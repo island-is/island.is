@@ -100,6 +100,9 @@ export const estateSchema = z.object({
         relationWithApplicant: z.string().optional(),
         nationalId: z.string().optional(),
         custodian: z.string().length(10).optional(),
+        noContactInfo: z
+          .array(z.union([z.literal('Yes'), z.literal('No')]))
+          .optional(),
         foreignCitizenship: z.string().array().min(0).max(1).optional(),
         dateOfBirth: z.string().optional(),
         initial: z.boolean(),
@@ -130,16 +133,20 @@ export const estateSchema = z.object({
       /* Validating email and phone of member depending on whether the field is 
           enabled and whether member has advocate */
       .refine(
-        ({ enabled, advocate, phone }) => {
-          return enabled && !advocate ? isValidPhoneNumber(phone) : true
+        ({ enabled, advocate, phone, noContactInfo }) => {
+          return enabled && noContactInfo?.[0] !== YES && !advocate
+            ? isValidPhoneNumber(phone)
+            : true
         },
         {
           path: ['phone'],
         },
       )
       .refine(
-        ({ enabled, advocate, email }) => {
-          return enabled && !advocate ? isValidEmail(email) : true
+        ({ enabled, advocate, email, noContactInfo }) => {
+          return enabled && !advocate && noContactInfo?.[0] !== YES
+            ? isValidEmail(email)
+            : true
         },
         {
           path: ['email'],
@@ -376,25 +383,26 @@ export const estateSchema = z.object({
   // is: Aðrar eignir
   otherAssets: z
     .object({
-      info: z.string(),
-      value: z.string(),
+      info: z.string().optional(),
+      value: z.string().optional(),
     })
     .refine(
-      ({ info, value }) => {
-        return info !== '' ? value !== '' : true
-      },
-      {
-        path: ['value'],
-      },
-    )
-    .refine(
-      ({ info, value }) => {
-        return value !== '' ? isValidString(info) : true
+      ({ info }) => {
+        return !!info
       },
       {
         path: ['info'],
       },
     )
+    .refine(
+      ({ value }) => {
+        return !!value
+      },
+      {
+        path: ['value'],
+      },
+    )
+    .array()
     .optional(),
 
   // is: Skuldir

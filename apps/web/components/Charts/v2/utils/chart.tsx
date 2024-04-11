@@ -7,9 +7,11 @@ import { Chart, ChartComponent } from '@island.is/web/graphql/schema'
 import {
   BASE_ACCORDION_HEIGHT,
   CHART_HEIGHT,
+  DEFAULT_XAXIS_HEIGHT,
   DEFAULT_XAXIS_KEY,
+  DEFAULT_YAXIS_WIDTH,
 } from '../constants'
-import { ChartComponentType, ChartType } from '../types'
+import { ChartComponentType, ChartType, CustomStyleConfig } from '../types'
 import { formatValueForPresentation } from './format'
 
 const KNOWN_COMPONENT_TYPES: ChartComponentType[] = [
@@ -57,6 +59,7 @@ interface GetCartesianGridComponents {
   chartUsesGrid: boolean
   slice: Chart
   tickFormatter: (value: unknown) => string
+  customStyleConfig: CustomStyleConfig
 }
 
 export const getCartesianGridComponents = ({
@@ -64,39 +67,60 @@ export const getCartesianGridComponents = ({
   chartUsesGrid,
   slice,
   tickFormatter,
+  customStyleConfig,
 }: GetCartesianGridComponents) => {
   if (!chartUsesGrid) {
     return null
   }
 
   const xAxisKey = slice.xAxisKey || DEFAULT_XAXIS_KEY
+  const dataKey = xAxisKey || undefined
+
+  const xAxisFormatter = tickFormatter
+  const yAxisFormatter = (v: string | number) =>
+    formatValueForPresentation(activeLocale, v)
 
   return [
     <CartesianGrid
       stroke="rgb(0, 97, 255, 0.2)"
       strokeDasharray="4 4"
-      vertical={false}
+      vertical={slice.flipAxis === true}
+      horizontal={slice.flipAxis === false}
     />,
     <XAxis
       axisLine={{ stroke: theme.color.blue200 }}
       aria-hidden="true"
-      dataKey={xAxisKey || undefined}
-      tickFormatter={tickFormatter}
+      dataKey={slice.flipAxis ? undefined : dataKey}
+      tickFormatter={slice.flipAxis ? yAxisFormatter : xAxisFormatter}
       style={{
-        fontSize: theme.typography.baseFontSize,
+        fontSize:
+          customStyleConfig.xAxis?.fontSize ?? theme.typography.baseFontSize,
         fontFamily: theme.typography.fontFamily,
       }}
       dy={theme.spacing.p2}
+      interval={customStyleConfig.xAxis?.interval ?? 'preserveEnd'}
+      angle={customStyleConfig.xAxis?.angle ?? 0}
+      domain={customStyleConfig.xAxis?.domain ?? [0, 'auto']}
+      type={slice.flipAxis ? 'number' : 'category'}
+      height={customStyleConfig.xAxis?.height ?? DEFAULT_XAXIS_HEIGHT}
+      tick={customStyleConfig.xAxis?.tick ?? undefined}
     />,
     <YAxis
       axisLine={{ stroke: theme.color.blue200 }}
       aria-hidden="true"
-      type="number"
+      width={customStyleConfig.yAxis?.width ?? DEFAULT_YAXIS_WIDTH}
       style={{
-        fontSize: theme.typography.baseFontSize,
+        fontSize:
+          customStyleConfig.yAxis?.fontSize ?? theme.typography.baseFontSize,
         fontFamily: theme.typography.fontFamily,
+        margin: 10,
       }}
-      tickFormatter={(v) => formatValueForPresentation(activeLocale, v)}
+      tickFormatter={slice.flipAxis ? xAxisFormatter : yAxisFormatter}
+      type={slice.flipAxis ? 'category' : 'number'}
+      dataKey={slice.flipAxis ? xAxisKey : undefined}
+      interval={customStyleConfig.yAxis?.interval ?? 'preserveEnd'}
+      domain={customStyleConfig.yAxis?.domain ?? [0, 'auto']}
+      tick={customStyleConfig.yAxis?.tick ?? undefined}
     />,
   ]
 }

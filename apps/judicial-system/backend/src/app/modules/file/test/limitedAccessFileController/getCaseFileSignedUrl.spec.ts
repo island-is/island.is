@@ -5,6 +5,7 @@ import { NotFoundException } from '@nestjs/common'
 import { createTestingFileModule } from '../createTestingFileModule'
 
 import { AwsS3Service } from '../../../aws-s3'
+import { Case } from '../../../case'
 import { CaseFile } from '../../models/file.model'
 import { SignedUrl } from '../../models/signedUrl.model'
 
@@ -15,6 +16,7 @@ interface Then {
 
 type GivenWhenThen = (
   caseId: string,
+  theCase: Case,
   fileId: string,
   caseFile: CaseFile,
 ) => Promise<Then>
@@ -33,13 +35,14 @@ describe('LimitedAccessFileController - Get case file signed url', () => {
 
     givenWhenThen = async (
       caseId: string,
+      theCase: Case,
       fileId: string,
       caseFile: CaseFile,
     ): Promise<Then> => {
       const then = {} as Then
 
       await limitedAccessFileController
-        .getCaseFileSignedUrl(caseId, fileId, caseFile)
+        .getCaseFileSignedUrl(caseId, theCase, fileId, caseFile)
         .then((result) => (then.result = result))
         .catch((error) => (then.error = error))
 
@@ -52,12 +55,13 @@ describe('LimitedAccessFileController - Get case file signed url', () => {
     const fileId = uuid()
     const key = `uploads/${uuid()}/${uuid()}/test.txt`
     const caseFile = { id: fileId, key } as CaseFile
+    const theCase = {} as Case
     let mockObjectExists: jest.Mock
 
     beforeEach(async () => {
       mockObjectExists = mockAwsS3Service.objectExists as jest.Mock
 
-      await givenWhenThen(caseId, fileId, caseFile)
+      await givenWhenThen(caseId, theCase, fileId, caseFile)
     })
 
     it('should check if the file exists in AWS S3', () => {
@@ -70,6 +74,8 @@ describe('LimitedAccessFileController - Get case file signed url', () => {
     const fileId = uuid()
     const key = `uploads/${uuid()}/${uuid()}/test.txt`
     const caseFile = { id: fileId, key } as CaseFile
+    const theCase = {} as Case
+
     let mockGetSignedUrl: jest.Mock
 
     beforeEach(async () => {
@@ -77,7 +83,7 @@ describe('LimitedAccessFileController - Get case file signed url', () => {
       const mockObjectExists = mockAwsS3Service.objectExists as jest.Mock
       mockObjectExists.mockResolvedValueOnce(true)
 
-      await givenWhenThen(caseId, fileId, caseFile)
+      await givenWhenThen(caseId, theCase, fileId, caseFile)
     })
 
     it('should get signed url from AWS S3', () => {
@@ -90,6 +96,8 @@ describe('LimitedAccessFileController - Get case file signed url', () => {
     const fileId = uuid()
     const key = `uploads/${uuid()}/${uuid()}/test.txt`
     const caseFile = { id: fileId, key } as CaseFile
+    const theCase = {} as Case
+
     const signedUrl = {} as SignedUrl
     let then: Then
 
@@ -99,7 +107,7 @@ describe('LimitedAccessFileController - Get case file signed url', () => {
       const mockGetSignedUrl = mockAwsS3Service.getSignedUrl as jest.Mock
       mockGetSignedUrl.mockResolvedValueOnce(signedUrl)
 
-      then = await givenWhenThen(caseId, fileId, caseFile)
+      then = await givenWhenThen(caseId, theCase, fileId, caseFile)
     })
 
     it('should return the signed url', () => {
@@ -111,10 +119,12 @@ describe('LimitedAccessFileController - Get case file signed url', () => {
     const caseId = uuid()
     const fileId = uuid()
     const caseFile = { id: fileId } as CaseFile
+    const theCase = {} as Case
+
     let then: Then
 
     beforeEach(async () => {
-      then = await givenWhenThen(caseId, fileId, caseFile)
+      then = await givenWhenThen(caseId, theCase, fileId, caseFile)
     })
 
     it('should throw not found exceptoin', () => {
@@ -130,6 +140,8 @@ describe('LimitedAccessFileController - Get case file signed url', () => {
     const fileId = uuid()
     const key = `uploads/${uuid()}/${uuid()}/test.txt`
     const caseFile = { id: fileId, key } as CaseFile
+    const theCase = {} as Case
+
     let mockUpdate: jest.Mock
     let then: Then
 
@@ -138,7 +150,7 @@ describe('LimitedAccessFileController - Get case file signed url', () => {
       const mockObjectExists = mockAwsS3Service.objectExists as jest.Mock
       mockObjectExists.mockResolvedValueOnce(false)
 
-      then = await givenWhenThen(caseId, fileId, caseFile)
+      then = await givenWhenThen(caseId, theCase, fileId, caseFile)
     })
 
     it('should remove the key', () => {
@@ -161,13 +173,15 @@ describe('LimitedAccessFileController - Get case file signed url', () => {
     const fileId = uuid()
     const key = `uploads/${uuid()}/${uuid()}/test.txt`
     const caseFile = { id: fileId, key } as CaseFile
+    const theCase = {} as Case
+
     let then: Then
 
     beforeEach(async () => {
       const mockObjectExists = mockAwsS3Service.objectExists as jest.Mock
       mockObjectExists.mockRejectedValueOnce(new Error('Some error'))
 
-      then = await givenWhenThen(caseId, fileId, caseFile)
+      then = await givenWhenThen(caseId, theCase, fileId, caseFile)
     })
 
     it('should throw error', () => {
@@ -181,6 +195,8 @@ describe('LimitedAccessFileController - Get case file signed url', () => {
     const fileId = uuid()
     const key = `uploads/${uuid()}/${uuid()}/test.txt`
     const caseFile = { id: fileId, key } as CaseFile
+    const theCase = {} as Case
+
     let then: Then
 
     beforeEach(async () => {
@@ -189,7 +205,7 @@ describe('LimitedAccessFileController - Get case file signed url', () => {
       const mockGetSignedUrl = mockAwsS3Service.getSignedUrl as jest.Mock
       mockGetSignedUrl.mockRejectedValueOnce(new Error('Some error'))
 
-      then = await givenWhenThen(caseId, fileId, caseFile)
+      then = await givenWhenThen(caseId, theCase, fileId, caseFile)
     })
 
     it('should throw error', () => {

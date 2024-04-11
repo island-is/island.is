@@ -102,10 +102,10 @@ export class ApplicationModel {
   readonly directTaxPayments!: DirectTaxPaymentModel[]
 
   @Field({ nullable: true })
-  readonly hasFetchedDirectTaxPayment!: boolean
+  readonly hasFetchedDirectTaxPayment?: boolean
 
   @Field({ nullable: true })
-  readonly spouseHasFetchedDirectTaxPayment!: boolean
+  readonly spouseHasFetchedDirectTaxPayment?: boolean
 
   @Field({ nullable: true })
   readonly navSuccess?: boolean

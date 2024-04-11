@@ -12,6 +12,10 @@ import type { Logger } from '@island.is/logging'
 import { LOGGER_PROVIDER } from '@island.is/logging'
 
 import { TokenGuard } from '@island.is/judicial-system/auth'
+import {
+  messageEndpoint,
+  MessageType,
+} from '@island.is/judicial-system/message'
 
 import { Case, CaseHasExistedGuard, CurrentCase } from '../case'
 import { SendInternalNotificationDto } from './dto/sendInternalNotification.dto'
@@ -19,7 +23,9 @@ import { DeliverResponse } from './models/deliver.response'
 import { NotificationService } from './notification.service'
 
 @UseGuards(TokenGuard, CaseHasExistedGuard)
-@Controller('api/internal/case/:caseId')
+@Controller(
+  `api/internal/case/:caseId/${messageEndpoint[MessageType.NOTIFICATION]}`,
+)
 @ApiTags('internal notifications')
 export class InternalNotificationController {
   constructor(
@@ -27,7 +33,7 @@ export class InternalNotificationController {
     @Inject(LOGGER_PROVIDER) private readonly logger: Logger,
   ) {}
 
-  @Post('notification')
+  @Post()
   @ApiCreatedResponse({
     type: DeliverResponse,
     description: 'Sends a new notification for an existing case',

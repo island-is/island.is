@@ -48,6 +48,7 @@ describe('useSections getSections', () => {
     role: UserRole.PROSECUTOR,
     email: faker.internet.email(),
     active: true,
+    canConfirmIndictment: false,
     institution: {
       created: faker.date.past().toISOString(),
       modified: faker.date.past().toISOString(),

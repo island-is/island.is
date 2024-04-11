@@ -1,5 +1,4 @@
 import { IdsUserGuard, ScopesGuard } from '@island.is/auth-nest-tools'
-import { logger } from '@island.is/logging'
 import { UseGuards } from '@nestjs/common'
 import { Args, Mutation, Resolver } from '@nestjs/graphql'
 import { CurrentUser, User } from '../auth'
@@ -20,10 +19,6 @@ export class RecyclingRequestAppSysResolver {
     @CurrentUser() user: User,
     @Args('input') input: CreateRecyclingRequestInput,
   ): Promise<typeof RecyclingRequestResponse> {
-    logger.info(`Recycling request ${input.permno}`, {
-      permno: input.permno,
-      requestType: input.requestType,
-    })
     user.name = input.fullName
 
     return this.recyclingRequestService.createRecyclingRequest(

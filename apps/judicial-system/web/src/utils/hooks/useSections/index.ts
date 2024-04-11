@@ -26,13 +26,12 @@ import {
   Gender,
   InstitutionType,
   User,
-  UserRole,
 } from '@island.is/judicial-system-web/src/graphql/schema'
 import { TempCase as Case } from '@island.is/judicial-system-web/src/types'
 
 import { stepValidations, stepValidationsType } from '../../formHelper'
 import {
-  isTrafficViolationCase,
+  isTrafficViolationIndictment,
   shouldUseAppealWithdrawnRoutes,
 } from '../../stepHelper'
 
@@ -401,7 +400,7 @@ const useSections = (
   ): RouteSection => {
     const { id, type, state } = workingCase
     const caseHasBeenReceivedByCourt = state === CaseState.RECEIVED
-    const isTrafficViolation = isTrafficViolationCase(workingCase)
+    const isTrafficViolation = isTrafficViolationIndictment(workingCase)
 
     return {
       name: formatMessage(sections.indictmentCaseProsecutorSection.title),

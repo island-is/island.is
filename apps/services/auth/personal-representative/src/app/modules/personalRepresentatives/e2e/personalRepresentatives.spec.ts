@@ -16,6 +16,7 @@ import {
   PersonalRepresentativeRightType,
   PaginatedPersonalRepresentativeDto,
   PersonalRepresentativeType,
+  DelegationsIndexService,
 } from '@island.is/auth-api-lib'
 import { AuthScope } from '@island.is/auth/scopes'
 import { createCurrentUser } from '@island.is/testing/fixtures'
@@ -112,11 +113,13 @@ describe('PersonalRepresentativeController', () => {
   let prTypeModel: typeof PersonalRepresentativeType
   let prModel: typeof PersonalRepresentative
   let prRightsModel: typeof PersonalRepresentativeRight
+  let delegationsIndexService: DelegationsIndexService
 
   beforeAll(async () => {
     // TestApp setup with auth and database
     app = await setupWithAuth({ user })
     server = request(app.getHttpServer())
+    delegationsIndexService = app.get(DelegationsIndexService)
     // Get reference on rightType models to seed DB
     prRightTypeModel = app.get<typeof PersonalRepresentativeRightType>(
       'PersonalRepresentativeRightTypeRepository',
@@ -132,6 +135,10 @@ describe('PersonalRepresentativeController', () => {
     prRightsModel = app.get<typeof PersonalRepresentativeRight>(
       'PersonalRepresentativeRightRepository',
     )
+
+    jest
+      .spyOn(delegationsIndexService, 'indexRepresentativeDelegations')
+      .mockImplementation()
   })
 
   afterAll(async () => {
@@ -139,6 +146,7 @@ describe('PersonalRepresentativeController', () => {
   })
 
   beforeEach(async () => {
+    jest.clearAllMocks()
     await prRightsModel.destroy({
       where: {},
       cascade: true,
@@ -177,6 +185,9 @@ describe('PersonalRepresentativeController', () => {
         ...errorExpectedStructure,
         statusCode: 400,
       })
+      expect(
+        delegationsIndexService.indexRepresentativeDelegations,
+      ).not.toHaveBeenCalled()
     })
 
     it('POST /v1/personal-representatives should create a new entry', async () => {
@@ -201,6 +212,9 @@ describe('PersonalRepresentativeController', () => {
         ),
       }
       expect(result).toMatchObject(requestData)
+      expect(
+        delegationsIndexService.indexRepresentativeDelegations,
+      ).toHaveBeenCalled()
     })
   })
 
@@ -219,6 +233,9 @@ describe('PersonalRepresentativeController', () => {
       })
       // Test delete personal rep
       await server.delete(`${path}/${personalRep.id}`).expect(204)
+      expect(
+        delegationsIndexService.indexRepresentativeDelegations,
+      ).toHaveBeenCalled()
     })
     it('DELETE /v1/personal-representatives should return success when trying to delete non existing personal rep', async () => {
       // Test delete personal rep
@@ -227,6 +244,9 @@ describe('PersonalRepresentativeController', () => {
     it('DELETE /v1/personal-representatives should return BadRequest for invalid uuid', async () => {
       // Test delete personal rep
       await server.delete(`${path}/notexisting`).expect(400)
+      expect(
+        delegationsIndexService.indexRepresentativeDelegations,
+      ).not.toHaveBeenCalled()
     })
   })
 

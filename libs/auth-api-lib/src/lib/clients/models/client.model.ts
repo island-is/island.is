@@ -502,6 +502,16 @@ export class Client extends Model {
   })
   requireApiScopes!: boolean
 
+  @Column({
+    type: DataType.BOOLEAN,
+    allowNull: false,
+    defaultValue: false,
+  })
+  @ApiProperty({
+    example: true,
+  })
+  singleSession!: boolean
+
   @CreatedAt
   @ApiProperty()
   readonly created!: Date

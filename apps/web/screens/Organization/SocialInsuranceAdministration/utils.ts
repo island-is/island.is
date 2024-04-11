@@ -99,23 +99,23 @@ export const getDateOfCalculationsOptions = (pageData?: CustomPage | null) => {
     ?.dateOfCalculationOptions ?? [
     {
       label: '2024',
-      value: new Date(2024, 1, 1).toISOString(),
+      value: new Date(2024, 11, 31).toISOString(),
     },
     {
       label: '2023 (júl-des)',
-      value: new Date(2023, 7, 1).toISOString(),
+      value: new Date(2023, 11, 31).toISOString(),
     },
     {
       label: '2023 (jan-jún)',
-      value: new Date(2023, 2, 1).toISOString(),
+      value: new Date(2023, 5, 30).toISOString(),
     },
     {
       label: '2022 (jún-des)',
-      value: new Date(2022, 7, 1).toISOString(),
+      value: new Date(2022, 11, 31).toISOString(),
     },
     {
       label: '2022 (jan-maí)',
-      value: new Date(2022, 2, 1).toISOString(),
+      value: new Date(2022, 5, 31).toISOString(),
     },
   ]
 
@@ -125,7 +125,7 @@ export const getDateOfCalculationsOptions = (pageData?: CustomPage | null) => {
     while (year > new Date(options[0].value).getFullYear()) {
       missingYearOptions.push({
         label: year.toString(),
-        value: new Date(year, 0, 1).toISOString(),
+        value: new Date(year, 11, 31).toISOString(),
       })
       year -= 1
     }

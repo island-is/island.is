@@ -4,8 +4,8 @@ import {
 } from '@island.is/clients/firearm-license'
 import isAfter from 'date-fns/isAfter'
 import { Locale } from '@island.is/shared/types'
+import { DEFAULT_LICENSE_ID } from '../licenseService.constants'
 import {
-  DEFAULT_LICENSE_ID,
   GenericLicenseDataField,
   GenericLicenseDataFieldType,
   GenericLicenseLabels,

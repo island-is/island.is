@@ -68,6 +68,19 @@ export const laws = {
       description: 'Útskýring á 2. mgr. 95. gr. sml.',
     },
   }),
+  [CaseLegalProvisions._97_1]: defineMessages({
+    title: {
+      id: 'judicial.system.core:laws._97_1.title',
+      defaultMessage: '1. mgr. 97. gr. sml.',
+      description: 'Titill fyrir 1. mgr. 97. gr. sml.',
+    },
+    info: {
+      id: 'judicial.system.core:laws._97_1.info',
+      defaultMessage:
+        'Gæsluvarðhald skal ákveðið með úrskurði dómara, þar sem því skal markaður ákveðinn tími sem má ekki vera lengri en fjórar vikur í senn, enda setji ákvæði 4. mgr. 95. gr. því ekki enn þrengri tímamörk. Gæsluvarðhald verður ekki framlengt nema til komi nýr dómsúrskurður. [Því má þó marka lengri tíma en fjórar vikur meðan á áfrýjunarfresti skv. 199. gr. stendur eða fresti til að leita leyfis Hæstaréttar til að áfrýja dómi Landsréttar skv. 217. gr., svo og meðan mál er til meðferðar fyrir æðri dómi uns endanlegur dómur gengur.]',
+      description: 'Útskýring á 1. mgr. 97. gr. sml.',
+    },
+  }),
   [CaseLegalProvisions._99_1_B]: defineMessages({
     title: {
       id: 'judicial.system.core:laws._99_1_B.title',

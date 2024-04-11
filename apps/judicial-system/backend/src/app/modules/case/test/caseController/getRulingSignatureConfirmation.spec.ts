@@ -7,6 +7,7 @@ import { MessageService, MessageType } from '@island.is/judicial-system/message'
 import {
   CaseFileState,
   CaseOrigin,
+  NotificationType,
   User,
 } from '@island.is/judicial-system/types'
 
@@ -18,7 +19,7 @@ import { AwsS3Service } from '../../../aws-s3'
 import { Case } from '../../models/case.model'
 import { SignatureConfirmationResponse } from '../../models/signatureConfirmation.response'
 
-jest.mock('../../../factories')
+jest.mock('../../../../factories')
 
 interface Then {
   result: SignatureConfirmationResponse
@@ -124,7 +125,7 @@ describe('CaseController - Get ruling signature confirmation', () => {
       then = await givenWhenThen(caseId, user, theCase, documentToken)
     })
 
-    it('should set the ruling date', () => {
+    it('should set the ruling signature date', () => {
       expect(mockCaseModel.update).toHaveBeenCalledWith(
         { rulingSignatureDate: date },
         { where: { id: caseId }, transaction },
@@ -134,16 +135,13 @@ describe('CaseController - Get ruling signature confirmation', () => {
     it('should return success', () => {
       expect(mockAwsS3Service.putObject).toHaveBeenCalled()
       expect(mockMessageService.sendMessagesToQueue).toHaveBeenCalledWith([
-        { type: MessageType.DELIVER_SIGNED_RULING_TO_COURT, user, caseId },
-        { type: MessageType.DELIVER_CASE_CONCLUSION_TO_COURT, user, caseId },
-        { type: MessageType.SEND_RULING_NOTIFICATION, user, caseId },
+        { type: MessageType.DELIVERY_TO_COURT_SIGNED_RULING, user, caseId },
         {
-          type: MessageType.DELIVER_CASE_FILE_TO_COURT,
+          type: MessageType.NOTIFICATION,
           user,
           caseId,
-          caseFileId,
+          body: { type: NotificationType.RULING },
         },
-        { type: MessageType.DELIVER_COURT_RECORD_TO_COURT, user, caseId },
       ])
       expect(then.result).toEqual({ documentSigned: true })
     })
@@ -166,7 +164,7 @@ describe('CaseController - Get ruling signature confirmation', () => {
       then = await givenWhenThen(caseId, user, theCase, documentToken)
     })
 
-    it('should set the ruling date', () => {
+    it('should set the ruling signature date', () => {
       expect(mockCaseModel.update).toHaveBeenCalledWith(
         { rulingSignatureDate: date },
         { where: { id: caseId }, transaction },
@@ -176,11 +174,14 @@ describe('CaseController - Get ruling signature confirmation', () => {
     it('should return success', () => {
       expect(mockAwsS3Service.putObject).toHaveBeenCalled()
       expect(mockMessageService.sendMessagesToQueue).toHaveBeenCalledWith([
-        { type: MessageType.DELIVER_SIGNED_RULING_TO_COURT, user, caseId },
-        { type: MessageType.DELIVER_CASE_CONCLUSION_TO_COURT, user, caseId },
-        { type: MessageType.SEND_RULING_NOTIFICATION, user, caseId },
-        { type: MessageType.DELIVER_COURT_RECORD_TO_COURT, user, caseId },
-        { type: MessageType.DELIVER_CASE_TO_POLICE, user, caseId },
+        { type: MessageType.DELIVERY_TO_COURT_SIGNED_RULING, user, caseId },
+        {
+          type: MessageType.NOTIFICATION,
+          user,
+          caseId,
+          body: { type: NotificationType.RULING },
+        },
+        { type: MessageType.DELIVERY_TO_POLICE_SIGNED_RULING, user, caseId },
       ])
       expect(then.result).toEqual({ documentSigned: true })
     })
@@ -205,11 +206,14 @@ describe('CaseController - Get ruling signature confirmation', () => {
 
     it('should return success', () => {
       expect(mockMessageService.sendMessagesToQueue).toHaveBeenCalledWith([
-        { type: MessageType.DELIVER_SIGNED_RULING_TO_COURT, user, caseId },
-        { type: MessageType.DELIVER_CASE_CONCLUSION_TO_COURT, user, caseId },
-        { type: MessageType.SEND_RULING_NOTIFICATION, user, caseId },
-        { type: MessageType.DELIVER_COURT_RECORD_TO_COURT, user, caseId },
-        { type: MessageType.DELIVER_CASE_TO_POLICE, user, caseId },
+        { type: MessageType.DELIVERY_TO_COURT_SIGNED_RULING, user, caseId },
+        {
+          type: MessageType.NOTIFICATION,
+          user,
+          caseId,
+          body: { type: NotificationType.RULING },
+        },
+        { type: MessageType.DELIVERY_TO_POLICE_SIGNED_RULING, user, caseId },
       ])
     })
   })

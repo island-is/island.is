@@ -16,6 +16,8 @@ export enum OccupationalLicenseStatus {
   valid = 'valid',
   error = 'error',
   limited = 'limited',
+  revoked = 'revoked',
+  waived = 'waived',
 }
 
 registerEnumType(OccupationalLicenseType, {

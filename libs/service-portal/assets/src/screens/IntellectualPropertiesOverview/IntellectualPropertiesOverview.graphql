@@ -34,7 +34,7 @@ query GetIntellectualProperties {
       ... on IntellectualPropertiesTrademark {
         __typename
         text
-        type
+        typeReadable
         status
         id
       }

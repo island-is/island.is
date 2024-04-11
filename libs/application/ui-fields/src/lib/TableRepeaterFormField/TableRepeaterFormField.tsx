@@ -1,6 +1,7 @@
 import { coreMessages, formatText } from '@island.is/application/core'
 import {
   FieldBaseProps,
+  StaticText,
   TableRepeaterField,
 } from '@island.is/application/types'
 import {
@@ -13,6 +14,7 @@ import {
   Tooltip,
   GridRow,
   GridColumn,
+  AlertMessage,
 } from '@island.is/island-ui/core'
 import { useLocale } from '@island.is/localization'
 import {
@@ -93,6 +95,7 @@ export const TableRepeaterFormField: FC<Props> = ({
   const handleNewItem = () => {
     append({})
     setActiveIndex(fields.length)
+    methods.clearErrors()
   }
 
   const handleRemoveItem = (index: number) => {
@@ -109,6 +112,14 @@ export const TableRepeaterFormField: FC<Props> = ({
     const errorList = error as unknown as Record<string, string>[] | undefined
     const errors = errorList?.[activeIndex]
     return errors?.[id]
+  }
+
+  const formatTableValue = (key: string, item: Record<string, string>) => {
+    const formatFn = table?.format?.[key]
+    const formatted = formatFn ? formatFn(item[key]) : item[key]
+    return typeof formatted === 'string'
+      ? formatted
+      : formatText(formatted, application, formatMessage)
   }
 
   return (
@@ -141,14 +152,11 @@ export const TableRepeaterFormField: FC<Props> = ({
                 staticData.map((item, index) => (
                   <T.Row key={index}>
                     <T.Data></T.Data>
-                    {Object.keys(item).map((key, index) => {
-                      const formatFn = table?.format?.[key]
-                      return (
-                        <T.Data key={`static-${key}-${index}`}>
-                          {formatFn ? formatFn(item[key]) : item[key]}
-                        </T.Data>
-                      )
-                    })}
+                    {Object.keys(item).map((key, index) => (
+                      <T.Data key={`static-${key}-${index}`}>
+                        {formatTableValue(key, item)}
+                      </T.Data>
+                    ))}
                   </T.Row>
                 ))}
               {values &&
@@ -168,21 +176,20 @@ export const TableRepeaterFormField: FC<Props> = ({
                             type="button"
                             onClick={() => handleRemoveItem(index)}
                           >
-                            <Icon icon="removeCircle" type="outline" />
+                            <Icon
+                              icon="removeCircle"
+                              type="outline"
+                              color="dark200"
+                            />
                           </button>
                         </Tooltip>
                       </Box>
                     </T.Data>
-                    {tableRows.map((item, idx) => {
-                      const formatFn = table?.format?.[item]
-                      return (
-                        <T.Data key={`${item}-${idx}`}>
-                          {formatFn
-                            ? formatFn(values[index][item])
-                            : values[index][item]}
-                        </T.Data>
-                      )
-                    })}
+                    {tableRows.map((item, idx) => (
+                      <T.Data key={`${item}-${idx}`}>
+                        {formatTableValue(item, values[index])}
+                      </T.Data>
+                    ))}
                   </T.Row>
                 ))}
             </T.Body>
@@ -211,18 +218,30 @@ export const TableRepeaterFormField: FC<Props> = ({
                   const span = isHalfColumn ? '1/2' : '1/1'
                   const Component = componentMapper[component]
                   const id = `${data.id}[${activeIndex}].${itemId}`
+                  const activeValues =
+                    activeIndex >= 0 && values ? values[activeIndex] : undefined
 
                   const translatedOptions = options?.map((option) => ({
                     ...option,
                     label: formatText(option.label, application, formatMessage),
                   }))
 
-                  if (condition && !condition(application)) {
+                  if (condition && !condition(application, activeValues)) {
                     return null
                   }
 
                   return (
                     <GridColumn key={id} span={['1/1', '1/1', '1/1', span]}>
+                      {component === 'radio' && label && (
+                        <Text
+                          variant="h4"
+                          as="h4"
+                          id={id + 'title'}
+                          marginBottom={3}
+                        >
+                          {formatText(label, application, formatMessage)}
+                        </Text>
+                      )}
                       <Component
                         id={id}
                         name={id}
@@ -271,6 +290,11 @@ export const TableRepeaterFormField: FC<Props> = ({
             </Box>
           )}
         </Stack>
+        {error && typeof error === 'string' && fields.length === 0 && (
+          <Box marginTop={3}>
+            <AlertMessage type="error" title={error} />
+          </Box>
+        )}
       </Box>
     </Box>
   )

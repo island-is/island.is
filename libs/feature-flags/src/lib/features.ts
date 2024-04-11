@@ -30,7 +30,10 @@ export enum Features {
   additionalSupportForTheElderlyApplication = 'isAdditionalSupportForTheElderlyEnable',
   homeSupport = 'isHomeSupportEnabled',
   ChangeMachineSupervisor = 'isChangeMachineSupervisorEnabled',
+  DeregisterMachine = 'isDeregisterMachineEnabled',
   grindavikHousingBuyout = 'isGrindavikHousingBuyoutEnabled',
+  RequestInspection = 'isRequestInspectionForMachineEnabled',
+  officialJournalOfIceland = 'isOfficialJournalOfIcelandEnabled',
 
   // Application System Delegations active
   applicationSystemDelegations = 'applicationSystemDelegations',
@@ -54,6 +57,7 @@ export enum Features {
 
   //License service new drivers license client enabled
   licenseServiceDrivingLicenseClient = 'isLicenseServiceDrivingLicenceClientV2Enabled',
+  licenseServiceDrivingLicencePhotoCheckDisabled = 'isLicenseServiceDrivingLicencePhotoCheckDisabled',
 
   //Enable intellectual properties fetch
   isIntellectualPropertyModuleEnabled = 'isIntellectualPropertyModuleEnabled',
@@ -75,6 +79,7 @@ export enum Features {
 
   // Notifications
   isNotificationEmailWorkerEnabled = 'isnotificationemailworkerenabled',
+  shouldSendEmailNotificationsToDelegations = 'shouldSendEmailNotificationsToDelegations',
 }
 
 export enum ServerSideFeature {

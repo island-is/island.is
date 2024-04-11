@@ -24,6 +24,8 @@ import {
   UpdateNotificationDto,
   RenderedNotificationDto,
   ExtendedPaginationDto,
+  UnseenNotificationsCountDto,
+  UnreadNotificationsCountDto,
 } from './dto/notification.dto'
 
 const ACCESS_TOKEN = process.env.CONTENTFUL_ACCESS_TOKEN
@@ -39,6 +41,7 @@ const ALLOWED_REPLACE_PROPS: Array<keyof HnippTemplate> = [
   'notificationDataCopy',
   'clickAction',
   'clickActionWeb',
+  'clickActionUrl',
 ]
 
 /**
@@ -78,13 +81,16 @@ export class NotificationsService {
       return {
         id: notification.id,
         messageId: notification.messageId,
+        senderId: notification.senderId || '',
         title: formattedTemplate.notificationTitle,
         body: formattedTemplate.notificationBody,
         dataCopy: formattedTemplate.notificationDataCopy,
         clickAction: formattedTemplate.clickAction,
+        clickActionUrl: formattedTemplate.clickActionUrl,
         created: notification.created,
         updated: notification.updated,
-        status: notification.status,
+        read: notification.read,
+        seen: notification.seen,
       }
     } catch (error) {
       this.logger.error('Error formatting notification:', error)
@@ -114,7 +120,7 @@ export class NotificationsService {
     )
 
     const contentfulHnippTemplatesQuery = {
-      query: ` {
+      query: `{
       hnippTemplateCollection(locale: "${mappedLocale}") {
         items {
           templateId
@@ -123,12 +129,12 @@ export class NotificationsService {
           notificationDataCopy
           clickAction
           clickActionWeb
+          clickActionUrl
           category
           args
         }
       }
-    }
-    `,
+    }`,
     }
 
     const res = await axios
@@ -240,7 +246,6 @@ export class NotificationsService {
             for (const arg of args) {
               const regexTarget = new RegExp(`{{${arg.key}}}`, 'g')
               const newValue = value.replace(regexTarget, arg.value)
-
               if (newValue !== value) {
                 // finds {{key}} in string and replace with value
                 template[templateKey] = value.replace(regexTarget, arg.value)
@@ -311,7 +316,6 @@ export class NotificationsService {
         }
       }),
     )
-
     paginatedListResponse.data = formattedNotifications.filter((n) => n) // Filter out nulls if any
     return paginatedListResponse
   }
@@ -338,6 +342,58 @@ export class NotificationsService {
         updatedNotification,
         updatedNotification.templateId,
         locale,
+      )
+    }
+  }
+
+  async getUnreadNotificationsCount(
+    user: User,
+  ): Promise<UnreadNotificationsCountDto> {
+    try {
+      const unreadCount = await this.notificationModel.count({
+        where: {
+          recipient: user.nationalId,
+          read: false,
+        },
+      })
+      return { unreadCount }
+    } catch (error) {
+      this.logger.error('Error getting unread notifications count:', error)
+      throw new InternalServerErrorException(
+        'Error getting unread notifications count',
+      )
+    }
+  }
+
+  async getUnseenNotificationsCount(
+    user: User,
+  ): Promise<UnseenNotificationsCountDto> {
+    try {
+      const unseenCount = await this.notificationModel.count({
+        where: {
+          recipient: user.nationalId,
+          seen: false,
+        },
+      })
+      return { unseenCount }
+    } catch (error) {
+      this.logger.error('Error getting unseen notifications count:', error)
+      throw new InternalServerErrorException(
+        'Error getting unseen notifications count',
+      )
+    }
+  }
+
+  async markAllAsSeen(user: User): Promise<void> {
+    try {
+      await this.notificationModel.update(
+        { seen: true },
+        { where: { recipient: user.nationalId, seen: false } },
+      )
+    } catch (error) {
+      this.logger.error('Error marking all notifications as seen:', error)
+      throw new InternalServerErrorException(
+        'Error marking all notifications as seen',
       )
     }
   }

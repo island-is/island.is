@@ -44,4 +44,9 @@ export class CreateUserDto {
   @IsBoolean()
   @ApiProperty()
   readonly active!: boolean
+
+  @IsNotEmpty()
+  @IsBoolean()
+  @ApiProperty()
+  readonly canConfirmIndictment!: boolean
 }

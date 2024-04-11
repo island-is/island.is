@@ -3,7 +3,6 @@
   "$schema": "../../../node_modules/nx/schemas/project-schema.json",
   "sourceRoot": "libs/service-portal/restrictions/src",
   "projectType": "library",
-  "tags": ["lib:portals-mypages"],
   "targets": {
     "lint": {
       "executor": "@nx/linter:eslint",
@@ -27,5 +26,6 @@
         "command": "yarn ts-node -P libs/localization/tsconfig.lib.json libs/localization/scripts/extract 'libs/service-portal/restrictions/src/{lib,screens}/**/*.{js,ts,tsx}'"
       }
     }
-  }
+  },
+  "tags": ["lib:portals-mypages", "scope:portals-mypages"]
 }

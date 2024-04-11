@@ -24,8 +24,8 @@ class PensionCalculationItemGroup {
 
 @ObjectType('SocialInsurancePensionCalculationResponse')
 export class PensionCalculationResponse {
-  @CacheField(() => PensionCalculationItem, { nullable: true })
-  highlightedItem?: PensionCalculationItem
+  @CacheField(() => [PensionCalculationItem], { nullable: true })
+  highlightedItems?: PensionCalculationItem[]
 
   @CacheField(() => [PensionCalculationItemGroup], { nullable: true })
   groups?: PensionCalculationItemGroup[]

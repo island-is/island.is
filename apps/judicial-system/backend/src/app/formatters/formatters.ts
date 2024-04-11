@@ -33,7 +33,7 @@ type SubjectAndBody = {
   body: string
 }
 
-function legalProvisionsOrder(p: CaseLegalProvisions) {
+const legalProvisionsOrder = (p: CaseLegalProvisions) => {
   switch (p) {
     case CaseLegalProvisions._95_1_A:
       return 0
@@ -45,6 +45,8 @@ function legalProvisionsOrder(p: CaseLegalProvisions) {
       return 3
     case CaseLegalProvisions._95_2:
       return 4
+    case CaseLegalProvisions._97_1:
+      return 5
     case CaseLegalProvisions._99_1_B:
       return 6
     case CaseLegalProvisions._100_1:
@@ -744,3 +746,6 @@ export const formatDefenderRoute = (
     isIndictmentCase(caseType) ? DEFENDER_INDICTMENT_ROUTE : DEFENDER_ROUTE
   }/${id}`
 }
+
+export const formatConfirmedIndictmentKey = (key?: string) =>
+  key?.replace(/\/([^/]*)$/, '/confirmed/$1') ?? ''

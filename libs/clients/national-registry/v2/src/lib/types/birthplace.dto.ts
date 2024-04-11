@@ -6,9 +6,9 @@ export interface BirthplaceDto {
   birthdate: Date
 }
 
-export function formatBirthplaceDto(
+export const formatBirthplaceDto = (
   birthplace: Faedingarstadur | null | undefined,
-): BirthplaceDto | null {
+): BirthplaceDto | null => {
   if (birthplace == null) {
     return null
   }

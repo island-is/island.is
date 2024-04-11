@@ -19,10 +19,8 @@ export class VehicleAppSysResolver {
     @CurrentUser() user: User,
     @Args('input') input: CreateVehicleInput,
   ) {
-    logger.info(`Creating Vehicle ${input.permno}`, {
-      permno: input.permno,
+    logger.info(`car-recycling: Creating Vehicle ${input.permno.slice(-3)}`, {
       mileage: input.mileage,
-      vehicle: input,
     })
 
     const newVehicle = new VehicleModel()

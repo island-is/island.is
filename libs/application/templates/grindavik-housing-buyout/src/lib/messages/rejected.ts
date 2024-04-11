@@ -7,7 +7,7 @@ export const rejected = defineMessages({
     description: 'Title of the rejected section',
   },
   text: {
-    id: 'ghb.application:rejected.text',
+    id: 'ghb.application:rejected.text#markdown',
     defaultMessage:
       'Umsókn þinni um kaup ríkis á íbúðarhúsnæði í Grindavík hefur verið hafnað.',
     description: 'Text of the section when the application is rejected',

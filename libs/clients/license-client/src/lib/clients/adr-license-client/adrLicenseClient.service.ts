@@ -16,9 +16,10 @@ import { parseAdrLicenseResponse } from './adrLicenseClientMapper'
 import {
   LicenseClient,
   LicensePkPassAvailability,
-  PkPassVerification,
+  LicenseType,
   PkPassVerificationInputData,
   Result,
+  VerifyPkPassResult,
 } from '../../licenseClient.type'
 import { FlattenedAdrDto } from './adrLicenseClient.type'
 
@@ -26,7 +27,7 @@ import { FlattenedAdrDto } from './adrLicenseClient.type'
 const LOG_CATEGORY = 'adrlicense-service'
 
 @Injectable()
-export class AdrLicenseClient implements LicenseClient<FlattenedAdrDto> {
+export class AdrLicenseClient implements LicenseClient<LicenseType.AdrLicense> {
   constructor(
     @Inject(LOGGER_PROVIDER) private logger: Logger,
     private adrApi: AdrApi,
@@ -34,6 +35,7 @@ export class AdrLicenseClient implements LicenseClient<FlattenedAdrDto> {
   ) {}
 
   clientSupportsPkPass = true
+  type = LicenseType.AdrLicense
 
   private checkLicenseValidityForPkPass(
     licenseInfo: AdrDto,
@@ -98,18 +100,22 @@ export class AdrLicenseClient implements LicenseClient<FlattenedAdrDto> {
     }
   }
 
-  licenseIsValidForPkPass(payload: unknown): LicensePkPassAvailability {
+  licenseIsValidForPkPass(
+    payload: unknown,
+  ): Promise<LicensePkPassAvailability> {
     if (typeof payload === 'string') {
       let jsonLicense: AdrDto
       try {
         jsonLicense = JSON.parse(payload)
       } catch (e) {
         this.logger.warn('Invalid raw data', { error: e, LOG_CATEGORY })
-        return LicensePkPassAvailability.Unknown
+        return Promise.resolve(LicensePkPassAvailability.Unknown)
       }
-      return this.checkLicenseValidityForPkPass(jsonLicense)
+      return Promise.resolve(this.checkLicenseValidityForPkPass(jsonLicense))
     }
-    return this.checkLicenseValidityForPkPass(payload as AdrDto)
+    return Promise.resolve(
+      this.checkLicenseValidityForPkPass(payload as AdrDto),
+    )
   }
 
   async getLicenses(user: User): Promise<Result<Array<FlattenedAdrDto>>> {
@@ -166,7 +172,7 @@ export class AdrLicenseClient implements LicenseClient<FlattenedAdrDto> {
       }
     }
 
-    const valid = this.licenseIsValidForPkPass(license.data)
+    const valid = await this.licenseIsValidForPkPass(license.data)
 
     if (!valid) {
       return {
@@ -252,7 +258,9 @@ export class AdrLicenseClient implements LicenseClient<FlattenedAdrDto> {
     }
   }
 
-  async verifyPkPass(data: string): Promise<Result<PkPassVerification>> {
+  async verifyPkPass(
+    data: string,
+  ): Promise<Result<VerifyPkPassResult<LicenseType.AdrLicense>>> {
     const { code, date } = JSON.parse(data) as PkPassVerificationInputData
     const result = await this.smartApi.verifyPkPass({ code, date })
 
@@ -268,7 +276,9 @@ export class AdrLicenseClient implements LicenseClient<FlattenedAdrDto> {
 
     return {
       ok: true,
-      data: result.data,
+      data: {
+        valid: result.data.valid,
+      },
     }
   }
 }

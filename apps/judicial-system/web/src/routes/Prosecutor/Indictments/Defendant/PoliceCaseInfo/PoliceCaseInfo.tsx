@@ -50,6 +50,10 @@ interface Props {
       crimeScene?: CrimeScene
     },
   ) => void
+  updateIndictmentCount: (
+    policeCaseNumber: string,
+    crimeScene: CrimeScene,
+  ) => void
   policeCaseNumberImmutable: boolean
 }
 
@@ -66,6 +70,7 @@ export const PoliceCaseInfo: React.FC<React.PropsWithChildren<Props>> = (
     deletePoliceCase,
     updatePoliceCase,
     policeCaseNumberImmutable = false,
+    updateIndictmentCount,
   } = props
 
   const { formatMessage } = useIntl()
@@ -258,8 +263,12 @@ export const PoliceCaseInfo: React.FC<React.PropsWithChildren<Props>> = (
               crimeScene: { ...crimeScene, place: event.target.value },
             })
           }}
-          onBlur={() => {
+          onBlur={(event) => {
             updatePoliceCase()
+            updateIndictmentCount(policeCaseNumbers[index], {
+              ...crimeScene,
+              place: event.target.value,
+            })
           }}
         />
       </Box>
@@ -273,6 +282,11 @@ export const PoliceCaseInfo: React.FC<React.PropsWithChildren<Props>> = (
           if (date && valid) {
             updatePoliceCase(index, {
               crimeScene: { ...crimeScene, date: date },
+            })
+
+            updateIndictmentCount(policeCaseNumbers[index], {
+              ...crimeScene,
+              date: date,
             })
           }
         }}

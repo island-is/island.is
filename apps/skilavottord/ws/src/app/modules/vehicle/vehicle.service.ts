@@ -68,7 +68,11 @@ export class VehicleService {
       return true
     } else {
       const errorMsg = `failed to update mileage: ${mileage} on vehicle: ${permno}`
-      this.logger.error(errorMsg)
+      this.logger.error(
+        `car-recycling: Failed to update mileage: ${mileage} on vehicle: ${permno.slice(
+          -3,
+        )}`,
+      )
       throw new Error(errorMsg)
     }
   }

@@ -96,6 +96,9 @@ export class AdminClientDto {
   @ApiProperty()
   accessTokenLifetime!: number
 
+  @ApiProperty()
+  singleSession!: boolean
+
   @ApiPropertyOptional({
     description: 'Dictionary of custom claims added to access tokens.',
     type: [AdminClientClaimDto],

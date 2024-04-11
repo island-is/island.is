@@ -8,6 +8,7 @@ if [[ -n "${DEBUG:-}" || -n "${CI:-}" ]]; then set -x; fi
 : "${REMOVE_CONTAINERS_FORCE:=}"
 : "${RESTART_INTERVAL_TIME:=1}"
 : "${RESTART_MAX_RETRIES:=3}"
+: "${LOCAL_PORT:=}"
 : "${DRY:=}"
 
 ARGS=()
@@ -64,6 +65,7 @@ print_usage() {
 
 show_help() {
   cat <<EOF
+
 Usage:
   ./scripts/run-proxies.sh [OPTIONS] PROXY1 PROXY2 ...
 
@@ -74,8 +76,11 @@ Options:
     Remove containers on start
   -x, --remove-containers-on-fail
     Remove containers on fail
-  -i, --interval
-    Restart interval time in seconds
+  -i, --interval N
+    Wait N seconds before restarting a proxy (default: 1)
+  -p, --port N
+    Local port to bind to (default: 5432 for db, 6379 for redis, 9200 for es, 8443 for soffia, 8081 for xroad)
+    Only works for single-proxy mode
 
 Proxies:
   es
@@ -91,6 +96,15 @@ parse_cli() {
     local arg="$1"
     local opt="${2:-}"
     local value=true
+    # echo "DEBUG: Raw args: '$*'"
+    # Check for equal sign
+    if echo "$arg" | grep -q '='; then
+      # echo "DEBUG: Setting value by equal sign"
+      opt="${arg##*=}"
+      arg="${arg%%=*}"
+      set -- "$arg" "$opt" "${@:2}"
+    fi
+    # echo "DEBUG: arg='$arg' opt='$opt' \$@='$*'"
 
     # Remove any --no- prefix and set the value to false
     local negative=false
@@ -125,11 +139,13 @@ parse_cli() {
       RESTART_MAX_RETRIES="${opt}"
       shift
       ;;
-
     -n | --dry)
       DRY=true
       ;;
-
+    -p | --port)
+      LOCAL_PORT="${opt}"
+      shift
+      ;;
     --)
       shift
       ARGS+=("$@")
@@ -139,22 +155,37 @@ parse_cli() {
       print_usage
       exit 0
       ;;
+    -*)
+      echo "Unknown option: $arg"
+      show_help
+      exit 1
+      ;;
     *)
       PROXIES+=("$arg")
       ;;
     esac
     shift
   done
+
+  # echo "DEBUG: PROXIES=${PROXIES[*]}"
   # echo "DEBUG: PROXIES=${PROXIES[*]}"
   # echo "DEBUG: ARGS=${ARGS[*]}"
   # echo "DEBUG: REMOVE_CONTAINERS_ON_START=${REMOVE_CONTAINERS_ON_START}"
   # echo "DEBUG: REMOVE_CONTAINERS_ON_FAIL=${REMOVE_CONTAINERS_ON_FAIL}"
   # echo "DEBUG: REMOVE_CONTAINERS_FORCE=${REMOVE_CONTAINERS_FORCE}"
+  # echo "DEBUG: debug exiting" && exit 1
 
   # Return early if no proxies
   if [ "${#PROXIES[@]}" -eq 0 ]; then
     PROXIES=("es" "soffia" "xroad" "redis" "db")
     return
+  fi
+
+  # Allow only a single proxy in single-proxy mode
+  if [ "${#PROXIES[@]}" -gt 1 ] && [ -n "${LOCAL_PORT:-}" ]; then
+    echo "Only a single proxy is allowed in single-proxy mode"
+    show_help
+    exit 1
   fi
 
   local unknown_proxies
@@ -167,6 +198,7 @@ parse_cli() {
   # Exit with error if there are unknown proxies
   if [[ "${unknown_proxies[*]-}" != "" ]]; then
     echo "Unknown proxies: '${unknown_proxies[*]}'"
+    show_help
     exit 1
   fi
 }
@@ -216,19 +248,19 @@ run-proxy() {
     --cluster "${CLUSTER:-dev-cluster01}"
 }
 run-db-proxy() {
-  run-proxy 5432 5432 db
+  run-proxy 5432 "${LOCAL_PORT:=5432}" db
 }
 run-redis-proxy() {
-  run-proxy 6379 6379 redis
+  run-proxy 6379 "${LOCAL_PORT:=6379}" redis
 }
 run-es-proxy() {
-  run-proxy 9200 9200 es "$@"
+  run-proxy 9200 "${LOCAL_PORT:=9200}" es "$@"
 }
 run-soffia-proxy() {
-  run-proxy 443 8443 soffia
+  run-proxy 443 "${LOCAL_PORT:=8443}" soffia
 }
 run-xroad-proxy() {
-  run-proxy 80 8081 xroad
+  run-proxy 80 "${LOCAL_PORT:=8081}" xroad
 }
 
 parse_cli "$@"

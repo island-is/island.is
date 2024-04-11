@@ -5,6 +5,7 @@ import {
   PersonalRepresentativeCreateDTO,
   PersonalRepresentativeService,
   PaginationWithNationalIdsDto,
+  DelegationsIndexService,
 } from '@island.is/auth-api-lib'
 import {
   BadRequestException,
@@ -46,6 +47,7 @@ export class PersonalRepresentativesController {
     @Inject(PersonalRepresentativeService)
     private readonly prService: PersonalRepresentativeService,
     private readonly auditService: AuditService,
+    private readonly delegationIndexService: DelegationsIndexService,
   ) {}
 
   /** Gets a list of personal representatives */
@@ -64,7 +66,7 @@ export class PersonalRepresentativesController {
     return this.prService.getMany(true, query)
   }
 
-  /** Gets a personal representative rights by it's id */
+  /** Gets a personal representative rights by its id */
   @Get(':id')
   @Documentation({
     summary: 'Gets a personal representative rights by id',
@@ -97,7 +99,7 @@ export class PersonalRepresentativesController {
 
     return personalRepresentative
   }
-  /** Removes a personal representative by it's id */
+  /** Removes a personal representative by its id */
   @Delete(':id')
   @Documentation({
     summary: 'Delete a personal representative connection by id',
@@ -119,7 +121,7 @@ export class PersonalRepresentativesController {
     if (!id) {
       throw new BadRequestException('Id needs to be provided')
     }
-    await this.auditService.auditPromise(
+    const deletedPersonalRepresentative = await this.auditService.auditPromise(
       {
         auth: user,
         action: 'deletePersonalRepresentative',
@@ -128,6 +130,13 @@ export class PersonalRepresentativesController {
       },
       this.prService.delete(id),
     )
+
+    if (deletedPersonalRepresentative) {
+      // Index personal representative delegations for the personal representative
+      void this.delegationIndexService.indexRepresentativeDelegations(
+        deletedPersonalRepresentative.nationalIdPersonalRepresentative,
+      )
+    }
   }
 
   /** Creates a personal representative */
@@ -179,7 +188,7 @@ export class PersonalRepresentativesController {
     }
 
     // Create a new personal representative
-    return await this.auditService.auditPromise(
+    const createdPersonalRepresentative = await this.auditService.auditPromise(
       {
         auth: user,
         action: 'createPersonalRepresentative',
@@ -189,5 +198,14 @@ export class PersonalRepresentativesController {
       },
       this.prService.create(personalRepresentative),
     )
+
+    if (createdPersonalRepresentative) {
+      // Index personal representative delegations for the personal representative
+      void this.delegationIndexService.indexRepresentativeDelegations(
+        createdPersonalRepresentative.nationalIdPersonalRepresentative,
+      )
+    }
+
+    return createdPersonalRepresentative
   }
 }

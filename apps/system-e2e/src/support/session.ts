@@ -25,7 +25,10 @@ async function ensureCognitoSessionIfNeeded(
   if (
     cognitoSessionValidation
       .url()
-      .startsWith('https://cognito.shared.devland.is/')
+      .startsWith('https://cognito.shared.devland.is/') ||
+    cognitoSessionValidation
+      .url()
+      .startsWith('https://ids-users.auth.eu-west-1.amazoncognito.com/')
   ) {
     await page.goto(homeUrl)
     await cognitoLogin(page, homeUrl, authUrlPrefix)

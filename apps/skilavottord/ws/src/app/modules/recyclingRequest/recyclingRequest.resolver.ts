@@ -123,7 +123,7 @@ export class RecyclingRequestResolver {
     ].includes(user.role)
     if (requestType === 'deregistered' && !hasPermission) {
       throw new NotFoundException(
-        `User doesn't have right to deregistered the vehicle`,
+        `car-recycling: User doesn't have right to deregistered the vehicle`,
       )
     }
 

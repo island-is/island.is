@@ -191,6 +191,7 @@ export const is = {
   'profile.vehicles': 'Ökutæki',
   'profile.assets': 'Fasteignir',
   'profile.finance': 'Fjármál',
+  'profile.airDiscount': 'Loftbrú',
 
   // vehicles
   'vehicles.screenTitle': 'Ökutæki',
@@ -358,16 +359,16 @@ export const is = {
   'licenseScanner.helperMessage': 'Snúðu símanum að strikamerkinu',
   'licenseScanner.awaitingPermission': 'Bið um leyfi til að nota myndavél',
   'licenseScanner.noCameraAccess': 'Myndavél ekki aðgengileg',
+  'licenseScanner.errorUnknown': 'Óþekkt villa',
+  'licenseScanner.invalidBarcode': 'Ógilt strikamerki',
+  'licenseScanner.errorNetwork': 'Net villa',
   'licenseScannerDetail.driverLicenseNumber': 'Númer ökuskírteinis',
-  'licenseScannerDetail.invalidBarcode': 'Ógilt strikamerki',
   'licenseScannerResult.androidHelp':
     'Smellið á hnapp neðan við skírteini til þess að fá uppfært strikamerki.',
   'licenseScannerResult.iosHelp':
     'Smellið á hnapp með þremur punktum fyrir neðan skírteinið. Dragið því næst niður með fingur á miðjum skjánum til þess að uppfæra strikamerkið.',
 
   // license scan detail
-  'licenseScanDetail.errorUnknown': 'Óþekkt villa',
-  'licenseScanDetail.errorNetwork': 'Net villa',
   'licenseScanDetail.errorCodeMessage': `{
     errorCode,
     select,
@@ -400,6 +401,9 @@ export const is = {
   'licenseDetail.pcard.alert.title': 'Mundu eftir stæðiskortinu!',
   'licenseDetail.pcard.alert.description':
     'Þetta yfirlit gildir ekki sem stæðiskort.',
+  'licenseDetail.ehic.alert.title': 'Mundu eftir kortinu!',
+  'licenseDetail.ehic.alert.description':
+    'Þetta yfirlit gildir ekki sem sjúkratryggingakort.',
 
   // notifications
   'notifications.screenTitle': 'Tilkynningar',
@@ -472,4 +476,29 @@ export const is = {
   'edit.confirm.inputlabel': 'Öryggisnúmer',
   'edit.cancel.button': 'Hætta við',
   'edit.confirm.button': 'Staðfesta',
+
+  // air discount
+  'airDiscount.screenTitle': 'Loftbrú',
+  'airDiscount.headingTitle': 'Lægra fargjald með Loftbrú',
+  'airDiscount.headingSubtitle':
+    'Hver einstaklingur með lögheimili innan skilgreinds svæðis á rétt á afslætti á sex flugleggjum á ári. Með notkun afsláttar með Loftbrú staðfestir þú að hafa lesið notendaskilmála Loftbrúar.',
+  'airDiscount.tosLinkText': 'Notendaskilmálar',
+  'airDiscount.alertTitle': 'Athugið',
+  'airDiscount.alertDescription':
+    'Kóðinn endurnýjast eftir 1 notkun\n(gildir í 24 klst.)',
+  'airDiscount.myRights': 'Mín réttindi',
+  'airDiscount.remainingFares': 'Eftirstandandi {remaining} af {total}',
+  'airDiscount.copyDiscountCode': 'Afrita kóða',
+  'airDiscount.bulletPointDiscount':
+    'Hver afsláttur nemur 40% af flugfargjaldi.',
+  'airDiscount.bulletPointUsage':
+    'Kóðinn virkjar afslátt í bókunarvél félagsins.',
+  'airDiscount.activeConnectionCodes':
+    'Virkir afsláttarkóðar fyrir áframhaldandi flug',
+  'airDiscount.flight': 'Flugleið: {flight}',
+  'airDiscount.validTo': 'Gildir til: {date} {time}',
+  'airDiscount.airfaresUsage': 'Notkun á núverandi tímabili',
+  'airDiscount.emptyListTitle': 'Enginn réttur',
+  'airDiscount.emptyListDescription':
+    'Einungis íbúar landsbyggðarinnar sem eiga lögheimili fjarri höfuðborgarsvæðinu og eyjum eiga rétt á Loftbrú.',
 }

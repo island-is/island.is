@@ -6,6 +6,7 @@ export const serviceSetup = (services: {
   service('judicial-system-robot-api')
     .namespace('judicial-system')
     .serviceAccount('judicial-system-robot-api')
+    .image('judicial-system-robot-api')
     .env({
       BACKEND_URL: ref((h) => `http://${h.svc(services.backend)}`),
       AUDIT_TRAIL_USE_GENERIC_LOGGER: 'false',
@@ -21,9 +22,9 @@ export const serviceSetup = (services: {
     .ingress({
       primary: {
         host: {
-          dev: 'judicial-system-robot-api',
-          staging: 'judicial-system-robot-api',
-          prod: 'judicial-system-robot-api',
+          dev: 'judicial-system-robot-api-xrd',
+          staging: 'judicial-system-robot-api-xrd',
+          prod: 'judicial-system-robot-api-xrd',
         },
         paths: ['/'],
         public: false,

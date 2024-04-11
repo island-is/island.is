@@ -177,6 +177,7 @@ export const mockCase = (caseType: CaseType): Case => {
 export const mockUser = (userRole: UserRole): User => {
   return {
     active: true,
+    canConfirmIndictment: false,
     created: '',
     email: '',
     id: '',

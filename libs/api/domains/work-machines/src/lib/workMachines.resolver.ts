@@ -4,6 +4,7 @@ import {
   Scopes,
   ScopesGuard,
 } from '@island.is/auth-nest-tools'
+import { isUuid } from 'uuidv4'
 import type { User } from '@island.is/auth-nest-tools'
 import { Inject, UseGuards } from '@nestjs/common'
 import { ApiScope } from '@island.is/auth/scopes'
@@ -91,6 +92,9 @@ export class WorkMachinesResolver {
     @Args('input', { type: () => GetWorkMachineInput })
     input: GetWorkMachineInput,
   ) {
+    if (!isUuid(input.id)) {
+      return null
+    }
     return this.workMachinesService.getWorkMachineById(user, input)
   }
 

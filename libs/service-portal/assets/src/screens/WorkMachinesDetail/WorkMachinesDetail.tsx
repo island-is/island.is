@@ -121,14 +121,15 @@ const WorkMachinesDetail = () => {
   )
   return (
     <>
-      <IntroHeader
-        title={workMachine?.type ?? ''}
-        serviceProviderSlug={VINNUEFTIRLITID_SLUG}
-        serviceProviderTooltip={formatMessage(m.workmachineTooltip)}
-      />
-      {error && !loading ? (
-        <Problem error={error} noBorder={false} />
-      ) : !workMachine && !error && !loading ? (
+      <Box marginBottom={[1, 1, 3]}>
+        <IntroHeader
+          title={workMachine?.type ?? ''}
+          serviceProviderSlug={VINNUEFTIRLITID_SLUG}
+          serviceProviderTooltip={formatMessage(m.workmachineTooltip)}
+        />
+      </Box>
+      {error && !loading && <Problem error={error} noBorder={false} />}
+      {!error && !loading && !data?.workMachine && (
         <Problem
           type="no_data"
           title={formatMessage(m.noDataFoundVariable, {
@@ -139,7 +140,8 @@ const WorkMachinesDetail = () => {
           titleSize="h3"
           noBorder={false}
         />
-      ) : (
+      )}
+      {!error && (loading || data?.workMachine) && (
         <>
           <GridRow marginBottom={2}>
             <GridColumn span="12/12">
@@ -266,10 +268,8 @@ const WorkMachinesDetail = () => {
           </Box>
           <Box marginBottom={[2, 2, 6]}>
             <Stack space={2}>
-              <Text variant="eyebrow" color="purple400">
-                {labels.owner}
-              </Text>
               <UserInfoLine
+                title={formatMessage(m.owner)}
                 label={labels.ownerName}
                 content={workMachine?.ownerName ?? ''}
                 loading={loading}
@@ -292,6 +292,7 @@ const WorkMachinesDetail = () => {
                 content={workMachine?.ownerPostcode ?? ''}
                 loading={loading}
               />
+              <Divider />
             </Stack>
           </Box>
           <Box marginBottom={[2, 2, 6]}>

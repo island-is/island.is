@@ -7,7 +7,7 @@ import {
   NotificationsInput,
   NotificationsResponse,
 } from './notifications.model'
-import { RenderedNotificationDtoStatusEnum } from '@island.is/clients/user-notification'
+// import { RenderedNotificationDtoStatusEnum } from '@island.is/clients/user-notification'
 import { Locale } from '@island.is/shared/types'
 import { faker } from '@island.is/shared/mocking'
 
@@ -41,9 +41,9 @@ export function generateMockNotification(user: User | null): Notification {
     metadata: {
       sent,
       read: isRead ? faker.date.between(sent, new Date()) : undefined,
-      status: isRead
-        ? RenderedNotificationDtoStatusEnum.Read
-        : RenderedNotificationDtoStatusEnum.Unread,
+      // status: isRead
+      //   ? RenderedNotificationDtoStatusEnum.Read
+      //   : RenderedNotificationDtoStatusEnum.Unread,
     },
     sender: {
       name: faker.company.companyName(),
@@ -93,10 +93,10 @@ export function mockNotificationsResponse(
   paging?: NotificationsInput,
 ): NotificationsResponse {
   const totalCount = notifications.length
-  const unreadCount = notifications.filter(
-    (notification) =>
-      notification.metadata.status === RenderedNotificationDtoStatusEnum.Unread,
-  ).length
+  const unreadCount = 1 //notifications.filter(
+  //   (notification) =>
+  //     notification.metadata.status === RenderedNotificationDtoStatusEnum.Unread,
+  // ).length
 
   const afterInt = paging?.after ? parseInt(paging?.after) : undefined
   const beforeInt = paging?.before ? parseInt(paging?.before) : undefined
@@ -170,7 +170,7 @@ export function markMockNotificationRead(
   }
 
   notification.metadata.read = new Date()
-  notification.metadata.status = RenderedNotificationDtoStatusEnum.Read
+  // notification.metadata.status = RenderedNotificationDtoStatusEnum.Read
 
   generated.set(key, notifications)
 

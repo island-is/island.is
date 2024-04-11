@@ -15,11 +15,13 @@ import {
   grindaVikHousing,
 } from '../dataProviders'
 import { prerequisites, application } from '../lib/messages'
+import Logo from '../assets/Logo'
 
 export const Prerequisites: Form = buildForm({
   id: 'HomeSupportPrerequisites',
   title: application.general.name,
   mode: FormModes.DRAFT,
+  logo: Logo,
   renderLastScreenButton: true,
   renderLastScreenBackButton: true,
   children: [
@@ -42,7 +44,7 @@ export const Prerequisites: Form = buildForm({
         buildExternalDataProvider({
           id: 'approveExternalData',
           title: prerequisites.general.sectionTitle,
-          subTitle: coreMessages.externalDataTitle,
+          subTitle: prerequisites.general.subTitle,
           checkboxLabel: prerequisites.general.checkboxLabel,
           submitField: buildSubmitField({
             id: 'submit',

@@ -18,7 +18,6 @@ import {
   SectionHeading,
 } from '@island.is/judicial-system-web/src/components'
 import {
-  CaseAppealState,
   NotificationType,
   User,
   UserRole,

@@ -1,4 +1,10 @@
-import { Box, Text, Stack, ActionCard } from '@island.is/island-ui/core'
+import {
+  Box,
+  Text,
+  Stack,
+  ActionCard,
+  SkeletonLoader,
+} from '@island.is/island-ui/core'
 import format from 'date-fns/format'
 import { FC } from 'react'
 import {
@@ -11,6 +17,7 @@ import {
   useGetCurrentCollection,
   useGetOpenLists,
 } from './useGetSignatureLists'
+import { sortAlpha } from '@island.is/shared/utils'
 
 interface SignatureListsProps {
   slice: ConnectedComponent
@@ -20,36 +27,55 @@ export const SignatureLists: FC<
   React.PropsWithChildren<SignatureListsProps>
 > = ({ slice }) => {
   const { collection, loading } = useGetCurrentCollection()
-  const { openLists, openListsLoading } = useGetOpenLists(collection?.id || '')
+  const { openLists, openListsLoading } = useGetOpenLists(collection)
   const t = useLocalization(slice.json)
 
-  return (
-    !loading &&
-    !openListsLoading && (
-      <Box marginTop={7}>
-        {(collection?.candidates.length > 0 || openLists?.length > 0) && (
-          <Box marginBottom={3}>
-            <Text variant="h4">
-              {t('title', 'Frambjóðendur sem hægt er að mæla með')}
-            </Text>
-          </Box>
-        )}
-        <Stack space={4}>
-          {/* if collection time is over yet there are still open lists, show them */}
-          {new Date() > new Date(collection.endTime) &&
-          openLists?.length > 0 ? (
-            openLists?.map((list: SignatureCollectionListBase) => {
+  return !loading && !openListsLoading ? (
+    <Box marginTop={5}>
+      {(collection?.candidates.length > 0 || openLists?.length > 0) && (
+        <Box
+          marginBottom={3}
+          display={['block', 'flex']}
+          justifyContent={'spaceBetween'}
+          alignItems={'baseline'}
+        >
+          {collection?.isActive ? (
+            <>
+              <Text variant="h3">{t('title', 'Forsetakosningar 2024')}</Text>
+              <Text variant="eyebrow">
+                {t('totalCandidates', 'Fjöldi frambjóðenda: ') +
+                  collection?.candidates.length}
+              </Text>
+            </>
+          ) : (
+            <>
+              <Text variant="h3">
+                {t('title2', 'Forsetakosningar 2024 - Framlengt')}
+              </Text>
+              <Text variant="eyebrow">
+                {t('totalLists', 'Fjöldi lista: ') + openLists?.length}
+              </Text>
+            </>
+          )}
+        </Box>
+      )}
+      <Stack space={3}>
+        {/* if collection time is over yet there are still open lists, show them */}
+        {!collection?.isActive && openLists?.length > 0 ? (
+          [...openLists]
+            ?.sort(sortAlpha('title'))
+            .map((list: SignatureCollectionListBase) => {
               return (
                 <ActionCard
                   eyebrow={
                     t('openTil', 'Lokadagur:') +
                     ' ' +
-                    format(new Date(list.endTime), 'dd.MM.yyyy')
+                    format(new Date(list.endTime), 'dd.MM.yyyy HH:mm')
                   }
                   key={list.id}
                   backgroundColor="white"
-                  heading={list.title}
-                  text={t('collectionName', 'Forsetakosningar 2024')}
+                  heading={list.title.split(' -')[0]}
+                  text={list.area?.name}
                   cta={{
                     label: t('sign', 'Mæla með framboði'),
                     variant: 'text',
@@ -65,56 +91,56 @@ export const SignatureLists: FC<
                 />
               )
             })
-          ) : collection?.candidates.length > 0 ? (
-            collection.candidates.map(
-              (candidate: SignatureCollectionCandidate) => {
-                return (
-                  <ActionCard
-                    eyebrow={
-                      t('openTil', 'Lokadagur:') +
-                      ' ' +
-                      format(new Date(collection.endTime), 'dd.MM.yyyy')
-                    }
-                    key={candidate.id}
-                    backgroundColor="white"
-                    heading={candidate.name}
-                    text={t('collectionName', 'Forsetakosningar 2024')}
-                    cta={
-                      new Date() < new Date(collection.endTime)
-                        ? {
-                            label: t('sign', 'Mæla með framboði'),
-                            variant: 'text',
-                            icon: 'open',
-                            iconType: 'outline',
-                            size: 'small',
-                            onClick: () =>
-                              window.open(
-                                `${window.location.origin}/umsoknir/maela-med-frambodi/?candidate=${candidate.id}`,
-                                '_blank',
-                              ),
-                          }
-                        : undefined
-                    }
-                    tag={
-                      new Date() > new Date(collection.endTime)
-                        ? {
-                            label: t('closed', 'Söfnuninni lokið'),
-                            variant: 'red',
-                          }
-                        : undefined
-                    }
-                  />
-                )
-              },
-            )
-          ) : (
-            <Text variant="h4">
-              {t('noLists', 'Engin meðmælasöfnun er í gangi í augnablikinu.')}
-            </Text>
-          )}
-        </Stack>
-      </Box>
-    )
+        ) : collection?.candidates?.length > 0 ? (
+          [...collection.candidates]
+            ?.sort(sortAlpha('name'))
+            .map((candidate: SignatureCollectionCandidate) => {
+              return (
+                <ActionCard
+                  key={candidate.id}
+                  backgroundColor="white"
+                  heading={candidate.name}
+                  eyebrow={
+                    t('openTil', 'Lokadagur:') +
+                    ' ' +
+                    format(new Date(collection.endTime), 'dd.MM.yyyy')
+                  }
+                  cta={
+                    collection.isActive
+                      ? {
+                          label: t('sign', 'Mæla með framboði'),
+                          variant: 'text',
+                          icon: 'open',
+                          iconType: 'outline',
+                          size: 'small',
+                          onClick: () =>
+                            window.open(
+                              `${window.location.origin}/umsoknir/maela-med-frambodi/?candidate=${candidate.id}`,
+                              '_blank',
+                            ),
+                        }
+                      : undefined
+                  }
+                  tag={
+                    !collection.isActive
+                      ? {
+                          label: t('closed', 'Söfnuninni lokið'),
+                          variant: 'red',
+                        }
+                      : undefined
+                  }
+                />
+              )
+            })
+        ) : (
+          <Text variant="h4">
+            {t('noLists', 'Engin meðmælasöfnun er í gangi í augnablikinu.')}
+          </Text>
+        )}
+      </Stack>
+    </Box>
+  ) : (
+    <SkeletonLoader height={110} repeat={4} space={3} />
   )
 }
 

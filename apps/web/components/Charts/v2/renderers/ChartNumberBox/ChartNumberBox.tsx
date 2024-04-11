@@ -120,6 +120,7 @@ export const ChartNumberBox = ({ slice }: ChartNumberBoxRendererProps) => {
 
         return (
           <div
+            key={index}
             className={cn({
               [styles.numberBox]: true,
               [styles.numberBoxFillWidth]: boxData.length === 3 && index === 0,

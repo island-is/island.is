@@ -6,6 +6,7 @@ export type CognitoCreds = {
   username: string
   password: string
 }
+
 function getCognitoCredentials(): CognitoCreds {
   const username = process.env.AWS_COGNITO_USERNAME
   const password = process.env.AWS_COGNITO_PASSWORD
@@ -15,12 +16,18 @@ function getCognitoCredentials(): CognitoCreds {
     password,
   }
 }
+
 export const cognitoLogin = async (
   page: Page,
   home: string,
   authUrl: string,
   creds?: CognitoCreds,
 ) => {
+  if (
+    page.url().startsWith('https://ids-users.auth.eu-west-1.amazoncognito.com/')
+  ) {
+    await page.getByRole('button', { name: 'ids-deprecated' }).click()
+  }
   const { username, password } = creds ?? getCognitoCredentials()
   const cognito = page.locator('form[name="cognitoSignInForm"]:visible')
   await cognito.locator('input[id="signInFormUsername"]:visible').type(username)
@@ -51,14 +58,21 @@ export async function idsLogin(
   const btn = page.locator('button[id="submitPhoneNumber"]')
   await expect(btn).toBeEnabled()
   await btn.click()
-  await page.waitForURL(new RegExp(`${home}|${urls.authUrl}/delegation`), {
-    waitUntil: 'domcontentloaded',
-  })
+  await page.waitForURL(
+    new RegExp(`${home}|${urls.authUrl}/(app/)?delegation`),
+    {
+      waitUntil: 'domcontentloaded',
+    },
+  )
 
   // Handle delegation on login
   if (page.url().startsWith(urls.authUrl)) {
     debug('Still on auth site')
-    const delegations = page.locator('button[name="SelectedNationalId"]')
+    /**
+     * Not using accessible selector here because this test needs to work on both the new and current login page at the same time to handle the transition gracefully
+     * TODO: use accessible selector when the new login pages is out
+     */
+    const delegations = page.locator('.identity-card--name')
     await expect(delegations).not.toHaveCount(0)
     // Default to the first delegation
     if (!delegation) await delegations.first().click()

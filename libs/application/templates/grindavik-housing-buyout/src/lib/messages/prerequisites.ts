@@ -7,6 +7,11 @@ export const prerequisites = {
       defaultMessage: 'Gagnaöflun',
       description: 'Data collection section title',
     },
+    subTitle: {
+      id: 'ghb.application:prerequisites.general.subTitle',
+      defaultMessage: 'Eftirfarandi gögn verða sótt rafrænt',
+      description: 'Data collection section subtitle',
+    },
     checkboxLabel: {
       id: 'ghb.application:prerequisites.general.checkbox.label',
       defaultMessage:
@@ -23,7 +28,7 @@ export const prerequisites = {
     noResidenceDescription: {
       id: 'ghb.application:errors.noResidence.description#markdown',
       defaultMessage:
-        'Samkvæmt upplýsingum um lögheimili frá **Þjóðskrá** varst þú með skráð lögeimili í **{locality}** þann 10. nóvember 2023.\n\nÞessi umsókn er aðeins fyrir einstaklinga með lögheimili í Grindavík þann 10. nóvember 2023.',
+        'Samkvæmt upplýsingum um lögheimili frá **Þjóðskrá** varst þú með skráð lögheimili í **{locality}** þann 10. nóvember 2023.\n\nÞessi umsókn er aðeins fyrir einstaklinga með lögheimili í Grindavík þann 10. nóvember 2023. Vinsamlega vísið erindum [hér](https://island.is/adstod/syslumenn/hafa-samband) ef þið teljið að þessar upplýsingar séu rangar eða málið krefst endurskoðunar.',
       description: 'Not eligible description',
     },
     youAreNotTheOwnerTitle: {
@@ -36,6 +41,50 @@ export const prerequisites = {
       defaultMessage:
         'Samkvæmt **húsnæðis og mannvirkjastofnun** varst þú ekki þinglýstur eigandi að **{streetName}** þar sem þú varst með lögheimili þann 10.nóvember 2023.',
       description: 'Noteligible description',
+    },
+    noRealEstateNumberWasFoundTitle: {
+      id: 'ghb.application:errors.noRealEstateNumberWasFound.title',
+      defaultMessage: 'Fasteignanúmer vantar í skráningu',
+      description: 'Not eligible section title',
+    },
+    noRealEstateNumberWasFoundDescription: {
+      id: 'ghb.application:errors.noRealEstateNumberWasFound.description#markdown',
+      defaultMessage:
+        'Samkvæmt **Þjóðskrá** fannst ekkert fasteignanúmer fyrir **{streetName}** þar sem þú varst með skráningu sem löghemili þann 10.nóvember 2023. Vinsamlegast komið erindinu áfram [hér](https://island.is/adstod/syslumenn/hafa-samband)',
+      description: 'Not eligible description',
+    },
+    residendHistoryNotFoundTitle: {
+      id: 'ghb.application:errors.residendHistoryNotFound.title',
+      defaultMessage: 'Engar upplýsingar fundust um lögheimili',
+      description: 'Residence history not found section title',
+    },
+    residendHistoryNotFoundDescription: {
+      id: 'ghb.application:errors.residendHistoryNotFound.description#markdown',
+      defaultMessage:
+        'Samkvæmt **Þjóðskrá** eru engar upplýsingar skráðar um lögheimili. Ef þú telur þessar upplýsingar rangar vinsamlegast sendið inn erindi [hér](https://island.is/adstod/syslumenn/hafa-samband)',
+      description: 'Residence history not found description',
+    },
+    noResidenceRecordForDateTitle: {
+      id: 'ghb.application:errors.noResidenceRecordForDate.title',
+      defaultMessage: 'Engin skráning um lögheimili fannst ',
+      description: 'No residnce record found section title',
+    },
+    noResidenceRecordForDateDescription: {
+      id: 'ghb.application:errors.noResidenceRecordForDate.description#markdown',
+      defaultMessage:
+        'Samkvæmt **Þjóðskrá** eru engar upplýsingar skráðar um lögheimili þann 10. nóvember 2023. Ef þú telur þessar upplýsingar rangar vinsamlegast sendið inn erindi [hér](https://island.is/adstod/syslumenn/hafa-samband)',
+      description: 'No residnce record found description',
+    },
+    propertyNotFoundTitle: {
+      id: 'ghb.application:errors.propertyNotFound.title',
+      defaultMessage: 'Engin fasteign finnst',
+      description: 'Property not found section title',
+    },
+    propertyNotFoundDescription: {
+      id: 'ghb.application:errors.propertyNotFound.description#markdown',
+      defaultMessage:
+        'Samkvæmt **Húsnæðis- og mannvirkjastofnun** fannst engin fasteign fyrir **{streetName}** í fasteignaskrá. Vinsamlegast hafðu samband við **Húsnæðis- og mannvirkjastofnun**.',
+      description: 'Property not found  description',
     },
   }),
   intro: defineMessages({

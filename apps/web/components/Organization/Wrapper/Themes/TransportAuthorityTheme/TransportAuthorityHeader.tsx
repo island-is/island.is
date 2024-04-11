@@ -102,7 +102,7 @@ const TransportAuthorityHeader: React.FC<HeaderProps> = ({
                 linkResolver('organizationpage', [organizationPage.slug]).href
               }
             >
-              <Text variant="h1" color="blueberry600">
+              <Text variant="h1" as="h1" color="blueberry600">
                 {organizationPage.title}
               </Text>
             </Link>

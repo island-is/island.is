@@ -60,7 +60,7 @@ export class CarRecyclingClientService {
     })
 
     if (!response || !response.ok) {
-      throw new Error(`Failed to creating owner ${user.nationalId}`)
+      throw new Error(`Failed to creating owner`)
     }
 
     return await response.json()
@@ -91,12 +91,12 @@ export class CarRecyclingClientService {
       })
 
       if (!response || !response.ok) {
-        throw new Error(`Failed to creating vehicle ${permno}`)
+        throw new Error(`Failed to creating vehicle ${permno.slice(-3)}`)
       }
 
       return await response.json()
     } catch (e) {
-      throw new Error(`Failed to creating vehicle ${permno}`)
+      throw new Error(`Failed to creating vehicle ${permno.slice(-3)}`)
     }
   }
 
@@ -119,7 +119,9 @@ export class CarRecyclingClientService {
 
     if (!response || !response.ok) {
       throw new Error(
-        `Failed to recycle vehicle ${permno} - RequestType: ${requestType}`,
+        `Failed to recycle vehicle ${permno.slice(
+          -3,
+        )} - RequestType: ${requestType}`,
       )
     }
 

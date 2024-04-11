@@ -34,6 +34,7 @@ function canProsecutionUserAccessCase(
     ![
       CaseState.NEW,
       CaseState.DRAFT,
+      CaseState.WAITING_FOR_CONFIRMATION,
       CaseState.SUBMITTED,
       CaseState.RECEIVED,
       CaseState.ACCEPTED,

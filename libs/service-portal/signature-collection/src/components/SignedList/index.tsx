@@ -61,7 +61,7 @@ const SignedList = () => {
           <Text marginBottom={2}>{formatMessage(m.mySigneeListsHeader)}</Text>
           {signedLists?.map((list: SignatureCollectionSignedList) => {
             return (
-              <Box marginBottom={5} key={list.id}>
+              <Box marginBottom={3} key={list.id}>
                 <ActionCard
                   heading={list.title}
                   eyebrow={`${

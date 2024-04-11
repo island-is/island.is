@@ -2,7 +2,7 @@ import { NextApiRequest, NextApiResponse } from 'next'
 
 import { type Lawyer, mapToLawyer } from '@island.is/judicial-system/types'
 
-async function getLawyers(): Promise<Lawyer[]> {
+const getLawyers = async (): Promise<Lawyer[]> => {
   const response = await fetch('https://lmfi.is/api/lawyers', {
     headers: {
       Authorization: `Basic ${process.env.LAWYERS_ICELAND_API_KEY}`,

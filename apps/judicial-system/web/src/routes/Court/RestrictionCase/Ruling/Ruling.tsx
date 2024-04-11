@@ -48,7 +48,7 @@ import { isRulingValidRC } from '@island.is/judicial-system-web/src/utils/valida
 
 import { rcRuling as m } from './Ruling.strings'
 
-export function getConclusionAutofill(
+export const getConclusionAutofill = (
   formatMessage: IntlShape['formatMessage'],
   workingCase: Case,
   decision: CaseDecision,
@@ -56,7 +56,7 @@ export function getConclusionAutofill(
   validToDate?: string | null,
   isCustodyIsolation?: boolean | null,
   isolationToDate?: string | null,
-) {
+) => {
   const isolationEndsBeforeValidToDate =
     validToDate &&
     isolationToDate &&
@@ -606,6 +606,7 @@ export const Ruling: React.FC<React.PropsWithChildren<unknown>> = () => {
               )}
               onChange={(decision) => {
                 let conclusion = undefined
+                let ruling = undefined
 
                 if (
                   workingCase.defendants &&
@@ -622,8 +623,16 @@ export const Ruling: React.FC<React.PropsWithChildren<unknown>> = () => {
                   )
                 }
 
+                if (
+                  isAcceptingCaseDecision(decision) &&
+                  workingCase.parentCase &&
+                  !workingCase.ruling
+                ) {
+                  ruling = workingCase.parentCase.ruling
+                }
+
                 setAndSendCaseToServer(
-                  [{ conclusion, decision, force: true }],
+                  [{ conclusion, decision, ruling, force: true }],
                   workingCase,
                   setWorkingCase,
                 )

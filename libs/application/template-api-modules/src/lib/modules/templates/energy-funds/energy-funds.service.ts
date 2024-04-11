@@ -8,10 +8,10 @@ import { TemplateApiError } from '@island.is/nest/problem'
 import { LOGGER_PROVIDER } from '@island.is/logging'
 import type { Logger } from '@island.is/logging'
 import { Auth, AuthMiddleware, User } from '@island.is/auth-nest-tools'
-import { coreErrorMessages } from '@island.is/application/core'
+import { coreErrorMessages, getValueViaPath } from '@island.is/application/core'
 import { EnergyFundsClientService } from '@island.is/clients/energy-funds'
 import format from 'date-fns/format'
-import { VehiclesCurrentVehicle } from './types'
+import { VehiclesCurrentVehicle, VehiclesWithTotalCount } from './types'
 
 @Injectable()
 export class EnergyFundsService extends BaseTemplateApiService {
@@ -28,6 +28,48 @@ export class EnergyFundsService extends BaseTemplateApiService {
   }
 
   async getCurrentVehiclesWithDetails({ auth }: TemplateApiModuleActionProps) {
+    const totalCount =
+      (
+        await this.vehiclesApiWithAuth(
+          auth,
+        ).currentvehicleswithmileageandinspGet({
+          showOwned: true,
+          showCoowned: false,
+          showOperated: false,
+          page: 1,
+          pageSize: 1,
+          onlyMileageRequiredVehicles: false,
+        })
+      ).totalRecords || 0
+    const electricCount =
+      (
+        await this.vehiclesApiWithAuth(
+          auth,
+        ).currentvehicleswithmileageandinspGet({
+          showOwned: true,
+          showCoowned: false,
+          showOperated: false,
+          page: 1,
+          pageSize: 1,
+          onlyMileageRequiredVehicles: true,
+        })
+      ).totalRecords || 0
+
+    if (electricCount === 0) {
+      throw new TemplateApiError(
+        {
+          title: coreErrorMessages.electricVehicleListEmptyOwner,
+          summary: coreErrorMessages.electricVehicleListEmptyOwner,
+        },
+        400,
+      )
+    }
+    if (totalCount && totalCount > 20) {
+      return {
+        totalRecords: totalCount,
+        vehicles: [],
+      }
+    }
     const results = await this.vehiclesApiWithAuth(auth).currentVehiclesGet({
       persidNo: auth.nationalId,
       showOwned: true,
@@ -78,37 +120,40 @@ export class EnergyFundsService extends BaseTemplateApiService {
       )
     }
 
-    return await Promise.all(
-      onlyElectricVehiclesWithGrant?.map(async (vehicle) => {
-        let hasReceivedSubsidy: boolean | undefined
+    return {
+      vehicles: await Promise.all(
+        onlyElectricVehiclesWithGrant?.map(async (vehicle) => {
+          let hasReceivedSubsidy: boolean | undefined
 
-        // Only validate if fewer than 6 items
-        if (onlyElectricVehiclesWithGrant.length < 6) {
-          // Get subsidy status
-          hasReceivedSubsidy =
-            await this.energyFundsClientService.checkVehicleSubsidyAvilability(
-              auth,
-              vehicle.vin || '',
-            )
-        }
+          // Only validate if fewer than 6 items
+          if (onlyElectricVehiclesWithGrant.length < 6) {
+            // Get subsidy status
+            hasReceivedSubsidy =
+              await this.energyFundsClientService.checkVehicleSubsidyAvilability(
+                auth,
+                vehicle.vin || '',
+              )
+          }
 
-        return {
-          permno: vehicle.permno,
-          vin: vehicle.vin,
-          make: vehicle.make,
-          color: vehicle.color,
-          role: vehicle.role,
-          firstRegistrationDate: vehicle.firstRegistrationDate,
-          newRegistrationDate: vehicle.newRegistrationDate,
-          fuelCode: vehicle.fuelCode,
-          vehicleRegistrationCode: vehicle.vehicleRegistrationCode,
-          importCode: vehicle.importCode,
-          vehicleGrant: vehicle.vehicleGrant,
-          vehicleGrantItemCode: vehicle.vehicleGrantItemCode,
-          hasReceivedSubsidy: hasReceivedSubsidy,
-        }
-      }),
-    )
+          return {
+            permno: vehicle.permno,
+            vin: vehicle.vin,
+            make: vehicle.make,
+            color: vehicle.color,
+            role: vehicle.role,
+            firstRegistrationDate: vehicle.firstRegistrationDate,
+            newRegistrationDate: vehicle.newRegistrationDate,
+            fuelCode: vehicle.fuelCode,
+            vehicleRegistrationCode: vehicle.vehicleRegistrationCode,
+            importCode: vehicle.importCode,
+            vehicleGrant: vehicle.vehicleGrant,
+            vehicleGrantItemCode: vehicle.vehicleGrantItemCode,
+            hasReceivedSubsidy: hasReceivedSubsidy,
+          }
+        }),
+      ),
+      totalRecords: onlyElectricVehiclesWithGrant.length,
+    }
   }
 
   async submitApplication({
@@ -117,11 +162,16 @@ export class EnergyFundsService extends BaseTemplateApiService {
   }: TemplateApiModuleActionProps): Promise<void> {
     const applicationAnswers = application.answers as EnergyFundsAnswers
     const currentVehicleList = application.externalData?.currentVehicles
-      ?.data as Array<VehiclesCurrentVehicle>
-    const currentvehicleDetails = currentVehicleList.find(
-      (x) => x.permno === applicationAnswers.selectVehicle.plate,
-    )
+      ?.data as VehiclesWithTotalCount
 
+    const currentvehicleDetails = application.answers.findVehicle
+      ? (getValueViaPath(
+          application.answers,
+          'selectVehicle',
+        ) as VehiclesCurrentVehicle)
+      : currentVehicleList?.vehicles?.find(
+          (x) => x.permno === applicationAnswers.selectVehicle.plate,
+        ) || undefined
     try {
       const vehicleApiDetails = await this.vehiclesApiWithAuth(
         auth,

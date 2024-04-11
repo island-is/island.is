@@ -266,13 +266,15 @@ const Screen: FC<React.PropsWithChildren<ScreenProps>> = ({
   }, [width])
 
   useEffect(() => {
-    const target = isMobile ? headerHeight : 0
-    window.scrollTo(0, target)
-
     if (beforeSubmitCallback.current !== null) {
       setBeforeSubmitCallback(null)
     }
-  }, [activeScreenIndex, isMobile, setBeforeSubmitCallback])
+  }, [activeScreenIndex, setBeforeSubmitCallback])
+
+  useEffect(() => {
+    const target = isMobile ? headerHeight : 0
+    window.scrollTo(0, target)
+  }, [activeScreenIndex, isMobile])
 
   const onUpdateRepeater = async (newRepeaterItems: unknown[]) => {
     if (!screen.id) {

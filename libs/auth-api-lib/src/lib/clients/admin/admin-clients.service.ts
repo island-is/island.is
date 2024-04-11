@@ -115,6 +115,7 @@ export class AdminClientsService {
       },
       include: this.clientInclude(),
     })
+
     if (!client) {
       throw new NoContentException()
     }
@@ -534,6 +535,7 @@ export class AdminClientsService {
       allowOfflineAccess: client.allowOfflineAccess,
       requirePkce: client.requirePkce,
       accessTokenLifetime: client.accessTokenLifetime,
+      singleSession: client.singleSession,
       redirectUris: client.redirectUris?.map((uri) => uri.redirectUri) ?? [],
       postLogoutRedirectUris:
         client.postLogoutRedirectUris?.map((uri) => uri.redirectUri) ?? [],

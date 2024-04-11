@@ -17,6 +17,7 @@ import {
   Stack,
   Table,
   Text,
+  TextProps,
 } from '@island.is/island-ui/core'
 import { getThemeConfig } from '@island.is/web/components'
 import {
@@ -70,11 +71,12 @@ const PensionCalculatorResults: CustomScreen<PensionCalculatorResultsProps> = ({
   calculationInput,
   queryParamString,
   dateOfCalculationsOptions,
+  customPageData,
 }) => {
   const { formatMessage } = useIntl()
   const { linkResolver } = useLinkResolver()
 
-  const highlightedItem = calculation.highlightedItem
+  const highlightedItems = calculation.highlightedItems ?? []
 
   const perMonthText = formatMessage(translationStrings.perMonth)
   const perYearText = formatMessage(translationStrings.perYear)
@@ -87,6 +89,8 @@ const PensionCalculatorResults: CustomScreen<PensionCalculatorResultsProps> = ({
   const calculationIsPresent =
     typeof calculation.groups?.length === 'number' &&
     calculation.groups.length > 0
+
+  const higlightedItemIsPresent = highlightedItems.length > 0
 
   return (
     <PensionCalculatorWrapper
@@ -114,46 +118,126 @@ const PensionCalculatorResults: CustomScreen<PensionCalculatorResultsProps> = ({
                     </Text>
                   </Box>
                 </Stack>
-                <Inline alignY="center" justifyContent="spaceBetween" space={5}>
-                  {highlightedItem && (
-                    <Text variant="h2" as="h2">
-                      {formatMessage(
-                        translationStrings.highlightedResultItemHeading,
-                      )}
-                    </Text>
-                  )}
-                  {!highlightedItem && <Box />}
-                  <Hidden print>
-                    <LinkV2
-                      href={`${
-                        linkResolver('pensioncalculator').href
-                      }?${queryParamString}`}
-                    >
-                      <Button unfocusable={true} size="small">
-                        {formatMessage(translationStrings.changeAssumptions)}
-                      </Button>
-                    </LinkV2>
-                  </Hidden>
-                </Inline>
-                {highlightedItem && (
-                  <Box display="flex" paddingLeft={5}>
-                    <Box textAlign="right" paddingTop={2} paddingRight={4}>
-                      <Text variant="h3">
-                        {formatCurrency(highlightedItem?.monthlyAmount)}
-                      </Text>
-                      <Text>{perMonthText}</Text>
-                    </Box>
-                    <Box>
-                      <Box className={styles.line} />
-                    </Box>
-                    <Box textAlign="right" paddingTop={2} paddingLeft={5}>
-                      <Text variant="h3">
-                        {formatCurrency(highlightedItem?.yearlyAmount)}
-                      </Text>
-                      <Text>{perYearText}</Text>
-                    </Box>
-                  </Box>
+                {higlightedItemIsPresent && (
+                  <Stack space={5}>
+                    {highlightedItems.map((highlightedItem, index) => {
+                      let highlightedItemName =
+                        highlightedItem?.name &&
+                        highlightedItem?.name in translationStrings
+                          ? formatMessage(
+                              translationStrings[
+                                highlightedItem?.name as keyof typeof translationStrings
+                              ],
+                            )
+                          : highlightedItem?.name
+
+                      if (
+                        index > 0 &&
+                        highlightedItem?.name ===
+                          (customPageData?.configJson?.totalFromTrAfterTaxKey ??
+                            'REIKNH.SAMTALSTREFTIRSK')
+                      ) {
+                        highlightedItemName = formatMessage(
+                          translationStrings.highlighedResultItemHeadingForTotalAfterTaxFromTR,
+                        )
+                      }
+
+                      const titleVariant: TextProps['variant'] =
+                        index === 0 ? 'h3' : 'h4'
+
+                      const numericVariant: TextProps['variant'] =
+                        index === 0 ? 'h5' : 'medium'
+
+                      return (
+                        <Stack key={index} space={2}>
+                          <Inline
+                            alignY="center"
+                            justifyContent="spaceBetween"
+                            space={5}
+                          >
+                            {higlightedItemIsPresent && (
+                              <Text variant={titleVariant} as="h2">
+                                {highlightedItemName}
+                              </Text>
+                            )}
+                            {!higlightedItemIsPresent && <Box />}
+                            {index === 0 && (
+                              <Hidden print below="md">
+                                <LinkV2
+                                  href={`${
+                                    linkResolver('pensioncalculator').href
+                                  }?${queryParamString}`}
+                                >
+                                  <Button unfocusable={true} size="small">
+                                    {formatMessage(
+                                      translationStrings.changeAssumptions,
+                                    )}
+                                  </Button>
+                                </LinkV2>
+                              </Hidden>
+                            )}
+                          </Inline>
+
+                          <Box className={styles.grid}>
+                            <Box>
+                              <Box
+                                display="flex"
+                                flexDirection="column"
+                                rowGap={1}
+                                className={styles.fitContent}
+                              >
+                                <Box>
+                                  <Text variant={numericVariant}>
+                                    {formatCurrency(
+                                      highlightedItem?.monthlyAmount,
+                                    )}
+                                  </Text>
+                                </Box>
+                                <Box className={styles.alignSelfToFlexEnd}>
+                                  <Text variant="small">{perMonthText}</Text>
+                                </Box>
+                              </Box>
+                            </Box>
+                            <Box>
+                              <Box className={styles.line} />
+                            </Box>
+                            <Box paddingLeft={4}>
+                              <Box
+                                display="flex"
+                                flexDirection="column"
+                                rowGap={1}
+                                className={styles.fitContent}
+                              >
+                                <Box>
+                                  <Text variant={numericVariant}>
+                                    {formatCurrency(
+                                      highlightedItem?.yearlyAmount,
+                                    )}
+                                  </Text>
+                                </Box>
+                                <Box className={styles.alignSelfToFlexEnd}>
+                                  <Text variant="small">{perYearText}</Text>
+                                </Box>
+                              </Box>
+                            </Box>
+                          </Box>
+                        </Stack>
+                      )
+                    })}
+                  </Stack>
                 )}
+
+                <Hidden print above="sm">
+                  <LinkV2
+                    href={`${
+                      linkResolver('pensioncalculator').href
+                    }?${queryParamString}`}
+                  >
+                    <Button unfocusable={true} size="small">
+                      {formatMessage(translationStrings.changeAssumptions)}
+                    </Button>
+                  </LinkV2>
+                </Hidden>
 
                 {!calculationIsPresent && (
                   <AlertMessage
@@ -167,8 +251,10 @@ const PensionCalculatorResults: CustomScreen<PensionCalculatorResultsProps> = ({
                 {calculationIsPresent && (
                   <Accordion dividerOnTop={false}>
                     <AccordionItem
-                      startExpanded={!highlightedItem}
+                      startExpanded={!higlightedItemIsPresent}
                       id="resultDetails"
+                      labelVariant="h3"
+                      labelUse="h3"
                       label={formatMessage(
                         translationStrings.resultDetailsLabel,
                       )}
@@ -253,6 +339,19 @@ const PensionCalculatorResults: CustomScreen<PensionCalculatorResultsProps> = ({
                             ))}
                           </Table.Table>
                         </Stack>
+                        <Hidden print>
+                          <LinkV2
+                            href={`${
+                              linkResolver('pensioncalculator').href
+                            }?${queryParamString}`}
+                          >
+                            <Button unfocusable={true} size="small">
+                              {formatMessage(
+                                translationStrings.changeAssumptions,
+                              )}
+                            </Button>
+                          </LinkV2>
+                        </Hidden>
                       </Box>
                     </AccordionItem>
                   </Accordion>
