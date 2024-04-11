@@ -452,7 +452,7 @@ jobs:
 
       - uses: actions/setup-node@v4
         with:
-            node-version-file: 'package.json'
+          node-version-file: 'package.json'
       - name: Setup yarn
         run: npm install -g yarn
 
