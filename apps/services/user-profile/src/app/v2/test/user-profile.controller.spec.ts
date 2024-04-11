@@ -1,5 +1,6 @@
 import request from 'supertest'
 import faker from 'faker'
+import { getModelToken } from '@nestjs/sequelize'
 
 import {
   createCurrentUser,
@@ -8,12 +9,13 @@ import {
 } from '@island.is/testing/fixtures'
 import { UserProfileScope } from '@island.is/auth/scopes'
 import { setupApp, setupAppWithoutAuth } from '@island.is/testing/nest'
+import { DelegationsApi } from '@island.is/clients/auth/delegation-api'
 
 import { AppModule } from '../../app.module'
 import { SequelizeConfigService } from '../../sequelizeConfig.service'
 import { FixtureFactory } from '../../../../test/fixture-factory'
 import { UserProfile } from '../../user-profile/userProfile.model'
-import { getModelToken } from '@nestjs/sequelize'
+import { ActorProfile } from '../models/actor-profile.model'
 
 const testUserProfile = {
   nationalId: createNationalId(),
@@ -81,6 +83,8 @@ describe('UserProfileController', () => {
     let server = null
     let fixtureFactory = null
     let userProfileModel: typeof UserProfile = null
+    let delegationPreferenceModel: typeof ActorProfile = null
+    let delegationsApi: DelegationsApi = null
 
     beforeAll(async () => {
       app = await setupApp({
@@ -94,10 +98,15 @@ describe('UserProfileController', () => {
       server = request(app.getHttpServer())
       fixtureFactory = new FixtureFactory(app)
       userProfileModel = app.get(getModelToken(UserProfile))
+      delegationsApi = app.get(DelegationsApi)
+      delegationPreferenceModel = app.get(getModelToken(ActorProfile))
     })
 
     beforeEach(async () => {
       await userProfileModel.destroy({
+        truncate: true,
+      })
+      await delegationPreferenceModel.destroy({
         truncate: true,
       })
     })
@@ -142,6 +151,66 @@ describe('UserProfileController', () => {
         mobilePhoneNumberVerified: false,
         documentNotifications: true,
         needsNudge: null,
+      })
+    })
+
+    it('GET /v2/users/actor-profiles/.national-id should return 200 and the actor profile for each delegation', async () => {
+      const testNationalId1 = createNationalId('person')
+      const testNationalId2 = createNationalId('person')
+
+      // Arrange
+      jest
+        .spyOn(delegationsApi, 'delegationsControllerGetDelegationRecords')
+        .mockResolvedValue({
+          data: [
+            {
+              toNationalId: testUserProfile.nationalId,
+              fromNationalId: testNationalId1,
+            },
+            {
+              toNationalId: testUserProfile.nationalId,
+              fromNationalId: testNationalId2,
+            },
+          ],
+          pageInfo: {
+            hasNextPage: false,
+            hasPreviousPage: false,
+            startCursor: '',
+            endCursor: '',
+          },
+          totalCount: 2,
+        })
+
+      // only create actor profile for one of the delegations
+      await fixtureFactory.createActorProfile({
+        toNationalId: testUserProfile.nationalId,
+        fromNationalId: testNationalId1,
+        emailNotifications: false,
+      })
+
+      // Act
+      const res = await server
+        .get('/v2/users/actor-profiles/.national-id')
+        .set('X-Param-National-Id', testUserProfile.nationalId)
+
+      // Assert
+      expect(res.status).toEqual(200)
+      expect(res.body.data[0]).toStrictEqual({
+        fromNationalId: testNationalId1,
+        emailNotifications: false,
+      })
+      // Should default to true because we don't have a record for this delegation
+      expect(res.body.data[1]).toStrictEqual({
+        fromNationalId: testNationalId2,
+        emailNotifications: true,
+      })
+
+      expect(
+        delegationsApi.delegationsControllerGetDelegationRecords,
+      ).toHaveBeenCalledWith({
+        xQueryNationalId: testUserProfile.nationalId,
+        scope: '@island.is/documents',
+        direction: 'incoming',
       })
     })
   })

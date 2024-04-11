@@ -5,8 +5,12 @@ import addMonths from 'date-fns/addMonths'
 import { Sequelize } from 'sequelize-typescript'
 
 import { isDefined } from '@island.is/shared/utils'
-import { AttemptFailed } from '@island.is/nest/problem'
+import { AttemptFailed, NoContentException } from '@island.is/nest/problem'
 import type { User } from '@island.is/auth-nest-tools'
+import {
+  DelegationsApi,
+  DelegationsControllerGetDelegationRecordsDirectionEnum,
+} from '@island.is/clients/auth/delegation-api'
 
 import { VerificationService } from '../user-profile/verification.service'
 import { UserProfile } from '../user-profile/userProfile.model'
@@ -16,6 +20,12 @@ import { UserProfileDto } from './dto/user-profile.dto'
 import { IslykillService } from './islykill.service'
 import { DataStatus } from '../user-profile/types/dataStatusTypes'
 import { NudgeType } from '../types/nudge-type'
+import { ActorProfile } from './models/actor-profile.model'
+import {
+  ActorProfileDto,
+  PaginatedActorProfileDto,
+} from './dto/actor-profile.dto'
+import { DocumentsScope } from '@island.is/auth/scopes'
 
 export const NUDGE_INTERVAL = 6
 export const SKIP_INTERVAL = 1
@@ -25,10 +35,13 @@ export class UserProfileService {
   constructor(
     @InjectModel(UserProfile)
     private readonly userProfileModel: typeof UserProfile,
+    @InjectModel(ActorProfile)
+    private readonly delegationPreference: typeof ActorProfile,
     @Inject(VerificationService)
     private readonly verificationService: VerificationService,
     private readonly islykillService: IslykillService,
     private sequelize: Sequelize,
+    private readonly delegationsApi: DelegationsApi,
   ) {}
 
   async findById(
@@ -301,6 +314,82 @@ export class UserProfileService {
         }),
     })
   }
+
+  async getActorProfiles(
+    toNationalId: string,
+  ): Promise<PaginatedActorProfileDto> {
+    const incomingDelegations =
+      await this.delegationsApi.delegationsControllerGetDelegationRecords({
+        xQueryNationalId: toNationalId,
+        scope: DocumentsScope.main,
+        direction:
+          DelegationsControllerGetDelegationRecordsDirectionEnum.incoming,
+      })
+
+    const emailPreferences = await this.delegationPreference.findAll({
+      where: {
+        toNationalId,
+        fromNationalId: incomingDelegations.data.map((d) => d.fromNationalId),
+      },
+    })
+
+    const actorProfiles = incomingDelegations.data.map((delegation) => {
+      const emailPreference = emailPreferences.find(
+        (preference) => preference.fromNationalId === delegation.fromNationalId,
+      )
+
+      // return email preference if it exists, otherwise return default true
+      return (
+        emailPreference?.toDto() ?? {
+          fromNationalId: delegation.fromNationalId,
+          emailNotifications: true,
+        }
+      )
+    })
+
+    return {
+      data: actorProfiles,
+      totalCount: actorProfiles.length,
+      pageInfo: {
+        hasNextPage: false,
+      },
+    }
+  }
+
+  async createOrUpdateActorProfile({
+    toNationalId,
+    fromNationalId,
+    emailNotifications,
+  }: {
+    toNationalId: string
+    fromNationalId: string
+    emailNotifications: boolean
+  }): Promise<ActorProfileDto> {
+    const incomingDelegations =
+      await this.delegationsApi.delegationsControllerGetDelegationRecords({
+        xQueryNationalId: toNationalId,
+        scope: DocumentsScope.main,
+        direction:
+          DelegationsControllerGetDelegationRecordsDirectionEnum.incoming,
+      })
+
+    // if the delegation does not exist, throw an error
+    if (
+      !incomingDelegations.data.some((d) => d.fromNationalId === fromNationalId)
+    ) {
+      throw new NoContentException()
+    }
+
+    const [profile] = await this.delegationPreference.upsert({
+      toNationalId,
+      fromNationalId,
+      emailNotifications,
+    })
+
+    return profile.toDto()
+  }
+
+  /* Private methods */
 
   private checkNeedsNudge(userProfile: UserProfile): boolean | null {
     if (userProfile.nextNudge) {

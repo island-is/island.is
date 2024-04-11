@@ -4,9 +4,10 @@ import {
   Body,
   Controller,
   Get,
+  Headers,
   Patch,
   Post,
-  Query,
+  Put,
   UseGuards,
 } from '@nestjs/common'
 
@@ -25,8 +26,12 @@ import { CreateVerificationDto } from './dto/create-verification.dto'
 import { PatchUserProfileDto } from './dto/patch-user-profile.dto'
 import { UserProfileDto } from './dto/user-profile.dto'
 import { UserProfileService } from './user-profile.service'
-import { NudgeType } from '../types/nudge-type'
 import { PostNudgeDto } from './dto/post-nudge.dto'
+import {
+  ActorProfileDto,
+  PaginatedActorProfileDto,
+  PatchActorProfileDto,
+} from './dto/actor-profile.dto'
 
 const namespace = '@island.is/user-profile/v2/me'
 
@@ -137,5 +142,43 @@ export class MeUserProfileController {
       },
       this.userProfileService.confirmNudge(user.nationalId, input.nudgeType),
     )
+  }
+
+  @Get('/actor-profiles')
+  @Scopes(UserProfileScope.read)
+  @Documentation({
+    description: 'Get actor profiles for the current user.',
+    response: { status: 200, type: PaginatedActorProfileDto },
+  })
+  getDelegationPreferences(
+    @CurrentUser() user: User,
+  ): Promise<PaginatedActorProfileDto> {
+    return this.userProfileService.getActorProfiles(user.nationalId)
+  }
+
+  @Patch('/actor-profiles/.from-national-id')
+  @Scopes(UserProfileScope.write)
+  @Documentation({
+    description: 'Update or create an actor profile for the current user',
+    request: {
+      header: {
+        'X-Param-From-National-Id': {
+          required: true,
+          description: 'National id of the user that granted the delegation',
+        },
+      },
+    },
+    response: { status: 200, type: ActorProfileDto },
+  })
+  createOrUpdateActorProfile(
+    @CurrentUser() user: User,
+    @Headers('X-Param-From-National-Id') fromNationalId: string,
+    @Body() actorProfile: PatchActorProfileDto,
+  ): Promise<ActorProfileDto> {
+    return this.userProfileService.createOrUpdateActorProfile({
+      toNationalId: user.nationalId,
+      fromNationalId,
+      emailNotifications: actorProfile.emailNotifications,
+    })
   }
 }

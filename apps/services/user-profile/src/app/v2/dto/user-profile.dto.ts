@@ -8,7 +8,6 @@ import {
 } from 'class-validator'
 
 import { Locale } from '../../user-profile/types/localeTypes'
-import { DataStatus } from '../../user-profile/types/dataStatusTypes'
 
 export class UserProfileDto {
   @ApiProperty()

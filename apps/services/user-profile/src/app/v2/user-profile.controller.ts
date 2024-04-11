@@ -11,10 +11,20 @@ import * as kennitala from 'kennitala'
 import { Documentation } from '@island.is/nest/swagger'
 import { Audit } from '@island.is/nest/audit'
 import { UserProfileScope } from '@island.is/auth/scopes'
-import { IdsAuthGuard, Scopes, ScopesGuard } from '@island.is/auth-nest-tools'
+import {
+  CurrentUser,
+  IdsAuthGuard,
+  Scopes,
+  ScopesGuard,
+  type User,
+} from '@island.is/auth-nest-tools'
 
 import { UserProfileDto } from './dto/user-profile.dto'
 import { UserProfileService } from './user-profile.service'
+import {
+  ActorProfileDto,
+  PaginatedActorProfileDto,
+} from './dto/actor-profile.dto'
 
 const namespace = '@island.is/user-profile/v2/users'
 
@@ -53,5 +63,24 @@ export class UserProfileController {
       throw new BadRequestException('National id is not valid')
     }
     return this.userProfileService.findById(nationalId)
+  }
+
+  @Get('/actor-profiles/.national-id')
+  @Documentation({
+    description: 'Get actor profiles for nationalId.',
+    request: {
+      header: {
+        'X-Param-National-Id': {
+          required: true,
+          description: 'National id of the user to find actor profiles for',
+        },
+      },
+    },
+    response: { status: 200, type: PaginatedActorProfileDto },
+  })
+  getActorProfiles(
+    @Headers('X-Param-National-Id') nationalId: string,
+  ): Promise<PaginatedActorProfileDto> {
+    return this.userProfileService.getActorProfiles(nationalId)
   }
 }
