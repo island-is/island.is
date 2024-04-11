@@ -1,11 +1,12 @@
 /* eslint-disable @typescript-eslint/naming-convention */
 import AsyncStorage from '@react-native-community/async-storage'
-import { ActionSheetIOS, DevSettings, Platform } from 'react-native'
+import { ActionSheetIOS, DevSettings } from 'react-native'
 import DialogAndroid from 'react-native-dialogs'
 import { Navigation } from 'react-native-navigation'
 import { authStore } from '../../stores/auth-store'
 import { preferencesStore } from '../../stores/preferences-store'
 import { ComponentRegistry } from '../component-registry'
+import { isAndroid, isIos } from '../devices'
 import { getAppRoot } from './get-app-root'
 
 const devMenuOptions = {
@@ -109,7 +110,7 @@ export function setupDevMenu() {
       }
     }
 
-    if (Platform.OS === 'ios') {
+    if (isIos) {
       ActionSheetIOS.showActionSheetWithOptions(
         {
           options: [...objectValues, 'Cancel'] as string[],
@@ -120,13 +121,13 @@ export function setupDevMenu() {
           handleOption(optionKey)
         },
       )
-    } else if (Platform.OS === 'android') {
+    } else if (isAndroid) {
       DialogAndroid.showPicker('Ísland Dev Menu', null, {
         items: objectEntries.map((entry) => ({
           label: entry[1],
           id: entry[0],
         })),
-      }).then(({ selectedItem }: { selectedItem?: { id: string } }) => {
+      }).then(({ selectedItem }) => {
         if (selectedItem?.id) {
           handleOption(selectedItem.id)
         }

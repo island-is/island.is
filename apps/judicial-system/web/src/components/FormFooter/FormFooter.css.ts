@@ -13,12 +13,24 @@ export const button = style({
 
 export const continueButton = style({
   marginLeft: theme.spacing[2],
-
   '@media': {
     [`screen and (max-width: ${theme.breakpoints.lg}px) and (min-width: ${theme.breakpoints.md}px)`]:
       {
         marginBottom: theme.spacing[2],
         marginLeft: 0,
+      },
+  },
+})
+
+export const actionButton = style({
+  flexGrow: 1,
+  display: 'flex',
+  justifyContent: 'flex-end',
+
+  '@media': {
+    [`screen and (max-width: ${theme.breakpoints.lg}px) and (min-width: ${theme.breakpoints.md}px)`]:
+      {
+        marginBottom: theme.spacing[2],
       },
   },
 })

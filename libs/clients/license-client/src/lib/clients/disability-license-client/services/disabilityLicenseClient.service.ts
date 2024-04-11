@@ -99,19 +99,23 @@ export class DisabilityLicenseClient
     }
   }
 
-  licenseIsValidForPkPass(payload: unknown): LicensePkPassAvailability {
+  licenseIsValidForPkPass(
+    payload: unknown,
+  ): Promise<LicensePkPassAvailability> {
     if (typeof payload === 'string') {
       let jsonLicense: OrorkuSkirteini
       try {
         jsonLicense = JSON.parse(payload)
       } catch (e) {
         this.logger.warn('Invalid raw data', { error: e, LOG_CATEGORY })
-        return LicensePkPassAvailability.Unknown
+        return Promise.resolve(LicensePkPassAvailability.Unknown)
       }
-      return this.checkLicenseValidityForPkPass(jsonLicense)
+      return Promise.resolve(this.checkLicenseValidityForPkPass(jsonLicense))
     }
 
-    return this.checkLicenseValidityForPkPass(payload as OrorkuSkirteini)
+    return Promise.resolve(
+      this.checkLicenseValidityForPkPass(payload as OrorkuSkirteini),
+    )
   }
 
   async getLicenses(user: User): Promise<Result<Array<OrorkuSkirteini>>> {

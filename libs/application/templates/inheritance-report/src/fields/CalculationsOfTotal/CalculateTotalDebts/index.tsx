@@ -6,6 +6,7 @@ import { useLocale } from '@island.is/localization'
 import { FC, useEffect, useState } from 'react'
 import { useFormContext } from 'react-hook-form'
 import { m } from '../../../lib/messages'
+import { valueToNumber } from '../../../lib/utils/helpers'
 
 export const CalculateTotalDebts: FC<
   React.PropsWithChildren<FieldBaseProps>
@@ -14,14 +15,14 @@ export const CalculateTotalDebts: FC<
   const { formatMessage } = useLocale()
   const { setValue } = useFormContext()
 
-  const [total] = useState(
-    (getValueViaPath<number>(answers, 'debts.domesticAndForeignDebts.total') ||
-      0) +
-      parseInt(
-        getValueViaPath<string>(answers, 'debts.publicCharges') || '0',
-        10,
-      ),
+  const domesticAndForeignDebts = valueToNumber(
+    getValueViaPath<number>(answers, 'debts.domesticAndForeignDebts.total'),
   )
+  const publicCharges = valueToNumber(
+    getValueViaPath<number>(answers, 'debts.publicCharges'),
+  )
+
+  const [total] = useState(domesticAndForeignDebts + publicCharges)
 
   useEffect(() => {
     setValue('debts.debtsTotal', total)
