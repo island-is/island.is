@@ -95,7 +95,7 @@ export class EventService {
         return
       }
 
-      const courtDate = await this.dateLogService.findDateTypeByCaseId(
+      const courtDate = await this.dateLogService.findLatestDateTypeByCaseId(
         DateType.COURT_DATE,
         theCase.id,
       )

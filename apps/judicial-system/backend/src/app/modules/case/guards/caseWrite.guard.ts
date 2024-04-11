@@ -20,7 +20,7 @@ export class CaseWriteGuard implements CanActivate {
 
     const caseId = request.params.caseId
 
-    const courtDate = await this.dateLogService.findDateTypeByCaseId(
+    const courtDate = await this.dateLogService.findLatestDateTypeByCaseId(
       DateType.COURT_DATE,
       caseId,
     )

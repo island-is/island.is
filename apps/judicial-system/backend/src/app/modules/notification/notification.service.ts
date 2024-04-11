@@ -315,7 +315,7 @@ export class NotificationService {
   private async createICalAttachment(
     theCase: Case,
   ): Promise<Attachment | undefined> {
-    const courtDate = await this.dateLogService.findDateTypeByCaseId(
+    const courtDate = await this.dateLogService.findLatestDateTypeByCaseId(
       DateType.COURT_DATE,
       theCase.id,
     )
@@ -624,7 +624,7 @@ export class NotificationService {
     theCase: Case,
     user: User,
   ): Promise<Recipient> {
-    const courtDate = await this.dateLogService.findDateTypeByCaseId(
+    const courtDate = await this.dateLogService.findLatestDateTypeByCaseId(
       DateType.COURT_DATE,
       theCase.id,
     )
@@ -677,7 +677,7 @@ export class NotificationService {
       { caseType: theCase.type, courtCaseNumber: theCase.courtCaseNumber },
     )
 
-    const courtDate = await this.dateLogService.findDateTypeByCaseId(
+    const courtDate = await this.dateLogService.findLatestDateTypeByCaseId(
       DateType.COURT_DATE,
       theCase.id,
     )
@@ -714,7 +714,7 @@ export class NotificationService {
     theCase: Case,
     user: User,
   ): Promise<Recipient> {
-    const courtDate = await this.dateLogService.findDateTypeByCaseId(
+    const courtDate = await this.dateLogService.findLatestDateTypeByCaseId(
       DateType.COURT_DATE,
       theCase.id,
     )
@@ -1217,7 +1217,7 @@ export class NotificationService {
   private async sendRevokedSmsNotificationToCourt(
     theCase: Case,
   ): Promise<Recipient> {
-    const courtDate = await this.dateLogService.findDateTypeByCaseId(
+    const courtDate = await this.dateLogService.findLatestDateTypeByCaseId(
       DateType.COURT_DATE,
       theCase.id,
     )
@@ -1236,7 +1236,7 @@ export class NotificationService {
   private async sendRevokedEmailNotificationToPrison(
     theCase: Case,
   ): Promise<Recipient> {
-    const courtDate = await this.dateLogService.findDateTypeByCaseId(
+    const courtDate = await this.dateLogService.findLatestDateTypeByCaseId(
       DateType.COURT_DATE,
       theCase.id,
     )
@@ -1296,7 +1296,7 @@ export class NotificationService {
     theCase: Case,
   ): Promise<SendNotificationResponse> {
     const promises: Promise<Recipient>[] = []
-    const courtDate = await this.dateLogService.findDateTypeByCaseId(
+    const courtDate = await this.dateLogService.findLatestDateTypeByCaseId(
       DateType.COURT_DATE,
       theCase.id,
     )
@@ -1452,7 +1452,7 @@ export class NotificationService {
     theCase: Case,
   ): Promise<SendNotificationResponse> {
     const promises: Promise<Recipient>[] = []
-    const courtDate = await this.dateLogService.findDateTypeByCaseId(
+    const courtDate = await this.dateLogService.findLatestDateTypeByCaseId(
       DateType.COURT_DATE,
       theCase.id,
     )

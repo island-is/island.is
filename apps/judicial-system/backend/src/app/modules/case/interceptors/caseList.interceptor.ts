@@ -30,10 +30,11 @@ export class CaseListInterceptor implements NestInterceptor {
             // If you need to add sensitive information, then you should consider adding a new endpoint
             // for defenders and other user roles that are not allowed to see sensitive information.
 
-            const courtDate = await this.dateLogService.findDateTypeByCaseId(
-              DateType.COURT_DATE,
-              theCase.id,
-            )
+            const courtDate =
+              await this.dateLogService.findLatestDateTypeByCaseId(
+                DateType.COURT_DATE,
+                theCase.id,
+              )
 
             return {
               id: theCase.id,

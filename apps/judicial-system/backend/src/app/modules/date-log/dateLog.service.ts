@@ -31,7 +31,7 @@ export class DateLogService {
     }
   }
 
-  async findDateTypeByCaseId(dateType: DateType, caseId: string) {
+  async findLatestDateTypeByCaseId(dateType: DateType, caseId: string) {
     return this.dateLogModel.findOne({
       where: {
         caseId,
