@@ -75,7 +75,7 @@ import { UserNotificationsConfig } from '../../../config'
           ? {}
           : firebaseAdmin.initializeApp({
               credential: firebaseAdmin.credential.cert(
-                config.firebaseCredentials,
+                JSON.parse(config.firebaseCredentials),
               ),
             }),
       inject: [UserNotificationsConfig.KEY],
