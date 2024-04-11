@@ -6,6 +6,7 @@ jest.useFakeTimers()
 jest.advanceTimersByTime(10)
 
 import { caching } from 'cache-manager'
+import { Headers } from 'node-fetch'
 
 import { Auth } from '@island.is/auth-nest-tools'
 import { buildCacheControl, CacheControlOptions } from './buildCacheControl'
@@ -16,7 +17,7 @@ import {
   fakeResponse,
   setupTestEnv,
 } from '../../../test/setup'
-import { defaultCacheKeyWithHeader } from './withCache'
+import { calculateHeadersCacheKey, COMMON_HEADER_PATTERNS } from './withCache'
 
 const testUrl = 'http://localhost/test'
 
@@ -643,32 +644,34 @@ describe('EnhancedFetch#withCache', () => {
     )
   })
 
-  it('supports cache key with header value', async () => {
-    // Arrange
-    const cacheManager = await caching('memory', { ttl: 0 })
-    const headerParamName = 'X-Param-National-Id'
-    const env1 = setupTestEnv({
-      cache: {
-        cacheManager,
-        cacheKey: defaultCacheKeyWithHeader(headerParamName),
-        overrideCacheControl: buildCacheControl({ maxAge: 50 }),
-      },
-    })
-    env1.fetch.mockResolvedValueOnce(fakeResponse('Response 1'))
-    env1.fetch.mockResolvedValueOnce(fakeResponse('Response 2'))
+  // Test that all common header patterns are recognized in calculating the cache key.
+  COMMON_HEADER_PATTERNS.forEach((headerPattern) => {
+    it(`supports cache key with header value for pattern ${headerPattern}`, async () => {
+      // Arrange
+      const cacheManager = await caching('memory', { ttl: 0 })
+      const headerKey = `${headerPattern}-National-Id`
+      const env1 = setupTestEnv({
+        cache: {
+          cacheManager,
+          overrideCacheControl: buildCacheControl({ maxAge: 50 }),
+        },
+      })
+      env1.fetch.mockResolvedValueOnce(fakeResponse('Response 1'))
+      env1.fetch.mockResolvedValueOnce(fakeResponse('Response 2'))
 
-    // Act
-    const response1 = await env1.enhancedFetch(testUrl, {
-      headers: { [headerParamName]: 'A' },
-    })
-    const response2 = await env1.enhancedFetch(testUrl, {
-      headers: { [headerParamName]: 'B' },
-    })
+      // Act
+      const response1 = await env1.enhancedFetch(testUrl, {
+        headers: { [headerKey]: 'A' },
+      })
+      const response2 = await env1.enhancedFetch(testUrl, {
+        headers: { [headerKey]: 'B' },
+      })
 
-    // Assert
-    expect(env1.fetch).toHaveBeenCalledTimes(2)
-    await expect(response1.text()).resolves.toEqual('Response 1')
-    await expect(response2.text()).resolves.toEqual('Response 2')
+      // Assert
+      expect(env1.fetch).toHaveBeenCalledTimes(2)
+      await expect(response1.text()).resolves.toEqual('Response 1')
+      await expect(response2.text()).resolves.toEqual('Response 2')
+    })
   })
 
   // REGRESSION TEST: Passed in headers were deleted when combining Cache with Auth or AutoAuth.
@@ -688,5 +691,97 @@ describe('EnhancedFetch#withCache', () => {
     // Assert
     const actualHeaders = env.fetch.mock.calls[0][0].headers.raw()
     expect(actualHeaders).toMatchObject(expectedHeaders)
+  })
+
+  describe('calculateHeadersCacheKey', () => {
+    it('should return an empty string when no headers match the patterns', () => {
+      const headers = new Headers({
+        'Content-Type': 'application/json',
+        Accept: 'application/json',
+      })
+      expect(calculateHeadersCacheKey(headers)).toBe('')
+    })
+
+    it('should correctly calculate the cache key for one matching header', () => {
+      const headers = new Headers({
+        'X-Param-Key': '123',
+        Accept: 'application/json',
+      })
+      expect(calculateHeadersCacheKey(headers)).toBe('#x-param-key=123')
+    })
+
+    it('should correctly calculate the cache key for multiple matching headers', () => {
+      const headers = new Headers({
+        // Intentionally use the same value to assert that the key is unique
+        'X-Param-Key': '123',
+        'X-Query-Key': '123',
+        Accept: 'application/json',
+      })
+      expect(calculateHeadersCacheKey(headers)).toBe(
+        '#x-param-key=123#x-query-key=123',
+      )
+    })
+
+    it('should be case-insensitive when matching header names', () => {
+      const headers = new Headers({
+        'x-param-key': '123',
+        'x-query-key': '456',
+        Accept: 'application/json',
+      })
+      expect(calculateHeadersCacheKey(headers)).toBe(
+        '#x-param-key=123#x-query-key=456',
+      )
+    })
+
+    it('should handle unusual characters in header values', () => {
+      const headers = new Headers({
+        'X-Param-Key': '123$%^&*',
+        'X-Query-Key': '456@!~',
+      })
+      expect(calculateHeadersCacheKey(headers)).toBe(
+        '#x-param-key=123$%^&*#x-query-key=456@!~',
+      )
+    })
+
+    it('should handle extremely long values in headers', () => {
+      const longValue = 'a'.repeat(1000)
+      const headers = new Headers({
+        'X-Param-Key': longValue,
+      })
+      expect(calculateHeadersCacheKey(headers)).toBe(
+        `#x-param-key=${longValue}`,
+      )
+    })
+
+    it('should handle two different request with different optional query parameters with out cache key collision', () => {
+      // Arrange
+      const headers1 = new Headers({
+        'X-Query-Key1': '123',
+      })
+      const headers2 = new Headers({
+        'X-Query-Key2': '123',
+      })
+
+      // Act
+      const cacheKey1 = calculateHeadersCacheKey(headers1)
+      const cacheKey2 = calculateHeadersCacheKey(headers2)
+
+      // Assert
+      expect(cacheKey1).toBe('#x-query-key1=123')
+      expect(cacheKey2).toBe('#x-query-key2=123')
+      expect(cacheKey1).not.toBe(cacheKey2)
+    })
+
+    it('should escape # in header values', () => {
+      // Arrange
+      const headers = new Headers({
+        'X-Query-Key1': '123#x-query-key2=123',
+      })
+
+      // Act & Assert
+      expect(calculateHeadersCacheKey(headers)).toBe(
+        '#x-query-key1=123##x-query-key2=123',
+      )
+    })
   })
 })
