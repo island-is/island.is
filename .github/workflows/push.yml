@@ -516,11 +516,8 @@ jobs:
           echo "AFFECTED_PROJECTS=$AFFECTED_PROJECTS" >> $GITHUB_ENV
           echo "DOCKER_TYPE=$DOCKER_TYPE" >> $GITHUB_ENV
         continue-on-error: true
-      - uses: actions/setup-node@v4
-        with:
-          node-version-file: 'package.json'
+      - uses: actions/checkout@v3
         if: steps.gather.outcome == 'success'
-
       - uses: actions/setup-node@v4
         with:
           node-version-file: 'package.json'
@@ -530,8 +527,6 @@ jobs:
         run: npm install -g yarn
         if: steps.gather.outcome == 'success'
 
-      - uses: actions/checkout@v3
-        if: steps.gather.outcome == 'success'
       - name: Cache for generated files
         id: generated-files-cache
         if: steps.gather.outcome == 'success'
