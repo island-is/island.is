@@ -2,23 +2,28 @@ import { Provider } from '@nestjs/common'
 import { Configuration, DefaultApi as DmrApi } from '../../gen/fetch'
 import { createEnhancedFetch } from '@island.is/clients/middlewares'
 import { DmrClientConfig } from './dmrClient.config'
+import { ConfigType } from '@nestjs/config'
+import { XRoadConfig } from '@island.is/nest/config'
 
 export const DmrApiProvider: Provider<DmrApi> = {
   provide: DmrApi,
-  useFactory: (config) => {
+  useFactory: (
+    xroadConfig: ConfigType<typeof XRoadConfig>,
+    config: ConfigType<typeof DmrClientConfig>,
+  ) => {
     return new DmrApi(
       new Configuration({
         fetchApi: createEnhancedFetch({
           name: 'clients-dmr',
           organizationSlug: 'domsmalaraduneytid',
         }),
-        basePath: config.basePath,
+        basePath: `${xroadConfig.xRoadBasePath}/r1/${config.xRoadServicePath}`,
         headers: {
+          'X-Road-Client': xroadConfig.xRoadClient,
           Accept: 'application/json',
-          'Content-Type': 'application/json',
         },
       }),
     )
   },
-  inject: [DmrClientConfig.KEY],
+  inject: [XRoadConfig.KEY, DmrClientConfig.KEY],
 }

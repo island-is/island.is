@@ -47,9 +47,8 @@ const PetitionView: Screen<PetitionViewProps> = ({ namespace }) => {
     router.query.slug as string,
   )
 
-  const listEndorsements = useGetPetitionListEndorsements(
-    router.query.slug as string,
-  )
+  const { listEndorsements, loadingEndorsements } =
+    useGetPetitionListEndorsements(router.query.slug as string)
 
   const [page, setPage] = useState(1)
   const [totalPages, setTotalPages] = useState(0)
@@ -182,7 +181,11 @@ const PetitionView: Screen<PetitionViewProps> = ({ namespace }) => {
                 <Text variant="h4" marginTop={[2, 0]}>
                   {n('signedPetitions', 'Fjöldi undirskrifta:')}
                 </Text>
-                <Text variant="default">{listEndorsements.totalCount}</Text>
+                <Text variant="default">
+                  {loadingEndorsements
+                    ? n('loadingEndorsements', 'Sæki gögn...')
+                    : listEndorsements.totalCount}
+                </Text>
               </GridColumn>
             </GridRow>
             <Box marginTop={6} marginBottom={8}>

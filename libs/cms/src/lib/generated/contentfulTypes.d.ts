@@ -3509,6 +3509,9 @@ export interface IServiceWebPageFields {
 
   /** Email Config */
   emailConfig?: Record<string, any> | undefined
+
+  /** Contact Form Disclaimer */
+  contactFormDisclaimer?: Document | undefined
 }
 
 export interface IServiceWebPage extends Entry<IServiceWebPageFields> {

@@ -10,11 +10,11 @@ import {
 import HouseholdSupplementTemplate from './HouseholdSupplementTemplate'
 import { OAPEvents } from '@island.is/application/templates/social-insurance-administration-core/lib/constants'
 
-function buildApplication(data: {
+const buildApplication = (data: {
   answers?: FormValue
   externalData?: ExternalData
   state?: string
-}): Application {
+}): Application => {
   const { answers = {}, externalData = {}, state = 'draft' } = data
   return {
     id: '12345',
