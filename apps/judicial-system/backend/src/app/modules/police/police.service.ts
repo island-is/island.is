@@ -65,10 +65,21 @@ const formatCrimeScenePlace = (
   streetNumber?: string,
   municipality?: string,
 ) => {
-  if (!street && !streetNumber && !municipality) {
+  if (!street && !municipality) {
     return ''
   }
-  return `${street}${streetNumber ? ` ${streetNumber}` : ''}, ${municipality}`
+
+  // Format the street and street number
+  const formattedStreet =
+    street && streetNumber ? `${street} ${streetNumber}` : street
+
+  // Format the municipality
+  const formattedMunicipality =
+    municipality && street ? `, ${municipality}` : municipality
+
+  const address = `${formattedStreet || ''}${formattedMunicipality || ''}`
+
+  return address.trim()
 }
 
 @Injectable()
