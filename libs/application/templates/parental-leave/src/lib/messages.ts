@@ -2125,6 +2125,11 @@ export const parentalLeaveFormMessages = {
       defaultMessage: `Þeir sem hafa farið í tæknifrjóvgun þurfa að skila inn skjali því til staðfestingar frá Livio. Athugaðu að skjalið þarf að vera á .pdf formi`,
       description: `Those who have undergone artificial insemination must submit a document to confirm this from Livio. Note that the document needs to be on .pdf format`,
     },
+    changeEmployerTitle: {
+      id: 'pl.application:attachmentscreen.changeEmployer',
+      defaultMessage: `Staðfesting vegna nýs vinnuveitanda`,
+      description: `Confirmation of new employer`,
+    },
     parentWithoutBirthParentTitle: {
       id: 'pl.application:attachmentscreen.parent.without.birth.parent.title',
       defaultMessage: 'Staðfesting',

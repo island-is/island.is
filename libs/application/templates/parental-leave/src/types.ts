@@ -55,6 +55,7 @@ export interface FileUpload {
   adoption?: Files[]
   employmentTerminationCertificateFile?: Files[]
   file?: Files[]
+  changeEmployer?: Files []
 }
 
 export interface VMSTPeriod {

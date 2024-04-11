@@ -1986,6 +1986,7 @@ export const getAttachments = (application: Application) => {
     attachmentsArr: Files[] | undefined,
     attachmentType: AttachmentTypes,
   ) => {
+
     if (attachmentsArr && attachmentsArr.length > 0) {
       attachments.push({
         attachments: attachmentsArr,
@@ -2005,6 +2006,7 @@ export const getAttachments = (application: Application) => {
     employerLastSixMonths,
     isNotStillEmployed,
     commonFiles,
+    changeEmployer
   } = getApplicationAnswers(answers)
 
   const attachments: Attachments[] = []
@@ -2062,6 +2064,9 @@ export const getAttachments = (application: Application) => {
   }
   if (commonFiles?.length > 0) {
     getAttachmentDetails(fileUpload?.file, AttachmentTypes.FILE)
+  }
+  if (changeEmployer?.length > 0) {
+    getAttachmentDetails(fileUpload?.changeEmployer, AttachmentTypes.CHANGE_EMPLOYER)
   }
 
   return attachments

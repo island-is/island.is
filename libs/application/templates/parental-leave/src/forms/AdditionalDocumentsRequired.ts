@@ -37,7 +37,7 @@ export const AdditionalDocumentsRequired: Form = buildForm({
               maxSizeErrorText:
                 parentalLeaveFormMessages.fileUpload.attachmentMaxSizeError,
               uploadAccept: '.pdf',
-              uploadHeader: parentalLeaveFormMessages.selfEmployed.uploadHeader,
+              uploadHeader: parentalLeaveFormMessages.fileUpload.uploadHeader,
               uploadDescription:
                 parentalLeaveFormMessages.fileUpload.uploadDescription,
               uploadButtonLabel:
