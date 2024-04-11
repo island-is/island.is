@@ -1,7 +1,7 @@
 import { NestFactory } from '@nestjs/core'
 
-import { SessionsCleanupWorkerModule } from './worker.module'
-import { SessionsCleanupService } from './worker.service'
+import { SessionsCleanupWorkerModule } from './cleanup-worker.module'
+import { SessionsCleanupService } from './cleanup-worker.service'
 
 export const worker = async () => {
   try {

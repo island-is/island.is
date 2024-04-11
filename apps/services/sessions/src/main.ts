@@ -19,7 +19,7 @@ if (job === 'worker') {
     beforeAppInit,
   })
 } else if (job === 'cleanup') {
-  import('./app/cleanup/worker')
+  import('./app/cleanup/cleanup-worker')
     .then((app) => app.worker())
     .catch((error) => {
       console.error('Failed to import or execute the cleanup worker:', error)

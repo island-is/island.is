@@ -4,8 +4,8 @@ import { TestApp, testServer, useDatabase } from '@island.is/testing/nest'
 import { FixtureFactory } from '../../../test/fixture.factory'
 import { SequelizeConfigService } from '../../sequelizeConfig.service'
 import { Session } from '../sessions/session.model'
-import { SessionsCleanupWorkerModule } from './worker.module'
-import { SessionsCleanupService } from './worker.service'
+import { SessionsCleanupWorkerModule } from './cleanup-worker.module'
+import { SessionsCleanupService } from './cleanup-worker.service'
 
 const setupWithoutAuth = async (): Promise<TestApp> =>
   testServer({

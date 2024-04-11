@@ -5,7 +5,7 @@ import { LoggingModule } from '@island.is/logging'
 
 import { SequelizeConfigService } from '../../sequelizeConfig.service'
 import { Session } from '../sessions/session.model'
-import { SessionsCleanupService } from './worker.service'
+import { SessionsCleanupService } from './cleanup-worker.service'
 
 @Module({
   imports: [
