@@ -81,11 +81,11 @@ jobs:
           echo "FEATURE_NAME=$(echo $GIT_BRANCH_DEPLOY | cut -d"/" -f2- | tr -cd '[:alnum:]-' | tr '[:upper:]' '[:lower:]' | cut -c1-50)" >> $GITHUB_OUTPUT
       - uses: actions/checkout@v4
         with:
-            fetch-depth: 0
-            sparse-checkout: |
-              package.json
-              scripts/ci/get-node-version.mjs
-              scripts/ci/_common.mjs
+          fetch-depth: 0
+          sparse-checkout: |
+            package.json
+            scripts/ci/get-node-version.mjs
+            scripts/ci/_common.mjs
       - name: Check if we want to run workflow
         id: should-run
         env:
