@@ -16,7 +16,7 @@ const Attachment: FC<React.PropsWithChildren<ReviewScreenProps>> = ({
   application,
 }) => {
   const { formatMessage } = useLocale()
-  const { changeEmployer } = getApplicationAnswers(application.answers)
+  const { changeEmployerFile } = getApplicationAnswers(application.answers)
 
   const attachments: Attachments[] = []
 
@@ -32,8 +32,8 @@ const Attachment: FC<React.PropsWithChildren<ReviewScreenProps>> = ({
     }
   }
 
-  if (changeEmployer?.length > 0) {
-    getAttachmentDetails(changeEmployer, AttachmentTypes.CHANGE_EMPLOYER)
+  if (changeEmployerFile?.length > 0) {
+    getAttachmentDetails(changeEmployerFile, AttachmentTypes.CHANGE_EMPLOYER)
   }
 
   return (

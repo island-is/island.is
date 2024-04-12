@@ -354,7 +354,7 @@ export const EditOrAddEmployersAndPeriods: Form = buildForm({
                   .additionalAttachmentDescription,
               children: [
                 buildFileUploadField({
-                  id: 'fileUpload.changeEmployer',
+                  id: 'fileUpload.changeEmployerFile',
                   title: '',
                   maxSize: FILE_SIZE_LIMIT,
                   maxSizeErrorText:

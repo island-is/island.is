@@ -75,7 +75,7 @@ export const currentDateStartTime = () => {
 export const findActionName = (context: ApplicationContext) => {
   const { application } = context
   const { state } = application
-  const { addEmployer, addPeriods, changeEmployer } = getApplicationAnswers(
+  const { addEmployer, addPeriods, changeEmployerFile } = getApplicationAnswers(
     application.answers,
   )
   if (
@@ -86,12 +86,12 @@ export const findActionName = (context: ApplicationContext) => {
   if (state === States.ADDITIONAL_DOCUMENTS_REQUIRED) return 'document'
   if (state === States.EDIT_OR_ADD_EMPLOYERS_AND_PERIODS) {
     if (
-      changeEmployer.length !== 0 &&
+      changeEmployerFile.length !== 0 &&
       addEmployer === YES &&
       addPeriods === YES
     )
       return 'empdocper'
-    if (changeEmployer.length !== 0 && addEmployer === YES) return 'empdoc'
+    if (changeEmployerFile.length !== 0 && addEmployer === YES) return 'empdoc'
     if (addEmployer === YES && addPeriods === YES) return 'empper'
     if (addEmployer === YES) return 'employer'
     if (addPeriods === YES) return 'period'

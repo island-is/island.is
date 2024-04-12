@@ -954,9 +954,9 @@ export const getApplicationAnswers = (answers: Application['answers']) => {
     'fileUpload.employmentTerminationCertificateFile',
   ) as Files[]
 
-  const changeEmployer = getValueViaPath(
+  const changeEmployerFile = getValueViaPath(
     answers,
-    'fileUpload.changeEmployer',
+    'fileUpload.changeEmployerFile',
   ) as Files[]
 
   const dateOfBirth = getValueViaPath(answers, 'dateOfBirth') as string
@@ -1049,7 +1049,7 @@ export const getApplicationAnswers = (answers: Application['answers']) => {
     dateOfBirth,
     residenceGrantFiles,
     employmentTerminationCertificateFiles,
-    changeEmployer,
+    changeEmployerFile,
     hasAppliedForReidenceGrant,
     previousState,
     addEmployer,
@@ -2005,7 +2005,7 @@ export const getAttachments = (application: Application) => {
     employerLastSixMonths,
     isNotStillEmployed,
     commonFiles,
-    changeEmployer,
+    changeEmployerFile,
   } = getApplicationAnswers(answers)
 
   const attachments: Attachments[] = []
@@ -2064,9 +2064,9 @@ export const getAttachments = (application: Application) => {
   if (commonFiles?.length > 0) {
     getAttachmentDetails(fileUpload?.file, AttachmentTypes.FILE)
   }
-  if (changeEmployer?.length > 0) {
+  if (changeEmployerFile?.length > 0) {
     getAttachmentDetails(
-      fileUpload?.changeEmployer,
+      fileUpload?.changeEmployerFile,
       AttachmentTypes.CHANGE_EMPLOYER,
     )
   }
