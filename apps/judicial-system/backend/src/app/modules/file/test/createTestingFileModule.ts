@@ -10,6 +10,7 @@ import { LOGGER_PROVIDER } from '@island.is/logging'
 import { ConfigModule, ConfigType } from '@island.is/nest/config'
 
 import { SharedAuthModule } from '@island.is/judicial-system/auth'
+import { MessageService } from '@island.is/judicial-system/message'
 
 import { environment } from '../../../../environments'
 import { AwsS3Service } from '../../aws-s3'
@@ -22,6 +23,7 @@ import { InternalFileController } from '../internalFile.controller'
 import { LimitedAccessFileController } from '../limitedAccessFile.controller'
 import { CaseFile } from '../models/file.model'
 
+jest.mock('@island.is/judicial-system/message')
 jest.mock('../../aws-s3/awsS3.service.ts')
 jest.mock('../../court/court.service.ts')
 jest.mock('../../case/case.service.ts')
@@ -41,6 +43,7 @@ export const createTestingFileModule = async () => {
       LimitedAccessFileController,
     ],
     providers: [
+      MessageService,
       CaseService,
       CourtService,
       AwsS3Service,
@@ -83,6 +86,8 @@ export const createTestingFileModule = async () => {
     })
     .compile()
 
+  const messageService = fileModule.get<MessageService>(MessageService)
+
   const awsS3Service = fileModule.get<AwsS3Service>(AwsS3Service)
 
   const courtService = fileModule.get<CourtService>(CourtService)
@@ -112,6 +117,7 @@ export const createTestingFileModule = async () => {
 
   return {
     sequelize,
+    messageService,
     awsS3Service,
     courtService,
     fileModel,

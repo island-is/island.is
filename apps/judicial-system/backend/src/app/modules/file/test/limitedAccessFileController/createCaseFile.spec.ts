@@ -2,7 +2,9 @@ import { uuid } from 'uuidv4'
 
 import { BadRequestException } from '@nestjs/common'
 
+import { MessageService, MessageType } from '@island.is/judicial-system/message'
 import {
+  CaseFileCategory,
   CaseFileState,
   indictmentCases,
   investigationCases,
@@ -29,13 +31,17 @@ type GivenWhenThen = (
 ) => Promise<Then>
 
 describe('limitedAccessFileController - Create case file', () => {
+  const user = { id: uuid() } as User
+
+  let mockMessageService: MessageService
   let mockFileModel: typeof CaseFile
   let givenWhenThen: GivenWhenThen
 
   beforeEach(async () => {
-    const { fileModel, limitedAccessFileController } =
+    const { messageService, fileModel, limitedAccessFileController } =
       await createTestingFileModule()
 
+    mockMessageService = messageService
     mockFileModel = fileModel
 
     givenWhenThen = async (
@@ -46,7 +52,7 @@ describe('limitedAccessFileController - Create case file', () => {
       const then = {} as Then
 
       await limitedAccessFileController
-        .createCaseFile(caseId, { id: uuid() } as User, theCase, createCaseFile)
+        .createCaseFile(caseId, user, theCase, createCaseFile)
         .then((result) => (then.result = result))
         .catch((error) => (then.error = error))
 
@@ -64,6 +70,7 @@ describe('limitedAccessFileController - Create case file', () => {
         type: 'text/plain',
         key: `uploads/${caseId}/${uuId}/test.txt`,
         size: 99,
+        category: CaseFileCategory.DEFENDANT_APPEAL_CASE_FILE,
       }
       const fileId = uuid()
       const timeStamp = randomDate()
@@ -71,6 +78,7 @@ describe('limitedAccessFileController - Create case file', () => {
         type: 'text/plain',
         key: `uploads/${caseId}/${uuId}/test.txt`,
         size: 99,
+        category: CaseFileCategory.DEFENDANT_APPEAL_CASE_FILE,
         id: fileId,
         created: timeStamp,
         modified: timeStamp,
@@ -84,19 +92,25 @@ describe('limitedAccessFileController - Create case file', () => {
         then = await givenWhenThen(caseId, createCaseFile, theCase)
       })
 
-      it('should create a case file in the database', () => {
+      it('should create a case file', () => {
         expect(mockFileModel.create).toHaveBeenCalledWith({
           type: 'text/plain',
           state: CaseFileState.STORED_IN_RVG,
           key: `uploads/${caseId}/${uuId}/test.txt`,
           size: 99,
+          category: CaseFileCategory.DEFENDANT_APPEAL_CASE_FILE,
           caseId,
           name: 'test.txt',
           userGeneratedFilename: 'test.txt',
         })
-      })
-
-      it('should return a case file', () => {
+        expect(mockMessageService.sendMessagesToQueue).toHaveBeenCalledWith([
+          {
+            type: MessageType.DELIVERY_TO_COURT_OF_APPEALS_CASE_FILE,
+            user,
+            caseId,
+            elementId: fileId,
+          },
+        ])
         expect(then.result).toBe(caseFile)
       })
     },
@@ -130,7 +144,7 @@ describe('limitedAccessFileController - Create case file', () => {
       then = await givenWhenThen(caseId, createCaseFile, theCase)
     })
 
-    it('should create a case file in the database', () => {
+    it('should create a case file', () => {
       expect(mockFileModel.create).toHaveBeenCalledWith({
         type: 'text/plain',
         state: CaseFileState.STORED_IN_RVG,
@@ -140,9 +154,6 @@ describe('limitedAccessFileController - Create case file', () => {
         name: 'test.txt',
         userGeneratedFilename: 'test.txt',
       })
-    })
-
-    it('should return a case file', () => {
       expect(then.result).toBe(caseFile)
     })
   })
