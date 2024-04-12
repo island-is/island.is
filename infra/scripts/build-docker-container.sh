@@ -7,7 +7,6 @@ PUBLISH=${PUBLISH:-false}
 DOCKER_IMAGE="${DOCKER_REGISTRY}helm-config"
 DOCKER_TAG=$1
 
-echo $EXTRA_DOCKER_BUILD_ARGS
 # shellcheck disable=SC2086
 docker build -f "$DIR"/Dockerfile ${EXTRA_DOCKER_BUILD_ARGS:-} -t "$DOCKER_IMAGE":"${DOCKER_TAG}" "$DIR"/../..
 

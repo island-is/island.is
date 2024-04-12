@@ -244,6 +244,7 @@ jobs:
           echo "NODE_IMAGE_TAG: ${NODE_IMAGE_TAG}"
           echo "NODE_IMAGE_TAG=${NODE_IMAGE_TAG}" >> $GITHUB_OUTPUT
           echo "NODE_IMAGE_TAG=${NODE_IMAGE_TAG}" >> $GITHUB_ENV
+          echo "**NODE_IMAGE_TAG** ${NODE_IMAGE_TAG}" >> $GITHUB_STEP_SUMMARY
       - name: Generate docker image tag
         id: docker_tags
         run: |
@@ -504,7 +505,7 @@ jobs:
     container:
       image: public.ecr.aws/m3u4c4h9/island-is/actions-runner-public:latest
     timeout-minutes: 35
-    if: needs.prepare.outputs.BUILD_CHUNKS
+    if: needs.prepare.outputs.BUILD_CHUNKS && needs.prepare.outputs.NODE_IMAGE_TAG
     env:
       AFFECTED_ALL: ${{ secrets.AFFECTED_ALL }}
       GIT_BRANCH: ${{ needs.pre-checks.outputs.GIT_BRANCH}}
@@ -611,7 +612,7 @@ jobs:
           DOCKER_BASE_IMAGE_REGISTRY: ${{ env.DOCKER_BASE_IMAGE_REGISTRY }}
         run: |
           echo Node image tag is: $NODE_IMAGE_TAG
-          EXTRA_DOCKER_BUILD_ARGS="--build-arg DOCKER_IMAGE_REGISTRY=$DOCKER_BASE_IMAGE_REGISTRY --build-arg GIT_SHA=$SHA --build-arg NODE_IMAGE_TAG=$NODE_IMAGE_TAG"
+          export EXTRA_DOCKER_BUILD_ARGS="--build-arg DOCKER_IMAGE_REGISTRY=$DOCKER_BASE_IMAGE_REGISTRY --build-arg GIT_SHA=$SHA --build-arg NODE_IMAGE_TAG=$NODE_IMAGE_TAG"
           ./scripts/ci/run-in-parallel.sh 90_$DOCKER_TYPE
 
       - name: Building Docker images Retry
@@ -622,14 +623,14 @@ jobs:
           DOCKER_BASE_IMAGE_REGISTRY: ${{ env.DOCKER_BASE_IMAGE_REGISTRY }}
         run: |
           echo Node image tag is: $NODE_IMAGE_TAG
-          EXTRA_DOCKER_BUILD_ARGS="--build-arg DOCKER_IMAGE_REGISTRY=$DOCKER_BASE_IMAGE_REGISTRY --build-arg GIT_SHA=$SHA --build-arg NODE_IMAGE_TAG=$NODE_IMAGE_TAG"
+          export EXTRA_DOCKER_BUILD_ARGS="--build-arg DOCKER_IMAGE_REGISTRY=$DOCKER_BASE_IMAGE_REGISTRY --build-arg GIT_SHA=$SHA --build-arg NODE_IMAGE_TAG=$NODE_IMAGE_TAG"
           ./scripts/ci/run-in-parallel.sh 90_$DOCKER_TYPE
 
   helm-docker-build:
     needs:
       - prepare
       - pre-checks
-    #    if: needs.prepare.outputs.IMAGES && needs.pre-checks.outputs.PRE_CHECK != 'push'
+    #    if: needs.prepare.outputs.IMAGES && needs.pre-checks.outputs.PRE_CHECK != 'push' 
     runs-on: ec2-runners
     container:
       image: public.ecr.aws/m3u4c4h9/island-is/actions-runner-public:latest
@@ -660,7 +661,7 @@ jobs:
         run: |
           echo Registry is: ${{env.DOCKER_BASE_IMAGE_REGISTRY}}
           echo Image tag is: ${{env.NODE_IMAGE_TAG}}
-          EXTRA_DOCKER_BUILD_ARGS="--build-arg DOCKER_IMAGE_REGISTRY=${{env.DOCKER_BASE_IMAGE_REGISTRY}} --build-arg NODE_IMAGE_TAG=${{env.NODE_IMAGE_TAG}}"
+          export EXTRA_DOCKER_BUILD_ARGS="--build-arg DOCKER_IMAGE_REGISTRY=${{env.DOCKER_BASE_IMAGE_REGISTRY}} --build-arg NODE_IMAGE_TAG=${{env.NODE_IMAGE_TAG}}"
           ./scripts/build-docker-container.sh $DOCKER_TAG
           echo "COMMENT<<EOF" >> $GITHUB_ENV
           echo "Affected services are: ${{needs.prepare.outputs.IMAGES}}" >> $GITHUB_ENV
