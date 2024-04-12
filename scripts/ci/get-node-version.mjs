@@ -52,7 +52,7 @@ async function getVersion(
   }
 }
 
-async function getPackageVersion(filePath = resolve(ROOT, 'package.json')) {
+async function getPackageVersion() {
   const content = await getPackageJSON()
   const version = content.engines?.node
   if (!version) {
