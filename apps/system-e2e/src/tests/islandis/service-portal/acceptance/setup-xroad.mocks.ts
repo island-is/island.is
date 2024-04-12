@@ -3,13 +3,17 @@ import {
   resetMocks,
   wildcard,
 } from '../../../../support/wire-mocks'
-import { Response } from '@anev/ts-mountebank'
-import { Properties, Base } from '../../../../../../../infra/src/dsl/xroad'
+import { HttpMethod, Response } from '@anev/ts-mountebank'
+import {
+  Properties,
+  Base,
+  HealthInsurance,
+} from '../../../../../../../infra/src/dsl/xroad'
 import { env } from '../../../../support/urls'
 import { getEnvVariables } from '../../../../../../../infra/src/dsl/service-to-environment/pre-process-service'
 import { EnvironmentConfig } from '../../../../../../../infra/src/dsl/types/charts'
 
-export async function setupXroadMocks() {
+export const setupXroadMocks = async () => {
   await resetMocks()
   await addXroadMock({
     prefixType: 'only-base-path',
@@ -96,6 +100,109 @@ export async function setupXroadMocks() {
           ],
         },
         notkunareiningar: undefined,
+      }),
+    ],
+  })
+
+  await addXroadMock({
+    prefixType: 'only-base-path',
+    config: HealthInsurance,
+    prefix: 'XROAD_HEALTH_INSURANCE_MY_PAGES_PATH',
+    apiPath: '/v1/dentists/current',
+    response: [
+      new Response().withJSONBody({
+        id: 123,
+        name: 'Ósvikinn læknir',
+      }),
+    ],
+  })
+
+  await addXroadMock({
+    prefixType: 'only-base-path',
+    config: HealthInsurance,
+    prefix: 'XROAD_HEALTH_INSURANCE_MY_PAGES_PATH',
+    apiPath: '/v1/dentists/status',
+    response: [
+      new Response().withJSONBody({
+        isInsured: true,
+        canRegister: true,
+        contractType: '0',
+      }),
+    ],
+  })
+
+  await addXroadMock({
+    prefixType: 'only-base-path',
+    config: HealthInsurance,
+    prefix: 'XROAD_HEALTH_INSURANCE_MY_PAGES_PATH',
+    method: HttpMethod.POST,
+    apiPath: '/v1/dentists/1010101/register',
+    response: new Response().withStatusCode(200).withBody(null),
+  })
+
+  await addXroadMock({
+    prefixType: 'only-base-path',
+    config: HealthInsurance,
+    prefix: 'XROAD_HEALTH_INSURANCE_MY_PAGES_PATH',
+    apiPath: '/v1/dentists/bills',
+    response: [
+      new Response().withJSONBody([
+        {
+          number: 123,
+          amount: 456,
+          coveredAmount: 789,
+          date: new Date('2023-11-29T00:00:00.000Z'),
+          refundDate: new Date('2023-11-29T00:00:00.000Z'),
+        },
+        {
+          number: 10000,
+          amount: 7979,
+          coveredAmount: 6868,
+          date: new Date('2023-04-18T00:00:00.000Z'),
+          refundDate: new Date('2023-05-18T00:00:00.000Z'),
+        },
+      ]),
+    ],
+  })
+
+  await addXroadMock({
+    prefixType: 'only-base-path',
+    config: HealthInsurance,
+    prefix: 'XROAD_HEALTH_INSURANCE_MY_PAGES_PATH',
+    apiPath: '/v1/dentists',
+    response: [
+      new Response().withJSONBody({
+        dentists: [
+          {
+            id: 123,
+            name: 'Ósvikinn læknir',
+            practices: [
+              {
+                practice: 'Alvöru heilsgæsla ehf',
+                address: 'Ekki feikgata 18',
+                region: 'Langtíburtistan',
+                postalCode: '999',
+              },
+            ],
+          },
+          {
+            id: 1010101,
+            name: 'Skottulæknir',
+            practices: [
+              {
+                practice: 'Inn í hól 2',
+                address: 'Uppáhæð',
+                region: 'Kópasker',
+                postalCode: '670',
+              },
+            ],
+          },
+        ],
+        pageInfo: {
+          hasPreviousPage: false,
+          hasNextPage: false,
+        },
+        totalCount: 2,
       }),
     ],
   })
