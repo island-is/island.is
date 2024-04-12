@@ -1,0 +1,35 @@
+fragment NotificationMetadataFields on NotificationMetadata {
+  sent
+  updated
+  created
+  read
+}
+
+fragment NotificationSenderFields on NotificationSender {
+  # id
+  # logoUrl
+  name
+  logo
+}
+
+fragment NotificationMessageFields on NotificationMessage {
+  title
+  body
+  link {
+    uri
+  }
+}
+
+fragment NotificationDataFields on Notification {
+  id
+  notificationId
+  metadata {
+    ...NotificationMetadataFields
+  }
+  sender {
+    ...NotificationSenderFields
+  }
+  message {
+    ...NotificationMessageFields
+  }
+}

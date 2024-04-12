@@ -10,13 +10,9 @@ import {
 import { useTheme } from 'styled-components'
 import { createNavigationOptionHooks } from '../../hooks/create-navigation-option-hooks'
 import { navigateToNotification } from '../../lib/deep-linking'
-import {
-  Notification,
-  actionsForNotification,
-  useNotificationsStore,
-} from '../../stores/notifications-store'
 import { useOrganizationsStore } from '../../stores/organizations-store'
 import { testIDs } from '../../utils/test-ids'
+import { useGetUserNotificationsQuery } from '../../graphql/types/schema'
 
 const { getNavigationOptions, useNavigationOptions } =
   createNavigationOptionHooks(() => ({
@@ -29,18 +25,13 @@ export const NotificationsScreen: NavigationFunctionComponent = ({
   componentId,
 }) => {
   useNavigationOptions(componentId)
-  const { getNotifications } = useNotificationsStore()
   const intl = useIntl()
   const theme = useTheme()
-  const notifications = getNotifications()
   const { getOrganizationLogoUrl } = useOrganizationsStore()
-
-  const onNotificationPress = useCallback((notification: Notification) => {
-    navigateToNotification(notification, componentId)
-  }, [])
-
-  useEffect(() => {
-    dismissAllNotificationsAsync()
+  const notifications = useGetUserNotificationsQuery({
+    variables: {
+      input: {},
+    },
   })
 
   const renderNotificationItem = ({ item }: { item: Notification }) => {
