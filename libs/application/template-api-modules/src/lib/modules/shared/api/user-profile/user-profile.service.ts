@@ -12,8 +12,9 @@ import {
 } from '@island.is/application/types'
 import { TemplateApiError } from '@island.is/nest/problem'
 import { coreErrorMessages } from '@island.is/application/core'
-import { ConfigType, IdsClientConfig } from '@island.is/nest/config'
+import { IdsClientConfig } from '@island.is/nest/config'
 import { Inject } from '@nestjs/common'
+import { ConfigType } from '@nestjs/config'
 
 export const MAX_OUT_OF_DATE_MONTHS = 6
 

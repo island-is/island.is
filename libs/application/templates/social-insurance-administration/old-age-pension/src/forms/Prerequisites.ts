@@ -125,9 +125,17 @@ export const PrerequisitesForm: Form = buildForm({
                     socialInsuranceAdministrationMessage.pre
                       .contactInfoDescription,
                 }),
-                // Bæta í þennan texta að bankareikningur er sóttur frá TR?
                 buildDataProviderItem({
                   provider: SocialInsuranceAdministrationApplicantApi,
+                  title:
+                    socialInsuranceAdministrationMessage.pre
+                      .socialInsuranceAdministrationTitle,
+                  subTitle:
+                    socialInsuranceAdministrationMessage.pre
+                      .socialInsuranceAdministrationDescription,
+                }),
+                buildDataProviderItem({
+                  id: 'sia.data',
                   title:
                     socialInsuranceAdministrationMessage.pre
                       .socialInsuranceAdministrationInformationTitle,
@@ -136,13 +144,17 @@ export const PrerequisitesForm: Form = buildForm({
                       .socialInsuranceAdministrationDataDescription,
                 }),
                 buildDataProviderItem({
-                  provider: SocialInsuranceAdministrationIsApplicantEligibleApi,
+                  id: 'sia.privacy',
                   title:
                     socialInsuranceAdministrationMessage.pre
                       .socialInsuranceAdministrationPrivacyTitle,
                   subTitle:
                     socialInsuranceAdministrationMessage.pre
                       .socialInsuranceAdministrationPrivacyDescription,
+                }),
+                buildDataProviderItem({
+                  provider: SocialInsuranceAdministrationIsApplicantEligibleApi,
+                  title: '',
                 }),
                 buildDataProviderItem({
                   provider: SocialInsuranceAdministrationCurrenciesApi,

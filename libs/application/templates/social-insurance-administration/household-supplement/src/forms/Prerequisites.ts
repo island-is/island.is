@@ -66,6 +66,10 @@ export const PrerequisitesForm: Form = buildForm({
                 householdSupplementFormMessage.pre.skraInformationSubTitle,
             }),
             buildDataProviderItem({
+              provider: NationalRegistrySpouseApi,
+              title: '',
+            }),
+            buildDataProviderItem({
               provider: NationalRegistryCohabitantsApi,
               title: '',
             }),
@@ -77,10 +81,15 @@ export const PrerequisitesForm: Form = buildForm({
             }),
             buildDataProviderItem({
               provider: SocialInsuranceAdministrationApplicantApi,
-              title: '',
+              title:
+                socialInsuranceAdministrationMessage.pre
+                  .socialInsuranceAdministrationTitle,
+              subTitle:
+                socialInsuranceAdministrationMessage.pre
+                  .socialInsuranceAdministrationDescription,
             }),
             buildDataProviderItem({
-              provider: SocialInsuranceAdministrationCurrenciesApi,
+              id: 'sia.data',
               title:
                 socialInsuranceAdministrationMessage.pre
                   .socialInsuranceAdministrationInformationTitle,
@@ -89,7 +98,7 @@ export const PrerequisitesForm: Form = buildForm({
                   .socialInsuranceAdministrationDataDescription,
             }),
             buildDataProviderItem({
-              provider: SocialInsuranceAdministrationIsApplicantEligibleApi,
+              id: 'sia.privacy',
               title:
                 socialInsuranceAdministrationMessage.pre
                   .socialInsuranceAdministrationPrivacyTitle,
@@ -98,7 +107,11 @@ export const PrerequisitesForm: Form = buildForm({
                   .socialInsuranceAdministrationPrivacyDescription,
             }),
             buildDataProviderItem({
-              provider: NationalRegistrySpouseApi,
+              provider: SocialInsuranceAdministrationCurrenciesApi,
+              title: '',
+            }),
+            buildDataProviderItem({
+              provider: SocialInsuranceAdministrationIsApplicantEligibleApi,
               title: '',
             }),
           ],

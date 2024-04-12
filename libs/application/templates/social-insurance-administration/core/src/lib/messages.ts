@@ -65,6 +65,18 @@ export const socialInsuranceAdministrationMessage: MessageDir = {
       description:
         'Information about your telephone number and email address to facilitate the application process.',
     },
+    socialInsuranceAdministrationTitle: {
+      id: 'sia.application:prerequisites.social.insurance.administration.title',
+      defaultMessage: 'Upplýsingar frá Tryggingastofnun',
+      description: 'Information from Social Insurance Administration',
+    },
+    socialInsuranceAdministrationDescription: {
+      id: 'sia.application:prerequisites.social.insurance.administration.description',
+      defaultMessage:
+        'Upplýsingar um bankareikning sóttar á mínar síður hjá Tryggingastofnun.',
+      description:
+        'Information regarding bank account is retrieved from My Pages at the Social Insurance Administration.',
+    },
     socialInsuranceAdministrationInformationTitle: {
       id: 'sia.application:prerequisites.socialInsuranceAdministration.title',
       defaultMessage: 'Upplýsingar um tekjur og aðstæður',
