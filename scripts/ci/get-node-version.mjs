@@ -1,8 +1,5 @@
 #!/usr/bin/env node
-import fetch from 'node-fetch'
-import { resolve } from 'path'
-
-import { ROOT, getPackageJSON } from './_common.mjs'
+import { getPackageJSON } from './_common.mjs'
 
 const DOCKERHUB_BASE_URL =
   'https://hub.docker.com/v2/repositories/library/node/tags?page_size=100'

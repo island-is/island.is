@@ -238,6 +238,7 @@ jobs:
 
       - name: Generate nodejs image tag
         id: nodejs_image
+        continue-on-error: false
         run: |
           export NODE_IMAGE_TAG="$(./scripts/ci/get-node-version.mjs)"
           echo "NODE_IMAGE_TAG: ${NODE_IMAGE_TAG}"
