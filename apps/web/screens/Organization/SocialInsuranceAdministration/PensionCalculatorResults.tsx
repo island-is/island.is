@@ -1,4 +1,4 @@
-import { Fragment } from 'react'
+import { Fragment, ReactNode } from 'react'
 import { useIntl } from 'react-intl'
 
 import {
@@ -21,6 +21,7 @@ import {
 } from '@island.is/island-ui/core'
 import { getThemeConfig } from '@island.is/web/components'
 import {
+  CustomPage,
   CustomPageUniqueIdentifier as UniqueIdentifier,
   Organization,
   OrganizationPage,
@@ -30,6 +31,7 @@ import {
   QueryGetPensionCalculationArgs,
   SocialInsurancePensionCalculationInput,
   SocialInsurancePensionCalculationResponse,
+  SocialInsurancePensionCalculationResponseItem,
 } from '@island.is/web/graphql/schema'
 import { useLinkResolver } from '@island.is/web/hooks'
 import { withMainLayout } from '@island.is/web/layouts/main'
@@ -54,6 +56,174 @@ import {
   getDateOfCalculationsOptions,
 } from './utils'
 import * as styles from './PensionCalculatorResults.css'
+
+interface HighlightedItemsProps {
+  highlightedItems: SocialInsurancePensionCalculationResponseItem[]
+  customPageData: CustomPage | null | undefined
+  firstItemRightAlignedContent?: ReactNode
+}
+
+const HighlightedItems = ({
+  highlightedItems,
+  customPageData,
+  firstItemRightAlignedContent,
+}: HighlightedItemsProps) => {
+  const { formatMessage } = useIntl()
+
+  const higlightedItemIsPresent = highlightedItems.length > 0
+  const perMonthText = formatMessage(translationStrings.perMonth)
+  const perYearText = formatMessage(translationStrings.perYear)
+
+  return (
+    <Stack space={5}>
+      {highlightedItems.map((highlightedItem, index) => {
+        let highlightedItemName =
+          highlightedItem?.name && highlightedItem?.name in translationStrings
+            ? formatMessage(
+                translationStrings[
+                  highlightedItem?.name as keyof typeof translationStrings
+                ],
+              )
+            : highlightedItem?.name
+
+        if (
+          index > 0 &&
+          highlightedItem?.name ===
+            (customPageData?.configJson?.totalFromTrAfterTaxKey ??
+              'REIKNH.SAMTALSTREFTIRSK')
+        ) {
+          highlightedItemName = formatMessage(
+            translationStrings.highlighedResultItemHeadingForTotalAfterTaxFromTR,
+          )
+        }
+
+        const titleVariant: TextProps['variant'] = index === 0 ? 'h3' : 'h4'
+
+        const numericVariant: TextProps['variant'] =
+          index === 0 ? 'h5' : 'medium'
+
+        return (
+          <Stack key={index} space={2}>
+            <Inline alignY="center" justifyContent="spaceBetween" space={5}>
+              {higlightedItemIsPresent && (
+                <Text variant={titleVariant} as="h2">
+                  {highlightedItemName}
+                </Text>
+              )}
+              {!higlightedItemIsPresent && <Box />}
+              {index === 0 && firstItemRightAlignedContent}
+            </Inline>
+
+            <Box className={styles.grid}>
+              <Box>
+                <Box
+                  display="flex"
+                  flexDirection="column"
+                  rowGap={1}
+                  className={styles.fitContent}
+                >
+                  <Box>
+                    <Text variant={numericVariant}>
+                      {formatCurrency(highlightedItem?.monthlyAmount)}
+                    </Text>
+                  </Box>
+                  <Box className={styles.alignSelfToFlexEnd}>
+                    <Text variant="small">{perMonthText}</Text>
+                  </Box>
+                </Box>
+              </Box>
+
+              <Box className={styles.line} />
+
+              <Box paddingLeft={4}>
+                <Box
+                  display="flex"
+                  flexDirection="column"
+                  rowGap={1}
+                  className={styles.fitContent}
+                >
+                  <Box>
+                    <Text variant={numericVariant}>
+                      {formatCurrency(highlightedItem?.yearlyAmount)}
+                    </Text>
+                  </Box>
+                  <Box className={styles.alignSelfToFlexEnd}>
+                    <Text variant="small">{perYearText}</Text>
+                  </Box>
+                </Box>
+              </Box>
+            </Box>
+          </Stack>
+        )
+      })}
+    </Stack>
+  )
+}
+
+interface ResultTableProps {
+  calculation: SocialInsurancePensionCalculationResponse
+}
+
+const ResultTable = ({ calculation }: ResultTableProps) => {
+  const { formatMessage } = useIntl()
+  const perMonthText = formatMessage(translationStrings.perMonth)
+  const perYearText = formatMessage(translationStrings.perYear)
+
+  return (
+    <Table.Table>
+      {calculation.groups?.map((group, groupIndex) => (
+        <Fragment key={groupIndex}>
+          <Table.Body>
+            {group.name && (
+              <Table.Row>
+                <Table.HeadData>
+                  {group.name in translationStrings
+                    ? formatMessage(
+                        translationStrings[
+                          group.name as keyof typeof translationStrings
+                        ],
+                      )
+                    : group.name}
+                </Table.HeadData>
+                <Table.HeadData>{perMonthText}</Table.HeadData>
+                <Table.HeadData>{perYearText}</Table.HeadData>
+              </Table.Row>
+            )}
+            {group.items.map((item, itemIndex) => {
+              const isLastItem = itemIndex === group.items.length - 1
+              const fontWeight = isLastItem ? 'semiBold' : undefined
+              let itemName = item?.name
+              if (itemName && itemName in translationStrings) {
+                itemName = formatMessage(
+                  translationStrings[
+                    itemName as keyof typeof translationStrings
+                  ],
+                )
+              }
+              return (
+                <Table.Row key={itemIndex}>
+                  <Table.Data>
+                    <Text fontWeight={fontWeight}>{itemName}</Text>
+                  </Table.Data>
+                  <Table.Data>
+                    <Text fontWeight={fontWeight}>
+                      {formatCurrency(item.monthlyAmount)}
+                    </Text>
+                  </Table.Data>
+                  <Table.Data>
+                    <Text fontWeight={fontWeight}>
+                      {formatCurrency(item.yearlyAmount)}
+                    </Text>
+                  </Table.Data>
+                </Table.Row>
+              )
+            })}
+          </Table.Body>
+        </Fragment>
+      ))}
+    </Table.Table>
+  )
+}
 
 interface PensionCalculatorResultsProps {
   organizationPage: OrganizationPage
@@ -93,275 +263,148 @@ const PensionCalculatorResults: CustomScreen<PensionCalculatorResultsProps> = ({
   const higlightedItemIsPresent = highlightedItems.length > 0
 
   return (
-    <PensionCalculatorWrapper
-      organizationPage={organizationPage}
-      organization={organization}
-      ogTitle={title}
-      ogImageUrl={organizationPage.featuredImage?.url}
-      indexableBySearchEngine={false}
-    >
-      <GridContainer>
-        <GridRow>
-          <GridColumn
-            offset={['0', '0', '0', '1/9']}
-            className={styles.fullWidth}
-          >
-            <Box paddingY={6}>
-              <Stack space={5}>
-                <Stack space={2}>
-                  <Text variant="h1" as="h1">
-                    {title}
-                  </Text>
-                  <Box className={styles.textMaxWidth}>
-                    <Text>
-                      {formatMessage(translationStrings.resultDisclaimer)}
-                    </Text>
-                  </Box>
-                </Stack>
-                {higlightedItemIsPresent && (
+    <>
+      <Box printHidden>
+        <PensionCalculatorWrapper
+          organizationPage={organizationPage}
+          organization={organization}
+          ogTitle={title}
+          ogImageUrl={organizationPage.featuredImage?.url}
+          indexableBySearchEngine={false}
+        >
+          <GridContainer>
+            <GridRow>
+              <GridColumn
+                offset={['0', '0', '0', '1/9']}
+                className={styles.fullWidth}
+              >
+                <Box paddingY={6}>
                   <Stack space={5}>
-                    {highlightedItems.map((highlightedItem, index) => {
-                      let highlightedItemName =
-                        highlightedItem?.name &&
-                        highlightedItem?.name in translationStrings
-                          ? formatMessage(
-                              translationStrings[
-                                highlightedItem?.name as keyof typeof translationStrings
-                              ],
-                            )
-                          : highlightedItem?.name
-
-                      if (
-                        index > 0 &&
-                        highlightedItem?.name ===
-                          (customPageData?.configJson?.totalFromTrAfterTaxKey ??
-                            'REIKNH.SAMTALSTREFTIRSK')
-                      ) {
-                        highlightedItemName = formatMessage(
-                          translationStrings.highlighedResultItemHeadingForTotalAfterTaxFromTR,
-                        )
-                      }
-
-                      const titleVariant: TextProps['variant'] =
-                        index === 0 ? 'h3' : 'h4'
-
-                      const numericVariant: TextProps['variant'] =
-                        index === 0 ? 'h5' : 'medium'
-
-                      return (
-                        <Stack key={index} space={2}>
-                          <Inline
-                            alignY="center"
-                            justifyContent="spaceBetween"
-                            space={5}
-                          >
-                            {higlightedItemIsPresent && (
-                              <Text variant={titleVariant} as="h2">
-                                {highlightedItemName}
-                              </Text>
-                            )}
-                            {!higlightedItemIsPresent && <Box />}
-                            {index === 0 && (
-                              <Hidden print below="md">
-                                <LinkV2
-                                  href={`${
-                                    linkResolver('pensioncalculator').href
-                                  }?${queryParamString}`}
-                                >
-                                  <Button unfocusable={true} size="small">
-                                    {formatMessage(
-                                      translationStrings.changeAssumptions,
-                                    )}
-                                  </Button>
-                                </LinkV2>
-                              </Hidden>
-                            )}
-                          </Inline>
-
-                          <Box className={styles.grid}>
-                            <Box>
-                              <Box
-                                display="flex"
-                                flexDirection="column"
-                                rowGap={1}
-                                className={styles.fitContent}
-                              >
-                                <Box>
-                                  <Text variant={numericVariant}>
-                                    {formatCurrency(
-                                      highlightedItem?.monthlyAmount,
-                                    )}
-                                  </Text>
-                                </Box>
-                                <Box className={styles.alignSelfToFlexEnd}>
-                                  <Text variant="small">{perMonthText}</Text>
-                                </Box>
-                              </Box>
-                            </Box>
-                            <Box>
-                              <Box className={styles.line} />
-                            </Box>
-                            <Box paddingLeft={4}>
-                              <Box
-                                display="flex"
-                                flexDirection="column"
-                                rowGap={1}
-                                className={styles.fitContent}
-                              >
-                                <Box>
-                                  <Text variant={numericVariant}>
-                                    {formatCurrency(
-                                      highlightedItem?.yearlyAmount,
-                                    )}
-                                  </Text>
-                                </Box>
-                                <Box className={styles.alignSelfToFlexEnd}>
-                                  <Text variant="small">{perYearText}</Text>
-                                </Box>
-                              </Box>
-                            </Box>
-                          </Box>
-                        </Stack>
-                      )
-                    })}
-                  </Stack>
-                )}
-
-                <Hidden print above="sm">
-                  <LinkV2
-                    href={`${
-                      linkResolver('pensioncalculator').href
-                    }?${queryParamString}`}
-                  >
-                    <Button unfocusable={true} size="small">
-                      {formatMessage(translationStrings.changeAssumptions)}
-                    </Button>
-                  </LinkV2>
-                </Hidden>
-
-                {!calculationIsPresent && (
-                  <AlertMessage
-                    type="warning"
-                    message={formatMessage(
-                      translationStrings.noResultsCanBeShown,
-                    )}
-                  />
-                )}
-
-                {calculationIsPresent && (
-                  <Accordion dividerOnTop={false}>
-                    <AccordionItem
-                      startExpanded={!higlightedItemIsPresent}
-                      id="resultDetails"
-                      labelVariant="h3"
-                      labelUse="h3"
-                      label={formatMessage(
-                        translationStrings.resultDetailsLabel,
-                      )}
-                    >
-                      <Box paddingBottom={3}>
-                        <Stack space={3}>
-                          <Box display="flex" justifyContent="flexEnd">
-                            <Hidden print>
-                              <Button
-                                icon="print"
-                                variant="utility"
-                                onClick={() => {
-                                  window.print()
-                                }}
-                              >
-                                {formatMessage(translationStrings.print)}
+                    <Stack space={2}>
+                      <Text variant="h1" as="h1">
+                        {title}
+                      </Text>
+                      <Box className={styles.textMaxWidth}>
+                        <Text>
+                          {formatMessage(translationStrings.resultDisclaimer)}
+                        </Text>
+                      </Box>
+                    </Stack>
+                    {higlightedItemIsPresent && (
+                      <HighlightedItems
+                        customPageData={customPageData}
+                        highlightedItems={highlightedItems}
+                        firstItemRightAlignedContent={
+                          <Hidden print below="md">
+                            <LinkV2
+                              href={`${
+                                linkResolver('pensioncalculator').href
+                              }?${queryParamString}`}
+                            >
+                              <Button unfocusable={true} size="small">
+                                {formatMessage(
+                                  translationStrings.changeAssumptions,
+                                )}
                               </Button>
+                            </LinkV2>
+                          </Hidden>
+                        }
+                      />
+                    )}
+                    <Hidden print above="sm">
+                      <LinkV2
+                        href={`${
+                          linkResolver('pensioncalculator').href
+                        }?${queryParamString}`}
+                      >
+                        <Button unfocusable={true} size="small">
+                          {formatMessage(translationStrings.changeAssumptions)}
+                        </Button>
+                      </LinkV2>
+                    </Hidden>
+
+                    {!calculationIsPresent && (
+                      <AlertMessage
+                        type="warning"
+                        message={formatMessage(
+                          translationStrings.noResultsCanBeShown,
+                        )}
+                      />
+                    )}
+
+                    {calculationIsPresent && (
+                      <Accordion dividerOnTop={false}>
+                        <AccordionItem
+                          startExpanded={!higlightedItemIsPresent}
+                          id="resultDetails"
+                          labelVariant="h3"
+                          labelUse="h3"
+                          label={formatMessage(
+                            translationStrings.resultDetailsLabel,
+                          )}
+                        >
+                          <Box paddingBottom={3}>
+                            <Stack space={3}>
+                              <Box display="flex" justifyContent="flexEnd">
+                                <Hidden print>
+                                  <Button
+                                    icon="print"
+                                    variant="utility"
+                                    onClick={() => {
+                                      window.print()
+                                    }}
+                                  >
+                                    {formatMessage(translationStrings.print)}
+                                  </Button>
+                                </Hidden>
+                              </Box>
+                              <ResultTable calculation={calculation} />
+                            </Stack>
+
+                            <Hidden print>
+                              <LinkV2
+                                href={`${
+                                  linkResolver('pensioncalculator').href
+                                }?${queryParamString}`}
+                              >
+                                <Button unfocusable={true} size="small">
+                                  {formatMessage(
+                                    translationStrings.changeAssumptions,
+                                  )}
+                                </Button>
+                              </LinkV2>
                             </Hidden>
                           </Box>
-                          <Table.Table>
-                            {calculation.groups?.map((group, groupIndex) => (
-                              <Fragment key={groupIndex}>
-                                <Table.Body>
-                                  {group.name && (
-                                    <Table.Row>
-                                      <Table.HeadData>
-                                        {group.name in translationStrings
-                                          ? formatMessage(
-                                              translationStrings[
-                                                group.name as keyof typeof translationStrings
-                                              ],
-                                            )
-                                          : group.name}
-                                      </Table.HeadData>
-                                      <Table.HeadData>
-                                        {perMonthText}
-                                      </Table.HeadData>
-                                      <Table.HeadData>
-                                        {perYearText}
-                                      </Table.HeadData>
-                                    </Table.Row>
-                                  )}
-                                  {group.items.map((item, itemIndex) => {
-                                    const isLastItem =
-                                      itemIndex === group.items.length - 1
-                                    const fontWeight = isLastItem
-                                      ? 'semiBold'
-                                      : undefined
-                                    let itemName = item?.name
-                                    if (
-                                      itemName &&
-                                      itemName in translationStrings
-                                    ) {
-                                      itemName = formatMessage(
-                                        translationStrings[
-                                          itemName as keyof typeof translationStrings
-                                        ],
-                                      )
-                                    }
-                                    return (
-                                      <Table.Row key={itemIndex}>
-                                        <Table.Data>
-                                          <Text fontWeight={fontWeight}>
-                                            {itemName}
-                                          </Text>
-                                        </Table.Data>
-                                        <Table.Data>
-                                          <Text fontWeight={fontWeight}>
-                                            {formatCurrency(item.monthlyAmount)}
-                                          </Text>
-                                        </Table.Data>
-                                        <Table.Data>
-                                          <Text fontWeight={fontWeight}>
-                                            {formatCurrency(item.yearlyAmount)}
-                                          </Text>
-                                        </Table.Data>
-                                      </Table.Row>
-                                    )
-                                  })}
-                                </Table.Body>
-                              </Fragment>
-                            ))}
-                          </Table.Table>
-                        </Stack>
-                        <Hidden print>
-                          <LinkV2
-                            href={`${
-                              linkResolver('pensioncalculator').href
-                            }?${queryParamString}`}
-                          >
-                            <Button unfocusable={true} size="small">
-                              {formatMessage(
-                                translationStrings.changeAssumptions,
-                              )}
-                            </Button>
-                          </LinkV2>
-                        </Hidden>
-                      </Box>
-                    </AccordionItem>
-                  </Accordion>
-                )}
-              </Stack>
+                        </AccordionItem>
+                      </Accordion>
+                    )}
+                  </Stack>
+                </Box>
+              </GridColumn>
+            </GridRow>
+          </GridContainer>
+        </PensionCalculatorWrapper>
+      </Box>
+
+      <Box paddingTop={3} className={styles.hiddenOnScreen}>
+        <Stack space={3}>
+          <Stack space={2}>
+            <Text variant="h1" as="h1">
+              {title}
+            </Text>
+            <Box className={styles.textMaxWidth}>
+              <Text>{formatMessage(translationStrings.resultDisclaimer)}</Text>
             </Box>
-          </GridColumn>
-        </GridRow>
-      </GridContainer>
-    </PensionCalculatorWrapper>
+          </Stack>
+          {higlightedItemIsPresent && (
+            <HighlightedItems
+              customPageData={customPageData}
+              highlightedItems={highlightedItems}
+            />
+          )}
+        </Stack>
+      </Box>
+    </>
   )
 }
 
