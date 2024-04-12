@@ -37,7 +37,7 @@ import {
 import { VehicleMileageOverview } from '../models/getVehicleMileage.model'
 import isSameDay from 'date-fns/isSameDay'
 import { mileageDetailConstructor } from '../utils/helpers'
-import { FetchError } from '@island.is/clients/middlewares'
+import { handle404 } from '@island.is/clients/middlewares'
 
 const ORIGIN_CODE = 'ISLAND.IS'
 const LOG_CATEGORY = 'vehicle-service'
@@ -149,11 +149,7 @@ export class VehiclesService {
       })
       return data
     } catch (error) {
-      if (error instanceof FetchError && error.status === 404) {
-        this.logger.info(`Vehicle with plate number: ${search} was not found`)
-        return null
-      }
-      throw error
+      handle404(error)
     }
   }
 
