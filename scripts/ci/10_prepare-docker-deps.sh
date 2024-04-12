@@ -10,8 +10,6 @@ mkdir -p "$PROJECT_ROOT"/cache
 
 NODE_IMAGE_TAG=${NODE_IMAGE_TAG:-$(./scripts/ci/get-node-version.mjs)}
 
-echo $NODE_IMAGE_TAG
-
 docker buildx create --driver docker-container --use || true
 
 docker buildx build \
