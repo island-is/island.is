@@ -247,6 +247,7 @@ export const DocumentLine: FC<Props> = ({
             </button>
             {(hasFocusOrHover || isBookmarked || isArchived) &&
               !postLoading &&
+              !fileLoading &&
               !asFrame && (
                 <FavAndStash
                   bookmarked={isBookmarked}
@@ -277,7 +278,7 @@ export const DocumentLine: FC<Props> = ({
                   }
                 />
               )}
-            {(postLoading || (asFrame && fileLoading)) && (
+            {(postLoading || fileLoading) && (
               <Box display="flex" alignItems="center">
                 <LoadingDots single />
               </Box>

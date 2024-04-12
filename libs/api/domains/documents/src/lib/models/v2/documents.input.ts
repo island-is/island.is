@@ -9,8 +9,8 @@ import {
 import {
   IsArray,
   IsBoolean,
+  IsDate,
   IsEnum,
-  IsISO8601,
   IsInt,
   IsOptional,
   IsString,
@@ -45,12 +45,12 @@ export class DocumentsInput {
 
   @Field(() => GraphQLISODateTime, { nullable: true })
   @IsOptional()
-  @IsISO8601()
+  @IsDate()
   readonly dateFrom?: Date
 
   @Field(() => GraphQLISODateTime, { nullable: true })
   @IsOptional()
-  @IsISO8601()
+  @IsDate()
   readonly dateTo?: Date
 
   @Field(() => [String], { nullable: true })
