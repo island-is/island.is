@@ -114,6 +114,13 @@ export class CacheInvalidationService {
   }
 
   async invalidateCache(items: MappedData[], locale: ElasticsearchIndexLocale) {
+    if (
+      environment.runtimeEnvironment === 'local' &&
+      !environment.forceCacheInvalidationAfterIndexing
+    ) {
+      return
+    }
+
     const baseUrl = this.getBaseUrl()
 
     const bypassSecret = environment.bypassCacheSecret

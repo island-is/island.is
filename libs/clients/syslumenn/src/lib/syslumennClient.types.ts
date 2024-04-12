@@ -222,6 +222,7 @@ export type EstateMember = {
   relation: string
   relationWithApplicant?: string
   dateOfBirth?: string
+  noContactInfo?: ('Yes' | 'No')[]
   enabled?: boolean
   phone?: string
   email?: string

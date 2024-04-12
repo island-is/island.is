@@ -27,14 +27,13 @@ type UseParams = {
 
 const IntellectualPropertiesDesignDetail = () => {
   useNamespaces('sp.intellectual-properties')
-  const { formatMessage, locale } = useLocale()
+  const { formatMessage } = useLocale()
   const { id } = useParams() as UseParams
 
   const { data, loading, error } = useGetIntellectualPropertiesDesignQuery({
     variables: {
       input: {
         key: id,
-        locale,
       },
     },
   })
