@@ -919,6 +919,9 @@ describe('Parental Leave Application Template', () => {
             periods,
             tempPeriods: periods,
             previousState: States.APPROVED,
+            fileUpload: {
+              changeEmployer: [],
+            },
           },
           state: ApplicationStates.EDIT_OR_ADD_EMPLOYERS_AND_PERIODS,
         }),
@@ -964,6 +967,9 @@ describe('Parental Leave Application Template', () => {
             periods,
             tempPeriods: periods,
             previousState: States.VINNUMALASTOFNUN_APPROVE_EDITS,
+            fileUpload: {
+              changeEmployer: [],
+            },
           },
           state: ApplicationStates.EDIT_OR_ADD_EMPLOYERS_AND_PERIODS,
         }),
@@ -1011,6 +1017,9 @@ describe('Parental Leave Application Template', () => {
             periods,
             tempPeriods: periods,
             previousState: States.VINNUMALASTOFNUN_APPROVAL,
+            fileUpload: {
+              changeEmployer: [],
+            },
           },
           state: ApplicationStates.EDIT_OR_ADD_EMPLOYERS_AND_PERIODS,
         }),
@@ -1037,6 +1046,9 @@ describe('Parental Leave Application Template', () => {
             },
             applicationType: {
               option: PARENTAL_LEAVE,
+            },
+            fileUpload: {
+              changeEmployer: [],
             },
           },
           state: ApplicationStates.EDIT_OR_ADD_EMPLOYERS_AND_PERIODS,
