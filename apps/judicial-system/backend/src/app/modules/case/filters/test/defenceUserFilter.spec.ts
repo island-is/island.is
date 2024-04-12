@@ -105,10 +105,9 @@ describe.each(defenceRoles)('defence user %s', (role) => {
             state: CaseState.RECEIVED,
             requestSharedWithDefender:
               RequestSharedWithDefender.READY_FOR_COURT,
-            courtDate: new Date(),
           } as Case
 
-          verifyNoAccess(theCase, user)
+          verifyNoAccess(theCase, user, new Date())
         })
 
         describe('court date not set, but request shared with defender on submission and defender assigned to case', () => {
@@ -128,10 +127,9 @@ describe.each(defenceRoles)('defence user %s', (role) => {
             type,
             state: CaseState.RECEIVED,
             defenderNationalId: user.nationalId,
-            courtDate: new Date(),
           } as Case
 
-          verifyFullAccess(theCase, user)
+          verifyFullAccess(theCase, user, new Date())
         })
       })
 
