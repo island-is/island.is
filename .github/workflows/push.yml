@@ -73,7 +73,9 @@ jobs:
             # Avoid too long resource names
             GIT_BRANCH_DEPLOY=${GIT_BRANCH_DEPLOY:0:50}
           fi
-          echo "NODE_IMAGE_TAG=$(./scripts/ci/get-node-version.mjs)" >> $GITHUB_OUTPUT
+          NODE_IMAGE_TAG="$(./scripts/ci/get-node-version.mjs)"
+          echo "NODE_IMAGE_TAG: ${NODE_IMAGE_TAG}"
+          echo "NODE_IMAGE_TAG=${NODE_IMAGE_TAG}" >> $GITHUB_OUTPUT
           echo "GIT_BRANCH_DEPLOY=${GIT_BRANCH_DEPLOY}" >> $GITHUB_OUTPUT
           echo "GIT_BRANCH_DEPLOY=$GIT_BRANCH_DEPLOY" >> $GITHUB_ENV
           echo "FEATURE_NAME=$(echo $GIT_BRANCH_DEPLOY | cut -d"/" -f2- | tr -cd '[:alnum:]-' | tr '[:upper:]' '[:lower:]' | cut -c1-50)" >> $GITHUB_OUTPUT
