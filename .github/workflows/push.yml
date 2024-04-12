@@ -73,19 +73,9 @@ jobs:
             # Avoid too long resource names
             GIT_BRANCH_DEPLOY=${GIT_BRANCH_DEPLOY:0:50}
           fi
-          NODE_IMAGE_TAG="$(./scripts/ci/get-node-version.mjs)"
-          echo "NODE_IMAGE_TAG: ${NODE_IMAGE_TAG}"
-          echo "NODE_IMAGE_TAG=${NODE_IMAGE_TAG}" >> $GITHUB_OUTPUT
           echo "GIT_BRANCH_DEPLOY=${GIT_BRANCH_DEPLOY}" >> $GITHUB_OUTPUT
           echo "GIT_BRANCH_DEPLOY=$GIT_BRANCH_DEPLOY" >> $GITHUB_ENV
           echo "FEATURE_NAME=$(echo $GIT_BRANCH_DEPLOY | cut -d"/" -f2- | tr -cd '[:alnum:]-' | tr '[:upper:]' '[:lower:]' | cut -c1-50)" >> $GITHUB_OUTPUT
-      - uses: actions/checkout@v4
-        with:
-          fetch-depth: 0
-          sparse-checkout: |
-            package.json
-            scripts/ci/get-node-version.mjs
-            scripts/ci/_common.mjs
       - name: Check if we want to run workflow
         id: should-run
         env:
@@ -168,6 +158,7 @@ jobs:
     outputs:
       TEST_CHUNKS: ${{ steps.test_projects.outputs.CHUNKS }}
       DOCKER_TAG: ${{ steps.docker_tags.outputs.DOCKER_TAG }}
+      NODE_IMAGE_TAG: ${{ steps.nodejs_image.outputs.NODE_IMAGE_TAG }}
       LAST_GOOD_BUILD_DOCKER_TAG: ${{ steps.git_nx_base.outputs.LAST_GOOD_BUILD_DOCKER_TAG }}
       UNAFFECTED: ${{ steps.unaffected.outputs.UNAFFECTED }}
       BUILD_CHUNKS: ${{ steps.build_map.outputs.BUILD_CHUNKS }}
@@ -245,6 +236,12 @@ jobs:
           path: event.json
           retention-days: 60
 
+      - name: Generate nodejs image tag
+        id: nodejs_image
+        run: |
+          export NODE_IMAGE_TAG="$(./scripts/ci/get-node-version.mjs)"
+          echo "NODE_IMAGE_TAG: ${NODE_IMAGE_TAG}"
+          echo "NODE_IMAGE_TAG=${NODE_IMAGE_TAG}" >> $GITHUB_STEP_SUMMARY
       - name: Generate docker image tag
         id: docker_tags
         run: |
@@ -511,6 +508,7 @@ jobs:
       AFFECTED_ALL: ${{ secrets.AFFECTED_ALL }}
       GIT_BRANCH: ${{ needs.pre-checks.outputs.GIT_BRANCH}}
       DOCKER_TAG: ${{ needs.prepare.outputs.DOCKER_TAG}}
+      NODE_IMAGE_TAG: ${{ needs.prepare.outputs.NODE_IMAGE_TAG}}
       PUBLISH: true
     strategy:
       fail-fast: false
@@ -607,7 +605,7 @@ jobs:
         id: dockerbuild
         if: steps.gather.outcome == 'success'
         env:
-          NODE_IMAGE_TAG: ${{ needs.pre-checks.outputs.NODE_IMAGE_TAG }}
+          NODE_IMAGE_TAG: ${{ needs.prepare.outputs.NODE_IMAGE_TAG }}
         run: |
           EXTRA_DOCKER_BUILD_ARGS="--build-arg DOCKER_IMAGE_REGISTRY=${{ env.DOCKER_BASE_IMAGE_REGISTRY }} --build-arg GIT_SHA=${{ github.sha }} --build-arg NODE_IMAGE_TAG=$NODE_IMAGE_TAG"
           ./scripts/ci/run-in-parallel.sh 90_$DOCKER_TYPE
@@ -615,7 +613,7 @@ jobs:
       - name: Building Docker images Retry #This only exists until GHA starts supporting this
         if: steps.gather.outcome == 'success' && steps.dockerbuild.outcome == 'failure'
         env:
-          NODE_IMAGE_TAG: ${{ needs.pre-checks.outputs.NODE_IMAGE_TAG }}
+          NODE_IMAGE_TAG: ${{ needs.prepare.outputs.NODE_IMAGE_TAG }}
         run: |
           EXTRA_DOCKER_BUILD_ARGS="--build-arg DOCKER_IMAGE_REGISTRY=${{ env.DOCKER_BASE_IMAGE_REGISTRY }} --build-arg GIT_SHA=${{ github.sha }} --build-arg NODE_IMAGE_TAG=$NODE_IMAGE_TAG"
           ./scripts/ci/run-in-parallel.sh 90_$DOCKER_TYPE
@@ -659,7 +657,7 @@ jobs:
           docker run --rm ${DOCKER_REGISTRY}helm-config:$DOCKER_TAG ingress-comment --images=${{needs.prepare.outputs.IMAGES}} --chart=islandis --feature=$FEATURE_NAME >> $GITHUB_ENV
           echo 'EOF' >> $GITHUB_ENV
         env:
-          NODE_IMAGE_TAG: ${{ needs.pre-checks.outputs.NODE_IMAGE_TAG }}
+          NODE_IMAGE_TAG: ${{ needs.prepare.outputs.NODE_IMAGE_TAG }}
           PUBLISH: 'true'
 
       - name: Retag as latest
