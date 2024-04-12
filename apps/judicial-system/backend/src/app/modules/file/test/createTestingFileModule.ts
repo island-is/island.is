@@ -7,6 +7,7 @@ import { Test } from '@nestjs/testing'
 import { IntlService } from '@island.is/cms-translations'
 import { createTestIntl } from '@island.is/cms-translations/test'
 import { LOGGER_PROVIDER } from '@island.is/logging'
+import { ConfigModule, ConfigType } from '@island.is/nest/config'
 
 import { SharedAuthModule } from '@island.is/judicial-system/auth'
 
@@ -14,6 +15,7 @@ import { environment } from '../../../../environments'
 import { AwsS3Service } from '../../aws-s3'
 import { CaseService } from '../../case'
 import { CourtService } from '../../court'
+import { fileModuleConfig } from '../file.config'
 import { FileController } from '../file.controller'
 import { FileService } from '../file.service'
 import { InternalFileController } from '../internalFile.controller'
@@ -31,6 +33,7 @@ export const createTestingFileModule = async () => {
         jwtSecret: environment.auth.jwtSecret,
         secretToken: environment.auth.secretToken,
       }),
+      ConfigModule.forRoot({ load: [fileModuleConfig] }),
     ],
     controllers: [
       FileController,
@@ -88,6 +91,10 @@ export const createTestingFileModule = async () => {
     getModelToken(CaseFile),
   )
 
+  const fileConfig = fileModule.get<ConfigType<typeof fileModuleConfig>>(
+    fileModuleConfig.KEY,
+  )
+
   const fileService = fileModule.get<FileService>(FileService)
 
   const fileController = fileModule.get<FileController>(FileController)
@@ -108,6 +115,7 @@ export const createTestingFileModule = async () => {
     awsS3Service,
     courtService,
     fileModel,
+    fileConfig,
     fileService,
     fileController,
     internalFileController,
