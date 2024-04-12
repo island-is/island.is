@@ -680,6 +680,11 @@ export const PrerequisitesForm: Form = buildForm({
       children: [],
     }),
     buildSection({
+      id: 'additionalInformation',
+      title: parentalLeaveFormMessages.shared.additionalInformationSection,
+      children: [],
+    }),
+    buildSection({
       id: 'confirmation',
       title: parentalLeaveFormMessages.confirmation.title,
       children: [],

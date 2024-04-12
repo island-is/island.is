@@ -29,6 +29,7 @@ import {
   isIndictmentCase,
   isProsecutionUser,
   isRestrictionCase,
+  NotificationType,
   restrictionCases,
   type User as TUser,
   UserRole,
@@ -738,12 +739,12 @@ export class InternalCaseService {
       })
   }
 
-  async deliverAppealReceivedDateToCourtOfAppeals(
+  async deliverReceivedDateToCourtOfAppeals(
     theCase: Case,
     user: TUser,
   ): Promise<DeliverResponse> {
     return this.courtService
-      .updateAppealCaseWithAppealReceivedDate(
+      .updateAppealCaseWithReceivedDate(
         user,
         theCase.id,
         theCase.appealCaseNumber,
@@ -753,6 +754,70 @@ export class InternalCaseService {
       .catch((reason) => {
         this.logger.error(
           `Failed to update appeal case ${theCase.id} with received date`,
+          {
+            reason,
+          },
+        )
+
+        return { delivered: false }
+      })
+  }
+
+  async deliverAssignedRolesToCourtOfAppeals(
+    theCase: Case,
+    user: TUser,
+  ): Promise<DeliverResponse> {
+    return this.courtService
+      .updateAppealCaseWithAssignedRoles(
+        user,
+        theCase.id,
+        theCase.appealCaseNumber,
+        theCase.appealAssistant?.nationalId,
+        theCase.appealJudge1?.nationalId,
+        theCase.appealJudge2?.nationalId,
+        theCase.appealJudge3?.nationalId,
+      )
+      .then(() => ({ delivered: true }))
+      .catch((reason) => {
+        this.logger.error(
+          `Failed to update appeal case ${theCase.id} with assigned roles`,
+          {
+            reason,
+          },
+        )
+
+        return { delivered: false }
+      })
+  }
+
+  async deliverConclusionToCourtOfAppeals(
+    theCase: Case,
+    user: TUser,
+  ): Promise<DeliverResponse> {
+    // There is no timestamp for appeal ruling, so we use notifications to approximate the time.
+    // We know notifications occur in a decending order by time.
+    const appealCompletedNotifications = theCase.notifications?.filter(
+      (notification) => notification.type === NotificationType.APPEAL_COMPLETED,
+    )
+    const appealRulingDate =
+      appealCompletedNotifications && appealCompletedNotifications.length > 0
+        ? appealCompletedNotifications[appealCompletedNotifications.length - 1]
+            .created
+        : undefined
+
+    return this.courtService
+      .updateAppealCaseWithConclusion(
+        user,
+        theCase.id,
+        theCase.appealCaseNumber,
+        Boolean(theCase.appealRulingModifiedHistory),
+        theCase.appealRulingDecision,
+        appealRulingDate,
+      )
+      .then(() => ({ delivered: true }))
+      .catch((reason) => {
+        this.logger.error(
+          `Failed to update appeal case ${theCase.id} with conclusion`,
           {
             reason,
           },

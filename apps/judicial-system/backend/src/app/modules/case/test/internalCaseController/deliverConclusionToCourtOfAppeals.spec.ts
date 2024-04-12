@@ -1,6 +1,10 @@
 import { uuid } from 'uuidv4'
 
-import { CaseType, User } from '@island.is/judicial-system/types'
+import {
+  CaseType,
+  NotificationType,
+  User,
+} from '@island.is/judicial-system/types'
 
 import { createTestingCaseModule } from '../createTestingCaseModule'
 
@@ -16,17 +20,21 @@ interface Then {
 
 type GivenWhenThen = () => Promise<Then>
 
-describe('InternalCaseController - Deliver received date to court of appeals', () => {
+describe('InternalCaseController - Deliver conclusion to court of appeals', () => {
   const user = { id: uuid() } as User
   const caseId = uuid()
   const appealCaseNumber = uuid()
-  const appealReceivedByCourtDate = randomDate()
+  const appealRulingDecision = uuid()
+  const appealRulingDate = randomDate()
 
   const theCase = {
     id: caseId,
     type: CaseType.CUSTODY,
     appealCaseNumber,
-    appealReceivedByCourtDate,
+    appealRulingDecision,
+    notifications: [
+      { type: NotificationType.APPEAL_COMPLETED, created: appealRulingDate },
+    ],
   } as Case
 
   let mockCourtService: CourtService
@@ -37,15 +45,15 @@ describe('InternalCaseController - Deliver received date to court of appeals', (
       await createTestingCaseModule()
 
     mockCourtService = courtService
-    const mockUpdateAppealCaseWithAppealReceivedDate =
-      mockCourtService.updateAppealCaseWithAppealReceivedDate as jest.Mock
-    mockUpdateAppealCaseWithAppealReceivedDate.mockResolvedValue(uuid())
+    const mockUpdateAppealCaseWithConclusion =
+      mockCourtService.updateAppealCaseWithConclusion as jest.Mock
+    mockUpdateAppealCaseWithConclusion.mockResolvedValue(uuid())
 
     givenWhenThen = async () => {
       const then = {} as Then
 
       await internalCaseController
-        .deliverAppealReceivedDateToCourtOfAppeals(caseId, theCase, {
+        .deliverConclusionToCourtOfAppeals(caseId, theCase, {
           user,
         })
         .then((result) => (then.result = result))
@@ -55,7 +63,7 @@ describe('InternalCaseController - Deliver received date to court of appeals', (
     }
   })
 
-  describe('appeal received date delivered', () => {
+  describe('conclusion delivered', () => {
     let then: Then
 
     beforeEach(async () => {
@@ -64,12 +72,14 @@ describe('InternalCaseController - Deliver received date to court of appeals', (
 
     it('should return success', () => {
       expect(
-        mockCourtService.updateAppealCaseWithAppealReceivedDate,
+        mockCourtService.updateAppealCaseWithConclusion,
       ).toHaveBeenCalledWith(
         user,
         caseId,
         appealCaseNumber,
-        appealReceivedByCourtDate,
+        false,
+        appealRulingDecision,
+        appealRulingDate,
       )
       expect(then.result).toEqual({ delivered: true })
     })
