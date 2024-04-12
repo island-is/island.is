@@ -80,7 +80,9 @@ jobs:
       - name: Calculate cache key for node modules
         id: calculate_node_modules_hash
         run: |
-          echo "node-modules-hash=$(./scripts/ci/get-node-modules-hash.mjs)" >> $GITHUB_OUTPUT
+          HASH="$(./scripts/ci/get-node-modules-hash.mjs)"
+          echo "node-modules-hash: ${HASH}"
+          echo "node-modules-hash=${HASH}" >> $GITHUB_OUTPUT
 
       - name: Calculate cache keys for generated files
         id: calculate_generated_files_cache_key
