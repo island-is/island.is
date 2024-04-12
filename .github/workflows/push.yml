@@ -73,7 +73,7 @@ jobs:
             # Avoid too long resource names
             GIT_BRANCH_DEPLOY=${GIT_BRANCH_DEPLOY:0:50}
           fi
-          echo "NODE_IMAGE_TAG=$(./scripts/ci/get-version.mjs)" >> $GITHUB_OUTPUT
+          echo "NODE_IMAGE_TAG=$(./scripts/ci/get-node-version.mjs)" >> $GITHUB_OUTPUT
           echo "GIT_BRANCH_DEPLOY=${GIT_BRANCH_DEPLOY}" >> $GITHUB_OUTPUT
           echo "GIT_BRANCH_DEPLOY=$GIT_BRANCH_DEPLOY" >> $GITHUB_ENV
           echo "FEATURE_NAME=$(echo $GIT_BRANCH_DEPLOY | cut -d"/" -f2- | tr -cd '[:alnum:]-' | tr '[:upper:]' '[:lower:]' | cut -c1-50)" >> $GITHUB_OUTPUT
@@ -279,11 +279,7 @@ jobs:
       - name: Calculate cache key for node modules
         id: calculate_node_modules_hash
         run: |
-          PACKAGE_JSON_HASH=$(cat package.json | jq '{resolutions,dependencies,devDependencies}' | sha1sum -t | cut -f1 -d" ")
-          echo "PACKAGE_JSON_HASH: $PACKAGE_JSON_HASH"
-          export NODE_MODULES_HASH=${{ runner.os }}-${{ hashFiles('yarn.lock') }}-$PACKAGE_JSON_HASH
-          echo "NODE_MODULES_HASH: $NODE_MODULES_HASH"
-          echo "node-modules-hash=$NODE_MODULES_HASH" >> $GITHUB_OUTPUT
+          echo "node-modules-hash=$(./scripts/ci/get-node-modules-hash.mjs)" >> $GITHUB_OUTPUT
 
       - name: Calculate cache keys for generated files
         id: calculate_generated_files_cache_key
@@ -609,7 +605,6 @@ jobs:
         env:
           NODE_IMAGE_TAG: ${{ needs.pre-checks.outputs.NODE_IMAGE_TAG }}
         run: |
-          NODE_IMAGE_TAG=$(./scripts/ci/get-version.mjs)
           EXTRA_DOCKER_BUILD_ARGS='--build-arg DOCKER_IMAGE_REGISTRY=${{ env.DOCKER_BASE_IMAGE_REGISTRY }} --build-arg GIT_SHA=${{ github.sha }} --build-arg NODE_IMAGE_TAG=$NODE_IMAGE_TAG'
           ./scripts/ci/run-in-parallel.sh 90_$DOCKER_TYPE
 
