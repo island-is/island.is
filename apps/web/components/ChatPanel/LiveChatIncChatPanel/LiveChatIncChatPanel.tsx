@@ -1,5 +1,6 @@
 import { useEffect, useMemo, useState } from 'react'
 import { useQuery } from '@apollo/client'
+import { createWidget, ExtendedWindow } from '@livechat/widget-core'
 
 import { Query, QueryGetNamespaceArgs } from '@island.is/web/graphql/schema'
 import { useNamespace } from '@island.is/web/hooks'
@@ -8,17 +9,17 @@ import { GET_NAMESPACE_QUERY } from '@island.is/web/screens/queries'
 
 import { ChatBubble } from '../ChatBubble'
 import { LiveChatIncChatPanelProps } from '../types'
-import { activateWidget } from './utils'
-import { LiveChatWidget, EventHandlerPayload } from '@livechat/widget-react'
+
+declare const window: ExtendedWindow
 
 export const LiveChatIncChatPanel = ({
   license,
-  version,
   group,
   showLauncher,
   pushUp,
 }: LiveChatIncChatPanelProps) => {
-  const [widget, setWidget] = useState(null)
+  const [loading, setLoading] = useState(false)
+  const [hasButtonBeenClicked, setHasButtonBeenClicked] = useState(false)
   const { activeLocale } = useI18n()
   const { data } = useQuery<Query, QueryGetNamespaceArgs>(GET_NAMESPACE_QUERY, {
     variables: {
@@ -36,8 +37,50 @@ export const LiveChatIncChatPanel = ({
 
   const n = useNamespace(namespace)
 
+  useEffect(() => {
+    if (!hasButtonBeenClicked && !showLauncher) {
+      return () => {
+        // No need for cleanup if we don't initialize widget
+      }
+    }
+
+    const widget = createWidget({
+      license,
+      group,
+    })
+
+    widget.init()
+
+    window.LiveChatWidget.on('ready', () => {
+      setLoading(false)
+    })
+
+    window.LiveChatWidget.call('maximize')
+
+    return () => {
+      widget.destroy()
+    }
+  }, [group, hasButtonBeenClicked, license, showLauncher])
+
+  if (showLauncher) {
+    return null
+  }
+
   return (
-    <LiveChatWidget license={license} group={group} visibility="maximized" />
+    <ChatBubble
+      text={n('chatBubbleText', 'Hæ, get ég aðstoðað?')}
+      isVisible={true}
+      onClick={() => {
+        if (!hasButtonBeenClicked) {
+          setLoading(true)
+          setHasButtonBeenClicked(true)
+        } else if (!loading) {
+          window.LiveChatWidget.call('maximize')
+        }
+      }}
+      pushUp={pushUp}
+      loading={loading}
+    />
   )
 }
 
