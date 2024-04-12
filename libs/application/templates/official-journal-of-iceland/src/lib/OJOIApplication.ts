@@ -157,6 +157,32 @@ const OJOITemplate: ApplicationTemplate<
             {
               id: Roles.APPLICANT,
               read: 'all',
+              formLoader: () =>
+                import('../forms/Submitted').then((val) =>
+                  Promise.resolve(val.Submitted),
+                ),
+            },
+          ],
+        },
+        on: {
+          [DefaultEvents.APPROVE]: {
+            target: ApplicationStates.COMPLETE,
+          },
+          [DefaultEvents.REJECT]: {
+            target: ApplicationStates.DRAFT,
+          },
+        },
+      },
+      [ApplicationStates.COMPLETE]: {
+        meta: {
+          name: general.applicationName.defaultMessage,
+          status: 'completed',
+          progress: 1,
+          lifecycle: pruneAfterDays(90),
+          roles: [
+            {
+              id: Roles.APPLICANT,
+              read: 'all',
               write: 'all',
               delete: true,
               formLoader: () =>
