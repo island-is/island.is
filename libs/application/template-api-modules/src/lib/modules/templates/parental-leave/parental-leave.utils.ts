@@ -34,6 +34,7 @@ import {
   ADOPTION,
   FileType,
   Languages,
+  States,
 } from '@island.is/application/templates/parental-leave'
 import { isRunningOnEnvironment } from '@island.is/shared/utils'
 
@@ -492,23 +493,14 @@ export const isDateInTheFuture = (date: string) => {
   return false
 }
 
-export const isParamsActionName = (params: any) => {
-  typeof params === 'string' &&
-  (params === 'period' ||
-    params === 'document' ||
-    params === 'documentPeriod' ||
-    params === 'empper' ||
-    params === 'employer')
-    ? (params as FileType)
-    : undefined
-  return params
-}
-
 export const checkActionName = (
   application: ApplicationWithAttachments,
-  params: FileType | undefined = undefined,
+  params: any | undefined = undefined,
 ) => {
-  const { actionName } = getApplicationAnswers(application.answers)
+  const { state } = application
+  const { addEmployer, addPeriods, changeEmployer, changePeriods, actionName } =
+    getApplicationAnswers(application.answers)
+
   if (params) {
     params === 'document' ||
       params === 'documentPeriod' ||
@@ -517,6 +509,29 @@ export const checkActionName = (
       params === 'employer'
     return params
   }
+
+  if (state === States.EDIT_OR_ADD_EMPLOYERS_AND_PERIODS) {
+    /* 
+        Check if user has made some changes to the employers and/or periods. 
+        changeEmployer and changePeriods are used for book keeping, to keep track if applicant changes employers or periods multiple times
+        before employers approves.
+    */
+    if (
+      (changeEmployer && changePeriods) ||
+      (addEmployer === YES && addPeriods === YES) ||
+      (changeEmployer && addPeriods === YES) ||
+      (changePeriods && addEmployer === YES)
+    ) {
+      return FileType.EMPPER
+    } else if (changeEmployer || addEmployer === YES) {
+      return FileType.EMPLOYER
+    } else if (changePeriods || addPeriods === YES) {
+      return FileType.PERIOD
+    }
+
+    return undefined
+  }
+
   if (
     actionName === 'document' ||
     actionName === 'documentPeriod' ||

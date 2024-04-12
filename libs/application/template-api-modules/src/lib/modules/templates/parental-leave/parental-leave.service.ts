@@ -1,88 +1,87 @@
 import { Inject, Injectable } from '@nestjs/common'
 import { S3 } from 'aws-sdk'
-import format from 'date-fns/format'
 import addDays from 'date-fns/addDays'
+import format from 'date-fns/format'
 import cloneDeep from 'lodash/cloneDeep'
 
-import type { Attachment, Period } from '@island.is/clients/vmst'
-import {
-  ParentalLeaveApi,
-  ApplicationInformationApi,
-} from '@island.is/clients/vmst'
-import type { Logger } from '@island.is/logging'
-import { LOGGER_PROVIDER } from '@island.is/logging'
 import { getValueViaPath } from '@island.is/application/core'
 import {
-  ApplicationConfigurations,
+  ADOPTION,
+  ChildInformation,
+  NO,
+  OTHER_NO_CHILDREN_FOUND,
+  PARENTAL_GRANT,
+  PARENTAL_GRANT_STUDENTS,
+  PARENTAL_LEAVE,
+  PERMANENT_FOSTER_CARE,
+  ParentalRelations,
+  SINGLE,
+  StartDateOptions,
+  States,
+  UnEmployedBenefitTypes,
+  YES,
+  calculatePeriodLength,
+  getAdditionalSingleParentRightsInDays,
+  getApplicationAnswers,
+  getApplicationExternalData,
+  getAvailablePersonalRightsInDays,
+  getAvailableRightsInDays,
+  getMultipleBirthsDays,
+  getUnApprovedEmployers,
+  isParentWithoutBirthParent,
+} from '@island.is/application/templates/parental-leave'
+import {
   Application,
+  ApplicationConfigurations,
   ApplicationTypes,
   YesOrNo,
 } from '@island.is/application/types'
+import type { Attachment, Period } from '@island.is/clients/vmst'
 import {
-  getApplicationAnswers,
-  getAvailableRightsInDays,
-  getAvailablePersonalRightsInDays,
-  YES,
-  NO,
-  StartDateOptions,
-  UnEmployedBenefitTypes,
-  PARENTAL_LEAVE,
-  PARENTAL_GRANT,
-  PARENTAL_GRANT_STUDENTS,
-  getMultipleBirthsDays,
-  SINGLE,
-  getAdditionalSingleParentRightsInDays,
-  getApplicationExternalData,
-  getUnApprovedEmployers,
-  ParentalRelations,
-  ChildInformation,
-  isParentWithoutBirthParent,
-  calculatePeriodLength,
-  PERMANENT_FOSTER_CARE,
-  OTHER_NO_CHILDREN_FOUND,
-  States,
-  ADOPTION,
-} from '@island.is/application/templates/parental-leave'
+  ApplicationInformationApi,
+  ParentalLeaveApi,
+} from '@island.is/clients/vmst'
+import type { Logger } from '@island.is/logging'
+import { LOGGER_PROVIDER } from '@island.is/logging'
 
-import { SharedTemplateApiService } from '../../shared'
+import { NationalRegistryClientService } from '@island.is/clients/national-registry-v2'
+import { ConfigService } from '@nestjs/config'
 import {
   BaseTemplateAPIModuleConfig,
   TemplateApiModuleActionProps,
 } from '../../../types'
-import {
-  generateAssignOtherParentApplicationEmail,
-  generateAssignEmployerApplicationEmail,
-  generateOtherParentRejected,
-  generateEmployerRejected,
-  generateApplicationApprovedByEmployerEmail,
-  generateApplicationApprovedByEmployerToEmployerEmail,
-} from './emailGenerators'
-import {
-  generateAssignEmployerApplicationSms,
-  generateAssignOtherParentApplicationSms,
-  generateEmployerRejectedApplicationSms,
-  generateOtherParentRejectedApplicationSms,
-} from './smsGenerators'
-import {
-  transformApplicationToParentalLeaveDTO,
-  getRatio,
-  getRightsCode,
-  checkIfPhoneNumberIsGSM,
-  isParamsActionName,
-  checkActionName,
-  getFromDate,
-} from './parental-leave.utils'
+import { BaseTemplateApiService } from '../../base-template-api.service'
+import { SharedTemplateApiService } from '../../shared'
+import { getConfigValue } from '../../shared/shared.utils'
+import { ChildrenService } from './children/children.service'
 import {
   APPLICATION_ATTACHMENT_BUCKET,
   SIX_MONTHS_IN_SECONDS_EXPIRES,
   apiConstants,
   df,
 } from './constants'
-import { ConfigService } from '@nestjs/config'
-import { getConfigValue } from '../../shared/shared.utils'
-import { BaseTemplateApiService } from '../../base-template-api.service'
-import { ChildrenService } from './children/children.service'
-import { NationalRegistryClientService } from '@island.is/clients/national-registry-v2'
+import {
+  generateApplicationApprovedByEmployerEmail,
+  generateApplicationApprovedByEmployerToEmployerEmail,
+  generateAssignEmployerApplicationEmail,
+  generateAssignOtherParentApplicationEmail,
+  generateEmployerRejected,
+  generateOtherParentRejected,
+} from './emailGenerators'
+import {
+  checkActionName,
+  checkIfPhoneNumberIsGSM,
+  getFromDate,
+  getRatio,
+  getRightsCode,
+  transformApplicationToParentalLeaveDTO,
+} from './parental-leave.utils'
+import {
+  generateAssignEmployerApplicationSms,
+  generateAssignOtherParentApplicationSms,
+  generateEmployerRejectedApplicationSms,
+  generateOtherParentRejectedApplicationSms,
+} from './smsGenerators'
 
 interface VMSTError {
   type: string
@@ -1399,8 +1398,6 @@ export class ParentalLeaveService extends BaseTemplateApiService {
     const attachments = await this.getAttachments(application)
 
     try {
-      const actionNameFromParams = isParamsActionName(params)
-
       const periods = await this.createPeriodsDTO(
         application,
         nationalRegistryId,
@@ -1411,7 +1408,7 @@ export class ParentalLeaveService extends BaseTemplateApiService {
         periods,
         attachments,
         false, // put false in testData as this is not dummy request
-        checkActionName(application, actionNameFromParams),
+        checkActionName(application, params),
       )
 
       const response =
@@ -1497,7 +1494,6 @@ export class ParentalLeaveService extends BaseTemplateApiService {
     }
     const attachments = await this.getAttachments(application)
     try {
-      const actionNameFromParams = isParamsActionName(params)
       const periods = await this.createPeriodsDTO(
         application,
         nationalRegistryId,
@@ -1508,7 +1504,7 @@ export class ParentalLeaveService extends BaseTemplateApiService {
         periods,
         attachments,
         true,
-        checkActionName(application, actionNameFromParams),
+        checkActionName(application, params),
       )
 
       // call SetParentalLeave API with testData: TRUE as this is a dummy request
