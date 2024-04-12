@@ -1,5 +1,6 @@
 import React from 'react'
 
+import { SliceType } from '@island.is/island-ui/contentful'
 import {
   Box,
   Button,
@@ -14,6 +15,7 @@ import { Article, FeaturedArticles } from '@island.is/web/graphql/schema'
 import { useNamespace } from '@island.is/web/hooks'
 import { LinkType, useLinkResolver } from '@island.is/web/hooks/useLinkResolver'
 import { hasProcessEntries } from '@island.is/web/utils/article'
+import { webRichText } from '@island.is/web/utils/richText'
 
 interface SliceProps {
   slice: FeaturedArticles
@@ -52,6 +54,11 @@ export const FeaturedArticlesSlice: React.FC<
           <Text as="h2" variant="h3" paddingBottom={3} id={labelId}>
             {slice.title}
           </Text>
+          {slice.introText && slice.introText.length > 0 && (
+            <Box paddingBottom={4}>
+              {webRichText((slice.introText ?? []) as SliceType[])}
+            </Box>
+          )}
           <Stack space={2}>
             {(slice.automaticallyFetchArticles
               ? sortedArticles
