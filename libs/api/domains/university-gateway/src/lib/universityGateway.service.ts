@@ -75,8 +75,8 @@ export class UniversityGatewayApi {
         modeOfDelivery: item.modeOfDelivery.map((m) =>
           m.modeOfDelivery.toString(),
         ),
-        applicationPeriodOpen: false,
-        applicationInUniversityGateway: false,
+        applicationPeriodOpen: item.applicationPeriodOpen,
+        applicationInUniversityGateway: item.applicationInUniversityGateway,
       })),
     }
   }
