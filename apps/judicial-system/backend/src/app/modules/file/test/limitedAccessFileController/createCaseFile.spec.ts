@@ -7,6 +7,7 @@ import {
   indictmentCases,
   investigationCases,
   restrictionCases,
+  User,
 } from '@island.is/judicial-system/types'
 
 import { createTestingFileModule } from '../createTestingFileModule'
@@ -45,7 +46,7 @@ describe('limitedAccessFileController - Create case file', () => {
       const then = {} as Then
 
       await limitedAccessFileController
-        .createCaseFile(caseId, theCase, createCaseFile)
+        .createCaseFile(caseId, { id: uuid() } as User, theCase, createCaseFile)
         .then((result) => (then.result = result))
         .catch((error) => (then.error = error))
 
