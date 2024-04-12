@@ -8,7 +8,6 @@ import {
   CaseAppealRulingDecision,
   CaseCustodyRestrictions,
   CaseType,
-  DateType,
   Gender,
   IndictmentSubtype,
   IndictmentSubtypeMap,

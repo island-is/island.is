@@ -5,12 +5,14 @@ export enum DateType {
 export const getLatestDateTypeByCaseId = (
   dateType: DateType,
   caseId: string,
-  dates?: {
-    created?: string
-    caseId?: string
-    dateType?: DateType
-    date?: string
-  }[],
+  dates?:
+    | {
+        created?: string | null
+        caseId?: string | null
+        dateType?: DateType | null
+        date?: string | null
+      }[]
+    | null,
 ) => {
   const typeDates = dates?.filter(
     (date) => date.dateType === dateType && date.caseId === caseId,

@@ -1,13 +1,5 @@
 import { Inject, UseGuards, UseInterceptors } from '@nestjs/common'
-import {
-  Args,
-  Context,
-  Mutation,
-  Parent,
-  Query,
-  ResolveField,
-  Resolver,
-} from '@nestjs/graphql'
+import { Args, Context, Mutation, Query, Resolver } from '@nestjs/graphql'
 
 import type { Logger } from '@island.is/logging'
 import { LOGGER_PROVIDER } from '@island.is/logging'

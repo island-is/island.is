@@ -2,8 +2,10 @@ import React from 'react'
 import { useIntl } from 'react-intl'
 
 import { Box, Text, Tooltip } from '@island.is/island-ui/core'
+import { getLatestDateTypeByCaseId } from '@island.is/judicial-system/types'
 import { requestCourtDate as m } from '@island.is/judicial-system-web/messages'
 import { DateTime } from '@island.is/judicial-system-web/src/components'
+import { DateType } from '@island.is/judicial-system-web/src/graphql/schema'
 import { TempCase as Case } from '@island.is/judicial-system-web/src/types'
 
 interface Props {
@@ -14,6 +16,11 @@ interface Props {
 const RequestCourtDate: React.FC<React.PropsWithChildren<Props>> = (props) => {
   const { workingCase, onChange } = props
   const { formatMessage } = useIntl()
+  const courtDate = getLatestDateTypeByCaseId(
+    DateType.COURT_DATE,
+    workingCase.id,
+    workingCase.dateLogs,
+  )
 
   return (
     <>
@@ -30,11 +37,11 @@ const RequestCourtDate: React.FC<React.PropsWithChildren<Props>> = (props) => {
         selectedDate={workingCase.requestedCourtDate}
         onChange={onChange}
         timeLabel={formatMessage(m.dateInput.timeLabel)}
-        locked={Boolean(workingCase.courtDate)}
+        locked={Boolean(courtDate?.date)}
         minDate={new Date()}
         required
       />
-      {workingCase.courtDate && (
+      {courtDate && (
         <Box marginTop={1}>
           <Text variant="eyebrow">{formatMessage(m.courtDate)}</Text>
         </Box>

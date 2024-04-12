@@ -12,7 +12,10 @@ import {
 } from '@island.is/island-ui/core'
 import * as constants from '@island.is/judicial-system/consts'
 import { formatDate } from '@island.is/judicial-system/formatters'
-import { isAcceptingCaseDecision } from '@island.is/judicial-system/types'
+import {
+  getLatestDateTypeByCaseId,
+  isAcceptingCaseDecision,
+} from '@island.is/judicial-system/types'
 import { core, ruling, titles } from '@island.is/judicial-system-web/messages'
 import {
   CaseFileList,
@@ -27,7 +30,10 @@ import {
   PoliceRequestAccordionItem,
   RulingInput,
 } from '@island.is/judicial-system-web/src/components'
-import { CaseDecision } from '@island.is/judicial-system-web/src/graphql/schema'
+import {
+  CaseDecision,
+  DateType,
+} from '@island.is/judicial-system-web/src/graphql/schema'
 import {
   removeTabsValidateAndSet,
   validateAndSendToServer,
@@ -65,11 +71,17 @@ const Ruling = () => {
   ])
 
   const initialize = useCallback(() => {
+    const courtDate = getLatestDateTypeByCaseId(
+      DateType.COURT_DATE,
+      workingCase.id,
+      workingCase.dateLogs,
+    )
+
     setAndSendCaseToServer(
       [
         {
           introduction: formatMessage(m.sections.introduction.autofill, {
-            date: formatDate(workingCase.courtDate, 'PPP'),
+            date: formatDate(courtDate?.date, 'PPP'),
           }),
           prosecutorDemands: workingCase.demands,
           courtCaseFacts: formatMessage(

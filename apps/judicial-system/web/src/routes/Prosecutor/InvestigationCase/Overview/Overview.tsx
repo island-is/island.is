@@ -16,6 +16,7 @@ import {
   formatCaseType,
   formatDate,
 } from '@island.is/judicial-system/formatters'
+import { getLatestDateTypeByCaseId } from '@island.is/judicial-system/types'
 import {
   core,
   errors,
@@ -45,6 +46,7 @@ import InfoCardCaseScheduled from '@island.is/judicial-system-web/src/components
 import {
   CaseState,
   CaseTransition,
+  DateType,
   NotificationType,
 } from '@island.is/judicial-system-web/src/graphql/schema'
 import { useCase } from '@island.is/judicial-system-web/src/utils/hooks'
@@ -113,6 +115,12 @@ export const Overview: React.FC<React.PropsWithChildren<unknown>> = () => {
   const caseFiles =
     workingCase.caseFiles?.filter((file) => !file.category) ?? []
 
+  const courtDate = getLatestDateTypeByCaseId(
+    DateType.COURT_DATE,
+    workingCase.id,
+    workingCase.dateLogs,
+  )
+
   return (
     <PageLayout
       workingCase={workingCase}
@@ -154,12 +162,13 @@ export const Overview: React.FC<React.PropsWithChildren<unknown>> = () => {
         </Box>
         <ProsecutorCaseInfo workingCase={workingCase} />
         {workingCase.state === CaseState.RECEIVED &&
-          workingCase.courtDate &&
+          courtDate &&
+          courtDate.date &&
           workingCase.court && (
             <Box component="section" marginBottom={5}>
               <InfoCardCaseScheduled
                 court={workingCase.court}
-                courtDate={workingCase.courtDate}
+                courtDate={courtDate?.date}
                 courtRoom={workingCase.courtRoom}
               />
             </Box>
@@ -232,14 +241,14 @@ export const Overview: React.FC<React.PropsWithChildren<unknown>> = () => {
                 title: formatMessage(core.caseType),
                 value: capitalize(formatCaseType(workingCase.type)),
               },
-              ...(workingCase.courtDate
+              ...(courtDate
                 ? [
                     {
                       title: formatMessage(core.confirmedCourtDate),
                       value: `${capitalize(
-                        formatDate(workingCase.courtDate, 'PPPP', true) ?? '',
+                        formatDate(courtDate?.date, 'PPPP', true) ?? '',
                       )} kl. ${formatDate(
-                        workingCase.courtDate,
+                        courtDate?.date,
                         constants.TIME_FORMAT,
                       )}`,
                     },

@@ -2,11 +2,15 @@ import React, { useEffect, useState } from 'react'
 import compareAsc from 'date-fns/compareAsc'
 
 import { Box, Input } from '@island.is/island-ui/core'
+import { getLatestDateTypeByCaseId } from '@island.is/judicial-system/types'
 import {
   BlueBox,
   DateTime,
 } from '@island.is/judicial-system-web/src/components'
-import { NotificationType } from '@island.is/judicial-system-web/src/graphql/schema'
+import {
+  DateType,
+  NotificationType,
+} from '@island.is/judicial-system-web/src/graphql/schema'
 import { TempCase as Case } from '@island.is/judicial-system-web/src/types'
 import {
   removeTabsValidateAndSet,
@@ -28,18 +32,24 @@ interface Props {
 export const useCourtArrangements = (workingCase: Case) => {
   const [courtDate, setCourtDate] = useState<string | null>()
   const [courtDateHasChanged, setCourtDateHasChanged] = useState(false)
+  const latestCourtDate = getLatestDateTypeByCaseId(
+    DateType.COURT_DATE,
+    workingCase.id,
+    workingCase.dateLogs,
+  )
 
   useEffect(() => {
-    if (workingCase.courtDate) {
-      setCourtDate(workingCase.courtDate)
+    if (latestCourtDate) {
+      setCourtDate(latestCourtDate.date)
     }
-  }, [workingCase.courtDate])
+  }, [latestCourtDate, workingCase.dateLogs, workingCase.id])
 
   const handleCourtDateChange = (date: Date | undefined, valid: boolean) => {
     if (date && valid) {
       if (
-        workingCase.courtDate &&
-        compareAsc(date, new Date(workingCase.courtDate)) !== 0 &&
+        latestCourtDate &&
+        latestCourtDate.date &&
+        compareAsc(date, new Date(latestCourtDate.date)) !== 0 &&
         hasSentNotification(
           NotificationType.COURT_DATE,
           workingCase.notifications,
