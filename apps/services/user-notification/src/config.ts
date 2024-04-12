@@ -21,7 +21,7 @@ export const UserNotificationsConfig = defineConfig({
         'is.island.app.dev',
       ),
       isWorker: processJob() === 'worker',
-      firebaseCredentials: env.required('FIREBASE_CREDENTIALS'),
+      firebaseCredentials: env.required('FIREBASE_CREDENTIALS', ''),
       servicePortalClickActionUrl:
         env.optional('SERVICE_PORTAL_CLICK_ACTION_URL') ??
         'https://island.is/minarsidur',
