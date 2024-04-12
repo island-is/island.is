@@ -4,7 +4,7 @@ FROM $DOCKER_IMAGE_REGISTRY/docker/library/node:$NODE_IMAGE_TAG as runner
 
 RUN apk add postgresql-client bash
 
-FROM $DOCKER_IMAGE_REGISTRY/docker/library/node:$NODE_IMAGE_TAG as build
+FROM ${DOCKER_IMAGE_REGISTRY}/docker/library/node:${NODE_IMAGE_TAG} as build
 
 ENV NODE_OPTIONS=--openssl-legacy-provider
 
