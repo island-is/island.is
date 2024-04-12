@@ -13,7 +13,7 @@ export const liveChatIncConfig: Record<
   is: {
     // Vinnueftirlitið - Organization
     '39S5VumPfb1hXBJm3SnE02': {
-      license: 13346703,
+      license: '13346703',
       version: '2.0',
       showLauncher: false,
     },
@@ -21,7 +21,7 @@ export const liveChatIncConfig: Record<
   en: {
     // Vinnueftirlitið - Organization
     '39S5VumPfb1hXBJm3SnE02': {
-      license: 13346703,
+      license: '13346703',
       version: '2.0',
       showLauncher: false,
     },

@@ -6,9 +6,9 @@ export interface BoostChatPanelProps {
 }
 
 export interface LiveChatIncChatPanelProps {
-  license: number
+  license: string
   version: string
-  group?: number
+  group?: string
   // Whether the default LiveChatInc launcher is shown
   showLauncher?: boolean
   pushUp?: boolean
