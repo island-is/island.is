@@ -917,7 +917,6 @@ export class CaseService {
       theCase.caseFiles
         ?.filter(
           (caseFile) =>
-            caseFile.state === CaseFileState.STORED_IN_RVG &&
             caseFile.key &&
             caseFile.category &&
             [
