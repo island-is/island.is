@@ -608,16 +608,20 @@ jobs:
         if: steps.gather.outcome == 'success'
         env:
           NODE_IMAGE_TAG: ${{ needs.prepare.outputs.NODE_IMAGE_TAG }}
+          SHA: ${{ github.sha }}
+          DOCKER_BASE_IMAGE_REGISTRY: ${{ env.DOCKER_BASE_IMAGE_REGISTRY }}
         run: |
-          EXTRA_DOCKER_BUILD_ARGS="--build-arg DOCKER_IMAGE_REGISTRY=${{ env.DOCKER_BASE_IMAGE_REGISTRY }} --build-arg GIT_SHA=${{ github.sha }} --build-arg NODE_IMAGE_TAG=$NODE_IMAGE_TAG"
+          EXTRA_DOCKER_BUILD_ARGS="--build-arg DOCKER_IMAGE_REGISTRY=$DOCKER_BASE_IMAGE_REGISTRY --build-arg GIT_SHA=$SHA --build-arg NODE_IMAGE_TAG=$NODE_IMAGE_TAG"
           ./scripts/ci/run-in-parallel.sh 90_$DOCKER_TYPE
 
-      - name: Building Docker images Retry #This only exists until GHA starts supporting this
+      - name: Building Docker images Retry
         if: steps.gather.outcome == 'success' && steps.dockerbuild.outcome == 'failure'
         env:
           NODE_IMAGE_TAG: ${{ needs.prepare.outputs.NODE_IMAGE_TAG }}
+          SHA: ${{ github.sha }}
+          DOCKER_BASE_IMAGE_REGISTRY: ${{ env.DOCKER_BASE_IMAGE_REGISTRY }}
         run: |
-          EXTRA_DOCKER_BUILD_ARGS="--build-arg DOCKER_IMAGE_REGISTRY=${{ env.DOCKER_BASE_IMAGE_REGISTRY }} --build-arg GIT_SHA=${{ github.sha }} --build-arg NODE_IMAGE_TAG=$NODE_IMAGE_TAG"
+          EXTRA_DOCKER_BUILD_ARGS="--build-arg DOCKER_IMAGE_REGISTRY=$DOCKER_BASE_IMAGE_REGISTRY --build-arg GIT_SHA=$SHA --build-arg NODE_IMAGE_TAG=$NODE_IMAGE_TAG"
           ./scripts/ci/run-in-parallel.sh 90_$DOCKER_TYPE
 
   helm-docker-build:
@@ -652,13 +656,14 @@ jobs:
       - name: Docker build image
         working-directory: infra
         run: |
+          EXTRA_DOCKER_BUILD_ARGS="--build-arg DOCKER_IMAGE_REGISTRY=$DOCKER_BASE_IMAGE_REGISTRY --build-arg NODE_IMAGE_TAG=$NODE_IMAGE_TAG"
           ./scripts/build-docker-container.sh $DOCKER_TAG
-          EXTRA_DOCKER_BUILD_ARGS="--build-arg DOCKER_IMAGE_REGISTRY=${{ env.DOCKER_BASE_IMAGE_REGISTRY }} --build-arg NODE_IMAGE_TAG=$NODE_IMAGE_TAG"
           echo "COMMENT<<EOF" >> $GITHUB_ENV
           echo "Affected services are: ${{needs.prepare.outputs.IMAGES}}" >> $GITHUB_ENV
           docker run --rm ${DOCKER_REGISTRY}helm-config:$DOCKER_TAG ingress-comment --images=${{needs.prepare.outputs.IMAGES}} --chart=islandis --feature=$FEATURE_NAME >> $GITHUB_ENV
           echo 'EOF' >> $GITHUB_ENV
         env:
+          DOCKER_BASE_IMAGE_REGISTRY: ${{ env.DOCKER_BASE_IMAGE_REGISTRY }}
           NODE_IMAGE_TAG: ${{ needs.prepare.outputs.NODE_IMAGE_TAG }}
           PUBLISH: 'true'
 
