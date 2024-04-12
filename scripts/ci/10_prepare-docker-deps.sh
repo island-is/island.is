@@ -15,7 +15,7 @@ docker buildx create --driver docker-container --use || true
 docker buildx build \
   --platform=linux/amd64 \
   --cache-to=type=local,dest="$PROJECT_ROOT"/cache \
-  --build-arg NODE_IMAGE_TAG=$NODE_IMAGE_TAG \
+  --build-arg NODE_IMAGE_TAG="$NODE_IMAGE_TAG" \
   -f "${DIR}"/Dockerfile \
   --target=deps \
   "$PROJECT_ROOT"
