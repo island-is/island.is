@@ -343,15 +343,12 @@ export const EditOrAddEmployersAndPeriods: Form = buildForm({
         }),
         buildSubSection({
           id: 'reviewUpload',
-          title:
-            parentalLeaveFormMessages.fileUpload
-            .additionalAttachmentTitle,
+          title: parentalLeaveFormMessages.fileUpload.additionalAttachmentTitle,
           children: [
             buildMultiField({
               id: 'changeEmployerScreen',
               title:
-                parentalLeaveFormMessages.fileUpload
-                  .additionalAttachmentTitle,
+                parentalLeaveFormMessages.fileUpload.additionalAttachmentTitle,
               description:
                 parentalLeaveFormMessages.fileUpload
                   .additionalAttachmentDescription,

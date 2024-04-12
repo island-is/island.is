@@ -1,12 +1,10 @@
-import {
-  Application
-} from '@island.is/application/types'
+import { Application } from '@island.is/application/types'
 import { Box, TopicCard } from '@island.is/island-ui/core'
 import { useLocale } from '@island.is/localization'
 import { FC } from 'react'
 import { getApplicationAnswers } from '../../../lib/parentalLeaveUtils'
 import { Label, ReviewGroup } from '@island.is/application/ui-components'
-import { AttachmentLabel, AttachmentTypes, } from '../../../constants'
+import { AttachmentLabel, AttachmentTypes } from '../../../constants'
 import { Files, Attachments } from '../../../types'
 
 interface ReviewScreenProps {
@@ -18,9 +16,7 @@ const Attachment: FC<React.PropsWithChildren<ReviewScreenProps>> = ({
   application,
 }) => {
   const { formatMessage } = useLocale()
-  const {
-    changeEmployer
-  } = getApplicationAnswers(application.answers)
+  const { changeEmployer } = getApplicationAnswers(application.answers)
 
   const attachments: Attachments[] = []
 
@@ -34,15 +30,12 @@ const Attachment: FC<React.PropsWithChildren<ReviewScreenProps>> = ({
         label: AttachmentLabel[attachmentType],
       })
     }
-  }    
-  
-  if (changeEmployer?.length > 0) {
-    getAttachmentDetails(
-      changeEmployer,
-      AttachmentTypes.CHANGE_EMPLOYER,
-    )
   }
-  
+
+  if (changeEmployer?.length > 0) {
+    getAttachmentDetails(changeEmployer, AttachmentTypes.CHANGE_EMPLOYER)
+  }
+
   return (
     attachments.length > 0 && (
       <ReviewGroup isLast>
@@ -71,4 +64,3 @@ const Attachment: FC<React.PropsWithChildren<ReviewScreenProps>> = ({
 }
 
 export default Attachment
-
