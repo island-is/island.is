@@ -70,6 +70,7 @@ export class NotificationsService {
             'content-type': 'application/json',
             authorization: `Bearer ${ACCESS_TOKEN}`,
           },
+          
         },
       )
       return response.data
@@ -125,39 +126,39 @@ export class NotificationsService {
         template = await this.getTemplate(templateId, locale)
       }
 
-      // // check for organization argument to fetch translated organization title
-      // const organizationArg = notification.args.find(
-      //   (arg) => arg.key === 'organization',
-      // )
-      // console.log(notification.senderId,"organizationArg",organizationArg)
+      // check for organization argument to fetch translated organization title
+      const organizationArg = notification.args.find(
+        (arg) => arg.key === 'organization',
+      )
+      console.log(notification.senderId,"organizationArg",organizationArg)
 
 
       // if senderId is set and args contains organization, fetch organizationtitle from senderId
-      // if (notification.senderId && organizationArg) {
-      //   try {
-      //     const senderTitle = await this.getSenderTitle(
-      //       notification.senderId,
-      //       locale,
-      //     )
-      //     notification.messageId = senderTitle
+      if (notification.senderId && organizationArg) {
+        try {
+          const senderTitle = await this.getSenderTitle(
+            notification.senderId,
+            locale,
+          )
+          notification.messageId = senderTitle
           
-      //     if (senderTitle) {
-      //       console.log(notification.senderId,'found a org title ', notification.senderId, senderTitle)
-      //       organizationArg.value = senderTitle
-      //       console.log(notification.senderId,"organizationArg.value",organizationArg.value) 
-      //     } else {
-      //       this.logger.warn('title not found ', {
-      //         senderId: notification.senderId,
-      //         locale: locale,
-      //       })
-      //     }
-      //   } catch (error) {
-      //     this.logger.error('error trying to get org title', {
-      //       senderId: notification.senderId,
-      //       locale: locale,
-      //     })
-      //   }
-      // }
+          if (senderTitle) {
+            console.log(notification.senderId,'found a org title ', notification.senderId, senderTitle)
+            organizationArg.value = senderTitle
+            console.log(notification.senderId,"organizationArg.value",organizationArg.value) 
+          } else {
+            this.logger.warn('title not found ', {
+              senderId: notification.senderId,
+              locale: locale,
+            })
+          }
+        } catch (error) {
+          this.logger.error('error trying to get org title', {
+            senderId: notification.senderId,
+            locale: locale,
+          })
+        }
+      }
 
       // Format the template with arguments from the notification
       const formattedTemplate = this.formatArguments(
@@ -324,33 +325,59 @@ export class NotificationsService {
     }
   }
 
+  // formatArguments(args: ArgumentDto[], template: HnippTemplate): HnippTemplate {
+  //   if (args.length > 0) {
+  //     Object.keys(template).forEach((key) => {
+  //       const templateKey = key as keyof HnippTemplate
+
+  //       if (
+  //         ALLOWED_REPLACE_PROPS.includes(templateKey) &&
+  //         templateKey !== 'args'
+  //       ) {
+  //         const value = template[templateKey] as string
+
+  //         if (value && ARG_REPLACE_REGEX.test(value)) {
+  //           for (const arg of args) {
+  //             const regexTarget = new RegExp(`{{${arg.key}}}`, 'g')
+  //             const newValue = value.replace(regexTarget, arg.value)
+  //             if (newValue !== value) {
+  //               // finds {{key}} in string and replace with value
+  //               template[templateKey] = value.replace(regexTarget, arg.value)
+  //               break
+  //             }
+  //           }
+  //         }
+  //       }
+  //     })
+  //   }
+
+  //   return template
+  // }
+
+  // EXPLORE THIS APPROACH TO WATCH OUT FOR EDITING ORIGINALS VS CLONES
+  // test = {haha: ""}
+
+  // tetter () {
+  //   return Object.entries(this.test).reduce((acc, [key, value]) => {
+  //     acc[key] = value.replace(/{{key}}/g, 'value')
+  //   }, {})
+  // }
+
   formatArguments(args: ArgumentDto[], template: HnippTemplate): HnippTemplate {
-    if (args.length > 0) {
-      Object.keys(template).forEach((key) => {
-        const templateKey = key as keyof HnippTemplate
-
-        if (
-          ALLOWED_REPLACE_PROPS.includes(templateKey) &&
-          templateKey !== 'args'
-        ) {
-          const value = template[templateKey] as string
-
-          if (value && ARG_REPLACE_REGEX.test(value)) {
-            for (const arg of args) {
-              const regexTarget = new RegExp(`{{${arg.key}}}`, 'g')
-              const newValue = value.replace(regexTarget, arg.value)
-              if (newValue !== value) {
-                // finds {{key}} in string and replace with value
-                template[templateKey] = value.replace(regexTarget, arg.value)
-                break
-              }
-            }
-          }
+    // Deep clone the template to avoid modifying the original
+    let formattedTemplate = JSON.parse(JSON.stringify(template));
+  
+    args.forEach(arg => {
+      Object.keys(formattedTemplate).forEach(key => {
+        const templateKey = key as keyof HnippTemplate;
+  
+        if (ALLOWED_REPLACE_PROPS.includes(templateKey) && typeof formattedTemplate[templateKey] === 'string') {
+          formattedTemplate[templateKey] = formattedTemplate[templateKey].replace(new RegExp(`{{${arg.key}}}`, 'g'), arg.value);
         }
-      })
-    }
-
-    return template
+      });
+    });
+  
+    return formattedTemplate;
   }
 
   async findOne(
