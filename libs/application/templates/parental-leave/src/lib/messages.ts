@@ -910,6 +910,11 @@ export const parentalLeaveFormMessages = {
       defaultMessage: 'Engar breytingar fundust.',
       description: 'No changes were found.',
     },
+    additionalInformationSection: {
+      id: 'pl.application:additional.information.section',
+      defaultMessage: 'Viðbótarupplýsingar',
+      description: 'Additional Information',
+    },
   }),
 
   selectChild: defineMessages({
