@@ -6,7 +6,6 @@ import {
   Get,
   Patch,
   Post,
-  Query,
   UseGuards,
 } from '@nestjs/common'
 
@@ -49,24 +48,16 @@ export class MeUserProfileController {
   @Documentation({
     description: 'Get user profile for the current user.',
     response: { status: 200, type: UserProfileDto },
-    request: {
-      query: {
-        clientType: {
-          required: false,
-          description: 'Client type',
-          enum: ClientType,
-        },
-      },
-    },
   })
   @Audit<UserProfileDto>({
     resources: (profile) => profile.nationalId,
   })
-  async findUserProfile(
-    @CurrentUser() user: User,
-    @Query('clientType') clientType: ClientType = ClientType.THIRD_PARTY,
-  ): Promise<UserProfileDto> {
-    return this.userProfileService.findById(user.nationalId, false, clientType)
+  async findUserProfile(@CurrentUser() user: User): Promise<UserProfileDto> {
+    return this.userProfileService.findById(
+      user.nationalId,
+      false,
+      ClientType.FIRST_PARTY,
+    )
   }
 
   @Patch()

@@ -4,7 +4,6 @@ import { ApolloError } from 'apollo-server-express'
 
 import {
   ConfirmationDtoResponse,
-  MeUserProfileControllerFindUserProfileClientTypeEnum,
   V2MeApi,
 } from '@island.is/clients/user-profile'
 import { Auth, AuthMiddleware, User } from '@island.is/auth-nest-tools'
@@ -82,10 +81,7 @@ export class UserProfileServiceV2 {
 
   async getUserProfile(user: User): Promise<UserProfile> {
     const userProfile = await this.v2UserProfileApiWithAuth(user)
-      .meUserProfileControllerFindUserProfile({
-        clientType:
-          MeUserProfileControllerFindUserProfileClientTypeEnum.FirstParty,
-      })
+      .meUserProfileControllerFindUserProfile()
       .catch((e) => handleError(e, `getUserProfileV2 error`))
 
     const bankInfo = await this.getBankInfo(user)

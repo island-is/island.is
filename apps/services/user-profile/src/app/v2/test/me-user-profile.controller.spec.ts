@@ -109,37 +109,6 @@ describe('MeUserProfileController', () => {
       })
     })
 
-    it('should return 200 with userprofile, but email and phone number should be null since ClientType is thirdParty', async () => {
-      // Arrange
-      await fixtureFactory.createUserProfile({
-        nationalId: testUserProfile.nationalId,
-        email: testUserProfile.email,
-        emailVerified: true,
-        mobilePhoneNumber: testUserProfile.mobilePhoneNumber,
-        mobilePhoneNumberVerified: true,
-        lastNudge: subMonths(MIGRATION_DATE, 1),
-        nextNudge: subMonths(new Date(), 1),
-      })
-      // Act
-      const res = await server.get(
-        `/v2/me?clientType=${ClientType.THIRD_PARTY}`,
-      )
-
-      // Assert
-      expect(res.status).toEqual(200)
-      expect(res.body).toMatchObject({
-        nationalId: testUserProfile.nationalId,
-        email: null,
-        emailVerified: false,
-        mobilePhoneNumber: null,
-        mobilePhoneNumberVerified: false,
-        locale: null,
-        documentNotifications: true,
-        needsNudge: true,
-        isRestricted: true,
-      })
-    })
-
     it('should return 200 with userprofile and no restrictions since lastNudge is newer then MIGRATION_DATE', async () => {
       // Arrange
       await fixtureFactory.createUserProfile({
@@ -152,9 +121,7 @@ describe('MeUserProfileController', () => {
         nextNudge: subMonths(new Date(), 1),
       })
       // Act
-      const res = await server.get(
-        `/v2/me?clientType=${ClientType.THIRD_PARTY}`,
-      )
+      const res = await server.get(`/v2/me`)
 
       // Assert
       expect(res.status).toEqual(200)
@@ -183,9 +150,7 @@ describe('MeUserProfileController', () => {
         nextNudge: subMonths(new Date(), 1),
       })
       // Act
-      const res = await server.get(
-        `/v2/me?clientType=${ClientType.FIRST_PARTY}`,
-      )
+      const res = await server.get(`/v2/me`)
 
       // Assert
       expect(res.status).toEqual(200)
