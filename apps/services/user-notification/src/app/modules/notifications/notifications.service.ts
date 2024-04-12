@@ -125,39 +125,39 @@ export class NotificationsService {
         template = await this.getTemplate(templateId, locale)
       }
 
-      // check for organization argument to fetch translated organization title
-      const organizationArg = notification.args.find(
-        (arg) => arg.key === 'organization',
-      )
-      console.log(notification.senderId,"organizationArg",organizationArg)
+      // // check for organization argument to fetch translated organization title
+      // const organizationArg = notification.args.find(
+      //   (arg) => arg.key === 'organization',
+      // )
+      // console.log(notification.senderId,"organizationArg",organizationArg)
 
 
       // if senderId is set and args contains organization, fetch organizationtitle from senderId
-      if (notification.senderId && organizationArg) {
-        try {
-          const senderTitle = await this.getSenderTitle(
-            notification.senderId,
-            locale,
-          )
-          notification.messageId = senderTitle
+      // if (notification.senderId && organizationArg) {
+      //   try {
+      //     const senderTitle = await this.getSenderTitle(
+      //       notification.senderId,
+      //       locale,
+      //     )
+      //     notification.messageId = senderTitle
           
-          if (senderTitle) {
-            console.log(notification.senderId,'found a org title ', notification.senderId, senderTitle)
-            organizationArg.value = senderTitle
-            console.log(notification.senderId,"organizationArg.value",organizationArg.value) 
-          } else {
-            this.logger.warn('title not found ', {
-              senderId: notification.senderId,
-              locale: locale,
-            })
-          }
-        } catch (error) {
-          this.logger.error('error trying to get org title', {
-            senderId: notification.senderId,
-            locale: locale,
-          })
-        }
-      }
+      //     if (senderTitle) {
+      //       console.log(notification.senderId,'found a org title ', notification.senderId, senderTitle)
+      //       organizationArg.value = senderTitle
+      //       console.log(notification.senderId,"organizationArg.value",organizationArg.value) 
+      //     } else {
+      //       this.logger.warn('title not found ', {
+      //         senderId: notification.senderId,
+      //         locale: locale,
+      //       })
+      //     }
+      //   } catch (error) {
+      //     this.logger.error('error trying to get org title', {
+      //       senderId: notification.senderId,
+      //       locale: locale,
+      //     })
+      //   }
+      // }
 
       // Format the template with arguments from the notification
       const formattedTemplate = this.formatArguments(
