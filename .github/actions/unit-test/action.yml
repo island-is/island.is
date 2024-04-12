@@ -36,9 +36,9 @@ runs:
       run: npm install -g yarn
       shell: bash
 
-    - uses: actions/setup-node@v2
+    - uses: actions/setup-node@v4
       with:
-        node-version: '18'
+        node-version-file: "package.json"
 
     - name: Setup yarn
       run: npm install -g yarn

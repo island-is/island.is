@@ -48,6 +48,7 @@ jobs:
       CREATE_PATTERNS: ^release/
       PRE_RELEASE_PATTERN: ^pre-release/
     outputs:
+      NODE_IMAGE_TAG: ${{ steps.git-branch.outputs.NODE_IMAGE_TAG }}
       GIT_BRANCH: ${{ steps.git-branch.outputs.GIT_BRANCH }}
       GIT_BRANCH_DEPLOY: ${{ steps.git-branch-deploy.outputs.GIT_BRANCH_DEPLOY }}
       FEATURE_NAME: ${{ steps.git-branch-deploy.outputs.FEATURE_NAME }}
@@ -72,6 +73,7 @@ jobs:
             # Avoid too long resource names
             GIT_BRANCH_DEPLOY=${GIT_BRANCH_DEPLOY:0:50}
           fi
+          echo "NODE_IMAGE_TAG=$(./scripts/ci/get-version.mjs)" >> $GITHUB_OUTPUT
           echo "GIT_BRANCH_DEPLOY=${GIT_BRANCH_DEPLOY}" >> $GITHUB_OUTPUT
           echo "GIT_BRANCH_DEPLOY=$GIT_BRANCH_DEPLOY" >> $GITHUB_ENV
           echo "FEATURE_NAME=$(echo $GIT_BRANCH_DEPLOY | cut -d"/" -f2- | tr -cd '[:alnum:]-' | tr '[:upper:]' '[:lower:]' | cut -c1-50)" >> $GITHUB_OUTPUT
@@ -168,9 +170,9 @@ jobs:
       - uses: actions/checkout@v3
         with:
           fetch-depth: 0
-      - uses: actions/setup-node@v3
+      - uses: actions/setup-node@v4
         with:
-          node-version: '18.8.0'
+          node-version-file: "package.json"
 
       - name: Setup yarn
         run: npm install -g yarn
@@ -448,9 +450,9 @@ jobs:
         with:
           fetch-depth: 0
 
-      - uses: actions/setup-node@v3
+      - uses: actions/setup-node@v4
         with:
-          node-version: '18'
+          node-version-file: "package.json"
 
       - name: Setup yarn
         run: npm install -g yarn
@@ -515,22 +517,17 @@ jobs:
           echo "AFFECTED_PROJECTS=$AFFECTED_PROJECTS" >> $GITHUB_ENV
           echo "DOCKER_TYPE=$DOCKER_TYPE" >> $GITHUB_ENV
         continue-on-error: true
-      - uses: actions/setup-node@v3
-        with:
-          node-version: '18'
+      - uses: actions/checkout@v3
         if: steps.gather.outcome == 'success'
-
-      - uses: actions/setup-node@v3
+      - uses: actions/setup-node@v4
         with:
-          node-version: '18'
+          node-version-file: "package.json"
         if: steps.gather.outcome == 'success'
-
+    
       - name: Setup yarn
         run: npm install -g yarn
         if: steps.gather.outcome == 'success'
 
-      - uses: actions/checkout@v3
-        if: steps.gather.outcome == 'success'
       - name: Cache for generated files
         id: generated-files-cache
         if: steps.gather.outcome == 'success'
@@ -601,15 +598,20 @@ jobs:
         continue-on-error: true
         id: dockerbuild
         if: steps.gather.outcome == 'success'
-        run: ./scripts/ci/run-in-parallel.sh 90_$DOCKER_TYPE
         env:
-          EXTRA_DOCKER_BUILD_ARGS: '--build-arg DOCKER_IMAGE_REGISTRY=${{ env.DOCKER_BASE_IMAGE_REGISTRY }} --build-arg GIT_SHA=${{ github.sha }}'
-
+          NODE_IMAGE_TAG: ${{ needs.pre-checks.outputs.NODE_IMAGE_TAG }}
+        run: |
+          EXTRA_DOCKER_BUILD_ARGS='--build-arg DOCKER_IMAGE_REGISTRY=${{ env.DOCKER_BASE_IMAGE_REGISTRY }} --build-arg GIT_SHA=${{ github.sha }} --build-arg NODE_IMAGE_TAG=$NODE_IMAGE_TAG'
+          ./scripts/ci/run-in-parallel.sh 90_$DOCKER_TYPE
+        
       - name: Building Docker images Retry #This only exists until GHA starts supporting this
         if: steps.gather.outcome == 'success' && steps.dockerbuild.outcome == 'failure'
-        run: ./scripts/ci/run-in-parallel.sh 90_$DOCKER_TYPE
         env:
-          EXTRA_DOCKER_BUILD_ARGS: '--build-arg DOCKER_IMAGE_REGISTRY=${{ env.DOCKER_BASE_IMAGE_REGISTRY }} --build-arg GIT_SHA=${{ github.sha }}'
+          NODE_IMAGE_TAG: ${{ needs.pre-checks.outputs.NODE_IMAGE_TAG }}
+        run: |
+          NODE_IMAGE_TAG=$(./scripts/ci/get-version.mjs)
+          EXTRA_DOCKER_BUILD_ARGS='--build-arg DOCKER_IMAGE_REGISTRY=${{ env.DOCKER_BASE_IMAGE_REGISTRY }} --build-arg GIT_SHA=${{ github.sha }} --build-arg NODE_IMAGE_TAG=$NODE_IMAGE_TAG'
+          ./scripts/ci/run-in-parallel.sh 90_$DOCKER_TYPE
 
   helm-docker-build:
     needs:
