@@ -6,6 +6,7 @@ import {
   AccordionItem,
   AlertMessage,
   Box,
+  BoxProps,
   Button,
   GridColumn,
   GridContainer,
@@ -32,6 +33,7 @@ import {
   SocialInsurancePensionCalculationInput,
   SocialInsurancePensionCalculationResponse,
   SocialInsurancePensionCalculationResponseItem,
+  SocialInsurancePensionCalculationResponseItemGroup,
 } from '@island.is/web/graphql/schema'
 import { useLinkResolver } from '@island.is/web/hooks'
 import { withMainLayout } from '@island.is/web/layouts/main'
@@ -161,22 +163,28 @@ const HighlightedItems = ({
 }
 
 interface ResultTableProps {
-  calculation: SocialInsurancePensionCalculationResponse
+  groups?: SocialInsurancePensionCalculationResponseItemGroup[] | null
+  /** Set this to true for less padding in the table cells */
+  dense?: boolean
 }
 
-const ResultTable = ({ calculation }: ResultTableProps) => {
+const ResultTable = ({ groups, dense = false }: ResultTableProps) => {
   const { formatMessage } = useIntl()
   const perMonthText = formatMessage(translationStrings.perMonth)
   const perYearText = formatMessage(translationStrings.perYear)
 
+  const cellProps: BoxProps | undefined = dense
+    ? { paddingBottom: 0, paddingTop: 0 }
+    : undefined
+
   return (
     <Table.Table>
-      {calculation.groups?.map((group, groupIndex) => (
+      {groups?.map((group, groupIndex) => (
         <Fragment key={groupIndex}>
           <Table.Body>
             {group.name && (
               <Table.Row>
-                <Table.HeadData>
+                <Table.HeadData box={cellProps}>
                   {group.name in translationStrings
                     ? formatMessage(
                         translationStrings[
@@ -185,8 +193,8 @@ const ResultTable = ({ calculation }: ResultTableProps) => {
                       )
                     : group.name}
                 </Table.HeadData>
-                <Table.HeadData>{perMonthText}</Table.HeadData>
-                <Table.HeadData>{perYearText}</Table.HeadData>
+                <Table.HeadData box={cellProps}>{perMonthText}</Table.HeadData>
+                <Table.HeadData box={cellProps}>{perYearText}</Table.HeadData>
               </Table.Row>
             )}
             {group.items.map((item, itemIndex) => {
@@ -202,15 +210,15 @@ const ResultTable = ({ calculation }: ResultTableProps) => {
               }
               return (
                 <Table.Row key={itemIndex}>
-                  <Table.Data>
+                  <Table.Data box={cellProps}>
                     <Text fontWeight={fontWeight}>{itemName}</Text>
                   </Table.Data>
-                  <Table.Data>
+                  <Table.Data box={cellProps}>
                     <Text fontWeight={fontWeight}>
                       {formatCurrency(item.monthlyAmount)}
                     </Text>
                   </Table.Data>
-                  <Table.Data>
+                  <Table.Data box={cellProps}>
                     <Text fontWeight={fontWeight}>
                       {formatCurrency(item.yearlyAmount)}
                     </Text>
@@ -248,8 +256,6 @@ const PensionCalculatorResults: CustomScreen<PensionCalculatorResultsProps> = ({
 
   const highlightedItems = calculation.highlightedItems ?? []
 
-  const perMonthText = formatMessage(translationStrings.perMonth)
-  const perYearText = formatMessage(translationStrings.perYear)
   const title = `${formatMessage(translationStrings.mainTitle)} ${
     dateOfCalculationsOptions.find(
       (o) => o.value === calculationInput.dateOfCalculations,
@@ -358,7 +364,7 @@ const PensionCalculatorResults: CustomScreen<PensionCalculatorResultsProps> = ({
                                   </Button>
                                 </Hidden>
                               </Box>
-                              <ResultTable calculation={calculation} />
+                              <ResultTable groups={calculation.groups} />
                             </Stack>
 
                             <Hidden print>
@@ -402,6 +408,7 @@ const PensionCalculatorResults: CustomScreen<PensionCalculatorResultsProps> = ({
               highlightedItems={highlightedItems}
             />
           )}
+          <ResultTable groups={calculation.groups} dense={true} />
         </Stack>
       </Box>
     </>
