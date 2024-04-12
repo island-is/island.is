@@ -141,6 +141,8 @@ export enum FileType {
   DOCUMENTPERIOD = 'documentPeriod',
   EMPPER = 'empper',
   EMPLOYER = 'employer',
+  EMPDOC = 'empdoc',
+  EMPDOCPER = 'empdocper'
 }
 
 export enum Languages {
