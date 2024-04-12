@@ -83,7 +83,7 @@ export class UserProfileController {
     },
     response: { status: 200, type: ActorProfileDto },
   })
-  async getActorProfiles(
+  async getActorProfile(
     @Headers('X-Param-To-National-Id') toNationalId: string,
     @Headers('X-Param-From-National-Id') fromNationalId: string,
   ): Promise<ActorProfileDto> {
