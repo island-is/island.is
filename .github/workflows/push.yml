@@ -372,10 +372,9 @@ jobs:
         run: '[[ "${{ steps.cache-deps-base.outputs.success }}" != "false" ]] || exit 1'
 
       - name: Building NodeJS dependencies
-        env:
-          NODE_IMAGE_TAG: ${{ needs.pre-checks.outputs.NODE_IMAGE_TAG }}
         if: steps.cache-deps.outputs.cache-hit != 'true' || steps.cache-deps-base.outputs.cache-hit != 'true'
-        run: ./scripts/ci/10_prepare-docker-deps.sh
+        run: |
+          ./scripts/ci/10_prepare-docker-deps.sh
 
       - name: set BRANCH env var
         run: echo "BRANCH=$GIT_BRANCH" >> $GITHUB_ENV
@@ -611,6 +610,7 @@ jobs:
           SHA: ${{ github.sha }}
           DOCKER_BASE_IMAGE_REGISTRY: ${{ env.DOCKER_BASE_IMAGE_REGISTRY }}
         run: |
+          echo Node image tag is: $NODE_IMAGE_TAG
           EXTRA_DOCKER_BUILD_ARGS="--build-arg DOCKER_IMAGE_REGISTRY=$DOCKER_BASE_IMAGE_REGISTRY --build-arg GIT_SHA=$SHA --build-arg NODE_IMAGE_TAG=$NODE_IMAGE_TAG"
           ./scripts/ci/run-in-parallel.sh 90_$DOCKER_TYPE
 
@@ -621,6 +621,7 @@ jobs:
           SHA: ${{ github.sha }}
           DOCKER_BASE_IMAGE_REGISTRY: ${{ env.DOCKER_BASE_IMAGE_REGISTRY }}
         run: |
+          echo Node image tag is: $NODE_IMAGE_TAG
           EXTRA_DOCKER_BUILD_ARGS="--build-arg DOCKER_IMAGE_REGISTRY=$DOCKER_BASE_IMAGE_REGISTRY --build-arg GIT_SHA=$SHA --build-arg NODE_IMAGE_TAG=$NODE_IMAGE_TAG"
           ./scripts/ci/run-in-parallel.sh 90_$DOCKER_TYPE
 
@@ -637,6 +638,7 @@ jobs:
       FEATURE_NAME: ${{ needs.pre-checks.outputs.FEATURE_NAME }}
       DOCKER_TAG: ${{ needs.prepare.outputs.DOCKER_TAG}}
       GIT_BRANCH: ${{ needs.pre-checks.outputs.GIT_BRANCH }}
+      NODE_IMAGE_TAG: ${{ needs.prepare.outputs.NODE_IMAGE_TAG }}
     steps:
       - uses: actions/checkout@v3
 
@@ -656,15 +658,15 @@ jobs:
       - name: Docker build image
         working-directory: infra
         run: |
-          EXTRA_DOCKER_BUILD_ARGS="--build-arg DOCKER_IMAGE_REGISTRY=$DOCKER_BASE_IMAGE_REGISTRY --build-arg NODE_IMAGE_TAG=$NODE_IMAGE_TAG"
+          echo Registry is: ${{env.DOCKER_BASE_IMAGE_REGISTRY}}
+          echo Image tag is: ${{env.NODE_IMAGE_TAG}}
+          EXTRA_DOCKER_BUILD_ARGS="--build-arg DOCKER_IMAGE_REGISTRY=${{env.DOCKER_BASE_IMAGE_REGISTRY}} --build-arg NODE_IMAGE_TAG=${{env.NODE_IMAGE_TAG}}"
           ./scripts/build-docker-container.sh $DOCKER_TAG
           echo "COMMENT<<EOF" >> $GITHUB_ENV
           echo "Affected services are: ${{needs.prepare.outputs.IMAGES}}" >> $GITHUB_ENV
           docker run --rm ${DOCKER_REGISTRY}helm-config:$DOCKER_TAG ingress-comment --images=${{needs.prepare.outputs.IMAGES}} --chart=islandis --feature=$FEATURE_NAME >> $GITHUB_ENV
           echo 'EOF' >> $GITHUB_ENV
         env:
-          DOCKER_BASE_IMAGE_REGISTRY: ${{ env.DOCKER_BASE_IMAGE_REGISTRY }}
-          NODE_IMAGE_TAG: ${{ needs.prepare.outputs.NODE_IMAGE_TAG }}
           PUBLISH: 'true'
 
       - name: Retag as latest
