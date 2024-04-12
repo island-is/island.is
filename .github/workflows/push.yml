@@ -363,6 +363,8 @@ jobs:
         run: '[[ "${{ steps.cache-deps-base.outputs.success }}" != "false" ]] || exit 1'
 
       - name: Building NodeJS dependencies
+        env:
+          NODE_IMAGE_TAG: ${{ needs.pre-checks.outputs.NODE_IMAGE_TAG }}  
         if: steps.cache-deps.outputs.cache-hit != 'true' || steps.cache-deps-base.outputs.cache-hit != 'true'
         run: ./scripts/ci/10_prepare-docker-deps.sh
 
