@@ -248,7 +248,6 @@ export const include: Includeable[] = [
     as: 'dateLogs',
     required: false,
     where: { dateType: { [Op.in]: dateTypes } },
-    separate: true,
   },
   { model: Notification, as: 'notifications' },
 ]
@@ -256,6 +255,7 @@ export const include: Includeable[] = [
 export const order: OrderItem[] = [
   [{ model: Defendant, as: 'defendants' }, 'created', 'ASC'],
   [{ model: IndictmentCount, as: 'indictmentCounts' }, 'created', 'ASC'],
+  [{ model: DateLog, as: 'dateLogs' }, 'created', 'DESC'],
   [{ model: Notification, as: 'notifications' }, 'created', 'DESC'],
 ]
 

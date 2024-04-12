@@ -1,5 +1,4 @@
 import { Observable, of } from 'rxjs'
-import { map } from 'rxjs/operators'
 
 import {
   CallHandler,
@@ -11,16 +10,20 @@ import {
 import { DateType } from '@island.is/judicial-system/types'
 
 import { DateLogService } from '../../date-log'
+import { CaseService } from '../case.service'
 import { Case } from '../models/case.model'
 
 @Injectable()
 export class UpdateCaseInterceptor implements NestInterceptor {
-  constructor(private readonly dateLogService: DateLogService) {}
+  constructor(
+    private readonly dateLogService: DateLogService,
+    private readonly caseService: CaseService,
+  ) {}
 
-  intercept(
+  async intercept(
     context: ExecutionContext,
     next: CallHandler,
-  ): Observable<Case | undefined> {
+  ): Promise<Observable<Case | undefined>> {
     const request = context.switchToHttp().getRequest()
 
     if (request.body.courtDate) {
@@ -31,8 +34,8 @@ export class UpdateCaseInterceptor implements NestInterceptor {
       })
 
       if (Object.keys(request.body).length === 1) {
-        // Return an Observable that completes immediately
-        return of(undefined)
+        const caseById = await this.caseService.findById(request.case.id)
+        return of(caseById)
       }
 
       delete request.body.courtDate

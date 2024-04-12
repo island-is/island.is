@@ -7,7 +7,6 @@ query LimitedAccessCase($input: CaseQueryInput!) {
     indictmentSubtypes
     state
     policeCaseNumbers
-    courtDate
     caseFiles {
       id
       created

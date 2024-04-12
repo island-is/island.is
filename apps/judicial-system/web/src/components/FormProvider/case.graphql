@@ -69,7 +69,6 @@ query Case($input: CaseQueryInput!) {
     }
     courtCaseNumber
     sessionArrangements
-    courtDate
     courtLocation
     courtRoom
     courtStartDate

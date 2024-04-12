@@ -166,9 +166,6 @@ export class Case {
   readonly sessionArrangements?: SessionArrangements
 
   @Field({ nullable: true })
-  readonly courtDate?: string
-
-  @Field({ nullable: true })
   readonly courtLocation?: string
 
   @Field({ nullable: true })
