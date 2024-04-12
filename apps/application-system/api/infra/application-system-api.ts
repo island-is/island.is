@@ -265,6 +265,7 @@ export const serviceSetup = (services: {
       Properties,
       RskCompanyInfo,
       VehicleServiceFjsV1,
+      Inna,
       TransportAuthority,
       Vehicles,
       Passports,
