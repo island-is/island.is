@@ -23,6 +23,7 @@ import { UserProfileDto } from './dto/user-profile.dto'
 import { UserProfileService } from './user-profile.service'
 import {
   ActorProfileDto,
+  MeActorProfileDto,
   PaginatedActorProfileDto,
 } from './dto/actor-profile.dto'
 
@@ -65,22 +66,37 @@ export class UserProfileController {
     return this.userProfileService.findById(nationalId)
   }
 
-  @Get('/actor-profiles/.national-id')
+  @Get('/.to-national-id/actor-profiles/.from-national-id')
   @Documentation({
     description: 'Get actor profiles for nationalId.',
     request: {
       header: {
-        'X-Param-National-Id': {
+        'X-Param-From-National-Id': {
           required: true,
-          description: 'National id of the user to find actor profiles for',
+          description: 'National id of the user the .....',
+        },
+        'X-Param-To-National-Id': {
+          required: true,
+          description: 'National id of the user',
         },
       },
     },
-    response: { status: 200, type: PaginatedActorProfileDto },
+    response: { status: 200, type: ActorProfileDto },
   })
-  getActorProfiles(
-    @Headers('X-Param-National-Id') nationalId: string,
-  ): Promise<PaginatedActorProfileDto> {
-    return this.userProfileService.getActorProfiles(nationalId)
+  async getActorProfiles(
+    @Headers('X-Param-To-National-Id') toNationalId: string,
+    @Headers('X-Param-From-National-Id') fromNationalId: string,
+  ): Promise<ActorProfileDto> {
+    if (
+      !kennitala.isValid(toNationalId) ||
+      !kennitala.isValid(fromNationalId)
+    ) {
+      throw new BadRequestException('National id is not valid')
+    }
+
+    return this.userProfileService.getActorProfile({
+      toNationalId,
+      fromNationalId,
+    })
   }
 }

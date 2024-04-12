@@ -28,7 +28,7 @@ import { UserProfileDto } from './dto/user-profile.dto'
 import { UserProfileService } from './user-profile.service'
 import { PostNudgeDto } from './dto/post-nudge.dto'
 import {
-  ActorProfileDto,
+  MeActorProfileDto,
   PaginatedActorProfileDto,
   PatchActorProfileDto,
 } from './dto/actor-profile.dto'
@@ -168,13 +168,13 @@ export class MeUserProfileController {
         },
       },
     },
-    response: { status: 200, type: ActorProfileDto },
+    response: { status: 200, type: MeActorProfileDto },
   })
   createOrUpdateActorProfile(
     @CurrentUser() user: User,
     @Headers('X-Param-From-National-Id') fromNationalId: string,
     @Body() actorProfile: PatchActorProfileDto,
-  ): Promise<ActorProfileDto> {
+  ): Promise<MeActorProfileDto> {
     return this.userProfileService.createOrUpdateActorProfile({
       toNationalId: user.nationalId,
       fromNationalId,

@@ -7,7 +7,7 @@ import {
   UpdatedAt,
 } from 'sequelize-typescript'
 import { ApiProperty } from '@nestjs/swagger'
-import { ActorProfileDto } from '../dto/actor-profile.dto'
+import { MeActorProfileDto } from '../dto/actor-profile.dto'
 
 @Table({
   tableName: 'actor_profile',
@@ -66,7 +66,7 @@ export class ActorProfile extends Model {
   @ApiProperty()
   modified!: Date
 
-  toDto(): ActorProfileDto {
+  toDto(): MeActorProfileDto {
     return {
       fromNationalId: this.fromNationalId,
       emailNotifications: this.emailNotifications,

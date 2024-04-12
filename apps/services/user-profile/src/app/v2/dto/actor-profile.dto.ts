@@ -1,8 +1,16 @@
-import { ApiProperty } from '@nestjs/swagger'
-import { IsBoolean, IsNumber, IsString } from 'class-validator'
+import { ApiProperty, ApiPropertyOptional } from '@nestjs/swagger'
+import {
+  IsBoolean,
+  IsEmail,
+  IsEnum,
+  IsNumber,
+  IsOptional,
+  IsString,
+} from 'class-validator'
 import { PageInfoDto } from '@island.is/nest/pagination'
+import { Locale } from '../../user-profile/types/localeTypes'
 
-export class ActorProfileDto {
+export class MeActorProfileDto {
   @ApiProperty()
   @IsString()
   readonly fromNationalId!: string
@@ -12,6 +20,34 @@ export class ActorProfileDto {
   emailNotifications!: boolean
 }
 
+export class ActorProfileDto {
+  @ApiProperty()
+  @IsString()
+  readonly fromNationalId!: string
+
+  @ApiProperty()
+  @IsBoolean()
+  emailNotifications!: boolean
+
+  @ApiPropertyOptional()
+  @IsOptional()
+  @IsEmail()
+  readonly email?: string
+
+  @ApiProperty()
+  @IsBoolean()
+  readonly emailVerified!: boolean
+
+  @ApiProperty()
+  @IsBoolean()
+  readonly documentNotifications!: boolean
+
+  @ApiPropertyOptional()
+  @IsOptional()
+  @IsEnum(Locale)
+  readonly locale?: Locale
+}
+
 export class PatchActorProfileDto {
   @ApiProperty()
   @IsBoolean()
@@ -19,8 +55,8 @@ export class PatchActorProfileDto {
 }
 
 export class PaginatedActorProfileDto {
-  @ApiProperty({ type: [ActorProfileDto] })
-  data!: ActorProfileDto[]
+  @ApiProperty({ type: [MeActorProfileDto] })
+  data!: MeActorProfileDto[]
 
   @ApiProperty()
   pageInfo!: PageInfoDto

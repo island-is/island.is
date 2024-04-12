@@ -23,6 +23,7 @@ import { NudgeType } from '../types/nudge-type'
 import { ActorProfile } from './models/actor-profile.model'
 import {
   ActorProfileDto,
+  MeActorProfileDto,
   PaginatedActorProfileDto,
 } from './dto/actor-profile.dto'
 import { DocumentsScope } from '@island.is/auth/scopes'
@@ -315,16 +316,11 @@ export class UserProfileService {
     })
   }
 
+  /* fetch actor profiles (delegation preferences) for each delegation */
   async getActorProfiles(
     toNationalId: string,
   ): Promise<PaginatedActorProfileDto> {
-    const incomingDelegations =
-      await this.delegationsApi.delegationsControllerGetDelegationRecords({
-        xQueryNationalId: toNationalId,
-        scope: DocumentsScope.main,
-        direction:
-          DelegationsControllerGetDelegationRecordsDirectionEnum.incoming,
-      })
+    const incomingDelegations = await this.getIncomingDelegations(toNationalId)
 
     const emailPreferences = await this.delegationPreference.findAll({
       where: {
@@ -356,6 +352,43 @@ export class UserProfileService {
     }
   }
 
+  /* Fetch extended actor profile for a specific delegation */
+  async getActorProfile({
+    toNationalId,
+    fromNationalId,
+  }: {
+    fromNationalId: string
+    toNationalId: string
+  }): Promise<ActorProfileDto> {
+    const incomingDelegation = await this.getIncomingDelegations(toNationalId)
+
+    const delegation = incomingDelegation.data.find(
+      (d) => d.fromNationalId === fromNationalId,
+    )
+
+    if (!delegation) {
+      throw new BadRequestException('delegation does not exist')
+    }
+
+    const userProfile = await this.findById(toNationalId)
+
+    const emailPreferences = await this.delegationPreference.findOne({
+      where: {
+        toNationalId,
+        fromNationalId,
+      },
+    })
+
+    return {
+      fromNationalId,
+      emailNotifications: emailPreferences?.emailNotifications ?? true,
+      email: userProfile.email,
+      emailVerified: userProfile.emailVerified,
+      documentNotifications: userProfile.documentNotifications,
+      locale: userProfile.locale,
+    }
+  }
+
   async createOrUpdateActorProfile({
     toNationalId,
     fromNationalId,
@@ -364,14 +397,8 @@ export class UserProfileService {
     toNationalId: string
     fromNationalId: string
     emailNotifications: boolean
-  }): Promise<ActorProfileDto> {
-    const incomingDelegations =
-      await this.delegationsApi.delegationsControllerGetDelegationRecords({
-        xQueryNationalId: toNationalId,
-        scope: DocumentsScope.main,
-        direction:
-          DelegationsControllerGetDelegationRecordsDirectionEnum.incoming,
-      })
+  }): Promise<MeActorProfileDto> {
+    const incomingDelegations = await this.getIncomingDelegations(toNationalId)
 
     // if the delegation does not exist, throw an error
     if (
@@ -390,6 +417,15 @@ export class UserProfileService {
   }
 
   /* Private methods */
+
+  private async getIncomingDelegations(nationalId: string) {
+    return this.delegationsApi.delegationsControllerGetDelegationRecords({
+      xQueryNationalId: nationalId,
+      scope: DocumentsScope.main,
+      direction:
+        DelegationsControllerGetDelegationRecordsDirectionEnum.incoming,
+    })
+  }
 
   private checkNeedsNudge(userProfile: UserProfile): boolean | null {
     if (userProfile.nextNudge) {

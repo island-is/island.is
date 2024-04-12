@@ -21,6 +21,9 @@ const testUserProfile = {
   nationalId: createNationalId(),
   email: faker.internet.email(),
   mobilePhoneNumber: createPhoneNumber(),
+  emailVerified: false,
+  documentNotifications: true,
+  locale: 'is',
 }
 
 describe('UserProfileController', () => {
@@ -154,63 +157,133 @@ describe('UserProfileController', () => {
       })
     })
 
-    it('GET /v2/users/actor-profiles/.national-id should return 200 and the actor profile for each delegation', async () => {
+    describe('GET /v2/users/.to-national-id/actor-profiles/.from-national-id', () => {
       const testNationalId1 = createNationalId('person')
       const testNationalId2 = createNationalId('person')
 
-      // Arrange
-      jest
-        .spyOn(delegationsApi, 'delegationsControllerGetDelegationRecords')
-        .mockResolvedValue({
-          data: [
-            {
-              toNationalId: testUserProfile.nationalId,
-              fromNationalId: testNationalId1,
+      beforeEach(async () => {
+        jest
+          .spyOn(delegationsApi, 'delegationsControllerGetDelegationRecords')
+          .mockResolvedValue({
+            data: [
+              {
+                toNationalId: testUserProfile.nationalId,
+                fromNationalId: testNationalId1,
+                subjectId: null,
+              },
+              {
+                toNationalId: testUserProfile.nationalId,
+                fromNationalId: testNationalId2,
+                subjectId: null,
+              },
+            ],
+            pageInfo: {
+              hasNextPage: false,
+              hasPreviousPage: false,
+              startCursor: '',
+              endCursor: '',
             },
-            {
-              toNationalId: testUserProfile.nationalId,
-              fromNationalId: testNationalId2,
-            },
-          ],
-          pageInfo: {
-            hasNextPage: false,
-            hasPreviousPage: false,
-            startCursor: '',
-            endCursor: '',
-          },
-          totalCount: 2,
+            totalCount: 2,
+          })
+      })
+
+      it('should return 200 and the extended actor profile if user profile exists', async () => {
+        await fixtureFactory.createUserProfile(testUserProfile)
+
+        await fixtureFactory.createActorProfile({
+          toNationalId: testUserProfile.nationalId,
+          fromNationalId: testNationalId1,
+          emailNotifications: false,
         })
 
-      // only create actor profile for one of the delegations
-      await fixtureFactory.createActorProfile({
-        toNationalId: testUserProfile.nationalId,
-        fromNationalId: testNationalId1,
-        emailNotifications: false,
+        // Act
+        const res = await server
+          .get('/v2/users/.to-national-id/actor-profiles/.from-national-id')
+          .set('X-Param-To-National-Id', testUserProfile.nationalId)
+          .set('X-Param-From-National-Id', testNationalId1)
+
+        // Assert
+        expect(res.status).toEqual(200)
+        expect(res.body).toStrictEqual({
+          fromNationalId: testNationalId1,
+          emailNotifications: false,
+          email: testUserProfile.email,
+          emailVerified: testUserProfile.emailVerified,
+          documentNotifications: testUserProfile.documentNotifications,
+          locale: testUserProfile.locale,
+        })
+
+        expect(
+          delegationsApi.delegationsControllerGetDelegationRecords,
+        ).toHaveBeenCalledWith({
+          xQueryNationalId: testUserProfile.nationalId,
+          scope: '@island.is/documents',
+          direction: 'incoming',
+        })
       })
 
-      // Act
-      const res = await server
-        .get('/v2/users/actor-profiles/.national-id')
-        .set('X-Param-National-Id', testUserProfile.nationalId)
+      it('should return 200 and the extended actor profile if user profile exists, should default to emailNotifications = true', async () => {
+        // Arrange
+        await fixtureFactory.createUserProfile(testUserProfile)
 
-      // Assert
-      expect(res.status).toEqual(200)
-      expect(res.body.data[0]).toStrictEqual({
-        fromNationalId: testNationalId1,
-        emailNotifications: false,
-      })
-      // Should default to true because we don't have a record for this delegation
-      expect(res.body.data[1]).toStrictEqual({
-        fromNationalId: testNationalId2,
-        emailNotifications: true,
+        // Act
+        const res = await server
+          .get('/v2/users/.to-national-id/actor-profiles/.from-national-id')
+          .set('X-Param-To-National-Id', testUserProfile.nationalId)
+          .set('X-Param-From-National-Id', testNationalId1)
+
+        // Assert
+        expect(res.status).toEqual(200)
+        expect(res.body).toStrictEqual({
+          fromNationalId: testNationalId1,
+          emailNotifications: true,
+          email: testUserProfile.email,
+          emailVerified: testUserProfile.emailVerified,
+          documentNotifications: testUserProfile.documentNotifications,
+          locale: testUserProfile.locale,
+        })
       })
 
-      expect(
-        delegationsApi.delegationsControllerGetDelegationRecords,
-      ).toHaveBeenCalledWith({
-        xQueryNationalId: testUserProfile.nationalId,
-        scope: '@island.is/documents',
-        direction: 'incoming',
+      it('should return 400 if toNationalId is invalid', async () => {
+        // Arrange
+        await fixtureFactory.createUserProfile(testUserProfile)
+
+        // Act
+        const res = await server
+          .get('/v2/users/.to-national-id/actor-profiles/.from-national-id')
+          .set('X-Param-To-National-Id', 'invalid')
+          .set('X-Param-From-National-Id', testNationalId1)
+
+        // Assert
+        expect(res.status).toEqual(400)
+      })
+
+      it('should return 400 if fromNationalId is invalid', async () => {
+        // Arrange
+        await fixtureFactory.createUserProfile(testUserProfile)
+
+        // Act
+        const res = await server
+          .get('/v2/users/.to-national-id/actor-profiles/.from-national-id')
+          .set('X-Param-To-National-Id', 'invalid')
+          .set('X-Param-From-National-Id', testNationalId1)
+
+        // Assert
+        expect(res.status).toEqual(400)
+      })
+
+      it('should return 400 if delegation does not exist', async () => {
+        // Arrange
+        await fixtureFactory.createUserProfile(testUserProfile)
+
+        // Act
+        const res = await server
+          .get('/v2/users/.to-national-id/actor-profiles/.from-national-id')
+          .set('X-Param-To-National-Id', testUserProfile.nationalId)
+          .set('X-Param-From-National-Id', createNationalId('person'))
+
+        // Assert
+        expect(res.status).toEqual(400)
       })
     })
   })
