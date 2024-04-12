@@ -139,7 +139,6 @@ export const setupXroadMocks = async () => {
     apiPath: '/v1/dentists/1010101/register',
     response: new Response().withStatusCode(200).withBody(null),
   })
-
   await addXroadMock({
     prefixType: 'only-base-path',
     config: HealthInsurance,
@@ -164,7 +163,6 @@ export const setupXroadMocks = async () => {
       ]),
     ],
   })
-
   await addXroadMock({
     prefixType: 'only-base-path',
     config: HealthInsurance,
@@ -205,6 +203,107 @@ export const setupXroadMocks = async () => {
         totalCount: 2,
       }),
     ],
+  })
+  await addXroadMock({
+    prefixType: 'only-base-path',
+    config: HealthInsurance,
+    prefix: 'XROAD_HEALTH_INSURANCE_MY_PAGES_PATH',
+    apiPath: '/v1/healthcenters',
+    response: [
+      new Response().withJSONBody({
+        healthCenters: [
+          {
+            id: 123,
+            url: 'www.alvoru-docs.au',
+            name: 'Ekki gildra ehf',
+            address: 'Annar álfasteinn til vinstri',
+            city: 'Rauðhólar 25',
+            region: 'Álfaskeið',
+            waitlistRegistration: false,
+            dateFrom: new Date('2023-11-29T00:00:00.000Z'),
+            postalCode: '999',
+          },
+          {
+            id: 987,
+            url: 'doc-ock.oc',
+            name: 'Octavius enterprises',
+            address: 'High street',
+            city: 'New yahk citeh',
+            region: 'Hrunamannahreppur',
+            waitlistRegistration: false,
+            dateFrom: new Date('2023-11-29T00:00:00.000Z'),
+            postalCode: '129',
+          },
+        ],
+        pageInfo: {
+          hasPreviousPage: false,
+          hasNextPage: false,
+        },
+        totalCount: 2,
+      }),
+    ],
+  })
+  await addXroadMock({
+    prefixType: 'only-base-path',
+    config: HealthInsurance,
+    prefix: 'XROAD_HEALTH_INSURANCE_MY_PAGES_PATH',
+    apiPath: '/v1/healthcenters/history',
+    response: [
+      new Response().withJSONBody([
+        {
+          dateFrom: new Date('2023-11-29T00:00:00.000Z'),
+          dateTo: new Date('2023-11-30T00:00:00.000Z'),
+          registrationType: 'kvef',
+          registrationTypeCode: 1,
+          healthCenter: {
+            healthCenter: 'Ekki gildra ehf',
+            url: 'www.alvoru-docs.au',
+            doctor: 'Hr. Doktor',
+          },
+        },
+        {
+          dateFrom: new Date('2023-11-05T00:00:00.000Z'),
+          dateTo: new Date('2023-11-05T00:00:00.000Z'),
+          registrationType: 'svo kvefaður omg',
+          registrationTypeCode: 2,
+          healthCenter: {
+            healthCenter: 'Ekki gildra ehf',
+            url: 'www.alvoru-docs.au',
+            doctor: 'Doktor læknir md.',
+          },
+        },
+      ]),
+    ],
+  })
+  await addXroadMock({
+    prefixType: 'only-base-path',
+    config: HealthInsurance,
+    prefix: 'XROAD_HEALTH_INSURANCE_MY_PAGES_PATH',
+    apiPath: '/v1/healthcenters/current',
+    response: [
+      new Response().withJSONBody({
+        healthCenter: 'Dýraspítalinn Víðidal',
+        url: 'heal-ur-pets.org',
+        doctor: 'Sámur Læknir, md., góður strákur',
+        canRegister: true,
+      }),
+    ],
+  })
+  await addXroadMock({
+    prefixType: 'only-base-path',
+    config: HealthInsurance,
+    prefix: 'XROAD_HEALTH_INSURANCE_MY_PAGES_PATH',
+    method: HttpMethod.POST,
+    apiPath: '/v1/healthcenters/123/register',
+    response: new Response().withStatusCode(200).withBody(null),
+  })
+  await addXroadMock({
+    prefixType: 'only-base-path',
+    config: HealthInsurance,
+    prefix: 'XROAD_HEALTH_INSURANCE_MY_PAGES_PATH',
+    method: HttpMethod.POST,
+    apiPath: '/v1/healthcenters/987/register',
+    response: new Response().withStatusCode(200).withBody(null),
   })
 
   const { envs } = getEnvVariables(Base.getEnv(), 'system-e2e', env)

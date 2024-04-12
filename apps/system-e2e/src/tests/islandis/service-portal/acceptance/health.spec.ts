@@ -81,4 +81,64 @@ test.describe('MS - Health', () => {
       await expect(newDentist).toBeVisible()
     })
   })
+
+  test('health centers', async () => {
+    const page = await context.newPage()
+    await disableI18n(page)
+
+    await test.step('should display data', async () => {
+      // Arrange
+      await page.goto(icelandicAndNoPopupUrl('/minarsidur/heilsa/heilsugaesla'))
+
+      const title = page.getByRole('heading', {
+        name: 'Heilsugæsla',
+      })
+      await expect(title).toBeVisible()
+    })
+  })
+
+  test('health center registration', async () => {
+    const page = await context.newPage()
+    await setupXroadMocks()
+    await disableI18n(page)
+
+    await test.step('should display registration button', async () => {
+      // Arrange
+      await page.goto(icelandicAndNoPopupUrl('/minarsidur/heilsa/heilsugaesla'))
+
+      const title = page.getByRole('link', {
+        name: label(messages.changeRegistration),
+      })
+
+      await expect(title).toBeVisible()
+      await title.click()
+
+      await page.getByTestId('accordion-item').first().click()
+
+      const row = page.getByRole('row').first()
+
+      await expect(row).toBeVisible()
+      await row.hover()
+
+      const save = page.getByRole('button', {
+        name: label(messages.healthRegistrationSave),
+      })
+
+      await expect(save).toBeVisible()
+      await save.click()
+
+      const agreeButton = page.getByRole('button', {
+        name: label(messages.healthRegisterModalAccept),
+      })
+
+      await expect(agreeButton).toBeVisible()
+      await agreeButton.click()
+
+      const newHealthCenter = page.getByRole('heading', {
+        name: 'Nýr tannlæknir skráður',
+      })
+
+      await expect(newHealthCenter).toBeVisible()
+    })
+  })
 })
