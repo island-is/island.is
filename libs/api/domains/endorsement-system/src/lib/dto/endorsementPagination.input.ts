@@ -7,7 +7,7 @@ export class EndorsementPaginationInput {
   @Field(() => [EndorsementListControllerFindByTagsTagsEnum])
   @IsEnum(EndorsementListControllerFindByTagsTagsEnum, { each: true })
   tags!: EndorsementListControllerFindByTagsTagsEnum[]
-  
+
   @Field({ nullable: true })
   limit?: number
 
