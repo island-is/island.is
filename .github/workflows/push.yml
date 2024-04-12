@@ -601,7 +601,7 @@ jobs:
         env:
           NODE_IMAGE_TAG: ${{ needs.pre-checks.outputs.NODE_IMAGE_TAG }}
         run: |
-          EXTRA_DOCKER_BUILD_ARGS='--build-arg DOCKER_IMAGE_REGISTRY=${{ env.DOCKER_BASE_IMAGE_REGISTRY }} --build-arg GIT_SHA=${{ github.sha }} --build-arg NODE_IMAGE_TAG=$NODE_IMAGE_TAG'
+          EXTRA_DOCKER_BUILD_ARGS="--build-arg DOCKER_IMAGE_REGISTRY=${{ env.DOCKER_BASE_IMAGE_REGISTRY }} --build-arg GIT_SHA=${{ github.sha }} --build-arg NODE_IMAGE_TAG=$NODE_IMAGE_TAG"
           ./scripts/ci/run-in-parallel.sh 90_$DOCKER_TYPE
 
       - name: Building Docker images Retry #This only exists until GHA starts supporting this
@@ -609,7 +609,7 @@ jobs:
         env:
           NODE_IMAGE_TAG: ${{ needs.pre-checks.outputs.NODE_IMAGE_TAG }}
         run: |
-          EXTRA_DOCKER_BUILD_ARGS='--build-arg DOCKER_IMAGE_REGISTRY=${{ env.DOCKER_BASE_IMAGE_REGISTRY }} --build-arg GIT_SHA=${{ github.sha }} --build-arg NODE_IMAGE_TAG=$NODE_IMAGE_TAG'
+          EXTRA_DOCKER_BUILD_ARGS="--build-arg DOCKER_IMAGE_REGISTRY=${{ env.DOCKER_BASE_IMAGE_REGISTRY }} --build-arg GIT_SHA=${{ github.sha }} --build-arg NODE_IMAGE_TAG=$NODE_IMAGE_TAG"
           ./scripts/ci/run-in-parallel.sh 90_$DOCKER_TYPE
 
   helm-docker-build:

@@ -4,8 +4,11 @@ import { resolve } from 'path'
 
 import { ROOT, getPackageJSON } from './_common.mjs'
 
+const DOCKERHUB_BASE_URL = 'https://hub.docker.com/v2/repositories/library/node/tags?page_size=100';
+
 const nodeVersion = await getPackageVersion()
 const version = await getVersion(nodeVersion)
+
 if (!version) {
   process.stderr.write(`Failed getting docker image for ${nodeVersion}`)
   process.exit(1)
@@ -19,9 +22,7 @@ async function getVersion(
   url = null,
 ) {
   try {
-    const baseURL =
-      url ??
-      'https://hub.docker.com/v2/repositories/library/node/tags?page_size=100'
+    const baseURL = url ?? DOCKERHUB_BASE_URL
     const response = await fetch(baseURL)
     const data = await response.json()
 
