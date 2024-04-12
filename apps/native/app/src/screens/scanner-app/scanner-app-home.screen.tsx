@@ -14,6 +14,7 @@ import { config } from '../../config'
 import { authStore } from '../../stores/auth-store'
 import { getAppRoot } from '../../utils/lifecycle/get-app-root'
 import { ComponentRegistry } from '../../utils/component-registry'
+import DeviceInfo from 'react-native-device-info'
 
 const Host = styled.View`
   flex: 1;
@@ -123,9 +124,8 @@ export const ScannerAppHomeScreen: NavigationFunctionComponent = ({
         </Action>
         <Bottom>
           <Version>
-            {/* {config.constants.nativeAppVersion} (build{' '}
-            {config.constants.nativeBuildVersion})
-            {config.constants.debugMode ? ' (debug)' : ''} */}
+            {DeviceInfo.getVersion()} (build{' '}
+            {DeviceInfo.getBuildNumber()})
           </Version>
           <TouchableOpacity onPress={onLogoutPress}>
             <Logout>Útskrá</Logout>

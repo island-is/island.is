@@ -113,8 +113,8 @@ android {
         applicationId "is.island"
         minSdkVersion rootProject.ext.minSdkVersion
         targetSdkVersion rootProject.ext.targetSdkVersion
-        versionCode 134
-        versionName "1.2.4"
+        versionCode 135
+        versionName "1.2.5"
         manifestPlaceholders = [
             appAuthRedirectScheme: "is.island" // project.config.get("BUNDLE_ID_ANDROID")
         ]

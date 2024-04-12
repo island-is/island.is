@@ -21,6 +21,7 @@ import { useAuthStore } from '../../stores/auth-store'
 import { Button, dynamicColor, font } from '../../ui'
 import { getMainRoot } from '../../utils/get-main-root'
 import { testIDs } from '../../utils/test-ids'
+import DeviceInfo from 'react-native-device-info';
 
 const Host = styled.View`
   flex: 1;
@@ -166,6 +167,12 @@ export const ScannerAppLoginScreen: NavigationFunctionComponent = ({ componentId
             onPress={onLoginPress}
             style={{ width: 213 }}
           />
+        </View>
+        <View style={{ alignItems: 'center', paddingBottom: 8 }}>
+          <Text>
+            {DeviceInfo.getVersion()} (build{' '}
+            {DeviceInfo.getBuildNumber()})
+            </Text>
         </View>
       </SafeAreaView>
     </Host>
