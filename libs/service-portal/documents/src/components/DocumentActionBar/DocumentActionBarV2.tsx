@@ -10,7 +10,7 @@ import { Tooltip, m } from '@island.is/service-portal/core'
 import { useLocale } from '@island.is/localization'
 import { ActiveDocumentType2 } from '../../lib/types'
 import { useDocumentContext } from '../../screens/Overview/DocumentContext'
-import { useDocumetList } from '../../hooks/useDocumentList'
+import { useDocumentList } from '../../hooks/useDocumentList'
 import { useMailAction } from '../../hooks/useMailActionV2'
 import { downloadFile } from '../../utils/downloadDocumentV2'
 import * as styles from './DocumentActionBar.css'
@@ -36,7 +36,7 @@ export const DocumentActionBar: React.FC<DocumentActionBarProps> = ({
   } = useMailAction()
 
   const { activeDocument } = useDocumentContext()
-  const { fetchObject, refetch } = useDocumetList()
+  const { fetchObject, refetch } = useDocumentList()
   const userInfo = useUserInfo()
 
   const { formatMessage } = useLocale()

@@ -14,9 +14,7 @@ export const DocumentIndex = () => {
         `isServicePortalDocumentsV2PageEnabled`,
         false,
       )
-      if (ffEnabled) {
-        setV2Enabled(ffEnabled as boolean)
-      }
+      setV2Enabled(ffEnabled as boolean)
     }
     isFlagEnabled()
     // eslint-disable-next-line react-hooks/exhaustive-deps

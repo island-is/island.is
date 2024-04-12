@@ -7,7 +7,7 @@ import { ActiveDocumentType2 } from '../../lib/types'
 import { useLocale } from '@island.is/localization'
 import { customUrl } from '../../utils/customUrlHandler'
 
-const parseDocmentType = (document: ActiveDocumentType2) => {
+const parseDocumentType = (document: ActiveDocumentType2) => {
   const doc = document.document
   const overviewUrl = document.downloadUrl
 
@@ -31,7 +31,7 @@ export const DocumentRenderer: React.FC<DocumentRendererProps> = ({
   document,
 }) => {
   const { formatMessage } = useLocale()
-  const type = parseDocmentType(document)
+  const type = parseDocumentType(document)
 
   if (type === 'unknown') return <NoPDF text={formatMessage(messages.error)} />
 

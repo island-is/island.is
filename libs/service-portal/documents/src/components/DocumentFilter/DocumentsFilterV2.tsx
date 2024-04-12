@@ -26,7 +26,7 @@ import { useDocumentFilters } from '../../hooks/useDocumentFilters'
 
 interface Props {
   filterValue: FilterValuesType
-  debounceChange: (e: any) => void
+  debounceChange: (e: React.ChangeEvent<HTMLElement>) => void
   clearCategories: () => void
   clearSenders: () => void
   categories: DocumentsV2Category[]

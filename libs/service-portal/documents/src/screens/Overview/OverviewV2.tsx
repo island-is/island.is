@@ -25,7 +25,7 @@ import DocumentDisplay from '../../components/OverviewDisplay/OverviewDocumentDi
 import { DocumentsPaths } from '../../lib/paths'
 import { useDocumentContext } from './DocumentContext'
 import { useDocumentFilters } from '../../hooks/useDocumentFilters'
-import { pageSize, useDocumetList } from '../../hooks/useDocumentList'
+import { pageSize, useDocumentList } from '../../hooks/useDocumentList'
 import { useMailAction } from '../../hooks/useMailActionV2'
 import * as styles from './Overview.css'
 
@@ -59,7 +59,7 @@ export const ServicePortalDocumentsV2 = () => {
     totalPages,
     filteredDocuments,
     totalCount,
-  } = useDocumetList()
+  } = useDocumentList()
 
   const { handlePageChange, handleSearchChange } = useDocumentFilters()
 

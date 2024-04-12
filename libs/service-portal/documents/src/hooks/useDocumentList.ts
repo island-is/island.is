@@ -1,10 +1,8 @@
-import { useEffect, useState } from 'react'
+import { useEffect } from 'react'
 import {
   AuthDelegationType,
-  DocumentsV2Category,
   DocumentsV2PageOrder,
   DocumentsV2PageSort,
-  DocumentsV2Sender,
 } from '@island.is/api/schema'
 import { useUserInfo } from '@island.is/auth/react'
 import { useDocumentContext } from '../screens/Overview/DocumentContext'
@@ -13,7 +11,7 @@ import differenceInYears from 'date-fns/differenceInYears'
 
 export const pageSize = 10
 
-export const useDocumetList = () => {
+export const useDocumentList = () => {
   const {
     filterValue,
     page,
@@ -78,7 +76,7 @@ export const useDocumetList = () => {
     ) {
       setCategoriesAvailable(data.documentsV2.categories)
     }
-  }, [loading])
+  }, [loading, data, sendersAvailable, categoriesAvailable])
 
   const totalCount = data?.documentsV2?.totalCount || 0
   useEffect(() => {

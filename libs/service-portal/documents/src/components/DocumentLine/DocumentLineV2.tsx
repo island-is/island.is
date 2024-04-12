@@ -21,7 +21,7 @@ import { FavAndStash } from '../FavAndStash'
 import { useIsChildFocusedorHovered } from '../../hooks/useIsChildFocused'
 import { useGetDocumentInboxLineV2LazyQuery } from '../../screens/Overview/Overview.generated'
 import { useDocumentContext } from '../../screens/Overview/DocumentContext'
-import { useDocumetList } from '../../hooks/useDocumentList'
+import { useDocumentList } from '../../hooks/useDocumentList'
 import { useMailAction } from '../../hooks/useMailActionV2'
 
 interface Props {
@@ -62,7 +62,7 @@ export const DocumentLine: FC<Props> = ({
     bookmarkSuccess,
   } = useMailAction()
 
-  const { activeArchive, fetchObject, refetch } = useDocumetList()
+  const { activeArchive, fetchObject, refetch } = useDocumentList()
 
   const { setActiveDocument, setDocumentDisplayError, setDocLoading } =
     useDocumentContext()
@@ -140,11 +140,11 @@ export const DocumentLine: FC<Props> = ({
     if (id === documentLine.id) {
       getDocument()
     }
-  }, [id, documentLine])
+  }, [id, documentLine, getDocument])
 
   useEffect(() => {
     setDocLoading(fileLoading)
-  }, [fileLoading])
+  }, [fileLoading, setDocLoading])
 
   const onLineClick = async () => {
     const pathName = location.pathname

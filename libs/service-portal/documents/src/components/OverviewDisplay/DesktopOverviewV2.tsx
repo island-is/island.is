@@ -9,7 +9,7 @@ import NoPDF from '../NoPDF/NoPDF'
 import { SERVICE_PORTAL_HEADER_HEIGHT_LG } from '@island.is/service-portal/constants'
 import { useDocumentContext } from '../../screens/Overview/DocumentContext'
 import * as styles from './OverviewDisplay.css'
-import { useDocumetList } from '../../hooks/useDocumentList'
+import { useDocumentList } from '../../hooks/useDocumentList'
 
 interface Props {
   activeBookmark: boolean
@@ -25,7 +25,7 @@ export const DesktopOverview: FC<Props> = ({
   useNamespaces('sp.documents')
   const { formatMessage } = useLocale()
   const { activeDocument } = useDocumentContext()
-  const { activeArchive } = useDocumetList()
+  const { activeArchive } = useDocumentList()
 
   if (loading) {
     return (

@@ -6,11 +6,11 @@ import { useLocale } from '@island.is/localization'
 import { m } from '@island.is/service-portal/core'
 import { useMailActionV2Mutation } from '../screens/Overview/Overview.generated'
 import { MailActions } from '../utils/types'
-import { useDocumetList } from './useDocumentList'
+import { useDocumentList } from './useDocumentList'
 
 export const useMailAction = () => {
   const { formatMessage } = useLocale()
-  const { fetchObject, refetch } = useDocumetList()
+  const { fetchObject, refetch } = useDocumentList()
 
   const [postMailAction, { data, loading }] = useMailActionV2Mutation()
 
