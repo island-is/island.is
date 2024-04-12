@@ -2,7 +2,7 @@
 ARG PLAYWRIGHT_VERSION
 ARG DOCKER_IMAGE_REGISTRY=public.ecr.aws
 ARG NODE_IMAGE_TAG
-FROM $DOCKER_IMAGE_REGISTRY/docker/library/node:$NODE_IMAGE_TAG as deps
+FROM ${DOCKER_IMAGE_REGISTRY}/docker/library/node:${NODE_IMAGE_TAG} as deps
 
 RUN apk add -U git
 
