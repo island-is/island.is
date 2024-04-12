@@ -544,7 +544,7 @@ const ParentalLeaveTemplate: ApplicationTemplate<
             ],
           },
           lifecycle: birthDayLifeCycle,
-          onEntry: [ 
+          onEntry: [
             defineTemplateApi({
               triggerEvent: DefaultEvents.SUBMIT,
               action: ApiModuleActions.sendApplication,
@@ -557,7 +557,7 @@ const ParentalLeaveTemplate: ApplicationTemplate<
               shouldPersistToExternalData: true,
               throwOnError: true,
             }),
-          ],  
+          ],
           onExit: defineTemplateApi({
             action: ApiModuleActions.setBirthDate,
             externalDataId: 'dateOfBirth',
@@ -1240,7 +1240,7 @@ const ParentalLeaveTemplate: ApplicationTemplate<
             ],
           },
           lifecycle: birthDayLifeCycle,
-          onEntry: [ 
+          onEntry: [
             defineTemplateApi({
               triggerEvent: DefaultEvents.APPROVE,
               action: ApiModuleActions.sendApplication,
@@ -1255,7 +1255,7 @@ const ParentalLeaveTemplate: ApplicationTemplate<
               shouldPersistToExternalData: true,
               throwOnError: true,
             }),
-          ],  
+          ],
           onExit: defineTemplateApi({
             action: ApiModuleActions.setBirthDate,
             externalDataId: 'dateOfBirth',
