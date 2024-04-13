@@ -5,7 +5,8 @@
   "engines": {
     "npm": "please-use-yarn",
     "node": "18.16.0",
-    "yarn": "3.2"
+    "yarn": "3.2",
+    "all-services-are-affected": true
   },
   "repository": {
     "type": "git",
