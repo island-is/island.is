@@ -60,3 +60,23 @@ export const PeriodHeaders = [
   'Tilvísun',
   'Uppsöfnuð staða',
 ]
+
+export const HousingPaymentsHeaders = [
+  'Dags.',
+  'Leigumánuður',
+  'Greiðsla fyrir skuld',
+  'Greitt af skuld',
+  'Greitt út',
+  'Staða skuldar',
+  'Fjöldi daga',
+  'Greiðslunúmer',
+  'Heildartekjur',
+  'Nafn',
+  'Grunnur réttinda',
+  'Banka nr.',
+  'Skerðing vegna tekna',
+  'Dagsetning millifærslu',
+  'Skerðing vegna húsnæðiskostnaðar',
+  'Tegund útreikn.',
+  'Skerðing vegna eigna',
+]
