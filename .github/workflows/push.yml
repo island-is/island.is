@@ -505,7 +505,7 @@ jobs:
     container:
       image: public.ecr.aws/m3u4c4h9/island-is/actions-runner-public:latest
     timeout-minutes: 35
-    if: needs.prepare.outputs.BUILD_CHUNKS && needs.prepare.outputs.NODE_IMAGE_TAG
+    if: needs.prepare.outputs.BUILD_CHUNKS
     env:
       AFFECTED_ALL: ${{ secrets.AFFECTED_ALL }}
       GIT_BRANCH: ${{ needs.pre-checks.outputs.GIT_BRANCH}}
