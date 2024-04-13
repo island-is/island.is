@@ -77,7 +77,7 @@ const formatCrimeScenePlace = (
   const formattedMunicipality =
     municipality && street ? `, ${municipality}` : municipality
 
-  const address = `${formattedStreet || ''}${formattedMunicipality || ''}`
+  const address = `${formattedStreet ?? ''}${formattedMunicipality ?? ''}`
 
   return address.trim()
 }
@@ -343,7 +343,7 @@ export class PoliceService {
                 info.gotuHeiti,
                 info.gotuNumer,
                 info.sveitafelag,
-              ).trim()
+              )
               const date = info.brotFra ? new Date(info.brotFra) : undefined
               const licencePlate = info.licencePlate
 
