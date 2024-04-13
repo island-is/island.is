@@ -21,8 +21,7 @@
     "pg-native",
     "form-data",
     "@nestjs/websockets/socket-module",
-    "@mikro-orm/core",
-    "swagger-ui-dist"
+    "@mikro-orm/core"
   ],
   "keepNames": true
 }
