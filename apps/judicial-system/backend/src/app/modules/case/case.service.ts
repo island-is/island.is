@@ -1038,10 +1038,7 @@ export class CaseService {
     }
 
     if (updatedCase.courtCaseNumber) {
-      if (
-        updatedCase.courtCaseNumber !== theCase.courtCaseNumber &&
-        updatedCase.courtCaseNumber !== ''
-      ) {
+      if (updatedCase.courtCaseNumber !== theCase.courtCaseNumber) {
         // New court case number
         if (isIndictmentCase(updatedCase.type)) {
           await this.addMessagesForIndictmentCourtCaseConnectionToQueue(
