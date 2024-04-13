@@ -23,7 +23,7 @@
       "executor": "nx:run-commands",
       "options": {
         "commands": [
-          "touch tmp/islyklar.empty",
+          "mkdir -p tmp/ && touch tmp/islyklar.empty",
           "ISLYKILL_CERT=tmp/islyklar.empty yarn openapi-generator -o libs/clients/islykill/gen/fetch -i libs/clients/islykill/src/clientConfig.yaml"
         ],
         "parallel": false

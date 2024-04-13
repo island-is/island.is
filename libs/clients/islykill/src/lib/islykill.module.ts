@@ -25,7 +25,7 @@ export class IslykillApiModule {
       const data = fs.readFileSync(config.cert, { encoding: 'base64' })
       pfx = Buffer.from(data, 'base64')
     } catch (err) {
-      throw new Error(`Failed to read certificate: ${err.message}`)
+      throw new Error(`Failed to read certificate: ${err}`)
     }
 
     const enhancedFetch = createEnhancedFetch({
