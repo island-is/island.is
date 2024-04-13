@@ -3,6 +3,7 @@ import { NestFactory } from '@nestjs/core'
 import { logger, LoggingModule } from '@island.is/logging'
 import { OpenAPIObject, SwaggerModule } from '@nestjs/swagger'
 import { Type } from '@nestjs/common'
+import { ModuleMetadata } from '@nestjs/common/interfaces/modules/module-metadata.interface'
 import yaml from 'js-yaml'
 
 import { InfraModule } from './infra/infra.module'
@@ -13,14 +14,13 @@ export const buildOpenApi = async ({
   path,
   enableVersioning,
 }: {
-  appModule: Type<any>
+  appModule: Type<ModuleMetadata>
   openApi: Omit<OpenAPIObject, 'paths'>
   path: string
   enableVersioning?: boolean
 }) => {
   try {
     logger.info('Creating openapi.yaml file ...', { path })
-
     const app = await NestFactory.create(InfraModule.forRoot({ appModule }), {
       logger: LoggingModule.createLogger(),
     })
@@ -28,17 +28,15 @@ export const buildOpenApi = async ({
       app.enableVersioning()
     }
     const document = SwaggerModule.createDocument(app, openApi)
-
     writeFileSync(path, yaml.dump(document, { noRefs: true }))
-
-    // Shut down everything so the process ends.
     await app.close()
 
     // Unfortunately, the above is not enough sometimes because of this bug:
     // https://github.com/configcat/common-js/issues/36
     // TODO: Remove this when it's been fixed.
     process.exit(0)
-  } catch (e: any) {
+  } catch (e: unknown) {
     logger.error('Error while creating openapi.yaml', e)
+    process.exit(1)
   }
 }

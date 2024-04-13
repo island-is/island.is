@@ -22,7 +22,11 @@
     "codegen/backend-client": {
       "executor": "nx:run-commands",
       "options": {
-        "command": "yarn openapi-generator -o libs/clients/islykill/gen/fetch -i libs/clients/islykill/src/clientConfig.yaml"
+        "commands": [
+          "touch tmp/islyklar.empty",
+          "ISLYKILL_CERT=tmp/islyklar.empty yarn openapi-generator -o libs/clients/islykill/gen/fetch -i libs/clients/islykill/src/clientConfig.yaml"
+        ],
+        "parallel": false
       },
       "outputs": ["{projectRoot}/gen/fetch"]
     }
