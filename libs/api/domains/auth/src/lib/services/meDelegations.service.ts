@@ -3,6 +3,7 @@ import differenceWith from 'lodash/differenceWith'
 
 import { Auth, AuthMiddleware, User } from '@island.is/auth-nest-tools'
 import {
+  DelegationDTO,
   MeDelegationsApi,
   MeDelegationsControllerFindAllDirectionEnum,
   MeDelegationsControllerFindAllValidityEnum,
@@ -17,11 +18,10 @@ import {
   UpdateDelegationInput,
 } from '../dto'
 import { DelegationByOtherUserInput } from '../dto/delegationByOtherUser.input'
-import { DelegationDTO, MeDelegationsServiceInterface } from './types'
 import startOfDay from 'date-fns/startOfDay'
 
 @Injectable()
-export class MeDelegationsService implements MeDelegationsServiceInterface {
+export class MeDelegationsService {
   constructor(private delegationsApi: MeDelegationsApi) {}
 
   private delegationsApiWithAuth(auth: Auth) {

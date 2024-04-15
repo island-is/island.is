@@ -109,6 +109,7 @@ export class LimitedAccessFileController {
   })
   getCaseFileSignedUrl(
     @Param('caseId') caseId: string,
+    @CurrentCase() theCase: Case,
     @Param('fileId') fileId: string,
     @CurrentCaseFile() caseFile: CaseFile,
   ): Promise<SignedUrl> {
@@ -116,7 +117,7 @@ export class LimitedAccessFileController {
       `Getting a signed url for file ${fileId} of case ${caseId}`,
     )
 
-    return this.fileService.getCaseFileSignedUrl(caseFile)
+    return this.fileService.getCaseFileSignedUrl(theCase, caseFile)
   }
 
   @UseGuards(

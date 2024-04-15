@@ -27,27 +27,8 @@ export const ResidenceGrant: Form = buildForm({
         buildMultiField({
           title:
             parentalLeaveFormMessages.residenceGrantMessage
-              .residenceGrantApplyHeader,
-          id: 'residenceGrant.multiOne',
-          description:
-            parentalLeaveFormMessages.residenceGrantMessage
-              .residenceGrantPeriodDescriptionLineOne,
-          space: 2,
-          children: [
-            buildDescriptionField({
-              id: 'residenceGrant.description',
-              title: '',
-              description:
-                parentalLeaveFormMessages.residenceGrantMessage
-                  .residenceGrantPeriodDescriptionLineTwo,
-            }),
-          ],
-        }),
-        buildMultiField({
-          title:
-            parentalLeaveFormMessages.residenceGrantMessage
               .residenceGrantAttachmentTitle,
-          id: 'residenceGrant.multiTwo',
+          id: 'residenceGrant.multi',
           description:
             parentalLeaveFormMessages.residenceGrantMessage
               .residenceGrantAttachmentDescription,
@@ -65,7 +46,7 @@ export const ResidenceGrant: Form = buildForm({
             buildSubmitField({
               id: 'residenceGrant.submit',
               placement: 'footer',
-              title: parentalLeaveFormMessages.confirmation.title,
+              title: '',
               refetchApplicationAfterSubmit: true,
               actions: [
                 {

@@ -26,8 +26,10 @@ import {
   valueToNumber,
 } from '../../lib/utils/helpers'
 import { HeirsAndPartitionRepeaterProps } from './types'
-import { TAX_FREE_LIMIT } from '../../lib/constants'
+import { DEFAULT_TAX_FREE_LIMIT } from '../../lib/constants'
 import DoubleColumnRow from '../../components/DoubleColumnRow'
+import ShareInput from '../../components/ShareInput'
+import { InheritanceReportInfo } from '@island.is/clients/syslumenn'
 
 export const HeirsAndPartitionRepeater: FC<
   React.PropsWithChildren<
@@ -45,6 +47,10 @@ export const HeirsAndPartitionRepeater: FC<
   })
 
   const values = getValues()
+
+  const heirsRelations = (values?.heirs?.data ?? []).map((x: EstateMember) => {
+    return x.relation
+  })
 
   const hasEstateMemberUnder18 = values.estate?.estateMembers?.some(
     (member: EstateMember) => {
@@ -98,9 +104,14 @@ export const HeirsAndPartitionRepeater: FC<
 
   const externalData = application.externalData.syslumennOnEntry?.data as {
     relationOptions: string[]
+    inheritanceReportInfos: Array<InheritanceReportInfo>
   }
 
   const estateData = getEstateDataFromApplication(application)
+
+  const inheritanceTaxFreeLimit =
+    externalData?.inheritanceReportInfos?.[0]?.inheritanceTax
+      ?.taxExemptionLimit ?? DEFAULT_TAX_FREE_LIMIT
 
   const relations =
     externalData.relationOptions?.map((relation) => ({
@@ -128,45 +139,6 @@ export const HeirsAndPartitionRepeater: FC<
       foreignCitizenship: [],
     })
 
-  const updateValues = (updateIndex: string, value: number) => {
-    const numValue = isNaN(value) ? 0 : value
-    const percentage = numValue > 0 ? numValue / 100 : 0
-
-    const assetsTotal = Number(getValueViaPath(answers, 'assets.assetsTotal'))
-    const debtsTotal = Number(getValueViaPath(answers, 'debts.debtsTotal'))
-    const businessTotal = Number(
-      getValueViaPath(answers, 'business.businessTotal'),
-    )
-    const totalDeduction = valueToNumber(
-      getValueViaPath(answers, 'totalDeduction'),
-    )
-    const inheritanceValue = Math.round(
-      (assetsTotal - debtsTotal + businessTotal - totalDeduction) * percentage,
-    )
-    const taxFreeInheritanceValue = Math.round(TAX_FREE_LIMIT * percentage)
-    const taxableInheritanceValue = Math.round(
-      inheritanceValue - taxFreeInheritanceValue,
-    )
-    const inheritanceTaxValue = Math.round(taxableInheritanceValue * 0.1)
-
-    setValue(`${updateIndex}.heirsPercentage`, String(numValue))
-    setValue(
-      `${updateIndex}.taxFreeInheritance`,
-      String(taxFreeInheritanceValue),
-    )
-    setValue(`${updateIndex}.inheritance`, String(inheritanceValue))
-    setValue(
-      `${updateIndex}.inheritanceTax`,
-      String(inheritanceTaxValue < 0 ? 0 : inheritanceTaxValue),
-    )
-    setValue(
-      `${updateIndex}.taxableInheritance`,
-      String(taxableInheritanceValue < 0 ? 0 : taxableInheritanceValue),
-    )
-
-    calculateTotal()
-  }
-
   const calculateTotal = useCallback(() => {
     const values = getValues(id)
 
@@ -175,7 +147,7 @@ export const HeirsAndPartitionRepeater: FC<
     }
 
     const total = values.reduce((acc: number, current: any) => {
-      const val = parseInt(current[props.sumField], 10)
+      const val = parseFloat(current[props.sumField])
 
       return current?.enabled ? acc + (isNaN(val) ? 0 : val) : acc
     }, 0)
@@ -186,12 +158,92 @@ export const HeirsAndPartitionRepeater: FC<
     setTotal(total)
   }, [getValues, id, props.sumField, setValue])
 
-  useEffect(() => {
+  const updateValues = useCallback(
+    (updateIndex: string, value: number, index?: number) => {
+      const numValue = isNaN(value) ? 0 : value
+      const percentage = numValue > 0 ? numValue / 100 : 0
+      const heirs = getValues()?.heirs?.data as EstateMember[]
+      let currentHeir = getValueViaPath(answers, updateIndex) as EstateMember
+
+      if (!currentHeir && typeof index === 'number') {
+        // if no current heir then it has not been saved yet, so let's
+        // get the current heir from the heirs list
+        currentHeir = heirs?.[index]
+      }
+
+      const currentNationalId = valueToNumber(currentHeir?.nationalId)
+
+      // currently we can only check if heir is spouse by relation string value...
+      const spouse = (heirs ?? []).filter(
+        (heir) =>
+          heir.enabled &&
+          (heir.relation === 'Maki' || heir.relation === 'Spouse'),
+      )
+
+      let isSpouse = false
+
+      // it is not possible to select more than one spouse but for now we will check for it anyway
+      if (spouse.length > 0) {
+        spouse.forEach((currentSpouse) => {
+          isSpouse =
+            valueToNumber(currentSpouse?.nationalId) === currentNationalId
+        })
+      }
+
+      const spouseTotal = valueToNumber(getValueViaPath(answers, 'spouseTotal'))
+      const netPropertyForExchange = valueToNumber(
+        getValueViaPath(answers, 'netPropertyForExchange'),
+      )
+      const inheritanceValue =
+        netPropertyForExchange * percentage + (isSpouse ? spouseTotal : 0)
+
+      const taxFreeInheritanceValue = isSpouse
+        ? inheritanceValue
+        : inheritanceTaxFreeLimit * percentage
+      const taxableInheritanceValue = inheritanceValue - taxFreeInheritanceValue
+
+      const inheritanceTaxValue = isSpouse ? 0 : taxableInheritanceValue * 0.1
+
+      const taxFreeInheritance = taxFreeInheritanceValue
+      const taxableInheritance =
+        taxableInheritanceValue < 0 ? 0 : taxableInheritanceValue
+
+      const inheritance = inheritanceValue
+      const inheritanceTax = inheritanceTaxValue < 0 ? 0 : inheritanceTaxValue
+
+      setValue(
+        `${updateIndex}.taxFreeInheritance`,
+        String(Math.round(taxFreeInheritance)),
+      )
+      setValue(`${updateIndex}.inheritance`, String(Math.round(inheritance)))
+      setValue(
+        `${updateIndex}.inheritanceTax`,
+        String(Math.round(inheritanceTax)),
+      )
+      setValue(
+        `${updateIndex}.taxableInheritance`,
+        String(Math.round(taxableInheritance)),
+      )
+
+      calculateTotal()
+    },
+    [answers, calculateTotal, getValues, inheritanceTaxFreeLimit, setValue],
+  )
+
+  const initialLoad = useCallback(() => {
     fields.forEach((field: any, mainIndex: number) => {
       const fieldIndex = `${id}[${mainIndex}]`
       const heirsPercentage = getValues(`${fieldIndex}.heirsPercentage`)
-      updateValues(fieldIndex, heirsPercentage)
+      updateValues(fieldIndex, heirsPercentage, mainIndex)
     })
+  }, [fields, getValues, id, updateValues])
+
+  useEffect(() => {
+    initialLoad()
+  }, [heirsRelations, initialLoad])
+
+  useEffect(() => {
+    initialLoad()
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [])
 
@@ -213,13 +265,29 @@ export const HeirsAndPartitionRepeater: FC<
   const [total, setTotal] = useState(0)
 
   useEffect(() => {
-    if (fields.length === 0 && estateData?.estate?.estateMembers) {
+    if (
+      fields.length === 0 &&
+      estateData?.inheritanceReportInfo?.heirs &&
+      !(application.answers as any)?.heirs?.hasModified
+    ) {
+      // Keeping this in for now, it may not be needed, will find out later
+      const heirsData = estateData?.inheritanceReportInfo?.heirs?.map(
+        (heir) => {
+          return {
+            ...heir,
+            initial: true,
+            enabled: true,
+          }
+        },
+      )
       // ran into a problem with "append", as it appeared to be getting called multiple times
       // despite checking on the length of the fields
       // so now using "replace" instead, for the initial setup
-      replace(estateData.estate.estateMembers)
+      replace(heirsData)
+      setValue('heirs.hasModified', true)
     }
-  }, [estateData?.estate?.estateMembers, fields.length, replace])
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [])
 
   return (
     <Box>
@@ -356,7 +424,7 @@ export const HeirsAndPartitionRepeater: FC<
                           <InputController
                             id={`${fieldIndex}.${customField.id}`}
                             name={`${fieldIndex}.${customField.id}`}
-                            label={customField?.title}
+                            label={formatMessage(customField.title)}
                             readOnly
                             defaultValue={member.relation}
                             backgroundColor="white"
@@ -365,24 +433,14 @@ export const HeirsAndPartitionRepeater: FC<
                         </GridColumn>
                       ) : customField.id === 'heirsPercentage' ? (
                         <GridColumn span="1/2" paddingBottom={2}>
-                          <InputController
-                            id={`${fieldIndex}.${customField.id}`}
+                          <ShareInput
                             name={`${fieldIndex}.${customField.id}`}
                             disabled={!member.enabled}
-                            label={customField.title}
-                            defaultValue={defaultValue ? defaultValue : 1}
-                            type="number"
-                            suffix="%"
-                            backgroundColor="blue"
-                            onChange={(
-                              event: React.ChangeEvent<
-                                HTMLInputElement | HTMLTextAreaElement
-                              >,
-                            ) => {
-                              const val = parseInt(event.target.value, 10)
-                              updateValues(fieldIndex, val)
+                            label={formatMessage(customField.title)}
+                            onAfterChange={(val) => {
+                              updateValues(fieldIndex, val, customFieldIndex)
                             }}
-                            error={
+                            errorMessage={
                               error && error[mainIndex]
                                 ? error[mainIndex][customField.id]
                                 : undefined
@@ -398,7 +456,7 @@ export const HeirsAndPartitionRepeater: FC<
                             disabled={!member.enabled}
                             defaultValue={defaultValue ? defaultValue : ''}
                             format={customField.format}
-                            label={customField.title}
+                            label={formatMessage(customField.title)}
                             currency
                             readOnly
                             error={
@@ -515,7 +573,7 @@ export const HeirsAndPartitionRepeater: FC<
               relationOptions={relations}
               updateValues={updateValues}
               remove={remove}
-              error={error && error[index] ? error[index] : null}
+              error={error ?? null}
             />
           </Box>
         )

@@ -88,7 +88,7 @@ export class AuthService {
           id: uuid(),
           created: new Date().toString(),
           modified: new Date().toString(),
-          canConfirmAppeal: false,
+          canConfirmIndictment: false,
         } as User
       }
     } catch (error) {

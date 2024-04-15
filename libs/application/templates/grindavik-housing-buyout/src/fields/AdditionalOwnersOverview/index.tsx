@@ -12,7 +12,9 @@ import { applicantInformationMessages } from '@island.is/application/ui-forms'
 import { useLocale } from '@island.is/localization'
 import { format as formatNationalId } from 'kennitala'
 import { formatText } from '@island.is/application/core'
+import * as m from '../../lib/messages'
 import {
+  formatBankInfo,
   formatPhoneNumber,
   removeCountryCode,
 } from '@island.is/application/ui-components'
@@ -70,6 +72,12 @@ export const AdditionalOwnersOverview = ({
                     value={formatPhoneNumber(
                       removeCountryCode(owner.phone ?? ''),
                     )}
+                  />
+                </GridColumn>
+                <GridColumn span="1/2">
+                  <KeyValue
+                    label={m.application.applicant.bankInfo}
+                    value={formatBankInfo(owner.bankInfo)}
                   />
                 </GridColumn>
               </GridRow>

@@ -25,7 +25,8 @@ export const energyFundsLabel = function (
         amount: energyDetails.vehicleGrant
           ? `${formatCurrency(energyDetails.vehicleGrant.toString())}`
           : formatMessage(
-              energyFundsMessages.carNotEligible as MessageDescriptor,
+              energyFundsMessages.carNotEligable as MessageDescriptor,
+              energyFundsMessages.carNotEligible as Record<string, FormText>,
             ),
       },
     )

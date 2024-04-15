@@ -56,19 +56,21 @@ export const mapLinkGroup = ({
   id: sys.id,
   name: fields.name ?? '',
   primaryLink: mapLinkWrapper(fields.primaryLink, pageAbove),
-  childrenLinks: (fields.childrenLinks ?? []).map((link) =>
-    mapLinkWrapper(link, pageAbove),
-  ),
+  childrenLinks: (fields.childrenLinks ?? [])
+    .map((link) => mapLinkWrapper(link, pageAbove))
+    .filter((childLink): childLink is Link => Boolean(childLink)),
 })
 
 const mapLinkWrapper = (link: LinkType, pageAbove: PageAbove | undefined) => {
-  if (link.sys?.contentType?.sys?.id === 'organizationSubpage') {
+  const contentTypeId = link?.sys?.contentType?.sys?.id
+  if (contentTypeId === 'organizationSubpage') {
     return generateOrganizationSubpageLink(link as IOrganizationSubpage)
-  } else if (link.sys.contentType.sys.id === 'projectSubpage') {
+  } else if (contentTypeId === 'projectSubpage') {
     return generateProjectSubpageLink(link as IProjectSubpage, pageAbove)
-  } else {
+  } else if (contentTypeId === 'link') {
     return mapLink(link as ILink)
   }
+  return null
 }
 
 const generateOrganizationSubpageLink = (subpage: IOrganizationSubpage) => {

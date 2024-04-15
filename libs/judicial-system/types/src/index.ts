@@ -46,6 +46,7 @@ export {
   isRestrictionCase,
   isInvestigationCase,
   isAcceptingCaseDecision,
+  isTrafficViolationCase,
   completedCaseStates,
   isCompletedCase,
   CaseAppealState,
@@ -56,6 +57,7 @@ export type {
   CrimeScene,
   CrimeSceneMap,
   IndictmentSubtypeMap,
+  IndictmentConfirmation,
 } from './lib/case'
 
 export {

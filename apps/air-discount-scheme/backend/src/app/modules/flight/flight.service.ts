@@ -24,9 +24,11 @@ export const ADS_POSTAL_CODES = {
   Reykhólahreppur: 380,
   // from Reykhólahreppur to Þingeyri
   Þingeyri: 471,
-
+  Stadur: 500,
   Hólmavík: 510,
   // from Hólmavík to Öræfi
+  Hvammstangi: 530,
+  HvammstangiDreif: 531,
   Öræfi: 785,
 
   Vestmannaeyjar: 900,
@@ -65,6 +67,12 @@ export class FlightService {
 
   isADSPostalCode(postalcode: number): boolean {
     if (postalcode === null) {
+      return false
+    }
+    if (
+      postalcode === ADS_POSTAL_CODES['Hvammstangi'] ||
+      postalcode === ADS_POSTAL_CODES['HvammstangiDreif']
+    ) {
       return false
     }
     if (

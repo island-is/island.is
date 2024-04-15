@@ -17,16 +17,19 @@ import compareAsc from 'date-fns/compareAsc'
 import {
   LicenseClient,
   LicensePkPassAvailability,
-  PkPassVerification,
+  LicenseType,
   PkPassVerificationInputData,
   Result,
+  VerifyPkPassResult,
 } from '../../../licenseClient.type'
 
 /** Category to attach each log message to */
 const LOG_CATEGORY = 'disability-license-service'
 
 @Injectable()
-export class DisabilityLicenseClient implements LicenseClient<OrorkuSkirteini> {
+export class DisabilityLicenseClient
+  implements LicenseClient<LicenseType.DisabilityLicense>
+{
   constructor(
     @Inject(LOGGER_PROVIDER) private logger: Logger,
     private disabilityLicenseApi: DisabilityLicenseService,
@@ -34,6 +37,7 @@ export class DisabilityLicenseClient implements LicenseClient<OrorkuSkirteini> {
   ) {}
 
   clientSupportsPkPass = true
+  type = LicenseType.DisabilityLicense
 
   private checkLicenseValidityForPkPass(
     licenseInfo: OrorkuSkirteini,
@@ -95,19 +99,23 @@ export class DisabilityLicenseClient implements LicenseClient<OrorkuSkirteini> {
     }
   }
 
-  licenseIsValidForPkPass(payload: unknown): LicensePkPassAvailability {
+  licenseIsValidForPkPass(
+    payload: unknown,
+  ): Promise<LicensePkPassAvailability> {
     if (typeof payload === 'string') {
       let jsonLicense: OrorkuSkirteini
       try {
         jsonLicense = JSON.parse(payload)
       } catch (e) {
         this.logger.warn('Invalid raw data', { error: e, LOG_CATEGORY })
-        return LicensePkPassAvailability.Unknown
+        return Promise.resolve(LicensePkPassAvailability.Unknown)
       }
-      return this.checkLicenseValidityForPkPass(jsonLicense)
+      return Promise.resolve(this.checkLicenseValidityForPkPass(jsonLicense))
     }
 
-    return this.checkLicenseValidityForPkPass(payload as OrorkuSkirteini)
+    return Promise.resolve(
+      this.checkLicenseValidityForPkPass(payload as OrorkuSkirteini),
+    )
   }
 
   async getLicenses(user: User): Promise<Result<Array<OrorkuSkirteini>>> {
@@ -236,7 +244,9 @@ export class DisabilityLicenseClient implements LicenseClient<OrorkuSkirteini> {
     }
   }
 
-  async verifyPkPass(data: string): Promise<Result<PkPassVerification>> {
+  async verifyPkPass(
+    data: string,
+  ): Promise<Result<VerifyPkPassResult<LicenseType.DisabilityLicense>>> {
     const { code, date } = JSON.parse(data) as PkPassVerificationInputData
     const result = await this.smartApi.verifyPkPass({ code, date })
 
@@ -252,7 +262,9 @@ export class DisabilityLicenseClient implements LicenseClient<OrorkuSkirteini> {
 
     return {
       ok: true,
-      data: result.data,
+      data: {
+        valid: result.data.valid,
+      },
     }
   }
 }

@@ -14,6 +14,7 @@ import {
   formatDOB,
 } from '@island.is/judicial-system/formatters'
 import {
+  CaseState,
   isDistrictCourtUser,
   isProsecutionUser,
 } from '@island.is/judicial-system/types'
@@ -25,11 +26,13 @@ import {
   TagCaseState,
   UserContext,
 } from '@island.is/judicial-system-web/src/components'
+import { contextMenu as contextMenuStrings } from '@island.is/judicial-system-web/src/components/ContextMenu/ContextMenu.strings'
 import IconButton from '@island.is/judicial-system-web/src/components/IconButton/IconButton'
 import {
   ColumnCaseType,
   SortButton,
 } from '@island.is/judicial-system-web/src/components/Table'
+import { table as tableStrings } from '@island.is/judicial-system-web/src/components/Table/Table.strings'
 import { CaseListEntry } from '@island.is/judicial-system-web/src/graphql/schema'
 import {
   directionType,
@@ -134,14 +137,20 @@ const ActiveCases: React.FC<React.PropsWithChildren<Props>> = (props) => {
             isCourtRole={isDistrictCourtUser(user)}
             isLoading={isOpeningCaseId === theCase.id && showLoading}
           >
+            {theCase.state &&
+              theCase.state === CaseState.WAITING_FOR_CONFIRMATION && (
+                <Text fontWeight={'medium'} variant="small">
+                  {`${formatMessage(
+                    m.activeRequests.table.headers.prosecutor,
+                  )}: ${theCase.prosecutor?.name}`}
+                </Text>
+              )}
             {theCase.courtDate && (
               <Text fontWeight={'medium'} variant="small">
-                {`${formatMessage(
-                  m.activeRequests.table.headers.hearing,
-                )} ${format(parseISO(theCase.courtDate), 'd.M.y')} kl. ${format(
+                {`${formatMessage(tableStrings.hearing)} ${format(
                   parseISO(theCase.courtDate),
-                  'kk:mm',
-                )}`}
+                  'd.M.y',
+                )} kl. ${format(parseISO(theCase.courtDate), 'kk:mm')}`}
               </Text>
             )}
           </MobileCase>
@@ -194,11 +203,7 @@ const ActiveCases: React.FC<React.PropsWithChildren<Props>> = (props) => {
             </th>
             <th className={styles.th}>
               <SortButton
-                title={capitalize(
-                  formatMessage(m.activeRequests.table.headers.hearing, {
-                    suffix: 'i',
-                  }),
-                )}
+                title={capitalize(formatMessage(tableStrings.hearing))}
                 onClick={() => requestSort('courtDate')}
                 sortAsc={getClassNamesFor('courtDate') === 'ascending'}
                 sortDes={getClassNamesFor('courtDate') === 'descending'}
@@ -350,7 +355,9 @@ const ActiveCases: React.FC<React.PropsWithChildren<Props>> = (props) => {
                           menuLabel={`Valmynd fyrir mál ${c.courtCaseNumber}`}
                           items={[
                             {
-                              title: formatMessage(m.contextMenu.openCase),
+                              title: formatMessage(
+                                contextMenuStrings.openInNewTab,
+                              ),
                               onClick: () => handleOpenCase(c.id, true),
                               icon: 'open',
                             },
@@ -358,7 +365,7 @@ const ActiveCases: React.FC<React.PropsWithChildren<Props>> = (props) => {
                               ? [
                                   {
                                     title: formatMessage(
-                                      m.contextMenu.deleteCase,
+                                      contextMenuStrings.deleteCase,
                                     ),
                                     onClick: () => {
                                       setRequestToRemoveIndex(i)

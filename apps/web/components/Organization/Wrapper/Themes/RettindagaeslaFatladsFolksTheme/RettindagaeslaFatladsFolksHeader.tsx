@@ -73,7 +73,9 @@ const RettindagaeslaFatladsFolksHeader = ({
                 src={organizationPage.defaultHeaderImage?.url}
               />
               <div className={styles.mobileHeaderTitle}>
-                <Text variant="h1">{organizationPage.title}</Text>
+                <Text variant="h1" as="h1">
+                  {organizationPage.title}
+                </Text>
               </div>
               <Link
                 href={

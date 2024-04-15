@@ -1,3 +1,5 @@
+import flatten from 'lodash/flatten'
+
 export enum CaseOrigin {
   UNKNOWN = 'UNKNOWN',
   RVG = 'RVG',
@@ -115,6 +117,8 @@ export enum CaseTransition {
   COMPLETE_APPEAL = 'COMPLETE_APPEAL',
   REOPEN_APPEAL = 'REOPEN_APPEAL',
   WITHDRAW_APPEAL = 'WITHDRAW_APPEAL',
+  DENY_INDICTMENT = 'DENY_INDICTMENT',
+  RETURN_INDICTMENT = 'RETURN_INDICTMENT',
 }
 
 /* eslint-disable @typescript-eslint/naming-convention */
@@ -124,6 +128,7 @@ export enum CaseLegalProvisions {
   _95_1_C = '_95_1_C', // c-lið 1. mgr. 95. gr.
   _95_1_D = '_95_1_D', // d-lið 1. mgr. 95. gr.
   _95_2 = '_95_2', // 2. mgr. 95. gr.
+  _97_1 = '_97_1', // 1. mgr. 97. gr. sml.
   _99_1_B = '_99_1_B', // b-lið 1. mgr. 99. gr.
   _100_1 = '_100_1', // 1. mgr. 100. gr. sml.
 }
@@ -245,6 +250,24 @@ export const isCompletedCase = (state?: CaseState | null): boolean => {
   return Boolean(state && completedCaseStates.includes(state))
 }
 
+export const isTrafficViolationCase = (
+  indictmentSubtypes?: IndictmentSubtypeMap,
+  type?: CaseType,
+): boolean => {
+  if (!indictmentSubtypes || type !== CaseType.INDICTMENT) {
+    return false
+  }
+
+  const flatIndictmentSubtypes = flatten(Object.values(indictmentSubtypes))
+
+  return Boolean(
+    flatIndictmentSubtypes.length > 0 &&
+      flatIndictmentSubtypes.every(
+        (val) => val === IndictmentSubtype.TRAFFIC_VIOLATION,
+      ),
+  )
+}
+
 export const getStatementDeadline = (appealReceived: Date): string => {
   return new Date(
     new Date(appealReceived).setDate(appealReceived.getDate() + 1),
@@ -267,3 +290,7 @@ export const prosecutorCanSelectDefenderForInvestigationCase = (
       ].includes(type),
   )
 }
+
+export type IndictmentConfirmation =
+  | { actor: string; institution: string; date: Date }
+  | undefined

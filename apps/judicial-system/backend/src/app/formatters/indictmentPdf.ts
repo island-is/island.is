@@ -8,6 +8,10 @@ import {
   formatDate,
   lowercase,
 } from '@island.is/judicial-system/formatters'
+import {
+  CaseState,
+  type IndictmentConfirmation,
+} from '@island.is/judicial-system/types'
 
 import { nowFactory } from '../factories'
 import { indictment } from '../messages'
@@ -15,6 +19,7 @@ import { Case } from '../modules/case'
 import {
   addEmptyLines,
   addGiganticHeading,
+  addIndictmentConfirmation,
   addNormalPlusCenteredText,
   addNormalPlusJustifiedText,
   addNormalPlusText,
@@ -54,6 +59,7 @@ const roman = (num: number) => {
 export const createIndictment = async (
   theCase: Case,
   formatMessage: FormatMessage,
+  confirmation?: IndictmentConfirmation,
 ): Promise<Buffer> => {
   const doc = new PDFDocument({
     size: 'A4',
@@ -74,6 +80,17 @@ export const createIndictment = async (
   const heading = formatMessage(indictment.heading)
 
   setTitle(doc, title)
+
+  if (theCase.state === CaseState.SUBMITTED && confirmation) {
+    addIndictmentConfirmation(
+      doc,
+      confirmation.actor,
+      confirmation.institution,
+      confirmation.date,
+    )
+  }
+
+  addEmptyLines(doc, 4, doc.page.margins.left)
 
   addGiganticHeading(doc, heading, 'Times-Roman')
   addNormalPlusText(doc, ' ')

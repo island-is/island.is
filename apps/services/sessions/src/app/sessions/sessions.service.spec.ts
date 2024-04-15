@@ -1,6 +1,7 @@
 import { createNationalId } from '@island.is/testing/fixtures'
 import { TestApp } from '@island.is/testing/nest'
 
+import ip3country from 'ip3country'
 import { FixtureFactory } from '../../../test/fixture.factory'
 import { setupWithoutAuth } from '../../../test/setup'
 import { Session } from '../sessions/session.model'
@@ -35,6 +36,7 @@ describe('SessionsService', () => {
   })
 
   beforeEach(async () => {
+    ip3country.init()
     await factory.get(Session).destroy({
       where: {},
       cascade: true,

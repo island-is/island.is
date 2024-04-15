@@ -233,7 +233,7 @@ export class ParentalLeaveService extends BaseTemplateApiService {
         dateOfBirth: applicationInformation.dateOfBirth,
       }
     } catch (e) {
-      this.logger.warning('Failed to fetch application information', e)
+      this.logger.error('Failed to fetch application information', e)
     }
 
     return {
@@ -428,7 +428,6 @@ export class ParentalLeaveService extends BaseTemplateApiService {
 
     if (
       state === States.VINNUMALASTOFNUN_APPROVE_EDITS ||
-      state === States.VINNUMALASTOFNUN_APPROVE_EDITS_ABORT ||
       state === States.RESIDENCE_GRANT_APPLICATION
     ) {
       if (residenceGrantFiles) {

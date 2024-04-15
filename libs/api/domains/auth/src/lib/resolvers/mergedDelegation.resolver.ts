@@ -1,13 +1,13 @@
 import { Parent, ResolveField, Resolver } from '@nestjs/graphql'
 import { UseGuards } from '@nestjs/common'
 
-import { DelegationType } from '@island.is/clients/auth/delegation-api'
 import { IdentityClientService } from '@island.is/clients/identity'
 import { Identity } from '@island.is/api/domains/identity'
 import { IdsUserGuard } from '@island.is/auth-nest-tools'
+import { AuthDelegationType } from '@island.is/clients/auth/delegation-api'
+import type { MergedDelegationDTO } from '@island.is/clients/auth/public-api'
 
-import { MergedDelegation } from '../models'
-import type { MergedDelegationDTO } from '../services/types'
+import { MergedDelegation } from '../models/delegation.model'
 
 @UseGuards(IdsUserGuard)
 @Resolver(() => MergedDelegation)
@@ -38,12 +38,12 @@ export class MergedDelegationResolver {
     )
   }
 
-  @ResolveField('type', () => DelegationType, {
+  @ResolveField('type', () => AuthDelegationType, {
     deprecationReason: 'Use types instead',
   })
   resolveDelegationType(
     @Parent() delegation: MergedDelegationDTO,
-  ): DelegationType {
+  ): AuthDelegationType {
     return delegation.types[0]
   }
 }

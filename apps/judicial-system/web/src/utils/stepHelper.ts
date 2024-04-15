@@ -1,10 +1,9 @@
 import addDays from 'date-fns/addDays'
 import parseISO from 'date-fns/parseISO'
-import flatten from 'lodash/flatten'
 
 import { TagVariant } from '@island.is/island-ui/core'
 import { formatDate } from '@island.is/judicial-system/formatters'
-import { IndictmentSubtype } from '@island.is/judicial-system/types'
+import { isTrafficViolationCase } from '@island.is/judicial-system/types'
 import {
   CaseAppealState,
   CaseCustodyRestrictions,
@@ -90,28 +89,19 @@ export const createCaseResentExplanation = (
   }Krafa endursend ${formatDate(now, 'PPPp')} - ${explanation}`
 }
 
-export const isTrafficViolationCase = (workingCase: Case): boolean => {
-  if (
-    !workingCase.indictmentSubtypes ||
-    workingCase.type !== CaseType.INDICTMENT
-  ) {
-    return false
-  }
-
-  const flatIndictmentSubtypes = flatten(
-    Object.values(workingCase.indictmentSubtypes),
+export const isTrafficViolationIndictment = (workingCase: Case): boolean => {
+  const isTrafficViolation = isTrafficViolationCase(
+    workingCase.indictmentSubtypes,
+    workingCase.type as CaseType,
   )
 
   return Boolean(
-    !(
-      workingCase.caseFiles &&
-      workingCase.caseFiles.find(
-        (file) => file.category === CaseFileCategory.INDICTMENT,
-      )
-    ) &&
-      flatIndictmentSubtypes.length > 0 &&
-      flatIndictmentSubtypes.every(
-        (val) => val === IndictmentSubtype.TRAFFIC_VIOLATION,
+    isTrafficViolation &&
+      !(
+        workingCase.caseFiles &&
+        workingCase.caseFiles.find(
+          (file) => file.category === CaseFileCategory.INDICTMENT,
+        )
       ),
   )
 }

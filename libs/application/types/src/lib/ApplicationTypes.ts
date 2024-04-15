@@ -63,6 +63,8 @@ export enum ApplicationTypes {
   CHANGE_MACHINE_SUPERVISOR = 'ChangeMachineSupervisor',
   DEREGISTER_MACHINE = 'DeregisterMachine',
   GRINDAVIK_HOUSING_BUYOUT = 'GrindavikHousingBuyout',
+  REQUEST_INSPECTION_FOR_MACHINE = 'RequestInspectionForMachine',
+  OFFICIAL_JOURNAL_OF_ICELAND = 'OfficialJournalOfIceland',
 }
 
 export const ApplicationConfigurations = {
@@ -136,7 +138,7 @@ export const ApplicationConfigurations = {
   },
   [ApplicationTypes.COMPLAINTS_TO_ALTHINGI_OMBUDSMAN]: {
     slug: 'kvortun-til-umbodsmanns-althingis',
-    translation: 'ctao.application',
+    translation: ['ctao.application', 'uiForms.application'],
   },
   [ApplicationTypes.ACCIDENT_NOTIFICATION]: {
     slug: 'slysatilkynning',
@@ -324,6 +326,14 @@ export const ApplicationConfigurations = {
   },
   [ApplicationTypes.GRINDAVIK_HOUSING_BUYOUT]: {
     slug: 'kaup-a-ibudarhusnaedi-i-grindavik',
-    translation: 'ghb.application',
+    translation: ['ghb.application', 'uiForms.application'],
+  },
+  [ApplicationTypes.REQUEST_INSPECTION_FOR_MACHINE]: {
+    slug: 'beidni-um-skodun-taekis',
+    translation: 'aosh.rifm.application',
+  },
+  [ApplicationTypes.OFFICIAL_JOURNAL_OF_ICELAND]: {
+    slug: 'stjornartidindi',
+    translation: 'ojoi.application',
   },
 }

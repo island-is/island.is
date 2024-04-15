@@ -105,5 +105,5 @@ export class User extends Model {
     allowNull: false,
   })
   @ApiProperty()
-  canConfirmAppeal!: boolean
+  canConfirmIndictment!: boolean
 }

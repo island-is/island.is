@@ -7,15 +7,15 @@ import {
 } from '@nestjs/graphql'
 
 import {
-  DelegationProvider,
-  DelegationType,
+  AuthDelegationProvider,
+  AuthDelegationType,
 } from '@island.is/clients/auth/delegation-api'
 import { Identity } from '@island.is/api/domains/identity'
 
 import { DelegationScope } from './delegationScope.model'
 
-registerEnumType(DelegationProvider, { name: 'AuthDelegationProvider' })
-registerEnumType(DelegationType, { name: 'AuthDelegationType' })
+registerEnumType(AuthDelegationProvider, { name: 'AuthDelegationProvider' })
+registerEnumType(AuthDelegationType, { name: 'AuthDelegationType' })
 
 const exhaustiveCheck = (param: never) => {
   throw new Error(`Missing interfaceType ${param}`)
@@ -24,13 +24,13 @@ const exhaustiveCheck = (param: never) => {
 @InterfaceType('AuthDelegation', {
   resolveType(delegation: Delegation) {
     switch (delegation.type) {
-      case DelegationType.LegalGuardian:
+      case AuthDelegationType.LegalGuardian:
         return LegalGuardianDelegation
-      case DelegationType.ProcurationHolder:
+      case AuthDelegationType.ProcurationHolder:
         return ProcuringHolderDelegation
-      case DelegationType.PersonalRepresentative:
+      case AuthDelegationType.PersonalRepresentative:
         return PersonalRepresentativeDelegation
-      case DelegationType.Custom:
+      case AuthDelegationType.Custom:
         return CustomDelegation
       default:
         exhaustiveCheck(delegation.type)
@@ -47,11 +47,11 @@ export abstract class Delegation {
   @Field(() => Identity)
   to!: Identity
 
-  @Field(() => DelegationType)
-  type!: DelegationType
+  @Field(() => AuthDelegationType)
+  type!: AuthDelegationType
 
-  @Field(() => DelegationProvider)
-  provider!: DelegationProvider
+  @Field(() => AuthDelegationProvider)
+  provider!: AuthDelegationProvider
 }
 
 @ObjectType('AuthLegalGuardianDelegation', {
@@ -85,6 +85,6 @@ export class CustomDelegation extends Delegation {
 
 @ObjectType('AuthMergedDelegation')
 export class MergedDelegation {
-  @Field(() => [DelegationType])
-  types!: DelegationType[]
+  @Field(() => [AuthDelegationType])
+  types!: AuthDelegationType[]
 }
