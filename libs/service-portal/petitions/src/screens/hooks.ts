@@ -55,6 +55,7 @@ export const useGetListsUserSigned = () => {
     {
       variables: {
         input: {
+          tags: 'generalPetition',
           limit: 1000,
         },
       },
