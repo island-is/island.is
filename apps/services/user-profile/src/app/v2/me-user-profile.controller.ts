@@ -154,7 +154,7 @@ export class MeUserProfileController {
     resources: (profiles) =>
       profiles.data.map((profile) => profile.fromNationalId),
   })
-  getDelegationPreferences(
+  getActorProfiles(
     @CurrentUser() user: User,
   ): Promise<PaginatedActorProfileDto> {
     return this.userProfileService.getActorProfiles(user.nationalId)
