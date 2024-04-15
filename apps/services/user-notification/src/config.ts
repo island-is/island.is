@@ -25,7 +25,7 @@ export const UserNotificationsConfig = defineConfig({
       servicePortalClickActionUrl:
         env.optional('SERVICE_PORTAL_CLICK_ACTION_URL') ??
         'https://island.is/minarsidur',
-      contentfulAccessToken: env.optional('CONTENTFUL_ACCESS_TOKEN'),
+      contentfulAccessToken: env.optional('CONTENTFUL_ACCESS_TOKEN', ''),
     }
   },
 })
