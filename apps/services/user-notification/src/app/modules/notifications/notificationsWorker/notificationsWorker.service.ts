@@ -225,12 +225,22 @@ export class NotificationsWorkerService implements OnApplicationBootstrap {
       return
     }
 
-    const [template, individual] = await Promise.all([
-      this.notificationsService.getTemplate(message.templateId, profile.locale),
-      this.nationalRegistryService.getName(profile.nationalId),
-    ])
+    const template = await this.notificationsService.getTemplate(
+      message.templateId,
+      profile.locale,
+    )
 
-    const fullName = individual?.fulltNafn ?? ''
+    let fullName = message.onBehalfOf?.name ?? ''
+
+    // if we don't have a full name, we try to get it from the national registry
+    if (!fullName) {
+      // we always use the name of the original recipient in the email
+      const nationalIdOfOriginalRecipient =
+        message.onBehalfOf?.nationalId ?? profile.nationalId
+
+      fullName = await this.getFullName(nationalIdOfOriginalRecipient)
+    }
+
     const isEnglish = profile.locale === 'en'
 
     const formattedTemplate = this.notificationsService.formatArguments(
@@ -369,17 +379,27 @@ export class NotificationsWorkerService implements OnApplicationBootstrap {
               const delegations =
                 await this.delegationsApi.delegationsControllerGetDelegationRecords(
                   {
-                    xQueryFromNationalId: message.recipient,
+                    xQueryNationalId: message.recipient,
                     scope: DocumentsScope.main,
                   },
                 )
+
+              let recipientName = ''
+
+              if (delegations.data.length > 0) {
+                recipientName = await this.getFullName(profile.nationalId)
+              }
 
               await Promise.all(
                 delegations.data.map((delegation) =>
                   this.queue.add({
                     ...message,
                     recipient: delegation.toNationalId,
-                    onBehalfOf: message.recipient,
+                    onBehalfOf: {
+                      nationalId: message.recipient,
+                      name: recipientName,
+                      subjectId: delegation.subjectId,
+                    },
                   }),
                 ),
               )
@@ -394,5 +414,10 @@ export class NotificationsWorkerService implements OnApplicationBootstrap {
         await Promise.all(notificationPromises)
       },
     )
+  }
+
+  private async getFullName(nationalId: string): Promise<string> {
+    const individual = await this.nationalRegistryService.getName(nationalId)
+    return individual?.fulltNafn ?? ''
   }
 }

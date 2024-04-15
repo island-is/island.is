@@ -33,6 +33,8 @@ import {
   validateToAndFromNationalId,
   delegationProviderTypeMap,
 } from './utils/delegations'
+import { DelegationDirection } from './types/delegationDirection'
+import { UserIdentitiesService } from '../user-identities/user-identities.service'
 
 const TEN_MINUTES = 1000 * 60 * 10
 const ONE_WEEK = 1000 * 60 * 60 * 24 * 7
@@ -45,6 +47,7 @@ export type DelegationIndexInfo = Pick<
   | 'type'
   | 'validTo'
   | 'customDelegationScopes'
+  | 'subjectId'
 >
 
 type DelegationDTOWithStringType = Omit<DelegationDTO, 'type'> & {
@@ -59,7 +62,8 @@ type SortedDelegations = {
 
 type FetchDelegationRecordsArgs = {
   scope: ApiScope
-  fromNationalId: string
+  nationalId: string
+  direction: DelegationDirection
 }
 
 const getTimeUntilEighteen = (nationalId: string) => {
@@ -133,8 +137,7 @@ const toDelegationIndexInfo = (
 
 /**
  * Service class for delegation index.
- * Delegation index stores delegations for a user
- * to bypass the need to fetch them from third party services
+ * Delegation index stores delegations for a user to bypass the need to fetch them from third party services
  * */
 @Injectable()
 export class DelegationsIndexService {
@@ -150,14 +153,18 @@ export class DelegationsIndexService {
     private delegationsIncomingCompanyService: IncomingDelegationsCompanyService,
     private delegationsIncomingWardService: DelegationsIncomingWardService,
     private personalRepresentativeScopePermissionService: PersonalRepresentativeScopePermissionService,
+    private userIdentitiesService: UserIdentitiesService,
   ) {}
 
+  /* Lookup delegations in index for user for specific scope */
   async getDelegationRecords({
     scope,
-    fromNationalId,
+    nationalId,
+    direction = DelegationDirection.OUTGOING,
   }: {
     scope: string
-    fromNationalId: string
+    nationalId: string
+    direction: DelegationDirection
   }): Promise<PaginatedDelegationRecordDTO> {
     const apiScope = await this.apiScopeModel.findOne({
       where: {
@@ -169,18 +176,27 @@ export class DelegationsIndexService {
       throw new BadRequestException('Invalid scope')
     }
 
-    if (!kennitala.isValid(fromNationalId)) {
+    if (!kennitala.isValid(nationalId)) {
       throw new BadRequestException('Invalid national id')
     }
 
     const delegations = await Promise.all([
-      this.getCustomDelegationRecords({ scope: apiScope, fromNationalId }),
+      this.getCustomDelegationRecords({
+        scope: apiScope,
+        nationalId,
+        direction,
+      }),
       this.getRepresentativeDelegationRecords({
         scope: apiScope,
-        fromNationalId,
+        nationalId,
+        direction,
       }),
-      this.getCompanyDelegationRecords({ scope: apiScope, fromNationalId }),
-      this.getWardDelegationRecords({ scope: apiScope, fromNationalId }),
+      this.getCompanyDelegationRecords({
+        scope: apiScope,
+        nationalId,
+        direction,
+      }),
+      this.getWardDelegationRecords({ scope: apiScope, nationalId, direction }),
     ]).then((d) => d.flat())
 
     // For now, we don't implement pagination but still return the paginated response
@@ -224,24 +240,9 @@ export class DelegationsIndexService {
       this.getRepresentativeDelegations(user.nationalId),
       this.getCompanyDelegations(user),
       this.getWardDelegations(user),
-    ]).then((d) =>
-      d.reduce(
-        (acc, curr) => {
-          return {
-            created: acc.created.concat(curr.created),
-            updated: acc.updated.concat(curr.updated),
-            deleted: acc.deleted.concat(curr.deleted),
-          }
-        },
-        {
-          created: [],
-          updated: [],
-          deleted: [],
-        } as SortedDelegations,
-      ),
-    )
+    ]).then((d) => d.flat())
 
-    await this.saveToIndex(delegations)
+    await this.saveToIndex(user.nationalId, delegations)
 
     // set next reindex to one week in the future
     await this.delegationIndexMetaModel.update(
@@ -260,7 +261,7 @@ export class DelegationsIndexService {
   /* Index incoming custom delegations */
   async indexCustomDelegations(nationalId: string) {
     const delegations = await this.getCustomDelegations(nationalId, true)
-    await this.saveToIndex(delegations)
+    await this.saveToIndex(nationalId, delegations)
   }
 
   /* Index incoming personal representative delegations */
@@ -269,7 +270,7 @@ export class DelegationsIndexService {
       nationalId,
       true,
     )
-    await this.saveToIndex(delegations)
+    await this.saveToIndex(nationalId, delegations)
   }
 
   /* Add item to index */
@@ -300,7 +301,27 @@ export class DelegationsIndexService {
   /*
    * Private methods
    * */
-  private async saveToIndex({ created, updated, deleted }: SortedDelegations) {
+  private async saveToIndex(
+    nationalId: string,
+    delegations: DelegationIndexInfo[],
+  ) {
+    const currRecords = await this.delegationIndexModel.findAll({
+      where: {
+        toNationalId: nationalId,
+      },
+    })
+
+    // add subject id to new delegations
+    const delegationsWithSubjectIds = await this.getSubjectIds({
+      newRecords: delegations,
+      currRecords,
+    })
+
+    const { created, updated, deleted } = this.sortDelegation({
+      newRecords: delegationsWithSubjectIds,
+      currRecords,
+    })
+
     await Promise.all([
       this.delegationIndexModel.bulkCreate(created),
       updated.map((d) =>
@@ -326,27 +347,31 @@ export class DelegationsIndexService {
     ])
   }
 
-  private sortDelegation(
-    currRecords: DelegationIndex[],
-    newRecords: DelegationIndexInfo[],
-  ): SortedDelegations {
+  private sortDelegation({
+    currRecords,
+    newRecords,
+  }: {
+    newRecords: DelegationIndexInfo[]
+    currRecords: DelegationIndexInfo[]
+  }): SortedDelegations {
     const { created, updated } = newRecords.reduce(
       (acc, curr) => {
         const existing = currRecords.find(
           (d) =>
-            d.fromNationalId === curr.fromNationalId && d.type === curr.type,
+            d.fromNationalId === curr.fromNationalId &&
+            d.type === curr.type &&
+            d.provider === curr.provider,
         )
 
-        if (existing) {
-          if (
-            existing.validTo !== curr.validTo ||
+        if (
+          existing &&
+          (existing.validTo !== curr.validTo ||
             !hasAllSameScopes(
               existing.customDelegationScopes,
               curr.customDelegationScopes,
-            )
-          ) {
-            acc.updated.push(curr)
-          }
+            ))
+        ) {
+          acc.updated.push(curr)
         } else {
           acc.created.push(curr)
         }
@@ -364,34 +389,63 @@ export class DelegationsIndexService {
         !newRecords.some(
           (d) =>
             d.fromNationalId === delegation.fromNationalId &&
-            d.type === delegation.type,
+            d.type === delegation.type &&
+            d.provider === delegation.provider,
         ),
     )
 
     return { deleted, created, updated }
   }
 
+  private async getSubjectIds({
+    currRecords,
+    newRecords,
+  }: {
+    newRecords: DelegationIndexInfo[]
+    currRecords: DelegationIndexInfo[]
+  }): Promise<DelegationIndexInfo[]> {
+    return Promise.all(
+      newRecords.map(async (d) => {
+        if (d.subjectId) {
+          return d
+        }
+
+        // subjectId is unique between from and to nationalId so if we already have a delegation with the same from and to nationalId, we can use that subjectId
+        let subjectId =
+          currRecords.find(
+            (delegation) =>
+              delegation.fromNationalId === d.fromNationalId &&
+              delegation.subjectId,
+          )?.subjectId ?? null
+
+        // don't fail indexing if we can't find or create a subjectId
+        try {
+          if (!subjectId) {
+            subjectId = await this.userIdentitiesService.findOrCreateSubjectId({
+              toNationalId: d.toNationalId,
+              fromNationalId: d.fromNationalId,
+            })
+          }
+        } catch {
+          return d
+        }
+
+        return { ...d, subjectId }
+      }),
+    )
+  }
+
   private async getCustomDelegations(nationalId: string, useMaster = false) {
-    const delegations = await this.delegationsIncomingCustomService
+    return this.delegationsIncomingCustomService
       .findAllValidIncoming({ nationalId }, useMaster)
       .then((d) => d.map(toDelegationIndexInfo))
-
-    const currentDelegationRecord = await this.delegationIndexModel.findAll({
-      where: {
-        toNationalId: nationalId,
-        type: AuthDelegationType.Custom,
-        provider: AuthDelegationProvider.Custom,
-      },
-    })
-
-    return this.sortDelegation(currentDelegationRecord, delegations)
   }
 
   private async getRepresentativeDelegations(
     nationalId: string,
     useMaster = false,
   ) {
-    const delegations = await this.delegationsIncomingRepresentativeService
+    return this.delegationsIncomingRepresentativeService
       .findAllIncoming({ nationalId }, useMaster)
       .then((d) => {
         // append the personal representative right type code to the delegation type in index
@@ -413,68 +467,32 @@ export class DelegationsIndexService {
 
         return delegationsWithRights.map(toDelegationIndexInfo)
       })
-
-    const currentDelegationRecord = await this.delegationIndexModel.findAll({
-      where: {
-        toNationalId: nationalId,
-        type: {
-          [Op.in]: [
-            AuthDelegationType.PersonalRepresentative,
-            PersonalRepresentativeDelegationType.PersonalRepresentativePostholf,
-          ],
-        },
-        provider: AuthDelegationProvider.PersonalRepresentativeRegistry,
-      },
-    })
-
-    return this.sortDelegation(currentDelegationRecord, delegations)
   }
 
   private async getCompanyDelegations(user: User) {
-    const delegations = await this.delegationsIncomingCompanyService
+    return await this.delegationsIncomingCompanyService
       .findAllIncoming(user)
       .then((d) => d.map(toDelegationIndexInfo))
-
-    const currentDelegationRecord = await this.delegationIndexModel.findAll({
-      where: {
-        toNationalId: user.nationalId,
-        type: AuthDelegationType.ProcurationHolder,
-        provider: AuthDelegationProvider.CompanyRegistry,
-      },
-    })
-
-    return this.sortDelegation(currentDelegationRecord, delegations)
   }
 
   private async getWardDelegations(user: User) {
-    const delegations = await this.delegationsIncomingWardService
-      .findAllIncoming(user)
-      .then(
-        (delegations) =>
-          delegations
-            .map((delegation) =>
-              toDelegationIndexInfo({
-                ...delegation,
-                validTo: getTimeUntilEighteen(delegation.fromNationalId), // validTo is the date the child turns 18
-              }),
-            )
-            .filter((d) => d.validTo !== null), // if child has already turned 18, we don't want to index the delegation
-      )
-
-    const currentDelegationRecord = await this.delegationIndexModel.findAll({
-      where: {
-        toNationalId: user.nationalId,
-        type: AuthDelegationType.LegalGuardian,
-        provider: AuthDelegationProvider.NationalRegistry,
-      },
-    })
-
-    return this.sortDelegation(currentDelegationRecord, delegations)
+    return this.delegationsIncomingWardService.findAllIncoming(user).then(
+      (delegations) =>
+        delegations
+          .map((delegation) =>
+            toDelegationIndexInfo({
+              ...delegation,
+              validTo: getTimeUntilEighteen(delegation.fromNationalId), // validTo is the date the child turns 18
+            }),
+          )
+          .filter((d) => d.validTo !== null), // if child has already turned 18, we don't want to index the delegation
+    )
   }
 
   private async getCustomDelegationRecords({
     scope,
-    fromNationalId,
+    nationalId,
+    direction,
   }: FetchDelegationRecordsArgs): Promise<DelegationRecordDTO[]> {
     if (!scope.allowExplicitDelegationGrant) {
       return []
@@ -483,7 +501,9 @@ export class DelegationsIndexService {
     return this.delegationIndexModel
       .findAll({
         where: {
-          fromNationalId,
+          ...(direction === DelegationDirection.INCOMING
+            ? { toNationalId: nationalId }
+            : { fromNationalId: nationalId }),
           type: AuthDelegationType.Custom,
           provider: AuthDelegationProvider.Custom,
           customDelegationScopes: { [Op.contains]: [scope.name] },
@@ -495,7 +515,8 @@ export class DelegationsIndexService {
 
   private async getRepresentativeDelegationRecords({
     scope,
-    fromNationalId,
+    nationalId,
+    direction,
   }: FetchDelegationRecordsArgs): Promise<DelegationRecordDTO[]> {
     if (!scope.grantToPersonalRepresentatives) {
       return []
@@ -514,7 +535,9 @@ export class DelegationsIndexService {
     return this.delegationIndexModel
       .findAll({
         where: {
-          fromNationalId,
+          ...(direction === DelegationDirection.INCOMING
+            ? { toNationalId: nationalId }
+            : { fromNationalId: nationalId }),
           type: {
             [Op.in]: permittedDelegationTypes,
           },
@@ -527,7 +550,8 @@ export class DelegationsIndexService {
 
   private async getCompanyDelegationRecords({
     scope,
-    fromNationalId,
+    nationalId,
+    direction,
   }: FetchDelegationRecordsArgs): Promise<DelegationRecordDTO[]> {
     if (!scope.grantToProcuringHolders) {
       return []
@@ -536,7 +560,9 @@ export class DelegationsIndexService {
     return this.delegationIndexModel
       .findAll({
         where: {
-          fromNationalId,
+          ...(direction === DelegationDirection.INCOMING
+            ? { toNationalId: nationalId }
+            : { fromNationalId: nationalId }),
           type: {
             [Op.in]:
               delegationProviderTypeMap[AuthDelegationProvider.CompanyRegistry],
@@ -550,7 +576,8 @@ export class DelegationsIndexService {
 
   private async getWardDelegationRecords({
     scope,
-    fromNationalId,
+    nationalId,
+    direction,
   }: FetchDelegationRecordsArgs): Promise<DelegationRecordDTO[]> {
     if (!scope.grantToLegalGuardians) {
       return []
@@ -559,7 +586,9 @@ export class DelegationsIndexService {
     return this.delegationIndexModel
       .findAll({
         where: {
-          fromNationalId,
+          ...(direction === DelegationDirection.INCOMING
+            ? { toNationalId: nationalId }
+            : { fromNationalId: nationalId }),
           type: {
             [Op.in]:
               delegationProviderTypeMap[

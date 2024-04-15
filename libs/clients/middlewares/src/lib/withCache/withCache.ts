@@ -11,6 +11,9 @@ import { FetchError } from '../FetchError'
 import { CacheEntry, CacheMiddlewareConfig, CachePolicyInternal } from './types'
 import { CacheResponse } from './CacheResponse'
 
+export const COMMON_HEADER_PATTERNS = ['X-Param', 'X-Query']
+const CACHE_KEY_SEPARATOR = '#'
+
 const DEBUG_NAMES = (process.env.ENHANCED_FETCH_DEBUG_CACHE ?? '')
   .split(',')
   .filter((a) => a)
@@ -257,29 +260,45 @@ export function withCache({
   return fetchWithCache
 }
 
-function defaultCacheKey(request: Request) {
+export function defaultCacheKey(request: Request) {
   // Here we trim the origin and the protocol from the URL to clean up cache
   // keys and increase cache hits in environments where the same API is routed
   // in different ways.
   // To avoid cache collisions, we additionally prefixed the cache key with the
   // Enhanced Cache name.
   const url = new URL(request.url)
-  return `${url.pathname}${url.search}`
+
+  // Add automatic calculation of cacheable headers value
+  const headersCacheKey = calculateHeadersCacheKey(request.headers)
+
+  return `${url.pathname}${url.search}${headersCacheKey}`
 }
 
-/**
- * Create a cache key that includes a header value based on a header name if header is present.
- *
- * This is required for clients that are using cache and the URL contains a static placeholder
- * for the resource identifier, e.g. /users/.national-id where the actual resource identifier is
- * passed in a header.
- */
-export function defaultCacheKeyWithHeader(header: string) {
-  return (request: Request) => {
-    const cacheKey = defaultCacheKey(request)
-    const paramHeader = request.headers.get(header)
-    return paramHeader ? `${cacheKey}#${paramHeader}` : cacheKey
+export function calculateHeadersCacheKey(requestHeaders: Headers): string {
+  const cacheableHeadersValues: string[] = []
+  const lowerCasedPatterns = COMMON_HEADER_PATTERNS.map((pattern) =>
+    pattern.toLowerCase(),
+  )
+
+  for (const [name, value] of requestHeaders) {
+    for (const pattern of lowerCasedPatterns) {
+      const nameLower = name.toLowerCase()
+      if (nameLower.startsWith(pattern)) {
+        cacheableHeadersValues.push(
+          `${nameLower}=${value.replace(
+            CACHE_KEY_SEPARATOR,
+            CACHE_KEY_SEPARATOR.repeat(2),
+          )}`,
+        )
+      }
+    }
   }
+
+  return cacheableHeadersValues.length > 0
+    ? `${CACHE_KEY_SEPARATOR}${cacheableHeadersValues.join(
+        CACHE_KEY_SEPARATOR,
+      )}`
+    : ''
 }
 
 function headersToObject(headers: Headers) {
