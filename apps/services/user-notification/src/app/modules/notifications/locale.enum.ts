@@ -1,5 +1,5 @@
 // Language Code Mapping in Contentful
-export enum Locale {
+export enum ContentfulLocale {
   EN = 'en',
   IS = 'is-IS',
 }

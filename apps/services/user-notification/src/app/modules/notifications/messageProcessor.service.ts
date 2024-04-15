@@ -3,7 +3,7 @@ import { Notification } from './types'
 import { UserProfileDto } from '@island.is/clients/user-profile'
 import { NotificationsService } from './notifications.service'
 import { CreateHnippNotificationDto } from './dto/createHnippNotification.dto'
-import { Locale } from './locale.enum'
+import { ContentfulLocale } from './locale.enum'
 import { mapStringToLocale } from './utils'
 
 export const APP_PROTOCOL = Symbol('APP_PROTOCOL')

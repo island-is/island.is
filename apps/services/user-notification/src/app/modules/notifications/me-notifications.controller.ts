@@ -30,7 +30,7 @@ import {
 } from './dto/notification.dto'
 import { Documentation } from '@island.is/nest/swagger'
 
-import { Locale } from './locale.enum'
+import { ContentfulLocale } from './locale.enum'
 
 @UseGuards(IdsUserGuard, ScopesGuard)
 @Scopes(NotificationsScope.read)
@@ -50,9 +50,9 @@ export class MeNotificationsController {
     request: {
       query: {
         locale: {
-          enum: Locale,
+          enum: ContentfulLocale,
           required: false,
-          example: Locale.IS,
+          example: ContentfulLocale.IS,
         },
       },
     },
@@ -93,9 +93,9 @@ export class MeNotificationsController {
     request: {
       query: {
         locale: {
-          enum: Locale,
+          enum: ContentfulLocale,
           required: false,
-          example: Locale.IS,
+          example: ContentfulLocale.IS,
         },
       },
     },
@@ -103,7 +103,7 @@ export class MeNotificationsController {
   findOne(
     @CurrentUser() user: User,
     @Param('id') id: number,
-    @Query('locale') locale: Locale = Locale.IS,
+    @Query('locale') locale: ContentfulLocale = ContentfulLocale.IS,
   ): Promise<RenderedNotificationDto> {
     return this.notificationService.findOne(user, id, locale)
   }
@@ -125,9 +125,9 @@ export class MeNotificationsController {
     request: {
       query: {
         locale: {
-          enum: Locale,
+          enum: ContentfulLocale,
           required: false,
-          example: Locale.IS,
+          example: ContentfulLocale.IS,
         },
       },
     },
@@ -139,7 +139,7 @@ export class MeNotificationsController {
     @CurrentUser() user: User,
     @Param('id') id: number,
     @Body() updateNotificationDto: UpdateNotificationDto,
-    @Query('locale') locale: Locale = Locale.IS,
+    @Query('locale') locale: ContentfulLocale = ContentfulLocale.IS,
   ): Promise<RenderedNotificationDto> {
     return this.notificationService.update(
       user,

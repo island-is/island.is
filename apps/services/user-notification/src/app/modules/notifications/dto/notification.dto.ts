@@ -13,7 +13,7 @@ import {
 } from 'class-validator'
 import { Type } from 'class-transformer'
 
-import { Locale } from '../locale.enum'
+import { ContentfulLocale } from '../locale.enum'
 
 export class ExtendedPaginationDto extends PaginationDto {
   @IsOptional()
@@ -22,7 +22,7 @@ export class ExtendedPaginationDto extends PaginationDto {
     type: 'string',
   })
   @IsString()
-  locale!: Locale
+  locale!: ContentfulLocale
 }
 
 class ArgItem {

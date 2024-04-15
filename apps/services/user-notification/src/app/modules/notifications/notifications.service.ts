@@ -27,7 +27,7 @@ import {
   UnseenNotificationsCountDto,
   UnreadNotificationsCountDto,
 } from './dto/notification.dto'
-import { Locale } from './locale.enum'
+import { ContentfulLocale } from './locale.enum'
 
 
 const ACCESS_TOKEN = process.env.CONTENTFUL_ACCESS_TOKEN
@@ -88,7 +88,7 @@ export class NotificationsService {
 
   async getSenderOrganization(
     senderId: string,
-    locale: Locale = Locale.IS,
+    locale: ContentfulLocale = ContentfulLocale.IS,
   ): Promise<SenderOrganization> {
     const cacheKey = `org-${senderId}-${locale}`
     const cachedOrganization = await this.cacheManager.get<SenderOrganization>(cacheKey)
@@ -120,7 +120,7 @@ export class NotificationsService {
   async formatAndMapNotification(
     notification: Notification,
     templateId: string,
-    locale: Locale,
+    locale: ContentfulLocale,
     template?: HnippTemplate,
   ): Promise<RenderedNotificationDto> {
     try {
@@ -185,7 +185,7 @@ export class NotificationsService {
     }
   }
 
-  async getTemplates(locale: Locale = Locale.IS): Promise<HnippTemplate[]> {
+  async getTemplates(locale: ContentfulLocale = ContentfulLocale.IS): Promise<HnippTemplate[]> {
     const cacheKey = `templates-${locale}`
 
     // Try to retrieve the templates from cache first
@@ -234,7 +234,7 @@ export class NotificationsService {
 
   async getTemplate(
     templateId: string,
-    locale: Locale = Locale.IS,
+    locale: ContentfulLocale = ContentfulLocale.IS,
   ): Promise<HnippTemplate> {
     const cacheKey = `template-${templateId}-${locale}`
 
@@ -346,7 +346,7 @@ export class NotificationsService {
   async findOne(
     user: User,
     id: number,
-    locale: Locale,
+    locale: ContentfulLocale,
   ): Promise<RenderedNotificationDto> {
     const notification = await this.notificationModel.findOne({
       where: { id: id, recipient: user.nationalId },
@@ -407,7 +407,7 @@ export class NotificationsService {
     user: User,
     id: number,
     updateNotificationDto: UpdateNotificationDto,
-    locale: Locale,
+    locale: ContentfulLocale,
   ): Promise<RenderedNotificationDto> {
     const [numberOfAffectedRows, [updatedNotification]] =
       await this.notificationModel.update(updateNotificationDto, {

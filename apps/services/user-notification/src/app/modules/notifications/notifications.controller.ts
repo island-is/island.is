@@ -28,7 +28,7 @@ import { CreateHnippNotificationDto } from './dto/createHnippNotification.dto'
 import { Documentation } from '@island.is/nest/swagger'
 import { HnippTemplate } from './dto/hnippTemplate.response'
 import { NotificationsService } from './notifications.service'
-import { Locale } from './locale.enum'
+import { ContentfulLocale } from './locale.enum'
 
 @Controller('notifications')
 @ApiExtraModels(CreateNotificationDto)
@@ -83,9 +83,9 @@ export class NotificationsController {
     request: {
       query: {
         locale: {
-          enum: Locale,
+          enum: ContentfulLocale,
           required: false,
-          example: Locale.IS,
+          example: ContentfulLocale.IS,
         },
       },
     },
@@ -93,7 +93,7 @@ export class NotificationsController {
   @Get('/templates')
   @Version('1')
   async getNotificationTemplates(
-    @Query('locale') locale: Locale = Locale.IS,
+    @Query('locale') locale: ContentfulLocale = ContentfulLocale.IS,
   ): Promise<HnippTemplate[]> {
     this.logger.info(`Fetching hnipp templates for locale: ${locale}`)
     return await this.notificationsService.getTemplates(locale)
@@ -106,9 +106,9 @@ export class NotificationsController {
     request: {
       query: {
         locale: {
-          enum: Locale,
+          enum: ContentfulLocale,
           required: false,
-          example: Locale.IS,
+          example: ContentfulLocale.IS,
         },
       },
       params: {
@@ -125,7 +125,7 @@ export class NotificationsController {
   async getNotificationTemplate(
     @Param('templateId')
     templateId: string,
-    @Query('locale') locale: Locale = Locale.IS,
+    @Query('locale') locale: ContentfulLocale = ContentfulLocale.IS,
   ): Promise<HnippTemplate> {
     return await this.notificationsService.getTemplate(templateId, locale)
   }
