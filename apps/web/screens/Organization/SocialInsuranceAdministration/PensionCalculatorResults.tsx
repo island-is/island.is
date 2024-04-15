@@ -214,12 +214,12 @@ const ResultTable = ({ groups, dense = false }: ResultTableProps) => {
                     <Text fontWeight={fontWeight}>{itemName}</Text>
                   </Table.Data>
                   <Table.Data box={cellProps}>
-                    <Text fontWeight={fontWeight}>
+                    <Text fontWeight={fontWeight} whiteSpace="nowrap">
                       {formatCurrency(item.monthlyAmount)}
                     </Text>
                   </Table.Data>
                   <Table.Data box={cellProps}>
-                    <Text fontWeight={fontWeight}>
+                    <Text fontWeight={fontWeight} whiteSpace="nowrap">
                       {formatCurrency(item.yearlyAmount)}
                     </Text>
                   </Table.Data>
@@ -408,7 +408,9 @@ const PensionCalculatorResults: CustomScreen<PensionCalculatorResultsProps> = ({
               highlightedItems={highlightedItems}
             />
           )}
-          <ResultTable groups={calculation.groups} dense={true} />
+          <Box paddingTop={2}>
+            <ResultTable groups={calculation.groups} dense={true} />
+          </Box>
         </Stack>
       </Box>
     </>
