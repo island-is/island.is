@@ -135,7 +135,7 @@ test.describe('MS - Health', () => {
       await agreeButton.click()
 
       const newHealthCenter = page.getByRole('heading', {
-        name: 'Nýr tannlæknir skráður',
+        name: 'Ný heilsugæsla skráð',
       })
 
       await expect(newHealthCenter).toBeVisible()
