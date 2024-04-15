@@ -1510,13 +1510,13 @@ export const ParentalLeaveForm: Form = buildForm({
                 parentalLeaveFormMessages.attachmentScreen.description,
               maxSize: FILE_SIZE_LIMIT,
               maxSizeErrorText:
-                parentalLeaveFormMessages.selfEmployed.attachmentMaxSizeError,
+                parentalLeaveFormMessages.fileUpload.attachmentMaxSizeError,
               uploadAccept: '.pdf',
-              uploadHeader: parentalLeaveFormMessages.selfEmployed.uploadHeader,
+              uploadHeader: parentalLeaveFormMessages.fileUpload.uploadHeader,
               uploadDescription:
-                parentalLeaveFormMessages.selfEmployed.uploadDescription,
+                parentalLeaveFormMessages.fileUpload.uploadDescription,
               uploadButtonLabel:
-                parentalLeaveFormMessages.selfEmployed.attachmentButton,
+                parentalLeaveFormMessages.fileUpload.attachmentButton,
             }),
           ],
         }),
