@@ -1597,8 +1597,28 @@ export const parentalLeaveFormMessages = {
         'Sjálfstætt starfandi foreldri þarf að skila staðfestingu á lækkun á reiknuðu endurgjaldi ef við á (fæst hjá RSK).',
       description: 'Description for the attachement required for self employed',
     },
+  }),
+
+  fileUpload: defineMessages({
+    additionalAttachmentTitle: {
+      id: 'pl.application:fileUpload.new.employer.attachment.title',
+      defaultMessage: 'Fylgiskjöl nýr vinnuveitandi',
+      description: 'Attachments for new employer',
+    },
+    additionalAttachmentDescription: {
+      id: 'pl.application:fileUpload.new.employer.attachment.description',
+      defaultMessage:
+        'Ef þú ert að skipta um vinnuveitanda þarf að skila inn starfslokavottorði frá fyrri vinnuveitanda því til staðfestingar. Vinsamlegast hlaðið skjalinu upp hér að neðan.',
+      description:
+        'If you are changing your employer you must submit a document from your previous employer confirming this. Please upload the document below.',
+    },
+    additionalDocumentsEditSubmit: {
+      id: 'pl.application:fileUpload.additionalDocumentsEditSubmit',
+      defaultMessage: 'Senda inn',
+      description: 'Submit',
+    },
     attachmentButton: {
-      id: 'pl.application:selfEmployed.attachment.button',
+      id: 'pl.application:fileUpload.attachment.button',
       defaultMessage: 'Veldu skjal',
       description: 'Button copy for the self employed attachement',
     },
@@ -1613,7 +1633,7 @@ export const parentalLeaveFormMessages = {
       description: 'Accepted documents with the following extensions: .pdf',
     },
     attachmentMaxSizeError: {
-      id: 'pl.application:selfEmployed.attachment.maxSizeError',
+      id: 'pl.application:fileUpload.attachment.maxSizeError',
       defaultMessage: 'Hámark 2 MB á skrá',
       description: 'Max 2 MB per file',
     },
@@ -2110,6 +2130,11 @@ export const parentalLeaveFormMessages = {
       id: 'pl.application:attachmentscreen.singleParentDescription',
       defaultMessage: `Þeir sem hafa farið í tæknifrjóvgun þurfa að skila inn skjali því til staðfestingar frá Livio. Athugaðu að skjalið þarf að vera á .pdf formi`,
       description: `Those who have undergone artificial insemination must submit a document to confirm this from Livio. Note that the document needs to be on .pdf format`,
+    },
+    changeEmployerTitle: {
+      id: 'pl.application:attachmentscreen.changeEmployer',
+      defaultMessage: `Staðfesting vegna nýs vinnuveitanda`,
+      description: `Confirmation of new employer`,
     },
     parentWithoutBirthParentTitle: {
       id: 'pl.application:attachmentscreen.parent.without.birth.parent.title',
