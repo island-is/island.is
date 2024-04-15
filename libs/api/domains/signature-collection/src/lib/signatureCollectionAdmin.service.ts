@@ -152,4 +152,14 @@ export class SignatureCollectionAdminService {
       user,
     )
   }
+
+  async removeCandidate(
+    canddidateId: string,
+    user: User,
+  ): Promise<SignatureCollectionSuccess> {
+    return await this.signatureCollectionClientService.removeCandidate(
+      canddidateId,
+      user,
+    )
+  }
 }
