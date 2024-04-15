@@ -60,6 +60,7 @@ export const useGetPetitionLists = () => {
       variables: {
         input: {
           tags: 'generalPetition',
+          limit: 1000,
         },
       },
     },
