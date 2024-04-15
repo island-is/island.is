@@ -641,14 +641,14 @@ export class CourtService {
     user: User,
     caseId: string,
     appealCaseNumber?: string,
-    catecory?: CaseFileCategory,
+    category?: CaseFileCategory,
     name?: string,
     url?: string,
     dateSent?: Date,
   ): Promise<unknown> {
     try {
       const subject = `Landsréttur - ${appealCaseNumber} - skjal`
-      const content = JSON.stringify({ catecory, name, url, dateSent })
+      const content = JSON.stringify({ category, name, url, dateSent })
 
       return this.sendToRobot(subject, content)
     } catch (error) {
@@ -659,7 +659,7 @@ export class CourtService {
           actor: user.name,
           institution: user.institution?.name,
           appealCaseNumber,
-          catecory,
+          category,
           name,
           url,
           dateSent,
