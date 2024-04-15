@@ -459,12 +459,12 @@ export class ContentfulService {
                 continue
               }
 
-              const linkedEntryAlreadyListed =
+              const entryBelowHasBeenIndexed =
                 indexableEntries.findIndex(
                   (entry) => entry.sys.id === linkedToEntryId,
                 ) >= 0
               if (
-                !linkedEntryAlreadyListed // No need to traverse further up the tree if what you were linking to was already indexed
+                !entryBelowHasBeenIndexed // No need to traverse further up the tree if what's below has already been indexed
               ) {
                 nextLevelOfNestedEntryIds.add(linkedEntry.sys.id)
               }
