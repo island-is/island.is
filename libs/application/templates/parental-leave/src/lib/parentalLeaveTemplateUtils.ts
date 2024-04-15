@@ -130,7 +130,7 @@ export const findActionName = (context: ApplicationContext) => {
       return FileType.EMPDOCPER  
     } else if (changeEmployerFile.length !== 0 && tmpChangeEmployer) { 
       return FileType.EMPDOC
-    if (tmpChangeEmployer && tmpChangePeriods) {
+    } if (tmpChangeEmployer && tmpChangePeriods) {
       return FileType.EMPPER
     } else if (tmpChangeEmployer) {
       return FileType.EMPLOYER
