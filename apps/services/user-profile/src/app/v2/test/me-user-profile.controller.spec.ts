@@ -4,7 +4,7 @@ import subMonths from 'date-fns/subMonths'
 import faker from 'faker'
 import request, { SuperTest, Test } from 'supertest'
 
-import { UserProfileScope } from '@island.is/auth/scopes'
+import { ApiScope, UserProfileScope } from '@island.is/auth/scopes'
 import { setupApp, TestApp } from '@island.is/testing/nest'
 import {
   createCurrentUser,
@@ -1137,7 +1137,7 @@ describe('MeUserProfileController', () => {
         SequelizeConfigService,
         user: createCurrentUser({
           nationalId: testUserProfile.nationalId,
-          scope: [UserProfileScope.read],
+          scope: [ApiScope.internal],
         }),
       })
 
@@ -1236,7 +1236,7 @@ describe('MeUserProfileController', () => {
         SequelizeConfigService,
         user: createCurrentUser({
           nationalId: testUserProfile.nationalId,
-          scope: [UserProfileScope.write],
+          scope: [ApiScope.internal],
         }),
       })
 
