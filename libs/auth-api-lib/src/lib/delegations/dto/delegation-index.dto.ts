@@ -11,6 +11,11 @@ export class DelegationRecordDTO {
   @IsString()
   @ApiProperty()
   toNationalId!: string
+
+  @IsOptional()
+  @IsString()
+  @ApiProperty({ type: String, nullable: true })
+  subjectId?: string | null
 }
 
 export class PaginatedDelegationRecordDTO {

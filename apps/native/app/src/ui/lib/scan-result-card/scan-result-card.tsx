@@ -18,7 +18,7 @@ import DisabilityLicenseLogo from '../../assets/card/tryggingastofnun_logo.png'
 import LogoEnvironmentAgency from '../../assets/card/ust-logo.png'
 import LogoAOSH from '../../assets/card/vinnueftirlitid-logo.png'
 import BackgroundVinnuvelar from '../../assets/card/vinnuvelar-bg.png'
-import BackgroundHuntingCard from '../../assets/card/veidikort.png'
+import BackgroundHuntingCard from '../../assets/card/veidikort-bg.png'
 import { font } from '../../utils'
 
 const Host = styled.View<{ backgroundColor: string }>`
