@@ -20,7 +20,7 @@ import {
 } from '@island.is/auth-nest-tools'
 import { Audit, AuditService } from '@island.is/nest/audit'
 import { Documentation } from '@island.is/nest/swagger'
-import { UserProfileScope } from '@island.is/auth/scopes'
+import { ApiScope, UserProfileScope } from '@island.is/auth/scopes'
 
 import { CreateVerificationDto } from './dto/create-verification.dto'
 import { PatchUserProfileDto } from './dto/patch-user-profile.dto'
@@ -145,7 +145,7 @@ export class MeUserProfileController {
   }
 
   @Get('/actor-profiles')
-  @Scopes(UserProfileScope.read)
+  @Scopes(ApiScope.internal)
   @Documentation({
     description: 'Get actor profiles for the current user.',
     response: { status: 200, type: PaginatedActorProfileDto },
@@ -161,7 +161,7 @@ export class MeUserProfileController {
   }
 
   @Patch('/actor-profiles/.from-national-id')
-  @Scopes(UserProfileScope.write)
+  @Scopes(ApiScope.internal)
   @Documentation({
     description: 'Update or create an actor profile for the current user',
     request: {
