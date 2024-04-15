@@ -138,6 +138,9 @@
       "@island.is/api/domains/housing-benefit-calculator": [
         "libs/api/domains/housing-benefit-calculator/src/index.ts"
       ],
+      "@island.is/api/domains/housing-benefits": [
+        "libs/api/domains/housing-benefits/src/index.ts"
+      ],
       "@island.is/api/domains/icelandic-government-institution-vacancies": [
         "libs/api/domains/icelandic-government-institution-vacancies/src/index.ts"
       ],
@@ -976,6 +979,9 @@
       ],
       "@island.is/service-portal/health": [
         "libs/service-portal/health/src/index.ts"
+      ],
+      "@island.is/service-portal/health/messages": [
+        "libs/service-portal/health/src/lib/messages.ts"
       ],
       "@island.is/service-portal/information": [
         "libs/service-portal/information/src/index.ts"
