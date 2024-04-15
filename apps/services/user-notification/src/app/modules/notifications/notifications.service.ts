@@ -29,6 +29,7 @@ import {
 } from './dto/notification.dto'
 import { Locale } from './locale.enum'
 
+
 const ACCESS_TOKEN = process.env.CONTENTFUL_ACCESS_TOKEN
 const CONTENTFUL_GQL_ENDPOINT =
   'https://graphql.contentful.com/content/v1/spaces/8k0h54kbe6bj/environments/master'
@@ -45,10 +46,11 @@ const ALLOWED_REPLACE_PROPS: Array<keyof HnippTemplate> = [
   'clickActionUrl',
 ]
 
-/**
- * Finds {{key}} in string
- */
-const ARG_REPLACE_REGEX = new RegExp(/{{[^{}]*}}/)
+
+
+type SenderOrganization = {
+  title: string | undefined
+}
 
 @Injectable()
 export class NotificationsService {
@@ -84,17 +86,18 @@ export class NotificationsService {
     }
   }
 
-  async getSenderTitle(
+  async getSenderOrganization(
     senderId: string,
     locale: Locale = Locale.IS,
-  ): Promise<string> {
+  ): Promise<SenderOrganization> {
     const cacheKey = `org-${senderId}-${locale}`
-    const cachedOrganization = await this.cacheManager.get<string>(cacheKey)
+    const cachedOrganization = await this.cacheManager.get<SenderOrganization>(cacheKey)
     if (cachedOrganization) {
-      this.logger.info(`Cache hit for: ${cacheKey}`)
+      this.logger.info(`Cache HIT for: ${cacheKey}`,cachedOrganization)
       return cachedOrganization
+    } else {
+      this.logger.warn(`Cache MISS for: ${cacheKey}`)
     }
-
     const contentfulOrganizationQuery = `{
       organizationCollection(where: {kennitala: "${senderId}"}, locale: "${locale}") {
         items {
@@ -102,16 +105,16 @@ export class NotificationsService {
         }
       }
     }`
-
     const res = await this.performGraphQLRequest(contentfulOrganizationQuery)
-    const organizationTitle = res.data.organizationCollection.items[0]?.title
-
+    const organizationTitle = res.data.organizationCollection.items[0]?.title ?? undefined;
+    const result:SenderOrganization = { title: organizationTitle }
+     
     if (!organizationTitle) {
       this.logger.warn(`Organization title not found for senderId: ${senderId}`)
     }
-    // return value or empty string
-    await this.cacheManager.set(cacheKey, `${senderId}_${organizationTitle}`)
-    return organizationTitle
+    // always store the result in cache wether it is found or not to avoid multiple requests
+    await this.cacheManager.set(cacheKey, result)
+    return result
   }
 
   async formatAndMapNotification(
@@ -130,22 +133,17 @@ export class NotificationsService {
       const organizationArg = notification.args.find(
         (arg) => arg.key === 'organization',
       )
-      console.log(notification.senderId,"organizationArg",organizationArg)
-
 
       // if senderId is set and args contains organization, fetch organizationtitle from senderId
       if (notification.senderId && organizationArg) {
         try {
-          const senderTitle = await this.getSenderTitle(
+          const sender = await this.getSenderOrganization(
             notification.senderId,
             locale,
           )
-          notification.messageId = senderTitle
           
-          if (senderTitle) {
-            console.log(notification.senderId,'found a org title ', notification.senderId, senderTitle)
-            organizationArg.value = senderTitle
-            console.log(notification.senderId,"organizationArg.value",organizationArg.value) 
+          if (sender.title) {
+            organizationArg.value = sender.title
           } else {
             this.logger.warn('title not found ', {
               senderId: notification.senderId,
@@ -325,44 +323,9 @@ export class NotificationsService {
     }
   }
 
-  // formatArguments(args: ArgumentDto[], template: HnippTemplate): HnippTemplate {
-  //   if (args.length > 0) {
-  //     Object.keys(template).forEach((key) => {
-  //       const templateKey = key as keyof HnippTemplate
-
-  //       if (
-  //         ALLOWED_REPLACE_PROPS.includes(templateKey) &&
-  //         templateKey !== 'args'
-  //       ) {
-  //         const value = template[templateKey] as string
-
-  //         if (value && ARG_REPLACE_REGEX.test(value)) {
-  //           for (const arg of args) {
-  //             const regexTarget = new RegExp(`{{${arg.key}}}`, 'g')
-  //             const newValue = value.replace(regexTarget, arg.value)
-  //             if (newValue !== value) {
-  //               // finds {{key}} in string and replace with value
-  //               template[templateKey] = value.replace(regexTarget, arg.value)
-  //               break
-  //             }
-  //           }
-  //         }
-  //       }
-  //     })
-  //   }
-
-  //   return template
-  // }
-
-  // EXPLORE THIS APPROACH TO WATCH OUT FOR EDITING ORIGINALS VS CLONES
-  // test = {haha: ""}
-
-  // tetter () {
-  //   return Object.entries(this.test).reduce((acc, [key, value]) => {
-  //     acc[key] = value.replace(/{{key}}/g, 'value')
-  //   }, {})
-  // }
-
+  /**
+   * Replaces the placeholders in the template with the values provided in the request body
+   */
   formatArguments(args: ArgumentDto[], template: HnippTemplate): HnippTemplate {
     // Deep clone the template to avoid modifying the original
     let formattedTemplate = JSON.parse(JSON.stringify(template));
