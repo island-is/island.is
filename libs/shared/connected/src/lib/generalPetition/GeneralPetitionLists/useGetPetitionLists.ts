@@ -59,7 +59,7 @@ export const useGetPetitionLists = () => {
     {
       variables: {
         input: {
-          limit: 20,
+          tags: 'generalPetition',
         },
       },
     },
