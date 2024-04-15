@@ -1,5 +1,4 @@
 import { gql, useMutation } from '@apollo/client'
-// import { MailActions } from './types'
 import { useState } from 'react'
 import { toast } from '@island.is/island-ui/core'
 import { useLocale } from '@island.is/localization'

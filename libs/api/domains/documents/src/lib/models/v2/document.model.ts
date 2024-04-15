@@ -10,9 +10,6 @@ export class Document {
   @Field(() => ID)
   id!: string
 
-  @Field(() => Int, { nullable: true })
-  pageNumber?: number
-
   @Field({ nullable: true })
   name?: string
 
@@ -63,4 +60,10 @@ export class PaginatedDocuments extends PaginatedResponse(Document) {
 
   @Field(() => [Sender], { nullable: true })
   senders?: Array<Sender>
+}
+
+@ObjectType()
+export class DocumentPageNumber {
+  @Field(() => Int)
+  pageNumber?: number
 }

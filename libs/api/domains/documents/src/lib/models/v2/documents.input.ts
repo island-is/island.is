@@ -38,10 +38,10 @@ export class DocumentsInput {
   @IsNationalId()
   readonly nationalId!: string
 
-  @Field({ nullable: true })
+  @Field(() => [String], { nullable: true })
   @IsOptional()
-  @IsString()
-  readonly senderNationalId?: string
+  @IsArray()
+  readonly senderNationalId?: Array<string>
 
   @Field(() => GraphQLISODateTime, { nullable: true })
   @IsOptional()
@@ -83,12 +83,15 @@ export class DocumentsInput {
   @IsBoolean()
   readonly opened?: boolean
 
-  @Field(() => DocumentPageSort, { nullable: true })
+  @Field(() => DocumentPageSort, { nullable: true, defaultValue: 'Date' })
   @IsOptional()
   @IsEnum(DocumentPageSort)
   readonly sortBy?: DocumentPageSort
 
-  @Field(() => DocumentPageOrder, { nullable: true })
+  @Field(() => DocumentPageOrder, {
+    nullable: true,
+    defaultValue: 'Descending',
+  })
   @IsOptional()
   @IsEnum(DocumentPageOrder)
   readonly order?: DocumentPageOrder

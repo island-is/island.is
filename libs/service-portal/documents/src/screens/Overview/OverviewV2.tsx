@@ -237,7 +237,7 @@ export const ServicePortalDocumentsV2 = () => {
                   />
                 </Box>
               ))}
-              {totalPages && (
+              {totalPages ? (
                 <Box paddingBottom={4} marginTop={4}>
                   <Pagination
                     page={page}
@@ -252,7 +252,7 @@ export const ServicePortalDocumentsV2 = () => {
                     )}
                   />
                 </Box>
-              )}
+              ) : undefined}
             </Stack>
           </Box>
         </GridColumn>

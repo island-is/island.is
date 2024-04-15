@@ -107,7 +107,7 @@ export const DocumentLine: FC<Props> = ({
       variables: {
         input: {
           id: documentLine.id,
-          provider: documentLine.name ?? 'unknown',
+          provider: documentLine.sender?.name ?? 'unknown',
         },
       },
       fetchPolicy: 'no-cache',

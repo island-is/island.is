@@ -19,6 +19,7 @@ import { DocumentsScope } from '@island.is/auth/scopes'
 import { AuditService } from '@island.is/nest/audit'
 
 import {
+  DocumentPageNumber,
   Document as DocumentV2,
   PaginatedDocuments,
 } from './models/v2/document.model'
@@ -53,7 +54,7 @@ export class DocumentResolverV2 {
     @CurrentUser() user: User,
   ): Promise<DocumentV2 | null> {
     try {
-      return this.auditService.auditPromise(
+      return await this.auditService.auditPromise(
         {
           auth: user,
           namespace: '@island.is/api/document-v2',
@@ -78,74 +79,35 @@ export class DocumentResolverV2 {
     @Args('input') input: DocumentsInput,
     @CurrentUser() user: User,
   ): Promise<PaginatedDocuments> {
-    try {
-      return this.documentServiceV2.listDocuments(user.nationalId, input)
-    } catch (e) {
-      this.logger.error('failed to get document list', {
-        category: LOG_CATEGORY,
-        error: e,
-      })
-      throw e
-    }
+    return this.documentServiceV2.listDocuments(user.nationalId, input)
   }
 
   @ResolveField('categories', () => [Category])
   documentCategories(@CurrentUser() user: User): Promise<Array<Category>> {
-    try {
-      return this.documentServiceV2.getCategories(user.nationalId)
-    } catch (e) {
-      this.logger.error('failed to get document categories', {
-        category: LOG_CATEGORY,
-        error: e,
-      })
-      throw e
-    }
+    return this.documentServiceV2.getCategories(user.nationalId)
   }
 
   @ResolveField('senders', () => [Sender])
   documentSenders(@CurrentUser() user: User): Promise<Array<Sender>> {
-    try {
-      return this.documentServiceV2.getSenders(user.nationalId)
-    } catch (e) {
-      this.logger.error('failed to get document senders', {
-        category: LOG_CATEGORY,
-        error: e,
-      })
-      throw e
-    }
+    return this.documentServiceV2.getSenders(user.nationalId)
   }
 
   @ResolveField('types', () => [Type])
   documentTypes(@CurrentUser() user: User): Promise<Array<Type>> {
-    try {
-      return this.documentServiceV2.getTypes(user.nationalId)
-    } catch (e) {
-      this.logger.error('failed to get document types', {
-        category: LOG_CATEGORY,
-        error: e,
-      })
-      throw e
-    }
+    return this.documentServiceV2.getTypes(user.nationalId)
   }
 
-  @ResolveField('pageNumber', () => Int)
+  @Scopes(DocumentsScope.main)
+  @Query(() => DocumentPageNumber, { nullable: true })
   documentPageNumber(
     @CurrentUser() user: User,
     @Args('input') input: DocumentInput,
-  ) {
-    try {
-      return this.documentServiceV2.getPageNumber(
-        user.nationalId,
-        input.id,
-        input.pageSize,
-      )
-    } catch (e) {
-      this.logger.error('failed to get document pageNumber', {
-        category: LOG_CATEGORY,
-        error: e,
-      })
-      throw e
-    }
+  ): Promise<DocumentPageNumber | null> {
+    return this.documentServiceV2.getPageNumber(
+      user.nationalId,
+      input.id,
+      input.pageSize,
+    )
   }
 
   @Scopes(DocumentsScope.main)
@@ -178,29 +140,29 @@ export class DocumentResolverV2 {
     @Args('input') input: MailActionInput,
   ): Promise<DocumentMailAction | null> {
     if (input.documentIds.length === 0) {
+      this.logger.warn('No document ids provided for posting action', {
+        category: LOG_CATEGORY,
+        action: input.action,
+      })
       return null
     }
 
     const ids =
       input.documentIds.length === 1 ? input.documentIds[0] : input.documentIds
 
-    if (input.documentIds) {
-      try {
-        return await this.documentServiceV2.postMailAction(
-          user.nationalId,
-          ids,
-          input.action,
-        )
-      } catch (e) {
-        this.logger.error('failed to post document action', {
-          category: LOG_CATEGORY,
-          action: input.action,
-          error: e,
-        })
-        throw e
-      }
+    try {
+      return await this.documentServiceV2.postMailAction(
+        user.nationalId,
+        ids,
+        input.action,
+      )
+    } catch (e) {
+      this.logger.error('failed to post document action', {
+        category: LOG_CATEGORY,
+        action: input.action,
+        error: e,
+      })
+      throw e
     }
-
-    return null
   }
 }

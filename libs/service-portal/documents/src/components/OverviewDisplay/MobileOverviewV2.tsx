@@ -59,7 +59,7 @@ export const MobileOverview: FC<Props> = ({
               <Text variant="h3" as="h3" marginBottom={3}>
                 {activeDocument?.subject}
               </Text>
-              {<DocumentRenderer document={activeDocument} />}
+              {<DocumentRenderer doc={activeDocument} />}
             </Box>
           </Box>
         </FocusLock>

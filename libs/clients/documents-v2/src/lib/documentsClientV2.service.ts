@@ -19,6 +19,11 @@ export class DocumentsClientV2Service {
   async getDocumentList(
     input: ListDocumentsInputDto,
   ): Promise<ListDocumentsDto | null> {
+    /**
+     *
+     * @param input List input object. Example: { dateFrom: undefined, nationalId: '123' }
+     * @returns List object sanitized of unnesseccary values. Example: { nationalId: '123' }
+     */
     function sanitizeObject<T extends { [key: string]: any }>(obj: T): T {
       const sanitizedObj = {} as T
       for (const key in obj) {
@@ -32,7 +37,10 @@ export class DocumentsClientV2Service {
     const inputObject = sanitizeObject({
       ...input,
       kennitala: input.nationalId,
-      senderKennitala: input.senderNationalId,
+      senderKennitala:
+        input.senderNationalId && input.senderNationalId.length > 0
+          ? input.senderNationalId.join()
+          : undefined,
       order: input.order
         ? CustomersListDocumentsOrderEnum[input.order]
         : undefined,

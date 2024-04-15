@@ -1,9 +1,5 @@
 import { useEffect } from 'react'
-import {
-  AuthDelegationType,
-  DocumentsV2PageOrder,
-  DocumentsV2PageSort,
-} from '@island.is/api/schema'
+import { AuthDelegationType } from '@island.is/api/schema'
 import { useUserInfo } from '@island.is/auth/react'
 import { useDocumentContext } from '../screens/Overview/DocumentContext'
 import { useDocumentsV2Query } from '../screens/Overview/Overview.generated'
@@ -37,15 +33,13 @@ export const useDocumentList = () => {
 
   const fetchObject = {
     input: {
-      senderNationalId: filterValue.activeSenders.join(),
+      senderNationalId: filterValue.activeSenders,
       nationalId: userInfo.profile.nationalId,
       dateFrom: filterValue.dateFrom?.toISOString(),
       dateTo: filterValue.dateTo?.toISOString(),
       categoryIds: filterValue.activeCategories,
       subjectContains: filterValue.searchQuery,
       typeId: null,
-      sortBy: 'Date' as DocumentsV2PageSort,
-      order: 'Descending' as DocumentsV2PageOrder,
       opened: filterValue.showUnread ? false : null,
       page: page,
       pageSize: pageSize,

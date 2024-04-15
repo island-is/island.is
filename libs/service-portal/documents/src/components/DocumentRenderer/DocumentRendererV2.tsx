@@ -7,67 +7,46 @@ import { ActiveDocumentType2 } from '../../lib/types'
 import { useLocale } from '@island.is/localization'
 import { customUrl } from '../../utils/customUrlHandler'
 
-const parseDocumentType = (document: ActiveDocumentType2) => {
-  const doc = document.document
-  const overviewUrl = document.downloadUrl
-
-  if (doc?.type === 'HTML') {
-    return 'html'
-  }
-  if (doc?.type === 'PDF') {
-    return 'pdf'
-  }
-  if (doc?.type === 'URL' || overviewUrl) {
-    return 'url'
-  }
-  return 'unknown'
-}
-
 type DocumentRendererProps = {
-  document: ActiveDocumentType2
+  doc: ActiveDocumentType2
 }
 
-export const DocumentRenderer: React.FC<DocumentRendererProps> = ({
-  document,
-}) => {
+export const DocumentRenderer: React.FC<DocumentRendererProps> = ({ doc }) => {
   const { formatMessage } = useLocale()
-  const type = parseDocumentType(document)
 
-  if (type === 'unknown') return <NoPDF text={formatMessage(messages.error)} />
-
-  if (type === 'html') {
-    return <HtmlDocument html={document.document?.value ?? ''} />
+  if (doc?.document?.type === 'HTML') {
+    return <HtmlDocument html={doc.document?.value ?? ''} />
   }
 
-  if (type === 'pdf') {
+  if (doc?.document?.type === 'PDF') {
     return (
       <PdfDocWithModal
         document={{
-          ...document,
+          ...doc,
           document: {
-            content: document.document.value ?? '',
-            html: document.document.value ?? '',
-            url: document.document.value ?? '',
-            fileType: document.document.type ?? '',
+            content: doc.document.value ?? '',
+            html: doc.document.value ?? '',
+            url: doc.document.value ?? '',
+            fileType: doc.document.type ?? '',
           },
         }}
       />
     )
   }
 
-  if (type === 'url') {
+  if (doc?.document?.type === 'URL' || doc.downloadUrl) {
     const docUrl = customUrl({
-      ...document,
+      ...doc,
       document: {
-        content: document.document.value ?? '',
-        html: document.document.value ?? '',
-        url: document.document.value ?? '',
-        fileType: document.document.type ?? '',
+        content: doc.document.value ?? '',
+        html: doc.document.value ?? '',
+        url: doc.document.value ?? '',
+        fileType: doc.document.type ?? '',
       },
     })
 
     return <UrlDocument url={docUrl} />
   }
 
-  return <NoPDF />
+  return <NoPDF text={formatMessage(messages.error)} />
 }

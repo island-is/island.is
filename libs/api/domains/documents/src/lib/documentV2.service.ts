@@ -4,7 +4,11 @@ import { LOGGER_PROVIDER, type Logger } from '@island.is/logging'
 import { isDefined } from '@island.is/shared/utils'
 import { Category } from './models/v2/category.model'
 import { MailAction } from './models/v2/bulkMailAction.input'
-import { PaginatedDocuments, Document } from './models/v2/document.model'
+import {
+  PaginatedDocuments,
+  Document,
+  DocumentPageNumber,
+} from './models/v2/document.model'
 import { DocumentsInput } from './models/v2/documents.input'
 import { PaperMailPreferences } from './models/v2/paperMailPreferences.model'
 import { Sender } from './models/v2/sender.model'
@@ -189,14 +193,16 @@ export class DocumentServiceV2 {
     nationalId: string,
     documentId: string,
     pageSize: number,
-  ): Promise<number> {
+  ): Promise<DocumentPageNumber> {
     const res = await this.documentService.getPageNumber(
       nationalId,
       documentId,
       pageSize,
     )
 
-    return res ?? 1
+    return {
+      pageNumber: res ?? 1,
+    }
   }
 
   async getPaperMailInfo(

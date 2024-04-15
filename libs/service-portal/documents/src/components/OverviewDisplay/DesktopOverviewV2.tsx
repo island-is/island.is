@@ -72,7 +72,7 @@ export const DesktopOverview: FC<Props> = ({
           bookmarked: activeBookmark,
         }}
       />
-      <Box>{<DocumentRenderer document={activeDocument} />}</Box>
+      <Box>{<DocumentRenderer doc={activeDocument} />}</Box>
       {activeDocument?.id && (
         <Box className={styles.reveal}>
           <button

@@ -1,7 +1,6 @@
 import { DocumentDetails, DocumentV2Content } from '@island.is/api/schema'
 
-export type ActiveDocumentType = {
-  document: DocumentDetails
+type ActiveDoc = {
   id: string
   subject: string
   date: string
@@ -12,14 +11,10 @@ export type ActiveDocumentType = {
   senderNatReg?: string
 }
 
+export type ActiveDocumentType = {
+  document: DocumentDetails
+} & ActiveDoc
+
 export type ActiveDocumentType2 = {
   document: Partial<DocumentV2Content>
-  id: string
-  subject: string
-  date: string
-  sender: string
-  downloadUrl: string
-  img?: string
-  categoryId?: string
-  senderNatReg?: string
-}
+} & ActiveDoc
