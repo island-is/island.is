@@ -140,7 +140,7 @@ export enum FileType {
   EMPPER = 'empper',
   EMPLOYER = 'employer',
   EMPDOC = 'empdoc',
-  EMPDOCPER = 'empdocper'
+  EMPDOCPER = 'empdocper',
 }
 
 export enum Languages {
