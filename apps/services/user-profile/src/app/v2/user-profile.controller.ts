@@ -73,15 +73,18 @@ export class UserProfileController {
       header: {
         'X-Param-From-National-Id': {
           required: true,
-          description: 'National id of the user the .....',
+          description: 'National id of the user the actor profile is for',
         },
         'X-Param-To-National-Id': {
           required: true,
-          description: 'National id of the user',
+          description: 'National id of the user the delegation is from',
         },
       },
     },
     response: { status: 200, type: ActorProfileDto },
+  })
+  @Audit<ActorProfileDto>({
+    resources: (profile) => profile.fromNationalId,
   })
   async getActorProfile(
     @Headers('X-Param-To-National-Id') toNationalId: string,

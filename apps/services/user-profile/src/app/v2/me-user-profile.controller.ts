@@ -150,6 +150,10 @@ export class MeUserProfileController {
     description: 'Get actor profiles for the current user.',
     response: { status: 200, type: PaginatedActorProfileDto },
   })
+  @Audit<PaginatedActorProfileDto>({
+    resources: (profiles) =>
+      profiles.data.map((profile) => profile.fromNationalId),
+  })
   getDelegationPreferences(
     @CurrentUser() user: User,
   ): Promise<PaginatedActorProfileDto> {
@@ -175,10 +179,22 @@ export class MeUserProfileController {
     @Headers('X-Param-From-National-Id') fromNationalId: string,
     @Body() actorProfile: PatchActorProfileDto,
   ): Promise<MeActorProfileDto> {
-    return this.userProfileService.createOrUpdateActorProfile({
-      toNationalId: user.nationalId,
-      fromNationalId,
-      emailNotifications: actorProfile.emailNotifications,
-    })
+    return this.auditService.auditPromise(
+      {
+        auth: user,
+        namespace,
+        action: 'patch',
+        resources: user.nationalId,
+        meta: {
+          fromNationalId,
+          fields: Object.keys(actorProfile),
+        },
+      },
+      this.userProfileService.createOrUpdateActorProfile({
+        toNationalId: user.nationalId,
+        fromNationalId,
+        emailNotifications: actorProfile.emailNotifications,
+      }),
+    )
   }
 }

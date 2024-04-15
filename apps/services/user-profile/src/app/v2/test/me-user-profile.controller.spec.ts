@@ -1172,10 +1172,12 @@ describe('MeUserProfileController', () => {
             {
               toNationalId: testUserProfile.nationalId,
               fromNationalId: testNationalId1,
+              subjectId: null,
             },
             {
               toNationalId: testUserProfile.nationalId,
               fromNationalId: testNationalId2,
+              subjectId: null,
             },
           ],
           pageInfo: {
@@ -1260,6 +1262,7 @@ describe('MeUserProfileController', () => {
             {
               toNationalId: testUserProfile.nationalId,
               fromNationalId: testNationalId1,
+              subjectId: null,
             },
           ],
           pageInfo: {
