@@ -17,6 +17,7 @@ import type { User } from '@island.is/judicial-system/types'
 import {
   CaseAppealRulingDecision,
   CaseDecision,
+  CaseFileCategory,
   CaseType,
   IndictmentSubtype,
   IndictmentSubtypeMap,
@@ -495,6 +496,7 @@ export class CourtService {
     caseId: string,
     courtName?: string,
     courtCaseNumber?: string,
+    isCorrection?: boolean,
     decision?: CaseDecision,
     rulingDate?: Date,
     validToDate?: Date,
@@ -503,6 +505,7 @@ export class CourtService {
     try {
       const subject = `${courtName} - ${courtCaseNumber} - lyktir`
       const content = JSON.stringify({
+        isCorrection,
         courtName,
         courtCaseNumber,
         decision,
@@ -519,6 +522,7 @@ export class CourtService {
           caseId,
           actor: user.name,
           institution: user.institution?.name,
+          isCorrection,
           courtName,
           courtCaseNumber,
           decision,
@@ -628,6 +632,40 @@ export class CourtService {
           isCorrection,
           appealRulingDecision,
           appealRulingDate,
+        },
+        error,
+      )
+
+      throw error
+    }
+  }
+
+  async updateAppealCaseWithFile(
+    user: User,
+    caseId: string,
+    appealCaseNumber?: string,
+    category?: CaseFileCategory,
+    name?: string,
+    url?: string,
+    dateSent?: Date,
+  ): Promise<unknown> {
+    try {
+      const subject = `Landsréttur - ${appealCaseNumber} - skjal`
+      const content = JSON.stringify({ category, name, url, dateSent })
+
+      return this.sendToRobot(subject, content)
+    } catch (error) {
+      this.eventService.postErrorEvent(
+        'Failed to update appeal case with file',
+        {
+          caseId,
+          actor: user.name,
+          institution: user.institution?.name,
+          appealCaseNumber,
+          category,
+          name,
+          url,
+          dateSent,
         },
         error,
       )
