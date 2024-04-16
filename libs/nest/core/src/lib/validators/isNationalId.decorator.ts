@@ -1,5 +1,5 @@
 import { registerDecorator, ValidationOptions } from 'class-validator'
-import { isPerson } from 'kennitala'
+import { isValid } from 'kennitala'
 
 export const IsNationalId = (validationOptions?: ValidationOptions) => {
   return (object: Object, propertyName: string) => {
@@ -8,13 +8,13 @@ export const IsNationalId = (validationOptions?: ValidationOptions) => {
       target: object.constructor,
       propertyName: propertyName,
       options: {
-        message: `${propertyName} contains an invalid national id for a person`,
+        message: `${propertyName} contains an invalid national id for a person or a company`,
         ...validationOptions,
       },
       validator: {
         validate(value: any) {
           return (
-            typeof value === 'string' && isPerson(value) && value.length === 10
+            typeof value === 'string' && isValid(value) && value.length === 10
           )
         },
       },
