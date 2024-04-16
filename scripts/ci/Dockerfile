@@ -145,6 +145,7 @@ RUN apt-get update -y \
   && apt-get install -y zip awscli \
   && apt-get purge
 
+
 ARG APP_HOME
 ARG APP_DIST_HOME
 
@@ -152,10 +153,10 @@ WORKDIR ${APP_DIST_HOME}
 
 COPY --from=builder /build/${APP_DIST_HOME} .
 
-RUN yarn install
+RUN npm install
 
 ENV PLAYWRIGHT_BROWSER=chromium
-RUN yarn playwright install ${PLAYWRIGHT_BROWSER}
+RUN npx playwright install ${PLAYWRIGHT_BROWSER}
 
 COPY ${APP_HOME}/entrypoint.sh .
 
