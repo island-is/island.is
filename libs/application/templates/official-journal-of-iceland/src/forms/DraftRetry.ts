@@ -40,15 +40,6 @@ export const DraftRetry: Form = buildForm({
           component: 'CommentsScreen',
         }),
       ],
-      // condition: (answers: Answers) => {
-      //   const hasComments =
-      //     answers.comments?.comments?.length !== undefined &&
-      //     answers.comments?.comments.length > 0
-      //   if (hasComments) {
-      //     return true
-      //   }
-      //   return false
-      // },
     }),
     buildSection({
       id: Routes.ADVERT,

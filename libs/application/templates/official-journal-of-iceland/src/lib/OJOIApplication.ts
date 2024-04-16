@@ -123,7 +123,7 @@ const OJOITemplate: ApplicationTemplate<
               actions: [
                 {
                   event: DefaultEvents.SUBMIT,
-                  name: 'Senda umsókn',
+                  name: general.sendApplication,
                   type: 'primary',
                 },
               ],
@@ -169,7 +169,7 @@ const OJOITemplate: ApplicationTemplate<
               actions: [
                 {
                   event: DefaultEvents.SUBMIT,
-                  name: 'Senda umsókn',
+                  name: general.sendApplication,
                   type: 'primary',
                 },
               ],
