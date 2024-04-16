@@ -21,6 +21,7 @@ export interface RadioButtonProps {
   disabled?: boolean
   onChange?: (event: React.ChangeEvent<HTMLInputElement>) => void
   tooltip?: React.ReactNode
+  
   tag?: {
     label: string
     variant?: TagVariant
@@ -35,6 +36,10 @@ export interface RadioButtonProps {
   subLabel?: React.ReactNode
   /** illustration can only be used if the 'large' prop set to true */
   illustration?: React.FC<React.PropsWithChildren<unknown>>
+  signature?: string
+  imageSrc?: string
+  vertical?: boolean
+  license?: boolean
 }
 
 interface AriaError {
@@ -63,7 +68,12 @@ export const RadioButton = ({
   large,
   dataTestId,
   backgroundColor,
+  imageSrc,
+  signature,
+  vertical,
+  license,
 }: RadioButtonProps & TestSupport) => {
+  console.log(imageSrc, signature)
   const errorId = `${id}-error`
   const ariaError = hasError
     ? {
@@ -77,6 +87,7 @@ export const RadioButton = ({
       className={cn(styles.container, {
         [styles.large]: large,
         [styles.largeError]: large && hasError,
+        [styles.verticalContainer]: vertical,
       })}
       background={
         large && backgroundColor ? backgroundColors[backgroundColor] : undefined
@@ -98,19 +109,44 @@ export const RadioButton = ({
         className={cn(styles.label, {
           [styles.radioButtonLabelDisabled]: disabled,
           [styles.largeLabel]: large,
+          [styles.verticalLabel]: vertical,
         })}
         htmlFor={id}
       >
+        {imageSrc && 
+         <Box
+          className={styles.imageContainer}
+       >
+            <img
+            src={imageSrc}
+            alt="image"
+            className={styles.image}
+          />
+        </Box>
+       }
+        {signature && 
+         <Box
+          className={styles.imageContainer}
+       >
+          <img
+            src={signature}
+            alt="image"
+          />
+        </Box>
+       }
         <div
           className={cn(styles.radioButton, {
             [styles.radioButtonChecked]: checked,
             [styles.radioButtonError]: hasError,
             [styles.radioButtonDisabled]: disabled,
+            [styles.licenseCheckmark]: license
           })}
         >
-          <div className={styles.checkMark} />
+          <div className={cn(styles.checkMark)} />
         </div>
-        <span className={styles.labelText}>
+        <span className={cn(styles.labelText, {
+          [styles.licenseText]: license,
+        })}>
           <Text as="span" fontWeight={checked ? 'semiBold' : 'light'}>
             {label}
           </Text>

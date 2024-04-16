@@ -13,6 +13,10 @@ export const container = style({
   position: 'relative',
 })
 
+export const verticalContainer = style({
+  width: 'fit-content',
+})
+
 export const large = style({
   borderRadius: theme.border.radius.large,
   border: `1px solid ${theme.color.blue200}`,
@@ -119,4 +123,32 @@ export const tooltipLargeContainer = style({
 export const toolTipLargeContainerWithIllustration = style({
   marginLeft: 0,
   paddingLeft: theme.spacing[2],
+})
+
+export const verticalLabel = style({
+  flexDirection: 'column',
+  alignItems: 'flex-start',
+})
+
+export const imageContainer = style({
+  marginLeft: 0,
+})
+
+export const image = style({
+  borderRadius: theme.border.radius.large,
+  height: '100%',
+  width: '180px',
+  objectFit: 'cover',
+})
+
+export const licenseText = style({
+  paddingLeft: theme.spacing[5],
+  maxWidth: '132px',
+  position: 'relative',
+  bottom: theme.spacing[1],
+})
+
+export const licenseCheckmark = style({
+  position: 'relative',
+  top: theme.spacing[2],
 })
