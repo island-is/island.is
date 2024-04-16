@@ -19,8 +19,8 @@ WORKDIR /build
 # Adding and installing packages
 COPY package.json yarn.lock .yarnrc.yml ./
 COPY apps/native/app/package.json ./apps/native/app/
-COPY .yarn/releases/ ./.yarn/releases/
-COPY .yarn/patches/ ./.yarn/patches/
+COPY .yarn/releases/ .yarn/releases/
+COPY .yarn/patches/ .yarn/patches/
 RUN ls -lah ./.yarn/ ./
 # We,re using --mount, so no need to `yarn cache clean`
 # hadolint ignore=DL3060
@@ -158,7 +158,8 @@ WORKDIR ${APP_DIST_HOME}
 
 
 COPY .yarnrc.yml yarn.lock package.json ./
-COPY .yarn/releases .yarn/patches .yarn/
+COPY .yarn/releases/ .yarn/releases/
+COPY .yarn/patches/ .yarn/patches/
 RUN CI=true yarn install --immutable
 
 COPY --from=builder /build/${APP_DIST_HOME} .
