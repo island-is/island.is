@@ -1,46 +1,45 @@
-import { Box, FocusableBox, Text } from '@island.is/island-ui/core'
+import {
+  Box,
+  FocusableBox,
+  Text,
+  ResponsiveSpace,
+} from '@island.is/island-ui/core'
 import LinkResolver from '../LinkResolver/LinkResolver'
-import * as styles from './SubTabItem.css'
-import cn from 'classnames'
+import { theme } from '@island.is/island-ui/theme'
+import { useWindowSize } from 'react-use'
 
 interface Props {
   onClick?: () => void
   title: string
+  marginLeft?: ResponsiveSpace
   href: string
   isActive: boolean
 }
 
 export const SubTabItem: React.FC<Props> = ({
-  onClick,
   title,
+  onClick,
+  marginLeft = 2,
   href,
   isActive,
-}: Props) => {
+}) => {
   return (
-    <Box
-      className={cn(styles.tabWrapper, {
-        [styles.active]: isActive,
-      })}
-      component="li"
-    >
+    <Box marginLeft={marginLeft}>
       <FocusableBox
+        background={isActive ? 'blue400' : 'blue100'}
         borderRadius="standard"
+        paddingX={3}
+        paddingY={1}
         component={LinkResolver}
-        className={cn(styles.tab)}
-        justifyContent="center"
-        alignItems="center"
         id={href}
         href={href}
         onClick={onClick}
+        justifyContent="center"
+        alignItems="center"
       >
-        <Box
-          component="p"
-          className={cn(styles.text, {
-            [styles.activeText]: isActive,
-          })}
-        >
+        <Text variant="small" color={isActive ? 'white' : 'black'}>
           {title}
-        </Box>
+        </Text>
       </FocusableBox>
     </Box>
   )
