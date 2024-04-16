@@ -151,21 +151,21 @@ ARG APP_DIST_HOME
 
 WORKDIR ${APP_DIST_HOME}
 
-COPY --from=builder /build/${APP_DIST_HOME} .
-COPY ${APP_HOME}/package.json .
-RUN chown -R pwuser:pwuser .
 
-USER pwuser
-COPY .yarnrc.yml ./
-RUN mkdir ./.yarn
-COPY .yarn/releases ./.yarn/releases
-RUN yarn install
+COPY .yarnrc.yml yarn.lock package.json ./
+COPY .yarn/releases .yarn/patches .yarn/
+RUN CI=true yarn install --immutable
+
+COPY --from=builder /build/${APP_DIST_HOME} .
+COPY package.json package.json
 
 ENV PLAYWRIGHT_BROWSER=chromium
 RUN yarn playwright install ${PLAYWRIGHT_BROWSER}
 
-COPY --chown=pwuser:pwuser ${APP_HOME}/entrypoint.sh .
+COPY ${APP_HOME}/entrypoint.sh .
 
+USER pwuser
+RUN chown -R pwuser:pwuser .
 ENTRYPOINT ["./entrypoint.sh"]
 
 
