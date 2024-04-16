@@ -1016,26 +1016,27 @@ export const OrganizationWrapper: React.FC<
                   }}
                 />
               </Box>
-              {organizationPage.secondaryMenu && (
-                <Box marginY={2}>
-                  <Navigation
-                    baseId="secondaryNav"
-                    colorScheme="purple"
-                    isMenuDialog={true}
-                    title={organizationPage.secondaryMenu.name}
-                    items={secondaryNavList}
-                    renderLink={(link, item) => {
-                      return item?.href ? (
-                        <NextLink href={item?.href} legacyBehavior>
-                          {link}
-                        </NextLink>
-                      ) : (
-                        link
-                      )
-                    }}
-                  />
-                </Box>
-              )}
+              {organizationPage.secondaryMenu &&
+                organizationPage.secondaryMenu.childrenLinks?.length > 0 && (
+                  <Box marginY={2}>
+                    <Navigation
+                      baseId="secondaryNav"
+                      colorScheme="purple"
+                      isMenuDialog={true}
+                      title={organizationPage.secondaryMenu.name}
+                      items={secondaryNavList}
+                      renderLink={(link, item) => {
+                        return item?.href ? (
+                          <NextLink href={item?.href} legacyBehavior>
+                            {link}
+                          </NextLink>
+                        ) : (
+                          link
+                        )
+                      }}
+                    />
+                  </Box>
+                )}
             </Box>
           )}
 
