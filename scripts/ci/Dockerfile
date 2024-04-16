@@ -198,8 +198,8 @@ RUN yarn playwright install ${PLAYWRIGHT_BROWSER}
 
 COPY ${APP_HOME}/entrypoint.sh .
 
+RUN chown -R pwuser:pwuser -- src/ *.*
 USER pwuser
-RUN chown -R pwuser:pwuser .
 ENTRYPOINT ["./entrypoint.sh"]
 
 
