@@ -16,6 +16,9 @@ import { UserProfileDto } from './dto/user-profile.dto'
 import { IslykillService } from './islykill.service'
 import { DataStatus } from '../user-profile/types/dataStatusTypes'
 import { NudgeType } from '../types/nudge-type'
+import { ClientType } from '../types/ClientType'
+import { UserProfileConfig } from '../../config'
+import type { ConfigType } from '@island.is/nest/config'
 
 export const NUDGE_INTERVAL = 6
 export const SKIP_INTERVAL = 1
@@ -29,11 +32,14 @@ export class UserProfileService {
     private readonly verificationService: VerificationService,
     private readonly islykillService: IslykillService,
     private sequelize: Sequelize,
+    @Inject(UserProfileConfig.KEY)
+    private config: ConfigType<typeof UserProfileConfig>,
   ) {}
 
   async findById(
     nationalId: string,
     useMaster = false,
+    clientType: ClientType = ClientType.THIRD_PARTY,
   ): Promise<UserProfileDto> {
     const userProfile = await this.userProfileModel.findOne({
       where: { nationalId },
@@ -51,20 +57,11 @@ export class UserProfileService {
         documentNotifications: true,
         needsNudge: null,
         emailNotifications: true,
+        isRestricted: false,
       }
     }
 
-    return {
-      nationalId: userProfile.nationalId,
-      email: userProfile.email,
-      mobilePhoneNumber: userProfile.mobilePhoneNumber,
-      locale: userProfile.locale,
-      mobilePhoneNumberVerified: userProfile.mobilePhoneNumberVerified,
-      emailVerified: userProfile.emailVerified,
-      documentNotifications: userProfile.documentNotifications,
-      needsNudge: this.checkNeedsNudge(userProfile),
-      emailNotifications: userProfile.emailNotifications,
-    }
+    return this.filterByClientTypeAndRestrictionDate(clientType, userProfile)
   }
 
   async patch(
@@ -234,7 +231,7 @@ export class UserProfileService {
       }
     })
 
-    return this.findById(nationalId, true)
+    return this.findById(nationalId, true, ClientType.FIRST_PARTY)
   }
 
   async createEmailVerification({
@@ -374,5 +371,39 @@ export class UserProfileService {
       mobilePhoneNumber.replace(/-/g, '').slice(-7) ===
       audkenniSimNumber.replace(/-/g, '').slice(-7)
     )
+  }
+
+  filterByClientTypeAndRestrictionDate(
+    clientType: ClientType,
+    userProfile: UserProfile,
+  ): UserProfileDto {
+    const isFirstParty = clientType === ClientType.FIRST_PARTY
+    let filteredUserProfile: UserProfileDto = {
+      nationalId: userProfile.nationalId,
+      email: userProfile.email,
+      mobilePhoneNumber: userProfile.mobilePhoneNumber,
+      locale: userProfile.locale,
+      mobilePhoneNumberVerified: userProfile.mobilePhoneNumberVerified,
+      emailVerified: userProfile.emailVerified,
+      documentNotifications: userProfile.documentNotifications,
+      needsNudge: this.checkNeedsNudge(userProfile),
+      emailNotifications: userProfile.emailNotifications,
+      isRestricted: false,
+    }
+
+    if ((this.config.migrationDate ?? new Date()) > userProfile.lastNudge) {
+      filteredUserProfile = {
+        ...filteredUserProfile,
+        email: isFirstParty ? userProfile.email : null,
+        mobilePhoneNumber: isFirstParty ? userProfile.mobilePhoneNumber : null,
+        emailVerified: isFirstParty ? userProfile.emailVerified : false,
+        mobilePhoneNumberVerified: isFirstParty
+          ? userProfile.mobilePhoneNumberVerified
+          : false,
+        isRestricted: true,
+      }
+    }
+
+    return filteredUserProfile
   }
 }
