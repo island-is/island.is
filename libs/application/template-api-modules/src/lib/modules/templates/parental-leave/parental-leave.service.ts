@@ -445,24 +445,7 @@ export class ParentalLeaveService extends BaseTemplateApiService {
         })
       }
     }
-    if (
-      state === States.VINNUMALASTOFNUN_APPROVE_EDITS ||
-      state === States.EDIT_OR_ADD_EMPLOYERS_AND_PERIODS
-    ) {
-      if (changeEmployerFile) {
-        changeEmployerFile.forEach(async (item, index) => {
-          const pdf = await this.getPdf(
-            application,
-            index,
-            'fileUpload.changeEmployerFile',
-          )
-          attachments.push({
-            attachmentType: apiConstants.attachments.changeEmployer,
-            attachmentBytes: pdf,
-          })
-        })
-      }
-    }
+
     // We don't want to send old files to VMST again
     if (applicationFundId && applicationFundId !== '') {
       if (additionalDocuments) {
@@ -662,6 +645,25 @@ export class ParentalLeaveService extends BaseTemplateApiService {
             attachmentBytes: pdf,
           })
         }
+      }
+    }
+
+    if (
+      state === States.VINNUMALASTOFNUN_APPROVE_EDITS ||
+      state === States.EDIT_OR_ADD_EMPLOYERS_AND_PERIODS
+    ) {
+      if (changeEmployerFile) {
+        changeEmployerFile.forEach(async (item, index) => {
+          const pdf = await this.getPdf(
+            application,
+            index,
+            'fileUpload.changeEmployerFile',
+          )
+          attachments.push({
+            attachmentType: apiConstants.attachments.changeEmployer,
+            attachmentBytes: pdf,
+          })
+        })
       }
     }
 
