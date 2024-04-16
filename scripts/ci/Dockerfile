@@ -11,8 +11,8 @@ FROM $DOCKER_IMAGE_REGISTRY/docker/library/node:18-alpine3.15 as deps
 
 RUN --mount=type=cache,target=/var/cache/apk/ \
   apk add --no-cache \
-  git python3 build-base gcc bash \
-  && ln -sf /usr/bin/python3 /usr/bin/python
+  git python3 build-base gcc bash && \
+  ln -sf /usr/bin/python3 /usr/bin/python
 
 WORKDIR /build
 
@@ -49,7 +49,9 @@ ENV APP=${APP}
 ENV NODE_ENV=production
 ENV NODE_OPTIONS="--max-old-space-size=8192"
 
-RUN id && pwd && ls -lah ./ .yarn ./apps/${APP}
+RUN id && \
+  pwd && \
+  ls -lah ./ .yarn ./apps/${APP}
 RUN yarn run build ${APP} --prod
 
 FROM $DOCKER_IMAGE_REGISTRY/docker/library/node:18-alpine3.15 as output-base
@@ -69,7 +71,8 @@ ENV NODE_ENV=production
 WORKDIR /webapp
 
 # Adding user for running the app
-RUN addgroup runners && adduser -D runner -G runners
+RUN addgroup runners && \
+  adduser -D runner -G runners
 
 FROM output-base as output-base-with-pg
 
@@ -122,7 +125,8 @@ COPY --from=builder /build/${APP_DIST_HOME} /usr/share/nginx/html
 
 FROM output-base as output-jest
 
-RUN echo 'module.exports = {};' > jest.config.js && npm install -g jest
+RUN echo 'module.exports = {};' > jest.config.js && \
+  npm install -g jest
 
 COPY --from=builder /build/${APP_DIST_HOME} /webapp/
 
@@ -142,9 +146,10 @@ FROM mcr.microsoft.com/playwright:v${PLAYWRIGHT_VERSION}-focal as playwright-bas
 FROM playwright-base as output-playwright
 # TODO: remove awscli dependency (157 MB extra)
 RUN --mount=type=cache,target=/apt/foo/bar \
-  apt-get update -y && apt-get install -y --no-install-recommends \
-  zip awscli \
-  && apt-get purge
+  apt-get update -y && \
+  apt-get install -y --no-install-recommends \
+  zip awscli && \
+  apt-get purge
 
 ARG APP_HOME
 ARG APP_DIST_HOME
@@ -175,8 +180,8 @@ WORKDIR /app
 
 
 # node user exists in the base image
-RUN mkdir -p /out \
-  && chown node:node /out
+RUN mkdir -p /out && \
+  chown node:node /out
 
 COPY --chown=pwuser:pwuser ${APP_HOME}/entrypoint.sh .
 
