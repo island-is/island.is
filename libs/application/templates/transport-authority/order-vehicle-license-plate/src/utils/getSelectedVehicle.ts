@@ -23,5 +23,5 @@ export const getSelectedVehicle = (
     '',
   ) as string
 
-  return currentVehicleList.vehicles[parseInt(vehicleIndex, 10)]
+  return currentVehicleList?.vehicles[parseInt(vehicleIndex, 10)]
 }

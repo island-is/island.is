@@ -29,7 +29,7 @@ export const vehicleSubSection = buildSubSection({
               application.externalData,
               application.answers,
             ) as VehiclesCurrentVehicle
-            return vehicle.permno
+            return vehicle?.permno
           },
         }),
         buildTextField({
@@ -43,7 +43,7 @@ export const vehicleSubSection = buildSubSection({
               application.externalData,
               application.answers,
             ) as VehiclesCurrentVehicle
-            return vehicle.make
+            return vehicle?.make
           },
         }),
         buildHiddenInput({
@@ -53,7 +53,17 @@ export const vehicleSubSection = buildSubSection({
               application.externalData,
               application.answers,
             ) as VehiclesCurrentVehicle
-            return vehicle.requireMileage || false
+            return vehicle?.requireMileage || false
+          },
+        }),
+        buildHiddenInput({
+          id: 'vehicleMileage.mileageReading',
+          defaultValue: (application: Application) => {
+            const vehicle = getSelectedVehicle(
+              application.externalData,
+              application.answers,
+            ) as VehiclesCurrentVehicle
+            return vehicle?.mileageReading || ''
           },
         }),
         buildTextField({
@@ -61,6 +71,22 @@ export const vehicleSubSection = buildSubSection({
           title: information.labels.vehicle.mileage,
           width: 'half',
           variant: 'number',
+          condition: (answers, externalData) => {
+            const vehicle = getSelectedVehicle(
+              externalData,
+              answers,
+            ) as VehiclesCurrentVehicle
+            return vehicle?.requireMileage || false
+          },
+          placeholder(application) {
+            const vehicle = getSelectedVehicle(
+              application.externalData,
+              application.answers,
+            ) as VehiclesCurrentVehicle
+            return vehicle?.mileageReading
+              ? `Síðasta skráning ${vehicle.mileageReading} Km`
+              : ''
+          },
         }),
       ],
     }),
