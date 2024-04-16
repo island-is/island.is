@@ -9,6 +9,7 @@ import {
 } from '@island.is/judicial-system/consts'
 import {
   CaseType,
+  DateType,
   NotificationType,
   User,
 } from '@island.is/judicial-system/types'
@@ -16,6 +17,7 @@ import {
 import { createTestingNotificationModule } from '../createTestingNotificationModule'
 
 import { Case } from '../../../case'
+import { DateLog, DateLogService } from '../../../date-log'
 import { SendInternalNotificationDto } from '../../dto/sendInternalNotification.dto'
 import { DeliverResponse } from '../../models/deliver.response'
 import { Notification } from '../../models/notification.model'
@@ -39,6 +41,7 @@ describe('InternalNotificationController - Send defender assigned notifications'
   const court = { name: 'Héraðsdómur Reykjavíkur' } as Case['court']
 
   let mockEmailService: EmailService
+  let mockDateLogService: DateLogService
   let mockConfig: ConfigType<typeof notificationModuleConfig>
   let mockNotificationModel: typeof Notification
   let givenWhenThen: GivenWhenThen
@@ -46,6 +49,7 @@ describe('InternalNotificationController - Send defender assigned notifications'
   beforeEach(async () => {
     const {
       emailService,
+      dateLogService,
       notificationConfig,
       notificationModel,
       internalNotificationController,
@@ -54,6 +58,7 @@ describe('InternalNotificationController - Send defender assigned notifications'
     mockEmailService = emailService
     mockConfig = notificationConfig
     mockNotificationModel = notificationModel
+    mockDateLogService = dateLogService
 
     const mockFindAll = mockNotificationModel.findAll as jest.Mock
     mockFindAll.mockResolvedValue([])
@@ -357,10 +362,16 @@ describe('InternalNotificationController - Send defender assigned notifications'
       defenderEmail: 'recipient@gmail.com',
       defenderName: 'John Doe',
       defenderNationalId: '1234567890',
-      courtDate: new Date(),
     } as Case
 
     beforeEach(async () => {
+      const mockFindLatestDateTypeByCaseId =
+        mockDateLogService.findLatestDateTypeByCaseId as jest.Mock
+      mockFindLatestDateTypeByCaseId.mockResolvedValueOnce({
+        caseId,
+        date: new Date(),
+        dateType: DateType.COURT_DATE,
+      } as DateLog)
       await givenWhenThen(caseId, theCase, notificationDto)
     })
 
@@ -403,10 +414,16 @@ describe('InternalNotificationController - Send defender assigned notifications'
       courtCaseNumber: 'R-123/2022',
       defenderEmail: 'recipient@gmail.com',
       defenderName: 'John Doe',
-      courtDate: new Date(),
     } as Case
 
     beforeEach(async () => {
+      const mockFindLatestDateTypeByCaseId =
+        mockDateLogService.findLatestDateTypeByCaseId as jest.Mock
+      mockFindLatestDateTypeByCaseId.mockResolvedValueOnce({
+        caseId,
+        date: new Date(),
+        dateType: DateType.COURT_DATE,
+      } as DateLog)
       await givenWhenThen(caseId, theCase, notificationDto)
     })
 
@@ -449,10 +466,16 @@ describe('InternalNotificationController - Send defender assigned notifications'
       courtCaseNumber: 'R-123/2022',
       defenderEmail: 'recipient@gmail.com',
       defenderName: 'John Doe',
-      courtDate: new Date(),
     } as Case
 
     beforeEach(async () => {
+      const mockFindLatestDateTypeByCaseId =
+        mockDateLogService.findLatestDateTypeByCaseId as jest.Mock
+      mockFindLatestDateTypeByCaseId.mockResolvedValueOnce({
+        caseId,
+        date: new Date(),
+        dateType: DateType.COURT_DATE,
+      } as DateLog)
       await givenWhenThen(caseId, theCase, notificationDto)
     })
 
