@@ -9,13 +9,14 @@ import {
   Document,
   DocumentPageNumber,
 } from './models/v2/document.model'
+import type { ConfigType } from '@island.is/nest/config'
 import { DocumentsInput } from './models/v2/documents.input'
 import { PaperMailPreferences } from './models/v2/paperMailPreferences.model'
 import { Sender } from './models/v2/sender.model'
 import { FileType } from './models/v2/documentContent.model'
 import { HEALTH_CATEGORY_ID } from './document.types'
 import { Type } from './models/v2/type.model'
-import { ConfigType, DownloadServiceConfig } from '@island.is/nest/config'
+import { DownloadServiceConfig } from '@island.is/nest/config'
 
 const LOG_CATEGORY = 'documents-api-v2'
 @Injectable()
