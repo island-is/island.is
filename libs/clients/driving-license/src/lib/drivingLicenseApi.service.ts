@@ -487,6 +487,8 @@ export class DrivingLicenseApi {
       postRenewal65AndOver: {
         districtId: params.districtId,
         healtCertificate: params.healthCertificate,
+        renewalDate: new Date(),
+        userId: v5.DRIVING_LICENSE_API_USER_ID,
       },
     })
   }
