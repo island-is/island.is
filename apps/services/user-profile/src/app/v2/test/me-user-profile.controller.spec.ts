@@ -1128,7 +1128,7 @@ describe('MeUserProfileController', () => {
     let server: SuperTest<Test> = null
     let fixtureFactory: FixtureFactory = null
     let userProfileModel: typeof UserProfile = null
-    let delegationPreferenceModel: typeof ActorProfile = null
+    let actorProfileModel: typeof ActorProfile = null
     let delegationsApi: DelegationsApi = null
 
     beforeAll(async () => {
@@ -1145,14 +1145,14 @@ describe('MeUserProfileController', () => {
       fixtureFactory = new FixtureFactory(app)
       delegationsApi = app.get(DelegationsApi)
       userProfileModel = app.get(getModelToken(UserProfile))
-      delegationPreferenceModel = app.get(getModelToken(ActorProfile))
+      actorProfileModel = app.get(getModelToken(ActorProfile))
     })
 
     beforeEach(async () => {
       await userProfileModel.destroy({
         truncate: true,
       })
-      await delegationPreferenceModel.destroy({
+      await actorProfileModel.destroy({
         truncate: true,
       })
     })

@@ -71,11 +71,11 @@ export class UserProfileController {
     description: 'Get actor profiles for nationalId.',
     request: {
       header: {
-        'X-Param-From-National-Id': {
+        'X-Param-To-National-Id': {
           required: true,
           description: 'National id of the user the actor profile is for',
         },
-        'X-Param-To-National-Id': {
+        'X-Param-From-National-Id': {
           required: true,
           description: 'National id of the user the delegation is from',
         },
