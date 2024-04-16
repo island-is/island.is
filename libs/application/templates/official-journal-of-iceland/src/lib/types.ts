@@ -140,6 +140,8 @@ export type OJOIApplication = Override<
   }
 >
 
+export type Answers = OJOIApplication['answers']
+
 export type OJOIFieldBaseProps = Override<
   FieldBaseProps,
   {

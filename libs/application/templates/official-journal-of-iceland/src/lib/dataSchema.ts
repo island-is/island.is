@@ -15,6 +15,14 @@ const FileSchema = z.object({
   url: z.string().optional(),
 })
 
+const CommentSchema = z.object({
+  from: z.string(),
+  task: z.string(),
+  comment: z.string(),
+  date: z.string(),
+  name: z.string(),
+})
+
 const getPath = (path: string) => path.split('.').slice(1)
 
 export const dataSchema = z.object({
@@ -206,6 +214,10 @@ export const dataSchema = z.object({
       }),
     ),
     message: z.string().optional(),
+  }),
+  comments: z.object({
+    lastUpdated: z.string(),
+    comments: z.array(CommentSchema),
   }),
 })
 
