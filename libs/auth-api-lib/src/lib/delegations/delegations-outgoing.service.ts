@@ -295,17 +295,19 @@ export class DelegationsOutgoingService {
       ]
 
       // Notify toNationalId of the delegation update
-      this.notificationsApi.notificationsControllerCreateHnippNotification({
-        createHnippNotificationDto: {
-          args,
-          recipient: delegation.toNationalId,
-          // If there are existing scopes we are updating the delegation
-          // else it is a new delegation
-          templateId: hasExistingScopes
-            ? UPDATED_DELEGATION_TEMPLATE_ID
-            : NEW_DELEGATION_TEMPLATE_ID,
+      await this.notificationsApi.notificationsControllerCreateHnippNotification(
+        {
+          createHnippNotificationDto: {
+            args,
+            recipient: delegation.toNationalId,
+            // If there are existing scopes we are updating the delegation
+            // else it is a new delegation
+            templateId: hasExistingScopes
+              ? UPDATED_DELEGATION_TEMPLATE_ID
+              : NEW_DELEGATION_TEMPLATE_ID,
+          },
         },
-      })
+      )
     } catch (e) {
       this.logger.error(`Failed to send delegation notification`, e)
     }
