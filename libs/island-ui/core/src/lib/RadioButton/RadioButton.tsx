@@ -21,7 +21,7 @@ export interface RadioButtonProps {
   disabled?: boolean
   onChange?: (event: React.ChangeEvent<HTMLInputElement>) => void
   tooltip?: React.ReactNode
-  
+
   tag?: {
     label: string
     variant?: TagVariant
@@ -110,27 +110,16 @@ export const RadioButton = ({
         })}
         htmlFor={id}
       >
-        {imageSrc && 
-         <Box
-          className={styles.imageContainer}
-       >
-            <img
-            src={imageSrc}
-            alt="image"
-            className={styles.image}
-          />
-        </Box>
-       }
-        {signature && 
-         <Box
-          className={styles.imageContainer}
-       >
-          <img
-            src={signature}
-            alt="image"
-          />
-        </Box>
-       }
+        {imageSrc && (
+          <Box className={styles.imageContainer}>
+            <img src={imageSrc} alt="image" className={styles.image} />
+          </Box>
+        )}
+        {signature && (
+          <Box className={styles.imageContainer}>
+            <img src={signature} alt="image" />
+          </Box>
+        )}
         <div
           className={cn(styles.radioButton, {
             [styles.radioButtonChecked]: checked,
@@ -141,9 +130,11 @@ export const RadioButton = ({
         >
           <div className={cn(styles.checkMark)} />
         </div>
-        <span className={cn(styles.labelText, {
-          [styles.licenseText]: license && large,
-        })}>
+        <span
+          className={cn(styles.labelText, {
+            [styles.licenseText]: license && large,
+          })}
+        >
           <Text as="span" fontWeight={checked ? 'semiBold' : 'light'}>
             {label}
           </Text>

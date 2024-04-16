@@ -4,7 +4,6 @@ import { withFigma } from '../../utils/withFigma'
 import { RadioButton } from './RadioButton'
 import { Box } from '../Box/Box'
 
-
 export default {
   title: 'Form/RadioButton',
   component: RadioButton,
@@ -52,7 +51,7 @@ export const FilledBlue = () => (
 )
 
 export const License = () => (
-  <Box background="white" padding={3} >
+  <Box background="white" padding={3}>
     <RadioButton
       label="Ég staðfesti að nota núverandi mynd í ökuskirteini"
       backgroundColor="blue"
