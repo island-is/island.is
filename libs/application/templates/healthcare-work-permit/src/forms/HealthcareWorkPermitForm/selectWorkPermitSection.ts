@@ -1,7 +1,9 @@
 import {
+  buildAlertMessageField,
   buildCustomField,
   buildMultiField,
   buildSection,
+  buildTextField,
 } from '@island.is/application/core'
 import { information } from '../../lib/messages'
 
@@ -14,6 +16,13 @@ export const SelectWorkPermitSection = buildSection({
       title: information.labels.selectWorkPermit.pageTitle,
       description: information.labels.selectWorkPermit.description,
       children: [
+        buildAlertMessageField({
+          id: 'selectWorkPermit.infoMessage',
+          title: '',
+          message: information.labels.selectWorkPermit.infoMessage,
+          alertType: 'info',
+          doesNotRequireAnswer: true,
+        }),
         buildCustomField({
           id: 'selectWorkPermit',
           component: 'SelectWorkPermitField',

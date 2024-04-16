@@ -19,20 +19,19 @@ export const externalData = {
     },
     checkboxLabel: {
       id: 'hwp.application:externalData.dataProvider.checkboxLabel',
-      defaultMessage: 'Ég skil að ofangreindra upplýsinga verður aflað',
+      defaultMessage: 'Ég hef kynnt mér ofangreint varðandi gagnaöflun',
       description: 'External data checkbox label',
     },
   }),
   nationalRegistry: defineMessages({
     title: {
       id: 'hwp.application:externalData.nationalRegistry.title',
-      defaultMessage: 'Upplýsingar úr Þjóðskrá',
+      defaultMessage: 'Persónupplýsingar úr Þjóðskrá',
       description: 'National Registry title',
     },
     subTitle: {
       id: 'hwp.application:externalData.nationalRegistry.subTitle',
-      defaultMessage:
-        'Til þess að auðvelda fyrir sækjum við persónuupplýsingar úr Þjóðskrá til þess að fylla út umsóknina.',
+      defaultMessage: 'Nafn, kennitölu,  fæðingardagur og ríkisfang',
       description: 'National Registry sub title',
     },
   }),
