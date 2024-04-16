@@ -65,8 +65,21 @@ export const AdditionalRealEstate = ({
     // https://www.skra.is/um-okkur/frettir/frett/2018/03/01/Nytt-fasteignanumer-og-itarlegri-skraning-stadfanga/
     // The property number is a seven digit informationless sequence with prefix F
     // The lot number is a six digit informationless sequence with prefix L
-    const propertyNumber = propertyNumberInput.trim().toUpperCase()
+    let propertyNumber = propertyNumberInput.trim().toUpperCase()
     setValue(addressField, '')
+
+    // check if property number starts with a number
+    if (propertyNumber && !isNaN(propertyNumber.charAt(0))) {
+      const str = String(propertyNumber).trim()
+      if (str.length === 7) {
+        propertyNumber = `F${str}`
+      }
+
+      if (str.length === 6) {
+        propertyNumber = `L${str}`
+      }
+    }
+
     if (isValidRealEstate(propertyNumber)) {
       clearErrors(propertyNumberField)
       getProperty({
@@ -82,6 +95,7 @@ export const AdditionalRealEstate = ({
         type: 'validate',
       })
     }
+    // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [getProperty, propertyNumberInput, setValue, setError])
 
   return (
