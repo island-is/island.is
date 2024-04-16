@@ -1,8 +1,11 @@
 import { BadRequestException, Inject, Injectable } from '@nestjs/common'
+import { Op } from 'sequelize'
 import { InjectModel } from '@nestjs/sequelize'
 import { isEmail } from 'class-validator'
 import addMonths from 'date-fns/addMonths'
 import { Sequelize } from 'sequelize-typescript'
+import * as kennitala from 'kennitala'
+import { parsePhoneNumber } from 'libphonenumber-js'
 
 import { isDefined } from '@island.is/shared/utils'
 import { AttemptFailed } from '@island.is/nest/problem'
@@ -16,6 +19,7 @@ import { UserProfileDto } from './dto/user-profile.dto'
 import { IslykillService } from './islykill.service'
 import { DataStatus } from '../user-profile/types/dataStatusTypes'
 import { NudgeType } from '../types/nudge-type'
+import { PaginatedUserProfileDto } from './dto/paginated-user-profile.dto'
 
 export const NUDGE_INTERVAL = 6
 export const SKIP_INTERVAL = 1
@@ -30,6 +34,42 @@ export class UserProfileService {
     private readonly islykillService: IslykillService,
     private sequelize: Sequelize,
   ) {}
+
+  async findAllBySearchTerm(search: string): Promise<PaginatedUserProfileDto> {
+    // Validate search term
+    if (!this.isSearchTermValid(search)) {
+      throw new BadRequestException('Invalid search term')
+    }
+
+    const userProfiles = await this.userProfileModel.findAll({
+      where: {
+        [Op.or]: [
+          { nationalId: search },
+          { email: search },
+          { mobilePhoneNumber: search },
+        ],
+      },
+    })
+
+    const userProfileDtos = userProfiles.map((userProfile) => ({
+      nationalId: userProfile.nationalId,
+      email: userProfile.email,
+      mobilePhoneNumber: userProfile.mobilePhoneNumber,
+      locale: userProfile.locale,
+      mobilePhoneNumberVerified: userProfile.mobilePhoneNumberVerified,
+      emailVerified: userProfile.emailVerified,
+      documentNotifications: userProfile.documentNotifications,
+      emailNotifications: userProfile.emailNotifications,
+    }))
+
+    return {
+      data: userProfileDtos,
+      totalCount: userProfileDtos.length,
+      pageInfo: {
+        hasNextPage: false,
+      },
+    }
+  }
 
   async findById(
     nationalId: string,
@@ -374,5 +414,28 @@ export class UserProfileService {
       mobilePhoneNumber.replace(/-/g, '').slice(-7) ===
       audkenniSimNumber.replace(/-/g, '').slice(-7)
     )
+  }
+
+  /**
+   * Validates if the search term is a valid nationalId, email or an icelandic phone number
+   * @param search
+   * @private
+   */
+  private isSearchTermValid(search: string): boolean {
+    try {
+      if (!search) {
+        return false
+      } else if (
+        !isEmail(search) &&
+        !kennitala.isValid(search) &&
+        !parsePhoneNumber(search, 'IS').isValid()
+      ) {
+        return false
+      }
+    } catch (e) {
+      return false
+    }
+
+    return true
   }
 }

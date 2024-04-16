@@ -97,7 +97,7 @@ const Companies = () => {
                         onClick={() =>
                           navigate(
                             replaceParams({
-                              href: ServiceDeskPaths.Procurers,
+                              href: ServiceDeskPaths.Company,
                               params: {
                                 nationalId,
                               },

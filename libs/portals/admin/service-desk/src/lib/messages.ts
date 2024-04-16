@@ -13,6 +13,14 @@ export const m = defineMessages({
     id: 'admin-portal.service-desk:procures',
     defaultMessage: 'Prókúruhafar',
   },
+  users: {
+    id: 'admin-portal.service-desk:users',
+    defaultMessage: 'Notendur',
+  },
+  user: {
+    id: 'admin-portal.service-desk:user',
+    defaultMessage: 'Notandi',
+  },
   procuresDescription: {
     id: 'admin-portal.service-desk:procures-description',
     defaultMessage: 'Flettu upp fyrirtæki til að birta prókúruhafa',

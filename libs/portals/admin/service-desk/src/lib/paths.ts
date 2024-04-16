@@ -1,4 +1,20 @@
 export enum ServiceDeskPaths {
   Root = '/thjonustubord',
-  Procurers = '/thjonustubord/:nationalId',
+
+  Companies = '/thjonustubord/fyrirtaeki',
+  Company = '/thjonustubord/fyrirtaeki/:nationalId',
+
+  Users = '/thjonustubord/notendur',
+  User = '/thjonustubord/notendur/:maskedNationalId',
 }
+
+// export enum ServiceDeskPaths {
+//   // Redirects either to Companies or Users
+//   Root = '/thjonustubord',
+//
+//   Companies = '/thjonustubord/fyrirtaeki',
+//   Company = '/thjonustubord/fyrirtaeki/:nationalId',
+//
+//   Users = '/thjonustubord/notendur',
+//   User = '/thjonustubord/notendur/:maskedNationalId',
+// }
