@@ -51,13 +51,12 @@ export const FilledBlue = () => (
   </Box>
 )
 
-export const WithSignature = () => (
+export const License = () => (
   <Box background="white" padding={3} >
     <RadioButton
       label="Ég staðfesti að nota núverandi mynd í ökuskirteini"
       backgroundColor="blue"
       large
-      vertical
       license
       imageSrc="https://images.ctfassets.net/8k0h54kbe6bj/25reLCy2oQHloIApkwu4Xs/56e99fcf69f83f052af9095e1a888f0c/Placeholder.png"
       signature="https://images.ctfassets.net/8k0h54kbe6bj/1hwZOVWlHWzO6dq7QAJmfy/97eb1cdc7a2e2af3dec222771e1fda73/Signaturesignature.png"

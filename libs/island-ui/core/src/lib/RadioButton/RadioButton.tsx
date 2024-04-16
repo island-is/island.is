@@ -84,7 +84,7 @@ export const RadioButton = ({
       className={cn(styles.container, {
         [styles.large]: large,
         [styles.largeError]: large && hasError,
-        [styles.licenseContainer]: license,
+        [styles.licenseContainer]: license && large,
       })}
       background={
         large && backgroundColor ? backgroundColors[backgroundColor] : undefined
@@ -106,7 +106,7 @@ export const RadioButton = ({
         className={cn(styles.label, {
           [styles.radioButtonLabelDisabled]: disabled,
           [styles.largeLabel]: large,
-          [styles.licenseLabel]: license,
+          [styles.licenseLabel]: license && large,
         })}
         htmlFor={id}
       >
@@ -136,13 +136,13 @@ export const RadioButton = ({
             [styles.radioButtonChecked]: checked,
             [styles.radioButtonError]: hasError,
             [styles.radioButtonDisabled]: disabled,
-            [styles.licenseCheckmark]: license
+            [styles.licenseCheckmark]: license && large,
           })}
         >
           <div className={cn(styles.checkMark)} />
         </div>
         <span className={cn(styles.labelText, {
-          [styles.licenseText]: license,
+          [styles.licenseText]: license && large,
         })}>
           <Text as="span" fontWeight={checked ? 'semiBold' : 'light'}>
             {label}

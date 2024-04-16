@@ -135,7 +135,7 @@ export const imageContainer = style({
 })
 
 export const image = style({
-  borderRadius: theme.border.radius.large,
+  borderRadius: theme.border.radius.standard,
   height: '100%',
   width: '180px',
   objectFit: 'cover',
