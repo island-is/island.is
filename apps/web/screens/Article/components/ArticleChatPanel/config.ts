@@ -815,4 +815,12 @@ export const excludedOrganizationWatsonConfig: string[] = [
   // Útlendingastofnun
   // https://app.contentful.com/spaces/8k0h54kbe6bj/entries/77rXck3sISbMsUv7BO1PG2
   '77rXck3sISbMsUv7BO1PG2',
+
+  // Tryggingastofnun
+  // https://app.contentful.com/spaces/8k0h54kbe6bj/entries/3dgsobJuiJXC1oOxhGpcUY
+  '3dgsobJuiJXC1oOxhGpcUY',
+
+  // HMS
+  // https://app.contentful.com/spaces/8k0h54kbe6bj/entries/53jrbgxPKpbNtordSfEZUK
+  '53jrbgxPKpbNtordSfEZUK',
 ]
