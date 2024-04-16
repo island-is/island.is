@@ -51,7 +51,6 @@ export const Panel: FC<
 
       {periods.map((p, index) => (
         <Box className={styles.panelRow} key={index}>
-          {/* TODO: Skoða betur þegar komin niðurstaða hvort eigi að setja default value fyrir "paid" og "approved" á ný tímabil */}
           {editable && onDeletePeriod && (
             <Box className={styles.deleteIcon}>
               {p.canDelete ? (

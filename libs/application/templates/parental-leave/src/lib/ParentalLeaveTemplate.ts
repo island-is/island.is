@@ -569,7 +569,7 @@ const ParentalLeaveTemplate: ApplicationTemplate<
               action: ApiModuleActions.setVMSTPeriods,
               triggerEvent: DefaultEvents.EDIT,
               externalDataId: 'VMSTPeriods',
-              throwOnError: true, // TODO: Hvað á að vera hérna? (defaults to true)
+              throwOnError: false, // TODO: Hvað á að vera hérna? (defaults to true)
             }),
           ],
           roles: [
@@ -873,7 +873,7 @@ const ParentalLeaveTemplate: ApplicationTemplate<
               action: ApiModuleActions.setVMSTPeriods,
               triggerEvent: DefaultEvents.EDIT,
               externalDataId: 'VMSTPeriods',
-              throwOnError: true, // TODO: Hvað á að vera hérna? (defaults to true)
+              throwOnError: false, // TODO: Hvað á að vera hérna? (defaults to true)
             }),
           ],
           roles: [
@@ -978,7 +978,6 @@ const ParentalLeaveTemplate: ApplicationTemplate<
           onExit: defineTemplateApi({
             triggerEvent: DefaultEvents.SUBMIT,
             action: ApiModuleActions.validateApplication,
-            triggerEvent: DefaultEvents.SUBMIT,
             throwOnError: true,
           }),
           roles: [
@@ -1047,7 +1046,7 @@ const ParentalLeaveTemplate: ApplicationTemplate<
             action: ApiModuleActions.setVMSTPeriods,
             triggerEvent: DefaultEvents.EDIT,
             externalDataId: 'VMSTPeriods',
-            throwOnError: true, // TODO: Hvað á að vera hérna? (defaults to true)
+            throwOnError: false, // TODO: Hvað á að vera hérna? (defaults to true)
           }),
           roles: [
             {
@@ -1104,7 +1103,7 @@ const ParentalLeaveTemplate: ApplicationTemplate<
             action: ApiModuleActions.setVMSTPeriods,
             triggerEvent: DefaultEvents.EDIT,
             externalDataId: 'VMSTPeriods',
-            throwOnError: true, // TODO: Hvað á að vera hérna? (defaults to true)
+            throwOnError: false, // TODO: Hvað á að vera hérna? (defaults to true)
           }),
           roles: [
             {
@@ -1204,7 +1203,7 @@ const ParentalLeaveTemplate: ApplicationTemplate<
             action: ApiModuleActions.setVMSTPeriods,
             triggerEvent: DefaultEvents.EDIT,
             externalDataId: 'VMSTPeriods',
-            throwOnError: true, // TODO: Hvað á að vera hérna? (defaults to true)
+            throwOnError: false, // TODO: Hvað á að vera hérna? (defaults to true)
           }),
           roles: [
             {
@@ -1303,7 +1302,7 @@ const ParentalLeaveTemplate: ApplicationTemplate<
               action: ApiModuleActions.setVMSTPeriods,
               triggerEvent: DefaultEvents.EDIT,
               externalDataId: 'VMSTPeriods',
-              throwOnError: true, // TODO: Hvað á að vera hérna? (defaults to true)
+              throwOnError: false, // TODO: Hvað á að vera hérna? (defaults to true)
             }),
           ],
           roles: [
@@ -1378,7 +1377,7 @@ const ParentalLeaveTemplate: ApplicationTemplate<
             action: ApiModuleActions.setVMSTPeriods,
             triggerEvent: DefaultEvents.EDIT,
             externalDataId: 'VMSTPeriods',
-            throwOnError: true, // TODO: Hvað á að vera hérna? (defaults to true)
+            throwOnError: false, // TODO: Hvað á að vera hérna? (defaults to true)
           }),
           roles: [
             {
@@ -2078,12 +2077,12 @@ const ParentalLeaveTemplate: ApplicationTemplate<
        * Copy VMST periods to periods.
        * Applicant could have made changes on paper, so VMST most likely has the newest changes to periods.
        */
-      setVMSTPeriods: assign((context) => {
-        console.log('========> (HERE) action')
+      setVMSTPeriods: assign((context, event) => {
+        if (event.type !== DefaultEvents.EDIT) {
+          return context
+        }
         const { application } = context
         const newPeriods = restructureVMSTPeriods(context)
-
-        console.log('=====> newPeriods: ', newPeriods)
 
         if (newPeriods.length > 0) {
           set(application.answers, 'periods', newPeriods)

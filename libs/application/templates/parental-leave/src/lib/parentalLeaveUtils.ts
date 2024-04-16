@@ -154,50 +154,35 @@ export const formatPeriods = (
         canDelete = true
       }
     }
-    // TODO: Skoða betur þegar komin niðurstaða hvort eigi að setja default value fyrir "paid" og "approved" á ný tímabil
-    const isVMSTPeriod = 'paid' in period
+
+    const timelinePeriod = {
+      startDate: period.startDate,
+      endDate: period.endDate,
+      ratio: period.ratio,
+      duration: calculatedLength,
+      canDelete: canDelete,
+      title: formatMessage(
+        period.approved
+          ? parentalLeaveFormMessages.reviewScreen.vmstPeriod
+          : parentalLeaveFormMessages.reviewScreen.period,
+        {
+          index: index + 1,
+          ratio: period.ratio,
+        },
+      ),
+      rawIndex: period.rawIndex ?? index,
+      paid: period.paid,
+    }
 
     if (isActualDob) {
       timelinePeriods.push({
+        ...timelinePeriod,
         actualDob: isActualDob,
-        startDate: period.startDate,
-        endDate: period.endDate,
-        ratio: period.ratio,
-        duration: calculatedLength,
-        canDelete: canDelete,
-        title: formatMessage(
-          isVMSTPeriod
-            ? parentalLeaveFormMessages.reviewScreen.vmstPeriod
-            : parentalLeaveFormMessages.reviewScreen.period,
-          {
-            index: index + 1,
-            ratio: period.ratio,
-          },
-        ),
-        rawIndex: period.rawIndex ?? index,
-        paid: period.paid,
       })
     }
 
     if (!isActualDob && period.startDate && period.endDate) {
-      timelinePeriods.push({
-        startDate: period.startDate,
-        endDate: period.endDate,
-        ratio: period.ratio,
-        duration: calculatedLength,
-        canDelete: canDelete,
-        title: formatMessage(
-          isVMSTPeriod
-            ? parentalLeaveFormMessages.reviewScreen.vmstPeriod
-            : parentalLeaveFormMessages.reviewScreen.period,
-          {
-            index: index + 1,
-            ratio: period.ratio,
-          },
-        ),
-        rawIndex: period.rawIndex ?? index,
-        paid: period.paid,
-      })
+      timelinePeriods.push(timelinePeriod)
     }
   })
 

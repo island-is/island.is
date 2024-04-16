@@ -77,8 +77,8 @@ export interface Period {
   daysToUse?: string
   rawIndex?: number
   rightCodePeriod?: string
-  paid?: boolean // TODO: Er þetta optional? (Ætti ég að setja default false á ný tímabil??)
-  approved?: boolean // TODO: Er þetta optional? (Ætti ég að setja default false á ný tímabil??)
+  paid?: boolean
+  approved?: boolean
 }
 
 export interface Payment {

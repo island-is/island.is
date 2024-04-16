@@ -184,7 +184,7 @@ export const restructureVMSTPeriods = (context: ApplicationContext) => {
         ratio: period.ratio.split(',')[0],
         rawIndex: index,
         firstPeriodStart: firstPeriodStart,
-        useLength: NO as YesOrNo,
+        useLength: NO as YesOrNo, // TODO: Passa þetta?? (ef fer inn í EDIT stöðu áður en búið að vinna með tímabil, á að haldast sem "yes"?)
         rightCodePeriod: rightsCodePeriod,
         daysToUse: period.days, // TODO: Getur verið að er ekki með days? (þarf að gera ehv svo gamalt "daysToUse" haldist ekki inni)
         paid: period.paid,

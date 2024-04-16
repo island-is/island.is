@@ -1545,7 +1545,7 @@ export class ParentalLeaveService extends BaseTemplateApiService {
           )
 
         if (VMSTperiods?.periods) {
-          vmstPeriod = VMSTperiods
+          vmstPeriod = VMSTperiods.periods
           return vmstPeriod
         }
       } catch (e) {

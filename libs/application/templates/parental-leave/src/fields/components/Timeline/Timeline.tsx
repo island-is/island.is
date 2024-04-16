@@ -18,8 +18,7 @@ export interface TimelinePeriod {
   color?: string
   canDelete?: boolean
   rawIndex: number
-  paid?: boolean // TODO: Á þetta að vera optional??
-  // TODO: Bæta við approved??
+  paid?: boolean
 }
 
 interface TimelineProps {
