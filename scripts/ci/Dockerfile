@@ -194,7 +194,7 @@ COPY --from=builder /build/${APP_DIST_HOME} .
 COPY package.json package.json
 
 ENV PLAYWRIGHT_BROWSER=chromium
-RUN npx playwright install ${PLAYWRIGHT_BROWSER}
+RUN yarn playwright install ${PLAYWRIGHT_BROWSER}
 
 COPY ${APP_HOME}/entrypoint.sh .
 
