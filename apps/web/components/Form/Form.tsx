@@ -293,8 +293,22 @@ export const Form = ({ form }: FormProps) => {
     setData({ ...data, [field]: String(value) })
   }
 
-  const invalidFormNameText = n(
-    'formInvalidName',
+  const requiredFieldText = n(
+    'requiredField',
+    activeLocale === 'is'
+      ? 'Þennan reit þarf að fylla út.'
+      : 'This field needs to be filled out.',
+  )
+
+  const requiredFileText = n(
+    'requiredFile',
+    activeLocale === 'is'
+      ? 'Þennan reit þarf að fylla út.'
+      : 'This field needs to be filled out.',
+  )
+
+  const requiredCheckboxText = n(
+    'requiredCheckbox',
     activeLocale === 'is'
       ? 'Þennan reit þarf að fylla út.'
       : 'This field needs to be filled out.',
@@ -324,7 +338,7 @@ export const Form = ({ form }: FormProps) => {
           if (slug === 'name' && !data['name']) {
             return {
               field: slug,
-              error: invalidFormNameText,
+              error: requiredFieldText,
             }
           }
 
@@ -370,7 +384,7 @@ export const Form = ({ form }: FormProps) => {
         ) {
           return {
             field: slug,
-            error: invalidFormNameText,
+            error: requiredFieldText,
           }
         }
 
@@ -382,7 +396,7 @@ export const Form = ({ form }: FormProps) => {
         ) {
           return {
             field: slug,
-            error: invalidFormNameText,
+            error: requiredCheckboxText,
           }
         }
 
@@ -393,7 +407,7 @@ export const Form = ({ form }: FormProps) => {
         ) {
           return {
             field: slug,
-            error: invalidFormNameText,
+            error: requiredFileText,
           }
         }
 
