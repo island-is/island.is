@@ -12,13 +12,18 @@ export const information = {
     selectWorkPermit: defineMessages({
       pageTitle: {
         id: 'hwp.application:information.labels.selectWorkPermit.pageTitle',
-        defaultMessage: 'Brautskráninganar þínar',
-        description: 'Select work permit page',
+        defaultMessage: 'Starfsleyfi',
+        description: 'Work permit',
+      },
+      sectionTitle: {
+        id: 'hwp.application:information.labels.selectWorkPermit.sectionTitle',
+        defaultMessage: 'Veldu það nám sem þú vilt fá starfsleyfi fyrir',
+        description: 'Pick your work permit programme',
       },
       description: {
         id: 'hwp.application:information.labels.selectWorkPermit.description',
         defaultMessage:
-          'Hér má sjá lista yfir þau starfsleyfi sem eru skráð á þig í starfsleyfaskrá embættis landlæknis sem uppfærð er daglega.',
+          'Hér að neðan er listi yfir loknar prófgráður frá Háskóla Íslands sem gefa réttindi til starfsleyfa. ',
         description: 'Select work permit description',
       },
       workPermitOptionSubLabelSpeciality: {
@@ -41,6 +46,13 @@ export const information = {
         defaultMessage:
           'Vinsamlega sendið póst á starfsleyfi@landlaeknir.is ef frekari upplýsingar óskast',
         description: 'Select work permit restriction alert message',
+      },
+      infoMessage: {
+        id: 'hwp.application:information.labels.selectWorkPermit.infoMessage',
+        defaultMessage:
+          'Athugið, ekki eru allar gráður aðgengilegar í sjálfafgreiðslu, til að mynda vegna kröfu um starfsreynslu eða annarra gagna sem þarf að yfirfara. Ef þú finnur ekki gráðuna þína skaltu  fylgja leiðbeiningunum hér.',
+        description:
+          'Info message for user regarding self serviced work permits',
       },
     }),
   },

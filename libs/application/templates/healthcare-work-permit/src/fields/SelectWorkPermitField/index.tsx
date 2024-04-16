@@ -64,7 +64,15 @@ export const SelectWorkPermitField: FC<
   }
 
   return (
-    <Box paddingTop={2}>
+    <Box
+      paddingTop={2}
+      display={'flex'}
+      flexDirection={'column'}
+      style={{ gap: '24px' }}
+    >
+      <Text variant="h5">
+        {formatMessage(information.labels.selectWorkPermit.sectionTitle)}
+      </Text>
       <RadioController
         id={`${props.field.id}.studyProgram`}
         error={props.error as any} // TODO ?
