@@ -95,8 +95,8 @@ import { FishingLicenseClientConfig } from '@island.is/clients/fishing-license'
 import { FiskistofaClientConfig } from '@island.is/clients/fiskistofa'
 import { AircraftRegistryClientConfig } from '@island.is/clients/aircraft-registry'
 import {
-  UserNotificationSystemClientConfig,
   UserNotificationClientConfig,
+  UserNotificationSystemClientConfig,
 } from '@island.is/clients/user-notification'
 import {
   HealthDirectorateClientConfig,

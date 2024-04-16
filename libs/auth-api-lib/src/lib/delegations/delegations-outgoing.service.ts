@@ -11,7 +11,7 @@ import { isUuid, uuid } from 'uuidv4'
 
 import { User } from '@island.is/auth-nest-tools'
 import { NoContentException } from '@island.is/nest/problem'
-import { NotificationsApi } from '@island.is/clients/user-notification'
+import { NotificationsApi } from '../user-notification'
 
 import { ApiScope } from '../resources/models/api-scope.model'
 import { ScopeService } from '../resources/scope.service'

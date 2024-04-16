@@ -2,6 +2,7 @@ import { Module } from '@nestjs/common'
 import { SequelizeModule } from '@nestjs/sequelize'
 
 import {
+  DelegationApiUserSystemNotificationConfig,
   DelegationConfig,
   SequelizeConfigService,
 } from '@island.is/auth-api-lib'
@@ -30,10 +31,6 @@ import { ResourcesModule } from './resources/resources.module'
 import { TranslationModule } from './translation/translation.module'
 import { UserProfileModule } from './user-profile/user-profile.module'
 import { UsersModule } from './users/users.module'
-import {
-  UserNotificationClientConfig,
-  UserNotificationSystemClientConfig,
-} from '@island.is/clients/user-notification'
 
 @Module({
   imports: [
@@ -63,9 +60,8 @@ import {
         NationalRegistryClientConfig,
         RskRelationshipsClientConfig,
         UserProfileClientConfig,
-        UserNotificationClientConfig,
-        UserNotificationSystemClientConfig,
         XRoadConfig,
+        DelegationApiUserSystemNotificationConfig,
       ],
     }),
   ],
