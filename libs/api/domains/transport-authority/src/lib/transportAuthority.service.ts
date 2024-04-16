@@ -95,11 +95,7 @@ export class TransportAuthorityApi {
         'Did not find the vehicle with for that permno, or you are neither owner nor co-owner of the vehicle',
       )
     }
-    console.log(
-      'vehicle.requiresMileageRegistration',
-      vehicle.requiresMileageRegistration,
-    )
-    console.log('mileage', vehicle?.mileageReadings?.[0]?.mileage)
+
     // Get debt status
     const debtStatus =
       await this.vehicleServiceFjsV1Client.getVehicleDebtStatus(auth, permno)
@@ -286,10 +282,7 @@ export class TransportAuthorityApi {
         auth,
         permno,
       )
-    console.log(
-      'vehicle?.mileageReadings?.[0]?.mileage',
-      vehicle?.mileageReadings?.[0]?.mileage,
-    )
+
     return {
       isDebtLess: debtStatus.isDebtLess,
       validationErrorMessages: operatorChangeValidation?.hasError

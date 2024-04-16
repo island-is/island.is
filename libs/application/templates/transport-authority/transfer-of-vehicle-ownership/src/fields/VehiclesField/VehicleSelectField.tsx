@@ -87,7 +87,6 @@ export const VehicleSelectField: FC<
           setValue('pickVehicle.type', currentVehicle.make)
           setValue('pickVehicle.plate', permno)
           setValue('pickVehicle.color', currentVehicle.color || undefined)
-          console.log('currentVehicle', currentVehicle)
           setValue(
             'vehicleMileage.requireMileage',
             response.vehicleOwnerchangeChecksByPermno.basicVehicleInformation
