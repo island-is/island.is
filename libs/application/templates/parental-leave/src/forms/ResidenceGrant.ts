@@ -1,5 +1,4 @@
 import {
-  buildDescriptionField,
   buildFileUploadField,
   buildForm,
   buildMultiField,
@@ -39,9 +38,9 @@ export const ResidenceGrant: Form = buildForm({
               maxSize: FILE_SIZE_LIMIT,
               uploadAccept: '.pdf',
               uploadDescription:
-                parentalLeaveFormMessages.selfEmployed.uploadDescription,
+                parentalLeaveFormMessages.fileUpload.uploadDescription,
               uploadButtonLabel:
-                parentalLeaveFormMessages.selfEmployed.attachmentButton,
+                parentalLeaveFormMessages.fileUpload.attachmentButton,
             }),
             buildSubmitField({
               id: 'residenceGrant.submit',

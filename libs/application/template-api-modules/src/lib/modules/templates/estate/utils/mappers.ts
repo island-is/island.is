@@ -30,6 +30,7 @@ const estateMemberMapper = (element: EstateMember) => {
     phone: '',
     email: '',
     relationWithApplicant: '',
+    noContactInfo: ['No'] as ('Yes' | 'No')[],
     advocate: element.advocate
       ? {
           ...element.advocate,
