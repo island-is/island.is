@@ -3,6 +3,7 @@ import {
   Configuration,
   UserProfileApi,
   V2MeApi,
+  V2UsersApi,
 } from '@island.is/clients/user-profile'
 import { UserProfileResolver } from './userProfile.resolver'
 import { UserProfileService } from './userProfile.service'
@@ -30,7 +31,7 @@ export class UserProfileModule {
         UserProfileServiceV1,
         UserProfileResolver,
         IslykillService,
-        ...[UserProfileApi, V2MeApi].map((Api) => ({
+        ...[UserProfileApi, V2MeApi, V2UsersApi].map((Api) => ({
           provide: Api,
           useFactory: () =>
             new Api(

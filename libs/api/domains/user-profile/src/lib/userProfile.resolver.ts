@@ -1,4 +1,13 @@
 import { Args, Mutation, Query, Resolver } from '@nestjs/graphql'
+import { UseGuards } from '@nestjs/common'
+
+import type { User } from '@island.is/auth-nest-tools'
+import {
+  CurrentUser,
+  IdsUserGuard,
+  ScopesGuard,
+} from '@island.is/auth-nest-tools'
+
 import { ConfirmEmailVerificationInput } from './dto/confirmEmailVerificationInput'
 import { ConfirmSmsVerificationInput } from './dto/confirmSmsVerificationInput'
 import { CreateSmsVerificationInput } from './dto/createSmsVerificationInput'
@@ -10,17 +19,11 @@ import { UserProfile } from './userProfile.model'
 import { ConfirmResponse, Response } from './response.model'
 import { DeleteIslykillSettings } from './models/deleteIslykillSettings.model'
 import { UserProfileService } from './userProfile.service'
-import type { User } from '@island.is/auth-nest-tools'
-import {
-  IdsUserGuard,
-  ScopesGuard,
-  CurrentUser,
-} from '@island.is/auth-nest-tools'
-import { UseGuards } from '@nestjs/common'
 import { UserDeviceToken } from './userDeviceToken.model'
 import { UserDeviceTokenInput } from './dto/userDeviceTokenInput'
 import { DeleteTokenResponse } from './dto/deleteTokenResponse'
 import { UserProfileLocale } from './models/userProfileLocale.model'
+import { PaginatedUserProfileResponse } from './dto/paginated-user-profile.response'
 
 @UseGuards(IdsUserGuard, ScopesGuard)
 @Resolver()
@@ -119,5 +122,13 @@ export class UserProfileResolver {
     @CurrentUser() user: User,
   ): Promise<DeleteTokenResponse> {
     return await this.userUserProfileService.deleteDeviceToken(input, user)
+  }
+
+  @Query(() => PaginatedUserProfileResponse, {
+    nullable: false,
+    name: 'GetPaginatedUserProfiles',
+  })
+  getUserProfiles(@Args('query') query: string) {
+    return this.userUserProfileService.getUserProfiles(query)
   }
 }

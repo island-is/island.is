@@ -5,6 +5,7 @@ import { ApolloError } from 'apollo-server-express'
 import {
   ConfirmationDtoResponse,
   V2MeApi,
+  V2UsersApi,
 } from '@island.is/clients/user-profile'
 import { Auth, AuthMiddleware, User } from '@island.is/auth-nest-tools'
 import { IslykillService } from '../islykill.service'
@@ -31,6 +32,7 @@ const handleError = (error: any, details?: string) => {
 export class UserProfileServiceV2 {
   constructor(
     private v2MeApi: V2MeApi,
+    private v2UserProfileApi: V2UsersApi,
     private readonly islyklarService: IslykillService,
   ) {}
 
@@ -134,5 +136,15 @@ export class UserProfileServiceV2 {
     throw new BadRequestException(
       'For User Profile V2 call createEmailVerification instead with email again',
     )
+  }
+
+  async getUserProfiles(search: string) {
+    return await this.v2UserProfileApi
+      .userProfileControllerFindUserProfiles({
+        search: search,
+      })
+      .catch((e) => {
+        handleError(e, `getUserProfiles error`)
+      })
   }
 }

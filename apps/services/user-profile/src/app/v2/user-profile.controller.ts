@@ -16,6 +16,7 @@ import { IdsAuthGuard, Scopes, ScopesGuard } from '@island.is/auth-nest-tools'
 
 import { UserProfileDto } from './dto/user-profile.dto'
 import { UserProfileService } from './user-profile.service'
+import { PaginatedUserProfileDto } from './dto/paginated-user-profile.dto'
 
 const namespace = '@island.is/user-profile/v2/users'
 
@@ -34,13 +35,24 @@ export class UserProfileController {
   @Get('/')
   @Documentation({
     description: 'Get user profiles.',
-    response: { status: 200, type: [UserProfileDto] },
+    response: { status: 200, type: PaginatedUserProfileDto },
+    request: {
+      query: {
+        search: {
+          required: true,
+          type: 'string',
+          description: 'Search term for user profiles',
+        },
+      },
+    },
   })
-  @Audit<UserProfileDto>({
-    resources: (profile) => profile.nationalId,
+  @Audit<PaginatedUserProfileDto>({
+    resources: (profile) => profile.data.map((p) => p.nationalId),
   })
-  @Scopes(AdminPortalScope.serviceDesk)
-  async findUserProfiles(@Query('search') search: string) {
+  // @Scopes(AdminPortalScope.serviceDesk)
+  async findUserProfiles(
+    @Query('search') search: string,
+  ): Promise<PaginatedUserProfileDto> {
     return this.userProfileService.findAllBySearchTerm(search)
   }
 
