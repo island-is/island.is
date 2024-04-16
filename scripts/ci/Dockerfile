@@ -183,9 +183,13 @@ WORKDIR ${APP_DIST_HOME}
 COPY .yarn/releases/ .yarn/releases/
 COPY .yarn/patches/ .yarn/patches/
 COPY .yarnrc.yml yarn.lock package.json ./
+
 # We,re using --mount, so no need to `yarn cache clean`
 # hadolint ignore=DL3060
-RUN --mount=type=cache,target=./.yarn/cache --mount=type=cache,target=.cache --mount=type=cache,target=/root/.cache \
+RUN \
+  --mount=type=cache,target=./.yarn/cache \
+  --mount=type=cache,target=.cache \
+  --mount=type=cache,target=/root/.cache \
   cp yarn.lock yarn.lock.bak && \
   diff yarn.lock.bak yarn.lock && \
   ( yarn install || (cat /tmp/*/*.log && exit 1) )
@@ -197,8 +201,10 @@ ENV PLAYWRIGHT_BROWSER=chromium
 RUN yarn playwright install ${PLAYWRIGHT_BROWSER}
 
 COPY ${APP_HOME}/entrypoint.sh .
+RUN echo ${APP_DIST_HOME}
+RUN env
+RUN chown -R pwuser:pwuser .
 
-RUN chown -R pwuser:pwuser -- src/ *.*
 USER pwuser
 ENTRYPOINT ["./entrypoint.sh"]
 
