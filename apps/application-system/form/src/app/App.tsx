@@ -11,6 +11,7 @@ import { BASE_PATH } from '../lib/routes'
 import { Router } from '../components/Router'
 
 export const App = () => (
+  //Touch File
   <ApolloProvider client={initializeClient(environment.baseApiUrl)}>
     <LocaleProvider locale={defaultLanguage} messages={{}}>
       <AuthProvider basePath={BASE_PATH}>
