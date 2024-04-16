@@ -42,8 +42,23 @@ export const application = {
   registerPersons: defineMessages({
     sectionTitle: {
       id: 'hid.application:registerPersons.section.title',
-      defaultMessage: 'Ég er einnig að sækja um fyrir',
+      defaultMessage: 'Skrá einstaklinga',
       description: 'Register persons section title',
+    },
+    sectionDescription: {
+      id: 'hid.application:registerPersons.section.description',
+      defaultMessage: 'Ég er einnig að sækja um fyrir',
+      description: 'Register persons section description',
+    },
+    spousetitle: {
+      id: 'hid.application:registerPersons.section.spouseTitle',
+      defaultMessage: 'Maki',
+      description: 'Register persons spouse title',
+    },
+    childrenTitle: {
+      id: 'hid.application:registerPersons.section.childrenTitle',
+      defaultMessage: 'Börn',
+      description: 'Register persons children title',
     },
   }),
   residency: defineMessages({
@@ -52,12 +67,37 @@ export const application = {
       defaultMessage: 'Veldu dvalarstað',
       description: 'Residency section title',
     },
+    sectionDescription: {
+      id: 'hid.application:residency.section.description',
+      defaultMessage: 'Veldu staðsetningu',
+      description: 'Residency section description',
+    },
   }),
   date: defineMessages({
     sectionTitle: {
       id: 'hid.application:dat.section.title',
-      defaultMessage: 'Veldu dvalardagsetningu',
+      defaultMessage: 'Veldu dagsetningu',
       description: 'Date section title',
+    },
+    sectionDescription: {
+      id: 'hid.application:dat.section.description',
+      defaultMessage: 'Veldu dagsetningu dvalar',
+      description: 'Date section description',
+    },
+    dateFromTitle: {
+      id: 'hid.application:dat.section.dateFrom.title',
+      defaultMessage: 'Dagsetning frá',
+      description: 'Date field from title',
+    },
+    dateToTitle: {
+      id: 'hid.application:dat.section.dateFrom.title',
+      defaultMessage: 'Dagsetning til',
+      description: 'Date field to title',
+    },
+    datePlaceholderText: {
+      id: 'hid.application:dat.section.datefield.placeholder',
+      defaultMessage: 'Veldu dagsetningu',
+      description: 'Date field placeholder text',
     },
   }),
 }

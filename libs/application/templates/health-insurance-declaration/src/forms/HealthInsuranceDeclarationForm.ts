@@ -1,6 +1,7 @@
 import {
   buildAlertMessageField,
   buildCheckboxField,
+  buildDateField,
   buildForm,
   buildMultiField,
   buildRadioField,
@@ -60,11 +61,11 @@ export const HealthInsuranceDeclarationForm: Form = buildForm({
       children: [
         buildMultiField({
           id: 'registerPersonsMultiFiled',
-          title: 'Ég er einnig að sækja um fyrir:',
+          title: m.application.registerPersons.sectionDescription,
           children: [
             buildCheckboxField({
               id: 'registerPersonsSpouseCheckboxField',
-              title: 'Maki',
+              title: m.application.registerPersons.spousetitle,
               options: [
                 {
                   value: '1201345850',
@@ -75,7 +76,7 @@ export const HealthInsuranceDeclarationForm: Form = buildForm({
             }),
             buildCheckboxField({
               id: 'registerPersonsChildrenCheckboxField',
-              title: 'Börn',
+              title: m.application.registerPersons.childrenTitle,
               options: ({ externalData }) => getChildrenAsOptions(externalData),
             }),
           ],
@@ -85,12 +86,52 @@ export const HealthInsuranceDeclarationForm: Form = buildForm({
     buildSection({
       id: 'residencySection',
       title: m.application.residency.sectionTitle,
-      children: [],
+      children: [
+        buildMultiField({
+          id: 'residencyMultiField',
+          title: m.application.residency.sectionDescription,
+          children: [
+            buildRadioField({
+              id: 'residencyTravellerRadioField',
+              title: '',
+              options: [
+                { label: 'Evrópa', value: 'Evrópa' },
+                { label: 'Norður Ameríka', value: 'Norður Ameríka' },
+                { label: 'Suður Ameríka', value: 'Suður Ameríka' },
+                { label: 'Asía', value: 'Asía' },
+                { label: 'Afríka', value: 'Afríka' },
+                { label: 'Ástralía', value: 'Ástralía' },
+                { label: 'Sðurskautslandið', value: 'Sðurskautslandið' },
+              ],
+              width: 'half',
+            }),
+          ],
+        }),
+      ],
     }),
     buildSection({
       id: 'dateSection',
       title: m.application.date.sectionTitle,
-      children: [],
+      children: [
+        buildMultiField({
+          id: 'dateMultifield',
+          title: m.application.date.sectionDescription,
+          children: [
+            buildDateField({
+              id: 'datefieldFrom',
+              title: m.application.date.dateFromTitle,
+              placeholder: m.application.date.datePlaceholderText,
+              width: 'half',
+            }),
+            buildDateField({
+              id: 'datefieldTo',
+              title: m.application.date.dateToTitle,
+              placeholder: m.application.date.datePlaceholderText,
+              width: 'half',
+            }),
+          ],
+        }),
+      ],
     }),
   ],
 })
