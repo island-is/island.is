@@ -1,7 +1,7 @@
 import { ApiProperty } from '@nestjs/swagger'
 import { IsDate, IsString } from 'class-validator'
 import { Type } from 'class-transformer'
-import { IsNationalId } from '@island.is/nest/core'
+import { IsPersonNationalId } from '@island.is/nest/core'
 
 const EXAMPLE_TOKEN =
   'f4XghAZSRs6L-RNWRo9-Mw:APA91bFGgAc-0rhMgeHCDvkMJBH_nU4dApG6qqATliEbPs9xXf5n7EJ7FiAjJ6NNCHMBKdqHMdLrkaFHxuShzTwmZquyCjchuVMwAGmlwdXY8vZWnVqvMVItYn5lfIH-mR7Q9FvnNlhv'
@@ -16,7 +16,7 @@ export class UserDeviceTokenDto {
 
   @ApiProperty({ required: true })
   @IsString()
-  @IsNationalId()
+  @IsPersonNationalId()
   nationalId!: string
 
   @ApiProperty({ required: true, example: EXAMPLE_TOKEN })

@@ -65,7 +65,7 @@ export const useGetPetitionList = (listId: string) => {
 }
 
 export const useGetPetitionListEndorsements = (listId: string) => {
-  const { data: endorsementListsResponse } =
+  const { data: endorsementListsResponse, loading: loadingEndorsements } =
     useQuery<PetitionListEndorsementsResponse>(
       GetGeneralPetitionListEndorsements,
       {
@@ -78,8 +78,10 @@ export const useGetPetitionListEndorsements = (listId: string) => {
       },
     )
 
-  return (
-    endorsementListsResponse?.endorsementSystemGetGeneralPetitionEndorsements ??
-    []
-  )
+  return {
+    listEndorsements:
+      endorsementListsResponse?.endorsementSystemGetGeneralPetitionEndorsements ??
+      [],
+    loadingEndorsements,
+  }
 }

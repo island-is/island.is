@@ -283,7 +283,7 @@ export const messages = defineMessages({
   },
   dentistTransferSuccessTitle: {
     id: 'sp.health:dentist-transfer-success-title',
-    defaultMessage: 'Ný tannlæknir skráður',
+    defaultMessage: 'Nýr tannlæknir skráður',
   },
   dentistTransferSuccessInfo: {
     id: 'sp.health:dentist-transfer-success-info',
