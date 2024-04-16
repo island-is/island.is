@@ -479,16 +479,14 @@ export class ContentfulService {
           visitedEntryIds.add(item.id)
 
           promises.push(
-            (async () => {
-              return {
-                entries: await this.getContentfulData(chunkSize, {
-                  include: this.defaultIncludeDepth,
-                  [item.isEntry ? 'links_to_entry' : 'links_to_asset']: item.id,
-                  locale: this.contentfulLocaleMap[locale],
-                }),
-                linkedToEntryId: item.id,
-              }
-            })(),
+            (async () => ({
+              entries: await this.getContentfulData(chunkSize, {
+                include: this.defaultIncludeDepth,
+                [item.isEntry ? 'links_to_entry' : 'links_to_asset']: item.id,
+                locale: this.contentfulLocaleMap[locale],
+              }),
+              linkedToEntryId: item.id,
+            }))(),
           )
 
           if (promises.length > MAX_REQUEST_COUNT) {
