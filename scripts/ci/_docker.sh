@@ -29,7 +29,7 @@ set-containerer-args() {
     --build-arg="APP=${APP}"
     --build-arg="APP_HOME=${APP_HOME}"
     --build-arg="APP_DIST_HOME=${APP_DIST_HOME}"
-    -t "${DOCKER_REGISTRY}""${APP}":"${DOCKER_TAG}"
+    -t "${DOCKER_REGISTRY}${APP}:${DOCKER_TAG:-latest}"
     --build-arg="PLAYWRIGHT_VERSION=${PLAYWRIGHT_VERSION}"
   )
   for extra_arg in ${EXTRA_DOCKER_BUILD_ARGS:-}; do
