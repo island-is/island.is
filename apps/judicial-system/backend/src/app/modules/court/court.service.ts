@@ -496,6 +496,7 @@ export class CourtService {
     caseId: string,
     courtName?: string,
     courtCaseNumber?: string,
+    isCorrection?: boolean,
     decision?: CaseDecision,
     rulingDate?: Date,
     validToDate?: Date,
@@ -504,6 +505,7 @@ export class CourtService {
     try {
       const subject = `${courtName} - ${courtCaseNumber} - lyktir`
       const content = JSON.stringify({
+        isCorrection,
         courtName,
         courtCaseNumber,
         decision,
@@ -520,6 +522,7 @@ export class CourtService {
           caseId,
           actor: user.name,
           institution: user.institution?.name,
+          isCorrection,
           courtName,
           courtCaseNumber,
           decision,
