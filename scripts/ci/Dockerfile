@@ -11,7 +11,9 @@ WORKDIR /build
 ADD package.json yarn.lock .yarnrc.yml ./
 ADD apps/native/app/package.json ./apps/native/app/
 COPY .yarn/ ./.yarn
-RUN apk add --update --no-cache python3 build-base gcc && ln -sf /usr/bin/python3 /usr/bin/python
+RUN apk add --update --no-cache \
+  python3 build-base gcc bash \
+  && ln -sf /usr/bin/python3 /usr/bin/python
 RUN CI=true yarn install --immutable
 
 FROM deps as src
@@ -21,7 +23,13 @@ RUN wget -O /tmp/jq-linux64 https://github.com/stedolan/jq/releases/download/jq-
   mv /tmp/jq-linux64 /usr/bin/jq
 
 # image with the source code
-ADD . .
+COPY LICENSE/ LICENSE/
+COPY tools/ tools/
+COPY scripts/ scripts/
+COPY infra/ infra/
+COPY charts/ charts/
+COPY libs/ libs/
+COPY apps/ apps/
 
 FROM src as builder
 ARG APP
@@ -130,7 +138,7 @@ FROM mcr.microsoft.com/playwright:v${PLAYWRIGHT_VERSION}-focal as playwright-bas
 FROM playwright-base as output-playwright
 # TODO: remove awscli dependency (157 MB extra)
 RUN apt-get update -y \
-  && apt-get install -y zip awscli bash \
+  && apt-get install -y zip awscli \
   && apt-get purge
 
 ARG APP_HOME
