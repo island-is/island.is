@@ -11,6 +11,7 @@ WORKDIR /build
 ADD package.json yarn.lock .yarnrc.yml ./
 ADD apps/native/app/package.json ./apps/native/app/
 COPY .yarn/ ./.yarn
+# Bash needed in e.g. build script for systeme-e2e
 RUN apk add --update --no-cache \
   python3 build-base gcc bash \
   && ln -sf /usr/bin/python3 /usr/bin/python
@@ -148,19 +149,19 @@ ARG APP_DIST_HOME
 WORKDIR ${APP_DIST_HOME}
 
 COPY --from=builder /build/${APP_DIST_HOME} .
-RUN chown -R pwuser:pwuser .
 
-USER pwuser
 ADD .yarnrc.yml ./
-RUN mkdir ./.yarn
-COPY .yarn/releases ./.yarn/releases
+COPY .yarn/ .yarn/
+
 RUN yarn install
 
 ENV PLAYWRIGHT_BROWSER=chromium
 RUN yarn playwright install ${PLAYWRIGHT_BROWSER}
 
-COPY --chown=pwuser:pwuser ${APP_HOME}/entrypoint.sh .
+COPY ${APP_HOME}/entrypoint.sh .
 
+USER pwuser
+RUN chown -R pwuser:pwuser .
 ENTRYPOINT ["./entrypoint.sh"]
 
 
