@@ -27,7 +27,7 @@ export const GetSingleEndorsementList = gql`
 
 export const GetFullName = gql`
   query NationalRegistryUserQuery {
-    nationalRegistryUser {
+    getIdentity {
       fullName
     }
   }
