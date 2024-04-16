@@ -173,7 +173,7 @@ export const subSectionHealthDeclaration = buildSubSection({
           uploadAccept: UPLOAD_ACCEPT,
           condition: (answers) =>
             hasYes((answers.healthDeclaration as any)?.answers) ||
-            (answers.healthDeclaration as any).contactGlassesMismatch === true,
+            (answers.healthDeclaration as any)?.contactGlassesMismatch === true,
         }),
       ],
     }),

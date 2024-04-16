@@ -35,7 +35,6 @@ export const draft: Form = buildForm({
         subSectionHealthDeclaration,
         subSectionQualityPhoto,
         subSectionDelivery,
-        subSectionHealthDeclaration,
         subSectionSummary,
       ],
     }),
