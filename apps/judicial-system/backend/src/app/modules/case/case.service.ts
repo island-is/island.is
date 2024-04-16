@@ -776,7 +776,7 @@ export class CaseService {
     // If case was appealed in court we don't need to send these messages
     if (
       theCase.accusedAppealDecision === CaseAppealDecision.APPEAL ||
-      theCase.prosecutorAppealDecision === CaseAppealDecision.ACCEPT
+      theCase.prosecutorAppealDecision === CaseAppealDecision.APPEAL
     ) {
       return
     }
@@ -909,17 +909,36 @@ export class CaseService {
     ])
   }
 
-  private addMessagesForReceivedAppealedCaseToQueue(
+  private addMessagesForNewAppealCaseNumberToQueue(
     theCase: Case,
     user: TUser,
   ): Promise<void> {
-    const messages: CaseMessage[] = [
-      {
-        type: MessageType.DELIVERY_TO_COURT_OF_APPEALS_RECEIVED_DATE,
-        user,
-        caseId: theCase.id,
-      },
-    ]
+    const messages: CaseMessage[] =
+      theCase.caseFiles
+        ?.filter(
+          (caseFile) =>
+            caseFile.key &&
+            caseFile.category &&
+            [
+              CaseFileCategory.PROSECUTOR_APPEAL_STATEMENT,
+              CaseFileCategory.DEFENDANT_APPEAL_STATEMENT,
+              CaseFileCategory.PROSECUTOR_APPEAL_STATEMENT_CASE_FILE,
+              CaseFileCategory.DEFENDANT_APPEAL_STATEMENT_CASE_FILE,
+              CaseFileCategory.PROSECUTOR_APPEAL_CASE_FILE,
+              CaseFileCategory.DEFENDANT_APPEAL_CASE_FILE,
+            ].includes(caseFile.category),
+        )
+        .map((caseFile) => ({
+          type: MessageType.DELIVERY_TO_COURT_OF_APPEALS_CASE_FILE,
+          user,
+          caseId: theCase.id,
+          elementId: caseFile.id,
+        })) ?? []
+    messages.push({
+      type: MessageType.DELIVERY_TO_COURT_OF_APPEALS_RECEIVED_DATE,
+      user,
+      caseId: theCase.id,
+    })
 
     if (this.allAppealRolesAssigned(theCase)) {
       messages.push(
@@ -1049,7 +1068,7 @@ export class CaseService {
     if (updatedCase.appealCaseNumber) {
       if (updatedCase.appealCaseNumber !== theCase.appealCaseNumber) {
         // New appeal case number
-        await this.addMessagesForReceivedAppealedCaseToQueue(updatedCase, user)
+        await this.addMessagesForNewAppealCaseNumberToQueue(updatedCase, user)
       } else if (
         this.allAppealRolesAssigned(updatedCase) &&
         (updatedCase.appealAssistantId !== theCase.appealAssistantId ||

@@ -4,6 +4,7 @@ import {
   Controller,
   Get,
   Headers,
+  Query,
   UseGuards,
 } from '@nestjs/common'
 import * as kennitala from 'kennitala'
@@ -15,6 +16,7 @@ import { IdsAuthGuard, Scopes, ScopesGuard } from '@island.is/auth-nest-tools'
 
 import { UserProfileDto } from './dto/user-profile.dto'
 import { UserProfileService } from './user-profile.service'
+import { ClientType } from '../types/ClientType'
 
 const namespace = '@island.is/user-profile/v2/users'
 
@@ -40,6 +42,13 @@ export class UserProfileController {
           description: 'National id of the user to find',
         },
       },
+      query: {
+        clientType: {
+          required: false,
+          description: 'Client type',
+          enum: ClientType,
+        },
+      },
     },
     response: { status: 200, type: UserProfileDto },
   })
@@ -48,10 +57,11 @@ export class UserProfileController {
   })
   async findUserProfile(
     @Headers('X-Param-National-Id') nationalId: string,
+    @Query('clientType') clientType: ClientType = ClientType.THIRD_PARTY,
   ): Promise<UserProfileDto> {
     if (!kennitala.isValid(nationalId)) {
       throw new BadRequestException('National id is not valid')
     }
-    return this.userProfileService.findById(nationalId)
+    return this.userProfileService.findById(nationalId, false, clientType)
   }
 }

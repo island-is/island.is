@@ -395,6 +395,9 @@ export const slices = gql`
       text
       url
     }
+    introText {
+      ...HtmlFields
+    }
   }
 
   fragment TwoColumnTextFields on TwoColumnText {

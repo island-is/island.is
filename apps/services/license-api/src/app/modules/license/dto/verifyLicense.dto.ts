@@ -1,4 +1,4 @@
-import { IsNationalId } from '@island.is/nest/core'
+import { IsPersonNationalId } from '@island.is/nest/core'
 import { ApiProperty, ApiPropertyOptional } from '@nestjs/swagger'
 import { IsBoolean, IsObject, IsOptional, IsString } from 'class-validator'
 
@@ -18,7 +18,7 @@ class PassIdentity {
   @IsString()
   readonly name!: string
   @ApiProperty({ description: "The scanned user's national id" })
-  @IsNationalId()
+  @IsPersonNationalId()
   readonly nationalId!: string
   @ApiPropertyOptional({ description: 'Picture of scanned user' })
   @IsOptional()
