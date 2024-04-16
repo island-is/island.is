@@ -44,8 +44,8 @@ COPY apps/ apps/
 
 FROM src as builder
 ARG APP
-ARG APP_DIST_HOME=dist/apps/${APP}
 ENV APP=${APP}
+ARG APP_DIST_HOME=dist/apps/${APP}
 ENV NODE_ENV=production
 ENV NODE_OPTIONS="--max-old-space-size=8192"
 
@@ -57,15 +57,15 @@ RUN yarn run build ${APP} --prod
 FROM $DOCKER_IMAGE_REGISTRY/docker/library/node:18-alpine3.15 as output-base
 # this is base image for containers that are to be deployed
 ARG GIT_BRANCH
+ENV GIT_BRANCH=${GIT_BRANCH}
 ARG GIT_SHA
+ENV GIT_SHA=${GIT_SHA}
 LABEL branch=${GIT_BRANCH}
 LABEL commit=${GIT_SHA}
-ENV GIT_BRANCH=${GIT_BRANCH}
-ENV GIT_SHA=${GIT_SHA}
 ARG APP
+ENV APP=${APP}
 ARG APP_HOME
 ARG APP_DIST_HOME=dist/apps/${APP}
-ENV APP=${APP}
 ENV NODE_ENV=production
 
 WORKDIR /webapp
@@ -103,14 +103,14 @@ ENTRYPOINT [ "node", "--no-experimental-fetch", "main.js" ]
 FROM $DOCKER_IMAGE_REGISTRY/nginx/nginx:1.21-alpine as output-static
 
 ARG APP
+ENV APP=${APP}
 ARG APP_DIST_HOME=dist/apps/${APP}
 ARG GIT_BRANCH
+ENV GIT_BRANCH=${GIT_BRANCH}
 ARG GIT_SHA
+ENV GIT_SHA=${GIT_SHA}
 LABEL branch=${GIT_BRANCH}
 LABEL commit=${GIT_SHA}
-ENV GIT_BRANCH=${GIT_BRANCH}
-ENV GIT_SHA=${GIT_SHA}
-ENV APP=${APP}
 ENV BASEPATH=/
 
 RUN mkdir -p /etc/nginx/templates
