@@ -9,7 +9,7 @@
     "build": {
       "executor": "nx:run-commands",
       "options": {
-        "commands": ["bash {projectRoot}/build.sh"],
+        "commands": ["{projectRoot}/build.sh"],
         "outputPath": "dist/{projectRoot}",
         "parallel": false
       },
