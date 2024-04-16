@@ -11110,6 +11110,15 @@ __metadata:
   languageName: node
   linkType: hard
 
+"@livechat/widget-core@npm:1.3.2":
+  version: 1.3.2
+  resolution: "@livechat/widget-core@npm:1.3.2"
+  dependencies:
+    mitt: 3.0.0
+  checksum: a807403b3e079fed5c950d2a1a455ba161a3bbd9154aa3ba4f491145197c404e67f0db2a9bdde00ae3bed6338978495b1087cf52c7b0adff2c1d07b05bdb00d5
+  languageName: node
+  linkType: hard
+
 "@lukeed/csprng@npm:^1.0.0":
   version: 1.1.0
   resolution: "@lukeed/csprng@npm:1.1.0"
@@ -33753,6 +33762,7 @@ __metadata:
     "@island.is/regulations-tools": 0.7.14
     "@jeremybarbet/contentful-extension-scripts": 0.22.7
     "@keyv/redis": 2.6.1
+    "@livechat/widget-core": 1.3.2
     "@nestjs/apollo": 10.1.0
     "@nestjs/axios": 2.0.0
     "@nestjs/bull": 0.6.3
@@ -39538,6 +39548,13 @@ __metadata:
     minipass: ^3.0.0
     yallist: ^4.0.0
   checksum: f1fdeac0b07cf8f30fcf12f4b586795b97be856edea22b5e9072707be51fc95d41487faec3f265b42973a304fe3a64acd91a44a3826a963e37b37bafde0212c3
+  languageName: node
+  linkType: hard
+
+"mitt@npm:3.0.0":
+  version: 3.0.0
+  resolution: "mitt@npm:3.0.0"
+  checksum: f7be5049d27d18b1dbe9408452d66376fa60ae4a79fe9319869d1b90ae8cbaedadc7e9dab30b32d781411256d468be5538996bb7368941c09009ef6bbfa6bfc7
   languageName: node
   linkType: hard
 
