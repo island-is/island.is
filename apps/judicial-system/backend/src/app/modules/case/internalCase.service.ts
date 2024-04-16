@@ -721,6 +721,7 @@ export class InternalCaseService {
         theCase.id,
         theCase.court?.name,
         theCase.courtCaseNumber,
+        Boolean(theCase.rulingModifiedHistory),
         theCase.decision,
         theCase.rulingDate,
         isRestrictionCase(theCase.type) ? theCase.validToDate : undefined,
