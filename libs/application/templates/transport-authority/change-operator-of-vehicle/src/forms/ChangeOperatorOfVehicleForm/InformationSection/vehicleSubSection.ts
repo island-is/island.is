@@ -63,7 +63,7 @@ export const vehicleSubSection = buildSubSection({
               application.externalData,
               application.answers,
             ) as VehiclesCurrentVehicle
-            return vehicle?.mileageReading || ''
+            return vehicle.mileageReading || ''
           },
         }),
         buildTextField({

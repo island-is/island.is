@@ -14,7 +14,7 @@ export const getSelectedVehicle = (
     return vehicle
   }
   const currentVehicleList =
-    (externalData?.currentVehicleList?.data as CurrentVehiclesAndRecords) ||
+    (externalData?.currentVehicleList?.data as CurrentVehiclesAndRecords) ??
     undefined
 
   const vehicleIndex = getValueViaPath(

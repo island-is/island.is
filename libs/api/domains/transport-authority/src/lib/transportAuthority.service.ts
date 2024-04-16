@@ -115,7 +115,7 @@ export class TransportAuthorityApi {
         permno: vehicle.permno,
         make: `${vehicle.make} ${vehicle.vehcom}`,
         color: vehicle.color,
-        requireMileage: true, //vehicle.requiresMileageRegistration,
+        requireMileage: vehicle.requiresMileageRegistration,
         mileageReading: vehicle?.mileageReadings?.[0]?.mileage,
       },
     }
@@ -373,7 +373,7 @@ export class TransportAuthorityApi {
         color: vehicleInfo.color,
         make: `${vehicleInfo.make} ${vehicleInfo.vehcom}`,
         permno: vehicleInfo.permno,
-        requireMileage: true, //vehicleInfo.requiresMileageRegistration,
+        requireMileage: vehicleInfo.requiresMileageRegistration,
         mileageReading: vehicleInfo?.mileageReadings?.[0]?.mileage,
       },
     }
