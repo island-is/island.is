@@ -114,12 +114,13 @@ export class FileController {
   })
   async createCaseFile(
     @Param('caseId') caseId: string,
+    @CurrentHttpUser() user: User,
     @CurrentCase() theCase: Case,
     @Body() createFile: CreateFileDto,
   ): Promise<CaseFile> {
     this.logger.debug(`Creating a file for case ${caseId}`)
 
-    return this.fileService.createCaseFile(theCase, createFile)
+    return this.fileService.createCaseFile(theCase, createFile, user)
   }
 
   @UseGuards(

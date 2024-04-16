@@ -977,6 +977,9 @@
       "@island.is/service-portal/health": [
         "libs/service-portal/health/src/index.ts"
       ],
+      "@island.is/service-portal/health/messages": [
+        "libs/service-portal/health/src/lib/messages.ts"
+      ],
       "@island.is/service-portal/information": [
         "libs/service-portal/information/src/index.ts"
       ],
