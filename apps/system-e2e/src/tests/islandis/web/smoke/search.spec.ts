@@ -31,7 +31,7 @@ test.describe('Search feature', () => {
     await expect(testResults).toHaveCountGreaterThan(9)
     const searchUrl = page.url()
     await testResults.nth(0).click()
-    await page.waitForLoadState('networkidle')
+    await page.waitForLoadState('load')
     await expect(page).not.toHaveURL(searchUrl)
   })
 
@@ -43,7 +43,7 @@ test.describe('Search feature', () => {
       'abcdefhijklmnopqrstuvwxyz1234567890',
     )
     await page.keyboard.press('Enter')
-    await page.waitForLoadState('networkidle')
+    await page.waitForLoadState()
     const testResults = page.locator('[data-testid="search-result"]')
     await expect(testResults).toHaveCount(0)
   })
