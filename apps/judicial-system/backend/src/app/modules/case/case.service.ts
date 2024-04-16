@@ -913,7 +913,6 @@ export class CaseService {
     theCase: Case,
     user: TUser,
   ): Promise<void> {
-    
     return this.messageService.sendMessagesToQueue([
       {
         type: MessageType.NOTIFICATION,
@@ -923,7 +922,6 @@ export class CaseService {
       },
     ])
   }
-
 
   private addMessagesForNewAppealCaseNumberToQueue(
     theCase: Case,
