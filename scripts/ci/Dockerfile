@@ -15,7 +15,7 @@ ARG DOCKER_IMAGE_REGISTRY=public.ecr.aws
 FROM $DOCKER_IMAGE_REGISTRY/docker/library/node:18-alpine3.15 as deps
 
 RUN --mount=type=cache,target=/var/cache/apk/ \
-  apk add --no-cache \
+  apk add --upgrade --no-cache \
   git python3 build-base gcc bash && \
   ln -sf /usr/bin/python3 /usr/bin/python
 
@@ -120,7 +120,7 @@ ENV BASEPATH=/
 
 RUN mkdir -p /etc/nginx/templates
 RUN --mount=type=cache,target=/var/cache/apk/ \
-  apk add --no-cache \
+  apk add --upgrade --no-cache \
   bash nodejs
 
 COPY scripts/dockerfile-assets/nginx/* /etc/nginx/templates
