@@ -28,8 +28,11 @@ import { NudgeType } from '../../types/nudge-type'
 import { PostNudgeDto } from '../dto/post-nudge.dto'
 import { NUDGE_INTERVAL, SKIP_INTERVAL } from '../user-profile.service'
 import { ActorProfile } from '../models/actor-profile.model'
+import { ClientType } from '../../types/ClientType'
 
 type StatusFieldType = 'emailStatus' | 'mobileStatus'
+
+const MIGRATION_DATE = new Date('2024-05-10')
 
 const testUserProfile = {
   nationalId: createNationalId(),
@@ -109,6 +112,64 @@ describe('MeUserProfileController', () => {
       })
     })
 
+    it('should return 200 with userprofile and no restrictions since lastNudge is newer then MIGRATION_DATE', async () => {
+      // Arrange
+      await fixtureFactory.createUserProfile({
+        nationalId: testUserProfile.nationalId,
+        email: testUserProfile.email,
+        emailVerified: true,
+        mobilePhoneNumber: testUserProfile.mobilePhoneNumber,
+        mobilePhoneNumberVerified: true,
+        lastNudge: addMonths(MIGRATION_DATE, 1),
+        nextNudge: subMonths(new Date(), 1),
+      })
+      // Act
+      const res = await server.get(`/v2/me`)
+
+      // Assert
+      expect(res.status).toEqual(200)
+      expect(res.body).toMatchObject({
+        nationalId: testUserProfile.nationalId,
+        email: testUserProfile.email,
+        emailVerified: true,
+        mobilePhoneNumber: testUserProfile.mobilePhoneNumber,
+        mobilePhoneNumberVerified: true,
+        locale: null,
+        documentNotifications: true,
+        needsNudge: true,
+        isRestricted: false,
+      })
+    })
+
+    it('should return 200 with userprofile and isRestricted set to true', async () => {
+      // Arrange
+      await fixtureFactory.createUserProfile({
+        nationalId: testUserProfile.nationalId,
+        email: testUserProfile.email,
+        emailVerified: true,
+        mobilePhoneNumber: testUserProfile.mobilePhoneNumber,
+        mobilePhoneNumberVerified: true,
+        lastNudge: subMonths(MIGRATION_DATE, 1),
+        nextNudge: subMonths(new Date(), 1),
+      })
+      // Act
+      const res = await server.get(`/v2/me`)
+
+      // Assert
+      expect(res.status).toEqual(200)
+      expect(res.body).toMatchObject({
+        nationalId: testUserProfile.nationalId,
+        email: testUserProfile.email,
+        emailVerified: true,
+        mobilePhoneNumber: testUserProfile.mobilePhoneNumber,
+        mobilePhoneNumberVerified: true,
+        locale: null,
+        documentNotifications: true,
+        needsNudge: true,
+        isRestricted: true,
+      })
+    })
+
     const currentDate = new Date()
     const expiredDate = subMonths(new Date(), NUDGE_INTERVAL + 1)
 
@@ -139,6 +200,7 @@ describe('MeUserProfileController', () => {
       ${null}                           | ${false}   | ${null}        | ${NUDGE_INTERVAL} | ${null}
       ${null}                           | ${false}   | ${currentDate} | ${NUDGE_INTERVAL} | ${false}
       ${null}                           | ${false}   | ${expiredDate} | ${NUDGE_INTERVAL} | ${true}
+      ${['email', 'mobilePhoneNumber']} | ${true}    | ${expiredDate} | ${SKIP_INTERVAL}  | ${true}
     `(
       'should return needsNudge=$needsNudgeExpected when $verifiedField is set and lastNudge=$lastNudge',
       async ({
@@ -172,7 +234,9 @@ describe('MeUserProfileController', () => {
         })
 
         // Act
-        const res = await server.get('/v2/me')
+        const res = await server.get(
+          `/v2/me?clientType=${ClientType.FIRST_PARTY}`,
+        )
 
         // Assert
         expect(res.status).toEqual(200)

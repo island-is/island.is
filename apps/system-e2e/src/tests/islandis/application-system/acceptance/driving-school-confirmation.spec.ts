@@ -97,7 +97,7 @@ test.describe('Driving School Confirmation', () => {
 
     // Verify page is OK, then go back
     await expect(datePicker).toBeVisible()
-    await expect(errorMessage).toBeHidden()
+    await expect(errorMessage).not.toBeVisible()
     await backwardsButton.click()
 
     // Enter details for unauthorized student
@@ -110,6 +110,6 @@ test.describe('Driving School Confirmation', () => {
 
     // Make sure only error message
     await expect(errorMessage).toBeVisible()
-    await expect(datePicker).toBeHidden()
+    await expect(datePicker).not.toBeVisible()
   })
 })

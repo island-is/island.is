@@ -54,4 +54,8 @@ export class UserProfileDto {
   @ApiProperty()
   @IsBoolean()
   emailNotifications!: boolean
+
+  @ApiProperty()
+  @IsBoolean()
+  readonly isRestricted?: boolean
 }

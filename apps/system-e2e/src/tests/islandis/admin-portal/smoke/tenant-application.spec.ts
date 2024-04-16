@@ -44,7 +44,7 @@ test.describe('Admin portal application', () => {
       if (disabled) {
         await expect(page.getByTestId(dataTestId)).toBeDisabled()
       } else {
-        await expect(page.getByTestId(dataTestId)).toBeEnabled()
+        await expect(page.getByTestId(dataTestId)).not.toBeDisabled()
       }
     }
 
@@ -88,7 +88,7 @@ test.describe('Admin portal application', () => {
         await expect(issuerUrl).toBeVisible()
 
         // Assert - Accordion inputs are not visible
-        await Promise.all(names.map((name) => expect(name).toBeHidden()))
+        await Promise.all(names.map((name) => expect(name).not.toBeVisible()))
 
         // Act - click on accordion
         await page.getByRole('button', { name: 'Other endpoints' }).click()
@@ -113,7 +113,7 @@ test.describe('Admin portal application', () => {
 
       // Assert - Icelandic input is visible and english is not
       await expect(page.locator(isDisplayNameInput)).toBeVisible()
-      await expect(page.locator(enDisplayNameInput)).toBeHidden()
+      await expect(page.locator(enDisplayNameInput)).not.toBeVisible()
 
       // Assert - save button is disabled
       await buttonSaveTest(title)
@@ -128,7 +128,7 @@ test.describe('Admin portal application', () => {
       await page.getByRole('tab', { name: 'English' }).click()
 
       // Assert - inputs visibility are switched
-      await expect(page.locator(isDisplayNameInput)).toBeHidden()
+      await expect(page.locator(isDisplayNameInput)).not.toBeVisible()
       await expect(page.locator(enDisplayNameInput)).toBeVisible()
 
       // Assert - save button is enabled
@@ -225,7 +225,9 @@ test.describe('Admin portal application', () => {
           .click()
 
         // Assert - check if slidingRefreshTokenLifetime is visible
-        await expect(page.locator(slidingRefreshTokenLifetime)).toBeHidden()
+        await expect(
+          page.locator(slidingRefreshTokenLifetime),
+        ).not.toBeVisible()
 
         // Assert - save button is enabled
         await buttonSaveTest(title, false)
@@ -256,7 +258,7 @@ test.describe('Admin portal application', () => {
 
       // Assert - modal is visible
       await expect(
-        page.getByRole('heading', { name: 'Add permissions' }),
+        await page.getByRole('heading', { name: 'Add permissions' }),
       ).toBeVisible()
 
       // Act - Add permission by clicking on checkbox and then pressing add button
@@ -312,7 +314,7 @@ test.describe('Admin portal application', () => {
 
       // Assert - All inputs are not visible
       await Promise.all(
-        checkboxes.map((checkbox) => expect(checkbox).toBeHidden()),
+        checkboxes.map((checkbox) => expect(checkbox).not.toBeVisible()),
       )
 
       // Act - Click on accordion to make checkboxes visible
@@ -357,7 +359,7 @@ test.describe('Admin portal application', () => {
         await expect(page.getByRole('heading', { name: title })).toBeVisible()
         await Promise.all(
           [...checkboxes, accessTokenLifetime, customClaims].map((checkbox) =>
-            expect(checkbox).toBeHidden(),
+            expect(checkbox).not.toBeVisible(),
           ),
         )
 
@@ -403,7 +405,7 @@ test.describe('Admin portal application', () => {
         await expect(page.getByText(title)).toBeVisible()
 
         // Assert - check if rotate secret button is not visible
-        await expect(rotateSecretButton).toBeHidden()
+        await expect(rotateSecretButton).not.toBeVisible()
 
         // Act - Click accordion button to make rotate secret button visible
         await page.locator('button[aria-controls="danger-zone"]').click()
@@ -431,7 +433,7 @@ test.describe('Admin portal application', () => {
         await page.getByRole('button', { name: 'cancel' }).click()
 
         // Assert - check if modal is not visible
-        await expect(page.locator(modalId)).toBeHidden()
+        await expect(page.locator(modalId)).not.toBeVisible()
       },
     )
   })
