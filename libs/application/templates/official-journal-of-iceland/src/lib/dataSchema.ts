@@ -15,6 +15,14 @@ const FileSchema = z.object({
   url: z.string().optional(),
 })
 
+const CommentSchema = z.object({
+  from: z.string(),
+  task: z.string(),
+  comment: z.string(),
+  date: z.string(),
+  name: z.string(),
+})
+
 const getPath = (path: string) => path.split('.').slice(1)
 
 export const dataSchema = z.object({
@@ -185,14 +193,20 @@ export const dataSchema = z.object({
     fileNames: z.enum([FileNames.ADDITIONS, FileNames.DOCUMENT]),
   }),
   publishing: z.object({
-    date: z.string(),
-    fastTrack: z.enum([AnswerOption.YES, AnswerOption.NO]),
-    contentCategories: z.array(
-      z.object({
-        label: z.string(),
-        value: z.string(),
+    date: z.string().refine((v) => v && v.length, {
+      params: error.emptyFieldError,
+    }),
+    fastTrack: z.string(),
+    contentCategories: z
+      .array(
+        z.object({
+          label: z.string(),
+          value: z.string(),
+        }),
+      )
+      .refine((v) => v.length, {
+        params: error.emptyFieldError,
       }),
-    ),
     communicationChannels: z.array(
       z.object({
         email: z.string(),
@@ -200,6 +214,10 @@ export const dataSchema = z.object({
       }),
     ),
     message: z.string().optional(),
+  }),
+  comments: z.object({
+    lastUpdated: z.string(),
+    comments: z.array(CommentSchema),
   }),
 })
 

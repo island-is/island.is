@@ -14,7 +14,11 @@ describe('isValidEmail', () => {
 describe('valueToNumber', () => {
   it('should return a number taken from a string', () => {
     expect(valueToNumber('123')).toBe(123)
-    expect(valueToNumber('1.123.123 kr')).toBe(1123123)
+    expect(valueToNumber('123.123.123', '.')).toBe(123.123123)
+    expect(valueToNumber('123,123,123', ',')).toBe(123.123123)
+    expect(valueToNumber('12.123.421.123,4233 kr.', ',')).toBe(12123421123.4233)
+    expect(valueToNumber('12.123.421.123,4233 kr.', '.')).toBe(12.1234211234233)
+    expect(valueToNumber('1.123.123 kr', ',')).toBe(1123123)
     expect(valueToNumber('æ ð þ ö 123 ASDF _-?  4 __d')).toBe(1234)
   })
 

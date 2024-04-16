@@ -125,6 +125,7 @@ const SubPage: Screen<SubPageProps> = ({
             // eslint-disable-next-line @typescript-eslint/ban-ts-comment
             // @ts-ignore make web strict
             offset={[null, null, '1/12']}
+            paddingBottom={3}
           >
             <Stack space={2}>
               {subpage?.links?.map((link) => (

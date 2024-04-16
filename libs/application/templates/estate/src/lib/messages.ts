@@ -81,6 +81,11 @@ export const m = defineMessages({
     defaultMessage: 'Staðfesta',
     description: '',
   },
+  noContactInfo: {
+    id: 'es.application:noContactInfo',
+    defaultMessage: 'Án upplýsinga um samskipti',
+    description: '',
+  },
 
   // Data collection - external data providers
   dataCollectionTitle: {
@@ -703,6 +708,11 @@ export const m = defineMessages({
   },
 
   // Other assets
+  otherAssetRepeaterButton: {
+    id: 'es.application:otherAssetRepeaterButton',
+    defaultMessage: 'Bæta við eign',
+    description: '',
+  },
   otherAssetsTitle: {
     id: 'es.application:otherAssetsTitle',
     defaultMessage: 'Aðrar eignir',

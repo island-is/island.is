@@ -95,10 +95,10 @@ export const ProfileForm: FC<React.PropsWithChildren<Props>> = ({
 
   /**
    * Creates a link to the IDS user profile page.
-   * By setting the continue_onboarding to false, the user won´t be forced to finish the onboarding.
+   * By setting the state to update, the user will exit the onboarding process after updating the desired field.
    */
   const getIDSLink = (linkPath: IdsUserProfileLinks) => {
-    return `${authority}${linkPath}?continue_onboarding=false&returnUrl=${encodeURIComponent(
+    return `${authority}${linkPath}?state=update&returnUrl=${encodeURIComponent(
       window.location.toString(),
     )}`
   }

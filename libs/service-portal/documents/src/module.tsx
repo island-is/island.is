@@ -23,6 +23,15 @@ export const documentsModule: PortalModule = {
       enabled: userInfo.scopes?.includes(DocumentsScope.main),
       loader: documentLoader({ userInfo, ...rest }),
       element: <Overview />,
+      children: [
+        {
+          name: rootName,
+          path: DocumentsPaths.ElectronicDocumentSingle,
+          enabled: userInfo.scopes?.includes(DocumentsScope.main),
+          loader: documentLoader({ userInfo, ...rest }),
+          element: <Overview />,
+        },
+      ],
     },
   ],
 }

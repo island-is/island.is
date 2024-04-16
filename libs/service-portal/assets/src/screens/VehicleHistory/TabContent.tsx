@@ -12,6 +12,7 @@ import { vehicleMessage as messages } from '../../lib/messages'
 import HistoryTableData from './HistoryTableData'
 import HistoryTableHeader from './HistoryTableHeader'
 import { useGetUsersVehiclesLazyQuery } from './VehicleHistory.generated'
+import { Problem } from '@island.is/react-spa/shared'
 
 interface Props {
   type: VehicleUserTypeEnum
@@ -74,6 +75,10 @@ export const TabContent: FC<React.PropsWithChildren<Props>> = ({
       value: formatMessage(messages.status),
     },
   ]
+
+  if (error) {
+    return <Problem error={error} size="small" />
+  }
 
   if (
     !loading &&

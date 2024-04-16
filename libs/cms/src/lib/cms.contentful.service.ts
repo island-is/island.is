@@ -216,6 +216,7 @@ export class CmsContentfulService {
 
   async getOrganizationTitles(
     organizationKeys: string[],
+    locale?: 'en' | 'is',
   ): Promise<Array<string | null>> {
     const params = {
       ['content_type']: 'organization',
@@ -224,7 +225,7 @@ export class CmsContentfulService {
     }
 
     const result = await this.contentfulRepository
-      .getLocalizedEntries<types.IOrganizationFields>(null, params)
+      .getLocalizedEntries<types.IOrganizationFields>(locale, params)
       .catch(errorHandler('getOrganizationsTitle'))
 
     return organizationKeys.map((key) => {
@@ -244,6 +245,7 @@ export class CmsContentfulService {
 
   async getOrganizationLink(
     organizationKeys: string[],
+    locale?: 'en' | 'is',
   ): Promise<Array<string | null>> {
     const params = {
       ['content_type']: 'organization',
@@ -252,7 +254,7 @@ export class CmsContentfulService {
     }
 
     const result = await this.contentfulRepository
-      .getLocalizedEntries<types.IOrganizationFields>(null, params)
+      .getLocalizedEntries<types.IOrganizationFields>(locale, params)
       .catch(errorHandler('getOrganizationLink'))
 
     return organizationKeys.map((key) => {

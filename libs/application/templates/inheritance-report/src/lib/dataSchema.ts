@@ -6,8 +6,33 @@ import {
   isValidEmail,
   isValidPhoneNumber,
   isValidString,
+  valueToNumber,
 } from './utils/helpers'
 import { m } from './messages'
+
+const deceasedShare = {
+  deceasedShare: z.string().nonempty().optional(),
+  deceasedShareEnabled: z.array(z.enum([YES])).optional(),
+  deceasedShareAmount: z.number().min(0).max(100).optional(),
+}
+
+const validateDeceasedShare = ({
+  deceasedShare,
+  deceasedShareEnabled,
+}: {
+  deceasedShare: string | undefined
+  deceasedShareEnabled: 'Yes'[] | undefined
+}) => {
+  if (
+    Array.isArray(deceasedShareEnabled) &&
+    deceasedShareEnabled.includes(YES)
+  ) {
+    const value = valueToNumber(deceasedShare)
+    return value > 0 && value <= 100
+  }
+
+  return true
+}
 
 const assetSchema = ({ withShare }: { withShare?: boolean } = {}) =>
   z
@@ -18,6 +43,7 @@ const assetSchema = ({ withShare }: { withShare?: boolean } = {}) =>
           description: z.string(),
           propertyValuation: z.string(),
           ...(withShare ? { share: z.string() } : {}),
+          ...deceasedShare,
         })
         .refine(
           ({ propertyValuation }) => {
@@ -59,9 +85,19 @@ const assetSchema = ({ withShare }: { withShare?: boolean } = {}) =>
             path: ['description'],
           },
         )
+        .refine(
+          ({ deceasedShare, deceasedShareEnabled }) => {
+            return validateDeceasedShare({
+              deceasedShare,
+              deceasedShareEnabled,
+            })
+          },
+          {
+            path: ['deceasedShare'],
+          },
+        )
         .array()
         .optional(),
-      hasModified: z.boolean().optional(),
       total: z.number().optional(),
     })
     .optional()
@@ -88,16 +124,41 @@ export const inheritanceReportSchema = z.object({
       .object({
         info: z.string().optional(),
         value: z.string().optional(),
+        ...deceasedShare,
       })
+      .refine(
+        ({ deceasedShare, deceasedShareEnabled }) => {
+          return validateDeceasedShare({
+            deceasedShare,
+            deceasedShareEnabled,
+          })
+        },
+        {
+          path: ['deceasedShare'],
+        },
+      )
       .optional(),
     bankAccounts: z
       .object({
         data: z
           .object({
             foreignBankAccount: z.array(z.enum([YES])).optional(),
-            accountNumber: z.string().refine((v) => v),
-            balance: z.string().refine((v) => v),
+            assetNumber: z.string().refine((v) => v),
+            propertyValuation: z.string().refine((v) => v),
+            exchangeRateOrInterest: z.string().refine((v) => v),
+            ...deceasedShare,
           })
+          .refine(
+            ({ deceasedShare, deceasedShareEnabled }) => {
+              return validateDeceasedShare({
+                deceasedShare,
+                deceasedShareEnabled,
+              })
+            },
+            {
+              path: ['deceasedShare'],
+            },
+          )
           .array()
           .optional(),
         total: z.number().optional(),
@@ -107,18 +168,30 @@ export const inheritanceReportSchema = z.object({
       .object({
         data: z
           .object({
-            issuer: z.string(),
-            nationalId: z.string(),
-            value: z.string().refine((v) => v),
+            description: z.string(),
+            assetNumber: z.string(),
+            propertyValuation: z.string().refine((v) => v),
+            ...deceasedShare,
           })
           .refine(
-            ({ nationalId }) => {
-              return nationalId && nationalId !== ''
-                ? kennitala.isValid(nationalId)
+            ({ assetNumber }) => {
+              return assetNumber && assetNumber !== ''
+                ? kennitala.isValid(assetNumber)
                 : true
             },
             {
-              path: ['nationalId'],
+              path: ['assetNumber'],
+            },
+          )
+          .refine(
+            ({ deceasedShare, deceasedShareEnabled }) => {
+              return validateDeceasedShare({
+                deceasedShare,
+                deceasedShareEnabled,
+              })
+            },
+            {
+              path: ['deceasedShare'],
             },
           )
           .array()
@@ -130,12 +203,35 @@ export const inheritanceReportSchema = z.object({
       .object({
         data: z
           .object({
-            organization: z.string(),
-            nationalId: z.string(),
-            faceValue: z.string(),
-            rateOfExchange: z.string(),
+            description: z.string(),
+            assetNumber: z.string(),
+            amount: z.string(),
+            exchangeRateOrInterest: z.string(),
             value: z.string().refine((v) => v),
+            ...deceasedShare,
           })
+          .refine(
+            ({ assetNumber }) => {
+              return assetNumber === ''
+                ? true
+                : assetNumber && kennitala.isValid(assetNumber)
+            },
+            {
+              params: m.errorNationalIdIncorrect,
+              path: ['assetNumber'],
+            },
+          )
+          .refine(
+            ({ deceasedShare, deceasedShareEnabled }) => {
+              return validateDeceasedShare({
+                deceasedShare,
+                deceasedShareEnabled,
+              })
+            },
+            {
+              path: ['deceasedShare'],
+            },
+          )
           .array()
           .optional(),
         total: z.number().optional(),
@@ -145,12 +241,58 @@ export const inheritanceReportSchema = z.object({
       .object({
         info: z.string().optional(),
         value: z.string().optional(),
+        ...deceasedShare,
       })
+      .refine(
+        ({ deceasedShare, deceasedShareEnabled }) => {
+          return validateDeceasedShare({
+            deceasedShare,
+            deceasedShareEnabled,
+          })
+        },
+        {
+          path: ['deceasedShare'],
+        },
+      )
       .optional(),
     otherAssets: z
       .object({
-        info: z.string().optional(),
-        value: z.string().optional(),
+        data: z
+          .object({
+            info: z.string().optional(),
+            value: z.string().optional(),
+            ...deceasedShare,
+          })
+          .refine(
+            ({ info }) => {
+              return !!info
+            },
+            {
+              path: ['info'],
+            },
+          )
+          .refine(
+            ({ value }) => {
+              return !!value
+            },
+            {
+              path: ['value'],
+            },
+          )
+          .refine(
+            ({ deceasedShare, deceasedShareEnabled }) => {
+              return validateDeceasedShare({
+                deceasedShare,
+                deceasedShareEnabled,
+              })
+            },
+            {
+              path: ['deceasedShare'],
+            },
+          )
+          .array()
+          .optional(),
+        total: z.number().optional(),
       })
       .optional(),
     assetsTotal: z.number().optional(),
@@ -162,10 +304,10 @@ export const inheritanceReportSchema = z.object({
       .object({
         data: z
           .object({
-            creditorName: z.string(),
+            description: z.string(),
             nationalId: z.string(),
-            loanIdentity: z.string(),
-            balance: z.string(),
+            assetNumber: z.string(),
+            propertyValuation: z.string(),
           })
           .refine(
             ({ nationalId }) => {
@@ -179,35 +321,39 @@ export const inheritanceReportSchema = z.object({
             },
           )
           .refine(
-            ({ creditorName, nationalId, balance, loanIdentity }) => {
-              return nationalId !== '' || creditorName !== '' || balance !== ''
-                ? isValidString(loanIdentity)
-                : true
-            },
-            {
-              path: ['loanIdentity'],
-            },
-          )
-          .refine(
-            ({ creditorName, nationalId, balance, loanIdentity }) => {
+            ({ description, nationalId, propertyValuation, assetNumber }) => {
               return nationalId !== '' ||
-                creditorName !== '' ||
-                loanIdentity !== ''
-                ? isValidString(balance)
+                description !== '' ||
+                propertyValuation !== ''
+                ? isValidString(assetNumber)
                 : true
             },
             {
-              path: ['balance'],
+              path: ['assetNumber'],
             },
           )
           .refine(
-            ({ creditorName, nationalId, balance, loanIdentity }) => {
-              return nationalId !== '' || balance !== '' || loanIdentity !== ''
-                ? isValidString(creditorName)
+            ({ description, nationalId, propertyValuation, assetNumber }) => {
+              return nationalId !== '' ||
+                description !== '' ||
+                assetNumber !== ''
+                ? isValidString(propertyValuation)
                 : true
             },
             {
-              path: ['creditorName'],
+              path: ['propertyValuation'],
+            },
+          )
+          .refine(
+            ({ description, nationalId, propertyValuation, assetNumber }) => {
+              return nationalId !== '' ||
+                propertyValuation !== '' ||
+                assetNumber !== ''
+                ? isValidString(description)
+                : true
+            },
+            {
+              path: ['description'],
             },
           )
           .array()
@@ -260,119 +406,6 @@ export const inheritanceReportSchema = z.object({
     )
     .optional(),
 
-  /* business */
-  business: z.object({
-    businessAssets: z
-      .object({
-        data: z
-          .object({
-            assetType: z.enum(['asset', 'estate']),
-            assetNumber: z.string().optional(),
-            description: z.string().optional(),
-            businessAsset: z.string().optional(),
-            businessAssetValue: z.string().optional(),
-          })
-          .refine(
-            ({ assetType, assetNumber }) => {
-              if (assetType === 'estate') {
-                return isValidString(assetNumber)
-              }
-
-              return true
-            },
-            {
-              path: ['assetNumber'],
-            },
-          )
-          .refine(
-            ({ businessAssetValue }) => {
-              return businessAssetValue !== ''
-            },
-            {
-              path: ['businessAssetValue'],
-            },
-          )
-          .refine(
-            ({ assetType, description }) => {
-              if (assetType === 'estate') {
-                return isValidString(description)
-              }
-
-              return true
-            },
-            {
-              path: ['description'],
-            },
-          )
-          .array()
-          .optional(),
-        total: z.number().optional(),
-      })
-      .optional(),
-    businessDebts: z
-      .object({
-        data: z
-          .object({
-            businessDebt: z.string(),
-            loanIdentity: z.string(),
-            nationalId: z.string(),
-            debtValue: z.string(),
-          })
-          .refine(
-            ({ nationalId }) => {
-              return nationalId === ''
-                ? true
-                : nationalId && kennitala.isValid(nationalId)
-            },
-            {
-              params: m.errorNationalIdIncorrect,
-              path: ['nationalId'],
-            },
-          )
-          .refine(
-            ({ businessDebt, nationalId, debtValue, loanIdentity }) => {
-              return nationalId !== '' ||
-                businessDebt !== '' ||
-                debtValue !== ''
-                ? isValidString(loanIdentity)
-                : true
-            },
-            {
-              path: ['loanIdentity'],
-            },
-          )
-          .refine(
-            ({ businessDebt, nationalId, debtValue, loanIdentity }) => {
-              return nationalId !== '' ||
-                businessDebt !== '' ||
-                loanIdentity !== ''
-                ? isValidString(debtValue)
-                : true
-            },
-            {
-              path: ['debtValue'],
-            },
-          )
-          .refine(
-            ({ businessDebt, nationalId, debtValue, loanIdentity }) => {
-              return nationalId !== '' ||
-                debtValue !== '' ||
-                loanIdentity !== ''
-                ? isValidString(businessDebt)
-                : true
-            },
-            {
-              path: ['businessDebt'],
-            },
-          )
-          .array()
-          .optional(),
-        total: z.number().optional(),
-      })
-      .optional(),
-    businessTotal: z.number().optional(),
-  }),
-
   /* heirs */
   heirs: z.object({
     data: z
@@ -384,7 +417,7 @@ export const inheritanceReportSchema = z.object({
         dateOfBirth: z.string().optional(),
         initial: z.boolean(),
         enabled: z.boolean(),
-        phone: z.string(),
+        phone: z.string().optional(),
         email: z.string(),
         heirsPercentage: z.string().refine((v) => {
           if (!v) return true
@@ -434,7 +467,7 @@ export const inheritanceReportSchema = z.object({
       .refine(
         ({ enabled, advocate, phone }) => {
           return enabled && !advocate?.nationalId
-            ? isValidPhoneNumber(phone)
+            ? isValidPhoneNumber(phone ?? '')
             : true
         },
         {
@@ -453,8 +486,8 @@ export const inheritanceReportSchema = z.object({
       /* validation for advocates */
       .refine(
         ({ enabled, advocate }) => {
-          return enabled && advocate?.phone
-            ? isValidPhoneNumber(advocate.phone)
+          return enabled && (advocate?.phone || advocate?.nationalId)
+            ? isValidPhoneNumber(advocate?.phone ?? '')
             : true
         },
         {
@@ -472,6 +505,20 @@ export const inheritanceReportSchema = z.object({
         },
       )
       .array()
+      .refine(
+        (v) => {
+          if (v.length > 0) {
+            const count = v.filter(
+              (x) =>
+                x.enabled && (x.relation === 'Maki' || x.relation === 'Spouse'),
+            )?.length
+            return count <= 1
+          }
+
+          return true
+        },
+        { params: m.errorSpouseCount, path: ['relation'] },
+      )
       .optional(),
     total: z.number().refine((v) => {
       const val = typeof v === 'string' ? parseInt(v, 10) ?? 0 : v
@@ -487,7 +534,7 @@ export const inheritanceReportSchema = z.object({
       wasInCohabitation: z.string().optional(),
       hadSeparateProperty: z.string().optional(),
       spouseTotalDeduction: z.number().optional(),
-      spouseTotalSeparateProperty: z.number().optional(),
+      spouseTotalSeparateProperty: z.string().optional(),
     })
     .refine(
       ({ wasInCohabitation }) => {
@@ -512,7 +559,7 @@ export const inheritanceReportSchema = z.object({
     .refine(
       ({ hadSeparateProperty, spouseTotalSeparateProperty }) => {
         if (hadSeparateProperty && [YES].includes(hadSeparateProperty)) {
-          return spouseTotalSeparateProperty && spouseTotalSeparateProperty > 0
+          return spouseTotalSeparateProperty !== ''
         }
 
         return true
@@ -523,6 +570,21 @@ export const inheritanceReportSchema = z.object({
     ),
 
   totalDeduction: z.number(),
+  total: z.number(),
+  debtsTotal: z.number(),
+  shareTotal: z.number(),
+  netTotal: z.number(),
+  spouseTotal: z.number(),
+  estateTotal: z.number(),
+  netPropertyForExchange: z.number(),
+  hasCustomSpouseSharePercentage: z.array(z.enum([YES])).optional(),
+  customSpouseSharePercentage: z
+    .string()
+    .refine((v) => {
+      const val = valueToNumber(v)
+      return val >= 0 && val <= 100
+    })
+    .optional(),
 
   /* einkaskipti */
   confirmAction: z.array(z.enum([YES])).length(1),

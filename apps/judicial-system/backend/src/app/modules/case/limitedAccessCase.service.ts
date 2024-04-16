@@ -24,6 +24,7 @@ import {
   CaseFileCategory,
   CaseFileState,
   CaseState,
+  NotificationType,
   UserRole,
 } from '@island.is/judicial-system/types'
 
@@ -250,26 +251,28 @@ export class LimitedAccessCaseService {
         )
         .forEach((caseFile) => {
           const message = {
-            type: MessageType.DELIVER_CASE_FILE_TO_COURT,
+            type: MessageType.DELIVERY_TO_COURT_CASE_FILE,
             user,
             caseId: theCase.id,
-            caseFileId: caseFile.id,
+            elementId: caseFile.id,
           }
           messages.push(message)
         })
 
       messages.push({
-        type: MessageType.SEND_APPEAL_TO_COURT_OF_APPEALS_NOTIFICATION,
+        type: MessageType.NOTIFICATION,
         user,
         caseId: theCase.id,
+        body: { type: NotificationType.APPEAL_TO_COURT_OF_APPEALS },
       })
     }
 
     if (update.appealState === CaseAppealState.WITHDRAWN) {
       messages.push({
-        type: MessageType.SEND_APPEAL_WITHDRAWN_NOTIFICATION,
+        type: MessageType.NOTIFICATION,
         user,
         caseId: theCase.id,
+        body: { type: NotificationType.APPEAL_WITHDRAWN },
       })
     }
 
@@ -281,9 +284,10 @@ export class LimitedAccessCaseService {
       theCase.defendantStatementDate?.getTime()
     ) {
       messages.push({
-        type: MessageType.SEND_APPEAL_STATEMENT_NOTIFICATION,
+        type: MessageType.NOTIFICATION,
         user,
         caseId: theCase.id,
+        body: { type: NotificationType.APPEAL_STATEMENT },
       })
     }
 
@@ -313,7 +317,7 @@ export class LimitedAccessCaseService {
       email: email ?? '',
       role: UserRole.DEFENDER,
       active: true,
-      canConfirmAppeal: false,
+      canConfirmIndictment: false,
     } as User
   }
 

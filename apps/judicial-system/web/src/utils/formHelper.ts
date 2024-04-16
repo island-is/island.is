@@ -21,7 +21,7 @@ export const removeTabsValidateAndSet = (
 
   validateAndSet(
     field,
-    value.trim(),
+    value,
     validations,
     setWorkingCase,
     errorMessage,
@@ -163,7 +163,7 @@ export type stepValidationsType = {
   [constants.INDICTMENTS_CASE_FILE_ROUTE]: () => boolean
   [constants.INDICTMENTS_PROCESSING_ROUTE]: (theCase: Case) => boolean
   [constants.INDICTMENTS_TRAFFIC_VIOLATION_ROUTE]: (theCase: Case) => boolean
-  [constants.INDICTMENTS_CASE_FILES_ROUTE]: () => boolean
+  [constants.INDICTMENTS_CASE_FILES_ROUTE]: (theCase: Case) => boolean
   [constants.RESTRICTION_CASE_RECEPTION_AND_ASSIGNMENT_ROUTE]: (
     theCase: Case,
   ) => boolean
@@ -244,7 +244,8 @@ export const stepValidations = (): stepValidationsType => {
       validations.isProcessingStepValidIndictments(theCase),
     [constants.INDICTMENTS_TRAFFIC_VIOLATION_ROUTE]: (theCase: Case) =>
       validations.isTrafficViolationStepValidIndictments(theCase),
-    [constants.INDICTMENTS_CASE_FILES_ROUTE]: () => true,
+    [constants.INDICTMENTS_CASE_FILES_ROUTE]: (theCase) =>
+      validations.isCaseFilesStepValidIndictments(theCase),
     [constants.RESTRICTION_CASE_RECEPTION_AND_ASSIGNMENT_ROUTE]: (
       theCase: Case,
     ) => validations.isReceptionAndAssignmentStepValid(theCase),

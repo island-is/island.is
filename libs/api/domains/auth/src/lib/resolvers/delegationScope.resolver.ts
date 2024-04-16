@@ -3,7 +3,8 @@ import { Parent, Resolver, ResolveField, Args } from '@nestjs/graphql'
 import type { DelegationScopeDTO } from '@island.is/clients/auth/delegation-api'
 import { Loader } from '@island.is/nest/dataloader'
 
-import { ApiScope, DelegationScope } from '../models'
+import { ApiScope } from '../models/apiScope.model'
+import { DelegationScope } from '../models/delegationScope.model'
 import { ApiScopeLoader } from '../loaders/apiScope.loader'
 import type { ApiScopeDataLoader } from '../loaders/apiScope.loader'
 

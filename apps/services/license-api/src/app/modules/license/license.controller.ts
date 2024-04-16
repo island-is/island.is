@@ -135,7 +135,6 @@ export class LicensesController {
   })
   @Post('/verify')
   async verify(@Body() data: VerifyLicenseRequest) {
-    const response = await this.licenseService.verifyLicense(data)
-    return response
+    return this.licenseService.verifyLicense(data)
   }
 }

@@ -119,7 +119,11 @@ const processSidebarLinks = (projectPage: IProjectPage) => {
     projectPage.fields.sidebarLinks ?? []
   ).filter((linkGroup) => {
     const linkGroupContentTypeId =
-      linkGroup.fields.primaryLink.sys.contentType.sys.id
+      linkGroup?.fields?.primaryLink?.sys?.contentType?.sys?.id
+
+    if (!linkGroupContentTypeId) {
+      return false
+    }
 
     if (
       projectPage.fields.sidebarFrontpageLink &&
@@ -192,11 +196,16 @@ const processSidebarLinks = (projectPage: IProjectPage) => {
   for (const item of filteredItems) {
     item.fields.childrenLinks =
       item.fields.childrenLinks?.filter((childLink) => {
-        if (childLink.sys.contentType.sys.id === 'link') {
+        const childLinkContentTypeId = childLink?.sys?.contentType?.sys?.id
+        if (!childLinkContentTypeId) {
+          return false
+        }
+
+        if (childLinkContentTypeId === 'link') {
           return true
         }
         return (
-          childLink.sys.contentType.sys.id === 'projectSubpage' &&
+          childLinkContentTypeId === 'projectSubpage' &&
           projectPage.fields.projectSubpages?.some(
             (subpage) => subpage.sys.id === childLink.sys.id,
           )

@@ -198,7 +198,7 @@ export const ParentalLeaveForm: Form = buildForm({
               children: [
                 buildRadioField({
                   id: 'otherParentObj.chooseOtherParent',
-                  title: parentalLeaveFormMessages.shared.otherParentSubTitle,
+                  title: '',
                   options: (application) => getOtherParentOptions(application),
                   defaultValue: (application: Application) =>
                     getOtherParentOptions(application)[0].value === SPOUSE
@@ -687,6 +687,7 @@ export const ParentalLeaveForm: Form = buildForm({
                     parentalLeaveFormMessages.employer
                       .isReceivingUnemploymentBenefitsDescription,
                   titleVariant: 'h2',
+                  marginTop: 3,
                   condition: (answers) => {
                     const { isSelfEmployed } = getApplicationAnswers(answers)
                     return isSelfEmployed === NO
@@ -901,47 +902,42 @@ export const ParentalLeaveForm: Form = buildForm({
         buildSubSection({
           id: 'fileUpload',
           title: parentalLeaveFormMessages.attachmentScreen.title,
+          condition: (answers) => {
+            const {
+              isReceivingUnemploymentBenefits,
+              isSelfEmployed,
+              unemploymentBenefits,
+              noChildrenFoundTypeOfApplication,
+              applicationType,
+              employerLastSixMonths,
+              isNotStillEmployed,
+              otherParent,
+            } = getApplicationAnswers(answers)
+
+            const benefitsFile =
+              isSelfEmployed === NO &&
+              isReceivingUnemploymentBenefits === YES &&
+              (unemploymentBenefits === UnEmployedBenefitTypes.union ||
+                unemploymentBenefits === UnEmployedBenefitTypes.healthInsurance)
+
+            const employmentTerminationCertificateFile =
+              (applicationType === PARENTAL_GRANT ||
+                applicationType === PARENTAL_GRANT_STUDENTS) &&
+              employerLastSixMonths === YES &&
+              isNotStillEmployed
+
+            return (
+              isSelfEmployed === YES ||
+              applicationType === PARENTAL_GRANT_STUDENTS ||
+              benefitsFile ||
+              otherParent === SINGLE ||
+              isParentWithoutBirthParent(answers) ||
+              noChildrenFoundTypeOfApplication === PERMANENT_FOSTER_CARE ||
+              noChildrenFoundTypeOfApplication === ADOPTION ||
+              employmentTerminationCertificateFile
+            )
+          },
           children: [
-            buildFileUploadField({
-              id: 'employer.selfEmployed.file',
-              title: parentalLeaveFormMessages.selfEmployed.attachmentTitle,
-              description:
-                parentalLeaveFormMessages.selfEmployed.attachmentDescription,
-              introduction:
-                parentalLeaveFormMessages.selfEmployed.attachmentDescription,
-              condition: (answers) => {
-                const isSelfEmployed =
-                  (
-                    answers as {
-                      employer: {
-                        isSelfEmployed: string
-                      }
-                    }
-                  )?.employer?.isSelfEmployed === YES
-
-                const hasOldSelfEmployedFile =
-                  (
-                    answers as {
-                      employer: {
-                        selfEmployed: {
-                          file: unknown[]
-                        }
-                      }
-                    }
-                  )?.employer?.selfEmployed?.file?.length > 0
-
-                return isSelfEmployed && hasOldSelfEmployedFile
-              },
-              maxSize: FILE_SIZE_LIMIT,
-              maxSizeErrorText:
-                parentalLeaveFormMessages.selfEmployed.attachmentMaxSizeError,
-              uploadAccept: '.pdf',
-              uploadHeader: '',
-              uploadDescription:
-                parentalLeaveFormMessages.selfEmployed.uploadDescription,
-              uploadButtonLabel:
-                parentalLeaveFormMessages.selfEmployed.attachmentButton,
-            }),
             buildFileUploadField({
               id: 'fileUpload.selfEmployedFile',
               title: parentalLeaveFormMessages.selfEmployed.attachmentTitle,
@@ -951,28 +947,18 @@ export const ParentalLeaveForm: Form = buildForm({
                 parentalLeaveFormMessages.selfEmployed.attachmentDescription,
               condition: (answers) => {
                 const { isSelfEmployed } = getApplicationAnswers(answers)
-                const hasOldSelfEmployedFile =
-                  (
-                    answers as {
-                      employer: {
-                        selfEmployed: {
-                          file: unknown[]
-                        }
-                      }
-                    }
-                  )?.employer?.selfEmployed?.file?.length > 0
 
-                return isSelfEmployed === YES && !hasOldSelfEmployedFile
+                return isSelfEmployed === YES
               },
               maxSize: FILE_SIZE_LIMIT,
               maxSizeErrorText:
-                parentalLeaveFormMessages.selfEmployed.attachmentMaxSizeError,
+                parentalLeaveFormMessages.fileUpload.attachmentMaxSizeError,
               uploadAccept: '.pdf',
-              uploadHeader: '',
+              uploadHeader: parentalLeaveFormMessages.fileUpload.uploadHeader,
               uploadDescription:
-                parentalLeaveFormMessages.selfEmployed.uploadDescription,
+                parentalLeaveFormMessages.fileUpload.uploadDescription,
               uploadButtonLabel:
-                parentalLeaveFormMessages.selfEmployed.attachmentButton,
+                parentalLeaveFormMessages.fileUpload.attachmentButton,
             }),
             buildFileUploadField({
               id: 'fileUpload.studentFile',
@@ -988,13 +974,13 @@ export const ParentalLeaveForm: Form = buildForm({
                   }
                 )?.applicationType?.option === PARENTAL_GRANT_STUDENTS,
               maxSizeErrorText:
-                parentalLeaveFormMessages.selfEmployed.attachmentMaxSizeError,
+                parentalLeaveFormMessages.fileUpload.attachmentMaxSizeError,
               uploadAccept: '.pdf',
-              uploadHeader: '',
+              uploadHeader: parentalLeaveFormMessages.fileUpload.uploadHeader,
               uploadDescription:
-                parentalLeaveFormMessages.selfEmployed.uploadDescription,
+                parentalLeaveFormMessages.fileUpload.uploadDescription,
               uploadButtonLabel:
-                parentalLeaveFormMessages.selfEmployed.attachmentButton,
+                parentalLeaveFormMessages.fileUpload.attachmentButton,
             }),
             buildFileUploadField({
               id: 'fileUpload.benefitsFile',
@@ -1020,13 +1006,13 @@ export const ParentalLeaveForm: Form = buildForm({
               },
               maxSize: FILE_SIZE_LIMIT,
               maxSizeErrorText:
-                parentalLeaveFormMessages.selfEmployed.attachmentMaxSizeError,
+                parentalLeaveFormMessages.fileUpload.attachmentMaxSizeError,
               uploadAccept: '.pdf',
-              uploadHeader: '',
+              uploadHeader: parentalLeaveFormMessages.fileUpload.uploadHeader,
               uploadDescription:
-                parentalLeaveFormMessages.selfEmployed.uploadDescription,
+                parentalLeaveFormMessages.fileUpload.uploadDescription,
               uploadButtonLabel:
-                parentalLeaveFormMessages.selfEmployed.attachmentButton,
+                parentalLeaveFormMessages.fileUpload.attachmentButton,
             }),
             buildFileUploadField({
               id: 'fileUpload.singleParent',
@@ -1045,13 +1031,13 @@ export const ParentalLeaveForm: Form = buildForm({
                 )?.otherParentObj?.chooseOtherParent === SINGLE,
               maxSize: FILE_SIZE_LIMIT,
               maxSizeErrorText:
-                parentalLeaveFormMessages.selfEmployed.attachmentMaxSizeError,
+                parentalLeaveFormMessages.fileUpload.attachmentMaxSizeError,
               uploadAccept: '.pdf',
-              uploadHeader: '',
+              uploadHeader: parentalLeaveFormMessages.fileUpload.uploadHeader,
               uploadDescription:
-                parentalLeaveFormMessages.selfEmployed.uploadDescription,
+                parentalLeaveFormMessages.fileUpload.uploadDescription,
               uploadButtonLabel:
-                parentalLeaveFormMessages.selfEmployed.attachmentButton,
+                parentalLeaveFormMessages.fileUpload.attachmentButton,
             }),
             buildFileUploadField({
               id: 'fileUpload.parentWithoutBirthParent',
@@ -1064,13 +1050,13 @@ export const ParentalLeaveForm: Form = buildForm({
               condition: (answers) => isParentWithoutBirthParent(answers),
               maxSize: FILE_SIZE_LIMIT,
               maxSizeErrorText:
-                parentalLeaveFormMessages.selfEmployed.attachmentMaxSizeError,
+                parentalLeaveFormMessages.fileUpload.attachmentMaxSizeError,
               uploadAccept: '.pdf',
-              uploadHeader: '',
+              uploadHeader: parentalLeaveFormMessages.fileUpload.uploadHeader,
               uploadDescription:
-                parentalLeaveFormMessages.selfEmployed.uploadDescription,
+                parentalLeaveFormMessages.fileUpload.uploadDescription,
               uploadButtonLabel:
-                parentalLeaveFormMessages.selfEmployed.attachmentButton,
+                parentalLeaveFormMessages.fileUpload.attachmentButton,
             }),
             buildFileUploadField({
               id: 'fileUpload.permanentFosterCare',
@@ -1090,13 +1076,13 @@ export const ParentalLeaveForm: Form = buildForm({
               },
               maxSize: FILE_SIZE_LIMIT,
               maxSizeErrorText:
-                parentalLeaveFormMessages.selfEmployed.attachmentMaxSizeError,
+                parentalLeaveFormMessages.fileUpload.attachmentMaxSizeError,
               uploadAccept: '.pdf',
-              uploadHeader: '',
+              uploadHeader: parentalLeaveFormMessages.fileUpload.uploadHeader,
               uploadDescription:
-                parentalLeaveFormMessages.selfEmployed.uploadDescription,
+                parentalLeaveFormMessages.fileUpload.uploadDescription,
               uploadButtonLabel:
-                parentalLeaveFormMessages.selfEmployed.attachmentButton,
+                parentalLeaveFormMessages.fileUpload.attachmentButton,
             }),
             buildFileUploadField({
               id: 'fileUpload.adoption',
@@ -1111,13 +1097,13 @@ export const ParentalLeaveForm: Form = buildForm({
               },
               maxSize: FILE_SIZE_LIMIT,
               maxSizeErrorText:
-                parentalLeaveFormMessages.selfEmployed.attachmentMaxSizeError,
+                parentalLeaveFormMessages.fileUpload.attachmentMaxSizeError,
               uploadAccept: '.pdf',
-              uploadHeader: '',
+              uploadHeader: parentalLeaveFormMessages.fileUpload.uploadHeader,
               uploadDescription:
-                parentalLeaveFormMessages.selfEmployed.uploadDescription,
+                parentalLeaveFormMessages.fileUpload.uploadDescription,
               uploadButtonLabel:
-                parentalLeaveFormMessages.selfEmployed.attachmentButton,
+                parentalLeaveFormMessages.fileUpload.attachmentButton,
             }),
             buildFileUploadField({
               id: 'fileUpload.employmentTerminationCertificateFile',
@@ -1142,28 +1128,13 @@ export const ParentalLeaveForm: Form = buildForm({
                 )
               },
               maxSizeErrorText:
-                parentalLeaveFormMessages.selfEmployed.attachmentMaxSizeError,
+                parentalLeaveFormMessages.fileUpload.attachmentMaxSizeError,
               uploadAccept: '.pdf',
-              uploadHeader: '',
+              uploadHeader: parentalLeaveFormMessages.fileUpload.uploadHeader,
               uploadDescription:
-                parentalLeaveFormMessages.selfEmployed.uploadDescription,
+                parentalLeaveFormMessages.fileUpload.uploadDescription,
               uploadButtonLabel:
-                parentalLeaveFormMessages.selfEmployed.attachmentButton,
-            }),
-            buildFileUploadField({
-              id: 'fileUpload.file',
-              title: parentalLeaveFormMessages.attachmentScreen.title,
-              introduction:
-                parentalLeaveFormMessages.attachmentScreen.description,
-              maxSize: FILE_SIZE_LIMIT,
-              maxSizeErrorText:
-                parentalLeaveFormMessages.selfEmployed.attachmentMaxSizeError,
-              uploadAccept: '.pdf',
-              uploadHeader: '',
-              uploadDescription:
-                parentalLeaveFormMessages.selfEmployed.uploadDescription,
-              uploadButtonLabel:
-                parentalLeaveFormMessages.selfEmployed.attachmentButton,
+                parentalLeaveFormMessages.fileUpload.attachmentButton,
             }),
           ],
         }),
@@ -1496,23 +1467,6 @@ export const ParentalLeaveForm: Form = buildForm({
             }),
           ],
         }),
-        // TODO: Bring back payment calculation info, once we have an api
-        // app.asana.com/0/1182378413629561/1200214178491335/f
-        // buildSubSection({
-        //   id: 'paymentPlan',
-        //   title: parentalLeaveFormMessages.paymentPlan.subSection,
-        //   children: [
-        //     buildCustomField(
-        //       {
-        //         id: 'paymentPlan',
-        //         title: parentalLeaveFormMessages.paymentPlan.title,
-        //         description: parentalLeaveFormMessages.paymentPlan.description,
-        //         component: 'PaymentSchedule',
-        //       },
-        //       {},
-        //     ),
-        //   ],
-        // }),
 
         // TODO: Bring back this feature post v1 launch
         // https://app.asana.com/0/1182378413629561/1200214178491339/f
@@ -1542,53 +1496,91 @@ export const ParentalLeaveForm: Form = buildForm({
       ],
     }),
     buildSection({
-      id: 'confirmation',
-      title: parentalLeaveFormMessages.confirmation.section,
+      id: 'additionalInformation',
+      title: parentalLeaveFormMessages.shared.additionalInformationSection,
       children: [
         buildSubSection({
+          id: 'fileUploadSection',
+          title: parentalLeaveFormMessages.attachmentScreen.title,
+          children: [
+            buildFileUploadField({
+              id: 'fileUpload.file',
+              title: parentalLeaveFormMessages.attachmentScreen.title,
+              introduction:
+                parentalLeaveFormMessages.attachmentScreen.description,
+              maxSize: FILE_SIZE_LIMIT,
+              maxSizeErrorText:
+                parentalLeaveFormMessages.fileUpload.attachmentMaxSizeError,
+              uploadAccept: '.pdf',
+              uploadHeader: parentalLeaveFormMessages.fileUpload.uploadHeader,
+              uploadDescription:
+                parentalLeaveFormMessages.fileUpload.uploadDescription,
+              uploadButtonLabel:
+                parentalLeaveFormMessages.fileUpload.attachmentButton,
+            }),
+          ],
+        }),
+        buildSubSection({
+          id: 'commentSection',
+          title: parentalLeaveFormMessages.applicant.commentSection,
+          children: [
+            buildTextField({
+              id: 'comment',
+              title: parentalLeaveFormMessages.applicant.commentSection,
+              variant: 'textarea',
+              rows: 10,
+              maxLength: 1024,
+              description:
+                parentalLeaveFormMessages.applicant.commentDescription,
+              placeholder:
+                parentalLeaveFormMessages.applicant.commentPlaceholder,
+            }),
+          ],
+        }),
+      ],
+    }),
+    buildSection({
+      id: 'confirmation',
+      title: parentalLeaveFormMessages.confirmation.title,
+      children: [
+        buildMultiField({
+          id: 'confirmation',
           title: '',
           children: [
-            buildMultiField({
-              id: 'confirmation',
+            buildCustomField(
+              {
+                id: 'confirmationScreen',
+                title: '',
+                component: 'Review',
+              },
+              {
+                editable: true,
+              },
+            ),
+            buildSubmitField({
+              id: 'submit',
+              placement: 'footer',
               title: '',
-              description: '',
-              children: [
-                buildCustomField(
-                  {
-                    id: 'confirmationScreen',
-                    title: '',
-                    component: 'Review',
-                  },
-                  {
-                    editable: true,
-                  },
-                ),
-                buildSubmitField({
-                  id: 'submit',
-                  placement: 'footer',
-                  title: parentalLeaveFormMessages.confirmation.title,
-                  actions: [
-                    {
-                      event: DefaultEvents.SUBMIT,
-                      name: parentalLeaveFormMessages.confirmation.title,
-                      type: 'primary',
-                      condition: (answers, externalData) => {
-                        const { applicationFundId } =
-                          getApplicationExternalData(externalData)
-                        if (!applicationFundId || applicationFundId === '') {
-                          const { periods } = getApplicationAnswers(answers)
-                          return (
-                            periods.length > 0 &&
-                            new Date(periods[0].startDate) >=
-                              addDays(getBeginningOfMonth3MonthsAgo(), -1)
-                          )
-                        }
+              actions: [
+                {
+                  event: DefaultEvents.SUBMIT,
+                  name: parentalLeaveFormMessages.confirmation.submitButton,
+                  type: 'primary',
+                  condition: (answers, externalData) => {
+                    const { applicationFundId } =
+                      getApplicationExternalData(externalData)
+                    if (!applicationFundId || applicationFundId === '') {
+                      const { periods } = getApplicationAnswers(answers)
+                      return (
+                        periods.length > 0 &&
+                        new Date(periods[0].startDate) >=
+                          addDays(getBeginningOfMonth3MonthsAgo(), -1)
+                      )
+                    }
 
-                        return true
-                      },
-                    },
-                  ],
-                }),
+                    return true
+                  },
+                },
               ],
             }),
           ],

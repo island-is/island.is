@@ -15,6 +15,8 @@ import { UserProfile } from '../../user-profile/userProfile.model'
 
 import { ProcessedStatus } from '../types'
 import { stringsHaveMatchingValue } from '../worker.utils'
+import addMonths from 'date-fns/addMonths'
+import { NUDGE_INTERVAL } from '../../v2/user-profile.service'
 
 describe('UserProfileWorker', () => {
   jest.setTimeout(30000)
@@ -91,12 +93,15 @@ describe('UserProfileWorker', () => {
         nudgeLastAsked: new Date(2023, 10, 5),
       }))
 
+      const currentDate = new Date()
+
       const existingProfiles = advaniaProfiles.map((p) => ({
         nationalId: p.ssn,
         email: p.email,
         mobilePhoneNumber: p.mobilePhoneNumber,
         modified: new Date(2023, 0, 1),
-        lastNudge: new Date(), // not null
+        lastNudge: currentDate, // not null
+        nextNudge: addMonths(currentDate, NUDGE_INTERVAL),
       }))
 
       // Act
@@ -125,6 +130,9 @@ describe('UserProfileWorker', () => {
           pick(profileAfter, fieldsToCompare),
         )
         expect(profileAfter.lastNudge).toEqual(advaniaProfile.nudgeLastAsked)
+        expect(profileAfter.nextNudge).toEqual(
+          addMonths(advaniaProfile.nudgeLastAsked, NUDGE_INTERVAL),
+        )
       }
     })
 
@@ -173,6 +181,7 @@ describe('UserProfileWorker', () => {
             profileAfter.mobilePhoneNumber,
           )
           expect(profileAfter.lastNudge).toBe(null)
+          expect(profileAfter.nextNudge).toBe(null)
         }
       })
 
@@ -225,6 +234,7 @@ describe('UserProfileWorker', () => {
               profileAfter.mobilePhoneNumber,
             )
             expect(profileAfter.lastNudge).toEqual(null)
+            expect(profileAfter.nextNudge).toEqual(null)
           }
         })
 
@@ -290,6 +300,9 @@ describe('UserProfileWorker', () => {
                 profileAfter.mobilePhoneNumber,
               )
               expect(profileAfter.lastNudge).toEqual(profileBefore.modified)
+              expect(profileAfter.nextNudge).toEqual(
+                addMonths(profileBefore.modified, NUDGE_INTERVAL),
+              )
             }
           },
         )
@@ -439,6 +452,7 @@ describe('UserProfileWorker', () => {
         migratedUserProfile.mobilePhoneNumber,
       )
       expect(existingUserProfileAfter.lastNudge).toEqual(null)
+      expect(existingUserProfileAfter.nextNudge).toEqual(null)
     })
 
     describe('profile being migrated exists in user_profile', () => {
@@ -474,6 +488,9 @@ describe('UserProfileWorker', () => {
         // Assert
         expect(existingUserProfileBefore).not.toEqual(existingUserProfileAfter)
         expect(existingUserProfileBefore.lastNudge).not.toEqual(nudgeLastAsked)
+        expect(existingUserProfileAfter.nextNudge).toEqual(
+          addMonths(nudgeLastAsked, NUDGE_INTERVAL),
+        )
         expect(existingUserProfileAfter.nationalId).toEqual(
           migratedUserProfile.ssn,
         )
@@ -562,6 +579,8 @@ describe('UserProfileWorker', () => {
           )
           // With last nudge set to null
           expect(existingUserProfileAfter.lastNudge).toEqual(null)
+          expect(existingUserProfileAfter.nextNudge).toEqual(null)
+
           expect(existingUserProfileAfter.documentNotifications).toEqual(
             migratedProfileCanNudge,
           )
@@ -635,6 +654,9 @@ describe('UserProfileWorker', () => {
               expect(existingUserProfileAfter.lastNudge).toEqual(
                 existingUserProfileBefore.modified,
               )
+              expect(existingUserProfileAfter.nextNudge).toEqual(
+                addMonths(existingUserProfileBefore.modified, NUDGE_INTERVAL),
+              )
               expect(existingUserProfileAfter.documentNotifications).toEqual(
                 existingUserProfileBefore.documentNotifications,
               )
@@ -694,6 +716,7 @@ describe('UserProfileWorker', () => {
             )
             // With last nudge set to null
             expect(existingUserProfileAfter.lastNudge).toEqual(null)
+            expect(existingUserProfileAfter.nextNudge).toEqual(null)
             expect(existingUserProfileAfter.documentNotifications).toEqual(
               existingUserProfileBefore.documentNotifications,
             )

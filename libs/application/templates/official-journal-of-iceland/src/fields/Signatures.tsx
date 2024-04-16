@@ -25,7 +25,7 @@ export const Signatures = ({ application, errors }: OJOIFieldBaseProps) => {
 
   const { answers } = application
 
-  const { setValue, getValues } = useFormContext()
+  const { setValue } = useFormContext()
 
   const [updateApplication] = useMutation(UPDATE_APPLICATION)
 

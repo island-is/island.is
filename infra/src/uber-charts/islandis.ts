@@ -29,7 +29,6 @@ import { serviceSetup as serviceDocumentsSetup } from '../../../apps/services/do
 import { serviceSetup as serviceNameRegistryBackendSetup } from '../../../apps/icelandic-names-registry/backend/infra/icelandic-names-registry-backend'
 
 import { serviceSetup as storybookSetup } from '../../../libs/island-ui/storybook/infra/storybook'
-import { serviceSetup as contentfulTranslationExtensionSetup } from '../../../libs/contentful-extensions/translation/infra/contentful-translation-extension'
 
 import { serviceSetup as downloadServiceSetup } from '../../../apps/download-service/infra/download-service'
 import { serviceSetup as endorsementServiceSetup } from '../../../apps/services/endorsements/api/infra/endorsement-system-api'
@@ -57,7 +56,6 @@ import {
 import {
   serviceSetup as sessionsServiceSetup,
   workerSetup as sessionsWorkerSetup,
-  geoipSetup as sessionsGeoipSetup,
 } from '../../../apps/services/sessions/infra/sessions'
 
 import { serviceSetup as authAdminApiSetup } from '../../../apps/services/auth/admin-api/infra/auth-admin-api'
@@ -90,7 +88,6 @@ const rabBackend = rabBackendSetup()
 
 const sessionsService = sessionsServiceSetup()
 const sessionsWorker = sessionsWorkerSetup()
-const sessionsGeoip = sessionsGeoipSetup()
 
 const authAdminApi = authAdminApiSetup()
 
@@ -122,7 +119,6 @@ const xroadCollector = xroadCollectorSetup()
 const licenseApi = licenseApiSetup()
 
 const storybook = storybookSetup({})
-const contentfulTranslationExtension = contentfulTranslationExtensionSetup()
 
 const downloadService = downloadServiceSetup({
   regulationsAdminBackend: rabBackend,
@@ -157,7 +153,6 @@ export const Services: EnvironmentServices = {
     skilavottordWs,
     documentsService,
     storybook,
-    contentfulTranslationExtension,
     xroadCollector,
     downloadService,
     nameRegistryBackend,
@@ -173,7 +168,6 @@ export const Services: EnvironmentServices = {
     licenseApi,
     sessionsService,
     sessionsWorker,
-    sessionsGeoip,
     universityGatewayService,
     universityGatewayWorker,
     contentfulApps,
@@ -193,7 +187,6 @@ export const Services: EnvironmentServices = {
     searchIndexer,
     documentsService,
     storybook,
-    contentfulTranslationExtension,
     xroadCollector,
     downloadService,
     nameRegistryBackend,
@@ -209,7 +202,6 @@ export const Services: EnvironmentServices = {
     licenseApi,
     sessionsService,
     sessionsWorker,
-    sessionsGeoip,
     universityGatewayService,
     universityGatewayWorker,
   ],
@@ -229,7 +221,6 @@ export const Services: EnvironmentServices = {
     skilavottordWs,
     documentsService,
     storybook,
-    contentfulTranslationExtension,
     downloadService,
     nameRegistryBackend,
     endorsement,
@@ -247,7 +238,6 @@ export const Services: EnvironmentServices = {
     licenseApi,
     sessionsService,
     sessionsWorker,
-    sessionsGeoip,
     contentfulApps,
     universityGatewayService,
     universityGatewayWorker,

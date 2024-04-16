@@ -4,7 +4,7 @@ import { DocumentInfoDTO } from '@island.is/clients/documents'
 import { DownloadServiceConfig } from '@island.is/nest/config'
 import type { ConfigType } from '@island.is/nest/config'
 
-import { Document } from './models/document.model'
+import { Document } from './models/v1/document.model'
 import { DocumentTypeFilter, FileType } from './types'
 
 @Injectable()

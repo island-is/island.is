@@ -89,6 +89,9 @@ RUN npm install -g \
 USER runner
 
 FROM output-base-with-pg as output-express
+ARG GIT_SHA
+ENV DD_GIT_COMMIT_SHA="${GIT_SHA}"
+ENV DD_GIT_REPOSITORY_URL="github.com/island-is/island.is"
 
 COPY --from=builder /build/${APP_DIST_HOME} /webapp/
 
@@ -96,7 +99,9 @@ ENTRYPOINT []
 CMD [ "node", "--no-experimental-fetch", "main.js" ]
 
 FROM output-base-with-pg as output-next
-
+ARG GIT_SHA
+ENV DD_GIT_COMMIT_SHA="${GIT_SHA}"
+ENV DD_GIT_REPOSITORY_URL="github.com/island-is/island.is"
 ENV PORT=4200
 
 # TODO: smallify
@@ -106,7 +111,6 @@ COPY --from=builder /build/${APP_DIST_HOME} /webapp/
 ENTRYPOINT [ "node", "--no-experimental-fetch", "main.js" ]
 
 FROM $DOCKER_IMAGE_REGISTRY/nginx/nginx:1.21-alpine as output-static
-
 ARG APP
 ENV APP=${APP}
 ARG APP_DIST_HOME=dist/apps/${APP}
@@ -117,6 +121,8 @@ ENV GIT_SHA=${GIT_SHA}
 LABEL branch=${GIT_BRANCH}
 LABEL commit=${GIT_SHA}
 ENV BASEPATH=/
+ENV DD_GIT_COMMIT_SHA="${GIT_SHA}"
+ENV DD_GIT_REPOSITORY_URL="github.com/island-is/island.is"
 
 RUN mkdir -p /etc/nginx/templates
 RUN --mount=type=cache,target=/var/cache/apk/ \

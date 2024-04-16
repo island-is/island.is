@@ -103,6 +103,7 @@ export const CommitteeSignature = ({ state, setState, errors }: Props) => {
           placeholder={f(signatures.inputs.date.placeholder)}
           backgroundColor="blue"
           size="sm"
+          locale="is"
           defaultValue={state.committee.date}
           onChange={(date) => onCommitteeChange('date', date)}
         />

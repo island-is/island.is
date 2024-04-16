@@ -1,0 +1,37 @@
+query Documents($input: DocumentsV2DocumentsInput!) {
+  documentsV2(input: $input) {
+    data {
+      id
+      name
+      categoryId
+      publicationDate
+      documentDate
+      subject
+      sender {
+        id
+        name
+      }
+      opened
+      bookmarked
+      archived
+      content {
+        type
+        value
+      }
+    }
+    totalCount
+    unreadCount
+    categories {
+      id
+      name
+    }
+    types {
+      id
+      name
+    }
+    senders {
+      id
+      name
+    }
+  }
+}

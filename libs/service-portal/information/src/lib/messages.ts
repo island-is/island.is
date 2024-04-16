@@ -1,6 +1,15 @@
 import { defineMessages } from 'react-intl'
 
 export const spmm = defineMessages({
+  spouseIntro: {
+    id: 'sp.family:data-info-spouse',
+    defaultMessage: 'Hér fyrir neðan eru gögn um maka.',
+  },
+  childIntro: {
+    id: 'sp.family:data-info-child',
+    defaultMessage:
+      'Hér fyrir neðan eru gögn um fjölskyldumeðlim. Þú hefur kost á að gera breytingar á eftirfarandi upplýsingum ef þú kýst.',
+  },
   genderFemale: {
     id: 'sp.family:gender-female',
     defaultMessage: 'Kona',
@@ -33,9 +42,21 @@ export const spmm = defineMessages({
     id: 'sp.family:parent',
     defaultMessage: 'Foreldri',
   },
+  custodians: {
+    id: 'sp.family:custodians',
+    defaultMessage: 'Forsjáraðilar',
+  },
+  custodyStatus: {
+    id: 'sp.family:custody-status',
+    defaultMessage: 'Staða forsjár',
+  },
   spouse: {
     id: 'sp.family:spouse',
     defaultMessage: 'Maki',
+  },
+  spouseAccusative: {
+    id: 'sp.family:spouse-accusative',
+    defaultMessage: 'Maka',
   },
   maritalStatusDivorced: {
     id: 'sp.family:marital-status-divorced',
@@ -149,6 +170,10 @@ export const spmm = defineMessages({
   seeInfo: {
     id: 'sp.family:see-info',
     defaultMessage: 'Skoða upplýsingar',
+  },
+  editLink: {
+    id: 'sp.family:edit-link',
+    defaultMessage: 'Breyta hjá Þjóðskrá',
   },
 })
 

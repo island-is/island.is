@@ -26,5 +26,5 @@
       }
     }
   },
-  "tags": ["lib:client"]
+  "tags": ["scope:client", "lib:client"]
 }

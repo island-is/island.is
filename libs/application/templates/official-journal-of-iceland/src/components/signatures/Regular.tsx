@@ -171,6 +171,7 @@ export const RegularSignature = ({ state, setState, errors }: Props) => {
                 placeholder={f(signatures.inputs.date.placeholder)}
                 backgroundColor="blue"
                 size="sm"
+                locale="is"
                 defaultValue={institution.date}
                 onChange={(date) => onChangeInstitution(index, 'date', date)}
                 error={errors && getErrorViaPath(errors, datePath)}

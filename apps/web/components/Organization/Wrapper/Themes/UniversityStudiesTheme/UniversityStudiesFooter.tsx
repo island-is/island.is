@@ -53,7 +53,12 @@ const UniversityStudiesFooter: React.FC<
           width="full"
         >
           <Box display={'flex'} className={styles.footerFirstColumnContainer}>
-            <LinkV2 href="https://www.stjornarradid.is/default.aspx?PageID=a496498d-6ce4-40b2-b339-fd61987a9918">
+            <LinkV2
+              href={n(
+                'privacyPolicy',
+                'https://island.is/en/personuverndarstefna-stafraent-islands',
+              )}
+            >
               <Text color="blue600" variant="medium">
                 <span style={{ textDecoration: 'underline' }}>
                   {n('footerPersonalInfo', 'Meðferð persónuupplýsinga')}

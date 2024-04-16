@@ -14,6 +14,8 @@ import {
 import {
   AdvertCategoryResponse,
   AdvertDepartmentResponse,
+  AdvertInstitutionsResponse,
+  AdvertMainCategoriesResponse,
   AdvertResponse,
   AdvertsResponse,
   AdvertTypeResponse,
@@ -23,29 +25,30 @@ import {
 export class MinistryOfJusticeService {
   constructor(private readonly dmrService: DmrClientService) {}
 
-  async departments(
-    auth: User,
+  async departments(params: QueryParams): Promise<AdvertDepartmentResponse> {
+    return await this.dmrService.departments(params)
+  }
+
+  async mainCategories(
     params: QueryParams,
-  ): Promise<AdvertDepartmentResponse> {
-    return await this.dmrService.departments(auth, params)
+  ): Promise<AdvertMainCategoriesResponse> {
+    return await this.dmrService.mainCategories(params)
   }
 
-  async categories(
-    auth: User,
-    params: QueryParams,
-  ): Promise<AdvertCategoryResponse> {
-    return await this.dmrService.categories(auth, params)
+  async categories(params: QueryParams): Promise<AdvertCategoryResponse> {
+    return await this.dmrService.categories(params)
   }
 
-  async types(
-    auth: User,
-    params: TypeQueryParams,
-  ): Promise<AdvertTypeResponse> {
-    return await this.dmrService.types(auth, params)
+  async types(params: TypeQueryParams): Promise<AdvertTypeResponse> {
+    return await this.dmrService.types(params)
   }
 
-  async advert(auth: User, params: AdvertQueryParams): Promise<AdvertResponse> {
-    const data = await this.dmrService.advert(auth, params)
+  async institutions(params: QueryParams): Promise<AdvertInstitutionsResponse> {
+    return await this.dmrService.institutions(params)
+  }
+
+  async advert(params: AdvertQueryParams): Promise<AdvertResponse> {
+    const data = await this.dmrService.advert(params)
     return {
       advert: {
         ...data,
@@ -55,10 +58,9 @@ export class MinistryOfJusticeService {
   }
 
   async adverts(
-    auth: User,
     input: JournalControllerAdvertsRequest,
   ): Promise<AdvertsResponse> {
-    const adverts = await this.dmrService.adverts(auth, input)
+    const adverts = await this.dmrService.adverts(input)
 
     const mappedAdverts = adverts.adverts.map((advert) => {
       return {
@@ -77,7 +79,7 @@ export class MinistryOfJusticeService {
 
   async submitApplication(auth: User, input: SubmitApplicationInput) {
     return await this.dmrService.submitApplication(auth, {
-      journalPostApplicationBody: input,
+      postApplicationBody: input,
     })
   }
 }

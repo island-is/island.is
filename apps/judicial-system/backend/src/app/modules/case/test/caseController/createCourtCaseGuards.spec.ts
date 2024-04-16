@@ -1,5 +1,3 @@
-import { CanActivate } from '@nestjs/common'
-
 import { JwtAuthGuard, RolesGuard } from '@island.is/judicial-system/auth'
 
 import { CaseController } from '../../case.controller'
@@ -17,55 +15,11 @@ describe('CaseController - Create court case guards', () => {
     )
   })
 
-  it('should have four guards', () => {
+  it('should have the right guard configuration', () => {
     expect(guards).toHaveLength(4)
-  })
-
-  describe('JwtAuthGuard', () => {
-    let guard: CanActivate
-
-    beforeEach(() => {
-      guard = new guards[0]()
-    })
-
-    it('should have JwtAuthGuard as guard 1', () => {
-      expect(guard).toBeInstanceOf(JwtAuthGuard)
-    })
-  })
-
-  describe('RolesGuard', () => {
-    let guard: CanActivate
-
-    beforeEach(() => {
-      guard = new guards[1]()
-    })
-
-    it('should have RolesGuard as guard 2', () => {
-      expect(guard).toBeInstanceOf(RolesGuard)
-    })
-  })
-
-  describe('CaseExistsGuard', () => {
-    let guard: CanActivate
-
-    beforeEach(() => {
-      guard = new guards[2]()
-    })
-
-    it('should have CaseExistsGuard as guard 3', () => {
-      expect(guard).toBeInstanceOf(CaseExistsGuard)
-    })
-  })
-
-  describe('CaseWriteGuard', () => {
-    let guard: CanActivate
-
-    beforeEach(() => {
-      guard = new guards[3]()
-    })
-
-    it('should have CaseWriteGuard as guard 4', () => {
-      expect(guard).toBeInstanceOf(CaseWriteGuard)
-    })
+    expect(new guards[0]()).toBeInstanceOf(JwtAuthGuard)
+    expect(new guards[1]()).toBeInstanceOf(RolesGuard)
+    expect(new guards[2]()).toBeInstanceOf(CaseExistsGuard)
+    expect(new guards[3]()).toBeInstanceOf(CaseWriteGuard)
   })
 })

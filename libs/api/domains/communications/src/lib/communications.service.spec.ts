@@ -7,7 +7,7 @@ import { ContactUsInput } from './dto/contactUs.input'
 import { TellUsAStoryInput } from './dto/tellUsAStory.input'
 import {
   ServiceWebFormsInput,
-  ServiceWebFormsInputWithInstitutionEmail,
+  ServiceWebFormsInputWithInstitutionEmailAndConfig,
 } from './dto/serviceWebForms.input'
 import { CmsModule } from '@island.is/cms'
 import { FileStorageConfig, FileStorageModule } from '@island.is/file-storage'
@@ -88,10 +88,11 @@ describe('communicationsService', () => {
 
   describe('getInputWithInstitutionEmail', () => {
     it('should get service web input with institution email', async () => {
-      const inputWithInstitutionEmail: ServiceWebFormsInputWithInstitutionEmail =
+      const inputWithInstitutionEmail: ServiceWebFormsInputWithInstitutionEmailAndConfig =
         {
           ...fakeServiceWebInput,
           institutionEmail: 'test@email.com',
+          config: { emails: [] },
         }
 
       jest

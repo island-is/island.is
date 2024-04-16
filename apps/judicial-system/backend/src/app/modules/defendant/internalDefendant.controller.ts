@@ -12,6 +12,10 @@ import type { Logger } from '@island.is/logging'
 import { LOGGER_PROVIDER } from '@island.is/logging'
 
 import { TokenGuard } from '@island.is/judicial-system/auth'
+import {
+  messageEndpoint,
+  MessageType,
+} from '@island.is/judicial-system/message'
 
 import { Case, CaseExistsGuard, CurrentCase } from '../case'
 import { DeliverDefendantToCourtDto } from './dto/deliverDefendantToCourt.dto'
@@ -21,7 +25,11 @@ import { Defendant } from './models/defendant.model'
 import { DeliverResponse } from './models/deliver.response'
 import { DefendantService } from './defendant.service'
 
-@Controller('api/internal/case/:caseId/defendant/:defendantId')
+@Controller(
+  `api/internal/case/:caseId/${
+    messageEndpoint[MessageType.DELIVERY_TO_COURT_DEFENDANT]
+  }/:defendantId`,
+)
 @ApiTags('internal defendants')
 @UseGuards(TokenGuard, CaseExistsGuard, DefendantExistsGuard)
 export class InternalDefendantController {
@@ -30,7 +38,7 @@ export class InternalDefendantController {
     @Inject(LOGGER_PROVIDER) private readonly logger: Logger,
   ) {}
 
-  @Post('deliverToCourt')
+  @Post()
   @ApiCreatedResponse({
     type: DeliverResponse,
     description: 'Delivers a case file to court',
