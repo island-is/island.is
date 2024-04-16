@@ -11,6 +11,7 @@ export { IndictmentCountModule } from './indictment-count/indictmentCount.module
 export { UserModule } from './user/user.module'
 export { InstitutionModule } from './institution/institution.module'
 export { FileModule } from './file/file.module'
+export { fileModuleConfig } from './file/file.config'
 export { NotificationModule } from './notification/notification.module'
 export { PoliceModule } from './police/police.module'
 export { CourtModule } from './court/court.module'

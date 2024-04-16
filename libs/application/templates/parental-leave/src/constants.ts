@@ -97,7 +97,6 @@ export enum States {
   EMPLOYER_ACTION = 'employerRequiresAction',
 
   VINNUMALASTOFNUN_APPROVAL = 'vinnumalastofnunApproval',
-  VINNUMALASTOFNUN_APPROVAL_ABORT_CHANGE = 'vinnumalastofnunApprovalAbortChange',
   VINNUMALASTOFNUN_ACTION = 'vinnumalastofnunRequiresAction',
 
   ADDITIONAL_DOCUMENTS_REQUIRED = 'additionalDocumentsRequired',
@@ -113,7 +112,6 @@ export enum States {
   EMPLOYER_EDITS_ACTION = 'employerRequiresActionOnEdits',
 
   VINNUMALASTOFNUN_APPROVE_EDITS = 'vinnumalastofnunApproveEdits',
-  VINNUMALASTOFNUN_APPROVE_EDITS_ABORT = 'vinnumalastofnunApproveEditsAbort',
   VINNUMALASTOFNUN_EDITS_ACTION = 'vinnumalastofnunRequiresActionOnEdits',
 
   RESIDENCE_GRANT_APPLICATION = 'residenceGrantApplication',
@@ -141,6 +139,8 @@ export enum FileType {
   DOCUMENTPERIOD = 'documentPeriod',
   EMPPER = 'empper',
   EMPLOYER = 'employer',
+  EMPDOC = 'empdoc',
+  EMPDOCPER = 'empdocper',
 }
 
 export enum Languages {
@@ -158,6 +158,7 @@ export enum AttachmentTypes {
   ADOPTION = 'adoption',
   EMPLOYMENT_TERMINATION_CERTIFICATE = 'employmentTerminationCertificateFile',
   FILE = 'file',
+  CHANGE_EMPLOYER = 'changeEmployerFile',
 }
 
 export const AttachmentLabel: {
@@ -177,4 +178,6 @@ export const AttachmentLabel: {
     parentalLeaveFormMessages.attachmentScreen
       .employmentTerminationCertificateTitle,
   file: parentalLeaveFormMessages.attachmentScreen.title,
+  changeEmployerFile:
+    parentalLeaveFormMessages.attachmentScreen.changeEmployerTitle,
 }
