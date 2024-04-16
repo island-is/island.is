@@ -7,7 +7,6 @@ import {
   Headers,
   Patch,
   Post,
-  Put,
   UseGuards,
 } from '@nestjs/common'
 

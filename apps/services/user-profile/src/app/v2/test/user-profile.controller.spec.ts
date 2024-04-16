@@ -1,6 +1,8 @@
 import request from 'supertest'
 import faker from 'faker'
 import { getModelToken } from '@nestjs/sequelize'
+import subMonths from 'date-fns/subMonths'
+import addMonths from 'date-fns/addMonths'
 
 import {
   createCurrentUser,
@@ -15,10 +17,7 @@ import { AppModule } from '../../app.module'
 import { SequelizeConfigService } from '../../sequelizeConfig.service'
 import { FixtureFactory } from '../../../../test/fixture-factory'
 import { UserProfile } from '../../user-profile/userProfile.model'
-import { getModelToken } from '@nestjs/sequelize'
 import { ClientType } from '../../types/ClientType'
-import subMonths from 'date-fns/subMonths'
-import addMonths from 'date-fns/addMonths'
 import { ActorProfile } from '../models/actor-profile.model'
 
 const testUserProfile = {
