@@ -367,7 +367,11 @@ export class UserProfileService {
       throw new BadRequestException('delegation does not exist')
     }
 
-    const userProfile = await this.findById(toNationalId)
+    const userProfile = await this.findById(
+      toNationalId,
+      false,
+      ClientType.FIRST_PARTY,
+    )
 
     const emailPreferences = await this.delegationPreference.findOne({
       where: {
