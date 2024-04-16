@@ -168,7 +168,7 @@ export const Overview: React.FC<React.PropsWithChildren<unknown>> = () => {
             <Box component="section" marginBottom={5}>
               <InfoCardCaseScheduled
                 court={workingCase.court}
-                courtDate={courtDate?.date}
+                courtDate={courtDate.date}
                 courtRoom={workingCase.courtRoom}
               />
             </Box>
@@ -241,14 +241,14 @@ export const Overview: React.FC<React.PropsWithChildren<unknown>> = () => {
                 title: formatMessage(core.caseType),
                 value: capitalize(formatCaseType(workingCase.type)),
               },
-              ...(courtDate
+              ...(courtDate && courtDate.date
                 ? [
                     {
                       title: formatMessage(core.confirmedCourtDate),
                       value: `${capitalize(
-                        formatDate(courtDate?.date, 'PPPP', true) ?? '',
+                        formatDate(courtDate.date, 'PPPP', true) ?? '',
                       )} kl. ${formatDate(
-                        courtDate?.date,
+                        courtDate.date,
                         constants.TIME_FORMAT,
                       )}`,
                     },
