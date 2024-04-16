@@ -1,7 +1,6 @@
 import { ChargeItemCode } from '@island.is/shared/constants'
 import { Application, StaticText } from '@island.is/application/types'
 import { HealthcareWorkPermit } from '../lib/dataSchema'
-import { HealthcareLicense } from '@island.is/clients/health-directorate'
 
 export const getChargeItemCodes = (application: Application): Array<string> => {
   return getChargeItemCodesAndExtraLabel(application).map(
@@ -16,6 +15,8 @@ export const getChargeItemCodesAndExtraLabel = (
   extraLabel?: StaticText
 }> => {
   const answers = application.answers as HealthcareWorkPermit
+
+  // TODO Get Id instead of studyProgram string, fetch programme via id and display info.
 
   // const licenses = application?.externalData?.healthcareLicenses
   //   ?.data as HealthcareLicense[]
