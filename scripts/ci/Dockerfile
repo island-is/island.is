@@ -4,6 +4,10 @@ ARG DOCKER_IMAGE_REGISTRY=public.ecr.aws
 FROM $DOCKER_IMAGE_REGISTRY/docker/library/node:18-alpine3.15 as deps
 
 RUN apk add -U git
+# Bash needed in e.g. build script for systeme-e2e
+RUN apk add --update --no-cache \
+  python3 build-base gcc bash \
+  && ln -sf /usr/bin/python3 /usr/bin/python
 
 WORKDIR /build
 
@@ -11,10 +15,6 @@ WORKDIR /build
 ADD package.json yarn.lock .yarnrc.yml ./
 ADD apps/native/app/package.json ./apps/native/app/
 COPY .yarn/ ./.yarn
-# Bash needed in e.g. build script for systeme-e2e
-RUN apk add --update --no-cache \
-  python3 build-base gcc bash \
-  && ln -sf /usr/bin/python3 /usr/bin/python
 RUN CI=true yarn install --immutable
 
 FROM deps as src
@@ -30,6 +30,8 @@ COPY scripts/ scripts/
 COPY infra/ infra/
 COPY charts/ charts/
 COPY .yarn/ .yarn/
+# Copy all files in the root
+COPY *.* .*.* ./
 COPY libs/ libs/
 COPY apps/ apps/
 
@@ -150,10 +152,12 @@ WORKDIR ${APP_DIST_HOME}
 
 COPY --from=builder /build/${APP_DIST_HOME} .
 
-ADD .yarnrc.yml ./
+COPY .yarnrc.yml ./
 COPY .yarn/ .yarn/
+# Copy all files in the root
+COPY *.* .*.* ./
 
-RUN yarn install
+RUN yarn install --immutable
 
 ENV PLAYWRIGHT_BROWSER=chromium
 RUN yarn playwright install ${PLAYWRIGHT_BROWSER}
