@@ -3,7 +3,12 @@
 ##
 
 # Ignore package pinning rules
-# hadolint global ignore=DL3016,DL3018,DL3008
+# # npm pinning
+# hadolint global ignore=DL3016
+# # apk pinning
+# hadolint global ignore=DL3018
+# # apt pinning
+# hadolint global ignore=DL3008
 
 ARG PLAYWRIGHT_VERSION
 ARG DOCKER_IMAGE_REGISTRY=public.ecr.aws
