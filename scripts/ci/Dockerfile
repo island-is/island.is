@@ -162,10 +162,15 @@ ARG APP_DIST_HOME
 WORKDIR ${APP_DIST_HOME}
 
 
-COPY .yarnrc.yml yarn.lock package.json ./
 COPY .yarn/releases/ .yarn/releases/
 COPY .yarn/patches/ .yarn/patches/
-RUN CI=true yarn install --immutable
+COPY .yarnrc.yml yarn.lock package.json ./
+# We,re using --mount, so no need to `yarn cache clean`
+# hadolint ignore=DL3060
+RUN --mount=type=cache,target=./.yarn/cache --mount=type=cache,target=.cache --mount=type=cache,target=/root/.cache \
+  cp yarn.lock yarn.lock.bak && \
+  diff yarn.lock.bak yarn.lock && \
+  ( yarn install || (cat /tmp/*/*.log && exit 1) )
 
 COPY --from=builder /build/${APP_DIST_HOME} .
 COPY package.json package.json
