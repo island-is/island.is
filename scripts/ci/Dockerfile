@@ -28,6 +28,7 @@ COPY tools/ tools/
 COPY scripts/ scripts/
 COPY infra/ infra/
 COPY charts/ charts/
+COPY .yarn/ .yarn/
 COPY libs/ libs/
 COPY apps/ apps/
 
