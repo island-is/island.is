@@ -104,7 +104,7 @@ applicationTest.describe('Operating Licence', () => {
       }
       deleteMockPdf()
       await sleep(1000)
-      await expect(page.getByText('Ógilt gildi.')).not.toBeVisible()
+      await expect(page.getByText('Ógilt gildi.')).toBeHidden()
       await page.getByTestId('proceed').click()
 
       // Overview
