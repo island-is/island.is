@@ -255,9 +255,7 @@ describe('InternalFileController - Deliver case file to court', () => {
 
     it('should throw not found exception', () => {
       expect(then.error).toBeInstanceOf(NotFoundException)
-      expect(then.error.message).toBe(
-        `File ${fileId} does not exists in AWS S3`,
-      )
+      expect(then.error.message).toBe(`File ${fileId} does not exist in AWS S3`)
     })
   })
 
@@ -285,9 +283,7 @@ describe('InternalFileController - Deliver case file to court', () => {
 
     it('should throw not found exception', () => {
       expect(then.error).toBeInstanceOf(NotFoundException)
-      expect(then.error.message).toBe(
-        `File ${fileId} does not exists in AWS S3`,
-      )
+      expect(then.error.message).toBe(`File ${fileId} does not exist in AWS S3`)
     })
   })
 
