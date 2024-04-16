@@ -60,7 +60,6 @@ export const EducationGraduationDetail = () => {
         title={m.educationGraduation}
         intro={text?.description || ''}
         serviceProviderSlug={uni as OrganizationSlugType}
-        serviceProviderTooltip={formatMessage(m.universityOfIcelandTooltip)}
       />
       <GridRow marginBottom={[1, 1, 1, 3]}>
         <GridColumn span="12/12">

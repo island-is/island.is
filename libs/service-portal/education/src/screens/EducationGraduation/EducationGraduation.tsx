@@ -91,8 +91,6 @@ export const EducationGraduation = () => {
             'Hér getur þú fundið yfirlit yfir brautskráningar frá háskólanámi frá árinu 2015.',
           description: 'education graduation intro',
         })}
-        serviceProviderSlug={'haskoli-islands'}
-        serviceProviderTooltip={formatMessage(m.universityOfIcelandTooltip)}
       />
       {!!errors.length && !error && !loading && (
         <Box marginBottom={2}>
@@ -124,9 +122,9 @@ export const EducationGraduation = () => {
             return (
               <ActionCard
                 key={`education-graduation-${index}`}
-                heading={item.institution?.displayName ?? undefined}
+                heading={`${item.studyProgram} - ${item.degree}`}
                 text={item.faculty}
-                subText={`${item.studyProgram} ${item.degree}`}
+                subText={item.institution.displayName ?? undefined}
                 cta={{
                   label: defineMessage({
                     id: 'sp.education-graduation:details',
