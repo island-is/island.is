@@ -77,8 +77,13 @@ export const currentDateStartTime = () => {
 export const findActionName = (context: ApplicationContext) => {
   const { application } = context
   const { state } = application
-  const { addEmployer, addPeriods, changeEmployer, changePeriods } =
-    getApplicationAnswers(application.answers)
+  const {
+    addEmployer,
+    addPeriods,
+    changeEmployerFile,
+    changeEmployer,
+    changePeriods,
+  } = getApplicationAnswers(application.answers)
 
   if (
     state === States.RESIDENCE_GRANT_APPLICATION_NO_BIRTH_DATE ||
@@ -122,6 +127,15 @@ export const findActionName = (context: ApplicationContext) => {
     }
 
     // If the applicant has selected add employee and/or period at some point
+    if (
+      changeEmployerFile.length !== 0 &&
+      tmpChangeEmployer &&
+      tmpChangePeriods
+    ) {
+      return FileType.EMPDOCPER
+    } else if (changeEmployerFile.length !== 0 && tmpChangeEmployer) {
+      return FileType.EMPDOC
+    }
     if (tmpChangeEmployer && tmpChangePeriods) {
       return FileType.EMPPER
     } else if (tmpChangeEmployer) {
