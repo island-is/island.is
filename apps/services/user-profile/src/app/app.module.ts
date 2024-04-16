@@ -31,7 +31,7 @@ import { UserProfileConfig } from '../config'
         FeatureFlagConfig,
         IdsClientConfig,
         AuthDelegationApiClientConfig,
-        UserProfileConfig
+        UserProfileConfig,
       ],
     }),
     AuditModule.forRoot(environment.audit),
