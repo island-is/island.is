@@ -39,7 +39,6 @@ import { Institution } from '../institution'
 import { User } from '../user'
 import { Case } from './models/case.model'
 import { PDFService } from './pdf.service'
-import { DateLog } from '../date-log'
 
 export const attributes: (keyof Case)[] = [
   'id',
