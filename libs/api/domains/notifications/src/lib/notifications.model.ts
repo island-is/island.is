@@ -55,6 +55,15 @@ export class NotificationMessage {
   @Field()
   body!: string
 
+  @Field({ nullable: true })
+  dataCopy?: string
+
+  @Field({
+    description:
+      'Displays the {dataCopy} by default, will display {body} as fallback',
+  })
+  displayBody!: string
+
   @Field(() => NotificationLink)
   link!: NotificationLink
 }

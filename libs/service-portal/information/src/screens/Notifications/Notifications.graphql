@@ -12,7 +12,7 @@ fragment NotificationSenderFields on NotificationSender {
 
 fragment NotificationMessageFields on NotificationMessage {
   title
-  body
+  displayBody
   link {
     url
   }

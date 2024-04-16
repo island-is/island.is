@@ -42,7 +42,7 @@ export class UniversityResolver {
     @Parent() university: UniversityGatewayUniversity,
   ): Promise<LogoUrl> {
     return await organizationLogoLoader.load({
-      key: university.contentfulKey,
+      value: university.contentfulKey,
       field: 'referenceIdentifier',
     })
   }

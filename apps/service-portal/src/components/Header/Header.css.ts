@@ -1,4 +1,4 @@
-import { style, styleVariants } from '@vanilla-extract/css'
+import { globalStyle, style, styleVariants } from '@vanilla-extract/css'
 import {
   SERVICE_PORTAL_HEADER_HEIGHT_LG,
   SERVICE_PORTAL_HEADER_HEIGHT_SM,
@@ -37,5 +37,15 @@ export const placeholder = style({
 export const closeButton = style({
   ':hover': {
     backgroundColor: theme.color.blue200,
+  },
+})
+
+export const overview = style({})
+
+globalStyle(`${overview} svg`, {
+  '@media': {
+    [`screen and (max-width: ${theme.breakpoints.sm - 1}px)`]: {
+      marginLeft: '0 !important',
+    },
   },
 })

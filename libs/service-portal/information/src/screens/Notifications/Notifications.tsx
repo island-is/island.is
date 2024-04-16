@@ -18,6 +18,7 @@ import { spmm } from '../../lib/messages'
 import { ActionCard, CardLoader } from '@island.is/service-portal/core'
 import { Problem } from '@island.is/react-spa/shared'
 import { InformationPaths } from '../../lib/paths'
+import { resolveLink } from '../../utils/notificationLinkResolver'
 
 const DEFAULT_PAGE_SIZE = 5
 
@@ -104,12 +105,12 @@ const UserNotifications = () => {
           data?.userNotifications?.data.map((item) => (
             <ActionCard
               heading={item.message.title}
-              text={item.message.body}
+              text={item.message.displayBody}
               backgroundColor={item.metadata.read ? undefined : 'blueberry'}
               cta={{
                 label: formatMessage(m.seeDetails),
                 variant: 'text',
-                url: item.message.link.url ?? undefined,
+                url: resolveLink(item.message.link),
                 hide: !item.message.link.url,
                 callback: () =>
                   postMarkAsRead({

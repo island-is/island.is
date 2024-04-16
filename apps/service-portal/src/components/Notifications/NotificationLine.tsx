@@ -5,11 +5,20 @@ import { LinkResolver } from '@island.is/service-portal/core'
 import format from 'date-fns/format'
 import cn from 'classnames'
 import * as styles from './Notifications.css'
-import { Notification } from '@island.is/api/schema'
+import {
+  NotificationMessage,
+  NotificationMetadata,
+  NotificationSender,
+} from '@island.is/api/schema'
 import { AvatarImage } from '@island.is/service-portal/documents'
+import { resolveLink } from '@island.is/service-portal/information'
 
 interface Props {
-  data: Omit<Notification, 'recipient'>
+  data: {
+    metadata: NotificationMetadata
+    message: Omit<NotificationMessage, 'body'>
+    sender: NotificationSender
+  }
   onClickCallback: () => void
 }
 
@@ -24,7 +33,7 @@ export const NotificationLine = ({ data, onClickCallback }: Props) => {
     <Box className={styles.lineWrapper}>
       <LinkResolver
         className={styles.link}
-        href={data.message?.link?.url ?? ''}
+        href={resolveLink(data.message?.link)}
         callback={onClickCallback}
       >
         <Box
@@ -72,7 +81,7 @@ export const NotificationLine = ({ data, onClickCallback }: Props) => {
               flexDirection="row"
               justifyContent="spaceBetween"
             >
-              <Text variant="small">{data.message.body}</Text>
+              <Text variant="small">{data.message.displayBody}</Text>
             </Box>
           </Box>
         </Box>

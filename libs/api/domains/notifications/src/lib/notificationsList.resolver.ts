@@ -98,7 +98,7 @@ export class NotificationSenderResolver {
     @Parent() sender: NotificationSender,
   ): Promise<LogoUrl | undefined> {
     return organizationLogoLoader.load({
-      key: sender?.id ?? '',
+      value: sender?.id ?? '',
       field: 'kennitala',
     })
   }

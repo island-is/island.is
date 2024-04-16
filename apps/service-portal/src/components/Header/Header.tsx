@@ -115,15 +115,13 @@ export const Header = ({ position }: Props) => {
                       </Hidden>
 
                       {enableNotificationFlag && (
-                        <Hidden below="md">
-                          <NotificationButton
-                            setMenuState={(val: MenuTypes) => setMenuOpen(val)}
-                            showMenu={menuOpen === 'notifications'}
-                          />
-                        </Hidden>
+                        <NotificationButton
+                          setMenuState={(val: MenuTypes) => setMenuOpen(val)}
+                          showMenu={menuOpen === 'notifications'}
+                        />
                       )}
 
-                      <Box marginRight={[1, 1, 2]}>
+                      <Box className={styles.overview} marginRight={[1, 1, 2]}>
                         <Button
                           variant="utility"
                           colorScheme="white"
@@ -137,7 +135,9 @@ export const Header = ({ position }: Props) => {
                           }}
                           ref={ref}
                         >
-                          {formatMessage(m.overview)}
+                          <Hidden below="sm">
+                            {formatMessage(m.overview)}
+                          </Hidden>
                         </Button>
                       </Box>
 

@@ -22,6 +22,8 @@ export const notificationMapper = (
   message: {
     title: notification.title,
     body: notification.body,
+    dataCopy: notification.dataCopy,
+    displayBody: notification.dataCopy ?? notification.body,
     link: {
       url: notification.clickActionUrl,
     },
