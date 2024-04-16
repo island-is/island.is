@@ -52,7 +52,7 @@ export const FilledBlue = () => (
 )
 
 export const WithSignature = () => (
-  <Box background="white" padding={3}>
+  <Box background="white" padding={3} >
     <RadioButton
       label="Ég staðfesti að nota núverandi mynd í ökuskirteini"
       backgroundColor="blue"

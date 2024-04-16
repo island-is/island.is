@@ -38,7 +38,6 @@ export interface RadioButtonProps {
   illustration?: React.FC<React.PropsWithChildren<unknown>>
   signature?: string
   imageSrc?: string
-  vertical?: boolean
   license?: boolean
 }
 
@@ -70,10 +69,8 @@ export const RadioButton = ({
   backgroundColor,
   imageSrc,
   signature,
-  vertical,
   license,
 }: RadioButtonProps & TestSupport) => {
-  console.log(imageSrc, signature)
   const errorId = `${id}-error`
   const ariaError = hasError
     ? {
@@ -87,7 +84,7 @@ export const RadioButton = ({
       className={cn(styles.container, {
         [styles.large]: large,
         [styles.largeError]: large && hasError,
-        [styles.verticalContainer]: vertical,
+        [styles.licenseContainer]: license,
       })}
       background={
         large && backgroundColor ? backgroundColors[backgroundColor] : undefined
@@ -109,7 +106,7 @@ export const RadioButton = ({
         className={cn(styles.label, {
           [styles.radioButtonLabelDisabled]: disabled,
           [styles.largeLabel]: large,
-          [styles.verticalLabel]: vertical,
+          [styles.licenseLabel]: license,
         })}
         htmlFor={id}
       >

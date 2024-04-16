@@ -13,10 +13,6 @@ export const container = style({
   position: 'relative',
 })
 
-export const verticalContainer = style({
-  width: 'fit-content',
-})
-
 export const large = style({
   borderRadius: theme.border.radius.large,
   border: `1px solid ${theme.color.blue200}`,
@@ -125,7 +121,11 @@ export const toolTipLargeContainerWithIllustration = style({
   paddingLeft: theme.spacing[2],
 })
 
-export const verticalLabel = style({
+export const licenseContainer = style({
+  width: 'fit-content',
+})
+
+export const licenseLabel = style({
   flexDirection: 'column',
   alignItems: 'flex-start',
 })
