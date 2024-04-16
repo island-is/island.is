@@ -33,6 +33,7 @@ RUN --mount=type=cache,target=./.yarn/cache --mount=type=cache,target=.cache --m
   CI=true yarn install --immutable
 
 
+
 FROM deps as src
 
 RUN wget -qO /tmp/jq-linux64 https://github.com/stedolan/jq/releases/download/jq-1.6/jq-linux64 && \
@@ -47,7 +48,10 @@ COPY infra/ infra/
 COPY libs/ libs/
 COPY apps/ apps/
 
+
+
 FROM src as builder
+
 ARG APP
 ENV APP=${APP}
 ARG APP_DIST_HOME=dist/apps/${APP}
@@ -59,7 +63,10 @@ RUN id && \
   ls -lah ./ .yarn ./apps/${APP}
 RUN yarn run build ${APP} --prod
 
+
+
 FROM $DOCKER_IMAGE_REGISTRY/docker/library/node:18-alpine3.15 as output-base
+
 # this is base image for containers that are to be deployed
 ARG GIT_BRANCH
 ENV GIT_BRANCH=${GIT_BRANCH}
@@ -79,6 +86,8 @@ WORKDIR /webapp
 RUN addgroup runners && \
   adduser -D runner -G runners
 
+
+
 FROM output-base as output-base-with-pg
 
 RUN npm install -g \
@@ -87,6 +96,8 @@ RUN npm install -g \
   pg
 
 USER runner
+
+
 
 FROM output-base-with-pg as output-express
 ARG GIT_SHA
@@ -97,6 +108,8 @@ COPY --from=builder /build/${APP_DIST_HOME} /webapp/
 
 ENTRYPOINT []
 CMD [ "node", "--no-experimental-fetch", "main.js" ]
+
+
 
 FROM output-base-with-pg as output-next
 ARG GIT_SHA
@@ -109,6 +122,8 @@ COPY --from=deps /build/node_modules /webapp/node_modules
 COPY --from=builder /build/${APP_DIST_HOME} /webapp/
 
 ENTRYPOINT [ "node", "--no-experimental-fetch", "main.js" ]
+
+
 
 FROM $DOCKER_IMAGE_REGISTRY/nginx/nginx:1.21-alpine as output-static
 ARG APP
@@ -134,6 +149,8 @@ COPY scripts/dockerfile-assets/bash/extract-environment.sh /docker-entrypoint.d
 COPY scripts/dockerfile-assets/bash/extract-environment.js /docker-entrypoint.d
 COPY --from=builder /build/${APP_DIST_HOME} /usr/share/nginx/html
 
+
+
 FROM output-base as output-jest
 
 RUN echo 'module.exports = {};' > jest.config.js && \
@@ -148,13 +165,8 @@ CMD [ "jest", "main.spec.js" ]
 
 
 FROM mcr.microsoft.com/playwright:v${PLAYWRIGHT_VERSION}-focal as playwright-base
-
-
-
-
-
-
 FROM playwright-base as output-playwright
+
 # TODO: remove awscli dependency (157 MB extra)
 RUN --mount=type=cache,target=/apt/foo/bar \
   apt-get update -y && \
@@ -191,6 +203,7 @@ RUN chown -R pwuser:pwuser .
 ENTRYPOINT ["./entrypoint.sh"]
 
 
+
 FROM playwright-base as output-local
 ARG APP_HOME
 WORKDIR /app
@@ -206,5 +219,8 @@ USER pwuser
 
 ENTRYPOINT ["./entrypoint.sh"]
 
+
+
 FROM output-base as output-native
+
 RUN echo "not-implemented"
