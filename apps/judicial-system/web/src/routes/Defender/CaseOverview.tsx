@@ -144,7 +144,7 @@ export const CaseOverview: React.FC<React.PropsWithChildren<unknown>> = () => {
               <Box component="section" marginBottom={5}>
                 <InfoCardCaseScheduled
                   court={workingCase.court}
-                  courtDate={courtDate?.date}
+                  courtDate={courtDate.date}
                   courtRoom={workingCase.courtRoom}
                 />
               </Box>
