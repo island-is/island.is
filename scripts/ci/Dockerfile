@@ -152,12 +152,7 @@ WORKDIR ${APP_DIST_HOME}
 
 COPY --from=builder /build/${APP_DIST_HOME} .
 
-COPY .yarnrc.yml ./
-COPY .yarn/ .yarn/
-# Copy all files in the root
-COPY *.* .*.* ./
-
-RUN yarn install --immutable
+RUN yarn install
 
 ENV PLAYWRIGHT_BROWSER=chromium
 RUN yarn playwright install ${PLAYWRIGHT_BROWSER}
