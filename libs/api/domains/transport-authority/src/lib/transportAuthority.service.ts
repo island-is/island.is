@@ -95,7 +95,11 @@ export class TransportAuthorityApi {
         'Did not find the vehicle with for that permno, or you are neither owner nor co-owner of the vehicle',
       )
     }
-
+    console.log(
+      'vehicle.requiresMileageRegistration',
+      vehicle.requiresMileageRegistration,
+    )
+    console.log('mileage', vehicle?.mileageReadings?.[0]?.mileage)
     // Get debt status
     const debtStatus =
       await this.vehicleServiceFjsV1Client.getVehicleDebtStatus(auth, permno)
@@ -106,7 +110,6 @@ export class TransportAuthorityApi {
         auth,
         permno,
       )
-
     return {
       isDebtLess: debtStatus.isDebtLess,
       validationErrorMessages: ownerChangeValidation?.hasError
@@ -116,7 +119,8 @@ export class TransportAuthorityApi {
         permno: vehicle.permno,
         make: `${vehicle.make} ${vehicle.vehcom}`,
         color: vehicle.color,
-        requireMileage: vehicle.requiresMileageRegistration,
+        requireMileage: true, //vehicle.requiresMileageRegistration,
+        mileageReading: vehicle?.mileageReadings?.[0]?.mileage,
       },
     }
   }
@@ -282,7 +286,10 @@ export class TransportAuthorityApi {
         auth,
         permno,
       )
-
+    console.log(
+      'vehicle?.mileageReadings?.[0]?.mileage',
+      vehicle?.mileageReadings?.[0]?.mileage,
+    )
     return {
       isDebtLess: debtStatus.isDebtLess,
       validationErrorMessages: operatorChangeValidation?.hasError
@@ -293,6 +300,7 @@ export class TransportAuthorityApi {
         make: `${vehicle.make} ${vehicle.vehcom}`,
         permno: vehicle.permno,
         requireMileage: vehicle.requiresMileageRegistration,
+        mileageReading: vehicle?.mileageReadings?.[0]?.mileage,
       },
     }
   }
@@ -372,7 +380,8 @@ export class TransportAuthorityApi {
         color: vehicleInfo.color,
         make: `${vehicleInfo.make} ${vehicleInfo.vehcom}`,
         permno: vehicleInfo.permno,
-        requireMileage: vehicleInfo.requiresMileageRegistration,
+        requireMileage: true, //vehicleInfo.requiresMileageRegistration,
+        mileageReading: vehicleInfo?.mileageReadings?.[0]?.mileage,
       },
     }
   }
