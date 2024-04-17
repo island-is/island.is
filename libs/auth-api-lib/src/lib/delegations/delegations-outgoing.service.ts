@@ -14,7 +14,6 @@ import { NoContentException } from '@island.is/nest/problem'
 import { NotificationsApi } from '../user-notification'
 
 import { ApiScope } from '../resources/models/api-scope.model'
-import { ScopeService } from '../resources/scope.service'
 import { DelegationScopeService } from './delegation-scope.service'
 import {
   CreateDelegationDTO,
@@ -56,7 +55,6 @@ export class DelegationsOutgoingService {
     private namesService: NamesService,
     private notificationsApi: NotificationsApi,
     private featureFlagService: FeatureFlagService,
-    private scopeService: ScopeService,
     @Inject(LOGGER_PROVIDER)
     private logger: Logger,
   ) {}
