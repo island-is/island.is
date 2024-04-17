@@ -15,7 +15,6 @@ import environment from '../environments/environment'
 import { SequelizeConfigService } from './sequelizeConfig.service'
 import { UserProfileModule } from './user-profile/userProfile.module'
 import { UserProfileModule as UserProfileV2Module } from './v2/user-profile.module'
-import { UserProfileConfig } from '../config'
 
 import { AuthDelegationApiClientConfig } from '@island.is/clients/auth/delegation-api'
 import { NationalRegistryV3ClientConfig } from '@island.is/clients/national-registry-v3'
@@ -37,10 +36,6 @@ import { UserProfileConfig } from '../config'
     }),
     AuditModule.forRoot(environment.audit),
     AuthModule.register(environment.auth),
-    ConfigModule.forRoot({
-      isGlobal: true,
-      load: [UserProfileConfig],
-    }),
     SequelizeModule.forRootAsync({
       useClass: SequelizeConfigService,
     }),
