@@ -101,8 +101,8 @@ import {
   HealthDirectorateClientModule,
 } from '@island.is/clients/health-directorate'
 import {
-  DmrClientConfig,
-  DmrClientModule,
+  OfficialJournalClientConfig,
+  OfficialJournalClientModule,
 } from '@island.is/clients/official-journal-public'
 import { HmsLoansClientConfig } from '@island.is/clients/hms-loans'
 import { HousingBenefitCalculatorClientConfig } from '@island.is/clients/housing-benefit-calculator'
@@ -258,7 +258,7 @@ const environment = getConfig
     OccupationalLicensesModule,
     SocialInsuranceModule,
     HealthDirectorateClientModule,
-    DmrClientModule,
+    OfficialJournalClientModule,
     DisabilityLicenseModule,
     ElectronicRegistrationsModule,
     FiskistofaModule,
@@ -372,7 +372,7 @@ const environment = getConfig
         JudicialAdministrationClientConfig,
         CommunicationsConfig,
         HealthDirectorateClientConfig,
-        DmrClientConfig,
+        OfficialJournalClientConfig,
         UniversityOfIcelandClientConfig,
         InnaClientConfig,
         SessionsApiClientConfig,

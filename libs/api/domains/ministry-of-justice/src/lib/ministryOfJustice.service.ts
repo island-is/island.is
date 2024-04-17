@@ -1,14 +1,9 @@
-import type { User } from '@island.is/auth-nest-tools'
-import {
-  DmrClientService,
-  JournalControllerAdvertsRequest,
-} from '@island.is/clients/official-journal-public'
+import { OfficialJournalClientService } from '@island.is/clients/official-journal-public'
 import { mapAdvertStatus } from './mapper'
 import { Injectable } from '@nestjs/common'
 import {
   AdvertQueryParams,
   QueryParams,
-  SubmitApplicationInput,
   TypeQueryParams,
 } from './models/advert.input'
 import {
@@ -23,32 +18,32 @@ import {
 
 @Injectable()
 export class MinistryOfJusticeService {
-  constructor(private readonly dmrService: DmrClientService) {}
+  constructor(private readonly ojService: OfficialJournalClientService) {}
 
   async departments(params: QueryParams): Promise<AdvertDepartmentResponse> {
-    return await this.dmrService.departments(params)
+    return await this.ojService.departments(params)
   }
 
   async mainCategories(
     params: QueryParams,
   ): Promise<AdvertMainCategoriesResponse> {
-    return await this.dmrService.mainCategories(params)
+    return await this.ojService.mainCategories(params)
   }
 
   async categories(params: QueryParams): Promise<AdvertCategoryResponse> {
-    return await this.dmrService.categories(params)
+    return await this.ojService.categories(params)
   }
 
   async types(params: TypeQueryParams): Promise<AdvertTypeResponse> {
-    return await this.dmrService.types(params)
+    return await this.ojService.types(params)
   }
 
   async institutions(params: QueryParams): Promise<AdvertInstitutionsResponse> {
-    return await this.dmrService.institutions(params)
+    return await this.ojService.institutions(params)
   }
 
   async advert(params: AdvertQueryParams): Promise<AdvertResponse> {
-    const data = await this.dmrService.advert(params)
+    const data = await this.ojService.advert(params)
     return {
       advert: {
         ...data,
@@ -60,7 +55,7 @@ export class MinistryOfJusticeService {
   async adverts(
     input: JournalControllerAdvertsRequest,
   ): Promise<AdvertsResponse> {
-    const adverts = await this.dmrService.adverts(input)
+    const adverts = await this.ojService.adverts(input)
 
     const mappedAdverts = adverts.adverts.map((advert) => {
       return {
@@ -75,11 +70,5 @@ export class MinistryOfJusticeService {
     }
 
     return response
-  }
-
-  async submitApplication(auth: User, input: SubmitApplicationInput) {
-    return await this.dmrService.submitApplication(auth, {
-      postApplicationBody: input,
-    })
   }
 }
