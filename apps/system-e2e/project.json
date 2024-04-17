@@ -18,36 +18,10 @@
       },
       "outputs": ["{workspaceRoot}/dist/apps/system-e2e"]
     },
-    "build-new": {
-      "executor": "@nx/esbuild:esbuild",
-      "options": {
-        "main": "{projectRoot}/playwright.config.ts",
-        "tsConfig": "{projectRoot}/tsconfig.json",
-        "external": ["@nx/*", "fs"],
-        "generatePackageJson": true,
-        "sourceMap:": true,
-        "deleteOutputPath": true,
-        "format": ["cjs"],
-        "thirdParty": true,
-        "outputPath": "dist/{projectRoot}"
-      }
-    },
     "lint": {
       "executor": "@nx/linter:eslint",
       "options": {
         "lintFilePatterns": ["{projectRoot}/**/*.{ts,tsx,js,jsx}"]
-      }
-    },
-    "smoke:old": {
-      "executor": "nx:run-commands",
-      "options": {
-        "command": "yarn playwright test apps/system-e2e/src/tests/*/smoke -c apps/system-e2e/src"
-      }
-    },
-    "acceptance:old": {
-      "executor": "nx:run-commands",
-      "options": {
-        "command": "playwright test apps/system-e2e/src/tests -c apps/system-e2e/src"
       }
     },
     "smoke": {
