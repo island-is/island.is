@@ -39,7 +39,7 @@ const generateApiConfiguration = (
             }
           : undefined,
     }),
-    basePath: `${config.basePath}/v1`,
+    basePath: `${config.basePath}`,
   })
 }
 
