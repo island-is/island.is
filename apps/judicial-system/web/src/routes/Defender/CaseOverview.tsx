@@ -72,7 +72,6 @@ export const CaseOverview: React.FC<React.PropsWithChildren<unknown>> = () => {
 
   const courtDate = getLatestDateTypeByCaseId(
     DateType.COURT_DATE,
-    workingCase.id,
     workingCase.dateLogs,
   )
 

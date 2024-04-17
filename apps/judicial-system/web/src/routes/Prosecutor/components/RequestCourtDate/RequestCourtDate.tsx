@@ -18,7 +18,6 @@ const RequestCourtDate: React.FC<React.PropsWithChildren<Props>> = (props) => {
   const { formatMessage } = useIntl()
   const courtDate = getLatestDateTypeByCaseId(
     DateType.COURT_DATE,
-    workingCase.id,
     workingCase.dateLogs,
   )
 

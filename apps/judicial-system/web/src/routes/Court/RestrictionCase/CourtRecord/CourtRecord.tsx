@@ -87,7 +87,6 @@ export const CourtRecord: React.FC<React.PropsWithChildren<unknown>> = () => {
     const endOfSessionBookings = []
     const courtDate = getLatestDateTypeByCaseId(
       DateType.COURT_DATE,
-      workingCase.id,
       workingCase.dateLogs,
     )
 

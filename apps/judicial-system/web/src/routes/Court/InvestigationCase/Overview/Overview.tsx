@@ -63,7 +63,6 @@ const Overview = () => {
 
   const courtDate = getLatestDateTypeByCaseId(
     DateType.COURT_DATE,
-    workingCase.id,
     workingCase.dateLogs,
   )
 

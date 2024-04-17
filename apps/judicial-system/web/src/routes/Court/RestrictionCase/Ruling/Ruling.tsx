@@ -144,7 +144,6 @@ export const Ruling: React.FC<React.PropsWithChildren<unknown>> = () => {
   const initialize = useCallback(() => {
     const courtDate = getLatestDateTypeByCaseId(
       DateType.COURT_DATE,
-      workingCase.id,
       workingCase.dateLogs,
     )
 

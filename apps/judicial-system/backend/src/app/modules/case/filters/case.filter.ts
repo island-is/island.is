@@ -227,7 +227,6 @@ const canDefenceUserAccessCase = (theCase: Case, user: User): boolean => {
 
   const courtDate = getLatestDateTypeByCaseId(
     DateType.COURT_DATE,
-    theCase.id,
     theCase.dateLogs?.map((dateLog) => ({
       caseId: dateLog.caseId,
       dateType: dateLog.dateType as DateType,

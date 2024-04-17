@@ -34,7 +34,6 @@ export const useCourtArrangements = (workingCase: Case) => {
   const [courtDateHasChanged, setCourtDateHasChanged] = useState(false)
   const latestCourtDate = getLatestDateTypeByCaseId(
     DateType.COURT_DATE,
-    workingCase.id,
     workingCase.dateLogs,
   )
 

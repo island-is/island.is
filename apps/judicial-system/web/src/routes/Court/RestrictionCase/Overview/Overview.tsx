@@ -61,7 +61,6 @@ export const JudgeOverview: React.FC<React.PropsWithChildren<unknown>> = () => {
   const id = router.query.id
   const courtDate = getLatestDateTypeByCaseId(
     DateType.COURT_DATE,
-    workingCase.id,
     workingCase.dateLogs,
   )
 
