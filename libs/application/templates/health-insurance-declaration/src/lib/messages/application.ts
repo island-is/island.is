@@ -8,6 +8,13 @@ export const application = {
       description: 'Health insurance declaration name',
     },
   }),
+  applicant: defineMessages({
+    sectionTitle: {
+      id: 'hid.application:applicant.section.title',
+      defaultMessage: 'Upplýsingar um þig',
+      description: 'Applicant section title',
+    },
+  }),
   studentOrTraveller: defineMessages({
     sectionTitle: {
       id: 'hid.application:studentOrTraveller.section.title',
@@ -75,29 +82,87 @@ export const application = {
   }),
   date: defineMessages({
     sectionTitle: {
-      id: 'hid.application:dat.section.title',
+      id: 'hid.application:date.section.title',
       defaultMessage: 'Veldu dagsetningu',
       description: 'Date section title',
     },
     sectionDescription: {
-      id: 'hid.application:dat.section.description',
+      id: 'hid.application:date.section.description',
       defaultMessage: 'Veldu dagsetningu dvalar',
       description: 'Date section description',
     },
     dateFromTitle: {
-      id: 'hid.application:dat.section.dateFrom.title',
+      id: 'hid.application:date.section.dateFrom.title',
       defaultMessage: 'Dagsetning frá',
       description: 'Date field from title',
     },
     dateToTitle: {
-      id: 'hid.application:dat.section.dateFrom.title',
+      id: 'hid.application:date.section.dateFrom.title',
       defaultMessage: 'Dagsetning til',
       description: 'Date field to title',
     },
     datePlaceholderText: {
-      id: 'hid.application:dat.section.datefield.placeholder',
+      id: 'hid.application:date.section.datefield.placeholder',
       defaultMessage: 'Veldu dagsetningu',
       description: 'Date field placeholder text',
+    },
+  }),
+  overview: defineMessages({
+    sectionTitle: {
+      id: 'hid.application:overview.section.title',
+      defaultMessage: 'Senda inn umsókn',
+      description: 'Overview section title',
+    },
+    sectionDescription: {
+      id: 'hid.application:overview.section.description',
+      defaultMessage:
+        'Vinsamlegast farðu yfir umsóknina áður en þú sendir hana inn.',
+      description: 'Overview section description',
+    },
+    studentOrTravellerTitle: {
+      id: 'hid.application:overview.section.studentOrTravellerTitle',
+      defaultMessage: 'Ertu ferðamaður eða námsmaður',
+      description: 'Overview section Student or Traveller title',
+    },
+    studentOrTravellerTravellerText: {
+      id: 'hid.application:overview.section.studentOrTravellerTravellerText',
+      defaultMessage: 'Ferðamaður',
+      description: 'Overview section Student or Traveller: Traveller text',
+    },
+    studentOrTravellerStudentText: {
+      id: 'hid.application:overview.section.studentOrTravellerStudentText',
+      defaultMessage: 'Námsmaður',
+      description: 'Overview section Student or Traveller: Student text',
+    },
+    applicantInfoTitle: {
+      id: 'hid.application:overview.section.applicantTitle',
+      defaultMessage: 'Persónu upplýsingar',
+      description: 'Overview section applicant title',
+    },
+    familyTableTitle: {
+      id: 'hid.application:overview.section.familyTableHeader',
+      defaultMessage: 'Maki og börn',
+      description: 'Overview section family table title',
+    },
+    familyTableRelationHeader: {
+      id: 'hid.application:overview.section.familyTableHeaderRelationText',
+      defaultMessage: 'Tengsl',
+      description: 'Overview section family table title',
+    },
+    familyTableRelationSpuoseText: {
+      id: 'hid.application:overview.section.familyTableSpouseRelationText',
+      defaultMessage: 'Maki',
+      description: 'Overview section family table spouse relation text',
+    },
+    familyTableRelationChildText: {
+      id: 'hid.application:overview.section.familyTableChildRelationText',
+      defaultMessage: 'Barn',
+      description: 'Overview section family table child relation text',
+    },
+    dateTitle: {
+      id: 'hid.application:overview.section.DateTitle',
+      defaultMessage: 'Dvalartímabil',
+      description: 'Overview section date period',
     },
   }),
 }

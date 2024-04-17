@@ -2,15 +2,35 @@ import {
   buildAlertMessageField,
   buildCheckboxField,
   buildDateField,
+  buildDescriptionField,
+  buildDividerField,
   buildForm,
+  buildHiddenInput,
+  buildKeyValueField,
   buildMultiField,
+  buildPhoneField,
   buildRadioField,
   buildSection,
+  buildStaticTableField,
+  buildTextField,
 } from '@island.is/application/core'
 import { Form, FormModes } from '@island.is/application/types'
 import * as m from '../lib/messages'
 import Logo from '../assets/Logo'
-import { getChildrenAsOptions } from '../utils'
+import {
+  getChildrenAsOptions,
+  getInsuranceStatus,
+  getSelectedFamiliy,
+} from '../utils'
+import { HealthInsuranceDeclaration } from '../lib/dataSchema'
+import { applicantInformationMessages } from '@island.is/application/ui-forms'
+import { HealthInsuranceDeclarationApplication } from '../types'
+import {
+  formatPhoneNumber,
+  removeCountryCode,
+} from '@island.is/application/ui-components'
+import format from 'date-fns/format'
+import { ApplicantType } from '../shared/constants'
 
 export const HealthInsuranceDeclarationForm: Form = buildForm({
   id: 'HealthInsuranceDeclarationDraft',
@@ -18,6 +38,112 @@ export const HealthInsuranceDeclarationForm: Form = buildForm({
   logo: Logo,
   mode: FormModes.DRAFT,
   children: [
+    buildSection({
+      id: 'applicantInfoSection',
+      title: m.application.applicant.sectionTitle,
+      children: [
+        buildMultiField({
+          id: 'applicant',
+          title: applicantInformationMessages.general.title,
+          children: [
+            buildTextField({
+              id: 'applicant.name',
+              title: applicantInformationMessages.labels.name,
+              backgroundColor: 'white',
+              disabled: true,
+              defaultValue: (
+                application: HealthInsuranceDeclarationApplication,
+              ) =>
+                application.externalData?.nationalRegistry?.data?.fullName ??
+                '',
+            }),
+            buildTextField({
+              id: 'applicant.nationalId',
+              title: applicantInformationMessages.labels.nationalId,
+              format: '######-####',
+              width: 'half',
+              backgroundColor: 'white',
+              disabled: true,
+              defaultValue: (
+                application: HealthInsuranceDeclarationApplication,
+              ) =>
+                application.externalData?.nationalRegistry?.data?.nationalId ??
+                '',
+            }),
+            buildTextField({
+              id: 'applicant.address',
+              title: applicantInformationMessages.labels.address,
+              width: 'half',
+              backgroundColor: 'white',
+              disabled: true,
+              defaultValue: (
+                application: HealthInsuranceDeclarationApplication,
+              ) =>
+                application.externalData?.nationalRegistry?.data?.address
+                  ?.streetAddress ?? '',
+            }),
+            buildTextField({
+              id: 'applicant.postalCode',
+              title: applicantInformationMessages.labels.postalCode,
+              width: 'half',
+              format: '###',
+              backgroundColor: 'white',
+              disabled: true,
+              defaultValue: (
+                application: HealthInsuranceDeclarationApplication,
+              ) => {
+                return (
+                  application.externalData?.nationalRegistry?.data?.address
+                    ?.postalCode ?? ''
+                )
+              },
+            }),
+            buildTextField({
+              id: 'applicant.city',
+              title: applicantInformationMessages.labels.city,
+              width: 'half',
+              backgroundColor: 'white',
+              disabled: true,
+              defaultValue: (
+                application: HealthInsuranceDeclarationApplication,
+              ) =>
+                application.externalData?.nationalRegistry?.data?.address
+                  ?.city ?? '',
+            }),
+            buildTextField({
+              id: 'applicant.email',
+              title: applicantInformationMessages.labels.email,
+              width: 'half',
+              variant: 'email',
+              backgroundColor: 'blue',
+              required: true,
+              defaultValue: (
+                application: HealthInsuranceDeclarationApplication,
+              ) => application.externalData?.userProfile?.data?.email ?? '',
+              maxLength: 100,
+            }),
+            buildPhoneField({
+              id: 'applicant.phoneNumber',
+              title: applicantInformationMessages.labels.tel,
+              width: 'half',
+              backgroundColor: 'blue',
+              defaultValue: (
+                application: HealthInsuranceDeclarationApplication,
+              ) =>
+                application.externalData?.userProfile?.data
+                  ?.mobilePhoneNumber ?? '',
+              required: true,
+            }),
+            buildHiddenInput({
+              id: 'applicant.isHealthInsured',
+              defaultValue: (
+                application: HealthInsuranceDeclarationApplication,
+              ) => getInsuranceStatus(application.externalData),
+            }),
+          ],
+        }),
+      ],
+    }),
     buildSection({
       id: 'studentOrTravellerSection',
       title: m.application.studentOrTraveller.sectionTitle,
@@ -34,11 +160,11 @@ export const HealthInsuranceDeclarationForm: Form = buildForm({
                 {
                   label:
                     m.application.studentOrTraveller.travellerRadioFieldText,
-                  value: 'traveller',
+                  value: ApplicantType.TRAVELLER,
                 },
                 {
                   label: m.application.studentOrTraveller.studentRadioFieldText,
-                  value: 'student',
+                  value: ApplicantType.STUDENT,
                 },
               ],
             }),
@@ -118,17 +244,134 @@ export const HealthInsuranceDeclarationForm: Form = buildForm({
           title: m.application.date.sectionDescription,
           children: [
             buildDateField({
-              id: 'datefieldFrom',
+              id: 'dateFieldFrom',
               title: m.application.date.dateFromTitle,
               placeholder: m.application.date.datePlaceholderText,
               width: 'half',
             }),
             buildDateField({
-              id: 'datefieldTo',
+              id: 'dateFieldTo',
               title: m.application.date.dateToTitle,
               placeholder: m.application.date.datePlaceholderText,
               width: 'half',
             }),
+          ],
+        }),
+      ],
+    }),
+    // Overview Screen
+    buildSection({
+      id: 'overview',
+      title: m.application.overview.sectionTitle,
+      children: [
+        buildMultiField({
+          id: 'overviewMultiField',
+          title: m.application.overview.sectionTitle,
+          description: m.application.overview.sectionDescription,
+          space: 3,
+          children: [
+            buildDividerField({}),
+            buildDescriptionField({
+              id: 'overviewStudentOrTravellerTtile',
+              title: m.application.overview.studentOrTravellerTitle,
+              titleVariant: 'h4',
+            }),
+            buildKeyValueField({
+              label: '',
+              value: ({ answers }) =>
+                (answers as HealthInsuranceDeclaration)
+                  .studentOrTravellerRadioFieldTraveller ===
+                ApplicantType.TRAVELLER
+                  ? m.application.overview.studentOrTravellerTravellerText
+                  : m.application.overview.studentOrTravellerStudentText,
+            }),
+            buildDividerField({}),
+            // Applicant Info
+            buildDescriptionField({
+              id: 'overviewApplicantInfoTitile',
+              title: m.application.overview.applicantInfoTitle,
+              titleVariant: 'h4',
+            }),
+            buildKeyValueField({
+              label: applicantInformationMessages.labels.name,
+              colSpan: '6/12',
+              value: ({ answers }) =>
+                (answers as HealthInsuranceDeclaration).applicant.name,
+            }),
+            buildKeyValueField({
+              label: applicantInformationMessages.labels.nationalId,
+              colSpan: '6/12',
+              value: ({ answers }) =>
+                (answers as HealthInsuranceDeclaration).applicant.nationalId,
+            }),
+            buildKeyValueField({
+              label: applicantInformationMessages.labels.address,
+              colSpan: '6/12',
+              value: ({ answers }) =>
+                (answers as HealthInsuranceDeclaration).applicant.address,
+            }),
+            buildKeyValueField({
+              label: applicantInformationMessages.labels.postalCode,
+              colSpan: '6/12',
+              value: ({ answers }) =>
+                (answers as HealthInsuranceDeclaration).applicant.postalCode,
+            }),
+            buildKeyValueField({
+              label: applicantInformationMessages.labels.email,
+              colSpan: '6/12',
+              value: ({ answers }) =>
+                (answers as HealthInsuranceDeclaration).applicant.email,
+            }),
+            buildKeyValueField({
+              label: applicantInformationMessages.labels.tel,
+              colSpan: '6/12',
+              condition: (answers) =>
+                !!(answers as HealthInsuranceDeclaration)?.applicant
+                  ?.phoneNumber,
+              value: ({ answers }) =>
+                formatPhoneNumber(
+                  removeCountryCode(
+                    (answers as HealthInsuranceDeclaration).applicant
+                      .phoneNumber,
+                  ),
+                ),
+            }),
+            buildDividerField({}),
+            // Family table
+            buildStaticTableField({
+              title: m.application.overview.familyTableTitle,
+              rows: ({ answers, externalData }) =>
+                getSelectedFamiliy(
+                  answers as HealthInsuranceDeclaration,
+                  externalData,
+                ),
+              header: [
+                applicantInformationMessages.labels.name,
+                applicantInformationMessages.labels.nationalId,
+                'Tengsl',
+              ],
+            }),
+            buildDividerField({}),
+            // Date period
+            buildDescriptionField({
+              id: 'overviewDatePeriodTitle',
+              title: m.application.overview.dateTitle,
+              titleVariant: 'h4',
+            }),
+            buildKeyValueField({
+              label: '',
+              value: ({ answers }) =>
+                `${format(
+                  new Date(
+                    (answers as HealthInsuranceDeclaration).dateFieldFrom,
+                  ),
+                  'dd.MM.yyyy',
+                )} - ${format(
+                  new Date((answers as HealthInsuranceDeclaration).dateFieldTo),
+                  'dd.MM.yyyy',
+                )} `,
+            }),
+            buildDividerField({}),
           ],
         }),
       ],
