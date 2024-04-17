@@ -1,11 +1,10 @@
 #!/bin/bash
-set -euo pipefail
-if [[ -n "${DEBUG:-}" || -n "${CI:-}" ]]; then set -x; fi
+set -euxo pipefail
 
-DIR="$(cd "$(dirname "${BASH_SOURCE[0]}")" >/dev/null 2>&1 && pwd)"
+DIR="$( cd "$( dirname "${BASH_SOURCE[0]}" )" >/dev/null 2>&1 && pwd )"
 
 # shellcheck disable=SC1091
-. "$DIR"/_common.sh
+source "$DIR"/_common.sh
 
 # Building Docker images for Cypress-based apps, pass extra args to use in docker cmds if needed
 exec "$DIR"/_docker.sh Dockerfile output-playwright
