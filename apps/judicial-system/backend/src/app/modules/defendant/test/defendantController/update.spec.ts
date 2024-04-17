@@ -1,7 +1,7 @@
 import { uuid } from 'uuidv4'
 
 import { MessageService, MessageType } from '@island.is/judicial-system/message'
-import { User } from '@island.is/judicial-system/types'
+import { NotificationType, User } from '@island.is/judicial-system/types'
 
 import { createTestingDefendantModule } from '../createTestingDefendantModule'
 
@@ -118,10 +118,10 @@ describe('DefendantController - Update', () => {
     it('should queue messages', () => {
       expect(mockMessageService.sendMessagesToQueue).toHaveBeenCalledWith([
         {
-          type: MessageType.DELIVER_DEFENDANT_TO_COURT,
+          type: MessageType.DELIVERY_TO_COURT_DEFENDANT,
           user,
           caseId,
-          defendantId,
+          elementId: defendantId,
         },
       ])
     })
@@ -141,15 +141,16 @@ describe('DefendantController - Update', () => {
     it('should queue messages', () => {
       expect(mockMessageService.sendMessagesToQueue).toHaveBeenCalledWith([
         {
-          type: MessageType.SEND_DEFENDANTS_NOT_UPDATED_AT_COURT_NOTIFICATION,
+          type: MessageType.NOTIFICATION,
           user,
           caseId,
+          body: { type: NotificationType.DEFENDANTS_NOT_UPDATED_AT_COURT },
         },
         {
-          type: MessageType.DELIVER_DEFENDANT_TO_COURT,
+          type: MessageType.DELIVERY_TO_COURT_DEFENDANT,
           user,
           caseId,
-          defendantId,
+          elementId: defendantId,
         },
       ])
     })
@@ -169,10 +170,10 @@ describe('DefendantController - Update', () => {
     it('should queue messages', () => {
       expect(mockMessageService.sendMessagesToQueue).toHaveBeenCalledWith([
         {
-          type: MessageType.DELIVER_DEFENDANT_TO_COURT,
+          type: MessageType.DELIVERY_TO_COURT_DEFENDANT,
           user,
           caseId,
-          defendantId,
+          elementId: defendantId,
         },
       ])
     })

@@ -746,3 +746,6 @@ export const formatDefenderRoute = (
     isIndictmentCase(caseType) ? DEFENDER_INDICTMENT_ROUTE : DEFENDER_ROUTE
   }/${id}`
 }
+
+export const formatConfirmedIndictmentKey = (key?: string) =>
+  key?.replace(/\/([^/]*)$/, '/confirmed/$1') ?? ''

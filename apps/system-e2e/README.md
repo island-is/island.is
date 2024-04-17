@@ -21,7 +21,7 @@ When testing an app/project you need to first start the app, then test it with P
 
 - Set up Playwright: `yarn install && yarn codegen && yarn playwright install`
 - Start the application: `yarn dev-init <app> && yarn dev <app>`
-- Test the app: `yarn system-e2e -g <name-of-your-app>`
+- Test the app: `yarn system-e2e <name-of-your-app>`
 
 ## 👨‍🍳 Prepare the app
 
@@ -46,15 +46,15 @@ However, not all projects support this, or are incomplete in this setup. If this
 First time you run Playwright, you'll need to set up its runtime environment with `yarn playwright install`. Then, you can list tests with the `--list` flag or run tests in various ways:
 
 - Using playwright directly: `yarn playwright test -c apps/system-e2e '<name-of-your-app>/.*/<smoke|acceptance>'`
-- Specific test file: `yarn system-e2e -g '<path/to/your/test/file>'`
-- Using a path pattern (regex): `yarn system-e2e -g '<pattern>'`
+- Specific test file: `yarn system-e2e '<path/to/your/test/file>'`
+- Using a path pattern (regex): `yarn system-e2e '<pattern>'`
 
 {% hint style="example" %}
 
-- smoke: `yarn system-e2e -g 'application-system-form/smoke'`
-- acceptance: `yarn system-e2e -g 'service-portal/acceptance'`
-- both: `yarn system-e2e -g 'system-e2e/.*/web'`
-- pattern `yarn system-e2e -g 'system-e2e/.*/s?port?'`
+- smoke: `yarn system-e2e 'application-system-form/smoke'`
+- acceptance: `yarn system-e2e 'service-portal/acceptance'`
+- both: `yarn system-e2e 'system-e2e/.*/web'`
+- pattern `yarn system-e2e 'system-e2e/.*/s?port?'`
 
 Note that the pattern is a RegEx string in quotes.
 {% endhint %}
@@ -193,7 +193,7 @@ You will need a few things to set up your test so it can run with mountebank.
 
 Now that you are set up. You need to run a couple of commands.
 
-- In your terminal run `yarn infra render-local-env --service=service-portal --service=api` .
+- In your terminal run `yarn cli render-local-env --service=service-portal --service=api` .
   - This would show you commands how to start the mocking for `service-portal` and `api`. Replace with the services you want to test.
 - In the output you will see a docker output it will look something like this: `docker run -it --rm -p ...` copy that line and run in a new terminal window. Now your Mountebank impostor should be running.
 - Now start your services, but make sure your services ports have been replaced by the ports provided by Mountebank. In this examples case that would be `XROAD_BASE_PATH=http://localhost:9388 yarn start api`
@@ -211,4 +211,4 @@ This is an infrastructure issue and should have been resolved. If you see this i
 
 ## ⌛ Tests are timing out
 
-This indicates either a local network issue like bad internet (your problem), or a performance problem in the application code. In some cases this can be remedied by increasing the timeout if a certain site/service is known to be slow with `page.goto('/my-url', { timeout: 1e11 })`.
+This indicates either a local network issue like bad internet (your problem), or a performance problem in the application code. In some cases this can be remedied by increasing the timeout if a certain site/service is known to be slow with `page.goto('/my-url', { timeout: Timeout.medium })`.

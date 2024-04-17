@@ -5,8 +5,12 @@ import addMonths from 'date-fns/addMonths'
 import { Sequelize } from 'sequelize-typescript'
 
 import { isDefined } from '@island.is/shared/utils'
-import { AttemptFailed } from '@island.is/nest/problem'
+import { AttemptFailed, NoContentException } from '@island.is/nest/problem'
 import type { User } from '@island.is/auth-nest-tools'
+import {
+  DelegationsApi,
+  DelegationsControllerGetDelegationRecordsDirectionEnum,
+} from '@island.is/clients/auth/delegation-api'
 
 import { VerificationService } from '../user-profile/verification.service'
 import { UserProfile } from '../user-profile/userProfile.model'
@@ -16,6 +20,16 @@ import { UserProfileDto } from './dto/user-profile.dto'
 import { IslykillService } from './islykill.service'
 import { DataStatus } from '../user-profile/types/dataStatusTypes'
 import { NudgeType } from '../types/nudge-type'
+import { ClientType } from '../types/ClientType'
+import { UserProfileConfig } from '../../config'
+import type { ConfigType } from '@island.is/nest/config'
+import { ActorProfile } from './models/actor-profile.model'
+import {
+  ActorProfileDto,
+  MeActorProfileDto,
+  PaginatedActorProfileDto,
+} from './dto/actor-profile.dto'
+import { DocumentsScope } from '@island.is/auth/scopes'
 
 export const NUDGE_INTERVAL = 6
 export const SKIP_INTERVAL = 1
@@ -25,15 +39,21 @@ export class UserProfileService {
   constructor(
     @InjectModel(UserProfile)
     private readonly userProfileModel: typeof UserProfile,
+    @InjectModel(ActorProfile)
+    private readonly delegationPreference: typeof ActorProfile,
     @Inject(VerificationService)
     private readonly verificationService: VerificationService,
     private readonly islykillService: IslykillService,
     private sequelize: Sequelize,
+    @Inject(UserProfileConfig.KEY)
+    private config: ConfigType<typeof UserProfileConfig>,
+    private readonly delegationsApi: DelegationsApi,
   ) {}
 
   async findById(
     nationalId: string,
     useMaster = false,
+    clientType: ClientType = ClientType.THIRD_PARTY,
   ): Promise<UserProfileDto> {
     const userProfile = await this.userProfileModel.findOne({
       where: { nationalId },
@@ -51,20 +71,11 @@ export class UserProfileService {
         documentNotifications: true,
         needsNudge: null,
         emailNotifications: true,
+        isRestricted: false,
       }
     }
 
-    return {
-      nationalId: userProfile.nationalId,
-      email: userProfile.email,
-      mobilePhoneNumber: userProfile.mobilePhoneNumber,
-      locale: userProfile.locale,
-      mobilePhoneNumberVerified: userProfile.mobilePhoneNumberVerified,
-      emailVerified: userProfile.emailVerified,
-      documentNotifications: userProfile.documentNotifications,
-      needsNudge: this.checkNeedsNudge(userProfile),
-      emailNotifications: userProfile.emailNotifications,
-    }
+    return this.filterByClientTypeAndRestrictionDate(clientType, userProfile)
   }
 
   async patch(
@@ -153,6 +164,12 @@ export class UserProfileService {
         ? formatPhoneNumber(userProfile.mobilePhoneNumber)
         : undefined
 
+      const currentUserProfile = await this.userProfileModel.findOne({
+        where: { nationalId },
+        transaction,
+        useMaster: true,
+      })
+
       const update = {
         nationalId,
         ...(isEmailDefined && {
@@ -160,6 +177,8 @@ export class UserProfileService {
           emailVerified: userProfile.email !== '',
           emailStatus: userProfile.email
             ? DataStatus.VERIFIED
+            : currentUserProfile.emailStatus === DataStatus.NOT_VERIFIED
+            ? DataStatus.NOT_DEFINED
             : DataStatus.EMPTY,
         }),
         ...(isMobilePhoneNumberDefined && {
@@ -167,6 +186,8 @@ export class UserProfileService {
           mobilePhoneNumberVerified: formattedPhoneNumber !== '',
           mobileStatus: formattedPhoneNumber
             ? DataStatus.VERIFIED
+            : currentUserProfile.mobileStatus === DataStatus.NOT_VERIFIED
+            ? DataStatus.NOT_DEFINED
             : DataStatus.EMPTY,
         }),
         ...(isDefined(userProfile.locale) && {
@@ -179,12 +200,6 @@ export class UserProfileService {
           documentNotifications: userProfile.documentNotifications,
         }),
       }
-
-      const currentUserProfile = await this.userProfileModel.findOne({
-        where: { nationalId },
-        transaction,
-        useMaster: true,
-      })
 
       await this.userProfileModel.upsert(
         {
@@ -230,7 +245,7 @@ export class UserProfileService {
       }
     })
 
-    return this.findById(nationalId, true)
+    return this.findById(nationalId, true, ClientType.FIRST_PARTY)
   }
 
   async createEmailVerification({
@@ -288,15 +303,128 @@ export class UserProfileService {
         nudgeType === NudgeType.NUDGE ? NUDGE_INTERVAL : SKIP_INTERVAL,
       ),
       ...(currentProfile?.emailStatus === DataStatus.NOT_DEFINED &&
-        (nudgeType === NudgeType.SKIP_EMAIL ||
-          nudgeType === NudgeType.NUDGE) && {
+        nudgeType === NudgeType.NUDGE && {
           emailStatus: DataStatus.EMPTY,
         }),
       ...(currentProfile?.mobileStatus === DataStatus.NOT_DEFINED &&
-        (nudgeType === NudgeType.SKIP_PHONE ||
-          nudgeType === NudgeType.NUDGE) && {
+        nudgeType === NudgeType.NUDGE && {
           mobileStatus: DataStatus.EMPTY,
         }),
+    })
+  }
+
+  /* fetch actor profiles (delegation preferences) for each delegation */
+  async getActorProfiles(
+    toNationalId: string,
+  ): Promise<PaginatedActorProfileDto> {
+    const incomingDelegations = await this.getIncomingDelegations(toNationalId)
+
+    const emailPreferences = await this.delegationPreference.findAll({
+      where: {
+        toNationalId,
+        fromNationalId: incomingDelegations.data.map((d) => d.fromNationalId),
+      },
+    })
+
+    const actorProfiles = incomingDelegations.data.map((delegation) => {
+      const emailPreference = emailPreferences.find(
+        (preference) => preference.fromNationalId === delegation.fromNationalId,
+      )
+
+      // return email preference if it exists, otherwise return default true
+      return (
+        emailPreference?.toDto() ?? {
+          fromNationalId: delegation.fromNationalId,
+          emailNotifications: true,
+        }
+      )
+    })
+
+    return {
+      data: actorProfiles,
+      totalCount: actorProfiles.length,
+      pageInfo: {
+        hasNextPage: false,
+      },
+    }
+  }
+
+  /* Fetch extended actor profile for a specific delegation */
+  async getActorProfile({
+    toNationalId,
+    fromNationalId,
+  }: {
+    fromNationalId: string
+    toNationalId: string
+  }): Promise<ActorProfileDto> {
+    const incomingDelegation = await this.getIncomingDelegations(toNationalId)
+
+    const delegation = incomingDelegation.data.find(
+      (d) => d.fromNationalId === fromNationalId,
+    )
+
+    if (!delegation) {
+      throw new BadRequestException('delegation does not exist')
+    }
+
+    const userProfile = await this.findById(
+      toNationalId,
+      false,
+      ClientType.FIRST_PARTY,
+    )
+
+    const emailPreferences = await this.delegationPreference.findOne({
+      where: {
+        toNationalId,
+        fromNationalId,
+      },
+    })
+
+    return {
+      fromNationalId,
+      emailNotifications: emailPreferences?.emailNotifications ?? true,
+      email: userProfile.email,
+      emailVerified: userProfile.emailVerified,
+      documentNotifications: userProfile.documentNotifications,
+      locale: userProfile.locale,
+    }
+  }
+
+  async createOrUpdateActorProfile({
+    toNationalId,
+    fromNationalId,
+    emailNotifications,
+  }: {
+    toNationalId: string
+    fromNationalId: string
+    emailNotifications: boolean
+  }): Promise<MeActorProfileDto> {
+    const incomingDelegations = await this.getIncomingDelegations(toNationalId)
+
+    // if the delegation does not exist, throw an error
+    if (
+      !incomingDelegations.data.some((d) => d.fromNationalId === fromNationalId)
+    ) {
+      throw new NoContentException()
+    }
+
+    const [profile] = await this.delegationPreference.upsert({
+      toNationalId,
+      fromNationalId,
+      emailNotifications,
+    })
+
+    return profile.toDto()
+  }
+
+  /* Private methods */
+
+  private async getIncomingDelegations(nationalId: string) {
+    return this.delegationsApi.delegationsControllerGetDelegationRecords({
+      xQueryNationalId: nationalId,
+      scope: DocumentsScope.main,
+      direction:
+        DelegationsControllerGetDelegationRecordsDirectionEnum.incoming,
     })
   }
 
@@ -372,5 +500,39 @@ export class UserProfileService {
       mobilePhoneNumber.replace(/-/g, '').slice(-7) ===
       audkenniSimNumber.replace(/-/g, '').slice(-7)
     )
+  }
+
+  filterByClientTypeAndRestrictionDate(
+    clientType: ClientType,
+    userProfile: UserProfile,
+  ): UserProfileDto {
+    const isFirstParty = clientType === ClientType.FIRST_PARTY
+    let filteredUserProfile: UserProfileDto = {
+      nationalId: userProfile.nationalId,
+      email: userProfile.email,
+      mobilePhoneNumber: userProfile.mobilePhoneNumber,
+      locale: userProfile.locale,
+      mobilePhoneNumberVerified: userProfile.mobilePhoneNumberVerified,
+      emailVerified: userProfile.emailVerified,
+      documentNotifications: userProfile.documentNotifications,
+      needsNudge: this.checkNeedsNudge(userProfile),
+      emailNotifications: userProfile.emailNotifications,
+      isRestricted: false,
+    }
+
+    if ((this.config.migrationDate ?? new Date()) > userProfile.lastNudge) {
+      filteredUserProfile = {
+        ...filteredUserProfile,
+        email: isFirstParty ? userProfile.email : null,
+        mobilePhoneNumber: isFirstParty ? userProfile.mobilePhoneNumber : null,
+        emailVerified: isFirstParty ? userProfile.emailVerified : false,
+        mobilePhoneNumberVerified: isFirstParty
+          ? userProfile.mobilePhoneNumberVerified
+          : false,
+        isRestricted: true,
+      }
+    }
+
+    return filteredUserProfile
   }
 }

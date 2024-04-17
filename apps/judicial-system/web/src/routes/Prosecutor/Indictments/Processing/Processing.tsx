@@ -27,7 +27,7 @@ import {
   useCase,
   useDefendants,
 } from '@island.is/judicial-system-web/src/utils/hooks'
-import { isTrafficViolationCase } from '@island.is/judicial-system-web/src/utils/stepHelper'
+import { isTrafficViolationIndictment } from '@island.is/judicial-system-web/src/utils/stepHelper'
 import { isProcessingStepValidIndictments } from '@island.is/judicial-system-web/src/utils/validate'
 
 import { ProsecutorSection, SelectCourt } from '../../components'
@@ -41,7 +41,7 @@ const Processing: React.FC = () => {
   const { formatMessage } = useIntl()
   const { updateDefendant, updateDefendantState } = useDefendants()
   const router = useRouter()
-  const isTrafficViolationCaseCheck = isTrafficViolationCase(workingCase)
+  const isTrafficViolationCaseCheck = isTrafficViolationIndictment(workingCase)
 
   const handleNavigationTo = useCallback(
     async (destination: string) => {

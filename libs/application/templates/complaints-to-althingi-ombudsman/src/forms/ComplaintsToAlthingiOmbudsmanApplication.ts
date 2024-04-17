@@ -1,9 +1,8 @@
 import {
   buildAlertMessageField,
   buildCustomField,
-  buildDataProviderItem,
   buildDateField,
-  buildExternalDataProvider,
+  buildDescriptionField,
   buildFileUploadField,
   buildForm,
   buildMultiField,
@@ -34,7 +33,6 @@ import {
   complainee,
   complaintDescription,
   complaintInformation,
-  dataProvider,
   information,
   section,
   attachments,
@@ -58,7 +56,6 @@ import {
   isGovernmentComplainee,
   isPreviousOmbudsmanComplaint,
 } from '../utils'
-import { NationalRegistryUserApi, UserProfileApi } from '../dataProviders'
 
 export const ComplaintsToAlthingiOmbudsmanApplication: Form = buildForm({
   id: 'ComplaintsToAlthingiOmbudsmanDraftForm',
@@ -66,34 +63,6 @@ export const ComplaintsToAlthingiOmbudsmanApplication: Form = buildForm({
   mode: FormModes.DRAFT,
   logo: Logo,
   children: [
-    buildSection({
-      id: 'conditions',
-      title: section.dataCollection,
-      children: [
-        buildExternalDataProvider({
-          id: 'approveExternalData',
-          title: dataProvider.dataProviderHeader,
-          subTitle: dataProvider.dataProviderSubTitle,
-          checkboxLabel: dataProvider.dataProviderCheckboxLabel,
-          dataProviders: [
-            buildDataProviderItem({
-              provider: NationalRegistryUserApi,
-              title: dataProvider.nationalRegistryTitle,
-              subTitle: dataProvider.nationalRegistrySubTitle,
-            }),
-            buildDataProviderItem({
-              provider: UserProfileApi,
-              title: dataProvider.userProfileTitle,
-              subTitle: dataProvider.userProfileSubTitle,
-            }),
-            buildDataProviderItem({
-              title: dataProvider.notificationTitle,
-              subTitle: dataProvider.notificationSubTitle,
-            }),
-          ],
-        }),
-      ],
-    }),
     buildSection({
       id: 'information',
       title: section.information,
@@ -184,18 +153,12 @@ export const ComplaintsToAlthingiOmbudsmanApplication: Form = buildForm({
               backgroundColor: 'blue',
               defaultValue: '',
             }),
-            buildCustomField(
-              {
-                id: 'complainedForInformation.titleField',
-                title: complainedFor.information.fieldTitle,
-                component: 'FieldTitle',
-                doesNotRequireAnswer: true,
-              },
-              {
-                marginTop: 7,
-                marginBottom: 3,
-              },
-            ),
+            buildDescriptionField({
+              id: 'complainedForInformation.titleField',
+              title: complainedFor.information.fieldTitle,
+              marginTop: 7,
+              marginBottom: 3,
+            }),
             buildTextField({
               id: 'complainedForInformation.connection',
               title: complainedFor.information.textareaTitle,
@@ -205,18 +168,12 @@ export const ComplaintsToAlthingiOmbudsmanApplication: Form = buildForm({
               variant: 'textarea',
               rows: 6,
             }),
-            buildCustomField(
-              {
-                id: 'complainedForInformation.uploadTitleField',
-                title: complainedFor.labels.powerOfAttorney,
-                component: 'FieldTitle',
-                doesNotRequireAnswer: true,
-              },
-              {
-                marginTop: 7,
-                marginBottom: 3,
-              },
-            ),
+            buildDescriptionField({
+              id: 'complainedForInformation.uploadTitleField',
+              title: complainedFor.labels.powerOfAttorney,
+              marginTop: 7,
+              marginBottom: 3,
+            }),
             buildFileUploadField({
               id: 'complainedForInformation.powerOfAttorney',
               title: '',

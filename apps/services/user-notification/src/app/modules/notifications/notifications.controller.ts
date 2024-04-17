@@ -1,34 +1,26 @@
 import { InjectQueue, QueueService } from '@island.is/message-queue'
 import { CacheInterceptor } from '@nestjs/cache-manager'
 import {
-  Inject,
   Body,
+  Controller,
   Get,
+  Inject,
   Param,
+  Post,
   Query,
   UseInterceptors,
   Version,
-  VERSION_NEUTRAL,
-  Controller,
-  Post,
-  HttpCode,
 } from '@nestjs/common'
-import {
-  ApiOkResponse,
-  ApiBody,
-  ApiExtraModels,
-  getSchemaPath,
-  ApiOperation,
-} from '@nestjs/swagger'
+
+import { ApiExtraModels } from '@nestjs/swagger'
 import type { Logger } from '@island.is/logging'
 import { LOGGER_PROVIDER } from '@island.is/logging'
+import { Documentation } from '@island.is/nest/swagger'
+
 import { CreateNotificationDto } from './dto/createNotification.dto'
 import { CreateNotificationResponse } from './dto/createNotification.response'
-
 import { CreateHnippNotificationDto } from './dto/createHnippNotification.dto'
-import { Documentation } from '@island.is/nest/swagger'
 import { HnippTemplate } from './dto/hnippTemplate.response'
-
 import { NotificationsService } from './notifications.service'
 
 @Controller('notifications')
@@ -40,42 +32,6 @@ export class NotificationsController {
     private readonly notificationsService: NotificationsService,
     @InjectQueue('notifications') private queue: QueueService,
   ) {}
-
-  // redirecting legacy endpoint to new one with fixed values
-  @ApiBody({
-    schema: {
-      type: 'object',
-      oneOf: [{ $ref: getSchemaPath(CreateNotificationDto) }],
-    },
-  })
-  @ApiOkResponse({ type: CreateNotificationResponse })
-  @ApiOperation({ deprecated: true })
-  @HttpCode(201)
-  @Post()
-  @Version(VERSION_NEUTRAL)
-  async createDeprecatedNotification(
-    @Body() body: CreateNotificationDto,
-  ): Promise<CreateNotificationResponse> {
-    this.logger.info('Creating notification', {
-      recipient: body.recipient,
-      organization: body.organization,
-      documentId: body.documentId,
-    })
-    return this.createHnippNotification({
-      recipient: body.recipient,
-      templateId: 'HNIPP.POSTHOLF.NEW_DOCUMENT',
-      args: [
-        {
-          key: 'organization',
-          value: body.organization,
-        },
-        {
-          key: 'documentId',
-          value: body.documentId,
-        },
-      ],
-    })
-  }
 
   @Documentation({
     summary: 'Fetches all notification templates',

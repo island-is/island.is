@@ -21,7 +21,7 @@ import { DeliverResponse } from '../../models/deliver.response'
 import { Notification } from '../../models/notification.model'
 import { notificationModuleConfig } from '../../notification.config'
 
-jest.mock('../../../factories')
+jest.mock('../../../../factories')
 
 interface Then {
   result: DeliverResponse

@@ -1,5 +1,6 @@
 import { AppLockScreen } from '../../screens/app-lock/app-lock'
 import { isTestingApp } from '../../config'
+import { AirDiscountScreen } from '../../screens/air-discount/air-discount'
 import { ApplicationsScreen } from '../../screens/applications/applications'
 import { AssetsDetailScreen } from '../../screens/assets/assets-detail'
 import { AssetsOverviewScreen } from '../../screens/assets/assets-overview'
@@ -87,4 +88,5 @@ export function registerAllComponents() {
   registerComponent(CR.FinanceScreen, FinanceScreen)
   registerComponent(CR.FinanceStatusDetailScreen, FinanceStatusDetailScreen)
   registerComponent(CR.InboxFilterScreen, InboxFilterScreen)
+  registerComponent(CR.AirDiscountScreen, AirDiscountScreen)
 }

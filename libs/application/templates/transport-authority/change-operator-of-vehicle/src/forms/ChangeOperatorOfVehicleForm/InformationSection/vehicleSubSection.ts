@@ -3,7 +3,7 @@ import {
   buildMultiField,
   buildTextField,
   buildSubSection,
-  buildCustomField,
+  buildHiddenInput,
 } from '@island.is/application/core'
 import { information } from '../../../lib/messages'
 import { VehiclesCurrentVehicle } from '../../../shared'
@@ -29,7 +29,7 @@ export const vehicleSubSection = buildSubSection({
               application.externalData,
               application.answers,
             ) as VehiclesCurrentVehicle
-            return vehicle.permno
+            return vehicle?.permno
           },
         }),
         buildTextField({
@@ -43,16 +43,50 @@ export const vehicleSubSection = buildSubSection({
               application.externalData,
               application.answers,
             ) as VehiclesCurrentVehicle
-            return vehicle.make
+            return vehicle?.make
           },
         }),
-        // Note: when buildHiddenInputField is ready, we can use that (to set vehicleMileage.isRequired)
-        // with buildTextField instead of this custom component
-        buildCustomField({
-          component: 'MileageField',
+        buildHiddenInput({
+          id: 'vehicleMileage.isRequired',
+          defaultValue: (application: Application) => {
+            const vehicle = getSelectedVehicle(
+              application.externalData,
+              application.answers,
+            ) as VehiclesCurrentVehicle
+            return vehicle?.requireMileage || false
+          },
+        }),
+        buildHiddenInput({
+          id: 'vehicleMileage.mileageReading',
+          defaultValue: (application: Application) => {
+            const vehicle = getSelectedVehicle(
+              application.externalData,
+              application.answers,
+            ) as VehiclesCurrentVehicle
+            return vehicle.mileageReading || ''
+          },
+        }),
+        buildTextField({
           id: 'vehicleMileage.value',
           title: information.labels.vehicle.mileage,
-          description: '',
+          width: 'half',
+          variant: 'number',
+          condition: (answers, externalData) => {
+            const vehicle = getSelectedVehicle(
+              externalData,
+              answers,
+            ) as VehiclesCurrentVehicle
+            return vehicle?.requireMileage || false
+          },
+          placeholder(application) {
+            const vehicle = getSelectedVehicle(
+              application.externalData,
+              application.answers,
+            ) as VehiclesCurrentVehicle
+            return vehicle?.mileageReading
+              ? `Síðasta skráning ${vehicle.mileageReading} Km`
+              : ''
+          },
         }),
       ],
     }),

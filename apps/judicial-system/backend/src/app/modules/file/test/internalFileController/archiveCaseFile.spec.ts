@@ -3,6 +3,7 @@ import { uuid } from 'uuidv4'
 import { createTestingFileModule } from '../createTestingFileModule'
 
 import { AwsS3Service } from '../../../aws-s3'
+import { Case } from '../../../case'
 import { DeliverResponse } from '../../models/deliver.response'
 import { CaseFile } from '../../models/file.model'
 
@@ -13,6 +14,7 @@ interface Then {
 
 type GivenWhenThen = (
   caseId: string,
+  theCase: Case,
   fileId: string,
   caseFile: CaseFile,
 ) => Promise<Then>
@@ -31,13 +33,14 @@ describe('InternalFileController - Archive case files', () => {
 
     givenWhenThen = async (
       caseId: string,
+      theCase: Case,
       fileId: string,
       caseFile: CaseFile,
     ): Promise<Then> => {
       const then = {} as Then
 
       await internalFileController
-        .archiveCaseFile(caseId, fileId, caseFile)
+        .archiveCaseFile(caseId, theCase, fileId, caseFile)
         .then((result) => (then.result = result))
         .catch((error) => (then.error = error))
 
@@ -53,6 +56,7 @@ describe('InternalFileController - Archive case files', () => {
     const newKey = `indictments/completed/${caseId}/${surrogateKey}/test.txt`
     const fileName = 'test.txt'
     const fileType = 'text/plain'
+    const theCase = {} as Case
     const caseFile = {
       id: fileId,
       caseId,
@@ -70,7 +74,7 @@ describe('InternalFileController - Archive case files', () => {
       const mockDeleteObject = mockAwsS3Service.deleteObject as jest.Mock
       mockDeleteObject.mockResolvedValueOnce(true)
 
-      then = await givenWhenThen(caseId, fileId, caseFile)
+      then = await givenWhenThen(caseId, theCase, fileId, caseFile)
     })
 
     it('should copy the file to archive bucket in AWS S3', () => {

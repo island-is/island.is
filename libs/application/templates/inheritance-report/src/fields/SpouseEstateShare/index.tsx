@@ -71,10 +71,6 @@ export const SpouseEstateShare: FC<
 
   const getUpdatedValues = useCallback(() => getValues(id), [getValues, id])
 
-  const [
-    localSpouseTotalSeparateProperty,
-    setLocalSpouseTotalSeparateProperty,
-  ] = useState<number>(getUpdatedValues()?.spouseTotalSeparateProperty ?? 0)
   const [localSpouseTotalDeduction, setLocalSpouseTotalDeduction] =
     useState<number>(getUpdatedValues()?.spouseTotalDeduction ?? 0)
   const [wasInCohabitation, setWasInCohabitation] = useState<
@@ -253,19 +249,21 @@ export const SpouseEstateShare: FC<
             <InputController
               id={spouseTotalSeparatePropertyField}
               name={spouseTotalSeparatePropertyField}
-              defaultValue={'0'}
               label={formatMessage(m.totalSeparatePropertyLabel)}
               error={getError('spouseTotalSeparateProperty')}
               backgroundColor="blue"
+              defaultValue="0"
               onChange={(e) => {
                 clearErrors()
                 const value = e.target.value
 
-                setValue(
-                  spouseTotalSeparatePropertyField,
-                  valueToNumber(value, ','),
-                )
-                setLocalSpouseTotalDeduction(valueToNumber(value, ','))
+                const val = String(valueToNumber(value, ','))
+
+                if (val) {
+                  setLocalSpouseTotalDeduction(valueToNumber(val, ','))
+
+                  setValue(spouseTotalSeparatePropertyField, val)
+                }
               }}
               currency
             />

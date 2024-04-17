@@ -1155,6 +1155,9 @@ export interface IFeaturedArticlesFields {
 
   /** Has Border Above */
   hasBorderAbove?: boolean | undefined
+
+  /** Intro text */
+  introText?: Document | undefined
 }
 
 export interface IFeaturedArticles extends Entry<IFeaturedArticlesFields> {
@@ -3506,6 +3509,12 @@ export interface IServiceWebPageFields {
 
   /** Footer Items */
   footerItems?: IFooterItem[] | undefined
+
+  /** Email Config */
+  emailConfig?: Record<string, any> | undefined
+
+  /** Contact Form Disclaimer */
+  contactFormDisclaimer?: Document | undefined
 }
 
 export interface IServiceWebPage extends Entry<IServiceWebPageFields> {

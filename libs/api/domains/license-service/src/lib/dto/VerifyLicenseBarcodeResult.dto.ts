@@ -53,7 +53,7 @@ export class VerifyLicenseBarcodeResult {
   })
   data?: typeof VerifyLicenseBarcodeDataUnion | null
 
-  @Field(() => String, { nullable: true })
+  @Field(() => GenericLicenseType, { nullable: true })
   licenseType?: GenericLicenseType
 
   @Field(() => VerifyLicenseBarcodeError, {

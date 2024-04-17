@@ -46,6 +46,7 @@ export {
   isRestrictionCase,
   isInvestigationCase,
   isAcceptingCaseDecision,
+  isTrafficViolationCase,
   completedCaseStates,
   isCompletedCase,
   CaseAppealState,

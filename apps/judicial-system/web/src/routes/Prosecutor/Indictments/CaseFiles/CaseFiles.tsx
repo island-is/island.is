@@ -21,7 +21,7 @@ import {
   useS3Upload,
   useUploadFiles,
 } from '@island.is/judicial-system-web/src/utils/hooks'
-import { isTrafficViolationCase } from '@island.is/judicial-system-web/src/utils/stepHelper'
+import { isTrafficViolationIndictment } from '@island.is/judicial-system-web/src/utils/stepHelper'
 
 import * as strings from './CaseFiles.strings'
 
@@ -31,7 +31,7 @@ const CaseFiles: React.FC<React.PropsWithChildren<unknown>> = () => {
   const { formatMessage } = useIntl()
   const {
     uploadFiles,
-    allFilesUploaded,
+    allFilesDoneOrError,
     addUploadFiles,
     updateUploadFile,
     removeUploadFile,
@@ -40,7 +40,7 @@ const CaseFiles: React.FC<React.PropsWithChildren<unknown>> = () => {
     workingCase.id,
   )
 
-  const isTrafficViolationCaseCheck = isTrafficViolationCase(workingCase)
+  const isTrafficViolationCaseCheck = isTrafficViolationIndictment(workingCase)
 
   const stepIsValid =
     uploadFiles.some(
@@ -59,7 +59,7 @@ const CaseFiles: React.FC<React.PropsWithChildren<unknown>> = () => {
         file.category === CaseFileCategory.CRIMINAL_RECORD &&
         file.status === 'done',
     ) &&
-    allFilesUploaded
+    allFilesDoneOrError
   const handleNavigationTo = useCallback(
     (destination: string) => router.push(`${destination}/${workingCase.id}`),
     [workingCase.id],

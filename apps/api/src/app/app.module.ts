@@ -38,6 +38,7 @@ import { FishingLicenseModule } from '@island.is/api/domains/fishing-license'
 import { FiskistofaModule } from '@island.is/api/domains/fiskistofa'
 import { HealthInsuranceModule } from '@island.is/api/domains/health-insurance'
 import { HmsLoansModule } from '@island.is/api/domains/hms-loans'
+import { HousingBenefitsModule } from '@island.is/api/domains/housing-benefits'
 import { HousingBenefitCalculatorModule } from '@island.is/api/domains/housing-benefit-calculator'
 import { IcelandicGovernmentInstitutionVacanciesModule } from '@island.is/api/domains/icelandic-government-institution-vacancies'
 import { IcelandicNamesModule } from '@island.is/api/domains/icelandic-names-registry'
@@ -164,6 +165,7 @@ import { GraphqlOptionsFactory } from './graphql-options.factory'
 import { GraphQLConfig } from './graphql.config'
 import { HealthController } from './health.controller'
 import { DocumentClientConfig } from '@island.is/clients/documents'
+import { HousingBenefitsConfig } from '@island.is/clients/hms-housing-benefits'
 
 const environment = getConfig
 
@@ -279,6 +281,7 @@ const environment = getConfig
     RightsPortalModule,
     AssetsModule,
     HmsLoansModule,
+    HousingBenefitsModule,
     PassportModule,
     AirDiscountSchemeModule,
     NationalRegistryXRoadModule,
@@ -337,6 +340,7 @@ const environment = getConfig
         HuntingLicenseClientConfig,
         FeatureFlagConfig,
         HmsLoansClientConfig,
+        HousingBenefitsConfig,
         FinanceClientConfig,
         FinanceClientV2Config,
         RegulationsAdminClientConfig,

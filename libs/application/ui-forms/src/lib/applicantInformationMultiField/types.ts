@@ -1,3 +1,4 @@
+import { FormText } from '@island.is/application/types'
 export interface ApplicantInformationInterface {
   externalData: {
     // new dataprovider
@@ -37,4 +38,6 @@ export interface ApplicantInformationInterface {
 export type applicantInformationProps = {
   phoneRequired?: boolean
   emailRequired?: boolean
+  emailDisabled?: boolean
+  applicantInformationDescription?: FormText
 }

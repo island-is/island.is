@@ -1,6 +1,36 @@
 import { defineMessages } from 'react-intl'
 
 export const m = defineMessages({
+  // Pre-data collection
+  preDataCollectionHeading: {
+    id: 'ir.application:preDataCollectionHeading',
+    defaultMessage: 'Foröflun gagna',
+    description: 'Heading for pre-collection',
+  },
+  preDataCollectionInfo: {
+    id: 'ir.application:preDataCollectionInfo',
+    defaultMessage:
+      'Til þess að geta hafið umsókn þarf fyrst að sækja til sýslumanns hvort viðkomandi eigi einhver dánarbú á skrá.',
+    description: 'Info for pre-collection',
+  },
+  preDataCollectionTitle: {
+    id: 'ir.application:preDataCollectionTitle',
+    defaultMessage: 'Upplýsingar um dánarbú',
+    description: 'Title of provider for pre-collection',
+  },
+
+  preDataCollectionDescription: {
+    id: 'ir.application:preDataCollectionDescription',
+    defaultMessage: 'Sóttar verða upplýsingar frá sýslumanni um dánarbú',
+    description: 'Description of provider for pre-collection',
+  },
+
+  preDataCollectionChooseEstateSelectTitle: {
+    id: 'ir.application:preDataCollectionChooseEstateSelectTitle',
+    defaultMessage: 'Foröflun gagna',
+    description: 'Title for pre-collection of data',
+  },
+
   // Application begin
   applicationName: {
     id: 'ir.application:applicationName',
@@ -287,6 +317,11 @@ export const m = defineMessages({
     id: 'ir.application:continueWithoutMoney',
     defaultMessage:
       'Ef hinn látni átti ekki peninga sem varðveittir eru utan fjármálastofnana vinsamlegast haltu áfram í ferlinu.',
+    description: '',
+  },
+  otherAssetRepeaterButton: {
+    id: 'ir.application:otherAssetRepeaterButton',
+    defaultMessage: 'Bæta við eign',
     description: '',
   },
   continueWithoutOtherAssets: {
@@ -973,6 +1008,44 @@ export const m = defineMessages({
     description: '',
   },
 
+  // Assets to share
+  assetsToShareDescription: {
+    id: 'ir.application:assetsToShareDescription',
+    defaultMessage:
+      'Frá dregst búshluti eftirlifandi maka samkvæmt reglum hjúskaparlaga nr. 31/1993.',
+    description: '',
+  },
+  assetsToShareTotalAssets: {
+    id: 'ir.application:assetsToShareTotalAssets',
+    defaultMessage: 'Heildareignir',
+    description: '',
+  },
+  assetsToShareTotalDebts: {
+    id: 'ir.application:assetsToShareTotalDebts',
+    defaultMessage: 'Heildarskuldir',
+    description: '',
+  },
+  assetsToShareSpouseShare: {
+    id: 'ir.application:assetsToShareSpouseShare',
+    defaultMessage: 'Búshluti makans',
+    description: '',
+  },
+  assetsToShareEstateShare: {
+    id: 'ir.application:assetsToShareEstateShare',
+    defaultMessage: 'Búshluti dánarbús',
+    description: '',
+  },
+  assetsToShareHasCustomSpousePercentage: {
+    id: 'ir.application:assetsToShareHasCustomSpousePercentage',
+    defaultMessage: 'Maki hefur annan búshluta en 50%',
+    description: '',
+  },
+  assetsToShareCustomSpousePercentage: {
+    id: 'ir.application:assetsToShareCustomSpousePercentage',
+    defaultMessage: 'Búshluti',
+    description: '',
+  },
+
   // Heirs
   spousesShare: {
     id: 'ir.application:spousesShare',
@@ -982,6 +1055,16 @@ export const m = defineMessages({
   deceasedSeparateProperty: {
     id: 'ir.application:deceasedSeparateProperty',
     defaultMessage: 'Séreign hins látna',
+    description: '',
+  },
+  share: {
+    id: 'ir.application:share',
+    defaultMessage: 'Séreign',
+    description: '',
+  },
+  deceasedShare: {
+    id: 'ir.application:deceasedShare',
+    defaultMessage: 'Hlutfall séreignar',
     description: '',
   },
   spousesShareDescription: {
@@ -999,6 +1082,11 @@ export const m = defineMessages({
     id: 'ir.application:hadSeparateProperty',
     defaultMessage:
       'Átti hinn látni séreign í hjúskapnum samkvæmt kaupmála eða fyrirmælum í erfðaskrá?',
+    description: '',
+  },
+  hadSeparatePropertyTitle: {
+    id: 'ir.application:hadSeparatePropertyTitle',
+    defaultMessage: 'Látni átti séreign í eigninni',
     description: '',
   },
   totalSeparateProperty: {
@@ -1043,9 +1131,19 @@ export const m = defineMessages({
     defaultMessage: 'Eign til skipta og erfingjar',
     description: '',
   },
+  propertyForExchangeAlternative: {
+    id: 'ir.application:propertyForExchangeAlternative',
+    defaultMessage: 'Eign til skipta',
+    description: '',
+  },
   totalDeduction: {
     id: 'ir.application:totalDeduction',
     defaultMessage: 'Samtals frádráttur (búshluti maka)',
+    description: '',
+  },
+  totalDeductionAlternative: {
+    id: 'ir.application:totalDeductionAlternative',
+    defaultMessage: 'Samtals frádráttur',
     description: '',
   },
   netProperty: {
@@ -1178,6 +1276,11 @@ export const m = defineMessages({
     id: 'ir.application:inheritanceAdvocateLabel',
     defaultMessage: 'Forsjáraðili/málsvari/sérstakur lögráðamaður',
     description: 'Custody label',
+  },
+  errorSpouseCount: {
+    id: 'ir.application:errorSpouseCount',
+    defaultMessage: 'Aðeins er hægt að hafa einn erfingja sem maka',
+    description: '',
   },
   inheritanceUnder18Error: {
     id: 'ir.application:inheritanceUnder18Error',
