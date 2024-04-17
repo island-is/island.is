@@ -1,13 +1,13 @@
 import { useUserInfo } from '@island.is/auth/react'
 import { Stack } from '@island.is/island-ui/core'
-import { OfficialJournalAdvertEntity } from '@island.is/api/schema'
+import { OfficialJournalOfIcelandAdvertEntity } from '@island.is/api/schema'
 import { useQuery } from '@apollo/client'
 import { Property } from '../components/property/Property'
 import { TYPES_QUERY, DEPARTMENTS_QUERY } from '../graphql/queries'
 import { summary, general } from '../lib/messages'
 import {
   OJOIFieldBaseProps,
-  OfficialJournalGraphqlResponse,
+  OfficialJournalOfIcelandGraphqlResponse,
 } from '../lib/types'
 import { useLocale } from '@island.is/localization'
 import { AnswerOption } from '../lib/constants'
@@ -19,20 +19,19 @@ export const Summary = ({ application }: OJOIFieldBaseProps) => {
 
   const { answers } = application
 
-  const { data: types } = useQuery<OfficialJournalGraphqlResponse<'types'>>(
-    TYPES_QUERY,
-    {
-      variables: {
-        params: {
-          department: answers?.advert?.department,
-          search: answers?.advert?.type,
-        },
+  const { data: types } = useQuery<
+    OfficialJournalOfIcelandGraphqlResponse<'types'>
+  >(TYPES_QUERY, {
+    variables: {
+      params: {
+        department: answers?.advert?.department,
+        search: answers?.advert?.type,
       },
     },
-  )
+  })
 
   const { data: departments } = useQuery<
-    OfficialJournalGraphqlResponse<'departments'>
+    OfficialJournalOfIcelandGraphqlResponse<'departments'>
   >(DEPARTMENTS_QUERY, {
     variables: {
       params: {
@@ -41,7 +40,7 @@ export const Summary = ({ application }: OJOIFieldBaseProps) => {
     },
   })
 
-  const extract = (arr?: OfficialJournalAdvertEntity[]) => {
+  const extract = (arr?: OfficialJournalOfIcelandAdvertEntity[]) => {
     if (!arr) {
       return ''
     }
@@ -58,7 +57,7 @@ export const Summary = ({ application }: OJOIFieldBaseProps) => {
       <Property name={f(summary.properties.sender)} value={user.profile.name} />
       <Property
         name={f(summary.properties.type)}
-        value={extract(types?.officialJournalTypes.types)}
+        value={extract(types?.officialJournalOfIcelandTypes.types)}
       />
       <Property
         name={f(summary.properties.title)}
@@ -66,7 +65,9 @@ export const Summary = ({ application }: OJOIFieldBaseProps) => {
       />
       <Property
         name={f(summary.properties.department)}
-        value={extract(departments?.officialJournalDepartments.departments)}
+        value={extract(
+          departments?.officialJournalOfIcelandDepartments.departments,
+        )}
       />
       <Property
         name={f(summary.properties.submissionDate)}

@@ -2,9 +2,9 @@ import { Application, FieldBaseProps } from '@island.is/application/types'
 import { type answerSchemas } from './dataSchema'
 import { INSTITUTION_INDEX, MEMBER_INDEX, Routes } from './constants'
 import {
-  OfficialJournalAdvert,
-  OfficialJournalAdvertEntity,
-  OfficialJournalPaging,
+  OfficialJournalOfIcelandOfIcelandAdvert,
+  OfficialJournalOfIcelandAdvertEntity,
+  OfficialJournalOfIcelandPaging,
 } from '@island.is/api/schema'
 
 export const InputFields = {
@@ -126,7 +126,7 @@ export interface ExternalData {
     status: StatusProvider
   }
   submitApplication: {
-    data: { application: OfficialJournalAdvert }
+    data: { application: OfficialJournalOfIcelandOfIcelandAdvert }
     date: string
     status: StatusProvider
   }
@@ -151,15 +151,15 @@ export type OJOIFieldBaseProps = Override<
 >
 
 export type CreateParentKey<Key extends string> =
-  `officialJournal${Capitalize<Key>}`
+  `officialJournalOfIceland${Capitalize<Key>}`
 
-export type OfficialJournalGraphqlResponse<
+export type OfficialJournalOfIcelandGraphqlResponse<
   Key extends string,
-  Value = OfficialJournalAdvertEntity[],
+  Value = OfficialJournalOfIcelandAdvertEntity[],
 > = {
   [key in CreateParentKey<Key>]: {
     [key in Key]: Value
   } & {
-    paging: OfficialJournalPaging
+    paging: OfficialJournalOfIcelandPaging
   }
 }

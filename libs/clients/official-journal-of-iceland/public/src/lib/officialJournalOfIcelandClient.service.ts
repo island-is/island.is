@@ -1,6 +1,6 @@
 import { Injectable } from '@nestjs/common'
 import {
-  DefaultApi as OfficialJournalApi,
+  DefaultApi as OfficialJournalOfIcelandApi,
   JournalControllerAdvertRequest,
   JournalControllerAdvertsRequest,
   JournalControllerCategoriesRequest,
@@ -12,7 +12,7 @@ import {
 
 @Injectable()
 export class OfficialJournalOfIcelandClientService {
-  constructor(private readonly api: OfficialJournalApi) {}
+  constructor(private readonly api: OfficialJournalOfIcelandApi) {}
 
   public async advert(params: JournalControllerAdvertRequest) {
     return this.api.journalControllerAdvert(params)

@@ -17,7 +17,7 @@ import { ADVERTS_QUERY } from '../graphql/queries'
 import debounce from 'lodash/debounce'
 import { DEBOUNCE_INPUT_TIMER } from '../lib/constants'
 import { ChangeEvent, useState } from 'react'
-import { OfficialJournalGraphqlResponse } from '../lib/types'
+import { OfficialJournalOfIcelandGraphqlResponse } from '../lib/types'
 type Props = {
   visible: boolean
   setVisibility: (visibility: boolean) => void
@@ -42,12 +42,11 @@ export const AdvertModal = ({
     setSearch(e.target.value)
   }
 
-  const { data, loading } = useQuery<OfficialJournalGraphqlResponse<'adverts'>>(
-    ADVERTS_QUERY,
-    {
-      variables: { input: { search } },
-    },
-  )
+  const { data, loading } = useQuery<
+    OfficialJournalOfIcelandGraphqlResponse<'adverts'>
+  >(ADVERTS_QUERY, {
+    variables: { input: { search } },
+  })
 
   const debouncedSearch = debounce(updateSearch, DEBOUNCE_INPUT_TIMER)
 
@@ -82,7 +81,7 @@ export const AdvertModal = ({
                   onChange={debouncedSearch}
                 />
               </Box>
-              {data?.officialJournalAdverts.adverts.length ? (
+              {data?.officialJournalOfIcelandAdverts.adverts.length ? (
                 <Box
                   paddingY={1}
                   borderColor="blue200"
@@ -90,15 +89,17 @@ export const AdvertModal = ({
                   borderBottomWidth="standard"
                 >
                   <Stack space={2} dividers="regular">
-                    {data.officialJournalAdverts.adverts.map((advert, i) => (
-                      <RadioButton
-                        name={advert.id}
-                        key={i}
-                        label={advert.title}
-                        checked={localSelectedAdvertId === advert.id}
-                        onChange={() => setLocalSelectedAdvertId(advert.id)}
-                      />
-                    ))}
+                    {data.officialJournalOfIcelandAdverts.adverts.map(
+                      (advert, i) => (
+                        <RadioButton
+                          name={advert.id}
+                          key={i}
+                          label={advert.title}
+                          checked={localSelectedAdvertId === advert.id}
+                          onChange={() => setLocalSelectedAdvertId(advert.id)}
+                        />
+                      ),
+                    )}
                   </Stack>
                 </Box>
               ) : loading ? (
