@@ -1,20 +1,23 @@
 import { Provider } from '@nestjs/common'
-import { Configuration, DefaultApi as DmrApi } from '../../gen/fetch'
+import {
+  Configuration,
+  DefaultApi as OfficialJournalApi,
+} from '../../gen/fetch'
 import { createEnhancedFetch } from '@island.is/clients/middlewares'
-import { DmrClientConfig } from './dmrClient.config'
+import { OfficialJournalClientConfig } from './officialJournalClient.config'
 import { ConfigType } from '@nestjs/config'
 import { XRoadConfig } from '@island.is/nest/config'
 
-export const DmrApiProvider: Provider<DmrApi> = {
-  provide: DmrApi,
+export const OfficialJournalApiProvider: Provider<OfficialJournalApi> = {
+  provide: OfficialJournalApi,
   useFactory: (
     xroadConfig: ConfigType<typeof XRoadConfig>,
-    config: ConfigType<typeof DmrClientConfig>,
+    config: ConfigType<typeof OfficialJournalClientConfig>,
   ) => {
-    return new DmrApi(
+    return new OfficialJournalApi(
       new Configuration({
         fetchApi: createEnhancedFetch({
-          name: 'clients-dmr',
+          name: 'clients-official-journal-public',
           organizationSlug: 'domsmalaraduneytid',
         }),
         basePath: `${xroadConfig.xRoadBasePath}/r1/${config.xRoadServicePath}`,
@@ -25,5 +28,5 @@ export const DmrApiProvider: Provider<DmrApi> = {
       }),
     )
   },
-  inject: [XRoadConfig.KEY, DmrClientConfig.KEY],
+  inject: [XRoadConfig.KEY, OfficialJournalClientConfig.KEY],
 }

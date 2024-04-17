@@ -1,4 +1,4 @@
-export { DmrClientConfig } from './lib/dmrClient.config'
-export { DmrClientModule } from './lib/dmrClient.module'
-export { DmrClientService } from './lib/dmrClient.service'
+export { OfficialJournalClientConfig as OfficialJournalPublicClientConfig } from './lib/officialJournalClient.config'
+export { OfficialJournalClientModule as DmrClientModule } from './lib/dmrClient.module'
+export { OfficialJournalClientService as DmrClientService } from './lib/officialJournalClient.service'
 export * from '../gen/fetch'

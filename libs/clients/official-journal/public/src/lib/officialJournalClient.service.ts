@@ -1,11 +1,8 @@
-import { AuthMiddleware, type User } from '@island.is/auth-nest-tools'
-
 import { Injectable } from '@nestjs/common'
 import {
-  DefaultApi as DmrApi,
+  DefaultApi as OfficialJournalApi,
   JournalControllerAdvertRequest,
   JournalControllerAdvertsRequest,
-  JournalControllerApplicationRequest,
   JournalControllerCategoriesRequest,
   JournalControllerDepartmentsRequest,
   JournalControllerInstitutionsRequest,
@@ -14,43 +11,34 @@ import {
 } from '../../gen/fetch/apis'
 
 @Injectable()
-export class DmrClientService {
-  constructor(private readonly dmrApi: DmrApi) {}
+export class OfficialJournalClientService {
+  constructor(private readonly api: OfficialJournalApi) {}
 
   public async advert(params: JournalControllerAdvertRequest) {
-    return this.dmrApi.journalControllerAdvert(params)
+    return this.api.journalControllerAdvert(params)
   }
 
   public async adverts(input: JournalControllerAdvertsRequest) {
-    return this.dmrApi.journalControllerAdverts(input)
+    return this.api.journalControllerAdverts(input)
   }
 
   public async departments(params: JournalControllerDepartmentsRequest) {
-    return this.dmrApi.journalControllerDepartments(params ?? {})
+    return this.api.journalControllerDepartments(params ?? {})
   }
 
   public async types(params: JournalControllerTypesRequest) {
-    return this.dmrApi.journalControllerTypes(params)
+    return this.api.journalControllerTypes(params)
   }
 
   public async mainCategories(params: JournalControllerMainCategoriesRequest) {
-    return this.dmrApi.journalControllerMainCategories(params)
+    return this.api.journalControllerMainCategories(params)
   }
 
   public async categories(params: JournalControllerCategoriesRequest) {
-    return this.dmrApi.journalControllerCategories(params)
+    return this.api.journalControllerCategories(params)
   }
 
   public async institutions(params: JournalControllerInstitutionsRequest) {
-    return this.dmrApi.journalControllerInstitutions(params)
-  }
-
-  public async submitApplication(
-    auth: User,
-    params: JournalControllerApplicationRequest,
-  ) {
-    return this.dmrApi
-      .withMiddleware(new AuthMiddleware(auth as User))
-      .journalControllerApplication(params)
+    return this.api.journalControllerInstitutions(params)
   }
 }
