@@ -21,6 +21,8 @@ import { UserDeviceToken } from './userDeviceToken.model'
 import { UserDeviceTokenInput } from './dto/userDeviceTokenInput'
 import { DeleteTokenResponse } from './dto/deleteTokenResponse'
 import { UserProfileLocale } from './models/userProfileLocale.model'
+import { ActorProfile, ActorProfileResponse } from './dto/actorProfile'
+import { UpdateActorProfileInput } from './dto/updateActorProfileInput'
 
 @UseGuards(IdsUserGuard, ScopesGuard)
 @Resolver()
@@ -39,6 +41,11 @@ export class UserProfileResolver {
     @CurrentUser() user: User,
   ): Promise<UserProfileLocale | undefined> {
     return this.userUserProfileService.getUserProfileLocale(user)
+  }
+
+  @Query(() => ActorProfileResponse)
+  getActorProfiles(@CurrentUser() user: User): Promise<ActorProfileResponse> {
+    return this.userUserProfileService.getActorProfiles(user)
   }
 
   @Mutation(() => UserProfile, { nullable: true })
@@ -119,5 +126,13 @@ export class UserProfileResolver {
     @CurrentUser() user: User,
   ): Promise<DeleteTokenResponse> {
     return await this.userUserProfileService.deleteDeviceToken(input, user)
+  }
+
+  @Mutation(() => ActorProfile)
+  async updateActorProfile(
+    @Args('input') input: UpdateActorProfileInput,
+    @CurrentUser() user: User,
+  ): Promise<ActorProfile> {
+    return await this.userUserProfileService.updateActorProfile(input, user)
   }
 }

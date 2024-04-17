@@ -7,13 +7,18 @@ import {
   V2MeApi,
 } from '@island.is/clients/user-profile'
 import { Auth, AuthMiddleware, User } from '@island.is/auth-nest-tools'
+import { IdentityClientService } from '@island.is/clients/identity'
+
 import { IslykillService } from '../islykill.service'
 import { UserProfile } from '../userProfile.model'
+import { ActorProfile, ActorProfileResponse } from '../dto/actorProfile'
 import { UpdateUserProfileInput } from '../dto/updateUserProfileInput'
 import { CreateSmsVerificationInput } from '../dto/createSmsVerificationInput'
 import { CreateEmailVerificationInput } from '../dto/createEmalVerificationInput'
 import { ConfirmSmsVerificationInput } from '../dto/confirmSmsVerificationInput'
 import { ConfirmEmailVerificationInput } from '../dto/confirmEmailVerificationInput'
+import { UpdateActorProfileResponse } from '../dto/updateActorProfileResponse'
+import { UpdateActorProfileInput } from '../dto/updateActorProfileInput'
 
 /** Category to attach each log message to */
 const LOG_CATEGORY = 'userprofile-service-v2'
@@ -32,6 +37,7 @@ export class UserProfileServiceV2 {
   constructor(
     private v2MeApi: V2MeApi,
     private readonly islyklarService: IslykillService,
+    private identityService: IdentityClientService,
   ) {}
 
   v2UserProfileApiWithAuth(auth: Auth) {
@@ -110,6 +116,43 @@ export class UserProfileServiceV2 {
         createVerificationDto: input,
       })
       .catch((e) => handleError(e, `createEmailVerification error`))
+  }
+
+  async getActorProfiles(user: User): Promise<ActorProfileResponse> {
+    const actorProfiles = await this.v2UserProfileApiWithAuth(user)
+      .meUserProfileControllerGetActorProfiles()
+      .catch((e) => handleError(e, `getActorProfile error`))
+
+    const profilesWithNames: ActorProfile[] = await Promise.all(
+      actorProfiles.data.map(async (actorProfile) => {
+        const identity = await this.identityService.getIdentity(
+          actorProfile.fromNationalId,
+        )
+
+        return {
+          ...actorProfile,
+          fromName: identity?.name,
+        }
+      }),
+    )
+
+    return { ...actorProfiles, data: profilesWithNames }
+  }
+
+  async updateActorProfile(
+    input: UpdateActorProfileInput,
+    user: User,
+  ): Promise<UpdateActorProfileResponse> {
+    const actorProfile = await this.v2UserProfileApiWithAuth(user)
+      .meUserProfileControllerCreateOrUpdateActorProfile({
+        xParamFromNationalId: input.fromNationalId,
+        patchActorProfileDto: { emailNotifications: input.emailNotifications },
+      })
+      .catch((e) => handleError(e, `updateActorProfile error`))
+
+    return {
+      ...actorProfile,
+    }
   }
 
   async confirmSms(

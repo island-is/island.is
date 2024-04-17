@@ -9,7 +9,6 @@ import {
   UserProfileApi,
   UserProfileControllerCreateRequest,
   UserProfileControllerUpdateRequest,
-  V2MeApi,
 } from '@island.is/clients/user-profile'
 import { handle204, handle404 } from '@island.is/clients/middlewares'
 import { UpdateUserProfileInput } from '../dto/updateUserProfileInput'

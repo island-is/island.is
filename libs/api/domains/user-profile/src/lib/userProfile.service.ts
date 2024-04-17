@@ -8,6 +8,8 @@ import {
   UserProfileApi,
 } from '@island.is/clients/user-profile'
 import { handle204 } from '@island.is/clients/middlewares'
+import { Auth, AuthMiddleware, User } from '@island.is/auth-nest-tools'
+import { FeatureFlagService, Features } from '@island.is/nest/feature-flags'
 
 import { DeleteIslykillSettings } from './models/deleteIslykillSettings.model'
 import { UpdateUserProfileInput } from './dto/updateUserProfileInput'
@@ -18,13 +20,12 @@ import { ConfirmSmsVerificationInput } from './dto/confirmSmsVerificationInput'
 import { ConfirmEmailVerificationInput } from './dto/confirmEmailVerificationInput'
 import { DeleteIslykillValueInput } from './dto/deleteIslykillValueInput'
 import { UserProfile } from './userProfile.model'
-import { Auth, AuthMiddleware, User } from '@island.is/auth-nest-tools'
 import { IslykillService } from './islykill.service'
 import { UserDeviceTokenInput } from './dto/userDeviceTokenInput'
 import { DataStatus } from './types/dataStatus.enum'
-import { FeatureFlagService, Features } from '@island.is/nest/feature-flags'
 import { UserProfileServiceV1 } from './V1/userProfile.service'
 import { UserProfileServiceV2 } from './V2/userProfile.service'
+import { UpdateActorProfileInput } from './dto/updateActorProfileInput'
 
 /** Category to attach each log message to */
 const LOG_CATEGORY = 'userprofile-service'
@@ -207,5 +208,13 @@ export class UserProfileService {
         deviceTokenDto: input,
       })
       .catch((e) => handleError(e, `deleteDeviceToken error`))
+  }
+
+  async getActorProfiles(user: User) {
+    return this.userProfileServiceV2.getActorProfiles(user)
+  }
+
+  async updateActorProfile(input: UpdateActorProfileInput, user: User) {
+    return this.userProfileServiceV2.updateActorProfile(input, user)
   }
 }
