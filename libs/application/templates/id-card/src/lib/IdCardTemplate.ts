@@ -12,7 +12,6 @@ import {
   ApplicationTemplate,
   ApplicationTypes,
   DefaultEvents,
-  defineTemplateApi,
   DistrictsApi,
   InstitutionNationalIds,
   PassportsApi,
@@ -27,8 +26,8 @@ import {
   NationalRegistryUser,
 } from '../dataProviders'
 import { application as applicationMessage } from './messages'
-import { ApiActions, Events, Roles, States } from './constants'
-import { dataSchema } from './dataSchema'
+import { Events, Roles, States } from './constants'
+import { IdCardSchema } from './dataSchema'
 import { buildPaymentState } from '@island.is/application/utils'
 // import { needAssignment } from './utils'
 
@@ -56,7 +55,7 @@ const IdCardTemplate: ApplicationTemplate<
   type: ApplicationTypes.ID_CARD,
   name: applicationMessage.name,
   featureFlag: Features.idCardApplication,
-  dataSchema,
+  dataSchema: IdCardSchema,
   stateMachineConfig: {
     initial: States.PREREQUISITES,
     states: {
@@ -108,7 +107,6 @@ const IdCardTemplate: ApplicationTemplate<
         },
         on: {
           [DefaultEvents.SUBMIT]: { target: States.DRAFT },
-          [DefaultEvents.PAYMENT]: { target: States.PAYMENT },
         },
       },
       [States.DRAFT]: {
@@ -117,9 +115,9 @@ const IdCardTemplate: ApplicationTemplate<
           status: 'draft',
           progress: 0.25,
           lifecycle: pruneAfterDays(2),
-          onExit: defineTemplateApi({
-            action: ApiActions.checkForDiscount,
-          }),
+          //   onExit: defineTemplateApi({
+          //     action: ApiActions.checkForDiscount,
+          //   }),
           actionCard: {
             historyLogs: [
               {
@@ -128,16 +126,30 @@ const IdCardTemplate: ApplicationTemplate<
               },
             ],
           },
+          roles: [
+            {
+              id: Roles.APPLICANT,
+              formLoader: () =>
+                import('../forms/IdCardForm').then((module) =>
+                  Promise.resolve(module.IdCardForm),
+                ),
+              write: 'all',
+              delete: true,
+            },
+          ],
+        },
+        on: {
+          [DefaultEvents.SUBMIT]: { target: States.PAYMENT },
         },
       },
       [States.PAYMENT]: buildPaymentState({
         organizationId: InstitutionNationalIds.SYSLUMENN,
         chargeItemCodes: getCode,
         submitTarget: [
-          {
-            target: States.PARENT_B_CONFIRM, // TODO CHANGE TO CHECK ALL PARENTS FOR ALL CHILDREN
-            // cond: hasReviewer,
-          },
+          //   {
+          //     target: States.PARENT_B_CONFIRM, // TODO CHANGE TO CHECK ALL PARENTS FOR ALL CHILDREN
+          //     // cond: hasReviewer,
+          //   },
           {
             target: States.COMPLETED,
           },

@@ -1,7 +1,7 @@
 import {
   buildMultiField,
   buildSubSection,
-  buildDescriptionField,
+  buildRadioField,
 } from '@island.is/application/core'
 import { Routes } from '../../../lib/constants'
 import { idInformation } from '../../../lib/messages/idInformation'
@@ -11,13 +11,19 @@ export const ChosenApplicantsSubSection = buildSubSection({
   title: idInformation.general.chosenApplicantsSectionTitle,
   children: [
     buildMultiField({
-      id: Routes.CHOSENAPPLICANTS,
-      title: 'todo',
+      id: `${Routes.CHOSENAPPLICANTS}MultiField`,
+      title: idInformation.general.chosenApplicantsSectionTitle,
+      description: idInformation.labels.chosenApplicantsDescription,
       children: [
-        buildDescriptionField({
-          id: `${Routes.CHOSENAPPLICANTS}.title`,
-          title: 'todo',
-          titleVariant: 'h5',
+        buildRadioField({
+          id: `${Routes.CHOSENAPPLICANTS}.applicant`,
+          title: '',
+          options: (application) => [
+            {
+              label: 'application.externalData.nationalRegistry.data.fullName',
+              value: 'yes',
+            },
+          ],
         }),
       ],
     }),

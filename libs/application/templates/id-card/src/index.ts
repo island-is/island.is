@@ -1,9 +1,12 @@
 import IdCardTemplate from './lib/IdCardTemplate'
-import { z } from 'zod'
-import { dataSchema } from './lib/dataSchema'
+import { IdCard } from './lib/dataSchema'
 
 export const getDataProviders = () => import('./dataProviders/')
 // export const getFields = () => import('./forms')
 
+export type IdCardAnswers = IdCard
+
+// export * from './utils'
+// export * from './shared/types'
+
 export default IdCardTemplate
-export type PassportSchema = z.TypeOf<typeof dataSchema>

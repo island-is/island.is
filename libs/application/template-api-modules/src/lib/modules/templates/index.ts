@@ -124,6 +124,9 @@ import { GrindavikHousingBuyoutService } from './grindavik-housing-buyout/grinda
 import { RequestInspectionTemplateModule } from './aosh/request-inspection/request-inspection.module'
 import { RequestInspectionTemplateService } from './aosh/request-inspection/request-inspection.service'
 
+import { IdCardModule } from './id-card/id-card.module'
+import { IdCardService } from './id-card/id-card.service'
+
 export const modules = [
   ReferenceTemplateModule,
   GeneralFishingLicenseModule,
@@ -188,6 +191,7 @@ export const modules = [
   GrindavikHousingBuyoutModule,
   RequestInspectionTemplateModule,
   OfficialJournalOfIcelandModule,
+  IdCardModule,
 ]
 
 export const services = [
@@ -254,4 +258,5 @@ export const services = [
   GrindavikHousingBuyoutService,
   RequestInspectionTemplateService,
   OfficialJournalOfIcelandService,
+  IdCardService,
 ]

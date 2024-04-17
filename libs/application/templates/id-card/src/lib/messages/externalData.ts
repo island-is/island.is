@@ -33,6 +33,24 @@ export const externalData = {
       description: 'External data submit button',
     },
   }),
+  preInformation: defineMessages({
+    sectionTitle: {
+      id: 'id.application:externalData.preInformation.sectionTitle',
+      defaultMessage: 'Nafnskírteinisumókn',
+      description: 'Pre information about application section title ',
+    },
+    title: {
+      id: 'id.application:externalData.preInformation.title',
+      defaultMessage: 'Nafnskírteini',
+      description: 'Pre information about application title',
+    },
+    description: {
+      id: 'id.application:externalData.preInformation.description#markdown',
+      defaultMessage:
+        'Í þessari umsókn getur þú sótt um nafnskírteini fyrir þig eða einstaklinga í þinni forsjá. Eftir þetta ferli þarf að mæta í myndatöku hjá næsta sýslumanni til þess að skírteinið geti farið í framleiðslu. Þegar nafnskírteinið er tilbúið þá getur þú sótt það hjá því sýslumannsembætti sem hentar þér best.',
+      description: 'Pre information about application description',
+    },
+  }),
   nationalRegistry: defineMessages({
     title: {
       id: 'id.application:externalData.nationalRegistry.title',

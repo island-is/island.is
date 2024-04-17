@@ -1,7 +1,7 @@
 import {
   buildMultiField,
   buildSubSection,
-  buildDescriptionField,
+  buildRadioField,
 } from '@island.is/application/core'
 import { Routes } from '../../../lib/constants'
 import { idInformation } from '../../../lib/messages/idInformation'
@@ -11,13 +11,24 @@ export const TypeOfIdSubSection = buildSubSection({
   title: idInformation.general.typeofIdSectionTitle,
   children: [
     buildMultiField({
-      id: Routes.TYPEOFID,
-      title: 'TODO type of id multifield title',
+      id: `${Routes.TYPEOFID}multiField`,
+      title: idInformation.labels.typeOfIdTitle,
+      description: idInformation.labels.typeOfIdDescription,
       children: [
-        buildDescriptionField({
-          id: `${Routes.TYPEOFID}.title`,
-          title: 'type of id description field title',
-          titleVariant: 'h5',
+        buildRadioField({
+          id: Routes.TYPEOFID,
+          title: idInformation.labels.typeOfIdRadioLabel,
+          width: 'half',
+          options: [
+            {
+              label: idInformation.labels.typeOfIdRadioAnswerOne,
+              value: 'WithTravel',
+            },
+            {
+              label: idInformation.labels.typeOfIdRadioAnswerTwo,
+              value: 'WithoutTravel',
+            },
+          ],
         }),
       ],
     }),
