@@ -35,7 +35,7 @@ import { DelegationsIndexService } from './delegations-index.service'
 import {
   NEW_DELEGATION_TEMPLATE_ID,
   UPDATED_DELEGATION_TEMPLATE_ID,
-} from './constants'
+} from './constants/hnipp'
 import { Features } from '@island.is/feature-flags'
 import { FeatureFlagService } from '@island.is/nest/feature-flags'
 import { LOGGER_PROVIDER } from '@island.is/logging'
