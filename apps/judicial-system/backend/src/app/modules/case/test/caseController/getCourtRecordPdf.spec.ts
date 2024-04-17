@@ -54,35 +54,15 @@ describe('CaseController - Get court record pdf', () => {
     }
   })
 
-  describe('AWS S3 lookup', () => {
-    const user = {} as User
-    const caseId = uuid()
-    const theCase = {
-      id: caseId,
-      courtRecordSignatureDate: nowFactory(),
-    } as Case
-    const res = {} as Response
-
-    beforeEach(async () => {
-      await givenWhenThen(caseId, user, theCase, res)
-    })
-
-    it('should lookup pdf', () => {
-      expect(mockAwsS3Service.getObject).toHaveBeenCalledWith(
-        `generated/${caseId}/courtRecord.pdf`,
-      )
-    })
-  })
-
   describe('AWS S3 pdf returned', () => {
-    const user = {} as User
+    const user = { id: uuid() } as User
     const caseId = uuid()
     const theCase = {
       id: caseId,
       courtRecordSignatureDate: nowFactory(),
     } as Case
     const res = { end: jest.fn() } as unknown as Response
-    const pdf = {}
+    const pdf = uuid()
 
     beforeEach(async () => {
       const mockGetObject = mockAwsS3Service.getObject as jest.Mock
@@ -91,58 +71,11 @@ describe('CaseController - Get court record pdf', () => {
       await givenWhenThen(caseId, user, theCase, res)
     })
 
-    it('should return pdf', () => {
+    it('should lookup pdf', () => {
+      expect(mockAwsS3Service.getObject).toHaveBeenCalledWith(
+        `generated/${caseId}/courtRecord.pdf`,
+      )
       expect(res.end).toHaveBeenCalledWith(pdf)
-    })
-  })
-
-  describe('AWS S3 lookup fails', () => {
-    const user = {} as User
-    const caseId = uuid()
-    const theCase = {
-      id: caseId,
-      courtRecordSignatureDate: nowFactory(),
-    } as Case
-    const res = {} as Response
-    const error = new Error('Some ignored error')
-
-    beforeEach(async () => {
-      const mockGetObject = mockAwsS3Service.getObject as jest.Mock
-      mockGetObject.mockRejectedValueOnce(error)
-
-      await givenWhenThen(caseId, user, theCase, res)
-    })
-
-    it('should info log the failure', () => {
-      expect(mockLogger.info).toHaveBeenCalledWith(
-        `The court record for case ${caseId} was not found in AWS S3`,
-        { error },
-      )
-    })
-  })
-
-  describe('pdf generated', () => {
-    const user = {} as User
-    const caseId = uuid()
-    const theCase = {
-      id: caseId,
-      courtRecordSignatureDate: nowFactory(),
-    } as Case
-    const res = {} as Response
-
-    beforeEach(async () => {
-      const mockGetObject = mockAwsS3Service.getObject as jest.Mock
-      mockGetObject.mockRejectedValueOnce(new Error('Some ignored error'))
-
-      await givenWhenThen(caseId, user, theCase, res)
-    })
-
-    it('should generate pdf', () => {
-      expect(getCourtRecordPdfAsBuffer).toHaveBeenCalledWith(
-        theCase,
-        expect.any(Function),
-        user,
-      )
     })
   })
 
@@ -153,19 +86,29 @@ describe('CaseController - Get court record pdf', () => {
       id: caseId,
       courtRecordSignatureDate: nowFactory(),
     } as Case
+    const error = new Error('Some ignored error')
     const res = { end: jest.fn() } as unknown as Response
-    const pdf = {}
+    const pdf = uuid()
 
     beforeEach(async () => {
       const mockGetObject = mockAwsS3Service.getObject as jest.Mock
-      mockGetObject.mockRejectedValueOnce(new Error('Some ignored error'))
+      mockGetObject.mockRejectedValueOnce(error)
       const getMock = getCourtRecordPdfAsBuffer as jest.Mock
       getMock.mockResolvedValueOnce(pdf)
 
       await givenWhenThen(caseId, user, theCase, res)
     })
 
-    it('should return pdf', () => {
+    it('should info log the failure', () => {
+      expect(mockLogger.info).toHaveBeenCalledWith(
+        `The court record for case ${caseId} was not found in AWS S3`,
+        { error },
+      )
+      expect(getCourtRecordPdfAsBuffer).toHaveBeenCalledWith(
+        theCase,
+        expect.any(Function),
+        user,
+      )
       expect(res.end).toHaveBeenCalledWith(pdf)
     })
   })
