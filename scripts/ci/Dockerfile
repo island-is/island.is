@@ -1,92 +1,55 @@
-##
-## This is a multi-stage Dockerfile which contains all CI-related operations as well as images to be deployed in production
-##
-
-# Ignore package pinning rules
-# # npm pinning
-# hadolint global ignore=DL3016
-# # apk pinning
-# hadolint global ignore=DL3018
-# # apt pinning
-# hadolint global ignore=DL3008
-
+# This is a multi-stage Dockerfile which contains all CI-related operations as well as images to be deployed in production
 ARG PLAYWRIGHT_VERSION
 ARG DOCKER_IMAGE_REGISTRY=public.ecr.aws
 FROM $DOCKER_IMAGE_REGISTRY/docker/library/node:18-alpine3.15 as deps
 
-RUN --mount=type=cache,target=/var/cache/apk/ \
-  apk add --upgrade --no-cache \
-  git python3 build-base gcc bash && \
-  ln -sf /usr/bin/python3 /usr/bin/python
+RUN apk add -U git
 
 WORKDIR /build
 
 # Adding and installing packages
-COPY package.json yarn.lock .yarnrc.yml ./
-COPY apps/native/app/package.json ./apps/native/app/
-COPY .yarn/releases/ .yarn/releases/
-COPY .yarn/patches/ .yarn/patches/
-RUN ls -lah ./.yarn/ ./
-# We,re using --mount, so no need to `yarn cache clean`
-# hadolint ignore=DL3060
-RUN --mount=type=cache,target=./.yarn/cache --mount=type=cache,target=.cache --mount=type=cache,target=/root/.cache \
-  CI=true yarn install --immutable
-
-
+ADD package.json yarn.lock .yarnrc.yml ./
+ADD apps/native/app/package.json ./apps/native/app/
+COPY .yarn/ ./.yarn
+RUN apk add --update --no-cache python3 build-base gcc && ln -sf /usr/bin/python3 /usr/bin/python
+RUN CI=true yarn install --immutable
 
 FROM deps as src
 
-RUN wget -qO /tmp/jq-linux64 https://github.com/stedolan/jq/releases/download/jq-1.6/jq-linux64 && \
+RUN wget -O /tmp/jq-linux64 https://github.com/stedolan/jq/releases/download/jq-1.6/jq-linux64 && \
   chmod a+x /tmp/jq-linux64 && \
   mv /tmp/jq-linux64 /usr/bin/jq
 
 # image with the source code
-# COPY *.* ./
-COPY *.js *.json *.yaml *.yml *.ts *.lock ./
-COPY .*.js .*.json .*.yaml .*.yml .*.ts .*.lock ./
-COPY infra/ infra/
-COPY libs/ libs/
-COPY apps/ apps/
-
-
+ADD . .
 
 FROM src as builder
-
 ARG APP
+ARG APP_DIST_HOME
 ENV APP=${APP}
-ARG APP_DIST_HOME=dist/apps/${APP}
 ENV NODE_ENV=production
 ENV NODE_OPTIONS="--max-old-space-size=8192"
 
-RUN id && \
-  pwd && \
-  ls -lah ./ .yarn ./apps/${APP}
 RUN yarn run build ${APP} --prod
 
-
-
 FROM $DOCKER_IMAGE_REGISTRY/docker/library/node:18-alpine3.15 as output-base
-
 # this is base image for containers that are to be deployed
 ARG GIT_BRANCH
-ENV GIT_BRANCH=${GIT_BRANCH}
 ARG GIT_SHA
-ENV GIT_SHA=${GIT_SHA}
 LABEL branch=${GIT_BRANCH}
 LABEL commit=${GIT_SHA}
+ENV GIT_BRANCH=${GIT_BRANCH}
+ENV GIT_SHA=${GIT_SHA}
 ARG APP
-ENV APP=${APP}
 ARG APP_HOME
-ARG APP_DIST_HOME=dist/apps/${APP}
+ARG APP_DIST_HOME
+ENV APP=${APP}
 ENV NODE_ENV=production
 
 WORKDIR /webapp
 
 # Adding user for running the app
-RUN addgroup runners && \
-  adduser -D runner -G runners
-
-
+RUN addgroup runners && adduser -D runner -G runners
 
 FROM output-base as output-base-with-pg
 
@@ -97,8 +60,6 @@ RUN npm install -g \
 
 USER runner
 
-
-
 FROM output-base-with-pg as output-express
 ARG GIT_SHA
 ENV DD_GIT_COMMIT_SHA="${GIT_SHA}"
@@ -108,8 +69,6 @@ COPY --from=builder /build/${APP_DIST_HOME} /webapp/
 
 ENTRYPOINT []
 CMD [ "node", "--no-experimental-fetch", "main.js" ]
-
-
 
 FROM output-base-with-pg as output-next
 ARG GIT_SHA
@@ -123,38 +82,35 @@ COPY --from=builder /build/${APP_DIST_HOME} /webapp/
 
 ENTRYPOINT [ "node", "--no-experimental-fetch", "main.js" ]
 
-
-
 FROM $DOCKER_IMAGE_REGISTRY/nginx/nginx:1.21-alpine as output-static
 ARG APP
-ENV APP=${APP}
-ARG APP_DIST_HOME=dist/apps/${APP}
+ARG APP_DIST_HOME
 ARG GIT_BRANCH
-ENV GIT_BRANCH=${GIT_BRANCH}
 ARG GIT_SHA
-ENV GIT_SHA=${GIT_SHA}
 LABEL branch=${GIT_BRANCH}
 LABEL commit=${GIT_SHA}
+ENV GIT_BRANCH=${GIT_BRANCH}
+ENV GIT_SHA=${GIT_SHA}
+ENV APP=${APP}
 ENV BASEPATH=/
 ENV DD_GIT_COMMIT_SHA="${GIT_SHA}"
 ENV DD_GIT_REPOSITORY_URL="github.com/island-is/island.is"
 
 RUN mkdir -p /etc/nginx/templates
-RUN --mount=type=cache,target=/var/cache/apk/ \
-  apk add --upgrade --no-cache \
-  bash nodejs
+RUN apk update && \
+  apk upgrade && \
+  apk add bash nodejs
 
-COPY scripts/dockerfile-assets/nginx/* /etc/nginx/templates
-COPY scripts/dockerfile-assets/bash/extract-environment.sh /docker-entrypoint.d
-COPY scripts/dockerfile-assets/bash/extract-environment.js /docker-entrypoint.d
+ADD scripts/dockerfile-assets/nginx/* /etc/nginx/templates
+ADD scripts/dockerfile-assets/bash/extract-environment.sh /docker-entrypoint.d
+ADD scripts/dockerfile-assets/bash/extract-environment.js /docker-entrypoint.d
 COPY --from=builder /build/${APP_DIST_HOME} /usr/share/nginx/html
-
-
 
 FROM output-base as output-jest
 
-RUN echo 'module.exports = {};' > jest.config.js && \
-  npm install -g jest
+RUN echo 'module.exports = {};' > jest.config.js
+
+RUN npm install -g jest
 
 COPY --from=builder /build/${APP_DIST_HOME} /webapp/
 
@@ -165,59 +121,46 @@ CMD [ "jest", "main.spec.js" ]
 
 
 FROM mcr.microsoft.com/playwright:v${PLAYWRIGHT_VERSION}-focal as playwright-base
-FROM playwright-base as output-playwright
 
+
+
+
+
+
+FROM playwright-base as output-playwright
 # TODO: remove awscli dependency (157 MB extra)
-RUN --mount=type=cache,target=/apt/foo/bar \
-  apt-get update -y && \
-  apt-get install -y --no-install-recommends \
-  zip awscli && \
-  apt-get purge
+RUN apt-get update -y && apt-get install -y zip awscli && apt-get purge
 
 ARG APP_HOME
 ARG APP_DIST_HOME
 
 WORKDIR ${APP_DIST_HOME}
 
-
-COPY .yarn/releases/ .yarn/releases/
-COPY .yarn/patches/ .yarn/patches/
-COPY .yarnrc.yml yarn.lock package.json ./
-
-# We,re using --mount, so no need to `yarn cache clean`
-# hadolint ignore=DL3060
-RUN \
-  --mount=type=cache,target=./.yarn/cache \
-  --mount=type=cache,target=.cache \
-  --mount=type=cache,target=/root/.cache \
-  cp yarn.lock yarn.lock.bak && \
-  diff yarn.lock.bak yarn.lock && \
-  ( yarn install || (cat /tmp/*/*.log && exit 1) )
-
 COPY --from=builder /build/${APP_DIST_HOME} .
-COPY package.json package.json
+COPY ${APP_HOME}/package.json .
+RUN chown -R pwuser:pwuser .
+
+USER pwuser
+ADD .yarnrc.yml ./
+RUN mkdir ./.yarn
+COPY .yarn/releases ./.yarn/releases
+RUN yarn install
 
 ENV PLAYWRIGHT_BROWSER=chromium
 RUN yarn playwright install ${PLAYWRIGHT_BROWSER}
 
-COPY ${APP_HOME}/entrypoint.sh .
-RUN echo ${APP_DIST_HOME}
-RUN env
-RUN chown -R pwuser:pwuser .
+COPY --chown=pwuser:pwuser ${APP_HOME}/entrypoint.sh .
 
-USER pwuser
 ENTRYPOINT ["./entrypoint.sh"]
-
 
 
 FROM playwright-base as output-local
 ARG APP_HOME
-WORKDIR /app
 
 
 # node user exists in the base image
-RUN mkdir -p /out && \
-  chown node:node /out
+RUN mkdir -p /out \
+  && chown node:node /out
 
 COPY --chown=pwuser:pwuser ${APP_HOME}/entrypoint.sh .
 
@@ -225,8 +168,5 @@ USER pwuser
 
 ENTRYPOINT ["./entrypoint.sh"]
 
-
-
 FROM output-base as output-native
-
 RUN echo "not-implemented"
