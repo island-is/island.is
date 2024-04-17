@@ -25,6 +25,9 @@ export class BasicVehicleInformation {
 
   @Field(() => Boolean, { nullable: true })
   requireMileage?: boolean | null
+
+  @Field(() => String, { nullable: true })
+  mileageReading?: string | null
 }
 
 @ObjectType()
