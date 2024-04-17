@@ -53,7 +53,7 @@ export const getApplicationAnswers = (answers: Application['answers']) => {
 
   const applicantPhonenumber = getValueViaPath(
     answers,
-    'applicantInfo.phonenumber',
+    'applicant.phoneNumber',
   ) as string
 
   // If foreign residence is found then this is always true
@@ -223,15 +223,20 @@ export const getApplicationExternalData = (
     'nationalRegistrySpouse.data',
   ) as object
 
-  const email = getValueViaPath(
-    externalData,
-    'socialInsuranceAdministrationApplicant.data.emailAddress',
-  ) as string
-
   const bankInfo = getValueViaPath(
     externalData,
     'socialInsuranceAdministrationApplicant.data.bankAccount',
   ) as BankInfo
+
+  const userProfileEmail = getValueViaPath(
+    externalData,
+    'userProfile.data.email',
+  ) as string
+
+  const userProfilePhoneNumber = getValueViaPath(
+    externalData,
+    'userProfile.data.mobilePhoneNumber',
+  ) as string
 
   const isEligible = getValueViaPath(
     externalData,
@@ -246,14 +251,17 @@ export const getApplicationExternalData = (
   return {
     residenceHistory,
     applicantName,
+    applicantPostalCode,
     applicantNationalId,
     applicantAddress,
+    applicantLocality,
     applicantMunicipality,
     hasSpouse,
     isEligible,
-    email,
     bankInfo,
     currencies,
+    userProfileEmail,
+    userProfilePhoneNumber,
   }
 }
 
