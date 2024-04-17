@@ -98,20 +98,20 @@ describe('LimitedAccessFileController - Get case file signed url', () => {
     const caseFile = { id: fileId, key } as CaseFile
     const theCase = {} as Case
 
-    const signedUrl = {} as SignedUrl
+    const url = uuid()
     let then: Then
 
     beforeEach(async () => {
       const mockObjectExists = mockAwsS3Service.objectExists as jest.Mock
       mockObjectExists.mockResolvedValueOnce(true)
       const mockGetSignedUrl = mockAwsS3Service.getSignedUrl as jest.Mock
-      mockGetSignedUrl.mockResolvedValueOnce(signedUrl)
+      mockGetSignedUrl.mockResolvedValueOnce(url)
 
       then = await givenWhenThen(caseId, theCase, fileId, caseFile)
     })
 
     it('should return the signed url', () => {
-      expect(then.result).toBe(signedUrl)
+      expect(then.result).toEqual({ url })
     })
   })
 
@@ -129,9 +129,7 @@ describe('LimitedAccessFileController - Get case file signed url', () => {
 
     it('should throw not found exceptoin', () => {
       expect(then.error).toBeInstanceOf(NotFoundException)
-      expect(then.error.message).toBe(
-        `File ${fileId} does not exists in AWS S3`,
-      )
+      expect(then.error.message).toBe(`File ${fileId} does not exist in AWS S3`)
     })
   })
 
@@ -162,9 +160,7 @@ describe('LimitedAccessFileController - Get case file signed url', () => {
 
     it('should throw not found exceptoin', () => {
       expect(then.error).toBeInstanceOf(NotFoundException)
-      expect(then.error.message).toBe(
-        `File ${fileId} does not exists in AWS S3`,
-      )
+      expect(then.error.message).toBe(`File ${fileId} does not exist in AWS S3`)
     })
   })
 

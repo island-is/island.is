@@ -1,7 +1,5 @@
 import { Locale } from 'locale'
 
-import { setupOneScreenWatsonChatBot } from '@island.is/web/utils/webChat'
-
 import {
   LiveChatIncChatPanelProps,
   WatsonChatPanelProps,
@@ -15,40 +13,54 @@ export const liveChatIncConfig: Record<
     // HSN - Organization
     // https://app.contentful.com/spaces/8k0h54kbe6bj/entries/EM4Y0gF4OoGhH9ZY0Dxl6
     EM4Y0gF4OoGhH9ZY0Dxl6: {
-      license: 15092154,
+      license: '15092154',
       version: '2.0',
     },
     // HSU - Organization
     // https://app.contentful.com/spaces/8k0h54kbe6bj/entries/1UDhUhE8pzwnl0UxuzRUMk
     '1UDhUhE8pzwnl0UxuzRUMk': {
-      license: 15092154,
+      license: '15092154',
       version: '2.0',
     },
     // HVE - Organization
     // https://app.contentful.com/spaces/8k0h54kbe6bj/entries/Un4jJk0rPybt9fu8gk94m
     Un4jJk0rPybt9fu8gk94m: {
-      license: 15092154,
+      license: '15092154',
       version: '2.0',
+    },
+
+    // Vinnueftirlitið - Organization
+    '39S5VumPfb1hXBJm3SnE02': {
+      license: '13346703',
+      version: '2.0',
+      showLauncher: false,
     },
   },
   en: {
     // HSN - Organization
     // https://app.contentful.com/spaces/8k0h54kbe6bj/entries/EM4Y0gF4OoGhH9ZY0Dxl6
     EM4Y0gF4OoGhH9ZY0Dxl6: {
-      license: 15092154,
+      license: '15092154',
       version: '2.0',
     },
     // HSU - Organization
     // https://app.contentful.com/spaces/8k0h54kbe6bj/entries/1UDhUhE8pzwnl0UxuzRUMk
     '1UDhUhE8pzwnl0UxuzRUMk': {
-      license: 15092154,
+      license: '15092154',
       version: '2.0',
     },
     // HVE - Organization
     // https://app.contentful.com/spaces/8k0h54kbe6bj/entries/Un4jJk0rPybt9fu8gk94m
     Un4jJk0rPybt9fu8gk94m: {
-      license: 15092154,
+      license: '15092154',
       version: '2.0',
+    },
+
+    // Vinnueftirlitið - Organization
+    '39S5VumPfb1hXBJm3SnE02': {
+      license: '13346703',
+      version: '2.0',
+      showLauncher: false,
     },
   },
 }
