@@ -252,13 +252,6 @@ export const LifeEventPage: Screen<LifeEventPageProps> = ({
                       renderComponent: {
                         // eslint-disable-next-line @typescript-eslint/ban-ts-comment
                         // @ts-ignore make web strict
-                        Form: (form) => (
-                          // eslint-disable-next-line @typescript-eslint/ban-ts-comment
-                          // @ts-ignore make web strict
-                          <Form form={form} namespace={namespace} />
-                        ),
-                        // eslint-disable-next-line @typescript-eslint/ban-ts-comment
-                        // @ts-ignore make web strict
                         SectionWithImage: (slice) => {
                           // Stagger section layout default <> reverse
                           sectionCountRef.current++

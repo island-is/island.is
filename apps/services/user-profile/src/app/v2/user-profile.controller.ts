@@ -17,6 +17,7 @@ import { IdsAuthGuard, Scopes, ScopesGuard } from '@island.is/auth-nest-tools'
 import { UserProfileDto } from './dto/user-profile.dto'
 import { UserProfileService } from './user-profile.service'
 import { ClientType } from '../types/ClientType'
+import { ActorProfileDto } from './dto/actor-profile.dto'
 
 const namespace = '@island.is/user-profile/v2/users'
 
@@ -63,5 +64,42 @@ export class UserProfileController {
       throw new BadRequestException('National id is not valid')
     }
     return this.userProfileService.findById(nationalId, false, clientType)
+  }
+
+  @Get('/.to-national-id/actor-profiles/.from-national-id')
+  @Documentation({
+    description: 'Get actor profiles for nationalId.',
+    request: {
+      header: {
+        'X-Param-To-National-Id': {
+          required: true,
+          description: 'National id of the user the actor profile is for',
+        },
+        'X-Param-From-National-Id': {
+          required: true,
+          description: 'National id of the user the delegation is from',
+        },
+      },
+    },
+    response: { status: 200, type: ActorProfileDto },
+  })
+  @Audit<ActorProfileDto>({
+    resources: (profile) => profile.fromNationalId,
+  })
+  async getActorProfile(
+    @Headers('X-Param-To-National-Id') toNationalId: string,
+    @Headers('X-Param-From-National-Id') fromNationalId: string,
+  ): Promise<ActorProfileDto> {
+    if (
+      !kennitala.isValid(toNationalId) ||
+      !kennitala.isValid(fromNationalId)
+    ) {
+      throw new BadRequestException('National id is not valid')
+    }
+
+    return this.userProfileService.getActorProfile({
+      toNationalId,
+      fromNationalId,
+    })
   }
 }
