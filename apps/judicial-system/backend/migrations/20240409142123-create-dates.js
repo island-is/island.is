@@ -72,13 +72,13 @@ module.exports = {
         .then(() =>
           queryInterface.sequelize.query(
             `update "case"
-            set court_date = d.date
-            from (
-              select distinct on (case_id) *
-              from "date_log"
-              order by case_id, 
-            ) d
-            where "case".id = d.case_id`,
+              set court_date = d.date
+              from (
+                select distinct on (case_id) *
+                from "date_log"
+                order by case_id,
+              ) d
+              where "case".id = d.case_id`,
             { transaction: t },
           ),
         )
