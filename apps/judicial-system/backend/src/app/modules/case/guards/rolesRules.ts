@@ -57,6 +57,7 @@ const districtCourtFields: (keyof UpdateCaseDto)[] = [
   'defenderPhoneNumber',
   'courtCaseNumber',
   'sessionArrangements',
+  'courtDate',
   'courtLocation',
   'courtRoom',
   'courtStartDate',
