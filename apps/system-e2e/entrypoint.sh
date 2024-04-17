@@ -18,7 +18,12 @@ export PATH="./node_modules/.bin:$PATH"
 
 echo "Current test environment: ${TEST_ENVIRONMENT}"
 echo "Playwright args: $*"
-echo "Playwright project: $TEST_PROJECT"
+if ! command -v playwright >/dev/null; then
+  echo "Can't find 'playwright'. Is it installed?"
+  echo "Your \$PATH might need updating"
+  echo "  PATH=$PATH"
+  exit 1
+fi
 echo "Playwright version: $(playwright --version)"
 
 TEST_EXIT_CODE=0
