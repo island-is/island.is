@@ -12,10 +12,13 @@ import {
   formatDate,
   readableIndictmentSubtypes,
 } from '@island.is/judicial-system/formatters'
-import { DateType, isIndictmentCase } from '@island.is/judicial-system/types'
+import {
+  DateType,
+  getLatestDateType,
+  isIndictmentCase,
+} from '@island.is/judicial-system/types'
 
 import { Case } from '../case'
-import { DateLogService } from '../date-log'
 import { eventModuleConfig } from './event.config'
 
 const errorEmojis = [
@@ -85,7 +88,6 @@ export class EventService {
   constructor(
     @Inject(eventModuleConfig.KEY)
     private readonly config: ConfigType<typeof eventModuleConfig>,
-    private readonly dateLogService: DateLogService,
     @Inject(LOGGER_PROVIDER) private readonly logger: Logger,
   ) {}
 
@@ -95,9 +97,11 @@ export class EventService {
         return
       }
 
-      const courtDate = await this.dateLogService.findLatestDateTypeByCaseId(
+      const courtDate = getLatestDateType(
         DateType.COURT_DATE,
-        theCase.id,
+        theCase.dateLogs?.map((dateLog) => ({
+          dateType: dateLog.dateType as DateType,
+        })),
       )
 
       const title =
