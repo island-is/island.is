@@ -6,9 +6,12 @@ export interface BoostChatPanelProps {
 }
 
 export interface LiveChatIncChatPanelProps {
-  license: number
+  license: string
   version: string
-  group?: number
+  group?: string
+  // Whether the default LiveChatInc launcher is shown
+  showLauncher?: boolean
+  pushUp?: boolean
 }
 
 export interface WatsonChatPanelProps {
@@ -26,7 +29,7 @@ export interface WatsonChatPanelProps {
   // eslint-disable-next-line @typescript-eslint/no-explicit-any
   onLoad?: (instance: any) => void
 
-  // Whether the default launcher is shown
+  // Whether the default IBM Watson launcher is shown
   showLauncher?: boolean
 
   // If don't use the default launcher that IBM Watson provides, should the chat bubble launcher be pushed up?
