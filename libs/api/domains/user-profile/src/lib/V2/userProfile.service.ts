@@ -125,13 +125,17 @@ export class UserProfileServiceV2 {
 
     const profilesWithNames: ActorProfile[] = await Promise.all(
       actorProfiles.data.map(async (actorProfile) => {
-        const identity = await this.identityService.getIdentity(
-          actorProfile.fromNationalId,
-        )
+        try {
+          const identity = await this.identityService.getIdentity(
+            actorProfile.fromNationalId,
+          )
 
-        return {
-          ...actorProfile,
-          fromName: identity?.name,
+          return {
+            ...actorProfile,
+            fromName: identity?.name,
+          }
+        } catch {
+          return actorProfile
         }
       }),
     )
