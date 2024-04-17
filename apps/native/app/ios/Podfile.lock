@@ -645,6 +645,8 @@ PODS:
     - React
   - RNShare (7.1.1):
     - React-Core
+  - RNSVG (15.1.0):
+    - React-Core
   - SocketRocket (0.6.0)
   - SSZipArchive (2.2.3)
   - Yoga (1.14.0)
@@ -757,6 +759,7 @@ DEPENDENCIES:
   - RNKeychain (from `../node_modules/react-native-keychain`)
   - RNQuickAction (from `../node_modules/react-native-quick-actions`)
   - RNShare (from `../node_modules/react-native-share`)
+  - RNSVG (from `../node_modules/react-native-svg`)
   - Yoga (from `../node_modules/react-native/ReactCommon/yoga`)
 
 SPEC REPOS:
@@ -945,6 +948,8 @@ EXTERNAL SOURCES:
     :path: "../node_modules/react-native-quick-actions"
   RNShare:
     :path: "../node_modules/react-native-share"
+  RNSVG:
+    :path: "../node_modules/react-native-svg"
   Yoga:
     :path: "../node_modules/react-native/ReactCommon/yoga"
 
@@ -1012,7 +1017,7 @@ SPEC CHECKSUMS:
   RCTTypeSafety: c276d85975bde3d8448907235c70bf0da257adfd
   React: e481a67971af1ce9639c9f746b753dd0e84ca108
   React-callinvoker: 1051c04a94fa9d243786b86380606bad701a3b31
-  React-Codegen: a1515fc3e1f52e21cdd56489ddd16c61b2889ed2
+  React-Codegen: 14b1e716d361d5ad95e0ce1a338f3fa0733a98b5
   React-Core: 698fc3baecb80d511d987475a16d036cec6d287f
   React-CoreModules: 59245305f41ff0adfeac334acc0594dea4585a7c
   React-cxxreact: 49accd2954b0f532805dbcd1918fa6962f32f247
@@ -1056,12 +1061,13 @@ SPEC CHECKSUMS:
   RNKeychain: ff836453cba46938e0e9e4c22e43d43fa2c90333
   RNQuickAction: 6d404a869dc872cde841ad3147416a670d13fa93
   RNShare: a22398d8d02336133e28bf8b6e0b47b31abade41
+  RNSVG: 50cf2c7018e57cf5d3522d98d0a3a4dd6bf9d093
   SocketRocket: fccef3f9c5cedea1353a9ef6ada904fde10d6608
   SSZipArchive: 62d4947b08730e4cda640473b0066d209ff033c9
   Yoga: 921eb014669cf9c718ada68b08d362517d564e0c
   YogaKit: f782866e155069a2cca2517aafea43200b01fd5a
   ZXingObjC: fdbb269f25dd2032da343e06f10224d62f537bdb
 
-PODFILE CHECKSUM: 8b8d1f319d1bf887f7eb7fa64a7345d92f0f19fe
+PODFILE CHECKSUM: 88dd06099129c132ab3214042958bb9c117cadf7
 
-COCOAPODS: 1.14.3
+COCOAPODS: 1.15.2

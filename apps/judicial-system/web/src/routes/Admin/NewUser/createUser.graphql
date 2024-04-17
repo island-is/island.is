@@ -13,6 +13,6 @@ mutation CreateUser($input: CreateUserInput!) {
       name
     }
     active
-    canConfirmAppeal
+    canConfirmIndictment
   }
 }

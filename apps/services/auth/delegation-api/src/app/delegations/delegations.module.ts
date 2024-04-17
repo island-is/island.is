@@ -5,10 +5,15 @@ import { FeatureFlagModule } from '@island.is/nest/feature-flags'
 
 import { MeDelegationsController } from './me-delegations.controller'
 import { DelegationIndexController } from './delegation-index.controller'
+import { DelegationsController } from './delegations.controller'
 
 @Module({
   imports: [AuthDelegationsModule, FeatureFlagModule],
-  controllers: [MeDelegationsController, DelegationIndexController],
+  controllers: [
+    MeDelegationsController,
+    DelegationIndexController,
+    DelegationsController,
+  ],
   providers: [],
 })
 export class DelegationsModule {}

@@ -15,6 +15,7 @@ import {
   NationalRegistryUserApi,
   InstitutionNationalIds,
   defineTemplateApi,
+  UserProfileApi,
 } from '@island.is/application/types'
 import {
   coreMessages,
@@ -88,6 +89,7 @@ const AdditionalSupportForTheElderlyTemplate: ApplicationTemplate<
               write: 'all',
               api: [
                 NationalRegistryUserApi,
+                UserProfileApi,
                 SocialInsuranceAdministrationApplicantApi,
                 SocialInsuranceAdministrationCurrenciesApi,
                 SocialInsuranceAdministrationIsApplicantEligibleApi,
@@ -444,17 +446,19 @@ const AdditionalSupportForTheElderlyTemplate: ApplicationTemplate<
         const { additionalAttachmentsRequired, additionalAttachments } =
           getApplicationAnswers(answers)
 
-        const mergedAdditionalDocumentRequired = [
-          ...additionalAttachments,
-          ...additionalAttachmentsRequired,
-        ]
+        if (additionalAttachmentsRequired) {
+          const mergedAdditionalDocumentRequired = [
+            ...additionalAttachments,
+            ...additionalAttachmentsRequired,
+          ]
 
-        set(
-          answers,
-          'fileUploadAdditionalFiles.additionalDocuments',
-          mergedAdditionalDocumentRequired,
-        )
-        unset(answers, 'fileUploadAdditionalFilesRequired')
+          set(
+            answers,
+            'fileUploadAdditionalFiles.additionalDocuments',
+            mergedAdditionalDocumentRequired,
+          )
+          unset(answers, 'fileUploadAdditionalFilesRequired')
+        }
 
         return context
       }),

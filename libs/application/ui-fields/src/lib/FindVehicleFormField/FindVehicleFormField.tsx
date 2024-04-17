@@ -33,7 +33,8 @@ interface VehicleDetails {
   color: string
   isDebtLess?: boolean
   validationErrorMessages?: VehicleValidationErrorMessage[]
-  requireMilage?: boolean
+  requireMileage?: boolean
+  mileageReading: string
 }
 
 interface Props extends FieldBaseProps {
@@ -51,7 +52,8 @@ const extractCommonVehicleInfo = function (
     permno: basicInfo.permno || '',
     make: basicInfo.make || '',
     color: basicInfo.color || '',
-    requireMilage: basicInfo.requireMileage || false,
+    requireMileage: basicInfo.requireMileage || false,
+    mileageReading: (basicInfo?.mileageReading || '') as string,
   }
 }
 
@@ -188,7 +190,6 @@ export const FindVehicleFormField: FC<React.PropsWithChildren<Props>> = ({
       }
 
       const response = await getDetails(plate.toUpperCase())
-
       const details:
         | VehicleDetails
         | MachineDetails
@@ -230,7 +231,10 @@ export const FindVehicleFormField: FC<React.PropsWithChildren<Props>> = ({
     setValue(`${field.id}.make`, vehicleDetails.make)
     setValue(`${field.id}.plate`, plate)
     setValue(`${field.id}.color`, vehicleDetails.color || undefined)
-    setValue(`${field.id}.requireMilage`, vehicleDetails.requireMilage)
+    setValue(`${field.id}.requireMileage`, vehicleDetails.requireMileage)
+    setValue(`${field.id}.mileageReading`, vehicleDetails.mileageReading)
+    setValue('vehicleMileage.requireMileage', vehicleDetails?.requireMileage)
+    setValue('vehicleMileage.mileageReading', vehicleDetails?.mileageReading)
     setValue('vehicleInfo.plate', plate)
     setValue('vehicleInfo.type', vehicleDetails.make)
     setVehicleDetails(vehicleDetails)

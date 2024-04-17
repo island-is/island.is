@@ -32,7 +32,9 @@ import {
   useViewport,
 } from '@island.is/judicial-system-web/src/utils/hooks'
 
-import { useContextMenu } from '../../ContextMenu/ContextMenu'
+import WithdrawAppealContextMenuModal, {
+  useWithdrawAppealMenuOption,
+} from '../../ContextMenu/ContextMenuOptions/WithdrawAppealMenuOption'
 import IconButton from '../../IconButton/IconButton'
 import MobilePastCase from './MobilePastCase'
 import { contextMenu } from '../../ContextMenu/ContextMenu.strings'
@@ -50,12 +52,15 @@ const PastCasesTable: React.FC<React.PropsWithChildren<Props>> = (props) => {
   const { user } = useContext(UserContext)
   const { isOpeningCaseId, handleOpenCase, LoadingIndicator, showLoading } =
     useCaseList()
-
   const { sortedData, requestSort, getClassNamesFor, isActiveColumn } =
     useSortCases('createdAt', 'descending', cases)
 
-  const { withdrawAppealMenuOption, shouldDisplayWithdrawAppealOption } =
-    useContextMenu()
+  const {
+    withdrawAppealMenuOption,
+    caseToWithdraw,
+    setCaseToWithdraw,
+    shouldDisplayWithdrawAppealOption,
+  } = useWithdrawAppealMenuOption()
 
   const pastCasesData = useMemo(
     () =>
@@ -91,132 +96,145 @@ const PastCasesTable: React.FC<React.PropsWithChildren<Props>> = (props) => {
       ))}
     </>
   ) : (
-    <TableContainer
-      loading={loading}
-      testid={testid}
-      tableHeader={
-        <>
-          <TableHeaderText title={formatMessage(tables.caseNumber)} />
-          <th className={cn(styles.th, styles.largeColumn)}>
-            <SortButton
-              title={capitalize(formatMessage(core.defendant, { suffix: 'i' }))}
-              onClick={() => requestSort('defendant')}
-              sortAsc={getClassNamesFor('defendant') === 'ascending'}
-              sortDes={getClassNamesFor('defendant') === 'descending'}
-              isActive={isActiveColumn('defendant')}
-            />
-          </th>
-          <TableHeaderText title={formatMessage(tables.type)} />
-          <th className={cn(styles.th, styles.largeColumn)}>
-            <SortButton
-              title={capitalize(formatMessage(tables.created, { suffix: 'i' }))}
-              onClick={() => requestSort('createdAt')}
-              sortAsc={getClassNamesFor('createdAt') === 'ascending'}
-              sortDes={getClassNamesFor('createdAt') === 'descending'}
-              isActive={isActiveColumn('createdAt')}
-            />
-          </th>
-          <TableHeaderText title={formatMessage(tables.state)} />
-          <TableHeaderText title={formatMessage(tables.duration)} />
-          <th></th>
-        </>
-      }
-    >
-      {sortedData.map((column) => {
-        return (
-          <tr
-            className={styles.row}
-            onClick={() => handleOpenCase(column.id)}
-            key={column.id}
-          >
-            <td>
-              <CourtCaseNumber
-                courtCaseNumber={column.courtCaseNumber}
-                policeCaseNumbers={column.policeCaseNumbers}
-                appealCaseNumber={column.appealCaseNumber}
-              />
-            </td>
-            <td className={cn(styles.td, styles.largeColumn)}>
-              <DefendantInfo defendants={column.defendants} />
-            </td>
-            <td>
-              <ColumnCaseType
-                type={column.type}
-                decision={column?.decision}
-                parentCaseId={column.parentCaseId}
-              />
-            </td>
-            <td>
-              <CreatedDate created={column.created} />
-            </td>
-            <td>
-              <Box
-                marginRight={column.appealState ? 1 : 0}
-                marginBottom={column.appealState ? 1 : 0}
-              >
-                <TagCaseState
-                  caseState={column.state}
-                  caseType={column.type}
-                  isCourtRole={isDistrictCourtUser(user)}
-                  isValidToDateInThePast={column.isValidToDateInThePast}
-                />
-              </Box>
-              {column.appealState && (
-                <TagAppealState
-                  appealState={column.appealState}
-                  appealRulingDecision={column.appealRulingDecision}
-                />
-              )}
-            </td>
-            <td>
-              <Text>
-                {getDurationDate(
-                  column.state,
-                  column.validToDate,
-                  column.initialRulingDate,
-                  column.rulingDate,
+    <>
+      <TableContainer
+        loading={loading}
+        testid={testid}
+        tableHeader={
+          <>
+            <TableHeaderText title={formatMessage(tables.caseNumber)} />
+            <th className={cn(styles.th, styles.largeColumn)}>
+              <SortButton
+                title={capitalize(
+                  formatMessage(core.defendant, { suffix: 'i' }),
                 )}
-              </Text>
-            </td>
-            <td className={styles.loadingContainer}>
-              {showLoading ? (
-                <AnimatePresence>
-                  {isOpeningCaseId === column.id && showLoading && (
-                    <LoadingIndicator />
-                  )}
-                </AnimatePresence>
-              ) : (
-                <Box>
-                  <ContextMenu
-                    items={[
-                      {
-                        title: formatMessage(contextMenu.openInNewTab),
-                        onClick: () => handleOpenCase(column.id, true),
-                        icon: 'open',
-                      },
-                      ...(shouldDisplayWithdrawAppealOption(column)
-                        ? [withdrawAppealMenuOption(column.id, cases)]
-                        : []),
-                    ]}
-                    menuLabel="Opna valmöguleika á máli"
-                    disclosure={
-                      <IconButton
-                        icon="ellipsisVertical"
-                        colorScheme="transparent"
-                        onClick={(evt) => {
-                          evt.stopPropagation()
-                        }}
-                        disabled={false}
-                      />
-                    }
+                onClick={() => requestSort('defendant')}
+                sortAsc={getClassNamesFor('defendant') === 'ascending'}
+                sortDes={getClassNamesFor('defendant') === 'descending'}
+                isActive={isActiveColumn('defendant')}
+              />
+            </th>
+            <TableHeaderText title={formatMessage(tables.type)} />
+            <th className={cn(styles.th, styles.largeColumn)}>
+              <SortButton
+                title={capitalize(
+                  formatMessage(tables.created, { suffix: 'i' }),
+                )}
+                onClick={() => requestSort('createdAt')}
+                sortAsc={getClassNamesFor('createdAt') === 'ascending'}
+                sortDes={getClassNamesFor('createdAt') === 'descending'}
+                isActive={isActiveColumn('createdAt')}
+              />
+            </th>
+            <TableHeaderText title={formatMessage(tables.state)} />
+            <TableHeaderText title={formatMessage(tables.duration)} />
+            <th></th>
+          </>
+        }
+      >
+        {sortedData.map((column) => {
+          return (
+            <tr
+              className={styles.row}
+              onClick={() => handleOpenCase(column.id)}
+              key={column.id}
+            >
+              <td>
+                <CourtCaseNumber
+                  courtCaseNumber={column.courtCaseNumber}
+                  policeCaseNumbers={column.policeCaseNumbers}
+                  appealCaseNumber={column.appealCaseNumber}
+                />
+              </td>
+              <td className={cn(styles.td, styles.largeColumn)}>
+                <DefendantInfo defendants={column.defendants} />
+              </td>
+              <td>
+                <ColumnCaseType
+                  type={column.type}
+                  decision={column?.decision}
+                  parentCaseId={column.parentCaseId}
+                />
+              </td>
+              <td>
+                <CreatedDate created={column.created} />
+              </td>
+              <td>
+                <Box
+                  marginRight={column.appealState ? 1 : 0}
+                  marginBottom={column.appealState ? 1 : 0}
+                >
+                  <TagCaseState
+                    caseState={column.state}
+                    caseType={column.type}
+                    isCourtRole={isDistrictCourtUser(user)}
+                    isValidToDateInThePast={column.isValidToDateInThePast}
                   />
                 </Box>
-              )}
-            </td>
-          </tr>
-        )
-      })}
-    </TableContainer>
+                {column.appealState && (
+                  <TagAppealState
+                    appealState={column.appealState}
+                    appealRulingDecision={column.appealRulingDecision}
+                  />
+                )}
+              </td>
+              <td>
+                <Text>
+                  {getDurationDate(
+                    column.state,
+                    column.validToDate,
+                    column.initialRulingDate,
+                    column.rulingDate,
+                  )}
+                </Text>
+              </td>
+              <td className={styles.loadingContainer}>
+                {showLoading ? (
+                  <AnimatePresence>
+                    {isOpeningCaseId === column.id && showLoading && (
+                      <LoadingIndicator />
+                    )}
+                  </AnimatePresence>
+                ) : (
+                  <Box>
+                    <ContextMenu
+                      items={[
+                        {
+                          title: formatMessage(contextMenu.openInNewTab),
+                          onClick: () => handleOpenCase(column.id, true),
+                          icon: 'open',
+                        },
+                        ...(shouldDisplayWithdrawAppealOption(column)
+                          ? [withdrawAppealMenuOption(column.id)]
+                          : []),
+                      ]}
+                      menuLabel="Opna valmöguleika á máli"
+                      disclosure={
+                        <IconButton
+                          icon="ellipsisVertical"
+                          colorScheme="transparent"
+                          onClick={(evt) => {
+                            evt.stopPropagation()
+                          }}
+                          disabled={false}
+                        />
+                      }
+                    />
+                  </Box>
+                )}
+              </td>
+            </tr>
+          )
+        })}
+      </TableContainer>
+      {caseToWithdraw && (
+        <WithdrawAppealContextMenuModal
+          caseId={caseToWithdraw}
+          cases={cases}
+          onClose={() => setCaseToWithdraw(undefined)}
+        />
+      )}
+    </>
   )
 }
 

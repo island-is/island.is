@@ -10,6 +10,8 @@ import {
   CmsContentfulService,
   localeMap,
   Form,
+  CmsElasticsearchService,
+  ServiceWebPage,
 } from '@island.is/cms'
 import type { Logger } from '@island.is/logging'
 import { LOGGER_PROVIDER } from '@island.is/logging'
@@ -17,7 +19,7 @@ import { ContactUsInput } from './dto/contactUs.input'
 import { TellUsAStoryInput } from './dto/tellUsAStory.input'
 import {
   ServiceWebFormsInput,
-  ServiceWebFormsInputWithInstitutionEmail,
+  ServiceWebFormsInputWithInstitutionEmailAndConfig,
 } from './dto/serviceWebForms.input'
 import { getTemplate as getContactUsTemplate } from './emailTemplates/contactUs'
 import { getTemplate as getTellUsAStoryTemplate } from './emailTemplates/tellUsAStory'
@@ -25,11 +27,12 @@ import { getTemplate as getServiceWebFormsTemplate } from './emailTemplates/serv
 import { GenericFormInput } from './dto/genericForm.input'
 import { environment } from './environments/environment'
 import { CommunicationsConfig } from './communications.config'
+import { getElasticsearchIndex } from '@island.is/content-search-index-manager'
 
 type SendEmailInput =
   | ContactUsInput
   | TellUsAStoryInput
-  | ServiceWebFormsInputWithInstitutionEmail
+  | ServiceWebFormsInputWithInstitutionEmailAndConfig
 
 @Injectable()
 export class CommunicationsService {
@@ -42,6 +45,7 @@ export class CommunicationsService {
     private logger: Logger,
     @Inject(CommunicationsConfig.KEY)
     private readonly config: ConfigType<typeof CommunicationsConfig>,
+    private readonly cmsElasticsearchService: CmsElasticsearchService,
   ) {}
   emailTypeTemplateMap = {
     contactUs: getContactUsTemplate,
@@ -59,7 +63,7 @@ export class CommunicationsService {
 
   async getInputWithInstitutionEmail(
     input: ServiceWebFormsInput,
-  ): Promise<ServiceWebFormsInputWithInstitutionEmail> {
+  ): Promise<ServiceWebFormsInputWithInstitutionEmailAndConfig> {
     const institutionSlug = input.institutionSlug
 
     const contentfulRespository = new ContentfulRepository()
@@ -70,14 +74,20 @@ export class CommunicationsService {
       locale = localeMap[input.lang]
     }
 
-    const result = await contentfulRespository.getLocalizedEntries(locale, {
-      ['content_type']: 'organization',
-      'fields.slug': institutionSlug,
-    })
+    const [institutionResult, serviceWebPageResult] = await Promise.all([
+      contentfulRespository.getLocalizedEntries(locale, {
+        ['content_type']: 'organization',
+        'fields.slug': institutionSlug,
+      }),
+      this.cmsElasticsearchService.getSingleDocumentTypeBySlug<ServiceWebPage>(
+        getElasticsearchIndex('is'),
+        { type: 'webServiceWebPage', slug: institutionSlug },
+      ),
+    ])
 
     const errors: Record<string, string> = {}
 
-    const item = result?.items?.[0]
+    const item = institutionResult?.items?.[0]
 
     if (!item) {
       errors[
@@ -98,6 +108,9 @@ export class CommunicationsService {
     return {
       ...input,
       institutionEmail: institutionEmail!,
+      config: serviceWebPageResult
+        ? serviceWebPageResult.emailConfig
+        : { emails: [] },
     }
   }
 

@@ -1,6 +1,5 @@
 import { Module } from '@nestjs/common'
 import { UniversityApplicationModule } from './modules/application/universityApplication.module'
-import { CourseModule } from './modules/course/course.module'
 import { ProgramModule } from './modules/program/program.module'
 import { UniversityModule } from './modules/university/university.module'
 import { SequelizeModule } from '@nestjs/sequelize'
@@ -21,7 +20,6 @@ import { AuthModule } from '@island.is/auth-nest-tools'
 @Module({
   imports: [
     UniversityApplicationModule,
-    CourseModule,
     ProgramModule,
     UniversityModule,
     AuditModule.forRoot(environment.audit),

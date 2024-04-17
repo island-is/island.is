@@ -4,11 +4,13 @@ import {
   Body,
   Controller,
   Get,
+  Headers,
   Patch,
   Post,
   UseGuards,
 } from '@nestjs/common'
 
+import type { User } from '@island.is/auth-nest-tools'
 import {
   CurrentUser,
   IdsUserGuard,
@@ -17,13 +19,19 @@ import {
 } from '@island.is/auth-nest-tools'
 import { Audit, AuditService } from '@island.is/nest/audit'
 import { Documentation } from '@island.is/nest/swagger'
-import { UserProfileScope } from '@island.is/auth/scopes'
-import type { User } from '@island.is/auth-nest-tools'
+import { ApiScope, UserProfileScope } from '@island.is/auth/scopes'
 
 import { CreateVerificationDto } from './dto/create-verification.dto'
 import { PatchUserProfileDto } from './dto/patch-user-profile.dto'
 import { UserProfileDto } from './dto/user-profile.dto'
 import { UserProfileService } from './user-profile.service'
+import { PostNudgeDto } from './dto/post-nudge.dto'
+import { ClientType } from '../types/ClientType'
+import {
+  MeActorProfileDto,
+  PaginatedActorProfileDto,
+  PatchActorProfileDto,
+} from './dto/actor-profile.dto'
 
 const namespace = '@island.is/user-profile/v2/me'
 
@@ -50,8 +58,12 @@ export class MeUserProfileController {
   @Audit<UserProfileDto>({
     resources: (profile) => profile.nationalId,
   })
-  findUserProfile(@CurrentUser() user: User): Promise<UserProfileDto> {
-    return this.userProfileService.findById(user.nationalId)
+  async findUserProfile(@CurrentUser() user: User): Promise<UserProfileDto> {
+    return this.userProfileService.findById(
+      user.nationalId,
+      false,
+      ClientType.FIRST_PARTY,
+    )
   }
 
   @Patch()
@@ -120,10 +132,11 @@ export class MeUserProfileController {
   @Post('/nudge')
   @Scopes(UserProfileScope.write)
   @Documentation({
-    description: 'Confirms that the user has seen the nudge',
+    description:
+      'Confirms that the user has seen the nudge from a specific screen. Allowed screens are defined in NudgeFrom enum.',
     response: { status: 200 },
   })
-  confirmNudge(@CurrentUser() user: User) {
+  confirmNudge(@CurrentUser() user: User, @Body() input: PostNudgeDto) {
     return this.auditService.auditPromise(
       {
         auth: user,
@@ -131,7 +144,61 @@ export class MeUserProfileController {
         action: 'nudge',
         resources: user.nationalId,
       },
-      this.userProfileService.confirmNudge(user.nationalId),
+      this.userProfileService.confirmNudge(user.nationalId, input.nudgeType),
+    )
+  }
+
+  @Get('/actor-profiles')
+  @Scopes(ApiScope.internal)
+  @Documentation({
+    description: 'Get actor profiles for the current user.',
+    response: { status: 200, type: PaginatedActorProfileDto },
+  })
+  @Audit<PaginatedActorProfileDto>({
+    resources: (profiles) =>
+      profiles.data.map((profile) => profile.fromNationalId),
+  })
+  getActorProfiles(
+    @CurrentUser() user: User,
+  ): Promise<PaginatedActorProfileDto> {
+    return this.userProfileService.getActorProfiles(user.nationalId)
+  }
+
+  @Patch('/actor-profiles/.from-national-id')
+  @Scopes(ApiScope.internal)
+  @Documentation({
+    description: 'Update or create an actor profile for the current user',
+    request: {
+      header: {
+        'X-Param-From-National-Id': {
+          required: true,
+          description: 'National id of the user that granted the delegation',
+        },
+      },
+    },
+    response: { status: 200, type: MeActorProfileDto },
+  })
+  createOrUpdateActorProfile(
+    @CurrentUser() user: User,
+    @Headers('X-Param-From-National-Id') fromNationalId: string,
+    @Body() actorProfile: PatchActorProfileDto,
+  ): Promise<MeActorProfileDto> {
+    return this.auditService.auditPromise(
+      {
+        auth: user,
+        namespace,
+        action: 'patch',
+        resources: user.nationalId,
+        meta: {
+          fromNationalId,
+          fields: Object.keys(actorProfile),
+        },
+      },
+      this.userProfileService.createOrUpdateActorProfile({
+        toNationalId: user.nationalId,
+        fromNationalId,
+        emailNotifications: actorProfile.emailNotifications,
+      }),
     )
   }
 }

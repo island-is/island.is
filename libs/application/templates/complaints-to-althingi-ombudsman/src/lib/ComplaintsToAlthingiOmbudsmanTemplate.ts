@@ -1,4 +1,7 @@
-import { DefaultStateLifeCycle } from '@island.is/application/core'
+import {
+  DefaultStateLifeCycle,
+  coreHistoryMessages,
+} from '@island.is/application/core'
 import {
   Application,
   ApplicationConfigurations,
@@ -8,6 +11,7 @@ import {
   ApplicationTemplate,
   ApplicationTypes,
   DefaultEvents,
+  FormModes,
   defineTemplateApi,
 } from '@island.is/application/types'
 import { ApiActions } from '../shared'
@@ -17,6 +21,7 @@ import { Features } from '@island.is/feature-flags'
 import { application as applicationMessage } from './messages'
 
 const States = {
+  prerequisites: 'prerequisites',
   draft: 'draft',
   submitted: 'submitted',
 }
@@ -41,12 +46,49 @@ const ComplaintsToAlthingiOmbudsmanTemplate: ApplicationTemplate<
   dataSchema: ComplaintsToAlthingiOmbudsmanSchema,
   featureFlag: Features.complaintsToAlthingiOmbudsman,
   stateMachineConfig: {
-    initial: States.draft,
+    initial: States.prerequisites,
     states: {
+      [States.prerequisites]: {
+        meta: {
+          name: applicationMessage.general.name.defaultMessage,
+          status: FormModes.DRAFT,
+          lifecycle: DefaultStateLifeCycle,
+          actionCard: {
+            historyLogs: {
+              logMessage: coreHistoryMessages.applicationStarted,
+              onEvent: DefaultEvents.SUBMIT,
+            },
+          },
+          roles: [
+            {
+              id: Roles.APPLICANT,
+              formLoader: () =>
+                import('../forms/Prerequisites').then((val) =>
+                  Promise.resolve(val.Prerequisites),
+                ),
+              actions: [
+                {
+                  event: DefaultEvents.SUBMIT,
+                  name: 'Submit',
+                  type: 'primary',
+                },
+              ],
+              write: 'all',
+              delete: true,
+              api: [UserProfileApi, NationalRegistryUserApi],
+            },
+          ],
+        },
+        on: {
+          SUBMIT: {
+            target: States.draft,
+          },
+        },
+      },
       [States.draft]: {
         meta: {
           name: States.draft,
-          status: 'draft',
+          status: FormModes.DRAFT,
           progress: 0.5,
           lifecycle: DefaultStateLifeCycle,
           roles: [

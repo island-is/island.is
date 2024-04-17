@@ -20,6 +20,7 @@ export enum ApiScope {
   healthAssistiveAndNutrition = '@island.is/health/assistive-devices-and-nutrition',
   healthTherapies = '@island.is/health/therapies',
   healthHealthcare = '@island.is/health/healthcare',
+  intellectualProperties = '@island.is/assets/ip',
   healthDentists = '@island.is/health/dentists',
   healthRightsStatus = '@island.is/health/rights-status',
   workMachines = '@island.is/work-machines',

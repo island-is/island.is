@@ -1,3 +1,4 @@
+import { ResponsiveSpace } from '@island.is/island-ui/core'
 import {
   DefaultHeader,
   DefaultHeaderProps,
@@ -64,6 +65,11 @@ export const ProjectHeader = ({ projectPage }: ProjectHeaderProps) => {
               ? 'right'
               : 'center'
           }
+          titleSectionPaddingLeft={
+            projectPage.themeProperties
+              ?.titleSectionPaddingLeft as ResponsiveSpace
+          }
+          mobileBackground={projectPage.themeProperties?.mobileBackgroundColor}
         />
       )
     default: {

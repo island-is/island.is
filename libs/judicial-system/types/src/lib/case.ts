@@ -1,3 +1,5 @@
+import flatten from 'lodash/flatten'
+
 export enum CaseOrigin {
   UNKNOWN = 'UNKNOWN',
   RVG = 'RVG',
@@ -34,20 +36,24 @@ export enum CaseType {
 export enum IndictmentSubtype {
   AGGRAVATED_ASSAULT = 'AGGRAVATED_ASSAULT',
   ALCOHOL_LAWS = 'ALCOHOL_LAWS',
+  ANIMAL_PROTECTION = 'ANIMAL_PROTECTION',
   ASSAULT_LEADING_TO_DEATH = 'ASSAULT_LEADING_TO_DEATH',
   ATTEMPTED_MURDER = 'ATTEMPTED_MURDER',
+  BODILY_INJURY = 'BODILY_INJURY',
   BREAKING_AND_ENTERING = 'BREAKING_AND_ENTERING',
   CHILD_PROTECTION_LAWS = 'CHILD_PROTECTION_LAWS',
   COVER_UP = 'COVER_UP',
   CUSTOMS_VIOLATION = 'CUSTOMS_VIOLATION',
   DOMESTIC_VIOLENCE = 'DOMESTIC_VIOLENCE',
   EMBEZZLEMENT = 'EMBEZZLEMENT',
+  FOREIGN_NATIONALS = 'FOREIGN_NATIONALS',
   FRAUD = 'FRAUD',
   INDECENT_EXPOSURE = 'INDECENT_EXPOSURE',
   INTIMATE_RELATIONS = 'INTIMATE_RELATIONS',
   LEGAL_ENFORCEMENT_LAWS = 'LEGAL_ENFORCEMENT_LAWS',
   LOOTING = 'LOOTING',
   MAJOR_ASSAULT = 'MAJOR_ASSAULT',
+  MEDICINES_OFFENSE = 'MEDICINES_OFFENSE',
   MINOR_ASSAULT = 'MINOR_ASSAULT',
   MONEY_LAUNDERING = 'MONEY_LAUNDERING',
   MURDER = 'MURDER',
@@ -116,6 +122,7 @@ export enum CaseTransition {
   REOPEN_APPEAL = 'REOPEN_APPEAL',
   WITHDRAW_APPEAL = 'WITHDRAW_APPEAL',
   DENY_INDICTMENT = 'DENY_INDICTMENT',
+  RETURN_INDICTMENT = 'RETURN_INDICTMENT',
 }
 
 /* eslint-disable @typescript-eslint/naming-convention */
@@ -125,6 +132,7 @@ export enum CaseLegalProvisions {
   _95_1_C = '_95_1_C', // c-lið 1. mgr. 95. gr.
   _95_1_D = '_95_1_D', // d-lið 1. mgr. 95. gr.
   _95_2 = '_95_2', // 2. mgr. 95. gr.
+  _97_1 = '_97_1', // 1. mgr. 97. gr. sml.
   _99_1_B = '_99_1_B', // b-lið 1. mgr. 99. gr.
   _100_1 = '_100_1', // 1. mgr. 100. gr. sml.
 }
@@ -244,6 +252,24 @@ export const completedCaseStates = [
 
 export const isCompletedCase = (state?: CaseState | null): boolean => {
   return Boolean(state && completedCaseStates.includes(state))
+}
+
+export const isTrafficViolationCase = (
+  indictmentSubtypes?: IndictmentSubtypeMap,
+  type?: CaseType,
+): boolean => {
+  if (!indictmentSubtypes || type !== CaseType.INDICTMENT) {
+    return false
+  }
+
+  const flatIndictmentSubtypes = flatten(Object.values(indictmentSubtypes))
+
+  return Boolean(
+    flatIndictmentSubtypes.length > 0 &&
+      flatIndictmentSubtypes.every(
+        (val) => val === IndictmentSubtype.TRAFFIC_VIOLATION,
+      ),
+  )
 }
 
 export const getStatementDeadline = (appealReceived: Date): string => {

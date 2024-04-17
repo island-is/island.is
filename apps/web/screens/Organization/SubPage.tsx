@@ -108,13 +108,7 @@ const SubPage: Screen<SubPageProps> = ({
           >
             {webRichText(
               subpage?.description as SliceType[],
-              {
-                renderComponent: {
-                  // eslint-disable-next-line @typescript-eslint/ban-ts-comment
-                  // @ts-ignore make web strict
-                  Form: (slice) => <Form form={slice} namespace={namespace} />,
-                },
-              },
+              undefined,
               activeLocale,
             )}
           </GridColumn>
@@ -125,6 +119,7 @@ const SubPage: Screen<SubPageProps> = ({
             // eslint-disable-next-line @typescript-eslint/ban-ts-comment
             // @ts-ignore make web strict
             offset={[null, null, '1/12']}
+            paddingBottom={3}
           >
             <Stack space={2}>
               {subpage?.links?.map((link) => (

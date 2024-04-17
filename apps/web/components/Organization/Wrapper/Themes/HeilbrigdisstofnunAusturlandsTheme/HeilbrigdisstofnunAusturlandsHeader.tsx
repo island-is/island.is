@@ -109,6 +109,7 @@ const HeilbrigdisstofnunAusturlandsHeader: React.FC<
               <Text
                 color={width > theme.breakpoints.md ? 'blueberry600' : 'white'}
                 variant="h1"
+                as="h1"
               >
                 {organizationPage.title}
               </Text>

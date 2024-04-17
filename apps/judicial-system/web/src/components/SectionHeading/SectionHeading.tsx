@@ -2,6 +2,8 @@ import React from 'react'
 
 import { Box, ResponsiveProp, Space, Text } from '@island.is/island-ui/core'
 
+import RequiredStar from '../RequiredStar/RequiredStar'
+
 interface Props {
   title: string
   required?: boolean
@@ -21,11 +23,7 @@ const SectionHeading: React.FC<React.PropsWithChildren<Props>> = ({
     <Text as="h3" variant="h3">
       {title}
       {required && ' '}
-      {required && (
-        <Text as="span" color={'red600'} fontWeight="semiBold">
-          *
-        </Text>
-      )}
+      {required && <RequiredStar />}
       {tooltip && ' '}
       {tooltip && <Box component="span">{tooltip}</Box>}
     </Text>

@@ -1,2 +1,2 @@
 export * from './lib/document.module'
-export * from './lib/document.resolver'
+export * from './lib/documentV2.resolver'

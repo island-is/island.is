@@ -45,4 +45,8 @@ export const m = defineMessages({
     id: 'sp.social-insurance-maintenance:no-payments-found',
     defaultMessage: 'Engar greiðslur fundust fyrir þetta ár',
   },
+  noPaymentHistoryFound: {
+    id: 'sp.social-insurance-maintenance:no-payment-history-found',
+    defaultMessage: 'Engin greiðslusaga fannst',
+  },
 })

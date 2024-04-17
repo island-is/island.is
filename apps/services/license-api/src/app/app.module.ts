@@ -4,9 +4,10 @@ import { OpenFirearmLicenseClientConfig } from '@island.is/clients/firearm-licen
 import {
   AdrDigitalLicenseClientConfig,
   DisabilityDigitalLicenseClientConfig,
-  DrivingDigitalLicenseClientConfig,
   FirearmDigitalLicenseClientConfig,
   MachineDigitalLicenseClientConfig,
+  DrivingDigitalLicenseClientConfig,
+  HuntingDigitalLicenseClientConfig,
 } from '@island.is/clients/license-client'
 import { LoggingModule } from '@island.is/logging'
 
@@ -36,6 +37,7 @@ import { LicenseModule } from './modules/license/license.module'
         DrivingDigitalLicenseClientConfig,
         AdrDigitalLicenseClientConfig,
         MachineDigitalLicenseClientConfig,
+        HuntingDigitalLicenseClientConfig,
         LicenseConfig,
       ],
     }),

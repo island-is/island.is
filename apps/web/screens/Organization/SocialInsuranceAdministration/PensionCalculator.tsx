@@ -59,8 +59,6 @@ import {
 } from './utils'
 import * as styles from './PensionCalculator.css'
 
-const CURRENCY_INPUT_MAX_LENGTH = 15
-
 const lowercaseFirstLetter = (value: string | undefined) => {
   if (!value) return value
   return value[0].toLowerCase() + value.slice(1)
@@ -131,6 +129,9 @@ const PensionCalculator: CustomScreen<PensionCalculatorProps> = ({
   const methods = useForm<CalculationInput>({
     defaultValues,
   })
+
+  const currencyInputMaxLength =
+    customPageData?.configJson?.currencyInputMaxLength ?? 14
 
   const maxMonthPensionDelay =
     customPageData?.configJson?.maxMonthPensionDelay ?? 156
@@ -275,6 +276,9 @@ const PensionCalculator: CustomScreen<PensionCalculatorProps> = ({
       ...(!hasDisabilityAssessment(data.typeOfBasePension) && {
         ageOfFirst75DisabilityAssessment: undefined,
       }),
+      ...(hasDisabilityAssessment(data.typeOfBasePension) && {
+        livingConditionAbroadInYears: undefined,
+      }),
       ...(!hasStartDate(data.typeOfBasePension) && {
         birthMonth: undefined,
         birthYear: undefined,
@@ -363,7 +367,7 @@ const PensionCalculator: CustomScreen<PensionCalculatorProps> = ({
 
   const defaultPensionDate =
     typeof birthMonth === 'number' && typeof birthYear === 'number'
-      ? add(new Date(birthYear, birthMonth), {
+      ? add(new Date(birthYear, birthMonth + 1), {
           years: defaultPensionAge,
         })
       : null
@@ -408,10 +412,10 @@ const PensionCalculator: CustomScreen<PensionCalculatorProps> = ({
       typeof birthMonth === 'number' &&
       typeof startMonth === 'number'
     ) {
-      if (startMonth < birthMonth) {
-        methods.setValue('startMonth', birthMonth)
+      if (startMonth < birthMonth + 1) {
+        methods.setValue('startMonth', birthMonth + 1)
       }
-      return monthOptions.slice(birthMonth)
+      return monthOptions.filter(({ value }) => value >= birthMonth + 1)
     }
     return monthOptions
   }, [
@@ -423,8 +427,8 @@ const PensionCalculator: CustomScreen<PensionCalculatorProps> = ({
     startYearOptions,
   ])
 
-  const selectedBirthMonthLabel = monthOptions.find(
-    (option) => option.value === birthMonth,
+  const defaultStartMonthLabel = monthOptions.find(
+    (option) => defaultPensionDate?.getMonth() === option.value,
   )?.label
 
   const maxLivingConditionAbroadInYears: number =
@@ -557,7 +561,20 @@ const PensionCalculator: CustomScreen<PensionCalculatorProps> = ({
                                   translationStrings.birthMonthPlaceholder,
                                 )}
                                 onSelect={(option) => {
-                                  methods.setValue('startMonth', option.value)
+                                  if (option.value > 10) {
+                                    methods.setValue('startMonth', 0)
+                                    if (startYear) {
+                                      methods.setValue(
+                                        'startYear',
+                                        startYear + 1,
+                                      )
+                                    }
+                                  } else {
+                                    methods.setValue(
+                                      'startMonth',
+                                      option.value + 1,
+                                    )
+                                  }
                                 }}
                               />
                             </Box>
@@ -591,9 +608,9 @@ const PensionCalculator: CustomScreen<PensionCalculatorProps> = ({
                                     month:
                                       activeLocale !== 'en'
                                         ? lowercaseFirstLetter(
-                                            selectedBirthMonthLabel,
+                                            defaultStartMonthLabel,
                                           )
-                                        : selectedBirthMonthLabel,
+                                        : defaultStartMonthLabel,
                                     year: startYearOptions?.[2]?.label,
                                   },
                                 )}
@@ -748,78 +765,79 @@ const PensionCalculator: CustomScreen<PensionCalculatorProps> = ({
                             </Box>
                           )}
                         </Stack>
-
-                        <Stack space={2}>
-                          <Text>
-                            {formatMessage(
-                              translationStrings.hasLivedAbroadLabel,
-                            )}
-                          </Text>
-                          <Box className={styles.inputContainer}>
-                            <Inline space={3}>
-                              <RadioButton
-                                id="hasLivedAbroadNo"
-                                checked={hasLivedAbroad === false}
-                                onChange={() => {
-                                  setHasLivedAbroad(false)
-                                  methods.setValue(
-                                    'livingConditionAbroadInYears',
-                                    null,
-                                  )
-                                }}
-                                label={formatMessage(
-                                  translationStrings.hasLivedAbroadNo,
-                                )}
-                              />
-                              <RadioButton
-                                id="hasLivedAbroadYes"
-                                checked={hasLivedAbroad === true}
-                                onChange={() => {
-                                  setHasLivedAbroad(true)
-                                }}
-                                label={formatMessage(
-                                  translationStrings.hasLivedAbroadYes,
-                                )}
-                              />
-                            </Inline>
-                          </Box>
-
-                          {hasLivedAbroad && (
+                        {!hasDisabilityAssessment(typeOfBasePension) && (
+                          <Stack space={2}>
+                            <Text>
+                              {formatMessage(
+                                translationStrings.hasLivedAbroadLabel,
+                              )}
+                            </Text>
                             <Box className={styles.inputContainer}>
-                              <InputController
-                                id={
-                                  'livingConditionAbroadInYears' as keyof CalculationInput
-                                }
-                                name={
-                                  'livingConditionAbroadInYears' as keyof CalculationInput
-                                }
-                                label={formatMessage(
-                                  translationStrings.livingConditionAbroadInYearsLabel,
-                                )}
-                                placeholder={formatMessage(
-                                  translationStrings.livingConditionAbroadInYearsPlaceholder,
-                                )}
-                                type="number"
-                                suffix={` ${formatMessage(
-                                  translationStrings.yearsSuffix,
-                                )}`}
-                                format={(value) => {
-                                  if (
-                                    Number(value) >
-                                    maxLivingConditionAbroadInYears
-                                  ) {
-                                    value = String(
-                                      maxLivingConditionAbroadInYears,
+                              <Inline space={3}>
+                                <RadioButton
+                                  id="hasLivedAbroadNo"
+                                  checked={hasLivedAbroad === false}
+                                  onChange={() => {
+                                    setHasLivedAbroad(false)
+                                    methods.setValue(
+                                      'livingConditionAbroadInYears',
+                                      null,
                                     )
-                                  }
-                                  return `${value} ${formatMessage(
-                                    translationStrings.yearsSuffix,
-                                  )}`
-                                }}
-                              />
+                                  }}
+                                  label={formatMessage(
+                                    translationStrings.hasLivedAbroadNo,
+                                  )}
+                                />
+                                <RadioButton
+                                  id="hasLivedAbroadYes"
+                                  checked={hasLivedAbroad === true}
+                                  onChange={() => {
+                                    setHasLivedAbroad(true)
+                                  }}
+                                  label={formatMessage(
+                                    translationStrings.hasLivedAbroadYes,
+                                  )}
+                                />
+                              </Inline>
                             </Box>
-                          )}
-                        </Stack>
+
+                            {hasLivedAbroad && (
+                              <Box className={styles.inputContainer}>
+                                <InputController
+                                  id={
+                                    'livingConditionAbroadInYears' as keyof CalculationInput
+                                  }
+                                  name={
+                                    'livingConditionAbroadInYears' as keyof CalculationInput
+                                  }
+                                  label={formatMessage(
+                                    translationStrings.livingConditionAbroadInYearsLabel,
+                                  )}
+                                  placeholder={formatMessage(
+                                    translationStrings.livingConditionAbroadInYearsPlaceholder,
+                                  )}
+                                  type="number"
+                                  suffix={` ${formatMessage(
+                                    translationStrings.yearsSuffix,
+                                  )}`}
+                                  format={(value) => {
+                                    if (
+                                      Number(value) >
+                                      maxLivingConditionAbroadInYears
+                                    ) {
+                                      value = String(
+                                        maxLivingConditionAbroadInYears,
+                                      )
+                                    }
+                                    return `${value} ${formatMessage(
+                                      translationStrings.yearsSuffix,
+                                    )}`
+                                  }}
+                                />
+                              </Box>
+                            )}
+                          </Stack>
+                        )}
 
                         <NumericInputFieldWrapper
                           heading={formatMessage(
@@ -923,7 +941,7 @@ const PensionCalculator: CustomScreen<PensionCalculatorProps> = ({
                               )}
                               placeholder="kr."
                               currency={true}
-                              maxLength={CURRENCY_INPUT_MAX_LENGTH}
+                              maxLength={currencyInputMaxLength}
                             />
                           </Box>
                         </NumericInputFieldWrapper>
@@ -945,7 +963,7 @@ const PensionCalculator: CustomScreen<PensionCalculatorProps> = ({
                               )}
                               placeholder="kr."
                               currency={true}
-                              maxLength={CURRENCY_INPUT_MAX_LENGTH}
+                              maxLength={currencyInputMaxLength}
                             />
                           </Box>
                         </NumericInputFieldWrapper>
@@ -971,7 +989,7 @@ const PensionCalculator: CustomScreen<PensionCalculatorProps> = ({
                               )}
                               placeholder="kr."
                               currency={true}
-                              maxLength={CURRENCY_INPUT_MAX_LENGTH}
+                              maxLength={currencyInputMaxLength}
                             />
                           </Box>
                         </NumericInputFieldWrapper>
@@ -993,7 +1011,7 @@ const PensionCalculator: CustomScreen<PensionCalculatorProps> = ({
                               )}
                               placeholder="kr."
                               currency={true}
-                              maxLength={CURRENCY_INPUT_MAX_LENGTH}
+                              maxLength={currencyInputMaxLength}
                             />
                           </Box>
                         </NumericInputFieldWrapper>
@@ -1015,7 +1033,7 @@ const PensionCalculator: CustomScreen<PensionCalculatorProps> = ({
                               )}
                               placeholder="kr."
                               currency={true}
-                              maxLength={CURRENCY_INPUT_MAX_LENGTH}
+                              maxLength={currencyInputMaxLength}
                             />
                           </Box>
                         </NumericInputFieldWrapper>
@@ -1041,7 +1059,7 @@ const PensionCalculator: CustomScreen<PensionCalculatorProps> = ({
                               )}
                               placeholder="kr."
                               currency={true}
-                              maxLength={CURRENCY_INPUT_MAX_LENGTH}
+                              maxLength={currencyInputMaxLength}
                             />
                           </Box>
                         </NumericInputFieldWrapper>
@@ -1067,7 +1085,7 @@ const PensionCalculator: CustomScreen<PensionCalculatorProps> = ({
                               )}
                               placeholder="kr."
                               currency={true}
-                              maxLength={CURRENCY_INPUT_MAX_LENGTH}
+                              maxLength={currencyInputMaxLength}
                             />
                           </Box>
                         </NumericInputFieldWrapper>
@@ -1089,7 +1107,7 @@ const PensionCalculator: CustomScreen<PensionCalculatorProps> = ({
                               )}
                               placeholder="kr."
                               currency={true}
-                              maxLength={CURRENCY_INPUT_MAX_LENGTH}
+                              maxLength={currencyInputMaxLength}
                             />
                           </Box>
                         </NumericInputFieldWrapper>

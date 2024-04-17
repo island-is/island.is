@@ -55,6 +55,7 @@ export interface FileUpload {
   adoption?: Files[]
   employmentTerminationCertificateFile?: Files[]
   file?: Files[]
+  changeEmployerFile?: Files[]
 }
 
 export interface VMSTPeriod {
@@ -169,4 +170,9 @@ export interface EmployerRow {
   reviewerNationalRegistryId?: string
   companyNationalRegistryId?: string
   stillEmployed?: YesOrNo
+}
+
+export type SelectOption = {
+  label: string
+  value: string
 }

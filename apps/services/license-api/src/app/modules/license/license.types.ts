@@ -3,7 +3,6 @@ import {
   PassDataInput,
   Result,
   RevokePassData,
-  VerifyPassData,
 } from '@island.is/clients/smartsolutions'
 
 export enum LicenseUpdateType {
@@ -15,6 +14,7 @@ export enum LicenseId {
   FIREARM_LICENSE = 'firearm',
   DISABILITY_LICENSE = 'disability',
   DRIVING_LICENSE = 'driving',
+  HUNTING_LICENSE = 'hunting',
 }
 
 export type PassTemplateIds = {

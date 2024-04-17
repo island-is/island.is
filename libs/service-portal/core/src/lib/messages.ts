@@ -638,6 +638,14 @@ export const m = defineMessages({
     defaultMessage:
       'Hér getur þú gert greiðsluáætlun ef þú vilt dreifa greiðslum á skuld þinni við ríkissjóð og stofnanir. Hér getur þú einnig séð eldri greiðsluáætlanir. Ef Greiðsluáætlunin er greidd hraðar niður en áætlunin segir til um, munu greiðsluseðlar ekki berast þegar hún er upp greidd og engar eftirstöðvar eftir.',
   },
+  financeHousingBenefits: {
+    id: 'service.portal:finance-housing-benefits',
+    defaultMessage: 'Húsnæðisbætur',
+  },
+  financeHousingBenefitsDesc: {
+    id: 'service.portal:finance-housing-benefits-description',
+    defaultMessage: 'Hér sérð þú sundurliðun húsnæðisbóta',
+  },
   financeClaims: {
     id: 'service.portal:finance-claims',
     defaultMessage: 'Kröfur',
@@ -1235,6 +1243,11 @@ export const m = defineMessages({
     defaultMessage:
       'Húsnæðis- og mannvirkjastofnun hefur umsjón með gögnum um fasteignir.',
   },
+  hmsHousingBenefitsTooltip: {
+    id: 'service.portal:housing-benefits-tooltip',
+    defaultMessage:
+      'Húsnæðis- og mannvirkjastofnun hefur umsjón með gögnum um húsnæðisbætur.',
+  },
   socialInsuranceTooltip: {
     id: 'service.portal:social-insurance-tooltip',
     defaultMessage: 'Tryggingastofnun hefur umsjón með gögnum um framfærslu.',
@@ -1315,6 +1328,10 @@ export const m = defineMessages({
   closeActiveDocument: {
     id: 'service.portal:close-active-document',
     defaultMessage: 'Loka skjali',
+  },
+  backToList: {
+    id: 'service.portal:back-to-list',
+    defaultMessage: 'Aftur í lista',
   },
   month: {
     id: 'service.portal:month',

@@ -1,7 +1,6 @@
 import { User } from '@island.is/auth-nest-tools'
 import {
   CreateApiScope,
-  CreateApiScopeUserAccess,
   CreateClient,
   CreateCustomDelegation,
   CreateDomain,
@@ -108,15 +107,8 @@ export class TestCase {
       (d: CreatePersonalRepresentativeDelegation) => ({
         toNationalId: this.user.nationalId,
         fromNationalId: d.fromNationalId,
-        rightType: d.rightType,
+        rightTypes: d.rightTypes,
       }),
     )
-  }
-
-  get apiScopeUserAccess(): CreateApiScopeUserAccess[] {
-    return this.scopeAccess.map((access) => ({
-      nationalId: access[0],
-      scope: access[1],
-    }))
   }
 }

@@ -7,7 +7,7 @@ import {
   Put,
   UseGuards,
 } from '@nestjs/common'
-import { ApiSecurity } from '@nestjs/swagger'
+import { ApiSecurity, ApiTags } from '@nestjs/swagger'
 
 import {
   DelegationRecordDTO,
@@ -55,8 +55,10 @@ const requestDocumentation = {
 @UseGuards(IdsAuthGuard, ScopesGuard)
 @Scopes(AuthScope.delegationIndexWrite)
 @ApiSecurity('ias', [AuthScope.delegationIndexWrite])
+@ApiTags('delegation-index')
 @Controller({
   path: 'delegation-index',
+  version: ['1'],
 })
 @Audit({ namespace })
 export class DelegationIndexController {

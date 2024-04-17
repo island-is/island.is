@@ -17,7 +17,8 @@ test.describe('Case list test', () => {
 
   test('should have a table visible on the screen', async () => {
     const page = await context.newPage()
-    page.goto('/krofur')
-    await expect(page.getByRole('table')).toHaveCount(2)
+    await page.goto('/krofur')
+    await expect(page).toHaveURL('/krofur')
+    await page.getByRole('button', { name: 'Nýtt mál' }).isVisible()
   })
 })

@@ -312,6 +312,11 @@ export class UpdateCaseDto {
   readonly prosecutorAppealAnnouncement?: string
 
   @IsOptional()
+  @IsString()
+  @ApiPropertyOptional()
+  readonly rulingSignatureDate?: Date
+
+  @IsOptional()
   @IsUUID()
   @ApiPropertyOptional()
   readonly judgeId?: string
@@ -430,4 +435,9 @@ export class UpdateCaseDto {
   @IsString()
   @ApiPropertyOptional()
   readonly indictmentDeniedExplanation?: string
+
+  @IsOptional()
+  @IsString()
+  @ApiPropertyOptional()
+  readonly indictmentReturnedExplanation?: string
 }

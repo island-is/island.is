@@ -61,6 +61,16 @@ export const AVAILABLE_LICENSES: GenericLicenseMetadata[] = [
     orgSlug: GenericLicenseOrganizationSlug.DisabilityLicense,
   },
   {
+    type: GenericLicenseType.HuntingLicense,
+    provider: {
+      id: GenericLicenseProviderId.EnvironmentAgency,
+    },
+    pkpass: true,
+    pkpassVerify: true,
+    timeout: 100,
+    orgSlug: GenericLicenseOrganizationSlug.HuntingLicense,
+  },
+  {
     type: GenericLicenseType.PCard,
     provider: {
       id: GenericLicenseProviderId.DistrictCommissioners,
