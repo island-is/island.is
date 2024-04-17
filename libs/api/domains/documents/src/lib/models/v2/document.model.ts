@@ -65,5 +65,5 @@ export class PaginatedDocuments extends PaginatedResponse(Document) {
 @ObjectType()
 export class DocumentPageNumber {
   @Field(() => Int)
-  pageNumber?: number
+  pageNumber: number
 }
