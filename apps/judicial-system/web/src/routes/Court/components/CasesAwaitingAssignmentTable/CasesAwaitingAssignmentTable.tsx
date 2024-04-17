@@ -16,6 +16,8 @@ import {
 import { useContextMenu } from '@island.is/judicial-system-web/src/components/ContextMenu/ContextMenu'
 import {
   ColumnCaseType,
+  CourtCaseNumber,
+  CreatedDate,
   DefendantInfo,
   TableSkeleton,
 } from '@island.is/judicial-system-web/src/components/Table'
@@ -75,9 +77,11 @@ const CasesAwaitingAssignmentTable: React.FC<
               columns={[
                 {
                   cell: (row: CaseListEntry) => (
-                    <Text as="span" title={row.policeCaseNumbers?.join(', ')}>
-                      {displayFirstPlusRemaining(row.policeCaseNumbers) || '-'}
-                    </Text>
+                    <CourtCaseNumber
+                      courtCaseNumber={row.courtCaseNumber ?? ''}
+                      policeCaseNumbers={row.policeCaseNumbers ?? []}
+                      appealCaseNumber={row.appealCaseNumber ?? ''}
+                    />
                   ),
                 },
                 {
@@ -92,7 +96,7 @@ const CasesAwaitingAssignmentTable: React.FC<
                 },
                 {
                   cell: (row: CaseListEntry) => (
-                    <Text as="span">{formatDate(row.created, 'd.M.y')}</Text>
+                    <CreatedDate created={row.created} />
                   ),
                 },
                 {
