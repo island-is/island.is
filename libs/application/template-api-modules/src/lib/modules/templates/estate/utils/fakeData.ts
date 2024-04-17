@@ -37,13 +37,13 @@ export const getFakeEstateInfo = (
     marriageSettlement: false,
     assets: [
       {
-        assetNumber: 'F2318696',
-        description: 'Íbúð í Reykjavík',
+        assetNumber: '2318696',
+        description: 'TEST1',
         share: 100,
       },
       {
-        assetNumber: 'F2262202',
-        description: 'Raðhús á Akureyri',
+        assetNumber: '2262202',
+        description: 'TEST2',
         share: 100,
       },
     ],
