@@ -5,7 +5,11 @@ import { AuthModule } from '@island.is/auth-nest-tools'
 import { LoggingModule } from '@island.is/logging'
 import { AuditModule } from '@island.is/nest/audit'
 import { ProblemModule } from '@island.is/nest/problem'
-import { ConfigModule } from '@island.is/nest/config'
+import {
+  ConfigModule,
+  IdsClientConfig,
+  XRoadConfig,
+} from '@island.is/nest/config'
 
 import environment from '../environments/environment'
 import { SequelizeConfigService } from './sequelizeConfig.service'
@@ -13,8 +17,24 @@ import { UserProfileModule } from './user-profile/userProfile.module'
 import { UserProfileModule as UserProfileV2Module } from './v2/user-profile.module'
 import { UserProfileConfig } from '../config'
 
+import { AuthDelegationApiClientConfig } from '@island.is/clients/auth/delegation-api'
+import { NationalRegistryV3ClientConfig } from '@island.is/clients/national-registry-v3'
+import { FeatureFlagConfig } from '@island.is/nest/feature-flags'
+import { UserProfileConfig } from '../config'
+
 @Module({
   imports: [
+    ConfigModule.forRoot({
+      isGlobal: true,
+      load: [
+        XRoadConfig,
+        NationalRegistryV3ClientConfig,
+        FeatureFlagConfig,
+        IdsClientConfig,
+        AuthDelegationApiClientConfig,
+        UserProfileConfig,
+      ],
+    }),
     AuditModule.forRoot(environment.audit),
     AuthModule.register(environment.auth),
     ConfigModule.forRoot({
