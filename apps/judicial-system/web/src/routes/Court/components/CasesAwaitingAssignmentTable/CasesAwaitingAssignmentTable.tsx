@@ -2,12 +2,8 @@ import React from 'react'
 import { useIntl } from 'react-intl'
 import { AnimatePresence } from 'framer-motion'
 
-import { Box, Text } from '@island.is/island-ui/core'
-import {
-  capitalize,
-  displayFirstPlusRemaining,
-  formatDate,
-} from '@island.is/judicial-system/formatters'
+import { Box } from '@island.is/island-ui/core'
+import { capitalize } from '@island.is/judicial-system/formatters'
 import { core, tables } from '@island.is/judicial-system-web/messages'
 import {
   SectionHeading,
