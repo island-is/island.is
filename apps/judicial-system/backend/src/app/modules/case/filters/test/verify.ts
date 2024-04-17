@@ -3,13 +3,13 @@ import { User } from '@island.is/judicial-system/types'
 import { Case } from '../../models/case.model'
 import { canUserAccessCase } from '../case.filter'
 
-export const verifyNoAccess = (theCase: Case, user: User, courtDate?: Date) => {
+export const verifyNoAccess = (theCase: Case, user: User) => {
   let hasReadAccess: boolean
   let hasWriteAccess: boolean
 
   beforeEach(() => {
-    hasReadAccess = canUserAccessCase(theCase, user, false, courtDate)
-    hasWriteAccess = canUserAccessCase(theCase, user, true, courtDate)
+    hasReadAccess = canUserAccessCase(theCase, user, false)
+    hasWriteAccess = canUserAccessCase(theCase, user, true)
   })
 
   it('should have no access', () => {
@@ -18,17 +18,13 @@ export const verifyNoAccess = (theCase: Case, user: User, courtDate?: Date) => {
   })
 }
 
-export const verifyFullAccess = (
-  theCase: Case,
-  user: User,
-  courtDate?: Date,
-) => {
+export const verifyFullAccess = (theCase: Case, user: User) => {
   let hasReadAccess: boolean
   let hasWriteAccess: boolean
 
   beforeEach(() => {
-    hasReadAccess = canUserAccessCase(theCase, user, false, courtDate)
-    hasWriteAccess = canUserAccessCase(theCase, user, true, courtDate)
+    hasReadAccess = canUserAccessCase(theCase, user, false)
+    hasWriteAccess = canUserAccessCase(theCase, user, true)
   })
 
   it('should have full access', () => {

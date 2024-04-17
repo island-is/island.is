@@ -3,6 +3,7 @@ import { uuid } from 'uuidv4'
 import {
   CaseState,
   completedCaseStates,
+  DateType,
   defenceRoles,
   indictmentCases,
   investigationCases,
@@ -105,9 +106,10 @@ describe.each(defenceRoles)('defence user %s', (role) => {
             state: CaseState.RECEIVED,
             requestSharedWithDefender:
               RequestSharedWithDefender.READY_FOR_COURT,
+            dateLogs: [{ dateType: DateType.COURT_DATE, date: new Date() }],
           } as Case
 
-          verifyNoAccess(theCase, user, new Date())
+          verifyNoAccess(theCase, user)
         })
 
         describe('court date not set, but request shared with defender on submission and defender assigned to case', () => {
@@ -127,9 +129,10 @@ describe.each(defenceRoles)('defence user %s', (role) => {
             type,
             state: CaseState.RECEIVED,
             defenderNationalId: user.nationalId,
+            dateLogs: [{ dateType: DateType.COURT_DATE, date: new Date() }],
           } as Case
 
-          verifyFullAccess(theCase, user, new Date())
+          verifyFullAccess(theCase, user)
         })
       })
 

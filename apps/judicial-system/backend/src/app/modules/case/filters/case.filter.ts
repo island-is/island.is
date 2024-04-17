@@ -4,6 +4,8 @@ import {
   CaseDecision,
   CaseState,
   CaseType,
+  DateType,
+  getLatestDateTypeByCaseId,
   InstitutionType,
   isCourtOfAppealsUser,
   isDefenceUser,
@@ -209,11 +211,7 @@ const canPrisonSystemUserAccessCase = (
   return true
 }
 
-const canDefenceUserAccessCase = (
-  theCase: Case,
-  user: User,
-  courtDate?: Date,
-): boolean => {
+const canDefenceUserAccessCase = (theCase: Case, user: User): boolean => {
   // Check case state access
   if (
     ![
@@ -226,6 +224,15 @@ const canDefenceUserAccessCase = (
   ) {
     return false
   }
+
+  const courtDate = getLatestDateTypeByCaseId(
+    DateType.COURT_DATE,
+    theCase.id,
+    theCase.dateLogs?.map((dateLog) => ({
+      caseId: dateLog.caseId,
+      dateType: dateLog.dateType as DateType,
+    })),
+  )
 
   // Check submitted case access
   const canDefenderAccessSubmittedCase =
@@ -274,7 +281,6 @@ export const canUserAccessCase = (
   theCase: Case,
   user: User,
   forUpdate = true,
-  courtDate?: Date,
 ): boolean => {
   if (isProsecutionUser(user)) {
     return canProsecutionUserAccessCase(theCase, user, forUpdate)
@@ -293,7 +299,7 @@ export const canUserAccessCase = (
   }
 
   if (isDefenceUser(user)) {
-    return canDefenceUserAccessCase(theCase, user, courtDate)
+    return canDefenceUserAccessCase(theCase, user)
   }
 
   // Other users cannot access cases
