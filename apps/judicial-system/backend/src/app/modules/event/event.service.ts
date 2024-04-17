@@ -88,7 +88,8 @@ export class EventService {
   constructor(
     @Inject(eventModuleConfig.KEY)
     private readonly config: ConfigType<typeof eventModuleConfig>,
-    @Inject(LOGGER_PROVIDER) private readonly logger: Logger,
+    @Inject(LOGGER_PROVIDER)
+    private readonly logger: Logger,
   ) {}
 
   postEvent(event: CaseEvent, theCase: Case, eventOnly = false) {
