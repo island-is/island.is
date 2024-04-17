@@ -11,6 +11,7 @@ WORKDIR /build
 ADD package.json yarn.lock .yarnrc.yml ./
 ADD apps/native/app/package.json ./apps/native/app/
 COPY .yarn/ ./.yarn
+# bash: needed for system-e2e build script
 RUN apk add --update --no-cache python3 build-base gcc bash && ln -sf /usr/bin/python3 /usr/bin/python
 RUN CI=true yarn install --immutable
 
