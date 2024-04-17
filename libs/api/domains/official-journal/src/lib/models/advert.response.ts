@@ -8,7 +8,7 @@ import {
 } from './advert.model'
 import { AdvertPaging } from './advert-paging.model'
 
-@ObjectType('MinistryOfJusticeAdvertsTypeResponse')
+@ObjectType('OfficialJournalAdvertsTypeResponse')
 export class AdvertTypeResponse {
   @Field(() => [AdvertType])
   types!: AdvertType[]
@@ -17,7 +17,7 @@ export class AdvertTypeResponse {
   paging!: AdvertPaging
 }
 
-@ObjectType('MinistryOfJusticeAdvertsMainCategoriesResponse')
+@ObjectType('OfficialJournalAdvertsMainCategoriesResponse')
 export class AdvertMainCategoriesResponse {
   @Field(() => [AdvertMainCategory])
   mainCategories!: AdvertMainCategory[]
@@ -26,7 +26,7 @@ export class AdvertMainCategoriesResponse {
   paging!: AdvertPaging
 }
 
-@ObjectType('MinistryOfJusticeAdvertsCategoryResponse')
+@ObjectType('OfficialJournalAdvertsCategoryResponse')
 export class AdvertCategoryResponse {
   @Field(() => [AdvertCategory])
   categories!: AdvertCategory[]
@@ -35,7 +35,7 @@ export class AdvertCategoryResponse {
   paging!: AdvertPaging
 }
 
-@ObjectType('MinistryOfJusticeAdvertsDepartmentResponse')
+@ObjectType('OfficialJournalAdvertsDepartmentResponse')
 export class AdvertDepartmentResponse {
   @Field(() => [AdvertEntity])
   departments!: AdvertEntity[]
@@ -44,7 +44,7 @@ export class AdvertDepartmentResponse {
   paging!: AdvertPaging
 }
 
-@ObjectType('MinistryOfJusticeAdvertsInstitutionsResponse')
+@ObjectType('OfficialJournalAdvertsInstitutionsResponse')
 export class AdvertInstitutionsResponse {
   @Field(() => [AdvertEntity])
   institutions!: AdvertEntity[]
@@ -53,7 +53,7 @@ export class AdvertInstitutionsResponse {
   paging!: AdvertPaging
 }
 
-@ObjectType('MinistryOfJusticeAdvertsResponse')
+@ObjectType('OfficialJournalAdvertsResponse')
 export class AdvertsResponse {
   @Field(() => [Advert])
   adverts!: Advert[]
@@ -62,7 +62,7 @@ export class AdvertsResponse {
   paging!: AdvertPaging
 }
 
-@ObjectType('MinistryOfJusticeAdvertResponse')
+@ObjectType('OfficialJournalAdvertResponse')
 export class AdvertResponse {
   @Field(() => Advert)
   advert?: Advert

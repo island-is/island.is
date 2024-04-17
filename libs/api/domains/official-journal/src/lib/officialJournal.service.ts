@@ -17,7 +17,7 @@ import {
 } from './models/advert.response'
 
 @Injectable()
-export class MinistryOfJusticeService {
+export class OfficialJournalService {
   constructor(private readonly ojService: OfficialJournalClientService) {}
 
   async departments(params: QueryParams): Promise<AdvertDepartmentResponse> {

@@ -17,7 +17,7 @@ import { ADVERTS_QUERY } from '../graphql/queries'
 import debounce from 'lodash/debounce'
 import { DEBOUNCE_INPUT_TIMER } from '../lib/constants'
 import { ChangeEvent, useState } from 'react'
-import { MinistryOfJusticeGraphqlResponse } from '../lib/types'
+import { OfficialJournalGraphqlResponse } from '../lib/types'
 type Props = {
   visible: boolean
   setVisibility: (visibility: boolean) => void
@@ -42,11 +42,12 @@ export const AdvertModal = ({
     setSearch(e.target.value)
   }
 
-  const { data, loading } = useQuery<
-    MinistryOfJusticeGraphqlResponse<'adverts'>
-  >(ADVERTS_QUERY, {
-    variables: { input: { search } },
-  })
+  const { data, loading } = useQuery<OfficialJournalGraphqlResponse<'adverts'>>(
+    ADVERTS_QUERY,
+    {
+      variables: { input: { search } },
+    },
+  )
 
   const debouncedSearch = debounce(updateSearch, DEBOUNCE_INPUT_TIMER)
 
@@ -81,7 +82,7 @@ export const AdvertModal = ({
                   onChange={debouncedSearch}
                 />
               </Box>
-              {data?.ministryOfJusticeAdverts.adverts.length ? (
+              {data?.officialJournalAdverts.adverts.length ? (
                 <Box
                   paddingY={1}
                   borderColor="blue200"
@@ -89,7 +90,7 @@ export const AdvertModal = ({
                   borderBottomWidth="standard"
                 >
                   <Stack space={2} dividers="regular">
-                    {data.ministryOfJusticeAdverts.adverts.map((advert, i) => (
+                    {data.officialJournalAdverts.adverts.map((advert, i) => (
                       <RadioButton
                         name={advert.id}
                         key={i}

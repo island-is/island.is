@@ -1,2 +1,2 @@
-export { MinistryOfJusticeModule } from './lib/ministryOfJustice.module'
-export { MinistryOfJusticeService } from './lib/ministryOfJustice.service'
+export { OfficialJournalModule } from './lib/officialJournal.module'
+export { OfficialJournalService } from './lib/officialJournal.service'

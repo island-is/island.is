@@ -6,10 +6,10 @@ export enum AdvertSignatureBodyTypeEnum {
 }
 
 registerEnumType(AdvertSignatureBodyTypeEnum, {
-  name: 'MinistryOfJusticeAdvertSignatureType',
+  name: 'OfficialJournalAdvertSignatureType',
 })
 
-@InputType('MinistryOfJusticeAdvertsInput')
+@InputType('OfficialJournalAdvertsInput')
 export class AdvertsInput {
   @Field(() => String, { nullable: true })
   search?: string
@@ -36,7 +36,7 @@ export class AdvertsInput {
   dateTo?: string
 }
 
-@InputType('MinistryOfJusticeTypesInput')
+@InputType('OfficialJournalTypesInput')
 export class TypeQueryParams {
   @Field(() => String, { nullable: true })
   search?: string
@@ -48,13 +48,13 @@ export class TypeQueryParams {
   page?: number
 }
 
-@InputType('MinistryOfJusticeAdvertQuery')
+@InputType('OfficialJournalAdvertQuery')
 export class AdvertQueryParams {
   @Field(() => String)
   id!: string
 }
 
-@InputType('MinistryOfJusticeQueryInput')
+@InputType('OfficialJournalQueryInput')
 export class QueryParams {
   @Field(() => String, { nullable: true })
   search?: string
@@ -63,7 +63,7 @@ export class QueryParams {
   page?: number
 }
 
-@InputType('MinistryOfJusticeAdvertSignatureMember')
+@InputType('OfficialJournalAdvertSignatureMember')
 export class AdvertSignatureMember {
   @Field(() => Boolean)
   isChairman!: boolean
@@ -80,7 +80,7 @@ export class AdvertSignatureMember {
   @Field(() => String, { nullable: true })
   textBelow?: string
 }
-@InputType('MinistryOfJusticeAdvertSignatureData')
+@InputType('OfficialJournalAdvertSignatureData')
 export class AdvertSignatureData {
   @Field(() => String)
   institution!: string
@@ -91,7 +91,7 @@ export class AdvertSignatureData {
   @Field(() => [AdvertSignatureMember])
   members!: AdvertSignatureMember[]
 }
-@InputType('MinistryOfJusticeAdvertSignature')
+@InputType('OfficialJournalAdvertSignature')
 export class AdvertSignature {
   @Field(() => AdvertSignatureBodyTypeEnum)
   type!: AdvertSignatureBodyTypeEnum
@@ -103,7 +103,7 @@ export class AdvertSignature {
   data!: AdvertSignatureData[]
 }
 
-@InputType('MinistryOfJusticeSubmitApplicationInput')
+@InputType('OfficialJournalSubmitApplicationInput')
 export class SubmitApplicationInput {
   @Field(() => String)
   applicationId!: string

@@ -9,7 +9,7 @@ import {
 import { preview } from '../lib/messages'
 import {
   OJOIFieldBaseProps,
-  MinistryOfJusticeGraphqlResponse,
+  OfficialJournalGraphqlResponse,
 } from '../lib/types'
 import { useLocale } from '@island.is/localization'
 import { useQuery } from '@apollo/client'
@@ -20,7 +20,7 @@ export const Preview = (props: OJOIFieldBaseProps) => {
   const { answers } = props.application
   const { advert, signature } = answers
 
-  const { data, loading } = useQuery<MinistryOfJusticeGraphqlResponse<'types'>>(
+  const { data, loading } = useQuery<OfficialJournalGraphqlResponse<'types'>>(
     TYPES_QUERY,
     {
       variables: {
@@ -31,7 +31,7 @@ export const Preview = (props: OJOIFieldBaseProps) => {
     },
   )
 
-  const category = data?.ministryOfJusticeTypes.types?.find(
+  const category = data?.officialJournal.types?.find(
     (type) => type.id === advert?.type,
   )
 
