@@ -909,6 +909,20 @@ export class CaseService {
     ])
   }
 
+  private addMessagesForReturnedIndictmentCaseToQueue(
+    theCase: Case,
+    user: TUser,
+  ): Promise<void> {
+    return this.messageService.sendMessagesToQueue([
+      {
+        type: MessageType.NOTIFICATION,
+        user,
+        caseId: theCase.id,
+        body: { type: NotificationType.INDICTMENT_RETURNED },
+      },
+    ])
+  }
+
   private addMessagesForNewAppealCaseNumberToQueue(
     theCase: Case,
     user: TUser,
@@ -963,6 +977,7 @@ export class CaseService {
     updatedCase: Case,
     user: TUser,
   ): Promise<void> {
+    const isIndictment = isIndictmentCase(updatedCase.type)
     if (updatedCase.state !== theCase.state) {
       // New case state
       if (
@@ -978,7 +993,7 @@ export class CaseService {
           theCase.state,
         )
       } else if (completedCaseStates.includes(updatedCase.state)) {
-        if (isIndictmentCase(updatedCase.type)) {
+        if (isIndictment) {
           await this.addMessagesForCompletedIndictmentCaseToQueue(
             updatedCase,
             user,
@@ -986,23 +1001,27 @@ export class CaseService {
         } else {
           await this.addMessagesForCompletedCaseToQueue(updatedCase, user)
         }
-      } else if (
-        updatedCase.state === CaseState.SUBMITTED &&
-        isIndictmentCase(updatedCase.type)
-      ) {
+      } else if (updatedCase.state === CaseState.SUBMITTED && isIndictment) {
         await this.addMessagesForSubmittedIndicitmentCaseToQueue(
           updatedCase,
           user,
         )
+      } else if (
+        updatedCase.state === CaseState.DRAFT &&
+        theCase.state === CaseState.WAITING_FOR_CONFIRMATION &&
+        isIndictment
+      ) {
+        await this.addMessagesForDeniedIndictmentCaseToQueue(updatedCase, user)
+      } else if (
+        updatedCase.state === CaseState.DRAFT &&
+        theCase.state === CaseState.RECEIVED &&
+        isIndictment
+      ) {
+        await this.addMessagesForReturnedIndictmentCaseToQueue(
+          updatedCase,
+          user,
+        )
       }
-    }
-
-    if (
-      isIndictmentCase(updatedCase.type) &&
-      updatedCase.state === CaseState.DRAFT &&
-      theCase.state === CaseState.WAITING_FOR_CONFIRMATION
-    ) {
-      await this.addMessagesForDeniedIndictmentCaseToQueue(updatedCase, user)
     }
 
     // This only applies to restriction cases
