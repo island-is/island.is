@@ -12,7 +12,7 @@ type Props = Omit<TemplateApiModuleActionProps, 'application'> & {
 }
 
 @Injectable()
-export class OfficialJournalOfIcelandService extends BaseTemplateApiService {
+export class OfficialJournalOfIcelandTemaplateService extends BaseTemplateApiService {
   constructor(private readonly ojService: OfficialJournalOfIcelandService) {
     super(ApplicationTypes.OFFICIAL_JOURNAL_OF_ICELAND)
   }

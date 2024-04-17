@@ -1,4 +1,7 @@
-import { OfficialJournalOfIcelandClientService } from '@island.is/clients/official-journal-of-iceland'
+import {
+  JournalControllerAdvertsRequest,
+  OfficialJournalOfIcelandClientService,
+} from '@island.is/clients/official-journal-of-iceland'
 import { mapAdvertStatus } from './mapper'
 import { Injectable } from '@nestjs/common'
 import {
