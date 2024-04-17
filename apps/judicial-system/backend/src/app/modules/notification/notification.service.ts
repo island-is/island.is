@@ -1587,6 +1587,40 @@ export class NotificationService {
   }
   //#endregion
 
+  //#region INDICTMENT_RETURNED notifications
+  private async sendIndictmentReturnedNotifications(
+    theCase: Case,
+  ): Promise<SendNotificationResponse> {
+    const subject = this.formatMessage(
+      notifications.indictmentReturned.subject,
+      {
+        caseNumber: theCase.policeCaseNumbers[0],
+      },
+    )
+    const html = this.formatMessage(notifications.indictmentReturned.body, {
+      courtName: theCase.court?.name,
+      caseNumber: theCase.policeCaseNumbers[0],
+      linkStart: `<a href="${this.config.clientUrl}${INDICTMENTS_OVERVIEW_ROUTE}/${theCase.id}">`,
+      linkEnd: '</a>',
+    })
+
+    const recipient = await this.sendEmail(
+      subject,
+      html,
+      theCase.prosecutor?.name,
+      theCase.prosecutor?.email,
+      undefined,
+      true,
+    )
+
+    return this.recordNotification(
+      theCase.id,
+      NotificationType.INDICTMENT_RETURNED,
+      [recipient],
+    )
+  }
+  //#endregion
+
   //#region Appeal notifications
   //#region COURT_OF_APPEAL_JUDGE_ASSIGNED notifications
   private async sendCourtOfAppealJudgeAssignedNotification(
@@ -2407,6 +2441,8 @@ export class NotificationService {
         return this.sendAppealWithdrawnNotifications(theCase, user)
       case NotificationType.INDICTMENT_DENIED:
         return this.sendIndictmentDeniedNotifications(theCase)
+      case NotificationType.INDICTMENT_RETURNED:
+        return this.sendIndictmentReturnedNotifications(theCase)
     }
   }
 

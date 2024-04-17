@@ -7,9 +7,9 @@ import { DocumentsPaths } from '../lib/paths'
 import { ServicePortalPaths } from '@island.is/service-portal/core'
 
 export const GET_PAGE_NUMBER_QUERY = gql`
-  query GetDocumentPageNumber($input: GetDocumentPageInput!) {
-    getDocumentPageNumber(input: $input) {
-      messagePage
+  query GetDocumentPageNumber($input: DocumentInput!) {
+    documentPageNumber(input: $input) {
+      pageNumber
     }
   }
 `
@@ -31,11 +31,11 @@ export const documentLoader: WrappedLoaderFn =
           variables: {
             input: {
               pageSize: pageSize,
-              messageId: match.params.id,
+              id: match.params.id,
             },
           },
         })
-        return data?.getDocumentPageNumber.messagePage ?? 1
+        return data?.documentPageNumber?.pageNumber ?? 1
       }
       return 1
     } catch {

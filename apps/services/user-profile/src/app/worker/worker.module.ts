@@ -10,10 +10,16 @@ import { environment } from '../../environments'
 import { UserProfileWorkerService } from './worker.service'
 import { UserProfile } from '../user-profile/userProfile.model'
 import { UserProfileAdvania } from './userProfileAdvania.model'
+import { UserProfileConfig } from '../../config'
+import { ConfigModule } from '@island.is/nest/config'
 
 @Module({
   imports: [
     AuditModule.forRoot(environment.audit),
+    ConfigModule.forRoot({
+      isGlobal: true,
+      load: [UserProfileConfig],
+    }),
     LoggingModule,
     SequelizeModule.forRootAsync({
       useClass: SequelizeConfigService,
