@@ -15,7 +15,6 @@ export const DelegationApiUserSystemNotificationConfig = defineConfig({
         'USER_NOTIFICATION_CLIENT_URL',
         'http://localhost:3333',
       ),
-      scope: ['api_resource.scope'],
     }
   },
 })
