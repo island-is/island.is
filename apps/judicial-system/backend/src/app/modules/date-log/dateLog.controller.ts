@@ -19,7 +19,7 @@ export class DateLogController {
   @UseGuards(TokenGuard)
   @Post('log-date')
   @ApiCreatedResponse({ description: 'Logs an date to date log' })
-  logEvent(@Body() date: CreateDateLogDto): Promise<void> {
+  logDate(@Body() date: CreateDateLogDto): Promise<void> {
     return this.dateLogService.create(date)
   }
 }
