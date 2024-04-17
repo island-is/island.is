@@ -48,7 +48,7 @@ import {
 } from '@island.is/api/domains/communications'
 import { IdentityModule } from '@island.is/api/domains/identity'
 import { LicenseServiceModule } from '@island.is/api/domains/license-service'
-import { MinistryOfJusticeModule } from '@island.is/api/domains/ministry-of-justice'
+import { MinistryOfJusticeModule } from '@island.is/api/domains/official-journal'
 import { MortgageCertificateModule } from '@island.is/api/domains/mortgage-certificate'
 import { MunicipalitiesFinancialAidModule } from '@island.is/api/domains/municipalities-financial-aid'
 import { NationalRegistryXRoadModule } from '@island.is/api/domains/national-registry-x-road'
@@ -103,7 +103,7 @@ import {
 import {
   OfficialJournalClientConfig,
   OfficialJournalClientModule,
-} from '@island.is/clients/official-journal-public'
+} from '@island.is/clients/official-journal'
 import { HmsLoansClientConfig } from '@island.is/clients/hms-loans'
 import { HousingBenefitCalculatorClientConfig } from '@island.is/clients/housing-benefit-calculator'
 import { IcelandicGovernmentInstitutionVacanciesClientConfig } from '@island.is/clients/icelandic-government-institution-vacancies'

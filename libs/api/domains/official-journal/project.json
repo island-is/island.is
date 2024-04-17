@@ -1,21 +1,21 @@
 {
-  "name": "api-domains-ministry-of-justice",
+  "name": "api-domains-official-journal",
   "$schema": "../../../../node_modules/nx/schemas/project-schema.json",
-  "sourceRoot": "libs/api/domains/ministry-of-justice/src",
+  "sourceRoot": "libs/api/domains/official-journal/src",
   "projectType": "library",
   "targets": {
     "lint": {
       "executor": "@nx/linter:eslint",
       "outputs": ["{options.outputFile}"],
       "options": {
-        "lintFilePatterns": ["libs/api/domains/ministry-of-justice/**/*.ts"]
+        "lintFilePatterns": ["libs/api/domains/official-journal/**/*.ts"]
       }
     },
     "test": {
       "executor": "@nx/jest:jest",
       "outputs": ["{workspaceRoot}/coverage/{projectRoot}"],
       "options": {
-        "jestConfig": "libs/api/domains/ministry-of-justice/jest.config.ts",
+        "jestConfig": "libs/api/domains/official-journal/jest.config.ts",
         "passWithNoTests": true
       },
       "configurations": {

@@ -1,4 +1,4 @@
-import { OfficialJournalClientService } from '@island.is/clients/official-journal-public'
+import { OfficialJournalClientService } from '@island.is/clients/official-journal'
 import { mapAdvertStatus } from './mapper'
 import { Injectable } from '@nestjs/common'
 import {

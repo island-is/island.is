@@ -4,7 +4,7 @@ import { ApplicationTypes } from '@island.is/application/types'
 import { User } from '@island.is/auth-nest-tools'
 import { BaseTemplateApiService } from '../../base-template-api.service'
 import { SharedTemplateApiService } from '../../shared'
-import { MinistryOfJusticeService } from '@island.is/api/domains/ministry-of-justice'
+import { MinistryOfJusticeService } from '@island.is/api/domains/official-journal'
 import { TemplateApiModuleActionProps } from '../../../types'
 import { OJOIApplication } from '@island.is/application-templates-official-journal-of-iceland'
 

@@ -17,7 +17,7 @@ export const OfficialJournalApiProvider: Provider<OfficialJournalApi> = {
     return new OfficialJournalApi(
       new Configuration({
         fetchApi: createEnhancedFetch({
-          name: 'clients-official-journal-public',
+          name: 'clients-official-journal',
           organizationSlug: 'domsmalaraduneytid',
         }),
         basePath: `${xroadConfig.xRoadBasePath}/r1/${config.xRoadServicePath}`,

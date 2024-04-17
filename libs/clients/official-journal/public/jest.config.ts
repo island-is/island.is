@@ -1,6 +1,6 @@
 /* eslint-disable */
 export default {
-  displayName: 'clients-official-journal-public',
+  displayName: 'clients-official-journal',
   preset: '../../../../jest.preset.js',
   testEnvironment: 'node',
   transform: {

@@ -1,5 +1,5 @@
 {
-  "name": "clients-official-journal-public",
+  "name": "clients-official-journal",
   "$schema": "../../../../node_modules/nx/schemas/project-schema.json",
   "sourceRoot": "libs/clients/official-journal/public/src",
   "projectType": "library",
