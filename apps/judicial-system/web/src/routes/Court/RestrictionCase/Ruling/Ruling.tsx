@@ -14,7 +14,7 @@ import {
 import * as constants from '@island.is/judicial-system/consts'
 import { formatDate, formatDOB } from '@island.is/judicial-system/formatters'
 import {
-  getLatestDateTypeByCaseId,
+  getLatestDateType,
   isAcceptingCaseDecision,
 } from '@island.is/judicial-system/types'
 import { core, ruling, titles } from '@island.is/judicial-system-web/messages'
@@ -142,7 +142,7 @@ export const Ruling: React.FC<React.PropsWithChildren<unknown>> = () => {
   ])
 
   const initialize = useCallback(() => {
-    const courtDate = getLatestDateTypeByCaseId(
+    const courtDate = getLatestDateType(
       DateType.COURT_DATE,
       workingCase.dateLogs,
     )

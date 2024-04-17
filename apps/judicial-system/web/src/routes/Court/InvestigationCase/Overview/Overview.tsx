@@ -16,7 +16,7 @@ import {
   formatCaseType,
   formatDate,
 } from '@island.is/judicial-system/formatters'
-import { getLatestDateTypeByCaseId } from '@island.is/judicial-system/types'
+import { getLatestDateType } from '@island.is/judicial-system/types'
 import {
   core,
   icCourtOverview,
@@ -61,10 +61,7 @@ const Overview = () => {
   const { uploadState } = useCourtUpload(workingCase, setWorkingCase)
   const [isDraftingConclusion, setIsDraftingConclusion] = useState<boolean>()
 
-  const courtDate = getLatestDateTypeByCaseId(
-    DateType.COURT_DATE,
-    workingCase.dateLogs,
-  )
+  const courtDate = getLatestDateType(DateType.COURT_DATE, workingCase.dateLogs)
 
   const handleNavigationTo = useCallback(
     (destination: string) => router.push(`${destination}/${workingCase.id}`),

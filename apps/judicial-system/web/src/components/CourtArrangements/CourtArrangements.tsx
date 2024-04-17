@@ -2,7 +2,7 @@ import React, { useEffect, useState } from 'react'
 import compareAsc from 'date-fns/compareAsc'
 
 import { Box, Input } from '@island.is/island-ui/core'
-import { getLatestDateTypeByCaseId } from '@island.is/judicial-system/types'
+import { getLatestDateType } from '@island.is/judicial-system/types'
 import {
   BlueBox,
   DateTime,
@@ -32,7 +32,7 @@ interface Props {
 export const useCourtArrangements = (workingCase: Case) => {
   const [courtDate, setCourtDate] = useState<string | null>()
   const [courtDateHasChanged, setCourtDateHasChanged] = useState(false)
-  const latestCourtDate = getLatestDateTypeByCaseId(
+  const latestCourtDate = getLatestDateType(
     DateType.COURT_DATE,
     workingCase.dateLogs,
   )

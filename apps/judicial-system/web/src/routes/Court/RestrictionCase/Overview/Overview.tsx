@@ -12,7 +12,7 @@ import {
 } from '@island.is/island-ui/core'
 import * as constants from '@island.is/judicial-system/consts'
 import { capitalize, formatDate } from '@island.is/judicial-system/formatters'
-import { getLatestDateTypeByCaseId } from '@island.is/judicial-system/types'
+import { getLatestDateType } from '@island.is/judicial-system/types'
 import {
   core,
   laws,
@@ -59,10 +59,7 @@ export const JudgeOverview: React.FC<React.PropsWithChildren<unknown>> = () => {
   const { formatMessage } = useIntl()
   const router = useRouter()
   const id = router.query.id
-  const courtDate = getLatestDateTypeByCaseId(
-    DateType.COURT_DATE,
-    workingCase.dateLogs,
-  )
+  const courtDate = getLatestDateType(DateType.COURT_DATE, workingCase.dateLogs)
 
   const { uploadState } = useCourtUpload(workingCase, setWorkingCase)
 

@@ -1,4 +1,4 @@
-import { getLatestDateTypeByCaseId } from '@island.is/judicial-system/types'
+import { getLatestDateType } from '@island.is/judicial-system/types'
 import {
   CaseState,
   completedCaseStates,
@@ -25,11 +25,7 @@ const RequestSharedWithDefenderAllowedStates: {
 
 export const canDefenderViewRequest = (theCase: Case) => {
   const { requestSharedWithDefender, state } = theCase
-  const courtDate = getLatestDateTypeByCaseId(
-    DateType.COURT_DATE,
-    theCase.id,
-    theCase.dateLogs,
-  )
+  const courtDate = getLatestDateType(DateType.COURT_DATE, theCase.dateLogs)
 
   if (!requestSharedWithDefender) {
     return false

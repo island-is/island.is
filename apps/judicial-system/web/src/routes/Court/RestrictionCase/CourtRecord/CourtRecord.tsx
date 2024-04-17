@@ -13,7 +13,7 @@ import {
 } from '@island.is/island-ui/core'
 import * as constants from '@island.is/judicial-system/consts'
 import {
-  getLatestDateTypeByCaseId,
+  getLatestDateType,
   isAcceptingCaseDecision,
 } from '@island.is/judicial-system/types'
 import {
@@ -85,7 +85,7 @@ export const CourtRecord: React.FC<React.PropsWithChildren<unknown>> = () => {
     const autofillAttendees = []
     const autofillSessionBookings = []
     const endOfSessionBookings = []
-    const courtDate = getLatestDateTypeByCaseId(
+    const courtDate = getLatestDateType(
       DateType.COURT_DATE,
       workingCase.dateLogs,
     )

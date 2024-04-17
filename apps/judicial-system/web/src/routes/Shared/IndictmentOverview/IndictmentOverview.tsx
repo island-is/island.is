@@ -5,7 +5,7 @@ import { useRouter } from 'next/router'
 import { Box } from '@island.is/island-ui/core'
 import * as constants from '@island.is/judicial-system/consts'
 import {
-  getLatestDateTypeByCaseId,
+  getLatestDateType,
   isCompletedCase,
   isDefenceUser,
   isDistrictCourtUser,
@@ -51,10 +51,7 @@ const IndictmentOverview = () => {
     [router, workingCase.id],
   )
 
-  const courtDate = getLatestDateTypeByCaseId(
-    DateType.COURT_DATE,
-    workingCase.dateLogs,
-  )
+  const courtDate = getLatestDateType(DateType.COURT_DATE, workingCase.dateLogs)
 
   return (
     <PageLayout

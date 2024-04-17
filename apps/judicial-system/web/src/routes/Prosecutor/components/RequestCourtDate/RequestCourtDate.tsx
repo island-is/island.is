@@ -2,7 +2,7 @@ import React from 'react'
 import { useIntl } from 'react-intl'
 
 import { Box, Text, Tooltip } from '@island.is/island-ui/core'
-import { getLatestDateTypeByCaseId } from '@island.is/judicial-system/types'
+import { getLatestDateType } from '@island.is/judicial-system/types'
 import { requestCourtDate as m } from '@island.is/judicial-system-web/messages'
 import { DateTime } from '@island.is/judicial-system-web/src/components'
 import { DateType } from '@island.is/judicial-system-web/src/graphql/schema'
@@ -16,10 +16,7 @@ interface Props {
 const RequestCourtDate: React.FC<React.PropsWithChildren<Props>> = (props) => {
   const { workingCase, onChange } = props
   const { formatMessage } = useIntl()
-  const courtDate = getLatestDateTypeByCaseId(
-    DateType.COURT_DATE,
-    workingCase.dateLogs,
-  )
+  const courtDate = getLatestDateType(DateType.COURT_DATE, workingCase.dateLogs)
 
   return (
     <>

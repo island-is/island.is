@@ -5,7 +5,7 @@ import {
   CaseState,
   CaseType,
   DateType,
-  getLatestDateTypeByCaseId,
+  getLatestDateType,
   InstitutionType,
   isCourtOfAppealsUser,
   isDefenceUser,
@@ -225,7 +225,7 @@ const canDefenceUserAccessCase = (theCase: Case, user: User): boolean => {
     return false
   }
 
-  const courtDate = getLatestDateTypeByCaseId(
+  const courtDate = getLatestDateType(
     DateType.COURT_DATE,
     theCase.dateLogs?.map((dateLog) => ({
       caseId: dateLog.caseId,

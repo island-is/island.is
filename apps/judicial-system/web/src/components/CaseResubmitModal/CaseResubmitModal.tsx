@@ -2,7 +2,7 @@ import React, { useState } from 'react'
 import { IntlShape, useIntl } from 'react-intl'
 
 import { Box, Input } from '@island.is/island-ui/core'
-import { getLatestDateTypeByCaseId } from '@island.is/judicial-system/types'
+import { getLatestDateType } from '@island.is/judicial-system/types'
 import {
   DateType,
   RequestSharedWithDefender,
@@ -22,10 +22,7 @@ export const getCaseResubmittedText = (
   formatMessage: IntlShape['formatMessage'],
   workingCase: Case,
 ) => {
-  const courtDate = getLatestDateTypeByCaseId(
-    DateType.COURT_DATE,
-    workingCase.dateLogs,
-  )
+  const courtDate = getLatestDateType(DateType.COURT_DATE, workingCase.dateLogs)
 
   return formatMessage(strings.text, {
     requestSharedWithDefender:

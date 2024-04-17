@@ -12,7 +12,7 @@ import {
   Tooltip,
 } from '@island.is/island-ui/core'
 import * as constants from '@island.is/judicial-system/consts'
-import { getLatestDateTypeByCaseId } from '@island.is/judicial-system/types'
+import { getLatestDateType } from '@island.is/judicial-system/types'
 import {
   closedCourt,
   core,
@@ -116,7 +116,7 @@ const CourtRecord = () => {
 
   const initialize = useCallback(() => {
     const autofillAttendees = []
-    const courtDate = getLatestDateTypeByCaseId(
+    const courtDate = getLatestDateType(
       DateType.COURT_DATE,
       workingCase.dateLogs,
     )

@@ -4,7 +4,7 @@ import router from 'next/router'
 
 import { AlertMessage, Box, RadioButton, Text } from '@island.is/island-ui/core'
 import * as constants from '@island.is/judicial-system/consts'
-import { getLatestDateTypeByCaseId } from '@island.is/judicial-system/types'
+import { getLatestDateType } from '@island.is/judicial-system/types'
 import { titles } from '@island.is/judicial-system-web/messages'
 import {
   BlueBox,
@@ -57,7 +57,7 @@ const HearingArrangements = () => {
   const [checkedRadio, setCheckedRadio] = useState<SessionArrangements>()
 
   const initialize = useCallback(() => {
-    const courtDate = getLatestDateTypeByCaseId(
+    const courtDate = getLatestDateType(
       DateType.COURT_DATE,
       workingCase.dateLogs,
     )

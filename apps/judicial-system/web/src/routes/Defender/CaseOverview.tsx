@@ -9,7 +9,7 @@ import {
   formatCaseType,
 } from '@island.is/judicial-system/formatters'
 import {
-  getLatestDateTypeByCaseId,
+  getLatestDateType,
   isCompletedCase,
   isInvestigationCase,
   isRestrictionCase,
@@ -70,10 +70,7 @@ export const CaseOverview: React.FC<React.PropsWithChildren<unknown>> = () => {
     isCompletedCase(workingCase.state) &&
     (workingCase.canDefenderAppeal || workingCase.hasBeenAppealed)
 
-  const courtDate = getLatestDateTypeByCaseId(
-    DateType.COURT_DATE,
-    workingCase.dateLogs,
-  )
+  const courtDate = getLatestDateType(DateType.COURT_DATE, workingCase.dateLogs)
 
   return (
     <>
