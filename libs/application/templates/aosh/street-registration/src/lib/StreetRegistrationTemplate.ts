@@ -160,7 +160,7 @@ const template: ApplicationTemplate<
           ],
         },
         on: {
-          [DefaultEvents.SUBMIT]: { target: States.COMPLETED },
+          [DefaultEvents.SUBMIT]: { target: States.PAYMENT },
         },
       },
       [States.PAYMENT]: buildPaymentState({
