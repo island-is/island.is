@@ -147,16 +147,12 @@ export class UserProfileServiceV2 {
     input: UpdateActorProfileInput,
     user: User,
   ): Promise<UpdateActorProfileResponse> {
-    const actorProfile = await this.v2UserProfileApiWithAuth(user)
+    return await this.v2UserProfileApiWithAuth(user)
       .meUserProfileControllerCreateOrUpdateActorProfile({
         xParamFromNationalId: input.fromNationalId,
         patchActorProfileDto: { emailNotifications: input.emailNotifications },
       })
       .catch((e) => handleError(e, `updateActorProfile error`))
-
-    return {
-      ...actorProfile,
-    }
   }
 
   async confirmSms(
