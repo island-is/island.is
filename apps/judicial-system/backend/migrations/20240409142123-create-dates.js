@@ -39,28 +39,28 @@ module.exports = {
         )
         .then(() =>
           queryInterface.sequelize.query(
-            `insert into "date_log" (id, case_id, date)
-               select md5(random()::text || clock_timestamp()::text)::uuid, 
-               id, 
-               court_date
-              from "case"`,
+            `insert into "date_log" (id, date_type, case_id,
+              select md5(random()::text || clock_timestamp()::text)::uuid, 
+              'COURT_DATE' as date_type,
+              id,
+              court_date
+            from "case"
+            where court_date is not null`,
             { transaction: t },
           ),
         )
         .then(() =>
-          Promise.all([
-            queryInterface.removeColumn('case', 'court_date', {
-              transaction: t,
-            }),
-          ]),
+          queryInterface.removeColumn('case', 'court_date', {
+            transaction: t,
+          }),
         ),
     )
   },
 
   down: (queryInterface, Sequelize) => {
     return queryInterface.sequelize.transaction((t) =>
-      Promise.all([
-        queryInterface.addColumn(
+      queryInterface
+        .addColumn(
           'case',
           'court_date',
           {
@@ -68,26 +68,21 @@ module.exports = {
             allowNull: true,
           },
           { transaction: t },
-        ),
-      ])
+        )
         .then(() =>
           queryInterface.sequelize.query(
             `update "case"
-               set court_date = d.court_date
-             from (
-               select distinct on (case_id) *
-               from "date_log"
-               order by case_id, created
-             ) d
-             where "case".id = d.case_id`,
+            set court_date = d.date
+            from (
+              select distinct on (case_id) *
+              from "date_log"
+              order by case_id, 
+            ) d
+            where "case".id = d.case_id`,
             { transaction: t },
           ),
         )
-        .then(() =>
-          Promise.all([
-            queryInterface.dropTable('date_log', { transaction: t }),
-          ]),
-        ),
+        .then(() => queryInterface.dropTable('date_log', { transaction: t })),
     )
   },
 }
