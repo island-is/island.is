@@ -90,7 +90,6 @@ export const cases = {
         },
       }),
     },
-
     title: defineMessage({
       id: 'judicial.system.core:cases.active_requests.title',
       defaultMessage: 'Mál í vinnslu',
