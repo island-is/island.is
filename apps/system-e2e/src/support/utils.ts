@@ -1,10 +1,11 @@
 //import PDFDocument from 'pdfkit'
 import { debuglog } from 'util'
 import fs from 'fs'
+import { getLogger } from '../../../../infra/src/logging'
 
 export const sleep = (ms: number) => new Promise((r) => setTimeout(r, ms))
 
-export function createMockPdf() {
+export const createMockPdf = () => {
   fs.writeFile('./mockPdf.pdf', 'test', (e) => {
     throw e
   })
@@ -17,7 +18,7 @@ export function createMockPdf() {
   */
 }
 
-export function deleteMockPdf() {
+export const deleteMockPdf = () => {
   fs.unlink('./mockPdf.pdf', (err) => {
     if (err) throw err
     debug('Successfully deleted mockPdf file.')
@@ -25,7 +26,7 @@ export function deleteMockPdf() {
 }
 
 // Set NODE_DEBUG=system-e2e in your environment when testing to show debug messages
-export const debug = (msg?: string | object, ...args: unknown[]) => {
+export const debugLog = (msg?: string | object, ...args: unknown[]) => {
   if (msg) {
     if (typeof msg === 'object') {
       debuglog('system-e2e')('', msg, ...args)
@@ -36,3 +37,6 @@ export const debug = (msg?: string | object, ...args: unknown[]) => {
   }
   debuglog('system-e2e')('debug enabled')
 }
+
+export const logger = getLogger()
+export const debug = logger.debug
