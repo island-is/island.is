@@ -57,7 +57,7 @@ const template: ApplicationTemplate<
   type: ApplicationTypes.STREET_REGISTRATION,
   name: determineMessageFromApplicationAnswers,
   institution: applicationMessage.institutionName,
-  //featureFlag: Features.Street,
+  featureFlag: Features.StreetRegistration,
   translationNamespaces: [
     ApplicationConfigurations.StreetRegistration.translation,
   ],

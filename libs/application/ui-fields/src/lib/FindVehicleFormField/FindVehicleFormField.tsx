@@ -312,12 +312,9 @@ export const FindVehicleFormField: FC<React.PropsWithChildren<Props>> = ({
       setSubmitButtonDisabledCalled(true)
     }
     if (plate.length === MAX_LENGTH) {
-      console.log('called')
       setButtonDisabled(false)
     }
     if (machineDetails && machineDetails.disabled) {
-      console.log('machineDetails', machineDetails)
-      console.log('last')
       setSubmitButtonDisabled && setSubmitButtonDisabled(true)
     }
     setFieldLoadingState?.(isLoading)

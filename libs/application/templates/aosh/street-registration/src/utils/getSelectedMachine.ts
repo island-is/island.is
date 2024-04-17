@@ -31,7 +31,6 @@ export const mustInspectBeforeStreetRegistration = (
     'typesMustInspectBeforeRegistration.data',
     [],
   ) as string[]
-  console.log('inspectBeforeTypes', inspectBeforeTypes)
   return inspectBeforeTypes?.includes(regNumber.substring(0, 2)) || false
 }
 

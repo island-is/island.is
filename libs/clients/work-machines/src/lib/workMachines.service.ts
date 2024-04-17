@@ -107,7 +107,6 @@ export class WorkMachinesClientService {
       pageSize: 20,
       pageNumber: 1,
     })
-    console.log('result', result)
     return {
       machines:
         result?.value?.map((machine) => {
@@ -142,7 +141,6 @@ export class WorkMachinesClientService {
     rel: string,
   ): Promise<MachineDto> {
     const result = await this.machineApiWithAuth(auth).getMachine({ id })
-    console.log('details result', result)
     const [type, ...subType] = result.type?.split(' ') || ''
     return {
       id: result.id,

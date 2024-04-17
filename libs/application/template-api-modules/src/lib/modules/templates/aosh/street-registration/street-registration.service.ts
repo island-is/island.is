@@ -71,7 +71,6 @@ export class StreetRegistrationTemplateService extends BaseTemplateApiService {
     auth,
   }: TemplateApiModuleActionProps): Promise<void> {
     // 1. Validate payment
-    console.log('application.externalData', application.externalData)
     // 1a. Make sure a paymentUrl was created
     const paymentUrl =
       (application.externalData.createCharge?.data as { paymentUrl?: string })
@@ -105,7 +104,6 @@ export class StreetRegistrationTemplateService extends BaseTemplateApiService {
     }
 
     const userInfo = exrtactUserInfo(answers, application.externalData)
-    console.log('userInfo', userInfo)
     const machineId = answers.machine.id || answers.pickMachine.id
     if (!machineId) {
       throw new Error('Machine has not been selected')

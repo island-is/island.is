@@ -21,8 +21,6 @@ export const PaymentChargeOverviewFormField: FC<
 
   // get list of selected charge items with info
   const selectedChargeList = field.getSelectedChargeItems(application)
-  console.log('selectedChargeList', selectedChargeList)
-  console.log('application', application)
   const allChargeWithInfoList = application?.externalData?.payment?.data as [
     {
       priceAmount: number
