@@ -91,7 +91,7 @@ export class EventService {
     @Inject(LOGGER_PROVIDER) private readonly logger: Logger,
   ) {}
 
-  async postEvent(event: CaseEvent, theCase: Case, eventOnly = false) {
+  postEvent(event: CaseEvent, theCase: Case, eventOnly = false) {
     try {
       if (!this.config.url) {
         return
