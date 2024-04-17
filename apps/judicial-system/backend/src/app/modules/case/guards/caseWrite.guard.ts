@@ -10,7 +10,7 @@ import { canUserAccessCase } from '../filters/case.filter'
 
 @Injectable()
 export class CaseWriteGuard implements CanActivate {
-  async canActivate(context: ExecutionContext): Promise<boolean> {
+  canActivate(context: ExecutionContext): boolean {
     const request = context.switchToHttp().getRequest()
 
     const user = request.user
