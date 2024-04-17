@@ -26,13 +26,9 @@ export const RealEstateRepeater: FC<
     name: id,
   })
 
-  console.log('application', application)
-
   const { clearErrors } = useFormContext()
 
   const estateData = getEstateDataFromApplication(application)
-
-  console.log('estateData', estateData)
 
   useEffect(() => {
     if (fields.length === 0 && estateData.estate?.assets) {
