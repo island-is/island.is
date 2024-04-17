@@ -33,6 +33,9 @@ export interface NotificationsControllerGetNotificationTemplatesRequest {
   locale?: string
 }
 
+/**
+ *
+ */
 export class NotificationsApi extends runtime.BaseAPI {
   /**
    * Creates a new notification and adds to queue
@@ -57,7 +60,7 @@ export class NotificationsApi extends runtime.BaseAPI {
     headerParameters['Content-Type'] = 'application/json'
 
     const response = await this.request({
-      path: `/notifications`,
+      path: `/v1/notifications`,
       method: 'POST',
       headers: headerParameters,
       query: queryParameters,

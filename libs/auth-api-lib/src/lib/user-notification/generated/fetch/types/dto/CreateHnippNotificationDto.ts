@@ -12,12 +12,15 @@
  * Do not edit the class manually.
  */
 
-import { exists } from '../../runtime'
+import { exists, mapValues } from '../../runtime'
 import {
+  ArgumentDto,
+  ArgumentDtoFromJSON,
+  ArgumentDtoToJSON,
   HnippNotificationOriginalRecipientDto,
   HnippNotificationOriginalRecipientDtoFromJSON,
   HnippNotificationOriginalRecipientDtoToJSON,
-} from '.'
+} from './'
 
 /**
  *
@@ -51,10 +54,10 @@ export interface CreateHnippNotificationDto {
   templateId: string
   /**
    *
-   * @type {Array<string>}
+   * @type {Array<ArgumentDto>}
    * @memberof CreateHnippNotificationDto
    */
-  args: Array<{ key: string; value: string }>
+  args: Array<ArgumentDto>
 }
 
 export function CreateHnippNotificationDtoFromJSON(
@@ -77,7 +80,7 @@ export function CreateHnippNotificationDtoFromJSONTyped(
       ? undefined
       : HnippNotificationOriginalRecipientDtoFromJSON(json['onBehalfOf']),
     templateId: json['templateId'],
-    args: json['args'],
+    args: (json['args'] as Array<any>).map(ArgumentDtoFromJSON),
   }
 }
 
@@ -95,6 +98,6 @@ export function CreateHnippNotificationDtoToJSON(
     senderId: value.senderId,
     onBehalfOf: HnippNotificationOriginalRecipientDtoToJSON(value.onBehalfOf),
     templateId: value.templateId,
-    args: value.args,
+    args: (value.args as Array<any>).map(ArgumentDtoToJSON),
   }
 }

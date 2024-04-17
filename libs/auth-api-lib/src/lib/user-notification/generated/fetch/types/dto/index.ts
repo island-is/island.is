@@ -1,3 +1,4 @@
+export * from './ArgumentDto'
 export * from './CreateHnippNotificationDto'
 export * from './CreateNotificationDto'
 export * from './CreateNotificationResponse'
