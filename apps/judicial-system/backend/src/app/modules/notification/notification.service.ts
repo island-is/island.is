@@ -41,7 +41,6 @@ import {
   CaseState,
   CaseType,
   DateType,
-  getLatestDateType,
   getStatementDeadline,
   isDefenceUser,
   isIndictmentCase,
@@ -79,7 +78,6 @@ import { formatCourtOfAppealJudgeAssignedEmailNotification } from '../../formatt
 import { notifications } from '../../messages'
 import { Case } from '../case'
 import { CourtService } from '../court'
-import { DateLogService } from '../date-log'
 import { Defendant, DefendantService } from '../defendant'
 import { CaseEvent, EventService } from '../event'
 import { SendNotificationDto } from './dto/sendNotification.dto'
