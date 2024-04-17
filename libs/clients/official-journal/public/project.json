@@ -1,21 +1,21 @@
 {
-  "name": "clients-dmr",
-  "$schema": "../../../node_modules/nx/schemas/project-schema.json",
-  "sourceRoot": "libs/clients/dmr/src",
+  "name": "clients-official-journal-public",
+  "$schema": "../../../../node_modules/nx/schemas/project-schema.json",
+  "sourceRoot": "libs/clients/official-journal/public/src",
   "projectType": "library",
   "targets": {
     "lint": {
       "executor": "@nx/linter:eslint",
       "outputs": ["{options.outputFile}"],
       "options": {
-        "lintFilePatterns": ["libs/clients/dmr/**/*.ts"]
+        "lintFilePatterns": ["libs/clients/official-journal/public/**/*.ts"]
       }
     },
     "test": {
       "executor": "@nx/jest:jest",
       "outputs": ["{workspaceRoot}/coverage/{projectRoot}"],
       "options": {
-        "jestConfig": "libs/clients/dmr/jest.config.ts",
+        "jestConfig": "libs/clients/official-journal/public/jest.config.ts",
         "passWithNoTests": true
       },
       "configurations": {
@@ -33,13 +33,13 @@
           "prettier --write src/clientConfig.json"
         ],
         "parallel": false,
-        "cwd": "libs/clients/dmr"
+        "cwd": "libs/clients/official-journal/public"
       }
     },
     "codegen/backend-client": {
       "executor": "nx:run-commands",
       "options": {
-        "command": "yarn openapi-generator -o libs/clients/dmr/gen/fetch -i libs/clients/dmr/src/clientConfig.json"
+        "command": "yarn openapi-generator -o libs/clients/official-journal/public/gen/fetch -i libs/clients/official-journal/public/src/clientConfig.json"
       },
       "outputs": ["{projectRoot}/gen/fetch"]
     }

@@ -100,7 +100,10 @@ import {
   HealthDirectorateClientConfig,
   HealthDirectorateClientModule,
 } from '@island.is/clients/health-directorate'
-import { DmrClientConfig, DmrClientModule } from '@island.is/clients/dmr'
+import {
+  DmrClientConfig,
+  DmrClientModule,
+} from '@island.is/clients/official-journal-public'
 import { HmsLoansClientConfig } from '@island.is/clients/hms-loans'
 import { HousingBenefitCalculatorClientConfig } from '@island.is/clients/housing-benefit-calculator'
 import { IcelandicGovernmentInstitutionVacanciesClientConfig } from '@island.is/clients/icelandic-government-institution-vacancies'

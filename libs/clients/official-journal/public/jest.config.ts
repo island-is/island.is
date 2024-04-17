@@ -1,11 +1,12 @@
 /* eslint-disable */
 export default {
-  displayName: 'clients-dmr',
-  preset: '../../../jest.preset.js',
+  displayName: 'clients-official-journal-public',
+  preset: '../../../../jest.preset.js',
   testEnvironment: 'node',
   transform: {
     '^.+\\.[tj]s$': ['ts-jest', { tsconfig: '<rootDir>/tsconfig.spec.json' }],
   },
   moduleFileExtensions: ['ts', 'js', 'html'],
-  coverageDirectory: '../../../coverage/libs/clients/dmr',
+  coverageDirectory:
+    '../../../../coverage/libs/clients/official-journal/public',
 }

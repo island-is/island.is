@@ -2,7 +2,7 @@ import type { User } from '@island.is/auth-nest-tools'
 import {
   DmrClientService,
   JournalControllerAdvertsRequest,
-} from '@island.is/clients/dmr'
+} from '@island.is/clients/official-journal-public'
 import { mapAdvertStatus } from './mapper'
 import { Injectable } from '@nestjs/common'
 import {
