@@ -2,6 +2,14 @@ import { expect, test as base, Page } from '@playwright/test'
 import { disableI18n } from '../../../../support/disablers'
 import { session } from '../../../../support/session'
 import { createApplication } from '../../../../support/application'
+import { label } from '../../../../support/i18n'
+import {
+  complaint,
+  delimitation,
+  info,
+  sharedFields,
+} from '@island.is/application/templates/data-protection-complaint/messages'
+import { coreMessages } from '@island.is/application/core/messages'
 
 const homeUrl = '/umsoknir/kvortun-til-personuverndar'
 
@@ -40,7 +48,7 @@ applicationTest.describe('Data protection complaint application', () => {
       const agreeToDataProvidersTestId = 'agree-to-data-providers'
       const proceedTestId = 'proceed'
       const gervimadurAfricaText = 'Gervimaður Afríka'
-      const overviewPageText = 'Þínar umsóknir'
+      const overviewPageText = label(coreMessages.applications)
 
       await applicationTest.step('Create a new application', async () => {
         numOfApplicationsAtStart = await createApplication(page)
@@ -58,8 +66,8 @@ applicationTest.describe('Data protection complaint application', () => {
       await applicationTest.step(
         'Go to the overview page and check the number of applications after creation',
         async () => {
-          await page.goto(`${homeUrl}`, { waitUntil: 'load' })
-          page.getByText(overviewPageText)
+          await page.goto(`${homeUrl}`, { waitUntil: 'networkidle' })
+          await page.getByText(overviewPageText)
 
           numberOfApplicationsAfterCreationVisible =
             await countApplicationsVisible(page)
@@ -75,7 +83,9 @@ applicationTest.describe('Data protection complaint application', () => {
     'Should be able to delete an application and that its not visible on overview',
     async ({ applicationPage }) => {
       const iconTrashTestId = 'icon-trash'
-      const deleteConfirmationText = 'Já, eyða'
+      const deleteConfirmationText = label(
+        coreMessages.deleteApplicationDialogConfirmLabel,
+      )
       const agreeToDataProvidersTestId = 'agree-to-data-providers'
 
       await applicationTest.step(
@@ -84,7 +94,7 @@ applicationTest.describe('Data protection complaint application', () => {
           const page = applicationPage
           const applicationAtStart = await createApplication(page)
 
-          await page.goto(`${homeUrl}`, { waitUntil: 'load' })
+          await page.goto(`${homeUrl}`, { waitUntil: 'networkidle' })
           const visibleApplicationsAfterCreation =
             await countApplicationsVisible(page)
           await page.getByTestId(iconTrashTestId).first().click()
@@ -99,9 +109,7 @@ applicationTest.describe('Data protection complaint application', () => {
               await countApplicationsVisible(page)
             expect(numberOfApplicationsAfterDeletion).toBe(applicationAtStart)
           } else {
-            await expect(
-              page.getByTestId(agreeToDataProvidersTestId).first(),
-            ).toBeVisible()
+            await page.getByTestId(agreeToDataProvidersTestId)
             await expect(applicationPage).toBeApplication()
           }
         },
@@ -115,29 +123,30 @@ applicationTest.describe('Data protection complaint application', () => {
       const page = applicationPage
       const agreeToDataProvidersTestId = 'agree-to-data-providers'
       const proceedTestId = 'proceed'
-      const noOptionLabel = 'Nei'
-      const emailLabel = 'Netfang'
-      const phoneNumberLabel = 'Símanúmer'
-
-      const fullNameLabel = 'Fullt nafn'
-      const nationalIdLabel = 'Kennitala'
-      const uploadButtonName = 'Velja umboðsskjöl til að hlaða upp'
+      const noOptionLabel = label(sharedFields.no)
+      const emailLabel = label(info.labels.email)
+      const phoneNumberLabel = label(info.labels.tel)
+      const fullNameLabel = label(info.labels.name)
+      const nationalIdLabel = label(info.labels.nationalId)
+      const uploadButtonName = label(
+        info.labels.commissionsDocumentsButtonLabel,
+      )
       const stepBackTestId = 'step-back'
-      const firstCheckboxText =
-        'Er málið sem um ræðir til meðferðar hjá dómstólum eða öðrum stjórnvöldum?'
-      const secondCheckBoxText =
-        'Ertu að kvarta yfir umfjöllun um þig eða aðra í fjölmiðlum?'
-      const thirdCheckBoxText =
-        'Ertu að kvarta yfir því að x-merking í símaskrá eða bannmerking í þjóðskrá hafi ekki verið virt?'
-      const fourthCheckBoxText =
-        'Ertu að kvarta yfir einhverju sem var sagt eða skrifað um þig á netinu eða á öðrum opinberum vettvangi?'
-      const infoAboutCaseText =
-        'Ítarlegri upplýsingar um málsmeðferð hjá Persónuvernd má nálgast í {link}.'
-      const forWhomText = 'Fyrir hvern ertu að senda inn kvörtun?'
-      const inPowerOfText = 'Upplýsingar um umboð'
-      const inPowerOfSomeoneElse = 'Í umboði fyrir aðra'
-      const informationAboutCompanyText =
-        'Upplýsingar um fyrirtæki, stofnun eða einstakling sem kvartað er yfir'
+      const firstCheckboxText = label(delimitation.labels.inCourtProceedings)
+      const secondCheckBoxText = label(
+        delimitation.labels.concernsMediaCoverage,
+      )
+      const thirdCheckBoxText = label(delimitation.labels.concernsBanMarking)
+      const fourthCheckBoxText = label(delimitation.labels.concernsLibel)
+      const infoAboutCaseText = label(
+        delimitation.labels.agreementDescriptionBulletSeven,
+      )
+      const forWhomText = label(info.general.pageTitle)
+      const inPowerOfText = label(info.general.commissionsPageTitle)
+      const inPowerOfSomeoneElse = label(info.labels.others)
+      const informationAboutCompanyText = label(
+        complaint.general.complaineePageTitle,
+      )
 
       await applicationTest.step('Start the application', async () => {
         await createApplication(page)

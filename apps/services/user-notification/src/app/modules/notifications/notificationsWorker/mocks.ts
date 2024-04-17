@@ -24,6 +24,7 @@ export const userWithDelegations: MockUserProfileDto = {
   mobilePhoneNumberVerified: true,
   documentNotifications: true,
   emailNotifications: true,
+  isRestricted: false,
 }
 
 export const userWithDelegations2: MockUserProfileDto = {
@@ -35,6 +36,7 @@ export const userWithDelegations2: MockUserProfileDto = {
   mobilePhoneNumberVerified: true,
   documentNotifications: true,
   emailNotifications: true,
+  isRestricted: false,
 }
 
 export const userWitNoDelegations: MockUserProfileDto = {
@@ -46,6 +48,7 @@ export const userWitNoDelegations: MockUserProfileDto = {
   mobilePhoneNumberVerified: true,
   documentNotifications: true,
   emailNotifications: true,
+  isRestricted: false,
 }
 
 export const userWithEmailNotificationsDisabled: MockUserProfileDto = {
@@ -56,6 +59,7 @@ export const userWithEmailNotificationsDisabled: MockUserProfileDto = {
   mobilePhoneNumberVerified: true,
   documentNotifications: true,
   emailNotifications: false,
+  isRestricted: false,
 }
 
 export const userWithDocumentNotificationsDisabled: MockUserProfileDto = {
@@ -67,6 +71,7 @@ export const userWithDocumentNotificationsDisabled: MockUserProfileDto = {
   mobilePhoneNumberVerified: true,
   documentNotifications: false,
   emailNotifications: true,
+  isRestricted: false,
 }
 
 export const userWithFeatureFlagDisabled: MockUserProfileDto = {
@@ -78,6 +83,7 @@ export const userWithFeatureFlagDisabled: MockUserProfileDto = {
   mobilePhoneNumberVerified: true,
   documentNotifications: true,
   emailNotifications: true,
+  isRestricted: false,
 }
 
 export const userWithSendToDelegationsFeatureFlagDisabled: MockUserProfileDto =
@@ -90,6 +96,7 @@ export const userWithSendToDelegationsFeatureFlagDisabled: MockUserProfileDto =
     mobilePhoneNumberVerified: true,
     documentNotifications: true,
     emailNotifications: true,
+    isRestricted: false,
   }
 
 export const mockTemplateId = 'HNIPP.DEMO.ID'
