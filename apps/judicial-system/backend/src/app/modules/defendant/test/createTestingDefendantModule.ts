@@ -9,7 +9,6 @@ import { MessageService } from '@island.is/judicial-system/message'
 import { environment } from '../../../../environments'
 import { CaseService } from '../../case'
 import { CourtService } from '../../court'
-import { DateLogService } from '../../date-log'
 import { UserService } from '../../user'
 import { DefendantController } from '../defendant.controller'
 import { DefendantService } from '../defendant.service'
@@ -20,7 +19,6 @@ jest.mock('@island.is/judicial-system/message')
 jest.mock('../../user/user.service')
 jest.mock('../../court/court.service')
 jest.mock('../../case/case.service')
-jest.mock('../../date-log/dateLog.service')
 
 export const createTestingDefendantModule = async () => {
   const defendantModule = await Test.createTestingModule({
@@ -36,7 +34,6 @@ export const createTestingDefendantModule = async () => {
       UserService,
       CourtService,
       CaseService,
-      DateLogService,
       {
         provide: LOGGER_PROVIDER,
         useValue: {
@@ -66,8 +63,6 @@ export const createTestingDefendantModule = async () => {
 
   const courtService = defendantModule.get<CourtService>(CourtService)
 
-  const dateLogService = defendantModule.get<DateLogService>(DateLogService)
-
   const defendantModel = await defendantModule.resolve<typeof Defendant>(
     getModelToken(Defendant),
   )
@@ -89,7 +84,6 @@ export const createTestingDefendantModule = async () => {
     messageService,
     userService,
     courtService,
-    dateLogService,
     defendantModel,
     defendantService,
     defendantController,
