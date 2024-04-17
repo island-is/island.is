@@ -16,11 +16,11 @@ export class MessageProcessorService {
 
   async convertToNotification(
     message: CreateHnippNotificationDto,
-    profile: UserProfileDto,
+    locale?: string | null | undefined,
   ): Promise<Notification> {
     const template = await this.notificationsService.getTemplate(
       message.templateId,
-      profile.locale,
+      locale,
     )
     const notification = this.notificationsService.formatArguments(
       message.args,
