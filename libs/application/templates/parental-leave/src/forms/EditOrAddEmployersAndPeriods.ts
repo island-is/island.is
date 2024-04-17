@@ -347,12 +347,13 @@ export const EditOrAddEmployersAndPeriods: Form = buildForm({
           children: [
             buildFileUploadField({
               id: 'fileUpload.changeEmployerFile',
-              title: parentalLeaveFormMessages.fileUpload.additionalAttachmentTitle,
-              introduction: parentalLeaveFormMessages.fileUpload
-                .additionalAttachmentDescription,
+              title:
+                parentalLeaveFormMessages.fileUpload.additionalAttachmentTitle,
+              introduction:
+                parentalLeaveFormMessages.fileUpload
+                  .additionalAttachmentDescription,
               condition: (answers) => {
-                const { addEmployer } =
-                  getApplicationAnswers(answers)
+                const { addEmployer } = getApplicationAnswers(answers)
 
                 return addEmployer === YES
               },
