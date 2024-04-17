@@ -41,6 +41,7 @@ import {
   CaseState,
   CaseType,
   DateType,
+  getLatestDateType,
   getStatementDeadline,
   isDefenceUser,
   isIndictmentCase,
@@ -315,14 +316,18 @@ export class NotificationService {
   private async createICalAttachment(
     theCase: Case,
   ): Promise<Attachment | undefined> {
-    const courtDate = await this.dateLogService.findLatestDateTypeByCaseId(
+    const courtDate = getLatestDateType(
       DateType.COURT_DATE,
-      theCase.id,
+      theCase.dateLogs?.map((dateLog) => ({
+        dateType: dateLog.dateType as DateType,
+      })),
     )
 
     if (!courtDate || !courtDate.date) {
       return
     }
+
+    const courtDateAsDate = new Date(courtDate.date)
 
     const eventOrganizer = {
       name: theCase.registrar
@@ -338,7 +343,7 @@ export class NotificationService {
     }
 
     const courtDateStart = new Date(courtDate.date.toString().split('.')[0])
-    const courtDateEnd = new Date(courtDate.date.getTime() + 30 * 60000)
+    const courtDateEnd = new Date(courtDateAsDate.getTime() + 30 * 60000)
 
     const icalendar = new ICalendar({
       title: `Fyrirtaka í máli ${theCase.courtCaseNumber} - ${theCase.prosecutorsOffice?.name} gegn X`,
