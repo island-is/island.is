@@ -313,9 +313,7 @@ export class NotificationService {
     }
   }
 
-  private async createICalAttachment(
-    theCase: Case,
-  ): Promise<Attachment | undefined> {
+  private createICalAttachment(theCase: Case): Attachment | undefined {
     const courtDate = getLatestDateType(
       DateType.COURT_DATE,
       theCase.dateLogs?.map((dateLog) => ({
