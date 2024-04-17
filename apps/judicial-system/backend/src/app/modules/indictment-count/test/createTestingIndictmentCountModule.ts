@@ -7,14 +7,12 @@ import { SharedAuthModule } from '@island.is/judicial-system/auth'
 
 import { environment } from '../../../../environments'
 import { CaseService } from '../../case'
-import { DateLogService } from '../../date-log'
 import { IndictmentCountController } from '../indictmentCount.controller'
 import { IndictmentCountService } from '../indictmentCount.service'
 import { IndictmentCount } from '../models/indictmentCount.model'
 
 jest.mock('@island.is/judicial-system/message')
 jest.mock('../../case/case.service')
-jest.mock('../../date-log/dateLog.service')
 
 export const createTestingIndictmentCountModule = async () => {
   const indictmentCountModule = await Test.createTestingModule({
@@ -27,7 +25,6 @@ export const createTestingIndictmentCountModule = async () => {
     controllers: [IndictmentCountController],
     providers: [
       CaseService,
-      DateLogService,
       {
         provide: LOGGER_PROVIDER,
         useValue: {

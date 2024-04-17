@@ -17,7 +17,6 @@ import { MessageService } from '@island.is/judicial-system/message'
 import { environment } from '../../../../environments'
 import { awsS3ModuleConfig, AwsS3Service } from '../../aws-s3'
 import { CourtService } from '../../court'
-import { DateLogService } from '../../date-log'
 import { DefendantService } from '../../defendant'
 import { eventModuleConfig, EventService } from '../../event'
 import { InternalNotificationController } from '../internalNotification.controller'
@@ -94,12 +93,6 @@ export const createTestingNotificationModule = async () => {
           isDefendantInActiveCustody: jest.fn(),
         },
       },
-      {
-        provide: DateLogService,
-        useValue: {
-          findLatestDateTypeByCaseId: jest.fn(),
-        },
-      },
     ],
   })
     .useMocker((token) => {
@@ -114,7 +107,6 @@ export const createTestingNotificationModule = async () => {
     defendantService:
       notificationModule.get<DefendantService>(DefendantService),
     emailService: notificationModule.get<EmailService>(EmailService),
-    dateLogService: notificationModule.get<DateLogService>(DateLogService),
     smsService: notificationModule.get<SmsService>(SmsService),
     courtService: notificationModule.get<CourtService>(CourtService),
     notificationConfig: notificationModule.get<
