@@ -721,6 +721,7 @@ export class InternalCaseService {
         theCase.id,
         theCase.court?.name,
         theCase.courtCaseNumber,
+        Boolean(theCase.rulingModifiedHistory),
         theCase.decision,
         theCase.rulingDate,
         isRestrictionCase(theCase.type) ? theCase.validToDate : undefined,
@@ -754,9 +755,7 @@ export class InternalCaseService {
       .catch((reason) => {
         this.logger.error(
           `Failed to update appeal case ${theCase.id} with received date`,
-          {
-            reason,
-          },
+          { reason },
         )
 
         return { delivered: false }
@@ -781,9 +780,7 @@ export class InternalCaseService {
       .catch((reason) => {
         this.logger.error(
           `Failed to update appeal case ${theCase.id} with assigned roles`,
-          {
-            reason,
-          },
+          { reason },
         )
 
         return { delivered: false }
@@ -818,9 +815,7 @@ export class InternalCaseService {
       .catch((reason) => {
         this.logger.error(
           `Failed to update appeal case ${theCase.id} with conclusion`,
-          {
-            reason,
-          },
+          { reason },
         )
 
         return { delivered: false }
