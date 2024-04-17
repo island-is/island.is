@@ -15,6 +15,26 @@ export const application = {
       description: 'Applicant section title',
     },
   }),
+  notHealthInusred: defineMessages({
+    sectionTitle: {
+      id: 'hid.application:notHealthInsured.section.title',
+      defaultMessage: 'Ekki með sjúkratryggingu',
+      description: 'Not Health Insured section title',
+    },
+    sectionDescription: {
+      id: 'hid.application:notHealthInsured.section.description',
+      defaultMessage: 'Því miður átt þú ekki rétt á tryggingaryfirlýsingu',
+      description: 'Not Health Insured section description',
+    },
+    descriptionFieldDescription: {
+      id: 'hid.application:notHealthInsured.section.descriptionField.description#markdown',
+      defaultMessage: `Ástæðan fyrir því er eftirfarandi:
+      
+      - Einstaklingur er ekki sjúkratryggð/ur á Íslandi.
+      - Ef þú telur þetta ekki eiga við, vinsamlega hafðu samband við [mailto:ehic@sjukra.is](ehic@sjukra.is)`,
+      description: 'Not Health Insured section descriptionField description',
+    },
+  }),
   studentOrTraveller: defineMessages({
     sectionTitle: {
       id: 'hid.application:studentOrTraveller.section.title',

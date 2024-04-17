@@ -14,11 +14,12 @@ import {
   buildStaticTableField,
   buildTextField,
 } from '@island.is/application/core'
-import { Form, FormModes } from '@island.is/application/types'
+import { Form, FormModes, FormValue } from '@island.is/application/types'
 import * as m from '../lib/messages'
 import Logo from '../assets/Logo'
 import {
   getChildrenAsOptions,
+  getFullNameFromExternalData,
   getInsuranceStatus,
   getSelectedFamiliy,
 } from '../utils'
@@ -135,7 +136,7 @@ export const HealthInsuranceDeclarationForm: Form = buildForm({
               required: true,
             }),
             buildHiddenInput({
-              id: 'applicant.isHealthInsured',
+              id: 'isHealthInsured',
               defaultValue: (
                 application: HealthInsuranceDeclarationApplication,
               ) => getInsuranceStatus(application.externalData),
@@ -143,6 +144,44 @@ export const HealthInsuranceDeclarationForm: Form = buildForm({
           ],
         }),
       ],
+    }),
+    buildSection({
+      id: 'notHealthInsuredSection',
+      title: m.application.notHealthInusred.sectionTitle,
+      children: [
+        buildMultiField({
+          id: 'notHealthInsuredMultiField',
+          title: m.application.notHealthInusred.sectionDescription,
+          children: [
+            buildDescriptionField({
+              id: 'notHealthInsuredDescriptionField',
+              title: '',
+              description:
+                m.application.notHealthInusred.descriptionFieldDescription,
+            }),
+            buildCheckboxField({
+              id: 'notHealthInsuredCheckboxField',
+              title: '',
+              disabled: true,
+              options: () => [
+                {
+                  value: '',
+                  label: ({ externalData }) =>
+                    getFullNameFromExternalData(externalData),
+                },
+              ],
+            }),
+          ],
+        }),
+      ],
+      condition: (answers: FormValue) => {
+        console.log(answers.isHealthInsured)
+        return !answers.isHealthInsured as boolean
+      },
+
+      // condition: (answers: FormValue) => {
+      //   return true
+      // },
     }),
     buildSection({
       id: 'studentOrTravellerSection',

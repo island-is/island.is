@@ -4,6 +4,7 @@ import { z } from 'zod'
 export const HealthInsuranceDeclarationSchema = z.object({
   approveExternalData: z.boolean().refine((v) => v),
   applicant: applicantInformationSchema(),
+  isHealthInsured: z.boolean(),
   studentOrTravellerRadioFieldTraveller: z.string(),
   residencyTravellerRadioField: z.string(),
   registerPersonsSpouseCheckboxField: z.string().array(),

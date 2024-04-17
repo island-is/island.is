@@ -1,6 +1,7 @@
 import {
   ApplicantChildCustodyInformation,
   ExternalData,
+  NationalRegistryIndividual,
   Option,
   StaticText,
 } from '@island.is/application/types'
@@ -20,7 +21,10 @@ const getSpouseFromExternalData = (externalData: ExternalData) => {
 export const getInsuranceStatus = (externalData: ExternalData) => {
   return externalData?.isHealthInsured?.data as boolean
 }
-
+export const getFullNameFromExternalData = (externalData: ExternalData) => {
+  return (externalData.nationalRegistry?.data as NationalRegistryIndividual)
+    .fullName
+}
 export const getChildrenAsOptions = (externalData: ExternalData): Option[] => {
   const children = getChildrenFromExternalData(externalData)
 
