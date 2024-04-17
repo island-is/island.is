@@ -39,7 +39,7 @@ export const userWithDelegations2: MockUserProfileDto = {
 }
 
 export const userWithNoDelegations: MockUserProfileDto = {
-  name: 'userWitNoDelegations',
+  name: 'userWithNoDelegations',
   nationalId: createNationalId('person'),
   mobilePhoneNumber: '1234567',
   email: 'email1@email.com',
