@@ -3,7 +3,8 @@ import { SequelizeModule } from '@nestjs/sequelize'
 
 import { MessageModule } from '@island.is/judicial-system/message'
 
-import { CaseModule, CourtModule } from '../index'
+import { CaseModule } from '../case/case.module'
+import { CourtModule } from '../court/court.module'
 import { Defendant } from './models/defendant.model'
 import { DefendantController } from './defendant.controller'
 import { DefendantService } from './defendant.service'
