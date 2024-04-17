@@ -3,7 +3,7 @@ import { Injectable } from '@nestjs/common'
 import { ApplicationTypes } from '@island.is/application/types'
 import { User } from '@island.is/auth-nest-tools'
 import { BaseTemplateApiService } from '../../base-template-api.service'
-import { OfficialJournalService } from '@island.is/api/domains/official-journal'
+import { OfficialJournalOfIcelandService } from '@island.is/api/domains/official-journal-of-iceland'
 import { TemplateApiModuleActionProps } from '../../../types'
 import { OJOIApplication } from '@island.is/application-templates-official-journal-of-iceland'
 
@@ -13,7 +13,7 @@ type Props = Omit<TemplateApiModuleActionProps, 'application'> & {
 
 @Injectable()
 export class OfficialJournalOfIcelandService extends BaseTemplateApiService {
-  constructor(private readonly ojService: OfficialJournalService) {
+  constructor(private readonly ojService: OfficialJournalOfIcelandService) {
     super(ApplicationTypes.OFFICIAL_JOURNAL_OF_ICELAND)
   }
 

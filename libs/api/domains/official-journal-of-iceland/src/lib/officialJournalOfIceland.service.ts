@@ -17,35 +17,35 @@ import {
 } from './models/advert.response'
 
 @Injectable()
-export class OfficialJournalService {
+export class OfficialJournalOfIcelandService {
   constructor(
-    private readonly ojService: OfficialJournalOfIcelandClientService,
+    private readonly ojoiService: OfficialJournalOfIcelandClientService,
   ) {}
 
   async departments(params: QueryParams): Promise<AdvertDepartmentResponse> {
-    return await this.ojService.departments(params)
+    return await this.ojoiService.departments(params)
   }
 
   async mainCategories(
     params: QueryParams,
   ): Promise<AdvertMainCategoriesResponse> {
-    return await this.ojService.mainCategories(params)
+    return await this.ojoiService.mainCategories(params)
   }
 
   async categories(params: QueryParams): Promise<AdvertCategoryResponse> {
-    return await this.ojService.categories(params)
+    return await this.ojoiService.categories(params)
   }
 
   async types(params: TypeQueryParams): Promise<AdvertTypeResponse> {
-    return await this.ojService.types(params)
+    return await this.ojoiService.types(params)
   }
 
   async institutions(params: QueryParams): Promise<AdvertInstitutionsResponse> {
-    return await this.ojService.institutions(params)
+    return await this.ojoiService.institutions(params)
   }
 
   async advert(params: AdvertQueryParams): Promise<AdvertResponse> {
-    const data = await this.ojService.advert(params)
+    const data = await this.ojoiService.advert(params)
     return {
       advert: {
         ...data,
@@ -57,7 +57,7 @@ export class OfficialJournalService {
   async adverts(
     input: JournalControllerAdvertsRequest,
   ): Promise<AdvertsResponse> {
-    const adverts = await this.ojService.adverts(input)
+    const adverts = await this.ojoiService.adverts(input)
 
     const mappedAdverts = adverts.adverts.map((advert) => {
       return {

@@ -177,8 +177,8 @@
       "@island.is/api/domains/occupational-licenses": [
         "libs/api/domains/occupational-licenses/src/index.ts"
       ],
-      "@island.is/api/domains/official-journal": [
-        "libs/api/domains/official-journal/src/index.ts"
+      "@island.is/api/domains/official-journal-of-iceland": [
+        "libs/api/domains/official-journal-of-iceland/src/index.ts"
       ],
       "@island.is/api/domains/passport": [
         "libs/api/domains/passport/src/index.ts"
