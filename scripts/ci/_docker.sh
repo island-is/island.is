@@ -70,8 +70,14 @@ main() {
   "${ACTION}"
 }
 
-# Set podman-specific config (if `docker` is missing, but `podman` is present)
-if ! command -v docker >/dev/null && command -v podman >/dev/null; then
+# Set podman-specific config
+if (
+  # `docker` is missing, but `podman` is present
+  (! command -v docker >/dev/null && command -v podman >/dev/null) ||
+    # `docker` _is_ `podman`
+    docker version | grep -qi 'podman'
+); then
+  # podman doesn't support key-value in `--cache-*`
   export CONTAINER_BUILDER=podman LOCAL_CACHE=false
 fi
 
