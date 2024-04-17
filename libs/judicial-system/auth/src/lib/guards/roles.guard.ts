@@ -33,10 +33,6 @@ export class RolesGuard implements CanActivate {
       typeof rule === 'string' ? rule === user.role : rule?.role === user.role,
     )
 
-    if (user.role === UserRole.DISTRICT_COURT_JUDGE && request.body.courtDate) {
-      return true
-    }
-
     // Deny if no rule matches the user's role
     if (!rule) {
       return false
