@@ -125,21 +125,27 @@ export const ListViewCard = ({
           </Box>
         )}
         <Box paddingTop={3} width="full" height="full">
-          <Box display={'flex'} alignItems={'flexEnd'} height="full">
+          <Box
+            display={'flex'}
+            alignItems={'flexEnd'}
+            height="full"
+            width="full"
+            style={{ cursor: cta.disabled ? 'not-allowed' : '' }}
+          >
             {cta.href ? (
-              <LinkV2 href={cta.href} newTab={true}>
-                <Button
-                  {...(cta.buttonType ?? { variant: cta.variant })}
-                  size={cta.size}
-                  fluid
-                  disabled={cta.disabled}
-                  icon={cta.icon}
-                  iconType={cta.iconType}
-                  nowrap
-                >
+              <Button
+                {...(cta.buttonType ?? { variant: cta.variant })}
+                size={cta.size}
+                fluid
+                disabled={cta.disabled}
+                icon={cta.icon}
+                iconType={cta.iconType}
+                nowrap
+              >
+                <LinkV2 href={cta.href} newTab={true}>
                   {cta.label}
-                </Button>
-              </LinkV2>
+                </LinkV2>
+              </Button>
             ) : (
               <Button
                 {...(cta.buttonType ?? { variant: cta.variant })}

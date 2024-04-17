@@ -85,6 +85,7 @@ interface UniversitySearchProps {
   universities: Array<UniversityGatewayUniversity>
   organizationPage?: Query['getOrganizationPage']
   searchQuery: string
+  filtersFromQuery: FilterProps
 }
 
 interface FilterProps {
@@ -146,6 +147,7 @@ const UniversitySearch: Screen<UniversitySearchProps> = ({
   filterOptions,
   namespace,
   searchQuery,
+  filtersFromQuery,
   locale,
   organizationPage,
   universities,
@@ -176,9 +178,7 @@ const UniversitySearch: Screen<UniversitySearchProps> = ({
   const [gridView, setGridView] = useState<boolean>(true)
   const { linkResolver } = useLinkResolver()
   const [totalPages, setTotalPages] = useState<number>(0)
-  const [filters, setFilters] = useState<FilterProps>(
-    JSON.parse(JSON.stringify(initialFilters)),
-  )
+  const [filters, setFilters] = useState<FilterProps>(filtersFromQuery)
 
   useEffect(() => {
     if (!loading) {
@@ -246,7 +246,7 @@ const UniversitySearch: Screen<UniversitySearchProps> = ({
   useEffect(() => {
     const comp = localStorage.getItem('comparison')
     const viewChoice = localStorage.getItem('viewChoice')
-    const savedFilters = localStorage.getItem('savedFilters')
+    // const savedFilters = localStorage.getItem('savedFilters')
 
     if (comp) {
       const comparison = JSON.parse(comp)
@@ -255,20 +255,6 @@ const UniversitySearch: Screen<UniversitySearchProps> = ({
 
     if (viewChoice) {
       setGridView(viewChoice === 'true' ? true : false)
-    }
-
-    if (savedFilters) {
-      const parsedFilters = JSON.parse(savedFilters)
-      setFilters(parsedFilters)
-    }
-
-    if (searchQuery) {
-      setQuery(searchQuery)
-      sessionStorage.setItem('query', searchQuery)
-      //also set deep copy here
-      setFilters(JSON.parse(JSON.stringify(initialFilters)))
-    } else if (sessionStorage.getItem('query')) {
-      setQuery(sessionStorage.getItem('query') || '')
     }
   }, [])
 
@@ -332,7 +318,6 @@ const UniversitySearch: Screen<UniversitySearchProps> = ({
 
       setFilteredResults(results)
     }
-    localStorage.setItem('savedFilters', JSON.stringify(filters))
   }, [filters, query, data, loading, originalSortedResults, locale])
 
   const applicationUrlParser = (universityId: string) => {
@@ -373,7 +358,12 @@ const UniversitySearch: Screen<UniversitySearchProps> = ({
     return CTA
   }
 
-  const handleFilters = (filterKey: string, filterValue: string) => {
+  const handleFilters = (
+    filterKey: string,
+    filterValue: string,
+    checked: boolean,
+  ) => {
+    // Set state
     const str = filterKey as keyof typeof filters
     if (filters[str].includes(filterValue)) {
       const index = filters[str].indexOf(filterValue)
@@ -386,6 +376,68 @@ const UniversitySearch: Screen<UniversitySearchProps> = ({
         [filterKey]: [...filters[str], filterValue],
       })
     }
+
+    // Update query params
+    const currentQueryParams = router.query
+    const { [filterKey]: prevFilterKeyValues, ...restParams } =
+      currentQueryParams
+
+    let updatedQueryParams = {}
+    if (!prevFilterKeyValues) {
+      // No previous value
+      updatedQueryParams = {
+        ...restParams,
+        ...(checked && { [filterKey]: filterValue }),
+      }
+    } else if (Array.isArray(prevFilterKeyValues)) {
+      // More than one prev value
+      const updatedValues = checked
+        ? [...prevFilterKeyValues, filterValue]
+        : prevFilterKeyValues.filter((value) => value !== filterValue)
+
+      updatedQueryParams = {
+        ...restParams,
+        ...(updatedValues.length > 0 && { [filterKey]: updatedValues }),
+      }
+    } else {
+      // one prev value
+      updatedQueryParams = {
+        ...restParams,
+        ...(checked && { [filterKey]: [prevFilterKeyValues, filterValue] }),
+      }
+    }
+
+    router.push(
+      {
+        pathname: router.pathname,
+        query: updatedQueryParams,
+      },
+      undefined,
+      {
+        shallow: true,
+      },
+    )
+  }
+
+  const clearFilterType = (filterKey: string) => {
+    setFilters({ ...filters, [filterKey]: [] })
+
+    const currentQueryParams = router.query
+    const { [filterKey]: _, ...restParams } = currentQueryParams
+    const updatedQueryParams = {
+      ...restParams,
+    }
+
+    router.push(
+      {
+        pathname: router.pathname,
+        query: updatedQueryParams,
+      },
+      undefined,
+      {
+        shallow: true,
+      },
+    )
   }
 
   const handleComparisonChange = (dataItem: ComparisonProps) => {
@@ -456,7 +508,7 @@ const UniversitySearch: Screen<UniversitySearchProps> = ({
     filterKey: string,
   ) => {
     setSelectedPage(1)
-    handleFilters(filterKey, e.target.value)
+    handleFilters(filterKey, e.target.value, e.target.checked)
   }
 
   const routeToComparison = () => {
@@ -535,6 +587,10 @@ const UniversitySearch: Screen<UniversitySearchProps> = ({
     }
   }
 
+  const areFiltersOpen = () => {
+    return isOpen.filter((x) => x === false).length > 0
+  }
+
   const loadSkeletons = () => {
     if (gridView || isMobileScreenWidth || isTabletScreenWidth) {
       return (
@@ -574,6 +630,43 @@ const UniversitySearch: Screen<UniversitySearchProps> = ({
         </GridContainer>
       )
     }
+  }
+
+  const handleUserInput = (value: string) => {
+    setSelectedPage(1)
+    searchTermHasBeenInitialized.current = true
+    setQuery(value)
+
+    const currentQueryParams = router.query
+    const updatedQueryParams = {
+      ...currentQueryParams,
+      search: value,
+    }
+    router.push(
+      {
+        pathname: router.pathname,
+        query: updatedQueryParams,
+      },
+      undefined,
+      {
+        shallow: true,
+      },
+    )
+  }
+
+  const clearFilterParams = () => {
+    setSelectedPage(1)
+    setFilters(initialFilters)
+    router.push(
+      {
+        pathname: router.pathname,
+        query: { search: query },
+      },
+      undefined,
+      {
+        shallow: true,
+      },
+    )
   }
 
   return (
@@ -624,16 +717,14 @@ const UniversitySearch: Screen<UniversitySearchProps> = ({
                   >
                     <Button
                       variant="text"
-                      icon="add"
+                      icon={areFiltersOpen() ? 'add' : 'remove'}
                       size="small"
                       onClick={() =>
-                        isOpen.filter((x) => x === false).length > 0
-                          ? toggleOpenAll()
-                          : toggleCloseAll()
+                        areFiltersOpen() ? toggleOpenAll() : toggleCloseAll()
                       }
                     >
                       {`${
-                        isOpen.filter((x) => x === false).length > 0
+                        areFiltersOpen()
                           ? n('openAllFilters', 'opna allar síur')
                           : n('closeAllFilters', 'loka öllum síum')
                       }`}
@@ -710,9 +801,7 @@ const UniversitySearch: Screen<UniversitySearchProps> = ({
                                 variant="text"
                                 icon="reload"
                                 size="small"
-                                onClick={() =>
-                                  setFilters({ ...filters, [filter.field]: [] })
-                                }
+                                onClick={() => clearFilterType(filter.field)}
                               >
                                 {n('clearFilter', 'Hreinsa val')}
                               </Button>
@@ -734,9 +823,7 @@ const UniversitySearch: Screen<UniversitySearchProps> = ({
                       variant="text"
                       icon="reload"
                       size="small"
-                      onClick={() =>
-                        setFilters(JSON.parse(JSON.stringify(initialFilters)))
-                      }
+                      onClick={() => clearFilterParams()}
                     >
                       {n('clearAllFilters', 'Hreinsa allar síur')}
                     </Button>
@@ -786,10 +873,7 @@ const UniversitySearch: Screen<UniversitySearchProps> = ({
               value={query}
               backgroundColor="blue"
               onChange={(e) => {
-                setSelectedPage(1)
-                searchTermHasBeenInitialized.current = true
-                setQuery(e.target.value)
-                sessionStorage.setItem('query', e.target.value)
+                handleUserInput(e.target.value)
               }}
             />
             <Box
@@ -797,7 +881,11 @@ const UniversitySearch: Screen<UniversitySearchProps> = ({
               display={'flex'}
               justifyContent={'spaceBetween'}
             >
-              <Box display={'flex'} style={{ gap: '0.5rem' }} flexWrap={'wrap'}>
+              <Box
+                display={'flex'}
+                style={{ gap: '0.5rem', minHeight: '2rem' }}
+                flexWrap={'wrap'}
+              >
                 {Object.keys(filters).map((key) =>
                   filters[key as keyof FilterProps].map((tag) => (
                     <Tag key={tag}>
@@ -827,10 +915,7 @@ const UniversitySearch: Screen<UniversitySearchProps> = ({
                   variant="text"
                   icon="reload"
                   size="small"
-                  onClick={() => {
-                    setSelectedPage(1)
-                    setFilters(JSON.parse(JSON.stringify(initialFilters)))
-                  }}
+                  onClick={() => clearFilterParams()}
                 >
                   {n('clearAllFilters', 'Hreinsa allar síur')}
                 </Button>
@@ -857,7 +942,9 @@ const UniversitySearch: Screen<UniversitySearchProps> = ({
                         if (item === 'OTHER') return null
                         return (
                           <Tag
-                            onClick={() => handleFilters('degreeType', item)}
+                            onClick={() =>
+                              handleFilters('degreeType', item, false)
+                            }
                           >
                             {n(
                               option.field === 'universityId'
@@ -936,18 +1023,20 @@ const UniversitySearch: Screen<UniversitySearchProps> = ({
               marginTop={isTabletScreenWidth || isMobileScreenWidth ? 2 : 5}
               marginBottom={isTabletScreenWidth || isMobileScreenWidth ? 2 : 5}
             >
-              <Box display="flex">
-                <Text variant="intro" fontWeight="semiBold" as="h2">
-                  {`${filteredResults.length}`}{' '}
-                </Text>
-                <Box paddingLeft={1}>
-                  {' '}
-                  <Text variant="intro" as="h2">{`${n(
-                    'visiblePrograms',
-                    'námsleiðir sýnilegar',
-                  )}`}</Text>
+              {filteredResults.length > 0 && (
+                <Box display="flex">
+                  <Text variant="intro" fontWeight="semiBold" as="h2">
+                    {`${filteredResults.length}`}{' '}
+                  </Text>
+                  <Box paddingLeft={1}>
+                    {' '}
+                    <Text variant="intro" as="h2">{`${n(
+                      'visiblePrograms',
+                      'námsleiðir sýnilegar',
+                    )}`}</Text>
+                  </Box>
                 </Box>
-              </Box>
+              )}
               <Hidden below="md">
                 <Box>
                   <button
@@ -1467,8 +1556,6 @@ const UniversitySearch: Screen<UniversitySearchProps> = ({
               </Box>
             </Box>
           )}
-        {/* <Box marginBottom={8} marginTop={5}>
-        </Box> */}
         <ToastContainer></ToastContainer>
       </GridContainer>
       <Box className="rs_read">
@@ -1526,6 +1613,19 @@ UniversitySearch.getProps = async ({ apolloClient, locale, query, res }) => {
   ])
 
   const { search } = query
+  const queryFilters = query
+
+  const filtersByQuery = initialFilters
+  Object.keys(initialFilters).forEach((key) => {
+    const typedKey = key as keyof typeof initialFilters
+    if (queryFilters[key]) {
+      if (Array.isArray(queryFilters[key])) {
+        filtersByQuery[typedKey] = queryFilters[key] as string[]
+      } else {
+        filtersByQuery[typedKey] = [queryFilters[key]] as string[]
+      }
+    }
+  })
 
   const namespace = JSON.parse(
     namespaceResponse?.data?.getNamespace?.fields || '{}',
@@ -1537,6 +1637,7 @@ UniversitySearch.getProps = async ({ apolloClient, locale, query, res }) => {
 
   return {
     searchQuery: search as string,
+    filtersFromQuery: filtersByQuery,
     filterOptions: filters.data.universityGatewayProgramFilters,
     locale,
     namespace,

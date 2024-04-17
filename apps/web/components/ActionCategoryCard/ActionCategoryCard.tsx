@@ -141,22 +141,23 @@ const Component = forwardRef<HTMLElement, ActionCategoryCardProps>(
             display="flex"
             justifyContent={['flexStart', 'flexEnd']}
             flexDirection="row"
+            style={{ cursor: cta.disabled ? 'not-allowed' : '' }}
           >
             <Box>
               {cta.href ? (
-                <LinkV2 href={cta.href} newTab={true}>
-                  <Button
-                    {...(cta.buttonType ?? { variant: cta.variant })}
-                    size={cta.size}
-                    fluid
-                    disabled={cta.disabled}
-                    icon={cta.icon}
-                    iconType={cta.iconType}
-                    nowrap
-                  >
+                <Button
+                  {...(cta.buttonType ?? { variant: cta.variant })}
+                  size={cta.size}
+                  fluid
+                  disabled={cta.disabled}
+                  icon={cta.icon}
+                  iconType={cta.iconType}
+                  nowrap
+                >
+                  <LinkV2 href={cta.href} newTab={true}>
                     {cta.label}
-                  </Button>
-                </LinkV2>
+                  </LinkV2>
+                </Button>
               ) : (
                 <Button
                   {...(cta.buttonType ?? { variant: cta.variant })}
