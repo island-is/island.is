@@ -1,14 +1,17 @@
 import { defineConfig } from '@island.is/nest/config'
 import { z } from 'zod'
 
-const schema = z.object({
+const schemaWithoutScope = z.object({
   basePath: z.string(),
+})
+
+const schemaWithScope = schemaWithoutScope.extend({
   scope: z.array(z.string()),
 })
 
 export const UserNotificationSystemClientConfig = defineConfig({
   name: 'UserNotificationSystemConfig',
-  schema,
+  schema: schemaWithoutScope,
   load(env) {
     return {
       basePath: env.required(
@@ -21,7 +24,7 @@ export const UserNotificationSystemClientConfig = defineConfig({
 
 export const UserNotificationClientConfig = defineConfig({
   name: 'UserNotificationConfig',
-  schema,
+  schema: schemaWithScope,
   load(env) {
     return {
       basePath: env.required(

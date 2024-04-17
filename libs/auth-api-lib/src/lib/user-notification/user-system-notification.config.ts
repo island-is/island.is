@@ -3,7 +3,6 @@ import { z } from 'zod'
 
 const schema = z.object({
   basePath: z.string(),
-  scope: z.array(z.string()),
 })
 
 export const DelegationApiUserSystemNotificationConfig = defineConfig({

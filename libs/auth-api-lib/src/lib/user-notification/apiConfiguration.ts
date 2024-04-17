@@ -19,7 +19,7 @@ export const NotificationsApiProvider: Provider<NotificationsApi> = {
           organizationSlug: 'stafraent-island',
           autoAuth: undefined,
         }),
-        basePath: `${config.basePath}/v1`,
+        basePath: config.isConfigured ? `${config.basePath}` : '',
       }),
     ),
   inject: [DelegationApiUserSystemNotificationConfig.KEY],

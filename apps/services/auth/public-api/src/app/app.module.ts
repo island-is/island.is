@@ -4,7 +4,6 @@ import { SequelizeModule } from '@nestjs/sequelize'
 import {
   SequelizeConfigService,
   DelegationConfig,
-  DelegationApiUserSystemNotificationConfig,
 } from '@island.is/auth-api-lib'
 import { AuthModule } from '@island.is/auth-nest-tools'
 import { AuditModule } from '@island.is/nest/audit'
@@ -39,7 +38,6 @@ import { DelegationsModule } from './modules/delegations/delegations.module'
         NationalRegistryClientConfig,
         RskRelationshipsClientConfig,
         XRoadConfig,
-        DelegationApiUserSystemNotificationConfig,
       ],
     }),
   ],

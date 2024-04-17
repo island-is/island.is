@@ -20,7 +20,9 @@ import {
 const generateApiConfiguration = (
   isSystemNotification: boolean,
   idsConfig: ConfigType<typeof IdsClientConfig>,
-  config: ConfigType<typeof UserNotificationClientConfig>,
+  config:
+    | ConfigType<typeof UserNotificationClientConfig>
+    | ConfigType<typeof UserNotificationSystemClientConfig>,
 ) => {
   return new Configuration({
     fetchApi: createEnhancedFetch({
@@ -34,6 +36,11 @@ const generateApiConfiguration = (
               issuer: idsConfig.issuer,
               clientId: idsConfig.clientId,
               clientSecret: idsConfig.clientSecret,
+              // typescript is complaining that scope is possibly not defined on the
+              // config type, but it is, since system notification config does not reach
+              // this code path, so we can safely ignore this error
+              // eslint-disable-next-line @typescript-eslint/ban-ts-comment
+              // @ts-ignore
               scope: config.scope,
               mode: 'auto',
             }

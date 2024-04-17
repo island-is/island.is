@@ -3,7 +3,6 @@ import { PersonalRepresentativesModule } from './modules/personalRepresentatives
 import { PersonalRepresentativeTypesModule } from './modules/personalRepresentativeTypes/personalRepresentativeTypes.module'
 import { AccessLogsModule } from './modules/accessLogs/accessLogs.module'
 import {
-  DelegationApiUserSystemNotificationConfig,
   DelegationConfig,
   SequelizeConfigService,
 } from '@island.is/auth-api-lib'
@@ -37,7 +36,6 @@ import { FeatureFlagConfig } from '@island.is/nest/feature-flags'
         RskRelationshipsClientConfig,
         XRoadConfig,
         FeatureFlagConfig,
-        DelegationApiUserSystemNotificationConfig,
       ],
     }),
     RightTypesModule,
