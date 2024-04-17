@@ -156,13 +156,15 @@ export const Cases: React.FC = () => {
         return false
       }
 
-      if (isIndictmentCase(c.type)) {
-        if (isDistrictCourtUser(user) && c.judge === null) {
-          return false
-        } else return !isCompletedCase(c.state)
+      if (isDistrictCourtUser(user) && casesAwaitingAssignment.includes(c)) {
+        return false
       }
 
-      return !(isCompletedCase(c.state) && c.rulingSignatureDate)
+      if (isIndictmentCase(c.type) || !isDistrictCourtUser(user)) {
+        return !isCompletedCase(c.state)
+      } else {
+        return !(isCompletedCase(c.state) && c.rulingSignatureDate)
+      }
     })
 
     const pastCases = filterCases(
