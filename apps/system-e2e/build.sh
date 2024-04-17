@@ -16,6 +16,7 @@ entryPoints=()
 readarray -t entryPoints < <(
   find "$APP_ROOT" \
     -name '*.ts' \
+    -or -name '*.d.ts' \
     -not -path '*/node_modules/*'
 )
 
