@@ -1,4 +1,4 @@
-import { OfficialJournalClientService } from '@island.is/clients/official-journal'
+import { OfficialJournalOfIcelandClientService } from '@island.is/clients/official-journal-of-iceland'
 import { mapAdvertStatus } from './mapper'
 import { Injectable } from '@nestjs/common'
 import {
@@ -18,7 +18,9 @@ import {
 
 @Injectable()
 export class OfficialJournalService {
-  constructor(private readonly ojService: OfficialJournalClientService) {}
+  constructor(
+    private readonly ojService: OfficialJournalOfIcelandClientService,
+  ) {}
 
   async departments(params: QueryParams): Promise<AdvertDepartmentResponse> {
     return await this.ojService.departments(params)

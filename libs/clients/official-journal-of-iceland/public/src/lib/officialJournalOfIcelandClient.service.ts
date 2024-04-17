@@ -11,7 +11,7 @@ import {
 } from '../../gen/fetch/apis'
 
 @Injectable()
-export class OfficialJournalClientService {
+export class OfficialJournalOfIcelandClientService {
   constructor(private readonly api: OfficialJournalApi) {}
 
   public async advert(params: JournalControllerAdvertRequest) {

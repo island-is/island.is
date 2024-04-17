@@ -101,9 +101,9 @@ import {
   HealthDirectorateClientModule,
 } from '@island.is/clients/health-directorate'
 import {
-  OfficialJournalClientConfig,
-  OfficialJournalClientModule,
-} from '@island.is/clients/official-journal'
+  OfficialJournalOfIcelandClientConfig,
+  OfficialJournalOfIcelandClientModule,
+} from '@island.is/clients/official-journal-of-iceland'
 import { HmsLoansClientConfig } from '@island.is/clients/hms-loans'
 import { HousingBenefitCalculatorClientConfig } from '@island.is/clients/housing-benefit-calculator'
 import { IcelandicGovernmentInstitutionVacanciesClientConfig } from '@island.is/clients/icelandic-government-institution-vacancies'
@@ -258,7 +258,7 @@ const environment = getConfig
     OccupationalLicensesModule,
     SocialInsuranceModule,
     HealthDirectorateClientModule,
-    OfficialJournalClientModule,
+    OfficialJournalOfIcelandClientModule,
     DisabilityLicenseModule,
     ElectronicRegistrationsModule,
     FiskistofaModule,
@@ -372,7 +372,7 @@ const environment = getConfig
         JudicialAdministrationClientConfig,
         CommunicationsConfig,
         HealthDirectorateClientConfig,
-        OfficialJournalClientConfig,
+        OfficialJournalOfIcelandClientConfig,
         UniversityOfIcelandClientConfig,
         InnaClientConfig,
         SessionsApiClientConfig,

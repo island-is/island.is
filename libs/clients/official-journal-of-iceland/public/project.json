@@ -1,21 +1,23 @@
 {
-  "name": "clients-official-journal",
+  "name": "clients-official-journal-of-iceland",
   "$schema": "../../../../node_modules/nx/schemas/project-schema.json",
-  "sourceRoot": "libs/clients/official-journal/public/src",
+  "sourceRoot": "libs/clients/official-journal-of-iceland/public/src",
   "projectType": "library",
   "targets": {
     "lint": {
       "executor": "@nx/linter:eslint",
       "outputs": ["{options.outputFile}"],
       "options": {
-        "lintFilePatterns": ["libs/clients/official-journal/public/**/*.ts"]
+        "lintFilePatterns": [
+          "libs/clients/official-journal-of-iceland/public/**/*.ts"
+        ]
       }
     },
     "test": {
       "executor": "@nx/jest:jest",
       "outputs": ["{workspaceRoot}/coverage/{projectRoot}"],
       "options": {
-        "jestConfig": "libs/clients/official-journal/public/jest.config.ts",
+        "jestConfig": "libs/clients/official-journal-of-iceland/public/jest.config.ts",
         "passWithNoTests": true
       },
       "configurations": {
@@ -33,13 +35,13 @@
           "prettier --write src/clientConfig.json"
         ],
         "parallel": false,
-        "cwd": "libs/clients/official-journal/public"
+        "cwd": "libs/clients/official-journal-of-iceland/public"
       }
     },
     "codegen/backend-client": {
       "executor": "nx:run-commands",
       "options": {
-        "command": "yarn openapi-generator -o libs/clients/official-journal/public/gen/fetch -i libs/clients/official-journal/public/src/clientConfig.json"
+        "command": "yarn openapi-generator -o libs/clients/official-journal-of-iceland/public/gen/fetch -i libs/clients/official-journal-of-iceland/public/src/clientConfig.json"
       },
       "outputs": ["{projectRoot}/gen/fetch"]
     }

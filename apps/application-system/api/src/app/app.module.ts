@@ -36,7 +36,7 @@ import { ArborgWorkpoinClientConfig } from '@island.is/clients/workpoint/arborg'
 import { SocialInsuranceAdministrationClientConfig } from '@island.is/clients/social-insurance-administration'
 import { SignatureCollectionClientConfig } from '@island.is/clients/signature-collection'
 import { InnaClientConfig } from '@island.is/clients/inna'
-import { OfficialJournalClientConfig } from '@island.is/clients/official-journal'
+import { OfficialJournalOfIcelandClientConfig } from '@island.is/clients/official-journal-of-iceland'
 
 @Module({
   imports: [
@@ -76,7 +76,7 @@ import { OfficialJournalClientConfig } from '@island.is/clients/official-journal
         SocialInsuranceAdministrationClientConfig,
         SignatureCollectionClientConfig,
         InnaClientConfig,
-        OfficialJournalClientConfig,
+        OfficialJournalOfIcelandClientConfig,
       ],
     }),
   ],
