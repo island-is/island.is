@@ -35,7 +35,7 @@ if [[ -n "$TEST_RESULTS_S3" ]]; then
   aws s3 cp test-results.zip "$TEST_RESULTS_S3"
 fi
 if [ "$TEST_EXIT_CODE" != "0" ]; then
-  node ./src/notifications/notify.js
+  node ./src/notifications/notify.*
 fi
 
 cat <<EOF
