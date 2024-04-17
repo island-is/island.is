@@ -3,7 +3,10 @@ import { Auth, AuthMiddleware } from '@island.is/auth-nest-tools'
 import { IslyklarApi } from '@island.is/clients/islykill'
 import { UserProfileApi } from '@island.is/clients/user-profile'
 import { isRunningOnEnvironment } from '@island.is/shared/utils'
-import { TemplateApiModuleActionProps } from '../../../../types'
+import {
+  BaseTemplateAPIModuleConfig,
+  TemplateApiModuleActionProps,
+} from '../../../../types'
 import { BaseTemplateApiService } from '../../../base-template-api.service'
 import {
   ApplicationWithAttachments,
@@ -11,10 +14,11 @@ import {
   UserProfileParameters,
 } from '@island.is/application/types'
 import { TemplateApiError } from '@island.is/nest/problem'
-import { coreErrorMessages } from '@island.is/application/core'
+import { coreErrorMessages, getSlugFromType } from '@island.is/application/core'
 import { IdsClientConfig } from '@island.is/nest/config'
 import { Inject } from '@nestjs/common'
-import { ConfigType } from '@nestjs/config'
+import { ConfigService, ConfigType } from '@nestjs/config'
+import { getConfigValue } from '../../shared.utils'
 
 export const MAX_OUT_OF_DATE_MONTHS = 6
 
@@ -25,6 +29,8 @@ export class UserProfileService extends BaseTemplateApiService {
     private readonly islyklarApi: IslyklarApi,
     @Inject(IdsClientConfig.KEY)
     private idsClientConfig: ConfigType<typeof IdsClientConfig>,
+    @Inject(ConfigService)
+    private readonly configService: ConfigService<BaseTemplateAPIModuleConfig>,
   ) {
     super('UserProfile')
   }
@@ -60,11 +66,7 @@ export class UserProfileService extends BaseTemplateApiService {
               title: coreErrorMessages.noEmailFound,
               summary: {
                 ...coreErrorMessages.noEmailFoundDescription,
-                defaultMessage:
-                  coreErrorMessages.noEmailFoundDescription.defaultMessage.replace(
-                    '{link}',
-                    this.getIDSLink(application),
-                  ),
+                values: { link: this.getIDSLink(application) },
               },
             },
             500,
@@ -93,6 +95,12 @@ export class UserProfileService extends BaseTemplateApiService {
   }
 
   private getIDSLink(application: ApplicationWithAttachments) {
-    return `${this.idsClientConfig.issuer}/app/user-profile/email?state=update&returnUrl=${this.idsClientConfig.redirectUri}/ellilifeyrir/${application.id}`
+    const slug = getSlugFromType(application.typeId)
+    const clientLocationOrigin = getConfigValue(
+      this.configService,
+      'clientLocationOrigin',
+    ) as string
+
+    return `${this.idsClientConfig.issuer}/app/user-profile/email?state=update&returnUrl=${clientLocationOrigin}/${slug}/${application.id}`
   }
 }
