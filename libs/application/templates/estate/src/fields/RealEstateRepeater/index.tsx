@@ -117,7 +117,7 @@ export const RealEstateRepeater: FC<
         }
 
         return (
-          <Box key={field.id} hidden={field.initial}>
+          <Box key={field.id}>
             <AdditionalRealEstate
               field={field}
               fieldName={id}
