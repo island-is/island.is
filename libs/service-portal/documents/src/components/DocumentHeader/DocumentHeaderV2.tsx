@@ -1,19 +1,19 @@
 import { useEffect, useRef } from 'react'
 import { Box, Text } from '@island.is/island-ui/core'
 import AvatarImage from '../DocumentLine/AvatarImage'
-import { DocumentCategory, DocumentsV2Category } from '@island.is/api/schema'
+import { DocumentsV2Category } from '@island.is/api/schema'
 import * as styles from './DocumentHeader.css'
 import {
   DocumentActionBar,
   DocumentActionBarProps,
-} from '../DocumentActionBar/DocumentActionBar'
+} from '../DocumentActionBar/DocumentActionBarV2'
 import { helperStyles } from '@island.is/island-ui/theme'
 
 type DocumentHeaderProps = {
   avatar?: string
   sender?: string
   date?: string
-  category?: DocumentCategory | DocumentsV2Category
+  category?: DocumentsV2Category
   actionBar?: DocumentActionBarProps
   subject?: string
 }
