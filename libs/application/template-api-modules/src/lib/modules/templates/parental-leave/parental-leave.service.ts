@@ -449,7 +449,7 @@ export class ParentalLeaveService extends BaseTemplateApiService {
 
     if (
       (state === States.VINNUMALASTOFNUN_APPROVE_EDITS ||
-      state === States.EDIT_OR_ADD_EMPLOYERS_AND_PERIODS) &&
+        state === States.EDIT_OR_ADD_EMPLOYERS_AND_PERIODS) &&
       addEmployer === YES
     ) {
       if (changeEmployerFile) {
