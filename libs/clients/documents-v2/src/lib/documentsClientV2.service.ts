@@ -22,7 +22,7 @@ export class DocumentsClientV2Service {
     /**
      *
      * @param input List input object. Example: { dateFrom: undefined, nationalId: '123' }
-     * @returns List object sanitized of unnesseccary values. Example: { nationalId: '123' }
+     * @returns List object sanitized of unnecessary values. Example: { nationalId: '123' }
      */
     function sanitizeObject<T extends { [key: string]: any }>(obj: T): T {
       const sanitizedObj = {} as T
