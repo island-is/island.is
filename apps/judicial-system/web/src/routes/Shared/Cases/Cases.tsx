@@ -52,7 +52,7 @@ import { useCase } from '@island.is/judicial-system-web/src/utils/hooks'
 import CasesAwaitingAssignmentTable from '../../Court/components/CasesAwaitingAssignmentTable/CasesAwaitingAssignmentTable'
 import ActiveCases from './ActiveCases'
 import { useCasesQuery } from './cases.generated'
-import { Filter, FilterOption, useFilter } from './useFilter'
+import { FilterOption, useFilter } from './useFilter'
 import { cases as m } from './Cases.strings'
 import * as styles from './Cases.css'
 
@@ -155,7 +155,7 @@ export const Cases: React.FC = () => {
     )
 
     const casesAwaitingAssignment = filterCases(
-      (c) => isIndictmentCase(c.type) && c.state === CaseState.SUBMITTED,
+      (c) => isIndictmentCase(c.type) && c.judge === null,
     )
 
     const activeCases = filterCases((c) => {
@@ -167,7 +167,7 @@ export const Cases: React.FC = () => {
       }
 
       if (isIndictmentCase(c.type)) {
-        if (isDistrictCourtUser(user) && c.state === CaseState.SUBMITTED) {
+        if (isDistrictCourtUser(user) && c.judge === null) {
           return false
         } else return !isCompletedCase(c.state)
       }
