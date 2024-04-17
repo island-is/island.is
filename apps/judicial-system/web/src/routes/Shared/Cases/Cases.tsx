@@ -161,12 +161,9 @@ export const Cases: React.FC = () => {
     const activeCases = filterCases((c) => {
       if (
         c.state === CaseState.DELETED ||
-        c.state === CaseState.WAITING_FOR_CONFIRMATION
+        c.state === CaseState.WAITING_FOR_CONFIRMATION ||
+        (isDistrictCourtUser(user) && casesAwaitingAssignment.includes(c))
       ) {
-        return false
-      }
-
-      if (isDistrictCourtUser(user) && casesAwaitingAssignment.includes(c)) {
         return false
       }
 
