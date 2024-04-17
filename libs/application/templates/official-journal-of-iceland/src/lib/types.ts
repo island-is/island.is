@@ -2,7 +2,7 @@ import { Application, FieldBaseProps } from '@island.is/application/types'
 import { type answerSchemas } from './dataSchema'
 import { INSTITUTION_INDEX, MEMBER_INDEX, Routes } from './constants'
 import {
-  OfficialJournalOfIcelandOfIcelandAdvert,
+  OfficialJournalOfIcelandAdvert,
   OfficialJournalOfIcelandAdvertEntity,
   OfficialJournalOfIcelandPaging,
 } from '@island.is/api/schema'
@@ -126,7 +126,7 @@ export interface ExternalData {
     status: StatusProvider
   }
   submitApplication: {
-    data: { application: OfficialJournalOfIcelandOfIcelandAdvert }
+    data: { application: OfficialJournalOfIcelandAdvert }
     date: string
     status: StatusProvider
   }

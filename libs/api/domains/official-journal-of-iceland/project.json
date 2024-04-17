@@ -1,5 +1,5 @@
 {
-  "name": "api-domains-official-journal-of-icelnad",
+  "name": "api-domains-official-journal-of-iceland",
   "$schema": "../../../../node_modules/nx/schemas/project-schema.json",
   "sourceRoot": "libs/api/domains/official-journal-of-iceland/src",
   "projectType": "library",

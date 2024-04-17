@@ -1,6 +1,6 @@
 /* eslint-disable */
 export default {
-  displayName: 'api-domains-official-journal-of-icelnad',
+  displayName: 'api-domains-official-journal-of-iceland',
   preset: '../../../../jest.preset.js',
   testEnvironment: 'node',
   transform: {
