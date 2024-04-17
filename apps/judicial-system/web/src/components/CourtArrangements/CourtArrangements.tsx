@@ -41,7 +41,7 @@ export const useCourtArrangements = (workingCase: Case) => {
     if (latestCourtDate) {
       setCourtDate(latestCourtDate.date)
     }
-  }, [latestCourtDate, workingCase.dateLogs, workingCase.id])
+  }, [latestCourtDate])
 
   const handleCourtDateChange = (date: Date | undefined, valid: boolean) => {
     if (date && valid) {
