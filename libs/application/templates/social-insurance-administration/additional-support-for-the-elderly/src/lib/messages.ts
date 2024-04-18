@@ -13,8 +13,8 @@ export const additionalSupportForTheElderyFormMessage: MessageDir = {
   pre: defineMessages({
     skraInformationSubTitle: {
       id: 'asfte.application:prerequisites.national.registry.subtitle',
-      defaultMessage: 'Upplýsingar um þig og maka.',
-      description: 'Information about you and spouse.',
+      defaultMessage: 'Upplýsingar um þig.',
+      description: 'Information about you.',
     },
     isNotEligibleLabel: {
       id: 'asfte.application:is.not.eligible.label',

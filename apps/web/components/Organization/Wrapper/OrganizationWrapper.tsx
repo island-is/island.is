@@ -1016,7 +1016,7 @@ export const OrganizationWrapper: React.FC<
                   }}
                 />
               </Box>
-              {organizationPage.secondaryMenu && (
+              {organizationPage.secondaryMenu && secondaryNavList.length > 0 && (
                 <Box marginY={2}>
                   <Navigation
                     baseId="secondaryNav"

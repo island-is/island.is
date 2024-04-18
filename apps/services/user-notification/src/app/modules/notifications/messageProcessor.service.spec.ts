@@ -6,10 +6,6 @@ import { HnippTemplate } from './dto/hnippTemplate.response'
 import { CreateHnippNotificationDto } from './dto/createHnippNotification.dto'
 import { CacheModule } from '@nestjs/cache-manager'
 import { NotificationsService } from './notifications.service'
-import {
-  UserProfile,
-  UserProfileLocaleEnum,
-} from '@island.is/clients/user-profile'
 import { getModelToken } from '@nestjs/sequelize'
 import { Notification } from './notification.model'
 
@@ -33,24 +29,7 @@ const mockCreateHnippNotificationDto: CreateHnippNotificationDto = {
   ],
 }
 
-const mockProfile: UserProfile = {
-  nationalId: '1234567890',
-  mobilePhoneNumber: '1234567',
-  email: 'foo@bar.com',
-  locale: UserProfileLocaleEnum.Is,
-  documentNotifications: true,
-  created: new Date(),
-  modified: new Date(),
-  id: '1234567',
-  emailVerified: true,
-  mobilePhoneNumberVerified: true,
-  profileImageUrl: '',
-  emailStatus: 'VERIFIED',
-  mobileStatus: 'VERIFIED',
-  lastNudge: new Date(),
-  emailNotifications: true,
-  nextNudge: new Date(),
-}
+const mockLocale = 'is'
 
 describe('MessageProcessorService', () => {
   let service: MessageProcessorService
@@ -93,7 +72,7 @@ describe('MessageProcessorService', () => {
 
     const notification = await service.convertToNotification(
       mockCreateHnippNotificationDto,
-      mockProfile,
+      mockLocale,
     )
     expect(notification.title).toMatch('Demo title')
     expect(notification.body).toMatch('Demo body hello')
@@ -112,7 +91,7 @@ describe('MessageProcessorService', () => {
 
     const notification1 = await service.convertToNotification(
       mockCreateHnippNotificationDto,
-      mockProfile,
+      mockLocale,
     )
     const notification2 = await service.convertToNotification(
       {
@@ -122,7 +101,7 @@ describe('MessageProcessorService', () => {
           { key: 'arg2', value: 'world2' },
         ],
       },
-      mockProfile,
+      mockLocale,
     )
 
     expect(notification1.title).toMatch('Demo title')
