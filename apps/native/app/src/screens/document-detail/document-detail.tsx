@@ -6,6 +6,7 @@ import { Animated, Platform, StyleSheet, View } from 'react-native'
 import {
   Navigation,
   NavigationFunctionComponent,
+  OptionsTopBarButton,
 } from 'react-native-navigation'
 import {
   useNavigationButtonPress,
@@ -56,19 +57,21 @@ function getRightButtons({
 }: {
   archived?: boolean
   bookmarked?: boolean
-} = {}) {
+} = {}): OptionsTopBarButton[] {
+  const iconBackground = {
+    color: 'transparent',
+    cornerRadius: 8,
+    width: 32,
+    height: 32,
+  }
+
   return [
     {
       id: ButtonRegistry.ShareButton,
       icon: require('../../assets/icons/navbar-share.png'),
       color: blue400,
       accessibilityLabel: 'Share',
-      iconBackground: {
-        color: 'transparent',
-        cornerRadius: 8,
-        width: 32,
-        height: 32,
-      },
+      iconBackground: iconBackground,
     },
     {
       id: ButtonRegistry.DocumentArchiveButton,
@@ -77,12 +80,7 @@ function getRightButtons({
         : require('../../assets/icons/tray.png'),
       color: blue400,
       accessibilityLabel: 'Archive',
-      iconBackground: {
-        color: 'transparent',
-        cornerRadius: 8,
-        width: 32,
-        height: 32,
-      },
+      iconBackground: iconBackground,
     },
     {
       id: ButtonRegistry.DocumentStarButton,
@@ -91,12 +89,7 @@ function getRightButtons({
         : require('../../assets/icons/star.png'),
       color: blue400,
       accessibilityLabel: 'Star',
-      iconBackground: {
-        color: 'transparent',
-        cornerRadius: 8,
-        width: 32,
-        height: 32,
-      },
+      iconBackground: iconBackground,
     },
   ]
 }

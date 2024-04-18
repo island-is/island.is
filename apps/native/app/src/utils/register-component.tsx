@@ -10,10 +10,9 @@ import { I18nProvider } from '../contexts/i18n-provider'
 import { ThemeProvider } from '../contexts/theme-provider'
 import { client } from '../graphql/client'
 
-export function registerComponent(
+export function registerComponent<Props>(
   name: string,
-  // eslint-disable-next-line @typescript-eslint/no-explicit-any
-  Component: NavigationFunctionComponent<any>,
+  Component: NavigationFunctionComponent<Props>,
 ) {
   Navigation.registerComponent(
     name,

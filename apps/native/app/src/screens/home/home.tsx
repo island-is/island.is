@@ -23,6 +23,7 @@ import {
 } from '../../graphql/types/schema'
 import { createNavigationOptionHooks } from '../../hooks/create-navigation-option-hooks'
 import { useActiveTabItemPress } from '../../hooks/use-active-tab-item-press'
+import { useOfflineUpdateNavigation } from '../../hooks/use-offline-update-navigation'
 import { notificationsStore } from '../../stores/notifications-store'
 import { useUiStore } from '../../stores/ui-store'
 import { getRightButtons } from '../../utils/get-main-root'
@@ -104,6 +105,8 @@ export const MainHomeScreen: NavigationFunctionComponent = ({
   useActiveTabItemPress(2, () => {
     flatListRef.current?.scrollToOffset({ offset: -150, animated: true })
   })
+
+  useOfflineUpdateNavigation(componentId, getRightButtons())
 
   const applicationsRes = useListApplicationsQuery()
 

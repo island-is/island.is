@@ -1,16 +1,18 @@
+import { addEventListener } from '@react-native-community/netinfo'
+import { impactAsync, ImpactFeedbackStyle } from 'expo-haptics'
 import { getPresentedNotificationsAsync } from 'expo-notifications'
 import {
   AppState,
   AppStateStatus,
   DeviceEventEmitter,
   Linking,
-  Platform,
 } from 'react-native'
 import { Navigation } from 'react-native-navigation'
 import SpotlightSearch from 'react-native-spotlight-search'
 import { evaluateUrl, navigateTo } from '../../lib/deep-linking'
 import { authStore } from '../../stores/auth-store'
 import { environmentStore } from '../../stores/environment-store'
+import { offlineStore } from '../../stores/offline-store'
 import { preferencesStore } from '../../stores/preferences-store'
 import { uiStore } from '../../stores/ui-store'
 import {
@@ -18,8 +20,11 @@ import {
   showAppLockOverlay,
   skipAppLock,
 } from '../app-lock'
-import { ButtonRegistry } from '../component-registry'
+import { ButtonRegistry, ComponentRegistry as CR } from '../component-registry'
+import { isIos } from '../devices'
+import { getRightButtons } from '../get-main-root'
 import { handleQuickAction } from '../quick-actions'
+
 import { handleNotificationResponse } from './setup-notifications'
 
 let backgroundAppLockTimeout: ReturnType<typeof setTimeout>
@@ -55,7 +60,7 @@ export function setupEventHandlers() {
     }
   })
 
-  if (Platform.OS === 'ios') {
+  if (isIos) {
     SpotlightSearch.searchItemTapped((url) => {
       navigateTo(url)
     })
@@ -107,7 +112,7 @@ export function setupEventHandlers() {
       }
 
       if (status === 'background' || status === 'inactive') {
-        if (Platform.OS === 'ios') {
+        if (isIos) {
           // Add a small delay for those accidental backgrounds in iOS
           backgroundAppLockTimeout = setTimeout(() => {
             if (!lockScreenComponentId) {
@@ -142,6 +147,22 @@ export function setupEventHandlers() {
     }
   })
 
+  const handleOfflineButtonClick = () => {
+    const offlineState = offlineStore.getState()
+
+    if (!offlineState.showBanner) {
+      void impactAsync(ImpactFeedbackStyle.Heavy)
+      void Navigation.showOverlay({
+        component: {
+          id: CR.OfflineBanner,
+          name: CR.OfflineBanner,
+        },
+      })
+    } else {
+      void Navigation.dismissOverlay(CR.OfflineBanner)
+    }
+  }
+
   // handle navigation topBar buttons
   Navigation.events().registerNavigationButtonPressedListener(
     ({ buttonId }) => {
@@ -152,10 +173,25 @@ export function setupEventHandlers() {
           return navigateTo('/notifications')
         case ButtonRegistry.ScanLicenseButton:
           return navigateTo('/license-scanner')
+        case ButtonRegistry.OfflineButton:
+          return handleOfflineButtonClick()
       }
     },
   )
 
   // Handle quick actions
   DeviceEventEmitter.addListener('quickActionShortcut', handleQuickAction)
+
+  // Subscribe to network status changes
+  addEventListener(({ isConnected, type }) => {
+    const oldIsConnected = offlineStore.getState().isConnected
+
+    if (!isConnected) {
+      // Only update the store if there is no connection
+      offlineStore.getState().setNetInfoNoConnection()
+    } else if (!oldIsConnected && isConnected) {
+      // if the connection is back, reset the connection state
+      offlineStore.getState().resetConnectionState()
+    }
+  })
 }
