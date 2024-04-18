@@ -25,7 +25,7 @@ export const getApplicationAnswers = (answers: Application['answers']) => {
   const selectedMonth = getValueViaPath(answers, 'period.month') as string
   const applicantPhonenumber = getValueViaPath(
     answers,
-    'applicantInfo.phonenumber',
+    'applicant.phoneNumber',
   ) as string
 
   const comment = getValueViaPath(answers, 'comment') as string
@@ -117,20 +117,37 @@ export const getApplicationExternalData = (
     'nationalRegistry.data.nationalId',
   ) as string
 
+  const applicantAddress = getValueViaPath(
+    externalData,
+    'nationalRegistry.data.address.streetAddress',
+  ) as string
+
+  const applicantPostalCode = getValueViaPath(
+    externalData,
+    'nationalRegistry.data.address.postalCode',
+  ) as string
+
+  const applicantLocality = getValueViaPath(
+    externalData,
+    'nationalRegistry.data.address.locality',
+  ) as string
+
+  const applicantMunicipality = applicantPostalCode + ', ' + applicantLocality
+
   const hasSpouse = getValueViaPath(
     externalData,
     'nationalRegistrySpouse.data',
   ) as object
 
-  const email = getValueViaPath(
-    externalData,
-    'socialInsuranceAdministrationApplicant.data.emailAddress',
-  ) as string
-
   const bankInfo = getValueViaPath(
     externalData,
     'socialInsuranceAdministrationApplicant.data.bankAccount',
   ) as BankInfo
+
+  const userProfileEmail = getValueViaPath(
+    externalData,
+    'userProfile.data.email',
+  ) as string
 
   const currencies = getValueViaPath(
     externalData,
@@ -145,8 +162,10 @@ export const getApplicationExternalData = (
   return {
     applicantName,
     applicantNationalId,
+    applicantAddress,
+    applicantMunicipality,
     hasSpouse,
-    email,
+    userProfileEmail,
     bankInfo,
     currencies,
     isEligible,

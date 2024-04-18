@@ -18,8 +18,10 @@ export const householdSupplementFormMessage: MessageDir = {
   pre: defineMessages({
     skraInformationSubTitle: {
       id: 'hs.application:skra.info.subtitle',
-      defaultMessage: 'Upplýsingar um þig og lögheimilistengsl.',
-      description: 'Information about you and ...',
+      defaultMessage:
+        'Upplýsingar um þig og maka. Upplýsingar um lögheimilistengsl.',
+      description:
+        'Information about you and spouse. Information about cohabitants.',
     },
     socialInsuranceAdministrationInformationTitle: {
       id: 'hs.application:prerequisites.socialInsuranceAdministration.title',

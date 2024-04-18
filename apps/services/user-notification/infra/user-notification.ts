@@ -44,6 +44,7 @@ const getEnv = (services: {
     staging: 'is.island.app.dev', // intentionally set to dev - see firebase setup
     prod: 'is.island.app',
   },
+  SERVICE_PORTAL_CLICK_ACTION_URL: 'https://island.is/minarsidur',
 })
 
 export const userNotificationServiceSetup = (services: {
