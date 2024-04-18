@@ -64,6 +64,8 @@ const secrets: Secrets = {
   ISLYKILL_SERVICE_BASEPATH: '/k8s/api/ISLYKILL_SERVICE_BASEPATH',
   IDENTITY_SERVER_CLIENT_ID: `/k8s/service-portal/api/SERVICE_PORTAL_API_CLIENT_ID`,
   IDENTITY_SERVER_CLIENT_SECRET: `/k8s/service-portal/api/SERVICE_PORTAL_API_CLIENT_SECRET`,
+  NATIONAL_REGISTRY_B2C_CLIENT_SECRET:
+    '/k8s/api/NATIONAL_REGISTRY_B2C_CLIENT_SECRET',
 }
 
 export const workerSetup = (): ServiceBuilder<typeof workerId> =>
