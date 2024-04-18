@@ -167,7 +167,7 @@ const UniversitySearch: Screen<UniversitySearchProps> = ({
   const [selectedComparison, setSelectedComparison] = useState<
     Array<ComparisonProps>
   >([])
-  const [query, setQuery] = useState('')
+  const [query, setQuery] = useState(searchQuery || '')
   const searchTermHasBeenInitialized = useRef(false)
   const [originalSortedResults, setOriginalSortedList] = useState<
     Array<FuseQueryResult>
@@ -179,6 +179,7 @@ const UniversitySearch: Screen<UniversitySearchProps> = ({
   const { linkResolver } = useLinkResolver()
   const [totalPages, setTotalPages] = useState<number>(0)
   const [filters, setFilters] = useState<FilterProps>(filtersFromQuery)
+  const titleRef = useRef<HTMLDivElement>(null)
 
   useEffect(() => {
     if (!loading) {
@@ -189,7 +190,7 @@ const UniversitySearch: Screen<UniversitySearchProps> = ({
         .map((item: UniversityGatewayProgram, index: number) => {
           const itemWithStatus = {
             ...item,
-            applicationStatus: getApplicationStatus(item),
+            applicationStatus: item.applicationPeriodOpen ? 'OPEN' : 'CLOSED',
           }
           return { item: itemWithStatus, refIndex: index, score: 1 }
         })
@@ -246,7 +247,6 @@ const UniversitySearch: Screen<UniversitySearchProps> = ({
   useEffect(() => {
     const comp = localStorage.getItem('comparison')
     const viewChoice = localStorage.getItem('viewChoice')
-    // const savedFilters = localStorage.getItem('savedFilters')
 
     if (comp) {
       const comparison = JSON.parse(comp)
@@ -363,6 +363,8 @@ const UniversitySearch: Screen<UniversitySearchProps> = ({
     filterValue: string,
     checked: boolean,
   ) => {
+    setSelectedPage(1)
+
     // Set state
     const str = filterKey as keyof typeof filters
     if (filters[str].includes(filterValue)) {
@@ -503,14 +505,6 @@ const UniversitySearch: Screen<UniversitySearchProps> = ({
     setIsOpen(newIsOpen)
   }
 
-  const checkboxEventHandler = (
-    e: React.ChangeEvent<HTMLInputElement>,
-    filterKey: string,
-  ) => {
-    setSelectedPage(1)
-    handleFilters(filterKey, e.target.value, e.target.checked)
-  }
-
   const routeToComparison = () => {
     router.push(
       `${
@@ -529,13 +523,6 @@ const UniversitySearch: Screen<UniversitySearchProps> = ({
         href: url,
       })),
     })) ?? []
-
-  const handleRemoveTag = (key: keyof FilterProps, tag: string) => {
-    setFilters((prevFilters) => ({
-      ...prevFilters,
-      [key]: prevFilters[key].filter((existingTag) => existingTag !== tag),
-    }))
-  }
 
   const formatModeOfDelivery = (items: string[]): string => {
     items = items.filter((item) => {
@@ -784,7 +771,11 @@ const UniversitySearch: Screen<UniversitySearchProps> = ({
                                         .length > 0
                                     }
                                     onChange={(e) =>
-                                      checkboxEventHandler(e, filter.field)
+                                      handleFilters(
+                                        filter.field,
+                                        e.target.value,
+                                        e.target.checked,
+                                      )
                                     }
                                   />
                                 )
@@ -858,6 +849,7 @@ const UniversitySearch: Screen<UniversitySearchProps> = ({
           <Box minWidth={0} className={styles.mainContentWrapper}>
             <Webreader />
             <Text
+              ref={titleRef}
               marginTop={0}
               marginBottom={2}
               variant="h1"
@@ -887,7 +879,7 @@ const UniversitySearch: Screen<UniversitySearchProps> = ({
                 flexWrap={'wrap'}
               >
                 {Object.keys(filters).map((key) =>
-                  filters[key as keyof FilterProps].map((tag) => (
+                  filters[key as keyof FilterProps].map((tag, idx) => (
                     <Tag key={tag}>
                       <Box
                         display={'flex'}
@@ -900,7 +892,11 @@ const UniversitySearch: Screen<UniversitySearchProps> = ({
                           aria-label="remove tag"
                           style={{ alignSelf: 'end' }}
                           onClick={() =>
-                            handleRemoveTag(key as keyof FilterProps, tag)
+                            handleFilters(
+                              key,
+                              filters[key as keyof FilterProps][idx],
+                              false,
+                            )
                           }
                         >
                           <Icon icon={'close'} size="small" />
@@ -1023,7 +1019,7 @@ const UniversitySearch: Screen<UniversitySearchProps> = ({
               marginTop={isTabletScreenWidth || isMobileScreenWidth ? 2 : 5}
               marginBottom={isTabletScreenWidth || isMobileScreenWidth ? 2 : 5}
             >
-              {filteredResults.length > 0 && (
+              {data && (
                 <Box display="flex">
                   <Text variant="intro" fontWeight="semiBold" as="h2">
                     {`${filteredResults.length}`}{' '}
@@ -1040,6 +1036,19 @@ const UniversitySearch: Screen<UniversitySearchProps> = ({
               <Hidden below="md">
                 <Box>
                   <button
+                    onClick={() => setGridView(true)}
+                    className={styles.iconButton}
+                  >
+                    <VisuallyHidden>
+                      {n('changeToTable', 'Breyta niðurstöðum í töflu')}
+                    </VisuallyHidden>
+                    <Icon
+                      icon={'gridView'}
+                      type="outline"
+                      color={gridView ? 'blue400' : 'dark200'}
+                    />
+                  </button>
+                  <button
                     onClick={() => setGridView(false)}
                     className={styles.iconButton}
                   >
@@ -1051,19 +1060,6 @@ const UniversitySearch: Screen<UniversitySearchProps> = ({
                       type="outline"
                       color={gridView ? 'dark200' : 'blue400'}
                       useStroke
-                    />
-                  </button>
-                  <button
-                    onClick={() => setGridView(true)}
-                    className={styles.iconButton}
-                  >
-                    <VisuallyHidden>
-                      {n('changeToTable', 'Breyta niðurstöðum í töflu')}
-                    </VisuallyHidden>
-                    <Icon
-                      icon={'gridView'}
-                      type="outline"
-                      color={gridView ? 'blue400' : 'dark200'}
                     />
                   </button>
                 </Box>
@@ -1203,16 +1199,15 @@ const UniversitySearch: Screen<UniversitySearchProps> = ({
                                           color="blue400"
                                         />
                                       ),
-                                      title:
-                                        dataItem.applicationStatus === 'OPEN'
-                                          ? `${n(
-                                              'openForApplication',
-                                              'Opið fyrir umsóknir',
-                                            )}`
-                                          : `${n(
-                                              'closedForApplication',
-                                              'Lokað fyrir umsóknir',
-                                            )}`,
+                                      title: dataItem.applicationPeriodOpen
+                                        ? `${n(
+                                            'openForApplication',
+                                            'Opið fyrir umsóknir',
+                                          )}`
+                                        : `${n(
+                                            'closedForApplication',
+                                            'Lokað fyrir umsóknir',
+                                          )}`,
                                     },
                                   ],
                                 }}
@@ -1364,16 +1359,15 @@ const UniversitySearch: Screen<UniversitySearchProps> = ({
                                           color="blue400"
                                         />
                                       ),
-                                      title:
-                                        dataItem.applicationStatus === 'OPEN'
-                                          ? `${n(
-                                              'openForApplication',
-                                              'Opið fyrir umsóknir',
-                                            )}`
-                                          : `${n(
-                                              'closedForApplication',
-                                              'Lokað fyrir umsóknir',
-                                            )}`,
+                                      title: dataItem.applicationPeriodOpen
+                                        ? `${n(
+                                            'openForApplication',
+                                            'Opið fyrir umsóknir',
+                                          )}`
+                                        : `${n(
+                                            'closedForApplication',
+                                            'Lokað fyrir umsóknir',
+                                          )}`,
                                     },
                                   ]}
                                 />
@@ -1401,6 +1395,11 @@ const UniversitySearch: Screen<UniversitySearchProps> = ({
                     aria-label={selectedPage < page ? 'Next' : 'Previous'}
                     onClick={() => {
                       setSelectedPage(page)
+                      if (titleRef.current) {
+                        titleRef.current.scrollIntoView({
+                          behavior: 'smooth',
+                        })
+                      }
                     }}
                   >
                     <span className={className}>{children}</span>
