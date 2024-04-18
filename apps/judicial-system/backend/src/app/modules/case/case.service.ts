@@ -159,7 +159,6 @@ export interface UpdateCase
   courtRecordSignatoryId?: string | null
   courtRecordSignatureDate?: Date | null
   parentCaseId?: string | null
-  courtDate?: Date | null
 }
 
 const eventTypes = Object.values(EventType)
