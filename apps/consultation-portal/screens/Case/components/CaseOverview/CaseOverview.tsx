@@ -50,7 +50,7 @@ export const CaseOverview = ({ chosenCase }: CaseOverviewProps) => {
           wrap={true}
           truncate={false}
         />
-        <Text variant="h1" color="blue400">
+        <Text as="h1" variant="h1" color="blue400">
           {chosenCase?.name}
         </Text>
       </Stack>
@@ -60,11 +60,15 @@ export const CaseOverview = ({ chosenCase }: CaseOverviewProps) => {
         )}
       <Stack space={[3, 3, 3, 4, 4]}>
         <Box dataTestId="short-description">
-          <Text variant="h4">{loc.shortDescriptionTitle}</Text>
+          <Text as="h2" variant="h4">
+            {loc.shortDescriptionTitle}
+          </Text>
           <Text variant="default">{chosenCase?.shortDescription}</Text>
         </Box>
         <Box>
-          <Text variant="h4">{loc.detailedDescriptionTitle}</Text>
+          <Text as="h2" variant="h4">
+            {loc.detailedDescriptionTitle}
+          </Text>
           {chosenCaseSplitted && (
             <Stack space={1}>
               {chosenCaseSplitted.map((split, idx) => {
