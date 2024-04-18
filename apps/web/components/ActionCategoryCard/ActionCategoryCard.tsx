@@ -141,7 +141,7 @@ const Component = forwardRef<HTMLElement, ActionCategoryCardProps>(
             display="flex"
             justifyContent={['flexStart', 'flexEnd']}
             flexDirection="row"
-            style={{ cursor: cta.disabled ? 'not-allowed' : '' }}
+            style={{ cursor: cta.disabled ? 'not-allowed' : undefined }}
           >
             <Box>
               {cta.href ? (

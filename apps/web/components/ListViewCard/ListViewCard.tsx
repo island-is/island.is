@@ -130,7 +130,7 @@ export const ListViewCard = ({
             alignItems={'flexEnd'}
             height="full"
             width="full"
-            style={{ cursor: cta.disabled ? 'not-allowed' : '' }}
+            style={{ cursor: cta.disabled ? 'not-allowed' : undefined }}
           >
             {cta.href ? (
               <Button

@@ -647,7 +647,7 @@ const UniversitySearch: Screen<UniversitySearchProps> = ({
     router.push(
       {
         pathname: router.pathname,
-        query: { search: query },
+        query: query ? { search: query } : {},
       },
       undefined,
       {
@@ -814,7 +814,7 @@ const UniversitySearch: Screen<UniversitySearchProps> = ({
                       variant="text"
                       icon="reload"
                       size="small"
-                      onClick={() => clearFilterParams()}
+                      onClick={clearFilterParams}
                     >
                       {n('clearAllFilters', 'Hreinsa allar síur')}
                     </Button>
@@ -1019,20 +1019,22 @@ const UniversitySearch: Screen<UniversitySearchProps> = ({
               marginTop={isTabletScreenWidth || isMobileScreenWidth ? 2 : 5}
               marginBottom={isTabletScreenWidth || isMobileScreenWidth ? 2 : 5}
             >
-              {data && (
-                <Box display="flex">
-                  <Text variant="intro" fontWeight="semiBold" as="h2">
-                    {`${filteredResults.length}`}{' '}
-                  </Text>
-                  <Box paddingLeft={1}>
-                    {' '}
-                    <Text variant="intro" as="h2">{`${n(
-                      'visiblePrograms',
-                      'námsleiðir sýnilegar',
-                    )}`}</Text>
+              <Box>
+                {data && (
+                  <Box display="flex">
+                    <Text variant="intro" fontWeight="semiBold" as="h2">
+                      {`${filteredResults.length}`}{' '}
+                    </Text>
+                    <Box paddingLeft={1}>
+                      {' '}
+                      <Text variant="intro" as="h2">{`${n(
+                        'visiblePrograms',
+                        'námsleiðir sýnilegar',
+                      )}`}</Text>
+                    </Box>
                   </Box>
-                </Box>
-              )}
+                )}
+              </Box>
               <Hidden below="md">
                 <Box>
                   <button
