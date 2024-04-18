@@ -11,6 +11,7 @@ import { Link, mapLink } from './link.model'
 import { ArticleReference, mapArticleReference } from './articleReference'
 import { GetArticlesInput } from '../dto/getArticles.input'
 import { Article } from './article.model'
+import { mapDocument, SliceUnion } from '../unions/slice.union'
 
 @ObjectType()
 export class FeaturedArticles {
@@ -40,6 +41,9 @@ export class FeaturedArticles {
 
   @Field(() => Boolean, { nullable: true })
   hasBorderAbove?: boolean
+
+  @CacheField(() => [SliceUnion], { nullable: true })
+  introText?: Array<typeof SliceUnion>
 }
 
 export const mapFeaturedArticles = ({
@@ -73,4 +77,7 @@ export const mapFeaturedArticles = ({
   },
   link: fields.link ? mapLink(fields.link) : null,
   hasBorderAbove: fields.hasBorderAbove ?? true,
+  introText: fields.introText
+    ? mapDocument(fields.introText, sys.id + ':introText')
+    : [],
 })

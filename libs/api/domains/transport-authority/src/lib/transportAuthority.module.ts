@@ -30,6 +30,10 @@ import {
   VehiclesClientModule,
   VehiclesClientConfig,
 } from '@island.is/clients/vehicles'
+import {
+  VehiclesMileageClientConfig,
+  VehiclesMileageClientModule,
+} from '@island.is/clients/vehicles-mileage'
 
 @Module({
   imports: [
@@ -40,6 +44,7 @@ import {
     VehiclePlateRenewalClientModule,
     VehicleServiceFjsV1ClientModule,
     VehiclesClientModule,
+    VehiclesMileageClientModule,
     ConfigModule.forRoot({
       isGlobal: true,
       load: [
@@ -50,6 +55,7 @@ import {
         VehiclePlateRenewalClientConfig,
         VehicleServiceFjsV1ClientConfig,
         VehiclesClientConfig,
+        VehiclesMileageClientConfig,
       ],
     }),
   ],
