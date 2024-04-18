@@ -7,14 +7,16 @@ import { m } from './lib/messages'
 import { ServiceDeskPaths } from './lib/paths'
 import { CompaniesAction } from './screens/Companies/Companies.action'
 import { procurersLoader } from './screens/Procurers/Procurers.loader'
+import { UsersAction } from './screens/Users/Users.action'
+import { userLoader } from './screens/User/User.loader'
 
 const Companies = lazy(() => import('./screens/Companies/Companies'))
 const Procures = lazy(() => import('./screens/Procurers/Procurers'))
 
 const Root = lazy(() => import('./screens/Root/Root'))
 
-const Users = <div>Users</div>
-const User = <div>User details</div>
+const Users = lazy(() => import('./screens/Users/Users'))
+const User = lazy(() => import('./screens/User/User'))
 
 export const serviceDeskModule: PortalModule = {
   name: m.serviceDesk,
@@ -43,13 +45,15 @@ export const serviceDeskModule: PortalModule = {
         {
           name: m.users,
           path: ServiceDeskPaths.Users,
-          element: Users,
+          element: <Users />,
+          action: UsersAction(props),
         },
         {
           name: m.user,
           path: ServiceDeskPaths.User,
-          element: User,
+          element: <User />,
           navHide: true,
+          loader: userLoader(props),
         },
       ],
     },

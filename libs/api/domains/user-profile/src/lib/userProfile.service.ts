@@ -209,7 +209,14 @@ export class UserProfileService {
       .catch((e) => handleError(e, `deleteDeviceToken error`))
   }
 
-  async getUserProfiles(query: string) {
-    return await this.userProfileServiceV2.getUserProfiles(query)
+  async getUserProfiles(user: User, query: string) {
+    return await this.userProfileServiceV2.getUserProfiles(user, query)
+  }
+
+  async getUserProfileByNationalId(user: User, nationalId: string) {
+    return await this.userProfileServiceV2.getUserProfileByNationalId(
+      user,
+      nationalId,
+    )
   }
 }

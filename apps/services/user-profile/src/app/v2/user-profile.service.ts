@@ -60,6 +60,8 @@ export class UserProfileService {
       emailVerified: userProfile.emailVerified,
       documentNotifications: userProfile.documentNotifications,
       emailNotifications: userProfile.emailNotifications,
+      lastNudge: userProfile.lastNudge,
+      nextNudge: userProfile.nextNudge,
     }))
 
     return {

@@ -36,8 +36,12 @@ export class UserProfileServiceV2 {
     private readonly islyklarService: IslykillService,
   ) {}
 
-  v2UserProfileApiWithAuth(auth: Auth) {
+  v2MeUserProfileApiWithAuth(auth: Auth) {
     return this.v2MeApi.withMiddleware(new AuthMiddleware(auth))
+  }
+
+  v2UserProfileApiWithAuth(auth: Auth) {
+    return this.v2UserProfileApi.withMiddleware(new AuthMiddleware(auth))
   }
 
   private async getBankInfo(user: User) {
@@ -58,7 +62,7 @@ export class UserProfileServiceV2 {
   ): Promise<UserProfile> {
     const { bankInfo, ...alteredInput } = input
 
-    const userProfile = await this.v2UserProfileApiWithAuth(user)
+    const userProfile = await this.v2MeUserProfileApiWithAuth(user)
       .meUserProfileControllerPatchUserProfile({
         patchUserProfileDto: {
           ...alteredInput,
@@ -82,7 +86,7 @@ export class UserProfileServiceV2 {
   }
 
   async getUserProfile(user: User): Promise<UserProfile> {
-    const userProfile = await this.v2UserProfileApiWithAuth(user)
+    const userProfile = await this.v2MeUserProfileApiWithAuth(user)
       .meUserProfileControllerFindUserProfile()
       .catch((e) => handleError(e, `getUserProfileV2 error`))
 
@@ -96,7 +100,7 @@ export class UserProfileServiceV2 {
   }
 
   async createSmsVerification(input: CreateSmsVerificationInput, user: User) {
-    await this.v2UserProfileApiWithAuth(user)
+    await this.v2MeUserProfileApiWithAuth(user)
       .meUserProfileControllerCreateVerification({
         createVerificationDto: input,
       })
@@ -107,7 +111,7 @@ export class UserProfileServiceV2 {
     input: CreateEmailVerificationInput,
     user: User,
   ): Promise<void> {
-    await this.v2UserProfileApiWithAuth(user)
+    await this.v2MeUserProfileApiWithAuth(user)
       .meUserProfileControllerCreateVerification({
         createVerificationDto: input,
       })
@@ -138,13 +142,23 @@ export class UserProfileServiceV2 {
     )
   }
 
-  async getUserProfiles(search: string) {
-    return await this.v2UserProfileApi
+  async getUserProfiles(user: User, search: string) {
+    return await this.v2UserProfileApiWithAuth(user)
       .userProfileControllerFindUserProfiles({
         search: search,
       })
       .catch((e) => {
         handleError(e, `getUserProfiles error`)
+      })
+  }
+
+  async getUserProfileByNationalId(user: User, nationalId: string) {
+    return await this.v2UserProfileApiWithAuth(user)
+      .userProfileControllerFindUserProfile({
+        xParamNationalId: nationalId,
+      })
+      .catch((e) => {
+        handleError(e, `getUserProfileByNationalId error`)
       })
   }
 }

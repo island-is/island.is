@@ -49,7 +49,7 @@ export class UserProfileController {
   @Audit<PaginatedUserProfileDto>({
     resources: (profile) => profile.data.map((p) => p.nationalId),
   })
-  // @Scopes(AdminPortalScope.serviceDesk)
+  @Scopes(AdminPortalScope.serviceDesk)
   async findUserProfiles(
     @Query('search') search: string,
   ): Promise<PaginatedUserProfileDto> {

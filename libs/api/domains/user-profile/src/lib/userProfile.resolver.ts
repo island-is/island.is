@@ -1,4 +1,11 @@
-import { Args, Mutation, Query, Resolver } from '@nestjs/graphql'
+import {
+  Args,
+  Mutation,
+  Parent,
+  Query,
+  ResolveField,
+  Resolver,
+} from '@nestjs/graphql'
 import { UseGuards } from '@nestjs/common'
 
 import type { User } from '@island.is/auth-nest-tools'
@@ -122,13 +129,5 @@ export class UserProfileResolver {
     @CurrentUser() user: User,
   ): Promise<DeleteTokenResponse> {
     return await this.userUserProfileService.deleteDeviceToken(input, user)
-  }
-
-  @Query(() => PaginatedUserProfileResponse, {
-    nullable: false,
-    name: 'GetPaginatedUserProfiles',
-  })
-  getUserProfiles(@Args('query') query: string) {
-    return this.userUserProfileService.getUserProfiles(query)
   }
 }
