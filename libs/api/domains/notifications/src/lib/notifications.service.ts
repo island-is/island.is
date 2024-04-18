@@ -3,7 +3,7 @@ import { LOGGER_PROVIDER } from '@island.is/logging'
 import type { Logger } from '@island.is/logging'
 import { Inject, Injectable } from '@nestjs/common'
 import {
-  // UpdateNotificationDtoStatusEnum,,
+  // UpdateNotificationDtoStatusEnum,
   UserNotificationApi,
 } from '@island.is/clients/user-notification'
 import type { Locale } from '@island.is/shared/types'
