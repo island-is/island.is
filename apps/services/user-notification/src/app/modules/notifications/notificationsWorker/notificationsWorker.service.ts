@@ -25,7 +25,7 @@ import { CreateHnippNotificationDto } from '../dto/createHnippNotification.dto'
 import { NotificationsService } from '../notifications.service'
 import { HnippTemplate } from '../dto/hnippTemplate.response'
 import { Notification } from '../notification.model'
-import { mapStringToLocale } from '../utils'
+// import { mapStringToLocale } from '../utils'
 
 export const IS_RUNNING_AS_WORKER = Symbol('IS_NOTIFICATION_WORKER')
 const WORK_STARTING_HOUR = 8 // 8 AM

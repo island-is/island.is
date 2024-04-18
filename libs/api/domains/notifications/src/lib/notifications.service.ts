@@ -4,9 +4,9 @@ import type { Logger } from '@island.is/logging'
 import { Inject, Injectable } from '@nestjs/common'
 import {
   // UpdateNotificationDtoStatusEnum,,
-  MeNotificationsControllerFindManyLocaleEnum,
-  MeNotificationsControllerFindOneLocaleEnum,
-  MeNotificationsControllerUpdateLocaleEnum,
+  // MeNotificationsControllerFindManyLocaleEnum,
+  // MeNotificationsControllerFindOneLocaleEnum,
+  // MeNotificationsControllerUpdateLocaleEnum,
   UserNotificationApi,
 } from '@island.is/clients/user-notification'
 import type { Locale } from '@island.is/shared/types'
@@ -39,7 +39,7 @@ export class NotificationsService {
     const notifications = await this.userNotificationsWAuth(
       user,
     ).meNotificationsControllerFindMany({
-      locale: locale as MeNotificationsControllerFindManyLocaleEnum,
+      locale,
       limit: input?.limit,
       before: input?.before,
       after: input?.after,
@@ -67,7 +67,7 @@ export class NotificationsService {
     const notification = await this.userNotificationsWAuth(
       user,
     ).meNotificationsControllerFindOne({
-      locale: locale as MeNotificationsControllerFindOneLocaleEnum,
+      locale,
       id,
     })
 
@@ -90,7 +90,7 @@ export class NotificationsService {
     const notification = await this.userNotificationsWAuth(
       user,
     ).meNotificationsControllerUpdate({
-      locale: locale as MeNotificationsControllerUpdateLocaleEnum,
+      locale,
       id,
       updateNotificationDto: {
         read: true,

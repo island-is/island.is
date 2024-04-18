@@ -50,6 +50,7 @@ const mockProfile: UserProfile = {
   lastNudge: new Date(),
   emailNotifications: true,
   nextNudge: new Date(),
+  
 }
 
 describe('MessageProcessorService', () => {

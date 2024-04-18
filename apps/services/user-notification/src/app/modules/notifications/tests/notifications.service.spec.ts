@@ -8,7 +8,7 @@ import { getModelToken } from '@nestjs/sequelize'
 import { Notification } from '../notification.model'
 import { NotificationsScope } from '@island.is/auth/scopes'
 import type { User } from '@island.is/auth-nest-tools'
-import { Locale } from '../locale.enum'
+// import { Locale } from '../locale.enum'
 
 import {
   ExtendedPaginationDto,
@@ -78,7 +78,7 @@ describe('NotificationsService', () => {
       .spyOn(service, 'getTemplates')
       .mockImplementation(() => Promise.resolve(mockTemplates))
 
-    const templates = await service.getTemplates()
+    const templates = await service.getTemplates("is")
     expect(templates).toBeInstanceOf(Array)
     expect(templates).toEqual(mockTemplates)
   })
@@ -166,7 +166,7 @@ describe('NotificationsService', () => {
         .spyOn(service, 'findOne')
         .mockImplementation(async () => mockedResponse)
 
-      expect(await service.findOne(user, id, Locale.EN)).toBe(mockedResponse)
+      expect(await service.findOne(user, id, "en")).toBe(mockedResponse)
     })
   })
 
@@ -180,7 +180,7 @@ describe('NotificationsService', () => {
         .mockImplementation(async () => mockedResponse)
 
       expect(
-        await service.update(user, id, updateNotificationDto, Locale.EN),
+        await service.update(user, id, updateNotificationDto, "en"),
       ).toBe(mockedResponse)
     })
   })

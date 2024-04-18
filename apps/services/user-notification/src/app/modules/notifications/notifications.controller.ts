@@ -22,7 +22,7 @@ import { CreateNotificationResponse } from './dto/createNotification.response'
 import { CreateHnippNotificationDto } from './dto/createHnippNotification.dto'
 import { HnippTemplate } from './dto/hnippTemplate.response'
 import { NotificationsService } from './notifications.service'
-import { ContentfulLocale } from './locale.enum'
+// import { ContentfulLocale } from './locale.enum'
 
 @Controller('notifications')
 @ApiExtraModels(CreateNotificationDto)
@@ -38,20 +38,20 @@ export class NotificationsController {
     summary: 'Fetches all notification templates',
     includeNoContentResponse: true,
     response: { status: 200, type: [HnippTemplate] },
-    request: {
-      query: {
-        locale: {
-          enum: ContentfulLocale,
-          required: false,
-          example: ContentfulLocale.IS,
-        },
-      },
-    },
+    // request: {
+    //   query: {
+    //     locale: {
+    //       enum: ContentfulLocale,
+    //       required: false,
+    //       example: ContentfulLocale.IS,
+    //     },
+    //   },
+    // },
   })
   @Get('/templates')
   @Version('1')
   async getNotificationTemplates(
-    @Query('locale') locale: ContentfulLocale = ContentfulLocale.IS,
+    @Query('locale') locale: string,
   ): Promise<HnippTemplate[]> {
     this.logger.info(`Fetching hnipp templates for locale: ${locale}`)
     return await this.notificationsService.getTemplates(locale)
@@ -62,13 +62,13 @@ export class NotificationsController {
     includeNoContentResponse: true,
     response: { status: 200, type: HnippTemplate },
     request: {
-      query: {
-        locale: {
-          enum: ContentfulLocale,
-          required: false,
-          example: ContentfulLocale.IS,
-        },
-      },
+      // query: {
+      //   locale: {
+      //     enum: ContentfulLocale,
+      //     required: false,
+      //     example: ContentfulLocale.IS,
+      //   },
+      // },
       params: {
         templateId: {
           type: 'string',
@@ -83,7 +83,7 @@ export class NotificationsController {
   async getNotificationTemplate(
     @Param('templateId')
     templateId: string,
-    @Query('locale') locale: ContentfulLocale = ContentfulLocale.IS,
+    @Query('locale') locale: string,
   ): Promise<HnippTemplate> {
     return await this.notificationsService.getTemplate(templateId, locale)
   }

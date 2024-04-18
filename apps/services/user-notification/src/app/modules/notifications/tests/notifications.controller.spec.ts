@@ -5,7 +5,7 @@ import { QueueService } from '@island.is/message-queue'
 import { CreateHnippNotificationDto } from '../dto/createHnippNotification.dto'
 import { HnippTemplate } from '../dto/hnippTemplate.response'
 import { LOGGER_PROVIDER } from '@island.is/logging'
-import { Locale } from '../locale.enum'
+// import { Locale } from '../locale.enum'
 import { CacheInterceptor, CacheModule } from '@nestjs/cache-manager'
 
 describe('NotificationsController', () => {
@@ -68,9 +68,9 @@ describe('NotificationsController', () => {
         .spyOn(notificationsService, 'getTemplates')
         .mockResolvedValue(templates)
 
-      const result = await controller.getNotificationTemplates(Locale.IS)
+      const result = await controller.getNotificationTemplates("is")
 
-      expect(notificationsService.getTemplates).toHaveBeenCalledWith(Locale.IS)
+      expect(notificationsService.getTemplates).toHaveBeenCalledWith("is")
       expect(result).toEqual(templates)
     })
   })
@@ -90,12 +90,12 @@ describe('NotificationsController', () => {
 
       const result = await controller.getNotificationTemplate(
         'HNIPP.POSTHOLF.NEW_DOCUMENT',
-        Locale.IS,
+        "is",
       )
 
       expect(notificationsService.getTemplate).toHaveBeenCalledWith(
         'HNIPP.POSTHOLF.NEW_DOCUMENT',
-        Locale.IS,
+        "is",
       )
       expect(result).toEqual(template)
     })
