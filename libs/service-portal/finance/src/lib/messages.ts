@@ -339,7 +339,7 @@ export const m = defineMessages({
   },
   paymentOrigin2: {
     id: 'sp.finance-housing-benefits:payment-origin-2',
-    defaultMessage: 'Sérstakur húsnæðiststuðningur',
+    defaultMessage: 'Sérstakur húsnæðisstuðningur',
   },
 })
 
