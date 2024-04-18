@@ -624,10 +624,10 @@ const UniversitySearch: Screen<UniversitySearchProps> = ({
     searchTermHasBeenInitialized.current = true
     setQuery(value)
 
-    const currentQueryParams = router.query
+    const { search: _, ...currentQueryParams } = router.query
     const updatedQueryParams = {
       ...currentQueryParams,
-      search: value,
+      ...(value.length > 0 && { search: value }),
     }
     router.push(
       {
