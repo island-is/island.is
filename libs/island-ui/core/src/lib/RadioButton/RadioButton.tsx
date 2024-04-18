@@ -119,10 +119,7 @@ export const RadioButton = ({
             {signature && (
               <Hidden below="sm">
                 <Box className={styles.imageContainer}>
-                  <img
-                    src={signature}
-                    alt="image"
-                  />
+                  <img src={signature} alt="image" />
                 </Box>
               </Hidden>
             )}
@@ -147,17 +144,16 @@ export const RadioButton = ({
             {label}
           </Text>
           {signature && (
-              <Hidden above="xs">
-                <Box className={cn(styles.imageContainer, {
-                  [styles.signatureImageContainer]: signature
-                })}>
-                  <img
-                    src={signature}
-                    alt="image"
-                  />
-                </Box>
-              </Hidden>
-            )}
+            <Hidden above="xs">
+              <Box
+                className={cn(styles.imageContainer, {
+                  [styles.signatureImageContainer]: signature,
+                })}
+              >
+                <img src={signature} alt="image" />
+              </Box>
+            </Hidden>
+          )}
           {subLabel && large && (
             <Text
               as="span"
