@@ -1970,6 +1970,34 @@ export interface ILifeEventPage extends Entry<ILifeEventPageFields> {
   }
 }
 
+export interface ILifeEventPageListSliceFields {
+  /** Title */
+  title?: string | undefined
+
+  /** List */
+  lifeEventPageList?: (ILifeEventPage | IAnchorPage)[] | undefined
+}
+
+/** !!DO NOT USE!! - This content type has been deprecated. Use Anchor Page List */
+
+export interface ILifeEventPageListSlice
+  extends Entry<ILifeEventPageListSliceFields> {
+  sys: {
+    id: string
+    type: string
+    createdAt: string
+    updatedAt: string
+    locale: string
+    contentType: {
+      sys: {
+        id: 'lifeEventPageListSlice'
+        linkType: 'ContentType'
+        type: 'Link'
+      }
+    }
+  }
+}
+
 export interface ILinkFields {
   /** Text */
   text: string
@@ -2103,6 +2131,68 @@ export interface ILinkUrl extends Entry<ILinkUrlFields> {
     contentType: {
       sys: {
         id: 'linkUrl'
+        linkType: 'ContentType'
+        type: 'Link'
+      }
+    }
+  }
+}
+
+export interface IListItemFields {
+  /** List Page */
+  listPage: IListPage
+
+  /** Internal Title */
+  internalTitle?: string | undefined
+
+  /** Title */
+  title: string
+
+  /** Thumbnail Content */
+  thumbnailContent?: Document | undefined
+}
+
+export interface IListItem extends Entry<IListItemFields> {
+  sys: {
+    id: string
+    type: string
+    createdAt: string
+    updatedAt: string
+    locale: string
+    contentType: {
+      sys: {
+        id: 'listItem'
+        linkType: 'ContentType'
+        type: 'Link'
+      }
+    }
+  }
+}
+
+export interface IListPageFields {
+  /** Internal Title */
+  internalTitle?: string | undefined
+
+  /** Title */
+  title: string
+
+  /** Relative URL */
+  relativeUrl?: string | undefined
+
+  /** Items */
+  listItems?: Record<string, any> | undefined
+}
+
+export interface IListPage extends Entry<IListPageFields> {
+  sys: {
+    id: string
+    type: string
+    createdAt: string
+    updatedAt: string
+    locale: string
+    contentType: {
+      sys: {
+        id: 'listPage'
         linkType: 'ContentType'
         type: 'Link'
       }
@@ -4873,6 +4963,8 @@ export type CONTENT_TYPE =
   | 'linkGroup'
   | 'linkList'
   | 'linkUrl'
+  | 'listItem'
+  | 'listPage'
   | 'location'
   | 'logoListSlice'
   | 'manual'

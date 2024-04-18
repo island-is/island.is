@@ -7,9 +7,15 @@ import {
 import { defaultLanguage } from '@island.is/shared/constants'
 import { Locale } from '@island.is/shared/types'
 
-import { GetUrlQuery, GetUrlQueryVariables } from '../graphql/schema'
+import {
+  GetListPageQuery,
+  GetListPageQueryVariables,
+  GetUrlQuery,
+  GetUrlQueryVariables,
+} from '../graphql/schema'
 import { linkResolver, LinkType } from '../hooks'
 import { GET_URL_QUERY } from '../screens/queries'
+import { GET_LIST_PAGE_QUERY } from '../screens/queries/ListPage'
 
 export const fetch404RedirectUrl = async (
   apolloClient: ApolloClient<NormalizedCacheObject>,
@@ -18,27 +24,43 @@ export const fetch404RedirectUrl = async (
 ): Promise<string | null> => {
   path = path.trim().replace(/\/\/+/g, '/').replace(/\/+$/, '').toLowerCase()
 
-  const [redirectPropsWithQueryParams, redirectPropsWithoutQueryParams] =
-    await Promise.all([
-      apolloClient.query<GetUrlQuery, GetUrlQueryVariables>({
-        query: GET_URL_QUERY,
-        variables: {
-          input: {
-            slug: path,
-            lang: locale,
-          },
+  const [
+    redirectPropsWithQueryParams,
+    redirectPropsWithoutQueryParams,
+    listPageResponse,
+  ] = await Promise.all([
+    apolloClient.query<GetUrlQuery, GetUrlQueryVariables>({
+      query: GET_URL_QUERY,
+      variables: {
+        input: {
+          slug: path,
+          lang: locale,
         },
-      }),
-      apolloClient.query<GetUrlQuery, GetUrlQueryVariables>({
-        query: GET_URL_QUERY,
-        variables: {
-          input: {
-            slug: path.split('?')[0],
-            lang: locale,
-          },
+      },
+    }),
+    apolloClient.query<GetUrlQuery, GetUrlQueryVariables>({
+      query: GET_URL_QUERY,
+      variables: {
+        input: {
+          slug: path.split('?')[0],
+          lang: locale,
         },
-      }),
-    ])
+      },
+    }),
+    apolloClient.query<GetListPageQuery, GetListPageQueryVariables>({
+      query: GET_LIST_PAGE_QUERY,
+      variables: {
+        input: {
+          slug: path.split('?')[0],
+          lang: locale,
+        },
+      },
+    }),
+  ])
+
+  // if (listPageResponse) { // ?
+  //   return listPageResponse.data.
+  // }
 
   let redirectProps: ApolloQueryResult<GetUrlQuery> | null = null
 

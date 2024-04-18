@@ -36,6 +36,8 @@ import { CategoryPage } from './models/categoryPage.model'
 import { GetCustomPageInput } from './dto/getCustomPage.input'
 import { getElasticsearchIndex } from '@island.is/content-search-index-manager'
 import { CustomPage } from './models/customPage.model'
+import { GetListPageInput } from './dto/GetListPage.input'
+import { ListPage } from './models/listPage.model'
 
 @Injectable()
 export class CmsElasticsearchService {
@@ -383,6 +385,13 @@ export class CmsElasticsearchService {
     return this.getSingleDocumentTypeBySlug(getElasticsearchIndex(input.lang), {
       type: 'webCustomPage',
       slug: input.uniqueIdentifier,
+    })
+  }
+
+  async getListPage(input: GetListPageInput): Promise<ListPage | null> {
+    return this.getSingleDocumentTypeBySlug(getElasticsearchIndex(input.lang), {
+      type: 'webListPage',
+      slug: input.slug,
     })
   }
 

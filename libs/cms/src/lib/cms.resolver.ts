@@ -111,6 +111,8 @@ import { FeaturedEvents } from './models/featuredEvents.model'
 import { GraphQLJSONObject } from 'graphql-type-json'
 import { CustomPage } from './models/customPage.model'
 import { GetCustomPageInput } from './dto/getCustomPage.input'
+import { GetListPageInput } from './dto/GetListPage.input'
+import { ListPage } from './models/listPage.model'
 
 const defaultCache: CacheControlOptions = { maxAge: CACHE_CONTROL_MAX_AGE }
 
@@ -646,6 +648,14 @@ export class CmsResolver {
     @Args('input') input: GetCustomPageInput,
   ): Promise<CustomPage | null> {
     return this.cmsElasticsearchService.getCustomPage(input)
+  }
+
+  @CacheControl(defaultCache)
+  @Query(() => ListPage, { nullable: true })
+  async getListPage(
+    @Args('input') input: GetListPageInput,
+  ): Promise<ListPage | null> {
+    return this.cmsElasticsearchService.getListPage(input)
   }
 }
 
