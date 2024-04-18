@@ -1,13 +1,31 @@
-import { useMemo } from 'react'
-import { Box, Button, FilterMultiChoice } from '@island.is/island-ui/core'
+import { useEffect, useMemo, useState } from 'react'
+import {
+  Accordion,
+  AccordionItem,
+  Box,
+  Button,
+  FilterMultiChoice,
+  Select,
+  Stack,
+} from '@island.is/island-ui/core'
 import { HousingBenefitsPayments } from '@island.is/api/schema'
-import { m, Filter } from '@island.is/service-portal/core'
+import { m, Filter, MONTHS } from '@island.is/service-portal/core'
 import { useLocale } from '@island.is/localization'
 import { exportHousingBenefitFiles } from '../../utils/filesHousingBenefits'
-import generateYearMonthArray from '../../utils/generateMonthArray'
+import {
+  generateMonthArray,
+  generateYearArray,
+} from '../../utils/generateMonthArray'
 import { m as messages } from '../../lib/messages'
+import cn from 'classnames'
 import * as styles from './HousingBenefits.css'
+import * as financeStyles from '../../screens/Finance.css'
 import DropdownExport from '../../components/DropdownExport/DropdownExport'
+
+export type DateSelection = {
+  label?: string
+  value?: string
+}
 
 interface Props {
   payments?: HousingBenefitsPayments
@@ -20,14 +38,35 @@ interface Props {
 const HousingBenefitsFilter = ({
   payments,
   paymentOrigin,
-  selectedMonth,
   clearAllFilters,
   setSelectedMonth,
   setPaymentOrigin,
 }: Props) => {
   const { formatMessage } = useLocale()
+  const [currentMonth, setCurrentMonth] = useState<DateSelection>()
+  const [currentYear, setCurrentYear] = useState<DateSelection>()
 
-  const yearMonthOptions = useMemo(generateYearMonthArray, [])
+  const monthOptions = useMemo(
+    () =>
+      generateMonthArray(
+        MONTHS.map((month) => formatMessage(m[month as keyof typeof m])),
+      ),
+    [],
+  )
+  const yearOptions = useMemo(() => generateYearArray(2017), [])
+
+  useEffect(() => {
+    if (currentYear?.value) {
+      setSelectedMonth(
+        `${currentYear.value}${
+          currentMonth?.value ? `-${currentMonth.value}` : ''
+        }`,
+      )
+    }
+    if (!currentYear?.value && !currentMonth?.value) {
+      setSelectedMonth(undefined)
+    }
+  }, [currentYear, currentMonth])
 
   return (
     <Filter
@@ -64,7 +103,7 @@ const HousingBenefitsFilter = ({
       }
       onFilterClear={clearAllFilters}
     >
-      <Box className={styles.selectBox}>
+      <Box>
         <FilterMultiChoice
           labelClear={formatMessage(m.clearSelected)}
           singleExpand={true}
@@ -72,16 +111,10 @@ const HousingBenefitsFilter = ({
             if (categoryId === 'payment-type') {
               setPaymentOrigin(selected[0])
             }
-            if (categoryId === 'rental-month-year') {
-              setSelectedMonth(selected[0])
-            }
           }}
           onClear={(categoryId) => {
             if (categoryId === 'payment-type') {
               setPaymentOrigin(undefined)
-            }
-            if (categoryId === 'rental-month-year') {
-              setSelectedMonth(undefined)
             }
           }}
           categories={[
@@ -106,16 +139,61 @@ const HousingBenefitsFilter = ({
               inline: false,
               singleOption: true,
             },
-            {
-              id: 'rental-month-year',
-              label: formatMessage(messages.hbRentalMonthYear),
-              selected: selectedMonth ? [selectedMonth] : [],
-              filters: yearMonthOptions,
-              inline: false,
-              singleOption: true,
-            },
           ]}
         />
+      </Box>
+      <Box className={financeStyles.dateFilter} paddingX={3}>
+        <Box borderBottomWidth="standard" borderColor="blue200" width="full" />
+        <Box marginTop={1}>
+          <Accordion
+            dividerOnBottom={false}
+            dividerOnTop={false}
+            singleExpand={false}
+          >
+            <AccordionItem
+              key="date-accordion-item"
+              id="date-accordion-item"
+              label={formatMessage(messages.hbRentalMonthYear)}
+              labelColor="dark400"
+              labelUse="h5"
+              labelVariant="h5"
+              iconVariant="small"
+            >
+              <Box
+                className={cn(financeStyles.accordionBox, styles.selectBox)}
+                display="flex"
+                flexDirection="column"
+              >
+                <Stack space="smallGutter">
+                  <Select
+                    label="Mánuður"
+                    name="month"
+                    onChange={(opt) =>
+                      setCurrentMonth({
+                        ...opt,
+                      })
+                    }
+                    options={monthOptions}
+                    isClearable
+                    size="sm"
+                  />
+                  <Select
+                    label="Ár"
+                    name="month"
+                    onChange={(opt) =>
+                      setCurrentYear({
+                        ...opt,
+                      })
+                    }
+                    options={yearOptions}
+                    isClearable
+                    size="sm"
+                  />
+                </Stack>
+              </Box>
+            </AccordionItem>
+          </Accordion>
+        </Box>
       </Box>
     </Filter>
   )
