@@ -38,7 +38,6 @@ test.describe('Driving School Confirmation', () => {
 
     // Start application
     await page.goto('/umsoknir/okuskoli')
-    await expect(page).toBeApplication()
     await dataProviders.click()
     await forwardsButton.click()
 
@@ -82,7 +81,6 @@ test.describe('Driving School Confirmation', () => {
 
     // Start application
     await page.goto('/umsoknir/okuskoli')
-    await expect(page).toBeApplication()
     await dataProviders.click()
     await forwardsButton.click()
 

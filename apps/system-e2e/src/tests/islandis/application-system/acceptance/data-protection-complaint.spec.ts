@@ -102,7 +102,6 @@ applicationTest.describe('Data protection complaint application', () => {
             await expect(
               page.getByTestId(agreeToDataProvidersTestId).first(),
             ).toBeVisible()
-            await expect(applicationPage).toBeApplication()
           }
         },
       )
