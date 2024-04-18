@@ -23,6 +23,7 @@ export const dataSchema = z.object({
     isDisabled: z.enum([YES, NO]),
     hasOtherDiseases: z.enum([YES, NO]),
   }),
+  contactGlassesMismatch: z.boolean(),
   willBringQualityPhoto: z.union([
     z.array(z.enum([YES, NO])).nonempty(),
     z.enum([YES, NO]),

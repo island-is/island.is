@@ -141,6 +141,12 @@ export const m = defineMessages({
       'Ef einhverri spurningu er svarað játandi í heilbrigðisyfirlýsingu þarf læknisvottorð frá heimilislækni eða viðeigandi sérfræðilækni.',
     description: '',
   },
+  alertHealthDeclarationGlassesMismatch: {
+    id: 'dl.application:alertHealthDeclarationGlassesMismatch',
+    defaultMessage:
+      'Athugaðu að þar sem breyting hefur orðið á sjón síðan síðast var sótt um ökuskírteini þarftu að skila vottorði frá heimilislækni þess efnis.',
+    description: '',
+  },
   healthDeclaration1: {
     id: 'dl.application:healthDeclaration.1',
     defaultMessage: '1. Notar þú gleraugu, snertilinsur eða hefur skerta sjón?',

@@ -21,10 +21,11 @@ export const allowFakeCondition =
 
 export const needsHealthCertificateCondition =
   (result = YES) =>
-  (answers: FormValue) => {
+  (answers: FormValue, externalData: ExternalData) => {
     return (
       Object.values(answers?.healthDeclaration || {}).includes(result) ||
-      answers?.hasHealthRemarks === result
+      answers?.hasHealthRemarks === result ||
+      externalData.glassesCheck?.data === true
     )
   }
 
