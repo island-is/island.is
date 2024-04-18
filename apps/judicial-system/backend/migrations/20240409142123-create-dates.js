@@ -39,7 +39,7 @@ module.exports = {
         )
         .then(() =>
           queryInterface.sequelize.query(
-            `insert into "date_log" (id, date_type, case_id,
+            `insert into "date_log" (id, date_type, case_id, date)
               select md5(random()::text || clock_timestamp()::text)::uuid, 
               'COURT_DATE' as date_type,
               id,
@@ -76,7 +76,7 @@ module.exports = {
               from (
                 select distinct on (case_id) *
                 from "date_log"
-                order by case_id,
+                order by case_id
               ) d
               where "case".id = d.case_id`,
             { transaction: t },
