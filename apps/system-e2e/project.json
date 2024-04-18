@@ -7,6 +7,22 @@
   "generators": {},
   "targets": {
     "build": {
+      "executor": "@nx/esbuild:esbuild",
+      "outputs": ["{options.outputPath}"],
+      "options": {
+        "outputFileName": "main.js",
+        "format": ["cjs"],
+        "deleteOutputPath": false,
+        "generatePackageJson": true,
+        "esbuildConfig": "{projectRoot}/esbuild.config.js",
+        "outputPath": "dist/{projectRoot}",
+        "main": "{projectRoot}/playwright.config.ts",
+        "tsConfig": "{projectRoot}/tsconfig.json",
+        "minify": false,
+        "watch": false
+      }
+    },
+    "build:old": {
       "executor": "nx:run-commands",
       "options": {
         "commands": ["bash {projectRoot}/build.sh"],
