@@ -69,9 +69,9 @@ describe('NotificationsController', () => {
         .spyOn(notificationsService, 'getTemplates')
         .mockResolvedValue(templates)
 
-      const result = await controller.getNotificationTemplates("is")
+      const result = await controller.getNotificationTemplates('is')
 
-      expect(notificationsService.getTemplates).toHaveBeenCalledWith("is")
+      expect(notificationsService.getTemplates).toHaveBeenCalledWith('is')
       expect(result).toEqual(templates)
     })
   })
@@ -91,12 +91,12 @@ describe('NotificationsController', () => {
 
       const result = await controller.getNotificationTemplate(
         'HNIPP.POSTHOLF.NEW_DOCUMENT',
-        "is",
+        'is',
       )
 
       expect(notificationsService.getTemplate).toHaveBeenCalledWith(
         'HNIPP.POSTHOLF.NEW_DOCUMENT',
-        "is",
+        'is',
       )
       expect(result).toEqual(template)
     })

@@ -13,7 +13,6 @@ import {
 } from 'class-validator'
 import { Type } from 'class-transformer'
 
-
 export class ExtendedPaginationDto extends PaginationDto {
   @IsOptional()
   @ApiPropertyOptional({

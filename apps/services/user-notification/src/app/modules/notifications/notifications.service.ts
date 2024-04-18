@@ -28,7 +28,6 @@ import {
   UnreadNotificationsCountDto,
 } from './dto/notification.dto'
 
-
 const ACCESS_TOKEN = process.env.CONTENTFUL_ACCESS_TOKEN
 const CONTENTFUL_GQL_ENDPOINT =
   'https://graphql.contentful.com/content/v1/spaces/8k0h54kbe6bj/environments/master'
@@ -44,8 +43,6 @@ const ALLOWED_REPLACE_PROPS: Array<keyof HnippTemplate> = [
   'clickActionWeb',
   'clickActionUrl',
 ]
-
-
 
 type SenderOrganization = {
   title: string | undefined
@@ -71,7 +68,6 @@ export class NotificationsService {
             'content-type': 'application/json',
             authorization: `Bearer ${ACCESS_TOKEN}`,
           },
-          
         },
       )
       return response.data
@@ -90,9 +86,11 @@ export class NotificationsService {
     locale: string,
   ): Promise<SenderOrganization> {
     const cacheKey = `org-${senderId}-${locale}`
-    const cachedOrganization = await this.cacheManager.get<SenderOrganization>(cacheKey)
+    const cachedOrganization = await this.cacheManager.get<SenderOrganization>(
+      cacheKey,
+    )
     if (cachedOrganization) {
-      this.logger.info(`Cache HIT for: ${cacheKey}`,cachedOrganization)
+      this.logger.info(`Cache HIT for: ${cacheKey}`, cachedOrganization)
       return cachedOrganization
     } else {
       this.logger.warn(`Cache MISS for: ${cacheKey}`)
@@ -105,9 +103,10 @@ export class NotificationsService {
       }
     }`
     const res = await this.performGraphQLRequest(contentfulOrganizationQuery)
-    const organizationTitle = res.data.organizationCollection.items[0]?.title ?? undefined;
-    const result:SenderOrganization = { title: organizationTitle }
-     
+    const organizationTitle =
+      res.data.organizationCollection.items[0]?.title ?? undefined
+    const result: SenderOrganization = { title: organizationTitle }
+
     if (!organizationTitle) {
       this.logger.warn(`Organization title not found for senderId: ${senderId}`)
     }
@@ -140,7 +139,7 @@ export class NotificationsService {
             notification.senderId,
             locale,
           )
-          
+
           if (sender.title) {
             organizationArg.value = sender.title
           } else {
@@ -184,7 +183,7 @@ export class NotificationsService {
     }
   }
 
-  async getTemplates( locale: string,): Promise<HnippTemplate[]> {
+  async getTemplates(locale: string): Promise<HnippTemplate[]> {
     const cacheKey = `templates-${locale}`
 
     // Try to retrieve the templates from cache first
@@ -327,19 +326,24 @@ export class NotificationsService {
    */
   formatArguments(args: ArgumentDto[], template: HnippTemplate): HnippTemplate {
     // Deep clone the template to avoid modifying the original
-    let formattedTemplate = JSON.parse(JSON.stringify(template));
-  
-    args.forEach(arg => {
-      Object.keys(formattedTemplate).forEach(key => {
-        const templateKey = key as keyof HnippTemplate;
-  
-        if (ALLOWED_REPLACE_PROPS.includes(templateKey) && typeof formattedTemplate[templateKey] === 'string') {
-          formattedTemplate[templateKey] = formattedTemplate[templateKey].replace(new RegExp(`{{${arg.key}}}`, 'g'), arg.value);
+    let formattedTemplate = JSON.parse(JSON.stringify(template))
+
+    args.forEach((arg) => {
+      Object.keys(formattedTemplate).forEach((key) => {
+        const templateKey = key as keyof HnippTemplate
+
+        if (
+          ALLOWED_REPLACE_PROPS.includes(templateKey) &&
+          typeof formattedTemplate[templateKey] === 'string'
+        ) {
+          formattedTemplate[templateKey] = formattedTemplate[
+            templateKey
+          ].replace(new RegExp(`{{${arg.key}}}`, 'g'), arg.value)
         }
-      });
-    });
-  
-    return formattedTemplate;
+      })
+    })
+
+    return formattedTemplate
   }
 
   async findOne(

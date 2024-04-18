@@ -78,7 +78,7 @@ describe('NotificationsService', () => {
       .spyOn(service, 'getTemplates')
       .mockImplementation(() => Promise.resolve(mockTemplates))
 
-    const templates = await service.getTemplates("is")
+    const templates = await service.getTemplates('is')
     expect(templates).toBeInstanceOf(Array)
     expect(templates).toEqual(mockTemplates)
   })
@@ -166,7 +166,7 @@ describe('NotificationsService', () => {
         .spyOn(service, 'findOne')
         .mockImplementation(async () => mockedResponse)
 
-      expect(await service.findOne(user, id, "en")).toBe(mockedResponse)
+      expect(await service.findOne(user, id, 'en')).toBe(mockedResponse)
     })
   })
 
@@ -179,9 +179,9 @@ describe('NotificationsService', () => {
         .spyOn(service, 'update')
         .mockImplementation(async () => mockedResponse)
 
-      expect(
-        await service.update(user, id, updateNotificationDto, "en"),
-      ).toBe(mockedResponse)
+      expect(await service.update(user, id, updateNotificationDto, 'en')).toBe(
+        mockedResponse,
+      )
     })
   })
 

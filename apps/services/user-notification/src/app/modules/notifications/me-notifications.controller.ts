@@ -30,7 +30,6 @@ import {
 } from './dto/notification.dto'
 import { Documentation } from '@island.is/nest/swagger'
 
-
 @UseGuards(IdsUserGuard, ScopesGuard)
 @Scopes(NotificationsScope.read)
 @ApiSecurity('oauth2', [NotificationsScope.read])
