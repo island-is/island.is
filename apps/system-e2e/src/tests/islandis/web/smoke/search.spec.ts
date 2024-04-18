@@ -28,7 +28,7 @@ test.describe('Search feature', () => {
       .type(testPhrase, { delay: 100 })
     await page.keyboard.press('Enter')
     const testResults = page.locator('[data-testid="search-result"]')
-    await expect(testResults).toHaveCountGreaterThan(9)
+    expect(await testResults.count()).toBeGreaterThan(9)
     const searchUrl = page.url()
     await testResults.nth(0).click()
     await page.waitForLoadState('load')

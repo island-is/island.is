@@ -52,7 +52,7 @@ test.describe('Admin portal (Endorsements)', () => {
   test.skip('See locked lists are present and locked', async ({ page }) => {
     await page.getByRole('tab', { name: 'Læstir listar' }).click()
     const lockedLists = page.getByRole('button', { name: 'Skoða lista' })
-    await expect(lockedLists).toHaveCountGreaterThan(1)
+    expect(await lockedLists.count()).toBeGreaterThan(1)
     await lockedLists.first().click()
     await expect(
       page.getByRole('alert', { name: 'Listi er læstur' }),
