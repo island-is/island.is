@@ -12,7 +12,9 @@ const isDevelopment = process.env.NODE_ENV === 'development'
 
 const UserOnboarding = () => {
   const { userInfo } = useAuth()
-  const { data, loading } = useGetUserProfileQuery()
+  const { data, loading } = useGetUserProfileQuery({
+    skip: userInfo?.profile.subjectType !== 'legalEntity',
+  })
 
   const featureFlagCLI = useFeatureFlagClient()
   const [hiddenByFeatureFlag, setHiddenByFeatureFlag] = useState<boolean>(true)
