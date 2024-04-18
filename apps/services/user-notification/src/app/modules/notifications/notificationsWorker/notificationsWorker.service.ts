@@ -25,8 +25,7 @@ import { CreateHnippNotificationDto } from '../dto/createHnippNotification.dto'
 import { NotificationsService } from '../notifications.service'
 import { HnippTemplate } from '../dto/hnippTemplate.response'
 import { Notification } from '../notification.model'
-import { mapToLocale } from '../utils'
-
+import { Locale } from '@island.is/shared/types'
 export const IS_RUNNING_AS_WORKER = Symbol('IS_NOTIFICATION_WORKER')
 const WORK_STARTING_HOUR = 8 // 8 AM
 const WORK_ENDING_HOUR = 23 // 11 PM
@@ -228,7 +227,7 @@ export class NotificationsWorkerService implements OnApplicationBootstrap {
 
     const template = await this.notificationsService.getTemplate(
       message.templateId,
-      mapToLocale(profile.locale),
+      profile.locale as Locale,
     )
 
     let fullName = message.onBehalfOf?.name ?? ''

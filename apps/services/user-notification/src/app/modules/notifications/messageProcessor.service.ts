@@ -3,7 +3,7 @@ import { Notification } from './types'
 import { UserProfileDto } from '@island.is/clients/user-profile'
 import { NotificationsService } from './notifications.service'
 import { CreateHnippNotificationDto } from './dto/createHnippNotification.dto'
-
+import { Locale } from '@island.is/shared/types'
 export const APP_PROTOCOL = Symbol('APP_PROTOCOL')
 
 export interface MessageProcessorServiceConfig {
@@ -21,7 +21,7 @@ export class MessageProcessorService {
 
     const template = await this.notificationsService.getTemplate(
       message.templateId,
-      profile.locale,
+      profile.locale as Locale,
     )
     const notification = this.notificationsService.formatArguments(
       message.args,

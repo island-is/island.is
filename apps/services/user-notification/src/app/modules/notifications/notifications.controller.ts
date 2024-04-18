@@ -42,9 +42,8 @@ export class NotificationsController {
   @Get('/templates')
   @Version('1')
   async getNotificationTemplates(
-    @Query('locale') queryLocale: string = 'is',
+    @Query('locale') locale?: Locale,
   ): Promise<HnippTemplate[]> {
-    const locale: Locale = queryLocale as Locale;  // Asserting directly
     this.logger.info(`Fetching hnipp templates for locale: ${locale}`)
     return await this.notificationsService.getTemplates(locale)
   }
