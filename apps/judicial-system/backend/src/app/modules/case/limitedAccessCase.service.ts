@@ -24,12 +24,14 @@ import {
   CaseFileCategory,
   CaseFileState,
   CaseState,
+  DateType,
   NotificationType,
   UserRole,
 } from '@island.is/judicial-system/types'
 
 import { nowFactory, uuidFactory } from '../../factories'
 import { AwsS3Service } from '../aws-s3'
+import { DateLog } from '../date-log'
 import { Defendant, DefendantService } from '../defendant'
 import {
   CaseFile,
@@ -105,6 +107,8 @@ export interface LimitedAccessUpdateCase
     | 'appealRulingDecision'
   > {}
 
+const dateTypes = Object.values(DateType)
+
 export const include: Includeable[] = [
   { model: Institution, as: 'prosecutorsOffice' },
   { model: Institution, as: 'court' },
@@ -177,10 +181,17 @@ export const include: Includeable[] = [
       ],
     },
   },
+  {
+    model: DateLog,
+    as: 'dateLogs',
+    required: false,
+    where: { dateType: { [Op.in]: dateTypes } },
+  },
 ]
 
 export const order: OrderItem[] = [
   [{ model: Defendant, as: 'defendants' }, 'created', 'ASC'],
+  [{ model: DateLog, as: 'dateLogs' }, 'created', 'DESC'],
 ]
 
 @Injectable()
