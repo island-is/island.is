@@ -31,6 +31,7 @@ export class ListPageSyncService implements CmsSyncProvider<IListPage> {
             response: JSON.stringify({ ...mapped, typename: 'ListPage' }),
             dateCreated: entry.sys.createdAt,
             dateUpdated: new Date().getTime().toString(),
+            tags: [{ key: mapped.relativeUrl, type: 'slug' }],
           }
         } catch (error) {
           logger.warn('Failed to import list page', {

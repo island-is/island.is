@@ -38,6 +38,9 @@ import { getElasticsearchIndex } from '@island.is/content-search-index-manager'
 import { CustomPage } from './models/customPage.model'
 import { GetListPageInput } from './dto/GetListPage.input'
 import { ListPage } from './models/listPage.model'
+import { GetListItemsInput } from './dto/getListItems.input'
+import { ListItem } from './models/listItem.model'
+import { ListItemResponse } from './models/listItemResponse.model'
 
 @Injectable()
 export class CmsElasticsearchService {
@@ -393,6 +396,19 @@ export class CmsElasticsearchService {
       type: 'webListPage',
       slug: input.slug,
     })
+  }
+
+  // TODO: paginate
+  async getListItems(input: GetListItemsInput): Promise<ListItemResponse> {
+    const response = await this.elasticService.getSingleDocumentByMetaData(
+      getElasticsearchIndex(input.lang),
+      {
+        tags: [{ type: 'referencedBy', key: input.listPageId }],
+        types: ['webListItem'],
+      },
+    )
+
+    response.hits.
   }
 
   async getVacancies(index: string) {

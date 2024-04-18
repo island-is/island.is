@@ -113,6 +113,7 @@ import { CustomPage } from './models/customPage.model'
 import { GetCustomPageInput } from './dto/getCustomPage.input'
 import { GetListPageInput } from './dto/GetListPage.input'
 import { ListPage } from './models/listPage.model'
+import { GetListItemsInput } from './dto/getListItems.input'
 
 const defaultCache: CacheControlOptions = { maxAge: CACHE_CONTROL_MAX_AGE }
 
@@ -656,6 +657,14 @@ export class CmsResolver {
     @Args('input') input: GetListPageInput,
   ): Promise<ListPage | null> {
     return this.cmsElasticsearchService.getListPage(input)
+  }
+
+  @CacheControl(defaultCache)
+  @Query(() => [ListPage], { nullable: true })
+  async getListItems(
+    @Args('input') input: GetListItemsInput,
+  ): Promise<ListPage | null> {
+    return this.cmsElasticsearchService.getListItems(input)
   }
 }
 

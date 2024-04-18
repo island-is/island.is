@@ -283,6 +283,19 @@ export class CmsSyncService implements ContentSearchImporter<PostSyncOptions> {
       )
     }
 
+    // TODO: test if this works
+    if (document.sys.contentType.sys.id === 'listPage') {
+      const listItems = await this.contentfulService.getContentfulData(100, {
+        content_type: 'listItem',
+        'fields.listPage.sys.id': document.sys.id,
+      })
+
+      return this.elasticService.deleteByIds(
+        elasticIndex,
+        [document.sys.id].concat(listItems.map((i) => i.sys.id)),
+      )
+    }
+
     return this.elasticService.deleteByIds(elasticIndex, [document.sys.id])
   }
 }

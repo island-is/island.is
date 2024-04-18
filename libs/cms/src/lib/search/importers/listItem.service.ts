@@ -21,7 +21,7 @@ export class ListItemSyncService implements CmsSyncProvider<IListItem> {
 
   doMapping(entries: IListItem[]) {
     if (entries.length > 0) {
-      logger.info('Mapping list pages', { count: entries.length })
+      logger.info('Mapping list items', { count: entries.length })
     }
 
     return entries
@@ -40,9 +40,15 @@ export class ListItemSyncService implements CmsSyncProvider<IListItem> {
             content: content,
             contentWordCount: content.split(/\s+/).length,
             type: 'webListItem',
-            response: JSON.stringify({ ...mapped, typename: 'ListPage' }),
+            response: JSON.stringify({ ...mapped, typename: 'ListItem' }),
             dateCreated: entry.sys.createdAt,
             dateUpdated: new Date().getTime().toString(),
+            tags: [
+              {
+                type: 'referencedBy',
+                key: mapped.listPage.id,
+              },
+            ],
           }
         } catch (error) {
           logger.warn('Failed to import list page', {

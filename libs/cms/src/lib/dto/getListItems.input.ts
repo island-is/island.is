@@ -1,14 +1,16 @@
 import { ElasticsearchIndexLocale } from '@island.is/content-search-index-manager'
-import { Field, InputType } from '@nestjs/graphql'
+import { Field, InputType, Int } from '@nestjs/graphql'
 import { IsString } from 'class-validator'
 
 @InputType()
-export class GetListPageInput {
+export class GetListItemsInput {
   @Field()
   @IsString()
-  slug!: string
+  listPageId!: string
 
   @Field()
   @IsString()
   lang: ElasticsearchIndexLocale = 'is'
+
+  // TODO: look into cursor based pagination
 }
