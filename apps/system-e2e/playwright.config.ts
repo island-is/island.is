@@ -42,7 +42,7 @@ export default defineConfig({
       ]
     : undefined,
 
-  // projects: undefined, // Disable preset recommendation
+  projects: undefined, // Disable preset recommendation
 
   /* Run your local dev server before starting the tests */
   // webServer: {
