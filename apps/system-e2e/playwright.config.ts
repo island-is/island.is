@@ -1,7 +1,6 @@
 import { defineConfig } from '@playwright/test'
 import { nxE2EPreset } from '@nx/playwright/preset'
 import { urls } from './src/support/urls'
-import { applyAddons } from './src/addons'
 // eslint-disable-next-line @typescript-eslint/no-unused-vars
 
 // For CI, you may want to set BASE_URL to the deployed application.
@@ -13,8 +12,6 @@ const baseURL: string = urls.islandisBaseUrl
  * https://github.com/motdotla/dotenv
  */
 // require('dotenv').config();
-
-applyAddons()
 
 /**
  * See https://playwright.dev/docs/test-configuration.
