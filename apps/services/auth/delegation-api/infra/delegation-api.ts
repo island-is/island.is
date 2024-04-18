@@ -45,6 +45,12 @@ export const serviceSetup =
             'clustercfg.general-redis-cluster-group.dnugi2.euw1.cache.amazonaws.com:6379',
           ]),
         },
+        USER_NOTIFICATION_CLIENT_URL: {
+          dev: 'http://web-services-user-notification.services-user-notification.svc.cluster.local',
+          staging:
+            'http://web-services-user-notification.services-user-notification.svc.cluster.local',
+          prod: 'https://services-user-notification.internal.island.is',
+        },
       })
       .secrets({
         IDENTITY_SERVER_CLIENT_SECRET:
