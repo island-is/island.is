@@ -2588,6 +2588,7 @@ services-university-gateway:
   grantNamespaces:
     - 'islandis'
     - 'nginx-ingress-internal'
+    - 'application-system'
   grantNamespacesEnabled: true
   healthCheck:
     liveness:
@@ -2716,6 +2717,7 @@ services-university-gateway-worker:
   grantNamespaces:
     - 'islandis'
     - 'nginx-ingress-internal'
+    - 'application-system'
   grantNamespacesEnabled: true
   healthCheck:
     liveness:
