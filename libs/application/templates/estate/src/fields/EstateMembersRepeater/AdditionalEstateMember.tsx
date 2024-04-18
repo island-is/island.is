@@ -171,14 +171,6 @@ export const AdditionalEstateMember = ({
           />
         </Box>
       )}
-      <RadioButton
-        label="Ég staðfesti að nota núverandi mynd."
-        backgroundColor="blue"
-        large
-        license
-        imageSrc="https://images.ctfassets.net/8k0h54kbe6bj/5u0bSKny81QfKj3gC3tu0s/1415f3e408bd9097b8d5c8c4cfcc8425/Photolicense.png"
-        signature="https://images.ctfassets.net/8k0h54kbe6bj/1hwZOVWlHWzO6dq7QAJmfy/97eb1cdc7a2e2af3dec222771e1fda73/Signaturesignature.png"
-      />
       <GridRow>
         <GridColumn span={['1/1', '1/2']} paddingBottom={2}>
           <SelectController
