@@ -180,6 +180,7 @@ export const HearingArrangements: React.FC<
               setWorkingCase={setWorkingCase}
               handleCourtDateChange={handleCourtDateChange}
               selectedCourtDate={courtDate}
+              selectedCourtRoom={workingCase.courtRoom}
             />
           </Box>
         </Box>

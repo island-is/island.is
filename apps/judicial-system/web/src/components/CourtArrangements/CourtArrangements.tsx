@@ -22,7 +22,14 @@ interface Props {
   workingCase: Case
   setWorkingCase: React.Dispatch<React.SetStateAction<Case>>
   handleCourtDateChange: (date: Date | undefined, valid: boolean) => void
+  handleCourtRoomChange?: (
+    event: React.FocusEvent<HTMLInputElement | HTMLTextAreaElement, Element>,
+  ) => void
   selectedCourtDate?: string | null
+  selectedCourtRoom?: string | null
+  blueBox?: boolean
+  dateTimeDisabled?: boolean
+  courtRoomDisabled?: boolean
 }
 
 export const useCourtArrangements = (workingCase: Case) => {
@@ -60,14 +67,17 @@ export const useCourtArrangements = (workingCase: Case) => {
   }
 }
 
-export const CourtArrangements: React.FC<React.PropsWithChildren<Props>> = (
-  props,
-) => {
+export const CourtArrangements: React.FC<Props> = (props) => {
   const {
     workingCase,
     setWorkingCase,
     handleCourtDateChange,
+    handleCourtRoomChange,
     selectedCourtDate,
+    selectedCourtRoom,
+    blueBox = true,
+    dateTimeDisabled,
+    courtRoomDisabled,
   } = props
   const { updateCase } = useCase()
 
@@ -75,8 +85,8 @@ export const CourtArrangements: React.FC<React.PropsWithChildren<Props>> = (
     (notification) => notification.type === NotificationType.RULING,
   )
 
-  return (
-    <BlueBox>
+  const renderCourtArrangements = () => (
+    <>
       <Box marginBottom={2}>
         <DateTime
           name="courtDate"
@@ -85,7 +95,7 @@ export const CourtArrangements: React.FC<React.PropsWithChildren<Props>> = (
           onChange={handleCourtDateChange}
           blueBox={false}
           required
-          disabled={isCorrectingRuling}
+          disabled={isCorrectingRuling || dateTimeDisabled}
         />
       </Box>
       <Input
@@ -93,7 +103,7 @@ export const CourtArrangements: React.FC<React.PropsWithChildren<Props>> = (
         name="courtroom"
         label="Dómsalur"
         autoComplete="off"
-        value={workingCase.courtRoom || ''}
+        value={selectedCourtRoom || ''}
         placeholder="Skráðu inn dómsal"
         onChange={(event) =>
           removeTabsValidateAndSet(
@@ -103,7 +113,11 @@ export const CourtArrangements: React.FC<React.PropsWithChildren<Props>> = (
             setWorkingCase,
           )
         }
-        onBlur={(event) =>
+        onBlur={(event) => {
+          if (handleCourtRoomChange) {
+            handleCourtRoomChange(event)
+          }
+
           validateAndSendToServer(
             'courtRoom',
             event.target.value,
@@ -111,9 +125,15 @@ export const CourtArrangements: React.FC<React.PropsWithChildren<Props>> = (
             workingCase,
             updateCase,
           )
-        }
-        disabled={isCorrectingRuling}
+        }}
+        disabled={isCorrectingRuling || courtRoomDisabled}
       />
-    </BlueBox>
+    </>
+  )
+
+  return blueBox ? (
+    <BlueBox>{renderCourtArrangements()}</BlueBox>
+  ) : (
+    renderCourtArrangements()
   )
 }

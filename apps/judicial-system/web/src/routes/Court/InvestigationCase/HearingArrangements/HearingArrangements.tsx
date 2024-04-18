@@ -309,6 +309,7 @@ const HearingArrangements = () => {
                 setWorkingCase={setWorkingCase}
                 handleCourtDateChange={handleCourtDateChange}
                 selectedCourtDate={courtDate}
+                selectedCourtRoom={workingCase.courtRoom}
               />
             </Box>
           </Box>

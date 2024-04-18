@@ -97,6 +97,7 @@ const Subpoena: React.FC<React.PropsWithChildren<unknown>> = () => {
             setWorkingCase={setWorkingCase}
             handleCourtDateChange={handleCourtDateChange}
             selectedCourtDate={courtDate}
+            selectedCourtRoom={workingCase.courtRoom}
           />
         </Box>
       </FormContentContainer>

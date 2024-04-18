@@ -1,9 +1,11 @@
-import React, { useCallback, useContext, useState } from 'react'
+import React, { useCallback, useContext, useEffect, useState } from 'react'
 import { useIntl } from 'react-intl'
 import router from 'next/router'
 
 import {
   Box,
+  Checkbox,
+  Input,
   InputFileUpload,
   RadioButton,
   toast,
@@ -12,6 +14,7 @@ import * as constants from '@island.is/judicial-system/consts'
 import { core, errors, titles } from '@island.is/judicial-system-web/messages'
 import {
   BlueBox,
+  CourtArrangements,
   CourtCaseInfo,
   FormContentContainer,
   FormContext,
@@ -21,6 +24,7 @@ import {
   PageLayout,
   PageTitle,
   SectionHeading,
+  useCourtArrangements,
 } from '@island.is/judicial-system-web/src/components'
 import {
   CaseFileCategory,
@@ -28,6 +32,7 @@ import {
 } from '@island.is/judicial-system-web/src/graphql/schema'
 import { stepValidationsType } from '@island.is/judicial-system-web/src/utils/formHelper'
 import {
+  formatDateForServer,
   useCase,
   useS3Upload,
   useUploadFiles,
@@ -35,10 +40,21 @@ import {
 
 import { conclusion as m } from './Conclusion.strings'
 
+type Actions = 'POSTPONE'
+interface Postponement {
+  newDate?: string | null
+  courtRoom?: string | null
+  postponedIndefinitely?: boolean
+  reason?: string
+}
+
 const Conclusion: React.FC = () => {
   const { workingCase, setWorkingCase, isLoadingWorkingCase, caseNotFound } =
     useContext(FormContext)
   const [navigateTo, setNavigateTo] = useState<keyof stepValidationsType>()
+  const [selectedAction, setSelectedAction] = useState<Actions>()
+  const [postponement, setPostponement] = useState<Postponement>()
+  const { courtDate, handleCourtDateChange } = useCourtArrangements(workingCase)
 
   const { formatMessage } = useIntl()
   const { transitionCase, isTransitioningCase, setAndSendCaseToServer } =
@@ -71,6 +87,15 @@ const Conclusion: React.FC = () => {
     [transitionCase, workingCase, formatMessage],
   )
 
+  useEffect(() => {
+    if (selectedAction === 'POSTPONE') {
+      setPostponement({
+        newDate: workingCase.courtDate,
+        courtRoom: workingCase.courtRoom,
+      })
+    }
+  }, [selectedAction, workingCase.courtDate, workingCase.courtRoom])
+
   return (
     <PageLayout
       workingCase={workingCase}
@@ -84,37 +109,84 @@ const Conclusion: React.FC = () => {
         <PageTitle>{formatMessage(m.title)}</PageTitle>
         <CourtCaseInfo workingCase={workingCase} />
         <Box component="section" marginBottom={5}>
+          <SectionHeading title={formatMessage(m.decisionTitle)} required />
           <BlueBox>
-            <Box marginBottom={2}>
-              <RadioButton
-                id="conclusion-postpone"
-                name="conclusion-decision"
-                checked={false} // {defendant.defendantPlea === DefendantPlea.GUILTY}
-                onChange={() => {
-                  setAndSendCaseToServer([], workingCase, setWorkingCase)
-                }}
-                large
-                backgroundColor="white"
-                label={formatMessage(m.postponed)}
-              />
-            </Box>
             <RadioButton
-              id="conclusion-judgement"
+              id="conclusion-postpone"
               name="conclusion-decision"
-              checked={false} // {defendant.defendantPlea === DefendantPlea.NOT_GUILTY}
+              checked={selectedAction === 'POSTPONE'}
               onChange={() => {
-                // handleUpdateDefendant({
-                //   defendantId: defendant.id,
-                //   caseId: workingCase.id,
-                //   defendantPlea: DefendantPlea.NOT_GUILTY,
-                // })
+                setSelectedAction('POSTPONE')
               }}
               large
               backgroundColor="white"
-              label={formatMessage(m.judgement)}
+              label={formatMessage(m.postponed)}
             />
           </BlueBox>
         </Box>
+        {selectedAction === 'POSTPONE' && (
+          <>
+            <SectionHeading title={formatMessage(m.arrangeAnotherHearing)} />
+            <Box marginBottom={5}>
+              <BlueBox>
+                <Box marginBottom={2}>
+                  <CourtArrangements
+                    workingCase={workingCase}
+                    setWorkingCase={setWorkingCase}
+                    handleCourtDateChange={(date, valid) => {
+                      if (valid && date) {
+                        setPostponement((prev) => ({
+                          ...prev,
+                          newDate: formatDateForServer(date),
+                        }))
+                      }
+                    }}
+                    handleCourtRoomChange={(evt) =>
+                      setPostponement((prev) => ({
+                        ...prev,
+                        courtRoom: evt.target.value,
+                      }))
+                    }
+                    dateTimeDisabled={postponement?.postponedIndefinitely}
+                    courtRoomDisabled={postponement?.postponedIndefinitely}
+                    selectedCourtDate={postponement?.newDate}
+                    selectedCourtRoom={postponement?.courtRoom}
+                    blueBox={false}
+                  />
+                </Box>
+                <Box marginBottom={2}>
+                  <Checkbox
+                    name="postponedIndefinitely"
+                    label={formatMessage(m.postponedIndefinitely)}
+                    large
+                    filled
+                    onChange={(event) =>
+                      setPostponement({
+                        newDate: null,
+                        courtRoom: null,
+                        postponedIndefinitely: event.target.checked,
+                      })
+                    }
+                  />
+                </Box>
+                <Input
+                  name="reasonForPostponement"
+                  rows={10}
+                  autoExpand={{ on: true, maxHeight: 600 }}
+                  label={formatMessage(m.reasonForPostponement)}
+                  placeholder={formatMessage(
+                    m.reasonForPostponementPlaceholder,
+                  )}
+                  onBlur={(event) =>
+                    setPostponement({ reason: event.target.value })
+                  }
+                  disabled={!postponement?.postponedIndefinitely}
+                  textarea
+                />
+              </BlueBox>
+            </Box>
+          </>
+        )}
         <Box component="section" marginBottom={5}>
           <SectionHeading title={formatMessage(m.courtRecordTitle)} />
           <InputFileUpload

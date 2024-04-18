@@ -13,6 +13,11 @@ export const conclusion = defineMessages({
     description:
       'Notaður sem titill á þingbókar hluta á Niðurstaða skrefi í ákærum í dómaraflæði.',
   },
+  decisionTitle: {
+    id: 'judicial.system.core:court_record.decision_title',
+    defaultMessage: 'Staða',
+    description: 'Notaður sem titill á Staða hluta á Niðurstaða skrefi.',
+  },
   rulingTitle: {
     id: 'judicial.system.core:court_record.ruling_title',
     defaultMessage: 'Dómur',
@@ -23,11 +28,29 @@ export const conclusion = defineMessages({
     defaultMessage: 'Frestun',
     description: 'Notaður sem texti fyrir frestun valkost á Niðurstaða skrefi.',
   },
-  judgement: {
-    id: 'judicial.system.core:court_record.judgement',
-    defaultMessage: 'Dómtekið',
+  arrangeAnotherHearing: {
+    id: 'judicial.system.core:court_record.arrange_another_hearing',
+    defaultMessage: 'Bóka annað þinghald',
     description:
-      'Notaður sem texti fyrir Dómtekið valkost á Niðurstaða skrefi.',
+      'Notaður sem texti fyrir bóka annað þinghald valkost á Niðurstaða skrefi.',
+  },
+  postponedIndefinitely: {
+    id: 'judicial.system.core:court_record.postponed_indefinitely',
+    defaultMessage: 'Frestað um ótilgreindan tíma',
+    description:
+      'Notaður sem texti fyrir frestað um ótilgreindan tíma valkost á Niðurstaða skrefi.',
+  },
+  reasonForPostponement: {
+    id: 'judicial.system.core:court_record.reason_for_postponement',
+    defaultMessage: 'Ástæða frestunar',
+    description:
+      'Notaður sem titill á ástæða frestunar textabox á Niðurstaða skrefi.',
+  },
+  reasonForPostponementPlaceholder: {
+    id: 'judicial.system.core:court_record.reason_for_postponement_placeholder',
+    defaultMessage: 'Skráðu ástæðu fyrir frestun um ótilgreindan tíma',
+    description:
+      'Notaður sem skýritexti í ástæða frestunar textabox á Niðurstaða skrefi.',
   },
   inputFieldLabel: {
     id: 'judicial.system.core:court_record.input_field_label',
