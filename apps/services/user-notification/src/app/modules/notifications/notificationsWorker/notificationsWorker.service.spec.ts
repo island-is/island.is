@@ -4,7 +4,7 @@ import { INestApplication, Type } from '@nestjs/common'
 import { TestingModuleBuilder } from '@nestjs/testing'
 
 import { testServer, truncate, useDatabase } from '@island.is/testing/nest'
-import { V2UsersApi } from '@island.is/clients/user-profile'
+import { UserProfileDto, V2UsersApi } from '@island.is/clients/user-profile'
 import { getQueueServiceToken, QueueService } from '@island.is/message-queue'
 import { FeatureFlagService } from '@island.is/nest/feature-flags'
 import { NationalRegistryV3ClientService } from '@island.is/clients/national-registry-v3'
@@ -19,22 +19,44 @@ import {
   MockDelegationsService,
   MockFeatureFlagService,
   MockNationalRegistryV3ClientService,
-  MockV2UsersApi,
   userWithDelegations,
   userWithDelegations2,
   userWithDocumentNotificationsDisabled,
   userWithEmailNotificationsDisabled,
   userWithFeatureFlagDisabled,
   userWithSendToDelegationsFeatureFlagDisabled,
-  userWitNoDelegations,
   getMockHnippTemplate,
   mockTemplateId,
   delegationSubjectId,
+  userWithNoDelegations,
+  userProfiles,
 } from './mocks'
 import { wait } from './helpers'
 import { Notification } from '../notification.model'
 import { FIREBASE_PROVIDER } from '../../../../constants'
 import { NotificationsService } from '../notifications.service'
+
+export const MockV2UsersApi = {
+  userProfileControllerFindUserProfile: jest.fn(
+    ({ xParamNationalId }: { xParamNationalId: string }) => {
+      return Promise.resolve(
+        userProfiles.find(
+          (u) => u.nationalId === xParamNationalId,
+        ) as UserProfileDto,
+      )
+    },
+  ),
+
+  userProfileControllerGetActorProfile: jest.fn(
+    ({ xParamToNationalId }: { xParamToNationalId: string }) => {
+      return Promise.resolve(
+        userProfiles.find(
+          (u) => u.nationalId === xParamToNationalId,
+        ) as UserProfileDto,
+      )
+    },
+  ),
+}
 
 describe('NotificationsWorkerService', () => {
   let app: INestApplication
@@ -44,6 +66,7 @@ describe('NotificationsWorkerService', () => {
   let queue: QueueService
   let notificationModel: typeof Notification
   let notificationsService: NotificationsService
+  let userProfileApi: V2UsersApi
 
   const insideWorkingHours = new Date(2021, 1, 1, 10, 0, 0)
 
@@ -59,7 +82,7 @@ describe('NotificationsWorkerService', () => {
           .overrideProvider(FeatureFlagService)
           .useClass(MockFeatureFlagService)
           .overrideProvider(V2UsersApi)
-          .useClass(MockV2UsersApi)
+          .useValue(MockV2UsersApi)
           .overrideProvider(IS_RUNNING_AS_WORKER)
           .useValue(true)
           .overrideProvider(FIREBASE_PROVIDER)
@@ -83,6 +106,7 @@ describe('NotificationsWorkerService', () => {
     queue = app.get<QueueService>(getQueueServiceToken('notifications'))
     notificationModel = app.get(getModelToken(Notification))
     notificationsService = app.get<NotificationsService>(NotificationsService)
+    userProfileApi = app.get(V2UsersApi)
   })
 
   beforeEach(async () => {
@@ -151,7 +175,7 @@ describe('NotificationsWorkerService', () => {
       expect.objectContaining({
         to: expect.objectContaining({
           name: userWithDelegations.name, // should use the original recipient name
-          address: userWitNoDelegations.email,
+          address: userWithNoDelegations.email,
         }),
         // should not have 3rd party login - because subjectId is null for the delegation between userWithDelegations and userWitNoDelegations
         template: expect.objectContaining({
@@ -180,6 +204,24 @@ describe('NotificationsWorkerService', () => {
     // should write the messages to db
     const messages = await notificationModel.findAll()
     expect(messages).toHaveLength(2)
+
+    // should have gotten user profile for primary recipient
+    expect(
+      userProfileApi.userProfileControllerFindUserProfile,
+    ).toHaveBeenCalledWith(
+      expect.objectContaining({
+        xParamNationalId: userWithDelegations.nationalId,
+      }),
+    )
+
+    // should have gotten actor profile for delegation holder
+    expect(
+      userProfileApi.userProfileControllerGetActorProfile,
+    ).toHaveBeenCalledWith(
+      expect.objectContaining({
+        xParamToNationalId: userWithNoDelegations.nationalId,
+      }),
+    )
   })
 
   it('should not send email or push notifications to delegation holders if recipient is a delegation holder (test correct propagation of emails to delegation holders)', async () => {
@@ -294,7 +336,7 @@ describe('NotificationsWorkerService', () => {
     const outsideWorkingHours = new Date(2021, 1, 1, 7, 59, 58) // 2 seconds before 8 AM
     jest.setSystemTime(outsideWorkingHours)
 
-    await addToQueue(userWitNoDelegations.nationalId)
+    await addToQueue(userWithNoDelegations.nationalId)
 
     expect(emailService.sendEmail).not.toHaveBeenCalled()
     expect(notificationDispatch.sendPushNotification).not.toHaveBeenCalled()
