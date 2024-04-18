@@ -37,6 +37,15 @@ export const GET_UNIVERSITY_GATEWAY_PROGRAM_LIST = gql`
     }
   }
 `
+export const GET_UNIVERSITY_GATEWAY_PROGRAM_LIST_IDS = gql`
+  query GetUniversityGatewayProgramIds {
+    universityGatewayPrograms {
+      data {
+        id
+      }
+    }
+  }
+`
 
 export const GET_UNIVERSITY_GATEWAY_UNIVERSITIES = gql`
   query GetUniversityGatewayUniversities {

@@ -365,6 +365,7 @@ api:
     XROAD_NATIONAL_REGISTRY_REDIS_NODES: '["clustercfg.general-redis-cluster-group.5fzau3.euw1.cache.amazonaws.com:6379"]'
     XROAD_NATIONAL_REGISTRY_SERVICE_PATH: 'IS-DEV/GOV/10001/SKRA-Protected/Einstaklingar-v1'
     XROAD_NATIONAL_REGISTRY_TIMEOUT: '20000'
+    XROAD_OFFICIAL_JOURNAL_PATH: 'IS-DEV/GOV/10014/DMR-Protected/official-journal'
     XROAD_PASSPORT_LICENSE_PATH: 'IS-DEV/GOV/10001/SKRA-Protected/Forskraning-V1'
     XROAD_PAYMENT_ADDITION_CALLBACK_URL: '/'
     XROAD_PAYMENT_BASE_CALLBACK_URL: 'XROAD:/IS-DEV/GOV/10000/island-is/application-callback-v2/application-payment/'
@@ -628,8 +629,10 @@ application-system-api:
     XROAD_HEALTH_INSURANCE_WSDLURL: 'https://test-huld.sjukra.is/islandrg?wsdl'
     XROAD_HMS_HOUSING_BENEFITS_PATH: 'IS-DEV/GOV/10033/HMS-Protected/husbot-v1'
     XROAD_HMS_LOANS_PATH: 'IS-DEV/GOV/10033/HMS-Protected/libra-v1'
+    XROAD_INNA_PATH: 'IS-DEV/EDU/10020/MMS-Protected/inna-v1'
     XROAD_NATIONAL_REGISTRY_REDIS_NODES: '["clustercfg.general-redis-cluster-group.5fzau3.euw1.cache.amazonaws.com:6379"]'
     XROAD_NATIONAL_REGISTRY_SERVICE_PATH: 'IS-DEV/GOV/10001/SKRA-Protected/Einstaklingar-v1'
+    XROAD_OFFICIAL_JOURNAL_PATH: 'IS-DEV/GOV/10014/DMR-Protected/official-journal'
     XROAD_PASSPORT_LICENSE_PATH: 'IS-DEV/GOV/10001/SKRA-Protected/Forskraning-V1'
     XROAD_PAYMENT_ADDITION_CALLBACK_URL: '/'
     XROAD_PAYMENT_BASE_CALLBACK_URL: 'XROAD:/IS-DEV/GOV/10000/island-is/application-callback-v2/application-payment/'
@@ -813,6 +816,7 @@ application-system-api-worker:
     XROAD_BASE_PATH_WITH_ENV: 'http://securityserver.dev01.devland.is/r1/IS-DEV'
     XROAD_CHARGE_FJS_V2_PATH: 'IS-DEV/GOV/10021/FJS-Public/chargeFJS_v2'
     XROAD_CLIENT_ID: 'IS-DEV/GOV/10000/island-is-client'
+    XROAD_INNA_PATH: 'IS-DEV/EDU/10020/MMS-Protected/inna-v1'
     XROAD_PAYMENT_ADDITION_CALLBACK_URL: '/'
     XROAD_PAYMENT_BASE_CALLBACK_URL: 'XROAD:/IS-DEV/GOV/10000/island-is/application-callback-v2/application-payment/'
     XROAD_PAYMENT_PROVIDER_ID: 'IS-DEV/GOV/10021/FJS-Public'
@@ -2584,6 +2588,7 @@ services-university-gateway:
   grantNamespaces:
     - 'islandis'
     - 'nginx-ingress-internal'
+    - 'application-system'
   grantNamespacesEnabled: true
   healthCheck:
     liveness:
@@ -2712,6 +2717,7 @@ services-university-gateway-worker:
   grantNamespaces:
     - 'islandis'
     - 'nginx-ingress-internal'
+    - 'application-system'
   grantNamespacesEnabled: true
   healthCheck:
     liveness:
@@ -2949,6 +2955,7 @@ user-notification:
     NATIONAL_REGISTRY_B2C_SCOPE: 'https://skraidentitydev.onmicrosoft.com/midlun/.default'
     NODE_OPTIONS: '--max-old-space-size=345'
     SERVERSIDE_FEATURES_ON: ''
+    SERVICE_PORTAL_CLICK_ACTION_URL: 'https://island.is/minarsidur'
     USER_PROFILE_CLIENT_URL: 'http://web-service-portal-api.service-portal.svc.cluster.local'
     XROAD_BASE_PATH: 'http://securityserver.dev01.devland.is'
     XROAD_BASE_PATH_WITH_ENV: 'http://securityserver.dev01.devland.is/r1/IS-DEV'
@@ -3138,6 +3145,7 @@ user-notification-worker:
     NATIONAL_REGISTRY_B2C_SCOPE: 'https://skraidentitydev.onmicrosoft.com/midlun/.default'
     NODE_OPTIONS: '--max-old-space-size=345'
     SERVERSIDE_FEATURES_ON: ''
+    SERVICE_PORTAL_CLICK_ACTION_URL: 'https://island.is/minarsidur'
     USER_NOTIFICATION_APP_PROTOCOL: 'is.island.app.dev'
     USER_PROFILE_CLIENT_URL: 'http://web-service-portal-api.service-portal.svc.cluster.local'
     XROAD_BASE_PATH: 'http://securityserver.dev01.devland.is'
