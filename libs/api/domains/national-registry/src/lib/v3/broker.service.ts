@@ -1,3 +1,4 @@
+import kennitala from 'kennitala'
 import { Inject, Injectable } from '@nestjs/common'
 import {
   EinstaklingurDTOAllt,
@@ -175,6 +176,11 @@ export class BrokerService {
     return children
       .map((c) => formatChildCustody(c, useFakeData))
       .filter(isDefined)
+      .sort((a, b) => {
+        return (
+          kennitala.info(b.nationalId).age - kennitala.info(a.nationalId).age
+        )
+      })
   }
 
   async getChildDetails(
