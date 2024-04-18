@@ -415,6 +415,24 @@ describe('CaseController - Transition', () => {
                 },
               ],
             )
+          } else if (
+            isIndictmentCase(theCase.type) &&
+            newState === CaseState.DRAFT &&
+            oldState === CaseState.RECEIVED
+          ) {
+            expect(mockMessageService.sendMessagesToQueue).toHaveBeenCalledWith(
+              [
+                {
+                  type: MessageType.NOTIFICATION,
+                  user: {
+                    ...defaultUser,
+                    canConfirmIndictment: isIndictmentCase(theCase.type),
+                  },
+                  caseId,
+                  body: { type: NotificationType.INDICTMENT_RETURNED },
+                },
+              ],
+            )
           } else {
             expect(
               mockMessageService.sendMessagesToQueue,

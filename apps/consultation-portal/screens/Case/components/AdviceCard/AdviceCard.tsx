@@ -109,7 +109,7 @@ export const AdviceCard = ({ advice }: Props) => {
             </FocusableBox>
           )}
         </Inline>
-        <Text variant="h3">
+        <Text as="h3" variant="h3">
           {advice?.number} -{' '}
           {!advice?.isPrivate && !advice?.isHidden && advice?.participantName}
         </Text>
