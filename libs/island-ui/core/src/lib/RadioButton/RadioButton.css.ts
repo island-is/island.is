@@ -34,11 +34,7 @@ export const label = style({
   display: 'flex',
   fontSize: theme.typography.baseFontSize,
   lineHeight: theme.typography.baseLineHeight,
-  '@media': {
-    [`screen and (min-width: ${theme.breakpoints.sm}px)`]: {
-      height: 'auto',
-    },
-  },
+
 })
 export const labelText = style({
   display: 'flex',
@@ -129,17 +125,24 @@ export const toolTipLargeContainerWithIllustration = style({
 })
 
 export const licenseContainer = style({
-  width: 'fit-content',
+  width: 'auto',
+  '@media': {
+    [`screen and (min-width: ${theme.breakpoints.sm}px)`]: {
+      width: 'fit-content',
+    },
+  },
 })
 
 export const licenseLabel = style({
   flexDirection: 'row-reverse',
   alignSelf: 'flex-start',
+  justifyContent: 'space-between',
   height: '135px',
   '@media': {
     [`screen and (min-width: ${theme.breakpoints.sm}px)`]: {
       flexDirection: 'column',
       alignItems: 'center',
+      height: 'auto',
     },
   },
 })
@@ -156,8 +159,6 @@ export const signatureImageContainer = style({
 
 export const image = style({
   borderRadius: theme.border.radius.standard,
-  width: '96px',
-  height: '128px',
   '@media': {
     [`screen and (min-width: ${theme.breakpoints.sm}px)`]: {
       height: '100%',
@@ -166,19 +167,11 @@ export const image = style({
   },
 })
 
-export const signatureImage = style({
-  '@media': {
-    [`screen and (min-width: ${theme.breakpoints.sm}px)`]: {
-      position: 'static',
-    },
-  },
-})
-
 export const licenseText = style({
   alignSelf: 'self-start',
   paddingRight: theme.spacing[2],
   order: 1,
-  maxWidth: '144px',
+  width: '100%',
   '@media': {
     [`screen and (min-width: ${theme.breakpoints.sm}px)`]: {
       order: 0,

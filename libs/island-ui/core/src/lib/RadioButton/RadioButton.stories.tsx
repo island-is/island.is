@@ -51,7 +51,7 @@ export const FilledBlue = () => (
 )
 
 export const License = () => (
-  <Box background="white" padding={3}>
+  <Box background="white">
     <RadioButton
       label="Ég staðfesti að nota núverandi mynd."
       backgroundColor="blue"
