@@ -55,6 +55,7 @@ export class TransferOfMachineOwnershipTemplateService extends BaseTemplateApiSe
         400,
       )
     }
+    console.log('this.constructor.name', this.constructor.name)
     if (result.totalCount <= 5) {
       return {
         machines: await Promise.all(
@@ -143,7 +144,7 @@ export class TransferOfMachineOwnershipTemplateService extends BaseTemplateApiSe
           )
           .catch(() => {
             this.logger.error(
-              `Error sending email about submit application to ${recipientList[i].email}`,
+              `Error sending email about submit application in ${this.constructor.name}`,
             )
           })
       }
@@ -157,7 +158,7 @@ export class TransferOfMachineOwnershipTemplateService extends BaseTemplateApiSe
           )
           .catch(() => {
             this.logger.error(
-              `Error sending sms about submit application to ${recipientList[i].phone}`,
+              `Error sending sms about submit application in ${this.constructor.name}`,
             )
           })
       }
@@ -223,7 +224,7 @@ export class TransferOfMachineOwnershipTemplateService extends BaseTemplateApiSe
           )
           .catch(() => {
             this.logger.error(
-              `Error sending email about initReview to ${recipientList[i].email}`,
+              `Error sending email about initReview in ${this.constructor.name}`,
             )
           })
       }
@@ -237,7 +238,7 @@ export class TransferOfMachineOwnershipTemplateService extends BaseTemplateApiSe
           )
           .catch(() => {
             this.logger.error(
-              `Error sending sms about initReview to ${recipientList[i].phone}`,
+              `Error sending sms about initReview in ${this.constructor.name}`,
             )
           })
       }
@@ -280,7 +281,7 @@ export class TransferOfMachineOwnershipTemplateService extends BaseTemplateApiSe
           )
           .catch(() => {
             this.logger.error(
-              `Error sending email about rejectApplication to ${recipientList[i].email}`,
+              `Error sending email about rejectApplication in ${this.constructor.name}`,
             )
           })
       }
@@ -298,7 +299,7 @@ export class TransferOfMachineOwnershipTemplateService extends BaseTemplateApiSe
           )
           .catch(() => {
             this.logger.error(
-              `Error sending sms about rejectApplication to ${recipientList[i].phone}`,
+              `Error sending sms about rejectApplication in ${this.constructor.name}`,
             )
           })
       }

@@ -74,7 +74,7 @@ export const sendNotificationsToRecipients = async (
         )
         .catch(() => {
           errors.push(
-            `Error sending email about submit application to ${recipientList[i].email}`,
+            `Error sending email about submit application in ${this.constructor.name}`,
           )
         })
     }
@@ -92,7 +92,7 @@ export const sendNotificationsToRecipients = async (
         )
         .catch(() => {
           errors.push(
-            `Error sending sms about submit application to ${recipientList[i].phone}`,
+            `Error sending sms about submit application in ${this.constructor.name}`,
           )
         })
     }

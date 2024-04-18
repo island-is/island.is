@@ -239,7 +239,7 @@ export class ChangeOperatorOfVehicleService extends BaseTemplateApiService {
           )
           .catch(() => {
             this.logger.error(
-              `Error sending email about initReview to ${recipientList[i].email}`,
+              `Error sending email about initReview in ${this.constructor.name}`,
             )
           })
       }
@@ -253,7 +253,7 @@ export class ChangeOperatorOfVehicleService extends BaseTemplateApiService {
           )
           .catch(() => {
             this.logger.error(
-              `Error sending sms about initReview to ${recipientList[i].phone}`,
+              `Error sending sms about initReview in ${this.constructor.name}`,
             )
           })
       }
@@ -294,7 +294,7 @@ export class ChangeOperatorOfVehicleService extends BaseTemplateApiService {
           )
           .catch(() => {
             this.logger.error(
-              `Error sending email about rejectApplication to ${recipientList[i].email}`,
+              `Error sending email about rejectApplication in ${this.constructor.name}`,
             )
           })
       }
@@ -312,7 +312,7 @@ export class ChangeOperatorOfVehicleService extends BaseTemplateApiService {
           )
           .catch(() => {
             this.logger.error(
-              `Error sending sms about rejectApplication to ${recipientList[i].phone}`,
+              `Error sending sms about rejectApplication in ${this.constructor.name}`,
             )
           })
       }
@@ -409,7 +409,7 @@ export class ChangeOperatorOfVehicleService extends BaseTemplateApiService {
           )
           .catch(() => {
             this.logger.error(
-              `Error sending email about submitApplication to ${recipientList[i].email}`,
+              `Error sending email about submitApplication in ${this.constructor.name}`,
             )
           })
       }
@@ -423,7 +423,7 @@ export class ChangeOperatorOfVehicleService extends BaseTemplateApiService {
           )
           .catch(() => {
             this.logger.error(
-              `Error sending sms about submitApplication to ${recipientList[i].phone}`,
+              `Error sending sms about submitApplication in ${this.constructor.name}`,
             )
           })
       }
