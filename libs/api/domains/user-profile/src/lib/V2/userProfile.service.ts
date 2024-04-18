@@ -147,7 +147,7 @@ export class UserProfileServiceV2 {
     input: UpdateActorProfileInput,
     user: User,
   ): Promise<UpdateActorProfileResponse> {
-    return await this.v2UserProfileApiWithAuth(user)
+    return this.v2UserProfileApiWithAuth(user)
       .meUserProfileControllerCreateOrUpdateActorProfile({
         xParamFromNationalId: input.fromNationalId,
         patchActorProfileDto: { emailNotifications: input.emailNotifications },

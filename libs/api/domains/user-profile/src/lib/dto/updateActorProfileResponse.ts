@@ -1,7 +1,7 @@
 import { Field, ObjectType } from '@nestjs/graphql'
 import { IsBoolean, IsString } from 'class-validator'
 
-@ObjectType()
+@ObjectType('UserProfileUpdateActorProfileResponse')
 export class UpdateActorProfileResponse {
   @Field(() => String, { nullable: false })
   @IsString()

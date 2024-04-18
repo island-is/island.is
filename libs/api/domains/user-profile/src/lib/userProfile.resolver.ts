@@ -43,7 +43,7 @@ export class UserProfileResolver {
     return this.userUserProfileService.getUserProfileLocale(user)
   }
 
-  @Query(() => ActorProfileResponse)
+  @Query(() => ActorProfileResponse, { name: 'userProfileActorProfiles' })
   getActorProfiles(@CurrentUser() user: User): Promise<ActorProfileResponse> {
     return this.userUserProfileService.getActorProfiles(user)
   }
@@ -128,7 +128,7 @@ export class UserProfileResolver {
     return await this.userUserProfileService.deleteDeviceToken(input, user)
   }
 
-  @Mutation(() => ActorProfile)
+  @Mutation(() => ActorProfile, { name: 'userProfileUpdateActorProfile' })
   async updateActorProfile(
     @Args('input') input: UpdateActorProfileInput,
     @CurrentUser() user: User,

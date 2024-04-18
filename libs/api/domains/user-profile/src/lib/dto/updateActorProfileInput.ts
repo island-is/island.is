@@ -1,7 +1,7 @@
 import { Field, InputType } from '@nestjs/graphql'
 import { IsBoolean, IsString } from 'class-validator'
 
-@InputType()
+@InputType('UserProfileUpdateActorProfileInput')
 export class UpdateActorProfileInput {
   @Field(() => String)
   @IsString()

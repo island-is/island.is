@@ -1,7 +1,7 @@
 import { Field, ObjectType } from '@nestjs/graphql'
 import { PaginatedResponse } from '@island.is/nest/pagination'
 
-@ObjectType()
+@ObjectType('UserProfileActorProfile')
 export class ActorProfile {
   @Field(() => String)
   fromNationalId!: string
@@ -13,5 +13,5 @@ export class ActorProfile {
   emailNotifications!: boolean
 }
 
-@ObjectType()
+@ObjectType('UserProfileActorProfileResponse')
 export class ActorProfileResponse extends PaginatedResponse(ActorProfile) {}
