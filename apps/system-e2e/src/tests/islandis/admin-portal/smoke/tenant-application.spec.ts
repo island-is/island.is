@@ -33,7 +33,7 @@ test.describe('Admin portal application', () => {
   })
 
   const buttonSaveTest = async (page: Page, title: string, disabled = true) => {
-    test.step(
+    await test.step(
       `Expect button to be ${disabled ? 'disabled' : 'enabled'}`,
       async () => {
         const dataTestId = `button-save-${title}`
