@@ -18,7 +18,6 @@ import { SequelizeConfigService } from '../../../sequelizeConfig.service'
 import {
   MockDelegationsService,
   MockFeatureFlagService,
-  mockHnippTemplate,
   MockNationalRegistryV3ClientService,
   userWithDelegations,
   userWithDelegations2,
@@ -26,6 +25,9 @@ import {
   userWithEmailNotificationsDisabled,
   userWithFeatureFlagDisabled,
   userWithSendToDelegationsFeatureFlagDisabled,
+  getMockHnippTemplate,
+  mockTemplateId,
+  delegationSubjectId,
   userWithNoDelegations,
   userProfiles,
 } from './mocks'
@@ -120,7 +122,7 @@ describe('NotificationsWorkerService', () => {
 
     jest
       .spyOn(notificationsService, 'getTemplate')
-      .mockReturnValue(Promise.resolve(mockHnippTemplate))
+      .mockReturnValue(Promise.resolve(getMockHnippTemplate({})))
   })
 
   afterAll(async () => {
@@ -134,7 +136,7 @@ describe('NotificationsWorkerService', () => {
   const addToQueue = async (recipient: string) => {
     await queue.add({
       recipient,
-      templateId: mockHnippTemplate.templateId,
+      templateId: mockTemplateId,
       args: [{ key: 'organization', value: 'Test Crew' }],
     })
 
@@ -153,6 +155,17 @@ describe('NotificationsWorkerService', () => {
           name: userWithDelegations.name,
           address: userWithDelegations.email,
         }),
+        // email body should have a call-to-action button
+        template: expect.objectContaining({
+          body: expect.arrayContaining([
+            expect.objectContaining({
+              component: 'Button',
+              context: expect.objectContaining({
+                href: 'https://island.is/minarsidur/postholf',
+              }),
+            }),
+          ]),
+        }),
       }),
     )
 
@@ -163,6 +176,17 @@ describe('NotificationsWorkerService', () => {
         to: expect.objectContaining({
           name: userWithDelegations.name, // should use the original recipient name
           address: userWithNoDelegations.email,
+        }),
+        // should not have 3rd party login - because subjectId is null for the delegation between userWithDelegations and userWitNoDelegations
+        template: expect.objectContaining({
+          body: expect.arrayContaining([
+            expect.objectContaining({
+              component: 'Button',
+              context: expect.objectContaining({
+                href: 'https://island.is/minarsidur/postholf',
+              }),
+            }),
+          ]),
         }),
       }),
     )
@@ -215,6 +239,16 @@ describe('NotificationsWorkerService', () => {
           name: userWithDelegations2.name,
           address: userWithDelegations2.email,
         }),
+        template: expect.objectContaining({
+          body: expect.arrayContaining([
+            expect.objectContaining({
+              component: 'Button',
+              context: expect.objectContaining({
+                href: 'https://island.is/minarsidur/postholf',
+              }),
+            }),
+          ]),
+        }),
       }),
     )
 
@@ -225,6 +259,74 @@ describe('NotificationsWorkerService', () => {
         to: expect.objectContaining({
           name: userWithDelegations2.name, // should use the original recipient name
           address: userWithDelegations.email,
+        }),
+        // should use 3rd party login - because subjectId is not null for the delegation between userWithDelegations2 and userWithDelegations
+        template: expect.objectContaining({
+          body: expect.arrayContaining([
+            expect.objectContaining({
+              component: 'Button',
+              context: expect.objectContaining({
+                href: `https://island.is/minarsidur/login?login_hint=${delegationSubjectId}&target_link_uri=https://island.is/minarsidur/postholf`,
+              }),
+            }),
+          ]),
+        }),
+      }),
+    )
+  })
+
+  it('should use clickActionUrl that is provided if the url is not a service portal url', async () => {
+    const notServicePortalUrl = 'https://island.is/something-else/'
+    jest
+      .spyOn(notificationsService, 'getTemplate')
+      .mockReturnValue(
+        Promise.resolve(
+          getMockHnippTemplate({ clickActionUrl: notServicePortalUrl }),
+        ),
+      )
+
+    await addToQueue(userWithDelegations2.nationalId)
+
+    // should send email to primary recipient
+    expect(emailService.sendEmail).toHaveBeenNthCalledWith(
+      1,
+      expect.objectContaining({
+        to: expect.objectContaining({
+          name: userWithDelegations2.name,
+          address: userWithDelegations2.email,
+        }),
+        // should not use 3rd party login because the clickActionUrl is not a service portal url
+        template: expect.objectContaining({
+          body: expect.arrayContaining([
+            expect.objectContaining({
+              component: 'Button',
+              context: expect.objectContaining({
+                href: notServicePortalUrl,
+              }),
+            }),
+          ]),
+        }),
+      }),
+    )
+
+    // should send email to delegation recipient
+    expect(emailService.sendEmail).toHaveBeenNthCalledWith(
+      2,
+      expect.objectContaining({
+        to: expect.objectContaining({
+          name: userWithDelegations2.name, // should use the original recipient name
+          address: userWithDelegations.email,
+        }),
+        // should not use 3rd party login because the clickActionUrl is not a service portal url
+        template: expect.objectContaining({
+          body: expect.arrayContaining([
+            expect.objectContaining({
+              component: 'Button',
+              context: expect.objectContaining({
+                href: notServicePortalUrl,
+              }),
+            }),
+          ]),
         }),
       }),
     )
