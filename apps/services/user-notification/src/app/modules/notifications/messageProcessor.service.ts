@@ -17,7 +17,6 @@ export class MessageProcessorService {
     message: CreateHnippNotificationDto,
     locale?: Locale,
   ): Promise<Notification> {
-
     const template = await this.notificationsService.getTemplate(
       message.templateId,
       locale,

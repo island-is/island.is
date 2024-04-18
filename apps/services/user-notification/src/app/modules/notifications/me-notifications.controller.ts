@@ -21,7 +21,6 @@ import {
 import type { User } from '@island.is/auth-nest-tools'
 import { Locale } from '@island.is/shared/types'
 
-
 import {
   UpdateNotificationDto,
   PaginatedNotificationDto,

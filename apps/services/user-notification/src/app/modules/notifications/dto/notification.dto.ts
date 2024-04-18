@@ -21,8 +21,6 @@ export class ExtendedPaginationDto extends PaginationDto {
     type: 'string',
   })
   @IsString()
-
-
   locale!: Locale
 }
 
