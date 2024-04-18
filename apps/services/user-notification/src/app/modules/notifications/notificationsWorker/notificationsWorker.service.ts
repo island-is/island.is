@@ -5,7 +5,11 @@ import { isCompany } from 'kennitala'
 
 import { User } from '@island.is/auth-nest-tools'
 import { NationalRegistryV3ClientService } from '@island.is/clients/national-registry-v3'
-import { UserProfileDto, V2UsersApi } from '@island.is/clients/user-profile'
+import {
+  UserProfileDto,
+  V2UsersApi,
+  ActorProfileDto,
+} from '@island.is/clients/user-profile'
 import { DelegationsApi } from '@island.is/clients/auth/delegation-api'
 import { Body, EmailService, Message } from '@island.is/email-service'
 import type { Logger } from '@island.is/logging'
@@ -31,7 +35,13 @@ const WORK_STARTING_HOUR = 8 // 8 AM
 const WORK_ENDING_HOUR = 23 // 11 PM
 
 type HandleNotification = {
-  profile: UserProfileDto
+  profile: {
+    nationalId: string
+    email?: string
+    documentNotifications: boolean
+    emailNotifications: boolean
+    locale?: string
+  }
   messageId: string
   message: CreateHnippNotificationDto
 }
@@ -94,7 +104,7 @@ export class NotificationsWorkerService implements OnApplicationBootstrap {
 
     const notification = await this.messageProcessor.convertToNotification(
       message,
-      profile,
+      profile.locale,
     )
 
     await this.notificationDispatch.sendPushNotification({
@@ -334,10 +344,21 @@ export class NotificationsWorkerService implements OnApplicationBootstrap {
           }
         }
 
-        const profile =
-          await this.userProfileApi.userProfileControllerFindUserProfile({
-            xParamNationalId: message.recipient,
-          })
+        // get actor profile if sending to delegation holder, else get user profile
+        let profile: UserProfileDto | ActorProfileDto
+
+        if (message.onBehalfOf) {
+          profile =
+            await this.userProfileApi.userProfileControllerGetActorProfile({
+              xParamToNationalId: message.recipient,
+              xParamFromNationalId: message.onBehalfOf.nationalId,
+            })
+        } else {
+          profile =
+            await this.userProfileApi.userProfileControllerFindUserProfile({
+              xParamNationalId: message.recipient,
+            })
+        }
 
         // can't send message if user has no user profile
         if (!profile) {
@@ -348,8 +369,8 @@ export class NotificationsWorkerService implements OnApplicationBootstrap {
 
         this.logger.info('User found for message', { messageId })
 
-        const handleNotificationArgs = {
-          profile,
+        const handleNotificationArgs: HandleNotification = {
+          profile: { ...profile, nationalId: message.recipient },
           messageId,
           message,
         }
@@ -387,7 +408,7 @@ export class NotificationsWorkerService implements OnApplicationBootstrap {
               let recipientName = ''
 
               if (delegations.data.length > 0) {
-                recipientName = await this.getFullName(profile.nationalId)
+                recipientName = await this.getFullName(message.recipient)
               }
 
               await Promise.all(

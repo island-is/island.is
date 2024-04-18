@@ -16,16 +16,29 @@ export const SocialInsuranceAdministrationIsApplicantEligibleApi =
     action: 'getIsEligible',
     externalDataId: 'socialInsuranceAdministrationIsApplicantEligible',
     namespace: 'SocialInsuranceAdministration',
+    order: 2,
   })
 
+// This needs to run before eligible is called because if applicant isn't vskm at TR
+// they register one in this call.
 export const SocialInsuranceAdministrationApplicantApi = defineTemplateApi({
   action: 'getApplicant',
   externalDataId: 'socialInsuranceAdministrationApplicant',
   namespace: 'SocialInsuranceAdministration',
+  order: 1,
 })
 
 export const SocialInsuranceAdministrationCurrenciesApi = defineTemplateApi({
   action: 'getCurrencies',
   externalDataId: 'socialInsuranceAdministrationCurrencies',
   namespace: 'SocialInsuranceAdministration',
+})
+
+export const UserProfileApi = defineTemplateApi({
+  action: 'userProfile',
+  externalDataId: 'userProfile',
+  namespace: 'UserProfile',
+  params: {
+    validateEmail: true,
+  },
 })
