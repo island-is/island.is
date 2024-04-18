@@ -22,7 +22,7 @@ globalStyle(`${spanStyle} > div > ul`, {
   paddingLeft: 40,
 })
 
-globalStyle(`${spanStyle} > div > h4`, {
+globalStyle(`${spanStyle} > div > h3`, {
   marginTop: 10,
   marginBottom: 10,
   fontSize: '20px',
