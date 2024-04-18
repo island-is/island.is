@@ -74,7 +74,7 @@ const Card = ({
           className={styles.title}
           paddingY={2}
         >
-          <Text as="h4" fontWeight="semiBold">
+          <Text as="h2" fontWeight="semiBold">
             {card.title}
           </Text>
         </Box>
