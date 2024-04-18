@@ -283,10 +283,17 @@ export const caseListInclude: Includeable[] = [
     as: 'registrar',
     include: [{ model: Institution, as: 'institution' }],
   },
+  {
+    model: DateLog,
+    as: 'dateLogs',
+    required: false,
+    where: { dateType: { [Op.in]: dateTypes } },
+  },
 ]
 
 export const listOrder: OrderItem[] = [
   [{ model: Defendant, as: 'defendants' }, 'created', 'ASC'],
+  [{ model: DateLog, as: 'dateLogs' }, 'created', 'DESC'],
 ]
 
 @Injectable()
