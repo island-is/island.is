@@ -9,6 +9,7 @@ import { WorkflowID } from './git-action-status'
 
   const diffWeight = (s: string[]) => s.length
   const rev =
+    process.env.TEST_EVERYTHING ? "rebuild" : 
     process.env.GITHUB_EVENT_NAME === 'pull_request'
       ? await findBestGoodRefPR(
           diffWeight,

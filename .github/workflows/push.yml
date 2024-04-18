@@ -314,6 +314,15 @@ jobs:
         if: steps.node-modules.outputs.cache-hit != 'true'
         run: ./scripts/ci/10_prepare-host-deps.sh
 
+      - name: Set Test Everything true
+        run: echo "TEST_EVERYTHING=true" >> $GITHUB_ENV
+        if: github.event_name == 'pull_request' && contains(github.event.pull_request.labels.*.name, 'test everything')
+
+      - name: Set Test Everything false
+        run: echo "TEST_EVERYTHING=false" >> $GITHUB_ENV
+        if: github.event_name != 'pull_request' || !contains(github.event.pull_request.labels.*.name, 'test everything')
+
+
       - name: Preparing BASE tags
         id: git_nx_base
         env:
