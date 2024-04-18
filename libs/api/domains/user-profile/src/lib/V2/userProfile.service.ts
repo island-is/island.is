@@ -119,28 +119,9 @@ export class UserProfileServiceV2 {
   }
 
   async getActorProfiles(user: User): Promise<ActorProfileResponse> {
-    const actorProfiles = await this.v2UserProfileApiWithAuth(user)
+    return this.v2UserProfileApiWithAuth(user)
       .meUserProfileControllerGetActorProfiles()
       .catch((e) => handleError(e, `getActorProfile error`))
-
-    const profilesWithNames: ActorProfile[] = await Promise.all(
-      actorProfiles.data.map(async (actorProfile) => {
-        try {
-          const identity = await this.identityService.getIdentity(
-            actorProfile.fromNationalId,
-          )
-
-          return {
-            ...actorProfile,
-            fromName: identity?.name,
-          }
-        } catch {
-          return actorProfile
-        }
-      }),
-    )
-
-    return { ...actorProfiles, data: profilesWithNames }
   }
 
   async updateActorProfile(

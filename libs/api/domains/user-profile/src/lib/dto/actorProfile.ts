@@ -6,9 +6,6 @@ export class ActorProfile {
   @Field(() => String)
   fromNationalId!: string
 
-  @Field(() => String, { nullable: true })
-  fromName?: string
-
   @Field(() => Boolean)
   emailNotifications!: boolean
 }

@@ -1,4 +1,13 @@
 import { Args, Mutation, Query, Resolver } from '@nestjs/graphql'
+
+import { IdentityClientService } from '@island.is/clients/identity'
+import type { User } from '@island.is/auth-nest-tools'
+import {
+  IdsUserGuard,
+  ScopesGuard,
+  CurrentUser,
+} from '@island.is/auth-nest-tools'
+
 import { ConfirmEmailVerificationInput } from './dto/confirmEmailVerificationInput'
 import { ConfirmSmsVerificationInput } from './dto/confirmSmsVerificationInput'
 import { CreateSmsVerificationInput } from './dto/createSmsVerificationInput'
@@ -10,19 +19,11 @@ import { UserProfile } from './userProfile.model'
 import { ConfirmResponse, Response } from './response.model'
 import { DeleteIslykillSettings } from './models/deleteIslykillSettings.model'
 import { UserProfileService } from './userProfile.service'
-import type { User } from '@island.is/auth-nest-tools'
-import {
-  IdsUserGuard,
-  ScopesGuard,
-  CurrentUser,
-} from '@island.is/auth-nest-tools'
 import { UseGuards } from '@nestjs/common'
 import { UserDeviceToken } from './userDeviceToken.model'
 import { UserDeviceTokenInput } from './dto/userDeviceTokenInput'
 import { DeleteTokenResponse } from './dto/deleteTokenResponse'
 import { UserProfileLocale } from './models/userProfileLocale.model'
-import { ActorProfile, ActorProfileResponse } from './dto/actorProfile'
-import { UpdateActorProfileInput } from './dto/updateActorProfileInput'
 
 @UseGuards(IdsUserGuard, ScopesGuard)
 @Resolver()
@@ -41,11 +42,6 @@ export class UserProfileResolver {
     @CurrentUser() user: User,
   ): Promise<UserProfileLocale | undefined> {
     return this.userUserProfileService.getUserProfileLocale(user)
-  }
-
-  @Query(() => ActorProfileResponse, { name: 'userProfileActorProfiles' })
-  getActorProfiles(@CurrentUser() user: User): Promise<ActorProfileResponse> {
-    return this.userUserProfileService.getActorProfiles(user)
   }
 
   @Mutation(() => UserProfile, { nullable: true })
@@ -126,13 +122,5 @@ export class UserProfileResolver {
     @CurrentUser() user: User,
   ): Promise<DeleteTokenResponse> {
     return await this.userUserProfileService.deleteDeviceToken(input, user)
-  }
-
-  @Mutation(() => ActorProfile, { name: 'userProfileUpdateActorProfile' })
-  async updateActorProfile(
-    @Args('input') input: UpdateActorProfileInput,
-    @CurrentUser() user: User,
-  ): Promise<ActorProfile> {
-    return await this.userUserProfileService.updateActorProfile(input, user)
   }
 }

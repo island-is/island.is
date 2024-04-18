@@ -16,6 +16,7 @@ import { IdentityClientModule } from '@island.is/clients/identity'
 import { FeatureFlagModule } from '@island.is/nest/feature-flags'
 import { UserProfileServiceV2 } from './V2/userProfile.service'
 import { UserProfileServiceV1 } from './V1/userProfile.service'
+import { ActorProfileResolver } from './actorProfile.resolver'
 
 export interface Config {
   userProfileServiceBasePath: string
@@ -31,6 +32,7 @@ export class UserProfileModule {
         UserProfileServiceV2,
         UserProfileServiceV1,
         UserProfileResolver,
+        ActorProfileResolver,
         IslykillService,
         ...[UserProfileApi, V2MeApi].map((Api) => ({
           provide: Api,
