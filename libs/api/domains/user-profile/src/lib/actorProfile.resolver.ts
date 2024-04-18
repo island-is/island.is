@@ -29,7 +29,7 @@ export class ActorProfileResolver {
   ) {}
 
   @Query(() => ActorProfileResponse, { name: 'userProfileActorProfiles' })
-  getActorProfiles(@CurrentUser() user: User): Promise<ActorProfileResponse> {
+  actorProfiles(@CurrentUser() user: User): Promise<ActorProfileResponse> {
     return this.userUserProfileService.getActorProfiles(user)
   }
 
