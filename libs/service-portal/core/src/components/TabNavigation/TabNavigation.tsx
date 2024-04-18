@@ -46,7 +46,7 @@ export const TabNavigation: React.FC<Props> = ({ items, pathname, label }) => {
   }, [items])
 
   const tabChangeHandler = (id?: string) => {
-    if (id && id !== pathname) {
+    if (id && pathname && !(id === pathname || id === activePath.path)) {
       navigate(id)
     }
   }

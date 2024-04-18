@@ -1,4 +1,4 @@
-import { style } from '@vanilla-extract/css'
+import { style, globalStyle } from '@vanilla-extract/css'
 import { theme } from '@island.is/island-ui/theme'
 
 export const subTab = style({
@@ -20,38 +20,118 @@ export const alternativeTabItem = style({
 })
 
 export const tab = style({
-  position: 'relative',
-  padding: '10px',
-  minHeight: `${theme.spacing[7]}px`,
+  height: '100%',
   width: '100%',
-  outline: 0,
-  fontWeight: 'lighter',
-  borderBottom: `1px solid ${theme.color.blue200}`,
-})
-
-export const tabNotSelected = style({
-  selectors: {
-    '&:not(last-child):after': {
-      content: '""',
-      position: 'absolute',
-      width: '1px',
-      margin: `${theme.spacing[1]}px 0`,
-      top: 0,
-      bottom: 0,
-      right: -1,
-      zIndex: theme.zIndex.above,
-      backgroundColor: theme.color.blue200,
-    },
+  position: 'relative',
+  minHeight: `${theme.spacing[7]}px`,
+  fontWeight: theme.typography.light,
+  alignItems: 'center',
+  justifyContent: 'center',
+  border: `1px solid ${theme.color.transparent}`,
+  ':hover': {
+    color: theme.color.blue400,
+    borderColor: theme.color.transparent,
+    borderBottomColor: theme.color.blue400,
   },
 })
 
 export const tabSelected = style({
+  fontWeight: theme.typography.semiBold,
+  color: theme.color.blue400,
+  background: `linear-gradient(180deg, ${theme.color.transparent} 50%, ${theme.color.white} 50%)`,
+  '::after': {
+    backgroundColor: theme.color.white,
+    position: 'absolute',
+    content: '',
+    top: 0,
+    left: 0,
+    height: '50%',
+    width: '100%',
+    border: `1px solid ${theme.color.blue200}`,
+    borderBottom: 'none',
+    borderTopRightRadius: 10,
+    borderTopLeftRadius: 10,
+  },
+})
+
+export const tabNotSelected = style({
+  borderBottomColor: theme.color.blue200,
+
   selectors: {
-    '&:first-child': {
-      borderLeft: 'none',
+    [`&:not(:has(+ ${tabSelected})):after`]: {
+      content: '""',
+      position: 'absolute',
+      width: '1px',
+      margin: `${theme.spacing[1]}px 0`,
+      backgroundColor: theme.color.blue200,
+      top: 0,
+      bottom: 0,
+      right: -1,
+      zIndex: theme.zIndex.above,
     },
-    '&:last-child': {
-      borderRight: 'none',
+    [`&:has(+ ${tabSelected})`]: {
+      borderColor: 'transparent',
+    },
+    [`${tabSelected} + &`]: {
+      borderColor: 'transparent',
     },
   },
+})
+
+export const tabText = style({
+  zIndex: theme.zIndex.above,
+})
+
+globalStyle(`${tabSelected}:not(:last-of-type) span:after`, {
+  position: 'absolute',
+  content: '',
+  right: 'calc(-100% + 1px)',
+  bottom: -1,
+  height: '60%',
+  width: '100%',
+  border: `1px solid ${theme.color.blue200}`,
+  borderRight: 'none',
+  borderTop: 'none',
+  borderBottomLeftRadius: 10,
+  pointerEvents: 'none',
+})
+
+globalStyle(`${tabSelected}:last-of-type span:after`, {
+  position: 'absolute',
+  content: '',
+  right: 'calc(-100% + 1px)',
+  bottom: -1,
+  height: '60%',
+  width: '100%',
+  border: `1px solid ${theme.color.blue200}`,
+  borderTop: 'none',
+  borderBottom: 'none',
+  pointerEvents: 'none',
+})
+
+globalStyle(`${tabSelected}:first-of-type span:before`, {
+  position: 'absolute',
+  content: '',
+  left: `calc(-100% + 1px)`,
+  bottom: -1,
+  height: '60%',
+  width: '100%',
+  border: `1px solid ${theme.color.blue200}`,
+  borderTop: 'none',
+  borderBottom: 'none',
+  pointerEvents: 'none',
+})
+
+globalStyle(`${tabSelected}:not(:first-of-type) span:before`, {
+  position: 'absolute',
+  content: '',
+  left: `calc(-100% + 1px)`,
+  bottom: -1,
+  height: '60%',
+  width: '100%',
+  border: `1px solid ${theme.color.blue200}`,
+  borderLeft: 'none',
+  borderTop: 'none',
+  borderBottomRightRadius: 10,
+  pointerEvents: 'none',
 })

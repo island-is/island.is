@@ -84,7 +84,12 @@ export const TabBar = ({ tabs, variant = 'default', ...boxProps }: Props) => {
   }
 
   return (
-    <Box className={styles.tabBar} width="full" {...boxProps}>
+    <Box
+      className={styles.tabBar}
+      background="blue100"
+      width="full"
+      {...boxProps}
+    >
       {tabItems}
     </Box>
   )

@@ -1,11 +1,11 @@
-import { FocusableBox, Text } from '@island.is/island-ui/core'
+import { Box, FocusableBox, Text } from '@island.is/island-ui/core'
 import cn from 'classnames'
 import * as styles from './TabItem.css'
 import { Ref, forwardRef } from 'react'
 
 export interface TabItemProps {
   id: string
-  active: boolean
+  active?: boolean
   onClick: () => void
   onKeyDown: (code: string) => void
   name: string
@@ -14,7 +14,7 @@ export interface TabItemProps {
 }
 
 export const TabItem = forwardRef<HTMLElement, TabItemProps>(
-  ({ id, active, onClick, onKeyDown, name, variant }, ref) => {
+  ({ id, active = false, onClick, onKeyDown, name, variant }, ref) => {
     if (variant === 'alternative') {
       return (
         <FocusableBox
@@ -42,16 +42,16 @@ export const TabItem = forwardRef<HTMLElement, TabItemProps>(
         </FocusableBox>
       )
     }
+
     return (
       <FocusableBox
-        component="button"
         key={id}
         display="flex"
         tabIndex={active ? 0 : -1}
+        component="button"
         role="tab"
         id={id}
         aria-selected={active}
-        padding={1}
         onClick={onClick}
         onKeyDown={(e) => onKeyDown(e.code)}
         ref={ref}
@@ -59,16 +59,8 @@ export const TabItem = forwardRef<HTMLElement, TabItemProps>(
           [styles.tabSelected]: active,
           [styles.tabNotSelected]: !active,
         })}
-        alignItems="center"
-        justifyContent="center"
-        background={active ? 'white' : 'blue100'}
       >
-        <Text
-          fontWeight={active ? 'medium' : 'light'}
-          color={active ? 'blue400' : 'black'}
-        >
-          {name}
-        </Text>
+        <span className={cn({ [styles.tabText]: active })}>{name}</span>
       </FocusableBox>
     )
   },
