@@ -30,14 +30,4 @@ export class DateLogService {
       this.logger.error('Failed to create date log', error)
     }
   }
-
-  async findLatestDateTypeByCaseId(dateType: DateType, caseId: string) {
-    return this.dateLogModel.findOne({
-      where: {
-        caseId,
-        dateType,
-      },
-      order: [['created', 'DESC']],
-    })
-  }
 }
