@@ -1,7 +1,7 @@
 #!/bin/bash
 set -euxo pipefail
 
-DIR="$(cd "$(dirname "${BASH_SOURCE[0]}")" >/dev/null 2>&1 && pwd)"
+DIR="$( cd "$( dirname "${BASH_SOURCE[0]}" )" >/dev/null 2>&1 && pwd )"
 
 # shellcheck disable=SC1091
 source "$DIR"/_common.sh
@@ -28,5 +28,3 @@ export APP=$1
 # $PROJECT_ROOT/scripts/ci/90_docker-next.sh
 # $PROJECT_ROOT/scripts/ci/90_docker-static.sh
 # $PROJECT_ROOT/scripts/ci/90_docker-cypress.sh
-
-echo "Finished CI"

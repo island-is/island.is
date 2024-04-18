@@ -36,6 +36,7 @@ import { buildPaymentState } from '@island.is/application/utils'
 import { ApiScope } from '@island.is/auth/scopes'
 import { Features } from '@island.is/feature-flags'
 import { getBuyerNationalId } from '../utils/getBuyerNationalid'
+import { getExtraData } from '../utils/getExtraData'
 
 const pruneInDaysAtMidnight = (application: Application, days: number) => {
   const date = new Date(application.created)
@@ -193,6 +194,7 @@ const template: ApplicationTemplate<
             triggerEvent: DefaultEvents.SUBMIT,
           }),
         ],
+        extraData: getExtraData,
       }),
       [States.REVIEW]: {
         entry: 'assignUsers',
