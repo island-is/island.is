@@ -53,11 +53,11 @@ export const FilledBlue = () => (
 export const License = () => (
   <Box background="white" padding={3}>
     <RadioButton
-      label="Ég staðfesti að nota núverandi mynd í ökuskirteini"
+      label="Ég staðfesti að nota núverandi mynd."
       backgroundColor="blue"
       large
       license
-      imageSrc="https://images.ctfassets.net/8k0h54kbe6bj/25reLCy2oQHloIApkwu4Xs/56e99fcf69f83f052af9095e1a888f0c/Placeholder.png"
+      imageSrc="https://images.ctfassets.net/8k0h54kbe6bj/5u0bSKny81QfKj3gC3tu0s/1415f3e408bd9097b8d5c8c4cfcc8425/Photolicense.png"
       signature="https://images.ctfassets.net/8k0h54kbe6bj/1hwZOVWlHWzO6dq7QAJmfy/97eb1cdc7a2e2af3dec222771e1fda73/Signaturesignature.png"
     />
   </Box>

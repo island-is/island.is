@@ -34,11 +34,18 @@ export const label = style({
   display: 'flex',
   fontSize: theme.typography.baseFontSize,
   lineHeight: theme.typography.baseLineHeight,
+  '@media': {
+    [`screen and (min-width: ${theme.breakpoints.sm}px)`]: {
+      height: 'auto',
+    },
+  },
 })
 export const labelText = style({
   display: 'flex',
   flexDirection: 'column',
   width: '100%',
+  height: '100%',
+  justifyContent: 'space-between',
 })
 export const largeLabel = style({
   alignItems: 'center',
@@ -126,29 +133,71 @@ export const licenseContainer = style({
 })
 
 export const licenseLabel = style({
-  flexDirection: 'column',
-  alignItems: 'flex-start',
+  flexDirection: 'row-reverse',
+  alignSelf: 'flex-start',
+  height: '135px',
+  '@media': {
+    [`screen and (min-width: ${theme.breakpoints.sm}px)`]: {
+      flexDirection: 'column',
+      alignItems: 'center',
+    },
+  },
 })
 
 export const imageContainer = style({
   marginLeft: 0,
 })
 
+export const signatureImageContainer = style({
+  width: 'calc(100% + 32px)',
+  position: 'relative',
+  right: theme.spacing[4],
+})
+
 export const image = style({
   borderRadius: theme.border.radius.standard,
-  height: '100%',
-  width: '180px',
-  objectFit: 'cover',
+  width: '96px',
+  height: '128px',
+  '@media': {
+    [`screen and (min-width: ${theme.breakpoints.sm}px)`]: {
+      height: '100%',
+      width: '180px',
+    },
+  },
+})
+
+export const signatureImage = style({
+  '@media': {
+    [`screen and (min-width: ${theme.breakpoints.sm}px)`]: {
+      position: 'static',
+    },
+  },
 })
 
 export const licenseText = style({
-  paddingLeft: theme.spacing[5],
-  maxWidth: '132px',
-  position: 'relative',
-  bottom: theme.spacing[1],
+  alignSelf: 'self-start',
+  paddingRight: theme.spacing[2],
+  order: 1,
+  maxWidth: '144px',
+  '@media': {
+    [`screen and (min-width: ${theme.breakpoints.sm}px)`]: {
+      order: 0,
+      bottom: theme.spacing[1],
+      position: 'relative',
+      paddingLeft: theme.spacing[5],
+      maxWidth: '140px',
+    },
+  },
 })
 
 export const licenseCheckmark = style({
   position: 'relative',
-  top: theme.spacing[2],
+  alignSelf: 'self-start',
+  order: 2,
+  '@media': {
+    [`screen and (min-width: ${theme.breakpoints.sm}px)`]: {
+      order: 0,
+      top: theme.spacing[2],
+    },
+  },
 })

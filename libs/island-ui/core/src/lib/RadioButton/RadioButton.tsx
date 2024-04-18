@@ -111,13 +111,22 @@ export const RadioButton = ({
         htmlFor={id}
       >
         {imageSrc && (
-          <Box className={styles.imageContainer}>
-            <img src={imageSrc} alt="image" className={styles.image} />
-          </Box>
-        )}
-        {signature && (
-          <Box className={styles.imageContainer}>
-            <img src={signature} alt="image" />
+          <Box flexDirection="column" display="flex">
+            <Box className={styles.imageContainer}>
+              <img src={imageSrc} alt="image" className={styles.image} />
+            </Box>
+
+            {signature && (
+              <Hidden below="sm">
+                <Box className={styles.imageContainer}>
+                  <img
+                    src={signature}
+                    alt="image"
+                    className={styles.signatureImage}
+                  />
+                </Box>
+              </Hidden>
+            )}
           </Box>
         )}
         <div
@@ -138,6 +147,19 @@ export const RadioButton = ({
           <Text as="span" fontWeight={checked ? 'semiBold' : 'light'}>
             {label}
           </Text>
+          {signature && (
+              <Hidden above="sm">
+                <Box className={cn(styles.imageContainer, {
+                  [styles.signatureImageContainer]: signature
+                })}>
+                  <img
+                    src={signature}
+                    alt="image"
+                    className={styles.signatureImage}
+                  />
+                </Box>
+              </Hidden>
+            )}
           {subLabel && large && (
             <Text
               as="span"
