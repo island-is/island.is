@@ -15,7 +15,7 @@ export class ListItemSyncService implements CmsSyncProvider<IListItem> {
   processSyncData(entries: processSyncDataInput<ILink>) {
     return entries.filter(
       (entry: Entry<any>): entry is IListItem =>
-        entry.sys.contentType.sys.id === 'listItem' && entry.fields.relativeUrl,
+        entry.sys.contentType.sys.id === 'listItem' && entry.fields.title,
     )
   }
 

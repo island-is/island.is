@@ -12,14 +12,18 @@ export const GET_LIST_PAGE_QUERY = gql`
   }
 `
 
+// TODO: also query the input so we can req res match
 export const GET_LIST_ITEMS_QUERY = gql`
   query GetListItems($input: GetListItemsInput!) {
     getListItems(input: $input) {
-      id
-      title
-      thumbnailContent {
-        ...HtmlFields
+      items {
+        id
+        title
+        thumbnailContent {
+          ...HtmlFields
+        }
       }
+      total
     }
   }
   ${htmlFields}

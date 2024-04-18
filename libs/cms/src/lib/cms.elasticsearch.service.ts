@@ -36,10 +36,9 @@ import { CategoryPage } from './models/categoryPage.model'
 import { GetCustomPageInput } from './dto/getCustomPage.input'
 import { getElasticsearchIndex } from '@island.is/content-search-index-manager'
 import { CustomPage } from './models/customPage.model'
-import { GetListPageInput } from './dto/GetListPage.input'
+import { GetListPageInput } from './dto/getListPage.input'
 import { ListPage } from './models/listPage.model'
 import { GetListItemsInput } from './dto/getListItems.input'
-import { ListItem } from './models/listItem.model'
 import { ListItemResponse } from './models/listItemResponse.model'
 
 @Injectable()
@@ -398,17 +397,80 @@ export class CmsElasticsearchService {
     })
   }
 
-  // TODO: paginate
   async getListItems(input: GetListItemsInput): Promise<ListItemResponse> {
-    const response = await this.elasticService.getSingleDocumentByMetaData(
-      getElasticsearchIndex(input.lang),
+    const must: Record<string, unknown>[] = [
       {
-        tags: [{ type: 'referencedBy', key: input.listPageId }],
-        types: ['webListItem'],
+        term: {
+          type: {
+            value: 'webListItem',
+          },
+        },
       },
-    )
+      {
+        nested: {
+          path: 'tags',
+          query: {
+            bool: {
+              must: [
+                {
+                  term: {
+                    'tags.key': input.listPageId,
+                  },
+                },
+                {
+                  term: {
+                    'tags.type': 'referencedBy',
+                  },
+                },
+              ],
+            },
+          },
+        },
+      },
+    ]
 
-    response.hits.
+    const wildcardSearch = {
+      wildcard: {
+        title: '*',
+      },
+    }
+
+    let queryString = input.queryString ? input.queryString.toLowerCase() : ''
+
+    if (input.lang === 'is') {
+      queryString = queryString.replace('`', '')
+    }
+
+    const multimatchSearch = {
+      multi_match: {
+        query: queryString,
+        fields: ['title'],
+        type: 'phrase_prefix',
+      },
+    }
+
+    must.push(!queryString ? wildcardSearch : multimatchSearch)
+
+    const size = input.size ?? 10
+
+    const response: ApiResponse<SearchResponse<MappedData>> =
+      await this.elasticService.findByQuery(getElasticsearchIndex(input.lang), {
+        query: {
+          bool: {
+            must,
+          },
+        },
+        size,
+        from: ((input.page ?? 1) - 1) * size,
+      })
+
+    return {
+      input,
+      items: response.body.hits.hits
+        .map((item) => JSON.parse(item._source.response ?? 'null'))
+        .filter(Boolean),
+      total: response.body.hits.total.value,
+    }
   }
 
   async getVacancies(index: string) {

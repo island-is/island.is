@@ -4,11 +4,11 @@ import { IsString } from 'class-validator'
 
 @InputType()
 export class GetListPageInput {
-  @Field()
+  @Field(() => String)
   @IsString()
   slug!: string
 
-  @Field()
+  @Field(() => String)
   @IsString()
   lang: ElasticsearchIndexLocale = 'is'
 }

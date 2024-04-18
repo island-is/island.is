@@ -1,13 +1,16 @@
 import { CacheField } from '@island.is/nest/graphql'
-import { Field, ID, ObjectType } from '@nestjs/graphql'
-import { SliceUnion, mapDocument } from '../unions/slice.union'
-import { ListPage, mapListPage } from './listPage.model'
-import { IListItem } from '../generated/contentfulTypes'
+import { Field, Int, ObjectType } from '@nestjs/graphql'
+import { GetListItemsInput } from '../dto/getListItems.input'
+import { ListItem } from './listItem.model'
 
 @ObjectType()
 export class ListItemResponse {
-    @Field()
-    // TODO: implement
+  @CacheField(() => GetListItemsInput)
+  input!: GetListItemsInput
 
+  @CacheField(() => [ListItem])
+  items!: ListItem[]
+
+  @Field(() => Int)
+  total!: number
 }
-
