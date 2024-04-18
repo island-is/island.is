@@ -2,6 +2,7 @@ import { addEventListener } from '@react-native-community/netinfo'
 import { impactAsync, ImpactFeedbackStyle } from 'expo-haptics'
 import { getPresentedNotificationsAsync } from 'expo-notifications'
 import {
+  Alert,
   AppState,
   AppStateStatus,
   DeviceEventEmitter,
@@ -22,7 +23,6 @@ import {
 } from '../app-lock'
 import { ButtonRegistry, ComponentRegistry as CR } from '../component-registry'
 import { isIos } from '../devices'
-import { getRightButtons } from '../get-main-root'
 import { handleQuickAction } from '../quick-actions'
 
 import { handleNotificationResponse } from './setup-notifications'
@@ -184,14 +184,12 @@ export function setupEventHandlers() {
 
   // Subscribe to network status changes
   addEventListener(({ isConnected, type }) => {
-    const oldIsConnected = offlineStore.getState().isConnected
+    const offlineStoreState = offlineStore.getState()
 
     if (!isConnected) {
+      Alert.alert('Global event no connection')
       // Only update the store if there is no connection
-      offlineStore.getState().setNetInfoNoConnection()
-    } else if (!oldIsConnected && isConnected) {
-      // if the connection is back, reset the connection state
-      offlineStore.getState().resetConnectionState()
+      offlineStoreState.setNetInfoNoConnection()
     }
   })
 }

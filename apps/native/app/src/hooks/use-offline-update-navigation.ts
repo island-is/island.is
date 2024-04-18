@@ -1,36 +1,34 @@
+import { useNetInfo } from '@react-native-community/netinfo'
+import { theme } from '@ui'
 import { useEffect } from 'react'
+import { Alert } from 'react-native'
 import { Navigation, OptionsTopBar } from 'react-native-navigation'
 
 import { useOfflineStore } from '../stores/offline-store'
-import { preferencesStore } from '../stores/preferences-store'
 import {
   ButtonRegistry,
   ComponentRegistry as CR,
 } from '../utils/component-registry'
-import { getThemeWithPreferences } from '../utils/get-theme-with-preferences'
 import { testIDs } from '../utils/test-ids'
 
-export const getOfflineButton = () => {
-  const theme = getThemeWithPreferences(preferencesStore.getState())
-
-  return {
-    accessibilityLabel: 'Offline',
-    id: ButtonRegistry.OfflineButton,
-    testID: testIDs.TOPBAR_OFFLINE_BUTTON,
-    icon: require('../assets/icons/warning.png'),
-    iconBackground: {
-      color: 'transparent',
-      cornerRadius: 8,
-      width: theme.spacing[4],
-      height: theme.spacing[4],
-    },
-  }
+export const offlineButton = {
+  accessibilityLabel: 'Offline',
+  id: ButtonRegistry.OfflineButton,
+  testID: testIDs.TOPBAR_OFFLINE_BUTTON,
+  icon: require('../assets/icons/warning.png'),
+  iconBackground: {
+    color: 'transparent',
+    cornerRadius: 8,
+    width: theme.spacing[4],
+    height: theme.spacing[4],
+  },
 }
 
 export const useOfflineUpdateNavigation = (
   componentId: string,
   optionsTopBarRightButtons: OptionsTopBar['rightButtons'],
 ) => {
+  const netInfo = useNetInfo()
   const pastIsConnected = useOfflineStore(
     ({ pastIsConnected }) => pastIsConnected,
   )
@@ -48,10 +46,13 @@ export const useOfflineUpdateNavigation = (
   const setBannerHasBeenShown = useOfflineStore(
     ({ setBannerHasBeenShown }) => setBannerHasBeenShown,
   )
+  const resetConnectionState = useOfflineStore(
+    ({ resetConnectionState }) => resetConnectionState,
+  )
 
   const updateNavigationOptions = () => {
-    const offlineButton = getOfflineButton()
-    // Update the navigation options
+    // Update the navigation top bar right buttons with additional offline button
+    // or remove it if the user is connected
     Navigation.mergeOptions(componentId, {
       topBar: {
         rightButtons: isConnected
@@ -62,7 +63,7 @@ export const useOfflineUpdateNavigation = (
       },
     })
 
-    if (!showBanner && !bannerHasBeenShown && !isConnected) {
+    if (showBanner && !bannerHasBeenShown && !isConnected) {
       void Navigation.showOverlay({
         component: {
           id: CR.OfflineBanner,
@@ -74,8 +75,10 @@ export const useOfflineUpdateNavigation = (
   }
 
   useEffect(() => {
-    if (currentComponentId === componentId && isConnected !== pastIsConnected) {
-      updateNavigationOptions()
+    if (currentComponentId === componentId) {
+      if (!isConnected || (isConnected && isConnected !== pastIsConnected)) {
+        updateNavigationOptions()
+      }
     }
   }, [isConnected, currentComponentId])
 
@@ -94,4 +97,11 @@ export const useOfflineUpdateNavigation = (
       screenEventListener.remove()
     }
   }, [])
+
+  useEffect(() => {
+    if (netInfo.isConnected && !pastIsConnected) {
+      Alert.alert('Resetting connection state')
+      resetConnectionState()
+    }
+  }, [netInfo.isConnected])
 }

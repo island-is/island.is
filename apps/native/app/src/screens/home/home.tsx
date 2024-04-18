@@ -12,6 +12,8 @@ import {
   ListRenderItemInfo,
   Platform,
   RefreshControl,
+  Text,
+  View,
 } from 'react-native'
 import CodePush from 'react-native-code-push'
 import { NavigationFunctionComponent } from 'react-native-navigation'
@@ -25,6 +27,7 @@ import { createNavigationOptionHooks } from '../../hooks/create-navigation-optio
 import { useActiveTabItemPress } from '../../hooks/use-active-tab-item-press'
 import { useOfflineUpdateNavigation } from '../../hooks/use-offline-update-navigation'
 import { notificationsStore } from '../../stores/notifications-store'
+import { offlineStore } from '../../stores/offline-store'
 import { useUiStore } from '../../stores/ui-store'
 import { getRightButtons } from '../../utils/get-main-root'
 import { testIDs } from '../../utils/test-ids'
@@ -145,6 +148,21 @@ export const MainHomeScreen: NavigationFunctionComponent = ({
 
   const data = [
     {
+      id: 'debug',
+      component: (
+        <View>
+          <Text>
+            {JSON.stringify({
+              isConnected: offlineStore.getState().isConnected,
+              pastIsConnected: offlineStore.getState().pastIsConnected,
+              showBanner: offlineStore.getState().showBanner,
+              bannerHasBeenShown: offlineStore.getState().bannerHasBeenShown,
+            })}
+          </Text>
+        </View>
+      ),
+    },
+    {
       id: 'onboarding',
       component: <OnboardingModule />,
     },
@@ -201,6 +219,7 @@ export const MainHomeScreen: NavigationFunctionComponent = ({
         }
       />
       <TopLine scrollY={scrollY} />
+
       <BottomTabsIndicator index={2} total={5} />
     </>
   )
