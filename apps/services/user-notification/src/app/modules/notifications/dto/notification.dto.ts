@@ -10,18 +10,25 @@ import {
   IsOptional,
   IsUUID,
   IsBoolean,
+  IsEnum,
 } from 'class-validator'
 import { Type } from 'class-transformer'
+import { Locale } from '@island.is/shared/types'
 
 
 export class ExtendedPaginationDto extends PaginationDto {
-  @IsOptional()
-  @ApiPropertyOptional({
-    description: 'locale',
-    type: 'string',
-  })
-  @IsString()
-  locale!: string
+  // @IsOptional()
+  // @ApiPropertyOptional({
+  //   description: 'locale',
+  //   type: 'string',
+  // })
+  // @IsString()
+
+  // @IsEnum(Locale)
+  // @IsOptional()
+  // @ApiProperty({ enum: Locale })
+
+  locale!: Locale
 }
 
 class ArgItem {

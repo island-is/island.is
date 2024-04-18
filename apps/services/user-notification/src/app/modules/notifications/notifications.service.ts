@@ -27,6 +27,7 @@ import {
   UnseenNotificationsCountDto,
   UnreadNotificationsCountDto,
 } from './dto/notification.dto'
+import { mapToLocale } from './utils'
 
 
 const ACCESS_TOKEN = process.env.CONTENTFUL_ACCESS_TOKEN
@@ -87,7 +88,7 @@ export class NotificationsService {
 
   async getSenderOrganization(
     senderId: string,
-    locale: string,
+    locale: Locale,
   ): Promise<SenderOrganization> {
     const cacheKey = `org-${senderId}-${locale}`
     const cachedOrganization = await this.cacheManager.get<SenderOrganization>(cacheKey)
@@ -119,7 +120,7 @@ export class NotificationsService {
   async formatAndMapNotification(
     notification: Notification,
     templateId: string,
-    locale: string,
+    locale: Locale,
     template?: HnippTemplate,
   ): Promise<RenderedNotificationDto> {
     try {
@@ -146,13 +147,13 @@ export class NotificationsService {
           } else {
             this.logger.warn('title not found ', {
               senderId: notification.senderId,
-              locale: locale,
+              locale,
             })
           }
         } catch (error) {
           this.logger.error('error trying to get org title', {
             senderId: notification.senderId,
-            locale: locale,
+            locale,
           })
         }
       }
@@ -184,7 +185,9 @@ export class NotificationsService {
     }
   }
 
-  async getTemplates( locale: string,): Promise<HnippTemplate[]> {
+  async getTemplates(
+    locale: Locale,
+  ): Promise<HnippTemplate[]> {
     const cacheKey = `templates-${locale}`
 
     // Try to retrieve the templates from cache first
@@ -233,7 +236,7 @@ export class NotificationsService {
 
   async getTemplate(
     templateId: string,
-    locale?: string,
+    locale: Locale,
   ): Promise<HnippTemplate> {
     const cacheKey = `template-${templateId}-${locale}`
 
@@ -284,8 +287,8 @@ export class NotificationsService {
   /**
    * Checks if the arguments provided in the request body are valid for the template and checks if the number of arguments match
    */
-  async validate(templateId: string, args: ArgumentDto[]) {
-    const template = await this.getTemplate(templateId)
+  async validate(templateId: string, args: ArgumentDto[],locale: Locale) {
+    const template = await this.getTemplate(templateId,locale)
 
     if (!this.validateArgCounts(args, template)) {
       throw new BadRequestException(
@@ -345,10 +348,10 @@ export class NotificationsService {
   async findOne(
     user: User,
     id: number,
-    locale: string,
+    locale: Locale,
   ): Promise<RenderedNotificationDto> {
     const notification = await this.notificationModel.findOne({
-      where: { id: id, recipient: user.nationalId },
+      where: { id, recipient: user.nationalId },
     })
 
     if (!notification) {
@@ -366,7 +369,8 @@ export class NotificationsService {
     user: User,
     query: ExtendedPaginationDto,
   ): Promise<PaginatedNotificationDto> {
-    const templates = await this.getTemplates(query.locale)
+    const locale = query.locale as unknown as Locale
+    const templates = await this.getTemplates(locale)
     const paginatedListResponse = await paginate({
       Model: this.notificationModel,
       limit: query.limit || 10,
@@ -387,7 +391,7 @@ export class NotificationsService {
           return this.formatAndMapNotification(
             notification,
             notification.templateId,
-            query.locale,
+            locale,
             template,
           )
         } else {
@@ -406,7 +410,7 @@ export class NotificationsService {
     user: User,
     id: number,
     updateNotificationDto: UpdateNotificationDto,
-    locale: string,
+    locale: Locale,
   ): Promise<RenderedNotificationDto> {
     const [numberOfAffectedRows, [updatedNotification]] =
       await this.notificationModel.update(updateNotificationDto, {
@@ -423,7 +427,7 @@ export class NotificationsService {
       return this.formatAndMapNotification(
         updatedNotification,
         updatedNotification.templateId,
-        locale,
+        locale as Locale,
       )
     }
   }

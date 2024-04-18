@@ -22,6 +22,7 @@ import { CreateNotificationResponse } from './dto/createNotification.response'
 import { CreateHnippNotificationDto } from './dto/createHnippNotification.dto'
 import { HnippTemplate } from './dto/hnippTemplate.response'
 import { NotificationsService } from './notifications.service'
+import { Locale } from '@island.is/shared/types'
 
 @Controller('notifications')
 @ApiExtraModels(CreateNotificationDto)
@@ -41,8 +42,9 @@ export class NotificationsController {
   @Get('/templates')
   @Version('1')
   async getNotificationTemplates(
-    @Query('locale') locale: string,
+    @Query('locale') queryLocale: string = 'is',
   ): Promise<HnippTemplate[]> {
+    const locale: Locale = queryLocale as Locale;  // Asserting directly
     this.logger.info(`Fetching hnipp templates for locale: ${locale}`)
     return await this.notificationsService.getTemplates(locale)
   }
@@ -66,7 +68,7 @@ export class NotificationsController {
   async getNotificationTemplate(
     @Param('templateId')
     templateId: string,
-    @Query('locale') locale: string,
+    @Query('locale') locale: Locale,
   ): Promise<HnippTemplate> {
     return await this.notificationsService.getTemplate(templateId, locale)
   }

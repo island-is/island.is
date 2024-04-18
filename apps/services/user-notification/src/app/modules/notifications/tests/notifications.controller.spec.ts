@@ -68,9 +68,9 @@ describe('NotificationsController', () => {
         .spyOn(notificationsService, 'getTemplates')
         .mockResolvedValue(templates)
 
-      const result = await controller.getNotificationTemplates("is")
+      const result = await controller.getNotificationTemplates()
 
-      expect(notificationsService.getTemplates).toHaveBeenCalledWith("is")
+      expect(notificationsService.getTemplates).toHaveBeenCalledWith()
       expect(result).toEqual(templates)
     })
   })

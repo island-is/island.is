@@ -19,6 +19,8 @@ import {
   ScopesGuard,
 } from '@island.is/auth-nest-tools'
 import type { User } from '@island.is/auth-nest-tools'
+import { Locale } from '@island.is/shared/types'
+
 
 import {
   UpdateNotificationDto,
@@ -84,7 +86,7 @@ export class MeNotificationsController {
   findOne(
     @CurrentUser() user: User,
     @Param('id') id: number,
-    @Query('locale') locale: string,
+    @Query('locale') locale: Locale,
   ): Promise<RenderedNotificationDto> {
     return this.notificationService.findOne(user, id, locale)
   }
@@ -111,7 +113,7 @@ export class MeNotificationsController {
     @CurrentUser() user: User,
     @Param('id') id: number,
     @Body() updateNotificationDto: UpdateNotificationDto,
-    @Query('locale') locale: string,
+    @Query('locale') locale: Locale,
   ): Promise<RenderedNotificationDto> {
     return this.notificationService.update(
       user,

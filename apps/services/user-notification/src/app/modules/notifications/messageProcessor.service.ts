@@ -18,7 +18,6 @@ export class MessageProcessorService {
     message: CreateHnippNotificationDto,
     profile: UserProfileDto,
   ): Promise<Notification> {
-    const loc = profile.locale
 
     const template = await this.notificationsService.getTemplate(
       message.templateId,

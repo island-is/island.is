@@ -78,7 +78,7 @@ describe('NotificationsService', () => {
       .spyOn(service, 'getTemplates')
       .mockImplementation(() => Promise.resolve(mockTemplates))
 
-    const templates = await service.getTemplates("is")
+    const templates = await service.getTemplates()
     expect(templates).toBeInstanceOf(Array)
     expect(templates).toEqual(mockTemplates)
   })
