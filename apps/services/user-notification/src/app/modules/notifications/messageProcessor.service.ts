@@ -1,6 +1,5 @@
 import { Injectable } from '@nestjs/common'
 import { Notification } from './types'
-import { UserProfileDto } from '@island.is/clients/user-profile'
 import { NotificationsService } from './notifications.service'
 import { CreateHnippNotificationDto } from './dto/createHnippNotification.dto'
 
