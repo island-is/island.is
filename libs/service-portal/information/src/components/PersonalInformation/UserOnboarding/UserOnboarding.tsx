@@ -3,18 +3,29 @@ import { Suspense, useEffect, useState } from 'react'
 import { useAuth } from '@island.is/auth/react'
 import { UserProfileScope } from '@island.is/auth/scopes'
 import { Features, useFeatureFlagClient } from '@island.is/react/feature-flags'
+import { AuthDelegationType } from '@island.is/shared/types'
 
 import { useGetUserProfileQuery } from './UserOnboarding.generated'
 import { UserOnboardingModal } from '../UserOnboardingModal/UserOnboardingModal'
 import { showUserOnboardingModal } from '../../../utils/showUserOnboardingModal'
 
 const isDevelopment = process.env.NODE_ENV === 'development'
+// Companies and children don't get the user profile onboarding on IDS yet
+// so we explicitly allow them here.
+const ALLOWED_DELEGATION_TYPES = [
+  AuthDelegationType.ProcurationHolder,
+  AuthDelegationType.LegalGuardian,
+]
 
 const UserOnboarding = () => {
   const { userInfo } = useAuth()
   const { data, loading } = useGetUserProfileQuery({
-    skip: userInfo?.profile.subjectType !== 'legalEntity',
+    skip: !userInfo?.scopes.includes(UserProfileScope.read),
   })
+  const isProcurationHolderOrLegalGuardian =
+    !!userInfo?.profile?.delegationType?.some((type) =>
+      ALLOWED_DELEGATION_TYPES.includes(type),
+    )
 
   const featureFlagCLI = useFeatureFlagClient()
   const [hiddenByFeatureFlag, setHiddenByFeatureFlag] = useState<boolean>(true)
@@ -36,7 +47,7 @@ const UserOnboarding = () => {
     const showTheModal = showUserOnboardingModal(data?.getUserProfile)
 
     if (
-      !hiddenByFeatureFlag &&
+      (!hiddenByFeatureFlag || isProcurationHolderOrLegalGuardian) &&
       !isDevelopment &&
       userInfo.scopes.includes(UserProfileScope.write) &&
       showTheModal
