@@ -110,7 +110,7 @@ export class NotificationsWorkerService implements OnApplicationBootstrap {
 
     const notification = await this.messageProcessor.convertToNotification(
       message,
-      profile.locale,
+      profile.locale as Locale,
     )
 
     await this.notificationDispatch.sendPushNotification({

@@ -38,6 +38,16 @@ export class NotificationsController {
     summary: 'Fetches all notification templates',
     includeNoContentResponse: true,
     response: { status: 200, type: [HnippTemplate] },
+    request: {
+      query: {
+        locale: {
+          required: false,
+          type: 'string',
+          description: 'locale',
+          example: 'en',
+        },
+      },
+    },
   })
   @Get('/templates')
   @Version('1')
@@ -58,6 +68,14 @@ export class NotificationsController {
           type: 'string',
           description: 'ID of the template',
           example: 'HNIPP.POSTHOLF.NEW_DOCUMENT',
+        },
+      },
+      query: {
+        locale: {
+          required: false,
+          type: 'string',
+          description: 'locale',
+          example: 'en',
         },
       },
     },
