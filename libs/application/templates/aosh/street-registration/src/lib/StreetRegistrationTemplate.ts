@@ -124,7 +124,7 @@ const template: ApplicationTemplate<
       },
       [States.DRAFT]: {
         meta: {
-          name: 'Tilkynning um eigendaskipti að tæki',
+          name: 'Tilkynning um götuskráningu tækis',
           status: 'draft',
           actionCard: {
             tag: {
@@ -145,7 +145,7 @@ const template: ApplicationTemplate<
               id: Roles.APPLICANT,
               formLoader: () =>
                 import('../forms/StreetRegistrationForm/index').then((module) =>
-                  Promise.resolve(module.TransferOfMachineOwnershipForm),
+                  Promise.resolve(module.StreetRegistrationForm),
                 ),
               actions: [
                 {

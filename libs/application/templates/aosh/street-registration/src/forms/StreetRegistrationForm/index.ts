@@ -18,8 +18,8 @@ import {
 import { conclusion, externalData, payment } from '../../lib/messages'
 import { getChargeItemCodes } from '../../utils'
 
-export const TransferOfMachineOwnershipForm: Form = buildForm({
-  id: 'TransferOfMachineOwnershipFormDraft',
+export const StreetRegistrationForm: Form = buildForm({
+  id: 'StreetRegistrationFormDraft',
   title: '',
   logo: Logo,
   mode: FormModes.DRAFT,

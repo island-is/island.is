@@ -119,18 +119,6 @@ export const plateDeliverySubSection = buildSubSection({
           },
           required: true,
         }),
-        // buildSubmitField({
-        //   id: 'submit',
-        //   placement: 'footer',
-        //   title: 'Staðfesta',
-        //   actions: [
-        //     {
-        //       event: DefaultEvents.SUBMIT,
-        //       name: 'staðfesta',
-        //       type: 'primary',
-        //     },
-        //   ],
-        // }),
       ],
     }),
   ],
