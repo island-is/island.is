@@ -38,8 +38,8 @@ export const userWithDelegations2: MockUserProfileDto = {
   isRestricted: false,
 }
 
-export const userWitNoDelegations: MockUserProfileDto = {
-  name: 'userWitNoDelegations',
+export const userWithNoDelegations: MockUserProfileDto = {
+  name: 'userWithNoDelegations',
   nationalId: createNationalId('person'),
   mobilePhoneNumber: '1234567',
   email: 'email1@email.com',
@@ -108,10 +108,10 @@ export const mockHnippTemplate: HnippTemplate = {
   args: ['arg1', 'arg2'],
 }
 
-const userProfiles = [
+export const userProfiles = [
   userWithDelegations,
   userWithDelegations2,
-  userWitNoDelegations,
+  userWithNoDelegations,
   userWithEmailNotificationsDisabled,
   userWithDocumentNotificationsDisabled,
   userWithFeatureFlagDisabled,
@@ -122,7 +122,7 @@ const delegations: Record<string, DelegationRecordDTO[]> = {
   [userWithDelegations.nationalId]: [
     {
       fromNationalId: userWithDelegations.nationalId,
-      toNationalId: userWitNoDelegations.nationalId,
+      toNationalId: userWithNoDelegations.nationalId,
       subjectId: faker.datatype.uuid(),
     },
   ],
@@ -136,7 +136,7 @@ const delegations: Record<string, DelegationRecordDTO[]> = {
   [userWithSendToDelegationsFeatureFlagDisabled.nationalId]: [
     {
       fromNationalId: userWithSendToDelegationsFeatureFlagDisabled.nationalId,
-      toNationalId: userWitNoDelegations.nationalId,
+      toNationalId: userWithNoDelegations.nationalId,
       subjectId: faker.datatype.uuid(),
     },
   ],
@@ -149,20 +149,6 @@ export class MockDelegationsService {
     xQueryNationalId: string
   }) {
     return { data: delegations[xQueryNationalId] ?? [] }
-  }
-}
-
-export class MockV2UsersApi {
-  userProfileControllerFindUserProfile({
-    xParamNationalId,
-  }: {
-    xParamNationalId: string
-  }) {
-    return Promise.resolve(
-      userProfiles.find(
-        (u) => u.nationalId === xParamNationalId,
-      ) as UserProfileDto,
-    )
   }
 }
 
