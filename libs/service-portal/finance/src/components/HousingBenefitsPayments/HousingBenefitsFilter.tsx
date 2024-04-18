@@ -51,7 +51,7 @@ const HousingBenefitsFilter = ({
       generateMonthArray(
         MONTHS.map((month) => formatMessage(m[month as keyof typeof m])),
       ),
-    [],
+    [formatMessage],
   )
   const yearOptions = useMemo(() => generateYearArray(2017), [])
 

@@ -22,7 +22,7 @@ export class HmsHousingBenefitsClientService {
       this.apiWithAuth(user).apiVversionPaymentPaymenthistoryPostRaw(input),
     )
 
-    function roundIfDefined(
+    const roundIfDefined = function (
       value: number | undefined | null,
     ): number | undefined {
       return typeof value === 'number' ? Math.round(value) : undefined
