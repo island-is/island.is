@@ -13,7 +13,6 @@ import {
   GridRow,
   Button,
   Text,
-  RadioButton,
 } from '@island.is/island-ui/core'
 import { m } from '../../lib/messages'
 import { EstateTypes, YES } from '../../lib/constants'
