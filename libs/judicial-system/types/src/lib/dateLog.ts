@@ -6,10 +6,10 @@ export const getLatestDateType = (
   dateType: DateType,
   dates?:
     | {
-        created?: string | null
+        created?: string | Date | null
         caseId?: string | null
         dateType?: DateType | null
-        date?: string | null
+        date?: string | Date | null
       }[]
     | null,
 ) => {

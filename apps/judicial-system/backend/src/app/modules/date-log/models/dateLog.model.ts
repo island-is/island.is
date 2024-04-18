@@ -9,6 +9,8 @@ import {
 
 import { ApiProperty, ApiPropertyOptional } from '@nestjs/swagger'
 
+import { DateType } from '@island.is/judicial-system/types'
+
 import { Case } from '../../case/models/case.model'
 
 @Table({
@@ -34,7 +36,7 @@ export class DateLog extends Model {
 
   @Column({ type: DataType.STRING })
   @ApiProperty()
-  dateType!: string
+  dateType!: DateType
 
   @ForeignKey(() => Case)
   @Column({ type: DataType.UUID, allowNull: true })
