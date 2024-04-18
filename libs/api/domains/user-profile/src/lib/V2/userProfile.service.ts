@@ -7,7 +7,6 @@ import {
   V2MeApi,
 } from '@island.is/clients/user-profile'
 import { Auth, AuthMiddleware, User } from '@island.is/auth-nest-tools'
-import { IdentityClientService } from '@island.is/clients/identity'
 
 import { IslykillService } from '../islykill.service'
 import { UserProfile } from '../userProfile.model'
@@ -17,7 +16,6 @@ import { CreateSmsVerificationInput } from '../dto/createSmsVerificationInput'
 import { CreateEmailVerificationInput } from '../dto/createEmalVerificationInput'
 import { ConfirmSmsVerificationInput } from '../dto/confirmSmsVerificationInput'
 import { ConfirmEmailVerificationInput } from '../dto/confirmEmailVerificationInput'
-import { UpdateActorProfileResponse } from '../dto/updateActorProfileResponse'
 import { UpdateActorProfileInput } from '../dto/updateActorProfileInput'
 
 /** Category to attach each log message to */
@@ -37,7 +35,6 @@ export class UserProfileServiceV2 {
   constructor(
     private v2MeApi: V2MeApi,
     private readonly islyklarService: IslykillService,
-    private identityService: IdentityClientService,
   ) {}
 
   v2UserProfileApiWithAuth(auth: Auth) {
@@ -127,7 +124,7 @@ export class UserProfileServiceV2 {
   async updateActorProfile(
     input: UpdateActorProfileInput,
     user: User,
-  ): Promise<UpdateActorProfileResponse> {
+  ): Promise<ActorProfile> {
     return this.v2UserProfileApiWithAuth(user)
       .meUserProfileControllerCreateOrUpdateActorProfile({
         xParamFromNationalId: input.fromNationalId,
