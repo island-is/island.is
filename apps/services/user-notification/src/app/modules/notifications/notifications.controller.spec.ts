@@ -91,12 +91,12 @@ describe('NotificationsController', () => {
 
       const result = await controller.getNotificationTemplate(
         'HNIPP.POSTHOLF.NEW_DOCUMENT',
-        "is",
+        'is',
       )
 
       expect(notificationsService.getTemplate).toHaveBeenCalledWith(
         'HNIPP.POSTHOLF.NEW_DOCUMENT',
-        "is",
+        'is',
       )
       expect(result).toEqual(template)
     })
