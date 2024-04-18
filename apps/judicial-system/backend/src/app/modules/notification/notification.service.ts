@@ -318,7 +318,7 @@ export class NotificationService {
       theCase.dateLogs,
     ) as DateLog
 
-    if (!courtDate || !courtDate.date) {
+    if (!courtDate) {
       return
     }
 
