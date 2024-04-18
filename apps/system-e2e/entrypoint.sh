@@ -27,7 +27,7 @@ fi
 echo "Playwright version: $(playwright --version)"
 
 TEST_EXIT_CODE=0
-playwright test -c src "$@" || TEST_EXIT_CODE=$?
+playwright test -c . "$@" || TEST_EXIT_CODE=$?
 
 # Upload results
 if [[ -n "$TEST_RESULTS_S3" ]]; then
