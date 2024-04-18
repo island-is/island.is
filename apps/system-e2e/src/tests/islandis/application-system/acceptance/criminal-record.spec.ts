@@ -2,8 +2,6 @@ import { expect, test as base, Page } from '@playwright/test'
 import { disableI18n } from '../../../../support/disablers'
 import { session } from '../../../../support/session'
 import { createApplication } from '../../../../support/application'
-import { m } from '@island.is/application/templates/criminal-record/messages'
-import { label } from '../../../../support/i18n'
 
 const homeUrl = '/umsoknir/sakavottord'
 

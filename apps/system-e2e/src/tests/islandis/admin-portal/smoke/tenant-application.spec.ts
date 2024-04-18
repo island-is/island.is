@@ -1,4 +1,4 @@
-import { BrowserContext, expect, test } from '@playwright/test'
+import { BrowserContext, Page, expect, test } from '@playwright/test'
 
 import { urls } from '../../../../support/urls'
 import { session } from '../../../../support/session'
@@ -32,21 +32,27 @@ test.describe('Admin portal application', () => {
     await contextGranter.close()
   })
 
+  const buttonSaveTest = async (page: Page, title: string, disabled = true) => {
+    test.step(
+      `Expect button to be ${disabled ? 'disabled' : 'enabled'}`,
+      async () => {
+        const dataTestId = `button-save-${title}`
+
+        if (disabled) {
+          await expect(page.getByTestId(dataTestId)).toBeDisabled()
+        } else {
+          await expect(page.getByTestId(dataTestId)).toBeEnabled()
+        }
+      },
+      { box: true },
+    )
+  }
+
   test('can manage application', async () => {
     // Arrange
     const page = await contextGranter.newPage()
     // Act
     await page.goto(homeUrl)
-
-    const buttonSaveTest = async (title: string, disabled = true) => {
-      const dataTestId = `button-save-${title}`
-
-      if (disabled) {
-        await expect(page.getByTestId(dataTestId)).toBeDisabled()
-      } else {
-        await expect(page.getByTestId(dataTestId)).toBeEnabled()
-      }
-    }
 
     /**
      * Header
@@ -116,7 +122,7 @@ test.describe('Admin portal application', () => {
       await expect(page.locator(enDisplayNameInput)).toBeHidden()
 
       // Assert - save button is disabled
-      await buttonSaveTest(title)
+      await buttonSaveTest(page, title)
 
       // Act - fill in input
       await page.locator(isDisplayNameInput).fill(dummyText)
@@ -132,7 +138,7 @@ test.describe('Admin portal application', () => {
       await expect(page.locator(enDisplayNameInput)).toBeVisible()
 
       // Assert - save button is enabled
-      await buttonSaveTest(title, false)
+      await buttonSaveTest(page, title, false)
     })
 
     /**
@@ -157,7 +163,7 @@ test.describe('Admin portal application', () => {
         await expect(page.locator(postLogoutRedirectUris)).toBeVisible()
 
         // Assert - save button is disabled
-        await buttonSaveTest(title)
+        await buttonSaveTest(page, title)
 
         // Act - Type dummy text value into inputs
         await page.locator(redirectUris).clear()
@@ -172,7 +178,7 @@ test.describe('Admin portal application', () => {
         )
 
         // Assert - save button is enabled
-        await buttonSaveTest(title, false)
+        await buttonSaveTest(page, title, false)
       },
     )
 
@@ -197,7 +203,7 @@ test.describe('Admin portal application', () => {
         await expect(page.getByRole('heading', { name: title })).toBeVisible()
 
         // Assert - save button is disabled
-        await buttonSaveTest(title)
+        await buttonSaveTest(page, title)
 
         // Assert - inputs are visible
         await expect(page.locator(absoluteRefreshTokenLifetime)).toBeVisible()
@@ -228,7 +234,7 @@ test.describe('Admin portal application', () => {
         await expect(page.locator(slidingRefreshTokenLifetime)).toBeHidden()
 
         // Assert - save button is enabled
-        await buttonSaveTest(title, false)
+        await buttonSaveTest(page, title, false)
       },
     )
 
@@ -242,14 +248,14 @@ test.describe('Admin portal application', () => {
       await expect(page.getByRole('heading', { name: title })).toBeVisible()
 
       // Assert - save button is disabled
-      await buttonSaveTest(title)
+      await buttonSaveTest(page, title)
 
       const initialPermissionCount = await page
         .getByTestId('permission-row')
         .count()
 
       // Assert - permission list is visible
-      await expect(initialPermissionCount).toBeGreaterThan(0)
+      expect(initialPermissionCount).toBeGreaterThan(0)
 
       // Act - Open add permission modal
       await page.getByTestId('add-permissions-button').click()
@@ -274,10 +280,10 @@ test.describe('Admin portal application', () => {
       const currentPermissionCount = await page
         .getByTestId('permission-row')
         .count()
-      await expect(initialPermissionCount).toBeLessThan(currentPermissionCount)
+      expect(initialPermissionCount).toBeLessThan(currentPermissionCount)
 
       // Assert - save button is enabled
-      await buttonSaveTest(title, false)
+      await buttonSaveTest(page, title, false)
 
       // Act - Remove added permission
       await page
@@ -287,7 +293,7 @@ test.describe('Admin portal application', () => {
         .click()
 
       // Assert - Check if permission list has decreased
-      await expect(await page.getByTestId('permission-row').count()).toBe(
+      expect(await page.getByTestId('permission-row').count()).toBe(
         initialPermissionCount,
       )
     })
@@ -319,7 +325,7 @@ test.describe('Admin portal application', () => {
       await page.locator('button[aria-controls="delegations"]').click()
 
       // Assert - save button is disabled
-      await buttonSaveTest(title)
+      await buttonSaveTest(page, title)
 
       // Assert - All inputs are visible
       await Promise.all(
@@ -330,7 +336,7 @@ test.describe('Admin portal application', () => {
       await page.locator(getInputByName('supportsProcuringHolders')).click()
 
       // Assert - save button is disabled
-      await buttonSaveTest(title, false)
+      await buttonSaveTest(page, title, false)
     })
 
     /**
@@ -371,7 +377,7 @@ test.describe('Admin portal application', () => {
         )
 
         // Assert - save button is disabled
-        await buttonSaveTest(title)
+        await buttonSaveTest(page, title)
 
         // Act - Type into input
         await accessTokenLifetime.clear()
@@ -381,7 +387,7 @@ test.describe('Admin portal application', () => {
         await expect(accessTokenLifetime).toHaveValue(dummyNumber)
 
         // Assert - save button is disabled
-        await buttonSaveTest(title, false)
+        await buttonSaveTest(page, title, false)
       },
     )
 

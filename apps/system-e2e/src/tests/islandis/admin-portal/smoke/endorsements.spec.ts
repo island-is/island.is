@@ -49,7 +49,7 @@ test.describe('Admin portal (Endorsements)', () => {
     ).toBeVisible()
   })
 
-  test.skip('See locked lists are present and locked', async ({ page }) => {
+  test('See locked lists are present and locked', async ({ page }) => {
     await page.getByRole('tab', { name: 'Læstir listar' }).click()
     const lockedLists = page.getByRole('button', { name: 'Skoða lista' })
     expect(await lockedLists.count()).toBeGreaterThan(1)
@@ -84,7 +84,7 @@ test.describe('Admin portal (Endorsements)', () => {
 
     // Assert
     let dateValue = await page.getByLabel('Tímabil til').last().inputValue()
-    await expect(dateValue).toBe(exampleDateInThePast)
+    expect(dateValue).toBe(exampleDateInThePast)
 
     // And lets end by setting the date back to what it was
     await page.getByLabel('Tímabil til').last().fill(currentEndDate)
@@ -93,6 +93,6 @@ test.describe('Admin portal (Endorsements)', () => {
 
     // Assert
     dateValue = await page.getByLabel('Tímabil til').last().inputValue()
-    await expect(dateValue).toBe(currentEndDate)
+    expect(dateValue).toBe(currentEndDate)
   })
 })

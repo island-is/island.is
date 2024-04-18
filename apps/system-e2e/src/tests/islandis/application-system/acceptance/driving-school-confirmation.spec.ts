@@ -61,7 +61,7 @@ test.describe('Driving School Confirmation', () => {
     const oldURL = page.url()
     await newButton.click()
     const newURL = page.url()
-    await expect(newURL).not.toBe(oldURL)
+    expect(newURL).not.toBe(oldURL)
     await page.close()
   })
 
