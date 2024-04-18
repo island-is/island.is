@@ -30,7 +30,6 @@ import {
 } from './dto/notification.dto'
 import { Documentation } from '@island.is/nest/swagger'
 
-// import { ContentfulLocale } from './locale.enum'
 
 @UseGuards(IdsUserGuard, ScopesGuard)
 @Scopes(NotificationsScope.read)
@@ -47,15 +46,6 @@ export class MeNotificationsController {
   @Documentation({
     summary: 'Returns a paginated list of current user notifications',
     response: { status: HttpStatus.OK, type: PaginatedNotificationDto },
-    // request: {
-    //   query: {
-    //     locale: {
-    //       enum: ContentfulLocale,
-    //       required: false,
-    //       example: ContentfulLocale.IS,
-    //     },
-    //   },
-    // },
   })
   findMany(
     @CurrentUser() user: User,
@@ -90,15 +80,6 @@ export class MeNotificationsController {
   @Documentation({
     summary: 'Returns current user specific notification',
     response: { status: HttpStatus.OK, type: RenderedNotificationDto },
-    // request: {
-    //   query: {
-    //     locale: {
-    //       enum: ContentfulLocale,
-    //       required: false,
-    //       example: ContentfulLocale.IS,
-    //     },
-    //   },
-    // },
   })
   findOne(
     @CurrentUser() user: User,
@@ -122,15 +103,6 @@ export class MeNotificationsController {
   @Documentation({
     summary: 'Updates current user specific notification',
     response: { status: HttpStatus.OK, type: RenderedNotificationDto },
-    // request: {
-    //   query: {
-    //     locale: {
-    //       enum: ContentfulLocale,
-    //       required: false,
-    //       example: ContentfulLocale.IS,
-    //     },
-    //   },
-    // },
   })
   @Patch(':id')
   @Scopes(NotificationsScope.write)

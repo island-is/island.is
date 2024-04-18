@@ -13,7 +13,6 @@ import {
 } from 'class-validator'
 import { Type } from 'class-transformer'
 
-// import { ContentfulLocale } from '../locale.enum'
 
 export class ExtendedPaginationDto extends PaginationDto {
   @IsOptional()

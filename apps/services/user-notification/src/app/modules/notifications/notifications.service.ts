@@ -27,7 +27,6 @@ import {
   UnseenNotificationsCountDto,
   UnreadNotificationsCountDto,
 } from './dto/notification.dto'
-// import { ContentfulLocale } from './locale.enum'
 
 
 const ACCESS_TOKEN = process.env.CONTENTFUL_ACCESS_TOKEN
