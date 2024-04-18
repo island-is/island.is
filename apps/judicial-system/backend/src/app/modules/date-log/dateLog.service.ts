@@ -3,8 +3,6 @@ import { InjectModel } from '@nestjs/sequelize'
 
 import { type Logger, LOGGER_PROVIDER } from '@island.is/logging'
 
-import { DateType } from '@island.is/judicial-system/types'
-
 import { CreateDateLogDto } from './dto/createDateLog.dto'
 import { DateLog } from './models/dateLog.model'
 
