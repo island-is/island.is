@@ -1,6 +1,5 @@
 import { Injectable } from '@nestjs/common'
 import { Notification } from './types'
-import { UserProfileDto } from '@island.is/clients/user-profile'
 import { NotificationsService } from './notifications.service'
 import { CreateHnippNotificationDto } from './dto/createHnippNotification.dto'
 import { Locale } from '@island.is/shared/types'
@@ -16,12 +15,12 @@ export class MessageProcessorService {
 
   async convertToNotification(
     message: CreateHnippNotificationDto,
-    profile: UserProfileDto,
+    locale?: Locale,
   ): Promise<Notification> {
 
     const template = await this.notificationsService.getTemplate(
       message.templateId,
-      profile.locale as Locale,
+      locale,
     )
     const notification = this.notificationsService.formatArguments(
       message.args,
