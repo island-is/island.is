@@ -166,7 +166,8 @@ const HousingBenefitsFilter = ({
               >
                 <Stack space="smallGutter">
                   <Select
-                    label="Mánuður"
+                    label={formatMessage(m.month)}
+                    placeholder={formatMessage(m.month)}
                     name="month"
                     onChange={(opt) =>
                       setCurrentMonth({
@@ -178,8 +179,9 @@ const HousingBenefitsFilter = ({
                     size="sm"
                   />
                   <Select
-                    label="Ár"
-                    name="month"
+                    label={formatMessage(m.year)}
+                    placeholder={formatMessage(m.year)}
+                    name="year"
                     onChange={(opt) =>
                       setCurrentYear({
                         ...opt,
