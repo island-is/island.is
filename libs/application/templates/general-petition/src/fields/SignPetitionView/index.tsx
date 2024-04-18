@@ -38,7 +38,9 @@ const SignPetitionView: FC<React.PropsWithChildren<FieldBaseProps>> = ({
   const petitionList = petitionData as EndorsementList
   const listClosed = new Date() >= new Date(petitionList.closedDate)
   const [createEndorsement, { loading }] = useMutation(EndorseList)
-  const { data: userData } = useQuery(GetFullName)
+  const { data: userData } = useQuery(GetFullName, {
+    variables: { api: 'v3' },
+  })
 
   useEffect(() => setHasSigned(checkForSigned), [checkForSigned])
 
@@ -124,7 +126,7 @@ const SignPetitionView: FC<React.PropsWithChildren<FieldBaseProps>> = ({
                       <Input
                         label={formatMessage(m.name)}
                         name={formatMessage(m.name)}
-                        value={userData?.nationalRegistryUser?.fullName}
+                        value={userData?.nationalRegistryPerson?.fullName}
                         readOnly
                       />
                     </Box>

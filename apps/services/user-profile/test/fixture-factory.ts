@@ -8,6 +8,7 @@ import { SmsVerification } from '../src/app/user-profile/smsVerification.model'
 import { UserProfile } from '../src/app/user-profile/userProfile.model'
 import { UserDeviceTokens } from '../src/app/user-profile/userDeviceTokens.model'
 import { DataStatus } from '../src/app/user-profile/types/dataStatusTypes'
+import { ActorProfile } from '../src/app/v2/models/actor-profile.model'
 
 export class FixtureFactory {
   constructor(private app: TestApp) {}
@@ -79,6 +80,24 @@ export class FixtureFactory {
     return userDeviceTokenModel.create<UserDeviceTokens>({
       nationalId,
       deviceToken,
+    })
+  }
+
+  async createActorProfile({
+    toNationalId,
+    fromNationalId,
+    emailNotifications,
+  }: {
+    toNationalId: string
+    fromNationalId: string
+    emailNotifications: boolean
+  }) {
+    const actorProfileModel = this.get(ActorProfile)
+
+    return actorProfileModel.create<ActorProfile>({
+      toNationalId,
+      fromNationalId,
+      emailNotifications,
     })
   }
 }
