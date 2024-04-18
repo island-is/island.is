@@ -4,9 +4,6 @@ import type { Logger } from '@island.is/logging'
 import { Inject, Injectable } from '@nestjs/common'
 import {
   // UpdateNotificationDtoStatusEnum,,
-  // MeNotificationsControllerFindManyLocaleEnum,
-  // MeNotificationsControllerFindOneLocaleEnum,
-  // MeNotificationsControllerUpdateLocaleEnum,
   UserNotificationApi,
 } from '@island.is/clients/user-notification'
 import type { Locale } from '@island.is/shared/types'
@@ -66,10 +63,7 @@ export class NotificationsService {
     this.logger.debug('getting potential single notification')
     const notification = await this.userNotificationsWAuth(
       user,
-    ).meNotificationsControllerFindOne({
-      locale,
-      id,
-    })
+    ).meNotificationsControllerFindOne({ locale, id })
 
     if (!notification) {
       this.logger.debug('no notification found')
