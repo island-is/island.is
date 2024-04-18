@@ -6,7 +6,7 @@ import {
 } from '@island.is/application/core'
 import { m } from '../../lib/messages'
 import { DrivingLicense } from '../../lib/types'
-import { B_FULL, B_TEMP } from '../../shared'
+import { B_FULL, B_TEMP, BE, DrivingLicenseFakeData } from '../../lib/constants'
 
 export const sectionApplicationFor = buildSubSection({
   id: 'applicationFor',
@@ -23,10 +23,19 @@ export const sectionApplicationFor = buildSubSection({
           backgroundColor: 'white',
           largeButtons: true,
           options: (app) => {
-            const { currentLicense } = getValueViaPath<DrivingLicense>(
+            let { currentLicense } = getValueViaPath<DrivingLicense>(
               app.externalData,
               'currentLicense.data',
             ) ?? { currentLicense: null }
+
+            const fakeData = getValueViaPath<DrivingLicenseFakeData>(
+              app.answers,
+              'fakeData',
+            )
+            if (fakeData?.useFakeData === 'yes') {
+              currentLicense = fakeData.currentLicense ?? null
+              console.log(currentLicense)
+            }
 
             return [
               {
@@ -39,7 +48,13 @@ export const sectionApplicationFor = buildSubSection({
                 label: m.applicationForFullLicenseTitle,
                 subLabel: m.applicationForFullLicenseDescription.defaultMessage,
                 value: B_FULL,
-                disabled: !currentLicense,
+                disabled: currentLicense !== 'temp',
+              },
+              {
+                label: m.applicationForBELicenseTitle,
+                subLabel: m.applicationForBELicenseDescription.defaultMessage,
+                value: BE,
+                disabled: currentLicense !== 'full',
               },
             ]
           },

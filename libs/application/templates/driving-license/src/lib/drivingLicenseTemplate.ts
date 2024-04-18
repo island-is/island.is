@@ -23,8 +23,15 @@ import {
   Application,
 } from '@island.is/application/types'
 import { FeatureFlagClient } from '@island.is/feature-flags'
-import { ApiActions } from '../shared'
-import { Events, States, Roles } from './constants'
+import {
+  Events,
+  States,
+  Roles,
+  BE,
+  B_TEMP,
+  B_FULL,
+  ApiActions,
+} from './constants'
 import { dataSchema } from './dataSchema'
 import {
   getApplicationFeatureFlags,
@@ -32,7 +39,7 @@ import {
 } from './getApplicationFeatureFlags'
 import { m } from './messages'
 import { hasCompletedPrerequisitesStep } from './utils'
-import { SyslumadurPaymentCatalogApi } from '../dataProviders'
+import { GlassesCheckApi, SyslumadurPaymentCatalogApi } from '../dataProviders'
 import { buildPaymentState } from '@island.is/application/utils'
 
 const getCodes = (application: Application) => {
@@ -56,7 +63,18 @@ const template: ApplicationTemplate<
   Events
 > = {
   type: ApplicationTypes.DRIVING_LICENSE,
-  name: m.applicationForDrivingLicense,
+  name: (application) =>
+    application.answers.applicationFor === BE
+      ? m.applicationForBELicenseTitle.defaultMessage
+      : application.answers.applicationFor === B_TEMP
+      ? m.applicationForDrivingLicense.defaultMessage +
+        ' - ' +
+        m.applicationForTempLicenseTitle.defaultMessage
+      : application.answers.applicationFor === B_FULL
+      ? m.applicationForDrivingLicense.defaultMessage +
+        ' - ' +
+        m.applicationForFullLicenseTitle.defaultMessage
+      : m.applicationForDrivingLicense.defaultMessage,
   institution: m.nationalCommissionerOfPolice,
   dataSchema,
   stateMachineConfig: {
@@ -96,6 +114,7 @@ const template: ApplicationTemplate<
                 TeachersApi,
                 UserProfileApi,
                 SyslumadurPaymentCatalogApi,
+                GlassesCheckApi,
                 CurrentLicenseApi.configure({
                   params: {
                     useLegacyVersion: true,

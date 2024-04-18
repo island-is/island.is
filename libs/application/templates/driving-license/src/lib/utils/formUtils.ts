@@ -6,12 +6,13 @@ import {
 } from '@island.is/application/types'
 import { m } from '../messages'
 import { ConditionFn, DrivingLicense } from '../types'
-import { NO, YES } from '../constants'
 import {
-  DrivingLicenseApplicationFor,
   B_FULL,
   B_TEMP,
-} from '../../shared/constants'
+  DrivingLicenseApplicationFor,
+  NO,
+  YES,
+} from '../constants'
 
 export const allowFakeCondition =
   (result = YES) =>
