@@ -284,7 +284,7 @@
         }
       }
     },
-    "/api/v1/journal/Institutions": {
+    "/api/v1/journal/institutions": {
       "get": {
         "operationId": "JournalController_institutions",
         "parameters": [
@@ -700,6 +700,27 @@
         },
         "required": ["id", "advertId", "type", "data"]
       },
+      "AdvertAttachment": {
+        "type": "object",
+        "properties": {
+          "name": {
+            "type": "string",
+            "description": "File name for Attachment.",
+            "example": "Viðauki.pdf"
+          },
+          "type": {
+            "type": "string",
+            "description": "Type Attachment.",
+            "example": "addendum"
+          },
+          "url": {
+            "type": "string",
+            "description": "URL for Attachment.",
+            "example": "<url>"
+          }
+        },
+        "required": ["name", "type", "url"]
+      },
       "Advert": {
         "type": "object",
         "properties": {
@@ -798,6 +819,11 @@
           "signature": {
             "description": "Signatures for the advert.",
             "allOf": [{ "$ref": "#/components/schemas/AdvertSignature" }]
+          },
+          "attachments": {
+            "description": "Attachments for the advert.",
+            "type": "array",
+            "items": { "$ref": "#/components/schemas/AdvertAttachment" }
           }
         },
         "required": [
@@ -814,7 +840,8 @@
           "categories",
           "involvedParty",
           "document",
-          "signature"
+          "signature",
+          "attachments"
         ]
       },
       "AdvertNotFound": {

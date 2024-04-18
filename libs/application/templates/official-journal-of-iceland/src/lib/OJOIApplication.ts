@@ -117,8 +117,8 @@ const OJOITemplate: ApplicationTemplate<
               write: 'all',
               delete: true,
               formLoader: () =>
-                import('../forms/DraftRetry').then((val) =>
-                  Promise.resolve(val.DraftRetry),
+                import('../forms/Draft').then((val) =>
+                  Promise.resolve(val.Draft),
                 ),
               actions: [
                 {
