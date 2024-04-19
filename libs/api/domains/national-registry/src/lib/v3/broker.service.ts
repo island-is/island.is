@@ -1,3 +1,4 @@
+import kennitala from 'kennitala'
 import { Inject, Injectable } from '@nestjs/common'
 import {
   EinstaklingurDTOAllt,
@@ -6,6 +7,7 @@ import {
   EinstaklingurDTOLoghTengsl,
   NationalRegistryV3ClientService,
 } from '@island.is/clients/national-registry-v3'
+import { FamilyChild, User } from '../v1/types'
 import {
   formatPersonDiscriminated,
   formatAddress,
@@ -15,6 +17,8 @@ import {
   formatHousing,
   formatName,
   formatChildCustody,
+  formatUser,
+  formatFamilyChild,
 } from './mapper'
 import { ChildCustodyV3, PersonV3 } from '../shared/types'
 import {
@@ -172,6 +176,11 @@ export class BrokerService {
     return children
       .map((c) => formatChildCustody(c, useFakeData))
       .filter(isDefined)
+      .sort((a, b) => {
+        return (
+          kennitala.info(b.nationalId).age - kennitala.info(a.nationalId).age
+        )
+      })
   }
 
   async getChildDetails(
@@ -230,5 +239,29 @@ export class BrokerService {
           this.nationalRegistryV3.getAddress(nationalId),
         ])
     return data && formatHousing(nationalId, ...data)
+  }
+
+  // Deprecated schemas
+  async getUser(nationalId: User['nationalId']): Promise<User | null> {
+    const user = await this.nationalRegistryV3.getAllDataIndividual(nationalId)
+    return formatUser(user)
+  }
+
+  async getChildren(
+    parentNationalId: User['nationalId'],
+  ): Promise<FamilyChild[] | null> {
+    const children = await this.getChildrenCustodyInformation(parentNationalId)
+    if (!children) {
+      return null
+    }
+
+    const childrenDetails = await Promise.all(
+      children.map((child) =>
+        this.nationalRegistryV3.getAllDataIndividual(child.nationalId),
+      ),
+    )
+    return childrenDetails
+      .map((child) => formatFamilyChild(child))
+      .filter(isDefined)
   }
 }
