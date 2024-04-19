@@ -35,11 +35,9 @@ const OJOIAdvertPage: Screen<OJOIAdvertProps> = ({
   advert,
   organizationPage,
   organization,
-  namespace,
   locale,
 }) => {
   const { linkResolver } = useLinkResolver()
-  const n = useNamespace(namespace)
   useContentfulId(organizationPage?.id)
 
   const organizationNamespace = useMemo(() => {
@@ -70,9 +68,10 @@ const OJOIAdvertPage: Screen<OJOIAdvertProps> = ({
     <OJOIWrapper
       pageTitle={advert.title}
       hideTitle
-      pageDescription={
-        'Sé munur á uppsetningu texta hér að neðan og í PDF skjali gildir PDF skjalið.'
-      }
+      pageDescription={o(
+        'advertPageDescription',
+        'Sé munur á uppsetningu texta hér að neðan og í PDF skjali gildir PDF skjalið.',
+      )}
       // eslint-disable-next-line @typescript-eslint/no-non-null-assertion
       organizationPage={organizationPage!}
       pageFeaturedImage={organizationPage?.featuredImage ?? undefined}
@@ -82,27 +81,37 @@ const OJOIAdvertPage: Screen<OJOIAdvertProps> = ({
         <Stack space={[2]}>
           <Box background="blue100" padding={[2, 2, 3]} borderRadius="large">
             <Stack space={[1, 1, 2]}>
-              <Text variant="h4">Upplýsingar um auglýsingu</Text>
+              <Text variant="h4">
+                {o('advertSidebarTitle', 'Upplýsingar um auglýsingu')}
+              </Text>
 
               <Box>
-                <Text variant="h5">Deild</Text>
+                <Text variant="h5">
+                  {o('advertSidebarDepartment', 'Deild')}
+                </Text>
                 <Text variant="small">{advert.department.title}</Text>
               </Box>
 
               <Box>
-                <Text variant="h5">Stofnun</Text>
+                <Text variant="h5">
+                  {o('advertSidebarInstitution', 'Stofnun')}
+                </Text>
                 <Text variant="small">{advert.involvedParty.title}</Text>
               </Box>
 
               <Box>
-                <Text variant="h5">Málaflokkur</Text>
+                <Text variant="h5">
+                  {o('advertSidebarCategory', 'Málaflokkur')}
+                </Text>
                 <Text variant="small">
                   {advert.categories.map((c) => c.title).join(', ')}
                 </Text>
               </Box>
 
               <Box>
-                <Text variant="h5">Skráningardagur</Text>
+                <Text variant="h5">
+                  {o('advertSidebarSignatureDate', 'Skráningardagur')}
+                </Text>
                 <Text variant="small">
                   {format(new Date(advert.signatureDate), 'dd. MMMM yyyy', {
                     locale: is,
@@ -111,7 +120,9 @@ const OJOIAdvertPage: Screen<OJOIAdvertProps> = ({
               </Box>
 
               <Box>
-                <Text variant="h5">Útgáfudagur</Text>
+                <Text variant="h5">
+                  {o('advertSidebarPublicationDate', 'Útgáfudagur')}
+                </Text>
                 <Text variant="small">
                   {format(new Date(advert.publicationDate), 'dd. MMMM yyyy', {
                     locale: is,
@@ -136,7 +147,7 @@ const OJOIAdvertPage: Screen<OJOIAdvertProps> = ({
                     iconType="outline"
                     size="small"
                   >
-                    Sækja PDF
+                    {o('advertSidebarGetPdf', 'Sækja PDF')}
                   </Button>
                 </Box>
               </Stack>

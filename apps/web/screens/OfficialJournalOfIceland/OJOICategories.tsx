@@ -78,12 +78,10 @@ const OJOICategoriesPage: Screen<OJOICategoriesProps> = ({
   departments,
   organizationPage,
   organization,
-  namespace,
   locale,
 }) => {
   const router = useRouter()
   const { linkResolver } = useLinkResolver()
-  const n = useNamespace(namespace)
   useContentfulId(organizationPage?.id)
 
   const organizationNamespace = useMemo(() => {
@@ -230,7 +228,7 @@ const OJOICategoriesPage: Screen<OJOICategoriesProps> = ({
 
   return (
     <OJOIWrapper
-      pageTitle={'Málaflokkar Stjórnartíðinda'}
+      pageTitle={o('categoriesTitle', 'Málaflokkar Stjórnartíðinda')}
       pageDescription={organizationPage?.description}
       // eslint-disable-next-line @typescript-eslint/no-non-null-assertion
       organizationPage={organizationPage!}
@@ -249,7 +247,7 @@ const OJOICategoriesPage: Screen<OJOICategoriesProps> = ({
 
             <Input
               name="q"
-              placeholder="Leit í flokkum"
+              placeholder={o('categoriesSearchPlaceholder', 'Leit í flokkum')}
               size="xs"
               value={searchState.q}
               onChange={(e) => updateSearchState('q', e.target.value)}
@@ -258,7 +256,7 @@ const OJOICategoriesPage: Screen<OJOICategoriesProps> = ({
             <Divider weight={'blueberry200'} />
 
             <Box display="flex" justifyContent={'spaceBetween'}>
-              <Text variant="h4">Síun</Text>
+              <Text variant="h4">{o('categoriesFilterTitle', 'Síun')}</Text>
               <Button
                 type="button"
                 as="button"
@@ -266,15 +264,15 @@ const OJOICategoriesPage: Screen<OJOICategoriesProps> = ({
                 onClick={resetFilter}
                 size="small"
               >
-                Hreinsa síun
+                {o('categoriesClearFilter', 'Hreinsa síun')}
               </Button>
             </Box>
 
             <Select
               name="deild"
-              label="Deild"
+              label={o('categoriesDepartmentLabel', 'Deild')}
               size="xs"
-              placeholder="Veldu deild"
+              placeholder={o('categoriesDepartmentPlaceholder', 'Veldu deild')}
               options={[
                 { ...emptyOption('Allar deildir') },
                 ...departmentsOptions,
@@ -286,9 +284,12 @@ const OJOICategoriesPage: Screen<OJOICategoriesProps> = ({
 
             <Select
               name="yfirflokkur"
-              label="Yfirflokkur"
+              label={o('categoriesMainCategoryLabel', 'Yfirflokkur')}
               size="xs"
-              placeholder="Veldu yfirflokk"
+              placeholder={o(
+                'categoriesMainCategoryPlaceholder',
+                'Veldu yfirflokk',
+              )}
               options={[
                 { ...emptyOption('Allir flokkar') },
                 ...mainCategoriesOptions,
@@ -330,7 +331,12 @@ const OJOICategoriesPage: Screen<OJOICategoriesProps> = ({
           ))}
         </Inline>
         {activeCategories.length === 0 ? (
-          <p>Ekkert fannst fyrir þessi leitarskilyrði</p>
+          <p>
+            {o(
+              'categoriesNotFoundMessage',
+              'Ekkert fannst fyrir þessi leitarskilyrði',
+            )}
+          </p>
         ) : (
           activeCategories.map((c) => {
             const groups = splitArrayIntoGroups(c.categories, 3)

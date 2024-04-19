@@ -84,12 +84,10 @@ const OJOISearchPage: Screen<OJOISearchProps> = ({
   institutions,
   organizationPage,
   organization,
-  namespace,
   locale,
 }) => {
   const router = useRouter()
   const { linkResolver } = useLinkResolver()
-  const n = useNamespace(namespace)
   useContentfulId(organizationPage?.id)
 
   const [adverts, setAdverts] = useState(initialAdverts)
@@ -218,7 +216,7 @@ const OJOISearchPage: Screen<OJOISearchProps> = ({
 
   return (
     <OJOIWrapper
-      pageTitle={n('searchPageTitle', 'Leit í Stjórnartíðindum')}
+      pageTitle={o('searchPageTitle', 'Leit í Stjórnartíðindum')}
       pageDescription={organizationPage?.description}
       // eslint-disable-next-line @typescript-eslint/no-non-null-assertion
       organizationPage={organizationPage!}
@@ -237,7 +235,10 @@ const OJOISearchPage: Screen<OJOISearchProps> = ({
 
             <Input
               name="q"
-              placeholder="Leit í Stjórnartíðindum"
+              placeholder={o(
+                'searchinputPlaceholder',
+                'Leit í Stjórnartíðindum',
+              )}
               size="xs"
               value={searchState.q}
               onChange={(e) => updateSearchState('q', e.target.value)}
@@ -246,7 +247,7 @@ const OJOISearchPage: Screen<OJOISearchProps> = ({
             <Divider weight={'blueberry200'} />
 
             <Box display="flex" justifyContent={'spaceBetween'}>
-              <Text variant="h4">Síun</Text>
+              <Text variant="h4">{o('filterTitle', 'Síun')}</Text>
               <Button
                 type="button"
                 as="button"
@@ -254,15 +255,15 @@ const OJOISearchPage: Screen<OJOISearchProps> = ({
                 onClick={resetFilter}
                 size="small"
               >
-                Hreinsa síun
+                {o('clearFilter', 'Hreinsa síun')}
               </Button>
             </Box>
 
             <Select
               name="deild"
-              label="Deild"
+              label={o('departmentSelectLabel', 'Deild')}
               size="xs"
-              placeholder="Veldu deild"
+              placeholder={o('departmentSelectPlaceholder', 'Veldu deild')}
               options={[
                 { ...emptyOption('Allar deildir') },
                 ...departmentsOptions,
@@ -275,9 +276,9 @@ const OJOISearchPage: Screen<OJOISearchProps> = ({
 
             <Select
               name="tegund"
-              label="Tegund"
+              label={o('typeSelectLabel', 'Tegund')}
               size="xs"
-              placeholder="Veldu tegund"
+              placeholder={o('typeSelectPlaceholder', 'Veldu tegund')}
               options={[{ ...emptyOption('Allar tegundir') }, ...typesOptions]}
               isClearable
               value={findValueOption(typesOptions, searchState.tegund)}
@@ -286,9 +287,9 @@ const OJOISearchPage: Screen<OJOISearchProps> = ({
 
             <Select
               name="malaflokkur"
-              label="Málaflokkur"
+              label={o('categoriesSelectLabel', 'Málaflokkur')}
               size="xs"
-              placeholder="Veldu málaflokk"
+              placeholder={o('categoriesSelectPlaceholder', 'Veldu málaflokk')}
               options={[
                 { ...emptyOption('Allir flokkar') },
                 ...categoriesOptions,
@@ -306,8 +307,11 @@ const OJOISearchPage: Screen<OJOISearchProps> = ({
               size="xs"
               locale="is"
               name="dagsFra"
-              label="Dags. frá"
-              placeholderText="Veldu upphafsdagsetningu"
+              label={o('dateFromLabel', 'Dags. frá')}
+              placeholderText={o(
+                'dateFromPlaceholder',
+                'Veldu upphafsdagsetningu',
+              )}
               selected={
                 searchState.dagsFra ? new Date(searchState.dagsFra) : undefined
               }
@@ -327,8 +331,8 @@ const OJOISearchPage: Screen<OJOISearchProps> = ({
               size="xs"
               locale="is"
               name="dagsTil"
-              label="Dags. til"
-              placeholderText="Veldu lokadagsetningu"
+              label={o('dateToLabel', 'Dags. til')}
+              placeholderText={o('dateToPlaceholder', 'Veldu lokadagsetningu')}
               selected={
                 searchState.dagsTil ? new Date(searchState.dagsTil) : undefined
               }
@@ -346,9 +350,9 @@ const OJOISearchPage: Screen<OJOISearchProps> = ({
 
             <Select
               name="stofnun"
-              label="Stofnun"
+              label={o('institutionLabel', 'Stofnun')}
               size="xs"
-              placeholder="Veldu stofnun"
+              placeholder={o('institutionPlaceholder', 'Veldu stofnun')}
               options={[
                 { ...emptyOption('Allir stofnanir') },
                 ...institutionsOptions,
@@ -384,9 +388,11 @@ const OJOISearchPage: Screen<OJOISearchProps> = ({
       ) : (
         <Box padding={[2, 3, 4]} border={'standard'} borderRadius="large">
           <Text variant="h3" as="h2">
-            Engin mál fundust
+            {o('notFoundTitle', 'Engin mál fundust')}
           </Text>
-          <Text>Lorem ipsum dolor sit amet, consectetur adipiscing elit.</Text>
+          <Text>
+            {o('notFoundMessage', 'Vinsamlega endurskoðaðu leitarskilyrði')}
+          </Text>
         </Box>
       )}
     </OJOIWrapper>

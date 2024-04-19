@@ -52,7 +52,6 @@ const OJOIHomePage: Screen<OJOIHomeProps> = ({
   locale,
 }) => {
   const { linkResolver } = useLinkResolver()
-  const n = useNamespace(namespace)
   useContentfulId(organizationPage?.id)
 
   const organizationNamespace = useMemo(() => {
@@ -89,12 +88,12 @@ const OJOIHomePage: Screen<OJOIHomeProps> = ({
           organizationPage={organizationPage ?? undefined}
           organization={organization ?? undefined}
           namespace={namespace}
-          searchPlaceholder={n(
+          searchPlaceholder={o(
             'searchinputPlaceholder',
             'Leitaðu í stjórnartíðindum',
           )}
           searchUrl={searchUrl}
-          shortcutsTitle={n('shortcuts', 'Flýtileiðir')}
+          shortcutsTitle={o('shortcuts', 'Flýtileiðir')}
           quickLinks={[
             {
               title: 'A deild',
@@ -144,9 +143,9 @@ const OJOIHomePage: Screen<OJOIHomeProps> = ({
         <Box background="blue100" paddingTop={8} paddingBottom={8}>
           <GridContainer>
             <Box display={'flex'} justifyContent={'spaceBetween'}>
-              <Text variant="h3">{n('mainCategories', 'Yfirflokkar')}</Text>
+              <Text variant="h3">{o('mainCategories', 'Yfirflokkar')}</Text>
               <ArrowLink href={categoriesUrl}>
-                {n('allCategories', 'Málaflokkar A-Ö')}
+                {o('allCategories', 'Málaflokkar A-Ö')}
               </ArrowLink>
             </Box>
 
