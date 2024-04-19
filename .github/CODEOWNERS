@@ -148,6 +148,7 @@ libs/clients/rsk/relationships/                                                 
 /libs/api/domains/intellectual-properties/                                                               @island-is/hugsmidjan
 /libs/api/domains/official-journal-of-iceland/                                                           @island-is/hugsmidjan
 /libs/api/domains/document-provider/                                                                     @island-is/hugsmidjan @island-is/core
+/libs/api/domains/housing-benefits/                                                                      @island-is/hugsmidjan
 /libs/clients/documents/                                                                                 @island-is/hugsmidjan
 /libs/clients/documents-v2/                                                                              @island-is/hugsmidjan
 /libs/clients/finance/                                                                                   @island-is/hugsmidjan
