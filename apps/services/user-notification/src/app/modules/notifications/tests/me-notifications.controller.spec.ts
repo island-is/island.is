@@ -1,27 +1,28 @@
 import request from 'supertest'
 import { AppModule } from '../../../app.module'
-import { getRequestMethod, setupApp, setupAppWithoutAuth, TestEndpointOptions } from '@island.is/testing/nest'
+import {
+  getRequestMethod,
+  setupApp,
+  setupAppWithoutAuth,
+  TestEndpointOptions,
+} from '@island.is/testing/nest'
 import { SequelizeConfigService } from '../../../sequelizeConfig.service'
 import { NotificationsScope } from '@island.is/auth/scopes'
-import {
-  createCurrentUser,
-} from '@island.is/testing/fixtures'
-
-
+import { createCurrentUser } from '@island.is/testing/fixtures'
 
 beforeAll(async () => {
-  process.env.INIT_SCHEMA = 'true'; // Disabling Firebase init
+  process.env.INIT_SCHEMA = 'true' // Disabling Firebase init
 })
 
 describe('MeNotificationsController - No Auth', () => {
   it.each`
-    method      | endpoint
-    ${'GET'}    | ${'/v1/me/notifications'}
-    ${'GET'}    | ${'/v1/me/notifications/some-notification-id'}
-    ${'GET'}    | ${'/v1/me/notifications/unread-count'}
-    ${'GET'}    | ${'/v1/me/notifications/unseen-count'}
-    ${'PATCH'}  | ${'/v1/me/notifications/some-notification-id'}
-    ${'PATCH'}  | ${'/v1/me/notifications/mark-all-as-seen'}
+    method     | endpoint
+    ${'GET'}   | ${'/v1/me/notifications'}
+    ${'GET'}   | ${'/v1/me/notifications/some-notification-id'}
+    ${'GET'}   | ${'/v1/me/notifications/unread-count'}
+    ${'GET'}   | ${'/v1/me/notifications/unseen-count'}
+    ${'PATCH'} | ${'/v1/me/notifications/some-notification-id'}
+    ${'PATCH'} | ${'/v1/me/notifications/mark-all-as-seen'}
   `(
     '$method $endpoint should return 401 when user is unauthenticated',
     async ({ method, endpoint }: TestEndpointOptions) => {
@@ -45,13 +46,13 @@ describe('MeNotificationsController - No Auth', () => {
 
 describe('MeNotificationsController - With Auth No Scope', () => {
   it.each`
-    method      | endpoint
-    ${'GET'}    | ${'/v1/me/notifications'}
-    ${'GET'}    | ${'/v1/me/notifications/some-notification-id'}
-    ${'GET'}    | ${'/v1/me/notifications/unread-count'}
-    ${'GET'}    | ${'/v1/me/notifications/unseen-count'}
-    ${'PATCH'}  | ${'/v1/me/notifications/some-notification-id'}
-    ${'PATCH'}  | ${'/v1/me/notifications/mark-all-as-seen'}
+    method     | endpoint
+    ${'GET'}   | ${'/v1/me/notifications'}
+    ${'GET'}   | ${'/v1/me/notifications/some-notification-id'}
+    ${'GET'}   | ${'/v1/me/notifications/unread-count'}
+    ${'GET'}   | ${'/v1/me/notifications/unseen-count'}
+    ${'PATCH'} | ${'/v1/me/notifications/some-notification-id'}
+    ${'PATCH'} | ${'/v1/me/notifications/mark-all-as-seen'}
   `(
     '$method $endpoint should return 403 when user is unauthorized',
     async ({ method, endpoint }: TestEndpointOptions) => {
@@ -76,13 +77,13 @@ describe('MeNotificationsController - With Auth No Scope', () => {
 
 describe('MeNotificationsController - With Auth And Scope', () => {
   it.each`
-    method      | endpoint
-    ${'GET'}    | ${'/v1/me/notifications'}
-    ${'GET'}    | ${'/v1/me/notifications/some-notification-id'}
-    ${'GET'}    | ${'/v1/me/notifications/unread-count'}
-    ${'GET'}    | ${'/v1/me/notifications/unseen-count'}
-    ${'PATCH'}  | ${'/v1/me/notifications/some-notification-id'}
-    ${'PATCH'}  | ${'/v1/me/notifications/mark-all-as-seen'}
+    method     | endpoint
+    ${'GET'}   | ${'/v1/me/notifications'}
+    ${'GET'}   | ${'/v1/me/notifications/some-notification-id'}
+    ${'GET'}   | ${'/v1/me/notifications/unread-count'}
+    ${'GET'}   | ${'/v1/me/notifications/unseen-count'}
+    ${'PATCH'} | ${'/v1/me/notifications/some-notification-id'}
+    ${'PATCH'} | ${'/v1/me/notifications/mark-all-as-seen'}
   `(
     '$method $endpoint should return 200 when user is authorized',
     async ({ method, endpoint }: TestEndpointOptions) => {
@@ -100,9 +101,7 @@ describe('MeNotificationsController - With Auth And Scope', () => {
       const res = await getRequestMethod(server, method)(endpoint)
 
       //Assert
-      expect([200, 204].includes(res.status)).toBe(true);
-
-      
+      expect([200, 204].includes(res.status)).toBe(true)
 
       app.cleanUp()
     },
