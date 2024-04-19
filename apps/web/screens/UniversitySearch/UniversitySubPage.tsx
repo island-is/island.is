@@ -50,7 +50,6 @@ import {
   GET_ORGANIZATION_SUBPAGE_QUERY,
 } from '../queries'
 import { GET_UNIVERSITY_GATEWAY_UNIVERSITIES } from '../queries/UniversityGateway'
-import { useSetZIndexOnHeader } from './useSetZIndexOnHeader'
 import * as styles from './UniversitySearch.css'
 
 interface UniversitySubPageProps {
@@ -70,7 +69,6 @@ const UniversitySubPage: Screen<UniversitySubPageProps> = ({
   const n = useNamespace(namespace)
   const router = useRouter()
   const { activeLocale } = useI18n()
-  useSetZIndexOnHeader()
   const [sortedUniversities, setSortedUniversities] = useState<
     UniversityGatewayUniversity[]
   >([])
