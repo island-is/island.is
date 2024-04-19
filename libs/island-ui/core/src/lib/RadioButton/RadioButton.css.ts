@@ -39,8 +39,6 @@ export const labelText = style({
   display: 'flex',
   flexDirection: 'column',
   width: '100%',
-  height: '100%',
-  justifyContent: 'space-between',
 })
 export const largeLabel = style({
   alignItems: 'center',
@@ -175,7 +173,8 @@ export const licenseText = style({
   paddingRight: theme.spacing[2],
   order: 1,
   width: '100px',
-
+  height: '100%',
+  justifyContent: 'space-between',
   '@media': {
     [`screen and (min-width: 400px)`]: {
       width: 'auto',
