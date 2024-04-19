@@ -336,7 +336,7 @@ export class NotificationsService {
    */
   formatArguments(args: ArgumentDto[], template: HnippTemplate): HnippTemplate {
     // Deep clone the template to avoid modifying the original
-    let formattedTemplate = JSON.parse(JSON.stringify(template))
+    const formattedTemplate = JSON.parse(JSON.stringify(template))
 
     args.forEach((arg) => {
       Object.keys(formattedTemplate).forEach((key) => {
