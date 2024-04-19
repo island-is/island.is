@@ -68,7 +68,6 @@ mutation UpdateCase($input: UpdateCaseInput!) {
     }
     courtCaseNumber
     sessionArrangements
-    courtDate
     courtLocation
     courtRoom
     courtStartDate
