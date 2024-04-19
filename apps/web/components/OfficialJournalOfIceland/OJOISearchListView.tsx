@@ -9,7 +9,7 @@ import { advertUrl } from './OJOIUtils'
 export const OJOISearchListView = ({
   adverts,
 }: {
-  adverts?: MinistryOfJusticeAdvertsResponse['adverts']
+  adverts: MinistryOfJusticeAdvertsResponse['adverts']
 }) => {
   return (
     <T.Table>
@@ -23,7 +23,7 @@ export const OJOISearchListView = ({
         </T.Row>
       </T.Head>
       <T.Body>
-        {adverts?.map((ad) => (
+        {adverts.map((ad) => (
           <T.Row key={ad.id}>
             <T.Data>
               <Text variant="small" whiteSpace="nowrap">

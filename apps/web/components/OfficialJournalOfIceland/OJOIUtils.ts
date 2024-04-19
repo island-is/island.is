@@ -16,11 +16,9 @@ export const categoriesUrl = baseUrl + '/malaflokkar'
 export const advertUrl = baseUrl + '/nr'
 
 export const splitArrayIntoGroups = <T>(array: Array<T>, groupSize: number) => {
-  const groups = []
-  for (let i = 0; i < array.length; i += groupSize) {
-    groups.push(array.slice(i, i + groupSize))
-  }
-  return groups
+  return Array.from({ length: Math.ceil(array.length / groupSize) }, (_, i) =>
+    array.slice(i * groupSize, (i + 1) * groupSize),
+  )
 }
 
 export const removeEmptyFromObject = (obj: Record<string, string>) => {

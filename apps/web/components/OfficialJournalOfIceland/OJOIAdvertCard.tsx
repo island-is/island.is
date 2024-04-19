@@ -35,11 +35,11 @@ export const OJOIAdvertCard = ({
           )}
           {(department || publicationDate) && (
             <Box>
-              <Text variant="eyebrow" color="blueberry400">{`${department} ${
-                department && publicationDate ? ' - ' : ''
-              } ${
-                publicationDate ? `Útg: ${formatDate(publicationDate)}` : ''
-              }`}</Text>
+              <Text variant="eyebrow" color="blueberry400">
+                {department}
+                {department && publicationDate && ' - '}
+                {publicationDate && `Útg: ${formatDate(publicationDate)}`}
+              </Text>
             </Box>
           )}
         </Box>

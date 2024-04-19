@@ -7,11 +7,11 @@ import { advertUrl } from './OJOIUtils'
 export const OJOISearchGridView = ({
   adverts,
 }: {
-  adverts?: MinistryOfJusticeAdvertsResponse['adverts']
+  adverts: MinistryOfJusticeAdvertsResponse['adverts']
 }) => {
   return (
     <Stack space={2}>
-      {adverts?.map((ad) => (
+      {adverts.map((ad) => (
         <OJOIAdvertCard
           key={ad.id}
           insitiution={ad.involvedParty?.title}
