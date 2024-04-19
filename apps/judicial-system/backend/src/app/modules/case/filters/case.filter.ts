@@ -225,13 +225,7 @@ const canDefenceUserAccessCase = (theCase: Case, user: User): boolean => {
     return false
   }
 
-  const courtDate = getLatestDateType(
-    DateType.COURT_DATE,
-    theCase.dateLogs?.map((dateLog) => ({
-      caseId: dateLog.caseId,
-      dateType: dateLog.dateType as DateType,
-    })),
-  )
+  const courtDate = getLatestDateType(DateType.COURT_DATE, theCase.dateLogs)
 
   // Check submitted case access
   const canDefenderAccessSubmittedCase =

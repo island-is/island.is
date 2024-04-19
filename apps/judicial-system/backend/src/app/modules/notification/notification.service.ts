@@ -41,6 +41,7 @@ import {
   CaseState,
   CaseType,
   DateType,
+  getLatestDateType,
   getStatementDeadline,
   isDefenceUser,
   isIndictmentCase,
@@ -76,7 +77,7 @@ import {
 } from '../../formatters'
 import { formatCourtOfAppealJudgeAssignedEmailNotification } from '../../formatters/formatters'
 import { notifications } from '../../messages'
-import { Case } from '../case'
+import { Case, DateLog } from '../case'
 import { CourtService } from '../court'
 import { Defendant, DefendantService } from '../defendant'
 import { CaseEvent, EventService } from '../event'
@@ -311,11 +312,12 @@ export class NotificationService {
   }
 
   private createICalAttachment(theCase: Case): Attachment | undefined {
-    const courtDate = theCase.dateLogs?.find(
-      (dateLog) => dateLog.dateType === DateType.COURT_DATE,
-    )
+    const courtDate = getLatestDateType(
+      DateType.COURT_DATE,
+      theCase.dateLogs,
+    ) as DateLog
 
-    if (!courtDate || !courtDate.date) {
+    if (!courtDate) {
       return
     }
 
@@ -619,9 +621,10 @@ export class NotificationService {
     theCase: Case,
     user: User,
   ): Promise<Recipient> {
-    const courtDate = theCase.dateLogs?.find(
-      (dateLog) => (dateLog.dateType = DateType.COURT_DATE),
-    )
+    const courtDate = getLatestDateType(
+      DateType.COURT_DATE,
+      theCase.dateLogs,
+    ) as DateLog
 
     const { subject, body } = formatProsecutorCourtDateEmailNotification(
       this.formatMessage,
@@ -671,9 +674,10 @@ export class NotificationService {
       { caseType: theCase.type, courtCaseNumber: theCase.courtCaseNumber },
     )
 
-    const courtDate = theCase.dateLogs?.find(
-      (dateLog) => (dateLog.dateType = DateType.COURT_DATE),
-    )
+    const courtDate = getLatestDateType(
+      DateType.COURT_DATE,
+      theCase.dateLogs,
+    ) as DateLog
 
     // Assume there is at most one defendant
     const html = formatPrisonCourtDateEmailNotification(
@@ -1207,9 +1211,10 @@ export class NotificationService {
   }
 
   private sendRevokedSmsNotificationToCourt(theCase: Case): Promise<Recipient> {
-    const courtDate = theCase.dateLogs?.find(
-      (dateLog) => dateLog.dateType === DateType.COURT_DATE,
-    )
+    const courtDate = getLatestDateType(
+      DateType.COURT_DATE,
+      theCase.dateLogs,
+    ) as DateLog
 
     const smsText = formatCourtRevokedSmsNotification(
       this.formatMessage,
@@ -1225,9 +1230,10 @@ export class NotificationService {
   private sendRevokedEmailNotificationToPrison(
     theCase: Case,
   ): Promise<Recipient> {
-    const courtDate = theCase.dateLogs?.find(
-      (dateLog) => dateLog.dateType === DateType.COURT_DATE,
-    )
+    const courtDate = getLatestDateType(
+      DateType.COURT_DATE,
+      theCase.dateLogs,
+    ) as DateLog
 
     const subject = this.formatMessage(
       notifications.prisonRevokedEmail.subject,
@@ -1285,9 +1291,10 @@ export class NotificationService {
     theCase: Case,
   ): Promise<SendNotificationResponse> {
     const promises: Promise<Recipient>[] = []
-    const courtDate = theCase.dateLogs?.find(
-      (dateLog) => dateLog.dateType === DateType.COURT_DATE,
-    )
+    const courtDate = getLatestDateType(
+      DateType.COURT_DATE,
+      theCase.dateLogs,
+    ) as DateLog
 
     const courtWasNotified =
       !isIndictmentCase(theCase.type) &&
@@ -1440,9 +1447,10 @@ export class NotificationService {
     theCase: Case,
   ): Promise<SendNotificationResponse> {
     const promises: Promise<Recipient>[] = []
-    const courtDate = theCase.dateLogs?.find(
-      (dateLog) => dateLog.dateType === DateType.COURT_DATE,
-    )
+    const courtDate = getLatestDateType(
+      DateType.COURT_DATE,
+      theCase.dateLogs,
+    ) as DateLog
 
     if (isIndictmentCase(theCase.type)) {
       const uniqDefendants = _uniqBy(

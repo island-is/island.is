@@ -98,12 +98,7 @@ export class EventService {
         return
       }
 
-      const courtDate = getLatestDateType(
-        DateType.COURT_DATE,
-        theCase.dateLogs?.map((dateLog) => ({
-          dateType: dateLog.dateType as DateType,
-        })),
-      )
+      const courtDate = getLatestDateType(DateType.COURT_DATE, theCase.dateLogs)
 
       const title =
         event === CaseEvent.ACCEPT && isIndictmentCase(theCase.type)

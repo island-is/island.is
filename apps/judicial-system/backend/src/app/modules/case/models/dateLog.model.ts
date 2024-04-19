@@ -9,7 +9,9 @@ import {
 
 import { ApiProperty, ApiPropertyOptional } from '@nestjs/swagger'
 
-import { Case } from '../../case/models/case.model'
+import { DateType } from '@island.is/judicial-system/types'
+
+import { Case } from './case.model'
 
 @Table({
   tableName: 'date_log',
@@ -19,32 +21,26 @@ export class DateLog extends Model {
   @Column({
     type: DataType.UUID,
     primaryKey: true,
-    allowNull: false,
     defaultValue: DataType.UUIDV4,
   })
   @ApiProperty()
   id!: string
 
   @CreatedAt
-  @Column({
-    type: DataType.DATE,
-  })
+  @Column({ type: DataType.DATE })
   @ApiProperty()
   created!: Date
 
   @Column({ type: DataType.STRING })
   @ApiProperty()
-  dateType!: string
+  dateType!: DateType
 
   @ForeignKey(() => Case)
-  @Column({ type: DataType.UUID, allowNull: true })
+  @Column({ type: DataType.UUID })
   @ApiPropertyOptional()
-  caseId?: string
+  caseId!: string
 
-  @Column({
-    type: DataType.DATE,
-    allowNull: true,
-  })
+  @Column({ type: DataType.DATE })
   @ApiPropertyOptional()
-  date?: Date
+  date!: Date
 }
