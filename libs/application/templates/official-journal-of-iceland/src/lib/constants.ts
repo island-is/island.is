@@ -16,6 +16,7 @@ export const MINIMUM_WEEKDAYS = 10
 
 export enum Routes {
   TEST = 'test',
+  COMMENTS = 'comments',
   REQUIREMENTS = 'requirements',
   ADVERT = 'advert',
   SIGNATURE = 'signature',

@@ -80,7 +80,7 @@ export const messages = defineMessages({
       'Ekki tókst að birta umbeðið skjal, við bendum þér á að prófa að sækja skjalið. Ef ekki tekst að sækja skal beina fyrirspurn til sendanda skjals: {senderName}',
   },
   documentFetchError: {
-    id: 'sp.documents:fetch-error',
+    id: 'sp.documents:fetch-error-2',
     defaultMessage:
       'Ekki tókst að sækja umbeðið skjal, við bendum þér á að beina fyrirspurn til sendanda þess: {senderName}',
   },

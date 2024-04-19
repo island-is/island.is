@@ -35,6 +35,7 @@ import {
   CaseTransition,
   CaseType,
   completedCaseStates,
+  DateType,
   EventType,
   isIndictmentCase,
   isRestrictionCase,
@@ -61,6 +62,7 @@ import { User } from '../user'
 import { CreateCaseDto } from './dto/createCase.dto'
 import { getCasesQueryFilter } from './filters/cases.filter'
 import { Case } from './models/case.model'
+import { DateLog } from './models/dateLog.model'
 import { SignatureConfirmationResponse } from './models/signatureConfirmation.response'
 import { transitionCase } from './state/case.state'
 
@@ -96,7 +98,6 @@ export interface UpdateCase
     | 'sharedWithProsecutorsOfficeId'
     | 'courtCaseNumber'
     | 'sessionArrangements'
-    | 'courtDate'
     | 'courtLocation'
     | 'courtRoom'
     | 'courtStartDate'
@@ -158,9 +159,11 @@ export interface UpdateCase
   courtRecordSignatoryId?: string | null
   courtRecordSignatureDate?: Date | null
   parentCaseId?: string | null
+  courtDate?: Date | null
 }
 
 const eventTypes = Object.values(EventType)
+const dateTypes = Object.values(DateType)
 
 export const include: Includeable[] = [
   { model: Institution, as: 'prosecutorsOffice' },
@@ -241,12 +244,19 @@ export const include: Includeable[] = [
     where: { eventType: { [Op.in]: eventTypes } },
     separate: true,
   },
+  {
+    model: DateLog,
+    as: 'dateLogs',
+    required: false,
+    where: { dateType: { [Op.in]: dateTypes } },
+  },
   { model: Notification, as: 'notifications' },
 ]
 
 export const order: OrderItem[] = [
   [{ model: Defendant, as: 'defendants' }, 'created', 'ASC'],
   [{ model: IndictmentCount, as: 'indictmentCounts' }, 'created', 'ASC'],
+  [{ model: DateLog, as: 'dateLogs' }, 'created', 'DESC'],
   [{ model: Notification, as: 'notifications' }, 'created', 'DESC'],
 ]
 
@@ -273,10 +283,17 @@ export const caseListInclude: Includeable[] = [
     as: 'registrar',
     include: [{ model: Institution, as: 'institution' }],
   },
+  {
+    model: DateLog,
+    as: 'dateLogs',
+    required: false,
+    where: { dateType: { [Op.in]: dateTypes } },
+  },
 ]
 
 export const listOrder: OrderItem[] = [
   [{ model: Defendant, as: 'defendants' }, 'created', 'ASC'],
+  [{ model: DateLog, as: 'dateLogs' }, 'created', 'DESC'],
 ]
 
 @Injectable()
@@ -284,6 +301,7 @@ export class CaseService {
   constructor(
     @InjectConnection() private readonly sequelize: Sequelize,
     @InjectModel(Case) private readonly caseModel: typeof Case,
+    @InjectModel(DateLog) private readonly dateLogModel: typeof DateLog,
     private readonly defendantService: DefendantService,
     private readonly fileService: FileService,
     private readonly awsS3Service: AwsS3Service,
@@ -909,6 +927,20 @@ export class CaseService {
     ])
   }
 
+  private addMessagesForReturnedIndictmentCaseToQueue(
+    theCase: Case,
+    user: TUser,
+  ): Promise<void> {
+    return this.messageService.sendMessagesToQueue([
+      {
+        type: MessageType.NOTIFICATION,
+        user,
+        caseId: theCase.id,
+        body: { type: NotificationType.INDICTMENT_RETURNED },
+      },
+    ])
+  }
+
   private addMessagesForNewAppealCaseNumberToQueue(
     theCase: Case,
     user: TUser,
@@ -963,6 +995,7 @@ export class CaseService {
     updatedCase: Case,
     user: TUser,
   ): Promise<void> {
+    const isIndictment = isIndictmentCase(updatedCase.type)
     if (updatedCase.state !== theCase.state) {
       // New case state
       if (
@@ -978,7 +1011,7 @@ export class CaseService {
           theCase.state,
         )
       } else if (completedCaseStates.includes(updatedCase.state)) {
-        if (isIndictmentCase(updatedCase.type)) {
+        if (isIndictment) {
           await this.addMessagesForCompletedIndictmentCaseToQueue(
             updatedCase,
             user,
@@ -986,23 +1019,27 @@ export class CaseService {
         } else {
           await this.addMessagesForCompletedCaseToQueue(updatedCase, user)
         }
-      } else if (
-        updatedCase.state === CaseState.SUBMITTED &&
-        isIndictmentCase(updatedCase.type)
-      ) {
+      } else if (updatedCase.state === CaseState.SUBMITTED && isIndictment) {
         await this.addMessagesForSubmittedIndicitmentCaseToQueue(
           updatedCase,
           user,
         )
+      } else if (
+        updatedCase.state === CaseState.DRAFT &&
+        theCase.state === CaseState.WAITING_FOR_CONFIRMATION &&
+        isIndictment
+      ) {
+        await this.addMessagesForDeniedIndictmentCaseToQueue(updatedCase, user)
+      } else if (
+        updatedCase.state === CaseState.DRAFT &&
+        theCase.state === CaseState.RECEIVED &&
+        isIndictment
+      ) {
+        await this.addMessagesForReturnedIndictmentCaseToQueue(
+          updatedCase,
+          user,
+        )
       }
-    }
-
-    if (
-      isIndictmentCase(updatedCase.type) &&
-      updatedCase.state === CaseState.DRAFT &&
-      theCase.state === CaseState.WAITING_FOR_CONFIRMATION
-    ) {
-      await this.addMessagesForDeniedIndictmentCaseToQueue(updatedCase, user)
     }
 
     // This only applies to restriction cases
@@ -1140,6 +1177,25 @@ export class CaseService {
       .then((caseId) => this.findById(caseId))
   }
 
+  private async handleDateUpdates(
+    theCase: Case,
+    update: UpdateCase,
+    transaction: Transaction,
+  ) {
+    if (update.courtDate) {
+      await this.dateLogModel.create(
+        {
+          dateType: DateType.COURT_DATE,
+          caseId: theCase.id,
+          date: update.courtDate,
+        },
+        { transaction },
+      )
+
+      delete update.courtDate
+    }
+  }
+
   async update(
     theCase: Case,
     update: UpdateCase,
@@ -1157,6 +1213,12 @@ export class CaseService {
             theCase.state,
             theCase.appealState,
           ).state
+        }
+
+        await this.handleDateUpdates(theCase, update, transaction)
+
+        if (Object.keys(update).length === 0) {
+          return
         }
 
         const [numberOfAffectedRows] = await this.caseModel.update(update, {
