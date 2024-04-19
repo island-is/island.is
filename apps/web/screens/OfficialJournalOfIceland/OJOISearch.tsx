@@ -5,15 +5,6 @@ import { useRouter } from 'next/router'
 import { useLazyQuery } from '@apollo/client'
 
 import {
-  MinistryOfJusticeAdvert,
-  MinistryOfJusticeAdvertCategory,
-  MinistryOfJusticeAdvertEntity,
-  MinistryOfJusticeAdvertsResponse,
-  MinistryOfJusticeAdvertType,
-  QueryMinistryOfJusticeInstitutionsArgs,
-  QueryMinistryOfJusticeTypesArgs,
-} from '@island.is/api/schema'
-import {
   Box,
   Button,
   DatePicker,
@@ -27,12 +18,19 @@ import { debounceTime } from '@island.is/shared/constants'
 import { getThemeConfig } from '@island.is/web/components'
 import {
   ContentLanguage,
+  MinistryOfJusticeAdvert,
+  MinistryOfJusticeAdvertCategory,
+  MinistryOfJusticeAdvertEntity,
+  MinistryOfJusticeAdvertsResponse,
+  MinistryOfJusticeAdvertType,
   Query,
   QueryGetNamespaceArgs,
   QueryGetOrganizationPageArgs,
   QueryMinistryOfJusticeAdvertsArgs,
   QueryMinistryOfJusticeCategoriesArgs,
   QueryMinistryOfJusticeDepartmentsArgs,
+  QueryMinistryOfJusticeInstitutionsArgs,
+  QueryMinistryOfJusticeTypesArgs,
 } from '@island.is/web/graphql/schema'
 import { useLinkResolver, useNamespace } from '@island.is/web/hooks'
 import useContentfulId from '@island.is/web/hooks/useContentfulId'

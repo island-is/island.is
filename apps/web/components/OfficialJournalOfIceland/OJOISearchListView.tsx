@@ -43,7 +43,7 @@ export const OJOISearchListView = ({
               </Text>
             </T.Data>
             <T.Data>
-              <Text variant="small" /*truncate whiteSpace="nowrap"*/>
+              <Text variant="small">
                 <LinkV2
                   href={advertUrl + '/' + ad.id}
                   underline="normal"
@@ -54,9 +54,7 @@ export const OJOISearchListView = ({
               </Text>
             </T.Data>
             <T.Data>
-              <Text variant="small" /*truncate whiteSpace="nowrap"*/>
-                {ad.involvedParty?.title}
-              </Text>
+              <Text variant="small">{ad.involvedParty?.title}</Text>
             </T.Data>
           </T.Row>
         ))}

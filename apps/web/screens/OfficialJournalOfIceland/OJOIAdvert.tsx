@@ -3,11 +3,11 @@ import format from 'date-fns/format'
 import is from 'date-fns/locale/is'
 import { Locale } from 'locale'
 
-import { MinistryOfJusticeAdvertResponse } from '@island.is/api/schema'
 import { Box, Button, Link, Stack, Text } from '@island.is/island-ui/core'
 import { getThemeConfig } from '@island.is/web/components'
 import {
   ContentLanguage,
+  MinistryOfJusticeAdvertResponse,
   Query,
   QueryGetNamespaceArgs,
   QueryGetOrganizationPageArgs,

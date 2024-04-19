@@ -440,7 +440,6 @@ OJOICategories.getProps = async ({ apolloClient, locale }) => {
       variables: {
         params: {
           search: '',
-          // page: 1,
         },
       },
     }),
@@ -449,7 +448,6 @@ OJOICategories.getProps = async ({ apolloClient, locale }) => {
       variables: {
         params: {
           search: '',
-          // page: 1,
         },
       },
     }),

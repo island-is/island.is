@@ -3,10 +3,6 @@ import { Locale } from 'locale'
 import NextLink from 'next/link'
 
 import {
-  MinistryOfJusticeAdvertMainCategory,
-  QueryMinistryOfJusticeMainCategoriesArgs,
-} from '@island.is/api/schema'
-import {
   ArrowLink,
   Box,
   Breadcrumbs,
@@ -21,9 +17,11 @@ import { getThemeConfig, SliceMachine } from '@island.is/web/components'
 import { SLICE_SPACING } from '@island.is/web/constants'
 import {
   ContentLanguage,
+  MinistryOfJusticeAdvertMainCategory,
   Query,
   QueryGetNamespaceArgs,
   QueryGetOrganizationPageArgs,
+  QueryMinistryOfJusticeMainCategoriesArgs,
 } from '@island.is/web/graphql/schema'
 import { useLinkResolver, useNamespace } from '@island.is/web/hooks'
 import useContentfulId from '@island.is/web/hooks/useContentfulId'
