@@ -175,7 +175,7 @@ export const licenseText = style({
   paddingRight: theme.spacing[2],
   order: 1,
   width: '100px',
-  
+
   '@media': {
     [`screen and (min-width: 400px)`]: {
       width: 'auto',
