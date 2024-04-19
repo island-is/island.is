@@ -34,6 +34,7 @@ import {
 } from '@island.is/web/graphql/schema'
 import { linkResolver, useNamespace } from '@island.is/web/hooks'
 import useContentfulId from '@island.is/web/hooks/useContentfulId'
+import { useI18n } from '@island.is/web/i18n'
 import { withMainLayout } from '@island.is/web/layouts/main'
 import { GET_PROJECT_PAGE_QUERY } from '@island.is/web/screens/queries/Project'
 import { CustomNextError } from '@island.is/web/units/errors'
@@ -64,6 +65,7 @@ const ProjectPage: Screen<PageProps> = ({
 }) => {
   const n = useNamespace(namespace)
   const p = useNamespace(projectNamespace)
+  const { activeLocale } = useI18n()
 
   const router = useRouter()
 
@@ -185,15 +187,11 @@ const ProjectPage: Screen<PageProps> = ({
             )}
             {subpage.content && (
               <Box className="rs_read">
-                {webRichText(subpage.content as SliceType[], {
-                  renderComponent: {
-                    // eslint-disable-next-line @typescript-eslint/ban-ts-comment
-                    // @ts-ignore make web strict
-                    Form: (slice) => (
-                      <Form form={slice} namespace={namespace} />
-                    ),
-                  },
-                })}
+                {webRichText(
+                  subpage.content as SliceType[],
+                  undefined,
+                  activeLocale,
+                )}
               </Box>
             )}
           </Box>
@@ -232,9 +230,6 @@ const ProjectPage: Screen<PageProps> = ({
           <Box className="rs_read" paddingBottom={SLICE_SPACING}>
             {webRichText(content, {
               renderComponent: {
-                // eslint-disable-next-line @typescript-eslint/ban-ts-comment
-                // @ts-ignore make web strict
-                Form: (slice) => <Form form={slice} namespace={namespace} />,
                 // eslint-disable-next-line @typescript-eslint/ban-ts-comment
                 // @ts-ignore make web strict
                 TabSection: (slice) => (

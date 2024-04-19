@@ -24,6 +24,7 @@ import {
   ChartsCardsProps,
   DrivingInstructorList,
   EmailSignup,
+  Form,
   KilometerFee,
   MasterList,
   MultipleStatistics,
@@ -54,6 +55,7 @@ import {
   Embed as EmbedSchema,
   FeaturedEvents as FeaturedEventsSchema,
   FeaturedSupportQnAs as FeaturedSupportQNAsSchema,
+  Form as FormSchema,
   MultipleStatistics as MultipleStatisticsSchema,
   OneColumnText,
   OverviewLinks as OverviewLinksSliceSchema,
@@ -183,6 +185,7 @@ const defaultRenderComponent = {
   FeaturedEvents: (slice: FeaturedEventsSchema) => (
     <FeaturedEvents slice={slice} />
   ),
+  Form: (slice: FormSchema) => <Form form={slice} />,
 }
 
 export const webRichText = (

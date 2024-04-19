@@ -486,6 +486,7 @@ export class FileService {
       .updateAppealCaseWithFile(
         user,
         theCase.id,
+        file.id,
         theCase.appealCaseNumber,
         file.category,
         file.name,
