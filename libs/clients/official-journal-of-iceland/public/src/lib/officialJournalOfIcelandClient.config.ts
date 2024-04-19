@@ -9,8 +9,10 @@ const schema = z.object({
   }),
 })
 
-export const DmrClientConfig = defineConfig<z.infer<typeof schema>>({
-  name: 'DmrClientConfig',
+export const OfficialJournalOfIcelandClientConfig = defineConfig<
+  z.infer<typeof schema>
+>({
+  name: 'OfficialJournalOfIcelandClientConfig',
   schema,
   load: (env) => ({
     xRoadServicePath: env.required(
