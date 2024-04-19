@@ -8,6 +8,7 @@ import {
   DateTime,
 } from '@island.is/judicial-system-web/src/components'
 import {
+  DateLog,
   DateType,
   NotificationType,
 } from '@island.is/judicial-system-web/src/graphql/schema'
@@ -35,7 +36,7 @@ export const useCourtArrangements = (workingCase: Case) => {
   const latestCourtDate = getLatestDateType(
     DateType.COURT_DATE,
     workingCase.dateLogs,
-  )
+  ) as DateLog
 
   useEffect(() => {
     if (latestCourtDate) {
