@@ -117,4 +117,29 @@ export const externalData = {
       description: 'National commissioner of police sub title',
     },
   }),
+  creditInfo: defineMessages({
+    title: {
+      id: 'doi.cs.application:externalData.creditInfo.title',
+      defaultMessage: 'Upplýsingar frá Credit Info',
+      description: 'Credit info title',
+    },
+    subTitle: {
+      id: 'doi.cs.application:externalData.creditInfo.subTitle',
+      defaultMessage:
+        'Upplýsingar um hvort árangurslaust fjárnám hafi verið gert hjá þér síðastliðin 3 ár, bú þitt tekið til gjaldþrotaskipta eða þú í vanskilum með skattgreiðslur.',
+      description: 'Credit info sub title',
+    },
+  }),
+  educationServices: defineMessages({
+    title: {
+      id: 'doi.cs.application:externalData.educationServices.title',
+      defaultMessage: 'Upplýsingar frá Miðstöð menntunar- og skólaþjónustu',
+      description: 'Education services title',
+    },
+    subTitle: {
+      id: 'doi.cs.application:externalData.educationServices.subTitle',
+      defaultMessage: 'Upplýsingar um skráningu og niðurstöðu íslenskuprófs.',
+      description: 'Education services sub title',
+    },
+  }),
 }
