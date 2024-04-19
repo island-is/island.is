@@ -9,7 +9,7 @@ import {
   displayMonthOrYear,
 } from '@island.is/service-portal/core'
 import { ExpandRow, ExpandHeader } from '@island.is/service-portal/core'
-import { m as messages } from '../../lib/messages'
+import { hb, m as messages } from '../../lib/messages'
 import { HousingBenefitsPayments } from '@island.is/api/schema'
 import { HousingBenefitsFooter } from './HousingBenefitsFooter'
 
@@ -53,7 +53,11 @@ const HousingBenefitsTable = ({ payments, page, setPage }: Props) => {
                 { value: formatDate(record.dateTransfer) },
                 {
                   value: record.month
-                    ? capitalize(displayMonthOrYear(record.month, lang))
+                    ? `${capitalize(displayMonthOrYear(record.month, lang))}${
+                        record.transactionType === 'L'
+                          ? ' - ' + formatMessage(hb.transaction?.L)
+                          : ''
+                      }`
                     : '',
                 },
                 { value: amountFormat(record.paymentBeforeDebt) },
@@ -102,11 +106,28 @@ const HousingBenefitsTable = ({ payments, page, setPage }: Props) => {
                   },
                   {
                     title: formatMessage(messages.hbTypeOfCalculation),
-                    value: record.calculationType ?? '',
+                    value: record.calculationType
+                      ? formatMessage(hb.calculation?.[record.calculationType])
+                      : '',
                   },
                   {
                     title: formatMessage(messages.hbReductionAssets),
                     value: amountFormat(record.reductionAssets),
+                  },
+                  {
+                    title: formatMessage(messages.hbTypeOfTransaction),
+                    value: record.transactionType
+                      ? formatMessage(hb.transaction?.[record.transactionType])
+                      : '',
+                  },
+                  {
+                    title: formatMessage(messages.hbPaymentType),
+                    value:
+                      record.paymentOrigin === 1
+                        ? formatMessage(messages.paymentOrigin1)
+                        : record.paymentOrigin === 2
+                        ? formatMessage(messages.paymentOrigin2)
+                        : '',
                   },
                 ]}
               />
