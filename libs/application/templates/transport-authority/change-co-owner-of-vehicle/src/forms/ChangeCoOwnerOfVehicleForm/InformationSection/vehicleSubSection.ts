@@ -70,7 +70,7 @@ export const vehicleSubSection = buildSubSection({
         buildTextField({
           id: 'vehicleMileage.value',
           title: information.labels.vehicle.mileage,
-          width: 'half',
+          width: 'full',
           variant: 'number',
           condition: (answers, externalData) => {
             const vehicle = getSelectedVehicle(
