@@ -21,7 +21,7 @@ const Stacked = ({ children, adviceCount }: StackedProps) => {
   const loc = localization['renderAdvices']
   return (
     <Stack space={3}>
-      <Text variant="h1" color="blue400">
+      <Text as="h2" variant="h2" color="blue400">
         {`${loc.advices.title} (${adviceCount ? adviceCount : 0})`}
       </Text>
       {children}

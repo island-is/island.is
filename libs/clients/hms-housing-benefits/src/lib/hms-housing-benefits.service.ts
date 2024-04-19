@@ -5,6 +5,7 @@ import {
   PaymentApi,
 } from '../../gen/fetch'
 import { handle204 } from '@island.is/clients/middlewares'
+import { CalculationTypes, TransactionTypes } from './enums'
 
 @Injectable()
 export class HmsHousingBenefitsClientService {
@@ -21,6 +22,12 @@ export class HmsHousingBenefitsClientService {
       this.apiWithAuth(user).apiVversionPaymentPaymenthistoryPostRaw(input),
     )
 
+    const roundIfDefined = function (
+      value: number | undefined | null,
+    ): number | undefined {
+      return typeof value === 'number' ? Math.round(value) : undefined
+    }
+
     if (!res) return null
     return {
       ...res,
@@ -32,6 +39,22 @@ export class HmsHousingBenefitsClientService {
       data:
         res.data?.map((item) => ({
           ...item,
+          paymentActual: roundIfDefined(item.paymentActual),
+          paidOfDebt: roundIfDefined(item.paidOfDebt),
+          paymentBeforeDebt: roundIfDefined(item.paymentBeforeDebt),
+          benefit: roundIfDefined(item.benefit),
+          reductionIncome: roundIfDefined(item.reductionIncome),
+          reductionAssets: roundIfDefined(item.reductionAssets),
+          reductionHousingCost: roundIfDefined(item.reductionHousingCost),
+          totalIncome: roundIfDefined(item.totalIncome),
+          remainDebt: roundIfDefined(item.remainDebt),
+          paymentOrigin: roundIfDefined(item.paymentOrigin),
+          calculationType: item.calculationType
+            ? (item.calculationType as CalculationTypes)
+            : undefined,
+          transactionType: item.transactionType
+            ? (item.transactionType as TransactionTypes)
+            : undefined,
           nationalId: item.kennitala ?? undefined,
         })) ?? [],
     }
