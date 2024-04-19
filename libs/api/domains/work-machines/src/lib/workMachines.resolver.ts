@@ -104,8 +104,9 @@ export class WorkMachinesResolver {
   async getWorkerMachineDetails(
     @CurrentUser() auth: User,
     @Args('id') id: string,
+    @Args('rel') rel: string,
   ) {
-    return this.workMachinesService.getMachineDetails(auth, id)
+    return this.workMachinesService.getMachineDetails(auth, id, rel)
   }
 
   @Scopes(ApiScope.vinnueftirlitid)
@@ -124,7 +125,8 @@ export class WorkMachinesResolver {
   async getWorkerMachineByRegno(
     @CurrentUser() auth: User,
     @Args('regno') regno: string,
+    @Args('rel') rel: string,
   ) {
-    return this.workMachinesService.getMachineByRegno(auth, regno)
+    return this.workMachinesService.getMachineByRegno(auth, regno, rel)
   }
 }
