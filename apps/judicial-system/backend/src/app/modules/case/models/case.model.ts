@@ -40,6 +40,7 @@ import { IndictmentCount } from '../../indictment-count'
 import { Institution } from '../../institution'
 import { Notification } from '../../notification'
 import { User } from '../../user'
+import { DateLog } from './dateLog.model'
 
 @Table({
   tableName: 'case',
@@ -478,16 +479,6 @@ export class Case extends Model {
   })
   @ApiPropertyOptional({ enum: SessionArrangements })
   sessionArrangements?: SessionArrangements
-
-  /**********
-   * The scheduled date and time of the case's court session
-   **********/
-  @Column({
-    type: DataType.DATE,
-    allowNull: true,
-  })
-  @ApiPropertyOptional()
-  courtDate?: Date
 
   /**********
    * The location of the court session
@@ -1136,6 +1127,13 @@ export class Case extends Model {
   @HasMany(() => EventLog, 'caseId')
   @ApiPropertyOptional({ type: EventLog, isArray: true })
   eventLogs?: EventLog[]
+
+  /**********
+   * The case's date logs
+   **********/
+  @HasMany(() => DateLog, 'caseId')
+  @ApiPropertyOptional({ type: DateLog, isArray: true })
+  dateLogs?: DateLog[]
 
   /**********
    * The appeal ruling expiration date and time - example: the end of custody in custody cases -

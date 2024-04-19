@@ -65,6 +65,7 @@ export enum ApplicationTypes {
   GRINDAVIK_HOUSING_BUYOUT = 'GrindavikHousingBuyout',
   REQUEST_INSPECTION_FOR_MACHINE = 'RequestInspectionForMachine',
   OFFICIAL_JOURNAL_OF_ICELAND = 'OfficialJournalOfIceland',
+  STREET_REGISTRATION = 'StreetRegistration',
 }
 
 export const ApplicationConfigurations = {
@@ -335,5 +336,9 @@ export const ApplicationConfigurations = {
   [ApplicationTypes.OFFICIAL_JOURNAL_OF_ICELAND]: {
     slug: 'stjornartidindi',
     translation: 'ojoi.application',
+  },
+  [ApplicationTypes.STREET_REGISTRATION]: {
+    slug: 'gotuskraning-taekis',
+    translation: 'sr.application',
   },
 }
