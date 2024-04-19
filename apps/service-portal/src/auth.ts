@@ -5,6 +5,7 @@ import {
   AuthScope,
   DocumentsScope,
   EndorsementsScope,
+  HmsScope,
   NationalRegistryScope,
   NotificationsScope,
   UserProfileScope,

@@ -1,5 +1,3 @@
-import { CanActivate } from '@nestjs/common'
-
 import { JwtAuthGuard, RolesGuard } from '@island.is/judicial-system/auth'
 import {
   investigationCases,
@@ -22,70 +20,15 @@ describe('CaseController - Get court record pdf guards', () => {
     )
   })
 
-  it('should have five guards', () => {
+  it('should have the right guard configuration', () => {
     expect(guards).toHaveLength(5)
-  })
-
-  describe('JwtAuthGuard', () => {
-    let guard: CanActivate
-
-    beforeEach(() => {
-      guard = new guards[0]()
+    expect(new guards[0]()).toBeInstanceOf(JwtAuthGuard)
+    expect(new guards[1]()).toBeInstanceOf(RolesGuard)
+    expect(new guards[2]()).toBeInstanceOf(CaseExistsGuard)
+    expect(guards[3]).toBeInstanceOf(CaseTypeGuard)
+    expect(guards[3]).toEqual({
+      allowedCaseTypes: [...restrictionCases, ...investigationCases],
     })
-
-    it('should have JwtAuthGuard as guard 1', () => {
-      expect(guard).toBeInstanceOf(JwtAuthGuard)
-    })
-  })
-
-  describe('RolesGuard', () => {
-    let guard: CanActivate
-
-    beforeEach(() => {
-      guard = new guards[1]()
-    })
-
-    it('should have RolesGuard as guard 2', () => {
-      expect(guard).toBeInstanceOf(RolesGuard)
-    })
-  })
-
-  describe('CaseExistsGuard', () => {
-    let guard: CanActivate
-
-    beforeEach(() => {
-      guard = new guards[2]()
-    })
-
-    it('should have CaseExistsGuard as guard 3', () => {
-      expect(guard).toBeInstanceOf(CaseExistsGuard)
-    })
-  })
-
-  describe('CaseTypeGuard', () => {
-    let guard: CanActivate
-
-    beforeEach(() => {
-      guard = guards[3]
-    })
-
-    it('should have CaseTypeGuard as guard 4', () => {
-      expect(guard).toBeInstanceOf(CaseTypeGuard)
-      expect(guard).toEqual({
-        allowedCaseTypes: [...restrictionCases, ...investigationCases],
-      })
-    })
-  })
-
-  describe('CaseReadGuard', () => {
-    let guard: CanActivate
-
-    beforeEach(() => {
-      guard = new guards[4]()
-    })
-
-    it('should have CaseReadGuard as guard 5', () => {
-      expect(guard).toBeInstanceOf(CaseReadGuard)
-    })
+    expect(new guards[4]()).toBeInstanceOf(CaseReadGuard)
   })
 })

@@ -35,6 +35,15 @@ export const GET_UNIVERSITY_GATEWAY_PROGRAM_LIST = gql`
     }
   }
 `
+export const GET_UNIVERSITY_GATEWAY_PROGRAM_LIST_IDS = gql`
+  query GetUniversityGatewayProgramIds {
+    universityGatewayPrograms {
+      data {
+        id
+      }
+    }
+  }
+`
 
 export const GET_UNIVERSITY_GATEWAY_UNIVERSITIES = gql`
   query GetUniversityGatewayUniversities {
@@ -73,21 +82,6 @@ export const GET_UNIVERSITY_GATEWAY_PROGRAM = gql`
       costInformationEn
       costInformationIs
       costPerYear
-      courses {
-        credits
-        descriptionEn
-        descriptionIs
-        externalId
-        externalUrlEn
-        externalUrlIs
-        id
-        nameEn
-        nameIs
-        requirement
-        semesterSeason
-        semesterYear
-        semesterYearNumber
-      }
       credits
       degreeAbbreviation
       degreeType

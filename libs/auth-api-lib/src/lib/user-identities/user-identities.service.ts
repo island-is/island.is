@@ -1,13 +1,25 @@
-import { BadRequestException, Inject, Injectable } from '@nestjs/common'
+import {
+  BadRequestException,
+  Inject,
+  Injectable,
+  NotFoundException,
+} from '@nestjs/common'
 import { InjectModel } from '@nestjs/sequelize'
-import type { Logger } from '@island.is/logging'
-import { LOGGER_PROVIDER } from '@island.is/logging'
-import { Claim } from './models/claim.model'
-import { Sequelize } from 'sequelize-typescript'
-import { UserIdentity } from './models/user-identity.model'
-import { UserIdentityDto } from './dto/user-identity.dto'
-import { ClaimDto } from './dto/claim.dto'
+import { randomBytes } from 'crypto'
 import { Op } from 'sequelize'
+import { Sequelize } from 'sequelize-typescript'
+
+import { LOGGER_PROVIDER } from '@island.is/logging'
+import type { Logger } from '@island.is/logging'
+
+import { ClaimDto } from './dto/claim.dto'
+import { UserIdentityDto } from './dto/user-identity.dto'
+import { Claim } from './models/claim.model'
+import { UserIdentity } from './models/user-identity.model'
+
+export const audkenniProvider = 'audkenni'
+export const delegationProvider = 'delegation'
+export const actorSubjectIdType = 'actorSubjectId'
 
 @Injectable()
 export class UserIdentitiesService {
@@ -21,7 +33,7 @@ export class UserIdentitiesService {
     private logger: Logger,
   ) {}
 
-  /** Get's all user identities and total count of rows */
+  /** Gets all user identities and total count of rows */
   async findAndCountAll(): Promise<{
     rows: UserIdentity[]
     count: number
@@ -70,7 +82,7 @@ export class UserIdentitiesService {
     })
   }
 
-  /** Get user identity by national national id (kt) */
+  /** Get user identity by national id (kt) */
   async findByNationalId(nationalId: string) {
     if (!nationalId) {
       throw new BadRequestException('NationalId must be provided')
@@ -97,7 +109,7 @@ export class UserIdentitiesService {
     return null
   }
 
-  /** Gets a user identiy by a provider and subjectid */
+  /** Gets a user identity by a provider and subjectId */
   async findByProviderSubjectId(
     provider: string,
     subjectId: string,
@@ -121,7 +133,7 @@ export class UserIdentitiesService {
     })
   }
 
-  /** Gets a delegation identity by a provider, subjectid and actor subject id */
+  /** Gets a delegation identity by a provider, subjectId and actor subjectId */
   async findDelegationIdentity(
     provider: string,
     subjectId: string,
@@ -183,7 +195,7 @@ export class UserIdentitiesService {
     return await this.findBySubjectId(userIdentity.subjectId)
   }
 
-  /** Deletes an user identity by subjectid */
+  /** Deletes a user identity by subjectId */
   async delete(subjectId: string): Promise<number> {
     this.logger.debug('Deleting user identity with subjectId: ', subjectId)
 
@@ -196,7 +208,7 @@ export class UserIdentitiesService {
     })
   }
 
-  /** Activates or deactivates a user by it's subjectId */
+  /** Activates or deactivates a user by its subjectId */
   async setActive(
     subjectId: string,
     active: boolean,
@@ -246,5 +258,94 @@ export class UserIdentitiesService {
     })
 
     return claims
+  }
+
+  async findOrCreateSubjectId({
+    toNationalId,
+    fromNationalId,
+  }: {
+    fromNationalId: string
+    toNationalId: string
+  }): Promise<string | null> {
+    const actor = await this.findUserIdentity({
+      nationalId: toNationalId,
+      provider: audkenniProvider,
+    })
+
+    if (!actor) {
+      throw new NotFoundException('Actor not found')
+    }
+
+    const delegation = await this.findUserIdentity({
+      nationalId: fromNationalId,
+      provider: delegationProvider,
+      claim: { type: actorSubjectIdType, value: actor.subjectId },
+    })
+
+    if (delegation) {
+      return delegation.subjectId
+    } else {
+      return await this.autoProvisionDelegation(fromNationalId, actor)
+    }
+  }
+
+  private findUserIdentity({
+    nationalId,
+    provider,
+    claim,
+  }: {
+    nationalId: string
+    provider: string
+    claim?: {
+      type: string
+      value: string
+    }
+  }): Promise<UserIdentity | null> {
+    return this.userIdentityModel.findOne({
+      where: {
+        providerName: provider,
+        providerSubjectId: `IS-${nationalId}`,
+      },
+      ...(claim && {
+        include: [
+          {
+            model: Claim,
+            where: { type: claim.type, value: claim.value },
+          },
+        ],
+      }),
+    })
+  }
+
+  private async autoProvisionDelegation(
+    fromNationalId: string,
+    actor: UserIdentity,
+  ): Promise<string | null> {
+    const subjectId = this.generateSubjectId()
+
+    const delegation: UserIdentityDto = {
+      subjectId,
+      name: '-', // the name column should not be in use anywhere
+      providerName: delegationProvider,
+      providerSubjectId: `IS-${fromNationalId}`,
+      active: true,
+      claims: [
+        {
+          type: actorSubjectIdType,
+          value: actor.subjectId,
+          valueType: 'http://www.w3.org/2001/XMLSchema#string',
+          issuer: 'delegationindex',
+          originalIssuer: 'delegationindex',
+        },
+      ], // claims will be updated when the delegation is used
+    }
+
+    const createdDelegation = await this.create(delegation)
+
+    return createdDelegation?.subjectId ?? null
+  }
+
+  private generateSubjectId(): string {
+    return randomBytes(32).toString('hex').toUpperCase()
   }
 }
