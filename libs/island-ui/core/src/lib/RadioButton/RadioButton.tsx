@@ -150,7 +150,7 @@ export const RadioButton = ({
                   [styles.signatureImageContainer]: signature,
                 })}
               >
-                <img src={signature} alt="image" />
+                <img className={styles.signatureImage} src={signature} alt="image" />
               </Box>
             </Hidden>
           )}

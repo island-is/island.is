@@ -156,6 +156,10 @@ export const signatureImageContainer = style({
   right: theme.spacing[4],
 })
 
+export const signatureImage = style({
+  width: '100%',
+})
+
 export const image = style({
   borderRadius: theme.border.radius.standard,
   '@media': {
@@ -170,8 +174,12 @@ export const licenseText = style({
   alignSelf: 'self-start',
   paddingRight: theme.spacing[2],
   order: 1,
-  width: '100%',
+  width: '100px',
+  
   '@media': {
+    [`screen and (min-width: 400px)`]: {
+      width: 'auto',
+    },
     [`screen and (min-width: ${theme.breakpoints.sm}px)`]: {
       order: 0,
       bottom: theme.spacing[1],
