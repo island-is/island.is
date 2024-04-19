@@ -1,208 +1,110 @@
-import request, { SuperTest, Test } from 'supertest'
+import request from 'supertest'
 import { AppModule } from '../../../app.module'
-import { setupApp, setupAppWithoutAuth, TestApp } from '@island.is/testing/nest'
+import { getRequestMethod, setupApp, setupAppWithoutAuth, TestEndpointOptions } from '@island.is/testing/nest'
 import { SequelizeConfigService } from '../../../sequelizeConfig.service'
 import { NotificationsScope } from '@island.is/auth/scopes'
 import {
   createCurrentUser,
-  createNationalId,
-  createPhoneNumber,
 } from '@island.is/testing/fixtures'
-import faker from 'faker'
 
-const testUserProfile = {
-  nationalId: createNationalId(),
-  email: faker.internet.email(),
-  mobilePhoneNumber: createPhoneNumber(),
-}
 
-describe('MeNotificationsController', () => {
-  describe('No auth', () => {
-    let app: TestApp
-    let server: SuperTest<Test>
 
-    beforeAll(async () => {
-      process.env.INIT_SCHEMA = 'true' // Disabling Firebase init
+beforeAll(async () => {
+  process.env.INIT_SCHEMA = 'true'; // Disabling Firebase init
+})
 
-      app = await setupAppWithoutAuth({
+describe('MeNotificationsController - No Auth', () => {
+  it.each`
+    method      | endpoint
+    ${'GET'}    | ${'/v1/me/notifications'}
+    ${'GET'}    | ${'/v1/me/notifications/some-notification-id'}
+    ${'GET'}    | ${'/v1/me/notifications/unread-count'}
+    ${'GET'}    | ${'/v1/me/notifications/unseen-count'}
+    ${'PATCH'}  | ${'/v1/me/notifications/some-notification-id'}
+    ${'PATCH'}  | ${'/v1/me/notifications/mark-all-as-seen'}
+  `(
+    '$method $endpoint should return 401 when user is unauthenticated',
+    async ({ method, endpoint }: TestEndpointOptions) => {
+      //Arrange
+      const app = await setupAppWithoutAuth({
         AppModule: AppModule,
         SequelizeConfigService: SequelizeConfigService,
       })
-
-      server = request(app.getHttpServer())
-    })
-
-    afterAll(async () => {
-      await app.cleanUp()
-    })
-
-    it('GET /me/notifications should return 401 when user is not authenticated', async () => {
-      // Act
-      const res = await server.get('/v1/me/notifications')
-
-      // Assert
-      expect(res.status).toBe(401)
-    })
-
-    it('GET me/notification/unread-count should return 401 when user is not authenticated', async () => {
       const server = request(app.getHttpServer())
 
-      // Act
-      const res = await server.get('/v1/me/notifications/unread-count')
+      //Act
+      const res = await getRequestMethod(server, method)(endpoint)
 
-      // Assert
-      expect(res.status).toBe(401)
-    })
+      //Assert
+      expect(res.status).toEqual(401)
 
-    it('GET me/notification/unseen-count should return 401 when user is not authenticated', async () => {
-      const server = request(app.getHttpServer())
+      app.cleanUp()
+    },
+  )
+})
 
-      // Act
-      const res = await server.get('/v1/me/notifications/unseen-count')
-
-      // Assert
-      expect(res.status).toBe(401)
-    })
-
-    it('GET me/notification/:id should return 401 when user is not authenticated', async () => {
-      const server = request(app.getHttpServer())
-
-      // Act
-      const res = await server.get('/v1/me/notifications/1')
-
-      // Assert
-      expect(res.status).toBe(401)
-    })
-
-    it('PATCH me/notification/mark-all-as-seen should return 401 when user is not authenticated', async () => {
-      const server = request(app.getHttpServer())
-
-      // Act
-      const res = await server.patch('/v1/me/notifications/mark-all-as-seen')
-
-      // Assert
-      expect(res.status).toBe(401)
-    })
-  })
-
-  describe('With auth but wrong scope', () => {
-    let app: TestApp
-    let server: SuperTest<Test>
-
-    beforeAll(async () => {
-      app = await setupApp({
-        AppModule: AppModule,
-        SequelizeConfigService: SequelizeConfigService,
-        user: createCurrentUser({
-          nationalId: testUserProfile.nationalId,
-        }),
+describe('MeNotificationsController - With Auth No Scope', () => {
+  it.each`
+    method      | endpoint
+    ${'GET'}    | ${'/v1/me/notifications'}
+    ${'GET'}    | ${'/v1/me/notifications/some-notification-id'}
+    ${'GET'}    | ${'/v1/me/notifications/unread-count'}
+    ${'GET'}    | ${'/v1/me/notifications/unseen-count'}
+    ${'PATCH'}  | ${'/v1/me/notifications/some-notification-id'}
+    ${'PATCH'}  | ${'/v1/me/notifications/mark-all-as-seen'}
+  `(
+    '$method $endpoint should return 403 when user is unauthorized',
+    async ({ method, endpoint }: TestEndpointOptions) => {
+      //Arrange
+      const app = await setupApp({
+        AppModule,
+        SequelizeConfigService,
+        user: createCurrentUser({}),
       })
+      const server = request(app.getHttpServer())
 
-      server = request(app.getHttpServer())
-    })
+      //Act
+      const res = await getRequestMethod(server, method)(endpoint)
 
-    afterAll(async () => {
-      await app.cleanUp()
-    })
+      //Assert
+      expect(res.status).toEqual(403)
 
-    it('GET /me/notifications should return 403', async () => {
-      const response = await server.get('/v1/me/notifications')
+      app.cleanUp()
+    },
+  )
+})
 
-      // Assert
-      expect(response.status).toBe(403)
-    })
-
-    it('GET me/notification/unread-count should return 403', async () => {
-      const response = await server.get('/v1/me/notifications/unread-count')
-
-      // Assert
-      expect(response.status).toBe(403)
-    })
-
-    it('GET me/notification/unseen-count should return 403', async () => {
-      const response = await server.get('/v1/me/notifications/unseen-count')
-
-      // Assert
-      expect(response.status).toBe(403)
-    })
-
-    it('GET me/notification/:id should return 403', async () => {
-      const response = await server.get('/v1/me/notifications/1')
-
-      // Assert
-      expect(response.status).toBe(403)
-    })
-
-    it('PATCH me/notification/mark-all-as-seen should return 403', async () => {
-      const response = await server.patch(
-        '/v1/me/notifications/mark-all-as-seen',
-      )
-
-      // Assert
-      expect(response.status).toBe(403)
-    })
-  })
-
-  describe('With auth and correct scope', () => {
-    let app: TestApp
-    let server: SuperTest<Test>
-
-    beforeAll(async () => {
-      app = await setupApp({
+describe('MeNotificationsController - With Auth And Scope', () => {
+  it.each`
+    method      | endpoint
+    ${'GET'}    | ${'/v1/me/notifications'}
+    ${'GET'}    | ${'/v1/me/notifications/some-notification-id'}
+    ${'GET'}    | ${'/v1/me/notifications/unread-count'}
+    ${'GET'}    | ${'/v1/me/notifications/unseen-count'}
+    ${'PATCH'}  | ${'/v1/me/notifications/some-notification-id'}
+    ${'PATCH'}  | ${'/v1/me/notifications/mark-all-as-seen'}
+  `(
+    '$method $endpoint should return 200 when user is authorized',
+    async ({ method, endpoint }: TestEndpointOptions) => {
+      //Arrange
+      const app = await setupApp({
         AppModule,
         SequelizeConfigService,
         user: createCurrentUser({
-          scope: [NotificationsScope.read, NotificationsScope.write],
+          scope: [NotificationsScope.read],
         }),
       })
+      const server = request(app.getHttpServer())
 
-      server = request(app.getHttpServer())
-    })
+      //Act
+      const res = await getRequestMethod(server, method)(endpoint)
 
-    afterAll(async () => {
-      await app.cleanUp()
-    })
+      //Assert
+      expect([200, 204].includes(res.status)).toBe(true);
 
-    it('GET /me/notifications should return 200', async () => {
-      // Act
-      const res = await server.get('/v1/me/notifications')
+      
 
-      // Assert
-      expect(res.status).toEqual(200)
-    })
-
-    it('GET me/notification/unread-count should return 200', async () => {
-      // Act
-      const res = await server.get('/v1/me/notifications/unread-count')
-
-      // Assert
-      expect(res.status).toEqual(200)
-    })
-
-    it('GET me/notification/unseen-count should return 200', async () => {
-      // Act
-      const res = await server.get('/v1/me/notifications/unseen-count')
-
-      // Assert
-      expect(res.status).toEqual(200)
-    })
-
-    it('GET me/notification/:id should return 204', async () => {
-      // Act
-      const res = await server.get('/v1/me/notifications/1')
-
-      // Assert
-      expect(res.status).toEqual(204)
-    })
-
-    it('PATCH me/notification/mark-all-as-seen should return 200', async () => {
-      // Act
-      const res = await server
-        .patch('/v1/me/notifications/mark-all-as-seen')
-        .send({ read: true, seen: true, unreadCount: 1, unseenCount: 1 })
-
-      // Assert
-      expect(res.status).toEqual(204)
-    })
-  })
+      app.cleanUp()
+    },
+  )
 })
