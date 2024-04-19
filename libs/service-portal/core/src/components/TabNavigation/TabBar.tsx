@@ -21,28 +21,17 @@ export const TabBar = ({ tabs, variant = 'default', ...boxProps }: Props) => {
   }
 
   const keyPressHandler = (idx: number, maxLength: number, keyCode: string) => {
-    const setFocusToTab = (id: number) => {
-      const map = getMap()
-      const node = map.get(id)
+    const setFocusToTab = (id: number) => getMap().get(id)?.focus()
 
-      if (node) {
-        node.focus()
-      }
-    }
-
+    let tabIndex: number | undefined
     if (keyCode === 'ArrowLeft') {
-      if (idx > 0) {
-        setFocusToTab(idx - 1)
-      } else {
-        setFocusToTab(maxLength - 1)
-      }
+      tabIndex = idx > 0 ? idx - 1 : maxLength - 1
+    } else if (keyCode === 'ArrowRight') {
+      tabIndex = idx < maxLength - 1 ? idx + 1 : 0
     }
-    if (keyCode === 'ArrowRight') {
-      if (idx < maxLength - 1) {
-        setFocusToTab(idx + 1)
-      } else {
-        setFocusToTab(0)
-      }
+
+    if (typeof tabIndex === 'number') {
+      setFocusToTab(tabIndex)
     }
   }
 
