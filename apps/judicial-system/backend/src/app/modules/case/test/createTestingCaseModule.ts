@@ -31,6 +31,7 @@ import { LimitedAccessCaseController } from '../limitedAccessCase.controller'
 import { LimitedAccessCaseService } from '../limitedAccessCase.service'
 import { Case } from '../models/case.model'
 import { CaseArchive } from '../models/caseArchive.model'
+import { DateLog } from '../models/dateLog.model'
 import { PDFService } from '../pdf.service'
 
 jest.mock('@island.is/judicial-system/message')
@@ -97,6 +98,12 @@ export const createTestingCaseModule = async () => {
           findByPk: jest.fn(),
           findAll: jest.fn(),
           update: jest.fn(),
+        },
+      },
+      {
+        provide: getModelToken(DateLog),
+        useValue: {
+          create: jest.fn(),
         },
       },
       {
