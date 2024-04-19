@@ -22,7 +22,8 @@ export const offlineButton = {
 
 export const useOfflineUpdateNavigation = (
   componentId: string,
-  optionsTopBarRightButtons: OptionsTopBar['rightButtons'],
+  optionsTopBarRightButtons: OptionsTopBar['rightButtons'] = [],
+  extraProps?: Record<string, unknown>,
 ) => {
   const netInfo = useNetInfo()
   const pastIsConnected = useOfflineStore(
@@ -33,19 +34,23 @@ export const useOfflineUpdateNavigation = (
     ({ resetConnectionState }) => resetConnectionState,
   )
 
+  const updateNavigationButtons = () => {
+    Navigation.mergeOptions(componentId, {
+      topBar: {
+        rightButtons: isConnected
+          ? optionsTopBarRightButtons
+          : optionsTopBarRightButtons
+          ? [...optionsTopBarRightButtons, offlineButton]
+          : [offlineButton],
+      },
+    })
+  }
+
   useEffect(() => {
     if (!isConnected || (isConnected && isConnected !== pastIsConnected)) {
       // Update the navigation top bar right buttons with additional offline button
       // or remove it if the user is connected
-      Navigation.mergeOptions(componentId, {
-        topBar: {
-          rightButtons: isConnected
-            ? optionsTopBarRightButtons
-            : optionsTopBarRightButtons
-            ? [...optionsTopBarRightButtons, offlineButton]
-            : [offlineButton],
-        },
-      })
+      updateNavigationButtons()
     }
   }, [isConnected])
 
@@ -54,4 +59,11 @@ export const useOfflineUpdateNavigation = (
       resetConnectionState()
     }
   }, [netInfo.isConnected])
+
+  useEffect(() => {
+    if (extraProps) {
+      // Make sure update the navigation buttons if extra props are passed
+      updateNavigationButtons()
+    }
+  }, [extraProps])
 }

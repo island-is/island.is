@@ -16,7 +16,6 @@ const Icon = styled(Image)(({ theme }) => ({
 export const OfflineIcon = () => {
   const isConnected = useOfflineStore(({ isConnected }) => isConnected)
   const bannerVisible = useOfflineStore(({ bannerVisible }) => bannerVisible)
-  const toggleBanner = useOfflineStore(({ toggleBanner }) => toggleBanner)
 
   const onPress = async () => {
     if (!bannerVisible) {
@@ -30,8 +29,6 @@ export const OfflineIcon = () => {
     } else {
       void Navigation.dismissOverlay(CR.OfflineBanner)
     }
-
-    toggleBanner(!bannerVisible)
   }
 
   if (isConnected) {
