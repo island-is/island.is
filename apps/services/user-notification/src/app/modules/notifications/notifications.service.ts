@@ -30,7 +30,6 @@ import {
 import { Locale } from '@island.is/shared/types'
 import { mapToContentfulLocale, mapToLocale } from './utils'
 
-
 const ACCESS_TOKEN = process.env.CONTENTFUL_ACCESS_TOKEN
 const CONTENTFUL_GQL_ENDPOINT =
   'https://graphql.contentful.com/content/v1/spaces/8k0h54kbe6bj/environments/master'
@@ -100,7 +99,9 @@ export class NotificationsService {
       this.logger.warn(`Cache MISS for: ${cacheKey}`)
     }
     const contentfulOrganizationQuery = `{
-      organizationCollection(where: {kennitala: "${senderId}"}, locale: "${mapToContentfulLocale(locale)}") {
+      organizationCollection(where: {kennitala: "${senderId}"}, locale: "${mapToContentfulLocale(
+      locale,
+    )}") {
         items {
           title
         }
@@ -188,9 +189,7 @@ export class NotificationsService {
     }
   }
 
-  async getTemplates(
-    locale?: Locale,
-  ): Promise<HnippTemplate[]> {
+  async getTemplates(locale?: Locale): Promise<HnippTemplate[]> {
     locale = mapToLocale(locale as Locale)
     console.log(locale)
     const cacheKey = `templates-${locale}`
@@ -255,7 +254,9 @@ export class NotificationsService {
 
     // Query to fetch a specific template by templateId
     const contentfulTemplateQuery = `{
-      hnippTemplateCollection(where: {templateId: "${templateId}"}, locale: "${mapToContentfulLocale(locale)}") {
+      hnippTemplateCollection(where: {templateId: "${templateId}"}, locale: "${mapToContentfulLocale(
+      locale,
+    )}") {
         items {
           templateId
           notificationTitle
