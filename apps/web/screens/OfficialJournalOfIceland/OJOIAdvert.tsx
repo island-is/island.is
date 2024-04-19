@@ -19,10 +19,10 @@ import { withMainLayout } from '@island.is/web/layouts/main'
 import { CustomNextError } from '@island.is/web/units/errors'
 
 import {
+  OJOIAdvertDisplay,
   OJOIWrapper,
   searchUrl,
 } from '../../components/OfficialJournalOfIceland'
-import { OJOIAdvertDisplay } from '../../components/OfficialJournalOfIceland/OJOIAdvertDisplay'
 import { Screen } from '../../types'
 import {
   GET_NAMESPACE_QUERY,

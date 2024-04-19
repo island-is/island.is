@@ -44,12 +44,12 @@ import {
   emptyOption,
   findValueOption,
   mapEntityToOptions,
+  OJOISearchGridView,
+  OJOISearchListView,
   OJOIWrapper,
   removeEmptyFromObject,
   searchUrl,
 } from '../../components/OfficialJournalOfIceland'
-import { OJOISearchGridView } from '../../components/OfficialJournalOfIceland/OJOISearchGridView'
-import { OJOISearchListView } from '../../components/OfficialJournalOfIceland/OJOISearchListView'
 import { Screen } from '../../types'
 import {
   GET_NAMESPACE_QUERY,

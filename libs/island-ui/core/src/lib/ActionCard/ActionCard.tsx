@@ -48,7 +48,6 @@ export const ActionCard: React.FC<React.PropsWithChildren<ActionCardProps>> = ({
   heading,
   headingVariant = 'h3',
   text,
-  children,
   eyebrow,
   backgroundColor = 'white',
   cta: _cta,
@@ -305,10 +304,6 @@ export const ActionCard: React.FC<React.PropsWithChildren<ActionCardProps>> = ({
             <Text color={color} paddingTop={heading ? 1 : 0}>
               {text}
             </Text>
-          )}
-
-          {children && (
-            <Box paddingTop={heading || text ? 1 : 0}>{children}</Box>
           )}
         </Box>
         <Box
