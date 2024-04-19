@@ -8,7 +8,6 @@ import { getModelToken } from '@nestjs/sequelize'
 import { Notification } from '../notification.model'
 import { NotificationsScope } from '@island.is/auth/scopes'
 import type { User } from '@island.is/auth-nest-tools'
-// import { Locale } from '../locale.enum'
 
 import {
   ExtendedPaginationDto,

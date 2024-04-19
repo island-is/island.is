@@ -5,7 +5,6 @@ import { QueueService } from '@island.is/message-queue'
 import { CreateHnippNotificationDto } from '../dto/createHnippNotification.dto'
 import { HnippTemplate } from '../dto/hnippTemplate.response'
 import { LOGGER_PROVIDER } from '@island.is/logging'
-// import { Locale } from '../locale.enum'
 import { CacheInterceptor, CacheModule } from '@nestjs/cache-manager'
 
 describe('NotificationsController', () => {
