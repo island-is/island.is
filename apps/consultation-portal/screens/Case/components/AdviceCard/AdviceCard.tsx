@@ -110,7 +110,7 @@ export const AdviceCard = ({ advice }: Props) => {
                 type="outline"
                 size="small"
                 color="blue400"
-                ariaHidden
+                aria-hidden="true"
               />
             </FocusableBox>
           )}
