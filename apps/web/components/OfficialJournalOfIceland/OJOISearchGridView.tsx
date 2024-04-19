@@ -14,7 +14,7 @@ export const OJOISearchGridView = ({
       {adverts.map((ad) => (
         <OJOIAdvertCard
           key={ad.id}
-          insitiution={ad.involvedParty?.title}
+          institution={ad.involvedParty?.title}
           department={ad.department?.title}
           publicationNumber={ad.publicationNumber?.full}
           publicationDate={ad.publicationDate}

@@ -4,7 +4,7 @@ import { formatDate } from './OJOIUtils'
 import * as s from './OJOIAdvertCard.css'
 
 type Props = {
-  insitiution?: string | null
+  institution?: string | null
   department?: string | null
   publicationNumber?: string | null
   publicationDate?: string | null
@@ -14,7 +14,7 @@ type Props = {
 }
 
 export const OJOIAdvertCard = ({
-  insitiution,
+  institution,
   department,
   publicationNumber,
   publicationDate,
@@ -24,12 +24,12 @@ export const OJOIAdvertCard = ({
 }: Props) => {
   return (
     <Box display="flex" flexDirection="column" rowGap={1} className={s.wrapper}>
-      {(insitiution || department || publicationDate) && (
+      {(institution || department || publicationDate) && (
         <Box display="flex" justifyContent="spaceBetween">
-          {insitiution && (
+          {institution && (
             <Box>
               <Text variant="eyebrow" color="blueberry400">
-                {insitiution}
+                {institution}
               </Text>
             </Box>
           )}
