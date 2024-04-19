@@ -4,7 +4,7 @@ import env from '../../../../lib/environment'
 import { isDocumentLink, renderDocFileName } from '../../utils'
 import localization from '../../Case.json'
 import * as styles from './DocFileName.css'
-import { useIsMobile } from '@island.is/consultation-portal/hooks'
+import { useIsMobile } from '../../../../hooks'
 
 interface Props {
   doc: Document
