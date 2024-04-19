@@ -85,6 +85,11 @@ export const m = defineMessages({
     defaultMessage: 'Frambjóðandi',
     description: '',
   },
+  nationalId: {
+    id: 'admin-portal.signature-collection:nationalId',
+    defaultMessage: 'Kennitala',
+    description: '',
+  },
   clearFilter: {
     id: 'admin-portal.signature-collection:clearFilter',
     defaultMessage: 'Hreinsa',
@@ -98,6 +103,11 @@ export const m = defineMessages({
   createCollection: {
     id: 'admin-portal.signature-collection:createCollection',
     defaultMessage: 'Stofna söfnun',
+    description: '',
+  },
+  reviewCandidates: {
+    id: 'admin-portal.signature-collection:reviewCandidates',
+    defaultMessage: 'Fara yfir lista af frambjóðendum',
     description: '',
   },
   createCollectionSuccess: {
@@ -446,6 +456,33 @@ export const m = defineMessages({
   unsignFromListSuccess: {
     id: 'admin-portal.signature-collection:unsignFromListSuccess',
     defaultMessage: 'Tókst að taka aðila af lista',
+    description: '',
+  },
+
+  // Review candidates
+  reviewCandidatesModalDescription: {
+    id: 'admin-portal.signature-collection:reviewCandidatesModalDescription',
+    defaultMessage: 'Fara yfir lista af frambjóðendum',
+    description: '',
+  },
+  removeCandidateFromListModalDescription: {
+    id: 'admin-portal.signature-collection:removeCandidateFromListModalDescription',
+    defaultMessage: 'Taka frambjóðanda af lista',
+    description: '',
+  },
+  confirmRemoveCandidateFromList: {
+    id: 'admin-portal.signature-collection:confirmRemoveCandidateFromList',
+    defaultMessage: 'Ertu viss um að þú viljir taka ',
+    description: '',
+  },
+  confirmRemoveCandidateFromList2: {
+    id: 'admin-portal.signature-collection:confirmRemoveCandidateFromList2',
+    defaultMessage: ' af lista af frambjóðendum?',
+    description: '',
+  },
+  removeCandidateFromListButton: {
+    id: 'admin-portal.signature-collection:removeCandidateFromListButton',
+    defaultMessage: 'Já, taka af lista',
     description: '',
   },
 })

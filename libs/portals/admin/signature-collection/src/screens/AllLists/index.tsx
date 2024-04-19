@@ -35,12 +35,13 @@ import ActionCompleteCollectionProcessing from './components/completeCollectionP
 import ListInfo from '../List/components/listInfoAlert'
 import { ListsLoaderReturn } from './AllLists.loader'
 import EmptyState from './components/emptyState'
+import ReviewCandidates from './components/reviewCandidates'
 
 const Lists = ({ allowedToProcess }: { allowedToProcess: boolean }) => {
   const { formatMessage } = useLocale()
   const navigate = useNavigate()
 
-  const { allLists, collectionStatus, collectionId } =
+  const { allLists, collectionStatus, collection } =
     useLoaderData() as ListsLoaderReturn
 
   const [lists, setLists] = useState(allLists)
@@ -220,7 +221,7 @@ const Lists = ({ allowedToProcess }: { allowedToProcess: boolean }) => {
                 {lists?.length > 0 &&
                   allowedToProcess &&
                   collectionStatus === CollectionStatus.InInitialReview && (
-                    <CreateCollection collectionId={collectionId} />
+                    <CreateCollection collectionId={collection.id} />
                   )}
               </Box>
             </GridColumn>
@@ -333,16 +334,20 @@ const Lists = ({ allowedToProcess }: { allowedToProcess: boolean }) => {
             <Box>
               {(collectionStatus === CollectionStatus.InInitialReview ||
                 collectionStatus === CollectionStatus.InReview) && (
-                <CompareLists collectionId={collectionId} />
+                <CompareLists collectionId={collection?.id} />
               )}
 
               {!hasInReview &&
                 collectionStatus === CollectionStatus.InInitialReview && (
                   <ActionCompleteCollectionProcessing
-                    collectionId={collectionId}
+                    collectionId={collection?.id}
                   />
                 )}
             </Box>
+          )}
+
+          {lists?.length > 0 && (
+            <ReviewCandidates candidates={collection?.candidates ?? []} />
           )}
         </GridColumn>
       </GridRow>
