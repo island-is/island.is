@@ -38,6 +38,7 @@ import {
 import {
   CaseDecision,
   CaseType,
+  DateLog,
   DateType,
 } from '@island.is/judicial-system-web/src/graphql/schema'
 import {
@@ -88,7 +89,7 @@ export const CourtRecord: React.FC<React.PropsWithChildren<unknown>> = () => {
     const courtDate = getLatestDateType(
       DateType.COURT_DATE,
       workingCase.dateLogs,
-    )
+    ) as DateLog
 
     if (workingCase.courtAttendees !== '') {
       if (workingCase.prosecutor) {

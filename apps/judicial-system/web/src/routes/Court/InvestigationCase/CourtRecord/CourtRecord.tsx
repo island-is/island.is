@@ -34,6 +34,7 @@ import {
 } from '@island.is/judicial-system-web/src/components'
 import {
   CaseType,
+  DateLog,
   DateType,
   SessionArrangements,
 } from '@island.is/judicial-system-web/src/graphql/schema'
@@ -119,7 +120,7 @@ const CourtRecord = () => {
     const courtDate = getLatestDateType(
       DateType.COURT_DATE,
       workingCase.dateLogs,
-    )
+    ) as DateLog
 
     if (workingCase.sessionArrangements === SessionArrangements.NONE_PRESENT) {
       autofillAttendees.push(formatMessage(core.sessionArrangementsNonePresent))

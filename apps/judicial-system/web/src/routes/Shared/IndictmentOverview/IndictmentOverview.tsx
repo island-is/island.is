@@ -29,6 +29,7 @@ import {
 import InfoCardCaseScheduled from '@island.is/judicial-system-web/src/components/InfoCard/InfoCardCaseScheduled'
 import {
   CaseState,
+  DateLog,
   DateType,
 } from '@island.is/judicial-system-web/src/graphql/schema'
 
@@ -51,7 +52,10 @@ const IndictmentOverview = () => {
     [router, workingCase.id],
   )
 
-  const courtDate = getLatestDateType(DateType.COURT_DATE, workingCase.dateLogs)
+  const courtDate = getLatestDateType(
+    DateType.COURT_DATE,
+    workingCase.dateLogs,
+  ) as DateLog
 
   return (
     <PageLayout

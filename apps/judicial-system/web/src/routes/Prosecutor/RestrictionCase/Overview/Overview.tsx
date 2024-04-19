@@ -45,6 +45,7 @@ import {
   CaseLegalProvisions,
   CaseState,
   CaseTransition,
+  DateLog,
   DateType,
   NotificationType,
 } from '@island.is/judicial-system-web/src/graphql/schema'
@@ -115,7 +116,10 @@ export const Overview: React.FC<React.PropsWithChildren<unknown>> = () => {
   const caseFiles =
     workingCase.caseFiles?.filter((file) => !file.category) ?? []
 
-  const courtDate = getLatestDateType(DateType.COURT_DATE, workingCase.dateLogs)
+  const courtDate = getLatestDateType(
+    DateType.COURT_DATE,
+    workingCase.dateLogs,
+  ) as DateLog
 
   return (
     <PageLayout

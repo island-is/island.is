@@ -43,6 +43,7 @@ import { NameAndEmail } from '@island.is/judicial-system-web/src/components/Info
 import InfoCardCaseScheduled from '@island.is/judicial-system-web/src/components/InfoCard/InfoCardCaseScheduled'
 import {
   CaseState,
+  DateLog,
   DateType,
 } from '@island.is/judicial-system-web/src/graphql/schema'
 import {
@@ -61,7 +62,10 @@ const Overview = () => {
   const { uploadState } = useCourtUpload(workingCase, setWorkingCase)
   const [isDraftingConclusion, setIsDraftingConclusion] = useState<boolean>()
 
-  const courtDate = getLatestDateType(DateType.COURT_DATE, workingCase.dateLogs)
+  const courtDate = getLatestDateType(
+    DateType.COURT_DATE,
+    workingCase.dateLogs,
+  ) as DateLog
 
   const handleNavigationTo = useCallback(
     (destination: string) => router.push(`${destination}/${workingCase.id}`),
