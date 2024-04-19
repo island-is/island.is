@@ -7,10 +7,11 @@ import {
   IdsUserGuard,
   ScopesGuard,
 } from '@island.is/auth-nest-tools'
+import { IdentityClientService } from '@island.is/clients/identity'
+
 import { UserProfileService } from './userProfile.service'
 import { PaginatedUserProfileResponse } from './dto/paginated-user-profile.response'
 import { UserProfile } from './userProfile.model'
-import { IdentityClientService } from '@island.is/clients/identity'
 
 @UseGuards(IdsUserGuard, ScopesGuard)
 @Resolver(() => UserProfile)
@@ -44,11 +45,10 @@ export class AdminUserProfileResolver {
 
   @ResolveField('fullName', () => String, { nullable: true })
   async getFullName(@Parent() userProfile: UserProfile) {
-    return (
-      await this.identityService.getIdentityWithFallback(
-        userProfile.nationalId ?? '',
-        { name: userProfile.nationalId ?? undefined },
-      )
-    ).name
+    return await this.identityService
+      .getIdentity(userProfile.nationalId ?? '')
+      .then((identity) => {
+        return identity?.name
+      })
   }
 }

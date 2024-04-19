@@ -3,15 +3,6 @@ query GetPaginatedUserProfiles($query: String!) {
     totalCount
     data {
       nationalId
-      email
-      emailStatus
-      emailVerified
-      emailNotifications
-      mobilePhoneNumber
-      mobileStatus
-      mobilePhoneNumberVerified
-      lastNudge
-      nextNudge
       fullName
     }
   }

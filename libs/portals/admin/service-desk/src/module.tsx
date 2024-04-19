@@ -1,4 +1,5 @@
 import { lazy } from 'react'
+import { Navigate } from 'react-router-dom'
 
 import { PortalModule } from '@island.is/portals/core'
 import { AdminPortalScope } from '@island.is/auth/scopes'
@@ -29,6 +30,12 @@ export const serviceDeskModule: PortalModule = {
       path: ServiceDeskPaths.Root,
       element: <Root />,
       children: [
+        {
+          name: 'index',
+          path: ServiceDeskPaths.Root,
+          index: true,
+          element: <Navigate to={ServiceDeskPaths.Companies} />,
+        },
         {
           name: m.serviceDesk,
           path: ServiceDeskPaths.Companies,

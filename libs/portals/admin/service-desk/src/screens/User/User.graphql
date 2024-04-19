@@ -8,5 +8,8 @@ query GetUserProfileByNationalId($nationalId: String!) {
     lastNudge
     nextNudge
     fullName
+    documentNotifications
+    emailNotifications
+    locale
   }
 }

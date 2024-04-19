@@ -1,5 +1,9 @@
 import { z } from 'zod'
+import { redirect } from 'react-router-dom'
+import { isEmail } from 'class-validator'
 import * as kennitala from 'kennitala'
+import { parsePhoneNumber } from 'libphonenumber-js'
+
 import {
   RawRouterActionResponse,
   WrappedActionFn,
@@ -9,15 +13,19 @@ import {
   validateFormData,
   ValidateFormDataResult,
 } from '@island.is/react-spa/shared'
-import { isEmail } from 'class-validator'
-import { parsePhoneNumber } from 'libphonenumber-js'
+import { maskString } from '@island.is/shared/utils'
+
 import {
   GetPaginatedUserProfilesDocument,
   GetPaginatedUserProfilesQuery,
   type GetPaginatedUserProfilesQueryVariables,
 } from './Users.generated'
-import { redirect } from 'react-router-dom'
 import { ServiceDeskPaths } from '../../lib/paths'
+
+export enum ErrorType {
+  // Add more error types here when needed
+  InvalidSearchQuery = 'INVALID_SEARCH_QUERY',
+}
 
 const schema = z.object({
   searchQuery: z.string().min(1),
@@ -29,7 +37,7 @@ export type GetUserProfilesResult = RawRouterActionResponse<
 >
 
 export const UsersAction: WrappedActionFn =
-  ({ client }) =>
+  ({ client, userInfo }) =>
   async ({ request }): Promise<Response | GetUserProfilesResult> => {
     const formData = await request.formData()
 
@@ -82,19 +90,15 @@ export const UsersAction: WrappedActionFn =
 
         const { data: respData, totalCount } = res.data.GetPaginatedUserProfiles
 
-        if (totalCount === 0) {
-          return {
-            data: null,
-            errors: {
-              searchQuery: 'No users found',
-            },
-          }
-        } else if (totalCount === 1) {
+        if (totalCount === 1) {
           return redirect(
             replaceParams({
               href: ServiceDeskPaths.User,
               params: {
-                nationalId: respData[0].nationalId,
+                nationalId: maskString(
+                  respData[0].nationalId,
+                  userInfo.profile.nationalId,
+                ) as string,
               },
             }),
           )
@@ -107,16 +111,15 @@ export const UsersAction: WrappedActionFn =
       } catch (e) {
         return {
           data: null,
-          errors: {
-            searchQuery: 'Invalid search query',
-          },
+          errors: null,
+          globalError: true,
         }
       }
     } else {
       return {
         data: null,
         errors: {
-          searchQuery: 'Invalid search query',
+          searchQuery: ErrorType.InvalidSearchQuery,
         },
       }
     }

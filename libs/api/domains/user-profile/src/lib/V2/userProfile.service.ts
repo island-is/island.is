@@ -4,6 +4,7 @@ import { ApolloError } from 'apollo-server-express'
 
 import {
   ConfirmationDtoResponse,
+  UserProfileControllerFindUserProfileClientTypeEnum,
   V2MeApi,
   V2UsersApi,
 } from '@island.is/clients/user-profile'
@@ -155,6 +156,8 @@ export class UserProfileServiceV2 {
   async getUserProfileByNationalId(user: User, nationalId: string) {
     return await this.v2UserProfileApiWithAuth(user)
       .userProfileControllerFindUserProfile({
+        clientType:
+          UserProfileControllerFindUserProfileClientTypeEnum.FirstParty,
         xParamNationalId: nationalId,
       })
       .catch((e) => {

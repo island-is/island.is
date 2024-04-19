@@ -1,5 +1,3 @@
-import { ServiceDeskPaths } from '../../lib/paths'
-import { WrappedLoaderFn } from '@island.is/portals/core'
 import {
   GetUserProfileByNationalIdDocument,
   GetUserProfileByNationalIdQuery,
@@ -7,15 +5,23 @@ import {
 } from './User.generated'
 import { redirect } from 'react-router-dom'
 
+import { WrappedLoaderFn } from '@island.is/portals/core'
+import { unmaskString } from '@island.is/shared/utils'
+
+import { ServiceDeskPaths } from '../../lib/paths'
+
 export type UserProfileResult = NonNullable<
   GetUserProfileByNationalIdQuery['GetUserProfileByNationalId']
 >
 
-export const userLoader: WrappedLoaderFn = ({ client }) => {
+export const userLoader: WrappedLoaderFn = ({ client, userInfo }) => {
   return async ({ params }): Promise<UserProfileResult | Response> => {
     const nationalId = params['nationalId']
 
     if (!nationalId) throw new Error('User not found')
+
+    const unMaskedNationalId =
+      unmaskString(nationalId, userInfo.profile.nationalId) ?? ''
 
     const res = await client.query<
       GetUserProfileByNationalIdQuery,
@@ -24,7 +30,7 @@ export const userLoader: WrappedLoaderFn = ({ client }) => {
       query: GetUserProfileByNationalIdDocument,
       fetchPolicy: 'network-only',
       variables: {
-        nationalId,
+        nationalId: unMaskedNationalId,
       },
     })
 

@@ -559,6 +559,8 @@ export class UserProfileService {
       documentNotifications: userProfile.documentNotifications,
       needsNudge: this.checkNeedsNudge(userProfile),
       emailNotifications: userProfile.emailNotifications,
+      lastNudge: userProfile.lastNudge,
+      nextNudge: userProfile.nextNudge,
       isRestricted: false,
     }
 
