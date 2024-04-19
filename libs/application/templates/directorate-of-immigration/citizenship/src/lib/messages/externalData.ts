@@ -18,7 +18,7 @@ export const externalData = {
       description: 'External data sub title',
     },
     description: {
-      id: 'doi.cs.application:externalData.dataProvider.description',
+      id: 'doi.cs.application:externalData.dataProvider.description#markdown',
       defaultMessage: `Mér er kunnugt um að ég get misst núverandi ríkisborgararétt minn við töku íslensks ríkisborgararéttar.\n\n Jafnframt lýsi ég því yfir að ég hef kynnt mér persónuverndarskilmála Útlendingastofnunar vegna umsókna um íslenskan ríkisborgararétt og heimila þar með Útlendingastofnun og lögregluembættum að afla þeirra upplýsinga um mig sem þessir aðilar telja nauðsynlegar til að meta umsókn mína, þar á meðal sakavottorðs hérlendis sem erlendis og upplýsinga frá skattyfirvöldum.`,
       description: 'External data description',
     },
