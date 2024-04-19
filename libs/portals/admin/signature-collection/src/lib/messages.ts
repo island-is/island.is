@@ -105,11 +105,6 @@ export const m = defineMessages({
     defaultMessage: 'Stofna söfnun',
     description: '',
   },
-  reviewCandidates: {
-    id: 'admin-portal.signature-collection:reviewCandidates',
-    defaultMessage: 'Fara yfir lista af frambjóðendum',
-    description: '',
-  },
   createCollectionSuccess: {
     id: 'admin-portal.signature-collection:createCollectionSuccess',
     defaultMessage: 'Tókst að stofna meðmælasöfnun',

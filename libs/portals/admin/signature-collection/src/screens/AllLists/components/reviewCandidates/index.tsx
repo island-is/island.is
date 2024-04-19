@@ -71,13 +71,13 @@ const ReviewCandidates = ({
             setModalIsOpen(true)
           }}
         >
-          {formatMessage(m.reviewCandidates)}
+          {formatMessage(m.reviewCandidatesModalDescription)}
         </Button>
       </Box>
       <Modal
         id="reviewCandidatesModal"
         isVisible={modalIsOpen}
-        title={formatMessage(m.reviewCandidates)}
+        title={formatMessage(m.reviewCandidatesModalDescription)}
         onClose={() => {
           setModalIsOpen(false)
         }}
