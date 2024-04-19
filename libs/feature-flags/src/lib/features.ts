@@ -81,6 +81,9 @@ export enum Features {
   // Notifications
   isNotificationEmailWorkerEnabled = 'isnotificationemailworkerenabled',
   shouldSendEmailNotificationsToDelegations = 'shouldSendEmailNotificationsToDelegations',
+
+  // National registry integration
+  disableSoffia = 'disableSoffia',
 }
 
 export enum ServerSideFeature {
