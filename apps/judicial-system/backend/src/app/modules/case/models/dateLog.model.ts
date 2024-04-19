@@ -11,7 +11,7 @@ import { ApiProperty, ApiPropertyOptional } from '@nestjs/swagger'
 
 import { DateType } from '@island.is/judicial-system/types'
 
-import { Case } from '../../case/models/case.model'
+import { Case } from './case.model'
 
 @Table({
   tableName: 'date_log',

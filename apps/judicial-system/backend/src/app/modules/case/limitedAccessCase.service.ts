@@ -31,7 +31,6 @@ import {
 
 import { nowFactory, uuidFactory } from '../../factories'
 import { AwsS3Service } from '../aws-s3'
-import { DateLog } from '../date-log'
 import { Defendant, DefendantService } from '../defendant'
 import {
   CaseFile,
@@ -40,6 +39,7 @@ import {
 import { Institution } from '../institution'
 import { User } from '../user'
 import { Case } from './models/case.model'
+import { DateLog } from './models/dateLog.model'
 import { PDFService } from './pdf.service'
 
 export const attributes: (keyof Case)[] = [

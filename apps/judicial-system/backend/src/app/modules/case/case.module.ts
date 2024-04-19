@@ -9,7 +9,6 @@ import { MessageModule } from '@island.is/judicial-system/message'
 import {
   AwsS3Module,
   CourtModule,
-  DateLogModule,
   DefendantModule,
   EventLogModule,
   EventModule,
@@ -20,6 +19,7 @@ import {
 } from '../index'
 import { Case } from './models/case.model'
 import { CaseArchive } from './models/caseArchive.model'
+import { DateLog } from './models/dateLog.model'
 import { CaseController } from './case.controller'
 import { CaseService } from './case.service'
 import { InternalCaseController } from './internalCase.controller'
@@ -42,8 +42,7 @@ import { PDFService } from './pdf.service'
     forwardRef(() => EventModule),
     forwardRef(() => PoliceModule),
     forwardRef(() => EventLogModule),
-    forwardRef(() => DateLogModule),
-    SequelizeModule.forFeature([Case, CaseArchive]),
+    SequelizeModule.forFeature([Case, CaseArchive, DateLog]),
   ],
   providers: [
     CaseService,
