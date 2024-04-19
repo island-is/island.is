@@ -9,48 +9,38 @@ import {
 
 import { ApiProperty, ApiPropertyOptional } from '@nestjs/swagger'
 
-import { EventType } from '@island.is/judicial-system/types'
+import { DateType } from '@island.is/judicial-system/types'
 
-import { Case } from '../../case/models/case.model'
+import { Case } from './case.model'
 
 @Table({
-  tableName: 'event_log',
+  tableName: 'date_log',
   timestamps: false,
 })
-export class EventLog extends Model {
+export class DateLog extends Model {
   @Column({
     type: DataType.UUID,
     primaryKey: true,
-    allowNull: false,
     defaultValue: DataType.UUIDV4,
   })
   @ApiProperty()
   id!: string
 
   @CreatedAt
-  @Column({
-    type: DataType.DATE,
-  })
+  @Column({ type: DataType.DATE })
   @ApiProperty()
   created!: Date
 
   @Column({ type: DataType.STRING })
   @ApiProperty()
-  eventType!: EventType
+  dateType!: DateType
 
   @ForeignKey(() => Case)
-  @Column({ type: DataType.UUID, allowNull: true })
+  @Column({ type: DataType.UUID })
   @ApiPropertyOptional()
-  caseId?: string
+  caseId!: string
 
-  @Column({
-    type: DataType.STRING,
-    allowNull: true,
-  })
+  @Column({ type: DataType.DATE })
   @ApiPropertyOptional()
-  nationalId?: string
-
-  @Column({ type: DataType.STRING, allowNull: true })
-  @ApiPropertyOptional()
-  userRole?: string
+  date!: Date
 }
