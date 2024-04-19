@@ -462,22 +462,22 @@ export const m = defineMessages({
   },
   removeCandidateFromListModalDescription: {
     id: 'admin-portal.signature-collection:removeCandidateFromListModalDescription',
-    defaultMessage: 'Taka frambjóðanda af lista',
+    defaultMessage: 'Loka lista fyrir frambjóðanda',
     description: '',
   },
   confirmRemoveCandidateFromList: {
     id: 'admin-portal.signature-collection:confirmRemoveCandidateFromList',
-    defaultMessage: 'Ertu viss um að þú viljir taka ',
-    description: '',
-  },
-  confirmRemoveCandidateFromList2: {
-    id: 'admin-portal.signature-collection:confirmRemoveCandidateFromList2',
-    defaultMessage: ' af lista af frambjóðendum?',
+    defaultMessage: 'Ertu viss um að þú viljir loka lista fyrir frambjóðanda',
     description: '',
   },
   removeCandidateFromListButton: {
     id: 'admin-portal.signature-collection:removeCandidateFromListButton',
-    defaultMessage: 'Já, taka af lista',
+    defaultMessage: 'Já, loka lista',
+    description: '',
+  },
+  removeCandidateFromList: {
+    id: 'admin-portal.signature-collection:removeCandidateFromList',
+    defaultMessage: 'Loka lista',
     description: '',
   },
 })

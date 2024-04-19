@@ -113,7 +113,7 @@ const ReviewCandidates = ({
                           setCandidateInReview(candidate)
                         }}
                       >
-                        {formatMessage(m.unsignFromList)}
+                        {formatMessage(m.removeCandidateFromList)}
                       </Button>
                     </T.Data>
                   </T.Row>
@@ -126,7 +126,11 @@ const ReviewCandidates = ({
       <Modal
         id="confirmRemoveCandidateFromListModal"
         isVisible={confirmModalIsOpen}
-        title={formatMessage(m.removeCandidateFromListModalDescription)}
+        title={
+          candidateInReview?.name +
+          ' - ' +
+          formatMessage(m.removeCandidateFromListModalDescription)
+        }
         onClose={() => {
           setConfirmModalIsOpen(false)
         }}
@@ -136,8 +140,9 @@ const ReviewCandidates = ({
       >
         <Text>
           {formatMessage(m.confirmRemoveCandidateFromList) +
+            ' ' +
             candidateInReview?.name +
-            formatMessage(m.confirmRemoveCandidateFromList2)}
+            ' ?'}
         </Text>
         <Box display="flex" justifyContent="center" marginY={5}>
           <Button
