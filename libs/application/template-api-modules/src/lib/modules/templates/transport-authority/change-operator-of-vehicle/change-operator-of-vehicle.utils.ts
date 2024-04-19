@@ -48,13 +48,16 @@ export const getRecipients = (
 ): Array<EmailRecipient> => {
   const recipientList: Array<EmailRecipient> = []
 
+  console.log('answers', answers)
+  console.log('roles', roles)
   // Owner
   if (roles.includes(EmailRole.owner) && answers.owner) {
+    console.log('in here1')
     recipientList.push({
       ssn: answers.owner.nationalId,
       name: answers.owner.name,
       email: answers.owner.email,
-      phone: answers.owner.phone,
+      phone: cleanPhoneNumber(answers.owner.phone),
       role: EmailRole.owner,
       approved: true,
     })
@@ -63,6 +66,7 @@ export const getRecipients = (
   // Owner's co-owners
   const ownerCoOwners = answers.ownerCoOwner
   if (roles.includes(EmailRole.ownerCoOwner) && ownerCoOwners) {
+    console.log('in here2')
     for (let i = 0; i < ownerCoOwners.length; i++) {
       recipientList.push({
         ssn: ownerCoOwners[i].nationalId,
@@ -108,7 +112,7 @@ export const getRecipientBySsn = (
       ssn: answers.owner.nationalId,
       name: answers.owner.name,
       email: answers.owner.email,
-      phone: answers.owner.phone,
+      phone: cleanPhoneNumber(answers.owner.phone),
       role: EmailRole.owner,
       approved: true,
     }
@@ -151,4 +155,15 @@ export const getRecipientBySsn = (
       }
     }
   }
+}
+
+export const cleanPhoneNumber = (phoneNumber: string) => {
+  let cleanNumber
+  console.log('phoneNumber', phoneNumber)
+  if (phoneNumber.includes('+')) {
+    cleanNumber = phoneNumber.replace(/[-+]/g, '')
+    cleanNumber = cleanNumber.substring(3)
+    console.log('cleanNumber', cleanNumber)
+  }
+  return cleanNumber
 }

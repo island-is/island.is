@@ -230,34 +230,34 @@ export class ChangeOperatorOfVehicleService extends BaseTemplateApiService {
     ])
 
     // 2b. Send email/sms individually to each recipient
-    for (let i = 0; i < recipientList.length; i++) {
-      if (recipientList[i].email) {
-        await this.sharedTemplateAPIService
-          .sendEmail(
-            (props) => generateRequestReviewEmail(props, recipientList[i]),
-            application,
-          )
-          .catch(() => {
-            this.logger.error(
-              `Error sending email about initReview to ${recipientList[i].email}`,
-            )
-          })
-      }
+    // for (let i = 0; i < recipientList.length; i++) {
+    //   if (recipientList[i].email) {
+    //     await this.sharedTemplateAPIService
+    //       .sendEmail(
+    //         (props) => generateRequestReviewEmail(props, recipientList[i]),
+    //         application,
+    //       )
+    //       .catch(() => {
+    //         this.logger.error(
+    //           `Error sending email about initReview to ${recipientList[i].email}`,
+    //         )
+    //       })
+    //   }
 
-      if (recipientList[i].phone) {
-        await this.sharedTemplateAPIService
-          .sendSms(
-            (_, options) =>
-              generateRequestReviewSms(application, options, recipientList[i]),
-            application,
-          )
-          .catch(() => {
-            this.logger.error(
-              `Error sending sms about initReview to ${recipientList[i].phone}`,
-            )
-          })
-      }
-    }
+    //   if (recipientList[i].phone) {
+    //     await this.sharedTemplateAPIService
+    //       .sendSms(
+    //         (_, options) =>
+    //           generateRequestReviewSms(application, options, recipientList[i]),
+    //         application,
+    //       )
+    //       .catch(() => {
+    //         this.logger.error(
+    //           `Error sending sms about initReview to ${recipientList[i].phone}`,
+    //         )
+    //       })
+    //   }
+    // }
 
     return recipientList
   }
@@ -386,47 +386,48 @@ export class ChangeOperatorOfVehicleService extends BaseTemplateApiService {
 
     const mileage = answers?.vehicleMileage?.value
 
-    await this.vehicleOperatorsClient.saveOperators(
-      auth,
-      permno,
-      operators,
-      mileage ? Number(mileage) || 0 : null,
-    )
+    // await this.vehicleOperatorsClient.saveOperators(
+    //   auth,
+    //   permno,
+    //   operators,
+    //   mileage ? Number(mileage) || 0 : null,
+    // )
 
     // 3. Notify everyone in the process that the application has successfully been submitted
 
     // 3a. Get list of users that need to be notified
     const recipientList = getRecipients(answers, getAllRoles())
+    console.log('recipientList in submit', recipientList)
 
     // 3b. Send email/sms individually to each recipient about success of submitting application
-    for (let i = 0; i < recipientList.length; i++) {
-      if (recipientList[i].email) {
-        await this.sharedTemplateAPIService
-          .sendEmail(
-            (props) =>
-              generateApplicationSubmittedEmail(props, recipientList[i]),
-            application,
-          )
-          .catch(() => {
-            this.logger.error(
-              `Error sending email about submitApplication to ${recipientList[i].email}`,
-            )
-          })
-      }
+    // for (let i = 0; i < recipientList.length; i++) {
+    //   if (recipientList[i].email) {
+    //     await this.sharedTemplateAPIService
+    //       .sendEmail(
+    //         (props) =>
+    //           generateApplicationSubmittedEmail(props, recipientList[i]),
+    //         application,
+    //       )
+    //       .catch(() => {
+    //         this.logger.error(
+    //           `Error sending email about submitApplication to ${recipientList[i].email}`,
+    //         )
+    //       })
+    //   }
 
-      if (recipientList[i].phone) {
-        await this.sharedTemplateAPIService
-          .sendSms(
-            () =>
-              generateApplicationSubmittedSms(application, recipientList[i]),
-            application,
-          )
-          .catch(() => {
-            this.logger.error(
-              `Error sending sms about submitApplication to ${recipientList[i].phone}`,
-            )
-          })
-      }
-    }
+    //   if (recipientList[i].phone) {
+    //     await this.sharedTemplateAPIService
+    //       .sendSms(
+    //         () =>
+    //           generateApplicationSubmittedSms(application, recipientList[i]),
+    //         application,
+    //       )
+    //       .catch(() => {
+    //         this.logger.error(
+    //           `Error sending sms about submitApplication to ${recipientList[i].phone}`,
+    //         )
+    //       })
+    //   }
+    // }
   }
 }

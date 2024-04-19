@@ -78,6 +78,11 @@ export class RequestInspectionTemplateService extends BaseTemplateApiService {
       throw new Error('Machine has not been selected')
     }
 
+    console.log(
+      'cleanPhoneNumber(answers.contactInformation.phoneNumber)',
+      cleanPhoneNumber(answers.contactInformation.phoneNumber),
+    )
+
     await this.workMachineClientService.requestInspection(auth, {
       machineId: machineId,
       comments: answers.location.comment,
