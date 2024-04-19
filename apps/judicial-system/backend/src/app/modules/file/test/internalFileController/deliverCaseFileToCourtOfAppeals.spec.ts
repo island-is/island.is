@@ -106,6 +106,7 @@ describe('InternalFileController - Deliver case file to court of appeals', () =>
       expect(mockCourtService.updateAppealCaseWithFile).toHaveBeenCalledWith(
         user,
         caseId,
+        caseFileId,
         appealCaseNumber,
         category,
         name,
