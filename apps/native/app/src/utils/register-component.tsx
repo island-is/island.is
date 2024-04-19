@@ -1,5 +1,4 @@
 import { ApolloProvider } from '@apollo/client'
-import React from 'react'
 import {
   Navigation,
   NavigationFunctionComponent,
@@ -9,6 +8,7 @@ import { FeatureFlagProvider } from '../contexts/feature-flag-provider'
 import { I18nProvider } from '../contexts/i18n-provider'
 import { ThemeProvider } from '../contexts/theme-provider'
 import { client } from '../graphql/client'
+import { OfflineHoc } from '../hoc/offline-hoc'
 
 export function registerComponent<Props>(
   name: string,
@@ -23,7 +23,9 @@ export function registerComponent<Props>(
             <NavigationProvider value={{ componentId: props.componentId }}>
               <FeatureFlagProvider>
                 <ApolloProvider client={client}>
-                  <Component {...props} />
+                  <OfflineHoc>
+                    <Component {...props} />
+                  </OfflineHoc>
                 </ApolloProvider>
               </FeatureFlagProvider>
             </NavigationProvider>

@@ -3,10 +3,9 @@ import create from 'zustand/vanilla'
 import { isDefined } from '../utils/is-defined'
 
 interface State {
-  currentComponentId: string | null
   pastIsConnected: boolean
   isConnected: boolean | null
-  showBanner: boolean
+  bannerVisible: boolean
   bannerHasBeenShown: boolean
 }
 
@@ -14,7 +13,6 @@ interface Actions {
   toggleBanner(show: boolean): void
   setIsConnected(isConnected: boolean): void
   setNetInfoNoConnection(): void
-  setCurrentComponentId(currentComponentId: string): void
   setBannerHasBeenShown(bannerHasBeenShown: boolean): void
   resetConnectionState(): void
 }
@@ -24,8 +22,7 @@ export type OfflineStore = State & Actions
 export const offlineStore = create<OfflineStore>((set) => ({
   pastIsConnected: true,
   isConnected: true,
-  showBanner: false,
-  currentComponentId: null,
+  bannerVisible: false,
   bannerHasBeenShown: false,
 
   setIsConnected: (isConnected) =>
@@ -35,13 +32,10 @@ export const offlineStore = create<OfflineStore>((set) => ({
     set(({ isConnected }) => ({
       pastIsConnected: isDefined(isConnected) ? !isConnected : true,
       isConnected: false,
-      showBanner: true,
+      bannerVisible: true,
     })),
 
-  toggleBanner: (show) => set((state) => ({ showBanner: show })),
-
-  setCurrentComponentId: (currentComponentId) =>
-    set((state) => ({ currentComponentId })),
+  toggleBanner: (show) => set((state) => ({ bannerVisible: show })),
 
   setBannerHasBeenShown: (bannerHasBeenShown) =>
     set((state) => ({ bannerHasBeenShown })),
@@ -50,7 +44,7 @@ export const offlineStore = create<OfflineStore>((set) => ({
     set((state) => ({
       pastIsConnected: true,
       isConnected: true,
-      showBanner: false,
+      bannerVisible: false,
       bannerHasBeenShown: false,
     })),
 }))

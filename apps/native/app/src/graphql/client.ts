@@ -87,11 +87,11 @@ const errorLink = onError(
             openBrowser(cognitoAuthUrl(), MainBottomTabs)
           }
         }
+      } else {
+        // This might be an SSL error, a socket error because your app is offline, or a 500 or any other HTTP error.
+        // We determine that we are offline if we receive a network error
+        offlineStore.getState().setIsConnected(false)
       }
-
-      // This might be an SSL error, a socket error because your app is offline, or a 500 or any other HTTP error.
-      // We determine that we are offline if we receive a network error
-      offlineStore.getState().setIsConnected(false)
     }
   },
 )

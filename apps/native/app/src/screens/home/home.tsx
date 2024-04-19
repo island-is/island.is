@@ -12,8 +12,6 @@ import {
   ListRenderItemInfo,
   Platform,
   RefreshControl,
-  Text,
-  View,
 } from 'react-native'
 import CodePush from 'react-native-code-push'
 import { NavigationFunctionComponent } from 'react-native-navigation'
@@ -27,8 +25,8 @@ import { createNavigationOptionHooks } from '../../hooks/create-navigation-optio
 import { useActiveTabItemPress } from '../../hooks/use-active-tab-item-press'
 import { useOfflineUpdateNavigation } from '../../hooks/use-offline-update-navigation'
 import { notificationsStore } from '../../stores/notifications-store'
-import { offlineStore } from '../../stores/offline-store'
 import { useUiStore } from '../../stores/ui-store'
+import { isAndroid } from '../../utils/devices'
 import { getRightButtons } from '../../utils/get-main-root'
 import { testIDs } from '../../utils/test-ids'
 import { ApplicationsModule } from './applications-module'
@@ -64,7 +62,7 @@ const { useNavigationOptions, getNavigationOptions } =
         // selectedIconColor: null as any,
         // iconColor: null as any,
         textColor: initialized
-          ? Platform.OS === 'android'
+          ? isAndroid
             ? theme.shade.foreground
             : { light: 'black', dark: 'white' }
           : theme.shade.background,
@@ -147,21 +145,6 @@ export const MainHomeScreen: NavigationFunctionComponent = ({
   }
 
   const data = [
-    {
-      id: 'debug',
-      component: (
-        <View>
-          <Text>
-            {JSON.stringify({
-              isConnected: offlineStore.getState().isConnected,
-              pastIsConnected: offlineStore.getState().pastIsConnected,
-              showBanner: offlineStore.getState().showBanner,
-              bannerHasBeenShown: offlineStore.getState().bannerHasBeenShown,
-            })}
-          </Text>
-        </View>
-      ),
-    },
     {
       id: 'onboarding',
       component: <OnboardingModule />,

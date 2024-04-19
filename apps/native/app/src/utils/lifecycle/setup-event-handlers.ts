@@ -150,7 +150,7 @@ export function setupEventHandlers() {
   const handleOfflineButtonClick = () => {
     const offlineState = offlineStore.getState()
 
-    if (!offlineState.showBanner) {
+    if (!offlineState.bannerVisible) {
       void impactAsync(ImpactFeedbackStyle.Heavy)
       void Navigation.showOverlay({
         component: {
@@ -187,9 +187,9 @@ export function setupEventHandlers() {
     const offlineStoreState = offlineStore.getState()
 
     if (!isConnected) {
-      Alert.alert('Global event no connection')
-      // Only update the store if there is no connection
       offlineStoreState.setNetInfoNoConnection()
+    } else {
+      offlineStoreState.setIsConnected(true)
     }
   })
 }

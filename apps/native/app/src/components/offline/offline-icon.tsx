@@ -1,5 +1,4 @@
 import { impactAsync, ImpactFeedbackStyle } from 'expo-haptics'
-import { useEffect } from 'react'
 import { Image } from 'react-native'
 import { Navigation } from 'react-native-navigation'
 
@@ -16,11 +15,11 @@ const Icon = styled(Image)(({ theme }) => ({
 
 export const OfflineIcon = () => {
   const isConnected = useOfflineStore(({ isConnected }) => isConnected)
-  const showBanner = useOfflineStore(({ showBanner }) => showBanner)
+  const bannerVisible = useOfflineStore(({ bannerVisible }) => bannerVisible)
   const toggleBanner = useOfflineStore(({ toggleBanner }) => toggleBanner)
 
   const onPress = async () => {
-    if (showBanner) {
+    if (!bannerVisible) {
       void impactAsync(ImpactFeedbackStyle.Heavy)
       void Navigation.showOverlay({
         component: {
@@ -28,16 +27,12 @@ export const OfflineIcon = () => {
           name: CR.OfflineBanner,
         },
       })
-    }
-
-    toggleBanner(!showBanner)
-  }
-
-  useEffect(() => {
-    if (!showBanner) {
+    } else {
       void Navigation.dismissOverlay(CR.OfflineBanner)
     }
-  }, [showBanner])
+
+    toggleBanner(!bannerVisible)
+  }
 
   if (isConnected) {
     return null
