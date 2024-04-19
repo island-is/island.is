@@ -140,9 +140,10 @@ export const addXroadMock = async <Conf extends XroadSectionConfig>(
   const prefix = path.startsWith('r1/') ? '/' : '/r1/'
   const env =
     options.prefixType === 'base-path-with-env'
-      ? `IS-DEV/${options.orgType ?? 'GOV'}/${String(
-          options.serviceMemberCode,
-        )}`
+      ? `IS-DEV/${options.orgType ?? 'GOV'}/${
+          envs[options.serviceMemberCode as string] ??
+          String(options.serviceMemberCode)
+        }`
       : ''
   const stubResponses = Array.isArray(options.response)
     ? options.response

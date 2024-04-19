@@ -1,11 +1,7 @@
-import { BrowserContext, expect, test, Page } from '@playwright/test'
-import {
-  BaseAuthority,
-  env,
-  getEnvironmentBaseUrl,
-  TestEnvironment,
-  urls,
-} from '../../../../support/urls'
+import { BrowserContext, Page, expect, test } from '@playwright/test'
+import addDays from 'date-fns/addDays'
+import addMonths from 'date-fns/addMonths'
+import formatISO from 'date-fns/formatISO'
 import {
   disableI18n,
   disablePreviousApplications,
@@ -16,6 +12,13 @@ import {
 } from '../../../../support/email-account'
 import { helpers } from '../../../../support/locator-helpers'
 import { session } from '../../../../support/session'
+import {
+  BaseAuthority,
+  TestEnvironment,
+  env,
+  getEnvironmentBaseUrl,
+  urls,
+} from '../../../../support/urls'
 import { setupXroadMocks } from './setup-xroad.mocks'
 
 test.use({ baseURL: urls.islandisBaseUrl })
@@ -32,7 +35,7 @@ const getEmployerEmailAndApprove = async (
   if (!email || typeof email.html !== 'string') {
     throw new Error('Email not found, test incomplete')
   }
-  const employerUrlMatch = email.html.match(/>(http?:.*)<\/p>/)
+  const employerUrlMatch = email.html.match(/<a href="(http?:.*?)"/)
   if (employerUrlMatch?.length != 2)
     throw new Error(
       'Email does not contain the url to approve the parental leave application',
@@ -67,6 +70,9 @@ const applicationSystemApi: { [env in TestEnvironment]: string } = {
   local: 'http://localhost:9456',
 }
 
+// Need to set mode to default because nxE2EPreset sets "fullyParallel: true" but we need to run the Primary parent test first
+test.describe.configure({ mode: 'default' })
+
 test.describe('Parental leave', () => {
   let context: BrowserContext
   let applicant: EmailAccount
@@ -83,7 +89,7 @@ test.describe('Parental leave', () => {
     context = await session({
       browser: browser,
       homeUrl: `${urls.islandisBaseUrl}/umsoknir/faedingarorlof`,
-      phoneNumber: submitApplicationSuccess ? '0102989' : '0102399',
+      phoneNumber: submitApplicationSuccess ? '0107789' : '0103019',
       idsLoginOn: true,
     })
   })
@@ -102,310 +108,360 @@ test.describe('Parental leave', () => {
     await page.goto('/umsoknir/faedingarorlof', { waitUntil: 'load' })
     const { proceed } = helpers(page)
 
-    // Mock data
-    await expect(
-      page.getByRole('heading', {
-        name: 'Viltu nota gervigögn?',
-      }),
-    ).toBeVisible()
-    await page
-      .getByRole('radio', {
-        name: 'Nei',
+    await test.step('Mock data', async () => {
+      await expect(
+        page.getByRole('heading', {
+          name: 'Viltu nota gervigögn?',
+        }),
+      ).toBeVisible()
+      await page
+        .getByRole('radio', {
+          name: 'Já',
+        })
+        .click()
+      await page
+        .getByRole('radio', {
+          name: 'Móðir',
+        })
+        .click()
+
+      const mockDataEstimatedDateOfBirth = page.getByRole('textbox', {
+        name: 'Áætlaður fæðingardagur:',
       })
-      .click()
-    await proceed()
+      await mockDataEstimatedDateOfBirth.selectText()
+      const babyBDayRandomFactor = Math.ceil(Math.random() * 85)
+      const expectedDateOfBirth = formatISO(
+        addDays(addMonths(new Date(), 6), babyBDayRandomFactor),
+        {
+          representation: 'date',
+        },
+      )
+      await mockDataEstimatedDateOfBirth.type(expectedDateOfBirth)
+      await proceed()
+    })
 
     applicationID = page.url().split('/').slice(-1)[0]
 
-    // Type of application
-    await expect(
-      page.getByRole('heading', {
-        name: 'Tegund umsóknar',
-      }),
-    ).toBeVisible()
-    await page.getByTestId('parental-leave').click()
-    await proceed()
-
-    // External Data
-    await expect(
-      page.getByRole('heading', {
-        name: 'Sækja gögn',
-      }),
-    ).toBeVisible()
-    await page.getByTestId('agree-to-data-providers').click()
-    await proceed()
-
-    // Child information
-    await expect(
-      page.getByRole('heading', {
-        name: 'Upplýsingar um barn',
-      }),
-    ).toBeVisible()
-    await page.getByTestId('child-0').click()
-    await page
-      .getByRole('radio', {
-        name: 'Nei',
-      })
-      .click()
-    await page.getByTestId('select-child').click()
-
-    // Email address and telephone number
-    await expect(
-      page.getByRole('heading', {
-        name: 'Netfang og símanúmer',
-      }),
-    ).toBeVisible()
-    const emailBox = page.getByRole('textbox', {
-      name: 'Netfang',
+    await test.step('Type of application', async () => {
+      await expect(
+        page.getByRole('heading', {
+          name: 'Tegund umsóknar',
+        }),
+      ).toBeVisible()
+      await page.getByTestId('parental-leave').click()
+      await proceed()
     })
-    await emailBox.selectText()
-    await emailBox.type(applicant.email)
 
-    const phoneNumber = page.getByRole('textbox', {
-      name: 'Símanúmer',
+    await test.step('External Data', async () => {
+      await expect(
+        page.getByRole('heading', {
+          name: 'Sækja gögn',
+        }),
+      ).toBeVisible()
+      await page.getByTestId('agree-to-data-providers').click()
+      await proceed()
     })
-    await phoneNumber.selectText()
-    await phoneNumber.type('6555555')
 
-    await page
-      .getByRole('region', {
-        name: 'Vinasamlegast veldu tungumál fyrir samskipti við sjóðinn',
-      })
-      .getByRole('radio', {
-        name: 'Íslenska',
-      })
-      .click()
-    await proceed()
-
-    // Child's parents
-    await expect(
-      page.getByRole('heading', {
-        name: 'Vinsamlegast staðfestu hitt foreldrið (ef það á við)',
-      }),
-    ).toBeVisible()
-    await page
-      .getByRole('region', {
-        name: 'Hitt foreldrið',
-      })
-      .getByRole('radio')
-      .first()
-      .click()
-    await proceed()
-
-    // Payment information
-    await expect(
-      page.getByRole('heading', {
-        name: 'Er allt eins og það á að vera?',
-      }),
-    ).toBeVisible()
-
-    const paymentBank = page.getByRole('textbox', {
-      name: 'Banki',
+    await test.step('Child information', async () => {
+      await expect(
+        page.getByRole('heading', {
+          name: 'Upplýsingar um barn',
+        }),
+      ).toBeVisible()
+      await page.getByTestId('child-0').click()
+      await page
+        .getByRole('radio', {
+          name: 'Nei',
+        })
+        .click()
+      await page.getByTestId('select-child').click()
     })
-    await paymentBank.selectText()
-    await paymentBank.type('051226054678')
 
-    await page.waitForResponse(`${apiUrl}/api/graphql?op=GetPensionFunds`)
-    const pensionFund = page.getByRole('combobox', {
-      name: `${'Lífeyrissjóður'} ${'Skrifaðu hér til að leita'}`,
+    await test.step('Email address and telephone number', async () => {
+      await expect(
+        page.getByRole('heading', {
+          name: 'Netfang og símanúmer',
+        }),
+      ).toBeVisible()
+      const emailBox = page.getByRole('textbox', {
+        name: 'Netfang',
+      })
+      await emailBox.selectText()
+      await emailBox.type(applicant.email)
+
+      const phoneNumber = page.getByRole('textbox', {
+        name: 'Símanúmer',
+      })
+      await phoneNumber.selectText()
+      await phoneNumber.type('6555555')
+
+      await page
+        .getByRole('region', {
+          name: 'Vinasamlegast veldu tungumál fyrir samskipti við sjóðinn',
+        })
+        .getByRole('radio', {
+          name: 'Íslenska',
+        })
+        .click()
+      await proceed()
     })
-    await pensionFund.focus()
-    await page.keyboard.press('ArrowDown')
-    await page.keyboard.press('Enter')
 
-    await page.getByTestId('use-union').click()
-    await page.waitForResponse(`${apiUrl}/api/graphql?op=GetUnions`)
-    const paymentUnion = page.getByTestId('payments-union')
-    await paymentUnion.focus()
-    await page.keyboard.type('VR')
-    await page.keyboard.press('Enter')
+    await test.step("Child's parents", async () => {
+      await expect(
+        page.getByRole('heading', {
+          name: 'Vinsamlegast staðfestu hitt foreldrið (ef það á við)',
+        }),
+      ).toBeVisible()
+      await proceed()
+    })
 
-    await page.getByTestId('use-private-pension-fund').click()
-    const privatePensionFund = page.getByTestId('private-pension-fund')
-    await privatePensionFund.focus()
-    await privatePensionFund.press('ArrowDown')
-    await page
-      .locator('#react-select-payments\\.privatePensionFund-option-0')
-      .click()
-    await page.getByTestId('private-pension-fund-ratio').press('ArrowDown')
-    await page
-      .locator('#react-select-payments\\.privatePensionFundPercentage-option-0')
-      .click()
-    await proceed()
+    await test.step('Payment information', async () => {
+      await expect(
+        page.getByRole('heading', {
+          name: 'Er allt eins og það á að vera?',
+        }),
+      ).toBeVisible()
 
-    // Personal Allowance
-    await expect(
-      page.getByRole('heading', {
-        name: 'Persónuafsláttur',
-      }),
-    ).toBeVisible()
-    await page.getByTestId('use-personal-finance').click()
-    await page.getByTestId('use-as-much-as-possible').click()
-    await proceed()
-
-    // Spouse's personal allowance
-    await expect(
-      page.getByRole('heading', {
-        name: 'Beiðni um persónuafslátt frá maka',
-      }),
-    ).toBeVisible()
-    await page.getByTestId('dont-use-personal-finance').click()
-    await proceed()
-
-    // Are you self employed?
-    await expect(page.getByText('Ertu sjálfstætt starfandi?')).toBeVisible()
-    await page
-      .getByRole('radio', {
-        name: 'Nei',
+      const paymentBank = page.getByRole('textbox', {
+        name: 'Banki',
       })
-      .click()
-    await expect(page.getByText('Ertu að þiggja bætur?')).toBeVisible()
-    await page
-      .getByRole('radio', {
-        name: 'Nei',
+      await paymentBank.selectText()
+      await paymentBank.type('051226054678')
+
+      await page.waitForResponse(`${apiUrl}/api/graphql?op=GetPensionFunds`)
+      const pensionFund = page.getByRole('combobox', {
+        name: `${'Lífeyrissjóður'} ${'Skrifaðu hér til að leita'}`,
       })
-      .nth(1)
-      .click()
-    await proceed()
+      await pensionFund.focus()
+      await page.keyboard.press('ArrowDown')
+      await page.keyboard.press('Enter')
 
-    // Register an employer
-    await expect(
-      page.getByRole('heading', {
-        name: 'Vinnuveitendur',
-      }),
-    ).toBeVisible()
+      await page.getByTestId('use-union').click()
+      await page.waitForResponse(`${apiUrl}/api/graphql?op=GetUnions`)
+      const paymentUnion = page.getByTestId('payments-union')
+      await paymentUnion.focus()
+      await page.keyboard.type('VR')
+      await page.keyboard.press('Enter')
 
-    await page
-      .getByRole('button', {
-        name: 'Bæta við vinnuveitanda',
-      })
-      .click()
+      await page.getByTestId('use-private-pension-fund').click()
+      const privatePensionFund = page.getByTestId('private-pension-fund')
+      await privatePensionFund.focus()
+      await privatePensionFund.press('ArrowDown')
+      await page
+        .locator('#react-select-payments\\.privatePensionFund-option-0')
+        .click()
+      await page.getByTestId('private-pension-fund-ratio').press('ArrowDown')
+      await page
+        .locator(
+          '#react-select-payments\\.privatePensionFundPercentage-option-0',
+        )
+        .click()
+      await proceed()
+    })
 
-    await expect(
-      page.getByRole('paragraph').filter({
-        hasText: 'Skráning vinnuveitanda',
-      }),
-    ).toBeVisible()
-    await page.getByTestId('employer-email').type(employer.email)
-    await page.getByTestId('employer-phone-number').type('6555555')
-    const employmentRatio = page.getByTestId('employment-ratio')
-    await employmentRatio.type('100%')
-    await employmentRatio.press('Enter')
-    await page
-      .getByRole('button', {
-        name: 'Skrá vinnuveitanda',
-      })
-      .click()
-    await proceed()
+    await test.step('Personal Allowance', async () => {
+      await expect(
+        page.getByRole('heading', {
+          name: 'Persónuafsláttur',
+        }),
+      ).toBeVisible()
+      await page.getByTestId('use-personal-finance').click()
+      await page.getByTestId('use-as-much-as-possible').click()
+      await proceed()
+    })
 
-    // Additional documentation for application
-    await expect(
-      page.getByRole('heading', {
-        name: 'Viðbótargögn með umsókn',
-      }),
-    ).toBeVisible()
-    await proceed()
+    await test.step("Spouse's personal allowance", async () => {
+      await expect(
+        page.getByRole('heading', {
+          name: 'Beiðni um persónuafslátt frá maka',
+        }),
+      ).toBeVisible()
+      await page.getByTestId('dont-use-personal-finance').click()
+      await proceed()
+    })
 
-    // These are your rights
-    await expect(
-      page.getByRole('heading', {
-        name: 'Þetta eru réttindin þín',
-      }),
-    ).toBeVisible()
-    await proceed()
+    await test.step('Are you self employed?', async () => {
+      await expect(page.getByText('Ertu sjálfstætt starfandi?')).toBeVisible()
+      await page
+        .getByRole('radio', {
+          name: 'Nei',
+        })
+        .click()
+      await expect(page.getByText('Ertu að þiggja bætur?')).toBeVisible()
+      await page
+        .getByRole('radio', {
+          name: 'Nei',
+        })
+        .nth(1)
+        .click()
+      await proceed()
+    })
 
-    // Transferal of rights
-    await expect(
-      page.getByRole('heading', {
-        name: 'Tilfærsla réttinda',
-      }),
-    ).toBeVisible()
-    await page
-      .getByRole('region', {
-        name: 'Tilfærsla réttinda',
-      })
-      .getByRole('radio', {
-        name: 'Ég vil ekki færa daga',
-      })
-      .click()
-    await proceed()
+    await test.step('Register an employer', async () => {
+      await expect(
+        page.getByRole('heading', {
+          name: 'Vinnuveitendur',
+        }),
+      ).toBeVisible()
 
-    // Start of parental leave
-    await expect(
-      page.getByRole('heading', {
-        name: 'Upphaf fæðingarorlofs',
-      }),
-    ).toBeVisible()
-    await page
-      .getByRole('region', {
-        name: 'Upphaf fæðingarorlofs',
-      })
-      .getByRole('radio', {
-        name: 'Ég vil byrja frá raunverulegum fæðingardegi',
-      })
-      .click()
-    await proceed()
+      await page
+        .getByRole('button', {
+          name: 'Bæta við vinnuveitanda',
+        })
+        .click()
 
-    // Leave duration
-    await expect(
-      page.getByRole('heading', {
-        name: 'Lengd fæðingarorlofs',
-      }),
-    ).toBeVisible()
-    await page
-      .getByRole('radio', {
-        name: 'Í fjölda mánaða',
-      })
-      .click()
-    await proceed()
+      await expect(
+        page.getByRole('paragraph').filter({
+          hasText: 'Skráning vinnuveitanda',
+        }),
+      ).toBeVisible()
+      await page.getByTestId('employer-email').type(employer.email)
+      const employmentRatio = page.getByTestId('employment-ratio')
+      await employmentRatio.type('100%')
+      await employmentRatio.press('Enter')
+      await page
+        .getByRole('button', {
+          name: 'Skrá vinnuveitanda',
+        })
+        .click()
+      await proceed()
+    })
 
-    await expect(
-      page.getByRole('heading', {
-        name: 'Lengd fæðingarorlofs',
-      }),
-    ).toBeVisible()
-    await page
-      .getByRole('button', {
-        name: '6 months',
-        exact: true,
-      })
-      .click()
-    await proceed()
+    await test.step('These are your rights', async () => {
+      await expect(
+        page.getByRole('heading', {
+          name: 'Þetta eru réttindin þín',
+        }),
+      ).toBeVisible()
+      await proceed()
+    })
 
-    // What percent off your employment ratio will you take for the leave?
-    await expect(
-      page.getByRole('heading', {
-        name: 'Hversu hátt hlutfall viltu að fæðingarorlofið sé af starfshlutfalli þínu?',
-      }),
-    ).toBeVisible()
-    const selectPercentageUse = page.getByTestId('select-percentage-use')
-    await selectPercentageUse.focus()
-    await page.keyboard.type('50%')
-    await page.keyboard.press('Enter')
-    await proceed()
+    await test.step('Transferal of rights', async () => {
+      await expect(
+        page.getByRole('heading', {
+          name: 'Tilfærsla réttinda',
+        }),
+      ).toBeVisible()
+      await page
+        .getByRole('region', {
+          name: 'Tilfærsla réttinda',
+        })
+        .getByRole('radio', {
+          name: 'Ég vil ekki færa daga',
+        })
+        .click()
+      await proceed()
+    })
 
-    // Here is your current leave plan
-    await expect(
-      page.getByRole('button', {
-        name: 'Bæta við tímabili',
-      }),
-    ).toBeVisible()
-    await proceed()
+    await test.step('Start of parental leave', async () => {
+      await expect(
+        page.getByRole('heading', {
+          name: 'Upphaf fæðingarorlofs',
+        }),
+      ).toBeVisible()
+      await page
+        .getByRole('region', {
+          name: 'Upphaf fæðingarorlofs',
+        })
+        .getByRole('radio', {
+          name: 'Ég vil byrja frá raunverulegum fæðingardegi',
+        })
+        .click()
+      await proceed()
+    })
 
-    // Submit application
-    await page
-      .getByRole('button', {
-        name: 'Senda inn umsókn',
-      })
-      .click()
+    await test.step('Leave duration', async () => {
+      await expect(
+        page.getByRole('heading', {
+          name: 'Lengd fæðingarorlofs',
+        }),
+      ).toBeVisible()
+      await page
+        .getByRole('radio', {
+          name: 'Í fjölda mánaða',
+        })
+        .click()
+      await proceed()
 
-    await expect(
-      page.getByRole('heading', {
-        name: 'Til hamingju, hér að neðan eru næstu skref',
-      }),
-    ).toBeVisible()
+      await expect(
+        page.getByRole('heading', {
+          name: 'Lengd fæðingarorlofs',
+        }),
+      ).toBeVisible()
+      await page
+        .getByRole('button', {
+          name: '6 months',
+          exact: true,
+        })
+        .click()
+      await proceed()
+    })
+
+    await test.step(
+      'What percent off your employment ratio will you take for the leave?',
+      async () => {
+        await expect(
+          page.getByRole('heading', {
+            name: 'Hversu hátt hlutfall viltu að fæðingarorlofið sé af starfshlutfalli þínu?',
+          }),
+        ).toBeVisible()
+        const selectPercentageUse = page.getByTestId('select-percentage-use')
+        await selectPercentageUse.focus()
+        await page.keyboard.type('50%')
+        await page.keyboard.press('Enter')
+        await proceed()
+      },
+    )
+
+    await test.step(' Here is your current leave plan', async () => {
+      await expect(
+        page.getByRole('button', {
+          name: 'Bæta við tímabili',
+        }),
+      ).toBeVisible()
+      await proceed()
+    })
+
+    await test.step('Additional documentation for application', async () => {
+      await expect(
+        page.getByRole('heading', {
+          name: 'Viðbótargögn með umsókn',
+        }),
+      ).toBeVisible()
+      await proceed()
+    })
+
+    await test.step('Comment', async () => {
+      await expect(
+        page.getByRole('heading', { name: 'Athugasemd' }),
+      ).toBeVisible()
+      await page
+        .getByPlaceholder('Skrifaðu athugasemd hér')
+        .fill(
+          'Lorem ipsum dolor sit amet, consectetur adipiscing elit. In vehicula malesuada augue, sit amet pulvinar tortor pellentesque at. Nulla facilisi. Nunc vel mi ac mi commodo rhoncus sit amet ut neque.',
+        )
+      await proceed()
+    })
+
+    await test.step('Submit application', async () => {
+      await page
+        .getByRole('button', {
+          name: 'Senda inn umsókn',
+        })
+        .click()
+
+      await expect(
+        page.getByRole('heading', {
+          name: 'Til hamingju, hér að neðan eru næstu skref',
+        }),
+      ).toBeVisible()
+    })
+
     submitApplicationSuccess = true
-    await getEmployerEmailAndApprove(employer, page)
+
+    await test.step('Employer approval', async () => {
+      await getEmployerEmailAndApprove(employer, page)
+    })
   })
 
   test('Other parent should be able to create application', async () => {
@@ -424,272 +480,306 @@ test.describe('Parental leave', () => {
     await page.goto('/umsoknir/faedingarorlof', { waitUntil: 'load' })
     const { proceed } = helpers(page)
 
-    // Mock data
-    await expect(
-      page.getByRole('heading', {
-        name: 'Viltu nota gervigögn?',
-      }),
-    ).toBeVisible()
-    await page
-      .getByRole('radio', {
-        name: 'Já',
-      })
-      .click()
-    await page
-      .getByRole('radio', {
-        name: 'Hitt foreldri',
-      })
-      .click()
-    await page
-      .getByRole('region', {
-        name: 'Notaðu núverandi umsókn frá aðalforeldra',
-      })
-      .getByRole('radio', {
-        name: 'Já',
-      })
-      .click()
+    await test.step('Mock data', async () => {
+      await expect(
+        page.getByRole('heading', {
+          name: 'Viltu nota gervigögn?',
+        }),
+      ).toBeVisible()
+      await page
+        .getByRole('radio', {
+          name: 'Já',
+        })
+        .click()
+      await page
+        .getByRole('radio', {
+          name: 'Hitt foreldri',
+        })
+        .click()
+      await page
+        .getByRole('region', {
+          name: 'Notaðu núverandi umsókn frá aðalforeldra',
+        })
+        .getByRole('radio', {
+          name: 'Já',
+        })
+        .click()
 
-    const mockDataApplicationID = page.getByRole('textbox', {
-      name: 'Umsóknarnúmer frá aðalforeldri',
+      const mockDataApplicationID = page.getByRole('textbox', {
+        name: 'Umsóknarnúmer frá aðalforeldri',
+      })
+      await mockDataApplicationID.selectText()
+      await mockDataApplicationID.type(applicationID)
+      await proceed()
     })
-    await mockDataApplicationID.selectText()
-    await mockDataApplicationID.type(applicationID)
-    await proceed()
 
-    // Type of application
-    await expect(
-      page.getByRole('heading', {
-        name: 'Tegund umsóknar',
-      }),
-    ).toBeVisible()
-    await page.getByTestId('parental-leave').click()
-    await proceed()
-
-    // External Data
-    await expect(
-      page.getByRole('heading', {
-        name: 'Sækja gögn',
-      }),
-    ).toBeVisible()
-    await page.getByTestId('agree-to-data-providers').click()
-    await proceed()
-
-    // Child information
-    await expect(
-      page.getByRole('heading', {
-        name: 'Upplýsingar um barn',
-      }),
-    ).toBeVisible()
-    await page.getByTestId('child-0').click()
-    await page.getByTestId('select-child').click()
-
-    // Email address and telephone number
-    await expect(
-      page.getByRole('heading', {
-        name: 'Netfang og símanúmer',
-      }),
-    ).toBeVisible()
-    const emailBox = page.getByRole('textbox', {
-      name: 'Netfang',
+    await test.step('Type of application', async () => {
+      await expect(
+        page.getByRole('heading', {
+          name: 'Tegund umsóknar',
+        }),
+      ).toBeVisible()
+      await page.getByTestId('parental-leave').click()
+      await proceed()
     })
-    await emailBox.selectText()
-    await emailBox.type(applicant.email)
 
-    const phoneNumber = page.getByRole('textbox', {
-      name: 'Símanúmer',
+    await test.step('External Data', async () => {
+      await expect(
+        page.getByRole('heading', {
+          name: 'Sækja gögn',
+        }),
+      ).toBeVisible()
+      await page.getByTestId('agree-to-data-providers').click()
+      await proceed()
     })
-    await phoneNumber.selectText()
-    await phoneNumber.type('6555555')
 
-    await page
-      .getByRole('region', {
-        name: 'Vinasamlegast veldu tungumál fyrir samskipti við sjóðinn',
-      })
-      .getByRole('radio', {
-        name: 'Íslenska',
-      })
-      .click()
-    await proceed()
-
-    // Payment information
-    await expect(
-      page.getByRole('heading', {
-        name: 'Er allt eins og það á að vera?',
-      }),
-    ).toBeVisible()
-
-    const paymentBank = page.getByRole('textbox', {
-      name: 'Banki',
+    await test.step('Child information', async () => {
+      await expect(
+        page.getByRole('heading', {
+          name: 'Upplýsingar um barn',
+        }),
+      ).toBeVisible()
+      await page.getByTestId('child-0').click()
+      await page.getByTestId('select-child').click()
     })
-    await paymentBank.selectText()
-    await paymentBank.type('051226054678')
 
-    await page.waitForResponse(`${apiUrl}/api/graphql?op=GetPensionFunds`)
-    const pensionFund = page.getByRole('combobox', {
-      name: `${'Lífeyrissjóður'} ${'Skrifaðu hér til að leita'}`,
+    await test.step('Email address and telephone number', async () => {
+      await expect(
+        page.getByRole('heading', {
+          name: 'Netfang og símanúmer',
+        }),
+      ).toBeVisible()
+      const emailBox = page.getByRole('textbox', {
+        name: 'Netfang',
+      })
+      await emailBox.selectText()
+      await emailBox.type(applicant.email)
+
+      const phoneNumber = page.getByRole('textbox', {
+        name: 'Símanúmer',
+      })
+      await phoneNumber.selectText()
+      await phoneNumber.type('6555555')
+
+      await page
+        .getByRole('region', {
+          name: 'Vinasamlegast veldu tungumál fyrir samskipti við sjóðinn',
+        })
+        .getByRole('radio', {
+          name: 'Íslenska',
+        })
+        .click()
+      await proceed()
     })
-    await pensionFund.focus()
-    await page.keyboard.press('ArrowDown')
-    await page.keyboard.press('Enter')
 
-    await page.getByTestId('use-union').click()
-    await page.waitForResponse(`${apiUrl}/api/graphql?op=GetUnions`)
-    const paymentUnion = page.getByTestId('payments-union')
-    await paymentUnion.focus()
-    await page.keyboard.type('VR')
-    await page.keyboard.press('Enter')
+    await test.step('Payment information', async () => {
+      await expect(
+        page.getByRole('heading', {
+          name: 'Er allt eins og það á að vera?',
+        }),
+      ).toBeVisible()
 
-    await page.getByTestId('use-private-pension-fund').click()
-    const privatePensionFund = page.getByTestId('private-pension-fund')
-    await privatePensionFund.focus()
-    await privatePensionFund.press('ArrowDown')
-    await page
-      .locator('#react-select-payments\\.privatePensionFund-option-0')
-      .click()
-    await page.getByTestId('private-pension-fund-ratio').press('ArrowDown')
-    await page
-      .locator('#react-select-payments\\.privatePensionFundPercentage-option-0')
-      .click()
-    await proceed()
-
-    // Personal Allowance
-    await expect(
-      page.getByRole('heading', {
-        name: 'Persónuafsláttur',
-      }),
-    ).toBeVisible()
-    await page.getByTestId('use-personal-finance').click()
-    await page.getByTestId('use-as-much-as-possible').click()
-    await proceed()
-
-    // Are you self employed?
-    await expect(page.getByText('Ertu sjálfstætt starfandi?')).toBeVisible()
-    await page
-      .getByRole('radio', {
-        name: 'Nei',
+      const paymentBank = page.getByRole('textbox', {
+        name: 'Banki',
       })
-      .click()
-    await expect(page.getByText('Ertu að þiggja bætur?')).toBeVisible()
-    await page
-      .getByRole('radio', {
-        name: 'Nei',
+      await paymentBank.selectText()
+      await paymentBank.type('051226054678')
+
+      await page.waitForResponse(`${apiUrl}/api/graphql?op=GetPensionFunds`)
+      const pensionFund = page.getByRole('combobox', {
+        name: `${'Lífeyrissjóður'} ${'Skrifaðu hér til að leita'}`,
       })
-      .nth(1)
-      .click()
-    await proceed()
+      await pensionFund.focus()
+      await page.keyboard.press('ArrowDown')
+      await page.keyboard.press('Enter')
 
-    // Register an employer
-    await expect(
-      page.getByRole('heading', {
-        name: 'Vinnuveitendur',
-      }),
-    ).toBeVisible()
+      await page.getByTestId('use-union').click()
+      await page.waitForResponse(`${apiUrl}/api/graphql?op=GetUnions`)
+      const paymentUnion = page.getByTestId('payments-union')
+      await paymentUnion.focus()
+      await page.keyboard.type('VR')
+      await page.keyboard.press('Enter')
 
-    await page
-      .getByRole('button', {
-        name: 'Bæta við vinnuveitanda',
-      })
-      .click()
+      await page.getByTestId('use-private-pension-fund').click()
+      const privatePensionFund = page.getByTestId('private-pension-fund')
+      await privatePensionFund.focus()
+      await privatePensionFund.press('ArrowDown')
+      await page
+        .locator('#react-select-payments\\.privatePensionFund-option-0')
+        .click()
+      await page.getByTestId('private-pension-fund-ratio').press('ArrowDown')
+      await page
+        .locator(
+          '#react-select-payments\\.privatePensionFundPercentage-option-0',
+        )
+        .click()
+      await proceed()
+    })
 
-    await expect(
-      page.getByRole('paragraph').filter({
-        hasText: 'Skráning vinnuveitanda',
-      }),
-    ).toBeVisible()
-    await page.getByTestId('employer-email').type(employer.email)
-    await page.getByTestId('employer-phone-number').type('6555555')
-    const employmentRatio = page.getByTestId('employment-ratio')
-    await employmentRatio.type('100%')
-    await employmentRatio.press('Enter')
-    await page
-      .getByRole('button', {
-        name: 'Skrá vinnuveitanda',
-      })
-      .click()
-    await proceed()
+    await test.step('Personal Allowance', async () => {
+      await expect(
+        page.getByRole('heading', {
+          name: 'Persónuafsláttur',
+        }),
+      ).toBeVisible()
+      await page.getByTestId('use-personal-finance').click()
+      await page.getByTestId('use-as-much-as-possible').click()
+      await proceed()
+    })
 
-    // Additional documentation for application
-    await expect(
-      page.getByRole('heading', {
-        name: 'Viðbótargögn með umsókn',
-      }),
-    ).toBeVisible()
-    await proceed()
+    await test.step('Are you self employed?', async () => {
+      await expect(page.getByText('Ertu sjálfstætt starfandi?')).toBeVisible()
+      await page
+        .getByRole('radio', {
+          name: 'Nei',
+        })
+        .click()
+      await expect(page.getByText('Ertu að þiggja bætur?')).toBeVisible()
+      await page
+        .getByRole('radio', {
+          name: 'Nei',
+        })
+        .nth(1)
+        .click()
+      await proceed()
+    })
 
-    // Start of parental leave
-    await expect(
-      page.getByRole('heading', {
-        name: 'Upphaf fæðingarorlofs',
-      }),
-    ).toBeVisible()
-    await page
-      .getByRole('region', {
-        name: 'Upphaf fæðingarorlofs',
-      })
-      .getByRole('radio', {
-        name: 'Ég vil byrja frá raunverulegum fæðingardegi',
-      })
-      .click()
-    await proceed()
+    await test.step('Register an employer', async () => {
+      await expect(
+        page.getByRole('heading', {
+          name: 'Vinnuveitendur',
+        }),
+      ).toBeVisible()
 
-    // Leave duration
-    await expect(
-      page.getByRole('heading', {
-        name: 'Lengd fæðingarorlofs',
-      }),
-    ).toBeVisible()
-    await page
-      .getByRole('radio', {
-        name: 'Í fjölda mánaða',
-      })
-      .click()
-    await proceed()
+      await page
+        .getByRole('button', {
+          name: 'Bæta við vinnuveitanda',
+        })
+        .click()
 
-    await expect(
-      page.getByRole('heading', {
-        name: 'Lengd fæðingarorlofs',
-      }),
-    ).toBeVisible()
-    await page
-      .getByRole('button', {
-        name: '3 months',
-        exact: true,
-      })
-      .click()
-    await proceed()
+      await expect(
+        page.getByRole('paragraph').filter({
+          hasText: 'Skráning vinnuveitanda',
+        }),
+      ).toBeVisible()
+      await page.getByTestId('employer-email').type(employer.email)
+      const employmentRatio = page.getByTestId('employment-ratio')
+      await employmentRatio.type('100%')
+      await employmentRatio.press('Enter')
+      await page
+        .getByRole('button', {
+          name: 'Skrá vinnuveitanda',
+        })
+        .click()
+      await proceed()
+    })
 
-    // What percent off your employment ratio will you take for the leave?
-    await expect(
-      page.getByRole('heading', {
-        name: 'Hversu hátt hlutfall viltu að fæðingarorlofið sé af starfshlutfalli þínu?',
-      }),
-    ).toBeVisible()
-    const selectPercentageUse = page.getByTestId('select-percentage-use')
-    await selectPercentageUse.focus()
-    await page.keyboard.type('50%')
-    await page.keyboard.press('Enter')
-    await proceed()
+    await test.step('Start of parental leave', async () => {
+      await expect(
+        page.getByRole('heading', {
+          name: 'Upphaf fæðingarorlofs',
+        }),
+      ).toBeVisible()
+      await page
+        .getByRole('region', {
+          name: 'Upphaf fæðingarorlofs',
+        })
+        .getByRole('radio', {
+          name: 'Ég vil byrja frá raunverulegum fæðingardegi',
+        })
+        .click()
+      await proceed()
+    })
 
-    // Here is your current leave plan
-    await expect(
-      page.getByRole('button', {
-        name: 'Bæta við tímabili',
-      }),
-    ).toBeVisible()
-    await proceed()
+    await test.step('Leave duration', async () => {
+      await expect(
+        page.getByRole('heading', {
+          name: 'Lengd fæðingarorlofs',
+        }),
+      ).toBeVisible()
+      await page
+        .getByRole('radio', {
+          name: 'Í fjölda mánaða',
+        })
+        .click()
+      await proceed()
 
-    // Submit application
-    await page
-      .getByRole('button', {
-        name: 'Senda inn umsókn',
-      })
-      .click()
+      await expect(
+        page.getByRole('heading', {
+          name: 'Lengd fæðingarorlofs',
+        }),
+      ).toBeVisible()
+      await page
+        .getByRole('button', {
+          name: '3 months',
+          exact: true,
+        })
+        .click()
+      await proceed()
+    })
 
-    await expect(
-      page.getByRole('heading', {
-        name: 'Til hamingju, hér að neðan eru næstu skref',
-      }),
-    ).toBeVisible()
-    await getEmployerEmailAndApprove(employer, page)
+    await test.step(
+      'What percent off your employment ratio will you take for the leave?',
+      async () => {
+        await expect(
+          page.getByRole('heading', {
+            name: 'Hversu hátt hlutfall viltu að fæðingarorlofið sé af starfshlutfalli þínu?',
+          }),
+        ).toBeVisible()
+        const selectPercentageUse = page.getByTestId('select-percentage-use')
+        await selectPercentageUse.focus()
+        await page.keyboard.type('50%')
+        await page.keyboard.press('Enter')
+        await proceed()
+      },
+    )
+
+    await test.step('Here is your current leave plan', async () => {
+      await expect(
+        page.getByRole('button', {
+          name: 'Bæta við tímabili',
+        }),
+      ).toBeVisible()
+      await proceed()
+    })
+
+    await test.step('Additional documentation for application', async () => {
+      await expect(
+        page.getByRole('heading', {
+          name: 'Viðbótargögn með umsókn',
+        }),
+      ).toBeVisible()
+      await proceed()
+    })
+
+    await test.step('Comment', async () => {
+      await expect(
+        page.getByRole('heading', { name: 'Athugasemd' }),
+      ).toBeVisible()
+      await page
+        .getByPlaceholder('Skrifaðu athugasemd hér')
+        .fill(
+          'Lorem ipsum dolor sit amet, consectetur adipiscing elit. In vehicula malesuada augue, sit amet pulvinar tortor pellentesque at. Nulla facilisi. Nunc vel mi ac mi commodo rhoncus sit amet ut neque.',
+        )
+      await proceed()
+    })
+
+    await test.step('Submit application', async () => {
+      await page
+        .getByRole('button', {
+          name: 'Senda inn umsókn',
+        })
+        .click()
+
+      await expect(
+        page.getByRole('heading', {
+          name: 'Til hamingju, hér að neðan eru næstu skref',
+        }),
+      ).toBeVisible()
+    })
+
+    await test.step('Employer approval', async () => {
+      await getEmployerEmailAndApprove(employer, page)
+    })
   })
 })
