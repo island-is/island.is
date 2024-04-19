@@ -59,7 +59,7 @@ const BubbleWrapper = styled.View`
   align-items: center;
 `
 
-const rightButtons: OptionsTopBarButton[] = [
+const RIGHT_BUTTONS: OptionsTopBarButton[] = [
   {
     id: 'LICENSE_SCANNER_DONE',
     systemItem: 'done',
@@ -78,7 +78,7 @@ const { useNavigationOptions, getNavigationOptions } =
     {
       topBar: {
         visible: true,
-        rightButtons,
+        rightButtons: RIGHT_BUTTONS,
       },
     },
   )
@@ -89,7 +89,7 @@ export const LicenseScannerScreen: NavigationFunctionComponent = ({
   componentId,
 }) => {
   useNavigationOptions(componentId)
-  useOfflineUpdateNavigation(componentId, rightButtons)
+  useOfflineUpdateNavigation(componentId, RIGHT_BUTTONS)
   const [hasPermission, setHasPermission] = useState<boolean>()
   const [active, setActive] = useState(true)
   const [invalid, setInvalid] = useState<boolean>(false)
