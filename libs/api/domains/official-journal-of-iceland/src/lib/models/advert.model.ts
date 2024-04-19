@@ -15,10 +15,10 @@ export enum AdvertStatus {
 }
 
 registerEnumType(AdvertStatus, {
-  name: 'MinistryOfJusticeAdvertStatus',
+  name: 'OfficialJournalOfIcelandAdvertStatus',
 })
 
-@ObjectType('MinistryOfJusticeAdvertMainCategory')
+@ObjectType('OfficialJournalOfIcelandAdvertMainCategory')
 export class AdvertMainCategory {
   @Field(() => ID)
   id!: string
@@ -33,7 +33,7 @@ export class AdvertMainCategory {
   description!: string
 }
 
-@ObjectType('MinistryOfJusticeAdvertCategory')
+@ObjectType('OfficialJournalOfIcelandAdvertCategory')
 export class AdvertCategory {
   @Field(() => ID)
   id!: string
@@ -51,7 +51,7 @@ export class AdvertCategory {
   mainCategory?: AdvertMainCategory | null
 }
 
-@ObjectType('MinistryOfJusticeAdvertEntity')
+@ObjectType('OfficialJournalOfIcelandAdvertEntity')
 export class AdvertEntity {
   @Field(() => ID)
   id!: string
@@ -63,7 +63,7 @@ export class AdvertEntity {
   slug!: string
 }
 
-@ObjectType('MinistryOfJusticeAdvertDocument')
+@ObjectType('OfficialJournalOfIcelandAdvertDocument')
 export class AdvertDocument {
   @Field(() => Boolean)
   isLegacy!: boolean
@@ -75,7 +75,7 @@ export class AdvertDocument {
   pdfUrl?: string | null
 }
 
-@ObjectType('MinistryOfJusticeAdvertPublicationNumber')
+@ObjectType('OfficialJournalOfIcelandAdvertPublicationNumber')
 export class AdvertPublicationNumber {
   @Field(() => Int)
   number!: number
@@ -87,7 +87,7 @@ export class AdvertPublicationNumber {
   full!: string
 }
 
-@ObjectType('MinistryOfJusticeAdvertType')
+@ObjectType('OfficialJournalOfIcelandAdvertType')
 export class AdvertType {
   @Field(() => ID)
   id!: string
@@ -102,7 +102,7 @@ export class AdvertType {
   department!: AdvertEntity
 }
 
-@ObjectType('MinistryOfJusticeAdvert')
+@ObjectType('OfficialJournalOfIcelandAdvert')
 export class Advert {
   @Field(() => ID)
   id!: string
