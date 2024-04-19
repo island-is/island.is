@@ -25,14 +25,6 @@ export function deleteMockPdf() {
 }
 
 // Set NODE_DEBUG=system-e2e in your environment when testing to show debug messages
-export const debug = (msg?: string | object, ...args: unknown[]) => {
-  if (msg) {
-    if (typeof msg === 'object') {
-      debuglog('system-e2e')('', msg, ...args)
-      return
-    }
-    debuglog('system-e2e')(msg, ...args)
-    return
-  }
-  debuglog('system-e2e')('debug enabled')
+export function debug(msg: string, ...args: unknown[]) {
+  debuglog('system-e2e')(msg, ...args)
 }

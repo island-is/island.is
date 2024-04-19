@@ -3,37 +3,38 @@ import { Gender, MaritalStatus } from '../../shared/types'
 export interface User {
   nationalId: string
   name: string
-  firstName: string
-  middleName: string
-  lastName: string
+  firstName?: string | null
+  middleName?: string | null
+  lastName?: string | null
   fullName: string
   gender: Gender
   maritalStatus: MaritalStatus
-  religion: string
-  familyNr: string
+  religion?: string | null
+  familyNr?: string | null
+  legalResidence?: string | null
   banMarking: {
     banMarked: boolean
-    startDate: string
+    startDate?: string
   }
-  citizenship: {
+  citizenship?: {
     code: string
     name: string
-  }
-  address: {
-    code: string
-    lastUpdated: string
-    streetAddress: string
+  } | null
+  address?: {
+    code?: string | null
+    lastUpdated?: string | null
+    streetAddress?: string | null
     city: string
-    postalCode: string
-  }
+    postalCode?: string | null
+  } | null
   birthPlace: {
-    code: string
-    city: string
-    date: string
+    code?: string | null
+    city?: string | null
+    date?: string | null
   }
   spouse?: {
-    name?: string
-    nationalId?: string
-    cohabitant?: string
-  }
+    name?: string | null
+    nationalId?: string | null
+    cohabitant?: string | null
+  } | null
 }
