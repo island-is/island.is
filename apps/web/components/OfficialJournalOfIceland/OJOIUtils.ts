@@ -1,3 +1,6 @@
+import format from 'date-fns/format'
+import is from 'date-fns/locale/is'
+
 import {
   MinistryOfJusticeAdvertCategory,
   MinistryOfJusticeAdvertEntity,
@@ -70,4 +73,12 @@ export const sortCategories = (cats: EntityOption[]) => {
   return cats.sort((a, b) => {
     return sortAlpha('title')(a, b)
   })
+}
+
+export const formatDate = (date: string, df = 'dd.MM.yyyy') => {
+  try {
+    return format(new Date(date), df, { locale: is })
+  } catch (e) {
+    throw new Error(`Could not format date: ${date}`)
+  }
 }
