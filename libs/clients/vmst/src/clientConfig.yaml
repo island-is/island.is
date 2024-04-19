@@ -672,7 +672,7 @@ components:
           type: string
           minLength: 1
         approverNationalRegistryId:
-          type: string  
+          type: string
           minLength: 1
     Attachment:
       type: object

@@ -90,8 +90,12 @@ export const getEmployer = (
   application: Application,
   isSelfEmployed = false,
 ): Employer[] => {
-  const { applicantEmail, employers, employerNationalRegistryId, employerReviewerNationalRegistryId } =
-    getApplicationAnswers(application.answers)
+  const {
+    applicantEmail,
+    employers,
+    employerNationalRegistryId,
+    employerReviewerNationalRegistryId,
+  } = getApplicationAnswers(application.answers)
 
   if (isSelfEmployed) {
     return [
@@ -106,7 +110,8 @@ export const getEmployer = (
     email: e.email,
     nationalRegistryId:
       e.companyNationalRegistryId ?? employerNationalRegistryId ?? '',
-    approverNationalRegistryId: e.reviewerNationalRegistryId ?? employerReviewerNationalRegistryId ?? '', 
+    approverNationalRegistryId:
+      e.reviewerNationalRegistryId ?? employerReviewerNationalRegistryId ?? '',
   }))
 }
 
