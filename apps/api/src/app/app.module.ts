@@ -169,6 +169,7 @@ import { GraphQLConfig } from './graphql.config'
 import { HealthController } from './health.controller'
 import { DocumentClientConfig } from '@island.is/clients/documents'
 import { HousingBenefitsConfig } from '@island.is/clients/hms-housing-benefits'
+import { UserProfileClientConfig } from '@island.is/clients/user-profile'
 
 const environment = getConfig
 
@@ -390,6 +391,7 @@ const environment = getConfig
         SignatureCollectionClientConfig,
         UniversityGatewayApiClientConfig,
         LicenseConfig,
+        UserProfileClientConfig,
       ],
     }),
   ],
