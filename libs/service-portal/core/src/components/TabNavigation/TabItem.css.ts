@@ -56,9 +56,8 @@ export const tabSelected = style({
 
 export const tabNotSelected = style({
   borderBottomColor: theme.color.blue200,
-
   selectors: {
-    [`&:not(:has(+ ${tabSelected})):after`]: {
+    [`&:not(:has(+ ${tabSelected})):not(:last-of-type):after`]: {
       content: '""',
       position: 'absolute',
       width: '1px',
@@ -85,10 +84,10 @@ export const tabText = style({
 globalStyle(`${tabSelected}:not(:last-of-type) span:after`, {
   position: 'absolute',
   content: '',
-  right: 'calc(-100% + 1px)',
+  right: 'calc(-100% - 3px)',
   bottom: -1,
   height: '60%',
-  width: '100%',
+  width: 'calc(100% + 4px)',
   border: `1px solid ${theme.color.blue200}`,
   borderRight: 'none',
   borderTop: 'none',
@@ -99,10 +98,10 @@ globalStyle(`${tabSelected}:not(:last-of-type) span:after`, {
 globalStyle(`${tabSelected}:last-of-type span:after`, {
   position: 'absolute',
   content: '',
-  right: 'calc(-100% + 1px)',
+  right: 'calc(-100% - 3px)',
   bottom: -1,
   height: '60%',
-  width: '100%',
+  width: 'calc(100% + 4px)',
   border: `1px solid ${theme.color.blue200}`,
   borderTop: 'none',
   borderBottom: 'none',
@@ -112,10 +111,10 @@ globalStyle(`${tabSelected}:last-of-type span:after`, {
 globalStyle(`${tabSelected}:first-of-type span:before`, {
   position: 'absolute',
   content: '',
-  left: `calc(-100% + 1px)`,
+  left: 'calc(-100% - 3px)',
   bottom: -1,
   height: '60%',
-  width: '100%',
+  width: 'calc(100% + 4px)',
   border: `1px solid ${theme.color.blue200}`,
   borderTop: 'none',
   borderBottom: 'none',
@@ -125,10 +124,10 @@ globalStyle(`${tabSelected}:first-of-type span:before`, {
 globalStyle(`${tabSelected}:not(:first-of-type) span:before`, {
   position: 'absolute',
   content: '',
-  left: `calc(-100% + 1px)`,
+  left: 'calc(-100% - 3px)',
   bottom: -1,
   height: '60%',
-  width: '100%',
+  width: 'calc(100% + 4px)',
   border: `1px solid ${theme.color.blue200}`,
   borderLeft: 'none',
   borderTop: 'none',

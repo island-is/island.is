@@ -67,6 +67,10 @@ export const TabBar = ({ tabs, variant = 'default', ...boxProps }: Props) => {
     )
   })
 
+  if (!tabs?.length) {
+    return null
+  }
+
   if (variant === 'alternative') {
     return (
       <Box
