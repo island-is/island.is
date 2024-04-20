@@ -10808,9 +10808,11 @@ __metadata:
     react-native-mmkv-storage: 0.9.1
     react-native-navigation: 7.32.1
     react-native-navigation-hooks: 6.3.0
+    react-native-passkey: 2.1.1
     react-native-passkit-wallet: 0.1.6
     react-native-pdf: 6.6.2
     react-native-quick-actions: 0.3.13
+    react-native-quick-base64: 2.1.1
     react-native-share: 7.1.1
     react-native-spotlight-search: 2.0.0
     react-native-svg: 15.1.0
@@ -44740,6 +44742,16 @@ __metadata:
   languageName: node
   linkType: hard
 
+"react-native-passkey@npm:2.1.1":
+  version: 2.1.1
+  resolution: "react-native-passkey@npm:2.1.1"
+  peerDependencies:
+    react: "*"
+    react-native: "*"
+  checksum: 80631e1548cea8cc172a263cdd90079ff2db525c5e728d554fc8f50a61382556114eb17984371e4514e23c94adb66b4a0b9f5fe5ac5ff752501fad0adbd8cd31
+  languageName: node
+  linkType: hard
+
 "react-native-passkit-wallet@npm:0.1.6":
   version: 0.1.6
   resolution: "react-native-passkit-wallet@npm:0.1.6"
@@ -44761,6 +44773,18 @@ __metadata:
   version: 0.3.13
   resolution: "react-native-quick-actions@npm:0.3.13"
   checksum: c3d52043d26ce8fd7b95d8158d8b03e4d00463fc60c96e5b8f1b7817b62e8683c758ff665e4e42ece75d3e299c680432937ed5774e28aedf2fe52f02937fa812
+  languageName: node
+  linkType: hard
+
+"react-native-quick-base64@npm:2.1.1":
+  version: 2.1.1
+  resolution: "react-native-quick-base64@npm:2.1.1"
+  dependencies:
+    base64-js: ^1.5.1
+  peerDependencies:
+    react: "*"
+    react-native: "*"
+  checksum: 13c374b20153418de7c89001ba9c1313aa0e6f1cbb4a829077bd8d4ed88b159e31f3be9a1ed96ac9d1c647be6fafca00aceaf59379bdf2e8ea029907f944dd4c
   languageName: node
   linkType: hard
 

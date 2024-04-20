@@ -54,7 +54,7 @@ export const is = {
   'onboarding.pinKeypad.accessibilityLabel.faceId': 'Nota andlitsauðkenningu',
   'onboarding.pinKeypad.accessibilityLabel.delete': 'Eyða staf',
 
-  // peronal info screen
+  // personal info screen
   'personalInfo.screenTitle': 'Persónuupplýsingar',
 
   // user
@@ -90,6 +90,17 @@ export const is = {
   'settings.security.useBiometricsLabel': 'Nota {biometricType}',
   'settings.security.useBiometricsDescription':
     'Þannig sleppur þú við að nota PIN-númerið',
+  'settings.security.createPasskeyLabel': 'Búa til aðgangslykil',
+  'settings.security.createPasskeyDescription':
+    'Til að skrá þig inn sjálfkrafa á Ísland.is í þessu tæki',
+  'settings.security.removePasskeyLabel': 'Eyða aðgangslykli',
+  'settings.security.removePasskeyDescription':
+    'Með því að eyða aðgangslykli sleppur þú að skrá þig inn sjálfkrafa á Ísland.is',
+  'settings.security.removePasskeyPromptTitle': 'Viltu eyða aðgangslykli?',
+  'settings.security.removePasskeyPromptDescription':
+    'Með því að eyða aðgangslykli getur þú ekki skráð þig sjálfkrafa á Ísland.is',
+  'settings.security.removePasskeyButton': 'Eyða',
+  'settings.security.removePasskeyCancelButton': 'Hætta við',
   'settings.security.appLockTimeoutLabel': 'Biðtími skjálæsingar',
   'settings.security.appLockTimeoutDescription':
     'Tíminn þar til skjálæsing fer í gang',
@@ -523,4 +534,16 @@ export const is = {
     'Ef þú telur þig eiga gögn sem ættu að birtast hér, vinsamlegast hafðu samband við þjónustuaðila.',
   'problem.offline.title': 'Samband næst ekki',
   'problem.offline.message': 'Villa kom upp í samskiptum við þjónustuaðila',
+
+  // passkeys
+  'passkeys.headingTitle': 'Innskrá með Ísland.is appinu',
+  'passkeys.openUrlHeadingSubtitle':
+    'Þú ert að fara að opna Ísland.is í vafra. Viltu búa til aðgangslykil til að skrá þig inn sjálfkrafa með appinu?',
+  'passkeys.headingSubtitle':
+    'Viltu búa til aðgangslykil til að skrá þig inn sjálfkrafa með appinu?',
+  'passkeys.createButton': 'Búa til aðgangslykil',
+  'passkeys.skipButton': 'Sleppa',
+  'passkeys.errorTitle': 'Villa',
+  'passkeys.errorRegister': 'Ekki tókst að búa til aðgangslykil',
+  'passkeys.errorAuthenticate': 'Ekki tókst að skrá inn með aðgangslykli',
 }

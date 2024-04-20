@@ -1,4 +1,4 @@
-import { TopLine } from '@ui'
+import { TopLine, Button } from '@ui'
 import React, {
   ReactElement,
   useCallback,
@@ -12,6 +12,8 @@ import {
   ListRenderItemInfo,
   Platform,
   RefreshControl,
+  ScrollView,
+  View,
 } from 'react-native'
 import CodePush from 'react-native-code-push'
 import { NavigationFunctionComponent } from 'react-native-navigation'
@@ -31,6 +33,8 @@ import { getRightButtons } from '../../utils/get-main-root'
 import { testIDs } from '../../utils/test-ids'
 import { ApplicationsModule } from './applications-module'
 import { OnboardingModule } from './onboarding-module'
+import { openBrowser } from '../../lib/rn-island'
+import { IP_ADDRESS } from '../../lib/passkeys/server'
 
 interface ListItem {
   id: string
@@ -178,6 +182,23 @@ export const MainHomeScreen: NavigationFunctionComponent = ({
 
   return (
     <>
+      <View
+        style={{
+          flex: 1,
+          maxHeight: '25%',
+          justifyContent: 'center',
+          marginHorizontal: 16,
+        }}
+      >
+        <ScrollView style={{ flex: 1 }}>
+          <View style={{ height: 100 }}>
+            <Button
+              title={'Opna mínar síður'}
+              onPress={() => openBrowser(`http://${IP_ADDRESS}:8000/logged-in`)}
+            />
+          </View>
+        </ScrollView>
+      </View>
       <Animated.FlatList
         ref={flatListRef}
         testID={testIDs.SCREEN_HOME}

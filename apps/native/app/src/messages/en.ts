@@ -55,7 +55,7 @@ export const en: TranslatedMessages = {
   'onboarding.pinKeypad.accessibilityLabel.fingerprint': 'Use fingerprint',
   'onboarding.pinKeypad.accessibilityLabel.delete': 'Delete character',
 
-  // peronal info screen
+  // personal info screen
   'personalInfo.screenTitle': 'Personal info',
 
   // user
@@ -91,6 +91,18 @@ export const en: TranslatedMessages = {
   'settings.security.useBiometricsLabel': 'Use {biometricType}',
   'settings.security.useBiometricsDescription':
     'With {biometricType} you don’t need to enter PIN',
+  'settings.security.createPasskeyLabel': 'Create a passkey',
+  'settings.security.createPasskeyDescription':
+    'To automatically sign in to Island.is through the app in this device',
+  'settings.security.removePasskeyLabel': 'Delete passkey',
+  'settings.security.removePasskeyDescription':
+    'By deleting your passkey you skip signing in automatically to Island.is with the app',
+  'settings.security.removePasskeyPromptTitle':
+    'Do you want to delete the passkey?',
+  'settings.security.removePasskeyPromptDescription':
+    'By deleting your passkey you can not sign in automatically to Island.is with the app',
+  'settings.security.removePasskeyButton': 'Delete',
+  'settings.security.removePasskeyCancelButton': 'Cancel',
   'settings.security.appLockTimeoutLabel': 'App lock timeout',
   'settings.security.appLockTimeoutDescription':
     'Time until app lock will appear',
@@ -523,4 +535,16 @@ export const en: TranslatedMessages = {
   'problem.offline.title': 'No internet connection',
   'problem.offline.message':
     'An error occurred while communicating with the service provider',
+
+  // passkeys
+  'passkeys.headingTitle': 'Sign in with Island.is app',
+  'passkeys.openUrlHeadingSubtitle':
+    'You are opening Island.is in a browser. Do you want to create a passkey to sign in automatically with the app?',
+  'passkeys.headingSubtitle':
+    'Do you want to create a passkey to sign in automatically with the app?',
+  'passkeys.createButton': 'Create a passkey',
+  'passkeys.skipButton': 'Skip',
+  'passkeys.errorTitle': 'Error',
+  'passkeys.errorRegister': 'Could not create passkey',
+  'passkeys.errorAuthenticate': 'Could not sign in with passkey',
 }
