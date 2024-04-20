@@ -136,11 +136,11 @@ export class InternalCaseService {
     @InjectConnection() private readonly sequelize: Sequelize,
     @InjectModel(Case) private readonly caseModel: typeof Case,
     @InjectModel(CaseArchive)
-    private readonly awsS3Service: AwsS3Service,
-    private readonly eventService: EventService,
     private readonly caseArchiveModel: typeof CaseArchive,
     @Inject(caseModuleConfig.KEY)
     private readonly config: ConfigType<typeof caseModuleConfig>,
+    private readonly awsS3Service: AwsS3Service,
+    private readonly eventService: EventService,
     @Inject(forwardRef(() => IntlService))
     private readonly intlService: IntlService,
     @Inject(forwardRef(() => CourtService))
