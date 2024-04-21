@@ -6,12 +6,12 @@ import { SigningModule } from '@island.is/dokobit-signing'
 
 import { MessageModule } from '@island.is/judicial-system/message'
 
+import { AwsS3Module } from '../aws-s3/awsS3.module'
+import { EventModule } from '../event/event.module'
 import {
-  AwsS3Module,
   CourtModule,
   DefendantModule,
   EventLogModule,
-  EventModule,
   FileModule,
   IndictmentCountModule,
   PoliceModule,
@@ -33,13 +33,13 @@ import { PDFService } from './pdf.service'
     SigningModule,
     CmsTranslationsModule,
     MessageModule,
+    AwsS3Module,
+    EventModule,
     forwardRef(() => DefendantModule),
     forwardRef(() => UserModule),
     forwardRef(() => FileModule),
     forwardRef(() => IndictmentCountModule),
     forwardRef(() => CourtModule),
-    forwardRef(() => AwsS3Module),
-    forwardRef(() => EventModule),
     forwardRef(() => PoliceModule),
     forwardRef(() => EventLogModule),
     SequelizeModule.forFeature([Case, CaseArchive, DateLog]),
