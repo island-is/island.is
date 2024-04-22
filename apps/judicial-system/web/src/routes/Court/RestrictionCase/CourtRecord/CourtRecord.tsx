@@ -12,7 +12,10 @@ import {
   Tooltip,
 } from '@island.is/island-ui/core'
 import * as constants from '@island.is/judicial-system/consts'
-import { isAcceptingCaseDecision } from '@island.is/judicial-system/types'
+import {
+  getLatestDateType,
+  isAcceptingCaseDecision,
+} from '@island.is/judicial-system/types'
 import {
   closedCourt,
   core,
@@ -35,6 +38,8 @@ import {
 import {
   CaseDecision,
   CaseType,
+  DateLog,
+  DateType,
 } from '@island.is/judicial-system-web/src/graphql/schema'
 import {
   removeTabsValidateAndSet,
@@ -81,6 +86,10 @@ export const CourtRecord: React.FC<React.PropsWithChildren<unknown>> = () => {
     const autofillAttendees = []
     const autofillSessionBookings = []
     const endOfSessionBookings = []
+    const courtDate = getLatestDateType(
+      DateType.COURT_DATE,
+      workingCase.dateLogs,
+    ) as DateLog
 
     if (workingCase.courtAttendees !== '') {
       if (workingCase.prosecutor) {
@@ -199,7 +208,7 @@ export const CourtRecord: React.FC<React.PropsWithChildren<unknown>> = () => {
     setAndSendCaseToServer(
       [
         {
-          courtStartDate: workingCase.courtDate,
+          courtStartDate: courtDate?.date,
           courtLocation:
             workingCase.court?.name &&
             `í ${

@@ -8,8 +8,11 @@ import {
   NestInterceptor,
 } from '@nestjs/common'
 
+import { DateType, getLatestDateType } from '@island.is/judicial-system/types'
+
 import { Case } from '../models/case.model'
 import { CaseListEntry } from '../models/caseListEntry.response'
+import { DateLog } from '../models/dateLog.model'
 
 @Injectable()
 export class CaseListInterceptor implements NestInterceptor {
@@ -18,11 +21,17 @@ export class CaseListInterceptor implements NestInterceptor {
     next: CallHandler,
   ): Observable<CaseListEntry[]> {
     return next.handle().pipe(
-      map((cases: Case[]) => {
-        return cases.map((theCase) => {
+      map((cases: Case[]) =>
+        cases.map((theCase) => {
           // WARNING: Be careful when adding to this list. No sensitive information should be returned.
           // If you need to add sensitive information, then you should consider adding a new endpoint
           // for defenders and other user roles that are not allowed to see sensitive information.
+
+          const courtDate = getLatestDateType(
+            DateType.COURT_DATE,
+            theCase.dateLogs,
+          ) as DateLog
+
           return {
             id: theCase.id,
             created: theCase.created,
@@ -33,7 +42,7 @@ export class CaseListInterceptor implements NestInterceptor {
             courtCaseNumber: theCase.courtCaseNumber,
             decision: theCase.decision,
             validToDate: theCase.validToDate,
-            courtDate: theCase.courtDate,
+            courtDate: courtDate?.date,
             initialRulingDate: theCase.initialRulingDate,
             rulingDate: theCase.rulingDate,
             rulingSignatureDate: theCase.rulingSignatureDate,
@@ -53,8 +62,8 @@ export class CaseListInterceptor implements NestInterceptor {
             appealRulingDecision: theCase.appealRulingDecision,
             prosecutorsOffice: theCase.prosecutorsOffice,
           }
-        })
-      }),
+        }),
+      ),
     )
   }
 }
