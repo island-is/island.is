@@ -29,9 +29,9 @@ export const application = {
     descriptionFieldDescription: {
       id: 'hid.application:notHealthInsured.section.descriptionField.description#markdown',
       defaultMessage: `Ástæðan fyrir því er eftirfarandi:
-      
-      - Einstaklingur er ekki sjúkratryggð/ur á Íslandi.
-      - Ef þú telur þetta ekki eiga við, vinsamlega hafðu samband við [mailto:ehic@sjukra.is](ehic@sjukra.is)`,
+
+* Einstaklingur er ekki sjúkratryggð/ur á Íslandi.
+* Ef þú telur þetta ekki eiga við, vinsamlega hafðu samband við [ehic@sjukra.is](mailto:ehic@sjukra.is)`,
       description: 'Not Health Insured section descriptionField description',
     },
   }),
