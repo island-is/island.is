@@ -19,10 +19,13 @@ workflows:
       - name: Install npm dependencies
         working_directory: .
         script: |
+          corepack enable
+          corepack prepare
           yarn install --immutable
       - name: Run codegen
         working_directory: .
         script: |
+          yarn --version
           yarn codegen
       - name: Install CocoaPods dependencies
         script: |
