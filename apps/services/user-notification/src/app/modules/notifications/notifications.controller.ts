@@ -11,8 +11,7 @@ import {
   UseInterceptors,
   Version,
 } from '@nestjs/common'
-
-import { ApiExtraModels } from '@nestjs/swagger'
+import { ApiExtraModels, ApiTags } from '@nestjs/swagger'
 import type { Logger } from '@island.is/logging'
 import { LOGGER_PROVIDER } from '@island.is/logging'
 import { Documentation } from '@island.is/nest/swagger'
@@ -25,6 +24,7 @@ import { NotificationsService } from './notifications.service'
 import type { Locale } from '@island.is/shared/types'
 
 @Controller('notifications')
+@ApiTags('notifications')
 @ApiExtraModels(CreateNotificationDto)
 @UseInterceptors(CacheInterceptor)
 export class NotificationsController {
