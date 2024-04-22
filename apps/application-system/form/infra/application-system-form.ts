@@ -1,8 +1,6 @@
 import { ref, service, ServiceBuilder } from '../../../../infra/src/dsl/dsl'
 
-export const serviceSetup = (services: {
-  api: ServiceBuilder<'api'>
-}): ServiceBuilder<'application-system-form'> =>
+export const serviceSetup = (): ServiceBuilder<'application-system-form'> =>
   service('application-system-form')
     .namespace('application-system')
     .liveness('/liveness')
@@ -13,7 +11,7 @@ export const serviceSetup = (services: {
         dev: '',
         prod: '',
         staging: '',
-        local: ref((h) => `http://${h.svc(services.api)}`),
+        local: '',
       },
       SI_PUBLIC_IDENTITY_SERVER_ISSUER_URL: {
         dev: 'https://identity-server.dev01.devland.is',
