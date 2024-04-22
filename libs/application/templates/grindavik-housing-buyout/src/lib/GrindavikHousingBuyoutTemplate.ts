@@ -144,10 +144,10 @@ const GrindavikHousingBuyoutTemplate: ApplicationTemplate<
           status: FormModes.IN_PROGRESS,
           name: application.general.name.defaultMessage,
           lifecycle: pruneAfterDays(90),
-          /*  onEntry: defineTemplateApi({
+          onEntry: defineTemplateApi({
             action: 'submitApplication',
             shouldPersistToExternalData: true,
-          }),*/
+          }),
           actionCard: {
             historyLogs: [
               {
