@@ -10,7 +10,7 @@ export class ListPage {
   title!: string
 
   @Field()
-  relativeUrl!: string
+  relativeUrl!: string // TODO think this naming through
 }
 
 export const mapListPage = ({ fields, sys }: IListPage): ListPage => ({

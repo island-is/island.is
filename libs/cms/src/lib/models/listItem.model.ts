@@ -1,8 +1,14 @@
 import { CacheField } from '@island.is/nest/graphql'
 import { Field, ID, ObjectType } from '@nestjs/graphql'
-import { SliceUnion, mapDocument } from '../unions/slice.union'
+import { SliceUnion } from '../unions/slice.union'
 import { ListPage, mapListPage } from './listPage.model'
 import { IListItem } from '../generated/contentfulTypes'
+
+@ObjectType()
+class ListItemCustomFields {
+  @CacheField(() => [SliceUnion], { nullable: true })
+  thumbnailContent?: Array<typeof SliceUnion> = []
+}
 
 @ObjectType()
 export class ListItem {
@@ -15,14 +21,19 @@ export class ListItem {
   @Field()
   title!: string
 
-  @CacheField(() => [SliceUnion], { nullable: true })
-  thumbnailContent?: Array<typeof SliceUnion> = []
+  @Field()
+  date!: string
 
-  @Field({ nullable: true })
-  slug?: string
+  @CacheField(() => ListItemCustomFields)
+  customFields!: ListItemCustomFields
+}
 
-  @CacheField(() => [SliceUnion], { nullable: true })
-  content?: Array<typeof SliceUnion> = []
+const mapListItemCustomFields = (
+  listItemFields: IListItem['fields'],
+): ListItemCustomFields => {
+  return {
+    thumbnailContent: [], // TODO: default set this to listpage.template field if (??)
+  }
 }
 
 export const mapListItem = ({ fields, sys }: IListItem): ListItem => {
@@ -30,8 +41,8 @@ export const mapListItem = ({ fields, sys }: IListItem): ListItem => {
     id: sys.id,
     title: fields.title,
     listPage: mapListPage(fields.listPage),
-    thumbnailContent: fields.thumbnailContent
-      ? mapDocument(fields.thumbnailContent, sys.id + ':thumbnailContent')
-      : [],
+    customFields: mapListItemCustomFields(fields),
+    //fields.date
+    date: '2024-01-01', // TODO: add field in cms
   }
 }
