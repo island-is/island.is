@@ -14,18 +14,6 @@ import { CreateSmsVerificationInput } from '../dto/createSmsVerificationInput'
 import { CreateEmailVerificationInput } from '../dto/createEmalVerificationInput'
 import { UpdateActorProfileInput } from '../dto/updateActorProfileInput'
 
-/** Category to attach each log message to */
-const LOG_CATEGORY = 'userprofile-service-v2'
-
-// eslint-disable-next-line
-const handleError = (error: any, details?: string) => {
-  logger.error(details || 'Userprofile error', {
-    error: JSON.stringify(error),
-    category: LOG_CATEGORY,
-  })
-  throw new ApolloError('Failed to resolve request', error.status)
-}
-
 @Injectable()
 export class UserProfileServiceV2 {
   constructor(
@@ -114,7 +102,7 @@ export class UserProfileServiceV2 {
   async getActorProfiles(user: User): Promise<ActorProfileResponse> {
     return this.v2UserProfileApiWithAuth(user)
       .meUserProfileControllerGetActorProfiles()
-      .catch((e) => handleError(e, `getActorProfile error`))
+
   }
 
   async updateActorProfile(
@@ -126,7 +114,7 @@ export class UserProfileServiceV2 {
         xParamFromNationalId: input.fromNationalId,
         patchActorProfileDto: { emailNotifications: input.emailNotifications },
       })
-      .catch((e) => handleError(e, `updateActorProfile error`))
+
   }
 
   async confirmSms(): Promise<ConfirmationDtoResponse> {

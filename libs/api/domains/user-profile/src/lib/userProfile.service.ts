@@ -1,6 +1,5 @@
 import { Injectable } from '@nestjs/common'
 
-import { Auth, AuthMiddleware, User } from '@island.is/auth-nest-tools'
 import {
   ActorLocaleLocaleEnum,
   ConfirmationDtoResponse,
@@ -8,6 +7,7 @@ import {
 } from '@island.is/clients/user-profile'
 import { handle204 } from '@island.is/clients/middlewares'
 import { FeatureFlagService, Features } from '@island.is/nest/feature-flags'
+import { Auth, AuthMiddleware, User } from '@island.is/auth-nest-tools'
 
 import { DeleteIslykillSettings } from './models/deleteIslykillSettings.model'
 import { UpdateUserProfileInput } from './dto/updateUserProfileInput'
