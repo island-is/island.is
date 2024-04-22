@@ -17,7 +17,10 @@ export const StatisticBox = ({ statistic }: StatisticProps) => {
         {loc.statisticBox.label}
       </Text>
       {statistic ? (
-        <Text variant="h2">{`${statistic} ${loc.statisticBox.text}`}</Text>
+        <Text
+          as="h2"
+          variant="h2"
+        >{`${statistic} ${loc.statisticBox.text}`}</Text>
       ) : (
         <Box paddingTop={1} paddingBottom={isMobile ? 0 : 1}>
           <LoadingDots />
