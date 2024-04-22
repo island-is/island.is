@@ -22,8 +22,8 @@ export const AccessDenied = () => {
       }
       message={
         isDelegation
-          ? formatMessage(m.accessNeededText)
-          : formatMessage(m.accessDeniedText)
+          ? formatMessage(m.accessDeniedText)
+          : formatMessage(m.accessNeededText)
       }
       imgSrc="./assets/images/jobsGrid.svg"
     />
