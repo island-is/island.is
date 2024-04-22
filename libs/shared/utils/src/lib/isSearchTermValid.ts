@@ -10,9 +10,9 @@ export const isSearchTermValid = (search: string): boolean => {
   try {
     if (!search) return false
     return (
-      !isEmail(search) &&
-      !kennitala.isValid(search) &&
-      !parsePhoneNumber(search, 'IS').isValid()
+      isEmail(search) ||
+      kennitala.isValid(search) ||
+      parsePhoneNumber(search, 'IS').isValid()
     )
   } catch (e) {
     return false
