@@ -1,21 +1,23 @@
 {
-  "name": "api-domains-ministry-of-justice",
+  "name": "api-domains-official-journal-of-iceland",
   "$schema": "../../../../node_modules/nx/schemas/project-schema.json",
-  "sourceRoot": "libs/api/domains/ministry-of-justice/src",
+  "sourceRoot": "libs/api/domains/official-journal-of-iceland/src",
   "projectType": "library",
   "targets": {
     "lint": {
       "executor": "@nx/linter:eslint",
       "outputs": ["{options.outputFile}"],
       "options": {
-        "lintFilePatterns": ["libs/api/domains/ministry-of-justice/**/*.ts"]
+        "lintFilePatterns": [
+          "libs/api/domains/official-journal-of-iceland/**/*.ts"
+        ]
       }
     },
     "test": {
       "executor": "@nx/jest:jest",
       "outputs": ["{workspaceRoot}/coverage/{projectRoot}"],
       "options": {
-        "jestConfig": "libs/api/domains/ministry-of-justice/jest.config.ts",
+        "jestConfig": "libs/api/domains/official-journal-of-iceland/jest.config.ts",
         "passWithNoTests": true
       },
       "configurations": {

@@ -1,6 +1,6 @@
 /* eslint-disable */
 export default {
-  displayName: 'api-domains-ministry-of-justice',
+  displayName: 'clients-official-journal-of-iceland',
   preset: '../../../../jest.preset.js',
   testEnvironment: 'node',
   transform: {
@@ -8,5 +8,5 @@ export default {
   },
   moduleFileExtensions: ['ts', 'js', 'html'],
   coverageDirectory:
-    '../../../../coverage/libs/api/domains/ministry-of-justice',
+    '../../../../coverage/libs/clients/official-journal-of-iceland/public',
 }

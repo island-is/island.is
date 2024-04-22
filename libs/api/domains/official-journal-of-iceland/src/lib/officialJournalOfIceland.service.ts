@@ -1,14 +1,12 @@
-import type { User } from '@island.is/auth-nest-tools'
 import {
-  DmrClientService,
   JournalControllerAdvertsRequest,
-} from '@island.is/clients/dmr'
+  OfficialJournalOfIcelandClientService,
+} from '@island.is/clients/official-journal-of-iceland'
 import { mapAdvertStatus } from './mapper'
 import { Injectable } from '@nestjs/common'
 import {
   AdvertQueryParams,
   QueryParams,
-  SubmitApplicationInput,
   TypeQueryParams,
 } from './models/advert.input'
 import {
@@ -22,33 +20,35 @@ import {
 } from './models/advert.response'
 
 @Injectable()
-export class MinistryOfJusticeService {
-  constructor(private readonly dmrService: DmrClientService) {}
+export class OfficialJournalOfIcelandService {
+  constructor(
+    private readonly ojoiService: OfficialJournalOfIcelandClientService,
+  ) {}
 
   async departments(params: QueryParams): Promise<AdvertDepartmentResponse> {
-    return await this.dmrService.departments(params)
+    return await this.ojoiService.departments(params)
   }
 
   async mainCategories(
     params: QueryParams,
   ): Promise<AdvertMainCategoriesResponse> {
-    return await this.dmrService.mainCategories(params)
+    return await this.ojoiService.mainCategories(params)
   }
 
   async categories(params: QueryParams): Promise<AdvertCategoryResponse> {
-    return await this.dmrService.categories(params)
+    return await this.ojoiService.categories(params)
   }
 
   async types(params: TypeQueryParams): Promise<AdvertTypeResponse> {
-    return await this.dmrService.types(params)
+    return await this.ojoiService.types(params)
   }
 
   async institutions(params: QueryParams): Promise<AdvertInstitutionsResponse> {
-    return await this.dmrService.institutions(params)
+    return await this.ojoiService.institutions(params)
   }
 
   async advert(params: AdvertQueryParams): Promise<AdvertResponse> {
-    const data = await this.dmrService.advert(params)
+    const data = await this.ojoiService.advert(params)
     return {
       advert: {
         ...data,
@@ -60,7 +60,7 @@ export class MinistryOfJusticeService {
   async adverts(
     input: JournalControllerAdvertsRequest,
   ): Promise<AdvertsResponse> {
-    const adverts = await this.dmrService.adverts(input)
+    const adverts = await this.ojoiService.adverts(input)
 
     const mappedAdverts = adverts.adverts.map((advert) => {
       return {
@@ -75,11 +75,5 @@ export class MinistryOfJusticeService {
     }
 
     return response
-  }
-
-  async submitApplication(auth: User, input: SubmitApplicationInput) {
-    return await this.dmrService.submitApplication(auth, {
-      postApplicationBody: input,
-    })
   }
 }

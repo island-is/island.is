@@ -1,6 +1,6 @@
 import { Field, ObjectType } from '@nestjs/graphql'
 
-@ObjectType('MinistryOfJusticePaging')
+@ObjectType('OfficialJournalOfIcelandPaging')
 export class AdvertPaging {
   @Field(() => Number)
   page!: number
