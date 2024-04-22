@@ -5,7 +5,7 @@ import {
   BadRequestException,
 } from '@nestjs/common'
 import { InjectModel } from '@nestjs/sequelize'
-import { Op } from 'sequelize'
+import { Op, Sequelize } from 'sequelize'
 import type { Logger } from '@island.is/logging'
 import { LOGGER_PROVIDER } from '@island.is/logging'
 import { EndorsementList } from './endorsementList.model'
@@ -139,7 +139,10 @@ export class EndorsementListService {
           model: EndorsementList,
           required: true,
           as: 'endorsementList',
-          where: { adminLock: false },
+          where: { 
+            adminLock: false,
+            tags: { [Op.contains]: [ENDORSEMENT_SYSTEM_GENERAL_PETITION_TAGS] }
+          },
           attributes: [
             'id',
             'title',
