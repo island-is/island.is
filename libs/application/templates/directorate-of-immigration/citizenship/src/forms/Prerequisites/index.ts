@@ -126,8 +126,8 @@ export const Prerequisites: Form = buildForm({
               title: '',
             }),
             buildDataProviderItem({
-              pageTitle: externalData.dataProvider.subTitle2,
-              title: '',
+              title: externalData.nationalCommissionerOfPolice.title,
+              subTitle: externalData.nationalCommissionerOfPolice.subTitle,
             }),
             buildDataProviderItem({
               id: 'meansOfSupport',
@@ -135,12 +135,12 @@ export const Prerequisites: Form = buildForm({
               subTitle: externalData.icelandRevenueAndCustoms.subTitle,
             }),
             buildDataProviderItem({
-              title: externalData.nationalRegistry2.title,
-              subTitle: externalData.nationalRegistry2.subTitle,
+              title: externalData.creditInfo.title,
+              subTitle: externalData.creditInfo.subTitle,
             }),
             buildDataProviderItem({
-              title: externalData.nationalCommissionerOfPolice.title,
-              subTitle: externalData.nationalCommissionerOfPolice.subTitle,
+              title: externalData.educationServices.title,
+              subTitle: externalData.educationServices.subTitle,
             }),
           ],
         }),

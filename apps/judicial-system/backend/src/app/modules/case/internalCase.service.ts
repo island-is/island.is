@@ -139,12 +139,10 @@ export class InternalCaseService {
     private readonly caseArchiveModel: typeof CaseArchive,
     @Inject(caseModuleConfig.KEY)
     private readonly config: ConfigType<typeof caseModuleConfig>,
+    private readonly awsS3Service: AwsS3Service,
+    private readonly eventService: EventService,
     @Inject(forwardRef(() => IntlService))
     private readonly intlService: IntlService,
-    @Inject(forwardRef(() => EventService))
-    private readonly eventService: EventService,
-    @Inject(forwardRef(() => AwsS3Service))
-    private readonly awsS3Service: AwsS3Service,
     @Inject(forwardRef(() => CourtService))
     private readonly courtService: CourtService,
     @Inject(forwardRef(() => PoliceService))
@@ -721,6 +719,7 @@ export class InternalCaseService {
         theCase.id,
         theCase.court?.name,
         theCase.courtCaseNumber,
+        Boolean(theCase.rulingModifiedHistory),
         theCase.decision,
         theCase.rulingDate,
         isRestrictionCase(theCase.type) ? theCase.validToDate : undefined,
@@ -754,9 +753,7 @@ export class InternalCaseService {
       .catch((reason) => {
         this.logger.error(
           `Failed to update appeal case ${theCase.id} with received date`,
-          {
-            reason,
-          },
+          { reason },
         )
 
         return { delivered: false }
@@ -781,9 +778,7 @@ export class InternalCaseService {
       .catch((reason) => {
         this.logger.error(
           `Failed to update appeal case ${theCase.id} with assigned roles`,
-          {
-            reason,
-          },
+          { reason },
         )
 
         return { delivered: false }
@@ -818,9 +813,7 @@ export class InternalCaseService {
       .catch((reason) => {
         this.logger.error(
           `Failed to update appeal case ${theCase.id} with conclusion`,
-          {
-            reason,
-          },
+          { reason },
         )
 
         return { delivered: false }

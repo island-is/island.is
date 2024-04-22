@@ -130,6 +130,12 @@ query LimitedAccessCase($input: CaseQueryInput!) {
       id
       name
     }
+    dateLogs {
+      id
+      caseId
+      dateType
+      date
+    }
     prosecutorsOffice {
       id
       name
