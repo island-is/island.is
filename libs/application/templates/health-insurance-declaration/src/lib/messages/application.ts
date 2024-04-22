@@ -94,10 +94,48 @@ export const application = {
       defaultMessage: 'Veldu dvalarstað',
       description: 'Residency section title',
     },
-    sectionDescription: {
-      id: 'hid.application:residency.section.description',
+    travellerSectionDescription: {
+      id: 'hid.application:residency.section.traveller.description',
       defaultMessage: 'Veldu staðsetningu',
-      description: 'Residency section description',
+      description: 'Traveller residency section description',
+    },
+    studentSectionDescription: {
+      id: 'hid.application:residency.section.student.description',
+      defaultMessage: 'Veldu land úr lista þar sem nám verður stundað',
+      description: 'Student residency section description',
+    },
+    studentSectionPlaceholderText: {
+      id: 'hid.application:residency.section.student.placeholderSelectText',
+      defaultMessage: 'Veldur land sem þú ferðast til',
+      description: 'Student residency selection placeholder text',
+    },
+  }),
+  educationConfirmation: defineMessages({
+    sectionTitle: {
+      id: 'hid.application:educationConfirmation.section.title',
+      defaultMessage: 'Staðfesting á námi',
+      description: 'Education confirmation section title',
+    },
+    SectionDescription: {
+      id: 'hid.application:educationConfirmation.section.description',
+      defaultMessage:
+        'Bættu við staðfestingu á námi frá viðurkenndri námsstofnun eða lánastofnun Íslenskra námsmanna',
+      description: 'Education conformation section description',
+    },
+    UploadFieldTitle: {
+      id: 'hid.application:educationConfirmation.uploadField.title',
+      defaultMessage: 'Dragðu skjalið hingað til að hlaða upp',
+      description: 'Education conformation upload field title',
+    },
+    UploadFieldDescription: {
+      id: 'hid.application:educationConfirmation.uploadField.description',
+      defaultMessage: 'Tekið er við skjölum með endingu: .pdf, .docx, .rtf',
+      description: 'Education conformation upload field description',
+    },
+    UploadFieldButtonText: {
+      id: 'hid.application:educationConfirmation.uploadField.buttonText',
+      defaultMessage: 'Velja skjöl til að hlaða upp',
+      description: 'Education conformation upload field button text',
     },
   }),
   date: defineMessages({

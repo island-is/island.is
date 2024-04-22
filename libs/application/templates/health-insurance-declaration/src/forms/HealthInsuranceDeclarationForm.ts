@@ -11,6 +11,7 @@ import {
   buildPhoneField,
   buildRadioField,
   buildSection,
+  buildSelectField,
   buildStaticTableField,
   buildTextField,
 } from '@island.is/application/core'
@@ -249,12 +250,12 @@ export const HealthInsuranceDeclarationForm: Form = buildForm({
       ],
     }),
     buildSection({
-      id: 'residencySection',
+      id: 'residencySectionTraveller',
       title: m.application.residency.sectionTitle,
       children: [
         buildMultiField({
           id: 'residencyMultiField',
-          title: m.application.residency.sectionDescription,
+          title: m.application.residency.travellerSectionDescription,
           children: [
             buildRadioField({
               id: 'residencyTravellerRadioField',
@@ -273,6 +274,38 @@ export const HealthInsuranceDeclarationForm: Form = buildForm({
           ],
         }),
       ],
+      condition: (answers: FormValue) =>
+        answers.studentOrTravellerRadioFieldTraveller ===
+        ApplicantType.TRAVELLER,
+    }),
+    buildSection({
+      id: 'residencySectionStudent',
+      title: m.application.residency.sectionTitle,
+      children: [
+        buildMultiField({
+          id: 'residencyMultiField',
+          title: m.application.residency.studentSectionDescription,
+          children: [
+            buildSelectField({
+              id: 'residencyTravellerDropdownField',
+              title: '',
+              options: [
+                { label: 'Þýskaland', value: 'Þýskaland' },
+                { label: 'Danmörk', value: 'Danmörk' },
+                { label: 'Noregur', value: 'Noregur' },
+                { label: 'Svíðjóð', value: 'Svíðjóð' },
+                { label: 'Frakkland', value: 'Frakkland' },
+                { label: 'Ástralía', value: 'Ástralía' },
+                { label: 'Sðurskautslandið', value: 'Sðurskautslandið' },
+              ],
+              placeholder:
+                m.application.residency.studentSectionPlaceholderText,
+            }),
+          ],
+        }),
+      ],
+      condition: (answers: FormValue) =>
+        answers.studentOrTravellerRadioFieldTraveller === ApplicantType.STUDENT,
     }),
     buildSection({
       id: 'dateSection',
