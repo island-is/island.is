@@ -374,7 +374,7 @@ const OJOISearchPage: Screen<OJOISearchProps> = ({
             icon={listView ? 'copy' : 'menu'}
             variant="utility"
           >
-            {listView ? 'Sýna sem spjöld' : 'Sýna sem listi'}
+            {listView ? 'Sýna sem spjöld' : 'Sýna sem lista'}
           </Button>
 
           {listView ? (
