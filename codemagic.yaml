@@ -1,0 +1,57 @@
+workflows:
+  island-is-app-ios:
+    name: Island.is App iOS
+    max_build_duration: 120
+    instance_type: mac_mini_m1
+    working_directory: apps/native/app
+    integrations:
+      app_store_connect: "Island.is API Key"
+    environment:
+      ios_signing:
+        distribution_type: app_store
+        bundle_identifier: is.island.app
+      vars:
+        BUNDLE_ID: "is.island.app"
+        XCODE_WORKSPACE: "IslandApp.xcworkspace"
+        XCODE_SCHEME: "IslandApp"
+        APP_STORE_APPLE_ID: 1569828682
+    scripts:
+      - name: Install npm dependencies
+        script: |
+          yarn install --immutable
+      - name: Set Info.plist values
+        script: |
+          PLIST=ios/$XCODE_SCHEME/Info.plist
+          PLIST_BUDDY=/usr/libexec/PlistBuddy
+          $PLIST_BUDDY -c "Add :ITSAppUsesNonExemptEncryption bool false" $PLIST
+      - name: Install CocoaPods dependencies
+        script: |
+          cd ios && pod install
+      - name: Set up provisioning profiles settings on Xcode project
+        script: xcode-project use-profiles
+      - name: Increment build number
+        script: |
+          cd $CM_BUILD_DIR/ios
+          LATEST_BUILD_NUMBER=$(app-store-connect get-latest-app-store-build-number "$APP_STORE_APPLE_ID")
+          agvtool new-version -all $(($LATEST_BUILD_NUMBER + 1))
+      - name: Build ipa for distribution
+        script: |
+          xcode-project build-ipa \
+            --workspace "ios/$XCODE_WORKSPACE" \
+            --scheme "$XCODE_SCHEME"
+    artifacts:
+      - build/ios/ipa/*.ipa
+      - /tmp/xcodebuild_logs/*.log
+      - $HOME/Library/Developer/Xcode/DerivedData/**/Build/**/*.app
+      - $HOME/Library/Developer/Xcode/DerivedData/**/Build/**/*.dSYM
+    publishing:
+      email:
+        recipients:
+          - eirikur@aranja.com
+        notify:
+          success: true
+          failure: false
+      app_store_connect:
+        auth: integration
+        submit_to_testflight: true
+        submit_to_app_store: false
