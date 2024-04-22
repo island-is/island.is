@@ -669,25 +669,6 @@ export class ParentalLeaveService extends BaseTemplateApiService {
       }
     }
 
-    // if (
-    //   state === States.VINNUMALASTOFNUN_APPROVE_EDITS ||
-    //   state === States.EDIT_OR_ADD_EMPLOYERS_AND_PERIODS
-    // ) {
-    //   if (changeEmployerFile) {
-    //     changeEmployerFile.forEach(async (item, index) => {
-    //       const pdf = await this.getPdf(
-    //         application,
-    //         index,
-    //         'fileUpload.changeEmployerFile',
-    //       )
-    //       attachments.push({
-    //         attachmentType: apiConstants.attachments.changeEmployer,
-    //         attachmentBytes: pdf,
-    //       })
-    //     })
-    //   }
-    // }
-
     if (genericPdfs?.length) {
       for (let i = 0; i <= genericPdfs.length - 1; i++) {
         const pdf = await this.getPdf(application, i, 'fileUpload.file')
