@@ -13,7 +13,7 @@ import {
   validateFormData,
   ValidateFormDataResult,
 } from '@island.is/react-spa/shared'
-import { maskString } from '@island.is/shared/utils'
+import { isSearchTermValid, maskString } from '@island.is/shared/utils'
 
 import {
   GetPaginatedUserProfilesDocument,
@@ -51,24 +51,6 @@ export const UsersAction: WrappedActionFn =
         errors,
         data: null,
       }
-    }
-
-    const isSearchTermValid = (searchTerm: string) => {
-      try {
-        if (!searchTerm) {
-          return false
-        } else if (
-          !isEmail(searchTerm) &&
-          !kennitala.isValid(searchTerm) &&
-          !parsePhoneNumber(searchTerm, 'IS').isValid()
-        ) {
-          return false
-        }
-      } catch (e) {
-        return false
-      }
-
-      return true
     }
 
     if (isSearchTermValid(data.searchQuery)) {

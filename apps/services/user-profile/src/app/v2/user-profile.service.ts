@@ -4,10 +4,8 @@ import { InjectModel } from '@nestjs/sequelize'
 import { isEmail } from 'class-validator'
 import addMonths from 'date-fns/addMonths'
 import { Sequelize } from 'sequelize-typescript'
-import * as kennitala from 'kennitala'
-import { parsePhoneNumber } from 'libphonenumber-js'
 
-import { isDefined } from '@island.is/shared/utils'
+import { isDefined, isSearchTermValid } from '@island.is/shared/utils'
 import { AttemptFailed, NoContentException } from '@island.is/nest/problem'
 import type { User } from '@island.is/auth-nest-tools'
 import type { ConfigType } from '@island.is/nest/config'
@@ -56,7 +54,7 @@ export class UserProfileService {
 
   async findAllBySearchTerm(search: string): Promise<PaginatedUserProfileDto> {
     // Validate search term
-    if (!this.isSearchTermValid(search)) {
+    if (!isSearchTermValid(search)) {
       throw new BadRequestException('Invalid search term')
     }
 
@@ -578,28 +576,5 @@ export class UserProfileService {
     }
 
     return filteredUserProfile
-  }
-
-  /**
-   * Validates if the search term is a valid nationalId, email or an icelandic phone number
-   * @param search
-   * @private
-   */
-  private isSearchTermValid(search: string): boolean {
-    try {
-      if (!search) {
-        return false
-      } else if (
-        !isEmail(search) &&
-        !kennitala.isValid(search) &&
-        !parsePhoneNumber(search, 'IS').isValid()
-      ) {
-        return false
-      }
-    } catch (e) {
-      return false
-    }
-
-    return true
   }
 }
