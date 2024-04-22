@@ -424,20 +424,24 @@ export class ContentfulService {
 
         const nextLevelOfNestedEntryIds = new Set<string>()
 
-        const promises: Promise<Entry<unknown>[]>[] = []
+        const promises: Promise<{
+          entries: Entry<unknown>[]
+          linkedToEntryId: string
+        }>[] = []
         let counter = 0
 
         const handleRequests = async () => {
           const responses = await Promise.all(promises)
 
-          for (const linkedEntries of responses) {
+          for (const { entries: linkedEntries, linkedToEntryId } of responses) {
             for (const linkedEntry of linkedEntries) {
               counter += 1
-              if (
-                environment.indexableTypes.includes(
-                  linkedEntry.sys.contentType.sys.id,
-                )
-              ) {
+
+              const isIndexable = environment.indexableTypes.includes(
+                linkedEntry.sys.contentType.sys.id,
+              )
+
+              if (isIndexable) {
                 const entryAlreadyListed =
                   indexableEntries.findIndex(
                     (entry) => entry.sys.id === linkedEntry.sys.id,
@@ -445,10 +449,22 @@ export class ContentfulService {
                 if (!entryAlreadyListed) {
                   indexableEntries.push(linkedEntry)
                 }
-              } else if (
-                environment.nestedContentTypes.includes(
-                  linkedEntry.sys.contentType.sys.id,
-                )
+              }
+
+              const isNested = environment.nestedContentTypes.includes(
+                linkedEntry.sys.contentType.sys.id,
+              )
+
+              if (!isNested) {
+                continue
+              }
+
+              const entryBelowHasBeenIndexed =
+                indexableEntries.findIndex(
+                  (entry) => entry.sys.id === linkedToEntryId,
+                ) >= 0
+              if (
+                !entryBelowHasBeenIndexed // No need to traverse further up the tree if what's below has already been indexed
               ) {
                 nextLevelOfNestedEntryIds.add(linkedEntry.sys.id)
               }
@@ -463,11 +479,14 @@ export class ContentfulService {
           visitedEntryIds.add(item.id)
 
           promises.push(
-            this.getContentfulData(chunkSize, {
-              include: this.defaultIncludeDepth,
-              [item.isEntry ? 'links_to_entry' : 'links_to_asset']: item.id,
-              locale: this.contentfulLocaleMap[locale],
-            }),
+            (async () => ({
+              entries: await this.getContentfulData(chunkSize, {
+                include: this.defaultIncludeDepth,
+                [item.isEntry ? 'links_to_entry' : 'links_to_asset']: item.id,
+                locale: this.contentfulLocaleMap[locale],
+              }),
+              linkedToEntryId: item.id,
+            }))(),
           )
 
           if (promises.length > MAX_REQUEST_COUNT) {

@@ -8,7 +8,7 @@ module.exports = {
     })
   },
 
-  async down(queryInterface, Sequelize) {
+  async down(queryInterface) {
     // Logic for reverting the changes
     await queryInterface.removeColumn('user_notification', 'sender_id')
   },
