@@ -41,53 +41,12 @@ export const loadParentalLeaveXroadMocks = async () => {
   await addXroadMock({
     config: NationalRegistry,
     prefix: 'XROAD_NATIONAL_REGISTRY_SERVICE_PATH',
-    apiPath: '/api/v1/einstaklingar/0101307789',
-    prefixType: 'only-base-path',
-    response: new Response().withJSONBody({
-      kennitala: '0101307789',
-      nafn: 'Gervimaður útlönd',
-      eiginnafn: 'Gervimaður',
-      millinafn: null,
-      kenninafn: 'útlönd',
-      fulltNafn: 'Gervimaður útlönd',
-      kynkodi: '1',
-      bannmerking: false,
-      faedingardagur: new Date('1930-01-01T00:00:00'),
-      logheimili: {
-        heiti: 'Engihjalli 3',
-        postnumer: '200',
-        stadur: 'Kópavogur',
-        sveitarfelagsnumer: '1000',
-      },
-      adsetur: {
-        heiti: 'Fellsmúli 2',
-        postnumer: '108',
-        stadur: 'Reykjavík',
-        sveitarfelagsnumer: '0000',
-      },
-    }),
-  })
-  await addXroadMock({
-    config: NationalRegistry,
-    prefix: 'XROAD_NATIONAL_REGISTRY_SERVICE_PATH',
     apiPath: '/api/v1/einstaklingar/0101303019/hjuskapur',
     prefixType: 'only-base-path',
     response: new Response().withJSONBody({
       kennitalaMaka: '0101307789',
       nafnMaka: 'Gervimaður útlönd',
       hjuskaparkodi: '3',
-      breytt: '2021-05-26T22:23:40.513',
-    }),
-  })
-  await addXroadMock({
-    config: NationalRegistry,
-    prefix: 'XROAD_NATIONAL_REGISTRY_SERVICE_PATH',
-    apiPath: '/api/v1/einstaklingar/0101307789/hjuskapur',
-    prefixType: 'only-base-path',
-    response: new Response().withJSONBody({
-      kennitalaMaka: '0101303019',
-      nafnMaka: 'Gervimaður Afríka',
-      hjuskaparkodi: '1',
       breytt: '2021-05-26T22:23:40.513',
     }),
   })
@@ -113,23 +72,6 @@ export const loadParentalLeaveXroadMocks = async () => {
       new Response().withJSONBody({
         status: 'OK',
         id: '23234',
-      }),
-    ],
-    prefixType: 'base-path-with-env',
-    method: HttpMethod.POST,
-  })
-  await addXroadMock({
-    config: Labor,
-    prefix: 'XROAD_VMST_API_PATH',
-    serviceMemberCode: 'XROAD_VMST_MEMBER_CODE',
-    apiPath: '/users/0101307789/parental-leaves',
-    response: [
-      new Response().withJSONBody({
-        status: 'TestOK',
-      }),
-      new Response().withJSONBody({
-        status: 'OK',
-        id: '23235',
       }),
     ],
     prefixType: 'base-path-with-env',

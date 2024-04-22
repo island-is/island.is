@@ -51,7 +51,7 @@ const getEmployerEmailAndApprove = async (
     })
     .getByRole('textbox')
     // eslint-disable-next-line local-rules/disallow-kennitalas
-    .type('5402696029')
+    .fill('5402696029')
   await proceed()
 
   await page
@@ -70,28 +70,20 @@ const applicationSystemApi: { [env in TestEnvironment]: string } = {
   local: 'http://localhost:9456',
 }
 
-// Need to set mode to default because nxE2EPreset sets "fullyParallel: true" but we need to run the Primary parent test first
-test.describe.configure({ mode: 'default' })
-
 test.describe('Parental leave', () => {
   let context: BrowserContext
   let applicant: EmailAccount
   let employer: EmailAccount
-  let applicationID: string
-  let submitApplicationSuccess: boolean
 
-  test.beforeAll(async () => {
-    applicant = await makeEmailAccount('applicant')
-    employer = await makeEmailAccount('employer')
-    submitApplicationSuccess = false
-  })
-  test.beforeEach(async ({ browser }) => {
+  test.beforeAll(async ({ browser }) => {
     context = await session({
       browser: browser,
       homeUrl: `${urls.islandisBaseUrl}/umsoknir/faedingarorlof`,
-      phoneNumber: submitApplicationSuccess ? '0107789' : '0103019',
+      phoneNumber: '0103019',
       idsLoginOn: true,
     })
+    applicant = await makeEmailAccount('applicant')
+    employer = await makeEmailAccount('employer')
   })
   test.afterAll(async () => {
     await context.close()
@@ -125,22 +117,20 @@ test.describe('Parental leave', () => {
         })
         .click()
 
-      const mockDataEstimatedDateOfBirth = page.getByRole('textbox', {
-        name: 'Áætlaður fæðingardagur:',
-      })
-      await mockDataEstimatedDateOfBirth.selectText()
       const babyBDayRandomFactor = Math.ceil(Math.random() * 85)
-      const expectedDateOfBirth = formatISO(
+      const estimatedDateOfBirth = formatISO(
         addDays(addMonths(new Date(), 6), babyBDayRandomFactor),
         {
           representation: 'date',
         },
       )
-      await mockDataEstimatedDateOfBirth.type(expectedDateOfBirth)
+      await page
+        .getByRole('textbox', {
+          name: 'Áætlaður fæðingardagur:',
+        })
+        .fill(estimatedDateOfBirth)
       await proceed()
     })
-
-    applicationID = page.url().split('/').slice(-1)[0]
 
     await test.step('Type of application', async () => {
       await expect(
@@ -187,13 +177,13 @@ test.describe('Parental leave', () => {
         name: 'Netfang',
       })
       await emailBox.selectText()
-      await emailBox.type(applicant.email)
+      await emailBox.fill(applicant.email)
 
       const phoneNumber = page.getByRole('textbox', {
         name: 'Símanúmer',
       })
       await phoneNumber.selectText()
-      await phoneNumber.type('6555555')
+      await phoneNumber.fill('6555555')
 
       await page
         .getByRole('region', {
@@ -226,7 +216,7 @@ test.describe('Parental leave', () => {
         name: 'Banki',
       })
       await paymentBank.selectText()
-      await paymentBank.type('051226054678')
+      await paymentBank.fill('051226054678')
 
       await page.waitForResponse(`${apiUrl}/api/graphql?op=GetPensionFunds`)
       const pensionFund = page.getByRole('combobox', {
@@ -315,9 +305,9 @@ test.describe('Parental leave', () => {
           hasText: 'Skráning vinnuveitanda',
         }),
       ).toBeVisible()
-      await page.getByTestId('employer-email').type(employer.email)
+      await page.getByTestId('employer-email').fill(employer.email)
       const employmentRatio = page.getByTestId('employment-ratio')
-      await employmentRatio.type('100%')
+      await employmentRatio.fill('100%')
       await employmentRatio.press('Enter')
       await page
         .getByRole('button', {
@@ -457,19 +447,12 @@ test.describe('Parental leave', () => {
       ).toBeVisible()
     })
 
-    submitApplicationSuccess = true
-
     await test.step('Employer approval', async () => {
       await getEmployerEmailAndApprove(employer, page)
     })
   })
 
   test('Other parent should be able to create application', async () => {
-    // Skip this test if primary parent was unable to submit application
-    test.skip(
-      submitApplicationSuccess !== true,
-      'Primary parent unable to submit application',
-    )
     const page = await context.newPage()
     await disablePreviousApplications(page)
     await disableI18n(page)
@@ -501,15 +484,37 @@ test.describe('Parental leave', () => {
           name: 'Notaðu núverandi umsókn frá aðalforeldra',
         })
         .getByRole('radio', {
-          name: 'Já',
+          name: 'Nei',
         })
         .click()
 
-      const mockDataApplicationID = page.getByRole('textbox', {
-        name: 'Umsóknarnúmer frá aðalforeldri',
-      })
-      await mockDataApplicationID.selectText()
-      await mockDataApplicationID.type(applicationID)
+      await page
+        .getByRole('region', {
+          name: 'Viltu búa til umsókn vegna varanlegst fóstur, ættleiðingu eða föður án móður?',
+        })
+        .getByRole('radio', {
+          name: 'Nei',
+        })
+        .click()
+
+      const babyBDayRandomFactor = Math.ceil(Math.random() * 85)
+      const estimatedDateOfBirth = formatISO(
+        addDays(addMonths(new Date(), 6), babyBDayRandomFactor),
+        {
+          representation: 'date',
+        },
+      )
+      await page
+        .getByRole('textbox', {
+          name: 'Áætlaður fæðingardagur:',
+        })
+        .fill(estimatedDateOfBirth)
+
+      await page
+        .getByRole('textbox', {
+          name: 'Kennitala móður:',
+        })
+        .fill('0101303019')
       await proceed()
     })
 
@@ -553,13 +558,13 @@ test.describe('Parental leave', () => {
         name: 'Netfang',
       })
       await emailBox.selectText()
-      await emailBox.type(applicant.email)
+      await emailBox.fill(applicant.email)
 
       const phoneNumber = page.getByRole('textbox', {
         name: 'Símanúmer',
       })
       await phoneNumber.selectText()
-      await phoneNumber.type('6555555')
+      await phoneNumber.fill('6555555')
 
       await page
         .getByRole('region', {
@@ -583,7 +588,7 @@ test.describe('Parental leave', () => {
         name: 'Banki',
       })
       await paymentBank.selectText()
-      await paymentBank.type('051226054678')
+      await paymentBank.fill('051226054678')
 
       await page.waitForResponse(`${apiUrl}/api/graphql?op=GetPensionFunds`)
       const pensionFund = page.getByRole('combobox', {
@@ -662,9 +667,9 @@ test.describe('Parental leave', () => {
           hasText: 'Skráning vinnuveitanda',
         }),
       ).toBeVisible()
-      await page.getByTestId('employer-email').type(employer.email)
+      await page.getByTestId('employer-email').fill(employer.email)
       const employmentRatio = page.getByTestId('employment-ratio')
-      await employmentRatio.type('100%')
+      await employmentRatio.fill('100%')
       await employmentRatio.press('Enter')
       await page
         .getByRole('button', {
