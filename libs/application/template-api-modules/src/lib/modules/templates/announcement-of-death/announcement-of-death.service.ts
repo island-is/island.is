@@ -26,14 +26,21 @@ import { BaseTemplateApiService } from '../../base-template-api.service'
 import { ApplicationTypes } from '@island.is/application/types'
 import { coreErrorMessages } from '@island.is/application/core'
 import { TemplateApiError } from '@island.is/nest/problem'
+import { EmailService } from '@island.is/email-service'
+import { generateFirearmApplicantEmail } from './emailGenerators/firearmApplicantNotification'
 
 @Injectable()
 export class AnnouncementOfDeathService extends BaseTemplateApiService {
   constructor(
     @Inject(LOGGER_PROVIDER) private logger: Logger,
     private readonly syslumennService: SyslumennService,
+    private readonly emailService: EmailService,
   ) {
     super(ApplicationTypes.ANNOUNCEMENT_OF_DEATH)
+  }
+
+  private log(lvl: 'error' | 'info', message: string, meta: unknown) {
+    this.logger.log(lvl, `[driving-license-submission] ${message}`, meta)
   }
 
   async deathNotice({
@@ -199,6 +206,8 @@ export class AnnouncementOfDeathService extends BaseTemplateApiService {
         vehicles: JSON.stringify(
           answers.vehicles.vehicles.filter((vehicle) => !vehicle?.dummy),
         ),
+        hadFirearms: answers.hadFirearms,
+        firearm: JSON.stringify(answers.firearmApplicant),
         bankcodeSecuritiesOrShares: otherProperties.includes(
           OtherPropertiesEnum.ACCOUNTS,
         )
@@ -256,6 +265,26 @@ export class AnnouncementOfDeathService extends BaseTemplateApiService {
         throw new Error(
           'Application submission failed on syslumadur upload data',
         )
+      }
+      console.log(
+        '🚀 ~ AnnouncementOfDeathService ~ submitApplication ~ (answers.firearmsApplicant:',
+        answers.firearmApplicant,
+      )
+      if (answers.firearmApplicant) {
+        try {
+          console.log('sending email')
+          await this.emailService.sendEmail(
+            generateFirearmApplicantEmail(
+              (answers.firearmApplicant as any).email,
+            ),
+          )
+        } catch (e) {
+          this.log(
+            'error',
+            'Could not send email to applicant after successful submission',
+            { e },
+          )
+        }
       }
       return { success: result.success, id: result.caseNumber }
     }

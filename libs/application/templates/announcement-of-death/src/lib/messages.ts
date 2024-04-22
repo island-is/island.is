@@ -199,6 +199,59 @@ export const m = defineMessages({
     description: 'Testament step knowledge of other testament answer no',
   },
 
+  /* Firearms step */
+  firearmsTitle: {
+    id: 'aod.application:firearmsTitle',
+    defaultMessage: 'Skotvopn',
+    description: 'Firearms step title',
+  },
+  firearmsDescription: {
+    id: 'aod.application:firearmsDescription',
+    defaultMessage:
+      'Upplýsingar um skotvopn hins látna verða sóttar til lögreglu.',
+    description: 'Firearms step description',
+  },
+  firearmsHadFirearms: {
+    id: 'aod.application:firearmsHadFirearms',
+    defaultMessage: 'Hafði hinn látni skotvopn?',
+    description: 'Firearms step had firearms',
+  },
+  firearmsYes: {
+    id: 'aod.application:firearmsYes',
+    defaultMessage: 'Já',
+    description: 'Firearms step answer yes',
+  },
+  firearmsNo: {
+    id: 'aod.application:firearmsNo',
+    defaultMessage: 'Nei',
+    description: 'Firearms step answer no',
+  },
+  firearmsApplicantTitle: {
+    id: 'aod.application:firearmsApplicantTitle',
+    defaultMessage: 'Upplýsingar um umsækjanda',
+    description: 'Firearms step applicant title',
+  },
+  firearmsApplicantName: {
+    id: 'aod.application:firearmsApplicantName',
+    defaultMessage: 'Nafn',
+    description: 'Firearms step applicant name',
+  },
+  firearmsApplicantNationalId: {
+    id: 'aod.application:firearmsApplicantNationalId',
+    defaultMessage: 'Kennitala',
+    description: 'Firearms step applicant national id',
+  },
+  firearmsApplicantEmail: {
+    id: 'aod.application:firearmsApplicantEmail',
+    defaultMessage: 'Netfang',
+    description: 'Firearms step applicant email',
+  },
+  firearmsApplicantPhone: {
+    id: 'aod.application:firearmsApplicantPhone',
+    defaultMessage: 'Símanúmer',
+    description: 'Firearms step applicant phone',
+  },
+
   /* Inheritance step */
   inheritanceTitle: {
     id: 'aod.application:inheritanceTitle',
