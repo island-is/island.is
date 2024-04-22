@@ -34,7 +34,6 @@ describe('NotificationsController', () => {
           },
         },
         {
-          // Assuming this is the correct token based on your controller's constructor
           provide: 'IslandIsMessageQueue/QueueService/notifications',
           useValue: { add: jest.fn().mockResolvedValue('mockQueueId') },
         },

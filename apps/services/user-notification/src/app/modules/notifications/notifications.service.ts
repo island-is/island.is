@@ -109,7 +109,7 @@ export class NotificationsService {
     }`
     const res = await this.performGraphQLRequest(contentfulOrganizationQuery)
     const organizationTitle =
-      res.data.organizationCollection.items[0]?.title ?? undefined
+      res.data.organizationCollection.items?.[0]?.title ?? undefined
     const result: SenderOrganization = { title: organizationTitle }
 
     if (!organizationTitle) {
