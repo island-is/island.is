@@ -671,6 +671,9 @@ components:
         nationalRegistryId:
           type: string
           minLength: 1
+        approverNationalRegistryId:
+          type: string
+          minLength: 1
     Attachment:
       type: object
       additionalProperties: false

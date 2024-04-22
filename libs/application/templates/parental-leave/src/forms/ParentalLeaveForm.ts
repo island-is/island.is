@@ -902,6 +902,41 @@ export const ParentalLeaveForm: Form = buildForm({
         buildSubSection({
           id: 'fileUpload',
           title: parentalLeaveFormMessages.attachmentScreen.title,
+          condition: (answers) => {
+            const {
+              isReceivingUnemploymentBenefits,
+              isSelfEmployed,
+              unemploymentBenefits,
+              noChildrenFoundTypeOfApplication,
+              applicationType,
+              employerLastSixMonths,
+              isNotStillEmployed,
+              otherParent,
+            } = getApplicationAnswers(answers)
+
+            const benefitsFile =
+              isSelfEmployed === NO &&
+              isReceivingUnemploymentBenefits === YES &&
+              (unemploymentBenefits === UnEmployedBenefitTypes.union ||
+                unemploymentBenefits === UnEmployedBenefitTypes.healthInsurance)
+
+            const employmentTerminationCertificateFile =
+              (applicationType === PARENTAL_GRANT ||
+                applicationType === PARENTAL_GRANT_STUDENTS) &&
+              employerLastSixMonths === YES &&
+              isNotStillEmployed
+
+            return (
+              isSelfEmployed === YES ||
+              applicationType === PARENTAL_GRANT_STUDENTS ||
+              benefitsFile ||
+              otherParent === SINGLE ||
+              isParentWithoutBirthParent(answers) ||
+              noChildrenFoundTypeOfApplication === PERMANENT_FOSTER_CARE ||
+              noChildrenFoundTypeOfApplication === ADOPTION ||
+              employmentTerminationCertificateFile
+            )
+          },
           children: [
             buildFileUploadField({
               id: 'fileUpload.selfEmployedFile',
@@ -917,13 +952,13 @@ export const ParentalLeaveForm: Form = buildForm({
               },
               maxSize: FILE_SIZE_LIMIT,
               maxSizeErrorText:
-                parentalLeaveFormMessages.selfEmployed.attachmentMaxSizeError,
+                parentalLeaveFormMessages.fileUpload.attachmentMaxSizeError,
               uploadAccept: '.pdf',
-              uploadHeader: parentalLeaveFormMessages.selfEmployed.uploadHeader,
+              uploadHeader: parentalLeaveFormMessages.fileUpload.uploadHeader,
               uploadDescription:
-                parentalLeaveFormMessages.selfEmployed.uploadDescription,
+                parentalLeaveFormMessages.fileUpload.uploadDescription,
               uploadButtonLabel:
-                parentalLeaveFormMessages.selfEmployed.attachmentButton,
+                parentalLeaveFormMessages.fileUpload.attachmentButton,
             }),
             buildFileUploadField({
               id: 'fileUpload.studentFile',
@@ -939,13 +974,13 @@ export const ParentalLeaveForm: Form = buildForm({
                   }
                 )?.applicationType?.option === PARENTAL_GRANT_STUDENTS,
               maxSizeErrorText:
-                parentalLeaveFormMessages.selfEmployed.attachmentMaxSizeError,
+                parentalLeaveFormMessages.fileUpload.attachmentMaxSizeError,
               uploadAccept: '.pdf',
-              uploadHeader: parentalLeaveFormMessages.selfEmployed.uploadHeader,
+              uploadHeader: parentalLeaveFormMessages.fileUpload.uploadHeader,
               uploadDescription:
-                parentalLeaveFormMessages.selfEmployed.uploadDescription,
+                parentalLeaveFormMessages.fileUpload.uploadDescription,
               uploadButtonLabel:
-                parentalLeaveFormMessages.selfEmployed.attachmentButton,
+                parentalLeaveFormMessages.fileUpload.attachmentButton,
             }),
             buildFileUploadField({
               id: 'fileUpload.benefitsFile',
@@ -971,13 +1006,13 @@ export const ParentalLeaveForm: Form = buildForm({
               },
               maxSize: FILE_SIZE_LIMIT,
               maxSizeErrorText:
-                parentalLeaveFormMessages.selfEmployed.attachmentMaxSizeError,
+                parentalLeaveFormMessages.fileUpload.attachmentMaxSizeError,
               uploadAccept: '.pdf',
-              uploadHeader: parentalLeaveFormMessages.selfEmployed.uploadHeader,
+              uploadHeader: parentalLeaveFormMessages.fileUpload.uploadHeader,
               uploadDescription:
-                parentalLeaveFormMessages.selfEmployed.uploadDescription,
+                parentalLeaveFormMessages.fileUpload.uploadDescription,
               uploadButtonLabel:
-                parentalLeaveFormMessages.selfEmployed.attachmentButton,
+                parentalLeaveFormMessages.fileUpload.attachmentButton,
             }),
             buildFileUploadField({
               id: 'fileUpload.singleParent',
@@ -996,13 +1031,13 @@ export const ParentalLeaveForm: Form = buildForm({
                 )?.otherParentObj?.chooseOtherParent === SINGLE,
               maxSize: FILE_SIZE_LIMIT,
               maxSizeErrorText:
-                parentalLeaveFormMessages.selfEmployed.attachmentMaxSizeError,
+                parentalLeaveFormMessages.fileUpload.attachmentMaxSizeError,
               uploadAccept: '.pdf',
-              uploadHeader: parentalLeaveFormMessages.selfEmployed.uploadHeader,
+              uploadHeader: parentalLeaveFormMessages.fileUpload.uploadHeader,
               uploadDescription:
-                parentalLeaveFormMessages.selfEmployed.uploadDescription,
+                parentalLeaveFormMessages.fileUpload.uploadDescription,
               uploadButtonLabel:
-                parentalLeaveFormMessages.selfEmployed.attachmentButton,
+                parentalLeaveFormMessages.fileUpload.attachmentButton,
             }),
             buildFileUploadField({
               id: 'fileUpload.parentWithoutBirthParent',
@@ -1015,13 +1050,13 @@ export const ParentalLeaveForm: Form = buildForm({
               condition: (answers) => isParentWithoutBirthParent(answers),
               maxSize: FILE_SIZE_LIMIT,
               maxSizeErrorText:
-                parentalLeaveFormMessages.selfEmployed.attachmentMaxSizeError,
+                parentalLeaveFormMessages.fileUpload.attachmentMaxSizeError,
               uploadAccept: '.pdf',
-              uploadHeader: parentalLeaveFormMessages.selfEmployed.uploadHeader,
+              uploadHeader: parentalLeaveFormMessages.fileUpload.uploadHeader,
               uploadDescription:
-                parentalLeaveFormMessages.selfEmployed.uploadDescription,
+                parentalLeaveFormMessages.fileUpload.uploadDescription,
               uploadButtonLabel:
-                parentalLeaveFormMessages.selfEmployed.attachmentButton,
+                parentalLeaveFormMessages.fileUpload.attachmentButton,
             }),
             buildFileUploadField({
               id: 'fileUpload.permanentFosterCare',
@@ -1041,13 +1076,13 @@ export const ParentalLeaveForm: Form = buildForm({
               },
               maxSize: FILE_SIZE_LIMIT,
               maxSizeErrorText:
-                parentalLeaveFormMessages.selfEmployed.attachmentMaxSizeError,
+                parentalLeaveFormMessages.fileUpload.attachmentMaxSizeError,
               uploadAccept: '.pdf',
-              uploadHeader: parentalLeaveFormMessages.selfEmployed.uploadHeader,
+              uploadHeader: parentalLeaveFormMessages.fileUpload.uploadHeader,
               uploadDescription:
-                parentalLeaveFormMessages.selfEmployed.uploadDescription,
+                parentalLeaveFormMessages.fileUpload.uploadDescription,
               uploadButtonLabel:
-                parentalLeaveFormMessages.selfEmployed.attachmentButton,
+                parentalLeaveFormMessages.fileUpload.attachmentButton,
             }),
             buildFileUploadField({
               id: 'fileUpload.adoption',
@@ -1062,13 +1097,13 @@ export const ParentalLeaveForm: Form = buildForm({
               },
               maxSize: FILE_SIZE_LIMIT,
               maxSizeErrorText:
-                parentalLeaveFormMessages.selfEmployed.attachmentMaxSizeError,
+                parentalLeaveFormMessages.fileUpload.attachmentMaxSizeError,
               uploadAccept: '.pdf',
-              uploadHeader: parentalLeaveFormMessages.selfEmployed.uploadHeader,
+              uploadHeader: parentalLeaveFormMessages.fileUpload.uploadHeader,
               uploadDescription:
-                parentalLeaveFormMessages.selfEmployed.uploadDescription,
+                parentalLeaveFormMessages.fileUpload.uploadDescription,
               uploadButtonLabel:
-                parentalLeaveFormMessages.selfEmployed.attachmentButton,
+                parentalLeaveFormMessages.fileUpload.attachmentButton,
             }),
             buildFileUploadField({
               id: 'fileUpload.employmentTerminationCertificateFile',
@@ -1093,45 +1128,13 @@ export const ParentalLeaveForm: Form = buildForm({
                 )
               },
               maxSizeErrorText:
-                parentalLeaveFormMessages.selfEmployed.attachmentMaxSizeError,
+                parentalLeaveFormMessages.fileUpload.attachmentMaxSizeError,
               uploadAccept: '.pdf',
-              uploadHeader: parentalLeaveFormMessages.selfEmployed.uploadHeader,
+              uploadHeader: parentalLeaveFormMessages.fileUpload.uploadHeader,
               uploadDescription:
-                parentalLeaveFormMessages.selfEmployed.uploadDescription,
+                parentalLeaveFormMessages.fileUpload.uploadDescription,
               uploadButtonLabel:
-                parentalLeaveFormMessages.selfEmployed.attachmentButton,
-            }),
-            buildFileUploadField({
-              id: 'fileUpload.file',
-              title: parentalLeaveFormMessages.attachmentScreen.title,
-              introduction:
-                parentalLeaveFormMessages.attachmentScreen.description,
-              maxSize: FILE_SIZE_LIMIT,
-              maxSizeErrorText:
-                parentalLeaveFormMessages.selfEmployed.attachmentMaxSizeError,
-              uploadAccept: '.pdf',
-              uploadHeader: parentalLeaveFormMessages.selfEmployed.uploadHeader,
-              uploadDescription:
-                parentalLeaveFormMessages.selfEmployed.uploadDescription,
-              uploadButtonLabel:
-                parentalLeaveFormMessages.selfEmployed.attachmentButton,
-            }),
-          ],
-        }),
-        buildSubSection({
-          id: 'commentSection',
-          title: parentalLeaveFormMessages.applicant.commentSection,
-          children: [
-            buildTextField({
-              id: 'comment',
-              title: parentalLeaveFormMessages.applicant.commentSection,
-              variant: 'textarea',
-              rows: 10,
-              maxLength: 1024,
-              description:
-                parentalLeaveFormMessages.applicant.commentDescription,
-              placeholder:
-                parentalLeaveFormMessages.applicant.commentPlaceholder,
+                parentalLeaveFormMessages.fileUpload.attachmentButton,
             }),
           ],
         }),
@@ -1490,6 +1493,50 @@ export const ParentalLeaveForm: Form = buildForm({
         //     }),
         //   ],
         // }),
+      ],
+    }),
+    buildSection({
+      id: 'additionalInformation',
+      title: parentalLeaveFormMessages.shared.additionalInformationSection,
+      children: [
+        buildSubSection({
+          id: 'fileUploadSection',
+          title: parentalLeaveFormMessages.attachmentScreen.title,
+          children: [
+            buildFileUploadField({
+              id: 'fileUpload.file',
+              title: parentalLeaveFormMessages.attachmentScreen.title,
+              introduction:
+                parentalLeaveFormMessages.attachmentScreen.description,
+              maxSize: FILE_SIZE_LIMIT,
+              maxSizeErrorText:
+                parentalLeaveFormMessages.fileUpload.attachmentMaxSizeError,
+              uploadAccept: '.pdf',
+              uploadHeader: parentalLeaveFormMessages.fileUpload.uploadHeader,
+              uploadDescription:
+                parentalLeaveFormMessages.fileUpload.uploadDescription,
+              uploadButtonLabel:
+                parentalLeaveFormMessages.fileUpload.attachmentButton,
+            }),
+          ],
+        }),
+        buildSubSection({
+          id: 'commentSection',
+          title: parentalLeaveFormMessages.applicant.commentSection,
+          children: [
+            buildTextField({
+              id: 'comment',
+              title: parentalLeaveFormMessages.applicant.commentSection,
+              variant: 'textarea',
+              rows: 10,
+              maxLength: 1024,
+              description:
+                parentalLeaveFormMessages.applicant.commentDescription,
+              placeholder:
+                parentalLeaveFormMessages.applicant.commentPlaceholder,
+            }),
+          ],
+        }),
       ],
     }),
     buildSection({
