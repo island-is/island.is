@@ -121,7 +121,7 @@ export const serviceSetup = (services: {
         staging: 'development@island.is',
         prod: 'island@island.is',
       },
-      SERVICE_USER_PROFILE_URL: ref(
+      USER_PROFILE_CLIENT_URL: ref(
         (h) => `http://${h.svc(services.servicePortalApi)}`,
       ),
       FILE_DOWNLOAD_BUCKET: {
