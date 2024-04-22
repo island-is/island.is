@@ -12,7 +12,6 @@ import { UserProfileServiceV2 } from './V2/userProfile.service'
 import { UserProfileServiceV1 } from './V1/userProfile.service'
 
 export interface Config {
-  userProfileServiceBasePath: string
   islykill: IslykillApiModuleConfig
 }
 
