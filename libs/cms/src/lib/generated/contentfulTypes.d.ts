@@ -554,6 +554,9 @@ export interface IChartFields {
   /** Components */
   components: IChartComponent[]
 
+  /** Interval */
+  interval?: number | undefined
+
   /** Date From */
   dateFrom?: string | undefined
 
@@ -2148,8 +2151,8 @@ export interface IListItemFields {
   /** Title */
   title: string
 
-  /** Thumbnail Content */
-  thumbnailContent?: Document | undefined
+  /** Custom Fields */
+  customFields?: Record<string, any> | undefined
 }
 
 export interface IListItem extends Entry<IListItemFields> {
@@ -2180,7 +2183,7 @@ export interface IListPageFields {
   relativeUrl?: string | undefined
 
   /** Items */
-  listItems?: Record<string, any> | undefined
+  listItemConfig?: Record<string, any> | undefined
 }
 
 export interface IListPage extends Entry<IListPageFields> {
