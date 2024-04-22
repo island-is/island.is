@@ -37,6 +37,7 @@ import {
   completedCaseStates,
   DateType,
   EventType,
+  getLatestDateType,
   isIndictmentCase,
   isRestrictionCase,
   NotificationType,
@@ -1196,15 +1197,39 @@ export class CaseService {
 
       delete update.courtDate
     } else if (update.postponedCourtDate) {
-      await this.dateLogModel.create(
-        {
-          dateType: DateType.POSTPONED_COURT_DATE,
-          caseId: theCase.id,
-          date: update.postponedCourtDate,
-          location: update.courtRoom,
-        },
-        { transaction },
+      // TODO: This code is not complete
+      const latestPostponedCourtDate = getLatestDateType(
+        [DateType.POSTPONED_COURT_DATE],
+        theCase.dateLogs,
       )
+
+      if (!latestPostponedCourtDate?.date) {
+        return
+      }
+
+      if (update.postponedCourtDate < latestPostponedCourtDate.date) {
+        await this.dateLogModel.update(
+          { date: update.postponedCourtDate },
+          {
+            where: {
+              caseId: theCase.id,
+              dateType: DateType.POSTPONED_COURT_DATE,
+              date: latestPostponedCourtDate.date,
+            },
+            transaction,
+          },
+        )
+      } else {
+        await this.dateLogModel.create(
+          {
+            dateType: DateType.POSTPONED_COURT_DATE,
+            caseId: theCase.id,
+            date: update.postponedCourtDate,
+            location: update.courtRoom,
+          },
+          { transaction },
+        )
+      }
 
       delete update.postponedCourtDate
     }
