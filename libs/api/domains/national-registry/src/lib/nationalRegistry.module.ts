@@ -1,3 +1,4 @@
+import { FeatureFlagModule } from '@island.is/nest/feature-flags'
 import { Module } from '@nestjs/common'
 
 import {
@@ -19,7 +20,7 @@ import {
 } from './resolvers'
 
 @Module({
-  imports: [NationalRegistryV3ClientModule],
+  imports: [NationalRegistryV3ClientModule, FeatureFlagModule],
   providers: [
     {
       provide: NationalRegistryApi,

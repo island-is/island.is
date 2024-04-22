@@ -1,10 +1,5 @@
 import { DynamicModule } from '@nestjs/common'
-import {
-  Configuration,
-  UserProfileApi,
-  V2MeApi,
-  V2UsersApi,
-} from '@island.is/clients/user-profile'
+import { UserProfileClientModule } from '@island.is/clients/user-profile'
 import { UserProfileResolver } from './userProfile.resolver'
 import { UserProfileService } from './userProfile.service'
 import { IslykillService } from './islykill.service'
@@ -34,16 +29,6 @@ export class UserProfileModule {
         UserProfileResolver,
         AdminUserProfileResolver,
         IslykillService,
-        ...[UserProfileApi, V2MeApi, V2UsersApi].map((Api) => ({
-          provide: Api,
-          useFactory: () =>
-            new Api(
-              new Configuration({
-                fetchApi: fetch,
-                basePath: config.userProfileServiceBasePath,
-              }),
-            ),
-        })),
       ],
       imports: [
         FeatureFlagModule,
@@ -53,6 +38,7 @@ export class UserProfileModule {
           passphrase: config.islykill.passphrase,
           basePath: config.islykill.basePath,
         }),
+        UserProfileClientModule,
       ],
       exports: [],
     }
