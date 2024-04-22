@@ -1,41 +1,40 @@
 import jwt from 'jsonwebtoken'
-import { join } from 'path'
 import get from 'lodash/get'
+import { join } from 'path'
 
 import {
-  ParentalLeave,
-  Period,
-  Union,
-  PensionFund,
-  Attachment,
-  Employer,
-} from '@island.is/clients/vmst'
+  ADOPTION,
+  Period as AnswerPeriod,
+  ChildInformation,
+  Languages,
+  NO,
+  PARENTAL_GRANT,
+  PARENTAL_GRANT_STUDENTS,
+  PARENTAL_LEAVE,
+  PERMANENT_FOSTER_CARE,
+  ParentalRelations,
+  YES,
+  applicantIsMale,
+  formatBankInfo,
+  getActionName,
+  getApplicationAnswers,
+  getApplicationExternalData,
+  getOtherParentId,
+  getSelectedChild,
+  getSpouse,
+} from '@island.is/application/templates/parental-leave'
 import {
   Application,
   ApplicationWithAttachments,
 } from '@island.is/application/types'
 import {
-  getSelectedChild,
-  getApplicationAnswers,
-  getSpouse,
-  ParentalRelations,
-  YES,
-  Period as AnswerPeriod,
-  getApplicationExternalData,
-  getOtherParentId,
-  applicantIsMale,
-  PARENTAL_LEAVE,
-  PARENTAL_GRANT,
-  PARENTAL_GRANT_STUDENTS,
-  NO,
-  formatBankInfo,
-  PERMANENT_FOSTER_CARE,
-  ChildInformation,
-  ADOPTION,
-  FileType,
-  Languages,
-  States,
-} from '@island.is/application/templates/parental-leave'
+  Attachment,
+  Employer,
+  ParentalLeave,
+  PensionFund,
+  Period,
+  Union,
+} from '@island.is/clients/vmst'
 import { isRunningOnEnvironment } from '@island.is/shared/utils'
 
 import { apiConstants } from './constants'
@@ -501,43 +500,14 @@ export const isDateInTheFuture = (date: string) => {
   return false
 }
 
-export const checkActionName = (
-  application: ApplicationWithAttachments,
-  params: any | undefined = undefined,
-) => {
-  const { state } = application
-  const { addEmployer, addPeriods, changeEmployer, changePeriods, actionName } =
-    getApplicationAnswers(application.answers)
+export const getType = (application: ApplicationWithAttachments) => {
+  const { actionName } = getApplicationAnswers(application.answers)
 
-  if (params) {
-    params === 'document' ||
-      params === 'documentPeriod' ||
-      params === 'period' ||
-      params === 'empper' ||
-      params === 'employer'
-    return params
-  }
+  // Check if we can get the the action name. Used when valiating application
+  const tmpActionName = getActionName(application)
 
-  if (state === States.EDIT_OR_ADD_EMPLOYERS_AND_PERIODS) {
-    /* 
-        Check if user has made some changes to the employers and/or periods. 
-        changeEmployer and changePeriods are used for book keeping, to keep track if applicant changes employers or periods multiple times
-        before employers approves.
-    */
-    if (
-      (changeEmployer && changePeriods) ||
-      (addEmployer === YES && addPeriods === YES) ||
-      (changeEmployer && addPeriods === YES) ||
-      (changePeriods && addEmployer === YES)
-    ) {
-      return FileType.EMPPER
-    } else if (changeEmployer || addEmployer === YES) {
-      return FileType.EMPLOYER
-    } else if (changePeriods || addPeriods === YES) {
-      return FileType.PERIOD
-    }
-
-    return undefined
+  if (tmpActionName) {
+    return tmpActionName
   }
 
   if (
@@ -551,6 +521,7 @@ export const checkActionName = (
   ) {
     return actionName
   }
+
   return undefined
 }
 

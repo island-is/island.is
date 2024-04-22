@@ -19,6 +19,8 @@ import {
   SPOUSE,
   ParentalRelations,
   ADOPTION,
+  States,
+  FileType,
 } from '../constants'
 import { ChildInformation } from '../dataProviders/Children/types'
 import {
@@ -53,6 +55,7 @@ import {
   isFosterCareAndAdoption,
   residentGrantIsOpenForApplication,
   setTestBirthAndExpectedDate,
+  getType,
 } from './parentalLeaveUtils'
 import { PersonInformation } from '../types'
 
@@ -88,6 +91,23 @@ const buildField = (): Field => {
     children: undefined,
   }
 }
+
+let id = 0
+const createApplicationBase = (): Application => ({
+  answers: {},
+  applicant: '',
+  assignees: [],
+  attachments: {},
+  created: new Date(),
+  modified: new Date(),
+  applicantActors: [],
+  externalData: {},
+  id: (id++).toString(),
+  state: '',
+  typeId: ApplicationTypes.PARENTAL_LEAVE,
+  name: '',
+  status: ApplicationStatus.IN_PROGRESS,
+})
 
 describe('getExpectedDateOfBirthOrAdoptionDate', () => {
   it('should return undefined when no child is found', () => {
@@ -1312,23 +1332,6 @@ describe('getOtherParentId', () => {
 })
 
 describe('getOtherParentName', () => {
-  let id = 0
-  const createApplicationBase = (): Application => ({
-    answers: {},
-    applicant: '',
-    assignees: [],
-    attachments: {},
-    created: new Date(),
-    modified: new Date(),
-    applicantActors: [],
-    externalData: {},
-    id: (id++).toString(),
-    state: '',
-    typeId: ApplicationTypes.PARENTAL_LEAVE,
-    name: '',
-    status: ApplicationStatus.IN_PROGRESS,
-  })
-
   let application: Application
   beforeEach(() => {
     application = createApplicationBase()
@@ -1541,3 +1544,71 @@ test.each([
     expect(residentGrantIsOpenForApplication(date.birthDate)).toBe(expected)
   },
 )
+
+describe.only('getType', () => {
+  let application: Application
+  beforeEach(() => {
+    application = createApplicationBase()
+  })
+
+  it('should return FileType.EMPDOCPER if changeEmployerFile, changeEmployer and changePeriods', () => {
+    set(application, 'answers.fileUpload.changeEmployerFile', [
+      { name: 'file1.pdf', key: 'Key1' },
+    ])
+    set(application, 'answers.changeEmployer', true)
+    set(application, 'answers.changePeriods', true)
+
+    application.state = States.EDIT_OR_ADD_EMPLOYERS_AND_PERIODS
+
+    const result = getType(application)
+
+    expect(result).toBe(FileType.EMPDOCPER)
+  })
+
+  it('should return FileType.PERIOD if changePeriods', () => {
+    set(application, 'answers.changePeriods', true)
+
+    application.state = States.EDIT_OR_ADD_EMPLOYERS_AND_PERIODS
+
+    const result = getType(application)
+
+    expect(result).toBe(FileType.PERIOD)
+  })
+
+  it('should return FileType.EMPLOYER if changeEmployer', () => {
+    set(application, 'answers.changeEmployer', true)
+
+    application.state = States.EDIT_OR_ADD_EMPLOYERS_AND_PERIODS
+
+    const result = getType(application)
+
+    expect(result).toBe(FileType.EMPLOYER)
+  })
+
+  it('should return FileType.EMPPER if changePeriods & changeEmployer', () => {
+    set(application, 'answers.changeEmployer', true)
+    set(application, 'answers.changePeriods', true)
+
+    application.state = States.EDIT_OR_ADD_EMPLOYERS_AND_PERIODS
+
+    const result = getType(application)
+
+    expect(result).toBe(FileType.EMPPER)
+  })
+
+  it('should return FileType.DOCUMENT if state is ADDITIONAL_DOCUMENTS_REQUIRED', () => {
+    application.state = application.state = States.ADDITIONAL_DOCUMENTS_REQUIRED
+
+    const result = getType(application)
+
+    expect(result).toBe(FileType.DOCUMENT)
+  })
+
+  it('should return undefined if no conditions met', () => {
+    application.state = application.state = States.CLOSED
+
+    const result = getType(application)
+
+    expect(result).toBeUndefined()
+  })
+})

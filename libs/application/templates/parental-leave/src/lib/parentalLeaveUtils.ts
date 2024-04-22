@@ -27,6 +27,7 @@ import parseISO from 'date-fns/parseISO'
 import subDays from 'date-fns/subDays'
 import subMonths from 'date-fns/subMonths'
 import round from 'lodash/round'
+import set from 'lodash/set'
 import { MessageDescriptor } from 'react-intl'
 import {
   additionalSingleParentMonths,
@@ -39,6 +40,7 @@ import {
   ADOPTION,
   AttachmentLabel,
   AttachmentTypes,
+  FileType,
   MANUAL,
   NO,
   OTHER_NO_CHILDREN_FOUND,
@@ -2108,4 +2110,72 @@ export const getSelectOptionLabel = (options: SelectOption[], id?: string) => {
   }
 
   return options.find((option) => option.value === id)?.label
+}
+
+export const getActionName = (
+  application: Application,
+): FileType | undefined => {
+  const { state } = application
+  const {
+    addEmployer,
+    addPeriods,
+    changeEmployer,
+    changePeriods,
+    changeEmployerFile,
+  } = getApplicationAnswers(application.answers)
+
+  if (
+    state === States.RESIDENCE_GRANT_APPLICATION_NO_BIRTH_DATE ||
+    state === States.RESIDENCE_GRANT_APPLICATION ||
+    state === States.ADDITIONAL_DOCUMENTS_REQUIRED
+  ) {
+    return FileType.DOCUMENT
+  } else if (state === States.EDIT_OR_ADD_EMPLOYERS_AND_PERIODS) {
+    // Keep book keeping of what has been selected
+    if (addEmployer === YES) {
+      if (!changeEmployer) {
+        set(application.answers, 'changeEmployer', true)
+      }
+    }
+    // Keep book keeping of what has been selected
+    if (addPeriods === YES) {
+      if (!changePeriods) {
+        set(application.answers, 'changePeriods', true)
+      }
+    }
+
+    /* 
+        Check if user has made some changes to the employers and/or periods and/or employer file. 
+        changeEmployer and changePeriods are used for book keeping, to keep track if applicant changes employers or periods multiple times
+        before employers approves.
+    */
+    if (changeEmployerFile) {
+      if (
+        changeEmployerFile.length !== 0 &&
+        (changeEmployer || addEmployer === YES) &&
+        (changePeriods || addPeriods === YES)
+      ) {
+        return FileType.EMPDOCPER
+      } else if (
+        changeEmployerFile.length !== 0 &&
+        (changeEmployer || addEmployer === YES)
+      ) {
+        return FileType.EMPDOC
+      }
+    }
+
+    if (
+      (changeEmployer && changePeriods) ||
+      (addEmployer === YES && addPeriods === YES) ||
+      (changeEmployer && addPeriods === YES) ||
+      (changePeriods && addEmployer === YES)
+    ) {
+      return FileType.EMPPER
+    } else if (changeEmployer || addEmployer === YES) {
+      return FileType.EMPLOYER
+    } else if (changePeriods || addPeriods === YES) {
+      return FileType.PERIOD
+    }
+  }
+  return undefined
 }

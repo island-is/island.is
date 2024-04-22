@@ -8,6 +8,7 @@ import { getValueViaPath } from '@island.is/application/core'
 import {
   ADOPTION,
   ChildInformation,
+  FileType,
   NO,
   OTHER_NO_CHILDREN_FOUND,
   PARENTAL_GRANT,
@@ -69,7 +70,7 @@ import {
   generateOtherParentRejected,
 } from './emailGenerators'
 import {
-  checkActionName,
+  getType,
   checkIfPhoneNumberIsGSM,
   getFromDate,
   getRatio,
@@ -1414,6 +1415,7 @@ export class ParentalLeaveService extends BaseTemplateApiService {
     // }
     const nationalRegistryId = application.applicant
     const attachments = await this.getAttachments(application)
+    const type = getType(application)
 
     try {
       const periods = await this.createPeriodsDTO(
@@ -1426,7 +1428,7 @@ export class ParentalLeaveService extends BaseTemplateApiService {
         periods,
         attachments,
         false, // put false in testData as this is not dummy request
-        checkActionName(application, params),
+        type,
       )
 
       const response =
@@ -1442,8 +1444,7 @@ export class ParentalLeaveService extends BaseTemplateApiService {
       }
 
       // If applicant is sending additional documents then don't need to send email
-      const { actionName } = getApplicationAnswers(application.answers)
-      if (actionName === 'document') {
+      if (type === FileType.DOCUMENT) {
         return
       }
 
@@ -1499,10 +1500,7 @@ export class ParentalLeaveService extends BaseTemplateApiService {
     }
   }
 
-  async validateApplication({
-    application,
-    params = undefined,
-  }: TemplateApiModuleActionProps) {
+  async validateApplication({ application }: TemplateApiModuleActionProps) {
     const nationalRegistryId = application.applicant
     const { previousState } = getApplicationAnswers(application.answers)
     /* This is to avoid calling the api every time the user leaves the residenceGrantApplicationNoBirthDate state or residenceGrantApplication state */
@@ -1522,7 +1520,7 @@ export class ParentalLeaveService extends BaseTemplateApiService {
         periods,
         attachments,
         true,
-        checkActionName(application, params),
+        getType(application),
       )
 
       // call SetParentalLeave API with testData: TRUE as this is a dummy request
