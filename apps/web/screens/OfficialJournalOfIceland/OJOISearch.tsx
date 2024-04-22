@@ -18,19 +18,19 @@ import { debounceTime } from '@island.is/shared/constants'
 import { getThemeConfig } from '@island.is/web/components'
 import {
   ContentLanguage,
-  MinistryOfJusticeAdvert,
-  MinistryOfJusticeAdvertCategory,
-  MinistryOfJusticeAdvertEntity,
-  MinistryOfJusticeAdvertsResponse,
-  MinistryOfJusticeAdvertType,
+  OfficialJournalOfIcelandAdvert,
+  OfficialJournalOfIcelandAdvertCategory,
+  OfficialJournalOfIcelandAdvertEntity,
+  OfficialJournalOfIcelandAdvertsResponse,
+  OfficialJournalOfIcelandAdvertType,
   Query,
   QueryGetNamespaceArgs,
   QueryGetOrganizationPageArgs,
-  QueryMinistryOfJusticeAdvertsArgs,
-  QueryMinistryOfJusticeCategoriesArgs,
-  QueryMinistryOfJusticeDepartmentsArgs,
-  QueryMinistryOfJusticeInstitutionsArgs,
-  QueryMinistryOfJusticeTypesArgs,
+  QueryOfficialJournalOfIcelandAdvertsArgs,
+  QueryOfficialJournalOfIcelandCategoriesArgs,
+  QueryOfficialJournalOfIcelandDepartmentsArgs,
+  QueryOfficialJournalOfIcelandInstitutionsArgs,
+  QueryOfficialJournalOfIcelandTypesArgs,
 } from '@island.is/web/graphql/schema'
 import { useLinkResolver, useNamespace } from '@island.is/web/hooks'
 import useContentfulId from '@island.is/web/hooks/useContentfulId'
@@ -100,8 +100,10 @@ const OJOISearchPage: Screen<OJOISearchProps> = ({
   const [listView, setListView] = useState(false)
 
   const [getAdverts] = useLazyQuery<
-    { ministryOfJusticeAdverts: MinistryOfJusticeAdvertsResponse },
-    QueryMinistryOfJusticeAdvertsArgs
+    {
+      OfficialJournalOfIcelandAdverts: OfficialJournalOfIcelandAdvertsResponse
+    },
+    QueryOfficialJournalOfIcelandAdvertsArgs
   >(ADVERTS_QUERY, { fetchPolicy: 'no-cache' })
 
   useEffect(() => {
@@ -137,7 +139,7 @@ const OJOISearchPage: Screen<OJOISearchProps> = ({
       })
         .then((res) => {
           if (res.data) {
-            setAdverts(res.data.ministryOfJusticeAdverts.adverts)
+            setAdverts(res.data.OfficialJournalOfIcelandAdverts.adverts)
           } else if (res.error) {
             setAdverts([])
             console.error('Error fetching Adverts', res.error)
@@ -398,11 +400,11 @@ const OJOISearchPage: Screen<OJOISearchProps> = ({
 }
 
 interface OJOISearchProps {
-  initialAdverts?: MinistryOfJusticeAdvert[]
-  categories?: Array<MinistryOfJusticeAdvertCategory>
-  departments?: Array<MinistryOfJusticeAdvertEntity>
-  types?: Array<MinistryOfJusticeAdvertType>
-  institutions?: Array<MinistryOfJusticeAdvertEntity>
+  initialAdverts?: OfficialJournalOfIcelandAdvert[]
+  categories?: Array<OfficialJournalOfIcelandAdvertCategory>
+  departments?: Array<OfficialJournalOfIcelandAdvertEntity>
+  types?: Array<OfficialJournalOfIcelandAdvertType>
+  institutions?: Array<OfficialJournalOfIcelandAdvertEntity>
   organizationPage?: Query['getOrganizationPage']
   organization?: Query['getOrganization']
   namespace: Record<string, string>
@@ -440,19 +442,19 @@ OJOISearch.getProps = async ({ apolloClient, locale }) => {
 
   const [
     {
-      data: { ministryOfJusticeAdverts },
+      data: { officialJournalOfIcelandAdverts },
     },
     {
-      data: { ministryOfJusticeCategories },
+      data: { officialJournalOfIcelandCategories },
     },
     {
-      data: { ministryOfJusticeDepartments },
+      data: { officialJournalOfIcelandDepartments },
     },
     {
-      data: { ministryOfJusticeTypes },
+      data: { officialJournalOfIcelandTypes },
     },
     {
-      data: { ministryOfJusticeInstitutions },
+      data: { officialJournalOfIcelandInstitutions },
     },
     {
       data: { getOrganizationPage },
@@ -462,7 +464,7 @@ OJOISearch.getProps = async ({ apolloClient, locale }) => {
     },
     namespace,
   ] = await Promise.all([
-    apolloClient.query<Query, QueryMinistryOfJusticeAdvertsArgs>({
+    apolloClient.query<Query, QueryOfficialJournalOfIcelandAdvertsArgs>({
       query: ADVERTS_QUERY,
       variables: {
         input: {
@@ -470,7 +472,7 @@ OJOISearch.getProps = async ({ apolloClient, locale }) => {
         },
       },
     }),
-    apolloClient.query<Query, QueryMinistryOfJusticeCategoriesArgs>({
+    apolloClient.query<Query, QueryOfficialJournalOfIcelandCategoriesArgs>({
       query: CATEGORIES_QUERY,
       variables: {
         params: {
@@ -478,7 +480,7 @@ OJOISearch.getProps = async ({ apolloClient, locale }) => {
         },
       },
     }),
-    apolloClient.query<Query, QueryMinistryOfJusticeDepartmentsArgs>({
+    apolloClient.query<Query, QueryOfficialJournalOfIcelandDepartmentsArgs>({
       query: DEPARTMENTS_QUERY,
       variables: {
         params: {
@@ -486,7 +488,7 @@ OJOISearch.getProps = async ({ apolloClient, locale }) => {
         },
       },
     }),
-    apolloClient.query<Query, QueryMinistryOfJusticeTypesArgs>({
+    apolloClient.query<Query, QueryOfficialJournalOfIcelandTypesArgs>({
       query: TYPES_QUERY,
       variables: {
         params: {
@@ -494,7 +496,7 @@ OJOISearch.getProps = async ({ apolloClient, locale }) => {
         },
       },
     }),
-    apolloClient.query<Query, QueryMinistryOfJusticeInstitutionsArgs>({
+    apolloClient.query<Query, QueryOfficialJournalOfIcelandInstitutionsArgs>({
       query: INSTITUTIONS_QUERY,
       variables: {
         params: {
@@ -542,11 +544,11 @@ OJOISearch.getProps = async ({ apolloClient, locale }) => {
   }
 
   return {
-    initialAdverts: ministryOfJusticeAdverts.adverts,
-    categories: ministryOfJusticeCategories?.categories,
-    departments: ministryOfJusticeDepartments?.departments,
-    types: ministryOfJusticeTypes?.types,
-    institutions: ministryOfJusticeInstitutions?.institutions,
+    initialAdverts: officialJournalOfIcelandAdverts.adverts,
+    categories: officialJournalOfIcelandCategories?.categories,
+    departments: officialJournalOfIcelandDepartments?.departments,
+    types: officialJournalOfIcelandTypes?.types,
+    institutions: officialJournalOfIcelandInstitutions?.institutions,
     organizationPage: getOrganizationPage,
     organization: getOrganization,
     namespace,

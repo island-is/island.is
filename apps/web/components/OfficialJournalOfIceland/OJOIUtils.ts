@@ -1,14 +1,14 @@
 import format from 'date-fns/format'
 import is from 'date-fns/locale/is'
 
-import {
-  MinistryOfJusticeAdvertCategory,
-  MinistryOfJusticeAdvertEntity,
-  MinistryOfJusticeAdvertMainCategory,
-  MinistryOfJusticeAdvertType,
-} from '@island.is/api/schema'
 import { StringOption as Option } from '@island.is/island-ui/core'
 import { sortAlpha } from '@island.is/shared/utils'
+import {
+  OfficialJournalOfIcelandAdvertCategory,
+  OfficialJournalOfIcelandAdvertEntity,
+  OfficialJournalOfIcelandAdvertMainCategory,
+  OfficialJournalOfIcelandAdvertType,
+} from '@island.is/web/graphql/schema'
 
 export const baseUrl = '/s/stjornartidindi'
 export const searchUrl = baseUrl + '/leit'
@@ -50,10 +50,10 @@ export type EntityOption = Option & {
 
 export const mapEntityToOptions = (
   entities?: Array<
-    | MinistryOfJusticeAdvertEntity
-    | MinistryOfJusticeAdvertType
-    | MinistryOfJusticeAdvertCategory
-    | MinistryOfJusticeAdvertMainCategory
+    | OfficialJournalOfIcelandAdvertEntity
+    | OfficialJournalOfIcelandAdvertType
+    | OfficialJournalOfIcelandAdvertCategory
+    | OfficialJournalOfIcelandAdvertMainCategory
   >,
 ): EntityOption[] => {
   if (!entities) {

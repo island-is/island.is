@@ -1,5 +1,5 @@
-import { MinistryOfJusticeAdvertsResponse } from '@island.is/api/schema'
 import { Stack } from '@island.is/island-ui/core'
+import { OfficialJournalOfIcelandAdvertsResponse } from '@island.is/web/graphql/schema'
 
 import { OJOIAdvertCard } from './OJOIAdvertCard'
 import { advertUrl } from './OJOIUtils'
@@ -7,7 +7,7 @@ import { advertUrl } from './OJOIUtils'
 export const OJOISearchGridView = ({
   adverts,
 }: {
-  adverts: MinistryOfJusticeAdvertsResponse['adverts']
+  adverts: OfficialJournalOfIcelandAdvertsResponse['adverts']
 }) => {
   return (
     <Stack space={2}>

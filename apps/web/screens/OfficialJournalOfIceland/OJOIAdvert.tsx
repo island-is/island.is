@@ -7,11 +7,11 @@ import { Box, Button, Link, Stack, Text } from '@island.is/island-ui/core'
 import { getThemeConfig } from '@island.is/web/components'
 import {
   ContentLanguage,
-  MinistryOfJusticeAdvertResponse,
+  OfficialJournalOfIcelandAdvertResponse,
   Query,
   QueryGetNamespaceArgs,
   QueryGetOrganizationPageArgs,
-  QueryMinistryOfJusticeAdvertArgs,
+  QueryOfficialJournalOfIcelandAdvertArgs,
 } from '@island.is/web/graphql/schema'
 import { useLinkResolver, useNamespace } from '@island.is/web/hooks'
 import useContentfulId from '@island.is/web/hooks/useContentfulId'
@@ -171,7 +171,7 @@ const OJOIAdvertPage: Screen<OJOIAdvertProps> = ({
 }
 
 interface OJOIAdvertProps {
-  advert: MinistryOfJusticeAdvertResponse['advert']
+  advert: OfficialJournalOfIcelandAdvertResponse['advert']
   organizationPage?: Query['getOrganizationPage']
   organization?: Query['getOrganization']
   namespace: Record<string, string>
@@ -203,7 +203,7 @@ OJOIAdvert.getProps = async ({ apolloClient, locale, query }) => {
 
   const [
     {
-      data: { ministryOfJusticeAdvert },
+      data: { officialJournalOfIcelandAdvert },
     },
     {
       data: { getOrganizationPage },
@@ -213,7 +213,7 @@ OJOIAdvert.getProps = async ({ apolloClient, locale, query }) => {
     },
     namespace,
   ] = await Promise.all([
-    apolloClient.query<Query, QueryMinistryOfJusticeAdvertArgs>({
+    apolloClient.query<Query, QueryOfficialJournalOfIcelandAdvertArgs>({
       query: ADVERT_QUERY,
       variables: {
         params: {
@@ -260,12 +260,12 @@ OJOIAdvert.getProps = async ({ apolloClient, locale, query }) => {
     throw new CustomNextError(404, 'Organization page not found')
   }
 
-  if (!ministryOfJusticeAdvert) {
+  if (!officialJournalOfIcelandAdvert) {
     throw new CustomNextError(404, 'OJOI advert not found')
   }
 
   return {
-    advert: ministryOfJusticeAdvert.advert,
+    advert: officialJournalOfIcelandAdvert.advert,
     organizationPage: getOrganizationPage,
     organization: getOrganization,
     namespace,

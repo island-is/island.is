@@ -20,15 +20,15 @@ import { debounceTime } from '@island.is/shared/constants'
 import { getThemeConfig } from '@island.is/web/components'
 import {
   ContentLanguage,
-  MinistryOfJusticeAdvertCategory,
-  MinistryOfJusticeAdvertEntity,
-  MinistryOfJusticeAdvertMainCategory,
+  OfficialJournalOfIcelandAdvertCategory,
+  OfficialJournalOfIcelandAdvertEntity,
+  OfficialJournalOfIcelandAdvertMainCategory,
   Query,
   QueryGetNamespaceArgs,
   QueryGetOrganizationPageArgs,
-  QueryMinistryOfJusticeCategoriesArgs,
-  QueryMinistryOfJusticeDepartmentsArgs,
-  QueryMinistryOfJusticeMainCategoriesArgs,
+  QueryOfficialJournalOfIcelandCategoriesArgs,
+  QueryOfficialJournalOfIcelandDepartmentsArgs,
+  QueryOfficialJournalOfIcelandMainCategoriesArgs,
 } from '@island.is/web/graphql/schema'
 import { useLinkResolver, useNamespace } from '@island.is/web/hooks'
 import useContentfulId from '@island.is/web/hooks/useContentfulId'
@@ -375,9 +375,9 @@ const OJOICategoriesPage: Screen<OJOICategoriesProps> = ({
 }
 
 interface OJOICategoriesProps {
-  mainCategories?: MinistryOfJusticeAdvertMainCategory[]
-  categories?: Array<MinistryOfJusticeAdvertCategory>
-  departments?: Array<MinistryOfJusticeAdvertEntity>
+  mainCategories?: OfficialJournalOfIcelandAdvertMainCategory[]
+  categories?: Array<OfficialJournalOfIcelandAdvertCategory>
+  departments?: Array<OfficialJournalOfIcelandAdvertEntity>
   organizationPage?: Query['getOrganizationPage']
   organization?: Query['getOrganization']
   namespace: Record<string, string>
@@ -411,13 +411,13 @@ OJOICategories.getProps = async ({ apolloClient, locale }) => {
 
   const [
     {
-      data: { ministryOfJusticeMainCategories },
+      data: { officialJournalOfIcelandMainCategories },
     },
     {
-      data: { ministryOfJusticeCategories },
+      data: { officialJournalOfIcelandCategories },
     },
     {
-      data: { ministryOfJusticeDepartments },
+      data: { officialJournalOfIcelandDepartments },
     },
     {
       data: { getOrganizationPage },
@@ -427,7 +427,7 @@ OJOICategories.getProps = async ({ apolloClient, locale }) => {
     },
     namespace,
   ] = await Promise.all([
-    apolloClient.query<Query, QueryMinistryOfJusticeMainCategoriesArgs>({
+    apolloClient.query<Query, QueryOfficialJournalOfIcelandMainCategoriesArgs>({
       query: MAIN_CATEGORIES_QUERY,
       variables: {
         params: {
@@ -435,7 +435,7 @@ OJOICategories.getProps = async ({ apolloClient, locale }) => {
         },
       },
     }),
-    apolloClient.query<Query, QueryMinistryOfJusticeCategoriesArgs>({
+    apolloClient.query<Query, QueryOfficialJournalOfIcelandCategoriesArgs>({
       query: CATEGORIES_QUERY,
       variables: {
         params: {
@@ -443,7 +443,7 @@ OJOICategories.getProps = async ({ apolloClient, locale }) => {
         },
       },
     }),
-    apolloClient.query<Query, QueryMinistryOfJusticeDepartmentsArgs>({
+    apolloClient.query<Query, QueryOfficialJournalOfIcelandDepartmentsArgs>({
       query: DEPARTMENTS_QUERY,
       variables: {
         params: {
@@ -491,9 +491,9 @@ OJOICategories.getProps = async ({ apolloClient, locale }) => {
   }
 
   return {
-    mainCategories: ministryOfJusticeMainCategories?.mainCategories,
-    categories: ministryOfJusticeCategories?.categories,
-    departments: ministryOfJusticeDepartments?.departments,
+    mainCategories: officialJournalOfIcelandMainCategories?.mainCategories,
+    categories: officialJournalOfIcelandCategories?.categories,
+    departments: officialJournalOfIcelandDepartments?.departments,
     organizationPage: getOrganizationPage,
     organization: getOrganization,
     namespace,

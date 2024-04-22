@@ -17,11 +17,11 @@ import { getThemeConfig, SliceMachine } from '@island.is/web/components'
 import { SLICE_SPACING } from '@island.is/web/constants'
 import {
   ContentLanguage,
-  MinistryOfJusticeAdvertMainCategory,
+  OfficialJournalOfIcelandAdvertMainCategory,
   Query,
   QueryGetNamespaceArgs,
   QueryGetOrganizationPageArgs,
-  QueryMinistryOfJusticeMainCategoriesArgs,
+  QueryOfficialJournalOfIcelandMainCategoriesArgs,
 } from '@island.is/web/graphql/schema'
 import { useLinkResolver, useNamespace } from '@island.is/web/hooks'
 import useContentfulId from '@island.is/web/hooks/useContentfulId'
@@ -181,7 +181,7 @@ const OJOIHomePage: Screen<OJOIHomeProps> = ({
 }
 
 interface OJOIHomeProps {
-  mainCategories?: MinistryOfJusticeAdvertMainCategory[]
+  mainCategories?: OfficialJournalOfIcelandAdvertMainCategory[]
   organizationPage?: Query['getOrganizationPage']
   organization?: Query['getOrganization']
   namespace: Record<string, string>
@@ -211,7 +211,7 @@ OJOIHome.getProps = async ({ apolloClient, locale }) => {
 
   const [
     {
-      data: { ministryOfJusticeMainCategories },
+      data: { officialJournalOfIcelandMainCategories },
     },
     {
       data: { getOrganizationPage },
@@ -221,7 +221,7 @@ OJOIHome.getProps = async ({ apolloClient, locale }) => {
     },
     namespace,
   ] = await Promise.all([
-    apolloClient.query<Query, QueryMinistryOfJusticeMainCategoriesArgs>({
+    apolloClient.query<Query, QueryOfficialJournalOfIcelandMainCategoriesArgs>({
       query: MAIN_CATEGORIES_QUERY,
       variables: {
         params: {
@@ -269,7 +269,7 @@ OJOIHome.getProps = async ({ apolloClient, locale }) => {
   }
 
   return {
-    mainCategories: ministryOfJusticeMainCategories.mainCategories,
+    mainCategories: officialJournalOfIcelandMainCategories.mainCategories,
     organizationPage: getOrganizationPage,
     organization: getOrganization,
     namespace,

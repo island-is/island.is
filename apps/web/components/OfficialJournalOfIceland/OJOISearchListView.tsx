@@ -1,15 +1,15 @@
 import format from 'date-fns/format'
 import is from 'date-fns/locale/is'
 
-import { MinistryOfJusticeAdvertsResponse } from '@island.is/api/schema'
 import { LinkV2, Table as T, Text } from '@island.is/island-ui/core'
+import { OfficialJournalOfIcelandAdvertsResponse } from '@island.is/web/graphql/schema'
 
 import { advertUrl } from './OJOIUtils'
 
 export const OJOISearchListView = ({
   adverts,
 }: {
-  adverts: MinistryOfJusticeAdvertsResponse['adverts']
+  adverts: OfficialJournalOfIcelandAdvertsResponse['adverts']
 }) => {
   return (
     <T.Table>

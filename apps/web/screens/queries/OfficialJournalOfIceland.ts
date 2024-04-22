@@ -1,7 +1,7 @@
 import { gql } from '@apollo/client'
 export const ADVERTS_QUERY = gql`
-  query Adverts($input: MinistryOfJusticeAdvertsInput!) {
-    ministryOfJusticeAdverts(input: $input) {
+  query Adverts($input: OfficialJournalOfIcelandAdvertsInput!) {
+    officialJournalOfIcelandAdverts(input: $input) {
       adverts {
         id
         department {
@@ -37,8 +37,8 @@ export const ADVERTS_QUERY = gql`
 `
 
 export const ADVERT_QUERY = gql`
-  query Advert($params: MinistryOfJusticeAdvertQuery!) {
-    ministryOfJusticeAdvert(params: $params) {
+  query Advert($params: OfficialJournalOfIcelandAdvertQuery!) {
+    officialJournalOfIcelandAdvert(params: $params) {
       advert {
         id
         department {
@@ -76,8 +76,8 @@ export const ADVERT_QUERY = gql`
 `
 
 export const TYPES_QUERY = gql`
-  query AdvertTypes($params: MinistryOfJusticeTypesInput!) {
-    ministryOfJusticeTypes(params: $params) {
+  query AdvertTypes($params: OfficialJournalOfIcelandTypesInput!) {
+    officialJournalOfIcelandTypes(params: $params) {
       types {
         title
         slug
@@ -97,8 +97,8 @@ export const TYPES_QUERY = gql`
 `
 
 export const DEPARTMENTS_QUERY = gql`
-  query AdvertDepartments($params: MinistryOfJusticeQueryInput!) {
-    ministryOfJusticeDepartments(params: $params) {
+  query AdvertDepartments($params: OfficialJournalOfIcelandQueryInput!) {
+    officialJournalOfIcelandDepartments(params: $params) {
       departments {
         title
         slug
@@ -118,8 +118,8 @@ export const DEPARTMENTS_QUERY = gql`
 `
 
 export const CATEGORIES_QUERY = gql`
-  query AdvertCategories($params: MinistryOfJusticeQueryInput!) {
-    ministryOfJusticeCategories(params: $params) {
+  query AdvertCategories($params: OfficialJournalOfIcelandQueryInput!) {
+    officialJournalOfIcelandCategories(params: $params) {
       categories {
         title
         slug
@@ -147,8 +147,8 @@ export const CATEGORIES_QUERY = gql`
 `
 
 export const INSTITUTIONS_QUERY = gql`
-  query AdvertInstitutions($params: MinistryOfJusticeQueryInput!) {
-    ministryOfJusticeInstitutions(params: $params) {
+  query AdvertInstitutions($params: OfficialJournalOfIcelandQueryInput!) {
+    officialJournalOfIcelandInstitutions(params: $params) {
       institutions {
         title
         slug
@@ -168,8 +168,8 @@ export const INSTITUTIONS_QUERY = gql`
 `
 
 export const MAIN_CATEGORIES_QUERY = gql`
-  query AdvertMainCategories($params: MinistryOfJusticeQueryInput!) {
-    ministryOfJusticeMainCategories(params: $params) {
+  query AdvertMainCategories($params: OfficialJournalOfIcelandQueryInput!) {
+    officialJournalOfIcelandMainCategories(params: $params) {
       mainCategories {
         title
         slug
