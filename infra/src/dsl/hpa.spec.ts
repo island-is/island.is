@@ -40,7 +40,7 @@ describe('HPA definitions', () => {
           min: 2,
           max: 3,
         },
-        metric: { cpuAverageUtilization: 70, nginxRequestsIrate: 5 },
+        metric: { cpuAverageUtilization: 90, nginxRequestsIrate: 5 },
       },
     })
   })
