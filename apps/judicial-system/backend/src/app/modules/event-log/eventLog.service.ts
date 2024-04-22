@@ -52,6 +52,7 @@ export class EventLogService {
         userRole,
       })
     } catch (error) {
+      // Tolerate failure but log error
       this.logger.error('Failed to create event log', error)
     }
   }

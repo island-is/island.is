@@ -1,13 +1,13 @@
 import { Injectable } from '@nestjs/common'
-import { logger } from '@island.is/logging'
-import { ApolloError } from 'apollo-server-express'
 
+import { Auth, AuthMiddleware, User } from '@island.is/auth-nest-tools'
 import {
   ActorLocaleLocaleEnum,
   ConfirmationDtoResponse,
   UserProfileApi,
 } from '@island.is/clients/user-profile'
 import { handle204 } from '@island.is/clients/middlewares'
+import { FeatureFlagService, Features } from '@island.is/nest/feature-flags'
 
 import { DeleteIslykillSettings } from './models/deleteIslykillSettings.model'
 import { UpdateUserProfileInput } from './dto/updateUserProfileInput'
@@ -18,25 +18,11 @@ import { ConfirmSmsVerificationInput } from './dto/confirmSmsVerificationInput'
 import { ConfirmEmailVerificationInput } from './dto/confirmEmailVerificationInput'
 import { DeleteIslykillValueInput } from './dto/deleteIslykillValueInput'
 import { UserProfile } from './userProfile.model'
-import { Auth, AuthMiddleware, User } from '@island.is/auth-nest-tools'
 import { IslykillService } from './islykill.service'
 import { UserDeviceTokenInput } from './dto/userDeviceTokenInput'
 import { DataStatus } from './types/dataStatus.enum'
-import { FeatureFlagService, Features } from '@island.is/nest/feature-flags'
 import { UserProfileServiceV1 } from './V1/userProfile.service'
 import { UserProfileServiceV2 } from './V2/userProfile.service'
-
-/** Category to attach each log message to */
-const LOG_CATEGORY = 'userprofile-service'
-
-// eslint-disable-next-line
-const handleError = (error: any, details?: string) => {
-  logger.error(details || 'Userprofile error', {
-    error: JSON.stringify(error),
-    category: LOG_CATEGORY,
-  })
-  throw new ApolloError('Failed to resolve request', error.status)
-}
 
 @Injectable()
 export class UserProfileService {
@@ -108,25 +94,17 @@ export class UserProfileService {
       user.nationalId,
     )
     if (islyklarData.noUserFound) {
-      await this.islyklarService
-        .createIslykillSettings(user.nationalId, {
-          email: undefined,
-          mobile: undefined,
-        })
-        .catch((e) =>
-          handleError(e, `deleteIslykillValue:createIslykillSettings error`),
-        )
+      await this.islyklarService.createIslykillSettings(user.nationalId, {
+        email: undefined,
+        mobile: undefined,
+      })
     } else {
-      await this.islyklarService
-        .updateIslykillSettings(user.nationalId, {
-          email: input.email ? undefined : islyklarData.email,
-          mobile: input.mobilePhoneNumber ? undefined : islyklarData.mobile,
-          canNudge: islyklarData.canNudge,
-          bankInfo: islyklarData.bankInfo,
-        })
-        .catch((e) =>
-          handleError(e, `deleteIslykillValue:updateIslykillSettings error`),
-        )
+      await this.islyklarService.updateIslykillSettings(user.nationalId, {
+        email: input.email ? undefined : islyklarData.email,
+        mobile: input.mobilePhoneNumber ? undefined : islyklarData.mobile,
+        canNudge: islyklarData.canNudge,
+        bankInfo: islyklarData.bankInfo,
+      })
     }
 
     const profileUpdate = {
@@ -134,14 +112,10 @@ export class UserProfileService {
       ...(input.mobilePhoneNumber && { mobileStatus: DataStatus.EMPTY }),
     }
 
-    await this.userProfileApiWithAuth(user)
-      .userProfileControllerUpdate({
-        nationalId: user.nationalId,
-        updateUserProfileDto: profileUpdate,
-      })
-      .catch((e) =>
-        handleError(e, `deleteIslykillValue:userProfileControllerUpdate error`),
-      )
+    await this.userProfileApiWithAuth(user).userProfileControllerUpdate({
+      nationalId: user.nationalId,
+      updateUserProfileDto: profileUpdate,
+    })
 
     return {
       nationalId: user.nationalId,
@@ -191,21 +165,21 @@ export class UserProfileService {
     return service.confirmEmail(input, user)
   }
 
-  async addDeviceToken(input: UserDeviceTokenInput, user: User) {
-    return await this.userProfileApiWithAuth(user)
-      .userProfileControllerAddDeviceToken({
-        nationalId: user.nationalId,
-        deviceTokenDto: input,
-      })
-      .catch((e) => handleError(e, `addDeviceToken error`))
+  addDeviceToken(input: UserDeviceTokenInput, user: User) {
+    return this.userProfileApiWithAuth(
+      user,
+    ).userProfileControllerAddDeviceToken({
+      nationalId: user.nationalId,
+      deviceTokenDto: input,
+    })
   }
 
-  async deleteDeviceToken(input: UserDeviceTokenInput, user: User) {
-    return await this.userProfileApiWithAuth(user)
-      .userProfileControllerDeleteDeviceToken({
-        nationalId: user.nationalId,
-        deviceTokenDto: input,
-      })
-      .catch((e) => handleError(e, `deleteDeviceToken error`))
+  deleteDeviceToken(input: UserDeviceTokenInput, user: User) {
+    return this.userProfileApiWithAuth(
+      user,
+    ).userProfileControllerDeleteDeviceToken({
+      nationalId: user.nationalId,
+      deviceTokenDto: input,
+    })
   }
 }

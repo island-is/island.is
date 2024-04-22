@@ -1,7 +1,8 @@
 import { EnergyFundVehicleDetailsWithGrant } from '@island.is/api/schema'
-import { formatText } from '@island.is/application/core'
+import { formatText, getValueViaPath } from '@island.is/application/core'
 import {
   Application,
+  ExternalData,
   FormText,
   FormatMessage,
 } from '@island.is/application/types'
@@ -37,4 +38,16 @@ export const energyFundsLabel = function (
       formatMessage,
     )
   }
+}
+
+export const mustInspectBeforeStreetRegistration = (
+  externalData: ExternalData,
+  regNumber: string,
+) => {
+  const inspectBeforeTypes = getValueViaPath(
+    externalData,
+    'typesMustInspectBeforeRegistration.data',
+    [],
+  ) as string[]
+  return inspectBeforeTypes?.includes(regNumber.substring(0, 2)) || false
 }
