@@ -52,8 +52,8 @@ export const serviceSetup = (services: {
         ]),
       },
       USER_NOTIFICATION_CLIENT_URL: {
-        dev: ref((h) => h.svc(services.userNotification)),
-        staging: ref((h) => h.svc(services.userNotification)),
+        dev: ref((h) => `http://${h.svc(services.userNotification)}`),
+        staging: ref((h) => `http://${h.svc(services.userNotification)}`),
         prod: 'https://user-notification.internal.island.is',
       },
     })
