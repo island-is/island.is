@@ -17,6 +17,7 @@ import {
   YES,
   defineTemplateApi,
   NationalRegistrySpouseApi,
+  UserProfileApi,
 } from '@island.is/application/types'
 import {
   coreMessages,
@@ -87,6 +88,11 @@ const HouseholdSupplementTemplate: ApplicationTemplate<
                 NationalRegistryUserApi,
                 NationalRegistryCohabitantsApi,
                 NationalRegistrySpouseApi,
+                UserProfileApi.configure({
+                  params: {
+                    validateEmail: true,
+                  },
+                }),
                 SocialInsuranceAdministrationApplicantApi,
                 SocialInsuranceAdministrationCurrenciesApi,
                 SocialInsuranceAdministrationIsApplicantEligibleApi,

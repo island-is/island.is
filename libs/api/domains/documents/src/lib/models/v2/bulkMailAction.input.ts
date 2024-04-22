@@ -19,11 +19,6 @@ export class MailActionInput {
   documentIds!: Array<string>
 
   @Field()
-  @IsString()
-  @IsPersonNationalId()
-  nationalId!: string
-
-  @Field()
   @IsEnum(MailAction)
   action!: MailAction
 }

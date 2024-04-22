@@ -645,6 +645,7 @@ application-system-api:
     XROAD_TLS_BASE_PATH: 'https://securityserver.dev01.devland.is'
     XROAD_TLS_BASE_PATH_WITH_ENV: 'https://securityserver.dev01.devland.is/r1/IS-DEV'
     XROAD_TR_PATH: 'IS-DEV/GOV/10008/TR-Protected/external-v1'
+    XROAD_VEHICLES_MILEAGE_PATH: 'IS-DEV/GOV/10017/Samgongustofa-Protected/Vehicle-Mileagereading-V1'
     XROAD_VEHICLES_PATH: 'IS-DEV/GOV/10017/Samgongustofa-Protected/Mitt-Svaedi-V1'
     XROAD_VEHICLE_CODETABLES_PATH: 'IS-DEV/GOV/10017/Samgongustofa-Protected/Vehicle-Codetables-V1'
     XROAD_VEHICLE_INFOLOCKS_PATH: 'IS-DEV/GOV/10017/Samgongustofa-Protected/Vehicle-Infolocks-V1'
@@ -2127,6 +2128,8 @@ service-portal:
 service-portal-api:
   enabled: true
   env:
+    AUTH_DELEGATION_API_URL: 'http://web-services-auth-delegation-api.identity-server-delegation.svc.cluster.local'
+    AUTH_DELEGATION_MACHINE_CLIENT_SCOPE: '["@island.is/auth/delegations/index:system"]'
     DB_HOST: 'postgres-applications.internal'
     DB_NAME: 'service_portal_api'
     DB_REPLICAS_HOST: 'postgres-applications-reader.internal'
@@ -2135,11 +2138,20 @@ service-portal-api:
     IDENTITY_SERVER_ISSUER_URL: 'https://identity-server.dev01.devland.is'
     ISLYKILL_CERT: '/etc/config/islyklar.p12'
     LOG_LEVEL: 'info'
+    NATIONAL_REGISTRY_B2C_CLIENT_ID: 'b464afdd-056b-406d-b650-6d41733cfeb7'
+    NATIONAL_REGISTRY_B2C_ENDPOINT: 'https://skraidentitydev.b2clogin.com/skraidentitydev.onmicrosoft.com/b2c_1_midlun_flow/oauth2/v2.0/token'
+    NATIONAL_REGISTRY_B2C_PATH: 'IS-DEV/GOV/10001/SKRA-Cloud-Protected/Midlun-v1'
+    NATIONAL_REGISTRY_B2C_SCOPE: 'https://skraidentitydev.onmicrosoft.com/midlun/.default'
     NODE_OPTIONS: '--max-old-space-size=921'
     NOVA_ACCEPT_UNAUTHORIZED: 'true'
     SERVERSIDE_FEATURES_ON: ''
     SERVICE_PORTAL_BASE_URL: 'https://beta.dev01.devland.is/minarsidur'
     USER_PROFILE_WORKER_PAGE_SIZE: '3000'
+    XROAD_BASE_PATH: 'http://securityserver.dev01.devland.is'
+    XROAD_BASE_PATH_WITH_ENV: 'http://securityserver.dev01.devland.is/r1/IS-DEV'
+    XROAD_CLIENT_ID: 'IS-DEV/GOV/10000/island-is-client'
+    XROAD_TLS_BASE_PATH: 'https://securityserver.dev01.devland.is'
+    XROAD_TLS_BASE_PATH_WITH_ENV: 'https://securityserver.dev01.devland.is/r1/IS-DEV'
   files:
     - 'islyklar.p12'
   grantNamespaces:
@@ -2223,8 +2235,11 @@ service-portal-api:
     EMAIL_FROM_NAME: '/k8s/service-portal/api/EMAIL_FROM_NAME'
     EMAIL_REPLY_TO: '/k8s/service-portal/api/EMAIL_REPLY_TO'
     EMAIL_REPLY_TO_NAME: '/k8s/service-portal/api/EMAIL_REPLY_TO_NAME'
+    IDENTITY_SERVER_CLIENT_ID: '/k8s/service-portal/api/SERVICE_PORTAL_API_CLIENT_ID'
+    IDENTITY_SERVER_CLIENT_SECRET: '/k8s/service-portal/api/SERVICE_PORTAL_API_CLIENT_SECRET'
     ISLYKILL_SERVICE_BASEPATH: '/k8s/api/ISLYKILL_SERVICE_BASEPATH'
     ISLYKILL_SERVICE_PASSPHRASE: '/k8s/api/ISLYKILL_SERVICE_PASSPHRASE'
+    NATIONAL_REGISTRY_B2C_CLIENT_SECRET: '/k8s/api/NATIONAL_REGISTRY_B2C_CLIENT_SECRET'
     NOVA_PASSWORD: '/k8s/gjafakort/NOVA_PASSWORD'
     NOVA_URL: '/k8s/service-portal-api/NOVA_URL'
     NOVA_USERNAME: '/k8s/gjafakort/NOVA_USERNAME'
@@ -2244,6 +2259,8 @@ service-portal-api-worker:
     - 'node'
   enabled: true
   env:
+    AUTH_DELEGATION_API_URL: 'http://web-services-auth-delegation-api.identity-server-delegation.svc.cluster.local'
+    AUTH_DELEGATION_MACHINE_CLIENT_SCOPE: '["@island.is/auth/delegations/index:system"]'
     DB_HOST: 'postgres-applications.internal'
     DB_NAME: 'service_portal_api'
     DB_REPLICAS_HOST: 'postgres-applications-reader.internal'
@@ -2308,8 +2325,11 @@ service-portal-api-worker:
     EMAIL_FROM_NAME: '/k8s/service-portal/api/EMAIL_FROM_NAME'
     EMAIL_REPLY_TO: '/k8s/service-portal/api/EMAIL_REPLY_TO'
     EMAIL_REPLY_TO_NAME: '/k8s/service-portal/api/EMAIL_REPLY_TO_NAME'
+    IDENTITY_SERVER_CLIENT_ID: '/k8s/service-portal/api/SERVICE_PORTAL_API_CLIENT_ID'
+    IDENTITY_SERVER_CLIENT_SECRET: '/k8s/service-portal/api/SERVICE_PORTAL_API_CLIENT_SECRET'
     ISLYKILL_SERVICE_BASEPATH: '/k8s/api/ISLYKILL_SERVICE_BASEPATH'
     ISLYKILL_SERVICE_PASSPHRASE: '/k8s/api/ISLYKILL_SERVICE_PASSPHRASE'
+    NATIONAL_REGISTRY_B2C_CLIENT_SECRET: '/k8s/api/NATIONAL_REGISTRY_B2C_CLIENT_SECRET'
     NOVA_PASSWORD: '/k8s/gjafakort/NOVA_PASSWORD'
     NOVA_URL: '/k8s/service-portal-api/NOVA_URL'
     NOVA_USERNAME: '/k8s/gjafakort/NOVA_USERNAME'
@@ -2588,6 +2608,7 @@ services-university-gateway:
   grantNamespaces:
     - 'islandis'
     - 'nginx-ingress-internal'
+    - 'application-system'
   grantNamespacesEnabled: true
   healthCheck:
     liveness:
@@ -2716,6 +2737,7 @@ services-university-gateway-worker:
   grantNamespaces:
     - 'islandis'
     - 'nginx-ingress-internal'
+    - 'application-system'
   grantNamespacesEnabled: true
   healthCheck:
     liveness:
@@ -2953,6 +2975,8 @@ user-notification:
     NATIONAL_REGISTRY_B2C_SCOPE: 'https://skraidentitydev.onmicrosoft.com/midlun/.default'
     NODE_OPTIONS: '--max-old-space-size=345'
     SERVERSIDE_FEATURES_ON: ''
+    SERVICE_PORTAL_CLICK_ACTION_URL: 'https://island.is/minarsidur'
+    USER_NOTIFICATION_APP_PROTOCOL: 'is.island.app.dev'
     USER_PROFILE_CLIENT_URL: 'http://web-service-portal-api.service-portal.svc.cluster.local'
     XROAD_BASE_PATH: 'http://securityserver.dev01.devland.is'
     XROAD_BASE_PATH_WITH_ENV: 'http://securityserver.dev01.devland.is/r1/IS-DEV'
@@ -2961,6 +2985,7 @@ user-notification:
     XROAD_TLS_BASE_PATH_WITH_ENV: 'https://securityserver.dev01.devland.is/r1/IS-DEV'
   grantNamespaces:
     - 'nginx-ingress-internal'
+    - 'identity-server'
   grantNamespacesEnabled: true
   healthCheck:
     liveness:
@@ -3043,6 +3068,7 @@ user-notification-cleanup-worker:
     SERVERSIDE_FEATURES_ON: ''
   grantNamespaces:
     - 'nginx-ingress-internal'
+    - 'identity-server'
   grantNamespacesEnabled: true
   healthCheck:
     liveness:
@@ -3142,6 +3168,7 @@ user-notification-worker:
     NATIONAL_REGISTRY_B2C_SCOPE: 'https://skraidentitydev.onmicrosoft.com/midlun/.default'
     NODE_OPTIONS: '--max-old-space-size=345'
     SERVERSIDE_FEATURES_ON: ''
+    SERVICE_PORTAL_CLICK_ACTION_URL: 'https://island.is/minarsidur'
     USER_NOTIFICATION_APP_PROTOCOL: 'is.island.app.dev'
     USER_PROFILE_CLIENT_URL: 'http://web-service-portal-api.service-portal.svc.cluster.local'
     XROAD_BASE_PATH: 'http://securityserver.dev01.devland.is'
@@ -3151,6 +3178,7 @@ user-notification-worker:
     XROAD_TLS_BASE_PATH_WITH_ENV: 'https://securityserver.dev01.devland.is/r1/IS-DEV'
   grantNamespaces:
     - 'nginx-ingress-internal'
+    - 'identity-server'
   grantNamespacesEnabled: true
   healthCheck:
     liveness:
