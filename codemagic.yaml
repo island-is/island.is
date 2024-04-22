@@ -17,13 +17,13 @@ workflows:
         APP_STORE_APPLE_ID: 1569828682
     scripts:
       - name: Install npm dependencies
+        working_directory: .
         script: |
           yarn install --immutable
-      - name: Set Info.plist values
+      - name: Run codegen
+        working_directory: .
         script: |
-          PLIST=ios/$XCODE_SCHEME/Info.plist
-          PLIST_BUDDY=/usr/libexec/PlistBuddy
-          $PLIST_BUDDY -c "Add :ITSAppUsesNonExemptEncryption bool false" $PLIST
+          yarn codegen
       - name: Install CocoaPods dependencies
         script: |
           cd ios && pod install
@@ -31,7 +31,7 @@ workflows:
         script: xcode-project use-profiles
       - name: Increment build number
         script: |
-          cd $CM_BUILD_DIR/ios
+          cd ios
           LATEST_BUILD_NUMBER=$(app-store-connect get-latest-app-store-build-number "$APP_STORE_APPLE_ID")
           agvtool new-version -all $(($LATEST_BUILD_NUMBER + 1))
       - name: Build ipa for distribution
