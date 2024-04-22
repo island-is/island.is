@@ -6,10 +6,10 @@ export enum AdvertSignatureBodyTypeEnum {
 }
 
 registerEnumType(AdvertSignatureBodyTypeEnum, {
-  name: 'MinistryOfJusticeAdvertSignatureType',
+  name: 'OfficialJournalOfIcelandAdvertSignatureType',
 })
 
-@InputType('MinistryOfJusticeAdvertsInput')
+@InputType('OfficialJournalOfIcelandAdvertsInput')
 export class AdvertsInput {
   @Field(() => String, { nullable: true })
   search?: string
@@ -36,7 +36,7 @@ export class AdvertsInput {
   dateTo?: string
 }
 
-@InputType('MinistryOfJusticeTypesInput')
+@InputType('OfficialJournalOfIcelandTypesInput')
 export class TypeQueryParams {
   @Field(() => String, { nullable: true })
   search?: string
@@ -48,13 +48,13 @@ export class TypeQueryParams {
   page?: number
 }
 
-@InputType('MinistryOfJusticeAdvertQuery')
+@InputType('OfficialJournalOfIcelandAdvertQuery')
 export class AdvertQueryParams {
   @Field(() => String)
   id!: string
 }
 
-@InputType('MinistryOfJusticeQueryInput')
+@InputType('OfficialJournalOfIcelandQueryInput')
 export class QueryParams {
   @Field(() => String, { nullable: true })
   search?: string
@@ -63,7 +63,7 @@ export class QueryParams {
   page?: number
 }
 
-@InputType('MinistryOfJusticeAdvertSignatureMember')
+@InputType('OfficialJournalOfIcelandAdvertSignatureMember')
 export class AdvertSignatureMember {
   @Field(() => Boolean)
   isChairman!: boolean
@@ -80,7 +80,7 @@ export class AdvertSignatureMember {
   @Field(() => String, { nullable: true })
   textBelow?: string
 }
-@InputType('MinistryOfJusticeAdvertSignatureData')
+@InputType('OfficialJournalOfIcelandAdvertSignatureData')
 export class AdvertSignatureData {
   @Field(() => String)
   institution!: string
@@ -91,7 +91,7 @@ export class AdvertSignatureData {
   @Field(() => [AdvertSignatureMember])
   members!: AdvertSignatureMember[]
 }
-@InputType('MinistryOfJusticeAdvertSignature')
+@InputType('OfficialJournalOfIcelandAdvertSignature')
 export class AdvertSignature {
   @Field(() => AdvertSignatureBodyTypeEnum)
   type!: AdvertSignatureBodyTypeEnum
@@ -103,7 +103,7 @@ export class AdvertSignature {
   data!: AdvertSignatureData[]
 }
 
-@InputType('MinistryOfJusticeSubmitApplicationInput')
+@InputType('OfficialJournalOfIcelandSubmitApplicationInput')
 export class SubmitApplicationInput {
   @Field(() => String)
   applicationId!: string
