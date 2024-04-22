@@ -42,6 +42,9 @@ const ListPageEditor = () => {
   const [page, setPage] = useState(0)
   const pageRef = useRef(0)
 
+  /** Counter that's simply used to refresh the list when an item gets created */
+  const [counter, setCounter] = useState(0)
+
   const skip = LIST_ITEMS_PER_PAGE * page
 
   useDebounce(
@@ -70,7 +73,7 @@ const ListPageEditor = () => {
       }
     },
     SEARCH_DEBOUNCE_TIME_IN_MS,
-    [page, searchValue],
+    [page, searchValue, counter],
   )
 
   const createListItem = async () => {
@@ -91,12 +94,22 @@ const ListPageEditor = () => {
               },
             },
           },
+          thumbnailContent: {
+            // TODO: make this dynamic for all locales
+            [sdk.locales.default]:
+              sdk.entry.fields.listItemThumbnailContentTemplate.getValue(
+                sdk.locales.default,
+              ),
+            ['en']:
+              sdk.entry.fields.listItemThumbnailContentTemplate.getValue('en'),
+          },
         },
       },
     )
     sdk.navigator.openEntry(listItem.sys.id, {
       slideIn: true,
     })
+    setCounter((counter) => counter + 1)
   }
 
   const availableLocales = useMemo(() => {
@@ -121,6 +134,7 @@ const ListPageEditor = () => {
       paddingLeft="spacingL"
       paddingRight="spacingL"
       paddingTop="spacingL"
+      paddingBottom="spacingL"
       style={{ display: 'flex', flexFlow: 'column nowrap', gap: '32px' }}
     >
       <Box>
@@ -160,6 +174,8 @@ const ListPageEditor = () => {
           onChange={(ev) => {
             searchValueRef.current = ev.target.value
             setSearchValue(ev.target.value)
+            setPage(0)
+            pageRef.current = 0
           }}
         />
 
