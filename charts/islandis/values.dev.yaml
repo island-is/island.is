@@ -31,7 +31,7 @@ air-discount-scheme-api:
   hpa:
     scaling:
       metric:
-        cpuAverageUtilization: 70
+        cpuAverageUtilization: 90
         nginxRequestsIrate: 20
       replicas:
         max: 10
@@ -119,7 +119,7 @@ air-discount-scheme-backend:
   hpa:
     scaling:
       metric:
-        cpuAverageUtilization: 70
+        cpuAverageUtilization: 90
         nginxRequestsIrate: 20
       replicas:
         max: 10
@@ -218,7 +218,7 @@ air-discount-scheme-web:
   hpa:
     scaling:
       metric:
-        cpuAverageUtilization: 70
+        cpuAverageUtilization: 90
         nginxRequestsIrate: 20
       replicas:
         max: 10
@@ -418,7 +418,7 @@ api:
   hpa:
     scaling:
       metric:
-        cpuAverageUtilization: 70
+        cpuAverageUtilization: 90
         nginxRequestsIrate: 5
       replicas:
         max: 50
@@ -675,7 +675,7 @@ application-system-api:
   hpa:
     scaling:
       metric:
-        cpuAverageUtilization: 70
+        cpuAverageUtilization: 90
         nginxRequestsIrate: 5
       replicas:
         max: 60
@@ -839,7 +839,7 @@ application-system-api-worker:
   hpa:
     scaling:
       metric:
-        cpuAverageUtilization: 70
+        cpuAverageUtilization: 90
         nginxRequestsIrate: 5
       replicas:
         max: 3
@@ -916,7 +916,7 @@ application-system-form:
   hpa:
     scaling:
       metric:
-        cpuAverageUtilization: 70
+        cpuAverageUtilization: 90
         nginxRequestsIrate: 5
       replicas:
         max: 3
@@ -983,7 +983,7 @@ consultation-portal:
   hpa:
     scaling:
       metric:
-        cpuAverageUtilization: 70
+        cpuAverageUtilization: 90
         nginxRequestsIrate: 5
       replicas:
         max: 30
@@ -1044,7 +1044,7 @@ contentful-apps:
   hpa:
     scaling:
       metric:
-        cpuAverageUtilization: 70
+        cpuAverageUtilization: 90
         nginxRequestsIrate: 5
       replicas:
         max: 10
@@ -1108,7 +1108,7 @@ contentful-entry-tagger-service:
   hpa:
     scaling:
       metric:
-        cpuAverageUtilization: 70
+        cpuAverageUtilization: 90
         nginxRequestsIrate: 5
       replicas:
         max: 3
@@ -1196,7 +1196,7 @@ download-service:
   hpa:
     scaling:
       metric:
-        cpuAverageUtilization: 70
+        cpuAverageUtilization: 90
         nginxRequestsIrate: 5
       replicas:
         max: 3
@@ -1291,7 +1291,7 @@ endorsement-system-api:
   hpa:
     scaling:
       metric:
-        cpuAverageUtilization: 70
+        cpuAverageUtilization: 90
         nginxRequestsIrate: 5
       replicas:
         max: 3
@@ -1382,7 +1382,7 @@ external-contracts-tests:
   hpa:
     scaling:
       metric:
-        cpuAverageUtilization: 70
+        cpuAverageUtilization: 90
         nginxRequestsIrate: 5
       replicas:
         max: 3
@@ -1441,7 +1441,7 @@ github-actions-cache:
   hpa:
     scaling:
       metric:
-        cpuAverageUtilization: 70
+        cpuAverageUtilization: 90
         nginxRequestsIrate: 5
       replicas:
         max: 8
@@ -1522,7 +1522,7 @@ icelandic-names-registry-backend:
   hpa:
     scaling:
       metric:
-        cpuAverageUtilization: 70
+        cpuAverageUtilization: 90
         nginxRequestsIrate: 5
       replicas:
         max: 3
@@ -1607,7 +1607,7 @@ island-ui-storybook:
   hpa:
     scaling:
       metric:
-        cpuAverageUtilization: 70
+        cpuAverageUtilization: 90
         nginxRequestsIrate: 5
       replicas:
         max: 3
@@ -1680,7 +1680,7 @@ license-api:
   hpa:
     scaling:
       metric:
-        cpuAverageUtilization: 70
+        cpuAverageUtilization: 90
         nginxRequestsIrate: 5
       replicas:
         max: 10
@@ -1787,7 +1787,7 @@ portals-admin:
   hpa:
     scaling:
       metric:
-        cpuAverageUtilization: 70
+        cpuAverageUtilization: 90
         nginxRequestsIrate: 5
       replicas:
         max: 30
@@ -1865,7 +1865,7 @@ regulations-admin-backend:
   hpa:
     scaling:
       metric:
-        cpuAverageUtilization: 70
+        cpuAverageUtilization: 90
         nginxRequestsIrate: 5
       replicas:
         max: 3
@@ -1950,7 +1950,7 @@ search-indexer-service:
   hpa:
     scaling:
       metric:
-        cpuAverageUtilization: 70
+        cpuAverageUtilization: 90
         nginxRequestsIrate: 5
       replicas:
         max: 1
@@ -2083,7 +2083,7 @@ service-portal:
   hpa:
     scaling:
       metric:
-        cpuAverageUtilization: 70
+        cpuAverageUtilization: 90
         nginxRequestsIrate: 5
       replicas:
         max: 30
@@ -2160,7 +2160,7 @@ service-portal-api:
   hpa:
     scaling:
       metric:
-        cpuAverageUtilization: 70
+        cpuAverageUtilization: 90
         nginxRequestsIrate: 5
       replicas:
         max: 30
@@ -2278,7 +2278,7 @@ service-portal-api-worker:
   hpa:
     scaling:
       metric:
-        cpuAverageUtilization: 70
+        cpuAverageUtilization: 90
         nginxRequestsIrate: 5
       replicas:
         max: 3
@@ -2343,7 +2343,7 @@ services-documents:
   hpa:
     scaling:
       metric:
-        cpuAverageUtilization: 70
+        cpuAverageUtilization: 90
         nginxRequestsIrate: 5
       replicas:
         max: 3
@@ -2424,7 +2424,7 @@ services-sessions:
   hpa:
     scaling:
       metric:
-        cpuAverageUtilization: 70
+        cpuAverageUtilization: 90
         nginxRequestsIrate: 5
       replicas:
         max: 10
@@ -2497,7 +2497,7 @@ services-sessions-worker:
   hpa:
     scaling:
       metric:
-        cpuAverageUtilization: 70
+        cpuAverageUtilization: 90
         nginxRequestsIrate: 5
       replicas:
         max: 3
@@ -2601,7 +2601,7 @@ services-university-gateway:
   hpa:
     scaling:
       metric:
-        cpuAverageUtilization: 70
+        cpuAverageUtilization: 90
         nginxRequestsIrate: 5
       replicas:
         max: 10
@@ -2729,7 +2729,7 @@ services-university-gateway-worker:
   hpa:
     scaling:
       metric:
-        cpuAverageUtilization: 70
+        cpuAverageUtilization: 90
         nginxRequestsIrate: 5
       replicas:
         max: 3
@@ -2789,7 +2789,7 @@ skilavottord-web:
   hpa:
     scaling:
       metric:
-        cpuAverageUtilization: 70
+        cpuAverageUtilization: 90
         nginxRequestsIrate: 5
       replicas:
         max: 3
@@ -2859,7 +2859,7 @@ skilavottord-ws:
   hpa:
     scaling:
       metric:
-        cpuAverageUtilization: 70
+        cpuAverageUtilization: 90
         nginxRequestsIrate: 5
       replicas:
         max: 3
@@ -2974,7 +2974,7 @@ user-notification:
   hpa:
     scaling:
       metric:
-        cpuAverageUtilization: 70
+        cpuAverageUtilization: 90
         nginxRequestsIrate: 5
       replicas:
         max: 3
@@ -3056,7 +3056,7 @@ user-notification-cleanup-worker:
   hpa:
     scaling:
       metric:
-        cpuAverageUtilization: 70
+        cpuAverageUtilization: 90
         nginxRequestsIrate: 5
       replicas:
         max: 3
@@ -3164,7 +3164,7 @@ user-notification-worker:
   hpa:
     scaling:
       metric:
-        cpuAverageUtilization: 70
+        cpuAverageUtilization: 90
         nginxRequestsIrate: 5
       replicas:
         max: 2
@@ -3258,7 +3258,7 @@ web:
   hpa:
     scaling:
       metric:
-        cpuAverageUtilization: 70
+        cpuAverageUtilization: 90
         nginxRequestsIrate: 5
       replicas:
         max: 50
@@ -3330,7 +3330,7 @@ xroad-collector:
   hpa:
     scaling:
       metric:
-        cpuAverageUtilization: 70
+        cpuAverageUtilization: 90
         nginxRequestsIrate: 5
       replicas:
         max: 3
