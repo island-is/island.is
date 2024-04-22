@@ -86,7 +86,11 @@ const HouseholdSupplementTemplate: ApplicationTemplate<
                 NationalRegistryUserApi,
                 NationalRegistryCohabitantsApi,
                 NationalRegistrySpouseApi,
-                UserProfileApi,
+                UserProfileApi.configure({
+                  params: {
+                    validateEmail: true,
+                  },
+                }),
                 SocialInsuranceAdministrationApplicantApi,
                 SocialInsuranceAdministrationCurrenciesApi,
                 SocialInsuranceAdministrationIsApplicantEligibleApi,

@@ -79,7 +79,11 @@ const PensionSupplementTemplate: ApplicationTemplate<
               write: 'all',
               api: [
                 NationalRegistryUserApi,
-                UserProfileApi,
+                UserProfileApi.configure({
+                  params: {
+                    validateEmail: true,
+                  },
+                }),
                 SocialInsuranceAdministrationApplicantApi,
                 SocialInsuranceAdministrationCurrenciesApi,
                 SocialInsuranceAdministrationIsApplicantEligibleApi,
