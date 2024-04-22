@@ -13,6 +13,8 @@ type UpdateUserProfileData = {
   mobileStatus?: string
   emailCode?: string
   smsCode?: string
+  documentNotifications?: boolean
+  emailNotifications?: boolean
 }
 
 export const useUpdateOrCreateUserProfile = () => {

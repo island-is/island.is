@@ -44,7 +44,7 @@ export const filterNavigationTree = ({
     })
   })
 
-  // If the item is not included but one or more of it's descendants are
+  // If the item is not included but one or more of its descendants are
   // We remove the item's path but include it in the tree
   const onlyDescendantsIncluded =
     !included && Array.isArray(item.children) && item.children.length > 0

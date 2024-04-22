@@ -387,3 +387,51 @@ export const mCompany = defineMessages({
     defaultMessage: 'ÍSAT Atvinnugreinaflokkun',
   },
 })
+
+export const mNotifications = defineMessages({
+  intro: {
+    id: 'sp.notifications:intro-text',
+    defaultMessage:
+      'Veldu hvernig þú vilt að stofnanir geti sent þér tilkynningar.',
+  },
+  emailNotifications: {
+    id: 'sp.notifications:email-notifications',
+    defaultMessage: 'Tilkynningar í tölvupósti',
+  },
+  emailNotificationsDescription: {
+    id: 'sp.notifications:email-notifications-description',
+    defaultMessage: 'Stofnanir geta sent þér tilkynningu með tölvupósti.',
+  },
+  emailNotificationsAriaLabel: {
+    id: 'sp.notifications:email-notifications-aria-label',
+    defaultMessage: 'Fá tilkynningar í tölvupósti?',
+  },
+  appNotifications: {
+    id: 'sp.notifications:app-notifications',
+    defaultMessage: 'Tilkynningar í Ísland.is appinu',
+  },
+  appNotificationsDescription: {
+    id: 'sp.notifications:app-notifications-description',
+    defaultMessage: 'Stofnanir geta sent þér tilkynniningar í Ísland.is appið.',
+  },
+  appNotificationsAriaLabel: {
+    id: 'sp.notifications:app-notifications-aria-label',
+    defaultMessage: 'Fá tilkynningar í Ísland.is appinu?',
+  },
+  delegations: {
+    id: 'sp.notifications:delegations',
+    defaultMessage: 'Umboð',
+  },
+  fetchErrorTitle: {
+    id: 'sp.notifications:fetch-error-title',
+    defaultMessage: 'Samband næst ekki',
+  },
+  fetchErrorMessage: {
+    id: 'sp.notifications:fetch-error-message',
+    defaultMessage: 'Villa kom upp í samskiptum við þjónustuaðila.',
+  },
+  updateError: {
+    id: 'sp.notifications:update-error',
+    defaultMessage: 'Ekki tókst að vista stillingar',
+  },
+})

@@ -712,6 +712,14 @@ export const m = defineMessages({
     id: 'service.portal:my-settings',
     defaultMessage: 'Mínar stillingar',
   },
+  mySettingsInformation: {
+    id: 'service.portal:my-settings-information',
+    defaultMessage: 'Upplýsingar',
+  },
+  mySettingsNotifications: {
+    id: 'service.portal:my-settings-notifications',
+    defaultMessage: 'Tilkynningar',
+  },
   lists: {
     id: 'service.portal:lists',
     defaultMessage: 'Listar',
