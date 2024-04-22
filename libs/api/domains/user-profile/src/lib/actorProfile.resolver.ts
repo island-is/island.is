@@ -11,7 +11,6 @@ import { UseGuards } from '@nestjs/common'
 import {
   CurrentUser,
   IdsUserGuard,
-  ScopesGuard,
   type User,
 } from '@island.is/auth-nest-tools'
 import { IdentityClientService } from '@island.is/clients/identity'
@@ -20,7 +19,7 @@ import { UserProfileService } from './userProfile.service'
 import { ActorProfile, ActorProfileResponse } from './dto/actorProfile'
 import { UpdateActorProfileInput } from './dto/updateActorProfileInput'
 
-@UseGuards(IdsUserGuard, ScopesGuard)
+@UseGuards(IdsUserGuard)
 @Resolver(() => ActorProfile)
 export class ActorProfileResolver {
   constructor(
@@ -40,7 +39,7 @@ export class ActorProfileResolver {
     @Args('input') input: UpdateActorProfileInput,
     @CurrentUser() user: User,
   ): Promise<ActorProfile> {
-    return await this.userUserProfileService.updateActorProfile(input, user)
+    return this.userUserProfileService.updateActorProfile(input, user)
   }
 
   @ResolveField('fromName', () => String, { nullable: true })
