@@ -9,6 +9,7 @@ import {
   CaseOrigin,
   CaseState,
   CaseType,
+  DateType,
   indictmentCases,
   InstitutionType,
   investigationCases,
@@ -26,6 +27,7 @@ import { FileService } from '../../../file'
 import { UserService } from '../../../user'
 import { UpdateCaseDto } from '../../dto/updateCase.dto'
 import { Case } from '../../models/case.model'
+import { DateLog } from '../../models/dateLog.model'
 
 jest.mock('../../../../factories')
 
@@ -68,6 +70,7 @@ describe('CaseController - Update', () => {
   let mockFileService: FileService
   let transaction: Transaction
   let mockCaseModel: typeof Case
+  let mockDateLogModel: typeof DateLog
   let givenWhenThen: GivenWhenThen
 
   beforeEach(async () => {
@@ -77,6 +80,7 @@ describe('CaseController - Update', () => {
       fileService,
       sequelize,
       caseModel,
+      dateLogModel,
       caseController,
     } = await createTestingCaseModule()
 
@@ -84,6 +88,7 @@ describe('CaseController - Update', () => {
     mockUserService = userService
     mockFileService = fileService
     mockCaseModel = caseModel
+    mockDateLogModel = dateLogModel
 
     const mockTransaction = sequelize.transaction as jest.Mock
     transaction = {} as Transaction
@@ -855,6 +860,22 @@ describe('CaseController - Update', () => {
           caseId,
         },
       ])
+    })
+  })
+
+  describe('court date updated', () => {
+    const courtDate = new Date()
+    const caseToUpdate = { courtDate }
+
+    beforeEach(async () => {
+      await givenWhenThen(caseId, user, theCase, caseToUpdate)
+    })
+
+    it('should post to queue', () => {
+      expect(mockDateLogModel.create).toHaveBeenCalledWith(
+        { dateType: DateType.COURT_DATE, caseId, date: courtDate },
+        { transaction },
+      )
     })
   })
 })
