@@ -55,7 +55,7 @@ const IndictmentOverview = () => {
   const courtDate = getLatestDateType(
     [DateType.COURT_DATE],
     workingCase.dateLogs,
-  )
+  ) as DateLog
 
   return (
     <PageLayout
