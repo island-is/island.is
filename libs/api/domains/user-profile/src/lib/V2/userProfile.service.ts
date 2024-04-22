@@ -100,21 +100,21 @@ export class UserProfileServiceV2 {
   }
 
   async getActorProfiles(user: User): Promise<ActorProfileResponse> {
-    return this.v2UserProfileApiWithAuth(user)
-      .meUserProfileControllerGetActorProfiles()
-
+    return this.v2UserProfileApiWithAuth(
+      user,
+    ).meUserProfileControllerGetActorProfiles()
   }
 
   async updateActorProfile(
     input: UpdateActorProfileInput,
     user: User,
   ): Promise<ActorProfile> {
-    return this.v2UserProfileApiWithAuth(user)
-      .meUserProfileControllerCreateOrUpdateActorProfile({
-        xParamFromNationalId: input.fromNationalId,
-        patchActorProfileDto: { emailNotifications: input.emailNotifications },
-      })
-
+    return this.v2UserProfileApiWithAuth(
+      user,
+    ).meUserProfileControllerCreateOrUpdateActorProfile({
+      xParamFromNationalId: input.fromNationalId,
+      patchActorProfileDto: { emailNotifications: input.emailNotifications },
+    })
   }
 
   async confirmSms(): Promise<ConfirmationDtoResponse> {

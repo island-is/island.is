@@ -39,7 +39,8 @@ export class UserProfileModule {
           basePath: config.islykill.basePath,
         }),
         UserProfileClientModule,
-        IdentityClientModule,],
+        IdentityClientModule,
+      ],
       exports: [],
     }
   }
