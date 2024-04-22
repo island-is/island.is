@@ -5,7 +5,7 @@ import {
   BadRequestException,
 } from '@nestjs/common'
 import { InjectModel } from '@nestjs/sequelize'
-import { Op, Sequelize } from 'sequelize'
+import { Op } from 'sequelize'
 import type { Logger } from '@island.is/logging'
 import { LOGGER_PROVIDER } from '@island.is/logging'
 import { EndorsementList } from './endorsementList.model'
