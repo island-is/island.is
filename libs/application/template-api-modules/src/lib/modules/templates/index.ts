@@ -105,8 +105,8 @@ import { CarRecyclingModule } from './car-recycling/car-recycling.module'
 import { CarRecyclingService } from './car-recycling/car-recycling.service'
 import { DrivingLicenseDuplicateModule } from './driving-license-duplicate/driving-license-duplicate.module'
 import { DrivingLicenseDuplicateService } from './driving-license-duplicate/driving-license-duplicate.service'
-import { OfficialJournalOfIcelandModule } from './official-journal-of-iceland/official-journal-of-iceland.module'
-import { OfficialJournalOfIcelandService } from './official-journal-of-iceland/official-journal-of-iceland.service'
+import { OfficialJournalOfIcelandTemplateModule } from './official-journal-of-iceland/official-journal-of-iceland.module'
+import { OfficialJournalOfIcelandTemaplateService } from './official-journal-of-iceland/official-journal-of-iceland.service'
 import { SocialInsuranceAdministrationModule } from './social-insurance-administration/social-insurance-administration.module'
 import { SocialInsuranceAdministrationService } from './social-insurance-administration/social-insurance-administration.service'
 import { ChangeMachineSupervisorTemplateModule } from './aosh/change-machine-supervisor/change-machine-supervisor.module'
@@ -189,7 +189,7 @@ export const modules = [
   DeregisterMachineTemplateModule,
   GrindavikHousingBuyoutModule,
   RequestInspectionTemplateModule,
-  OfficialJournalOfIcelandModule,
+  OfficialJournalOfIcelandTemplateModule,
   StreetRegistrationTemplateModule,
 ]
 
@@ -256,6 +256,6 @@ export const services = [
   DeregisterMachineTemplateService,
   GrindavikHousingBuyoutService,
   RequestInspectionTemplateService,
-  OfficialJournalOfIcelandService,
+  OfficialJournalOfIcelandTemaplateService,
   StreetRegistrationTemplateService,
 ]

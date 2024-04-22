@@ -199,6 +199,11 @@ export class UpdateCaseDto {
   @IsOptional()
   @IsString()
   @ApiPropertyOptional()
+  readonly postponedCourtDate?: Date
+
+  @IsOptional()
+  @IsString()
+  @ApiPropertyOptional()
   readonly courtLocation?: string
 
   @IsOptional()

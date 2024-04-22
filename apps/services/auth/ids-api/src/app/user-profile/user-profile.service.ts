@@ -1,6 +1,5 @@
 import { Inject, Injectable } from '@nestjs/common'
 
-import type { Auth, User } from '@island.is/auth-nest-tools'
 import { AuthMiddleware } from '@island.is/auth-nest-tools'
 import { FetchError } from '@island.is/clients/middlewares'
 import {
@@ -8,14 +7,15 @@ import {
   NationalRegistryClientService,
 } from '@island.is/clients/national-registry-v2'
 import { CompanyRegistryClientService } from '@island.is/clients/rsk/company-registry'
-import { UserProfileApi } from '@island.is/clients/user-profile'
-import type { Logger } from '@island.is/logging'
+import { V2MeApi } from '@island.is/clients/user-profile'
 import { LOGGER_PROVIDER } from '@island.is/logging'
 
-import type { GenderValue } from './dto/user-profile.dto'
-import { UserProfileDTO } from './dto/user-profile.dto'
 import { AddressDTO } from './dto/address.dto'
+import { UserProfileDTO } from './dto/user-profile.dto'
 
+import type { Auth, User } from '@island.is/auth-nest-tools'
+import type { Logger } from '@island.is/logging'
+import type { GenderValue } from './dto/user-profile.dto'
 interface Address extends NationalRegistryAddress {
   country?: string
 }
@@ -34,7 +34,7 @@ export class UserProfileService {
 
   constructor(
     private individualClient: NationalRegistryClientService,
-    private userProfileApi: UserProfileApi,
+    private userProfileApi: V2MeApi,
     private companyRegistryApi: CompanyRegistryClientService,
     @Inject(LOGGER_PROVIDER)
     private logger: Logger,
@@ -130,14 +130,18 @@ export class UserProfileService {
   private async getClaimsFromUserProfile(auth: User): Promise<UserProfileDTO> {
     const userProfile = await this.userProfileApiWithAuth(
       auth,
-    ).userProfileControllerFindOneByNationalId({
-      nationalId: auth.nationalId,
-    })
+    ).meUserProfileControllerFindUserProfile()
     return {
-      email: userProfile.email,
-      emailVerified: userProfile.emailVerified,
-      phoneNumber: userProfile.mobilePhoneNumber,
-      phoneNumberVerified: userProfile.mobilePhoneNumberVerified,
+      email: userProfile.isRestricted ? undefined : userProfile.email,
+      emailVerified: userProfile.isRestricted
+        ? undefined
+        : userProfile.emailVerified,
+      phoneNumber: userProfile.isRestricted
+        ? undefined
+        : userProfile.mobilePhoneNumber,
+      phoneNumberVerified: userProfile.isRestricted
+        ? undefined
+        : userProfile.mobilePhoneNumberVerified,
       locale: userProfile.locale,
       picture: userProfile.profileImageUrl,
     }

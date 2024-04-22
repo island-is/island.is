@@ -43,4 +43,8 @@ export class DateLog extends Model {
   @Column({ type: DataType.DATE })
   @ApiPropertyOptional()
   date!: Date
+
+  @Column({ type: DataType.STRING })
+  @ApiPropertyOptional()
+  location!: string
 }

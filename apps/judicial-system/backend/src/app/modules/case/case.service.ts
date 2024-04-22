@@ -160,6 +160,7 @@ export interface UpdateCase
   courtRecordSignatureDate?: Date | null
   parentCaseId?: string | null
   courtDate?: Date | null
+  postponedCourtDate?: Date | null
 }
 
 const eventTypes = Object.values(EventType)
@@ -1188,11 +1189,24 @@ export class CaseService {
           dateType: DateType.COURT_DATE,
           caseId: theCase.id,
           date: update.courtDate,
+          location: update.courtRoom,
         },
         { transaction },
       )
 
       delete update.courtDate
+    } else if (update.postponedCourtDate) {
+      await this.dateLogModel.create(
+        {
+          dateType: DateType.POSTPONED_COURT_DATE,
+          caseId: theCase.id,
+          date: update.postponedCourtDate,
+          location: update.courtRoom,
+        },
+        { transaction },
+      )
+
+      delete update.postponedCourtDate
     }
   }
 
