@@ -266,17 +266,10 @@ export class AnnouncementOfDeathService extends BaseTemplateApiService {
           'Application submission failed on syslumadur upload data',
         )
       }
-      console.log(
-        '🚀 ~ AnnouncementOfDeathService ~ submitApplication ~ (answers.firearmsApplicant:',
-        answers.firearmApplicant,
-      )
       if (answers.firearmApplicant) {
         try {
-          console.log('sending email')
           await this.emailService.sendEmail(
-            generateFirearmApplicantEmail(
-              (answers.firearmApplicant as any).email,
-            ),
+            generateFirearmApplicantEmail(answers.firearmApplicant.email),
           )
         } catch (e) {
           this.log(
