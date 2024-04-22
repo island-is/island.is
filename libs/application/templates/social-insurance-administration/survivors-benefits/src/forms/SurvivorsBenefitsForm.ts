@@ -4,7 +4,6 @@ import {
   buildFileUploadField,
   buildForm,
   buildMultiField,
-  buildPhoneField,
   buildRadioField,
   buildSection,
   buildSelectField,
@@ -19,7 +18,6 @@ import {
   YES,
 } from '@island.is/application/types'
 import { Form, FormModes } from '@island.is/application/types'
-import Logo from '../assets/Logo'
 import { survivorsBenefitsFormMessage } from '../lib/messages'
 import { socialInsuranceAdministrationMessage } from '@island.is/application/templates/social-insurance-administration-core/lib/messages'
 import {
@@ -27,8 +25,10 @@ import {
   TaxLevelOptions,
   fileUploadSharedProps,
 } from '@island.is/application/templates/social-insurance-administration-core/lib/constants'
-import { ApplicantInfo } from '@island.is/application/templates/social-insurance-administration-core/types'
-import { buildFormConclusionSection } from '@island.is/application/ui-forms'
+import {
+  applicantInformationMultiField,
+  buildFormConclusionSection,
+} from '@island.is/application/ui-forms'
 import isEmpty from 'lodash/isEmpty'
 import {
   getApplicationAnswers,
@@ -44,6 +44,7 @@ import {
   getTaxOptions,
   getYesNoOptions,
 } from '@island.is/application/templates/social-insurance-administration-core/lib/socialInsuranceAdministrationUtils'
+import Logo from '@island.is/application/templates/social-insurance-administration-core/assets/Logo'
 
 export const SurvivorsBenefitsForm: Form = buildForm({
   id: 'SurvivorsBenefitsDraft',
@@ -62,42 +63,14 @@ export const SurvivorsBenefitsForm: Form = buildForm({
       children: [
         buildSubSection({
           id: 'info',
-          title: socialInsuranceAdministrationMessage.info.subSectionTitle,
+          title: socialInsuranceAdministrationMessage.info.infoSubSectionTitle,
           children: [
-            buildMultiField({
-              id: 'applicantInfo',
-              title: socialInsuranceAdministrationMessage.info.subSectionTitle,
-              description:
-                socialInsuranceAdministrationMessage.info.subSectionDescription,
-              children: [
-                buildTextField({
-                  id: 'applicantInfo.email',
-                  title:
-                    socialInsuranceAdministrationMessage.info.applicantEmail,
-                  width: 'half',
-                  variant: 'email',
-                  disabled: true,
-                  defaultValue: (application: Application) => {
-                    const data = application.externalData
-                      .socialInsuranceAdministrationApplicant
-                      .data as ApplicantInfo
-                    return data.emailAddress
-                  },
-                }),
-                buildPhoneField({
-                  id: 'applicantInfo.phonenumber',
-                  title:
-                    socialInsuranceAdministrationMessage.info
-                      .applicantPhonenumber,
-                  width: 'half',
-                  defaultValue: (application: Application) => {
-                    const data = application.externalData
-                      .socialInsuranceAdministrationApplicant
-                      .data as ApplicantInfo
-                    return data.phoneNumber
-                  },
-                }),
-              ],
+            applicantInformationMultiField({
+              emailRequired: false,
+              emailDisabled: true,
+              applicantInformationDescription:
+                socialInsuranceAdministrationMessage.info
+                  .infoSubSectionDescription,
             }),
           ],
         }),

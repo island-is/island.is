@@ -16,6 +16,7 @@ import {
   NationalRegistrySpouseApi,
   InstitutionNationalIds,
   defineTemplateApi,
+  UserProfileApi,
 } from '@island.is/application/types'
 
 import {
@@ -81,6 +82,11 @@ const SurvivorsBenefitsTemplate: ApplicationTemplate<
               write: 'all',
               api: [
                 NationalRegistryUserApi,
+                UserProfileApi.configure({
+                  params: {
+                    validateEmail: true,
+                  },
+                }),
                 NationalRegistrySpouseApi,
                 SocialInsuranceAdministrationApplicantApi,
                 SocialInsuranceAdministrationChildrenApi,

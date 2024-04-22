@@ -21,10 +21,10 @@ enum AttachmentTypes {
   ADDITIONAL_DOCUMENTS = 'additionalDocuments',
 }
 
-export function getApplicationAnswers(answers: Application['answers']) {
+export const getApplicationAnswers = (answers: Application['answers']) => {
   const applicantPhonenumber = getValueViaPath(
     answers,
-    'applicantInfo.phonenumber',
+    'applicant.phoneNumber',
   ) as string
 
   const comment = getValueViaPath(answers, 'comment') as string
@@ -119,9 +119,9 @@ export function getApplicationAnswers(answers: Application['answers']) {
   }
 }
 
-export function getApplicationExternalData(
+export const getApplicationExternalData = (
   externalData: Application['externalData'],
-) {
+) => {
   const applicantName = getValueViaPath(
     externalData,
     'nationalRegistry.data.fullName',
@@ -131,6 +131,28 @@ export function getApplicationExternalData(
     externalData,
     'nationalRegistry.data.nationalId',
   ) as string
+
+  const userProfileEmail = getValueViaPath(
+    externalData,
+    'userProfile.data.email',
+  ) as string
+
+  const applicantAddress = getValueViaPath(
+    externalData,
+    'nationalRegistry.data.address.streetAddress',
+  ) as string
+
+  const applicantPostalCode = getValueViaPath(
+    externalData,
+    'nationalRegistry.data.address.postalCode',
+  ) as string
+
+  const applicantLocality = getValueViaPath(
+    externalData,
+    'nationalRegistry.data.address.locality',
+  ) as string
+
+  const applicantMunicipality = applicantPostalCode + ', ' + applicantLocality
 
   const hasSpouse = getValueViaPath(
     externalData,
@@ -145,11 +167,6 @@ export function getApplicationExternalData(
   const lastModified = getValueViaPath(
     externalData,
     'nationalRegistrySpouse.data.lastModified',
-  ) as string
-
-  const email = getValueViaPath(
-    externalData,
-    'socialInsuranceAdministrationApplicant.data.emailAddress',
   ) as string
 
   const bankInfo = getValueViaPath(
@@ -170,8 +187,10 @@ export function getApplicationExternalData(
   return {
     applicantName,
     applicantNationalId,
+    userProfileEmail,
+    applicantAddress,
+    applicantMunicipality,
     hasSpouse,
-    email,
     bankInfo,
     currencies,
     children,
@@ -180,7 +199,7 @@ export function getApplicationExternalData(
   }
 }
 
-export function getAttachments(application: Application) {
+export const getAttachments = (application: Application) => {
   const getAttachmentDetails = (
     attachmentsArr: FileType[] | undefined,
     attachmentType: AttachmentTypes,
@@ -221,9 +240,9 @@ export function getAttachments(application: Application) {
   return attachments
 }
 
-export function hasSpouseLessThanAYear(
+export const hasSpouseLessThanAYear = (
   externalData: Application['externalData'],
-) {
+) => {
   const { maritalStatus, lastModified } =
     getApplicationExternalData(externalData)
   const today = new Date()

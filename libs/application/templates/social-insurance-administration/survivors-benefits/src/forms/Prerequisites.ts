@@ -11,8 +11,8 @@ import {
   FormModes,
   NationalRegistrySpouseApi,
   NationalRegistryUserApi,
+  UserProfileApi,
 } from '@island.is/application/types'
-import Logo from '../assets/Logo'
 import { survivorsBenefitsFormMessage } from '../lib/messages'
 import {
   SocialInsuranceAdministrationApplicantApi,
@@ -20,6 +20,7 @@ import {
   SocialInsuranceAdministrationCurrenciesApi,
 } from '../dataProviders'
 import { socialInsuranceAdministrationMessage } from '@island.is/application/templates/social-insurance-administration-core/lib/messages'
+import Logo from '@island.is/application/templates/social-insurance-administration-core/assets/Logo'
 
 export const PrerequisitesForm: Form = buildForm({
   id: 'SurvivorsBenefitsPrerequisites',
@@ -65,13 +66,23 @@ export const PrerequisitesForm: Form = buildForm({
               title: '',
             }),
             buildDataProviderItem({
-              provider: SocialInsuranceAdministrationApplicantApi,
+              provider: UserProfileApi,
+              title: socialInsuranceAdministrationMessage.pre.contactInfoTitle,
+              subTitle:
+                socialInsuranceAdministrationMessage.pre.contactInfoDescription,
+            }),
+            buildDataProviderItem({
+              id: 'sia.data',
               title:
-                survivorsBenefitsFormMessage.pre
+                socialInsuranceAdministrationMessage.pre
                   .socialInsuranceAdministrationTitle,
               subTitle:
                 survivorsBenefitsFormMessage.pre
                   .socialInsuranceAdministrationDescription,
+            }),
+            buildDataProviderItem({
+              provider: SocialInsuranceAdministrationApplicantApi,
+              title: '',
             }),
             buildDataProviderItem({
               provider: SocialInsuranceAdministrationChildrenApi,

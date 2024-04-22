@@ -14,21 +14,23 @@ export const ExpectingChild = ({
   const { formatMessage } = useLocale()
 
   return (
-    <ReviewGroup
-      isLast
-      isEditable={editable}
-      editAction={() => goToScreen?.('onePaymentPerYear')}
-    >
-      <GridRow>
-        <GridColumn span={['12/12', '12/12', '12/12', '5/12']}>
-          <RadioValue
-            label={formatMessage(
-              survivorsBenefitsFormMessage.info.expectingChildTitle,
-            )}
-            value={isExpectingChild}
-          />
-        </GridColumn>
-      </GridRow>
-    </ReviewGroup>
+    isExpectingChild && (
+      <ReviewGroup
+        isLast
+        isEditable={editable}
+        editAction={() => goToScreen?.('onePaymentPerYear')}
+      >
+        <GridRow>
+          <GridColumn span={['12/12', '12/12', '12/12', '5/12']}>
+            <RadioValue
+              label={formatMessage(
+                survivorsBenefitsFormMessage.info.expectingChildTitle,
+              )}
+              value={isExpectingChild}
+            />
+          </GridColumn>
+        </GridRow>
+      </ReviewGroup>
+    )
   )
 }

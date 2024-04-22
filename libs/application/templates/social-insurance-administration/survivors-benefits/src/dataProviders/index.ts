@@ -3,6 +3,7 @@ import { defineTemplateApi } from '@island.is/application/types'
 export {
   NationalRegistryUserApi,
   NationalRegistrySpouseApi,
+  UserProfileApi,
 } from '@island.is/application/types'
 
 export const SocialInsuranceAdministrationApplicantApi = defineTemplateApi({
