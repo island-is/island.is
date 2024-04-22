@@ -15,7 +15,6 @@ import { UserProfileServiceV1 } from './V1/userProfile.service'
 import { ActorProfileResolver } from './actorProfile.resolver'
 
 export interface Config {
-  userProfileServiceBasePath: string
   islykill: IslykillApiModuleConfig
 }
 
