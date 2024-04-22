@@ -271,4 +271,8 @@ export const institutionMapper = {
     nationalId: InstitutionNationalIds.SJUKRATRYGGINGAR_ISLANDS,
     slug: InstitutionTypes.SJUKRATRYGGINGAR_ISLANDS,
   },
+  [ApplicationTypes.STREET_REGISTRATION]: {
+    nationalId: InstitutionNationalIds.VINNUEFTIRLITID,
+    slug: InstitutionTypes.VINNUEFTIRLITID,
+  },
 }

@@ -12,14 +12,14 @@ import {
 import { Audit } from '@island.is/nest/audit'
 import { FamilyCorrectionResponse } from '../shared/models'
 import { FamilyCorrectionInput } from '../v1/dto/FamilyCorrectionInput.input'
-import { SoffiaService } from '../v1/soffia.service'
+import { NationalRegistryService } from '../nationalRegistry.service'
 
 @UseGuards(IdsUserGuard, ScopesGuard)
 @Scopes(ApiScope.meDetails)
 @Resolver()
 @Audit({ namespace: '@island.is/api/national-registry' })
 export class CorrectionResolver {
-  constructor(private readonly soffiaService: SoffiaService) {}
+  constructor(private readonly service: NationalRegistryService) {}
 
   @Audit()
   @Mutation(() => FamilyCorrectionResponse, { nullable: true })
@@ -27,6 +27,7 @@ export class CorrectionResolver {
     @Args('input') input: FamilyCorrectionInput,
     @CurrentUser() user: AuthUser,
   ): Promise<FamilyCorrectionResponse> {
-    return this.soffiaService.postUserCorrection(input, user.nationalId)
+    const api = await this.service.getApi(user)
+    return this.service.postUserCorrection(user.nationalId, input, api)
   }
 }

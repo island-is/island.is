@@ -6,7 +6,7 @@ import {
   ScopesGuard,
 } from '@island.is/auth-nest-tools'
 import type { User as AuthUser, User } from '@island.is/auth-nest-tools'
-import { Inject, UseGuards } from '@nestjs/common'
+import { UseGuards } from '@nestjs/common'
 import { AuditService } from '@island.is/nest/audit'
 import {
   Args,
@@ -35,7 +35,6 @@ import {
 import { Housing } from '../shared/models/housing.model'
 import { Name } from '../shared/models/name.model'
 import { ChildCustody } from '../shared/models/childCustody.model'
-import { LOGGER_PROVIDER, type Logger } from '@island.is/logging'
 
 const namespace = '@island.is/api/national-registry'
 
@@ -53,12 +52,13 @@ export class PersonResolver {
     nullable: true,
   })
   @Audit()
-  nationalRegistryPerson(
+  async nationalRegistryPerson(
     @CurrentUser() user: AuthUser,
-    @Args('api', { nullable: true }) api?: 'v1' | 'v3',
+    @Args('api', { nullable: true }) requestedApi?: 'v1' | 'v3',
     @Args('useFakeData', { nullable: true }) useFakeData?: boolean,
   ): Promise<Person | null> {
-    return this.service.getPerson(user.nationalId, api ?? 'v1', useFakeData)
+    const api = await this.service.getApi(user, requestedApi)
+    return this.service.getPerson(user.nationalId, api, useFakeData)
   }
 
   @ResolveField('custodians', () => [Custodian], {

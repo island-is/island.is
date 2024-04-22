@@ -24,6 +24,8 @@ import {
   CaseFileCategory,
   CaseFileState,
   CaseState,
+  DateType,
+  NotificationType,
   UserRole,
 } from '@island.is/judicial-system/types'
 
@@ -37,6 +39,7 @@ import {
 import { Institution } from '../institution'
 import { User } from '../user'
 import { Case } from './models/case.model'
+import { DateLog } from './models/dateLog.model'
 import { PDFService } from './pdf.service'
 
 export const attributes: (keyof Case)[] = [
@@ -58,7 +61,6 @@ export const attributes: (keyof Case)[] = [
   'requestedCustodyRestrictions',
   'prosecutorId',
   'courtCaseNumber',
-  'courtDate',
   'courtEndTime',
   'decision',
   'validToDate',
@@ -104,6 +106,8 @@ export interface LimitedAccessUpdateCase
     | 'openedByDefender'
     | 'appealRulingDecision'
   > {}
+
+const dateTypes = Object.values(DateType)
 
 export const include: Includeable[] = [
   { model: Institution, as: 'prosecutorsOffice' },
@@ -177,10 +181,17 @@ export const include: Includeable[] = [
       ],
     },
   },
+  {
+    model: DateLog,
+    as: 'dateLogs',
+    required: false,
+    where: { dateType: { [Op.in]: dateTypes } },
+  },
 ]
 
 export const order: OrderItem[] = [
   [{ model: Defendant, as: 'defendants' }, 'created', 'ASC'],
+  [{ model: DateLog, as: 'dateLogs' }, 'created', 'DESC'],
 ]
 
 @Injectable()
@@ -250,26 +261,28 @@ export class LimitedAccessCaseService {
         )
         .forEach((caseFile) => {
           const message = {
-            type: MessageType.DELIVER_CASE_FILE_TO_COURT,
+            type: MessageType.DELIVERY_TO_COURT_CASE_FILE,
             user,
             caseId: theCase.id,
-            caseFileId: caseFile.id,
+            elementId: caseFile.id,
           }
           messages.push(message)
         })
 
       messages.push({
-        type: MessageType.SEND_APPEAL_TO_COURT_OF_APPEALS_NOTIFICATION,
+        type: MessageType.NOTIFICATION,
         user,
         caseId: theCase.id,
+        body: { type: NotificationType.APPEAL_TO_COURT_OF_APPEALS },
       })
     }
 
     if (update.appealState === CaseAppealState.WITHDRAWN) {
       messages.push({
-        type: MessageType.SEND_APPEAL_WITHDRAWN_NOTIFICATION,
+        type: MessageType.NOTIFICATION,
         user,
         caseId: theCase.id,
+        body: { type: NotificationType.APPEAL_WITHDRAWN },
       })
     }
 
@@ -281,9 +294,10 @@ export class LimitedAccessCaseService {
       theCase.defendantStatementDate?.getTime()
     ) {
       messages.push({
-        type: MessageType.SEND_APPEAL_STATEMENT_NOTIFICATION,
+        type: MessageType.NOTIFICATION,
         user,
         caseId: theCase.id,
+        body: { type: NotificationType.APPEAL_STATEMENT },
       })
     }
 

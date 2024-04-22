@@ -12,6 +12,7 @@ import {
 } from '@island.is/island-ui/core'
 import * as constants from '@island.is/judicial-system/consts'
 import { capitalize, formatDate } from '@island.is/judicial-system/formatters'
+import { getLatestDateType } from '@island.is/judicial-system/types'
 import {
   core,
   laws,
@@ -37,7 +38,13 @@ import {
   UserContext,
 } from '@island.is/judicial-system-web/src/components'
 import { NameAndEmail } from '@island.is/judicial-system-web/src/components/InfoCard/InfoCard'
-import { CaseLegalProvisions } from '@island.is/judicial-system-web/src/graphql/schema'
+import InfoCardCaseScheduled from '@island.is/judicial-system-web/src/components/InfoCard/InfoCardCaseScheduled'
+import {
+  CaseLegalProvisions,
+  CaseState,
+  DateLog,
+  DateType,
+} from '@island.is/judicial-system-web/src/graphql/schema'
 import {
   UploadState,
   useCourtUpload,
@@ -53,6 +60,10 @@ export const JudgeOverview: React.FC<React.PropsWithChildren<unknown>> = () => {
   const { formatMessage } = useIntl()
   const router = useRouter()
   const id = router.query.id
+  const courtDate = getLatestDateType(
+    DateType.COURT_DATE,
+    workingCase.dateLogs,
+  ) as DateLog
 
   const { uploadState } = useCourtUpload(workingCase, setWorkingCase)
 
@@ -105,6 +116,18 @@ export const JudgeOverview: React.FC<React.PropsWithChildren<unknown>> = () => {
           </Text>
         </Box>
         <CourtCaseInfo workingCase={workingCase} />
+        {workingCase.state === CaseState.RECEIVED &&
+          courtDate &&
+          courtDate.date &&
+          workingCase.court && (
+            <Box component="section" marginBottom={5}>
+              <InfoCardCaseScheduled
+                court={workingCase.court}
+                courtDate={courtDate.date}
+                courtRoom={workingCase.courtRoom}
+              />
+            </Box>
+          )}
         <Box component="section" marginBottom={5}>
           <InfoCard
             data={[

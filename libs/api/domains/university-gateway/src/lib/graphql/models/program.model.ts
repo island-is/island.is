@@ -87,6 +87,12 @@ export class UniversityGatewayProgram {
 
   @CacheField(() => [String])
   modeOfDelivery!: string[]
+
+  @Field()
+  applicationPeriodOpen!: boolean
+
+  @Field()
+  applicationInUniversityGateway!: boolean
 }
 
 @ObjectType('UniversityGatewayProgramDetails')
@@ -132,9 +138,6 @@ export class UniversityGatewayProgramDetails extends UniversityGatewayProgram {
 
   @Field()
   allowThirdLevelQualification!: boolean
-
-  @CacheField(() => [UniversityGatewayProgramCourse])
-  courses!: UniversityGatewayProgramCourse[]
 
   @CacheField(() => [UniversityGatewayProgramExtraApplicationField])
   extraApplicationFields!: UniversityGatewayProgramExtraApplicationField[]

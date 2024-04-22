@@ -9,6 +9,7 @@ import {
   formatCaseType,
 } from '@island.is/judicial-system/formatters'
 import {
+  getLatestDateType,
   isCompletedCase,
   isInvestigationCase,
   isRestrictionCase,
@@ -33,8 +34,9 @@ import {
   SignedDocument,
 } from '@island.is/judicial-system-web/src/components'
 import {
-  CaseAppealDecision,
   CaseState,
+  DateLog,
+  DateType,
   RequestSharedWithDefender,
 } from '@island.is/judicial-system-web/src/graphql/schema'
 import { api } from '@island.is/judicial-system-web/src/services'
@@ -42,6 +44,7 @@ import { useAppealAlertBanner } from '@island.is/judicial-system-web/src/utils/h
 import { sortByIcelandicAlphabet } from '@island.is/judicial-system-web/src/utils/sortHelper'
 
 import { NameAndEmail } from '../../components/InfoCard/InfoCard'
+import InfoCardCaseScheduled from '../../components/InfoCard/InfoCardCaseScheduled'
 import { strings } from './CaseOverview.strings'
 import * as styles from './CaseOverview.css'
 
@@ -66,8 +69,12 @@ export const CaseOverview: React.FC<React.PropsWithChildren<unknown>> = () => {
 
   const shouldDisplayAlertBanner =
     isCompletedCase(workingCase.state) &&
-    (workingCase.accusedAppealDecision === CaseAppealDecision.POSTPONE ||
-      workingCase.hasBeenAppealed)
+    (workingCase.canDefenderAppeal || workingCase.hasBeenAppealed)
+
+  const courtDate = getLatestDateType(
+    DateType.COURT_DATE,
+    workingCase.dateLogs,
+  ) as DateLog
 
   return (
     <>
@@ -130,6 +137,18 @@ export const CaseOverview: React.FC<React.PropsWithChildren<unknown>> = () => {
               />
             </Box>
           )}
+          {workingCase.state === CaseState.RECEIVED &&
+            courtDate &&
+            courtDate.date &&
+            workingCase.court && (
+              <Box component="section" marginBottom={5}>
+                <InfoCardCaseScheduled
+                  court={workingCase.court}
+                  courtDate={courtDate.date}
+                  courtRoom={workingCase.courtRoom}
+                />
+              </Box>
+            )}
           <Box marginBottom={6}>
             <InfoCard
               data={[

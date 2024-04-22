@@ -66,6 +66,7 @@ export enum ApplicationTypes {
   REQUEST_INSPECTION_FOR_MACHINE = 'RequestInspectionForMachine',
   OFFICIAL_JOURNAL_OF_ICELAND = 'OfficialJournalOfIceland',
   HEALTH_INSURANCE_DECLARATION = 'HealthInsuranceDeclaration',
+  STREET_REGISTRATION = 'StreetRegistration',
 }
 
 export const ApplicationConfigurations = {
@@ -340,5 +341,9 @@ export const ApplicationConfigurations = {
   [ApplicationTypes.HEALTH_INSURANCE_DECLARATION]: {
     slug: 'tryggingaryfirlysing',
     translation: ['hid.application', 'uiForms.application'],
+  },
+  [ApplicationTypes.STREET_REGISTRATION]: {
+    slug: 'gotuskraning-taekis',
+    translation: 'sr.application',
   },
 }

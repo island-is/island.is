@@ -225,16 +225,16 @@ export const en: TranslatedMessages = {
   'licenseScanner.helperMessage': 'Point device at barcode',
   'licenseScanner.awaitingPermission': 'Asking for camera permissions',
   'licenseScanner.noCameraAccess': 'Camera not available',
+  'licenseScanner.errorUnknown': 'Unknown error',
+  'licenseScanner.invalidBarcode': 'Invalid barcode',
+  'licenseScanner.errorNetwork': 'Network error',
   'licenseScannerDetail.driverLicenseNumber': 'Driver license number',
-  'licenseScannerDetail.invalidBarcode': 'Invalid barcode',
   'licenseScannerResult.androidHelp':
     'Press button below the license to get updated barcode.',
   'licenseScannerResult.iosHelp':
     'Press three-dot button below the license. Next, refresh the screen by pulling down from the center to update the barcode.',
 
   // license scan detail
-  'licenseScanDetail.errorUnknown': 'Unknown error',
-  'licenseScanDetail.errorNetwork': 'Network error',
   'licenseScanDetail.errorCodeMessage': `{
     errorCode,
     select,
@@ -267,6 +267,9 @@ export const en: TranslatedMessages = {
   'licenseDetail.pcard.alert.title': 'Remember the parking card!',
   'licenseDetail.pcard.alert.description':
     'This summary is not valid as a parking card.',
+  'licenseDetail.ehic.alert.title': 'Remember the card!',
+  'licenseDetail.ehic.alert.description':
+    'This summary is not valid as a European Health Insurance card.',
 
   // notifications
   'notifications.screenTitle': 'Notifications',

@@ -792,6 +792,8 @@ export const getApplicationAnswers = (answers: Application['answers']) => {
     'personalAllowanceFromSpouse.usage',
   ) as string
 
+  const comment = getValueViaPath(answers, 'comment') as string
+
   const employerNationalRegistryId = getValueViaPath(
     answers,
     'employerNationalRegistryId',
@@ -952,6 +954,11 @@ export const getApplicationAnswers = (answers: Application['answers']) => {
     'fileUpload.employmentTerminationCertificateFile',
   ) as Files[]
 
+  const changeEmployerFile = getValueViaPath(
+    answers,
+    'fileUpload.changeEmployerFile',
+  ) as Files[]
+
   const dateOfBirth = getValueViaPath(answers, 'dateOfBirth') as string
 
   const commonFiles = getValueViaPath(answers, 'fileUpload.file') as Files[]
@@ -962,6 +969,8 @@ export const getApplicationAnswers = (answers: Application['answers']) => {
     | 'documentPeriod'
     | 'empper'
     | 'employer'
+    | 'empdoc'
+    | 'empdocper'
     | undefined
 
   const previousState = getValueViaPath(answers, 'previousState') as string
@@ -978,6 +987,9 @@ export const getApplicationAnswers = (answers: Application['answers']) => {
   ) as EmployerRow[]
 
   const language = getValueViaPath(answers, 'applicant.language') as string
+
+  const changeEmployer = getValueViaPath(answers, 'changeEmployer') as boolean
+  const changePeriods = getValueViaPath(answers, 'changePeriods') as boolean
 
   return {
     applicationType,
@@ -1008,6 +1020,7 @@ export const getApplicationAnswers = (answers: Application['answers']) => {
     personalUsage,
     spouseUseAsMuchAsPossible,
     spouseUsage,
+    comment,
     employers,
     employerLastSixMonths,
     isNotStillEmployed,
@@ -1039,6 +1052,7 @@ export const getApplicationAnswers = (answers: Application['answers']) => {
     dateOfBirth,
     residenceGrantFiles,
     employmentTerminationCertificateFiles,
+    changeEmployerFile,
     hasAppliedForReidenceGrant,
     previousState,
     addEmployer,
@@ -1046,6 +1060,8 @@ export const getApplicationAnswers = (answers: Application['answers']) => {
     tempPeriods,
     tempEmployers,
     language,
+    changeEmployer,
+    changePeriods,
   }
 }
 
@@ -1994,6 +2010,7 @@ export const getAttachments = (application: Application) => {
     employerLastSixMonths,
     isNotStillEmployed,
     commonFiles,
+    changeEmployerFile,
   } = getApplicationAnswers(answers)
 
   const attachments: Attachments[] = []
@@ -2051,6 +2068,12 @@ export const getAttachments = (application: Application) => {
   }
   if (commonFiles?.length > 0) {
     getAttachmentDetails(fileUpload?.file, AttachmentTypes.FILE)
+  }
+  if (changeEmployerFile?.length > 0) {
+    getAttachmentDetails(
+      fileUpload?.changeEmployerFile,
+      AttachmentTypes.CHANGE_EMPLOYER,
+    )
   }
 
   return attachments

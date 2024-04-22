@@ -102,6 +102,7 @@ query LimitedAccessCase($input: CaseQueryInput!) {
     isStatementDeadlineExpired
     statementDeadline
     canBeAppealed
+    canDefenderAppeal
     hasBeenAppealed
     appealedByRole
     appealedDate
@@ -128,6 +129,12 @@ query LimitedAccessCase($input: CaseQueryInput!) {
     appealJudge3 {
       id
       name
+    }
+    dateLogs {
+      id
+      caseId
+      dateType
+      date
     }
     prosecutorsOffice {
       id
