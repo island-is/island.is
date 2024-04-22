@@ -28,7 +28,7 @@ export class CaseListInterceptor implements NestInterceptor {
           // for defenders and other user roles that are not allowed to see sensitive information.
 
           const courtDate = getLatestDateType(
-            DateType.COURT_DATE,
+            [DateType.COURT_DATE],
             theCase.dateLogs,
           ) as DateLog
 

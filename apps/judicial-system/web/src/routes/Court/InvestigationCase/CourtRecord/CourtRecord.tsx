@@ -118,7 +118,7 @@ const CourtRecord = () => {
   const initialize = useCallback(() => {
     const autofillAttendees = []
     const courtDate = getLatestDateType(
-      DateType.COURT_DATE,
+      [DateType.COURT_DATE],
       workingCase.dateLogs,
     ) as DateLog
 

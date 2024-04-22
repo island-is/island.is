@@ -22,7 +22,10 @@ export const getCaseResubmittedText = (
   formatMessage: IntlShape['formatMessage'],
   workingCase: Case,
 ) => {
-  const courtDate = getLatestDateType(DateType.COURT_DATE, workingCase.dateLogs)
+  const courtDate = getLatestDateType(
+    [DateType.COURT_DATE],
+    workingCase.dateLogs,
+  )
 
   return formatMessage(strings.text, {
     requestSharedWithDefender:

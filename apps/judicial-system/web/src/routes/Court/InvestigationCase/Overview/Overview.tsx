@@ -63,7 +63,7 @@ const Overview = () => {
   const [isDraftingConclusion, setIsDraftingConclusion] = useState<boolean>()
 
   const courtDate = getLatestDateType(
-    DateType.COURT_DATE,
+    [DateType.COURT_DATE],
     workingCase.dateLogs,
   ) as DateLog
 

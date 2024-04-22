@@ -72,7 +72,7 @@ const Ruling = () => {
 
   const initialize = useCallback(() => {
     const courtDate = getLatestDateType(
-      DateType.COURT_DATE,
+      [DateType.COURT_DATE],
       workingCase.dateLogs,
     )
 

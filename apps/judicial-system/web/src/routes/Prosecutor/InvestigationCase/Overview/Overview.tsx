@@ -117,7 +117,7 @@ export const Overview: React.FC<React.PropsWithChildren<unknown>> = () => {
     workingCase.caseFiles?.filter((file) => !file.category) ?? []
 
   const courtDate = getLatestDateType(
-    DateType.COURT_DATE,
+    [DateType.COURT_DATE],
     workingCase.dateLogs,
   ) as DateLog
 

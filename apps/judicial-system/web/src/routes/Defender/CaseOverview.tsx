@@ -72,7 +72,7 @@ export const CaseOverview: React.FC<React.PropsWithChildren<unknown>> = () => {
     (workingCase.canDefenderAppeal || workingCase.hasBeenAppealed)
 
   const courtDate = getLatestDateType(
-    DateType.COURT_DATE,
+    [DateType.COURT_DATE],
     workingCase.dateLogs,
   ) as DateLog
 

@@ -16,7 +16,10 @@ interface Props {
 const RequestCourtDate: React.FC<React.PropsWithChildren<Props>> = (props) => {
   const { workingCase, onChange } = props
   const { formatMessage } = useIntl()
-  const courtDate = getLatestDateType(DateType.COURT_DATE, workingCase.dateLogs)
+  const courtDate = getLatestDateType(
+    [DateType.COURT_DATE],
+    workingCase.dateLogs,
+  )
 
   return (
     <>

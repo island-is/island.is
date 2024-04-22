@@ -25,7 +25,7 @@ const RequestSharedWithDefenderAllowedStates: {
 
 export const canDefenderViewRequest = (theCase: Case) => {
   const { requestSharedWithDefender, state } = theCase
-  const courtDate = getLatestDateType(DateType.COURT_DATE, theCase.dateLogs)
+  const courtDate = getLatestDateType([DateType.COURT_DATE], theCase.dateLogs)
 
   if (!requestSharedWithDefender) {
     return false

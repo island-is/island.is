@@ -87,7 +87,7 @@ export const CourtRecord: React.FC<React.PropsWithChildren<unknown>> = () => {
     const autofillSessionBookings = []
     const endOfSessionBookings = []
     const courtDate = getLatestDateType(
-      DateType.COURT_DATE,
+      [DateType.COURT_DATE],
       workingCase.dateLogs,
     ) as DateLog
 

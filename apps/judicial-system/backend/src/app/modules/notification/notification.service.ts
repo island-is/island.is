@@ -313,7 +313,7 @@ export class NotificationService {
 
   private createICalAttachment(theCase: Case): Attachment | undefined {
     const courtDate = getLatestDateType(
-      DateType.COURT_DATE,
+      [DateType.COURT_DATE],
       theCase.dateLogs,
     ) as DateLog
 
@@ -622,7 +622,7 @@ export class NotificationService {
     user: User,
   ): Promise<Recipient> {
     const courtDate = getLatestDateType(
-      DateType.COURT_DATE,
+      [DateType.COURT_DATE],
       theCase.dateLogs,
     ) as DateLog
 
@@ -675,7 +675,7 @@ export class NotificationService {
     )
 
     const courtDate = getLatestDateType(
-      DateType.COURT_DATE,
+      [DateType.COURT_DATE],
       theCase.dateLogs,
     ) as DateLog
 
@@ -1212,7 +1212,7 @@ export class NotificationService {
 
   private sendRevokedSmsNotificationToCourt(theCase: Case): Promise<Recipient> {
     const courtDate = getLatestDateType(
-      DateType.COURT_DATE,
+      [DateType.COURT_DATE],
       theCase.dateLogs,
     ) as DateLog
 
@@ -1231,7 +1231,7 @@ export class NotificationService {
     theCase: Case,
   ): Promise<Recipient> {
     const courtDate = getLatestDateType(
-      DateType.COURT_DATE,
+      [DateType.COURT_DATE],
       theCase.dateLogs,
     ) as DateLog
 
@@ -1292,7 +1292,7 @@ export class NotificationService {
   ): Promise<SendNotificationResponse> {
     const promises: Promise<Recipient>[] = []
     const courtDate = getLatestDateType(
-      DateType.COURT_DATE,
+      [DateType.COURT_DATE],
       theCase.dateLogs,
     ) as DateLog
 
@@ -1448,7 +1448,7 @@ export class NotificationService {
   ): Promise<SendNotificationResponse> {
     const promises: Promise<Recipient>[] = []
     const courtDate = getLatestDateType(
-      DateType.COURT_DATE,
+      [DateType.COURT_DATE],
       theCase.dateLogs,
     ) as DateLog
 
