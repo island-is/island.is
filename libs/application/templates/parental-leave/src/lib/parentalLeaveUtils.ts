@@ -2124,57 +2124,29 @@ export const getActionName = (
     changeEmployerFile,
   } = getApplicationAnswers(application.answers)
 
-  if (
-    state === States.RESIDENCE_GRANT_APPLICATION_NO_BIRTH_DATE ||
-    state === States.RESIDENCE_GRANT_APPLICATION ||
-    state === States.ADDITIONAL_DOCUMENTS_REQUIRED
-  ) {
-    return FileType.DOCUMENT
-  } else if (state === States.EDIT_OR_ADD_EMPLOYERS_AND_PERIODS) {
-    // Keep book keeping of what has been selected
-    if (addEmployer === YES) {
-      if (!changeEmployer) {
-        set(application.answers, 'changeEmployer', true)
+  switch (state) {
+    case States.RESIDENCE_GRANT_APPLICATION_NO_BIRTH_DATE:
+    case States.RESIDENCE_GRANT_APPLICATION:
+    case States.ADDITIONAL_DOCUMENTS_REQUIRED:
+      return FileType.DOCUMENT
+    case States.EDIT_OR_ADD_EMPLOYERS_AND_PERIODS: {
+      const employerChanged = changeEmployer || addEmployer === YES
+      const periodsChanged = changePeriods || addPeriods === YES
+      if (changeEmployerFile && changeEmployerFile.length !== 0) {
+        if (employerChanged && periodsChanged) {
+          return FileType.EMPDOCPER
+        } else if (employerChanged) {
+          return FileType.EMPDOC
+        }
       }
-    }
-    // Keep book keeping of what has been selected
-    if (addPeriods === YES) {
-      if (!changePeriods) {
-        set(application.answers, 'changePeriods', true)
+      if (employerChanged && periodsChanged) {
+        return FileType.EMPPER
+      } else if (employerChanged) {
+        return FileType.EMPLOYER
+      } else if (periodsChanged) {
+        return FileType.PERIOD
       }
-    }
-
-    /* 
-        Check if user has made some changes to the employers and/or periods and/or employer file. 
-        changeEmployer and changePeriods are used for book keeping, to keep track if applicant changes employers or periods multiple times
-        before employers approves.
-    */
-    if (changeEmployerFile) {
-      if (
-        changeEmployerFile.length !== 0 &&
-        (changeEmployer || addEmployer === YES) &&
-        (changePeriods || addPeriods === YES)
-      ) {
-        return FileType.EMPDOCPER
-      } else if (
-        changeEmployerFile.length !== 0 &&
-        (changeEmployer || addEmployer === YES)
-      ) {
-        return FileType.EMPDOC
-      }
-    }
-
-    if (
-      (changeEmployer && changePeriods) ||
-      (addEmployer === YES && addPeriods === YES) ||
-      (changeEmployer && addPeriods === YES) ||
-      (changePeriods && addEmployer === YES)
-    ) {
-      return FileType.EMPPER
-    } else if (changeEmployer || addEmployer === YES) {
-      return FileType.EMPLOYER
-    } else if (changePeriods || addPeriods === YES) {
-      return FileType.PERIOD
+      break
     }
   }
   return undefined

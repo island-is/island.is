@@ -55,7 +55,7 @@ import {
   isFosterCareAndAdoption,
   residentGrantIsOpenForApplication,
   setTestBirthAndExpectedDate,
-  getType,
+  getActionName,
 } from './parentalLeaveUtils'
 import { PersonInformation } from '../types'
 
@@ -1545,7 +1545,7 @@ test.each([
   },
 )
 
-describe.only('getType', () => {
+describe.only('getActionName', () => {
   let application: Application
   beforeEach(() => {
     application = createApplicationBase()
@@ -1560,7 +1560,7 @@ describe.only('getType', () => {
 
     application.state = States.EDIT_OR_ADD_EMPLOYERS_AND_PERIODS
 
-    const result = getType(application)
+    const result = getActionName(application)
 
     expect(result).toBe(FileType.EMPDOCPER)
   })
@@ -1570,7 +1570,7 @@ describe.only('getType', () => {
 
     application.state = States.EDIT_OR_ADD_EMPLOYERS_AND_PERIODS
 
-    const result = getType(application)
+    const result = getActionName(application)
 
     expect(result).toBe(FileType.PERIOD)
   })
@@ -1580,7 +1580,7 @@ describe.only('getType', () => {
 
     application.state = States.EDIT_OR_ADD_EMPLOYERS_AND_PERIODS
 
-    const result = getType(application)
+    const result = getActionName(application)
 
     expect(result).toBe(FileType.EMPLOYER)
   })
@@ -1591,7 +1591,7 @@ describe.only('getType', () => {
 
     application.state = States.EDIT_OR_ADD_EMPLOYERS_AND_PERIODS
 
-    const result = getType(application)
+    const result = getActionName(application)
 
     expect(result).toBe(FileType.EMPPER)
   })
@@ -1599,7 +1599,7 @@ describe.only('getType', () => {
   it('should return FileType.DOCUMENT if state is ADDITIONAL_DOCUMENTS_REQUIRED', () => {
     application.state = application.state = States.ADDITIONAL_DOCUMENTS_REQUIRED
 
-    const result = getType(application)
+    const result = getActionName(application)
 
     expect(result).toBe(FileType.DOCUMENT)
   })
@@ -1607,7 +1607,7 @@ describe.only('getType', () => {
   it('should return undefined if no conditions met', () => {
     application.state = application.state = States.CLOSED
 
-    const result = getType(application)
+    const result = getActionName(application)
 
     expect(result).toBeUndefined()
   })
