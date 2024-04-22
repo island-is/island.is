@@ -75,35 +75,35 @@ describe('MeNotificationsController - With Auth No Scope', () => {
   )
 })
 
-// describe('MeNotificationsController - With Auth And Scope', () => {
-//   it.each`
-//     method     | endpoint
-//     ${'GET'}   | ${'/v1/me/notifications'}
-//     ${'GET'}   | ${'/v1/me/notifications/some-notification-id'}
-//     ${'GET'}   | ${'/v1/me/notifications/unread-count'}
-//     ${'GET'}   | ${'/v1/me/notifications/unseen-count'}
-//     ${'PATCH'} | ${'/v1/me/notifications/some-notification-id'}
-//     ${'PATCH'} | ${'/v1/me/notifications/mark-all-as-seen'}
-//   `(
-//     '$method $endpoint should return 200 when user is authorized',
-//     async ({ method, endpoint }: TestEndpointOptions) => {
-//       //Arrange
-//       const app = await setupApp({
-//         AppModule,
-//         SequelizeConfigService,
-//         user: createCurrentUser({
-//           scope: [NotificationsScope.read],
-//         }),
-//       })
-//       const server = request(app.getHttpServer())
+describe('MeNotificationsController - With Auth And Scope', () => {
+  it.each`
+    method     | endpoint
+    ${'GET'}   | ${'/v1/me/notifications'}
+    ${'GET'}   | ${'/v1/me/notifications/some-notification-id'}
+    ${'GET'}   | ${'/v1/me/notifications/unread-count'}
+    ${'GET'}   | ${'/v1/me/notifications/unseen-count'}
+    ${'PATCH'} | ${'/v1/me/notifications/some-notification-id'}
+    ${'PATCH'} | ${'/v1/me/notifications/mark-all-as-seen'}
+  `(
+    '$method $endpoint should return 200 when user is authorized',
+    async ({ method, endpoint }: TestEndpointOptions) => {
+      //Arrange
+      const app = await setupApp({
+        AppModule,
+        SequelizeConfigService,
+        user: createCurrentUser({
+          scope: [NotificationsScope.read, NotificationsScope.write],
+        }),
+      })
+      const server = request(app.getHttpServer())
 
-//       //Act
-//       const res = await getRequestMethod(server, method)(endpoint)
+      //Act
+      const res = await getRequestMethod(server, method)(endpoint)
 
-//       //Assert
-//       expect([200, 204].includes(res.status)).toBe(true)
+      //Assert
+      expect([200, 204].includes(res.status)).toBe(true)
 
-//       app.cleanUp()
-//     },
-//   )
-// })
+      app.cleanUp()
+    },
+  )
+})
