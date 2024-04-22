@@ -155,7 +155,7 @@ export const Header = ({
                               <Button
                                 colorScheme={
                                   dark
-                                    ? 'default'
+                                    ? 'dark'
                                     : textMode === 'blueberry'
                                     ? 'blueberry'
                                     : 'negative'
@@ -173,7 +173,7 @@ export const Header = ({
                           <LanguageToggler
                             buttonColorScheme={
                               dark
-                                ? 'default'
+                                ? 'dark'
                                 : textMode === 'blueberry'
                                 ? 'blueberry'
                                 : 'negative'

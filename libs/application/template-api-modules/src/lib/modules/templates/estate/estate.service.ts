@@ -1,7 +1,7 @@
 import { Inject, Injectable } from '@nestjs/common'
 
 import { TemplateApiModuleActionProps } from '../../../types'
-import { NationalRegistry, UploadData } from './types'
+import { NationalRegistry } from './types'
 import {
   Attachment,
   DataUploadResponse,
@@ -52,13 +52,16 @@ export class EstateTemplateService extends BaseTemplateApiService {
     application,
   }: TemplateApiModuleActionProps): Promise<boolean> {
     const applicationData = (
-      application.externalData?.syslumennOnEntry?.data as { estate: EstateInfo }
-    ).estate
+      application.externalData?.syslumennOnEntry?.data as {
+        estates: Array<EstateInfo>
+      }
+    ).estates
 
-    const applicationAnswers = application.answers as unknown as EstateSchema
+    // Note: Boolean('')/Boolean(undefined)/Boolean(null) are all false which is what we want
     if (
-      !applicationData?.caseNumber?.length ||
-      applicationData?.caseNumber.length === 0
+      !applicationData ||
+      applicationData.length === 0 ||
+      !applicationData.some((estate) => Boolean(estate.caseNumber))
     ) {
       throw new TemplateApiError(
         {
@@ -69,7 +72,22 @@ export class EstateTemplateService extends BaseTemplateApiService {
       )
     }
 
-    const { availableSettlements } = applicationData
+    const applicationAnswers = application.answers as unknown as EstateSchema
+    const estateData = applicationData.find((estate) => estate.caseNumber)
+    if (
+      !estateData?.caseNumber?.length ||
+      estateData?.caseNumber.length === 0
+    ) {
+      throw new TemplateApiError(
+        {
+          title: coreErrorMessages.failedDataProviderSubmit,
+          summary: coreErrorMessages.drivingLicenseNoTeachingRightsSummary,
+        },
+        400,
+      )
+    }
+
+    const { availableSettlements } = estateData
     const selectedEstate = applicationAnswers.selectedEstate
     const selectedEstateKey = Object.keys(EstateTypes).find(
       (key) => EstateTypes[key as keyof typeof EstateTypes] === selectedEstate,
@@ -98,7 +116,7 @@ export class EstateTemplateService extends BaseTemplateApiService {
       )
     }
 
-    const youngheirs = applicationData.estateMembers.filter(
+    const youngheirs = estateData.estateMembers.filter(
       (heir) => kennitala.info(heir.nationalId).age < 18,
     )
     // Requirements:
@@ -129,7 +147,7 @@ export class EstateTemplateService extends BaseTemplateApiService {
   }
 
   async syslumennOnEntry({ application }: TemplateApiModuleActionProps) {
-    let estateResponse: EstateInfo
+    let estateResponse: Array<EstateInfo>
     if (
       application.applicant.startsWith('010130') &&
       (application.applicant.endsWith('2399') ||
@@ -137,21 +155,20 @@ export class EstateTemplateService extends BaseTemplateApiService {
     ) {
       estateResponse = getFakeData(application)
     } else {
-      estateResponse = (
+      estateResponse =
         await this.syslumennService.getEstateInfoWithAvailableSettlements(
           application.applicant,
         )
-      )[0]
     }
 
-    const estate = estateTransformer(estateResponse)
+    const estates = estateResponse.map(estateTransformer)
 
     const relationOptions = (await this.syslumennService.getEstateRelations())
       .relations
 
     return {
       success: true,
-      estate,
+      estates,
       relationOptions,
     }
   }
@@ -160,8 +177,10 @@ export class EstateTemplateService extends BaseTemplateApiService {
     const nationalRegistryData = application.externalData.nationalRegistry
       ?.data as NationalRegistry
 
-    const externalData = application.externalData.syslumennOnEntry
-      ?.data as EstateSchema
+    const externalData = application.externalData.syslumennOnEntry?.data as {
+      estate?: EstateSchema['estate']
+      estates?: Array<EstateSchema['estate']>
+    }
 
     const applicantData = application.answers
       .applicant as EstateSchema['applicant']
@@ -182,7 +201,19 @@ export class EstateTemplateService extends BaseTemplateApiService {
     const uploadDataId = 'danarbusskipti1.0'
     const answers = application.answers as unknown as EstateSchema
 
-    const uploadData = generateRawUploadData(answers, externalData, application)
+    let estateData = externalData.estates?.find(
+      (estate) => estate.caseNumber === answers.estateInfoSelection,
+    )
+    // TODO: Remove the singular estate property in the future when
+    //       legacy applications clear out of the system
+    estateData = estateData ?? externalData.estate ?? undefined
+    if (!estateData) {
+      throw new Error(
+        '[estate]: Selected casenumber not present in external data. Should not happen',
+      )
+    }
+
+    const uploadData = generateRawUploadData(answers, estateData, application)
     // We deep copy the pdfData since the transform function
     // for the PDF creation mutates the object
     const pdfData = structuredClone(uploadData)

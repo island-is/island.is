@@ -24,6 +24,8 @@ export const mapReasons = (
           return ReasonKey.AlreadyOwner
         case Requirement.notSigned:
           return ReasonKey.AlreadySigned
+        case Requirement.noInvalidSignature:
+          return ReasonKey.noInvalidSignature
         default:
           return ReasonKey.DeniedByService
       }

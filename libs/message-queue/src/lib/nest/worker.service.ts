@@ -73,7 +73,13 @@ export class WorkerService implements OnModuleDestroy {
     messages: Message[],
     messageHandler: MessageHandler<T>,
   ) {
-    this.logger.info(`Processing ${messages.length} message(s)`)
+    this.logger.info(
+      `Processing ${messages.length} message${messages.length > 1 ? 's' : ''}`,
+      {
+        messageIds: messages.map((msg) => msg.MessageId),
+        institutions: messages.map((msg) => msg.Attributes?.institution),
+      },
+    )
 
     const results: boolean[] = await Promise.all(
       messages.map(async (msg) => {

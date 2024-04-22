@@ -6,11 +6,14 @@ import {
   BreadCrumbItem,
   LinkV2,
   Pagination,
+  Stack,
+  Text,
 } from '@island.is/island-ui/core'
 import {
   EventList,
   getThemeConfig,
   OrganizationWrapper,
+  Webreader,
 } from '@island.is/web/components'
 import {
   ContentLanguage,
@@ -98,12 +101,22 @@ const OrganizationEventList: Screen<OrganizationEventListProps> = ({
       }}
     >
       <Box paddingBottom={3}>
-        <EventList
-          title={eventsHeading}
-          namespace={namespace}
-          eventList={eventList?.items}
-          parentPageSlug={organizationPage.slug}
-        />
+        <Stack space={[3, 3, 4]}>
+          <Text variant="h1" as="h1" marginBottom={0}>
+            {eventsHeading}
+          </Text>
+          <Webreader
+            marginTop={0}
+            marginBottom={0}
+            readId={undefined}
+            readClass="rs_read"
+          />
+          <EventList
+            namespace={namespace}
+            eventList={eventList?.items}
+            parentPageSlug={organizationPage.slug}
+          />
+        </Stack>
 
         {!!eventList.items.length && eventList.total > PAGE_SIZE && (
           <Box marginTop={[4, 4, 8]}>

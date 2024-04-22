@@ -24,6 +24,7 @@ import { HealthPaths } from '../../lib/paths'
 import { RightsPortalDentist } from '@island.is/api/schema'
 import { RegisterModal } from '../../components/RegisterModal'
 import * as styles from './DentistRegistration.css'
+import { Problem } from '@island.is/react-spa/shared'
 
 const DEFAULT_PAGE_SIZE = 12
 const DEFAULT_PAGE_NUMBER = 1
@@ -113,13 +114,7 @@ export const DentistRegistration = () => {
   }
 
   if (!canRegister && !statusLoading && !statusError)
-    return (
-      <AlertMessage
-        type="error"
-        title={formatMessage(m.errorTitle)}
-        message={formatMessage(m.errorFetch)}
-      />
-    )
+    return <Problem error={error} noBorder={false} />
 
   if (statusLoading)
     return (

@@ -12,6 +12,7 @@ export {
 } from './CheckboxList/CheckboxList'
 export { default as CommentsAccordionItem } from './AccordionItems/CommentsAccordionItem/CommentsAccordionItem'
 export { default as ConclusionDraft } from './ConclusionDraft/ConclusionDraft'
+export { default as ContextMenu } from './ContextMenu/ContextMenu'
 export {
   CourtArrangements,
   useCourtArrangements,
@@ -23,7 +24,6 @@ export { default as Decision } from './Decision/Decision'
 export { default as DefenderInfo } from './DefenderInfo/DefenderInfo'
 export { default as DefenderInput } from './DefenderInfo/DefenderInput'
 export { default as DefenderNotFound } from './DefenderInfo/DefenderNotFound'
-export { default as DropdownMenu } from './DropdownMenu/DropdownMenu'
 export {
   default as FeatureProvider,
   FeatureContext,
@@ -65,7 +65,6 @@ export {
   useRequestRulingSignature,
 } from './SigningModal/SigningModal'
 export { default as Skeleton } from './Skeleton/Skeleton'
-export { default as Table } from './ReactTable/Table'
 export { default as TimeInputField } from './TimeInputField/TimeInputField'
 export { UserProvider, UserContext } from './UserProvider/UserProvider'
 export {
@@ -96,3 +95,7 @@ export {
   useIndictmentsLawsBroken,
 } from './AccordionItems/IndictmentsLawsBrokenAccordionItem/IndictmentsLawsBrokenAccordionItem'
 export { default as IndictmentCaseFilesList } from './IndictmentCaseFilesList/IndictmentCaseFilesList'
+export {
+  default as WithdrawAppealContextMenuModal,
+  useWithdrawAppealMenuOption,
+} from './ContextMenu/ContextMenuOptions/WithdrawAppealMenuOption'

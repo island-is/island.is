@@ -66,6 +66,15 @@ export const m = defineMessages({
     id: 'sp.license:disability-license-description',
     defaultMessage: 'Hér birtast upplýsingar um örorkuskírteinið þitt.',
   },
+  huntingLicense: {
+    id: 'sp.license:hunting-license',
+    defaultMessage: 'Almennt veiðikort',
+  },
+  huntingLicenseDescription: {
+    id: 'sp.license:hunting-license-description',
+    defaultMessage:
+      'Allir sem stunda veiðar á fuglum og spendýrum hér á landi þurfa að hafa veiðikort. Til að fá veiðikort í fyrsta sinn þurfa menn að hafa tekið próf fyrir verðandi veiðimenn.',
+  },
   machineLicense: {
     id: 'sp.license:machine-license',
     defaultMessage: 'Vinnuvélaréttindi',

@@ -2,7 +2,7 @@ import { useCallback, useContext, useEffect, useState } from 'react'
 import { useIntl } from 'react-intl'
 import { uuid } from 'uuidv4'
 
-import { toast, UploadFile } from '@island.is/island-ui/core'
+import { toast, UploadFile, UploadFileStatus } from '@island.is/island-ui/core'
 import { UserContext } from '@island.is/judicial-system-web/src/components'
 import {
   CaseFile,
@@ -48,6 +48,11 @@ export interface TUploadFile extends UploadFile {
   policeFileId?: string | null
 }
 
+export interface UploadFileState {
+  isUploading: boolean
+  error: boolean
+}
+
 const mapCaseFileToUploadFile = (file: CaseFile): TUploadFile => ({
   id: file.id,
   name: file.name ?? '',
@@ -73,9 +78,11 @@ export const useUploadFiles = (files?: CaseFile[] | null) => {
     setUploadFiles(files?.map(mapCaseFileToUploadFile) ?? [])
   }, [files])
 
-  const allFilesUploaded = uploadFiles.every(
+  const allFilesDoneOrError = uploadFiles.every(
     (file) => file.status === 'done' || file.status === 'error',
   )
+
+  const someFilesError = uploadFiles.some((file) => file.status === 'error')
 
   const addUploadFile = (file: TUploadFile) =>
     setUploadFiles((previous) => [file, ...previous])
@@ -83,6 +90,7 @@ export const useUploadFiles = (files?: CaseFile[] | null) => {
   const addUploadFiles = (
     files: File[],
     category?: CaseFileCategory,
+    status?: UploadFileStatus,
     policeCaseNumber?: string,
   ) => {
     // We generate an id for each file so that we find the file again when
@@ -93,8 +101,8 @@ export const useUploadFiles = (files?: CaseFile[] | null) => {
       name: file.name,
       type: file.type,
       size: file.size,
-      percent: 1,
-      status: 'uploading',
+      percent: 0,
+      status,
       category,
       policeCaseNumber,
       originalFileObj: file,
@@ -119,7 +127,8 @@ export const useUploadFiles = (files?: CaseFile[] | null) => {
 
   return {
     uploadFiles,
-    allFilesUploaded,
+    allFilesDoneOrError,
+    someFilesError,
     addUploadFile,
     addUploadFiles,
     updateUploadFile,
@@ -229,7 +238,7 @@ const useS3Upload = (caseId: string) => {
   const handleUpload = useCallback(
     async (
       files: TUploadFile[],
-      callback: (file: TUploadFile, newId?: string) => void,
+      updateFile: (file: TUploadFile, newId?: string) => void,
     ) => {
       const mutation = limitedAccess
         ? limitedAccessCreatePresignedPost
@@ -258,12 +267,14 @@ const useS3Upload = (caseId: string) => {
         return presignedPost
       }
 
-      files.forEach(async (file) => {
+      const promises = files.map(async (file, idx) => {
         try {
+          updateFile({ ...file, status: 'uploading' })
+
           const presignedPost = await getPresignedPost(file)
 
           await uploadToS3(file, presignedPost, (percent) => {
-            callback({ ...file, percent })
+            updateFile({ ...file, percent })
           })
 
           const newFileId = await addFileToCaseState({
@@ -271,7 +282,7 @@ const useS3Upload = (caseId: string) => {
             key: presignedPost.fields.key,
           })
 
-          callback(
+          updateFile(
             {
               ...file,
               key: presignedPost.fields.key,
@@ -281,11 +292,19 @@ const useS3Upload = (caseId: string) => {
             // We need to set the id so we are able to delete the file later
             newFileId,
           )
+
+          return true
         } catch (e) {
           toast.error(formatMessage(strings.uploadFailed))
-          callback({ ...file, status: 'error' })
+          updateFile({ ...file, percent: 0, status: 'error' })
+
+          return false
         }
       })
+
+      return Promise.all(promises).then((results) =>
+        results.every((result) => result),
+      )
     },
     [
       limitedAccess,

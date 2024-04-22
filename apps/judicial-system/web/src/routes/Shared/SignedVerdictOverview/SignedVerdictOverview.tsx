@@ -57,7 +57,6 @@ import {
 } from '@island.is/judicial-system-web/src/components'
 import { NameAndEmail } from '@island.is/judicial-system-web/src/components/InfoCard/InfoCard'
 import {
-  CaseAppealDecision,
   CaseAppealState,
   CaseDecision,
   CaseState,
@@ -355,10 +354,10 @@ export const SignedVerdictOverview: React.FC = () => {
           ),
         })
 
-        setWorkingCase({
-          ...workingCase,
+        setWorkingCase((prevWorkingCase) => ({
+          ...prevWorkingCase,
           sharedWithProsecutorsOffice: undefined,
-        })
+        }))
         setSelectedSharingInstitutionId(null)
 
         updateCase(workingCase.id, {
@@ -379,8 +378,8 @@ export const SignedVerdictOverview: React.FC = () => {
           ),
         })
 
-        setWorkingCase({
-          ...workingCase,
+        setWorkingCase((prevWorkingCase) => ({
+          ...prevWorkingCase,
           sharedWithProsecutorsOffice: {
             id: institution?.value as string,
             name: institution?.label as string,
@@ -389,10 +388,10 @@ export const SignedVerdictOverview: React.FC = () => {
             modified: new Date().toString(),
             active: true,
           },
-          isHeightenedSecurityLevel: workingCase.isHeightenedSecurityLevel
+          isHeightenedSecurityLevel: prevWorkingCase.isHeightenedSecurityLevel
             ? false
-            : workingCase.isHeightenedSecurityLevel,
-        })
+            : prevWorkingCase.isHeightenedSecurityLevel,
+        }))
 
         updateCase(workingCase.id, {
           sharedWithProsecutorsOfficeId: institution?.value as string,
@@ -411,7 +410,7 @@ export const SignedVerdictOverview: React.FC = () => {
       return false
     }
 
-    setWorkingCase((theCase) => ({ ...theCase, ...update }))
+    setWorkingCase((prevWorkingCase) => ({ ...prevWorkingCase, ...update }))
 
     return true
   }
@@ -419,8 +418,7 @@ export const SignedVerdictOverview: React.FC = () => {
   const shouldDisplayAlertBanner =
     (workingCase.hasBeenAppealed &&
       (isProsecutionUser(user) || isDistrictCourtUser(user))) ||
-    (isProsecutionUser(user) &&
-      workingCase.prosecutorAppealDecision === CaseAppealDecision.POSTPONE) ||
+    (isProsecutionUser(user) && workingCase.canProsecutorAppeal) ||
     workingCase.appealState === CaseAppealState.COMPLETED
 
   return (
@@ -529,7 +527,7 @@ export const SignedVerdictOverview: React.FC = () => {
                 },
                 {
                   title: formatMessage(core.prosecutor),
-                  value: `${workingCase.creatingProsecutor?.institution?.name}`,
+                  value: `${workingCase.prosecutorsOffice?.name}`,
                 },
                 {
                   title: formatMessage(core.court),
@@ -599,24 +597,36 @@ export const SignedVerdictOverview: React.FC = () => {
                         title: formatMessage(core.appealCaseNumberHeading),
                         value: workingCase.appealCaseNumber,
                       },
-                      {
-                        title: formatMessage(core.appealAssistantHeading),
-                        value: workingCase.appealAssistant?.name,
-                      },
-                      {
-                        title: formatMessage(core.appealJudgesHeading),
-                        value: (
-                          <>
-                            {sortByIcelandicAlphabet([
-                              workingCase.appealJudge1?.name || '',
-                              workingCase.appealJudge2?.name || '',
-                              workingCase.appealJudge3?.name || '',
-                            ]).map((judge, index) => (
-                              <Text key={index}>{judge}</Text>
-                            ))}
-                          </>
-                        ),
-                      },
+                      ...(workingCase.appealAssistant
+                        ? [
+                            {
+                              title: formatMessage(core.appealAssistantHeading),
+                              value: workingCase.appealAssistant.name,
+                            },
+                          ]
+                        : []),
+                      ...(workingCase.appealJudge1 &&
+                      workingCase.appealJudge2 &&
+                      workingCase.appealJudge3
+                        ? [
+                            {
+                              title: formatMessage(core.appealJudgesHeading),
+                              value: (
+                                <>
+                                  {sortByIcelandicAlphabet([
+                                    workingCase.appealJudge1.name || '',
+                                    workingCase.appealJudge2.name || '',
+                                    workingCase.appealJudge3.name || '',
+                                  ]).map((judge, index) => (
+                                    <Text key={`${judge}_${index}`}>
+                                      {judge}
+                                    </Text>
+                                  ))}
+                                </>
+                              ),
+                            },
+                          ]
+                        : []),
                     ]
                   : undefined
               }
@@ -650,16 +660,18 @@ export const SignedVerdictOverview: React.FC = () => {
               judgeName={workingCase.judge?.name}
             />
           </Box>
-          {workingCase.appealConclusion && (
-            <Box marginBottom={6}>
-              <Conclusion
-                title={formatMessage(conclusion.appealTitle)}
-                conclusionText={workingCase.appealConclusion}
-              />
-            </Box>
-          )}
-
-          <AppealCaseFilesOverview />
+          {workingCase.appealState === CaseAppealState.COMPLETED &&
+            workingCase.appealConclusion && (
+              <Box marginBottom={6}>
+                <Conclusion
+                  title={formatMessage(conclusion.appealTitle)}
+                  conclusionText={workingCase.appealConclusion}
+                />
+              </Box>
+            )}
+          <Box marginBottom={5}>
+            <AppealCaseFilesOverview />
+          </Box>
           <CaseDocuments
             isRequestingCourtRecordSignature={isRequestingCourtRecordSignature}
             handleRequestCourtRecordSignature={
@@ -670,8 +682,7 @@ export const SignedVerdictOverview: React.FC = () => {
           />
 
           {isProsecutionUser(user) &&
-            user?.institution?.id ===
-              workingCase.creatingProsecutor?.institution?.id &&
+            user?.institution?.id === workingCase.prosecutorsOffice?.id &&
             isRestrictionCase(workingCase.type) && (
               <ShareCase
                 selectedSharingInstitutionId={selectedSharingInstitutionId}

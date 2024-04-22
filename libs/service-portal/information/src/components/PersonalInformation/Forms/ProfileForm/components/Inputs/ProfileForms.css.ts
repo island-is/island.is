@@ -74,6 +74,13 @@ export const countryCodeInput = style({
   }),
 })
 
+export const errorMessage = style({
+  color: theme.color.red600,
+  fontWeight: theme.typography.medium,
+  fontSize: 14,
+  marginTop: theme.spacing[1],
+})
+
 globalStyle(`${hb} input, ${bank} input`, {
   paddingRight: 0,
 })

@@ -1,17 +1,11 @@
 import { service, ServiceBuilder } from '../../../../../infra/src/dsl/dsl'
 import { settings } from '../../../../../infra/src/dsl/settings'
-import { PostgresInfo } from '../../../../../infra/src/dsl/types/input-types'
 import {
   Base,
   Client,
   NationalRegistry,
 } from '../../../../../infra/src/dsl/xroad'
 
-const postgresInfo: PostgresInfo = {
-  passwordSecret: '/k8s/services-endorsements-api/DB_PASSWORD',
-  name: 'services_endorsements_api',
-  username: 'services_endorsements_api',
-}
 export const serviceSetup =
   (_services: {}): ServiceBuilder<'endorsement-system-api'> =>
     service('endorsement-system-api')
@@ -20,17 +14,8 @@ export const serviceSetup =
       .serviceAccount('endorsement-system-api')
       .command('node')
       .args('--tls-min-v1.0', '--no-experimental-fetch', 'main.js')
-      .postgres(postgresInfo)
-      .initContainer({
-        containers: [
-          {
-            name: 'migrations',
-            command: 'npx',
-            args: ['sequelize-cli', 'db:migrate'],
-          },
-        ],
-        postgres: postgresInfo,
-      })
+      .db({ name: 'services-endorsements-api' })
+      .migrations()
       .env({
         EMAIL_REGION: 'eu-west-1',
         EMAIL_FROM_NAME: {

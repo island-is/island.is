@@ -19,7 +19,7 @@ import { StateLifeCycle } from '@island.is/application/types'
 import { CanSignApi, GetListApi } from '../dataProviders'
 
 export const WeekLifeCycle: StateLifeCycle = {
-  shouldBeListed: true,
+  shouldBeListed: false,
   shouldBePruned: true,
   whenToPrune: 1000 * 3600 * 24 * 7,
 }

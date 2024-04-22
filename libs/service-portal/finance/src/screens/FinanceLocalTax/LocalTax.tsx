@@ -11,11 +11,6 @@ const LocalTax = () => {
     <DynamicWrapper>
       <DocumentScreen
         title={formatMessage(m.financeLocalTax)}
-        intro={formatMessage({
-          id: 'sp.local-tax:intro',
-          defaultMessage:
-            'Sýnir þá staðgreiðslu sem skilað er til sveitafélaga.',
-        })}
         listPath="localTax"
         defaultDateRangeMonths={12}
       />

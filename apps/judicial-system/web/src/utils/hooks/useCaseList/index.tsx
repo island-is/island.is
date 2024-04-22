@@ -4,7 +4,6 @@ import { motion } from 'framer-motion'
 import { useRouter } from 'next/router'
 
 import { LoadingDots, toast } from '@island.is/island-ui/core'
-import { theme } from '@island.is/island-ui/theme'
 import * as constants from '@island.is/judicial-system/consts'
 import {
   DEFENDER_INDICTMENT_ROUTE,
@@ -23,13 +22,14 @@ import { UserContext } from '@island.is/judicial-system-web/src/components'
 import { useCaseLazyQuery } from '@island.is/judicial-system-web/src/components/FormProvider/case.generated'
 import { useLimitedAccessCaseLazyQuery } from '@island.is/judicial-system-web/src/components/FormProvider/limitedAccessCase.generated'
 import {
+  CaseAppealState,
   CaseState,
   User,
 } from '@island.is/judicial-system-web/src/graphql/schema'
 import { TempCase as Case } from '@island.is/judicial-system-web/src/types'
 
 import { findFirstInvalidStep } from '../../formHelper'
-import { isTrafficViolationCase } from '../../stepHelper'
+import { isTrafficViolationIndictment } from '../../stepHelper'
 import useCase from '../useCase'
 
 const useCaseList = () => {
@@ -38,6 +38,7 @@ const useCaseList = () => {
   const [clickedCase, setClickedCase] = useState<
     [id: string | null, showLoading: boolean]
   >([null, false])
+  const [openCaseInNewTab, setOpenCaseInNewTab] = useState<boolean>(false)
 
   const { user, limitedAccess } = useContext(UserContext)
   const { formatMessage } = useIntl()
@@ -72,7 +73,7 @@ const useCaseList = () => {
 
   const openCase = (caseToOpen: Case, user: User) => {
     let routeTo = null
-    const isTrafficViolation = isTrafficViolationCase(caseToOpen)
+    const isTrafficViolation = isTrafficViolationIndictment(caseToOpen)
 
     if (isDefenceUser(user)) {
       if (isIndictmentCase(caseToOpen.type)) {
@@ -88,16 +89,10 @@ const useCaseList = () => {
       if (isIndictmentCase(caseToOpen.type)) {
         routeTo = constants.CLOSED_INDICTMENT_OVERVIEW_ROUTE
       } else if (isCourtOfAppealsUser(user)) {
-        if (
-          findFirstInvalidStep(constants.courtOfAppealRoutes, caseToOpen) ===
-          constants.courtOfAppealRoutes[1]
-        ) {
-          routeTo = constants.COURT_OF_APPEAL_OVERVIEW_ROUTE
+        if (caseToOpen.appealState === CaseAppealState.COMPLETED) {
+          routeTo = constants.COURT_OF_APPEAL_RESULT_ROUTE
         } else {
-          routeTo = findFirstInvalidStep(
-            constants.courtOfAppealRoutes,
-            caseToOpen,
-          )
+          routeTo = constants.COURT_OF_APPEAL_OVERVIEW_ROUTE
         }
       } else {
         routeTo = constants.SIGNED_VERDICT_OVERVIEW_ROUTE
@@ -137,14 +132,23 @@ const useCaseList = () => {
       }
     }
 
-    if (routeTo) router.push(`${routeTo}/${caseToOpen.id}`)
+    if (openCaseInNewTab) {
+      window.open(`${routeTo}/${caseToOpen.id}`, '_blank')
+      setOpenCaseInNewTab(false)
+    } else if (routeTo) {
+      router.push(`${routeTo}/${caseToOpen.id}`)
+    }
   }
 
   const handleOpenCase = useCallback(
-    (id: string) => {
+    (id: string, openInNewTab?: boolean) => {
       Promise.all(timeouts.map((timeout) => clearTimeout(timeout)))
 
-      if (clickedCase[0] !== id) {
+      if (openInNewTab === true) {
+        setOpenCaseInNewTab(openInNewTab)
+      }
+
+      if (clickedCase[0] !== id && !openInNewTab) {
         setClickedCase([id, false])
 
         timeouts.push(
@@ -159,7 +163,6 @@ const useCaseList = () => {
           ? getLimitedAccessCase({ variables: { input: { id } } })
           : getCase({ variables: { input: { id } } })
       }
-
       if (
         isTransitioningCase ||
         isSendingNotification ||
@@ -189,12 +192,6 @@ const useCaseList = () => {
         initial={{ opacity: 0 }}
         animate={{ opacity: 1 }}
         exit={{ opacity: 0 }}
-        style={{
-          display: 'flex',
-          alignItems: 'center',
-          justifyContent: 'center',
-          height: theme.spacing[3],
-        }}
       >
         <LoadingDots single />
       </motion.div>

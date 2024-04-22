@@ -6,7 +6,7 @@ import {
   getValueViaPath,
 } from '@island.is/application/core'
 import { information } from '../../../lib/messages'
-import { MachineDto } from '@island.is/clients/work-machines'
+import { MachinesWithTotalCount } from '@island.is/clients/work-machines'
 
 export const pickMachineSubSection = buildSubSection({
   id: 'pickMachine',
@@ -24,18 +24,16 @@ export const pickMachineSubSection = buildSubSection({
             const machines = getValueViaPath(
               externalData,
               'machinesList.data',
-              [],
-            ) as MachineDto[]
+              {},
+            ) as MachinesWithTotalCount
 
-            return machines.length <= 5
+            return machines.totalCount <= 5
           },
 
           options: (application) => {
-            const machineList =
-              (application?.externalData.machinesList.data as
-                | MachineDto[]
-                | undefined) || []
-            return machineList.map((machine) => {
+            const machineList = application?.externalData.machinesList
+              .data as MachinesWithTotalCount
+            return machineList.machines.map((machine) => {
               return {
                 value: machine.id || '',
                 label: machine?.regNumber || '',
@@ -58,9 +56,9 @@ export const pickMachineSubSection = buildSubSection({
             const machines = getValueViaPath(
               externalData,
               'machinesList.data',
-              [],
-            ) as MachineDto[]
-            return machines.length > 5
+              {},
+            ) as MachinesWithTotalCount
+            return machines.totalCount > 5
           },
           component: 'MachinesField',
           title: '',

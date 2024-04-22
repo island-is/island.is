@@ -9,4 +9,7 @@ bootstrap({
   name: 'auth-public-api',
   openApi,
   port: environment.port,
+  healthCheck: {
+    database: true,
+  },
 })

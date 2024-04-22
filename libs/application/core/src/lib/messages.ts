@@ -36,6 +36,11 @@ export const coreMessages = defineMessages({
     defaultMessage: 'Breyta',
     description: 'Edit button for review screen and so on',
   },
+  buttonAdd: {
+    id: 'application.system:button.add',
+    defaultMessage: 'Bæta við',
+    description: 'Add button',
+  },
   cardButtonInProgress: {
     id: 'application.system:card.button.inProgress',
     defaultMessage: 'Opna umsókn',
@@ -209,6 +214,11 @@ export const coreMessages = defineMessages({
     defaultMessage: 'Bíð staðfestingar frá greiðsluveitu',
     description:
       'Text indicating we are waiting for confirmation from 3rd party payment gateway',
+  },
+  deleteFieldText: {
+    id: 'application.system:core.delete.field.text',
+    defaultMessage: 'Eyða færslu',
+    description: 'Delete field text',
   },
   deleteApplicationDialogTitle: {
     id: 'application.system:delete.application.dialog.title',

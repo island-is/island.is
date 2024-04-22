@@ -135,10 +135,8 @@ export const HealthOverview = () => {
             borderColor="blue200"
           >
             <Stack space={1} dividers="blueberry200">
-              <Text variant="eyebrow" marginBottom={1} color="purple600">
-                {formatMessage(messages.statusOfRights)}
-              </Text>
               <UserInfoLine
+                title={formatMessage(messages.statusOfRights)}
                 label={formatMessage(messages.healthInsuranceStart)}
                 content={formatMessage(
                   formatDateFns(insurance.from, 'dd.MM.yyyy'),
@@ -185,34 +183,15 @@ export const HealthOverview = () => {
             borderColor="blue200"
           >
             <Stack space={1} dividers="blueberry200">
-              <Text variant="eyebrow" marginBottom={1} color="purple600">
-                {formatMessage(messages.paymentParticipation)}
-              </Text>
               <UserInfoLine
+                title={formatMessage(messages.paymentParticipation)}
                 label={formatMessage(messages.paymentTarget)}
-                content={
-                  <Box
-                    display="flex"
-                    width="full"
-                    justifyContent="spaceBetween"
-                  >
-                    <Text>{amountFormat(insurance.maximumPayment ?? 0)}</Text>
-                    {enabledPaymentPage && (
-                      <Link to={HealthPaths.HealthPaymentOverview}>
-                        <Button
-                          as="span"
-                          unfocusable
-                          icon="open"
-                          iconType="outline"
-                          variant="text"
-                          size="small"
-                        >
-                          {formatMessage(messages.seeMore)}
-                        </Button>
-                      </Link>
-                    )}
-                  </Box>
-                }
+                editLink={{
+                  title: formatMessage(messages.seeMore),
+                  url: HealthPaths.HealthPaymentOverview,
+                  external: true,
+                }}
+                content={amountFormat(insurance.maximumPayment ?? 0)}
               />
             </Stack>
           </Box>

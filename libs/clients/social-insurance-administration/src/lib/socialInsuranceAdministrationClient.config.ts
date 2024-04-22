@@ -14,7 +14,7 @@ export const SocialInsuranceAdministrationClientConfig = defineConfig({
   load: (env) => ({
     xRoadServicePath: env.required(
       'XROAD_TR_PATH',
-      'IS-DEV/GOV/10008/TR-Protected/external-v1/api/protected/v1',
+      'IS-DEV/GOV/10008/TR-Protected/external-v1',
     ),
     fetch: {
       timeout: env.optionalJSON('XROAD_TR_TIMEOUT') ?? 30000,

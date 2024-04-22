@@ -1,4 +1,4 @@
 {
-  "presets": ["@nx/web/babel"],
+  "presets": ["@nx/js/babel"],
   "plugins": []
 }

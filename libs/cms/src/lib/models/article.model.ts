@@ -108,7 +108,7 @@ export const mapArticle = ({
   id: sys.id,
   title: fields.title ?? '',
   shortTitle: fields.shortTitle ?? '',
-  slug: fields.slug ?? '',
+  slug: (fields.slug ?? '').trim(),
   intro: fields.intro ?? '',
   importance: fields.importance ?? 0,
   body: fields.content ? mapDocument(fields.content, sys.id + ':body') : [],

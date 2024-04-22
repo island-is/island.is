@@ -1,3 +1,4 @@
+import { useEffect, useRef } from 'react'
 import { Box, Text } from '@island.is/island-ui/core'
 import AvatarImage from '../DocumentLine/AvatarImage'
 import { DocumentCategory } from '@island.is/api/schema'
@@ -25,8 +26,16 @@ export const DocumentHeader: React.FC<DocumentHeaderProps> = ({
   actionBar,
   subject,
 }) => {
+  const wrapper = useRef<HTMLDivElement>(null)
+
+  useEffect(() => {
+    if (wrapper.current) {
+      wrapper.current.focus()
+    }
+  }, [wrapper])
+
   return (
-    <Box display="flex">
+    <Box tabIndex={0} outline="none" ref={wrapper} display="flex">
       <p className={helperStyles.srOnly} aria-live="assertive">
         {subject}
       </p>

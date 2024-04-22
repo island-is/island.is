@@ -9,6 +9,7 @@ import { CmsSyncProvider, processSyncDataInput } from '../cmsSync.service'
 import {
   createTerms,
   extractStringsFromObject,
+  pruneNonSearchableSliceUnionFields,
   removeEntryHyperlinkFields,
 } from './utils'
 
@@ -81,7 +82,9 @@ export class SubArticleSyncService implements CmsSyncProvider<ISubArticle> {
       .map<MappedData | boolean>((entry) => {
         try {
           const mapped = mapSubArticle(entry)
-          const content = extractStringsFromObject(mapped.body)
+          const content = extractStringsFromObject(
+            mapped.body.map(pruneNonSearchableSliceUnionFields),
+          )
 
           return {
             _id: mapped.id,

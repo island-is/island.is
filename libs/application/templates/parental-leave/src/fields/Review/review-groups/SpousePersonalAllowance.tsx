@@ -3,11 +3,11 @@ import {
   RadioValue,
   ReviewGroup,
 } from '@island.is/application/ui-components'
-import { GridColumn, GridRow } from '@island.is/island-ui/core'
-import { NO, YES, parentalLeaveFormMessages } from '../../..'
-import { ReviewGroupProps } from './props'
 import { useLocale } from '@island.is/localization'
-import { useStatefulAnswers } from '../../../hooks/useStatefulAnswers'
+import { YES } from '../../../constants'
+import { parentalLeaveFormMessages } from '../../../lib/messages'
+import { getApplicationAnswers } from '../../../lib/parentalLeaveUtils'
+import { ReviewGroupProps } from './props'
 
 export const SpousePersonalAllowance = ({
   application,
@@ -15,56 +15,32 @@ export const SpousePersonalAllowance = ({
   goToScreen,
 }: ReviewGroupProps) => {
   const { formatMessage } = useLocale()
-  const [
-    { usePersonalAllowanceFromSpouse, spouseUseAsMuchAsPossible, spouseUsage },
-  ] = useStatefulAnswers(application)
+  const {
+    usePersonalAllowanceFromSpouse,
+    spouseUseAsMuchAsPossible,
+    spouseUsage,
+  } = getApplicationAnswers(application.answers)
 
   return (
     <ReviewGroup
       isEditable={editable}
       editAction={() => goToScreen?.('personalAllowanceFromSpouse')}
     >
-      <GridRow>
-        <GridColumn span={['12/12', '12/12', '12/12', '5/12']}>
-          <RadioValue
-            label={formatMessage(
-              parentalLeaveFormMessages.personalAllowance.spouseTitle,
-            )}
-            value={usePersonalAllowanceFromSpouse}
-          />
-        </GridColumn>
-
-        {usePersonalAllowanceFromSpouse === YES &&
-          spouseUseAsMuchAsPossible === YES && (
-            <GridColumn
-              span={['12/12', '12/12', '12/12', '5/12']}
-              paddingTop={[2, 2, 2, 0]}
-            >
-              <RadioValue
-                label={formatMessage(
-                  parentalLeaveFormMessages.reviewScreen
-                    .useSpousePersonalAllowance,
-                )}
-                value={spouseUseAsMuchAsPossible}
-              />
-            </GridColumn>
+      {usePersonalAllowanceFromSpouse === YES ? (
+        <DataValue
+          label={formatMessage(
+            parentalLeaveFormMessages.personalAllowance.spouseTitle,
           )}
-
-        {usePersonalAllowanceFromSpouse === YES &&
-          spouseUseAsMuchAsPossible === NO && (
-            <GridColumn
-              span={['12/12', '12/12', '12/12', '5/12']}
-              paddingTop={[2, 2, 2, 0]}
-            >
-              <DataValue
-                label={formatMessage(
-                  parentalLeaveFormMessages.personalAllowance.allowanceUsage,
-                )}
-                value={`${spouseUsage ?? 0}%`}
-              />
-            </GridColumn>
+          value={`${spouseUseAsMuchAsPossible === YES ? 100 : spouseUsage}%`}
+        />
+      ) : (
+        <RadioValue
+          label={formatMessage(
+            parentalLeaveFormMessages.personalAllowance.spouseTitle,
           )}
-      </GridRow>
+          value={usePersonalAllowanceFromSpouse}
+        />
+      )}
     </ReviewGroup>
   )
 }

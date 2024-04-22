@@ -2,21 +2,19 @@ import type { Logger } from '@island.is/logging'
 import { LOGGER_PROVIDER } from '@island.is/logging'
 import { Inject, Injectable } from '@nestjs/common'
 import { Auth, AuthMiddleware, User } from '@island.is/auth-nest-tools'
-import { LicenseClient, Result } from '../../licenseClient.type'
+import { LicenseClient, LicenseType, Result } from '../../licenseClient.type'
 import { FetchError, handle404 } from '@island.is/clients/middlewares'
-import {
-  BasicCardInfoDTO,
-  EhicApi,
-} from '@island.is/clients/icelandic-health-insurance/rights-portal'
+import { EhicApi } from '@island.is/clients/icelandic-health-insurance/rights-portal'
 import { EhicCardResponse } from './ehicCardClient.type'
 
 @Injectable()
-export class EhicClient implements LicenseClient<BasicCardInfoDTO> {
+export class EhicClient implements LicenseClient<LicenseType.Ehic> {
   constructor(
     @Inject(LOGGER_PROVIDER) private logger: Logger,
     private ehicApi: EhicApi,
   ) {}
   clientSupportsPkPass = false
+  type = LicenseType.Ehic
 
   async getLicenses(user: User): Promise<Result<Array<EhicCardResponse>>> {
     try {

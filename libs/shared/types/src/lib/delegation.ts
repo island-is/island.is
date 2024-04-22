@@ -4,3 +4,10 @@ export enum AuthDelegationType {
   Custom = 'Custom',
   PersonalRepresentative = 'PersonalRepresentative',
 }
+
+export enum AuthDelegationProvider {
+  NationalRegistry = 'thjodskra',
+  CompanyRegistry = 'fyrirtaekjaskra',
+  PersonalRepresentativeRegistry = 'talsmannagrunnur',
+  Custom = 'delegationdb',
+}

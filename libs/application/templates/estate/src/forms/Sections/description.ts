@@ -1,10 +1,12 @@
 import {
   buildDescriptionField,
+  buildMultiField,
   buildSection,
 } from '@island.is/application/core'
 
 import { m } from '../../lib/messages'
 import { EstateTypes } from '../../lib/constants'
+import { deceasedInfoFields } from './deceasedInfoFields'
 
 export const applicationDescription = buildSection({
   id: 'applicationDescription',

@@ -14,6 +14,7 @@ import {
 } from './utils/lifecycle/setup-notifications'
 import { setupRoutes } from './utils/lifecycle/setup-routes'
 import { performanceMetricsAppLaunched } from './utils/performance-metrics'
+import { preferencesStore } from './stores/preferences-store'
 
 async function startApp() {
   // setup global packages and polyfills

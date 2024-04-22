@@ -1,7 +1,7 @@
 import gql from 'graphql-tag'
 
 export const GetListById = gql`
-  query ListById($input: SignatureCollectionIdInput!) {
+  query ListById($input: SignatureCollectionListIdInput!) {
     signatureCollectionList(input: $input) {
       id
       title
@@ -33,7 +33,7 @@ export const GetListById = gql`
 `
 
 export const GetListSignatures = gql`
-  query Signatures($input: SignatureCollectionIdInput!) {
+  query Signatures($input: SignatureCollectionListIdInput!) {
     signatureCollectionSignatures(input: $input) {
       id
       listId
@@ -43,7 +43,7 @@ export const GetListSignatures = gql`
         address
       }
       isDigital
-      active
+      valid
       created
     }
   }
@@ -62,19 +62,13 @@ export const GetSignedList = gql`
       }
       endTime
       startTime
-      candidate {
-        id
-        nationalId
-        name
-        phone
-        email
-      }
-      collectors {
-        nationalId
-        name
-      }
+      isDigital
+      pageNumber
+      signedDate
       active
+      isValid
       collectionId
+      canUnsign
       slug
     }
   }
@@ -89,8 +83,29 @@ export const GetIsOwner = gql`
 `
 
 export const GetListsForUser = gql`
-  query listsForUser {
-    signatureCollectionListsForUser {
+  query listsForUser($input: SignatureCollectionIdInput!) {
+    signatureCollectionListsForUser(input: $input) {
+      id
+      title
+      area {
+        id
+        name
+        min
+        max
+      }
+      endTime
+      startTime
+      active
+      collectionId
+      slug
+      numberOfSignatures
+    }
+  }
+`
+
+export const GetListsForOwner = gql`
+  query listsForOwner($input: SignatureCollectionIdInput!) {
+    signatureCollectionListsForOwner(input: $input) {
       id
       title
       area {
@@ -116,6 +131,26 @@ export const GetListsForUser = gql`
       collectionId
       slug
       numberOfSignatures
+      maxReached
+    }
+  }
+`
+
+export const GetCurrentCollection = gql`
+  query currentCollection {
+    signatureCollectionCurrent {
+      id
+      endTime
+      startTime
+      name
+      isActive
+      status
+      areas {
+        id
+        name
+        min
+        max
+      }
     }
   }
 `

@@ -108,7 +108,6 @@ const PoliceReport = () => {
                 'caseFacts',
                 event.target.value,
                 ['empty'],
-                workingCase,
                 setWorkingCase,
                 caseFactsEM,
                 setCaseFactsEM,
@@ -157,7 +156,6 @@ const PoliceReport = () => {
                   'legalArguments',
                   event.target.value,
                   ['empty'],
-                  workingCase,
                   setWorkingCase,
                   legalArgumentsEM,
                   setLegalArgumentsEM,
@@ -192,10 +190,10 @@ const PoliceReport = () => {
                   )}
                   checked={Boolean(workingCase.requestProsecutorOnlySession)}
                   onChange={(evt) => {
-                    setWorkingCase({
-                      ...workingCase,
+                    setWorkingCase((prevWorkingCase) => ({
+                      ...prevWorkingCase,
                       requestProsecutorOnlySession: evt.target.checked,
-                    })
+                    }))
                     updateCase(workingCase.id, {
                       requestProsecutorOnlySession: evt.target.checked,
                     })
@@ -217,7 +215,6 @@ const PoliceReport = () => {
                     'prosecutorOnlySessionRequest',
                     event.target.value,
                     [],
-                    workingCase,
                     setWorkingCase,
                   )
                 }

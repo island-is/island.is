@@ -10,7 +10,6 @@ import {
   NativeModules,
   Platform,
   SafeAreaView,
-  Text,
   TouchableOpacity,
   View,
 } from 'react-native'
@@ -57,6 +56,13 @@ const LightButtonText = styled.Text`
     fontWeight: '600',
     color: (props) => props.theme.color.blue400,
   })}
+`
+
+const Text = styled.Text`
+  color: ${dynamicColor((props) => ({
+    light: props.theme.color.dark400,
+    dark: 'white',
+  }))};
 `
 
 function getChromeVersion(): Promise<number> {
@@ -252,6 +258,7 @@ function DebugRow({ title, actions, value }: any) {
     lineHeight: 22,
     fontFamily: Platform.OS === 'ios' ? 'Menlo-Regular' : 'monospace',
   }
+
   return (
     <View
       style={{

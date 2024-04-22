@@ -39,6 +39,7 @@ import {
 } from '@island.is/web/hooks'
 import useContentfulId from '@island.is/web/hooks/useContentfulId'
 import useLocalLinkTypeResolver from '@island.is/web/hooks/useLocalLinkTypeResolver'
+import { useI18n } from '@island.is/web/i18n'
 import { withMainLayout } from '@island.is/web/layouts/main'
 import { webRichText } from '@island.is/web/utils/richText'
 
@@ -94,11 +95,14 @@ const SubPage: Screen<SubPageProps> = ({
     singleSupportQNA?.id,
   )
   useLocalLinkTypeResolver()
+  const { activeLocale } = useI18n()
 
   const organizationSlug = organization?.slug
   const question = singleSupportQNA
 
   const institutionSlug = getSlugPart(Router.asPath, locale === 'is' ? 2 : 3)
+  const institutionSlugBelongsToMannaudstorg =
+    institutionSlug.includes('mannaudstorg')
   // Already filtered by category, simply
   const categoryDescription = supportQNAs[0]?.category?.description ?? ''
   const categoryTitle = supportQNAs[0]?.category?.title
@@ -112,11 +116,21 @@ const SubPage: Screen<SubPageProps> = ({
     supportQNAsBySubCategory,
   )
 
+  const headerTitle = institutionSlugBelongsToMannaudstorg
+    ? o(
+        'serviceWebHeaderTitle',
+        n('assistanceForIslandIs', 'Aðstoð fyrir Ísland.is'),
+      )
+    : ''
+
   const organizationTitle = (organization && organization.title) || 'Ísland.is'
-  const pageTitle = `${categoryTitle ? categoryTitle + ' | ' : ''}${o(
-    'serviceWebSubpageTitleSuffix',
-    n('assistanceForIslandIs', 'Aðstoð fyrir Ísland.is'),
-  )}`
+  const pageTitle = `${
+    categoryTitle
+      ? institutionSlugBelongsToMannaudstorg
+        ? categoryTitle + ' | ' + headerTitle
+        : categoryTitle
+      : ''
+  }`
 
   const mobileBackButtonText = questionSlug
     ? `${organizationTitle}: ${categoryTitle}`
@@ -125,9 +139,6 @@ const SubPage: Screen<SubPageProps> = ({
   const mobileBackButtonLink = `${
     linkResolver('serviceweb').href
   }/${organizationSlug}${questionSlug ? `/${categorySlug}` : ''}`
-
-  const institutionSlugBelongsToMannaudstorg =
-    institutionSlug.includes('mannaudstorg')
 
   const breadcrumbItems = [
     {
@@ -159,10 +170,7 @@ const SubPage: Screen<SubPageProps> = ({
     <ServiceWebWrapper
       pageTitle={pageTitle}
       pageDescription={o('serviceWebFeaturedDescription', '')}
-      headerTitle={o(
-        'serviceWebHeaderTitle',
-        n('assistanceForIslandIs', 'Aðstoð fyrir Ísland.is'),
-      )}
+      headerTitle={headerTitle}
       institutionSlug={institutionSlug}
       // eslint-disable-next-line @typescript-eslint/ban-ts-comment
       // @ts-ignore make web strict
@@ -171,7 +179,9 @@ const SubPage: Screen<SubPageProps> = ({
       smallBackground
       searchPlaceholder={o(
         'serviceWebSearchPlaceholder',
-        'Leitaðu á þjónustuvefnum',
+        activeLocale === 'is'
+          ? 'Leitaðu á þjónustuvefnum'
+          : 'Search the service web',
       )}
       pageData={serviceWebPage}
     >

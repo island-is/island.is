@@ -49,7 +49,7 @@ import {
 import { formatCustodyRestrictions } from '@island.is/judicial-system-web/src/utils/restrictions'
 import { isCourtRecordStepValidRC } from '@island.is/judicial-system-web/src/utils/validate'
 
-import AppealSections from '../../components/AppealSections/AppealSections'
+import { AppealSections } from '../../components'
 
 export const CourtRecord: React.FC<React.PropsWithChildren<unknown>> = () => {
   const {
@@ -293,7 +293,6 @@ export const CourtRecord: React.FC<React.PropsWithChildren<unknown>> = () => {
                   'courtLocation',
                   event.target.value,
                   ['empty'],
-                  workingCase,
                   setWorkingCase,
                   courtLocationErrorMessage,
                   setCourtLocationMessage,
@@ -347,7 +346,6 @@ export const CourtRecord: React.FC<React.PropsWithChildren<unknown>> = () => {
                 'courtAttendees',
                 event.target.value,
                 ['empty'],
-                workingCase,
                 setWorkingCase,
               )
             }
@@ -388,7 +386,6 @@ export const CourtRecord: React.FC<React.PropsWithChildren<unknown>> = () => {
                   'sessionBookings',
                   event.target.value,
                   ['empty'],
-                  workingCase,
                   setWorkingCase,
                   sessionBookingsErrorMessage,
                   setSessionBookingsErrorMessage,
@@ -451,7 +448,6 @@ export const CourtRecord: React.FC<React.PropsWithChildren<unknown>> = () => {
                   'endOfSessionBookings',
                   event.target.value,
                   [],
-                  workingCase,
                   setWorkingCase,
                 )
               }

@@ -1,10 +1,18 @@
 import { EinstaklingurMaFrambodInfo, MedmaeliDTO } from '../../gen/fetch'
-import { List } from './types/list.dto'
+import { Area } from './types/area.dto'
+import { ListBase } from './types/list.dto'
+import { Signature } from './types/signature.dto'
 
+export enum ListState {
+  Open = 'open',
+  Closed = 'closed',
+}
 export interface GetListInput {
   areaId?: string
   nationalId?: string
   candidateId?: string
+  collectionId?: string
+  onlyActive?: boolean
 }
 
 export interface OwnerInput {
@@ -36,24 +44,27 @@ export interface CanCreateInput {
   requirementsMet?: boolean
   canCreateInfo?: EinstaklingurMaFrambodInfo
   isPresidential: boolean
-  isActive: boolean
-  ownedLists: List[]
+  isActive?: boolean
+  ownedLists: ListBase[]
+  areas: Area[]
 }
 
 export interface CanSignInput {
   requirementsMet?: boolean
   canSignInfo?: EinstaklingurMaFrambodInfo
-  isActive: boolean
   activeSignature?: MedmaeliDTO
+  signatures?: Signature[]
 }
 
 export enum Requirement {
   aldur = 'aldur',
   rikisfang = 'rikisfang',
   buseta = 'buseta',
+  ekkiBuseta = 'ekkiBuseta',
   active = 'active',
   notOwner = 'notOwner',
   notSigned = 'notSigned',
+  noInvalidSignature = 'noInvalidSignature',
 }
 
 export enum ReasonKey {
@@ -68,4 +79,5 @@ export enum ReasonKey {
   AlreadyOwner = 'alreadyOwner',
   AlreadySigned = 'alreadySigned',
   NotOwner = 'notOwner',
+  noInvalidSignature = 'noInvalidSignature',
 }

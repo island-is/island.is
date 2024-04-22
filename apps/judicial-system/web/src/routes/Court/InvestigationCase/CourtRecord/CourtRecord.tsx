@@ -276,7 +276,6 @@ const CourtRecord = () => {
                   'courtLocation',
                   event.target.value,
                   ['empty'],
-                  workingCase,
                   setWorkingCase,
                   courtLocationEM,
                   setCourtLocationEM,
@@ -330,7 +329,6 @@ const CourtRecord = () => {
                 'courtAttendees',
                 event.target.value,
                 [],
-                workingCase,
                 setWorkingCase,
               )
             }
@@ -371,7 +369,6 @@ const CourtRecord = () => {
                   'sessionBookings',
                   event.target.value,
                   sessionBookingValidation,
-                  workingCase,
                   setWorkingCase,
                   sessionBookingsErrorMessage,
                   setSessionBookingsMessage,
@@ -434,7 +431,6 @@ const CourtRecord = () => {
                   'endOfSessionBookings',
                   event.target.value,
                   [],
-                  workingCase,
                   setWorkingCase,
                 )
               }

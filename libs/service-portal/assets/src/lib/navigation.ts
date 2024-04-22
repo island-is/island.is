@@ -6,7 +6,7 @@ export const assetsNavigation: PortalNavigationItem = {
   name: m.assets,
   path: AssetsPaths.AssetsRoot,
   icon: {
-    icon: 'home',
+    icon: 'homeWithCar',
   },
   children: [
     {

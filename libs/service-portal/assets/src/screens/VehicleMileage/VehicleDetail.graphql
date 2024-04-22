@@ -2,7 +2,7 @@ fragment VehicleMileageDetailFragment on VehicleMileageDetail {
   permno
   readDate
   originCode
-  mileage
+  mileageNumber
   internalId
 }
 
@@ -28,6 +28,6 @@ mutation PutVehicleMileage($input: PutVehicleMileageInput!) {
   vehicleMileagePut(input: $input) {
     permno
     internalId
-    mileage
+    mileageNumber
   }
 }

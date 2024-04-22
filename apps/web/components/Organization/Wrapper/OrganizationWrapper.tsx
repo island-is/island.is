@@ -17,6 +17,7 @@ import {
   Navigation,
   NavigationItem,
   ProfileCard,
+  ResponsiveSpace,
   Stack,
   Text,
 } from '@island.is/island-ui/core'
@@ -90,11 +91,8 @@ import {
 } from './Themes/SjukratryggingarTheme'
 import { SyslumennFooter, SyslumennHeader } from './Themes/SyslumennTheme'
 import { TransportAuthorityHeader } from './Themes/TransportAuthorityTheme'
-import {
-  TryggingastofnunFooter,
-  TryggingastofnunHeader,
-} from './Themes/TryggingastofnunTheme'
 import { UniversityStudiesHeader } from './Themes/UniversityStudiesTheme'
+import UniversityStudiesFooter from './Themes/UniversityStudiesTheme/UniversityStudiesFooter'
 import {
   UtlendingastofnunFooter,
   UtlendingastofnunHeader,
@@ -124,6 +122,7 @@ interface WrapperProps {
   showSecondaryMenu?: boolean
   showExternalLinks?: boolean
   showReadSpeaker?: boolean
+  isSubpage?: boolean
 }
 
 interface HeaderProps {
@@ -132,12 +131,7 @@ interface HeaderProps {
 
 const darkThemes = ['hms']
 
-const blueberryThemes = [
-  'sjukratryggingar',
-  'rikislogmadur',
-  'tryggingastofnun',
-  'nti',
-]
+const blueberryThemes = ['sjukratryggingar', 'rikislogmadur', 'nti']
 
 const lightThemes = [
   'digital_iceland',
@@ -301,13 +295,6 @@ export const OrganizationHeader: React.FC<
           logoAltText={logoAltText}
         />
       )
-    case 'tryggingastofnun':
-      return (
-        <TryggingastofnunHeader
-          organizationPage={organizationPage}
-          logoAltText={logoAltText}
-        />
-      )
     case 'sak':
       return (
         <SAkHeader
@@ -439,6 +426,13 @@ export const OrganizationHeader: React.FC<
               : 'center'
           }
           logoAltText={logoAltText}
+          titleSectionPaddingLeft={
+            organizationPage.themeProperties
+              .titleSectionPaddingLeft as ResponsiveSpace
+          }
+          mobileBackground={
+            organizationPage.themeProperties.mobileBackgroundColor
+          }
         />
       )
   }
@@ -661,13 +655,10 @@ export const OrganizationFooter: React.FC<
         />
       )
       break
-    case 'tryggingastofnun':
-    case 'insurance-administration':
+    case 'haskolanam':
+    case 'university-studies':
       OrganizationFooterComponent = (
-        <TryggingastofnunFooter
-          footerItems={organization.footerItems}
-          namespace={namespace}
-        />
+        <UniversityStudiesFooter organization={organization} />
       )
       break
     case 'gev':
@@ -826,12 +817,16 @@ const getActiveNavigationItemTitle = (
   navigationItems: NavigationItem[],
   clientUrl: string,
 ) => {
+  const clientUrlWithoutHashOrQueryParams = clientUrl
+    .split('?')[0]
+    .split('#')[0]
+
   for (const item of navigationItems) {
-    if (clientUrl === item.href) {
+    if (clientUrlWithoutHashOrQueryParams === item.href) {
       return item.title
     }
     for (const childItem of item.items ?? []) {
-      if (clientUrl === childItem.href) {
+      if (clientUrlWithoutHashOrQueryParams === childItem.href) {
         return childItem.title
       }
     }
@@ -876,6 +871,7 @@ export const OrganizationWrapper: React.FC<
   showSecondaryMenu = true,
   showExternalLinks = false,
   showReadSpeaker = true,
+  isSubpage = true,
 }) => {
   const router = useRouter()
   const { width } = useWindowSize()
@@ -921,7 +917,7 @@ export const OrganizationWrapper: React.FC<
       {!minimal && (
         <SidebarLayout
           paddingTop={[2, 2, 9]}
-          paddingBottom={[4, 4, 9]}
+          paddingBottom={[6, 6, 9]}
           isSticky={false}
           fullWidthContent={fullWidthContent}
           sidebarContent={
@@ -1100,7 +1096,7 @@ export const OrganizationWrapper: React.FC<
             {mainContent ?? children}
           </Box>
 
-          {isMobile && sidebarCards.length > 0 && (
+          {isMobile && !isSubpage && sidebarCards.length > 0 && (
             <Box marginY={4}>
               <Stack space={3}>
                 {sidebarCards.map((card) => {

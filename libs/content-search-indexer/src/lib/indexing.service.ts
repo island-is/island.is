@@ -91,13 +91,10 @@ export class IndexingService {
 
         // Invalidate cached pages in the background if we are performing an incremental update
         if (isIncrementalUpdate) {
-          // Wait for some time to make sure data is properly indexed
-          setTimeout(() => {
-            this.cacheInvalidationService.invalidateCache(
-              elasticData.add,
-              options.locale,
-            )
-          }, 8000)
+          this.cacheInvalidationService.invalidateCache(
+            elasticData.add,
+            options.locale,
+          )
         }
 
         nextPageToken = importerResponseNextPageToken

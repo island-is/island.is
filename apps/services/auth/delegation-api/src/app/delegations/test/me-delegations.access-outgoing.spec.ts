@@ -14,6 +14,7 @@ import {
   Domain,
   NamesService,
   PatchDelegationDTO,
+  UserIdentitiesService,
 } from '@island.is/auth-api-lib'
 import { isDefined } from '@island.is/shared/utils'
 import { createNationalId } from '@island.is/testing/fixtures'
@@ -45,9 +46,17 @@ describe.each(Object.keys(accessOutgoingTestCases))(
       app = await setupWithAuth({
         user: testCase.user,
         customScopeRules: testCase.customScopeRules,
+        // user identities service is used in delegation index service, override it to mock the response
+        override: (builder) =>
+          builder.overrideProvider(UserIdentitiesService).useValue({
+            findOrCreateSubjectId: jest
+              .fn()
+              .mockResolvedValue(faker.datatype.uuid()),
+          }),
       })
       server = request(app.getHttpServer())
       const namesService = app.get(NamesService)
+
       jest
         .spyOn(namesService, 'getPersonName')
         .mockResolvedValue(faker.name.findName())
@@ -118,12 +127,14 @@ describe.each(Object.keys(accessOutgoingTestCases))(
           .map((delegation) => {
             const expectedScopes = testCase.expected
               .find((domain) => domain.name === delegation.domainName)
-              ?.scopes.map(({ name }) => ({ scopeName: name }))
+              ?.scopes.map(({ name }) =>
+                expect.objectContaining({ scopeName: name }),
+              )
             if (expectedScopes?.length) {
               return {
                 id: delegation.id,
                 domainName: delegation.domainName,
-                scopes: expectedScopes,
+                scopes: expect.arrayContaining(expectedScopes),
               }
             }
           })
@@ -147,7 +158,11 @@ describe.each(Object.keys(accessOutgoingTestCases))(
           // Assert
           expect(res.status).toEqual(200)
           expect(res.body).toMatchObject({
-            scopes: domain.scopes.map((scope) => ({ scopeName: scope.name })),
+            scopes: expect.arrayContaining(
+              domain.scopes.map((scope) =>
+                expect.objectContaining({ scopeName: scope.name }),
+              ),
+            ),
           })
         },
       )
@@ -266,7 +281,7 @@ describe.each(Object.keys(accessOutgoingTestCases))(
         'DELETE /v1/me/delegations/:id works and removes scopes you have access to in $name',
         async (domain) => {
           // Arrange
-          const delegationScopeModel = await app.get<typeof DelegationScope>(
+          const delegationScopeModel = app.get<typeof DelegationScope>(
             getModelToken(DelegationScope),
           )
           const delegation = delegations.find(

@@ -9,9 +9,9 @@ export const resolvers: Resolvers = {
   },
 
   Query: {
-    rightsPortalCopaymentStatus: () => {
-      return store.getCopaymentStatus
-    },
+    // rightsPortalCopaymentStatus: () => {
+    //   return store.getCopaymentStatus
+    // },
     rightsPortalCopaymentPeriods: () => {
       return store.getCopaymentPeriods
     },

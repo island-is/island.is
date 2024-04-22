@@ -19,7 +19,7 @@ export class SignatureCollectionSignature {
   signee!: SignatureCollectionSigneeBase
 
   @Field(() => Boolean, { nullable: true })
-  active?: boolean
+  valid?: boolean
 
   @Field(() => Boolean)
   isDigital!: boolean

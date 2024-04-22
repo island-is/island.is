@@ -7,12 +7,17 @@ import {
   IsDateString,
   ValidateNested,
 } from 'class-validator'
-import { DelegationType } from '../types/delegationType'
 import {
   DelegationScopeDTO,
   UpdateDelegationScopeDTO,
 } from './delegation-scope.dto'
+import { PersonalRepresentativeRightTypeDTO } from '../../personal-representative/dto/personal-representative-right-type.dto'
+import {
+  AuthDelegationProvider,
+  AuthDelegationType,
+} from '@island.is/shared/types'
 
+/** @deprecated - use AuthDelegationProvider from @island.is/shared/types instead */
 export enum DelegationProvider {
   NationalRegistry = 'thjodskra',
   CompanyRegistry = 'fyrirtaekjaskra',
@@ -46,11 +51,14 @@ export class DelegationDTO {
   @ApiPropertyOptional({ nullable: true, type: Date })
   validTo?: Date | null
 
-  @ApiProperty({ enum: DelegationType, enumName: 'DelegationType' })
-  type!: DelegationType
+  @ApiProperty({ enum: AuthDelegationType, enumName: 'AuthDelegationType' })
+  type!: AuthDelegationType
 
-  @ApiProperty({ enum: DelegationProvider, enumName: 'DelegationProvider' })
-  provider!: DelegationProvider
+  @ApiProperty({
+    enum: AuthDelegationProvider,
+    enumName: 'AuthDelegationProvider',
+  })
+  provider!: AuthDelegationProvider
 
   @IsOptional()
   @ApiPropertyOptional({ type: [DelegationScopeDTO] })
@@ -60,15 +68,9 @@ export class DelegationDTO {
   @IsString()
   @ApiPropertyOptional({ type: String, nullable: true })
   domainName?: string | null
-}
 
-export class UpdateDelegationDTO {
-  @ApiPropertyOptional({ type: [UpdateDelegationScopeDTO] })
-  @Type(() => UpdateDelegationScopeDTO)
-  @ValidateNested({ each: true })
-  @IsOptional()
-  @IsArray()
-  scopes?: UpdateDelegationScopeDTO[]
+  // This property is only used in delegation index
+  rights?: PersonalRepresentativeRightTypeDTO[]
 }
 
 export class PatchDelegationDTO {

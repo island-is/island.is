@@ -21,6 +21,7 @@ query Case($input: CaseQueryInput!) {
       defenderEmail
       defenderPhoneNumber
       defendantWaivesRightToCounsel
+      defendantPlea
     }
     defenderName
     defenderNationalId
@@ -54,20 +55,12 @@ query Case($input: CaseQueryInput!) {
       id
       name
       title
-      institution {
-        id
-        name
-      }
     }
     prosecutor {
       id
       name
       title
       email
-      institution {
-        id
-        name
-      }
     }
     sharedWithProsecutorsOffice {
       id
@@ -205,6 +198,7 @@ query Case($input: CaseQueryInput!) {
     isStatementDeadlineExpired
     statementDeadline
     canBeAppealed
+    canProsecutorAppeal
     hasBeenAppealed
     appealedByRole
     appealedDate
@@ -236,6 +230,8 @@ query Case($input: CaseQueryInput!) {
     isAppealCustodyIsolation
     appealIsolationToDate
     requestAppealRulingNotToBePublished
+    indictmentDeniedExplanation
+    indictmentReturnedExplanation
     eventLogs {
       id
       created
@@ -243,6 +239,11 @@ query Case($input: CaseQueryInput!) {
       eventType
       nationalId
       userRole
+    }
+    prosecutorsOffice {
+      id
+      name
+      policeCaseNumberPrefix
     }
   }
 }

@@ -72,6 +72,7 @@ export const headerBgImageWrapper = style({
   maxWidth: 1440,
   margin: '0 auto',
   position: 'relative',
+  pointerEvents: 'none',
 })
 
 export const headerBgImage = style({
@@ -88,7 +89,7 @@ export const titleWrapper = style({
   ...themeUtils.responsiveStyle({
     lg: {
       display: 'flex',
-      justifyContent: 'end',
+      justifyContent: 'flex-end',
     },
   }),
 })

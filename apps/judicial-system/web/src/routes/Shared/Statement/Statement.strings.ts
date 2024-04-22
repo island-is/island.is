@@ -45,6 +45,11 @@ export const statement = defineMessages({
     defaultMessage: 'Senda greinargerð',
     description: 'Texti á áfram takka á greinargerðar skjá',
   },
+  uploadFailedNextButtonText: {
+    id: 'judicial.system.core:statement.upload_failed_next_button_text',
+    defaultMessage: 'Reyna aftur',
+    description: 'Texti á reyna aftur takka á greinargerðar skjá',
+  },
   statementSentModalTitle: {
     id: 'judicial.system.core:statement_sent_title',
     defaultMessage: 'Greinargerð hefur verið send Landsrétti',

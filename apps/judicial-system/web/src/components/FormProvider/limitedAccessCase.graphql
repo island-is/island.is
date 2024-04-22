@@ -7,6 +7,7 @@ query LimitedAccessCase($input: CaseQueryInput!) {
     indictmentSubtypes
     state
     policeCaseNumbers
+    courtDate
     caseFiles {
       id
       created
@@ -45,20 +46,12 @@ query LimitedAccessCase($input: CaseQueryInput!) {
       id
       name
       title
-      institution {
-        id
-        name
-      }
     }
     prosecutor {
       id
       name
       title
       email
-      institution {
-        id
-        name
-      }
     }
     courtCaseNumber
     courtEndTime
@@ -110,6 +103,7 @@ query LimitedAccessCase($input: CaseQueryInput!) {
     isStatementDeadlineExpired
     statementDeadline
     canBeAppealed
+    canDefenderAppeal
     hasBeenAppealed
     appealedByRole
     appealedDate
@@ -134,6 +128,10 @@ query LimitedAccessCase($input: CaseQueryInput!) {
       name
     }
     appealJudge3 {
+      id
+      name
+    }
+    prosecutorsOffice {
       id
       name
     }

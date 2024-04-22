@@ -53,6 +53,7 @@ export const CheckboxController: FC<
 }) => {
   const { clearErrors, setValue } = useFormContext()
 
+  // eslint-disable-next-line func-style
   function handleSelect(option: Option, checkedValues: string[]) {
     const excludeOptionsLookup = options.map((o) => o.excludeOthers && o.value)
 
@@ -89,7 +90,10 @@ export const CheckboxController: FC<
                 large={large}
                 onChange={() => {
                   clearErrors(id)
-                  const newChoices = handleSelect(option, value || [])
+                  const newChoices = handleSelect(
+                    option,
+                    Array.isArray(value) ? value : [value] || [],
+                  )
                   onChange(newChoices)
                   setValue(id, newChoices)
                   onSelect(newChoices)

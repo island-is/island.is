@@ -51,6 +51,9 @@ export const useCourtUpload = (
           status,
         }
 
+        // setFileUploadStatus is doing some in-place updates before calling setWorkingCase
+        // We need to refactor this code at some point to avoid in-place updates
+        // Then we can fix the call to setWorkingCase to accept the current working case as argument
         setWorkingCase({ ...theCase })
       }
     },

@@ -31,10 +31,12 @@ export class TenantsService {
       attributes: ['name', 'displayName'],
     })
 
-    return tenants.map((tenant) => ({
-      name: tenant.name,
-      displayName: [{ locale: 'is', value: tenant.displayName }],
-    }))
+    return tenants
+      .sort((a, b) => a.name.localeCompare(b.name, 'is'))
+      .map((tenant) => ({
+        name: tenant.name,
+        displayName: [{ locale: 'is', value: tenant.displayName }],
+      }))
   }
 
   async findById(id: string): Promise<TenantDto> {

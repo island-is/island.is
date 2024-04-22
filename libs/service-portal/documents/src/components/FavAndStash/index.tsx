@@ -7,6 +7,7 @@ import { useLocale } from '@island.is/localization'
 type FavAndStashProps = {
   onFav?: (event: MouseEvent<HTMLElement>) => void
   onStash?: (event: MouseEvent<HTMLElement>) => void
+  onRead?: (event: MouseEvent<HTMLElement>) => void
   bookmarked?: boolean
   archived?: boolean
   loading?: boolean
@@ -15,6 +16,7 @@ type FavAndStashProps = {
 export const FavAndStash: React.FC<FavAndStashProps> = ({
   onFav,
   onStash,
+  onRead,
   bookmarked,
   archived,
   loading,
@@ -54,6 +56,18 @@ export const FavAndStash: React.FC<FavAndStashProps> = ({
             icon="star"
             iconType={bookmarked ? 'filled' : 'outline'}
             onClick={onFav}
+            size="small"
+            colorScheme="light"
+          />
+        </Tooltip>
+      )}
+      {onRead && (
+        <Tooltip text={formatMessage(m.markAsRead)}>
+          <Button
+            circle
+            icon="mailOpen"
+            iconType="outline"
+            onClick={onRead}
             size="small"
             colorScheme="light"
           />

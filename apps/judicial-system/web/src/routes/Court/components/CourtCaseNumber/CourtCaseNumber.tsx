@@ -128,7 +128,6 @@ const CourtCaseNumber: React.FC<React.PropsWithChildren<Props>> = (props) => {
                         ? 'S-case-number'
                         : 'R-case-number',
                     ],
-                    workingCase,
                     setWorkingCase,
                     courtCaseNumberEM,
                     setCourtCaseNumberEM,

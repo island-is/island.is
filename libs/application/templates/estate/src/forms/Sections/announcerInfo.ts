@@ -1,11 +1,14 @@
 import { UserProfile, Application } from '@island.is/api/schema'
 import {
+  buildDescriptionField,
   buildMultiField,
   buildPhoneField,
+  buildRadioField,
   buildSection,
   buildSelectField,
   buildTextField,
 } from '@island.is/application/core'
+import { JA, YES, NEI, NO } from '../../lib/constants'
 import { m } from '../../lib/messages'
 import { format as formatNationalId } from 'kennitala'
 import { EstateTypes } from '../../lib/constants'
@@ -108,6 +111,20 @@ export const announcerInfo = buildSection({
                 } || []),
             )
           },
+        }),
+        buildRadioField({
+          id: 'applicant.autonomous',
+          title: m.applicantAutonomous,
+          width: 'half',
+          defaultValue: YES,
+          condition: (answers) =>
+            answers.selectedEstate === EstateTypes.permitForUndividedEstate,
+          largeButtons: false,
+          space: 8,
+          options: [
+            { label: JA, value: YES },
+            { label: NEI, value: NO },
+          ],
         }),
       ],
     }),

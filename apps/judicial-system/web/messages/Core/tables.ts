@@ -2,8 +2,8 @@ import { defineMessages } from 'react-intl'
 
 export const tables = defineMessages({
   caseNumber: {
-    id: 'judicial.system.core:tables.case_number',
-    defaultMessage: 'Málsnr.',
+    id: 'judicial.system.core:tables.case_number_v1',
+    defaultMessage: 'Málsnúmer',
     description: 'Notaður sem titill fyrir málsnúmer dálk í lista yfir mál.',
   },
   type: {
@@ -40,6 +40,11 @@ export const tables = defineMessages({
     id: 'judicial.system.core:tables.completed_tag',
     defaultMessage: 'Lokið',
     description: 'Notað sem merki þegar mál í stöðu "Lokið" í málalista',
+  },
+  withdrawnTag: {
+    id: 'judicial.system.core:tables.withdrawn_tag',
+    defaultMessage: 'Afturkallað',
+    description: 'Notað sem merki þegar mál í stöðu "Afturkallað" í málalista',
   },
   completedCasesTitle: {
     id: 'judicial.system.core:tables.completed_cases_title',

@@ -69,6 +69,8 @@ export const DatePicker: React.FC<React.PropsWithChildren<DatePickerProps>> = ({
   maxYear,
   showTimeInput = false,
   timeInputLabel = 'Tími:',
+  readOnly = false,
+  calendarStartDay = 0,
 }) => {
   const [startDate, setStartDate] = useState<Date | null>(selected ?? null)
   const [datePickerState, setDatePickerState] = useState<'open' | 'closed'>(
@@ -157,9 +159,11 @@ export const DatePicker: React.FC<React.PropsWithChildren<DatePickerProps>> = ({
               size={size}
             />
           }
+          calendarStartDay={calendarStartDay}
           timeFormat={currentLanguage.timeFormat}
           timeInputLabel={timeInputLabel}
           showTimeInput={showTimeInput}
+          readOnly={readOnly}
           renderCustomHeader={(props) => (
             <CustomHeader
               locale={currentLanguage.locale}

@@ -13,7 +13,6 @@ import {
 } from '@island.is/island-ui/core'
 import { useLocale } from '@island.is/localization'
 import { m } from '../../lib/messages'
-
 import { IntroHeader, PortalNavigation } from '@island.is/portals/core'
 import { SignatureCollectionPaths } from '../../lib/paths'
 import { useLoaderData, useNavigate } from 'react-router-dom'
@@ -21,19 +20,33 @@ import { useEffect, useState } from 'react'
 import { SignatureCollectionList } from '@island.is/api/schema'
 import format from 'date-fns/format'
 import { signatureCollectionNavigation } from '../../lib/navigation'
-import header from '../../../assets/headerImage.svg'
-import { Filters, countryAreas, pageSize } from '../../lib/utils'
+import {
+  CollectionStatus,
+  Filters,
+  countryAreas,
+  pageSize,
+} from '../../lib/utils'
 import CompareLists from './components/compareLists'
 import { format as formatNationalId } from 'kennitala'
 import CreateCollection from './components/createCollection'
+import electionsCommitteeLogo from '../../../assets/electionsCommittee.svg'
+import nationalRegistryLogo from '../../../assets/nationalRegistry.svg'
+import ActionCompleteCollectionProcessing from './components/completeCollectionProcessing'
+import ListInfo from '../List/components/listInfoAlert'
+import { ListsLoaderReturn } from './AllLists.loader'
+import EmptyState from './components/emptyState'
 
-const Lists = () => {
+const Lists = ({ allowedToProcess }: { allowedToProcess: boolean }) => {
   const { formatMessage } = useLocale()
   const navigate = useNavigate()
 
-  const allLists = useLoaderData() as SignatureCollectionList[]
+  const { allLists, collectionStatus, collectionId } =
+    useLoaderData() as ListsLoaderReturn
+
   const [lists, setLists] = useState(allLists)
   const [page, setPage] = useState(1)
+  // hasInReview is used to check if any list is in review
+  const [hasInReview, setHasInReview] = useState(false)
   const [filters, setFilters] = useState<Filters>({
     area: [],
     candidate: [],
@@ -74,7 +87,13 @@ const Lists = () => {
     // set candidates on initial load of lists
     if (lists.length > 0) {
       const candidates = lists
-        .map((list) => list.candidate.name)
+        .map((list) => {
+          // mapping all lists to check if any are in review
+          if (!list.reviewed) {
+            setHasInReview(true)
+          }
+          return list.candidate.name
+        })
         .filter((value, index, self) => self.indexOf(value) === index)
         .map((candidate) => {
           return {
@@ -100,17 +119,42 @@ const Lists = () => {
           />
         </GridColumn>
         <GridColumn
-          paddingTop={[5, 5, 5, 2]}
+          paddingTop={[5, 5, 5, 0]}
           offset={['0', '0', '0', '1/12']}
           span={['12/12', '12/12', '12/12', '8/12']}
         >
           <IntroHeader
             title={formatMessage(m.signatureListsTitle)}
             intro={formatMessage(m.signatureListsIntro)}
-            img={header}
+            img={
+              allowedToProcess ? electionsCommitteeLogo : nationalRegistryLogo
+            }
             imgPosition="right"
             imgHiddenBelow="sm"
           />
+          {collectionStatus !== CollectionStatus.InitialActive && (
+            <ListInfo
+              type={
+                collectionStatus === CollectionStatus.InReview && !hasInReview
+                  ? 'success'
+                  : undefined
+              }
+              message={formatMessage(
+                collectionStatus === CollectionStatus.InInitialReview
+                  ? hasInReview
+                    ? m.signatureCollectionInInitialReview
+                    : m.signatureCollectionProcessing
+                  : collectionStatus === CollectionStatus.Processed
+                  ? m.signatureCollectionProcessed
+                  : collectionStatus === CollectionStatus.Active
+                  ? m.signatureCollectionActive
+                  : collectionStatus === CollectionStatus.InReview &&
+                    hasInReview
+                  ? m.signatureCollectionInReview
+                  : m.signatureCollectionReviewDone,
+              )}
+            />
+          )}
           <GridRow marginBottom={5}>
             <GridColumn span={['12/12', '12/12', '12/12', '6/12']}>
               <FilterInput
@@ -173,11 +217,14 @@ const Lists = () => {
                     }
                   />
                 </Filter>
-                <CreateCollection />
+                {lists?.length > 0 &&
+                  allowedToProcess &&
+                  collectionStatus === CollectionStatus.InInitialReview && (
+                    <CreateCollection collectionId={collectionId} />
+                  )}
               </Box>
             </GridColumn>
           </GridRow>
-
           {lists?.length > 0 ? (
             <>
               <Box marginBottom={2}>
@@ -214,19 +261,35 @@ const Lists = () => {
                           maxProgress: list.area.min,
                           withLabel: true,
                         }}
-                        cta={{
-                          label: formatMessage(m.viewList),
-                          variant: 'text',
-                          icon: 'arrowForward',
-                          onClick: () => {
-                            navigate(
-                              SignatureCollectionPaths.SignatureList.replace(
-                                ':id',
-                                list.id,
-                              ),
-                            )
-                          },
-                        }}
+                        tag={
+                          list.reviewed
+                            ? {
+                                label: m.confirmListReviewed.defaultMessage,
+                                variant: 'mint',
+                                outlined: false,
+                              }
+                            : undefined
+                        }
+                        cta={
+                          (allowedToProcess &&
+                            collectionStatus !==
+                              CollectionStatus.InitialActive) ||
+                          !allowedToProcess
+                            ? {
+                                label: formatMessage(m.viewList),
+                                variant: 'text',
+                                icon: 'arrowForward',
+                                onClick: () => {
+                                  navigate(
+                                    SignatureCollectionPaths.SignatureList.replace(
+                                      ':id',
+                                      list.id,
+                                    ),
+                                  )
+                                },
+                              }
+                            : undefined
+                        }
                       />
                     )
                   })}
@@ -240,26 +303,47 @@ const Lists = () => {
               </Box>
             </Box>
           ) : (
-            <Text>{formatMessage(m.noLists)}</Text>
+            <Box marginTop={10}>
+              <EmptyState
+                title={formatMessage(m.noLists)}
+                description={formatMessage(m.noListsDescription)}
+              />
+            </Box>
           )}
-          <Box marginTop={5}>
-            <Pagination
-              totalItems={lists.length}
-              itemsPerPage={pageSize}
-              page={page}
-              renderLink={(page, className, children) => (
-                <Box
-                  cursor="pointer"
-                  className={className}
-                  onClick={() => setPage(page)}
-                  component="button"
-                >
-                  {children}
-                </Box>
+          {lists?.length > 0 && (
+            <Box marginTop={5}>
+              <Pagination
+                totalItems={lists.length}
+                itemsPerPage={pageSize}
+                page={page}
+                renderLink={(page, className, children) => (
+                  <Box
+                    cursor="pointer"
+                    className={className}
+                    onClick={() => setPage(page)}
+                    component="button"
+                  >
+                    {children}
+                  </Box>
+                )}
+              />
+            </Box>
+          )}
+          {lists?.length > 0 && allowedToProcess && (
+            <Box>
+              {(collectionStatus === CollectionStatus.InInitialReview ||
+                collectionStatus === CollectionStatus.InReview) && (
+                <CompareLists collectionId={collectionId} />
               )}
-            />
-          </Box>
-          <CompareLists />
+
+              {!hasInReview &&
+                collectionStatus === CollectionStatus.InInitialReview && (
+                  <ActionCompleteCollectionProcessing
+                    collectionId={collectionId}
+                  />
+                )}
+            </Box>
+          )}
         </GridColumn>
       </GridRow>
     </GridContainer>

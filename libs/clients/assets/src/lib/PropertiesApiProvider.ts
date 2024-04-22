@@ -24,7 +24,7 @@ export const PropertiesApiProvider: Provider<FasteignirApi> = {
       new Configuration({
         fetchApi: createEnhancedFetch({
           name: 'clients-assets',
-          organizationSlug: 'husnaedis-og-mannvirkjastofnun',
+          organizationSlug: 'hms',
           timeout: config.fetchTimeout,
           autoAuth: idsClientConfig.isConfigured
             ? {

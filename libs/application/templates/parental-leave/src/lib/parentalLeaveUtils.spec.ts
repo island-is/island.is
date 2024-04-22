@@ -56,11 +56,11 @@ import {
 } from './parentalLeaveUtils'
 import { PersonInformation } from '../types'
 
-function buildApplication(data?: {
+const buildApplication = (data?: {
   answers?: FormValue
   externalData?: ExternalData
   state?: string
-}): Application {
+}): Application => {
   const { answers = {}, externalData = {}, state = 'draft' } = data ?? {}
 
   return {
@@ -79,7 +79,7 @@ function buildApplication(data?: {
   }
 }
 
-function buildField(): Field {
+const buildField = (): Field => {
   return {
     type: FieldTypes.TEXT,
     component: FieldComponents.TEXT,
@@ -1137,7 +1137,6 @@ describe('getApplicationExternalData', () => {
         children: {
           data: {
             children: 'Mock child',
-            existingApplications: 'Mock application',
           },
           date: new Date(),
           status: 'success',
@@ -1160,6 +1159,7 @@ describe('getApplicationExternalData', () => {
         },
       },
     })
+
     expect(getApplicationExternalData(application.externalData)).toEqual({
       applicantGenderCode: 'Mock gender code',
       applicantName: 'Mock name',
@@ -1167,9 +1167,7 @@ describe('getApplicationExternalData', () => {
       children: 'Mock child',
       dataProvider: {
         children: 'Mock child',
-        existingApplications: 'Mock application',
       },
-      existingApplications: 'Mock application',
       navId: '',
       userEmail: 'mock@email.is',
       userPhoneNumber: 'Mock number',

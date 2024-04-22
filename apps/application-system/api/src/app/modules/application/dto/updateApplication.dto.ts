@@ -1,4 +1,4 @@
-import { IsObject, IsOptional } from 'class-validator'
+import { IsBoolean, IsObject, IsOptional } from 'class-validator'
 import { ApiPropertyOptional } from '@nestjs/swagger'
 
 export class UpdateApplicationDto {
@@ -14,4 +14,9 @@ export class UpdateApplicationDto {
     stepsFinished: number
     totalSteps: number
   }
+
+  @IsOptional()
+  @IsBoolean()
+  @ApiPropertyOptional()
+  readonly skipValidation?: boolean
 }

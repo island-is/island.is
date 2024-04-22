@@ -4,9 +4,9 @@ import * as data from './static'
 import {
   RightsPortalCopaymentBillResponse,
   RightsPortalCopaymentPeriodResponse,
-  RightsPortalCopaymentStatusResponse,
   RightsPortalPaymentOverviewDocumentResponse,
   RightsPortalPaymentOverviewResponse,
+  RightsPortalCopaymentStatus,
   RightsPortalPaymentOverviewServiceTypeResponse,
 } from '../../types'
 
@@ -17,7 +17,7 @@ export const store = createStore(() => {
     data.getPaymentOverview
   const getPaymentOverviewDocument: RightsPortalPaymentOverviewDocumentResponse =
     data.getPaymentOverviewDocument
-  const getCopaymentStatus: RightsPortalCopaymentStatusResponse =
+  const getCopaymentStatus: RightsPortalCopaymentStatus =
     data.getCopaymentStatus
   const getCopaymentPeriods: RightsPortalCopaymentPeriodResponse =
     data.getCopaymentPeriods

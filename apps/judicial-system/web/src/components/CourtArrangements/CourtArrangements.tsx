@@ -43,7 +43,7 @@ export const useCourtArrangements = (workingCase: Case) => {
         hasSentNotification(
           NotificationType.COURT_DATE,
           workingCase.notifications,
-        )
+        ).hasSent
       ) {
         setCourtDateHasChanged(true)
       }
@@ -100,7 +100,6 @@ export const CourtArrangements: React.FC<React.PropsWithChildren<Props>> = (
             'courtRoom',
             event.target.value,
             [],
-            workingCase,
             setWorkingCase,
           )
         }

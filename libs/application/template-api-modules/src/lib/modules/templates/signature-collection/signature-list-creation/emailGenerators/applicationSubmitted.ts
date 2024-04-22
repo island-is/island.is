@@ -18,7 +18,7 @@ export const generateApplicationSubmittedEmail: EmailTemplateGenerator = (
   const currentCollection: SignatureCollection = application.externalData
     .currentCollection?.data as SignatureCollection
 
-  const subject = 'Nýir meðmælasöfnunar listar stofnaðir'
+  const subject = 'Ný meðmælasöfnun hefur verið stofnuð'
   const lists: Body[] = currentCollection.areas.map((area) => {
     return {
       component: 'Copy',
@@ -56,7 +56,7 @@ export const generateApplicationSubmittedEmail: EmailTemplateGenerator = (
         {
           component: 'Copy',
           context: {
-            copy: `Samskiptaupplýsingar framboðs. SímiÆ ${owner.phone} Netfang: ${owner.email} `,
+            copy: `Samskiptaupplýsingar framboðs. Sími ${owner.phone} Netfang: ${owner.email} `,
           },
         },
       ],

@@ -15,6 +15,8 @@ import { UserProfile } from '../../user-profile/userProfile.model'
 
 import { ProcessedStatus } from '../types'
 import { stringsHaveMatchingValue } from '../worker.utils'
+import addMonths from 'date-fns/addMonths'
+import { NUDGE_INTERVAL } from '../../v2/user-profile.service'
 
 describe('UserProfileWorker', () => {
   jest.setTimeout(30000)
@@ -91,12 +93,15 @@ describe('UserProfileWorker', () => {
         nudgeLastAsked: new Date(2023, 10, 5),
       }))
 
+      const currentDate = new Date()
+
       const existingProfiles = advaniaProfiles.map((p) => ({
         nationalId: p.ssn,
         email: p.email,
         mobilePhoneNumber: p.mobilePhoneNumber,
         modified: new Date(2023, 0, 1),
-        lastNudge: new Date(), // not null
+        lastNudge: currentDate, // not null
+        nextNudge: addMonths(currentDate, NUDGE_INTERVAL),
       }))
 
       // Act
@@ -125,6 +130,9 @@ describe('UserProfileWorker', () => {
           pick(profileAfter, fieldsToCompare),
         )
         expect(profileAfter.lastNudge).toEqual(advaniaProfile.nudgeLastAsked)
+        expect(profileAfter.nextNudge).toEqual(
+          addMonths(advaniaProfile.nudgeLastAsked, NUDGE_INTERVAL),
+        )
       }
     })
 
@@ -173,6 +181,7 @@ describe('UserProfileWorker', () => {
             profileAfter.mobilePhoneNumber,
           )
           expect(profileAfter.lastNudge).toBe(null)
+          expect(profileAfter.nextNudge).toBe(null)
         }
       })
 
@@ -225,6 +234,7 @@ describe('UserProfileWorker', () => {
               profileAfter.mobilePhoneNumber,
             )
             expect(profileAfter.lastNudge).toEqual(null)
+            expect(profileAfter.nextNudge).toEqual(null)
           }
         })
 
@@ -290,9 +300,107 @@ describe('UserProfileWorker', () => {
                 profileAfter.mobilePhoneNumber,
               )
               expect(profileAfter.lastNudge).toEqual(profileBefore.modified)
+              expect(profileAfter.nextNudge).toEqual(
+                addMonths(profileBefore.modified, NUDGE_INTERVAL),
+              )
             }
           },
         )
+      })
+
+      describe('existing user profile email or phone number edge cases', () => {
+        const exported = new Date(2023, 10, 1)
+        const modified = new Date(2023, 9, 1)
+
+        const advaniaProfiles = new Array(4).fill(null).map((_, index) => ({
+          ssn: `${index}`,
+          // Email and mobile phone number from advania is null
+          email: null,
+          mobilePhoneNumber: null,
+          exported,
+        }))
+
+        const pickFields = (p: Partial<UserProfile>) =>
+          pick(p, [
+            'email',
+            'emailVerified',
+            'emailStatus',
+            'mobilePhoneNumber',
+            'mobilePhoneNumberVerified',
+            'mobileStatus',
+          ])
+
+        it('should not replace an existing email with a null value during migration', async () => {
+          // Arrange
+          const existingProfiles: Partial<UserProfile>[] = advaniaProfiles.map(
+            (p, index) => ({
+              nationalId: p.ssn,
+              modified,
+              email: `test${index}@test.local`, // Existing profile has a defined email
+              emailVerified: true,
+              emailStatus: 'VERIFIED',
+              mobilePhoneNumber: null,
+              mobilePhoneNumberVerified: false,
+              mobileStatus: 'NOT_VERIFIED',
+            }),
+          )
+
+          // Act
+          await userProfileAdvaniaModel.bulkCreate(advaniaProfiles.slice())
+          await userProfileModel.bulkCreate(existingProfiles)
+
+          const userProfilesBeforeMigration = await userProfileModel.findAll()
+
+          await workerService.run()
+
+          const userProfilesAfterMigration = await userProfileModel.findAll()
+
+          const existingProfileFields = existingProfiles.map(pickFields)
+
+          // Assert
+          expect(userProfilesBeforeMigration.map(pickFields)).toEqual(
+            existingProfileFields,
+          )
+          expect(userProfilesAfterMigration.map(pickFields)).toEqual(
+            existingProfileFields,
+          )
+        })
+
+        it('should not replace an existing phone number with a null value during migration', async () => {
+          // Arrange
+          const existingProfiles: Partial<UserProfile>[] = advaniaProfiles.map(
+            (p, index) => ({
+              nationalId: p.ssn,
+              modified,
+              email: null,
+              emailVerified: false,
+              emailStatus: 'NOT_VERIFIED',
+              mobilePhoneNumber: `888111${index}`, // Existing profile has a defined phone number
+              mobilePhoneNumberVerified: true,
+              mobileStatus: 'VERIFIED',
+            }),
+          )
+
+          // Act
+          await userProfileAdvaniaModel.bulkCreate(advaniaProfiles.slice())
+          await userProfileModel.bulkCreate(existingProfiles)
+
+          const userProfilesBeforeMigration = await userProfileModel.findAll()
+
+          await workerService.run()
+
+          const userProfilesAfterMigration = await userProfileModel.findAll()
+
+          const existingProfileFields = existingProfiles.map(pickFields)
+
+          // Assert
+          expect(userProfilesBeforeMigration.map(pickFields)).toEqual(
+            existingProfileFields,
+          )
+          expect(userProfilesAfterMigration.map(pickFields)).toEqual(
+            existingProfileFields,
+          )
+        })
       })
     })
   })
@@ -344,6 +452,7 @@ describe('UserProfileWorker', () => {
         migratedUserProfile.mobilePhoneNumber,
       )
       expect(existingUserProfileAfter.lastNudge).toEqual(null)
+      expect(existingUserProfileAfter.nextNudge).toEqual(null)
     })
 
     describe('profile being migrated exists in user_profile', () => {
@@ -379,6 +488,9 @@ describe('UserProfileWorker', () => {
         // Assert
         expect(existingUserProfileBefore).not.toEqual(existingUserProfileAfter)
         expect(existingUserProfileBefore.lastNudge).not.toEqual(nudgeLastAsked)
+        expect(existingUserProfileAfter.nextNudge).toEqual(
+          addMonths(nudgeLastAsked, NUDGE_INTERVAL),
+        )
         expect(existingUserProfileAfter.nationalId).toEqual(
           migratedUserProfile.ssn,
         )
@@ -467,6 +579,8 @@ describe('UserProfileWorker', () => {
           )
           // With last nudge set to null
           expect(existingUserProfileAfter.lastNudge).toEqual(null)
+          expect(existingUserProfileAfter.nextNudge).toEqual(null)
+
           expect(existingUserProfileAfter.documentNotifications).toEqual(
             migratedProfileCanNudge,
           )
@@ -540,6 +654,9 @@ describe('UserProfileWorker', () => {
               expect(existingUserProfileAfter.lastNudge).toEqual(
                 existingUserProfileBefore.modified,
               )
+              expect(existingUserProfileAfter.nextNudge).toEqual(
+                addMonths(existingUserProfileBefore.modified, NUDGE_INTERVAL),
+              )
               expect(existingUserProfileAfter.documentNotifications).toEqual(
                 existingUserProfileBefore.documentNotifications,
               )
@@ -599,6 +716,7 @@ describe('UserProfileWorker', () => {
             )
             // With last nudge set to null
             expect(existingUserProfileAfter.lastNudge).toEqual(null)
+            expect(existingUserProfileAfter.nextNudge).toEqual(null)
             expect(existingUserProfileAfter.documentNotifications).toEqual(
               existingUserProfileBefore.documentNotifications,
             )

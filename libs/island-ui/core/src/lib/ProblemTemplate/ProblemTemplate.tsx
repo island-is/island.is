@@ -16,7 +16,7 @@ export type ProblemTemplateBaseProps = {
   imgSrc?: string
   imgAlt?: string
   noBorder?: boolean
-  titleSize?: 'h1' | 'h2'
+  titleSize?: 'h1' | 'h2' | 'h3'
   /**
    * If true, the out most container will be expanded to fill the available space.
    */

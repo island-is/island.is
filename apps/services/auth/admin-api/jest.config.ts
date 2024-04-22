@@ -9,6 +9,8 @@ export default {
   displayName: 'services-auth-admin-api',
   testEnvironment: 'node',
   setupFiles: [`${__dirname}/test/environment.jest.ts`],
+  globalSetup: `${__dirname}/test/globalSetup.ts`,
+  globalTeardown: `${__dirname}/test/globalTeardown.ts`,
   transform: {
     '^.+\\.[tj]s$': [
       'ts-jest',

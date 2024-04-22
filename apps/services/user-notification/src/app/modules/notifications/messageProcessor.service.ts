@@ -24,7 +24,12 @@ export class MessageProcessorService {
     )
     const notification = this.notificationsService.formatArguments(
       message.args,
-      template,
+      // We need to pass the template as a new object to avoid tempering with
+      // the template object from the memory cache.
+      // Shallow copy is enough with the current definition of HnippTemplate (./dto/hnippTemplate.response.ts)
+      {
+        ...template,
+      },
     )
 
     return {

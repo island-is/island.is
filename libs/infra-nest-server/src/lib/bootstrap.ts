@@ -4,9 +4,7 @@ import { NestExpressApplication } from '@nestjs/platform-express'
 import { OpenAPIObject, SwaggerModule } from '@nestjs/swagger'
 import bodyParser from 'body-parser'
 import cookieParser from 'cookie-parser'
-import * as fs from 'fs'
 import type { Server } from 'http'
-import yaml from 'js-yaml'
 
 import {
   logger,
@@ -29,13 +27,19 @@ export const createApp = async ({
   stripNonClassValidatorInputs = true,
   appModule,
   enableVersioning,
+  healthCheck,
+  beforeAppInit,
   ...options
 }: RunServerOptions) => {
+  if (beforeAppInit) {
+    await beforeAppInit()
+  }
   monkeyPatchServerLogging()
 
   const app = await NestFactory.create<NestExpressApplication>(
     InfraModule.forRoot({
       appModule,
+      healthCheck,
     }),
     {
       logger: LoggingModule.createLogger(),

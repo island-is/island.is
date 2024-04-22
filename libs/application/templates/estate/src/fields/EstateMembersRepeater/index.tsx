@@ -17,23 +17,27 @@ import { Answers, EstateMember } from '../../types'
 import { AdditionalEstateMember } from './AdditionalEstateMember'
 import { getValueViaPath } from '@island.is/application/core'
 import {
+  CheckboxController,
   InputController,
   SelectController,
 } from '@island.is/shared/form-fields'
 import { format as formatNationalId } from 'kennitala'
 import {
   EstateTypes,
+  NO,
+  YES,
   heirAgeValidation,
   relationWithApplicant,
 } from '../../lib/constants'
 import intervalToDuration from 'date-fns/intervalToDuration'
+import { getEstateDataFromApplication } from '../../lib/utils'
 
 export const EstateMembersRepeater: FC<
   React.PropsWithChildren<FieldBaseProps<Answers>>
 > = ({ application, field, errors, setBeforeSubmitCallback }) => {
   const { id } = field
   const { formatMessage } = useLocale()
-  const { getValues, setError } = useFormContext()
+  const { getValues, setValue, setError } = useFormContext()
   const { fields, append, remove, update, replace } = useFieldArray({
     name: id,
   })
@@ -99,9 +103,9 @@ export const EstateMembersRepeater: FC<
 
   const externalData = application.externalData.syslumennOnEntry?.data as {
     relationOptions: string[]
-    estate: EstateRegistrant
   }
 
+  const estateData = getEstateDataFromApplication(application)
   const relationsWithApplicant = relationWithApplicant.map((relation) => ({
     value: relation,
     label: relation,
@@ -140,17 +144,20 @@ export const EstateMembersRepeater: FC<
   ])
 
   useEffect(() => {
-    if (fields.length === 0 && externalData.estate.estateMembers) {
+    if (fields.length === 0 && estateData?.estate?.estateMembers) {
       // ran into a problem with "append", as it appeared to be getting called multiple times
       // despite checking on the length of the fields
       // so now using "replace" instead, for the initial setup
-      replace(externalData.estate.estateMembers)
+      replace(estateData.estate.estateMembers)
     }
   }, [])
 
   return (
     <Box>
       {fields.reduce((acc, member: GenericFormField<EstateMember>, index) => {
+        const noContact =
+          values?.estate?.estateMembers?.[index]?.noContactInfo?.[0]
+
         if (member.nationalId === application.applicant) {
           const relation = getValueViaPath<string>(
             application.answers,
@@ -256,7 +263,7 @@ export const EstateMembersRepeater: FC<
                       disabled={!member.enabled}
                       defaultValue={member.email || ''}
                       error={error && error[index] && error[index].email}
-                      required
+                      required={noContact !== YES}
                     />
                   </GridColumn>
                   <GridColumn span={['1/1', '1/2']} paddingBottom={2}>
@@ -269,9 +276,29 @@ export const EstateMembersRepeater: FC<
                       format="###-####"
                       defaultValue={member.phone || ''}
                       error={error && error[index] && error[index].phone}
-                      required
+                      required={noContact !== YES}
                     />
                   </GridColumn>
+                  {selectedEstate === EstateTypes.estateWithoutAssets && (
+                    <GridColumn span="1/1" paddingBottom={2}>
+                      <Box width="half">
+                        <CheckboxController
+                          id={`${id}[${index}].noContactInfo`}
+                          name={`${id}[${index}].noContactInfo`}
+                          defaultValue={[]}
+                          options={[
+                            {
+                              label: formatMessage(m.noContactInfo),
+                              value: YES,
+                            },
+                          ]}
+                          onSelect={(val) => {
+                            setValue(`${id}[${index}].noContactInfo`, val)
+                          }}
+                        />
+                      </Box>
+                    </GridColumn>
+                  )}
                 </>
               )}
             </GridRow>

@@ -22,5 +22,5 @@
       }
     }
   },
-  "tags": ["lib:api"]
+  "tags": ["scope:api", "lib:api"]
 }

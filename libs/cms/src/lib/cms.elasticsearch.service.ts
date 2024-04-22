@@ -33,6 +33,9 @@ import { Event as EventModel } from './models/event.model'
 import { Manual } from './models/manual.model'
 import { GetCategoryPagesInput } from './dto/getCategoryPages.input'
 import { CategoryPage } from './models/categoryPage.model'
+import { GetCustomPageInput } from './dto/getCustomPage.input'
+import { getElasticsearchIndex } from '@island.is/content-search-index-manager'
+import { CustomPage } from './models/customPage.model'
 
 @Injectable()
 export class CmsElasticsearchService {
@@ -374,6 +377,13 @@ export class CmsElasticsearchService {
       }
       throw error
     }
+  }
+
+  async getCustomPage(input: GetCustomPageInput): Promise<CustomPage | null> {
+    return this.getSingleDocumentTypeBySlug(getElasticsearchIndex(input.lang), {
+      type: 'webCustomPage',
+      slug: input.uniqueIdentifier,
+    })
   }
 
   async getVacancies(index: string) {

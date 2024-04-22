@@ -1,3 +1,4 @@
+import type { Locale } from '@island.is/shared/types'
 import { Chart } from '@island.is/web/graphql/schema'
 
 import { DEFAULT_XAXIS_KEY } from '../constants'
@@ -7,6 +8,7 @@ import { formatDate } from '../utils'
 
 interface AccessibilityTableRendererProps {
   id: string
+  activeLocale: Locale
   chart: Chart
   componentsWithAddedProps: ChartComponentWithRenderProps[]
   data: ReturnType<typeof useGetChartData>['data']
@@ -14,6 +16,7 @@ interface AccessibilityTableRendererProps {
 
 export const AccessibilityTableRenderer = ({
   id,
+  activeLocale,
   chart,
   componentsWithAddedProps,
   data,
@@ -53,7 +56,7 @@ export const AccessibilityTableRenderer = ({
                   <tr key={xAxisValue}>
                     <th scope="row">
                       {xAxisValueType === 'date' && xAxisValue !== null
-                        ? formatDate(xAxisValue)
+                        ? formatDate(activeLocale, xAxisValue)
                         : xAxisValue}
                     </th>
                     {tableSettings.tableHead.map((key) => {

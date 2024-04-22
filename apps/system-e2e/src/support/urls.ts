@@ -21,6 +21,17 @@ export const JUDICIAL_SYSTEM_JUDGE_HOME_URL =
   '/api/auth/login?nationalId=0000000000'
 export const JUDICIAL_SYSTEM_COA_JUDGE_HOME_URL =
   '/api/auth/login?nationalId=0000000001'
+export const JUDICIAL_SYSTEM_DEFENDER_HOME_URL =
+  '/api/auth/login?nationalId=0909090909'
+
+export const shouldSkipNavigation = (url: string) => {
+  return [
+    JUDICIAL_SYSTEM_COA_JUDGE_HOME_URL,
+    JUDICIAL_SYSTEM_DEFENDER_HOME_URL,
+    JUDICIAL_SYSTEM_HOME_URL,
+    JUDICIAL_SYSTEM_JUDGE_HOME_URL,
+  ].includes(url)
+}
 
 export const getEnvironmentBaseUrl = (authority: string) => {
   const baseurlPrefix = process.env.BASE_URL_PREFIX ?? ''
@@ -56,13 +67,14 @@ const addQueryParameters = (
 export const icelandicAndNoPopupUrl = (url: string) =>
   addQueryParameters(url, icelandicAndNoPopup)
 
+type Urls = {
+  authUrl: string
+  islandisBaseUrl: string
+  adsBaseUrl: string
+  judicialSystemBaseUrl: string
+}
 const envs: {
-  [envName in TestEnvironment]: {
-    authUrl: string
-    islandisBaseUrl: string
-    adsBaseUrl: string
-    judicialSystemBaseUrl: string
-  }
+  [envName in TestEnvironment]: Urls
 } = {
   dev: {
     authUrl: AuthUrl.dev,
@@ -92,7 +104,8 @@ const envs: {
   },
 }
 
-export const env = (process.env.TEST_ENVIRONMENT ?? 'local') as TestEnvironment
+export const env = (process.env.TEST_ENVIRONMENT ??
+  (process.env.CI ? 'dev' : 'local')) as TestEnvironment
 const hotEnv = process.env.TEST_URL
   ? { islandisBaseUrl: process.env.TEST_URL }
   : {}

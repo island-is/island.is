@@ -16,9 +16,8 @@ import { Control, useForm } from 'react-hook-form'
 import { useCandidateLookupLazyQuery } from './candidateLookup.generated'
 import { setReason } from './utils'
 import { useCreateCollectionMutation } from './createCollection.generated'
-import { useCurrentCollectionQuery } from './getCurrentCollection.generated'
 
-const CompareLists = () => {
+const CompareLists = ({ collectionId }: { collectionId: string }) => {
   const { formatMessage } = useLocale()
   const { control } = useForm()
 
@@ -30,17 +29,16 @@ const CompareLists = () => {
   const [canCreateErrorReason, setCanCreateErrorReason] = useState('')
 
   const [candidateLookup] = useCandidateLookupLazyQuery()
-  const { data: currentCollection } = useCurrentCollectionQuery()
   const [createCollection, { loading }] = useCreateCollectionMutation({
     variables: {
       input: {
+        collectionId,
         owner: {
           name: name,
           nationalId: nationalIdInput,
           phone: '',
           email: '',
         },
-        collectionId: currentCollection?.signatureCollectionCurrent.id ?? '',
       },
     },
   })
@@ -48,7 +46,7 @@ const CompareLists = () => {
   const createNewCollection = async () => {
     try {
       const createCollectionRes = await createCollection()
-      if (createCollectionRes.data?.signatureCollectionCreate.slug) {
+      if (createCollectionRes.data?.signatureCollectionAdminCreate.slug) {
         toast.success(formatMessage(m.createCollectionSuccess))
         setModalIsOpen(false)
       } else {
@@ -64,17 +62,18 @@ const CompareLists = () => {
       candidateLookup({
         variables: {
           input: {
-            id: nationalIdInput,
+            nationalId: nationalIdInput,
           },
         },
       }).then((res) => {
-        if (res.data?.signatureCollectionSigneeLookup?.name) {
-          setName(res.data.signatureCollectionSigneeLookup.name)
-          setCanCreate(res.data.signatureCollectionSigneeLookup.canCreate)
+        if (res.data?.signatureCollectionAdminCandidateLookup?.name) {
+          const { name, canCreate, canCreateInfo } =
+            res.data.signatureCollectionAdminCandidateLookup
+
+          setName(name)
+          setCanCreate(canCreate)
           setCanCreateErrorReason(
-            setReason(
-              String(res.data.signatureCollectionSigneeLookup.canCreateInfo),
-            ).defaultMessage,
+            setReason(String(canCreateInfo)).defaultMessage,
           )
         } else {
           setName('')

@@ -12,20 +12,29 @@ import ProsecutorSectionHeading from './ProsecutorSectionHeading'
 
 const ProsecutorSection: React.FC<React.PropsWithChildren<unknown>> = () => {
   const { workingCase, setWorkingCase } = useContext(FormContext)
-  const { setAndSendCaseToServer } = useCase()
+  const { updateCase } = useCase()
+
+  const setProsecutor = async (prosecutorId: string) => {
+    if (workingCase) {
+      const updatedCase = await updateCase(workingCase.id, {
+        prosecutorId: prosecutorId,
+      })
+
+      const prosecutor = updatedCase?.prosecutor
+
+      setWorkingCase((prevWorkingCase) => ({
+        ...prevWorkingCase,
+        prosecutor,
+      }))
+    }
+  }
 
   const handleProsecutorChange = (prosecutorId: string) => {
-    setAndSendCaseToServer(
-      [
-        {
-          prosecutorId: prosecutorId,
-          force: true,
-        },
-      ],
-      workingCase,
-      setWorkingCase,
-    )
+    if (!workingCase) {
+      return false
+    }
 
+    setProsecutor(prosecutorId)
     return true
   }
 

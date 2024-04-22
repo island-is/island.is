@@ -5,9 +5,9 @@ export interface CitizenshipDto {
   countryName: string | null
 }
 
-export function formatCitizenshipDto(
+export const formatCitizenshipDto = (
   citizenship: Rikisfang | null | undefined,
-): CitizenshipDto | null {
+): CitizenshipDto | null => {
   if (citizenship == null) {
     return null
   }

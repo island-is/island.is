@@ -15,6 +15,7 @@ import {
 import slugify from '@sindresorhus/slugify'
 import type { ActionType } from 'contentful-management/dist/typings/entities/role'
 import type { CheckboxState } from '../types'
+import { sortAlpha } from '@island.is/shared/utils'
 
 let client: PlainClientAPI | null = null
 
@@ -56,9 +57,7 @@ export const getAllContentTypesInAscendingOrder = async () => {
     for (const type of contentfulTypesResponse.items) contentTypes.push(type)
   }
 
-  contentTypes.sort((a, b) =>
-    a.name.toLowerCase().localeCompare(b.name.toLowerCase()),
-  )
+  contentTypes.sort(sortAlpha('name'))
 
   return contentTypes
 }
@@ -315,4 +314,15 @@ export const applyEntryEditPolicies = (
       },
     })
   }
+}
+
+export const narrowDownCheckboxState = (
+  checkboxState: CheckboxState,
+  enabledRoleName: string,
+) => {
+  const state = checkboxState[enabledRoleName]
+  if (state) {
+    return { [enabledRoleName]: state }
+  }
+  return {}
 }

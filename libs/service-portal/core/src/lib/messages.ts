@@ -45,6 +45,14 @@ export const m = defineMessages({
     id: 'service.portal:final-due-date',
     defaultMessage: 'Eindagi',
   },
+  year: {
+    id: 'service.portal:year',
+    defaultMessage: 'Ár',
+  },
+  theYear: {
+    id: 'service.portal:the-year',
+    defaultMessage: 'Árið',
+  },
   yearAndSeason: {
     id: 'service.portal:year-and-season',
     defaultMessage: 'Ár og tímabil',
@@ -52,6 +60,10 @@ export const m = defineMessages({
   effectiveDate: {
     id: 'service.portal:effective-date',
     defaultMessage: 'Gildisdagur',
+  },
+  validTo: {
+    id: 'service.portal:valid-to',
+    defaultMessage: 'Gildir til',
   },
   feeItem: {
     id: 'service.portal:fee-item',
@@ -98,6 +110,10 @@ export const m = defineMessages({
   transactions: {
     id: 'service.portal:transactions',
     defaultMessage: 'Færslur',
+  },
+  country: {
+    id: 'service.portal:country',
+    defaultMessage: 'Land',
   },
   date: {
     id: 'service.portal:date',
@@ -163,6 +179,10 @@ export const m = defineMessages({
   moreOptions: {
     id: 'service.portal:more-options',
     defaultMessage: 'Fleiri möguleikar',
+  },
+  owner: {
+    id: 'service.portal:owner',
+    defaultMessage: 'Eigandi',
   },
   get: {
     id: 'service.portal:get',
@@ -461,7 +481,7 @@ export const m = defineMessages({
   },
   signatureCollectionLists: {
     id: 'service.portal:signatureCollectionLists',
-    defaultMessage: 'Meðmælalistar',
+    defaultMessage: 'Meðmælasöfnun',
   },
   viewSignatureList: {
     id: 'service.portal:viewSignatureList',
@@ -569,9 +589,24 @@ export const m = defineMessages({
     id: 'service.portal:finance-status',
     defaultMessage: 'Staða',
   },
+  financeStatusDescription: {
+    id: 'service.portal:finance-status-description',
+    defaultMessage:
+      'Hér sérð þú sundurliðun skulda og/eða inneigna hjá ríkissjóði og stofnunum',
+  },
   financeTransactions: {
     id: 'service.portal:finance-transactions',
     defaultMessage: 'Hreyfingar',
+  },
+  financeTransactionsDescription: {
+    id: 'service.portal:finance-transactions-description',
+    defaultMessage:
+      'Hér sérð þú hreyfingar gjaldflokka fyrir valin skilyrði. Opnaðu síu og veldu gjaldflokka og tímabil. Hreyfingar geta verið gjöld, greiðslur, skuldajöfnuður o.fl.',
+  },
+  financeTransactionPeriodsDescription: {
+    id: 'service.portal:finance-transaction-periods-description',
+    defaultMessage:
+      'Hér sérð þú þær hreyfingar sem tilheyra ákveðnum reikningi eða álagningu. Þeir gjaldflokkar sem birtast hér að neðan eru þeir gjaldflokkar sem hafa haft hreyfingu síðustu 12 mánuði. Veldu gjaldflokk með því að smella á hann og síðan þann gjaldgrunn og tímabil sem við á. {br} Ef þú vilt annað tímabil eða gjaldflokka geturðu valið það með því að opna síuna',
   },
   financeTransactionsCategories: {
     id: 'service.portal:finance-transactions-categories',
@@ -581,25 +616,64 @@ export const m = defineMessages({
     id: 'service.portal:finance-transaction-periods',
     defaultMessage: 'Gjaldtímabil',
   },
+  financePayments: {
+    id: 'service.portal:finance-payments',
+    defaultMessage: 'Greiðslur',
+  },
   financeBills: {
     id: 'service.portal:finance-bills',
-    defaultMessage: 'Greiðsluseðlar og -kvittanir',
+    defaultMessage: 'Greiðsluseðlar og kvittanir',
+  },
+  financeBillsDescription: {
+    id: 'service.portal:finance-bills-description',
+    defaultMessage:
+      'Hér er að finna greidda og ógreidda greiðsluseðla fyrir valið tímabil. Einnig eru hér greiðslukvittanir nema þar sem greiðsluseðill hefur verið greiddur beint í banka.',
   },
   financeSchedules: {
     id: 'service.portal:finance-schedules',
     defaultMessage: 'Greiðsluáætlanir',
   },
+  financeSchedulesDescription: {
+    id: 'service.portal:finance-schedules-description',
+    defaultMessage:
+      'Hér getur þú gert greiðsluáætlun ef þú vilt dreifa greiðslum á skuld þinni við ríkissjóð og stofnanir. Hér getur þú einnig séð eldri greiðsluáætlanir. Ef Greiðsluáætlunin er greidd hraðar niður en áætlunin segir til um, munu greiðsluseðlar ekki berast þegar hún er upp greidd og engar eftirstöðvar eftir.',
+  },
+  financeHousingBenefits: {
+    id: 'service.portal:finance-housing-benefits',
+    defaultMessage: 'Húsnæðisbætur',
+  },
+  financeHousingBenefitsDesc: {
+    id: 'service.portal:finance-housing-benefits-description',
+    defaultMessage: 'Hér sérð þú sundurliðun húsnæðisbóta',
+  },
+  financeClaims: {
+    id: 'service.portal:finance-claims',
+    defaultMessage: 'Kröfur',
+  },
   financeEmployeeClaims: {
     id: 'service.portal:finance-employee-claims',
     defaultMessage: 'Launagreiðendakröfur',
+  },
+  financeEmployeeClaimsDescription: {
+    id: 'service.portal:finance-employee-claims-description',
+    defaultMessage:
+      'Hér er að finna opinber gjöld utan staðgreiðslu sem dregin eru af starfsmönnum.',
   },
   financeLocalTax: {
     id: 'service.portal:finance-local-tax',
     defaultMessage: 'Útsvar',
   },
+  financeLocalTaxDescription: {
+    id: 'service.portal:finance-local-tax-description',
+    defaultMessage: 'Sýnir þá staðgreiðslu sem skilað er til sveitafélaga.',
+  },
   financeLoans: {
     id: 'service.portal:finance-loans',
     defaultMessage: 'Lán',
+  },
+  financeLoansDescription: {
+    id: 'service.portal:finance-loans-description',
+    defaultMessage: 'Virk lán hjá HMS',
   },
   searchLabel: {
     id: 'service.portal:search-label',
@@ -794,9 +868,17 @@ export const m = defineMessages({
     id: 'service.portal:no-data-found',
     defaultMessage: 'Engin gögn fundust fyrir þig',
   },
+  noTransactionFound: {
+    id: 'service.portal:no-transaction-found',
+    defaultMessage: 'Engar færslur eru innan þeirra skilyrða sem valin eru',
+  },
   noData: {
     id: 'service.portal:no-data-found-simple',
     defaultMessage: 'Engin gögn fundust',
+  },
+  noSearchResults: {
+    id: 'service.portal:no-search-resulsts',
+    defaultMessage: 'Engar niðurstöður',
   },
   noDataFoundDetail: {
     id: 'service.portal:no-data-found-detail',
@@ -977,6 +1059,10 @@ export const m = defineMessages({
     id: 'service.portal:datepicker-placeholder',
     defaultMessage: 'Veldu dagsetningu',
   },
+  pick: {
+    id: 'service.portal:pick',
+    defaultMessage: 'Velja',
+  },
   clearFilter: {
     id: 'service.portal:clear-filter',
     defaultMessage: 'Hreinsa síu',
@@ -1016,6 +1102,10 @@ export const m = defineMessages({
   errorTitle: {
     id: 'service.portal:error-screen-title',
     defaultMessage: 'Villa',
+  },
+  errorNoConnection: {
+    id: 'service.portal:error-no-connection',
+    defaultMessage: 'Villa kom upp í samskiptum við þjónustuaðila',
   },
   buttonCancel: {
     id: 'service.portal:button.cancel',
@@ -1153,6 +1243,15 @@ export const m = defineMessages({
     defaultMessage:
       'Húsnæðis- og mannvirkjastofnun hefur umsjón með gögnum um fasteignir.',
   },
+  hmsHousingBenefitsTooltip: {
+    id: 'service.portal:housing-benefits-tooltip',
+    defaultMessage:
+      'Húsnæðis- og mannvirkjastofnun hefur umsjón með gögnum um húsnæðisbætur.',
+  },
+  socialInsuranceTooltip: {
+    id: 'service.portal:social-insurance-tooltip',
+    defaultMessage: 'Tryggingastofnun hefur umsjón með gögnum um framfærslu.',
+  },
   vehiclesTooltip: {
     id: 'service.portal:vehicles-tooltip',
     defaultMessage: 'Samgöngustofa hefur umsjón með gögnum um ökutæki.',
@@ -1168,6 +1267,10 @@ export const m = defineMessages({
   mmsTooltip: {
     id: 'service.portal:mms-tooltip',
     defaultMessage: 'Menntamálastofnun hefur umsjón með gögnum um grunnskóla.',
+  },
+  mmsTooltipSecondary: {
+    id: 'service.portal:mms-tooltip-secondary',
+    defaultMessage: 'Menntamálastofnun hefur umsjón með gögnum um menntaskóla.',
   },
   occupationalLicenseTooltip: {
     id: 'service.portal:occupational-license-tooltip',
@@ -1206,6 +1309,10 @@ export const m = defineMessages({
     id: 'service.portal:add-to-storage',
     defaultMessage: 'Setja í geymslu',
   },
+  markAsRead: {
+    id: 'service.portal:mark-as-read',
+    defaultMessage: 'Merkja sem lesið',
+  },
   removeFromStorage: {
     id: 'service.portal:remove-from-storage',
     defaultMessage: 'Flytja í pósthólf',
@@ -1221,6 +1328,10 @@ export const m = defineMessages({
   closeActiveDocument: {
     id: 'service.portal:close-active-document',
     defaultMessage: 'Loka skjali',
+  },
+  backToList: {
+    id: 'service.portal:back-to-list',
+    defaultMessage: 'Aftur í lista',
   },
   month: {
     id: 'service.portal:month',
@@ -1253,5 +1364,134 @@ export const m = defineMessages({
   unmuteAudio: {
     id: 'service.portal:unmute-audio',
     defaultMessage: 'Hljóð á',
+  },
+  socialInsuranceMaintenance: {
+    id: 'service.portal:social-insurance-maintenance',
+    defaultMessage: 'Framfærsla',
+  },
+  socialInsuranceMaintenanceDescription: {
+    id: 'service.portal:social-insurance-maintenance-description',
+    defaultMessage:
+      'Einstaklingar geta átt rétt á greiðslum frá Tryggingastofnun (TR) til að bæta afkomu sína og hag. Allar greiðslur frá TR þarf að sækja sérstaklega um.',
+  },
+  paymentPlan: {
+    id: 'service.portal:payment-plan',
+    defaultMessage: 'Greiðsluáætlun',
+  },
+  paymentsReasoning: {
+    id: 'service.portal:payments-reasoning',
+    defaultMessage: 'Forsenda greiðslna',
+  },
+  january: {
+    id: 'service.portal:january',
+    defaultMessage: 'Janúar',
+    description: 'January',
+  },
+  february: {
+    id: 'service.portal:february',
+    defaultMessage: 'Febrúar',
+    description: 'February',
+  },
+  march: {
+    id: 'service.portal:march',
+    defaultMessage: 'Mars',
+    description: 'March',
+  },
+  april: {
+    id: 'service.portal:april',
+    defaultMessage: 'Apríl',
+    description: 'April',
+  },
+  may: {
+    id: 'service.portal:may',
+    defaultMessage: 'Maí',
+    description: 'May',
+  },
+  june: {
+    id: 'service.portal:june',
+    defaultMessage: 'Júní',
+    description: 'June',
+  },
+  july: {
+    id: 'service.portal:july',
+    defaultMessage: 'Júlí',
+    description: 'July',
+  },
+  august: {
+    id: 'service.portal:august',
+    defaultMessage: 'Ágúst',
+    description: 'August',
+  },
+  september: {
+    id: 'service.portal:september',
+    defaultMessage: 'September',
+    description: 'September',
+  },
+  october: {
+    id: 'service.portal:october',
+    defaultMessage: 'Október',
+    description: 'October',
+  },
+  november: {
+    id: 'service.portal:november',
+    defaultMessage: 'Nóvember',
+    description: 'November',
+  },
+  december: {
+    id: 'service.portal:december',
+    defaultMessage: 'Desember',
+    description: 'December',
+  },
+  english: {
+    id: 'service.portal:english',
+    defaultMessage: 'Enska',
+  },
+  icelandic: {
+    id: 'service.portal:icelandic',
+    defaultMessage: 'Íslenska',
+  },
+  noDataFoundVariableSingular: {
+    id: 'service.portal:no-data-found-variable-singular',
+    defaultMessage: 'Ekkert {arg} skráð',
+  },
+  noDataFoundVariableSingularFeminine: {
+    id: 'service.portal:no-data-found-variable-singular-feminine',
+    defaultMessage: 'Engin {arg} skráð',
+  },
+  noDataFoundVariableSingularMasculine: {
+    id: 'service.portal:no-data-found-variable-singular-masculine',
+    defaultMessage: 'Enginn {arg} skráður',
+  },
+  noDataFoundVariableMasculine: {
+    id: 'service.portal:no-data-found-variable-masculine',
+    defaultMessage: 'Engir {arg} skráðir',
+  },
+  noDataFoundVariableFeminine: {
+    id: 'service.portal:no-data-found-variable-feminine',
+    defaultMessage: 'Engar {arg} skráðar',
+  },
+  noDataFoundVariable: {
+    id: 'service.portal:no-data-found-variable',
+    defaultMessage: 'Engin {arg} skráð',
+  },
+  noDataFoundVariableDetail: {
+    id: 'service.portal:no-data-found-variable-detail',
+    defaultMessage:
+      'Ef þú telur að þú eigir að vera með skráða {arg}, vinsamlegast hafðu samband við þjónustuaðila.',
+  },
+  noDataFoundVariableDetailVariation: {
+    id: 'service.portal:no-data-found-variable-detail-variation',
+    defaultMessage:
+      'Ef þú telur að þú eigir að vera með skráð {arg}, vinsamlegast hafðu samband við þjónustuaðila.',
+  },
+  noDataFoundVariableDetailVariationFeminine: {
+    id: 'service.portal:no-data-found-variable-detail-variation-feminine',
+    defaultMessage:
+      'Ef þú telur að þú eigir að vera með skráðar {arg}, vinsamlegast hafðu samband við þjónustuaðila.',
+  },
+  noDataFoundVariableDetailVariationMasculine: {
+    id: 'service.portal:no-data-variable-found-detail-variation-masculine',
+    defaultMessage:
+      'Ef þú telur að þú eigir að vera með skráðann {arg}, vinsamlegast hafðu samband við þjónustuaðila.',
   },
 })

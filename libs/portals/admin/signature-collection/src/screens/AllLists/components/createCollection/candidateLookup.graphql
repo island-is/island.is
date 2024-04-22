@@ -1,5 +1,5 @@
-query CandidateLookup($input: SignatureCollectionIdInput!) {
-  signatureCollectionSigneeLookup(input: $input) {
+query CandidateLookup($input: SignatureCollectionNationalIdInput!) {
+  signatureCollectionAdminCandidateLookup(input: $input) {
     nationalId
     name
     canCreate

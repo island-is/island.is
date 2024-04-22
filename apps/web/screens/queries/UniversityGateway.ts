@@ -21,6 +21,9 @@ export const GET_UNIVERSITY_GATEWAY_PROGRAM_LIST = gql`
         durationInYears
         externalId
         schoolAnswerDate
+        specializationExternalId
+        specializationNameEn
+        specializationNameIs
         id
         iscedCode
         studentAnswerDate
@@ -28,6 +31,15 @@ export const GET_UNIVERSITY_GATEWAY_PROGRAM_LIST = gql`
         modeOfDelivery
         startingSemesterYear
         universityContentfulKey
+      }
+    }
+  }
+`
+export const GET_UNIVERSITY_GATEWAY_PROGRAM_LIST_IDS = gql`
+  query GetUniversityGatewayProgramIds {
+    universityGatewayPrograms {
+      data {
+        id
       }
     }
   }
@@ -41,6 +53,9 @@ export const GET_UNIVERSITY_GATEWAY_UNIVERSITIES = gql`
       contentfulKey
       contentfulLogoUrl
       contentfulTitle
+      contentfulTitleEn
+      contentfulLink
+      contentfulLinkEn
     }
   }
 `
@@ -67,21 +82,6 @@ export const GET_UNIVERSITY_GATEWAY_PROGRAM = gql`
       costInformationEn
       costInformationIs
       costPerYear
-      courses {
-        credits
-        descriptionEn
-        descriptionIs
-        externalId
-        externalUrlEn
-        externalUrlIs
-        id
-        nameEn
-        nameIs
-        requirement
-        semesterSeason
-        semesterYear
-        semesterYearNumber
-      }
       credits
       degreeAbbreviation
       degreeType
@@ -89,6 +89,8 @@ export const GET_UNIVERSITY_GATEWAY_PROGRAM = gql`
       departmentNameIs
       descriptionEn
       descriptionIs
+      descriptionHtmlEn
+      descriptionHtmlIs
       durationInYears
       externalId
       externalUrlEn
@@ -118,6 +120,8 @@ export const GET_UNIVERSITY_GATEWAY_PROGRAM = gql`
       studentAnswerDate
       studyRequirementsEn
       studyRequirementsIs
+      arrangementIs
+      arrangementEn
       universityContentfulKey
       universityId
     }

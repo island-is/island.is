@@ -6,7 +6,11 @@ import {
   Season,
   mapStringToEnum,
 } from '@island.is/university-gateway'
-import { InlineResponse2002 } from '../../../gen/fetch'
+import {
+  InlineResponse2002,
+  InlineResponse2002Data,
+  InlineResponse2002ExtraApplicationFields,
+} from '../../../gen/fetch'
 
 export const mapUglaPrograms = (
   res: InlineResponse2002,
@@ -48,35 +52,31 @@ export const mapUglaPrograms = (
         studyRequirementsEn: program.studyRequirementsEn,
         costInformationIs: program.costInformationIs,
         costInformationEn: program.costInformationEn,
-        allowException: false, //TODO missing in api
-        allowThirdLevelQualification: false, //TODO missing in api
+        arrangementIs: undefined, //TODO missing in api
+        arrangementEn: undefined, //TODO missing in api
+        allowException: program.extraApplicationSettings?.bannaUndanthagur
+          ? program.extraApplicationSettings?.bannaUndanthagur !== 't'
+          : true,
+        allowThirdLevelQualification: program.extraApplicationSettings
+          ?.thridjaStigsnamLeyft
+          ? program.extraApplicationSettings?.thridjaStigsnamLeyft === 't'
+          : false,
         modeOfDelivery:
           program.modeOfDelivery?.map((m) => {
-            // TODO handle when ráðuneyti has made decisions
-            if (m.toString() === 'MIXED') {
-              return ModeOfDelivery.UNDEFINED
-            } else {
-              return mapStringToEnum(m, ModeOfDelivery)
-            }
+            return mapStringToEnum(m, ModeOfDelivery)
           }) || [],
-        extraApplicationFields: program.extraApplicationFields?.map(
-          (field) => ({
-            externalId: '', //TODO missing in api
-            nameIs: field.nameIs || '',
-            nameEn: field.nameEn || '',
-            descriptionIs: field.descriptionIs,
-            descriptionEn: field.descriptionEn,
-            required: field.required || false,
-            fieldType: field.fieldType as unknown as FieldType,
-            uploadAcceptedFileType: field.uploadAcceptedFileType,
-            options: undefined, //TODO missing in api
-          }),
-        ),
+        extraApplicationFields: mapExtraApplicationFields(program),
         specializations: program.kjorsvid?.map((k) => ({
           externalId: k.id?.toString() || '',
           nameIs: k.heiti || '',
           nameEn: k.heitiEn || '',
         })),
+        applicationPeriodOpen: mapApplicationPeriodOpen(program),
+        applicationInUniversityGateway:
+          program.canApplyOnHaskolanam !== undefined &&
+          program.canApplyOnHaskolanam !== null
+            ? program.canApplyOnHaskolanam
+            : true,
       })
     } catch (e) {
       logError(program.externalId || '', e)
@@ -84,4 +84,59 @@ export const mapUglaPrograms = (
   }
 
   return mappedRes
+}
+
+const mapApplicationPeriodOpen = (program: InlineResponse2002Data): boolean => {
+  if (!program.applicationStartDate || !program.applicationEndDate) return false
+  return (
+    new Date() > program.applicationStartDate &&
+    new Date() < program.applicationEndDate
+  )
+}
+
+const mapExtraApplicationFields = (
+  program: InlineResponse2002Data,
+): IProgram['extraApplicationFields'] => {
+  const fields =
+    program.extraApplicationFields?.map((field) => ({
+      externalId: '', //TODO missing in api
+      nameIs: field.nameIs || '',
+      nameEn: field.nameEn || '',
+      descriptionIs: field.descriptionIs,
+      descriptionEn: field.descriptionEn,
+      required: field.required || false,
+      fieldType: field.fieldType as unknown as FieldType,
+      uploadAcceptedFileType: field.uploadAcceptedFileType,
+      options: mapOptions(program, field),
+    })) || []
+
+  if (program.mustPickExamVenue) {
+    fields.push({
+      externalId: '', //TODO missing in the api
+      nameIs: 'Prófstaður',
+      nameEn: 'Exam venue',
+      required: true,
+      descriptionIs: undefined,
+      descriptionEn: undefined,
+      fieldType: FieldType.TESTING_SITE,
+      uploadAcceptedFileType: undefined,
+      options: JSON.stringify(program?.simenntunarstodvar) ?? undefined,
+    })
+  }
+
+  return fields
+}
+
+const mapOptions = (
+  program: InlineResponse2002Data,
+  field: InlineResponse2002ExtraApplicationFields,
+): string | undefined => {
+  const type = field.fieldType as FieldType
+  // More fields can be added here
+  switch (type) {
+    case FieldType.TESTING_SITE:
+      return JSON.stringify(program?.simenntunarstodvar) ?? undefined
+    default:
+      return undefined
+  }
 }

@@ -8,7 +8,6 @@ import {
   buildCheckboxField,
   buildCompanySearchField,
   getValueViaPath,
-  buildAlertMessageField,
 } from '@island.is/application/core'
 import {
   Form,
@@ -26,7 +25,6 @@ import {
   overview,
   submitted,
   selectCompany,
-  errorMessages,
 } from '../lib/messages'
 import { YES } from '../shared/constants'
 
@@ -148,29 +146,6 @@ export const LoginServiceForm: Form = buildForm({
                   '',
                 )
               },
-            }),
-            buildAlertMessageField({
-              id: 'applicant.invalidIsat',
-              title: errorMessages.invalidIsatMessage,
-              alertType: 'warning',
-              condition: (formValue) => {
-                const isatNr = getValueViaPath(
-                  formValue,
-                  'selectCompany.searchField.isat',
-                  '',
-                )
-                if (isatNr !== undefined) {
-                  return isatNr.slice(0, 2) !== '84'
-                }
-                return false
-              },
-              links: [
-                {
-                  title: errorMessages.invalidIsatPdfUrl,
-                  url: errorMessages.invalidIsatPdfUrl,
-                  isExternal: true,
-                },
-              ],
             }),
             buildCustomField(
               {

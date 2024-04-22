@@ -32,7 +32,7 @@ export const saveButtonWrapperStyle = recipe({
 })
 
 globalStyle(`${tableRowStyles} td, ${tableRowStyles} th`, {
-  fontSize: '14px',
+  fontSize: '16px',
   fontWeight: 600,
   whiteSpace: 'nowrap',
 })

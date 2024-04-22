@@ -23,3 +23,20 @@ query GetMachineDetails($id: String!) {
   }
 }
 `
+
+export const GET_MACHINE_BY_REGNO = `
+query GetMachineByRegno($regno: String!) {
+  getWorkerMachineByRegno(regno: $regno) {
+    id
+    regNumber
+    type
+    subType
+    status
+    category
+    ownerNumber
+    plate
+    disabled
+    supervisorName
+  }
+}
+`

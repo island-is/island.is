@@ -630,6 +630,13 @@
             }
           },
           {
+            "name": "onlyMileageRequiredVehicles",
+            "in": "query",
+            "schema": {
+              "type": "boolean"
+            }
+          },
+          {
             "name": "showOwned",
             "in": "query",
             "schema": {

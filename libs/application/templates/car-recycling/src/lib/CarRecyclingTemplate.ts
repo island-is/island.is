@@ -12,8 +12,7 @@ import {
   ApplicationTemplate,
   ApplicationTypes,
   DefaultEvents,
-  NationalRegistryUserApi,
-  UserProfileApi,
+  IdentityApi,
   defineTemplateApi,
 } from '@island.is/application/types'
 
@@ -86,7 +85,7 @@ const CarRecyclingTemplate: ApplicationTemplate<
               ],
               write: 'all',
               delete: true,
-              api: [UserProfileApi, NationalRegistryUserApi, VehicleSearchApi],
+              api: [IdentityApi, VehicleSearchApi],
             },
           ],
         },

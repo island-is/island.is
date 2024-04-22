@@ -20,7 +20,11 @@ const CourtOfAppealCases = () => {
   const { formatMessage } = useIntl()
 
   const input = {
-    appealState: [CaseAppealState.RECEIVED, CaseAppealState.COMPLETED],
+    appealState: [
+      CaseAppealState.RECEIVED,
+      CaseAppealState.COMPLETED,
+      CaseAppealState.WITHDRAWN,
+    ],
   }
 
   const { data: appealedCases, loading } = useAppealedCasesQuery({

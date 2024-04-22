@@ -9,6 +9,7 @@ import {
   expandClaims,
   expandDebts,
   expandEstateMembers,
+  expandOtherAssets,
   expandStocks,
   trueOrHasYes,
 } from './mappers'
@@ -31,25 +32,25 @@ export const stringifyObject = <T extends Record<string, unknown>>(
 
 export const generateRawUploadData = (
   answers: EstateSchema,
-  externalData: EstateSchema,
+  externalData: EstateSchema['estate'],
   application: ApplicationWithAttachments,
 ) => {
   const relation =
-    externalData?.estate.estateMembers?.find(
+    externalData?.estateMembers?.find(
       (member) => member.nationalId === application.applicant,
     )?.relation ?? 'Óþekkt'
 
   const processedAssets = filterAndRemoveRepeaterMetadata<
     EstateSchema['estate']['assets']
-  >(answers?.estate?.assets ?? externalData?.estate?.assets ?? [])
+  >(answers?.estate?.assets ?? externalData?.assets ?? [])
 
   const processedVehicles = filterAndRemoveRepeaterMetadata<
     EstateSchema['estate']['vehicles']
-  >(answers?.estate?.vehicles ?? externalData?.estate?.vehicles ?? [])
+  >(answers?.estate?.vehicles ?? externalData?.vehicles ?? [])
 
   const processedEstateMembers = filterAndRemoveRepeaterMetadata<
     EstateSchema['estate']['estateMembers']
-  >(answers?.estate?.estateMembers ?? externalData?.estate?.estateMembers ?? [])
+  >(answers?.estate?.estateMembers ?? externalData?.estateMembers ?? [])
 
   const processedGuns = filterAndRemoveRepeaterMetadata<
     EstateSchema['estate']['guns']
@@ -57,10 +58,10 @@ export const generateRawUploadData = (
 
   const uploadData: UploadData = {
     deceased: {
-      name: externalData.estate.nameOfDeceased ?? '',
-      ssn: externalData.estate.nationalIdOfDeceased ?? '',
-      dateOfDeath: externalData.estate.dateOfDeath?.toString() ?? '',
-      address: externalData.estate.addressOfDeceased ?? '',
+      name: externalData.nameOfDeceased ?? '',
+      ssn: externalData.nationalIdOfDeceased ?? '',
+      dateOfDeath: externalData.dateOfDeath?.toString() ?? '',
+      address: externalData.addressOfDeceased ?? '',
     },
     districtCommissionerHasWill: trueOrHasYes(
       answers.estate?.testament?.wills ?? 'false',
@@ -70,7 +71,7 @@ export const generateRawUploadData = (
     remarksOnTestament: answers.estate?.testament?.additionalInfo ?? '',
     guns: expandAssetFrames(processedGuns),
     applicationType: answers.selectedEstate,
-    caseNumber: externalData?.estate?.caseNumber ?? '',
+    caseNumber: externalData?.caseNumber ?? '',
     assets: expandAssetFrames(processedAssets),
     claims: expandClaims(answers?.claims ?? []),
     bankAccounts: expandBankAccounts(answers.bankAccounts ?? []),
@@ -90,11 +91,9 @@ export const generateRawUploadData = (
       phoneNumber: answers.applicant.phone,
       relation: relation ?? '',
       ssn: answers.applicant.nationalId,
+      autonomous: trueOrHasYes(answers.applicant.autonomous ?? 'false'),
     },
-    otherAssets: {
-      info: answers.otherAssets?.info ?? '',
-      value: answers.otherAssets?.value ?? '',
-    },
+    otherAssets: expandOtherAssets(answers.otherAssets ?? []),
     stocks: expandStocks(answers.stocks ?? []),
     vehicles: expandAssetFrames(processedVehicles),
     estateWithoutAssetsInfo: {

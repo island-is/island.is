@@ -61,26 +61,6 @@ export const m = defineMessages({
     defaultMessage: 'Upplýsingar frá Þjóðskrá um kennitölu og lögheimili.',
     description: '',
   },
-  userProfileProviderTitle: {
-    id: 'sls.application:userProfileProviderTitle',
-    defaultMessage: 'Stillingar frá Ísland.is',
-    description: '',
-  },
-  userProfileProviderSubtitle: {
-    id: 'sls.application:userProfileProviderSubtitle',
-    defaultMessage: 'Persónustillingar þínar (sími og netfang) frá Ísland.is.',
-    description: '',
-  },
-  canSignProviderTitle: {
-    id: 'sls.application:canSignProviderTitle',
-    defaultMessage: 'Kjörskrá',
-    description: '',
-  },
-  canSignProviderSubtitle: {
-    id: 'sls.application:canSignProviderSubtitle',
-    defaultMessage: 'Skilyrði fyrir að mæla með lista',
-    description: '',
-  },
 
   /* Signee Information */
   information: {
@@ -164,6 +144,11 @@ export const m = defineMessages({
   listSigned: {
     id: 'sls.application:listSigned',
     defaultMessage: 'Þú hefur mælt með framboði',
+    description: '',
+  },
+  listSignedShort: {
+    id: 'sls.application:listSignedShort',
+    defaultMessage: 'Mælt með framboði',
     description: '',
   },
   listSignedDescription: {

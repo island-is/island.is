@@ -130,22 +130,22 @@ const Defendant = () => {
 
   const updateDefendantState = useCallback(
     (update: UpdateDefendantInput) => {
-      setWorkingCase((theCase: Case) => {
-        if (!theCase.defendants) {
-          return theCase
+      setWorkingCase((prevWorkingCase: Case) => {
+        if (!prevWorkingCase.defendants) {
+          return prevWorkingCase
         }
 
-        const indexOfDefendantToUpdate = theCase.defendants.findIndex(
+        const indexOfDefendantToUpdate = prevWorkingCase.defendants.findIndex(
           (defendant) => defendant.id === update.defendantId,
         )
 
-        const newDefendants = [...theCase.defendants]
+        const newDefendants = [...prevWorkingCase.defendants]
 
         newDefendants[indexOfDefendantToUpdate] = {
           ...newDefendants[indexOfDefendantToUpdate],
           ...update,
         } as TDefendant
-        return { ...theCase, defendants: newDefendants }
+        return { ...prevWorkingCase, defendants: newDefendants }
       })
     },
     [setWorkingCase],
@@ -182,14 +182,12 @@ const Defendant = () => {
   }
 
   const removeDefendantFromState = (defendant: TDefendant) => {
-    if (workingCase.defendants && workingCase.defendants?.length > 1) {
-      setWorkingCase({
-        ...workingCase,
-        defendants: [...workingCase.defendants].filter(
-          (d) => d.id !== defendant.id,
-        ),
-      })
-    }
+    setWorkingCase((prevWorkingCase) => ({
+      ...prevWorkingCase,
+      defendants:
+        prevWorkingCase.defendants &&
+        [...prevWorkingCase.defendants].filter((d) => d.id !== defendant.id),
+    }))
   }
 
   const handleCreateDefendantClick = async () => {
@@ -212,22 +210,20 @@ const Defendant = () => {
   }
 
   const createEmptyDefendant = (defendantId?: string) => {
-    if (workingCase.defendants) {
-      setWorkingCase({
-        ...workingCase,
-        defendants: [
-          ...workingCase.defendants,
-          {
-            id: defendantId || uuid(),
-            gender: undefined,
-            name: '',
-            nationalId: '',
-            address: '',
-            citizenship: '',
-          } as TDefendant,
-        ],
-      })
-    }
+    setWorkingCase((prevWorkingCase) => ({
+      ...prevWorkingCase,
+      defendants: prevWorkingCase.defendants && [
+        ...prevWorkingCase.defendants,
+        {
+          id: defendantId || uuid(),
+          gender: undefined,
+          name: '',
+          nationalId: '',
+          address: '',
+          citizenship: '',
+        } as TDefendant,
+      ],
+    }))
   }
 
   const stepIsValid = isDefendantStepValidIC(
@@ -327,10 +323,10 @@ const Defendant = () => {
                 value={workingCase.description || ''}
                 autoComplete="off"
                 onChange={(evt) => {
-                  setWorkingCase({
-                    ...workingCase,
+                  setWorkingCase((prevWorkingCase) => ({
+                    ...prevWorkingCase,
                     description: evt.target.value,
-                  })
+                  }))
                 }}
                 onBlur={(evt) =>
                   setAndSendCaseToServer(

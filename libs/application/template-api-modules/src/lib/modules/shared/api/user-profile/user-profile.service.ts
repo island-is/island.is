@@ -5,7 +5,10 @@ import { UserProfileApi } from '@island.is/clients/user-profile'
 import { isRunningOnEnvironment } from '@island.is/shared/utils'
 import { TemplateApiModuleActionProps } from '../../../../types'
 import { BaseTemplateApiService } from '../../../base-template-api.service'
-import { UserProfileParameters } from '@island.is/application/types'
+import {
+  UserProfile,
+  UserProfileParameters,
+} from '@island.is/application/types'
 import { TemplateApiError } from '@island.is/nest/problem'
 import { coreErrorMessages } from '@island.is/application/core'
 
@@ -27,7 +30,7 @@ export class UserProfileService extends BaseTemplateApiService {
   async userProfile({
     auth,
     params,
-  }: TemplateApiModuleActionProps<UserProfileParameters>) {
+  }: TemplateApiModuleActionProps<UserProfileParameters>): Promise<UserProfile> {
     // Temporary solution while we still run the old user profile service.
 
     return this.islyklarApi

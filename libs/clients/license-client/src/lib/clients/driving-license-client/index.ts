@@ -3,3 +3,4 @@ export { DrivingLicenseUpdateClient } from './services/drivingLicenseUpdateClien
 export { DrivingDigitalLicenseClientConfig } from './drivingLicenseClient.config'
 export { DrivingClientModule } from './modules/drivingLicenseClient.module'
 export { DrivingUpdateClientModule } from './modules/drivingLicenseUpdateClient.module'
+export { DrivingLicenseVerifyExtraData } from './drivingLicenseClient.type'

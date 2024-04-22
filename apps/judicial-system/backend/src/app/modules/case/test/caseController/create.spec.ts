@@ -26,11 +26,12 @@ type GivenWhenThen = (type: CaseType) => Promise<Then>
 
 describe('CaseController - Create', () => {
   const userId = uuid()
+  const prosecutorsOfficeId = uuid()
   const courtId = uuid()
   const user = {
     id: userId,
     role: UserRole.PROSECUTOR,
-    institution: { defaultCourtId: courtId },
+    institution: { id: prosecutorsOfficeId, defaultCourtId: courtId },
   } as TUser
   const createProperties = {
     property1: uuid(),
@@ -100,6 +101,7 @@ describe('CaseController - Create', () => {
           creatingProsecutorId: userId,
           prosecutorId: userId,
           courtId,
+          prosecutorsOfficeId,
         },
         { transaction },
       )
@@ -136,6 +138,7 @@ describe('CaseController - Create', () => {
           creatingProsecutorId: userId,
           prosecutorId: userId,
           courtId,
+          prosecutorsOfficeId,
         },
         { transaction },
       )

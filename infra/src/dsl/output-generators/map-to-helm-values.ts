@@ -61,8 +61,12 @@ const serializeService: SerializeMethod<HelmService> = async (
       NODE_OPTIONS: `--max-old-space-size=${getScaledValue(
         serviceDef.resources.limits.memory,
       )}`,
+      LOG_LEVEL: 'info',
     },
     secrets: {},
+    podDisruptionBudget: serviceDef.podDisruptionBudget ?? {
+      maxUnavailable: 1,
+    },
     healthCheck: {
       port: serviceDef.healthPort,
       liveness: {
@@ -86,7 +90,9 @@ const serializeService: SerializeMethod<HelmService> = async (
   if (serviceDef.args) {
     result.args = serviceDef.args
   }
-
+  if (serviceDef.podDisruptionBudget) {
+    result.podDisruptionBudget = serviceDef.podDisruptionBudget
+  }
   // resources
   result.resources = serviceDef.resources
 
