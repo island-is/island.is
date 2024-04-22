@@ -27,7 +27,7 @@ import {
   UnseenNotificationsCountDto,
   UnreadNotificationsCountDto,
 } from './dto/notification.dto'
-import { Locale } from '@island.is/shared/types'
+import type { Locale } from '@island.is/shared/types'
 import { mapToContentfulLocale, mapToLocale } from './utils'
 
 const ACCESS_TOKEN = process.env.CONTENTFUL_ACCESS_TOKEN

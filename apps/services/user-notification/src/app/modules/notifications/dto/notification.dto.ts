@@ -12,7 +12,7 @@ import {
   IsBoolean,
 } from 'class-validator'
 import { Type } from 'class-transformer'
-import { Locale } from '@island.is/shared/types'
+import type { Locale } from '@island.is/shared/types'
 
 export class ExtendedPaginationDto extends PaginationDto {
   @IsOptional()

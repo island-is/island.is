@@ -22,7 +22,7 @@ import { CreateNotificationResponse } from './dto/createNotification.response'
 import { CreateHnippNotificationDto } from './dto/createHnippNotification.dto'
 import { HnippTemplate } from './dto/hnippTemplate.response'
 import { NotificationsService } from './notifications.service'
-import { Locale } from '@island.is/shared/types'
+import type { Locale } from '@island.is/shared/types'
 
 @Controller('notifications')
 @ApiExtraModels(CreateNotificationDto)
