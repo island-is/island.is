@@ -191,7 +191,6 @@ export class NotificationsService {
 
   async getTemplates(locale?: Locale): Promise<HnippTemplate[]> {
     locale = mapToLocale(locale as Locale)
-    console.log(locale)
     const cacheKey = `templates-${locale}`
 
     // Try to retrieve the templates from cache first
