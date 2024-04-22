@@ -129,6 +129,8 @@ const ListPageEditor = () => {
     return locales
   }, [])
 
+  // TODO: fix left and right padding on all elements
+
   return (
     <Box
       paddingLeft="spacingL"
