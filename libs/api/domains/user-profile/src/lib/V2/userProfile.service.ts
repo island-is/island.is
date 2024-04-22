@@ -1,6 +1,4 @@
 import { BadRequestException, Injectable } from '@nestjs/common'
-import { logger } from '@island.is/logging'
-import { ApolloError } from 'apollo-server-express'
 
 import {
   ConfirmationDtoResponse,
@@ -14,8 +12,6 @@ import { ActorProfile, ActorProfileResponse } from '../dto/actorProfile'
 import { UpdateUserProfileInput } from '../dto/updateUserProfileInput'
 import { CreateSmsVerificationInput } from '../dto/createSmsVerificationInput'
 import { CreateEmailVerificationInput } from '../dto/createEmalVerificationInput'
-import { ConfirmSmsVerificationInput } from '../dto/confirmSmsVerificationInput'
-import { ConfirmEmailVerificationInput } from '../dto/confirmEmailVerificationInput'
 import { UpdateActorProfileInput } from '../dto/updateActorProfileInput'
 
 /** Category to attach each log message to */
@@ -59,21 +55,21 @@ export class UserProfileServiceV2 {
   ): Promise<UserProfile> {
     const { bankInfo, ...alteredInput } = input
 
-    const userProfile = await this.v2UserProfileApiWithAuth(user)
-      .meUserProfileControllerPatchUserProfile({
-        patchUserProfileDto: {
-          ...alteredInput,
-          emailNotifications: alteredInput.canNudge,
-        },
-      })
-      .catch((e) => handleError(e, `updateEmailNotifications error`))
+    const userProfile = await this.v2UserProfileApiWithAuth(
+      user,
+    ).meUserProfileControllerPatchUserProfile({
+      patchUserProfileDto: {
+        ...alteredInput,
+        emailNotifications: alteredInput.canNudge,
+        emailVerificationCode: alteredInput.emailCode,
+        mobilePhoneNumberVerificationCode: alteredInput.smsCode,
+      },
+    })
 
     if (bankInfo) {
-      await this.islyklarService
-        .updateIslykillSettings(user.nationalId, {
-          bankInfo,
-        })
-        .catch((e) => handleError(e, `updateIslykillSettings error`))
+      await this.islyklarService.updateIslykillSettings(user.nationalId, {
+        bankInfo,
+      })
     }
 
     return {
@@ -83,9 +79,9 @@ export class UserProfileServiceV2 {
   }
 
   async getUserProfile(user: User): Promise<UserProfile> {
-    const userProfile = await this.v2UserProfileApiWithAuth(user)
-      .meUserProfileControllerFindUserProfile()
-      .catch((e) => handleError(e, `getUserProfileV2 error`))
+    const userProfile = await this.v2UserProfileApiWithAuth(
+      user,
+    ).meUserProfileControllerFindUserProfile()
 
     const bankInfo = await this.getBankInfo(user)
 
@@ -97,22 +93,22 @@ export class UserProfileServiceV2 {
   }
 
   async createSmsVerification(input: CreateSmsVerificationInput, user: User) {
-    await this.v2UserProfileApiWithAuth(user)
-      .meUserProfileControllerCreateVerification({
-        createVerificationDto: input,
-      })
-      .catch((e) => handleError(e, `createSmsVerification error`))
+    await this.v2UserProfileApiWithAuth(
+      user,
+    ).meUserProfileControllerCreateVerification({
+      createVerificationDto: input,
+    })
   }
 
   async createEmailVerification(
     input: CreateEmailVerificationInput,
     user: User,
   ): Promise<void> {
-    await this.v2UserProfileApiWithAuth(user)
-      .meUserProfileControllerCreateVerification({
-        createVerificationDto: input,
-      })
-      .catch((e) => handleError(e, `createEmailVerification error`))
+    await this.v2UserProfileApiWithAuth(
+      user,
+    ).meUserProfileControllerCreateVerification({
+      createVerificationDto: input,
+    })
   }
 
   async getActorProfiles(user: User): Promise<ActorProfileResponse> {
@@ -133,25 +129,19 @@ export class UserProfileServiceV2 {
       .catch((e) => handleError(e, `updateActorProfile error`))
   }
 
-  async confirmSms(
-    input: ConfirmSmsVerificationInput,
-    user: User,
-  ): Promise<ConfirmationDtoResponse> {
+  async confirmSms(): Promise<ConfirmationDtoResponse> {
     throw new BadRequestException(
       'For User Profile V2 call updateUserProfile instead with mobilePhoneNumberVerificationCode',
     )
   }
 
-  async confirmEmail(
-    input: ConfirmEmailVerificationInput,
-    user: User,
-  ): Promise<ConfirmationDtoResponse> {
+  async confirmEmail(): Promise<ConfirmationDtoResponse> {
     throw new BadRequestException(
       'For User Profile V2 call updateUserProfile instead with emailVerificationCode',
     )
   }
 
-  async resendEmailVerification(user: User): Promise<void> {
+  async resendEmailVerification(): Promise<void> {
     throw new BadRequestException(
       'For User Profile V2 call createEmailVerification instead with email again',
     )

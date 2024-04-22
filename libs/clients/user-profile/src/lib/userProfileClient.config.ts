@@ -27,6 +27,8 @@ export const UserProfileClientConfig = defineConfig({
         nodes: env.optionalJSON('USER_PROFILE_CLIENT_REDIS_NODES') ?? [],
         ssl: env.optionalJSON('USER_PROFILE_CLIENT_REDIS_SSL', false) ?? true,
       },
+      // By setting default scope to empty array the machine client token will get all the scopes that the machine client has access to
+      // and user authentication will be forwarded without doing token exchange.
       scope: env.optionalJSON<string[]>('USER_PROFILE_CLIENT_SCOPE') ?? [],
     }
   },
