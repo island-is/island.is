@@ -429,27 +429,19 @@ export class CmsElasticsearchService {
       },
     ]
 
-    const wildcardSearch = {
-      wildcard: {
-        title: '*',
-      },
-    }
-
     let queryString = input.queryString ? input.queryString.toLowerCase() : ''
 
     if (input.lang === 'is') {
       queryString = queryString.replace('`', '')
     }
 
-    const multimatchSearch = {
-      multi_match: {
-        query: queryString,
+    must.push({
+      simple_query_string: {
+        query: queryString + '*',
         fields: ['title'],
-        type: 'phrase_prefix',
+        analyze_wildcard: true,
       },
-    }
-
-    must.push(!queryString ? wildcardSearch : multimatchSearch)
+    })
 
     const size = input.size ?? 10
 
