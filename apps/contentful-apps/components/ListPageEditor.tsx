@@ -1,7 +1,7 @@
-import { useEffect, useRef, useState } from 'react'
+import { useMemo, useRef, useState } from 'react'
 import { useDebounce } from 'react-use'
 import { CollectionProp, EntryProps, KeyValueMap } from 'contentful-management'
-import { FieldExtensionSDK } from '@contentful/app-sdk'
+import { EditorExtensionSDK } from '@contentful/app-sdk'
 import {
   Box,
   Button,
@@ -11,20 +11,27 @@ import {
   Text,
   TextInput,
   Pagination,
+  FormControl,
 } from '@contentful/f36-components'
 import { PlusIcon } from '@contentful/f36-icons'
 import { useCMA, useSDK } from '@contentful/react-apps-toolkit'
-import { RichTextEditor } from '@contentful/field-editor-rich-text'
-
-import { DEFAULT_LOCALE } from '../../constants'
-import { BLOCKS } from '@contentful/rich-text-types'
+import { Field, FieldWrapper } from '@contentful/default-field-editors'
 
 const SEARCH_DEBOUNCE_TIME_IN_MS = 300
 const LIST_ITEM_CONTENT_TYPE_ID = 'listItem'
 const LIST_ITEMS_PER_PAGE = 4
 
-const ListPageItemConfigField = () => {
-  const sdk = useSDK<FieldExtensionSDK>()
+const getFieldApiForLocale = (locale: string, sdk: EditorExtensionSDK) => {
+  return {
+    ...sdk,
+    field:
+      sdk.entry.fields['listItemThumbnailContentTemplate'].getForLocale(locale),
+  }
+}
+
+const ListPageEditor = () => {
+  const sdk = useSDK<EditorExtensionSDK>()
+
   const cma = useCMA()
 
   const searchValueRef = useRef('')
@@ -66,10 +73,6 @@ const ListPageItemConfigField = () => {
     [page, searchValue],
   )
 
-  useEffect(() => {
-    sdk.window.startAutoResizer()
-  }, [sdk.window])
-
   const createListItem = async () => {
     const listItem = await cma.entry.create(
       {
@@ -80,7 +83,7 @@ const ListPageItemConfigField = () => {
       {
         fields: {
           listPage: {
-            [DEFAULT_LOCALE]: {
+            [sdk.locales.default]: {
               sys: {
                 id: sdk.entry.getSys().id,
                 linkType: 'Entry',
@@ -96,105 +99,58 @@ const ListPageItemConfigField = () => {
     })
   }
 
-  return (
-    <Box style={{ display: 'flex', flexFlow: 'column nowrap', gap: '32px' }}>
-      {JSON.stringify(sdk.field.getValue())}
-      <RichTextEditor
-        value={{
-          nodeType: BLOCKS.DOCUMENT,
-          data: {},
-          content: [
-            {
-              nodeType: BLOCKS.PARAGRAPH,
-              data: {},
-              content: [
-                {
-                  nodeType: 'text',
-                  value: 'setting value here',
-                  marks: [],
-                  data: {},
-                },
-              ],
-            },
-          ],
-        }}
-        sdk={
-          {
-            ...sdk,
-            field: {
-              getIsDisabled() {
-                return false
-              },
-              getSchemaErrors() {
-                return []
-              },
-              getValue() {
-                return {
-                  nodeType: 'document',
-                  data: {},
-                  content: [
-                    {
-                      nodeType: 'paragraph',
-                      data: {},
-                      content: [
-                        {
-                          nodeType: 'text',
-                          value: 'setting value here',
-                          marks: [],
-                          data: {},
-                        },
-                      ],
-                    },
-                  ],
-                }
-              },
-              id: 'tst',
-              locale: sdk.field.locale,
-              name: 'tst',
-              onIsDisabledChanged() {
-                return () => {}
-              },
-              onSchemaErrorsChanged() {
-                return () => {}
-              },
-              onValueChanged(callback) {
-                callback((value) => {
-                  console.log('CHANGE', value)
-                })
-                return () => {}
-              },
-              async removeValue() {},
-              required: false,
-              setInvalid() {},
-              async setValue(value) {
-                console.log('Set value', value)
-                sdk.field.setValue({
-                  template: value,
-                })
-                return value as any
-              },
-              type: 'RichText',
-              validations: [
-                {
-                  enabledMarks: [],
-                  message: 'Marks are not allowed',
-                },
-                {
-                  enabledNodeTypes: [],
-                  message: 'Nodes are not allowed',
-                },
-              ],
-            },
-          } as any
-        }
-        isInitiallyDisabled={false}
-      />
+  const availableLocales = useMemo(() => {
+    const locales = [...sdk.locales.available]
 
-      <Box
-        onClick={createListItem}
-        style={{ display: 'flex', justifyContent: 'flex-end' }}
-      >
-        <Button startIcon={<PlusIcon />}>Add item</Button>
+    // Make sure that the default locale is at the top
+    if (locales[0] !== sdk.locales.default) {
+      const index = locales.findIndex(
+        (locale) => locale === sdk.locales.default,
+      )
+      if (index >= 0) {
+        locales.splice(index, 1)
+        locales.unshift(sdk.locales.default)
+      }
+    }
+
+    return locales
+  }, [])
+
+  return (
+    <Box
+      paddingLeft="spacingL"
+      paddingRight="spacingL"
+      paddingTop="spacingL"
+      style={{ display: 'flex', flexFlow: 'column nowrap', gap: '32px' }}
+    >
+      <Box>
+        {availableLocales.map((locale) => (
+          <FieldWrapper
+            key={locale}
+            sdk={getFieldApiForLocale(locale, sdk)}
+            name="listItemThumbnailContentTemplate"
+            renderHeading={() => (
+              <FormControl.Label>
+                Intro template | {sdk.locales.names[locale]}
+              </FormControl.Label>
+            )}
+          >
+            <Field
+              sdk={getFieldApiForLocale(locale, sdk)}
+              widgetId="richTextEditor"
+            />
+          </FieldWrapper>
+        ))}
+      </Box>
+
+      <Box>
+        <FormControl.Label>Items</FormControl.Label>
+        <Box
+          onClick={createListItem}
+          style={{ display: 'flex', justifyContent: 'flex-end' }}
+        >
+          <Button startIcon={<PlusIcon />}>Add item</Button>
+        </Box>
       </Box>
 
       <Box style={{ display: 'flex', flexFlow: 'column nowrap', gap: '24px' }}>
@@ -225,7 +181,9 @@ const ListPageItemConfigField = () => {
                   <EntryCard
                     key={item.sys.id}
                     contentType="List Item"
-                    title={item.fields.title?.[DEFAULT_LOCALE] ?? 'Untitled'}
+                    title={
+                      item.fields.title?.[sdk.locales.default] ?? 'Untitled'
+                    }
                     onClick={() => {
                       sdk.navigator.openEntry(item.sys.id, { slideIn: true })
                     }}
@@ -255,4 +213,4 @@ const ListPageItemConfigField = () => {
   )
 }
 
-export default ListPageItemConfigField
+export default ListPageEditor
