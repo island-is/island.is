@@ -1,5 +1,6 @@
 export enum DateType {
   COURT_DATE = 'COURT_DATE',
+  POSTPONED_COURT_DATE = 'POSTPONED_COURT_DATE',
 }
 
 export const getLatestDateType = (

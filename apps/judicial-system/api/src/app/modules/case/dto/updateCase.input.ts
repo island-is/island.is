@@ -160,6 +160,10 @@ export class UpdateCaseInput {
 
   @Allow()
   @Field({ nullable: true })
+  readonly postponedCourtDate?: string
+
+  @Allow()
+  @Field({ nullable: true })
   readonly courtLocation?: string
 
   @Allow()

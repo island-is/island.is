@@ -41,6 +41,7 @@ import {
 import { conclusion as m } from './Conclusion.strings'
 
 type Actions = 'POSTPONE'
+
 interface Postponement {
   newDate?: string | null
   courtRoom?: string | null
@@ -57,8 +58,12 @@ const Conclusion: React.FC = () => {
   const { courtDate, handleCourtDateChange } = useCourtArrangements(workingCase)
 
   const { formatMessage } = useIntl()
-  const { transitionCase, isTransitioningCase, setAndSendCaseToServer } =
-    useCase()
+  const {
+    transitionCase,
+    isTransitioningCase,
+    setAndSendCaseToServer,
+    updateCase,
+  } = useCase()
 
   const {
     uploadFiles,
@@ -73,28 +78,29 @@ const Conclusion: React.FC = () => {
 
   const handleNavigationTo = useCallback(
     async (destination: keyof stepValidationsType) => {
-      const transitionSuccessful = await transitionCase(
-        workingCase.id,
-        CaseTransition.ACCEPT,
-      )
-
-      if (transitionSuccessful) {
-        setNavigateTo(destination)
-      } else {
-        toast.error(formatMessage(errors.transitionCase))
-      }
-    },
-    [transitionCase, workingCase, formatMessage],
-  )
-
-  useEffect(() => {
-    if (selectedAction === 'POSTPONE') {
-      setPostponement({
-        newDate: workingCase.courtDate,
-        courtRoom: workingCase.courtRoom,
+      updateCase(workingCase.id, {
+        postponedCourtDate: postponement?.newDate,
+        courtRoom: postponement?.courtRoom,
       })
-    }
-  }, [selectedAction, workingCase.courtDate, workingCase.courtRoom])
+      // const transitionSuccessful = await transitionCase(
+      //   workingCase.id,
+      //   CaseTransition.ACCEPT,
+      // )
+
+      // if (transitionSuccessful) {
+      //   setNavigateTo(destination)
+      // } else {
+      //   toast.error(formatMessage(errors.transitionCase))
+      // }
+    },
+    // [transitionCase, workingCase, formatMessage],
+    [
+      postponement?.courtRoom,
+      postponement?.newDate,
+      updateCase,
+      workingCase.id,
+    ],
+  )
 
   return (
     <PageLayout
@@ -141,12 +147,12 @@ const Conclusion: React.FC = () => {
                         }))
                       }
                     }}
-                    handleCourtRoomChange={(evt) =>
+                    handleCourtRoomChange={(evt) => {
                       setPostponement((prev) => ({
                         ...prev,
                         courtRoom: evt.target.value,
                       }))
-                    }
+                    }}
                     dateTimeDisabled={postponement?.postponedIndefinitely}
                     courtRoomDisabled={postponement?.postponedIndefinitely}
                     selectedCourtDate={postponement?.newDate}

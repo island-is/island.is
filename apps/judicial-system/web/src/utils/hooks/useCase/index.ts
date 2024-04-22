@@ -51,6 +51,8 @@ type ChildKeys = Pick<
 
 export type UpdateCase = Omit<UpdateCaseInput, 'id'> & {
   force?: boolean
+  // TODO: Make this a part of updateCase
+  postponedCourtDate?: string | null
 }
 
 const isChildKey = (key: keyof UpdateCaseInput): key is keyof ChildKeys => {

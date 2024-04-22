@@ -27,9 +27,7 @@ interface Props {
   workingCase: Case
   setWorkingCase: React.Dispatch<React.SetStateAction<Case>>
   handleCourtDateChange: (date: Date | undefined, valid: boolean) => void
-  handleCourtRoomChange?: (
-    event: React.FocusEvent<HTMLInputElement | HTMLTextAreaElement, Element>,
-  ) => void
+  handleCourtRoomChange?: (event: any) => void
   selectedCourtDate?: string | null
   selectedCourtRoom?: string | null
   blueBox?: boolean
@@ -115,14 +113,18 @@ export const CourtArrangements: React.FC<Props> = (props) => {
         autoComplete="off"
         value={selectedCourtRoom || ''}
         placeholder="Skráðu inn dómsal"
-        onChange={(event) =>
+        onChange={(event) => {
+          if (handleCourtRoomChange) {
+            handleCourtRoomChange(event)
+          }
+
           removeTabsValidateAndSet(
             'courtRoom',
             event.target.value,
             [],
             setWorkingCase,
           )
-        }
+        }}
         onBlur={(event) => {
           if (handleCourtRoomChange) {
             handleCourtRoomChange(event)
