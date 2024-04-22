@@ -1,4 +1,3 @@
-import { IsString } from 'class-validator'
 import { Field, InputType } from '@nestjs/graphql'
 import { SignatureCollectionOwnerInput } from './owner.input'
 import { SignatureCollectionAreaInput } from './area.input'
@@ -6,7 +5,6 @@ import { SignatureCollectionAreaInput } from './area.input'
 @InputType()
 export class SignatureCollectionListInput {
   @Field()
-  @IsString()
   collectionId!: string
 
   @Field(() => SignatureCollectionOwnerInput)

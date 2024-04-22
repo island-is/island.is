@@ -5,11 +5,16 @@ import {
   GetListSignatures,
   GetListsForUser,
   GetSignedList,
+  GetListsForOwner,
+  GetCurrentCollection,
 } from './graphql/queries'
 import {
-  SignatureCollectionList,
+  SignatureCollectionListBase,
   SignatureCollectionSignature,
+  SignatureCollectionList,
   SignatureCollectionSuccess,
+  SignatureCollection,
+  SignatureCollectionSignedList,
 } from '@island.is/api/schema'
 
 export const useGetSignatureList = (listId: string) => {
@@ -22,13 +27,13 @@ export const useGetSignatureList = (listId: string) => {
     {
       variables: {
         input: {
-          id: listId,
+          listId,
         },
       },
     },
   )
   const listInfo =
-    (signatureList?.signatureCollectionList as SignatureCollectionList) ?? {}
+    (signatureList?.signatureCollectionList as SignatureCollectionList) ?? null
   return { listInfo, refetchSignatureList, loadingList }
 }
 
@@ -42,7 +47,7 @@ export const useGetListSignees = (listId: string, pageNumber?: number) => {
   }>(GetListSignatures, {
     variables: {
       input: {
-        id: listId,
+        listId,
       },
     },
   })
@@ -55,30 +60,59 @@ export const useGetListSignees = (listId: string, pageNumber?: number) => {
 export const useGetSignedList = () => {
   const {
     data: getSignedList,
-    loading: loadingSignedList,
-    refetch: refetchSignedList,
-  } = useQuery<{ signatureCollectionSignedList?: SignatureCollectionList }>(
-    GetSignedList,
-  )
-  const signedList =
-    (getSignedList?.signatureCollectionSignedList as SignatureCollectionList) ??
+    loading: loadingSignedLists,
+    refetch: refetchSignedLists,
+  } = useQuery<{
+    signatureCollectionSignedList?: SignatureCollectionSignedList[]
+  }>(GetSignedList)
+  const signedLists =
+    (getSignedList?.signatureCollectionSignedList as SignatureCollectionSignedList[]) ??
     null
-  return { signedList, loadingSignedList, refetchSignedList }
+  return { signedLists, loadingSignedLists, refetchSignedLists }
 }
 
-export const useGetListsForUser = () => {
+export const useGetListsForUser = (collectionId?: string) => {
   const {
     data: getListsForUser,
     loading: loadingUserLists,
     refetch: refetchListsForUser,
-  } = useQuery<{ signatureCollectionListsForUser?: SignatureCollectionList[] }>(
-    GetListsForUser,
-  )
+  } = useQuery<{
+    signatureCollectionListsForUser?: SignatureCollectionListBase[]
+  }>(GetListsForUser, {
+    variables: {
+      input: {
+        collectionId,
+      },
+    },
+    skip: !collectionId,
+  })
 
   const listsForUser =
-    (getListsForUser?.signatureCollectionListsForUser as SignatureCollectionList[]) ??
+    (getListsForUser?.signatureCollectionListsForUser as SignatureCollectionListBase[]) ??
     []
   return { listsForUser, loadingUserLists, refetchListsForUser }
+}
+
+export const useGetListsForOwner = (collectionId: string) => {
+  const {
+    data: getListsForOwner,
+    loading: loadingOwnerLists,
+    refetch: refetchListsForOwner,
+  } = useQuery<{
+    signatureCollectionListsForOwner?: SignatureCollectionList[]
+  }>(GetListsForOwner, {
+    variables: {
+      input: {
+        collectionId,
+      },
+      skip: !collectionId,
+    },
+  })
+
+  const listsForOwner =
+    (getListsForOwner?.signatureCollectionListsForOwner as SignatureCollectionList[]) ??
+    []
+  return { listsForOwner, loadingOwnerLists, refetchListsForOwner }
 }
 
 export const useIsOwner = () => {
@@ -94,4 +128,22 @@ export const useIsOwner = () => {
     (getIsOwner?.signatureCollectionIsOwner as SignatureCollectionSuccess) ??
     false
   return { isOwner, loadingIsOwner, refetchIsOwner }
+}
+
+export const useGetCurrentCollection = () => {
+  const {
+    data: getCurrentCollection,
+    loading: loadingCurrentCollection,
+    refetch: refetchCurrentCollection,
+  } = useQuery<{
+    signatureCollectionCurrent?: SignatureCollection
+  }>(GetCurrentCollection)
+  const currentCollection =
+    (getCurrentCollection?.signatureCollectionCurrent as SignatureCollection) ??
+    null
+  return {
+    currentCollection,
+    loadingCurrentCollection,
+    refetchCurrentCollection,
+  }
 }

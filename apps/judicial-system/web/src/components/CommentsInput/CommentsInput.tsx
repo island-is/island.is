@@ -43,7 +43,6 @@ const CommentsInput: React.FC<React.PropsWithChildren<Props>> = (props) => {
             'comments',
             event.target.value,
             [],
-            workingCase,
             setWorkingCase,
           )
         }

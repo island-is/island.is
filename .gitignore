@@ -7,9 +7,6 @@
 **/tsconfig.tsbuildinfo
 infra/mountebank-imposter-config.json
 infra/helm/**/*.tgz
-# Contentful extensions
-libs/contentful-extensions/translation/build
-libs/contentful-extensions/translation/.cache
 
 # dependencies
 node_modules/
@@ -73,7 +70,7 @@ libs/localization/messages.json
 
 # Ignore automatically openapi, generated schemas, types definitions, fragments types from codegen/autoSchemaFile/servers scripts
 /generated_files.tar.gz
-openapi.yaml
+*openapi.yaml
 api.graphql
 schema.d.ts
 schema.tsx

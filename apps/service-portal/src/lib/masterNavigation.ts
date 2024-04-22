@@ -20,6 +20,7 @@ import {
 import { sessionsNavigation } from '@island.is/service-portal/sessions'
 import { consentNavigation } from '@island.is/service-portal/consent'
 import { ServicePortalPaths } from '@island.is/service-portal/core'
+import { socialInsuranceMaintenanceNavigation } from '@island.is/service-portal/social-insurance-maintenance'
 
 export const rootNavigationItem: PortalNavigationItem = {
   name: m.overview,
@@ -46,6 +47,7 @@ export const MAIN_NAVIGATION: PortalNavigationItem = {
     },
     companyNavigation,
     informationNavigation,
+    socialInsuranceMaintenanceNavigation,
     assetsNavigation,
     financeNavigation,
     licenseNavigation,

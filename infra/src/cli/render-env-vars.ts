@@ -16,6 +16,22 @@ export const EXCLUDED_ENVIRONMENT_NAMES = [
   'COMPANY_REGISTRY_REDIS_NODES',
 ]
 
+export const EXCLUDED_ENVIRONMENT_PATTERNS = [/.*_NODES?$/, /REDIS/]
+
+/**
+ * Returns true if the environment variable should be included
+ * based on the name
+ */
+export function shouldIncludeEnv(name: string | string[]): boolean {
+  if (Array.isArray(name)) {
+    return name.every(shouldIncludeEnv)
+  }
+  return (
+    EXCLUDED_ENVIRONMENT_PATTERNS.every((pattern) => !pattern.test(name)) &&
+    !EXCLUDED_ENVIRONMENT_NAMES.includes(name)
+  )
+}
+
 const OVERRIDE_ENVIRONMENT_NAMES: Record<string, string> = {
   XROAD_BASE_PATH: 'http://localhost:8081',
   XROAD_BASE_PATH_WITH_ENV: 'http://localhost:8081/r1/IS-DEV',
@@ -51,7 +67,7 @@ export const renderServiceEnvVars = async (service: string) => {
     })
     .flat()
     // .reduce((p, c) => p.concat(c), [])
-    .filter(([envName]) => !EXCLUDED_ENVIRONMENT_NAMES.includes(envName))
+    .filter(shouldIncludeEnv)
     .map((request) => {
       const envName = request[0]
       const ssmName = OVERRIDE_ENVIRONMENT_NAMES[envName]

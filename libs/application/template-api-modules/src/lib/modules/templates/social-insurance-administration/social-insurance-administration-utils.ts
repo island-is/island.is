@@ -2,8 +2,8 @@ import { Application, YES, YesOrNo } from '@island.is/application/types'
 import parse from 'date-fns/parse'
 import {
   ApplicationDTO,
-  Attachment,
-  EmployersInfo,
+  TrWebCommonsExternalPortalsApiModelsDocumentsDocument as Attachment,
+  Employer as TrWebEmployer,
 } from '@island.is/clients/social-insurance-administration'
 import {
   ApplicationType,
@@ -59,7 +59,7 @@ export const transformApplicationToOldAgePensionDTO = (
     employmentStatus,
     employers,
   } = getOAPApplicationAnswers(application.answers)
-  const { bankInfo, email } = getOAPApplicationExternalData(
+  const { bankInfo, userProfileEmail } = getOAPApplicationExternalData(
     application.externalData,
   )
 
@@ -101,7 +101,7 @@ export const transformApplicationToOldAgePensionDTO = (
       taxLevel: +taxLevel,
     },
     applicantInfo: {
-      email: email,
+      email: userProfileEmail,
       phonenumber: applicantPhonenumber,
     },
     hasAbroadResidence: YES === residenceHistoryQuestion,
@@ -139,14 +139,14 @@ export const transformApplicationToHouseholdSupplementDTO = (
     householdSupplementHousing,
     householdSupplementChildren,
   } = getHSApplicationAnswers(application.answers)
-  const { bankInfo, email } = getHSApplicationExternalData(
+  const { bankInfo, userProfileEmail } = getHSApplicationExternalData(
     application.externalData,
   )
 
   const householdSupplementDTO: ApplicationDTO = {
     applicationId: application.id,
     applicantInfo: {
-      email: email,
+      email: userProfileEmail,
       phonenumber: applicantPhonenumber,
     },
     ...(!shouldNotUpdateBankAccount(bankInfo, paymentInfo) && {
@@ -200,14 +200,14 @@ export const transformApplicationToAdditionalSupportForTheElderlyDTO = (
     personalAllowanceUsage,
     taxLevel,
   } = getASFTEApplicationAnswers(application.answers)
-  const { bankInfo, email } = getASFTEApplicationExternalData(
+  const { bankInfo, userProfileEmail } = getASFTEApplicationExternalData(
     application.externalData,
   )
 
   const additionalSupportForTheElderlyDTO: ApplicationDTO = {
     applicationId: application.id,
     applicantInfo: {
-      email: email,
+      email: userProfileEmail,
       phonenumber: applicantPhonenumber,
     },
     ...(!shouldNotUpdateBankAccount(bankInfo, paymentInfo) && {
@@ -315,8 +315,8 @@ export const getApplicationType = (application: Application): string => {
   return ApplicationType.OLD_AGE_PENSION
 }
 
-export const getEmployers = (employers: Employer[]): EmployersInfo[] => {
-  const employersInfo: EmployersInfo[] = []
+export const getEmployers = (employers: Employer[]): Array<TrWebEmployer> => {
+  const employersInfo: TrWebEmployer[] = []
 
   for (const employer of employers) {
     const employerInfo = {

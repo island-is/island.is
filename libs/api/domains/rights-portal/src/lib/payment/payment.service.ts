@@ -25,24 +25,20 @@ export type PaymentResponse<T> = {
 export class PaymentService {
   constructor(private readonly api: PaymentApi) {}
 
-  async getCopaymentStatus(
-    user: User,
-  ): Promise<PaymentResponse<CopaymentStatus>> {
-    try {
-      const data = await this.api
-        .withMiddleware(new AuthMiddleware(user as Auth))
-        .getCopaymentStatus()
-        .catch(handle404)
+  async getCopaymentStatus(user: User): Promise<CopaymentStatus | null> {
+    const data = await this.api
+      .withMiddleware(new AuthMiddleware(user as Auth))
+      .getCopaymentStatus()
+      .catch(handle404)
 
-      return {
-        items: data ? [data] : [],
-        errors: [],
-      }
-    } catch (error) {
-      return {
-        items: [],
-        errors: [{ status: PaymentErrorStatus.INTERNAL_SERVICE_ERROR }],
-      }
+    return {
+      insuranceStatus: {
+        display: data?.insuranceStatus?.display ?? undefined,
+        code: data?.insuranceStatus?.code ?? undefined,
+      },
+      maximumMonthlyPayment: data?.maximumMonthlyPayment ?? undefined,
+      maximumPayment: data?.maximumPayment ?? undefined,
+      basePayment: data?.basePayment ?? undefined,
     }
   }
 

@@ -2,7 +2,7 @@
   "openapi": "3.0.1",
   "info": {
     "title": "Samgöngustofa",
-    "description": "Leitar eftir ökutækjum út frá fastanúmeri, skr�ningarnúmeri eða verksmiðjunúmeri - Release-29 : 20240104.2",
+    "description": "Leitar eftir ökutækjum út frá fastanúmeri, skr�ningarnúmeri eða verksmiðjunúmeri - Release-36 : 20240403.1",
     "contact": {
       "name": "Samgongustofa",
       "url": "https://www.samgongustofa.is/",
@@ -664,6 +664,14 @@
             "schema": {
               "type": "integer",
               "format": "int32"
+            }
+          },
+          {
+            "name": "onlyMileageRequiredVehicles",
+            "in": "query",
+            "schema": {
+              "type": "boolean",
+              "default": false
             }
           }
         ],
@@ -2377,6 +2385,22 @@
           "tMassoftrunbr": {
             "type": "integer",
             "format": "int32",
+            "nullable": true
+          },
+          "euGroupCode": {
+            "type": "string",
+            "nullable": true
+          },
+          "euGroupName": {
+            "type": "string",
+            "nullable": true
+          },
+          "euSubGroupCode": {
+            "type": "string",
+            "nullable": true
+          },
+          "euSubGroupName": {
+            "type": "string",
             "nullable": true
           },
           "tyre": {

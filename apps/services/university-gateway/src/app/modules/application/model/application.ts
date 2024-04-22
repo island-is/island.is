@@ -1,4 +1,8 @@
-import { ApiHideProperty, ApiProperty } from '@nestjs/swagger'
+import {
+  ApiHideProperty,
+  ApiProperty,
+  ApiPropertyOptional,
+} from '@nestjs/swagger'
 import {
   Column,
   CreatedAt,
@@ -26,7 +30,8 @@ export class Application extends Model<
   InferCreationAttributes<Application>
 > {
   @ApiProperty({
-    description: 'Application ID',
+    description:
+      'Application ID, should be the same application GUID that is used in island.is application system',
     example: '00000000-0000-0000-0000-000000000000',
     type: String,
   })
@@ -37,6 +42,16 @@ export class Application extends Model<
     allowNull: false,
   })
   id!: CreationOptional<string>
+
+  @ApiPropertyOptional({
+    description: 'External ID for the application (from University)',
+    example: 'ABC12345',
+  })
+  @Column({
+    type: DataType.STRING,
+    allowNull: true,
+  })
+  externalId?: string
 
   @ApiProperty({
     description: 'Applicant national id',

@@ -1,46 +1,63 @@
 import {
   Base,
   Client,
-  NationalRegistry,
   NationalRegistryB2C,
 } from '../../../../infra/src/dsl/xroad'
-import { ref, service, ServiceBuilder } from '../../../../infra/src/dsl/dsl'
+import {
+  json,
+  ref,
+  service,
+  ServiceBuilder,
+} from '../../../../infra/src/dsl/dsl'
 
 const serviceName = 'user-notification'
 const serviceWorkerName = `${serviceName}-worker`
-const dbName = `${serviceName.replace('-', '_')}`
+const serviceCleanupWorkerName = `${serviceName}-cleanup-worker`
 const imageName = `services-${serviceName}`
 const MAIN_QUEUE_NAME = serviceName
 const DEAD_LETTER_QUEUE_NAME = `${serviceName}-failure`
 
-const postgresInfo = {
-  username: dbName,
-  name: dbName,
-  passwordSecret: `/k8s/${serviceName}/DB_PASSWORD`,
-}
+const getEnv = (services: {
+  userProfileApi: ServiceBuilder<'service-portal-api'>
+}) => ({
+  MAIN_QUEUE_NAME,
+  DEAD_LETTER_QUEUE_NAME,
+  IDENTITY_SERVER_ISSUER_URL: {
+    dev: 'https://identity-server.dev01.devland.is',
+    staging: 'https://identity-server.staging01.devland.is',
+    prod: 'https://innskra.island.is',
+  },
+  USER_PROFILE_CLIENT_URL: ref(
+    (ctx) => `http://${ctx.svc(services.userProfileApi)}`,
+  ),
+  AUTH_DELEGATION_API_URL: {
+    dev: 'http://web-services-auth-delegation-api.identity-server-delegation.svc.cluster.local',
+    staging:
+      'http://web-services-auth-delegation-api.identity-server-delegation.svc.cluster.local',
+    prod: 'https://auth-delegation-api.internal.innskra.island.is',
+  },
+  AUTH_DELEGATION_MACHINE_CLIENT_SCOPE: json([
+    '@island.is/auth/delegations/index:system',
+  ]),
+  USER_NOTIFICATION_APP_PROTOCOL: {
+    dev: 'is.island.app.dev',
+    staging: 'is.island.app.dev', // intentionally set to dev - see firebase setup
+    prod: 'is.island.app',
+  },
+  SERVICE_PORTAL_CLICK_ACTION_URL: 'https://island.is/minarsidur',
+})
 
 export const userNotificationServiceSetup = (services: {
-  userProfileApi: ServiceBuilder<typeof serviceWorkerName>
+  userProfileApi: ServiceBuilder<'service-portal-api'>
 }): ServiceBuilder<typeof serviceName> =>
   service(serviceName)
     .image(imageName)
     .namespace(serviceName)
     .serviceAccount(serviceName)
-    .postgres(postgresInfo)
+    .db()
     .command('node')
     .args('--no-experimental-fetch', 'main.js')
-    .env({
-      MAIN_QUEUE_NAME,
-      DEAD_LETTER_QUEUE_NAME,
-      IDENTITY_SERVER_ISSUER_URL: {
-        dev: 'https://identity-server.dev01.devland.is',
-        staging: 'https://identity-server.staging01.devland.is',
-        prod: 'https://innskra.island.is',
-      },
-      USER_PROFILE_CLIENT_URL: ref(
-        (ctx) => `http://${ctx.svc(services.userProfileApi)}`,
-      ),
-    })
+    .env(getEnv(services))
     .secrets({
       FIREBASE_CREDENTIALS: `/k8s/${serviceName}/firestore-credentials`,
       CONTENTFUL_ACCESS_TOKEN: `/k8s/${serviceName}/CONTENTFUL_ACCESS_TOKEN`,
@@ -98,28 +115,11 @@ export const userNotificationWorkerSetup = (services: {
     .serviceAccount(serviceWorkerName)
     .command('node')
     .args('--no-experimental-fetch', 'main.js', '--job=worker')
-    .postgres(postgresInfo)
-    .initContainer({
-      containers: [{ command: 'npx', args: ['sequelize-cli', 'db:migrate'] }],
-      postgres: postgresInfo,
-    })
+    .db()
+    .migrations()
     .env({
-      MAIN_QUEUE_NAME,
-      DEAD_LETTER_QUEUE_NAME,
+      ...getEnv(services),
       EMAIL_REGION: 'eu-west-1',
-      IDENTITY_SERVER_ISSUER_URL: {
-        dev: 'https://identity-server.dev01.devland.is',
-        staging: 'https://identity-server.staging01.devland.is',
-        prod: 'https://innskra.island.is',
-      },
-      USER_PROFILE_CLIENT_URL: ref(
-        (ctx) => `http://${ctx.svc(services.userProfileApi)}`,
-      ),
-      USER_NOTIFICATION_APP_PROTOCOL: {
-        dev: 'is.island.app.dev',
-        staging: 'is.island.app.dev', // intentionally set to dev - see firebase setup
-        prod: 'is.island.app',
-      },
       CONTENTFUL_HOST: {
         dev: 'preview.contentful.com',
         staging: 'cdn.contentful.com',
@@ -136,6 +136,11 @@ export const userNotificationWorkerSetup = (services: {
         memory: '256Mi',
       },
     })
+    .replicaCount({
+      min: 1,
+      max: 2,
+      default: 1,
+    })
     .secrets({
       FIREBASE_CREDENTIALS: `/k8s/${serviceName}/firestore-credentials`,
       IDENTITY_SERVER_CLIENT_ID: `/k8s/${serviceName}/USER_NOTIFICATION_CLIENT_ID`,
@@ -147,3 +152,20 @@ export const userNotificationWorkerSetup = (services: {
     .xroad(Base, Client, NationalRegistryB2C)
     .liveness('/liveness')
     .readiness('/readiness')
+
+export const userNotificationCleanUpWorkerSetup = (): ServiceBuilder<
+  typeof serviceCleanupWorkerName
+> =>
+  service(serviceCleanupWorkerName)
+    .image(imageName)
+    .namespace(serviceName)
+    .serviceAccount(serviceCleanupWorkerName)
+    .command('node')
+    .args('--no-experimental-fetch', 'main.js', '--job=cleanup')
+    .db({ name: 'user-notification' })
+    .migrations()
+    .extraAttributes({
+      dev: { schedule: '@hourly' },
+      staging: { schedule: '@midnight' },
+      prod: { schedule: '@midnight' },
+    })

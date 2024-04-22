@@ -67,11 +67,7 @@ function constructRestrictionRequestPdf(
 
   setTitle(doc, title)
 
-  if (
-    theCase.creatingProsecutor?.institution?.name?.startsWith(
-      'Lögreglustjórinn',
-    )
-  ) {
+  if (theCase.prosecutorsOffice?.name?.startsWith('Lögreglustjórinn')) {
     addPoliceStar(doc)
     addEmptyLines(doc, 5)
   } else {
@@ -82,8 +78,7 @@ function constructRestrictionRequestPdf(
   setLineGap(doc, 4)
   addLargeHeading(
     doc,
-    theCase.creatingProsecutor?.institution?.name ??
-      formatMessage(m.noDistrict),
+    theCase.prosecutorsOffice?.name ?? formatMessage(m.noDistrict),
     'Times-Bold',
   )
   setLineGap(doc, 24)
@@ -238,11 +233,7 @@ function constructInvestigationRequestPdf(
 
   setTitle(doc, title)
 
-  if (
-    theCase.creatingProsecutor?.institution?.name?.startsWith(
-      'Lögreglustjórinn',
-    )
-  ) {
+  if (theCase.prosecutorsOffice?.name?.startsWith('Lögreglustjórinn')) {
     addPoliceStar(doc)
     addEmptyLines(doc, 5)
   } else {
@@ -253,8 +244,7 @@ function constructInvestigationRequestPdf(
   setLineGap(doc, 4)
   addLargeHeading(
     doc,
-    theCase.creatingProsecutor?.institution?.name ??
-      formatMessage(m.noDistrict),
+    theCase.prosecutorsOffice?.name ?? formatMessage(m.noDistrict),
     'Times-Bold',
   )
   setLineGap(doc, 24)

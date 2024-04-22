@@ -87,7 +87,7 @@ export const PkPass = ({
       .then((response) => {
         if (!response.errors && window && typeof window !== 'undefined') {
           setPkpassUrl(response?.data?.generatePkPass?.pkpassUrl)
-          window.open(response?.data?.generatePkPass?.pkpassUrl)
+          window.location.assign(response?.data?.generatePkPass?.pkpassUrl)
           setFetched(true)
           setDisplayLoader(false)
           setLinkTimestamp(new Date())

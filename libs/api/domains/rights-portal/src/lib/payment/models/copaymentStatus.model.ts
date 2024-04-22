@@ -4,14 +4,14 @@ import { CopaymentInsuranceStatus } from './copaymentInsuranceStatus.model'
 @ObjectType('RightsPortalCopaymentStatus')
 export class CopaymentStatus {
   @Field(() => CopaymentInsuranceStatus, { nullable: true })
-  insuranceStatus?: CopaymentInsuranceStatus | null
+  insuranceStatus?: CopaymentInsuranceStatus
 
   @Field(() => Number, { nullable: true })
-  maximumMonthlyPayment?: number | null
+  maximumMonthlyPayment?: number
 
   @Field(() => Number, { nullable: true })
-  maximumPayment?: number | null
+  maximumPayment?: number
 
   @Field(() => Number, { nullable: true })
-  basePayment?: number | null
+  basePayment?: number
 }

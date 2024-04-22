@@ -23,6 +23,7 @@ FROM runner
 
 COPY --from=build /app/dist/ /app
 COPY infra/scripts/container-scripts/* ./app/
+COPY infra/scripts/update-package-json.ts ./app/
 WORKDIR /app
 
 ENTRYPOINT [ "node", "feature-env" ]

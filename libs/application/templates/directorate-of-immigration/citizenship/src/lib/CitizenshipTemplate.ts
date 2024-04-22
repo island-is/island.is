@@ -48,7 +48,7 @@ const template: ApplicationTemplate<
   type: ApplicationTypes.CITIZENSHIP,
   name: applicationMessage.name,
   institution: applicationMessage.institutionName,
-  translationNamespaces: [ApplicationConfigurations.Citizenship.translation],
+  translationNamespaces: ApplicationConfigurations.Citizenship.translation,
   dataSchema: CitizenshipSchema,
   featureFlag: Features.citizenship,
   stateMachineConfig: {

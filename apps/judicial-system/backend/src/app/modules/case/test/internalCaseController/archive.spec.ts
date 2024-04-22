@@ -121,7 +121,6 @@ describe('InternalCaseController - Archive', () => {
       description: 'original_description',
       demands: 'original_demands',
       lawsBroken: 'original_lawsBroken',
-      legalBasis: 'original_legalBasis',
       requestedOtherRestrictions: 'original_requestedOtherRestrictions',
       caseFacts: 'original_caseFacts',
       legalArguments: 'original_legalArguments',
@@ -194,8 +193,6 @@ describe('InternalCaseController - Archive', () => {
     const archive = JSON.stringify({
       description: 'original_description',
       demands: 'original_demands',
-      lawsBroken: 'original_lawsBroken',
-      legalBasis: 'original_legalBasis',
       requestedOtherRestrictions: 'original_requestedOtherRestrictions',
       caseFacts: 'original_caseFacts',
       legalArguments: 'original_legalArguments',
@@ -370,8 +367,6 @@ describe('InternalCaseController - Archive', () => {
         {
           description: '',
           demands: '',
-          lawsBroken: '',
-          legalBasis: '',
           requestedOtherRestrictions: '',
           caseFacts: '',
           legalArguments: '',

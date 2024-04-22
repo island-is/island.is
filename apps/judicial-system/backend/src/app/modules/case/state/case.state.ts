@@ -21,7 +21,31 @@ export const caseStateMachine: Map<CaseTransition, Rule> = new Map([
   [
     CaseTransition.OPEN,
     {
-      fromStates: [CaseState.NEW],
+      fromStates: [CaseState.NEW, CaseState.WAITING_FOR_CONFIRMATION],
+      fromAppealStates: [undefined],
+      to: { state: CaseState.DRAFT },
+    },
+  ],
+  [
+    CaseTransition.ASK_FOR_CONFIRMATION,
+    {
+      fromStates: [CaseState.DRAFT, CaseState.SUBMITTED],
+      fromAppealStates: [undefined],
+      to: { state: CaseState.WAITING_FOR_CONFIRMATION },
+    },
+  ],
+  [
+    CaseTransition.DENY_INDICTMENT,
+    {
+      fromStates: [CaseState.WAITING_FOR_CONFIRMATION],
+      fromAppealStates: [undefined],
+      to: { state: CaseState.DRAFT },
+    },
+  ],
+  [
+    CaseTransition.RETURN_INDICTMENT,
+    {
+      fromStates: [CaseState.RECEIVED],
       fromAppealStates: [undefined],
       to: { state: CaseState.DRAFT },
     },
@@ -29,7 +53,7 @@ export const caseStateMachine: Map<CaseTransition, Rule> = new Map([
   [
     CaseTransition.SUBMIT,
     {
-      fromStates: [CaseState.DRAFT],
+      fromStates: [CaseState.DRAFT, CaseState.WAITING_FOR_CONFIRMATION],
       fromAppealStates: [undefined],
       to: { state: CaseState.SUBMITTED },
     },
@@ -48,6 +72,7 @@ export const caseStateMachine: Map<CaseTransition, Rule> = new Map([
       fromStates: [
         CaseState.NEW,
         CaseState.DRAFT,
+        CaseState.WAITING_FOR_CONFIRMATION,
         CaseState.SUBMITTED,
         CaseState.RECEIVED,
       ],
@@ -64,6 +89,7 @@ export const caseStateMachine: Map<CaseTransition, Rule> = new Map([
         CaseAppealState.APPEALED,
         CaseAppealState.RECEIVED,
         CaseAppealState.COMPLETED,
+        CaseAppealState.WITHDRAWN,
       ],
       to: { state: CaseState.ACCEPTED },
     },
@@ -77,6 +103,7 @@ export const caseStateMachine: Map<CaseTransition, Rule> = new Map([
         CaseAppealState.APPEALED,
         CaseAppealState.RECEIVED,
         CaseAppealState.COMPLETED,
+        CaseAppealState.WITHDRAWN,
       ],
       to: { state: CaseState.REJECTED },
     },
@@ -90,6 +117,7 @@ export const caseStateMachine: Map<CaseTransition, Rule> = new Map([
         CaseAppealState.APPEALED,
         CaseAppealState.RECEIVED,
         CaseAppealState.COMPLETED,
+        CaseAppealState.WITHDRAWN,
       ],
       to: { state: CaseState.DISMISSED },
     },
@@ -103,6 +131,7 @@ export const caseStateMachine: Map<CaseTransition, Rule> = new Map([
         CaseAppealState.APPEALED,
         CaseAppealState.RECEIVED,
         CaseAppealState.COMPLETED,
+        CaseAppealState.WITHDRAWN,
       ],
       to: { state: CaseState.RECEIVED },
     },
@@ -129,7 +158,7 @@ export const caseStateMachine: Map<CaseTransition, Rule> = new Map([
     CaseTransition.COMPLETE_APPEAL,
     {
       fromStates: [CaseState.ACCEPTED, CaseState.REJECTED, CaseState.DISMISSED],
-      fromAppealStates: [CaseAppealState.RECEIVED],
+      fromAppealStates: [CaseAppealState.RECEIVED, CaseAppealState.WITHDRAWN],
       to: { appealState: CaseAppealState.COMPLETED },
     },
   ],
@@ -139,6 +168,14 @@ export const caseStateMachine: Map<CaseTransition, Rule> = new Map([
       fromStates: [CaseState.ACCEPTED, CaseState.REJECTED, CaseState.DISMISSED],
       fromAppealStates: [CaseAppealState.COMPLETED],
       to: { appealState: CaseAppealState.RECEIVED },
+    },
+  ],
+  [
+    CaseTransition.WITHDRAW_APPEAL,
+    {
+      fromStates: [CaseState.ACCEPTED, CaseState.REJECTED, CaseState.DISMISSED],
+      fromAppealStates: [CaseAppealState.APPEALED, CaseAppealState.RECEIVED],
+      to: { appealState: CaseAppealState.WITHDRAWN },
     },
   ],
 ])

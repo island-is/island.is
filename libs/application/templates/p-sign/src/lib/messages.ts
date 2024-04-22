@@ -185,7 +185,7 @@ export const m = defineMessages({
     description: `Upload button label`,
   },
   qualityPhotoNoPhotoDescription: {
-    id: 'ps.application:qualityPhotoNoPhotoDescription',
+    id: 'ps.application:qualityPhotoNoPhotoDescription#markdown',
     defaultMessage:
       'Til að hlaða inn mynd fyrir stæðiskort, þarf hún að fylla upp eftirfarandi skilyrði:',
     description: `Description text for no existing photo`,
@@ -194,41 +194,6 @@ export const m = defineMessages({
     id: 'ps.application:qualityPhotoAltText',
     defaultMessage: 'Þín mynd skv. ökuskírteinaskrá',
     description: `Alt text for the user's quality photo`,
-  },
-  qualityPhotoInstructionsBulletOne: {
-    id: 'ps.application:qualityPhoto.instructionsbulletone',
-    defaultMessage: `
-    Ljósmynd af umsækjanda þarf að vera tekin beint að framan.
-    `,
-    description: 'Description of photo requirements',
-  },
-  qualityPhotoInstructionsBulletTwo: {
-    id: 'ps.application:qualityPhoto.instructionsbullettwo',
-    defaultMessage: `
-    Sýna þarf höfuð (án höfuðfats) og herðar.
-    `,
-    description: 'Description of photo requirements',
-  },
-  qualityPhotoInstructionsBulletThree: {
-    id: 'ps.application:qualityPhoto.instructionsbulletthree',
-    defaultMessage: `
-    Lýsing andlits þarf að vera jöfn.
-    `,
-    description: 'Description of photo requirements',
-  },
-  qualityPhotoInstructionsBulletFour: {
-    id: 'ps.application:qualityPhoto.instructionsbulletfour',
-    defaultMessage: `
-    Hvorki má glampa á gleraugu né skyggja á augu.
-    `,
-    description: 'Description of photo requirements',
-  },
-  qualityPhotoInstructionsBulletFive: {
-    id: 'ps.application:qualityPhoto.instructionsbulletfive',
-    defaultMessage: `
-    Bakgrunnur þarf að vera einfaldur og ljós á litinn.
-    `,
-    description: 'Description of photo requirements',
   },
   qualityPhotoNoPhotoAlertMessage: {
     id: 'ps.application:qualityPhoto.qualityPhotoNoPhotoAlertMessage',

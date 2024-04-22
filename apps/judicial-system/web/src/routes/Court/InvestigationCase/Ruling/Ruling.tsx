@@ -12,7 +12,10 @@ import {
 } from '@island.is/island-ui/core'
 import * as constants from '@island.is/judicial-system/consts'
 import { formatDate } from '@island.is/judicial-system/formatters'
-import { isAcceptingCaseDecision } from '@island.is/judicial-system/types'
+import {
+  getLatestDateType,
+  isAcceptingCaseDecision,
+} from '@island.is/judicial-system/types'
 import { core, ruling, titles } from '@island.is/judicial-system-web/messages'
 import {
   CaseFileList,
@@ -27,7 +30,10 @@ import {
   PoliceRequestAccordionItem,
   RulingInput,
 } from '@island.is/judicial-system-web/src/components'
-import { CaseDecision } from '@island.is/judicial-system-web/src/graphql/schema'
+import {
+  CaseDecision,
+  DateType,
+} from '@island.is/judicial-system-web/src/graphql/schema'
 import {
   removeTabsValidateAndSet,
   validateAndSendToServer,
@@ -65,11 +71,16 @@ const Ruling = () => {
   ])
 
   const initialize = useCallback(() => {
+    const courtDate = getLatestDateType(
+      DateType.COURT_DATE,
+      workingCase.dateLogs,
+    )
+
     setAndSendCaseToServer(
       [
         {
           introduction: formatMessage(m.sections.introduction.autofill, {
-            date: formatDate(workingCase.courtDate, 'PPP'),
+            date: formatDate(courtDate?.date, 'PPP'),
           }),
           prosecutorDemands: workingCase.demands,
           courtCaseFacts: formatMessage(
@@ -158,7 +169,6 @@ const Ruling = () => {
                 'introduction',
                 event.target.value,
                 ['empty'],
-                workingCase,
                 setWorkingCase,
                 introductionEM,
                 setIntroductionEM,
@@ -201,7 +211,6 @@ const Ruling = () => {
                 'prosecutorDemands',
                 event.target.value,
                 ['empty'],
-                workingCase,
                 setWorkingCase,
                 prosecutorDemandsEM,
                 setProsecutorDemandsEM,
@@ -246,7 +255,6 @@ const Ruling = () => {
                   'courtCaseFacts',
                   event.target.value,
                   ['empty'],
-                  workingCase,
                   setWorkingCase,
                   courtCaseFactsEM,
                   setCourtCaseFactsEM,
@@ -294,7 +302,6 @@ const Ruling = () => {
                   'courtLegalArguments',
                   event.target.value,
                   ['empty'],
-                  workingCase,
                   setWorkingCase,
                   courtLegalArgumentsEM,
                   setCourtLegalArgumentsEM,
@@ -353,6 +360,16 @@ const Ruling = () => {
                 ruling.investigationCases.sections.decision.dismissLabel,
               )}
               onChange={(decision) => {
+                let ruling = undefined
+
+                if (
+                  isAcceptingCaseDecision(decision) &&
+                  workingCase.parentCase &&
+                  !workingCase.ruling
+                ) {
+                  ruling = workingCase.parentCase.ruling
+                }
+
                 setAndSendCaseToServer(
                   [
                     {
@@ -360,8 +377,7 @@ const Ruling = () => {
                         decision === CaseDecision.ACCEPTING
                           ? workingCase.demands
                           : workingCase.conclusion,
-                    },
-                    {
+                      ruling,
                       decision,
                       force: true,
                     },
@@ -389,7 +405,6 @@ const Ruling = () => {
                 'conclusion',
                 event.target.value,
                 [],
-                workingCase,
                 setWorkingCase,
               )
             }

@@ -230,13 +230,6 @@ const Search: Screen<CategoryProps> = ({
     switch (item.__typename) {
       // eslint-disable-next-line @typescript-eslint/ban-ts-comment
       // @ts-ignore make web strict
-      case 'AnchorPage':
-        if (item.pageType === AnchorPageType.LIFE_EVENT) {
-          labels.push(n('lifeEvent'))
-        }
-        break
-      // eslint-disable-next-line @typescript-eslint/ban-ts-comment
-      // @ts-ignore make web strict
       case 'LifeEventPage':
         labels.push(n('lifeEvent'))
         break

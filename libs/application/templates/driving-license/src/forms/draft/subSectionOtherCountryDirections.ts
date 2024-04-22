@@ -1,15 +1,24 @@
-import { buildCustomField, buildSubSection } from '@island.is/application/core'
+import {
+  buildCustomField,
+  buildSubSection,
+  getValueViaPath,
+} from '@island.is/application/core'
 import { m } from '../../lib/messages'
-import { hasYes } from '@island.is/application/core'
+import { YES } from '../../lib/constants'
 
 export const subSectionOtherCountryDirections = buildSubSection({
   id: 'otherCountrySelected',
   title: m.countryDirectionsTitle,
-  condition: (answer) => hasYes(answer?.drivingLicenseInOtherCountry),
+  condition: (answers) =>
+    getValueViaPath(answers, 'otherCountry.drivingLicenseInOtherCountry') ===
+    YES,
   children: [
     buildCustomField({
       condition: (answers) =>
-        hasYes(answers?.drivingLicenseInOtherCountry || []),
+        getValueViaPath(
+          answers,
+          'otherCountry.drivingLicenseInOtherCountry',
+        ) === YES,
       title: 'SubmitAndDecline',
       component: 'SubmitAndDecline',
       id: 'SubmitAndDecline',

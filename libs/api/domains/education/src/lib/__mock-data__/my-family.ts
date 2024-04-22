@@ -1,67 +1,71 @@
-import { ISLFjolskyldan } from '@island.is/clients/national-registry-v1'
+import {
+  EinstaklingurDTOAllt,
+  EinstaklingurDTOGrunn,
+  EinstaklingurDTOLogForeldriItem,
+} from '@island.is/clients/national-registry-v3'
+import { Student } from '../education.type'
 
 // Note: this family is generated from a real family, but the names and
 // national IDs have been changed to protect the identity of said family.
 // Extra note: it would be nice to have more family cases to test.
 
-export const ADULT1 = {
-  attributes: {
-    'diffgr:id': 'ISLFjolskyldan2',
-    'msdata:rowOrder': '1',
-    'diffgr:hasChanges': 'inserted',
-  },
-  Kennitala: 'a1',
-  Nafn: 'Arfón Heyrir Sogurðsson',
-  Fjolsknr: 'a2',
-  Kyn: '1',
-  Kynheiti: 'Karl',
-  Faedingardagur: '9.10.1981 00:00:00',
-  MakiBarn: '',
-} as ISLFjolskyldan
+export const ADULT_STUDENT1: Student = {
+  nationalId: 'a1',
+  name: 'Arfón Heyrir Sogurðsson',
+}
+export const CHILD_STUDENT1: Student = {
+  name: 'Glóa Arfónsdóttir',
+  nationalId: 'c1',
+}
+export const CHILD_STUDENT2: Student = {
+  name: 'Salbör Arfónsdóttir',
+  nationalId: 'c2',
+}
 
-export const CHILD2 = {
-  attributes: {
-    'diffgr:id': 'ISLFjolskyldan4',
-    'msdata:rowOrder': '3',
-    'diffgr:hasChanges': 'inserted',
-  },
-  Kennitala: 'c2',
-  Nafn: 'Salbör Arfónsdóttir',
-  Fjolsknr: 'a2',
-  Kyn: '4',
-  Kynheiti: 'Stúlka',
-  Faedingardagur: '31.8.2016 00:00:00',
-  MakiBarn: '',
-} as ISLFjolskyldan
+export const ADULT1: EinstaklingurDTOGrunn = {
+  kennitala: ADULT_STUDENT1.nationalId,
+  nafn: ADULT_STUDENT1.name,
+}
 
-export const CHILD1 = {
-  attributes: {
-    'diffgr:id': 'ISLFjolskyldan3',
-    'msdata:rowOrder': '2',
-    'diffgr:hasChanges': 'inserted',
-  },
-  Kennitala: 'c1',
-  Nafn: 'Glóa Arfónsdóttir',
-  Fjolsknr: 'a2',
-  Kyn: '4',
-  Kynheiti: 'Stúlka',
-  Faedingardagur: '24.7.2013 00:00:00',
-  MakiBarn: '',
-} as ISLFjolskyldan
+export const PARENT1: EinstaklingurDTOLogForeldriItem = {
+  logForeldriFaedingardagur: new Date('1981-10-09'),
+  logForeldriNafn: 'Arfón Heyrir Sogurðsson',
+  logForeldriKennitala: 'a1',
+}
 
-export const ADULT2 = {
-  attributes: {
-    'diffgr:id': 'ISLFjolskyldan1',
-    'msdata:rowOrder': '0',
-    'diffgr:hasChanges': 'inserted',
-  },
-  Kennitala: 'a2',
-  Nafn: 'Helfa Hreiðursdóttir',
-  Fjolsknr: 'a2',
-  Kyn: '2',
-  Kynheiti: 'Kona',
-  Faedingardagur: '18.9.1978 00:00:00',
-  MakiBarn: '',
-} as ISLFjolskyldan
+export const PARENT2: EinstaklingurDTOLogForeldriItem = {
+  logForeldriFaedingardagur: new Date('1954-10-09'),
+  logForeldriNafn: 'Helfa Hreiðursdóttir',
+  logForeldriKennitala: 'a2',
+}
 
-export const MyFamilyMock = [ADULT1, CHILD2, CHILD1, ADULT2] as ISLFjolskyldan[]
+export const CHILD1: EinstaklingurDTOLogForeldriItem = {
+  barnKennitala: CHILD_STUDENT1.nationalId,
+  barnNafn: CHILD_STUDENT1.name,
+  logForeldriNafn: 'Arfón Heyrir Sogurðsson',
+  logForeldriKennitala: 'a1',
+  logForeldriFaedingardagur: new Date('1981-10-09'),
+}
+
+export const CHILD2: EinstaklingurDTOLogForeldriItem = {
+  barnKennitala: CHILD_STUDENT2.nationalId,
+  barnNafn: CHILD_STUDENT2.name,
+  logForeldriNafn: 'Arfón Heyrir Sogurðsson',
+  logForeldriKennitala: 'a1',
+  logForeldriFaedingardagur: new Date('1981-10-09'),
+}
+
+export const MyChildrenMock: EinstaklingurDTOAllt = {
+  ...ADULT1,
+  logforeldrar: {
+    born: [CHILD2, CHILD1],
+  },
+}
+
+export const MyParentsMock: EinstaklingurDTOAllt = {
+  nafn: CHILD1.barnNafn,
+  kennitala: CHILD1.barnKennitala,
+  logforeldrar: {
+    logForeldrar: [PARENT1, PARENT2],
+  },
+}

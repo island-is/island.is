@@ -21,6 +21,7 @@ mutation UpdateCase($input: UpdateCaseInput!) {
       defenderEmail
       defenderPhoneNumber
       defendantWaivesRightToCounsel
+      defendantPlea
     }
     defenderName
     defenderNationalId
@@ -54,19 +55,11 @@ mutation UpdateCase($input: UpdateCaseInput!) {
       id
       name
       title
-      institution {
-        id
-        name
-      }
     }
     prosecutor {
       id
       name
       title
-      institution {
-        id
-        name
-      }
     }
     sharedWithProsecutorsOffice {
       id
@@ -75,7 +68,6 @@ mutation UpdateCase($input: UpdateCaseInput!) {
     }
     courtCaseNumber
     sessionArrangements
-    courtDate
     courtLocation
     courtRoom
     courtStartDate
@@ -222,5 +214,11 @@ mutation UpdateCase($input: UpdateCaseInput!) {
     isAppealCustodyIsolation
     appealIsolationToDate
     requestAppealRulingNotToBePublished
+    prosecutorsOffice {
+      id
+      name
+    }
+    indictmentDeniedExplanation
+    indictmentReturnedExplanation
   }
 }

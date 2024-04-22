@@ -1,6 +1,5 @@
 import { FormValue } from '@island.is/application/types'
-import { EstateAsset } from '@island.is/clients/syslumenn'
-import e from 'express'
+import { Advocate, EstateAsset } from '@island.is/clients/syslumenn'
 
 export enum RoleConfirmationEnum {
   CONTINUE = 'continue',
@@ -18,6 +17,11 @@ export enum OtherPropertiesEnum {
   OWN_BUSINESS = 'ownBusiness',
   RESIDENCE = 'residence',
   ASSETS_ABROAD = 'assetsAbroad',
+}
+
+export type DeceasedShare = {
+  deceasedShare: string
+  deceasedShareEnabled: string[]
 }
 
 export type Asset = Partial<EstateAsset & { initial: boolean; dummy?: boolean }>
@@ -63,18 +67,6 @@ export interface ElectPersonType {
   lookupError?: boolean
 }
 
-export interface EstateMember {
-  name: string
-  nationalId: string
-  relation: RelationEnum | string
-  initial?: boolean
-  dateOfBirth?: string
-  custodian?: string
-  foreignCitizenship?: ('yes' | 'no')[]
-  dummy: boolean
-  enabled?: boolean
-}
-
 export interface Property {
   propertyNumber: string
   address?: string
@@ -117,43 +109,49 @@ export interface Guns {
   total: number
 }
 
-export interface GunsData {
+export interface GunsData extends DeceasedShare {
   assetNumber: string
   description: string
   propertyValuation: string
   taxFreeInheritance: number
 }
 
-export interface Money {
+export interface Money extends DeceasedShare {
   info: string
   value: string
 }
 
-export interface ClaimsData {
+export interface ClaimsData extends DeceasedShare {
   value: string
+  propertyValuation: string
+  description: string
   issuer: string
   nationalId: string
   taxFreeInheritance: number
 }
+
 export interface Claims {
   data: ClaimsData[]
   total: number
 }
 
-export interface StocksData {
+export interface StocksData extends DeceasedShare {
   value: string
+  amount: string
   faceValue: string
   nationalId: string
   organization: string
   rateOfExchange: string
+  exchangeRateOrInterest: string
   taxFreeInheritance: number
 }
+
 export interface Stocks {
   data: StocksData[]
   total: number
 }
 
-export interface VehiclesData {
+export interface VehiclesData extends DeceasedShare {
   assetNumber: string
   description: string
   propertyValuation: string
@@ -162,16 +160,17 @@ export interface VehiclesData {
 
 export interface Vehicles {
   data: VehiclesData[]
+  hasModified?: boolean
   total: number
 }
 
-export interface Inventory {
+export interface Inventory extends DeceasedShare {
   info: string
   value: string
 }
 
-export interface RealEstateData {
-  share: number
+export interface RealEstateData extends DeceasedShare {
+  share: string
   assetNumber: string
   description: string
   propertyValuation: string
@@ -179,23 +178,27 @@ export interface RealEstateData {
 }
 
 export interface RealEstate {
-  data: RealEstateData[]
+  data?: RealEstateData[]
+  hasModified?: boolean
   total: number
 }
 
-export interface otherassetsData {
-  otherAssets: string
-  otherAssetsValue: string
+export interface OtherAssetsData extends DeceasedShare {
+  info: string
+  value: string
   taxFreeInheritance: number
 }
 export interface OtherAssets {
-  data: otherassetsData[]
+  data: OtherAssetsData[]
   total: number
 }
 
-export interface BankAccountsData {
-  balance: string
-  accountNumber: string
+export interface BankAccountsData extends DeceasedShare {
+  exchangeRateOrInterest: string
+  propertyNumber: string
+  assetNumber: string
+  propertyValuation: string
+  foreignBankAccount?: ('yes' | 'no')[]
   taxFreeInheritance: number
 }
 
@@ -213,13 +216,8 @@ export interface AllDebts {
 }
 
 export interface ApplicationDebts {
-  publicCharges: PublicCharges
+  publicCharges: string
   domesticAndForeignDebts: DomesticAndForeignDebts
-}
-
-export interface PublicChargesData {
-  taxFreeInheritance: number
-  publicChargesAmount: string
 }
 
 interface DomesticAndForeignDebtsData {
@@ -229,17 +227,16 @@ interface DomesticAndForeignDebtsData {
   creditorName: string
   taxFreeInheritance: number
 }
+
 interface DomesticAndForeignDebts {
   data: DomesticAndForeignDebtsData[]
   total: number
 }
 
-export interface PublicCharges {
-  data: PublicChargesData[]
-  total: number
-}
-
 export interface BuisnessAssetsData {
+  assetType: 'estate' | 'asset'
+  assetNumber: string
+  description: string
   businessAsset: string
   businessAssetValue: string
   taxFreeInheritance: number
@@ -265,3 +262,30 @@ export interface Buisness {
   businessDebts: BuisnessDebt
   businessTotal: number
 }
+
+// todo: do these value labels make sense?
+export enum RelationEnum {
+  REPRESENTATIVE = 'representative',
+  HEIR = 'heir',
+  EXCHANGEMANAGER = 'exchangeManager',
+}
+
+export interface EstateMember {
+  name: string
+  nationalId: string
+  relation: string
+  initial?: boolean
+  dateOfBirth?: string
+  foreignCitizenship?: ('yes' | 'no')[]
+  enabled?: boolean
+  phone?: string
+  email?: string
+  advocate?: Advocate
+  heirsPercentage?: string
+  inheritance?: string
+  inheritanceTax?: string
+  taxableInheritance?: string
+  taxFreeInheritance?: string
+}
+
+export const heirAgeValidation = 'heirAgeValidation'

@@ -50,7 +50,7 @@ const Signees = ({ numberOfSignatures }: { numberOfSignatures: number }) => {
     <Box marginTop={7}>
       <Text variant="h3">{formatMessage(m.listSigneesHeader)}</Text>
 
-      <GridRow marginTop={3} marginBottom={5}>
+      <GridRow marginTop={2} marginBottom={4}>
         <GridColumn span={['12/12', '12/12', '6/12']}>
           <FilterInput
             name="searchSignee"

@@ -7,7 +7,6 @@ import {
   CaseFileState,
   CaseState,
   CaseType,
-  indictmentCases,
   IndictmentSubtype,
   investigationCases,
   isIndictmentCase,
@@ -130,16 +129,10 @@ describe('CaseController - Create court case', () => {
         false,
         indictmentSubtypes,
       )
-    })
-
-    it('should update the court case number', () => {
       expect(mockCaseModel.update).toHaveBeenCalledWith(
         { courtCaseNumber },
         { where: { id: caseId }, transaction },
       )
-    })
-
-    it('should lookup the updated case', () => {
       expect(mockCaseModel.findOne).toHaveBeenCalledWith({
         include,
         order,
@@ -148,14 +141,11 @@ describe('CaseController - Create court case', () => {
           isArchived: false,
         },
       })
-    })
-
-    it('should return the case', () => {
       expect(then.result).toBe(returnedCase)
     })
   })
 
-  describe('court case received', () => {
+  describe('case transitioned from SUBMITTED to RECEIVED', () => {
     const caseId = uuid()
     const type = randomEnum(CaseType)
     const courtId = uuid()
@@ -186,59 +176,56 @@ describe('CaseController - Create court case', () => {
     })
   })
 
-  describe.each([...restrictionCases, ...investigationCases])(
-    '%s case queued',
-    (type) => {
-      const defendantId1 = uuid()
-      const defendantId2 = uuid()
-      const caseId = uuid()
-      const theCase = {
-        id: caseId,
-      } as Case
-      const returnedCase = {
-        id: caseId,
-        type,
-        defendants: [{ id: defendantId1 }, { id: defendantId2 }],
-        courtCaseNumber,
-      } as Case
+  describe('R-case queued', () => {
+    const defendantId1 = uuid()
+    const defendantId2 = uuid()
+    const caseId = uuid()
+    const theCase = {
+      id: caseId,
+    } as Case
+    const returnedCase = {
+      id: caseId,
+      type: randomEnum([...restrictionCases, ...investigationCases]),
+      defendants: [{ id: defendantId1 }, { id: defendantId2 }],
+      courtCaseNumber,
+    } as Case
 
-      beforeEach(async () => {
-        const mockFindOne = mockCaseModel.findOne as jest.Mock
-        mockFindOne.mockResolvedValueOnce(returnedCase)
+    beforeEach(async () => {
+      const mockFindOne = mockCaseModel.findOne as jest.Mock
+      mockFindOne.mockResolvedValueOnce(returnedCase)
 
-        await givenWhenThen(caseId, user, theCase)
-      })
+      await givenWhenThen(caseId, user, theCase)
+    })
 
-      it('should post to queue', () => {
-        expect(mockMessageService.sendMessagesToQueue).toHaveBeenCalledWith([
-          {
-            type: MessageType.DELIVER_REQUEST_TO_COURT,
-            user,
-            caseId,
-          },
-          {
-            type: MessageType.DELIVER_PROSECUTOR_TO_COURT,
-            user,
-            caseId,
-          },
-          {
-            type: MessageType.DELIVER_DEFENDANT_TO_COURT,
-            user,
-            caseId,
-            defendantId: defendantId1,
-          },
-          {
-            type: MessageType.DELIVER_DEFENDANT_TO_COURT,
-            user,
-            caseId,
-            defendantId: defendantId2,
-          },
-        ])
-      })
-    },
-  )
+    it('should post to queue', () => {
+      expect(mockMessageService.sendMessagesToQueue).toHaveBeenCalledWith([
+        {
+          type: MessageType.DELIVERY_TO_COURT_REQUEST,
+          user,
+          caseId,
+        },
+        {
+          type: MessageType.DELIVERY_TO_COURT_PROSECUTOR,
+          user,
+          caseId,
+        },
+        {
+          type: MessageType.DELIVERY_TO_COURT_DEFENDANT,
+          user,
+          caseId,
+          elementId: defendantId1,
+        },
+        {
+          type: MessageType.DELIVERY_TO_COURT_DEFENDANT,
+          user,
+          caseId,
+          elementId: defendantId2,
+        },
+      ])
+    })
+  })
 
-  describe.each(indictmentCases)('%s case queued', (type) => {
+  describe('indictment case queued', () => {
     const caseId = uuid()
     const policeCaseNumber1 = uuid()
     const policeCaseNumber2 = uuid()
@@ -252,7 +239,7 @@ describe('CaseController - Create court case', () => {
     } as Case
     const returnedCase = {
       id: caseId,
-      type,
+      type: CaseType.INDICTMENT,
       policeCaseNumbers: [policeCaseNumber1, policeCaseNumber2],
       caseFiles: [
         {
@@ -305,51 +292,51 @@ describe('CaseController - Create court case', () => {
     it('should post to queue', () => {
       expect(mockMessageService.sendMessagesToQueue).toHaveBeenCalledWith([
         {
-          type: MessageType.DELIVER_PROSECUTOR_TO_COURT,
+          type: MessageType.DELIVERY_TO_COURT_PROSECUTOR,
           user,
           caseId: theCase.id,
         },
         {
-          type: MessageType.DELIVER_CASE_FILES_RECORD_TO_COURT,
+          type: MessageType.DELIVERY_TO_COURT_CASE_FILES_RECORD,
           user,
           caseId,
-          policeCaseNumber: policeCaseNumber1,
+          elementId: policeCaseNumber1,
         },
         {
-          type: MessageType.DELIVER_CASE_FILES_RECORD_TO_COURT,
+          type: MessageType.DELIVERY_TO_COURT_CASE_FILES_RECORD,
           user,
           caseId,
-          policeCaseNumber: policeCaseNumber2,
+          elementId: policeCaseNumber2,
         },
         {
-          type: MessageType.DELIVER_CASE_FILE_TO_COURT,
+          type: MessageType.DELIVERY_TO_COURT_CASE_FILE,
           user,
           caseId,
-          caseFileId: coverLetterId,
+          elementId: coverLetterId,
         },
         {
-          type: MessageType.DELIVER_CASE_FILE_TO_COURT,
+          type: MessageType.DELIVERY_TO_COURT_CASE_FILE,
           user,
           caseId,
-          caseFileId: indictmentId,
+          elementId: indictmentId,
         },
         {
-          type: MessageType.DELIVER_CASE_FILE_TO_COURT,
+          type: MessageType.DELIVERY_TO_COURT_CASE_FILE,
           user,
           caseId,
-          caseFileId: criminalRecordId,
+          elementId: criminalRecordId,
         },
         {
-          type: MessageType.DELIVER_CASE_FILE_TO_COURT,
+          type: MessageType.DELIVERY_TO_COURT_CASE_FILE,
           user,
           caseId,
-          caseFileId: costBreakdownId,
+          elementId: costBreakdownId,
         },
         {
-          type: MessageType.DELIVER_CASE_FILE_TO_COURT,
+          type: MessageType.DELIVERY_TO_COURT_CASE_FILE,
           user,
           caseId,
-          caseFileId: uncategorisedId,
+          elementId: uncategorisedId,
         },
       ])
     })

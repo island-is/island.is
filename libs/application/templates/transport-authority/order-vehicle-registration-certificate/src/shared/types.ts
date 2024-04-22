@@ -4,3 +4,8 @@ export type VehiclesCurrentVehicle = {
   color?: string
   role?: string
 }
+
+export type CurrentVehiclesAndRecords = {
+  totalRecords: number
+  vehicles: VehiclesCurrentVehicle[]
+}

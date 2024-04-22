@@ -1,3 +1,12 @@
+import type { CSSProperties } from 'react'
+import type { VerticalAlignmentType } from 'recharts/types/component/DefaultLegendContent'
+import type {
+  AxisDomain,
+  AxisInterval,
+  BaseAxisProps,
+  Margin,
+} from 'recharts/types/util/types'
+
 import {
   ChartComponent,
   GetMultipleStatisticsQuery,
@@ -6,13 +15,13 @@ import {
 export enum FillPattern {
   diagonalSwToNe = 'pattern1',
   diagonalSeToNw = 'pattern2',
-  diagonalSwToNeDense = 'pattern3',
-  diagonalSeToNwDense = 'pattern4',
-  horizontal = 'pattern5',
-  vertical = 'pattern6',
-  dotsSmall = 'pattern7',
-  dotsMedium = 'pattern8',
-  dotsLarge = 'pattern9',
+  horizontal = 'pattern3',
+  vertical = 'pattern4',
+  dotsSmall = 'pattern5',
+  dotsMedium = 'pattern6',
+  dotsLarge = 'pattern7',
+  chevron = 'pattern8',
+  denseDots = 'pattern9',
 }
 
 export enum ChartComponentType {
@@ -30,14 +39,7 @@ export enum ChartType {
   mixed = 'mixed',
 }
 
-export type ChartComponentWithRenderProps = ChartComponent & {
-  indexWithinType: number
-  shouldRenderBorderRadius: boolean
-  renderIndex: number
-  hasFill: boolean
-  color: string
-  fill?: string
-}
+export type ChartComponentWithRenderProps = ChartComponent & ComponentStyle
 
 export type DataItemDynamicKeys = {
   [key: string]: string | number | null
@@ -49,3 +51,43 @@ type SingleStatistic =
 export type DataItem = SingleStatistic & DataItemDynamicKeys
 
 export type ChartData = DataItem[]
+
+export interface ComponentStyle {
+  color: string
+  hasFill: boolean
+  pattern?: string
+  patternId?: string
+  shouldRenderBorderRadius: boolean
+  renderIndex: number
+  renderIndexForType: number
+}
+
+export interface CustomStyleConfig {
+  chart?: {
+    margin?: Margin
+  }
+  legend?: {
+    verticalAlign?: VerticalAlignmentType
+    wrapperStyle: CSSProperties
+  }
+  yAxis?: {
+    width?: number
+    fontSize?: number
+    domain?: AxisDomain
+    interval?: AxisInterval
+    tick?: BaseAxisProps['tick']
+  }
+  xAxis?: {
+    height?: number
+    fontSize?: number
+    domain?: AxisDomain
+    angle?: number
+    interval?: AxisInterval
+    tick?: BaseAxisProps['tick']
+  }
+  pie?: {
+    innerRadius?: number
+    outerRadius?: number
+    fontSize?: number
+  }
+}

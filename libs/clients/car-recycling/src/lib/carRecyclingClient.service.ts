@@ -60,13 +60,21 @@ export class CarRecyclingClientService {
     })
 
     if (!response || !response.ok) {
-      throw new Error(`Failed to creating owner ${user.nationalId}`)
+      throw new Error(`Failed to creating owner`)
     }
 
     return await response.json()
   }
 
-  async createVehicle(user: User, permno: string, mileage: number) {
+  async createVehicle(
+    user: User,
+    permno: string,
+    mileage: number,
+    vin: string,
+    make: string,
+    firstRegistrationDate: Date,
+    color: string,
+  ) {
     try {
       const response = await this.gqlRequestWithAuth(user, {
         query: print(SkilavottordVehicleDocument),
@@ -74,17 +82,21 @@ export class CarRecyclingClientService {
           input: {
             permno,
             mileage,
+            vin,
+            make,
+            firstRegistrationDate,
+            color,
           },
         } as SkilavottordVehicleMutationVariables,
       })
 
       if (!response || !response.ok) {
-        throw new Error(`Failed to creating vehicle ${permno}`)
+        throw new Error(`Failed to creating vehicle ${permno.slice(-3)}`)
       }
 
       return await response.json()
     } catch (e) {
-      throw new Error(`Failed to creating vehicle ${permno}`)
+      throw new Error(`Failed to creating vehicle ${permno.slice(-3)}`)
     }
   }
 
@@ -107,7 +119,9 @@ export class CarRecyclingClientService {
 
     if (!response || !response.ok) {
       throw new Error(
-        `Failed to recycle vehicle ${permno} - RequestType: ${requestType}`,
+        `Failed to recycle vehicle ${permno.slice(
+          -3,
+        )} - RequestType: ${requestType}`,
       )
     }
 

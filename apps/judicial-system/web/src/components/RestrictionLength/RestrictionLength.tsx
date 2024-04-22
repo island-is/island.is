@@ -7,9 +7,12 @@ import {
   isAcceptingCaseDecision,
   isCourtOfAppealsUser,
 } from '@island.is/judicial-system/types'
+import {
+  CaseDecision,
+  CaseType,
+} from '@island.is/judicial-system-web/src/graphql/schema'
+import { TempCase as Case } from '@island.is/judicial-system-web/src/types'
 
-import { CaseDecision, CaseType } from '../../graphql/schema'
-import { TempCase as Case } from '../../types'
 import BlueBox from '../BlueBox/BlueBox'
 import DateTime from '../DateTime/DateTime'
 import { UserContext } from '../UserProvider/UserProvider'

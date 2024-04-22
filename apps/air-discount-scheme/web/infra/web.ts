@@ -69,6 +69,12 @@ export const serviceSetup = (services: {
         public: true,
       },
     })
+    .replicaCount({
+      min: 2,
+      max: 10,
+      default: 2,
+      scalingMagicNumber: 20,
+    })
     .readiness('/readiness')
     .liveness('/liveness')
     .grantNamespaces('nginx-ingress-external', 'islandis')

@@ -77,7 +77,6 @@ const MaybeFormProvider = ({ children }: Props) => {
 const FormProvider = ({ children }: Props) => {
   const { isAuthenticated, limitedAccess } = useContext(UserContext)
   const router = useRouter()
-  const id = typeof router.query.id === 'string' ? router.query.id : undefined
 
   const caseType = router.pathname.includes('farbann')
     ? CaseType.TRAVEL_BAN
@@ -91,6 +90,7 @@ const FormProvider = ({ children }: Props) => {
 
   const [state, setState] = useState<ProviderState>()
   const [caseId, setCaseId] = useState<string>()
+  const [pathname, setPathname] = useState<string>()
   const [workingCase, setWorkingCase] = useState<Case>({
     ...initialState,
     type: caseType,
@@ -98,14 +98,15 @@ const FormProvider = ({ children }: Props) => {
   })
 
   // Used in exported indicators
-  const replacingCase = router.query.id && router.query.id !== caseId
-  const replacingPath = router.pathname !== window.location.pathname
+  const id = typeof router.query.id === 'string' ? router.query.id : undefined
+  const replacingCase = id && id !== caseId
+  const replacingPath = router.pathname !== pathname
 
   useEffect(() => {
-    if (!router.query.id) {
+    if (!id) {
       // Not working on a case
       setState(undefined)
-    } else if (router.query.id === caseId) {
+    } else if (id === caseId) {
       // Working on the same case as the previous page
       setState('refresh')
     } else {
@@ -113,7 +114,12 @@ const FormProvider = ({ children }: Props) => {
       setState('fetch')
     }
 
-    setCaseId(router.query.id as string)
+    if (id !== caseId) {
+      setCaseId(id)
+    }
+    if (router.pathname !== pathname) {
+      setPathname(router.pathname)
+    }
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [router.query.id, router.pathname])
 
@@ -198,7 +204,8 @@ const FormProvider = ({ children }: Props) => {
         isLoadingWorkingCase: replacingCase || state === 'fetch',
         // Not found until we navigate to a different page
         caseNotFound: !replacingPath && state === 'not-found',
-        isCaseUpToDate: state === 'up-to-date',
+        isCaseUpToDate:
+          !replacingCase && !replacingPath && state === 'up-to-date',
         refreshCase: () => setState('refresh'),
       }}
     >

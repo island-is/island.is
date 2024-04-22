@@ -39,7 +39,8 @@
     "form-data",
     "lru-cache",
     "safer-buffer",
-    "swagger-ui-dist"
+    "swagger-ui-dist",
+    "@mikro-orm/core"
   ],
   "keepNames": true
 }

@@ -20,7 +20,7 @@ import { CurrentCollectionApi, OwnerRequirementsApi } from '../dataProviders'
 
 export const Prerequisites: Form = buildForm({
   id: 'CreateListPrerequisites',
-  title: m.applicationName,
+  title: '',
   mode: FormModes.NOT_STARTED,
   renderLastScreenButton: true,
   renderLastScreenBackButton: true,
@@ -66,19 +66,19 @@ export const Prerequisites: Form = buildForm({
           }),
           dataProviders: [
             buildDataProviderItem({
-              provider: NationalRegistryUserApi,
-              title: m.nationalRegistryProviderTitle,
-              subTitle: m.nationalRegistryProviderSubtitle,
-            }),
-            buildDataProviderItem({
               provider: UserProfileApi,
               title: m.userProfileProviderTitle,
               subTitle: m.userProfileProviderSubtitle,
             }),
             buildDataProviderItem({
+              provider: NationalRegistryUserApi,
+              title: m.nationalRegistryProviderTitle,
+              subTitle: m.nationalRegistryProviderSubtitle,
+            }),
+            buildDataProviderItem({
               provider: OwnerRequirementsApi,
-              title: m.canCreateProviderTitle,
-              subTitle: m.canCreateProviderSubtitle,
+              title: '',
+              subTitle: '',
             }),
             buildDataProviderItem({
               provider: CurrentCollectionApi,

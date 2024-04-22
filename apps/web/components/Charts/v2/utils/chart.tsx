@@ -2,11 +2,17 @@ import { CartesianGrid, XAxis, YAxis } from 'recharts'
 
 import { theme } from '@island.is/island-ui/theme'
 import type { Locale } from '@island.is/shared/types'
-import { ChartComponent } from '@island.is/web/graphql/schema'
+import { Chart, ChartComponent } from '@island.is/web/graphql/schema'
 
-import { BASE_ACCORDION_HEIGHT, CHART_HEIGHT } from '../constants'
-import { ChartComponentType, ChartType } from '../types'
-import { formatDate, formatValueForPresentation } from './format'
+import {
+  BASE_ACCORDION_HEIGHT,
+  CHART_HEIGHT,
+  DEFAULT_XAXIS_HEIGHT,
+  DEFAULT_XAXIS_KEY,
+  DEFAULT_YAXIS_WIDTH,
+} from '../constants'
+import { ChartComponentType, ChartType, CustomStyleConfig } from '../types'
+import { formatValueForPresentation } from './format'
 
 const KNOWN_COMPONENT_TYPES: ChartComponentType[] = [
   ChartComponentType.line,
@@ -48,42 +54,76 @@ export const decideChartBase = (
   return ChartType.mixed
 }
 
-export const getCartesianGridComponents = (
-  activeLocale: Locale,
-  chartUsesGrid: boolean,
-) =>
-  chartUsesGrid
-    ? [
-        <CartesianGrid
-          stroke="rgb(0, 97, 255, 0.2)"
-          strokeDasharray="4 4"
-          vertical={false}
-        />,
+interface GetCartesianGridComponents {
+  activeLocale: Locale
+  chartUsesGrid: boolean
+  slice: Chart
+  tickFormatter: (value: unknown) => string
+  customStyleConfig: CustomStyleConfig
+}
 
-        <XAxis
-          axisLine={{ stroke: theme.color.blue200 }}
-          aria-hidden="true"
-          dataKey="date"
-          tickFormatter={formatDate}
-          style={{
-            fontSize: theme.typography.baseFontSize,
-            fontFamily: theme.typography.fontFamily,
-            color: 'red',
-          }}
-          dy={theme.spacing.p2}
-        />,
-        <YAxis
-          axisLine={{ stroke: theme.color.blue200 }}
-          aria-hidden="true"
-          type="number"
-          style={{
-            fontSize: theme.typography.baseFontSize,
-            fontFamily: theme.typography.fontFamily,
-          }}
-          tickFormatter={(v) => formatValueForPresentation(activeLocale, v)}
-        />,
-      ]
-    : null
+export const getCartesianGridComponents = ({
+  activeLocale,
+  chartUsesGrid,
+  slice,
+  tickFormatter,
+  customStyleConfig,
+}: GetCartesianGridComponents) => {
+  if (!chartUsesGrid) {
+    return null
+  }
+
+  const xAxisKey = slice.xAxisKey || DEFAULT_XAXIS_KEY
+  const dataKey = xAxisKey || undefined
+
+  const xAxisFormatter = tickFormatter
+  const yAxisFormatter = (v: string | number) =>
+    formatValueForPresentation(activeLocale, v)
+
+  return [
+    <CartesianGrid
+      stroke="rgb(0, 97, 255, 0.2)"
+      strokeDasharray="4 4"
+      vertical={slice.flipAxis === true}
+      horizontal={slice.flipAxis === false}
+    />,
+    <XAxis
+      axisLine={{ stroke: theme.color.blue200 }}
+      aria-hidden="true"
+      dataKey={slice.flipAxis ? undefined : dataKey}
+      tickFormatter={slice.flipAxis ? yAxisFormatter : xAxisFormatter}
+      style={{
+        fontSize:
+          customStyleConfig.xAxis?.fontSize ?? theme.typography.baseFontSize,
+        fontFamily: theme.typography.fontFamily,
+      }}
+      dy={theme.spacing.p2}
+      interval={customStyleConfig.xAxis?.interval ?? 'preserveEnd'}
+      angle={customStyleConfig.xAxis?.angle ?? 0}
+      domain={customStyleConfig.xAxis?.domain ?? [0, 'auto']}
+      type={slice.flipAxis ? 'number' : 'category'}
+      height={customStyleConfig.xAxis?.height ?? DEFAULT_XAXIS_HEIGHT}
+      tick={customStyleConfig.xAxis?.tick ?? undefined}
+    />,
+    <YAxis
+      axisLine={{ stroke: theme.color.blue200 }}
+      aria-hidden="true"
+      width={customStyleConfig.yAxis?.width ?? DEFAULT_YAXIS_WIDTH}
+      style={{
+        fontSize:
+          customStyleConfig.yAxis?.fontSize ?? theme.typography.baseFontSize,
+        fontFamily: theme.typography.fontFamily,
+        margin: 10,
+      }}
+      tickFormatter={slice.flipAxis ? xAxisFormatter : yAxisFormatter}
+      type={slice.flipAxis ? 'category' : 'number'}
+      dataKey={slice.flipAxis ? xAxisKey : undefined}
+      interval={customStyleConfig.yAxis?.interval ?? 'preserveEnd'}
+      domain={customStyleConfig.yAxis?.domain ?? [0, 'auto']}
+      tick={customStyleConfig.yAxis?.tick ?? undefined}
+    />,
+  ]
+}
 
 export const calculateChartSkeletonLoaderHeight = (
   isCard: boolean,

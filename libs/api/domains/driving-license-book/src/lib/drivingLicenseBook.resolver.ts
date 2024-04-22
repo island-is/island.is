@@ -80,7 +80,7 @@ export class DrivingLicenseBookResolver {
     return this.drivingLicenseBookService.getStudent(input)
   }
 
-  @Scopes(ApiScope.vehicles)
+  @Scopes(ApiScope.vehicles, ApiScope.education)
   @Query(() => DrivingLicenseBookStudentOverview, { nullable: true })
   drivingLicenseBookUserBook(@CurrentUser() user: User) {
     return (

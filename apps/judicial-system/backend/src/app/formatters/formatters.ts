@@ -33,7 +33,7 @@ type SubjectAndBody = {
   body: string
 }
 
-function legalProvisionsOrder(p: CaseLegalProvisions) {
+const legalProvisionsOrder = (p: CaseLegalProvisions) => {
   switch (p) {
     case CaseLegalProvisions._95_1_A:
       return 0
@@ -45,6 +45,8 @@ function legalProvisionsOrder(p: CaseLegalProvisions) {
       return 3
     case CaseLegalProvisions._95_2:
       return 4
+    case CaseLegalProvisions._97_1:
+      return 5
     case CaseLegalProvisions._99_1_B:
       return 6
     case CaseLegalProvisions._100_1:
@@ -228,7 +230,7 @@ export function formatProsecutorReceivedByCourtSmsNotification(
   })
 }
 
-export function formatProsecutorCourtDateEmailNotification(
+export const formatProsecutorCourtDateEmailNotification = (
   formatMessage: FormatMessage,
   type: CaseType,
   courtCaseNumber?: string,
@@ -239,7 +241,7 @@ export function formatProsecutorCourtDateEmailNotification(
   registrarName?: string,
   defenderName?: string,
   sessionArrangements?: SessionArrangements,
-): SubjectAndBody {
+): SubjectAndBody => {
   const cf = notifications.prosecutorCourtDateEmail
   const scheduledCaseText = isIndictmentCase(type)
     ? formatMessage(cf.sheduledIndictmentCase, { court, courtCaseNumber })
@@ -301,7 +303,7 @@ export function formatProsecutorCourtDateEmailNotification(
   return { body, subject }
 }
 
-export function formatPrisonCourtDateEmailNotification(
+export const formatPrisonCourtDateEmailNotification = (
   formatMessage: FormatMessage,
   type: CaseType,
   prosecutorOffice?: string,
@@ -314,7 +316,7 @@ export function formatPrisonCourtDateEmailNotification(
   isExtension?: boolean,
   sessionArrangements?: SessionArrangements,
   courtCaseNumber?: string,
-): string {
+): string => {
   const courtText = formatMessage(
     notifications.prisonCourtDateEmail.courtText,
     { court: court || 'NONE' },
@@ -544,7 +546,7 @@ export function formatPrisonRevokedEmailNotification(
   })
 }
 
-export function formatDefenderRevokedEmailNotification(
+export const formatDefenderRevokedEmailNotification = (
   formatMessage: FormatMessage,
   type: CaseType,
   defendantNationalId?: string,
@@ -552,7 +554,7 @@ export function formatDefenderRevokedEmailNotification(
   defendantNoNationalId?: boolean,
   court?: string,
   courtDate?: Date,
-): string {
+): string => {
   const cf = notifications.defenderRevokedEmail
   const courtText = formatMessage(cf.court, {
     court: court || 'NONE',
@@ -702,7 +704,7 @@ export function formatCourtIndictmentReadyForCourtEmailNotification(
       ),
       formatMessage(core.and),
     ),
-    prosecutorName: theCase.prosecutor?.institution?.name,
+    prosecutorName: theCase.prosecutorsOffice?.name,
     linkStart: `<a href="${overviewUrl}">`,
     linkEnd: '</a>',
   })
@@ -744,3 +746,6 @@ export const formatDefenderRoute = (
     isIndictmentCase(caseType) ? DEFENDER_INDICTMENT_ROUTE : DEFENDER_ROUTE
   }/${id}`
 }
+
+export const formatConfirmedIndictmentKey = (key?: string) =>
+  key?.replace(/\/([^/]*)$/, '/confirmed/$1') ?? ''

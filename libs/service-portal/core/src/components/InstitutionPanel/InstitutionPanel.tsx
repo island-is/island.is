@@ -1,6 +1,5 @@
 import { Box, BoxProps, SkeletonLoader, Text } from '@island.is/island-ui/core'
 import * as styles from './InstitutionPanel.css'
-import React from 'react'
 import { theme } from '@island.is/island-ui/theme'
 import { useWindowSize } from 'react-use'
 import { Tooltip } from '../ToolTip/ToolTip'
@@ -14,6 +13,7 @@ interface InstitutionPanelProps {
   backgroundColor?: 'purple100' | 'blue100' | 'white'
   tooltipText?: string
   tooltipVariant?: 'white' | 'dark' | 'light'
+  fixedImageWidth?: boolean
 }
 
 export const InstitutionPanel = ({
@@ -22,6 +22,7 @@ export const InstitutionPanel = ({
   imgContainerDisplay,
   loading = false,
   backgroundColor = 'purple100',
+  fixedImageWidth = false,
   tooltipText,
   title,
   tooltipVariant = 'light',
@@ -40,7 +41,13 @@ export const InstitutionPanel = ({
       width="full"
       position="relative"
     >
-      <Box width="full" height="full" display={imgContainerDisplay}>
+      <Box
+        width="full"
+        height="full"
+        alignItems="center"
+        justifyContent="center"
+        display={imgContainerDisplay}
+      >
         {loading ? (
           <SkeletonLoader
             display="block"
@@ -57,8 +64,7 @@ export const InstitutionPanel = ({
               width={isMobile ? undefined : 'full'}
               height={isMobile ? undefined : 'full'}
               marginRight={isMobile ? 2 : 0}
-              className={isMobile && styles.image}
-              style={{ maxWidth: 60 }}
+              className={fixedImageWidth ? styles.fixedImage : styles.image}
             />
             {title && (
               <Text variant="h4" as="p" color="purple600" lineHeight="xl">

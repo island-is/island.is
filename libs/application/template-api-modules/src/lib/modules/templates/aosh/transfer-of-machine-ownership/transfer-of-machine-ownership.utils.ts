@@ -61,7 +61,7 @@ export const getRecipients = (
       email: buyerOperator.email,
       phone: buyerOperator.phone,
       role: EmailRole.buyerOperator,
-      approved: buyerOperator.approved,
+      approved: true,
     })
   }
 

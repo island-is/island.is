@@ -23,6 +23,10 @@ import { IncomingDelegationsCompanyService } from './delegations-incoming-compan
 import { DelegationsIncomingCustomService } from './delegations-incoming-custom.service'
 import { DelegationsIncomingRepresentativeService } from './delegations-incoming-representative.service'
 import { ApiScopeUserAccess } from '../resources/models/api-scope-user-access.model'
+import { DelegationIndex } from './models/delegation-index.model'
+import { DelegationIndexMeta } from './models/delegation-index-meta.model'
+import { DelegationsIndexService } from './delegations-index.service'
+import { UserIdentitiesModule } from '../user-identities/user-identities.module'
 
 @Module({
   imports: [
@@ -30,12 +34,15 @@ import { ApiScopeUserAccess } from '../resources/models/api-scope-user-access.mo
     PersonalRepresentativeModule,
     NationalRegistryClientModule,
     RskRelationshipsClientModule,
+    UserIdentitiesModule,
     FeatureFlagModule,
     SequelizeModule.forFeature([
       ApiScope,
       IdentityResource,
       Delegation,
       DelegationScope,
+      DelegationIndex,
+      DelegationIndexMeta,
       Client,
       ClientAllowedScope,
       ApiScopeUserAccess,
@@ -51,12 +58,14 @@ import { ApiScopeUserAccess } from '../resources/models/api-scope-user-access.mo
     IncomingDelegationsCompanyService,
     DelegationsIncomingCustomService,
     DelegationsIncomingRepresentativeService,
+    DelegationsIndexService,
   ],
   exports: [
     DelegationsService,
     DelegationsOutgoingService,
     DelegationsIncomingService,
     DelegationScopeService,
+    DelegationsIndexService,
   ],
 })
 export class DelegationsModule {}

@@ -30,7 +30,8 @@
     "form-data",
     "bull",
     "pseudomap",
-    "ioredis"
+    "ioredis",
+    "@mikro-orm/core"
   ],
   "keepNames": true
 }

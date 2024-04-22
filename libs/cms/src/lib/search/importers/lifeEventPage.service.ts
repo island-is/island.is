@@ -6,7 +6,11 @@ import isCircular from 'is-circular'
 import { ILifeEventPage } from '../../generated/contentfulTypes'
 import { mapLifeEventPage } from '../../models/lifeEventPage.model'
 import { CmsSyncProvider, processSyncDataInput } from '../cmsSync.service'
-import { createTerms, extractStringsFromObject } from './utils'
+import {
+  createTerms,
+  extractStringsFromObject,
+  pruneNonSearchableSliceUnionFields,
+} from './utils'
 
 @Injectable()
 export class LifeEventPageSyncService
@@ -30,7 +34,9 @@ export class LifeEventPageSyncService
       .map<MappedData | boolean>((entry) => {
         try {
           const mapped = mapLifeEventPage(entry)
-          const content = extractStringsFromObject(mapped.content)
+          const content = extractStringsFromObject(
+            mapped.content.map(pruneNonSearchableSliceUnionFields),
+          )
 
           return {
             _id: mapped.id,

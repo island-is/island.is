@@ -29,10 +29,11 @@ export class ApplicationAttachmentProvider {
     )
     return files.map((file, index) => {
       const type = this.mapAnswerToType(file.answerKey)
+      const fileName = file.fileName
       return {
-        subject: `${type} ${index + 1}`,
+        subject: fileName,
         content: file.fileContent,
-        fileName: file.fileName,
+        fileName: fileName,
         type: type,
       }
     })

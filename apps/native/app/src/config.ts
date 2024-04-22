@@ -31,6 +31,14 @@ export const environments = {
     configCat: 'YcfYCOwBTUeI04mWOWpPdA/2mYtDGA4oEKdCJt2lnpXEw',
     datadog: null,
   },
+  local: {
+    id: 'local',
+    label: 'Local',
+    idsIssuer: 'https://identity-server.dev01.devland.is/',
+    apiUrl: 'http://localhost:4444/api',
+    configCat: 'YcfYCOwBTUeI04mWOWpPdA/2mYtDGA4oEKdCJt2lnpXEw',
+    datadog: null,
+  },
 }
 
 export const bundleId = DeviceInfo.getBundleId()
@@ -58,6 +66,7 @@ export const config = {
     '@island.is/finance:overview',
     '@island.is/finance/salary',
     '@island.is/finance/schedule:read',
+    '@island.is/licenses:barcode',
   ],
   cognitoUrl: 'https://cognito.shared.devland.is/login',
   cognitoClientId: 'bre6r7d5e7imkcgbt7et1kqlc',

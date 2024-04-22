@@ -6,9 +6,9 @@ import {
   Box,
   Bullet,
   BulletList,
-  CategoryCard,
   SkeletonLoader,
   InputError,
+  ActionCard,
 } from '@island.is/island-ui/core'
 import { information, error } from '../../lib/messages'
 import { SelectController } from '@island.is/shared/form-fields'
@@ -48,6 +48,7 @@ export const MachineSelectField: FC<
     async (id: string) => {
       const { data } = await getMachineDetails({
         id: id,
+        rel: 'ownerChange',
       })
       return data
     },
@@ -111,7 +112,7 @@ export const MachineSelectField: FC<
         options={currentMachineList.map((machine, index) => {
           return {
             value: index.toString(),
-            label: `${machine.type}` || '',
+            label: `${machine.type} (${machine.regNumber})` || '',
           }
         })}
         placeholder={formatMessage(information.labels.pickMachine.placeholder)}
@@ -123,10 +124,11 @@ export const MachineSelectField: FC<
         ) : (
           <Box>
             {selectedMachine && (
-              <CategoryCard
-                colorScheme={selectedMachine.disabled ? 'red' : 'blue'}
+              <ActionCard
+                backgroundColor={selectedMachine.disabled ? 'red' : 'blue'}
                 heading={selectedMachine.regNumber || ''}
                 text={`${selectedMachine.type} ${selectedMachine.subType}`}
+                focused={true}
               />
             )}
             {selectedMachine && selectedMachine.disabled && (

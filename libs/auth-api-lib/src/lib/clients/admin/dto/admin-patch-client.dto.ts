@@ -146,6 +146,13 @@ export class AdminPatchClientDto {
   accessTokenLifetime?: number
 
   @ApiPropertyOptional({
+    description: 'Only super users can update this value.',
+  })
+  @IsOptional()
+  @IsBoolean()
+  singleSession?: boolean
+
+  @ApiPropertyOptional({
     description:
       'Dictionary of custom claims added to access tokens. Only super users can update this value.',
     type: [AdminClientClaimDto],
@@ -190,4 +197,5 @@ export const superUserFields = [
   'supportTokenExchange',
   'accessTokenLifetime',
   'customClaims',
+  'singleSession',
 ]

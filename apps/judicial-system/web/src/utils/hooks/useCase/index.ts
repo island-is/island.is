@@ -53,7 +53,7 @@ export type UpdateCase = Omit<UpdateCaseInput, 'id'> & {
   force?: boolean
 }
 
-function isChildKey(key: keyof UpdateCaseInput): key is keyof ChildKeys {
+const isChildKey = (key: keyof UpdateCaseInput): key is keyof ChildKeys => {
   return [
     'courtId',
     'prosecutorId',
@@ -87,7 +87,7 @@ const overwrite = (update: UpdateCase): UpdateCase => {
 
 export const fieldHasValue =
   (workingCase: Case) => (value: unknown, key: string) => {
-    const theKey = key as keyof UpdateCaseInput // loadash types are not better than this
+    const theKey = key as keyof Omit<UpdateCaseInput, 'courtDate'> // loadash types are not better than this
 
     if (
       isChildKey(theKey) // check if key is f.example `judgeId`
@@ -219,8 +219,8 @@ const useCase = () => {
             })
 
             if (data?.createCourtCase?.courtCaseNumber && !errors) {
-              setWorkingCase((theCase) => ({
-                ...theCase,
+              setWorkingCase((prevWorkingCase) => ({
+                ...prevWorkingCase,
                 courtCaseNumber: (data.createCourtCase as Case).courtCaseNumber,
               }))
 
@@ -311,8 +311,8 @@ const useCase = () => {
           }
 
           if (setWorkingCase) {
-            setWorkingCase((theCase) => ({
-              ...theCase,
+            setWorkingCase((prevWorkingCase) => ({
+              ...prevWorkingCase,
               ...(res[resultType] as Case),
             }))
           }
@@ -375,7 +375,6 @@ const useCase = () => {
     updates: UpdateCase[],
     workingCase: Case,
     setWorkingCase: React.Dispatch<React.SetStateAction<Case>>,
-    retrieveAllUpdates = true,
   ) => {
     try {
       const updatesToCase: UpdateCase = formatUpdates(updates, workingCase)
@@ -385,9 +384,12 @@ const useCase = () => {
         return
       }
 
-      // The case has not been created
+      setWorkingCase((prevWorkingCase) => ({
+        ...prevWorkingCase,
+        ...updatesToCase,
+      }))
+
       if (!workingCase.id) {
-        setWorkingCase((theCase) => ({ ...theCase, ...updatesToCase }))
         return
       }
 
@@ -395,15 +397,6 @@ const useCase = () => {
 
       if (!newWorkingCase) {
         throw new Error()
-      }
-
-      if (retrieveAllUpdates) {
-        setWorkingCase((theCase) => ({ ...theCase, ...newWorkingCase }))
-      } else {
-        setWorkingCase((theCase) => ({
-          ...theCase,
-          ...updatesToCase,
-        }))
       }
     } catch (error) {
       toast.error(formatMessage(errors.updateCase))

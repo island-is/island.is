@@ -1,6 +1,8 @@
 import { Controller, Post, Module } from '@nestjs/common'
 import request from 'supertest'
+
 import { bootstrap } from './bootstrap'
+import { HealthCheckOptionsProviderKey } from './infra/health/types'
 import { InfraNestServer } from './types'
 
 @Controller()
@@ -58,5 +60,38 @@ describe('Bootstrap', () => {
     })
     const server = request(nestServer.server)
     await server.post('/').send(largeJsonBody).expect(201, 'OK')
+  })
+
+  it('configures health checks options default', async () => {
+    // Act
+    nestServer = await testBootstrap()
+
+    // Assert
+    const healthCheckOptions = nestServer.app.get(HealthCheckOptionsProviderKey)
+    expect(healthCheckOptions).toMatchObject({
+      timeout: 1000,
+    })
+  })
+
+  it('configures health checks options with database', async () => {
+    // Act
+    nestServer = await testBootstrap({ healthCheck: { database: true } })
+
+    // Assert
+    const healthCheckOptions = nestServer.app.get(HealthCheckOptionsProviderKey)
+    expect(healthCheckOptions).toMatchObject({
+      timeout: 1000,
+      database: true,
+    })
+  })
+
+  it('disables health checks', async () => {
+    // Act
+    nestServer = await testBootstrap({ healthCheck: false })
+
+    // Assert
+    const response = await request(nestServer.server).get('/health/check')
+    expect(response.status).toBe(404)
+    expect(response.body).toMatchObject({ error: 'Not Found', statusCode: 404 })
   })
 })

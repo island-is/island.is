@@ -7,7 +7,6 @@ import {
   PrimaryKey,
   CreatedAt,
   UpdatedAt,
-  Index,
 } from 'sequelize-typescript'
 import {
   CreationOptional,
@@ -20,14 +19,10 @@ interface ArgItem {
   value: string
 }
 
-export enum NotificationStatus {
-  READ = 'read',
-  UNREAD = 'unread',
-}
 @Table({
   tableName: 'user_notification', // Explicitly setting the table name
+  indexes: [{ fields: ['message_id'] }, { fields: ['recipient'] }],
 })
-@Table
 export class Notification extends Model<
   InferAttributes<Notification>,
   InferCreationAttributes<Notification>
@@ -41,7 +36,6 @@ export class Notification extends Model<
   })
   id!: CreationOptional<number>
 
-  @Index // Adding an index
   @Column({
     type: DataType.UUID,
     unique: true, // Adding the unique constraint
@@ -49,13 +43,22 @@ export class Notification extends Model<
   })
   messageId!: string
 
-  @Index // Adding an index
   @Column({
     type: DataType.STRING,
     allowNull: false,
     field: 'recipient',
   })
   recipient!: string
+
+  @Column({
+    type: DataType.STRING,
+    defaultValue: null,
+    allowNull: true, // initially nullable if it's optional during transition
+    field: 'sender_id',
+  })
+  senderId?: string
+  // senderId!: CreationOptional<string>;
+  // senderId!: string
 
   @Column({
     type: DataType.STRING,
@@ -86,11 +89,18 @@ export class Notification extends Model<
   updated!: CreationOptional<Date>
 
   @Column({
-    type: DataType.ENUM,
-    values: [NotificationStatus.READ, NotificationStatus.UNREAD],
-    defaultValue: NotificationStatus.UNREAD,
+    type: DataType.BOOLEAN,
+    defaultValue: false,
     allowNull: false,
-    field: 'status',
+    field: 'read',
   })
-  status!: CreationOptional<NotificationStatus>
+  read!: CreationOptional<boolean>
+
+  @Column({
+    type: DataType.BOOLEAN,
+    defaultValue: false,
+    allowNull: false,
+    field: 'seen',
+  })
+  seen!: CreationOptional<boolean>
 }

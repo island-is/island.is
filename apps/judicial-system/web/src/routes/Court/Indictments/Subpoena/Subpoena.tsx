@@ -57,7 +57,7 @@ const Subpoena: React.FC<React.PropsWithChildren<unknown>> = () => {
         hasSentNotification(
           NotificationType.COURT_DATE,
           workingCase.notifications,
-        ) &&
+        ).hasSent &&
         !courtDateHasChanged
       ) {
         router.push(`${destination}/${workingCase.id}`)

@@ -16,6 +16,7 @@ type Notifier = {
   phoneNumber: string
   email: string
   relation: string
+  autonomous: string
 }
 
 type Advocate = {
@@ -34,6 +35,7 @@ type EstateMember = {
   relationWithApplicant?: string
   dateOfBirth?: string
   foreignCitizenship?: string | string[]
+  noContactInfo?: ('Yes' | 'No')[]
   phone?: string
   email?: string
   advocate?: Advocate
@@ -75,6 +77,11 @@ type Debt = {
   loanIdentity?: string
 }
 
+type OtherAssets = {
+  info?: string
+  value?: string
+}
+
 type InfoValueField = {
   info?: string
   value?: string
@@ -83,6 +90,7 @@ type InfoValueField = {
 type Claim = {
   publisher?: string
   value?: string | number
+  nationalId?: string
 }
 
 type Deceased = {
@@ -123,7 +131,7 @@ export type UploadData = {
   bankAccounts: BankAccount[]
   stocks: Stock[]
   moneyAndDeposit: InfoValueField
-  otherAssets: InfoValueField
+  otherAssets: OtherAssets[]
   debts: Debt[]
   representative?: Representative
   districtCommissionerHasWill: string

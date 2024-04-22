@@ -17,7 +17,6 @@ import {
 import { ProgramExtraApplicationField } from './programExtraApplicationField'
 import { ProgramModeOfDelivery } from './programModeOfDelivery'
 import { University } from '../../university/model/university'
-import { ProgramCourse } from './programCourse'
 import { DegreeType, Season } from '@island.is/university-gateway'
 import {
   CreationOptional,
@@ -261,7 +260,7 @@ export class ProgramBase extends Model<
     example: 3,
   })
   @Column({
-    type: DataType.INTEGER,
+    type: DataType.FLOAT,
     allowNull: false,
   })
   durationInYears!: number
@@ -318,7 +317,32 @@ export class ProgramBase extends Model<
   @ApiHideProperty()
   @UpdatedAt
   readonly modified!: CreationOptional<Date>
+
+  @ApiProperty({
+    description:
+      'Whether the application period for the program is open and applications can be submitted',
+    example: true,
+  })
+  @Column({
+    type: DataType.BOOLEAN,
+    allowNull: false,
+  })
+  applicationPeriodOpen!: boolean
+
+  @ApiProperty({
+    description:
+      'Whether applications for the program should be submitted via University Gateway or the application portals of each university',
+    example: true,
+  })
+  @Column({
+    type: DataType.BOOLEAN,
+    allowNull: false,
+  })
+  applicationInUniversityGateway!: boolean
 }
+/*
+  This Model is for program information that are passed into the application, it doesn't need all the values passed to the Program model or ProgramBase so a new model was created with the necessary information
+*/
 
 @Table({
   tableName: 'program',
@@ -406,6 +430,28 @@ export class Program extends ProgramBase {
   })
   costInformationEn?: string
 
+  @ApiPropertyOptional({
+    description: 'Arrangement for program (skipulag náms) (Icelandic)',
+    example:
+      'Á fyrsta ári er 60 einingar, á öðru 60 einingar og á þriðja 60 einingar',
+  })
+  @Column({
+    type: DataType.STRING,
+    allowNull: true,
+  })
+  arrangementIs?: string
+
+  @ApiPropertyOptional({
+    description: 'Arrangement for program (English)',
+    example:
+      'The first year is 60 credits, the second 60 credits and the third 60 credits',
+  })
+  @Column({
+    type: DataType.STRING,
+    allowNull: true,
+  })
+  arrangementEn?: string
+
   @ApiProperty({
     description:
       'Whether the program allows applicants to apply using exception',
@@ -427,13 +473,6 @@ export class Program extends ProgramBase {
     allowNull: false,
   })
   allowThirdLevelQualification!: boolean
-
-  @ApiProperty({
-    description: 'List of courses that belong to this program',
-    type: [ProgramCourse],
-  })
-  @HasMany(() => ProgramCourse)
-  courses!: ProgramCourse[]
 
   @ApiProperty({
     description:

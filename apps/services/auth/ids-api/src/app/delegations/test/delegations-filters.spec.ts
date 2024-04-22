@@ -98,9 +98,9 @@ describe('DelegationsController', () => {
 
         expect(res.status).toEqual(200)
         expect(res.body).toHaveLength(testCase.expectedFrom.length)
-        expect(res.body.map((d: DelegationDTO) => d.fromNationalId)).toEqual(
-          testCase.expectedFrom,
-        )
+        expect(
+          res.body.map((d: DelegationDTO) => d.fromNationalId).sort(),
+        ).toEqual(testCase.expectedFrom.sort())
       })
     },
   )

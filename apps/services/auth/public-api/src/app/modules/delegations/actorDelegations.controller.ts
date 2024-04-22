@@ -10,7 +10,6 @@ import { ApiTags } from '@nestjs/swagger'
 import {
   DelegationDirection,
   DelegationsIncomingService,
-  DelegationType,
   MergedDelegationDTO,
 } from '@island.is/auth-api-lib'
 import {
@@ -24,6 +23,7 @@ import { Audit } from '@island.is/nest/audit'
 import { Documentation } from '@island.is/nest/swagger'
 
 import type { User } from '@island.is/auth-nest-tools'
+import { AuthDelegationType } from '@island.is/shared/types'
 const namespace = '@island.is/auth-public-api/actor/delegations'
 
 @UseGuards(IdsUserGuard, ScopesGuard)
@@ -57,17 +57,17 @@ export class ActorDelegationsController {
             items: {
               type: 'string',
               enum: [
-                DelegationType.LegalGuardian,
-                DelegationType.ProcurationHolder,
-                DelegationType.PersonalRepresentative,
-                DelegationType.Custom,
+                AuthDelegationType.LegalGuardian,
+                AuthDelegationType.ProcurationHolder,
+                AuthDelegationType.PersonalRepresentative,
+                AuthDelegationType.Custom,
               ],
               example: [
                 [
-                  DelegationType.LegalGuardian,
-                  DelegationType.ProcurationHolder,
+                  AuthDelegationType.LegalGuardian,
+                  AuthDelegationType.ProcurationHolder,
                 ],
-                DelegationType.Custom,
+                AuthDelegationType.Custom,
               ],
             },
           },
@@ -89,7 +89,7 @@ export class ActorDelegationsController {
   async findAll(
     @CurrentActor() actor: User,
     @Query('direction') direction: DelegationDirection.INCOMING,
-    @Query('delegationTypes') delegationTypes?: Array<DelegationType>,
+    @Query('delegationTypes') delegationTypes?: Array<AuthDelegationType>,
     @Query('otherUser') otherUser?: string,
   ): Promise<MergedDelegationDTO[]> {
     if (direction !== DelegationDirection.INCOMING) {

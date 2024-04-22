@@ -1,0 +1,291 @@
+{
+  "openapi": "3.0.1",
+  "info": { "title": "Tengill Application API", "version": "v1" },
+  "servers": [{ "url": "/api/v1" }],
+  "paths": {
+    "/application": {
+      "post": {
+        "tags": ["Application"],
+        "requestBody": {
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/ApplicationSystemInput"
+              }
+            },
+            "text/json": {
+              "schema": {
+                "$ref": "#/components/schemas/ApplicationSystemInput"
+              }
+            },
+            "application/*+json": {
+              "schema": {
+                "$ref": "#/components/schemas/ApplicationSystemInput"
+              }
+            }
+          }
+        },
+        "responses": {
+          "200": {
+            "description": "Success",
+            "content": {
+              "text/plain": {
+                "schema": {
+                  "$ref": "#/components/schemas/PostApplicationResponse"
+                }
+              },
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/PostApplicationResponse"
+                }
+              },
+              "text/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/PostApplicationResponse"
+                }
+              }
+            }
+          }
+        }
+      },
+      "get": {
+        "tags": ["Application"],
+        "responses": {
+          "200": {
+            "description": "Success",
+            "content": {
+              "text/plain": {
+                "schema": {
+                  "$ref": "#/components/schemas/GetApplicationNumberResponse"
+                }
+              },
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/GetApplicationNumberResponse"
+                }
+              },
+              "text/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/GetApplicationNumberResponse"
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/application/upload": {
+      "post": {
+        "tags": ["Application"],
+        "requestBody": {
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/ApplicationFilesContent"
+              }
+            },
+            "text/json": {
+              "schema": {
+                "$ref": "#/components/schemas/ApplicationFilesContent"
+              }
+            },
+            "application/*+json": {
+              "schema": {
+                "$ref": "#/components/schemas/ApplicationFilesContent"
+              }
+            }
+          }
+        },
+        "responses": {
+          "200": {
+            "description": "Success",
+            "content": {
+              "text/plain": {
+                "schema": {
+                  "$ref": "#/components/schemas/PostApplicationResponse"
+                }
+              },
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/PostApplicationResponse"
+                }
+              },
+              "text/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/PostApplicationResponse"
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/application/{id}": {
+      "get": {
+        "tags": ["Application"],
+        "parameters": [
+          {
+            "name": "id",
+            "in": "path",
+            "required": true,
+            "style": "simple",
+            "schema": { "type": "string" }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "Success",
+            "content": {
+              "text/plain": {
+                "schema": {
+                  "$ref": "#/components/schemas/GetApplicationNumberResponse"
+                }
+              },
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/GetApplicationNumberResponse"
+                }
+              },
+              "text/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/GetApplicationNumberResponse"
+                }
+              }
+            }
+          }
+        }
+      }
+    }
+  },
+  "components": {
+    "schemas": {
+      "Adilar": {
+        "type": "object",
+        "properties": {
+          "kennitala": { "type": "string", "nullable": true },
+          "heiti": { "type": "string", "nullable": true },
+          "heimili": { "type": "string", "nullable": true },
+          "stadur": { "type": "string", "nullable": true },
+          "postnumer": { "type": "string", "nullable": true },
+          "tegund": { "$ref": "#/components/schemas/ApplicantType" },
+          "hlutverk": { "type": "string", "nullable": true },
+          "netfang": { "type": "string", "nullable": true },
+          "simi": { "type": "string", "nullable": true }
+        },
+        "additionalProperties": false
+      },
+      "ApplicantType": {
+        "enum": [0, 1, 2, -2],
+        "type": "integer",
+        "format": "int32"
+      },
+      "ApplicationFileTypes": {
+        "enum": [1, 2, 3, 4, 5],
+        "type": "integer",
+        "format": "int32"
+      },
+      "ApplicationFiles": {
+        "type": "object",
+        "properties": {
+          "flokkur": { "$ref": "#/components/schemas/ApplicationFileTypes" },
+          "heiti": { "type": "string", "nullable": true },
+          "dags": { "type": "string", "format": "date-time", "nullable": true },
+          "tegund": { "type": "string", "nullable": true },
+          "fileID": { "type": "string", "nullable": true },
+          "ending": { "type": "string", "nullable": true },
+          "sharepointFileId": { "type": "string", "nullable": true }
+        },
+        "additionalProperties": false
+      },
+      "ApplicationFilesContent": {
+        "type": "object",
+        "properties": {
+          "fileID": { "type": "string", "nullable": true },
+          "applicationID": { "type": "string", "nullable": true },
+          "content": { "type": "string", "nullable": true }
+        },
+        "additionalProperties": false
+      },
+      "ApplicationSystemInput": {
+        "type": "object",
+        "properties": {
+          "language": { "type": "string", "nullable": true },
+          "portalApplicationID": { "type": "string", "nullable": true },
+          "applicationName": { "type": "string", "nullable": true },
+          "applicationType": { "type": "string", "nullable": true },
+          "dagssetning": { "type": "string", "format": "date-time" },
+          "adilar": {
+            "type": "array",
+            "items": { "$ref": "#/components/schemas/Adilar" },
+            "nullable": true
+          },
+          "notandagogn": {
+            "type": "array",
+            "items": { "$ref": "#/components/schemas/Notandagogn" },
+            "nullable": true
+          },
+          "greidsla": { "$ref": "#/components/schemas/Greidsla" },
+          "files": {
+            "type": "array",
+            "items": { "$ref": "#/components/schemas/ApplicationFiles" },
+            "nullable": true
+          },
+          "status": { "$ref": "#/components/schemas/CurrentApplicationStatus" }
+        },
+        "additionalProperties": false
+      },
+      "CurrentApplicationStatus": {
+        "enum": [70, 71, 73, 80, 90, 100, 1100, 1200],
+        "type": "integer",
+        "format": "int32"
+      },
+      "ExternalResultStatus": {
+        "enum": [200, 300, 400],
+        "type": "integer",
+        "format": "int32"
+      },
+      "GetApplicationNumberResponse": {
+        "type": "object",
+        "properties": {
+          "status": { "$ref": "#/components/schemas/ExternalResultStatus" },
+          "message": { "type": "string", "nullable": true },
+          "applicationID": { "type": "string", "nullable": true }
+        },
+        "additionalProperties": false
+      },
+      "Greidsla": {
+        "type": "object",
+        "properties": {
+          "upphaed": { "type": "string", "nullable": true },
+          "dags": { "type": "string", "format": "date-time", "nullable": true },
+          "korthafi": { "type": "string", "nullable": true },
+          "kortanumer": { "type": "string", "nullable": true },
+          "tegundKorts": { "type": "string", "nullable": true }
+        },
+        "additionalProperties": false
+      },
+      "Notandagogn": {
+        "type": "object",
+        "properties": {
+          "guid": { "type": "string", "nullable": true },
+          "flokkur": { "type": "string", "nullable": true },
+          "heiti": { "type": "string", "nullable": true },
+          "tegund": { "type": "string", "nullable": true },
+          "gildi": { "type": "object", "nullable": true },
+          "countryCode": { "type": "string", "nullable": true },
+          "nafn": { "type": "string", "nullable": true }
+        },
+        "additionalProperties": false
+      },
+      "PostApplicationResponse": {
+        "type": "object",
+        "properties": {
+          "status": { "$ref": "#/components/schemas/ExternalResultStatus" },
+          "message": { "type": "string", "nullable": true }
+        },
+        "additionalProperties": false
+      },
+      "ProblemDetails": { "additionalProperties": false }
+    }
+  }
+}

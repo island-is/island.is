@@ -14,6 +14,12 @@ export type VehiclesCurrentVehicle = {
   color?: string
   role?: string
   requireMileage?: boolean | null
+  mileageReading?: string | null
+}
+
+export type CurrentVehiclesAndRecords = {
+  totalRecords: number
+  vehicles: VehiclesCurrentVehicle[]
 }
 
 type VehicleValidationErrorMessage = {
@@ -27,8 +33,15 @@ export type VehiclesCurrentVehicleWithOwnerchangeChecks = {
   color?: string
   role?: string
   requireMileage?: boolean | null
+  mileageReading?: string | null
   isDebtLess?: boolean | null
   validationErrorMessages?: VehicleValidationErrorMessage[] | null
+}
+
+export type VehicleMileage = {
+  isRequired?: boolean
+  mileageReading?: string
+  value?: string
 }
 
 interface ReviewerProps {

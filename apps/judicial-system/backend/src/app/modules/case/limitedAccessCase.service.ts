@@ -24,17 +24,22 @@ import {
   CaseFileCategory,
   CaseFileState,
   CaseState,
-  defenderCaseFileCategoriesForRestrictionAndInvestigationCases,
+  DateType,
+  NotificationType,
   UserRole,
 } from '@island.is/judicial-system/types'
 
 import { nowFactory, uuidFactory } from '../../factories'
 import { AwsS3Service } from '../aws-s3'
 import { Defendant, DefendantService } from '../defendant'
-import { CaseFile } from '../file'
+import {
+  CaseFile,
+  defenderCaseFileCategoriesForRestrictionAndInvestigationCases,
+} from '../file'
 import { Institution } from '../institution'
 import { User } from '../user'
 import { Case } from './models/case.model'
+import { DateLog } from './models/dateLog.model'
 import { PDFService } from './pdf.service'
 
 export const attributes: (keyof Case)[] = [
@@ -54,10 +59,8 @@ export const attributes: (keyof Case)[] = [
   'courtId',
   'leadInvestigator',
   'requestedCustodyRestrictions',
-  'creatingProsecutorId',
   'prosecutorId',
   'courtCaseNumber',
-  'courtDate',
   'courtEndTime',
   'decision',
   'validToDate',
@@ -91,6 +94,7 @@ export const attributes: (keyof Case)[] = [
   'appealReceivedByCourtDate',
   'appealRulingModifiedHistory',
   'requestAppealRulingNotToBePublished',
+  'prosecutorsOfficeId',
 ]
 
 export interface LimitedAccessUpdateCase
@@ -100,15 +104,14 @@ export interface LimitedAccessUpdateCase
     | 'appealState'
     | 'defendantStatementDate'
     | 'openedByDefender'
+    | 'appealRulingDecision'
   > {}
 
+const dateTypes = Object.values(DateType)
+
 export const include: Includeable[] = [
+  { model: Institution, as: 'prosecutorsOffice' },
   { model: Institution, as: 'court' },
-  {
-    model: User,
-    as: 'creatingProsecutor',
-    include: [{ model: Institution, as: 'institution' }],
-  },
   {
     model: User,
     as: 'prosecutor',
@@ -174,13 +177,21 @@ export const include: Includeable[] = [
         CaseFileCategory.CRIMINAL_RECORD,
         CaseFileCategory.COST_BREAKDOWN,
         CaseFileCategory.CASE_FILE,
+        CaseFileCategory.APPEAL_COURT_RECORD,
       ],
     },
+  },
+  {
+    model: DateLog,
+    as: 'dateLogs',
+    required: false,
+    where: { dateType: { [Op.in]: dateTypes } },
   },
 ]
 
 export const order: OrderItem[] = [
   [{ model: Defendant, as: 'defendants' }, 'created', 'ASC'],
+  [{ model: DateLog, as: 'dateLogs' }, 'created', 'DESC'],
 ]
 
 @Injectable()
@@ -250,18 +261,28 @@ export class LimitedAccessCaseService {
         )
         .forEach((caseFile) => {
           const message = {
-            type: MessageType.DELIVER_CASE_FILE_TO_COURT,
+            type: MessageType.DELIVERY_TO_COURT_CASE_FILE,
             user,
             caseId: theCase.id,
-            caseFileId: caseFile.id,
+            elementId: caseFile.id,
           }
           messages.push(message)
         })
 
       messages.push({
-        type: MessageType.SEND_APPEAL_TO_COURT_OF_APPEALS_NOTIFICATION,
+        type: MessageType.NOTIFICATION,
         user,
         caseId: theCase.id,
+        body: { type: NotificationType.APPEAL_TO_COURT_OF_APPEALS },
+      })
+    }
+
+    if (update.appealState === CaseAppealState.WITHDRAWN) {
+      messages.push({
+        type: MessageType.NOTIFICATION,
+        user,
+        caseId: theCase.id,
+        body: { type: NotificationType.APPEAL_WITHDRAWN },
       })
     }
 
@@ -273,9 +294,10 @@ export class LimitedAccessCaseService {
       theCase.defendantStatementDate?.getTime()
     ) {
       messages.push({
-        type: MessageType.SEND_APPEAL_STATEMENT_NOTIFICATION,
+        type: MessageType.NOTIFICATION,
         user,
         caseId: theCase.id,
+        body: { type: NotificationType.APPEAL_STATEMENT },
       })
     }
 
@@ -305,6 +327,7 @@ export class LimitedAccessCaseService {
       email: email ?? '',
       role: UserRole.DEFENDER,
       active: true,
+      canConfirmIndictment: false,
     } as User
   }
 

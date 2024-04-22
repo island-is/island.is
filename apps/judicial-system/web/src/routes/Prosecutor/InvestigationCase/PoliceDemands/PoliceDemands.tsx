@@ -144,7 +144,7 @@ const PoliceDemands: React.FC<React.PropsWithChildren<unknown>> = () => {
             }),
             ...(courtClaim.format?.institution && {
               institution: formatInstitutionName(
-                workingCase.creatingProsecutor?.institution?.name,
+                workingCase.prosecutorsOffice?.name,
               ),
             }),
             ...(courtClaim.format?.live && {
@@ -213,7 +213,6 @@ const PoliceDemands: React.FC<React.PropsWithChildren<unknown>> = () => {
                 'demands',
                 event.target.value,
                 ['empty'],
-                workingCase,
                 setWorkingCase,
                 demandsEM,
                 setDemandsEM,
@@ -258,7 +257,6 @@ const PoliceDemands: React.FC<React.PropsWithChildren<unknown>> = () => {
                 'lawsBroken',
                 event.target.value,
                 ['empty'],
-                workingCase,
                 setWorkingCase,
                 lawsBrokenEM,
                 setLawsBrokenEM,
@@ -301,7 +299,6 @@ const PoliceDemands: React.FC<React.PropsWithChildren<unknown>> = () => {
                 'legalBasis',
                 event.target.value,
                 ['empty'],
-                workingCase,
                 setWorkingCase,
                 legalBasisEM,
                 setLegalBasisEM,

@@ -1,67 +1,79 @@
 import { Area, mapArea } from './area.dto'
-import {
-  MedmaelasofnunDTO,
-  MedmaelasofnunExtendedDTO,
-} from '../../../gen/fetch'
+import { MedmaelasofnunExtendedDTO } from '../../../gen/fetch'
 import { logger } from '@island.is/logging'
 import { Candidate, mapCandidate } from './candidate.dto'
 
-export interface CollectionInfo {
-  id: number
+export enum CollectionStatus {
+  InitialActive = 'initialActive',
+  Active = 'active',
+  InInitialReview = 'inInitialReview',
+  InReview = 'inReview',
+  Processing = 'processing',
+  Processed = 'processed',
+  Inactive = 'inactive',
+}
+
+export interface Collection {
+  id: string
   startTime: Date
   endTime: Date
   isActive: boolean
   isPresidential: boolean
   isSignatureCollection: boolean
-}
-export interface Collection extends Omit<CollectionInfo, 'id'> {
-  id: string
   name: string
-  startTime: Date
-  endTime: Date
   areas: Area[]
   candidates: Candidate[]
+  processed: boolean
+  status: CollectionStatus
 }
 
-export function mapCollectionInfo(
-  collection: MedmaelasofnunDTO,
-): CollectionInfo | null {
-  const {
-    id: id,
-    sofnunStart: startTime,
-    sofnunEnd: endTime,
-    kosning,
-  } = collection
+const getStatus = ({
+  isActive,
+  processed,
+  hasActiveLists,
+  hasExtendedLists,
+}: {
+  isActive: boolean
+  processed: boolean
+  hasActiveLists: boolean
+  hasExtendedLists: boolean
+}): CollectionStatus => {
+  // Collection in inital opening time
+  if (isActive) {
+    return CollectionStatus.InitialActive
+  }
 
-  if (id == null || startTime == null || endTime == null) {
-    logger.warn(
-      'Received partial collection information from the national registry.',
-      collection,
-    )
-    return null
+  // Initial opening time passed not all lists reviewed
+  if (!hasActiveLists && !processed) {
+    return CollectionStatus.InInitialReview
   }
-  return {
-    id,
-    startTime,
-    endTime,
-    isActive: startTime < new Date() && endTime > new Date(),
-    isPresidential: collection.kosningTegund == 'Forsetakosning',
-    isSignatureCollection: kosning?.erMedmaelakosning ?? false,
+  // Initial opening time passed, collection has been manually processed
+  if (!hasActiveLists && processed && !hasExtendedLists) {
+    return CollectionStatus.Processed
   }
+  // Collection active if any lists have been extended
+  if (hasActiveLists && processed && hasExtendedLists) {
+    return CollectionStatus.Active
+  }
+  // Collection had extended lists that have all expired
+  if (!hasActiveLists && processed && hasExtendedLists) {
+    return CollectionStatus.InReview
+  }
+  return CollectionStatus.Inactive
 }
 
-export function mapCollection(
+export const mapCollection = (
   collection: MedmaelasofnunExtendedDTO,
-): Collection {
+): Collection => {
   const {
-    id: id,
+    id,
     sofnunStart: startTime,
     sofnunEnd: endTime,
     svaedi: areas,
     frambodList: candidates,
     kosning,
   } = collection
-  if (id == null || startTime == null || endTime == null || areas == null) {
+  if (!id || !startTime || !endTime || !areas) {
     logger.warn(
       'Received partial collection information from the national registry.',
       collection,
@@ -70,18 +82,30 @@ export function mapCollection(
       'Received partial collection information from the national registry.',
     )
   }
+  const isActive = startTime < new Date() && endTime > new Date()
+  const processed = collection.lokadHandvirkt ?? false
+  const hasActiveLists = collection.opnirListar ?? false
+  const hasExtendedLists = collection.framlengdirListar ?? false
 
+  const status = getStatus({
+    isActive,
+    processed,
+    hasActiveLists,
+    hasExtendedLists,
+  })
   return {
-    id: id?.toString(),
+    id: id.toString(),
     name: collection.kosningNafn ?? '',
     startTime,
     endTime,
-    isActive: startTime < new Date() && endTime > new Date(),
+    isActive,
     isPresidential: collection.kosningTegund == 'Forsetakosning',
     isSignatureCollection: kosning?.erMedmaelakosning ?? false,
     candidates: candidates
       ? candidates.map((candidate) => mapCandidate(candidate))
       : [],
     areas: areas.map((area) => mapArea(area)),
+    processed,
+    status,
   }
 }

@@ -36,6 +36,11 @@ export const coreMessages = defineMessages({
     defaultMessage: 'Breyta',
     description: 'Edit button for review screen and so on',
   },
+  buttonAdd: {
+    id: 'application.system:button.add',
+    defaultMessage: 'Bæta við',
+    description: 'Add button',
+  },
   cardButtonInProgress: {
     id: 'application.system:card.button.inProgress',
     defaultMessage: 'Opna umsókn',
@@ -209,6 +214,11 @@ export const coreMessages = defineMessages({
     defaultMessage: 'Bíð staðfestingar frá greiðsluveitu',
     description:
       'Text indicating we are waiting for confirmation from 3rd party payment gateway',
+  },
+  deleteFieldText: {
+    id: 'application.system:core.delete.field.text',
+    defaultMessage: 'Eyða færslu',
+    description: 'Delete field text',
   },
   deleteApplicationDialogTitle: {
     id: 'application.system:delete.application.dialog.title',
@@ -607,6 +617,18 @@ export const coreErrorMessages = defineMessages({
     id: 'application.system:core.fetch.data.noBankAccountError',
     defaultMessage: 'Þú ert ekki með skráðan bankareikning',
     description: 'No bank account error',
+  },
+  noEmailFound: {
+    id: 'application.system:core.fetch.data.noEmailError',
+    defaultMessage: 'Ekkert netfang skráð',
+    description: 'No email address registered',
+  },
+  noEmailFoundDescription: {
+    id: 'application.system:core.fetch.data.noEmailError.description#markdown',
+    defaultMessage:
+      'Þú ert ekki með skráð netfang hjá Ísland.is. Vinsamlegast skráðu það [hér]({link}).',
+    description:
+      'You do not have a registered email address at Ísland.is. Please register an email address here .',
   },
   machinesEmptyListDefault: {
     id: 'application.system:core.fetch.data.machinesEmptyListDefault',

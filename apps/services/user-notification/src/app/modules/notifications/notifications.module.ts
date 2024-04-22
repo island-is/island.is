@@ -1,6 +1,7 @@
 import { Module } from '@nestjs/common'
 import { SequelizeModule } from '@nestjs/sequelize'
 import { CacheModule } from '@nestjs/cache-manager'
+import { ConfigType } from '@nestjs/config'
 import * as firebaseAdmin from 'firebase-admin'
 
 import { NationalRegistryV3ClientModule } from '@island.is/clients/national-registry-v3'
@@ -10,6 +11,7 @@ import { LoggingModule } from '@island.is/logging'
 import { CmsTranslationsModule } from '@island.is/cms-translations'
 import { QueueModule } from '@island.is/message-queue'
 import { UserProfileClientModule } from '@island.is/clients/user-profile'
+import { AuthDelegationApiClientModule } from '@island.is/clients/auth/delegation-api'
 
 import { NotificationsController } from './notifications.controller'
 import { environment } from '../../../environments/environment'
@@ -22,13 +24,16 @@ import { NotificationDispatchService } from './notificationDispatch.service'
 import {
   IS_RUNNING_AS_WORKER,
   NotificationsWorkerService,
-} from './notificationsWorker.service'
+  SERVICE_PORTAL_CLICK_ACTION_URL,
+} from './notificationsWorker/notificationsWorker.service'
 import {
   APP_PROTOCOL,
   MessageProcessorService,
 } from './messageProcessor.service'
+import { UserNotificationsConfig } from '../../../config'
 
 @Module({
+  exports: [NotificationsService],
   imports: [
     SequelizeModule.forFeature([Notification]),
     CacheModule.register({
@@ -51,6 +56,7 @@ import {
     EmailModule.register(environment.emailOptions),
     FeatureFlagModule,
     NationalRegistryV3ClientModule,
+    AuthDelegationApiClientModule,
   ],
   controllers: [
     NotificationsController,
@@ -64,24 +70,34 @@ import {
     MessageProcessorService,
     {
       provide: FIREBASE_PROVIDER,
-      useFactory: () =>
+      useFactory: (config: ConfigType<typeof UserNotificationsConfig>) =>
         process.env.INIT_SCHEMA === 'true'
           ? {}
           : firebaseAdmin.initializeApp({
               credential: firebaseAdmin.credential.cert(
-                JSON.parse(environment.firebaseCredentials),
+                JSON.parse(config.firebaseCredentials),
               ),
             }),
+      inject: [UserNotificationsConfig.KEY],
     },
     {
       provide: IS_RUNNING_AS_WORKER,
-      useValue: environment.isWorker,
+      useFactory: (config: ConfigType<typeof UserNotificationsConfig>) =>
+        config.isWorker,
+      inject: [UserNotificationsConfig.KEY],
     },
     {
       provide: APP_PROTOCOL,
-      useValue: environment.appProtocol,
+      useFactory: (config: ConfigType<typeof UserNotificationsConfig>) =>
+        config.appProtocol,
+      inject: [UserNotificationsConfig.KEY],
+    },
+    {
+      provide: SERVICE_PORTAL_CLICK_ACTION_URL,
+      useFactory: (config: ConfigType<typeof UserNotificationsConfig>) =>
+        config.servicePortalClickActionUrl,
+      inject: [UserNotificationsConfig.KEY],
     },
   ],
-  exports: [NotificationsService],
 })
 export class NotificationsModule {}

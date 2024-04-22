@@ -1,8 +1,14 @@
-import { NormalizedCacheObject } from '@apollo/client'
-import { logger } from '@island.is/logging'
 import type { GetServerSideProps } from 'next'
+import { NormalizedCacheObject } from '@apollo/client'
+
+import { logger } from '@island.is/logging'
+
+import initApollo from '../graphql/client'
+import { getLocaleFromPath } from '../i18n'
 import type { ScreenContext } from '../types'
 import { CustomNextError } from '../units/errors'
+import { fetch404RedirectUrl } from './fetch404RedirectUrl'
+import { safelyExtractPathnameFromUrl } from './safelyExtractPathnameFromUrl'
 
 // Taken from here: https://github.com/vercel/next.js/discussions/11209#discussioncomment-38480
 // eslint-disable-next-line @typescript-eslint/no-explicit-any
@@ -45,8 +51,35 @@ export const getServerSidePropsWrapper: (
     if (error instanceof CustomNextError) {
       if (error.statusCode === 404) {
         logger.info(error.title || '404 error occurred on web', error)
+
+        const path = safelyExtractPathnameFromUrl(ctx.req.url)
+        if (!path) {
+          return {
+            notFound: true,
+          }
+        }
+
+        const clientLocale = getLocaleFromPath(path)
+
+        const apolloClient = initApollo({}, clientLocale, ctx)
+
+        const redirectUrl = await fetch404RedirectUrl(
+          apolloClient,
+          path,
+          clientLocale,
+        )
+
+        if (!redirectUrl) {
+          return {
+            notFound: true,
+          }
+        }
+
         return {
-          notFound: true,
+          redirect: {
+            destination: redirectUrl,
+            permanent: false,
+          },
         }
       }
     }

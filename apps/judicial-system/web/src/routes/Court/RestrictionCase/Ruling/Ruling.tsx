@@ -13,7 +13,10 @@ import {
 } from '@island.is/island-ui/core'
 import * as constants from '@island.is/judicial-system/consts'
 import { formatDate, formatDOB } from '@island.is/judicial-system/formatters'
-import { isAcceptingCaseDecision } from '@island.is/judicial-system/types'
+import {
+  getLatestDateType,
+  isAcceptingCaseDecision,
+} from '@island.is/judicial-system/types'
 import { core, ruling, titles } from '@island.is/judicial-system-web/messages'
 import {
   CaseFileList,
@@ -32,6 +35,7 @@ import {
 import {
   CaseDecision,
   CaseType,
+  DateType,
   Defendant,
 } from '@island.is/judicial-system-web/src/graphql/schema'
 import { TempCase as Case } from '@island.is/judicial-system-web/src/types'
@@ -48,7 +52,7 @@ import { isRulingValidRC } from '@island.is/judicial-system-web/src/utils/valida
 
 import { rcRuling as m } from './Ruling.strings'
 
-export function getConclusionAutofill(
+export const getConclusionAutofill = (
   formatMessage: IntlShape['formatMessage'],
   workingCase: Case,
   decision: CaseDecision,
@@ -56,7 +60,7 @@ export function getConclusionAutofill(
   validToDate?: string | null,
   isCustodyIsolation?: boolean | null,
   isolationToDate?: string | null,
-) {
+) => {
   const isolationEndsBeforeValidToDate =
     validToDate &&
     isolationToDate &&
@@ -138,11 +142,16 @@ export const Ruling: React.FC<React.PropsWithChildren<unknown>> = () => {
   ])
 
   const initialize = useCallback(() => {
+    const courtDate = getLatestDateType(
+      DateType.COURT_DATE,
+      workingCase.dateLogs,
+    )
+
     setAndSendCaseToServer(
       [
         {
           introduction: formatMessage(m.sections.introduction.autofill, {
-            date: formatDate(workingCase.courtDate, 'PPP'),
+            date: formatDate(courtDate?.date, 'PPP'),
           }),
           prosecutorDemands: workingCase.demands,
           courtCaseFacts: formatMessage(
@@ -371,7 +380,6 @@ export const Ruling: React.FC<React.PropsWithChildren<unknown>> = () => {
                 'introduction',
                 event.target.value,
                 ['empty'],
-                workingCase,
                 setWorkingCase,
                 introductionErrorMessage,
                 setIntroductionErrorMessage,
@@ -414,7 +422,6 @@ export const Ruling: React.FC<React.PropsWithChildren<unknown>> = () => {
                 'prosecutorDemands',
                 event.target.value,
                 ['empty'],
-                workingCase,
                 setWorkingCase,
                 prosecutorDemandsErrorMessage,
                 setProsecutorDemandsMessage,
@@ -459,7 +466,6 @@ export const Ruling: React.FC<React.PropsWithChildren<unknown>> = () => {
                   'courtCaseFacts',
                   event.target.value,
                   ['empty'],
-                  workingCase,
                   setWorkingCase,
                   courtCaseFactsErrorMessage,
                   setCourtCaseFactsErrorMessage,
@@ -507,7 +513,6 @@ export const Ruling: React.FC<React.PropsWithChildren<unknown>> = () => {
                   'courtLegalArguments',
                   event.target.value,
                   ['empty'],
-                  workingCase,
                   setWorkingCase,
                   courtLegalArgumentsErrorMessage,
                   setCourtLegalArgumentsErrorMessage,
@@ -610,6 +615,7 @@ export const Ruling: React.FC<React.PropsWithChildren<unknown>> = () => {
               )}
               onChange={(decision) => {
                 let conclusion = undefined
+                let ruling = undefined
 
                 if (
                   workingCase.defendants &&
@@ -626,8 +632,16 @@ export const Ruling: React.FC<React.PropsWithChildren<unknown>> = () => {
                   )
                 }
 
+                if (
+                  isAcceptingCaseDecision(decision) &&
+                  workingCase.parentCase &&
+                  !workingCase.ruling
+                ) {
+                  ruling = workingCase.parentCase.ruling
+                }
+
                 setAndSendCaseToServer(
-                  [{ conclusion, decision, force: true }],
+                  [{ conclusion, decision, ruling, force: true }],
                   workingCase,
                   setWorkingCase,
                 )
@@ -663,7 +677,6 @@ export const Ruling: React.FC<React.PropsWithChildren<unknown>> = () => {
                 'conclusion',
                 event.target.value,
                 [],
-                workingCase,
                 setWorkingCase,
               )
             }

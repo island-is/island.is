@@ -12,6 +12,16 @@ export const confirmation = {
       defaultMessage: 'Takk fyrir umsóknina!',
       description: 'Conclusion screen alert title',
     },
+    alertMessage: {
+      id: 'ctao.application:confirmation.general.alertMessage',
+      defaultMessage: 'Takk fyrir umsóknina!',
+      description: 'Conclusion screen alert message',
+    },
+    multiFieldTitle: {
+      id: 'ctao.application:confirmation.general.multiFieldTitle',
+      defaultMessage: 'Kvörtun móttekin!',
+      description: 'Title of conclusion multi field',
+    },
   }),
   information: defineMessages({
     title: {

@@ -1,15 +1,30 @@
 import { Injectable } from '@nestjs/common'
-import { CoursesApi, ProgramsApi } from '../../gen/fetch/apis'
-import { ICourse, IProgram } from '@island.is/university-gateway'
+import { ApplicationApi, CoursesApi, ProgramsApi } from '../../gen/fetch/apis'
+import {
+  ApplicationStatus,
+  CourseSeason,
+  DegreeType,
+  FieldType,
+  IApplication,
+  ICourse,
+  IProgram,
+  ModeOfDelivery,
+  Requirement,
+  Season,
+  mapStringToEnum,
+} from '@island.is/university-gateway'
 import { logger } from '@island.is/logging'
 import { mapUglaPrograms } from './utils/mapUglaPrograms'
 import { mapUglaCourses } from './utils/mapUglaCourses'
+import { mapUglaApplication } from './utils/mapUglaApplication'
+import { InlineResponse2004 } from '../../gen/fetch'
 
 @Injectable()
 export class UniversityOfIcelandApplicationClient {
   constructor(
     private readonly programsApi: ProgramsApi,
     private readonly coursesApi: CoursesApi,
+    private readonly applicationApi: ApplicationApi,
   ) {}
 
   async getPrograms(): Promise<IProgram[]> {
@@ -35,5 +50,34 @@ export class UniversityOfIcelandApplicationClient {
         e,
       )
     })
+  }
+
+  async getApplicationStatus(externalId: string): Promise<ApplicationStatus> {
+    // TODOx connect to HÍ API
+    return ApplicationStatus.IN_REVIEW
+  }
+
+  async createApplication(
+    application: IApplication,
+  ): Promise<InlineResponse2004> {
+    const mappedApplication = mapUglaApplication(
+      application,
+      (courseExternalId: string, e: Error) => {
+        logger.error(
+          `Failed to map application for user ${application.applicant.nationalId} to University of Iceland, reason:`,
+          e,
+        )
+      },
+    )
+
+    const response = await this.applicationApi.applicationsPost(
+      mappedApplication,
+    )
+    return response
+  }
+
+  async updateApplicationStatus(externalId: string, status: ApplicationStatus) {
+    // TODOx connect to HÍ API
+    return
   }
 }

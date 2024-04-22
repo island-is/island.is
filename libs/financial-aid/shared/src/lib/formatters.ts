@@ -40,7 +40,7 @@ export const getEmploymentStatus: KeyMapping<Employment, string> = {
 
 export const getState: KeyMapping<ApplicationState, string> = {
   New: 'Ný umsókn',
-  DataNeeded: 'Vantar gögn',
+  DataNeeded: 'Vantar upplýsingar',
   InProgress: 'Í vinnslu',
   Rejected: 'Synjað',
   Approved: 'Samþykkt',
@@ -86,8 +86,8 @@ export const getEventData = (
       }
     case ApplicationEventType.DATANEEDED:
       return {
-        header: 'Vantar gögn',
-        text: 'óskaði eftir gögnum',
+        header: 'Vantar upplýsingar',
+        text: 'óskaði eftir upplýsingum',
         prefix: event.staffName ?? 'Starfsmaður',
       }
     case ApplicationEventType.INPROGRESS:
@@ -122,14 +122,14 @@ export const getEventData = (
       }
     case ApplicationEventType.SPOUSEFILEUPLOAD:
       return {
-        header: 'Ný gögn',
-        text: 'sendi inn gögn',
+        header: 'Nýjar upplýsingar',
+        text: 'sendi inn upplýsingar',
         prefix: `Maki ${spouseName}`,
       }
     case ApplicationEventType.FILEUPLOAD:
       return {
-        header: 'Ný gögn',
-        text: 'sendi inn gögn',
+        header: 'Nýjar upplýsingar',
+        text: 'sendi inn upplýsingar',
         prefix: `Umsækjandi ${applicantName}`,
       }
     case ApplicationEventType.ASSIGNCASE:
@@ -251,16 +251,15 @@ export const getApplicantEmailDataFromEventType = (
 
     case ApplicationEventType.DATANEEDED:
       return {
-        subject:
-          'Þú þarft að skila gögnum svo hægt sé að klára að vinna umsóknina',
+        subject: 'Upplýsingar vantar vegna umsóknar um fjárhagsaðstoð',
         data: {
-          title: 'Fjárhagsaðstoð Umsókn vantar gögn',
-          header: `Þú þarft að skila gögnum svo hægt sé að klára að vinna umsóknina`,
+          title: 'Fjárhagsaðstoð Umsókn vantar upplýsingar',
+          header: `Upplýsingar vantar vegna umsóknar um fjárhagsaðstoð`,
           content:
             typeOfDataNeeded ??
             `Þú getur sent okkur upplýsingar og/eða gögnin á <a href="${applicationLink}" target="_blank">þinni stöðusíðu</a>`,
-          applicationLinkText: 'Bæta við gögnum',
-          applicationChange: 'Umsóknin bíður eftir gögnum',
+          applicationLinkText: 'Bæta við upplýsingum',
+          applicationChange: '',
           applicationMonth: getPeriod.month,
           applicationYear: getPeriod.year,
           applicationLink,

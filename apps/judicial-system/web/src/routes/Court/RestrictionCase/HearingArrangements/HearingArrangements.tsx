@@ -4,6 +4,7 @@ import router from 'next/router'
 
 import { AlertMessage, Box, Text } from '@island.is/island-ui/core'
 import * as constants from '@island.is/judicial-system/consts'
+import { getLatestDateType } from '@island.is/judicial-system/types'
 import { errors, titles } from '@island.is/judicial-system-web/messages'
 import {
   CourtArrangements,
@@ -20,6 +21,7 @@ import {
 import {
   CaseCustodyRestrictions,
   CaseType,
+  DateType,
   NotificationType,
 } from '@island.is/judicial-system-web/src/graphql/schema'
 import type { stepValidationsType } from '@island.is/judicial-system-web/src/utils/formHelper'
@@ -61,7 +63,12 @@ export const HearingArrangements: React.FC<
   } = useCourtArrangements(workingCase)
 
   const initialize = useCallback(() => {
-    if (!workingCase.courtDate) {
+    const courtDate = getLatestDateType(
+      DateType.COURT_DATE,
+      workingCase.dateLogs,
+    )
+
+    if (!courtDate) {
       setCourtDate(workingCase.requestedCourtDate)
     }
 
@@ -119,7 +126,7 @@ export const HearingArrangements: React.FC<
         (hasSentNotification(
           NotificationType.COURT_DATE,
           workingCase.notifications,
-        ) &&
+        ).hasSent &&
           !courtDateHasChanged)
       ) {
         router.push(`${destination}/${workingCase.id}`)

@@ -13,9 +13,11 @@ const promptUserForSheetName = (
 ) => {
   const confirmButtonId = 'sheet-name-confirm-button'
   const cancelButtonId = 'sheet-name-cancel-button'
+  const sheetNameSelectId = 'sheet-name-select'
+
   const modal = `
-  <label for="sheet-names">Choose a tab:</label>
-  <select name="sheet-names" id="sheet-names">
+  <label for="${sheetNameSelectId}">Choose a tab:</label>
+  <select id="${sheetNameSelectId}" name="${sheetNameSelectId}">
     ${sheetNames.map((name) => `<option value="${name}">${name}</option>`)}
   </select>
   <button id="${confirmButtonId}" style="background-color: #0059C8; color:white; padding: 2px">Confirm</button>
@@ -49,11 +51,13 @@ const promptUserForSheetName = (
   document.body.appendChild(div)
 
   const confirmButton = document.getElementById(confirmButtonId)
+  const select = document.getElementById(sheetNameSelectId) as HTMLSelectElement
+
   if (confirmButton) {
     confirmButton.addEventListener('click', () => {
       setOpacity('1')
       div.remove()
-      callback('Sameinað')
+      callback(select?.value || '')
     })
   } else {
     setOpacity('1')

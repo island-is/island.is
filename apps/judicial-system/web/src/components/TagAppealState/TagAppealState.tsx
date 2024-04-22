@@ -35,6 +35,12 @@ const TagAppealState: React.FC<React.PropsWithChildren<Props>> = ({
         text: string
       }
     | undefined => {
+    if (state === CaseAppealState.WITHDRAWN) {
+      return {
+        color: 'red',
+        text: formatMessage(tables.withdrawnTag),
+      }
+    }
     if (state === CaseAppealState.APPEALED) {
       return {
         color: 'red',
@@ -63,7 +69,8 @@ const TagAppealState: React.FC<React.PropsWithChildren<Props>> = ({
             ? 'mint'
             : ruling === CaseAppealRulingDecision.CHANGED ||
               ruling === CaseAppealRulingDecision.CHANGED_SIGNIFICANTLY ||
-              ruling === CaseAppealRulingDecision.REPEAL
+              ruling === CaseAppealRulingDecision.REPEAL ||
+              ruling === CaseAppealRulingDecision.DISCONTINUED
             ? 'rose'
             : 'blueberry',
         text: getAppealResultTextByValue(ruling),

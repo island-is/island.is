@@ -31,11 +31,11 @@ import {
 
 import { RequestCourtRecordSignatureMutation } from '../../requestCourtRecordSignature.generated'
 
-function showCustodyNotice(
+const showCustodyNotice = (
   type?: CaseType | null,
   state?: CaseState | null,
   decision?: CaseDecision | null,
-) {
+) => {
   return (
     (type === CaseType.CUSTODY || type === CaseType.ADMISSION_TO_FACILITY) &&
     state === CaseState.ACCEPTED &&

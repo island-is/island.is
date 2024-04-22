@@ -23,6 +23,7 @@ export default {
     'event',
     'manual',
     'manualChapter',
+    'customPage',
   ],
   nestedContentTypes: [
     'alertBanner',
@@ -90,10 +91,14 @@ export default {
     'latestEventsSlice',
     'supportCategory',
     'supportSubCategory',
-    'lifeEventPageListSlice',
     'manualChapter',
     'chart',
     'chartComponent',
+    'featuredEvents',
+    'bigBulletList',
+    'iconBullet',
+    'numberBulletSection',
+    'numberBullet',
   ],
   // Content types that have the 'activeTranslations' JSON field
   localizedContentTypes: ['article'],
@@ -106,4 +111,7 @@ export default {
   elastic: {
     node: process.env.ELASTIC_NODE || 'http://localhost:9200/',
   },
+  runtimeEnvironment: process.env.ENVIRONMENT ?? 'local',
+  forceSearchIndexerToResolveNestedEntries:
+    process.env.FORCE_SEARCH_INDEXER_TO_RESOLVE_NESTED_ENTRIES ?? false,
 }

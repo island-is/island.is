@@ -1314,6 +1314,11 @@
         "type": "object",
         "properties": {
           "icelandicIDNO": { "type": "string", "nullable": true },
+          "icelandicIDNOWithHyphen": {
+            "type": "string",
+            "nullable": true,
+            "readOnly": true
+          },
           "givenName": { "type": "string", "nullable": true },
           "surName": { "type": "string", "nullable": true },
           "emailAddress": { "type": "string", "nullable": true },
@@ -1341,6 +1346,11 @@
         "type": "object",
         "properties": {
           "icelandicIDNO": { "type": "string", "nullable": true },
+          "icelandicIDNOWithHyphen": {
+            "type": "string",
+            "nullable": true,
+            "readOnly": true
+          },
           "givenName": { "type": "string", "nullable": true },
           "surName": { "type": "string", "nullable": true }
         },
@@ -1350,6 +1360,11 @@
         "type": "object",
         "properties": {
           "icelandicIDNO": { "type": "string", "nullable": true },
+          "icelandicIDNOWithHyphen": {
+            "type": "string",
+            "nullable": true,
+            "readOnly": true
+          },
           "givenName": { "type": "string", "nullable": true },
           "surName": { "type": "string", "nullable": true },
           "emailAddress": { "type": "string", "nullable": true },
@@ -1402,6 +1417,7 @@
           },
           "maritalStatusName": { "type": "string", "nullable": true },
           "icelandicIDNO": { "type": "string", "nullable": true },
+          "icelandicIDNOWithHyphen": { "type": "string", "nullable": true },
           "telephone": { "type": "string", "nullable": true },
           "applicantId": { "type": "string", "nullable": true },
           "children": {
@@ -1443,6 +1459,7 @@
       "ApplicationCitizenshipChildCompleteNewModel": {
         "type": "object",
         "properties": {
+          "parentApplicationId": { "type": "string", "nullable": true },
           "applicant": {
             "$ref": "#/components/schemas/ApplicantNewChildModel"
           },
@@ -1493,7 +1510,8 @@
           "caseTypeId": { "type": "integer", "format": "int32" },
           "classificationId": { "type": "string", "nullable": true },
           "classificationTypeId": { "type": "string", "nullable": true },
-          "classificationDetailId": { "type": "string", "nullable": true }
+          "classificationDetailId": { "type": "string", "nullable": true },
+          "parentApplicationId": { "type": "string", "nullable": true }
         },
         "additionalProperties": false
       },
@@ -1514,6 +1532,7 @@
           "classificationDetailName": { "type": "string", "nullable": true },
           "staticDataId": { "type": "string", "nullable": true },
           "applicationId": { "type": "string", "nullable": true },
+          "parentApplicationId": { "type": "string", "nullable": true },
           "createdOn": { "type": "string", "format": "date-time" },
           "permitValidTo": {
             "type": "string",
@@ -1851,11 +1870,19 @@
             "format": "date-time",
             "nullable": true
           },
-          "issuingCountryId": { "type": "integer", "format": "int32" },
+          "issuingCountryId": {
+            "type": "integer",
+            "format": "int32",
+            "nullable": true
+          },
           "issuingCountryName": { "type": "string", "nullable": true },
           "name": { "type": "string", "nullable": true },
           "travelDocumentNo": { "type": "string", "nullable": true },
-          "travelDocumentTypeId": { "type": "integer", "format": "int32" },
+          "travelDocumentTypeId": {
+            "type": "integer",
+            "format": "int32",
+            "nullable": true
+          },
           "travelDocumentTypeName": { "type": "string", "nullable": true },
           "createdOn": { "type": "string", "format": "date-time" }
         },

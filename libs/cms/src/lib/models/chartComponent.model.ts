@@ -33,7 +33,10 @@ export const mapChartComponent = ({
   return {
     id: sys.id,
     typename: 'ChartComponent',
-    ...pick(fields, ['label', 'type', 'sourceDataKey', 'stackId']),
+    label: fields.label ?? '',
+    type: fields.type ?? 'line',
+    sourceDataKey: fields.sourceDataKey ?? '',
+    stackId: fields.stackId,
     interval: fields.interval ? Number(fields.interval) : undefined,
   }
 }

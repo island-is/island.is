@@ -35,7 +35,7 @@ export const statement = defineMessages({
     description: 'Lýsing á Hlaða upp gögnum á greinargerðarskjá',
   },
   appealCaseFilesCOASubtitle: {
-    id: 'judicial.system.core:appeal_case_files.appeal_case_files_coa_subtitle',
+    id: 'judicial.system.core:statement.appeal_case_files_coa_subtitle',
     defaultMessage:
       'Athugið að gögn sem hér er hlaðið upp verða einungis sýnileg Landsrétti.',
     description: 'Lýsing á Hlaða upp gögnum á greinargerðarskjá',
@@ -44,6 +44,11 @@ export const statement = defineMessages({
     id: 'judicial.system.core:statement.next_button_text',
     defaultMessage: 'Senda greinargerð',
     description: 'Texti á áfram takka á greinargerðar skjá',
+  },
+  uploadFailedNextButtonText: {
+    id: 'judicial.system.core:statement.upload_failed_next_button_text',
+    defaultMessage: 'Reyna aftur',
+    description: 'Texti á reyna aftur takka á greinargerðar skjá',
   },
   statementSentModalTitle: {
     id: 'judicial.system.core:statement_sent_title',

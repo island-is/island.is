@@ -16,6 +16,10 @@ import {
   UniversityOfAkureyriApplicationClientModule,
 } from '@island.is/clients/university-application/university-of-akureyri'
 import {
+  BifrostUniversityApplicationClientConfig,
+  BifrostUniversityApplicationClientModule,
+} from '@island.is/clients/university-application/bifrost-university'
+import {
   IcelandUniversityOfTheArtsApplicationClientConfig,
   IcelandUniversityOfTheArtsApplicationClientModule,
 } from '@island.is/clients/university-application/iceland-university-of-the-arts'
@@ -31,14 +35,16 @@ import { UniversityGatewayWorkerService } from './worker.service'
 import { AuditModule } from '@island.is/nest/audit'
 import { environment } from '../../environments'
 import { InternalProgramService } from '../modules/program/internalProgram.service'
-import { InternalCourseService } from '../modules/course/internalCourse.service'
+import { InternalApplicationService } from '../modules/application/internalApplication.service'
 import { University } from '../modules/university/model/university'
-import { Course } from '../modules/course/model/course'
 import { ProgramCourse } from '../modules/program/model/programCourse'
 import { ProgramModeOfDelivery } from '../modules/program/model/programModeOfDelivery'
 import { Program } from '../modules/program/model/program'
 import { ProgramExtraApplicationField } from '../modules/program/model/programExtraApplicationField'
 import { LoggingModule } from '@island.is/logging'
+import { UniversityApplicationService } from '../modules/application/universityApplication.service'
+import { UniversityApplicationModule } from '../modules/application/universityApplication.module'
+import { Application } from '../modules/application/model/application'
 
 @Module({
   imports: [
@@ -49,18 +55,20 @@ import { LoggingModule } from '@island.is/logging'
     }),
     SequelizeModule.forFeature([
       University,
-      Course,
       Program,
       ProgramModeOfDelivery,
       ProgramExtraApplicationField,
       ProgramCourse,
+      Application,
     ]),
     ReykjavikUniversityApplicationClientModule,
     UniversityOfIcelandApplicationClientModule,
     UniversityOfAkureyriApplicationClientModule,
+    BifrostUniversityApplicationClientModule,
     IcelandUniversityOfTheArtsApplicationClientModule,
     AgriculturalUniversityOfIcelandApplicationClientModule,
     HolarUniversityApplicationClientModule,
+    UniversityApplicationModule,
     ConfigModule.forRoot({
       isGlobal: true,
       load: [
@@ -69,6 +77,7 @@ import { LoggingModule } from '@island.is/logging'
         ReykjavikUniversityApplicationClientConfig,
         UniversityOfIcelandApplicationClientConfig,
         UniversityOfAkureyriApplicationClientConfig,
+        BifrostUniversityApplicationClientConfig,
         IcelandUniversityOfTheArtsApplicationClientConfig,
         AgriculturalUniversityOfIcelandApplicationClientConfig,
         HolarUniversityApplicationClientConfig,
@@ -77,8 +86,9 @@ import { LoggingModule } from '@island.is/logging'
   ],
   providers: [
     InternalProgramService,
-    InternalCourseService,
+    InternalApplicationService,
     UniversityGatewayWorkerService,
+    UniversityApplicationService,
   ],
 })
 export class UniversityGatewayWorkerModule {}

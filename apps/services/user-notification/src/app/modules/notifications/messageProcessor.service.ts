@@ -1,6 +1,5 @@
 import { Injectable } from '@nestjs/common'
 import { Notification } from './types'
-import { UserProfileDto } from '@island.is/clients/user-profile'
 import { NotificationsService } from './notifications.service'
 import { CreateHnippNotificationDto } from './dto/createHnippNotification.dto'
 
@@ -16,15 +15,20 @@ export class MessageProcessorService {
 
   async convertToNotification(
     message: CreateHnippNotificationDto,
-    profile: UserProfileDto,
+    locale?: string | null | undefined,
   ): Promise<Notification> {
     const template = await this.notificationsService.getTemplate(
       message.templateId,
-      profile.locale,
+      locale,
     )
     const notification = this.notificationsService.formatArguments(
       message.args,
-      template,
+      // We need to pass the template as a new object to avoid tempering with
+      // the template object from the memory cache.
+      // Shallow copy is enough with the current definition of HnippTemplate (./dto/hnippTemplate.response.ts)
+      {
+        ...template,
+      },
     )
 
     return {

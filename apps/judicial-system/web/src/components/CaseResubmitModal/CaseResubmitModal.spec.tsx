@@ -1,6 +1,9 @@
 import { createIntl } from 'react-intl'
 
-import { RequestSharedWithDefender } from '@island.is/judicial-system-web/src/graphql/schema'
+import {
+  DateType,
+  RequestSharedWithDefender,
+} from '@island.is/judicial-system-web/src/graphql/schema'
 import { TempCase as Case } from '@island.is/judicial-system-web/src/types'
 
 import { getCaseResubmittedText } from './CaseResubmitModal'
@@ -15,8 +18,16 @@ describe('getCaseResubmittedText', () => {
 
   test('should format correctly when court date has been set and defender is set to receive access when the court date is set', () => {
     const theCase = {
-      courtDate: '2022-06-13T13:37:00Z',
+      id: 'abc',
       requestSharedWithDefender: RequestSharedWithDefender.COURT_DATE,
+      dateLogs: [
+        {
+          caseId: 'abc',
+          created: '2022-06-13',
+          date: '2022-06-13T13:37:00Z',
+          dateType: DateType.COURT_DATE,
+        },
+      ],
     } as Case
 
     const res = fn(theCase)
@@ -27,14 +38,19 @@ describe('getCaseResubmittedText', () => {
   })
 
   it.each`
-    courtDate                 | requestSharedWithDefender
-    ${undefined}              | ${RequestSharedWithDefender.COURT_DATE}
-    ${'2022-06-13T13:37:00Z'} | ${undefined}
-    ${undefined}              | ${undefined}
+    id       | dateLogs     | requestSharedWithDefender
+    ${'abc'} | ${undefined} | ${RequestSharedWithDefender.COURT_DATE}
+    ${'abc'} | ${[{
+    caseId: 'abc',
+    date: '2022-06-13T13:37:00Z',
+    created: '2022-06-13',
+    dateType: DateType.COURT_DATE,
+  }]} | ${undefined}
+    ${'abc'} | ${undefined} | ${undefined}
   `(
     'should not include section about notification',
-    ({ courtDate, requestSharedWithDefender }) => {
-      const theCase = { courtDate, requestSharedWithDefender } as Case
+    ({ id, dateLogs, requestSharedWithDefender }) => {
+      const theCase = { id, dateLogs, requestSharedWithDefender } as Case
 
       const res = fn(theCase)
 

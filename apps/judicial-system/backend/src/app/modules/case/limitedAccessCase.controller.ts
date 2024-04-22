@@ -28,8 +28,10 @@ import {
 } from '@island.is/judicial-system/auth'
 import type { User as TUser } from '@island.is/judicial-system/types'
 import {
+  CaseAppealRulingDecision,
   CaseAppealState,
   CaseState,
+  CaseTransition,
   CaseType,
   indictmentCases,
   investigationCases,
@@ -163,6 +165,14 @@ export class LimitedAccessCaseController {
 
     if (update.appealState === CaseAppealState.APPEALED) {
       update.accusedPostponedAppealDate = nowFactory()
+    }
+
+    if (
+      transition.transition === CaseTransition.WITHDRAW_APPEAL &&
+      !theCase.appealRulingDecision &&
+      theCase.appealState === CaseAppealState.RECEIVED
+    ) {
+      update.appealRulingDecision = CaseAppealRulingDecision.DISCONTINUED
     }
 
     const updatedCase = await this.limitedAccessCaseService.update(

@@ -13,13 +13,9 @@ import {
 import { ConnectedComponent } from '@island.is/web/graphql/schema'
 import { useNamespace } from '@island.is/web/hooks'
 import { useI18n } from '@island.is/web/i18n'
+import { formatCurrency } from '@island.is/web/utils/currency'
 
 const MAX_KILOMETER_INPUT_LENGTH = 10
-
-const formatCurrency = (answer: number | null | undefined) => {
-  if (typeof answer !== 'number') return answer
-  return String(Math.round(answer)).replace(/\B(?=(\d{3})+(?!\d))/g, '.')
-}
 
 const calculate = (inputState: InputState, slice: ConnectedComponent) => {
   let unit = 0

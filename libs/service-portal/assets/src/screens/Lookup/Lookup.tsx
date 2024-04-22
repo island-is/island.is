@@ -30,6 +30,7 @@ import {
   useGetUsersVehiclesSearchLimitLazyQuery,
   useGetVehiclesSearchLazyQuery,
 } from './Lookup.generated'
+import { Problem } from '@island.is/react-spa/shared'
 
 const Lookup = () => {
   useNamespaces('sp.vehicles')
@@ -101,20 +102,6 @@ const Lookup = () => {
     }
   }, [searchLimitData?.data?.vehiclesSearchLimit])
 
-  if (!loading && error) {
-    return (
-      <ErrorScreen
-        figure="./assets/images/hourglass.svg"
-        tagVariant="red"
-        tag={formatMessage(m.errorTitle)}
-        title={formatMessage(m.somethingWrong)}
-        children={formatMessage(m.errorFetchModule, {
-          module: formatMessage(messages.title).toLowerCase(),
-        })}
-      />
-    )
-  }
-
   const confirmSearch = () => {
     getVehiclesSearch({
       variables: {
@@ -137,110 +124,120 @@ const Lookup = () => {
           serviceProviderSlug={SAMGONGUSTOFA_SLUG}
           serviceProviderTooltip={formatMessage(m.vehiclesTooltip)}
         />
-        <GridRow>
-          <GridColumn span="1/1">
-            <Accordion dividerOnTop={false}>
-              <AccordionItem
-                id="terms-1"
-                label={formatMessage(messages.termsTitle)}
-                labelUse="h5"
-                expanded={expanded}
-                onToggle={(expanded) => setExpanded(expanded)}
-              >
-                <BulletList>
-                  <Bullet>
-                    <Text as="p" variant="small">
-                      {formatMessage(messages.termsBulletOne)}
-                    </Text>
-                  </Bullet>
-                  <Bullet>
-                    <Text as="p" variant="small">
-                      {formatMessage(messages.termsBulletTwo)}
-                    </Text>
-                  </Bullet>
-                  <Bullet>
-                    <Text as="p" variant="small">
-                      {formatMessage(messages.termsBulletThree)}
-                    </Text>
-                  </Bullet>
-                  <Bullet>
-                    <Text as="p" variant="small">
-                      {formatMessage(messages.termsBulletFour)}
-                    </Text>
-                  </Bullet>
-                  <Bullet>
-                    <Text as="p" variant="small">
-                      {formatMessage(messages.termsBulletFive)}
-                    </Text>
-                  </Bullet>
-                </BulletList>
-                <Box marginTop={3} marginBottom={4}>
-                  <Button
-                    size="small"
-                    variant="ghost"
-                    disabled={termsAccepted}
-                    onClick={
-                      !termsAccepted
-                        ? () => {
-                            setTermsAccepted(true)
-                            setExpanded(false)
-                          }
-                        : undefined
-                    }
-                    icon={termsAccepted ? 'checkmark' : undefined}
-                  >
-                    {' '}
-                    {!termsAccepted
-                      ? formatMessage(messages.acceptTerms)
-                      : formatMessage(messages.termsAccepted)}
-                  </Button>
-                </Box>
-              </AccordionItem>
-            </Accordion>
+        {error && !loading && <Problem error={error} noBorder={false} />}
+        {!error && (
+          <GridRow>
+            <GridColumn span="1/1">
+              <Accordion dividerOnTop={false}>
+                <AccordionItem
+                  id="terms-1"
+                  label={formatMessage(messages.termsTitle)}
+                  labelUse="h5"
+                  expanded={expanded}
+                  onToggle={(expanded) => setExpanded(expanded)}
+                >
+                  <BulletList>
+                    <Bullet>
+                      <Text as="p" variant="small">
+                        {formatMessage(messages.termsBulletOne)}
+                      </Text>
+                    </Bullet>
+                    <Bullet>
+                      <Text as="p" variant="small">
+                        {formatMessage(messages.termsBulletTwo)}
+                      </Text>
+                    </Bullet>
+                    <Bullet>
+                      <Text as="p" variant="small">
+                        {formatMessage(messages.termsBulletThree)}
+                      </Text>
+                    </Bullet>
+                    <Bullet>
+                      <Text as="p" variant="small">
+                        {formatMessage(messages.termsBulletFour)}
+                      </Text>
+                    </Bullet>
+                    <Bullet>
+                      <Text as="p" variant="small">
+                        {formatMessage(messages.termsBulletFive)}
+                      </Text>
+                    </Bullet>
+                  </BulletList>
+                  <Box marginTop={3} marginBottom={4}>
+                    <Button
+                      size="small"
+                      variant="ghost"
+                      disabled={termsAccepted}
+                      onClick={
+                        !termsAccepted
+                          ? () => {
+                              setTermsAccepted(true)
+                              setExpanded(false)
+                            }
+                          : undefined
+                      }
+                      icon={termsAccepted ? 'checkmark' : undefined}
+                    >
+                      {' '}
+                      {!termsAccepted
+                        ? formatMessage(messages.acceptTerms)
+                        : formatMessage(messages.termsAccepted)}
+                    </Button>
+                  </Box>
+                </AccordionItem>
+              </Accordion>
+            </GridColumn>
+          </GridRow>
+        )}
+      </Box>
+      {!error && (
+        <GridRow marginTop={2}>
+          {limitExceeded && !noSearchData && (
+            <GridColumn span={['9/9', '9/9', '9/9']}>
+              <Text marginBottom={4}>
+                {formatMessage(messages.searchLimitExceeded)}
+              </Text>
+            </GridColumn>
+          )}
+          <GridColumn span={['9/9', '9/9', '9/9']}>
+            <Box
+              display="flex"
+              flexDirection={['column', 'row']}
+              alignItems={['flexStart', 'flexEnd']}
+            >
+              <Input
+                icon={{ name: 'search' }}
+                backgroundColor="blue"
+                size="xs"
+                value={searchValue}
+                onChange={(ev) => setSearchValue(ev.target.value)}
+                name="uppfletting-okutaekjaskra-leit"
+                label={formatMessage(messages.searchLabel)}
+                placeholder={formatMessage(messages.searchPlaceholder)}
+                disabled={!termsAccepted || limitExceeded}
+              />
+              <Box marginLeft={[0, 3]} marginTop={[2, 0]}>
+                <Button
+                  disabled={!termsAccepted || limitExceeded}
+                  variant="ghost"
+                  size="small"
+                  onClick={() => confirmSearch()}
+                  loading={infoLoading || loading}
+                >
+                  {formatMessage(messages.search)} {' ('}
+                  {limit}
+                  {')'}
+                </Button>
+              </Box>
+            </Box>
           </GridColumn>
         </GridRow>
-      </Box>
-      <GridRow marginTop={2}>
-        {limitExceeded && !noSearchData && (
-          <GridColumn span={['9/9', '9/9', '9/9']}>
-            <Text marginBottom={4}>
-              {formatMessage(messages.searchLimitExceeded)}
-            </Text>
-          </GridColumn>
-        )}
-        <GridColumn span={['9/9', '9/9', '9/9']}>
-          <Box
-            display="flex"
-            flexDirection={['column', 'row']}
-            alignItems={['flexStart', 'flexEnd']}
-          >
-            <Input
-              icon={{ name: 'search' }}
-              backgroundColor="blue"
-              size="xs"
-              value={searchValue}
-              onChange={(ev) => setSearchValue(ev.target.value)}
-              name="uppfletting-okutaekjaskra-leit"
-              label={formatMessage(messages.searchLabel)}
-              placeholder={formatMessage(messages.searchPlaceholder)}
-              disabled={!termsAccepted || limitExceeded}
-            />
-            <Box marginLeft={[0, 3]} marginTop={[2, 0]}>
-              <Button
-                disabled={!termsAccepted || limitExceeded}
-                variant="ghost"
-                size="small"
-                onClick={() => confirmSearch()}
-                loading={infoLoading || loading}
-              >
-                {formatMessage(messages.search)} {' ('}
-                {limit}
-                {')'}
-              </Button>
-            </Box>
-          </Box>
-        </GridColumn>
-      </GridRow>
+      )}
+      {infoCalled && infoError && (
+        <Box marginTop={4}>
+          <Problem error={infoError} size="small" />
+        </Box>
+      )}
       {infoCalled && !infoError && !infoLoading && noInfo && (
         <Box marginTop={4}>
           <Text variant="h4" as="h3">

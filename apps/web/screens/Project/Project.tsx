@@ -19,6 +19,7 @@ import {
   Stepper,
   stepperUtils,
   TabSectionSlice,
+  TOC,
   Webreader,
 } from '@island.is/web/components'
 import { SLICE_SPACING } from '@island.is/web/constants'
@@ -33,6 +34,7 @@ import {
 } from '@island.is/web/graphql/schema'
 import { linkResolver, useNamespace } from '@island.is/web/hooks'
 import useContentfulId from '@island.is/web/hooks/useContentfulId'
+import { useI18n } from '@island.is/web/i18n'
 import { withMainLayout } from '@island.is/web/layouts/main'
 import { GET_PROJECT_PAGE_QUERY } from '@island.is/web/screens/queries/Project'
 import { CustomNextError } from '@island.is/web/units/errors'
@@ -42,7 +44,6 @@ import { Screen } from '../../types'
 import { GET_NAMESPACE_QUERY } from '../queries'
 import { ProjectFooter } from './components/ProjectFooter'
 import { ProjectWrapper } from './components/ProjectWrapper'
-import { TOC } from './ProjectTableOfContents'
 import { getThemeConfig } from './utils'
 
 interface PageProps {
@@ -64,6 +65,7 @@ const ProjectPage: Screen<PageProps> = ({
 }) => {
   const n = useNamespace(namespace)
   const p = useNamespace(projectNamespace)
+  const { activeLocale } = useI18n()
 
   const router = useRouter()
 
@@ -136,6 +138,8 @@ const ProjectPage: Screen<PageProps> = ({
   const shouldDisplayWebReader =
     projectNamespace?.shouldDisplayWebReader ?? true
 
+  const pageSlices = (subpage ?? projectPage)?.slices ?? []
+
   return (
     <>
       <HeadWithSocialSharing
@@ -177,21 +181,17 @@ const ProjectPage: Screen<PageProps> = ({
               />
             )}
             {subpage.showTableOfContents && (
-              <Box className="rs_read">
+              <Box marginY={6} className="rs_read">
                 <TOC slices={subpage.slices} title={navigationTitle} />
               </Box>
             )}
             {subpage.content && (
               <Box className="rs_read">
-                {webRichText(subpage.content as SliceType[], {
-                  renderComponent: {
-                    // eslint-disable-next-line @typescript-eslint/ban-ts-comment
-                    // @ts-ignore make web strict
-                    Form: (slice) => (
-                      <Form form={slice} namespace={namespace} />
-                    ),
-                  },
-                })}
+                {webRichText(
+                  subpage.content as SliceType[],
+                  undefined,
+                  activeLocale,
+                )}
               </Box>
             )}
           </Box>
@@ -232,9 +232,6 @@ const ProjectPage: Screen<PageProps> = ({
               renderComponent: {
                 // eslint-disable-next-line @typescript-eslint/ban-ts-comment
                 // @ts-ignore make web strict
-                Form: (slice) => <Form form={slice} namespace={namespace} />,
-                // eslint-disable-next-line @typescript-eslint/ban-ts-comment
-                // @ts-ignore make web strict
                 TabSection: (slice) => (
                   <TabSectionSlice
                     slice={slice}
@@ -256,10 +253,10 @@ const ProjectPage: Screen<PageProps> = ({
             />
           </Box>
         )}
-        {!renderSlicesAsTabs && (
+        {!renderSlicesAsTabs && pageSlices.length > 0 && (
           <Stack space={SLICE_SPACING}>
-            {(subpage ?? projectPage)?.slices.map((slice: Slice, index) => {
-              const sliceCount = (subpage ?? projectPage)?.slices?.length
+            {pageSlices.map((slice: Slice, index) => {
+              const sliceCount = pageSlices.length
               return (
                 <Box className="rs_read">
                   <SliceMachine

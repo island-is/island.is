@@ -41,20 +41,6 @@ const FinanceSchedule = () => {
 
   const applicationButtonText = formatMessage(messages.scheduleApplication)
 
-  if (paymentSchedulesError && !paymentSchedulesLoading) {
-    return (
-      <ErrorScreen
-        figure="./assets/images/hourglass.svg"
-        tagVariant="red"
-        tag={formatMessage(coreMessage.errorTitle)}
-        title={formatMessage(coreMessage.somethingWrong)}
-        children={formatMessage(coreMessage.errorFetchModule, {
-          module: formatMessage(coreMessage.finance).toLowerCase(),
-        })}
-      />
-    )
-  }
-
   if (
     recordsData.length <= 0 &&
     !paymentSchedulesLoading &&
@@ -94,46 +80,59 @@ const FinanceSchedule = () => {
             'Hér getur þú gert greiðsluáætlun ef þú vilt dreifa greiðslum á skuld þinni við ríkissjóð og stofnanir. Hér getur þú einnig séð eldri greiðsluáætlanir. Ef Greiðsluáætlunin er greidd hraðar niður en áætlunin segir til um, munu greiðsluseðlar ekki berast þegar hún er upp greidd og engar eftirstöðvar eftir.',
         })}
       />
-      <Stack space={2}>
-        {!isDelegation && (
-          <GridRow>
-            <GridColumn span={['12/12', '12/12', '12/12', '4/12']}>
-              <Box display="flex" height="full">
-                <a
-                  href="/umsoknir/greidsluaaetlun/"
-                  target="_blank"
-                  rel="noreferrer"
-                >
-                  <Button
-                    colorScheme="default"
-                    icon="receipt"
-                    iconType="filled"
-                    preTextIconType="outline"
-                    size="default"
-                    type="button"
-                    variant="utility"
-                    as="span"
-                    unfocusable
+      {paymentSchedulesError && !paymentSchedulesLoading && (
+        <ErrorScreen
+          figure="./assets/images/hourglass.svg"
+          tagVariant="red"
+          tag={formatMessage(coreMessage.errorTitle)}
+          title={formatMessage(coreMessage.somethingWrong)}
+          children={formatMessage(coreMessage.errorFetchModule, {
+            module: formatMessage(coreMessage.finance).toLowerCase(),
+          })}
+        />
+      )}
+      {!paymentSchedulesError && (
+        <Stack space={2}>
+          {!isDelegation && (
+            <GridRow>
+              <GridColumn span={['12/12', '12/12', '12/12', '4/12']}>
+                <Box display="flex" height="full">
+                  <a
+                    href="/umsoknir/greidsluaaetlun/"
+                    target="_blank"
+                    rel="noreferrer"
                   >
-                    {applicationButtonText}
-                  </Button>
-                </a>
-              </Box>
-            </GridColumn>
-          </GridRow>
-        )}
-        <Box marginTop={4}>
-          {paymentSchedulesLoading && !paymentSchedulesError && (
-            <Box padding={3}>
-              <SkeletonLoader space={1} height={40} repeat={5} />
-            </Box>
+                    <Button
+                      colorScheme="default"
+                      icon="receipt"
+                      iconType="filled"
+                      preTextIconType="outline"
+                      size="default"
+                      type="button"
+                      variant="utility"
+                      as="span"
+                      unfocusable
+                    >
+                      {applicationButtonText}
+                    </Button>
+                  </a>
+                </Box>
+              </GridColumn>
+            </GridRow>
           )}
+          <Box marginTop={4}>
+            {paymentSchedulesLoading && !paymentSchedulesError && (
+              <Box padding={3}>
+                <SkeletonLoader space={1} height={40} repeat={5} />
+              </Box>
+            )}
 
-          {recordsData.length > 0 ? (
-            <FinanceScheduleTable recordsArray={recordsData} />
-          ) : null}
-        </Box>
-      </Stack>
+            {recordsData.length > 0 ? (
+              <FinanceScheduleTable recordsArray={recordsData} />
+            ) : null}
+          </Box>
+        </Stack>
+      )}
       <FootNote serviceProviderSlug={FJARSYSLAN_SLUG} />
     </Box>
   )

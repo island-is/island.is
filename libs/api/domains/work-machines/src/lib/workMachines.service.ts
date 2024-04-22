@@ -55,8 +55,12 @@ export class WorkMachinesService {
   async getWorkMachines(
     user: User,
     input: GetWorkMachineCollectionInput,
-  ): Promise<PaginatedCollectionResponse> {
+  ): Promise<PaginatedCollectionResponse | null> {
     const data = await this.machineService.getWorkMachines(user, input)
+
+    if (!data) {
+      return null
+    }
 
     if (!data.links || !data.pagination || !data.labels) {
       this.logger.warn(
@@ -102,6 +106,10 @@ export class WorkMachinesService {
   ): Promise<WorkMachine | null> {
     const data = await this.machineService.getWorkMachineById(user, input)
 
+    if (!data) {
+      return null
+    }
+
     if (!data.links || !data.labels) {
       this.logger.warn('No links or label in work machine response')
     }
@@ -124,8 +132,20 @@ export class WorkMachinesService {
   getDocuments = (user: User, input: GetDocumentsInput): Promise<Blob> =>
     this.machineService.getDocuments(user, input)
 
-  async getMachineDetails(auth: User, id: string): Promise<MachineDto> {
-    return this.machineService.getMachineDetail(auth, id)
+  async getMachineDetails(
+    auth: User,
+    id: string,
+    rel: string,
+  ): Promise<MachineDto> {
+    return this.machineService.getMachineDetail(auth, id, rel)
+  }
+
+  async getMachineByRegno(
+    auth: User,
+    regNumber: string,
+    rel: string,
+  ): Promise<MachineDto> {
+    return this.machineService.getMachineByRegno(auth, regNumber, rel)
   }
 
   async isPaymentRequired(auth: User, regNumber: string): Promise<boolean> {

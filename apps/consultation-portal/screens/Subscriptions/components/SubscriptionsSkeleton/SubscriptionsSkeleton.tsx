@@ -87,6 +87,7 @@ const SubscriptionsSkeleton = ({
             <Stack space={[3, 3, 3, 5, 5]}>
               <Stack space={3}>
                 <Text
+                  as="h1"
                   variant="h1"
                   color="dark400"
                   dataTestId="subscriptions-title"
@@ -117,26 +118,24 @@ const SubscriptionsSkeleton = ({
         </GridContainer>
       </Box>
       <Divider />
-      {isAuthenticated && !userLoading && emailVerified && (
-        <GridContainer>
-          <Box paddingTop={[3, 3, 3, 5, 5]}>
-            {isMySubscriptions && getUserSubsLoading ? (
-              <>
-                <LoadingDots />
-              </>
-            ) : (
-              <Tabs
-                selected={currentTab}
-                onlyRenderSelectedTab={true}
-                label={loc.tabsLabel}
-                tabs={tabs}
-                contentBackground="transparent"
-                onChange={(e: Area) => setCurrentTab(e)}
-              />
-            )}
-          </Box>
-        </GridContainer>
-      )}
+      <GridContainer>
+        <Box paddingTop={[3, 3, 3, 5, 5]}>
+          {isMySubscriptions && getUserSubsLoading ? (
+            <LoadingDots />
+          ) : isAuthenticated && !userLoading && emailVerified ? (
+            <Tabs
+              selected={currentTab}
+              onlyRenderSelectedTab={true}
+              label={loc.tabsLabel}
+              tabs={tabs}
+              contentBackground="transparent"
+              onChange={(e: Area) => setCurrentTab(e)}
+            />
+          ) : (
+            <></>
+          )}
+        </Box>
+      </GridContainer>
     </Layout>
   )
 }

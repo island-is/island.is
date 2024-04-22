@@ -3,6 +3,7 @@ import { uuid } from 'uuidv4'
 import {
   CaseState,
   completedCaseStates,
+  DateType,
   defenceRoles,
   indictmentCases,
   investigationCases,
@@ -11,7 +12,7 @@ import {
   User,
 } from '@island.is/judicial-system/types'
 
-import { Case } from '../..'
+import { Case } from '../../models/case.model'
 import { verifyFullAccess, verifyNoAccess } from './verify'
 
 describe.each(defenceRoles)('defence user %s', (role) => {
@@ -105,7 +106,7 @@ describe.each(defenceRoles)('defence user %s', (role) => {
             state: CaseState.RECEIVED,
             requestSharedWithDefender:
               RequestSharedWithDefender.READY_FOR_COURT,
-            courtDate: new Date(),
+            dateLogs: [{ dateType: DateType.COURT_DATE, date: new Date() }],
           } as Case
 
           verifyNoAccess(theCase, user)
@@ -128,7 +129,7 @@ describe.each(defenceRoles)('defence user %s', (role) => {
             type,
             state: CaseState.RECEIVED,
             defenderNationalId: user.nationalId,
-            courtDate: new Date(),
+            dateLogs: [{ dateType: DateType.COURT_DATE, date: new Date() }],
           } as Case
 
           verifyFullAccess(theCase, user)

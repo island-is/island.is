@@ -33,6 +33,7 @@ export const mapCaseStateToTagVariant = (
   switch (state) {
     case CaseState.NEW:
     case CaseState.DRAFT:
+    case CaseState.WAITING_FOR_CONFIRMATION:
       return { color: 'red', text: formatMessage(m.draft) }
     case CaseState.SUBMITTED:
       return {

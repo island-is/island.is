@@ -96,7 +96,7 @@ const Subtitle = styled.View`
 const SubtitleText = styled.Text`
   ${font({
     fontSize: 15,
-    color: (props) => props.theme.color.dark400,
+    color: (props) => ({ light: props.theme.color.dark400, dark: '#e0e0e0' }),
     fontWeight: '300',
   })}
 `

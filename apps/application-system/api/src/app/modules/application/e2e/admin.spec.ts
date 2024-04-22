@@ -21,7 +21,7 @@ const mockAuthGaurdUserWithAdminScope = new MockAuthGuard({
   scope: [
     ApplicationScope.read,
     ApplicationScope.write,
-    AdminPortalScope.applicationSystem,
+    AdminPortalScope.applicationSystemAdmin,
   ],
 })
 

@@ -1,5 +1,6 @@
 import dynamic from 'next/dynamic'
 
+import { SectionWithImage, SliceType } from '@island.is/island-ui/contentful'
 import {
   Box,
   GridColumn,
@@ -144,7 +145,6 @@ const renderSlice = (
       return <EventSlice slice={slice} />
     case 'LatestNewsSlice':
       return <LatestNewsSlice slice={slice} slug={slug} {...params} />
-    case 'LifeEventPageListSlice':
     case 'AnchorPageListSlice':
       return (
         <AnchorPageListSlice slice={slice} namespace={namespace} {...params} />
@@ -166,6 +166,15 @@ const renderSlice = (
           slug={slug}
           namespace={namespace}
           {...params}
+        />
+      )
+    case 'SectionWithImage':
+      return (
+        <SectionWithImage
+          title={slice.title}
+          content={slice.content as SliceType[]}
+          image={slice.image ?? undefined}
+          contain={true}
         />
       )
     default:

@@ -1,5 +1,6 @@
 import { Injectable } from '@nestjs/common'
 import {
+  ApplicationApi,
   ProgramApi,
   University,
   UniversityApi,
@@ -17,14 +18,24 @@ import {
   DegreeType,
   ModeOfDelivery,
   Season,
+  ProgramStatus,
 } from '@island.is/university-gateway'
+import { Auth, AuthMiddleware } from '@island.is/auth-nest-tools'
+import { convertHtmlToContentfulRichText } from './utils'
 
 @Injectable()
 export class UniversityGatewayApi {
   constructor(
     private readonly programApi: ProgramApi,
     private readonly universityApi: UniversityApi,
+    private readonly universityApplicationApi: ApplicationApi,
   ) {}
+
+  private universityApplicationApiWithAuth(auth: Auth) {
+    return this.universityApplicationApi.withMiddleware(
+      new AuthMiddleware(auth),
+    )
+  }
 
   async getActivePrograms(): Promise<UniversityGatewayProgramsPaginated> {
     const res = await this.programApi.programControllerGetPrograms({
@@ -64,6 +75,8 @@ export class UniversityGatewayApi {
         modeOfDelivery: item.modeOfDelivery.map((m) =>
           m.modeOfDelivery.toString(),
         ),
+        applicationPeriodOpen: item.applicationPeriodOpen,
+        applicationInUniversityGateway: item.applicationInUniversityGateway,
       })),
     }
   }
@@ -75,12 +88,26 @@ export class UniversityGatewayApi {
       id: input.id,
     })
 
+    const [descriptionHtmlEn, descriptionHtmlIs] = await Promise.all([
+      convertHtmlToContentfulRichText(
+        item.descriptionEn ?? '',
+        'descriptionHtmlEn',
+      ),
+      convertHtmlToContentfulRichText(
+        item.descriptionIs ?? '',
+        'descriptionHtmlIs',
+      ),
+    ])
+
     return {
       id: item.id,
       externalId: item.externalId,
       active: item.active,
       nameIs: item.nameIs,
       nameEn: item.nameEn,
+      specializationExternalId: item.specializationExternalId,
+      specializationNameIs: item.specializationNameIs,
+      specializationNameEn: item.specializationNameEn,
       universityId: item.universityId,
       universityContentfulKey: item.universityDetails.contentfulKey,
       departmentNameIs: item.departmentNameIs,
@@ -95,6 +122,8 @@ export class UniversityGatewayApi {
       degreeAbbreviation: item.degreeAbbreviation,
       credits: item.credits,
       descriptionIs: item.descriptionIs,
+      descriptionHtmlEn,
+      descriptionHtmlIs,
       descriptionEn: item.descriptionEn,
       durationInYears: item.durationInYears,
       costPerYear: item.costPerYear,
@@ -112,24 +141,9 @@ export class UniversityGatewayApi {
       costInformationEn: item.costInformationEn,
       allowException: item.allowException,
       allowThirdLevelQualification: item.allowThirdLevelQualification,
-      courses: item.courses.map((c) => ({
-        id: c.details.id,
-        externalId: c.details.externalId,
-        nameIs: c.details.nameIs,
-        nameEn: c.details.nameEn,
-        credits: c.details.credits,
-        descriptionIs: c.details.descriptionIs,
-        descriptionEn: c.details.descriptionEn,
-        externalUrlIs: c.details.externalUrlIs,
-        externalUrlEn: c.details.externalUrlEn,
-        requirement: c.requirement.toString(),
-        semesterYear: c.semesterYear,
-        semesterYearNumber: c.semesterYear
-          ? item.startingSemesterYear - c.semesterYear + 1
-          : undefined,
-        semesterSeason: c.semesterSeason.toString(),
-      })),
       extraApplicationFields: item.extraApplicationFields,
+      applicationPeriodOpen: item.applicationPeriodOpen,
+      applicationInUniversityGateway: item.applicationInUniversityGateway,
     }
   }
 
@@ -138,8 +152,25 @@ export class UniversityGatewayApi {
     return res.data
   }
 
+  async getUniversityApplicationById(auth: Auth, id: string) {
+    const results = await this.universityApplicationApiWithAuth(
+      auth,
+    ).universityApplicationControllerGetApplicationById({
+      id: id,
+    })
+
+    return {
+      id: results.id,
+      nationalId: results.nationalId,
+    }
+  }
+
   async getProgramFilters(): Promise<UniversityGatewayProgramFilter[]> {
     return [
+      {
+        field: 'applicationStatus',
+        options: Object.values(ProgramStatus),
+      },
       {
         field: 'degreeType',
         options: Object.values(DegreeType),
@@ -150,17 +181,18 @@ export class UniversityGatewayApi {
       },
       {
         field: 'modeOfDelivery',
-        options: Object.values(ModeOfDelivery),
+        options: Object.values([
+          ModeOfDelivery.ON_SITE,
+          ModeOfDelivery.REMOTE,
+          ModeOfDelivery.ONLINE,
+          ModeOfDelivery.MIXED,
+        ]),
       },
       {
         field: 'universityId',
         options: (
           await this.universityApi.universityControllerGetUniversities()
         ).data.map((item: University) => item.id),
-      },
-      {
-        field: 'durationInYears',
-        options: await this.programApi.programControllerGetDurationInYears(),
       },
     ]
   }

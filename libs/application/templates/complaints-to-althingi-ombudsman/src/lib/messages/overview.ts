@@ -82,7 +82,7 @@ export const complaintOverview = {
     },
     decisionDate: {
       id: 'ctao.application:overview.label.decisionDate',
-      defaultMessage: 'Dagsetning ákvörðunar',
+      defaultMessage: 'Dagsetning',
       description: 'Label for decision date',
     },
     complaintType: {

@@ -12,14 +12,13 @@ import {
 } from '@island.is/island-ui/core'
 import * as constants from '@island.is/judicial-system/consts'
 import { capitalize, formatDate } from '@island.is/judicial-system/formatters'
-import { isAcceptingCaseDecision } from '@island.is/judicial-system/types'
+import { getLatestDateType } from '@island.is/judicial-system/types'
 import {
   core,
   laws,
   rcCourtOverview,
   requestCourtDate,
   restrictionsV2,
-  ruling,
   titles,
 } from '@island.is/judicial-system-web/messages'
 import { lawsBrokenAccordion } from '@island.is/judicial-system-web/messages/Core/lawsBrokenAccordion'
@@ -39,54 +38,36 @@ import {
   UserContext,
 } from '@island.is/judicial-system-web/src/components'
 import { NameAndEmail } from '@island.is/judicial-system-web/src/components/InfoCard/InfoCard'
-import { CaseLegalProvisions } from '@island.is/judicial-system-web/src/graphql/schema'
+import InfoCardCaseScheduled from '@island.is/judicial-system-web/src/components/InfoCard/InfoCardCaseScheduled'
+import {
+  CaseLegalProvisions,
+  CaseState,
+  DateLog,
+  DateType,
+} from '@island.is/judicial-system-web/src/graphql/schema'
 import {
   UploadState,
-  useCase,
   useCourtUpload,
-  useOnceOn,
 } from '@island.is/judicial-system-web/src/utils/hooks'
 import { formatRequestedCustodyRestrictions } from '@island.is/judicial-system-web/src/utils/restrictions'
 
 import { DraftConclusionModal } from '../../components'
 
 export const JudgeOverview: React.FC<React.PropsWithChildren<unknown>> = () => {
-  const {
-    workingCase,
-    setWorkingCase,
-    isLoadingWorkingCase,
-    caseNotFound,
-    isCaseUpToDate,
-  } = useContext(FormContext)
+  const { workingCase, setWorkingCase, isLoadingWorkingCase, caseNotFound } =
+    useContext(FormContext)
   const { user } = useContext(UserContext)
   const { formatMessage } = useIntl()
   const router = useRouter()
   const id = router.query.id
+  const courtDate = getLatestDateType(
+    DateType.COURT_DATE,
+    workingCase.dateLogs,
+  ) as DateLog
 
   const { uploadState } = useCourtUpload(workingCase, setWorkingCase)
-  const { setAndSendCaseToServer } = useCase()
 
   const [isDraftingConclusion, setIsDraftingConclusion] = useState<boolean>()
-
-  const initialize = useCallback(() => {
-    setAndSendCaseToServer(
-      [
-        {
-          ruling: !workingCase.parentCase
-            ? `\n${formatMessage(ruling.autofill, {
-                judgeName: workingCase.judge?.name,
-              })}`
-            : isAcceptingCaseDecision(workingCase.decision)
-            ? workingCase.parentCase.ruling
-            : undefined,
-        },
-      ],
-      workingCase,
-      setWorkingCase,
-    )
-  }, [setAndSendCaseToServer, formatMessage, setWorkingCase, workingCase])
-
-  useOnceOn(isCaseUpToDate, initialize)
 
   const handleNavigationTo = useCallback(
     (destination: string) => router.push(`${destination}/${workingCase.id}`),
@@ -135,12 +116,24 @@ export const JudgeOverview: React.FC<React.PropsWithChildren<unknown>> = () => {
           </Text>
         </Box>
         <CourtCaseInfo workingCase={workingCase} />
+        {workingCase.state === CaseState.RECEIVED &&
+          courtDate &&
+          courtDate.date &&
+          workingCase.court && (
+            <Box component="section" marginBottom={5}>
+              <InfoCardCaseScheduled
+                court={workingCase.court}
+                courtDate={courtDate.date}
+                courtRoom={workingCase.courtRoom}
+              />
+            </Box>
+          )}
         <Box component="section" marginBottom={5}>
           <InfoCard
             data={[
               {
                 title: formatMessage(core.prosecutor),
-                value: `${workingCase.creatingProsecutor?.institution?.name}`,
+                value: `${workingCase.prosecutorsOffice?.name}`,
               },
               {
                 title: formatMessage(requestCourtDate.heading),

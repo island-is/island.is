@@ -52,7 +52,7 @@ export const serviceSetup = (services: {
       },
     })
     .liveness('/liveness')
-    .readiness('/readiness')
+    .readiness({ path: '/readiness', initialDelaySeconds: 20 })
     .resources({
       limits: { cpu: '400m', memory: '768Mi' },
       requests: { cpu: '200m', memory: '384Mi' },
@@ -67,5 +67,12 @@ export const serviceSetup = (services: {
       staging: { basicAuth: '/k8s/web/basic_auth' },
       prod: {},
     })
+    .grantNamespaces(
+      'nginx-ingress-external',
+      'api-catalogue',
+      'application-system',
+      'consultation-portal',
+      'search-indexer',
+    )
   return web
 }

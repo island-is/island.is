@@ -40,7 +40,7 @@ const ArticleSubArticlesField = () => {
       parameters={{
         instance: {
           showCreateEntityAction: true,
-          showLinkEntityAction: true,
+          showLinkEntityAction: sdk.user.spaceMembership.admin,
         },
       }}
       renderCustomActions={(props) => (

@@ -468,6 +468,15 @@ export const m = defineMessages({
     id: 'ap.ids-admin:supports-token-exchange',
     defaultMessage: 'Supports token exchange grant',
   },
+  singleSession: {
+    id: 'ap.ids-admin:single-session',
+    defaultMessage: 'Single session client',
+  },
+  singleSessionDescription: {
+    id: 'ap.ids-admin:single-session-description',
+    defaultMessage:
+      'Only allow users to have one active session in this client at a time. When a user signs in, previously created refresh tokens for that user and client will be disabled.',
+  },
   supportsTokenExchangeDescription: {
     id: 'ap.ids-admin:supports-token-exchange-description',
     defaultMessage:

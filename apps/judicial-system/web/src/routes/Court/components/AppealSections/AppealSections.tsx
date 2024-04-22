@@ -211,7 +211,6 @@ const AppealSections: React.FC<React.PropsWithChildren<Props>> = (props) => {
                   'accusedAppealAnnouncement',
                   event.target.value,
                   [],
-                  workingCase,
                   setWorkingCase,
                 )
               }
@@ -386,7 +385,6 @@ const AppealSections: React.FC<React.PropsWithChildren<Props>> = (props) => {
                   'prosecutorAppealAnnouncement',
                   event.target.value,
                   [],
-                  workingCase,
                   setWorkingCase,
                 )
               }

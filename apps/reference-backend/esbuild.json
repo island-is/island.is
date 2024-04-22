@@ -28,7 +28,8 @@
     "form-data",
     "sequelize",
     "lru-cache",
-    "swagger-ui-dist"
+    "swagger-ui-dist",
+    "@mikro-orm/core"
   ],
   "keepNames": true
 }

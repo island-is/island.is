@@ -15,19 +15,16 @@ See role description further down.
 
 ### Dev
 
-- [Dev - role: citizen](https://beta.dev01.devland.is/app/skilavottord/my-cars)
 - [Dev - role: company](https://beta.dev01.devland.is/app/skilavottord/deregister-vehicle)
 - [Dev - role: fund](https://beta.dev01.devland.is/app/skilavottord/recycled-vehicles)
 
 ### Staging
 
-- [Staging - role: citizen](https://beta.staging01.devland.is/app/skilavottord/my-cars)
 - [Staging - role: company](https://beta.staging01.devland.is/app/skilavottord/deregister-vehicle)
 - [Staging - role: fund](https://beta.staging01.devland.is/app/skilavottord/recycled-vehicles)
 
 ### Prod
 
-- [Prod - role: citizen](https://island.is/app/skilavottord/my-cars)
 - [Prod - role: company](https://island.is/app/skilavottord/deregister-vehicle)
 - [Prod - role: fund](https://island.is/app/skilavottord/recycled-vehicles)
 
@@ -55,7 +52,6 @@ yarn start skilavottord-web
 
 Navigate to:
 
-- [localhost:4200/app/skilavottord/my-cars](http://localhost:4200/app/skilavottord/my-cars)
 - [localhost:4200/app/skilavottord/deregister-vehicle](http://localhost:4200/app/skilavottord/deregister-vehicle)
 - [localhost:4200/app/skilavottord/recycled-vehicles](http://localhost:4200/app/skilavottord/recycled-vehicles)
 
@@ -102,16 +98,6 @@ Visit
 
 ## Application
 
-### Citizen frontend
-
-URL:
-[https://island.is/app/skilavottord/my-cars](https://island.is/app/skilavottord/my-cars)
-
-This site shows a list of vehicles that a user owns. The user can mark their
-car for recycling and get information on where to leave the car. While the car
-is in the recycling process the page will show and update the status
-accordingly.
-
 ### Company frontend
 
 URL:
@@ -123,7 +109,7 @@ here to deregister vehicles that citizens have marked for recycling.
 ### Fund frontend
 
 URL:
-[https://island.is/app/skilavottord/recycled-vehicles](https://island.is/app/skilavottord/deregister-vehicle)
+[https://island.is/app/skilavottord/recycled-vehicles](https://island.is/app/skilavottord/recycled-vehicles)
 
 If users are registered as an employee of Fjársýsla ríkisins, they can log in
 here to see a list of all vehicles that has completed the process of being

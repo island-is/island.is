@@ -26,7 +26,7 @@ import {
 import { createNavigationOptionHooks } from '../../hooks/create-navigation-option-hooks'
 import { openBrowser } from '../../lib/rn-island'
 import { MileageCell } from './components/mileage-cell'
-import { useTheme } from 'styled-components'
+
 const { getNavigationOptions, useNavigationOptions } =
   createNavigationOptionHooks(() => ({
     topBar: {
@@ -54,6 +54,7 @@ export const VehicleMileageScreen: NavigationFunctionComponent<{
 }> = ({ componentId, id, title }) => {
   useNavigationOptions(componentId)
   const intl = useIntl()
+  const dynamicColor = useDynamicColor()
   const [input, setInput] = useState('')
   const info = useGetVehicleQuery({
     fetchPolicy: 'cache-first',
@@ -110,6 +111,8 @@ export const VehicleMileageScreen: NavigationFunctionComponent<{
   const isFormEditable = !!res.data?.vehicleMileageDetails?.editing
   const canRegisterMileage =
     !!res.data?.vehicleMileageDetails?.canRegisterMileage
+  const canUserRegisterVehicleMileage =
+    !!res.data?.vehicleMileageDetails?.canUserRegisterVehicleMileage
 
   const vehicle = useMemo(() => {
     return {
@@ -122,9 +125,9 @@ export const VehicleMileageScreen: NavigationFunctionComponent<{
   }, [info.data, title])
 
   const parseMileage = useCallback(
-    (value?: string) => {
+    (value?: string, allowLower?: boolean) => {
       const mileage = Number(String(value ?? '').replace(/\D/g, ''))
-      if (mileage <= highestMileage) {
+      if (mileage <= highestMileage && !allowLower) {
         Alert.alert(
           intl.formatMessage({ id: 'vehicle.mileage.errorTitle' }),
           intl.formatMessage({ id: 'vehicle.mileage.errorMileageInputTooLow' }),
@@ -180,7 +183,7 @@ export const VehicleMileageScreen: NavigationFunctionComponent<{
         {
           isPreferred: true,
           onPress(value) {
-            const mileage = parseMileage(value)
+            const mileage = parseMileage(value, true)
             const internalId = data[0].internalId
             if (!mileage) {
               return
@@ -261,7 +264,9 @@ export const VehicleMileageScreen: NavigationFunctionComponent<{
                 originCodes[item.originCode as keyof typeof originCodes] ??
                 item.originCode
               }
-              subtitle={<FormattedDate value={item.readDate} />}
+              subtitle={
+                item.readDate ? <FormattedDate value={item.readDate} /> : '-'
+              }
               accessory={
                 item.mileage
                   ? `${intl.formatNumber(parseInt(item.mileage, 10))} km`
@@ -283,6 +288,10 @@ export const VehicleMileageScreen: NavigationFunctionComponent<{
                 key="mileage-input"
                 placeholder={intl.formatMessage({
                   id: 'vehicle.mileage.inputPlaceholder',
+                })}
+                placeholderTextColor={dynamicColor({
+                  light: '#999999',
+                  dark: '#999999',
                 })}
                 label={intl.formatMessage({ id: 'vehicle.mileage.inputLabel' })}
                 value={input}
@@ -316,9 +325,13 @@ export const VehicleMileageScreen: NavigationFunctionComponent<{
                   textAlign="center"
                   style={{ marginTop: 16 }}
                 >
-                  {intl.formatMessage({
-                    id: 'vehicle.mileage.registerIntervalCopy',
-                  })}
+                  {!canUserRegisterVehicleMileage
+                    ? intl.formatMessage({
+                        id: 'vehicle.mileage.youAreNotAllowedCopy',
+                      })
+                    : intl.formatMessage({
+                        id: 'vehicle.mileage.registerIntervalCopy',
+                      })}
                 </Typography>
               )}
               <Button

@@ -1,5 +1,5 @@
 mutation ExtendDeadline($input: SignatureCollectionExtendDeadlineInput!) {
-  signatureCollectionExtendDeadline(input: $input) {
+  signatureCollectionAdminExtendDeadline(input: $input) {
     success
   }
 }

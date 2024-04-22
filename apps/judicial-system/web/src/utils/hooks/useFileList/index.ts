@@ -60,9 +60,9 @@ const useFileList = ({ caseId }: Parameters) => {
         code === 'https://httpstatuses.org/403'
       ) {
         setFileNotFound(true)
-        setWorkingCase((theCase) => ({
-          ...theCase,
-          caseFiles: theCase.caseFiles?.map((file) =>
+        setWorkingCase((prevWorkingCase) => ({
+          ...prevWorkingCase,
+          caseFiles: prevWorkingCase.caseFiles?.map((file) =>
             file.id === variables.input.id
               ? {
                   ...file,
