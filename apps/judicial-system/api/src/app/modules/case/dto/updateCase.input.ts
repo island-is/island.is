@@ -15,6 +15,7 @@ import {
   CaseDecision,
   CaseLegalProvisions,
   CaseType,
+  ExplanatoryComment,
   RequestSharedWithDefender,
   SessionArrangements,
   UserRole,
@@ -357,4 +358,8 @@ export class UpdateCaseInput {
   @Allow()
   @Field({ nullable: true })
   readonly indictmentReturnedExplanation?: string
+
+  @Allow()
+  @Field(() => GraphQLJSONObject, { nullable: true })
+  readonly explanatoryComment?: ExplanatoryComment
 }

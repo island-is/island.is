@@ -34,10 +34,10 @@ import {
   CaseState,
   CaseTransition,
   CaseType,
+  CommentType,
   completedCaseStates,
   DateType,
   EventType,
-  getLatestDateType,
   isIndictmentCase,
   isRestrictionCase,
   NotificationType,
@@ -64,6 +64,7 @@ import { CreateCaseDto } from './dto/createCase.dto'
 import { getCasesQueryFilter } from './filters/cases.filter'
 import { Case } from './models/case.model'
 import { DateLog } from './models/dateLog.model'
+import { ExplanatoryComment } from './models/expalanatoryComment.model'
 import { SignatureConfirmationResponse } from './models/signatureConfirmation.response'
 import { transitionCase } from './state/case.state'
 
@@ -162,10 +163,15 @@ export interface UpdateCase
   parentCaseId?: string | null
   courtDate?: Date | null
   postponedCourtDate?: Date | null
+  explanatoryComment?: {
+    comment: string
+    commentType: CommentType
+  }
 }
 
 const eventTypes = Object.values(EventType)
 const dateTypes = Object.values(DateType)
+const commentTypes = Object.values(CommentType)
 
 export const include: Includeable[] = [
   { model: Institution, as: 'prosecutorsOffice' },
@@ -252,6 +258,12 @@ export const include: Includeable[] = [
     required: false,
     where: { dateType: { [Op.in]: dateTypes } },
   },
+  {
+    model: ExplanatoryComment,
+    as: 'explanatoryComments',
+    required: false,
+    where: { commentType: { [Op.in]: commentTypes } },
+  },
   { model: Notification, as: 'notifications' },
 ]
 
@@ -304,6 +316,8 @@ export class CaseService {
     @InjectConnection() private readonly sequelize: Sequelize,
     @InjectModel(Case) private readonly caseModel: typeof Case,
     @InjectModel(DateLog) private readonly dateLogModel: typeof DateLog,
+    @InjectModel(ExplanatoryComment)
+    private readonly explanatoryCommentModel: typeof ExplanatoryComment,
     private readonly defendantService: DefendantService,
     private readonly fileService: FileService,
     private readonly awsS3Service: AwsS3Service,
@@ -1202,6 +1216,23 @@ export class CaseService {
     }
   }
 
+  private async handleCommentUpdates(
+    theCase: Case,
+    update: UpdateCase,
+    transaction: Transaction,
+  ) {
+    await this.explanatoryCommentModel.create(
+      {
+        caseId: theCase.id,
+        commentType: update.explanatoryComment?.commentType,
+        comment: update.explanatoryComment?.comment,
+      },
+      { transaction },
+    )
+
+    delete update.explanatoryComment
+  }
+
   async update(
     theCase: Case,
     update: UpdateCase,
@@ -1222,6 +1253,7 @@ export class CaseService {
         }
 
         await this.handleDateUpdates(theCase, update, transaction)
+        await this.handleCommentUpdates(theCase, update, transaction)
 
         if (Object.keys(update).length === 0) {
           return

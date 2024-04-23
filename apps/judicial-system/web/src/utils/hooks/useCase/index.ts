@@ -1,6 +1,7 @@
 import { useContext, useMemo } from 'react'
 import { useIntl } from 'react-intl'
 import formatISO from 'date-fns/formatISO'
+import e from 'express'
 import isNil from 'lodash/isNil'
 import isUndefined from 'lodash/isUndefined'
 import omitBy from 'lodash/omitBy'
@@ -260,6 +261,8 @@ const useCase = () => {
         if (!id || Object.keys(updateCase).length === 0) {
           return
         }
+
+        console.log('updateCase', updateCase)
 
         const { data } = await mutation({
           variables: { input: { id, ...updateCase } },

@@ -6,6 +6,7 @@ export { InstitutionType } from './lib/institution'
 export { NotificationType } from './lib/notification'
 export { EventType } from './lib/eventLog'
 export { DateType, getLatestDateType } from './lib/dateLog'
+export { CommentType, ExplanatoryComment } from './lib/comment'
 
 export { CaseFileState, CaseFileCategory } from './lib/file'
 

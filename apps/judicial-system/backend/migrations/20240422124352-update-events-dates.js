@@ -4,12 +4,41 @@ module.exports = {
   up: (queryInterface, Sequelize) => {
     return queryInterface.sequelize.transaction((t) =>
       Promise.all([
-        queryInterface.addColumn(
-          'event_log',
-          'comment',
+        queryInterface.createTable(
+          'explanatory_comment',
           {
-            type: Sequelize.TEXT,
-            allowNull: true,
+            created: {
+              type: 'TIMESTAMP WITH TIME ZONE',
+              defaultValue: Sequelize.literal('CURRENT_TIMESTAMP'),
+              allowNull: false,
+            },
+            modified: {
+              type: 'TIMESTAMP WITH TIME ZONE',
+              defaultValue: Sequelize.literal('CURRENT_TIMESTAMP'),
+              allowNull: false,
+            },
+            id: {
+              type: Sequelize.UUID,
+              primaryKey: true,
+              allowNull: false,
+              defaultValue: Sequelize.UUIDV4,
+            },
+            comment_type: {
+              type: Sequelize.STRING,
+              allowNull: false,
+            },
+            case_id: {
+              type: Sequelize.UUID,
+              references: {
+                model: 'case',
+                key: 'id',
+              },
+              allowNull: false,
+            },
+            comment: {
+              type: Sequelize.TEXT,
+              allowNull: false,
+            },
           },
           { transaction: t },
         ),
@@ -29,9 +58,7 @@ module.exports = {
   down: (queryInterface) => {
     return queryInterface.sequelize.transaction((t) =>
       Promise.all([
-        queryInterface.removeColumn('event_log', 'comment', {
-          transaction: t,
-        }),
+        queryInterface.dropTable('explanatory_comment', { transaction: t }),
         queryInterface.removeColumn('date_log', 'location', {
           transaction: t,
         }),

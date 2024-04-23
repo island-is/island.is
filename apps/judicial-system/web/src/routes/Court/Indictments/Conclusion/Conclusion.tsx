@@ -11,7 +11,10 @@ import {
   toast,
 } from '@island.is/island-ui/core'
 import * as constants from '@island.is/judicial-system/consts'
-import { getLatestDateType } from '@island.is/judicial-system/types'
+import {
+  CommentType,
+  getLatestDateType,
+} from '@island.is/judicial-system/types'
 import { core, errors, titles } from '@island.is/judicial-system-web/messages'
 import {
   BlueBox,
@@ -80,10 +83,20 @@ const Conclusion: React.FC = () => {
 
   const handleNavigationTo = useCallback(
     async (destination: keyof stepValidationsType) => {
-      updateCase(workingCase.id, {
-        postponedCourtDate: postponement?.newDate,
-        courtRoom: postponement?.courtRoom,
-      })
+      console.log(postponement)
+      if (postponement && postponement.postponedIndefinitely) {
+        updateCase(workingCase.id, {
+          explanatoryComment: {
+            comment: postponement.reason,
+            commentType: CommentType.POSTPONED_INDEFINITELY_EXPLANATION,
+          },
+        })
+      } else {
+        updateCase(workingCase.id, {
+          postponedCourtDate: postponement?.newDate,
+          courtRoom: postponement?.courtRoom,
+        })
+      }
       // const transitionSuccessful = await transitionCase(
       //   workingCase.id,
       //   CaseTransition.ACCEPT,
@@ -96,12 +109,7 @@ const Conclusion: React.FC = () => {
       // }
     },
     // [transitionCase, workingCase, formatMessage],
-    [
-      postponement?.courtRoom,
-      postponement?.newDate,
-      updateCase,
-      workingCase.id,
-    ],
+    [postponement, updateCase, workingCase.id],
   )
 
   useEffect(() => {
@@ -201,7 +209,10 @@ const Conclusion: React.FC = () => {
                     m.reasonForPostponementPlaceholder,
                   )}
                   onBlur={(event) =>
-                    setPostponement({ reason: event.target.value })
+                    setPostponement((prev) => ({
+                      ...prev,
+                      reason: event.target.value,
+                    }))
                   }
                   disabled={!postponement?.postponedIndefinitely}
                   textarea
