@@ -15,11 +15,7 @@ const createLocaleToFieldMapping = (sdk: EditorExtensionSDK) => {
       'internalTitle',
     ),
     title: mapLocalesToFieldApis(sdk.locales.available, sdk, 'title'),
-    thumbnailContent: mapLocalesToFieldApis(
-      sdk.locales.available,
-      sdk,
-      'thumbnailContent',
-    ),
+    cardIntro: mapLocalesToFieldApis(sdk.locales.available, sdk, 'cardIntro'),
   }
 }
 
@@ -64,8 +60,8 @@ const ListItemEditor = () => {
         sdk={sdk}
       />
       <ContentfulField
-        displayName="Thumbnail Content"
-        fieldID="thumbnailContent"
+        displayName="Card Intro"
+        fieldID="cardIntro"
         localeToFieldMapping={localeToFieldMapping}
         sdk={sdk}
         widgetId="richTextEditor"

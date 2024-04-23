@@ -11,6 +11,7 @@ export const ContentfulField = (props: {
   fieldID: keyof typeof props.localeToFieldMapping
   displayName: string
   widgetId?: string
+  helpText?: string
 }) => {
   const availableLocales = useMemo(() => {
     const validLocales = props.sdk.locales.available.filter(
@@ -46,6 +47,15 @@ export const ContentfulField = (props: {
         sdk={props.localeToFieldMapping[props.fieldID][locale]}
         name={props.displayName}
         showFocusBar={false}
+        renderHelpText={
+          props.helpText
+            ? () => {
+                return (
+                  <FormControl.HelpText>{props.helpText}</FormControl.HelpText>
+                )
+              }
+            : undefined
+        }
         renderHeading={() => {
           return (
             <Box

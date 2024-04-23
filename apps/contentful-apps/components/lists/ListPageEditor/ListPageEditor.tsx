@@ -36,10 +36,10 @@ const createLocaleToFieldMapping = (sdk: EditorExtensionSDK) => {
       sdk,
       'relativeUrl',
     ),
-    listItemThumbnailContentTemplate: mapLocalesToFieldApis(
+    cardIntroTemplate: mapLocalesToFieldApis(
       sdk.locales.available,
       sdk,
-      'listItemThumbnailContentTemplate',
+      'cardIntroTemplate',
     ),
   }
 }
@@ -93,11 +93,10 @@ const ListPageEditor = () => {
   )
 
   const createListItem = async () => {
-    const thumbnailContent = {}
+    const cardIntro = {}
 
     for (const locale of sdk.locales.available) {
-      thumbnailContent[locale] =
-        sdk.entry.fields.listItemThumbnailContentTemplate.getValue(locale)
+      cardIntro[locale] = sdk.entry.fields.cardIntroTemplate.getValue(locale)
     }
 
     const listItem = await cma.entry.create(
@@ -117,7 +116,7 @@ const ListPageEditor = () => {
               },
             },
           },
-          thumbnailContent,
+          cardIntro,
         },
       },
     )
@@ -167,10 +166,11 @@ const ListPageEditor = () => {
       />
 
       <ContentfulField
-        fieldID="listItemThumbnailContentTemplate"
-        displayName="Intro Template"
+        fieldID="cardIntroTemplate"
+        displayName="Card Intro Template"
         localeToFieldMapping={localeToFieldMapping}
         sdk={sdk}
+        helpText="This text will be copied to the Card Intro field of a newly created List Item"
       />
 
       <Box>
