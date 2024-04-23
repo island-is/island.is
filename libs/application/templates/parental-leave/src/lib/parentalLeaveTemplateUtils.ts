@@ -127,11 +127,7 @@ export const findActionName = (context: ApplicationContext) => {
     }
 
     // If the applicant has selected add employee and/or period at some point
-    if (
-      changeEmployerFile &&
-      tmpChangeEmployer &&
-      tmpChangePeriods
-    ) {
+    if (changeEmployerFile && tmpChangeEmployer && tmpChangePeriods) {
       return FileType.EMPDOCPER
     } else if (changeEmployerFile && tmpChangeEmployer) {
       return FileType.EMPDOC
