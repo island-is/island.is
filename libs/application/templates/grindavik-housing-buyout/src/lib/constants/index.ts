@@ -7,6 +7,12 @@ export enum States {
   PREREQUISITES = 'prerequisites',
   DRAFT = 'draft',
   IN_REVIEW = 'inReview',
+  SENT_TO_THORKATLA = 'sentToThorkatla',
+  APPROVED_BY_THORKATLA = 'approvedByThorkatla',
+  PURCHASE_AGREEMENT_SENT_FOR_SIGNING = 'purchaseAgreementSentForSigning',
+  PURCHASE_AGREEMENT_RECEIVED_FROM_SIGNING = 'purchaseAgreementReceivedFromSigning',
+  PURCHASE_AGREEMENT_DECLARED = 'purchaseAgreementDeclared',
+  PAID_OUT = 'paidOut',
   APPROVED = 'approved',
   REJECTED = 'rejected',
 }
