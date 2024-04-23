@@ -403,25 +403,19 @@ OJOICategories.getProps = async ({ apolloClient, locale }) => {
     apolloClient.query<Query, QueryOfficialJournalOfIcelandMainCategoriesArgs>({
       query: MAIN_CATEGORIES_QUERY,
       variables: {
-        params: {
-          search: '',
-        },
+        params: {},
       },
     }),
     apolloClient.query<Query, QueryOfficialJournalOfIcelandCategoriesArgs>({
       query: CATEGORIES_QUERY,
       variables: {
-        params: {
-          search: '',
-        },
+        params: {},
       },
     }),
     apolloClient.query<Query, QueryOfficialJournalOfIcelandDepartmentsArgs>({
       query: DEPARTMENTS_QUERY,
       variables: {
-        params: {
-          search: '',
-        },
+        params: {},
       },
     }),
     apolloClient.query<Query, QueryGetOrganizationArgs>({
