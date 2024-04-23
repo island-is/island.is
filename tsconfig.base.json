@@ -676,6 +676,9 @@
       "@island.is/clients/official-journal-of-iceland": [
         "libs/clients/official-journal-of-iceland/public/src/index.ts"
       ],
+      "@island.is/clients/official-journal-of-iceland/application": [
+        "libs/clients/official-journal-of-iceland/application/src/index.ts"
+      ],
       "@island.is/clients/p-card": ["libs/clients/p-card/src/index.ts"],
       "@island.is/clients/passports": ["libs/clients/passports/src/index.ts"],
       "@island.is/clients/payment-schedule": [

@@ -178,3 +178,5 @@ export const CATEGORIES_QUERY = gql`
     }
   }
 `
+
+export const COMMENTS_QUERY = gql``
