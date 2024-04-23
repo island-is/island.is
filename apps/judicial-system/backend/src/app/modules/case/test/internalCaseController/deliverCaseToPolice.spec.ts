@@ -70,6 +70,7 @@ describe('InternalCaseController - Deliver case to police', () => {
     const caseType = CaseType.CUSTODY
     const caseState = CaseState.ACCEPTED
     const policeCaseNumber = uuid()
+    const courtCaseNumber = uuid()
     const defendantNationalId = '0123456789'
     const validToDate = randomDate()
     const caseConclusion = 'test conclusion'
@@ -79,6 +80,7 @@ describe('InternalCaseController - Deliver case to police', () => {
       type: caseType,
       state: caseState,
       policeCaseNumbers: [policeCaseNumber],
+      courtCaseNumber,
       defendants: [{ nationalId: defendantNationalId }],
       validToDate,
       conclusion: caseConclusion,
@@ -122,6 +124,7 @@ describe('InternalCaseController - Deliver case to police', () => {
         caseType,
         caseState,
         policeCaseNumber,
+        courtCaseNumber,
         defendantNationalId,
         validToDate,
         caseConclusion,
