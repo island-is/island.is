@@ -94,7 +94,7 @@ const OJOISearchPage: CustomScreen<OJOISearchProps> = ({
 
   const [getAdverts] = useLazyQuery<
     {
-      OfficialJournalOfIcelandAdverts: OfficialJournalOfIcelandAdvertsResponse
+      officialJournalOfIcelandAdverts: OfficialJournalOfIcelandAdvertsResponse
     },
     QueryOfficialJournalOfIcelandAdvertsArgs
   >(ADVERTS_QUERY, { fetchPolicy: 'no-cache' })
@@ -132,7 +132,7 @@ const OJOISearchPage: CustomScreen<OJOISearchProps> = ({
       })
         .then((res) => {
           if (res.data) {
-            setAdverts(res.data.OfficialJournalOfIcelandAdverts.adverts)
+            setAdverts(res.data.officialJournalOfIcelandAdverts.adverts)
           } else if (res.error) {
             setAdverts([])
             console.error('Error fetching Adverts', res.error)
