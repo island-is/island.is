@@ -305,6 +305,7 @@ services-auth-delegation-api:
   grantNamespaces:
     - 'nginx-ingress-internal'
     - 'islandis'
+    - 'user-notification'
   grantNamespacesEnabled: true
   healthCheck:
     liveness:

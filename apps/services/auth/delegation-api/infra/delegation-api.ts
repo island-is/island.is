@@ -92,5 +92,5 @@ export const serviceSetup = (services: {
         public: false,
       },
     })
-    .grantNamespaces('nginx-ingress-internal', 'islandis')
+    .grantNamespaces('nginx-ingress-internal', 'islandis', 'user-notification')
 }
