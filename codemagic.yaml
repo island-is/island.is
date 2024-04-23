@@ -46,6 +46,7 @@ definitions:
 
 workflows:
   prod-app-ios:
+    <<: *base
     name: Island.is Prod App iOS
     instance_type: mac_mini_m1
     integrations:
@@ -84,6 +85,7 @@ workflows:
         submit_to_app_store: false
 
   dev-app-ios:
+    <<: *base
     name: Island.is Dev App iOS
     instance_type: mac_mini_m1
     integrations:
