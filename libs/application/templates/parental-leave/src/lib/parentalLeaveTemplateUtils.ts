@@ -18,6 +18,7 @@ import {
 import { EmployerRow } from '../types'
 import { getValueViaPath } from '@island.is/application/core'
 import set from 'lodash/set'
+import isEmpty from 'lodash/isEmpty'
 
 export const allEmployersHaveApproved = (context: ApplicationContext) => {
   const employers = getValueViaPath<EmployerRow[]>(
@@ -128,12 +129,12 @@ export const findActionName = (context: ApplicationContext) => {
 
     // If the applicant has selected add employee and/or period at some point
     if (
-      changeEmployerFile &&
+      !isEmpty(changeEmployerFile) &&
       tmpChangeEmployer &&
       tmpChangePeriods
     ) {
       return FileType.EMPDOCPER
-    } else if (changeEmployerFile && tmpChangeEmployer) {
+    } else if (!isEmpty(changeEmployerFile) && tmpChangeEmployer) {
       return FileType.EMPDOC
     }
     if (tmpChangeEmployer && tmpChangePeriods) {
