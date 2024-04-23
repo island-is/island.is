@@ -240,6 +240,7 @@ query Case($input: CaseQueryInput!) {
       userRole
     }
     dateLogs {
+      created
       id
       caseId
       dateType

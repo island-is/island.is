@@ -131,6 +131,7 @@ query LimitedAccessCase($input: CaseQueryInput!) {
       name
     }
     dateLogs {
+      created
       id
       caseId
       dateType
