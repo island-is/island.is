@@ -27,7 +27,7 @@ interface Props {
   workingCase: Case
   setWorkingCase: React.Dispatch<React.SetStateAction<Case>>
   handleCourtDateChange: (date: Date | undefined, valid: boolean) => void
-  handleCourtRoomChange?: (event: any) => void
+  handleCourtRoomChange?: (event: React.SyntheticEvent) => void
   selectedCourtDate?: string | null
   selectedCourtRoom?: string | null
   blueBox?: boolean
