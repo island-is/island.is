@@ -199,7 +199,7 @@ export class NotificationsWorkerService implements OnApplicationBootstrap {
     return {
       from: {
         name: 'Ísland.is',
-        address: 'no-reply@island.is',
+        address: 'noreply@island.is',
       },
       to: {
         name: fullName,
