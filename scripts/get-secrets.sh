@@ -29,6 +29,7 @@ function get-secrets {
     echo "An error occured rendering secrets: $output"
     exit 1
   fi
+  fi
   echo "$output" >> "$env_secret_file"
   post=$(wc -l "$env_secret_file")
   debug "Project '$*' has $post secrets after render-secrets"
