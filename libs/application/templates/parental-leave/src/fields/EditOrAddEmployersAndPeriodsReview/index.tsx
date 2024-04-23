@@ -76,7 +76,7 @@ const EditOrAddEmployersAndPeriodsReview: FC<
       )}
       <Employers {...childProps} />
       <Periods {...childProps} />
-      <Attachments {...childProps} />
+      {addEmployer === YES && <Attachments {...childProps} />}
     </>
   )
 }
