@@ -1,4 +1,5 @@
 import { useEffect, useMemo, useState } from 'react'
+import { useIntl } from 'react-intl'
 import { Locale } from 'locale'
 import debounce from 'lodash/debounce'
 import { useRouter } from 'next/router'
@@ -15,30 +16,27 @@ import {
   Text,
 } from '@island.is/island-ui/core'
 import { debounceTime } from '@island.is/shared/constants'
-import { getThemeConfig } from '@island.is/web/components'
 import {
   ContentLanguage,
+  CustomPageUniqueIdentifier,
   OfficialJournalOfIcelandAdvert,
   OfficialJournalOfIcelandAdvertCategory,
   OfficialJournalOfIcelandAdvertEntity,
   OfficialJournalOfIcelandAdvertsResponse,
   OfficialJournalOfIcelandAdvertType,
   Query,
-  QueryGetNamespaceArgs,
-  QueryGetOrganizationPageArgs,
+  QueryGetOrganizationArgs,
   QueryOfficialJournalOfIcelandAdvertsArgs,
   QueryOfficialJournalOfIcelandCategoriesArgs,
   QueryOfficialJournalOfIcelandDepartmentsArgs,
   QueryOfficialJournalOfIcelandInstitutionsArgs,
   QueryOfficialJournalOfIcelandTypesArgs,
 } from '@island.is/web/graphql/schema'
-import { useLinkResolver, useNamespace } from '@island.is/web/hooks'
-import useContentfulId from '@island.is/web/hooks/useContentfulId'
+import { useLinkResolver } from '@island.is/web/hooks'
 import { withMainLayout } from '@island.is/web/layouts/main'
 import { CustomNextError } from '@island.is/web/units/errors'
 
 import {
-  baseUrl,
   emptyOption,
   findValueOption,
   mapEntityToOptions,
@@ -46,14 +44,12 @@ import {
   OJOISearchListView,
   OJOIWrapper,
   removeEmptyFromObject,
-  searchUrl,
 } from '../../components/OfficialJournalOfIceland'
-import { Screen } from '../../types'
 import {
-  GET_NAMESPACE_QUERY,
-  GET_ORGANIZATION_PAGE_QUERY,
-  GET_ORGANIZATION_QUERY,
-} from '../queries'
+  CustomScreen,
+  withCustomPageWrapper,
+} from '../CustomPage/CustomPageWrapper'
+import { GET_ORGANIZATION_QUERY } from '../queries'
 import {
   ADVERTS_QUERY,
   CATEGORIES_QUERY,
@@ -61,6 +57,7 @@ import {
   INSTITUTIONS_QUERY,
   TYPES_QUERY,
 } from '../queries/OfficialJournalOfIceland'
+import { m } from './messages'
 
 const initialState = {
   sida: '',
@@ -74,30 +71,26 @@ const initialState = {
   dagsTil: '',
 }
 
-const OJOISearchPage: Screen<OJOISearchProps> = ({
+const OJOISearchPage: CustomScreen<OJOISearchProps> = ({
   initialAdverts,
   categories,
   departments,
   types,
   institutions,
-  organizationPage,
   organization,
   locale,
 }) => {
+  const { formatMessage } = useIntl()
   const router = useRouter()
   const { linkResolver } = useLinkResolver()
-  useContentfulId(organizationPage?.id)
 
   const [adverts, setAdverts] = useState(initialAdverts)
 
-  const organizationNamespace = useMemo(() => {
-    return JSON.parse(organization?.namespace?.fields || '{}')
-  }, [organization?.namespace?.fields])
-
-  const o = useNamespace(organizationNamespace)
-
   const [searchState, setSearchState] = useState(initialState)
   const [listView, setListView] = useState(false)
+
+  const baseUrl = linkResolver('ojoihome', [], locale).href
+  const searchUrl = linkResolver('ojoisearch', [], locale).href
 
   const [getAdverts] = useLazyQuery<
     {
@@ -169,12 +162,8 @@ const OJOISearchPage: Screen<OJOISearchProps> = ({
       href: linkResolver('homepage', [], locale).href,
     },
     {
-      title: organizationPage?.title ?? '',
-      href: linkResolver(
-        'organizationpage',
-        [organizationPage?.slug ?? ''],
-        locale,
-      ).href,
+      title: organization?.title ?? '',
+      href: baseUrl,
     },
     {
       title: 'Leitarniðurstöður',
@@ -216,11 +205,10 @@ const OJOISearchPage: Screen<OJOISearchProps> = ({
 
   return (
     <OJOIWrapper
-      pageTitle={o('searchPageTitle', 'Leit í Stjórnartíðindum')}
-      pageDescription={organizationPage?.description}
-      // eslint-disable-next-line @typescript-eslint/no-non-null-assertion
-      organizationPage={organizationPage!}
-      pageFeaturedImage={organizationPage?.featuredImage ?? undefined}
+      pageTitle={formatMessage(m.search.title)}
+      pageDescription={formatMessage(m.search.description)}
+      organization={organization ?? undefined}
+      pageFeaturedImage={organization?.serviceWebFeaturedImage ?? undefined}
       goBackUrl={baseUrl}
       sidebarContent={
         <Box
@@ -235,10 +223,7 @@ const OJOISearchPage: Screen<OJOISearchProps> = ({
 
             <Input
               name="q"
-              placeholder={o(
-                'searchinputPlaceholder',
-                'Leit í Stjórnartíðindum',
-              )}
+              placeholder={formatMessage(m.search.inputPlaceholder)}
               size="xs"
               value={searchState.q}
               onChange={(e) => updateSearchState('q', e.target.value)}
@@ -247,7 +232,7 @@ const OJOISearchPage: Screen<OJOISearchProps> = ({
             <Divider weight={'blueberry200'} />
 
             <Box display="flex" justifyContent={'spaceBetween'}>
-              <Text variant="h4">{o('filterTitle', 'Síun')}</Text>
+              <Text variant="h4">{formatMessage(m.search.filterTitle)}</Text>
               <Button
                 type="button"
                 as="button"
@@ -255,17 +240,17 @@ const OJOISearchPage: Screen<OJOISearchProps> = ({
                 onClick={resetFilter}
                 size="small"
               >
-                {o('clearFilter', 'Hreinsa síun')}
+                {formatMessage(m.search.clearFilter)}
               </Button>
             </Box>
 
             <Select
               name="deild"
-              label={o('departmentSelectLabel', 'Deild')}
+              label={formatMessage(m.search.departmentLabel)}
               size="xs"
-              placeholder={o('departmentSelectPlaceholder', 'Veldu deild')}
+              placeholder={formatMessage(m.search.departmentPlaceholder)}
               options={[
-                { ...emptyOption('Allar deildir') },
+                { ...emptyOption(formatMessage(m.search.departmentAll)) },
                 ...departmentsOptions,
               ]}
               isClearable
@@ -276,10 +261,13 @@ const OJOISearchPage: Screen<OJOISearchProps> = ({
 
             <Select
               name="tegund"
-              label={o('typeSelectLabel', 'Tegund')}
+              label={formatMessage(m.search.typeLabel)}
               size="xs"
-              placeholder={o('typeSelectPlaceholder', 'Veldu tegund')}
-              options={[{ ...emptyOption('Allar tegundir') }, ...typesOptions]}
+              placeholder={formatMessage(m.search.typePlaceholder)}
+              options={[
+                { ...emptyOption(formatMessage(m.search.typeAll)) },
+                ...typesOptions,
+              ]}
               isClearable
               value={findValueOption(typesOptions, searchState.tegund)}
               onChange={(v) => updateSearchState('tegund', v?.value ?? '')}
@@ -287,11 +275,11 @@ const OJOISearchPage: Screen<OJOISearchProps> = ({
 
             <Select
               name="malaflokkur"
-              label={o('categoriesSelectLabel', 'Málaflokkur')}
+              label={formatMessage(m.search.categoriesLabel)}
               size="xs"
-              placeholder={o('categoriesSelectPlaceholder', 'Veldu málaflokk')}
+              placeholder={formatMessage(m.search.categoriesPlaceholder)}
               options={[
-                { ...emptyOption('Allir flokkar') },
+                { ...emptyOption(formatMessage(m.search.categoriesAll)) },
                 ...categoriesOptions,
               ]}
               isClearable
@@ -307,11 +295,8 @@ const OJOISearchPage: Screen<OJOISearchProps> = ({
               size="xs"
               locale="is"
               name="dagsFra"
-              label={o('dateFromLabel', 'Dags. frá')}
-              placeholderText={o(
-                'dateFromPlaceholder',
-                'Veldu upphafsdagsetningu',
-              )}
+              label={formatMessage(m.search.dateFromLabel)}
+              placeholderText={formatMessage(m.search.dateFromPlaceholder)}
               selected={
                 searchState.dagsFra ? new Date(searchState.dagsFra) : undefined
               }
@@ -331,8 +316,8 @@ const OJOISearchPage: Screen<OJOISearchProps> = ({
               size="xs"
               locale="is"
               name="dagsTil"
-              label={o('dateToLabel', 'Dags. til')}
-              placeholderText={o('dateToPlaceholder', 'Veldu lokadagsetningu')}
+              label={formatMessage(m.search.dateToLabel)}
+              placeholderText={formatMessage(m.search.dateToPlaceholder)}
               selected={
                 searchState.dagsTil ? new Date(searchState.dagsTil) : undefined
               }
@@ -350,11 +335,11 @@ const OJOISearchPage: Screen<OJOISearchProps> = ({
 
             <Select
               name="stofnun"
-              label={o('institutionLabel', 'Stofnun')}
+              label={formatMessage(m.search.institutionLabel)}
               size="xs"
-              placeholder={o('institutionPlaceholder', 'Veldu stofnun')}
+              placeholder={formatMessage(m.search.institutionPlaceholder)}
               options={[
-                { ...emptyOption('Allir stofnanir') },
+                { ...emptyOption(formatMessage(m.search.institutionAll)) },
                 ...institutionsOptions,
               ]}
               isClearable
@@ -376,23 +361,23 @@ const OJOISearchPage: Screen<OJOISearchProps> = ({
             icon={listView ? 'copy' : 'menu'}
             variant="utility"
           >
-            {listView ? 'Sýna sem spjöld' : 'Sýna sem lista'}
+            {listView
+              ? formatMessage(m.search.cardView)
+              : formatMessage(m.search.listView)}
           </Button>
 
           {listView ? (
-            <OJOISearchListView adverts={adverts} />
+            <OJOISearchListView adverts={adverts} locale={locale} />
           ) : (
-            <OJOISearchGridView adverts={adverts} />
+            <OJOISearchGridView adverts={adverts} locale={locale} />
           )}
         </Stack>
       ) : (
         <Box padding={[2, 3, 4]} border={'standard'} borderRadius="large">
           <Text variant="h3" as="h2">
-            {o('notFoundTitle', 'Engin mál fundust')}
+            {formatMessage(m.search.notFoundTitle)}
           </Text>
-          <Text>
-            {o('notFoundMessage', 'Vinsamlega endurskoðaðu leitarskilyrði')}
-          </Text>
+          <Text>{formatMessage(m.search.notFoundMessage)}</Text>
         </Box>
       )}
     </OJOIWrapper>
@@ -405,22 +390,19 @@ interface OJOISearchProps {
   departments?: Array<OfficialJournalOfIcelandAdvertEntity>
   types?: Array<OfficialJournalOfIcelandAdvertType>
   institutions?: Array<OfficialJournalOfIcelandAdvertEntity>
-  organizationPage?: Query['getOrganizationPage']
   organization?: Query['getOrganization']
-  namespace: Record<string, string>
   locale: Locale
 }
 
-const OJOISearch: Screen<OJOISearchProps> = ({
+const OJOISearch: CustomScreen<OJOISearchProps> = ({
   initialAdverts,
   categories,
   departments,
   types,
   institutions,
-  organizationPage,
   organization,
-  namespace,
   locale,
+  customPageData,
 }) => {
   return (
     <OJOISearchPage
@@ -429,10 +411,9 @@ const OJOISearch: Screen<OJOISearchProps> = ({
       departments={departments}
       types={types}
       institutions={institutions}
-      namespace={namespace}
-      organizationPage={organizationPage}
       organization={organization}
       locale={locale}
+      customPageData={customPageData}
     />
   )
 }
@@ -457,12 +438,8 @@ OJOISearch.getProps = async ({ apolloClient, locale }) => {
       data: { officialJournalOfIcelandInstitutions },
     },
     {
-      data: { getOrganizationPage },
-    },
-    {
       data: { getOrganization },
     },
-    namespace,
   ] = await Promise.all([
     apolloClient.query<Query, QueryOfficialJournalOfIcelandAdvertsArgs>({
       query: ADVERTS_QUERY,
@@ -504,16 +481,7 @@ OJOISearch.getProps = async ({ apolloClient, locale }) => {
         },
       },
     }),
-    apolloClient.query<Query, QueryGetOrganizationPageArgs>({
-      query: GET_ORGANIZATION_PAGE_QUERY,
-      variables: {
-        input: {
-          slug: organizationSlug,
-          lang: locale as ContentLanguage,
-        },
-      },
-    }),
-    apolloClient.query<Query, QueryGetOrganizationPageArgs>({
+    apolloClient.query<Query, QueryGetOrganizationArgs>({
       query: GET_ORGANIZATION_QUERY,
       variables: {
         input: {
@@ -522,24 +490,9 @@ OJOISearch.getProps = async ({ apolloClient, locale }) => {
         },
       },
     }),
-    apolloClient
-      .query<Query, QueryGetNamespaceArgs>({
-        query: GET_NAMESPACE_QUERY,
-        variables: {
-          input: {
-            namespace: 'OrganizationPages',
-            lang: locale,
-          },
-        },
-      })
-      .then((variables) =>
-        variables?.data?.getNamespace?.fields
-          ? JSON.parse(variables.data.getNamespace.fields)
-          : {},
-      ),
   ])
 
-  if (!getOrganizationPage && !getOrganization?.hasALandingPage) {
+  if (!getOrganization?.hasALandingPage) {
     throw new CustomNextError(404, 'Organization page not found')
   }
 
@@ -549,16 +502,18 @@ OJOISearch.getProps = async ({ apolloClient, locale }) => {
     departments: officialJournalOfIcelandDepartments?.departments,
     types: officialJournalOfIcelandTypes?.types,
     institutions: officialJournalOfIcelandInstitutions?.institutions,
-    organizationPage: getOrganizationPage,
     organization: getOrganization,
-    namespace,
     locale: locale as Locale,
     showSearchInHeader: false,
-    ...getThemeConfig(
-      getOrganizationPage?.theme ?? 'landing_page',
-      getOrganization ?? getOrganizationPage?.organization,
-    ),
+    themeConfig: {
+      footerVersion: 'organization',
+    },
   }
 }
 
-export default withMainLayout(OJOISearch)
+export default withMainLayout(
+  withCustomPageWrapper(
+    CustomPageUniqueIdentifier.OfficialJournalOfIceland,
+    OJOISearch,
+  ),
+)

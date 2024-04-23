@@ -1,4 +1,5 @@
 import { useCallback, useEffect, useMemo, useState } from 'react'
+import { useIntl } from 'react-intl'
 import { Locale } from 'locale'
 import debounce from 'lodash/debounce'
 import { useRouter } from 'next/router'
@@ -17,49 +18,43 @@ import {
   Text,
 } from '@island.is/island-ui/core'
 import { debounceTime } from '@island.is/shared/constants'
-import { getThemeConfig } from '@island.is/web/components'
 import {
   ContentLanguage,
+  CustomPageUniqueIdentifier,
   OfficialJournalOfIcelandAdvertCategory,
   OfficialJournalOfIcelandAdvertEntity,
   OfficialJournalOfIcelandAdvertMainCategory,
   Query,
-  QueryGetNamespaceArgs,
-  QueryGetOrganizationPageArgs,
+  QueryGetOrganizationArgs,
   QueryOfficialJournalOfIcelandCategoriesArgs,
   QueryOfficialJournalOfIcelandDepartmentsArgs,
   QueryOfficialJournalOfIcelandMainCategoriesArgs,
 } from '@island.is/web/graphql/schema'
-import { useLinkResolver, useNamespace } from '@island.is/web/hooks'
-import useContentfulId from '@island.is/web/hooks/useContentfulId'
+import { useLinkResolver } from '@island.is/web/hooks'
 import { withMainLayout } from '@island.is/web/layouts/main'
 import { CustomNextError } from '@island.is/web/units/errors'
 
 import {
-  baseUrl,
-  categoriesUrl,
   emptyOption,
   EntityOption,
   findValueOption,
   mapEntityToOptions,
   OJOIWrapper,
   removeEmptyFromObject,
-  searchUrl,
   sortCategories,
   splitArrayIntoGroups,
 } from '../../components/OfficialJournalOfIceland'
-import { Screen } from '../../types'
 import {
-  GET_NAMESPACE_QUERY,
-  GET_ORGANIZATION_PAGE_QUERY,
-  GET_ORGANIZATION_QUERY,
-} from '../queries'
+  CustomScreen,
+  withCustomPageWrapper,
+} from '../CustomPage/CustomPageWrapper'
+import { GET_ORGANIZATION_QUERY } from '../queries'
 import {
   CATEGORIES_QUERY,
   DEPARTMENTS_QUERY,
   MAIN_CATEGORIES_QUERY,
 } from '../queries/OfficialJournalOfIceland'
-
+import { m } from './messages'
 type MalaflokkarType = Array<{
   letter: string
   categories: EntityOption[]
@@ -72,23 +67,20 @@ const initialState = {
   yfirflokkur: '',
 }
 
-const OJOICategoriesPage: Screen<OJOICategoriesProps> = ({
+const OJOICategoriesPage: CustomScreen<OJOICategoriesProps> = ({
   mainCategories,
   categories,
   departments,
-  organizationPage,
   organization,
   locale,
 }) => {
+  const { formatMessage } = useIntl()
   const router = useRouter()
   const { linkResolver } = useLinkResolver()
-  useContentfulId(organizationPage?.id)
 
-  const organizationNamespace = useMemo(() => {
-    return JSON.parse(organization?.namespace?.fields || '{}')
-  }, [organization?.namespace?.fields])
-
-  const o = useNamespace(organizationNamespace)
+  const baseUrl = linkResolver('ojoihome', [], locale).href
+  const searchUrl = linkResolver('ojoisearch', [], locale).href
+  const categoriesUrl = linkResolver('ojoicategories', [], locale).href
 
   const [searchState, setSearchState] = useState(initialState)
 
@@ -174,12 +166,8 @@ const OJOICategoriesPage: Screen<OJOICategoriesProps> = ({
       href: linkResolver('homepage', [], locale).href,
     },
     {
-      title: organizationPage?.title ?? '',
-      href: linkResolver(
-        'organizationpage',
-        [organizationPage?.slug ?? ''],
-        locale,
-      ).href,
+      title: organization?.title ?? '',
+      href: baseUrl,
     },
     {
       title: 'Málaflokkar',
@@ -228,11 +216,10 @@ const OJOICategoriesPage: Screen<OJOICategoriesProps> = ({
 
   return (
     <OJOIWrapper
-      pageTitle={o('categoriesTitle', 'Málaflokkar Stjórnartíðinda')}
-      pageDescription={organizationPage?.description}
-      // eslint-disable-next-line @typescript-eslint/no-non-null-assertion
-      organizationPage={organizationPage!}
-      pageFeaturedImage={organizationPage?.featuredImage ?? undefined}
+      pageTitle={formatMessage(m.categories.title)}
+      pageDescription={formatMessage(m.categories.description)}
+      organization={organization ?? undefined}
+      pageFeaturedImage={organization?.serviceWebFeaturedImage ?? undefined}
       goBackUrl={baseUrl}
       sidebarContent={
         <Box
@@ -243,11 +230,11 @@ const OJOICategoriesPage: Screen<OJOICategoriesProps> = ({
           action={categoriesUrl}
         >
           <Stack space={[1, 1, 2]}>
-            <Text variant="h4">Leit</Text>
+            <Text variant="h4">{formatMessage(m.categories.searchTitle)}</Text>
 
             <Input
               name="q"
-              placeholder={o('categoriesSearchPlaceholder', 'Leit í flokkum')}
+              placeholder={formatMessage(m.categories.searchPlaceholder)}
               size="xs"
               value={searchState.q}
               onChange={(e) => updateSearchState('q', e.target.value)}
@@ -256,7 +243,9 @@ const OJOICategoriesPage: Screen<OJOICategoriesProps> = ({
             <Divider weight={'blueberry200'} />
 
             <Box display="flex" justifyContent={'spaceBetween'}>
-              <Text variant="h4">{o('categoriesFilterTitle', 'Síun')}</Text>
+              <Text variant="h4">
+                {formatMessage(m.categories.filterTitle)}
+              </Text>
               <Button
                 type="button"
                 as="button"
@@ -264,17 +253,17 @@ const OJOICategoriesPage: Screen<OJOICategoriesProps> = ({
                 onClick={resetFilter}
                 size="small"
               >
-                {o('categoriesClearFilter', 'Hreinsa síun')}
+                {formatMessage(m.categories.clearFilter)}
               </Button>
             </Box>
 
             <Select
               name="deild"
-              label={o('categoriesDepartmentLabel', 'Deild')}
+              label={formatMessage(m.categories.departmentLabel)}
               size="xs"
-              placeholder={o('categoriesDepartmentPlaceholder', 'Veldu deild')}
+              placeholder={formatMessage(m.categories.departmentPlaceholder)}
               options={[
-                { ...emptyOption('Allar deildir') },
+                { ...emptyOption(formatMessage(m.categories.departmentAll)) },
                 ...departmentsOptions,
               ]}
               isClearable
@@ -284,14 +273,11 @@ const OJOICategoriesPage: Screen<OJOICategoriesProps> = ({
 
             <Select
               name="yfirflokkur"
-              label={o('categoriesMainCategoryLabel', 'Yfirflokkur')}
+              label={formatMessage(m.categories.mainCategoryLabel)}
               size="xs"
-              placeholder={o(
-                'categoriesMainCategoryPlaceholder',
-                'Veldu yfirflokk',
-              )}
+              placeholder={formatMessage(m.categories.mainCategoryPlaceholder)}
               options={[
-                { ...emptyOption('Allir flokkar') },
+                { ...emptyOption(formatMessage(m.categories.mainCategoryAll)) },
                 ...mainCategoriesOptions,
               ]}
               isClearable
@@ -331,12 +317,7 @@ const OJOICategoriesPage: Screen<OJOICategoriesProps> = ({
           ))}
         </Inline>
         {activeCategories.length === 0 ? (
-          <p>
-            {o(
-              'categoriesNotFoundMessage',
-              'Ekkert fannst fyrir þessi leitarskilyrði',
-            )}
-          </p>
+          <p>{formatMessage(m.categories.notFoundMessage)}</p>
         ) : (
           activeCategories.map((c) => {
             const groups = splitArrayIntoGroups(c.categories, 3)
@@ -378,19 +359,16 @@ interface OJOICategoriesProps {
   mainCategories?: OfficialJournalOfIcelandAdvertMainCategory[]
   categories?: Array<OfficialJournalOfIcelandAdvertCategory>
   departments?: Array<OfficialJournalOfIcelandAdvertEntity>
-  organizationPage?: Query['getOrganizationPage']
   organization?: Query['getOrganization']
-  namespace: Record<string, string>
   locale: Locale
 }
 
-const OJOICategories: Screen<OJOICategoriesProps> = ({
+const OJOICategories: CustomScreen<OJOICategoriesProps> = ({
   mainCategories,
   departments,
   categories,
-  organizationPage,
   organization,
-  namespace,
+  customPageData,
   locale,
 }) => {
   return (
@@ -398,10 +376,9 @@ const OJOICategories: Screen<OJOICategoriesProps> = ({
       mainCategories={mainCategories}
       categories={categories}
       departments={departments}
-      namespace={namespace}
-      organizationPage={organizationPage}
       organization={organization}
       locale={locale}
+      customPageData={customPageData}
     />
   )
 }
@@ -420,12 +397,8 @@ OJOICategories.getProps = async ({ apolloClient, locale }) => {
       data: { officialJournalOfIcelandDepartments },
     },
     {
-      data: { getOrganizationPage },
-    },
-    {
       data: { getOrganization },
     },
-    namespace,
   ] = await Promise.all([
     apolloClient.query<Query, QueryOfficialJournalOfIcelandMainCategoriesArgs>({
       query: MAIN_CATEGORIES_QUERY,
@@ -451,16 +424,7 @@ OJOICategories.getProps = async ({ apolloClient, locale }) => {
         },
       },
     }),
-    apolloClient.query<Query, QueryGetOrganizationPageArgs>({
-      query: GET_ORGANIZATION_PAGE_QUERY,
-      variables: {
-        input: {
-          slug: organizationSlug,
-          lang: locale as ContentLanguage,
-        },
-      },
-    }),
-    apolloClient.query<Query, QueryGetOrganizationPageArgs>({
+    apolloClient.query<Query, QueryGetOrganizationArgs>({
       query: GET_ORGANIZATION_QUERY,
       variables: {
         input: {
@@ -469,24 +433,9 @@ OJOICategories.getProps = async ({ apolloClient, locale }) => {
         },
       },
     }),
-    apolloClient
-      .query<Query, QueryGetNamespaceArgs>({
-        query: GET_NAMESPACE_QUERY,
-        variables: {
-          input: {
-            namespace: 'OrganizationPages',
-            lang: locale,
-          },
-        },
-      })
-      .then((variables) =>
-        variables?.data?.getNamespace?.fields
-          ? JSON.parse(variables.data.getNamespace.fields)
-          : {},
-      ),
   ])
 
-  if (!getOrganizationPage && !getOrganization?.hasALandingPage) {
+  if (!getOrganization?.hasALandingPage) {
     throw new CustomNextError(404, 'Organization page not found')
   }
 
@@ -494,16 +443,18 @@ OJOICategories.getProps = async ({ apolloClient, locale }) => {
     mainCategories: officialJournalOfIcelandMainCategories?.mainCategories,
     categories: officialJournalOfIcelandCategories?.categories,
     departments: officialJournalOfIcelandDepartments?.departments,
-    organizationPage: getOrganizationPage,
     organization: getOrganization,
-    namespace,
     locale: locale as Locale,
     showSearchInHeader: false,
-    ...getThemeConfig(
-      getOrganizationPage?.theme ?? 'landing_page',
-      getOrganization ?? getOrganizationPage?.organization,
-    ),
+    themeConfig: {
+      footerVersion: 'organization',
+    },
   }
 }
 
-export default withMainLayout(OJOICategories)
+export default withMainLayout(
+  withCustomPageWrapper(
+    CustomPageUniqueIdentifier.OfficialJournalOfIceland,
+    OJOICategories,
+  ),
+)

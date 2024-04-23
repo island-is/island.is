@@ -1,16 +1,21 @@
 import format from 'date-fns/format'
 import is from 'date-fns/locale/is'
+import { Locale } from 'locale'
 
 import { LinkV2, Table as T, Text } from '@island.is/island-ui/core'
 import { OfficialJournalOfIcelandAdvertsResponse } from '@island.is/web/graphql/schema'
-
-import { advertUrl } from './OJOIUtils'
+import { useLinkResolver } from '@island.is/web/hooks'
 
 export const OJOISearchListView = ({
   adverts,
+  locale,
 }: {
   adverts: OfficialJournalOfIcelandAdvertsResponse['adverts']
+  locale: Locale
 }) => {
+  const { linkResolver } = useLinkResolver()
+  const advertUrl = linkResolver('ojoiadvert', [], locale).href
+
   return (
     <T.Table>
       <T.Head>
@@ -43,11 +48,12 @@ export const OJOISearchListView = ({
               </Text>
             </T.Data>
             <T.Data>
-              <Text variant="small">
+              <Text variant="small" color="blue400">
                 <LinkV2
-                  href={advertUrl + '/' + ad.id}
+                  href={advertUrl.replace('[number]', ad.id)}
                   underline="normal"
                   color="blue400"
+                  underlineVisibility="always"
                 >
                   {ad.title}
                 </LinkV2>

@@ -1,14 +1,20 @@
+import { Locale } from 'locale'
+
 import { Stack } from '@island.is/island-ui/core'
 import { OfficialJournalOfIcelandAdvertsResponse } from '@island.is/web/graphql/schema'
+import { useLinkResolver } from '@island.is/web/hooks'
 
 import { OJOIAdvertCard } from './OJOIAdvertCard'
-import { advertUrl } from './OJOIUtils'
 
 export const OJOISearchGridView = ({
   adverts,
+  locale,
 }: {
   adverts: OfficialJournalOfIcelandAdvertsResponse['adverts']
+  locale: Locale
 }) => {
+  const { linkResolver } = useLinkResolver()
+  const advertUrl = linkResolver('ojoiadvert', [], locale).href
   return (
     <Stack space={2}>
       {adverts.map((ad) => (
@@ -20,7 +26,7 @@ export const OJOISearchGridView = ({
           publicationDate={ad.publicationDate}
           title={ad.title}
           categories={ad.categories?.map((cat) => cat.title)}
-          link={advertUrl + '/' + ad.id}
+          link={advertUrl.replace('[number]', ad.id)}
         />
       ))}
     </Stack>

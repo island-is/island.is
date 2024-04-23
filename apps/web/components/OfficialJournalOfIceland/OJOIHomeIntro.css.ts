@@ -27,4 +27,5 @@ export const introImage = style({
   maxHeight: '17em',
   display: 'block',
   margin: 'auto',
+  width: '100%',
 })

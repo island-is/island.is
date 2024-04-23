@@ -10,11 +10,6 @@ import {
   OfficialJournalOfIcelandAdvertType,
 } from '@island.is/web/graphql/schema'
 
-export const baseUrl = '/s/stjornartidindi'
-export const searchUrl = baseUrl + '/leit'
-export const categoriesUrl = baseUrl + '/malaflokkar'
-export const advertUrl = baseUrl + '/nr'
-
 export const splitArrayIntoGroups = <T>(array: Array<T>, groupSize: number) => {
   return Array.from({ length: Math.ceil(array.length / groupSize) }, (_, i) =>
     array.slice(i * groupSize, (i + 1) * groupSize),

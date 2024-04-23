@@ -1,66 +1,54 @@
-import { useMemo } from 'react'
-import format from 'date-fns/format'
-import is from 'date-fns/locale/is'
+import { useIntl } from 'react-intl'
 import { Locale } from 'locale'
 
 import { Box, Button, Link, Stack, Text } from '@island.is/island-ui/core'
-import { getThemeConfig } from '@island.is/web/components'
 import {
   ContentLanguage,
+  CustomPageUniqueIdentifier,
   OfficialJournalOfIcelandAdvertResponse,
   Query,
-  QueryGetNamespaceArgs,
-  QueryGetOrganizationPageArgs,
+  QueryGetOrganizationArgs,
   QueryOfficialJournalOfIcelandAdvertArgs,
 } from '@island.is/web/graphql/schema'
-import { useLinkResolver, useNamespace } from '@island.is/web/hooks'
-import useContentfulId from '@island.is/web/hooks/useContentfulId'
+import { useLinkResolver } from '@island.is/web/hooks'
 import { withMainLayout } from '@island.is/web/layouts/main'
 import { CustomNextError } from '@island.is/web/units/errors'
 
 import {
+  formatDate,
   OJOIAdvertDisplay,
   OJOIWrapper,
-  searchUrl,
 } from '../../components/OfficialJournalOfIceland'
-import { Screen } from '../../types'
 import {
-  GET_NAMESPACE_QUERY,
-  GET_ORGANIZATION_PAGE_QUERY,
-  GET_ORGANIZATION_QUERY,
-} from '../queries'
+  CustomScreen,
+  withCustomPageWrapper,
+} from '../CustomPage/CustomPageWrapper'
+import { GET_ORGANIZATION_QUERY } from '../queries'
 import { ADVERT_QUERY } from '../queries/OfficialJournalOfIceland'
+import { m } from './messages'
 
-const OJOIAdvertPage: Screen<OJOIAdvertProps> = ({
+const OJOIAdvertPage: CustomScreen<OJOIAdvertProps> = ({
   advert,
-  organizationPage,
-  organization,
   locale,
+  organization,
 }) => {
+  const { formatMessage } = useIntl()
   const { linkResolver } = useLinkResolver()
-  useContentfulId(organizationPage?.id)
 
-  const organizationNamespace = useMemo(() => {
-    return JSON.parse(organization?.namespace?.fields || '{}')
-  }, [organization?.namespace?.fields])
-
-  const o = useNamespace(organizationNamespace)
+  const baseUrl = linkResolver('ojoihome', [], locale).href
+  const searchUrl = linkResolver('ojoisearch', [], locale).href
 
   const breadcrumbItems = [
     {
       title: 'Ísland.is',
-      href: linkResolver('homepage', [], locale).href,
+      href: linkResolver('homepage', undefined, locale).href,
     },
     {
-      title: organizationPage?.title ?? '',
-      href: linkResolver(
-        'organizationpage',
-        [organizationPage?.slug ?? ''],
-        locale,
-      ).href,
+      title: organization?.title ?? '',
+      href: baseUrl,
     },
     {
-      title: 'Auglýsing',
+      title: formatMessage(m.advert.title),
     },
   ]
 
@@ -68,40 +56,33 @@ const OJOIAdvertPage: Screen<OJOIAdvertProps> = ({
     <OJOIWrapper
       pageTitle={advert.title}
       hideTitle
-      pageDescription={o(
-        'advertPageDescription',
-        'Sé munur á uppsetningu texta hér að neðan og í PDF skjali gildir PDF skjalið.',
-      )}
-      // eslint-disable-next-line @typescript-eslint/no-non-null-assertion
-      organizationPage={organizationPage!}
-      pageFeaturedImage={organizationPage?.featuredImage ?? undefined}
+      organization={organization ?? undefined}
+      pageDescription={formatMessage(m.advert.description)}
       breadcrumbItems={breadcrumbItems}
       goBackUrl={searchUrl}
       sidebarContent={
         <Stack space={[2]}>
           <Box background="blue100" padding={[2, 2, 3]} borderRadius="large">
             <Stack space={[1, 1, 2]}>
-              <Text variant="h4">
-                {o('advertSidebarTitle', 'Upplýsingar um auglýsingu')}
-              </Text>
+              <Text variant="h4">{formatMessage(m.advert.sidebarTitle)}</Text>
 
               <Box>
                 <Text variant="h5">
-                  {o('advertSidebarDepartment', 'Deild')}
+                  {formatMessage(m.advert.sidebarDepartment)}
                 </Text>
                 <Text variant="small">{advert.department.title}</Text>
               </Box>
 
               <Box>
                 <Text variant="h5">
-                  {o('advertSidebarInstitution', 'Stofnun')}
+                  {formatMessage(m.advert.sidebarInstitution)}
                 </Text>
                 <Text variant="small">{advert.involvedParty.title}</Text>
               </Box>
 
               <Box>
                 <Text variant="h5">
-                  {o('advertSidebarCategory', 'Málaflokkur')}
+                  {formatMessage(m.advert.sidebarCategory)}
                 </Text>
                 <Text variant="small">
                   {advert.categories.map((c) => c.title).join(', ')}
@@ -110,23 +91,19 @@ const OJOIAdvertPage: Screen<OJOIAdvertProps> = ({
 
               <Box>
                 <Text variant="h5">
-                  {o('advertSidebarSignatureDate', 'Skráningardagur')}
+                  {formatMessage(m.advert.signatureDate)}
                 </Text>
                 <Text variant="small">
-                  {format(new Date(advert.signatureDate), 'dd. MMMM yyyy', {
-                    locale: is,
-                  })}
+                  {formatDate(advert.signatureDate, 'dd. MMMM yyyy')}
                 </Text>
               </Box>
 
               <Box>
                 <Text variant="h5">
-                  {o('advertSidebarPublicationDate', 'Útgáfudagur')}
+                  {formatMessage(m.advert.publicationDate)}
                 </Text>
                 <Text variant="small">
-                  {format(new Date(advert.publicationDate), 'dd. MMMM yyyy', {
-                    locale: is,
-                  })}
+                  {formatDate(advert.publicationDate, 'dd. MMMM yyyy')}
                 </Text>
               </Box>
             </Stack>
@@ -147,7 +124,7 @@ const OJOIAdvertPage: Screen<OJOIAdvertProps> = ({
                     iconType="outline"
                     size="small"
                   >
-                    {o('advertSidebarGetPdf', 'Sækja PDF')}
+                    {formatMessage(m.advert.getPdf)}
                   </Button>
                 </Box>
               </Stack>
@@ -158,9 +135,7 @@ const OJOIAdvertPage: Screen<OJOIAdvertProps> = ({
     >
       <OJOIAdvertDisplay
         advertNumber={advert.publicationNumber.full}
-        signatureDate={format(new Date(advert.signatureDate), 'dd. MMMM yyyy', {
-          locale: is,
-        })}
+        signatureDate={formatDate(advert.signatureDate, 'dd. MMMM yyyy')}
         advertType={advert.type.title}
         advertSubject={advert.subject}
         advertText={advert.document.html}
@@ -172,33 +147,32 @@ const OJOIAdvertPage: Screen<OJOIAdvertProps> = ({
 
 interface OJOIAdvertProps {
   advert: OfficialJournalOfIcelandAdvertResponse['advert']
-  organizationPage?: Query['getOrganizationPage']
-  organization?: Query['getOrganization']
-  namespace: Record<string, string>
   locale: Locale
+  organization?: Query['getOrganization']
 }
 
-const OJOIAdvert: Screen<OJOIAdvertProps> = ({
+const OJOIAdvert: CustomScreen<OJOIAdvertProps> = ({
   advert,
-  organizationPage,
-  organization,
-  namespace,
   locale,
+  organization,
+  customPageData,
 }) => {
-  console.log({ advert })
-
   return (
     <OJOIAdvertPage
       advert={advert}
-      namespace={namespace}
-      organizationPage={organizationPage}
-      organization={organization}
       locale={locale}
+      organization={organization}
+      customPageData={customPageData}
     />
   )
 }
 
-OJOIAdvert.getProps = async ({ apolloClient, locale, query }) => {
+OJOIAdvert.getProps = async ({
+  apolloClient,
+  locale,
+  query,
+  customPageData,
+}) => {
   const organizationSlug = 'stjornartidindi'
 
   const [
@@ -206,12 +180,8 @@ OJOIAdvert.getProps = async ({ apolloClient, locale, query }) => {
       data: { officialJournalOfIcelandAdvert },
     },
     {
-      data: { getOrganizationPage },
-    },
-    {
       data: { getOrganization },
     },
-    namespace,
   ] = await Promise.all([
     apolloClient.query<Query, QueryOfficialJournalOfIcelandAdvertArgs>({
       query: ADVERT_QUERY,
@@ -221,16 +191,7 @@ OJOIAdvert.getProps = async ({ apolloClient, locale, query }) => {
         },
       },
     }),
-    apolloClient.query<Query, QueryGetOrganizationPageArgs>({
-      query: GET_ORGANIZATION_PAGE_QUERY,
-      variables: {
-        input: {
-          slug: organizationSlug,
-          lang: locale as ContentLanguage,
-        },
-      },
-    }),
-    apolloClient.query<Query, QueryGetOrganizationPageArgs>({
+    apolloClient.query<Query, QueryGetOrganizationArgs>({
       query: GET_ORGANIZATION_QUERY,
       variables: {
         input: {
@@ -239,43 +200,30 @@ OJOIAdvert.getProps = async ({ apolloClient, locale, query }) => {
         },
       },
     }),
-    apolloClient
-      .query<Query, QueryGetNamespaceArgs>({
-        query: GET_NAMESPACE_QUERY,
-        variables: {
-          input: {
-            namespace: 'OrganizationPages',
-            lang: locale,
-          },
-        },
-      })
-      .then((variables) =>
-        variables?.data?.getNamespace?.fields
-          ? JSON.parse(variables.data.getNamespace.fields)
-          : {},
-      ),
   ])
 
-  if (!getOrganizationPage && !getOrganization?.hasALandingPage) {
+  if (!getOrganization?.hasALandingPage) {
     throw new CustomNextError(404, 'Organization page not found')
   }
 
-  if (!officialJournalOfIcelandAdvert) {
+  if (!officialJournalOfIcelandAdvert?.advert) {
     throw new CustomNextError(404, 'OJOI advert not found')
   }
 
   return {
     advert: officialJournalOfIcelandAdvert.advert,
-    organizationPage: getOrganizationPage,
     organization: getOrganization,
-    namespace,
     locale: locale as Locale,
     showSearchInHeader: false,
-    ...getThemeConfig(
-      getOrganizationPage?.theme ?? 'landing_page',
-      getOrganization ?? getOrganizationPage?.organization,
-    ),
+    themeConfig: {
+      footerVersion: 'organization',
+    },
   }
 }
 
-export default withMainLayout(OJOIAdvert)
+export default withMainLayout(
+  withCustomPageWrapper(
+    CustomPageUniqueIdentifier.OfficialJournalOfIceland,
+    OJOIAdvert,
+  ),
+)

@@ -1,5 +1,8 @@
+import { useIntl } from 'react-intl'
+
 import { Box, Icon, LinkV2, Tag, Text } from '@island.is/island-ui/core'
 
+import { m } from '../../screens/OfficialJournalOfIceland/messages'
 import { formatDate } from './OJOIUtils'
 import * as s from './OJOIAdvertCard.css'
 
@@ -22,6 +25,8 @@ export const OJOIAdvertCard = ({
   categories,
   link,
 }: Props) => {
+  const { formatMessage } = useIntl()
+
   return (
     <Box display="flex" flexDirection="column" rowGap={1} className={s.wrapper}>
       {(institution || department || publicationDate) && (
@@ -74,7 +79,7 @@ export const OJOIAdvertCard = ({
             underlineVisibility="always"
           >
             <Text as="span" fontWeight="medium" variant="small">
-              Skoða nánar
+              {formatMessage(m.general.seeMore)}
             </Text>{' '}
             <Icon icon="open" type="outline" size="small" />
           </LinkV2>

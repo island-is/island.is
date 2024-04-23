@@ -11,25 +11,24 @@ import {
   TagVariant,
   Text,
 } from '@island.is/island-ui/core'
-import { Organization, OrganizationPage } from '@island.is/web/graphql/schema'
+import { Organization } from '@island.is/web/graphql/schema'
 
 import * as s from './OJOIHomeIntro.css'
 
 export type OJOIHomeIntroProps = {
-  organizationPage?: OrganizationPage
   organization?: Organization
-  namespace: Record<string, string>
   breadCrumbs: ReactNode
   searchPlaceholder: string
   quickLinks: Array<{ title: string; href: string; variant?: TagVariant }>
   searchUrl: string
   shortcutsTitle: string
+  featuredImage?: string
 }
 
 export const OJOIHomeIntro = (props: OJOIHomeIntroProps) => {
-  const organizationPage = props.organizationPage
+  const organization = props.organization
 
-  if (!organizationPage) {
+  if (!organization) {
     return null
   }
 
@@ -45,11 +44,11 @@ export const OJOIHomeIntro = (props: OJOIHomeIntroProps) => {
           {props.breadCrumbs}
 
           <Text as="h1" variant="h1" marginTop={2} marginBottom={2}>
-            {organizationPage && organizationPage.title}
+            {organization && organization.title}
           </Text>
 
-          {organizationPage?.description && (
-            <Text variant="default">{organizationPage?.description}</Text>
+          {organization?.description && (
+            <Text variant="default">{organization?.description}</Text>
           )}
 
           <Box paddingTop={6} component="form" action={props.searchUrl}>
@@ -77,13 +76,16 @@ export const OJOIHomeIntro = (props: OJOIHomeIntroProps) => {
           </Box>
         </GridColumn>
 
-        {organizationPage.featuredImage && (
+        {props.featuredImage && (
           <GridColumn span="3/12" hiddenBelow="lg" paddingTop={[0, 0, 0, 2]}>
-            <img
-              className={s.introImage}
-              src={organizationPage.featuredImage.url}
-              alt={organizationPage.featuredImage.title}
-            />
+            <Box
+              display="flex"
+              height="full"
+              justifyContent="center"
+              alignItems="center"
+            >
+              <img className={s.introImage} src={props.featuredImage} alt="" />
+            </Box>
           </GridColumn>
         )}
       </GridRow>

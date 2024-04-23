@@ -12,17 +12,17 @@ import {
 } from '@island.is/island-ui/core'
 import { theme } from '@island.is/island-ui/theme'
 import { Footer as WebFooter } from '@island.is/web/components'
-import { Image, OrganizationPage } from '@island.is/web/graphql/schema'
+import { Image, Organization } from '@island.is/web/graphql/schema'
 import { usePlausiblePageview } from '@island.is/web/hooks'
 import SidebarLayout from '@island.is/web/screens/Layouts/SidebarLayout'
 
 import { HeadWithSocialSharing } from '../HeadWithSocialSharing/HeadWithSocialSharing'
-import { OrganizationHeader } from '../Organization'
+
 type WrapperProps = {
   pageTitle: string
   pageDescription?: string
   pageFeaturedImage?: Image
-  organizationPage: OrganizationPage
+  organization?: Organization
   breadcrumbItems?: BreadCrumbItem[]
   children?: ReactNode
   sidebarContent?: ReactNode
@@ -34,7 +34,7 @@ export const OJOIWrapper = ({
   pageTitle,
   pageDescription,
   pageFeaturedImage,
-  organizationPage,
+  organization,
   breadcrumbItems,
   children,
   sidebarContent,
@@ -43,22 +43,18 @@ export const OJOIWrapper = ({
 }: WrapperProps) => {
   const { width } = useWindowSize()
   const [isMobile, setIsMobile] = useState<boolean | undefined>()
-  usePlausiblePageview(
-    organizationPage.organization?.trackingDomain ?? undefined,
-  )
-
-  const organization = organizationPage.organization
+  usePlausiblePageview(organization?.trackingDomain ?? undefined)
 
   useEffect(() => {
     setIsMobile(width < theme.breakpoints.md)
   }, [width])
 
-  if (!organizationPage || !organization) {
+  if (!organization) {
     return null
   }
 
   const metaTitleSuffix =
-    pageTitle !== organizationPage.title ? ` | ${organizationPage.title}` : ''
+    pageTitle !== organization.title ? ` | ${organization.title}` : ''
 
   return (
     <>
@@ -70,7 +66,6 @@ export const OJOIWrapper = ({
         imageWidth={pageFeaturedImage?.width?.toString()}
         imageHeight={pageFeaturedImage?.height?.toString()}
       />
-      <OrganizationHeader organizationPage={organizationPage} />
 
       {sidebarContent && (
         <SidebarLayout

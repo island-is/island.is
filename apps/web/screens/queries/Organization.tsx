@@ -83,6 +83,11 @@ export const GET_ORGANIZATION_QUERY = gql`
         title
         url
       }
+      serviceWebFeaturedImage {
+        url
+        width
+        height
+      }
       footerConfig
       footerItems {
         title

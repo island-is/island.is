@@ -1,4 +1,4 @@
-import { useMemo } from 'react'
+import { useIntl } from 'react-intl'
 import { Locale } from 'locale'
 import NextLink from 'next/link'
 
@@ -13,50 +13,42 @@ import {
   Stack,
   Text,
 } from '@island.is/island-ui/core'
-import { getThemeConfig, SliceMachine } from '@island.is/web/components'
 import { SLICE_SPACING } from '@island.is/web/constants'
 import {
   ContentLanguage,
+  CustomPageUniqueIdentifier,
   OfficialJournalOfIcelandAdvertMainCategory,
   Query,
-  QueryGetNamespaceArgs,
-  QueryGetOrganizationPageArgs,
+  QueryGetOrganizationArgs,
   QueryOfficialJournalOfIcelandMainCategoriesArgs,
 } from '@island.is/web/graphql/schema'
-import { useLinkResolver, useNamespace } from '@island.is/web/hooks'
-import useContentfulId from '@island.is/web/hooks/useContentfulId'
+import { useLinkResolver } from '@island.is/web/hooks'
 import { withMainLayout } from '@island.is/web/layouts/main'
 import { CustomNextError } from '@island.is/web/units/errors'
 
 import {
-  categoriesUrl,
   OJOIHomeIntro,
   OJOIWrapper,
-  searchUrl,
 } from '../../components/OfficialJournalOfIceland'
-import { Screen } from '../../types'
 import {
-  GET_NAMESPACE_QUERY,
-  GET_ORGANIZATION_PAGE_QUERY,
-  GET_ORGANIZATION_QUERY,
-} from '../queries'
+  CustomScreen,
+  withCustomPageWrapper,
+} from '../CustomPage/CustomPageWrapper'
+import { GET_ORGANIZATION_QUERY } from '../queries'
 import { MAIN_CATEGORIES_QUERY } from '../queries/OfficialJournalOfIceland'
+import { m } from './messages'
 
-const OJOIHomePage: Screen<OJOIHomeProps> = ({
+const OJOIHomePage: CustomScreen<OJOIHomeProps> = ({
   mainCategories,
-  organizationPage,
   organization,
-  namespace,
   locale,
 }) => {
+  const { formatMessage } = useIntl()
   const { linkResolver } = useLinkResolver()
-  useContentfulId(organizationPage?.id)
 
-  const organizationNamespace = useMemo(() => {
-    return JSON.parse(organization?.namespace?.fields || '{}')
-  }, [organization?.namespace?.fields])
-
-  const o = useNamespace(organizationNamespace)
+  const baseUrl = linkResolver('ojoihome', [], locale).href
+  const searchUrl = linkResolver('ojoisearch', [], locale).href
+  const categoriesUrl = linkResolver('ojoicategories', [], locale).href
 
   const breadcrumbItems = [
     {
@@ -64,34 +56,27 @@ const OJOIHomePage: Screen<OJOIHomeProps> = ({
       href: linkResolver('homepage', [], locale).href,
     },
     {
-      title: organizationPage?.title ?? '',
-      href: linkResolver(
-        'organizationpage',
-        [organizationPage?.slug ?? ''],
-        locale,
-      ).href,
+      title: organization?.title ?? '',
+      href: baseUrl,
     },
   ]
 
   return (
     <OJOIWrapper
-      pageTitle={organizationPage?.title ?? ''}
-      pageDescription={organizationPage?.description}
-      // eslint-disable-next-line @typescript-eslint/no-non-null-assertion
-      organizationPage={organizationPage!}
-      pageFeaturedImage={organizationPage?.featuredImage ?? undefined}
+      pageTitle={organization?.title ?? ''}
+      pageDescription={formatMessage(m.home.description)}
+      organization={organization ?? undefined}
+      pageFeaturedImage={organization?.serviceWebFeaturedImage ?? undefined}
     >
       <Stack space={SLICE_SPACING}>
         <OJOIHomeIntro
-          organizationPage={organizationPage ?? undefined}
           organization={organization ?? undefined}
-          namespace={namespace}
-          searchPlaceholder={o(
-            'searchinputPlaceholder',
-            'Leitaðu í stjórnartíðindum',
-          )}
+          searchPlaceholder={formatMessage(m.home.inputPlaceholder)}
           searchUrl={searchUrl}
-          shortcutsTitle={o('shortcuts', 'Flýtileiðir')}
+          shortcutsTitle={formatMessage(m.home.shortcuts)}
+          featuredImage={
+            organization?.serviceWebFeaturedImage?.url ?? undefined
+          }
           quickLinks={[
             {
               title: 'A deild',
@@ -140,10 +125,14 @@ const OJOIHomePage: Screen<OJOIHomeProps> = ({
 
         <Box background="blue100" paddingTop={8} paddingBottom={8}>
           <GridContainer>
-            <Box display={'flex'} justifyContent={'spaceBetween'}>
-              <Text variant="h3">{o('mainCategories', 'Yfirflokkar')}</Text>
+            <Box
+              display={'flex'}
+              justifyContent={'spaceBetween'}
+              alignItems="flexEnd"
+            >
+              <Text variant="h3">{formatMessage(m.home.mainCategories)}</Text>
               <ArrowLink href={categoriesUrl}>
-                {o('allCategories', 'Málaflokkar A-Ö')}
+                {formatMessage(m.home.allCategories)}
               </ArrowLink>
             </Box>
 
@@ -165,16 +154,6 @@ const OJOIHomePage: Screen<OJOIHomeProps> = ({
             </GridRow>
           </GridContainer>
         </Box>
-
-        {organizationPage?.bottomSlices.map((slice, index) => (
-          <SliceMachine
-            key={slice.id}
-            slice={slice}
-            namespace={namespace}
-            slug={organizationPage.slug}
-            marginBottom={index === organizationPage.slices.length - 1 ? 5 : 0}
-          />
-        ))}
       </Stack>
     </OJOIWrapper>
   )
@@ -182,26 +161,22 @@ const OJOIHomePage: Screen<OJOIHomeProps> = ({
 
 interface OJOIHomeProps {
   mainCategories?: OfficialJournalOfIcelandAdvertMainCategory[]
-  organizationPage?: Query['getOrganizationPage']
   organization?: Query['getOrganization']
-  namespace: Record<string, string>
   locale: Locale
 }
 
-const OJOIHome: Screen<OJOIHomeProps> = ({
+const OJOIHome: CustomScreen<OJOIHomeProps> = ({
   mainCategories,
-  organizationPage,
   organization,
-  namespace,
+  customPageData,
   locale,
 }) => {
   return (
     <OJOIHomePage
       mainCategories={mainCategories}
-      namespace={namespace}
-      organizationPage={organizationPage}
       organization={organization}
       locale={locale}
+      customPageData={customPageData}
     />
   )
 }
@@ -214,12 +189,8 @@ OJOIHome.getProps = async ({ apolloClient, locale }) => {
       data: { officialJournalOfIcelandMainCategories },
     },
     {
-      data: { getOrganizationPage },
-    },
-    {
       data: { getOrganization },
     },
-    namespace,
   ] = await Promise.all([
     apolloClient.query<Query, QueryOfficialJournalOfIcelandMainCategoriesArgs>({
       query: MAIN_CATEGORIES_QUERY,
@@ -229,16 +200,7 @@ OJOIHome.getProps = async ({ apolloClient, locale }) => {
         },
       },
     }),
-    apolloClient.query<Query, QueryGetOrganizationPageArgs>({
-      query: GET_ORGANIZATION_PAGE_QUERY,
-      variables: {
-        input: {
-          slug: organizationSlug,
-          lang: locale as ContentLanguage,
-        },
-      },
-    }),
-    apolloClient.query<Query, QueryGetOrganizationPageArgs>({
+    apolloClient.query<Query, QueryGetOrganizationArgs>({
       query: GET_ORGANIZATION_QUERY,
       variables: {
         input: {
@@ -247,39 +209,26 @@ OJOIHome.getProps = async ({ apolloClient, locale }) => {
         },
       },
     }),
-    apolloClient
-      .query<Query, QueryGetNamespaceArgs>({
-        query: GET_NAMESPACE_QUERY,
-        variables: {
-          input: {
-            namespace: 'OrganizationPages',
-            lang: locale,
-          },
-        },
-      })
-      .then((variables) =>
-        variables?.data?.getNamespace?.fields
-          ? JSON.parse(variables.data.getNamespace.fields)
-          : {},
-      ),
   ])
 
-  if (!getOrganizationPage && !getOrganization?.hasALandingPage) {
+  if (!getOrganization?.hasALandingPage) {
     throw new CustomNextError(404, 'Organization page not found')
   }
 
   return {
     mainCategories: officialJournalOfIcelandMainCategories.mainCategories,
-    organizationPage: getOrganizationPage,
     organization: getOrganization,
-    namespace,
     locale: locale as Locale,
     showSearchInHeader: false,
-    ...getThemeConfig(
-      getOrganizationPage?.theme ?? 'landing_page',
-      getOrganization ?? getOrganizationPage?.organization,
-    ),
+    themeConfig: {
+      footerVersion: 'organization',
+    },
   }
 }
 
-export default withMainLayout(OJOIHome)
+export default withMainLayout(
+  withCustomPageWrapper(
+    CustomPageUniqueIdentifier.OfficialJournalOfIceland,
+    OJOIHome,
+  ),
+)
