@@ -118,10 +118,18 @@ const Subpoena: React.FC<React.PropsWithChildren<unknown>> = () => {
           nextButtonIcon="arrowForward"
           previousUrl={`${constants.INDICTMENTS_RECEPTION_AND_ASSIGNMENT_ROUTE}/${workingCase.id}`}
           nextIsLoading={isLoadingWorkingCase}
-          onNextButtonClick={() =>
-            handleNavigationTo(constants.INDICTMENTS_DEFENDER_ROUTE)
+          onNextButtonClick={() => {
+            if (isPostponed) {
+              router.push(
+                `${constants.INDICTMENTS_DEFENDER_ROUTE}/${workingCase.id}`,
+              )
+            } else {
+              handleNavigationTo(constants.INDICTMENTS_DEFENDER_ROUTE)
+            }
+          }}
+          nextButtonText={
+            isPostponed ? undefined : formatMessage(strings.nextButtonText)
           }
-          nextButtonText={formatMessage(strings.nextButtonText)}
           nextIsDisabled={!stepIsValid}
         />
       </FormContentContainer>
