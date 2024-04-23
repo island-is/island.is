@@ -3,6 +3,7 @@ import { defineTemplateApi } from '@island.is/application/types'
 export {
   NationalRegistryUserApi,
   NationalRegistrySpouseApi,
+  UserProfileApi,
 } from '@island.is/application/types'
 
 export const NationalRegistryResidenceHistoryApi = defineTemplateApi({
@@ -32,13 +33,4 @@ export const SocialInsuranceAdministrationCurrenciesApi = defineTemplateApi({
   action: 'getCurrencies',
   externalDataId: 'socialInsuranceAdministrationCurrencies',
   namespace: 'SocialInsuranceAdministration',
-})
-
-export const UserProfileApi = defineTemplateApi({
-  action: 'userProfile',
-  externalDataId: 'userProfile',
-  namespace: 'UserProfile',
-  params: {
-    validateEmail: true,
-  },
 })
