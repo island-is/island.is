@@ -1,0 +1,711 @@
+{
+  "openapi": "3.0.0",
+  "paths": {
+    "/api/v1/health": {
+      "get": {
+        "operationId": "HealthController_health",
+        "parameters": [],
+        "responses": { "200": { "description": "Health check endpoint." } }
+      }
+    },
+    "/api/v1/applications/{id}": {
+      "get": {
+        "operationId": "getApplication",
+        "summary": "Get application by ID.",
+        "parameters": [
+          {
+            "name": "id",
+            "required": true,
+            "in": "path",
+            "schema": { "type": "string" }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "",
+            "content": {
+              "application/json": {
+                "schema": { "$ref": "#/components/schemas/Application" }
+              }
+            }
+          }
+        }
+      },
+      "put": {
+        "operationId": "updateApplication",
+        "summary": "Update answers of an application.",
+        "parameters": [
+          {
+            "name": "id",
+            "required": true,
+            "in": "path",
+            "description": "Id of the application to update.",
+            "allowEmptyValue": false,
+            "schema": { "type": "string" }
+          }
+        ],
+        "requestBody": {
+          "required": true,
+          "description": "Update application body, answers to update.",
+          "content": {
+            "application/json": {
+              "schema": { "$ref": "#/components/schemas/UpdateApplicationBody" }
+            }
+          }
+        },
+        "responses": {
+          "200": {
+            "description": "",
+            "content": {
+              "application/json": {
+                "schema": { "$ref": "#/components/schemas/Application" }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/api/v1/applications/{id}/submit": {
+      "put": {
+        "operationId": "submitApplication",
+        "summary": "Submit application by ID.",
+        "parameters": [
+          {
+            "name": "id",
+            "required": true,
+            "in": "path",
+            "description": "Id of the application to submit.",
+            "allowEmptyValue": false,
+            "schema": { "type": "string" }
+          }
+        ],
+        "requestBody": {
+          "required": true,
+          "description": "Submit application body, approve or reject the application.",
+          "content": {
+            "application/json": {
+              "schema": { "$ref": "#/components/schemas/SubmitApplicationBody" }
+            }
+          }
+        },
+        "responses": {
+          "200": {
+            "description": "",
+            "content": {
+              "application/json": {
+                "schema": { "$ref": "#/components/schemas/Application" }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/api/v1/applications/{id}/comments": {
+      "get": {
+        "operationId": "getComments",
+        "summary": "Get comments by application ID.",
+        "parameters": [
+          {
+            "name": "id",
+            "required": true,
+            "in": "path",
+            "schema": { "type": "string" }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "array",
+                  "items": { "$ref": "#/components/schemas/CaseComment" }
+                }
+              }
+            }
+          }
+        }
+      },
+      "post": {
+        "operationId": "addComment",
+        "summary": "Add comment to application.",
+        "parameters": [
+          {
+            "name": "id",
+            "required": true,
+            "in": "path",
+            "schema": { "type": "string" }
+          }
+        ],
+        "requestBody": {
+          "required": true,
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/PostApplicationComment"
+              }
+            }
+          }
+        },
+        "responses": {
+          "200": {
+            "description": "",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "array",
+                  "items": { "$ref": "#/components/schemas/CaseComment" }
+                }
+              }
+            }
+          }
+        }
+      }
+    }
+  },
+  "info": {
+    "title": "The Official Journal of Iceland Application API",
+    "description": "This api is responsible for communications with the island.is application system.",
+    "version": "1.0",
+    "contact": {}
+  },
+  "tags": [],
+  "servers": [],
+  "components": {
+    "schemas": {
+      "ApplicationRequirements": {
+        "type": "object",
+        "properties": {
+          "approveExternalData": {
+            "type": "string",
+            "enum": ["yes", "no"],
+            "example": "yes",
+            "description": "Has the applicant approved the requirements"
+          }
+        },
+        "required": ["approveExternalData"]
+      },
+      "ApplicationAdvert": {
+        "type": "object",
+        "properties": {
+          "department": {
+            "type": "string",
+            "example": "b783c4d5-6e78-9f01-2g34-h56i7j8k9l0m",
+            "description": "Id of the selected department for the application advert"
+          },
+          "type": {
+            "type": "string",
+            "example": "a71ka2b3-4c56-7d89-0e12-3f45g6h7i8j9",
+            "description": "Id of the selected type for the application advert"
+          },
+          "title": {
+            "type": "string",
+            "example": "GJALDSKRÁ fyrir hundahald í Reykjavík",
+            "description": "Title of the application advert"
+          },
+          "document": {
+            "type": "string",
+            "description": "HTML string of the application advert"
+          },
+          "template": {
+            "type": "string",
+            "description": "Selected template for the application advert"
+          },
+          "subType": {
+            "type": "string",
+            "example": "b781ks2-3c45-6d78-9e01-2f34g5h6i7j8",
+            "description": "Id of the selected subType for the application advert, only when type is \"Reglugerð\""
+          }
+        },
+        "required": [
+          "department",
+          "type",
+          "title",
+          "document",
+          "template",
+          "subType"
+        ]
+      },
+      "ApplicationSignatureMember": {
+        "type": "object",
+        "properties": {
+          "above": {
+            "type": "string",
+            "example": "F.h.r",
+            "description": "Text above the name of the signature"
+          },
+          "name": {
+            "type": "string",
+            "example": "Jón Jónsson",
+            "description": "Name of the signature"
+          },
+          "after": {
+            "type": "string",
+            "example": "ráðherra",
+            "description": "Text after the name of the signature"
+          },
+          "below": {
+            "type": "string",
+            "example": "Text below the name of the signature",
+            "description": "borgarstjóri"
+          }
+        },
+        "required": ["above", "name", "after", "below"]
+      },
+      "ApplicationRegularSignature": {
+        "type": "object",
+        "properties": {
+          "institution": {
+            "type": "string",
+            "example": "Dómsmálaráðuneytið",
+            "description": "Institution/place of the signature"
+          },
+          "date": {
+            "type": "string",
+            "example": "2021-04-01T00:00:00.000Z",
+            "description": "Date of the signature"
+          },
+          "members": {
+            "description": "Member of the signature",
+            "type": "array",
+            "items": {
+              "$ref": "#/components/schemas/ApplicationSignatureMember"
+            }
+          }
+        },
+        "required": ["institution", "date", "members"]
+      },
+      "ApplicationCommitteeSignature": {
+        "type": "object",
+        "properties": {
+          "institution": {
+            "type": "string",
+            "example": "Dómsmálaráðuneytið",
+            "description": "Institution/place of the signature"
+          },
+          "date": {
+            "type": "string",
+            "example": "2021-04-01T00:00:00.000Z",
+            "description": "Date of the signature"
+          },
+          "members": {
+            "description": "Member of the signature",
+            "type": "array",
+            "items": {
+              "$ref": "#/components/schemas/ApplicationSignatureMember"
+            }
+          }
+        },
+        "required": ["institution", "date", "members"]
+      },
+      "ApplicationSignature": {
+        "type": "object",
+        "properties": {
+          "type": {
+            "type": "string",
+            "example": "committee",
+            "description": "Signature type of the application"
+          },
+          "signature": {
+            "type": "string",
+            "example": "<p>Jón Jónsson</p>",
+            "description": "HTML string of the signature"
+          },
+          "additional": {
+            "type": "string",
+            "example": "Dagur B. Eggertsson",
+            "description": "Additional name of the signature"
+          },
+          "regular": {
+            "description": "Regular signature of the application",
+            "type": "array",
+            "items": {
+              "$ref": "#/components/schemas/ApplicationRegularSignature"
+            }
+          },
+          "committee": {
+            "description": "Committee signature of the application",
+            "allOf": [
+              { "$ref": "#/components/schemas/ApplicationCommitteeSignature" }
+            ]
+          }
+        },
+        "required": ["type", "signature", "additional", "regular", "committee"]
+      },
+      "ApplicationAttachmentsFileSchema": {
+        "type": "object",
+        "properties": {
+          "name": {
+            "type": "string",
+            "example": "filename.doc",
+            "description": "Name of the attachment"
+          },
+          "key": {
+            "type": "string",
+            "example": "key",
+            "description": "Key of the attachment"
+          },
+          "url": {
+            "type": "string",
+            "example": "https://example.com/document.pdf",
+            "description": "URL of the attachment"
+          }
+        },
+        "required": ["name", "key", "url"]
+      },
+      "ApplicationAttachments": {
+        "type": "object",
+        "properties": {
+          "files": {
+            "description": "List of attachments",
+            "type": "array",
+            "items": {
+              "$ref": "#/components/schemas/ApplicationAttachmentsFileSchema"
+            }
+          },
+          "fileNames": {
+            "type": "string",
+            "example": "document",
+            "description": "Selected department for the application attachment, should be \"document\" or \"additions\""
+          }
+        },
+        "required": ["files", "fileNames"]
+      },
+      "ApplicationContentCategories": {
+        "type": "object",
+        "properties": {
+          "label": {
+            "type": "string",
+            "example": "Gæludýr",
+            "description": "Label of the category"
+          },
+          "value": {
+            "type": "string",
+            "example": "b619j2k3-4l56-7m89-0n12-3o45p6q7r8s9",
+            "description": "Id of the selected category"
+          }
+        },
+        "required": ["label", "value"]
+      },
+      "ApplicationCommunicationChannels": {
+        "type": "object",
+        "properties": {
+          "email": {
+            "type": "string",
+            "example": "email",
+            "description": "Selected communication channel"
+          },
+          "phone": {
+            "type": "string",
+            "example": "5555555",
+            "description": "Phone number of the communication channel"
+          }
+        },
+        "required": ["email", "phone"]
+      },
+      "ApplicationPublishing": {
+        "type": "object",
+        "properties": {
+          "date": {
+            "type": "string",
+            "example": "2021-04-01T00:00:00.000Z",
+            "description": "Requested publishing date"
+          },
+          "fastTrack": {
+            "type": "string",
+            "enum": ["yes", "no"],
+            "example": "yes",
+            "description": "Request fast track for the advert"
+          },
+          "contentCategories": {
+            "description": "List of selected categories",
+            "type": "array",
+            "items": {
+              "$ref": "#/components/schemas/ApplicationContentCategories"
+            }
+          },
+          "communicationChannels": {
+            "description": "Selected communication channels",
+            "type": "array",
+            "items": {
+              "$ref": "#/components/schemas/ApplicationCommunicationChannels"
+            }
+          },
+          "message": {
+            "type": "string",
+            "example": "Some message..",
+            "description": "Message for the publisher"
+          }
+        },
+        "required": [
+          "date",
+          "fastTrack",
+          "contentCategories",
+          "communicationChannels",
+          "message"
+        ]
+      },
+      "ApplicationAnswers": {
+        "type": "object",
+        "properties": {
+          "requirements": {
+            "example": "true",
+            "description": "Has the applicant approved the external data",
+            "allOf": [
+              { "$ref": "#/components/schemas/ApplicationRequirements" }
+            ]
+          },
+          "advert": {
+            "description": "Application advert",
+            "allOf": [{ "$ref": "#/components/schemas/ApplicationAdvert" }]
+          },
+          "signature": {
+            "description": "Application signature",
+            "allOf": [{ "$ref": "#/components/schemas/ApplicationSignature" }]
+          },
+          "attachments": {
+            "description": "Application attachments",
+            "allOf": [{ "$ref": "#/components/schemas/ApplicationAttachments" }]
+          },
+          "publishing": {
+            "description": "Application publishing",
+            "allOf": [{ "$ref": "#/components/schemas/ApplicationPublishing" }]
+          }
+        },
+        "required": [
+          "requirements",
+          "advert",
+          "signature",
+          "attachments",
+          "publishing"
+        ]
+      },
+      "Application": {
+        "type": "object",
+        "properties": {
+          "id": {
+            "type": "string",
+            "example": "a12c3d4e-5f67-8h90-1i23-j45k6l7m8n9o0",
+            "description": "Guid of the application"
+          },
+          "applicant": {
+            "type": "string",
+            "example": "0101015050",
+            "description": "National id of the applicant"
+          },
+          "assignees": {
+            "example": ["0101015050"],
+            "description": "List of assignees",
+            "type": "array",
+            "items": { "type": "string" }
+          },
+          "state": {
+            "type": "string",
+            "example": "draft",
+            "description": "State of the application"
+          },
+          "status": {
+            "type": "string",
+            "example": "inprogress",
+            "description": "Status of the application"
+          },
+          "typeId": {
+            "type": "string",
+            "example": "OfficialJournalOfIceland",
+            "description": "Type of the application"
+          },
+          "created": {
+            "type": "string",
+            "example": "2021-04-01T00:00:00.000Z",
+            "description": "Application creation date"
+          },
+          "modified": {
+            "type": "string",
+            "example": "2021-04-01T00:00:00.000Z",
+            "description": "Application last modified date"
+          },
+          "name": {
+            "type": "string",
+            "example": "Stjórnartíðindi",
+            "description": "Name of the application"
+          },
+          "answers": {
+            "description": "Application answers",
+            "allOf": [{ "$ref": "#/components/schemas/ApplicationAnswers" }]
+          },
+          "externalData": { "type": "object" },
+          "listed": {
+            "type": "boolean",
+            "example": true,
+            "description": "Is the application listed"
+          },
+          "prunedAt": {
+            "type": "string",
+            "example": "2021-04-01T00:00:00.000Z",
+            "description": "Prune date of the application"
+          },
+          "pruned": {
+            "type": "boolean",
+            "example": "2021-04-01T00:00:00.000Z",
+            "description": "Date of the application"
+          }
+        },
+        "required": [
+          "id",
+          "applicant",
+          "assignees",
+          "state",
+          "status",
+          "typeId",
+          "created",
+          "modified",
+          "name",
+          "answers",
+          "externalData",
+          "listed",
+          "prunedAt",
+          "pruned"
+        ]
+      },
+      "SubmitApplicationBody": {
+        "type": "object",
+        "properties": {
+          "event": {
+            "type": "string",
+            "enum": ["REJECT", "APPROVE"],
+            "example": "APPROVE",
+            "description": "Approve or reject the application."
+          },
+          "answers": {
+            "example": {},
+            "description": "Answers to the application questions.",
+            "allOf": [{ "$ref": "#/components/schemas/ApplicationAnswers" }]
+          }
+        },
+        "required": ["event", "answers"]
+      },
+      "UpdateApplicationBody": {
+        "type": "object",
+        "properties": {
+          "answers": {
+            "example": {},
+            "description": "Answers to the application questions.",
+            "allOf": [{ "$ref": "#/components/schemas/ApplicationAnswers" }]
+          }
+        },
+        "required": ["answers"]
+      },
+      "CaseCommentTask": {
+        "type": "object",
+        "properties": {
+          "from": {
+            "type": "string",
+            "description": "From who or what initied the task, used by client to show who inited the task.",
+            "example": "Ármann",
+            "nullable": true
+          },
+          "to": {
+            "type": "string",
+            "description": "To whom or what the task is assigned to.",
+            "example": "Pálina J",
+            "nullable": true
+          },
+          "title": {
+            "type": "string",
+            "enum": [
+              "Innsent af:",
+              "merkir sér málið.",
+              "færir mál á",
+              "færir mál í stöðuna:",
+              "gerir athugasemd.",
+              "skráir skilaboð"
+            ],
+            "example": "Innsent af:",
+            "description": "Title for the task action"
+          },
+          "comment": {
+            "type": "string",
+            "description": "The comment itself",
+            "example": "Pálína, getur þú tekið við og staðfest að upplýsingarnar séu réttar?",
+            "nullable": true
+          }
+        },
+        "required": ["from", "to", "title", "comment"]
+      },
+      "CaseComment": {
+        "type": "object",
+        "properties": {
+          "id": {
+            "type": "string",
+            "example": "d290f1ee-6c54-4b01-90e6-d701748f0851",
+            "description": "Id of the case comment."
+          },
+          "createdAt": {
+            "type": "string",
+            "description": "Date and time of the comment, ISO 8601 format, UTC time format.",
+            "example": "2024-01-01T09:00:00Z"
+          },
+          "internal": {
+            "type": "boolean",
+            "description": "Is the comment internal or external.",
+            "example": false
+          },
+          "type": {
+            "type": "string",
+            "enum": ["submit", "assign", "update", "comment", "message"],
+            "example": "comment",
+            "description": "Type of the case task."
+          },
+          "caseStatus": {
+            "type": "string",
+            "enum": [
+              "Innsent",
+              "Grunnvinnsla",
+              "Yfirlestur",
+              "Tilbúið",
+              "Útgefið",
+              "Tekið úr birtingu",
+              "Birtingu hafnað"
+            ],
+            "example": "Innsent",
+            "description": "Status of case when comment was added."
+          },
+          "task": {
+            "example": {
+              "from": "Ármann",
+              "to": null,
+              "title": "gerir athugasemd",
+              "comment": "Pálína, getur\n      þú tekið við og staðfest að upplýsingarnar séu réttar?"
+            },
+            "description": "The task itself",
+            "allOf": [{ "$ref": "#/components/schemas/CaseCommentTask" }]
+          }
+        },
+        "required": [
+          "id",
+          "createdAt",
+          "internal",
+          "type",
+          "caseStatus",
+          "task"
+        ]
+      },
+      "PostApplicationComment": {
+        "type": "object",
+        "properties": {
+          "from": { "type": "string", "description": "Reykjavíkurborg" },
+          "name": {
+            "type": "string",
+            "description": "Addtional name for the comment, goes after `from` text.",
+            "example": "Reykjavíkurborg, (`Jón Jónsson`)"
+          },
+          "comment": {
+            "type": "string",
+            "description": "The case comment itself"
+          }
+        },
+        "required": ["from", "comment"]
+      }
+    }
+  }
+}
