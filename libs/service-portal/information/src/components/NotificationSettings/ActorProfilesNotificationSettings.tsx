@@ -47,7 +47,7 @@ const ActorProfilesNotificationSettings = () => {
   }
 
   return (
-    <Box>
+    <Box dataTestId="actor-profile-settings-list">
       <Text variant="h4" as="h2" paddingTop={6} paddingBottom={[2, 3]}>
         {formatMessage(mNotifications.delegations)}
       </Text>

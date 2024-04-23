@@ -74,7 +74,7 @@ export const informationModule: PortalModule = {
       name: m.userInfo,
       path: InformationPaths.SettingsNotifications,
       enabled: userInfo.scopes.includes(ApiScope.internal),
-      // key: 'NotificationSettings',
+      key: 'NotificationSettings',
       element: <UserNotificationsSettings />,
     },
     {
