@@ -136,6 +136,7 @@ query LimitedAccessCase($input: CaseQueryInput!) {
       caseId
       dateType
       date
+      location
     }
     prosecutorsOffice {
       id

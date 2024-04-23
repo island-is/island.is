@@ -20,4 +20,7 @@ export class DateLog {
 
   @Field({ nullable: true })
   readonly date?: string
+
+  @Field({ nullable: true })
+  readonly location?: string
 }

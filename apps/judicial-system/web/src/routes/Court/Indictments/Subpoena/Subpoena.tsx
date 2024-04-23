@@ -82,6 +82,10 @@ const Subpoena: React.FC<React.PropsWithChildren<unknown>> = () => {
   const isPostponed = Boolean(
     getLatestDateType([DateType.POSTPONED_COURT_DATE], workingCase.dateLogs),
   )
+  const hearingArrangements = getLatestDateType(
+    [DateType.COURT_DATE],
+    workingCase.dateLogs,
+  )
 
   return (
     <PageLayout
@@ -103,11 +107,8 @@ const Subpoena: React.FC<React.PropsWithChildren<unknown>> = () => {
             workingCase={workingCase}
             setWorkingCase={setWorkingCase}
             handleCourtDateChange={handleCourtDateChange}
-            selectedCourtDate={
-              getLatestDateType([DateType.COURT_DATE], workingCase.dateLogs)
-                ?.date as string
-            }
-            selectedCourtRoom={workingCase.courtRoom}
+            selectedCourtDate={hearingArrangements?.date as string}
+            selectedCourtRoom={hearingArrangements?.location}
             courtRoomDisabled={isPostponed}
             dateTimeDisabled={isPostponed}
           />

@@ -114,7 +114,7 @@ const Conclusion: React.FC = () => {
       setSelectedAction('POSTPONE')
       setPostponement({
         newDate: formatDateForServer(new Date(latestPostponement.date)),
-        courtRoom: workingCase.courtRoom,
+        courtRoom: latestPostponement.location,
       })
     }
   }, [workingCase.courtRoom, workingCase.dateLogs])

@@ -1,4 +1,3 @@
-import max from 'date-fns/max'
 export enum DateType {
   COURT_DATE = 'COURT_DATE',
   POSTPONED_COURT_DATE = 'POSTPONED_COURT_DATE',
@@ -17,6 +16,7 @@ export const getLatestDateType = (
         caseId?: string | null
         dateType?: DateType | null
         date?: string | Date | null
+        location?: string | null
       }[]
     | null,
 ) => {
