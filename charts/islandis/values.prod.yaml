@@ -2792,7 +2792,7 @@ user-notification:
     XROAD_TLS_BASE_PATH_WITH_ENV: 'https://securityserver.island.is/r1/IS'
   grantNamespaces:
     - 'nginx-ingress-internal'
-    - 'identity-server'
+    - 'identity-server-delegation'
   grantNamespacesEnabled: true
   healthCheck:
     liveness:
@@ -2875,7 +2875,7 @@ user-notification-cleanup-worker:
     SERVERSIDE_FEATURES_ON: 'driving-license-use-v1-endpoint-for-v2-comms'
   grantNamespaces:
     - 'nginx-ingress-internal'
-    - 'identity-server'
+    - 'identity-server-delegation'
   grantNamespacesEnabled: true
   healthCheck:
     liveness:
@@ -2985,7 +2985,7 @@ user-notification-worker:
     XROAD_TLS_BASE_PATH_WITH_ENV: 'https://securityserver.island.is/r1/IS'
   grantNamespaces:
     - 'nginx-ingress-internal'
-    - 'identity-server'
+    - 'identity-server-delegation'
   grantNamespacesEnabled: true
   healthCheck:
     liveness:
