@@ -185,6 +185,13 @@ const ListPageEditor = () => {
   )
 
   const createListItem = async () => {
+    const thumbnailContent = {}
+
+    for (const locale of sdk.locales.available) {
+      thumbnailContent[locale] =
+        sdk.entry.fields.listItemThumbnailContentTemplate.getValue(locale)
+    }
+
     const listItem = await cma.entry.create(
       {
         contentTypeId: LIST_ITEM_CONTENT_TYPE_ID,
@@ -202,15 +209,7 @@ const ListPageEditor = () => {
               },
             },
           },
-          thumbnailContent: {
-            // TODO: make this dynamic for all locales
-            [defaultLocale]:
-              sdk.entry.fields.listItemThumbnailContentTemplate.getValue(
-                defaultLocale,
-              ),
-            ['en']:
-              sdk.entry.fields.listItemThumbnailContentTemplate.getValue('en'),
-          },
+          thumbnailContent,
         },
       },
     )
