@@ -67,6 +67,7 @@ import {
   otherParentApprovalStatePendingAction,
   employerApprovalStatePendingAction,
   calculatePruneDate,
+  getSpouse,
 } from '../lib/parentalLeaveUtils'
 import { ChildrenApi, GetPersonInformation } from '../dataProviders'
 
@@ -93,6 +94,7 @@ const ParentalLeaveTemplate: ApplicationTemplate<
     states: {
       [States.PREREQUISITES]: {
         exit: [
+          'otherParentToSpouse',
           'attemptToSetPrimaryParentAsOtherParent',
           'setRightsToOtherParent',
           'setMultipleBirthsIfNo',
@@ -1827,6 +1829,17 @@ const ParentalLeaveTemplate: ApplicationTemplate<
         )
 
         set(answers, 'otherParentObj.chooseOtherParent', MANUAL)
+
+        return context
+      }),
+      otherParentToSpouse: assign((context) => {
+        const { application } = context
+        const { answers } = application
+        const spouse = getSpouse(application)
+
+        if (spouse) {
+          set(answers, 'otherParentObj.chooseOtherParent', SPOUSE)
+        }
 
         return context
       }),
