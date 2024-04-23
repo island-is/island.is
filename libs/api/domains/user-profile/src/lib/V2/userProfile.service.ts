@@ -8,9 +8,11 @@ import { Auth, AuthMiddleware, User } from '@island.is/auth-nest-tools'
 
 import { IslykillService } from '../islykill.service'
 import { UserProfile } from '../userProfile.model'
+import { ActorProfile, ActorProfileResponse } from '../dto/actorProfile'
 import { UpdateUserProfileInput } from '../dto/updateUserProfileInput'
 import { CreateSmsVerificationInput } from '../dto/createSmsVerificationInput'
 import { CreateEmailVerificationInput } from '../dto/createEmalVerificationInput'
+import { UpdateActorProfileInput } from '../dto/updateActorProfileInput'
 
 @Injectable()
 export class UserProfileServiceV2 {
@@ -94,6 +96,24 @@ export class UserProfileServiceV2 {
       user,
     ).meUserProfileControllerCreateVerification({
       createVerificationDto: input,
+    })
+  }
+
+  async getActorProfiles(user: User): Promise<ActorProfileResponse> {
+    return this.v2UserProfileApiWithAuth(
+      user,
+    ).meUserProfileControllerGetActorProfiles()
+  }
+
+  async updateActorProfile(
+    input: UpdateActorProfileInput,
+    user: User,
+  ): Promise<ActorProfile> {
+    return this.v2UserProfileApiWithAuth(
+      user,
+    ).meUserProfileControllerCreateOrUpdateActorProfile({
+      xParamFromNationalId: input.fromNationalId,
+      patchActorProfileDto: { emailNotifications: input.emailNotifications },
     })
   }
 

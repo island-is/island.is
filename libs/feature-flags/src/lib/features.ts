@@ -48,6 +48,7 @@ export enum Features {
   servicePortalSignatureCollection = 'isServicePortalSignatureCollectionEnabled',
   servicePortalVehicleMileagePageEnabled = 'isServicePortalVehicleMileagePageEnabled',
   servicePortalSocialInsurancePageEnabled = 'isServicePortalSocialInsurancePageEnabled',
+  ServicePortalNotificationsEnabled = 'isServicePortalNotificationsPageEnabled',
 
   //Occupational License Health directorate fetch enabled
   occupationalLicensesHealthDirectorate = 'isHealthDirectorateOccupationalLicenseEnabled',

@@ -58,6 +58,7 @@ export const serviceSetup = (services: {
   sessionsApi: ServiceBuilder<'services-sessions'>
   authAdminApi: ServiceBuilder<'services-auth-admin-api'>
   universityGatewayApi: ServiceBuilder<'services-university-gateway'>
+  userNotificationService: ServiceBuilder<'services-user-notification'>
 }): ServiceBuilder<'api'> => {
   return service('api')
     .namespace('islandis')
@@ -67,6 +68,9 @@ export const serviceSetup = (services: {
     .env({
       APPLICATION_SYSTEM_API_URL: ref(
         (h) => `http://${h.svc(services.appSystemApi)}`,
+      ),
+      USER_NOTIFICATION_API_URL: ref(
+        (h) => `http://${h.svc(services.userNotificationService)}`,
       ),
       ICELANDIC_NAMES_REGISTRY_BACKEND_URL: ref(
         (h) => `http://${h.svc(services.icelandicNameRegistryBackend)}`,
@@ -157,15 +161,15 @@ export const serviceSetup = (services: {
           'http://web-services-auth-delegation-api.identity-server-delegation.svc.cluster.local',
         prod: 'https://auth-delegation-api.internal.innskra.island.is',
       },
-      IDENTITY_SERVER_ISSUER_URL: {
-        dev: 'https://identity-server.dev01.devland.is',
-        staging: 'https://identity-server.staging01.devland.is',
-        prod: 'https://innskra.island.is',
-      },
       USER_NOTIFICATION_CLIENT_URL: {
         dev: 'http://user-notification-xrd.internal.dev01.devland.is',
         staging: 'http://user-notification-xrd.internal.staging01.devland.is',
         prod: 'https://user-notification-xrd.internal.island.is',
+      },
+      IDENTITY_SERVER_ISSUER_URL: {
+        dev: 'https://identity-server.dev01.devland.is',
+        staging: 'https://identity-server.staging01.devland.is',
+        prod: 'https://innskra.island.is',
       },
       MUNICIPALITIES_FINANCIAL_AID_BACKEND_URL: {
         dev: 'http://web-financial-aid-backend',

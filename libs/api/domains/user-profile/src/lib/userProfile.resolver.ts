@@ -1,4 +1,13 @@
 import { Args, Mutation, Query, Resolver } from '@nestjs/graphql'
+
+import { IdentityClientService } from '@island.is/clients/identity'
+import type { User } from '@island.is/auth-nest-tools'
+import {
+  IdsUserGuard,
+  ScopesGuard,
+  CurrentUser,
+} from '@island.is/auth-nest-tools'
+
 import { ConfirmEmailVerificationInput } from './dto/confirmEmailVerificationInput'
 import { ConfirmSmsVerificationInput } from './dto/confirmSmsVerificationInput'
 import { CreateSmsVerificationInput } from './dto/createSmsVerificationInput'
@@ -10,12 +19,6 @@ import { UserProfile } from './userProfile.model'
 import { ConfirmResponse, Response } from './response.model'
 import { DeleteIslykillSettings } from './models/deleteIslykillSettings.model'
 import { UserProfileService } from './userProfile.service'
-import type { User } from '@island.is/auth-nest-tools'
-import {
-  IdsUserGuard,
-  ScopesGuard,
-  CurrentUser,
-} from '@island.is/auth-nest-tools'
 import { UseGuards } from '@nestjs/common'
 import { UserDeviceToken } from './userDeviceToken.model'
 import { UserDeviceTokenInput } from './dto/userDeviceTokenInput'
