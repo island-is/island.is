@@ -26,6 +26,7 @@ export const sectionDelivery = buildSection({
           id: 'district',
           title: m.deliveryMethodOfficeLabel,
           placeholder: m.deliveryMethodOfficeSelectPlaceholder,
+          required: true,
           options: ({
             externalData: {
               jurisdictions: { data },
