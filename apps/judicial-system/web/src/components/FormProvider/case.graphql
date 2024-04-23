@@ -250,5 +250,9 @@ query Case($input: CaseQueryInput!) {
       name
       policeCaseNumberPrefix
     }
+    explanatoryComments {
+      comment
+      commentType
+    }
   }
 }
