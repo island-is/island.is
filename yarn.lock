@@ -7672,7 +7672,7 @@ __metadata:
   languageName: node
   linkType: hard
 
-"@contentful/field-editor-rich-text@npm:3.20.1, @contentful/field-editor-rich-text@npm:^3.20.1":
+"@contentful/field-editor-rich-text@npm:^3.20.1":
   version: 3.20.1
   resolution: "@contentful/field-editor-rich-text@npm:3.20.1"
   dependencies:
@@ -34086,7 +34086,6 @@ __metadata:
     "@contentful/default-field-editors": 1.6.34
     "@contentful/field-editor-json": 3.1.4
     "@contentful/field-editor-reference": 5.20.0
-    "@contentful/field-editor-rich-text": 3.20.1
     "@contentful/field-editor-single-line": 1.1.8
     "@contentful/forma-36-react-components": 3.78.4
     "@contentful/forma-36-tokens": 0.10.1
