@@ -2,7 +2,6 @@ import { useMemo, useRef, useState } from 'react'
 import { useDebounce } from 'react-use'
 import { CollectionProp, EntryProps, KeyValueMap } from 'contentful-management'
 import { EditorExtensionSDK } from '@contentful/app-sdk'
-import { Field, FieldWrapper } from '@contentful/default-field-editors'
 import {
   Box,
   Button,
@@ -17,34 +16,12 @@ import {
 import { PlusIcon } from '@contentful/f36-icons'
 import { useCMA, useSDK } from '@contentful/react-apps-toolkit'
 
+import { ContentfulField } from '../ContentfulField'
+import { mapLocalesToFieldApis } from '../utils'
+
 const SEARCH_DEBOUNCE_TIME_IN_MS = 300
 const LIST_ITEM_CONTENT_TYPE_ID = 'listItem'
 const LIST_ITEMS_PER_PAGE = 4
-
-const getFieldApiForLocale = (
-  locale: string,
-  sdk: EditorExtensionSDK,
-  fieldName: keyof typeof sdk.entry.fields,
-) => {
-  return {
-    ...sdk,
-    field: sdk.entry.fields[fieldName].getForLocale(locale),
-  }
-}
-
-const mapLocalesToFieldApis = (
-  locales: string[],
-  sdk: EditorExtensionSDK,
-  fieldName: string,
-) => {
-  const mapping = new Map<string, ReturnType<typeof getFieldApiForLocale>>()
-
-  for (const locale of locales) {
-    mapping.set(locale, getFieldApiForLocale(locale, sdk, fieldName))
-  }
-
-  return Object.fromEntries(mapping)
-}
 
 const createLocaleToFieldMapping = (sdk: EditorExtensionSDK) => {
   return {
@@ -65,75 +42,6 @@ const createLocaleToFieldMapping = (sdk: EditorExtensionSDK) => {
       'listItemThumbnailContentTemplate',
     ),
   }
-}
-
-const ContentfulField = (props: {
-  sdk: EditorExtensionSDK
-  localeToFieldMapping: ReturnType<typeof createLocaleToFieldMapping>
-  fieldID: keyof typeof props.localeToFieldMapping
-  displayName: string
-  widgetId?: string
-}) => {
-  const availableLocales = useMemo(() => {
-    const validLocales = props.sdk.locales.available.filter(
-      (locale) => props.localeToFieldMapping[props.fieldID]?.[locale],
-    )
-
-    // Make sure that the default locale is at the top
-    if (validLocales[0] !== props.sdk.locales.default) {
-      const index = validLocales.findIndex(
-        (locale) => locale === props.sdk.locales.default,
-      )
-      if (index >= 0) {
-        validLocales.splice(index, 1)
-        validLocales.unshift(props.sdk.locales.default)
-      }
-    }
-
-    return validLocales
-  }, [
-    props.fieldID,
-    props.localeToFieldMapping,
-    props.sdk.locales.available,
-    props.sdk.locales.default,
-  ])
-
-  return availableLocales.map((locale) => {
-    return (
-      <FieldWrapper
-        key={locale}
-        sdk={props.localeToFieldMapping[props.fieldID][locale]}
-        name={props.displayName}
-        showFocusBar={false}
-        renderHeading={
-          availableLocales.length > 1
-            ? () => {
-                return (
-                  <Box
-                    style={{
-                      display: 'flex',
-                      flexFlow: 'row nowrap',
-                      gap: '6px',
-                    }}
-                  >
-                    <FormControl.Label>{props.displayName}</FormControl.Label>
-                    <Text fontColor="gray500">|</Text>
-                    <Text fontColor="gray500">
-                      {props.sdk.locales.names[locale]}
-                    </Text>
-                  </Box>
-                )
-              }
-            : undefined
-        }
-      >
-        <Field
-          sdk={props.localeToFieldMapping[props.fieldID][locale]}
-          widgetId={props.widgetId}
-        />
-      </FieldWrapper>
-    )
-  })
 }
 
 const ListPageEditor = () => {
@@ -219,7 +127,7 @@ const ListPageEditor = () => {
     setCounter((counter) => counter + 1)
   }
 
-  const fields = useMemo(() => {
+  const localeToFieldMapping = useMemo(() => {
     return createLocaleToFieldMapping(sdk)
   }, [sdk])
 
@@ -240,57 +148,31 @@ const ListPageEditor = () => {
       <ContentfulField
         fieldID="internalTitle"
         displayName="Internal Title"
-        localeToFieldMapping={fields}
+        localeToFieldMapping={localeToFieldMapping}
         sdk={sdk}
       />
 
       <ContentfulField
         fieldID="title"
         displayName="Displayed Title"
-        localeToFieldMapping={fields}
+        localeToFieldMapping={localeToFieldMapping}
         sdk={sdk}
       />
 
       <ContentfulField
         fieldID="relativeUrl"
         displayName="Relative URL"
-        localeToFieldMapping={fields}
+        localeToFieldMapping={localeToFieldMapping}
         sdk={sdk}
       />
 
       <ContentfulField
         fieldID="listItemThumbnailContentTemplate"
         displayName="Intro Template"
-        localeToFieldMapping={fields}
+        localeToFieldMapping={localeToFieldMapping}
         sdk={sdk}
       />
 
-      {/* 
-      <Box>
-        {availableLocales.map((locale) => (
-          <FormControl key={locale}>
-            <Box
-              style={{ display: 'flex', flexFlow: 'row nowrap', gap: '6px' }}
-            >
-              <FormControl.Label>Intro template</FormControl.Label>
-              <Text fontColor="gray600">|</Text>
-              <Text fontColor="gray600">{sdk.locales.names[locale]}</Text>
-            </Box>
-            <Field
-              sdk={getFieldApiForLocale(
-                locale,
-                sdk,
-                'listItemThumbnailContentTemplate',
-              )}
-              widgetId="richTextEditor"
-            />
-            <FormControl.HelpText>
-              When creating a new list item this text will be copied over to the
-              card intro field for that list item
-            </FormControl.HelpText>
-          </FormControl>
-        ))}
-      </Box> */}
       <Box>
         <FormControl.Label>Items</FormControl.Label>
         <Box
