@@ -3,7 +3,6 @@ import {
   buildCustomField,
   buildMultiField,
   buildSection,
-  buildTextField,
 } from '@island.is/application/core'
 import { information } from '../../lib/messages'
 
