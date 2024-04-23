@@ -21,7 +21,7 @@ import { HeadWithSocialSharing } from '../HeadWithSocialSharing/HeadWithSocialSh
 type WrapperProps = {
   pageTitle: string
   pageDescription?: string
-  pageFeaturedImage?: Image
+  pageFeaturedImage?: string
   organization?: Organization
   breadcrumbItems?: BreadCrumbItem[]
   children?: ReactNode
@@ -61,10 +61,7 @@ export const OJOIWrapper = ({
       <HeadWithSocialSharing
         title={`${pageTitle}${metaTitleSuffix}`}
         description={pageDescription}
-        imageUrl={pageFeaturedImage?.url}
-        imageContentType={pageFeaturedImage?.contentType}
-        imageWidth={pageFeaturedImage?.width?.toString()}
-        imageHeight={pageFeaturedImage?.height?.toString()}
+        imageUrl={pageFeaturedImage}
       />
 
       {sidebarContent && (

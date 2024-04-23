@@ -219,7 +219,7 @@ const OJOICategoriesPage: CustomScreen<OJOICategoriesProps> = ({
       pageTitle={formatMessage(m.categories.title)}
       pageDescription={formatMessage(m.categories.description)}
       organization={organization ?? undefined}
-      pageFeaturedImage={organization?.serviceWebFeaturedImage ?? undefined}
+      pageFeaturedImage={formatMessage(m.home.featuredImage)}
       goBackUrl={baseUrl}
       sidebarContent={
         <Box

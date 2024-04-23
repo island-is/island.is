@@ -66,7 +66,7 @@ const OJOIHomePage: CustomScreen<OJOIHomeProps> = ({
       pageTitle={organization?.title ?? ''}
       pageDescription={formatMessage(m.home.description)}
       organization={organization ?? undefined}
-      pageFeaturedImage={organization?.serviceWebFeaturedImage ?? undefined}
+      pageFeaturedImage={formatMessage(m.home.featuredImage)}
     >
       <Stack space={SLICE_SPACING}>
         <OJOIHomeIntro
@@ -74,9 +74,7 @@ const OJOIHomePage: CustomScreen<OJOIHomeProps> = ({
           searchPlaceholder={formatMessage(m.home.inputPlaceholder)}
           searchUrl={searchUrl}
           shortcutsTitle={formatMessage(m.home.shortcuts)}
-          featuredImage={
-            organization?.serviceWebFeaturedImage?.url ?? undefined
-          }
+          featuredImage={formatMessage(m.home.featuredImage)}
           quickLinks={[
             {
               title: 'A deild',

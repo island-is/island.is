@@ -208,7 +208,7 @@ const OJOISearchPage: CustomScreen<OJOISearchProps> = ({
       pageTitle={formatMessage(m.search.title)}
       pageDescription={formatMessage(m.search.description)}
       organization={organization ?? undefined}
-      pageFeaturedImage={organization?.serviceWebFeaturedImage ?? undefined}
+      pageFeaturedImage={formatMessage(m.home.featuredImage)}
       goBackUrl={baseUrl}
       sidebarContent={
         <Box

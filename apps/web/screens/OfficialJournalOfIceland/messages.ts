@@ -17,6 +17,11 @@ export const m = {
       defaultMessage:
         'Um útgáfu Stjórnartíðinda gilda lög um Stjórnartíðindi og Lögbirtingablað nr. 15/2005.',
     },
+    featuredImage: {
+      id: 'web.ojoi:home.featuredImage',
+      defaultMessage:
+        'https://images.ctfassets.net/8k0h54kbe6bj/5LqU9yD9nzO5oOijpZF0K0/b595e1cf3e72bc97b2f9d869a53f5da9/LE_-_Jobs_-_S3.png',
+    },
 
     inputPlaceholder: {
       id: 'web.ojoi:home.inputPlaceholder',

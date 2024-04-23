@@ -58,6 +58,7 @@ const OJOIAdvertPage: CustomScreen<OJOIAdvertProps> = ({
       hideTitle
       organization={organization ?? undefined}
       pageDescription={formatMessage(m.advert.description)}
+      pageFeaturedImage={formatMessage(m.home.featuredImage)}
       breadcrumbItems={breadcrumbItems}
       goBackUrl={searchUrl}
       sidebarContent={
