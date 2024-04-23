@@ -13,7 +13,7 @@ workflows:
       vars:
         BUNDLE_ID: "is.island.app"
         XCODE_WORKSPACE: "IslandApp.xcworkspace"
-        XCODE_SCHEME: "IslandApp"
+        XCODE_SCHEME: "Ísland.is"
         APP_STORE_APPLE_ID: 1569828682
     scripts:
       - name: Install npm dependencies
@@ -25,7 +25,6 @@ workflows:
       - name: Run codegen
         working_directory: .
         script: |
-          yarn --version
           yarn codegen
       - name: Install CocoaPods dependencies
         script: |
