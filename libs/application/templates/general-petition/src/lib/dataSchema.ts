@@ -50,14 +50,18 @@ export const GeneralPetitionSchema = z.object({
     })
     .refine(
       ({ dateFrom, dateTil }) =>
-        !dateFrom || !dateTil || new Date(dateFrom) <= new Date(dateTil),
+        !dateFrom || !dateTil || new Date(dateFrom) < new Date(dateTil),
       {
         message: m.validationTilBeforeFrom.defaultMessage as string,
         path: ['dateTil'],
       },
     ),
-  phone: z.string().refine((v) => isValidPhoneNumber(v)),
-  email: z.string().refine((v) => isValidEmail(v)),
+  phone: z.string().refine((v) => isValidPhoneNumber(v) || v.length < 0, {
+    message: m.validationPhone.defaultMessage as string,
+  }),
+  email: z.string().refine((v) => isValidEmail(v) || v.length < 0, {
+    message: m.validationEmail.defaultMessage as string,
+  }),
 })
 
 export type File = z.TypeOf<typeof FileSchema>
