@@ -121,7 +121,6 @@ export class EndorsementService {
     if (new Date() >= endorsementList.closedDate) {
       throw new MethodNotAllowedException(['Unable to endorse closed list'])
     }
-    //const person = await this.nationalRegistryApiV3.getIndividual(nationalId)
     const person = await this.nationalRegistryApiV3.getAllDataIndividual(
       nationalId,
     )
@@ -129,7 +128,7 @@ export class EndorsementService {
       endorser: nationalId,
       endorsementListId: endorsementList.id,
       meta: {
-        fullName: person?.fulltNafn,
+        fullName: person?.fulltNafn?.fulltNafn,
         locality: person?.rikisfang?.rikisfangKodi,
         showName,
       },

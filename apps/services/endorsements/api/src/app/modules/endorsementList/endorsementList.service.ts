@@ -294,6 +294,10 @@ export class EndorsementListService {
 
     try {
       const person = await this.nationalRegistryApiV3.getName(owner)
+      console.log(
+        '🚀 ~ EndorsementListService ~ getOwnerInfo ~ person:',
+        person,
+      )
       return person?.fulltNafn ? person.fulltNafn : ''
     } catch (e) {
       if (e instanceof Error) {
