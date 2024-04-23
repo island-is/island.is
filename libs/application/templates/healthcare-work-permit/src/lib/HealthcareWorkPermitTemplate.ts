@@ -172,8 +172,8 @@ const template: ApplicationTemplate<
             {
               id: Roles.APPLICANT,
               formLoader: () =>
-                import('../forms/HealthcareWorkPermitForm').then((val) =>
-                  Promise.resolve(val.HealthcareWorkPermitForm),
+                import('../forms/Confirmation').then((val) =>
+                  Promise.resolve(val.Confirmation),
                 ),
               read: 'all',
             },

@@ -40,15 +40,15 @@ export class HealthcareWorkPermitService extends BaseTemplateApiService {
       )
 
     // TODO Double check if this fails on empty response
-    // if (!result) {
-    //   throw new TemplateApiError(
-    //     {
-    //       title: errorMsg.healthcareLicenseErrorTitle,
-    //       summary: errorMsg.healthcareLicenseErrorMessage,
-    //     },
-    //     400,
-    //   )
-    // }
+    if (!result) {
+      throw new TemplateApiError(
+        {
+          title: errorMsg.healthcareLicenseErrorTitle,
+          summary: errorMsg.healthcareLicenseErrorMessage,
+        },
+        400,
+      )
+    }
 
     return result
   }
@@ -61,17 +61,15 @@ export class HealthcareWorkPermitService extends BaseTemplateApiService {
         auth,
       )
 
-    console.log('Accessing education info', result)
-
-    // if (!result) {
-    //   throw new TemplateApiError(
-    //     {
-    //       title: errorMsg.healthcareLicenseErrorTitle,
-    //       summary: errorMsg.noResponseEducationInfoMessage,
-    //     },
-    //     400,
-    //   )
-    // }
+    if (!result) {
+      throw new TemplateApiError(
+        {
+          title: errorMsg.healthcareLicenseErrorTitle,
+          summary: errorMsg.noResponseEducationInfoMessage,
+        },
+        400,
+      )
+    }
 
     return result
   }
