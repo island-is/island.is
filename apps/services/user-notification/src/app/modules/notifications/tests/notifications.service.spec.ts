@@ -1,11 +1,11 @@
 import { Test, TestingModule } from '@nestjs/testing'
-import { NotificationsService } from './notifications.service'
+import { NotificationsService } from '../notifications.service'
 import { LoggingModule, logger, LOGGER_PROVIDER } from '@island.is/logging'
-import { HnippTemplate } from './dto/hnippTemplate.response'
-import { CreateHnippNotificationDto } from './dto/createHnippNotification.dto'
+import { HnippTemplate } from '../dto/hnippTemplate.response'
+import { CreateHnippNotificationDto } from '../dto/createHnippNotification.dto'
 import { CacheModule } from '@nestjs/cache-manager'
 import { getModelToken } from '@nestjs/sequelize'
-import { Notification } from './notification.model'
+import { Notification } from '../notification.model'
 import { NotificationsScope } from '@island.is/auth/scopes'
 import type { User } from '@island.is/auth-nest-tools'
 
@@ -14,7 +14,9 @@ import {
   UpdateNotificationDto,
   RenderedNotificationDto,
   PaginatedNotificationDto,
-} from './dto/notification.dto'
+  UnreadNotificationsCountDto,
+  UnseenNotificationsCountDto,
+} from '../dto/notification.dto'
 
 const user: User = {
   nationalId: '1234567890',
@@ -82,8 +84,8 @@ describe('NotificationsService', () => {
 
   it('should get template', async () => {
     jest
-      .spyOn(service, 'getTemplates')
-      .mockImplementation(() => Promise.resolve(mockTemplates))
+      .spyOn(service, 'getTemplate')
+      .mockImplementation(() => Promise.resolve(mockHnippTemplate))
     const template = await service.getTemplate(mockHnippTemplate.templateId)
     expect(template).toBeInstanceOf(Object)
   })
@@ -143,13 +145,6 @@ describe('NotificationsService', () => {
     expect(template.clickAction).toEqual('Demo click action world')
   })
 
-  it('should return the correct locale mapping', async () => {
-    expect(service.mapLocale('en')).toBe('en')
-    expect(service.mapLocale('is')).toBe('is-IS')
-    expect(service.mapLocale(null)).toBe('is-IS')
-    expect(service.mapLocale(undefined)).toBe('is-IS')
-  })
-
   describe('findMany', () => {
     it('should return a paginated list of notifications', async () => {
       const query = new ExtendedPaginationDto()
@@ -165,13 +160,12 @@ describe('NotificationsService', () => {
   describe('findOne', () => {
     it('should return a specific notification', async () => {
       const id = 123
-      const locale = 'en'
       const mockedResponse = new RenderedNotificationDto()
       jest
         .spyOn(service, 'findOne')
         .mockImplementation(async () => mockedResponse)
 
-      expect(await service.findOne(user, id, locale)).toBe(mockedResponse)
+      expect(await service.findOne(user, id, 'en')).toBe(mockedResponse)
     })
   })
 
@@ -179,15 +173,48 @@ describe('NotificationsService', () => {
     it('should update a notification', async () => {
       const id = 123
       const updateNotificationDto = new UpdateNotificationDto()
-      const locale = 'en' // Mock locale
       const mockedResponse = new RenderedNotificationDto()
       jest
         .spyOn(service, 'update')
         .mockImplementation(async () => mockedResponse)
 
-      expect(
-        await service.update(user, id, updateNotificationDto, locale),
-      ).toBe(mockedResponse)
+      expect(await service.update(user, id, updateNotificationDto, 'en')).toBe(
+        mockedResponse,
+      )
+    })
+  })
+
+  describe('Seen', () => {
+    it('should get all unseen notification count', async () => {
+      const mockedResponse = new UnseenNotificationsCountDto()
+      jest
+        .spyOn(service, 'getUnseenNotificationsCount')
+        .mockImplementation(async () => mockedResponse)
+
+      expect(await service.getUnseenNotificationsCount(user)).toBe(
+        mockedResponse,
+      )
+    })
+
+    it('should mark all notifications as seen', async () => {
+      jest
+        .spyOn(service, 'markAllAsSeen')
+        .mockImplementation(async () => undefined)
+
+      expect(await service.markAllAsSeen(user)).toBe(undefined)
+    })
+  })
+
+  describe('unread', () => {
+    it('should get all unread notification count', async () => {
+      const mockedResponse = new UnreadNotificationsCountDto()
+      jest
+        .spyOn(service, 'getUnreadNotificationsCount')
+        .mockImplementation(async () => mockedResponse)
+
+      expect(await service.getUnreadNotificationsCount(user)).toBe(
+        mockedResponse,
+      )
     })
   })
 })

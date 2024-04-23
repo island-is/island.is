@@ -39,7 +39,6 @@ import {
   SocialInsuranceAdministrationApplicantApi,
   SocialInsuranceAdministrationCurrenciesApi,
 } from '../dataProviders'
-import { Features } from '@island.is/feature-flags'
 import {
   determineNameFromApplicationAnswers,
   getApplicationAnswers,
@@ -60,7 +59,6 @@ const OldAgePensionTemplate: ApplicationTemplate<
   type: ApplicationTypes.OLD_AGE_PENSION,
   name: determineNameFromApplicationAnswers,
   institution: socialInsuranceAdministrationMessage.shared.institution,
-  featureFlag: Features.oldAgePensionApplication,
   translationNamespaces: ApplicationConfigurations.OldAgePension.translation,
   dataSchema,
   allowMultipleApplicationsInDraft: false,

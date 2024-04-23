@@ -38,7 +38,6 @@ import {
   SocialInsuranceAdministrationCurrenciesApi,
   SocialInsuranceAdministrationIsApplicantEligibleApi,
 } from '../dataProviders'
-import { Features } from '@island.is/feature-flags'
 import {
   Events,
   Roles,
@@ -56,7 +55,6 @@ const HouseholdSupplementTemplate: ApplicationTemplate<
   type: ApplicationTypes.HOUSEHOLD_SUPPLEMENT,
   name: householdSupplementFormMessage.shared.applicationTitle,
   institution: socialInsuranceAdministrationMessage.shared.institution,
-  featureFlag: Features.householdSupplementApplication,
   translationNamespaces:
     ApplicationConfigurations.HouseholdSupplement.translation,
   dataSchema,

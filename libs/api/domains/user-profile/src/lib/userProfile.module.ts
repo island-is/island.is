@@ -7,12 +7,14 @@ import {
   IslykillApiModule,
   IslykillApiModuleConfig,
 } from '@island.is/clients/islykill'
+import { IdentityClientModule } from '@island.is/clients/identity'
+
 import { FeatureFlagModule } from '@island.is/nest/feature-flags'
 import { UserProfileServiceV2 } from './V2/userProfile.service'
 import { UserProfileServiceV1 } from './V1/userProfile.service'
+import { ActorProfileResolver } from './actorProfile.resolver'
 
 export interface Config {
-  userProfileServiceBasePath: string
   islykill: IslykillApiModuleConfig
 }
 
@@ -25,6 +27,7 @@ export class UserProfileModule {
         UserProfileServiceV2,
         UserProfileServiceV1,
         UserProfileResolver,
+        ActorProfileResolver,
         IslykillService,
       ],
       imports: [
@@ -35,6 +38,7 @@ export class UserProfileModule {
           basePath: config.islykill.basePath,
         }),
         UserProfileClientModule,
+        IdentityClientModule,
       ],
       exports: [],
     }

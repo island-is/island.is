@@ -136,7 +136,10 @@ export class EndorsementListService {
           model: EndorsementList,
           required: true,
           as: 'endorsementList',
-          where: { adminLock: false },
+          where: {
+            adminLock: false,
+            tags: { [Op.contains]: [ENDORSEMENT_SYSTEM_GENERAL_PETITION_TAGS] },
+          },
           attributes: [
             'id',
             'title',
