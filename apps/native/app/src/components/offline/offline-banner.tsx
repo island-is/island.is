@@ -4,7 +4,7 @@ import { Animated, Easing, SafeAreaView } from 'react-native'
 import { Navigation } from 'react-native-navigation'
 import styled from 'styled-components/native'
 import { getIntl } from '../../contexts/i18n-provider'
-import { useOfflineStore } from '../../stores/offline-store'
+import { useOfflineActions, useOfflineStore } from '../../stores/offline-store'
 import { ComponentRegistry as CR } from '../../utils/component-registry'
 
 const TranslateYValue = 200
@@ -21,7 +21,7 @@ const Overlay = styled(SafeAreaView)`
 
 export const OfflineBanner = () => {
   const intl = getIntl()
-  const toggleBanner = useOfflineStore(({ toggleBanner }) => toggleBanner)
+  const { toggleBanner } = useOfflineActions()
   const popAnim = useRef(new Animated.Value(-TranslateYValue)).current
 
   const popIn = () => {

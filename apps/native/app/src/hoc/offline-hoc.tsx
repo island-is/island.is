@@ -2,7 +2,7 @@ import { impactAsync, ImpactFeedbackStyle } from 'expo-haptics'
 import { ReactNode, useEffect } from 'react'
 import { Navigation } from 'react-native-navigation'
 import { useAuthStore } from '../stores/auth-store'
-import { useOfflineStore } from '../stores/offline-store'
+import { useOfflineActions, useOfflineStore } from '../stores/offline-store'
 import { ComponentRegistry as CR } from '../utils/component-registry'
 
 interface OfflineHocProps {
@@ -15,9 +15,7 @@ export const OfflineHoc = ({ children }: OfflineHocProps) => {
     ({ bannerHasBeenShown }) => bannerHasBeenShown,
   )
   const bannerVisible = useOfflineStore(({ bannerVisible }) => bannerVisible)
-  const setBannerHasBeenShown = useOfflineStore(
-    ({ setBannerHasBeenShown }) => setBannerHasBeenShown,
-  )
+  const { setBannerHasBeenShown } = useOfflineActions()
 
   const lockScreenActivatedAt = useAuthStore(
     ({ lockScreenActivatedAt }) => lockScreenActivatedAt,

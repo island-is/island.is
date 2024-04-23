@@ -130,8 +130,6 @@ export const WalletPassScreen: NavigationFunctionComponent<{
   const [addingToWallet, setAddingToWallet] = useState(false)
   const isBarcodeEnabled = useFeatureFlag('isBarcodeEnabled', false)
 
-  useOfflineUpdateNavigation(componentId)
-
   const [generatePkPass] = useGeneratePkPassMutation()
   const res = useGetLicenseQuery({
     variables: {

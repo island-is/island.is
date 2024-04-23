@@ -3,7 +3,7 @@ import { theme } from '@ui'
 import { useEffect } from 'react'
 import { Navigation, OptionsTopBar } from 'react-native-navigation'
 
-import { useOfflineStore } from '../stores/offline-store'
+import { useOfflineActions, useOfflineStore } from '../stores/offline-store'
 import { ButtonRegistry } from '../utils/component-registry'
 import { testIDs } from '../utils/test-ids'
 
@@ -30,9 +30,7 @@ export const useOfflineUpdateNavigation = (
     ({ pastIsConnected }) => pastIsConnected,
   )
   const isConnected = useOfflineStore(({ isConnected }) => isConnected)
-  const resetConnectionState = useOfflineStore(
-    ({ resetConnectionState }) => resetConnectionState,
-  )
+  const { resetConnectionState } = useOfflineActions()
 
   const updateNavigationButtons = () => {
     Navigation.mergeOptions(componentId, {

@@ -2,7 +2,6 @@ import { addEventListener } from '@react-native-community/netinfo'
 import { impactAsync, ImpactFeedbackStyle } from 'expo-haptics'
 import { getPresentedNotificationsAsync } from 'expo-notifications'
 import {
-  Alert,
   AppState,
   AppStateStatus,
   DeviceEventEmitter,
@@ -187,9 +186,9 @@ export function setupEventHandlers() {
     const offlineStoreState = offlineStore.getState()
 
     if (!isConnected) {
-      offlineStoreState.setNetInfoNoConnection()
+      offlineStoreState.actions.setNetInfoNoConnection()
     } else {
-      offlineStoreState.setIsConnected(true)
+      offlineStoreState.actions.setIsConnected(true)
     }
   })
 }
