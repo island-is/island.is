@@ -7,14 +7,24 @@ import { serviceSetup as authDelegationApiSetup } from '../../../apps/services/a
 import { serviceSetup as personalRepresentativeSetup } from '../../../apps/services/auth/personal-representative/infra/personal-representative'
 import { serviceSetup as personalRepresentativePublicSetup } from '../../../apps/services/auth/personal-representative-public/infra/personal-representative-public'
 
+import { serviceSetup as userProfileApiSetup } from '../../../apps/services/user-profile/infra/service-portal-api'
+import { userNotificationServiceSetup } from '../../../apps/services/user-notification/infra/user-notification'
+
 import { EnvironmentServices } from '../dsl/types/charts'
+
+const userProfileApi = userProfileApiSetup()
+const userNotification = userNotificationServiceSetup({
+  userProfileApi,
+})
 
 const authIdsApi = authIdsApiSetup()
 const identityServer = identityServerSetup({ authIdsApi })
 const authAdminWeb = authAdminWebSetup()
 const authAdminApi = authAdminApiSetup()
 const authPublicApi = authPublicApiSetup()
-const authDelegationApi = authDelegationApiSetup()
+const authDelegationApi = authDelegationApiSetup({
+  userNotification,
+})
 const personalRepresentative = personalRepresentativeSetup()
 const personalRepresentativePublic = personalRepresentativePublicSetup()
 

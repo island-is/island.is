@@ -30,7 +30,6 @@ import { UserDeviceToken } from './userDeviceToken.model'
 import { UserDeviceTokenInput } from './dto/userDeviceTokenInput'
 import { DeleteTokenResponse } from './dto/deleteTokenResponse'
 import { UserProfileLocale } from './models/userProfileLocale.model'
-import { PaginatedUserProfileResponse } from './dto/paginated-user-profile.response'
 
 @UseGuards(IdsUserGuard, ScopesGuard)
 @Resolver()
