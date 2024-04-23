@@ -448,7 +448,7 @@ export class UpdateCaseDto {
   readonly indictmentReturnedExplanation?: string
 
   @IsOptional()
-  @IsObject()
+  @IsObject({ each: true })
   @ApiPropertyOptional()
   readonly explanatoryComment?: ExplanatoryComment
 }

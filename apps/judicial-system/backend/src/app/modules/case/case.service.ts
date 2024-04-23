@@ -1221,16 +1221,18 @@ export class CaseService {
     update: UpdateCase,
     transaction: Transaction,
   ) {
-    await this.explanatoryCommentModel.create(
-      {
-        caseId: theCase.id,
-        commentType: update.explanatoryComment?.commentType,
-        comment: update.explanatoryComment?.comment,
-      },
-      { transaction },
-    )
+    if (update.explanatoryComment) {
+      await this.explanatoryCommentModel.create(
+        {
+          caseId: theCase.id,
+          commentType: update.explanatoryComment?.commentType,
+          comment: update.explanatoryComment?.comment,
+        },
+        { transaction },
+      )
 
-    delete update.explanatoryComment
+      delete update.explanatoryComment
+    }
   }
 
   async update(
