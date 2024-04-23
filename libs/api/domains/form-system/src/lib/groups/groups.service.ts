@@ -82,7 +82,7 @@ export class GroupsService {
       groupId: input.groupId,
       groupUpdateDto: input.groupUpdateDto as GroupUpdateDto
     }
-
+    console.log('groups update request: ', request)
     const response = await this.groupsApiWithAuth(auth)
       .apiGroupsGroupIdPut(request)
       .catch((e) => this.handle4xx(e, 'failed to update group'))

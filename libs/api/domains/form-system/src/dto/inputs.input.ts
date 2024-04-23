@@ -40,6 +40,10 @@ export class UpdateInput {
 
   @Field()
   isPartOfMultiSet?: boolean
+
+  @Field(() => Int, { nullable: true })
+  groupId?: number
+
 }
 
 

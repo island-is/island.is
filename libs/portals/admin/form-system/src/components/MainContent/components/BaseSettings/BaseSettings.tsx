@@ -11,7 +11,7 @@ import { useContext } from 'react'
 import ControlContext from '../../../../context/ControlContext'
 
 export const BaseSettings = () => {
-  const { control, controlDispatch, setFocus, focus, formSettingsUpdate } = useContext(ControlContext)
+  const { control, controlDispatch, setFocus, focus, formSettingsUpdate, formUpdate } = useContext(ControlContext)
   const { form } = control
   console.log('BaseSettings form', form)
   return (
@@ -25,7 +25,7 @@ export const BaseSettings = () => {
             value={form?.name?.is ?? ''}
             backgroundColor={'blue'}
             onFocus={(e) => setFocus(e.target.value)}
-            onBlur={(e) => e.target.value !== focus && formSettingsUpdate()}
+            onBlur={(e) => e.target.value !== focus && formUpdate()}
             onChange={(e) => controlDispatch({ type: 'CHANGE_FORM_NAME', payload: { lang: 'is', newValue: e.target.value } })}
           />
         </Column>
@@ -37,7 +37,7 @@ export const BaseSettings = () => {
             value={form?.name?.en ?? ''}
             backgroundColor="blue"
             onFocus={(e) => setFocus(e.target.value)}
-            onBlur={(e) => e.target.value !== focus && formSettingsUpdate()}
+            onBlur={(e) => e.target.value !== focus && formUpdate()}
             onChange={(e) => controlDispatch({ type: 'CHANGE_FORM_NAME', payload: { lang: 'en', newValue: e.target.value } })}
           />
         </Column>
@@ -56,7 +56,7 @@ export const BaseSettings = () => {
             backgroundColor="blue"
             type="number"
             onFocus={(e) => setFocus(e.target.value)}
-            onBlur={(e) => e.target.value !== focus && formSettingsUpdate()}
+            onBlur={(e) => e.target.value !== focus && formUpdate()}
             onChange={(e) => controlDispatch({ type: 'CHANGE_APPLICATION_DAYS_TO_REMOVE', payload: { value: parseInt(e.target.value) } })}
           />
         </Column>
@@ -75,7 +75,7 @@ export const BaseSettings = () => {
             handleChange={(e) => {
               controlDispatch({ type: 'CHANGE_INVALIDATION_DATE', payload: { value: e } })
             }}
-            handleCloseCalendar={() => formSettingsUpdate()}
+            handleCloseCalendar={() => formUpdate()}
           />
         </Column>
       </Row>
@@ -85,8 +85,8 @@ export const BaseSettings = () => {
             label="Leyfa notanda að halda áfram í umsókninni með ógild/óútfyllt gildi"
             checked={form.stopProgressOnValidatingStep ?? false}
             onChange={(e) => {
-              console.log('stopProgressOnValidatingStep', e.target.checked)
-              formSettingsUpdate({ ...form, stopProgressOnValidatingStep: e.target.checked })
+              controlDispatch({ type: 'CHANGE_STOP_PROGRESS_ON_VALIDATING_STEP', payload: { value: e.target.checked } })
+              formUpdate({ ...form, stopProgressOnValidatingStep: e.target.checked })
             }}
 
           />

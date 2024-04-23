@@ -1,14 +1,12 @@
 import { Dispatch, createContext } from "react"
 import { ControlAction, ControlState } from "../hooks/controlReducer"
-import { ApolloClient, NormalizedCacheObject } from "@apollo/client"
 import { Maybe } from "graphql/jsutils/Maybe"
-import { FormSystemApplicantType, FormSystemDocumentType, FormSystemForm, FormSystemInput, FormSystemListType } from "@island.is/api/schema"
+import { FormSystemApplicantType, FormSystemDocumentType, FormSystemForm, FormSystemInput, FormSystemListItem, FormSystemListType } from "@island.is/api/schema"
 import { ActiveItem, ItemType, NavbarSelectStatus } from "../lib/utils/interfaces"
 
 export interface IControlContext {
   control: ControlState
   controlDispatch: Dispatch<ControlAction>
-  apolloClient: ApolloClient<NormalizedCacheObject>
   applicantTypes: Maybe<Maybe<FormSystemApplicantType>[]> | undefined
   documentTypes: Maybe<Maybe<FormSystemDocumentType>[]> | undefined
   inputTypes: Maybe<Maybe<FormSystemInput>[]> | undefined
@@ -22,6 +20,10 @@ export interface IControlContext {
   formSettingsUpdate: (updatedForm?: FormSystemForm) => void
   selectStatus: NavbarSelectStatus
   setSelectStatus: Dispatch<NavbarSelectStatus>
+  formUpdate: (updatedForm?: FormSystemForm) => void
+  inListBuilder: boolean
+  setInListBuilder: Dispatch<boolean>,
+  updateSettings: (updatedForm?: FormSystemForm) => void
 }
 
 const ControlContext = createContext<IControlContext>({
@@ -29,7 +31,6 @@ const ControlContext = createContext<IControlContext>({
   controlDispatch: function (_value: unknown): void {
     throw new Error('Function not implemented.')
   },
-  apolloClient: {} as ApolloClient<NormalizedCacheObject>,
   applicantTypes: [] as Maybe<Maybe<FormSystemApplicantType>[]>,
   documentTypes: [] as Maybe<Maybe<FormSystemDocumentType>[]>,
   inputTypes: [] as Maybe<Maybe<FormSystemInput>[]>,
@@ -55,6 +56,16 @@ const ControlContext = createContext<IControlContext>({
   setSelectStatus: function (_value: NavbarSelectStatus): void {
     throw new Error('Function not implemented.')
   },
+  formUpdate: function (_updatedForm?: FormSystemForm): void {
+    throw new Error('Function not implemented.')
+  },
+  inListBuilder: false,
+  setInListBuilder: function (_value: boolean): void {
+    throw new Error('Function not implemented.')
+  },
+  updateSettings: function (_updatedForm?: FormSystemForm): void {
+    throw new Error('Function not implemented.')
+  }
 })
 
 export default ControlContext

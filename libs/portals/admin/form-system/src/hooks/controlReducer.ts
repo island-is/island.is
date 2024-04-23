@@ -1,10 +1,13 @@
-import { FormSystemForm, FormSystemGroup, FormSystemInput, FormSystemInputSettings, FormSystemStep } from "@island.is/api/schema"
+import { FormSystemForm, FormSystemGroup, FormSystemInput, FormSystemInputSettings, FormSystemListItem, FormSystemStep } from "@island.is/api/schema"
 import { ActiveItem } from "../types/interfaces"
 import { UniqueIdentifier } from "@dnd-kit/core"
 import { arrayMove } from "@dnd-kit/sortable"
+import { removeTypename } from "../lib/utils/removeTypename"
+import { uuid } from "uuidv4"
 
 type ActiveItemActions =
   | { type: 'SET_ACTIVE_ITEM', payload: { activeItem: ActiveItem } }
+  | { type: 'SET_ACTIVE_LIST_ITEM', payload: { listItem: FormSystemListItem | null } }
 
 type GroupActions =
   | { type: 'ADD_GROUP', payload: { group: FormSystemGroup } }
@@ -28,6 +31,7 @@ type DndActions =
   | { type: 'GROUP_OVER_GROUP', payload: { activeId: UniqueIdentifier, overId: UniqueIdentifier } }
   | { type: 'INPUT_OVER_GROUP', payload: { activeId: UniqueIdentifier, overId: UniqueIdentifier } }
   | { type: 'INPUT_OVER_INPUT', payload: { activeId: UniqueIdentifier, overId: UniqueIdentifier } }
+  | { type: 'LIST_ITEM_OVER_LIST_ITEM', payload: { activeId: UniqueIdentifier, overId: UniqueIdentifier } }
 
 type ChangeActions =
   | { type: 'CHANGE_NAME', payload: { lang: 'en' | 'is', newValue: string } }
@@ -37,10 +41,21 @@ type ChangeActions =
   | { type: 'CHANGE_STOP_PROGRESS_ON_VALIDATING_STEP', payload: { value: boolean } }
   | { type: 'CHANGE_FORM_SETTINGS', payload: { newForm: FormSystemForm } }
 
-export type ControlAction = ActiveItemActions | GroupActions | InputActions | StepActions | DndActions | ChangeActions
+type InputSettingsActions =
+  | { type: 'SET_MESSAGE_WITH_LINK_SETTINGS', payload: { property: 'buttonText' | 'url' | 'hasLink', value?: string, checked?: boolean, lang?: 'is' | 'en', update?: (updatedActiveItem?: ActiveItem) => void } }
+  | { type: 'SET_FILE_UPLOAD_SETTINGS', payload: { property: 'isMulti' | 'maxSize' | 'amount' | 'types', checked?: boolean, value?: string | number, update: (updatedActiveItem?: ActiveItem) => void } }
+  | { type: 'SET_INPUT_SETTINGS', payload: { property: 'isLarge', value: boolean, update: (updatedActiveItem?: ActiveItem) => void } }
+  | { type: 'SET_LIST_ITEM_SELECTED', payload: { guid: UniqueIdentifier, update: (updatedActiveItem?: ActiveItem) => void } }
+  | { type: 'REMOVE_LIST_ITEM', payload: { guid: UniqueIdentifier, update: (updatedActiveItem?: ActiveItem) => void } }
+  | { type: 'CHANGE_LIST_ITEM', payload: { property: 'label' | 'description', lang: 'is' | 'en', value: string, guid: UniqueIdentifier, update: (updatedActiveItem?: ActiveItem) => void } }
+  | { type: 'ADD_LIST_ITEM' }
+
+
+export type ControlAction = ActiveItemActions | GroupActions | InputActions | StepActions | DndActions | ChangeActions | InputSettingsActions
 
 export interface ControlState {
   activeItem: ActiveItem
+  activeListItem: FormSystemListItem | null
   form: FormSystemForm
 }
 
@@ -49,11 +64,17 @@ export const controlReducer = (state: ControlState, action: ControlAction): Cont
   const { stepsList: steps, groupsList: groups, inputsList: inputs } = form
   switch (action.type) {
     case 'SET_ACTIVE_ITEM':
+      console.log('current active item', action.payload.activeItem)
       return {
         ...state,
         activeItem: action.payload.activeItem
       }
-
+    case 'SET_ACTIVE_LIST_ITEM': {
+      return {
+        ...state,
+        activeListItem: action.payload.listItem
+      }
+    }
     // Steps
     case 'ADD_STEP':
       return {
@@ -110,6 +131,7 @@ export const controlReducer = (state: ControlState, action: ControlAction): Cont
 
     // Inputs
     case 'ADD_INPUT':
+      console.log('adding input reducer', action.payload.input)
       return {
         ...state,
         activeItem: {
@@ -144,11 +166,12 @@ export const controlReducer = (state: ControlState, action: ControlAction): Cont
         data: {
           ...activeItem.data,
           type: newValue,
-          inputSettings: inputSettings
+          inputSettings: removeTypename(inputSettings)
         }
       }
       update(newActive)
       return {
+        ...state,
         activeItem: newActive,
         form: {
           ...form,
@@ -170,6 +193,7 @@ export const controlReducer = (state: ControlState, action: ControlAction): Cont
         }
       };
       return {
+        ...state,
         activeItem: newActive,
         form: {
           ...form,
@@ -189,6 +213,7 @@ export const controlReducer = (state: ControlState, action: ControlAction): Cont
       }
       action.payload.update(newActive)
       return {
+        ...state,
         activeItem: newActive,
         form: {
           ...form,
@@ -220,6 +245,7 @@ export const controlReducer = (state: ControlState, action: ControlAction): Cont
         updatedList = inputs?.map(i => i?.guid === activeItem.data?.guid ? newActive.data : i);
       }
       return {
+        ...state,
         activeItem: newActive,
         form: {
           ...form,
@@ -266,6 +292,228 @@ export const controlReducer = (state: ControlState, action: ControlAction): Cont
         form: action.payload.newForm
       }
     }
+    case 'CHANGE_STOP_PROGRESS_ON_VALIDATING_STEP': {
+      return {
+        ...state,
+        form: {
+          ...form,
+          stopProgressOnValidatingStep: action.payload.value
+        }
+      }
+    }
+    // Input settings
+    case 'SET_MESSAGE_WITH_LINK_SETTINGS': {
+      const input = activeItem.data as FormSystemInput
+      const { property, lang: langg, value, checked, update } = action.payload
+      const lang = langg ?? 'is'
+
+      const newInput = {
+        ...input,
+        inputSettings: {
+          ...input.inputSettings,
+          [property]: property === 'hasLink' ? checked : value,
+          ...(property === 'buttonText'
+            ? {
+              buttonText: {
+                ...input.inputSettings?.buttonText,
+                [lang]: value
+              }
+            }
+            : {})
+        },
+      }
+      if (property === 'hasLink' && update) {
+        update({ type: 'Input', data: newInput })
+      }
+      return {
+        ...state,
+        activeItem: {
+          type: 'Input',
+          data: newInput
+        },
+        form: {
+          ...form,
+          inputsList: inputs?.map(i => i?.guid === input.guid ? newInput : i)
+        }
+      }
+    }
+    case 'SET_FILE_UPLOAD_SETTINGS': {
+      const input = activeItem.data as FormSystemInput
+      const { property, checked, value, update } = action.payload
+
+      const updateFileTypesArray = (): string[] => {
+        const newFileTypes = input.inputSettings?.types ?? []
+        if (checked) {
+          return [...newFileTypes, value as string]
+        } else {
+          return newFileTypes.filter((type) => type !== value)
+        }
+      }
+      const newInput = {
+        ...input,
+        inputSettings: {
+          ...input.inputSettings,
+          [property]: property === 'types' ? updateFileTypesArray() : property === 'isMulti' ? checked : value
+        }
+      }
+      console.log('property', property, 'value', value, 'checked', checked)
+      console.log('new input: ', newInput)
+      update({ type: 'Input', data: newInput })
+      return {
+        ...state,
+        activeItem: {
+          type: 'Input',
+          data: newInput
+        },
+        form: {
+          ...form,
+          inputsList: inputs?.map(i => i?.guid === input.guid ? newInput : i)
+        }
+      }
+    }
+    case 'SET_INPUT_SETTINGS': {
+      const input = activeItem.data as FormSystemInput
+      const { property, value, update } = action.payload
+      const newInput = {
+        ...input,
+        inputSettings: {
+          ...input.inputSettings,
+          [property]: value
+        }
+      }
+      update({ type: 'Input', data: newInput })
+      return {
+        ...state,
+        activeItem: {
+          type: 'Input',
+          data: newInput
+        },
+        form: {
+          ...form,
+          inputsList: inputs?.map(i => i?.guid === input.guid ? newInput : i)
+        }
+      }
+    }
+    case 'SET_LIST_ITEM_SELECTED': {
+      const { guid, update } = action.payload
+      const input = activeItem.data as FormSystemInput
+      const list = input.inputSettings?.list ?? []
+      const newInput = {
+        ...input,
+        inputSettings: {
+          ...input.inputSettings,
+          list: list.map((l) =>
+            l.guid === guid
+              ? { ...l, isSelected: !l.isSelected }
+              : { ...l, isSelected: false },
+          )
+        }
+      }
+      update({ type: 'Input', data: newInput })
+      return {
+        ...state,
+        activeItem: {
+          type: 'Input',
+          data: newInput
+        },
+        form: {
+          ...form,
+          inputsList: inputs?.map(i => i?.guid === input.guid ? newInput : i)
+        }
+
+      }
+    }
+    case 'REMOVE_LIST_ITEM': {
+      const { guid, update } = action.payload
+      const input = activeItem.data as FormSystemInput
+      const list = input.inputSettings?.list ?? []
+      const newInput = {
+        ...input,
+        inputSettings: {
+          ...input.inputSettings,
+          list: list.filter((l) => l.guid !== guid)
+        }
+      }
+      update({ type: 'Input', data: newInput })
+      return {
+        ...state,
+        activeItem: {
+          type: 'Input',
+          data: newInput
+        },
+        form: {
+          ...form,
+          inputsList: inputs?.map(i => i?.guid === input.guid ? newInput : i)
+        }
+      }
+    }
+    case 'ADD_LIST_ITEM': {
+      const input = activeItem.data as FormSystemInput
+      const list = input.inputSettings?.list ?? []
+      const newInput = {
+        ...input,
+        inputSettings: {
+          ...input.inputSettings,
+          list: [
+            ...list,
+            {
+              guid: uuid(),
+              label: { is: '', en: '' },
+              description: { is: '', en: '' },
+              displayOrder: list.length,
+              isSelected: false
+            }
+          ]
+        }
+      }
+      return {
+        ...state,
+        activeItem: {
+          type: 'Input',
+          data: newInput
+        },
+        form: {
+          ...form,
+          inputsList: inputs?.map(i => i?.guid === input.guid ? newInput : i)
+        }
+      }
+    }
+    case 'CHANGE_LIST_ITEM': {
+      const input = activeItem.data as FormSystemInput
+      const list = input.inputSettings?.list
+      const { property, lang, value, guid, update } = action.payload
+      if (!list) return state
+      const newInput = {
+        ...input,
+        inputSettings: {
+          ...input.inputSettings,
+          list: list.map((l) => {
+            if (l.guid === guid) {
+              return {
+                ...l,
+                [property]: {
+                  ...l[property],
+                  [lang]: value,
+                },
+              }
+            }
+            return l
+          }),
+        },
+      }
+      update({ type: 'Input', data: newInput })
+      return {
+        ...state,
+        activeItem: {
+          type: 'Input',
+          data: newInput
+        },
+        form: {
+          ...form,
+          inputsList: inputs?.map(i => i?.guid === input.guid ? newInput : i)
+        }
+      }
+    }
     // Drag and Drop
     case 'STEP_OVER_STEP': {
       const activeIndex = steps?.findIndex((step) => step?.guid === action.payload.activeId) as number
@@ -282,7 +530,10 @@ export const controlReducer = (state: ControlState, action: ControlAction): Cont
     case 'GROUP_OVER_STEP': {
       const activeIndex = groups?.findIndex((group) => group?.guid === action.payload.activeId) as number
       const overIndex = steps?.findIndex((step) => step?.guid === action.payload.overId) as number
-      const updatedGroups = groups?.map(group => ({ ...group })) as FormSystemGroup[]
+      if (groups && steps) {
+        console.log('active: ', groups[activeIndex], 'over: ', steps[overIndex])
+      }
+      const updatedGroups = groups as FormSystemGroup[]
       if (steps && steps[overIndex]) {
         updatedGroups[activeIndex].stepGuid = action.payload.overId as string
         updatedGroups[activeIndex].stepId = steps[overIndex]?.id as number
@@ -291,14 +542,14 @@ export const controlReducer = (state: ControlState, action: ControlAction): Cont
         ...state,
         form: {
           ...form,
-          groupsList: arrayMove(updatedGroups, activeIndex, overIndex).map((g, i) => ({ ...g, displayOrder: i }))
+          groupsList: arrayMove(updatedGroups, activeIndex, activeIndex).map((g, i) => ({ ...g, displayOrder: i }))
         }
       }
     }
     case 'GROUP_OVER_GROUP': {
       const activeIndex = groups?.findIndex((group) => group?.guid === action.payload.activeId) as number
       const overIndex = groups?.findIndex((group) => group?.guid === action.payload.overId) as number
-      const updatedGroups = groups?.map(group => ({ ...group })) as FormSystemGroup[]
+      const updatedGroups = groups as FormSystemGroup[]
       if (updatedGroups[activeIndex] && updatedGroups[overIndex]) {
         if (updatedGroups[activeIndex].stepGuid !== updatedGroups[overIndex].stepGuid) {
           updatedGroups[activeIndex].stepGuid = updatedGroups[overIndex].stepGuid
@@ -362,6 +613,35 @@ export const controlReducer = (state: ControlState, action: ControlAction): Cont
         }
       }
       return state
+    }
+    case 'LIST_ITEM_OVER_LIST_ITEM': {
+      const input = activeItem.data as FormSystemInput
+      const list = input.inputSettings?.list
+      const { activeId, overId } = action.payload
+      if (!list) {
+        return state
+      }
+      const activeIndex = list.findIndex((item) => item.guid === activeId)
+      const overIndex = list.findIndex((item) => item.guid === overId)
+
+      const newInput = {
+        ...input,
+        inputSettings: {
+          ...input.inputSettings,
+          list: arrayMove(list, activeIndex, overIndex).map((l, i) => ({ ...l, displayOrder: i }))
+        }
+      }
+      return {
+        ...state,
+        activeItem: {
+          type: 'Input',
+          data: newInput
+        },
+        form: {
+          ...form,
+          inputsList: inputs?.map(i => i?.guid === input.guid ? newInput : i)
+        }
+      }
     }
     default:
       return state

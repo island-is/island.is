@@ -1,3 +1,4 @@
+/* eslint-disable func-style */
 import {
   useSensors,
   useSensor,
@@ -304,9 +305,8 @@ export default function Navbar() {
     if (activeStep && overStep) {
       dispatchDragAction('stepOverStep')
     }
-
     // Dragging Group
-    if (activeGroup) {
+    else if (activeGroup) {
       if (overStep) {
         dispatchDragAction('groupOverStep')
       }
@@ -314,9 +314,8 @@ export default function Navbar() {
         dispatchDragAction('groupOverGroup')
       }
     }
-
     // Dragging Input
-    if (activeInput) {
+    else if (activeInput) {
       if (overGroup) {
         dispatchDragAction('inputOverGroup')
       }

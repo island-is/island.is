@@ -40,7 +40,7 @@ export class InputSettings {
   hasLink?: boolean
 
   @Field(() => String, { nullable: true })
-  url?: string
+  url?: string | null
 
   @Field(() => LanguageType, { nullable: true })
   buttonText?: LanguageType

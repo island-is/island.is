@@ -4,11 +4,6 @@
     "title": "UmsóknarkerfiWebAPI",
     "version": "1.0"
   },
-  "servers": [
-    {
-      "url": "/umsoknarkerfi"
-    }
-  ],
   "paths": {
     "/api/Files": {
       "post": {
@@ -1124,7 +1119,7 @@
             "type": "string",
             "nullable": true
           },
-          "listi": {
+          "list": {
             "type": "array",
             "items": {
               "$ref": "#/components/schemas/Listagildi"
@@ -1409,21 +1404,21 @@
           "stepsList": {
             "type": "array",
             "items": {
-              "$ref": "#/components/schemas/StepDto"
+              "$ref": "#/components/schemas/StepUpdateDto"
             },
             "nullable": true
           },
           "groupsList": {
             "type": "array",
             "items": {
-              "$ref": "#/components/schemas/GroupDto"
+              "$ref": "#/components/schemas/GroupUpdateDto"
             },
             "nullable": true
           },
           "inputsList": {
             "type": "array",
             "items": {
-              "$ref": "#/components/schemas/InputDto"
+              "$ref": "#/components/schemas/InputUpdateDto"
             },
             "nullable": true
           }
@@ -1506,6 +1501,10 @@
             "format": "int32"
           },
           "multiSet": {
+            "type": "integer",
+            "format": "int32"
+          },
+          "stepId": {
             "type": "integer",
             "format": "int32"
           }
@@ -1635,6 +1634,10 @@
           },
           "inputSettings": {
             "$ref": "#/components/schemas/BaseInputSettings"
+          },
+          "groupId": {
+            "type": "integer",
+            "format": "int32"
           }
         },
         "additionalProperties": false

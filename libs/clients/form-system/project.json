@@ -43,7 +43,7 @@
     "update-openapi-document": {
       "executor": "nx:run-commands",
       "options": {
-        "command": "curl https://profun.island.is/umsoknarkerfi/swagger/v1/swagger.json > libs/clients/form-system/src/clientConfig.json"
+        "command": "curl https://localhost:51345/swagger/v1/swagger.json > libs/clients/form-system/src/clientConfig.json"
       }
     }
   },

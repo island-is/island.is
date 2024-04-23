@@ -5,6 +5,9 @@ import { AuthMiddleware, User } from '@island.is/auth-nest-tools'
 import { InputsApi, ApiInputsInputIdGetRequest, ApiInputsPostRequest, ApiInputsInputIdDeleteRequest, ApiInputsInputIdPutRequest, InputCreationDto, InputUpdateDto } from "@island.is/clients/form-system"
 import { GetInputInput, CreateInputInput, DeleteInputInput, UpdateInputInput } from "../../dto/inputs.input"
 import { Input } from "../../models/input.model"
+// import { graphql } from "graphql"
+// import { RESTInputSettings, graphqlToRestInputSettings, restToGraphqlInputSettings } from "../utils/helperFunctions"
+// import { InputSettings } from "../../models/inputSettings.model"
 
 @Injectable()
 export class InputsService {
@@ -45,6 +48,10 @@ export class InputsService {
     if (!response || response instanceof ApolloError) {
       return {}
     }
+    // return {
+    //   ...response,
+    //   inputSettings: restToGraphqlInputSettings(response.inputSettings as RESTInputSettings)
+    // } as Input
     return response as Input
   }
 
@@ -59,6 +66,7 @@ export class InputsService {
     if (!response || response instanceof ApolloError) {
       return {}
     }
+    console.log('Post input response', response)
     return response as Input
   }
 
@@ -78,11 +86,25 @@ export class InputsService {
   }
 
   async updateInput(auth: User, input: UpdateInputInput): Promise<void> {
-    const request: ApiInputsInputIdPutRequest = {
+    // const request: ApiInputsInputIdPutRequest = {
+    //   inputId: input.inputId,
+    //   inputUpdateDto: {
+    //     ...input.inputUpdateDto,
+    //     inputSettings: graphqlToRestInputSettings(input.inputUpdateDto?.inputSettings as InputSettings)
+    //   } as InputUpdateDto,
+    // }
+    let request: ApiInputsInputIdPutRequest = {
       inputId: input.inputId,
-      inputUpdateDto: input.inputUpdateDto as InputUpdateDto,
+      inputUpdateDto: input.inputUpdateDto as InputUpdateDto
+    }
+    if (input.inputUpdateDto) {
+      request = {
+        inputId: input.inputId,
+        inputUpdateDto: input.inputUpdateDto
+      }
     }
 
+    console.log('request Input update', request)
     const response = await this.inputsApiWithAuth(auth)
       .apiInputsInputIdPut(request)
       .catch((e) => this.handle4xx(e, 'failed to update input'))

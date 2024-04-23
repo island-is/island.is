@@ -28,6 +28,9 @@ export class UpdateGroup {
 
   @Field(() => Number, { nullable: true })
   multiSet?: number
+
+  @Field(() => Int, { nullable: true })
+  stepId?: number
 }
 
 @InputType('FormSystemGetGroupInput')

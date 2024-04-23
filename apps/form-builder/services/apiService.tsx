@@ -54,7 +54,7 @@ export async function updateForm(
       }
     }),
   }
-
+  console.log('updatedForm', updatedForm)
   try {
     const response = await axios.put(
       `${BASEURL}/Forms/${form.id}`,

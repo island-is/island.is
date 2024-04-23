@@ -10,7 +10,7 @@ import {
 import { FormSystemInput } from "@island.is/api/schema"
 
 const MessageWithLinkSettings = () => {
-  const { control, controlDispatch, setFocus, updateActiveItem } = useContext(ControlContext)
+  const { control, controlDispatch, focus, setFocus, updateActiveItem } = useContext(ControlContext)
   const currentItem = control.activeItem.data as FormSystemInput
   const { inputSettings } = currentItem
   return (
@@ -20,7 +20,14 @@ const MessageWithLinkSettings = () => {
           <Checkbox
             label="Bæta við hlekk"
             checked={inputSettings?.hasLink ?? false}
-
+            onChange={(e) => controlDispatch({
+              type: 'SET_MESSAGE_WITH_LINK_SETTINGS',
+              payload: {
+                property: 'hasLink',
+                checked: e.target.checked,
+                update: updateActiveItem
+              }
+            })}
           />
         </Column>
       </Row>
@@ -34,16 +41,16 @@ const MessageWithLinkSettings = () => {
                   name="buttonTitle"
                   backgroundColor="blue"
                   value={inputSettings?.buttonText?.is ?? ''}
-                  onChange={(e) => {
-                    listsDispatch({
-                      type: 'setMessageWithLinkSettings',
-                      payload: {
-                        property: 'hnapptexti',
-                        lang: 'is',
-                        value: e.target.value,
-                      },
-                    })
-                  }}
+                  onChange={(e) => controlDispatch({
+                    type: 'SET_MESSAGE_WITH_LINK_SETTINGS',
+                    payload: {
+                      property: 'buttonText',
+                      lang: 'is',
+                      value: e.target.value,
+                    }
+                  })}
+                  onFocus={(e) => setFocus(e.target.value)}
+                  onBlur={(e) => e.target.value !== focus && updateActiveItem()}
                 />
               </Column>
               <Column span="5/10">
@@ -52,16 +59,16 @@ const MessageWithLinkSettings = () => {
                   name="buttonTitle"
                   backgroundColor="blue"
                   value={inputSettings.buttonText?.en ?? ''}
-                  onChange={(e) => {
-                    listsDispatch({
-                      type: 'setMessageWithLinkSettings',
-                      payload: {
-                        property: 'hnapptexti',
-                        lang: 'en',
-                        value: e.target.value,
-                      },
-                    })
-                  }}
+                  onChange={(e) => controlDispatch({
+                    type: 'SET_MESSAGE_WITH_LINK_SETTINGS',
+                    payload: {
+                      property: 'buttonText',
+                      lang: 'en',
+                      value: e.target.value,
+                    }
+                  })}
+                  onFocus={(e) => setFocus(e.target.value)}
+                  onBlur={(e) => e.target.value !== focus && updateActiveItem()}
                 />
               </Column>
             </Row>
@@ -73,15 +80,15 @@ const MessageWithLinkSettings = () => {
                   backgroundColor="blue"
                   placeholder="island.is"
                   value={inputSettings?.url ?? ''}
-                  onChange={(e) =>
-                    listsDispatch({
-                      type: 'setMessageWithLinkSettings',
-                      payload: {
-                        property: 'url',
-                        value: e.target.value,
-                      },
-                    })
-                  }
+                  onChange={(e) => controlDispatch({
+                    type: 'SET_MESSAGE_WITH_LINK_SETTINGS',
+                    payload: {
+                      property: 'url',
+                      value: e.target.value,
+                    }
+                  })}
+                  onFocus={(e) => setFocus(e.target.value)}
+                  onBlur={(e) => e.target.value !== focus && updateActiveItem()}
                 />
               </Column>
             </Row>
@@ -91,3 +98,5 @@ const MessageWithLinkSettings = () => {
     </Stack>
   )
 }
+
+export default MessageWithLinkSettings

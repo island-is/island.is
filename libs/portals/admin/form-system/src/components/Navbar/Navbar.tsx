@@ -22,8 +22,8 @@ import ControlContext, { IControlContext } from '../../context/ControlContext'
 import { useFormSystemCreateStepMutation } from '../../gql/Step.generated'
 import { useFormSystemUpdateFormMutation } from '../../gql/Form.generated'
 import { ItemType } from '../../lib/utils/interfaces'
+import { removeTypename } from '../../lib/utils/removeTypename'
 
-type ActionType = 'removeStep' | 'removeGroup' | 'removeInput'
 
 type DndAction =
   | 'STEP_OVER_STEP'
@@ -38,7 +38,8 @@ export default function Navbar() {
     controlDispatch,
     setInSettings,
     inSettings,
-    updateDnD
+    updateDnD,
+    formUpdate
   } = useContext(ControlContext) as IControlContext
 
   const { activeItem, form } = control
@@ -54,26 +55,24 @@ export default function Navbar() {
       },
     }),
   )
-  const [createStep, { data, loading, error }] = useFormSystemCreateStepMutation({
-    variables: {
-      input: {
-        stepCreationDto: {
-          formId: form?.id as number,
-          displayOrder: steps?.length
+  const [createStep, { data, loading, error }] = useFormSystemCreateStepMutation()
+
+  const addStep = async () => {
+    const newStep = await createStep({
+      variables: {
+        input: {
+          stepCreationDto: {
+            formId: form?.id as number,
+            displayOrder: steps?.length
+          }
         }
       }
-    }
-  })
-
-  const [updateForm, { data: formData, loading: formLoading, error: formError }] = useFormSystemUpdateFormMutation()
-
-  const addStep = () => {
-    createStep()
-    if (!loading && !error && data) {
+    })
+    if (newStep) {
       controlDispatch({
         type: 'ADD_STEP',
         payload: {
-          step: data?.formSystemCreateStep as FormSystemStep
+          step: removeTypename(newStep.data?.formSystemCreateStep) as FormSystemStep
         }
       })
     }
@@ -129,17 +128,12 @@ export default function Navbar() {
 
     if (activeId === overId) return
 
-    const getType = (
-      data: DataRef<{ [x: string]: unknown }>,
-      targetType: ItemType,
-    ) => data?.current?.type === targetType
-
-    const activeStep = getType(active.data, 'Step')
-    const activeGroup = getType(active.data, 'Group')
-    const activeInput = getType(active.data, 'Input')
-    const overStep = getType(over.data, 'Step')
-    const overGroup = getType(over.data, 'Group')
-    const overInput = getType(over.data, 'Input')
+    const activeStep = active.data?.current?.type === 'Step'
+    const activeGroup = active.data?.current?.type === 'Group'
+    const activeInput = active.data?.current?.type === 'Input'
+    const overStep = over.data?.current?.type === 'Step'
+    const overGroup = over.data?.current?.type === 'Group'
+    const overInput = over.data?.current?.type === 'Input'
 
     const dispatchDragAction = (type: DndAction) =>
       controlDispatch({ type, payload: { activeId: activeId, overId: overId } })
@@ -171,7 +165,8 @@ export default function Navbar() {
   }
 
   const onDragEnd = () => {
-    updateDnD(activeItem.type)
+    // updateDnD(activeItem.type)
+    formUpdate()
   }
 
   if (inSettings) {
@@ -315,6 +310,11 @@ export default function Navbar() {
         <Box display="flex" justifyContent="center" paddingTop={3}>
           <Button variant="ghost" size="small" onClick={addStep}>
             + Bæta við skrefi
+          </Button>
+        </Box>
+        <Box display="flex" justifyContent="center" paddingTop={3}>
+          <Button variant="text" size="small" onClick={() => console.log(control.form)}>
+            Test btn
           </Button>
         </Box>
       </Box>

@@ -1,14 +1,13 @@
 import { Inject, Injectable } from "@nestjs/common"
 import { LOGGER_PROVIDER, Logger } from '@island.is/logging'
-import { ApiFormsFormIdDeleteRequest, ApiFormsFormIdGetRequest, ApiFormsFormIdPutRequest, ApiFormsOrganizationOrganizationIdGetRequest, FormUpdateDto, FormsApi } from "@island.is/clients/form-system"
+import { ApiFormsFormIdDeleteRequest, ApiFormsFormIdGetRequest, ApiFormsFormIdPutRequest, ApiFormsOrganizationOrganizationIdGetRequest, FormUpdateDto, FormsApi, ApiFormsFormIdSettingsPutRequest, FormSettingsUpdateDto } from "@island.is/clients/form-system"
 import { ApolloError } from "@apollo/client"
 import { AuthMiddleware, User } from '@island.is/auth-nest-tools'
 import { CreateFormInput, DeleteFormInput, GetFormInput, GetFormsInput, UpdateFormInput } from "../../dto/forms.input"
 import { FormResponse } from "../../models/formResponse.model"
 import { FormListResponse } from "../../models/formListResponse.model"
-import { graphqlToRestInputSettings, RESTInputSettings, restToGraphqlInputSettings } from "../utils/helperFunctions"
-import { Form } from "../../models/form.model"
-import { Input } from "../../models/input.model"
+import { UpdateFormSettingsInput } from "../../dto/updateFormSettings.input"
+import { InputSettings } from "../../models/inputSettings.model"
 
 
 
@@ -54,16 +53,20 @@ export class FormsService {
     if (!response || response instanceof ApolloError) {
       return {}
     }
-    const formattedResponse = {
-      ...response,
-      inputsList: response.form?.inputsList?.map((input) => {
-        return {
-          ...input,
-          inputSettings: restToGraphqlInputSettings(input.inputSettings as RESTInputSettings)
-        }
-      })
-    }
-    return formattedResponse as FormResponse
+    // const formattedResponse = {
+    //   ...response,
+    //   inputsList: response.form?.inputsList?.map((input) => {
+    //     const { type, ...newInputSettings } = input.inputSettings as InputSettings
+    //     return {
+    //       ...input,
+    //       inputSettings: {
+    //         ...newInputSettings,
+    //         $type: type
+    //       }
+    //     }
+    //   })
+    // }
+    return response as FormResponse
   }
 
   async getForms(auth: User, input: GetFormsInput): Promise<FormListResponse> {
@@ -116,10 +119,7 @@ export class FormsService {
       ...input.form,
       id: input.formId,
       inputsList: input.form?.inputsList?.map((input) => {
-        return {
-          ...input,
-          inputSettings: graphqlToRestInputSettings(input.inputSettings)
-        }
+        return input
       })
     }
 
@@ -127,11 +127,29 @@ export class FormsService {
       formId: input.formId,
       formUpdateDto: formattedForm as FormUpdateDto,
     }
-    console.log('request: ', request)
+    // const request: ApiFormsFormIdPutRequest = {
+    //   formId: input.formId,
+    //   formUpdateDto: input.form as FormUpdateDto
+    // }
     const response = await this.formsApiWithAuth(auth)
       .apiFormsFormIdPut(request)
       .catch((e) => this.handle4xx(e, 'failed to update form'))
-    console.log('response: ', response)
+    if (!response || response instanceof ApolloError) {
+      return void 0
+    }
+    return response
+  }
+
+  async updateFormSettings(auth: User, input: UpdateFormSettingsInput): Promise<void> {
+    const request: ApiFormsFormIdSettingsPutRequest = {
+      formId: input.id,
+      formSettingsUpdateDto: input.formSettingsUpdateDto as FormSettingsUpdateDto
+    }
+    console.log('updateFormSettings request', request)
+    const response = await this.formsApiWithAuth(auth)
+      .apiFormsFormIdSettingsPut(request)
+      .catch((e) => this.handle4xx(e, 'failed to update form settings'))
+
     if (!response || response instanceof ApolloError) {
       return void 0
     }

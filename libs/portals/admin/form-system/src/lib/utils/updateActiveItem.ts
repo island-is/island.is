@@ -12,74 +12,75 @@ export const updateActiveItemFn = (
   currentActiveItem?: ActiveItem
 ) => {
   const { type } = activeItem
-  console.log('updating: ', type)
-  if (type === 'Step') {
-    const { id, name, type, displayOrder, waitingText, callRuleset } = currentActiveItem ? currentActiveItem.data as FormSystemStep : activeItem.data as FormSystemStep
-
-    updateStep({
-      variables: {
-        input: {
-          stepId: id,
-          stepUpdateDto: {
-            id: id,
-            name: name?.__typename ? { ...name, __typename: undefined } : name,
-            type: type,
-            displayOrder: displayOrder,
-            waitingText: waitingText?.__typename ? { ...waitingText, __typename: undefined } : waitingText,
-            callRuleset: callRuleset
+  try {
+    if (type === 'Step') {
+      const { id, name, type, displayOrder, waitingText, callRuleset } = currentActiveItem ? currentActiveItem.data as FormSystemStep : activeItem.data as FormSystemStep
+      updateStep({
+        variables: {
+          input: {
+            stepId: id,
+            stepUpdateDto: {
+              id: id,
+              name: name,
+              type: type,
+              displayOrder: displayOrder,
+              waitingText: waitingText,
+              callRuleset: callRuleset
+            }
           }
         }
-      }
-    })
-  } else if (type === 'Group') {
-    const { id, name, guid, displayOrder, multiSet } = currentActiveItem ? currentActiveItem.data as FormSystemGroup : activeItem.data as FormSystemGroup
-    updateGroup({
-      variables: {
-        input: {
-          groupId: activeItem?.data?.id,
-          groupUpdateDto: {
-            id,
-            name: name?.__typename ? { ...name, __typename: undefined } : name,
-            guid,
-            displayOrder,
-            multiSet,
+      })
+    } else if (type === 'Group') {
+      const { id, name, guid, displayOrder, multiSet, stepId } = currentActiveItem ? currentActiveItem.data as FormSystemGroup : activeItem.data as FormSystemGroup
+      updateGroup({
+        variables: {
+          input: {
+            groupId: activeItem?.data?.id,
+            groupUpdateDto: {
+              id,
+              name: name,
+              guid,
+              displayOrder,
+              multiSet,
+              stepId
+            },
           },
         },
-      },
-    })
-  } else if (type === 'Input') {
-    const {
-      id,
-      name,
-      description,
-      isRequired,
-      displayOrder,
-      isHidden,
-      type,
-      inputSettings,
-      isPartOfMultiSet,
-    } = currentActiveItem ? currentActiveItem.data as FormSystemInput : activeItem.data as FormSystemInput
-    updateInput({
-      variables: {
-        input: {
-          inputId: activeItem?.data?.id,
-          inputUpdateDto: {
-            id,
-            name: name?.__typename ? { ...name, __typename: undefined } : name,
-            description: description?.__typename
-              ? { ...description, __typename: undefined }
-              : description,
-            isRequired: isRequired ?? false,
-            displayOrder,
-            isHidden: isHidden ?? false,
-            type,
-            inputSettings: inputSettings?.__typename
-              ? { ...inputSettings, __typename: undefined }
-              : inputSettings,
-            isPartOfMultiSet: isPartOfMultiSet ?? false,
+      })
+    } else if (type === 'Input') {
+      const {
+        id,
+        name,
+        description,
+        isRequired,
+        displayOrder,
+        isHidden,
+        type,
+        inputSettings,
+        isPartOfMultiSet,
+        groupId
+      } = currentActiveItem ? currentActiveItem.data as FormSystemInput : activeItem.data as FormSystemInput
+      updateInput({
+        variables: {
+          input: {
+            inputId: id,
+            inputUpdateDto: {
+              id,
+              name: name,
+              description: description,
+              isRequired: isRequired ?? false,
+              displayOrder,
+              isHidden: isHidden ?? false,
+              type,
+              inputSettings: inputSettings,
+              isPartOfMultiSet: isPartOfMultiSet ?? false,
+              groupId: groupId ?? null,
+            },
           },
         },
-      },
-    });
+      });
+    }
+  } catch (e) {
+    console.error('Error updating active item: ', e)
   }
-};
+}

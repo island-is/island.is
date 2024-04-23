@@ -5,10 +5,11 @@ import { FormSystemGroup, FormSystemInput } from '@island.is/api/schema'
 import { useFormSystemCreateGroupMutation, useFormSystemDeleteGroupMutation } from '../../../../../gql/Group.generated'
 import { useFormSystemCreateInputMutation, useFormSystemDeleteInputMutation } from '../../../../../gql/Input.generated'
 import { useFormSystemDeleteStepMutation } from '../../../../../gql/Step.generated'
+import { removeTypename } from '../../../../../lib/utils/removeTypename'
 
 
 export default function NavButtons() {
-  const { control, controlDispatch, apolloClient } = useContext(ControlContext)
+  const { control, controlDispatch } = useContext(ControlContext)
   const { activeItem, form } = control
   const { groupsList: groups, inputsList: inputs } = form
 
@@ -31,7 +32,7 @@ export default function NavButtons() {
         }
       })
       if (newGroup) {
-        controlDispatch({ type: 'ADD_GROUP', payload: { group: newGroup.data?.formSystemCreateGroup as FormSystemGroup } })
+        controlDispatch({ type: 'ADD_GROUP', payload: { group: removeTypename(newGroup.data?.formSystemCreateGroup) as FormSystemGroup } })
       }
     } else if (activeItem.type === 'Group') {
       const newInput = await addInput({
@@ -45,7 +46,8 @@ export default function NavButtons() {
         }
       })
       if (newInput) {
-        controlDispatch({ type: 'ADD_INPUT', payload: { input: newInput.data?.formSystemCreateInput as FormSystemInput } })
+        console.log('newInput', newInput)
+        controlDispatch({ type: 'ADD_INPUT', payload: { input: removeTypename(newInput.data?.formSystemCreateInput) as FormSystemInput } })
       }
     }
   }

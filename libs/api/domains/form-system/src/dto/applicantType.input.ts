@@ -20,8 +20,8 @@ export class ApplicantTypeInput {
   @Field(() => String, { nullable: true })
   type?: string | null
 
-  @Field(() => ApplicantTypeNameSuggestionInput, { nullable: true })
-  nameSuggestion?: ApplicantTypeNameSuggestionInput
+  @Field(() => [ApplicantTypeNameSuggestionInput], { nullable: 'itemsAndList' })
+  nameSuggestions?: ApplicantTypeNameSuggestionInput[] | null
 }
 
 @InputType('FormSystemFormApplicantTypeInput')

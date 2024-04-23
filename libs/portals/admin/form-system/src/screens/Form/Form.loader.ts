@@ -3,6 +3,7 @@ import { FormSystemFormResponse } from '@island.is/api/schema'
 
 import { ApolloClient, NormalizedCacheObject } from '@apollo/client'
 import { FormSystemGetFormDocument, FormSystemGetFormQuery } from '../../gql/Form.generated'
+import { FormSystemGetInputDocument, FormSystemGetInputQuery } from '../../gql/Input.generated'
 
 export interface FormLoaderResponse {
   formBuilder: FormSystemFormResponse,
@@ -31,8 +32,38 @@ export const formLoader: WrappedLoaderFn = ({ client }) => {
     if (!formData) {
       throw new Error(`No form data found for ${params.formId}`)
     }
+
+    //Inputs had null values thus I need to fetch them again for some reason...
+    const formBuilder = formData.formSystemGetForm
+    const updatedInputs = formBuilder.form?.inputsList?.length
+      ? await Promise.all(
+        formBuilder.form.inputsList.map(async (input) => {
+          const { data: updatedInput, error: inputError } =
+            await client.query<FormSystemGetInputQuery>({
+              query: FormSystemGetInputDocument,
+              fetchPolicy: 'network-only',
+              variables: {
+                input: {
+                  id: Number(input?.id),
+                },
+              },
+            });
+          return updatedInput?.formSystemGetInput;
+        })
+      )
+      : []
+    const updatedFormBuilder = {
+      ...formBuilder,
+      form: {
+        ...formBuilder.form,
+        inputsList: updatedInputs
+      }
+    }
+
+
+
     return {
-      formBuilder: formData.formSystemGetForm,
+      formBuilder: updatedFormBuilder as FormSystemFormResponse,
       client
     }
   }

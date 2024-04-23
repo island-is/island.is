@@ -17,3 +17,12 @@ export class DocumentTypeInput {
   @Field(() => LanguageTypeInput, { nullable: true })
   description?: LanguageTypeInput
 }
+
+@InputType('FormSystemDocumentTypeUpdateInput')
+export class DocumentTypeUpdateInput {
+  @Field(() => Int, { nullable: true })
+  formId?: number
+
+  @Field(() => Int, { nullable: true })
+  documentTypeId?: number
+}

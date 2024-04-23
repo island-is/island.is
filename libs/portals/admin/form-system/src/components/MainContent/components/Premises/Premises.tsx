@@ -5,7 +5,7 @@ import { FormSystemDocumentType } from '@island.is/api/schema'
 
 
 const Premises = () => {
-  const { control, documentTypes, formSettingsUpdate } = useContext(ControlContext)
+  const { control, documentTypes, updateSettings } = useContext(ControlContext)
   const [formDocumentTypes, setFormDocumentTypes] = useState<FormSystemDocumentType[]>(control.form?.documentTypes?.filter((d): d is FormSystemDocumentType => d !== null) ?? [])
 
   const handleCheckboxChange = (documentTypeId: number) => {
@@ -19,7 +19,7 @@ const Premises = () => {
         documentTypes?.find((d) => d?.id === documentTypeId),
       ].filter((d) => d !== undefined) as FormSystemDocumentType[])
     setFormDocumentTypes(newDocumentTypes)
-    formSettingsUpdate({ ...control.form, documentTypes: newDocumentTypes })
+    updateSettings({ ...control.form, documentTypes: newDocumentTypes })
   }
 
   return (

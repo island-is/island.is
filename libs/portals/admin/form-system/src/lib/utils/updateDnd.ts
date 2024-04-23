@@ -1,4 +1,4 @@
-import { FormSystemGroup, FormSystemGroupInput, FormSystemInput } from "@island.is/api/schema"
+import { FormSystemFormInput, FormSystemGroup, FormSystemGroupInput, FormSystemInput, FormSystemInputInput, FormSystemOrganizationInput, FormSystemStepInput, InputMaybe } from "@island.is/api/schema"
 import { useFormSystemUpdateFormMutation } from "../../gql/Form.generated"
 import { ControlState } from "../../hooks/controlReducer"
 import { ItemType } from "./interfaces"
@@ -11,9 +11,10 @@ export const updateDnd = (
 ) => {
   console.log('updating: ', type)
   const formId = control.form.id
+
   if (type === 'Step') {
     const steps = control.form.stepsList
-    const { form } = control
+    console.log('steps: ', steps)
     updateForm({
       variables: {
         input: {
@@ -23,9 +24,9 @@ export const updateDnd = (
               id: s?.id,
               guid: s?.guid,
               displayOrder: s?.displayOrder,
-              name: s?.name?.__typename ? { ...s?.name, __typename: undefined } : s?.name,
+              name: s?.name,
               type: s?.type,
-              waitingText: s?.waitingText?.__typename ? { ...s?.waitingText, __typename: undefined } : s?.waitingText,
+              waitingText: s?.waitingText,
               callRuleset: s?.callRuleset,
               isHidden: s?.isHidden,
               isCompleted: s?.isCompleted,
@@ -35,32 +36,23 @@ export const updateDnd = (
       }
     })
   } else if (type === 'Group') {
-    const { groupsList } = control.form
-    const updatedGroup = groupsList?.map(g => ({
-      id: g?.id,
-      name: g?.name?.__typename ? { ...g?.name, __typename: undefined } : g?.name,
-      guid: g?.guid,
-      displayOrder: g?.displayOrder,
-      isHidden: g?.isHidden ?? false,
-      stepId: g?.stepId,
-      multiSet: g?.multiSet,
-      stepGuid: g?.stepGuid,
-    }))
-    console.log('updatedGroup', updatedGroup)
+    const groups = control.form.groupsList
+    console.log('groups: ', groups)
     updateForm({
       variables: {
         input: {
           formId: formId,
           form: {
-            groupsList: groupsList?.map(g => ({
+            groupsList: groups?.map(g => ({
               id: g?.id,
-              name: g?.name?.__typename ? { ...g?.name, __typename: undefined } : g?.name,
+              name: g?.name,
               guid: g?.guid,
               displayOrder: g?.displayOrder,
-              isHidden: g?.isHidden ?? false,
+              isHidden: (g?.isHidden ?? false) as boolean,
               stepId: g?.stepId,
               multiSet: g?.multiSet,
               stepGuid: g?.stepGuid,
+              inputs: null
             } as FormSystemGroupInput),
             )
           }
@@ -69,6 +61,7 @@ export const updateDnd = (
     })
   } else if (type === 'Input') {
     const { inputsList } = control.form
+    console.log('inputs: ', inputsList)
     updateForm({
       variables: {
         input: {
@@ -76,13 +69,13 @@ export const updateDnd = (
           form: {
             inputsList: inputsList?.filter((i): i is FormSystemInput => i !== null && i !== undefined).map(i => ({
               id: i.id,
-              name: i.name?.__typename ? { ...i.name, __typename: undefined } : i.name,
-              description: i.description?.__typename ? { ...i.description, __typename: undefined } : i.description,
+              name: i.name,
+              description: i.description,
               isRequired: i.isRequired ?? false,
               displayOrder: i.displayOrder,
               isHidden: i.isHidden ?? false,
               type: i.type,
-              inputSettings: i.inputSettings?.__typename ? { ...i.inputSettings, __typename: undefined } : i.inputSettings,
+              inputSettings: i.inputSettings,
               isPartOfMultiSet: i.isPartOfMultiSet ?? false,
               groupId: i.groupId,
               groupGuid: i.groupGuid,

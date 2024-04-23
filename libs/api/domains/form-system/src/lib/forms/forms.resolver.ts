@@ -6,6 +6,7 @@ import { CurrentUser, IdsUserGuard, type User } from '@island.is/auth-nest-tools
 import { FormListResponse } from "../../models/formListResponse.model"
 import { Audit } from '@island.is/nest/audit'
 import { UseGuards } from "@nestjs/common"
+import { UpdateFormSettingsInput } from "../../dto/updateFormSettings.input"
 
 
 
@@ -54,6 +55,17 @@ export class FormsResolver {
     @CurrentUser() user: User
   ): Promise<void> {
     return this.formsService.updateForm(user, input)
+  }
+
+  @Mutation(() => Boolean, {
+    nullable: true,
+    name: 'formSystemUpdateFormSettings'
+  })
+  async updateFormSettings(
+    @Args('input', { type: () => UpdateFormSettingsInput }) input: UpdateFormSettingsInput,
+    @CurrentUser() user: User
+  ): Promise<void> {
+    return this.formsService.updateFormSettings(user, input)
   }
 
   @Mutation(() => Boolean, {

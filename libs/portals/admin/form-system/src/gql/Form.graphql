@@ -46,67 +46,6 @@ query formSystemGetForm(
         displayOrder
         guid
         id
-        inputs {
-          description {
-            is
-            en
-          }
-          displayOrder
-          groupGuid
-          groupId
-          guid
-          id
-          inputFields
-          inputSettings {
-            amount
-            buttonText {
-              is
-              en
-            }
-            hasInput
-            hasLink
-            header
-            interval
-            isLarge
-            isList
-            isMulti
-            list {
-              description {
-                is
-                en
-              }
-              displayOrder
-              guid
-              isSelected
-              label {
-                is
-                en
-              }
-              value
-            }
-            max
-            maxLength
-            maxSize
-            min
-            minLength
-            name {
-              is
-              en
-            }
-            size
-            type
-            types
-            url
-          }
-          isHidden
-          isPartOfMultiSet
-          isRequired
-          name {
-            is
-            en
-          }
-          type
-        }
         isHidden
         multiSet
         name {
@@ -192,7 +131,7 @@ query formSystemGetForm(
             is
             en
           }
-          nameSuggestion {
+          nameSuggestions {
             applicantTypeId
             nameSuggestion {
               is
@@ -387,80 +326,6 @@ query formSystemGetForm(
       stepsList {
         callRuleset
         displayOrder
-        groups {
-          displayOrder
-          guid
-          id
-          inputs {
-            description {
-              is
-              en
-            }
-            displayOrder
-            groupGuid
-            groupId
-            guid
-            id
-            inputFields
-            inputSettings {
-              amount
-              buttonText {
-                is
-                en
-              }
-              hasInput
-              hasLink
-              header
-              interval
-              isLarge
-              isList
-              isMulti
-              list {
-                description {
-                  is
-                  en
-                }
-                displayOrder
-                guid
-                isSelected
-                label {
-                  is
-                  en
-                }
-                value
-              }
-              max
-              maxLength
-              maxSize
-              min
-              minLength
-              name {
-                is
-                en
-              }
-              size
-              type
-              types
-              url
-            }
-            isHidden
-            isPartOfMultiSet
-            isRequired
-            name {
-              is
-              en
-            }
-            type
-          }
-          isHidden
-          multiSet
-          name {
-            is
-            en
-          }
-          stepGuid
-          stepId
-        }
         guid
         id
         isCompleted
@@ -488,7 +353,7 @@ query formSystemGetForm(
         is
         en
       }
-      nameSuggestion {
+      nameSuggestions {
         applicantTypeId
         nameSuggestion {
           is
@@ -762,7 +627,7 @@ mutation formSystemCreateForm(
             is
             en
           }
-          nameSuggestion {
+          nameSuggestions {
             applicantTypeId
             nameSuggestion {
               is
@@ -1058,7 +923,7 @@ mutation formSystemCreateForm(
         is
         en
       }
-      nameSuggestion {
+      nameSuggestions {
         applicantTypeId
         nameSuggestion {
           is

@@ -19,6 +19,6 @@ export class ApplicantType {
   @Field(() => String, { nullable: true })
   type?: string | null
 
-  @Field(() => ApplicantTypeNameSuggestion, { nullable: true })
-  nameSuggestion?: ApplicantTypeNameSuggestion
+  @Field(() => [ApplicantTypeNameSuggestion], { nullable: 'itemsAndList' })
+  nameSuggestions?: ApplicantTypeNameSuggestion[] | null
 }
