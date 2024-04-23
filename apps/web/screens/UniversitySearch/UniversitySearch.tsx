@@ -27,8 +27,6 @@ import {
   Stack,
   Tag,
   Text,
-  toast,
-  ToastContainer,
   VisuallyHidden,
 } from '@island.is/island-ui/core'
 import { theme } from '@island.is/island-ui/theme'
@@ -69,14 +67,12 @@ import {
   GET_UNIVERSITY_GATEWAY_PROGRAM_LIST,
   GET_UNIVERSITY_GATEWAY_UNIVERSITIES,
 } from '../queries/UniversityGateway'
-import { Comparison } from './ComparisonComponent'
 import { TranslationDefaults } from './TranslationDefaults'
 import * as organizationStyles from '../../components/Organization/Wrapper/OrganizationWrapper.css'
 import * as styles from './UniversitySearch.css'
 
 const ITEMS_PER_PAGE = 18
 const NUMBER_OF_FILTERS = 6
-const MAX_SELECTED_COMPARISON = 3
 
 interface UniversitySearchProps {
   namespace: Record<string, string>
@@ -112,12 +108,6 @@ const stripHtml = (html: string) => {
   return tmp.textContent || tmp.innerText || ''
 }
 
-export interface ComparisonProps {
-  id: string
-  nameIs: string
-  iconSrc: string
-}
-
 interface UniversityProgramsQuery {
   universityGatewayPrograms: {
     data: Array<UniversityGatewayProgram>
@@ -125,22 +115,6 @@ interface UniversityProgramsQuery {
 }
 interface UniversityGatewayProgramWithStatus extends UniversityGatewayProgram {
   applicationStatus: string
-}
-
-const getActiveNavigationItemTitle = (
-  navigationItems: NavigationItem[],
-  clientUrl: string,
-) => {
-  for (const item of navigationItems) {
-    if (clientUrl === item.href) {
-      return item.title
-    }
-    for (const childItem of item.items ?? []) {
-      if (clientUrl === childItem.href) {
-        return childItem.title
-      }
-    }
-  }
 }
 
 const UniversitySearch: Screen<UniversitySearchProps> = ({
@@ -164,9 +138,6 @@ const UniversitySearch: Screen<UniversitySearchProps> = ({
   const isTabletScreenWidth = width < theme.breakpoints.xl
 
   const [selectedPage, setSelectedPage] = useState(1)
-  const [selectedComparison, setSelectedComparison] = useState<
-    Array<ComparisonProps>
-  >([])
   const [query, setQuery] = useState(searchQuery || '')
   const searchTermHasBeenInitialized = useRef(false)
   const [originalSortedResults, setOriginalSortedList] = useState<
@@ -232,26 +203,12 @@ const UniversitySearch: Screen<UniversitySearchProps> = ({
     }
   }, [filterOptions, universities, locale])
 
-  const getApplicationStatus = (item: UniversityGatewayProgram) => {
-    const now = new Date()
-    return new Date(item.applicationStartDate) <= now &&
-      new Date(item.applicationEndDate) >= now
-      ? 'OPEN'
-      : 'CLOSED'
-  }
-
   useEffect(() => {
     setTotalPages(Math.ceil(filteredResults.length / ITEMS_PER_PAGE))
   }, [filteredResults])
 
   useEffect(() => {
-    const comp = localStorage.getItem('comparison')
     const viewChoice = localStorage.getItem('viewChoice')
-
-    if (comp) {
-      const comparison = JSON.parse(comp)
-      setSelectedComparison(comparison)
-    }
 
     if (viewChoice) {
       setGridView(viewChoice === 'true' ? true : false)
@@ -442,37 +399,6 @@ const UniversitySearch: Screen<UniversitySearchProps> = ({
     )
   }
 
-  const handleComparisonChange = (dataItem: ComparisonProps) => {
-    const found = selectedComparison.some((x) => x.id === dataItem.id)
-
-    if (!found) {
-      if (selectedComparison.length === MAX_SELECTED_COMPARISON) {
-        //comparison can only include 3 items so display error message if trying to add the fourth
-        toast.error(
-          n(
-            'maxComparisonError',
-            `Aðeins er hægt að hafa ${MAX_SELECTED_COMPARISON} nám í samanburði`,
-          ),
-        )
-      } else {
-        setSelectedComparison([...selectedComparison, dataItem])
-      }
-    } else {
-      setSelectedComparison(
-        selectedComparison.filter((item) => {
-          if (item.id !== dataItem.id) {
-            return true
-          }
-          return false
-        }),
-      )
-    }
-  }
-
-  useEffect(() => {
-    localStorage.setItem('comparison', JSON.stringify(selectedComparison))
-  }, [selectedComparison])
-
   useEffect(() => {
     localStorage.setItem('viewChoice', gridView ? 'true' : 'false')
   }, [gridView])
@@ -503,14 +429,6 @@ const UniversitySearch: Screen<UniversitySearchProps> = ({
       return false
     })
     setIsOpen(newIsOpen)
-  }
-
-  const routeToComparison = () => {
-    router.push(
-      `${
-        linkResolver('universitysearchcomparison').href
-      }?comparison=${JSON.stringify(selectedComparison.map((i) => i.id))}`,
-    )
   }
 
   const navList: NavigationItem[] =
@@ -1381,11 +1299,7 @@ const UniversitySearch: Screen<UniversitySearchProps> = ({
                 )}
               </>
             )}
-
-            <Box
-              marginTop={2}
-              marginBottom={selectedComparison.length > 0 ? 4 : 0}
-            >
+            <Box marginTop={2} marginBottom={0}>
               <Pagination
                 variant="purple"
                 page={selectedPage}
@@ -1417,147 +1331,6 @@ const UniversitySearch: Screen<UniversitySearchProps> = ({
           columnGap={15}
           paddingBottom={8}
         ></Box>
-        {selectedComparison.length > 0 &&
-          !isTabletScreenWidth &&
-          !isMobileScreenWidth && (
-            <Box display="flex" flexDirection="column">
-              <Box paddingLeft={2} paddingBottom={2}>
-                <Text variant="h3">
-                  {n('programsInCompare', 'Nám í samanburði')}
-                </Text>
-              </Box>
-              <Box
-                display="flex"
-                flexDirection="row"
-                justifyContent="spaceBetween"
-              >
-                <Box
-                  display="flex"
-                  flexDirection="row"
-                  flexWrap="wrap"
-                  rowGap={1}
-                  width="full"
-                >
-                  {selectedComparison.map((item) => {
-                    return (
-                      <GridColumn span="1/3" key={item.id}>
-                        <Comparison>
-                          <Box
-                            display="flex"
-                            flexDirection="row"
-                            justifyContent="spaceBetween"
-                            alignItems="center"
-                            width="full"
-                          >
-                            <Box
-                              display="flex"
-                              flexDirection="row"
-                              alignItems="center"
-                              paddingRight={3}
-                              style={{ maxWidth: '90%' }}
-                            >
-                              <img
-                                src={item.iconSrc}
-                                className={styles.icon}
-                                alt={`Logo fyrir ${item.nameIs}`}
-                                style={{ paddingRight: 10 }}
-                              />
-                              <Text variant="h5" truncate>
-                                {item.nameIs}
-                              </Text>
-                            </Box>
-                            <Box
-                              display="flex"
-                              flexDirection="row"
-                              alignItems="center"
-                            >
-                              <button
-                                onClick={() =>
-                                  handleComparisonChange({
-                                    id: item.id,
-                                    nameIs: item.nameIs,
-                                    iconSrc: item.iconSrc,
-                                  })
-                                }
-                                className={styles.removeButton}
-                              >
-                                <Icon
-                                  className={styles.closeIcon}
-                                  icon={'close'}
-                                  type="outline"
-                                  color="blue400"
-                                />
-                              </button>
-                            </Box>
-                          </Box>
-                        </Comparison>
-                      </GridColumn>
-                    )
-                  })}
-                </Box>
-                <Button onClick={() => routeToComparison()}>
-                  <Text variant="h5" whiteSpace="nowrap" color="white">
-                    {n('seeCompare', 'Skoða samanburð')}
-                  </Text>
-                </Button>
-              </Box>
-            </Box>
-          )}
-        {selectedComparison.length > 0 &&
-          (isTabletScreenWidth || isMobileScreenWidth) && (
-            <Box
-              display="flex"
-              flexDirection="column"
-              width="full"
-              background="white"
-              padding={3}
-              position="fixed"
-              bottom={0}
-              right={0}
-              left={0}
-              zIndex={10}
-              borderTopWidth="standard"
-              borderColor="blue300"
-              boxShadow="strong"
-            >
-              <Box
-                display="flex"
-                flexDirection="row"
-                justifyContent="spaceBetween"
-                width="full"
-                alignItems="flexStart"
-                paddingBottom={2}
-              >
-                <Text variant="h3">{n('comparison', 'Samanburður')}</Text>
-                <Button
-                  variant="text"
-                  icon="close"
-                  size="small"
-                  onClick={() => setSelectedComparison([])}
-                >
-                  <Text variant="eyebrow" color="blue400" as="span">
-                    {n('clearFilter', 'Hreinsa val')}
-                  </Text>
-                </Button>
-              </Box>
-              <Box
-                display="flex"
-                flexDirection="row"
-                justifyContent="spaceBetween"
-                width="full"
-                alignItems="center"
-              >
-                <Button variant="primary" onClick={() => routeToComparison()}>
-                  {n('seeCompare', 'Skoða samanburð')}
-                </Button>
-                <Text
-                  variant="h5"
-                  as="span"
-                >{`${selectedComparison.length} / ${MAX_SELECTED_COMPARISON}`}</Text>
-              </Box>
-            </Box>
-          )}
-        <ToastContainer></ToastContainer>
       </GridContainer>
       <Box className="rs_read">
         <OrganizationFooter
