@@ -43,6 +43,18 @@ const determineMessageFromApplicationAnswers = (application: Application) => {
   }
 }
 
+export const isOver64 =
+  (value = false) =>
+  ({ application }: ApplicationContext) => {
+    const requirementsMet =
+      getValueViaPath<boolean>(
+        application.answers,
+        'requirementsMet',
+        false,
+      ) === true
+    return requirementsMet === value
+  }
+
 const template: ApplicationTemplate<
   ApplicationContext,
   ApplicationStateSchema<Events>,
@@ -112,7 +124,16 @@ const template: ApplicationTemplate<
           ],
         },
         on: {
-          [DefaultEvents.SUBMIT]: { target: States.PAYMENT },
+          [DefaultEvents.SUBMIT]: [
+            // {
+            //   target: States.COMPLETED,
+            //   cond: hasCompletedPrerequisitesStep(false),
+            // },
+            // {
+            //   target: States.PAYMENT,
+            //   cond: hasCompletedPrerequisitesStep(true),
+            // },
+          ],
         },
       },
       [States.PAYMENT]: buildPaymentState({
