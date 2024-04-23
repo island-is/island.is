@@ -1,9 +1,11 @@
 import { Alert, DARK_YELLOW_200, dynamicColor } from '@ui'
 import React, { useEffect, useRef } from 'react'
 import { Animated, Easing, SafeAreaView } from 'react-native'
+import { Navigation } from 'react-native-navigation'
 import styled from 'styled-components/native'
 import { getIntl } from '../../contexts/i18n-provider'
 import { useOfflineStore } from '../../stores/offline-store'
+import { ComponentRegistry as CR } from '../../utils/component-registry'
 
 const TranslateYValue = 200
 
@@ -39,6 +41,7 @@ export const OfflineBanner = () => {
       easing: Easing.out(Easing.ease),
     }).start(() => {
       toggleBanner(false)
+      void Navigation.dismissOverlay(CR.OfflineBanner)
     })
   }
 

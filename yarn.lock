@@ -27656,6 +27656,16 @@ __metadata:
   languageName: node
   linkType: hard
 
+"expo-modules-core@patch:expo-modules-core@npm%3A1.1.1#./.yarn/patches/expo-modules-core-npm-1.1.1-c3861d47cb.patch::locator=island.is%40workspace%3A.":
+  version: 1.1.1
+  resolution: "expo-modules-core@patch:expo-modules-core@npm%3A1.1.1#./.yarn/patches/expo-modules-core-npm-1.1.1-c3861d47cb.patch::version=1.1.1&hash=1babc3&locator=island.is%40workspace%3A."
+  dependencies:
+    compare-versions: ^3.4.0
+    invariant: ^2.2.4
+  checksum: c9bd53cd324bea0e00c20e31da232967f0ee280b7c2e824ff0a15600a981cf69d89a85d97fa88818a96b9a02d5fb1eacb1040f0549cbc7b0083fdd24d0cc7e4d
+  languageName: node
+  linkType: hard
+
 "expo-notifications@npm:0.17.0":
   version: 0.17.0
   resolution: "expo-notifications@npm:0.17.0"
@@ -42423,6 +42433,28 @@ __metadata:
   languageName: node
   linkType: hard
 
+"react-native-navigation@patch:react-native-navigation@npm%3A7.32.1#./.yarn/patches/react-native-navigation-npm-7.32.1-262dc5c010.patch::locator=island.is%40workspace%3A.":
+  version: 7.32.1
+  resolution: "react-native-navigation@patch:react-native-navigation@npm%3A7.32.1#./.yarn/patches/react-native-navigation-npm-7.32.1-262dc5c010.patch::version=7.32.1&hash=eaa437&locator=island.is%40workspace%3A."
+  dependencies:
+    hoist-non-react-statics: 3.x.x
+    lodash: 4.17.x
+    prop-types: 15.x.x
+    react-lifecycles-compat: 2.0.0
+    tslib: 1.9.3
+  peerDependencies:
+    react: "*"
+    react-native: "*"
+    remx: "*"
+  peerDependenciesMeta:
+    remx:
+      optional: true
+  bin:
+    rnn-link: autolink/postlink/run.js
+  checksum: 80292dd351d1b48ec55acbc9b96917fec47f8b9046785db17279c8dd911145c369659fcab47884bc7530ca50528b83836088073c3d35bacd7fd05cb464d0645b
+  languageName: node
+  linkType: hard
+
 "react-native-passkit-wallet@npm:0.1.6":
   version: 0.1.6
   resolution: "react-native-passkit-wallet@npm:0.1.6"
@@ -42532,6 +42564,52 @@ __metadata:
   bin:
     react-native: cli.js
   checksum: c4d4d643d410066af9ddf1c1868904817c50546e96a1887f06461327e1c666eb5b7db81ab1ae50cd866b0a1b3505ee1cbfa2ae8f93f13e26c2e47dd715828035
+  languageName: node
+  linkType: hard
+
+"react-native@patch:react-native@npm%3A0.71.1#./.yarn/patches/react-native-npm-0.71.1-f5d237f240.patch::locator=island.is%40workspace%3A.":
+  version: 0.71.1
+  resolution: "react-native@patch:react-native@npm%3A0.71.1#./.yarn/patches/react-native-npm-0.71.1-f5d237f240.patch::version=0.71.1&hash=ef3018&locator=island.is%40workspace%3A."
+  dependencies:
+    "@jest/create-cache-key-function": ^29.2.1
+    "@react-native-community/cli": 10.1.3
+    "@react-native-community/cli-platform-android": 10.1.3
+    "@react-native-community/cli-platform-ios": 10.1.1
+    "@react-native/assets": 1.0.0
+    "@react-native/normalize-color": 2.1.0
+    "@react-native/polyfills": 2.0.0
+    abort-controller: ^3.0.0
+    anser: ^1.4.9
+    base64-js: ^1.1.2
+    deprecated-react-native-prop-types: ^3.0.1
+    event-target-shim: ^5.0.1
+    invariant: ^2.2.4
+    jest-environment-node: ^29.2.1
+    jsc-android: ^250230.2.1
+    memoize-one: ^5.0.0
+    metro-react-native-babel-transformer: 0.73.7
+    metro-runtime: 0.73.7
+    metro-source-map: 0.73.7
+    mkdirp: ^0.5.1
+    nullthrows: ^1.1.1
+    pretty-format: ^26.5.2
+    promise: ^8.3.0
+    react-devtools-core: ^4.26.1
+    react-native-codegen: ^0.71.3
+    react-native-gradle-plugin: ^0.71.13
+    react-refresh: ^0.4.0
+    react-shallow-renderer: ^16.15.0
+    regenerator-runtime: ^0.13.2
+    scheduler: ^0.23.0
+    stacktrace-parser: ^0.1.3
+    use-sync-external-store: ^1.0.0
+    whatwg-fetch: ^3.0.0
+    ws: ^6.2.2
+  peerDependencies:
+    react: 18.2.0
+  bin:
+    react-native: cli.js
+  checksum: 309ee5f83883b9e19510018f5bcb1848df2eaae4dc529c4687970718dae10c22caf67f19a058eadbc17a95dfbc445f645b4b309d8820c06d7ecf9c8de6bdfb55
   languageName: node
   linkType: hard
 
