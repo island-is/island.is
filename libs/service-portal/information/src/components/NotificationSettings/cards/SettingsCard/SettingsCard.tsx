@@ -5,7 +5,7 @@ import * as styles from './SettingsCard.css'
 
 interface SettingsCardProps {
   title: string
-  subtitle?: string
+  subtitle: string
   toggleLabel?: string
   checked: boolean
   onChange(active: boolean): void

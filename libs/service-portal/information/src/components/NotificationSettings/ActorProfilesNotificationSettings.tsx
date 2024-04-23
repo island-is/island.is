@@ -1,5 +1,4 @@
 import React from 'react'
-import { NotificationSettingsCard } from './cards/NotificationSettingsCard'
 import { useLocale } from '@island.is/localization'
 import {
   AlertMessage,
@@ -10,6 +9,7 @@ import {
 } from '@island.is/island-ui/core'
 
 import { mNotifications } from '../../lib/messages'
+import { NotificationSettingsCard } from './cards/NotificationSettingsCard'
 import { ActorProfileSettingsCard } from './cards/ActorProfileSettingsCard'
 import { useActorProfilesQuery } from './graphql/ActorProfiles.generated'
 

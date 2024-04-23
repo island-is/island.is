@@ -13,7 +13,7 @@ import { useLocale } from '@island.is/localization'
 import { SettingsCard } from './cards/SettingsCard/SettingsCard'
 import { mNotifications } from '../../lib/messages'
 import {
-  useUpdateUserProfileMutation,
+  useUpdateUserProfileSettingsMutation,
   useUserProfileSettingsQuery,
 } from './graphql/UserProfile.generated'
 
@@ -30,7 +30,7 @@ const UserProfileNotificationSettings = () => {
     loading,
     error: fetchError,
   } = useUserProfileSettingsQuery()
-  const [updateUserProfile] = useUpdateUserProfileMutation()
+  const [updateUserProfile] = useUpdateUserProfileSettingsMutation()
 
   const [settings, setSettings] = useState<UserProfileNotificationSettings>({
     documentNotifications:

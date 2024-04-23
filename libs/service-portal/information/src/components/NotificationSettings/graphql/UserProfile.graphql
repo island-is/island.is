@@ -1,4 +1,4 @@
-mutation UpdateUserProfile($input: UpdateUserProfileInput!) {
+mutation UpdateUserProfileSettings($input: UpdateUserProfileInput!) {
   updateProfile(input: $input) {
     nationalId
     documentNotifications
