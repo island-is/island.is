@@ -1,14 +1,14 @@
 definitions:
-  base_config: &base
+  base: &base
     max_build_duration: 120
     working_directory: apps/native/app
-    triggering:
-      events:
-        - push
-      branch_patterns:
-        - pattern: "codemagic"
-          include: true
-          source: true
+  default_triggers: &default_triggers
+    events:
+      - push
+    branch_patterns:
+      - pattern: "codemagic"
+        include: true
+        source: true
   scripts:
     - &npm_install
       name: Install npm dependencies
@@ -49,6 +49,7 @@ workflows:
     <<: *base
     name: Island.is Prod App iOS
     instance_type: mac_mini_m1
+    triggering: *default_triggers
     integrations:
       app_store_connect: "Island.is API Key"
     environment:
@@ -81,13 +82,14 @@ workflows:
           failure: false
       app_store_connect:
         auth: integration
-        submit_to_testflight: true
+        submit_to_testflight: false
         submit_to_app_store: false
 
   dev-app-ios:
     <<: *base
     name: Island.is Dev App iOS
     instance_type: mac_mini_m1
+    triggering: *default_triggers
     integrations:
       app_store_connect: "Island.is API Key"
     environment:
