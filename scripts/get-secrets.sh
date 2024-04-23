@@ -22,15 +22,13 @@ function get-secrets {
 
   pre=$(wc -l "$env_secret_file")
   debug "Project '$*' has $pre secrets before render-secrets"
-  output=$(ts-node --dir "$ROOT"/infra "$ROOT"/infra/src/cli/cli render-secrets --service="$*")
   if output=$(ts-node --dir "$ROOT"/infra "$ROOT"/infra/src/cli/cli render-secrets --service="$*" 2>&1); then
     echo "Successfully rendered secrets for '$*'"
+    echo "$output" >> "$env_secret_file"
   else
     echo "An error occured rendering secrets: $output"
     exit 1
   fi
-  fi
-  echo "$output" >> "$env_secret_file"
   post=$(wc -l "$env_secret_file")
   debug "Project '$*' has $post secrets after render-secrets"
 
