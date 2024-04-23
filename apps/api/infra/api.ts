@@ -161,6 +161,11 @@ export const serviceSetup = (services: {
           'http://web-services-auth-delegation-api.identity-server-delegation.svc.cluster.local',
         prod: 'https://auth-delegation-api.internal.innskra.island.is',
       },
+      USER_NOTIFICATION_CLIENT_URL: {
+        dev: 'http://user-notification-xrd.internal.dev01.devland.is',
+        staging: 'http://user-notification-xrd.internal.staging01.devland.is',
+        prod: 'https://user-notification-xrd.internal.island.is',
+      },
       IDENTITY_SERVER_ISSUER_URL: {
         dev: 'https://identity-server.dev01.devland.is',
         staging: 'https://identity-server.staging01.devland.is',
