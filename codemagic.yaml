@@ -10,6 +10,24 @@ definitions:
         include: true
         source: true
   scripts:
+    - &check_changes
+      name: Check changes since last build
+      script: |
+        set -e
+
+        echo "Considering changes between $CM_PREVIOUS_COMMIT and $CM_COMMIT"
+        if git cat-file -e "$CM_PREVIOUS_COMMIT"^{commit} >& /dev/null; then
+          notes=$(git log --pretty=format:"%s (%an)" "$CM_PREVIOUS_COMMIT".."$CM_COMMIT" -- codemagic.yaml apps/native/app)
+          if [[ $notes == "" ]]; then
+            echo "No changes detected in native app. Exiting."
+            exit 1
+          else
+            echo "App changes since last build:"
+            echo $notes | tee apps/native/app/release_notes_en-US.txt
+          fi
+        else
+          echo "No previous commit detected. Continuing."
+        fi
     - &npm_install
       name: Install npm dependencies
       working_directory: .
@@ -33,7 +51,7 @@ definitions:
       name: Increment build number
       script: |
         cd ios
-        LATEST_BUILD_NUMBER=$(app-store-connect get-latest-app-store-build-number "$APP_STORE_APPLE_ID")
+        LATEST_BUILD_NUMBER=$(app-store-connect get-latest-build-number "$APP_STORE_APPLE_ID")
         agvtool new-version -all $(($LATEST_BUILD_NUMBER + 1))
     - &build_ipa
       name: Build ipa for distribution
@@ -62,6 +80,7 @@ workflows:
         XCODE_SCHEME: "Ísland.is"
         APP_STORE_APPLE_ID: 1569828682
     scripts:
+      - *check_changes
       - *npm_install
       - *codegen
       - *cocoapods
@@ -102,6 +121,7 @@ workflows:
         XCODE_SCHEME: "Ísland.dev"
         APP_STORE_APPLE_ID: 1570427360
     scripts:
+      - *check_changes
       - *npm_install
       - *codegen
       - *cocoapods
