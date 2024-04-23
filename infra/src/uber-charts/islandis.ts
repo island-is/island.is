@@ -94,6 +94,10 @@ const authAdminApi = authAdminApiSetup()
 const universityGatewayService = universityGatewaySetup()
 const universityGatewayWorker = universityGatewayWorkerSetup()
 
+const userNotificationService = userNotificationServiceSetup({
+  userProfileApi: servicePortalApi,
+})
+
 const api = apiSetup({
   appSystemApi,
   servicePortalApi,
@@ -105,6 +109,7 @@ const api = apiSetup({
   sessionsApi: sessionsService,
   authAdminApi,
   universityGatewayApi: universityGatewayService,
+  userNotificationService,
 })
 const servicePortal = servicePortalSetup({ graphql: api })
 const appSystemForm = appSystemFormSetup({ api: api })
@@ -122,10 +127,6 @@ const storybook = storybookSetup({})
 
 const downloadService = downloadServiceSetup({
   regulationsAdminBackend: rabBackend,
-})
-
-const userNotificationService = userNotificationServiceSetup({
-  userProfileApi: servicePortalApi,
 })
 const userNotificationWorkerService = userNotificationWorkerSetup({
   userProfileApi: servicePortalApi,
