@@ -14,7 +14,7 @@ export const OJOISearchGridView = ({
   locale: Locale
 }) => {
   const { linkResolver } = useLinkResolver()
-  const advertUrl = linkResolver('ojoiadvert', [], locale).href
+
   return (
     <Stack space={2}>
       {adverts.map((ad) => (
@@ -26,7 +26,7 @@ export const OJOISearchGridView = ({
           publicationDate={ad.publicationDate}
           title={ad.title}
           categories={ad.categories?.map((cat) => cat.title)}
-          link={advertUrl.replace('[number]', ad.id)}
+          link={linkResolver('ojoiadvert', [ad.id], locale).href}
         />
       ))}
     </Stack>

@@ -14,7 +14,6 @@ export const OJOISearchListView = ({
   locale: Locale
 }) => {
   const { linkResolver } = useLinkResolver()
-  const advertUrl = linkResolver('ojoiadvert', [], locale).href
 
   return (
     <T.Table>
@@ -50,7 +49,7 @@ export const OJOISearchListView = ({
             <T.Data>
               <Text variant="small" color="blue400">
                 <LinkV2
-                  href={advertUrl.replace('[number]', ad.id)}
+                  href={linkResolver('ojoiadvert', [ad.id], locale).href}
                   underline="normal"
                   color="blue400"
                   underlineVisibility="always"
