@@ -315,6 +315,30 @@ const UniversitySearch: Screen<UniversitySearchProps> = ({
     return CTA
   }
 
+  const handleFilterType = (filterKey: string, filterValues: string[]) => {
+    setSelectedPage(1)
+    setFilters({ ...filters, [filterKey]: filterValues })
+
+    // Update query params
+    const currentQueryParams = router.query
+    const { [filterKey]: prevFilterKeyValues, ...restParams } =
+      currentQueryParams
+
+    router.push(
+      {
+        pathname: router.pathname,
+        query: {
+          ...restParams,
+          [filterKey]: filterValues,
+        },
+      },
+      undefined,
+      {
+        shallow: true,
+      },
+    )
+  }
+
   const handleFilters = (
     filterKey: string,
     filterValue: string,
@@ -889,19 +913,17 @@ const UniversitySearch: Screen<UniversitySearchProps> = ({
                   labelResult={n('showResults', 'Skoða niðurstöður')}
                   labelTitle={n('filterResults', 'Sía niðurstöður')}
                   onFilterClear={() => {
-                    setSelectedPage(1)
-                    setFilters(JSON.parse(JSON.stringify(initialFilters)))
+                    clearFilterParams()
                   }}
                 >
                   <FilterMultiChoice
                     labelClear={n('clearFilter', 'Hreinsa val')}
                     onChange={({ categoryId, selected }) => {
-                      setSelectedPage(1)
-                      setFilters({ ...filters, [categoryId]: selected })
+                      handleFilterType(categoryId, selected)
                     }}
                     onClear={(categoryId) => {
                       setSelectedPage(1)
-                      setFilters({ ...filters, [categoryId]: [] })
+                      clearFilterType(categoryId)
                     }}
                     categories={
                       filterOptions
