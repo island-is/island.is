@@ -116,27 +116,27 @@ export const CourtArrangements: React.FC<Props> = (props) => {
         onChange={(event) => {
           if (handleCourtRoomChange) {
             handleCourtRoomChange(event)
+          } else {
+            removeTabsValidateAndSet(
+              'courtRoom',
+              event.target.value,
+              [],
+              setWorkingCase,
+            )
           }
-
-          removeTabsValidateAndSet(
-            'courtRoom',
-            event.target.value,
-            [],
-            setWorkingCase,
-          )
         }}
         onBlur={(event) => {
           if (handleCourtRoomChange) {
             handleCourtRoomChange(event)
+          } else {
+            validateAndSendToServer(
+              'courtRoom',
+              event.target.value,
+              [],
+              workingCase,
+              updateCase,
+            )
           }
-
-          validateAndSendToServer(
-            'courtRoom',
-            event.target.value,
-            [],
-            workingCase,
-            updateCase,
-          )
         }}
         disabled={isCorrectingRuling || courtRoomDisabled}
       />

@@ -11,6 +11,7 @@ import {
   toast,
 } from '@island.is/island-ui/core'
 import * as constants from '@island.is/judicial-system/consts'
+import { getLatestDateType } from '@island.is/judicial-system/types'
 import { core, errors, titles } from '@island.is/judicial-system-web/messages'
 import {
   BlueBox,
@@ -29,6 +30,7 @@ import {
 import {
   CaseFileCategory,
   CaseTransition,
+  DateType,
 } from '@island.is/judicial-system-web/src/graphql/schema'
 import { stepValidationsType } from '@island.is/judicial-system-web/src/utils/formHelper'
 import {
@@ -101,6 +103,21 @@ const Conclusion: React.FC = () => {
       workingCase.id,
     ],
   )
+
+  useEffect(() => {
+    const latestPostponement = getLatestDateType(
+      [DateType.POSTPONED_COURT_DATE],
+      workingCase.dateLogs,
+    )
+
+    if (latestPostponement && latestPostponement.date) {
+      setSelectedAction('POSTPONE')
+      setPostponement({
+        newDate: formatDateForServer(new Date(latestPostponement.date)),
+        courtRoom: workingCase.courtRoom,
+      })
+    }
+  }, [workingCase.courtRoom, workingCase.dateLogs])
 
   return (
     <PageLayout

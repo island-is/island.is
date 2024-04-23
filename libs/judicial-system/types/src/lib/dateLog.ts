@@ -41,7 +41,7 @@ export const getLatestDateType = (
     }
 
     return current.date > latest.date ? current : latest
-  })
+  }, {})
 
   return latestObject
 }
