@@ -12,7 +12,11 @@ import {
   formatDate,
   readableIndictmentSubtypes,
 } from '@island.is/judicial-system/formatters'
-import { isIndictmentCase } from '@island.is/judicial-system/types'
+import {
+  DateType,
+  getLatestDateType,
+  isIndictmentCase,
+} from '@island.is/judicial-system/types'
 
 import { Case } from '../case'
 import { eventModuleConfig } from './event.config'
@@ -94,6 +98,8 @@ export class EventService {
         return
       }
 
+      const courtDate = getLatestDateType(DateType.COURT_DATE, theCase.dateLogs)
+
       const title =
         event === CaseEvent.ACCEPT && isIndictmentCase(theCase.type)
           ? caseEvent[CaseEvent.ACCEPT_INDICTMENT]
@@ -124,7 +130,7 @@ export class EventService {
             }\n>Dómritari ${
               theCase.registrar?.name ?? 'er ekki skráður'
             }\n>Fyrirtaka ${
-              formatDate(theCase.courtDate, 'Pp') ?? 'er ekki skráð'
+              formatDate(courtDate?.date, 'Pp') ?? 'er ekki skráð'
             }`
           : ''
 

@@ -25,7 +25,10 @@ import { useFormContext } from 'react-hook-form'
 import { FC, useEffect, useState } from 'react'
 import format from 'date-fns/format'
 import { formatCurrency } from '@island.is/application/ui-components'
-import { energyFundsLabel } from './FindVehicleFormField.util'
+import {
+  energyFundsLabel,
+  mustInspectBeforeStreetRegistration,
+} from './FindVehicleFormField.util'
 
 interface VehicleDetails {
   permno: string
@@ -241,9 +244,28 @@ export const FindVehicleFormField: FC<React.PropsWithChildren<Props>> = ({
   }
 
   const setMachineValues = (machineDetails: MachineDetails) => {
+    if (application.typeId === 'StreetRegistration') {
+      const mustInspect = mustInspectBeforeStreetRegistration(
+        application?.externalData,
+        machineDetails.regNumber || '',
+      )
+      if (mustInspect && !machineDetails.disabled) {
+        machineDetails = {
+          ...machineDetails,
+          disabled: true,
+          status:
+            validationErrors &&
+            formatText(
+              validationErrors.inspectBeforeRegistration,
+              application,
+              formatMessage,
+            ),
+        }
+      }
+    }
+
     setValue(`${field.id}.regNumber`, machineDetails.regNumber)
     setValue(`${field.id}.category`, machineDetails.category)
-
     setValue(`${field.id}.type`, machineDetails.type || '')
     setValue(`${field.id}.subType`, machineDetails.subType || '')
     setValue(`${field.id}.plate`, machineDetails.plate || '')
@@ -253,6 +275,8 @@ export const FindVehicleFormField: FC<React.PropsWithChildren<Props>> = ({
     setValue(`${field.id}.date`, new Date().toISOString())
     setValue('pickMachine.isValid', machineDetails.disabled ? undefined : true)
     setMachineId(machineDetails?.id || '')
+    setSubmitButtonDisabled &&
+      setSubmitButtonDisabled(!machineDetails.disabled || false)
     setMachineDetails(machineDetails)
   }
 
@@ -294,13 +318,16 @@ export const FindVehicleFormField: FC<React.PropsWithChildren<Props>> = ({
     if (plate.length === MAX_LENGTH) {
       setButtonDisabled(false)
     }
+    if (machineDetails && machineDetails.disabled) {
+      setSubmitButtonDisabled && setSubmitButtonDisabled(true)
+    }
     setFieldLoadingState?.(isLoading)
   }, [isLoading])
 
   return (
     <Box>
       <Box display="flex" alignItems="center">
-        <Box marginRight={2}>
+        <Box flexGrow={1} marginRight={2}>
           <InputController
             id={`${field.id}.permno`}
             name={`${field.id}.permno`}

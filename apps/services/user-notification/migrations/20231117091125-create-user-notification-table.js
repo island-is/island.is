@@ -47,7 +47,7 @@ module.exports = {
     await queryInterface.addIndex('user_notification', ['message_id']) // Adding index
   },
 
-  down: async (queryInterface, Sequelize) => {
+  down: async (queryInterface) => {
     await queryInterface.dropTable('user_notification')
   },
 }

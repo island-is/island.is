@@ -10,6 +10,7 @@ import {
   MachineOwnerChangeApi,
   MachineRequestInspectionApi,
   MachineStatusChangeApi,
+  MachineStreetRegistrationApi,
   MachineSupervisorChangeApi,
   MachinesApi,
   MachinesDocumentApi,
@@ -85,6 +86,11 @@ export const apiProviders = [
   {
     api: MachineStatusChangeApi,
     provide: MachineStatusChangeApi,
+    acceptHeader: 'application/json-patch+json',
+  },
+  {
+    api: MachineStreetRegistrationApi,
+    provide: MachineStreetRegistrationApi,
     acceptHeader: 'application/json-patch+json',
   },
   {
