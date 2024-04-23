@@ -19,7 +19,6 @@ export type UpdateUserProfileData = {
   mobileStatus?: string
   emailCode?: string
   smsCode?: string
-  documentNotifications?: boolean
 }
 
 export const useUpdateUserProfile = () => {
@@ -53,8 +52,6 @@ export const useUpdateUserProfile = () => {
     if (data.mobileStatus) input.mobileStatus = data.mobileStatus
     if (data.emailCode) input.emailCode = data.emailCode
     if (data.smsCode) input.smsCode = data.smsCode
-    if (data.documentNotifications !== undefined)
-      input.documentNotifications = data.documentNotifications
 
     return updateUserProfileMutation({
       variables: {

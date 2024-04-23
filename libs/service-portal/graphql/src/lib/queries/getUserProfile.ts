@@ -12,7 +12,6 @@ export const USER_PROFILE = gql`
       mobileStatus
       modified
       emailNotifications
-      documentNotifications
     }
   }
 `
