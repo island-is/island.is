@@ -1,9 +1,53 @@
-workflows:
-  island-is-app-ios:
-    name: Island.is App iOS
+definitions:
+  base_config: &base
     max_build_duration: 120
-    instance_type: mac_mini_m1
     working_directory: apps/native/app
+    triggering:
+      events:
+        - push
+      branch_patterns:
+        - pattern: "codemagic"
+          include: true
+          source: true
+  scripts:
+    - &npm_install
+      name: Install npm dependencies
+      working_directory: .
+      script: |
+        corepack enable
+        corepack prepare
+        yarn install --immutable
+    - &codegen
+      name: Run codegen
+      working_directory: .
+      script: |
+        yarn codegen
+    - &cocoapods
+      name: Install CocoaPods dependencies
+      script: |
+        cd ios && pod install
+    - &provisioning_profiles
+      name: Set up provisioning profiles settings on Xcode project
+      script: xcode-project use-profiles
+    - &increment_build_number
+      name: Increment build number
+      script: |
+        cd ios
+        LATEST_BUILD_NUMBER=$(app-store-connect get-latest-app-store-build-number "$APP_STORE_APPLE_ID")
+        agvtool new-version -all $(($LATEST_BUILD_NUMBER + 1))
+    - &build_ipa
+      name: Build ipa for distribution
+      script: |
+        xcode-project build-ipa \
+          --workspace "ios/$XCODE_WORKSPACE" \
+          --scheme "$XCODE_SCHEME"
+  ios_artifacts:
+  ios_publishing:
+
+workflows:
+  prod-app-ios:
+    name: Island.is Prod App iOS
+    instance_type: mac_mini_m1
     integrations:
       app_store_connect: "Island.is API Key"
     environment:
@@ -16,37 +60,18 @@ workflows:
         XCODE_SCHEME: "Ísland.is"
         APP_STORE_APPLE_ID: 1569828682
     scripts:
-      - name: Install npm dependencies
-        working_directory: .
-        script: |
-          corepack enable
-          corepack prepare
-          yarn install --immutable
-      - name: Run codegen
-        working_directory: .
-        script: |
-          yarn codegen
-      - name: Install CocoaPods dependencies
-        script: |
-          cd ios && pod install
-      - name: Set up provisioning profiles settings on Xcode project
-        script: xcode-project use-profiles
-      - name: Increment build number
-        script: |
-          cd ios
-          LATEST_BUILD_NUMBER=$(app-store-connect get-latest-app-store-build-number "$APP_STORE_APPLE_ID")
-          agvtool new-version -all $(($LATEST_BUILD_NUMBER + 1))
-      - name: Build ipa for distribution
-        script: |
-          xcode-project build-ipa \
-            --workspace "ios/$XCODE_WORKSPACE" \
-            --scheme "$XCODE_SCHEME"
-    artifacts:
+      - *npm_install
+      - *codegen
+      - *cocoapods
+      - *provisioning_profiles
+      - *increment_build_number
+      - *build_ipa
+    artifacts: &ios_artifacts
       - build/ios/ipa/*.ipa
       - /tmp/xcodebuild_logs/*.log
       - $HOME/Library/Developer/Xcode/DerivedData/**/Build/**/*.app
       - $HOME/Library/Developer/Xcode/DerivedData/**/Build/**/*.dSYM
-    publishing:
+    publishing: &ios_publishing
       email:
         recipients:
           - eirikur@aranja.com
@@ -57,3 +82,27 @@ workflows:
         auth: integration
         submit_to_testflight: true
         submit_to_app_store: false
+
+  dev-app-ios:
+    name: Island.is Dev App iOS
+    instance_type: mac_mini_m1
+    integrations:
+      app_store_connect: "Island.is API Key"
+    environment:
+      ios_signing:
+        distribution_type: app_store
+        bundle_identifier: is.island.app.dev
+      vars:
+        BUNDLE_ID: "is.island.app.dev"
+        XCODE_WORKSPACE: "IslandApp.xcworkspace"
+        XCODE_SCHEME: "Ísland.dev"
+        APP_STORE_APPLE_ID: 1570427360
+    scripts:
+      - *npm_install
+      - *codegen
+      - *cocoapods
+      - *provisioning_profiles
+      - *increment_build_number
+      - *build_ipa
+    artifacts: *ios_artifacts
+    publishing: *ios_publishing
