@@ -89,7 +89,10 @@ const overwrite = (update: UpdateCase): UpdateCase => {
 
 export const fieldHasValue =
   (workingCase: Case) => (value: unknown, key: string) => {
-    const theKey = key as keyof Omit<UpdateCaseInput, 'courtDate'> // loadash types are not better than this
+    const theKey = key as keyof Omit<
+      UpdateCaseInput,
+      'courtDate' | 'postponedCourtDate'
+    > // loadash types are not better than this
 
     if (
       isChildKey(theKey) // check if key is f.example `judgeId`

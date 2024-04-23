@@ -4,6 +4,7 @@ import router from 'next/router'
 
 import { Box } from '@island.is/island-ui/core'
 import * as constants from '@island.is/judicial-system/consts'
+import { getLatestDateType } from '@island.is/judicial-system/types'
 import { core, titles } from '@island.is/judicial-system-web/messages'
 import {
   CourtArrangements,
@@ -18,7 +19,10 @@ import {
   SectionHeading,
   useCourtArrangements,
 } from '@island.is/judicial-system-web/src/components'
-import { NotificationType } from '@island.is/judicial-system-web/src/graphql/schema'
+import {
+  DateType,
+  NotificationType,
+} from '@island.is/judicial-system-web/src/graphql/schema'
 import type { stepValidationsType } from '@island.is/judicial-system-web/src/utils/formHelper'
 import {
   formatDateForServer,
@@ -75,6 +79,9 @@ const Subpoena: React.FC<React.PropsWithChildren<unknown>> = () => {
   )
 
   const stepIsValid = isSubpoenaStepValid(workingCase, courtDate)
+  const isPostponed = Boolean(
+    getLatestDateType([DateType.POSTPONED_COURT_DATE], workingCase.dateLogs),
+  )
 
   return (
     <PageLayout
@@ -96,8 +103,13 @@ const Subpoena: React.FC<React.PropsWithChildren<unknown>> = () => {
             workingCase={workingCase}
             setWorkingCase={setWorkingCase}
             handleCourtDateChange={handleCourtDateChange}
-            selectedCourtDate={courtDate}
+            selectedCourtDate={
+              getLatestDateType([DateType.COURT_DATE], workingCase.dateLogs)
+                ?.date as string
+            }
             selectedCourtRoom={workingCase.courtRoom}
+            courtRoomDisabled={isPostponed}
+            dateTimeDisabled={isPostponed}
           />
         </Box>
       </FormContentContainer>

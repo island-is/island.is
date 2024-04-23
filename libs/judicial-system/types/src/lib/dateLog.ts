@@ -32,15 +32,15 @@ export const getLatestDateType = (
   )
 
   const latestObject = typeDates.reduce((latest, current) => {
-    if (current.date === null || current.date === undefined) {
+    if (current.created === null || current.created === undefined) {
       return latest
     }
 
-    if (latest.date === null || latest.date === undefined) {
+    if (latest.created === null || latest.created === undefined) {
       return current
     }
 
-    return current.date > latest.date ? current : latest
+    return current.created > latest.created ? current : latest
   }, {})
 
   return latestObject
