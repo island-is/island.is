@@ -375,7 +375,7 @@ describe('getCasesQueryFilter', () => {
                     {
                       [Op.and]: [
                         { state: CaseState.RECEIVED },
-                        { court_date: { [Op.not]: null } },
+                        { '$dateLogs.date_type$': 'COURT_DATE' },
                       ],
                     },
                     { state: completedCaseStates },

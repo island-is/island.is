@@ -314,7 +314,6 @@ api:
     TELL_US_A_STORY_EMAIL: 'sogur@island.is'
     UNIVERSITY_GATEWAY_API_URL: 'http://web-services-university-gateway.services-university-gateway.svc.cluster.local'
     USER_NOTIFICATION_API_URL: 'http://web-user-notification.user-notification.svc.cluster.local'
-    USER_NOTIFICATION_CLIENT_URL: 'https://user-notification-xrd.internal.island.is'
     USER_PROFILE_CLIENT_URL: 'http://web-service-portal-api.service-portal.svc.cluster.local'
     XROAD_ADR_MACHINE_LICENSE_PATH: 'IS/GOV/4201810439/Vinnueftirlitid-Protected/rettindi-token-v1'
     XROAD_AIRCRAFT_REGISTRY_PATH: 'IS/GOV/5405131040/Samgongustofa-Protected/Loftfaraskra-V1'
@@ -2792,7 +2791,7 @@ user-notification:
     XROAD_TLS_BASE_PATH_WITH_ENV: 'https://securityserver.island.is/r1/IS'
   grantNamespaces:
     - 'nginx-ingress-internal'
-    - 'identity-server'
+    - 'identity-server-delegation'
   grantNamespacesEnabled: true
   healthCheck:
     liveness:
@@ -2875,7 +2874,7 @@ user-notification-cleanup-worker:
     SERVERSIDE_FEATURES_ON: 'driving-license-use-v1-endpoint-for-v2-comms'
   grantNamespaces:
     - 'nginx-ingress-internal'
-    - 'identity-server'
+    - 'identity-server-delegation'
   grantNamespacesEnabled: true
   healthCheck:
     liveness:
@@ -2985,7 +2984,7 @@ user-notification-worker:
     XROAD_TLS_BASE_PATH_WITH_ENV: 'https://securityserver.island.is/r1/IS'
   grantNamespaces:
     - 'nginx-ingress-internal'
-    - 'identity-server'
+    - 'identity-server-delegation'
   grantNamespacesEnabled: true
   healthCheck:
     liveness:

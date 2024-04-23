@@ -15,7 +15,7 @@ export const UserNotificationSystemClientConfig = defineConfig({
   load(env) {
     return {
       basePath: env.required(
-        'USER_NOTIFICATION_CLIENT_URL',
+        'USER_NOTIFICATION_API_URL',
         'http://localhost:3333',
       ),
     }

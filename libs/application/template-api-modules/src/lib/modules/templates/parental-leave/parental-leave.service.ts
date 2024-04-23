@@ -417,6 +417,7 @@ export class ParentalLeaveService extends BaseTemplateApiService {
       employerLastSixMonths,
       employers,
       changeEmployerFile,
+      addEmployer,
     } = getApplicationAnswers(application.answers)
     const { applicationFundId } = getApplicationExternalData(
       application.externalData,
@@ -445,10 +446,8 @@ export class ParentalLeaveService extends BaseTemplateApiService {
         })
       }
     }
-    if (
-      state === States.VINNUMALASTOFNUN_APPROVE_EDITS ||
-      state === States.EDIT_OR_ADD_EMPLOYERS_AND_PERIODS
-    ) {
+
+    if (addEmployer === YES) {
       if (changeEmployerFile) {
         changeEmployerFile.forEach(async (item, index) => {
           const pdf = await this.getPdf(
@@ -463,6 +462,7 @@ export class ParentalLeaveService extends BaseTemplateApiService {
         })
       }
     }
+
     // We don't want to send old files to VMST again
     if (applicationFundId && applicationFundId !== '') {
       if (additionalDocuments) {
