@@ -7,7 +7,7 @@ interface Props {
 }
 
 const Radio = ({ currentItem }: Props) => {
-  const radioButtons = currentItem.inputSettings?.list
+  const radioButtons = currentItem.inputSettings?.list as FormSystemListItem[]
   const [radioChecked, setRadioChecked] = useState<boolean[]>([])
 
   useEffect(() => {

@@ -17,7 +17,7 @@ const List = ({ currentItem }: Props) => {
   useEffect(() => {
     const currentList = currentItem.inputSettings?.list ?? []
     setListItems(
-      currentList.map((l) => ({
+      currentList.map((l: FormSystemListItem) => ({
         label: l?.label?.is ?? '',
         value: l?.label?.is ?? '',
       })),

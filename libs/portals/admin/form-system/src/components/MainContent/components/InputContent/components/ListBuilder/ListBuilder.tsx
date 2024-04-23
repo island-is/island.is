@@ -29,8 +29,8 @@ const ListBuilder = () => {
   const { control, controlDispatch, setSelectStatus, setInListBuilder, updateActiveItem } = useContext(ControlContext)
   const currentItem = control.activeItem.data as FormSystemInput
   const { activeListItem } = control
-  const listItems = currentItem?.inputSettings?.list ?? []
-  const listItemIds = useMemo(() => listItems?.filter((l): l is FormSystemListItem => l !== null && l !== undefined).map((l) => l?.guid as UniqueIdentifier), [listItems])
+  const listItems = currentItem?.inputSettings?.list ?? [] as FormSystemListItem[]
+  const listItemIds = useMemo(() => listItems?.filter((l: FormSystemListItem): l is FormSystemListItem => l !== null && l !== undefined).map((l: FormSystemListItem) => l?.guid as UniqueIdentifier), [listItems])
   const [connecting, setConnecting] = useState<boolean[]>([false])
 
   const sensors = useSensors(
@@ -118,7 +118,7 @@ const ListBuilder = () => {
           >
             <SortableContext items={listItemIds}>
               {listItems &&
-                listItems.map((l, i) => {
+                listItems.map((l: FormSystemListItem, i: number) => {
                   return (
                     <ListItem
                       key={l.guid}

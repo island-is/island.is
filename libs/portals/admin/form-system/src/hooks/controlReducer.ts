@@ -1,5 +1,5 @@
-import { FormSystemForm, FormSystemGroup, FormSystemInput, FormSystemInputSettings, FormSystemListItem, FormSystemStep } from "@island.is/api/schema"
-import { ActiveItem } from "../types/interfaces"
+import { FormSystemForm, FormSystemGroup, FormSystemInput, FormSystemListItem, FormSystemStep } from "@island.is/api/schema"
+import { ActiveItem, IInputSettings } from "../types/interfaces"
 import { UniqueIdentifier } from "@dnd-kit/core"
 import { arrayMove } from "@dnd-kit/sortable"
 import { removeTypename } from "../lib/utils/removeTypename"
@@ -16,7 +16,7 @@ type GroupActions =
 type InputActions =
   | { type: 'ADD_INPUT', payload: { input: FormSystemInput } }
   | { type: 'REMOVE_INPUT', payload: { inputId: number } }
-  | { type: 'CHANGE_INPUT_TYPE', payload: { newValue: string, inputSettings: FormSystemInputSettings, update: (updatedActiveItem?: ActiveItem) => void } }
+  | { type: 'CHANGE_INPUT_TYPE', payload: { newValue: string, inputSettings: IInputSettings, update: (updatedActiveItem?: ActiveItem) => void } }
   | { type: 'CHANGE_DESCRIPTION', payload: { lang: 'en' | 'is', newValue: string } }
   | { type: 'CHANGE_IS_REQUIRED', payload: { update: (updatedActiveItem?: ActiveItem) => void } }
 
@@ -342,7 +342,7 @@ export const controlReducer = (state: ControlState, action: ControlAction): Cont
       const { property, checked, value, update } = action.payload
 
       const updateFileTypesArray = (): string[] => {
-        const newFileTypes = input.inputSettings?.types ?? []
+        const newFileTypes = input.inputSettings?.types as string[] ?? []
         if (checked) {
           return [...newFileTypes, value as string]
         } else {
@@ -402,7 +402,7 @@ export const controlReducer = (state: ControlState, action: ControlAction): Cont
         ...input,
         inputSettings: {
           ...input.inputSettings,
-          list: list.map((l) =>
+          list: list.map((l: FormSystemListItem) =>
             l.guid === guid
               ? { ...l, isSelected: !l.isSelected }
               : { ...l, isSelected: false },
@@ -431,7 +431,7 @@ export const controlReducer = (state: ControlState, action: ControlAction): Cont
         ...input,
         inputSettings: {
           ...input.inputSettings,
-          list: list.filter((l) => l.guid !== guid)
+          list: list.filter((l: FormSystemListItem) => l.guid !== guid)
         }
       }
       update({ type: 'Input', data: newInput })
@@ -487,7 +487,7 @@ export const controlReducer = (state: ControlState, action: ControlAction): Cont
         ...input,
         inputSettings: {
           ...input.inputSettings,
-          list: list.map((l) => {
+          list: list.map((l: FormSystemListItem) => {
             if (l.guid === guid) {
               return {
                 ...l,
@@ -621,14 +621,14 @@ export const controlReducer = (state: ControlState, action: ControlAction): Cont
       if (!list) {
         return state
       }
-      const activeIndex = list.findIndex((item) => item.guid === activeId)
-      const overIndex = list.findIndex((item) => item.guid === overId)
+      const activeIndex = list.findIndex((item: FormSystemListItem) => item.guid === activeId)
+      const overIndex = list.findIndex((item: FormSystemListItem) => item.guid === overId)
 
       const newInput = {
         ...input,
         inputSettings: {
           ...input.inputSettings,
-          list: arrayMove(list, activeIndex, overIndex).map((l, i) => ({ ...l, displayOrder: i }))
+          list: arrayMove<FormSystemListItem>(list, activeIndex, overIndex).map((l: FormSystemListItem, i: number) => ({ ...l, displayOrder: i }))
         }
       }
       return {

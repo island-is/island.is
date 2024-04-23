@@ -3,7 +3,7 @@ import { UniqueIdentifier } from '@dnd-kit/core'
 import { EFormApplicantTypes } from './enums'
 import { FormAction } from '../hooks/formReducer'
 import { FormHeaderAction } from '../hooks/headerInfoReducer'
-import { FormSystemApplicantType, FormSystemDocumentType, FormSystemForm, FormSystemGroup, FormSystemInput, FormSystemListType, FormSystemStep } from '@island.is/api/schema'
+import { FormSystemApplicantType, FormSystemDocumentType, FormSystemForm, FormSystemGroup, FormSystemInput, FormSystemLanguageType, FormSystemListItem, FormSystemListType, FormSystemStep } from '@island.is/api/schema'
 import { Maybe } from 'graphql/jsutils/Maybe'
 
 export type IFormBuilderContext = {
@@ -247,3 +247,25 @@ export interface User {
 type Sizes = 'xs' | 'sm' | 'md'
 
 export type ItemType = 'Step' | 'Group' | 'Input'
+
+interface InputSettings {
+  hasInput?: boolean
+  isList?: boolean
+  isLarge?: boolean
+  size?: string
+  interval?: string
+  list?: FormSystemListItem[]
+  max?: number
+  min?: number
+  maxLength?: number
+  minLength?: number
+  amount?: number
+  isMulti?: boolean
+  maxSize?: number
+  types?: string[]
+  buttonText?: FormSystemLanguageType
+  hasLink?: boolean
+  $type?: string
+  name?: FormSystemLanguageType
+  [key: string]: unknown
+}

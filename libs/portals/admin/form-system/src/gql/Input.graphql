@@ -19,47 +19,7 @@ mutation formSystemCreateInput(
     guid
     isPartOfMultiSet
     groupGuid
-    inputSettings {
-      isLarge
-      size
-      interval
-      hasLink
-      url
-      buttonText {
-        is
-        en
-      }
-      types
-      maxSize
-      isMulti
-      amount
-      header
-      maxLength
-      minLength
-      min
-      max
-      list {
-        guid
-        label {
-        is
-        en
-      }
-        description {
-        is
-        en
-      }
-        displayOrder
-        isSelected
-        value
-      }
-      type
-      name {
-        is
-        en
-      }
-      isList
-      hasInput
-    }
+    inputSettings
     inputFields
   }
 }
@@ -97,47 +57,7 @@ query formSystemGetInput(
     guid
     isPartOfMultiSet
     groupGuid
-    inputSettings {
-      isLarge
-      size
-      interval
-      hasLink
-      url
-      buttonText {
-        is
-        en
-      }
-      types
-      maxSize
-      isMulti
-      amount
-      header
-      maxLength
-      minLength
-      min
-      max
-      list {
-        guid
-        label {
-          is
-          en
-        }
-        description {
-          is
-          en
-        }
-        displayOrder
-        isSelected
-        value
-      }
-      type
-      name {
-        is
-        en
-      }
-      isList
-      hasInput
-    }
+    inputSettings
     inputFields
   }
 }

@@ -39,8 +39,8 @@ export class Input {
   @Field(() => String, { nullable: true })
   groupGuid?: string
 
-  @Field(() => InputSettings, { nullable: true })
-  inputSettings?: InputSettings
+  @Field(() => graphqlTypeJson, { nullable: true })
+  inputSettings?: object
 
   @Field(() => graphqlTypeJson, { nullable: true })
   inputFields?: object

@@ -66,47 +66,7 @@ query formSystemGetForm(
         guid
         id
         inputFields
-        inputSettings {
-          amount
-          buttonText {
-            is
-            en
-          }
-          hasInput
-          hasLink
-          header
-          interval
-          isLarge
-          isList
-          isMulti
-          list {
-            description {
-              is
-              en
-            }
-            displayOrder
-            guid
-            isSelected
-            label {
-              is
-              en
-            }
-            value
-          }
-          max
-          maxLength
-          maxSize
-          min
-          minLength
-          name {
-            is
-            en
-          }
-          size
-          type
-          types
-          url
-        }
+        inputSettings
         isHidden
         isPartOfMultiSet
         isRequired
@@ -164,47 +124,7 @@ query formSystemGetForm(
           guid
           id
           inputFields
-          inputSettings {
-            amount
-            buttonText {
-              is
-              en
-            }
-            hasInput
-            hasLink
-            header
-            interval
-            isLarge
-            isList
-            isMulti
-            list {
-              description {
-                is
-                en
-              }
-              displayOrder
-              guid
-              isSelected
-              label {
-                is
-                en
-              }
-              value
-            }
-            max
-            maxLength
-            maxSize
-            min
-            minLength
-            name {
-              is
-              en
-            }
-            size
-            type
-            types
-            url
-          }
+          inputSettings
           isHidden
           isPartOfMultiSet
           isRequired
@@ -250,47 +170,7 @@ query formSystemGetForm(
             guid
             id
             inputFields
-            inputSettings {
-              amount
-              buttonText {
-                is
-                en
-              }
-              hasInput
-              hasLink
-              header
-              interval
-              isLarge
-              isList
-              isMulti
-              list {
-                description {
-                  is
-                  en
-                }
-                displayOrder
-                guid
-                isSelected
-                label {
-                  is
-                  en
-                }
-                value
-              }
-              max
-              maxLength
-              maxSize
-              min
-              minLength
-              name {
-                is
-                en
-              }
-              size
-              type
-              types
-              url
-            }
+            inputSettings
             isHidden
             isPartOfMultiSet
             isRequired
@@ -385,47 +265,7 @@ query formSystemGetForm(
         guid
         id
         inputFields
-        inputSettings {
-          amount
-          buttonText {
-            is
-            en
-          }
-          hasInput
-          hasLink
-          header
-          interval
-          isLarge
-          isList
-          isMulti
-          list {
-            description {
-              is
-              en
-            }
-            displayOrder
-            guid
-            isSelected
-            label {
-              is
-              en
-            }
-            value
-          }
-          max
-          maxLength
-          maxSize
-          min
-          minLength
-          name {
-            is
-            en
-          }
-          size
-          type
-          types
-          url
-        }
+        inputSettings
         isHidden
         isPartOfMultiSet
         isRequired
@@ -492,47 +332,7 @@ mutation formSystemCreateForm(
           guid
           id
           inputFields
-          inputSettings {
-            amount
-            buttonText {
-              is
-              en
-            }
-            hasInput
-            hasLink
-            header
-            interval
-            isLarge
-            isList
-            isMulti
-            list {
-              description {
-                is
-                en
-              }
-              displayOrder
-              guid
-              isSelected
-              label {
-                is
-                en
-              }
-              value
-            }
-            max
-            maxLength
-            maxSize
-            min
-            minLength
-            name {
-              is
-              en
-            }
-            size
-            type
-            types
-            url
-          }
+          inputSettings
           isHidden
           isPartOfMultiSet
           isRequired
@@ -562,47 +362,7 @@ mutation formSystemCreateForm(
         guid
         id
         inputFields
-        inputSettings {
-          amount
-          buttonText {
-            is
-            en
-          }
-          hasInput
-          hasLink
-          header
-          interval
-          isLarge
-          isList
-          isMulti
-          list {
-            description {
-              is
-              en
-            }
-            displayOrder
-            guid
-            isSelected
-            label {
-              is
-              en
-            }
-            value
-          }
-          max
-          maxLength
-          maxSize
-          min
-          minLength
-          name {
-            is
-            en
-          }
-          size
-          type
-          types
-          url
-        }
+        inputSettings
         isHidden
         isPartOfMultiSet
         isRequired
@@ -660,47 +420,7 @@ mutation formSystemCreateForm(
           guid
           id
           inputFields
-          inputSettings {
-            amount
-            buttonText {
-              is
-              en
-            }
-            hasInput
-            hasLink
-            header
-            interval
-            isLarge
-            isList
-            isMulti
-            list {
-              description {
-                is
-                en
-              }
-              displayOrder
-              guid
-              isSelected
-              label {
-                is
-                en
-              }
-              value
-            }
-            max
-            maxLength
-            maxSize
-            min
-            minLength
-            name {
-              is
-              en
-            }
-            size
-            type
-            types
-            url
-          }
+          inputSettings
           isHidden
           isPartOfMultiSet
           isRequired
@@ -746,47 +466,7 @@ mutation formSystemCreateForm(
             guid
             id
             inputFields
-            inputSettings {
-              amount
-              buttonText {
-                is
-                en
-              }
-              hasInput
-              hasLink
-              header
-              interval
-              isLarge
-              isList
-              isMulti
-              list {
-                description {
-                  is
-                  en
-                }
-                displayOrder
-                guid
-                isSelected
-                label {
-                  is
-                  en
-                }
-                value
-              }
-              max
-              maxLength
-              maxSize
-              min
-              minLength
-              name {
-                is
-                en
-              }
-              size
-              type
-              types
-              url
-            }
+            inputSettings
             isHidden
             isPartOfMultiSet
             isRequired
@@ -837,47 +517,7 @@ mutation formSystemCreateForm(
             guid
             id
             inputFields
-            inputSettings {
-              amount
-              buttonText {
-                is
-                en
-              }
-              hasInput
-              hasLink
-              header
-              interval
-              isLarge
-              isList
-              isMulti
-              list {
-                description {
-                  is
-                  en
-                }
-                displayOrder
-                guid
-                isSelected
-                label {
-                  is
-                  en
-                }
-                value
-              }
-              max
-              maxLength
-              maxSize
-              min
-              minLength
-              name {
-                is
-                en
-              }
-              size
-              type
-              types
-              url
-            }
+            inputSettings
             isHidden
             isPartOfMultiSet
             isRequired
@@ -955,47 +595,7 @@ mutation formSystemCreateForm(
         guid
         id
         inputFields
-        inputSettings {
-          amount
-          buttonText {
-            is
-            en
-          }
-          hasInput
-          hasLink
-          header
-          interval
-          isLarge
-          isList
-          isMulti
-          list {
-            description {
-              is
-              en
-            }
-            displayOrder
-            guid
-            isSelected
-            label {
-              is
-              en
-            }
-            value
-          }
-          max
-          maxLength
-          maxSize
-          min
-          minLength
-          name {
-            is
-            en
-          }
-          size
-          type
-          types
-          url
-        }
+        inputSettings
         isHidden
         isPartOfMultiSet
         isRequired

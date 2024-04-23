@@ -47,7 +47,7 @@ const FileUpload = ({ currentItem }: Props) => {
         fileList={fileList}
         header={currentItem?.name?.is ?? ''}
         description={`Eftirfarandi skjalatýpur eru leyfðar: ${currentItem?.inputSettings?.types?.map(
-          (f) => `${f} `,
+          (f: string) => `${f} `,
         )}`}
         buttonLabel="Veldu skjöl til að hlaða upp"
         onChange={onChange}
@@ -55,7 +55,7 @@ const FileUpload = ({ currentItem }: Props) => {
         errorMessage={fileList.length > 0 ? error : undefined}
         accept={
           currentItem?.inputSettings?.types?.map(
-            (t) => fileTypes[t as keyof typeof fileTypes],
+            (t: string) => fileTypes[t as keyof typeof fileTypes],
           ) ?? []
         }
         showFileSize

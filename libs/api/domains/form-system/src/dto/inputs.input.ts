@@ -35,8 +35,8 @@ export class UpdateInput {
   @Field(() => String, { nullable: true })
   type?: string
 
-  @Field(() => InputSettingsInput, { nullable: true })
-  inputSettings?: InputSettingsInput
+  @Field(() => graphqlTypeJson, { nullable: true })
+  inputSettings?: object
 
   @Field()
   isPartOfMultiSet?: boolean
@@ -45,8 +45,6 @@ export class UpdateInput {
   groupId?: number
 
 }
-
-
 
 @InputType('FormSystemGetInputInput')
 export class GetInputInput {
@@ -110,8 +108,8 @@ export class InputInput {
   @Field(() => String, { nullable: true })
   groupGuid?: string
 
-  @Field(() => InputSettingsInput, { nullable: true })
-  inputSettings?: InputSettingsInput
+  @Field(() => graphqlTypeJson, { nullable: true })
+  inputSettings?: object
 
   @Field(() => graphqlTypeJson, { nullable: true })
   inputFields?: object
