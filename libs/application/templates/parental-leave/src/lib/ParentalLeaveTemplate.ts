@@ -1426,7 +1426,7 @@ const ParentalLeaveTemplate: ApplicationTemplate<
 
         const { application } = context
         const { answers } = application
-        
+
         if (answers.tempEmployers) {
           set(answers, 'employers', cloneDeep(answers.tempEmployers))
           unset(answers, 'tempEmployers')
