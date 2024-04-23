@@ -107,7 +107,7 @@ export class UserProfileServiceV2 {
   }
 
   async getActorProfiles(user: User): Promise<ActorProfileResponse> {
-    return this.v2UserProfileApiWithAuth(
+    return this.v2MeUserProfileApiWithAuth(
       user,
     ).meUserProfileControllerGetActorProfiles()
   }
@@ -116,7 +116,7 @@ export class UserProfileServiceV2 {
     input: UpdateActorProfileInput,
     user: User,
   ): Promise<ActorProfile> {
-    return this.v2UserProfileApiWithAuth(
+    return this.v2MeUserProfileApiWithAuth(
       user,
     ).meUserProfileControllerCreateOrUpdateActorProfile({
       xParamFromNationalId: input.fromNationalId,
