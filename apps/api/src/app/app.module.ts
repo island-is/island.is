@@ -94,7 +94,6 @@ import { FirearmLicenseClientConfig } from '@island.is/clients/firearm-license'
 import { FishingLicenseClientConfig } from '@island.is/clients/fishing-license'
 import { FiskistofaClientConfig } from '@island.is/clients/fiskistofa'
 import { AircraftRegistryClientConfig } from '@island.is/clients/aircraft-registry'
-import { UserNotificationClientConfig } from '@island.is/clients/user-notification'
 import { UniversityCareersModule } from '@island.is/api/domains/university-careers'
 import {
   UserNotificationClientConfig,
@@ -279,7 +278,6 @@ const environment = getConfig
     IntellectualPropertiesModule,
     StatisticsModule,
     UniversityCareersModule,
-    MinistryOfJusticeModule,
     OfficialJournalOfIcelandModule,
     CompanyRegistryModule,
     IcelandicNamesModule.register({
@@ -384,9 +382,7 @@ const environment = getConfig
         JudicialAdministrationClientConfig,
         CommunicationsConfig,
         HealthDirectorateClientConfig,
-        DmrClientConfig,
         OfficialJournalOfIcelandClientConfig,
-        UniversityOfIcelandClientConfig,
         InnaClientConfig,
         SessionsApiClientConfig,
         AuthAdminApiClientConfig,
