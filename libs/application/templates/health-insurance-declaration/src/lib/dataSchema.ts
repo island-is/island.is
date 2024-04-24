@@ -1,16 +1,40 @@
 import { applicantInformationSchema } from '@island.is/application/ui-forms'
 import { z } from 'zod'
+import { ApplicantType } from '../shared/constants'
 
 export const HealthInsuranceDeclarationSchema = z.object({
   approveExternalData: z.boolean().refine((v) => v),
   applicant: applicantInformationSchema(),
   isHealthInsured: z.boolean(),
-  studentOrTravellerRadioFieldTraveller: z.string(),
-  residencyTravellerRadioField: z.string(),
+  studentOrTravellerRadioFieldTraveller: z.enum([
+    ApplicantType.STUDENT,
+    ApplicantType.TRAVELLER,
+  ]),
+  residencyTravellerRadioField: z
+    .string()
+    .or(z.undefined())
+    .refine((v) => !!v),
+  residencyStudentSelectField: z
+    .string()
+    .or(z.undefined())
+    .refine((v) => !!v),
   registerPersonsSpouseCheckboxField: z.string().array(),
   registerPersonsChildrenCheckboxField: z.string().array(),
-  dateFieldTo: z.string(),
-  dateFieldFrom: z.string(),
+  educationConfirmationFileUploadField: z
+    .object({
+      name: z.string(),
+      key: z.string(),
+      url: z.string().optional(),
+    })
+    .array(),
+  dateFieldTo: z
+    .string()
+    .min(1)
+    .refine((v) => !!v && v.trim().length > 0),
+  dateFieldFrom: z
+    .string()
+    .min(1)
+    .refine((v) => !!v && v.trim().length > 0),
 })
 
 export type HealthInsuranceDeclaration = z.TypeOf<

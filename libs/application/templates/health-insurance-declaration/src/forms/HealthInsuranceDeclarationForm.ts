@@ -4,6 +4,7 @@ import {
   buildDateField,
   buildDescriptionField,
   buildDividerField,
+  buildFileUploadField,
   buildForm,
   buildHiddenInput,
   buildKeyValueField,
@@ -13,9 +14,15 @@ import {
   buildSection,
   buildSelectField,
   buildStaticTableField,
+  buildSubmitField,
   buildTextField,
 } from '@island.is/application/core'
-import { Form, FormModes, FormValue } from '@island.is/application/types'
+import {
+  DefaultEvents,
+  Form,
+  FormModes,
+  FormValue,
+} from '@island.is/application/types'
 import * as m from '../lib/messages'
 import Logo from '../assets/Logo'
 import {
@@ -176,16 +183,11 @@ export const HealthInsuranceDeclarationForm: Form = buildForm({
         }),
       ],
       condition: (answers: FormValue) => {
-        console.log(answers.isHealthInsured)
         return !answers.isHealthInsured as boolean
       },
-
-      // condition: (answers: FormValue) => {
-      //   return true
-      // },
     }),
     buildSection({
-      id: 'studentOrTravellerSection',
+      id: 'studentOrTraveller',
       title: m.application.studentOrTraveller.sectionTitle,
       children: [
         buildMultiField({
@@ -260,6 +262,7 @@ export const HealthInsuranceDeclarationForm: Form = buildForm({
             buildRadioField({
               id: 'residencyTravellerRadioField',
               title: '',
+              required: true,
               options: [
                 { label: 'Evrópa', value: 'Evrópa' },
                 { label: 'Norður Ameríka', value: 'Norður Ameríka' },
@@ -267,7 +270,7 @@ export const HealthInsuranceDeclarationForm: Form = buildForm({
                 { label: 'Asía', value: 'Asía' },
                 { label: 'Afríka', value: 'Afríka' },
                 { label: 'Ástralía', value: 'Ástralía' },
-                { label: 'Sðurskautslandið', value: 'Sðurskautslandið' },
+                { label: 'Suðurskautslandið', value: 'Suðurskautslandið' },
               ],
               width: 'half',
             }),
@@ -287,19 +290,49 @@ export const HealthInsuranceDeclarationForm: Form = buildForm({
           title: m.application.residency.studentSectionDescription,
           children: [
             buildSelectField({
-              id: 'residencyTravellerDropdownField',
+              id: 'residencyStudentSelectField',
               title: '',
+              required: true,
               options: [
                 { label: 'Þýskaland', value: 'Þýskaland' },
                 { label: 'Danmörk', value: 'Danmörk' },
                 { label: 'Noregur', value: 'Noregur' },
-                { label: 'Svíðjóð', value: 'Svíðjóð' },
+                { label: 'Svíþjóð', value: 'Svíþjóð' },
                 { label: 'Frakkland', value: 'Frakkland' },
                 { label: 'Ástralía', value: 'Ástralía' },
-                { label: 'Sðurskautslandið', value: 'Sðurskautslandið' },
+                { label: 'Suðurskautslandið', value: 'Suðurskautslandið' },
               ],
+              defaultValue: '',
               placeholder:
                 m.application.residency.studentSectionPlaceholderText,
+            }),
+          ],
+        }),
+      ],
+      condition: (answers: FormValue) =>
+        answers.studentOrTravellerRadioFieldTraveller === ApplicantType.STUDENT,
+    }),
+    buildSection({
+      id: 'educationConfirmationSection',
+      title: m.application.educationConfirmation.sectionTitle,
+      children: [
+        buildMultiField({
+          id: 'educationConfirmaitonMultifield',
+          title: m.application.educationConfirmation.sectionTitle,
+          children: [
+            buildDescriptionField({
+              id: 'educationConfirmationDescriptionField',
+              title: '',
+              description:
+                m.application.educationConfirmation.SectionDescription,
+            }),
+            buildFileUploadField({
+              id: 'educationConfirmationFileUploadField',
+              title: m.application.educationConfirmation.UploadFieldTitle,
+              uploadDescription:
+                m.application.educationConfirmation.UploadFieldDescription,
+              uploadAccept: '.pdf, .docx, .rtf',
+              uploadMultiple: true,
             }),
           ],
         }),
@@ -319,13 +352,17 @@ export const HealthInsuranceDeclarationForm: Form = buildForm({
               id: 'dateFieldFrom',
               title: m.application.date.dateFromTitle,
               placeholder: m.application.date.datePlaceholderText,
+              required: true,
               width: 'half',
+              defaultValue: '',
             }),
             buildDateField({
               id: 'dateFieldTo',
               title: m.application.date.dateToTitle,
               placeholder: m.application.date.datePlaceholderText,
+              required: true,
               width: 'half',
+              defaultValue: '',
             }),
           ],
         }),
@@ -444,6 +481,29 @@ export const HealthInsuranceDeclarationForm: Form = buildForm({
                 )} `,
             }),
             buildDividerField({}),
+            buildKeyValueField({
+              label: m.application.overview.fileUploadListTitle,
+              colSpan: '9/12',
+              condition: (answers) =>
+                (answers as HealthInsuranceDeclaration)
+                  ?.studentOrTravellerRadioFieldTraveller ===
+                ApplicantType.STUDENT,
+              value: ({ answers }) =>
+                (
+                  answers as HealthInsuranceDeclaration
+                ).educationConfirmationFileUploadField.map((file) => file.name),
+            }),
+            buildSubmitField({
+              id: 'overviewSubmit',
+              title: '',
+              actions: [
+                {
+                  event: DefaultEvents.SUBMIT,
+                  name: m.application.overview.submitButtonText,
+                  type: 'primary',
+                },
+              ],
+            }),
           ],
         }),
       ],

@@ -222,5 +222,15 @@ export const application = {
       defaultMessage: 'Dvalartímabil',
       description: 'Overview section date period',
     },
+    fileUploadListTitle: {
+      id: 'hid.application:overview.section.fileUploadTitle',
+      defaultMessage: 'Fylgiskjöl',
+      description: 'File upload list title',
+    },
+    submitButtonText: {
+      id: 'hid.application:overview.section.submitButtonText',
+      defaultMessage: 'Halda áfram',
+      description: 'Submit button text',
+    },
   }),
 }
