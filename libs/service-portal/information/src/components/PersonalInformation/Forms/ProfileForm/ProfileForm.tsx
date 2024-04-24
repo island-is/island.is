@@ -84,9 +84,7 @@ export const ProfileForm: FC<React.PropsWithChildren<Props>> = ({
     )
 
     if (ffEnabled) {
-      setV2UserProfileEnabled(!isCompany);
-    }
-      setV2UserProfileEnabled(ffEnabled as boolean)
+      setV2UserProfileEnabled(!isCompany)
     }
   }
 
