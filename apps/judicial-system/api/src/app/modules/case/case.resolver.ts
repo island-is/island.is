@@ -1,13 +1,5 @@
 import { Inject, UseGuards, UseInterceptors } from '@nestjs/common'
-import {
-  Args,
-  Context,
-  Mutation,
-  Parent,
-  Query,
-  ResolveField,
-  Resolver,
-} from '@nestjs/graphql'
+import { Args, Context, Mutation, Query, Resolver } from '@nestjs/graphql'
 
 import type { Logger } from '@island.is/logging'
 import { LOGGER_PROVIDER } from '@island.is/logging'
@@ -34,7 +26,6 @@ import { TransitionCaseInput } from './dto/transitionCase.input'
 import { UpdateCaseInput } from './dto/updateCase.input'
 import { CaseInterceptor } from './interceptors/case.interceptor'
 import { Case } from './models/case.model'
-import { Notification } from './models/notification.model'
 import { RequestSignatureResponse } from './models/requestSignature.response'
 import { SendNotificationResponse } from './models/sendNotification.response'
 import { SignatureConfirmationResponse } from './models/signatureConfirmation.response'

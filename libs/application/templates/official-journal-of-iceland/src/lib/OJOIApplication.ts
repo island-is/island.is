@@ -117,8 +117,8 @@ const OJOITemplate: ApplicationTemplate<
               write: 'all',
               delete: true,
               formLoader: () =>
-                import('../forms/DraftRetry').then((val) =>
-                  Promise.resolve(val.DraftRetry),
+                import('../forms/Draft').then((val) =>
+                  Promise.resolve(val.Draft),
                 ),
               actions: [
                 {
@@ -174,6 +174,11 @@ const OJOITemplate: ApplicationTemplate<
                 },
               ],
             },
+            {
+              id: Roles.ASSIGNEE,
+              read: 'all',
+              write: 'all',
+            },
           ],
         },
         on: {
@@ -201,10 +206,16 @@ const OJOITemplate: ApplicationTemplate<
             {
               id: Roles.APPLICANT,
               read: 'all',
+              write: 'all',
               formLoader: () =>
                 import('../forms/Submitted').then((val) =>
                   Promise.resolve(val.Submitted),
                 ),
+            },
+            {
+              id: Roles.ASSIGNEE,
+              read: 'all',
+              write: 'all',
             },
           ],
         },
@@ -233,6 +244,11 @@ const OJOITemplate: ApplicationTemplate<
                 import('../forms/Complete').then((val) =>
                   Promise.resolve(val.Complete),
                 ),
+            },
+            {
+              id: Roles.ASSIGNEE,
+              read: 'all',
+              write: 'all',
             },
           ],
         },

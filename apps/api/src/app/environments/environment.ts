@@ -55,9 +55,6 @@ const prodConfig = () => ({
     username: process.env.XROAD_HEALTH_INSURANCE_V2_XROAD_USERNAME,
     password: process.env.XROAD_HEALTH_INSURANCE_V2_XROAD_PASSWORD,
   },
-  userProfile: {
-    userProfileServiceBasePath: process.env.SERVICE_USER_PROFILE_URL,
-  },
   auth: {
     issuer: process.env.IDENTITY_SERVER_ISSUER_URL,
     audience: ['@island.is', '@admin.island.is'],
@@ -176,9 +173,6 @@ const devConfig = () => ({
       'IS-DEV/GOV/10007/SJUKRA-Protected',
     username: process.env.XROAD_HEALTH_INSURANCE_V2_XROAD_USERNAME ?? '',
     password: process.env.XROAD_HEALTH_INSURANCE_V2_XROAD_PASSWORD ?? '',
-  },
-  userProfile: {
-    userProfileServiceBasePath: 'http://localhost:3366',
   },
   auth: {
     issuer: 'https://identity-server.dev01.devland.is',

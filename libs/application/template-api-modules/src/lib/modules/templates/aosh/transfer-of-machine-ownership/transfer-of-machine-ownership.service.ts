@@ -27,7 +27,6 @@ import { generateApplicationRejectedEmail } from './emailGenerators/applicationR
 import { generateApplicationRejectedSms } from './smsGenerators/applicationRejectedSms'
 import {
   ChangeMachineOwner,
-  MachineDto,
   MachinesWithTotalCount,
   WorkMachinesClientService,
 } from '@island.is/clients/work-machines'
@@ -63,6 +62,7 @@ export class TransferOfMachineOwnershipTemplateService extends BaseTemplateApiSe
               return await this.workMachineClientService.getMachineDetail(
                 auth,
                 machine.id,
+                'ownerChange',
               )
             }
             return machine
