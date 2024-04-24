@@ -279,21 +279,6 @@ export function setupRoutes() {
     })
   })
 
-  addRoute('/notification/:id', (passProps) => {
-    Navigation.showModal({
-      stack: {
-        children: [
-          {
-            component: {
-              name: ComponentRegistry.NotificationDetailScreen,
-              passProps,
-            },
-          },
-        ],
-      },
-    })
-  })
-
   addRoute(
     '/wallet/:passId',
     async ({ passId, fromId, toId, item, ...rest }: any) => {

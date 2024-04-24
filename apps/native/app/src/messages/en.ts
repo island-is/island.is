@@ -274,9 +274,6 @@ export const en: TranslatedMessages = {
   // notifications
   'notifications.screenTitle': 'Notifications',
 
-  // notification detail
-  'notificationDetail.screenTitle': 'Notification',
-
   // profile
   'profile.screenTitle': 'More',
   'profile.bottomTabText': 'More',
