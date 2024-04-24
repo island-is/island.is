@@ -28,7 +28,10 @@
         "default",
         "{workspaceRoot}/apps/skilavottord/ws/src/api.graphql"
       ],
-      "outputs": ["{projectRoot}/gen"]
+      "outputs": [
+        "{projectRoot}/gen",
+        "{projectRoot}/**/*.generated.ts"
+      ]
     }
   },
   "implicitDependencies": ["skilavottord-ws"],
