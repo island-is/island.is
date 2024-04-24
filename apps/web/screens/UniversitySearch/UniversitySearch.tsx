@@ -598,6 +598,17 @@ const UniversitySearch: Screen<UniversitySearchProps> = ({
     )
   }
 
+  const countOccurrencesInResults = (): Map<string, number> => {
+    const occurrenceMap = new Map<string, number>()
+
+    filteredResults.forEach((result) => {
+      const count = occurrenceMap.get(result.item.universityId) || 0
+      occurrenceMap.set(result.item.universityId, count + 1)
+    })
+
+    return occurrenceMap
+  }
+
   return (
     <Box>
       {organizationPage && (
@@ -955,26 +966,9 @@ const UniversitySearch: Screen<UniversitySearchProps> = ({
             <Box
               display="flex"
               flexDirection="row"
-              justifyContent="spaceBetween"
-              marginTop={isTabletScreenWidth || isMobileScreenWidth ? 2 : 5}
-              marginBottom={isTabletScreenWidth || isMobileScreenWidth ? 2 : 5}
+              justifyContent="flexEnd"
+              marginTop={1}
             >
-              <Box>
-                {data && (
-                  <Box display="flex">
-                    <Text variant="intro" fontWeight="semiBold" as="h2">
-                      {`${filteredResults.length}`}{' '}
-                    </Text>
-                    <Box paddingLeft={1}>
-                      {' '}
-                      <Text variant="intro" as="h2">{`${n(
-                        'visiblePrograms',
-                        'námsleiðir sýnilegar',
-                      )}`}</Text>
-                    </Box>
-                  </Box>
-                )}
-              </Box>
               <Hidden below="md">
                 <Box>
                   <button
@@ -1006,6 +1000,68 @@ const UniversitySearch: Screen<UniversitySearchProps> = ({
                   </button>
                 </Box>
               </Hidden>
+            </Box>
+            <Box
+              display="flex"
+              flexDirection="row"
+              justifyContent="spaceBetween"
+              marginTop={isTabletScreenWidth || isMobileScreenWidth ? 2 : 3}
+              marginBottom={isTabletScreenWidth || isMobileScreenWidth ? 2 : 5}
+            >
+              <Box>
+                {data && (
+                  <Box
+                    display="flex"
+                    flexWrap={'wrap'}
+                    style={{ gap: '0.5rem' }}
+                  >
+                    <Box display={'flex'} style={{ gap: '8px' }}>
+                      <Text variant="intro" fontWeight="semiBold" as="h2">
+                        {`${filteredResults.length}`}
+                      </Text>
+                      <Box paddingLeft={1}>
+                        {' '}
+                        <Text variant="intro" as="h2">{`${n(
+                          'visiblePrograms',
+                          'námsleiðir',
+                        )}:`}</Text>
+                      </Box>
+                    </Box>
+                    <Box
+                      display="flex"
+                      justifyContent="center"
+                      alignItems={'center'}
+                      style={{ gap: '0.5rem' }}
+                    >
+                      {Array.from(countOccurrencesInResults())
+                        .sort((a, b) => b[1] - a[1])
+                        .map(([universityId, count]) => {
+                          const uni = universities.filter(
+                            (x) => x.id === universityId,
+                          )[0]
+                          return (
+                            <Box
+                              display="flex"
+                              alignItems="center"
+                              style={{ gap: '4px' }}
+                            >
+                              <img
+                                className={styles.searchResultIcon}
+                                src={uni?.contentfulLogoUrl || ''}
+                                alt={`${
+                                  locale === 'en'
+                                    ? uni.contentfulTitleEn
+                                    : uni.contentfulTitle
+                                } logo`}
+                              />
+                              <Text>{`(${count})`}</Text>
+                            </Box>
+                          )
+                        })}
+                    </Box>
+                  </Box>
+                )}
+              </Box>
             </Box>
             {loading ? (
               <>{loadSkeletons()}</>
