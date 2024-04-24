@@ -4,6 +4,7 @@ import { SequelizeModule } from '@nestjs/sequelize'
 import { NationalRegistryClientModule } from '@island.is/clients/national-registry-v2'
 import { RskRelationshipsClientModule } from '@island.is/clients-rsk-relationships'
 import { FeatureFlagModule } from '@island.is/nest/feature-flags'
+import { UserSystemNotificationModule } from '../user-notification'
 
 import { ClientAllowedScope } from '../clients/models/client-allowed-scope.model'
 import { Client } from '../clients/models/client.model'
@@ -47,6 +48,7 @@ import { UserIdentitiesModule } from '../user-identities/user-identities.module'
       ClientAllowedScope,
       ApiScopeUserAccess,
     ]),
+    UserSystemNotificationModule,
   ],
   providers: [
     DelegationsService,

@@ -28,7 +28,7 @@ export class QueueModule {
     const queue = {
       provide: queueToken,
       useFactory: (clientService: ClientService, logger: Logger) => {
-        return new QueueService(clientService, config.queue, logger)
+        return new QueueService(clientService, config.queue)
       },
       inject: [clientToken, LOGGER_PROVIDER],
     }

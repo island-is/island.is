@@ -97,11 +97,22 @@ describe('PoliceController - Get police case info', () => {
             {
               upprunalegtMalsnumer: '007-2021-000001',
               brotFra: '2021-02-23T13:17:00',
-              vettvangur: 'Testgata 1, 101',
               licencePlate: 'ABC-123',
+              gotuHeiti: 'Testgata',
+              gotuNumer: '3',
+              sveitafelag: 'Testbær',
             },
             {
               upprunalegtMalsnumer: '007-2020-000103',
+              brotFra: '2021-02-23T13:17:00',
+              gotuHeiti: 'Teststígur',
+              sveitafelag: 'Testbær',
+              licencePlate: 'CDE-123',
+            },
+            {
+              upprunalegtMalsnumer: '007-2020-000057',
+              brotFra: '2021-02-23T13:17:00',
+              gotuHeiti: 'Teststígur',
             },
           ],
         }),
@@ -114,12 +125,22 @@ describe('PoliceController - Get police case info', () => {
       expect(then.result).toEqual([
         {
           policeCaseNumber: '007-2021-000001',
-          place: 'Testgata 1, 101',
+          place: 'Testgata 3, Testbær',
           date: new Date('2021-02-23T13:17:00'),
           licencePlate: 'ABC-123',
         },
-        { policeCaseNumber: '007-2020-000103' },
-        { policeCaseNumber: '007-2020-000057' },
+        {
+          policeCaseNumber: '007-2020-000103',
+          date: new Date('2021-02-23T13:17:00'),
+          place: 'Teststígur, Testbær',
+          licencePlate: 'CDE-123',
+        },
+        {
+          date: new Date('2021-02-23T13:17:00'),
+          policeCaseNumber: '007-2020-000057',
+          place: 'Teststígur',
+          licencePlate: undefined,
+        },
         { policeCaseNumber: '008-2013-000033' },
       ])
     })

@@ -474,9 +474,6 @@ const ArticleScreen: Screen<ArticleProps> = ({
                     />
                   </Box>
                 ),
-                // eslint-disable-next-line @typescript-eslint/ban-ts-comment
-                // @ts-ignore make web strict
-                Form: (form) => <Form form={form} namespace={namespace} />,
               },
             },
             activeLocale,

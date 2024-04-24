@@ -1,8 +1,13 @@
-import { service, ServiceBuilder } from '../../../../infra/src/dsl/dsl'
+import { json, service, ServiceBuilder } from '../../../../infra/src/dsl/dsl'
 import {
   EnvironmentVariables,
   Secrets,
 } from '../../../../infra/src/dsl/types/input-types'
+import {
+  Base,
+  Client,
+  NationalRegistryB2C,
+} from '../../../../infra/src/dsl/xroad'
 
 // We basically don't want it to run in a cron job
 // but manually, so set it to run once a year on dec 31st
@@ -36,6 +41,15 @@ const envVariables: EnvironmentVariables = {
     staging: '3000',
     prod: '3000',
   },
+  AUTH_DELEGATION_API_URL: {
+    dev: 'http://web-services-auth-delegation-api.identity-server-delegation.svc.cluster.local',
+    staging:
+      'http://web-services-auth-delegation-api.identity-server-delegation.svc.cluster.local',
+    prod: 'https://auth-delegation-api.internal.innskra.island.is',
+  },
+  AUTH_DELEGATION_MACHINE_CLIENT_SCOPE: json([
+    '@island.is/auth/delegations/index:system',
+  ]),
 }
 
 const secrets: Secrets = {
@@ -48,6 +62,10 @@ const secrets: Secrets = {
   EMAIL_REPLY_TO_NAME: '/k8s/service-portal/api/EMAIL_REPLY_TO_NAME',
   ISLYKILL_SERVICE_PASSPHRASE: '/k8s/api/ISLYKILL_SERVICE_PASSPHRASE',
   ISLYKILL_SERVICE_BASEPATH: '/k8s/api/ISLYKILL_SERVICE_BASEPATH',
+  IDENTITY_SERVER_CLIENT_ID: `/k8s/service-portal/api/SERVICE_PORTAL_API_CLIENT_ID`,
+  IDENTITY_SERVER_CLIENT_SECRET: `/k8s/service-portal/api/SERVICE_PORTAL_API_CLIENT_SECRET`,
+  NATIONAL_REGISTRY_B2C_CLIENT_SECRET:
+    '/k8s/api/NATIONAL_REGISTRY_B2C_CLIENT_SECRET',
 }
 
 export const workerSetup = (): ServiceBuilder<typeof workerId> =>
@@ -83,6 +101,7 @@ export const serviceSetup = (): ServiceBuilder<typeof serviceId> =>
     .serviceAccount(serviceId)
     .env(envVariables)
     .secrets(secrets)
+    .xroad(Base, Client, NationalRegistryB2C)
     .migrations()
     .liveness('/liveness')
     .readiness('/readiness')

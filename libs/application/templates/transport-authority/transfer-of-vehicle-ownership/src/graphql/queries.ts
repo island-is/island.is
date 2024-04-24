@@ -12,6 +12,7 @@ export const GET_VEHICLE_OWNERCHANGE_CHECKS_BY_PERMNO = `
         color
         role
         requireMileage
+        mileageReading
       }
     }
   } 
