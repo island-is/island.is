@@ -51,6 +51,16 @@ module.exports = {
           },
           { transaction: t },
         ),
+        queryInterface.addColumn(
+          'date_log',
+          'modified',
+          {
+            type: 'TIMESTAMP WITH TIME ZONE',
+            defaultValue: Sequelize.literal('CURRENT_TIMESTAMP'),
+            allowNull: false,
+          },
+          { transaction: t },
+        ),
       ]),
     )
   },
@@ -60,6 +70,9 @@ module.exports = {
       Promise.all([
         queryInterface.dropTable('explanatory_comment', { transaction: t }),
         queryInterface.removeColumn('date_log', 'location', {
+          transaction: t,
+        }),
+        queryInterface.removeColumn('date_log', 'modified', {
           transaction: t,
         }),
       ]),

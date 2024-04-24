@@ -29,7 +29,6 @@ import { Institution } from '../../institution'
 import { User } from '../../user'
 import { DateLog } from './dateLog.model'
 import { EventLog } from './eventLog.model'
-import { ExplanatoryComment } from './explanatoryComment.model'
 import { Notification } from './notification.model'
 
 registerEnumType(CaseType, { name: 'CaseType' })
@@ -400,6 +399,6 @@ export class Case {
   @Field({ nullable: true })
   readonly indictmentReturnedExplanation?: string
 
-  @Field(() => [ExplanatoryComment], { nullable: true })
-  readonly explanatoryComments?: ExplanatoryComment[]
+  @Field({ nullable: true })
+  readonly postponedIndefinitelyExplanation?: string
 }

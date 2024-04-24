@@ -86,10 +86,7 @@ const Conclusion: React.FC = () => {
       console.log(postponement)
       if (postponement && postponement.postponedIndefinitely) {
         updateCase(workingCase.id, {
-          explanatoryComment: {
-            comment: postponement.reason,
-            commentType: CommentType.POSTPONED_INDEFINITELY_EXPLANATION,
-          },
+          postponedIndefinitelyExplanation: postponement.reason,
         })
       } else {
         updateCase(workingCase.id, {

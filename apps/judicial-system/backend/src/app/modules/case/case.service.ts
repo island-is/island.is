@@ -163,11 +163,14 @@ export interface UpdateCase
   parentCaseId?: string | null
   courtDate?: Date | null
   postponedCourtDate?: Date | null
-  explanatoryComment?: {
-    comment: string
-    commentType: CommentType
-  }
+  postponedIndefinitelyExplanation?: string | null
 }
+
+const explanatoryCommentsTypes: Partial<Record<keyof UpdateCase, CommentType>> =
+  {
+    postponedIndefinitelyExplanation:
+      CommentType.POSTPONED_INDEFINITELY_EXPLANATION,
+  }
 
 const eventTypes = Object.values(EventType)
 const dateTypes = Object.values(DateType)
@@ -1221,17 +1224,39 @@ export class CaseService {
     update: UpdateCase,
     transaction: Transaction,
   ) {
-    if (update.explanatoryComment) {
-      await this.explanatoryCommentModel.create(
-        {
-          caseId: theCase.id,
-          commentType: update.explanatoryComment?.commentType,
-          comment: update.explanatoryComment?.comment,
-        },
-        { transaction },
-      )
+    // Iterate over all known explanatory comments
+    for (const key in explanatoryCommentsTypes) {
+      const commentKey = key as keyof UpdateCase
 
-      delete update.explanatoryComment
+      if (update[commentKey] !== undefined) {
+        const commentType = explanatoryCommentsTypes[commentKey]
+
+        const comment = await this.explanatoryCommentModel.findOne({
+          where: { caseId: theCase.id, commentType },
+          transaction: transaction,
+        })
+
+        if (comment) {
+          if (update[commentKey] === null) {
+            await this.explanatoryCommentModel.destroy({
+              where: { caseId: theCase.id, commentType },
+              transaction,
+            })
+          } else {
+            await this.explanatoryCommentModel.update(
+              { comment: update[commentKey] },
+              { where: { caseId: theCase.id, commentType }, transaction },
+            )
+          }
+        } else {
+          await this.explanatoryCommentModel.create(
+            { caseId: theCase.id, commentType, comment: update[commentKey] },
+            { transaction },
+          )
+        }
+
+        delete update[commentKey]
+      }
     }
   }
 

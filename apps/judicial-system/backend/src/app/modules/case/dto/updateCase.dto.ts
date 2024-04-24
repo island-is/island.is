@@ -13,7 +13,6 @@ import { ApiPropertyOptional } from '@nestjs/swagger'
 
 import type {
   CrimeSceneMap,
-  ExplanatoryComment,
   IndictmentSubtypeMap,
 } from '@island.is/judicial-system/types'
 import {
@@ -448,7 +447,7 @@ export class UpdateCaseDto {
   readonly indictmentReturnedExplanation?: string
 
   @IsOptional()
-  @IsObject({ each: true })
+  @IsString()
   @ApiPropertyOptional()
-  readonly explanatoryComment?: ExplanatoryComment
+  readonly postponedIndefinitelyExplanation?: string
 }
