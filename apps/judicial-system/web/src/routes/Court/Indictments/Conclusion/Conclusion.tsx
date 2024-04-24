@@ -160,7 +160,6 @@ const Conclusion: React.FC = () => {
                 <Box marginBottom={2}>
                   <CourtArrangements
                     workingCase={workingCase}
-                    setWorkingCase={setWorkingCase}
                     handleCourtDateChange={(date, valid) => {
                       if (valid && date) {
                         setPostponement((prev) => ({
