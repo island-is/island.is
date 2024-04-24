@@ -38,8 +38,12 @@ const Subpoena: React.FC<React.PropsWithChildren<unknown>> = () => {
     useContext(FormContext)
   const [navigateTo, setNavigateTo] = useState<keyof stepValidationsType>()
   const { formatMessage } = useIntl()
-  const { courtDate, handleCourtDateChange, courtDateHasChanged } =
-    useCourtArrangements(workingCase)
+  const {
+    courtDate,
+    handleCourtDateChange,
+    courtDateHasChanged,
+    handleCourtRoomChange,
+  } = useCourtArrangements(workingCase)
   const { setAndSendCaseToServer, sendNotification } = useCase()
 
   const handleNavigationTo = useCallback(
@@ -105,8 +109,10 @@ const Subpoena: React.FC<React.PropsWithChildren<unknown>> = () => {
           />
           <CourtArrangements
             workingCase={workingCase}
-            setWorkingCase={setWorkingCase}
             handleCourtDateChange={handleCourtDateChange}
+            handleCourtRoomChange={(evt) =>
+              handleCourtRoomChange(evt.target.value)
+            }
             selectedCourtDate={hearingArrangements?.date as string}
             selectedCourtRoom={hearingArrangements?.location}
             courtRoomDisabled={isPostponed}

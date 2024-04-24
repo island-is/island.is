@@ -13,10 +13,7 @@ import {
   NotificationType,
 } from '@island.is/judicial-system-web/src/graphql/schema'
 import { TempCase as Case } from '@island.is/judicial-system-web/src/types'
-import {
-  removeTabsValidateAndSet,
-  validateAndSendToServer,
-} from '@island.is/judicial-system-web/src/utils/formHelper'
+import { validateAndSendToServer } from '@island.is/judicial-system-web/src/utils/formHelper'
 import {
   formatDateForServer,
   useCase,
@@ -25,9 +22,10 @@ import { hasSentNotification } from '@island.is/judicial-system-web/src/utils/st
 
 interface Props {
   workingCase: Case
-  setWorkingCase: React.Dispatch<React.SetStateAction<Case>>
   handleCourtDateChange: (date: Date | undefined, valid: boolean) => void
-  handleCourtRoomChange?: (event: React.SyntheticEvent) => void
+  handleCourtRoomChange: (
+    event: React.FocusEvent<HTMLInputElement | HTMLTextAreaElement, Element>,
+  ) => void
   selectedCourtDate?: string | null
   selectedCourtRoom?: string | null
   blueBox?: boolean
@@ -38,6 +36,7 @@ interface Props {
 export const useCourtArrangements = (workingCase: Case) => {
   const [courtDate, setCourtDate] = useState<string | null>()
   const [courtDateHasChanged, setCourtDateHasChanged] = useState(false)
+  const { updateCase } = useCase()
   const latestCourtDate = getLatestDateType(
     [DateType.COURT_DATE],
     workingCase.dateLogs,
@@ -67,18 +66,22 @@ export const useCourtArrangements = (workingCase: Case) => {
     }
   }
 
+  const handleCourtRoomChange = (courtRoom: string) => {
+    validateAndSendToServer('courtRoom', courtRoom, [], workingCase, updateCase)
+  }
+
   return {
     courtDate,
     setCourtDate,
     courtDateHasChanged,
     handleCourtDateChange,
+    handleCourtRoomChange,
   }
 }
 
 export const CourtArrangements: React.FC<Props> = (props) => {
   const {
     workingCase,
-    setWorkingCase,
     handleCourtDateChange,
     handleCourtRoomChange,
     selectedCourtDate,
@@ -88,10 +91,17 @@ export const CourtArrangements: React.FC<Props> = (props) => {
     courtRoomDisabled,
   } = props
   const { updateCase } = useCase()
+  const [courtRoomValue, setCourtRoomValue] = useState<string>()
 
   const isCorrectingRuling = workingCase.notifications?.some(
     (notification) => notification.type === NotificationType.RULING,
   )
+
+  useEffect(() => {
+    if (selectedCourtRoom) {
+      setCourtRoomValue(selectedCourtRoom)
+    }
+  }, [selectedCourtRoom])
 
   const renderCourtArrangements = () => (
     <>
@@ -111,27 +121,18 @@ export const CourtArrangements: React.FC<Props> = (props) => {
         name="courtroom"
         label="Dómsalur"
         autoComplete="off"
-        value={selectedCourtRoom || ''}
+        value={courtRoomValue}
         placeholder="Skráðu inn dómsal"
-        onChange={(event) => {
-          if (handleCourtRoomChange) {
-            handleCourtRoomChange(event)
-          } else {
-            removeTabsValidateAndSet(
-              'courtRoom',
-              event.target.value,
-              [],
-              setWorkingCase,
-            )
-          }
+        onChange={(evt) => {
+          setCourtRoomValue(evt.target.value)
         }}
-        onBlur={(event) => {
+        onBlur={(evt) => {
           if (handleCourtRoomChange) {
-            handleCourtRoomChange(event)
+            handleCourtRoomChange(evt)
           } else {
             validateAndSendToServer(
               'courtRoom',
-              event.target.value,
+              evt.target.value,
               [],
               workingCase,
               updateCase,
