@@ -430,6 +430,7 @@ export class PoliceService {
     caseType: CaseType,
     caseState: CaseState,
     policeCaseNumber: string,
+    courtCaseNumber: string,
     defendantNationalId: string,
     validToDate: Date,
     caseConclusion: string,
@@ -449,6 +450,7 @@ export class PoliceService {
         body: JSON.stringify({
           rvMal_ID: caseId,
           caseNumber: policeCaseNumber,
+          courtCaseNumber,
           ssn: defendantNationalId,
           type: caseType,
           courtVerdict: caseState,
@@ -487,6 +489,7 @@ export class PoliceService {
             caseType,
             caseState,
             policeCaseNumber,
+            courtCaseNumber,
           },
           reason,
         )
