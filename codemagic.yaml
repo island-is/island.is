@@ -78,12 +78,17 @@ definitions:
             UPDATED_BUILD_NUMBER=$(($LATEST_GOOGLE_PLAY_BUILD_NUMBER + 1))
         fi
         cd android
-        ./gradlew bundleRelease -PversionCode=$UPDATED_BUILD_NUMBER
-  ios_publishing: &ios_publishing
-    app_store_connect:
-      auth: integration
-      submit_to_testflight: false
-      submit_to_app_store: false
+        ./gradlew "bundle${ANDROID_APP}Release -PversionCode=$UPDATED_BUILD_NUMBER
+  publishing:
+    ios_publishing: &ios_publishing
+      app_store_connect:
+        auth: integration
+        submit_to_testflight: false
+        submit_to_app_store: false
+    android_publishing: &android_publishing
+      google_play:
+        credentials: $GCLOUD_SERVICE_ACCOUNT_CREDENTIALS
+        track: internal
 
 workflows:
   prod-app-ios:
@@ -122,11 +127,6 @@ workflows:
       - $HOME/Library/Developer/Xcode/DerivedData/**/Build/**/*.dSYM
     publishing:
       <<: *ios_publishing
-      slack:
-        channel: '#codemagic-test'
-        notify:
-          success: false
-          failure: true
 
   dev-app-ios:
     <<: *base
@@ -160,16 +160,16 @@ workflows:
         channel: '#codemagic-test'
         notify:
           success: true
-          failure: true
+          failure: false
 
-  dev-app-android:
+  prod-app-android:
     <<: *base
-    name: Island.is Dev App Android
+    name: Island.is Prod App Android
     instance_type: mac_mini_m1
     ## Switch when we have billing
     # instance_type: linux_x2
     triggering: *default_triggers
-    cache:
+    cache: &android_cache
       cache_paths:
         - ~/.gradle/caches
         - .yarn/cache
@@ -182,7 +182,8 @@ workflows:
         - firebase_credentials
       vars:
         <<: *shared_envs
-        PACKAGE_NAME: "is.island.app.dev"
+        PACKAGE_NAME: "is.island.app"
+        ANDROID_APP: prod
     scripts:
       - *check_changes
       - *set_android_location
@@ -191,7 +192,31 @@ workflows:
       - *build_android
     artifacts: &android_artifacts
       - android/app/build/outputs/**/*.aab
-    publishing:
-      google_play:
-        credentials: $GCLOUD_SERVICE_ACCOUNT_CREDENTIALS
-        track: internal
+    publishing: *android_publishing
+
+  dev-app-android:
+    <<: *base
+    name: Island.is Dev App Android
+    instance_type: mac_mini_m1
+    ## Switch when we have billing
+    # instance_type: linux_x2
+    triggering: *default_triggers
+    cache: *android_cache
+    environment:
+      android_signing:
+        - island-upload-keystore
+      groups:
+        - google_credentials
+        - firebase_credentials
+      vars:
+        <<: *shared_envs
+        PACKAGE_NAME: "is.island.app.dev"
+        ANDROID_APP: dev
+    scripts:
+      - *check_changes
+      - *set_android_location
+      - *npm_install
+      - *codegen
+      - *build_android
+    artifacts: *android_artifacts
+    publishing: *android_publishing
