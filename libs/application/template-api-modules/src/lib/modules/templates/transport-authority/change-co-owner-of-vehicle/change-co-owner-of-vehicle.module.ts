@@ -27,6 +27,10 @@ import {
   VehiclesClientModule,
   VehiclesClientConfig,
 } from '@island.is/clients/vehicles'
+import {
+  VehiclesMileageClientModule,
+  VehiclesMileageClientConfig,
+} from '@island.is/clients/vehicles-mileage'
 
 export class ChangeCoOwnerOfVehicleModule {
   static register(baseConfig: BaseTemplateAPIModuleConfig): DynamicModule {
@@ -40,6 +44,7 @@ export class ChangeCoOwnerOfVehicleModule {
         ChargeFjsV2ClientModule,
         VehicleServiceFjsV1ClientModule,
         VehiclesClientModule,
+        VehiclesMileageClientModule,
         ConfigModule.forRoot({
           isGlobal: true,
           load: [
@@ -49,6 +54,7 @@ export class ChangeCoOwnerOfVehicleModule {
             ChargeFjsV2ClientConfig,
             VehicleServiceFjsV1ClientConfig,
             VehiclesClientConfig,
+            VehiclesMileageClientConfig,
           ],
         }),
       ],

@@ -27,7 +27,6 @@ export class PaymentService extends BaseTemplateApiService {
     if (!params?.organizationId) {
       throw Error('Missing performing organization ID')
     }
-
     const data = await this.chargeFjsV2ClientService.getCatalogByPerformingOrg(
       params.organizationId,
     )

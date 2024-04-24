@@ -101,7 +101,6 @@ export function buildPaymentState<
     target: string
     cond?: (context: ApplicationContext) => boolean
   }> = []
-
   if (typeof options.submitTarget === 'string') {
     submitTransitions = [{ target: options.submitTarget }]
   } else if (options.submitTarget && Array.isArray(options.submitTarget)) {
