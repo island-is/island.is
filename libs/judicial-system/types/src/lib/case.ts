@@ -193,6 +193,12 @@ export enum DefendantPlea {
   NO_PLEA = 'NO_PLEA',
 }
 
+export enum ServiceRequirement {
+  REQUIRED = 'REQUIRED',
+  NOT_REQUIRED = 'NOT_REQUIRED',
+  NOT_APPLICABLE = 'NOT_APPLICABLE',
+}
+
 export const indictmentCases = [CaseType.INDICTMENT]
 
 export const isIndictmentCase = (type?: string | null): boolean => {

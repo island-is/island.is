@@ -135,4 +135,11 @@ export class Defendant extends Model {
   })
   @ApiProperty({ enum: DefendantPlea })
   defendantPlea?: DefendantPlea
+
+  @Column({
+    type: DataType.STRING,
+    allowNull: true,
+  })
+  @ApiProperty()
+  serviceRequirement?: string
 }
