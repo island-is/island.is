@@ -476,7 +476,10 @@
     "jest-config": "patch:jest-config@npm%3A29.7.0#./.yarn/patches/jest-config-npm-29.7.0-97d8544d74.patch",
     "@nestjs/terminus@10.2.0": "patch:@nestjs/terminus@npm%3A10.2.0#./.yarn/patches/@nestjs-terminus-npm-10.2.0-9e24c129e0.patch",
     "node-request-interceptor@^0.5.1": "patch:node-request-interceptor@npm%3A0.5.9#./.yarn/patches/node-request-interceptor-npm-0.5.9-77e9d9c058.patch",
-    "dd-trace@5.10.0": "patch:dd-trace@npm%3A5.10.0#./.yarn/patches/dd-trace-npm-5.10.0-184ed36e96.patch"
+    "dd-trace@5.10.0": "patch:dd-trace@npm%3A5.10.0#./.yarn/patches/dd-trace-npm-5.10.0-184ed36e96.patch",
+    "expo-modules-core@1.1.1": "patch:expo-modules-core@npm%3A1.1.1#./.yarn/patches/expo-modules-core-npm-1.1.1-c3861d47cb.patch",
+    "react-native@0.71.1": "patch:react-native@npm%3A0.71.1#./.yarn/patches/react-native-npm-0.71.1-f5d237f240.patch",
+    "react-native-navigation@7.32.1": "patch:react-native-navigation@npm%3A7.32.1#./.yarn/patches/react-native-navigation-npm-7.32.1-262dc5c010.patch"
   },
   "volta": {
     "node": "18.16.0",
