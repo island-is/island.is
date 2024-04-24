@@ -113,6 +113,7 @@ import { CustomPage } from './models/customPage.model'
 import { GetCustomPageInput } from './dto/getCustomPage.input'
 import { GenericListItemResponse } from './models/genericListItemResponse.model'
 import { GetGenericListItemsInput } from './dto/getGenericListItems.input'
+import { GenericList } from './models/genericList.model'
 
 const defaultCache: CacheControlOptions = { maxAge: CACHE_CONTROL_MAX_AGE }
 
@@ -652,7 +653,7 @@ export class CmsResolver {
 
   @CacheControl(defaultCache)
   @Query(() => GenericListItemResponse, { nullable: true })
-  async getListItems(
+  getGenericListItems(
     @Args('input') input: GetGenericListItemsInput,
   ): Promise<GenericListItemResponse> {
     return this.cmsElasticsearchService.getGenericListItems(input)
@@ -796,5 +797,20 @@ export class FeaturedEventsResolver {
       // Fallback to empty object in case something goes wrong when fetching or parsing namespace
       return {}
     }
+  }
+}
+
+@Resolver(() => GenericList)
+@CacheControl(defaultCache)
+export class GenericListResolver {
+  constructor(
+    private readonly cmsElasticsearchService: CmsElasticsearchService,
+  ) {}
+
+  @ResolveField(() => GenericListItemResponse)
+  firstPageListItemResponse(
+    @Parent() { firstPageListItemResponse: input }: GenericList,
+  ) {
+    return this.cmsElasticsearchService.getGenericListItems(input)
   }
 }

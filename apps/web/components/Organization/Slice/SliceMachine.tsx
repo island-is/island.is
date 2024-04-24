@@ -10,10 +10,14 @@ import {
 } from '@island.is/island-ui/core'
 import {
   EmailSignup,
+  GenericList,
   RichText,
   SectionWithVideo,
 } from '@island.is/web/components'
-import { Slice } from '@island.is/web/graphql/schema'
+import {
+  GenericList as GenericListSchema,
+  Slice,
+} from '@island.is/web/graphql/schema'
 import { webRenderConnectedComponent } from '@island.is/web/utils/richText'
 
 import { FeaturedSupportQNAs } from '../../FeaturedSupportQNAs'
@@ -175,6 +179,15 @@ const renderSlice = (
           content={slice.content as SliceType[]}
           image={slice.image ?? undefined}
           contain={true}
+        />
+      )
+    case 'GenericList':
+      return (
+        <GenericList
+          id={slice.id}
+          firstPageItemResponse={
+            (slice as GenericListSchema).firstPageListItemResponse
+          }
         />
       )
     default:
