@@ -1,4 +1,3 @@
-import { Observable } from 'rxjs'
 import { map } from 'rxjs/operators'
 
 import {
@@ -11,15 +10,11 @@ import {
 import { DateType, getLatestDateType } from '@island.is/judicial-system/types'
 
 import { Case } from '../models/case.model'
-import { CaseListEntry } from '../models/caseListEntry.response'
 import { DateLog } from '../models/dateLog.model'
 
 @Injectable()
 export class CaseListInterceptor implements NestInterceptor {
-  intercept(
-    _: ExecutionContext,
-    next: CallHandler,
-  ): Observable<CaseListEntry[]> {
+  intercept(_: ExecutionContext, next: CallHandler) {
     return next.handle().pipe(
       map((cases: Case[]) =>
         cases.map((theCase) => {

@@ -357,4 +357,8 @@ export class UpdateCaseInput {
   @Allow()
   @Field({ nullable: true })
   readonly indictmentReturnedExplanation?: string
+
+  @Allow()
+  @Field({ nullable: true })
+  readonly postponedIndefinitelyExplanation?: string
 }

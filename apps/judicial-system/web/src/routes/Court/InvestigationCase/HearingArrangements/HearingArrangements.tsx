@@ -51,6 +51,7 @@ const HearingArrangements = () => {
     setCourtDate,
     courtDateHasChanged,
     handleCourtDateChange,
+    handleCourtRoomChange,
   } = useCourtArrangements(workingCase)
 
   const [navigateTo, setNavigateTo] = useState<keyof stepValidationsType>()
@@ -313,8 +314,10 @@ const HearingArrangements = () => {
             <Box marginBottom={2}>
               <CourtArrangements
                 workingCase={workingCase}
-                setWorkingCase={setWorkingCase}
                 handleCourtDateChange={handleCourtDateChange}
+                handleCourtRoomChange={(evt) =>
+                  handleCourtRoomChange(evt.target.value)
+                }
                 selectedCourtDate={courtDate}
                 selectedCourtRoom={workingCase.courtRoom}
               />

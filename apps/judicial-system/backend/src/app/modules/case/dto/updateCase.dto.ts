@@ -445,4 +445,9 @@ export class UpdateCaseDto {
   @IsString()
   @ApiPropertyOptional()
   readonly indictmentReturnedExplanation?: string
+
+  @IsOptional()
+  @IsString()
+  @ApiPropertyOptional()
+  readonly postponedIndefinitelyExplanation?: string
 }

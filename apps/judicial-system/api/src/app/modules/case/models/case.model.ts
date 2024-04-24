@@ -398,4 +398,7 @@ export class Case {
 
   @Field({ nullable: true })
   readonly indictmentReturnedExplanation?: string
+
+  @Field({ nullable: true })
+  readonly postponedIndefinitelyExplanation?: string
 }

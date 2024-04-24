@@ -60,6 +60,7 @@ export const HearingArrangements: React.FC<
     setCourtDate,
     courtDateHasChanged,
     handleCourtDateChange,
+    handleCourtRoomChange,
   } = useCourtArrangements(workingCase)
 
   const initialize = useCallback(() => {
@@ -184,8 +185,10 @@ export const HearingArrangements: React.FC<
           <Box marginBottom={3}>
             <CourtArrangements
               workingCase={workingCase}
-              setWorkingCase={setWorkingCase}
               handleCourtDateChange={handleCourtDateChange}
+              handleCourtRoomChange={(evt) =>
+                handleCourtRoomChange(evt.target.value)
+              }
               selectedCourtDate={courtDate}
               selectedCourtRoom={workingCase.courtRoom}
             />
