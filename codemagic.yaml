@@ -32,6 +32,10 @@ definitions:
         else
           echo "No previous commit detected. Continuing."
         fi
+    - &set_android_location
+      name: Set Android SDK location
+      script: |
+        echo "sdk.dir=$ANDROID_SDK_ROOT" > android/local.properties
     - &npm_install
       name: Install npm dependencies
       working_directory: .
@@ -63,6 +67,17 @@ definitions:
         xcode-project build-ipa \
           --workspace "ios/$XCODE_WORKSPACE" \
           --scheme "$XCODE_SCHEME"
+    - &build_android
+      name: Build Android release
+      script: |
+        LATEST_GOOGLE_PLAY_BUILD_NUMBER=$(google-play get-latest-build-number --package-name "$PACKAGE_NAME")
+        if [ -z $LATEST_GOOGLE_PLAY_BUILD_NUMBER ]; then
+            exit 1
+        else
+            UPDATED_BUILD_NUMBER=$(($LATEST_GOOGLE_PLAY_BUILD_NUMBER + 1))
+        fi
+        cd android
+        ./gradlew bundleRelease -PversionCode=$UPDATED_BUILD_NUMBER
   ios_publishing: &ios_publishing
     app_store_connect:
       auth: integration
@@ -74,7 +89,7 @@ workflows:
     <<: *base
     name: Island.is Prod App iOS
     instance_type: mac_mini_m1
-    triggering: *default_triggers
+    # triggering: *default_triggers
     integrations:
       app_store_connect: "Island.is API Key"
     environment:
@@ -111,7 +126,7 @@ workflows:
     <<: *base
     name: Island.is Dev App iOS
     instance_type: mac_mini_m1
-    triggering: *default_triggers
+    # triggering: *default_triggers
     integrations:
       app_store_connect: "Island.is API Key"
     environment:
@@ -139,3 +154,31 @@ workflows:
         notify:
           success: true
           failure: true
+
+  dev-app-android:
+    <<: *base
+    name: Island.is Dev App Android
+    instance_type: mac_mini_m1
+    ## Switch when we have billing
+    # instance_type: linux_x2
+    triggering: *default_triggers
+    environment:
+      android_signing:
+        - island-upload-keystore
+      groups:
+        - google_credentials
+      vars:
+        <<: *shared_envs
+        PACKAGE_NAME: "is.island.app.dev"
+    scripts:
+      - *check_changes
+      - *set_android_location
+      - *npm_install
+      - *codegen
+      - *build_android
+    artifacts: &android_artifacts
+      - android/app/build/outputs/**/*.aab
+    publishing:
+      google_play:
+        credentials: $GCLOUD_SERVICE_ACCOUNT_CREDENTIALS
+        track: internal
