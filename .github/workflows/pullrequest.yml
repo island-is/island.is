@@ -99,7 +99,9 @@ jobs:
         continue-on-error: true
         uses: ./.github/actions/cache
         with:
-          path: node_modules
+          path: |
+            node_modules
+            apps/native/app/node_modules
           key: ${{ steps.calculate_node_modules_hash.outputs.node-modules-hash }}-yarn
 
       - name: Check node-modules cache success
