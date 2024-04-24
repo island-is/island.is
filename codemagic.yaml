@@ -78,7 +78,7 @@ definitions:
             UPDATED_BUILD_NUMBER=$(($LATEST_GOOGLE_PLAY_BUILD_NUMBER + 1))
         fi
         cd android
-        ./gradlew "bundle${ANDROID_APP}Release -PversionCode=$UPDATED_BUILD_NUMBER
+        ./gradlew bundle${ANDROID_APP}Release -PversionCode=$UPDATED_BUILD_NUMBER
   publishing:
     ios_publishing: &ios_publishing
       app_store_connect:
