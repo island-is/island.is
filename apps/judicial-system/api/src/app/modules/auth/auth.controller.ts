@@ -3,10 +3,10 @@ import { Entropy } from 'entropy-string'
 import { CookieOptions, Request, Response } from 'express'
 
 import { Controller, Get, Inject, Query, Req, Res } from '@nestjs/common'
-import { ConfigType } from '@nestjs/config'
 
 import type { Logger } from '@island.is/logging'
 import { LOGGER_PROVIDER } from '@island.is/logging'
+import { type ConfigType } from '@island.is/nest/config'
 
 import {
   AuditedAction,

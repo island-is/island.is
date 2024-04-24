@@ -18,7 +18,7 @@ import {
 } from '@island.is/dokobit-signing'
 import type { Logger } from '@island.is/logging'
 import { LOGGER_PROVIDER } from '@island.is/logging'
-import { ConfigType } from '@island.is/nest/config'
+import { type ConfigType } from '@island.is/nest/config'
 
 import {
   CaseMessage,
