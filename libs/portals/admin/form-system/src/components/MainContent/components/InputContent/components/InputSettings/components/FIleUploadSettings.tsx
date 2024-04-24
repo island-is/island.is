@@ -14,52 +14,53 @@ import ControlContext from '../../../../../../../context/ControlContext'
 import { FormSystemInput } from '@island.is/api/schema'
 
 const fileSizes = {
-  "fileSizes": [
+  fileSizes: [
     {
-      "label": "1 mb",
-      "value": 1048576
+      label: '1 mb',
+      value: 1048576,
     },
     {
-      "label": "2 mb",
-      "value": 2097152
+      label: '2 mb',
+      value: 2097152,
     },
     {
-      "label": "3 mb",
-      "value": 3145728
+      label: '3 mb',
+      value: 3145728,
     },
     {
-      "label": "4 mb",
-      "value": 4194304
+      label: '4 mb',
+      value: 4194304,
     },
     {
-      "label": "5 mb",
-      "value": 5242880
+      label: '5 mb',
+      value: 5242880,
     },
     {
-      "label": "6 mb",
-      "value": 6291456
+      label: '6 mb',
+      value: 6291456,
     },
     {
-      "label": "7 mb",
-      "value": 7340032
+      label: '7 mb',
+      value: 7340032,
     },
     {
-      "label": "8 mb",
-      "value": 8388608
+      label: '8 mb',
+      value: 8388608,
     },
     {
-      "label": "9 mb",
-      "value": 9437184
+      label: '9 mb',
+      value: 9437184,
     },
     {
-      "label": "10 mb",
-      "value": 10485760
-    }
-  ]
+      label: '10 mb',
+      value: 10485760,
+    },
+  ],
 }
 
 const FileUploadSettings = () => {
-  const { control, controlDispatch, updateActiveItem } = useContext(ControlContext)
+  const { control, controlDispatch, updateActiveItem } =
+    useContext(ControlContext)
   const { activeItem } = control
   const currentItem = activeItem.data as FormSystemInput
   const { inputSettings } = currentItem
@@ -90,14 +91,16 @@ const FileUploadSettings = () => {
             name="multi"
             label="Er fjölval"
             checked={inputSettings?.isMulti ?? false}
-            onChange={(e) => controlDispatch({
-              type: 'SET_FILE_UPLOAD_SETTINGS',
-              payload: {
-                property: 'isMulti',
-                checked: e.target.checked,
-                update: updateActiveItem
-              }
-            })}
+            onChange={(e) =>
+              controlDispatch({
+                type: 'SET_FILE_UPLOAD_SETTINGS',
+                payload: {
+                  property: 'isMulti',
+                  checked: e.target.checked,
+                  update: updateActiveItem,
+                },
+              })
+            }
           />
         </Column>
       </Row>
@@ -112,14 +115,16 @@ const FileUploadSettings = () => {
               (f) => f.value === inputSettings?.maxSize,
             )}
             options={fileSizeOptions}
-            onChange={(e) => controlDispatch({
-              type: 'SET_FILE_UPLOAD_SETTINGS',
-              payload: {
-                property: 'maxSize',
-                value: e?.value,
-                update: updateActiveItem
-              }
-            })}
+            onChange={(e) =>
+              controlDispatch({
+                type: 'SET_FILE_UPLOAD_SETTINGS',
+                payload: {
+                  property: 'maxSize',
+                  value: e?.value,
+                  update: updateActiveItem,
+                },
+              })
+            }
           />
         </Column>
         {inputSettings?.isMulti && (
@@ -133,14 +138,16 @@ const FileUploadSettings = () => {
                 (f) => f.value === inputSettings.amount,
               )}
               options={fileAmountOptions}
-              onChange={(e) => controlDispatch({
-                type: 'SET_FILE_UPLOAD_SETTINGS',
-                payload: {
-                  property: 'amount',
-                  value: e?.value,
-                  update: updateActiveItem
-                }
-              })}
+              onChange={(e) =>
+                controlDispatch({
+                  type: 'SET_FILE_UPLOAD_SETTINGS',
+                  payload: {
+                    property: 'amount',
+                    value: e?.value,
+                    update: updateActiveItem,
+                  },
+                })
+              }
             />
           </Column>
         )}
@@ -158,15 +165,17 @@ const FileUploadSettings = () => {
                 label={key}
                 value={value as string}
                 checked={inputSettings?.types?.includes(key)}
-                onChange={(e) => controlDispatch({
-                  type: 'SET_FILE_UPLOAD_SETTINGS',
-                  payload: {
-                    property: 'types',
-                    checked: e.target.checked,
-                    value: key,
-                    update: updateActiveItem
-                  }
-                })}
+                onChange={(e) =>
+                  controlDispatch({
+                    type: 'SET_FILE_UPLOAD_SETTINGS',
+                    payload: {
+                      property: 'types',
+                      checked: e.target.checked,
+                      value: key,
+                      update: updateActiveItem,
+                    },
+                  })
+                }
               />
             )}
           </Box>

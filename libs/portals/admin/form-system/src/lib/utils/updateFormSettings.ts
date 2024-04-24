@@ -1,20 +1,18 @@
-import { FormSystemForm } from "@island.is/api/schema"
-import { useFormSystemUpdateFormSettingsMutation } from "../../gql/FormSettings.generated"
-import { ControlState } from "../../hooks/controlReducer"
-import { removeTypename } from "./removeTypename"
-
+import { FormSystemForm } from '@island.is/api/schema'
+import { useFormSystemUpdateFormSettingsMutation } from '../../gql/FormSettings.generated'
+import { ControlState } from '../../hooks/controlReducer'
+import { removeTypename } from './removeTypename'
 
 export const updateSettings = (
   control: ControlState,
   updatedForm?: FormSystemForm,
-  updateFormSettings = useFormSystemUpdateFormSettingsMutation()[0]
+  updateFormSettings = useFormSystemUpdateFormSettingsMutation()[0],
 ) => {
   const form = updatedForm ? updatedForm : control.form
   const documentTypesInput = form?.documentTypes?.map((dt) => ({
     formId: form.id,
     documentTypeId: dt?.id,
   }))
-  console.log('updating form settings: ', form.formApplicantTypes)
   updateFormSettings({
     variables: {
       input: {
@@ -31,8 +29,8 @@ export const updateSettings = (
           isTranslated: form.isTranslated,
           stopProgressOnValidatingStep: form.stopProgressOnValidatingStep,
           applicationsDaysToRemove: form.applicationsDaysToRemove,
-        }
-      }
-    }
+        },
+      },
+    },
   })
 }

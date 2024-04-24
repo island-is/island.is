@@ -45,5 +45,3 @@ export class Input {
   @Field(() => graphqlTypeJson, { nullable: true })
   inputFields?: object
 }
-
-

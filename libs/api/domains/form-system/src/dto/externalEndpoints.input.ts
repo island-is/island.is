@@ -1,5 +1,8 @@
 import { Field, Int, InputType, registerEnumType } from '@nestjs/graphql'
-import { EExternalEndpointType, EExternalEndpointEnvironment } from '@island.is/clients/form-system'
+import {
+  EExternalEndpointType,
+  EExternalEndpointEnvironment,
+} from '@island.is/clients/form-system'
 
 registerEnumType(EExternalEndpointType, {
   name: 'FormSystemExternalEndpointType',

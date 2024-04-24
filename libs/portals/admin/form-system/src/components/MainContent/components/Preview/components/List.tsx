@@ -1,5 +1,5 @@
-import { FormSystemInput, FormSystemListItem } from "@island.is/api/schema"
-import { useEffect, useState } from "react"
+import { FormSystemInput, FormSystemListItem } from '@island.is/api/schema'
+import { useEffect, useState } from 'react'
 import { Select } from '@island.is/island-ui/core'
 
 interface Props {
@@ -26,7 +26,11 @@ const List = ({ currentItem }: Props) => {
 
   return (
     <>
-      <Select name="list" label={currentItem?.name?.is ?? ''} options={listItems} />
+      <Select
+        name="list"
+        label={currentItem?.name?.is ?? ''}
+        options={listItems}
+      />
     </>
   )
 }

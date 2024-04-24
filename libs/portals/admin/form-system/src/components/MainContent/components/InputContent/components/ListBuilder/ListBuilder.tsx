@@ -1,6 +1,6 @@
-import { useContext, useEffect, useMemo, useState } from "react"
-import ControlContext from "../../../../../../context/ControlContext"
-import { FormSystemInput, FormSystemListItem } from "@island.is/api/schema"
+import { useContext, useEffect, useMemo, useState } from 'react'
+import ControlContext from '../../../../../../context/ControlContext'
+import { FormSystemInput, FormSystemListItem } from '@island.is/api/schema'
 import {
   GridRow as Row,
   GridColumn as Column,
@@ -19,18 +19,33 @@ import {
   useSensor,
   useSensors,
 } from '@dnd-kit/core'
-import { NavbarSelectStatus } from "../../../../../../lib/utils/interfaces"
-import ListItem from "./components/ListItem"
-import { SortableContext } from "@dnd-kit/sortable"
-import { createPortal } from "react-dom"
-
+import { NavbarSelectStatus } from '../../../../../../lib/utils/interfaces'
+import ListItem from './components/ListItem'
+import { SortableContext } from '@dnd-kit/sortable'
+import { createPortal } from 'react-dom'
 
 const ListBuilder = () => {
-  const { control, controlDispatch, setSelectStatus, setInListBuilder, updateActiveItem } = useContext(ControlContext)
+  const {
+    control,
+    controlDispatch,
+    setSelectStatus,
+    setInListBuilder,
+    updateActiveItem,
+  } = useContext(ControlContext)
   const currentItem = control.activeItem.data as FormSystemInput
   const { activeListItem } = control
-  const listItems = currentItem?.inputSettings?.list ?? [] as FormSystemListItem[]
-  const listItemIds = useMemo(() => listItems?.filter((l: FormSystemListItem): l is FormSystemListItem => l !== null && l !== undefined).map((l: FormSystemListItem) => l?.guid as UniqueIdentifier), [listItems])
+  const listItems =
+    currentItem?.inputSettings?.list ?? ([] as FormSystemListItem[])
+  const listItemIds = useMemo(
+    () =>
+      listItems
+        ?.filter(
+          (l: FormSystemListItem): l is FormSystemListItem =>
+            l !== null && l !== undefined,
+        )
+        .map((l: FormSystemListItem) => l?.guid as UniqueIdentifier),
+    [listItems],
+  )
   const [connecting, setConnecting] = useState<boolean[]>([false])
 
   const sensors = useSensors(
@@ -40,7 +55,6 @@ const ListBuilder = () => {
       },
     }),
   )
-
 
   const addListItem = () => {
     controlDispatch({
@@ -68,7 +82,7 @@ const ListBuilder = () => {
       type: 'LIST_ITEM_OVER_LIST_ITEM',
       payload: {
         activeId: activeId,
-        overId: overId
+        overId: overId,
       },
     })
   }
@@ -85,9 +99,6 @@ const ListBuilder = () => {
   }
 
   useEffect(() => {
-    // if (listItems.length === 0) {
-    //   addListItem()
-    // }
     setSelectStatus(NavbarSelectStatus.ON_WITHOUT_SELECT)
   }, [])
 

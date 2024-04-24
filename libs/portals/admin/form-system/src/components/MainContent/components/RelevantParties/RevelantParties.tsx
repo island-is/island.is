@@ -1,9 +1,13 @@
-import { useContext, useState } from "react"
-import ControlContext from "../../../../context/ControlContext"
+import { useContext, useState } from 'react'
+import ControlContext from '../../../../context/ControlContext'
 import { Stack, Checkbox, Box, Text } from '@island.is/island-ui/core'
-import { FormSystemApplicantType, FormSystemFormApplicantType, FormSystemLanguageType } from "@island.is/api/schema"
-import { EFormApplicantTypes } from "../../../../lib/utils/interfaces"
-import FormApplicantType from "./components/FormApplicantType"
+import {
+  FormSystemApplicantType,
+  FormSystemFormApplicantType,
+  FormSystemLanguageType,
+} from '@island.is/api/schema'
+import { EFormApplicantTypes } from '../../../../lib/utils/interfaces'
+import FormApplicantType from './components/FormApplicantType'
 
 const applicantTypeLabel = [
   'Einstaklingur (innskráður)',
@@ -23,19 +27,26 @@ const applicantTypes = [
   'Lögaðili',
 ]
 
-
 export const RelevantParties = () => {
-  const { applicantTypes: applicantTypeTemplates, control, updateSettings } = useContext(ControlContext)
+  const {
+    applicantTypes: applicantTypeTemplates,
+    control,
+    updateSettings,
+  } = useContext(ControlContext)
   const { form } = control
   const { id: formId } = form
-  const [formApplicantTypes, setFormApplicantTypes] = useState<FormSystemFormApplicantType[]>(
-    (form.formApplicantTypes ?? []).filter(Boolean) as FormSystemFormApplicantType[]
+  const [formApplicantTypes, setFormApplicantTypes] = useState<
+    FormSystemFormApplicantType[]
+  >(
+    (form.formApplicantTypes ?? []).filter(
+      Boolean,
+    ) as FormSystemFormApplicantType[],
   )
   const [focus, setOnFocus] = useState('')
 
   const createFormApplicantType = (
     type: string,
-    template: FormSystemApplicantType
+    template: FormSystemApplicantType,
   ): FormSystemFormApplicantType => {
     return {
       __typename: undefined,
@@ -43,7 +54,7 @@ export const RelevantParties = () => {
       name: template?.nameSuggestions?.[0]?.nameSuggestion ?? {
         __typename: undefined,
         is: '',
-        en: ''
+        en: '',
       },
       applicantTypeId: template.id,
       formId,
@@ -105,8 +116,8 @@ export const RelevantParties = () => {
       )
       const newTypes = hasLegalEntity
         ? newFormApplicantTypes.filter(
-          (f) => f.type !== EFormApplicantTypes.logadili,
-        )
+            (f) => f.type !== EFormApplicantTypes.logadili,
+          )
         : newFormApplicantTypes
       const newList = [...formApplicantTypes, ...newTypes]
       updateSettings({ ...form, formApplicantTypes: newList })
@@ -114,7 +125,9 @@ export const RelevantParties = () => {
     }
 
     const removeFormApplicantTypes = (types: EFormApplicantTypes[]) => {
-      const newList = formApplicantTypes.filter((f) => !types.includes(f.type as EFormApplicantTypes))
+      const newList = formApplicantTypes.filter(
+        (f) => !types.includes(f.type as EFormApplicantTypes),
+      )
       updateSettings({ ...form, formApplicantTypes: newList })
       setFormApplicantTypes(newList)
     }
@@ -127,7 +140,10 @@ export const RelevantParties = () => {
         if (template !== undefined && template !== null) {
           const newFormApplicantType: FormSystemFormApplicantType =
             createFormApplicantType(EFormApplicantTypes.einstaklingur, template)
-          updateSettings({ ...form, formApplicantTypes: [...formApplicantTypes, newFormApplicantType] })
+          updateSettings({
+            ...form,
+            formApplicantTypes: [...formApplicantTypes, newFormApplicantType],
+          })
           setFormApplicantTypes([...formApplicantTypes, newFormApplicantType])
         }
       } else if (index === 1) {
@@ -138,8 +154,10 @@ export const RelevantParties = () => {
           (at) => at?.id === 5,
         )
         if (
-          delegatorTemplate === undefined || delegatorTemplate === null ||
-          delegateeTemplate === undefined || delegateeTemplate === null
+          delegatorTemplate === undefined ||
+          delegatorTemplate === null ||
+          delegateeTemplate === undefined ||
+          delegateeTemplate === null
         ) {
           return
         }
@@ -162,8 +180,10 @@ export const RelevantParties = () => {
           (at) => at?.id === 3,
         )
         if (
-          delegatorTemplate === undefined || delegatorTemplate === null ||
-          delegateeTemplate === undefined || delegateeTemplate === null
+          delegatorTemplate === undefined ||
+          delegatorTemplate === null ||
+          delegateeTemplate === undefined ||
+          delegateeTemplate === null
         ) {
           return
         }
@@ -183,7 +203,12 @@ export const RelevantParties = () => {
           (at) => at?.id === 4,
         )
         const legalEntity = applicantTypeTemplates?.find((at) => at?.id === 6)
-        if (procurationHolder === undefined || procurationHolder === null || legalEntity === undefined || legalEntity === null) {
+        if (
+          procurationHolder === undefined ||
+          procurationHolder === null ||
+          legalEntity === undefined ||
+          legalEntity === null
+        ) {
           return
         }
 
@@ -267,12 +292,17 @@ export const RelevantParties = () => {
       {formApplicantTypes.map((f, i) => (
         <FormApplicantType
           key={i}
-          title={applicantTypeLabel[applicantTypes.indexOf(f.type)] ? applicantTypeLabel[applicantTypes.indexOf(f.type)] : ''}
+          title={
+            applicantTypeLabel[applicantTypes.indexOf(f.type)]
+              ? applicantTypeLabel[applicantTypes.indexOf(f.type)]
+              : ''
+          }
           name={f.name as FormSystemLanguageType}
           nameSuggestions={
             (applicantTypeTemplates
               ?.find((at) => at?.id === f.applicantTypeId)
-              ?.nameSuggestions?.map((ns) => ns?.nameSuggestion) ?? []) as FormSystemLanguageType[]
+              ?.nameSuggestions?.map((ns) => ns?.nameSuggestion) ??
+              []) as FormSystemLanguageType[]
           }
           formApplicantType={f}
           index={i}
@@ -288,4 +318,3 @@ export const RelevantParties = () => {
 }
 
 export default RelevantParties
-

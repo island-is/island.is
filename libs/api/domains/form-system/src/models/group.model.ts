@@ -1,6 +1,6 @@
-import { Field, Int, ObjectType } from "@nestjs/graphql";
-import { LanguageType } from "./global.model";
-import { Input } from "./input.model";
+import { Field, Int, ObjectType } from '@nestjs/graphql'
+import { LanguageType } from './global.model'
+import { Input } from './input.model'
 
 @ObjectType('FormSystemGroup')
 export class Group {
@@ -31,4 +31,3 @@ export class Group {
   @Field(() => String, { nullable: true })
   stepGuid?: string
 }
-

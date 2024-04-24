@@ -392,4 +392,4 @@ const environment = getConfig
     }),
   ],
 })
-export class AppModule { }
+export class AppModule {}

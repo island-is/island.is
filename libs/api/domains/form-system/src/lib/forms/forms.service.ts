@@ -1,15 +1,28 @@
-import { Inject, Injectable } from "@nestjs/common"
+import { Inject, Injectable } from '@nestjs/common'
 import { LOGGER_PROVIDER, Logger } from '@island.is/logging'
-import { ApiFormsFormIdDeleteRequest, ApiFormsFormIdGetRequest, ApiFormsFormIdPutRequest, ApiFormsOrganizationOrganizationIdGetRequest, FormUpdateDto, FormsApi, ApiFormsFormIdSettingsPutRequest, FormSettingsUpdateDto } from "@island.is/clients/form-system"
-import { ApolloError } from "@apollo/client"
+import {
+  ApiFormsFormIdDeleteRequest,
+  ApiFormsFormIdGetRequest,
+  ApiFormsFormIdPutRequest,
+  ApiFormsOrganizationOrganizationIdGetRequest,
+  FormUpdateDto,
+  FormsApi,
+  ApiFormsFormIdSettingsPutRequest,
+  FormSettingsUpdateDto,
+} from '@island.is/clients/form-system'
+import { ApolloError } from '@apollo/client'
 import { AuthMiddleware, User } from '@island.is/auth-nest-tools'
-import { CreateFormInput, DeleteFormInput, GetFormInput, GetFormsInput, UpdateFormInput } from "../../dto/forms.input"
-import { FormResponse } from "../../models/formResponse.model"
-import { FormListResponse } from "../../models/formListResponse.model"
-import { UpdateFormSettingsInput } from "../../dto/updateFormSettings.input"
-import { InputSettings } from "../../models/inputSettings.model"
-
-
+import {
+  CreateFormInput,
+  DeleteFormInput,
+  GetFormInput,
+  GetFormsInput,
+  UpdateFormInput,
+} from '../../dto/forms.input'
+import { FormResponse } from '../../models/formResponse.model'
+import { FormListResponse } from '../../models/formListResponse.model'
+import { UpdateFormSettingsInput } from '../../dto/updateFormSettings.input'
+import { InputSettings } from '../../models/inputSettings.model'
 
 @Injectable()
 export class FormsService {
@@ -17,12 +30,12 @@ export class FormsService {
     @Inject(LOGGER_PROVIDER)
     private logger: Logger,
     private formsApi: FormsApi,
-  ) { }
+  ) {}
 
   handleError(error: any, errorDetail?: string): ApolloError | null {
     const err = {
       error: JSON.stringify(error),
-      category: 'forms-service'
+      category: 'forms-service',
     }
     this.logger.error(errorDetail || 'Error in forms service', err)
 
@@ -39,7 +52,6 @@ export class FormsService {
   private formsApiWithAuth(auth: User) {
     return this.formsApi.withMiddleware(new AuthMiddleware(auth))
   }
-
 
   async getForm(auth: User, input: GetFormInput): Promise<FormResponse> {
     const request: ApiFormsFormIdGetRequest = {
@@ -75,12 +87,13 @@ export class FormsService {
     }
     const response = await this.formsApiWithAuth(auth)
       .apiFormsOrganizationOrganizationIdGet(request)
-      .catch((e) => this.handle4xx(e, 'failed to get forms from organization Id'))
+      .catch((e) =>
+        this.handle4xx(e, 'failed to get forms from organization Id'),
+      )
 
     if (!response || response instanceof ApolloError) {
       return {}
     }
-
 
     return response as FormListResponse
   }
@@ -120,7 +133,7 @@ export class FormsService {
       id: input.formId,
       inputsList: input.form?.inputsList?.map((input) => {
         return input
-      })
+      }),
     }
 
     const request: ApiFormsFormIdPutRequest = {
@@ -140,12 +153,15 @@ export class FormsService {
     return response
   }
 
-  async updateFormSettings(auth: User, input: UpdateFormSettingsInput): Promise<void> {
+  async updateFormSettings(
+    auth: User,
+    input: UpdateFormSettingsInput,
+  ): Promise<void> {
     const request: ApiFormsFormIdSettingsPutRequest = {
       formId: input.id,
-      formSettingsUpdateDto: input.formSettingsUpdateDto as FormSettingsUpdateDto
+      formSettingsUpdateDto:
+        input.formSettingsUpdateDto as FormSettingsUpdateDto,
     }
-    console.log('updateFormSettings request', request)
     const response = await this.formsApiWithAuth(auth)
       .apiFormsFormIdSettingsPut(request)
       .catch((e) => this.handle4xx(e, 'failed to update form settings'))

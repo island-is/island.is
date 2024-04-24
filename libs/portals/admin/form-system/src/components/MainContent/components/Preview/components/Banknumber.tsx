@@ -2,7 +2,6 @@ import {
   GridRow as Row,
   GridColumn as Column,
   Input,
-  Box,
 } from '@island.is/island-ui/core'
 import { useRef, useState } from 'react'
 

@@ -1,5 +1,5 @@
-import { InputType, Field, Int } from "@nestjs/graphql"
-import { LanguageTypeInput } from "./language.input"
+import { InputType, Field, Int } from '@nestjs/graphql'
+import { LanguageTypeInput } from './language.input'
 
 @InputType('FormSystemApplicantTypeNameSuggestionInput')
 export class ApplicantTypeNameSuggestionInput {

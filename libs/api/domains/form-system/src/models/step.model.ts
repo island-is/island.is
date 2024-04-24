@@ -1,6 +1,6 @@
-import { Field, Int, ObjectType } from "@nestjs/graphql";
-import { LanguageType } from "./global.model";
-import { Group } from "./group.model";
+import { Field, Int, ObjectType } from '@nestjs/graphql'
+import { LanguageType } from './global.model'
+import { Group } from './group.model'
 
 @ObjectType('FormSystemStep')
 export class Step {
@@ -34,4 +34,3 @@ export class Step {
   @Field(() => [Group], { nullable: 'itemsAndList' })
   groups?: Group[] | null
 }
-

@@ -3,12 +3,12 @@ import * as styles from './selectNavComponent.css'
 import { Box, Checkbox } from '@island.is/island-ui/core'
 import { useContext } from 'react'
 import {
-  ItemType,
-  NavbarSelectStatus,
-} from '../../../types/interfaces'
-import FormBuilderContext from '../../../context/FormBuilderContext'
-import { FormSystemGroup, FormSystemInput, FormSystemStep } from '@island.is/api/schema'
+  FormSystemGroup,
+  FormSystemInput,
+  FormSystemStep,
+} from '@island.is/api/schema'
 import ControlContext from '../../../context/ControlContext'
+import { ItemType, NavbarSelectStatus } from '../../../lib/utils/interfaces'
 
 type Props = {
   type: ItemType
@@ -23,15 +23,16 @@ export default function SelectNavComponent({
   active,
   selectable,
 }: Props) {
-  const { control, controlDispatch, selectStatus } = useContext(ControlContext)
+  const { control, selectStatus, controlDispatch, updateSettings } =
+    useContext(ControlContext)
   const { activeItem, activeListItem, form } = control
   const activeGuid =
     selectStatus === NavbarSelectStatus.LIST_ITEM
       ? activeListItem?.guid ?? ''
       : activeItem?.data?.guid ?? ''
-  const connected =
-    form.dependencies[activeGuid]?.includes(data.guid as string) ||
-    !form.dependencies
+  const connected: boolean = form.dependencies[activeGuid]?.includes(
+    data.guid as string,
+  )
 
   const truncateText = (text: string, maxLength: number) => {
     return text.length > maxLength ? text.slice(0, maxLength) + '...' : text
@@ -72,6 +73,7 @@ export default function SelectNavComponent({
 
     return truncateText(name, maxLength)
   }
+
   return (
     <Box
       className={cn({
@@ -123,18 +125,19 @@ export default function SelectNavComponent({
             {truncateName(data?.name?.is ?? '')}
           </Box>
           {selectable && (
-            <Box style={{ paddingTop: '10px' }} marginLeft="auto">
+            <Box className={cn(styles.selectableComponent)} marginLeft="auto">
               <Checkbox
                 checked={connected}
-              // onChange={() => {
-              //   formDispatch({
-              //     type: 'addRemoveConnection',
-              //     payload: {
-              //       active: activeGuid,
-              //       item: data.guid,
-              //     },
-              //   })
-              // }}
+                onChange={() =>
+                  controlDispatch({
+                    type: 'TOGGLE_DEPENDENCY',
+                    payload: {
+                      activeId: activeGuid,
+                      itemId: data.guid as string,
+                      update: updateSettings,
+                    },
+                  })
+                }
               />
             </Box>
           )}
@@ -142,6 +145,4 @@ export default function SelectNavComponent({
       )}
     </Box>
   )
-
-
 }

@@ -1,23 +1,34 @@
-import { Inject, Injectable } from "@nestjs/common"
+import { Inject, Injectable } from '@nestjs/common'
 import { LOGGER_PROVIDER, Logger } from '@island.is/logging'
-import { ApiStepsPostRequest, ApiStepsStepIdDeleteRequest, ApiStepsStepIdGetRequest, ApiStepsStepIdPutRequest, StepsApi } from "@island.is/clients/form-system"
-import { ApolloError } from "@apollo/client"
+import {
+  ApiStepsPostRequest,
+  ApiStepsStepIdDeleteRequest,
+  ApiStepsStepIdGetRequest,
+  ApiStepsStepIdPutRequest,
+  StepsApi,
+} from '@island.is/clients/form-system'
+import { ApolloError } from '@apollo/client'
 import { AuthMiddleware, User } from '@island.is/auth-nest-tools'
-import { CreateStepInput, DeleteStepInput, GetStepInput, UpdateStepInput } from "../../dto/steps.input"
-import { Step } from "../../models/step.model"
+import {
+  CreateStepInput,
+  DeleteStepInput,
+  GetStepInput,
+  UpdateStepInput,
+} from '../../dto/steps.input'
+import { Step } from '../../models/step.model'
 
 @Injectable()
 export class StepsService {
   constructor(
     @Inject(LOGGER_PROVIDER)
     private logger: Logger,
-    private formsApi: StepsApi
-  ) { }
+    private formsApi: StepsApi,
+  ) {}
 
   handleError(error: any, errorDetail?: string): ApolloError | null {
     const err = {
       error: JSON.stringify(error),
-      category: 'steps-service'
+      category: 'steps-service',
     }
     this.logger.error(errorDetail || 'Error in steps service', err)
 
@@ -80,7 +91,7 @@ export class StepsService {
   async updateStep(auth: User, input: UpdateStepInput): Promise<void> {
     const request: ApiStepsStepIdPutRequest = {
       stepId: input.stepId,
-      stepUpdateDto: input.stepUpdateDto
+      stepUpdateDto: input.stepUpdateDto,
     }
 
     const response = await this.stepsApiWithAuth(auth)

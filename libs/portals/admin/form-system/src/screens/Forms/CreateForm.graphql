@@ -1,7 +1,4 @@
-
-mutation formSystemCreateForm(
-  $input: FormSystemCreateFormInput!
-) {
+mutation formSystemCreateForm($input: FormSystemCreateFormInput!) {
   formSystemCreateForm(input: $input) {
     form {
       id
@@ -73,8 +70,8 @@ mutation formSystemCreateForm(
       }
       inputsList {
         description {
-        is
-        en
+          is
+          en
         }
         displayOrder
         groupGuid
@@ -305,26 +302,25 @@ mutation formSystemCreateForm(
       type
     }
     inputTypes {
-        description {
+      description {
         is
         en
-        }
-        displayOrder
-        groupGuid
-        groupId
-        guid
-        id
-        inputFields
-        inputSettings
-        isHidden
-        isPartOfMultiSet
-        isRequired
-        name {
-          is
-          en
-        }
-        type
       }
+      displayOrder
+      groupGuid
+      groupId
+      guid
+      id
+      inputFields
+      inputSettings
+      isHidden
+      isPartOfMultiSet
+      isRequired
+      name {
+        is
+        en
+      }
+      type
+    }
   }
 }
-

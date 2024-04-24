@@ -15,10 +15,7 @@ const FormBuilderProviderApp: React.FC<AppProps> = ({
       defaultLocale="is"
       onError={() => undefined}
     >
-      <Provider
-        session={pageProps.session}
-        options={{ clientMaxAge: 120 }}
-      >
+      <Provider session={pageProps.session} options={{ clientMaxAge: 120 }}>
         <AuthProvider>
           <Layout>
             <main className="app">
@@ -28,7 +25,6 @@ const FormBuilderProviderApp: React.FC<AppProps> = ({
         </AuthProvider>
       </Provider>
     </IntlProvider>
-
   )
 }
 
@@ -37,10 +33,9 @@ export async function getInitialProps(appContext: AppContext) {
   const session = await getSession(ctx)
   return {
     pageProps: {
-      session: session
-    }
+      session: session,
+    },
   }
 }
 
 export default FormBuilderProviderApp
-

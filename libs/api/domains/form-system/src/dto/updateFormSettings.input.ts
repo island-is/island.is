@@ -1,9 +1,8 @@
-import { Field, InputType, Int } from "@nestjs/graphql"
-import { LanguageTypeInput } from "./language.input"
+import { Field, InputType, Int } from '@nestjs/graphql'
+import { LanguageTypeInput } from './language.input'
 import graphqlTypeJson from 'graphql-type-json'
-import { DocumentTypeUpdateInput } from "./documentType.input"
-import { FormApplicantTypeInput } from "./applicantType.input"
-
+import { DocumentTypeUpdateInput } from './documentType.input'
+import { FormApplicantTypeInput } from './applicantType.input'
 
 @InputType('FormSystemFormSettingsInput')
 export class FormSettingsInput {

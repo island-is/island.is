@@ -1,9 +1,13 @@
 import { useContext } from 'react'
 import { Box, Text } from '@island.is/island-ui/core'
 import SelectNavComponent from './components/SelectNavComponent'
-import { NavbarSelectStatus } from '../../types/interfaces'
 import ControlContext from '../../context/ControlContext'
-import { FormSystemGroup, FormSystemInput, FormSystemStep } from '@island.is/api/schema'
+import {
+  FormSystemGroup,
+  FormSystemInput,
+  FormSystemStep,
+} from '@island.is/api/schema'
+import { NavbarSelectStatus } from '../../lib/utils/interfaces'
 
 export default function NavbarSelect() {
   const { control, selectStatus } = useContext(ControlContext)

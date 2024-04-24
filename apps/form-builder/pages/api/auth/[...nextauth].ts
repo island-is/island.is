@@ -19,20 +19,20 @@ const providers = [
     clientSecret: env.identityServerClientId,
     clientId: env.identityServerClientId,
     domain: env.identityServerDomain,
-    protection: 'pkce'
-  })
+    protection: 'pkce',
+  }),
 ]
 
 const callbacks: CallbacksOptions = {
   signIn: signIn,
   jwt: jwt,
-  session: session
+  session: session,
 }
 
 async function signIn(
   user: AuthUser,
   account: Record<string, unknown>,
-  profile: Record<string, unknown>
+  profile: Record<string, unknown>,
 ): Promise<boolean> {
   return handleSignIn(user, account, profile, env.identityServerClientId)
 }
@@ -68,4 +68,3 @@ const handleAuth = (req: NextApiRequest, res: NextApiResponse) => {
 }
 
 export default handleAuth
-

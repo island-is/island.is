@@ -29,5 +29,5 @@ export const modules: PortalModule[] = [
   petitionModule,
   serviceDeskModule,
   signatureCollectionModule,
-  formSystemModule
+  formSystemModule,
 ]

@@ -88,3 +88,7 @@ export const navBackgroundDefault = styleVariants({
 export const customBackgroundDropdown = style({
   background: theme.color.blue100,
 })
+
+export const selectableComponent = style({
+  paddingTop: '10px',
+})

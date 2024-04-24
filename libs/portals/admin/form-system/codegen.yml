@@ -15,4 +15,4 @@ generates:
         DateTime: string
 hooks:
   afterAllFileWrite:
-  - prettier --write
+    - prettier --write

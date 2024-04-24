@@ -1,23 +1,36 @@
-import { Inject, Injectable } from "@nestjs/common"
+import { Inject, Injectable } from '@nestjs/common'
 import { LOGGER_PROVIDER, Logger } from '@island.is/logging'
-import { ApolloError } from "@apollo/client"
+import { ApolloError } from '@apollo/client'
 import { AuthMiddleware, User } from '@island.is/auth-nest-tools'
-import { GroupsApi, ApiGroupsGroupIdGetRequest, ApiGroupsPostRequest, ApiGroupsGroupIdDeleteRequest, ApiGroupsGroupIdPutRequest, GroupCreationDto, GroupUpdateDto } from "@island.is/clients/form-system"
-import { GetGroupInput, CreateGroupInput, DeleteGroupInput, UpdateGroupInput } from "../../dto/groups.input"
-import { Group } from "../../models/group.model"
+import {
+  GroupsApi,
+  ApiGroupsGroupIdGetRequest,
+  ApiGroupsPostRequest,
+  ApiGroupsGroupIdDeleteRequest,
+  ApiGroupsGroupIdPutRequest,
+  GroupCreationDto,
+  GroupUpdateDto,
+} from '@island.is/clients/form-system'
+import {
+  GetGroupInput,
+  CreateGroupInput,
+  DeleteGroupInput,
+  UpdateGroupInput,
+} from '../../dto/groups.input'
+import { Group } from '../../models/group.model'
 
 @Injectable()
 export class GroupsService {
   constructor(
     @Inject(LOGGER_PROVIDER)
     private logger: Logger,
-    private formsApi: GroupsApi
-  ) { }
+    private formsApi: GroupsApi,
+  ) {}
 
   handleError(error: any, errorDetail?: string): ApolloError | null {
     const err = {
       error: JSON.stringify(error),
-      category: 'groups-service'
+      category: 'groups-service',
     }
     this.logger.error(errorDetail || 'Error in groups service', err)
 
@@ -80,9 +93,8 @@ export class GroupsService {
   async updateGroup(auth: User, input: UpdateGroupInput): Promise<void> {
     const request: ApiGroupsGroupIdPutRequest = {
       groupId: input.groupId,
-      groupUpdateDto: input.groupUpdateDto as GroupUpdateDto
+      groupUpdateDto: input.groupUpdateDto as GroupUpdateDto,
     }
-    console.log('groups update request: ', request)
     const response = await this.groupsApiWithAuth(auth)
       .apiGroupsGroupIdPut(request)
       .catch((e) => this.handle4xx(e, 'failed to update group'))

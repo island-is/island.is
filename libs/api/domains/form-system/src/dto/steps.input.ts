@@ -1,6 +1,6 @@
-import { Field, InputType, Int } from "@nestjs/graphql"
-import { LanguageTypeInput } from "./language.input"
-import { GroupInput } from "./groups.input"
+import { Field, InputType, Int } from '@nestjs/graphql'
+import { LanguageTypeInput } from './language.input'
+import { GroupInput } from './groups.input'
 
 @InputType('FormSystemStepCreation')
 export class CreateStep {

@@ -1,6 +1,5 @@
-import { createContext } from "react";
-import { User } from "../types/interfaces";
-
+import { createContext } from 'react'
+import { User } from '../types/interfaces'
 
 const UserContext = createContext({
   isAuthenticated: false,

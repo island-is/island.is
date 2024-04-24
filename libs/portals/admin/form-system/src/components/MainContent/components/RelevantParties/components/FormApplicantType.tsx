@@ -8,7 +8,10 @@ import {
   Stack,
   Text,
 } from '@island.is/island-ui/core'
-import { FormSystemFormApplicantType, FormSystemLanguageType } from '@island.is/api/schema'
+import {
+  FormSystemFormApplicantType,
+  FormSystemLanguageType,
+} from '@island.is/api/schema'
 
 interface Props {
   title: string
@@ -46,13 +49,14 @@ const FormApplicantType = ({
   const other = { label: 'Annað', value: 'Annað' }
 
   const getOptions = () => {
-    const options = nameSuggestions?.map((suggestion) => {
-      return {
-        label: suggestion?.is ?? '',
-        value: suggestion?.en ?? '',
-      }
-    }) || []
-    options.push(other);
+    const options =
+      nameSuggestions?.map((suggestion) => {
+        return {
+          label: suggestion?.is ?? '',
+          value: suggestion?.en ?? '',
+        }
+      }) || []
+    options.push(other)
     return options
   }
 
@@ -70,18 +74,20 @@ const FormApplicantType = ({
     language: 'is' | 'en',
   ) => {
     setFormApplicantTypes((prev: FormSystemFormApplicantType[]) => {
-      const newApplicantTypes = prev.map((f: FormSystemFormApplicantType, i: number) => {
-        if (i === index) {
-          return {
-            ...f,
-            name: {
-              ...f.name,
-              [language]: e.target.value,
-            },
+      const newApplicantTypes = prev.map(
+        (f: FormSystemFormApplicantType, i: number) => {
+          if (i === index) {
+            return {
+              ...f,
+              name: {
+                ...f.name,
+                [language]: e.target.value,
+              },
+            }
           }
-        }
-        return f
-      })
+          return f
+        },
+      )
       return newApplicantTypes
     })
   }
@@ -106,7 +112,9 @@ const FormApplicantType = ({
                 isOther ? other : { label: name.is ?? '', value: name.en ?? '' }
               }
               options={getOptions()}
-              onChange={(e) => handleSelectChange(e ?? { label: '', value: '' })}
+              onChange={(e) =>
+                handleSelectChange(e ?? { label: '', value: '' })
+              }
             />
           </Column>
         </Row>

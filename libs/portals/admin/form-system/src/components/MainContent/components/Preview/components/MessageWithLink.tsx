@@ -1,13 +1,8 @@
-import { FormSystemInput } from "@island.is/api/schema"
-import {
-  Box,
-  Button,
-  Text
-} from "@island.is/island-ui/core"
+import { FormSystemInput } from '@island.is/api/schema'
+import { Box, Button, Text } from '@island.is/island-ui/core'
 
 interface Props {
   data: FormSystemInput
-
 }
 
 const MessageWithLink = ({ data }: Props) => {
@@ -24,8 +19,8 @@ const MessageWithLink = ({ data }: Props) => {
       flexDirection={'row'}
       display={'flex'}
       padding={4}
-      background={"white"}
-      alignItems={"center"}
+      background={'white'}
+      alignItems={'center'}
     >
       <Box display="flex" flexDirection="column">
         <Box paddingBottom={1}>

@@ -1,6 +1,4 @@
-mutation formSystemCreateStep(
-  $input: FormSystemCreateStepInput!
-) {
+mutation formSystemCreateStep($input: FormSystemCreateStepInput!) {
   formSystemCreateStep(input: $input) {
     callRuleset
     displayOrder
@@ -54,14 +52,10 @@ mutation formSystemCreateStep(
   }
 }
 
-mutation formSystemDeleteStep(
-  $input: FormSystemDeleteStepInput!
-) {
+mutation formSystemDeleteStep($input: FormSystemDeleteStepInput!) {
   formSystemDeleteStep(input: $input)
 }
 
-mutation formSystemUpdateStep(
-  $input: FormSystemUpdateStepInput!
-) {
+mutation formSystemUpdateStep($input: FormSystemUpdateStepInput!) {
   formSystemUpdateStep(input: $input)
 }

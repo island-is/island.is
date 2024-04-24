@@ -1,6 +1,6 @@
-import { useContext } from "react"
-import ControlContext from "../../../../../context/ControlContext"
-import { FormSystemInput } from "@island.is/api/schema"
+import { useContext } from 'react'
+import ControlContext from '../../../../../context/ControlContext'
+import { FormSystemInput } from '@island.is/api/schema'
 import {
   Stack,
   GridRow as Row,
@@ -8,20 +8,28 @@ import {
   Select,
   Option,
   Input,
-  Checkbox
-} from "@island.is/island-ui/core"
-import { SingleValue } from "react-select"
-
+  Checkbox,
+} from '@island.is/island-ui/core'
+import { SingleValue } from 'react-select'
 
 const BaseInput = () => {
-  const { control, controlDispatch, setFocus, focus, inputTypes, updateActiveItem } = useContext(ControlContext)
+  const {
+    control,
+    controlDispatch,
+    setFocus,
+    focus,
+    inputTypes,
+    updateActiveItem,
+  } = useContext(ControlContext)
   const { activeItem } = control
   const currentItem = activeItem.data as FormSystemInput
 
-  const sortedInputTypes = inputTypes?.map(i => ({
-    label: i?.type ?? '',
-    value: i?.type ?? '',
-  })).sort((a, b) => (a?.label ?? '').localeCompare(b?.label ?? ''))
+  const sortedInputTypes = inputTypes
+    ?.map((i) => ({
+      label: i?.type ?? '',
+      value: i?.type ?? '',
+    }))
+    .sort((a, b) => (a?.label ?? '').localeCompare(b?.label ?? ''))
 
   const defaultOption =
     currentItem.type === ''
@@ -45,9 +53,11 @@ const BaseInput = () => {
                 type: 'CHANGE_INPUT_TYPE',
                 payload: {
                   newValue: e?.value ?? '',
-                  inputSettings: inputTypes?.find((i) => i?.type === e?.value)?.inputSettings ?? {},
-                  update: updateActiveItem
-                }
+                  inputSettings:
+                    inputTypes?.find((i) => i?.type === e?.value)
+                      ?.inputSettings ?? {},
+                  update: updateActiveItem,
+                },
               })
             }
           />
@@ -61,13 +71,15 @@ const BaseInput = () => {
             name="name"
             value={currentItem?.name?.is ?? ''}
             backgroundColor="blue"
-            onChange={(e) => controlDispatch({
-              type: 'CHANGE_NAME',
-              payload: {
-                lang: 'is',
-                newValue: e.target.value,
-              },
-            })}
+            onChange={(e) =>
+              controlDispatch({
+                type: 'CHANGE_NAME',
+                payload: {
+                  lang: 'is',
+                  newValue: e.target.value,
+                },
+              })
+            }
             onFocus={(e) => setFocus(e.target.value)}
             onBlur={(e) => e.target.value !== focus && updateActiveItem()}
           />
@@ -81,13 +93,15 @@ const BaseInput = () => {
             name="nameEn"
             value={currentItem?.name?.en ?? ''}
             backgroundColor="blue"
-            onChange={(e) => controlDispatch({
-              type: 'CHANGE_NAME',
-              payload: {
-                lang: 'en',
-                newValue: e.target.value,
-              },
-            })}
+            onChange={(e) =>
+              controlDispatch({
+                type: 'CHANGE_NAME',
+                payload: {
+                  lang: 'en',
+                  newValue: e.target.value,
+                },
+              })
+            }
             onFocus={(e) => setFocus(e.target.value)}
             onBlur={(e) => e.target.value !== focus && updateActiveItem()}
           />
@@ -106,13 +120,15 @@ const BaseInput = () => {
                 backgroundColor="blue"
                 onFocus={(e) => setFocus(e.target.value)}
                 onBlur={(e) => e.target.value !== focus && updateActiveItem()}
-                onChange={(e) => controlDispatch({
-                  type: 'CHANGE_DESCRIPTION',
-                  payload: {
-                    lang: 'is',
-                    newValue: e.target.value,
-                  },
-                })}
+                onChange={(e) =>
+                  controlDispatch({
+                    type: 'CHANGE_DESCRIPTION',
+                    payload: {
+                      lang: 'is',
+                      newValue: e.target.value,
+                    },
+                  })
+                }
               />
             </Column>
           </Row>
@@ -126,13 +142,15 @@ const BaseInput = () => {
                 backgroundColor="blue"
                 onFocus={(e) => setFocus(e.target.value)}
                 onBlur={(e) => e.target.value !== focus && updateActiveItem()}
-                onChange={(e) => controlDispatch({
-                  type: 'CHANGE_DESCRIPTION',
-                  payload: {
-                    lang: 'en',
-                    newValue: e.target.value,
-                  },
-                })}
+                onChange={(e) =>
+                  controlDispatch({
+                    type: 'CHANGE_DESCRIPTION',
+                    payload: {
+                      lang: 'en',
+                      newValue: e.target.value,
+                    },
+                  })
+                }
               />
             </Column>
           </Row>
@@ -149,7 +167,7 @@ const BaseInput = () => {
                 type: 'CHANGE_IS_REQUIRED',
                 payload: {
                   update: updateActiveItem,
-                }
+                },
               })
             }
           />

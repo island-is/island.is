@@ -1,23 +1,26 @@
-import { Inject, Injectable } from "@nestjs/common";
+import { Inject, Injectable } from '@nestjs/common'
 import { LOGGER_PROVIDER, Logger } from '@island.is/logging'
-import { ApolloError } from "@apollo/client"
+import { ApolloError } from '@apollo/client'
 import { AuthMiddleware, User } from '@island.is/auth-nest-tools'
-import { ApiServicesFasteignFasteignanumerGetRequest, ServicesApi } from "@island.is/clients/form-system"
-import { List } from "../../models/services.model";
-import { GetPropertyInput } from "../../dto/services.input";
+import {
+  ApiServicesFasteignFasteignanumerGetRequest,
+  ServicesApi,
+} from '@island.is/clients/form-system'
+import { List } from '../../models/services.model'
+import { GetPropertyInput } from '../../dto/services.input'
 
 @Injectable()
 export class FormSystemService {
   constructor(
     @Inject(LOGGER_PROVIDER)
     private logger: Logger,
-    private servicesApi: ServicesApi
-  ) { }
+    private servicesApi: ServicesApi,
+  ) {}
 
   handleError(error: any, errorDetail?: string): ApolloError | null {
     const err = {
       error: JSON.stringify(error),
-      category: 'services-service'
+      category: 'services-service',
     }
     this.logger.error(errorDetail || 'Error in services service', err)
 

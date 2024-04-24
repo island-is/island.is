@@ -1,10 +1,10 @@
-import { Dispatch, SetStateAction, useContext, useEffect } from "react"
+import { Dispatch, SetStateAction, useContext, useEffect } from 'react'
 import { Box, Button, Text } from '@island.is/island-ui/core'
-import ControlContext from "../../../../context/ControlContext"
-import { FormSystemGroup, FormSystemInput } from "@island.is/api/schema"
-import { NavbarSelectStatus } from "../../../../lib/utils/interfaces"
-import Preview from "../Preview/Preveiw"
-import MultiSet from "./components/MultiSet"
+import ControlContext from '../../../../context/ControlContext'
+import { FormSystemGroup, FormSystemInput } from '@island.is/api/schema'
+import { NavbarSelectStatus } from '../../../../lib/utils/interfaces'
+import Preview from '../Preview/Preveiw'
+import MultiSet from './components/MultiSet'
 
 interface Props {
   setOpenPreview: Dispatch<SetStateAction<boolean>>
@@ -45,10 +45,7 @@ const PreviewStepOrGroup = ({ setOpenPreview }: Props) => {
                   inputs
                     ?.filter((i) => i?.groupGuid === g?.guid)
                     .map((i) => (
-                      <Preview
-                        key={i?.guid}
-                        data={i as FormSystemInput}
-                      />
+                      <Preview key={i?.guid} data={i as FormSystemInput} />
                     ))
                 )}
               </Box>
@@ -65,12 +62,7 @@ const PreviewStepOrGroup = ({ setOpenPreview }: Props) => {
           ) : (
             inputs
               ?.filter((i) => i?.groupGuid === activeItem?.data?.guid)
-              .map((i) => (
-                <Preview
-                  key={i?.guid}
-                  data={i as FormSystemInput}
-                />
-              ))
+              .map((i) => <Preview key={i?.guid} data={i as FormSystemInput} />)
           )}
         </Box>
       )}

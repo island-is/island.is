@@ -16,7 +16,6 @@ const FileUpload = ({ currentItem }: Props) => {
   const [error, setError] = useState<string | undefined>(undefined)
   const [fileList, setFileList] = useState<Array<UploadFile>>([])
 
-
   const onChange = (files: File[]) => {
     const uploadFiles = files.map((file) => fileToObject(file))
     const uploadFilesWithKey = uploadFiles.map((f) => ({

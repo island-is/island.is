@@ -1,6 +1,4 @@
-mutation formSystemCreateInput(
-  $input: FormSystemCreateInputInput!
-  ) {
+mutation formSystemCreateInput($input: FormSystemCreateInputInput!) {
   formSystemCreateInput(input: $input) {
     id
     name {
@@ -24,21 +22,15 @@ mutation formSystemCreateInput(
   }
 }
 
-mutation formSystemDeleteInput(
-  $input: FormSystemDeleteInputInput!
-) {
+mutation formSystemDeleteInput($input: FormSystemDeleteInputInput!) {
   formSystemDeleteInput(input: $input)
 }
 
-mutation formSystemUpdateInput(
-  $input: FormSystemUpdateInputInput!
-) {
+mutation formSystemUpdateInput($input: FormSystemUpdateInputInput!) {
   formSystemUpdateInput(input: $input)
 }
 
-query formSystemGetInput(
-  $input: FormSystemGetInputInput!
-) {
+query formSystemGetInput($input: FormSystemGetInputInput!) {
   formSystemGetInput(input: $input) {
     id
     name {

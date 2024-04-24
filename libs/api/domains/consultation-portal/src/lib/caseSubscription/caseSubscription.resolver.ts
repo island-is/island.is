@@ -25,7 +25,7 @@ import { Audit } from '@island.is/nest/audit'
 @FeatureFlag(Features.consultationPortalApplication)
 @Audit({ namespace: '@island.is/samradsgatt' })
 export class CaseSubscriptionResolver {
-  constructor(private caseSubscriptionService: CaseSubscriptionService) { }
+  constructor(private caseSubscriptionService: CaseSubscriptionService) {}
 
   @Mutation(() => Boolean, {
     nullable: true,

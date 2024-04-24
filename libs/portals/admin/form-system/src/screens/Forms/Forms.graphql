@@ -1,6 +1,4 @@
-query formSystemGetForms(
-  $input: FormSystemGetFormsInput!
-) {
+query formSystemGetForms($input: FormSystemGetFormsInput!) {
   formSystemGetForms(input: $input) {
     forms {
       id
@@ -17,4 +15,3 @@ query formSystemGetForms(
     }
   }
 }
-

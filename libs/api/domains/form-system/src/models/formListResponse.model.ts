@@ -1,5 +1,5 @@
-import { Field, ObjectType } from "@nestjs/graphql";
-import { Form } from "./form.model";
+import { Field, ObjectType } from '@nestjs/graphql'
+import { Form } from './form.model'
 
 @ObjectType('FormSystemFormListResponse')
 export class FormListResponse {

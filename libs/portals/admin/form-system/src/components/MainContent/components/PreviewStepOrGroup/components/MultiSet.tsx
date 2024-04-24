@@ -12,7 +12,8 @@ const MultiSet = ({ group }: Props) => {
   const { inputsList: inputs } = control.form
   const originalInput = inputs?.filter((i) => i?.groupGuid === group.guid)
   const [multiInput, setMultiInput] = useState<FormSystemInput[][]>([
-    (inputs?.filter((i) => i?.groupGuid === group.guid) || []) as FormSystemInput[],
+    (inputs?.filter((i) => i?.groupGuid === group.guid) ||
+      []) as FormSystemInput[],
   ])
   const add = () => {
     if (originalInput) {
@@ -24,10 +25,7 @@ const MultiSet = ({ group }: Props) => {
       {multiInput.map((inputArray, index) => (
         <div key={index}>
           {inputArray.map((i) => (
-            <Preview
-              key={i.guid}
-              data={i}
-            />
+            <Preview key={i.guid} data={i} />
           ))}
         </div>
       ))}

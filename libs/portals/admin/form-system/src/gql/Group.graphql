@@ -1,6 +1,4 @@
-mutation formSystemCreateGroup(
-  $input: FormSystemCreateGroupInput!
-) {
+mutation formSystemCreateGroup($input: FormSystemCreateGroupInput!) {
   formSystemCreateGroup(input: $input) {
     displayOrder
     guid
@@ -37,14 +35,10 @@ mutation formSystemCreateGroup(
   }
 }
 
-mutation formSystemDeleteGroup(
-  $input: FormSystemDeleteGroupInput!
-) {
+mutation formSystemDeleteGroup($input: FormSystemDeleteGroupInput!) {
   formSystemDeleteGroup(input: $input)
 }
 
-mutation formSystemUpdateGroup(
-  $input: FormSystemUpdateGroupInput!
-) {
+mutation formSystemUpdateGroup($input: FormSystemUpdateGroupInput!) {
   formSystemUpdateGroup(input: $input)
 }

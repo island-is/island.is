@@ -13,11 +13,11 @@ import { AnimatePresence, motion } from 'framer-motion'
 import { useNavigate } from 'react-router-dom'
 import TranslationTag from '../TranslationTag/TranslationTag'
 import { formatDate } from '../../utils/formatDate'
-import {
-  ApplicationTemplateStatus,
-  LicenseProviderEnum,
-} from '../../types/enums'
 import { FormSystemPaths } from '../../lib/paths'
+import {
+  LicenseProviderEnum,
+  ApplicationTemplateStatus,
+} from '../../lib/utils/interfaces'
 
 interface Props {
   id?: number | null
@@ -101,12 +101,14 @@ const TableRow = ({
                 {
                   title: 'Breyta',
                   onClick: () => {
-                    navigate(FormSystemPaths.Form.replace(':formId', String(id)),
+                    navigate(
+                      FormSystemPaths.Form.replace(':formId', String(id)),
                       {
                         state: {
-                          formId: id
-                        }
-                      })
+                          formId: id,
+                        },
+                      },
+                    )
                   },
                 },
                 {

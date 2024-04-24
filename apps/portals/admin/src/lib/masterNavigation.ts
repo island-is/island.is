@@ -44,7 +44,7 @@ export const TOP_NAVIGATION: PortalNavigationItem = {
     serviceDeskNavigation,
     // Meðmælasöfnun
     signatureCollectionNavigation,
-    formSystemNavigation
+    formSystemNavigation,
   ],
 }
 export const BOTTOM_NAVIGATION: PortalNavigationItem = {

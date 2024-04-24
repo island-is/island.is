@@ -20,12 +20,22 @@ interface Props {
 }
 
 const ListItem = ({ listItem, connecting, index, setConnecting }: Props) => {
-  const { control, controlDispatch, setFocus, focus, setSelectStatus, updateActiveItem } = useContext(ControlContext)
+  const {
+    control,
+    controlDispatch,
+    setFocus,
+    focus,
+    setSelectStatus,
+    updateActiveItem,
+  } = useContext(ControlContext)
   const { activeItem } = control
   const currentItem = activeItem.data as FormSystemInput
   const isRadio = currentItem.type === 'Valhnappar'
 
-  const { setNodeRef, attributes, listeners, isDragging } = useSortable({ id: listItem.guid ?? '', data: { listItem } })
+  const { setNodeRef, attributes, listeners, isDragging } = useSortable({
+    id: listItem.guid ?? '',
+    data: { listItem },
+  })
 
   if (isDragging) {
     return (
@@ -53,13 +63,13 @@ const ListItem = ({ listItem, connecting, index, setConnecting }: Props) => {
               label="Tengja"
               checked={false}
               // eslint-disable-next-line @typescript-eslint/no-empty-function
-              onChange={() => { }}
+              onChange={() => {}}
             />
             <ToggleSwitchCheckbox
               label="Sjálfvalið"
               checked={listItem?.isSelected ?? false}
               // eslint-disable-next-line @typescript-eslint/no-empty-function
-              onChange={() => { }}
+              onChange={() => {}}
             />
           </Box>
           <Box display="flex" flexDirection="row" alignItems="center">
@@ -67,7 +77,7 @@ const ListItem = ({ listItem, connecting, index, setConnecting }: Props) => {
               marginRight={2}
               style={{ cursor: 'pointer' }}
               // eslint-disable-next-line @typescript-eslint/no-empty-function
-              onClick={() => { }}
+              onClick={() => {}}
             >
               <Icon icon="trash" color="blue400" />
             </Box>
@@ -85,7 +95,7 @@ const ListItem = ({ listItem, connecting, index, setConnecting }: Props) => {
               size="sm"
               value={listItem?.label?.is ?? ''}
               // eslint-disable-next-line @typescript-eslint/no-empty-function
-              onChange={() => { }}
+              onChange={() => {}}
             />
           </Column>
           <Column span="5/10">
@@ -96,7 +106,7 @@ const ListItem = ({ listItem, connecting, index, setConnecting }: Props) => {
               size="sm"
               value={listItem?.label?.en ?? ''}
               // eslint-disable-next-line @typescript-eslint/no-empty-function
-              onChange={() => { }}
+              onChange={() => {}}
             />
           </Column>
         </Row>
@@ -135,12 +145,15 @@ const ListItem = ({ listItem, connecting, index, setConnecting }: Props) => {
               setSelectStatus(
                 e
                   ? NavbarSelectStatus.LIST_ITEM
-                  : NavbarSelectStatus.ON_WITHOUT_SELECT
+                  : NavbarSelectStatus.ON_WITHOUT_SELECT,
               )
               setConnecting((prev) =>
-                prev.map((_, i) => (i === index ? e : false))
+                prev.map((_, i) => (i === index ? e : false)),
               )
-              controlDispatch({ type: 'SET_ACTIVE_LIST_ITEM', payload: { listItem: e ? listItem : null } })
+              controlDispatch({
+                type: 'SET_ACTIVE_LIST_ITEM',
+                payload: { listItem: e ? listItem : null },
+              })
             }}
           />
           <ToggleSwitchCheckbox
@@ -152,7 +165,7 @@ const ListItem = ({ listItem, connecting, index, setConnecting }: Props) => {
                 payload: {
                   guid: listItem.guid ?? '',
                   update: updateActiveItem,
-                }
+                },
               })
             }
           />
@@ -280,6 +293,5 @@ const ListItem = ({ listItem, connecting, index, setConnecting }: Props) => {
     </Box>
   )
 }
-
 
 export default ListItem

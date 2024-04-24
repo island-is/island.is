@@ -1,12 +1,8 @@
-mutation formSystemUpdateForm(
-  $input: FormSystemUpdateFormInput!
-) {
+mutation formSystemUpdateForm($input: FormSystemUpdateFormInput!) {
   formSystemUpdateForm(input: $input)
 }
 
-query formSystemGetForm(
-  $input: FormSystemGetFormInput!
-) {
+query formSystemGetForm($input: FormSystemGetFormInput!) {
   formSystemGetForm(input: $input) {
     form {
       id
@@ -255,33 +251,30 @@ query formSystemGetForm(
       type
     }
     inputTypes {
-        description {
+      description {
         is
         en
-        }
-        displayOrder
-        groupGuid
-        groupId
-        guid
-        id
-        inputFields
-        inputSettings
-        isHidden
-        isPartOfMultiSet
-        isRequired
-        name {
-          is
-          en
-        }
-        type
       }
+      displayOrder
+      groupGuid
+      groupId
+      guid
+      id
+      inputFields
+      inputSettings
+      isHidden
+      isPartOfMultiSet
+      isRequired
+      name {
+        is
+        en
+      }
+      type
+    }
   }
 }
 
-
-mutation formSystemCreateForm(
-  $input: FormSystemCreateFormInput!
-) {
+mutation formSystemCreateForm($input: FormSystemCreateFormInput!) {
   formSystemCreateForm(input: $input) {
     form {
       id
@@ -353,8 +346,8 @@ mutation formSystemCreateForm(
       }
       inputsList {
         description {
-        is
-        en
+          is
+          en
         }
         displayOrder
         groupGuid
@@ -585,31 +578,29 @@ mutation formSystemCreateForm(
       type
     }
     inputTypes {
-        description {
+      description {
         is
         en
-        }
-        displayOrder
-        groupGuid
-        groupId
-        guid
-        id
-        inputFields
-        inputSettings
-        isHidden
-        isPartOfMultiSet
-        isRequired
-        name {
-          is
-          en
-        }
-        type
       }
+      displayOrder
+      groupGuid
+      groupId
+      guid
+      id
+      inputFields
+      inputSettings
+      isHidden
+      isPartOfMultiSet
+      isRequired
+      name {
+        is
+        en
+      }
+      type
+    }
   }
 }
 
-mutation formSystemDeleteForm(
-  $input: FormSystemDeleteFormInput!
-) {
+mutation formSystemDeleteForm($input: FormSystemDeleteFormInput!) {
   formSystemDeleteForm(input: $input)
 }

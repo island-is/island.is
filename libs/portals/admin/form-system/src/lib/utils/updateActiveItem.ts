@@ -1,20 +1,27 @@
-import { ActiveItem } from "./interfaces"
-import { useFormSystemUpdateStepMutation } from "../../gql/Step.generated"
-import { useFormSystemUpdateGroupMutation } from "../../gql/Group.generated"
-import { useFormSystemUpdateInputMutation } from "../../gql/Input.generated"
-import { FormSystemStep, FormSystemGroup, FormSystemInput } from "@island.is/api/schema"
+import { ActiveItem } from './interfaces'
+import { useFormSystemUpdateStepMutation } from '../../gql/Step.generated'
+import { useFormSystemUpdateGroupMutation } from '../../gql/Group.generated'
+import { useFormSystemUpdateInputMutation } from '../../gql/Input.generated'
+import {
+  FormSystemStep,
+  FormSystemGroup,
+  FormSystemInput,
+} from '@island.is/api/schema'
 
 export const updateActiveItemFn = (
   activeItem: ActiveItem,
   updateStep = useFormSystemUpdateStepMutation()[0],
   updateGroup = useFormSystemUpdateGroupMutation()[0],
   updateInput = useFormSystemUpdateInputMutation()[0],
-  currentActiveItem?: ActiveItem
+  currentActiveItem?: ActiveItem,
 ) => {
   const { type } = activeItem
   try {
     if (type === 'Step') {
-      const { id, name, type, displayOrder, waitingText, callRuleset } = currentActiveItem ? currentActiveItem.data as FormSystemStep : activeItem.data as FormSystemStep
+      const { id, name, type, displayOrder, waitingText, callRuleset } =
+        currentActiveItem
+          ? (currentActiveItem.data as FormSystemStep)
+          : (activeItem.data as FormSystemStep)
       updateStep({
         variables: {
           input: {
@@ -25,13 +32,16 @@ export const updateActiveItemFn = (
               type: type,
               displayOrder: displayOrder,
               waitingText: waitingText,
-              callRuleset: callRuleset
-            }
-          }
-        }
+              callRuleset: callRuleset,
+            },
+          },
+        },
       })
     } else if (type === 'Group') {
-      const { id, name, guid, displayOrder, multiSet, stepId } = currentActiveItem ? currentActiveItem.data as FormSystemGroup : activeItem.data as FormSystemGroup
+      const { id, name, guid, displayOrder, multiSet, stepId } =
+        currentActiveItem
+          ? (currentActiveItem.data as FormSystemGroup)
+          : (activeItem.data as FormSystemGroup)
       updateGroup({
         variables: {
           input: {
@@ -42,7 +52,7 @@ export const updateActiveItemFn = (
               guid,
               displayOrder,
               multiSet,
-              stepId
+              stepId,
             },
           },
         },
@@ -58,8 +68,10 @@ export const updateActiveItemFn = (
         type,
         inputSettings,
         isPartOfMultiSet,
-        groupId
-      } = currentActiveItem ? currentActiveItem.data as FormSystemInput : activeItem.data as FormSystemInput
+        groupId,
+      } = currentActiveItem
+        ? (currentActiveItem.data as FormSystemInput)
+        : (activeItem.data as FormSystemInput)
       updateInput({
         variables: {
           input: {
@@ -78,7 +90,7 @@ export const updateActiveItemFn = (
             },
           },
         },
-      });
+      })
     }
   } catch (e) {
     console.error('Error updating active item: ', e)

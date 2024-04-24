@@ -3,10 +3,15 @@ import { useContext, useState } from 'react'
 import ControlContext from '../../../../context/ControlContext'
 import { FormSystemDocumentType } from '@island.is/api/schema'
 
-
 const Premises = () => {
   const { control, documentTypes, updateSettings } = useContext(ControlContext)
-  const [formDocumentTypes, setFormDocumentTypes] = useState<FormSystemDocumentType[]>(control.form?.documentTypes?.filter((d): d is FormSystemDocumentType => d !== null) ?? [])
+  const [formDocumentTypes, setFormDocumentTypes] = useState<
+    FormSystemDocumentType[]
+  >(
+    control.form?.documentTypes?.filter(
+      (d): d is FormSystemDocumentType => d !== null,
+    ) ?? [],
+  )
 
   const handleCheckboxChange = (documentTypeId: number) => {
     if (documentTypeId === -1) return
@@ -15,9 +20,9 @@ const Premises = () => {
     )
       ? formDocumentTypes.filter((f) => f?.id !== documentTypeId)
       : ([
-        ...formDocumentTypes,
-        documentTypes?.find((d) => d?.id === documentTypeId),
-      ].filter((d) => d !== undefined) as FormSystemDocumentType[])
+          ...formDocumentTypes,
+          documentTypes?.find((d) => d?.id === documentTypeId),
+        ].filter((d) => d !== undefined) as FormSystemDocumentType[])
     setFormDocumentTypes(newDocumentTypes)
     updateSettings({ ...control.form, documentTypes: newDocumentTypes })
   }
@@ -49,7 +54,8 @@ const Premises = () => {
           )
         })}
       </Stack>
-    </Box>)
+    </Box>
+  )
 }
 
 export default Premises

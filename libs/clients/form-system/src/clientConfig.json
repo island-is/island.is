@@ -7,9 +7,7 @@
   "paths": {
     "/api/Files": {
       "post": {
-        "tags": [
-          "Files"
-        ],
+        "tags": ["Files"],
         "requestBody": {
           "content": {
             "multipart/form-data": {
@@ -42,9 +40,7 @@
     },
     "/api/Forms/Organization/{organizationId}": {
       "get": {
-        "tags": [
-          "Forms"
-        ],
+        "tags": ["Forms"],
         "parameters": [
           {
             "name": "organizationId",
@@ -82,9 +78,7 @@
     },
     "/api/Forms/{formId}": {
       "get": {
-        "tags": [
-          "Forms"
-        ],
+        "tags": ["Forms"],
         "parameters": [
           {
             "name": "formId",
@@ -120,9 +114,7 @@
         }
       },
       "put": {
-        "tags": [
-          "Forms"
-        ],
+        "tags": ["Forms"],
         "parameters": [
           {
             "name": "formId",
@@ -160,9 +152,7 @@
         }
       },
       "delete": {
-        "tags": [
-          "Forms"
-        ],
+        "tags": ["Forms"],
         "parameters": [
           {
             "name": "formId",
@@ -183,9 +173,7 @@
     },
     "/api/Forms/{organizationId}": {
       "post": {
-        "tags": [
-          "Forms"
-        ],
+        "tags": ["Forms"],
         "parameters": [
           {
             "name": "organizationId",
@@ -223,9 +211,7 @@
     },
     "/api/Forms/{formId}/settings": {
       "put": {
-        "tags": [
-          "Forms"
-        ],
+        "tags": ["Forms"],
         "parameters": [
           {
             "name": "formId",
@@ -265,9 +251,7 @@
     },
     "/api/Groups/{groupId}": {
       "get": {
-        "tags": [
-          "Groups"
-        ],
+        "tags": ["Groups"],
         "parameters": [
           {
             "name": "groupId",
@@ -303,9 +287,7 @@
         }
       },
       "delete": {
-        "tags": [
-          "Groups"
-        ],
+        "tags": ["Groups"],
         "parameters": [
           {
             "name": "groupId",
@@ -324,9 +306,7 @@
         }
       },
       "put": {
-        "tags": [
-          "Groups"
-        ],
+        "tags": ["Groups"],
         "parameters": [
           {
             "name": "groupId",
@@ -366,9 +346,7 @@
     },
     "/api/Groups": {
       "post": {
-        "tags": [
-          "Groups"
-        ],
+        "tags": ["Groups"],
         "requestBody": {
           "content": {
             "application/json": {
@@ -414,9 +392,7 @@
     },
     "/api/Inputs/{inputId}": {
       "get": {
-        "tags": [
-          "Inputs"
-        ],
+        "tags": ["Inputs"],
         "parameters": [
           {
             "name": "inputId",
@@ -452,9 +428,7 @@
         }
       },
       "put": {
-        "tags": [
-          "Inputs"
-        ],
+        "tags": ["Inputs"],
         "parameters": [
           {
             "name": "inputId",
@@ -492,9 +466,7 @@
         }
       },
       "delete": {
-        "tags": [
-          "Inputs"
-        ],
+        "tags": ["Inputs"],
         "parameters": [
           {
             "name": "inputId",
@@ -515,9 +487,7 @@
     },
     "/api/Inputs": {
       "post": {
-        "tags": [
-          "Inputs"
-        ],
+        "tags": ["Inputs"],
         "requestBody": {
           "content": {
             "application/json": {
@@ -563,9 +533,7 @@
     },
     "/api/Organizations": {
       "post": {
-        "tags": [
-          "Organizations"
-        ],
+        "tags": ["Organizations"],
         "requestBody": {
           "content": {
             "application/json": {
@@ -611,9 +579,7 @@
     },
     "/api/Services/Fasteign/{fasteignanumer}": {
       "get": {
-        "tags": [
-          "Services"
-        ],
+        "tags": ["Services"],
         "parameters": [
           {
             "name": "fasteignanumer",
@@ -650,9 +616,7 @@
     },
     "/api/Services/IdngreinarMeistara": {
       "get": {
-        "tags": [
-          "Services"
-        ],
+        "tags": ["Services"],
         "responses": {
           "200": {
             "description": "Success",
@@ -679,9 +643,7 @@
     },
     "/api/Services/Skraningarflokkar": {
       "get": {
-        "tags": [
-          "Services"
-        ],
+        "tags": ["Services"],
         "responses": {
           "200": {
             "description": "Success",
@@ -708,9 +670,7 @@
     },
     "/api/Services/Sveitarfelog": {
       "get": {
-        "tags": [
-          "Services"
-        ],
+        "tags": ["Services"],
         "responses": {
           "200": {
             "description": "Success",
@@ -737,9 +697,7 @@
     },
     "/api/Services/Postnumer": {
       "get": {
-        "tags": [
-          "Services"
-        ],
+        "tags": ["Services"],
         "responses": {
           "200": {
             "description": "Success",
@@ -766,9 +724,7 @@
     },
     "/api/Services/Lond": {
       "get": {
-        "tags": [
-          "Services"
-        ],
+        "tags": ["Services"],
         "responses": {
           "200": {
             "description": "Success",
@@ -795,9 +751,7 @@
     },
     "/api/Steps/{stepId}": {
       "get": {
-        "tags": [
-          "Steps"
-        ],
+        "tags": ["Steps"],
         "parameters": [
           {
             "name": "stepId",
@@ -833,9 +787,7 @@
         }
       },
       "delete": {
-        "tags": [
-          "Steps"
-        ],
+        "tags": ["Steps"],
         "parameters": [
           {
             "name": "stepId",
@@ -854,9 +806,7 @@
         }
       },
       "put": {
-        "tags": [
-          "Steps"
-        ],
+        "tags": ["Steps"],
         "parameters": [
           {
             "name": "stepId",
@@ -896,9 +846,7 @@
     },
     "/api/Steps": {
       "post": {
-        "tags": [
-          "Steps"
-        ],
+        "tags": ["Steps"],
         "requestBody": {
           "content": {
             "application/json": {
@@ -1049,17 +997,11 @@
         "additionalProperties": false
       },
       "EExternalEndpointEnvironment": {
-        "enum": [
-          "development",
-          "production"
-        ],
+        "enum": ["development", "production"],
         "type": "string"
       },
       "EExternalEndpointType": {
-        "enum": [
-          "submit",
-          "validation"
-        ],
+        "enum": ["submit", "validation"],
         "type": "string"
       },
       "ExternalEndpointDto": {

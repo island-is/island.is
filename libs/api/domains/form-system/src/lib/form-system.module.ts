@@ -27,12 +27,9 @@ import { StepsResolver } from './steps/steps.resolver'
     FormSystemService,
     FormSystemServicesResolver,
     StepsService,
-    StepsResolver
+    StepsResolver,
   ],
   exports: [],
-  imports: [
-    AuthModule,
-    FormSystemClientModule
-  ]
+  imports: [AuthModule, FormSystemClientModule],
 })
-export class FormSystemModule { }
+export class FormSystemModule {}

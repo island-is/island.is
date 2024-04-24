@@ -1,5 +1,5 @@
-import { Field, Int, ObjectType } from "@nestjs/graphql";
-import { LanguageType } from "./global.model";
+import { Field, Int, ObjectType } from '@nestjs/graphql'
+import { LanguageType } from './global.model'
 
 @ObjectType('FormSystemDocumentType')
 export class DocumentType {
@@ -15,5 +15,3 @@ export class DocumentType {
   @Field(() => LanguageType, { nullable: true })
   description?: LanguageType
 }
-
-

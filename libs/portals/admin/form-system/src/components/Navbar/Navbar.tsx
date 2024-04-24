@@ -7,8 +7,6 @@ import {
   UniqueIdentifier,
   DragStartEvent,
   DragOverEvent,
-  DataRef,
-  DragEndEvent,
 } from '@dnd-kit/core'
 import { SortableContext } from '@dnd-kit/sortable'
 import { useContext, useMemo } from 'react'
@@ -17,13 +15,16 @@ import { Box, Button } from '@island.is/island-ui/core'
 import { baseSettingsStep } from '../../utils/getBaseSettingsStep'
 import NavbarTab from './components/NavbarTab/NavbarTab'
 import NavComponent from './components/NavComponent/NavComponent'
-import { FormSystemFormInput, FormSystemGroup, FormSystemInput, FormSystemStep, FormSystemUpdateFormInput, Maybe } from '@island.is/api/schema'
+import {
+  FormSystemGroup,
+  FormSystemInput,
+  FormSystemStep,
+  Maybe,
+} from '@island.is/api/schema'
 import ControlContext, { IControlContext } from '../../context/ControlContext'
 import { useFormSystemCreateStepMutation } from '../../gql/Step.generated'
-import { useFormSystemUpdateFormMutation } from '../../gql/Form.generated'
 import { ItemType } from '../../lib/utils/interfaces'
 import { removeTypename } from '../../lib/utils/removeTypename'
-
 
 type DndAction =
   | 'STEP_OVER_STEP'
@@ -33,20 +34,32 @@ type DndAction =
   | 'INPUT_OVER_INPUT'
 
 export default function Navbar() {
-  const {
-    control,
-    controlDispatch,
-    setInSettings,
-    inSettings,
-    updateDnD,
-    formUpdate
-  } = useContext(ControlContext) as IControlContext
+  const { control, controlDispatch, setInSettings, inSettings, formUpdate } =
+    useContext(ControlContext) as IControlContext
 
   const { activeItem, form } = control
   const { stepsList: steps, groupsList: groups, inputsList: inputs } = form
-  const stepsIds = useMemo(() => steps?.filter((s): s is FormSystemStep => s !== null && s !== undefined).map((s) => s?.guid as UniqueIdentifier), [steps])
-  const groupsIds = useMemo(() => groups?.filter((g): g is FormSystemGroup => g !== null && g !== undefined).map((g) => g?.guid as UniqueIdentifier), [groups])
-  const inputsIds = useMemo(() => inputs?.filter((i): i is FormSystemInput => i !== null && i !== undefined).map((i) => i?.guid as UniqueIdentifier), [inputs])
+  const stepsIds = useMemo(
+    () =>
+      steps
+        ?.filter((s): s is FormSystemStep => s !== null && s !== undefined)
+        .map((s) => s?.guid as UniqueIdentifier),
+    [steps],
+  )
+  const groupsIds = useMemo(
+    () =>
+      groups
+        ?.filter((g): g is FormSystemGroup => g !== null && g !== undefined)
+        .map((g) => g?.guid as UniqueIdentifier),
+    [groups],
+  )
+  const inputsIds = useMemo(
+    () =>
+      inputs
+        ?.filter((i): i is FormSystemInput => i !== null && i !== undefined)
+        .map((i) => i?.guid as UniqueIdentifier),
+    [inputs],
+  )
 
   const sensors = useSensors(
     useSensor(PointerSensor, {
@@ -55,7 +68,7 @@ export default function Navbar() {
       },
     }),
   )
-  const [createStep, { data, loading, error }] = useFormSystemCreateStepMutation()
+  const [createStep] = useFormSystemCreateStepMutation()
 
   const addStep = async () => {
     const newStep = await createStep({
@@ -63,26 +76,36 @@ export default function Navbar() {
         input: {
           stepCreationDto: {
             formId: form?.id as number,
-            displayOrder: steps?.length
-          }
-        }
-      }
+            displayOrder: steps?.length,
+          },
+        },
+      },
     })
     if (newStep) {
       controlDispatch({
         type: 'ADD_STEP',
         payload: {
-          step: removeTypename(newStep.data?.formSystemCreateStep) as FormSystemStep
-        }
+          step: removeTypename(
+            newStep.data?.formSystemCreateStep,
+          ) as FormSystemStep,
+        },
       })
     }
   }
 
   const focusComponent = (type: ItemType, id: UniqueIdentifier) => {
-    const data = type === "Step"
-      ? steps?.find((item: Maybe<FormSystemStep> | undefined) => item?.guid === id) : type === "Group"
-        ? groups?.find((item: Maybe<FormSystemGroup> | undefined) => item?.guid === id)
-        : inputs?.find((item: Maybe<FormSystemInput> | undefined) => item?.guid === id)
+    const data =
+      type === 'Step'
+        ? steps?.find(
+            (item: Maybe<FormSystemStep> | undefined) => item?.guid === id,
+          )
+        : type === 'Group'
+        ? groups?.find(
+            (item: Maybe<FormSystemGroup> | undefined) => item?.guid === id,
+          )
+        : inputs?.find(
+            (item: Maybe<FormSystemInput> | undefined) => item?.guid === id,
+          )
     if (id === baseSettingsStep.guid) {
       controlDispatch({
         type: 'SET_ACTIVE_ITEM',
@@ -90,7 +113,7 @@ export default function Navbar() {
           activeItem: {
             type: 'Step',
             data: baseSettingsStep,
-          }
+          },
         },
       })
     } else if (data) {
@@ -100,7 +123,7 @@ export default function Navbar() {
           activeItem: {
             type: type,
             data: data,
-          }
+          },
         },
       })
     }
@@ -113,8 +136,8 @@ export default function Navbar() {
         activeItem: {
           type: event.active.data.current?.type,
           data: event.active.data.current?.data ?? null,
-        }
-      }
+        },
+      },
     })
   }
 
@@ -165,7 +188,6 @@ export default function Navbar() {
   }
 
   const onDragEnd = () => {
-    // updateDnD(activeItem.type)
     formUpdate()
   }
 
@@ -210,7 +232,7 @@ export default function Navbar() {
                     activeItem: {
                       type: 'Step',
                       data: step,
-                    }
+                    },
                   },
                 })
               }
@@ -241,7 +263,9 @@ export default function Navbar() {
         >
           <SortableContext items={stepsIds ?? []}>
             {steps
-              ?.filter((s): s is FormSystemStep => s !== null && s !== undefined)
+              ?.filter(
+                (s): s is FormSystemStep => s !== null && s !== undefined,
+              )
               .filter((s) => s.type === 'Innsláttur')
               .map((s, i) => (
                 <Box key={s.guid}>
@@ -254,7 +278,10 @@ export default function Navbar() {
                   />
                   <SortableContext items={groupsIds ?? []}>
                     {groups
-                      ?.filter((g): g is FormSystemGroup => g !== null && g !== undefined)
+                      ?.filter(
+                        (g): g is FormSystemGroup =>
+                          g !== null && g !== undefined,
+                      )
                       .filter((g) => g.stepGuid === s.guid)
                       .map((g) => (
                         <Box key={g.guid}>
@@ -267,7 +294,10 @@ export default function Navbar() {
 
                           <SortableContext items={inputsIds ?? []}>
                             {inputs
-                              ?.filter((i): i is FormSystemInput => i !== null && i !== undefined)
+                              ?.filter(
+                                (i): i is FormSystemInput =>
+                                  i !== null && i !== undefined,
+                              )
                               .filter((i) => i.groupGuid === g.guid)
                               .map((i) => (
                                 <NavComponent
@@ -298,7 +328,12 @@ export default function Navbar() {
                 {activeItem && (
                   <NavComponent
                     type={activeItem.type}
-                    data={activeItem.data as FormSystemGroup | FormSystemStep | FormSystemInput}
+                    data={
+                      activeItem.data as
+                        | FormSystemGroup
+                        | FormSystemStep
+                        | FormSystemInput
+                    }
                     active={activeItem.data?.guid === activeItem.data?.guid}
                     focusComponent={focusComponent}
                   />
@@ -312,14 +347,8 @@ export default function Navbar() {
             + Bæta við skrefi
           </Button>
         </Box>
-        <Box display="flex" justifyContent="center" paddingTop={3}>
-          <Button variant="text" size="small" onClick={() => console.log(control.form)}>
-            Test btn
-          </Button>
-        </Box>
       </Box>
     )
   }
   return null
-
 }

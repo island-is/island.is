@@ -2,14 +2,19 @@ import type { WrappedLoaderFn } from '@island.is/portals/core'
 import { FormSystemFormResponse } from '@island.is/api/schema'
 
 import { ApolloClient, NormalizedCacheObject } from '@apollo/client'
-import { FormSystemGetFormDocument, FormSystemGetFormQuery } from '../../gql/Form.generated'
-import { FormSystemGetInputDocument, FormSystemGetInputQuery } from '../../gql/Input.generated'
+import {
+  FormSystemGetFormDocument,
+  FormSystemGetFormQuery,
+} from '../../gql/Form.generated'
+import {
+  FormSystemGetInputDocument,
+  FormSystemGetInputQuery,
+} from '../../gql/Input.generated'
 
 export interface FormLoaderResponse {
-  formBuilder: FormSystemFormResponse,
+  formBuilder: FormSystemFormResponse
   client: ApolloClient<NormalizedCacheObject>
 }
-
 
 export const formLoader: WrappedLoaderFn = ({ client }) => {
   return async ({ params }): Promise<FormLoaderResponse> => {
@@ -24,7 +29,7 @@ export const formLoader: WrappedLoaderFn = ({ client }) => {
           input: {
             id: Number(params.formId),
           },
-        }
+        },
       })
     if (formError) {
       throw formError
@@ -37,34 +42,32 @@ export const formLoader: WrappedLoaderFn = ({ client }) => {
     const formBuilder = formData.formSystemGetForm
     const updatedInputs = formBuilder.form?.inputsList?.length
       ? await Promise.all(
-        formBuilder.form.inputsList.map(async (input) => {
-          const { data: updatedInput, error: inputError } =
-            await client.query<FormSystemGetInputQuery>({
-              query: FormSystemGetInputDocument,
-              fetchPolicy: 'network-only',
-              variables: {
-                input: {
-                  id: Number(input?.id),
+          formBuilder.form.inputsList.map(async (input) => {
+            const { data: updatedInput, error: inputError } =
+              await client.query<FormSystemGetInputQuery>({
+                query: FormSystemGetInputDocument,
+                fetchPolicy: 'network-only',
+                variables: {
+                  input: {
+                    id: Number(input?.id),
+                  },
                 },
-              },
-            });
-          return updatedInput?.formSystemGetInput;
-        })
-      )
+              })
+            return updatedInput?.formSystemGetInput
+          }),
+        )
       : []
     const updatedFormBuilder = {
       ...formBuilder,
       form: {
         ...formBuilder.form,
-        inputsList: updatedInputs
-      }
+        inputsList: updatedInputs,
+      },
     }
-
-
 
     return {
       formBuilder: updatedFormBuilder as FormSystemFormResponse,
-      client
+      client,
     }
   }
 }

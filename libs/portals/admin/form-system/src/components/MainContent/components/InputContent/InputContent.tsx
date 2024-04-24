@@ -1,16 +1,14 @@
-import { useContext } from "react"
-import ControlContext from "../../../../context/ControlContext"
-import { Stack } from "@island.is/island-ui/core"
-import BaseInput from "./components/BaseInput"
-import Preview from "../Preview/Preveiw"
-import { FormSystemInput } from "@island.is/api/schema"
-import InputSettings from "./components/InputSettings/InputSettings"
-import ListBuilder from "./components/ListBuilder/ListBuilder"
-
-
+import { useContext } from 'react'
+import ControlContext from '../../../../context/ControlContext'
+import { Stack } from '@island.is/island-ui/core'
+import BaseInput from './components/BaseInput'
+import Preview from '../Preview/Preveiw'
+import { FormSystemInput } from '@island.is/api/schema'
+import InputSettings from './components/InputSettings/InputSettings'
+import ListBuilder from './components/ListBuilder/ListBuilder'
 
 const InputContent = () => {
-  const { control, selectStatus, setSelectStatus, inListBuilder } = useContext(ControlContext)
+  const { control, inListBuilder } = useContext(ControlContext)
   const currentItem = control.activeItem.data as FormSystemInput
 
   if (inListBuilder) {

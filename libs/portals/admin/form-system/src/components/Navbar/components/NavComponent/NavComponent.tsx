@@ -1,12 +1,16 @@
 import { useState } from 'react'
-import { ItemType, IGroup, IInput, IStep } from '../../../../types/interfaces'
 import { useSortable } from '@dnd-kit/sortable'
 import { Box } from '@island.is/island-ui/core'
 import cn from 'classnames'
 import * as styles from './NavComponent.css'
 import { UniqueIdentifier } from '@dnd-kit/core'
 import NavButtons from './components/NavButtons'
-import { FormSystemGroup, FormSystemInput, FormSystemStep } from '@island.is/api/schema'
+import {
+  FormSystemGroup,
+  FormSystemInput,
+  FormSystemStep,
+} from '@island.is/api/schema'
+import { ItemType } from '../../../../lib/utils/interfaces'
 
 type Props = {
   type: ItemType
@@ -30,39 +34,39 @@ export default function NavComponent({
   }
 
   const truncateName = (name: string) => {
-    let maxLength;
+    let maxLength
 
     if (active) {
       switch (type) {
         case 'Step':
-          maxLength = 23;
-          break;
+          maxLength = 23
+          break
         case 'Group':
-          maxLength = 16;
-          break;
+          maxLength = 16
+          break
         case 'Input':
-          maxLength = 12;
-          break;
+          maxLength = 12
+          break
         default:
-          maxLength = 26;
+          maxLength = 26
       }
     } else {
       switch (type) {
         case 'Step':
-          maxLength = 26;
-          break;
+          maxLength = 26
+          break
         case 'Group':
-          maxLength = 19;
-          break;
+          maxLength = 19
+          break
         case 'Input':
-          maxLength = 16;
-          break;
+          maxLength = 16
+          break
         default:
-          maxLength = 26;
+          maxLength = 26
       }
     }
 
-    return truncateText(name, maxLength);
+    return truncateText(name, maxLength)
   }
 
   const { setNodeRef, attributes, listeners, isDragging } = useSortable({
@@ -138,9 +142,9 @@ export default function NavComponent({
               verticalAlign: 'middle',
             }}
           >
-            {!(type === 'Step' && (data as FormSystemStep).type !== 'Innsláttur') && (
-              <NavButtons />
-            )}
+            {!(
+              type === 'Step' && (data as FormSystemStep).type !== 'Innsláttur'
+            ) && <NavButtons />}
           </Box>
         </Box>
       ) : (
@@ -168,8 +172,4 @@ export default function NavComponent({
       )}
     </Box>
   )
-
-
-
-
 }

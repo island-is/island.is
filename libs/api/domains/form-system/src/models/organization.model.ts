@@ -36,5 +36,3 @@ export class Organization {
   @Field(() => [ExternalEndpoints], { nullable: 'itemsAndList' })
   externalEndpoints?: ExternalEndpoints[] | null
 }
-
-

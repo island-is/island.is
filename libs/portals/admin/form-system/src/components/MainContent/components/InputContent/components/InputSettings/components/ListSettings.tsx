@@ -1,5 +1,5 @@
-import { useContext, useState } from "react"
-import ControlContext from "../../../../../../../context/ControlContext"
+import { useContext, useState } from 'react'
+import ControlContext from '../../../../../../../context/ControlContext'
 import {
   GridColumn as Column,
   GridRow as Row,
@@ -8,9 +8,8 @@ import {
   Box,
   Button,
   RadioButton,
-  Option,
 } from '@island.is/island-ui/core'
-import { FormSystemInput } from "@island.is/api/schema"
+import { FormSystemInput } from '@island.is/api/schema'
 
 const predeterminedLists = [
   {
@@ -33,7 +32,7 @@ const predeterminedLists = [
 
 // Need to fix the radio buttons
 const ListSettings = () => {
-  const { control, controlDispatch, setInListBuilder } = useContext(ControlContext)
+  const { control, setInListBuilder } = useContext(ControlContext)
   const { activeItem } = control
   const currentItem = activeItem.data as FormSystemInput
   const [radio, setRadio] = useState([true, false, false])
@@ -54,13 +53,25 @@ const ListSettings = () => {
           <Row>
             <Column>
               <Box onClick={() => radioHandler(0)}>
-                <RadioButton label="Nýr fellilisti" onChange={(e) => { console.log() }} checked={radio[0]} />
+                <RadioButton
+                  label="Nýr fellilisti"
+                  onChange={(e) => {
+                    console.log()
+                  }}
+                  checked={radio[0]}
+                />
               </Box>
             </Column>
           </Row>
           <Row>
             <Column>
-              <RadioButton label="Tilbúnir fellilistar" onChange={(e) => { console.log() }} checked={radio[1]} />
+              <RadioButton
+                label="Tilbúnir fellilistar"
+                onChange={(e) => {
+                  console.log()
+                }}
+                checked={radio[1]}
+              />
             </Column>
           </Row>
         </>
@@ -78,18 +89,7 @@ const ListSettings = () => {
             label="Tilbúnir fellilistar"
             options={predeterminedLists}
             backgroundColor="blue"
-          // onChange={async (e: SingleValue<Option<string>>) => {
-          //   const newList = e && (await getList(e.value))
-          //   listsDispatch({
-          //     type: 'setInputSettings',
-          //     payload: {
-          //       inputSettings: {
-          //         ...(activeItem.data as IInput).inputSettings,
-          //         listi: newList.listi,
-          //       },
-          //     },
-          //   })
-          // }}
+            // TODO: add lists
           />
         </Column>
       )}

@@ -1,8 +1,18 @@
-import { Dispatch, createContext } from "react"
-import { ControlAction, ControlState } from "../hooks/controlReducer"
-import { Maybe } from "graphql/jsutils/Maybe"
-import { FormSystemApplicantType, FormSystemDocumentType, FormSystemForm, FormSystemInput, FormSystemListItem, FormSystemListType } from "@island.is/api/schema"
-import { ActiveItem, ItemType, NavbarSelectStatus } from "../lib/utils/interfaces"
+import { Dispatch, createContext } from 'react'
+import { ControlAction, ControlState } from '../hooks/controlReducer'
+import { Maybe } from 'graphql/jsutils/Maybe'
+import {
+  FormSystemApplicantType,
+  FormSystemDocumentType,
+  FormSystemForm,
+  FormSystemInput,
+  FormSystemListType,
+} from '@island.is/api/schema'
+import {
+  ActiveItem,
+  ItemType,
+  NavbarSelectStatus,
+} from '../lib/utils/interfaces'
 
 export interface IControlContext {
   control: ControlState
@@ -17,12 +27,11 @@ export interface IControlContext {
   focus: string
   setFocus: Dispatch<string>
   updateDnD: (type: ItemType) => void
-  formSettingsUpdate: (updatedForm?: FormSystemForm) => void
   selectStatus: NavbarSelectStatus
   setSelectStatus: Dispatch<NavbarSelectStatus>
   formUpdate: (updatedForm?: FormSystemForm) => void
   inListBuilder: boolean
-  setInListBuilder: Dispatch<boolean>,
+  setInListBuilder: Dispatch<boolean>
   updateSettings: (updatedForm?: FormSystemForm) => void
 }
 
@@ -49,9 +58,6 @@ const ControlContext = createContext<IControlContext>({
   updateDnD: function (_type: ItemType): void {
     throw new Error('Function not implemented.')
   },
-  formSettingsUpdate: function (_updatedForm?: FormSystemForm): void {
-    throw new Error('Function not implemented.')
-  },
   selectStatus: NavbarSelectStatus.OFF,
   setSelectStatus: function (_value: NavbarSelectStatus): void {
     throw new Error('Function not implemented.')
@@ -65,7 +71,7 @@ const ControlContext = createContext<IControlContext>({
   },
   updateSettings: function (_updatedForm?: FormSystemForm): void {
     throw new Error('Function not implemented.')
-  }
+  },
 })
 
 export default ControlContext

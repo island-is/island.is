@@ -1,23 +1,26 @@
-import { Inject, Injectable } from "@nestjs/common"
+import { Inject, Injectable } from '@nestjs/common'
 import { LOGGER_PROVIDER, Logger } from '@island.is/logging'
-import { ApolloError } from "@apollo/client"
+import { ApolloError } from '@apollo/client'
 import { AuthMiddleware, User } from '@island.is/auth-nest-tools'
-import { ApiOrganizationsPostRequest, OrganizationsApi } from "@island.is/clients/form-system"
-import { CreateOrganizationInput } from "../../dto/organization.input"
-import { Organization } from "../../models/organization.model"
+import {
+  ApiOrganizationsPostRequest,
+  OrganizationsApi,
+} from '@island.is/clients/form-system'
+import { CreateOrganizationInput } from '../../dto/organization.input'
+import { Organization } from '../../models/organization.model'
 
 @Injectable()
 export class OrganizationsService {
   constructor(
     @Inject(LOGGER_PROVIDER)
     private logger: Logger,
-    private organizationsApi: OrganizationsApi
-  ) { }
+    private organizationsApi: OrganizationsApi,
+  ) {}
 
   handleError(error: any, errorDetail?: string): ApolloError | null {
     const err = {
       error: JSON.stringify(error),
-      category: 'organizations-service'
+      category: 'organizations-service',
     }
     this.logger.error(errorDetail || 'Error in organizations service', err)
 
@@ -35,7 +38,10 @@ export class OrganizationsService {
     return this.organizationsApi.withMiddleware(new AuthMiddleware(auth))
   }
 
-  async postOrganization(auth: User, input: CreateOrganizationInput): Promise<Organization> {
+  async postOrganization(
+    auth: User,
+    input: CreateOrganizationInput,
+  ): Promise<Organization> {
     const request: ApiOrganizationsPostRequest = {
       organizationCreationDto: {
         name: input.name,

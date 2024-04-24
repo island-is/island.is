@@ -2,7 +2,6 @@ import { useContext, useState } from 'react'
 import { Input, Stack, Text } from '@island.is/island-ui/core'
 import ControlContext from '../../../../../context/ControlContext'
 
-
 export const Email = () => {
   const { control } = useContext(ControlContext)
   const { activeItem } = control

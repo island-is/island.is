@@ -1,5 +1,5 @@
-import { InputType, Field } from "@nestjs/graphql"
-import { LanguageTypeInput } from "./language.input"
+import { InputType, Field } from '@nestjs/graphql'
+import { LanguageTypeInput } from './language.input'
 
 @InputType('FormSystemListItemInput')
 export class ListItemInput {

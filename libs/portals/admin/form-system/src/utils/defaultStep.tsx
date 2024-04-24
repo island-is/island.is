@@ -1,5 +1,4 @@
 import { uuid } from 'uuidv4'
-import { IStep } from '../types/interfaces'
 import { FormSystemStep } from '@island.is/api/schema'
 
 export const defaultStep: FormSystemStep = {
@@ -18,5 +17,5 @@ export const defaultStep: FormSystemStep = {
   callRuleset: false,
   isHidden: false,
   isCompleted: false,
-  groups: []
+  groups: [],
 }

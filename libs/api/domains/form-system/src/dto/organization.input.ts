@@ -1,11 +1,11 @@
-import { Field, Int, InputType } from "@nestjs/graphql"
-import { InputInput } from "./inputs.input"
-import { DocumentTypeInput } from "./documentType.input"
-import { FormInput } from "./forms.input"
-import { ApplicantTypeInput } from "./applicantType.input"
-import { ListTypeInput } from "./listType.input"
-import { ExternalEndpointsInput } from "./externalEndpoints.input"
-import { LanguageTypeInput } from "./language.input"
+import { Field, Int, InputType } from '@nestjs/graphql'
+import { InputInput } from './inputs.input'
+import { DocumentTypeInput } from './documentType.input'
+import { FormInput } from './forms.input'
+import { ApplicantTypeInput } from './applicantType.input'
+import { ListTypeInput } from './listType.input'
+import { ExternalEndpointsInput } from './externalEndpoints.input'
+import { LanguageTypeInput } from './language.input'
 
 @InputType('FormSystemOrganizationCreation')
 export class CreateOrganization {

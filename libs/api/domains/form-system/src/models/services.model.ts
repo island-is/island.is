@@ -1,6 +1,5 @@
-import { Field, ObjectType } from "@nestjs/graphql";
-import { ListItem } from "./inputSettings.model";
-
+import { Field, ObjectType } from '@nestjs/graphql'
+import { ListItem } from './inputSettings.model'
 
 @ObjectType('FormSystemList')
 export class List {

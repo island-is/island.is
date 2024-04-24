@@ -1,6 +1,6 @@
-import { FormSystemInput, FormSystemListItem } from "@island.is/api/schema"
+import { FormSystemInput, FormSystemListItem } from '@island.is/api/schema'
 import { RadioButton, Text, Box } from '@island.is/island-ui/core'
-import { useEffect, useState } from "react"
+import { useEffect, useState } from 'react'
 
 interface Props {
   currentItem: FormSystemInput

@@ -5,7 +5,7 @@ import { FormSystemPaths } from './paths'
 export const formSystemNavigation: PortalNavigationItem = {
   name: m.formSystemTitle,
   icon: {
-    icon: 'settings'
+    icon: 'settings',
   },
   description: m.formSystemIntro,
   path: FormSystemPaths.FormSystemRoot,
@@ -13,7 +13,7 @@ export const formSystemNavigation: PortalNavigationItem = {
     {
       name: m.formSystemTitle,
       path: FormSystemPaths.Form,
-      activeIfExact: true
-    }
-  ]
+      activeIfExact: true,
+    },
+  ],
 }

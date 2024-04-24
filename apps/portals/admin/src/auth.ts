@@ -37,7 +37,7 @@ if (userMocked) {
       AdminPortalScope.signatureCollectionManage,
       AdminPortalScope.signatureCollectionProcess,
       AdminPortalScope.formSystem,
-      AdminPortalScope.formSystemSuperUser
+      AdminPortalScope.formSystemSuperUser,
     ],
     post_logout_redirect_uri: `${window.location.origin}`,
     userStorePrefix: 'ap.',

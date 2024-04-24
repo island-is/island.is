@@ -1,6 +1,6 @@
-import { Field, Int, ObjectType } from "@nestjs/graphql";
-import { LanguageType } from "./global.model";
-import { ApplicantTypeNameSuggestion } from "./applicantTypeNameSuggestion";
+import { Field, Int, ObjectType } from '@nestjs/graphql'
+import { LanguageType } from './global.model'
+import { ApplicantTypeNameSuggestion } from './applicantTypeNameSuggestion'
 
 @ObjectType('FormSystemApplicantType')
 export class ApplicantType {
