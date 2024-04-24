@@ -408,9 +408,6 @@ export const is = {
   // notifications
   'notifications.screenTitle': 'Tilkynningar',
 
-  // notification detail
-  'notificationDetail.screenTitle': 'Tilkynning',
-
   // applications screen
   'applications.title': 'Umsóknir',
   'applications.bottomTabText': 'Umsóknir',
