@@ -25,7 +25,7 @@ const providers = [
 
 const types = [
   {
-    id: 'delegationdb',
+    id: 'Custom',
     name: 'Custom',
     description: 'Custom delegation type',
     provider: 'delegationdb',
