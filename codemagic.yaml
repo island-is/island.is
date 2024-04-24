@@ -18,6 +18,7 @@ definitions:
       script: |
         set -e
 
+        git fetch --all --tags
         echo "Considering changes between $CM_PREVIOUS_COMMIT and $CM_COMMIT"
         if git cat-file -e "$CM_PREVIOUS_COMMIT"^{commit} >& /dev/null; then
           notes=$(git log --pretty=format:"%s (%an)" "$CM_PREVIOUS_COMMIT".."$CM_COMMIT" -- codemagic.yaml apps/native/app)
@@ -26,7 +27,7 @@ definitions:
             exit 1
           else
             echo "App changes since last build:"
-            echo $notes | tee apps/native/app/release_notes_en-US.txt
+            echo "$notes" | tee apps/native/app/release_notes_en-US.txt
           fi
         else
           echo "No previous commit detected. Continuing."
