@@ -10,7 +10,6 @@ import {
 } from './healthDirectorateClient.types'
 import { isDefined } from '@island.is/shared/utils'
 import format from 'date-fns/format'
-import { LOGGER_PROVIDER, type Logger } from '@island.is/logging'
 import { handle404 } from '@island.is/clients/middlewares'
 
 @Injectable()
@@ -18,8 +17,6 @@ export class HealthDirectorateClientService {
   constructor(
     private readonly starfsleyfiAMinumSidumApi: StarfsleyfiAMinumSidumApi,
     private readonly vottordApi: VottordApi,
-    @Inject(LOGGER_PROVIDER)
-    private readonly logger: Logger,
   ) {}
 
   private starfsleyfiAMinumSidumApiWithAuth(auth: Auth) {
