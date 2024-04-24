@@ -358,6 +358,10 @@ export const urls = defineMessages({
     id: 'sp.family:url-edit-banmarking-adult',
     defaultMessage: 'https://www.skra.is/umsoknir/rafraen-skil/bannmerking/',
   },
+  contactThjodskra: {
+    id: 'sp.family:contact-thjodskra',
+    defaultMessage: 'https://www.skra.is/um-okkur/hafa-samband/',
+  },
 })
 
 export const mCompany = defineMessages({
