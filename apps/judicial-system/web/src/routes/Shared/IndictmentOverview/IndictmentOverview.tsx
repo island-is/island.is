@@ -2,7 +2,7 @@ import React, { useCallback, useContext, useState } from 'react'
 import { useIntl } from 'react-intl'
 import { useRouter } from 'next/router'
 
-import { Box } from '@island.is/island-ui/core'
+import { Box, RadioButton, Text } from '@island.is/island-ui/core'
 import * as constants from '@island.is/judicial-system/consts'
 import {
   getLatestDateType,
@@ -12,6 +12,7 @@ import {
 } from '@island.is/judicial-system/types'
 import { core, titles } from '@island.is/judicial-system-web/messages'
 import {
+  BlueBox,
   CourtCaseInfo,
   FormContentContainer,
   FormContext,
@@ -31,10 +32,13 @@ import {
   CaseState,
   DateLog,
   DateType,
+  ServiceRequirement,
 } from '@island.is/judicial-system-web/src/graphql/schema'
 
 import ReturnIndictmentModal from '../../Court/Indictments/ReturnIndictmentCaseModal/ReturnIndictmentCaseModal'
 import { strings } from './IndictmentOverview.strings'
+import RequiredStar from '@island.is/judicial-system-web/src/components/RequiredStar/RequiredStar'
+import { useDefendants } from '@island.is/judicial-system-web/src/utils/hooks'
 
 const IndictmentOverview = () => {
   const router = useRouter()
@@ -43,6 +47,7 @@ const IndictmentOverview = () => {
     useContext(FormContext)
   const { formatMessage } = useIntl()
   const lawsBroken = useIndictmentsLawsBroken(workingCase)
+  const { setAndSendDefendantToServer } = useDefendants()
   const [modalVisible, setModalVisible] = useState<boolean>(false)
 
   const caseIsClosed = isCompletedCase(workingCase.state)
@@ -106,10 +111,103 @@ const IndictmentOverview = () => {
           </Box>
         )}
         {workingCase.caseFiles && (
-          <Box component="section" marginBottom={10}>
+          <Box component="section" marginBottom={caseIsClosed ? 5 : 10}>
             <IndictmentCaseFilesList workingCase={workingCase} />
           </Box>
         )}
+        {caseIsClosed &&
+          workingCase.defendants?.map((defendant, index) => {
+            return (
+              <Box
+                component="section"
+                marginBottom={
+                  workingCase.defendants &&
+                  workingCase.defendants?.length - 1 === index
+                    ? 10
+                    : 3
+                }
+              >
+                <BlueBox>
+                  <Box marginBottom={2}>
+                    <Text variant="h4" as="h4">
+                      {`${defendant.name} `}
+                      <RequiredStar />
+                    </Text>
+                  </Box>
+                  <Box marginBottom={2}>
+                    <RadioButton
+                      id={`defendant-${defendant.id}-service-requirement-not-applicable`}
+                      name={`defendant-${defendant.id}-service-requirement`}
+                      checked={
+                        defendant.serviceRequirement ===
+                        ServiceRequirement.NOT_APPLICABLE
+                      }
+                      onChange={() => {
+                        setAndSendDefendantToServer(
+                          {
+                            defendantId: defendant.id,
+                            caseId: workingCase.id,
+                            serviceRequirement:
+                              ServiceRequirement.NOT_APPLICABLE,
+                          },
+                          setWorkingCase,
+                        )
+                      }}
+                      large
+                      backgroundColor="white"
+                      label={formatMessage(
+                        strings.serviceRequirementNotApplicable,
+                      )}
+                    />
+                  </Box>
+                  <Box marginBottom={2}>
+                    <RadioButton
+                      id={`defendant-${defendant.id}-service-requirement-required`}
+                      name={`defendant-${defendant.id}-service-requirement`}
+                      checked={
+                        defendant.serviceRequirement ===
+                        ServiceRequirement.REQUIRED
+                      }
+                      onChange={() => {
+                        setAndSendDefendantToServer(
+                          {
+                            defendantId: defendant.id,
+                            caseId: workingCase.id,
+                            serviceRequirement: ServiceRequirement.REQUIRED,
+                          },
+                          setWorkingCase,
+                        )
+                      }}
+                      large
+                      backgroundColor="white"
+                      label={formatMessage(strings.serviceRequirementRequired)}
+                    />
+                  </Box>
+                  <RadioButton
+                    id={`defendant-${defendant.id}-service-requirement-not-required`}
+                    name={`defendant-${defendant.id}-service-requirement`}
+                    checked={
+                      defendant.serviceRequirement ===
+                      ServiceRequirement.NOT_REQUIRED
+                    }
+                    onChange={() => {
+                      setAndSendDefendantToServer(
+                        {
+                          defendantId: defendant.id,
+                          caseId: workingCase.id,
+                          serviceRequirement: ServiceRequirement.NOT_REQUIRED,
+                        },
+                        setWorkingCase,
+                      )
+                    }}
+                    large
+                    backgroundColor="white"
+                    label={formatMessage(strings.serviceRequirementNotRequired)}
+                  />
+                </BlueBox>
+              </Box>
+            )
+          })}
       </FormContentContainer>
       {!caseIsClosed && !isDefenceUser(user) && (
         <FormContentContainer isFooter>
