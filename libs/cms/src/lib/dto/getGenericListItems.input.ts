@@ -3,11 +3,11 @@ import { Field, InputType, Int, ObjectType } from '@nestjs/graphql'
 import { IsInt, IsOptional, IsString } from 'class-validator'
 
 @InputType()
-@ObjectType('ListItemResponseInput')
-export class GetListItemsInput {
+@ObjectType('GenericListItemResponseInput')
+export class GetGenericListItemsInput {
   @Field(() => String)
   @IsString()
-  listPageId!: string
+  genericListId!: string
 
   @Field(() => String)
   @IsString()

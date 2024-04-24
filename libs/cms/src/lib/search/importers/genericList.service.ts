@@ -2,39 +2,38 @@ import { MappedData } from '@island.is/content-search-indexer/types'
 import { logger } from '@island.is/logging'
 import { Injectable } from '@nestjs/common'
 import { Entry } from 'contentful'
-import { ILink, IListPage } from '../../generated/contentfulTypes'
+import { ILink, IGenericList } from '../../generated/contentfulTypes'
 import { CmsSyncProvider, processSyncDataInput } from '../cmsSync.service'
-import { mapListPage } from '../../models/listPage.model'
+import { mapGenericList } from '../../models/genericList.model'
 
 @Injectable()
-export class ListPageSyncService implements CmsSyncProvider<IListPage> {
+export class GenericListSyncService implements CmsSyncProvider<IGenericList> {
   processSyncData(entries: processSyncDataInput<ILink>) {
     return entries.filter(
-      (entry: Entry<any>): entry is IListPage =>
-        entry.sys.contentType.sys.id === 'listPage' && entry.fields.relativeUrl,
+      (entry: Entry<unknown>): entry is IGenericList =>
+        entry.sys.contentType.sys.id === 'genericList',
     )
   }
 
-  doMapping(entries: IListPage[]) {
+  doMapping(entries: IGenericList[]) {
     if (entries.length > 0) {
-      logger.info('Mapping list pages', { count: entries.length })
+      logger.info('Mapping generic lists', { count: entries.length })
     }
 
     return entries
       .map<MappedData | boolean>((entry) => {
         try {
-          const mapped = mapListPage(entry)
+          const mapped = mapGenericList(entry)
           return {
             _id: mapped.id,
-            title: mapped.title,
-            type: 'webListPage',
-            response: JSON.stringify({ ...mapped, typename: 'ListPage' }),
+            title: entry.fields.internalTitle ?? '',
+            type: 'webGenericList',
+            response: JSON.stringify({ ...mapped, typename: 'GenericList' }),
             dateCreated: entry.sys.createdAt,
             dateUpdated: new Date().getTime().toString(),
-            tags: [{ key: mapped.relativeUrl, type: 'slug' }],
           }
         } catch (error) {
-          logger.warn('Failed to import list page', {
+          logger.warn('Failed to import generic list', {
             error: error.message,
             id: entry?.sys?.id,
           })

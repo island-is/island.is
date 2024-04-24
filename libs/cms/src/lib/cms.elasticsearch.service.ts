@@ -36,10 +36,8 @@ import { CategoryPage } from './models/categoryPage.model'
 import { GetCustomPageInput } from './dto/getCustomPage.input'
 import { getElasticsearchIndex } from '@island.is/content-search-index-manager'
 import { CustomPage } from './models/customPage.model'
-import { GetListPageInput } from './dto/getListPage.input'
-import { ListPage } from './models/listPage.model'
-import { GetListItemsInput } from './dto/getListItems.input'
-import { ListItemResponse } from './models/listItemResponse.model'
+import { GetGenericListItemsInput } from './dto/getGenericListItems.input'
+import { GenericListItemResponse } from './models/genericListItemResponse.model'
 
 @Injectable()
 export class CmsElasticsearchService {
@@ -390,14 +388,9 @@ export class CmsElasticsearchService {
     })
   }
 
-  async getListPage(input: GetListPageInput): Promise<ListPage | null> {
-    return this.getSingleDocumentTypeBySlug(getElasticsearchIndex(input.lang), {
-      type: 'webListPage',
-      slug: input.slug,
-    })
-  }
-
-  async getListItems(input: GetListItemsInput): Promise<ListItemResponse> {
+  async getGenericListItems(
+    input: GetGenericListItemsInput,
+  ): Promise<GenericListItemResponse> {
     const must: Record<string, unknown>[] = [
       {
         term: {
@@ -414,7 +407,7 @@ export class CmsElasticsearchService {
               must: [
                 {
                   term: {
-                    'tags.key': input.listPageId,
+                    'tags.key': input.genericListId,
                   },
                 },
                 {

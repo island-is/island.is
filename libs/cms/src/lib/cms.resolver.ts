@@ -111,10 +111,8 @@ import { FeaturedEvents } from './models/featuredEvents.model'
 import { GraphQLJSONObject } from 'graphql-type-json'
 import { CustomPage } from './models/customPage.model'
 import { GetCustomPageInput } from './dto/getCustomPage.input'
-import { GetListPageInput } from './dto/getListPage.input'
-import { ListPage } from './models/listPage.model'
-import { GetListItemsInput } from './dto/getListItems.input'
-import { ListItemResponse } from './models/listItemResponse.model'
+import { GenericListItemResponse } from './models/genericListItemResponse.model'
+import { GetGenericListItemsInput } from './dto/getGenericListItems.input'
 
 const defaultCache: CacheControlOptions = { maxAge: CACHE_CONTROL_MAX_AGE }
 
@@ -653,19 +651,11 @@ export class CmsResolver {
   }
 
   @CacheControl(defaultCache)
-  @Query(() => ListPage, { nullable: true })
-  async getListPage(
-    @Args('input') input: GetListPageInput,
-  ): Promise<ListPage | null> {
-    return this.cmsElasticsearchService.getListPage(input)
-  }
-
-  @CacheControl(defaultCache)
-  @Query(() => ListItemResponse, { nullable: true })
+  @Query(() => GenericListItemResponse, { nullable: true })
   async getListItems(
-    @Args('input') input: GetListItemsInput,
-  ): Promise<ListItemResponse> {
-    return this.cmsElasticsearchService.getListItems(input)
+    @Args('input') input: GetGenericListItemsInput,
+  ): Promise<GenericListItemResponse> {
+    return this.cmsElasticsearchService.getGenericListItems(input)
   }
 }
 

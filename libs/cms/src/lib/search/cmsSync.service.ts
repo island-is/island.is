@@ -34,8 +34,8 @@ import { EventSyncService } from './importers/event.service'
 import { ManualSyncService } from './importers/manual.service'
 import { ManualChapterItemSyncService } from './importers/manualChapterItem.service'
 import { CustomPageSyncService } from './importers/customPage.service'
-import { ListPageSyncService } from './importers/listPage.service'
-import { ListItemSyncService } from './importers/listItem.service'
+import { GenericListSyncService } from './importers/genericList.service'
+import { GenericListItemSyncService } from './importers/genericListItem.service'
 
 export interface PostSyncOptions {
   folderHash: string
@@ -82,8 +82,8 @@ export class CmsSyncService implements ContentSearchImporter<PostSyncOptions> {
     private readonly manualSyncService: ManualSyncService,
     private readonly manualChapterItemSyncService: ManualChapterItemSyncService,
     private readonly customPageSyncService: CustomPageSyncService,
-    private readonly listPageSyncService: ListPageSyncService,
-    private readonly listItemSyncService: ListItemSyncService,
+    private readonly genericListSyncService: GenericListSyncService,
+    private readonly genericListItemSyncService: GenericListItemSyncService,
   ) {
     this.contentSyncProviders = [
       this.articleSyncService,
@@ -108,8 +108,8 @@ export class CmsSyncService implements ContentSearchImporter<PostSyncOptions> {
       this.manualSyncService,
       this.manualChapterItemSyncService,
       this.customPageSyncService,
-      this.listPageSyncService,
-      this.listItemSyncService,
+      this.genericListSyncService,
+      this.genericListItemSyncService,
     ]
   }
 

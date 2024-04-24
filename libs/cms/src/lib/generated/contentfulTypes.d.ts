@@ -1131,6 +1131,9 @@ export interface IFeaturedArticlesFields {
   /** Title */
   title: string
 
+  /** Intro text */
+  introText?: Document | undefined
+
   /** Image */
   image?: Asset | undefined
 
@@ -1502,6 +1505,69 @@ export interface IFrontpageSlider extends Entry<IFrontpageSliderFields> {
     contentType: {
       sys: {
         id: 'frontpageSlider'
+        linkType: 'ContentType'
+        type: 'Link'
+      }
+    }
+  }
+}
+
+export interface IGenericListFields {
+  /** Internal Title */
+  internalTitle: string
+
+  /** Card Intro Template */
+  cardIntroTemplate?: Document | undefined
+}
+
+/** A list of items which can be embedded into rich text */
+
+export interface IGenericList extends Entry<IGenericListFields> {
+  sys: {
+    id: string
+    type: string
+    createdAt: string
+    updatedAt: string
+    locale: string
+    contentType: {
+      sys: {
+        id: 'genericList'
+        linkType: 'ContentType'
+        type: 'Link'
+      }
+    }
+  }
+}
+
+export interface IGenericListItemFields {
+  /** Generic List */
+  genericList: IGenericList
+
+  /** Internal Title */
+  internalTitle: string
+
+  /** Title */
+  title: string
+
+  /** Date */
+  date?: string | undefined
+
+  /** Card Intro */
+  cardIntro?: Document | undefined
+}
+
+/** An item that belongs to a generic list */
+
+export interface IGenericListItem extends Entry<IGenericListItemFields> {
+  sys: {
+    id: string
+    type: string
+    createdAt: string
+    updatedAt: string
+    locale: string
+    contentType: {
+      sys: {
+        id: 'genericListItem'
         linkType: 'ContentType'
         type: 'Link'
       }
@@ -2134,68 +2200,6 @@ export interface ILinkUrl extends Entry<ILinkUrlFields> {
     contentType: {
       sys: {
         id: 'linkUrl'
-        linkType: 'ContentType'
-        type: 'Link'
-      }
-    }
-  }
-}
-
-export interface IListItemFields {
-  /** List Page */
-  listPage: IListPage
-
-  /** Internal Title */
-  internalTitle?: string | undefined
-
-  /** Title */
-  title: string
-
-  /** Custom Fields */
-  customFields?: Record<string, any> | undefined
-}
-
-export interface IListItem extends Entry<IListItemFields> {
-  sys: {
-    id: string
-    type: string
-    createdAt: string
-    updatedAt: string
-    locale: string
-    contentType: {
-      sys: {
-        id: 'listItem'
-        linkType: 'ContentType'
-        type: 'Link'
-      }
-    }
-  }
-}
-
-export interface IListPageFields {
-  /** Internal Title */
-  internalTitle?: string | undefined
-
-  /** Title */
-  title: string
-
-  /** Relative URL */
-  relativeUrl?: string | undefined
-
-  /** Items */
-  listItemConfig?: Record<string, any> | undefined
-}
-
-export interface IListPage extends Entry<IListPageFields> {
-  sys: {
-    id: string
-    type: string
-    createdAt: string
-    updatedAt: string
-    locale: string
-    contentType: {
-      sys: {
-        id: 'listPage'
         linkType: 'ContentType'
         type: 'Link'
       }
@@ -2993,7 +2997,6 @@ export interface IOrganizationPageFields {
     | 'vinnueftirlitid'
     | 'hljodbokasafn-islands'
     | 'thjodskjalasafn'
-    | 'stjornartidindi'
 
   /** Theme Properties */
   themeProperties?: Record<string, any> | undefined
@@ -4949,6 +4952,8 @@ export type CONTENT_TYPE =
   | 'formField'
   | 'frontpage'
   | 'frontpageSlider'
+  | 'genericList'
+  | 'genericListItem'
   | 'genericOverviewPage'
   | 'genericPage'
   | 'genericTag'
@@ -4966,8 +4971,6 @@ export type CONTENT_TYPE =
   | 'linkGroup'
   | 'linkList'
   | 'linkUrl'
-  | 'listItem'
-  | 'listPage'
   | 'location'
   | 'logoListSlice'
   | 'manual'
