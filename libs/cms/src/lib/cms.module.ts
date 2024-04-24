@@ -11,6 +11,7 @@ import {
   FeaturedSupportQNAsResolver,
   PowerBiSliceResolver,
   LatestEventsSliceResolver,
+  GenericListResolver,
 } from './cms.resolver'
 import { CmsContentfulService } from './cms.contentful.service'
 import { ContentfulRepository } from './contentful.repository'
@@ -48,6 +49,7 @@ import { OrganizationTitleEnByReferenceIdLoader } from './loaders/organizationTi
     PowerBiService,
     PowerBiSliceResolver,
     LatestEventsSliceResolver,
+    GenericListResolver,
   ],
   exports: [
     ContentfulRepository,

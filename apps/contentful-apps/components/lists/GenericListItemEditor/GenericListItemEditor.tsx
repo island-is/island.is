@@ -8,7 +8,11 @@ import { mapLocalesToFieldApis } from '../utils'
 
 const createLocaleToFieldMapping = (sdk: EditorExtensionSDK) => {
   return {
-    listPage: mapLocalesToFieldApis([sdk.locales.default], sdk, 'listPage'),
+    genericList: mapLocalesToFieldApis(
+      [sdk.locales.default],
+      sdk,
+      'genericList',
+    ),
     internalTitle: mapLocalesToFieldApis(
       [sdk.locales.default],
       sdk,
@@ -19,7 +23,7 @@ const createLocaleToFieldMapping = (sdk: EditorExtensionSDK) => {
   }
 }
 
-const ListItemEditor = () => {
+const GenericListItemEditor = () => {
   const sdk = useSDK<EditorExtensionSDK>()
 
   const localeToFieldMapping = useMemo(() => {
@@ -41,8 +45,8 @@ const ListItemEditor = () => {
       }}
     >
       <ContentfulField
-        displayName="List Page"
-        fieldID="listPage"
+        displayName="Generic List"
+        fieldID="genericList"
         localeToFieldMapping={localeToFieldMapping}
         sdk={sdk}
         widgetId="entryCardEditor"
@@ -70,4 +74,4 @@ const ListItemEditor = () => {
   )
 }
 
-export default ListItemEditor
+export default GenericListItemEditor

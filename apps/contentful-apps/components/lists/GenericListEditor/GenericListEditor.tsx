@@ -20,7 +20,7 @@ import { ContentfulField } from '../ContentfulField'
 import { mapLocalesToFieldApis } from '../utils'
 
 const SEARCH_DEBOUNCE_TIME_IN_MS = 300
-const LIST_ITEM_CONTENT_TYPE_ID = 'listItem'
+const LIST_ITEM_CONTENT_TYPE_ID = 'genericListItem'
 const LIST_ITEMS_PER_PAGE = 4
 
 const createLocaleToFieldMapping = (sdk: EditorExtensionSDK) => {
@@ -29,12 +29,6 @@ const createLocaleToFieldMapping = (sdk: EditorExtensionSDK) => {
       [sdk.locales.default],
       sdk,
       'internalTitle',
-    ),
-    title: mapLocalesToFieldApis(sdk.locales.available, sdk, 'title'),
-    relativeUrl: mapLocalesToFieldApis(
-      sdk.locales.available,
-      sdk,
-      'relativeUrl',
     ),
     cardIntroTemplate: mapLocalesToFieldApis(
       sdk.locales.available,
@@ -107,7 +101,7 @@ const ListPageEditor = () => {
       },
       {
         fields: {
-          listPage: {
+          genericList: {
             [defaultLocale]: {
               sys: {
                 id: sdk.entry.getSys().id,
@@ -147,20 +141,6 @@ const ListPageEditor = () => {
       <ContentfulField
         fieldID="internalTitle"
         displayName="Internal Title"
-        localeToFieldMapping={localeToFieldMapping}
-        sdk={sdk}
-      />
-
-      <ContentfulField
-        fieldID="title"
-        displayName="Displayed Title"
-        localeToFieldMapping={localeToFieldMapping}
-        sdk={sdk}
-      />
-
-      <ContentfulField
-        fieldID="relativeUrl"
-        displayName="Relative URL"
         localeToFieldMapping={localeToFieldMapping}
         sdk={sdk}
       />

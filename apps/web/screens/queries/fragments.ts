@@ -850,7 +850,24 @@ export const slices = gql`
   fragment GenericListFields on GenericList {
     __typename
     id
-    firstPageListItemResponse
+    firstPageListItemResponse {
+      input {
+        genericListId
+        lang
+        page
+        queryString
+        size
+      }
+      items {
+        id
+        date
+        title
+        cardIntro {
+          ...HtmlFields
+        }
+      }
+      total
+    }
   }
 
   fragment BaseSlices on Slice {

@@ -24,8 +24,7 @@ export default {
     'manual',
     'manualChapter',
     'customPage',
-    'listPage',
-    'listItem',
+    'genericListItem',
   ],
   nestedContentTypes: [
     'alertBanner',
