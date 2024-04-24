@@ -4,8 +4,14 @@ import {
   Input,
 } from '@island.is/island-ui/core'
 import { useRef, useState } from 'react'
+import { FormSystemInput } from '@island.is/api/schema'
 
-const Banknumber = () => {
+interface Props {
+  currentItem: FormSystemInput
+
+}
+
+const Banknumber = ({ currentItem }: Props) => {
   const [banki, setBanki] = useState<string>('')
   const [hb, setHb] = useState<string>('')
   const [reikningur, setReikningur] = useState<string>('')
@@ -71,6 +77,7 @@ const Banknumber = () => {
             name=""
             onChange={(e) => handleChange(0, e.target.value)}
             onBlur={(e) => setBanki(addLeadingZeros(e.target.value, 4))}
+            required={currentItem?.isRequired ?? false}
           />
         </Column>
         <Column span="2/12">
@@ -87,6 +94,7 @@ const Banknumber = () => {
             name=""
             onChange={(e) => handleChange(1, e.target.value)}
             onBlur={(e) => setHb(addLeadingZeros(e.target.value, 2))}
+            required={currentItem?.isRequired ?? false}
           />
         </Column>
         <Column span="4/12">
@@ -102,6 +110,7 @@ const Banknumber = () => {
             name=""
             onChange={(e) => handleChange(2, e.target.value)}
             onBlur={(e) => setReikningur(addLeadingZeros(e.target.value, 6))}
+            required={currentItem?.isRequired ?? false}
           />
         </Column>
       </Row>

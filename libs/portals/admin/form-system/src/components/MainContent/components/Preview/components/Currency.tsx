@@ -5,8 +5,13 @@ import {
 } from '@island.is/island-ui/core'
 import { ChangeEvent, useContext, useState } from 'react'
 import ControlContext from '../../../../../context/ControlContext'
+import { FormSystemInput } from '@island.is/api/schema'
 
-const Currency = () => {
+interface Props {
+  currentItem: FormSystemInput
+}
+
+const Currency = ({ currentItem }: Props) => {
   const [currency, setCurrency] = useState('')
   const { control } = useContext(ControlContext)
   const label = control.activeItem?.data?.name?.is
@@ -28,6 +33,7 @@ const Currency = () => {
           name={'Currency'}
           value={currency}
           onChange={handleCurrencyChange}
+          required={currentItem?.isRequired ?? false}
         />
       </Column>
     </Row>

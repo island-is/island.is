@@ -9,6 +9,7 @@ import TextInput from './components/TextInput'
 import List from './components/List'
 import Radio from './components/Radio'
 import Currency from './components/Currency'
+import CheckboxPreview from './components/CheckboxPreview'
 
 interface Props {
   data: FormSystemInput
@@ -22,10 +23,10 @@ const Preview = ({ data }: Props) => {
       {type === 'Bankareikningur' && (
         <Box>
           <Text variant="h5">{data?.name?.is}</Text>
-          <Banknumber />
+          <Banknumber currentItem={data} />
         </Box>
       )}
-      {type === 'Netfang' && <Email />}
+      {type === 'Netfang' && <Email currentItem={data} />}
       {type === 'Dagssetningarval' && (
         <Box marginTop={2} width="half">
           <DatePicker
@@ -38,13 +39,14 @@ const Preview = ({ data }: Props) => {
           />
         </Box>
       )}
-      {type === 'Kennitala' && <NationalId />}
+      {type === 'Kennitala' && <NationalId currentItem={data} />}
       {type === 'Skjal' && <FileUpload currentItem={data} />}
       {type === 'Textalínubox' ||
         (type === 'TextaInnsláttur' && <TextInput data={data} />)}
       {type === 'Fellilisti' && <List currentItem={data} />}
       {type === 'Valhnappar' && <Radio currentItem={data} />}
-      {type === 'Krónutölubox' && <Currency />}
+      {type === 'Krónutölubox' && <Currency currentItem={data} />}
+      {type === 'Hakbox' && <CheckboxPreview currentItem={data} />}
     </Box>
   )
 }

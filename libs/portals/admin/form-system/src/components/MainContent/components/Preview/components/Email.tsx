@@ -1,8 +1,13 @@
 import { useContext, useState } from 'react'
 import { Input, Stack, Text } from '@island.is/island-ui/core'
 import ControlContext from '../../../../../context/ControlContext'
+import { FormSystemInput } from '@island.is/api/schema'
 
-export const Email = () => {
+interface Props {
+  currentItem: FormSystemInput
+}
+
+export const Email = ({ currentItem }: Props) => {
   const { control } = useContext(ControlContext)
   const { activeItem } = control
   const [email, setEmail] = useState('')
@@ -24,6 +29,7 @@ export const Email = () => {
         onBlur={() => setHasError(isValidEmail())}
         errorMessage="Ekki gilt netfang"
         hasError={hasError}
+        required={currentItem?.isRequired ?? false}
       />
     </Stack>
   )

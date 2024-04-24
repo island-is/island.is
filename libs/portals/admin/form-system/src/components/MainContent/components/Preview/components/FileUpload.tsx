@@ -8,7 +8,7 @@ import { uuid } from 'uuidv4'
 import { FormSystemInput } from '@island.is/api/schema'
 import { fileTypes } from '../../../../../utils/fileTypes'
 
-type Props = {
+interface Props {
   currentItem: FormSystemInput
 }
 

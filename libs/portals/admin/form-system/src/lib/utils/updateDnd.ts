@@ -1,4 +1,7 @@
-import { FormSystemGroupInput, FormSystemInput } from '@island.is/api/schema'
+import {
+  FormSystemGroupInput,
+  FormSystemInput,
+} from '@island.is/api/schema'
 import { useFormSystemUpdateFormMutation } from '../../gql/Form.generated'
 import { ControlState } from '../../hooks/controlReducer'
 import { ItemType } from './interfaces'
@@ -9,7 +12,6 @@ export const updateDnd = (
   updateForm = useFormSystemUpdateFormMutation()[0],
 ) => {
   const formId = control.form.id
-
   if (type === 'Step') {
     const steps = control.form.stepsList
     updateForm({
@@ -41,17 +43,17 @@ export const updateDnd = (
           form: {
             groupsList: groups?.map(
               (g) =>
-                ({
-                  id: g?.id,
-                  name: g?.name,
-                  guid: g?.guid,
-                  displayOrder: g?.displayOrder,
-                  isHidden: (g?.isHidden ?? false) as boolean,
-                  stepId: g?.stepId,
-                  multiSet: g?.multiSet,
-                  stepGuid: g?.stepGuid,
-                  inputs: null,
-                } as FormSystemGroupInput),
+              ({
+                id: g?.id,
+                name: g?.name,
+                guid: g?.guid,
+                displayOrder: g?.displayOrder,
+                isHidden: (g?.isHidden ?? false) as boolean,
+                stepId: g?.stepId,
+                multiSet: g?.multiSet,
+                stepGuid: g?.stepGuid,
+                inputs: null,
+              } as FormSystemGroupInput),
             ),
           },
         },

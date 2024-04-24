@@ -2,6 +2,7 @@ import { FormSystemInput, FormSystemListItem } from '@island.is/api/schema'
 import { useEffect, useState } from 'react'
 import { Select } from '@island.is/island-ui/core'
 
+
 interface Props {
   currentItem: FormSystemInput
 }
@@ -13,7 +14,6 @@ type ListItem = {
 
 const List = ({ currentItem }: Props) => {
   const [listItems, setListItems] = useState<ListItem[]>([])
-
   useEffect(() => {
     const currentList = currentItem.inputSettings?.list ?? []
     setListItems(
@@ -30,6 +30,7 @@ const List = ({ currentItem }: Props) => {
         name="list"
         label={currentItem?.name?.is ?? ''}
         options={listItems}
+        required={currentItem?.isRequired ?? false}
       />
     </>
   )

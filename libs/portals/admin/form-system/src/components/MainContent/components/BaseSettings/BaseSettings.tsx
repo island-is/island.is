@@ -10,7 +10,7 @@ import { useContext } from 'react'
 import ControlContext from '../../../../context/ControlContext'
 
 export const BaseSettings = () => {
-  const { control, controlDispatch, setFocus, focus, formUpdate } =
+  const { control, controlDispatch, setFocus, focus, formUpdate, updateSettings } =
     useContext(ControlContext)
   const { form } = control
   return (
@@ -104,7 +104,7 @@ export const BaseSettings = () => {
                 type: 'CHANGE_STOP_PROGRESS_ON_VALIDATING_STEP',
                 payload: { value: e.target.checked },
               })
-              formUpdate({
+              updateSettings({
                 ...form,
                 stopProgressOnValidatingStep: e.target.checked,
               })
