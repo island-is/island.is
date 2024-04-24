@@ -86,6 +86,7 @@ export class DrivingLicenseBookService {
     nationalId,
   }: DrivingLicenseBookStudentInput): Promise<DrivingLicenseBookStudentOverview> {
     this.logger.debug(`driving-license-book: Get student with id ${nationalId}`)
+
     return await this.drivingLicenseBookClientApiFactory.getStudent({
       nationalId,
     })
@@ -93,12 +94,14 @@ export class DrivingLicenseBookService {
 
   async getStudentsForTeacher(
     user: User,
+    licenseCategory: 'B' | 'BE',
   ): Promise<DrivingLicenseBookStudentForTeacher[]> {
     this.logger.debug(
       `driving-license-book: Getting student for teacher ${user}`,
     )
     return await this.drivingLicenseBookClientApiFactory.getStudentsForTeacher(
       user,
+      licenseCategory,
     )
   }
 

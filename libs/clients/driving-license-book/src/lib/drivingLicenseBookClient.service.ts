@@ -174,12 +174,14 @@ export class DrivingLicenseBookClientApiFactory {
 
   async getStudentsForTeacher(
     user: User,
+    licenseCategory: 'B' | 'BE',
   ): Promise<DrivingLicenseBookStudentForTeacher[]> {
     const api = await this.create()
     const { data } =
       await api.apiTeacherGetStudentOverviewForTeacherTeacherSsnGet({
         teacherSsn: user.nationalId,
         showExpired: false,
+        licenseCategory: licenseCategory,
       })
     if (!data) {
       this.logger.error(`${LOGTAG} Error fetching students for teacher`)

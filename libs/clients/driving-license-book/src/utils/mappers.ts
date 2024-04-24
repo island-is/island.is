@@ -41,7 +41,12 @@ export const getStudentAndBookMapper = (
       isDigital: book.isDigital ?? false,
       status: book.status ?? 1,
       statusName: book.statusName ?? '',
-      totalLessonTime: book.totalLessonTime ?? -1,
+      totalLessonTime: !book.teachersAndLessons
+        ? -1
+        : book.teachersAndLessons.reduce(
+            (total, lesson) => total + (lesson.lessonTime ?? 0),
+            0,
+          ),
       totalLessonCount: book.totalLessonCount ?? -1,
       drivingSchoolExams: !book.drivingSchoolExams
         ? []
