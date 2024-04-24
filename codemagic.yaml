@@ -18,10 +18,9 @@ definitions:
       script: |
         set -e
 
-        git fetch --all --tags
         echo "Considering changes between $CM_PREVIOUS_COMMIT and $CM_COMMIT"
         if git cat-file -e "$CM_PREVIOUS_COMMIT"^{commit} >& /dev/null; then
-          notes=$(git log --pretty=format:"%s (%an)" "$CM_PREVIOUS_COMMIT".."$CM_COMMIT" -- codemagic.yaml apps/native/app)
+          notes=$(git log --pretty=format:"%s (%an)" "$CM_PREVIOUS_COMMIT".."$CM_COMMIT" -- ../../../codemagic.yaml .)
           if [[ $notes == "" ]]; then
             echo "No changes detected in native app. Exiting."
             exit 1
