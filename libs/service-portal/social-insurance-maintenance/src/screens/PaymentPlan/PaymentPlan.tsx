@@ -122,6 +122,7 @@ const PaymentPlan = () => {
                   <GridRow alignItems="flexEnd">
                     <GridColumn span={'3/8'}>
                       <Select
+                        name="payment-plan-date-picker"
                         backgroundColor="blue"
                         size="xs"
                         options={yearOptions}

@@ -243,4 +243,169 @@ export const m = defineMessages({
     id: 'sp.finance-loans:no-result-message',
     defaultMessage: 'Engar lánafærslur fundust innan þessa skilyrða',
   },
+
+  hbRentMonth: {
+    id: 'sp.finance-housing-benefits:rental-month',
+    defaultMessage: 'Leigumánuður',
+  },
+  hbPaymentBeforeDebt: {
+    id: 'sp.finance-housing-benefits:payment-before-debt',
+    defaultMessage: 'Húsnæðisbætur',
+  },
+  hbDebtPaidOff: {
+    id: 'sp.finance-housing-benefits:paid-off',
+    defaultMessage: 'Greitt af skuld',
+  },
+  hbPaidOut: {
+    id: 'sp.finance-housing-benefits:paid-out',
+    defaultMessage: 'Greitt út',
+  },
+  hbDebtStatus: {
+    id: 'sp.finance-housing-benefits:debt-status',
+    defaultMessage: 'Staða skuldar',
+  },
+
+  hbNumberOfDays: {
+    id: 'sp.finance-housing-benefits:number-of-days',
+    defaultMessage: 'Fjöldi daga',
+  },
+  hbPaymentNumber: {
+    id: 'sp.finance-housing-benefits:payment-number',
+    defaultMessage: 'Greiðslunúmer',
+  },
+  hbTotalIncome: {
+    id: 'sp.finance-housing-benefits:total-income',
+    defaultMessage: 'Heildartekjur',
+  },
+  hbName: {
+    id: 'sp.finance-housing-benefits:name',
+    defaultMessage: 'Viðtakandi greiðslu',
+  },
+  hbBenefit: {
+    id: 'sp.finance-housing-benefits:benefit',
+    defaultMessage: 'Grunnur réttinda',
+  },
+  hbBanknumber: {
+    id: 'sp.finance-housing-benefits:bank-number',
+    defaultMessage: 'Banka nr.',
+  },
+  hbReductionIncome: {
+    id: 'sp.finance-housing-benefits:reduction-income',
+    defaultMessage: 'Skerðing vegna tekna',
+  },
+  hbDateOfBankTransfer: {
+    id: 'sp.finance-housing-benefits:date-of-bank-transfer',
+    defaultMessage: 'Dagsetning millifærslu',
+  },
+  hbReductionHousingCost: {
+    id: 'sp.finance-housing-benefits:reduction-housing-cost',
+    defaultMessage: 'Skerðing vegna húsnæðiskostnaðar',
+  },
+  hbTypeOfCalculation: {
+    id: 'sp.finance-housing-benefits:calculation-type',
+    defaultMessage: 'Tegund útreikn.',
+  },
+  hbTypeOfTransaction: {
+    id: 'sp.finance-housing-benefits:transaction-type',
+    defaultMessage: 'Tegund færslu.',
+  },
+  hbReductionAssets: {
+    id: 'sp.finance-housing-benefits:reduction-assets',
+    defaultMessage: 'Skerðing vegna eigna',
+  },
+  hbRentalMonthYear: {
+    id: 'sp.finance-housing-benefits:rental-month-year-title',
+    defaultMessage: 'Leigumánuður / Ár',
+  },
+  hbPaymentType: {
+    id: 'sp.finance-housing-benefits:payment-type-title',
+    defaultMessage: 'Tegund greiðslu',
+  },
+  hbAllPayments: {
+    id: 'sp.finance-housing-benefits:all-payments',
+    defaultMessage: 'Allar greiðslur',
+  },
+  hbGeneralPayments: {
+    id: 'sp.finance-housing-benefits:general-payments',
+    defaultMessage: 'Almennar greiðslur',
+  },
+  hbSpecialPayments: {
+    id: 'sp.finance-housing-benefits:special-payments',
+    defaultMessage: 'Sérstakar greiðslur',
+  },
+  paymentOrigin1: {
+    id: 'sp.finance-housing-benefits:payment-origin-1',
+    defaultMessage: 'Húsnæðisbætur',
+  },
+  paymentOrigin2: {
+    id: 'sp.finance-housing-benefits:payment-origin-2',
+    defaultMessage: 'Sérstakur húsnæðisstuðningur',
+  },
 })
+
+export const hb = {
+  transaction: defineMessages({
+    G: {
+      id: 'sp.finance-housing-benefits:transaction-type-g',
+      defaultMessage: 'Greiðsla',
+    },
+    E: {
+      id: 'sp.finance-housing-benefits:transaction-type-e',
+      defaultMessage: 'Endurgreitt',
+    },
+    M: {
+      id: 'sp.finance-housing-benefits:transaction-type-m',
+      defaultMessage: 'Millifærsla',
+    },
+    A: {
+      id: 'sp.finance-housing-benefits:transaction-type-a',
+      defaultMessage: 'Álag',
+    },
+    AS: {
+      id: 'sp.finance-housing-benefits:transaction-type-as',
+      defaultMessage: 'Afskrifuð krafa',
+    },
+    L: {
+      id: 'sp.finance-housing-benefits:transaction-type-l',
+      defaultMessage: 'Lokauppgjör',
+    },
+    KG: {
+      id: 'sp.finance-housing-benefits:transaction-type-kg',
+      defaultMessage: 'Krafa greidd',
+    },
+    LM: {
+      id: 'sp.finance-housing-benefits:transaction-type-lm',
+      defaultMessage: 'Sameinað lokauppgjör',
+    },
+    KS: {
+      id: 'sp.finance-housing-benefits:transaction-type-ks',
+      defaultMessage: 'Krafa greidd hjá sýslumanni',
+    },
+    AF: {
+      id: 'sp.finance-housing-benefits:transaction-type-af',
+      defaultMessage: 'Sent til sýslumanns',
+    },
+    I: {
+      id: 'sp.finance-housing-benefits:transaction-type-i',
+      defaultMessage: 'Skuld',
+    },
+  }),
+  calculation: defineMessages({
+    KG: {
+      id: 'sp.finance-housing-benefits:calculation-type-kg',
+      defaultMessage: 'Krafa greidd',
+    },
+    L: {
+      id: 'sp.finance-housing-benefits:calculation-type-l',
+      defaultMessage: 'Lokauppgjör',
+    },
+    E: {
+      id: 'sp.finance-housing-benefits:calculation-type-e',
+      defaultMessage: 'Endurútreikningur',
+    },
+    U: {
+      id: 'sp.finance-housing-benefits:calculation-type-u',
+      defaultMessage: 'Útreikningur',
+    },
+  }),
+}

@@ -24,6 +24,7 @@ import {
   CaseFileCategory,
   CaseFileState,
   CaseState,
+  DateType,
   NotificationType,
   UserRole,
 } from '@island.is/judicial-system/types'
@@ -38,6 +39,7 @@ import {
 import { Institution } from '../institution'
 import { User } from '../user'
 import { Case } from './models/case.model'
+import { DateLog } from './models/dateLog.model'
 import { PDFService } from './pdf.service'
 
 export const attributes: (keyof Case)[] = [
@@ -59,7 +61,6 @@ export const attributes: (keyof Case)[] = [
   'requestedCustodyRestrictions',
   'prosecutorId',
   'courtCaseNumber',
-  'courtDate',
   'courtEndTime',
   'decision',
   'validToDate',
@@ -105,6 +106,8 @@ export interface LimitedAccessUpdateCase
     | 'openedByDefender'
     | 'appealRulingDecision'
   > {}
+
+const dateTypes = Object.values(DateType)
 
 export const include: Includeable[] = [
   { model: Institution, as: 'prosecutorsOffice' },
@@ -178,10 +181,17 @@ export const include: Includeable[] = [
       ],
     },
   },
+  {
+    model: DateLog,
+    as: 'dateLogs',
+    required: false,
+    where: { dateType: { [Op.in]: dateTypes } },
+  },
 ]
 
 export const order: OrderItem[] = [
   [{ model: Defendant, as: 'defendants' }, 'created', 'ASC'],
+  [{ model: DateLog, as: 'dateLogs' }, 'created', 'DESC'],
 ]
 
 @Injectable()

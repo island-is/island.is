@@ -4,6 +4,7 @@ import {
   NO_ANSWER,
   buildCustomField,
   buildDateField,
+  buildFileUploadField,
   buildForm,
   buildMultiField,
   buildRadioField,
@@ -21,6 +22,7 @@ import {
   FormModes,
 } from '@island.is/application/types'
 import {
+  FILE_SIZE_LIMIT,
   NO,
   PARENTAL_GRANT,
   PARENTAL_GRANT_STUDENTS,
@@ -336,6 +338,35 @@ export const EditOrAddEmployersAndPeriods: Form = buildForm({
                   ratio: (value) => `${value}%`,
                 },
               },
+            }),
+          ],
+        }),
+        buildSubSection({
+          id: 'reviewUpload',
+          title: parentalLeaveFormMessages.fileUpload.additionalAttachmentTitle,
+          children: [
+            buildFileUploadField({
+              id: 'fileUpload.changeEmployerFile',
+              title:
+                parentalLeaveFormMessages.fileUpload.additionalAttachmentTitle,
+              introduction:
+                parentalLeaveFormMessages.fileUpload
+                  .additionalAttachmentDescription,
+              condition: (answers) => {
+                const { addEmployer } = getApplicationAnswers(answers)
+
+                return addEmployer === YES
+              },
+              maxSize: FILE_SIZE_LIMIT,
+              maxSizeErrorText:
+                parentalLeaveFormMessages.fileUpload.attachmentMaxSizeError,
+              uploadAccept: '.pdf',
+              uploadHeader: '',
+              uploadDescription:
+                parentalLeaveFormMessages.fileUpload.uploadDescription,
+              uploadButtonLabel:
+                parentalLeaveFormMessages.fileUpload.attachmentButton,
+              uploadMultiple: true,
             }),
           ],
         }),

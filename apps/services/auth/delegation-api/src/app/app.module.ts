@@ -2,6 +2,7 @@ import { Module } from '@nestjs/common'
 import { SequelizeModule } from '@nestjs/sequelize'
 
 import {
+  DelegationApiUserSystemNotificationConfig,
   DelegationConfig,
   SequelizeConfigService,
 } from '@island.is/auth-api-lib'
@@ -46,6 +47,7 @@ import { ScopesModule } from './scopes/scopes.module'
         NationalRegistryClientConfig,
         RskRelationshipsClientConfig,
         XRoadConfig,
+        DelegationApiUserSystemNotificationConfig,
       ],
     }),
   ],
