@@ -36,7 +36,7 @@ describe('SessionsService', () => {
     await app?.cleanUp()
   })
 
-  it('should', async () => {
+  it('should remove old enough session records', async () => {
     // Arrange
 
     // Create sessions that should be deleted
