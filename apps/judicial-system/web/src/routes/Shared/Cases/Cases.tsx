@@ -49,6 +49,7 @@ import {
 } from '@island.is/judicial-system-web/src/graphql/schema'
 import { useCase } from '@island.is/judicial-system-web/src/utils/hooks'
 
+import CasesAwaitingAssignmentTable from '../../Court/components/CasesAwaitingAssignmentTable/CasesAwaitingAssignmentTable'
 import ActiveCases from './ActiveCases'
 import { useCasesQuery } from './cases.generated'
 import { FilterOption, useFilter } from './useFilter'
@@ -136,41 +137,54 @@ export const Cases: React.FC = () => {
     }
   }, [isFiltering])
 
-  const [casesAwaitingConfirmation, allActiveCases, allPastCases] =
-    useMemo(() => {
-      if (!resCases) {
-        return [[], [], []]
+  const [
+    casesAwaitingConfirmation,
+    allActiveCases,
+    allPastCases,
+    casesAwaitingAssignment,
+  ] = useMemo(() => {
+    if (!resCases) {
+      return [[], [], [], []]
+    }
+
+    const filterCases = (predicate: (c: CaseListEntry) => boolean) =>
+      resCases.filter(predicate)
+
+    const casesAwaitingConfirmation = filterCases(
+      (c) => c.state === CaseState.WAITING_FOR_CONFIRMATION,
+    )
+
+    const casesAwaitingAssignment = filterCases(
+      (c) => isIndictmentCase(c.type) && c.judge === null,
+    )
+
+    const activeCases = filterCases((c) => {
+      if (
+        c.state === CaseState.DELETED ||
+        c.state === CaseState.WAITING_FOR_CONFIRMATION ||
+        (isDistrictCourtUser(user) && casesAwaitingAssignment.includes(c))
+      ) {
+        return false
       }
 
-      const filterCases = (predicate: (c: CaseListEntry) => boolean) =>
-        resCases.filter(predicate)
+      if (isIndictmentCase(c.type) || !isDistrictCourtUser(user)) {
+        return !isCompletedCase(c.state)
+      } else {
+        return !(isCompletedCase(c.state) && c.rulingSignatureDate)
+      }
+    })
 
-      const casesAwaitingConfirmation = filterCases(
-        (c) => c.state === CaseState.WAITING_FOR_CONFIRMATION,
-      )
+    const pastCases = filterCases(
+      (c) => !activeCases.includes(c) && !casesAwaitingAssignment.includes(c),
+    )
 
-      const activeCases = filterCases((c) => {
-        if (
-          c.state === CaseState.DELETED ||
-          c.state === CaseState.WAITING_FOR_CONFIRMATION
-        ) {
-          return false
-        }
-        if (isIndictmentCase(c.type) || !isDistrictCourtUser(user)) {
-          return !isCompletedCase(c.state)
-        } else {
-          return !(isCompletedCase(c.state) && c.rulingSignatureDate)
-        }
-      })
-
-      const pastCases = filterCases((c) => !activeCases.includes(c))
-
-      return [
-        casesAwaitingConfirmation as CaseListEntry[],
-        activeCases as CaseListEntry[],
-        pastCases as CaseListEntry[],
-      ]
-    }, [resCases, user])
+    return [
+      casesAwaitingConfirmation as CaseListEntry[],
+      activeCases as CaseListEntry[],
+      pastCases as CaseListEntry[],
+      casesAwaitingAssignment as CaseListEntry[],
+    ]
+  }, [resCases, user])
 
   const {
     filter,
@@ -366,6 +380,14 @@ export const Cases: React.FC = () => {
                   </Box>
                 </AnimatePresence>
               </>
+            )}
+
+            {isDistrictCourtUser(user) && filter.value !== 'INVESTIGATION' && (
+              <CasesAwaitingAssignmentTable
+                cases={casesAwaitingAssignment}
+                loading={loading || isFiltering}
+                isFiltering={isFiltering}
+              />
             )}
             <SectionHeading title={formatMessage(m.activeRequests.title)} />
             <Box marginBottom={[5, 5, 12]}>
