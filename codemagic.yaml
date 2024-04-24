@@ -33,9 +33,10 @@ definitions:
           echo "No previous commit detected. Continuing."
         fi
     - &set_android_location
-      name: Set Android SDK location
+      name: Prepare Android configuration
       script: |
         echo "sdk.dir=$ANDROID_SDK_ROOT" > android/local.properties
+        echo $ANDROID_FIREBASE_SECRET > android/app/google-services.json
     - &npm_install
       name: Install npm dependencies
       working_directory: .
@@ -93,6 +94,8 @@ workflows:
     cache: &ios_cache
       cache_paths:
         - ~/Library/Caches/CocoaPods
+        - .yarn/cache
+        - .cache/nx
     integrations:
       app_store_connect: "Island.is API Key"
     environment:
@@ -169,11 +172,14 @@ workflows:
     cache:
       cache_paths:
         - ~/.gradle/caches
+        - .yarn/cache
+        - .cache/nx
     environment:
       android_signing:
         - island-upload-keystore
       groups:
         - google_credentials
+        - firebase_credentials
       vars:
         <<: *shared_envs
         PACKAGE_NAME: "is.island.app.dev"
