@@ -23,7 +23,7 @@ import {
   Features,
 } from '@island.is/nest/feature-flags'
 
-@UseGuards(IdsUserGuard, IdsAuthGuard, FeatureFlagGuard)
+@UseGuards(IdsUserGuard, FeatureFlagGuard)
 @Audit({ namespace: '@island.is/api/occupational-licenses-v2' })
 @Scopes(ApiScope.internal)
 @FeatureFlag(Features.occupationalLicensesV2)
