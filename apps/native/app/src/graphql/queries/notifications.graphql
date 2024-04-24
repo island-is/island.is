@@ -1,0 +1,43 @@
+query GetUserNotifications($input: NotificationsInput!) {
+  userNotifications: notifications(input: $input) {
+    data {
+      ...NotificationDataFields
+      recipient {
+        nationalId
+      }
+    }
+    pageInfo {
+      hasNextPage
+      hasPreviousPage
+      startCursor
+      endCursor
+    }
+    unreadCount
+    # unseenCount
+    totalCount
+  }
+}
+
+query GetUserNotificationsOverview($input: NotificationsInput!) {
+  userNotificationsOverview: notifications(input: $input) {
+    data {
+      ...NotificationDataFields
+    }
+    totalCount
+    # unseenCount
+  }
+}
+
+mutation MarkUserNotificationAsRead($id: Float!) {
+  markNotificationAsRead(id: $id) {
+    data {
+      ...NotificationDataFields
+    }
+  }
+}
+
+# mutation MarkAllNotificationsAsSeen {
+#   markAllNotificationsSeen {
+#     success
+#   }
+# }
