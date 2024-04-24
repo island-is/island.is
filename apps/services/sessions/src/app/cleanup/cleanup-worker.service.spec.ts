@@ -59,6 +59,7 @@ describe('SessionsService', () => {
     // Assert
     const sessions = await factory.get(Session).findAll()
     expect(sessions).toHaveLength(5)
+    // Check that all remaining sessions are newer than the cutoff date
     expect(sessions.every((s) => s.timestamp > new Date('2023-02-01')))
   })
 })
