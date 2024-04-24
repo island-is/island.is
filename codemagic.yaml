@@ -2,13 +2,14 @@ definitions:
   base: &base
     max_build_duration: 120
     working_directory: apps/native/app
-  default_triggers: &default_triggers
-    events:
-      - push
-    branch_patterns:
-      - pattern: "codemagic"
-        include: true
-        source: true
+    # To save on build minutes, workflows are currently triggered manually and/or once per day.
+    #  default_triggers: &default_triggers
+    #    events:
+    #      - push
+    #    branch_patterns:
+    #      - pattern: "main"
+    #        include: true
+    #        source: true
   shared_envs: &shared_envs
     XCODE_WORKSPACE: "IslandApp.xcworkspace"
     CM_CLONE_DEPTH: 50
@@ -95,7 +96,6 @@ workflows:
     <<: *base
     name: Island.is Prod App iOS
     instance_type: mac_mini_m1
-    # triggering: *default_triggers
     cache: &ios_cache
       cache_paths:
         - ~/Library/Caches/CocoaPods
@@ -132,7 +132,6 @@ workflows:
     <<: *base
     name: Island.is Dev App iOS
     instance_type: mac_mini_m1
-    # triggering: *default_triggers
     cache: *ios_cache
     integrations:
       app_store_connect: "Island.is API Key"
@@ -168,7 +167,6 @@ workflows:
     instance_type: mac_mini_m1
     ## Switch when we have billing
     # instance_type: linux_x2
-    triggering: *default_triggers
     cache: &android_cache
       cache_paths:
         - ~/.gradle/caches
@@ -200,7 +198,6 @@ workflows:
     instance_type: mac_mini_m1
     ## Switch when we have billing
     # instance_type: linux_x2
-    triggering: *default_triggers
     cache: *android_cache
     environment:
       android_signing:
