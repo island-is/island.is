@@ -3,116 +3,63 @@ import { FormattedDate } from 'react-intl'
 import { Image, ImageSourcePropType } from 'react-native'
 import styled, { useTheme } from 'styled-components/native'
 import { dynamicColor } from '../../utils/dynamic-color'
-import { font } from '../../utils/font'
+import { Typography } from '../typography/typography'
 
-const Host = styled.TouchableHighlight`
-  border-radius: ${({ theme }) => theme.border.radius.large};
+const Host = styled.TouchableHighlight<{ unread?: boolean }>`
   background-color: ${dynamicColor((props) => ({
-    dark: 'shade100',
-    light: props.theme.color.blueberry100,
+    dark: props.unread ? 'shade100' : 'transparent',
+    light: props.unread ? props.theme.color.blue100 : 'transparent',
   }))};
-  margin-bottom: ${({ theme }) => theme.spacing[2]}px;
+`
+
+const Cell = styled.View`
+  flex: 1;
+  flex-direction: row;
+  padding-horizontal: ${({ theme }) => theme.spacing[2]}px;
+  padding-vertical: ${({ theme }) => theme.spacing[3]}px;
+  border-bottom-width: ${({ theme }) => theme.border.width.standard}px;
+  border-bottom-color: ${dynamicColor(
+    ({ theme }) => ({
+      light: theme.color.blue200,
+      dark: theme.shades.dark.shade300,
+    }),
+    true,
+  )};
 `
 
 const Container = styled.View`
-  padding-top: 20px;
+  flex-direction: column;
+  flex: 1;
+`
+
+const Icon = styled.View<{ unread?: boolean }>`
+  margin-right: ${({ theme }) => theme.spacing[2]}px;
+  background-color: ${({ theme, unread }) =>
+    unread ? theme.color.white : theme.color.blue100};
+  height: 40px;
+  width: 40px;
+  align-items: center;
+  justify-content: center;
+  border-radius: ${({ theme }) => theme.border.radius.circle};
+  flex-direction: column;
 `
 
 const Title = styled.View`
   flex-direction: row;
   align-items: center;
   flex: 1;
-  padding-right: ${({ theme }) => theme.spacing[1]}px;
-`
-
-const ActionsContainer = styled.View`
-  border-top-width: ${({ theme }) => theme.border.width.standard}px;
-  border-top-color: ${dynamicColor(
-    (props) => ({
-      dark: 'shade200',
-      light: props.theme.color.blueberry200,
-    }),
-    true,
-  )};
-  flex-direction: row;
-`
-
-const ActionButton = styled.TouchableOpacity<{ border: boolean }>`
-  flex: 1;
-  align-items: center;
-  justify-content: center;
-  padding: ${({ theme }) => theme.spacing[2]}px;
-  border-left-width: ${({ theme }) => theme.border.width.standard}px;
-  border-left-color: ${dynamicColor(
-    (props) => ({
-      dark: !props.border ? 'transparent' : 'shade200',
-      light: !props.border ? 'transparent' : props.theme.color.blueberry200,
-    }),
-    true,
-  )};
-`
-
-const ActionText = styled.Text`
-  ${font({
-    fontWeight: '600',
-    color: ({ theme }) => theme.color.blue400,
-  })}
-  text-align: center;
-`
-
-const TitleText = styled.Text`
-  flex: 1;
-
-  ${font({
-    fontWeight: '600',
-    fontSize: 13,
-    lineHeight: 17,
-    color: 'foreground',
-  })}
 `
 
 const Row = styled.View`
   flex-direction: row;
+  flex: 1;
   justify-content: space-between;
-  margin-bottom: ${({ theme }) => theme.spacing[1]}px;
-  padding-left: ${({ theme }) => theme.spacing[2]}px;
-  padding-right: ${({ theme }) => theme.spacing[2]}px;
+  margin-bottom: ${({ theme }) => theme.spacing.smallGutter}px;
 `
 
 const Date = styled.View`
   flex-direction: row;
   align-items: center;
-`
-
-const DateText = styled.Text<{ unread?: boolean }>`
-  ${font({
-    fontWeight: (props) => (props.unread ? '600' : '300'),
-    fontSize: 13,
-    lineHeight: 17,
-    color: 'foreground',
-  })}
-`
-
-const Content = styled.View`
-  padding-left: ${({ theme }) => theme.spacing[2]}px;
-  padding-right: ${({ theme }) => theme.spacing[2]}px;
-  padding-bottom: 20px;
-`
-
-const Message = styled.Text`
-  ${font({
-    fontWeight: '300',
-    color: 'foreground',
-    lineHeight: 24,
-  })}
-`
-
-const Dot = styled.View`
-  width: ${({ theme }) => theme.spacing[1]}px;
-  height: ${({ theme }) => theme.spacing[1]}px;
-  border-radius: ${({ theme }) => theme.border.radius.large};
-  background-color: ${dynamicColor(({ theme }) => theme.color.blueberry400)};
-  margin-left: ${({ theme }) => theme.spacing[1]}px;
 `
 
 interface CardProps {
@@ -136,51 +83,41 @@ export function NotificationCard({
   date,
   icon,
   unread,
-  actions = [],
 }: CardProps) {
   const theme = useTheme()
   return (
     <Host
       onPress={() => onPress(id)}
       underlayColor={theme.isDark ? theme.shade.shade200 : '#EBEBFA'}
+      unread={unread}
     >
-      <Container>
-        <Row>
-          <Title>
-            {icon && isValidElement(icon) ? (
-              icon
-            ) : (
-              <Image
-                source={icon as ImageSourcePropType}
-                style={{ width: 16, height: 16, marginRight: 8 }}
-              />
+      <Cell>
+        {icon && isValidElement(icon) ? (
+          icon
+        ) : (
+          <Icon unread={unread}>
+            <Image
+              source={1 as ImageSourcePropType}
+              style={{ width: 16, height: 16 }}
+            />
+          </Icon>
+        )}
+        <Container>
+          <Row>
+            <Title>
+              <Typography variant="heading5">{title}</Typography>
+            </Title>
+            {date && (
+              <Date>
+                <Typography variant="body3">
+                  <FormattedDate value={date} />
+                </Typography>
+              </Date>
             )}
-            <TitleText numberOfLines={1} ellipsizeMode="tail">
-              {title}
-            </TitleText>
-          </Title>
-          {date && (
-            <Date>
-              <DateText unread={unread}>
-                <FormattedDate value={date} />
-              </DateText>
-              {unread && <Dot />}
-            </Date>
-          )}
-        </Row>
-        <Content>
-          <Message>{message}</Message>
-        </Content>
-        {actions.length ? (
-          <ActionsContainer>
-            {actions.map(({ text, onPress }, i) => (
-              <ActionButton onPress={onPress} key={i} border={i !== 0}>
-                <ActionText>{text}</ActionText>
-              </ActionButton>
-            ))}
-          </ActionsContainer>
-        ) : null}
-      </Container>
+          </Row>
+          <Typography>{message}</Typography>
+        </Container>
+      </Cell>
     </Host>
   )
 }
