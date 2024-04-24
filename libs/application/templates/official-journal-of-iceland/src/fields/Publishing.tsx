@@ -2,7 +2,7 @@ import { useLocale } from '@island.is/localization'
 import { FormGroup } from '../components/form/FormGroup'
 import {
   InputFields,
-  MinistryOfJusticeGraphqlResponse,
+  OfficialJournalOfIcelandGraphqlResponse,
   OJOIFieldBaseProps,
   Override,
 } from '../lib/types'
@@ -77,21 +77,26 @@ export const Publishing = (props: OJOIFieldBaseProps) => {
 
   const [updateApplication] = useMutation(UPDATE_APPLICATION)
 
-  useQuery<MinistryOfJusticeGraphqlResponse<'categories'>>(CATEGORIES_QUERY, {
-    variables: {
-      input: {
-        search: '',
+  useQuery<OfficialJournalOfIcelandGraphqlResponse<'categories'>>(
+    CATEGORIES_QUERY,
+    {
+      variables: {
+        params: {
+          search: '',
+        },
+      },
+      onCompleted: (data) => {
+        setCategories(
+          data.officialJournalOfIcelandCategories.categories.map(
+            (category) => ({
+              label: category.title,
+              value: category.id,
+            }),
+          ),
+        )
       },
     },
-    onCompleted: (data) => {
-      setCategories(
-        data.ministryOfJusticeCategories.categories.map((category) => ({
-          label: category.title,
-          value: category.id,
-        })),
-      )
-    },
-  })
+  )
 
   const onSelect = (opt: CategoryOption) => {
     if (!opt.value) return

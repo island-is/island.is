@@ -15,9 +15,21 @@ interface AppealInfo {
   appealedByRole?: UserRole
   appealedDate?: string
   statementDeadline?: string
+  canProsecutorAppeal?: boolean
+  canDefenderAppeal?: boolean
 }
 
-const getAppealInfo = (theCase: Case): AppealInfo => {
+const isAppealableDecision = (decision?: CaseAppealDecision | null) => {
+  if (!decision) {
+    return false
+  }
+  return [
+    CaseAppealDecision.POSTPONE,
+    CaseAppealDecision.NOT_APPLICABLE,
+  ].includes(decision)
+}
+
+export const getAppealInfo = (theCase: Case): AppealInfo => {
   const {
     rulingDate,
     appealState,
@@ -34,13 +46,21 @@ const getAppealInfo = (theCase: Case): AppealInfo => {
     return appealInfo
   }
 
+  const hasBeenAppealed = Boolean(appealState)
+
   appealInfo.canBeAppealed = Boolean(
-    !appealState &&
-      (accusedAppealDecision === CaseAppealDecision.POSTPONE ||
-        prosecutorAppealDecision === CaseAppealDecision.POSTPONE),
+    !hasBeenAppealed &&
+      (isAppealableDecision(accusedAppealDecision) ||
+        isAppealableDecision(prosecutorAppealDecision)),
   )
 
-  appealInfo.hasBeenAppealed = Boolean(appealState)
+  appealInfo.canProsecutorAppeal =
+    !hasBeenAppealed && isAppealableDecision(prosecutorAppealDecision)
+
+  appealInfo.canDefenderAppeal =
+    !hasBeenAppealed && isAppealableDecision(accusedAppealDecision)
+
+  appealInfo.hasBeenAppealed = hasBeenAppealed
 
   appealInfo.appealedByRole = prosecutorPostponedAppealDate
     ? UserRole.PROSECUTOR

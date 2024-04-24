@@ -69,7 +69,6 @@ query Case($input: CaseQueryInput!) {
     }
     courtCaseNumber
     sessionArrangements
-    courtDate
     courtLocation
     courtRoom
     courtStartDate
@@ -198,6 +197,7 @@ query Case($input: CaseQueryInput!) {
     isStatementDeadlineExpired
     statementDeadline
     canBeAppealed
+    canProsecutorAppeal
     hasBeenAppealed
     appealedByRole
     appealedDate
@@ -230,6 +230,7 @@ query Case($input: CaseQueryInput!) {
     appealIsolationToDate
     requestAppealRulingNotToBePublished
     indictmentDeniedExplanation
+    indictmentReturnedExplanation
     eventLogs {
       id
       created
@@ -237,6 +238,12 @@ query Case($input: CaseQueryInput!) {
       eventType
       nationalId
       userRole
+    }
+    dateLogs {
+      id
+      caseId
+      dateType
+      date
     }
     prosecutorsOffice {
       id

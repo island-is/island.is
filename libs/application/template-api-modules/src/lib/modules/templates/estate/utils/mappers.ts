@@ -8,6 +8,7 @@ import { estateSchema } from '@island.is/application/templates/estate'
 import { infer as zinfer } from 'zod'
 import { UploadData } from '../types'
 import { filterEmptyObjects } from './filters'
+import { info } from 'kennitala'
 
 type EstateSchema = zinfer<typeof estateSchema>
 type EstateData = EstateSchema['estate']
@@ -29,12 +30,15 @@ const estateMemberMapper = (element: EstateMember) => {
     phone: '',
     email: '',
     relationWithApplicant: '',
+    noContactInfo: ['No'] as ('Yes' | 'No')[],
     advocate: element.advocate
       ? {
           ...element.advocate,
           phone: '',
           email: '',
         }
+      : info(element?.nationalId).age < 18
+      ? { nationalId: '', name: '', phone: '', email: '' }
       : undefined,
   }
 }

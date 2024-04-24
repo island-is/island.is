@@ -4,3 +4,6 @@ export const EstateTypes = {
   permitForUndividedEstate: 'Seta í óskiptu búi',
   divisionOfEstateByHeirs: 'Einkaskipti',
 }
+
+export const YES = 'Yes'
+export const NO = 'No'

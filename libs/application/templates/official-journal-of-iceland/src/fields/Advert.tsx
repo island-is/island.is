@@ -6,7 +6,7 @@ import { ADVERT_QUERY, TYPES_QUERY } from '../graphql/queries'
 import { DEBOUNCE_INPUT_TIMER, INITIAL_ANSWERS } from '../lib/constants'
 import {
   InputFields,
-  MinistryOfJusticeGraphqlResponse,
+  OfficialJournalOfIcelandGraphqlResponse,
   OJOIFieldBaseProps,
 } from '../lib/types'
 import { Box, SkeletonLoader } from '@island.is/island-ui/core'
@@ -20,15 +20,15 @@ import {
   SelectController,
 } from '@island.is/shared/form-fields'
 import { HTMLEditor } from '../components/htmlEditor/HTMLEditor'
-import { MinistryOfJusticeAdvert } from '@island.is/api/schema'
+import { OfficialJournalOfIcelandAdvert } from '@island.is/api/schema'
 import { useFormContext } from 'react-hook-form'
 
 type LocalState = typeof INITIAL_ANSWERS['advert']
-type TypeResonse = MinistryOfJusticeGraphqlResponse<'types'>
+type TypeResonse = OfficialJournalOfIcelandGraphqlResponse<'types'>
 
-type SelectedAdvertResponse = MinistryOfJusticeGraphqlResponse<
+type SelectedAdvertResponse = OfficialJournalOfIcelandGraphqlResponse<
   'advert',
-  MinistryOfJusticeAdvert
+  OfficialJournalOfIcelandAdvert
 >
 
 type Props = OJOIFieldBaseProps & {
@@ -100,13 +100,12 @@ export const Advert = ({ application, errors, selectedAdvertId }: Props) => {
         variables: {
           params: {
             search: '',
-            page: '1',
             department: state.department,
           },
         },
         onCompleted: (data) =>
           setTypes(
-            data.ministryOfJusticeTypes.types.map((t) => ({
+            data.officialJournalOfIcelandTypes.types.map((t) => ({
               label: t.title,
               value: t.id,
             })),
@@ -129,7 +128,7 @@ export const Advert = ({ application, errors, selectedAdvertId }: Props) => {
         })
 
         if (data) {
-          const { advert } = data.ministryOfJusticeAdvert
+          const { advert } = data.officialJournalOfIcelandAdvert
           setState({
             department: advert.department.id,
             type: advert.type.id,

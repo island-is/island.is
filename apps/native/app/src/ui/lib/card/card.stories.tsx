@@ -13,7 +13,7 @@ import illustrationSrc from '../../assets/illustrations/digital-services-m3.png'
 import { theme } from '../../utils/theme'
 import { Badge } from '../badge/badge'
 import { FamilyMemberCard } from './family-member-card'
-import { LicenceCard } from './licence-card'
+import { LicenseCard } from './license-card'
 import { NotificationCard } from './notification-card'
 import { StatusCard } from './status-card'
 import { UserCard } from './user-card'
@@ -73,7 +73,7 @@ storiesOf('Cards', module)
     )
     const title = text('Licence Card Title', 'Ökuskýrteini')
     return (
-      <LicenceCard
+      <LicenseCard
         title={title}
         status={status}
         date={new Date()}

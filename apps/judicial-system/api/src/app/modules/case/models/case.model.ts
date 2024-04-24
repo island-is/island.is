@@ -27,6 +27,7 @@ import { CaseFile } from '../../file'
 import { IndictmentCount } from '../../indictment-count'
 import { Institution } from '../../institution'
 import { User } from '../../user'
+import { DateLog } from './dateLog.model'
 import { EventLog } from './eventLog.model'
 import { Notification } from './notification.model'
 
@@ -163,9 +164,6 @@ export class Case {
 
   @Field(() => SessionArrangements, { nullable: true })
   readonly sessionArrangements?: SessionArrangements
-
-  @Field({ nullable: true })
-  readonly courtDate?: string
 
   @Field({ nullable: true })
   readonly courtLocation?: string
@@ -324,6 +322,12 @@ export class Case {
   readonly canBeAppealed?: boolean
 
   @Field(() => Boolean, { nullable: true })
+  readonly canProsecutorAppeal?: boolean
+
+  @Field(() => Boolean, { nullable: true })
+  readonly canDefenderAppeal?: boolean
+
+  @Field(() => Boolean, { nullable: true })
   readonly hasBeenAppealed?: boolean
 
   @Field({ nullable: true })
@@ -371,6 +375,9 @@ export class Case {
   @Field(() => [EventLog], { nullable: true })
   readonly eventLogs?: EventLog[]
 
+  @Field(() => [DateLog], { nullable: true })
+  readonly dateLogs?: DateLog[]
+
   @Field({ nullable: true })
   readonly appealValidToDate?: string
 
@@ -388,4 +395,7 @@ export class Case {
 
   @Field({ nullable: true })
   readonly indictmentDeniedExplanation?: string
+
+  @Field({ nullable: true })
+  readonly indictmentReturnedExplanation?: string
 }

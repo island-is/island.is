@@ -21,7 +21,7 @@ export const complainedFor = {
       description: 'Title about decision, you or someone else',
     },
     description: {
-      id: 'ctao.application:complainedFor.decision.description',
+      id: 'ctao.application:complainedFor.decision.description#markdown',
       defaultMessage: `Almennt getur maður ekki kvartað til 
 				umboðsmanns Alþingis yfir því að aðrir hafi verið 
 				beittir rangsleitni af hálfu stjórnvalda. Ef maður hefur

@@ -7,7 +7,7 @@ import {
   font,
   Input,
   InputRow,
-  LicenceCard,
+  LicenseCard,
   LinkText,
 } from '@ui'
 import React from 'react'
@@ -26,6 +26,7 @@ import IconStatusNonVerified from '../../assets/icons/warning.png'
 import { useFeatureFlag } from '../../contexts/feature-flag-provider'
 import { useGetIdentityDocumentQuery } from '../../graphql/types/schema'
 import { createNavigationOptionHooks } from '../../hooks/create-navigation-option-hooks'
+import { useOfflineUpdateNavigation } from '../../hooks/use-offline-update-navigation'
 import { openBrowser } from '../../lib/rn-island'
 
 const Information = styled.ScrollView`
@@ -91,7 +92,7 @@ export const WalletPassportScreen: NavigationFunctionComponent<{
   cardHeight?: number
 }> = ({ id, componentId, cardHeight = 140 }) => {
   useNavigationOptions(componentId)
-
+  useOfflineUpdateNavigation(componentId)
   const showChildrenPassport = useFeatureFlag(
     'isChildrenPassportEnabled',
     false,
@@ -365,7 +366,7 @@ export const WalletPassportScreen: NavigationFunctionComponent<{
           zIndex: 100,
         }}
       >
-        <LicenceCard
+        <LicenseCard
           nativeID={`license-${CustomLicenseType.Passport}_destination`}
           type={CustomLicenseType.Passport}
           date={

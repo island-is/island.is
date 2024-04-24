@@ -58,7 +58,7 @@
 /libs/shared/connected/src/lib/generalPetition/GeneralPetitionLists/                                     @island-is/juni
 /libs/shared/connected/src/lib/SignatureLists/                                                           @island-is/juni
 /libs/api/domains/communications/                                                                        @island-is/juni @island-is/stefna
-/apps/services/user-notification/                                                                        @island-is/juni
+/apps/services/user-notification/                                                                        @island-is/juni @island-is/aranja
 /apps/air-discount-scheme/                                                                               @island-is/hugsmidjan
 /libs/air-discount-scheme/                                                                               @island-is/hugsmidjan
 /libs/application/templates/p-sign/                                                                      @island-is/juni
@@ -127,6 +127,8 @@ libs/clients/rsk/relationships/                                                 
 /apps/services/user-profile/                                                                             @island-is/hugsmidjan @island-is/juni @island-is/aranja
 /apps/web/screens/Regulations/                                                                           @island-is/hugsmidjan
 /apps/web/components/Regulations/                                                                        @island-is/hugsmidjan
+/apps/web/screens/OfficialJournalOfIceland/                                                              @island-is/hugsmidjan
+/apps/web/components/OfficialJournalOfIceland/                                                           @island-is/hugsmidjan
 /libs/api/domains/air-discount-scheme                                                                    @island-is/hugsmidjan
 /libs/api/domains/documents/                                                                             @island-is/hugsmidjan
 /libs/api/domains/finance/                                                                               @island-is/hugsmidjan
@@ -146,8 +148,9 @@ libs/clients/rsk/relationships/                                                 
 /libs/api/domains/social-insurance                                                                       @island-is/hugsmidjan @island-is/stefna
 /libs/api/domains/occupational-licenses/                                                                 @island-is/hugsmidjan
 /libs/api/domains/intellectual-properties/                                                               @island-is/hugsmidjan
-/libs/api/domains/ministry-of-justice/                                                                   @island-is/hugsmidjan
+/libs/api/domains/official-journal-of-iceland/                                                           @island-is/hugsmidjan
 /libs/api/domains/document-provider/                                                                     @island-is/hugsmidjan @island-is/core
+/libs/api/domains/housing-benefits/                                                                      @island-is/hugsmidjan
 /libs/clients/documents/                                                                                 @island-is/hugsmidjan
 /libs/clients/documents-v2/                                                                              @island-is/hugsmidjan
 /libs/clients/finance/                                                                                   @island-is/hugsmidjan
@@ -174,7 +177,7 @@ libs/clients/rsk/relationships/                                                 
 /libs/clients/regulations-admin/                                                                         @island-is/hugsmidjan
 /libs/clients/inna/                                                                                      @island-is/hugsmidjan
 /libs/clients/hms-loans/                                                                                 @island-is/hugsmidjan
-/libs/clients/dmr/                                                                                       @island-is/hugsmidjan
+/libs/clients/official-journal-of-iceland/                                                               @island-is/hugsmidjan
 /libs/clients/hms-housing-benefits/                                                                      @island-is/hugsmidjan
 /apps/services/license-api/                                                                              @island-is/hugsmidjan
 /libs/regulations/                                                                                       @island-is/hugsmidjan
@@ -338,6 +341,9 @@ libs/clients/rsk/relationships/                                                 
 /libs/application/template-api-modules/src/lib/modules/templates/energy-funds/                           @island-is/origo
 /libs/api/domains/energy-funds/                                                                          @island-is/origo
 /libs/clients/energy-funds/                                                                              @island-is/origo
+
+/libs/application/templates/university/                                                                  @island-is/origo
+/libs/application/template-api-modules/src/lib/modules/templates/university/                             @island-is/origo
 
 # Temporary assignment while the QA bootstrap project is in progress
 /apps/system-e2e/                                                                                        @island-is/qa
