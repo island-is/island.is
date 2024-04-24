@@ -7,9 +7,5 @@ export const up = compose(
     description: 'Bakendascope fyrir húsnæðisbætur',
     addToClients: ['@island.is/clients/api'],
     accessControlled: false,
-    delegation: {
-      custom: true,
-      legalGuardians: false,
-    },
   }),
 )
