@@ -1,12 +1,10 @@
-import React, { useEffect, useState } from 'react'
+import { useEffect, useState } from 'react'
 import {
-  Animated,
   Image,
   ImageSourcePropType,
   LayoutAnimation,
   SafeAreaView,
   TouchableOpacity,
-  View,
 } from 'react-native'
 import { useTheme } from 'styled-components'
 import styled from 'styled-components/native'
@@ -64,7 +62,9 @@ const darkBackgroundColor = (color: string, colors: any) => {
   return color
 }
 
-const Host = styled(Animated.View)<HostProps>`
+const Host = styled.View<HostProps>`
+  padding: ${({ theme }) => theme.spacing[2]}px;
+
   border-style: solid;
   border-color: ${dynamicColor((props) => ({
     light: props.theme.color[props.borderColor],
@@ -73,11 +73,10 @@ const Host = styled(Animated.View)<HostProps>`
       props.theme.color,
     ),
   }))};
-
   border-width: ${({ hasBorder }) => (hasBorder ? '1px' : 0)};
   ${({ hasBottomBorder }) => hasBottomBorder && 'border-bottom-width: 1px;'}
-
   border-radius: ${({ hasBorder }) => (hasBorder ? '8px' : 0)};
+
   background-color: ${dynamicColor((props) => ({
     light: props.theme.color[props.backgroundColor],
     dark: darkBackgroundColor(
@@ -85,7 +84,6 @@ const Host = styled(Animated.View)<HostProps>`
       props.theme.color,
     ),
   }))};
-  padding: ${({ theme }) => theme.spacing[2]}px;
 `
 
 const Container = styled(SafeAreaView)`
@@ -124,6 +122,7 @@ const Close = styled(TouchableOpacity)`
   padding: 10px;
   justify-content: center;
   align-items: center;
+  align-self: flex-start;
 `
 
 const CloseIcon = styled.Image`
@@ -170,7 +169,6 @@ export function Alert({
   const theme = useTheme()
   const [hidden, setHidden] = useState<boolean>()
   const variant = variantStyles[type]
-  const [height, setHeight] = useState(70)
 
   useEffect(() => {
     if (typeof hidden !== undefined) {
@@ -190,45 +188,43 @@ export function Alert({
   }
 
   return (
-    <View>
-      <Host
-        backgroundColor={variant.background}
-        borderColor={variant.borderColor}
-        hasBorder={hasBorder}
-        hasBottomBorder={hasBottomBorder}
-        {...rest}
-      >
-        <Container>
-          {!hideIcon && (
-            <Icon>
-              <Image
-                source={variant.icon}
-                style={{ width: 32, height: 32, marginRight: 16 }}
-              />
-            </Icon>
-          )}
+    <Host
+      backgroundColor={variant.background}
+      borderColor={variant.borderColor}
+      hasBorder={hasBorder}
+      hasBottomBorder={hasBottomBorder}
+      {...rest}
+    >
+      <Container>
+        {!hideIcon && (
+          <Icon>
+            <Image
+              source={variant.icon}
+              style={{ width: 32, height: 32, marginRight: 16 }}
+            />
+          </Icon>
+        )}
 
-          {message && (
-            <Content>
-              {title && <Title>{title}</Title>}
-              <Message>{message}</Message>
-            </Content>
-          )}
+        {message && (
+          <Content>
+            {title && <Title>{title}</Title>}
+            <Message>{message}</Message>
+          </Content>
+        )}
 
-          {onClose && (
-            <Close onPressIn={onClose}>
-              <CloseIcon
-                source={close}
-                style={{
-                  tintColor: theme.isDark
-                    ? theme.color.white
-                    : theme.color.dark400,
-                }}
-              />
-            </Close>
-          )}
-        </Container>
-      </Host>
-    </View>
+        {onClose && (
+          <Close onPressIn={onClose}>
+            <CloseIcon
+              source={close}
+              style={{
+                tintColor: theme.isDark
+                  ? theme.color.white
+                  : theme.color.dark400,
+              }}
+            />
+          </Close>
+        )}
+      </Container>
+    </Host>
   )
 }
