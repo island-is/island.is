@@ -345,45 +345,28 @@ export const EditOrAddEmployersAndPeriods: Form = buildForm({
           id: 'reviewUpload',
           title: parentalLeaveFormMessages.fileUpload.additionalAttachmentTitle,
           children: [
-            buildMultiField({
-              id: 'changeEmployerScreen',
+            buildFileUploadField({
+              id: 'fileUpload.changeEmployerFile',
               title:
                 parentalLeaveFormMessages.fileUpload.additionalAttachmentTitle,
-              description:
+              introduction:
                 parentalLeaveFormMessages.fileUpload
                   .additionalAttachmentDescription,
-              children: [
-                buildFileUploadField({
-                  id: 'fileUpload.changeEmployerFile',
-                  title: '',
-                  maxSize: FILE_SIZE_LIMIT,
-                  maxSizeErrorText:
-                    parentalLeaveFormMessages.fileUpload.attachmentMaxSizeError,
-                  uploadAccept: '.pdf',
-                  uploadHeader: '',
-                  uploadDescription:
-                    parentalLeaveFormMessages.fileUpload.uploadDescription,
-                  uploadButtonLabel:
-                    parentalLeaveFormMessages.fileUpload.attachmentButton,
-                  uploadMultiple: true,
-                }),
-                buildSubmitField({
-                  id: 'submit',
-                  placement: 'footer',
-                  title:
-                    parentalLeaveFormMessages.fileUpload
-                      .additionalDocumentsEditSubmit,
-                  refetchApplicationAfterSubmit: true,
-                  actions: [
-                    {
-                      event: DefaultEvents.SUBMIT,
-                      name: parentalLeaveFormMessages.fileUpload
-                        .additionalDocumentsEditSubmit,
-                      type: 'primary',
-                    },
-                  ],
-                }),
-              ],
+              condition: (answers) => {
+                const { addEmployer } = getApplicationAnswers(answers)
+
+                return addEmployer === YES
+              },
+              maxSize: FILE_SIZE_LIMIT,
+              maxSizeErrorText:
+                parentalLeaveFormMessages.fileUpload.attachmentMaxSizeError,
+              uploadAccept: '.pdf',
+              uploadHeader: '',
+              uploadDescription:
+                parentalLeaveFormMessages.fileUpload.uploadDescription,
+              uploadButtonLabel:
+                parentalLeaveFormMessages.fileUpload.attachmentButton,
+              uploadMultiple: true,
             }),
           ],
         }),

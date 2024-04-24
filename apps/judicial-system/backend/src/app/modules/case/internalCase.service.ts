@@ -139,10 +139,12 @@ export class InternalCaseService {
     private readonly caseArchiveModel: typeof CaseArchive,
     @Inject(caseModuleConfig.KEY)
     private readonly config: ConfigType<typeof caseModuleConfig>,
-    private readonly awsS3Service: AwsS3Service,
-    private readonly eventService: EventService,
     @Inject(forwardRef(() => IntlService))
     private readonly intlService: IntlService,
+    @Inject(forwardRef(() => EventService))
+    private readonly eventService: EventService,
+    @Inject(forwardRef(() => AwsS3Service))
+    private readonly awsS3Service: AwsS3Service,
     @Inject(forwardRef(() => CourtService))
     private readonly courtService: CourtService,
     @Inject(forwardRef(() => PoliceService))
@@ -847,6 +849,7 @@ export class InternalCaseService {
       theCase.type,
       theCase.state,
       theCase.policeCaseNumbers.length > 0 ? theCase.policeCaseNumbers[0] : '',
+      theCase.courtCaseNumber ?? '',
       defendantNationalIds && defendantNationalIds[0]
         ? defendantNationalIds[0].replace('-', '')
         : '',

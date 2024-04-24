@@ -29,7 +29,7 @@ import { CreateHnippNotificationDto } from '../dto/createHnippNotification.dto'
 import { NotificationsService } from '../notifications.service'
 import { HnippTemplate } from '../dto/hnippTemplate.response'
 import { Notification } from '../notification.model'
-
+import type { Locale } from '@island.is/shared/types'
 export const IS_RUNNING_AS_WORKER = Symbol('IS_NOTIFICATION_WORKER')
 export const SERVICE_PORTAL_CLICK_ACTION_URL = Symbol(
   'SERVICE_PORTAL_CLICK_ACTION_URL',
@@ -110,7 +110,7 @@ export class NotificationsWorkerService implements OnApplicationBootstrap {
 
     const notification = await this.messageProcessor.convertToNotification(
       message,
-      profile.locale,
+      profile.locale as Locale,
     )
 
     await this.notificationDispatch.sendPushNotification({
@@ -199,7 +199,7 @@ export class NotificationsWorkerService implements OnApplicationBootstrap {
     return {
       from: {
         name: 'Ísland.is',
-        address: 'no-reply@island.is',
+        address: 'noreply@island.is',
       },
       to: {
         name: fullName,
@@ -243,7 +243,7 @@ export class NotificationsWorkerService implements OnApplicationBootstrap {
 
     const template = await this.notificationsService.getTemplate(
       message.templateId,
-      profile.locale,
+      profile.locale as Locale,
     )
 
     let fullName = message.onBehalfOf?.name ?? ''
