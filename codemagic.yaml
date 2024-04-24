@@ -59,8 +59,11 @@ definitions:
         xcode-project build-ipa \
           --workspace "ios/$XCODE_WORKSPACE" \
           --scheme "$XCODE_SCHEME"
-  ios_artifacts:
-  ios_publishing:
+  ios_publishing: &ios_publishing
+    app_store_connect:
+      auth: integration
+      submit_to_testflight: false
+      submit_to_app_store: false
 
 workflows:
   prod-app-ios:
@@ -92,17 +95,13 @@ workflows:
       - /tmp/xcodebuild_logs/*.log
       - $HOME/Library/Developer/Xcode/DerivedData/**/Build/**/*.app
       - $HOME/Library/Developer/Xcode/DerivedData/**/Build/**/*.dSYM
-    publishing: &ios_publishing
-      email:
-        recipients:
-          - eirikur@aranja.com
+    publishing:
+      <<: *ios_publishing
+      slack:
+        channel: '#codemagic-test'
         notify:
-          success: true
-          failure: false
-      app_store_connect:
-        auth: integration
-        submit_to_testflight: false
-        submit_to_app_store: false
+          success: false
+          failure: true
 
   dev-app-ios:
     <<: *base
@@ -129,4 +128,10 @@ workflows:
       - *increment_build_number
       - *build_ipa
     artifacts: *ios_artifacts
-    publishing: *ios_publishing
+    publishing:
+      <<: *ios_publishing
+      slack:
+        channel: '#codemagic-test'
+        notify:
+          success: true
+          failure: true
