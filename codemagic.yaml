@@ -90,6 +90,9 @@ workflows:
     name: Island.is Prod App iOS
     instance_type: mac_mini_m1
     # triggering: *default_triggers
+    cache: &ios_cache
+      cache_paths:
+        - ~/Library/Caches/CocoaPods
     integrations:
       app_store_connect: "Island.is API Key"
     environment:
@@ -127,6 +130,7 @@ workflows:
     name: Island.is Dev App iOS
     instance_type: mac_mini_m1
     # triggering: *default_triggers
+    cache: *ios_cache
     integrations:
       app_store_connect: "Island.is API Key"
     environment:
@@ -162,6 +166,9 @@ workflows:
     ## Switch when we have billing
     # instance_type: linux_x2
     triggering: *default_triggers
+    cache:
+      cache_paths:
+        - ~/.gradle/caches
     environment:
       android_signing:
         - island-upload-keystore

@@ -92,7 +92,7 @@ def reactNativeArchitectures() {
 }
 
 // get version code from the specified property argument `-PversionCode` during the build call
-def getMyVersionCode(fallbackVersionCode = -1) { ->
+def getMyVersionCode(fallbackVersionCode = -1) {
     return project.hasProperty('versionCode') ? versionCode.toInteger() : fallbackVersionCode
 }
 
