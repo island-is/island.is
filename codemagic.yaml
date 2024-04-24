@@ -99,8 +99,8 @@ workflows:
     cache: &ios_cache
       cache_paths:
         - ~/Library/Caches/CocoaPods
-        - .yarn/cache
-        - .cache/nx
+        - $CM_BUILD_DIR/.yarn/cache
+        - $CM_BUILD_DIR/.cache/nx
     integrations:
       app_store_connect: "Island.is API Key"
     environment:
@@ -172,8 +172,8 @@ workflows:
     cache: &android_cache
       cache_paths:
         - ~/.gradle/caches
-        - .yarn/cache
-        - .cache/nx
+        - $CM_BUILD_DIR/.yarn/cache
+        - $CM_BUILD_DIR/.cache/nx
     environment:
       android_signing:
         - island-upload-keystore
