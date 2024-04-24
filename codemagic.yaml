@@ -9,6 +9,9 @@ definitions:
       - pattern: "codemagic"
         include: true
         source: true
+  shared_envs: &shared_envs
+    XCODE_WORKSPACE: "IslandApp.xcworkspace"
+    CM_CLONE_DEPTH: 50
   scripts:
     - &check_changes
       name: Check changes since last build
@@ -78,8 +81,8 @@ workflows:
         distribution_type: app_store
         bundle_identifier: is.island.app
       vars:
+        <<: *shared_envs
         BUNDLE_ID: "is.island.app"
-        XCODE_WORKSPACE: "IslandApp.xcworkspace"
         XCODE_SCHEME: "Ísland.is"
         APP_STORE_APPLE_ID: 1569828682
     scripts:
@@ -115,8 +118,8 @@ workflows:
         distribution_type: app_store
         bundle_identifier: is.island.app.dev
       vars:
+        <<: *shared_envs
         BUNDLE_ID: "is.island.app.dev"
-        XCODE_WORKSPACE: "IslandApp.xcworkspace"
         XCODE_SCHEME: "Ísland.dev"
         APP_STORE_APPLE_ID: 1570427360
     scripts:
