@@ -15,12 +15,13 @@ definitions:
   scripts:
     - &check_changes
       name: Check changes since last build
+      working_directory: .
       script: |
         set -e
 
         echo "Considering changes between $CM_PREVIOUS_COMMIT and $CM_COMMIT"
         if git cat-file -e "$CM_PREVIOUS_COMMIT"^{commit} >& /dev/null; then
-          notes=$(git log --pretty=format:"%s (%an)" "$CM_PREVIOUS_COMMIT".."$CM_COMMIT" -- ../../../codemagic.yaml .)
+          notes=$(git log --pretty=format:"%s (%an)" "$CM_PREVIOUS_COMMIT".."$CM_COMMIT" -- codemagic.yaml apps/native/app)
           if [[ $notes == "" ]]; then
             echo "No changes detected in native app. Exiting."
             exit 1
