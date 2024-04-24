@@ -98,6 +98,14 @@ export class HuntingLicensePayloadMapper implements GenericLicenseMapper {
             licenseId: DEFAULT_LICENSE_ID,
             expired: !t.isValid,
             expireDate: t.validTo ? t.validTo.toISOString() : undefined,
+            links: [
+              {
+                label: getLabel('renewHuntingLicense', locale, label),
+                value:
+                  t.renewalUrl ??
+                  'https://innskraning.island.is/?id=gogn.ust.is',
+              },
+            ],
           },
         }
       },

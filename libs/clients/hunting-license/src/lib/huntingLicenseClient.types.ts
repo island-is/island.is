@@ -12,6 +12,7 @@ export type HuntingLicenseDto = {
   validTo?: Date
   permitFor?: Array<string>
   benefits?: Array<HuntingLicenseBenefitDto>
+  renewalUrl?: string
   holderPhoto?: string
 }
 
@@ -64,5 +65,6 @@ export const mapHuntingLicenseDto = (
     validFrom: data.validFrom ? new Date(data.validFrom) : undefined,
     validTo: data.validTo ? new Date(data.validTo) : undefined,
     holderPhoto: data.personphoto,
+    renewalUrl: data.permitRenewLink,
   }
 }

@@ -1,13 +1,13 @@
 import { useUserInfo } from '@island.is/auth/react'
-import { Box, Stack } from '@island.is/island-ui/core'
-import { MinistryOfJusticeAdvertEntity } from '@island.is/api/schema'
+import { Stack } from '@island.is/island-ui/core'
+import { OfficialJournalOfIcelandAdvertEntity } from '@island.is/api/schema'
 import { useQuery } from '@apollo/client'
 import { Property } from '../components/property/Property'
 import { TYPES_QUERY, DEPARTMENTS_QUERY } from '../graphql/queries'
 import { summary, general } from '../lib/messages'
 import {
   OJOIFieldBaseProps,
-  MinistryOfJusticeGraphqlResponse,
+  OfficialJournalOfIcelandGraphqlResponse,
 } from '../lib/types'
 import { useLocale } from '@island.is/localization'
 import { AnswerOption } from '../lib/constants'
@@ -19,20 +19,19 @@ export const Summary = ({ application }: OJOIFieldBaseProps) => {
 
   const { answers } = application
 
-  const { data: types } = useQuery<MinistryOfJusticeGraphqlResponse<'types'>>(
-    TYPES_QUERY,
-    {
-      variables: {
-        params: {
-          department: answers?.advert?.department,
-          search: answers?.advert?.type,
-        },
+  const { data: types } = useQuery<
+    OfficialJournalOfIcelandGraphqlResponse<'types'>
+  >(TYPES_QUERY, {
+    variables: {
+      params: {
+        department: answers?.advert?.department,
+        search: answers?.advert?.type,
       },
     },
-  )
+  })
 
   const { data: departments } = useQuery<
-    MinistryOfJusticeGraphqlResponse<'departments'>
+    OfficialJournalOfIcelandGraphqlResponse<'departments'>
   >(DEPARTMENTS_QUERY, {
     variables: {
       params: {
@@ -41,7 +40,7 @@ export const Summary = ({ application }: OJOIFieldBaseProps) => {
     },
   })
 
-  const extract = (arr?: MinistryOfJusticeAdvertEntity[]) => {
+  const extract = (arr?: OfficialJournalOfIcelandAdvertEntity[]) => {
     if (!arr) {
       return ''
     }
@@ -58,7 +57,7 @@ export const Summary = ({ application }: OJOIFieldBaseProps) => {
       <Property name={f(summary.properties.sender)} value={user.profile.name} />
       <Property
         name={f(summary.properties.type)}
-        value={extract(types?.ministryOfJusticeTypes.types)}
+        value={extract(types?.officialJournalOfIcelandTypes.types)}
       />
       <Property
         name={f(summary.properties.title)}
@@ -66,7 +65,9 @@ export const Summary = ({ application }: OJOIFieldBaseProps) => {
       />
       <Property
         name={f(summary.properties.department)}
-        value={extract(departments?.ministryOfJusticeDepartments.departments)}
+        value={extract(
+          departments?.officialJournalOfIcelandDepartments.departments,
+        )}
       />
       <Property
         name={f(summary.properties.submissionDate)}

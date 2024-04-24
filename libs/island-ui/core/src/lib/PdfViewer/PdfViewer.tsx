@@ -1,10 +1,12 @@
 import React, { FC, useEffect, useState, ReactNode } from 'react'
 import { Box } from '../Box/Box'
 import type { Document, Page, Outline, pdfjs } from 'react-pdf'
-import * as styles from './PdfViewer.css'
 import { Pagination } from '../Pagination/Pagination'
 import { LoadingDots } from '../LoadingDots/LoadingDots'
 import { AlertMessage } from '../AlertMessage/AlertMessage'
+import 'react-pdf/dist/Page/TextLayer.css'
+import 'react-pdf/dist/Page/AnnotationLayer.css'
+import * as styles from './PdfViewer.css'
 import cn from 'classnames'
 
 const pdfError = 'Villa kom upp við að birta skjal, reyndu aftur síðar.'
@@ -83,14 +85,14 @@ export const PdfViewer: FC<React.PropsWithChildren<PdfViewerProps>> = ({
               <pdfLib.Page
                 key={`page_${page + 1}`}
                 pageNumber={page + 1}
-                renderTextLayer={false}
+                renderTextLayer={true}
                 renderAnnotationLayer={true}
                 scale={scale}
               />
             ))
           ) : (
             <pdfLib.Page
-              renderTextLayer={false}
+              renderTextLayer={true}
               renderAnnotationLayer={true}
               pageNumber={pageNumber}
               scale={scale}

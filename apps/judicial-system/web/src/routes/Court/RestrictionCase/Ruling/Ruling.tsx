@@ -13,7 +13,10 @@ import {
 } from '@island.is/island-ui/core'
 import * as constants from '@island.is/judicial-system/consts'
 import { formatDate, formatDOB } from '@island.is/judicial-system/formatters'
-import { isAcceptingCaseDecision } from '@island.is/judicial-system/types'
+import {
+  getLatestDateType,
+  isAcceptingCaseDecision,
+} from '@island.is/judicial-system/types'
 import { core, ruling, titles } from '@island.is/judicial-system-web/messages'
 import {
   CaseFileList,
@@ -32,6 +35,7 @@ import {
 import {
   CaseDecision,
   CaseType,
+  DateType,
   Defendant,
 } from '@island.is/judicial-system-web/src/graphql/schema'
 import { TempCase as Case } from '@island.is/judicial-system-web/src/types'
@@ -138,11 +142,16 @@ export const Ruling: React.FC<React.PropsWithChildren<unknown>> = () => {
   ])
 
   const initialize = useCallback(() => {
+    const courtDate = getLatestDateType(
+      DateType.COURT_DATE,
+      workingCase.dateLogs,
+    )
+
     setAndSendCaseToServer(
       [
         {
           introduction: formatMessage(m.sections.introduction.autofill, {
-            date: formatDate(workingCase.courtDate, 'PPP'),
+            date: formatDate(courtDate?.date, 'PPP'),
           }),
           prosecutorDemands: workingCase.demands,
           courtCaseFacts: formatMessage(
@@ -606,6 +615,7 @@ export const Ruling: React.FC<React.PropsWithChildren<unknown>> = () => {
               )}
               onChange={(decision) => {
                 let conclusion = undefined
+                let ruling = undefined
 
                 if (
                   workingCase.defendants &&
@@ -622,8 +632,16 @@ export const Ruling: React.FC<React.PropsWithChildren<unknown>> = () => {
                   )
                 }
 
+                if (
+                  isAcceptingCaseDecision(decision) &&
+                  workingCase.parentCase &&
+                  !workingCase.ruling
+                ) {
+                  ruling = workingCase.parentCase.ruling
+                }
+
                 setAndSendCaseToServer(
-                  [{ conclusion, decision, force: true }],
+                  [{ conclusion, decision, ruling, force: true }],
                   workingCase,
                   setWorkingCase,
                 )

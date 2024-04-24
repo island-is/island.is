@@ -3,9 +3,8 @@
 # continue-on-error feature we need a second step to check the output of the
 # cache action to determine if it ran successfully.
 #
-# ** Example **
+# Example:
 #
-# ```
 # jobs:
 #   my-job:
 #     steps:
@@ -16,193 +15,91 @@
 #       with:
 #         path: node_modules
 #         key: ${{ steps.calculate_node_modules_hash.outputs.node-modules-hash }}-yarn
-# ```
-
+#     - name: Check cache success
+#       run: '[[ "${{ steps.node-modules.outputs.success }}" != "false" ]] || exit 1'
+#
 name: 'Cache'
 description: 'Cache with retry'
 inputs:
-  # From https://github.com/actions/cache?tab=readme-ov-file#inputs
-  key:
-    description: 'An explicit key for a cache entry. See creating a cache key.'
-    required: false
   path:
-    description: 'A list of files, directories, and wildcard patterns to cache and restore. See @actions/glob for supported patterns.'
+    description: 'path'
     required: true
-  restore-keys:
-    description: 'An ordered list of prefix-matched keys to use for restoring stale cache if no cache hit occurred for key.'
+  key:
+    description: 'key'
+    required: true
+  retry:
+    description: 'retry'
     required: false
-  enableCrossOsArchive:
-    description: 'An optional boolean when enabled, allows Windows runners to save or restore caches that can be restored or saved respectively on other platforms'
-    required: false
-    default: 'false'
-  fail-on-missing:
-    description: 'Fail the workflow if cache entry is not found'
-    required: false
-    default: 'false'
-  lookup-only:
-    description: 'If true, only checks if cache entry exists and skips download. Does not change save cache behavior'
-    required: false
-    default: 'false'
-  # From https://github.com/island-is/cache?tab=readme-ov-file#inputs
-  retries:
-    description: 'Number of retries'
-    required: false
-    default: '0'
-  retry-interval:
-    description: 'Time between retries'
-    required: false
-    default: '5'
-  cache-url:
-    description: 'URL to your cache'
-    required: false
-    default: https://cache.dev01.devland.is/
-  # Custom secrets
-  slack-webhook:
-    description: 'Slack webhook'
-    required: false
-  slack-notify-on-success:
-    description: 'Notify on success'
-    required: false
-    default: 'false'
-
+    default: '2'
+  # force-cache-save:
+  #   description: 'force cache save regardless of cache hit.'
+  #   required: false
+  #   default: 'false'
 outputs:
-  cache-hit:
-    description: 'Did the cache key match and restored the cache?'
-    value: ${{ steps.collector.outputs.cache-hit }}
-  result:
-    description: 'Result of the action'
-    value: ${{ steps.collector.outputs.result }}
   success:
-    description: 'Did the action succeed?'
-    value: ${{ steps.collector.outputs.success }}
-  conclusion:
-    description: 'Did the action succeed?'
-    value: ${{ steps.collector.outputs.conclusion }}
-
+    description: 'success'
+    value: ${{ steps.computed_outputs.outputs.success }}
+  cache-hit:
+    description: 'cache-hit'
+    value: ${{ steps.computed_outputs.outputs.cache-hit }}
 runs:
   using: 'composite'
   steps:
-    - name: Warn on unimplemented inputs
-      if: ${{ !cancelled() && (inputs.enableCrossOsArchive || inputs.lookup-only) }}
-      shell: bash
-      run: |
-        echo "## ⚠  Invalid inputs ⚠ " >> "$GITHUB_STEP_SUMMARY"
-        echo "The following input is not yet implemented: enableCrossOsArchive, lookup-only, fail-on-missing" >> "$GITHUB_STEP_SUMMARY"
-
-    - name: Attempting to cache (${{ inputs.retries }} retries left)
-      if: ${{ !cancelled() && fromJSON(inputs.retries) >= 0 }}
-      id: cache-attempt
-      # uses: actions/cache@v3 # Good for local debugging with act ❤️
+    - name: Cache try number one
+      id: cache_try_number_one
       uses: island-is/cache@v0.3
       with:
         path: ${{ inputs.path }}
         key: ${{ inputs.key }}
-        cache-url: ${{ inputs.cache-url }}
-        restore-keys: ${{ inputs.restore-keys }}
-        # fail-on-missing: ${{ inputs.fail-on-missing }}
-        # lookup-only: ${{ inputs.lookup-only }}
-        # enable-cross-os-archive: ${{ inputs.enableCrossOsArchive }}
+        # force-cache-save: ${{ inputs.force-cache-save }}
 
-    - name: Fail on cache miss
-      if: ${{ !cancelled() && inputs.fail-on-missing == 'true' && steps.cache-attempt.outputs.cache-miss == 'true' }}
+    - name: Give cache server a bit of time to recover
+      if: always() && inputs.retry > 0 && steps.cache_try_number_one.outputs.success != 'true'
       shell: bash
-      run: exit 1
+      run: sleep 10
 
-    - name: Sleep for ${{ inputs.retry-interval }} seconds
-      if: ${{ !cancelled() && fromJSON(inputs.retries) > 0 && steps.cache-attempt.outputs.success != 'true' }}
-      shell: bash
-      run: sleep ${{ inputs.retry-interval }}
-
-    - name: Calculate retries left
-      shell: bash
-      id: calculator
-      run: echo "retries-left=$(( ${{ inputs.retries }} - 1 ))" >> "$GITHUB_OUTPUT"
-
-    - name: Recursively loop caching
-      if: ${{ !cancelled() && fromJSON(inputs.retries) >= 0 }}
-      id: recurse-loop
-      uses: ./.github/actions/cache
+    - name: Cache try number two
+      id: cache_try_number_two
+      if: always() && inputs.retry > 0 && steps.cache_try_number_one.outputs.success != 'true'
+      uses: island-is/cache@v0.3
       with:
         path: ${{ inputs.path }}
         key: ${{ inputs.key }}
-        retries: ${{ steps.calculator.outputs.retries-left }}
-        retry-interval: ${{ inputs.retry-interval }}
-        cache-url: ${{ inputs.cache-url }}
+        # force-cache-save: ${{ inputs.force-cache-save }}
 
-      # From https://github.com/marketplace/actions/slack-notify#environment-variables
-      # SLACK_CHANNEL: general
-      # SLACK_COLOR: ${{ job.status }} # or a specific color like 'good' or '#ff00ff'
-      # SLACK_ICON: https://github.com/rtCamp.png?size=48
-      # SLACK_MESSAGE: 'Post Content :rocket:'
-      # SLACK_TITLE: Post Title
-      # SLACK_USERNAME: rtCamp
-      # SLACK_WEBHOOK: ${{ secrets.SLACK_WEBHOOK }}
-      # 👆 Available environment variables/concfig
-    - name: Slack Notify defaults
-      if: ${{ !cancelled() && inputs.slack-webhook }}
-      env:
-        SLACK_CHANNEL: infra-updates
-        SLACK_ICON: https://github.com/island-is.png?size=48
-        SLACK_MESSAGE: ''
-        SLACK_TITLE: Github Actions cache check
-        SLACK_USERNAME: Digital Iceland cache bot
-        SLACK_WEBHOOK: ${{ inputs.slack-webhook }}
+    - name: Give cache server a bit of time to recover
+      if: always() && inputs.retry > 1 && steps.cache_try_number_one.outputs.success != 'true' && steps.cache_try_number_two.outputs.success != 'true'
+      shell: bash
+      run: sleep 10
+
+    - name: Cache try number three
+      id: cache_try_number_three
+      if: always() && inputs.retry > 1 && steps.cache_try_number_one.outputs.success != 'true' && steps.cache_try_number_two.outputs.success != 'true'
+      uses: island-is/cache@v0.3
+      with:
+        path: ${{ inputs.path }}
+        key: ${{ inputs.key }}
+        # force-cache-save: ${{ inputs.force-cache-save }}
+
+    - name: Gather outputs
+      id: computed_outputs
+      if: always()
       shell: bash
       run: |
-        echo "SLACK_CHANNEL=${SLACK_CHANNEL}" >> "$GITHUB_ENV"
-        echo "SLACK_COLOR=${SLACK_COLOR}" >> "$GITHUB_ENV"
-        echo "SLACK_ICON=${SLACK_ICON}" >> "$GITHUB_ENV"
-        echo "SLACK_MESSAGE=${SLACK_MESSAGE}" >> "$GITHUB_ENV"
-        echo "SLACK_TITLE=${SLACK_TITLE}" >> "$GITHUB_ENV"
-        echo "SLACK_USERNAME=${SLACK_USERNAME}" >> "$GITHUB_ENV"
-        echo "SLACK_WEBHOOK=${SLACK_WEBHOOK}" >> "$GITHUB_ENV"
-
-    - name: Notify on success
-      if: ${{ !cancelled() && success() && inputs.slack-webhook && inputs.slack-notify-on-success == 'true' }}
-      continue-on-error: true
-      uses: rtCamp/action-slack-notify@v2
-      env:
-        SLACK_COLOR: 'good'
-        SLACK_MESSAGE: 'Cache success'
-        # Defaults
-        SLACK_CHANNEL: ${{ env.SLACK_CHANNEL }}
-        SLACK_ICON: ${{ env.SLACK_ICON }}
-        SLACK_TITLE: ${{ env.SLACK_TITLE }}
-        SLACK_USERNAME: ${{ env.SLACK_USERNAME }}
-        SLACK_WEBHOOK: ${{ env.SLACK_WEBHOOK }}
-
-    - name: Notify on failure
-      if: ${{ !cancelled() && !success() && inputs.slack-webhook }}
-      continue-on-error: true
-      uses: rtCamp/action-slack-notify@v2
-      env:
-        SLACK_COLOR: 'bad'
-        SLACK_MESSAGE: 'Cache failed'
-        # Defaults
-        SLACK_CHANNEL: ${{ env.SLACK_CHANNEL }}
-        SLACK_ICON: ${{ env.SLACK_ICON }}
-        SLACK_TITLE: ${{ env.SLACK_TITLE }}
-        SLACK_USERNAME: ${{ env.SLACK_USERNAME }}
-        SLACK_WEBHOOK: ${{ env.SLACK_WEBHOOK }}
-
-    - name: Collect statuses
-      if: '${{ !cancelled() }}'
-      id: collector
-      shell: bash
-      run: |
-        # Default to cache-attempt outputs
-        echo "cache-hit=${{ steps.cache-attempt.outputs.cache-hit }}" >> "$GITHUB_OUTPUT"
-        echo "conclusion=${{ steps.cache-attempt.outputs.conclusion }}" >> "$GITHUB_OUTPUT"
-        echo "result=${{ steps.cache-attempt.outputs.result }}" >> "$GITHUB_OUTPUT"
-        echo "success=${{ steps.cache-attempt.outputs.success }}" >> "$GITHUB_OUTPUT"
-
-        # Overwrite on specific config
-        if [ "${{ inputs.fail-on-missing }}" = 'false' ]; then
-          echo "success=true" >> "$GITHUB_OUTPUT"
+        if [[ "${{ steps.cache_try_number_one.outputs.success }}" == "true" ]] || \
+           [[ "${{ steps.cache_try_number_two.outputs.success }}" == "true" ]] || \
+           [[ "${{ steps.cache_try_number_three.outputs.success }}" == "true" ]]
+        then
+          echo "success=true" >> $GITHUB_OUTPUT
+        else
+          echo "success=false" >> $GITHUB_OUTPUT
         fi
 
-        # Fail on conditions
-        if [ "${{ inputs.fail-on-missing }}" = 'true' ] && [ "${{ steps.cache-attempt.outputs.cache-hit }}" = 'false' ]; then
-          echo "Key not found in cache, and configured to fail on cache miss. Aborting"
-          exit 1
+        if [[ "${{ steps.cache_try_number_one.outputs.cache-hit }}" == "true" ]] || \
+           [[ "${{ steps.cache_try_number_two.outputs.cache-hit }}" == "true" ]] || \
+           [[ "${{ steps.cache_try_number_three.outputs.cache-hit }}" == "true" ]]
+        then
+          echo "cache-hit=true" >> $GITHUB_OUTPUT
+        else
+          echo "cache-hit=false" >> $GITHUB_OUTPUT
         fi

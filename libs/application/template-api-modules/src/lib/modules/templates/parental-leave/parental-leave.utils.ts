@@ -90,8 +90,12 @@ export const getEmployer = (
   application: Application,
   isSelfEmployed = false,
 ): Employer[] => {
-  const { applicantEmail, employers, employerNationalRegistryId } =
-    getApplicationAnswers(application.answers)
+  const {
+    applicantEmail,
+    employers,
+    employerNationalRegistryId,
+    employerReviewerNationalRegistryId,
+  } = getApplicationAnswers(application.answers)
 
   if (isSelfEmployed) {
     return [
@@ -106,6 +110,8 @@ export const getEmployer = (
     email: e.email,
     nationalRegistryId:
       e.companyNationalRegistryId ?? employerNationalRegistryId ?? '',
+    approverNationalRegistryId:
+      e.reviewerNationalRegistryId ?? employerReviewerNationalRegistryId ?? '',
   }))
 }
 
@@ -357,6 +363,8 @@ export const transformApplicationToParentalLeaveDTO = (
     | 'document'
     | 'empper'
     | 'employer'
+    | 'empdoc'
+    | 'empdocper'
     | undefined,
 ): ParentalLeave => {
   const selectedChild = getSelectedChild(
@@ -377,6 +385,8 @@ export const transformApplicationToParentalLeaveDTO = (
     isReceivingUnemploymentBenefits,
     employerLastSixMonths,
     language,
+    otherParentRightOfAccess,
+    comment,
   } = getApplicationAnswers(application.answers)
 
   const { applicationFundId } = getApplicationExternalData(
@@ -428,6 +438,7 @@ export const transformApplicationToParentalLeaveDTO = (
       privatePensionFundRatio: getPrivatePensionFundRatio(application),
     },
     periods,
+    applicationComment: comment,
     employers:
       (applicationType === PARENTAL_LEAVE && !receivingUnemploymentBenefits) ||
       ((applicationType === PARENTAL_GRANT ||
@@ -445,6 +456,7 @@ export const transformApplicationToParentalLeaveDTO = (
         : undefined,
     type,
     language: language === Languages.EN ? language : undefined, // Only send language if EN
+    otherParentBlocked: otherParentRightOfAccess === NO ? true : false,
   }
 }
 
@@ -518,7 +530,9 @@ export const checkActionName = (
     actionName === 'documentPeriod' ||
     actionName === 'period' ||
     actionName === 'empper' ||
-    actionName === 'employer'
+    actionName === 'employer' ||
+    actionName === 'empdoc' ||
+    actionName === 'empdocper'
   ) {
     return actionName
   }

@@ -1,7 +1,6 @@
 import assert from 'assert'
 import { Injectable, OnApplicationBootstrap } from '@nestjs/common'
 import { ClientService } from './client.service'
-import type { Logger } from '@island.is/logging'
 import { DAY, MINUTE } from './time'
 import type { Queue } from './types'
 
@@ -9,14 +8,10 @@ import type { Queue } from './types'
 export class QueueService implements OnApplicationBootstrap {
   private _url: string | null = null
 
-  constructor(
-    private client: ClientService,
-    private config: Queue,
-    private logger: Logger,
-  ) {}
+  constructor(private client: ClientService, private config: Queue) {}
 
   // NB: We initialize the queues using "onApplicationBootstrap" rather than an
-  // async "useFactory" because creating the the nest application (like the
+  // async "useFactory" because creating the nest application (like the
   // openapi generator does at the time of writing) initializes all
   // factories, but we don't want to attempt connecting to the queue server
   // unless we're actually going to run the application
@@ -36,7 +31,7 @@ export class QueueService implements OnApplicationBootstrap {
 
   // Add new message to queue.
   async add(message: unknown): Promise<string> {
-    return await this.client.add(this.url, message)
+    return this.client.add(this.url, message)
   }
 
   // Purge all messages from queue. This is probably mainly useful in test

@@ -14,10 +14,12 @@ import type { Logger } from '@island.is/logging'
 import { LOGGER_PROVIDER } from '@island.is/logging'
 
 import {
+  CurrentHttpUser,
   JwtAuthGuard,
   RolesGuard,
   RolesRules,
 } from '@island.is/judicial-system/auth'
+import type { User } from '@island.is/judicial-system/types'
 import {
   investigationCases,
   restrictionCases,
@@ -92,12 +94,13 @@ export class LimitedAccessFileController {
   })
   async createCaseFile(
     @Param('caseId') caseId: string,
+    @CurrentHttpUser() user: User,
     @CurrentCase() theCase: Case,
     @Body() createFile: CreateFileDto,
   ): Promise<CaseFile> {
     this.logger.debug(`Creating a file for case ${caseId}`)
 
-    return this.fileService.createCaseFile(theCase, createFile)
+    return this.fileService.createCaseFile(theCase, createFile, user)
   }
 
   @UseGuards(CaseReadGuard, CaseFileExistsGuard, LimitedAccessViewCaseFileGuard)
@@ -109,6 +112,7 @@ export class LimitedAccessFileController {
   })
   getCaseFileSignedUrl(
     @Param('caseId') caseId: string,
+    @CurrentCase() theCase: Case,
     @Param('fileId') fileId: string,
     @CurrentCaseFile() caseFile: CaseFile,
   ): Promise<SignedUrl> {
@@ -116,7 +120,7 @@ export class LimitedAccessFileController {
       `Getting a signed url for file ${fileId} of case ${caseId}`,
     )
 
-    return this.fileService.getCaseFileSignedUrl(caseFile)
+    return this.fileService.getCaseFileSignedUrl(theCase, caseFile)
   }
 
   @UseGuards(

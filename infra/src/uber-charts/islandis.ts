@@ -56,6 +56,7 @@ import {
 import {
   serviceSetup as sessionsServiceSetup,
   workerSetup as sessionsWorkerSetup,
+  cleanupSetup as sessionsCleanupWorkerSetup,
 } from '../../../apps/services/sessions/infra/sessions'
 
 import { serviceSetup as authAdminApiSetup } from '../../../apps/services/auth/admin-api/infra/auth-admin-api'
@@ -88,11 +89,16 @@ const rabBackend = rabBackendSetup()
 
 const sessionsService = sessionsServiceSetup()
 const sessionsWorker = sessionsWorkerSetup()
+const sessionsCleanupWorker = sessionsCleanupWorkerSetup()
 
 const authAdminApi = authAdminApiSetup()
 
 const universityGatewayService = universityGatewaySetup()
 const universityGatewayWorker = universityGatewayWorkerSetup()
+
+const userNotificationService = userNotificationServiceSetup({
+  userProfileApi: servicePortalApi,
+})
 
 const api = apiSetup({
   appSystemApi,
@@ -105,6 +111,7 @@ const api = apiSetup({
   sessionsApi: sessionsService,
   authAdminApi,
   universityGatewayApi: universityGatewayService,
+  userNotificationService,
 })
 const servicePortal = servicePortalSetup({ graphql: api })
 const appSystemForm = appSystemFormSetup({ api: api })
@@ -122,10 +129,6 @@ const storybook = storybookSetup({})
 
 const downloadService = downloadServiceSetup({
   regulationsAdminBackend: rabBackend,
-})
-
-const userNotificationService = userNotificationServiceSetup({
-  userProfileApi: servicePortalApi,
 })
 const userNotificationWorkerService = userNotificationWorkerSetup({
   userProfileApi: servicePortalApi,
@@ -168,6 +171,7 @@ export const Services: EnvironmentServices = {
     licenseApi,
     sessionsService,
     sessionsWorker,
+    sessionsCleanupWorker,
     universityGatewayService,
     universityGatewayWorker,
     contentfulApps,
@@ -202,6 +206,7 @@ export const Services: EnvironmentServices = {
     licenseApi,
     sessionsService,
     sessionsWorker,
+    sessionsCleanupWorker,
     universityGatewayService,
     universityGatewayWorker,
   ],
@@ -238,6 +243,7 @@ export const Services: EnvironmentServices = {
     licenseApi,
     sessionsService,
     sessionsWorker,
+    sessionsCleanupWorker,
     contentfulApps,
     universityGatewayService,
     universityGatewayWorker,

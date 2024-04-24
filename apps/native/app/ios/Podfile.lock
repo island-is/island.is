@@ -507,6 +507,8 @@ PODS:
     - React-Core
   - react-native-cookies (6.2.1):
     - React-Core
+  - react-native-netinfo (11.3.1):
+    - React-Core
   - react-native-passkit-wallet (0.1.6):
     - React
   - react-native-pdf (6.6.2):
@@ -645,6 +647,8 @@ PODS:
     - React
   - RNShare (7.1.1):
     - React-Core
+  - RNSVG (15.1.0):
+    - React-Core
   - SocketRocket (0.6.0)
   - SSZipArchive (2.2.3)
   - Yoga (1.14.0)
@@ -725,6 +729,7 @@ DEPENDENCIES:
   - react-native-app-auth (from `../node_modules/react-native-app-auth`)
   - react-native-blob-util (from `../node_modules/react-native-blob-util`)
   - "react-native-cookies (from `../node_modules/@react-native-cookies/cookies`)"
+  - "react-native-netinfo (from `../node_modules/@react-native-community/netinfo`)"
   - react-native-passkit-wallet (from `../node_modules/react-native-passkit-wallet`)
   - react-native-pdf (from `../node_modules/react-native-pdf`)
   - "react-native-progress-bar-android (from `../node_modules/@react-native-community/progress-bar-android`)"
@@ -757,6 +762,7 @@ DEPENDENCIES:
   - RNKeychain (from `../node_modules/react-native-keychain`)
   - RNQuickAction (from `../node_modules/react-native-quick-actions`)
   - RNShare (from `../node_modules/react-native-share`)
+  - RNSVG (from `../node_modules/react-native-svg`)
   - Yoga (from `../node_modules/react-native/ReactCommon/yoga`)
 
 SPEC REPOS:
@@ -881,6 +887,8 @@ EXTERNAL SOURCES:
     :path: "../node_modules/react-native-blob-util"
   react-native-cookies:
     :path: "../node_modules/@react-native-cookies/cookies"
+  react-native-netinfo:
+    :path: "../node_modules/@react-native-community/netinfo"
   react-native-passkit-wallet:
     :path: "../node_modules/react-native-passkit-wallet"
   react-native-pdf:
@@ -945,6 +953,8 @@ EXTERNAL SOURCES:
     :path: "../node_modules/react-native-quick-actions"
   RNShare:
     :path: "../node_modules/react-native-share"
+  RNSVG:
+    :path: "../node_modules/react-native-svg"
   Yoga:
     :path: "../node_modules/react-native/ReactCommon/yoga"
 
@@ -1012,7 +1022,7 @@ SPEC CHECKSUMS:
   RCTTypeSafety: c276d85975bde3d8448907235c70bf0da257adfd
   React: e481a67971af1ce9639c9f746b753dd0e84ca108
   React-callinvoker: 1051c04a94fa9d243786b86380606bad701a3b31
-  React-Codegen: a1515fc3e1f52e21cdd56489ddd16c61b2889ed2
+  React-Codegen: 14b1e716d361d5ad95e0ce1a338f3fa0733a98b5
   React-Core: 698fc3baecb80d511d987475a16d036cec6d287f
   React-CoreModules: 59245305f41ff0adfeac334acc0594dea4585a7c
   React-cxxreact: 49accd2954b0f532805dbcd1918fa6962f32f247
@@ -1024,6 +1034,7 @@ SPEC CHECKSUMS:
   react-native-app-auth: fd1eaa667c0bc014199456d14a6440cb74de814e
   react-native-blob-util: 60453b777610c87a22b3524032c0214e8db555db
   react-native-cookies: f54fcded06bb0cda05c11d86788020b43528a26c
+  react-native-netinfo: bdb108d340cdb41875c9ced535977cac6d2ff321
   react-native-passkit-wallet: bd06b26f147016c352013a75271dd22cc11514df
   react-native-pdf: 33c622cbdf776a649929e8b9d1ce2d313347c4fa
   react-native-progress-bar-android: 092e6a794f158642692f25c8839d9aa8eb779afb
@@ -1056,12 +1067,13 @@ SPEC CHECKSUMS:
   RNKeychain: ff836453cba46938e0e9e4c22e43d43fa2c90333
   RNQuickAction: 6d404a869dc872cde841ad3147416a670d13fa93
   RNShare: a22398d8d02336133e28bf8b6e0b47b31abade41
+  RNSVG: 50cf2c7018e57cf5d3522d98d0a3a4dd6bf9d093
   SocketRocket: fccef3f9c5cedea1353a9ef6ada904fde10d6608
   SSZipArchive: 62d4947b08730e4cda640473b0066d209ff033c9
   Yoga: 921eb014669cf9c718ada68b08d362517d564e0c
   YogaKit: f782866e155069a2cca2517aafea43200b01fd5a
   ZXingObjC: fdbb269f25dd2032da343e06f10224d62f537bdb
 
-PODFILE CHECKSUM: 8b8d1f319d1bf887f7eb7fa64a7345d92f0f19fe
+PODFILE CHECKSUM: 88dd06099129c132ab3214042958bb9c117cadf7
 
-COCOAPODS: 1.14.3
+COCOAPODS: 1.15.2

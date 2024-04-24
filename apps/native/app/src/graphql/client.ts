@@ -14,6 +14,7 @@ import { openBrowser } from '../lib/rn-island'
 import { cognitoAuthUrl } from '../screens/cognito-auth/config-switcher'
 import { authStore } from '../stores/auth-store'
 import { environmentStore } from '../stores/environment-store'
+import { offlineStore } from '../stores/offline-store'
 import { MainBottomTabs } from '../utils/component-registry'
 
 const httpLink = new HttpLink({
@@ -86,6 +87,10 @@ const errorLink = onError(
             openBrowser(cognitoAuthUrl(), MainBottomTabs)
           }
         }
+      } else {
+        // This might be an SSL error, a socket error because your app is offline, or a 500 or any other HTTP error.
+        // We determine that we are offline if we receive a network error
+        offlineStore.getState().actions.setIsConnected(false)
       }
     }
   },

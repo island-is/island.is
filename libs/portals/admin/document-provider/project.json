@@ -28,6 +28,13 @@
       "options": {
         "command": "yarn ts-node -P libs/localization/tsconfig.lib.json libs/localization/scripts/extract libs/portals/admin/document-provider/src/lib/messages.ts"
       }
+    },
+    "codegen/frontend-client": {
+      "executor": "nx:run-commands",
+      "options": {
+        "output": "libs/portals/admin/document-provider/src/**/*.codegen.ts",
+        "command": "graphql-codegen --config libs/portals/admin/document-provider/codegen.yml"
+      }
     }
   },
   "tags": ["scope:portals-admin", "lib:portals-admin"]

@@ -1,18 +1,18 @@
 import { Parent, Query, ResolveField, Resolver } from '@nestjs/graphql'
 import { Loader } from '@island.is/nest/dataloader'
 import { CacheControl, CacheControlOptions } from '@island.is/nest/graphql'
-import { CACHE_CONTROL_MAX_AGE } from '@island.is/shared/constants'
 import {
   OrganizationLinkByReferenceIdLoader,
   OrganizationLinkEnByReferenceIdLoader,
-  OrganizationLogoByReferenceIdLoader,
+  OrganizationLogoLoader,
   OrganizationTitleByReferenceIdLoader,
+  OrganizationTitleEnByReferenceIdLoader,
 } from '@island.is/cms'
 import type {
   LogoUrl,
   OrganizationLink,
   OrganizationLinkByReferenceIdDataLoader,
-  OrganizationLogoByReferenceIdDataLoader,
+  OrganizationLogoDataLoader,
   OrganizationTitleByReferenceIdDataLoader,
   ShortTitle,
 } from '@island.is/cms'
@@ -37,17 +37,30 @@ export class UniversityResolver {
   @CacheControl(defaultCache)
   @ResolveField('contentfulLogoUrl', () => String, { nullable: true })
   async resolveContentfulLogoUrl(
-    @Loader(OrganizationLogoByReferenceIdLoader)
-    organizationLogoLoader: OrganizationLogoByReferenceIdDataLoader,
+    @Loader(OrganizationLogoLoader)
+    organizationLogoLoader: OrganizationLogoDataLoader,
     @Parent() university: UniversityGatewayUniversity,
   ): Promise<LogoUrl> {
-    return await organizationLogoLoader.load(university.contentfulKey)
+    return await organizationLogoLoader.load({
+      value: university.contentfulKey,
+      field: 'referenceIdentifier',
+    })
   }
 
   @CacheControl(defaultCache)
   @ResolveField('contentfulTitle', () => String, { nullable: true })
   async resolveContentfulTitle(
     @Loader(OrganizationTitleByReferenceIdLoader)
+    organizationTitleLoader: OrganizationTitleByReferenceIdDataLoader,
+    @Parent() university: UniversityGatewayUniversity,
+  ): Promise<ShortTitle> {
+    return organizationTitleLoader.load(university.contentfulKey)
+  }
+
+  @CacheControl(defaultCache)
+  @ResolveField('contentfulTitleEn', () => String, { nullable: true })
+  async resolveContentfulTitleEn(
+    @Loader(OrganizationTitleEnByReferenceIdLoader)
     organizationTitleLoader: OrganizationTitleByReferenceIdDataLoader,
     @Parent() university: UniversityGatewayUniversity,
   ): Promise<ShortTitle> {

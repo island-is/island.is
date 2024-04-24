@@ -430,11 +430,11 @@ export const UserForm: React.FC<React.PropsWithChildren<Props>> = (props) => {
         </Box>
         <Box marginBottom={2}>
           <Checkbox
-            name="canConfirmAppeal"
+            name="canConfirmIndictment"
             label="Notandi getur staðfest kærur"
-            checked={Boolean(user.canConfirmAppeal)}
+            checked={Boolean(user.canConfirmIndictment)}
             onChange={({ target }) =>
-              setUser({ ...user, canConfirmAppeal: target.checked })
+              setUser({ ...user, canConfirmIndictment: target.checked })
             }
             large
             filled

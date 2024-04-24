@@ -111,7 +111,7 @@ const IntellectualPropertiesOverview = () => {
                   index,
                   ip.text,
                   ip.id,
-                  ip.type,
+                  ip.typeReadable,
                   AssetsPaths.AssetsIntellectualPropertiesTrademark.replace(
                     ':id',
                     ip.id ?? '',

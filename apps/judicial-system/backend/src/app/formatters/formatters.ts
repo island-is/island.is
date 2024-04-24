@@ -230,7 +230,7 @@ export function formatProsecutorReceivedByCourtSmsNotification(
   })
 }
 
-export function formatProsecutorCourtDateEmailNotification(
+export const formatProsecutorCourtDateEmailNotification = (
   formatMessage: FormatMessage,
   type: CaseType,
   courtCaseNumber?: string,
@@ -241,7 +241,7 @@ export function formatProsecutorCourtDateEmailNotification(
   registrarName?: string,
   defenderName?: string,
   sessionArrangements?: SessionArrangements,
-): SubjectAndBody {
+): SubjectAndBody => {
   const cf = notifications.prosecutorCourtDateEmail
   const scheduledCaseText = isIndictmentCase(type)
     ? formatMessage(cf.sheduledIndictmentCase, { court, courtCaseNumber })
@@ -303,7 +303,7 @@ export function formatProsecutorCourtDateEmailNotification(
   return { body, subject }
 }
 
-export function formatPrisonCourtDateEmailNotification(
+export const formatPrisonCourtDateEmailNotification = (
   formatMessage: FormatMessage,
   type: CaseType,
   prosecutorOffice?: string,
@@ -316,7 +316,7 @@ export function formatPrisonCourtDateEmailNotification(
   isExtension?: boolean,
   sessionArrangements?: SessionArrangements,
   courtCaseNumber?: string,
-): string {
+): string => {
   const courtText = formatMessage(
     notifications.prisonCourtDateEmail.courtText,
     { court: court || 'NONE' },
@@ -546,7 +546,7 @@ export function formatPrisonRevokedEmailNotification(
   })
 }
 
-export function formatDefenderRevokedEmailNotification(
+export const formatDefenderRevokedEmailNotification = (
   formatMessage: FormatMessage,
   type: CaseType,
   defendantNationalId?: string,
@@ -554,7 +554,7 @@ export function formatDefenderRevokedEmailNotification(
   defendantNoNationalId?: boolean,
   court?: string,
   courtDate?: Date,
-): string {
+): string => {
   const cf = notifications.defenderRevokedEmail
   const courtText = formatMessage(cf.court, {
     court: court || 'NONE',
@@ -746,3 +746,6 @@ export const formatDefenderRoute = (
     isIndictmentCase(caseType) ? DEFENDER_INDICTMENT_ROUTE : DEFENDER_ROUTE
   }/${id}`
 }
+
+export const formatConfirmedIndictmentKey = (key?: string) =>
+  key?.replace(/\/([^/]*)$/, '/confirmed/$1') ?? ''

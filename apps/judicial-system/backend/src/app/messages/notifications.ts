@@ -791,4 +791,18 @@ export const notifications = {
       description: 'Texti í pósti til sækjanda máls þegar ákæru er hafnað',
     },
   }),
+  indictmentReturned: defineMessages({
+    subject: {
+      id: 'judicial.system.backend:notifications.indictment_returned.subject',
+      defaultMessage: 'Ákæra endursend í máli {caseNumber}',
+      description:
+        'Fyrirsögn í pósti til sækjanda máls þegar ákæra er endursend',
+    },
+    body: {
+      id: 'judicial.system.backend:notifications.indictment_returned.body',
+      defaultMessage:
+        '{courtName} hefur endursent ákæru vegna lögreglumáls {caseNumber}. Þú getur nálgast samantekt málsins á {linkStart}yfirlitssíðu málsins í Réttarvörslugátt.{linkEnd}',
+      description: 'Texti í pósti til sækjanda máls þegar ákæra er endursend',
+    },
+  }),
 }
