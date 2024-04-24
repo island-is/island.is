@@ -14,7 +14,6 @@ import {
   UserResolver,
   FamilyMemberResolver,
   ChildResolver,
-  CorrectionResolver,
   PersonResolver,
   ChildCustodyResolver,
 } from './resolvers'
@@ -41,7 +40,6 @@ import {
     PersonResolver,
     FamilyMemberResolver,
     ChildResolver,
-    CorrectionResolver,
   ],
 })
 export class NationalRegistryModule {}

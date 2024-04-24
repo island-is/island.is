@@ -6,7 +6,6 @@ import { Inject, Injectable, NotImplementedException } from '@nestjs/common'
 import { Birthplace, Citizenship, Housing, Spouse } from './shared/models'
 import { Name } from './shared/models/name.model'
 import { SharedPerson } from './shared/types'
-import { FamilyCorrectionInput } from './v1/dto/FamilyCorrectionInput.input'
 import { SoffiaService } from './v1/soffia.service'
 import { BrokerService } from './v3/broker.service'
 
@@ -163,18 +162,5 @@ export class NationalRegistryService {
     return api === 'v3'
       ? null
       : this.v1.getFamilyMemberDetails(nationalId, familyMemberNationalId)
-  }
-
-  postUserCorrection(
-    nationalId: string,
-    input: FamilyCorrectionInput,
-    api: ApiVersion = 'v1',
-  ) {
-    if (api === 'v3') {
-      throw new NotImplementedException(
-        'Post user correction is not implemented in national registry v3',
-      )
-    }
-    return this.v1.postUserCorrection(input, nationalId)
   }
 }

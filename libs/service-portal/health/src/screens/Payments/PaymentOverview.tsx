@@ -80,8 +80,8 @@ export const PaymentOverview = () => {
     lazyOverviewQuery({
       variables: {
         input: {
-          dateFrom: formatDateFns(startDate, 'MM.dd.yyyy'),
-          dateTo: formatDateFns(endDate, 'MM.dd.yyyy'),
+          dateFrom: startDate,
+          dateTo: endDate,
           serviceTypeCode: selectedOptionId ?? '',
         },
       },
