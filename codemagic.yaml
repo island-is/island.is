@@ -11,7 +11,7 @@ definitions:
     #        include: true
     #        source: true
   shared_envs: &shared_envs
-    XCODE_WORKSPACE: "IslandApp.xcworkspace"
+    XCODE_WORKSPACE: 'IslandApp.xcworkspace'
     CM_CLONE_DEPTH: 50
   scripts:
     - &check_changes
@@ -102,15 +102,15 @@ workflows:
         - $CM_BUILD_DIR/.yarn/cache
         - $CM_BUILD_DIR/.cache/nx
     integrations:
-      app_store_connect: "Island.is API Key"
+      app_store_connect: 'Island.is API Key'
     environment:
       ios_signing:
         distribution_type: app_store
         bundle_identifier: is.island.app
       vars:
         <<: *shared_envs
-        BUNDLE_ID: "is.island.app"
-        XCODE_SCHEME: "Ísland.is"
+        BUNDLE_ID: 'is.island.app'
+        XCODE_SCHEME: 'Ísland.is'
         APP_STORE_APPLE_ID: 1569828682
     scripts:
       - *check_changes
@@ -134,15 +134,15 @@ workflows:
     instance_type: mac_mini_m1
     cache: *ios_cache
     integrations:
-      app_store_connect: "Island.is API Key"
+      app_store_connect: 'Island.is API Key'
     environment:
       ios_signing:
         distribution_type: app_store
         bundle_identifier: is.island.app.dev
       vars:
         <<: *shared_envs
-        BUNDLE_ID: "is.island.app.dev"
-        XCODE_SCHEME: "Ísland.dev"
+        BUNDLE_ID: 'is.island.app.dev'
+        XCODE_SCHEME: 'Ísland.dev'
         APP_STORE_APPLE_ID: 1570427360
     scripts:
       - *check_changes
@@ -180,7 +180,7 @@ workflows:
         - firebase_credentials
       vars:
         <<: *shared_envs
-        PACKAGE_NAME: "is.island.app"
+        PACKAGE_NAME: 'is.island.app'
         ANDROID_APP: prod
     scripts:
       - *check_changes
@@ -207,7 +207,7 @@ workflows:
         - firebase_credentials
       vars:
         <<: *shared_envs
-        PACKAGE_NAME: "is.island.app.dev"
+        PACKAGE_NAME: 'is.island.app.dev'
         ANDROID_APP: dev
     scripts:
       - *check_changes
