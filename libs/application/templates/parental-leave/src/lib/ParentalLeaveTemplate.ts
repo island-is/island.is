@@ -57,8 +57,6 @@ import {
   getSelectedChild,
   isParentWithoutBirthParent,
   otherParentApprovalStatePendingAction,
-  employerApprovalStatePendingAction,
-  calculatePruneDate,
   getSpouse,
 } from '../lib/parentalLeaveUtils'
 import { answerValidators } from './answerValidators'
