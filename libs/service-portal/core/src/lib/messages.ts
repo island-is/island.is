@@ -487,6 +487,14 @@ export const m = defineMessages({
     id: 'service.portal:signatureCollectionLists',
     defaultMessage: 'Meðmælasöfnun',
   },
+  notifications: {
+    id: 'service.portal:notifications',
+    defaultMessage: 'Tilkynningar',
+  },
+  notificationsViewAll: {
+    id: 'service.portal:notifications-view-all',
+    defaultMessage: 'Sjá allar tilkynningar',
+  },
   viewSignatureList: {
     id: 'service.portal:viewSignatureList',
     defaultMessage: 'Skoða nánar',
@@ -641,6 +649,14 @@ export const m = defineMessages({
     id: 'service.portal:finance-schedules-description',
     defaultMessage:
       'Hér getur þú gert greiðsluáætlun ef þú vilt dreifa greiðslum á skuld þinni við ríkissjóð og stofnanir. Hér getur þú einnig séð eldri greiðsluáætlanir. Ef Greiðsluáætlunin er greidd hraðar niður en áætlunin segir til um, munu greiðsluseðlar ekki berast þegar hún er upp greidd og engar eftirstöðvar eftir.',
+  },
+  financeHousingBenefits: {
+    id: 'service.portal:finance-housing-benefits',
+    defaultMessage: 'Húsnæðisbætur',
+  },
+  financeHousingBenefitsDesc: {
+    id: 'service.portal:finance-housing-benefits-description',
+    defaultMessage: 'Hér sérð þú sundurliðun húsnæðisbóta',
   },
   financeClaims: {
     id: 'service.portal:finance-claims',
@@ -1238,6 +1254,11 @@ export const m = defineMessages({
     id: 'service.portal:real-estate-tooltip',
     defaultMessage:
       'Húsnæðis- og mannvirkjastofnun hefur umsjón með gögnum um fasteignir.',
+  },
+  hmsHousingBenefitsTooltip: {
+    id: 'service.portal:housing-benefits-tooltip',
+    defaultMessage:
+      'Húsnæðis- og mannvirkjastofnun hefur umsjón með gögnum um húsnæðisbætur.',
   },
   socialInsuranceTooltip: {
     id: 'service.portal:social-insurance-tooltip',

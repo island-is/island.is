@@ -1,4 +1,4 @@
-import { IsNationalId } from '@island.is/nest/core'
+import { IsPersonNationalId } from '@island.is/nest/core'
 import { Field, InputType, OmitType, registerEnumType } from '@nestjs/graphql'
 import { IsArray, IsBoolean, IsEnum, IsString } from 'class-validator'
 
@@ -17,11 +17,6 @@ export class MailActionInput {
   @Field(() => [String])
   @IsArray()
   documentIds!: Array<string>
-
-  @Field()
-  @IsString()
-  @IsNationalId()
-  nationalId!: string
 
   @Field()
   @IsEnum(MailAction)

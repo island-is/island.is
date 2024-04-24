@@ -1,13 +1,22 @@
+import faker from 'faker'
+
 import { UserProfileDto } from '@island.is/clients/user-profile'
 import { createNationalId } from '@island.is/testing/fixtures'
 import { DelegationRecordDTO } from '@island.is/clients/auth/delegation-api'
 import { Features } from '@island.is/feature-flags'
 import type { User } from '@island.is/auth-nest-tools'
+
 import { HnippTemplate } from '../dto/hnippTemplate.response'
 
 export const mockFullName = 'mockFullName'
+export const delegationSubjectId = 'delegation-subject-id'
 
-export const userWithDelegations: UserProfileDto = {
+interface MockUserProfileDto extends UserProfileDto {
+  name: string
+}
+
+export const userWithDelegations: MockUserProfileDto = {
+  name: 'userWithDelegations',
   nationalId: createNationalId('person'),
   mobilePhoneNumber: '1234567',
   email: 'email@email.com',
@@ -15,9 +24,11 @@ export const userWithDelegations: UserProfileDto = {
   mobilePhoneNumberVerified: true,
   documentNotifications: true,
   emailNotifications: true,
+  isRestricted: false,
 }
 
-export const userWithDelegations2: UserProfileDto = {
+export const userWithDelegations2: MockUserProfileDto = {
+  name: 'userWithDelegations2',
   nationalId: createNationalId('person'),
   mobilePhoneNumber: '1234567',
   email: 'email5@email.com',
@@ -25,9 +36,11 @@ export const userWithDelegations2: UserProfileDto = {
   mobilePhoneNumberVerified: true,
   documentNotifications: true,
   emailNotifications: true,
+  isRestricted: false,
 }
 
-export const userWitNoDelegations: UserProfileDto = {
+export const userWithNoDelegations: MockUserProfileDto = {
+  name: 'userWithNoDelegations',
   nationalId: createNationalId('person'),
   mobilePhoneNumber: '1234567',
   email: 'email1@email.com',
@@ -35,18 +48,22 @@ export const userWitNoDelegations: UserProfileDto = {
   mobilePhoneNumberVerified: true,
   documentNotifications: true,
   emailNotifications: true,
+  isRestricted: false,
 }
 
-export const userWithEmailNotificationsDisabled: UserProfileDto = {
+export const userWithEmailNotificationsDisabled: MockUserProfileDto = {
+  name: 'userWithEmailNotificationsDisabled',
   nationalId: createNationalId('person'),
   mobilePhoneNumber: '1234567',
   emailVerified: true,
   mobilePhoneNumberVerified: true,
   documentNotifications: true,
   emailNotifications: false,
+  isRestricted: false,
 }
 
-export const userWithDocumentNotificationsDisabled: UserProfileDto = {
+export const userWithDocumentNotificationsDisabled: MockUserProfileDto = {
+  name: 'userWithDocumentNotificationsDisabled',
   nationalId: createNationalId('person'),
   mobilePhoneNumber: '1234567',
   email: 'email2@email.com',
@@ -54,9 +71,11 @@ export const userWithDocumentNotificationsDisabled: UserProfileDto = {
   mobilePhoneNumberVerified: true,
   documentNotifications: false,
   emailNotifications: true,
+  isRestricted: false,
 }
 
-export const userWithFeatureFlagDisabled: UserProfileDto = {
+export const userWithFeatureFlagDisabled: MockUserProfileDto = {
+  name: 'userWithFeatureFlagDisabled',
   nationalId: createNationalId('person'),
   mobilePhoneNumber: '1234567',
   email: 'email3@email.com',
@@ -64,32 +83,46 @@ export const userWithFeatureFlagDisabled: UserProfileDto = {
   mobilePhoneNumberVerified: true,
   documentNotifications: true,
   emailNotifications: true,
+  isRestricted: false,
 }
 
-export const userWithSendToDelegationsFeatureFlagDisabled: UserProfileDto = {
-  nationalId: createNationalId('person'),
-  mobilePhoneNumber: '1234567',
-  email: 'email4@email.com',
-  emailVerified: true,
-  mobilePhoneNumberVerified: true,
-  documentNotifications: true,
-  emailNotifications: true,
-}
+export const userWithSendToDelegationsFeatureFlagDisabled: MockUserProfileDto =
+  {
+    name: 'userWithSendToDelegationsFeatureFlagDisabled',
+    nationalId: createNationalId('person'),
+    mobilePhoneNumber: '1234567',
+    email: 'email4@email.com',
+    emailVerified: true,
+    mobilePhoneNumberVerified: true,
+    documentNotifications: true,
+    emailNotifications: true,
+    isRestricted: false,
+  }
 
-export const mockHnippTemplate: HnippTemplate = {
-  templateId: 'HNIPP.DEMO.ID',
-  notificationTitle: 'Demo title ',
-  notificationBody: 'Demo body {{arg1}}',
-  notificationDataCopy: 'Demo data copy',
-  clickAction: 'Demo click action {{arg2}}',
-  category: 'Demo category',
-  args: ['arg1', 'arg2'],
-}
+export const mockTemplateId = 'HNIPP.DEMO.ID'
 
-const userProfiles = [
+export const getMockHnippTemplate = ({
+  templateId = mockTemplateId,
+  notificationTitle = 'Demo title ',
+  notificationBody = 'Demo body {{arg1}}',
+  notificationDataCopy = 'Demo data copy',
+  clickActionUrl = 'https://island.is/minarsidur/postholf',
+  category = 'Demo category',
+  args = ['arg1', 'arg2'],
+}: Partial<HnippTemplate>): HnippTemplate => ({
+  templateId,
+  notificationTitle,
+  notificationBody,
+  notificationDataCopy,
+  clickActionUrl,
+  category,
+  args,
+})
+
+export const userProfiles = [
   userWithDelegations,
   userWithDelegations2,
-  userWitNoDelegations,
+  userWithNoDelegations,
   userWithEmailNotificationsDisabled,
   userWithDocumentNotificationsDisabled,
   userWithFeatureFlagDisabled,
@@ -100,44 +133,33 @@ const delegations: Record<string, DelegationRecordDTO[]> = {
   [userWithDelegations.nationalId]: [
     {
       fromNationalId: userWithDelegations.nationalId,
-      toNationalId: userWitNoDelegations.nationalId,
+      toNationalId: userWithNoDelegations.nationalId,
+      subjectId: null, // test that 3rd party login is not used if subjectId is null
     },
   ],
   [userWithDelegations2.nationalId]: [
     {
       fromNationalId: userWithDelegations2.nationalId,
       toNationalId: userWithDelegations.nationalId,
+      subjectId: delegationSubjectId,
     },
   ],
   [userWithSendToDelegationsFeatureFlagDisabled.nationalId]: [
     {
       fromNationalId: userWithSendToDelegationsFeatureFlagDisabled.nationalId,
-      toNationalId: userWitNoDelegations.nationalId,
+      toNationalId: userWithNoDelegations.nationalId,
+      subjectId: faker.datatype.uuid(),
     },
   ],
 }
 
 export class MockDelegationsService {
   delegationsControllerGetDelegationRecords({
-    xQueryFromNationalId,
+    xQueryNationalId,
   }: {
-    xQueryFromNationalId: string
+    xQueryNationalId: string
   }) {
-    return { data: delegations[xQueryFromNationalId] ?? [] }
-  }
-}
-
-export class MockV2UsersApi {
-  userProfileControllerFindUserProfile({
-    xParamNationalId,
-  }: {
-    xParamNationalId: string
-  }) {
-    return Promise.resolve(
-      userProfiles.find(
-        (u) => u.nationalId === xParamNationalId,
-      ) as UserProfileDto,
-    )
+    return { data: delegations[xQueryNationalId] ?? [] }
   }
 }
 
@@ -159,9 +181,11 @@ export class MockFeatureFlagService {
 }
 
 export class MockNationalRegistryV3ClientService {
-  getName() {
+  getName(nationalId: string) {
+    const user = userProfiles.find((u) => u.nationalId === nationalId)
+
     return {
-      fulltNafn: mockFullName,
+      fulltNafn: user?.name ?? mockFullName,
     }
   }
 }

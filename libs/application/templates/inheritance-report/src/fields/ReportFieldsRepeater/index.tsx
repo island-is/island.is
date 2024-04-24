@@ -414,7 +414,7 @@ export const ReportFieldsRepeater: FC<
                           repeaterField[field.id] ? repeaterField[field.id] : ''
                         }
                         format={field.format}
-                        label={formatMessage(field.title) + 'hey'}
+                        label={formatMessage(field.title)}
                         placeholder={field.placeholder}
                         backgroundColor={field.color ? field.color : 'blue'}
                         currency={field.currency}

@@ -1,0 +1,44 @@
+diff --git a/packages/dd-trace/src/external-logger/src/index.js b/packages/dd-trace/src/external-logger/src/index.js
+index aa21b20b6e78336329f8f99214a36fde3b9c2c59..523c285768a9f34ba9bc353a5caff6962cf1ff5c 100644
+--- a/packages/dd-trace/src/external-logger/src/index.js
++++ b/packages/dd-trace/src/external-logger/src/index.js
+@@ -81,7 +81,7 @@ class ExternalLogger {
+     let encodedLogs
+ 
+     if (!this.queue.length) {
+-      setImmediate(() => cb())
++      setTimeout(() => cb(), 0)
+       return
+     }
+ 
+@@ -93,7 +93,7 @@ class ExternalLogger {
+       encodedLogs = JSON.stringify(logs)
+     } catch (error) {
+       tracerLogger.error(`failed to encode ${numLogs} logs`)
+-      setImmediate(() => cb(error))
++      setTimeout(() => cb(error), 0)
+       return
+     }
+ 
+diff --git a/packages/dd-trace/src/telemetry/dependencies.js b/packages/dd-trace/src/telemetry/dependencies.js
+index 992dde7d2ec7b6742b55e48bb0941f88d01669bf..9a0559d576663eaff4291edf0fdda6ea51da1456 100644
+--- a/packages/dd-trace/src/telemetry/dependencies.js
++++ b/packages/dd-trace/src/telemetry/dependencies.js
+@@ -32,7 +32,7 @@ function createBatchPayload (payload) {
+ }
+ function waitAndSend (config, application, host) {
+   if (!immediate) {
+-    immediate = setImmediate(() => {
++    immediate = setTimeout(() => {
+       immediate = null
+       if (savedDependenciesToSend.size > 0) {
+         const dependencies = Array.from(savedDependenciesToSend.values())
+@@ -69,7 +69,7 @@ function waitAndSend (config, application, host) {
+           waitAndSend(config, application, host)
+         }
+       }
+-    })
++    }, 0)
+     immediate.unref()
+   }
+ }

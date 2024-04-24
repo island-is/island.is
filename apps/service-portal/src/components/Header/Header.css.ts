@@ -1,4 +1,4 @@
-import { style, styleVariants } from '@vanilla-extract/css'
+import { globalStyle, style, styleVariants } from '@vanilla-extract/css'
 import {
   SERVICE_PORTAL_HEADER_HEIGHT_LG,
   SERVICE_PORTAL_HEADER_HEIGHT_SM,
@@ -40,22 +40,12 @@ export const closeButton = style({
   },
 })
 
-export const badge = styleVariants({
-  active: {
-    position: 'absolute',
-    top: 10,
-    right: 13,
-    height: theme.spacing[1],
-    width: theme.spacing[1],
-    borderRadius: '50%',
-    backgroundColor: theme.color.red400,
-    ...themeUtils.responsiveStyle({
-      md: {
-        top: 14,
-      },
-    }),
-  },
-  inactive: {
-    display: 'none',
+export const overview = style({})
+
+globalStyle(`${overview} svg`, {
+  '@media': {
+    [`screen and (max-width: ${theme.breakpoints.sm - 1}px)`]: {
+      marginLeft: '0 !important',
+    },
   },
 })
