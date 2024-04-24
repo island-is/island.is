@@ -26,6 +26,7 @@ import { Features } from '@island.is/feature-flags'
 import { application, states } from './messages'
 import { assign } from 'xstate'
 import set from 'lodash/set'
+import { historyLogs } from './messages/history'
 
 type GrindavikHousingBuyoutEvent =
   | { type: DefaultEvents.APPROVE }
@@ -139,7 +140,6 @@ const GrindavikHousingBuyoutTemplate: ApplicationTemplate<
       },
       [States.IN_REVIEW]: {
         entry: 'assignToOrganization',
-        exit: 'clearAssignees',
         meta: {
           status: FormModes.IN_PROGRESS,
           name: application.general.name.defaultMessage,
@@ -151,8 +151,8 @@ const GrindavikHousingBuyoutTemplate: ApplicationTemplate<
           actionCard: {
             historyLogs: [
               {
-                onEvent: DefaultEvents.APPROVE,
-                logMessage: coreHistoryMessages.applicationApproved,
+                onEvent: DefaultEvents.SUBMIT,
+                logMessage: historyLogs.sentToThorkatla,
               },
               {
                 onEvent: DefaultEvents.REJECT,
@@ -180,7 +180,101 @@ const GrindavikHousingBuyoutTemplate: ApplicationTemplate<
               write: 'all',
               actions: [
                 {
-                  event: DefaultEvents.APPROVE,
+                  event: DefaultEvents.SUBMIT,
+                  name: 'Samþykkja',
+                  type: 'primary',
+                },
+              ],
+            },
+          ],
+        },
+        on: {
+          SUBMIT: {
+            target: States.SENT_TO_THORKATLA,
+          },
+        },
+      },
+      [States.SENT_TO_THORKATLA]: {
+        meta: {
+          status: FormModes.IN_PROGRESS,
+          name: application.general.name.defaultMessage,
+          lifecycle: pruneAfterDays(190),
+          actionCard: {
+            historyLogs: [
+              {
+                onEvent: DefaultEvents.SUBMIT,
+                logMessage: historyLogs.approvedByThorkatla,
+              },
+            ],
+            pendingAction: {
+              displayStatus: 'info',
+              title: states.sentToThorkatlaTitle,
+              content: states.sentToThorkatlaDescription,
+            },
+          },
+          roles: [
+            {
+              id: Roles.APPLICANT,
+              formLoader: () =>
+                import('../forms/InReview').then((module) =>
+                  Promise.resolve(module.InReview),
+                ),
+              read: 'all',
+            },
+            {
+              id: Roles.ORGANIZATION,
+              read: 'all',
+              write: 'all',
+              actions: [
+                {
+                  event: DefaultEvents.SUBMIT,
+                  name: 'Samþykkja',
+                  type: 'primary',
+                },
+              ],
+            },
+          ],
+        },
+        on: {
+          SUBMIT: {
+            target: States.APPROVED_BY_THORKATLA,
+          },
+        },
+      },
+      [States.APPROVED_BY_THORKATLA]: {
+        meta: {
+          status: FormModes.IN_PROGRESS,
+          name: application.general.name.defaultMessage,
+          lifecycle: pruneAfterDays(190),
+          actionCard: {
+            historyLogs: [
+              {
+                onEvent: DefaultEvents.SUBMIT,
+                logMessage: historyLogs.purchaseAgreementSentForSigning,
+              },
+            ],
+            pendingAction: {
+              displayStatus: 'info',
+              title: states.approvedByThorkatlaTitle,
+              content: states.approvedByThorkatlaDescription,
+            },
+          },
+          roles: [
+            {
+              id: Roles.APPLICANT,
+              formLoader: () =>
+                import('../forms/InReview').then((module) =>
+                  Promise.resolve(module.InReview),
+                ),
+              read: 'all',
+            },
+            {
+              id: Roles.ORGANIZATION,
+              read: 'all',
+              write: 'all',
+              actions: [
+                {
+                  event: DefaultEvents.SUBMIT,
                   name: 'Samþykkja',
                   type: 'primary',
                 },
@@ -194,42 +288,163 @@ const GrindavikHousingBuyoutTemplate: ApplicationTemplate<
           ],
         },
         on: {
-          APPROVE: {
-            target: States.APPROVED,
-          },
-          REJECT: {
-            target: States.REJECTED,
+          SUBMIT: {
+            target: States.PURCHASE_AGREEMENT_SENT_FOR_SIGNING,
           },
         },
       },
-      [States.REJECTED]: {
+      [States.PURCHASE_AGREEMENT_SENT_FOR_SIGNING]: {
         meta: {
-          status: FormModes.REJECTED,
+          status: FormModes.IN_PROGRESS,
           name: application.general.name.defaultMessage,
-          lifecycle: DefaultStateLifeCycle,
+          lifecycle: pruneAfterDays(190),
           actionCard: {
+            historyLogs: [
+              {
+                onEvent: DefaultEvents.SUBMIT,
+                logMessage: historyLogs.purchaseAgreementReceivedFromSigning,
+              },
+            ],
             pendingAction: {
-              displayStatus: 'error',
-              title: states.rejectedTitle,
-              content: states.rejectedText,
+              displayStatus: 'info',
+              title: states.purchaseAgreementSentForSigningTitle,
+              content: states.purchaseAgreementSentForSigningDescription,
             },
           },
-          onEntry: defineTemplateApi({
-            action: 'rejectedByOrganization',
-          }),
           roles: [
             {
               id: Roles.APPLICANT,
               formLoader: () =>
-                import('../forms/Rejected').then((module) =>
-                  Promise.resolve(module.Rejected),
+                import('../forms/InReview').then((module) =>
+                  Promise.resolve(module.InReview),
                 ),
               read: 'all',
             },
+            {
+              id: Roles.ORGANIZATION,
+              read: 'all',
+              write: 'all',
+              actions: [
+                {
+                  event: DefaultEvents.SUBMIT,
+                  name: 'Samþykkja',
+                  type: 'primary',
+                },
+                {
+                  event: DefaultEvents.REJECT,
+                  name: 'Hafna',
+                  type: 'reject',
+                },
+              ],
+            },
           ],
         },
+        on: {
+          SUBMIT: {
+            target: States.PURCHASE_AGREEMENT_RECEIVED_FROM_SIGNING,
+          },
+        },
       },
-      [States.APPROVED]: {
+      [States.PURCHASE_AGREEMENT_RECEIVED_FROM_SIGNING]: {
+        meta: {
+          status: FormModes.IN_PROGRESS,
+          name: application.general.name.defaultMessage,
+          lifecycle: pruneAfterDays(190),
+          actionCard: {
+            historyLogs: [
+              {
+                onEvent: DefaultEvents.SUBMIT,
+                logMessage: historyLogs.purchaseAgreementDeclared,
+              },
+            ],
+            pendingAction: {
+              displayStatus: 'info',
+              title: states.purchaseAgreementReceivedFromSigningTitle,
+              content: states.purchaseAgreementReceivedFromSigningDescription,
+            },
+          },
+          roles: [
+            {
+              id: Roles.APPLICANT,
+              formLoader: () =>
+                import('../forms/InReview').then((module) =>
+                  Promise.resolve(module.InReview),
+                ),
+              read: 'all',
+            },
+            {
+              id: Roles.ORGANIZATION,
+              read: 'all',
+              write: 'all',
+              actions: [
+                {
+                  event: DefaultEvents.SUBMIT,
+                  name: 'Samþykkja',
+                  type: 'primary',
+                },
+                {
+                  event: DefaultEvents.REJECT,
+                  name: 'Hafna',
+                  type: 'reject',
+                },
+              ],
+            },
+          ],
+        },
+        on: {
+          SUBMIT: {
+            target: States.PURCHASE_AGREEMENT_DECLARED,
+          },
+        },
+      },
+      [States.PURCHASE_AGREEMENT_DECLARED]: {
+        meta: {
+          status: FormModes.IN_PROGRESS,
+          name: application.general.name.defaultMessage,
+          lifecycle: pruneAfterDays(190),
+          actionCard: {
+            pendingAction: {
+              displayStatus: 'info',
+              title: states.purchaseAgreementDeclaredTitle,
+              content: states.purchaseAgreementDeclaredDescription,
+            },
+          },
+          roles: [
+            {
+              id: Roles.APPLICANT,
+              formLoader: () =>
+                import('../forms/InReview').then((module) =>
+                  Promise.resolve(module.InReview),
+                ),
+              read: 'all',
+            },
+            {
+              id: Roles.ORGANIZATION,
+              read: 'all',
+              write: 'all',
+              actions: [
+                {
+                  event: DefaultEvents.SUBMIT,
+                  name: 'Samþykkja',
+                  type: 'primary',
+                },
+                {
+                  event: DefaultEvents.REJECT,
+                  name: 'Hafna',
+                  type: 'reject',
+                },
+              ],
+            },
+          ],
+        },
+        on: {
+          SUBMIT: {
+            target: States.PAID_OUT,
+          },
+        },
+      },
+      [States.PAID_OUT]: {
+        entry: 'clearAssignees',
         meta: {
           status: FormModes.APPROVED,
           name: application.general.name.defaultMessage,
@@ -237,8 +452,8 @@ const GrindavikHousingBuyoutTemplate: ApplicationTemplate<
           actionCard: {
             pendingAction: {
               displayStatus: 'success',
-              title: states.approvedTitle,
-              content: states.approvedText,
+              title: states.paidOutTitle,
+              content: states.paidOutDescription,
             },
           },
           onEntry: defineTemplateApi({

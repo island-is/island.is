@@ -37,7 +37,6 @@ import {
   States,
   Actions,
 } from '@island.is/application/templates/social-insurance-administration-core/lib/constants'
-import { Features } from '@island.is/feature-flags'
 import {
   socialInsuranceAdministrationMessage,
   statesMessages as coreSIAStatesMessages,
@@ -51,7 +50,6 @@ const PensionSupplementTemplate: ApplicationTemplate<
   type: ApplicationTypes.PENSION_SUPPLEMENT,
   name: pensionSupplementFormMessage.shared.applicationTitle,
   institution: socialInsuranceAdministrationMessage.shared.institution,
-  featureFlag: Features.pensionSupplementApplication,
   translationNamespaces:
     ApplicationConfigurations.PensionSupplement.translation,
   dataSchema,
@@ -81,7 +79,11 @@ const PensionSupplementTemplate: ApplicationTemplate<
               write: 'all',
               api: [
                 NationalRegistryUserApi,
-                UserProfileApi,
+                UserProfileApi.configure({
+                  params: {
+                    validateEmail: true,
+                  },
+                }),
                 SocialInsuranceAdministrationApplicantApi,
                 SocialInsuranceAdministrationCurrenciesApi,
                 SocialInsuranceAdministrationIsApplicantEligibleApi,

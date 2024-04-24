@@ -97,6 +97,10 @@ import { AircraftRegistryClientConfig } from '@island.is/clients/aircraft-regist
 import { UserNotificationClientConfig } from '@island.is/clients/user-notification'
 import { UniversityCareersModule } from '@island.is/api/domains/university-careers'
 import {
+  UserNotificationClientConfig,
+  UserNotificationSystemClientConfig,
+} from '@island.is/clients/user-notification'
+import {
   HealthDirectorateClientConfig,
   HealthDirectorateClientModule,
 } from '@island.is/clients/health-directorate'
@@ -248,8 +252,6 @@ const environment = getConfig
       },
     }),
     UserProfileModule.register({
-      userProfileServiceBasePath:
-        environment.userProfile.userProfileServiceBasePath!,
       islykill: {
         cert: environment.islykill.cert!,
         passphrase: environment.islykill.passphrase!,
@@ -342,6 +344,7 @@ const environment = getConfig
         DrivingDigitalLicenseClientConfig,
         IntellectualPropertiesClientConfig,
         UserNotificationClientConfig,
+        UserNotificationSystemClientConfig,
         GraphQLConfig,
         VehiclesClientConfig,
         VehiclesMileageClientConfig,
