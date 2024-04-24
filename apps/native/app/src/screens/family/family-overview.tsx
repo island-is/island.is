@@ -16,6 +16,7 @@ import illustrationSrc from '../../assets/illustrations/hero_spring.png'
 import { BottomTabsIndicator } from '../../components/bottom-tabs-indicator/bottom-tabs-indicator'
 import { useNationalRegistryChildrenQuery } from '../../graphql/types/schema'
 import { createNavigationOptionHooks } from '../../hooks/create-navigation-option-hooks'
+import { useOfflineUpdateNavigation } from '../../hooks/use-offline-update-navigation'
 import { navigateTo } from '../../lib/deep-linking'
 import { formatNationalId } from '../../lib/format-national-id'
 import { testIDs } from '../../utils/test-ids'
@@ -60,6 +61,8 @@ export const FamilyOverviewScreen: NavigationFunctionComponent = ({
   componentId,
 }) => {
   useNavigationOptions(componentId)
+  useOfflineUpdateNavigation(componentId)
+
   const flatListRef = useRef<FlatList>(null)
   const [loading, setLoading] = useState(false)
   const intl = useIntl()

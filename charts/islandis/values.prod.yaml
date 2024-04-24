@@ -31,7 +31,7 @@ air-discount-scheme-api:
   hpa:
     scaling:
       metric:
-        cpuAverageUtilization: 70
+        cpuAverageUtilization: 90
         nginxRequestsIrate: 20
       replicas:
         max: 10
@@ -117,7 +117,7 @@ air-discount-scheme-backend:
   hpa:
     scaling:
       metric:
-        cpuAverageUtilization: 70
+        cpuAverageUtilization: 90
         nginxRequestsIrate: 20
       replicas:
         max: 10
@@ -212,7 +212,7 @@ air-discount-scheme-web:
   hpa:
     scaling:
       metric:
-        cpuAverageUtilization: 70
+        cpuAverageUtilization: 90
         nginxRequestsIrate: 20
       replicas:
         max: 10
@@ -313,7 +313,7 @@ api:
     SYSLUMENN_TIMEOUT: '40000'
     TELL_US_A_STORY_EMAIL: 'sogur@island.is'
     UNIVERSITY_GATEWAY_API_URL: 'http://web-services-university-gateway.services-university-gateway.svc.cluster.local'
-    USER_NOTIFICATION_CLIENT_URL: 'https://user-notification-xrd.internal.island.is'
+    USER_NOTIFICATION_API_URL: 'http://web-user-notification.user-notification.svc.cluster.local'
     USER_PROFILE_CLIENT_URL: 'http://web-service-portal-api.service-portal.svc.cluster.local'
     XROAD_ADR_MACHINE_LICENSE_PATH: 'IS/GOV/4201810439/Vinnueftirlitid-Protected/rettindi-token-v1'
     XROAD_AIRCRAFT_REGISTRY_PATH: 'IS/GOV/5405131040/Samgongustofa-Protected/Loftfaraskra-V1'
@@ -408,7 +408,7 @@ api:
   hpa:
     scaling:
       metric:
-        cpuAverageUtilization: 70
+        cpuAverageUtilization: 90
         nginxRequestsIrate: 5
       replicas:
         max: 50
@@ -666,7 +666,7 @@ application-system-api:
   hpa:
     scaling:
       metric:
-        cpuAverageUtilization: 70
+        cpuAverageUtilization: 90
         nginxRequestsIrate: 5
       replicas:
         max: 60
@@ -830,7 +830,7 @@ application-system-api-worker:
   hpa:
     scaling:
       metric:
-        cpuAverageUtilization: 70
+        cpuAverageUtilization: 90
         nginxRequestsIrate: 5
       replicas:
         max: 10
@@ -907,7 +907,7 @@ application-system-form:
   hpa:
     scaling:
       metric:
-        cpuAverageUtilization: 70
+        cpuAverageUtilization: 90
         nginxRequestsIrate: 5
       replicas:
         max: 10
@@ -977,7 +977,7 @@ consultation-portal:
   hpa:
     scaling:
       metric:
-        cpuAverageUtilization: 70
+        cpuAverageUtilization: 90
         nginxRequestsIrate: 5
       replicas:
         max: 30
@@ -1041,7 +1041,7 @@ contentful-apps:
   hpa:
     scaling:
       metric:
-        cpuAverageUtilization: 70
+        cpuAverageUtilization: 90
         nginxRequestsIrate: 5
       replicas:
         max: 10
@@ -1126,7 +1126,7 @@ download-service:
   hpa:
     scaling:
       metric:
-        cpuAverageUtilization: 70
+        cpuAverageUtilization: 90
         nginxRequestsIrate: 5
       replicas:
         max: 10
@@ -1221,7 +1221,7 @@ endorsement-system-api:
   hpa:
     scaling:
       metric:
-        cpuAverageUtilization: 70
+        cpuAverageUtilization: 90
         nginxRequestsIrate: 5
       replicas:
         max: 10
@@ -1321,7 +1321,7 @@ icelandic-names-registry-backend:
   hpa:
     scaling:
       metric:
-        cpuAverageUtilization: 70
+        cpuAverageUtilization: 90
         nginxRequestsIrate: 5
       replicas:
         max: 10
@@ -1406,7 +1406,7 @@ island-ui-storybook:
   hpa:
     scaling:
       metric:
-        cpuAverageUtilization: 70
+        cpuAverageUtilization: 90
         nginxRequestsIrate: 5
       replicas:
         max: 10
@@ -1478,7 +1478,7 @@ license-api:
   hpa:
     scaling:
       metric:
-        cpuAverageUtilization: 70
+        cpuAverageUtilization: 90
         nginxRequestsIrate: 5
       replicas:
         max: 10
@@ -1582,7 +1582,7 @@ portals-admin:
   hpa:
     scaling:
       metric:
-        cpuAverageUtilization: 70
+        cpuAverageUtilization: 90
         nginxRequestsIrate: 5
       replicas:
         max: 30
@@ -1663,7 +1663,7 @@ regulations-admin-backend:
   hpa:
     scaling:
       metric:
-        cpuAverageUtilization: 70
+        cpuAverageUtilization: 90
         nginxRequestsIrate: 5
       replicas:
         max: 10
@@ -1748,7 +1748,7 @@ search-indexer-service:
   hpa:
     scaling:
       metric:
-        cpuAverageUtilization: 70
+        cpuAverageUtilization: 90
         nginxRequestsIrate: 5
       replicas:
         max: 1
@@ -1881,7 +1881,7 @@ service-portal:
   hpa:
     scaling:
       metric:
-        cpuAverageUtilization: 70
+        cpuAverageUtilization: 90
         nginxRequestsIrate: 5
       replicas:
         max: 30
@@ -1972,7 +1972,7 @@ service-portal-api:
   hpa:
     scaling:
       metric:
-        cpuAverageUtilization: 70
+        cpuAverageUtilization: 90
         nginxRequestsIrate: 5
       replicas:
         max: 30
@@ -2095,7 +2095,7 @@ service-portal-api-worker:
   hpa:
     scaling:
       metric:
-        cpuAverageUtilization: 70
+        cpuAverageUtilization: 90
         nginxRequestsIrate: 5
       replicas:
         max: 10
@@ -2163,7 +2163,7 @@ services-documents:
   hpa:
     scaling:
       metric:
-        cpuAverageUtilization: 70
+        cpuAverageUtilization: 90
         nginxRequestsIrate: 5
       replicas:
         max: 10
@@ -2244,7 +2244,7 @@ services-sessions:
   hpa:
     scaling:
       metric:
-        cpuAverageUtilization: 70
+        cpuAverageUtilization: 90
         nginxRequestsIrate: 5
       replicas:
         max: 10
@@ -2278,6 +2278,67 @@ services-sessions:
   secrets:
     CONFIGCAT_SDK_KEY: '/k8s/configcat/CONFIGCAT_SDK_KEY'
     DB_PASS: '/k8s/services-sessions/readonly/DB_PASSWORD'
+  securityContext:
+    allowPrivilegeEscalation: false
+    privileged: false
+services-sessions-cleanup:
+  args:
+    - 'main.js'
+    - '--job=cleanup'
+  command:
+    - 'node'
+  enabled: true
+  env:
+    DB_HOST: 'postgres-applications.internal'
+    DB_NAME: 'services_sessions_cleanup'
+    DB_REPLICAS_HOST: 'postgres-applications.internal'
+    DB_USER: 'services_sessions_cleanup'
+    LOG_LEVEL: 'info'
+    NODE_OPTIONS: '--max-old-space-size=460'
+    SERVERSIDE_FEATURES_ON: 'driving-license-use-v1-endpoint-for-v2-comms'
+  grantNamespaces:
+    - 'nginx-ingress-internal'
+    - 'islandis'
+    - 'identity-server'
+  grantNamespacesEnabled: true
+  healthCheck:
+    liveness:
+      initialDelaySeconds: 3
+      path: '/'
+      timeoutSeconds: 3
+    readiness:
+      initialDelaySeconds: 3
+      path: '/'
+      timeoutSeconds: 3
+  hpa:
+    scaling:
+      metric:
+        cpuAverageUtilization: 90
+        nginxRequestsIrate: 5
+      replicas:
+        max: 10
+        min: 3
+  image:
+    repository: '821090935708.dkr.ecr.eu-west-1.amazonaws.com/services-sessions'
+  namespace: 'services-sessions'
+  podDisruptionBudget:
+    maxUnavailable: 1
+  pvcs: []
+  replicaCount:
+    default: 3
+    max: 10
+    min: 3
+  resources:
+    limits:
+      cpu: '400m'
+      memory: '512Mi'
+    requests:
+      cpu: '100m'
+      memory: '256Mi'
+  schedule: '0 3 * * *'
+  secrets:
+    CONFIGCAT_SDK_KEY: '/k8s/configcat/CONFIGCAT_SDK_KEY'
+    DB_PASS: '/k8s/services-sessions-cleanup/DB_PASSWORD'
   securityContext:
     allowPrivilegeEscalation: false
     privileged: false
@@ -2317,7 +2378,7 @@ services-sessions-worker:
   hpa:
     scaling:
       metric:
-        cpuAverageUtilization: 70
+        cpuAverageUtilization: 90
         nginxRequestsIrate: 5
       replicas:
         max: 10
@@ -2422,7 +2483,7 @@ services-university-gateway:
   hpa:
     scaling:
       metric:
-        cpuAverageUtilization: 70
+        cpuAverageUtilization: 90
         nginxRequestsIrate: 5
       replicas:
         max: 10
@@ -2551,7 +2612,7 @@ services-university-gateway-worker:
   hpa:
     scaling:
       metric:
-        cpuAverageUtilization: 70
+        cpuAverageUtilization: 90
         nginxRequestsIrate: 5
       replicas:
         max: 10
@@ -2611,7 +2672,7 @@ skilavottord-web:
   hpa:
     scaling:
       metric:
-        cpuAverageUtilization: 70
+        cpuAverageUtilization: 90
         nginxRequestsIrate: 5
       replicas:
         max: 10
@@ -2684,7 +2745,7 @@ skilavottord-ws:
   hpa:
     scaling:
       metric:
-        cpuAverageUtilization: 70
+        cpuAverageUtilization: 90
         nginxRequestsIrate: 5
       replicas:
         max: 10
@@ -2791,7 +2852,7 @@ user-notification:
     XROAD_TLS_BASE_PATH_WITH_ENV: 'https://securityserver.island.is/r1/IS'
   grantNamespaces:
     - 'nginx-ingress-internal'
-    - 'identity-server'
+    - 'identity-server-delegation'
   grantNamespacesEnabled: true
   healthCheck:
     liveness:
@@ -2805,7 +2866,7 @@ user-notification:
   hpa:
     scaling:
       metric:
-        cpuAverageUtilization: 70
+        cpuAverageUtilization: 90
         nginxRequestsIrate: 5
       replicas:
         max: 10
@@ -2874,7 +2935,7 @@ user-notification-cleanup-worker:
     SERVERSIDE_FEATURES_ON: 'driving-license-use-v1-endpoint-for-v2-comms'
   grantNamespaces:
     - 'nginx-ingress-internal'
-    - 'identity-server'
+    - 'identity-server-delegation'
   grantNamespacesEnabled: true
   healthCheck:
     liveness:
@@ -2888,7 +2949,7 @@ user-notification-cleanup-worker:
   hpa:
     scaling:
       metric:
-        cpuAverageUtilization: 70
+        cpuAverageUtilization: 90
         nginxRequestsIrate: 5
       replicas:
         max: 10
@@ -2984,7 +3045,7 @@ user-notification-worker:
     XROAD_TLS_BASE_PATH_WITH_ENV: 'https://securityserver.island.is/r1/IS'
   grantNamespaces:
     - 'nginx-ingress-internal'
-    - 'identity-server'
+    - 'identity-server-delegation'
   grantNamespacesEnabled: true
   healthCheck:
     liveness:
@@ -2998,7 +3059,7 @@ user-notification-worker:
   hpa:
     scaling:
       metric:
-        cpuAverageUtilization: 70
+        cpuAverageUtilization: 90
         nginxRequestsIrate: 5
       replicas:
         max: 2
@@ -3092,7 +3153,7 @@ web:
   hpa:
     scaling:
       metric:
-        cpuAverageUtilization: 70
+        cpuAverageUtilization: 90
         nginxRequestsIrate: 5
       replicas:
         max: 50
@@ -3168,7 +3229,7 @@ xroad-collector:
   hpa:
     scaling:
       metric:
-        cpuAverageUtilization: 70
+        cpuAverageUtilization: 90
         nginxRequestsIrate: 5
       replicas:
         max: 10

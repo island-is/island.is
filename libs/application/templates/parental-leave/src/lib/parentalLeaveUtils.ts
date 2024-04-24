@@ -407,7 +407,7 @@ export const getSpouse = (
   return null
 }
 
-export const getOtherParentOptions = (application: Application) => {
+export const getOtherParentOptions = () => {
   const options: Option[] = [
     {
       value: NO,
@@ -425,24 +425,6 @@ export const getOtherParentOptions = (application: Application) => {
       label: parentalLeaveFormMessages.shared.otherParentOption,
     },
   ]
-
-  const spouse = getSpouse(application)
-
-  if (spouse) {
-    options.forEach((o) => {
-      o.disabled = true
-    })
-    options.unshift({
-      value: SPOUSE,
-      label: {
-        ...parentalLeaveFormMessages.shared.otherParentSpouse,
-        values: {
-          spouseName: spouse.name,
-          spouseId: spouse.nationalId,
-        },
-      },
-    })
-  }
 
   return options
 }

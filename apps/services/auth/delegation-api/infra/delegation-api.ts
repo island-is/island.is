@@ -51,9 +51,9 @@ export const serviceSetup = (services: {
           'clustercfg.general-redis-cluster-group.dnugi2.euw1.cache.amazonaws.com:6379',
         ]),
       },
-      USER_NOTIFICATION_CLIENT_URL: {
-        dev: ref((h) => h.svc(services.userNotification)),
-        staging: ref((h) => h.svc(services.userNotification)),
+      USER_NOTIFICATION_API_URL: {
+        dev: ref((h) => `http://${h.svc(services.userNotification)}`),
+        staging: ref((h) => `http://${h.svc(services.userNotification)}`),
         prod: 'https://user-notification.internal.island.is',
       },
     })
