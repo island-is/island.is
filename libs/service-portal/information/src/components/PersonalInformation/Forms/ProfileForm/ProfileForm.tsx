@@ -71,10 +71,11 @@ export const ProfileForm: FC<React.PropsWithChildren<Props>> = ({
     useUpdateOrCreateUserProfile()
   const { deleteIslykillValue, loading: deleteLoading } =
     useDeleteIslykillValue()
-  const { authority } = useAuth()
+  const { authority, userInfo } = useAuth()
   const { data: userProfile, loading: userLoading, refetch } = useUserProfile()
   const featureFlagClient: FeatureFlagClient = useFeatureFlagClient()
   const { formatMessage } = useLocale()
+  const isCompany = userInfo?.profile?.subjectType === 'legalEntity'
 
   const isV2UserProfileEnabled = async () => {
     const ffEnabled = await featureFlagClient.getValue(
@@ -82,7 +83,7 @@ export const ProfileForm: FC<React.PropsWithChildren<Props>> = ({
       false,
     )
 
-    if (ffEnabled) {
+    if (ffEnabled && !isCompany) {
       setV2UserProfileEnabled(ffEnabled as boolean)
     }
   }
