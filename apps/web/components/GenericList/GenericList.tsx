@@ -106,14 +106,15 @@ export const GenericList = ({
                     borderRadius="large"
                   >
                     <Stack space={2}>
-                      {item.date && (
+                      <Stack space={0}>
                         <Text variant="eyebrow" color="purple400">
-                          {format(new Date(item.date), 'do.MMM.YYYY')}
+                          {item.date &&
+                            format(new Date(item.date), 'do MMM yyyy')}
                         </Text>
-                      )}
-                      <Text variant="h4" as="span" color="dark400">
-                        {item.title}
-                      </Text>
+                        <Text variant="h4" as="span" color="dark400">
+                          {item.title}
+                        </Text>
+                      </Stack>
                       {item.cardIntro?.length > 0 && (
                         <Box>{webRichText(item.cardIntro ?? [])}</Box>
                       )}

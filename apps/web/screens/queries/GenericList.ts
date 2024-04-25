@@ -7,6 +7,7 @@ export const GET_GENERIC_LIST_ITEMS_QUERY = gql`
     getGenericListItems(input: $input) {
       items {
         id
+        date
         title
         cardIntro {
           ...HtmlFields

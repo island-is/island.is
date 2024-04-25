@@ -68,8 +68,8 @@ const ListPageEditor = () => {
             content_type: LIST_ITEM_CONTENT_TYPE_ID,
             limit: LIST_ITEMS_PER_PAGE,
             skip,
-            'fields.title[match]': searchValue,
-            'fields.listPage.sys.id': sdk.entry.getSys().id,
+            'fields.internalTitle[match]': searchValue,
+            'fields.genericList.sys.id': sdk.entry.getSys().id,
           },
         })
         if (
@@ -192,7 +192,9 @@ const ListPageEditor = () => {
                   <EntryCard
                     key={item.sys.id}
                     contentType="List Item"
-                    title={item.fields.title?.[defaultLocale] ?? 'Untitled'}
+                    title={
+                      item.fields.internalTitle?.[defaultLocale] ?? 'Untitled'
+                    }
                     onClick={() => {
                       sdk.navigator.openEntry(item.sys.id, { slideIn: true })
                     }}

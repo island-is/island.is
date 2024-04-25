@@ -395,7 +395,7 @@ export class CmsElasticsearchService {
       {
         term: {
           type: {
-            value: 'webListItem',
+            value: 'webGenericListItem',
           },
         },
       },
