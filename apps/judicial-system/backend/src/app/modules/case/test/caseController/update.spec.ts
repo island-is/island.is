@@ -863,9 +863,9 @@ describe('CaseController - Update', () => {
     })
   })
 
-  describe('court date updated', () => {
-    const courtDate = new Date()
-    const caseToUpdate = { courtDate }
+  describe('arraignment date updated', () => {
+    const arraignmentDate = { date: new Date(), location: uuid() }
+    const caseToUpdate = { arraignmentDate }
 
     beforeEach(async () => {
       await givenWhenThen(caseId, user, theCase, caseToUpdate)
@@ -873,7 +873,7 @@ describe('CaseController - Update', () => {
 
     it('should post to queue', () => {
       expect(mockDateLogModel.create).toHaveBeenCalledWith(
-        { dateType: DateType.COURT_DATE, caseId, date: courtDate },
+        { dateType: DateType.ARRAIGNMENT_DATE, caseId, ...arraignmentDate },
         { transaction },
       )
     })

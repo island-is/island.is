@@ -52,8 +52,6 @@ type ChildKeys = Pick<
 
 export type UpdateCase = Omit<UpdateCaseInput, 'id'> & {
   force?: boolean
-  // TODO: Make this a part of updateCase
-  postponedCourtDate?: string | null
 }
 
 const isChildKey = (key: keyof UpdateCaseInput): key is keyof ChildKeys => {
@@ -90,10 +88,7 @@ const overwrite = (update: UpdateCase): UpdateCase => {
 
 export const fieldHasValue =
   (workingCase: Case) => (value: unknown, key: string) => {
-    const theKey = key as keyof Omit<
-      UpdateCaseInput,
-      'courtDate' | 'postponedCourtDate'
-    > // loadash types are not better than this
+    const theKey = key as keyof UpdateCaseInput
 
     if (
       isChildKey(theKey) // check if key is f.example `judgeId`

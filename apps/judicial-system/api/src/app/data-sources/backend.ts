@@ -5,7 +5,11 @@ import { Injectable } from '@nestjs/common'
 
 import { ProblemError } from '@island.is/nest/problem'
 
-import { CommentType, type User } from '@island.is/judicial-system/types'
+import {
+  CommentType,
+  DateType,
+  type User,
+} from '@island.is/judicial-system/types'
 
 import { environment } from '../../environments'
 import {
@@ -129,11 +133,18 @@ export class BackendApi extends DataSource<{ req: Request }> {
   // Find a way to get types from the backend
   private caseTransformer<Case>(data: unknown): Case {
     const theCase = data as Case & {
-      explanatoryComments: { commentType: CommentType; comment: string }[]
+      dateLogs?: { dateType: DateType; date: string }[]
+      explanatoryComments?: { commentType: CommentType; comment: string }[]
     }
 
     return {
       ...theCase,
+      arraignmentDate: theCase.dateLogs?.find(
+        (dateLog) => dateLog.dateType === DateType.ARRAIGNMENT_DATE,
+      ),
+      courtDate: theCase.dateLogs?.find(
+        (dateLog) => dateLog.dateType === DateType.COURT_DATE,
+      ),
       postponedIndefinitelyExplanation: theCase.explanatoryComments?.find(
         (comment) =>
           comment.commentType ===

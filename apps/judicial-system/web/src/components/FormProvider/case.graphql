@@ -70,7 +70,6 @@ query Case($input: CaseQueryInput!) {
     courtCaseNumber
     sessionArrangements
     courtLocation
-    courtRoom
     courtStartDate
     courtEndTime
     isClosedCourtHidden
@@ -239,9 +238,11 @@ query Case($input: CaseQueryInput!) {
       nationalId
       userRole
     }
-    dateLogs {
-      created
-      dateType
+    arraignmentDate {
+      date
+      location
+    }
+    courtDate {
       date
       location
     }

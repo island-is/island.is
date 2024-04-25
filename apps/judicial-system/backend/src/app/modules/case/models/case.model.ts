@@ -492,16 +492,6 @@ export class Case extends Model {
   courtLocation?: string
 
   /**********
-   * The assigned court room for the court session
-   **********/
-  @Column({
-    type: DataType.STRING,
-    allowNull: true,
-  })
-  @ApiPropertyOptional()
-  courtRoom?: string
-
-  /**********
    * The date and time the court session started
    **********/
   @Column({

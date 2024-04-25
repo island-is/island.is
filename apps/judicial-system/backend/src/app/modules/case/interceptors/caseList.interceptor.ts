@@ -7,10 +7,9 @@ import {
   NestInterceptor,
 } from '@nestjs/common'
 
-import { DateType, getLatestDateType } from '@island.is/judicial-system/types'
+import { DateType } from '@island.is/judicial-system/types'
 
 import { Case } from '../models/case.model'
-import { DateLog } from '../models/dateLog.model'
 
 @Injectable()
 export class CaseListInterceptor implements NestInterceptor {
@@ -22,10 +21,12 @@ export class CaseListInterceptor implements NestInterceptor {
           // If you need to add sensitive information, then you should consider adding a new endpoint
           // for defenders and other user roles that are not allowed to see sensitive information.
 
-          const courtDate = getLatestDateType(
-            [DateType.COURT_DATE],
-            theCase.dateLogs,
-          ) as DateLog
+          const arraignmentDate = theCase.dateLogs?.find(
+            (d) => d.dateType === DateType.ARRAIGNMENT_DATE,
+          )?.date
+          const courtDate = theCase.dateLogs?.find(
+            (d) => d.dateType === DateType.COURT_DATE,
+          )?.date
 
           return {
             id: theCase.id,
@@ -37,7 +38,7 @@ export class CaseListInterceptor implements NestInterceptor {
             courtCaseNumber: theCase.courtCaseNumber,
             decision: theCase.decision,
             validToDate: theCase.validToDate,
-            courtDate: courtDate?.date,
+            courtDate: courtDate ?? arraignmentDate,
             initialRulingDate: theCase.initialRulingDate,
             rulingDate: theCase.rulingDate,
             rulingSignatureDate: theCase.rulingSignatureDate,

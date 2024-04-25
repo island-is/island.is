@@ -13,10 +13,7 @@ import {
 } from '@island.is/island-ui/core'
 import * as constants from '@island.is/judicial-system/consts'
 import { formatDate, formatDOB } from '@island.is/judicial-system/formatters'
-import {
-  getLatestDateType,
-  isAcceptingCaseDecision,
-} from '@island.is/judicial-system/types'
+import { isAcceptingCaseDecision } from '@island.is/judicial-system/types'
 import { core, ruling, titles } from '@island.is/judicial-system-web/messages'
 import {
   CaseFileList,
@@ -35,7 +32,6 @@ import {
 import {
   CaseDecision,
   CaseType,
-  DateType,
   Defendant,
 } from '@island.is/judicial-system-web/src/graphql/schema'
 import { TempCase as Case } from '@island.is/judicial-system-web/src/types'
@@ -142,16 +138,11 @@ export const Ruling: React.FC<React.PropsWithChildren<unknown>> = () => {
   ])
 
   const initialize = useCallback(() => {
-    const courtDate = getLatestDateType(
-      [DateType.COURT_DATE],
-      workingCase.dateLogs,
-    )
-
     setAndSendCaseToServer(
       [
         {
           introduction: formatMessage(m.sections.introduction.autofill, {
-            date: formatDate(courtDate?.date, 'PPP'),
+            date: formatDate(workingCase.arraignmentDate?.date, 'PPP'),
           }),
           prosecutorDemands: workingCase.demands,
           courtCaseFacts: formatMessage(

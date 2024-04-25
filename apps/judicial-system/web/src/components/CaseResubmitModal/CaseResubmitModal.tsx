@@ -2,7 +2,6 @@ import React, { useState } from 'react'
 import { IntlShape, useIntl } from 'react-intl'
 
 import { Box, Input } from '@island.is/island-ui/core'
-import { getLatestDateType } from '@island.is/judicial-system/types'
 import {
   DateType,
   RequestSharedWithDefender,
@@ -22,16 +21,15 @@ export const getCaseResubmittedText = (
   formatMessage: IntlShape['formatMessage'],
   workingCase: Case,
 ) => {
-  const courtDate = getLatestDateType(
-    [DateType.COURT_DATE],
-    workingCase.dateLogs,
-  )
+  const arraignmentDate = theCase.dateLogs?.find(
+    (d) => d.dateType === DateType.ARRAIGNMENT_DATE,
+  )?.date
 
   return formatMessage(strings.text, {
     requestSharedWithDefender:
       (workingCase.requestSharedWithDefender ===
         RequestSharedWithDefender.COURT_DATE &&
-        Boolean(courtDate)) ||
+        Boolean(arraignmentDate)) ||
       workingCase.requestSharedWithDefender ===
         RequestSharedWithDefender.READY_FOR_COURT,
   })

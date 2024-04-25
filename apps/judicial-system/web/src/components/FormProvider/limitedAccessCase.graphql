@@ -130,9 +130,11 @@ query LimitedAccessCase($input: CaseQueryInput!) {
       id
       name
     }
-    dateLogs {
-      created
-      dateType
+    arraignmentDate {
+      date
+      location
+    }
+    courtDate {
       date
       location
     }

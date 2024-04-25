@@ -25,7 +25,7 @@ describe('getCaseResubmittedText', () => {
           caseId: 'abc',
           created: '2022-06-13',
           date: '2022-06-13T13:37:00Z',
-          dateType: DateType.COURT_DATE,
+          dateType: DateType.ARRAIGNMENT_DATE,
         },
       ],
     } as Case
@@ -44,7 +44,7 @@ describe('getCaseResubmittedText', () => {
     caseId: 'abc',
     date: '2022-06-13T13:37:00Z',
     created: '2022-06-13',
-    dateType: DateType.COURT_DATE,
+    dateType: DateType.ARRAIGNMENT_DATE,
   }]} | ${undefined}
     ${'abc'} | ${undefined} | ${undefined}
   `(

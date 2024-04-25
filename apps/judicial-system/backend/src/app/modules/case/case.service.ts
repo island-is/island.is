@@ -68,6 +68,10 @@ import { ExplanatoryComment } from './models/expalanatoryComment.model'
 import { SignatureConfirmationResponse } from './models/signatureConfirmation.response'
 import { transitionCase } from './state/case.state'
 
+interface UpdateDateLog {
+  date?: Date
+  location?: string
+}
 export interface UpdateCase
   extends Pick<
     Case,
@@ -101,7 +105,6 @@ export interface UpdateCase
     | 'courtCaseNumber'
     | 'sessionArrangements'
     | 'courtLocation'
-    | 'courtRoom'
     | 'courtStartDate'
     | 'courtEndTime'
     | 'isClosedCourtHidden'
@@ -161,16 +164,27 @@ export interface UpdateCase
   courtRecordSignatoryId?: string | null
   courtRecordSignatureDate?: Date | null
   parentCaseId?: string | null
-  courtDate?: Date | null
-  postponedCourtDate?: Date | null
+  arraignmentDate?: UpdateDateLog | null
+  courtDate?: UpdateDateLog | null
   postponedIndefinitelyExplanation?: string | null
 }
 
-const explanatoryCommentsTypes: Partial<Record<keyof UpdateCase, CommentType>> =
-  {
-    postponedIndefinitelyExplanation:
-      CommentType.POSTPONED_INDEFINITELY_EXPLANATION,
-  }
+type DateLogKeys = keyof Pick<UpdateCase, 'arraignmentDate' | 'courtDate'>
+
+const dateLogTypes: Record<DateLogKeys, DateType> = {
+  arraignmentDate: DateType.ARRAIGNMENT_DATE,
+  courtDate: DateType.COURT_DATE,
+}
+
+type ExplanatoryCommentKeys = keyof Pick<
+  UpdateCase,
+  'postponedIndefinitelyExplanation'
+>
+
+const explanatoryCommentTypes: Record<ExplanatoryCommentKeys, CommentType> = {
+  postponedIndefinitelyExplanation:
+    CommentType.POSTPONED_INDEFINITELY_EXPLANATION,
+}
 
 const eventTypes = Object.values(EventType)
 const dateTypes = Object.values(DateType)
@@ -1201,21 +1215,44 @@ export class CaseService {
     update: UpdateCase,
     transaction: Transaction,
   ) {
-    if (update.courtDate || update.postponedCourtDate) {
-      await this.dateLogModel.create(
-        {
-          dateType: update.courtDate
-            ? DateType.COURT_DATE
-            : DateType.POSTPONED_COURT_DATE,
-          caseId: theCase.id,
-          date: update.courtDate ?? update.postponedCourtDate,
-          location: update.courtRoom,
-        },
-        { transaction },
-      )
+    // Iterate over all known date log types
+    for (const key in dateLogTypes) {
+      const dateKey = key as DateLogKeys
+      const updateDateLog = update[dateKey]
 
-      delete update.courtDate
-      delete update.postponedCourtDate
+      if (updateDateLog !== undefined) {
+        const dateType = dateLogTypes[dateKey]
+
+        const dateLog = await this.dateLogModel.findOne({
+          where: { caseId: theCase.id, dateType },
+          transaction,
+        })
+
+        if (dateLog) {
+          if (updateDateLog === null) {
+            await this.dateLogModel.destroy({
+              where: { caseId: theCase.id, dateType },
+              transaction,
+            })
+          } else {
+            await this.dateLogModel.update(updateDateLog, {
+              where: { caseId: theCase.id, dateType },
+              transaction,
+            })
+          }
+        } else {
+          await this.dateLogModel.create(
+            {
+              caseId: theCase.id,
+              dateType,
+              ...updateDateLog,
+            },
+            { transaction },
+          )
+        }
+
+        delete update[dateKey]
+      }
     }
   }
 
@@ -1224,33 +1261,34 @@ export class CaseService {
     update: UpdateCase,
     transaction: Transaction,
   ) {
-    // Iterate over all known explanatory comments
-    for (const key in explanatoryCommentsTypes) {
-      const commentKey = key as keyof UpdateCase
+    // Iterate over all known explanatory comment types
+    for (const key in explanatoryCommentTypes) {
+      const commentKey = key as ExplanatoryCommentKeys
+      const updateComment = update[commentKey]
 
-      if (update[commentKey] !== undefined) {
-        const commentType = explanatoryCommentsTypes[commentKey]
+      if (updateComment !== undefined) {
+        const commentType = explanatoryCommentTypes[commentKey]
 
         const comment = await this.explanatoryCommentModel.findOne({
           where: { caseId: theCase.id, commentType },
-          transaction: transaction,
+          transaction,
         })
 
         if (comment) {
-          if (update[commentKey] === null) {
+          if (updateComment === null) {
             await this.explanatoryCommentModel.destroy({
               where: { caseId: theCase.id, commentType },
               transaction,
             })
           } else {
             await this.explanatoryCommentModel.update(
-              { comment: update[commentKey] },
+              { comment: updateComment },
               { where: { caseId: theCase.id, commentType }, transaction },
             )
           }
         } else {
           await this.explanatoryCommentModel.create(
-            { caseId: theCase.id, commentType, comment: update[commentKey] },
+            { caseId: theCase.id, commentType, comment: updateComment },
             { transaction },
           )
         }

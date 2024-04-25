@@ -5,7 +5,6 @@ import {
   CaseState,
   CaseType,
   DateType,
-  getLatestDateType,
   InstitutionType,
   isCourtOfAppealsUser,
   isDefenceUser,
@@ -225,7 +224,9 @@ const canDefenceUserAccessCase = (theCase: Case, user: User): boolean => {
     return false
   }
 
-  const courtDate = getLatestDateType([DateType.COURT_DATE], theCase.dateLogs)
+  const arraignmentDate = theCase.dateLogs?.find(
+    (d) => d.dateType === DateType.ARRAIGNMENT_DATE,
+  )?.date
 
   // Check submitted case access
   const canDefenderAccessSubmittedCase =
@@ -245,7 +246,7 @@ const canDefenceUserAccessCase = (theCase: Case, user: User): boolean => {
     const canDefenderAccessReceivedCase =
       isIndictmentCase(theCase.type) ||
       canDefenderAccessSubmittedCase ||
-      Boolean(courtDate)
+      Boolean(arraignmentDate)
 
     if (!canDefenderAccessReceivedCase) {
       return false
