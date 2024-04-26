@@ -257,8 +257,6 @@ const useCase = () => {
           return
         }
 
-        console.log('updateCase', updateCase)
-
         const { data } = await mutation({
           variables: { input: { id, ...updateCase } },
         })
