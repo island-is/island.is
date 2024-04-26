@@ -23,7 +23,7 @@ export class ClientDelegationType extends Model {
   })
   @ForeignKey(() => Client)
   @ApiProperty()
-  client!: string
+  clientId!: string
 
   @PrimaryKey
   @Column({
