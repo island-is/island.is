@@ -2114,6 +2114,15 @@ export const getActionName = (
     case States.EDIT_OR_ADD_EMPLOYERS_AND_PERIODS: {
       const employerChanged = changeEmployer || addEmployer === YES
       const periodsChanged = changePeriods || addPeriods === YES
+
+      // Keep book keeping of what has been selected
+      if (!changeEmployer && addEmployer === YES) {
+        set(application.answers, 'changeEmployer', true)
+      }
+      if (!changePeriods && addPeriods === YES) {
+        set(application.answers, 'changePeriods', true)
+      }
+
       if (changeEmployerFile && changeEmployerFile.length !== 0) {
         if (employerChanged && periodsChanged) {
           return FileType.EMPDOCPER
