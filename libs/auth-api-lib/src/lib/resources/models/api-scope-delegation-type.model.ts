@@ -1,0 +1,45 @@
+import {
+  Column,
+  CreatedAt,
+  DataType,
+  ForeignKey,
+  Model,
+  PrimaryKey,
+  Table,
+  UpdatedAt,
+} from 'sequelize-typescript'
+import { ApiProperty, ApiPropertyOptional } from '@nestjs/swagger'
+
+import { ApiScope } from './api-scope.model'
+import { DelegationType } from '../../delegations/models/delegation-type.model'
+
+@Table({
+  tableName: 'api_scope_delegation_types',
+})
+export class ApiScopeDelegationType extends Model {
+  @PrimaryKey
+  @Column({
+    type: DataType.STRING,
+    allowNull: false,
+  })
+  @ForeignKey(() => ApiScope)
+  @ApiProperty()
+  api_scope!: string
+
+  @PrimaryKey
+  @Column({
+    type: DataType.STRING,
+    allowNull: false,
+  })
+  @ForeignKey(() => DelegationType)
+  @ApiProperty()
+  delegation_type!: string
+
+  @CreatedAt
+  @ApiProperty()
+  readonly created!: Date
+
+  @UpdatedAt
+  @ApiPropertyOptional({ nullable: true })
+  readonly modified?: Date | null
+}
