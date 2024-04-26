@@ -26,15 +26,15 @@ import { BaseTemplateApiService } from '../../base-template-api.service'
 import { ApplicationTypes } from '@island.is/application/types'
 import { coreErrorMessages } from '@island.is/application/core'
 import { TemplateApiError } from '@island.is/nest/problem'
-import { EmailService } from '@island.is/email-service'
 import { generateFirearmApplicantEmail } from './emailGenerators/firearmApplicantNotification'
+import { SharedTemplateApiService } from '../../shared'
 
 @Injectable()
 export class AnnouncementOfDeathService extends BaseTemplateApiService {
   constructor(
     @Inject(LOGGER_PROVIDER) private logger: Logger,
     private readonly syslumennService: SyslumennService,
-    private readonly emailService: EmailService,
+    private readonly sharedTemplateAPIService: SharedTemplateApiService,
   ) {
     super(ApplicationTypes.ANNOUNCEMENT_OF_DEATH)
   }
@@ -267,16 +267,34 @@ export class AnnouncementOfDeathService extends BaseTemplateApiService {
         )
       }
       if (answers.firearmApplicant) {
-        try {
-          await this.emailService.sendEmail(
-            generateFirearmApplicantEmail(answers.firearmApplicant.email),
-          )
-        } catch (e) {
-          this.log(
-            'error',
-            'Could not send email to applicant after successful submission',
-            { e },
-          )
+        if (answers.firearmApplicant.phone) {
+          // await this.sharedTemplateAPIService
+          //   .sendSms(
+          //     (_, options) =>
+          //       generateRequestReviewSms(
+          //         application,
+          //         options,
+          //         answers.firearmApplicant,
+          //       ),
+          //     application,
+          //   )
+          //   .catch(() => {
+          //     this.logger.error(
+          //       `Error sending sms about initReview to ${answers.firearmApplicant.phone}`,
+          //     )
+          //   })
+        }
+        if (answers.firearmApplicant.email) {
+          await this.sharedTemplateAPIService
+            .sendEmail(
+              (props) => generateFirearmApplicantEmail(props),
+              application,
+            )
+            .catch(() => {
+              this.logger.error(
+                `Error sending email about initReview to ${answers.firearmApplicant.email}`,
+              )
+            })
         }
       }
       return { success: result.success, id: result.caseNumber }

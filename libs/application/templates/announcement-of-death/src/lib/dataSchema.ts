@@ -128,3 +128,5 @@ export const dataSchema = z.object({
     encountered: z.boolean().optional(),
   }),
 })
+
+export type AnnouncementOfDeath = z.TypeOf<typeof dataSchema>
