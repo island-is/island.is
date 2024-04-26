@@ -29,7 +29,7 @@ import { UserService } from '../../../user'
 import { UpdateCaseDto } from '../../dto/updateCase.dto'
 import { Case } from '../../models/case.model'
 import { DateLog } from '../../models/dateLog.model'
-import { ExplanatoryComment } from '../../models/expalanatoryComment.model'
+import { ExplanatoryComment } from '../../models/explanatoryComment.model'
 
 jest.mock('../../../../factories')
 
