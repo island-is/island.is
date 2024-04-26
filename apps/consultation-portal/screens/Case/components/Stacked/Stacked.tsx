@@ -10,7 +10,7 @@ interface Props {
 const Stacked = ({ headingColor = 'blue400', title, children }: Props) => {
   return (
     <Stack space={1}>
-      <Text variant="h4" color={headingColor}>
+      <Text as="h4" variant="h4" color={headingColor}>
         {title}
       </Text>
       {children}

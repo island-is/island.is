@@ -9,6 +9,7 @@ import {
   formatCaseType,
 } from '@island.is/judicial-system/formatters'
 import {
+  getLatestDateType,
   isCompletedCase,
   isInvestigationCase,
   isRestrictionCase,
@@ -34,6 +35,8 @@ import {
 } from '@island.is/judicial-system-web/src/components'
 import {
   CaseState,
+  DateLog,
+  DateType,
   RequestSharedWithDefender,
 } from '@island.is/judicial-system-web/src/graphql/schema'
 import { api } from '@island.is/judicial-system-web/src/services'
@@ -67,6 +70,11 @@ export const CaseOverview: React.FC<React.PropsWithChildren<unknown>> = () => {
   const shouldDisplayAlertBanner =
     isCompletedCase(workingCase.state) &&
     (workingCase.canDefenderAppeal || workingCase.hasBeenAppealed)
+
+  const courtDate = getLatestDateType(
+    DateType.COURT_DATE,
+    workingCase.dateLogs,
+  ) as DateLog
 
   return (
     <>
@@ -130,12 +138,13 @@ export const CaseOverview: React.FC<React.PropsWithChildren<unknown>> = () => {
             </Box>
           )}
           {workingCase.state === CaseState.RECEIVED &&
-            workingCase.courtDate &&
+            courtDate &&
+            courtDate.date &&
             workingCase.court && (
               <Box component="section" marginBottom={5}>
                 <InfoCardCaseScheduled
                   court={workingCase.court}
-                  courtDate={workingCase.courtDate}
+                  courtDate={courtDate.date}
                   courtRoom={workingCase.courtRoom}
                 />
               </Box>

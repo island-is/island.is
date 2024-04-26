@@ -1,7 +1,7 @@
 import { gql } from '@apollo/client'
 export const ADVERTS_QUERY = gql`
-  query Adverts($input: MinistryOfJusticeAdvertsInput!) {
-    ministryOfJusticeAdverts(input: $input) {
+  query Adverts($input: OfficialJournalOfIcelandAdvertsInput!) {
+    officialJournalOfIcelandAdverts(input: $input) {
       adverts {
         id
         department {
@@ -62,8 +62,8 @@ export const ADVERTS_QUERY = gql`
 `
 
 export const ADVERT_QUERY = gql`
-  query Advert($params: MinistryOfJusticeAdvertQuery!) {
-    ministryOfJusticeAdvert(params: $params) {
+  query Advert($params: OfficialJournalOfIcelandAdvertQuery!) {
+    officialJournalOfIcelandAdvert(params: $params) {
       advert {
         id
         department {
@@ -114,8 +114,8 @@ export const ADVERT_QUERY = gql`
 `
 
 export const TYPES_QUERY = gql`
-  query AdvertTypes($params: MinistryOfJusticeTypesInput!) {
-    ministryOfJusticeTypes(params: $params) {
+  query AdvertTypes($params: OfficialJournalOfIcelandTypesInput!) {
+    officialJournalOfIcelandTypes(params: $params) {
       types {
         id
         title
@@ -136,8 +136,8 @@ export const TYPES_QUERY = gql`
 `
 
 export const DEPARTMENTS_QUERY = gql`
-  query AdvertDepartments($params: MinistryOfJusticeQueryInput!) {
-    ministryOfJusticeDepartments(params: $params) {
+  query AdvertDepartments($params: OfficialJournalOfIcelandQueryInput!) {
+    officialJournalOfIcelandDepartments(params: $params) {
       departments {
         id
         title
@@ -158,8 +158,8 @@ export const DEPARTMENTS_QUERY = gql`
 `
 
 export const CATEGORIES_QUERY = gql`
-  query AdvertCategories($params: MinistryOfJusticeQueryInput!) {
-    ministryOfJusticeCategories(params: $params) {
+  query AdvertCategories($params: OfficialJournalOfIcelandQueryInput!) {
+    officialJournalOfIcelandCategories(params: $params) {
       categories {
         id
         title

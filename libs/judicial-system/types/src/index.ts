@@ -5,6 +5,7 @@ export { Gender } from './lib/defendant'
 export { InstitutionType } from './lib/institution'
 export { NotificationType } from './lib/notification'
 export { EventType } from './lib/eventLog'
+export { DateType, getLatestDateType } from './lib/dateLog'
 
 export { CaseFileState, CaseFileCategory } from './lib/file'
 

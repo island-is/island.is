@@ -10,10 +10,10 @@ import {
 
 import { CaseListEntry } from '../models/caseList.model'
 
-function getAppealedDate(
+const getAppealedDate = (
   prosecutorPostponedAppealDate?: string,
   accusedPostponedAppealDate?: string,
-): string | undefined {
+): string | undefined => {
   return prosecutorPostponedAppealDate ?? accusedPostponedAppealDate
 }
 
