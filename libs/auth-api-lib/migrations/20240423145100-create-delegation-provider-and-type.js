@@ -114,7 +114,7 @@ module.exports = {
       await queryInterface.createTable(
         'client_delegation_types',
         {
-          client: {
+          client_id: {
             type: Sequelize.STRING,
             allowNull: false,
             references: {
@@ -145,7 +145,7 @@ module.exports = {
       await queryInterface.createTable(
         'api_scope_delegation_types',
         {
-          api_scope: {
+          api_scope_name: {
             type: Sequelize.STRING,
             allowNull: false,
             references: {
@@ -174,13 +174,13 @@ module.exports = {
       )
 
       await queryInterface.addConstraint('client_delegation_types', {
-        fields: ['client', 'delegation_type'],
+        fields: ['client_id', 'delegation_type'],
         type: 'primary key',
         transaction,
       })
 
       await queryInterface.addConstraint('api_scope_delegation_types', {
-        fields: ['api_scope', 'delegation_type'],
+        fields: ['api_scope_name', 'delegation_type'],
         type: 'primary key',
         transaction,
       })
