@@ -15,8 +15,8 @@ export class GenericListItem {
   @Field()
   title!: string
 
-  @Field()
-  date!: string
+  @Field(() => String, { nullable: true })
+  date?: string | null
 
   @CacheField(() => [SliceUnion])
   cardIntro: Array<typeof SliceUnion> = []
@@ -32,7 +32,7 @@ export const mapGenericListItem = ({
       ? mapGenericList(fields.genericList)
       : undefined,
     title: fields.title ?? '',
-    date: fields.date ?? '',
+    date: fields.date || null,
     cardIntro: fields.cardIntro
       ? mapDocument(fields.cardIntro, sys.id + ':cardIntro')
       : [],

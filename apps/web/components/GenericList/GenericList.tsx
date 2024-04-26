@@ -25,11 +25,15 @@ const DEBOUNCE_TIME_IN_MS = 300
 interface GenericListProps {
   id: string
   firstPageItemResponse?: GenericListItemResponse
+  searchInputLabel?: string | null
+  searchInputPlaceholder?: string | null
 }
 
 export const GenericList = ({
   id,
   firstPageItemResponse,
+  searchInputLabel,
+  searchInputPlaceholder,
 }: GenericListProps) => {
   const [searchValue, setSearchValue] = useQueryState('q')
   const [itemsResponse, setItemsResponse] = useState(firstPageItemResponse)
@@ -86,8 +90,9 @@ export const GenericList = ({
       <GridContainer>
         <Stack space={5}>
           <Input
-            name="list-search" // TODO: think of a good name
-            label="Leit" // TODO: read label and placeholder from listpage content type data
+            name="list-search"
+            label={searchInputLabel}
+            placeholder={searchInputPlaceholder}
             value={searchValue || ''}
             onChange={(ev) => {
               setSearchValue(ev.target.value || null)

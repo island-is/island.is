@@ -40,33 +40,28 @@ export const ContentfulField = (props: {
     props.sdk.locales.default,
   ])
 
-  return availableLocales.map((locale) => {
-    return (
-      <FieldWrapper
-        key={locale}
-        sdk={props.localeToFieldMapping[props.fieldID][locale]}
-        name={props.displayName}
-        showFocusBar={false}
-        renderHelpText={
-          props.helpText
-            ? () => {
-                return (
-                  <FormControl.HelpText>{props.helpText}</FormControl.HelpText>
-                )
-              }
-            : undefined
-        }
-        renderHeading={() => {
-          return (
-            <Box
-              style={{
-                display: 'flex',
-                flexFlow: 'row nowrap',
-                gap: '6px',
-              }}
-            >
-              <FormControl.Label>{props.displayName}</FormControl.Label>
-              {availableLocales.length > 1 && (
+  return (
+    <Box>
+      {availableLocales.map((locale) => {
+        return (
+          <FieldWrapper
+            key={locale}
+            sdk={props.localeToFieldMapping[props.fieldID][locale]}
+            name={props.displayName}
+            showFocusBar={false}
+            renderHelpText={
+              props.helpText
+                ? () => {
+                    return (
+                      <FormControl.HelpText>
+                        {props.helpText}
+                      </FormControl.HelpText>
+                    )
+                  }
+                : undefined
+            }
+            renderHeading={() => {
+              return (
                 <Box
                   style={{
                     display: 'flex',
@@ -74,21 +69,32 @@ export const ContentfulField = (props: {
                     gap: '6px',
                   }}
                 >
-                  <Text fontColor="gray500">|</Text>
-                  <Text fontColor="gray500">
-                    {props.sdk.locales.names[locale]}
-                  </Text>
+                  <FormControl.Label>{props.displayName}</FormControl.Label>
+                  {availableLocales.length > 1 && (
+                    <Box
+                      style={{
+                        display: 'flex',
+                        flexFlow: 'row nowrap',
+                        gap: '6px',
+                      }}
+                    >
+                      <Text fontColor="gray500">|</Text>
+                      <Text fontColor="gray500">
+                        {props.sdk.locales.names[locale]}
+                      </Text>
+                    </Box>
+                  )}
                 </Box>
-              )}
-            </Box>
-          )
-        }}
-      >
-        <Field
-          sdk={props.localeToFieldMapping[props.fieldID][locale]}
-          widgetId={props.widgetId}
-        />
-      </FieldWrapper>
-    )
-  })
+              )
+            }}
+          >
+            <Field
+              sdk={props.localeToFieldMapping[props.fieldID][locale]}
+              widgetId={props.widgetId}
+            />
+          </FieldWrapper>
+        )
+      })}
+    </Box>
+  )
 }

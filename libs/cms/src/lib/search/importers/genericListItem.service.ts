@@ -46,6 +46,7 @@ export class GenericListItemSyncService
                   },
                 ]
               : [],
+            releaseDate: mapped.date,
           }
         } catch (error) {
           logger.warn('Failed to import generic list item', {

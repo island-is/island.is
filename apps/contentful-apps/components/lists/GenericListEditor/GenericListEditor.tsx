@@ -30,6 +30,16 @@ const createLocaleToFieldMapping = (sdk: EditorExtensionSDK) => {
       sdk,
       'internalTitle',
     ),
+    searchInputLabel: mapLocalesToFieldApis(
+      sdk.locales.available,
+      sdk,
+      'searchInputLabel',
+    ),
+    searchInputPlaceholder: mapLocalesToFieldApis(
+      sdk.locales.available,
+      sdk,
+      'searchInputPlaceholder',
+    ),
     cardIntroTemplate: mapLocalesToFieldApis(
       sdk.locales.available,
       sdk,
@@ -133,7 +143,7 @@ const ListPageEditor = () => {
       style={{
         display: 'flex',
         flexFlow: 'column nowrap',
-        gap: '16px',
+        gap: '24px',
         margin: '0 auto',
         maxWidth: '768px',
       }}
@@ -141,6 +151,20 @@ const ListPageEditor = () => {
       <ContentfulField
         fieldID="internalTitle"
         displayName="Internal Title"
+        localeToFieldMapping={localeToFieldMapping}
+        sdk={sdk}
+      />
+
+      <ContentfulField
+        fieldID="searchInputLabel"
+        displayName="Search Input Label"
+        localeToFieldMapping={localeToFieldMapping}
+        sdk={sdk}
+      />
+
+      <ContentfulField
+        fieldID="searchInputPlaceholder"
+        displayName="Search Input Placeholder"
         localeToFieldMapping={localeToFieldMapping}
         sdk={sdk}
       />

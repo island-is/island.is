@@ -850,6 +850,8 @@ export const slices = gql`
   fragment GenericListFields on GenericList {
     __typename
     id
+    searchInputLabel
+    searchInputPlaceholder
     firstPageListItemResponse {
       input {
         genericListId

@@ -438,6 +438,19 @@ export class CmsElasticsearchService {
 
     const size = input.size ?? 10
 
+    const sort =
+      input.sort?.field === SortField.TITLE
+        ? [{ 'title.sort': { order: input.sort.order } }]
+        : [
+            {
+              [input.sort?.field ?? SortField.RELEASE_DATE]: {
+                order: input.sort?.order ?? SortDirection.DESC,
+              },
+            },
+            // Sort items with equal values by ascending title order
+            { 'title.sort': { order: SortDirection.ASC } },
+          ]
+
     const response: ApiResponse<SearchResponse<MappedData>> =
       await this.elasticService.findByQuery(getElasticsearchIndex(input.lang), {
         query: {
@@ -445,6 +458,7 @@ export class CmsElasticsearchService {
             must,
           },
         },
+        sort,
         size,
         from: ((input.page ?? 1) - 1) * size,
       })

@@ -188,6 +188,10 @@ const renderSlice = (
           firstPageItemResponse={
             (slice as GenericListSchema).firstPageListItemResponse
           }
+          searchInputLabel={(slice as GenericListSchema).searchInputLabel}
+          searchInputPlaceholder={
+            (slice as GenericListSchema).searchInputPlaceholder
+          }
         />
       )
     default:

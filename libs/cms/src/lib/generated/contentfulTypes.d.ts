@@ -1518,6 +1518,12 @@ export interface IGenericListFields {
 
   /** Card Intro Template */
   cardIntroTemplate?: Document | undefined
+
+  /** Search Input Label */
+  searchInputLabel?: string | undefined
+
+  /** Search Input Placeholder */
+  searchInputPlaceholder?: string | undefined
 }
 
 /** A list of items which can be embedded into rich text */
