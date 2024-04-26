@@ -21,11 +21,10 @@ export class CaseListInterceptor implements NestInterceptor {
           // If you need to add sensitive information, then you should consider adding a new endpoint
           // for defenders and other user roles that are not allowed to see sensitive information.
 
-          const arraignmentDate = theCase.dateLogs?.find(
-            (d) => d.dateType === DateType.ARRAIGNMENT_DATE,
-          )?.date
-          const courtDate = theCase.dateLogs?.find(
-            (d) => d.dateType === DateType.COURT_DATE,
+          const latestDate = theCase.dateLogs?.find((d) =>
+            [DateType.ARRAIGNMENT_DATE, DateType.COURT_DATE].includes(
+              d.dateType,
+            ),
           )?.date
 
           return {
@@ -38,7 +37,7 @@ export class CaseListInterceptor implements NestInterceptor {
             courtCaseNumber: theCase.courtCaseNumber,
             decision: theCase.decision,
             validToDate: theCase.validToDate,
-            courtDate: courtDate ?? arraignmentDate,
+            courtDate: latestDate,
             initialRulingDate: theCase.initialRulingDate,
             rulingDate: theCase.rulingDate,
             rulingSignatureDate: theCase.rulingSignatureDate,
