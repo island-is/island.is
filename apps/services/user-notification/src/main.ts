@@ -12,5 +12,8 @@ if (job === 'cleanup') {
     name: 'services-user-notifications',
     openApi,
     enableVersioning: true,
+    healthCheck: {
+      database: true,
+    },
   })
 }

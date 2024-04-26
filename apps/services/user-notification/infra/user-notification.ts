@@ -68,7 +68,7 @@ export const userNotificationServiceSetup = (services: {
     })
     .xroad(Base, Client, NationalRegistryB2C)
     .liveness('/liveness')
-    .readiness('/readiness')
+    .readiness('/health/check')
     .ingress({
       primary: {
         host: {
@@ -155,7 +155,7 @@ export const userNotificationWorkerSetup = (services: {
     })
     .xroad(Base, Client, NationalRegistryB2C)
     .liveness('/liveness')
-    .readiness('/readiness')
+    .readiness('/health/check')
 
 export const userNotificationCleanUpWorkerSetup = (): ServiceBuilder<
   typeof serviceCleanupWorkerName
