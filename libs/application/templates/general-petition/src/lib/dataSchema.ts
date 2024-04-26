@@ -56,10 +56,10 @@ export const GeneralPetitionSchema = z.object({
         path: ['dateTil'],
       },
     ),
-  phone: z.string().refine((v) => isValidPhoneNumber(v) || v.length < 0, {
+  phone: z.string().refine((v) => isValidPhoneNumber(v) && v.length > 0, {
     message: m.validationPhone.defaultMessage as string,
   }),
-  email: z.string().refine((v) => isValidEmail(v) || v.length < 0, {
+  email: z.string().refine((v) => isValidEmail(v) && v.length > 0, {
     message: m.validationEmail.defaultMessage as string,
   }),
 })
