@@ -11,7 +11,7 @@ import {
 import { ApiProperty, ApiPropertyOptional } from '@nestjs/swagger'
 
 import { ApiScope } from './api-scope.model'
-import { DelegationType } from '../../delegations/models/delegation-type.model'
+import { DelegationTypeModel } from '../../delegations/models/delegation-type.model'
 
 @Table({
   tableName: 'api_scope_delegation_types',
@@ -31,7 +31,7 @@ export class ApiScopeDelegationType extends Model {
     type: DataType.STRING,
     allowNull: false,
   })
-  @ForeignKey(() => DelegationType)
+  @ForeignKey(() => DelegationTypeModel)
   @ApiProperty()
   delegation_type!: string
 

@@ -14,15 +14,15 @@ import {
   UpdatedAt,
 } from 'sequelize-typescript'
 
-import { DelegationProvider } from './delegation-provider.model'
+import { DelegationProviderModel } from './delegation-provider.model'
 
 @Table({
   tableName: 'delegation_type',
   timestamps: true,
 })
-export class DelegationType extends Model<
-  InferAttributes<DelegationType>,
-  InferCreationAttributes<DelegationType>
+export class DelegationTypeModel extends Model<
+  InferAttributes<DelegationTypeModel>,
+  InferCreationAttributes<DelegationTypeModel>
 > {
   @PrimaryKey
   @Column({
@@ -36,7 +36,7 @@ export class DelegationType extends Model<
     type: DataType.STRING,
     allowNull: false,
   })
-  @ForeignKey(() => DelegationProvider)
+  @ForeignKey(() => DelegationProviderModel)
   provider!: string
 
   @Column({

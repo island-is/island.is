@@ -28,6 +28,7 @@ import { ClientPostLogoutRedirectUriDTO } from './dto/client-post-logout-redirec
 import { ClientSecretDTO } from './dto/client-secret.dto'
 import { ClientsTranslationService } from './clients-translation.service'
 import { BulkCreateOptions, DestroyOptions } from 'sequelize'
+import { ClientDelegationType } from './models/client-delegation-type.model'
 
 @Injectable()
 export class ClientsService {
@@ -69,6 +70,7 @@ export class ClientsService {
         ClientPostLogoutRedirectUri,
         ClientGrantType,
         ClientClaim,
+        ClientDelegationType,
       ],
     })
   }

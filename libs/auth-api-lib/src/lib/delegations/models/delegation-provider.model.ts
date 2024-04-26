@@ -17,9 +17,9 @@ import {
   tableName: 'delegation_provider',
   timestamps: true,
 })
-export class DelegationProvider extends Model<
-  InferAttributes<DelegationProvider>,
-  InferCreationAttributes<DelegationProvider>
+export class DelegationProviderModel extends Model<
+  InferAttributes<DelegationProviderModel>,
+  InferCreationAttributes<DelegationProviderModel>
 > {
   @PrimaryKey
   @Column({
