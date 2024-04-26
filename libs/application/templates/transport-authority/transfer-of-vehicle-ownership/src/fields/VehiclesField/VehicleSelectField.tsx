@@ -92,15 +92,11 @@ export const VehicleSelectField: FC<
             response.vehicleOwnerchangeChecksByPermno.basicVehicleInformation
               ?.requireMileage,
           )
-          if (
+          setValue(
+            'vehicleMileage.mileageReading',
             response.vehicleOwnerchangeChecksByPermno.basicVehicleInformation
-              ?.requireMileage
-          ) {
-            setValue(
-              'vehicleMileage.mileageReading',
-              response.vehicleOwnerchangeChecksByPermno.basicVehicleInformation?.mileageReading?.toString(),
-            )
-          }
+              ?.mileageReading,
+          )
           if (permno) setValue('vehicleInfo.plate', permno)
           if (permno) setValue('vehicleInfo.type', currentVehicle.make)
 
