@@ -32,7 +32,10 @@ import {
   getSelectedFamiliy,
 } from '../utils'
 import { HealthInsuranceDeclaration } from '../lib/dataSchema'
-import { applicantInformationMessages } from '@island.is/application/ui-forms'
+import {
+  applicantInformationMessages,
+  buildFormConclusionSection,
+} from '@island.is/application/ui-forms'
 import { HealthInsuranceDeclarationApplication } from '../types'
 import {
   formatPhoneNumber,
@@ -498,8 +501,8 @@ export const HealthInsuranceDeclarationForm: Form = buildForm({
                 ).educationConfirmationFileUploadField.map((file) => file.name),
             }),
             buildSubmitField({
-              id: 'overviewSubmit',
-              title: '',
+              id: 'submit',
+              title: 'Test',
               actions: [
                 {
                   event: DefaultEvents.SUBMIT,
@@ -512,5 +515,6 @@ export const HealthInsuranceDeclarationForm: Form = buildForm({
         }),
       ],
     }),
+    buildFormConclusionSection({}),
   ],
 })
