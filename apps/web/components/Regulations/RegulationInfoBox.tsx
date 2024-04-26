@@ -152,6 +152,7 @@ export const RegulationInfoBox = (props: RegulationInfoBoxProps) => {
             size="small"
             type="button"
             variant="text"
+            as="button"
             onClick={() => {
               showCopyCheck()
               navigator.clipboard.writeText(document.location.href)
