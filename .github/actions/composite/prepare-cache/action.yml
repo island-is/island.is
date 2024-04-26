@@ -1,0 +1,51 @@
+name: 'Composite Cache and Setup'
+description: 'Caches dependencies and setup environment'
+inputs:
+  nodeModulesHash:
+    description: 'Hash for NodeJS modules'
+    required: true
+  mobileNodeModulesHash:
+    description: 'Hash for mobile NodeJS modules'
+    required: true
+  generatedFilesCacheKey:
+    description: 'Key for caching generated files'
+    required: true
+
+runs:
+  using: 'composite'
+  steps:
+    - name: Cache for NodeJS dependencies - host OS
+      id: node-modules
+      continue-on-error: true
+      uses: ./.github/actions/cache
+      with:
+        path: node_modules
+        key: ${{ inputs.nodeModulesHash }}-yarn
+
+    - name: Cache for Mobile NodeJS dependencies - host OS
+      id: mobile-node-modules
+      continue-on-error: true
+      uses: ./.github/actions/cache
+      with:
+        path: apps/native/app/node_modules
+        key: ${{ inputs.mobileNodeModulesHash }}-yarn
+
+    - name: Check node-modules cache success
+      shell: bash
+      run: '[[ "${{ steps.node-modules.outputs.success }}" != "false" ]] || exit 1'
+
+    - name: Cache for generated files
+      id: generated-files-cache
+      continue-on-error: true
+      uses: ./.github/actions/cache
+      with:
+        path: generated_files.tar.gz
+        key: ${{ inputs.generatedFilesCacheKey }}
+
+    - name: Check generated-files cache success
+      shell: bash
+      run: '[[ "${{ steps.generated-files-cache.outputs.success }}" != "false" ]] || exit 1'
+
+    - name: Untar generated files
+      shell: bash
+      run: tar zxvf generated_files.tar.gz
