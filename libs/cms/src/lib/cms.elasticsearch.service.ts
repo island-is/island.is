@@ -429,20 +429,19 @@ export class CmsElasticsearchService {
       queryString = queryString.replace('`', '')
     }
 
-    // TODO: also search the content field and make sure it has very little weight
-    // TODO: figure out why searching for the entire title doesn't show the item with that title at the top
+    // TODO: tweak and test out search
 
     must.push({
       simple_query_string: {
         query: queryString + '*',
-        fields: ['title'],
+        fields: ['title^100', 'content'],
         analyze_wildcard: true,
       },
     })
 
     const size = input.size ?? 10
 
-    const sort =
+    const sort: ('_score' | sortRule)[] =
       input.sort?.field === SortField.TITLE
         ? [{ 'title.sort': { order: input.sort.order } }]
         : [
@@ -454,6 +453,12 @@ export class CmsElasticsearchService {
             // Sort items with equal values by ascending title order
             { 'title.sort': { order: SortDirection.ASC } },
           ]
+
+    // Order by score first in case there is a query string
+    // TODO: reconsider the *
+    if (queryString.length > 0 && queryString !== '*') {
+      sort.unshift('_score')
+    }
 
     const response: ApiResponse<SearchResponse<MappedData>> =
       await this.elasticService.findByQuery(getElasticsearchIndex(input.lang), {
