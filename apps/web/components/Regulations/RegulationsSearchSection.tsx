@@ -272,6 +272,8 @@ export const RegulationsSearchSection = (
               >
                 <Button
                   variant="text"
+                  as="button"
+                  size="medium"
                   icon={showAdvancedSearch ? 'chevronUp' : 'chevronDown'}
                   onClick={() => {
                     if (hasAdvancedValues) {
@@ -446,6 +448,7 @@ export const RegulationsSearchSection = (
               type="button"
               size="small"
               variant="text"
+              as="button"
               disabled={!filterHasValues}
               onClick={() => clearSearch()}
             >

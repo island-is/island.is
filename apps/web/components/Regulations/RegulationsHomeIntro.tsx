@@ -45,6 +45,7 @@ export const RegulationsHomeIntro = (props: RegulationsHomeIntroProps) => {
               <Button
                 variant="text"
                 size="small"
+                as="button"
                 icon={showDetails ? 'chevronUp' : 'chevronDown'}
                 onClick={() => setShowDetails(!showDetails)}
               >
