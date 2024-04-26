@@ -30,6 +30,7 @@ import { AuthDelegationType } from '@island.is/shared/types'
 import { ApiScope } from '@island.is/auth/scopes'
 import { buildPaymentState } from '@island.is/application/utils'
 import { getChargeItemCodes, getExtraData } from '../utils'
+import { info } from 'kennitala'
 
 const determineMessageFromApplicationAnswers = (application: Application) => {
   const regno = getValueViaPath(
@@ -44,15 +45,16 @@ const determineMessageFromApplicationAnswers = (application: Application) => {
 }
 
 export const isOver64 =
-  (value = false) =>
+  (value: boolean) =>
   ({ application }: ApplicationContext) => {
-    const requirementsMet =
-      getValueViaPath<boolean>(
-        application.answers,
-        'requirementsMet',
-        false,
-      ) === true
-    return requirementsMet === value
+    const nationalId = getValueViaPath(
+      application.externalData,
+      'identity.data.nationalId',
+      '',
+    ) as string
+    const age = info(nationalId).age
+    console.log('running this', age)
+    return age > 64 === value
   }
 
 const template: ApplicationTemplate<
@@ -96,9 +98,12 @@ const template: ApplicationTemplate<
             ],
           },
           lifecycle: EphemeralStateLifeCycle,
-          onExit: defineTemplateApi({
-            action: ApiActions.validateApplication,
-          }),
+          onExit: [
+            defineTemplateApi({
+              action: ApiActions.validateApplication,
+            }),
+            //NEEDS A CONDITIONAL SUBMITAPPLICATION
+          ],
           roles: [
             {
               id: Roles.APPLICANT,
@@ -125,14 +130,14 @@ const template: ApplicationTemplate<
         },
         on: {
           [DefaultEvents.SUBMIT]: [
-            // {
-            //   target: States.COMPLETED,
-            //   cond: hasCompletedPrerequisitesStep(false),
-            // },
-            // {
-            //   target: States.PAYMENT,
-            //   cond: hasCompletedPrerequisitesStep(true),
-            // },
+            {
+              target: States.COMPLETED,
+              cond: isOver64(true),
+            },
+            {
+              target: States.PAYMENT,
+              cond: isOver64(false),
+            },
           ],
         },
       },

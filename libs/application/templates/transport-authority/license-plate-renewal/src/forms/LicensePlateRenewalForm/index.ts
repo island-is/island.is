@@ -1,4 +1,8 @@
-import { buildForm, buildSection } from '@island.is/application/core'
+import {
+  buildForm,
+  buildSection,
+  getValueViaPath,
+} from '@island.is/application/core'
 import { Form, FormModes } from '@island.is/application/types'
 import { conclusion, payment } from '../../lib/messages'
 import { informationSection } from './InformationSection'
@@ -6,6 +10,7 @@ import { prerequisitesSection } from './prerequisitesSection'
 import { Logo } from '../../assets/Logo'
 import { buildFormPaymentChargeOverviewSection } from '@island.is/application/ui-forms'
 import { getChargeItemCodes } from '../../utils'
+import { info } from 'kennitala'
 
 export const LicensePlateRenewalForm: Form = buildForm({
   id: 'LicensePlateRenewalFormDraft',
@@ -18,6 +23,15 @@ export const LicensePlateRenewalForm: Form = buildForm({
     prerequisitesSection,
     informationSection,
     buildFormPaymentChargeOverviewSection({
+      condition: (_, externalData) => {
+        const nationalId = getValueViaPath(
+          externalData,
+          'identity.data.nationalId',
+          '',
+        ) as string
+        const age = info(nationalId).age
+        return age < 65
+      },
       sectionTitle: payment.general.sectionTitle,
       getSelectedChargeItems: (application) =>
         getChargeItemCodes(application).map((x) => ({

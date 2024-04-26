@@ -10,6 +10,7 @@ import {
   VehiclePlateRenewalClient,
 } from '@island.is/clients/transport-authority/vehicle-plate-renewal'
 import { TemplateApiError } from '@island.is/nest/problem'
+import { info } from 'kennitala'
 import { error } from '@island.is/application/templates/transport-authority/license-plate-renewal'
 
 @Injectable()
@@ -92,22 +93,30 @@ export class LicensePlateRenewalService extends BaseTemplateApiService {
     application,
     auth,
   }: TemplateApiModuleActionProps): Promise<void> {
-    const { paymentUrl } = application.externalData.createCharge.data as {
-      paymentUrl: string
-    }
-    if (!paymentUrl) {
-      throw new Error(
-        'Ekki er búið að staðfesta greiðslu, hinkraðu þar til greiðslan er staðfest.',
-      )
-    }
+    const age = info(auth.nationalId).age
+    //only has to pay if under 65
+    console.log('running submit')
+    if (age < 65) {
+      const { paymentUrl } = application.externalData.createCharge.data as {
+        paymentUrl: string
+      }
+      if (!paymentUrl) {
+        throw new Error(
+          'Ekki er búið að staðfesta greiðslu, hinkraðu þar til greiðslan er staðfest.',
+        )
+      }
 
-    const isPayment: { fulfilled: boolean } | undefined =
-      await this.sharedTemplateAPIService.getPaymentStatus(auth, application.id)
+      const isPayment: { fulfilled: boolean } | undefined =
+        await this.sharedTemplateAPIService.getPaymentStatus(
+          auth,
+          application.id,
+        )
 
-    if (!isPayment?.fulfilled) {
-      throw new Error(
-        'Ekki er búið að staðfesta greiðslu, hinkraðu þar til greiðslan er staðfest.',
-      )
+      if (!isPayment?.fulfilled) {
+        throw new Error(
+          'Ekki er búið að staðfesta greiðslu, hinkraðu þar til greiðslan er staðfest.',
+        )
+      }
     }
 
     const answers = application.answers as LicensePlateRenewalAnswers
