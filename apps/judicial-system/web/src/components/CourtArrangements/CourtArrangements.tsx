@@ -79,7 +79,7 @@ export const useCourtArrangements = (
     return setAndSendCaseToServer(
       [
         {
-          arraignmentDate: courtDate?.date
+          [dateKey]: courtDate?.date
             ? {
                 date: formatDateForServer(new Date(courtDate.date)),
                 location: courtDate.location,

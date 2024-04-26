@@ -2,10 +2,7 @@ import React, { useState } from 'react'
 import { IntlShape, useIntl } from 'react-intl'
 
 import { Box, Input } from '@island.is/island-ui/core'
-import {
-  DateType,
-  RequestSharedWithDefender,
-} from '@island.is/judicial-system-web/src/graphql/schema'
+import { RequestSharedWithDefender } from '@island.is/judicial-system-web/src/graphql/schema'
 import { TempCase as Case } from '@island.is/judicial-system-web/src/types'
 
 import { Modal } from '..'
@@ -21,15 +18,11 @@ export const getCaseResubmittedText = (
   formatMessage: IntlShape['formatMessage'],
   workingCase: Case,
 ) => {
-  const arraignmentDate = theCase.dateLogs?.find(
-    (d) => d.dateType === DateType.ARRAIGNMENT_DATE,
-  )?.date
-
   return formatMessage(strings.text, {
     requestSharedWithDefender:
       (workingCase.requestSharedWithDefender ===
         RequestSharedWithDefender.COURT_DATE &&
-        Boolean(arraignmentDate)) ||
+        Boolean(workingCase.arraignmentDate?.date)) ||
       workingCase.requestSharedWithDefender ===
         RequestSharedWithDefender.READY_FOR_COURT,
   })
