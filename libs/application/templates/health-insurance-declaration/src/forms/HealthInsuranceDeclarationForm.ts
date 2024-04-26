@@ -349,7 +349,7 @@ export const HealthInsuranceDeclarationForm: Form = buildForm({
           title: m.application.date.sectionDescription,
           children: [
             buildDateField({
-              id: 'dateFieldFrom',
+              id: 'period.dateFieldFrom',
               title: m.application.date.dateFromTitle,
               placeholder: m.application.date.datePlaceholderText,
               required: true,
@@ -357,7 +357,7 @@ export const HealthInsuranceDeclarationForm: Form = buildForm({
               defaultValue: '',
             }),
             buildDateField({
-              id: 'dateFieldTo',
+              id: 'period.dateFieldTo',
               title: m.application.date.dateToTitle,
               placeholder: m.application.date.datePlaceholderText,
               required: true,
@@ -472,11 +472,15 @@ export const HealthInsuranceDeclarationForm: Form = buildForm({
               value: ({ answers }) =>
                 `${format(
                   new Date(
-                    (answers as HealthInsuranceDeclaration).dateFieldFrom,
+                    (
+                      answers as HealthInsuranceDeclaration
+                    ).period.dateFieldFrom,
                   ),
                   'dd.MM.yyyy',
                 )} - ${format(
-                  new Date((answers as HealthInsuranceDeclaration).dateFieldTo),
+                  new Date(
+                    (answers as HealthInsuranceDeclaration).period.dateFieldTo,
+                  ),
                   'dd.MM.yyyy',
                 )} `,
             }),

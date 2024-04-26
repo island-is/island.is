@@ -26,15 +26,35 @@ export const HealthInsuranceDeclarationSchema = z.object({
       key: z.string(),
       url: z.string().optional(),
     })
-    .array(),
-  dateFieldTo: z
-    .string()
-    .min(1)
-    .refine((v) => !!v && v.trim().length > 0),
-  dateFieldFrom: z
-    .string()
-    .min(1)
-    .refine((v) => !!v && v.trim().length > 0),
+    .array()
+    .refine((v) => v.length > 0),
+  period: z
+    .object({
+      dateFieldTo: z
+        .string()
+        .min(1)
+        .refine((v) => !!v && v.trim().length > 0),
+      dateFieldFrom: z
+        .string()
+        .min(1)
+        .refine((v) => !!v && v.trim().length > 0),
+    })
+    .superRefine((v, ctx) => {
+      const start = new Date(v.dateFieldFrom)
+      const end = new Date(v.dateFieldTo)
+      if (start > end) {
+        ctx.addIssue({
+          code: z.ZodIssueCode.custom,
+          path: ['dateFieldFrom'],
+        })
+        ctx.addIssue({
+          code: z.ZodIssueCode.custom,
+          path: ['dateFieldTo'],
+        })
+        return false
+      }
+      return true
+    }),
 })
 
 export type HealthInsuranceDeclaration = z.TypeOf<
