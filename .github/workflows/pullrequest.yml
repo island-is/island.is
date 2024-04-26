@@ -278,7 +278,7 @@ jobs:
         run: npm install -g yarn
 
       - name: Prepare node-modules and generated-files cache
-        uses: ./.github/actions/prepare-cache/action.yml
+        uses: ${{ github.workspace }}/.github/actions/prepare-cache/action.yml
         with:
           nodeModulesHash: ${{ needs.prepare.outputs.node-modules-hash }}
           mobileNodeModulesHash: ${{ needs.prepare.outputs.mobile-node-modules-hash }}
