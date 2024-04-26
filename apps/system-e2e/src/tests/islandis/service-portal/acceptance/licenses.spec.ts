@@ -25,20 +25,8 @@ test.describe('MS - Licenses', () => {
     const page = await context.newPage()
     await disableI18n(page)
 
-    await test.step('should display data', async () => {
+    await test.step('should display each license type in list', async () => {
       // Arrange
-      await page.goto(icelandicAndNoPopupUrl('minarsidur/skirteini'))
-
-      const title = page.getByRole('heading', {
-        name: 'Skírteinin þín',
-      })
-      await expect(title).toBeVisible()
-    })
-
-    await test.step('should list each license type in list', async () => {
-      // Arrange
-      await page.goto(icelandicAndNoPopupUrl('minarsidur/skirteini'))
-
       const licenses = [
         'Ökuréttindi',
         'Skotvopnaleyfi',
@@ -48,14 +36,78 @@ test.describe('MS - Licenses', () => {
         'Almennt veiðikort',
         'P-kort',
         'Evrópska sjúkratryggingakortið',
-        'Vegabréf',
+        'Númer vegabréfs: Well6842',
       ]
 
-      await page.getByText('Skotvopnaleyfi').waitFor({ timeout: 100000 })
+      await page.goto(icelandicAndNoPopupUrl('minarsidur/skirteini'))
 
-      for (const license of licenses) {
-        await expect(page.getByText(license)).toBeVisible()
+      const title = page.getByRole('heading', {
+        name: 'Skírteinin þín',
+      })
+      await expect(title).toBeVisible()
+
+      for await (const license of licenses) {
+        const element = page.getByText(license)
+        await element.waitFor({ timeout: 30000 })
+        await expect(element).toBeVisible()
       }
     })
+    await test.step('should display each detail screen', async () => {
+      // Arrange
+      const licenses = [
+        { title: 'Skotvopnaleyfið þitt', ref: 'skotvopnaleyfi' },
+        { title: 'Ökuréttindin þín', ref: 'okurettindi' },
+        { title: 'ADR réttindin þín', ref: 'adrrettindi' },
+        { title: 'Vinnuvélaréttindin þín', ref: 'vinnuvelarettindi' },
+        { title: 'Örorkuskírteinið þitt', ref: 'ororkuskirteini' },
+        { title: 'Almennt veiðikort', ref: 'veidikort' },
+        { title: 'P-kort', ref: 'pkort' },
+        { title: 'Evrópska sjúkratryggingakortið', ref: 'ehic' },
+        { title: 'Vegabréf', ref: 'vegabref/Well6842' },
+      ]
+
+      for await (const license of licenses) {
+        const ref = `[href*="${license.ref}"]`
+        const element = page.locator(ref)
+        await element.waitFor()
+        await element.click()
+
+        const title = page.getByRole('heading', {
+          name: license.title,
+        })
+        await title.waitFor()
+        await expect(title).toBeVisible()
+
+        await page.goBack()
+      }
+    })
+    /*
+    await test.step(
+      'should return a pkpass for each applicable license',
+      async () => {
+        // Arrange
+        const licensesUrl = [
+          'minarsidur/skirteini/rikislogreglustjori/skotvopnaleyfi/default',
+          'minarsidur/skirteini/rikislogreglustjori/okurettindi/default',
+          'minarsidur/skirteini/vinnueftirlitid/adrrettindi/default',
+          'minarsidur/skirteini/vinnueftirlitid/vinnuvelarettindi/default',
+        ]
+
+        await page.route('/api/graphql?op=generatePkPass', (route) =>
+          route.fulfill({
+            status: 200,
+            path: '../../../fixtures/<my-app>/myError.json',
+          }),
+        )
+
+        for await (const url of licensesUrl) {
+          await page.goto(url)
+
+          const button = page.getByRole('button', { name: 'Senda í síma' })
+          await button.waitFor()
+          await button.click()
+        }
+      },
+      )*/
   })
 })

@@ -357,7 +357,7 @@ export const loadLicensesXroadMocks = async () => {
           productionRequestID: '67u589nj',
           number: '6842',
           type: 'Good',
-          verboseType: 'Goodening',
+          verboseType: 'Vegabréf',
           subType: 'Well',
           status: 'Cool',
           displayFirstName: 'Bubbi',
@@ -388,10 +388,10 @@ export const loadLicensesXroadMocks = async () => {
           identityDocumentResponses: [
             {
               productionRequestID: '67u589nj',
-              number: '6842',
+              number: '21111111',
               type: 'Good',
               verboseType: 'Vegabréf',
-              subType: 'Well',
+              subType: 'X - ',
               status: 'Cool',
               displayFirstName: 'Búbbert',
               displayLastName: 'Jr',
