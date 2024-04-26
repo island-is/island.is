@@ -123,7 +123,9 @@ export const getPensionFund = (
     ? 'payments.privatePensionFund'
     : 'payments.pensionFund'
 
-  const { applicationType, usePrivatePensionFund } = getApplicationAnswers(application.answers)
+  const { applicationType, usePrivatePensionFund } = getApplicationAnswers(
+    application.answers,
+  )
 
   const value =
     applicationType === PARENTAL_LEAVE
@@ -155,10 +157,13 @@ export const getPensionFund = (
 }
 
 export const getPrivatePensionFundRatio = (application: Application) => {
-  const { privatePensionFundPercentage, applicationType, usePrivatePensionFund } =
-    getApplicationAnswers(application.answers)
+  const {
+    privatePensionFundPercentage,
+    applicationType,
+    usePrivatePensionFund,
+  } = getApplicationAnswers(application.answers)
   const privatePensionFundRatio: number =
-    applicationType === PARENTAL_LEAVE && usePrivatePensionFund === YES 
+    applicationType === PARENTAL_LEAVE && usePrivatePensionFund === YES
       ? Number(privatePensionFundPercentage) || 0
       : 0
 
