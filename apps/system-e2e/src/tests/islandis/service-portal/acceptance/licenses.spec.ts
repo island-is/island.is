@@ -82,6 +82,9 @@ test.describe('MS - Licenses', () => {
       }
     })
     /*
+    DON'T REMOVE
+    ACTS AS A BASE FOR WHEN THESE TESTS ARE IMPLMENTED
+
     await test.step(
       'should return a pkpass for each applicable license',
       async () => {
