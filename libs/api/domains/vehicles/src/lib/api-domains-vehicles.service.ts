@@ -143,14 +143,11 @@ export class VehiclesService {
   }
 
   async getPublicVehicleSearch(search: string) {
-    try {
-      const data = await this.publicVehiclesApi.publicVehicleSearchGet({
+    return await this.publicVehiclesApi
+      .publicVehicleSearchGet({
         search,
       })
-      return data
-    } catch (error) {
-      handle404(error)
-    }
+      .catch(handle404)
   }
 
   async getSearchLimit(auth: User): Promise<number | null> {
