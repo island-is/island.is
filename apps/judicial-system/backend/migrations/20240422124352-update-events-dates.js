@@ -106,6 +106,13 @@ module.exports = {
       ])
         .then(() =>
           queryInterface.sequelize.query(
+            `DELETE FROM date_log
+             WHERE date_type = 'COURT_DATE'`,
+            { transaction },
+          ),
+        )
+        .then(() =>
+          queryInterface.sequelize.query(
             `UPDATE "case" c
              SET court_room = d.location
              FROM date_log d
