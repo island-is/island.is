@@ -8,6 +8,7 @@ import {
   CaseType,
   completedCaseStates,
   courtOfAppealsRoles,
+  DateType,
   districtCourtRoles,
   indictmentCases,
   InstitutionType,
