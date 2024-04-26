@@ -9,6 +9,12 @@ import { format } from 'kennitala'
 import { HealthInsuranceDeclaration } from '../lib/dataSchema'
 import { application as m } from '../lib/messages'
 import { NationalRegistrySpouse } from '@island.is/api/schema'
+import {
+  HealthInsuranceContinents,
+  HealthInsuranceCountry,
+  InsuranceStatementData,
+} from '../types'
+import { content } from 'pdfkit/js/page'
 
 const getChildrenFromExternalData = (externalData: ExternalData) => {
   return externalData?.childrenCustodyInformation
@@ -19,8 +25,70 @@ const getSpouseFromExternalData = (externalData: ExternalData) => {
 }
 
 export const getInsuranceStatus = (externalData: ExternalData) => {
-  return externalData?.isHealthInsured?.data as boolean
+  return getInsuranceStatementDataFromExternalData(externalData)?.canApply
 }
+
+export const getCountriesFromExternalData = (
+  externalData: ExternalData,
+): HealthInsuranceCountry[] => {
+  return getInsuranceStatementDataFromExternalData(externalData)?.countries
+}
+
+export const getCountriesAsOption = (externalData: ExternalData): Option[] => {
+  const countries = getCountriesFromExternalData(externalData)
+  if (countries && countries.length) {
+    return countries.map((country) => {
+      return {
+        value: country.code,
+        label: country.icelandicName,
+      }
+    })
+  }
+  return []
+}
+export const getCountryNameFromCode = (
+  code: string,
+  externalData: ExternalData,
+): string => {
+  const countries = getCountriesFromExternalData(externalData)
+  const country = countries.find((c) => c.code === code)
+  if (country) {
+    return country.icelandicName
+  }
+  return ''
+}
+
+export const getContinentNameFromCode = (
+  code: string,
+  externalData: ExternalData,
+): string => {
+  const continents = getContinentsFromExternalData(externalData)
+  const continent = continents.find((c) => c.code === code)
+  if (continent) {
+    return continent.icelandicName
+  }
+  return ''
+}
+
+export const getContinentsFromExternalData = (
+  externalData: ExternalData,
+): HealthInsuranceContinents[] => {
+  return getInsuranceStatementDataFromExternalData(externalData)?.continents
+}
+
+export const getContinentsAsOption = (externalData: ExternalData): Option[] => {
+  const continents = getContinentsFromExternalData(externalData)
+  if (continents && continents.length) {
+    return continents.map((continent) => {
+      return {
+        value: continent.code,
+        label: continent.icelandicName,
+      }
+    })
+  }
+  return []
+}
+
 export const getFullNameFromExternalData = (externalData: ExternalData) => {
   return (externalData.nationalRegistry?.data as NationalRegistryIndividual)
     .fullName
@@ -66,4 +134,10 @@ export const getSelectedFamiliy = (
     }),
   )
   return selectedFamiliy
+}
+
+export const getInsuranceStatementDataFromExternalData = (
+  externalData: ExternalData,
+): InsuranceStatementData => {
+  return externalData.insuranceStatementData?.data as InsuranceStatementData
 }

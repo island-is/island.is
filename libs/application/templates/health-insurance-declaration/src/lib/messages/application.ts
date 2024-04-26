@@ -222,6 +222,11 @@ export const application = {
       defaultMessage: 'Dvalartímabil',
       description: 'Overview section date period',
     },
+    residencyTitle: {
+      id: 'hid.application:overview.section.residencyTitle',
+      defaultMessage: 'Dvalarstaður',
+      description: 'Overview section residency title',
+    },
     fileUploadListTitle: {
       id: 'hid.application:overview.section.fileUploadTitle',
       defaultMessage: 'Fylgiskjöl',

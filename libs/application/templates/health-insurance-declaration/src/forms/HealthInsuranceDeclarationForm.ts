@@ -27,6 +27,10 @@ import * as m from '../lib/messages'
 import Logo from '../assets/Logo'
 import {
   getChildrenAsOptions,
+  getContinentNameFromCode,
+  getContinentsAsOption,
+  getCountriesAsOption,
+  getCountryNameFromCode,
   getFullNameFromExternalData,
   getInsuranceStatus,
   getSelectedFamiliy,
@@ -266,15 +270,8 @@ export const HealthInsuranceDeclarationForm: Form = buildForm({
               id: 'residencyTravellerRadioField',
               title: '',
               required: true,
-              options: [
-                { label: 'Evrópa', value: 'Evrópa' },
-                { label: 'Norður Ameríka', value: 'Norður Ameríka' },
-                { label: 'Suður Ameríka', value: 'Suður Ameríka' },
-                { label: 'Asía', value: 'Asía' },
-                { label: 'Afríka', value: 'Afríka' },
-                { label: 'Ástralía', value: 'Ástralía' },
-                { label: 'Suðurskautslandið', value: 'Suðurskautslandið' },
-              ],
+              options: ({ externalData }) =>
+                getContinentsAsOption(externalData),
               width: 'half',
             }),
           ],
@@ -296,15 +293,7 @@ export const HealthInsuranceDeclarationForm: Form = buildForm({
               id: 'residencyStudentSelectField',
               title: '',
               required: true,
-              options: [
-                { label: 'Þýskaland', value: 'Þýskaland' },
-                { label: 'Danmörk', value: 'Danmörk' },
-                { label: 'Noregur', value: 'Noregur' },
-                { label: 'Svíþjóð', value: 'Svíþjóð' },
-                { label: 'Frakkland', value: 'Frakkland' },
-                { label: 'Ástralía', value: 'Ástralía' },
-                { label: 'Suðurskautslandið', value: 'Suðurskautslandið' },
-              ],
+              options: ({ externalData }) => getCountriesAsOption(externalData),
               defaultValue: '',
               placeholder:
                 m.application.residency.studentSectionPlaceholderText,
@@ -486,6 +475,40 @@ export const HealthInsuranceDeclarationForm: Form = buildForm({
                   ),
                   'dd.MM.yyyy',
                 )} `,
+            }),
+            buildDividerField({
+              condition: (answers) =>
+                (answers as HealthInsuranceDeclaration)
+                  ?.studentOrTravellerRadioFieldTraveller ===
+                ApplicantType.STUDENT,
+            }),
+            buildKeyValueField({
+              label: m.application.overview.residencyTitle,
+              colSpan: '9/12',
+              condition: (answers) =>
+                (answers as HealthInsuranceDeclaration)
+                  ?.studentOrTravellerRadioFieldTraveller ===
+                ApplicantType.STUDENT,
+              value: ({ answers, externalData }) =>
+                getCountryNameFromCode(
+                  (answers as HealthInsuranceDeclaration)
+                    .residencyStudentSelectField || '',
+                  externalData,
+                ),
+            }),
+            buildKeyValueField({
+              label: m.application.overview.residencyTitle,
+              colSpan: '9/12',
+              condition: (answers) =>
+                (answers as HealthInsuranceDeclaration)
+                  ?.studentOrTravellerRadioFieldTraveller ===
+                ApplicantType.TRAVELLER,
+              value: ({ answers, externalData }) =>
+                getContinentNameFromCode(
+                  (answers as HealthInsuranceDeclaration)
+                    .residencyTravellerRadioField || '',
+                  externalData,
+                ),
             }),
             buildDividerField({}),
             buildKeyValueField({
