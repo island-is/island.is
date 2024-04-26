@@ -10,7 +10,7 @@ import {
   ChildrenCustodyInformationApi,
   Form,
   FormModes,
-  HealthInsuranceApi,
+  HealthInsuranceStatementsApi,
   NationalRegistrySpouseApi,
   NationalRegistryUserApi,
   UserProfileApi,
@@ -71,7 +71,7 @@ export const Prerequisites: Form = buildForm({
               subTitle: prerequisites.dataProviders.userProfileDescription,
             }),
             buildDataProviderItem({
-              provider: HealthInsuranceApi,
+              provider: HealthInsuranceStatementsApi,
               title: prerequisites.dataProviders.healthInsuranceTitle,
               subTitle: prerequisites.dataProviders.healthInsuranceDescription,
             }),
