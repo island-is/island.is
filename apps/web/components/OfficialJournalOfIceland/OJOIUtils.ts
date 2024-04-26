@@ -39,8 +39,8 @@ export const findValueOption = (
 }
 
 export type EntityOption = Option & {
-  mainCategory?: string
-  department?: string
+  mainCategory?: OfficialJournalOfIcelandAdvertMainCategory
+  department?: OfficialJournalOfIcelandAdvertEntity
 }
 
 export const mapEntityToOptions = (
@@ -55,6 +55,14 @@ export const mapEntityToOptions = (
     return []
   }
   return entities.map((e) => {
+    if (e.__typename === 'OfficialJournalOfIcelandAdvertCategory') {
+      return {
+        label: e.title,
+        value: e.slug,
+        mainCategory: e.mainCategory ?? undefined,
+        department: e.department ?? undefined,
+      }
+    }
     return {
       label: e.title,
       value: e.slug,
