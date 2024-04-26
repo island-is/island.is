@@ -5,7 +5,7 @@ import { persist } from 'zustand/middleware'
 import create, { State } from 'zustand/vanilla'
 import islandLogoSrc from '../assets/logo/logo-64w.png'
 import organizations from '../graphql/cache/organizations.json'
-import { client } from '../graphql/client'
+import { getApolloClient } from '../graphql/client'
 import { ListOrganizationsDocument } from '../graphql/types/schema'
 import { lowerCase } from '../lib/lowercase'
 
@@ -70,6 +70,7 @@ export const organizationsStore = create<OrganizationsStore>(
       },
       actions: {
         updateOriganizations: async () => {
+          const client = getApolloClient()
           const querySub = client
             .watchQuery({ query: ListOrganizationsDocument })
             .subscribe(({ data }) => {

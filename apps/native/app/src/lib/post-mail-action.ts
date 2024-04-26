@@ -1,4 +1,4 @@
-import { archivedCache, client } from '../graphql/client'
+import { archivedCache, getApolloClient } from '../graphql/client'
 import {
   ListDocumentFragmentDoc,
   ListDocumentsDocument,
@@ -12,6 +12,8 @@ export async function toggleAction(
   messageId: string,
   refetch = false,
 ) {
+  const client = getApolloClient()
+
   return client.mutate<
     PostMailActionMutationMutation,
     PostMailActionMutationMutationVariables

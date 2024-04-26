@@ -1,3 +1,4 @@
+import { useApolloClient } from '@apollo/client'
 import messaging from '@react-native-firebase/messaging'
 import {
   Alert,
@@ -10,11 +11,11 @@ import { authenticateAsync } from 'expo-local-authentication'
 import React, { useEffect, useRef, useState } from 'react'
 import { useIntl } from 'react-intl'
 import {
+  Alert as RNAlert,
   Image,
   Linking,
   Platform,
   Pressable,
-  Alert as RNAlert,
   ScrollView,
   Switch,
   TouchableOpacity,
@@ -29,7 +30,6 @@ import {
 import { useTheme } from 'styled-components/native'
 import editIcon from '../../assets/icons/edit.png'
 import { PressableHighlight } from '../../components/pressable-highlight/pressable-highlight'
-import { client } from '../../graphql/client'
 import {
   UpdateProfileDocument,
   UpdateProfileMutation,
@@ -62,6 +62,7 @@ export const SettingsScreen: NavigationFunctionComponent = ({
 }) => {
   useNavigationOptions(componentId)
 
+  const client = useApolloClient()
   const intl = useIntl()
   const theme = useTheme()
   const {

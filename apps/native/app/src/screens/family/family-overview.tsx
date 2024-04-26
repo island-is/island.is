@@ -71,7 +71,7 @@ export const FamilyOverviewScreen: NavigationFunctionComponent = ({
   const loadingTimeout = useRef<number>()
 
   const familyRes = useNationalRegistryChildrenQuery({
-    fetchPolicy: 'network-only',
+    fetchPolicy: 'cache-and-network',
   })
   const { nationalRegistryUser, nationalRegistryChildren = [] } =
     familyRes?.data || {}

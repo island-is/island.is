@@ -1,3 +1,4 @@
+import { NormalizedCacheObject } from '@apollo/client'
 import {
   ApolloClient,
   ApolloLink,
@@ -9,6 +10,8 @@ import {
 import { setContext } from '@apollo/client/link/context'
 import { onError } from '@apollo/client/link/error'
 import { RetryLink } from '@apollo/client/link/retry'
+import { persistCache, MMKVWrapper } from 'apollo3-cache-persist'
+import { MMKV } from 'react-native-mmkv'
 import { config, getConfig } from '../config'
 import { openBrowser } from '../lib/rn-island'
 import { cognitoAuthUrl } from '../screens/cognito-auth/config-switcher'
@@ -16,6 +19,11 @@ import { authStore } from '../stores/auth-store'
 import { environmentStore } from '../stores/environment-store'
 import { offlineStore } from '../stores/offline-store'
 import { MainBottomTabs } from '../utils/component-registry'
+
+const mkkvStorage = new MMKV({
+  id: 'apollo-cache',
+  encryptionKey: 'todo-set-some-secret-key-from-secure-place',
+})
 
 const httpLink = new HttpLink({
   uri() {
@@ -127,20 +135,19 @@ const authLink = setContext(async (_, { headers }) => ({
 }))
 
 export const archivedCache = new Map()
-export const client = new ApolloClient({
-  link: ApolloLink.from([
-    // performanceLink,
-    retryLink,
-    errorLink,
-    authLink,
-    httpLink,
-  ]),
-  defaultOptions: {
-    watchQuery: {
-      fetchPolicy: 'cache-and-network',
-    },
-  },
-  cache: new InMemoryCache({
+
+let apolloClient: ApolloClient<NormalizedCacheObject> | null = null
+
+export const getApolloClient = () => {
+  if (!apolloClient) {
+    throw new Error('Apollo client not initialized')
+  }
+
+  return apolloClient
+}
+
+export const initializeApolloClient = async () => {
+  const cache = new InMemoryCache({
     dataIdFromObject: (object) => {
       switch (object.__typename) {
         case 'VehiclesVehicle':
@@ -156,16 +163,35 @@ export const client = new ApolloClient({
         fields: {
           archived: {
             read(_value, { readField, variables }) {
-              const defaultState = variables?.input?.archived ? true : false
+              const defaultState = !!variables?.input?.archived
               const id = readField('id')
+
               if (!archivedCache.has(id)) {
                 archivedCache.set(id, defaultState)
               }
+
               return archivedCache.get(id)
             },
           },
         },
       },
     },
-  }),
-})
+  })
+
+  await persistCache({
+    cache,
+    storage: new MMKVWrapper(mkkvStorage),
+  })
+
+  apolloClient = new ApolloClient({
+    link: ApolloLink.from([retryLink, errorLink, authLink, httpLink]),
+    defaultOptions: {
+      watchQuery: {
+        fetchPolicy: 'cache-and-network',
+      },
+    },
+    cache,
+  })
+
+  return apolloClient
+}

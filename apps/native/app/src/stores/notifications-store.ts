@@ -5,7 +5,7 @@ import { Navigation } from 'react-native-navigation'
 import createUse from 'zustand'
 import { persist } from 'zustand/middleware'
 import create, { State } from 'zustand/vanilla'
-import { client } from '../graphql/client'
+import { getApolloClient } from '../graphql/client'
 import {
   AddUserProfileDeviceTokenDocument,
   AddUserProfileDeviceTokenMutationVariables,
@@ -144,8 +144,10 @@ export const notificationsStore = create<NotificationsStore>(
       },
       actions: {
         async syncToken() {
+          const client = getApolloClient()
           const token = await messaging().getToken()
           const { pushToken } = get()
+
           if (pushToken !== token) {
             if (pushToken) {
               // Attempt to remove old push token
@@ -166,22 +168,24 @@ export const notificationsStore = create<NotificationsStore>(
                 console.error('Error removing old push token', err)
               }
             }
-            // Register the new push token
+
             try {
-              await client
-                .mutate<object, AddUserProfileDeviceTokenMutationVariables>({
-                  mutation: AddUserProfileDeviceTokenDocument,
-                  variables: {
-                    input: {
-                      deviceToken: token,
-                    },
+              // Register the new push token
+              const res = await client.mutate<
+                object,
+                AddUserProfileDeviceTokenMutationVariables
+              >({
+                mutation: AddUserProfileDeviceTokenDocument,
+                variables: {
+                  input: {
+                    deviceToken: token,
                   },
-                })
-                .then((res) => {
-                  console.log('Registered push token', res)
-                  // Update push token in store
-                  set({ pushToken: token })
-                })
+                },
+              })
+
+              console.log('Registered push token', res)
+              // Update push token in store
+              set({ pushToken: token })
             } catch (err) {
               console.log('Failed to register push token', err)
             }

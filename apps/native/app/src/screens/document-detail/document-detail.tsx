@@ -1,4 +1,4 @@
-import { useFragment_experimental } from '@apollo/client'
+import { useApolloClient, useFragment_experimental } from '@apollo/client'
 import { blue400, dynamicColor, Header, Loader, Typography } from '@ui'
 import React, { useEffect, useRef, useState } from 'react'
 import { FormattedDate, useIntl } from 'react-intl'
@@ -17,12 +17,11 @@ import Pdf, { Source } from 'react-native-pdf'
 import Share from 'react-native-share'
 import WebView from 'react-native-webview'
 import styled from 'styled-components/native'
-import { client } from '../../graphql/client'
 import {
   Document,
   ListDocumentFragmentDoc,
-  ListDocumentsDocument,
   useGetDocumentQuery,
+  useListDocumentsLazyQuery,
 } from '../../graphql/types/schema'
 import { createNavigationOptionHooks } from '../../hooks/create-navigation-option-hooks'
 import { useOfflineUpdateNavigation } from '../../hooks/use-offline-update-navigation'
@@ -172,6 +171,7 @@ export const DocumentDetailScreen: NavigationFunctionComponent<{
 }> = ({ componentId, docId }) => {
   useNavigationOptions(componentId)
 
+  const client = useApolloClient()
   const intl = useIntl()
   const { getOrganizationLogoUrl } = useOrganizationsStore()
   const [accessToken, setAccessToken] = useState<string>()
@@ -186,8 +186,8 @@ export const DocumentDetailScreen: NavigationFunctionComponent<{
     returnPartialData: true,
   })
 
+  const [getListDocuments] = useListDocumentsLazyQuery()
   const docRes = useGetDocumentQuery({
-    client,
     variables: {
       input: {
         id: docId,
@@ -202,8 +202,7 @@ export const DocumentDetailScreen: NavigationFunctionComponent<{
 
   useEffect(() => {
     if (doc.missing) {
-      client.query({
-        query: ListDocumentsDocument,
+      void getListDocuments({
         variables: {
           input: {
             page: 1,
