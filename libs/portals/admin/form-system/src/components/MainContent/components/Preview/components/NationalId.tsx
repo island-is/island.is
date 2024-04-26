@@ -15,7 +15,12 @@ const NationalId = ({ currentItem }: Props) => {
     <Box>
       <Stack space={2}>
         <Column span="5/10">
-          <Input label="Kennitala" name="kennitala" type="number" required={currentItem?.isRequired ?? false} />
+          <Input
+            label="Kennitala"
+            name="kennitala"
+            type="number"
+            required={currentItem?.isRequired ?? false}
+          />
         </Column>
         <Column>
           <Input label="Nafn" name="nafn" disabled />

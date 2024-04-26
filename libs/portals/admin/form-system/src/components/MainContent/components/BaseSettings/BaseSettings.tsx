@@ -10,8 +10,14 @@ import { useContext } from 'react'
 import ControlContext from '../../../../context/ControlContext'
 
 export const BaseSettings = () => {
-  const { control, controlDispatch, setFocus, focus, formUpdate, updateSettings } =
-    useContext(ControlContext)
+  const {
+    control,
+    controlDispatch,
+    setFocus,
+    focus,
+    formUpdate,
+    updateSettings,
+  } = useContext(ControlContext)
   const { form } = control
   return (
     <Stack space={2}>
