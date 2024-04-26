@@ -7,13 +7,11 @@ import {
   ISLEinstaklingur,
   NationalRegistryApi,
 } from '@island.is/clients/national-registry-v1'
-import { FamilyCorrectionInput } from './dto/FamilyCorrectionInput.input'
 import { ChildCustodyV1, PersonV1, V1RawData } from '../shared/types'
 import { mapGender, mapMaritalStatus } from '../shared/mapper'
 import {
   Birthplace,
   Citizenship,
-  FamilyCorrectionResponse,
   Housing,
   PersonBase,
   Spouse,
@@ -432,32 +430,5 @@ export class SoffiaService {
           domicileInhabitants: family,
         }
       : null
-  }
-
-  async postUserCorrection(
-    input: FamilyCorrectionInput,
-    nationalId: User['nationalId'],
-  ): Promise<FamilyCorrectionResponse> {
-    const userChildren = await this.nationalRegistryApi.getMyChildren(
-      nationalId,
-    )
-    const isAllowed = some(userChildren, ['Barn', input.nationalIdChild])
-
-    /**
-     * Only show data if child SSN is part of user's family.
-     */
-    if (!isAllowed) {
-      throw new ForbiddenException('Child not found')
-    }
-
-    const user = await this.getUser(nationalId)
-
-    const correctionInput = {
-      ...input,
-      name: user.fullName,
-      nationalId: nationalId,
-    }
-
-    return this.nationalRegistryApi.postUserCorrection(correctionInput)
   }
 }

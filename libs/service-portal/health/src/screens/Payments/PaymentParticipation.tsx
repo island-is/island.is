@@ -56,8 +56,8 @@ export const PaymentPartication = () => {
   } = useGetCopaymentPeriodsQuery({
     variables: {
       input: {
-        dateTo: formatDateFns(endDate.toString(), 'MM.dd.yyyy'),
-        dateFrom: formatDateFns(startDate.toString(), 'MM.dd.yyyy'),
+        dateTo: endDate,
+        dateFrom: startDate,
       },
     },
   })

@@ -324,7 +324,6 @@ api:
     TELL_US_A_STORY_EMAIL: 's@kogk.is'
     UNIVERSITY_GATEWAY_API_URL: 'http://web-services-university-gateway.services-university-gateway.svc.cluster.local'
     USER_NOTIFICATION_API_URL: 'http://web-user-notification.user-notification.svc.cluster.local'
-    USER_NOTIFICATION_CLIENT_URL: 'http://user-notification-xrd.internal.dev01.devland.is'
     USER_PROFILE_CLIENT_URL: 'http://web-service-portal-api.service-portal.svc.cluster.local'
     XROAD_ADR_MACHINE_LICENSE_PATH: 'IS-DEV/GOV/10013/Vinnueftirlitid-Protected/rettindi-token-v1'
     XROAD_AIRCRAFT_REGISTRY_PATH: 'IS-DEV/GOV/10017/Samgongustofa-Protected/Loftfaraskra-V1'
@@ -2482,6 +2481,67 @@ services-sessions:
   securityContext:
     allowPrivilegeEscalation: false
     privileged: false
+services-sessions-cleanup:
+  args:
+    - 'main.js'
+    - '--job=cleanup'
+  command:
+    - 'node'
+  enabled: true
+  env:
+    DB_HOST: 'postgres-applications.internal'
+    DB_NAME: 'services_sessions_cleanup'
+    DB_REPLICAS_HOST: 'postgres-applications-reader.internal'
+    DB_USER: 'services_sessions_cleanup'
+    LOG_LEVEL: 'info'
+    NODE_OPTIONS: '--max-old-space-size=460'
+    SERVERSIDE_FEATURES_ON: ''
+  grantNamespaces:
+    - 'nginx-ingress-internal'
+    - 'islandis'
+    - 'identity-server'
+  grantNamespacesEnabled: true
+  healthCheck:
+    liveness:
+      initialDelaySeconds: 3
+      path: '/'
+      timeoutSeconds: 3
+    readiness:
+      initialDelaySeconds: 3
+      path: '/'
+      timeoutSeconds: 3
+  hpa:
+    scaling:
+      metric:
+        cpuAverageUtilization: 90
+        nginxRequestsIrate: 5
+      replicas:
+        max: 3
+        min: 1
+  image:
+    repository: '821090935708.dkr.ecr.eu-west-1.amazonaws.com/services-sessions'
+  namespace: 'services-sessions'
+  podDisruptionBudget:
+    maxUnavailable: 1
+  pvcs: []
+  replicaCount:
+    default: 1
+    max: 3
+    min: 1
+  resources:
+    limits:
+      cpu: '400m'
+      memory: '512Mi'
+    requests:
+      cpu: '100m'
+      memory: '256Mi'
+  schedule: '0 3 * * *'
+  secrets:
+    CONFIGCAT_SDK_KEY: '/k8s/configcat/CONFIGCAT_SDK_KEY'
+    DB_PASS: '/k8s/services-sessions-cleanup/DB_PASSWORD'
+  securityContext:
+    allowPrivilegeEscalation: false
+    privileged: false
 services-sessions-worker:
   args:
     - 'main.js'
@@ -2986,7 +3046,8 @@ user-notification:
     XROAD_TLS_BASE_PATH_WITH_ENV: 'https://securityserver.dev01.devland.is/r1/IS-DEV'
   grantNamespaces:
     - 'nginx-ingress-internal'
-    - 'identity-server'
+    - 'islandis'
+    - 'identity-server-delegation'
   grantNamespacesEnabled: true
   healthCheck:
     liveness:
@@ -2995,7 +3056,7 @@ user-notification:
       timeoutSeconds: 3
     readiness:
       initialDelaySeconds: 3
-      path: '/readiness'
+      path: '/health/check'
       timeoutSeconds: 3
   hpa:
     scaling:
@@ -3069,7 +3130,8 @@ user-notification-cleanup-worker:
     SERVERSIDE_FEATURES_ON: ''
   grantNamespaces:
     - 'nginx-ingress-internal'
-    - 'identity-server'
+    - 'islandis'
+    - 'identity-server-delegation'
   grantNamespacesEnabled: true
   healthCheck:
     liveness:
@@ -3179,7 +3241,8 @@ user-notification-worker:
     XROAD_TLS_BASE_PATH_WITH_ENV: 'https://securityserver.dev01.devland.is/r1/IS-DEV'
   grantNamespaces:
     - 'nginx-ingress-internal'
-    - 'identity-server'
+    - 'islandis'
+    - 'identity-server-delegation'
   grantNamespacesEnabled: true
   healthCheck:
     liveness:
@@ -3188,7 +3251,7 @@ user-notification-worker:
       timeoutSeconds: 3
     readiness:
       initialDelaySeconds: 3
-      path: '/readiness'
+      path: '/health/check'
       timeoutSeconds: 3
   hpa:
     scaling:

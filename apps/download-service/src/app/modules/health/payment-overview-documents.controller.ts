@@ -20,7 +20,7 @@ import {
   ScopesGuard,
 } from '@island.is/auth-nest-tools'
 import { AuditService } from '@island.is/nest/audit'
-import { PaymentApi } from '@island.is/clients/icelandic-health-insurance/rights-portal'
+import { PaymentsOverviewApi } from '@island.is/clients/icelandic-health-insurance/rights-portal'
 import { GetGetHealthPaymentDocumentDto } from './dto/getHealthPaymentDocument.dto'
 
 @UseGuards(IdsUserGuard, ScopesGuard)
@@ -28,7 +28,7 @@ import { GetGetHealthPaymentDocumentDto } from './dto/getHealthPaymentDocument.d
 @Controller('health')
 export class HealthPaymentsOverviewController {
   constructor(
-    private readonly paymentApi: PaymentApi,
+    private readonly paymentApi: PaymentsOverviewApi,
     private readonly auditService: AuditService,
   ) {}
 
