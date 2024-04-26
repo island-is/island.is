@@ -38,7 +38,6 @@ import { UserNotificationsConfig } from '../config'
         AuthDelegationApiClientConfig,
       ],
     }),
-
     NotificationsModule,
   ],
 })
