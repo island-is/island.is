@@ -23,6 +23,10 @@ export class JwtStrategy extends PassportStrategy(Strategy) {
       algorithms: ['RS256'],
       ignoreExpiration: false,
       passReqToCallback: true,
+      jsonWebTokenOptions: {
+        // Add default clockTolerance of 60 seconds to allow for small time differences between servers
+        clockTolerance: 60,
+      },
     })
   }
 

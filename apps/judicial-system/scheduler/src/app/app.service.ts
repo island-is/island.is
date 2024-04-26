@@ -8,7 +8,7 @@ import type { ConfigType } from '@island.is/nest/config'
 import { appModuleConfig } from './app.config'
 import { now } from './date.factory'
 
-function minutesBetween(startTime: Date, endTime: Date) {
+const minutesBetween = (startTime: Date, endTime: Date) => {
   return Math.floor((endTime.getTime() - startTime.getTime()) / (1000 * 60))
 }
 
