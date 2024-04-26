@@ -5,8 +5,9 @@ import { useLazyQuery } from '@apollo/client'
 
 import {
   Box,
+  FilterInput,
   GridContainer,
-  Input,
+  Pagination,
   Stack,
   Text,
 } from '@island.is/island-ui/core'
@@ -21,21 +22,22 @@ import { GET_GENERIC_LIST_ITEMS_QUERY } from '@island.is/web/screens/queries/Gen
 import { webRichText } from '@island.is/web/utils/richText'
 
 const DEBOUNCE_TIME_IN_MS = 300
+const ITEMS_PER_PAGE = 10
 
 interface GenericListProps {
   id: string
   firstPageItemResponse?: GenericListItemResponse
-  searchInputLabel?: string | null
   searchInputPlaceholder?: string | null
 }
 
 export const GenericList = ({
   id,
   firstPageItemResponse,
-  searchInputLabel,
+
   searchInputPlaceholder,
 }: GenericListProps) => {
   const [searchValue, setSearchValue] = useQueryState('q')
+  const [page, setPage] = useState(1)
   const [itemsResponse, setItemsResponse] = useState(firstPageItemResponse)
   const firstRender = useRef(true)
   const { format } = useDateUtils()
@@ -73,65 +75,79 @@ export const GenericList = ({
         variables: {
           input: {
             genericListId: id,
-            size: 10,
+            size: ITEMS_PER_PAGE,
             lang: activeLocale,
-            page: 1,
+            page,
             queryString: searchValue,
           },
         },
       })
     },
     DEBOUNCE_TIME_IN_MS,
-    [searchValue],
+    [searchValue, page],
   )
+
+  const totalItems = itemsResponse?.total ?? 0
+  const items = itemsResponse?.items ?? []
 
   return (
     <Box paddingBottom={3}>
       <GridContainer>
         <Stack space={5}>
-          <Input
+          <FilterInput
             name="list-search"
-            label={searchInputLabel ?? undefined}
-            placeholder={searchInputPlaceholder ?? undefined}
+            onChange={(value) => {
+              setSearchValue(value || null)
+              setPage(1)
+            }}
             value={searchValue || ''}
-            onChange={(ev) => {
-              setSearchValue(ev.target.value || null)
-            }}
             loading={loading}
-            backgroundColor="blue"
-            icon={{
-              name: 'search',
-            }}
+            placeholder={searchInputPlaceholder ?? undefined}
+            backgroundColor="white"
           />
-
-          {typeof itemsResponse?.items?.length === 'number' &&
-            itemsResponse.items.length > 0 && (
-              <Stack space={2}>
-                {itemsResponse.items.map((item) => (
-                  <Box
-                    key={item.id}
-                    padding={[2, 2, 3]}
-                    border="standard"
-                    borderRadius="large"
-                  >
+          {items.length > 0 && (
+            <Stack space={3}>
+              {items.map((item) => (
+                <Box
+                  key={item.id}
+                  padding={[2, 2, 3]}
+                  border="standard"
+                  borderRadius="large"
+                >
+                  <Stack space={0}>
                     <Stack space={0}>
-                      <Stack space={0}>
-                        <Text variant="eyebrow" color="purple400">
-                          {item.date &&
-                            format(new Date(item.date), 'dd.MM.yyyy')}
-                        </Text>
-                        <Text variant="h4" as="span" color="dark400">
-                          {item.title}
-                        </Text>
-                      </Stack>
-                      {item.cardIntro?.length > 0 && (
-                        <Box>{webRichText(item.cardIntro ?? [])}</Box>
-                      )}
+                      <Text variant="eyebrow" color="purple400">
+                        {item.date && format(new Date(item.date), 'dd.MM.yyyy')}
+                      </Text>
+                      <Text variant="h3" as="span" color="dark400">
+                        {item.title}
+                      </Text>
                     </Stack>
-                  </Box>
-                ))}
-              </Stack>
-            )}
+                    {item.cardIntro?.length > 0 && (
+                      <Box>{webRichText(item.cardIntro ?? [])}</Box>
+                    )}
+                  </Stack>
+                </Box>
+              ))}
+            </Stack>
+          )}
+
+          {totalItems > ITEMS_PER_PAGE && (
+            <Pagination
+              page={page}
+              itemsPerPage={ITEMS_PER_PAGE}
+              totalItems={totalItems}
+              renderLink={(page, className, children) => (
+                <button
+                  onClick={() => {
+                    setPage(page)
+                  }}
+                >
+                  <span className={className}>{children}</span>
+                </button>
+              )}
+            />
+          )}
         </Stack>
       </GridContainer>
     </Box>

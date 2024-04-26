@@ -30,11 +30,6 @@ const createLocaleToFieldMapping = (sdk: EditorExtensionSDK) => {
       sdk,
       'internalTitle',
     ),
-    searchInputLabel: mapLocalesToFieldApis(
-      sdk.locales.available,
-      sdk,
-      'searchInputLabel',
-    ),
     searchInputPlaceholder: mapLocalesToFieldApis(
       sdk.locales.available,
       sdk,
@@ -154,13 +149,6 @@ const GenericListEditor = () => {
       <ContentfulField
         fieldID="internalTitle"
         displayName="Internal Title"
-        localeToFieldMapping={localeToFieldMapping}
-        sdk={sdk}
-      />
-
-      <ContentfulField
-        fieldID="searchInputLabel"
-        displayName="Search Input Label"
         localeToFieldMapping={localeToFieldMapping}
         sdk={sdk}
       />

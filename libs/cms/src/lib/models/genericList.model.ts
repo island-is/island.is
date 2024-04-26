@@ -15,9 +15,6 @@ export class GenericList {
   firstPageListItemResponse!: GetGenericListItemsInput
 
   @Field(() => String, { nullable: true })
-  searchInputLabel?: string
-
-  @Field(() => String, { nullable: true })
   searchInputPlaceholder?: string
 }
 
@@ -33,6 +30,5 @@ export const mapGenericList = ({
       sys.locale === 'is-IS' ? 'is' : (sys.locale as ElasticsearchIndexLocale),
     page: 1,
   },
-  searchInputLabel: fields.searchInputLabel,
   searchInputPlaceholder: fields.searchInputPlaceholder,
 })
