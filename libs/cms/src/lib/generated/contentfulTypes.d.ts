@@ -739,7 +739,7 @@ export interface ICustomPageFields {
   title?: string | undefined
 
   /** Unique Identifier */
-  uniqueIdentifier: 'PensionCalculator'
+  uniqueIdentifier: 'PensionCalculator' | 'OfficialJournalOfIceland'
 
   /** Alert Banner */
   alertBanner?: IAlertBanner | undefined
@@ -2900,7 +2900,6 @@ export interface IOrganizationPageFields {
     | 'vinnueftirlitid'
     | 'hljodbokasafn-islands'
     | 'thjodskjalasafn'
-    | 'stjornartidindi'
 
   /** Theme Properties */
   themeProperties?: Record<string, any> | undefined
