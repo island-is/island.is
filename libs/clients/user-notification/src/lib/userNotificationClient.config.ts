@@ -7,7 +7,7 @@ const schema = z.object({
 
 export const UserNotificationClientConfig = defineConfig({
   name: 'UserNotificationConfig',
-  schema: schema,
+  schema,
   load(env) {
     return {
       basePath: env.required(
