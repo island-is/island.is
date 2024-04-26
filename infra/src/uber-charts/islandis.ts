@@ -56,6 +56,7 @@ import {
 import {
   serviceSetup as sessionsServiceSetup,
   workerSetup as sessionsWorkerSetup,
+  cleanupSetup as sessionsCleanupWorkerSetup,
 } from '../../../apps/services/sessions/infra/sessions'
 
 import { serviceSetup as authAdminApiSetup } from '../../../apps/services/auth/admin-api/infra/auth-admin-api'
@@ -88,6 +89,7 @@ const rabBackend = rabBackendSetup()
 
 const sessionsService = sessionsServiceSetup()
 const sessionsWorker = sessionsWorkerSetup()
+const sessionsCleanupWorker = sessionsCleanupWorkerSetup()
 
 const authAdminApi = authAdminApiSetup()
 
@@ -169,6 +171,7 @@ export const Services: EnvironmentServices = {
     licenseApi,
     sessionsService,
     sessionsWorker,
+    sessionsCleanupWorker,
     universityGatewayService,
     universityGatewayWorker,
     contentfulApps,
@@ -203,6 +206,7 @@ export const Services: EnvironmentServices = {
     licenseApi,
     sessionsService,
     sessionsWorker,
+    sessionsCleanupWorker,
     universityGatewayService,
     universityGatewayWorker,
   ],
@@ -239,6 +243,7 @@ export const Services: EnvironmentServices = {
     licenseApi,
     sessionsService,
     sessionsWorker,
+    sessionsCleanupWorker,
     contentfulApps,
     universityGatewayService,
     universityGatewayWorker,
