@@ -247,6 +247,7 @@ const UniversitySearch: Screen<UniversitySearchProps> = ({
 
     let fuseInstance: Fuse<UniversityGatewayProgram> = new Fuse([], fuseOptions)
     if (originalSortedResults.length > 0) {
+      fuseOptions.threshold = query.length < 9 ? 0.2 : 0.3
       fuseInstance = new Fuse(
         originalSortedResults.map((item: FuseQueryResult) => {
           return item.item
@@ -966,56 +967,18 @@ const UniversitySearch: Screen<UniversitySearchProps> = ({
             <Box
               display="flex"
               flexDirection="row"
-              justifyContent="flexEnd"
-              marginTop={1}
-            >
-              <Hidden below="md">
-                <Box>
-                  <button
-                    onClick={() => setGridView(true)}
-                    className={styles.iconButton}
-                  >
-                    <VisuallyHidden>
-                      {n('changeToTable', 'Breyta niðurstöðum í töflu')}
-                    </VisuallyHidden>
-                    <Icon
-                      icon={'gridView'}
-                      type="outline"
-                      color={gridView ? 'blue400' : 'dark200'}
-                    />
-                  </button>
-                  <button
-                    onClick={() => setGridView(false)}
-                    className={styles.iconButton}
-                  >
-                    <VisuallyHidden>
-                      {n('changeToList', 'Breyta niðurstöðum í lista')}
-                    </VisuallyHidden>
-                    <Icon
-                      icon={'listView'}
-                      type="outline"
-                      color={gridView ? 'dark200' : 'blue400'}
-                      useStroke
-                    />
-                  </button>
-                </Box>
-              </Hidden>
-            </Box>
-            <Box
-              display="flex"
-              flexDirection="row"
+              width="full"
               justifyContent="spaceBetween"
-              marginTop={isTabletScreenWidth || isMobileScreenWidth ? 2 : 3}
+              marginTop={isTabletScreenWidth || isMobileScreenWidth ? 2 : 5}
               marginBottom={isTabletScreenWidth || isMobileScreenWidth ? 2 : 5}
             >
-              <Box>
-                {data && (
-                  <Box
-                    display="flex"
-                    flexWrap={'wrap'}
-                    style={{ gap: '0.5rem' }}
-                  >
-                    <Box display={'flex'} style={{ gap: '8px' }}>
+              {data && (
+                <Box
+                  width="full"
+                  style={{ display: 'grid', gridTemplateColumns: '90% 10%' }}
+                >
+                  <Box display={'flex'} flexWrap={'wrap'}>
+                    <Box display={'flex'}>
                       <Text variant="intro" fontWeight="semiBold" as="h2">
                         {`${filteredResults.length}`}
                       </Text>
@@ -1060,8 +1023,45 @@ const UniversitySearch: Screen<UniversitySearchProps> = ({
                         })}
                     </Box>
                   </Box>
-                )}
-              </Box>
+                  <Box
+                    display="flex"
+                    flexDirection="row"
+                    justifyContent="flexEnd"
+                  >
+                    <Hidden below="md">
+                      <Box>
+                        <button
+                          onClick={() => setGridView(true)}
+                          className={styles.iconButton}
+                        >
+                          <VisuallyHidden>
+                            {n('changeToTable', 'Breyta niðurstöðum í töflu')}
+                          </VisuallyHidden>
+                          <Icon
+                            icon={'gridView'}
+                            type="outline"
+                            color={gridView ? 'blue400' : 'dark200'}
+                          />
+                        </button>
+                        <button
+                          onClick={() => setGridView(false)}
+                          className={styles.iconButton}
+                        >
+                          <VisuallyHidden>
+                            {n('changeToList', 'Breyta niðurstöðum í lista')}
+                          </VisuallyHidden>
+                          <Icon
+                            icon={'listView'}
+                            type="outline"
+                            color={gridView ? 'dark200' : 'blue400'}
+                            useStroke
+                          />
+                        </button>
+                      </Box>
+                    </Hidden>
+                  </Box>
+                </Box>
+              )}
             </Box>
             {loading ? (
               <>{loadSkeletons()}</>
