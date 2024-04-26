@@ -1,6 +1,6 @@
 import { uuid } from 'uuidv4'
 
-import { ConfigType } from '@nestjs/config'
+import { type ConfigType } from '@island.is/nest/config'
 
 import {
   CaseFileCategory,

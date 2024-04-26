@@ -12,7 +12,6 @@ import {
   ISLFjolskyldan,
   ISLBorninMin,
   ISLEinstaklingur,
-  FamilyCorrection,
 } from './dto'
 import { SoapClient } from './soapClient'
 
@@ -123,35 +122,6 @@ export class NationalRegistryApi {
     const documentData =
       borninMinResponse?.table?.diffgram?.DocumentElement?.ISLBorninMin
     return Array.isArray(documentData) ? documentData : [documentData]
-  }
-
-  public async postUserCorrection(
-    values: FamilyCorrection,
-  ): Promise<{ success: boolean; message?: string }> {
-    const response = await this.signal(
-      'CreateAndUpdateMS_Leidretting',
-      {
-        S5RequestID: '',
-        Kennitala: values.nationalId,
-        Barn: values.nationalIdChild,
-        Nafn: values.name,
-        Simanumer: values.phonenumber,
-        Netfang: values.email,
-        Athugasemd: values.comment,
-        Stada: 'Skráð',
-      },
-      true,
-    )
-
-    if (!response) {
-      throw new InternalServerErrorException(
-        'User correction not sent. Unknown error',
-      )
-    }
-    return {
-      success: response?.success,
-      message: response?.message,
-    }
   }
 
   private async signal(
