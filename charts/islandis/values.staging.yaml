@@ -2785,6 +2785,7 @@ user-notification:
     XROAD_TLS_BASE_PATH_WITH_ENV: 'https://securityserver.staging01.devland.is/r1/IS-TEST'
   grantNamespaces:
     - 'nginx-ingress-internal'
+    - 'islandis'
     - 'identity-server-delegation'
   grantNamespacesEnabled: true
   healthCheck:
@@ -2794,7 +2795,7 @@ user-notification:
       timeoutSeconds: 3
     readiness:
       initialDelaySeconds: 3
-      path: '/readiness'
+      path: '/health/check'
       timeoutSeconds: 3
   hpa:
     scaling:
@@ -2868,6 +2869,7 @@ user-notification-cleanup-worker:
     SERVERSIDE_FEATURES_ON: ''
   grantNamespaces:
     - 'nginx-ingress-internal'
+    - 'islandis'
     - 'identity-server-delegation'
   grantNamespacesEnabled: true
   healthCheck:
@@ -2978,6 +2980,7 @@ user-notification-worker:
     XROAD_TLS_BASE_PATH_WITH_ENV: 'https://securityserver.staging01.devland.is/r1/IS-TEST'
   grantNamespaces:
     - 'nginx-ingress-internal'
+    - 'islandis'
     - 'identity-server-delegation'
   grantNamespacesEnabled: true
   healthCheck:
@@ -2987,7 +2990,7 @@ user-notification-worker:
       timeoutSeconds: 3
     readiness:
       initialDelaySeconds: 3
-      path: '/readiness'
+      path: '/health/check'
       timeoutSeconds: 3
   hpa:
     scaling:
