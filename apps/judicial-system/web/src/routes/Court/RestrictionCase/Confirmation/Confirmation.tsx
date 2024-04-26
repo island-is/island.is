@@ -1,14 +1,12 @@
 import React, { useContext, useState } from 'react'
 import { useIntl } from 'react-intl'
+import { useRouter } from 'next/router'
 
 import { Accordion, Box, Text } from '@island.is/island-ui/core'
 import * as constants from '@island.is/judicial-system/consts'
 import {
-  CaseDecision,
-  CaseTransition,
-  completedCaseStates,
   isAcceptingCaseDecision,
-  NotificationType,
+  isCompletedCase,
 } from '@island.is/judicial-system/types'
 import { core, titles } from '@island.is/judicial-system-web/messages'
 import {
@@ -27,22 +25,34 @@ import {
   UserContext,
   useRequestRulingSignature,
 } from '@island.is/judicial-system-web/src/components'
+import {
+  CaseDecision,
+  CaseTransition,
+  NotificationType,
+} from '@island.is/judicial-system-web/src/graphql/schema'
 import { useCase } from '@island.is/judicial-system-web/src/utils/hooks'
 
-import { RulingModifiedModal } from '../../components'
+import {
+  JudgeRequestRulingSignatureModal,
+  RegistrarRequestRulingSignatureModal,
+  RulingModifiedModal,
+} from '../../components'
 import { confirmation as strings } from './Confirmation.strings'
 
-type VisibleModal = 'none' | 'rulingModifiedModal' | 'signingModal'
+type VisibleModal =
+  | 'none'
+  | 'rulingModifiedModal'
+  | 'judgeRequestRulingSignatureModal'
+  | 'registrarRequestRulingSignatureModal'
+  | 'signingModal'
 
-export const Confirmation: React.FC<React.PropsWithChildren<unknown>> = () => {
+const Confirmation: React.FC = () => {
+  const router = useRouter()
+  const { formatMessage } = useIntl()
+  const { user } = useContext(UserContext)
   const { workingCase, setWorkingCase, isLoadingWorkingCase, caseNotFound } =
     useContext(FormContext)
-  const [modalVisible, setModalVisible] = useState<VisibleModal>('none')
-
-  const { user } = useContext(UserContext)
-  const { formatMessage } = useIntl()
-
-  const { transitionCase } = useCase()
+  const { transitionCase, isTransitioningCase } = useCase()
   const {
     requestRulingSignature,
     requestRulingSignatureResponse,
@@ -50,36 +60,63 @@ export const Confirmation: React.FC<React.PropsWithChildren<unknown>> = () => {
   } = useRequestRulingSignature(workingCase.id, () =>
     setModalVisible('signingModal'),
   )
+  const [modalVisible, setModalVisible] = useState<VisibleModal>('none')
 
-  async function signRuling() {
-    const shouldSign =
-      completedCaseStates.includes(workingCase.state) ||
-      (await transitionCase(
-        workingCase.id,
-        workingCase.decision === CaseDecision.REJECTING
-          ? CaseTransition.REJECT
-          : workingCase.decision === CaseDecision.DISMISSING
-          ? CaseTransition.DISMISS
-          : CaseTransition.ACCEPT,
-        setWorkingCase,
-      ))
+  const isCorrectingRuling = workingCase.notifications?.some(
+    (notification) => notification.type === NotificationType.RULING,
+  )
+  const isAssignedJudge = user && workingCase.judge?.id === user.id
+  const isAssignedRegistrar = user && workingCase.registrar?.id === user.id
+  const hideNextButton =
+    (!isCorrectingRuling && !isAssignedJudge) ||
+    (isCorrectingRuling && !isAssignedJudge && !isAssignedRegistrar)
 
-    if (shouldSign) {
+  const completeCase = async () => {
+    if (isCompletedCase(workingCase.state)) {
+      return true
+    }
+
+    return transitionCase(
+      workingCase.id,
+      workingCase.decision === CaseDecision.REJECTING
+        ? CaseTransition.REJECT
+        : workingCase.decision === CaseDecision.DISMISSING
+        ? CaseTransition.DISMISS
+        : CaseTransition.ACCEPT,
+      setWorkingCase,
+    )
+  }
+
+  const continueToSignedVerdictOverview = () => {
+    router.push(`${constants.SIGNED_VERDICT_OVERVIEW_ROUTE}/${workingCase.id}`)
+  }
+
+  const handleCompleteModification = async () => {
+    const caseCompleted = await completeCase()
+
+    if (caseCompleted) {
+      setModalVisible(
+        isAssignedJudge
+          ? 'judgeRequestRulingSignatureModal'
+          : 'registrarRequestRulingSignatureModal',
+      )
+    }
+  }
+
+  const completeCaseWithSignature = async () => {
+    const caseCompleted = await completeCase()
+
+    if (caseCompleted) {
       requestRulingSignature()
     }
   }
 
   const handleNextButtonClick = async () => {
-    const isCorrectingRuling = workingCase.notifications?.some(
-      (notification) => notification.type === NotificationType.RULING,
-    )
-
     if (isCorrectingRuling) {
       setModalVisible('rulingModifiedModal')
-      return
+    } else {
+      completeCaseWithSignature()
     }
-
-    await signRuling()
   }
 
   return (
@@ -167,11 +204,11 @@ export const Confirmation: React.FC<React.PropsWithChildren<unknown>> = () => {
               : 'destructive'
           }
           onNextButtonClick={handleNextButtonClick}
-          nextIsLoading={isRequestingRulingSignature}
-          hideNextButton={workingCase.judge?.id !== user?.id}
+          nextIsLoading={isTransitioningCase || isRequestingRulingSignature}
+          hideNextButton={hideNextButton}
           infoBoxText={
-            workingCase.judge?.id !== user?.id
-              ? 'Einungis skráður dómari getur undirritað úrskurð'
+            hideNextButton
+              ? formatMessage(strings.onlyAssigendJudgeCanSign)
               : undefined
           }
         />
@@ -179,7 +216,18 @@ export const Confirmation: React.FC<React.PropsWithChildren<unknown>> = () => {
       {modalVisible === 'rulingModifiedModal' && (
         <RulingModifiedModal
           onCancel={() => setModalVisible('none')}
-          onContinue={signRuling}
+          onContinue={handleCompleteModification}
+        />
+      )}
+      {modalVisible === 'judgeRequestRulingSignatureModal' && (
+        <JudgeRequestRulingSignatureModal
+          onYes={requestRulingSignature}
+          onNo={continueToSignedVerdictOverview}
+        />
+      )}
+      {modalVisible === 'registrarRequestRulingSignatureModal' && (
+        <RegistrarRequestRulingSignatureModal
+          onContinue={continueToSignedVerdictOverview}
         />
       )}
       {modalVisible === 'signingModal' && (

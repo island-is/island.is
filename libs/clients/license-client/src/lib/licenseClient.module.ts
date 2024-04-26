@@ -24,6 +24,12 @@ import {
   DrivingClientModule,
   DrivingLicenseClient,
 } from './clients/driving-license-client'
+import { PCardClient, PCardModule } from './clients/p-card-client'
+import { EhicClient, EhicModule } from './clients/ehic-card-client'
+import {
+  HuntingClientModule,
+  HuntingLicenseClient,
+} from './clients/hunting-license-client'
 
 @Module({
   imports: [
@@ -32,6 +38,9 @@ import {
     MachineClientModule,
     DisabilityClientModule,
     DrivingClientModule,
+    HuntingClientModule,
+    PCardModule,
+    EhicModule,
   ],
   providers: [
     LicenseClientService,
@@ -49,8 +58,13 @@ import {
           machineClient: MachineLicenseClient,
           disabilityClient: DisabilityLicenseClient,
           drivingClient: DrivingLicenseClient,
+          pCardClient: PCardClient,
+          ehicCardClient: EhicClient,
+          huntingClient: HuntingLicenseClient,
         ) =>
-        async (type: LicenseType): Promise<LicenseClient<unknown> | null> => {
+        async (
+          type: LicenseType,
+        ): Promise<LicenseClient<LicenseType> | null> => {
           switch (type) {
             case LicenseType.FirearmLicense:
               return firearmClient
@@ -62,6 +76,12 @@ import {
               return machineClient
             case LicenseType.DisabilityLicense:
               return disabilityClient
+            case LicenseType.PCard:
+              return pCardClient
+            case LicenseType.Ehic:
+              return ehicCardClient
+            case LicenseType.HuntingLicense:
+              return huntingClient
             default:
               return null
           }
@@ -72,6 +92,9 @@ import {
         MachineLicenseClient,
         DisabilityLicenseClient,
         DrivingLicenseClient,
+        PCardClient,
+        EhicClient,
+        HuntingLicenseClient,
       ],
     },
   ],

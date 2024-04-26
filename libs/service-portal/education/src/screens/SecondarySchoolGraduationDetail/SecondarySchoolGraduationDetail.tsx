@@ -1,10 +1,9 @@
-import React from 'react'
 import {
   addArray,
   formatDate,
   IntroHeader,
   m,
-  NotFound,
+  MENNTAMALASTOFNUN_SLUG,
   SortableTable,
 } from '@island.is/service-portal/core'
 import {
@@ -19,8 +18,8 @@ import { useParams } from 'react-router-dom'
 import { useGetInnaPeriodsQuery } from '../SecondarySchoolCareer/Periods.generated'
 import { useGetInnaDiplomasQuery } from '../SecondarySchoolCareer/Diplomas.generated'
 import { tagSelector } from '../../utils/tagSelector'
-import { defineMessage } from 'react-intl'
 import { edMessage } from '../../lib/messages'
+import { Problem } from '@island.is/react-spa/shared'
 
 type UseParams = {
   id: string
@@ -41,7 +40,9 @@ export const EducationGraduationDetail = () => {
   const periodItems = innaData?.innaPeriods?.items || []
   const diplomaItems = innaDiplomas?.innaDiplomas?.items || []
 
-  const singleGraduation = diplomaItems.filter((item) => item.diplomaId === id)
+  const singleGraduation = diplomaItems.filter(
+    (item) => String(item.diplomaId) === id,
+  )
   const graduationItem = singleGraduation[0]
 
   const periodArray = periodItems.filter(
@@ -50,6 +51,7 @@ export const EducationGraduationDetail = () => {
 
   const queryLoading = loading || loadingDiplomas
   const queryError = error || errorDiplomas
+
   if (queryLoading) {
     return (
       <Box marginBottom={6}>
@@ -61,18 +63,6 @@ export const EducationGraduationDetail = () => {
       </Box>
     )
   }
-
-  if ((!periodArray.length && !queryLoading) || queryError) {
-    return (
-      <NotFound
-        title={defineMessage({
-          id: 'sp.education-secondary-school:not-found',
-          defaultMessage: 'Engin gögn fundust',
-        })}
-      />
-    )
-  }
-
   return (
     <Box marginBottom={[6, 6, 10]}>
       <IntroHeader
@@ -80,6 +70,8 @@ export const EducationGraduationDetail = () => {
           graduationItem.organisation ?? ''
         }`}
         intro={formatMessage(edMessage.careerIntro)}
+        serviceProviderSlug={MENNTAMALASTOFNUN_SLUG}
+        serviceProviderTooltip={formatMessage(m.mmsTooltipSecondary)}
         marginBottom={6}
       />
       {/* <GridRow marginTop={4}>
@@ -103,10 +95,21 @@ export const EducationGraduationDetail = () => {
           </Box>
         </GridColumn>
       </GridRow> */}
-
-      {periodArray.length > 0 &&
-        !loading &&
-        periodArray.map((item, i) => (
+      {queryError && !queryLoading && (
+        <Problem error={queryError} noBorder={false} />
+      )}
+      {!queryError && !queryLoading && !periodArray.length && (
+        <Problem
+          type="no_data"
+          noBorder={false}
+          title={formatMessage(m.noData)}
+          message={formatMessage(m.noDataFoundDetail)}
+          imgSrc="./assets/images/sofa.svg"
+        />
+      )}
+      {!queryLoading &&
+        !queryError &&
+        periodArray?.map((item, i) => (
           <Box key={i} marginTop={i > 0 ? 6 : 1}>
             <SortableTable
               title={`${item.organisation ?? ''} - ${item.periodName ?? ''}`}

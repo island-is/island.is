@@ -1,4 +1,4 @@
-import {TranslatedMessages} from './index';
+import { TranslatedMessages } from './index'
 
 export const en: TranslatedMessages = {
   // login
@@ -14,6 +14,11 @@ export const en: TranslatedMessages = {
   'login.networkErrorTitle': 'Network error',
   'login.networkErrorMessage':
     '\nCould not contact the login service.\n\nPlease check your device internet connection or try again later.',
+  'login.expiredTitle': 'Session expired',
+  'login.expiredScopesMessage':
+    'Updated permissions required, please login again.',
+  'login.expiredMissingUserMessage':
+    'Could not fetch user information, please login again.',
 
   // app lock
   'applock.title': 'Enter a 4-digit PIN',
@@ -132,6 +137,7 @@ export const en: TranslatedMessages = {
   }`,
   'user.natreg.citizenship': 'Citizenship',
   'user.natreg.religion': 'Religion',
+  'user.natreg.settingsButton': 'Go to settings',
 
   // Home
   'home.screenTitle': 'Overview',
@@ -147,6 +153,10 @@ export const en: TranslatedMessages = {
     'If you have comments or suggestions about something that is missing or that could be improved, feel free to contact us via email at',
   'home.onboardingModule.card4':
     'We encourage our users to read Digital Iceland’s privacy policy on',
+  'home.vehicleModule.summary':
+    'Enter mileage of electric and plug-in hybrid vehicles',
+  'home.vehicleModule.button': 'My vehicles',
+  'button.seeAll': 'See all',
 
   // inbox
   'inbox.screenTitle': 'Inbox',
@@ -215,16 +225,16 @@ export const en: TranslatedMessages = {
   'licenseScanner.helperMessage': 'Point device at barcode',
   'licenseScanner.awaitingPermission': 'Asking for camera permissions',
   'licenseScanner.noCameraAccess': 'Camera not available',
+  'licenseScanner.errorUnknown': 'Unknown error',
+  'licenseScanner.invalidBarcode': 'Invalid barcode',
+  'licenseScanner.errorNetwork': 'Network error',
   'licenseScannerDetail.driverLicenseNumber': 'Driver license number',
-  'licenseScannerDetail.invalidBarcode': 'Invalid barcode',
   'licenseScannerResult.androidHelp':
     'Press button below the license to get updated barcode.',
   'licenseScannerResult.iosHelp':
     'Press three-dot button below the license. Next, refresh the screen by pulling down from the center to update the barcode.',
 
   // license scan detail
-  'licenseScanDetail.errorUnknown': 'Unknown error',
-  'licenseScanDetail.errorNetwork': 'Network error',
   'licenseScanDetail.errorCodeMessage': `{
     errorCode,
     select,
@@ -257,6 +267,9 @@ export const en: TranslatedMessages = {
   'licenseDetail.pcard.alert.title': 'Remember the parking card!',
   'licenseDetail.pcard.alert.description':
     'This summary is not valid as a parking card.',
+  'licenseDetail.ehic.alert.title': 'Remember the card!',
+  'licenseDetail.ehic.alert.description':
+    'This summary is not valid as a European Health Insurance card.',
 
   // notifications
   'notifications.screenTitle': 'Notifications',
@@ -272,12 +285,15 @@ export const en: TranslatedMessages = {
   'profile.vehicles': 'Vehicles',
   'profile.assets': 'Assets',
   'profile.finance': 'Finance',
+  'profile.airDiscount': 'Air discount scheme',
 
   // vehicles
   'vehicles.screenTitle': 'Vehicles',
   'vehicles.emptyListTitle': 'No vehicles found for the user',
   'vehicles.emptyListDescription':
     'Vehicles registered to you will appear here.',
+  'vehicles.nextInspectionLabel': 'Next inspection {date}',
+  'vehicles.mileageRequired': 'Kilometre fee',
 
   // vehicles detail
   'vehicleDetail.regno': 'Registration number',
@@ -303,6 +319,29 @@ export const en: TranslatedMessages = {
   'vehicleDetail.totalWeight': 'Maximum weight',
   'vehicleDetail.capacityWeight': 'Road train weight',
   'vehicleDetail.odometer': 'Odometer',
+  'vehicleDetail.noInfo': 'No information received',
+
+  // vehicle mileage
+  'vehicle.mileage.errorTitle': 'Error',
+  'vehicle.mileage.errorMileageInputTooLow': 'Mileage input too low',
+  'vehicle.mileage.errorMileageInputTooHigh': 'Mileage input too high',
+  'vehicle.mileage.errorFailedToUpdate':
+    'Update mileage seems to have failed. Please try again later.',
+  'vehicle.mileage.successTitle': 'Mileage updated',
+  'vehicle.mileage.successMessage': 'Mileage has been updated',
+  'vehicle.mileage.promptEditTitle': 'Edit mileage',
+  'vehicle.mileage.promptEditButton': 'Edit',
+  'vehicle.mileage.promptCancelButton': 'Cancel',
+  'vehicle.mileage.inputPlaceholder': 'Enter current mileage',
+  'vehicle.mileage.inputLabel': 'Mileage',
+  'vehicle.mileage.inputSubmitButton': 'Submit',
+  'vehicle.mileage.registerIntervalCopy':
+    'Mileage can only be recorded once every 30 days',
+  'vehicle.mileage.youAreNotAllowedCopy':
+    'Only the main owner or custodian of an credit institution owned vehicle can record the mileage status',
+  'vehicle.mileage.moreInformationCopy': 'See more information at Ísland.is',
+  'vehicle.mileage.historyTitle': 'Mileage history',
+  'vehicle.mileage.editRecordButton': 'Edit mileage',
 
   // assets overview
   'assetsOvervies.screenTitle': 'Assets',
@@ -437,4 +476,32 @@ export const en: TranslatedMessages = {
   'edit.confirm.inputlabel': 'Security number',
   'edit.cancel.button': 'Cancel',
   'edit.confirm.button': 'Confirm',
-};
+
+  // air discount
+  'airDiscount.screenTitle': 'Air discount scheme',
+  'airDiscount.headingTitle': 'Lower airfares with Air Discount Scheme',
+  'airDiscount.headingSubtitle':
+    'Each individual is entitled to lower fares on up to three round trips to and from Reykjavík per year (six flights). By using the Loftbrú discount you are acknowledging that you have read the Air Discount scheme terms and conditions.',
+  'airDiscount.tosLinkText': 'Terms and conditions',
+  'airDiscount.alertTitle': 'Attention',
+  'airDiscount.alertDescription':
+    'Code gets renewed after 1 usage\n(expires in 24 hours)',
+  'airDiscount.myRights': 'My benefits',
+  'airDiscount.remainingFares': 'Remaining fares {remaining} of {total}',
+  'airDiscount.copyDiscountCode': 'Copy code',
+  'airDiscount.bulletPointDiscount':
+    'Each discount amounts to 40% of the airfare.',
+  'airDiscount.bulletPointUsage':
+    "Code enables a discount when booking on airline's booking engine.",
+  'airDiscount.activeConnectionCodes': 'Active codes for connecting flights',
+  'airDiscount.flight': 'Flight path: {flight}',
+  'airDiscount.validTo': 'Valid to: {date} {time}',
+  'airDiscount.airfaresUsage': 'Usage in the current season',
+  'airDiscount.emptyListTitle': 'No benefits',
+  'airDiscount.emptyListDescription':
+    'Only inhabitants with a legal domicile in rural areas far away from the Capital area and on islands are eligible for a discount with Loftbru. (see map on loftbru.is)',
+
+  // offline
+  'offline.title': 'No internet connection',
+  'offline.message': 'Information has not been updated.',
+}

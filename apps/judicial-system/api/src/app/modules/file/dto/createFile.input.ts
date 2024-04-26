@@ -1,14 +1,11 @@
 import { Allow, IsNumber, Min, ValidateIf } from 'class-validator'
 
-import { Field, InputType, Int, registerEnumType } from '@nestjs/graphql'
+import { Field, InputType, Int } from '@nestjs/graphql'
 
-import type { CreateFile } from '@island.is/judicial-system/types'
 import { CaseFileCategory } from '@island.is/judicial-system/types'
 
-registerEnumType(CaseFileCategory, { name: 'CaseFileCategory' })
-
 @InputType()
-export class CreateFileInput implements CreateFile {
+export class CreateFileInput {
   @Allow()
   @Field()
   readonly caseId!: string
@@ -18,7 +15,7 @@ export class CreateFileInput implements CreateFile {
   readonly type!: string
 
   @Allow()
-  @Field(() => String, { nullable: true })
+  @Field(() => CaseFileCategory, { nullable: true })
   readonly category?: CaseFileCategory
 
   @Allow()
@@ -26,7 +23,7 @@ export class CreateFileInput implements CreateFile {
   readonly key!: string
 
   @Allow()
-  @Field()
+  @Field(() => Int)
   readonly size!: number
 
   @Allow()

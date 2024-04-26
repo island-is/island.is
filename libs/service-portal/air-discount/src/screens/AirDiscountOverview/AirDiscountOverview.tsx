@@ -1,26 +1,22 @@
-import React, { useState } from 'react'
+import { useState } from 'react'
 import { useLocale, useNamespaces } from '@island.is/localization'
 import {
-  ErrorScreen,
   m as coreMessage,
   ActionCard,
-  EmptyState,
   CardLoader,
   FootNote,
-  VEGAGERDIN_ID,
   IntroHeader,
+  VEGAGERDIN_SLUG,
 } from '@island.is/service-portal/core'
 import { gql, useQuery } from '@apollo/client'
 import { Query } from '@island.is/api/schema'
 import {
-  AlertMessage,
   Box,
   Bullet,
   BulletList,
   Button,
   GridColumn,
   GridRow,
-  SkeletonLoader,
   Stack,
   Text,
   toast,
@@ -30,6 +26,7 @@ import copyToClipboard from 'copy-to-clipboard'
 import UsageTable from '../../components/UsageTable/UsageTable'
 import { formatDateWithTime } from '@island.is/service-portal/core'
 import { AirDiscountSchemeDiscount } from '@island.is/service-portal/graphql'
+import { Problem } from '@island.is/react-spa/shared'
 
 const AirDiscountQuery = gql`
   query AirDiscountQuery {
@@ -91,20 +88,6 @@ export const AirDiscountOverview = () => {
   const connectionCodes: AirDiscountSchemeDiscount[] | undefined =
     airDiscounts?.filter((x) => x.connectionDiscountCodes.length > 0)
 
-  if (error && !loading) {
-    return (
-      <ErrorScreen
-        figure="./assets/images/hourglass.svg"
-        tagVariant="red"
-        tag={formatMessage(coreMessage.errorTitle)}
-        title={formatMessage(coreMessage.somethingWrong)}
-        children={formatMessage(coreMessage.errorFetchModule, {
-          module: formatMessage(coreMessage.airDiscount).toLowerCase(),
-        })}
-      />
-    )
-  }
-
   const noRights =
     airDiscounts?.filter(
       (item) => item.user.fund?.credit === 0 && item.user.fund.used === 0,
@@ -132,7 +115,8 @@ export const AirDiscountOverview = () => {
           <GridColumn span={['8/8', '8/8']} order={1}>
             <IntroHeader
               title={formatMessage(m.introTitle)}
-              serviceProviderID={VEGAGERDIN_ID}
+              fixedImgWidth
+              serviceProviderSlug={VEGAGERDIN_SLUG}
               serviceProviderTooltip={formatMessage(
                 coreMessage.airDiscountTooltip,
               )}
@@ -163,24 +147,19 @@ export const AirDiscountOverview = () => {
             </IntroHeader>
           </GridColumn>
         </GridRow>
-
-        {loading && <CardLoader />}
-        {!loading ? (
-          noRights ? (
-            <AlertMessage
-              type="error"
-              title={formatMessage(m.noRights)}
-              message={formatMessage(m.noRightsText)}
-            />
-          ) : (
-            <AlertMessage
-              type="warning"
-              title={formatMessage(m.attention)}
-              message={formatMessage(m.codeRenewalText)}
-            />
-          )
-        ) : undefined}
       </Box>
+
+      {loading && !error && <CardLoader />}
+      {error && !loading && <Problem error={error} noBorder={false} />}
+      {!error && !loading && noRights && (
+        <Problem
+          type="no_data"
+          noBorder={false}
+          title={formatMessage(m.noRights)}
+          message={formatMessage(m.noRightsText)}
+          imgSrc="./assets/images/coffee.svg"
+        />
+      )}
       {data && !noRights && (
         <Box marginBottom={5}>
           <Text paddingBottom={3} fontWeight="medium">
@@ -265,9 +244,11 @@ export const AirDiscountOverview = () => {
         </Box>
       )}
       {!loading && !error && airDiscounts?.length === 0 && (
-        <Box marginY={8}>
-          <EmptyState />
-        </Box>
+        <Problem
+          type="no_data"
+          noBorder={false}
+          imgSrc="./assets/images/sofa.svg"
+        />
       )}
       {flightLegs && flightLegs.length > 0 && (
         <Box marginBottom={5}>
@@ -277,7 +258,7 @@ export const AirDiscountOverview = () => {
           <UsageTable data={flightLegs} />
         </Box>
       )}
-      <FootNote serviceProviderID={VEGAGERDIN_ID} />
+      <FootNote serviceProviderSlug={VEGAGERDIN_SLUG} />
     </>
   )
 }

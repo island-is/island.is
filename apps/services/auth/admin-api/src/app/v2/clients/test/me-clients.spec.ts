@@ -79,6 +79,7 @@ const createTestClientData = async (app: TestApp, user: User) => {
     supportsPersonalRepresentatives: false,
     supportsProcuringHolders: false,
     promptDelegations: false,
+    singleSession: false,
   }
 }
 
@@ -112,6 +113,7 @@ const clientForCreateTest: Partial<AdminCreateClientDto> = {
   supportsPersonalRepresentatives: true,
   supportsProcuringHolders: true,
   promptDelegations: true,
+  singleSession: true,
 }
 
 describe('MeClientsController with auth', () => {
@@ -138,6 +140,7 @@ describe('MeClientsController with auth', () => {
           AppModule,
           SequelizeConfigService,
           user,
+          dbType: 'postgres',
         })
         const server = request(app.getHttpServer())
         await createTestClientData(app, otherUser)
@@ -162,6 +165,7 @@ describe('MeClientsController with auth', () => {
       AppModule,
       SequelizeConfigService,
       user: currentUser,
+      dbType: 'postgres',
     })
     const server = request(app.getHttpServer())
     await createTestClientData(app, user)
@@ -195,6 +199,7 @@ describe('MeClientsController with auth', () => {
       AppModule,
       SequelizeConfigService,
       user: currentUser,
+      dbType: 'postgres',
     })
     const server = request(app.getHttpServer())
     const expected = await createTestClientData(app, user)
@@ -219,6 +224,7 @@ describe('MeClientsController with auth', () => {
         AppModule,
         SequelizeConfigService,
         user: currentUser,
+        dbType: 'postgres',
       })
       const server = request(app.getHttpServer())
       const expected = await createTestClientData(app, user)
@@ -238,7 +244,11 @@ describe('MeClientsController with auth', () => {
     clientType   | typeSpecificDefaults
     ${'web'}     | ${{}}
     ${'machine'} | ${{ allowOfflineAccess: false, requirePkce: false }}
-    ${'native'}  | ${{ absoluteRefreshTokenLifetime: 365 * 24 * 60 * 60, requireClientSecret: false, slidingRefreshTokenLifetime: 90 * 24 * 60 * 60 }}
+    ${'native'} | ${{
+  absoluteRefreshTokenLifetime: 365 * 24 * 60 * 60,
+  requireClientSecret: false,
+  slidingRefreshTokenLifetime: 90 * 24 * 60 * 60,
+}}
   `(
     'should create $clientType client with correct defaults',
     async ({ clientType, typeSpecificDefaults }) => {
@@ -247,6 +257,7 @@ describe('MeClientsController with auth', () => {
         AppModule,
         SequelizeConfigService,
         user,
+        dbType: 'postgres',
       })
       const server = request(app.getHttpServer())
       const clientModel = app.get(getModelToken(Client))
@@ -301,6 +312,7 @@ describe('MeClientsController with auth', () => {
         supportsProcuringHolders: false,
         promptDelegations: false,
         customClaims: [],
+        singleSession: false,
       })
 
       // Assert - db record
@@ -309,9 +321,6 @@ describe('MeClientsController with auth', () => {
       })
       expect(dbClient).toMatchObject({
         ...clientBaseAttributes,
-        allowRememberConsent: clientBaseAttributes.allowRememberConsent
-          ? '1'
-          : '0',
         clientId: newClient.clientId,
         clientType: newClient.clientType,
         clientName: newClient.clientName,
@@ -323,24 +332,136 @@ describe('MeClientsController with auth', () => {
   )
 
   it.each`
-    value                                   | typeSpecificDefaults
-    ${'none'}                               | ${{}}
-    ${'allowOfflineAccess and requirePkce'} | ${{ allowOfflineAccess: false, requirePkce: false }}
-    ${'refreshTokenExpiration'}             | ${{ refreshTokenExpiration: RefreshTokenExpiration.Sliding }}
-    ${'all values'}                         | ${{ ...clientForCreateTest }}
+    value | typeSpecificDefaults
+    ${'super admin fields'} | ${{
+  supportsCustomDelegation: true,
+  supportsLegalGuardians: true,
+  supportsProcuringHolders: true,
+  supportsPersonalRepresentatives: true,
+  promptDelegations: true,
+  requireApiScopes: true,
+  requireConsent: false,
+  singleSession: false,
+  allowOfflineAccess: true,
+  requirePkce: false,
+  supportTokenExchange: true,
+  accessTokenLifetime: 100,
+  customClaims: [{ type: 'claim1', value: 'value1' }],
+}}
   `(
-    'should create client with correct none default values for $value',
+    'should create client with default values for $value as normal user',
     async ({ typeSpecificDefaults }) => {
       // Arrange
       const app = await setupApp({
         AppModule,
         SequelizeConfigService,
         user,
+        dbType: 'postgres',
       })
       const server = request(app.getHttpServer())
       const clientModel = app.get(getModelToken(Client))
       const newClientId = '@test.is/new-test-client'
       await createTestClientData(app, user)
+      const newClient = {
+        ...typeSpecificDefaults,
+        clientId: newClientId,
+        clientName: 'test-client',
+        clientType: 'web',
+      }
+
+      // Act
+      const res = await server
+        .post(`/v2/me/tenants/${tenantId}/clients`)
+        .send(newClient)
+
+      // Assert - response
+      expect(res.status).toEqual(201)
+      expect(res.body).toEqual({
+        clientId: newClientId,
+        clientType: newClient.clientType,
+        tenantId,
+        displayName: typeSpecificDefaults.displayName ?? [
+          {
+            locale: 'is',
+            value: newClient.clientName,
+          },
+        ],
+        refreshTokenExpiration: typeSpecificDefaults.refreshTokenExpiration
+          ? typeSpecificDefaults.refreshTokenExpiration
+          : translateRefreshTokenExpiration(
+              clientBaseAttributes.refreshTokenExpiration,
+            ),
+        absoluteRefreshTokenLifetime:
+          typeSpecificDefaults.absoluteRefreshTokenLifetime ??
+          clientBaseAttributes.absoluteRefreshTokenLifetime,
+        slidingRefreshTokenLifetime:
+          typeSpecificDefaults.slidingRefreshTokenLifetime ??
+          clientBaseAttributes.slidingRefreshTokenLifetime,
+        accessTokenLifetime: clientBaseAttributes.accessTokenLifetime,
+        allowOfflineAccess: clientBaseAttributes.allowOfflineAccess,
+        redirectUris: [],
+        postLogoutRedirectUris: [],
+        requireApiScopes: false,
+        requireConsent: false,
+        requirePkce: true,
+        supportTokenExchange: false,
+        supportsCustomDelegation: false,
+        supportsLegalGuardians: false,
+        supportsPersonalRepresentatives: false,
+        supportsProcuringHolders: false,
+        promptDelegations: false,
+        customClaims: [],
+        singleSession: false,
+      })
+
+      // Assert - db record
+      const dbClient = await clientModel.findByPk(newClientId, {
+        include: [{ model: ClientGrantType, as: 'allowedGrantTypes' }],
+      })
+
+      expect(dbClient).toMatchObject({
+        ...clientBaseAttributes,
+        clientId: newClientId,
+        clientType: newClient.clientType,
+        clientName: newClient.clientName,
+        domainName: tenantId,
+
+        slidingRefreshTokenLifetime:
+          typeSpecificDefaults.slidingRefreshTokenLifetime ??
+          clientBaseAttributes.slidingRefreshTokenLifetime,
+        absoluteRefreshTokenLifetime:
+          typeSpecificDefaults.absoluteRefreshTokenLifetime ??
+          clientBaseAttributes.absoluteRefreshTokenLifetime,
+        accessTokenLifetime: clientBaseAttributes.accessTokenLifetime,
+        allowOfflineAccess: clientBaseAttributes.allowOfflineAccess,
+        requirePkce: clientBaseAttributes.requirePkce,
+        refreshTokenExpiration: translateRefreshTokenExpiration(
+          typeSpecificDefaults.refreshTokenExpiration,
+        ),
+      })
+    },
+  )
+
+  it.each`
+    value                                   | typeSpecificDefaults
+    ${'none'}                               | ${{}}
+    ${'allowOfflineAccess and requirePkce'} | ${{ allowOfflineAccess: false, requirePkce: false }}
+    ${'refreshTokenExpiration'}             | ${{ refreshTokenExpiration: RefreshTokenExpiration.Sliding }}
+    ${'all values'}                         | ${{ ...clientForCreateTest }}
+  `(
+    'super user should create client with correct none default values for $value',
+    async ({ typeSpecificDefaults }) => {
+      // Arrange
+      const app = await setupApp({
+        AppModule,
+        SequelizeConfigService,
+        user: superUser,
+        dbType: 'postgres',
+      })
+      const server = request(app.getHttpServer())
+      const clientModel = app.get(getModelToken(Client))
+      const newClientId = '@test.is/new-test-client'
+      await createTestClientData(app, superUser)
       const newClient = {
         ...typeSpecificDefaults,
         clientId: newClientId,
@@ -412,6 +533,7 @@ describe('MeClientsController with auth', () => {
           ? typeSpecificDefaults.promptDelegations
           : false,
         customClaims: typeSpecificDefaults.customClaims ?? [],
+        singleSession: typeSpecificDefaults.singleSession ?? false,
       })
 
       // Assert - db record
@@ -421,9 +543,6 @@ describe('MeClientsController with auth', () => {
 
       expect(dbClient).toMatchObject({
         ...clientBaseAttributes,
-        allowRememberConsent: clientBaseAttributes.allowRememberConsent
-          ? '1'
-          : '0',
         clientId: newClientId,
         clientType: newClient.clientType,
         clientName: newClient.clientName,
@@ -457,6 +576,7 @@ describe('MeClientsController with auth', () => {
         AppModule,
         SequelizeConfigService,
         user,
+        dbType: 'postgres',
       })
       const server = request(app.getHttpServer())
       await createTestClientData(app, user)
@@ -487,6 +607,7 @@ describe('MeClientsController with auth', () => {
         AppModule,
         SequelizeConfigService,
         user,
+        dbType: 'postgres',
       })
       const server = request(app.getHttpServer())
       await createTestClientData(app, user)
@@ -519,6 +640,7 @@ describe('MeClientsController with auth', () => {
         AppModule,
         SequelizeConfigService,
         user,
+        dbType: 'postgres',
       })
       const server = request(app.getHttpServer())
       await createTestClientData(app, user)
@@ -557,6 +679,7 @@ describe('MeClientsController with auth', () => {
           AppModule,
           SequelizeConfigService,
           user: currentUser,
+          dbType: 'postgres',
         })
         const server = request(app.getHttpServer())
         const expected = await createTestClientData(app, user)
@@ -601,6 +724,7 @@ describe('MeClientsController with auth', () => {
           AppModule,
           SequelizeConfigService,
           user: currentUser,
+          dbType: 'postgres',
         })
         const server = request(app.getHttpServer())
         await createTestClientData(app, user)
@@ -642,6 +766,7 @@ describe('MeClientsController with auth', () => {
           AppModule,
           SequelizeConfigService,
           user: currentUser,
+          dbType: 'postgres',
         })
         const server = request(app.getHttpServer())
         await createTestClientData(app, user)
@@ -676,6 +801,7 @@ describe('MeClientsController with auth', () => {
           AppModule,
           SequelizeConfigService,
           user: currentUser,
+          dbType: 'postgres',
         })
         const server = request(app.getHttpServer())
         const expected = await createTestClientData(app, user)
@@ -690,6 +816,7 @@ describe('MeClientsController with auth', () => {
           allowOfflineAccess: true,
           requirePkce: true,
           supportTokenExchange: true,
+          singleSession: true,
           accessTokenLifetime: 3600,
           customClaims: [
             {

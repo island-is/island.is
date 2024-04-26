@@ -12,6 +12,7 @@ import {
   Tooltip,
 } from '@island.is/island-ui/core'
 import * as constants from '@island.is/judicial-system/consts'
+import { getLatestDateType } from '@island.is/judicial-system/types'
 import {
   closedCourt,
   core,
@@ -27,12 +28,14 @@ import {
   FormContext,
   FormFooter,
   HideableText,
+  PageHeader,
   PageLayout,
   PdfButton,
 } from '@island.is/judicial-system-web/src/components'
-import PageHeader from '@island.is/judicial-system-web/src/components/PageHeader/PageHeader'
 import {
   CaseType,
+  DateLog,
+  DateType,
   SessionArrangements,
 } from '@island.is/judicial-system-web/src/graphql/schema'
 import { TempCase as Case } from '@island.is/judicial-system-web/src/types'
@@ -41,11 +44,11 @@ import {
   validateAndSendToServer,
 } from '@island.is/judicial-system-web/src/utils/formHelper'
 import {
+  formatDateForServer,
   useCase,
   useDeb,
   useOnceOn,
 } from '@island.is/judicial-system-web/src/utils/hooks'
-import { formatDateForServer } from '@island.is/judicial-system-web/src/utils/hooks/useCase'
 import {
   isCourtRecordStepValidIC,
   Validation,
@@ -114,6 +117,10 @@ const CourtRecord = () => {
 
   const initialize = useCallback(() => {
     const autofillAttendees = []
+    const courtDate = getLatestDateType(
+      DateType.COURT_DATE,
+      workingCase.dateLogs,
+    ) as DateLog
 
     if (workingCase.sessionArrangements === SessionArrangements.NONE_PRESENT) {
       autofillAttendees.push(formatMessage(core.sessionArrangementsNonePresent))
@@ -157,11 +164,12 @@ const CourtRecord = () => {
         }
       }
     }
+
     setAndSendCaseToServer(
       [
         {
-          courtStartDate: workingCase.courtDate,
-          courtLocation: workingCase.court
+          courtStartDate: courtDate?.date,
+          courtLocation: workingCase.court?.name
             ? `í ${
                 workingCase.court.name.indexOf('dómur') > -1
                   ? workingCase.court.name.replace('dómur', 'dómi')
@@ -276,7 +284,6 @@ const CourtRecord = () => {
                   'courtLocation',
                   event.target.value,
                   ['empty'],
-                  workingCase,
                   setWorkingCase,
                   courtLocationEM,
                   setCourtLocationEM,
@@ -330,7 +337,6 @@ const CourtRecord = () => {
                 'courtAttendees',
                 event.target.value,
                 [],
-                workingCase,
                 setWorkingCase,
               )
             }
@@ -371,7 +377,6 @@ const CourtRecord = () => {
                   'sessionBookings',
                   event.target.value,
                   sessionBookingValidation,
-                  workingCase,
                   setWorkingCase,
                   sessionBookingsErrorMessage,
                   setSessionBookingsMessage,
@@ -434,7 +439,6 @@ const CourtRecord = () => {
                   'endOfSessionBookings',
                   event.target.value,
                   [],
-                  workingCase,
                   setWorkingCase,
                 )
               }
@@ -476,19 +480,18 @@ const CourtRecord = () => {
                   maxDate={new Date()}
                   selectedDate={workingCase.courtEndTime}
                   onChange={(date: Date | undefined, valid: boolean) => {
-                    setAndSendCaseToServer(
-                      [
-                        {
-                          courtEndTime:
-                            date && valid
-                              ? formatDateForServer(date)
-                              : undefined,
-                          force: true,
-                        },
-                      ],
-                      workingCase,
-                      setWorkingCase,
-                    )
+                    if (date && valid) {
+                      setAndSendCaseToServer(
+                        [
+                          {
+                            courtEndTime: formatDateForServer(date),
+                            force: true,
+                          },
+                        ],
+                        workingCase,
+                        setWorkingCase,
+                      )
+                    }
                   }}
                   blueBox={false}
                   required

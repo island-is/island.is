@@ -23,13 +23,13 @@ import { InsuranceOverviewResponse } from './models/insuranceOverview.response'
 @FeatureFlag(Features.servicePortalHealthRightsModule)
 @FeatureFlag(Features.servicePortalHealthOverviewPage)
 @Audit({ namespace: '@island.is/api/rights-portal/overview' })
+@Scopes(ApiScope.healthRightsStatus)
 export class OverviewResolver {
   constructor(private readonly service: OverviewService) {}
 
   @Query(() => InsuranceConfirmationResponse, {
     name: 'rightsPortalInsuranceConfirmation',
   })
-  @Scopes(ApiScope.health)
   @Audit()
   async getInsuranceConfirmation(
     @CurrentUser() user: User,
@@ -40,7 +40,6 @@ export class OverviewResolver {
   @Query(() => InsuranceOverviewResponse, {
     name: 'rightsPortalInsuranceOverview',
   })
-  @Scopes(ApiScope.health)
   @Audit()
   async getInsuranceOverview(
     @CurrentUser() user: User,

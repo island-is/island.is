@@ -12,4 +12,9 @@ export interface NationalRegistryIndividual {
   } | null
   address: Address | null
   genderCode: string
+  maritalTitle?: {
+    code?: string | null
+    description?: string | null
+  } | null
+  birthDate: Date
 }

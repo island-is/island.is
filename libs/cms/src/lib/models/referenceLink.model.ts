@@ -34,7 +34,7 @@ export const mapReferenceLink = ({
   }
 
   return {
-    slug: slugValue,
+    slug: slugValue.trim(),
     type: typeMap[sys.contentType.sys.id] ?? sys.contentType.sys.id,
   }
 }

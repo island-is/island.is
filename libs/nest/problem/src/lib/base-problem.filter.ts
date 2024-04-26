@@ -1,4 +1,9 @@
-import { ArgumentsHost, ExceptionFilter, Inject } from '@nestjs/common'
+import {
+  ArgumentsHost,
+  ExceptionFilter,
+  HttpException,
+  Inject,
+} from '@nestjs/common'
 import { ApolloError } from 'apollo-server-express'
 import { Response } from 'express'
 
@@ -9,6 +14,9 @@ import { Problem, ProblemType } from '@island.is/shared/problem'
 import { ProblemError } from './ProblemError'
 import { PROBLEM_OPTIONS } from './problem.options'
 import type { ProblemOptions } from './problem.options'
+
+// Add a URL to this array to bypass the error filter and the ProblemJSON transformation
+export const BYPASS_ERROR_FILTER_URLS = ['/health/check']
 
 export abstract class BaseProblemFilter implements ExceptionFilter {
   private readonly logger: Logger
@@ -33,7 +41,7 @@ export abstract class BaseProblemFilter implements ExceptionFilter {
     if ((host.getType() as string) === 'graphql') {
       this.catchGraphQLError(error, problem)
     } else {
-      this.catchRestError(host, problem)
+      this.catchRestError(host, error, problem)
     }
   }
 
@@ -46,11 +54,22 @@ export abstract class BaseProblemFilter implements ExceptionFilter {
     }
   }
 
-  catchRestError(host: ArgumentsHost, problem: Problem) {
+  catchRestError(host: ArgumentsHost, error: Error, problem: Problem) {
     const ctx = host.switchToHttp()
+    const request = ctx.getRequest<Request>()
     const response = ctx.getResponse<Response>()
 
     response.status(problem.status || 500)
+
+    // Only bypass ProblemJSON for whitelisted urls that throws a HttpException
+    if (
+      BYPASS_ERROR_FILTER_URLS.some((url) => request.url.includes(url)) &&
+      error instanceof HttpException
+    ) {
+      response.json(error.getResponse())
+      return
+    }
+
     response.statusMessage = problem.title
 
     if (problem.type === ProblemType.HTTP_NO_CONTENT) {

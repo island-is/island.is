@@ -119,7 +119,7 @@ export const createClient =
     const client = getClientFields(options)
     const grantTypes: GrantType[] =
       options.grantTypes ??
-      (['spa', 'native'].includes(options.clientType)
+      (['spa', 'native', 'web'].includes(options.clientType)
         ? ['authorization_code']
         : ['client_credentials'])
 

@@ -1,26 +1,28 @@
-import {Content, dynamicColor, Header, NavigationBarSheet} from '@ui';
-import React from 'react';
-import {FormattedDate} from 'react-intl';
-import {Navigation, NavigationFunctionComponent} from 'react-native-navigation';
-import styled from 'styled-components/native';
-import {createNavigationOptionHooks} from '../../hooks/create-navigation-option-hooks';
-import {useIntl} from 'react-intl';
+import { Content, dynamicColor, Header, NavigationBarSheet } from '@ui'
+import React from 'react'
+import { FormattedDate, useIntl } from 'react-intl'
+import {
+  Navigation,
+  NavigationFunctionComponent,
+} from 'react-native-navigation'
+import styled from 'styled-components/native'
+import { createNavigationOptionHooks } from '../../hooks/create-navigation-option-hooks'
 import {
   actionsForNotification,
   useNotificationsStore,
-} from '../../stores/notifications-store';
-import {useOrganizationsStore} from '../../stores/organizations-store';
-import {testIDs} from '../../utils/test-ids';
+} from '../../stores/notifications-store'
+import { useOrganizationsStore } from '../../stores/organizations-store'
+import { testIDs } from '../../utils/test-ids'
 
 interface NotificationDetailScreenProps {
-  id: string;
+  id: string
 }
 
 const Host = styled.SafeAreaView`
   margin-left: 24px;
   margin-right: 24px;
   flex: 1;
-`;
+`
 
 const Actions = styled.View`
   flex-direction: row;
@@ -30,40 +32,40 @@ const Actions = styled.View`
 
   border-top-width: 1px;
   border-top-color: ${dynamicColor(
-    props => ({
+    (props) => ({
       dark: props.theme.shades.dark.shade200,
       light: props.theme.color.blue100,
     }),
     true,
   )};
-`;
+`
 
 const Action = styled.Button`
   flex: 1;
-`;
+`
 
-const {useNavigationOptions, getNavigationOptions} =
+const { useNavigationOptions, getNavigationOptions } =
   createNavigationOptionHooks(() => ({
     topBar: {
       visible: false,
     },
-  }));
+  }))
 
 export const NotificationDetailScreen: NavigationFunctionComponent<
   NotificationDetailScreenProps
-> = ({componentId, id}) => {
-  useNavigationOptions(componentId);
-  const intl = useIntl();
-  const {items} = useNotificationsStore();
-  const {getOrganizationLogoUrl} = useOrganizationsStore();
-  const notification = items.get(id)!;
-  const actions = actionsForNotification(notification, componentId);
+> = ({ componentId, id }) => {
+  useNavigationOptions(componentId)
+  const intl = useIntl()
+  const { items } = useNotificationsStore()
+  const { getOrganizationLogoUrl } = useOrganizationsStore()
+  const notification = items.get(id)!
+  const actions = actionsForNotification(notification, componentId)
 
   return (
     <Host testID={testIDs.SCREEN_NOTIFICATION_DETAIL}>
       <NavigationBarSheet
         componentId={componentId}
-        title={intl.formatMessage({id: 'notificationDetail.screenTitle'})}
+        title={intl.formatMessage({ id: 'notificationDetail.screenTitle' })}
         onClosePress={() => Navigation.dismissModal(componentId)}
       />
       <Header
@@ -80,7 +82,7 @@ export const NotificationDetailScreen: NavigationFunctionComponent<
         </Actions>
       )}
     </Host>
-  );
-};
+  )
+}
 
-NotificationDetailScreen.options = getNavigationOptions;
+NotificationDetailScreen.options = getNavigationOptions

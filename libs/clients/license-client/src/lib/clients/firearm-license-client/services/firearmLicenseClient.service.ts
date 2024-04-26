@@ -13,15 +13,20 @@ import compareAsc from 'date-fns/compareAsc'
 import {
   LicenseClient,
   LicensePkPassAvailability,
-  PkPassVerification,
+  LicenseType,
   PkPassVerificationInputData,
+  VerifyPkPassResult,
 } from '../../../licenseClient.type'
 import { FirearmLicenseDto } from '../firearmLicenseClient.type'
 import { createPkPassDataInput } from '../firearmLicenseMapper'
+
 /** Category to attach each log message to */
 const LOG_CATEGORY = 'firearmlicense-service'
+
 @Injectable()
-export class FirearmLicenseClient implements LicenseClient<FirearmLicenseDto> {
+export class FirearmLicenseClient
+  implements LicenseClient<LicenseType.FirearmLicense>
+{
   constructor(
     @Inject(LOGGER_PROVIDER) private logger: Logger,
     private firearmApi: FirearmApi,
@@ -29,6 +34,7 @@ export class FirearmLicenseClient implements LicenseClient<FirearmLicenseDto> {
   ) {}
 
   clientSupportsPkPass = true
+  type = LicenseType.FirearmLicense
 
   private checkLicenseValidityForPkPass(
     data: FirearmLicenseDto,
@@ -115,11 +121,25 @@ export class FirearmLicenseClient implements LicenseClient<FirearmLicenseDto> {
     }
   }
 
-  licenseIsValidForPkPass(payload: unknown): LicensePkPassAvailability {
-    return this.checkLicenseValidityForPkPass(payload as FirearmLicenseDto)
+  licenseIsValidForPkPass(
+    payload: unknown,
+  ): Promise<LicensePkPassAvailability> {
+    if (typeof payload === 'string') {
+      let jsonLicense: FirearmLicenseDto
+      try {
+        jsonLicense = JSON.parse(payload)
+      } catch (e) {
+        this.logger.warn('Invalid raw data', { error: e, LOG_CATEGORY })
+        return Promise.resolve(LicensePkPassAvailability.Unknown)
+      }
+      return Promise.resolve(this.checkLicenseValidityForPkPass(jsonLicense))
+    }
+    return Promise.resolve(
+      this.checkLicenseValidityForPkPass(payload as FirearmLicenseDto),
+    )
   }
 
-  async getLicense(user: User): Promise<Result<FirearmLicenseDto | null>> {
+  async getLicenses(user: User): Promise<Result<Array<FirearmLicenseDto>>> {
     const licenseData = await this.fetchLicenseData(user)
     if (!licenseData.ok) {
       return {
@@ -131,21 +151,10 @@ export class FirearmLicenseClient implements LicenseClient<FirearmLicenseDto> {
       }
     }
 
-    //the user ain't got no license
-    if (!licenseData.data.licenseInfo) {
-      return {
-        ok: true,
-        data: null,
-      }
+    return {
+      ok: true,
+      data: licenseData.data ? [licenseData.data] : [],
     }
-
-    return licenseData
-  }
-
-  async getLicenseDetail(
-    user: User,
-  ): Promise<Result<FirearmLicenseDto | null>> {
-    return this.getLicense(user)
   }
 
   private async createPkPassPayload(
@@ -193,7 +202,7 @@ export class FirearmLicenseClient implements LicenseClient<FirearmLicenseDto> {
       }
     }
 
-    const valid = this.licenseIsValidForPkPass(license.data)
+    const valid = await this.licenseIsValidForPkPass(license.data)
 
     if (!valid) {
       return {
@@ -280,7 +289,10 @@ export class FirearmLicenseClient implements LicenseClient<FirearmLicenseDto> {
       data: res.data.distributionUrl,
     }
   }
-  async verifyPkPass(data: string): Promise<Result<PkPassVerification>> {
+
+  async verifyPkPass(
+    data: string,
+  ): Promise<Result<VerifyPkPassResult<LicenseType.FirearmLicense>>> {
     const { code, date } = JSON.parse(data) as PkPassVerificationInputData
     const result = await this.smartApi.verifyPkPass({ code, date })
 
@@ -296,7 +308,9 @@ export class FirearmLicenseClient implements LicenseClient<FirearmLicenseDto> {
 
     return {
       ok: true,
-      data: result.data,
+      data: {
+        valid: result.data.valid,
+      },
     }
   }
 }

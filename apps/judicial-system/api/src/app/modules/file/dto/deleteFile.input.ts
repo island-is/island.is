@@ -2,10 +2,8 @@ import { Allow } from 'class-validator'
 
 import { Field, InputType } from '@nestjs/graphql'
 
-import type { DeleteFile } from '@island.is/judicial-system/types'
-
 @InputType()
-export class DeleteFileInput implements DeleteFile {
+export class DeleteFileInput {
   @Allow()
   @Field()
   readonly id!: string

@@ -2,45 +2,58 @@ import React, { useEffect, useState } from 'react'
 import compareAsc from 'date-fns/compareAsc'
 
 import { Box, Input } from '@island.is/island-ui/core'
-import { NotificationType } from '@island.is/judicial-system/types'
+import { getLatestDateType } from '@island.is/judicial-system/types'
+import {
+  BlueBox,
+  DateTime,
+} from '@island.is/judicial-system-web/src/components'
+import {
+  DateLog,
+  DateType,
+  NotificationType,
+} from '@island.is/judicial-system-web/src/graphql/schema'
 import { TempCase as Case } from '@island.is/judicial-system-web/src/types'
-
 import {
   removeTabsValidateAndSet,
   validateAndSendToServer,
-} from '../../utils/formHelper'
-import { useCase } from '../../utils/hooks'
-import { formatDateForServer } from '../../utils/hooks/useCase'
-import { hasSentNotification } from '../../utils/stepHelper'
-import BlueBox from '../BlueBox/BlueBox'
-import DateTime from '../DateTime/DateTime'
+} from '@island.is/judicial-system-web/src/utils/formHelper'
+import {
+  formatDateForServer,
+  useCase,
+} from '@island.is/judicial-system-web/src/utils/hooks'
+import { hasSentNotification } from '@island.is/judicial-system-web/src/utils/stepHelper'
 
 interface Props {
   workingCase: Case
   setWorkingCase: React.Dispatch<React.SetStateAction<Case>>
   handleCourtDateChange: (date: Date | undefined, valid: boolean) => void
-  selectedCourtDate?: string
+  selectedCourtDate?: string | null
 }
 
 export const useCourtArrangements = (workingCase: Case) => {
-  const [courtDate, setCourtDate] = useState<string>()
+  const [courtDate, setCourtDate] = useState<string | null>()
   const [courtDateHasChanged, setCourtDateHasChanged] = useState(false)
+  const latestCourtDate = getLatestDateType(
+    DateType.COURT_DATE,
+    workingCase.dateLogs,
+  ) as DateLog
 
   useEffect(() => {
-    if (workingCase.courtDate) {
-      setCourtDate(workingCase.courtDate)
+    if (latestCourtDate) {
+      setCourtDate(latestCourtDate.date)
     }
-  }, [workingCase.courtDate])
+  }, [latestCourtDate])
 
   const handleCourtDateChange = (date: Date | undefined, valid: boolean) => {
     if (date && valid) {
       if (
-        workingCase.courtDate &&
-        compareAsc(date, new Date(workingCase.courtDate)) !== 0 &&
+        latestCourtDate &&
+        latestCourtDate.date &&
+        compareAsc(date, new Date(latestCourtDate.date)) !== 0 &&
         hasSentNotification(
           NotificationType.COURT_DATE,
           workingCase.notifications,
-        )
+        ).hasSent
       ) {
         setCourtDateHasChanged(true)
       }
@@ -97,7 +110,6 @@ export const CourtArrangements: React.FC<React.PropsWithChildren<Props>> = (
             'courtRoom',
             event.target.value,
             [],
-            workingCase,
             setWorkingCase,
           )
         }

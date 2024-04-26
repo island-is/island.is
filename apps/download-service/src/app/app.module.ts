@@ -1,7 +1,10 @@
 import { Module } from '@nestjs/common'
 
 import { AuthModule } from '@island.is/auth-nest-tools'
-import { DocumentsClientModule } from '@island.is/clients/documents'
+import {
+  DocumentsClientModule,
+  DocumentClientConfig,
+} from '@island.is/clients/documents'
 import {
   FinanceClientConfig,
   FinanceClientModule,
@@ -43,7 +46,11 @@ import {
   WorkMachinesClientConfig,
   WorkMachinesClientModule,
 } from '@island.is/clients/work-machines'
-
+import { HealthPaymentsOverviewController } from './modules/health/payment-overview-documents.controller'
+import {
+  RightsPortalClientConfig,
+  RightsPortalClientModule,
+} from '@island.is/clients/icelandic-health-insurance/rights-portal'
 @Module({
   controllers: [
     DocumentController,
@@ -54,16 +61,12 @@ import {
     RegulationDocumentsController,
     WorkMachinesController,
     OccupationalLicensesEducationController,
+    HealthPaymentsOverviewController,
   ],
   imports: [
     AuditModule.forRoot(environment.audit),
     AuthModule.register(environment.auth),
-    DocumentsClientModule.register({
-      basePath: environment.documentService.basePath,
-      clientId: environment.documentService.clientId,
-      clientSecret: environment.documentService.clientSecret,
-      tokenUrl: environment.documentService.tokenUrl,
-    }),
+    DocumentsClientModule,
     FinanceClientModule,
     VehiclesClientModule,
     UniversityOfIcelandClientModule,
@@ -71,6 +74,7 @@ import {
     RegulationsClientModule,
     WorkMachinesClientModule,
     MMSClientModule,
+    RightsPortalClientModule,
     ConfigModule.forRoot({
       isGlobal: true,
       load: [
@@ -83,6 +87,8 @@ import {
         RegulationsClientConfig,
         WorkMachinesClientConfig,
         MMSClientConfig,
+        RightsPortalClientConfig,
+        DocumentClientConfig,
       ],
     }),
   ],

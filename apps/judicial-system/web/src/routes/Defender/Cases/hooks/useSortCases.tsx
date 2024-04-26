@@ -1,6 +1,6 @@
 import { useMemo, useState } from 'react'
 
-import { CaseListEntry } from '@island.is/judicial-system/types'
+import { CaseListEntry } from '@island.is/judicial-system-web/src/graphql/schema'
 
 const useSortCases = (
   defaultColumn: string,
@@ -40,7 +40,7 @@ const useSortCases = (
           ) {
             return entry.defendants[0].name ?? ''
           }
-          return entry.created
+          return entry.created ?? ''
         }
 
         const compareResult = getColumnValue(a).localeCompare(getColumnValue(b))

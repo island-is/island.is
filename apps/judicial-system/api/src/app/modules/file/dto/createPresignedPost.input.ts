@@ -2,10 +2,8 @@ import { Allow } from 'class-validator'
 
 import { Field, InputType } from '@nestjs/graphql'
 
-import type { CreatePresignedPost } from '@island.is/judicial-system/types'
-
 @InputType()
-export class CreatePresignedPostInput implements CreatePresignedPost {
+export class CreatePresignedPostInput {
   @Allow()
   @Field()
   readonly caseId!: string

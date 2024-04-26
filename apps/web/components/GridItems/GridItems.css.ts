@@ -1,4 +1,5 @@
 import { style } from '@vanilla-extract/css'
+
 import { theme, themeUtils } from '@island.is/island-ui/theme'
 
 export const gridContainer = style({
@@ -53,6 +54,24 @@ export const half = style({
     },
     xl: {
       gridTemplateColumns: 'repeat(2, 1fr)',
+    },
+  }),
+})
+
+export const quarter = style({
+  gridTemplateColumns: 'repeat(4, 1fr)',
+  ...themeUtils.responsiveStyle({
+    xs: {
+      width: theme.breakpoints.sm + 70,
+    },
+    sm: {
+      gridTemplateColumns: 'repeat(4, 1fr)',
+    },
+    lg: {
+      gridTemplateColumns: 'repeat(4, 1fr)',
+    },
+    xl: {
+      gridTemplateColumns: 'repeat(4, 1fr)',
     },
   }),
 })

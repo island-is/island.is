@@ -38,7 +38,11 @@ export const ManualHeader = ({ manual, namespace }: ManualHeaderProps) => {
     if (!searchValue) {
       return
     }
-    router.push(linkResolver('search').href + '?q=' + searchValue)
+    router.push(
+      `${
+        linkResolver('search').href
+      }?q=${searchValue}&type=webManualChapterItem&referencedBy=${manual?.id}`,
+    )
   }
 
   const lastUpdatedDate = useMemo(() => {
@@ -46,17 +50,32 @@ export const ManualHeader = ({ manual, namespace }: ManualHeaderProps) => {
     return date ? format(date, 'do MMMM yyyy') : ''
   }, [format, manual])
 
+  const breadcrumbItems = [
+    {
+      title: 'Ísland.is',
+      href: activeLocale === 'is' ? '/' : '/en',
+    },
+  ]
+
+  if (manual?.category?.slug) {
+    breadcrumbItems.push({
+      title: manual.category.title,
+      href: linkResolver('articlecategory', [manual.category.slug]).href,
+    })
+    if (manual.group?.slug) {
+      breadcrumbItems.push({
+        title: manual.group.title,
+        href: linkResolver('articlegroup', [
+          manual.category.slug,
+          manual.group.slug,
+        ]).href,
+      })
+    }
+  }
+
   return (
     <Stack space={3}>
-      <Breadcrumbs
-        items={[
-          {
-            title: 'Ísland.is',
-            href: activeLocale === 'is' ? '/' : '/en',
-          },
-        ]}
-      />
-
+      <Breadcrumbs items={breadcrumbItems} />
       <Text variant="h1" as="h1">
         {manual?.title}
       </Text>

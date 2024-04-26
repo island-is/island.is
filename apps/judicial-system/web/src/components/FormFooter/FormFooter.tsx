@@ -2,7 +2,7 @@ import React from 'react'
 import { useIntl } from 'react-intl'
 import { useWindowSize } from 'react-use'
 import cn from 'classnames'
-import { useRouter } from 'next/router'
+import router from 'next/router'
 
 import {
   Box,
@@ -28,14 +28,18 @@ interface Props {
   nextButtonColorScheme?: ButtonTypes['colorScheme']
   onNextButtonClick?: () => void
   hideNextButton?: boolean
+  actionButtonText?: string
+  actionButtonColorScheme?: 'destructive'
+  actionButtonIsDisabled?: boolean
+  onActionButtonClick?: () => void
   infoBoxText?: string
 }
 
 const FormFooter: React.FC<React.PropsWithChildren<Props>> = (props: Props) => {
-  const router = useRouter()
   const { formatMessage } = useIntl()
   const { width } = useWindowSize()
   const isMobile = width <= theme.breakpoints.md
+  const isTablet = width <= theme.breakpoints.lg && width > theme.breakpoints.md
 
   return (
     <Box
@@ -62,6 +66,19 @@ const FormFooter: React.FC<React.PropsWithChildren<Props>> = (props: Props) => {
           {!isMobile && (props.previousButtonText || formatMessage(core.back))}
         </Button>
       </Box>
+      {props.actionButtonText && (
+        <Box className={cn(styles.button, styles.actionButton)}>
+          <Button
+            onClick={props.onActionButtonClick}
+            variant="ghost"
+            colorScheme={props.actionButtonColorScheme ?? 'destructive'}
+            disabled={props.actionButtonIsDisabled}
+            fluid={isTablet}
+          >
+            {props.actionButtonText}
+          </Button>
+        </Box>
+      )}
       {(!props.hideNextButton || props.infoBoxText) && (
         <Box
           display="flex"

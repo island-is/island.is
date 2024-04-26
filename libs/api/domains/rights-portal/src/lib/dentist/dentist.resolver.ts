@@ -31,7 +31,7 @@ export class DentistResolver {
   constructor(private readonly service: DentistService) {}
 
   @FeatureFlag(Features.servicePortalHealthCenterDentistPage)
-  @Scopes(ApiScope.health)
+  @Scopes(ApiScope.healthDentists)
   @Query(() => DentistRegistration, {
     name: 'rightsPortalUserDentistRegistration',
     nullable: true,
@@ -53,7 +53,7 @@ export class DentistResolver {
   }
 
   @FeatureFlag(Features.servicePortalHealthCenterDentistPage)
-  @Scopes(ApiScope.health)
+  @Scopes(ApiScope.healthDentists)
   @Query(() => DentistStatus, {
     name: 'rightsPortalDentistStatus',
     nullable: true,
@@ -64,7 +64,7 @@ export class DentistResolver {
   }
 
   @FeatureFlag(Features.servicePortalHealthCenterDentistPage)
-  @Scopes(ApiScope.health)
+  @Scopes(ApiScope.healthDentists)
   @Query(() => DentistStatus, {
     name: 'rightsPortalCurrentDentist',
     nullable: true,
@@ -74,7 +74,7 @@ export class DentistResolver {
     return this.service.getDentistStatus(user)
   }
 
-  @Scopes(ApiScope.health)
+  @Scopes(ApiScope.healthDentists)
   @Mutation(() => DentistRegisterResponse, {
     name: 'rightsPortalRegisterDentist',
   })
@@ -87,7 +87,7 @@ export class DentistResolver {
   }
 
   @FeatureFlag(Features.servicePortalHealthCenterDentistPage)
-  @Scopes(ApiScope.health)
+  @Scopes(ApiScope.healthDentists)
   @Query(() => PaginatedDentistsResponse, {
     name: 'rightsPortalPaginatedDentists',
     nullable: true,

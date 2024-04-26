@@ -1,14 +1,10 @@
-import { Field, ObjectType } from '@nestjs/graphql'
-
-import type { UploadPoliceCaseFileResponse as TUploadPoliceCaseFileResponse } from '@island.is/judicial-system/types'
+import { Field, Int, ObjectType } from '@nestjs/graphql'
 
 @ObjectType()
-export class UploadPoliceCaseFileResponse
-  implements TUploadPoliceCaseFileResponse
-{
+export class UploadPoliceCaseFileResponse {
   @Field()
   key!: string
 
-  @Field()
+  @Field(() => Int)
   size!: number
 }

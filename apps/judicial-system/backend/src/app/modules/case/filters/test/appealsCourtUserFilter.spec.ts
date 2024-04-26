@@ -1,19 +1,20 @@
 import {
-  appealsCourtRoles,
   CaseAppealState,
   CaseState,
   CaseType,
   completedCaseStates,
+  courtOfAppealsRoles,
   InstitutionType,
   investigationCases,
   restrictionCases,
   User,
 } from '@island.is/judicial-system/types'
 
-import { Case } from '../..'
+import { nowFactory } from '../../../../factories'
+import { Case } from '../../models/case.model'
 import { verifyFullAccess, verifyNoAccess } from './verify'
 
-describe.each(appealsCourtRoles)('appeals court user %s', (role) => {
+describe.each(courtOfAppealsRoles)('appeals court user %s', (role) => {
   const user = {
     role,
     institution: { type: InstitutionType.COURT_OF_APPEALS },
@@ -48,6 +49,7 @@ describe.each(appealsCourtRoles)('appeals court user %s', (role) => {
       const accessibleCaseAppealStates = [
         CaseAppealState.RECEIVED,
         CaseAppealState.COMPLETED,
+        CaseAppealState.WITHDRAWN,
       ]
 
       describe.each(
@@ -63,7 +65,12 @@ describe.each(appealsCourtRoles)('appeals court user %s', (role) => {
       describe.each(accessibleCaseAppealStates)(
         'accessible case appeal state %s',
         (appealState) => {
-          const theCase = { type, state, appealState } as Case
+          const theCase = {
+            type,
+            state,
+            appealState,
+            appealReceivedByCourtDate: nowFactory(),
+          } as Case
 
           verifyFullAccess(theCase, user)
         },

@@ -1,19 +1,21 @@
 import { IntlFormatters } from 'react-intl'
 
 import {
-  CaseDecision,
-  CaseState,
   isIndictmentCase,
   isInvestigationCase,
 } from '@island.is/judicial-system/types'
 import { sections as m } from '@island.is/judicial-system-web/messages'
-import { CaseType } from '@island.is/judicial-system-web/src/graphql/schema'
+import {
+  CaseDecision,
+  CaseState,
+  CaseType,
+} from '@island.is/judicial-system-web/src/graphql/schema'
 import { TempCase as Case } from '@island.is/judicial-system-web/src/types'
 
 export const formatCaseResult = (
   formatMessage: IntlFormatters['formatMessage'],
   workingCase: Case,
-  caseResult: CaseState,
+  caseResult?: CaseState | null,
 ): string => {
   let caseType = workingCase.type
 

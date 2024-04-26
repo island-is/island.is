@@ -1,14 +1,17 @@
 import React, { useRef } from 'react'
+
 import {
-  Button,
-  Menu as MenuUI,
-  Link,
-  ButtonTypes,
   Box,
+  Button,
+  ButtonTypes,
+  Link,
+  Menu as MenuUI,
+  VisuallyHidden,
 } from '@island.is/island-ui/core'
-import { useI18n } from '@island.is/web/i18n'
-import { LinkResolverResponse } from '@island.is/web/hooks/useLinkResolver'
 import { SearchInput } from '@island.is/web/components'
+import { LinkResolverResponse } from '@island.is/web/hooks/useLinkResolver'
+import { useI18n } from '@island.is/web/i18n'
+
 import { LanguageToggler } from '../LanguageToggler'
 
 interface MegaMenuLink {
@@ -52,6 +55,9 @@ export const Menu = ({
       mainTitle={t.serviceCategories}
       asideBottomTitle={asideBottomTitle}
       myPagesText={t.login}
+      closeButtonLabel={activeLocale === 'is' ? 'Loka' : 'Close'}
+      expandButtonLabel={activeLocale === 'is' ? 'Opna allt' : 'Expand'}
+      collapseButtonLabel={activeLocale === 'is' ? 'Loka öllu' : 'Collapse'}
       renderDisclosure={(
         disclosureDefault,
         // eslint-disable-next-line @typescript-eslint/ban-ts-comment
@@ -75,7 +81,11 @@ export const Menu = ({
                     }
                   }, 100)
                 }}
-              />
+              >
+                <VisuallyHidden>
+                  {activeLocale === 'is' ? 'Leit' : 'Search'}
+                </VisuallyHidden>
+              </Button>
             </Box>
             {disclosureDefault}
           </Box>
@@ -133,7 +143,7 @@ export const Menu = ({
           activeLocale={activeLocale}
           placeholder={t.searchPlaceholder}
           autocomplete={true}
-          autosuggest={false}
+          autosuggest={true}
           onRouting={closeModal}
           skipContext
         />

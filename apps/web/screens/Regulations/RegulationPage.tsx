@@ -1,3 +1,6 @@
+import React from 'react'
+
+import { Text } from '@island.is/island-ui/core'
 import {
   ISODate,
   prettyName,
@@ -10,24 +13,22 @@ import {
   RegulationOriginalDates,
   RegulationViewTypes,
 } from '@island.is/regulations/web'
-import { RegulationPageTexts } from '../../components/Regulations/RegulationTexts.types'
-
-import React from 'react'
-import { Screen } from '@island.is/web/types'
-import { withMainLayout } from '@island.is/web/layouts/main'
-import { CustomNextError } from '@island.is/web/units/errors'
-import { RegulationRedirectMessage } from '../../components/Regulations/RegulationRedirectMessage'
-import { RegulationDisplay } from '../../components/Regulations/RegulationDisplay'
-import { getUiTexts } from '../../components/Regulations/getUiTexts'
+import { HeadWithSocialSharing } from '@island.is/web/components'
 import {
   GetRegulationQuery,
   QueryGetRegulationArgs,
   RegulationViewTypes as Schema_RegulationViewTypes,
 } from '@island.is/web/graphql/schema'
-import { GET_REGULATION_QUERY } from '../queries'
-import { Text } from '@island.is/island-ui/core'
-import { HeadWithSocialSharing } from '@island.is/web/components'
+import { withMainLayout } from '@island.is/web/layouts/main'
+import { Screen } from '@island.is/web/types'
+import { CustomNextError } from '@island.is/web/units/errors'
 import { safelyExtractPathnameFromUrl } from '@island.is/web/utils/safelyExtractPathnameFromUrl'
+
+import { getUiTexts } from '../../components/Regulations/getUiTexts'
+import { RegulationDisplay } from '../../components/Regulations/RegulationDisplay'
+import { RegulationRedirectMessage } from '../../components/Regulations/RegulationRedirectMessage'
+import { RegulationPageTexts } from '../../components/Regulations/RegulationTexts.types'
+import { GET_REGULATION_QUERY } from '../queries'
 
 // ---------------------------------------------------------------------------
 
@@ -215,30 +216,43 @@ RegulationPage.getProps = async ({ apolloClient, locale, query, res, req }) => {
     }
   }
 
-  const [texts, regulation] = await Promise.all([
-    getUiTexts<RegulationPageTexts>(apolloClient, locale, 'Regulations_Viewer'),
-    apolloClient
-      .query<GetRegulationQuery, QueryGetRegulationArgs>({
-        query: GET_REGULATION_QUERY,
-        variables: {
-          input: {
-            viewType: viewType as unknown as Schema_RegulationViewTypes,
-            name,
-            date,
-            isCustomDiff,
-            earlierDate,
-          },
-        },
-      })
-      .then(
-        (res) =>
-          res.data?.getRegulation as
-            | Regulation
-            | RegulationDiff
-            | RegulationRedirect
-            | undefined,
+  let regulation
+  let texts
+
+  try {
+    const [textsData, regulationData] = await Promise.all([
+      getUiTexts<RegulationPageTexts>(
+        apolloClient,
+        locale,
+        'Regulations_Viewer',
       ),
-  ])
+      apolloClient
+        .query<GetRegulationQuery, QueryGetRegulationArgs>({
+          query: GET_REGULATION_QUERY,
+          variables: {
+            input: {
+              viewType: viewType as unknown as Schema_RegulationViewTypes,
+              name,
+              date,
+              isCustomDiff,
+              earlierDate,
+            },
+          },
+        })
+        .then(
+          (res) =>
+            res.data?.getRegulation as
+              | Regulation
+              | RegulationDiff
+              | RegulationRedirect
+              | null,
+        ),
+    ])
+    texts = textsData
+    regulation = regulationData
+  } catch (error) {
+    throw new CustomNextError(404, 'Þessi reglugerð finnst ekki!')
+  }
 
   if (!regulation) {
     throw new CustomNextError(404, 'Þessi reglugerð finnst ekki!')

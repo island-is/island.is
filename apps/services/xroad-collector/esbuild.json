@@ -25,7 +25,8 @@
     "atob",
     "logform",
     "pg-native",
-    "form-data"
+    "form-data",
+    "@mikro-orm/core"
   ],
   "keepNames": true
 }

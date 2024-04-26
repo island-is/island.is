@@ -97,6 +97,7 @@ export const HOME_GET_CASES = gql`
         processBegins
         processEnds
         created
+        publishOnWeb
       }
     }
   }
@@ -143,6 +144,7 @@ export const CASE_GET_CASE_BY_ID = gql`
       oldInstitutionName
       extraStakeholderList
       statusName
+      publishOnWeb
       stakeholders {
         name
         email

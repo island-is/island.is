@@ -113,7 +113,7 @@ const HveFooter = ({ footerItems, namespace, logo, title }: HveFooterProps) => {
   )
 
   return (
-    <footer aria-labelledby="hve-footer">
+    <footer>
       <div className={styles.container}>
         <GridContainer>
           <GridColumn className={styles.mainColumn}>

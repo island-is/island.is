@@ -1,13 +1,14 @@
-import {TableViewCell, theme} from '@ui';
-import {Platform, ScrollView, Switch} from 'react-native';
-import {Navigation} from 'react-native-navigation';
-import {ComponentRegistry} from '../../utils/component-registry';
-import {useIntl} from 'react-intl';
-import {useEffect, useState} from 'react';
-import {PressableHighlight} from '../../components/pressable-highlight/pressable-highlight';
-import {createNavigationOptionHooks} from '../../hooks/create-navigation-option-hooks';
+import { TableViewCell, theme } from '@ui'
+import { useEffect, useState } from 'react'
+import { useIntl } from 'react-intl'
+import { Platform, ScrollView, Switch } from 'react-native'
+import { Navigation } from 'react-native-navigation'
+import { PressableHighlight } from '../../components/pressable-highlight/pressable-highlight'
+import { createNavigationOptionHooks } from '../../hooks/create-navigation-option-hooks'
+import { useOfflineUpdateNavigation } from '../../hooks/use-offline-update-navigation'
+import { ComponentRegistry } from '../../utils/component-registry'
 
-const {useNavigationOptions, getNavigationOptions} =
+const { useNavigationOptions, getNavigationOptions } =
   createNavigationOptionHooks((theme, intl) => ({
     topBar: {
       title: {
@@ -16,34 +17,38 @@ const {useNavigationOptions, getNavigationOptions} =
         }),
       },
     },
-  }));
-export function InboxFilterScreen(props: {
-  opened: boolean;
-  bookmarked: boolean;
-  archived: boolean;
-  componentId: string;
-}) {
-  const intl = useIntl();
-  const [opened, setOpened] = useState(props.opened);
-  const [bookmarked, setBookmarked] = useState(props.bookmarked);
-  const [archived, setArchived] = useState(props.archived);
+  }))
 
-  useNavigationOptions(props.componentId);
+export function InboxFilterScreen(props: {
+  opened: boolean
+  bookmarked: boolean
+  archived: boolean
+  componentId: string
+}) {
+  useOfflineUpdateNavigation(props.componentId)
+
+  const intl = useIntl()
+  const [opened, setOpened] = useState(props.opened)
+  const [bookmarked, setBookmarked] = useState(props.bookmarked)
+  const [archived, setArchived] = useState(props.archived)
+
+  useNavigationOptions(props.componentId)
 
   useEffect(() => {
     Navigation.updateProps(ComponentRegistry.InboxScreen, {
       opened,
       bookmarked,
       archived,
-    });
-  }, [opened, bookmarked, archived]);
+    })
+  }, [opened, bookmarked, archived])
 
   return (
-    <ScrollView style={{flex: 1}}>
+    <ScrollView style={{ flex: 1 }}>
       <PressableHighlight
         onPress={() => {
-          setOpened(!opened);
-        }}>
+          setOpened(!opened)
+        }}
+      >
         <TableViewCell
           title={intl.formatMessage({
             id: 'inboxFilters.unreadOnly',
@@ -52,7 +57,7 @@ export function InboxFilterScreen(props: {
             <Switch
               value={opened}
               onValueChange={() => setOpened(!opened)}
-              thumbColor={Platform.select({android: theme.color.dark100})}
+              thumbColor={Platform.select({ android: theme.color.dark100 })}
               trackColor={{
                 false: theme.color.dark200,
                 true: theme.color.blue400,
@@ -64,8 +69,9 @@ export function InboxFilterScreen(props: {
       </PressableHighlight>
       <PressableHighlight
         onPress={() => {
-          setBookmarked(!bookmarked);
-        }}>
+          setBookmarked(!bookmarked)
+        }}
+      >
         <TableViewCell
           title={intl.formatMessage({
             id: 'inboxFilters.starred',
@@ -74,7 +80,7 @@ export function InboxFilterScreen(props: {
             <Switch
               value={bookmarked}
               onValueChange={() => setBookmarked(!bookmarked)}
-              thumbColor={Platform.select({android: theme.color.dark100})}
+              thumbColor={Platform.select({ android: theme.color.dark100 })}
               trackColor={{
                 false: theme.color.dark200,
                 true: theme.color.blue400,
@@ -86,8 +92,9 @@ export function InboxFilterScreen(props: {
       </PressableHighlight>
       <PressableHighlight
         onPress={() => {
-          setArchived(!archived);
-        }}>
+          setArchived(!archived)
+        }}
+      >
         <TableViewCell
           title={intl.formatMessage({
             id: 'inboxFilters.archived',
@@ -96,7 +103,7 @@ export function InboxFilterScreen(props: {
             <Switch
               value={archived}
               onValueChange={() => setArchived(!archived)}
-              thumbColor={Platform.select({android: theme.color.dark100})}
+              thumbColor={Platform.select({ android: theme.color.dark100 })}
               trackColor={{
                 false: theme.color.dark200,
                 true: theme.color.blue400,
@@ -106,7 +113,7 @@ export function InboxFilterScreen(props: {
         />
       </PressableHighlight>
     </ScrollView>
-  );
+  )
 }
 
-InboxFilterScreen.options = getNavigationOptions;
+InboxFilterScreen.options = getNavigationOptions

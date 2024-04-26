@@ -116,7 +116,7 @@ const HeilbrigdisstofnunSudurlandsFooter = ({
   )
 
   return (
-    <footer aria-labelledby="heilbrigdisstofnun-sudurlands-footer">
+    <footer>
       <div className={styles.container}>
         <GridContainer>
           <GridColumn className={styles.mainColumn}>

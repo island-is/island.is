@@ -162,7 +162,6 @@ describe('DelegationsController', () => {
       })
 
       it(`GET ${path} returns correct scopes`, async () => {
-        console.log(testCase.delegationType)
         const res = await server.get(
           `${path}?fromNationalId=${
             testCase.fromNationalId
@@ -171,7 +170,7 @@ describe('DelegationsController', () => {
 
         expect(res.status).toEqual(200)
         expect(res.body).toHaveLength(testCase.expected.length)
-        expect(res.body).toEqual(testCase.expected)
+        expect(res.body.sort()).toEqual(testCase.expected.sort())
       })
     },
   )

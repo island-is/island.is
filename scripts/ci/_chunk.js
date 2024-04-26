@@ -2,7 +2,10 @@
 
 const chunkSize = parseInt(process.env['CHUNK_SIZE'] || '2')
 const projects = process.argv[2].split(',').map((s) => s.trim()) ?? []
-const problematicProjects = ['judicial-system-backend']
+const problematicProjects = [
+  'judicial-system-backend',
+  'application-system-api',
+]
 
 function groupbByPrefix(arr) {
   arr.sort()

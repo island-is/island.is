@@ -79,7 +79,7 @@ const MenuModal = ({ baseId, modalLabel, isLoggedIn, isFrontPage }: Props) => {
                           href="https://island.is/"
                           alignItems="center"
                         >
-                          <Logo iconOnly width={26} />
+                          <Logo width={28} height={28} iconOnly />
                         </FocusableBox>
                       ) : (
                         <FocusableBox href="/" alignItems="center">

@@ -33,8 +33,7 @@ import {
   CurrentVehiclesApi,
   InsuranceCompaniesApi,
 } from '../dataProviders'
-import { getChargeItemCodes, hasReviewerApproved } from '../utils'
-import { Features } from '@island.is/feature-flags'
+import { getChargeItemCodes, getExtraData, hasReviewerApproved } from '../utils'
 import { ApiScope } from '@island.is/auth/scopes'
 import { buildPaymentState } from '@island.is/application/utils'
 
@@ -96,7 +95,6 @@ const template: ApplicationTemplate<
     },
     {
       type: AuthDelegationType.Custom,
-      featureFlag: Features.transportAuthorityApplicationsCustomDelegation,
     },
   ],
   requiredScopes: [ApiScope.samgongustofaVehicles],
@@ -119,7 +117,6 @@ const template: ApplicationTemplate<
               },
             ],
           },
-          progress: 0.25,
           lifecycle: EphemeralStateLifeCycle,
           onExit: defineTemplateApi({
             action: ApiActions.validateApplication,
@@ -158,6 +155,7 @@ const template: ApplicationTemplate<
       [States.PAYMENT]: buildPaymentState({
         organizationId: InstitutionNationalIds.SAMGONGUSTOFA,
         chargeItemCodes: getChargeItemCodes(),
+        extraData: getExtraData,
         submitTarget: States.REVIEW,
         onExit: [
           defineTemplateApi({
@@ -192,7 +190,6 @@ const template: ApplicationTemplate<
             ],
             pendingAction: reviewStatePendingAction,
           },
-          progress: 0.65,
           lifecycle: {
             shouldBeListed: true,
             shouldBePruned: true,
@@ -271,7 +268,6 @@ const template: ApplicationTemplate<
         meta: {
           name: 'Rejected',
           status: 'rejected',
-          progress: 1,
           lifecycle: pruneAfterDays(3 * 30),
           onEntry: defineTemplateApi({
             action: ApiActions.rejectApplication,
@@ -314,7 +310,6 @@ const template: ApplicationTemplate<
         meta: {
           name: 'Completed',
           status: 'completed',
-          progress: 1,
           lifecycle: pruneAfterDays(3 * 30),
           onEntry: defineTemplateApi({
             action: ApiActions.submitApplication,
@@ -399,7 +394,7 @@ const template: ApplicationTemplate<
     buyerCoOwnerAndOperator
       ?.filter(({ wasRemoved }) => wasRemoved !== 'true')
       .map(({ nationalId }) => {
-        reviewerNationalIdList.push(nationalId!)
+        if (nationalId) reviewerNationalIdList.push(nationalId)
         return nationalId
       })
     if (id === application.applicant) {
@@ -446,7 +441,7 @@ const getNationalIdListOfReviewers = (application: Application) => {
     buyerCoOwnerAndOperator
       ?.filter(({ wasRemoved }) => wasRemoved !== 'true')
       .map(({ nationalId }) => {
-        reviewerNationalIdList.push(nationalId!)
+        if (nationalId) reviewerNationalIdList.push(nationalId)
         return nationalId
       })
     return reviewerNationalIdList

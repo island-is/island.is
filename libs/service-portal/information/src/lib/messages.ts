@@ -1,6 +1,15 @@
 import { defineMessages } from 'react-intl'
 
 export const spmm = defineMessages({
+  spouseIntro: {
+    id: 'sp.family:data-info-spouse',
+    defaultMessage: 'Hér fyrir neðan eru gögn um maka.',
+  },
+  childIntro: {
+    id: 'sp.family:data-info-child',
+    defaultMessage:
+      'Hér fyrir neðan eru gögn um fjölskyldumeðlim. Þú hefur kost á að gera breytingar á eftirfarandi upplýsingum ef þú kýst.',
+  },
   genderFemale: {
     id: 'sp.family:gender-female',
     defaultMessage: 'Kona',
@@ -33,9 +42,21 @@ export const spmm = defineMessages({
     id: 'sp.family:parent',
     defaultMessage: 'Foreldri',
   },
+  custodians: {
+    id: 'sp.family:custodians',
+    defaultMessage: 'Forsjáraðilar',
+  },
+  custodyStatus: {
+    id: 'sp.family:custody-status',
+    defaultMessage: 'Staða forsjár',
+  },
   spouse: {
     id: 'sp.family:spouse',
     defaultMessage: 'Maki',
+  },
+  spouseAccusative: {
+    id: 'sp.family:spouse-accusative',
+    defaultMessage: 'Maka',
   },
   maritalStatusDivorced: {
     id: 'sp.family:marital-status-divorced',
@@ -93,42 +114,9 @@ export const spmm = defineMessages({
     id: 'sp.family:user-famly-on-nr',
     defaultMessage: 'Einstaklingar með sömu lögheimilistengsl',
   },
-  childRegisterSuccess: {
-    id: 'sp.family:child-registration-generic-success',
-    defaultMessage: 'Athugasemd send til þjóðskrár',
-  },
-  childRegisterError: {
-    id: 'sp.family:child-registration-generic-error',
-    defaultMessage:
-      'Villa við innsendingu á formi. Vinsamlegast reynið aftur síðar',
-  },
   childRegisterModalButton: {
     id: 'sp.family:child-registration-modal-button',
     defaultMessage: 'Gera athugasemd við skráningu',
-  },
-  childRegisterRegistrationText: {
-    id: 'sp.family:child-registration-text',
-    defaultMessage: 'Athugasemdir vegna skráningar barns',
-  },
-  childRegisterParentName: {
-    id: 'sp.family:child-registration-parent-name',
-    defaultMessage: 'Nafn þess sem tilkynnir ranga skráningu: ',
-  },
-  childRegisterParentSSN: {
-    id: 'sp.family:child-registration-parent-id',
-    defaultMessage: 'Kennitala þess sem tilkynnir ranga skráningu: ',
-  },
-  childRegisterName: {
-    id: 'sp.family:child-registration-name',
-    defaultMessage: 'Nafn barns sem tilkynning á við: ',
-  },
-  childRegisterSSN: {
-    id: 'sp.family:child-registration-ssn',
-    defaultMessage: 'Kennitala barns sem tilkynning á við: ',
-  },
-  childRegisterSend: {
-    id: 'sp.family:child-registration-send',
-    defaultMessage: 'Senda tilkynningu',
   },
   givenName: {
     id: 'sp.family:person-given-name',
@@ -150,12 +138,32 @@ export const spmm = defineMessages({
     id: 'sp.family:see-info',
     defaultMessage: 'Skoða upplýsingar',
   },
+  editLink: {
+    id: 'sp.family:edit-link',
+    defaultMessage: 'Breyta hjá Þjóðskrá',
+  },
 })
 
 export const msg = defineMessages({
+  email: {
+    id: 'sp.settings:email',
+    defaultMessage: 'Netfang',
+  },
   saveEmail: {
     id: 'sp.settings:save-email',
     defaultMessage: 'Vista netfang',
+  },
+  add: {
+    id: 'sp.settings:add',
+    defaultMessage: 'Bæta við',
+  },
+  change: {
+    id: 'sp.settings:change',
+    defaultMessage: 'Breyta',
+  },
+  changeEmail: {
+    id: 'sp.settings:change-email',
+    defaultMessage: 'Breyta netfangi',
   },
   editEmailText: {
     id: 'sp.settings:edit-email-text',
@@ -165,6 +173,14 @@ export const msg = defineMessages({
   saveTel: {
     id: 'sp.settings:save-tel',
     defaultMessage: 'Vista símanúmer',
+  },
+  tel: {
+    id: 'sp.settings:tel',
+    defaultMessage: 'Símanúmer',
+  },
+  changeTel: {
+    id: 'sp.settings:change-tel',
+    defaultMessage: 'Breyta símanúmeri',
   },
   editTelText: {
     id: 'sp.settings:edit-tel-text',
@@ -308,6 +324,10 @@ export const urls = defineMessages({
   editBanmarking: {
     id: 'sp.family:url-edit-banmarking-adult',
     defaultMessage: 'https://www.skra.is/umsoknir/rafraen-skil/bannmerking/',
+  },
+  contactThjodskra: {
+    id: 'sp.family:contact-thjodskra',
+    defaultMessage: 'https://www.skra.is/um-okkur/hafa-samband/',
   },
 })
 

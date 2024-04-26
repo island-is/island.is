@@ -30,13 +30,14 @@
         "cwd": "libs/clients/criminal-record"
       }
     },
-    "schemas/external-openapi-generator": {
+    "codegen/backend-client": {
       "executor": "nx:run-commands",
       "options": {
         "commands": [
           "yarn openapi-generator -o libs/clients/criminal-record/gen/fetch -i libs/clients/criminal-record/src/clientConfig.json"
         ]
-      }
+      },
+      "outputs": ["{projectRoot}/gen/fetch"]
     }
   },
   "tags": ["lib:client", "scope:client"]

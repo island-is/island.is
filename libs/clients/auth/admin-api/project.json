@@ -3,7 +3,6 @@
   "$schema": "../../../../node_modules/nx/schemas/project-schema.json",
   "sourceRoot": "libs/clients/auth/admin-api/src",
   "projectType": "library",
-  "tags": ["lib:client"],
   "targets": {
     "lint": {
       "executor": "@nx/linter:eslint",
@@ -20,12 +19,14 @@
         "passWithNoTests": true
       }
     },
-    "schemas/openapi-generator": {
+    "codegen/backend-client": {
       "executor": "nx:run-commands",
       "options": {
         "command": "yarn openapi-generator -o libs/clients/auth/admin-api/gen/fetch -i apps/services/auth/admin-api/src/openapi.yaml --additional-properties=enumPropertyNaming=original"
       },
-      "outputs": ["{workspaceRoot}/libs/clients/auth/admin-api/gen"]
+      "outputs": ["{projectRoot}/gen/fetch"]
     }
-  }
+  },
+  "implicitDependencies": ["services-auth-admin-api"],
+  "tags": ["scope:client", "lib:client"]
 }

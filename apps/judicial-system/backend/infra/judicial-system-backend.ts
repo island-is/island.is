@@ -1,11 +1,6 @@
 import { ref, service, ServiceBuilder } from '../../../../infra/src/dsl/dsl'
 import { Base, JudicialSystem } from '../../../../infra/src/dsl/xroad'
 
-const postgresInfo = {
-  passwordSecret: '/k8s/judicial-system/DB_PASSWORD',
-  username: 'judicial_system',
-  name: 'judicial_system',
-}
 export const serviceSetup = (): ServiceBuilder<'judicial-system-backend'> =>
   service('judicial-system-backend')
     .namespace('judicial-system')
@@ -48,11 +43,15 @@ export const serviceSetup = (): ServiceBuilder<'judicial-system-backend'> =>
         staging: 'COURT,POLICE_CASE',
         prod: '',
       },
-      NO_UPDATE_NOTIFIER: 'true',
       NOVA_ACCEPT_UNAUTHORIZED: {
         dev: 'true',
         staging: 'false',
         prod: 'false',
+      },
+      USE_MICROSOFT_GRAPH_API_FOR_COURT_ROBOT: {
+        dev: 'false',
+        staging: 'true',
+        prod: 'true',
       },
     })
     .xroad(Base, JudicialSystem)
@@ -71,7 +70,6 @@ export const serviceSetup = (): ServiceBuilder<'judicial-system-backend'> =>
       EMAIL_REPLY_TO_NAME: '/k8s/judicial-system/EMAIL_REPLY_TO_NAME',
       PRISON_EMAIL: '/k8s/judicial-system/PRISON_EMAIL',
       PRISON_ADMIN_EMAIL: '/k8s/judicial-system/PRISON_ADMIN_EMAIL',
-      COURT_ROBOT_EMAIL: '/k8s/judicial-system/COURT_ROBOT_EMAIL',
       AUTH_JWT_SECRET: '/k8s/judicial-system/AUTH_JWT_SECRET',
       ADMIN_USERS: '/k8s/judicial-system/ADMIN_USERS',
       BACKEND_ACCESS_TOKEN: '/k8s/judicial-system/BACKEND_ACCESS_TOKEN',
@@ -79,17 +77,17 @@ export const serviceSetup = (): ServiceBuilder<'judicial-system-backend'> =>
       EVENT_URL: '/k8s/judicial-system/EVENT_URL',
       ERROR_EVENT_URL: '/k8s/judicial-system/ERROR_EVENT_URL',
       ARCHIVE_ENCRYPTION_KEY: '/k8s/judicial-system/ARCHIVE_ENCRYPTION_KEY',
-    })
-    .initContainer({
-      containers: [{ command: 'npx', args: ['sequelize-cli', 'db:migrate'] }],
-      postgres: postgresInfo,
-      envs: {
-        NO_UPDATE_NOTIFIER: 'true',
-      },
+      COURT_ROBOT_CLIENT_ID: '/k8s/judicial-system/COURT_ROBOT_CLIENT_ID',
+      COURT_ROBOT_TENANT_ID: '/k8s/judicial-system/COURT_ROBOT_TENANT_ID',
+      COURT_ROBOT_CLIENT_SECRET:
+        '/k8s/judicial-system/COURT_ROBOT_CLIENT_SECRET',
+      COURT_ROBOT_USER: '/k8s/judicial-system/COURT_ROBOT_USER',
+      COURT_ROBOT_EMAIL: '/k8s/judicial-system/COURT_ROBOT_EMAIL',
     })
     .liveness('/liveness')
     .readiness('/liveness')
-    .postgres(postgresInfo)
+    .db({ name: 'judicial-system' })
+    .migrations()
     .resources({
       requests: { cpu: '100m', memory: '512Mi' },
       limits: { cpu: '400m', memory: '1024Mi' },

@@ -27,7 +27,7 @@ export class OrganizationSubpage {
   url!: Array<string>
 
   @Field({ nullable: true })
-  intro!: string
+  intro?: string
 
   @CacheField(() => [SliceUnion], { nullable: true })
   description?: Array<typeof SliceUnion>
@@ -63,12 +63,13 @@ export const mapOrganizationSubpage = ({
 }: IOrganizationSubpage): OrganizationSubpage => ({
   id: sys.id,
   title: fields.title ?? '',
-  slug: fields.slug ?? '',
+  slug: (fields.slug ?? '').trim(),
   url: [fields.organizationPage?.fields?.slug, fields.slug],
   intro: fields.intro ?? '',
-  description: fields.description
-    ? mapDocument(fields.description, sys.id + ':content')
-    : [],
+  description:
+    fields.description && fields.sliceCustomRenderer !== 'SliceTableOfContents'
+      ? mapDocument(fields.description, sys.id + ':content')
+      : [],
   links: (fields.links ?? []).map(mapLink),
   slices: (fields.slices ?? []).map(safelyMapSliceUnion).filter(Boolean),
   showTableOfContents: fields.showTableOfContents ?? false,

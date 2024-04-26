@@ -9,16 +9,16 @@ export class CalculatorRequest {
 @InputType('RightsPortalCalculatorRequestInput')
 export class CalculatorRequestInput {
   @Field(() => Number, { nullable: true })
-  lineNumber?: number | null
+  lineNumber?: number
 
   @Field(() => String, { nullable: true })
   nordicCode?: string | null
 
   @Field(() => Number, { nullable: true })
-  units?: number | null
+  units?: number
 
   @Field(() => Number, { nullable: true })
-  price?: number | null
+  price?: number
 }
 
 @InputType('RightsPortalDrugCalculatorInput')

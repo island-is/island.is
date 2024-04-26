@@ -61,6 +61,66 @@ describe('Transition Case', () => {
     })
   })
 
+  describe('ask for confirmation', () => {
+    const allowedFromStates = [CaseState.DRAFT]
+    const allowedFromAppealStates = [undefined]
+
+    describe.each(allowedFromStates)('state %s', (fromState) => {
+      it.each(allowedFromAppealStates)(
+        'appeal state %s - should ask for confirmation',
+        (fromAppealState) => {
+          // Act
+          const res = transitionCase(
+            CaseTransition.ASK_FOR_CONFIRMATION,
+            fromState,
+            fromAppealState,
+          )
+
+          // Assert
+          expect(res).toEqual({ state: CaseState.WAITING_FOR_CONFIRMATION })
+        },
+      )
+
+      it.each(Object.values(CaseAppealState))(
+        'appeal state %s - should not ask for confirmation',
+        (fromAppealState) => {
+          // Arrange
+          const act = () =>
+            transitionCase(
+              CaseTransition.ASK_FOR_CONFIRMATION,
+              fromState,
+              fromAppealState,
+            )
+
+          // Act and assert
+          expect(act).toThrow(ForbiddenException)
+        },
+      )
+
+      describe.each(
+        Object.values(CaseState).filter(
+          (state) => !allowedFromStates.includes(state),
+        ),
+      )('state %s', (fromState) => {
+        it.each(Object.values(CaseAppealState))(
+          'appeal state %s - should not ask for confirmation',
+          (fromAppealState) => {
+            // Arrange
+            const act = () =>
+              transitionCase(
+                CaseTransition.ASK_FOR_CONFIRMATION,
+                fromState,
+                fromAppealState,
+              )
+
+            // Act and assert
+            expect(act).toThrow(ForbiddenException)
+          },
+        )
+      })
+    })
+  })
+
   describe('submit', () => {
     const allowedFromStates = [CaseState.DRAFT]
     const allowedFromAppealStates = [undefined]
@@ -113,7 +173,59 @@ describe('Transition Case', () => {
     })
   })
 
-  describe('reveive', () => {
+  describe('submit indictments', () => {
+    const allowedFromStates = [CaseState.WAITING_FOR_CONFIRMATION]
+    const allowedFromAppealStates = [undefined]
+
+    describe.each(allowedFromStates)('state %s', (fromState) => {
+      it.each(allowedFromAppealStates)(
+        'appeal state %s - should submit',
+        (fromAppealState) => {
+          // Act
+          const res = transitionCase(
+            CaseTransition.SUBMIT,
+            fromState,
+            fromAppealState,
+          )
+
+          // Assert
+          expect(res).toEqual({ state: CaseState.SUBMITTED })
+        },
+      )
+
+      it.each(Object.values(CaseAppealState))(
+        'appeal state %s - should not submit',
+        (fromAppealState) => {
+          // Arrange
+          const act = () =>
+            transitionCase(CaseTransition.SUBMIT, fromState, fromAppealState)
+
+          // Act and assert
+          expect(act).toThrow(ForbiddenException)
+        },
+      )
+    })
+
+    describe.each(
+      Object.values(CaseState).filter(
+        (state) => !allowedFromStates.includes(state),
+      ),
+    )('state %s', (fromState) => {
+      it.each(Object.values(CaseAppealState))(
+        'appeal state %s - should not submit',
+        (fromAppealState) => {
+          // Arrange
+          const act = () =>
+            transitionCase(CaseTransition.SUBMIT, fromState, fromAppealState)
+
+          // Act and assert
+          expect(act).toThrow(ForbiddenException)
+        },
+      )
+    })
+  })
+
+  describe('receive', () => {
     const allowedFromStates = [CaseState.SUBMITTED]
     const allowedFromAppealStates = [undefined]
 
@@ -169,6 +281,7 @@ describe('Transition Case', () => {
     const allowedFromStates = [
       CaseState.NEW,
       CaseState.DRAFT,
+      CaseState.WAITING_FOR_CONFIRMATION,
       CaseState.SUBMITTED,
       CaseState.RECEIVED,
     ]
@@ -454,6 +567,65 @@ describe('Transition Case', () => {
     })
   })
 
+  describe('withdraw appeal', () => {
+    const allowedFromStates = [
+      CaseState.ACCEPTED,
+      CaseState.REJECTED,
+      CaseState.DISMISSED,
+    ]
+    const allowedFromAppealStates = [
+      CaseAppealState.APPEALED,
+      CaseAppealState.RECEIVED,
+    ]
+
+    describe.each(allowedFromStates)('state %s', (fromState) => {
+      it.each(allowedFromAppealStates)(
+        'appeal state %s - should appeal',
+        (fromAppealState) => {
+          // Act
+          const res = transitionCase(
+            CaseTransition.WITHDRAW_APPEAL,
+            fromState,
+            fromAppealState,
+          )
+
+          // Assert
+          expect(res).toEqual({ appealState: CaseAppealState.WITHDRAWN })
+        },
+      )
+
+      it.each(Object.values(CaseAppealState))(
+        'appeal state %s - should not appeal',
+        (fromAppealState) => {
+          // Arrange
+          const act = () =>
+            transitionCase(CaseTransition.APPEAL, fromState, fromAppealState)
+
+          // Act and assert
+          expect(act).toThrow(ForbiddenException)
+        },
+      )
+    })
+
+    describe.each(
+      Object.values(CaseState).filter(
+        (state) => !allowedFromStates.includes(state),
+      ),
+    )('state %s', (fromState) => {
+      it.each(Object.values(CaseAppealState))(
+        'appeal state %s - should not appeal',
+        (fromAppealState) => {
+          // Arrange
+          const act = () =>
+            transitionCase(CaseTransition.APPEAL, fromState, fromAppealState)
+
+          // Act and assert
+          expect(act).toThrow(ForbiddenException)
+        },
+      )
+    })
+  })
+
   describe('receive appeal', () => {
     const allowedFromStates = [
       CaseState.ACCEPTED,
@@ -525,7 +697,10 @@ describe('Transition Case', () => {
       CaseState.REJECTED,
       CaseState.DISMISSED,
     ]
-    const allowedFromAppealStates = [CaseAppealState.RECEIVED]
+    const allowedFromAppealStates = [
+      CaseAppealState.RECEIVED,
+      CaseAppealState.WITHDRAWN,
+    ]
 
     describe.each(allowedFromStates)('state %s', (fromState) => {
       it.each(allowedFromAppealStates)(
@@ -576,6 +751,186 @@ describe('Transition Case', () => {
               fromState,
               fromAppealState,
             )
+
+          // Act and assert
+          expect(act).toThrow(ForbiddenException)
+        },
+      )
+    })
+  })
+
+  describe('reopen appeal', () => {
+    const allowedFromStates = [
+      CaseState.ACCEPTED,
+      CaseState.REJECTED,
+      CaseState.DISMISSED,
+    ]
+    const allowedFromAppealStates = [CaseAppealState.COMPLETED]
+
+    describe.each(allowedFromStates)('state %s', (fromState) => {
+      it.each(allowedFromAppealStates)(
+        'appeal state %s - should reopen appeal',
+        (fromAppealState) => {
+          // Act
+          const res = transitionCase(
+            CaseTransition.REOPEN_APPEAL,
+            fromState,
+
+            fromAppealState,
+          )
+
+          // Assert
+          expect(res).toEqual({ appealState: CaseAppealState.RECEIVED })
+        },
+      )
+
+      it.each(
+        Object.values(CaseAppealState).filter(
+          (appealState) => !allowedFromAppealStates.includes(appealState),
+        ),
+      )('appeal state %s - should not reopen appeal', (fromAppealState) => {
+        // Arrange
+        const act = () =>
+          transitionCase(
+            CaseTransition.REOPEN_APPEAL,
+            fromState,
+
+            fromAppealState,
+          )
+
+        // Act and assert
+        expect(act).toThrow(ForbiddenException)
+      })
+    })
+
+    describe.each(
+      Object.values(CaseState).filter(
+        (state) => !allowedFromStates.includes(state),
+      ),
+    )('state %s', (fromState) => {
+      it.each(Object.values(CaseAppealState))(
+        'appeal state %s - should not reopen appeal',
+        (fromAppealState) => {
+          // Arrange
+          const act = () =>
+            transitionCase(
+              CaseTransition.REOPEN_APPEAL,
+              fromState,
+
+              fromAppealState,
+            )
+
+          // Act and assert
+          expect(act).toThrow(ForbiddenException)
+        },
+      )
+    })
+  })
+
+  describe('deny indictment', () => {
+    const allowedFromStates = [CaseState.WAITING_FOR_CONFIRMATION]
+    const allowedFromAppealStates = [undefined]
+
+    describe.each(allowedFromStates)('state %s', (fromState) => {
+      it.each(allowedFromAppealStates)(
+        'appeal state %s - should deny indictment',
+        (fromAppealState) => {
+          // Act
+          const res = transitionCase(
+            CaseTransition.DENY_INDICTMENT,
+            fromState,
+            fromAppealState,
+          )
+
+          // Assert
+          expect(res).toEqual({ state: CaseState.DRAFT })
+        },
+      )
+
+      it.each(Object.values(CaseAppealState))(
+        'appeal state %s - should not deny indictment',
+        (fromAppealState) => {
+          // Arrange
+          const act = () =>
+            transitionCase(
+              CaseTransition.DENY_INDICTMENT,
+              fromState,
+              fromAppealState,
+            )
+
+          // Act and assert
+          expect(act).toThrow(ForbiddenException)
+        },
+      )
+    })
+
+    describe.each(
+      Object.values(CaseState).filter(
+        (state) => !allowedFromStates.includes(state),
+      ),
+    )('state %s', (fromState) => {
+      it.each(Object.values(CaseAppealState))(
+        'appeal state %s - should not deny indictment',
+        (fromAppealState) => {
+          // Arrange
+          const act = () =>
+            transitionCase(CaseTransition.RECEIVE, fromState, fromAppealState)
+
+          // Act and assert
+          expect(act).toThrow(ForbiddenException)
+        },
+      )
+    })
+  })
+
+  describe('return indictment', () => {
+    const allowedFromStates = [CaseState.RECEIVED]
+    const allowedFromAppealStates = [undefined]
+
+    describe.each(allowedFromStates)('state %s', (fromState) => {
+      it.each(allowedFromAppealStates)(
+        'appeal state %s - should return indictment',
+        (fromAppealState) => {
+          // Act
+          const res = transitionCase(
+            CaseTransition.RETURN_INDICTMENT,
+            fromState,
+            fromAppealState,
+          )
+
+          // Assert
+          expect(res).toEqual({ state: CaseState.DRAFT })
+        },
+      )
+
+      it.each(Object.values(CaseAppealState))(
+        'appeal state %s - should not return indictment',
+        (fromAppealState) => {
+          // Arrange
+          const act = () =>
+            transitionCase(
+              CaseTransition.RETURN_INDICTMENT,
+              fromState,
+              fromAppealState,
+            )
+
+          // Act and assert
+          expect(act).toThrow(ForbiddenException)
+        },
+      )
+    })
+
+    describe.each(
+      Object.values(CaseState).filter(
+        (state) => !allowedFromStates.includes(state),
+      ),
+    )('state %s', (fromState) => {
+      it.each(Object.values(CaseAppealState))(
+        'appeal state %s - should not return indictment',
+        (fromAppealState) => {
+          // Arrange
+          const act = () =>
+            transitionCase(CaseTransition.RECEIVE, fromState, fromAppealState)
 
           // Act and assert
           expect(act).toThrow(ForbiddenException)

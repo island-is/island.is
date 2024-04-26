@@ -1,13 +1,12 @@
 import {
   Body,
   Controller,
-  Get,
   Inject,
   Param,
   Post,
   UseGuards,
 } from '@nestjs/common'
-import { ApiCreatedResponse, ApiOkResponse, ApiTags } from '@nestjs/swagger'
+import { ApiCreatedResponse, ApiTags } from '@nestjs/swagger'
 
 import type { Logger } from '@island.is/logging'
 import { LOGGER_PROVIDER } from '@island.is/logging'
@@ -20,33 +19,23 @@ import {
 } from '@island.is/judicial-system/auth'
 import type { User } from '@island.is/judicial-system/types'
 
-import {
-  assistantRule,
-  judgeRule,
-  prosecutorRepresentativeRule,
-  prosecutorRule,
-  registrarRule,
-} from '../../guards'
-import {
-  Case,
-  CaseExistsGuard,
-  CaseReadGuard,
-  CaseWriteGuard,
-  CurrentCase,
-} from '../case'
+import { Case, CaseExistsGuard, CaseWriteGuard, CurrentCase } from '../case'
 import { SendNotificationDto } from './dto/sendNotification.dto'
 import {
-  assistantNotificationRule,
-  judgeNotificationRule,
+  courtOfAppealsAssistantNotificationRule,
+  courtOfAppealsJudgeNotificationRule,
+  courtOfAppealsRegistrarNotificationRule,
+  defenderNotificationRule,
+  districtCourtAssistantNotificationRule,
+  districtCourtJudgeNotificationRule,
+  districtCourtRegistrarNotificationRule,
   prosecutorNotificationRule,
-  registrarNotificationRule,
 } from './guards/rolesRules'
-import { Notification } from './models/notification.model'
 import { SendNotificationResponse } from './models/sendNotification.response'
 import { NotificationService } from './notification.service'
 
 @UseGuards(JwtAuthGuard, RolesGuard, CaseExistsGuard)
-@Controller('api/case/:caseId')
+@Controller('api/case/:caseId/notification')
 @ApiTags('notifications')
 export class NotificationController {
   constructor(
@@ -57,11 +46,15 @@ export class NotificationController {
   @UseGuards(CaseWriteGuard)
   @RolesRules(
     prosecutorNotificationRule,
-    judgeNotificationRule,
-    registrarNotificationRule,
-    assistantNotificationRule,
+    districtCourtJudgeNotificationRule,
+    districtCourtRegistrarNotificationRule,
+    districtCourtAssistantNotificationRule,
+    courtOfAppealsJudgeNotificationRule,
+    courtOfAppealsRegistrarNotificationRule,
+    courtOfAppealsAssistantNotificationRule,
+    defenderNotificationRule,
   )
-  @Post('notification')
+  @Post()
   @ApiCreatedResponse({
     type: SendNotificationResponse,
     description: 'Adds a new notification for an existing case to queue',
@@ -81,28 +74,5 @@ export class NotificationController {
       theCase,
       user,
     )
-  }
-
-  @UseGuards(CaseReadGuard)
-  @RolesRules(
-    prosecutorRule,
-    prosecutorRepresentativeRule,
-    judgeRule,
-    registrarRule,
-    assistantRule,
-  )
-  @Get('notifications')
-  @ApiOkResponse({
-    type: Notification,
-    isArray: true,
-    description: 'Gets all existing notifications for an existing case',
-  })
-  async getAllCaseNotifications(
-    @Param('caseId') caseId: string,
-    @CurrentCase() theCase: Case,
-  ): Promise<Notification[]> {
-    this.logger.debug(`Getting all notifications for case ${caseId}`)
-
-    return this.notificationService.getAllCaseNotifications(theCase)
   }
 }

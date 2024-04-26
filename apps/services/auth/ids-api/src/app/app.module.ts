@@ -23,6 +23,7 @@ import { environment } from '../environments'
 import { ClientsModule } from './clients/clients.module'
 import { DelegationsModule } from './delegations/delegations.module'
 import { GrantsModule } from './grants/grants.module'
+import { LoginRestrictionsModule } from './login-restrictions/login-restrictions.module'
 import { NotificationsModule } from './notifications/notifications.module'
 import { PermissionsModule } from './permissions/permissions.module'
 import { ResourcesModule } from './resources/resources.module'
@@ -47,6 +48,7 @@ import { UsersModule } from './users/users.module'
     PermissionsModule,
     UserProfileModule,
     NotificationsModule,
+    LoginRestrictionsModule,
     ConfigModule.forRoot({
       isGlobal: true,
       load: [

@@ -20,12 +20,12 @@
         "passWithNoTests": true
       }
     },
-    "schemas/codegen": {
+    "codegen/frontend-client": {
       "executor": "nx:run-commands",
       "options": {
-        "output": "libs/react-spa/shared/src/**/*.generated.ts",
         "command": "graphql-codegen --config libs/react-spa/shared/codegen.yml"
-      }
+      },
+      "outputs": ["{projectRoot}/src/**/*.generated.ts"]
     },
     "extract-strings": {
       "executor": "nx:run-commands",

@@ -34,12 +34,7 @@ import { childsPersonalInfo } from './infoSection/childsPersonalInfo'
 import { personalInfo } from './infoSection/personalInfo'
 import { childsOverview } from './overviewSection/childsOverview'
 import { personalOverview } from './overviewSection/personalOverview'
-import {
-  getChargeCode,
-  getPrice,
-  hasSecondGuardian,
-  needAssignment,
-} from '../lib/utils'
+import { getChargeCode, getPrice } from '../lib/utils'
 
 export const Draft: Form = buildForm({
   id: 'PassportApplicationDraftForm',
@@ -140,6 +135,7 @@ export const Draft: Form = buildForm({
                   Services.EXPRESS,
                 )
                 const expressPrices = getPrice(externalData, expressCode)
+
                 return [
                   {
                     value: Services.REGULAR,

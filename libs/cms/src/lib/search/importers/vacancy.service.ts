@@ -16,7 +16,9 @@ export class VacancySyncService implements CmsSyncProvider<IVacancy> {
   }
 
   doMapping(entries: IVacancy[]) {
-    logger.info('Mapping Vacancy', { count: entries.length })
+    if (entries.length > 0) {
+      logger.info('Mapping Vacancy', { count: entries.length })
+    }
 
     return entries
       .map<MappedData | boolean>((entry) => {

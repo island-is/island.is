@@ -50,7 +50,7 @@ export const AdvicesScreen = () => {
           justifyContent="center"
           style={{ height: 200 }}
         >
-          <LoadingDots color="blue" large />
+          <LoadingDots large />
         </Box>
       )
     }
@@ -153,7 +153,7 @@ export const AdvicesScreen = () => {
           <Box paddingBottom={[3, 3, 3, 5, 5]}>
             <Stack space={[3, 3, 3, 5, 5]}>
               <Stack space={3}>
-                <Text variant="h1" dataTestId="advices_title">
+                <Text as="h1" variant="h1" dataTestId="advices_title">
                   {loc.intro.title}
                 </Text>
                 <Text variant="default" dataTestId="advices_text">

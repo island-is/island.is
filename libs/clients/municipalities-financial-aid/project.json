@@ -22,16 +22,14 @@
         "passWithNoTests": true
       }
     },
-    "schemas/external-openapi-generator": {
+    "codegen/backend-client": {
       "executor": "nx:run-commands",
       "options": {
-        "commands": [
-          "nx run financial-aid-backend:schemas/build-openapi-internal $NX_OPTIONS",
-          "yarn openapi-generator -o libs/clients/municipalities-financial-aid/gen/fetch -i apps/financial-aid/backend/src/openapi.yaml --additional-properties=enumPropertyNaming=original"
-        ],
-        "parallel": false
-      }
+        "command": "yarn openapi-generator -o libs/clients/municipalities-financial-aid/gen/fetch -i apps/financial-aid/backend/src/openapi.yaml --additional-properties=enumPropertyNaming=original"
+      },
+      "outputs": ["{projectRoot}/gen/fetch"]
     }
   },
+  "implicitDependencies": ["financial-aid-backend"],
   "tags": ["lib:client", "scope:client"]
 }

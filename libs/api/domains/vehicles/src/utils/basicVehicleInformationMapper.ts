@@ -7,10 +7,10 @@ import { VehiclesAxle, VehiclesDetail } from '../models/getVehicleDetail.model'
 
 // 1kW equals 1.359622 metric horsepower.
 const KW_TO_METRIC_HP = 1.359622
+const EXCLUDED_INSURANCE_STATUS = ['TE1', 'TE2', 'TE3']
 
 export const basicVehicleInformationMapper = (
   data: BasicVehicleInformationDto,
-  nationalId: string,
 ): VehiclesDetail => {
   const newestInspection = data.inspections?.sort((a, b) => {
     if (a && b && a.date && b.date)
@@ -18,11 +18,9 @@ export const basicVehicleInformationMapper = (
     else return 0
   })[0]
   let axleMaxWeight = 0
-
   const numberOfAxles = data.technical?.axle?.axleno ?? 0
 
   const axles: VehiclesAxle[] = []
-  console.log(data.technical)
   if (data && data.technical && data.technical.axle && data.technical.mass) {
     for (let i = 1; i <= numberOfAxles; i++) {
       axles.push({
@@ -46,6 +44,10 @@ export const basicVehicleInformationMapper = (
   const coOwners = data.owners?.find((x) => x.current)?.coOwners
   const owner = data.owners?.find((x) => x.current === true)
 
+  const excludeInsurance = EXCLUDED_INSURANCE_STATUS.includes(
+    data.technical?.vehgroup ?? '',
+  )
+
   const subModel = [data.vehcom, data.speccom].filter(Boolean).join(' ')
   const response: VehiclesDetail = {
     mainInfo: {
@@ -60,6 +62,9 @@ export const basicVehicleInformationMapper = (
       cubicCapacity: data.technical?.capacity,
       trailerWithBrakesWeight: data.technical?.tMassoftrbr,
       trailerWithoutBrakesWeight: data.technical?.tMassoftrunbr,
+      nextAvailableMileageReadDate: data.nextAvailableMileageReadDate,
+      requiresMileageRegistration: data.requiresMileageRegistration,
+      canRegisterMileage: data.canRegisterMileage,
     },
     basicInfo: {
       model: data.make,
@@ -72,6 +77,7 @@ export const basicVehicleInformationMapper = (
       preregDateYear: data.productyear?.toString(),
       formerCountry: data.formercountry,
       importStatus: data._import,
+      vehicleStatus: data.vehiclestatus,
     },
     registrationInfo: {
       firstRegistrationDate: data.firstregdate,
@@ -106,7 +112,7 @@ export const basicVehicleInformationMapper = (
       odometer: newestInspection?.odometer,
       nextInspectionDate: data.nextinspectiondate,
       lastInspectionDate: data.inspections?.[0]?.date ?? null,
-      insuranceStatus: data.insurancestatus,
+      insuranceStatus: excludeInsurance ? undefined : data.insurancestatus,
       mortages: data?.fees?.hasEncumbrances,
       carTax: data?.fees?.gjold?.bifreidagjald,
       inspectionFine: data?.fees?.inspectionfine,
@@ -169,6 +175,8 @@ export const basicVehicleInformationMapper = (
           city: operator.city,
           startDate: operator.startdate,
           endDate: operator.enddate,
+          mainOperator: operator.mainoperator,
+          serial: operator.serial,
         }
       }) || undefined,
     isOutOfCommission: data.vehiclestatus === 'Úr umferð',

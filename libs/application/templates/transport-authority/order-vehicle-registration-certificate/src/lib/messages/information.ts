@@ -40,6 +40,26 @@ export const information = {
         defaultMessage: 'Veldu ökutæki',
         description: 'Pick vehicle placeholder',
       },
+      findPlatePlaceholder: {
+        id: 'ta.ovrc.application:information.labels.pickVehicle.findPlatePlaceholder',
+        defaultMessage: 'Sláðu inn plötunúmer',
+        description: 'Pick vehicle find plate placeholder',
+      },
+      findButton: {
+        id: 'ta.ovrc.application:information.labels.pickVehicle.findButton',
+        defaultMessage: 'Leita',
+        description: 'Pick vehicle find button',
+      },
+      notFoundTitle: {
+        id: 'ta.ovrc.application:information.labels.pickVehicle.notFoundTitle',
+        defaultMessage: 'Eitthvað fór úrskeiðis',
+        description: 'vehicle not found',
+      },
+      notFoundMessage: {
+        id: 'ta.ovrc.application:information.labels.pickVehicle.notFoundMessage',
+        defaultMessage: 'Ökutæki með plötunúmerið {plate} fannst ekki',
+        description: 'vehicle not found message',
+      },
     }),
     vehicle: defineMessages({
       sectionTitle: {

@@ -7,7 +7,7 @@ import {
 } from '@nestjs/common'
 
 import {
-  completedCaseStates,
+  isCompletedCase,
   RequestSharedWithDefender,
 } from '@island.is/judicial-system/types'
 
@@ -23,12 +23,13 @@ export class RequestSharedWithDefenderGuard implements CanActivate {
     }
 
     // Defender can always see the request if it's in a completed state
-    if (completedCaseStates.includes(theCase.state)) {
+    if (isCompletedCase(theCase.state)) {
       return true
     }
 
     if (
-      Boolean(theCase.requestSharedWithDefender) &&
+      theCase.requestSharedWithDefender ===
+        RequestSharedWithDefender.COURT_DATE &&
       Boolean(theCase.courtDate)
     ) {
       return true

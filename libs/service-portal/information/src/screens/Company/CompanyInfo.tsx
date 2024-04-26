@@ -5,12 +5,11 @@ import { defineMessage } from 'react-intl'
 import { Divider, Stack } from '@island.is/island-ui/core'
 import { useLocale, useNamespaces } from '@island.is/localization'
 import {
-  EmptyState,
   FootNote,
   formatNationalId,
   IntroHeader,
   m,
-  SKATTURINN_ID,
+  SKATTURINN_SLUG,
   UserInfoLine,
 } from '@island.is/service-portal/core'
 import { dateFormat } from '@island.is/shared/constants'
@@ -18,11 +17,7 @@ import { useUserInfo } from '@island.is/auth/react'
 
 import { mCompany } from '../../lib/messages'
 import { useCompanyRegistryCompanyQuery } from './Company.generated'
-
-const dataNotFoundMessage = defineMessage({
-  id: 'sp.company:data-not-found',
-  defaultMessage: 'Gögn fundust ekki',
-})
+import { Problem } from '@island.is/react-spa/shared'
 
 const CompanyInfo = () => {
   useNamespaces('sp.company')
@@ -60,36 +55,39 @@ const CompanyInfo = () => {
       ? `${vatDisplay?.[0]?.classification?.[0]?.number} ${vatDisplay?.[0]?.classification?.[0]?.name}`
       : ''
 
-  const emptyData = data === null
+  const emptyData = data?.companyRegistryCompany === null
 
   return (
     <>
       <IntroHeader
         title={userInfo.profile.name}
         intro={mCompany.subtitle}
-        serviceProviderID={SKATTURINN_ID}
+        serviceProviderSlug={SKATTURINN_SLUG}
       />
-      {emptyData && <EmptyState />}
-      {!emptyData && (
+      {error && !loading && <Problem error={error} noBorder={false} />}
+      {!error && !loading && emptyData && (
+        <Problem
+          type="no_data"
+          noBorder={false}
+          title={formatMessage(m.noData)}
+          message={formatMessage(m.noDataFoundDetail)}
+          imgSrc="./assets/images/sofa.svg"
+        />
+      )}
+      {!error && (loading || !emptyData) && (
         <Stack space={2}>
           <UserInfoLine
             title={formatMessage(m.info)}
             label={formatMessage(mCompany.name)}
             translate="no"
-            content={
-              error
-                ? formatMessage(dataNotFoundMessage)
-                : companyData?.name || ''
-            }
+            content={companyData?.name || ''}
             loading={loading}
           />
           <Divider />
           <UserInfoLine
             label={formatMessage(mCompany.registration)}
             content={
-              error
-                ? formatMessage(dataNotFoundMessage)
-                : companyData?.dateOfRegistration
+              companyData?.dateOfRegistration
                 ? format(
                     new Date(companyData.dateOfRegistration),
                     dateFormat.is,
@@ -103,9 +101,7 @@ const CompanyInfo = () => {
           <UserInfoLine
             label={defineMessage(m.natreg)}
             content={
-              error
-                ? formatMessage(dataNotFoundMessage)
-                : companyData?.nationalId
+              companyData?.nationalId
                 ? formatNationalId(companyData.nationalId)
                 : ''
             }
@@ -114,41 +110,31 @@ const CompanyInfo = () => {
           <Divider />
           <UserInfoLine
             label={m.address}
-            content={
-              error ? formatMessage(dataNotFoundMessage) : companyAddress
-            }
+            content={companyAddress}
             loading={loading}
           />
           <Divider />
           <UserInfoLine
             label={formatMessage(mCompany.taxNr)}
-            content={
-              error
-                ? formatMessage(dataNotFoundMessage)
-                : companyData?.companyInfo?.vat?.[0]?.vatNumber || ''
-            }
+            content={companyData?.companyInfo?.vat?.[0]?.vatNumber || ''}
             loading={loading}
           />
           <Divider />
           <UserInfoLine
             label={formatMessage(mCompany.operationForm)}
-            content={
-              error ? formatMessage(dataNotFoundMessage) : companyOperation
-            }
+            content={companyOperation}
             loading={loading}
           />
           <Divider />
           <UserInfoLine
             label={formatMessage(mCompany.industryClass)}
-            content={
-              error ? formatMessage(dataNotFoundMessage) : vatClassification
-            }
+            content={vatClassification}
             loading={loading}
           />
           <Divider />
         </Stack>
       )}
-      <FootNote serviceProviderID={SKATTURINN_ID} />
+      <FootNote serviceProviderSlug={SKATTURINN_SLUG} />
     </>
   )
 }

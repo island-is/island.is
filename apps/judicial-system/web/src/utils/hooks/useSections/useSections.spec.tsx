@@ -4,20 +4,18 @@ import faker from 'faker'
 import { ApolloClient, ApolloProvider, InMemoryCache } from '@apollo/client'
 import { renderHook } from '@testing-library/react'
 
-import {
-  Case,
-  CaseState,
-  CaseType,
-  InstitutionType,
-  User,
-  UserRole,
-} from '@island.is/judicial-system/types'
 import { UserProvider } from '@island.is/judicial-system-web/src/components'
 import {
   CaseAppealRulingDecision,
   CaseAppealState,
   CaseOrigin,
+  CaseState,
+  CaseType,
+  InstitutionType,
+  User,
+  UserRole,
 } from '@island.is/judicial-system-web/src/graphql/schema'
+import { TempCase as Case } from '@island.is/judicial-system-web/src/types'
 
 import useSections from './index'
 
@@ -50,6 +48,7 @@ describe('useSections getSections', () => {
     role: UserRole.PROSECUTOR,
     email: faker.internet.email(),
     active: true,
+    canConfirmIndictment: false,
     institution: {
       created: faker.date.past().toISOString(),
       modified: faker.date.past().toISOString(),
@@ -123,11 +122,7 @@ describe('useSections getSections', () => {
       { children: [], isActive: false, name: expect.any(String) },
       { children: [], isActive: false, name: expect.any(String) },
       { children: [], isActive: false, name: expect.any(String) },
-      {
-        children: generateSubsteps(3),
-        isActive: false,
-        name: expect.any(String),
-      },
+      { children: [], isActive: false, name: expect.any(String) },
       { children: [], isActive: true, name: 'Heimvísun' },
     ])
   })

@@ -469,7 +469,7 @@ export const EditChange = (props: EditChangeProp) => {
                     />
                   )}
                 </Box>
-                <Box marginBottom={4} position="relative">
+                <Box zIndex={10} marginBottom={4} position="relative">
                   <Text fontWeight="semiBold" paddingBottom="p2">
                     Uppfærður texti
                   </Text>

@@ -35,7 +35,7 @@ import { DrugCertificateInput } from './dto/drugCertificate.input'
 export class DrugResolver {
   constructor(private readonly drugService: DrugService) {}
 
-  @Scopes(ApiScope.health)
+  @Scopes(ApiScope.healthMedicines)
   @Query(() => [DrugPeriod], {
     name: 'rightsPortalDrugPeriods',
   })
@@ -44,7 +44,7 @@ export class DrugResolver {
     return this.drugService.getPeriods(user)
   }
 
-  @Scopes(ApiScope.health)
+  @Scopes(ApiScope.healthMedicines)
   @Query(() => [DrugBill], {
     name: 'rightsPortalDrugBills',
   })
@@ -56,7 +56,7 @@ export class DrugResolver {
     return this.drugService.getBills(user, input)
   }
 
-  @Scopes(ApiScope.health)
+  @Scopes(ApiScope.healthMedicines)
   @Query(() => [DrugBillLine], {
     name: 'rightsPortalDrugBillLines',
   })
@@ -68,7 +68,7 @@ export class DrugResolver {
     return this.drugService.getBillLines(user, input)
   }
 
-  @Scopes(ApiScope.health)
+  @Scopes(ApiScope.healthMedicines)
   @Query(() => PaginatedDrugResponse, {
     name: 'rightsPortalDrugs',
   })
@@ -80,7 +80,7 @@ export class DrugResolver {
     return this.drugService.getDrugs(user, input)
   }
 
-  @Scopes(ApiScope.health)
+  @Scopes(ApiScope.healthMedicines)
   @Mutation(() => DrugCalculatorResponse, {
     name: 'rightsPortalDrugsCalculator',
   })
@@ -92,7 +92,7 @@ export class DrugResolver {
     return this.drugService.getCalculations(user, input)
   }
 
-  @Scopes(ApiScope.health)
+  @Scopes(ApiScope.healthMedicines)
   @Query(() => [DrugCertificate], {
     name: 'rightsPortalDrugCertificates',
   })
@@ -101,7 +101,7 @@ export class DrugResolver {
     return this.drugService.getCertificates(user)
   }
 
-  @Scopes(ApiScope.health)
+  @Scopes(ApiScope.healthMedicines)
   @Query(() => DrugCertificate, {
     name: 'rightsPortalGetCertificateById',
   })

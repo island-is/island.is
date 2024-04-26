@@ -25,12 +25,13 @@ type ActionCardProps = {
   secondaryText?: string
   eyebrow?: string
   loading?: boolean
-  backgroundColor?: 'white' | 'blue' | 'red'
+  backgroundColor?: 'white' | 'blue' | 'red' | 'blueberry'
   tag?: {
     label: string
     variant?: TagVariant
     outlined?: boolean
   }
+  secondaryTag?: ActionCardProps['tag']
   cta: {
     url?: string
     internalUrl?: string
@@ -42,6 +43,7 @@ type ActionCardProps = {
     disabled?: boolean
     centered?: boolean
     hide?: boolean
+    callback?: () => void
   }
   secondaryCta?: {
     label: string
@@ -53,8 +55,9 @@ type ActionCardProps = {
     centered?: boolean
   }
   image?: {
-    type: 'avatar' | 'image' | 'logo'
+    type: 'avatar' | 'image' | 'logo' | 'circle'
     url?: string
+    active?: boolean
   }
   translateLabel?: 'yes' | 'no'
 }
@@ -84,6 +87,7 @@ export const ActionCard: React.FC<React.PropsWithChildren<ActionCardProps>> = ({
   cta: _cta,
   secondaryCta,
   tag: _tag,
+  secondaryTag,
   image,
   translateLabel = 'yes',
 }) => {
@@ -94,6 +98,8 @@ export const ActionCard: React.FC<React.PropsWithChildren<ActionCardProps>> = ({
       ? 'white'
       : backgroundColor === 'red'
       ? 'red100'
+      : backgroundColor === 'blueberry'
+      ? 'blueberry100'
       : 'blue100'
 
   const renderImage = () => {
@@ -139,6 +145,22 @@ export const ActionCard: React.FC<React.PropsWithChildren<ActionCardProps>> = ({
         </Box>
       )
     }
+    if (image.type === 'circle') {
+      return (
+        <Box
+          display="flex"
+          justifyContent="center"
+          alignItems="center"
+          flexShrink={0}
+          marginRight={[2, 3]}
+          borderRadius="circle"
+          background={image.active ? 'white' : 'blue100'}
+          className={styles.avatar}
+        >
+          <img className={styles.circleImg} src={image.url} alt="action-card" />
+        </Box>
+      )
+    }
     if (image.type === 'logo') {
       return (
         <Box
@@ -168,7 +190,7 @@ export const ActionCard: React.FC<React.PropsWithChildren<ActionCardProps>> = ({
         <Text variant="eyebrow" color="purple400">
           {eyebrow}
         </Text>
-        {renderTag()}
+        {renderTag(tag)}
       </Box>
     )
   }
@@ -199,20 +221,20 @@ export const ActionCard: React.FC<React.PropsWithChildren<ActionCardProps>> = ({
           </Box>
         </Box>
         <Inline alignY="center" space={1}>
-          {!eyebrow && renderTag()}
+          {!eyebrow && renderTag(tag)}
         </Inline>
       </Box>
     )
   }
 
-  const renderTag = () => {
-    if (!tag.label) {
+  const renderTag = (actionTag: ActionCardProps['tag']) => {
+    if (!actionTag?.label) {
       return null
     }
 
     return (
-      <Tag outlined={tag.outlined} variant={tag.variant} disabled>
-        {tag.label}
+      <Tag outlined={actionTag.outlined} variant={actionTag.variant} disabled>
+        {actionTag.label}
       </Tag>
     )
   }
@@ -247,7 +269,7 @@ export const ActionCard: React.FC<React.PropsWithChildren<ActionCardProps>> = ({
           {!cta.hide && (
             <Box dataTestId="action-card-cta" marginLeft={[0, 3]}>
               {cta.url ? (
-                <LinkResolver href={cta.url}>
+                <LinkResolver callback={cta.callback} href={cta.url}>
                   <Button
                     icon={isExternalLink(cta.url) ? 'open' : cta.icon}
                     colorScheme="default"
@@ -255,6 +277,7 @@ export const ActionCard: React.FC<React.PropsWithChildren<ActionCardProps>> = ({
                     size="small"
                     type="span"
                     unfocusable
+                    as="span"
                     variant="text"
                   >
                     {cta.label}
@@ -285,6 +308,7 @@ export const ActionCard: React.FC<React.PropsWithChildren<ActionCardProps>> = ({
       </Box>
     )
   }
+
   return (
     <Box
       display="flex"
@@ -341,7 +365,12 @@ export const ActionCard: React.FC<React.PropsWithChildren<ActionCardProps>> = ({
                 </Text>
               </Box>
               <Hidden above="xs">
-                <Box>{!date && !eyebrow && renderTag()}</Box>
+                {secondaryTag && (
+                  <Box marginRight="smallGutter">
+                    {!date && !eyebrow && renderTag(secondaryTag)}
+                  </Box>
+                )}
+                <Box>{!date && !eyebrow && renderTag(tag)}</Box>
               </Hidden>
             </Box>
           )}
@@ -370,7 +399,23 @@ export const ActionCard: React.FC<React.PropsWithChildren<ActionCardProps>> = ({
             tag?.label ? styles.tag : cta.centered ? undefined : styles.button
           }
         >
-          <Hidden below="sm">{!date && !eyebrow && renderTag()}</Hidden>
+          <Hidden below="sm">
+            <Box
+              display="flex"
+              flexDirection={[
+                'columnReverse',
+                'columnReverse',
+                'columnReverse',
+                'row',
+              ]}
+            >
+              <>
+                {!date && !eyebrow && renderTag(secondaryTag)}
+                <Box marginRight="smallGutter" marginBottom="smallGutter" />
+                {!date && !eyebrow && renderTag(tag)}
+              </>
+            </Box>
+          </Hidden>
           {renderDefault()}
         </Box>
       </Box>

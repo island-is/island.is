@@ -1,7 +1,7 @@
-import React from 'react';
-import styled from 'styled-components/native';
-import {dynamicColor} from '../../utils';
-import {font} from '../../utils/font';
+import React from 'react'
+import styled from 'styled-components/native'
+import { dynamicColor } from '../../utils'
+import { font } from '../../utils/font'
 
 const Host = styled.View`
   padding-top: 16px;
@@ -10,19 +10,19 @@ const Host = styled.View`
   padding-right: 32px;
   border-radius: 32px;
   background-color: ${dynamicColor('background')};
-`;
+`
 
 const Text = styled.Text`
   ${font()}
-`;
+`
 interface BubbleProps {
-  children: React.ReactNode;
+  children: React.ReactNode
 }
 
-export function Bubble({children}: BubbleProps) {
+export function Bubble({ children }: BubbleProps) {
   return (
     <Host>
       <Text>{children}</Text>
     </Host>
-  );
+  )
 }

@@ -11,18 +11,18 @@ export const taxInfoNumbers = {
     taxPercentage: 31.45,
     personalTaxAllowance: 59665,
   },
-  // TODO  update on new year
   '2024': {
-    taxPercentage: 31.45,
-    personalTaxAllowance: 59665,
+    taxPercentage: 31.48,
+    personalTaxAllowance: 64926,
   },
+  // TODO  update on new year
   '2025': {
-    taxPercentage: 31.45,
-    personalTaxAllowance: 59665,
+    taxPercentage: 31.48,
+    personalTaxAllowance: 64926,
   },
   '2026': {
-    taxPercentage: 31.45,
-    personalTaxAllowance: 59665,
+    taxPercentage: 31.48,
+    personalTaxAllowance: 64926,
   },
 }
 

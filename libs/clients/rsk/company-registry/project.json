@@ -32,11 +32,12 @@
         "cwd": "libs/clients/rsk/company-registry"
       }
     },
-    "schemas/external-openapi-generator": {
+    "codegen/backend-client": {
       "executor": "nx:run-commands",
       "options": {
         "command": "yarn openapi-generator -o libs/clients/rsk/company-registry/src/lib/gen/fetch -i libs/clients/rsk/company-registry/src/clientConfig.json"
-      }
+      },
+      "outputs": ["{projectRoot}/src/lib/gen/fetch"]
     }
   },
   "tags": ["lib:client", "scope:client"]

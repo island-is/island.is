@@ -1,37 +1,27 @@
 import format from 'date-fns/format'
 import sub from 'date-fns/sub'
-import React, { useEffect, useState } from 'react'
-import { useLazyQuery, useQuery } from '@apollo/client'
-import { Query } from '@island.is/api/schema'
+import { useEffect, useState } from 'react'
 import {
   Accordion,
   AccordionItem,
-  AlertBanner,
   Box,
   Button,
   DatePicker,
   FilterInput,
   FilterMultiChoice,
-  Text,
   Hidden,
   SkeletonLoader,
   Stack,
-  Column,
-  Columns,
-  GridContainer,
 } from '@island.is/island-ui/core'
 import { useLocale, useNamespaces } from '@island.is/localization'
 import {
   DynamicWrapper,
-  FJARSYSLAN_ID,
   FootNote,
   m,
   Filter,
+  FJARSYSLAN_SLUG,
 } from '@island.is/service-portal/core'
-import {
-  GET_CUSTOMER_CHARGETYPE,
-  GET_CUSTOMER_RECORDS,
-} from '@island.is/service-portal/graphql'
+import { m as messages } from '../../lib/messages'
 
 import DropdownExport from '../../components/DropdownExport/DropdownExport'
 import FinanceTransactionsTable from '../../components/FinanceTransactionsTable/FinanceTransactionsTable'
@@ -43,6 +33,11 @@ import {
   CustomerRecords,
 } from './FinanceTransactionsData.types'
 import FinanceIntro from '../../components/FinanceIntro'
+import {
+  useGetCustomerChargeTypeQuery,
+  useGetCustomerRecordsLazyQuery,
+} from './FinanceTransactions.generated'
+import { Problem } from '@island.is/react-spa/shared'
 
 const FinanceTransactions = () => {
   useNamespaces('sp.finance-transactions')
@@ -60,7 +55,7 @@ const FinanceTransactions = () => {
     data: customerChartypeData,
     loading: chargeTypeDataLoading,
     error: chargeTypeDataError,
-  } = useQuery<Query>(GET_CUSTOMER_CHARGETYPE, {
+  } = useGetCustomerChargeTypeQuery({
     onCompleted: (data) => {
       if (data?.getCustomerChargeType?.chargeType) {
         setEmptyChargeTypes()
@@ -74,7 +69,7 @@ const FinanceTransactions = () => {
     customerChartypeData?.getCustomerChargeType || {}
 
   const [loadCustomerRecords, { data, loading, called, error }] =
-    useLazyQuery(GET_CUSTOMER_RECORDS)
+    useGetCustomerRecordsLazyQuery()
 
   useEffect(() => {
     if (toDate && fromDate && dropdownSelect) {
@@ -91,11 +86,13 @@ const FinanceTransactions = () => {
         },
       })
     }
+    // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [toDate, fromDate, dropdownSelect])
 
   useEffect(() => {
     setFromDate(backInTheDay)
     setToDate(new Date())
+    // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [])
 
   function getAllChargeTypes() {
@@ -114,7 +111,7 @@ const FinanceTransactions = () => {
     setQ('')
   }
 
-  const recordsData: CustomerRecords = data?.getCustomerRecords || {}
+  const recordsData = (data?.getCustomerRecords || {}) as CustomerRecords
   const recordsDataArray =
     (recordsData?.records && transactionFilter(recordsData?.records, q)) || []
   const chargeTypeSelect = (chargeTypeData?.chargeType || []).map((item) => ({
@@ -124,143 +121,131 @@ const FinanceTransactions = () => {
 
   return (
     <DynamicWrapper>
-      <Box marginTop={[1, 1, 2, 2, 4]} marginBottom={[6, 6, 10]}>
-        <FinanceIntro
-          text={formatMessage({
-            id: 'sp.finance-transactions:intro',
-            defaultMessage:
-              'Hér er að finna hreyfingar fyrir valin skilyrði. Hreyfingar geta verið gjöld, greiðslur, skuldajöfnuður o.fl.',
-          })}
-        />
+      <Box marginBottom={[6, 6, 10]}>
         <Stack space={2}>
           <Hidden print={true}>
-            <Box marginTop={[1, 1, 2, 2, 5]}>
-              <Filter
-                variant="popover"
-                align="left"
-                reverse
-                labelClear={formatMessage(m.clearFilter)}
-                labelClearAll={formatMessage(m.clearAllFilters)}
-                labelOpen={formatMessage(m.openFilter)}
-                labelClose={formatMessage(m.closeFilter)}
-                filterInput={
-                  <FilterInput
-                    placeholder={formatMessage(m.searchPlaceholder)}
-                    name="finance-transaction-input"
-                    value={q}
-                    onChange={(e) => setQ(e)}
-                    backgroundColor="blue"
-                  />
-                }
-                additionalFilters={
-                  <>
-                    <Button
-                      colorScheme="default"
-                      icon="print"
-                      iconType="filled"
-                      onClick={() => window.print()}
-                      preTextIconType="filled"
-                      size="default"
-                      type="button"
-                      variant="utility"
-                    >
-                      {formatMessage(m.print)}
-                    </Button>
-                    <DropdownExport
-                      onGetCSV={() =>
-                        exportHreyfingarFile(recordsDataArray, 'csv')
-                      }
-                      onGetExcel={() =>
-                        exportHreyfingarFile(recordsDataArray, 'xlsx')
-                      }
-                    />
-                  </>
-                }
-                onFilterClear={clearAllFilters}
-              >
-                <FilterMultiChoice
-                  labelClear={formatMessage(m.clearSelected)}
-                  singleExpand={true}
-                  onChange={({ selected }) => {
-                    setDropdownSelect(selected)
-                  }}
-                  onClear={() => {
-                    setEmptyChargeTypes()
-                  }}
-                  categories={[
-                    {
-                      id: 'flokkur',
-                      label: formatMessage(m.transactionsLabel),
-                      selected: dropdownSelect ? [...dropdownSelect] : [],
-                      filters: chargeTypeSelect,
-                      inline: false,
-                      singleOption: false,
-                    },
-                  ]}
+            <Filter
+              variant="popover"
+              align="left"
+              reverse
+              labelClear={formatMessage(m.clearFilter)}
+              labelClearAll={formatMessage(m.clearAllFilters)}
+              labelOpen={formatMessage(m.openFilter)}
+              labelClose={formatMessage(m.closeFilter)}
+              filterInput={
+                <FilterInput
+                  placeholder={formatMessage(m.searchPlaceholder)}
+                  name="finance-transaction-input"
+                  value={q}
+                  onChange={(e) => setQ(e)}
+                  backgroundColor="blue"
                 />
-                <Box className={styles.dateFilter} paddingX={3}>
-                  <Box
-                    borderBottomWidth="standard"
-                    borderColor="blue200"
-                    width="full"
+              }
+              additionalFilters={
+                <>
+                  <Button
+                    colorScheme="default"
+                    icon="print"
+                    iconType="filled"
+                    onClick={() => window.print()}
+                    preTextIconType="filled"
+                    size="default"
+                    type="button"
+                    variant="utility"
+                  >
+                    {formatMessage(m.print)}
+                  </Button>
+                  <DropdownExport
+                    onGetCSV={() =>
+                      exportHreyfingarFile(recordsDataArray, 'csv')
+                    }
+                    onGetExcel={() =>
+                      exportHreyfingarFile(recordsDataArray, 'xlsx')
+                    }
                   />
-                  <Box marginTop={1}>
-                    <Accordion
-                      dividerOnBottom={false}
-                      dividerOnTop={false}
-                      singleExpand={false}
+                </>
+              }
+              onFilterClear={clearAllFilters}
+            >
+              <FilterMultiChoice
+                labelClear={formatMessage(m.clearSelected)}
+                singleExpand={true}
+                onChange={({ selected }) => {
+                  setDropdownSelect(selected)
+                }}
+                onClear={() => {
+                  setEmptyChargeTypes()
+                }}
+                categories={[
+                  {
+                    id: 'flokkur',
+                    label: formatMessage(messages.transactionsLabel),
+                    selected: dropdownSelect ? [...dropdownSelect] : [],
+                    filters: chargeTypeSelect,
+                    inline: false,
+                    singleOption: false,
+                  },
+                ]}
+              />
+              <Box className={styles.dateFilter} paddingX={3}>
+                <Box
+                  borderBottomWidth="standard"
+                  borderColor="blue200"
+                  width="full"
+                />
+                <Box marginTop={1}>
+                  <Accordion
+                    dividerOnBottom={false}
+                    dividerOnTop={false}
+                    singleExpand={false}
+                  >
+                    <AccordionItem
+                      key="date-accordion-item"
+                      id="date-accordion-item"
+                      label={formatMessage(m.datesLabel)}
+                      labelColor="dark400"
+                      labelUse="h5"
+                      labelVariant="h5"
+                      iconVariant="small"
                     >
-                      <AccordionItem
-                        key="date-accordion-item"
-                        id="date-accordion-item"
-                        label={formatMessage(m.datesLabel)}
-                        labelColor="dark400"
-                        labelUse="h5"
-                        labelVariant="h5"
-                        iconVariant="small"
+                      <Box
+                        className={styles.accordionBox}
+                        display="flex"
+                        flexDirection="column"
                       >
-                        <Box
-                          className={styles.accordionBox}
-                          display="flex"
-                          flexDirection="column"
-                        >
+                        <DatePicker
+                          label={formatMessage(m.datepickerFromLabel)}
+                          placeholderText={formatMessage(m.datepickLabel)}
+                          locale="is"
+                          backgroundColor="blue"
+                          size="xs"
+                          handleChange={(d) => setFromDate(d)}
+                          selected={fromDate}
+                          appearInline
+                        />
+                        <Box marginTop={3}>
                           <DatePicker
-                            label={formatMessage(m.datepickerFromLabel)}
+                            label={formatMessage(m.datepickerToLabel)}
                             placeholderText={formatMessage(m.datepickLabel)}
                             locale="is"
                             backgroundColor="blue"
                             size="xs"
-                            handleChange={(d) => setFromDate(d)}
-                            selected={fromDate}
+                            handleChange={(d) => setToDate(d)}
+                            selected={toDate}
                             appearInline
                           />
-                          <Box marginTop={3}>
-                            <DatePicker
-                              label={formatMessage(m.datepickerToLabel)}
-                              placeholderText={formatMessage(m.datepickLabel)}
-                              locale="is"
-                              backgroundColor="blue"
-                              size="xs"
-                              handleChange={(d) => setToDate(d)}
-                              selected={toDate}
-                              appearInline
-                            />
-                          </Box>
                         </Box>
-                      </AccordionItem>
-                    </Accordion>
-                  </Box>
+                      </Box>
+                    </AccordionItem>
+                  </Accordion>
                 </Box>
-              </Filter>
-            </Box>
+              </Box>
+            </Filter>
           </Hidden>
 
           <Box marginTop={2}>
             {(error || chargeTypeDataError) && (
-              <AlertBanner
-                description={formatMessage(m.errorFetch)}
-                variant="error"
-              />
+              <Problem error={error || chargeTypeDataError} noBorder={false} />
             )}
             {(loading || chargeTypeDataLoading || !called) &&
               !chargeTypesEmpty &&
@@ -272,9 +257,12 @@ const FinanceTransactions = () => {
               )}
             {((recordsDataArray.length === 0 && called && !loading && !error) ||
               chargeTypesEmpty) && (
-              <AlertBanner
-                description={formatMessage(m.noResultsTryAgain)}
-                variant="warning"
+              <Problem
+                type="no_data"
+                noBorder={false}
+                title={formatMessage(m.noData)}
+                message={formatMessage(m.noTransactionFound)}
+                imgSrc="./assets/images/sofa.svg"
               />
             )}
             {recordsDataArray.length > 0 ? (
@@ -283,7 +271,7 @@ const FinanceTransactions = () => {
           </Box>
         </Stack>
       </Box>
-      <FootNote serviceProviderID={FJARSYSLAN_ID} />
+      <FootNote serviceProviderSlug={FJARSYSLAN_SLUG} />
     </DynamicWrapper>
   )
 }

@@ -23,7 +23,7 @@ import { GetGenericPageInput } from './dto/getGenericPage.input'
 import { GetGenericOverviewPageInput } from './dto/getGenericOverviewPage.input'
 import { Namespace, mapNamespace } from './models/namespace.model'
 import { Menu, mapMenu } from './models/menu.model'
-import { LifeEventPage, mapLifeEventPage } from './models/lifeEventPage.model'
+import { AnchorPage, mapAnchorPage } from './models/anchorPage.model'
 import { AdgerdirTags } from './models/adgerdirTags.model'
 import { Organization } from './models/organization.model'
 import { Organizations } from './models/organizations.model'
@@ -81,6 +81,7 @@ import { mapTabSection, TabSection } from './models/tabSection.model'
 import { GetGenericTagBySlugInput } from './dto/getGenericTagBySlug.input'
 import { GenericTag, mapGenericTag } from './models/genericTag.model'
 import { GetEmailSignupInput } from './dto/getEmailSignup.input'
+import { LifeEventPage, mapLifeEventPage } from './models/lifeEventPage.model'
 
 const errorHandler = (name: string) => {
   return (error: Error) => {
@@ -173,24 +174,25 @@ export class CmsContentfulService {
   }
 
   async getOrganizationLogos(
-    organizationTitles: string[],
+    organizationFieldValues: string[],
+    searchByField: keyof types.IOrganizationFields,
   ): Promise<Array<string | null>> {
     const params = {
       ['content_type']: 'organization',
-      select: 'fields.logo,fields.title',
-      'fields.title[in]': organizationTitles.join(','),
+      select: `fields.logo,fields.${searchByField}`,
+      [`fields.${searchByField}[in]`]: organizationFieldValues.join(','),
     }
 
     const result = await this.contentfulRepository
       .getLocalizedEntries<types.IOrganizationFields>(null, params)
       .catch(errorHandler('getOrganizationsLogo'))
 
-    return organizationTitles.map((title) => {
+    return organizationFieldValues.map((title) => {
       if (!result.items) {
         return null
       } else {
         const organization = result.items.find(
-          (item) => item.fields.title === title,
+          (item) => item.fields[searchByField] === title,
         )
 
         const image = organization?.fields.logo
@@ -198,6 +200,64 @@ export class CmsContentfulService {
           : null
 
         return image?.url ? image.url : null
+      }
+    })
+  }
+
+  async getOrganizationTitles(
+    organizationKeys: string[],
+    locale?: 'en' | 'is',
+  ): Promise<Array<string | null>> {
+    const params = {
+      ['content_type']: 'organization',
+      select: 'fields.title,fields.referenceIdentifier',
+      'fields.referenceIdentifier[in]': organizationKeys.join(','),
+    }
+
+    const result = await this.contentfulRepository
+      .getLocalizedEntries<types.IOrganizationFields>(locale, params)
+      .catch(errorHandler('getOrganizationsTitle'))
+
+    return organizationKeys.map((key) => {
+      if (!result.items) {
+        return null
+      } else {
+        const organization = result.items.find(
+          (item) => item.fields.referenceIdentifier === key,
+        )
+
+        const title = organization?.fields.title || organization?.fields.title
+
+        return title ?? null
+      }
+    })
+  }
+
+  async getOrganizationLink(
+    organizationKeys: string[],
+    locale?: 'en' | 'is',
+  ): Promise<Array<string | null>> {
+    const params = {
+      ['content_type']: 'organization',
+      select: 'fields.link,fields.referenceIdentifier',
+      'fields.referenceIdentifier[in]': organizationKeys.join(','),
+    }
+
+    const result = await this.contentfulRepository
+      .getLocalizedEntries<types.IOrganizationFields>(locale, params)
+      .catch(errorHandler('getOrganizationLink'))
+
+    return organizationKeys.map((key) => {
+      if (!result.items) {
+        return null
+      } else {
+        const organization = result.items.find(
+          (item) => item.fields.referenceIdentifier === key,
+        )
+
+        const link = organization?.fields.link || organization?.fields.link
+
+        return link ?? null
       }
     })
   }
@@ -607,6 +667,32 @@ export class CmsContentfulService {
     return (result.items as types.IMenu[]).map(mapMenu)[0] ?? null
   }
 
+  async getAnchorPage(slug: string, lang: string): Promise<AnchorPage | null> {
+    const params = {
+      ['content_type']: 'anchorPage',
+      'fields.slug': slug,
+    }
+
+    const result = await this.contentfulRepository
+      .getLocalizedEntries<types.IAnchorPageFields>(lang, params)
+      .catch(errorHandler('getAnchorPage'))
+
+    return (result.items as types.IAnchorPage[]).map(mapAnchorPage)[0] ?? null
+  }
+
+  async getAnchorPages(lang: string): Promise<AnchorPage[]> {
+    const params = {
+      ['content_type']: 'anchorPage',
+      order: 'sys.createdAt',
+    }
+
+    const result = await this.contentfulRepository
+      .getLocalizedEntries<types.IAnchorPageFields>(lang, params)
+      .catch(errorHandler('getAnchorPages'))
+
+    return (result.items as types.IAnchorPage[]).map(mapAnchorPage)
+  }
+
   async getLifeEventPage(
     slug: string,
     lang: string,
@@ -634,6 +720,23 @@ export class CmsContentfulService {
     const result = await this.contentfulRepository
       .getLocalizedEntries<types.ILifeEventPageFields>(lang, params)
       .catch(errorHandler('getLifeEvents'))
+
+    return (result.items as types.ILifeEventPage[]).map(mapLifeEventPage)
+  }
+
+  async getLifeEventsInCategory(
+    lang: string,
+    slug: string,
+  ): Promise<LifeEventPage[]> {
+    const params = {
+      ['content_type']: 'lifeEventPage',
+      'fields.category.sys.contentType.sys.id': 'articleCategory',
+      'fields.category.fields.slug': slug,
+    }
+
+    const result = await this.contentfulRepository
+      .getLocalizedEntries<types.ILifeEventPageFields>(lang, params)
+      .catch(errorHandler('getLifeEventsInCategory'))
 
     return (result.items as types.ILifeEventPage[]).map(mapLifeEventPage)
   }
@@ -689,23 +792,6 @@ export class CmsContentfulService {
       .getLocalizedEntries<types.IUrlFields>(lang, params)
       .catch(errorHandler('getUrl'))
     return (result.items as types.IUrl[]).map(mapUrl)[0] ?? null
-  }
-
-  async getLifeEventsInCategory(
-    lang: string,
-    slug: string,
-  ): Promise<LifeEventPage[]> {
-    const params = {
-      ['content_type']: 'lifeEventPage',
-      'fields.category.sys.contentType.sys.id': 'articleCategory',
-      'fields.category.fields.slug': slug,
-    }
-
-    const result = await this.contentfulRepository
-      .getLocalizedEntries<types.ILifeEventPageFields>(lang, params)
-      .catch(errorHandler('getLifeEventsInCategory'))
-
-    return (result.items as types.ILifeEventPage[]).map(mapLifeEventPage)
   }
 
   async getFrontpage({

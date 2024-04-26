@@ -151,7 +151,9 @@ export const ValueContainer = (
   return (
     <components.ValueContainer
       className={cn({
-        [styles.valueContainer]: !!inputHasLabel,
+        [styles.valueContainer({
+          size,
+        })]: !!inputHasLabel,
         [styles.valueContainerSmall]: size === 'sm',
       })}
       {...props}
@@ -210,12 +212,12 @@ export const Control = (
   // @ts-ignore make web strict
   props: ControlProps<OptionType<string>, false, GroupBase<OptionType<string>>>,
 ) => {
-  const { size = 'md' } = props.selectProps
+  const { size = 'md', inputHasLabel } = props.selectProps
   return (
     <components.Control
       className={cn(styles.container, {
         [styles.hasError]: props.selectProps.hasError,
-        [styles.containerXS]: size === 'xs',
+        [styles.containerXS]: size === 'xs' && !!inputHasLabel,
       })}
       {...props}
     >

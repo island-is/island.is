@@ -44,7 +44,8 @@ export interface DatePickerProps {
   size?: DatePickerSize
   backgroundColor?: DatePickerBackgroundColor
   icon?: { name: IconType; type?: Type }
-
+  showTimeInput?: boolean
+  timeInputLabel?: string
   /**
    * Minimum selectable year inside datepicker
    */
@@ -53,6 +54,8 @@ export interface DatePickerProps {
    * Maximum selectable year inside datepicker
    */
   maxYear?: number
+  readOnly?: boolean
+  calendarStartDay?: number
 }
 
 export interface DatePickerCustomHeaderProps {

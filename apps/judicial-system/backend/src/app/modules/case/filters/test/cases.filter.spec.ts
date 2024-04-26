@@ -2,13 +2,13 @@ import { Op } from 'sequelize'
 
 import type { User } from '@island.is/judicial-system/types'
 import {
-  appealsCourtRoles,
   CaseAppealState,
   CaseDecision,
   CaseState,
   CaseType,
   completedCaseStates,
-  courtRoles,
+  courtOfAppealsRoles,
+  districtCourtRoles,
   indictmentCases,
   InstitutionType,
   investigationCases,
@@ -42,6 +42,7 @@ describe('getCasesQueryFilter', () => {
           state: [
             CaseState.NEW,
             CaseState.DRAFT,
+            CaseState.WAITING_FOR_CONFIRMATION,
             CaseState.SUBMITTED,
             CaseState.RECEIVED,
             CaseState.ACCEPTED,
@@ -51,8 +52,7 @@ describe('getCasesQueryFilter', () => {
         },
         {
           [Op.or]: [
-            { creating_prosecutor_id: { [Op.is]: null } },
-            { '$creatingProsecutor.institution_id$': 'Prosecutors Office Id' },
+            { prosecutors_office_id: 'Prosecutors Office Id' },
             { shared_with_prosecutors_office_id: 'Prosecutors Office Id' },
           ],
         },
@@ -97,6 +97,7 @@ describe('getCasesQueryFilter', () => {
           state: [
             CaseState.NEW,
             CaseState.DRAFT,
+            CaseState.WAITING_FOR_CONFIRMATION,
             CaseState.SUBMITTED,
             CaseState.RECEIVED,
             CaseState.ACCEPTED,
@@ -106,8 +107,7 @@ describe('getCasesQueryFilter', () => {
         },
         {
           [Op.or]: [
-            { creating_prosecutor_id: { [Op.is]: null } },
-            { '$creatingProsecutor.institution_id$': 'Prosecutors Office Id' },
+            { prosecutors_office_id: 'Prosecutors Office Id' },
             { shared_with_prosecutors_office_id: 'Prosecutors Office Id' },
           ],
         },
@@ -124,7 +124,10 @@ describe('getCasesQueryFilter', () => {
     })
   })
 
-  describe.each(courtRoles)('given %s role', (role) => {
+  describe.each([
+    UserRole.DISTRICT_COURT_JUDGE,
+    UserRole.DISTRICT_COURT_REGISTRAR,
+  ])('given %s role', (role) => {
     it(`should get ${role} filter`, () => {
       // Arrange
       const user = {
@@ -183,11 +186,19 @@ describe('getCasesQueryFilter', () => {
     })
   })
 
-  describe('given ASSISTANT role', () => {
+  describe.each(
+    districtCourtRoles.filter(
+      (role) =>
+        ![
+          UserRole.DISTRICT_COURT_JUDGE,
+          UserRole.DISTRICT_COURT_REGISTRAR,
+        ].includes(role as UserRole),
+    ),
+  )('given %s role', (role) => {
     it(`should get assistant filter`, () => {
       // Arrange
       const user = {
-        role: UserRole.ASSISTANT,
+        role,
         institution: { id: 'Court Id', type: InstitutionType.DISTRICT_COURT },
       }
 
@@ -219,7 +230,7 @@ describe('getCasesQueryFilter', () => {
     })
   })
 
-  describe.each(appealsCourtRoles)('given %s role', (role) => {
+  describe.each(courtOfAppealsRoles)('given %s role', (role) => {
     it('should get court of appeals filter', () => {
       // Arrange
       const user = {
@@ -246,7 +257,20 @@ describe('getCasesQueryFilter', () => {
             ],
           },
           {
-            appeal_state: [CaseAppealState.RECEIVED, CaseAppealState.COMPLETED],
+            [Op.or]: [
+              {
+                appeal_state: [
+                  CaseAppealState.RECEIVED,
+                  CaseAppealState.COMPLETED,
+                ],
+              },
+              {
+                [Op.and]: [
+                  { appeal_state: [CaseAppealState.WITHDRAWN] },
+                  { appeal_received_by_court_date: { [Op.not]: null } },
+                ],
+              },
+            ],
           },
         ],
       })
@@ -351,7 +375,7 @@ describe('getCasesQueryFilter', () => {
                     {
                       [Op.and]: [
                         { state: CaseState.RECEIVED },
-                        { court_date: { [Op.not]: null } },
+                        { '$dateLogs.date_type$': 'COURT_DATE' },
                       ],
                     },
                     { state: completedCaseStates },

@@ -1,9 +1,9 @@
 import { useContext, useState } from 'react'
 import { useIntl } from 'react-intl'
+import { AnimatePresence } from 'framer-motion'
 import { useRouter } from 'next/router'
-import { useQuery } from '@apollo/client'
 
-import { Box, Input, Select } from '@island.is/island-ui/core'
+import { Box, Select } from '@island.is/island-ui/core'
 import * as constants from '@island.is/judicial-system/consts'
 import { core } from '@island.is/judicial-system-web/messages'
 import {
@@ -11,28 +11,28 @@ import {
   FormContentContainer,
   FormContext,
   FormFooter,
+  Modal,
   PageHeader,
   PageLayout,
   PageTitle,
   SectionHeading,
 } from '@island.is/judicial-system-web/src/components'
 import {
-  InstitutionType,
+  NotificationType,
   User,
   UserRole,
 } from '@island.is/judicial-system-web/src/graphql/schema'
-import {
-  ReactSelectOption,
-  UserData,
-} from '@island.is/judicial-system-web/src/types'
-import {
-  removeTabsValidateAndSet,
-  validateAndSendToServer,
-} from '@island.is/judicial-system-web/src/utils/formHelper'
+import { ReactSelectOption } from '@island.is/judicial-system-web/src/types'
+import { stepValidationsType } from '@island.is/judicial-system-web/src/utils/formHelper'
 import { useCase } from '@island.is/judicial-system-web/src/utils/hooks'
-import { UsersQuery } from '@island.is/judicial-system-web/src/utils/mutations'
+import {
+  hasSentNotification,
+  isReopenedCOACase,
+} from '@island.is/judicial-system-web/src/utils/stepHelper'
 import { isCourtOfAppealCaseStepValid } from '@island.is/judicial-system-web/src/utils/validate'
 
+import CaseNumberInput from '../components/CaseNumberInput/CaseNumberInput'
+import { useAppealCaseUsersQuery } from './appealCaseUsers.generated'
 import { appealCase as strings } from './AppealCase.strings'
 
 type JudgeSelectOption = ReactSelectOption & { judge: User }
@@ -40,41 +40,41 @@ type AssistantSelectOption = ReactSelectOption & { assistant: User }
 
 const AppealCase = () => {
   const { workingCase, setWorkingCase } = useContext(FormContext)
-  const { updateCase, setAndSendCaseToServer } = useCase()
+  const {
+    updateCase,
+    sendNotification,
+    sendNotificationError,
+    isSendingNotification,
+  } = useCase()
 
   const { formatMessage } = useIntl()
   const router = useRouter()
   const { id } = router.query
 
-  const [appealCaseNumberErrorMessage, setAppealCaseNumberErrorMessage] =
-    useState<string>('')
+  const [modalVisible, setModalVisible] = useState<boolean>(false)
+  const [navigateTo, setNavigateTo] = useState<keyof stepValidationsType>()
 
-  const { data: userData } = useQuery<UserData>(UsersQuery, {
+  const { data: usersData } = useAppealCaseUsersQuery({
     fetchPolicy: 'no-cache',
     errorPolicy: 'all',
   })
 
-  const assistants = (userData?.users ?? [])
-    .filter(
-      (user: User) =>
-        user.role === UserRole.ASSISTANT &&
-        user.institution?.type === InstitutionType.COURT_OF_APPEALS,
-    )
+  const assistants = (usersData?.users ?? [])
+    .filter((user: User) => user.role === UserRole.COURT_OF_APPEALS_ASSISTANT)
     .map((assistant: User) => {
-      return { label: assistant.name, value: assistant.id, assistant }
+      return { label: assistant.name ?? '', value: assistant.id, assistant }
     })
 
-  const judges = (userData?.users ?? [])
+  const judges = (usersData?.users ?? [])
     .filter(
       (user: User) =>
-        user.role === UserRole.JUDGE &&
-        user.institution?.type === InstitutionType.COURT_OF_APPEALS &&
+        user.role === UserRole.COURT_OF_APPEALS_JUDGE &&
         workingCase.appealJudge1?.id !== user.id &&
         workingCase.appealJudge2?.id !== user.id &&
         workingCase.appealJudge3?.id !== user.id,
     )
     .map((judge: User) => {
-      return { label: judge.name, value: judge.id, judge }
+      return { label: judge.name ?? '', value: judge.id, judge }
     })
 
   const defaultJudges = [
@@ -88,138 +88,180 @@ const AppealCase = () => {
       assistant.value === workingCase.appealAssistant?.id,
   )
 
+  const sendNotifications = () => {
+    return sendNotification(
+      workingCase.id,
+      NotificationType.APPEAL_JUDGES_ASSIGNED,
+    )
+  }
+
   const previousUrl = `${constants.COURT_OF_APPEAL_OVERVIEW_ROUTE}/${id}`
-  const handleNavigationTo = (destination: string) =>
-    router.push(`${destination}/${workingCase.id}`)
+  const handleNavigationTo = async (destination: keyof stepValidationsType) => {
+    setNavigateTo(destination)
+
+    if (
+      hasSentNotification(
+        NotificationType.APPEAL_JUDGES_ASSIGNED,
+        workingCase.notifications,
+      ).hasSent ||
+      isReopenedCOACase(workingCase.appealState, workingCase.notifications)
+    ) {
+      router.push(`${destination}/${id}`)
+    } else {
+      await sendNotifications()
+      setModalVisible(true)
+    }
+  }
+
+  const handleChange = async (coaJudgeId: string, coaJudgeProperty: string) => {
+    if (workingCase) {
+      const updatedCase = await updateCase(workingCase.id, {
+        [coaJudgeProperty]: coaJudgeId,
+      })
+
+      const coaJudge =
+        coaJudgeProperty === 'appealJudge1Id'
+          ? { appealJudge1: updatedCase?.appealJudge1 }
+          : coaJudgeProperty === 'appealJudge2Id'
+          ? { appealJudge2: updatedCase?.appealJudge2 }
+          : { appealJudge3: updatedCase?.appealJudge3 }
+
+      setWorkingCase((prevWorkingCase) => ({
+        ...prevWorkingCase,
+        ...coaJudge,
+      }))
+    }
+  }
+
+  const handleAssistantChange = async (appealAssistantId: string) => {
+    if (workingCase) {
+      const updatedCase = await updateCase(workingCase.id, {
+        appealAssistantId,
+      })
+
+      setWorkingCase((prevWorkingCase) => ({
+        ...prevWorkingCase,
+        appealAssistant: updatedCase?.appealAssistant,
+      }))
+    }
+  }
 
   return (
-    <PageLayout
-      workingCase={workingCase}
-      isLoading={false}
-      notFound={false}
-      onNavigationTo={handleNavigationTo}
-    >
-      <PageHeader title={formatMessage(strings.title)} />
-      <FormContentContainer>
-        <PageTitle>{formatMessage(strings.title)}</PageTitle>
-        <Box component="section" marginBottom={5}>
-          <SectionHeading title={formatMessage(core.appealCaseNumberHeading)} />
-          <Input
-            name="appealCaseNumber"
-            label={formatMessage(strings.caseNumberLabel)}
-            value={workingCase.appealCaseNumber ?? ''}
-            placeholder={formatMessage(strings.caseNumberPlaceholder, {
-              year: new Date().getFullYear(),
-            })}
-            errorMessage={appealCaseNumberErrorMessage}
-            onChange={(event) => {
-              removeTabsValidateAndSet(
-                'appealCaseNumber',
-                event.target.value,
-                ['empty', 'appeal-case-number-format'],
-                workingCase,
-                setWorkingCase,
-                appealCaseNumberErrorMessage,
-                setAppealCaseNumberErrorMessage,
-              )
-            }}
-            onBlur={(event) => {
-              validateAndSendToServer(
-                'appealCaseNumber',
-                event.target.value,
-                ['empty', 'appeal-case-number-format'],
-                workingCase,
-                updateCase,
-                setAppealCaseNumberErrorMessage,
-              )
-            }}
-            required
-          />
-        </Box>
-        <Box component="section" marginBottom={5}>
-          <SectionHeading title={formatMessage(core.appealAssistantHeading)} />
-          <Select
-            name="assistant"
-            label={formatMessage(strings.assistantLabel)}
-            placeholder={formatMessage(strings.assistantPlaceholder)}
-            value={defaultAssistant}
-            options={assistants}
-            onChange={(so) => {
-              const assistantUpdate = (so as AssistantSelectOption).assistant
+    <>
+      <PageLayout
+        workingCase={workingCase}
+        isLoading={false}
+        notFound={false}
+        onNavigationTo={handleNavigationTo}
+      >
+        <PageHeader title={formatMessage(strings.title)} />
+        <FormContentContainer>
+          <PageTitle>{formatMessage(strings.title)}</PageTitle>
+          <Box component="section" marginBottom={5}>
+            <SectionHeading
+              title={formatMessage(core.appealCaseNumberHeading)}
+            />
+            <CaseNumberInput />
+          </Box>
 
-              setAndSendCaseToServer(
-                [
-                  {
-                    appealAssistantId: assistantUpdate.id ?? null,
-                    force: true,
-                  },
-                ],
-                workingCase,
-                setWorkingCase,
-              )
-            }}
-            required
-          />
-        </Box>
-        <Box component="section" marginBottom={8}>
-          <SectionHeading title={formatMessage(core.appealJudgesHeading)} />
-          <BlueBox>
-            {defaultJudges.map((judge, index) => {
-              return (
-                <Box marginBottom={2} key={`judgeBox${index + 1}`}>
-                  <Select
-                    name="judge"
-                    label={formatMessage(
-                      index === 0
-                        ? strings.judgeForepersonLabel
-                        : strings.judgeLabel,
-                    )}
-                    placeholder={formatMessage(
-                      index === 0
-                        ? strings.judgeForepersonPlaceholder
-                        : strings.judgePlaceholder,
-                    )}
-                    value={
-                      judge?.id
-                        ? { label: judge.name, value: judge.id }
-                        : undefined
-                    }
-                    options={judges}
-                    onChange={(so) => {
-                      const judgeUpdate = (so as JudgeSelectOption).judge
-                      const judgeProperty = `appealJudge${index + 1}Id`
+          <Box component="section" marginBottom={5}>
+            <SectionHeading
+              title={formatMessage(core.appealAssistantHeading)}
+            />
+            <Select
+              name="assistant"
+              label={formatMessage(strings.assistantLabel)}
+              placeholder={formatMessage(strings.assistantPlaceholder)}
+              value={defaultAssistant}
+              options={assistants}
+              onChange={(selectedOption) => {
+                handleAssistantChange(
+                  (selectedOption as AssistantSelectOption).assistant.id,
+                )
+              }}
+              required
+            />
+          </Box>
+          <Box component="section" marginBottom={8}>
+            <SectionHeading title={formatMessage(core.appealJudgesHeading)} />
+            <BlueBox>
+              {defaultJudges.map((judge, index) => {
+                return (
+                  <Box marginBottom={2} key={`judgeBox${index + 1}`}>
+                    <Select
+                      name="judge"
+                      label={formatMessage(
+                        index === 0
+                          ? strings.judgeForepersonLabel
+                          : strings.judgeLabel,
+                      )}
+                      placeholder={formatMessage(
+                        index === 0
+                          ? strings.judgeForepersonPlaceholder
+                          : strings.judgePlaceholder,
+                      )}
+                      value={
+                        judge?.id
+                          ? { label: judge.name ?? '', value: judge.id }
+                          : undefined
+                      }
+                      options={judges}
+                      onChange={(selectedOption) => {
+                        const judgeUpdate = (
+                          selectedOption as JudgeSelectOption
+                        ).judge.id
+                        const judgeProperty = `appealJudge${index + 1}Id`
 
-                      setAndSendCaseToServer(
-                        [
-                          {
-                            [judgeProperty]: judgeUpdate.id ?? null,
-                            force: true,
-                          },
-                        ],
-                        workingCase,
-                        setWorkingCase,
-                      )
-                    }}
-                    required
-                  />
-                </Box>
-              )
-            })}
-          </BlueBox>
-        </Box>
-      </FormContentContainer>
-      <FormContentContainer isFooter>
-        <FormFooter
-          previousUrl={previousUrl}
-          nextButtonIcon="arrowForward"
-          onNextButtonClick={() => {
-            handleNavigationTo(constants.COURT_OF_APPEAL_RULING_ROUTE)
-          }}
-          nextButtonText={formatMessage(strings.nextButtonText)}
-          nextIsDisabled={!isCourtOfAppealCaseStepValid(workingCase)}
-        />
-      </FormContentContainer>
-    </PageLayout>
+                        handleChange(judgeUpdate, judgeProperty)
+                      }}
+                      required
+                    />
+                  </Box>
+                )
+              })}
+            </BlueBox>
+          </Box>
+        </FormContentContainer>
+        <FormContentContainer isFooter>
+          <FormFooter
+            previousUrl={previousUrl}
+            nextButtonIcon="arrowForward"
+            onNextButtonClick={() => {
+              handleNavigationTo(constants.COURT_OF_APPEAL_RULING_ROUTE)
+            }}
+            nextButtonText={formatMessage(strings.nextButtonText)}
+            nextIsDisabled={!isCourtOfAppealCaseStepValid(workingCase)}
+          />
+        </FormContentContainer>
+      </PageLayout>
+      <AnimatePresence>
+        {modalVisible && (
+          <Modal
+            title={formatMessage(
+              sendNotificationError
+                ? strings.notificationsFailedModalHeading
+                : strings.modalHeading,
+            )}
+            text={formatMessage(
+              sendNotificationError
+                ? strings.notificationsFailedModalMessage
+                : strings.modalMessage,
+            )}
+            primaryButtonText={formatMessage(strings.modalPrimaryButton)}
+            onPrimaryButtonClick={() => router.push(`${navigateTo}/${id}`)}
+            onSecondaryButtonClick={() => {
+              sendNotifications()
+            }}
+            secondaryButtonText={
+              sendNotificationError
+                ? formatMessage(strings.notificationFailedModalSecondaryButton)
+                : undefined
+            }
+            isSecondaryButtonLoading={isSendingNotification}
+          />
+        )}
+      </AnimatePresence>
+    </>
   )
 }
 

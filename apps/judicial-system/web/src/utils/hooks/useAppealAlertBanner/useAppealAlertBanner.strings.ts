@@ -108,4 +108,14 @@ export const strings = defineMessages({
     description:
       'Texti í tilkynningarglugga sem birtist þegar héraðsdómari er að fara að móttaka kæru.',
   },
+  appealWithdrawnTitle: {
+    id: 'judicial.system.core:appeal_alert_banner.appeal_withdrawn_title',
+    defaultMessage: 'Kæra afturkölluð',
+    description: 'Titill á niðurstöðu landsréttar þegar kæru er lokið.',
+  },
+  appealWithdrawnDescription: {
+    id: 'judicial.system.core:appeal_alert_banner.appeal_withdrawn_description',
+    defaultMessage: 'Afturkallað',
+    description: 'Texti í viðvörunarglugga þegar kæru er lokið.',
+  },
 })

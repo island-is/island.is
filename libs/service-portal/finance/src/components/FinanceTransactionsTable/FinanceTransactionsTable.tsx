@@ -1,13 +1,17 @@
-import React, { FC, useState } from 'react'
-import format from 'date-fns/format'
+import { useState } from 'react'
 import { Table as T, Box, Pagination } from '@island.is/island-ui/core'
 import { useLocale } from '@island.is/localization'
-import { m, amountFormat } from '@island.is/service-portal/core'
+import {
+  m,
+  amountFormat,
+  periodFormat,
+  formatDate,
+  NestedTable,
+} from '@island.is/service-portal/core'
 import sortBy from 'lodash/sortBy'
-import { dateFormat } from '@island.is/shared/constants'
 import { ExpandRow, ExpandHeader } from '@island.is/service-portal/core'
 import { CustomerRecordsDetails } from '../../screens/FinanceTransactions/FinanceTransactionsData.types'
-import FinanceTransactionsDetail from '../FinanceTransactionsDetail/FinanceTransactionsDetail'
+import { m as messages } from '../../lib/messages'
 
 const ITEMS_ON_PAGE = 20
 
@@ -15,9 +19,7 @@ interface Props {
   recordsArray: Array<CustomerRecordsDetails>
 }
 
-const FinanceTransactionsTable: FC<React.PropsWithChildren<Props>> = ({
-  recordsArray,
-}) => {
+const FinanceTransactionsTable = ({ recordsArray }: Props) => {
   const [page, setPage] = useState(1)
   const { formatMessage } = useLocale()
 
@@ -34,7 +36,7 @@ const FinanceTransactionsTable: FC<React.PropsWithChildren<Props>> = ({
             { value: formatMessage(m.date) },
             { value: formatMessage(m.chargeType) },
             { value: formatMessage(m.feeItem) },
-            { value: formatMessage(m.feeBase) },
+            { value: formatMessage(messages.feeBase) },
             { value: formatMessage(m.period) },
             { value: formatMessage(m.amount), align: 'right' },
           ]}
@@ -49,19 +51,19 @@ const FinanceTransactionsTable: FC<React.PropsWithChildren<Props>> = ({
               <ExpandRow
                 key={`${record.createTime}-${record.createDate}-${record.accountReference}-${record.reference}-${record.amount}`}
                 data={[
-                  { value: format(new Date(record.createDate), dateFormat.is) },
+                  { value: formatDate(record.createDate) },
                   { value: record.chargeType },
                   { value: record.itemCode },
                   { value: record.chargeItemSubject },
-                  { value: record.period },
+                  { value: periodFormat(record.period) },
                   { value: amountFormat(record.amount), align: 'right' },
                 ]}
               >
-                <FinanceTransactionsDetail
+                <NestedTable
                   data={[
                     {
                       title: formatMessage(m.effectiveDate),
-                      value: format(new Date(record.valueDate), dateFormat.is),
+                      value: formatDate(record.valueDate),
                     },
                     {
                       title: formatMessage(m.performingOrganization),

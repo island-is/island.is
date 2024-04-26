@@ -8,6 +8,7 @@ import { IconMapIcon } from '../IconRC/types'
 import { Text } from '../Text/Text'
 import { LinkContext } from '../context/LinkContext/LinkContext'
 import { LinkV2 } from '../Link/LinkV2'
+import { VisuallyHidden } from '../VisuallyHidden/VisuallyHidden'
 
 export type AlertBannerVariants =
   | 'error'
@@ -74,6 +75,7 @@ export interface AlertBannerProps {
    * Fires when banner gets dismissed, useful for keeping track in storage that the user has dismissed the banner if we don't want it to show up again on page reload
    */
   onDismiss?: () => void
+  closeButtonLabel?: string
 }
 
 export const AlertBanner: FC<React.PropsWithChildren<AlertBannerProps>> = ({
@@ -83,6 +85,7 @@ export const AlertBanner: FC<React.PropsWithChildren<AlertBannerProps>> = ({
   description,
   link,
   onDismiss,
+  closeButtonLabel = 'Close',
 }) => {
   const [dismissed, setDismissed] = useState(false)
 
@@ -164,6 +167,7 @@ export const AlertBanner: FC<React.PropsWithChildren<AlertBannerProps>> = ({
               }
             }}
           >
+            <VisuallyHidden>{closeButtonLabel}</VisuallyHidden>
             <Icon icon="close" color="dark400" />
           </button>
         </Box>

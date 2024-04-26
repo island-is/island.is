@@ -20,14 +20,31 @@ import { CreateExplicitDiscountCodeInput } from './dto/createExplicitDiscountCod
 export class DiscountAdminResolver {
   constructor(private discountAdminService: DiscountAdminService) {}
 
-  @Mutation(() => Discount, {
+  @Mutation(() => [Discount], {
+    nullable: true,
     name: 'createAirDiscountSchemeExplicitDiscountCode',
   })
   createExplicitDiscountCode(
     @CurrentUser() user: User,
     @Args('input', { type: () => CreateExplicitDiscountCodeInput })
     input: CreateExplicitDiscountCodeInput,
-  ): Promise<Discount> {
+  ): Promise<Array<Discount>> {
     return this.discountAdminService.createExplicitDiscountCode(user, input)
+  }
+
+  @Mutation(() => [Discount], {
+    nullable: true,
+    name: 'createAirDiscountSchemeSuperExplicitDiscountCode',
+  })
+  @Scopes(AdminPortalScope.explicitAirDiscountScheme)
+  createSuperExplicitDiscountCode(
+    @CurrentUser() user: User,
+    @Args('input', { type: () => CreateExplicitDiscountCodeInput })
+    input: CreateExplicitDiscountCodeInput,
+  ): Promise<Array<Discount>> {
+    return this.discountAdminService.createSuperExplicitDiscountCode(
+      user,
+      input,
+    )
   }
 }

@@ -6,8 +6,7 @@ import {
   DrivingLicense,
   NationalRegistry,
   NationalRegistryBirthplace,
-  QualityPhoto,
-  QualitySignature,
+  QualityPhotoAndSignature,
 } from './types'
 import { YES } from '@island.is/application/core'
 import { DigitalTachographDriversCardClient } from '@island.is/clients/transport-authority/digital-tachograph-drivers-card'
@@ -168,10 +167,8 @@ export class DigitalTachographDriversCardService extends BaseTemplateApiService 
       const currentLicenseData = application.externalData.currentLicense
         ?.data as DrivingLicense
       const createChargeDate = application.externalData.createCharge?.date
-      const qualityPhotoData = application.externalData.qualityPhoto
-        ?.data as QualityPhoto
-      const qualitySignatureData = application.externalData.qualitySignature
-        ?.data as QualitySignature
+      const qualityPhotoAndSignatureData = application.externalData
+        .qualityPhotoAndSignature?.data as QualityPhotoAndSignature
 
       // Submit the application
       await this.digitalTachographDriversCardClient.saveDriversCard(auth, {
@@ -187,8 +184,8 @@ export class DigitalTachographDriversCardService extends BaseTemplateApiService 
         deliveryMethodIsSend: answers.cardDelivery.deliveryMethodIsSend === YES,
         cardType: answers.cardTypeSelection.cardType,
         paymentReceivedAt: new Date(createChargeDate),
-        photo: qualityPhotoData?.dataUri,
-        signature: qualitySignatureData?.dataUri,
+        photo: qualityPhotoAndSignatureData?.photoDataUri,
+        signature: qualityPhotoAndSignatureData?.signatureDataUri,
         driverslicenceNumber: currentLicenseData?.id?.toString() || '',
         driverslicencePlaceOfPublication:
           currentLicenseData?.publishPlaceName || '',

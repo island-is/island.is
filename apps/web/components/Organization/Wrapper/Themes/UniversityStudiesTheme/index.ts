@@ -1,8 +1,3 @@
-import dynamic from 'next/dynamic'
+import Header from './UniversityStudiesHeader'
 
-export const UniversityStudiesHeader = dynamic(
-  () => import('./UniversityStudiesHeader'),
-  {
-    ssr: false,
-  },
-)
+export const UniversityStudiesHeader = Header

@@ -25,12 +25,12 @@
         "command": "yarn ts-node -P libs/localization/tsconfig.lib.json libs/localization/scripts/extract 'libs/service-portal/assets/src/{lib,components,screens}/**/*.{js,ts,tsx}'"
       }
     },
-    "schemas/codegen": {
+    "codegen/frontend-client": {
       "executor": "nx:run-commands",
       "options": {
-        "output": "libs/service-portal/assets/src/**/*.generated.ts",
         "command": "graphql-codegen --config libs/service-portal/assets/codegen.yml"
-      }
+      },
+      "outputs": ["{projectRoot}/src/**/*.generated.ts"]
     }
   },
   "tags": ["lib:portals-mypages", "scope:portals-mypages"]

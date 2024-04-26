@@ -12,11 +12,25 @@ export enum Features {
   financialStatementInao = 'financialStatementInao',
   inheritanceReport = 'isInheritanceReportApplicationEnabled',
   transportAuthorityDigitalTachographCompanyCard = 'isTransportAuthorityDigitalTachographCompanyCardEnabled',
-  transportAuthorityDigitalTachographDriversCard = 'isTransportAuthorityDigitalTachographDriversCardEnabled',
   transportAuthorityDigitalTachographWorkshopCard = 'isTransportAuthorityDigitalTachographWorkshopCardEnabled',
   alcoholTaxRedemption = 'isAlcoholTaxRedemptionEnabled',
   consultationPortalApplication = 'isConsultationPortalEnabled',
   childrenResidenceChangeV2 = 'isChildrenResidenceChangeV2Enabled',
+  signatureListCreation = 'isSignatureListCreationEnabled',
+  citizenship = 'isCitizenshipEnabled',
+  energyFunds = 'isEnergyFundsEnabled',
+  carRecyclingApplication = 'isCarRecyclingApplicationEnabled',
+  complaintsToAlthingiOmbudsman = 'isComplaintToAlthingiOmbudsmanEnabled',
+  healthcareLicenseCertificate = 'isHealthcareLicenseCertificateEnabled',
+  transferOfMachineOwnership = 'isTransferOfMachineOwnershipEnabled',
+  university = 'isUniversityEnabled',
+  homeSupport = 'isHomeSupportEnabled',
+  ChangeMachineSupervisor = 'isChangeMachineSupervisorEnabled',
+  DeregisterMachine = 'isDeregisterMachineEnabled',
+  grindavikHousingBuyout = 'isGrindavikHousingBuyoutEnabled',
+  RequestInspection = 'isRequestInspectionForMachineEnabled',
+  officialJournalOfIceland = 'isOfficialJournalOfIcelandEnabled',
+  StreetRegistration = 'isStreetRegistrationEnabled',
 
   // Application System Delegations active
   applicationSystemDelegations = 'applicationSystemDelegations',
@@ -31,22 +45,46 @@ export enum Features {
   servicePortalHealthMedicinePages = 'isServicePortalHealthMedicinePageEnabled',
   servicePortalHealthPaymentPages = 'isServicePortalHealthPaymentPageEnabled',
   servicePortalHealthOverviewPage = 'isServicePortalHealthOverviewPageEnabled',
+  servicePortalSignatureCollection = 'isServicePortalSignatureCollectionEnabled',
+  servicePortalVehicleMileagePageEnabled = 'isServicePortalVehicleMileagePageEnabled',
+  servicePortalSocialInsurancePageEnabled = 'isServicePortalSocialInsurancePageEnabled',
+  ServicePortalNotificationsEnabled = 'isServicePortalNotificationsPageEnabled',
 
   //Occupational License Health directorate fetch enabled
   occupationalLicensesHealthDirectorate = 'isHealthDirectorateOccupationalLicenseEnabled',
 
   //License service new drivers license client enabled
   licenseServiceDrivingLicenseClient = 'isLicenseServiceDrivingLicenceClientV2Enabled',
+  licenseServiceDrivingLicencePhotoCheckDisabled = 'isLicenseServiceDrivingLicencePhotoCheckDisabled',
+
+  //Enable intellectual properties fetch
+  isIntellectualPropertyModuleEnabled = 'isIntellectualPropertyModuleEnabled',
 
   // Application delegation flags
   isFishingLicenceCustomDelegationEnabled = 'isFishingLicenceCustomDelegationEnabled',
-  transportAuthorityApplicationsCustomDelegation = 'isTransportAuthorityApplicationsCustomDelegationEnabled',
 
   //Application system
   applicationSystemHistory = 'applicationSystemHistory',
 
   // Search indexer
   shouldSearchIndexerResolveNestedEntries = 'shouldSearchIndexerResolveNestedEntries',
+
+  // Userprofile Collection
+  isIASSpaPagesEnabled = 'isiasspapagesenabled',
+
+  // Disable new login restrictions
+  disableNewDeviceLogins = 'disableNewDeviceLogins',
+
+  // Notifications
+  isNotificationEmailWorkerEnabled = 'isnotificationemailworkerenabled',
+
+  // New/updated delegation notification
+  isDelegationNotificationEnabled = 'isDelegationNotificationEnabled',
+
+  shouldSendEmailNotificationsToDelegations = 'shouldSendEmailNotificationsToDelegations',
+
+  // National registry integration
+  disableSoffia = 'disableSoffia',
 }
 
 export enum ServerSideFeature {

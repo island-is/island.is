@@ -1,10 +1,18 @@
-import React, { ReactNode, Fragment, FC, useMemo } from 'react'
+import React, {
+  ReactNode,
+  Fragment,
+  FC,
+  useMemo,
+  useState,
+  useEffect,
+} from 'react'
 import cn from 'classnames'
 import uniq from 'lodash/uniq'
-import { Colors } from '@island.is/island-ui/theme'
+import { Colors, theme } from '@island.is/island-ui/theme'
 import { Icon, IconTypes } from '../Icon/Icon'
 import { Box } from '../Box/Box'
 import * as styles from './Pagination.css'
+import { useWindowSize } from 'react-use'
 
 type ColorMap = Record<keyof typeof styles.variants, Colors>
 
@@ -42,6 +50,15 @@ export const Pagination: FC<React.PropsWithChildren<PaginationProps>> = ({
   variant = 'purple',
   renderLink,
 }) => {
+  const [isMobile, setIsMobile] = useState(false)
+  const { width } = useWindowSize()
+  useEffect(() => {
+    if (width <= theme.breakpoints.sm) {
+      return setIsMobile(true)
+    }
+    setIsMobile(false)
+  }, [width])
+
   const calculatedTotalPages =
     totalItems && itemsPerPage
       ? Math.ceil(totalItems / itemsPerPage)
@@ -51,14 +68,27 @@ export const Pagination: FC<React.PropsWithChildren<PaginationProps>> = ({
     return uniq(
       ([] as number[])
         .concat(
-          range(1, 3),
+          // First range
+          isMobile && page > 3 && calculatedTotalPages - page > 1
+            ? [1]
+            : isMobile && calculatedTotalPages - page <= 1
+            ? [1, 2]
+            : range(1, 3),
+
+          // Middle range
           range(page - 1, page + 1),
-          range(calculatedTotalPages - 2, calculatedTotalPages),
+
+          // End range
+          isMobile && page < 3
+            ? range(calculatedTotalPages - 1, calculatedTotalPages)
+            : isMobile && page !== calculatedTotalPages
+            ? [calculatedTotalPages]
+            : range(calculatedTotalPages - 2, calculatedTotalPages),
         )
         .filter((p) => 1 <= p && p <= calculatedTotalPages)
         .sort((a, b) => a - b),
     )
-  }, [page, calculatedTotalPages])
+  }, [page, calculatedTotalPages, isMobile])
 
   const renderEdgeLink = ({
     page,

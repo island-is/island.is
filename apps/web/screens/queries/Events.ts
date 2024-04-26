@@ -1,0 +1,82 @@
+import gql from 'graphql-tag'
+
+import { slices } from './fragments'
+
+export const GET_SINGLE_EVENT_QUERY = gql`
+  query GetSingleEvent($input: GetSingleEventInput!) {
+    getSingleEvent(input: $input) {
+      id
+      title
+      slug
+      startDate
+      time {
+        startTime
+        endTime
+      }
+      location {
+        streetAddress
+        floor
+        postalCode
+        useFreeText
+        freeText
+      }
+      contentImage {
+        url
+        title
+        width
+        height
+      }
+      thumbnailImage {
+        url
+        title
+        width
+        height
+      }
+      fullWidthImageInContent
+      content {
+        ...AllSlices
+      }
+      featuredImage {
+        url
+        title
+        width
+        height
+      }
+      video {
+        ...EmbeddedVideoFields
+      }
+    }
+  }
+  ${slices}
+`
+
+export const GET_EVENTS_QUERY = gql`
+  query GetEvents($input: GetEventsInput!) {
+    getEvents(input: $input) {
+      total
+      items {
+        id
+        title
+        slug
+        startDate
+        time {
+          startTime
+          endTime
+        }
+        location {
+          streetAddress
+          floor
+          postalCode
+          useFreeText
+          freeText
+        }
+        thumbnailImage {
+          url
+          title
+          width
+          height
+        }
+      }
+    }
+  }
+`

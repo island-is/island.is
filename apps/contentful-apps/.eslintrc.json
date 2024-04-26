@@ -13,8 +13,29 @@
         "@next/next/no-html-link-for-pages": [
           "error",
           "apps/contentful-apps/pages"
+        ],
+        "simple-import-sort/imports": [
+          "warn",
+          {
+            "groups": [
+              // React related packages come first, followed by all external imports.
+              ["^react", "^\\w", "^@(?!island).+"],
+              // Then island.is packages.
+              ["^(@island.is).*"],
+              // Then all other imports in this order: "../", "./", "./css"
+              [
+                "^\\.\\.(?!/?$)",
+                "^\\.\\./?$",
+                "^\\./(?=.*/)(?!/?$)",
+                "^\\.(?!/?$)",
+                "^\\./?$",
+                "^.+\\.?(css)$"
+              ]
+            ]
+          }
         ]
-      }
+      },
+      "plugins": ["simple-import-sort"]
     },
     {
       "files": ["*.ts", "*.tsx"],

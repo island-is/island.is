@@ -1,8 +1,6 @@
 import { ApiProperty } from '@nestjs/swagger'
 
-import type { PresignedPost as TPresignedPost } from '@island.is/judicial-system/types'
-
-export class PresignedPost implements TPresignedPost {
+export class PresignedPost {
   @ApiProperty()
   url!: string
 

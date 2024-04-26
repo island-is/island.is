@@ -10,4 +10,7 @@ bootstrap({
   openApi,
   port: environment.port,
   enableVersioning: true,
+  healthCheck: {
+    database: true,
+  },
 })

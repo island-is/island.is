@@ -1,6 +1,6 @@
 import React, { FC, useState } from 'react'
 import Header from '../Header/Header'
-import { ToastContainer, NavigationItem, Box } from '@island.is/island-ui/core'
+import { ToastContainer } from '@island.is/island-ui/core'
 import AuthOverlay from '../Loaders/AuthOverlay/AuthOverlay'
 import { useLocation } from 'react-router-dom'
 import { useNamespaces } from '@island.is/localization'
@@ -17,7 +17,6 @@ export const Layout: FC<React.PropsWithChildren<unknown>> = ({ children }) => {
   useNamespaces(['service.portal', 'global', 'portals'])
   const activeModule = useActiveModule()
   const { pathname } = useLocation()
-  const [sideMenuOpen, setSideMenuOpen] = useState(false)
 
   const navigation = useDynamicRoutesWithNavigation(MAIN_NAVIGATION)
   const activeParent = navigation?.children?.find((item) => {
@@ -39,11 +38,7 @@ export const Layout: FC<React.PropsWithChildren<unknown>> = ({ children }) => {
       {globalBanners.length > 0 && (
         <GlobalAlertBannerSection ref={ref} banners={globalBanners} />
       )}
-      <Header
-        setSideMenuOpen={(set: boolean) => setSideMenuOpen(set)}
-        sideMenuOpen={sideMenuOpen}
-        position={height && globalBanners.length > 0 ? height : 0}
-      />
+      <Header position={height && globalBanners.length > 0 ? height : 0} />
 
       {!isFullwidth && activeParent && (
         <NarrowLayout

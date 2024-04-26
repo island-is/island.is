@@ -95,6 +95,7 @@ export const NewsList = ({
           </LinkV2>
           {filteredNewsTags?.map((tag, index) => (
             <LinkV2
+              key={index}
               href={
                 linkResolver('organizationnewsoverview', [parentPageSlug])
                   .href +

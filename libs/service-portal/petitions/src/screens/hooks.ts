@@ -43,7 +43,6 @@ export const useGetAllPetitionLists = () => {
           limit: 1000,
         },
       },
-      pollInterval: 20000,
     },
   )
 
@@ -56,10 +55,10 @@ export const useGetListsUserSigned = () => {
     {
       variables: {
         input: {
+          tags: 'generalPetition',
           limit: 1000,
         },
       },
-      pollInterval: 20000,
     },
   )
   return endorsementResponse?.endorsementSystemUserEndorsements ?? []
@@ -75,24 +74,26 @@ export const useListsUserOwns = () => {
           limit: 1000,
         },
       },
-      pollInterval: 20000,
     },
   )
   return endorsementResponse?.endorsementSystemUserEndorsementLists ?? []
 }
 
 export const useGetSinglePetition = (listId: string) => {
-  const { data: petition, refetch: refetchSinglePetition } =
-    useQuery<SinglePetition>(GetSinglePetitionList, {
-      variables: {
-        input: {
-          listId: listId,
-        },
+  const {
+    data: petition,
+    refetch: refetchSinglePetition,
+    loading: loadingPetition,
+  } = useQuery<SinglePetition>(GetSinglePetitionList, {
+    variables: {
+      input: {
+        listId: listId,
       },
-    })
+    },
+  })
 
   const petitionData = petition?.endorsementSystemGetSingleEndorsementList ?? {}
-  return { petitionData, refetchSinglePetition }
+  return { petitionData, refetchSinglePetition, loadingPetition }
 }
 
 export const useGetSingleEndorsement = (listId: string) => {
@@ -104,25 +105,30 @@ export const useGetSingleEndorsement = (listId: string) => {
           listId: listId,
         },
       },
-      pollInterval: 20000,
     },
   )
   return endorsement?.endorsementSystemGetSingleEndorsement?.hasEndorsed
 }
 
 export const useGetSinglePetitionEndorsements = (listId: string) => {
-  const { data: endorsements, refetch: refetchSinglePetitionEndorsements } =
-    useQuery<SinglePetitionEndorsements>(GetEndorsements, {
-      variables: {
-        input: {
-          listId: listId,
-          limit: 1000,
-        },
+  const {
+    data: endorsements,
+    refetch: refetchSinglePetitionEndorsements,
+    loading: loadingSigners,
+  } = useQuery<SinglePetitionEndorsements>(GetEndorsements, {
+    variables: {
+      input: {
+        listId: listId,
+        limit: 1000,
       },
-      pollInterval: 20000,
-    })
+    },
+  })
 
   const petitionEndorsements =
     endorsements?.endorsementSystemGetEndorsements ?? []
-  return { petitionEndorsements, refetchSinglePetitionEndorsements }
+  return {
+    petitionEndorsements,
+    refetchSinglePetitionEndorsements,
+    loadingSigners,
+  }
 }

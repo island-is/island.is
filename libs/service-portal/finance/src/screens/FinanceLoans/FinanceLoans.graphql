@@ -1,0 +1,81 @@
+query GetHmsLoansHistory {
+  hmsLoansHistory {
+    loanId
+    name
+    homeAddress
+    postNumber
+    municipality
+    firstInterestDate
+    firstPaymentDate
+    totalNumberOfPayments
+    numberOfPaymentPerYear
+    balancePayment
+    paymentFee
+    paymentDelayment
+    temporaryPaymentDelayment
+    variableInterest
+    affiliateLoan
+    priceIndexType
+    baseIndex
+    interest
+    originalLoanAmount
+    nextPaymentDate
+    lastPaymentDate
+    lastUnpaidInvoiceDate
+    numberOfPaymentDatesRemaining
+    statusSettlementPayment
+    lastPaymentAmount
+    totalDueAmount
+    balanceWithoutInterestPriceImprovements
+    accruedInterestPriceImprovements
+    remainingBalanceWithoutDebt
+    repaymentFee
+    loanAmountWithRepayment
+    loanStatus
+    nationalId
+    propertyId
+    propertyAddress
+    propertyMunicipality
+    epilog
+    municipalityNumber
+    loanType
+    installments
+    creditor
+    coPayerName
+    coPayerNationalId
+    properties {
+      propertyId
+      propertyAddress
+      propertyMunicipality
+      epilog
+      municipalityNumber
+    }
+    coPayers {
+      coPayerName
+      coPayerNationalId
+    }
+  }
+}
+
+query GetHmsLoansHistoryPdf {
+  hmsLoansHistoryPdf {
+    mime
+    data
+    name
+  }
+}
+
+query GetHmsLoansPaymentHistory($input: GetHmsLoansPaymentHistoryInput!) {
+  hmsLoansPaymentHistory(input: $input) {
+    paymentDate
+    transactionDate
+    paymentAmount
+    interest
+    priceImprovementPayment
+    priceImprovementInterest
+    costPayment
+    defaultInterest
+    totalPayment
+    loanId
+  }
+}

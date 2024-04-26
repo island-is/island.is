@@ -120,11 +120,6 @@ export const m = defineMessages({
     defaultMessage: 'Til greiðslu vegna fasteignar',
     description: 'Cost',
   },
-  overviewPaymentTotal: {
-    id: 'mc.application:overview.paymentTotal',
-    defaultMessage: 'Samtals',
-    description: 'Total',
-  },
   draftDescription: {
     id: 'mc.application:draft.description',
     defaultMessage: 'Á eftir að samþykkja gagnaöflun',

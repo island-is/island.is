@@ -1,111 +1,75 @@
 import React, { useEffect, useState } from 'react'
 import { useRouter } from 'next/router'
-import { useLazyQuery } from '@apollo/client'
 
-import { Text, Box, Pagination } from '@island.is/island-ui/core'
 import {
-  ApplicationsTable,
+  Text,
+  Box,
+  Pagination,
+  SkeletonLoader,
+  Button,
+} from '@island.is/island-ui/core'
+import {
+  ApplicationsFilterTable,
+  FilterDates,
   FilterPopover,
+  LoadingContainer,
+  TableSkeleton,
 } from '@island.is/financial-aid-web/veita/src/components'
 import {
-  ApplicationState,
   ApplicationPagination,
   applicationPageSize,
+  getStateFromRoute,
 } from '@island.is/financial-aid/shared/lib'
-import { ApplicationFilterQuery } from '@island.is/financial-aid-web/veita/graphql/sharedGql'
 import { navigationItems } from '@island.is/financial-aid-web/veita/src/utils/navigation'
 import { container } from './applicationsOverviewProcessed.css'
-
-interface Filters {
-  selectedStates: ApplicationState[]
-  selectedMonths: number[]
-}
+import useFilter from '@island.is/financial-aid-web/veita/src/utils/useFilter'
+import useApplicationFilter from '@island.is/financial-aid-web/veita/src/utils/useApplicationFilter'
 
 export const ApplicationsOverviewProcessed = () => {
   const router = useRouter()
-
-  const [currentPage, setCurrentPage] = useState<number>(
-    router?.query?.page ? parseInt(router.query.page as string) : 1,
-  )
-  const [filters, setFilters] = useState<Filters>({
-    selectedStates: router?.query?.state
-      ? ((router?.query?.state as string).split(',') as ApplicationState[])
-      : [],
-    selectedMonths: router?.query?.month
-      ? (router?.query?.month as string).split(',').map(Number)
-      : [],
-  })
-
-  const onChecked = (item: ApplicationState | number, checked: boolean) => {
-    const filtersCopy = { ...filters }
-
-    if (typeof item === 'number') {
-      checked
-        ? filters.selectedMonths.push(item)
-        : filters.selectedMonths.splice(filters.selectedMonths.indexOf(item), 1)
-    } else {
-      checked
-        ? filters.selectedStates.push(item)
-        : filters.selectedStates.splice(filters.selectedStates.indexOf(item), 1)
-    }
-
-    setFilters(filtersCopy)
-  }
-
-  const onFilterClear = () => {
-    setFilters({ selectedMonths: [], selectedStates: [] })
-    setCurrentPage(1)
-    filter(1, { selectedMonths: [], selectedStates: [] })
-  }
-
-  const onFilterSave = () => {
-    setCurrentPage(1)
-    filter(1, filters)
-  }
-
-  const onPageChange = (page: number) => {
-    setCurrentPage(page)
-    filter(page, filters)
-  }
-
-  const filter = (page: number, searchFilters: Filters) => {
-    getApplications({
-      variables: {
-        input: {
-          states: searchFilters.selectedStates,
-          months: searchFilters.selectedMonths,
-          page: page,
-        },
-      },
-    })
-
-    const query = new URLSearchParams()
-    query.append('page', page.toString())
-
-    if (searchFilters.selectedMonths.length > 0) {
-      query.append('month', filters.selectedMonths.join(','))
-    }
-    if (searchFilters.selectedStates.length > 0) {
-      query.append('state', filters.selectedStates.join(','))
-    }
-
-    router.push({ search: query.toString() })
-  }
-
-  const [getApplications, { data, error }] = useLazyQuery<{
-    filterApplications: ApplicationPagination
-  }>(ApplicationFilterQuery, {
-    fetchPolicy: 'no-cache',
-    errorPolicy: 'all',
-  })
 
   const currentNavigationItem =
     navigationItems.find((i) => i.link === router.pathname) ||
     navigationItems[0]
 
+  const { label, headers, defaultHeaderSort } = currentNavigationItem
+
+  const statesOnRoute = getStateFromRoute[router.pathname]
+  const [filterApplications, setFilterApplications] =
+    useState<ApplicationPagination>()
+
+  const { applications, staffList, totalCount, minDateCreated } =
+    filterApplications || {}
+
+  const {
+    currentPage,
+    setCurrentPage,
+    activeFilters,
+    onChecked,
+    onFilterClear,
+    onClearFilterOrFillFromRoute,
+    handleDateChange,
+    onFilterClearAll,
+  } = useFilter(router)
+
+  const { filterTable, error, loading } = useApplicationFilter(
+    router,
+    statesOnRoute,
+    setFilterApplications,
+  )
+
   useEffect(() => {
-    filter(currentPage, filters)
-  }, [])
+    filterTable(activeFilters, currentPage)
+  }, [activeFilters])
+
+  useEffect(() => {
+    onClearFilterOrFillFromRoute()
+  }, [router.pathname])
+
+  const onPageChange = (page: number) => {
+    setCurrentPage(page)
+    filterTable(activeFilters, page)
+  }
 
   return (
     <Box
@@ -117,24 +81,69 @@ export const ApplicationsOverviewProcessed = () => {
       <Box>
         <Box className={`contentUp delay-25`} marginTop={15}>
           <Text as="h1" variant="h1" marginBottom={[2, 2, 4]}>
-            {currentNavigationItem.label}
+            {label}
           </Text>
         </Box>
-        <FilterPopover
-          selectedMonths={filters.selectedMonths}
-          selectedStates={filters.selectedStates}
-          results={data?.filterApplications?.totalCount ?? 0}
-          onChecked={onChecked}
-          onFilterClear={onFilterClear}
-          onFilterSave={onFilterSave}
-        />
-        {data?.filterApplications?.applications && (
-          <ApplicationsTable
-            headers={currentNavigationItem.headers}
-            applications={data?.filterApplications?.applications}
-            emptyText="Engar umsóknir fundust með þessum leitarskilyrðum 👀"
-          />
-        )}
+
+        <LoadingContainer
+          isLoading={staffList === undefined}
+          loader={<SkeletonLoader height={64} />}
+        >
+          <Box
+            display="flex"
+            alignItems="flexEnd"
+            rowGap={1}
+            columnGap={2}
+            flexWrap="wrap"
+            marginBottom={4}
+          >
+            {staffList && (
+              <FilterPopover
+                stateOptions={statesOnRoute}
+                staffOptions={staffList}
+                activeFilters={activeFilters}
+                onChecked={onChecked}
+                onFilterClear={onFilterClear}
+              />
+            )}
+
+            <FilterDates
+              onDateChange={handleDateChange}
+              periodFrom={activeFilters.period.from}
+              periodTo={activeFilters.period.to}
+              minDateCreated={minDateCreated}
+            />
+
+            <Box>
+              <Text fontWeight="semiBold" whiteSpace="nowrap">
+                {`${totalCount} ${
+                  totalCount === 1 ? 'niðurstaða' : 'niðurstöður'
+                }`}
+              </Text>
+              <Button
+                icon="reload"
+                onClick={onFilterClearAll}
+                variant="text"
+                size="small"
+              >
+                Hreinsa síu
+              </Button>
+            </Box>
+          </Box>
+        </LoadingContainer>
+
+        <LoadingContainer isLoading={loading} loader={<TableSkeleton />}>
+          {applications && applications.length > 0 ? (
+            <ApplicationsFilterTable
+              headers={headers}
+              applications={applications}
+              defaultHeaderSort={defaultHeaderSort}
+            />
+          ) : (
+            <Text marginTop={2}>Engar umsóknir bíða þín, vel gert 👏</Text>
+          )}
+        </LoadingContainer>
+
         {error && (
           <div>
             Abbabab mistókst að sækja umsóknir, ertu örugglega með aðgang að
@@ -144,25 +153,26 @@ export const ApplicationsOverviewProcessed = () => {
       </Box>
 
       <Box marginBottom={[3, 3, 7]}>
-        <Pagination
-          page={currentPage}
-          totalPages={
-            data?.filterApplications
-              ? Math.ceil(
-                  data?.filterApplications.totalCount / applicationPageSize,
-                )
-              : 0
-          }
-          renderLink={(page, className, children) => (
-            <Box
-              cursor="pointer"
-              className={className}
-              onClick={() => onPageChange(page)}
-            >
-              {children}
-            </Box>
-          )}
-        />
+        <LoadingContainer
+          isLoading={totalCount === undefined}
+          loader={<SkeletonLoader height={32} />}
+        >
+          <Pagination
+            page={currentPage}
+            totalPages={
+              totalCount ? Math.ceil(totalCount / applicationPageSize) : 0
+            }
+            renderLink={(page, className, children) => (
+              <Box
+                cursor="pointer"
+                className={className}
+                onClick={() => onPageChange(page)}
+              >
+                {children}
+              </Box>
+            )}
+          />
+        </LoadingContainer>
       </Box>
     </Box>
   )

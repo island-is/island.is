@@ -101,7 +101,9 @@ export const UserLicenses: FC<React.PropsWithChildren<Props>> = ({
                   )}
                   cta={{
                     label: formatMessage(m.seeDetails),
-                    url: getPathFromType(license.license.type),
+                    url: `${getPathFromType(license.license.type)}/${
+                      license.payload?.metadata.licenseId
+                    }`,
                     variant: 'text',
                   }}
                   tag={

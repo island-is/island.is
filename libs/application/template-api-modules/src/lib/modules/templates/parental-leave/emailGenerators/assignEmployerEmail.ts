@@ -79,7 +79,7 @@ export const generateAssignEmployerApplicationEmail: AssignEmployerEmail = (
         {
           component: 'Copy',
           context: {
-            copy: `Ef þú áttir von á þessum tölvupósti smellir þú á takkan hér fyrir neðan. Ef annar einstaklingur á að samþykkja fæðingarorloftið má áframsenda póstinn á viðkomandi einstakling (passið þó að opna ekki linkinn).`,
+            copy: `Ef þú áttir von á þessum tölvupósti smellir þú á takkan hér fyrir neðan. Ef annar einstaklingur á að samþykkja fæðingarorlofið má áframsenda póstinn á viðkomandi einstakling (passið þó að opna ekki linkinn).`,
           },
         },
         {
@@ -87,20 +87,6 @@ export const generateAssignEmployerApplicationEmail: AssignEmployerEmail = (
           context: {
             copy: 'Yfirfara umsókn',
             href: assignLink,
-          },
-        },
-        {
-          component: 'Copy',
-          context: {
-            copy: `Ef hnappur virkar ekki, getur þú afritað hlekkinn hér að neðan og límt hann inn í vafrann þinn.`,
-            small: true,
-          },
-        },
-        {
-          component: 'Copy',
-          context: {
-            copy: assignLink,
-            small: true,
           },
         },
         {

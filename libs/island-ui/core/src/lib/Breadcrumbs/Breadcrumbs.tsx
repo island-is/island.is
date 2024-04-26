@@ -1,7 +1,7 @@
 import React, { FC, ReactNode } from 'react'
 import { Text } from '../Text/Text'
 import { Tag } from '../Tag/Tag'
-import { TagVariant } from '../Tag/Tag'
+import { TagVariant } from '../Tag/types'
 import { Box } from '../Box/Box'
 import { Colors } from '@island.is/island-ui/theme'
 import cn from 'classnames'

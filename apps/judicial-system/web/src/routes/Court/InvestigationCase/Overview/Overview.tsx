@@ -13,15 +13,14 @@ import {
 import * as constants from '@island.is/judicial-system/consts'
 import {
   capitalize,
-  caseTypes,
+  formatCaseType,
   formatDate,
 } from '@island.is/judicial-system/formatters'
-import { isAcceptingCaseDecision } from '@island.is/judicial-system/types'
+import { getLatestDateType } from '@island.is/judicial-system/types'
 import {
   core,
   icCourtOverview,
   requestCourtDate,
-  ruling,
   titles,
 } from '@island.is/judicial-system-web/messages'
 import { lawsBrokenAccordion } from '@island.is/judicial-system-web/messages/Core/lawsBrokenAccordion'
@@ -40,10 +39,13 @@ import {
   PdfButton,
   UserContext,
 } from '@island.is/judicial-system-web/src/components'
+import { NameAndEmail } from '@island.is/judicial-system-web/src/components/InfoCard/InfoCard'
+import InfoCardCaseScheduled from '@island.is/judicial-system-web/src/components/InfoCard/InfoCardCaseScheduled'
 import {
-  useCase,
-  useOnceOn,
-} from '@island.is/judicial-system-web/src/utils/hooks'
+  CaseState,
+  DateLog,
+  DateType,
+} from '@island.is/judicial-system-web/src/graphql/schema'
 import {
   UploadState,
   useCourtUpload,
@@ -52,38 +54,18 @@ import {
 import { DraftConclusionModal } from '../../components'
 
 const Overview = () => {
-  const {
-    workingCase,
-    setWorkingCase,
-    isLoadingWorkingCase,
-    caseNotFound,
-    isCaseUpToDate,
-  } = useContext(FormContext)
+  const { workingCase, setWorkingCase, isLoadingWorkingCase, caseNotFound } =
+    useContext(FormContext)
   const { formatMessage } = useIntl()
-  const { setAndSendCaseToServer } = useCase()
+
   const { user } = useContext(UserContext)
   const { uploadState } = useCourtUpload(workingCase, setWorkingCase)
   const [isDraftingConclusion, setIsDraftingConclusion] = useState<boolean>()
 
-  const initialize = useCallback(() => {
-    setAndSendCaseToServer(
-      [
-        {
-          ruling: !workingCase.parentCase
-            ? `\n${formatMessage(ruling.autofill, {
-                judgeName: workingCase.judge?.name,
-              })}`
-            : isAcceptingCaseDecision(workingCase.decision)
-            ? workingCase.parentCase.ruling
-            : undefined,
-        },
-      ],
-      workingCase,
-      setWorkingCase,
-    )
-  }, [setAndSendCaseToServer, formatMessage, setWorkingCase, workingCase])
-
-  useOnceOn(isCaseUpToDate, initialize)
+  const courtDate = getLatestDateType(
+    DateType.COURT_DATE,
+    workingCase.dateLogs,
+  ) as DateLog
 
   const handleNavigationTo = useCallback(
     (destination: string) => router.push(`${destination}/${workingCase.id}`),
@@ -132,19 +114,30 @@ const Overview = () => {
           </Text>
         </Box>
         <CourtCaseInfo workingCase={workingCase} />
-
+        {workingCase.state === CaseState.RECEIVED &&
+          courtDate &&
+          courtDate.date &&
+          workingCase.court && (
+            <Box component="section" marginBottom={5}>
+              <InfoCardCaseScheduled
+                court={workingCase.court}
+                courtDate={courtDate.date}
+                courtRoom={workingCase.courtRoom}
+              />
+            </Box>
+          )}
         <Box component="section" marginBottom={5}>
           <InfoCard
             data={[
               {
                 title: formatMessage(core.policeCaseNumber),
-                value: workingCase.policeCaseNumbers.map((n) => (
+                value: workingCase.policeCaseNumbers?.map((n) => (
                   <Text key={n}>{n}</Text>
                 )),
               },
               {
                 title: formatMessage(core.prosecutor),
-                value: `${workingCase.creatingProsecutor?.institution?.name}`,
+                value: `${workingCase.prosecutorsOffice?.name}`,
               },
               {
                 title: formatMessage(requestCourtDate.heading),
@@ -158,11 +151,14 @@ const Overview = () => {
               },
               {
                 title: formatMessage(core.prosecutorPerson),
-                value: workingCase.prosecutor?.name,
+                value: NameAndEmail(
+                  workingCase.prosecutor?.name,
+                  workingCase.prosecutor?.email,
+                ),
               },
               {
                 title: formatMessage(core.caseType),
-                value: capitalize(caseTypes[workingCase.type]),
+                value: capitalize(formatCaseType(workingCase.type)),
               },
             ]}
             defendants={
@@ -179,7 +175,7 @@ const Overview = () => {
             }
             defenders={[
               {
-                name: workingCase.defenderName ?? '',
+                name: workingCase.defenderName,
                 defenderNationalId: workingCase.defenderNationalId,
                 sessionArrangement: workingCase.sessionArrangements,
                 email: workingCase.defenderEmail,

@@ -1,4 +1,8 @@
+import { jwtDecode } from 'jwt-decode'
 import { createContext, useContext } from 'react'
+
+import { User } from '@island.is/shared/types'
+
 import { AuthReducerState, initialState } from './Auth.state'
 
 export interface AuthContextType extends AuthReducerState {
@@ -6,6 +10,7 @@ export interface AuthContextType extends AuthReducerState {
   signInSilent(): void
   switchUser(nationalId?: string): void
   signOut(): void
+  authority?: string
 }
 
 export const defaultAuthContext = {
@@ -36,4 +41,16 @@ export const useUserInfo = () => {
   }
 
   return userInfo
+}
+
+export const useUserDecodedIdToken = () => {
+  const userInfo = useUserInfo()
+
+  if (!userInfo.id_token) {
+    throw new Error(
+      'Decoded ID token is not available. Is the user authenticated?',
+    )
+  }
+
+  return jwtDecode<User['profile']>(userInfo.id_token)
 }

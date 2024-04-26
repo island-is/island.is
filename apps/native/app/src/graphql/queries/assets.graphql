@@ -1,0 +1,30 @@
+query ListAssets($input: GetMultiPropertyInput!) {
+  assetsOverview(input: $input) {
+    properties {
+      propertyNumber
+      defaultAddress {
+        ...Address
+      }
+    }
+    paging {
+      ...Paging
+    }
+  }
+}
+
+query GetAsset($input: GetRealEstateInput!) {
+  assetsDetail(input: $input) {
+    propertyNumber
+    defaultAddress {
+      ...Address
+    }
+    appraisal {
+      ...Appraisal
+    }
+    unitsOfUse {
+      unitsOfUse {
+        ...unitsOfUse
+      }
+    }
+  }
+}

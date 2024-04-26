@@ -117,6 +117,11 @@ export const ApplicationFilterQuery = gql`
         }
       }
       totalCount
+      minDateCreated
+      staffList {
+        name
+        nationalId
+      }
     }
   }
 `
@@ -403,6 +408,35 @@ export const MunicipalityMutation = gql`
     createMunicipality(input: $input) {
       id
       municipalityId
+    }
+  }
+`
+
+export const ApiKeyForMunicipalityMutation = gql`
+  mutation ApiKeyForMunicipalityMutation($input: CreateApiKeyInput!) {
+    createApiKey(input: $input) {
+      id
+      name
+      apiKey
+      municipalityCode
+    }
+  }
+`
+export const DeleteApiKeyForMunicipalityMutation = gql`
+  mutation DeleteApiKeyForMunicipalityMutation($input: DeleteApiKeyInput!) {
+    deleteApiKey(input: $input) {
+      success
+    }
+  }
+`
+
+export const UpdateApiKeyForMunicipalityMutation = gql`
+  mutation UpdateApiKeyForMunicipalityMutation($input: UpdateApiKeyInput!) {
+    updateApiKey(input: $input) {
+      id
+      name
+      apiKey
+      municipalityCode
     }
   }
 `

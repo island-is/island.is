@@ -4,8 +4,8 @@ import { ChargeItemCode } from '@island.is/shared/constants'
 
 import { ExtraData } from '@island.is/clients/charge-fjs-v2'
 
-export const getChargeItemCodes = (applicaiton: Application): Array<string> => {
-  const answers = applicaiton.answers as ChangeCoOwnerOfVehicle
+export const getChargeItemCodes = (application: Application): Array<string> => {
+  const answers = application.answers as ChangeCoOwnerOfVehicle
   return getChargeItemCodeWithAnswers(answers)
 }
 

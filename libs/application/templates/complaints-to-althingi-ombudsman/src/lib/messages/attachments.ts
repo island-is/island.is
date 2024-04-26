@@ -3,14 +3,14 @@ import { defineMessages } from 'react-intl'
 export const attachments = defineMessages({
   introduction: {
     id: 'ctao.application:section.attachments.introduction',
-    defaultMessage: `Öll tiltæk sönnunargögn um málsatvik skulu fylgja kvörtun. 
+    defaultMessage: `Ef þú vilt láta nánari rökstuðning fyrir kvörtuninni fylgja er hægt að setja hann fram á sérstöku skjali í lok kvörtunarferlisins. 
 										 Mikilvægt er að öll gögn fylgi kvörtun svo hún fái eins skjóta meðferð og hægt er. 
-										 Það er líka hægt að koma með gögn á skrifstofu umboðsmanns Alþingis.`,
+										 Það er líka hægt að koma með gögn á skrifstofu umboðsmanns Alþingis að Templarasundi 5 í Reykjavík eða senda þau með pósti.`,
     description: 'Introduction for attachment upload',
   },
   title: {
     id: 'ctao.application:section.attachments.title',
-    defaultMessage: 'Rökstuðningur kvörtunar og önnur fylgiskjöl',
+    defaultMessage: 'Nánari rökstuðningur kvörtunar og önnur fylgiskjöl',
     description: 'Title of attachments',
   },
   uploadDescription: {

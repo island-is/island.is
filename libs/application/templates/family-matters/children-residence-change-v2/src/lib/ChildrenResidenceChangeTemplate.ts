@@ -14,20 +14,17 @@ import { getSelectedChildrenFromExternalData } from '@island.is/application/temp
 import { dataSchema } from './dataSchema'
 import { CRCApplication } from '../types'
 import { Roles, ApplicationStates } from './constants'
-import {
-  application,
-  stateDescriptions,
-  stateLabels,
-  history,
-} from './messages'
+import { application, stateDescriptions, history } from './messages'
 import {
   ChildrenCustodyInformationApi,
   NationalRegistryUserApi,
   UserProfileApi,
 } from '../dataProviders'
 import {
-  pruneAfterDays,
   coreHistoryMessages,
+  coreMessages,
+  EphemeralStateLifeCycle,
+  DefaultStateLifeCycle,
 } from '@island.is/application/core'
 import set from 'lodash/set'
 import { Features } from '@island.is/feature-flags'
@@ -58,8 +55,52 @@ const ChildrenResidenceChangeTemplate: ApplicationTemplate<
   dataSchema,
   featureFlag: Features.childrenResidenceChangeV2,
   stateMachineConfig: {
-    initial: ApplicationStates.DRAFT,
+    initial: ApplicationStates.PREREQUISITES,
     states: {
+      [ApplicationStates.PREREQUISITES]: {
+        meta: {
+          name: applicationName,
+          status: 'draft',
+          lifecycle: EphemeralStateLifeCycle,
+          actionCard: {
+            historyLogs: {
+              logMessage: coreHistoryMessages.applicationStarted,
+              onEvent: DefaultEvents.SUBMIT,
+            },
+          },
+          roles: [
+            {
+              id: Roles.ParentA,
+              formLoader: () =>
+                import('../forms/PrerequisitesForm').then((module) =>
+                  Promise.resolve(module.PrerequisitesForm),
+                ),
+              actions: [
+                {
+                  event: DefaultEvents.SUBMIT,
+                  name: coreMessages.externalDataAgreement,
+                  type: 'primary',
+                },
+              ],
+              delete: true,
+              write: 'all',
+              api: [
+                ChildrenCustodyInformationApi.configure({
+                  params: {
+                    validateHasChildren: true,
+                    validateHasJointCustody: true,
+                  },
+                }),
+                NationalRegistryUserApi,
+                UserProfileApi,
+              ],
+            },
+          ],
+        },
+        on: {
+          SUBMIT: { target: ApplicationStates.DRAFT },
+        },
+      },
       [ApplicationStates.DRAFT]: {
         meta: {
           status: 'draft',
@@ -74,7 +115,7 @@ const ChildrenResidenceChangeTemplate: ApplicationTemplate<
               },
             ],
           },
-          lifecycle: pruneAfterDays(365),
+          lifecycle: DefaultStateLifeCycle,
           roles: [
             {
               id: Roles.ParentA,
@@ -111,16 +152,6 @@ const ChildrenResidenceChangeTemplate: ApplicationTemplate<
                   UserProfileApi.externalDataId,
                 ],
               },
-              api: [
-                ChildrenCustodyInformationApi.configure({
-                  params: {
-                    validateHasChildren: true,
-                    validateHasJointCustody: true,
-                  },
-                }),
-                NationalRegistryUserApi,
-                UserProfileApi,
-              ],
             },
           ],
         },
@@ -161,7 +192,7 @@ const ChildrenResidenceChangeTemplate: ApplicationTemplate<
                     content: history.actions.waitingForCounterpartyDescription,
                   },
           },
-          lifecycle: pruneAfterDays(28),
+          lifecycle: DefaultStateLifeCycle,
           onEntry: defineTemplateApi({
             action: TemplateApiActions.sendNotificationToCounterParty,
           }),
@@ -223,7 +254,7 @@ const ChildrenResidenceChangeTemplate: ApplicationTemplate<
           actionCard: {
             description: stateDescriptions.rejectedByParentB,
           },
-          lifecycle: pruneAfterDays(365),
+          lifecycle: DefaultStateLifeCycle,
           onEntry: defineTemplateApi({
             action: TemplateApiActions.rejectedByCounterParty,
           }),
@@ -257,7 +288,7 @@ const ChildrenResidenceChangeTemplate: ApplicationTemplate<
             action: TemplateApiActions.submitApplication,
             shouldPersistToExternalData: true,
           }),
-          lifecycle: pruneAfterDays(365),
+          lifecycle: DefaultStateLifeCycle,
           actionCard: {
             historyLogs: [
               {
@@ -326,7 +357,7 @@ const ChildrenResidenceChangeTemplate: ApplicationTemplate<
           actionCard: {
             description: stateDescriptions.rejected,
           },
-          lifecycle: pruneAfterDays(365),
+          lifecycle: DefaultStateLifeCycle,
           onEntry: defineTemplateApi({
             action: TemplateApiActions.rejectedByOrganization,
           }),
@@ -358,7 +389,7 @@ const ChildrenResidenceChangeTemplate: ApplicationTemplate<
           actionCard: {
             description: stateDescriptions.approved,
           },
-          lifecycle: pruneAfterDays(365),
+          lifecycle: DefaultStateLifeCycle,
           onEntry: defineTemplateApi({
             action: TemplateApiActions.approvedByOrganization,
           }),

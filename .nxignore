@@ -5,6 +5,9 @@ libs/**/infra/*
 # Readmes in parent folders
 **/README.md
 
+# Unignore graphql schemas.
+!api.graphql
+
 # skilavottord
 apps/skilavottord/codegen.yml
 apps/skilavottord/api.graphql

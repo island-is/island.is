@@ -3,6 +3,7 @@ import {
   FaqListProps,
   renderConnectedComponent,
   richText,
+  SectionWithImage,
   SliceType,
 } from '@island.is/island-ui/contentful'
 import {
@@ -17,9 +18,16 @@ import {
   AlcoholLicencesList,
   BrokersList,
   CatchQuotaCalculator,
+  Chart,
+  ChartNumberBox,
   ChartsCard,
+  ChartsCardsProps,
   DrivingInstructorList,
   EmailSignup,
+  Form,
+  KilometerFee,
+  MasterList,
+  MultipleStatistics,
   OneColumnTextSlice,
   OverviewLinksSlice,
   PlateAvailableSearch,
@@ -32,6 +40,7 @@ import {
   ShipSearchBoxedInput,
   SidebarShipSearchInput,
   SliceDropdown,
+  SpecificHousingBenefitSupportCalculator,
   StraddlingStockCalculator,
   TableSlice,
   TemporaryEventLicencesList,
@@ -39,25 +48,37 @@ import {
 } from '@island.is/web/components'
 import {
   AccordionSlice as AccordionSliceSchema,
+  Chart as ChartSchema,
+  ChartNumberBox as ChartNumberBoxSchema,
+  ConnectedComponent,
+  EmailSignup as EmailSignupSchema,
   Embed as EmbedSchema,
+  FeaturedEvents as FeaturedEventsSchema,
   FeaturedSupportQnAs as FeaturedSupportQNAsSchema,
-  IntroLinkImage as IntroLinkImageSchema,
+  Form as FormSchema,
+  MultipleStatistics as MultipleStatisticsSchema,
+  OneColumnText,
   OverviewLinks as OverviewLinksSliceSchema,
   PowerBiSlice as PowerBiSliceSchema,
+  SectionWithImage as SectionWithImageSchema,
   SectionWithVideo as SectionWithVideoSchema,
   Slice,
   SliceDropdown as SliceDropdownSchema,
   TableSlice as TableSliceSchema,
+  TwoColumnText,
 } from '@island.is/web/graphql/schema'
 
+import AdministrationOfOccupationalSafetyAndHealthCourses from '../components/connected/AdministrationOfOccupationalSafetyAndHealthCourses/AdministrationOfOccupationalSafetyAndHealthCourses'
 import { MonthlyStatistics } from '../components/connected/electronicRegistrationStatistics'
+import { GrindavikResidentialPropertyPurchaseCalculator } from '../components/connected/GrindavikResidentialPropertyPurchaseCalculator'
 import HousingBenefitCalculator from '../components/connected/HousingBenefitCalculator/HousingBenefitCalculator'
+import FeaturedEvents from '../components/FeaturedEvents/FeaturedEvents'
 import FeaturedSupportQNAs from '../components/FeaturedSupportQNAs/FeaturedSupportQNAs'
 import { EmbedSlice } from '../components/Organization/Slice/EmbedSlice/EmbedSlice'
 
-// eslint-disable-next-line @typescript-eslint/ban-ts-comment
-// @ts-ignore make web strict
-export const webRenderConnectedComponent = (slice) => {
+export const webRenderConnectedComponent = (
+  slice: ConnectedComponent & { componentType?: string },
+) => {
   const data = slice.json ?? {}
 
   switch (slice.componentType) {
@@ -93,6 +114,18 @@ export const webRenderConnectedComponent = (slice) => {
       return <HousingBenefitCalculator slice={slice} />
     case 'PublicShipSearch':
       return <PublicShipSearch slice={slice} />
+    case 'Meistaraleyfi/MasterLicences':
+      return <MasterList slice={slice} />
+    case 'Vinnueftirlitid/Namskeid':
+      return (
+        <AdministrationOfOccupationalSafetyAndHealthCourses slice={slice} />
+      )
+    case 'KilometerFee':
+      return <KilometerFee slice={slice} />
+    case 'SpecificHousingBenefitSupportCalculator':
+      return <SpecificHousingBenefitSupportCalculator slice={slice} />
+    case 'GrindavikResidentialPropertyPurchaseCalculator':
+      return <GrindavikResidentialPropertyPurchaseCalculator slice={slice} />
     default:
       break
   }
@@ -104,35 +137,26 @@ const defaultRenderComponent = {
   PowerBiSlice: (slice: PowerBiSliceSchema) => <PowerBiSlice slice={slice} />,
   AccordionSlice: (slice: AccordionSliceSchema) =>
     slice.accordionItems && <AccordionSlice slice={slice} />,
-  // eslint-disable-next-line @typescript-eslint/ban-ts-comment
-  // @ts-ignore make web strict
-  ConnectedComponent: (slice) => webRenderConnectedComponent(slice),
-  // eslint-disable-next-line @typescript-eslint/ban-ts-comment
-  // @ts-ignore make web strict
-  GraphCard: (chart) => <ChartsCard chart={chart} />,
-  // eslint-disable-next-line @typescript-eslint/ban-ts-comment
-  // @ts-ignore make web strict
-  OneColumnText: (slice) => <OneColumnTextSlice slice={slice} />,
-  // eslint-disable-next-line @typescript-eslint/ban-ts-comment
-  // @ts-ignore make web strict
-  TwoColumnText: (slice) => <TwoColumnTextSlice slice={slice} />,
-  // eslint-disable-next-line @typescript-eslint/ban-ts-comment
-  // @ts-ignore make web strict
-  EmailSignup: (slice) => <EmailSignup slice={slice} />,
-  FaqList: (slice: FaqListProps) => slice?.questions && <FaqList {...slice} />,
+  ConnectedComponent: (slice: ConnectedComponent) =>
+    webRenderConnectedComponent(slice),
+  GraphCard: (chart: ChartsCardsProps['chart']) => <ChartsCard chart={chart} />,
+  OneColumnText: (slice: OneColumnText) => <OneColumnTextSlice slice={slice} />,
+  TwoColumnText: (slice: TwoColumnText) => <TwoColumnTextSlice slice={slice} />,
+  EmailSignup: (slice: EmailSignupSchema) => <EmailSignup slice={slice} />,
+  FaqList: (slice: FaqListProps, locale?: Locale) =>
+    slice?.questions && <FaqList {...slice} locale={locale} />,
   FeaturedSupportQNAs: (slice: FeaturedSupportQNAsSchema) => (
     <FeaturedSupportQNAs slice={slice} />
   ),
   SliceDropdown: (slice: SliceDropdownSchema) => (
     <SliceDropdown
       slices={slice.slices}
-      // eslint-disable-next-line @typescript-eslint/ban-ts-comment
-      // @ts-ignore make web strict
-      sliceExtraText={slice.dropdownLabel}
+      sliceExtraText={slice.dropdownLabel ?? ''}
       gridSpan="1/1"
       gridOffset="0"
       slicesAreFullWidth={true}
       dropdownMarginBottom={5}
+      orderOptionsAlphabetically={slice.alphabeticallyOrdered}
     />
   ),
   SectionWithVideo: (slice: SectionWithVideoSchema) => (
@@ -143,6 +167,25 @@ const defaultRenderComponent = {
   OverviewLinks: (slice: OverviewLinksSliceSchema) => (
     <OverviewLinksSlice slice={slice} />
   ),
+  Chart: (slice: ChartSchema) => <Chart slice={slice} />,
+  ChartNumberBox: (
+    slice: ChartNumberBoxSchema & { chartNumberBoxId: string },
+  ) => <ChartNumberBox slice={slice} />,
+  SectionWithImage: (slice: SectionWithImageSchema) => (
+    <SectionWithImage
+      title={slice.title}
+      content={slice.content as SliceType[]}
+      image={slice.image ?? undefined}
+      contain={true}
+    />
+  ),
+  MultipleStatistics: (slice: MultipleStatisticsSchema) => (
+    <MultipleStatistics slice={slice} />
+  ),
+  FeaturedEvents: (slice: FeaturedEventsSchema) => (
+    <FeaturedEvents slice={slice} />
+  ),
+  Form: (slice: FormSchema) => <Form form={slice} />,
 }
 
 export const webRichText = (

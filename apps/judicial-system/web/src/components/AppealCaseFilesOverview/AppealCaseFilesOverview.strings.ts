@@ -14,4 +14,10 @@ export const strings = defineMessages({
     description:
       'Titill á hver lagði skjöl kærumáls á yfirlitsskjá afgreiddra mála hjá Landsrétti',
   },
+  addFiles: {
+    id: 'judicial.system.core:appeal_case_files_overview.add_files',
+    defaultMessage: 'Bæta við gögnum',
+    description:
+      'Takkinn til að bæta við gögnum kærumáls á yfirlitsskjá kærumála',
+  },
 })

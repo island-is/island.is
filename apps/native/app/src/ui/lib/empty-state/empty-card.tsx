@@ -1,8 +1,8 @@
-import React from 'react';
-import {View} from 'react-native';
-import styled from 'styled-components/native';
-import {dynamicColor} from '../../utils';
-import {font} from '../../utils/font';
+import React from 'react'
+import { View } from 'react-native'
+import styled from 'styled-components/native'
+import { dynamicColor } from '../../utils'
+import { font } from '../../utils/font'
 
 const Host = styled.View`
   display: flex;
@@ -12,7 +12,7 @@ const Host = styled.View`
   border-radius: 8px;
   border-width: 1px;
   border-color: ${dynamicColor(
-    ({theme}) => ({
+    ({ theme }) => ({
       light: theme.color.blue200,
       dark: theme.shades.dark.shade300,
     }),
@@ -20,7 +20,7 @@ const Host = styled.View`
   )};
   align-items: center;
   justify-content: space-between;
-`;
+`
 
 const Text = styled.Text`
   padding-right: 30px;
@@ -31,15 +31,15 @@ const Text = styled.Text`
     lineHeight: 16,
     fontSize: 12,
   })}
-`;
+`
 
 interface EmptyCardProps {
-  text: string;
-  image: React.ReactNode;
-  link: React.ReactNode;
+  text: string
+  image: React.ReactNode
+  link: React.ReactNode
 }
 
-export function EmptyCard({text, image, link}: EmptyCardProps) {
+export function EmptyCard({ text, image, link }: EmptyCardProps) {
   return (
     <Host>
       <View>
@@ -48,5 +48,5 @@ export function EmptyCard({text, image, link}: EmptyCardProps) {
       </View>
       <View>{image}</View>
     </Host>
-  );
+  )
 }

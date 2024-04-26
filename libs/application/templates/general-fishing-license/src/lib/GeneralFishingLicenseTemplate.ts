@@ -32,6 +32,8 @@ import { buildPaymentState } from '@island.is/application/utils'
 import { GeneralFishingLicenseAnswers } from '..'
 import { ChargeItemCode } from '@island.is/shared/constants'
 
+import { ExtraData } from '@island.is/clients/charge-fjs-v2'
+
 const pruneAtMidnight = () => {
   const date = new Date()
   const utcDate = new Date(date.toUTCString()) // In case user is not on GMT
@@ -43,6 +45,16 @@ const pruneAtMidnight = () => {
     shouldBePruned: true,
     whenToPrune: timeToPrune,
   }
+}
+
+export const getExtraData = (application: Application): ExtraData[] => {
+  const answers = application.answers as GeneralFishingLicenseAnswers
+  return [
+    {
+      name: 'shipRegistrationNumber',
+      value: answers?.shipSelection.registrationNumber,
+    },
+  ]
 }
 
 const getCodes = (application: Application) => {
@@ -175,6 +187,7 @@ const GeneralFishingLicenseTemplate: ApplicationTemplate<
       [States.PAYMENT]: buildPaymentState({
         organizationId: InstitutionNationalIds.FISKISTOFA,
         chargeItemCodes: getCodes,
+        extraData: getExtraData,
         submitTarget: States.SUBMITTED,
       }),
       [States.SUBMITTED]: {

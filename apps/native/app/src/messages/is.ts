@@ -13,6 +13,11 @@ export const is = {
   'login.networkErrorTitle': 'Villa kom upp',
   'login.networkErrorMessage':
     '\nEkki náðist samband við innskráningarþjónustu.\n\nVinsamlegast athugið netsamband á tækinu eða reynið aftur síðar.',
+  'login.expiredTitle': 'Innskráning útrunnin',
+  'login.expiredScopesMessage':
+    'Uppfærð réttindi vantar, vinsamlegast skráðu þig inn aftur.',
+  'login.expiredMissingUserMessage':
+    'Tókst ekki að sækja notendaupplýsingar, vinsamlegast skráðu þig inn aftur.',
 
   // app lock
   'applock.title': 'Sláðu inn 4 tölustafa PIN',
@@ -131,6 +136,7 @@ export const is = {
   }`,
   'user.natreg.citizenship': 'Ríkisfang',
   'user.natreg.religion': 'Trú- eða lífsskoðunarfélag',
+  'user.natreg.settingsButton': 'Fara í stillingar',
 
   // home
   'home.screenTitle': 'Yfirlit',
@@ -146,6 +152,10 @@ export const is = {
     'Hafir þú athugasemdir eða ábendingar um eitthvað sem vantar eða sem má betur fara viljum við gjarnan fá frá þér línu á',
   'home.onboardingModule.card4':
     'Notendum er bent á að kynna sér stefnu Stafræns Íslands um meðferð persónuupplýsinga á',
+  'home.vehicleModule.summary':
+    'Skrá kílómetrastöðu  rafmagns- og tengiltvinnbíla',
+  'home.vehicleModule.button': 'Mín ökutæki',
+  'button.seeAll': 'Sjá allt',
 
   // inbox
   'inbox.screenTitle': 'Pósthólf',
@@ -181,12 +191,15 @@ export const is = {
   'profile.vehicles': 'Ökutæki',
   'profile.assets': 'Fasteignir',
   'profile.finance': 'Fjármál',
+  'profile.airDiscount': 'Loftbrú',
 
   // vehicles
   'vehicles.screenTitle': 'Ökutæki',
   'vehicles.emptyListTitle': 'Engin ökutæki finnast fyrir notanda',
   'vehicles.emptyListDescription':
     'Ökutæki sem eru skráð á þig munu birtast hér.',
+  'vehicles.nextInspectionLabel': 'Næsta skoðun {date}',
+  'vehicles.mileageRequired': 'Kílómetragjald',
 
   // vehicles detail
   'vehicleDetail.regno': 'Skráningarnúmer',
@@ -210,6 +223,31 @@ export const is = {
   'vehicleDetail.totalWeight': 'Heildarþyngd',
   'vehicleDetail.capacityWeight': 'Þyngd vagnlestar',
   'vehicleDetail.odometer': 'Kílómetrastaða',
+  'vehicleDetail.noInfo': 'Engar upplýsingar bárust',
+
+  // vehicle mileage
+  'vehicle.mileage.errorTitle': 'Villa',
+  'vehicle.mileage.errorMileageInputTooLow':
+    'Innslegin kílómetrastaða er of lág',
+  'vehicle.mileage.errorMileageInputTooHigh':
+    'Innslegin kílómetrastaða er of há',
+  'vehicle.mileage.errorFailedToUpdate':
+    'Ekki virðist hafa tekist að uppfæra kílómetrastöðu. Vinsamlegast reynið síðar.',
+  'vehicle.mileage.successTitle': 'Kílómetrastaða uppfærð',
+  'vehicle.mileage.successMessage': 'Kílómetrastaða hefur verið uppfærð.',
+  'vehicle.mileage.promptEditTitle': 'Breyta kílómetrastöðu',
+  'vehicle.mileage.promptEditButton': 'Senda inn breytingu',
+  'vehicle.mileage.promptCancelButton': 'Hætta við',
+  'vehicle.mileage.inputPlaceholder': 'Sláðu inn núverandi kílómetrastöðu',
+  'vehicle.mileage.inputLabel': 'Skrá kílómetrastöðu',
+  'vehicle.mileage.inputSubmitButton': 'Skrá',
+  'vehicle.mileage.registerIntervalCopy':
+    'Aðeins má skrá kílómetrastöðu einu sinn á hverjum 30 dögum',
+  'vehicle.mileage.youAreNotAllowedCopy':
+    'Eingöngu aðaleigandi eða umráðamaður yfir bifreið lánastofnunnar geta skráð kílómetrastöðu',
+  'vehicle.mileage.moreInformationCopy': 'Sjá nánari upplýsingar á Ísland.is',
+  'vehicle.mileage.historyTitle': 'Skráningar',
+  'vehicle.mileage.editRecordButton': 'Breyta færslu',
 
   // assets overview
   'assetsOvervies.screenTitle': 'Fasteignir',
@@ -321,16 +359,16 @@ export const is = {
   'licenseScanner.helperMessage': 'Snúðu símanum að strikamerkinu',
   'licenseScanner.awaitingPermission': 'Bið um leyfi til að nota myndavél',
   'licenseScanner.noCameraAccess': 'Myndavél ekki aðgengileg',
+  'licenseScanner.errorUnknown': 'Óþekkt villa',
+  'licenseScanner.invalidBarcode': 'Ógilt strikamerki',
+  'licenseScanner.errorNetwork': 'Net villa',
   'licenseScannerDetail.driverLicenseNumber': 'Númer ökuskírteinis',
-  'licenseScannerDetail.invalidBarcode': 'Ógilt strikamerki',
   'licenseScannerResult.androidHelp':
     'Smellið á hnapp neðan við skírteini til þess að fá uppfært strikamerki.',
   'licenseScannerResult.iosHelp':
     'Smellið á hnapp með þremur punktum fyrir neðan skírteinið. Dragið því næst niður með fingur á miðjum skjánum til þess að uppfæra strikamerkið.',
 
   // license scan detail
-  'licenseScanDetail.errorUnknown': 'Óþekkt villa',
-  'licenseScanDetail.errorNetwork': 'Net villa',
   'licenseScanDetail.errorCodeMessage': `{
     errorCode,
     select,
@@ -363,6 +401,9 @@ export const is = {
   'licenseDetail.pcard.alert.title': 'Mundu eftir stæðiskortinu!',
   'licenseDetail.pcard.alert.description':
     'Þetta yfirlit gildir ekki sem stæðiskort.',
+  'licenseDetail.ehic.alert.title': 'Mundu eftir kortinu!',
+  'licenseDetail.ehic.alert.description':
+    'Þetta yfirlit gildir ekki sem sjúkratryggingakort.',
 
   // notifications
   'notifications.screenTitle': 'Tilkynningar',
@@ -435,4 +476,33 @@ export const is = {
   'edit.confirm.inputlabel': 'Öryggisnúmer',
   'edit.cancel.button': 'Hætta við',
   'edit.confirm.button': 'Staðfesta',
-};
+
+  // air discount
+  'airDiscount.screenTitle': 'Loftbrú',
+  'airDiscount.headingTitle': 'Lægra fargjald með Loftbrú',
+  'airDiscount.headingSubtitle':
+    'Hver einstaklingur með lögheimili innan skilgreinds svæðis á rétt á afslætti á sex flugleggjum á ári. Með notkun afsláttar með Loftbrú staðfestir þú að hafa lesið notendaskilmála Loftbrúar.',
+  'airDiscount.tosLinkText': 'Notendaskilmálar',
+  'airDiscount.alertTitle': 'Athugið',
+  'airDiscount.alertDescription':
+    'Kóðinn endurnýjast eftir 1 notkun\n(gildir í 24 klst.)',
+  'airDiscount.myRights': 'Mín réttindi',
+  'airDiscount.remainingFares': 'Eftirstandandi {remaining} af {total}',
+  'airDiscount.copyDiscountCode': 'Afrita kóða',
+  'airDiscount.bulletPointDiscount':
+    'Hver afsláttur nemur 40% af flugfargjaldi.',
+  'airDiscount.bulletPointUsage':
+    'Kóðinn virkjar afslátt í bókunarvél félagsins.',
+  'airDiscount.activeConnectionCodes':
+    'Virkir afsláttarkóðar fyrir áframhaldandi flug',
+  'airDiscount.flight': 'Flugleið: {flight}',
+  'airDiscount.validTo': 'Gildir til: {date} {time}',
+  'airDiscount.airfaresUsage': 'Notkun á núverandi tímabili',
+  'airDiscount.emptyListTitle': 'Enginn réttur',
+  'airDiscount.emptyListDescription':
+    'Einungis íbúar landsbyggðarinnar sem eiga lögheimili fjarri höfuðborgarsvæðinu og eyjum eiga rétt á Loftbrú.',
+
+  // Offline
+  'offline.title': 'Ekkert netsamband',
+  'offline.message': 'Upplýsingar hafa ekki verið uppfærðar.',
+}

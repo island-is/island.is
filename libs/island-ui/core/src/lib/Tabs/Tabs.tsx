@@ -12,7 +12,7 @@ import { isDefined } from '@island.is/shared/utils'
 
 import * as styles from './Tabs.css'
 
-type TabType = {
+export type TabType = {
   /**
    * Required when prop onlyRenderSelectedTab is true
    */

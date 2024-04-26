@@ -1,32 +1,63 @@
 import { BadRequestException, Inject, Injectable } from '@nestjs/common'
 import { InjectModel } from '@nestjs/sequelize'
-import { parsePhoneNumber } from 'libphonenumber-js'
 import { isEmail } from 'class-validator'
-import pick from 'lodash/pick'
+import addMonths from 'date-fns/addMonths'
+import { Sequelize } from 'sequelize-typescript'
 
 import { isDefined } from '@island.is/shared/utils'
+import { AttemptFailed, NoContentException } from '@island.is/nest/problem'
+import type { User } from '@island.is/auth-nest-tools'
+import {
+  DelegationsApi,
+  DelegationsControllerGetDelegationRecordsDirectionEnum,
+} from '@island.is/clients/auth/delegation-api'
 
-import { UserProfileDto } from './dto/user-profileDto'
-import { PatchUserProfileDto } from './dto/patch-user-profileDto'
 import { VerificationService } from '../user-profile/verification.service'
 import { UserProfile } from '../user-profile/userProfile.model'
+import { formatPhoneNumber } from '../utils/format-phone-number'
+import { PatchUserProfileDto } from './dto/patch-user-profile.dto'
+import { UserProfileDto } from './dto/user-profile.dto'
 import { IslykillService } from './islykill.service'
-import { Sequelize } from 'sequelize-typescript'
+import { DataStatus } from '../user-profile/types/dataStatusTypes'
+import { NudgeType } from '../types/nudge-type'
+import { ClientType } from '../types/ClientType'
+import { UserProfileConfig } from '../../config'
+import type { ConfigType } from '@island.is/nest/config'
+import { ActorProfile } from './models/actor-profile.model'
+import {
+  ActorProfileDto,
+  MeActorProfileDto,
+  PaginatedActorProfileDto,
+} from './dto/actor-profile.dto'
+import { DocumentsScope } from '@island.is/auth/scopes'
+
+export const NUDGE_INTERVAL = 6
+export const SKIP_INTERVAL = 1
 
 @Injectable()
 export class UserProfileService {
   constructor(
     @InjectModel(UserProfile)
     private readonly userProfileModel: typeof UserProfile,
+    @InjectModel(ActorProfile)
+    private readonly delegationPreference: typeof ActorProfile,
     @Inject(VerificationService)
     private readonly verificationService: VerificationService,
     private readonly islykillService: IslykillService,
     private sequelize: Sequelize,
+    @Inject(UserProfileConfig.KEY)
+    private config: ConfigType<typeof UserProfileConfig>,
+    private readonly delegationsApi: DelegationsApi,
   ) {}
 
-  async findById(nationalId: string): Promise<UserProfileDto> {
+  async findById(
+    nationalId: string,
+    useMaster = false,
+    clientType: ClientType = ClientType.THIRD_PARTY,
+  ): Promise<UserProfileDto> {
     const userProfile = await this.userProfileModel.findOne({
       where: { nationalId },
+      useMaster,
     })
 
     if (!userProfile) {
@@ -38,38 +69,34 @@ export class UserProfileService {
         mobilePhoneNumberVerified: false,
         emailVerified: false,
         documentNotifications: true,
-        needsNudge: true,
+        needsNudge: null,
+        emailNotifications: true,
+        isRestricted: false,
       }
     }
 
-    console.log('userProfile', userProfile.lastNudge)
-
-    return {
-      nationalId: userProfile.nationalId,
-      email: userProfile.email,
-      mobilePhoneNumber: userProfile.mobilePhoneNumber,
-      locale: userProfile.locale,
-      mobilePhoneNumberVerified: userProfile.mobilePhoneNumberVerified,
-      emailVerified: userProfile.emailVerified,
-      documentNotifications: userProfile.documentNotifications,
-      needsNudge:
-        userProfile.lastNudge !== null
-          ? this.checkNeedsNudge(userProfile.lastNudge)
-          : null,
-    }
+    return this.filterByClientTypeAndRestrictionDate(clientType, userProfile)
   }
 
   async patch(
-    nationalId: string,
+    user: User,
     userProfile: PatchUserProfileDto,
   ): Promise<UserProfileDto> {
-    const isEmailDefined = userProfile.email !== undefined
-    const isMobilePhoneNumberDefined =
-      userProfile.mobilePhoneNumber !== undefined
+    const { nationalId, audkenniSimNumber } = user
+    const isEmailDefined = isDefined(userProfile.email)
+    const isMobilePhoneNumberDefined = isDefined(userProfile.mobilePhoneNumber)
 
-    const shouldVerifyEmail = isEmailDefined && userProfile.email !== null
+    const audkenniSimSameAsMobilePhoneNumber =
+      this.checkAudkenniSameAsMobilePhoneNumber(
+        audkenniSimNumber,
+        userProfile.mobilePhoneNumber,
+      )
+
+    const shouldVerifyEmail = isEmailDefined && userProfile.email !== ''
     const shouldVerifyMobilePhoneNumber =
-      isMobilePhoneNumberDefined && userProfile.mobilePhoneNumber !== null
+      !audkenniSimSameAsMobilePhoneNumber &&
+      isMobilePhoneNumberDefined &&
+      userProfile.mobilePhoneNumber !== ''
 
     if (shouldVerifyEmail && !isDefined(userProfile.emailVerificationCode)) {
       throw new BadRequestException('Email verification code is required')
@@ -84,74 +111,141 @@ export class UserProfileService {
       )
     }
 
-    const { nationalNumber, parsedPhoneNumber } =
-      isMobilePhoneNumberDefined &&
-      userProfile.mobilePhoneNumber !== null &&
-      this.formatPhoneNumber(userProfile.mobilePhoneNumber)
+    await this.sequelize.transaction(async (transaction) => {
+      const commonArgs = [nationalId, { transaction, maxTries: 3 }] as const
 
-    return await this.sequelize.transaction(async (transaction) => {
-      const commonArgs = [nationalId, transaction] as const
+      if (shouldVerifyEmail) {
+        const { confirmed, message, remainingAttempts } =
+          await this.verificationService.confirmEmail(
+            {
+              email: userProfile.email,
+              hash: userProfile.emailVerificationCode,
+            },
+            ...commonArgs,
+          )
 
-      const promises = await Promise.all(
-        [
-          shouldVerifyEmail &&
-            (await this.verificationService.confirmEmail(
-              {
-                email: userProfile.email,
-                hash: userProfile.emailVerificationCode,
-              },
-              ...commonArgs,
-            )),
-
-          shouldVerifyMobilePhoneNumber &&
-            (await this.verificationService.confirmSms(
-              {
-                mobilePhoneNumber: userProfile.mobilePhoneNumber,
-                code: userProfile.mobilePhoneNumberVerificationCode,
-              },
-              ...commonArgs,
-            )),
-        ].filter(Boolean),
-      )
-
-      promises.map(({ confirmed, message }) => {
-        if (confirmed === false) {
-          throw new BadRequestException(message)
+        if (!confirmed) {
+          // Check if we should throw a BadRequest or an AttemptFailed error
+          if (remainingAttempts >= 0) {
+            throw new AttemptFailed(remainingAttempts, {
+              emailVerificationCode: 'Verification code does not match.',
+            })
+          } else {
+            throw new BadRequestException(message)
+          }
         }
+      }
+
+      if (shouldVerifyMobilePhoneNumber) {
+        const { confirmed, message, remainingAttempts } =
+          await this.verificationService.confirmSms(
+            {
+              mobilePhoneNumber: userProfile.mobilePhoneNumber,
+              code: userProfile.mobilePhoneNumberVerificationCode,
+            },
+            ...commonArgs,
+          )
+
+        if (confirmed === false) {
+          // Check if we should throw a BadRequest or an AttemptFailed error
+          if (remainingAttempts >= 0) {
+            throw new AttemptFailed(remainingAttempts, {
+              smsVerificationCode: 'Verification code does not match.',
+            })
+          } else if (remainingAttempts === -1) {
+            throw new AttemptFailed(0)
+          } else {
+            throw new BadRequestException(message)
+          }
+        }
+      }
+
+      const formattedPhoneNumber = isMobilePhoneNumberDefined
+        ? formatPhoneNumber(userProfile.mobilePhoneNumber)
+        : undefined
+
+      const currentUserProfile = await this.userProfileModel.findOne({
+        where: { nationalId },
+        transaction,
+        useMaster: true,
       })
 
       const update = {
         nationalId,
         ...(isEmailDefined && {
-          email: userProfile.email,
-          emailVerified: userProfile.email !== null,
+          email: userProfile.email || null,
+          emailVerified: userProfile.email !== '',
+          emailStatus: userProfile.email
+            ? DataStatus.VERIFIED
+            : currentUserProfile.emailStatus === DataStatus.NOT_VERIFIED
+            ? DataStatus.NOT_DEFINED
+            : DataStatus.EMPTY,
         }),
         ...(isMobilePhoneNumberDefined && {
-          mobilePhoneNumberVerified: userProfile.mobilePhoneNumber !== null,
-          mobilePhoneNumber:
-            userProfile.mobilePhoneNumber === null ? null : nationalNumber,
+          mobilePhoneNumber: formattedPhoneNumber || null,
+          mobilePhoneNumberVerified: formattedPhoneNumber !== '',
+          mobileStatus: formattedPhoneNumber
+            ? DataStatus.VERIFIED
+            : currentUserProfile.mobileStatus === DataStatus.NOT_VERIFIED
+            ? DataStatus.NOT_DEFINED
+            : DataStatus.EMPTY,
         }),
         ...(isDefined(userProfile.locale) && {
           locale: userProfile.locale,
         }),
+        ...(isDefined(userProfile.emailNotifications) && {
+          emailNotifications: userProfile.emailNotifications,
+        }),
+        ...(isDefined(userProfile.documentNotifications) && {
+          documentNotifications: userProfile.documentNotifications,
+        }),
       }
 
-      const [userProfileUpdated] = await this.userProfileModel.upsert(
+      await this.userProfileModel.upsert(
         {
           ...update,
           lastNudge: new Date(),
+          nextNudge: addMonths(
+            new Date(),
+            this.hasUnverifiedOrNotDefinedData({
+              email: isEmailDefined ? update.email : currentUserProfile?.email,
+              mobilePhoneNumber: isMobilePhoneNumberDefined
+                ? update.mobilePhoneNumber
+                : currentUserProfile?.mobilePhoneNumber,
+              emailStatus:
+                update.emailStatus ??
+                (currentUserProfile?.emailStatus as DataStatus),
+              mobileStatus:
+                update.mobileStatus ??
+                (currentUserProfile?.mobileStatus as DataStatus),
+              emailVerified:
+                update.emailVerified ?? currentUserProfile?.emailVerified,
+              mobilePhoneNumberVerified:
+                update.mobilePhoneNumberVerified ??
+                currentUserProfile?.mobilePhoneNumberVerified,
+            })
+              ? SKIP_INTERVAL
+              : NUDGE_INTERVAL,
+          ),
         },
         { transaction },
       )
 
-      await this.islykillService.updateIslykillSettings({
-        nationalId,
-        phoneNumber: parsedPhoneNumber,
-        email: userProfile.email,
-      })
-
-      return pick(userProfileUpdated, Object.keys(update)) as typeof update
+      if (
+        isEmailDefined ||
+        isMobilePhoneNumberDefined ||
+        isDefined(userProfile.emailNotifications)
+      ) {
+        await this.islykillService.upsertIslykillSettings({
+          nationalId,
+          phoneNumber: formattedPhoneNumber,
+          email: userProfile.email,
+          canNudge: userProfile.emailNotifications,
+        })
+      }
     })
+
+    return this.findById(nationalId, true, ClientType.FIRST_PARTY)
   }
 
   async createEmailVerification({
@@ -174,49 +268,271 @@ export class UserProfileService {
     nationalId: string
     mobilePhoneNumber: string
   }) {
-    const { nationalNumber } = this.formatPhoneNumber(mobilePhoneNumber)
-
     await this.verificationService.createSmsVerification(
       {
         nationalId,
-        mobilePhoneNumber: nationalNumber,
+        mobilePhoneNumber,
       },
       3,
     )
   }
 
-  async confirmNudge(nationalId: string): Promise<void> {
-    await this.userProfileModel.upsert({ nationalId, lastNudge: new Date() })
+  /**
+   * Confirms the nudge for the user
+   * Moves the next nudge date to 6 months from now if the user has skipped the overview
+   * Moves the next nudge date to 1 month from now if the user has skipped the email or mobile phone number
+   * Sets the email and mobile phone number status to empty if the user has skipped the overview, that means the user has seen the nudge and acknowledged that the data is empty
+   * Sets the email and mobile phone number status to empty if the user has skipped the email or mobile phone number, that means the user has seen the nudge and acknowledged that the data is empty
+   * @param nationalId
+   * @param nudgeType
+   */
+  async confirmNudge(nationalId: string, nudgeType: NudgeType): Promise<void> {
+    const date = new Date()
+
+    const currentProfile = await this.userProfileModel.findOne({
+      where: {
+        nationalId,
+      },
+    })
+
+    await this.userProfileModel.upsert({
+      nationalId,
+      lastNudge: date,
+      nextNudge: addMonths(
+        date,
+        nudgeType === NudgeType.NUDGE ? NUDGE_INTERVAL : SKIP_INTERVAL,
+      ),
+      ...(currentProfile?.emailStatus === DataStatus.NOT_DEFINED &&
+        nudgeType === NudgeType.NUDGE && {
+          emailStatus: DataStatus.EMPTY,
+        }),
+      ...(currentProfile?.mobileStatus === DataStatus.NOT_DEFINED &&
+        nudgeType === NudgeType.NUDGE && {
+          mobileStatus: DataStatus.EMPTY,
+        }),
+    })
   }
 
-  private checkNeedsNudge(lastNudge: NonNullable<Date>): boolean {
-    console.log('lastNudge', lastNudge)
-    const sixMonthsAgoDate = new Date()
-    sixMonthsAgoDate.setMonth(sixMonthsAgoDate.getMonth() - 6)
+  /* fetch actor profiles (delegation preferences) for each delegation */
+  async getActorProfiles(
+    toNationalId: string,
+  ): Promise<PaginatedActorProfileDto> {
+    const incomingDelegations = await this.getIncomingDelegations(toNationalId)
 
-    return new Date(lastNudge) < sixMonthsAgoDate
-  }
+    const emailPreferences = await this.delegationPreference.findAll({
+      where: {
+        toNationalId,
+        fromNationalId: incomingDelegations.data.map((d) => d.fromNationalId),
+      },
+    })
 
-  private formatPhoneNumber(phoneNumber: string): {
-    nationalNumber: string
-    parsedPhoneNumber: string
-  } {
-    if (phoneNumber === '') {
-      return null
-    }
+    const actorProfiles = incomingDelegations.data.map((delegation) => {
+      const emailPreference = emailPreferences.find(
+        (preference) => preference.fromNationalId === delegation.fromNationalId,
+      )
 
-    let nationalNumber = phoneNumber
-    const tempPhoneNumber = parsePhoneNumber(phoneNumber, 'IS')
-    if (tempPhoneNumber.country === 'IS') {
-      nationalNumber = tempPhoneNumber.nationalNumber as string
-    }
+      // return email preference if it exists, otherwise return default true
+      return (
+        emailPreference?.toDto() ?? {
+          fromNationalId: delegation.fromNationalId,
+          emailNotifications: true,
+        }
+      )
+    })
 
     return {
-      nationalNumber,
-      parsedPhoneNumber: [
-        `+${tempPhoneNumber.countryCallingCode}`,
-        tempPhoneNumber.nationalNumber,
-      ].join('-'),
+      data: actorProfiles,
+      totalCount: actorProfiles.length,
+      pageInfo: {
+        hasNextPage: false,
+      },
     }
+  }
+
+  /* Fetch extended actor profile for a specific delegation */
+  async getActorProfile({
+    toNationalId,
+    fromNationalId,
+  }: {
+    fromNationalId: string
+    toNationalId: string
+  }): Promise<ActorProfileDto> {
+    const incomingDelegation = await this.getIncomingDelegations(toNationalId)
+
+    const delegation = incomingDelegation.data.find(
+      (d) => d.fromNationalId === fromNationalId,
+    )
+
+    if (!delegation) {
+      throw new BadRequestException('delegation does not exist')
+    }
+
+    const userProfile = await this.findById(
+      toNationalId,
+      false,
+      ClientType.FIRST_PARTY,
+    )
+
+    const emailPreferences = await this.delegationPreference.findOne({
+      where: {
+        toNationalId,
+        fromNationalId,
+      },
+    })
+
+    return {
+      fromNationalId,
+      emailNotifications: emailPreferences?.emailNotifications ?? true,
+      email: userProfile.email,
+      emailVerified: userProfile.emailVerified,
+      documentNotifications: userProfile.documentNotifications,
+      locale: userProfile.locale,
+    }
+  }
+
+  async createOrUpdateActorProfile({
+    toNationalId,
+    fromNationalId,
+    emailNotifications,
+  }: {
+    toNationalId: string
+    fromNationalId: string
+    emailNotifications: boolean
+  }): Promise<MeActorProfileDto> {
+    const incomingDelegations = await this.getIncomingDelegations(toNationalId)
+
+    // if the delegation does not exist, throw an error
+    if (
+      !incomingDelegations.data.some((d) => d.fromNationalId === fromNationalId)
+    ) {
+      throw new NoContentException()
+    }
+
+    const [profile] = await this.delegationPreference.upsert({
+      toNationalId,
+      fromNationalId,
+      emailNotifications,
+    })
+
+    return profile.toDto()
+  }
+
+  /* Private methods */
+
+  private async getIncomingDelegations(nationalId: string) {
+    return this.delegationsApi.delegationsControllerGetDelegationRecords({
+      xQueryNationalId: nationalId,
+      scope: DocumentsScope.main,
+      direction:
+        DelegationsControllerGetDelegationRecordsDirectionEnum.incoming,
+    })
+  }
+
+  private checkNeedsNudge(userProfile: UserProfile): boolean | null {
+    if (userProfile.nextNudge) {
+      if (!userProfile.email && !userProfile.mobilePhoneNumber) {
+        return userProfile.nextNudge < new Date()
+      }
+
+      if (
+        (userProfile.email && userProfile.emailVerified) ||
+        (userProfile.mobilePhoneNumber && userProfile.mobilePhoneNumberVerified)
+      ) {
+        return userProfile.nextNudge < new Date()
+      }
+    } else {
+      if (
+        (userProfile.email && userProfile.emailVerified) ||
+        (userProfile.mobilePhoneNumber && userProfile.mobilePhoneNumberVerified)
+      ) {
+        return true
+      }
+    }
+
+    return null
+  }
+
+  private hasUnverifiedOrNotDefinedData({
+    email,
+    mobilePhoneNumber,
+    emailVerified,
+    mobilePhoneNumberVerified,
+    mobileStatus,
+    emailStatus,
+  }: {
+    email: string
+    mobilePhoneNumber: string
+    emailVerified: boolean
+    mobilePhoneNumberVerified: boolean
+    mobileStatus: DataStatus
+    emailStatus: DataStatus
+  }): boolean {
+    if ((email && !emailVerified) || emailStatus === DataStatus.NOT_DEFINED) {
+      return true
+    } else if (
+      (mobilePhoneNumber && !mobilePhoneNumberVerified) ||
+      mobileStatus === DataStatus.NOT_DEFINED
+    ) {
+      return true
+    } else {
+      return false
+    }
+  }
+
+  /**
+   * Checks if the audkenni phone number is the same as the mobile phone number to skip verification
+   * @param audkenniSimNumber
+   * @param mobilePhoneNumber
+   */
+  private checkAudkenniSameAsMobilePhoneNumber(
+    audkenniSimNumber: string,
+    mobilePhoneNumber: string,
+  ): boolean {
+    if (!audkenniSimNumber || !mobilePhoneNumber) {
+      return false
+    }
+
+    /**
+     * Remove dashes from mobile phone number and compare last 7 digits of mobilePhoneNumber with the audkenni Phone number
+     * Removing the dashes prevents misreading string with format +354-765-4321 as 65-4321
+     */
+    return (
+      mobilePhoneNumber.replace(/-/g, '').slice(-7) ===
+      audkenniSimNumber.replace(/-/g, '').slice(-7)
+    )
+  }
+
+  filterByClientTypeAndRestrictionDate(
+    clientType: ClientType,
+    userProfile: UserProfile,
+  ): UserProfileDto {
+    const isFirstParty = clientType === ClientType.FIRST_PARTY
+    let filteredUserProfile: UserProfileDto = {
+      nationalId: userProfile.nationalId,
+      email: userProfile.email,
+      mobilePhoneNumber: userProfile.mobilePhoneNumber,
+      locale: userProfile.locale,
+      mobilePhoneNumberVerified: userProfile.mobilePhoneNumberVerified,
+      emailVerified: userProfile.emailVerified,
+      documentNotifications: userProfile.documentNotifications,
+      needsNudge: this.checkNeedsNudge(userProfile),
+      emailNotifications: userProfile.emailNotifications,
+      isRestricted: false,
+    }
+
+    if ((this.config.migrationDate ?? new Date()) > userProfile.lastNudge) {
+      filteredUserProfile = {
+        ...filteredUserProfile,
+        email: isFirstParty ? userProfile.email : null,
+        mobilePhoneNumber: isFirstParty ? userProfile.mobilePhoneNumber : null,
+        emailVerified: isFirstParty ? userProfile.emailVerified : false,
+        mobilePhoneNumberVerified: isFirstParty
+          ? userProfile.mobilePhoneNumberVerified
+          : false,
+        isRestricted: true,
+      }
+    }
+
+    return filteredUserProfile
   }
 }

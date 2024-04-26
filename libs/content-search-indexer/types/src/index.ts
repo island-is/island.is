@@ -30,12 +30,14 @@ export interface SyncOptions {
   locale: ElasticsearchIndexLocale
   syncType: 'full' | 'fromLast' | 'initialize'
   elasticIndex?: string
+  nextPageToken?: string
 }
 
 export interface SyncResponse<PostSyncOptionsType = any> {
   add: MappedData[]
   remove: string[]
   postSyncOptions?: PostSyncOptionsType
+  nextPageToken?: string
 }
 
 export interface ContentSearchImporter<postSyncOptions = any> {

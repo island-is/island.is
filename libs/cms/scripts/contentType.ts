@@ -156,18 +156,21 @@ async function main() {
 
   // 6. Re-generate the api codegen
   try {
-    await execShellCommand(`yarn nx run api:schemas/codegen`)
+    await execShellCommand(`yarn nx run api-schema:codegen/frontend-client`)
   } catch (e) {
-    logger.error(`'yarn nx run api:schemas/codegen' has an error`, {
-      message: e.message,
-    })
+    logger.error(
+      `'yarn nx run api-schema:codegen/frontend-client' has an error`,
+      {
+        message: e.message,
+      },
+    )
   }
 
   // 7. Re-generate the web codegen
   try {
-    await execShellCommand(`yarn nx run api:schemas/codegen`)
+    await execShellCommand(`yarn nx run web:codegen/frontend-client`)
   } catch (e) {
-    logger.error(`'yarn nx run api:schemas/codegen' has an error`, {
+    logger.error(`'yarn nx run web:codegen/frontend-client' has an error`, {
       message: e.message,
     })
   }

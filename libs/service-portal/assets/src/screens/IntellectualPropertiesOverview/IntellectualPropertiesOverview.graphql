@@ -1,0 +1,52 @@
+query GetIntellectualProperties {
+  intellectualProperties {
+    __typename
+    totalCount
+    items {
+      ... on IntellectualPropertiesPatentIS {
+        __typename
+        applicationNumber
+        name
+        statusText
+        lifecycle {
+          applicationDate
+        }
+      }
+      ... on IntellectualPropertiesPatentEP {
+        __typename
+        applicationNumber
+        name
+        statusText
+        lifecycle {
+          applicationDate
+        }
+      }
+      ... on IntellectualPropertiesSPC {
+        __typename
+        applicationNumber
+        name
+        statusText
+        lifecycle {
+          applicationDate
+        }
+      }
+
+      ... on IntellectualPropertiesTrademark {
+        __typename
+        text
+        typeReadable
+        status
+        id
+      }
+      ... on IntellectualPropertiesDesign {
+        __typename
+        applicationNumber
+        id
+        status
+        specification {
+          description
+        }
+      }
+    }
+  }
+}

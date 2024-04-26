@@ -7,16 +7,22 @@ import {
   ArticleResolver,
   LatestNewsSliceResolver,
   FeaturedArticlesResolver,
+  FeaturedEventsResolver,
   FeaturedSupportQNAsResolver,
   PowerBiSliceResolver,
+  LatestEventsSliceResolver,
 } from './cms.resolver'
 import { CmsContentfulService } from './cms.contentful.service'
 import { ContentfulRepository } from './contentful.repository'
 import { CmsElasticsearchService } from './cms.elasticsearch.service'
 import { CmsHealthIndicator } from './cms.health'
 import { OrganizationLogoLoader } from './loaders/organizationLogo.loader'
+import { OrganizationTitleByReferenceIdLoader } from './loaders/organizationTitleByKey.loader'
+import { OrganizationLinkByReferenceIdLoader } from './loaders/organizationLinkByKey.loader'
 import { PowerBiService } from './powerbi.service'
 import { PowerBiConfig } from './powerbi.config'
+import { OrganizationLinkEnByReferenceIdLoader } from './loaders/organizationLinkEnByKey.loader'
+import { OrganizationTitleEnByReferenceIdLoader } from './loaders/organizationTitleEnByKey.loader'
 
 @Module({
   imports: [HttpModule, TerminusModule, PowerBiConfig.registerOptional()],
@@ -30,16 +36,25 @@ import { PowerBiConfig } from './powerbi.config'
     CmsHealthIndicator,
     LatestNewsSliceResolver,
     FeaturedArticlesResolver,
+    FeaturedEventsResolver,
     FeaturedSupportQNAsResolver,
     OrganizationLogoLoader,
+    OrganizationLinkByReferenceIdLoader,
+    OrganizationLinkEnByReferenceIdLoader,
+    OrganizationTitleByReferenceIdLoader,
+    OrganizationTitleEnByReferenceIdLoader,
     PowerBiService,
     PowerBiSliceResolver,
+    LatestEventsSliceResolver,
   ],
   exports: [
     ContentfulRepository,
     CmsHealthIndicator,
     CmsContentfulService,
     OrganizationLogoLoader,
+    OrganizationLinkByReferenceIdLoader,
+    OrganizationLinkEnByReferenceIdLoader,
+    OrganizationTitleByReferenceIdLoader,
     CmsElasticsearchService,
   ],
 })

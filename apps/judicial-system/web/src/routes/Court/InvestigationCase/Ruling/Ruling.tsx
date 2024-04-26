@@ -13,7 +13,7 @@ import {
 import * as constants from '@island.is/judicial-system/consts'
 import { formatDate } from '@island.is/judicial-system/formatters'
 import {
-  CaseDecision,
+  getLatestDateType,
   isAcceptingCaseDecision,
 } from '@island.is/judicial-system/types'
 import { core, ruling, titles } from '@island.is/judicial-system-web/messages'
@@ -24,13 +24,16 @@ import {
   FormContentContainer,
   FormContext,
   FormFooter,
+  PageHeader,
   PageLayout,
   PdfButton,
   PoliceRequestAccordionItem,
   RulingInput,
-  UserContext,
 } from '@island.is/judicial-system-web/src/components'
-import PageHeader from '@island.is/judicial-system-web/src/components/PageHeader/PageHeader'
+import {
+  CaseDecision,
+  DateType,
+} from '@island.is/judicial-system-web/src/graphql/schema'
 import {
   removeTabsValidateAndSet,
   validateAndSendToServer,
@@ -52,7 +55,6 @@ const Ruling = () => {
     caseNotFound,
     isCaseUpToDate,
   } = useContext(FormContext)
-  const { user } = useContext(UserContext)
   const { setAndSendCaseToServer, updateCase } = useCase()
   const { formatMessage } = useIntl()
 
@@ -69,11 +71,16 @@ const Ruling = () => {
   ])
 
   const initialize = useCallback(() => {
+    const courtDate = getLatestDateType(
+      DateType.COURT_DATE,
+      workingCase.dateLogs,
+    )
+
     setAndSendCaseToServer(
       [
         {
           introduction: formatMessage(m.sections.introduction.autofill, {
-            date: formatDate(workingCase.courtDate, 'PPP'),
+            date: formatDate(courtDate?.date, 'PPP'),
           }),
           prosecutorDemands: workingCase.demands,
           courtCaseFacts: formatMessage(
@@ -141,16 +148,7 @@ const Ruling = () => {
               label={`Rannsóknargögn (${caseFiles.length})`}
               labelVariant="h3"
             >
-              <CaseFileList
-                caseId={workingCase.id}
-                files={caseFiles}
-                canOpenFiles={
-                  (workingCase.judge !== null &&
-                    workingCase.judge?.id === user?.id) ||
-                  (workingCase.registrar !== null &&
-                    workingCase.registrar?.id === user?.id)
-                }
-              />
+              <CaseFileList caseId={workingCase.id} files={caseFiles} />
             </AccordionItem>
           </Accordion>
         </Box>
@@ -171,7 +169,6 @@ const Ruling = () => {
                 'introduction',
                 event.target.value,
                 ['empty'],
-                workingCase,
                 setWorkingCase,
                 introductionEM,
                 setIntroductionEM,
@@ -214,7 +211,6 @@ const Ruling = () => {
                 'prosecutorDemands',
                 event.target.value,
                 ['empty'],
-                workingCase,
                 setWorkingCase,
                 prosecutorDemandsEM,
                 setProsecutorDemandsEM,
@@ -259,7 +255,6 @@ const Ruling = () => {
                   'courtCaseFacts',
                   event.target.value,
                   ['empty'],
-                  workingCase,
                   setWorkingCase,
                   courtCaseFactsEM,
                   setCourtCaseFactsEM,
@@ -307,7 +302,6 @@ const Ruling = () => {
                   'courtLegalArguments',
                   event.target.value,
                   ['empty'],
-                  workingCase,
                   setWorkingCase,
                   courtLegalArgumentsEM,
                   setCourtLegalArgumentsEM,
@@ -366,6 +360,16 @@ const Ruling = () => {
                 ruling.investigationCases.sections.decision.dismissLabel,
               )}
               onChange={(decision) => {
+                let ruling = undefined
+
+                if (
+                  isAcceptingCaseDecision(decision) &&
+                  workingCase.parentCase &&
+                  !workingCase.ruling
+                ) {
+                  ruling = workingCase.parentCase.ruling
+                }
+
                 setAndSendCaseToServer(
                   [
                     {
@@ -373,8 +377,7 @@ const Ruling = () => {
                         decision === CaseDecision.ACCEPTING
                           ? workingCase.demands
                           : workingCase.conclusion,
-                    },
-                    {
+                      ruling,
                       decision,
                       force: true,
                     },
@@ -402,7 +405,6 @@ const Ruling = () => {
                 'conclusion',
                 event.target.value,
                 [],
-                workingCase,
                 setWorkingCase,
               )
             }

@@ -15,10 +15,18 @@ export const applicantInformationMultiField = (
 ) => {
   // Phone required is default false for all applications
   // Email required is default true for all applications
-  const { phoneRequired = false, emailRequired = true } = props ?? {}
+  // Email disabled is default false for all applications
+  // Option to add description
+  const {
+    phoneRequired = false,
+    emailRequired = true,
+    emailDisabled = false,
+    applicantInformationDescription = '',
+  } = props ?? {}
   return buildMultiField({
     id: 'applicant',
     title: applicantInformation.general.title,
+    description: applicantInformationDescription,
     children: [
       buildTextField({
         id: 'applicant.name',
@@ -90,7 +98,9 @@ export const applicantInformationMultiField = (
         variant: 'email',
         backgroundColor: 'blue',
         required: emailRequired,
-        defaultValue: '',
+        disabled: emailDisabled,
+        defaultValue: (application: ApplicantInformationInterface) =>
+          application.externalData?.userProfile?.data?.email ?? '',
         maxLength: 100,
       }),
       buildPhoneField({
@@ -98,7 +108,8 @@ export const applicantInformationMultiField = (
         title: applicantInformation.labels.tel,
         width: 'half',
         backgroundColor: 'blue',
-        defaultValue: '',
+        defaultValue: (application: ApplicantInformationInterface) =>
+          application.externalData?.userProfile?.data?.mobilePhoneNumber ?? '',
         required: phoneRequired,
       }),
     ],

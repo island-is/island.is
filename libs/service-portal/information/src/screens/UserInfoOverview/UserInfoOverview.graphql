@@ -1,6 +1,7 @@
-query UserInfoOverview($api: String) {
-  nationalRegistryPerson(api: $api) {
+query UserInfoOverview($api: String, $useFakeData: Boolean) {
+  nationalRegistryPerson(api: $api, useFakeData: $useFakeData) {
     nationalId
+    fullName
     spouse {
       nationalId
       fullName
@@ -8,14 +9,6 @@ query UserInfoOverview($api: String) {
     childCustody {
       nationalId
       fullName
-      custodians {
-        nationalId
-        fullName
-      }
-      birthParents {
-        nationalId
-        fullName
-      }
     }
   }
 }

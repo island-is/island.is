@@ -1,17 +1,21 @@
+import { useContext, useEffect, useState } from 'react'
 import { theme } from '@island.is/island-ui/theme'
-import { useEffect, useState } from 'react'
-import { useWindowSize } from 'react-use'
+import { useWindowSize } from './useIsWindowSize'
+import { IsSsrMobileContext } from '../context'
 
 export const useIsMobile = () => {
-  const [isMobile, setIsMobile] = useState(false)
+  const isSsrMobile = useContext(IsSsrMobileContext)
+  const [isClientMobile, setIsClientMobile] = useState(false)
   const { width } = useWindowSize()
 
   useEffect(() => {
-    if (width < theme.breakpoints.md) {
-      return setIsMobile(true)
+    if (!!width && width < theme.breakpoints.md) {
+      return setIsClientMobile(true)
     }
-    return setIsMobile(false)
+    return setIsClientMobile(false)
   }, [width])
+
+  const isMobile = isSsrMobile || isClientMobile
 
   return {
     isMobile,

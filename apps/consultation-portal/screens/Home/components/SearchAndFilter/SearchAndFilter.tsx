@@ -20,6 +20,7 @@ interface SearchAndFilterProps {
   filters: CaseFilter
   setFilters: (arr: CaseFilter) => void
   loading?: boolean
+  filtersLoaded?: boolean
 }
 
 const SearchAndFilter = ({
@@ -30,6 +31,7 @@ const SearchAndFilter = ({
   filters,
   setFilters,
   loading,
+  filtersLoaded,
 }: SearchAndFilterProps) => {
   const loc = localization.searchAndFilter
 
@@ -64,6 +66,7 @@ const SearchAndFilter = ({
               setFilters={setFilters}
               name="front_page_search"
               localStorageId={FILTERS_FRONT_PAGE_KEY}
+              filtersLoaded={filtersLoaded}
             />
           </GridColumn>
           <GridColumn span={['2/12', '2/12', '3/12', '3/12', '3/12']}>

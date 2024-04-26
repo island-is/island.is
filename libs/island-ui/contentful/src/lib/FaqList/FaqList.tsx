@@ -1,5 +1,6 @@
 import { FC } from 'react'
 import slugify from '@sindresorhus/slugify'
+import { Locale } from 'locale'
 import {
   Stack,
   Text,
@@ -16,12 +17,14 @@ export interface FaqListProps {
     answer?: SliceType[]
   }[]
   showTitle?: boolean
+  locale?: Locale
 }
 
 export const FaqList: FC<React.PropsWithChildren<FaqListProps>> = ({
   title,
   questions,
   showTitle = true,
+  locale = 'is',
 }) => {
   return (
     <Stack space={6}>
@@ -39,7 +42,7 @@ export const FaqList: FC<React.PropsWithChildren<FaqListProps>> = ({
               label={question}
               labelUse="h2"
             >
-              {richText(answer as SliceType[], undefined)}
+              {richText(answer as SliceType[], undefined, locale)}
             </AccordionItem>
           )
         })}

@@ -7,6 +7,7 @@ import { RouteObject } from 'react-router-dom'
 import type { Features } from '@island.is/react/feature-flags'
 import { IconProps } from '@island.is/island-ui/core'
 import { User } from '@island.is/shared/types'
+import { OrganizationSlugType } from '@island.is/shared/constants'
 
 /**
  * A navigational item used by the service portal
@@ -61,7 +62,17 @@ export interface PortalNavigationItem {
   /**
    * Service provider id used for displaying service provider information in the module.
    */
-  serviceProvider?: string
+  serviceProvider?: OrganizationSlugType
+
+  /**
+   * If the service provider logo should be displayed beneath the tab navigation
+   */
+  displayServiceProviderLogo?: boolean
+
+  /**
+   * Service provider tooltip to display if service provider logo is supplied.
+   */
+  serviceProviderTooltip?: MessageDescriptor
 }
 
 /**

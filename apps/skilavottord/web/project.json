@@ -83,6 +83,12 @@
         "buildTarget": "skilavottord-web:build:production"
       }
     },
+    "codegen/frontend-client": {
+      "executor": "nx:run-commands",
+      "options": {
+        "command": "graphql-codegen --config apps/skilavottord/web/codegen.yml"
+      }
+    },
     "lint": {
       "executor": "@nx/linter:eslint",
       "options": {

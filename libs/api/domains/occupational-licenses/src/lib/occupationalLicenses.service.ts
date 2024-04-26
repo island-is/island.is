@@ -24,7 +24,12 @@ import { handle404 } from '@island.is/clients/middlewares'
 
 const LOG_CATEGORY = 'occupational-licenses-service'
 
-type HealthDirectorateStatusValues = 'Í gildi' | 'Ógilt' | 'Í gildi - Takmörkun'
+type HealthDirectorateStatusValues =
+  | 'Í gildi'
+  | 'Ógilt'
+  | 'Í gildi - Takmörkun'
+  | 'Svipting'
+  | 'Afsal'
 
 type OccupationalLicenseResult<T> =
   | {
@@ -59,6 +64,10 @@ export class OccupationalLicensesService {
         return OccupationalLicenseStatus.valid
       case 'Í gildi - Takmörkun':
         return OccupationalLicenseStatus.limited
+      case 'Svipting':
+        return OccupationalLicenseStatus.revoked
+      case 'Afsal':
+        return OccupationalLicenseStatus.waived
       case 'Ógilt':
         return OccupationalLicenseStatus.error
       default:

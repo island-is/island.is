@@ -29,13 +29,12 @@
         "cwd": "libs/clients/mms"
       }
     },
-    "schemas/external-openapi-generator": {
+    "codegen/backend-client": {
       "executor": "nx:run-commands",
       "options": {
-        "commands": [
-          "yarn openapi-generator -o libs/clients/mms/gen/fetch -i libs/clients/mms/src/clientConfig.json"
-        ]
-      }
+        "command": "yarn openapi-generator -o libs/clients/mms/gen/fetch -i libs/clients/mms/src/clientConfig.json"
+      },
+      "outputs": ["{projectRoot}/gen/fetch"]
     }
   },
   "tags": ["lib:client", "scope:client"]

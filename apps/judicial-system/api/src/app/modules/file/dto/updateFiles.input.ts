@@ -12,10 +12,8 @@ import {
 
 import { Field, InputType, Int } from '@nestjs/graphql'
 
-import { UpdateFile as TUpdateFile } from '@island.is/judicial-system/types'
-
 @InputType()
-export class UpdateFile implements TUpdateFile {
+export class UpdateFile {
   @Allow()
   @Field()
   readonly id!: string

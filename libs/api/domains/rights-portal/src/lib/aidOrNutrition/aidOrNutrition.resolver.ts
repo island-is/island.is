@@ -24,7 +24,7 @@ import { AidOrNutritionService } from './aidOrNutrition.service'
 export class AidOrNutritionResolver {
   constructor(private readonly service: AidOrNutritionService) {}
 
-  @Scopes(ApiScope.health)
+  @Scopes(ApiScope.healthAssistiveAndNutrition)
   @Query(() => PaginatedAidOrNutritionResponse, {
     name: 'rightsPortalPaginatedAidOrNutrition',
     nullable: true,

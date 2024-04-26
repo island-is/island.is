@@ -14,6 +14,7 @@ export const searchQuery = (
     queryString,
     size = 10,
     page = 1,
+    sort = [],
     types = [],
     tags = [],
     excludedTags = [],
@@ -30,6 +31,11 @@ export const searchQuery = (
   const must: TagQuery[] = []
   const mustNot: TagQuery[] = []
   let minimumShouldMatch = 1
+
+  // Handle aliases since the search engine has not been configured to support organization aliases
+  if (queryString.trim().toLowerCase() === 'tr') {
+    queryString = 'Tryggingastofnun'
+  }
 
   // * wildcard support for internal clients - eg. used by island.is app
   if (queryString.trim() === '*') {
@@ -57,10 +63,20 @@ export const searchQuery = (
             },
           })
         } else {
-          should.push({ prefix: { title: queryString } })
           should.push({
-            fuzzy: {
-              title: { value: queryString, fuzziness: 1, prefix_length: 0 },
+            bool: {
+              should: [
+                { prefix: { title: queryString } },
+                {
+                  fuzzy: {
+                    title: {
+                      value: queryString,
+                      fuzziness: 1,
+                      prefix_length: 0,
+                    },
+                  },
+                },
+              ],
             },
           })
         }
@@ -90,17 +106,16 @@ export const searchQuery = (
   // if we have types restrict the query to those types
   if (types?.length) {
     minimumShouldMatch++ // now we have to match at least one type and the search query
-
-    types.forEach((type) => {
-      const [value, boost = 1] = type.split('^')
-      should.push({
-        term: {
-          type: {
+    should.push({
+      terms: {
+        type: types.map((type) => {
+          const [value, boost = 1] = type.split('^')
+          return {
             value,
             boost: getBoostForType(value, boost),
-          },
-        },
-      })
+          }
+        }),
+      },
     })
   }
 
@@ -191,6 +206,7 @@ export const searchQuery = (
     ...(Object.keys(aggregation.aggs).length ? aggregation : {}), // spread aggregations if we have any
     ...(highlightSection ? highlight : {}),
     size,
+    sort,
     from: (page - 1) * size, // if we have a page number add it as offset for pagination
   }
 }

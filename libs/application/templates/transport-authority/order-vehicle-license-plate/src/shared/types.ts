@@ -29,3 +29,8 @@ export type PlateType = {
   plateHeight?: number | null
   plateWidth?: number | null
 }
+
+export type CurrentVehiclesAndRecords = {
+  totalRecords: number
+  vehicles: VehiclesCurrentVehicle[]
+}

@@ -41,6 +41,14 @@ export enum ApplicationFiltersEnum {
   MYCASES = 'MyCases',
 }
 
+export enum ApplicationHeaderSortByEnum {
+  NAME = 'name',
+  STATE = 'state',
+  MODIFIED = 'modified',
+  CREATED = 'created',
+  STAFF = 'staff',
+}
+
 export enum ApplicationStateUrl {
   NEW = 'New',
   INPROGRESS = 'InProgress',
@@ -109,4 +117,9 @@ export enum AidName {
   WITHOTHERS = 'withOthers',
   LIVESWITHPARENTS = 'livesWithParents',
   UNKNOWN = 'unknown',
+}
+
+export enum FilterType {
+  APPLICATIONSTATE = 'applicationState',
+  STAFF = 'staff',
 }

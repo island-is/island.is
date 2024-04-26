@@ -13,7 +13,7 @@
         ]
       }
     },
-    "schemas/codegen": {
+    "codegen/frontend-client": {
       "executor": "nx:run-commands",
       "options": {
         "output": "libs/portals/admin/ids-admin/src/**/*.generated.ts",

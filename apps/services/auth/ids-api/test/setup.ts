@@ -7,14 +7,14 @@ import {
   SequelizeConfigService,
 } from '@island.is/auth-api-lib'
 import { IdsUserGuard, MockAuthGuard, User } from '@island.is/auth-nest-tools'
+import { RskRelationshipsClient } from '@island.is/clients-rsk-relationships'
 import { NationalRegistryClientService } from '@island.is/clients/national-registry-v2'
 import { CompanyRegistryClientService } from '@island.is/clients/rsk/company-registry'
-import { RskRelationshipsClient } from '@island.is/clients-rsk-relationships'
-import { UserProfileApi } from '@island.is/clients/user-profile'
+import { V2MeApi } from '@island.is/clients/user-profile'
 import { FeatureFlagService } from '@island.is/nest/feature-flags'
 import {
-  createDomain,
   createApiScope,
+  createDomain,
   CreateDomain,
 } from '@island.is/services/auth/testing'
 import {
@@ -74,7 +74,7 @@ class MockNationalRegistryClientService
 
 class MockUserProfile {
   withMiddleware = () => this
-  userProfileControllerFindOneByNationalId = jest.fn().mockResolvedValue({})
+  meUserProfileControllerFindUserProfile = jest.fn().mockResolvedValue({})
 }
 
 interface SetupOptions {
@@ -103,7 +103,7 @@ export const setupWithAuth = async ({
         )
         .overrideProvider(NationalRegistryClientService)
         .useClass(MockNationalRegistryClientService)
-        .overrideProvider(UserProfileApi)
+        .overrideProvider(V2MeApi)
         .useClass(MockUserProfile)
         .overrideProvider(CompanyRegistryClientService)
         .useValue({
@@ -117,7 +117,7 @@ export const setupWithAuth = async ({
         .useValue({ getValue: () => true }),
     hooks: [
       useAuth({ auth: user }),
-      useDatabase({ type: 'sqlite', provider: SequelizeConfigService }),
+      useDatabase({ type: 'postgres', provider: SequelizeConfigService }),
     ],
   })
 
@@ -135,7 +135,9 @@ export const setupWithoutAuth = async (): Promise<TestApp> => {
   const app = await testServer({
     appModule: AppModule,
     enableVersioning: true,
-    hooks: [useDatabase({ type: 'sqlite', provider: SequelizeConfigService })],
+    hooks: [
+      useDatabase({ type: 'postgres', provider: SequelizeConfigService }),
+    ],
   })
 
   return app
@@ -148,7 +150,7 @@ export const setupWithoutPermission = async (): Promise<TestApp> => {
     enableVersioning: true,
     hooks: [
       useAuth({ auth: user }),
-      useDatabase({ type: 'sqlite', provider: SequelizeConfigService }),
+      useDatabase({ type: 'postgres', provider: SequelizeConfigService }),
     ],
   })
 

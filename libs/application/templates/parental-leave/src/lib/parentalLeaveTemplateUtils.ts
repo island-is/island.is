@@ -7,17 +7,19 @@ import {
   PARENTAL_GRANT,
   PARENTAL_GRANT_STUDENTS,
   States,
+  FileType,
 } from '../constants'
 import {
   getApplicationAnswers,
   getApplicationExternalData,
   requiresOtherParentApproval,
+  residentGrantIsOpenForApplication,
 } from '../lib/parentalLeaveUtils'
 import { EmployerRow } from '../types'
 import { getValueViaPath } from '@island.is/application/core'
-import { disableResidenceGrantApplication } from './answerValidationSections/utils'
+import set from 'lodash/set'
 
-export function allEmployersHaveApproved(context: ApplicationContext) {
+export const allEmployersHaveApproved = (context: ApplicationContext) => {
   const employers = getValueViaPath<EmployerRow[]>(
     context.application.answers,
     'employers',
@@ -28,105 +30,135 @@ export function allEmployersHaveApproved(context: ApplicationContext) {
   return employers.every((e) => !!e.isApproved)
 }
 
-export function hasEmployer(context: ApplicationContext) {
-  const currentApplicationAnswers = context.application.answers as {
-    isReceivingUnemploymentBenefits: typeof YES | typeof NO
-    applicationType: {
-      option:
-        | typeof PARENTAL_LEAVE
-        | typeof PARENTAL_GRANT
-        | typeof PARENTAL_GRANT_STUDENTS
-    }
-    isSelfEmployed: typeof YES | typeof NO
-    employers: [
-      {
-        stillEmployed: typeof YES | typeof NO
-      },
-    ]
-  }
-  const oldApplicationAnswers = context.application.answers as {
-    isRecivingUnemploymentBenefits: typeof YES | typeof NO
-    employer: {
-      isSelfEmployed: typeof YES | typeof NO
-    }
-  }
+export const hasEmployer = (context: ApplicationContext) => {
+  const { application } = context
+  const { isReceivingUnemploymentBenefits, isSelfEmployed, employers } =
+    getApplicationAnswers(application.answers)
 
-  const isUndefinedReceivingUnemploymentBenefits =
-    currentApplicationAnswers.isReceivingUnemploymentBenefits !== undefined ||
-    oldApplicationAnswers.isRecivingUnemploymentBenefits !== undefined
-  const receivingUnemploymentBenefits =
-    currentApplicationAnswers.isReceivingUnemploymentBenefits === NO ||
-    oldApplicationAnswers.isRecivingUnemploymentBenefits === NO
-  const selfEmployed =
-    currentApplicationAnswers.isSelfEmployed === NO ||
-    oldApplicationAnswers.employer?.isSelfEmployed === NO
+  const applicationType = (
+    application.answers as {
+      applicationType: { option: string }
+    }
+  )?.applicationType
 
   // Added this check for applications that is in the db already so they can go through to next state
-  if (currentApplicationAnswers.applicationType === undefined) {
-    if (isUndefinedReceivingUnemploymentBenefits) {
-      return selfEmployed && receivingUnemploymentBenefits
+  if (applicationType === undefined) {
+    if (isReceivingUnemploymentBenefits !== undefined) {
+      return isSelfEmployed === NO && isReceivingUnemploymentBenefits === NO
     }
-
-    return selfEmployed
+    return isSelfEmployed === NO
   } else {
-    if (currentApplicationAnswers.applicationType.option === PARENTAL_LEAVE) {
-      return selfEmployed && receivingUnemploymentBenefits
+    if (applicationType.option === PARENTAL_LEAVE) {
+      return isSelfEmployed === NO && isReceivingUnemploymentBenefits === NO
     } else if (
-      (currentApplicationAnswers.applicationType.option === PARENTAL_GRANT ||
-        currentApplicationAnswers.applicationType.option ===
-          PARENTAL_GRANT_STUDENTS) &&
-      currentApplicationAnswers.employers !== undefined
+      (applicationType.option === PARENTAL_GRANT ||
+        applicationType.option === PARENTAL_GRANT_STUDENTS) &&
+      employers !== undefined
     ) {
-      return currentApplicationAnswers.employers.some(
-        (employer) => employer.stillEmployed === YES,
-      )
+      return employers.some((employer) => employer.stillEmployed === YES)
     } else {
       return false
     }
   }
 }
 
-export function needsOtherParentApproval(context: ApplicationContext) {
+export const needsOtherParentApproval = (context: ApplicationContext) => {
   return requiresOtherParentApproval(
     context.application.answers,
     context.application.externalData,
   )
 }
 
-export function currentDateStartTime() {
+export const currentDateStartTime = () => {
   const date = new Date().toDateString()
   return new Date(date).getTime()
 }
 
-export function findActionName(context: ApplicationContext) {
+export const findActionName = (context: ApplicationContext) => {
   const { application } = context
   const { state } = application
-  const { addEmployer, addPeriods } = getApplicationAnswers(application.answers)
+  const {
+    addEmployer,
+    addPeriods,
+    changeEmployerFile,
+    changeEmployer,
+    changePeriods,
+  } = getApplicationAnswers(application.answers)
+
   if (
-    state === States.RESIDENCE_GRAND_APPLICATION_NO_BIRTH_DATE ||
-    state === States.RESIDENCE_GRAND_APPLICATION
+    state === States.RESIDENCE_GRANT_APPLICATION_NO_BIRTH_DATE ||
+    state === States.RESIDENCE_GRANT_APPLICATION
   )
     return 'documentPeriod'
   if (state === States.ADDITIONAL_DOCUMENTS_REQUIRED) return 'document'
+
   if (state === States.EDIT_OR_ADD_EMPLOYERS_AND_PERIODS) {
-    if (addEmployer === YES && addPeriods === YES) return 'empper'
-    if (addEmployer === YES) return 'employer'
-    if (addPeriods === YES) return 'period'
+    let tmpChangePeriods = changePeriods
+    let tmpChangeEmployer = changeEmployer
+
+    if (addEmployer === YES && addPeriods === YES) {
+      tmpChangeEmployer = true
+      tmpChangePeriods = true
+
+      // Keep book keeping of what has been selected
+      if (!changeEmployer) {
+        set(application.answers, 'changeEmployer', true)
+      }
+      if (!changePeriods) {
+        set(application.answers, 'changePeriods', true)
+      }
+    }
+
+    if (addEmployer === YES) {
+      tmpChangeEmployer = true
+
+      // Keep book keeping of what has been selected
+      if (!changeEmployer) {
+        set(application.answers, 'changeEmployer', true)
+      }
+    }
+    if (addPeriods === YES) {
+      tmpChangePeriods = true
+
+      // Keep book keeping of what has been selected
+      if (!changePeriods) {
+        set(application.answers, 'changePeriods', true)
+      }
+    }
+
+    // If the applicant has selected add employee and/or period at some point
+    if (changeEmployerFile && tmpChangeEmployer && tmpChangePeriods) {
+      return FileType.EMPDOCPER
+    } else if (changeEmployerFile && tmpChangeEmployer) {
+      return FileType.EMPDOC
+    }
+    if (tmpChangeEmployer && tmpChangePeriods) {
+      return FileType.EMPPER
+    } else if (tmpChangeEmployer) {
+      return FileType.EMPLOYER
+    } else if (tmpChangePeriods) {
+      return FileType.PERIOD
+    }
   }
 
   return undefined
 }
 
-export function hasDateOfBirth(context: ApplicationContext) {
+export const disableResidenceGrantApplication = (dateOfBirth: string) => {
+  if (!residentGrantIsOpenForApplication(dateOfBirth)) return false
+  return true
+}
+
+export const hasDateOfBirth = (context: ApplicationContext) => {
   const { application } = context
   const { dateOfBirth } = getApplicationExternalData(application.externalData)
   return disableResidenceGrantApplication(dateOfBirth?.data?.dateOfBirth || '')
 }
 
-export function goToState(
+export const goToState = (
   applicationContext: ApplicationContext,
   state: States,
-) {
+) => {
   const { previousState } = getApplicationAnswers(
     applicationContext.application.answers,
   )

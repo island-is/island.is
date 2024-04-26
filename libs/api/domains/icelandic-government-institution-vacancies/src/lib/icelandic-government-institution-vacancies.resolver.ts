@@ -1,4 +1,5 @@
 import { Args, Query, Resolver } from '@nestjs/graphql'
+import { Inject } from '@nestjs/common'
 import {
   DefaultApi,
   VacanciesGetAcceptEnum,
@@ -24,6 +25,9 @@ import {
   sortVacancyList,
 } from './utils'
 import { getElasticsearchIndex } from '@island.is/content-search-index-manager'
+import { LOGGER_PROVIDER } from '@island.is/logging'
+import type { Logger } from '@island.is/logging'
+import { FetchError } from '@island.is/clients/middlewares'
 
 const defaultCache: CacheControlOptions = { maxAge: CACHE_CONTROL_MAX_AGE }
 const defaultLang = 'is'
@@ -34,16 +38,36 @@ export class IcelandicGovernmentInstitutionVacanciesResolver {
     private readonly api: DefaultApi,
     private readonly cmsElasticService: CmsElasticsearchService,
     private readonly cmsContentfulService: CmsContentfulService,
+    @Inject(LOGGER_PROVIDER) private logger: Logger,
   ) {}
 
   private async getVacanciesFromExternalSystem(
     input: IcelandicGovernmentInstitutionVacanciesInput,
   ) {
-    const vacancies = (await this.api.vacanciesGet({
-      accept: VacanciesGetAcceptEnum.Json,
-      language: input.language,
-      stofnun: input.institution,
-    })) as DefaultApiVacanciesListItem[]
+    let vacancies: DefaultApiVacanciesListItem[] = []
+
+    try {
+      vacancies = (await this.api.vacanciesGet({
+        accept: VacanciesGetAcceptEnum.Json,
+        language: input.language,
+        stofnun: input.institution,
+      })) as DefaultApiVacanciesListItem[]
+    } catch (error) {
+      if (error instanceof FetchError) {
+        this.logger.error(
+          'Fetch error occurred when getting vacancies from xroad',
+          {
+            message: error.message,
+            statusCode: error.status,
+          },
+        )
+      } else {
+        this.logger.error(
+          'Error occurred when getting vacancies from xroad',
+          error,
+        )
+      }
+    }
 
     const mappedVacancies =
       await mapIcelandicGovernmentInstitutionVacanciesFromExternalSystem(

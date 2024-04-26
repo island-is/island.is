@@ -6,7 +6,7 @@ set -euo pipefail
 
 if ! git rev-parse --verify HEAD >/dev/null 2>&1; then
   # Initial commit: diff against an empty tree object
-  GIT_AGAINST="$(git hash-object -t tree /dev/null)"
+  GIT_AGAINST="origin/$(git branch --show-current)"
 fi
 
 whitespaces() {
@@ -18,11 +18,12 @@ whitespaces() {
 charts() {
   if git diff --name-only "$GIT_AGAINST" | grep -q -E 'apps/.*/infra'; then
     (yarn charts &>>.charts.log) &
-    echo "🤖 Generated charts for you 💖"
+    echo "🤖 Generating charts for you 💖"
     echo "    So you don't have to 😘"
     echo "       Just remember to commit them ✅"
     echo "          (check git status & .charts.log)"
-    echo ""
+    wait
+    echo " < DONE > "
   fi
   return 0
 }

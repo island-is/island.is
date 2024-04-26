@@ -342,9 +342,8 @@ export class ApplicationController {
     user: User,
     @CurrentLocale() locale: Locale,
   ): Promise<ApplicationResponseDto> {
-    const { typeId } = application
+    const { typeId, initialQuery } = application
     const template = await getApplicationTemplateByTypeId(typeId)
-
     if (template === null) {
       throw new BadRequestException(
         `No application template exists for type: ${typeId}`,
@@ -373,7 +372,8 @@ export class ApplicationController {
       | 'status'
       | 'typeId'
     > = {
-      answers: {},
+      answers:
+        template.initialQueryParameter && initialQuery ? { initialQuery } : {},
       applicant: user.nationalId,
       assignees: [],
       applicantActors: user.actor ? [user.actor.nationalId] : [],
@@ -580,20 +580,22 @@ export class ApplicationController {
     const newAnswers = application.answers as FormValue
     const intl = await this.intlService.useIntl(namespaces, locale)
 
-    await this.validationService.validateIncomingAnswers(
-      existingApplication as BaseApplication,
-      newAnswers,
-      user.nationalId,
-      true,
-      intl.formatMessage,
-    )
+    if (!application.skipValidation) {
+      await this.validationService.validateIncomingAnswers(
+        existingApplication as BaseApplication,
+        newAnswers,
+        user.nationalId,
+        true,
+        intl.formatMessage,
+      )
 
-    await this.validationService.validateApplicationSchema(
-      existingApplication,
-      newAnswers,
-      intl.formatMessage,
-      user,
-    )
+      await this.validationService.validateApplicationSchema(
+        existingApplication,
+        newAnswers,
+        intl.formatMessage,
+        user,
+      )
+    }
 
     const mergedAnswers = mergeAnswers(existingApplication.answers, newAnswers)
     const applicantActors: string[] =

@@ -24,7 +24,7 @@ export const AdviceList = ({ advices, chosenCase }: Props) => {
   const [showAll, setShowAll] = useState<boolean>(false)
   const { advicePublishTypeId, processEnds } = chosenCase
   return (
-    <Box dataTestId="advices-list">
+    <Box dataTestId="advices-list" id="view-advices">
       {renderAdvices(advicePublishTypeId, processEnds) && (
         <Stack space={3}>
           {advices?.map((advice: AdviceResult, index) => {

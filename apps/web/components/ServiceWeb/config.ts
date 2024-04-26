@@ -1,5 +1,7 @@
-import { WatsonChatPanelProps } from '@island.is/web/components'
 import { Locale } from 'locale'
+
+import { WatsonChatPanelProps } from '@island.is/web/components'
+
 import { BackgroundVariations, Options } from './types'
 
 export const options: Record<BackgroundVariations, Options> = {
@@ -25,12 +27,26 @@ export const options: Record<BackgroundVariations, Options> = {
   'icelandic-health-insurance': {
     textMode: 'blueberry',
   },
+  'iceland-health': {
+    textMode: 'blueberry',
+  },
 
   utlendingastofnun: {
     textMode: 'light',
   },
   'directorate-of-immigration': {
     textMode: 'light',
+  },
+
+  samgongustofa: {
+    textMode: 'light',
+  },
+  'transport-authority': {
+    textMode: 'light',
+  },
+
+  hms: {
+    textMode: 'dark',
   },
 
   default: {

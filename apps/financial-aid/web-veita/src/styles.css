@@ -215,3 +215,7 @@ input[type='number'] {
     page-break-after: always;
   }
 }
+
+.htmlReasonForRejection a {
+  color: #00b39e;
+}

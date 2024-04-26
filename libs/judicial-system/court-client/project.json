@@ -21,11 +21,12 @@
       },
       "outputs": ["{workspaceRoot}/coverage/libs/judicial-system/court-client"]
     },
-    "schemas/external-openapi-generator": {
+    "codegen/backend-client": {
       "executor": "nx:run-commands",
       "options": {
         "command": "yarn openapi-generator -o libs/judicial-system/court-client/gen/fetch -i libs/judicial-system/court-client/src/clientConfig.json"
-      }
+      },
+      "outputs": ["{projectRoot}/gen/fetch"]
     }
   },
   "tags": ["lib:judicial-system-api", "scope:judicial-system-api"]

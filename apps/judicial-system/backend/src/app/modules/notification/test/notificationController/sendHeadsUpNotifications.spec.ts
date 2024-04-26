@@ -57,9 +57,10 @@ describe('NotificationController - Send heads up notification', () => {
     it('should send message to queue', () => {
       expect(mockMessageService.sendMessagesToQueue).toHaveBeenCalledWith([
         {
-          type: MessageType.SEND_HEADS_UP_NOTIFICATION,
+          type: MessageType.NOTIFICATION,
           user,
           caseId,
+          body: { type: NotificationType.HEADS_UP },
         },
       ])
       expect(then.result).toEqual({ notificationSent: true })

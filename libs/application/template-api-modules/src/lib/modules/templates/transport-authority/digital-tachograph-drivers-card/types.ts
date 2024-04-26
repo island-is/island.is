@@ -22,10 +22,7 @@ export interface DrivingLicense {
   publishPlaceName?: string | null
 }
 
-export interface QualityPhoto {
-  dataUri: string
-}
-
-export interface QualitySignature {
-  dataUri: string
+export interface QualityPhotoAndSignature {
+  photoDataUri: string
+  signatureDataUri: string
 }

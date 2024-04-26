@@ -1,12 +1,8 @@
-import {
-  buildForm,
-  buildMultiField,
-  buildSection,
-  buildSubmitField,
-  buildCustomField,
-} from '@island.is/application/core'
-import { Form, FormModes, DefaultEvents } from '@island.is/application/types'
+import { buildForm, buildSection } from '@island.is/application/core'
+import { Form, FormModes } from '@island.is/application/types'
 import { m } from '../lib/messages'
+import { buildFormPaymentChargeOverviewSection } from '@island.is/application/ui-forms'
+import { getChargeItemCodesAndExtraLabel } from '../util'
 
 export const PaymentInfo: Form = buildForm({
   id: 'PaymentInfo',
@@ -21,39 +17,14 @@ export const PaymentInfo: Form = buildForm({
     }),
     buildSection({
       id: 'selectRealEstate',
-      title: 'Eign',
+      title: m.property,
       children: [],
     }),
-    buildSection({
-      id: 'payment',
-      title: m.payment,
-      children: [
-        buildMultiField({
-          id: 'payment.info',
-          title: m.payment,
-          space: 1,
-          children: [
-            buildCustomField({
-              id: 'payment.over',
-              title: '',
-              component: 'PaymentChargeOverview',
-            }),
-            buildSubmitField({
-              id: 'submit',
-              placement: 'footer',
-              title: m.confirm,
-              refetchApplicationAfterSubmit: true,
-              actions: [
-                {
-                  event: DefaultEvents.SUBMIT,
-                  name: m.confirm,
-                  type: 'primary',
-                },
-              ],
-            }),
-          ],
-        }),
-      ],
+    buildFormPaymentChargeOverviewSection({
+      sectionTitle: m.payment,
+      forPaymentLabel: m.overviewPaymentCharge,
+      getSelectedChargeItems: (application) =>
+        getChargeItemCodesAndExtraLabel(application),
     }),
     buildSection({
       id: 'confirmation',

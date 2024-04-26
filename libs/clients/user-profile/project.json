@@ -18,18 +18,14 @@
         "passWithNoTests": true
       }
     },
-    "schemas/external-openapi-generator": {
+    "codegen/backend-client": {
       "executor": "nx:run-commands",
       "options": {
-        "commands": [
-          "nx run services-user-profile:schemas/build-openapi-internal $NX_OPTIONS",
-          "yarn openapi-generator -o libs/clients/user-profile/gen/fetch -i apps/services/user-profile/src/openapi.yaml"
-        ],
-        "parallel": false
+        "command": "yarn openapi-generator -o libs/clients/user-profile/gen/fetch -i apps/services/user-profile/src/openapi.yaml"
       },
-      "outputs": ["{workspaceRoot}/libs/clients/user-profile/gen"]
+      "outputs": ["{projectRoot}/gen/fetch"]
     }
   },
-  "tags": ["lib:client", "scope:client"],
-  "implicitDependencies": ["services-user-profile"]
+  "implicitDependencies": ["services-user-profile"],
+  "tags": ["lib:client", "scope:client"]
 }

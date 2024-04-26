@@ -9,13 +9,18 @@ import {
 } from '@island.is/api/schema'
 import { Box, Text, LoadingDots, Icon } from '@island.is/island-ui/core'
 import { dateFormat } from '@island.is/shared/constants'
-import { m } from '@island.is/service-portal/core'
+import { ServicePortalPaths, m } from '@island.is/service-portal/core'
 import * as styles from './DocumentLine.css'
 import { gql, useLazyQuery } from '@apollo/client'
 import { useLocale } from '@island.is/localization'
 import { messages } from '../../utils/messages'
 import AvatarImage from './AvatarImage'
-import { useNavigate } from 'react-router-dom'
+import {
+  matchPath,
+  useNavigate,
+  useParams,
+  useLocation,
+} from 'react-router-dom'
 import { DocumentsPaths } from '../../lib/paths'
 import { FavAndStash } from '../FavAndStash'
 import { useSubmitMailAction } from '../../utils/useSubmitMailAction'
@@ -62,10 +67,15 @@ export const DocumentLine: FC<Props> = ({
   archived,
   selected,
 }) => {
-  const [avatarCheckmark, setAvatarCheckmark] = useState(false)
+  const [hasFocusOrHover, setHasFocusOrHover] = useState(false)
+  const [hasAvatarFocus, setHasAvatarFocus] = useState(false)
   const { formatMessage } = useLocale()
   const navigate = useNavigate()
+  const location = useLocation()
   const date = format(new Date(documentLine.date), dateFormat.is)
+  const { id } = useParams<{
+    id: string
+  }>()
 
   const {
     submitMailAction,
@@ -75,12 +85,25 @@ export const DocumentLine: FC<Props> = ({
   } = useSubmitMailAction({ messageId: documentLine.id })
 
   const wrapperRef = useRef(null)
+  const avatarRef = useRef(null)
 
   const isFocused = useIsChildFocusedorHovered(wrapperRef)
 
+  const isAvatarFocused = useIsChildFocusedorHovered(avatarRef)
+
   useEffect(() => {
-    setAvatarCheckmark(isFocused)
+    setHasFocusOrHover(isFocused)
   }, [isFocused])
+
+  useEffect(() => {
+    setHasAvatarFocus(isAvatarFocused)
+  }, [isAvatarFocused])
+
+  useEffect(() => {
+    if (id === documentLine.id) {
+      onLineClick()
+    }
+  }, [id, documentLine])
 
   const displayPdf = (docContent?: DocumentDetails) => {
     if (onClick) {
@@ -88,8 +111,9 @@ export const DocumentLine: FC<Props> = ({
         document:
           docContent || (getFileByIdData?.getDocument as DocumentDetails),
         id: documentLine.id,
-        subject: documentLine.subject,
         sender: documentLine.senderName,
+        subject: documentLine.subject,
+        senderNatReg: documentLine.senderNatReg,
         downloadUrl: documentLine.url,
         date: date,
         img,
@@ -113,20 +137,12 @@ export const DocumentLine: FC<Props> = ({
       onCompleted: (data) => {
         const docContent = data?.getDocument
         if (asFrame) {
-          navigate(DocumentsPaths.ElectronicDocumentsRoot, {
-            state: {
-              id: documentLine.id,
-              doc: {
-                document: docContent as DocumentDetails,
-                id: documentLine.id,
-                subject: documentLine.subject,
-                sender: documentLine.senderName,
-                downloadUrl: documentLine.url,
-                date: date,
-                img,
-              },
-            },
-          })
+          navigate(
+            DocumentsPaths.ElectronicDocumentSingle.replace(
+              ':id',
+              documentLine.id,
+            ),
+          )
         } else {
           displayPdf(docContent)
           if (onError) {
@@ -152,6 +168,17 @@ export const DocumentLine: FC<Props> = ({
   }, [fileLoading])
 
   const onLineClick = async () => {
+    const pathName = location.pathname
+    const match = matchPath(
+      {
+        path: DocumentsPaths.ElectronicDocumentSingle,
+      },
+      pathName,
+    )
+    if (match?.params?.id && match?.params?.id !== documentLine?.id) {
+      navigate(DocumentsPaths.ElectronicDocumentsRoot, { replace: true })
+    }
+
     getFileByIdData
       ? displayPdf()
       : await getDocument({
@@ -178,38 +205,40 @@ export const DocumentLine: FC<Props> = ({
           [styles.unread]: unread,
         })}
       >
-        <AvatarImage
-          img={img}
-          onClick={(e) => {
-            e.stopPropagation()
-            if (documentLine.id && setSelectLine) {
-              setSelectLine(documentLine.id)
+        <div ref={avatarRef}>
+          <AvatarImage
+            img={img}
+            onClick={(e) => {
+              e.stopPropagation()
+              if (documentLine.id && setSelectLine) {
+                setSelectLine(documentLine.id)
+              }
+            }}
+            avatar={
+              (hasAvatarFocus || selected) && !asFrame ? (
+                <Box
+                  display="flex"
+                  alignItems="center"
+                  justifyContent="center"
+                  background={selected ? 'blue400' : 'blue300'}
+                  borderRadius="circle"
+                  className={styles.checkCircle}
+                >
+                  <Icon icon="checkmark" color="white" type="filled" />
+                </Box>
+              ) : undefined
             }
-          }}
-          avatar={
-            (avatarCheckmark || selected) && !asFrame ? (
-              <Box
-                display="flex"
-                alignItems="center"
-                justifyContent="center"
-                background={selected ? 'blue400' : 'blue300'}
-                borderRadius="circle"
-                className={styles.checkCircle}
-              >
-                <Icon icon="checkmark" color="white" type="filled" />
-              </Box>
-            ) : undefined
-          }
-          background={
-            avatarCheckmark
-              ? asFrame
-                ? 'white'
-                : 'blue200'
-              : documentLine.opened
-              ? 'blue100'
-              : 'white'
-          }
-        />
+            background={
+              hasAvatarFocus
+                ? asFrame
+                  ? 'white'
+                  : 'blue200'
+                : documentLine.opened
+                ? 'blue100'
+                : 'white'
+            }
+          />
+        </div>
         <Box
           width="full"
           display="flex"
@@ -231,6 +260,7 @@ export const DocumentLine: FC<Props> = ({
                 subject: documentLine.subject,
               })}
               type="button"
+              id={active ? `button-${documentLine.id}` : undefined}
               className={styles.docLineButton}
             >
               <Text
@@ -241,14 +271,14 @@ export const DocumentLine: FC<Props> = ({
                 {documentLine.subject}
               </Text>
             </button>
-            {(avatarCheckmark || isBookmarked || isArchived) &&
+            {(hasFocusOrHover || isBookmarked || isArchived) &&
               !postLoading &&
               !asFrame && (
                 <FavAndStash
                   bookmarked={isBookmarked}
                   archived={isArchived}
                   onFav={
-                    avatarCheckmark || isBookmarked
+                    isBookmarked || hasFocusOrHover
                       ? async (e) => {
                           e.stopPropagation()
                           await submitMailAction(
@@ -261,7 +291,7 @@ export const DocumentLine: FC<Props> = ({
                       : undefined
                   }
                   onStash={
-                    avatarCheckmark || isArchived
+                    isArchived || hasFocusOrHover
                       ? async (e) => {
                           e.stopPropagation()
                           await submitMailAction(
@@ -275,7 +305,7 @@ export const DocumentLine: FC<Props> = ({
                   }
                 />
               )}
-            {postLoading && (
+            {(postLoading || (asFrame && fileLoading)) && (
               <Box display="flex" alignItems="center">
                 <LoadingDots single />
               </Box>

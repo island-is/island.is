@@ -19,6 +19,7 @@ import {
   formSubmit,
   IntroHeader,
   m,
+  UNI_HI_SLUG,
   UserInfoLine,
 } from '@island.is/service-portal/core'
 import { Query } from '@island.is/api/schema'
@@ -27,6 +28,7 @@ import { formatNationalId } from '@island.is/portals/core'
 import { useParams } from 'react-router-dom'
 import format from 'date-fns/format'
 import is from 'date-fns/locale/is'
+import { Problem } from '@island.is/react-spa/shared'
 
 const GetStudentInfoQuery = gql`
   query universityOfIcelandStudentInfo(
@@ -83,11 +85,11 @@ export const EducationGraduationDetail = () => {
     },
   })
 
-  const studentInfo = data?.universityOfIcelandStudentInfo.track.transcript
-  const text = data?.universityOfIcelandStudentInfo.track.body
-  const files = data?.universityOfIcelandStudentInfo.track.files
+  const studentInfo = data?.universityOfIcelandStudentInfo?.track?.transcript
+  const text = data?.universityOfIcelandStudentInfo?.track?.body
+  const files = data?.universityOfIcelandStudentInfo?.track?.files
   const downloadServiceURL =
-    data?.universityOfIcelandStudentInfo.track.downloadServiceURL
+    data?.universityOfIcelandStudentInfo?.track?.downloadServiceURL
 
   const graduationDate = studentInfo
     ? formatDate(studentInfo?.graduationDate)
@@ -95,25 +97,13 @@ export const EducationGraduationDetail = () => {
 
   const noFiles = files?.length === 0
 
-  if (error && !loading) {
-    return (
-      <ErrorScreen
-        figure="./assets/images/hourglass.svg"
-        tagVariant="red"
-        tag={formatMessage(m.errorTitle)}
-        title={formatMessage(m.somethingWrong)}
-        children={formatMessage(m.errorFetchModule, {
-          module: formatMessage(m.education).toLowerCase(),
-        })}
-      />
-    )
-  }
-
   return (
     <Box marginBottom={[6, 6, 10]}>
       <IntroHeader
         title={m.educationGraduation}
         intro={text?.description || ''}
+        serviceProviderSlug={UNI_HI_SLUG}
+        serviceProviderTooltip={formatMessage(m.universityOfIcelandTooltip)}
       />
       <GridRow marginBottom={[1, 1, 1, 3]}>
         <GridColumn span="12/12">
@@ -169,88 +159,93 @@ export const EducationGraduationDetail = () => {
           </Box>
         </GridColumn>
       </GridRow>
+      {error && !loading && <Problem error={error} noBorder={false} />}
+
       {loading && !error && (
         <SkeletonLoader height={20} width={500} repeat={3} />
       )}
       {!loading && !error && !studentInfo && (
         <Box marginTop={8}>
-          <EmptyState
-            title={defineMessage({
-              id: 'sp.education-graduation:education-grad-detail-no-data',
-              defaultMessage: 'Engin gögn fundust',
-            })}
+          <Problem
+            type="no_data"
+            noBorder={false}
+            title={formatMessage(m.noData)}
+            message={formatMessage(m.noDataFoundDetail)}
+            imgSrc="./assets/images/sofa.svg"
           />
         </Box>
       )}
-      <>
-        <Stack space={1}>
-          <UserInfoLine
-            title={formatMessage(m.overview)}
-            label={m.fullName}
-            loading={loading}
-            content={studentInfo?.name}
-            translate="no"
-          />
-          <Divider />
-          <UserInfoLine
-            label={m.date}
-            loading={loading}
-            content={graduationDate}
-          />
-          <Divider />
-          <UserInfoLine
-            label={defineMessage({
-              id: 'sp.education-graduation:education-grad-detail-degree',
-              defaultMessage: 'Gráða',
-            })}
-            loading={loading}
-            content={formatNationalId(studentInfo?.degree ?? '')}
-          />
-          <Divider />
-          <UserInfoLine
-            label={defineMessage({
-              id: 'sp.education-graduation:education-grad-detail-program',
-              defaultMessage: 'Námsleið',
-            })}
-            loading={loading}
-            content={formatNationalId(studentInfo?.studyProgram ?? '')}
-          />
-          <Divider />
-          <UserInfoLine
-            label={defineMessage({
-              id: 'sp.education-graduation:education-grad-detail-faculty',
-              defaultMessage: 'Deild',
-            })}
-            loading={loading}
-            content={formatNationalId(studentInfo?.faculty ?? '')}
-          />
-          <Divider />
-          <UserInfoLine
-            label={defineMessage({
-              id: 'sp.education-graduation:education-grad-detail-school',
-              defaultMessage: 'Svið',
-            })}
-            loading={loading}
-            content={formatNationalId(studentInfo?.school ?? '')}
-          />
-          <Divider />
-          <UserInfoLine
-            label={defineMessage({
-              id: 'sp.education-graduation:education-grad-detail-instutution',
-              defaultMessage: 'Stofnun',
-            })}
-            loading={loading}
-            content={formatNationalId(
-              studentInfo?.institution?.displayName ?? '',
-            )}
-          />
-          <Divider />
-        </Stack>
-        <Box marginTop={5}>
-          {loading && !error && <SkeletonLoader height={20} repeat={2} />}
-          <Text variant="small">{text?.footer}</Text>
-        </Box>
-      </>
+      {!error && (loading || studentInfo) && (
+        <>
+          <Stack space={1}>
+            <UserInfoLine
+              title={formatMessage(m.overview)}
+              label={m.fullName}
+              loading={loading}
+              content={studentInfo?.name}
+              translate="no"
+            />
+            <Divider />
+            <UserInfoLine
+              label={m.date}
+              loading={loading}
+              content={graduationDate}
+            />
+            <Divider />
+            <UserInfoLine
+              label={defineMessage({
+                id: 'sp.education-graduation:education-grad-detail-degree',
+                defaultMessage: 'Gráða',
+              })}
+              loading={loading}
+              content={formatNationalId(studentInfo?.degree ?? '')}
+            />
+            <Divider />
+            <UserInfoLine
+              label={defineMessage({
+                id: 'sp.education-graduation:education-grad-detail-program',
+                defaultMessage: 'Námsleið',
+              })}
+              loading={loading}
+              content={formatNationalId(studentInfo?.studyProgram ?? '')}
+            />
+            <Divider />
+            <UserInfoLine
+              label={defineMessage({
+                id: 'sp.education-graduation:education-grad-detail-faculty',
+                defaultMessage: 'Deild',
+              })}
+              loading={loading}
+              content={formatNationalId(studentInfo?.faculty ?? '')}
+            />
+            <Divider />
+            <UserInfoLine
+              label={defineMessage({
+                id: 'sp.education-graduation:education-grad-detail-school',
+                defaultMessage: 'Svið',
+              })}
+              loading={loading}
+              content={formatNationalId(studentInfo?.school ?? '')}
+            />
+            <Divider />
+            <UserInfoLine
+              label={defineMessage({
+                id: 'sp.education-graduation:education-grad-detail-instutution',
+                defaultMessage: 'Stofnun',
+              })}
+              loading={loading}
+              content={formatNationalId(
+                studentInfo?.institution?.displayName ?? '',
+              )}
+            />
+            <Divider />
+          </Stack>
+          <Box marginTop={5}>
+            {loading && !error && <SkeletonLoader height={20} repeat={2} />}
+            <Text variant="small">{text?.footer}</Text>
+          </Box>
+        </>
+      )}
     </Box>
   )
 }

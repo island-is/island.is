@@ -1,16 +1,20 @@
-import { DynamicModule } from '@nestjs/common'
-import { DocumentResolver } from './document.resolver'
-import { DocumentService } from './document.service'
+import { Module } from '@nestjs/common'
+import { DocumentsClientV2Module } from '@island.is/clients/documents-v2'
 import { DocumentsClientModule } from '@island.is/clients/documents'
-import { DocumentsConfig } from './types/documents.config'
 import { DocumentBuilder } from './documentBuilder'
+import { DocumentServiceV2 } from './documentV2.service'
+import { DocumentResolverV1 } from './documentV1.resolver'
+import { DocumentResolverV2 } from './documentV2.resolver'
+import { DocumentService } from './documentV1.service'
 
-export class DocumentModule {
-  static register(config: DocumentsConfig): DynamicModule {
-    return {
-      module: DocumentModule,
-      imports: [DocumentsClientModule.register(config.documentClientConfig)],
-      providers: [DocumentBuilder, DocumentResolver, DocumentService],
-    }
-  }
-}
+@Module({
+  imports: [DocumentsClientV2Module, DocumentsClientModule],
+  providers: [
+    DocumentResolverV2,
+    DocumentResolverV1,
+    DocumentService,
+    DocumentServiceV2,
+    DocumentBuilder,
+  ],
+})
+export class DocumentModule {}

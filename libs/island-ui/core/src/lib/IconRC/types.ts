@@ -13,6 +13,7 @@ export interface IconProps {
   title?: string
   titleId?: string
   color?: keyof typeof colors
+  useStroke?: boolean
   size?: Size
   className?: string
   skipPlaceholderSize?: boolean

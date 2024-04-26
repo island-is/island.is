@@ -6,6 +6,7 @@ import {
 import { InjectModel } from '@nestjs/sequelize'
 import { Includeable, Op, Transaction } from 'sequelize'
 import { Sequelize } from 'sequelize-typescript'
+import omit from 'lodash/omit'
 
 import { User } from '@island.is/auth-nest-tools'
 import { AdminPortalScope } from '@island.is/auth/scopes'
@@ -88,7 +89,6 @@ export class AdminClientsService {
       },
       include: this.clientInclude(),
     })
-
     const clientTranslations = await this.translationService.findTranslationMap(
       'client',
       clients.map((client) => client.clientId),
@@ -115,6 +115,7 @@ export class AdminClientsService {
       },
       include: this.clientInclude(),
     })
+
     if (!client) {
       throw new NoContentException()
     }
@@ -162,6 +163,16 @@ export class AdminClientsService {
       })
     ) {
       throw new BadRequestException('Invalid client id')
+    }
+
+    // If user is not super admin, we remove the super admin fields from the input to default to the client base attributes
+    if (!this.isSuperAdmin(user)) {
+      clientDto = {
+        clientId: clientDto.clientId,
+        clientType: clientDto.clientType,
+        clientName: clientDto.clientName,
+        ...omit(clientDto, superUserFields),
+      }
     }
 
     const {
@@ -269,6 +280,7 @@ export class AdminClientsService {
     if (!client) {
       throw new NoContentException()
     }
+
     const isValid = await this.validateUserUpdateAccess(user, input, tenantId)
     if (!isValid) {
       throw new ForbiddenException(
@@ -523,6 +535,7 @@ export class AdminClientsService {
       allowOfflineAccess: client.allowOfflineAccess,
       requirePkce: client.requirePkce,
       accessTokenLifetime: client.accessTokenLifetime,
+      singleSession: client.singleSession,
       redirectUris: client.redirectUris?.map((uri) => uri.redirectUri) ?? [],
       postLogoutRedirectUris:
         client.postLogoutRedirectUris?.map((uri) => uri.redirectUri) ?? [],
@@ -593,7 +606,7 @@ export class AdminClientsService {
     input: AdminPatchClientDto,
     tenantId: string,
   ) {
-    const isSuperUser = user.scope.includes(AdminPortalScope.idsAdminSuperUser)
+    const isSuperUser = this.isSuperAdmin(user)
 
     const updatedFields = Object.keys(input)
     const superUserUpdatedFields = updatedFields.filter((field) =>
@@ -761,11 +774,17 @@ export class AdminClientsService {
         apiScopes.map(({ name }) => name),
       )
 
-    return apiScopes.map((apiScope) =>
-      this.adminTranslationService.mapApiScopeToAdminScopeDTO(
-        apiScope,
-        translations,
-      ),
-    )
+    return apiScopes
+      .sort((a, b) => a.name.localeCompare(b.name))
+      .map((apiScope) =>
+        this.adminTranslationService.mapApiScopeToAdminScopeDTO(
+          apiScope,
+          translations,
+        ),
+      )
+  }
+
+  private isSuperAdmin = (user: User) => {
+    return user.scope.includes(AdminPortalScope.idsAdminSuperUser)
   }
 }

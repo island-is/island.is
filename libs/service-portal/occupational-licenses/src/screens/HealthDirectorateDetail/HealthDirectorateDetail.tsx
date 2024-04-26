@@ -5,7 +5,7 @@ import {
   CardLoader,
   EmptyState,
   ErrorScreen,
-  ICELAND_ID,
+  HEALTH_DIRECTORATE_SLUG,
 } from '@island.is/service-portal/core'
 import { useLocale, useNamespaces } from '@island.is/localization'
 import { useUserInfo } from '@island.is/auth/react'
@@ -52,7 +52,8 @@ export const EducationDetail = () => {
   return (
     <LicenseDetail
       title={license.profession}
-      serviceProviderID={ICELAND_ID}
+      serviceProviderSlug={HEALTH_DIRECTORATE_SLUG}
+      serviceProviderTooltip={formatMessage(om.healthDirectorateTooltip)}
       name={user.profile.name}
       dateOfBirth={birthday ? formatDateFns(birthday, 'dd.MM.yyyy') : undefined}
       profession={license.profession}

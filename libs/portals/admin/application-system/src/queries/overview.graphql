@@ -9,6 +9,8 @@ query getApplications($input: ApplicationApplicationsAdminInput!) {
     assignees
     applicantActors
     name
+    pruned
+    pruneAt
     institution
     progress
     status
@@ -34,6 +36,50 @@ query getApplications($input: ApplicationApplicationsAdminInput!) {
       draftTotalSteps
       draftFinishedSteps
     }
+  }
+}
+
+query getInstitutionApplications(
+  $input: ApplicationApplicationsInstitutionAdminInput!
+) {
+  applicationApplicationsInstitutionAdmin(input: $input) {
+    rows {
+      id
+      typeId
+      applicant
+      state
+      created
+      modified
+      assignees
+      applicantActors
+      name
+      institution
+      progress
+      status
+      applicantName
+      paymentStatus
+      actionCard {
+        title
+        description
+        tag {
+          label
+          variant
+        }
+        pendingAction {
+          displayStatus
+          content
+          title
+        }
+        history {
+          log
+          date
+        }
+        deleteButton
+        draftTotalSteps
+        draftFinishedSteps
+      }
+    }
+    count
   }
 }
 

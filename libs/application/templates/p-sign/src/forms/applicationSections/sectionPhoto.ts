@@ -40,6 +40,7 @@ export const sectionPhoto = buildSection({
                 ?.hasQualityPhoto === false
             )
           },
+          marginBottom: 2,
         }),
         buildCustomField({
           id: 'qphoto',
@@ -66,18 +67,6 @@ export const sectionPhoto = buildSection({
             return (
               (externalData.qualityPhoto as HasQualityPhotoData)?.data
                 ?.hasQualityPhoto === true
-            )
-          },
-        }),
-        buildCustomField({
-          id: 'bullets',
-          title: '',
-          component: 'Bullets',
-          condition: (answers, externalData) => {
-            return (
-              (externalData.qualityPhoto as HasQualityPhotoData)?.data
-                ?.hasQualityPhoto === false ||
-              (answers.photo as Photo)?.qualityPhoto === NO
             )
           },
         }),

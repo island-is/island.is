@@ -35,9 +35,17 @@ export const routesTemplate = {
     is: '/s/[organization]/frett',
     en: '/en/o/[organization]/news',
   },
+  organizationeventoverview: {
+    is: '/s/[organization]/vidburdir',
+    en: '/en/o/[organization]/events',
+  },
   aboutsubpage: {
     is: '/s/stafraent-island/[slug]',
     en: '',
+  },
+  applications: {
+    is: '/yfirlit-umsokna',
+    en: '/en/applications-overview',
   },
   page: {
     is: '/stafraent-island',
@@ -55,6 +63,10 @@ export const routesTemplate = {
     is: '/flokkur/[slug]',
     en: '/en/category/[slug]',
   },
+  articlegroup: {
+    is: '/flokkur/[slug]#[subgroupSlug]',
+    en: '/en/category/[slug]#[subgroupSlug]',
+  },
   news: {
     is: '/frett/[slug]',
     en: '/en/news/[slug]',
@@ -71,6 +83,10 @@ export const routesTemplate = {
     is: '/handbaekur/[slug]/breytingasaga',
     en: '/en/manuals/[slug]/changelog',
   },
+  manualchapteritem: {
+    is: '/handbaekur/[slug]/[chapterSlug]?selectedItemId=[chapterItemId]',
+    en: '/en/manuals/[slug]/[chapterSlug]?selectedItemId=[chapterItemId]',
+  },
   manualchapter: {
     is: '/handbaekur/[slug]/[chapterSlug]',
     en: '/en/manuals/[slug]/[chapterSlug]',
@@ -82,6 +98,14 @@ export const routesTemplate = {
   vacancydetails: {
     is: '/starfatorg/[id]',
     en: '',
+  },
+  pensioncalculatorresults: {
+    is: '/s/tryggingastofnun/reiknivel/nidurstodur',
+    en: '/en/o/social-insurance-administration/calculator/results',
+  },
+  pensioncalculator: {
+    is: '/s/tryggingastofnun/reiknivel',
+    en: '/en/o/social-insurance-administration/calculator',
   },
   digitalicelandservices: {
     is: '/s/stafraent-island/thjonustur',
@@ -122,6 +146,10 @@ export const routesTemplate = {
   organizationnews: {
     is: '/s/[organization]/frett/[slug]',
     en: '/en/o/[organization]/news/[slug]',
+  },
+  organizationevent: {
+    is: '/s/[organization]/vidburdir/[slug]',
+    en: '/en/o/[organization]/events/[slug]',
   },
   organizationsubpage: {
     is: '/s/[slug]/[subSlug]',
@@ -167,7 +195,6 @@ export const routesTemplate = {
     is: '/lifsvidburdir/[slug]',
     en: '/en/life-events/[slug]',
   },
-
   adgerdirpage: {
     is: '/covid-adgerdir/[slug]',
     en: '/en/covid-operations/[slug]',
@@ -182,6 +209,22 @@ export const routesTemplate = {
   },
   regulationshome: {
     is: '/reglugerdir',
+    en: '',
+  },
+  ojoiadvert: {
+    is: '/stjornartidindi/nr/[number]',
+    en: '',
+  },
+  ojoisearch: {
+    is: '/stjornartidindi/leit',
+    en: '',
+  },
+  ojoicategories: {
+    is: '/stjornartidindi/malaflokkar',
+    en: '',
+  },
+  ojoihome: {
+    is: '/stjornartidindi',
     en: '',
   },
   login: {
@@ -223,6 +266,30 @@ export const routesTemplate = {
   article: {
     is: '/[slug]',
     en: '/en/[slug]',
+  },
+  universitysearchdetails: {
+    is: '/haskolanam/[id]',
+    en: '/en/university-studies/[id]',
+  },
+  universitysearchcomparison: {
+    is: '/haskolanam/samanburdur',
+    en: '/en/university-studies/comparison',
+  },
+  universitysearch: {
+    is: '/haskolanam/leit',
+    en: '/en/university-studies/search',
+  },
+  universitysub: {
+    is: '/haskolanam/upplysingar/[subSlug]',
+    en: '/en/university-studies/info/[subSlug]',
+  },
+  universitylandingpage: {
+    is: '/haskolanam',
+    en: '/en/university-studies',
+  },
+  oskalistithjodarinnar: {
+    is: '/oskalisti-thjodarinnar',
+    en: '',
   },
   homepage: {
     is: '/',

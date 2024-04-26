@@ -1,3 +1,4 @@
+import kennitala from 'kennitala'
 import { Inject, Injectable } from '@nestjs/common'
 import {
   EinstaklingurDTOAllt,
@@ -6,6 +7,7 @@ import {
   EinstaklingurDTOLoghTengsl,
   NationalRegistryV3ClientService,
 } from '@island.is/clients/national-registry-v3'
+import { FamilyChild, User } from '../v1/types'
 import {
   formatPersonDiscriminated,
   formatAddress,
@@ -14,8 +16,11 @@ import {
   formatBirthplace,
   formatHousing,
   formatName,
+  formatChildCustody,
+  formatUser,
+  formatFamilyChild,
 } from './mapper'
-import { PersonV3 } from '../shared/types'
+import { ChildCustodyV3, PersonV3 } from '../shared/types'
 import {
   Address,
   PersonBase,
@@ -24,7 +29,6 @@ import {
   Citizenship,
   Birthplace,
   Housing,
-  Person,
 } from '../shared/models'
 import { LOGGER_PROVIDER } from '@island.is/logging'
 import type { Logger } from '@island.is/logging'
@@ -41,16 +45,20 @@ export class BrokerService {
   async getPerson(
     nationalId: string,
     rawData?: EinstaklingurDTOAllt | null,
+    useFakeApi?: boolean,
   ): Promise<PersonV3 | null> {
     const user =
       rawData ??
-      (await this.nationalRegistryV3.getAllDataIndividual(nationalId))
+      (await this.nationalRegistryV3.getAllDataIndividual(
+        nationalId,
+        useFakeApi ?? false,
+      ))
 
     if (!user?.kennitala) {
       return null
     }
 
-    return formatPersonDiscriminated(user)
+    return formatPersonDiscriminated(user, undefined, useFakeApi)
   }
 
   async getAddress(
@@ -130,6 +138,7 @@ export class BrokerService {
     const data =
       rawData?.hjuskaparstada ??
       (await this.nationalRegistryV3.getSpouse(nationalId))
+
     return data && formatSpouse(data)
   }
 
@@ -147,10 +156,14 @@ export class BrokerService {
   async getChildrenCustodyInformation(
     parentNationalId: string,
     rawData?: EinstaklingurDTOAllt | null,
-  ): Promise<Array<PersonV3> | null> {
+    useFakeData?: boolean,
+  ): Promise<Array<ChildCustodyV3> | null> {
     const parentData =
       rawData ??
-      (await this.nationalRegistryV3.getAllDataIndividual(parentNationalId))
+      (await this.nationalRegistryV3.getAllDataIndividual(
+        parentNationalId,
+        useFakeData,
+      ))
 
     if (!parentData) {
       return null
@@ -160,24 +173,30 @@ export class BrokerService {
       ? parentData.forsja.born
       : []
 
-    const childDetails: Array<Person | null> = await Promise.all(
-      children.map(async (child) => {
-        if (!child.barnKennitala || !child.barnNafn) {
-          return null
-        }
-
-        const childData = await this.nationalRegistryV3.getAllDataIndividual(
-          child.barnKennitala,
+    return children
+      .map((c) => formatChildCustody(c, useFakeData))
+      .filter(isDefined)
+      .sort((a, b) => {
+        return (
+          kennitala.info(b.nationalId).age - kennitala.info(a.nationalId).age
         )
+      })
+  }
 
-        if (!childData) {
-          return null
-        }
-
-        return formatPersonDiscriminated(childData)
-      }),
+  async getChildDetails(
+    nationalId: string,
+    useFakeApi?: boolean,
+  ): Promise<PersonV3 | null> {
+    const child = await this.nationalRegistryV3.getAllDataIndividual(
+      nationalId,
+      useFakeApi,
     )
-    return childDetails.filter((child): child is PersonV3 => child != null)
+
+    if (!child) {
+      return null
+    }
+
+    return formatPersonDiscriminated(child, nationalId, useFakeApi)
   }
 
   async getBirthplace(
@@ -220,5 +239,29 @@ export class BrokerService {
           this.nationalRegistryV3.getAddress(nationalId),
         ])
     return data && formatHousing(nationalId, ...data)
+  }
+
+  // Deprecated schemas
+  async getUser(nationalId: User['nationalId']): Promise<User | null> {
+    const user = await this.nationalRegistryV3.getAllDataIndividual(nationalId)
+    return formatUser(user)
+  }
+
+  async getChildren(
+    parentNationalId: User['nationalId'],
+  ): Promise<FamilyChild[] | null> {
+    const children = await this.getChildrenCustodyInformation(parentNationalId)
+    if (!children) {
+      return null
+    }
+
+    const childrenDetails = await Promise.all(
+      children.map((child) =>
+        this.nationalRegistryV3.getAllDataIndividual(child.nationalId),
+      ),
+    )
+    return childrenDetails
+      .map((child) => formatFamilyChild(child))
+      .filter(isDefined)
   }
 }

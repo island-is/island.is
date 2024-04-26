@@ -112,3 +112,7 @@ export const sortDes = style({
   opacity: 1,
   transform: 'rotate(0deg)',
 })
+
+export const loadingContainer = style({
+  minWidth: '67px',
+})

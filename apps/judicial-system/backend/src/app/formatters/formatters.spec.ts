@@ -1,7 +1,7 @@
 import { FormatMessage } from '@island.is/cms-translations'
 import { createTestIntl } from '@island.is/cms-translations/test'
 
-import { caseTypes } from '@island.is/judicial-system/formatters'
+import { formatCaseType } from '@island.is/judicial-system/formatters'
 import {
   CaseCustodyRestrictions,
   CaseLegalProvisions,
@@ -475,7 +475,7 @@ describe('formatProsecutorReadyForCourtEmailNotification', () => {
     const res = fn(policeCaseNumbers, type, court, overviewUrl)
 
     // Assert
-    expect(res.subject).toBe(`Krafa um ${caseTypes[type]} send`)
+    expect(res.subject).toBe(`Krafa um ${formatCaseType(type)} send`)
     expect(res.body).toBe(
       `Þú hefur sent kröfu á Héraðsdóm Reykjavíkur vegna LÖKE máls 007-2022-01. Skjalið er aðgengilegt undir <a href="https://rettarvorslugatt.island.is/test/overview">málinu í Réttarvörslugátt</a>.`,
     )
@@ -493,7 +493,7 @@ describe('formatProsecutorReadyForCourtEmailNotification', () => {
 
     // Assert
     expect(res.subject).toBe(
-      `Krafa um rannsóknarheimild send (${caseTypes[type]})`,
+      `Krafa um rannsóknarheimild send (${formatCaseType(type)})`,
     )
     expect(res.body).toBe(
       `Þú hefur sent kröfu á Héraðsdóm Reykjavíkur vegna LÖKE máls 007-2022-01. Skjalið er aðgengilegt undir <a href="https://rettarvorslugatt.island.is/test/overview">málinu í Réttarvörslugátt</a>.`,
@@ -2004,6 +2004,6 @@ describe('formatDefenderResubmittedToCourtEmailNotification', () => {
     expect(result.body).toEqual(
       'Sækjandi í máli R-2022/999 hjá Héraðsdómi Reykjavíkur hefur breytt kröfunni og sent hana aftur á dóminn.<br /><br />Þú getur nálgast gögn málsins á <a href="https://rettarvorslugatt.island.is/overviewUrl">yfirlitssíðu málsins í Réttarvörslugátt</a>.',
     )
-    expect(result.subject).toEqual('Gögn í máli R-2022/999')
+    expect(result.subject).toEqual('Krafa í máli R-2022/999')
   })
 })

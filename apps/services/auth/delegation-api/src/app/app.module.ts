@@ -2,6 +2,7 @@ import { Module } from '@nestjs/common'
 import { SequelizeModule } from '@nestjs/sequelize'
 
 import {
+  DelegationApiUserSystemNotificationConfig,
   DelegationConfig,
   SequelizeConfigService,
 } from '@island.is/auth-api-lib'
@@ -21,6 +22,7 @@ import { environment } from '../environments'
 import { ClientsModule } from './clients/clients.module'
 import { DelegationsModule } from './delegations/delegations.module'
 import { DomainsModule } from './domains/domains.module'
+import { LoginRestrictionsModule } from './login-restrictions/login-restrictions.module'
 import { ScopesModule } from './scopes/scopes.module'
 
 @Module({
@@ -35,6 +37,7 @@ import { ScopesModule } from './scopes/scopes.module'
     DomainsModule,
     ScopesModule,
     ProblemModule,
+    LoginRestrictionsModule,
     ConfigModule.forRoot({
       isGlobal: true,
       load: [
@@ -44,6 +47,7 @@ import { ScopesModule } from './scopes/scopes.module'
         NationalRegistryClientConfig,
         RskRelationshipsClientConfig,
         XRoadConfig,
+        DelegationApiUserSystemNotificationConfig,
       ],
     }),
   ],

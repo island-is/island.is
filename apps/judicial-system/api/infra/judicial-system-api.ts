@@ -84,4 +84,14 @@ export const serviceSetup = (services: {
         },
       },
     })
+    .resources({
+      limits: {
+        cpu: '350m',
+        memory: '512Mi',
+      },
+      requests: {
+        cpu: '200m',
+        memory: '256Mi',
+      },
+    })
     .grantNamespaces('nginx-ingress-external')

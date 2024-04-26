@@ -8,6 +8,14 @@ export const IDENTITY_QUERY = gql`
   }
 `
 
+export const DECEASED_IDENITY_QUERY = gql`
+  query DeceasedIdentityQuery($input: GetRegistryPersonInput!) {
+    syslumennGetRegistryPerson(input: $input) {
+      name
+    }
+  }
+`
+
 export const ESTATE_RELATIONS_QUERY = gql`
   query EstateRelationsQuery {
     getSyslumennEstateRelations {
@@ -22,6 +30,17 @@ export const SEARCH_FOR_PROPERTY_QUERY = gql`
       defaultAddress {
         display
       }
+    }
+  }
+`
+
+export const GET_VEHICLE_QUERY = gql`
+  query GetVehicle($input: GetVehicleInput!) {
+    syslumennGetVehicle(input: $input) {
+      modelName
+      manufacturer
+      licensePlate
+      color
     }
   }
 `

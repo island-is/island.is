@@ -45,6 +45,26 @@ export const information = {
         defaultMessage: 'Ekki er hægt að velja þessa bifreið vegna:',
         description: 'Pick vehicle has an error title',
       },
+      findPlatePlaceholder: {
+        id: 'ta.ovlp.application:information.labels.pickVehicle.findPlatePlaceholder',
+        defaultMessage: 'Sláðu inn plötunúmer',
+        description: 'Pick vehicle find plate placeholder',
+      },
+      findButton: {
+        id: 'ta.ovlp.application:information.labels.pickVehicle.findButton',
+        defaultMessage: 'Leita',
+        description: 'Pick vehicle find button',
+      },
+      notFoundTitle: {
+        id: 'ta.ovlp.application:information.labels.pickVehicle.notFoundTitle',
+        defaultMessage: 'Eitthvað fór úrskeiðis',
+        description: 'vehicle not found',
+      },
+      notFoundMessage: {
+        id: 'ta.ovlp.application:information.labels.pickVehicle.notFoundMessage',
+        defaultMessage: 'Ökutæki með plötunúmerið {plate} fannst ekki',
+        description: 'vehicle not found message',
+      },
     }),
     plateSize: defineMessages({
       sectionTitle: {

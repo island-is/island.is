@@ -2,7 +2,7 @@ version: '3.3'
 
 services:
   db_skilavottord_backend:
-    image: public.ecr.aws/docker/library/postgres:11.14-alpine
+    image: public.ecr.aws/docker/library/postgres:15.3-alpine
     container_name: db_skilavottord_backend
     networks:
       - local

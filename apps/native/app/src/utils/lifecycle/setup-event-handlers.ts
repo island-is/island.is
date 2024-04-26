@@ -1,155 +1,194 @@
-import {getPresentedNotificationsAsync} from 'expo-notifications';
+import { addEventListener } from '@react-native-community/netinfo'
+import { impactAsync, ImpactFeedbackStyle } from 'expo-haptics'
+import { getPresentedNotificationsAsync } from 'expo-notifications'
 import {
   AppState,
   AppStateStatus,
   DeviceEventEmitter,
   Linking,
-  Platform,
-} from 'react-native';
-import {Navigation} from 'react-native-navigation';
-import SpotlightSearch from 'react-native-spotlight-search';
-import {environmentStore} from '../../stores/environment-store';
-import {evaluateUrl, navigateTo} from '../../lib/deep-linking';
-import {authStore} from '../../stores/auth-store';
-import {preferencesStore} from '../../stores/preferences-store';
-import {uiStore} from '../../stores/ui-store';
-import {hideAppLockOverlay, showAppLockOverlay, skipAppLock} from '../app-lock';
-import {ButtonRegistry} from '../component-registry';
-import {handleQuickAction} from '../quick-actions';
-import {handleNotificationResponse} from './setup-notifications';
+} from 'react-native'
+import { Navigation } from 'react-native-navigation'
+import SpotlightSearch from 'react-native-spotlight-search'
+import { evaluateUrl, navigateTo } from '../../lib/deep-linking'
+import { authStore } from '../../stores/auth-store'
+import { environmentStore } from '../../stores/environment-store'
+import { offlineStore } from '../../stores/offline-store'
+import { preferencesStore } from '../../stores/preferences-store'
+import { uiStore } from '../../stores/ui-store'
+import {
+  hideAppLockOverlay,
+  showAppLockOverlay,
+  skipAppLock,
+} from '../app-lock'
+import { ButtonRegistry, ComponentRegistry as CR } from '../component-registry'
+import { isIos } from '../devices'
+import { handleQuickAction } from '../quick-actions'
 
-let backgroundAppLockTimeout: NodeJS.Timeout;
+import { handleNotificationResponse } from './setup-notifications'
+
+let backgroundAppLockTimeout: ReturnType<typeof setTimeout>
 
 export function setupEventHandlers() {
   // Listen for url events through iOS and Android's Linking library
-  Linking.addEventListener('url', ({url}) => {
-    console.log('URL', url);
-    Linking.canOpenURL(url).then(supported => {
+  Linking.addEventListener('url', ({ url }) => {
+    console.log('URL', url)
+    Linking.canOpenURL(url).then((supported) => {
       if (supported) {
-        evaluateUrl(url);
+        evaluateUrl(url)
       }
-    });
+    })
 
     // Handle Cognito
     if (/cognito/.test(url)) {
-      const [, hash] = url.split('#');
+      const [, hash] = url.split('#')
       const params = String(hash)
         .split('&')
         .reduce((acc, param) => {
-          const [key, value] = param.split('=');
-          acc[key] = value;
-          return acc;
-        }, {} as Record<string, string>);
+          const [key, value] = param.split('=')
+          acc[key] = value
+          return acc
+        }, {} as Record<string, string>)
       environmentStore.getState().actions.setCognito({
         idToken: params.id_token,
         accessToken: params.access_token,
         expiresIn: Number(params.expires_in),
         expiresAt: Number(params.expires_in) + Date.now() / 1000,
         tokenType: params.token_type,
-      });
-      Navigation.dismissAllModals();
+      })
+      Navigation.dismissAllModals()
     }
-  });
+  })
 
-  if (Platform.OS === 'ios') {
-    SpotlightSearch.searchItemTapped(url => {
-      navigateTo(url);
-    });
+  if (isIos) {
+    SpotlightSearch.searchItemTapped((url) => {
+      navigateTo(url)
+    })
 
-    SpotlightSearch.getInitialSearchItem().then(url => {
-      navigateTo(url);
-    });
+    SpotlightSearch.getInitialSearchItem().then((url) => {
+      navigateTo(url)
+    })
   }
 
   // Get initial url and pass to the opener
   Linking.getInitialURL()
-    .then(url => {
+    .then((url) => {
       if (url) {
-        Linking.openURL(url);
+        Linking.openURL(url)
       }
     })
-    .catch(err => console.error('An error occurred in getInitialURL: ', err));
+    .catch((err) => console.error('An error occurred in getInitialURL: ', err))
 
-  Navigation.events().registerBottomTabSelectedListener(e => {
+  Navigation.events().registerBottomTabSelectedListener((e) => {
     uiStore.setState({
       unselectedTab: e.unselectedTabIndex,
       selectedTab: e.selectedTabIndex,
-    });
-  });
+    })
+  })
 
   AppState.addEventListener('change', (status: AppStateStatus) => {
     const {
       lockScreenComponentId,
       lockScreenActivatedAt,
       noLockScreenUntilNextAppStateActive,
-    } = authStore.getState();
-    const {appLockTimeout} = preferencesStore.getState();
+    } = authStore.getState()
+    const { appLockTimeout } = preferencesStore.getState()
 
     if (status === 'active') {
-      getPresentedNotificationsAsync().then(notifications => {
-        notifications.forEach(notification =>
+      getPresentedNotificationsAsync().then((notifications) => {
+        notifications.forEach((notification) =>
           handleNotificationResponse({
             notification,
             actionIdentifier: 'NOOP',
           }),
-        );
-      });
+        )
+      })
     }
 
     if (!skipAppLock()) {
       if (noLockScreenUntilNextAppStateActive) {
-        authStore.setState({noLockScreenUntilNextAppStateActive: false});
-        return;
+        authStore.setState({ noLockScreenUntilNextAppStateActive: false })
+        return
       }
 
       if (status === 'background' || status === 'inactive') {
-        if (Platform.OS === 'ios') {
+        if (isIos) {
           // Add a small delay for those accidental backgrounds in iOS
           backgroundAppLockTimeout = setTimeout(() => {
             if (!lockScreenComponentId) {
-              showAppLockOverlay({status});
+              showAppLockOverlay({ status })
             } else {
-              Navigation.updateProps(lockScreenComponentId, {status});
+              Navigation.updateProps(lockScreenComponentId, { status })
             }
-          }, 100);
+          }, 100)
         } else {
           if (!lockScreenComponentId) {
-            showAppLockOverlay({status});
+            showAppLockOverlay({ status })
           } else {
-            Navigation.updateProps(lockScreenComponentId, {status});
+            Navigation.updateProps(lockScreenComponentId, { status })
           }
         }
       }
 
       if (status === 'active') {
-        clearTimeout(backgroundAppLockTimeout);
+        clearTimeout(backgroundAppLockTimeout)
 
         if (lockScreenComponentId) {
           if (
             lockScreenActivatedAt !== undefined &&
             lockScreenActivatedAt + appLockTimeout > Date.now()
           ) {
-            hideAppLockOverlay();
+            hideAppLockOverlay()
           } else {
-            Navigation.updateProps(lockScreenComponentId, {status});
+            Navigation.updateProps(lockScreenComponentId, { status })
           }
         }
       }
     }
-  });
+  })
+
+  const handleOfflineButtonClick = () => {
+    const offlineState = offlineStore.getState()
+
+    if (!offlineState.bannerVisible) {
+      void impactAsync(ImpactFeedbackStyle.Heavy)
+      void Navigation.showOverlay({
+        component: {
+          id: CR.OfflineBanner,
+          name: CR.OfflineBanner,
+        },
+      })
+    } else {
+      void Navigation.dismissOverlay(CR.OfflineBanner)
+    }
+  }
 
   // handle navigation topBar buttons
-  Navigation.events().registerNavigationButtonPressedListener(({buttonId}) => {
-    switch (buttonId) {
-      case ButtonRegistry.SettingsButton:
-        return navigateTo('/settings');
-      case ButtonRegistry.NotificationsButton:
-        return navigateTo('/notifications');
-      case ButtonRegistry.ScanLicenseButton:
-        return navigateTo('/license-scanner');
-    }
-  });
+  Navigation.events().registerNavigationButtonPressedListener(
+    ({ buttonId }) => {
+      switch (buttonId) {
+        case ButtonRegistry.SettingsButton:
+          return navigateTo('/settings')
+        case ButtonRegistry.NotificationsButton:
+          return navigateTo('/notifications')
+        case ButtonRegistry.ScanLicenseButton:
+          return navigateTo('/license-scanner')
+        case ButtonRegistry.OfflineButton:
+          return handleOfflineButtonClick()
+      }
+    },
+  )
 
   // Handle quick actions
-  DeviceEventEmitter.addListener('quickActionShortcut', handleQuickAction);
+  DeviceEventEmitter.addListener('quickActionShortcut', handleQuickAction)
+
+  // Subscribe to network status changes
+  addEventListener(({ isConnected, type }) => {
+    const offlineStoreState = offlineStore.getState()
+
+    if (!isConnected) {
+      offlineStoreState.actions.setNetInfoNoConnection()
+    } else {
+      offlineStoreState.actions.setIsConnected(true)
+    }
+  })
 }

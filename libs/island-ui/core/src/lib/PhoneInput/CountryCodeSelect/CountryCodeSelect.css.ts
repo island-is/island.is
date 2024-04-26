@@ -1,5 +1,6 @@
 import { style, globalStyle, styleVariants } from '@vanilla-extract/css'
 import { theme, themeUtils } from '@island.is/island-ui/theme'
+import { recipe } from '@vanilla-extract/recipes'
 import * as inputMixins from '../../Input/Input.mixins'
 import { wrapMedia } from '../../../utils/wrapMedia'
 
@@ -8,12 +9,28 @@ export const wrapperColor = styleVariants(
   { blue: {}, white: {} },
   'wrapperColor',
 )
-export const valueContainer = style(
+export const valueContainer = recipe(
   {
-    paddingTop: theme.spacing[4],
-    paddingBottom: theme.spacing[2],
-    paddingLeft: 0,
-    marginLeft: 0,
+    base: {
+      paddingTop: theme.spacing[4],
+      paddingBottom: theme.spacing[2],
+      paddingLeft: 0,
+      marginLeft: 0,
+    },
+    variants: {
+      size: {
+        xs: {
+          paddingTop: 28,
+          ...themeUtils.responsiveStyle({
+            md: {
+              paddingTop: theme.spacing[4],
+            },
+          }),
+        },
+        sm: {},
+        md: {},
+      },
+    },
   },
   'valueContainer',
 )

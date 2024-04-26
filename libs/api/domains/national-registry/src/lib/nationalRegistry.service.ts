@@ -1,30 +1,69 @@
-import { Inject, Injectable } from '@nestjs/common'
+import { User } from '@island.is/auth-nest-tools'
+import type { Logger } from '@island.is/logging'
+import { LOGGER_PROVIDER } from '@island.is/logging'
+import { FeatureFlagService, Features } from '@island.is/nest/feature-flags'
+import { Inject, Injectable, NotImplementedException } from '@nestjs/common'
+import { Birthplace, Citizenship, Housing, Spouse } from './shared/models'
+import { Name } from './shared/models/name.model'
+import { SharedPerson } from './shared/types'
 import { SoffiaService } from './v1/soffia.service'
 import { BrokerService } from './v3/broker.service'
-import { SharedPerson } from './shared/types'
-import { Birthplace, Citizenship, Spouse, Housing } from './shared/models'
-import { LOGGER_PROVIDER } from '@island.is/logging'
-import type { Logger } from '@island.is/logging'
-import { Name } from './shared/models/name.model'
+
+type ApiVersion = 'v1' | 'v3'
 
 @Injectable()
 export class NationalRegistryService {
   constructor(
     private readonly v1: SoffiaService,
     private readonly v3: BrokerService,
+    private readonly featureFlagService: FeatureFlagService,
     @Inject(LOGGER_PROVIDER) private readonly logger: Logger,
   ) {}
 
-  getPerson(nationalId: string, api: 'v1' | 'v3' = 'v1') {
+  async getApi(user: User, api: ApiVersion = 'v1') {
+    if (api === 'v3') {
+      return api
+    }
+
+    const disableSoffia = await this.featureFlagService.getValue(
+      Features.disableSoffia,
+      false,
+      user,
+    )
+    if (disableSoffia) {
+      return 'v3'
+    } else {
+      return api
+    }
+  }
+
+  getPerson(nationalId: string, api: ApiVersion = 'v1', useFakeData?: boolean) {
     return api === 'v3'
-      ? this.v3.getPerson(nationalId)
+      ? this.v3.getPerson(nationalId, undefined, useFakeData)
       : this.v1.getPerson(nationalId)
   }
 
   getChildCustody(nationalId: string, data?: SharedPerson) {
-    return data?.api === 'v3'
-      ? this.v3.getChildrenCustodyInformation(nationalId, data?.rawData)
-      : this.v1.getChildCustody(nationalId, data?.rawData)
+    if (data?.api === 'v3') {
+      return this.v3.getChildrenCustodyInformation(
+        nationalId,
+        data?.rawData,
+        data?.useFakeData,
+      )
+    }
+
+    return this.v1.getChildCustody(nationalId, data?.rawData)
+  }
+
+  async getChildDetails(
+    nationalId: string,
+    api: ApiVersion,
+    useFakeData?: boolean,
+  ) {
+    if (api === 'v3') {
+      return this.v3.getChildDetails(nationalId, useFakeData)
+    }
+    return this.v1.getPerson(nationalId)
   }
 
   getCustodians(
@@ -94,5 +133,34 @@ export class NationalRegistryService {
     return data?.api === 'v3'
       ? this.v3.getSpouse(nationalId, data?.rawData)
       : this.v1.getSpouse(nationalId, data?.rawData)
+  }
+
+  // Deprecated schemas
+  getUser(nationalId: string, api: ApiVersion = 'v1') {
+    return api === 'v3'
+      ? this.v3.getUser(nationalId)
+      : this.v1.getUser(nationalId)
+  }
+
+  getChildren(nationalId: string, api: ApiVersion = 'v1') {
+    return api === 'v3'
+      ? this.v3.getChildren(nationalId)
+      : this.v1.getChildren(nationalId)
+  }
+
+  getFamily(nationalId: string, api: ApiVersion = 'v1') {
+    // Returning null in v3 as this schema should have no clients.
+    return api === 'v3' ? null : this.v1.getFamily(nationalId)
+  }
+
+  getFamilyMemberDetails(
+    nationalId: string,
+    familyMemberNationalId: string,
+    api: ApiVersion = 'v1',
+  ) {
+    // Returning null in v3 as this schema should have no clients.
+    return api === 'v3'
+      ? null
+      : this.v1.getFamilyMemberDetails(nationalId, familyMemberNationalId)
   }
 }

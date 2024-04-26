@@ -10,6 +10,7 @@ import { ImageProps } from '../Image/Image'
 import { FaqListProps } from '../FaqList/FaqList'
 import { StatisticsProps } from '../Statistics/Statistics'
 import { AssetLinkProps } from '../AssetLink/AssetLink'
+import { LinkCardProps } from '../LinkCard/LinkCard'
 import { ProcessEntryProps } from '../ProcessEntry/ProcessEntry'
 import { EmbeddedVideoProps } from '../EmbeddedVideo/EmbeddedVideo'
 import { SectionWithImageProps } from '../SectionWithImage/SectionWithImage'
@@ -41,6 +42,7 @@ type ImageSlice = { __typename: 'Image'; id: string } & Omit<
   'thumbnail'
 >
 type AssetSlice = { __typename: 'Asset'; id: string } & AssetLinkProps
+type LinkCardSlice = { __typename: 'LinkCard'; id: string } & LinkCardProps
 type ProcessEntrySlice = {
   __typename: 'ProcessEntry'
   id: string
@@ -75,6 +77,7 @@ export type SliceType =
   | StatisticsSlice
   | ImageSlice
   | AssetSlice
+  | LinkCardSlice
   | ProcessEntrySlice
   | EmbeddedVideoSlice
   | TeamListSlice
@@ -89,7 +92,7 @@ export type SliceType =
       __typename:
         | 'TimelineSlice'
         | 'HeadingSlice'
-        | 'LinkCardSlice'
+        | 'LinkCardSection'
         | 'EmailSignup'
         | 'StorySlice'
         | 'LatestNewsSlice'
@@ -157,7 +160,7 @@ export const richText: RichText = (
         marginBottom={[5, 5, 5, 6]}
         marginTop={[5, 5, 5, 6]}
       >
-        {/** 
+        {/**
          // eslint-disable-next-line @typescript-eslint/ban-ts-comment
          // @ts-ignore make web strict */}
         {renderComponent[slice.__typename]?.(slice, locale)}

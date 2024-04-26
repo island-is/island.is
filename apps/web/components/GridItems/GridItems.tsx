@@ -1,8 +1,9 @@
-import React, { FC, Children, useEffect, useState } from 'react'
+import React, { Children, FC, useEffect, useState } from 'react'
 import { useWindowSize } from 'react-use'
 import cx from 'classnames'
-import { theme } from '@island.is/island-ui/theme'
+
 import { Box, BoxProps, GridContainer } from '@island.is/island-ui/core'
+import { theme } from '@island.is/island-ui/theme'
 
 import * as styles from './GridItems.css'
 
@@ -15,6 +16,7 @@ type GridItemsProps = {
   mobileItemWidth?: number
   mobileItemsRows?: number
   half?: boolean
+  quarter?: boolean
 }
 
 export const GridItems: FC<React.PropsWithChildren<GridItemsProps>> = ({
@@ -26,6 +28,7 @@ export const GridItems: FC<React.PropsWithChildren<GridItemsProps>> = ({
   mobileItemWidth = 400,
   mobileItemsRows = 3,
   half = false,
+  quarter = false,
   children,
 }) => {
   const { width } = useWindowSize()
@@ -34,8 +37,12 @@ export const GridItems: FC<React.PropsWithChildren<GridItemsProps>> = ({
   const items = Children.toArray(children)
 
   useEffect(() => {
-    setIsMobile(width < theme.breakpoints.sm)
-  }, [width])
+    if (quarter) {
+      setIsMobile(width < theme.breakpoints.xl)
+    } else {
+      setIsMobile(width < theme.breakpoints.sm)
+    }
+  }, [quarter, width])
 
   let style = null
 
@@ -61,7 +68,10 @@ export const GridItems: FC<React.PropsWithChildren<GridItemsProps>> = ({
         <Box
           paddingTop={paddingTop}
           paddingBottom={paddingBottom}
-          className={cx(styles.wrapper, { [styles.half]: half })}
+          className={cx(styles.wrapper, {
+            [styles.half]: half,
+            [styles.quarter]: quarter,
+          })}
           {...(style && { style })}
         >
           {children}

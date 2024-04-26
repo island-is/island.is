@@ -1,20 +1,17 @@
 import compareAsc from 'date-fns/compareAsc'
 
 import * as constants from '@island.is/judicial-system/consts'
-import {
-  TempCase as Case,
-  TempUpdateCase as UpdateCase,
-} from '@island.is/judicial-system-web/src/types'
+import { TempCase as Case } from '@island.is/judicial-system-web/src/types'
 
 import { replaceTabs } from './formatters'
+import { UpdateCase } from './hooks'
 import * as validations from './validate'
 
 export const removeTabsValidateAndSet = (
   field: keyof UpdateCase,
   value: string,
   validations: validations.Validation[],
-  theCase: Case,
-  setCase: (value: React.SetStateAction<Case>) => void,
+  setWorkingCase: (value: React.SetStateAction<Case>) => void,
   errorMessage?: string,
   setErrorMessage?: (value: React.SetStateAction<string>) => void,
 ) => {
@@ -26,8 +23,7 @@ export const removeTabsValidateAndSet = (
     field,
     value,
     validations,
-    theCase,
-    setCase,
+    setWorkingCase,
     errorMessage,
     setErrorMessage,
   )
@@ -63,17 +59,16 @@ export const validateAndSet = (
   field: keyof UpdateCase,
   value: string,
   validations: validations.Validation[],
-  theCase: Case,
-  setCase: (value: React.SetStateAction<Case>) => void,
+  setWorkingCase: (value: React.SetStateAction<Case>) => void,
   errorMessage?: string,
   setErrorMessage?: (value: React.SetStateAction<string>) => void,
 ) => {
   removeErrorMessageIfValid(validations, value, errorMessage, setErrorMessage)
 
-  setCase({
-    ...theCase,
+  setWorkingCase((prevWorkingCase) => ({
+    ...prevWorkingCase,
     [field]: value,
-  })
+  }))
 }
 
 export const validateAndSendToServer = (
@@ -94,7 +89,7 @@ export const validateAndSendToServer = (
 /**If entry is included in values then it is removed
  * otherwise it is appended
  */
-export function toggleInArray<T>(values: T[] | undefined, entry: T) {
+export const toggleInArray = <T>(values: T[] | undefined | null, entry: T) => {
   if (!values) return [entry]
 
   return values.includes(entry)
@@ -106,7 +101,7 @@ export const setCheckboxAndSendToServer = (
   field: keyof UpdateCase,
   value: string,
   theCase: Case,
-  setCase: (value: React.SetStateAction<Case>) => void,
+  setWorkingCase: (value: React.SetStateAction<Case>) => void,
   updateCase: (id: string, updateCase: UpdateCase) => void,
 ) => {
   const checks = theCase[field as keyof Case]
@@ -119,10 +114,10 @@ export const setCheckboxAndSendToServer = (
     checks.splice(checks.indexOf(value), 1)
   }
 
-  setCase({
-    ...theCase,
+  setWorkingCase((prevWorkingCase) => ({
+    ...prevWorkingCase,
     [field]: checks,
-  })
+  }))
 
   if (theCase.id !== '') {
     updateCase(theCase.id, { [field]: checks })
@@ -168,7 +163,7 @@ export type stepValidationsType = {
   [constants.INDICTMENTS_CASE_FILE_ROUTE]: () => boolean
   [constants.INDICTMENTS_PROCESSING_ROUTE]: (theCase: Case) => boolean
   [constants.INDICTMENTS_TRAFFIC_VIOLATION_ROUTE]: (theCase: Case) => boolean
-  [constants.INDICTMENTS_CASE_FILES_ROUTE]: () => boolean
+  [constants.INDICTMENTS_CASE_FILES_ROUTE]: (theCase: Case) => boolean
   [constants.RESTRICTION_CASE_RECEPTION_AND_ASSIGNMENT_ROUTE]: (
     theCase: Case,
   ) => boolean
@@ -200,6 +195,7 @@ export type stepValidationsType = {
   [constants.COURT_OF_APPEAL_OVERVIEW_ROUTE]: () => boolean
   [constants.COURT_OF_APPEAL_CASE_ROUTE]: (theCase: Case) => boolean
   [constants.COURT_OF_APPEAL_RULING_ROUTE]: (theCase: Case) => boolean
+  [constants.COURT_OF_APPEAL_SUMMARY_ROUTE]: (theCase: Case) => boolean
   [constants.COURT_OF_APPEAL_RESULT_ROUTE]: () => boolean
 }
 
@@ -248,7 +244,8 @@ export const stepValidations = (): stepValidationsType => {
       validations.isProcessingStepValidIndictments(theCase),
     [constants.INDICTMENTS_TRAFFIC_VIOLATION_ROUTE]: (theCase: Case) =>
       validations.isTrafficViolationStepValidIndictments(theCase),
-    [constants.INDICTMENTS_CASE_FILES_ROUTE]: () => true,
+    [constants.INDICTMENTS_CASE_FILES_ROUTE]: (theCase) =>
+      validations.isCaseFilesStepValidIndictments(theCase),
     [constants.RESTRICTION_CASE_RECEPTION_AND_ASSIGNMENT_ROUTE]: (
       theCase: Case,
     ) => validations.isReceptionAndAssignmentStepValid(theCase),
@@ -286,7 +283,8 @@ export const stepValidations = (): stepValidationsType => {
     [constants.COURT_OF_APPEAL_CASE_ROUTE]: (theCase: Case) =>
       validations.isCourtOfAppealCaseStepValid(theCase),
     [constants.COURT_OF_APPEAL_RULING_ROUTE]: (theCase: Case) =>
-      validations.isCourtOfAppealRulingStepValid(theCase) &&
+      validations.isCourtOfAppealRulingStepValid(theCase),
+    [constants.COURT_OF_APPEAL_SUMMARY_ROUTE]: (theCase) =>
       theCase.appealState === 'COMPLETED',
     [constants.COURT_OF_APPEAL_RESULT_ROUTE]: () => true,
   }

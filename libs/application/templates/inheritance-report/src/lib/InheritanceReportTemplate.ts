@@ -1,7 +1,4 @@
-import {
-  DefaultStateLifeCycle,
-  EphemeralStateLifeCycle,
-} from '@island.is/application/core'
+import { EphemeralStateLifeCycle } from '@island.is/application/core'
 import {
   ApplicationTemplate,
   ApplicationTypes,
@@ -17,6 +14,7 @@ import { m } from './messages'
 import { inheritanceReportSchema } from './dataSchema'
 import { ApiActions, InheritanceReportEvent, Roles, States } from './constants'
 import { Features } from '@island.is/feature-flags'
+import { EstateOnEntryApi } from '../dataProviders'
 
 const InheritanceReportTemplate: ApplicationTemplate<
   ApplicationContext,
@@ -30,45 +28,14 @@ const InheritanceReportTemplate: ApplicationTemplate<
   featureFlag: Features.inheritanceReport,
   allowMultipleApplicationsInDraft: false,
   stateMachineConfig: {
-    initial: States.prerequisites,
+    initial: States.draft,
     states: {
-      [States.prerequisites]: {
+      [States.draft]: {
         meta: {
           name: '',
           status: 'draft',
           progress: 0.15,
           lifecycle: EphemeralStateLifeCycle,
-          onEntry: defineTemplateApi({
-            action: ApiActions.syslumennOnEntry,
-            shouldPersistToExternalData: true,
-            throwOnError: false,
-          }),
-          roles: [
-            {
-              id: Roles.APPLICANT,
-              formLoader: () =>
-                import('../forms/prerequisites').then((module) =>
-                  Promise.resolve(module.prerequisites),
-                ),
-              actions: [{ event: 'SUBMIT', name: '', type: 'primary' }],
-              write: 'all',
-              delete: true,
-              api: [NationalRegistryUserApi, UserProfileApi],
-            },
-          ],
-        },
-        on: {
-          SUBMIT: {
-            target: States.draft,
-          },
-        },
-      },
-      [States.draft]: {
-        meta: {
-          name: '',
-          status: 'draft',
-          progress: 0.25,
-          lifecycle: DefaultStateLifeCycle,
           roles: [
             {
               id: Roles.APPLICANT,
@@ -79,15 +46,14 @@ const InheritanceReportTemplate: ApplicationTemplate<
               actions: [{ event: 'SUBMIT', name: '', type: 'primary' }],
               write: 'all',
               delete: true,
+              api: [NationalRegistryUserApi, UserProfileApi, EstateOnEntryApi],
             },
           ],
         },
         on: {
-          SUBMIT: [
-            {
-              target: States.done,
-            },
-          ],
+          SUBMIT: {
+            target: States.done,
+          },
         },
       },
       [States.done]: {

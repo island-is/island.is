@@ -78,7 +78,7 @@
         }
       }
     },
-    "schemas/codegen": {
+    "codegen/frontend-client": {
       "executor": "nx:run-commands",
       "options": {
         "command": "graphql-codegen --config apps/consultation-portal/codegen.yml"

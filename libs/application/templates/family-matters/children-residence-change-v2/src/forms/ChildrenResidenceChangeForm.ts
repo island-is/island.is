@@ -1,8 +1,6 @@
 import {
   buildForm,
   buildSection,
-  buildDataProviderItem,
-  buildExternalDataProvider,
   buildCustomField,
   buildSubSection,
   buildMultiField,
@@ -17,24 +15,7 @@ import { selectDurationInputs } from '../fields/Duration'
 import { confirmContractIds } from '../fields/Overview'
 import { contactInfoIds } from '../fields/ContactInfo'
 import * as m from '../lib/messages'
-import {
-  ChildrenCustodyInformationApi,
-  NationalRegistryUserApi,
-  UserProfileApi,
-} from '../dataProviders'
 import { Answers } from '../types'
-
-// TODO: Added by Kolibri - 2021-07-05 - Revisit mockdata implementation to prevent
-// Continue and Back button from being displayed on production
-
-// const shouldUseMocks = (answers: Answers): boolean => {
-//   if (answers.useMocks && answers.useMocks === 'yes') {
-//     return true
-//   }
-//   return false
-// }
-
-// const shouldRenderMockDataSubSection = !isRunningOnEnvironment('production')
 
 export const ChildrenResidenceChangeForm: Form = buildForm({
   id: 'ChildrenResidenceChangeFormDraft',
@@ -42,108 +23,10 @@ export const ChildrenResidenceChangeForm: Form = buildForm({
   logo: Logo,
   mode: FormModes.DRAFT,
   children: [
-    // buildSection({
-    //   id: 'mockData',
-    //   title: 'Mock data',
-    //   condition: () => shouldRenderMockDataSubSection,
-    //   children: [
-    //     buildSubSection({
-    //       id: 'useMocks',
-    //       title: 'Nota gervigögn?',
-    //       children: [
-    //         buildRadioField({
-    //           id: 'useMocks',
-    //           title: 'Nota gervigögn',
-    //           options: [
-    //             {
-    //               value: 'yes',
-    //               label: 'Já',
-    //             },
-    //             {
-    //               value: 'no',
-    //               label: 'Nei',
-    //             },
-    //           ],
-    //         }),
-    //       ],
-    //     }),
-    //     buildSubSection({
-    //       id: 'applicantMock',
-    //       title: 'Umsækjandi',
-    //       condition: (answers) =>
-    //         shouldUseMocks((answers as unknown) as Answers),
-    //       children: [
-    //         buildCustomField({
-    //           id: 'mockData.applicant',
-    //           title: 'Mock Umsækjandi',
-    //           component: 'ApplicantMock',
-    //         }),
-    //       ],
-    //     }),
-    //     buildSubSection({
-    //       id: 'parentMock',
-    //       title: 'Foreldrar',
-    //       condition: (answers) =>
-    //         shouldUseMocks((answers as unknown) as Answers),
-    //       children: [
-    //         buildCustomField({
-    //           id: 'mockData.parents',
-    //           title: 'Mock Foreldrar',
-    //           component: 'ParentMock',
-    //         }),
-    //       ],
-    //     }),
-    //     buildSubSection({
-    //       id: 'childrenMock',
-    //       title: 'Börn',
-    //       condition: (answers) =>
-    //         shouldUseMocks((answers as unknown) as Answers),
-    //       children: [
-    //         buildCustomField({
-    //           id: 'mockData.children',
-    //           title: 'Mock Börn',
-    //           component: 'ChildrenMock',
-    //         }),
-    //       ],
-    //     }),
-    //   ],
-    // }),
     buildSection({
       id: 'backgroundInformation',
       title: m.section.backgroundInformation,
       children: [
-        buildSubSection({
-          id: 'externalData',
-          title: m.externalData.general.sectionTitle,
-          // condition: (answers) =>
-          //   !shouldUseMocks((answers as unknown) as Answers),
-          children: [
-            buildExternalDataProvider({
-              title: m.externalData.general.pageTitle,
-              id: 'approveExternalData',
-              subTitle: m.externalData.general.subTitle,
-              description: m.externalData.general.description,
-              checkboxLabel: m.externalData.general.checkboxLabel,
-              dataProviders: [
-                buildDataProviderItem({
-                  provider: ChildrenCustodyInformationApi,
-                  title: m.externalData.children.title,
-                  subTitle: m.externalData.children.subTitle,
-                }),
-                buildDataProviderItem({
-                  provider: NationalRegistryUserApi,
-                  title: m.externalData.applicant.title,
-                  subTitle: m.externalData.applicant.subTitle,
-                }),
-                buildDataProviderItem({
-                  provider: UserProfileApi,
-                  title: m.externalData.userProfile.title,
-                  subTitle: m.externalData.userProfile.subTitle,
-                }),
-              ],
-            }),
-          ],
-        }),
         buildSubSection({
           id: 'selectChildInCustody',
           title: m.selectChildren.general.sectionTitle,

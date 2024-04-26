@@ -73,6 +73,7 @@ export const createTestingNotificationModule = async () => {
         useValue: {
           debug: jest.fn(),
           info: jest.fn(),
+          warn: jest.fn(),
           error: jest.fn(),
         },
       },
@@ -98,12 +99,6 @@ export const createTestingNotificationModule = async () => {
       if (typeof token === 'function') {
         return mock()
       }
-    })
-    .overrideProvider(LOGGER_PROVIDER)
-    .useValue({
-      debug: jest.fn(),
-      info: jest.fn(),
-      error: jest.fn(),
     })
     .compile()
 

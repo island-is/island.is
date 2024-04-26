@@ -4,6 +4,7 @@ import {
   AdrAndMachine,
   Base,
   ChargeFjsV2,
+  EnergyFunds,
   Client,
   CriminalRecord,
   Disability,
@@ -27,6 +28,7 @@ import {
   TransportAuthority,
   UniversityOfIceland,
   Vehicles,
+  VehiclesMileage,
   VehicleServiceFjsV1,
   WorkMachines,
   IcelandicGovernmentInstitutionVacancies,
@@ -36,6 +38,13 @@ import {
   OccupationalLicenses,
   ShipRegistry,
   DistrictCommissioners,
+  DirectorateOfImmigration,
+  Hunting,
+  SignatureCollection,
+  SocialInsuranceAdministration,
+  IntellectualProperties,
+  Inna,
+  OfficialJournalOfIceland,
 } from '../../../infra/src/dsl/xroad'
 
 export const serviceSetup = (services: {
@@ -48,16 +57,20 @@ export const serviceSetup = (services: {
   airDiscountSchemeBackend: ServiceBuilder<'air-discount-scheme-backend'>
   sessionsApi: ServiceBuilder<'services-sessions'>
   authAdminApi: ServiceBuilder<'services-auth-admin-api'>
+  universityGatewayApi: ServiceBuilder<'services-university-gateway'>
+  userNotificationService: ServiceBuilder<'services-user-notification'>
 }): ServiceBuilder<'api'> => {
   return service('api')
     .namespace('islandis')
     .serviceAccount()
     .command('node')
     .args('--tls-min-v1.0', '--no-experimental-fetch', 'main.js')
-
     .env({
       APPLICATION_SYSTEM_API_URL: ref(
         (h) => `http://${h.svc(services.appSystemApi)}`,
+      ),
+      USER_NOTIFICATION_API_URL: ref(
+        (h) => `http://${h.svc(services.userNotificationService)}`,
       ),
       ICELANDIC_NAMES_REGISTRY_BACKEND_URL: ref(
         (h) => `http://${h.svc(services.icelandicNameRegistryBackend)}`,
@@ -112,7 +125,7 @@ export const serviceSetup = (services: {
         staging: 'development@island.is',
         prod: 'island@island.is',
       },
-      SERVICE_USER_PROFILE_URL: ref(
+      USER_PROFILE_CLIENT_URL: ref(
         (h) => `http://${h.svc(services.servicePortalApi)}`,
       ),
       FILE_DOWNLOAD_BUCKET: {
@@ -182,7 +195,6 @@ export const serviceSetup = (services: {
         staging: 'https://samradapi-test.devland.is',
         prod: 'https://samradapi.island.is',
       },
-      NO_UPDATE_NOTIFIER: 'true',
       FISKISTOFA_ZENTER_CLIENT_ID: '1114',
       SOFFIA_SOAP_URL: {
         dev: ref((h) => h.svc('https://soffiaprufa.skra.is')),
@@ -211,6 +223,11 @@ export const serviceSetup = (services: {
         staging: 'https://identity-server.staging01.devland.is',
         prod: 'https://innskra.island.is',
       },
+      HUNTING_LICENSE_PASS_TEMPLATE_ID: {
+        dev: '1da72d52-a93a-4d0f-8463-1933a2bd210b',
+        staging: '1da72d52-a93a-4d0f-8463-1933a2bd210b',
+        prod: '5f42f942-d8d6-40bf-a186-5a9e12619d9f',
+      },
       XROAD_RSK_PROCURING_REDIS_NODES: {
         dev: json([
           'clustercfg.general-redis-cluster-group.5fzau3.euw1.cache.amazonaws.com:6379',
@@ -233,10 +250,24 @@ export const serviceSetup = (services: {
           'clustercfg.general-redis-cluster-group.whakos.euw1.cache.amazonaws.com:6379',
         ]),
       },
+      LICENSE_SERVICE_REDIS_NODES: {
+        dev: json([
+          'clustercfg.general-redis-cluster-group.5fzau3.euw1.cache.amazonaws.com:6379',
+        ]),
+        staging: json([
+          'clustercfg.general-redis-cluster-group.ab9ckb.euw1.cache.amazonaws.com:6379',
+        ]),
+        prod: json([
+          'clustercfg.general-redis-cluster-group.whakos.euw1.cache.amazonaws.com:6379',
+        ]),
+      },
       XROAD_RSK_PROCURING_SCOPE: json([
         '@rsk.is/prokura',
         '@rsk.is/prokura:admin',
       ]),
+      UNIVERSITY_GATEWAY_API_URL: ref(
+        (h) => `http://${h.svc(services.universityGatewayApi)}`,
+      ),
     })
 
     .secrets({
@@ -283,6 +314,7 @@ export const serviceSetup = (services: {
         '/k8s/api/PKPASS_CACHE_TOKEN_EXPIRY_DELTA',
       PKPASS_SECRET_KEY: '/k8s/api/PKPASS_SECRET_KEY',
       VE_PKPASS_API_KEY: '/k8s/api/VE_PKPASS_API_KEY',
+      UST_PKPASS_API_KEY: '/k8s/api/UST_PKPASS_API_KEY',
       RLS_PKPASS_API_KEY: '/k8s/api/RLS_PKPASS_API_KEY',
       TR_PKPASS_API_KEY: '/k8s/api/TR_PKPASS_API_KEY',
       SMART_SOLUTIONS_API_URL: '/k8s/api/SMART_SOLUTIONS_API_URL',
@@ -300,8 +332,10 @@ export const serviceSetup = (services: {
       FIREARM_LICENSE_FETCH_TIMEOUT: '/k8s/api/FIREARM_LICENSE_FETCH_TIMEOUT',
       DISABILITY_LICENSE_FETCH_TIMEOUT:
         '/k8s/api/DISABILITY_LICENSE_FETCH_TIMEOUT',
+      INTELLECTUAL_PROPERTY_API_KEY: '/k8s/api/IP_API_KEY',
       ISLYKILL_SERVICE_PASSPHRASE: '/k8s/api/ISLYKILL_SERVICE_PASSPHRASE',
       ISLYKILL_SERVICE_BASEPATH: '/k8s/api/ISLYKILL_SERVICE_BASEPATH',
+      VEHICLES_ALLOW_CO_OWNERS: '/k8s/api/VEHICLES_ALLOW_CO_OWNERS',
       IDENTITY_SERVER_CLIENT_SECRET: '/k8s/api/IDENTITY_SERVER_CLIENT_SECRET',
       FINANCIAL_STATEMENTS_INAO_CLIENT_ID:
         '/k8s/api/FINANCIAL_STATEMENTS_INAO_CLIENT_ID',
@@ -334,16 +368,28 @@ export const serviceSetup = (services: {
         '/k8s/api/DIRECTORATE_OF_IMMIGRATION_WATSON_ASSISTANT_CHAT_PRIVATE_RSA_KEY',
       DIRECTORATE_OF_IMMIGRATION_WATSON_ASSISTANT_CHAT_PUBLIC_IBM_KEY:
         '/k8s/api/DIRECTORATE_OF_IMMIGRATION_WATSON_ASSISTANT_CHAT_PUBLIC_IBM_KEY',
+      CHART_STATISTIC_SOURCE_DATA_PATHS:
+        '/k8s/api/CHART_STATISTIC_SOURCE_DATA_PATHS',
+      CHART_STATISTIC_CACHE_TTL: '/k8s/api/CHART_STATISTIC_CACHE_TTL',
+      WATSON_ASSISTANT_CHAT_FEEDBACK_URL:
+        '/k8s/api/WATSON_ASSISTANT_CHAT_FEEDBACK_URL',
+      WATSON_ASSISTANT_CHAT_FEEDBACK_API_KEY:
+        '/k8s/api/WATSON_ASSISTANT_CHAT_FEEDBACK_API_KEY',
+      LICENSE_SERVICE_BARCODE_SECRET_KEY:
+        '/k8s/api/LICENSE_SERVICE_BARCODE_SECRET_KEY',
     })
     .xroad(
       AdrAndMachine,
       JudicialAdministration,
+      Hunting,
       Firearm,
       Disability,
       Base,
       Client,
       OccupationalLicenses,
       HealthInsurance,
+      IntellectualProperties,
+      Inna,
       Labor,
       DrivingLicense,
       Payment,
@@ -359,10 +405,12 @@ export const serviceSetup = (services: {
       FishingLicense,
       MunicipalitiesFinancialAid,
       Vehicles,
+      VehiclesMileage,
       Passports,
       VehicleServiceFjsV1,
       TransportAuthority,
       ChargeFjsV2,
+      EnergyFunds,
       UniversityOfIceland,
       WorkMachines,
       IcelandicGovernmentInstitutionVacancies,
@@ -371,6 +419,10 @@ export const serviceSetup = (services: {
       AircraftRegistry,
       HousingBenefitCalculator,
       ShipRegistry,
+      DirectorateOfImmigration,
+      SignatureCollection,
+      SocialInsuranceAdministration,
+      OfficialJournalOfIceland,
     )
     .files({ filename: 'islyklar.p12', env: 'ISLYKILL_CERT' })
     .ingress({
@@ -394,8 +446,8 @@ export const serviceSetup = (services: {
     .readiness('/health')
     .liveness('/liveness')
     .resources({
-      limits: { cpu: '400m', memory: '2048Mi' },
-      requests: { cpu: '150m', memory: '512Mi' },
+      limits: { cpu: '600m', memory: '2048Mi' },
+      requests: { cpu: '250m', memory: '896Mi' },
     })
     .replicaCount({
       default: 2,

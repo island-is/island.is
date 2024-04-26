@@ -33,14 +33,12 @@
         "cwd": "libs/clients/electronic-registration-statistics"
       }
     },
-    "schemas/external-openapi-generator": {
+    "codegen/backend-client": {
       "executor": "nx:run-commands",
       "options": {
-        "commands": [
-          "yarn openapi-generator -o libs/clients/electronic-registration-statistics/gen/fetch -i libs/clients/electronic-registration-statistics/src/clientConfig.json"
-        ],
-        "parallel": false
-      }
+        "command": "yarn openapi-generator -o libs/clients/electronic-registration-statistics/gen/fetch -i libs/clients/electronic-registration-statistics/src/clientConfig.json"
+      },
+      "outputs": ["{projectRoot}/gen/fetch"]
     }
   },
   "tags": ["lib:client", "scope:client"]

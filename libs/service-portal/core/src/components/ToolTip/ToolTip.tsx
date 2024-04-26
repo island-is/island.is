@@ -2,6 +2,7 @@ import React, { ElementType, FC, ReactElement } from 'react'
 import cn from 'classnames'
 import {
   Tooltip as ReakitTooltip,
+  TooltipArrow,
   TooltipReference,
   useTooltipState,
 } from 'reakit'
@@ -13,10 +14,12 @@ type Placement = 'top' | 'right' | 'bottom' | 'left'
 
 interface ArrowIconProps {
   placement: string
+  variant: 'white' | 'light'
 }
 
 const ArrowIcon: FC<React.PropsWithChildren<ArrowIconProps>> = ({
   placement,
+  variant,
 }) => {
   let deg = 0
 
@@ -39,7 +42,10 @@ const ArrowIcon: FC<React.PropsWithChildren<ArrowIconProps>> = ({
       viewBox="0 0 16 16"
       style={{ transform }}
     >
-      <path fill="#F2F7FF" d="M7 12l6.928-12H.072L7 12z"></path>
+      <path
+        fill={variant === 'white' ? 'white' : '#F2F7FF'}
+        d="M7 12l6.928-12H.072L7 12z"
+      ></path>
       <path
         fill="#CCDFFF"
         fillRule="evenodd"
@@ -59,6 +65,7 @@ interface TooltipProps {
   fullWidth?: boolean
   renderInPortal?: boolean
   as?: ElementType
+  variant?: 'light' | 'dark' | 'white'
 }
 
 export const Tooltip: FC<React.PropsWithChildren<TooltipProps>> = ({
@@ -70,6 +77,7 @@ export const Tooltip: FC<React.PropsWithChildren<TooltipProps>> = ({
   as = 'span',
   fullWidth,
   renderInPortal = true,
+  variant = 'dark',
 }) => {
   const tooltip = useTooltipState({
     animated: 250,
@@ -91,12 +99,23 @@ export const Tooltip: FC<React.PropsWithChildren<TooltipProps>> = ({
           <Icon icon="informationCircle" color={color} size={iconSize} />
         </TooltipReference>
       )}
-      <ReakitTooltip {...tooltip} unstable_portal={renderInPortal}>
+      <ReakitTooltip
+        {...tooltip}
+        unstable_portal={renderInPortal}
+        className={styles.z}
+      >
         <div
           className={cn(styles.tooltip, {
             [styles.fullWidth]: fullWidth,
+            [styles.light]: variant === 'light',
+            [styles.white]: variant === 'white',
           })}
         >
+          {(variant === 'light' || variant === 'white') && (
+            <TooltipArrow {...tooltip}>
+              <ArrowIcon placement={tooltip.placement} variant={variant} />
+            </TooltipArrow>
+          )}
           {text}
         </div>
       </ReakitTooltip>

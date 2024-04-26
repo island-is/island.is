@@ -5,3 +5,4 @@ export {
   BaseTemplateApiApplicationService,
   TemplateApiModuleActionProps,
 } from './types'
+export { AttachmentS3Service } from './modules/shared/services'

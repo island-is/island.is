@@ -36,6 +36,10 @@ export interface ModalProps {
    * A visually hidden label for the close button
    */
   closeButtonLabel: string
+  /**
+   * Will hide the modal when clicking outside of it
+   */
+  hideOnClickOutside?: boolean
 }
 
 export const Modal = ({
@@ -49,6 +53,7 @@ export const Modal = ({
   noPaddingBottom = false,
   scrollType = 'outside',
   closeButtonLabel = 'Close',
+  hideOnClickOutside = true,
 }: ModalProps) => {
   const headingRef = useRef<HTMLElement>(null)
   const handleOnVisibilityChange = (isVisible: boolean) => {
@@ -71,7 +76,7 @@ export const Modal = ({
         className={styles.modal({ noPaddingBottom, scrollType })}
         isVisible={isVisible}
         onVisibilityChange={handleOnVisibilityChange}
-        hideOnClickOutside
+        hideOnClickOutside={hideOnClickOutside}
         hideOnEsc
         preventBodyScroll={false}
       >

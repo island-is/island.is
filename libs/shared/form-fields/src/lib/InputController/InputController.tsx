@@ -1,5 +1,10 @@
 import React, { forwardRef } from 'react'
-import { Input, Icon, InputBackgroundColor } from '@island.is/island-ui/core'
+import {
+  Input,
+  Icon,
+  InputBackgroundColor,
+  InputProps,
+} from '@island.is/island-ui/core'
 import { Controller, Control, RegisterOptions } from 'react-hook-form'
 import NumberFormat, { FormatInputValueFunction } from 'react-number-format'
 import { TestSupport } from '@island.is/island-ui/utils'
@@ -29,10 +34,12 @@ interface Props {
   required?: boolean
   readOnly?: boolean
   rightAlign?: boolean
+  thousandSeparator?: boolean
   maxLength?: number
   loading?: boolean
   size?: 'xs' | 'sm' | 'md'
   autoComplete?: 'off' | 'on'
+  inputMode?: InputProps['inputMode']
 }
 
 interface ChildParams {
@@ -75,8 +82,10 @@ export const InputController = forwardRef(
       size = 'md',
       dataTestId,
       autoComplete,
+      thousandSeparator,
+      inputMode,
     } = props
-    function renderChildInput(c: ChildParams & TestSupport) {
+    const renderChildInput = (c: ChildParams & TestSupport) => {
       const { value, onChange, ...props } = c
       if (currency) {
         return (
@@ -93,13 +102,14 @@ export const InputController = forwardRef(
             decimalSeparator=","
             backgroundColor={backgroundColor}
             thousandSeparator="."
-            suffix=" kr."
+            suffix={suffix ?? ' kr.'}
             value={value}
             format={format}
             maxLength={maxLength}
             autoComplete={autoComplete}
             loading={loading}
             rightAlign={rightAlign}
+            inputMode={inputMode}
             onChange={(
               e: React.ChangeEvent<HTMLInputElement | HTMLTextAreaElement>,
             ) => {
@@ -137,6 +147,7 @@ export const InputController = forwardRef(
             maxLength={maxLength}
             autoComplete={autoComplete}
             loading={loading}
+            inputMode={inputMode}
             onChange={(
               e: React.ChangeEvent<HTMLInputElement | HTMLTextAreaElement>,
             ) => {
@@ -150,6 +161,8 @@ export const InputController = forwardRef(
             hasError={error !== undefined}
             errorMessage={error}
             required={required}
+            decimalSeparator={thousandSeparator ? ',' : undefined}
+            thousandSeparator={thousandSeparator ? '.' : undefined}
             getInputRef={ref}
             {...props}
           />
@@ -174,6 +187,7 @@ export const InputController = forwardRef(
             maxLength={maxLength}
             autoComplete={autoComplete}
             loading={loading}
+            inputMode={inputMode}
             onChange={(
               e: React.ChangeEvent<HTMLInputElement | HTMLTextAreaElement>,
             ) => {
@@ -213,6 +227,7 @@ export const InputController = forwardRef(
             maxLength={maxLength}
             autoComplete={autoComplete}
             loading={loading}
+            inputMode={inputMode}
             onChange={(e) => {
               onChange(e.target.value)
               if (onInputChange) {

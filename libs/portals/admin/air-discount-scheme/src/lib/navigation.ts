@@ -19,5 +19,9 @@ export const airDiscountSchemeNavigation: PortalNavigationItem = {
       name: m.createDiscount,
       path: AirDiscountSchemePaths.CreateDiscount,
     },
+    {
+      name: m.superDiscount,
+      path: AirDiscountSchemePaths.SuperDiscount,
+    },
   ],
 }

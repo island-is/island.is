@@ -11,8 +11,12 @@ import { InputController } from '@island.is/shared/form-fields'
 import { useLocale } from '@island.is/localization'
 import { m } from '../../lib/messages'
 import { useLazyQuery } from '@apollo/client'
-import { IdentityInput, Query } from '@island.is/api/schema'
-import { IDENTITY_QUERY } from '../../graphql'
+import {
+  IdentityInput,
+  GetRegistryPersonInput,
+  Query,
+} from '@island.is/api/schema'
+import { DECEASED_IDENITY_QUERY, IDENTITY_QUERY } from '../../graphql'
 
 type LookupProps = {
   field: {
@@ -20,14 +24,19 @@ type LookupProps = {
     props?: {
       requiredNationalId?: boolean
       alertWhenUnder18?: boolean
+      useDeceasedRegistry?: boolean
     }
   }
+  nested?: boolean
+  message?: string
   error: Record<string, string> | any
 }
 
 export const LookupPerson: FC<React.PropsWithChildren<LookupProps>> = ({
   field,
   error,
+  message,
+  nested = false,
 }) => {
   const { formatMessage } = useLocale()
   const { id, props } = field
@@ -36,7 +45,18 @@ export const LookupPerson: FC<React.PropsWithChildren<LookupProps>> = ({
   const personNationalId: string = watch(`${id}.nationalId`)
   const personName: string = watch(`${id}.name`)
 
-  const [getIdentity, { loading: queryLoading }] = useLazyQuery<
+  const [getDeceased, { loading: deceasedQueryLoading }] = useLazyQuery<
+    Query,
+    { input: GetRegistryPersonInput }
+  >(DECEASED_IDENITY_QUERY, {
+    onCompleted: (data) => {
+      setValue(`${id}.name`, data.syslumennGetRegistryPerson?.name ?? '')
+      clearErrors(`${id}.name`)
+    },
+    fetchPolicy: 'network-only',
+  })
+
+  const [getIdentity, { loading: identityQueryLoading }] = useLazyQuery<
     Query,
     { input: IdentityInput }
   >(IDENTITY_QUERY, {
@@ -51,13 +71,23 @@ export const LookupPerson: FC<React.PropsWithChildren<LookupProps>> = ({
     if (personNationalId?.length === 10) {
       const isValidSSN = nationalId.isPerson(personNationalId)
       if (isValidSSN) {
-        getIdentity({
-          variables: {
-            input: {
-              nationalId: personNationalId,
+        if (props?.useDeceasedRegistry) {
+          getDeceased({
+            variables: {
+              input: {
+                nationalId: personNationalId,
+              },
             },
-          },
-        })
+          })
+        } else {
+          getIdentity({
+            variables: {
+              input: {
+                nationalId: personNationalId,
+              },
+            },
+          })
+        }
       }
     } else if (personNationalId?.length === 0) {
       clearErrors(`${id}.name`)
@@ -73,28 +103,32 @@ export const LookupPerson: FC<React.PropsWithChildren<LookupProps>> = ({
           <GridColumn span={['1/1']} paddingBottom={3}>
             <AlertMessage
               type="warning"
-              message={formatMessage(m.inheritanceUnder18Error)}
+              message={
+                message ? message : formatMessage(m.inheritanceUnder18Error)
+              }
             />
           </GridColumn>
         )}
-        <GridColumn span="6/12">
+        <GridColumn span={nested ? ['1/1', '1/2'] : '6/12'}>
           <InputController
             id={`${id}.nationalId`}
             name={`${id}.nationalId`}
             label={formatMessage(m.nationalId)}
             format="######-####"
             backgroundColor="blue"
-            loading={queryLoading}
+            loading={identityQueryLoading || deceasedQueryLoading}
+            size={nested ? 'sm' : 'md'}
             required={props?.requiredNationalId ?? true}
             error={error?.nationalId || error?.name}
           />
         </GridColumn>
-        <GridColumn span="6/12">
+        <GridColumn span={nested ? ['1/1', '1/2'] : '6/12'}>
           <InputController
             id={`${id}.name`}
             name={`${id}.name`}
             label={formatMessage(m.name)}
             readOnly
+            size={nested ? 'sm' : 'md'}
             error={error?.name ? error?.name : undefined}
           />
         </GridColumn>

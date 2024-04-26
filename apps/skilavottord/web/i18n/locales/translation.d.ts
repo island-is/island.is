@@ -272,6 +272,7 @@ export interface Deregister {
   buttons: DeregisterButtons
   success: string
   error: CompletedError
+  currentMileage: string
 }
 
 export interface DeregisterButtons {
@@ -533,6 +534,7 @@ export interface Routes {
   accessControlCompany: string
   recyclingCompanies: RecyclingCompaniesClass
   companyInfo: RecyclingCompaniesClass
+  deregisterVehicleKM: RoutesDeregisterVehicle
 }
 
 export interface RecyclingCompaniesClass {

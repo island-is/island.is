@@ -25,6 +25,7 @@ import {
   CourtDocument,
   RequestSharedWithDefender,
   SessionArrangements,
+  UserRole,
 } from '@island.is/judicial-system/types'
 
 export class UpdateCaseDto {
@@ -311,6 +312,11 @@ export class UpdateCaseDto {
   readonly prosecutorAppealAnnouncement?: string
 
   @IsOptional()
+  @IsString()
+  @ApiPropertyOptional()
+  readonly rulingSignatureDate?: Date
+
+  @IsOptional()
   @IsUUID()
   @ApiPropertyOptional()
   readonly judgeId?: string
@@ -396,7 +402,42 @@ export class UpdateCaseDto {
   readonly appealConclusion?: string
 
   @IsOptional()
+  @IsString()
+  @ApiPropertyOptional()
+  readonly appealRulingModifiedHistory?: string
+
+  @IsOptional()
   @IsEnum(CaseAppealRulingDecision)
   @ApiPropertyOptional({ enum: CaseAppealRulingDecision })
   readonly appealRulingDecision?: CaseAppealRulingDecision
+
+  @IsOptional()
+  @IsString()
+  @ApiPropertyOptional()
+  readonly appealValidToDate?: Date
+
+  @IsOptional()
+  @IsBoolean()
+  @ApiPropertyOptional()
+  readonly isAppealCustodyIsolation?: boolean
+
+  @IsOptional()
+  @IsString()
+  @ApiPropertyOptional()
+  readonly appealIsolationToDate?: Date
+
+  @IsOptional()
+  @IsEnum(UserRole, { each: true })
+  @ApiPropertyOptional({ enum: UserRole, isArray: true })
+  readonly requestAppealRulingNotToBePublished?: UserRole[]
+
+  @IsOptional()
+  @IsString()
+  @ApiPropertyOptional()
+  readonly indictmentDeniedExplanation?: string
+
+  @IsOptional()
+  @IsString()
+  @ApiPropertyOptional()
+  readonly indictmentReturnedExplanation?: string
 }

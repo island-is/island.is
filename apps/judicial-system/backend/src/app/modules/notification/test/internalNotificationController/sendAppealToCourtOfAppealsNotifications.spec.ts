@@ -29,6 +29,7 @@ describe('InternalNotificationController - Send appeal to court of appeals notif
   const caseId = uuid()
   const prosecutorName = uuid()
   const prosecutorEmail = uuid()
+  const prosecutorMobileNumber = uuid()
   const judgeName = uuid()
   const judgeEmail = uuid()
   const registrarName = uuid()
@@ -38,7 +39,7 @@ describe('InternalNotificationController - Send appeal to court of appeals notif
   const courtCaseNumber = uuid()
   const courtId = uuid()
   const courtEmail = uuid()
-  const mobileNumber = uuid()
+  const courtMobileNumber = uuid()
 
   let mockEmailService: EmailService
   let mockSmsService: SmsService
@@ -46,7 +47,7 @@ describe('InternalNotificationController - Send appeal to court of appeals notif
   let givenWhenThen: GivenWhenThen
 
   beforeEach(async () => {
-    process.env.COURTS_ASSISTANT_MOBILE_NUMBERS = `{"${courtId}": "${mobileNumber}"}`
+    process.env.COURTS_ASSISTANT_MOBILE_NUMBERS = `{"${courtId}": "${courtMobileNumber}"}`
     process.env.COURTS_EMAILS = `{"${courtId}": "${courtEmail}"}`
 
     const { emailService, smsService, internalNotificationController } =
@@ -63,7 +64,11 @@ describe('InternalNotificationController - Send appeal to court of appeals notif
           caseId,
           {
             id: caseId,
-            prosecutor: { name: prosecutorName, email: prosecutorEmail },
+            prosecutor: {
+              name: prosecutorName,
+              email: prosecutorEmail,
+              mobileNumber: prosecutorMobileNumber,
+            },
             judge: { name: judgeName, email: judgeEmail },
             registrar: { name: registrarName, email: registrarEmail },
             court: { name: 'Héraðsdómur Reykjavíkur' },
@@ -84,7 +89,7 @@ describe('InternalNotificationController - Send appeal to court of appeals notif
     }
   })
 
-  describe('notification sent by prosecutor', () => {
+  describe('case appealed by prosecutor', () => {
     let then: Then
 
     beforeEach(async () => {
@@ -122,14 +127,14 @@ describe('InternalNotificationController - Send appeal to court of appeals notif
       )
 
       expect(mockSmsService.sendSms).toHaveBeenCalledWith(
-        [mobileNumber],
+        [courtMobileNumber],
         `Úrskurður hefur verið kærður í máli ${courtCaseNumber}. Sjá nánar á rettarvorslugatt.island.is`,
       )
       expect(then.result).toEqual({ delivered: true })
     })
   })
 
-  describe('notification sent by prosecutor with missing defender national id', () => {
+  describe('case appealed by prosecutor with missing defender national id', () => {
     let then: Then
 
     beforeEach(async () => {
@@ -152,21 +157,21 @@ describe('InternalNotificationController - Send appeal to court of appeals notif
         }),
       )
       expect(mockSmsService.sendSms).toHaveBeenCalledWith(
-        [mobileNumber],
+        [courtMobileNumber],
         `Úrskurður hefur verið kærður í máli ${courtCaseNumber}. Sjá nánar á rettarvorslugatt.island.is`,
       )
       expect(then.result).toEqual({ delivered: true })
     })
   })
 
-  describe('notification sent by defender', () => {
+  describe('case appealed by defender', () => {
     let then: Then
 
     beforeEach(async () => {
       then = await givenWhenThen(UserRole.DEFENDER, uuid())
     })
 
-    it('should send notification to judge and prosecutor', () => {
+    it('should send notifications to judge and prosecutor', () => {
       expect(mockEmailService.sendEmail).toHaveBeenCalledWith(
         expect.objectContaining({
           to: [{ name: judgeName, address: judgeEmail }],
@@ -182,9 +187,14 @@ describe('InternalNotificationController - Send appeal to court of appeals notif
         }),
       )
       expect(mockSmsService.sendSms).toHaveBeenCalledWith(
-        [mobileNumber],
+        [courtMobileNumber],
         `Úrskurður hefur verið kærður í máli ${courtCaseNumber}. Sjá nánar á rettarvorslugatt.island.is`,
       )
+      expect(mockSmsService.sendSms).toHaveBeenCalledWith(
+        [prosecutorMobileNumber],
+        `Úrskurður hefur verið kærður í máli ${courtCaseNumber}. Sjá nánar á rettarvorslugatt.island.is`,
+      )
+
       expect(then.result).toEqual({ delivered: true })
     })
   })

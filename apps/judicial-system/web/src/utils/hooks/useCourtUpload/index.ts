@@ -1,16 +1,13 @@
 import { useCallback, useEffect, useState } from 'react'
-import { ApolloError, useMutation } from '@apollo/client'
+import { ApolloError } from '@apollo/client'
 
 import {
-  CaseFile as TCaseFile,
+  CaseFile,
   CaseFileState,
-} from '@island.is/judicial-system/types'
-import {
-  UploadFileToCourtDocument,
-  UploadFileToCourtMutation,
-  UploadFileToCourtMutationVariables,
 } from '@island.is/judicial-system-web/src/graphql/schema'
 import { TempCase as Case } from '@island.is/judicial-system-web/src/types'
+
+import { useUploadFileToCourtMutation } from './uploadFileToCourt.generated'
 
 export enum UploadState {
   ALL_UPLOADED = 'ALL_UPLOADED',
@@ -32,8 +29,8 @@ export type CaseFileStatus =
   | 'case-not-found'
   | 'unsupported'
 
-export interface CaseFile extends TCaseFile {
-  status: CaseFileStatus
+export interface CaseFileWithStatus extends CaseFile {
+  status?: CaseFileStatus
 }
 
 export const useCourtUpload = (
@@ -41,14 +38,11 @@ export const useCourtUpload = (
   setWorkingCase: React.Dispatch<React.SetStateAction<Case>>,
 ) => {
   const [uploadState, setUploadState] = useState<UploadState>()
-  const [uploadFileToCourtMutation] = useMutation<
-    UploadFileToCourtMutation,
-    UploadFileToCourtMutationVariables
-  >(UploadFileToCourtDocument)
+  const [uploadFileToCourtMutation] = useUploadFileToCourtMutation()
 
   const setFileUploadStatus = useCallback(
-    (theCase: Case, file: CaseFile, status: CaseFileStatus) => {
-      const files = theCase.caseFiles as CaseFile[]
+    (theCase: Case, file: CaseFileWithStatus, status: CaseFileStatus) => {
+      const files = theCase.caseFiles as CaseFileWithStatus[]
 
       if (files) {
         const fileIndexToUpdate = files.findIndex((f) => f.id === file.id)
@@ -57,6 +51,9 @@ export const useCourtUpload = (
           status,
         }
 
+        // setFileUploadStatus is doing some in-place updates before calling setWorkingCase
+        // We need to refactor this code at some point to avoid in-place updates
+        // Then we can fix the call to setWorkingCase to accept the current working case as argument
         setWorkingCase({ ...theCase })
       }
     },
@@ -65,7 +62,7 @@ export const useCourtUpload = (
 
   useEffect(() => {
     const files = (workingCase.caseFiles?.filter((f) => !f.category) ??
-      []) as CaseFile[]
+      []) as CaseFileWithStatus[]
 
     files
       .filter((file) => !file.status)
@@ -106,9 +103,9 @@ export const useCourtUpload = (
     )
   }, [setFileUploadStatus, workingCase])
 
-  const uploadFilesToCourt = async (files?: TCaseFile[]) => {
+  const uploadFilesToCourt = async (files?: CaseFile[]) => {
     if (files) {
-      const xFiles = files as CaseFile[]
+      const xFiles = files as CaseFileWithStatus[]
       xFiles.forEach(async (file) => {
         try {
           if (file.state === CaseFileState.STORED_IN_RVG && file.key) {

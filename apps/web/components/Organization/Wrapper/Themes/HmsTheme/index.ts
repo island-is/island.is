@@ -1,3 +1,3 @@
-import dynamic from 'next/dynamic'
+import Header from './HmsHeader'
 
-export const HmsHeader = dynamic(() => import('./HmsHeader'), { ssr: false })
+export const HmsHeader = Header

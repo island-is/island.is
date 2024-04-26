@@ -34,13 +34,12 @@
         "cwd": "libs/clients/transport-authority/vehicle-plate-ordering"
       }
     },
-    "schemas/external-openapi-generator": {
+    "codegen/backend-client": {
       "executor": "nx:run-commands",
       "options": {
-        "commands": [
-          "yarn openapi-generator -o libs/clients/transport-authority/vehicle-plate-ordering/gen/fetch -i libs/clients/transport-authority/vehicle-plate-ordering/src/clientConfig.json"
-        ]
-      }
+        "command": "yarn openapi-generator -o libs/clients/transport-authority/vehicle-plate-ordering/gen/fetch -i libs/clients/transport-authority/vehicle-plate-ordering/src/clientConfig.json"
+      },
+      "outputs": ["{projectRoot}/gen/fetch"]
     }
   },
   "tags": ["lib:client", "scope:client"]

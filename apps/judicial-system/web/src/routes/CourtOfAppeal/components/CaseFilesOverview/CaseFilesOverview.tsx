@@ -21,7 +21,7 @@ const CaseFilesOverview: React.FC<React.PropsWithChildren<unknown>> = () => {
     <>
       <AppealCaseFilesOverview />
       <Box marginBottom={6}>
-        <Text as="h3" variant="h3">
+        <Text as="h3" variant="h3" marginBottom={3}>
           {formatMessage(strings.courtCaseFilesTitle)}
         </Text>
         <PdfButton

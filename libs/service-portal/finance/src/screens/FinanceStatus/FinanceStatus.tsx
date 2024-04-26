@@ -1,20 +1,18 @@
 import subYears from 'date-fns/subYears'
 import flatten from 'lodash/flatten'
-import React from 'react'
 import { defineMessage } from 'react-intl'
 
-import { gql, useQuery } from '@apollo/client'
-import { Query } from '@island.is/api/schema'
 import {
   AlertBanner,
   Box,
   Button,
   GridColumn,
   GridRow,
+  Hidden,
+  Inline,
   SkeletonLoader,
   Stack,
   Table as T,
-  Text,
 } from '@island.is/island-ui/core'
 import { useLocale, useNamespaces } from '@island.is/localization'
 import {
@@ -22,7 +20,7 @@ import {
   ErrorScreen,
   ExpandHeader,
   ExpandRow,
-  FJARSYSLAN_ID,
+  FJARSYSLAN_SLUG,
   FootNote,
   formSubmit,
   m,
@@ -39,23 +37,12 @@ import {
 import * as styles from './Table.css'
 import { useUserInfo } from '@island.is/auth/react'
 import FinanceIntro from '../../components/FinanceIntro'
-
-const GetFinanceStatusQuery = gql`
-  query GetFinanceStatusQuery {
-    getFinanceStatus
-  }
-`
-
-const GetDebtStatusQuery = gql`
-  query FinanceStatusGetDebtStatus {
-    getDebtStatus {
-      myDebtStatus {
-        approvedSchedule
-        possibleToSchedule
-      }
-    }
-  }
-`
+import {
+  useGetDebtStatusQuery,
+  useGetFinanceStatusQuery,
+} from './FinanceStatus.generated'
+import { m as messages } from '../../lib/messages'
+import { Problem } from '@island.is/react-spa/shared'
 
 const FinanceStatus = () => {
   useNamespaces('sp.finance-status')
@@ -64,12 +51,10 @@ const FinanceStatus = () => {
 
   const isDelegation = userInfo && checkDelegation(userInfo)
 
-  const { loading, error, ...statusQuery } = useQuery<Query>(
-    GetFinanceStatusQuery,
-  )
+  const { loading, error, ...statusQuery } = useGetFinanceStatusQuery()
 
   const { data: debtStatusData, loading: debtStatusLoading } =
-    useQuery<Query>(GetDebtStatusQuery)
+    useGetDebtStatusQuery()
 
   const debtStatus = debtStatusData?.getDebtStatus?.myDebtStatus
   let scheduleButtonVisible = false
@@ -106,19 +91,6 @@ const FinanceStatus = () => {
   const twoYearsAgo = subYears(new Date(), 2).getFullYear().toString()
   const financeStatusZero = financeStatusData?.statusTotals === 0
 
-  if (error && !loading) {
-    return (
-      <ErrorScreen
-        figure="./assets/images/hourglass.svg"
-        tagVariant="red"
-        tag={formatMessage(m.errorTitle)}
-        title={formatMessage(m.somethingWrong)}
-        children={formatMessage(m.errorFetchModule, {
-          module: formatMessage(m.finance).toLowerCase(),
-        })}
-      />
-    )
-  }
   return (
     <Box marginTop={[1, 1, 2, 2, 4]} marginBottom={[6, 6, 10]}>
       <FinanceIntro
@@ -128,149 +100,155 @@ const FinanceStatus = () => {
             'Hér sérð þú sundurliðun skulda og/eða inneigna hjá ríkissjóði og stofnunum.',
         })}
       />
-      <Stack space={2}>
-        <GridRow>
-          <GridColumn span={['12/12', '12/12', '12/12', '8/12']}>
-            {financeStatusData.organizations?.length > 0 ||
-            financeStatusZero ? (
-              <Box
-                display="flex"
-                flexWrap="wrap"
-                justifyContent="flexStart"
-                printHidden
-              >
-                {!isDelegation && scheduleButtonVisible && (
-                  <Box paddingRight={2} marginBottom={[1, 1, 1, 0]}>
-                    <a
-                      href="/umsoknir/greidsluaaetlun/"
-                      target="_blank"
-                      rel="noreferrer"
-                    >
-                      <Button
-                        colorScheme="default"
-                        icon="receipt"
-                        iconType="filled"
-                        size="default"
-                        type="button"
-                        variant="utility"
+      {error && !loading && <Problem error={error} noBorder={false} />}
+      {!error && (
+        <Stack space={2}>
+          <GridRow>
+            <GridColumn span={['12/12', '12/12', '12/12', '8/12']}>
+              {financeStatusData.organizations?.length > 0 ||
+              financeStatusZero ? (
+                <Box
+                  display="flex"
+                  flexWrap="wrap"
+                  justifyContent="flexStart"
+                  printHidden
+                >
+                  {!isDelegation && scheduleButtonVisible && (
+                    <Box paddingRight={2} marginBottom={[1, 1, 1, 0]}>
+                      <a
+                        href="/umsoknir/greidsluaaetlun/"
+                        target="_blank"
+                        rel="noreferrer"
                       >
-                        {formatMessage({
-                          id: 'sp.finance-status:make-payment-schedule',
-                          defaultMessage: 'Gera greiðsluáætlun',
-                        })}
-                      </Button>
-                    </a>
-                  </Box>
-                )}
-
-                <Box paddingRight={2} marginBottom={[1, 1, 1, 0]}>
-                  <Button
-                    colorScheme="default"
-                    icon="print"
-                    iconType="filled"
-                    onClick={() => window.print()}
-                    preTextIconType="filled"
-                    size="default"
-                    type="button"
-                    variant="utility"
-                  >
-                    {formatMessage(m.print)}
-                  </Button>
-                </Box>
-                <DropdownExport
-                  onGetCSV={() =>
-                    exportGreidslustadaFile(financeStatusData, 'csv')
-                  }
-                  onGetExcel={() =>
-                    exportGreidslustadaFile(financeStatusData, 'xlsx')
-                  }
-                  dropdownItems={[
-                    {
-                      title: formatMessage({
-                        id: 'sp.finance-status:get-debt-certificate',
-                        defaultMessage: 'Skuldleysisvottorð',
-                      }),
-                      href: '/umsoknir/skuldleysisvottord/',
-                    },
-                    {
-                      title: formatMessage(endOfYearMessage, {
-                        year: previousYear,
-                      }),
-                      onClick: () =>
-                        formSubmit(
-                          `${financeStatusData.downloadServiceURL}${previousYear}`,
-                          true,
-                        ),
-                    },
-                    {
-                      title: formatMessage(endOfYearMessage, {
-                        year: twoYearsAgo,
-                      }),
-                      onClick: () =>
-                        formSubmit(
-                          `${financeStatusData.downloadServiceURL}${twoYearsAgo}`,
-                          true,
-                        ),
-                    },
-                  ]}
-                />
-              </Box>
-            ) : null}
-          </GridColumn>
-        </GridRow>
-        <Box marginTop={2}>
-          {loading && (
-            <Box padding={3}>
-              <SkeletonLoader space={1} height={40} repeat={5} />
-            </Box>
-          )}
-
-          {financeStatusData?.message && (
-            <Box paddingY={2}>
-              <AlertBanner
-                description={financeStatusData?.message}
-                variant="warning"
-              />
-            </Box>
-          )}
-          {financeStatusData?.organizations?.length > 0 || financeStatusZero ? (
-            <Box className={styles.printStyle} marginTop={2}>
-              <T.Table>
-                <ExpandHeader
-                  data={[
-                    { value: '', align: 'left' },
-                    { value: formatMessage(m.feeCategory) },
-                    { value: formatMessage(m.guardian) },
-                    { value: formatMessage(m.status), align: 'right' },
-                  ]}
-                />
-                <T.Body>
-                  {financeStatusData?.organizations?.map(
-                    (org: FinanceStatusOrganizationType, i) =>
-                      org.chargeTypes.map((chargeType, ii) => (
-                        <FinanceStatusTableRow
-                          chargeType={chargeType}
-                          organization={org}
-                          downloadURL={financeStatusData.downloadServiceURL}
-                          key={`${org.id}-${chargeType.id}-${i}-${ii}`}
-                        />
-                      )),
+                        <Button
+                          colorScheme="default"
+                          icon="receipt"
+                          iconType="filled"
+                          size="default"
+                          type="button"
+                          variant="utility"
+                          as="span"
+                          unfocusable
+                        >
+                          {formatMessage({
+                            id: 'sp.finance-status:make-payment-schedule',
+                            defaultMessage: 'Gera greiðsluáætlun',
+                          })}
+                        </Button>
+                      </a>
+                    </Box>
                   )}
-                  <ExpandRow
-                    last
-                    data={[
-                      { value: formatMessage(m.total) },
-                      { value: '' },
-                      { value: getChargeTypeTotal(), align: 'right' },
+
+                  <Box paddingRight={2} marginBottom={[1, 1, 1, 0]}>
+                    <Button
+                      colorScheme="default"
+                      icon="print"
+                      iconType="filled"
+                      onClick={() => window.print()}
+                      preTextIconType="filled"
+                      size="default"
+                      type="button"
+                      variant="utility"
+                    >
+                      {formatMessage(m.print)}
+                    </Button>
+                  </Box>
+                  <DropdownExport
+                    onGetCSV={() =>
+                      exportGreidslustadaFile(financeStatusData, 'csv')
+                    }
+                    onGetExcel={() =>
+                      exportGreidslustadaFile(financeStatusData, 'xlsx')
+                    }
+                    dropdownItems={[
+                      {
+                        title: formatMessage({
+                          id: 'sp.finance-status:get-debt-certificate',
+                          defaultMessage: 'Skuldleysisvottorð',
+                        }),
+                        href: '/umsoknir/skuldleysisvottord/',
+                      },
+                      {
+                        title: formatMessage(endOfYearMessage, {
+                          year: previousYear,
+                        }),
+                        onClick: () =>
+                          formSubmit(
+                            `${financeStatusData.downloadServiceURL}${previousYear}`,
+                            true,
+                          ),
+                      },
+                      {
+                        title: formatMessage(endOfYearMessage, {
+                          year: twoYearsAgo,
+                        }),
+                        onClick: () =>
+                          formSubmit(
+                            `${financeStatusData.downloadServiceURL}${twoYearsAgo}`,
+                            true,
+                          ),
+                      },
                     ]}
                   />
-                </T.Body>
-              </T.Table>
-            </Box>
-          ) : null}
-        </Box>
-      </Stack>
-      <FootNote serviceProviderID={FJARSYSLAN_ID} />
+                </Box>
+              ) : null}
+            </GridColumn>
+          </GridRow>
+          <Box marginTop={2}>
+            {loading && (
+              <Box padding={3}>
+                <SkeletonLoader space={1} height={40} repeat={5} />
+              </Box>
+            )}
+
+            {financeStatusData?.message && (
+              <Box paddingY={2}>
+                <AlertBanner
+                  description={financeStatusData?.message}
+                  variant="warning"
+                />
+              </Box>
+            )}
+            {financeStatusData?.organizations?.length > 0 ||
+            financeStatusZero ? (
+              <Box className={styles.printStyle} marginTop={2}>
+                <T.Table>
+                  <ExpandHeader
+                    data={[
+                      { value: '', align: 'left' },
+                      { value: formatMessage(messages.feeCategory) },
+                      { value: formatMessage(m.guardian) },
+                      { value: formatMessage(m.status), align: 'right' },
+                    ]}
+                  />
+                  <T.Body>
+                    {financeStatusData?.organizations?.map(
+                      (org: FinanceStatusOrganizationType, i) =>
+                        org.chargeTypes.map((chargeType, ii) => (
+                          <FinanceStatusTableRow
+                            chargeType={chargeType}
+                            organization={org}
+                            downloadURL={financeStatusData.downloadServiceURL}
+                            key={`${org.id}-${chargeType.id}-${i}-${ii}`}
+                          />
+                        )),
+                    )}
+                    <ExpandRow
+                      last
+                      data={[
+                        { value: formatMessage(m.total) },
+                        { value: '' },
+                        { value: getChargeTypeTotal(), align: 'right' },
+                      ]}
+                    />
+                  </T.Body>
+                </T.Table>
+              </Box>
+            ) : null}
+          </Box>
+        </Stack>
+      )}
+      <FootNote serviceProviderSlug={FJARSYSLAN_SLUG} />
     </Box>
   )
 }

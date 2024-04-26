@@ -6,6 +6,7 @@
     "next/core-web-vitals"
   ],
   "ignorePatterns": ["!**/*"],
+  "plugins": ["simple-import-sort"],
   "overrides": [
     {
       "files": ["*.ts", "*.tsx", "*.js", "*.jsx"],
@@ -13,6 +14,26 @@
         "@next/next/no-html-link-for-pages": [
           "error",
           "apps/tools/contentful-role-permissions/pages"
+        ],
+        "simple-import-sort/imports": [
+          "warn",
+          {
+            "groups": [
+              // React related packages come first, followed by all external imports.
+              ["^react", "^\\w", "^@(?!island).+"],
+              // Then island.is packages.
+              ["^(@island.is).*"],
+              // Then all other imports in this order: "../", "./", "./css"
+              [
+                "^\\.\\.(?!/?$)",
+                "^\\.\\./?$",
+                "^\\./(?=.*/)(?!/?$)",
+                "^\\.(?!/?$)",
+                "^\\./?$",
+                "^.+\\.?(css)$"
+              ]
+            ]
+          }
         ]
       }
     },

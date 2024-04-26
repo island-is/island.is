@@ -45,14 +45,12 @@
         "runInBand": true
       }
     },
-    "schemas/build-openapi": {
+    "codegen/backend-schema": {
       "executor": "nx:run-commands",
       "options": {
         "command": "cross-env INIT_SCHEMA=true yarn ts-node -P apps/services/auth/public-api/tsconfig.app.json apps/services/auth/public-api/src/buildOpenApi.ts $NX_OPTIONS"
       },
-      "outputs": [
-        "{workspaceRoot}/apps/services/auth/public-api/src/openapi.yaml"
-      ]
+      "outputs": ["{projectRoot}/src/openapi.yaml"]
     },
     "docker-express": {}
   },

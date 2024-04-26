@@ -12,7 +12,7 @@ import {
   indictmentCases,
   InstitutionType,
   investigationCases,
-  isAppealsCourtUser,
+  isCourtOfAppealsUser,
   isDefenceUser,
   isDistrictCourtUser,
   isPrisonSystemUser,
@@ -22,13 +22,14 @@ import {
   UserRole,
 } from '@island.is/judicial-system/types'
 
-function getProsecutionUserCasesQueryFilter(user: User): WhereOptions {
+const getProsecutionUserCasesQueryFilter = (user: User): WhereOptions => {
   const options: WhereOptions = [
     { isArchived: false },
     {
       state: [
         CaseState.NEW,
         CaseState.DRAFT,
+        CaseState.WAITING_FOR_CONFIRMATION,
         CaseState.SUBMITTED,
         CaseState.RECEIVED,
         CaseState.ACCEPTED,
@@ -38,8 +39,7 @@ function getProsecutionUserCasesQueryFilter(user: User): WhereOptions {
     },
     {
       [Op.or]: [
-        { creating_prosecutor_id: { [Op.is]: null } },
-        { '$creatingProsecutor.institution_id$': user.institution?.id },
+        { prosecutors_office_id: user.institution?.id },
         { shared_with_prosecutors_office_id: user.institution?.id },
       ],
     },
@@ -66,7 +66,7 @@ function getProsecutionUserCasesQueryFilter(user: User): WhereOptions {
   }
 }
 
-function getDistrictCourtUserCasesQueryFilter(user: User): WhereOptions {
+const getDistrictCourtUserCasesQueryFilter = (user: User): WhereOptions => {
   const options: WhereOptions = [
     { isArchived: false },
     {
@@ -77,7 +77,7 @@ function getDistrictCourtUserCasesQueryFilter(user: User): WhereOptions {
     },
   ]
 
-  if (user.role === UserRole.ASSISTANT) {
+  if (user.role === UserRole.DISTRICT_COURT_ASSISTANT) {
     options.push(
       { type: indictmentCases },
       {
@@ -131,20 +131,30 @@ function getDistrictCourtUserCasesQueryFilter(user: User): WhereOptions {
   }
 }
 
-function getAppealsCourtUserCasesQueryFilter(): WhereOptions {
+const getAppealsCourtUserCasesQueryFilter = (): WhereOptions => {
   return {
     [Op.and]: [
       { isArchived: false },
       { type: [...restrictionCases, ...investigationCases] },
       { state: [CaseState.ACCEPTED, CaseState.REJECTED, CaseState.DISMISSED] },
       {
-        appeal_state: [CaseAppealState.RECEIVED, CaseAppealState.COMPLETED],
+        [Op.or]: [
+          {
+            appeal_state: [CaseAppealState.RECEIVED, CaseAppealState.COMPLETED],
+          },
+          {
+            [Op.and]: [
+              { appeal_state: [CaseAppealState.WITHDRAWN] },
+              { appeal_received_by_court_date: { [Op.not]: null } },
+            ],
+          },
+        ],
       },
     ],
   }
 }
 
-function getPrisonSystemStaffUserCasesQueryFilter(user: User): WhereOptions {
+const getPrisonSystemStaffUserCasesQueryFilter = (user: User): WhereOptions => {
   const options: WhereOptions = [
     { isArchived: false },
     { state: CaseState.ACCEPTED },
@@ -177,7 +187,7 @@ function getPrisonSystemStaffUserCasesQueryFilter(user: User): WhereOptions {
   return { [Op.and]: options }
 }
 
-function getDefenceUserCasesQueryFilter(user: User): WhereOptions {
+const getDefenceUserCasesQueryFilter = (user: User): WhereOptions => {
   const options: WhereOptions = [
     { isArchived: false },
     {
@@ -199,7 +209,7 @@ function getDefenceUserCasesQueryFilter(user: User): WhereOptions {
                 {
                   [Op.and]: [
                     { state: CaseState.RECEIVED },
-                    { court_date: { [Op.not]: null } },
+                    { '$dateLogs.date_type$': 'COURT_DATE' },
                   ],
                 },
                 { state: completedCaseStates },
@@ -226,7 +236,7 @@ function getDefenceUserCasesQueryFilter(user: User): WhereOptions {
   }
 }
 
-export function getCasesQueryFilter(user: User): WhereOptions {
+export const getCasesQueryFilter = (user: User): WhereOptions => {
   // TODO: Convert to switch
   if (isProsecutionUser(user)) {
     return getProsecutionUserCasesQueryFilter(user)
@@ -236,7 +246,7 @@ export function getCasesQueryFilter(user: User): WhereOptions {
     return getDistrictCourtUserCasesQueryFilter(user)
   }
 
-  if (isAppealsCourtUser(user)) {
+  if (isCourtOfAppealsUser(user)) {
     return getAppealsCourtUserCasesQueryFilter()
   }
 

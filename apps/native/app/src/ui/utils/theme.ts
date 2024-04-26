@@ -1,6 +1,6 @@
-import * as color from './colors';
+import * as color from './colors'
 
-export const UNIT = 8;
+export const UNIT = 8
 
 const spacing = {
   0: UNIT * 0,
@@ -27,7 +27,7 @@ const spacing = {
   28: UNIT * 28,
   29: UNIT * 29,
   30: UNIT * 30,
-  none: UNIT * 0,
+  none: 0,
   smallGutter: UNIT * 0.5,
   gutter: UNIT * 2,
   containerGutter: UNIT * 6,
@@ -37,7 +37,7 @@ const spacing = {
   p3: 14,
   p4: 16,
   p5: 18,
-};
+}
 
 export const theme = {
   mode: 'light',
@@ -81,6 +81,7 @@ export const theme = {
     radius: {
       standard: '4px',
       large: '8px',
+      extraLarge: '16px',
       circle: '50%',
     },
     width: {
@@ -105,9 +106,9 @@ export const theme = {
   },
   color,
   grid: {
-    gutter: {desktop: 24, mobile: 12},
+    gutter: { desktop: 24, mobile: 12 },
   },
-};
+}
 
-export type Theme = typeof theme;
-export type Colors = keyof typeof color;
+export type Theme = typeof theme
+export type Colors = keyof typeof color

@@ -29,7 +29,9 @@ export class AdgerdirPageSyncService
   }
 
   doMapping(entries: IVidspyrnaPage[]) {
-    logger.info('Mapping adgerdir page', { count: entries.length })
+    if (entries.length > 0) {
+      logger.info('Mapping adgerdir page', { count: entries.length })
+    }
 
     return entries
       .map<MappedData | boolean>((entry) => {

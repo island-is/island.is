@@ -1,43 +1,56 @@
-import React, { FC, useState } from 'react'
+import { useState } from 'react'
 import { useLocale, useNamespaces } from '@island.is/localization'
 import { Box, Text, Stack, Divider, Select } from '@island.is/island-ui/core'
 import { messages } from '../../lib/messages'
-import { formatDate, UserInfoLine } from '@island.is/service-portal/core'
+import {
+  formatDate,
+  LinkButton,
+  UserInfoLine,
+} from '@island.is/service-portal/core'
 
-import { FootNote } from '../FootNote.tsx/FootNote'
+import { FootNote } from '../FootNote/FootNote'
 import * as styles from './TherapiesTabContent.css'
 import { formatNumberToString } from '../../utils/format'
 import { TherapyStatus } from '../../utils/constants'
-import LinkButton from '../LinkButton/LinkButton'
 import { RightsPortalTherapy } from '@island.is/api/schema'
+import { Problem } from '@island.is/react-spa/shared'
 interface Props {
   data: RightsPortalTherapy[]
   link?: string
   linkText?: string
+  loading: boolean
 }
 
 type OptionType = {
   label: string
   value: string
 }
-export const TherapiesTabContent: FC<React.PropsWithChildren<Props>> = ({
+export const TherapiesTabContent = ({
   data,
   link,
   linkText,
-}) => {
+  loading,
+}: Props) => {
   useNamespaces('sp.health')
   const { formatMessage } = useLocale()
   const [dropDownValue, setDropDownValue] = useState<OptionType>()
   let displayDropDown = false
   let dropDownOptions
 
-  if (!data || data.length === 0) {
+  if (!loading && !data.length) {
     return (
-      <Box width="full" marginTop={4} display="flex" justifyContent="center">
-        <Text variant="h5" as="h3">
-          {formatMessage(messages.noData)}
-        </Text>
-      </Box>
+      <Problem
+        type="no_data"
+        title={formatMessage(messages.noDataFound, {
+          arg: formatMessage(messages.therapyTitle).toLowerCase(),
+        })}
+        message={formatMessage(messages.noDataFoundDetail, {
+          arg: formatMessage(messages.therapyTitle).toLowerCase(),
+        })}
+        imgSrc="./assets/images/coffee.svg"
+        titleSize="h3"
+        noBorder={false}
+      />
     )
   }
 
@@ -56,15 +69,15 @@ export const TherapiesTabContent: FC<React.PropsWithChildren<Props>> = ({
       : data[0]
 
   // Build time periods in format dd.mm.yyyy - dd.mm.yyyy
-  const from = content.periods?.find((x) => x.from !== null)?.from ?? ''
-  const to = content.periods?.find((x) => x.to !== null)?.to ?? ''
+  const from = content?.periods?.find((x) => x.from !== null)?.from ?? ''
+  const to = content?.periods?.find((x) => x.to !== null)?.to ?? ''
   const timePeriod = [formatDate(from), formatDate(to)]
     .filter(Boolean)
     .join(' - ')
-  const periods = content.periods
+  const periods = content?.periods
 
   return (
-    <Box width="full" marginTop={[1, 1, 4]}>
+    <Box width="full">
       {displayDropDown && dropDownOptions && (
         <Box className={styles.dropdown} marginBottom={4}>
           <Select
@@ -84,6 +97,7 @@ export const TherapiesTabContent: FC<React.PropsWithChildren<Props>> = ({
         <UserInfoLine
           title={formatMessage(messages.informationAboutStatus)}
           label={formatMessage(messages.timePeriod)}
+          loading={loading}
           content={
             timePeriod === ''
               ? formatMessage(messages.noValidTimePeriod)
@@ -93,14 +107,16 @@ export const TherapiesTabContent: FC<React.PropsWithChildren<Props>> = ({
         <Divider />
         <UserInfoLine
           label={formatMessage(messages.status)}
+          loading={loading}
           content={
-            formatMessage(messages[content.state?.code as TherapyStatus]) ??
+            formatMessage(messages[content?.state?.code as TherapyStatus]) ??
             formatMessage(messages.unknownStatus)
           }
         />
         <Divider />
         <UserInfoLine
           label={formatMessage(messages.usedTherapySessions)}
+          loading={loading}
           content={formatNumberToString(
             periods?.find((x) => x.sessions?.used === 0 || x.sessions?.used)
               ?.sessions?.used,
@@ -109,6 +125,7 @@ export const TherapiesTabContent: FC<React.PropsWithChildren<Props>> = ({
         <Divider />
         <UserInfoLine
           label={formatMessage(messages.totalTherapySessions)}
+          loading={loading}
           content={formatNumberToString(
             periods?.find(
               (x) => x.sessions?.available === 0 || x.sessions?.available,
@@ -117,7 +134,7 @@ export const TherapiesTabContent: FC<React.PropsWithChildren<Props>> = ({
         />
         <Divider />
       </Stack>
-      <FootNote type={data[0].id.toString()} />
+      <FootNote type={data?.[0]?.id.toString()} />
       {link && linkText && <LinkButton to={link} text={linkText} />}
     </Box>
   )

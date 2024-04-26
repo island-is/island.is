@@ -1,6 +1,10 @@
 /* eslint-disable jsx-a11y/anchor-is-valid */
-import { useEffect, useState, useRef, useReducer } from 'react'
+import { useEffect, useReducer, useRef, useState } from 'react'
+import { useRouter } from 'next/router'
+import { ApolloClient } from '@apollo/client'
 import { useApolloClient } from '@apollo/client/react'
+
+import { SliceType } from '@island.is/island-ui/contentful'
 import {
   AlertMessage,
   Box,
@@ -11,39 +15,37 @@ import {
   Tag,
   Text,
 } from '@island.is/island-ui/core'
-import { withMainLayout } from '@island.is/web/layouts/main'
-import {
-  ContentLanguage,
-  Query,
-  QueryGetOperatingLicensesArgs,
-  QueryGetNamespaceArgs,
-  QueryGetOrganizationPageArgs,
-  QueryGetOrganizationSubpageArgs,
-  OperatingLicense,
-} from '@island.is/web/graphql/schema'
-import {
-  GET_NAMESPACE_QUERY,
-  GET_ORGANIZATION_PAGE_QUERY,
-  GET_ORGANIZATION_SUBPAGE_QUERY,
-  GET_OPERATING_LICENSES_QUERY,
-  GET_OPERATING_LICENSES_CSV_QUERY,
-} from '../../queries'
-import { Screen } from '../../../types'
-import { useNamespace } from '@island.is/web/hooks'
-import { useLinkResolver } from '@island.is/web/hooks/useLinkResolver'
 import {
   OrganizationWrapper,
   SyslumennListCsvExport,
   Webreader,
 } from '@island.is/web/components'
-import { CustomNextError } from '@island.is/web/units/errors'
-import { useRouter } from 'next/router'
-import { useDateUtils } from '@island.is/web/i18n/useDateUtils'
+import {
+  ContentLanguage,
+  OperatingLicense,
+  Query,
+  QueryGetNamespaceArgs,
+  QueryGetOperatingLicensesArgs,
+  QueryGetOrganizationPageArgs,
+  QueryGetOrganizationSubpageArgs,
+} from '@island.is/web/graphql/schema'
+import { useNamespace } from '@island.is/web/hooks'
 import useContentfulId from '@island.is/web/hooks/useContentfulId'
-import { SliceType } from '@island.is/island-ui/contentful'
+import { useLinkResolver } from '@island.is/web/hooks/useLinkResolver'
+import { useDateUtils } from '@island.is/web/i18n/useDateUtils'
+import { withMainLayout } from '@island.is/web/layouts/main'
+import { CustomNextError } from '@island.is/web/units/errors'
 import { webRichText } from '@island.is/web/utils/richText'
-import { ApolloClient } from '@apollo/client'
 import { safelyExtractPathnameFromUrl } from '@island.is/web/utils/safelyExtractPathnameFromUrl'
+
+import { Screen } from '../../../types'
+import {
+  GET_NAMESPACE_QUERY,
+  GET_OPERATING_LICENSES_CSV_QUERY,
+  GET_OPERATING_LICENSES_QUERY,
+  GET_ORGANIZATION_PAGE_QUERY,
+  GET_ORGANIZATION_SUBPAGE_QUERY,
+} from '../../queries'
 
 const DEBOUNCE_TIMER = 400
 const PAGE_SIZE = 10
@@ -358,7 +360,9 @@ const OperatingLicenses: Screen<OperatingLicensesProps> = ({
       organizationPage={organizationPage}
       // eslint-disable-next-line @typescript-eslint/ban-ts-comment
       // @ts-ignore make web strict
-      pageFeaturedImage={subpage?.featuredImage}
+      pageFeaturedImage={
+        subpage?.featuredImage ?? organizationPage?.featuredImage
+      }
       showReadSpeaker={false}
       breadcrumbItems={[
         {
@@ -543,7 +547,7 @@ const OperatingLicenses: Screen<OperatingLicensesProps> = ({
                   : {operatingLicense.alcoholWeekendOutdoorLicense}
                 </Text>
               )}
-              {operatingLicense.maximumNumberOfGuests &&
+              {typeof operatingLicense.maximumNumberOfGuests === 'number' &&
                 operatingLicense.maximumNumberOfGuests > 0 && (
                   <Text paddingBottom={0}>
                     {n(
@@ -553,8 +557,8 @@ const OperatingLicenses: Screen<OperatingLicensesProps> = ({
                     : {operatingLicense.maximumNumberOfGuests}
                   </Text>
                 )}
-              {operatingLicense.numberOfDiningGuests &&
-                operatingLicense?.numberOfDiningGuests > 0 && (
+              {typeof operatingLicense.numberOfDiningGuests === 'number' &&
+                operatingLicense.numberOfDiningGuests > 0 && (
                   <Text paddingBottom={0}>
                     {n(
                       'operatingLicensesMaximumNumberOfDiningGuests',

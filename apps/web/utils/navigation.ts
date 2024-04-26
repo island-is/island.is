@@ -2,6 +2,8 @@ import { AllSlicesFragment as Slice } from '@island.is/web/graphql/schema'
 import { Document, BLOCKS, Block, Text } from '@contentful/rich-text-types'
 import slugify from '@sindresorhus/slugify'
 
+const headingLevels = ['h2', 'h3', 'h4', 'h5'] as const
+type HeadingType = typeof headingLevels[number]
 interface NavLink {
   id: string
   text: string
@@ -21,6 +23,7 @@ const isNavigable = (slice: Slice) =>
   // @ts-ignore make web strict
   slice['title'] &&
   slice.__typename !== 'Image' &&
+  slice.__typename !== 'Asset' &&
   // If there's not a showTitle field on the slice or it's set to true we want to show the title
   // eslint-disable-next-line @typescript-eslint/ban-ts-comment
   // @ts-ignore make web strict
@@ -71,4 +74,18 @@ const sliceToNavLinks = (slice: Slice, htmlTags: BLOCKS[]): NavLink[] => {
   }
 
   return []
+}
+
+export const extractHeadingLevels = (slice: {
+  titleHeadingLevel?: string | null
+}) => {
+  let titleHeading: HeadingType = 'h2'
+  let childHeading: HeadingType = 'h3'
+
+  if (headingLevels.includes(slice.titleHeadingLevel as HeadingType)) {
+    titleHeading = slice.titleHeadingLevel as HeadingType
+    childHeading = `h${Number(titleHeading[1]) + 1}` as HeadingType
+  }
+
+  return { titleHeading, childHeading }
 }

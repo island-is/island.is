@@ -40,6 +40,8 @@ const prodConfig = {
     serviceName: 'financial-aid-backend',
   },
   navEncryptionKey: process.env.NAV_ENCRYPTION_KEY,
+  municipalityAccessApiEncryptionKey:
+    process.env.MUNICIPALITY_ACCESS_API_ENCRYPTION_KEY,
 }
 
 const devConfig = {
@@ -74,6 +76,8 @@ const devConfig = {
     defaultNamespace: '@samband.is/financial-backend',
   },
   navEncryptionKey: process.env.NAV_ENCRYPTION_KEY,
+  municipalityAccessApiEncryptionKey:
+    process.env.MUNICIPALITY_ACCESS_API_ENCRYPTION_KEY,
 }
 
 export default process.env.NODE_ENV === 'production' ? prodConfig : devConfig

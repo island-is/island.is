@@ -328,7 +328,8 @@
         "message": "We ran into a problem marking the car for deregistration. Please try again.",
         "primaryButton": "Try again",
         "secondaryButton": "Cancel"
-      }
+      },
+      "currentMileage": "Current mileage"
     }
   },
   "recyclingFundOverview": {

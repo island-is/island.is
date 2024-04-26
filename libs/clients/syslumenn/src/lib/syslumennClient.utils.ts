@@ -10,8 +10,8 @@ import {
   VedbandayfirlitReguverkiSvarSkeyti,
   SkraningaradiliDanarbusSkeyti,
   TegundAndlags,
-  AdiliDanarbus,
   DanarbuUppl,
+  DanarbuUpplRadstofun,
   EignirDanarbus,
   Fasteignasalar,
   Logmenn,
@@ -20,6 +20,12 @@ import {
   Verdbrefamidlari,
   Erfingar,
   Malsvari,
+  Meistaraleyfi,
+  Okutaeki,
+  ThjodskraSvarSkeyti,
+  ErfdafjarskatturSvar,
+  DanarbuUpplErfdafjarskatt,
+  EignirDanarbusErfdafjarskatt,
 } from '../../gen/fetch'
 import { uuid } from 'uuidv4'
 import {
@@ -40,13 +46,21 @@ import {
   EstateMember,
   EstateAsset,
   EstateRegistrant,
-  EstateInfo,
   RealEstateAgent,
   Lawyer,
   OperatingLicensesCSV,
   TemporaryEventLicence,
   Broker,
   Advocate,
+  MasterLicence,
+  VehicleRegistration,
+  EstateInfo,
+  AvailableSettlements,
+  RegistryPerson,
+  InheritanceTax,
+  InheritanceReportAsset,
+  InheritanceEstateMember,
+  InheritanceReportInfo,
 } from './syslumennClient.types'
 const UPLOAD_DATA_SUCCESS = 'Gögn móttekin'
 
@@ -308,6 +322,15 @@ export const mapAssetName = (
   return { name: response.heiti ?? '' }
 }
 
+export const mapVehicle = (response: Okutaeki): VehicleRegistration => {
+  return {
+    licensePlate: response.numerOkutaekis,
+    modelName: response.framleidandaGerd,
+    manufacturer: response.framleidandi,
+    color: response.litur,
+  }
+}
+
 export const estateMemberMapper = (estateRaw: Erfingar): EstateMember => {
   return {
     name: estateRaw.nafn ?? '',
@@ -321,8 +344,25 @@ export const assetMapper = (assetRaw: EignirDanarbus): EstateAsset => {
   return {
     description: assetRaw.lysing ?? '',
     assetNumber: assetRaw.fastanumer ?? '',
-    share: assetRaw.eignarhlutfall ?? 1,
+    share:
+      assetRaw.eignarhlutfall !== undefined
+        ? parseShare(assetRaw.eignarhlutfall)
+        : 100,
   }
+}
+
+export const mapAvailableSettlements = (
+  settlementRaw: DanarbuUpplRadstofun['mogulegSkipti'],
+): AvailableSettlements | undefined => {
+  if (settlementRaw) {
+    return {
+      divisionOfEstateByHeirs: settlementRaw.Einkaskipti,
+      estateWithoutAssets: settlementRaw.EignalaustDanarbu,
+      officialDivision: settlementRaw.OpinberSkipti,
+      permitForUndividedEstate: settlementRaw.SetaiOskiptuBui,
+    }
+  }
+  return undefined
 }
 
 export const mapEstateRegistrant = (
@@ -339,7 +379,7 @@ export const mapEstateRegistrant = (
             (a) =>
               a.tegundAngalgs === TegundAndlags.NUMBER_0 &&
               a?.fastanumer &&
-              /^[fF]{0,1}\d{7}$/.test(a.fastanumer),
+              /^[Ff]{0,1}\d{7}$|^[Ll]{0,1}\d{6}$/.test(a.fastanumer),
           )
           .map(assetMapper)
       : [],
@@ -386,15 +426,15 @@ export const mapEstateRegistrant = (
 }
 
 // TODO: get updated types into the client
-export const mapEstateInfo = (syslaData: DanarbuUppl): EstateInfo => {
+export const mapEstateInfo = (syslaData: DanarbuUpplRadstofun): EstateInfo => {
   return {
     assets: syslaData.eignir
       ? syslaData.eignir
           .filter(
             (a) =>
+              a?.tegundAngalgs !== undefined &&
               a.tegundAngalgs === TegundAndlags.NUMBER_0 &&
-              a?.tegundAngalgs &&
-              /^[fF]{0,1}\d{7}$/.test(a.fastanumer ?? ''),
+              /^[Ff]{0,1}\d{7}$|^[Ll]{0,1}\d{6}$/.test(a.fastanumer ?? ''),
           )
           .map(assetMapper)
       : [],
@@ -433,5 +473,197 @@ export const mapEstateInfo = (syslaData: DanarbuUppl): EstateInfo => {
     marriageSettlement: syslaData.kaupmali,
     nameOfDeceased: syslaData?.nafn ?? '',
     nationalIdOfDeceased: syslaData?.kennitala ?? '',
+    availableSettlements: mapAvailableSettlements(syslaData.mogulegSkipti),
   }
+}
+export const mapMasterLicence = (licence: Meistaraleyfi): MasterLicence => {
+  return {
+    name: licence.nafn,
+    dateOfPublication: licence.gildirFra,
+    profession: licence.idngrein,
+    office: licence.embaetti,
+  }
+}
+
+export const mapDepartedToRegistryPerson = (
+  departed: ThjodskraSvarSkeyti,
+): RegistryPerson => {
+  return {
+    address: departed.heimili ?? '',
+    city: departed.sveitarfelag ?? '',
+    name: departed.nafn ?? '',
+    nationalId: departed.kennitala ?? '',
+    postalCode: departed.postaritun?.split('-')[0] ?? '',
+  }
+}
+
+export const mapInheritanceTax = (
+  inheritance: ErfdafjarskatturSvar,
+): InheritanceTax => {
+  return {
+    inheritanceTax: inheritance.erfdafjarskattur,
+    taxExemptionLimit: inheritance.skattfrelsismorkUpphaed,
+    validFrom: inheritance.gildirFra,
+  }
+}
+
+const mapInheritanceReportAsset = (
+  iAsset: EignirDanarbusErfdafjarskatt,
+): InheritanceReportAsset => {
+  const {
+    eignarhlutfall,
+    fastanumer,
+    fasteignamat,
+    gengiVextir,
+    lysing,
+    upphaed,
+  } = iAsset
+  return {
+    description: lysing ?? '',
+    assetNumber: fastanumer ?? '',
+    share: parseShare(eignarhlutfall) ?? 100,
+    propertyValuation: fasteignamat ?? '',
+    amount: upphaed ?? '',
+    exchangeRateOrInterest: gengiVextir ?? '',
+  }
+}
+
+const mapInheritanceReportHeirs = (
+  heirs: Array<Erfingar>,
+): Array<InheritanceEstateMember> => {
+  return heirs.map((heir) => ({
+    name: heir.nafn ?? '',
+    nationalId: heir.kennitala ?? '',
+    relation: heir.tengsl ?? 'Annað',
+    advocate: heir.malsvari ? mapAdvocate(heir.malsvari) : undefined,
+    email: heir.netfang,
+    phone: heir.simi,
+    relationWithApplicant: heir.tengsl,
+    address: heir.heimilisfang,
+  }))
+}
+
+const mapInheritanceReportAssets = (
+  iAssets: DanarbuUpplErfdafjarskatt['eignir'],
+) => {
+  const assets: Array<InheritanceReportAsset> = []
+  const vehicles: Array<InheritanceReportAsset> = []
+  const ships: Array<InheritanceReportAsset> = []
+  const cash: Array<InheritanceReportAsset> = []
+  const flyers: Array<InheritanceReportAsset> = []
+  const otherAssets: Array<InheritanceReportAsset> = []
+  const stocks: Array<InheritanceReportAsset> = []
+  const bankAccounts: Array<InheritanceReportAsset> = []
+  const depositsAndMoney: Array<InheritanceReportAsset> = []
+  const guns: Array<InheritanceReportAsset> = []
+  const sharesAndClaims: Array<InheritanceReportAsset> = []
+  const funeralCosts: Array<InheritanceReportAsset> = []
+  const officialFees: Array<InheritanceReportAsset> = []
+  const otherDebts: Array<InheritanceReportAsset> = []
+  const assetsInBusiness: Array<InheritanceReportAsset> = []
+  const debtsInBusiness: Array<InheritanceReportAsset> = []
+
+  iAssets?.forEach((iAsset) => {
+    const asset = mapInheritanceReportAsset(iAsset)
+    switch (iAsset.tegundAngalgs) {
+      case TegundAndlags.NUMBER_0:
+        assets.push(asset)
+        break
+      case TegundAndlags.NUMBER_1:
+        vehicles.push(asset)
+        break
+      case TegundAndlags.NUMBER_2:
+        ships.push(asset)
+        break
+      case TegundAndlags.NUMBER_3:
+        cash.push(asset)
+        break
+      case TegundAndlags.NUMBER_4:
+        flyers.push(asset)
+        break
+      // NUMBER_5 represents unregistered assets so this is skipped
+      case TegundAndlags.NUMBER_6:
+        otherAssets.push(asset)
+        break
+      case TegundAndlags.NUMBER_7:
+        stocks.push(asset)
+        break
+      case TegundAndlags.NUMBER_8:
+        bankAccounts.push({
+          ...asset,
+          exchangeRateOrInterest: String(
+            Math.round(parseShare(iAsset.gengiVextir ?? 0)),
+          ),
+        })
+        break
+      case TegundAndlags.NUMBER_9:
+        depositsAndMoney.push(asset)
+        break
+      case TegundAndlags.NUMBER_10:
+        guns.push(asset)
+        break
+      case TegundAndlags.NUMBER_11:
+        sharesAndClaims.push(asset)
+        break
+      case TegundAndlags.NUMBER_12:
+        funeralCosts.push(asset)
+        break
+      case TegundAndlags.NUMBER_13:
+        officialFees.push(asset)
+        break
+      case TegundAndlags.NUMBER_14:
+        otherDebts.push(asset)
+        break
+      case TegundAndlags.NUMBER_15:
+        assetsInBusiness.push(asset)
+        break
+      case TegundAndlags.NUMBER_16:
+        debtsInBusiness.push(asset)
+        break
+      default:
+        break
+    }
+  })
+
+  return {
+    assets,
+    vehicles,
+    ships,
+    cash,
+    flyers,
+    otherAssets,
+    stocks,
+    bankAccounts,
+    depositsAndMoney,
+    guns,
+    sharesAndClaims,
+    funeralCosts,
+    officialFees,
+    otherDebts,
+    assetsInBusiness,
+    debtsInBusiness,
+  }
+}
+
+export const mapEstateToInheritanceReportInfo = (
+  estate: DanarbuUpplErfdafjarskatt,
+): InheritanceReportInfo => {
+  return {
+    caseNumber: estate.malsnumer,
+    dateOfDeath: estate.danardagur,
+    will: estate.erfdaskra,
+    knowledgeOfOtherWill: estate.erfdakraVitneskja,
+    settlement: estate.kaupmali,
+    nameOfDeceased: estate.nafn,
+    nationalId: estate.kennitala,
+    addressOfDeceased: estate.logheimili,
+    heirs: mapInheritanceReportHeirs(estate.erfingar ?? []),
+    ...mapInheritanceReportAssets(estate.eignir),
+  }
+}
+// This has untested behaviour if share is outside of [0, 100].
+// That should be fine since it is the DC's responsibility to return
+// valid percentages.
+export const parseShare = (share: string | number): number => {
+  return typeof share === 'string' ? parseFloat(share.replace(',', '.')) : share
 }

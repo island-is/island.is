@@ -19,7 +19,9 @@ export class OrganizationPageSyncService
   }
 
   doMapping(entries: IOrganizationPage[]) {
-    logger.info('Mapping organization page', { count: entries.length })
+    if (entries.length > 0) {
+      logger.info('Mapping organization page', { count: entries.length })
+    }
 
     return entries
       .map<MappedData | boolean>((entry) => {

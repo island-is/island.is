@@ -18,7 +18,7 @@ import { getEnvVariables } from '../../../../../../../infra/src/dsl/service-to-e
 import { env } from '../../../../support/urls'
 import { EnvironmentConfig } from '../../../../../../../infra/src/dsl/types/charts'
 
-export async function setupXroadMocks() {
+export const setupXroadMocks = async () => {
   await resetMocks()
   await addXroadMock({
     config: NationalRegistry,

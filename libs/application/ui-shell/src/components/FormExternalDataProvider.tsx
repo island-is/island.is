@@ -119,7 +119,19 @@ const ProviderItem: FC<
       <AlertMessage
         type={errorType}
         title={formatMessage(errorTitle)}
-        message={formatMessage(summary)}
+        message={
+          <Box>
+            <Box component="span" display="block">
+              {summary != null ? (
+                <Text variant="small">
+                  <Markdown>
+                    {formatText(summary, application, formatMessage)}
+                  </Markdown>
+                </Text>
+              ) : null}
+            </Box>
+          </Box>
+        }
       />
     )
   }
@@ -318,6 +330,7 @@ const FormExternalDataProvider: FC<
               }}
               checked={value}
               hasError={error !== undefined}
+              errorMessage={id ? (errors[id] as string) : undefined}
               backgroundColor="blue"
               dataTestId="agree-to-data-providers"
               name={`${id}`}

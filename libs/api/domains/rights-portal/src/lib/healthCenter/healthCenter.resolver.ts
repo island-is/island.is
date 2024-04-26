@@ -20,6 +20,8 @@ import { HealthCenterHistoryInput } from './dto/healthCenterHistory.input'
 import { HealthCenterRegistrationHistory } from './models/healthCenterRecordHistory.model'
 import { HealthCenterRegisterResponse } from './models/healthCenterTransfer.model'
 import { HealthCenterRegisterInput } from './dto/healthCenterTransfer.input'
+import { HealthCenterDoctorsInput } from './dto/healthCenterDoctors.input'
+import { HealthCenterDoctors } from './models/healthCenterDoctors.model'
 @Resolver()
 @UseGuards(IdsUserGuard, ScopesGuard, FeatureFlagGuard)
 @FeatureFlag(Features.servicePortalHealthRightsModule)
@@ -28,7 +30,7 @@ export class HealthCenterResolver {
   constructor(private readonly service: HealthCenterService) {}
 
   @FeatureFlag(Features.servicePortalHealthCenterDentistPage)
-  @Scopes(ApiScope.health)
+  @Scopes(ApiScope.healthHealthcare)
   @Query(() => HealthCenterRegistrationHistory, {
     name: 'rightsPortalHealthCenterRegistrationHistory',
     nullable: true,
@@ -50,7 +52,21 @@ export class HealthCenterResolver {
   }
 
   @FeatureFlag(Features.servicePortalHealthCenterDentistPage)
-  @Scopes(ApiScope.health)
+  @Scopes(ApiScope.healthHealthcare)
+  @Query(() => [HealthCenterDoctors], {
+    name: 'rightsPortalHealthCenterDoctors',
+    nullable: true,
+  })
+  @Audit()
+  getRightsPortalHealthCenterDoctors(
+    @CurrentUser() user: User,
+    @Args('input') input: HealthCenterDoctorsInput,
+  ) {
+    return this.service.getHealthCenterDoctors(user, input)
+  }
+
+  @FeatureFlag(Features.servicePortalHealthCenterDentistPage)
+  @Scopes(ApiScope.healthHealthcare)
   @Query(() => PaginatedHealthCentersResponse, {
     name: 'rightsPortalPaginatedHealthCenters',
     nullable: true,
@@ -60,7 +76,7 @@ export class HealthCenterResolver {
     return this.service.getHealthCenters(user)
   }
 
-  @Scopes(ApiScope.health)
+  @Scopes(ApiScope.healthHealthcare)
   @Mutation(() => HealthCenterRegisterResponse, {
     name: 'rightsPortalRegisterHealthCenter',
   })

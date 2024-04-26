@@ -23,11 +23,12 @@
         "passWithNoTests": true
       }
     },
-    "schemas/external-openapi-generator": {
+    "codegen/backend-client": {
       "executor": "nx:run-commands",
       "options": {
         "command": "yarn openapi-generator -o libs/clients/icelandic-health-insurance/rights-portal/gen/fetch -i libs/clients/icelandic-health-insurance/rights-portal/src/clientConfig.json"
-      }
+      },
+      "outputs": ["{projectRoot}/gen/fetch"]
     },
     "update-openapi-document": {
       "executor": "nx:run-commands",

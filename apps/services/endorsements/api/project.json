@@ -96,20 +96,12 @@
         "parallel": true
       }
     },
-    "schemas/build-openapi": {
-      "executor": "nx:run-commands",
-      "options": {
-        "command": "yarn nx run services-endorsements-api:schemas/build-openapi-internal $NX_OPTIONS"
-      }
-    },
-    "schemas/build-openapi-internal": {
+    "codegen/backend-schema": {
       "executor": "nx:run-commands",
       "options": {
         "command": "cross-env INIT_SCHEMA=true yarn ts-node -P apps/services/endorsements/api/tsconfig.app.json apps/services/endorsements/api/src/buildOpenApi.ts"
       },
-      "outputs": [
-        "{workspaceRoot}/apps/services/endorsements/api/src/openapi.yaml"
-      ]
+      "outputs": ["{projectRoot}/src/openapi.yaml"]
     },
     "migrate": {
       "executor": "nx:run-commands",

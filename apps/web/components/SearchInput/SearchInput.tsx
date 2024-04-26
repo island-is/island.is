@@ -29,9 +29,10 @@ import {
   Article,
   SubArticle,
   SearchableContentTypes,
-  LifeEventPage,
+  AnchorPage,
   News,
   OrganizationSubpage,
+  LifeEventPage,
 } from '@island.is/web/graphql/schema'
 
 import { LinkType, useLinkResolver } from '@island.is/web/hooks/useLinkResolver'
@@ -129,6 +130,7 @@ const useSearch = (
                   SearchableContentTypes['WebOrganizationSubpage'],
                   SearchableContentTypes['WebDigitalIcelandService'],
                   SearchableContentTypes['WebDigitalIcelandCommunityPage'],
+                  SearchableContentTypes['WebManual'],
                 ],
                 highlightResults: true,
                 useQuery: 'suggestions',
@@ -173,10 +175,18 @@ const useSubmit = (locale: Locale, onRouting?: () => void) => {
 
   return useCallback(
     (item: SubmitType) => {
+      const query: Record<string, string | string[]> = {
+        q: item.string,
+      }
+
+      if (Router.query.referencedBy) {
+        query.referencedBy = Router.query.referencedBy
+      }
+
       Router.push({
         ...(item.type === 'query' && {
           pathname: linkResolver('search').href,
-          query: { q: item.string },
+          query,
         }),
         ...(item.type === 'link' && {
           pathname: item.string,
@@ -245,7 +255,8 @@ export const SearchInput = forwardRef<
     return (
       <Downshift<SubmitType>
         id={id}
-        initialInputValue={initialInputValue}
+        // Since the search supports '*' we don't want to display it in the UI
+        initialInputValue={initialInputValue === '*' ? '' : initialInputValue}
         onChange={(item) => {
           if (!item?.string) {
             return false
@@ -380,6 +391,7 @@ export const SearchInput = forwardRef<
 
 type SearchResultItem =
   | Article
+  | AnchorPage
   | LifeEventPage
   | News
   | SubArticle
@@ -437,7 +449,9 @@ const Results = ({
               // eslint-disable-next-line @typescript-eslint/ban-ts-comment
               // @ts-ignore make web strict
               .map((item: SearchResultItem, i) => {
-                const typename = item.__typename?.toLowerCase() as LinkType
+                const typename = item.__typename?.toLowerCase() as
+                  | LinkType
+                  | 'anchorpage'
                 let variables = item.slug?.split('/')
 
                 if (typename === 'organizationsubpage') {
@@ -451,8 +465,8 @@ const Results = ({
                   item: {
                     type: 'link',
                     string: linkResolver(
-                      typename === 'lifeeventpage'
-                        ? extractAnchorPageLinkType(item as LifeEventPage)
+                      typename === 'anchorpage'
+                        ? extractAnchorPageLinkType(item as AnchorPage)
                         : typename,
                       variables,
                     )?.href,

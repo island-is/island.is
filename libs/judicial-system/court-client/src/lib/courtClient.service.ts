@@ -250,7 +250,7 @@ export class CourtClientServiceImplementation implements CourtClientService {
 
     // Force relogin if there are too many consecutive errors
     if (connectionState.errorCount >= MAX_ERRORS_BEFORE_RELOGIN) {
-      this.logger.error(
+      this.logger.warn(
         `Too many consecutive errors (${connectionState.errorCount}) from the court service, relogin forced`,
       )
 
@@ -348,7 +348,7 @@ export class CourtClientServiceImplementation implements CourtClientService {
         createCaseData: { ...args, authenticationToken },
       }),
     ).catch((reason) => {
-      this.logger.error('Court client error - createCase', { courtId, reason })
+      this.logger.warn('Court client error - createCase', { courtId, reason })
 
       throw this.handleUnknownError(courtId, reason)
     })
@@ -363,7 +363,7 @@ export class CourtClientServiceImplementation implements CourtClientService {
         createDocumentData: { ...args, authenticationToken },
       }),
     ).catch((reason: { status: string; message: string }) => {
-      this.logger.error('Court client error - createDocument', {
+      this.logger.warn('Court client error - createDocument', {
         courtId,
         reason,
       })
@@ -383,7 +383,7 @@ export class CourtClientServiceImplementation implements CourtClientService {
     return this.authenticatedRequest(courtId, (authenticationToken) =>
       this.createThingbokApi.createThingbok({ ...args, authenticationToken }),
     ).catch((reason) => {
-      this.logger.error('Court client error - createThingbok', {
+      this.logger.warn('Court client error - createThingbok', {
         courtId,
         reason,
       })
@@ -398,7 +398,7 @@ export class CourtClientServiceImplementation implements CourtClientService {
         createEmailData: { ...args, authenticationToken },
       }),
     ).catch((reason) => {
-      this.logger.error('Court client error - createEmail', { courtId, reason })
+      this.logger.warn('Court client error - createEmail', { courtId, reason })
 
       throw this.handleCaseError(courtId, reason)
     })
@@ -415,7 +415,7 @@ export class CourtClientServiceImplementation implements CourtClientService {
           updateCaseWithProsecutorData: { ...args, authenticationToken },
         }),
     ).catch((reason) => {
-      this.logger.error('Court client error - updateCaseWithProsecutor', {
+      this.logger.warn('Court client error - updateCaseWithProsecutor', {
         courtId,
         reason,
       })
@@ -479,7 +479,7 @@ export class CourtClientServiceImplementation implements CourtClientService {
         updateCaseWithDefendantData: { ...args, authenticationToken },
       }),
     ).catch((reason: { status: string; message: string }) => {
-      this.logger.error('Court client error - updateCaseWithDefendant', {
+      this.logger.warn('Court client error - updateCaseWithDefendant', {
         courtId,
         reason,
       })
@@ -517,7 +517,7 @@ export class CourtClientServiceImplementation implements CourtClientService {
     return this.authenticatedRequest(courtId, (authenticationToken) =>
       this.uploadStreamApi.uploadStream(authenticationToken, args),
     ).catch((reason) => {
-      this.logger.error('Court client error - uploadStream', {
+      this.logger.warn('Court client error - uploadStream', {
         courtId,
         reason,
       })

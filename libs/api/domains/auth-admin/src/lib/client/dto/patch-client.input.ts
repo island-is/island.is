@@ -63,6 +63,9 @@ export class PatchClientInput {
   requirePkce?: boolean
 
   @Field(() => Boolean, { nullable: true })
+  singleSession?: boolean
+
+  @Field(() => Boolean, { nullable: true })
   supportTokenExchange?: boolean
 
   @Field(() => Int, { nullable: true })

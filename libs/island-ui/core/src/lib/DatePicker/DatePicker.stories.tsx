@@ -27,7 +27,7 @@ Default.args = {
 }
 
 const Wrap: React.FC<React.PropsWithChildren<unknown>> = ({ children }) => (
-  <div style={{ height: 400 }}>{children}</div>
+  <div style={{ height: 450 }}>{children}</div>
 )
 
 export const Basic = () => {
@@ -206,5 +206,18 @@ export const AppearInline = () => (
       appearInline
     />
     <Text variant="intro">This stays below the date picker.</Text>
+  </Wrap>
+)
+
+export const WithTime = () => (
+  <Wrap>
+    <DatePicker
+      label="Date"
+      placeholderText="Pick a date"
+      handleChange={(date: Date) => console.log(date)}
+      selected={new Date()}
+      locale="is"
+      showTimeInput
+    />
   </Wrap>
 )

@@ -1,0 +1,10 @@
+mutation CreateSuperExplicitDiscountCode(
+  $input: AirDiscountSchemeCreateExplicitDiscountCodeInput!
+) {
+  createAirDiscountSchemeSuperExplicitDiscountCode(input: $input) {
+    discountCode
+    connectionDiscountCodes {
+      code
+    }
+  }
+}

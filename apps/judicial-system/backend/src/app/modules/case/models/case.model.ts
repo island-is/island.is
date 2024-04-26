@@ -30,6 +30,7 @@ import {
   CourtDocument,
   RequestSharedWithDefender,
   SessionArrangements,
+  UserRole,
 } from '@island.is/judicial-system/types'
 
 import { Defendant } from '../../defendant'
@@ -37,7 +38,9 @@ import { EventLog } from '../../event-log'
 import { CaseFile } from '../../file'
 import { IndictmentCount } from '../../indictment-count'
 import { Institution } from '../../institution'
+import { Notification } from '../../notification'
 import { User } from '../../user'
+import { DateLog } from './dateLog.model'
 
 @Table({
   tableName: 'case',
@@ -138,7 +141,7 @@ export class Case extends Model {
    * The case's defendants
    **********/
   @HasMany(() => Defendant, 'caseId')
-  @ApiPropertyOptional({ type: Defendant, isArray: true })
+  @ApiPropertyOptional({ type: () => Defendant, isArray: true })
   defendants?: Defendant[]
 
   /**********
@@ -218,7 +221,7 @@ export class Case extends Model {
    * The court assigned to the case
    **********/
   @BelongsTo(() => Institution, 'courtId')
-  @ApiPropertyOptional({ type: Institution })
+  @ApiPropertyOptional({ type: () => Institution })
   court?: Institution
 
   /**********
@@ -417,7 +420,7 @@ export class Case extends Model {
    * The prosecutor that created the case
    **********/
   @BelongsTo(() => User, 'creatingProsecutorId')
-  @ApiPropertyOptional({ type: User })
+  @ApiPropertyOptional({ type: () => User })
   creatingProsecutor?: User
 
   /**********
@@ -435,7 +438,7 @@ export class Case extends Model {
    * The prosecutor assigned to the case
    **********/
   @BelongsTo(() => User, 'prosecutorId')
-  @ApiPropertyOptional({ type: User })
+  @ApiPropertyOptional({ type: () => User })
   prosecutor?: User
 
   /**********
@@ -453,7 +456,7 @@ export class Case extends Model {
    * The prosecutor's office the case has been shared with - optional
    **********/
   @BelongsTo(() => Institution, 'sharedWithProsecutorsOfficeId')
-  @ApiPropertyOptional({ type: Institution })
+  @ApiPropertyOptional({ type: () => Institution })
   sharedWithProsecutorsOffice?: Institution
 
   /**********
@@ -476,16 +479,6 @@ export class Case extends Model {
   })
   @ApiPropertyOptional({ enum: SessionArrangements })
   sessionArrangements?: SessionArrangements
-
-  /**********
-   * The scheduled date and time of the case's court session
-   **********/
-  @Column({
-    type: DataType.DATE,
-    allowNull: true,
-  })
-  @ApiPropertyOptional()
-  courtDate?: Date
 
   /**********
    * The location of the court session
@@ -633,7 +626,7 @@ export class Case extends Model {
   /**********
    * The ruling expiration date and time - example: the end of custody in custody cases -
    * autofilled from requestedValidToDate - possibly modified by the court - only used for
-   * custody and travel ban cases
+   * custody, admission to facility and travel ban cases
    **********/
   @Column({
     type: DataType.DATE,
@@ -644,7 +637,7 @@ export class Case extends Model {
 
   /**********
    * Indicates whether the judge imposes isolation - prefilled from
-   * requestedCustodyRestrictions - only used for custody cases
+   * requestedCustodyRestrictions - only used for custody and admission to facility cases
    **********/
   @Column({
     type: DataType.BOOLEAN,
@@ -655,7 +648,7 @@ export class Case extends Model {
 
   /**********
    * Expiration date and time for isolation - prefilled from requestedValidToDate - only used
-   * for custody cases and only relevant if the judge imposes isolation
+   * for custody and admission to facility cases and only relevant if the judge imposes isolation
    **********/
   @Column({
     type: DataType.DATE,
@@ -794,7 +787,7 @@ export class Case extends Model {
    * The registrar assigned to the case
    **********/
   @BelongsTo(() => User, 'registrarId')
-  @ApiPropertyOptional({ type: User })
+  @ApiPropertyOptional({ type: () => User })
   registrar?: User
 
   /**********
@@ -812,7 +805,7 @@ export class Case extends Model {
    * The judge assigned to the case
    **********/
   @BelongsTo(() => User, 'judgeId')
-  @ApiPropertyOptional({ type: User })
+  @ApiPropertyOptional({ type: () => User })
   judge?: User
 
   /**********
@@ -830,7 +823,7 @@ export class Case extends Model {
    * The user that signed the court record of the case
    **********/
   @BelongsTo(() => User, 'courtRecordSignatoryId')
-  @ApiPropertyOptional({ type: User })
+  @ApiPropertyOptional({ type: () => User })
   courtRecordSignatory?: User
 
   /**********
@@ -858,21 +851,21 @@ export class Case extends Model {
    * The case's parent case - only used if the case is an extension
    **********/
   @BelongsTo(() => Case, 'parentCaseId')
-  @ApiPropertyOptional({ type: Case })
+  @ApiPropertyOptional({ type: () => Case })
   parentCase?: Case
 
   /**********
    * The case's child case - only used if the case has been extended
    **********/
   @HasOne(() => Case, 'parentCaseId')
-  @ApiPropertyOptional({ type: Case })
+  @ApiPropertyOptional({ type: () => Case })
   childCase?: Case
 
   /**********
    * The case's files
    **********/
   @HasMany(() => CaseFile, 'caseId')
-  @ApiPropertyOptional({ type: CaseFile, isArray: true })
+  @ApiPropertyOptional({ type: () => CaseFile, isArray: true })
   caseFiles?: CaseFile[]
 
   /**********
@@ -961,7 +954,7 @@ export class Case extends Model {
    * The case's counts - only used if the case is an indictment
    **********/
   @HasMany(() => IndictmentCount, 'caseId')
-  @ApiPropertyOptional({ type: IndictmentCount, isArray: true })
+  @ApiPropertyOptional({ type: () => IndictmentCount, isArray: true })
   indictmentCounts?: IndictmentCount[]
 
   /**********
@@ -1119,9 +1112,116 @@ export class Case extends Model {
   appealJudge3?: User
 
   /**********
+   * The history on when a case's appeal ruling was modified
+   **********/
+  @Column({
+    type: DataType.TEXT,
+    allowNull: true,
+  })
+  @ApiPropertyOptional()
+  appealRulingModifiedHistory?: string
+
+  /**********
    * The case's event logs
    **********/
   @HasMany(() => EventLog, 'caseId')
   @ApiPropertyOptional({ type: EventLog, isArray: true })
   eventLogs?: EventLog[]
+
+  /**********
+   * The case's date logs
+   **********/
+  @HasMany(() => DateLog, 'caseId')
+  @ApiPropertyOptional({ type: DateLog, isArray: true })
+  dateLogs?: DateLog[]
+
+  /**********
+   * The appeal ruling expiration date and time - example: the end of custody in custody cases -
+   * autofilled from validToDate - possibly modified by the court of appeals - only used for
+   * custody, admission to facility and travel ban cases
+   **********/
+  @Column({
+    type: DataType.DATE,
+    allowNull: true,
+  })
+  @ApiPropertyOptional()
+  appealValidToDate?: Date
+
+  /**********
+   * Indicates whether the judge imposes isolation - prefilled from
+   * isCustodyIsolation - only used for custody and admission to facility cases
+   **********/
+  @Column({
+    type: DataType.BOOLEAN,
+    allowNull: true,
+  })
+  @ApiPropertyOptional()
+  isAppealCustodyIsolation?: boolean
+
+  /**********
+   * Expiration date and time for isolation - prefilled from isolationToDate - only used
+   * for custody and admission to facility cases and only relevant if the judge imposes isolation
+   **********/
+  @Column({
+    type: DataType.DATE,
+    allowNull: true,
+  })
+  @ApiPropertyOptional()
+  appealIsolationToDate?: Date
+
+  /**********
+   * Indicates whether someone requested that the appeals court's ruling should not
+   * be published immediately.
+   **********/
+  @Column({
+    type: DataType.ARRAY(DataType.ENUM),
+    allowNull: true,
+    values: Object.values(UserRole),
+  })
+  @ApiPropertyOptional({ enum: UserRole, isArray: true })
+  requestAppealRulingNotToBePublished?: UserRole[]
+
+  /**********
+   * The surrogate key of the prosecutors office that created the case
+   **********/
+  @Column({
+    type: DataType.UUID,
+    allowNull: true,
+  })
+  @ApiPropertyOptional()
+  prosecutorsOfficeId?: string
+
+  /**********
+   * The prosecutors office that created the case
+   **********/
+  @BelongsTo(() => Institution, 'prosecutorsOfficeId')
+  @ApiPropertyOptional({ type: () => Institution })
+  prosecutorsOffice?: Institution
+
+  /**********
+   * The explanation given for a denial of an indictment
+   **********/
+  @Column({
+    type: DataType.TEXT,
+    allowNull: true,
+  })
+  @ApiPropertyOptional()
+  indictmentDeniedExplanation?: string
+
+  /**********
+   * The explanation given for the return of an indictment by the district court
+   **********/
+  @Column({
+    type: DataType.TEXT,
+    allowNull: true,
+  })
+  @ApiPropertyOptional()
+  indictmentReturnedExplanation?: string
+
+  /**********
+   * The case's notifications
+   **********/
+  @HasMany(() => Notification, 'caseId')
+  @ApiPropertyOptional({ type: Notification, isArray: true })
+  notifications?: Notification[]
 }

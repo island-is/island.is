@@ -71,7 +71,7 @@ yarn start api
 When making changes to the module code, run
 
 ```bash
-yarn nx schemas/build-openapi application-system-api
+yarn nx codegen/backend-schema application-system-api
 ```
 
 to generate the code needed for openapi and swagger. Then you can visit
@@ -83,13 +83,13 @@ localhost:3333/swagger
 In order to generate a typed fetch client run
 
 ```bash
-yarn nx schemas/openapi-generator api-domains-application
+yarn nx codegen/backend-client api-domains-application
 ```
 
 In order to update the graphql schema as well, run
 
 ```bash
-yarn nx schemas/build-graphql-schema api
+yarn nx codegen/backend-schema api
 ```
 
 ## Form
@@ -122,7 +122,7 @@ yarn start api
 
 - [Follow the Reference Template](https://github.com/island-is/island.is/tree/main/libs/application/templates/reference-template)
 
-After following the Reference Template, repeat the steps from [OpenAPI and Swagger](https://github.com/island-is/island.is/tree/main/apps/application-system#openapi-and-swagger) or run `yarn install` to update schemas.
+After following the Reference Template, repeat the steps from [OpenAPI and Swagger](https://github.com/island-is/island.is/tree/main/apps/application-system#openapi-and-swagger) or run `yarn codegen`.
 
 ### Adding a payment step
 

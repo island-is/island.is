@@ -1,13 +1,10 @@
 import groupBy from 'lodash/groupBy'
-import { documentToPlainTextString } from '@contentful/rich-text-plain-text-renderer'
-import { Block } from '@contentful/rich-text-types'
 
 import {
   GetNamespaceQuery,
   GetNamespaceQueryVariables,
   GetSingleManualQuery,
   GetSingleManualQueryVariables,
-  Html,
 } from '@island.is/web/graphql/schema'
 import { Screen } from '@island.is/web/types'
 import { CustomNextError } from '@island.is/web/units/errors'
@@ -47,27 +44,6 @@ export const extractLastUpdatedDateFromManual = (manual: ManualType) => {
     }
   }
   return lastUpdatedDate
-}
-
-export const extractTextFromManualChapterDescription = (
-  manualChapter: ManualProps['manualChapter'],
-) => {
-  const htmlSlices = manualChapter?.description?.filter(
-    (chapter) => chapter?.__typename === 'Html',
-  )
-
-  if (!htmlSlices) return ''
-
-  let text = ''
-
-  for (const htmlSlice of htmlSlices) {
-    const document = (htmlSlice as Html)?.document
-    if (document) {
-      text += documentToPlainTextString(document as Block)
-    }
-  }
-
-  return text
 }
 
 interface ChangelogItem {
@@ -184,4 +160,13 @@ export const getProps: ManualScreen['getProps'] = async ({
     ),
     namespace,
   }
+}
+
+export const generateOgTitle = (
+  manualTitle?: string,
+  chapterTitle?: string,
+) => {
+  return `${manualTitle ?? ''}${manualTitle ? ' - ' : ''}${
+    chapterTitle ?? ''
+  } | Ísland.is`
 }

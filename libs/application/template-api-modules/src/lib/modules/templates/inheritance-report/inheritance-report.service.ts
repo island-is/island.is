@@ -1,12 +1,11 @@
 import { Inject, Injectable } from '@nestjs/common'
 import {
   DataUploadResponse,
-  EstateInfo,
   Person,
   PersonType,
   SyslumennService,
 } from '@island.is/clients/syslumenn'
-import { estateTransformer } from './utils'
+import { estateTransformer, getFakeData } from './utils'
 import { BaseTemplateApiService } from '../../base-template-api.service'
 import { LOGGER_PROVIDER } from '@island.is/logging'
 import {
@@ -17,6 +16,7 @@ import { TemplateApiModuleActionProps } from '../../../types'
 import { infer as zinfer } from 'zod'
 import { inheritanceReportSchema } from '@island.is/application/templates/inheritance-report'
 import type { Logger } from '@island.is/logging'
+import { expandAnswers } from './utils/mappers'
 
 type InheritanceSchema = zinfer<typeof inheritanceReportSchema>
 
@@ -43,92 +43,44 @@ export class InheritanceReportService extends BaseTemplateApiService {
   }
 
   async syslumennOnEntry({ application, auth }: TemplateApiModuleActionProps) {
-    let estateResponse: EstateInfo
-    if (
-      application.applicant.startsWith('010130') &&
+    const [relationOptions, inheritanceReportInfos] = await Promise.all([
+      this.syslumennService.getEstateRelations(),
+      // Get estate info from syslumenn or fakedata depending on application.applicant
+      application.applicant.startsWith('110130') &&
       application.applicant.endsWith('2399')
-    ) {
-      estateResponse = {
-        addressOfDeceased: 'Gerviheimili 123, 600 Feneyjar',
-        cash: [],
-        marriageSettlement: false,
-        assets: [
-          {
-            assetNumber: 'F2318696',
-            description: 'Íbúð í Reykjavík',
-            share: 1,
-          },
-          {
-            assetNumber: 'F2262202',
-            description: 'Raðhús á Akureyri',
-            share: 1,
-          },
-        ],
-        vehicles: [
-          {
-            assetNumber: 'VA334',
-            description: 'Nissan Terrano II',
-            share: 1,
-          },
-          {
-            assetNumber: 'YZ927',
-            description: 'Subaru Forester',
-            share: 1,
-          },
-        ],
-        knowledgeOfOtherWills: 'Yes',
-        ships: [],
-        flyers: [],
-        guns: [
-          {
-            assetNumber: '009-2018-0505',
-            description: 'Framhlaðningur (púður)',
-            share: 1,
-          },
-          {
-            assetNumber: '007-2018-1380',
-            description: 'Mauser P38',
-            share: 1,
-          },
-        ],
-        estateMembers: [
-          {
-            name: 'Stúfur Mack',
-            relation: 'Sonur',
-            nationalId: '2222222229',
-          },
-          {
-            name: 'Gervimaður Færeyja',
-            relation: 'Maki',
-            nationalId: '0101302399',
-          },
-          {
-            name: 'Gervimaður Bretland',
-            relation: 'Faðir',
-            nationalId: '0101304929',
-          },
-        ],
-        caseNumber: '011515',
-        dateOfDeath: new Date(Date.now() - 1000 * 3600 * 24 * 100),
-        nameOfDeceased: 'Lizzy B. Gone',
-        nationalIdOfDeceased: '0101301234',
-        districtCommissionerHasWill: true,
-      }
-    } else {
-      estateResponse = (
-        await this.syslumennService.getEstateInfo(application.applicant)
-      )[0]
-    }
+        ? [
+            getFakeData('2022-14-14', 'Gervimaður Útlönd', '0101307789'),
+            getFakeData('2020-15-04', 'Gervimaður Danmörk', '0101302479'),
+          ]
+        : this.syslumennService.getEstateInfoForInheritanceReport(
+            application.applicant,
+          ),
+    ])
 
-    const estate = estateTransformer(estateResponse)
+    // Loop through all inheritanceReportInfos and attach inheritanceTax to each
+    await Promise.all(
+      inheritanceReportInfos.map(async (inheritanceReportInfo) => {
+        // The dateOfDeath is marked as Date as per the openapi spec but is actually a string when received
+        const inheritanceDate =
+          typeof inheritanceReportInfo.dateOfDeath === 'string'
+            ? new Date(Date.parse(inheritanceReportInfo.dateOfDeath))
+            : inheritanceReportInfo.dateOfDeath ?? new Date()
 
-    const relationOptions = (await this.syslumennService.getEstateRelations())
-      .relations
+        return new Promise<void>((resolve) => {
+          this.syslumennService
+            .getInheritanceTax(new Date())
+            .then((inheritanceTax) => {
+              inheritanceReportInfo.inheritanceTax = inheritanceTax
+              resolve()
+            })
+        })
+      }),
+    )
 
     return {
       success: true,
-      estate,
-      relationOptions,
+      inheritanceReportInfos,
+      relationOptions: relationOptions.relations,
     }
   }
 
@@ -153,12 +105,10 @@ export class InheritanceReportService extends BaseTemplateApiService {
       type: PersonType.AnnouncerOfDeathCertificate,
     }
 
-    const uploadData = this.stringifyObject(answers)
+    const uploadData = this.stringifyObject(expandAnswers(answers))
 
     const uploadDataName = 'erfdafjarskysla1.0'
     const uploadDataId = 'erfdafjarskysla1.0'
-
-    console.log('uploadData', uploadData)
 
     const result: DataUploadResponse = await this.syslumennService
       .uploadData([person], undefined, uploadData, uploadDataName, uploadDataId)

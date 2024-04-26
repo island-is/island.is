@@ -25,6 +25,6 @@ export const mapUrl = ({ fields, sys }: IUrl): Url => ({
   id: sys.id,
   title: fields.title ?? '',
   page: fields.page ? mapReferenceLink(fields.page) : null,
-  explicitRedirect: fields.explicitRedirect ?? '',
-  urlsList: fields.urlsList ?? [],
+  explicitRedirect: (fields.explicitRedirect ?? '').trim(),
+  urlsList: (fields.urlsList ?? []).map((url) => url?.trim()),
 })

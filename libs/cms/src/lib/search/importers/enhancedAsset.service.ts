@@ -19,7 +19,9 @@ export class EnhancedAssetSyncService
   }
 
   doMapping(entries: IEnhancedAsset[]) {
-    logger.info('Mapping enhanced asset', { count: entries.length })
+    if (entries.length > 0) {
+      logger.info('Mapping enhanced asset', { count: entries.length })
+    }
 
     return entries
       .map<MappedData | boolean>((entry) => {

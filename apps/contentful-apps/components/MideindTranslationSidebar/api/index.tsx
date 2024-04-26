@@ -1,16 +1,18 @@
-import { MIDEIND_TRANSLATION_API_BASE_URL } from '../../../constants'
-
 const defaultParams = {
   sourceLanguageCode: 'is',
   targetLanguageCode: 'en',
 }
 
-async function translateTexts(texts: string[], apiKey: string) {
-  const baseUrl = MIDEIND_TRANSLATION_API_BASE_URL
-
+async function translateTexts(
+  texts: string[],
+  apiKey: string,
+  baseUrl: string,
+  model?: string,
+) {
   const translations = []
   const body = {
     contents: texts,
+    model,
     ...defaultParams,
   }
 
@@ -35,19 +37,21 @@ async function sendTexts(
   enTexts: string[],
   reference: string,
   apiKey: string,
+  baseUrl: string,
+  model?: string,
+  userReference?: string,
 ) {
-  const baseUrl = MIDEIND_TRANSLATION_API_BASE_URL
-
   const body = {
     machineTranslatedText: '', // Required even if empty
     translationReference: 1 || reference, // Reference to be accepted later by Miðeind
     originalText: iceTexts.join(' '), // String expected, not array
     correctedText: enTexts.join(' '), // String expected, not array
     languagePair: 'is-en',
-    model: 'transformer-base',
+    model,
+    userReference: userReference,
   }
 
-  const response = await fetch(`${baseUrl}/corrected`, {
+  await fetch(`${baseUrl}/corrected`, {
     method: 'POST',
     headers: {
       'Content-Type': 'application/json',

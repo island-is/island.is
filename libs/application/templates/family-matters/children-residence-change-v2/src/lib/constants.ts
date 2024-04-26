@@ -1,4 +1,5 @@
 export enum ApplicationStates {
+  PREREQUISITES = 'prerequisites',
   DRAFT = 'draft',
   IN_REVIEW = 'inReview',
   COMPLETED = 'completed',

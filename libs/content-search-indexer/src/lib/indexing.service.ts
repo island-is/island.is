@@ -1,3 +1,4 @@
+import { Entry } from 'contentful'
 import { Injectable } from '@nestjs/common'
 
 import { ElasticService } from '@island.is/content-search-toolkit'
@@ -6,13 +7,14 @@ import { CmsSyncService } from '@island.is/cms'
 import {
   ContentSearchImporter,
   SyncOptions,
+  SyncResponse,
 } from '@island.is/content-search-indexer/types'
 import {
   ElasticsearchIndexLocale,
   getElasticsearchIndex,
 } from '@island.is/content-search-index-manager'
 import { environment } from '../environments/environment'
-import { Entry } from 'contentful'
+import { CacheInvalidationService } from './cache-invalidation.service'
 
 type SyncStatus = {
   running?: boolean
@@ -26,6 +28,7 @@ export class IndexingService {
   constructor(
     private readonly elasticService: ElasticService,
     private readonly cmsSyncService: CmsSyncService,
+    private readonly cacheInvalidationService: CacheInvalidationService,
   ) {
     // add importer service to this array to make it import
     this.importers = [this.cmsSyncService]
@@ -56,15 +59,48 @@ export class IndexingService {
         importer: importer.constructor.name,
         index: elasticIndex,
       })
-      // importers can skip import by returning null
-      const importerResponse = await importer.doSync(options)
-      if (!importerResponse) {
-        didImportAll = false
-        return true
-      }
 
-      const { postSyncOptions, ...elasticData } = importerResponse
-      await this.elasticService.bulk(elasticIndex, elasticData)
+      let nextPageToken: string | undefined = undefined
+      let initialFetch = true
+      let postSyncOptions: SyncResponse['postSyncOptions']
+
+      while (initialFetch || nextPageToken) {
+        const importerResponse = await importer.doSync({
+          ...options,
+          nextPageToken,
+        })
+
+        // importers can skip import by returning null
+        if (!importerResponse) {
+          didImportAll = false
+          return true
+        }
+
+        const isIncrementalUpdate = syncType === 'fromLast'
+
+        const {
+          nextPageToken: importerResponseNextPageToken,
+          postSyncOptions: importerResponsePostSyncOptions,
+          ...elasticData
+        } = importerResponse
+        await this.elasticService.bulk(
+          elasticIndex,
+          elasticData,
+          isIncrementalUpdate,
+        )
+
+        // Invalidate cached pages in the background if we are performing an incremental update
+        if (isIncrementalUpdate) {
+          this.cacheInvalidationService.invalidateCache(
+            elasticData.add,
+            options.locale,
+          )
+        }
+
+        nextPageToken = importerResponseNextPageToken
+        postSyncOptions = importerResponsePostSyncOptions
+        initialFetch = false
+      }
 
       if (importer.postSync) {
         logger.info('Importer started post sync', {

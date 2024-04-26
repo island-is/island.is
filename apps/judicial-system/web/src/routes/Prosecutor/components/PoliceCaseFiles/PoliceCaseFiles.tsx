@@ -3,10 +3,11 @@ import { useIntl } from 'react-intl'
 
 import { AlertMessage, Box } from '@island.is/island-ui/core'
 import { isIndictmentCase } from '@island.is/judicial-system/types'
-import { FormContext } from '@island.is/judicial-system-web/src/components'
-import SelectableList, {
+import {
+  FormContext,
   Item,
-} from '@island.is/judicial-system-web/src/components/SelectableList/SelectableList'
+  SelectableList,
+} from '@island.is/judicial-system-web/src/components'
 import {
   CaseOrigin,
   PoliceCaseFile,

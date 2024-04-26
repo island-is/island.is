@@ -44,17 +44,12 @@
       },
       "outputs": ["{workspaceRoot}/coverage/apps/financial-aid/api"]
     },
-    "schemas/build-graphql-schema": {
+    "codegen/backend-schema": {
       "executor": "nx:run-commands",
       "options": {
         "command": "yarn ts-node -P apps/financial-aid/api/tsconfig.json scripts/build-graphql-schema.ts apps/financial-aid/api/src/app/app.module"
-      }
-    },
-    "schemas/codegen": {
-      "executor": "nx:run-commands",
-      "options": {
-        "command": "graphql-codegen --config apps/financial-aid/codegen.yml"
-      }
+      },
+      "outputs": ["{projectRoot}/src/api.graphql"]
     },
     "docker-express": {}
   },

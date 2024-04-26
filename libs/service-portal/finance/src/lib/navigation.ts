@@ -1,5 +1,5 @@
 import { PortalNavigationItem } from '@island.is/portals/core'
-import { FJARSYSLAN_ID, m } from '@island.is/service-portal/core'
+import { FJARSYSLAN_SLUG, HMS_SLUG, m } from '@island.is/service-portal/core'
 import { FinancePaths } from './paths'
 
 export const financeNavigation: PortalNavigationItem = {
@@ -8,33 +8,85 @@ export const financeNavigation: PortalNavigationItem = {
   children: [
     {
       name: m.financeStatus,
+      description: m.financeStatusDescription,
+      serviceProvider: 'fjarsysla-rikisins',
+      serviceProviderTooltip: m.financeTooltip,
+      displayServiceProviderLogo: true,
       path: FinancePaths.FinanceStatus,
     },
     {
       name: m.financeTransactions,
+      serviceProvider: 'fjarsysla-rikisins',
+      serviceProviderTooltip: m.financeTooltip,
+      displayServiceProviderLogo: true,
       path: FinancePaths.FinanceTransactions,
+      children: [
+        {
+          name: m.financeTransactionsCategories,
+          description: m.financeTransactionsDescription,
+          path: FinancePaths.FinanceTransactions,
+        },
+        {
+          name: m.financeTransactionPeriods,
+          description: m.financeTransactionPeriodsDescription,
+          path: FinancePaths.FinanceTransactionPeriods,
+        },
+      ],
     },
     {
-      name: m.financeBills,
-      path: FinancePaths.FinanceBills,
+      name: m.financePayments,
+      serviceProvider: 'fjarsysla-rikisins',
+      serviceProviderTooltip: m.financeTooltip,
+      displayServiceProviderLogo: true,
+      path: FinancePaths.FinancePayments,
+      children: [
+        {
+          name: m.financeBills,
+          description: m.financeBillsDescription,
+          path: FinancePaths.FinancePaymentsBills,
+        },
+        {
+          name: m.financeSchedules,
+          description: m.financeSchedulesDescription,
+          path: FinancePaths.FinancePaymentsSchedule,
+        },
+        {
+          name: m.financeHousingBenefits,
+          description: m.financeHousingBenefitsDesc,
+          path: FinancePaths.FinancePaymentsHousingBenefits,
+          serviceProviderTooltip: m.hmsHousingBenefitsTooltip,
+          serviceProvider: 'hms',
+          displayServiceProviderLogo: true,
+        },
+      ],
     },
     {
-      name: m.financeSchedules,
-      path: FinancePaths.FinanceSchedule,
-    },
-    {
-      name: m.financeEmployeeClaims,
+      name: m.financeClaims,
+      description: m.financeEmployeeClaimsDescription,
+      serviceProvider: 'fjarsysla-rikisins',
+      serviceProviderTooltip: m.financeTooltip,
+      displayServiceProviderLogo: true,
       path: FinancePaths.FinanceEmployeeClaims,
     },
     {
       name: m.financeLocalTax,
+      description: m.financeLocalTaxDescription,
+      serviceProvider: 'fjarsysla-rikisins',
+      serviceProviderTooltip: m.financeTooltip,
+      displayServiceProviderLogo: true,
       path: FinancePaths.FinanceLocalTax,
+    },
+    {
+      name: m.financeLoans,
+      description: m.financeLoansDescription,
+      serviceProvider: 'hms',
+      displayServiceProviderLogo: true,
+      path: FinancePaths.FinanceLoans,
     },
   ],
   icon: {
     icon: 'cellular',
   },
   heading: m.financeHeading,
-  serviceProvider: FJARSYSLAN_ID,
   description: m.financeTooltip,
 }

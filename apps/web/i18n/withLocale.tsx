@@ -1,14 +1,15 @@
 import React from 'react'
-import I18n, { isLocale } from './I18n'
-import { NextComponentType } from 'next'
-import { ApolloClient } from '@apollo/client/core'
 import { NormalizedCacheObject } from '@apollo/client/cache'
-import { GET_NAMESPACE_QUERY } from '../screens/queries'
-import { GetNamespaceQuery, QueryGetNamespaceArgs } from '../graphql/schema'
-import { Locale } from '@island.is/shared/types'
+import { ApolloClient } from '@apollo/client/core'
+
 import { defaultLanguage } from '@island.is/shared/constants'
+import { Locale } from '@island.is/shared/types'
+
+import { GetNamespaceQuery, QueryGetNamespaceArgs } from '../graphql/schema'
+import { GET_NAMESPACE_QUERY } from '../screens/queries'
 import type { Screen } from '../types'
 import { safelyExtractPathnameFromUrl } from '../utils/safelyExtractPathnameFromUrl'
+import I18n, { isLocale } from './I18n'
 
 export const getLocaleFromPath = (path = ''): Locale => {
   const maybeLocale = path.split('/').find(Boolean)
@@ -24,18 +25,13 @@ interface NewComponentProps<T> {
 }
 
 export const withLocale =
-  <Props,>(locale?: Locale) =>
-  // eslint-disable-next-line @typescript-eslint/ban-ts-comment
-  // @ts-ignore make web strict
-  (Component: Screen<Props>): NextComponentType => {
+  <Props,>(locale: Locale) =>
+  (Component: Screen<Props>): Screen<Props> => {
     const getProps = Component.getProps
     if (!getProps) {
-      // eslint-disable-next-line @typescript-eslint/ban-ts-comment
-      // @ts-ignore make web strict
       return Component
     }
-    // eslint-disable-next-line @typescript-eslint/ban-ts-comment
-    // @ts-ignore make web strict
+
     const NewComponent: Screen<NewComponentProps<Props>> = ({
       pageProps,
       locale,

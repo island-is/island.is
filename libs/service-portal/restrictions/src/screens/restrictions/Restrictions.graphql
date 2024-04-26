@@ -1,0 +1,17 @@
+query getLoginRestriction {
+  authLoginRestriction {
+    restricted
+    until
+  }
+}
+
+mutation createLoginRestriction($input: CreateAuthLoginRestrictionInput!) {
+  createAuthLoginRestriction(input: $input) {
+    restricted
+    until
+  }
+}
+
+mutation removeLoginRestriction {
+  removeAuthLoginRestriction
+}
