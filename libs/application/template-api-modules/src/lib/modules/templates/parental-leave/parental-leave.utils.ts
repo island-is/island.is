@@ -123,7 +123,7 @@ export const getPensionFund = (
     ? 'payments.privatePensionFund'
     : 'payments.pensionFund'
 
-  const { applicationType } = getApplicationAnswers(application.answers)
+  const { applicationType, usePrivatePensionFund } = getApplicationAnswers(application.answers)
 
   const value =
     applicationType === PARENTAL_LEAVE
@@ -133,7 +133,7 @@ export const getPensionFund = (
   if (isPrivate) {
     return {
       id:
-        applicationType === PARENTAL_LEAVE
+        applicationType === PARENTAL_LEAVE && usePrivatePensionFund === YES
           ? typeof value === 'string'
             ? value
             : apiConstants.pensionFunds.noPrivatePensionFundId
@@ -155,10 +155,10 @@ export const getPensionFund = (
 }
 
 export const getPrivatePensionFundRatio = (application: Application) => {
-  const { privatePensionFundPercentage, applicationType } =
+  const { privatePensionFundPercentage, applicationType, usePrivatePensionFund } =
     getApplicationAnswers(application.answers)
   const privatePensionFundRatio: number =
-    applicationType === PARENTAL_LEAVE
+    applicationType === PARENTAL_LEAVE && usePrivatePensionFund === YES 
       ? Number(privatePensionFundPercentage) || 0
       : 0
 
@@ -378,6 +378,7 @@ export const transformApplicationToParentalLeaveDTO = (
 
   const {
     union,
+    useUnion,
     bank,
     applicationType,
     multipleBirths,
@@ -428,7 +429,7 @@ export const transformApplicationToParentalLeaveDTO = (
       union: {
         // If a union is not selected then use the default 'no union' value
         id:
-          applicationType === PARENTAL_LEAVE
+          applicationType === PARENTAL_LEAVE && useUnion === YES
             ? union ?? apiConstants.unions.noUnion
             : apiConstants.unions.noUnion,
         name: '',
