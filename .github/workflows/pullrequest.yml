@@ -320,16 +320,12 @@ jobs:
       - name: Setup yarn
         run: npm install -g yarn
 
-      - name: Cache for NodeJS dependencies - host OS
-        id: node-modules
-        continue-on-error: true
-        uses: ./.github/actions/cache
+      - name: Prepare node-modules and generated-files cache
+        uses: ./.github/actions/prepare-cache
         with:
-          path: node_modules
-          key: ${{ needs.prepare.outputs.node-modules-hash }}-yarn
-
-      - name: Check node-modules cache success
-        run: '[[ "${{ steps.node-modules.outputs.success }}" != "false" ]] || exit 1'
+          nodeModulesHash: ${{ needs.prepare.outputs.node-modules-hash }}
+          mobileNodeModulesHash: ${{ needs.prepare.outputs.mobile-node-modules-hash }}
+          generatedFilesCacheKey: ${{ needs.prepare.outputs.generated-files-cache-key }}
 
       - name: Cache for cypress
         id: cypress
@@ -466,32 +462,16 @@ jobs:
       - uses: actions/setup-node@v3
         with:
           node-version: '18'
+
       - name: Setup yarn
         run: npm install -g yarn
-      - name: Cache for NodeJS dependencies - host OS
-        id: node-modules
-        continue-on-error: true
-        uses: ./.github/actions/cache
+
+      - name: Prepare node-modules and generated-files cache
+        uses: ./.github/actions/prepare-cache
         with:
-          path: node_modules
-          key: ${{ needs.prepare.outputs.node-modules-hash }}-yarn
-
-      - name: Check node-modules cache success
-        run: '[[ "${{ steps.node-modules.outputs.success }}" != "false" ]] || exit 1'
-
-      - name: Cache for generated files
-        id: generated-files-cache
-        continue-on-error: true
-        uses: ./.github/actions/cache
-        with:
-          path: generated_files.tar.gz
-          key: ${{ needs.prepare.outputs.generated-files-cache-key }}
-
-      - name: Check generated-files cache success
-        run: '[[ "${{ steps.generated-files-cache.outputs.success }}" != "false" ]] || exit 1'
-
-      - name: Untar generated files
-        run: tar zxvf generated_files.tar.gz
+          nodeModulesHash: ${{ needs.prepare.outputs.node-modules-hash }}
+          mobileNodeModulesHash: ${{ needs.prepare.outputs.mobile-node-modules-hash }}
+          generatedFilesCacheKey: ${{ needs.prepare.outputs.generated-files-cache-key }}
 
       - name: Linting
         run: ./scripts/ci/run-in-parallel-native.sh lint
@@ -517,30 +497,13 @@ jobs:
           node-version: '18'
       - name: Setup yarn
         run: npm install -g yarn
-      - name: Cache for NodeJS dependencies - host OS
-        id: node-modules
-        continue-on-error: true
-        uses: ./.github/actions/cache
+
+      - name: Prepare node-modules and generated-files cache
+        uses: ./.github/actions/prepare-cache
         with:
-          path: node_modules
-          key: ${{ needs.prepare.outputs.node-modules-hash }}-yarn
-
-      - name: Check node-modules cache success
-        run: '[[ "${{ steps.node-modules.outputs.success }}" != "false" ]] || exit 1'
-
-      - name: Cache for generated files
-        id: generated-files-cache
-        continue-on-error: true
-        uses: ./.github/actions/cache
-        with:
-          path: generated_files.tar.gz
-          key: ${{ needs.prepare.outputs.generated-files-cache-key }}
-
-      - name: Check generated-files cache success
-        run: '[[ "${{ steps.generated-files-cache.outputs.success }}" != "false" ]] || exit 1'
-
-      - name: Untar generated files
-        run: tar zxvf generated_files.tar.gz
+          nodeModulesHash: ${{ needs.prepare.outputs.node-modules-hash }}
+          mobileNodeModulesHash: ${{ needs.prepare.outputs.mobile-node-modules-hash }}
+          generatedFilesCacheKey: ${{ needs.prepare.outputs.generated-files-cache-key }}
 
       - name: Building
         run: ./scripts/ci/run-in-parallel-native.sh build
