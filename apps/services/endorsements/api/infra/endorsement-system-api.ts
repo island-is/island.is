@@ -4,6 +4,7 @@ import {
   Base,
   Client,
   NationalRegistry,
+  NationalRegistryB2C,
 } from '../../../../../infra/src/dsl/xroad'
 
 export const serviceSetup =
@@ -42,8 +43,10 @@ export const serviceSetup =
         SOFFIA_SOAP_URL: '/k8s/endorsement-system-api/SOFFIA_SOAP_URL',
         SOFFIA_USER: settings.SOFFIA_USER,
         SOFFIA_PASS: settings.SOFFIA_PASS,
+        NATIONAL_REGISTRY_B2C_CLIENT_SECRET:
+          '/k8s/api/NATIONAL_REGISTRY_B2C_CLIENT_SECRET',
       })
       .grantNamespaces('islandis', 'application-system')
-      .xroad(Base, Client, NationalRegistry)
+      .xroad(Base, Client, NationalRegistry, NationalRegistryB2C)
       .liveness('/liveness')
       .readiness('/liveness')
