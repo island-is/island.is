@@ -5,6 +5,10 @@ import { Entry } from 'contentful'
 import { ILink, IGenericListItem } from '../../generated/contentfulTypes'
 import { CmsSyncProvider, processSyncDataInput } from '../cmsSync.service'
 import { mapGenericListItem } from '../../models/genericListItem.model'
+import {
+  extractStringsFromObject,
+  pruneNonSearchableSliceUnionFields,
+} from './utils'
 
 @Injectable()
 export class GenericListItemSyncService
@@ -28,10 +32,19 @@ export class GenericListItemSyncService
         try {
           const mapped = mapGenericListItem(entry)
 
+          // TODO: extractStringsFromObject only extracts the last rich text line
+          const content = extractStringsFromObject(
+            mapped.cardIntro.map(pruneNonSearchableSliceUnionFields),
+            100,
+            2,
+          )
+
           return {
             _id: mapped.id,
             title: mapped.title,
             type: 'webGenericListItem',
+            content,
+            contentWordCount: content.split(/\s+/).length,
             response: JSON.stringify({
               ...mapped,
               typename: 'GenericListItem',

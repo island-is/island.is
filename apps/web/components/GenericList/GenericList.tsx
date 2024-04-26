@@ -1,6 +1,5 @@
 import { useRef, useState } from 'react'
 import { useDebounce } from 'react-use'
-import { useQueryState } from 'next-usequerystate'
 import { useLazyQuery } from '@apollo/client'
 
 import {
@@ -36,7 +35,8 @@ export const GenericList = ({
 
   searchInputPlaceholder,
 }: GenericListProps) => {
-  const [searchValue, setSearchValue] = useQueryState('q')
+  // TODO: what should be persisted in the url?
+  const [searchValue, setSearchValue] = useState('')
   const [page, setPage] = useState(1)
   const [itemsResponse, setItemsResponse] = useState(firstPageItemResponse)
   const firstRender = useRef(true)

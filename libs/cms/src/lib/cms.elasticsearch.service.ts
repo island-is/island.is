@@ -424,9 +424,13 @@ export class CmsElasticsearchService {
 
     let queryString = input.queryString ? input.queryString.toLowerCase() : ''
 
+    // TODO: consider if this should be in frontend instead, or just skipped entirely?
     if (input.lang === 'is') {
       queryString = queryString.replace('`', '')
     }
+
+    // TODO: also search the content field and make sure it has very little weight
+    // TODO: figure out why searching for the entire title doesn't show the item with that title at the top
 
     must.push({
       simple_query_string: {
