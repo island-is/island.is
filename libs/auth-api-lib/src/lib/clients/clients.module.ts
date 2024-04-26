@@ -19,7 +19,6 @@ import { ApiScope } from '../resources/models/api-scope.model'
 import { AdminScopeService } from '../resources/admin/admin-scope.service'
 import { ApiScopeUserClaim } from '../resources/models/api-scope-user-claim.model'
 import { AdminTranslationService } from '../resources/admin/services/admin-translation.service'
-import { ClientDelegationType } from './models/client-delegation-type.model'
 
 @Module({
   imports: [
@@ -33,7 +32,6 @@ import { ClientDelegationType } from './models/client-delegation-type.model'
       ClientPostLogoutRedirectUri,
       ClientRedirectUri,
       ClientSecret,
-      ClientDelegationType,
       Domain,
       ApiScope,
       ApiScopeUserClaim,
