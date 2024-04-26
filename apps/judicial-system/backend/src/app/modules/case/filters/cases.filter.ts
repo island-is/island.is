@@ -35,6 +35,7 @@ const getProsecutionUserCasesQueryFilter = (user: User): WhereOptions => {
         CaseState.ACCEPTED,
         CaseState.REJECTED,
         CaseState.DISMISSED,
+        CaseState.MAIN_HEARING,
       ],
     },
     {
@@ -87,6 +88,7 @@ const getDistrictCourtUserCasesQueryFilter = (user: User): WhereOptions => {
           CaseState.ACCEPTED,
           CaseState.REJECTED,
           CaseState.DISMISSED,
+          CaseState.MAIN_HEARING,
         ],
       },
     )
@@ -118,6 +120,7 @@ const getDistrictCourtUserCasesQueryFilter = (user: User): WhereOptions => {
                 CaseState.ACCEPTED,
                 CaseState.REJECTED,
                 CaseState.DISMISSED,
+                CaseState.MAIN_HEARING,
               ],
             },
           ],
