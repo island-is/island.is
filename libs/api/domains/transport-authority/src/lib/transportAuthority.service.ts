@@ -116,7 +116,7 @@ export class TransportAuthorityApi {
         make: `${vehicle.make} ${vehicle.vehcom}`,
         color: vehicle.color,
         requireMileage: vehicle.requiresMileageRegistration,
-        mileageReading: vehicle?.mileageReadings?.[0]?.mileage,
+        mileageReading: vehicle?.mileageReadings?.[0]?.mileage || '',
       },
     }
   }
