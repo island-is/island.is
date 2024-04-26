@@ -48,7 +48,7 @@ const createLocaleToFieldMapping = (sdk: EditorExtensionSDK) => {
   }
 }
 
-const ListPageEditor = () => {
+const GenericListEditor = () => {
   const sdk = useSDK<EditorExtensionSDK>()
   const cma = useCMA()
 
@@ -124,10 +124,13 @@ const ListPageEditor = () => {
         },
       },
     )
-    sdk.navigator.openEntry(listItem.sys.id, {
-      slideIn: true,
-    })
-    setCounter((counter) => counter + 1)
+    sdk.navigator
+      .openEntry(listItem.sys.id, {
+        slideIn: { waitForClose: true },
+      })
+      .then(() => {
+        setCounter((c) => c + 1)
+      })
   }
 
   const localeToFieldMapping = useMemo(() => {
@@ -220,7 +223,13 @@ const ListPageEditor = () => {
                       item.fields.internalTitle?.[defaultLocale] ?? 'Untitled'
                     }
                     onClick={() => {
-                      sdk.navigator.openEntry(item.sys.id, { slideIn: true })
+                      sdk.navigator
+                        .openEntry(item.sys.id, {
+                          slideIn: { waitForClose: true },
+                        })
+                        .then(() => {
+                          setCounter((c) => c + 1)
+                        })
                     }}
                   />
                 ))}
@@ -248,4 +257,4 @@ const ListPageEditor = () => {
   )
 }
 
-export default ListPageEditor
+export default GenericListEditor

@@ -100,6 +100,7 @@ export default {
     'iconBullet',
     'numberBulletSection',
     'numberBullet',
+    'genericList',
   ],
   // Content types that have the 'activeTranslations' JSON field
   localizedContentTypes: ['article'],

@@ -91,13 +91,17 @@ export const GenericList = ({
         <Stack space={5}>
           <Input
             name="list-search"
-            label={searchInputLabel}
-            placeholder={searchInputPlaceholder}
+            label={searchInputLabel ?? undefined}
+            placeholder={searchInputPlaceholder ?? undefined}
             value={searchValue || ''}
             onChange={(ev) => {
               setSearchValue(ev.target.value || null)
             }}
             loading={loading}
+            backgroundColor="blue"
+            icon={{
+              name: 'search',
+            }}
           />
 
           {typeof itemsResponse?.items?.length === 'number' &&
@@ -110,11 +114,11 @@ export const GenericList = ({
                     border="standard"
                     borderRadius="large"
                   >
-                    <Stack space={2}>
+                    <Stack space={0}>
                       <Stack space={0}>
                         <Text variant="eyebrow" color="purple400">
                           {item.date &&
-                            format(new Date(item.date), 'do MMM yyyy')}
+                            format(new Date(item.date), 'dd.MM.yyyy')}
                         </Text>
                         <Text variant="h4" as="span" color="dark400">
                           {item.title}

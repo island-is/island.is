@@ -283,11 +283,10 @@ export class CmsSyncService implements ContentSearchImporter<PostSyncOptions> {
       )
     }
 
-    // TODO: test if this works
-    if (document.sys.contentType.sys.id === 'listPage') {
+    if (document.sys.contentType.sys.id === 'genericList') {
       const listItems = await this.contentfulService.getContentfulData(100, {
-        content_type: 'listItem',
-        'fields.listPage.sys.id': document.sys.id,
+        content_type: 'genericListItem',
+        'fields.genericList.sys.id': document.sys.id,
       })
 
       return this.elasticService.deleteByIds(
