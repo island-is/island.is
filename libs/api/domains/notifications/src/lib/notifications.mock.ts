@@ -34,20 +34,20 @@ export function generateMockNotification(user: User | null): Notification {
   const isRead = faker.datatype.boolean()
   const sent = faker.date.past()
   const num = faker.datatype.number(1000)
+  const senderId = faker.datatype.string(10)
 
   return {
     id: num,
     notificationId: uuid,
     metadata: {
       sent,
-      read: isRead ? faker.date.between(sent, new Date()) : undefined,
+      read: isRead,
       // status: isRead
       //   ? RenderedNotificationDtoStatusEnum.Read
       //   : RenderedNotificationDtoStatusEnum.Unread,
     },
     sender: {
-      name: faker.company.companyName(),
-      logo: undefined,
+      id: senderId,
     },
     recipient: {
       nationalId: user?.nationalId ?? '0000000000',
@@ -169,8 +169,7 @@ export function markMockNotificationRead(
     return null
   }
 
-  notification.metadata.read = new Date()
-  // notification.metadata.status = RenderedNotificationDtoStatusEnum.Read
+  notification.metadata.read = true
 
   generated.set(key, notifications)
 

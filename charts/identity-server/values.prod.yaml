@@ -31,7 +31,7 @@ auth-admin-web:
   hpa:
     scaling:
       metric:
-        cpuAverageUtilization: 70
+        cpuAverageUtilization: 90
         nginxRequestsIrate: 5
       replicas:
         max: 10
@@ -136,7 +136,7 @@ identity-server:
   hpa:
     scaling:
       metric:
-        cpuAverageUtilization: 70
+        cpuAverageUtilization: 90
         nginxRequestsIrate: 5
       replicas:
         max: 10
@@ -236,7 +236,7 @@ services-auth-admin-api:
   hpa:
     scaling:
       metric:
-        cpuAverageUtilization: 70
+        cpuAverageUtilization: 90
         nginxRequestsIrate: 5
       replicas:
         max: 10
@@ -287,6 +287,7 @@ services-auth-delegation-api:
     LOG_LEVEL: 'info'
     NODE_OPTIONS: '--max-old-space-size=460'
     SERVERSIDE_FEATURES_ON: 'driving-license-use-v1-endpoint-for-v2-comms'
+    USER_NOTIFICATION_API_URL: 'https://user-notification.internal.island.is'
     XROAD_BASE_PATH: 'http://securityserver.island.is'
     XROAD_BASE_PATH_WITH_ENV: 'http://securityserver.island.is/r1/IS'
     XROAD_CLIENT_ID: 'IS/GOV/5501692829/island-is-client'
@@ -314,7 +315,7 @@ services-auth-delegation-api:
   hpa:
     scaling:
       metric:
-        cpuAverageUtilization: 70
+        cpuAverageUtilization: 90
         nginxRequestsIrate: 5
       replicas:
         max: 10
@@ -397,7 +398,7 @@ services-auth-ids-api:
   hpa:
     scaling:
       metric:
-        cpuAverageUtilization: 70
+        cpuAverageUtilization: 90
         nginxRequestsIrate: 5
       replicas:
         max: 15
@@ -503,7 +504,7 @@ services-auth-personal-representative:
   hpa:
     scaling:
       metric:
-        cpuAverageUtilization: 70
+        cpuAverageUtilization: 90
         nginxRequestsIrate: 5
       replicas:
         max: 10
@@ -566,7 +567,7 @@ services-auth-personal-representative-public:
   hpa:
     scaling:
       metric:
-        cpuAverageUtilization: 70
+        cpuAverageUtilization: 90
         nginxRequestsIrate: 5
       replicas:
         max: 10
@@ -654,7 +655,7 @@ services-auth-public-api:
   hpa:
     scaling:
       metric:
-        cpuAverageUtilization: 70
+        cpuAverageUtilization: 90
         nginxRequestsIrate: 5
       replicas:
         max: 10

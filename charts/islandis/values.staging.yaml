@@ -31,7 +31,7 @@ air-discount-scheme-api:
   hpa:
     scaling:
       metric:
-        cpuAverageUtilization: 70
+        cpuAverageUtilization: 90
         nginxRequestsIrate: 20
       replicas:
         max: 10
@@ -119,7 +119,7 @@ air-discount-scheme-backend:
   hpa:
     scaling:
       metric:
-        cpuAverageUtilization: 70
+        cpuAverageUtilization: 90
         nginxRequestsIrate: 20
       replicas:
         max: 10
@@ -218,7 +218,7 @@ air-discount-scheme-web:
   hpa:
     scaling:
       metric:
-        cpuAverageUtilization: 70
+        cpuAverageUtilization: 90
         nginxRequestsIrate: 20
       replicas:
         max: 10
@@ -318,13 +318,13 @@ api:
     SEND_FROM_EMAIL: 'development@island.is'
     SERVERSIDE_FEATURES_ON: ''
     SERVICE_DOCUMENTS_BASEPATH: 'http://web-services-documents.services-documents.svc.cluster.local'
-    SERVICE_USER_PROFILE_URL: 'http://web-service-portal-api.service-portal.svc.cluster.local'
     SESSIONS_API_URL: 'http://web-services-sessions.services-sessions.svc.cluster.local'
     SOFFIA_SOAP_URL: 'https://soffiaprufa.skra.is'
     SYSLUMENN_TIMEOUT: '40000'
     TELL_US_A_STORY_EMAIL: 'sogur@island.is'
     UNIVERSITY_GATEWAY_API_URL: 'http://web-services-university-gateway.services-university-gateway.svc.cluster.local'
-    USER_NOTIFICATION_CLIENT_URL: 'http://user-notification-xrd.internal.staging01.devland.is'
+    USER_NOTIFICATION_API_URL: 'http://web-user-notification.user-notification.svc.cluster.local'
+    USER_PROFILE_CLIENT_URL: 'http://web-service-portal-api.service-portal.svc.cluster.local'
     XROAD_ADR_MACHINE_LICENSE_PATH: 'IS-TEST/GOV/4201810439/Vinnueftirlitid-Protected/rettindi-token-v1'
     XROAD_AIRCRAFT_REGISTRY_PATH: 'IS-DEV/GOV/10017/Samgongustofa-Protected/Loftfaraskra-V1'
     XROAD_BASE_PATH: 'http://securityserver.staging01.devland.is'
@@ -418,7 +418,7 @@ api:
   hpa:
     scaling:
       metric:
-        cpuAverageUtilization: 70
+        cpuAverageUtilization: 90
         nginxRequestsIrate: 5
       replicas:
         max: 50
@@ -643,6 +643,7 @@ application-system-api:
     XROAD_TLS_BASE_PATH: 'https://securityserver.staging01.devland.is'
     XROAD_TLS_BASE_PATH_WITH_ENV: 'https://securityserver.staging01.devland.is/r1/IS-TEST'
     XROAD_TR_PATH: 'IS-TEST/GOV/5012130120/TR-Protected/external-v1'
+    XROAD_VEHICLES_MILEAGE_PATH: 'IS/GOV/5405131040/Samgongustofa-Protected/Vehicle-Mileagereading-V1'
     XROAD_VEHICLES_PATH: 'IS/GOV/5405131040/Samgongustofa-Protected/Mitt-Svaedi-V1'
     XROAD_VEHICLE_CODETABLES_PATH: 'IS-DEV/GOV/10017/Samgongustofa-Protected/Vehicle-Codetables-V1'
     XROAD_VEHICLE_INFOLOCKS_PATH: 'IS-DEV/GOV/10017/Samgongustofa-Protected/Vehicle-Infolocks-V1'
@@ -673,7 +674,7 @@ application-system-api:
   hpa:
     scaling:
       metric:
-        cpuAverageUtilization: 70
+        cpuAverageUtilization: 90
         nginxRequestsIrate: 5
       replicas:
         max: 60
@@ -837,7 +838,7 @@ application-system-api-worker:
   hpa:
     scaling:
       metric:
-        cpuAverageUtilization: 70
+        cpuAverageUtilization: 90
         nginxRequestsIrate: 5
       replicas:
         max: 3
@@ -914,7 +915,7 @@ application-system-form:
   hpa:
     scaling:
       metric:
-        cpuAverageUtilization: 70
+        cpuAverageUtilization: 90
         nginxRequestsIrate: 5
       replicas:
         max: 3
@@ -982,7 +983,7 @@ consultation-portal:
   hpa:
     scaling:
       metric:
-        cpuAverageUtilization: 70
+        cpuAverageUtilization: 90
         nginxRequestsIrate: 5
       replicas:
         max: 30
@@ -1066,7 +1067,7 @@ download-service:
   hpa:
     scaling:
       metric:
-        cpuAverageUtilization: 70
+        cpuAverageUtilization: 90
         nginxRequestsIrate: 5
       replicas:
         max: 3
@@ -1162,7 +1163,7 @@ endorsement-system-api:
   hpa:
     scaling:
       metric:
-        cpuAverageUtilization: 70
+        cpuAverageUtilization: 90
         nginxRequestsIrate: 5
       replicas:
         max: 3
@@ -1262,7 +1263,7 @@ icelandic-names-registry-backend:
   hpa:
     scaling:
       metric:
-        cpuAverageUtilization: 70
+        cpuAverageUtilization: 90
         nginxRequestsIrate: 5
       replicas:
         max: 3
@@ -1347,7 +1348,7 @@ island-ui-storybook:
   hpa:
     scaling:
       metric:
-        cpuAverageUtilization: 70
+        cpuAverageUtilization: 90
         nginxRequestsIrate: 5
       replicas:
         max: 3
@@ -1420,7 +1421,7 @@ license-api:
   hpa:
     scaling:
       metric:
-        cpuAverageUtilization: 70
+        cpuAverageUtilization: 90
         nginxRequestsIrate: 5
       replicas:
         max: 10
@@ -1524,7 +1525,7 @@ portals-admin:
   hpa:
     scaling:
       metric:
-        cpuAverageUtilization: 70
+        cpuAverageUtilization: 90
         nginxRequestsIrate: 5
       replicas:
         max: 30
@@ -1603,7 +1604,7 @@ regulations-admin-backend:
   hpa:
     scaling:
       metric:
-        cpuAverageUtilization: 70
+        cpuAverageUtilization: 90
         nginxRequestsIrate: 5
       replicas:
         max: 3
@@ -1688,7 +1689,7 @@ search-indexer-service:
   hpa:
     scaling:
       metric:
-        cpuAverageUtilization: 70
+        cpuAverageUtilization: 90
         nginxRequestsIrate: 5
       replicas:
         max: 1
@@ -1821,7 +1822,7 @@ service-portal:
   hpa:
     scaling:
       metric:
-        cpuAverageUtilization: 70
+        cpuAverageUtilization: 90
         nginxRequestsIrate: 5
       replicas:
         max: 30
@@ -1866,6 +1867,8 @@ service-portal:
 service-portal-api:
   enabled: true
   env:
+    AUTH_DELEGATION_API_URL: 'http://web-services-auth-delegation-api.identity-server-delegation.svc.cluster.local'
+    AUTH_DELEGATION_MACHINE_CLIENT_SCOPE: '["@island.is/auth/delegations/index:system"]'
     DB_HOST: 'postgres-applications.internal'
     DB_NAME: 'service_portal_api'
     DB_REPLICAS_HOST: 'postgres-applications.internal'
@@ -1874,11 +1877,20 @@ service-portal-api:
     IDENTITY_SERVER_ISSUER_URL: 'https://identity-server.staging01.devland.is'
     ISLYKILL_CERT: '/etc/config/islyklar.p12'
     LOG_LEVEL: 'info'
+    NATIONAL_REGISTRY_B2C_CLIENT_ID: 'ca128c23-b43c-443d-bade-ec5a146a933f'
+    NATIONAL_REGISTRY_B2C_ENDPOINT: 'https://skraidentitydev.b2clogin.com/skraidentitystaging.onmicrosoft.com/b2c_1_midlun_flow/oauth2/v2.0/token'
+    NATIONAL_REGISTRY_B2C_PATH: 'IS-TEST/GOV/6503760649/SKRA-Cloud-Protected/Midlun-v1'
+    NATIONAL_REGISTRY_B2C_SCOPE: 'https://skraidentitystaging.onmicrosoft.com/midlun/.default'
     NODE_OPTIONS: '--max-old-space-size=921'
     NOVA_ACCEPT_UNAUTHORIZED: 'false'
     SERVERSIDE_FEATURES_ON: ''
     SERVICE_PORTAL_BASE_URL: 'https://beta.staging01.devland.is/minarsidur'
     USER_PROFILE_WORKER_PAGE_SIZE: '3000'
+    XROAD_BASE_PATH: 'http://securityserver.staging01.devland.is'
+    XROAD_BASE_PATH_WITH_ENV: 'http://securityserver.staging01.devland.is/r1/IS-TEST'
+    XROAD_CLIENT_ID: 'IS-TEST/GOV/5501692829/island-is-client'
+    XROAD_TLS_BASE_PATH: 'https://securityserver.staging01.devland.is'
+    XROAD_TLS_BASE_PATH_WITH_ENV: 'https://securityserver.staging01.devland.is/r1/IS-TEST'
   files:
     - 'islyklar.p12'
   grantNamespaces:
@@ -1899,7 +1911,7 @@ service-portal-api:
   hpa:
     scaling:
       metric:
-        cpuAverageUtilization: 70
+        cpuAverageUtilization: 90
         nginxRequestsIrate: 5
       replicas:
         max: 30
@@ -1962,8 +1974,11 @@ service-portal-api:
     EMAIL_FROM_NAME: '/k8s/service-portal/api/EMAIL_FROM_NAME'
     EMAIL_REPLY_TO: '/k8s/service-portal/api/EMAIL_REPLY_TO'
     EMAIL_REPLY_TO_NAME: '/k8s/service-portal/api/EMAIL_REPLY_TO_NAME'
+    IDENTITY_SERVER_CLIENT_ID: '/k8s/service-portal/api/SERVICE_PORTAL_API_CLIENT_ID'
+    IDENTITY_SERVER_CLIENT_SECRET: '/k8s/service-portal/api/SERVICE_PORTAL_API_CLIENT_SECRET'
     ISLYKILL_SERVICE_BASEPATH: '/k8s/api/ISLYKILL_SERVICE_BASEPATH'
     ISLYKILL_SERVICE_PASSPHRASE: '/k8s/api/ISLYKILL_SERVICE_PASSPHRASE'
+    NATIONAL_REGISTRY_B2C_CLIENT_SECRET: '/k8s/api/NATIONAL_REGISTRY_B2C_CLIENT_SECRET'
     NOVA_PASSWORD: '/k8s/gjafakort/NOVA_PASSWORD'
     NOVA_URL: '/k8s/service-portal-api/NOVA_URL'
     NOVA_USERNAME: '/k8s/gjafakort/NOVA_USERNAME'
@@ -1983,6 +1998,8 @@ service-portal-api-worker:
     - 'node'
   enabled: true
   env:
+    AUTH_DELEGATION_API_URL: 'http://web-services-auth-delegation-api.identity-server-delegation.svc.cluster.local'
+    AUTH_DELEGATION_MACHINE_CLIENT_SCOPE: '["@island.is/auth/delegations/index:system"]'
     DB_HOST: 'postgres-applications.internal'
     DB_NAME: 'service_portal_api'
     DB_REPLICAS_HOST: 'postgres-applications.internal'
@@ -2017,7 +2034,7 @@ service-portal-api-worker:
   hpa:
     scaling:
       metric:
-        cpuAverageUtilization: 70
+        cpuAverageUtilization: 90
         nginxRequestsIrate: 5
       replicas:
         max: 3
@@ -2047,8 +2064,11 @@ service-portal-api-worker:
     EMAIL_FROM_NAME: '/k8s/service-portal/api/EMAIL_FROM_NAME'
     EMAIL_REPLY_TO: '/k8s/service-portal/api/EMAIL_REPLY_TO'
     EMAIL_REPLY_TO_NAME: '/k8s/service-portal/api/EMAIL_REPLY_TO_NAME'
+    IDENTITY_SERVER_CLIENT_ID: '/k8s/service-portal/api/SERVICE_PORTAL_API_CLIENT_ID'
+    IDENTITY_SERVER_CLIENT_SECRET: '/k8s/service-portal/api/SERVICE_PORTAL_API_CLIENT_SECRET'
     ISLYKILL_SERVICE_BASEPATH: '/k8s/api/ISLYKILL_SERVICE_BASEPATH'
     ISLYKILL_SERVICE_PASSPHRASE: '/k8s/api/ISLYKILL_SERVICE_PASSPHRASE'
+    NATIONAL_REGISTRY_B2C_CLIENT_SECRET: '/k8s/api/NATIONAL_REGISTRY_B2C_CLIENT_SECRET'
     NOVA_PASSWORD: '/k8s/gjafakort/NOVA_PASSWORD'
     NOVA_URL: '/k8s/service-portal-api/NOVA_URL'
     NOVA_USERNAME: '/k8s/gjafakort/NOVA_USERNAME'
@@ -2082,7 +2102,7 @@ services-documents:
   hpa:
     scaling:
       metric:
-        cpuAverageUtilization: 70
+        cpuAverageUtilization: 90
         nginxRequestsIrate: 5
       replicas:
         max: 3
@@ -2163,7 +2183,7 @@ services-sessions:
   hpa:
     scaling:
       metric:
-        cpuAverageUtilization: 70
+        cpuAverageUtilization: 90
         nginxRequestsIrate: 5
       replicas:
         max: 10
@@ -2236,7 +2256,7 @@ services-sessions-worker:
   hpa:
     scaling:
       metric:
-        cpuAverageUtilization: 70
+        cpuAverageUtilization: 90
         nginxRequestsIrate: 5
       replicas:
         max: 3
@@ -2327,6 +2347,7 @@ services-university-gateway:
   grantNamespaces:
     - 'islandis'
     - 'nginx-ingress-internal'
+    - 'application-system'
   grantNamespacesEnabled: true
   healthCheck:
     liveness:
@@ -2340,7 +2361,7 @@ services-university-gateway:
   hpa:
     scaling:
       metric:
-        cpuAverageUtilization: 70
+        cpuAverageUtilization: 90
         nginxRequestsIrate: 5
       replicas:
         max: 10
@@ -2455,6 +2476,7 @@ services-university-gateway-worker:
   grantNamespaces:
     - 'islandis'
     - 'nginx-ingress-internal'
+    - 'application-system'
   grantNamespacesEnabled: true
   healthCheck:
     liveness:
@@ -2468,7 +2490,7 @@ services-university-gateway-worker:
   hpa:
     scaling:
       metric:
-        cpuAverageUtilization: 70
+        cpuAverageUtilization: 90
         nginxRequestsIrate: 5
       replicas:
         max: 3
@@ -2528,7 +2550,7 @@ skilavottord-web:
   hpa:
     scaling:
       metric:
-        cpuAverageUtilization: 70
+        cpuAverageUtilization: 90
         nginxRequestsIrate: 5
       replicas:
         max: 3
@@ -2598,7 +2620,7 @@ skilavottord-ws:
   hpa:
     scaling:
       metric:
-        cpuAverageUtilization: 70
+        cpuAverageUtilization: 90
         nginxRequestsIrate: 5
       replicas:
         max: 3
@@ -2692,6 +2714,8 @@ user-notification:
     NATIONAL_REGISTRY_B2C_SCOPE: 'https://skraidentitystaging.onmicrosoft.com/midlun/.default'
     NODE_OPTIONS: '--max-old-space-size=345'
     SERVERSIDE_FEATURES_ON: ''
+    SERVICE_PORTAL_CLICK_ACTION_URL: 'https://island.is/minarsidur'
+    USER_NOTIFICATION_APP_PROTOCOL: 'is.island.app.dev'
     USER_PROFILE_CLIENT_URL: 'http://web-service-portal-api.service-portal.svc.cluster.local'
     XROAD_BASE_PATH: 'http://securityserver.staging01.devland.is'
     XROAD_BASE_PATH_WITH_ENV: 'http://securityserver.staging01.devland.is/r1/IS-TEST'
@@ -2700,6 +2724,7 @@ user-notification:
     XROAD_TLS_BASE_PATH_WITH_ENV: 'https://securityserver.staging01.devland.is/r1/IS-TEST'
   grantNamespaces:
     - 'nginx-ingress-internal'
+    - 'identity-server-delegation'
   grantNamespacesEnabled: true
   healthCheck:
     liveness:
@@ -2713,7 +2738,7 @@ user-notification:
   hpa:
     scaling:
       metric:
-        cpuAverageUtilization: 70
+        cpuAverageUtilization: 90
         nginxRequestsIrate: 5
       replicas:
         max: 3
@@ -2782,6 +2807,7 @@ user-notification-cleanup-worker:
     SERVERSIDE_FEATURES_ON: ''
   grantNamespaces:
     - 'nginx-ingress-internal'
+    - 'identity-server-delegation'
   grantNamespacesEnabled: true
   healthCheck:
     liveness:
@@ -2795,7 +2821,7 @@ user-notification-cleanup-worker:
   hpa:
     scaling:
       metric:
-        cpuAverageUtilization: 70
+        cpuAverageUtilization: 90
         nginxRequestsIrate: 5
       replicas:
         max: 3
@@ -2881,6 +2907,7 @@ user-notification-worker:
     NATIONAL_REGISTRY_B2C_SCOPE: 'https://skraidentitystaging.onmicrosoft.com/midlun/.default'
     NODE_OPTIONS: '--max-old-space-size=345'
     SERVERSIDE_FEATURES_ON: ''
+    SERVICE_PORTAL_CLICK_ACTION_URL: 'https://island.is/minarsidur'
     USER_NOTIFICATION_APP_PROTOCOL: 'is.island.app.dev'
     USER_PROFILE_CLIENT_URL: 'http://web-service-portal-api.service-portal.svc.cluster.local'
     XROAD_BASE_PATH: 'http://securityserver.staging01.devland.is'
@@ -2890,6 +2917,7 @@ user-notification-worker:
     XROAD_TLS_BASE_PATH_WITH_ENV: 'https://securityserver.staging01.devland.is/r1/IS-TEST'
   grantNamespaces:
     - 'nginx-ingress-internal'
+    - 'identity-server-delegation'
   grantNamespacesEnabled: true
   healthCheck:
     liveness:
@@ -2903,7 +2931,7 @@ user-notification-worker:
   hpa:
     scaling:
       metric:
-        cpuAverageUtilization: 70
+        cpuAverageUtilization: 90
         nginxRequestsIrate: 5
       replicas:
         max: 2
@@ -2998,7 +3026,7 @@ web:
   hpa:
     scaling:
       metric:
-        cpuAverageUtilization: 70
+        cpuAverageUtilization: 90
         nginxRequestsIrate: 5
       replicas:
         max: 50
@@ -3070,7 +3098,7 @@ xroad-collector:
   hpa:
     scaling:
       metric:
-        cpuAverageUtilization: 70
+        cpuAverageUtilization: 90
         nginxRequestsIrate: 5
       replicas:
         max: 3

@@ -69,14 +69,12 @@ const Card = ({
           truncate={false}
         />
 
-        <Box
-          style={{ height: showAttachment ? '100px' : '100px' }}
-          className={styles.title}
-          paddingY={2}
-        >
-          <Text as="h4" fontWeight="semiBold">
-            {card.title}
-          </Text>
+        <Box className={styles.title} paddingY={2}>
+          <Box className={styles.textContainer}>
+            <Text as="h2" fontWeight="semiBold">
+              {card.title}
+            </Text>
+          </Box>
         </Box>
         <Inline space={1} alignY={'center'}>
           <Text variant="eyebrow" color="dark400">

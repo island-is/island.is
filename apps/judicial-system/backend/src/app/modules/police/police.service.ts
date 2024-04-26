@@ -6,6 +6,7 @@ import { z } from 'zod'
 
 import {
   BadGatewayException,
+  forwardRef,
   Inject,
   Injectable,
   NotFoundException,
@@ -114,7 +115,9 @@ export class PoliceService {
   constructor(
     @Inject(policeModuleConfig.KEY)
     private readonly config: ConfigType<typeof policeModuleConfig>,
+    @Inject(forwardRef(() => EventService))
     private readonly eventService: EventService,
+    @Inject(forwardRef(() => AwsS3Service))
     private readonly awsS3Service: AwsS3Service,
     @Inject(LOGGER_PROVIDER) private readonly logger: Logger,
   ) {

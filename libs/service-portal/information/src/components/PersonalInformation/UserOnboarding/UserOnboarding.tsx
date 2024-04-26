@@ -12,7 +12,11 @@ const isDevelopment = process.env.NODE_ENV === 'development'
 
 const UserOnboarding = () => {
   const { userInfo } = useAuth()
-  const { data, loading } = useGetUserProfileQuery()
+  const isCompany = userInfo?.profile?.subjectType === 'legalEntity'
+
+  const { data, loading } = useGetUserProfileQuery({
+    skip: !(isCompany && userInfo?.scopes.includes(UserProfileScope.write)),
+  })
 
   const featureFlagCLI = useFeatureFlagClient()
   const [hiddenByFeatureFlag, setHiddenByFeatureFlag] = useState<boolean>(true)
@@ -34,7 +38,7 @@ const UserOnboarding = () => {
     const showTheModal = showUserOnboardingModal(data?.getUserProfile)
 
     if (
-      !hiddenByFeatureFlag &&
+      (!hiddenByFeatureFlag || isCompany) &&
       !isDevelopment &&
       userInfo.scopes.includes(UserProfileScope.write) &&
       showTheModal
