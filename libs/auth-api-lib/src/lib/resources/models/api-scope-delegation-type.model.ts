@@ -40,6 +40,6 @@ export class ApiScopeDelegationType extends Model {
   readonly created!: Date
 
   @UpdatedAt
-  @ApiPropertyOptional({ nullable: true })
-  readonly modified?: Date | null
+  @ApiPropertyOptional()
+  readonly modified?: Date
 }
