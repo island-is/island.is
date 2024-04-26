@@ -11,10 +11,7 @@ import {
   toast,
 } from '@island.is/island-ui/core'
 import * as constants from '@island.is/judicial-system/consts'
-import {
-  CommentType,
-  getLatestDateType,
-} from '@island.is/judicial-system/types'
+import { getLatestDateType } from '@island.is/judicial-system/types'
 import { core, errors, titles } from '@island.is/judicial-system-web/messages'
 import {
   BlueBox,
@@ -45,7 +42,7 @@ import {
 
 import { conclusion as m } from './Conclusion.strings'
 
-type Actions = 'POSTPONE'
+type Actions = 'POSTPONE' | 'REDISTRIBUTE'
 
 interface Postponement {
   newDate?: string | null
@@ -81,9 +78,23 @@ const Conclusion: React.FC = () => {
     workingCase.id,
   )
 
-  const handleNavigationTo = useCallback(
-    async (destination: keyof stepValidationsType) => {
-      console.log(postponement)
+  const handleRedistribution = useCallback(async () => {
+    const transitionSuccessful = await transitionCase(
+      workingCase.id,
+      CaseTransition.REDISTRIBUTE,
+    )
+
+    if (transitionSuccessful) {
+      router.push(constants.CASES_ROUTE)
+    } else {
+      toast.error(formatMessage(errors.transitionCase))
+    }
+  }, [transitionCase, workingCase.id, formatMessage])
+
+const handleNavigationTo = useCallback(async () => {
+    if (selectedAction === 'REDISTRIBUTE') {
+      handleRedistribution()
+    } else {
       if (postponement && postponement.postponedIndefinitely) {
         updateCase(workingCase.id, {
           postponedIndefinitelyExplanation: postponement.reason,
@@ -94,20 +105,14 @@ const Conclusion: React.FC = () => {
           courtRoom: postponement?.courtRoom,
         })
       }
-      // const transitionSuccessful = await transitionCase(
-      //   workingCase.id,
-      //   CaseTransition.ACCEPT,
-      // )
-
-      // if (transitionSuccessful) {
-      //   setNavigateTo(destination)
-      // } else {
-      //   toast.error(formatMessage(errors.transitionCase))
-      // }
-    },
-    // [transitionCase, workingCase, formatMessage],
-    [postponement, updateCase, workingCase.id],
-  )
+    }
+  }, [
+    handleRedistribution,
+    postponement,
+    selectedAction,
+    updateCase,
+    workingCase.id,
+  ])
 
   useEffect(() => {
     const latestPostponement = getLatestDateType(
@@ -139,16 +144,32 @@ const Conclusion: React.FC = () => {
         <Box component="section" marginBottom={5}>
           <SectionHeading title={formatMessage(m.decisionTitle)} required />
           <BlueBox>
+            <Box marginBottom={2}>
+              <RadioButton
+                id="conclusion-postpone"
+                name="conclusion-decision"
+                checked={selectedAction === 'POSTPONE'}
+                onChange={() => {
+                  console.log(selectedAction)
+                  setSelectedAction('POSTPONE')
+                }}
+                large
+                backgroundColor="white"
+                label={formatMessage(m.postponed)}
+              />
+            </Box>
+
             <RadioButton
-              id="conclusion-postpone"
+              id="conclusion-redistribute"
               name="conclusion-decision"
-              checked={selectedAction === 'POSTPONE'}
-              onChange={() => {
-                setSelectedAction('POSTPONE')
+              checked={selectedAction === 'REDISTRIBUTE'}
+              onChange={async () => {
+                setSelectedAction('REDISTRIBUTE')
+                console.log(selectedAction)
               }}
               large
               backgroundColor="white"
-              label={formatMessage(m.postponed)}
+              label={formatMessage(m.redistribute)}
             />
           </BlueBox>
         </Box>
@@ -160,6 +181,7 @@ const Conclusion: React.FC = () => {
                 <Box marginBottom={2}>
                   <CourtArrangements
                     workingCase={workingCase}
+                    // setWorkingCase={setWorkingCase}
                     handleCourtDateChange={(date, valid) => {
                       if (valid && date) {
                         setPostponement((prev) => ({
@@ -205,10 +227,7 @@ const Conclusion: React.FC = () => {
                     m.reasonForPostponementPlaceholder,
                   )}
                   onBlur={(event) =>
-                    setPostponement((prev) => ({
-                      ...prev,
-                      reason: event.target.value,
-                    }))
+                    setPostponement({ reason: event.target.value })
                   }
                   disabled={!postponement?.postponedIndefinitely}
                   textarea

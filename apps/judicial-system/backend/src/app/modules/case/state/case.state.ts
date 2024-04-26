@@ -178,6 +178,14 @@ export const caseStateMachine: Map<CaseTransition, Rule> = new Map([
       to: { appealState: CaseAppealState.WITHDRAWN },
     },
   ],
+  [
+    CaseTransition.REDISTRIBUTE,
+    {
+      fromStates: [CaseState.RECEIVED],
+      fromAppealStates: [undefined],
+      to: { state: CaseState.MAIN_HEARING },
+    },
+  ],
 ])
 
 export const transitionCase = function (

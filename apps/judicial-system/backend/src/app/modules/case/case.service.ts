@@ -125,7 +125,6 @@ export interface UpdateCase
     | 'prosecutorAppealAnnouncement'
     | 'accusedPostponedAppealDate'
     | 'prosecutorPostponedAppealDate'
-    | 'judgeId'
     | 'registrarId'
     | 'caseModifiedExplanation'
     | 'rulingModifiedHistory'
@@ -164,6 +163,7 @@ export interface UpdateCase
   courtDate?: Date | null
   postponedCourtDate?: Date | null
   postponedIndefinitelyExplanation?: string | null
+  judgeId?: string | null
 }
 
 const explanatoryCommentsTypes: Partial<Record<keyof UpdateCase, CommentType>> =

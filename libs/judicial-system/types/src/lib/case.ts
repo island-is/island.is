@@ -97,6 +97,7 @@ export enum CaseState {
   REJECTED = 'REJECTED',
   DELETED = 'DELETED',
   DISMISSED = 'DISMISSED',
+  MAIN_HEARING = 'MAIN_HEARING',
 }
 
 export enum CaseAppealState {
@@ -123,6 +124,7 @@ export enum CaseTransition {
   WITHDRAW_APPEAL = 'WITHDRAW_APPEAL',
   DENY_INDICTMENT = 'DENY_INDICTMENT',
   RETURN_INDICTMENT = 'RETURN_INDICTMENT',
+  REDISTRIBUTE = 'REDISTRIBUTE',
 }
 
 /* eslint-disable @typescript-eslint/naming-convention */

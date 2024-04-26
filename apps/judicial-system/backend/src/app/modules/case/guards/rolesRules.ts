@@ -280,6 +280,7 @@ export const districtCourtJudgeTransitionRule: RolesRule = {
     CaseTransition.REOPEN,
     CaseTransition.RECEIVE_APPEAL,
     CaseTransition.RETURN_INDICTMENT,
+    CaseTransition.REDISTRIBUTE,
   ],
   canActivate: (request) => {
     const theCase = request.case
