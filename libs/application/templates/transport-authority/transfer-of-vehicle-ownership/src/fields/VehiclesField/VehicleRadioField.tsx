@@ -44,7 +44,12 @@ export const VehicleRadioField: FC<
     setValue('pickVehicle.type', currentVehicle.make)
     setValue('pickVehicle.color', currentVehicle.color || undefined)
     setValue('vehicleMileage.requireMileage', currentVehicle?.requireMileage)
-    setValue('vehicleMileage.mileageReading', currentVehicle?.mileageReading)
+    if (currentVehicle?.requireMileage) {
+      setValue(
+        'vehicleMileage.mileageReading',
+        currentVehicle?.mileageReading?.toString(),
+      )
+    }
     if (permno) setValue('vehicleInfo.plate', permno)
     if (permno) setValue('vehicleInfo.type', currentVehicle.make)
   }
