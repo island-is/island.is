@@ -217,7 +217,6 @@ const UniversitySearch: Screen<UniversitySearchProps> = ({
 
   const fuseOptions = {
     threshold: 0.3,
-    findAllMatches: true,
     includeScore: true,
     keys: [
       {
@@ -247,7 +246,6 @@ const UniversitySearch: Screen<UniversitySearchProps> = ({
 
     let fuseInstance: Fuse<UniversityGatewayProgram> = new Fuse([], fuseOptions)
     if (originalSortedResults.length > 0) {
-      fuseOptions.threshold = query.length < 9 ? 0.2 : 0.3
       fuseInstance = new Fuse(
         originalSortedResults.map((item: FuseQueryResult) => {
           return item.item
@@ -965,104 +963,114 @@ const UniversitySearch: Screen<UniversitySearchProps> = ({
               </Box>
             </Hidden>
             <Box
-              display="flex"
-              flexDirection="row"
-              width="full"
-              justifyContent="spaceBetween"
+              display={'flex'}
+              flexDirection={'column'}
+              style={{ gap: '0.5rem' }}
               marginTop={isTabletScreenWidth || isMobileScreenWidth ? 2 : 5}
               marginBottom={isTabletScreenWidth || isMobileScreenWidth ? 2 : 5}
             >
-              {data && (
-                <Box
-                  width="full"
-                  style={{ display: 'grid', gridTemplateColumns: '90% 10%' }}
-                >
-                  <Box display={'flex'} flexWrap={'wrap'}>
-                    <Box display={'flex'}>
-                      <Text variant="intro" fontWeight="semiBold" as="h2">
-                        {`${filteredResults.length}`}
-                      </Text>
-                      <Box paddingLeft={1}>
-                        {' '}
-                        <Text variant="intro" as="h2">{`${n(
-                          'visiblePrograms',
-                          'námsleiðir',
-                        )}:`}</Text>
+              <Box
+                display="flex"
+                flexDirection="row"
+                width="full"
+                justifyContent="spaceBetween"
+              >
+                {data && (
+                  <Box
+                    width="full"
+                    display={'flex'}
+                    justifyContent={'spaceBetween'}
+                  >
+                    <Box display={'flex'} flexWrap={'wrap'}>
+                      <Box display={'flex'}>
+                        <Text variant="intro" fontWeight="semiBold" as="h2">
+                          {`${filteredResults.length}`}
+                        </Text>
+                        <Box paddingLeft={1}>
+                          {' '}
+                          <Text variant="intro" as="h2">{`${n(
+                            'visiblePrograms',
+                            'námsleiðir',
+                          )}:`}</Text>
+                        </Box>
                       </Box>
                     </Box>
                     <Box
                       display="flex"
-                      justifyContent="center"
-                      alignItems={'center'}
-                      style={{ gap: '0.5rem' }}
+                      flexDirection="row"
+                      justifyContent="flexEnd"
                     >
-                      {Array.from(countOccurrencesInResults())
-                        .sort((a, b) => b[1] - a[1])
-                        .map(([universityId, count]) => {
-                          const uni = universities.filter(
-                            (x) => x.id === universityId,
-                          )[0]
-                          return (
-                            <Box
-                              display="flex"
-                              alignItems="center"
-                              style={{ gap: '4px' }}
-                            >
-                              <img
-                                className={styles.searchResultIcon}
-                                src={uni?.contentfulLogoUrl || ''}
-                                alt={`${
-                                  locale === 'en'
-                                    ? uni.contentfulTitleEn
-                                    : uni.contentfulTitle
-                                } logo`}
-                              />
-                              <Text>{`(${count})`}</Text>
-                            </Box>
-                          )
-                        })}
+                      <Hidden below="md">
+                        <Box>
+                          <button
+                            onClick={() => setGridView(true)}
+                            className={styles.iconButton}
+                          >
+                            <VisuallyHidden>
+                              {n('changeToTable', 'Breyta niðurstöðum í töflu')}
+                            </VisuallyHidden>
+                            <Icon
+                              icon={'gridView'}
+                              type="outline"
+                              color={gridView ? 'blue400' : 'dark200'}
+                            />
+                          </button>
+                          <button
+                            onClick={() => setGridView(false)}
+                            className={styles.iconButton}
+                          >
+                            <VisuallyHidden>
+                              {n('changeToList', 'Breyta niðurstöðum í lista')}
+                            </VisuallyHidden>
+                            <Icon
+                              icon={'listView'}
+                              type="outline"
+                              color={gridView ? 'dark200' : 'blue400'}
+                              useStroke
+                            />
+                          </button>
+                        </Box>
+                      </Hidden>
                     </Box>
                   </Box>
-                  <Box
-                    display="flex"
-                    flexDirection="row"
-                    justifyContent="flexEnd"
-                  >
-                    <Hidden below="md">
-                      <Box>
-                        <button
-                          onClick={() => setGridView(true)}
-                          className={styles.iconButton}
-                        >
-                          <VisuallyHidden>
-                            {n('changeToTable', 'Breyta niðurstöðum í töflu')}
-                          </VisuallyHidden>
-                          <Icon
-                            icon={'gridView'}
-                            type="outline"
-                            color={gridView ? 'blue400' : 'dark200'}
-                          />
-                        </button>
-                        <button
-                          onClick={() => setGridView(false)}
-                          className={styles.iconButton}
-                        >
-                          <VisuallyHidden>
-                            {n('changeToList', 'Breyta niðurstöðum í lista')}
-                          </VisuallyHidden>
-                          <Icon
-                            icon={'listView'}
-                            type="outline"
-                            color={gridView ? 'dark200' : 'blue400'}
-                            useStroke
-                          />
-                        </button>
+                )}
+              </Box>
+              <Box
+                display="flex"
+                justifyContent="flexStart"
+                alignItems={'center'}
+                style={{ gap: '0.5rem' }}
+                marginBottom={2}
+              >
+                {Array.from(countOccurrencesInResults())
+                  .sort((a, b) => b[1] - a[1])
+                  .map(([universityId, count]) => {
+                    const uni = universities.filter(
+                      (x) => x.id === universityId,
+                    )[0]
+                    return (
+                      <Box
+                        key={universityId}
+                        display="flex"
+                        alignItems="center"
+                        style={{ gap: '4px' }}
+                      >
+                        <img
+                          className={styles.searchResultIcon}
+                          src={uni?.contentfulLogoUrl || ''}
+                          alt={`${
+                            locale === 'en'
+                              ? uni.contentfulTitleEn
+                              : uni.contentfulTitle
+                          } logo`}
+                        />
+                        <Text variant="small">{`(${count})`}</Text>
                       </Box>
-                    </Hidden>
-                  </Box>
-                </Box>
-              )}
+                    )
+                  })}
+              </Box>
             </Box>
+
             {loading ? (
               <>{loadSkeletons()}</>
             ) : (
