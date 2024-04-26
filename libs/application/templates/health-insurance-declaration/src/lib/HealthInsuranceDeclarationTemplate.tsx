@@ -7,7 +7,7 @@ import {
   ChildrenCustodyInformationApi,
   DefaultEvents,
   FormModes,
-  HealthInsuranceApi,
+  HealthInsuranceStatementsApi,
   InstitutionNationalIds,
   NationalRegistrySpouseApi,
   NationalRegistryUserApi,
@@ -73,7 +73,7 @@ const HealthInsuranceDeclarationTemplate: ApplicationTemplate<
               write: 'all',
               delete: true,
               api: [
-                HealthInsuranceApi,
+                HealthInsuranceStatementsApi,
                 UserProfileApi,
                 NationalRegistryUserApi,
                 ChildrenCustodyInformationApi,

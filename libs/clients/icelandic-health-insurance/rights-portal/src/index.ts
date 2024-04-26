@@ -17,4 +17,5 @@ export {
   PaymentsCopaymentApi,
   PaymentsOverviewApi,
   MinarsidurAPIModelsPaymentsPaymentOverviewDTO as PaymentOverviewDTO,
+  InsurancestatementsApi,
 } from '../gen/fetch'
