@@ -1,9 +1,6 @@
 import { createIntl } from 'react-intl'
 
-import {
-  DateType,
-  RequestSharedWithDefender,
-} from '@island.is/judicial-system-web/src/graphql/schema'
+import { RequestSharedWithDefender } from '@island.is/judicial-system-web/src/graphql/schema'
 import { TempCase as Case } from '@island.is/judicial-system-web/src/types'
 
 import { getCaseResubmittedText } from './CaseResubmitModal'
@@ -20,14 +17,7 @@ describe('getCaseResubmittedText', () => {
     const theCase = {
       id: 'abc',
       requestSharedWithDefender: RequestSharedWithDefender.COURT_DATE,
-      dateLogs: [
-        {
-          caseId: 'abc',
-          created: '2022-06-13',
-          date: '2022-06-13T13:37:00Z',
-          dateType: DateType.ARRAIGNMENT_DATE,
-        },
-      ],
+      arraignmentDate: { date: '2022-06-13T13:37:00Z' },
     } as Case
 
     const res = fn(theCase)
@@ -38,19 +28,14 @@ describe('getCaseResubmittedText', () => {
   })
 
   it.each`
-    id       | dateLogs     | requestSharedWithDefender
-    ${'abc'} | ${undefined} | ${RequestSharedWithDefender.COURT_DATE}
-    ${'abc'} | ${[{
-    caseId: 'abc',
-    date: '2022-06-13T13:37:00Z',
-    created: '2022-06-13',
-    dateType: DateType.ARRAIGNMENT_DATE,
-  }]} | ${undefined}
-    ${'abc'} | ${undefined} | ${undefined}
+    id       | arraignmentDate                     | requestSharedWithDefender
+    ${'abc'} | ${undefined}                        | ${RequestSharedWithDefender.COURT_DATE}
+    ${'abc'} | ${{ date: '2022-06-13T13:37:00Z' }} | ${undefined}
+    ${'abc'} | ${undefined}                        | ${undefined}
   `(
     'should not include section about notification',
-    ({ id, dateLogs, requestSharedWithDefender }) => {
-      const theCase = { id, dateLogs, requestSharedWithDefender } as Case
+    ({ id, arraignmentDate, requestSharedWithDefender }) => {
+      const theCase = { id, arraignmentDate, requestSharedWithDefender } as Case
 
       const res = fn(theCase)
 
