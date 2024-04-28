@@ -76,7 +76,7 @@ import {
 } from '../../formatters'
 import { formatCourtOfAppealJudgeAssignedEmailNotification } from '../../formatters/formatters'
 import { notifications } from '../../messages'
-import { Case, DateLog } from '../case'
+import { Case } from '../case'
 import { CourtService } from '../court'
 import { Defendant, DefendantService } from '../defendant'
 import { CaseEvent, EventService } from '../event'
@@ -94,6 +94,10 @@ interface Attachment {
 interface RecipientInfo {
   name?: string
   email?: string
+}
+
+const getArraignmentDate = (theCase: Case) => {
+  return theCase.dateLogs?.find((d) => d.dateType === DateType.ARRAIGNMENT_DATE)
 }
 
 @Injectable()
@@ -311,9 +315,7 @@ export class NotificationService {
   }
 
   private createICalAttachment(theCase: Case): Attachment | undefined {
-    const arraignmentDate = theCase.dateLogs?.find(
-      (d) => d.dateType === DateType.ARRAIGNMENT_DATE,
-    )
+    const arraignmentDate = getArraignmentDate(theCase)
 
     if (!arraignmentDate?.date) {
       return
@@ -621,9 +623,7 @@ export class NotificationService {
     theCase: Case,
     user: User,
   ): Promise<Recipient> {
-    const arraignmentDate = theCase.dateLogs?.find(
-      (d) => d.dateType === DateType.ARRAIGNMENT_DATE,
-    )
+    const arraignmentDate = getArraignmentDate(theCase)
 
     const { subject, body } = formatProsecutorCourtDateEmailNotification(
       this.formatMessage,
@@ -673,9 +673,7 @@ export class NotificationService {
       { caseType: theCase.type, courtCaseNumber: theCase.courtCaseNumber },
     )
 
-    const arraignmentDate = theCase.dateLogs?.find(
-      (d) => d.dateType === DateType.ARRAIGNMENT_DATE,
-    )?.date
+    const arraignmentDate = getArraignmentDate(theCase)?.date
 
     // Assume there is at most one defendant
     const html = formatPrisonCourtDateEmailNotification(
@@ -709,9 +707,7 @@ export class NotificationService {
     theCase: Case,
     user: User,
   ): Promise<Recipient> {
-    const arraignmentDate = theCase.dateLogs?.find(
-      (d) => d.dateType === DateType.ARRAIGNMENT_DATE,
-    )
+    const arraignmentDate = getArraignmentDate(theCase)
 
     const subject = `Fyrirtaka í máli ${theCase.courtCaseNumber}`
     const calendarInvite = this.createICalAttachment(theCase)
@@ -1209,9 +1205,7 @@ export class NotificationService {
   }
 
   private sendRevokedSmsNotificationToCourt(theCase: Case): Promise<Recipient> {
-    const arraignmentDate = theCase.dateLogs?.find(
-      (d) => d.dateType === DateType.ARRAIGNMENT_DATE,
-    )?.date
+    const arraignmentDate = getArraignmentDate(theCase)?.date
 
     const smsText = formatCourtRevokedSmsNotification(
       this.formatMessage,
@@ -1227,9 +1221,7 @@ export class NotificationService {
   private sendRevokedEmailNotificationToPrison(
     theCase: Case,
   ): Promise<Recipient> {
-    const arraignmentDate = theCase.dateLogs?.find(
-      (d) => d.dateType === DateType.ARRAIGNMENT_DATE,
-    )?.date
+    const arraignmentDate = getArraignmentDate(theCase)?.date
 
     const subject = this.formatMessage(
       notifications.prisonRevokedEmail.subject,
@@ -1287,9 +1279,7 @@ export class NotificationService {
     theCase: Case,
   ): Promise<SendNotificationResponse> {
     const promises: Promise<Recipient>[] = []
-    const arraignmentDate = theCase.dateLogs?.find(
-      (d) => d.dateType === DateType.ARRAIGNMENT_DATE,
-    )?.date
+    const arraignmentDate = getArraignmentDate(theCase)?.date
 
     const courtWasNotified =
       !isIndictmentCase(theCase.type) &&
@@ -1442,9 +1432,7 @@ export class NotificationService {
     theCase: Case,
   ): Promise<SendNotificationResponse> {
     const promises: Promise<Recipient>[] = []
-    const arraignmentDate = theCase.dateLogs?.find(
-      (d) => d.dateType === DateType.ARRAIGNMENT_DATE,
-    )?.date
+    const arraignmentDate = getArraignmentDate(theCase)?.date
 
     if (isIndictmentCase(theCase.type)) {
       const uniqDefendants = _uniqBy(

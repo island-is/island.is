@@ -9,6 +9,7 @@ import {
   CaseOrigin,
   CaseState,
   CaseType,
+  CommentType,
   DateType,
   indictmentCases,
   InstitutionType,
@@ -28,6 +29,7 @@ import { UserService } from '../../../user'
 import { UpdateCaseDto } from '../../dto/updateCase.dto'
 import { Case } from '../../models/case.model'
 import { DateLog } from '../../models/dateLog.model'
+import { ExplanatoryComment } from '../../models/explanatoryComment.model'
 
 jest.mock('../../../../factories')
 
@@ -71,6 +73,7 @@ describe('CaseController - Update', () => {
   let transaction: Transaction
   let mockCaseModel: typeof Case
   let mockDateLogModel: typeof DateLog
+  let mockExplanatoryCommentModel: typeof ExplanatoryComment
   let givenWhenThen: GivenWhenThen
 
   beforeEach(async () => {
@@ -81,6 +84,7 @@ describe('CaseController - Update', () => {
       sequelize,
       caseModel,
       dateLogModel,
+      explanatoryCommentModel,
       caseController,
     } = await createTestingCaseModule()
 
@@ -89,6 +93,7 @@ describe('CaseController - Update', () => {
     mockFileService = fileService
     mockCaseModel = caseModel
     mockDateLogModel = dateLogModel
+    mockExplanatoryCommentModel = explanatoryCommentModel
 
     const mockTransaction = sequelize.transaction as jest.Mock
     transaction = {} as Transaction
@@ -868,12 +873,49 @@ describe('CaseController - Update', () => {
     const caseToUpdate = { arraignmentDate }
 
     beforeEach(async () => {
+      const newLocal = await givenWhenThen(caseId, user, theCase, caseToUpdate)
+      console.log('!!!!!!!!!!!!!!!!!!!!!!', { newLocal })
+    })
+
+    it('should update case', () => {
+      expect(mockDateLogModel.create).toHaveBeenCalledWith(
+        { dateType: DateType.ARRAIGNMENT_DATE, caseId, ...arraignmentDate },
+        { transaction },
+      )
+    })
+  })
+
+  describe('court date updated', () => {
+    const courtDate = { date: new Date(), location: uuid() }
+    const caseToUpdate = { courtDate }
+
+    beforeEach(async () => {
       await givenWhenThen(caseId, user, theCase, caseToUpdate)
     })
 
-    it('should post to queue', () => {
+    it('should update case', () => {
       expect(mockDateLogModel.create).toHaveBeenCalledWith(
-        { dateType: DateType.ARRAIGNMENT_DATE, caseId, ...arraignmentDate },
+        { dateType: DateType.COURT_DATE, caseId, ...courtDate },
+        { transaction },
+      )
+    })
+  })
+
+  describe('postponed indefinitely explanation updated', () => {
+    const postponedIndefinitelyExplanation = uuid()
+    const caseToUpdate = { postponedIndefinitelyExplanation }
+
+    beforeEach(async () => {
+      await givenWhenThen(caseId, user, theCase, caseToUpdate)
+    })
+
+    it('should update case', () => {
+      expect(mockExplanatoryCommentModel.create).toHaveBeenCalledWith(
+        {
+          commentType: CommentType.POSTPONED_INDEFINITELY_EXPLANATION,
+          caseId,
+          comment: postponedIndefinitelyExplanation,
+        },
         { transaction },
       )
     })

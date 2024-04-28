@@ -2,6 +2,8 @@ import each from 'jest-each'
 import { Transaction } from 'sequelize'
 import { uuid } from 'uuidv4'
 
+import { ConfigType } from '@island.is/nest/config'
+
 import { MessageService, MessageType } from '@island.is/judicial-system/message'
 import {
   CaseAppealRulingDecision,
@@ -24,6 +26,7 @@ import { createTestingCaseModule } from '../createTestingCaseModule'
 
 import { nowFactory } from '../../../../factories'
 import { randomDate } from '../../../../test'
+import { caseModuleConfig } from '../../case.config'
 import { include, order } from '../../case.service'
 import { TransitionCaseDto } from '../../dto/transitionCase.dto'
 import { Case } from '../../models/case.model'
@@ -48,14 +51,16 @@ describe('CaseController - Transition', () => {
 
   let mockMessageService: MessageService
   let transaction: Transaction
+  let mockConfig: ConfigType<typeof caseModuleConfig>
   let mockCaseModel: typeof Case
   let givenWhenThen: GivenWhenThen
 
   beforeEach(async () => {
-    const { messageService, sequelize, caseModel, caseController } =
+    const { messageService, sequelize, caseConfig, caseModel, caseController } =
       await createTestingCaseModule()
 
     mockMessageService = messageService
+    mockConfig = caseConfig
     mockCaseModel = caseModel
 
     const mockTransaction = sequelize.transaction as jest.Mock
@@ -644,6 +649,8 @@ describe('CaseController - Transition', () => {
                     canConfirmIndictment: isIndictmentCase(theCase.type),
                   },
                   caseId,
+                  nextRetry:
+                    date.getTime() + mockConfig.robotMessageDelay * 1000,
                 },
                 {
                   type: MessageType.DELIVERY_TO_POLICE_APPEAL,

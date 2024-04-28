@@ -18,6 +18,7 @@ import {
 } from '@island.is/dokobit-signing'
 import type { Logger } from '@island.is/logging'
 import { LOGGER_PROVIDER } from '@island.is/logging'
+import { type ConfigType } from '@island.is/nest/config'
 
 import {
   CaseMessage,
@@ -64,9 +65,10 @@ import { CreateCaseDto } from './dto/createCase.dto'
 import { getCasesQueryFilter } from './filters/cases.filter'
 import { Case } from './models/case.model'
 import { DateLog } from './models/dateLog.model'
-import { ExplanatoryComment } from './models/expalanatoryComment.model'
+import { ExplanatoryComment } from './models/explanatoryComment.model'
 import { SignatureConfirmationResponse } from './models/signatureConfirmation.response'
 import { transitionCase } from './state/case.state'
+import { caseModuleConfig } from './case.config'
 
 interface UpdateDateLog {
   date?: Date
@@ -335,6 +337,8 @@ export class CaseService {
     @InjectModel(DateLog) private readonly dateLogModel: typeof DateLog,
     @InjectModel(ExplanatoryComment)
     private readonly explanatoryCommentModel: typeof ExplanatoryComment,
+    @Inject(caseModuleConfig.KEY)
+    private readonly config: ConfigType<typeof caseModuleConfig>,
     private readonly defendantService: DefendantService,
     private readonly fileService: FileService,
     private readonly awsS3Service: AwsS3Service,
@@ -904,6 +908,9 @@ export class CaseService {
         type: MessageType.DELIVERY_TO_COURT_OF_APPEALS_CONCLUSION,
         user,
         caseId: theCase.id,
+        // The APPEAL_COMPLETED message must be handled before this message
+        nextRetry:
+          nowFactory().getTime() + this.config.robotMessageDelay * 1000,
       },
     )
 

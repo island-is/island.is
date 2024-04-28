@@ -107,11 +107,11 @@ const OJOICategoriesPage: CustomScreen<OJOICategoriesProps> = ({
             : true
         const deildMatch =
           !initial && searchState.deild
-            ? cat.department === searchState.deild
+            ? cat.department?.slug === searchState.deild
             : true
         const flokkurMatch =
           !initial && searchState.yfirflokkur
-            ? cat.mainCategory === searchState.yfirflokkur
+            ? cat.mainCategory?.slug === searchState.yfirflokkur
             : true
 
         if (qMatch && letterMatch && deildMatch && flokkurMatch) {

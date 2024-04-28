@@ -41,7 +41,7 @@ import { Institution } from '../../institution'
 import { Notification } from '../../notification'
 import { User } from '../../user'
 import { DateLog } from './dateLog.model'
-import { ExplanatoryComment } from './expalanatoryComment.model'
+import { ExplanatoryComment } from './explanatoryComment.model'
 
 @Table({
   tableName: 'case',
