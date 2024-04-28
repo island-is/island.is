@@ -35,7 +35,7 @@ export const canDefenderViewRequest = (theCase: Case) => {
     state &&
     allowedStates?.includes(state) &&
     (requestSharedWithDefender !== RequestSharedWithDefender.COURT_DATE ||
-      Boolean(theCase.arraignmentDate.date))
+      Boolean(theCase.arraignmentDate?.date))
   )
 }
 
