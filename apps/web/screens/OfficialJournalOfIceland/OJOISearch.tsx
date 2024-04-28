@@ -94,7 +94,7 @@ const OJOISearchPage: CustomScreen<OJOISearchProps> = ({
 
   const [getAdverts] = useLazyQuery<
     {
-      OfficialJournalOfIcelandAdverts: OfficialJournalOfIcelandAdvertsResponse
+      officialJournalOfIcelandAdverts: OfficialJournalOfIcelandAdvertsResponse
     },
     QueryOfficialJournalOfIcelandAdvertsArgs
   >(ADVERTS_QUERY, { fetchPolicy: 'no-cache' })
@@ -132,7 +132,7 @@ const OJOISearchPage: CustomScreen<OJOISearchProps> = ({
       })
         .then((res) => {
           if (res.data) {
-            setAdverts(res.data.OfficialJournalOfIcelandAdverts.adverts)
+            setAdverts(res.data.officialJournalOfIcelandAdverts.adverts)
           } else if (res.error) {
             setAdverts([])
             console.error('Error fetching Adverts', res.error)
@@ -444,41 +444,31 @@ OJOISearch.getProps = async ({ apolloClient, locale }) => {
     apolloClient.query<Query, QueryOfficialJournalOfIcelandAdvertsArgs>({
       query: ADVERTS_QUERY,
       variables: {
-        input: {
-          search: '',
-        },
+        input: {},
       },
     }),
     apolloClient.query<Query, QueryOfficialJournalOfIcelandCategoriesArgs>({
       query: CATEGORIES_QUERY,
       variables: {
-        params: {
-          search: '',
-        },
+        params: {},
       },
     }),
     apolloClient.query<Query, QueryOfficialJournalOfIcelandDepartmentsArgs>({
       query: DEPARTMENTS_QUERY,
       variables: {
-        params: {
-          search: '',
-        },
+        params: {},
       },
     }),
     apolloClient.query<Query, QueryOfficialJournalOfIcelandTypesArgs>({
       query: TYPES_QUERY,
       variables: {
-        params: {
-          search: '',
-        },
+        params: {},
       },
     }),
     apolloClient.query<Query, QueryOfficialJournalOfIcelandInstitutionsArgs>({
       query: INSTITUTIONS_QUERY,
       variables: {
-        params: {
-          search: '',
-        },
+        params: {},
       },
     }),
     apolloClient.query<Query, QueryGetOrganizationArgs>({

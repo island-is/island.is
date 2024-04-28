@@ -1,10 +1,8 @@
-import * as s from './RegulationsSearchSection.css'
-
 import React, { useEffect, useMemo, useState } from 'react'
-// eslint-disable-next-line @typescript-eslint/ban-ts-comment
-// @ts-ignore make web strict
 import { SingleValue } from 'react-select'
+import cn from 'classnames'
 import { useRouter } from 'next/router'
+
 import {
   Box,
   Button,
@@ -13,14 +11,15 @@ import {
   GridContainer,
   GridRow,
   Input,
-  StringOption as Option,
   Select,
+  StringOption as Option,
 } from '@island.is/island-ui/core'
+import { LawChapterTree, Ministry, useShortState } from '@island.is/regulations'
 import { useNamespaceStrict as useNamespace } from '@island.is/web/hooks'
-import { useShortState, LawChapterTree, Ministry } from '@island.is/regulations'
+
 import { RegulationHomeTexts } from './RegulationTexts.types'
 import { RegulationSearchFilters, RegulationSearchKey } from './regulationUtils'
-import cn from 'classnames'
+import * as s from './RegulationsSearchSection.css'
 
 // ---------------------------------------------------------------------------
 
@@ -112,6 +111,7 @@ export const RegulationsSearchSection = (
     return [emptyOption(txt('searchYearEmptyOption'))].concat(
       props.years.map(yearToOption),
     ) as ReadonlyArray<Option>
+    // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [props.years])
 
   const [yearToOptions, setYearToOptions] = useState(yearOptions)
@@ -129,6 +129,7 @@ export const RegulationsSearchSection = (
     if (Number(filters.yearTo) <= Number(filters.year)) {
       doSearch('yearTo', '')
     }
+    // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [yearOptions, filters.year])
 
   useEffect(() => {
@@ -142,6 +143,7 @@ export const RegulationsSearchSection = (
         behavior: 'smooth',
       })
     }, 100)
+    // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [props.page])
 
   const ministryOptions = useMemo(() => {
@@ -153,6 +155,7 @@ export const RegulationsSearchSection = (
         }),
       ),
     ) as ReadonlyArray<Option>
+    // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [props.ministries])
 
   const lawChapterOptions = useMemo(
@@ -173,6 +176,7 @@ export const RegulationsSearchSection = (
         },
         [emptyOption(txt('searchChapterEmptyOption'))],
       ) as ReadonlyArray<Option>,
+    // eslint-disable-next-line react-hooks/exhaustive-deps
     [props.lawChapters],
   )
 
@@ -268,6 +272,8 @@ export const RegulationsSearchSection = (
               >
                 <Button
                   variant="text"
+                  as="button"
+                  size="medium"
                   icon={showAdvancedSearch ? 'chevronUp' : 'chevronDown'}
                   onClick={() => {
                     if (hasAdvancedValues) {
@@ -442,6 +448,7 @@ export const RegulationsSearchSection = (
               type="button"
               size="small"
               variant="text"
+              as="button"
               disabled={!filterHasValues}
               onClick={() => clearSearch()}
             >

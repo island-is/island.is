@@ -89,17 +89,18 @@ const OJOIHomePage: CustomScreen<OJOIHomeProps> = ({
               href: searchUrl + '?deild=c-deild',
             },
             {
-              title: 'Auglýsendur',
-              href: searchUrl + '?deild=auglysendur',
+              title: 'Grindavík',
+              href: searchUrl + '?malaflokkur=grindavik',
+              variant: 'purple',
             },
             {
               title: 'Gjaldskrár',
-              href: searchUrl + '?malefni=gjaldskrar',
+              href: searchUrl + '?malaflokkur=gjaldskra',
               variant: 'purple',
             },
             {
               title: 'Covid 19',
-              href: searchUrl + '?malefni=covid-19',
+              href: searchUrl + '?malaflokkur=covid-19',
               variant: 'purple',
             },
           ]}
@@ -193,9 +194,7 @@ OJOIHome.getProps = async ({ apolloClient, locale }) => {
     apolloClient.query<Query, QueryOfficialJournalOfIcelandMainCategoriesArgs>({
       query: MAIN_CATEGORIES_QUERY,
       variables: {
-        params: {
-          search: '',
-        },
+        params: {},
       },
     }),
     apolloClient.query<Query, QueryGetOrganizationArgs>({

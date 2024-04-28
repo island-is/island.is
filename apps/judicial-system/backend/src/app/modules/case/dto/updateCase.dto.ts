@@ -1,3 +1,4 @@
+import { Type } from 'class-transformer'
 import {
   ArrayMinSize,
   IsArray,
@@ -7,6 +8,7 @@ import {
   IsOptional,
   IsString,
   IsUUID,
+  ValidateNested,
 } from 'class-validator'
 
 import { ApiPropertyOptional } from '@nestjs/swagger'
@@ -27,6 +29,18 @@ import {
   SessionArrangements,
   UserRole,
 } from '@island.is/judicial-system/types'
+
+class UpdateDateLog {
+  @IsOptional()
+  @IsString()
+  @ApiPropertyOptional()
+  readonly date?: Date
+
+  @IsOptional()
+  @IsString()
+  @ApiPropertyOptional()
+  readonly location?: string
+}
 
 export class UpdateCaseDto {
   @IsOptional()
@@ -192,19 +206,21 @@ export class UpdateCaseDto {
   readonly sessionArrangements?: SessionArrangements
 
   @IsOptional()
-  @IsString()
-  @ApiPropertyOptional()
-  readonly courtDate?: Date
+  @ValidateNested()
+  @Type(() => UpdateDateLog)
+  @ApiPropertyOptional({ type: UpdateDateLog })
+  readonly arraignmentDate?: UpdateDateLog
+
+  @IsOptional()
+  @ValidateNested()
+  @Type(() => UpdateDateLog)
+  @ApiPropertyOptional({ type: UpdateDateLog })
+  readonly courtDate?: UpdateDateLog
 
   @IsOptional()
   @IsString()
   @ApiPropertyOptional()
   readonly courtLocation?: string
-
-  @IsOptional()
-  @IsString()
-  @ApiPropertyOptional()
-  readonly courtRoom?: string
 
   @IsOptional()
   @IsString()
@@ -440,4 +456,9 @@ export class UpdateCaseDto {
   @IsString()
   @ApiPropertyOptional()
   readonly indictmentReturnedExplanation?: string
+
+  @IsOptional()
+  @IsString()
+  @ApiPropertyOptional()
+  readonly postponedIndefinitelyExplanation?: string
 }

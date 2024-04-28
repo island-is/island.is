@@ -9,6 +9,7 @@ import {
   CaseState,
   CaseType,
   completedCaseStates,
+  DateType,
   indictmentCases,
   InstitutionType,
   investigationCases,
@@ -209,7 +210,7 @@ const getDefenceUserCasesQueryFilter = (user: User): WhereOptions => {
                 {
                   [Op.and]: [
                     { state: CaseState.RECEIVED },
-                    { '$dateLogs.date_type$': 'COURT_DATE' },
+                    { '$dateLogs.date_type$': DateType.ARRAIGNMENT_DATE },
                   ],
                 },
                 { state: completedCaseStates },
