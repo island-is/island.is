@@ -21,8 +21,8 @@ const RequestSharedWithDefenderAllowedStates: {
   [RequestSharedWithDefender.NOT_SHARED]: completedCaseStates,
 }
 
-export function canDefenderViewRequest(theCase: Case) {
-  const { requestSharedWithDefender, state, courtDate } = theCase
+export const canDefenderViewRequest = (theCase: Case) => {
+  const { requestSharedWithDefender, state } = theCase
 
   if (!requestSharedWithDefender) {
     return false
@@ -35,11 +35,11 @@ export function canDefenderViewRequest(theCase: Case) {
     state &&
     allowedStates?.includes(state) &&
     (requestSharedWithDefender !== RequestSharedWithDefender.COURT_DATE ||
-      Boolean(courtDate))
+      Boolean(theCase.arraignmentDate?.date))
   )
 }
 
-export function transformLimitedAccessCase(theCase: Case): Case {
+export const transformLimitedAccessCase = (theCase: Case): Case => {
   return {
     ...theCase,
     caseResentExplanation: canDefenderViewRequest(theCase)

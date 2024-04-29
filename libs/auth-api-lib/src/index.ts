@@ -116,6 +116,7 @@ export * from './lib/clients/admin/admin-clients.service'
 export * from './lib/clients/admin/dto/admin-client.dto'
 export * from './lib/clients/admin/dto/admin-create-client.dto'
 export * from './lib/clients/admin/dto/admin-patch-client.dto'
+export * from './lib/user-notification/user-system-notification.config'
 
 // Translation module
 export * from './lib/translation/translation.module'

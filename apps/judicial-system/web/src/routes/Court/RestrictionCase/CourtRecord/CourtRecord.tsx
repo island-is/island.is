@@ -199,7 +199,7 @@ export const CourtRecord: React.FC<React.PropsWithChildren<unknown>> = () => {
     setAndSendCaseToServer(
       [
         {
-          courtStartDate: workingCase.courtDate,
+          courtStartDate: workingCase.arraignmentDate?.date,
           courtLocation:
             workingCase.court?.name &&
             `í ${

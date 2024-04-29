@@ -160,7 +160,7 @@
     "dataloader": "2.1.0",
     "date-fns": "2.28.0",
     "datebook": "7.0.8",
-    "dd-trace": "3.32.1",
+    "dd-trace": "5.10.0",
     "deepmerge": "4.2.2",
     "downshift": "5.4.3",
     "entropy-string": "4.2.0",
@@ -474,9 +474,13 @@
     "path-parse": "1.0.7",
     "@anatine/esbuildnx@0.2.0": "patch:@anatine/esbuildnx@patch%3A@anatine/esbuildnx@npm%253A0.2.0%23./.yarn/patches/@anatine-esbuildnx-npm-0.2.0-b2ba626748.patch%3A%3Aversion=0.2.0&hash=9054d7&locator=island.is%2540workspace%253A.#./.yarn/patches/@anatine-esbuildnx-patch-9f523e0a95.patch",
     "cache-manager-ioredis-yet@1.1.0": "patch:cache-manager-ioredis-yet@npm%3A1.1.0#./.yarn/patches/cache-manager-ioredis-yet-npm-1.1.0-da7d1a9865.patch",
-    "dd-trace@3.32.1": "patch:dd-trace@npm%3A3.32.1#./.yarn/patches/dd-trace-npm-3.29.1-4e4e5d3a0c.patch",
     "jest-config": "patch:jest-config@npm%3A29.7.0#./.yarn/patches/jest-config-npm-29.7.0-97d8544d74.patch",
-    "@nestjs/terminus@10.2.0": "patch:@nestjs/terminus@npm%3A10.2.0#./.yarn/patches/@nestjs-terminus-npm-10.2.0-9e24c129e0.patch"
+    "@nestjs/terminus@10.2.0": "patch:@nestjs/terminus@npm%3A10.2.0#./.yarn/patches/@nestjs-terminus-npm-10.2.0-9e24c129e0.patch",
+    "node-request-interceptor@^0.5.1": "patch:node-request-interceptor@npm%3A0.5.9#./.yarn/patches/node-request-interceptor-npm-0.5.9-77e9d9c058.patch",
+    "dd-trace@5.10.0": "patch:dd-trace@npm%3A5.10.0#./.yarn/patches/dd-trace-npm-5.10.0-184ed36e96.patch",
+    "expo-modules-core@1.1.1": "patch:expo-modules-core@npm%3A1.1.1#./.yarn/patches/expo-modules-core-npm-1.1.1-c3861d47cb.patch",
+    "react-native@0.71.1": "patch:react-native@npm%3A0.71.1#./.yarn/patches/react-native-npm-0.71.1-f5d237f240.patch",
+    "react-native-navigation@7.32.1": "patch:react-native-navigation@npm%3A7.32.1#./.yarn/patches/react-native-navigation-npm-7.32.1-262dc5c010.patch"
   },
   "volta": {
     "node": "18.16.0",

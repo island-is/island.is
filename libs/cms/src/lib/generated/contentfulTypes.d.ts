@@ -742,7 +742,7 @@ export interface ICustomPageFields {
   title?: string | undefined
 
   /** Unique Identifier */
-  uniqueIdentifier: 'PensionCalculator'
+  uniqueIdentifier: 'PensionCalculator' | 'OfficialJournalOfIceland'
 
   /** Alert Banner */
   alertBanner?: IAlertBanner | undefined
