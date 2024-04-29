@@ -87,7 +87,11 @@
       "executor": "nx:run-commands",
       "options": {
         "command": "graphql-codegen --config apps/skilavottord/web/codegen.yml"
-      }
+      },
+      "outputs": [
+        "{projectRoot}/graphql/schema.tsx",
+        "{projectRoot}/graphql/possibleTypes.json"
+      ]
     },
     "lint": {
       "executor": "@nx/linter:eslint",
