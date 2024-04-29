@@ -7,6 +7,7 @@ import {
   Divider,
   Text,
   Button,
+  AlertMessage,
 } from '@island.is/island-ui/core'
 import { EditorInput } from './EditorInput'
 import { editorMsgs as msg, errorMsgs } from '../lib/messages'
@@ -22,12 +23,15 @@ import {
 import { HTMLText } from '@island.is/regulations'
 import { findRegulationType } from '../utils/guessers'
 import { RegulationDraftTypes } from '../types'
+import ConfirmModal from './ConfirmModal/ConfirmModal'
 
 export const EditBasics = () => {
   const t = useLocale().formatMessage
   const { draft, actions } = useDraftingState()
   const [editorKey, setEditorKey] = useState('initial')
   const [titleError, setTitleError] = useState<string | undefined>(undefined)
+  const [hasUpdated, setHasUpdated] = useState<boolean>(false)
+  const [isModalVisible, setIsModalVisible] = useState<boolean>(false)
 
   const { text, appendixes } = draft
   const { updateState } = actions
@@ -105,6 +109,7 @@ export const EditBasics = () => {
     setEditorKey(Date.now().toString())
     const additionString = additions.join('') as HTMLText
     updateState('text', additionString)
+    setHasUpdated(true)
   }
 
   return (
@@ -133,17 +138,6 @@ export const EditBasics = () => {
           <Text variant="small" color="dark200">
             {regType ? `(${regType})` : ' '}
           </Text>
-          {draft.type.value === RegulationDraftTypes.amending ? (
-            <Button
-              icon="reload"
-              onClick={updateEditorText}
-              title="Uppfæra texta reglugerðar með breytingum frá fyrsta skrefi. Allur viðbættur texti í núverandi skrefi verður hreinsaður út."
-              variant="text"
-              size="small"
-            >
-              Uppfæra texta
-            </Button>
-          ) : null}
         </Box>
       </Box>
       <Box marginBottom={[6, 6, 8]}>
@@ -164,6 +158,26 @@ export const EditBasics = () => {
                 error={text.showError && text.error && t(text.error)}
               />
             </Box>
+            {!hasUpdated &&
+            draft.type.value === RegulationDraftTypes.amending ? (
+              <Box marginBottom={3}>
+                <AlertMessage
+                  type="default"
+                  title="Uppfæra texta"
+                  message="Uppfæra texta reglugerðar með breytingum frá fyrsta skrefi. Allur viðbættur texti í núverandi skrefi verður hreinsaður út."
+                  action={
+                    <Button
+                      icon="reload"
+                      onClick={() => setIsModalVisible(true)}
+                      variant="text"
+                      size="small"
+                    >
+                      Uppfæra
+                    </Button>
+                  }
+                />
+              </Box>
+            ) : undefined}
             <Box>
               <Divider />
               {' '}
@@ -182,6 +196,21 @@ export const EditBasics = () => {
           </AccordionItem>
         </Accordion>
 
+        <ConfirmModal
+          isVisible={isModalVisible}
+          message={
+            'Uppfæra texta reglugerðar með breytingum frá fyrsta skrefi. Allur viðbættur texti í núverandi skrefi verður hreinsaður út.'
+          }
+          onConfirm={() => {
+            updateEditorText()
+            setIsModalVisible(false)
+          }}
+          onVisibilityChange={(visibility: boolean) => {
+            setIsModalVisible(visibility)
+          }}
+          confirmMessage="Uppfæra"
+          confirmGhost
+        />
         <Appendixes
           draftId={draft.id}
           appendixes={appendixes}
