@@ -594,7 +594,20 @@ export const assets = buildSection({
       ],
     }),
     buildSubSection({
-      id: 'assetOverview',
+      id: 'assetOverview1',
+      title: m.assetOverview,
+      children: [
+        buildCustomField({
+          title: m.assetOverview,
+          description: m.assetOverviewDescription,
+          id: 'overviewAssets',
+          doesNotRequireAnswer: true,
+          component: 'OverviewAssets',
+        }),
+      ],
+    }),
+    buildSubSection({
+      id: 'assetOverview2',
       title: m.assetOverview,
       children: [
         buildMultiField({
