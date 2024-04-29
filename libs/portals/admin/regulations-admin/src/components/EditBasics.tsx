@@ -1,5 +1,4 @@
 import React, { useEffect, useState } from 'react'
-import * as s from './EditBasics.css'
 import {
   Box,
   Accordion,
@@ -20,10 +19,12 @@ import {
   formatAmendingRegTitle,
   formatAmendingBodyWithArticlePrefix,
 } from '../utils/formatAmendingRegulation'
-import { HTMLText } from '@island.is/regulations'
+import { HTMLText, RegName, Regulation } from '@island.is/regulations'
 import { findRegulationType } from '../utils/guessers'
 import { RegulationDraftTypes } from '../types'
 import ConfirmModal from './ConfirmModal/ConfirmModal'
+import { ReferenceText } from './impacts/ReferenceText'
+import { DraftChangeForm } from '../state/types'
 
 export const EditBasics = () => {
   const t = useLocale().formatMessage
@@ -31,6 +32,7 @@ export const EditBasics = () => {
   const [editorKey, setEditorKey] = useState('initial')
   const [titleError, setTitleError] = useState<string | undefined>(undefined)
   const [hasUpdated, setHasUpdated] = useState<boolean>(false)
+  const [references, setReferences] = useState<DraftChangeForm[]>()
   const [isModalVisible, setIsModalVisible] = useState<boolean>(false)
 
   const { text, appendixes } = draft
@@ -100,6 +102,12 @@ export const EditBasics = () => {
       updateEditorText()
       setEditorKey('newKey')
     }
+
+    if (draft.type.value === RegulationDraftTypes.amending) {
+      const impacts = Object.values(draft.impacts).flat() as DraftChangeForm[]
+      setReferences(impacts)
+    }
+
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [draft.impacts])
 
@@ -177,6 +185,25 @@ export const EditBasics = () => {
                   }
                 />
               </Box>
+            ) : undefined}
+
+            {references && references.length > 0 ? (
+              <ReferenceText
+                regulation={
+                  {
+                    title: references[0].regTitle,
+                    text: references[0].diff?.value,
+                    name: references[0].name as RegName,
+                    appendixes: references[0].appendixes.map((apx) => ({
+                      title: apx.title.value,
+                      text: apx.text.value,
+                    })),
+                  } as Regulation
+                }
+                key={references[0].id}
+                asBase
+                baseName={'' as RegName}
+              />
             ) : undefined}
             <Box>
               <Divider />
