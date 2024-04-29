@@ -3,7 +3,8 @@ import { TemplateApiModuleActionProps } from '../../../../types'
 import { Auth, AuthMiddleware } from '@island.is/auth-nest-tools'
 import { BaseTemplateApiService } from '../../../base-template-api.service'
 import { HealthcenterApi } from '@island.is/clients/icelandic-health-insurance/rights-portal'
-import { LOGGER_PROVIDER, Logger } from '@island.is/logging'
+import type { Logger } from '@island.is/logging'
+import { LOGGER_PROVIDER } from '@island.is/logging'
 
 @Injectable()
 export class HealthInsuranceService extends BaseTemplateApiService {
@@ -13,6 +14,7 @@ export class HealthInsuranceService extends BaseTemplateApiService {
     private healthcenterApi: HealthcenterApi,
   ) {
     super('Healthcenter')
+    this.logger = logger.child({ context: 'HealthInsuranceService' })
   }
 
   private healthcenterApiWithAuth(auth: Auth) {
