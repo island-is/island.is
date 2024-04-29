@@ -1,8 +1,10 @@
 import { useRef, useState } from 'react'
 import { useDebounce } from 'react-use'
+import { Locale } from 'locale'
 import { useLazyQuery } from '@apollo/client'
 
 import {
+  AlertMessage,
   Box,
   FilterInput,
   GridContainer,
@@ -23,6 +25,24 @@ import { webRichText } from '@island.is/web/utils/richText'
 const DEBOUNCE_TIME_IN_MS = 300
 const ITEMS_PER_PAGE = 10
 
+const getResultsFoundText = (totalItems: number, locale: Locale) => {
+  const singular = locale === 'is' ? 'niðurstaða fannst' : 'result found'
+  const plural = locale === 'is' ? 'niðurstöður fundust' : 'results found'
+
+  if (locale !== 'is') {
+    if (totalItems === 1) {
+      return singular
+    }
+    return plural
+  }
+
+  if (totalItems % 10 === 1 && totalItems % 100 !== 11) {
+    return singular
+  }
+
+  return plural
+}
+
 interface GenericListProps {
   id: string
   firstPageItemResponse?: GenericListItemResponse
@@ -32,15 +52,16 @@ interface GenericListProps {
 export const GenericList = ({
   id,
   firstPageItemResponse,
-
   searchInputPlaceholder,
 }: GenericListProps) => {
-  // TODO: what should be persisted in the url?
   const [searchValue, setSearchValue] = useState('')
   const [page, setPage] = useState(1)
+  const pageRef = useRef(page)
+  const searchValueRef = useRef(searchValue)
   const [itemsResponse, setItemsResponse] = useState(firstPageItemResponse)
   const firstRender = useRef(true)
   const { format } = useDateUtils()
+  const [errorOccurred, setErrorOccurred] = useState(false)
 
   const { activeLocale } = useI18n()
 
@@ -49,19 +70,21 @@ export const GenericList = ({
     GetGenericListItemsQueryVariables
   >(GET_GENERIC_LIST_ITEMS_QUERY, {
     onCompleted(data) {
-      // TODO: req res matching
-      if (!data.getGenericListItems) {
-        // TODO: handle undefined by showing a toaster?
-        return
+      if (
+        // Make sure the response matches the request input
+        searchValueRef.current ===
+          data?.getGenericListItems?.input?.queryString &&
+        pageRef.current === data?.getGenericListItems?.input?.page
+      ) {
+        setItemsResponse(data.getGenericListItems)
+        setErrorOccurred(false)
       }
-      setItemsResponse(data.getGenericListItems)
     },
-    onError(error) {
-      // TODO: handle error
+    onError(_) {
+      setErrorOccurred(true)
     },
   })
 
-  // TODO: make sure this does not run on initial render
   useDebounce(
     () => {
       // Only fetch initial items in case we don't have them
@@ -90,6 +113,11 @@ export const GenericList = ({
   const totalItems = itemsResponse?.total ?? 0
   const items = itemsResponse?.items ?? []
 
+  const noResultsFoundText =
+    activeLocale === 'is' ? 'Engar niðurstöður fundust' : 'No results found'
+
+  const resultsFoundText = getResultsFoundText(totalItems, activeLocale)
+
   return (
     <Box paddingBottom={3}>
       <GridContainer>
@@ -97,16 +125,33 @@ export const GenericList = ({
           <FilterInput
             name="list-search"
             onChange={(value) => {
-              setSearchValue(value || null)
+              setSearchValue(value)
+              searchValueRef.current = value
               setPage(1)
+              pageRef.current = 1
             }}
-            value={searchValue || ''}
+            value={searchValue}
             loading={loading}
             placeholder={searchInputPlaceholder ?? undefined}
             backgroundColor="white"
           />
+          {errorOccurred && (
+            <AlertMessage
+              type="warning"
+              title={activeLocale === 'is' ? 'Villa kom upp' : 'Error occurred'}
+              message={
+                activeLocale === 'is'
+                  ? 'Ekki tókst að sækja gögn frá þjónustuaðila'
+                  : 'Could not fetch results from service provider'
+              }
+            />
+          )}
+          {items.length === 0 && <Text>{noResultsFoundText}</Text>}
           {items.length > 0 && (
             <Stack space={3}>
+              <Text>
+                {totalItems} {resultsFoundText}
+              </Text>
               {items.map((item) => (
                 <Box
                   key={item.id}
@@ -141,6 +186,7 @@ export const GenericList = ({
                 <button
                   onClick={() => {
                     setPage(page)
+                    pageRef.current = page
                   }}
                 >
                   <span className={className}>{children}</span>
