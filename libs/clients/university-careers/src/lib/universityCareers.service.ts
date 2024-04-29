@@ -47,18 +47,25 @@ export class UniversityCareersClientService implements UniversityCareerService {
 
   getOrganizationSlugType = (
     type: UniversityId,
-  ): OrganizationSlugType | undefined => {
+    locale: Locale = 'is',
+  ): string | undefined => {
     switch (type) {
       case UniversityId.UNIVERSITY_OF_ICELAND:
-        return 'haskoli-islands'
+        return locale == 'is' ? 'haskoli-islands' : 'university-of-iceland'
       case UniversityId.HOLAR_UNIVERSITY:
-        return 'holaskoli-haskolinn-a-holum'
+        return locale == 'is'
+          ? 'holaskoli-haskolinn-a-holum'
+          : 'holar-university-college'
       case UniversityId.UNIVERSITY_OF_AKUREYRI:
-        return 'haskolinn-a-akureyri'
+        return locale == 'is'
+          ? 'haskolinn-a-akureyri'
+          : 'university-of-akureyri'
       case UniversityId.BIFROST_UNIVERSITY:
         return 'bifrost'
       case UniversityId.AGRICULTURAL_UNIVERSITY_OF_ICELAND:
-        return 'landbunadarhaskoli-islands'
+        return locale == 'is'
+          ? 'landbunadarhaskoli-islands'
+          : 'agricultural-university-of-iceland'
       default:
         return undefined
     }

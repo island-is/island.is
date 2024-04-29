@@ -44,8 +44,10 @@ export class UniversityCareersService {
     if (Array.isArray(data)) {
       let organization: Organization | undefined = undefined
       if (data.some((d) => !d.institution)) {
-        const orgSlug =
-          this.universityCareers.getOrganizationSlugType(university)
+        const orgSlug = this.universityCareers.getOrganizationSlugType(
+          university,
+          locale,
+        )
         if (!orgSlug) {
           this.logger.warning('Invalid university', {
             universityId: university,
@@ -65,6 +67,7 @@ export class UniversityCareersService {
       const institutionFallback: Institution = {
         id: organization?.slug ?? '',
         displayName: organization?.title,
+        logoUrl: organization?.logo?.url,
       }
 
       return data

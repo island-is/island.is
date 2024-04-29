@@ -30,6 +30,7 @@ export const mapToStudent = (
     institution = {
       id: data.institution.id,
       displayName: data.institution.displayName,
+      logoUrl: institutionFallback.logoUrl,
     }
   } else {
     institution = institutionFallback

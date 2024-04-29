@@ -7,4 +7,7 @@ export class Institution {
 
   @Field(() => String, { nullable: true })
   displayName?: string
+
+  @Field(() => String, { nullable: true })
+  logoUrl?: string
 }

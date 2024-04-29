@@ -140,14 +140,10 @@ export const EducationGraduation = () => {
                       : '',
                 }}
                 image={
-                  item.institution?.displayName
+                  item.institution?.logoUrl
                     ? {
                         type: 'image',
-                        url: getOrganizationLogoUrl(
-                          item.institution.displayName,
-                          organizations,
-                          120,
-                        ),
+                        url: item.institution.logoUrl,
                       }
                     : undefined
                 }
