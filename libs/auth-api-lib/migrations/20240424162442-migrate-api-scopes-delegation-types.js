@@ -24,7 +24,7 @@ module.exports = {
         FROM personal_representative_right_type prrt
         JOIN personal_representative_scope_permission prsp ON prrt.code = prsp.right_type_code
         JOIN api_scope apis ON prsp.api_scope_name = apis.name
-        WHERE cast(prrt.valid_from as date) < current_date AND cast(prrt.valid_to as date) > current_date AND apis.grant_to_personal_representatives = true;
+        WHERE prrt.valid_from < NOW() AND prrt.valid_to > NOW() AND apis.grant_to_personal_representatives = true;
 
       COMMIT;
     `)
