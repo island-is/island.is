@@ -19,7 +19,6 @@ import { FIREBASE_PROVIDER } from '../../../constants'
 import { NotificationsService } from './notifications.service'
 import { MeNotificationsController } from './me-notifications.controller'
 import { Notification } from './notification.model'
-import { UserNotificationsInfraController } from './infra.controller'
 import { NotificationDispatchService } from './notificationDispatch.service'
 import {
   IS_RUNNING_AS_WORKER,
@@ -58,11 +57,7 @@ import { UserNotificationsConfig } from '../../../config'
     NationalRegistryV3ClientModule,
     AuthDelegationApiClientModule,
   ],
-  controllers: [
-    NotificationsController,
-    MeNotificationsController,
-    UserNotificationsInfraController,
-  ],
+  controllers: [NotificationsController, MeNotificationsController],
   providers: [
     NotificationsService,
     NotificationDispatchService,
