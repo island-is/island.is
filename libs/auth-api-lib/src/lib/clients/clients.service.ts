@@ -28,6 +28,8 @@ import { ClientPostLogoutRedirectUriDTO } from './dto/client-post-logout-redirec
 import { ClientSecretDTO } from './dto/client-secret.dto'
 import { ClientsTranslationService } from './clients-translation.service'
 import { BulkCreateOptions, DestroyOptions } from 'sequelize'
+import { ClientDelegationType } from './models/client-delegation-type.model'
+import { AuthDelegationType } from 'delegation'
 
 @Injectable()
 export class ClientsService {
@@ -48,6 +50,8 @@ export class ClientsService {
     private clientAllowedScope: typeof ClientAllowedScope,
     @InjectModel(ClientClaim)
     private clientClaim: typeof ClientClaim,
+    @InjectModel(ClientDelegationType)
+    private readonly clientDelegationType: typeof ClientDelegationType,
     @InjectModel(ClientPostLogoutRedirectUri)
     private clientPostLogoutUri: typeof ClientPostLogoutRedirectUri,
 
@@ -69,6 +73,7 @@ export class ClientsService {
         ClientPostLogoutRedirectUri,
         ClientGrantType,
         ClientClaim,
+        ClientDelegationType,
       ],
     })
   }
@@ -610,5 +615,154 @@ export class ClientsService {
         value: clientSecret.value,
       },
     })
+  }
+
+  /* Add supported delegation types to client */
+  async addClientDelegationTypes({
+    clientId,
+    delegationTypes = [],
+    delegationBooleanTypes,
+    options = {},
+  }: {
+    clientId: string
+    delegationTypes?: string[]
+    delegationBooleanTypes: {
+      supportsCustomDelegation?: boolean
+      supportsLegalGuardians?: boolean
+      supportsProcuringHolders?: boolean
+      supportsPersonalRepresentatives?: boolean
+    }
+    options: BulkCreateOptions
+  }) {
+    // support for old boolean fields
+    const supportsCustomDelegation = delegationTypes.includes(
+      AuthDelegationType.Custom,
+    )
+      ? true
+      : delegationBooleanTypes.supportsCustomDelegation
+    const supportsProcuringHolders = delegationTypes.includes(
+      AuthDelegationType.ProcurationHolder,
+    )
+      ? true
+      : delegationBooleanTypes.supportsProcuringHolders
+    const supportsLegalGuardians = delegationTypes.includes(
+      AuthDelegationType.LegalGuardian,
+    )
+      ? true
+      : delegationBooleanTypes.supportsLegalGuardians
+    const supportsPersonalRepresentatives = delegationTypes.some((type) =>
+      type.startsWith(AuthDelegationType.PersonalRepresentative),
+    )
+      ? true
+      : delegationBooleanTypes.supportsPersonalRepresentatives
+
+    if (
+      supportsCustomDelegation ||
+      supportsLegalGuardians ||
+      supportsProcuringHolders ||
+      supportsPersonalRepresentatives
+    ) {
+      await this.clientModel.update(
+        {
+          supportsCustomDelegation,
+          supportsLegalGuardians,
+          supportsProcuringHolders,
+          supportsPersonalRepresentatives,
+        },
+        {
+          ...options,
+          where: {
+            clientId,
+          },
+        },
+      )
+    }
+
+    if (delegationTypes.length === 0) {
+      return []
+    }
+
+    return this.clientDelegationType.bulkCreate(
+      delegationTypes.map((delegationType) => ({ clientId, delegationType })),
+      options,
+    )
+  }
+
+  /* Remove supported delegation types from client */
+  async removeClientDelegationTypes({
+    clientId,
+    delegationTypes = [],
+    delegationBooleanTypes,
+    options = {},
+  }: {
+    clientId: string
+    delegationTypes?: string[]
+    delegationBooleanTypes: {
+      supportsCustomDelegation?: boolean
+      supportsLegalGuardians?: boolean
+      supportsProcuringHolders?: boolean
+      supportsPersonalRepresentatives?: boolean
+    }
+    options: DestroyOptions
+  }) {
+    // support for old boolean fields
+    const supportsCustomDelegation = delegationTypes.includes(
+      AuthDelegationType.Custom,
+    )
+      ? false
+      : delegationBooleanTypes.supportsCustomDelegation
+    const supportsProcuringHolders = delegationTypes.includes(
+      AuthDelegationType.ProcurationHolder,
+    )
+      ? false
+      : delegationBooleanTypes.supportsProcuringHolders
+    const supportsLegalGuardians = delegationTypes.includes(
+      AuthDelegationType.LegalGuardian,
+    )
+      ? false
+      : delegationBooleanTypes.supportsLegalGuardians
+    const supportsPersonalRepresentatives = delegationTypes.some((type) =>
+      type.startsWith(AuthDelegationType.PersonalRepresentative),
+    )
+      ? false
+      : delegationBooleanTypes.supportsPersonalRepresentatives
+
+    if (
+      supportsCustomDelegation !== undefined ||
+      supportsLegalGuardians !== undefined ||
+      supportsProcuringHolders !== undefined ||
+      supportsPersonalRepresentatives !== undefined
+    ) {
+      await this.clientModel.update(
+        {
+          supportsCustomDelegation,
+          supportsLegalGuardians,
+          supportsProcuringHolders,
+          supportsPersonalRepresentatives,
+        },
+        {
+          ...options,
+          where: {
+            clientId,
+          },
+        },
+      )
+    }
+
+    if (delegationTypes.length === 0) {
+      return []
+    }
+
+    return Promise.all(
+      delegationTypes.map((delegationType) =>
+        this.clientDelegationType.destroy({
+          ...options,
+          where: {
+            clientId,
+            delegationType,
+          },
+        }),
+      ),
+    )
   }
 }

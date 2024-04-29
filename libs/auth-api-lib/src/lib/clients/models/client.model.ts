@@ -20,6 +20,7 @@ import { ClientSecret } from './client-secret.model'
 import { ClientGrantType } from './client-grant-type.model'
 import { ClientClaim } from './client-claim.model'
 import { Domain } from '../../resources/models/domain.model'
+import { ClientDelegationType } from './client-delegation-type.model'
 
 @Table({
   tableName: 'client',
@@ -546,6 +547,9 @@ export class Client extends Model {
 
   @HasMany(() => ClientClaim)
   claims?: ClientClaim[]
+
+  @HasMany(() => ClientDelegationType)
+  supportedDelegationTypes?: ClientDelegationType[]
 
   // Signing algorithm for identity token. If empty, will use the server default signing algorithm.
   // readonly allowedIdentityTokenSigningAlgorithms
