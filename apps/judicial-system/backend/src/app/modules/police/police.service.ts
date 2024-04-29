@@ -102,7 +102,7 @@ export class PoliceService {
     upprunalegtMalsnumer: z.string(),
     licencePlate: z.optional(z.string()),
     gotuHeiti: z.optional(z.string()),
-    gotuNumer: z.optional(z.string()),
+    gotuNumer: z.string().nullish(),
     sveitafelag: z.optional(z.string()),
     postnumer: z.optional(z.string()),
   })
