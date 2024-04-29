@@ -47,6 +47,8 @@ export * from './lib/delegations/models/delegation.model'
 export * from './lib/delegations/models/delegation-scope.model'
 export * from './lib/delegations/models/delegation-index.model'
 export * from './lib/delegations/models/delegation-index-meta.model'
+export * from './lib/delegations/models/delegation-type.model'
+export * from './lib/delegations/models/delegation-provider.model'
 export * from './lib/delegations/DelegationConfig'
 export * from './lib/delegations/utils/scopes'
 
