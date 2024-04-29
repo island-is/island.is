@@ -264,14 +264,6 @@ export const Cases: React.FC = () => {
                 isFiltering={isFiltering}
               />
             )}
-
-            {isDistrictCourtUser(user) && filter.value !== 'INVESTIGATION' && (
-              <CasesAwaitingAssignmentTable
-                cases={casesAwaitingAssignment}
-                loading={loading || isFiltering}
-                isFiltering={isFiltering}
-              />
-            )}
             <SectionHeading title={formatMessage(m.activeRequests.title)} />
             <Box marginBottom={[5, 5, 12]}>
               {loading || isFiltering ? (

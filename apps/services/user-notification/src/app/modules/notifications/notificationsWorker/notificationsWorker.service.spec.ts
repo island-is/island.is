@@ -136,7 +136,7 @@ describe('NotificationsWorkerService', () => {
   })
 
   const addToQueue = async (recipient: string) => {
-    const messageId = await queue.add({
+    await queue.add({
       recipient,
       templateId: mockTemplateId,
       args: [{ key: 'organization', value: 'Test Crew' }],
