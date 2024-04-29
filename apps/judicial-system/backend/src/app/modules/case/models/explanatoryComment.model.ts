@@ -10,15 +10,15 @@ import {
 
 import { ApiProperty, ApiPropertyOptional } from '@nestjs/swagger'
 
-import { DateType } from '@island.is/judicial-system/types'
+import { CommentType } from '@island.is/judicial-system/types'
 
 import { Case } from './case.model'
 
 @Table({
-  tableName: 'date_log',
+  tableName: 'explanatory_comment',
   timestamps: false,
 })
-export class DateLog extends Model {
+export class ExplanatoryComment extends Model {
   @Column({
     type: DataType.UUID,
     primaryKey: true,
@@ -37,18 +37,14 @@ export class DateLog extends Model {
 
   @Column({ type: DataType.STRING })
   @ApiProperty()
-  dateType!: DateType
+  commentType!: CommentType
 
   @ForeignKey(() => Case)
   @Column({ type: DataType.UUID })
-  @ApiProperty()
+  @ApiPropertyOptional()
   caseId!: string
-
-  @Column({ type: DataType.DATE })
-  @ApiProperty()
-  date!: Date
 
   @Column({ type: DataType.STRING })
   @ApiPropertyOptional()
-  location?: string
+  comment!: string
 }
