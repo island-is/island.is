@@ -293,7 +293,7 @@ export class TransportAuthorityApi {
         make: `${vehicle.make} ${vehicle.vehcom}`,
         permno: vehicle.permno,
         requireMileage: vehicle.requiresMileageRegistration,
-        mileageReading: vehicle?.mileageReadings?.[0]?.mileage,
+        mileageReading: vehicle?.mileageReadings?.[0]?.mileage || '',
       },
     }
   }
@@ -374,7 +374,7 @@ export class TransportAuthorityApi {
         make: `${vehicleInfo.make} ${vehicleInfo.vehcom}`,
         permno: vehicleInfo.permno,
         requireMileage: vehicleInfo.requiresMileageRegistration,
-        mileageReading: vehicleInfo?.mileageReadings?.[0]?.mileage,
+        mileageReading: vehicleInfo?.mileageReadings?.[0]?.mileage || '',
       },
     }
   }
