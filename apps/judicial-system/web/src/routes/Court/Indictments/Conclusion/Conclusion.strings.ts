@@ -1,27 +1,16 @@
 import { defineMessages } from 'react-intl'
 
-export const conclusion = defineMessages({
+export const strings = defineMessages({
   title: {
     id: 'judicial.system.core:court_record.title_v1',
     defaultMessage: 'Niðurstaða',
     description:
       'Notaður sem titill á síðu á Niðurstaða ákæru skrefi í dómaraflæði.',
   },
-  courtRecordTitle: {
-    id: 'judicial.system.core:court_record.court_record_title',
-    defaultMessage: 'Þingbók',
-    description:
-      'Notaður sem titill á þingbókar hluta á Niðurstaða skrefi í ákærum í dómaraflæði.',
-  },
   decisionTitle: {
     id: 'judicial.system.core:court_record.decision_title',
     defaultMessage: 'Staða',
     description: 'Notaður sem titill á Staða hluta á Niðurstaða skrefi.',
-  },
-  rulingTitle: {
-    id: 'judicial.system.core:court_record.ruling_title',
-    defaultMessage: 'Dómur',
-    description: 'Notaður sem titill á dómur hluta á Niðurstaða skrefi.',
   },
   postponed: {
     id: 'judicial.system.core:court_record.postponed',
@@ -52,6 +41,17 @@ export const conclusion = defineMessages({
     description:
       'Notaður sem skýritexti í ástæða frestunar textabox á Niðurstaða skrefi.',
   },
+  courtRecordTitle: {
+    id: 'judicial.system.core:court_record.court_record_title',
+    defaultMessage: 'Þingbók',
+    description:
+      'Notaður sem titill á þingbókar hluta á Niðurstaða skrefi í ákærum í dómaraflæði.',
+  },
+  rulingTitle: {
+    id: 'judicial.system.core:court_record.ruling_title',
+    defaultMessage: 'Dómur',
+    description: 'Notaður sem titill á dómur hluta á Niðurstaða skrefi.',
+  },
   inputFieldLabel: {
     id: 'judicial.system.core:court_record.input_field_label',
     defaultMessage: 'Dragðu gögn hingað til að hlaða upp',
@@ -64,9 +64,9 @@ export const conclusion = defineMessages({
     description: 'Notaður sem titill á hlaða upp takka á Niðurstaða skrefi.',
   },
   nextButtonText: {
-    id: 'judicial.system.core:court_record.next_button_text',
-    defaultMessage: 'Ljúka máli',
-    description: 'Notaður sem titill á ljúka máli takka á Niðurstaða skrefi.',
+    id: 'judicial.system.core:court_record.next_button_text_v2',
+    defaultMessage: 'Staðfesta',
+    description: 'Notaður sem titill á Staðfesta takka á Niðurstaða skrefi.',
   },
   modalTitle: {
     id: 'judicial.system.core:court_record.modal_title',

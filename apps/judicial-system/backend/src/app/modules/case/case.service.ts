@@ -1247,7 +1247,7 @@ export class CaseService {
               transaction,
             })
           }
-        } else {
+        } else if (updateDateLog !== null) {
           await this.dateLogModel.create(
             {
               caseId: theCase.id,
@@ -1293,7 +1293,7 @@ export class CaseService {
               { where: { caseId: theCase.id, commentType }, transaction },
             )
           }
-        } else {
+        } else if (updateComment !== null) {
           await this.explanatoryCommentModel.create(
             { caseId: theCase.id, commentType, comment: updateComment },
             { transaction },

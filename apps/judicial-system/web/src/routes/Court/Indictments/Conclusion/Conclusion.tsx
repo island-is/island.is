@@ -8,14 +8,14 @@ import {
   Input,
   InputFileUpload,
   RadioButton,
-  toast,
+  // toast,
 } from '@island.is/island-ui/core'
 import * as constants from '@island.is/judicial-system/consts'
 import {
-  CommentType,
-  getLatestDateType,
-} from '@island.is/judicial-system/types'
-import { core, errors, titles } from '@island.is/judicial-system-web/messages'
+  core,
+  //  errors,
+  titles,
+} from '@island.is/judicial-system-web/messages'
 import {
   BlueBox,
   CourtArrangements,
@@ -23,7 +23,7 @@ import {
   FormContentContainer,
   FormContext,
   FormFooter,
-  Modal,
+  // Modal,
   PageHeader,
   PageLayout,
   PageTitle,
@@ -32,42 +32,44 @@ import {
 } from '@island.is/judicial-system-web/src/components'
 import {
   CaseFileCategory,
-  CaseTransition,
-  DateType,
+  // CaseTransition,
 } from '@island.is/judicial-system-web/src/graphql/schema'
 import { stepValidationsType } from '@island.is/judicial-system-web/src/utils/formHelper'
 import {
-  formatDateForServer,
   useCase,
   useS3Upload,
   useUploadFiles,
 } from '@island.is/judicial-system-web/src/utils/hooks'
 
-import { conclusion as m } from './Conclusion.strings'
+import { strings } from './Conclusion.strings'
 
 type Actions = 'POSTPONE'
 
 interface Postponement {
-  newDate?: string | null
-  courtRoom?: string | null
   postponedIndefinitely?: boolean
   reason?: string
 }
 
 const Conclusion: React.FC = () => {
+  const { formatMessage } = useIntl()
   const { workingCase, setWorkingCase, isLoadingWorkingCase, caseNotFound } =
     useContext(FormContext)
-  const [navigateTo, setNavigateTo] = useState<keyof stepValidationsType>()
+  // const [navigateTo, setNavigateTo] = useState<keyof stepValidationsType>()
+
   const [selectedAction, setSelectedAction] = useState<Actions>()
   const [postponement, setPostponement] = useState<Postponement>()
-  const { courtDate, handleCourtDateChange } = useCourtArrangements(workingCase)
-
-  const { formatMessage } = useIntl()
   const {
-    transitionCase,
-    isTransitioningCase,
-    setAndSendCaseToServer,
+    courtDate,
+    handleCourtDateChange,
+    handleCourtRoomChange,
+    sendCourtDateToServer,
+  } = useCourtArrangements(workingCase, setWorkingCase, 'courtDate')
+
+  const {
+    // transitionCase,
+    // isTransitioningCase,
     updateCase,
+    isUpdatingCase,
   } = useCase()
 
   const {
@@ -83,17 +85,19 @@ const Conclusion: React.FC = () => {
 
   const handleNavigationTo = useCallback(
     async (destination: keyof stepValidationsType) => {
-      console.log(postponement)
-      if (postponement && postponement.postponedIndefinitely) {
-        updateCase(workingCase.id, {
+      if (postponement?.postponedIndefinitely) {
+        await updateCase(workingCase.id, {
+          courtDate: null,
           postponedIndefinitelyExplanation: postponement.reason,
         })
       } else {
-        updateCase(workingCase.id, {
-          postponedCourtDate: postponement?.newDate,
-          courtRoom: postponement?.courtRoom,
-        })
+        await sendCourtDateToServer([
+          { postponedIndefinitelyExplanation: null, force: true },
+        ])
       }
+
+      router.push(`${destination}/${workingCase.id}`)
+
       // const transitionSuccessful = await transitionCase(
       //   workingCase.id,
       //   CaseTransition.ACCEPT,
@@ -105,24 +109,34 @@ const Conclusion: React.FC = () => {
       //   toast.error(formatMessage(errors.transitionCase))
       // }
     },
-    // [transitionCase, workingCase, formatMessage],
-    [postponement, updateCase, workingCase.id],
+    [postponement, sendCourtDateToServer, updateCase, workingCase.id],
   )
 
   useEffect(() => {
-    const latestPostponement = getLatestDateType(
-      [DateType.POSTPONED_COURT_DATE],
-      workingCase.dateLogs,
-    )
-
-    if (latestPostponement && latestPostponement.date) {
+    if (
+      workingCase.courtDate?.date ||
+      workingCase.postponedIndefinitelyExplanation
+    ) {
       setSelectedAction('POSTPONE')
+    }
+
+    if (workingCase.postponedIndefinitelyExplanation) {
       setPostponement({
-        newDate: formatDateForServer(new Date(latestPostponement.date)),
-        courtRoom: latestPostponement.location,
+        postponedIndefinitely: true,
+        reason: workingCase.postponedIndefinitelyExplanation,
       })
     }
-  }, [workingCase.courtRoom, workingCase.dateLogs])
+  }, [
+    workingCase.courtDate?.date,
+    workingCase.postponedIndefinitelyExplanation,
+  ])
+
+  const stepIsValid =
+    Boolean(selectedAction) &&
+    (postponement?.postponedIndefinitely
+      ? postponement.reason
+      : courtDate?.date) &&
+    allFilesDoneOrError
 
   return (
     <PageLayout
@@ -132,12 +146,15 @@ const Conclusion: React.FC = () => {
       isValid={allFilesDoneOrError}
       onNavigationTo={handleNavigationTo}
     >
-      <PageHeader title={formatMessage(titles.court.indictments.courtRecord)} />
+      <PageHeader title={formatMessage(titles.court.indictments.conclusion)} />
       <FormContentContainer>
-        <PageTitle>{formatMessage(m.title)}</PageTitle>
+        <PageTitle>{formatMessage(strings.title)}</PageTitle>
         <CourtCaseInfo workingCase={workingCase} />
         <Box component="section" marginBottom={5}>
-          <SectionHeading title={formatMessage(m.decisionTitle)} required />
+          <SectionHeading
+            title={formatMessage(strings.decisionTitle)}
+            required
+          />
           <BlueBox>
             <RadioButton
               id="conclusion-postpone"
@@ -148,51 +165,40 @@ const Conclusion: React.FC = () => {
               }}
               large
               backgroundColor="white"
-              label={formatMessage(m.postponed)}
+              label={formatMessage(strings.postponed)}
             />
           </BlueBox>
         </Box>
         {selectedAction === 'POSTPONE' && (
           <>
-            <SectionHeading title={formatMessage(m.arrangeAnotherHearing)} />
+            <SectionHeading
+              title={formatMessage(strings.arrangeAnotherHearing)}
+            />
             <Box marginBottom={5}>
               <BlueBox>
                 <Box marginBottom={2}>
                   <CourtArrangements
                     workingCase={workingCase}
-                    handleCourtDateChange={(date, valid) => {
-                      if (valid && date) {
-                        setPostponement((prev) => ({
-                          ...prev,
-                          newDate: formatDateForServer(date),
-                        }))
-                      }
-                    }}
-                    handleCourtRoomChange={(evt) => {
-                      setPostponement((prev) => ({
-                        ...prev,
-                        courtRoom: evt.target.value,
-                      }))
-                    }}
+                    handleCourtDateChange={handleCourtDateChange}
+                    handleCourtRoomChange={handleCourtRoomChange}
+                    courtDate={courtDate}
+                    blueBox={false}
                     dateTimeDisabled={postponement?.postponedIndefinitely}
                     courtRoomDisabled={postponement?.postponedIndefinitely}
-                    selectedCourtDate={postponement?.newDate}
-                    selectedCourtRoom={postponement?.courtRoom}
-                    blueBox={false}
                   />
                 </Box>
                 <Box marginBottom={2}>
                   <Checkbox
                     name="postponedIndefinitely"
-                    label={formatMessage(m.postponedIndefinitely)}
+                    label={formatMessage(strings.postponedIndefinitely)}
                     large
                     filled
+                    checked={postponement?.postponedIndefinitely}
                     onChange={(event) =>
-                      setPostponement({
-                        newDate: null,
-                        courtRoom: null,
+                      setPostponement((prev) => ({
+                        ...prev,
                         postponedIndefinitely: event.target.checked,
-                      })
+                      }))
                     }
                   />
                 </Box>
@@ -200,11 +206,12 @@ const Conclusion: React.FC = () => {
                   name="reasonForPostponement"
                   rows={10}
                   autoExpand={{ on: true, maxHeight: 600 }}
-                  label={formatMessage(m.reasonForPostponement)}
+                  label={formatMessage(strings.reasonForPostponement)}
                   placeholder={formatMessage(
-                    m.reasonForPostponementPlaceholder,
+                    strings.reasonForPostponementPlaceholder,
                   )}
-                  onBlur={(event) =>
+                  value={postponement?.reason}
+                  onChange={(event) =>
                     setPostponement((prev) => ({
                       ...prev,
                       reason: event.target.value,
@@ -212,78 +219,82 @@ const Conclusion: React.FC = () => {
                   }
                   disabled={!postponement?.postponedIndefinitely}
                   textarea
+                  required
                 />
               </BlueBox>
             </Box>
+            <Box component="section" marginBottom={5}>
+              <SectionHeading title={formatMessage(strings.courtRecordTitle)} />
+              <InputFileUpload
+                fileList={uploadFiles.filter(
+                  (file) => file.category === CaseFileCategory.COURT_RECORD,
+                )}
+                accept="application/pdf"
+                header={formatMessage(strings.inputFieldLabel)}
+                description={formatMessage(core.uploadBoxDescription, {
+                  fileEndings: '.pdf',
+                })}
+                buttonLabel={formatMessage(strings.uploadButtonText)}
+                onChange={(files) => {
+                  handleUpload(
+                    addUploadFiles(files, CaseFileCategory.COURT_RECORD),
+                    updateUploadFile,
+                  )
+                }}
+                onRemove={(file) => handleRemove(file, removeUploadFile)}
+                onRetry={(file) => handleRetry(file, updateUploadFile)}
+              />
+            </Box>
+            {/* <Box component="section" marginBottom={10}>
+              <SectionHeading title={formatMessage(strings.rulingTitle)} />
+              <InputFileUpload
+                fileList={uploadFiles.filter(
+                  (file) => file.category === CaseFileCategory.RULING,
+                )}
+                accept="application/pdf"
+                header={formatMessage(strings.inputFieldLabel)}
+                description={formatMessage(core.uploadBoxDescription, {
+                  fileEndings: '.pdf',
+                })}
+                buttonLabel={formatMessage(strings.uploadButtonText)}
+                onChange={(files) =>
+                  handleUpload(
+                    addUploadFiles(files, CaseFileCategory.RULING),
+                    updateUploadFile,
+                  )
+                }
+                onRemove={(file) => handleRemove(file, removeUploadFile)}
+                onRetry={(file) => handleRetry(file, updateUploadFile)}
+              />
+            </Box> */}
           </>
         )}
-        <Box component="section" marginBottom={5}>
-          <SectionHeading title={formatMessage(m.courtRecordTitle)} />
-          <InputFileUpload
-            fileList={uploadFiles.filter(
-              (file) => file.category === CaseFileCategory.COURT_RECORD,
-            )}
-            accept="application/pdf"
-            header={formatMessage(m.inputFieldLabel)}
-            description={formatMessage(core.uploadBoxDescription, {
-              fileEndings: '.pdf',
-            })}
-            buttonLabel={formatMessage(m.uploadButtonText)}
-            onChange={(files) => {
-              handleUpload(
-                addUploadFiles(files, CaseFileCategory.COURT_RECORD),
-                updateUploadFile,
-              )
-            }}
-            onRemove={(file) => handleRemove(file, removeUploadFile)}
-            onRetry={(file) => handleRetry(file, updateUploadFile)}
-          />
-        </Box>
-        <Box component="section" marginBottom={10}>
-          <SectionHeading title={formatMessage(m.rulingTitle)} />
-          <InputFileUpload
-            fileList={uploadFiles.filter(
-              (file) => file.category === CaseFileCategory.RULING,
-            )}
-            accept="application/pdf"
-            header={formatMessage(m.inputFieldLabel)}
-            description={formatMessage(core.uploadBoxDescription, {
-              fileEndings: '.pdf',
-            })}
-            buttonLabel={formatMessage(m.uploadButtonText)}
-            onChange={(files) =>
-              handleUpload(
-                addUploadFiles(files, CaseFileCategory.RULING),
-                updateUploadFile,
-              )
-            }
-            onRemove={(file) => handleRemove(file, removeUploadFile)}
-            onRetry={(file) => handleRetry(file, updateUploadFile)}
-          />
-        </Box>
       </FormContentContainer>
       <FormContentContainer isFooter>
         <FormFooter
           nextButtonIcon="arrowForward"
           previousUrl={`${constants.INDICTMENTS_DEFENDER_ROUTE}/${workingCase.id}`}
           onNextButtonClick={() =>
-            handleNavigationTo(constants.CLOSED_INDICTMENT_OVERVIEW_ROUTE)
+            handleNavigationTo(constants.INDICTMENTS_COURT_OVERVIEW_ROUTE)
           }
-          nextIsDisabled={!allFilesDoneOrError}
-          nextIsLoading={isTransitioningCase}
-          nextButtonText={formatMessage(m.nextButtonText)}
+          nextIsDisabled={!stepIsValid}
+          nextIsLoading={
+            isUpdatingCase
+            /* || isTransitioningCase" */
+          }
+          nextButtonText={formatMessage(strings.nextButtonText)}
         />
       </FormContentContainer>
-      {navigateTo !== undefined && (
+      {/*navigateTo !== undefined && (
         <Modal
-          title={formatMessage(m.modalTitle)}
-          text={formatMessage(m.modalText)}
+          title={formatMessage(strings.modalTitle)}
+          text={formatMessage(strings.modalText)}
           onPrimaryButtonClick={() => {
             router.push(`${navigateTo}/${workingCase.id}`)
           }}
           primaryButtonText={formatMessage(core.closeModal)}
         />
-      )}
+      )*/}
     </PageLayout>
   )
 }

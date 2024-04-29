@@ -203,7 +203,7 @@ export const titles = {
         description:
           'Notaður sem titill fyrir verjenda skjá hjá dómstólum í ákærum',
       },
-      courtRecord: {
+      conclusion: {
         id: 'judicial.system.core:titles.court.indictments.conclusion',
         defaultMessage: 'Niðurstaða - Réttarvörslugátt',
         description:
