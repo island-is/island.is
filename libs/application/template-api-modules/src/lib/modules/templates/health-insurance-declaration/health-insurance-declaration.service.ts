@@ -4,10 +4,20 @@ import { Injectable } from '@nestjs/common'
 import { BaseTemplateApiService } from '../../base-template-api.service'
 import { TemplateApiModuleActionProps } from '../../../types'
 import { AuthMiddleware, Auth } from '@island.is/auth-nest-tools'
+import { ApplicationAttachmentProvider } from './attachments/provider'
+import {
+  applicationToStudentApplication,
+  applicationToTravellerApplication,
+  getApplicantType,
+} from './health-insurance-declaration.utils'
+import { ApplicantType } from '@island.is/application/templates/health-insurance-declaration'
 
 @Injectable()
 export class HealthInsuranceDeclarationService extends BaseTemplateApiService {
-  constructor(private insuranceStatementApi: InsurancestatementsApi) {
+  constructor(
+    private insuranceStatementApi: InsurancestatementsApi,
+    private attachmentProvider: ApplicationAttachmentProvider,
+  ) {
     super(ApplicationTypes.HEALTH_INSURANCE_DECLARATION)
   }
 
@@ -39,7 +49,7 @@ export class HealthInsuranceDeclarationService extends BaseTemplateApiService {
     ).getInsuranceStatementCountries()
   }
 
-  async insuranceStatementData(application: TemplateApiModuleActionProps) {
+  async getInsuranceStatementData(application: TemplateApiModuleActionProps) {
     const canApply = await this.canApply(application)
     const continents = await this.continents(application)
     const countries = await this.countries(application)
@@ -48,6 +58,36 @@ export class HealthInsuranceDeclarationService extends BaseTemplateApiService {
       canApply: canApply,
       continents: continents,
       countries: countries,
+    }
+  }
+
+  async submitApplicaiton({ application, auth }: TemplateApiModuleActionProps) {
+    // Different endpoints are used base on if applicant is a student or not
+    const applicationType = getApplicantType(application)
+    if (applicationType === ApplicantType.STUDENT) {
+      const attachments = await this.attachmentProvider.getFiles(
+        ['attachments.documents'],
+        application,
+      )
+      const applicationStudentRequest = applicationToStudentApplication(
+        application,
+        attachments,
+      )
+      const response = await this.insuranceStatementsApiWithAuth(
+        auth,
+      ).insuranceStatementStudentApplication({
+        minarsidurAPIModelsInsuranceStatementsStudentApplicationDTO:
+          applicationStudentRequest,
+      })
+    } else {
+      const applicationTravellerRequest =
+        applicationToTravellerApplication(application)
+      const response = await this.insuranceStatementsApiWithAuth(
+        auth,
+      ).insuranceStatementTouristApplication({
+        minarsidurAPIModelsInsuranceStatementsTouristApplicationDTO:
+          applicationTravellerRequest,
+      })
     }
   }
 }

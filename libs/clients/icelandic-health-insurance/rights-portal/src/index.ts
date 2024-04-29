@@ -18,4 +18,7 @@ export {
   PaymentsOverviewApi,
   MinarsidurAPIModelsPaymentsPaymentOverviewDTO as PaymentOverviewDTO,
   InsurancestatementsApi,
+  MinarsidurAPIModelsInsuranceStatementsStudentApplicationDTO as InsuranceStatementsStudentApplicationDTO,
+  MinarsidurAPIModelsInsuranceStatementsApplicantDTO as InsuranceStatementsApplicantDTO,
+  MinarsidurAPIModelsInsuranceStatementsTouristApplicationDTO as InsuranceStatementsTouristApplicationDTO,
 } from '../gen/fetch'
