@@ -106,6 +106,7 @@ export class InheritanceReportService extends BaseTemplateApiService {
     }
 
     const uploadData = this.stringifyObject(expandAnswers(answers))
+    console.log('🚀 ~ InheritanceReportService ~ uploadData:', uploadData)
 
     const uploadDataName = 'erfdafjarskysla1.0'
     const uploadDataId = 'erfdafjarskysla1.0'

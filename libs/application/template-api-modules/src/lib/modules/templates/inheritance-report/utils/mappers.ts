@@ -164,7 +164,7 @@ export const expandAnswers = (
       realEstate: {
         data: (answers.assets.realEstate?.data ?? []).map((realEstate) => {
           return {
-            assetNumber: realEstate.assetNumber ?? '',
+            assetNumber: realEstate.assetNumber.replace('-', '') ?? '',
             description: realEstate.description ?? '',
             propertyValuation: realEstate.propertyValuation ?? '0',
             share: realEstate.share ?? '0',

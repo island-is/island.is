@@ -377,12 +377,18 @@ const RealEstateNumberField = ({
       SEARCH_FOR_PROPERTY_QUERY,
       {
         onCompleted: (data) => {
-          clearErrors(descriptionFieldName)
-
-          setValue(
-            descriptionFieldName,
-            data.searchForProperty?.defaultAddress?.display ?? '',
-          )
+          if (isValidRealEstate(propertyNumberInput)) {
+            clearErrors(descriptionFieldName)
+            setValue(
+              descriptionFieldName,
+              data.searchForProperty?.defaultAddress?.display ?? '',
+            )
+          } else {
+            setError(fieldName, {
+              message: formatMessage(m.errorPropertyNumber),
+              type: 'validate',
+            })
+          }
         },
         fetchPolicy: 'network-only',
       },
@@ -394,7 +400,10 @@ const RealEstateNumberField = ({
   }, [queryLoading])
 
   useEffect(() => {
-    const propertyNumber = propertyNumberInput.trim().toUpperCase()
+    const propertyNumber = propertyNumberInput
+      .trim()
+      .toUpperCase()
+      .replace('-', '')
 
     setValue(descriptionFieldName, '')
 
