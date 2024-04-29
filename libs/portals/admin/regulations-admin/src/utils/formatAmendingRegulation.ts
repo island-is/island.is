@@ -120,17 +120,14 @@ const formatListItemDiff = (item: Element) => {
       const liLidur = isStaflidur ? 'stafliður' : 'töluliður'
       const liLidurShortened = isStaflidur ? 'stafl.' : 'tölul.'
 
-      const lidurMaybeCapitalized =
-        liItemHtml === ''
-          ? liLidur.charAt(0).toUpperCase() + liLidur.slice(1).toLowerCase()
-          : liLidur
+      const lidurLabel = liItemHtml === '' ? liLidur.toLowerCase() : liLidur
 
       if (isLiDeleted) {
         liItemHtml = (liItemHtml +
-          `${lidurMaybeCapitalized} ${getLiPoint(
+          `${getLiPoint(
             lidur,
             isStaflidur,
-          )}, ${oldLiText} fellur brott og breytist númer annarra liða til samræmis.`) as HTMLText
+          )}. ${lidurLabel} fellur brott og breytist númer annarra liða til samræmis.`) as HTMLText
 
         // Finish up:
         returningArray.push(liItemHtml)
@@ -166,9 +163,11 @@ export const formatAmendingRegBody = (
   diff?: HTMLText | string | undefined,
 ) => {
   if (repeal) {
-    return [
-      `<p>Jafnframt fellur brott reglugerð nr. ${regName}</p>` as HTMLText,
-    ]
+    const text =
+      `<p>Reglugerð nr. ${regName} ásamt síðari breytingum fellur brott</p>` as HTMLText
+    const gildistaka =
+      `<p>Reglugerð þessi er sett með heimild í [].</p><p>Reglugerðin öðlast þegar gildi</p>` as HTMLText
+    return [text, gildistaka]
   }
 
   if (!diff) {
