@@ -62,9 +62,9 @@ const getChapter = (category?: string): number | undefined => {
 }
 
 const formatCrimeScenePlace = (
-  street?: string,
+  street?: string | null,
   streetNumber?: string | null,
-  municipality?: string,
+  municipality?: string | null,
 ) => {
   if (!street && !municipality) {
     return ''
@@ -103,8 +103,8 @@ export class PoliceService {
     licencePlate: z.optional(z.string()),
     gotuHeiti: z.optional(z.string()),
     gotuNumer: z.string().nullish(),
-    sveitafelag: z.optional(z.string()),
-    postnumer: z.optional(z.string()),
+    sveitafelag: z.string().nullish(),
+    postnumer: z.string().nullish(),
   })
   private responseStructure = z.object({
     malsnumer: z.string(),
@@ -336,9 +336,9 @@ export class PoliceService {
               vettvangur?: string
               brotFra?: string
               licencePlate?: string
-              gotuHeiti?: string
+              gotuHeiti?: string | null
               gotuNumer?: string | null
-              sveitafelag?: string
+              sveitafelag?: string | null
             }) => {
               const policeCaseNumber = info.upprunalegtMalsnumer
 
