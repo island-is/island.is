@@ -322,6 +322,12 @@ export const caseListInclude: Includeable[] = [
     required: false,
     where: { dateType: { [Op.in]: dateTypes } },
   },
+  {
+    model: ExplanatoryComment,
+    as: 'explanatoryComments',
+    required: false,
+    where: { commentType: { [Op.in]: commentTypes } },
+  },
 ]
 
 export const listOrder: OrderItem[] = [

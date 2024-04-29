@@ -25,6 +25,12 @@ export const infoCardCaseScheduled = defineMessages({
     defaultMessage: 'Á dagskrá',
     description: 'Notaður sem texti sem tilgreinir að málið sé á dagskrá',
   },
+  postponed: {
+    id: 'judicial.system.indictments:overview.postponed',
+    defaultMessage: 'Frestað',
+    description:
+      'Notaður sem texti sem tilgreinir að málinu hafi verið sé frestað',
+  },
   courtRoom: {
     id: 'judicial.system.indictments:overview.court_room',
     defaultMessage:
