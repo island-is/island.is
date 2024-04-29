@@ -24,7 +24,7 @@ import {
   VerifyLicenseBarcodeError,
 } from '../../graphql/types/schema'
 import { createNavigationOptionHooks } from '../../hooks/create-navigation-option-hooks'
-import { useOfflineUpdateNavigation } from '../../hooks/use-offline-update-navigation'
+import { useConnectivityIndicator } from '../../hooks/use-connectivity-indicator'
 import { ComponentRegistry } from '../../utils/component-registry'
 import { isAndroid, isIos } from '../../utils/devices'
 import { isDefined } from '../../utils/is-defined'
@@ -89,7 +89,7 @@ export const LicenseScannerScreen: NavigationFunctionComponent = ({
   componentId,
 }) => {
   useNavigationOptions(componentId)
-  useOfflineUpdateNavigation(componentId, RIGHT_BUTTONS)
+  useConnectivityIndicator(componentId, RIGHT_BUTTONS)
   const [hasPermission, setHasPermission] = useState<boolean>()
   const [active, setActive] = useState(true)
   const [invalid, setInvalid] = useState<boolean>(false)

@@ -23,7 +23,7 @@ import {
 } from '../../graphql/types/schema'
 import { createNavigationOptionHooks } from '../../hooks/create-navigation-option-hooks'
 import { useActiveTabItemPress } from '../../hooks/use-active-tab-item-press'
-import { useOfflineUpdateNavigation } from '../../hooks/use-offline-update-navigation'
+import { useConnectivityIndicator } from '../../hooks/use-connectivity-indicator'
 import { notificationsStore } from '../../stores/notifications-store'
 import { useUiStore } from '../../stores/ui-store'
 import { isAndroid } from '../../utils/devices'
@@ -107,7 +107,7 @@ export const MainHomeScreen: NavigationFunctionComponent = ({
     flatListRef.current?.scrollToOffset({ offset: -150, animated: true })
   })
 
-  useOfflineUpdateNavigation(componentId, getRightButtons())
+  useConnectivityIndicator(componentId, getRightButtons())
 
   const applicationsRes = useListApplicationsQuery()
 

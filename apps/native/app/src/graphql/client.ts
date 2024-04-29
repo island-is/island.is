@@ -1,4 +1,3 @@
-import { NormalizedCacheObject } from '@apollo/client'
 import {
   ApolloClient,
   ApolloLink,
@@ -6,12 +5,13 @@ import {
   fromPromise,
   HttpLink,
   InMemoryCache,
-} from '@apollo/client/index'
+  NormalizedCacheObject,
+} from '@apollo/client'
 import { setContext } from '@apollo/client/link/context'
 import { onError } from '@apollo/client/link/error'
 import { RetryLink } from '@apollo/client/link/retry'
-import { persistCache, MMKVWrapper } from 'apollo3-cache-persist'
-import { MMKV } from 'react-native-mmkv'
+import { MMKVStorageWrapper, persistCache } from 'apollo3-cache-persist'
+import { MMKVLoader } from 'react-native-mmkv-storage'
 import { config, getConfig } from '../config'
 import { openBrowser } from '../lib/rn-island'
 import { cognitoAuthUrl } from '../screens/cognito-auth/config-switcher'
@@ -20,10 +20,9 @@ import { environmentStore } from '../stores/environment-store'
 import { offlineStore } from '../stores/offline-store'
 import { MainBottomTabs } from '../utils/component-registry'
 
-const mkkvStorage = new MMKV({
-  id: 'apollo-cache',
-  encryptionKey: 'todo-set-some-secret-key-from-secure-place',
-})
+export const mkkvStorage = new MMKVLoader()
+  .withEncryption() // Generates a random key and stores it securely in Keychain
+  .initialize()
 
 const httpLink = new HttpLink({
   uri() {
@@ -136,7 +135,48 @@ const authLink = setContext(async (_, { headers }) => ({
 
 export const archivedCache = new Map()
 
+const cache = new InMemoryCache({
+  dataIdFromObject: (object) => {
+    switch (object.__typename) {
+      case 'VehiclesVehicle':
+        return `VehiclesVehicle:${object.permno}`
+      case 'VehicleMileageDetail':
+        return `VehicleMileageDetail:${object.internalId}`
+      default:
+        return defaultDataIdFromObject(object)
+    }
+  },
+  typePolicies: {
+    Document: {
+      fields: {
+        archived: {
+          read(_value, { readField, variables }) {
+            const defaultState = !!variables?.input?.archived
+            const id = readField('id')
+
+            if (!archivedCache.has(id)) {
+              archivedCache.set(id, defaultState)
+            }
+
+            return archivedCache.get(id)
+          },
+        },
+      },
+    },
+  },
+})
+
+let apolloClientPromise: Promise<ApolloClient<NormalizedCacheObject>> | null =
+  null
 let apolloClient: ApolloClient<NormalizedCacheObject> | null = null
+
+export const getApolloClientAsync = () => {
+  if (!apolloClientPromise) {
+    apolloClientPromise = initializeApolloClient()
+  }
+
+  return apolloClientPromise
+}
 
 export const getApolloClient = () => {
   if (!apolloClient) {
@@ -147,47 +187,33 @@ export const getApolloClient = () => {
 }
 
 export const initializeApolloClient = async () => {
-  const cache = new InMemoryCache({
-    dataIdFromObject: (object) => {
-      switch (object.__typename) {
-        case 'VehiclesVehicle':
-          return `VehiclesVehicle:${object.permno}`
-        case 'VehicleMileageDetail':
-          return `VehicleMileageDetail:${object.internalId}`
-        default:
-          return defaultDataIdFromObject(object)
-      }
-    },
-    typePolicies: {
-      Document: {
-        fields: {
-          archived: {
-            read(_value, { readField, variables }) {
-              const defaultState = !!variables?.input?.archived
-              const id = readField('id')
-
-              if (!archivedCache.has(id)) {
-                archivedCache.set(id, defaultState)
-              }
-
-              return archivedCache.get(id)
-            },
-          },
-        },
-      },
-    },
-  })
-
   await persistCache({
     cache,
-    storage: new MMKVWrapper(mkkvStorage),
+    storage: new MMKVStorageWrapper(mkkvStorage),
   })
 
   apolloClient = new ApolloClient({
     link: ApolloLink.from([retryLink, errorLink, authLink, httpLink]),
     defaultOptions: {
       watchQuery: {
-        fetchPolicy: 'cache-and-network',
+        fetchPolicy: 'network-only',
+        nextFetchPolicy(currentFetchPolicy, { reason, initialFetchPolicy }) {
+          if (reason === 'variables-changed') {
+            return initialFetchPolicy
+          }
+
+          if (
+            currentFetchPolicy === 'network-only' ||
+            currentFetchPolicy === 'cache-and-network'
+          ) {
+            // Demote the network policies (except "no-cache") to "cache-and-network"
+            // after the first request.
+            return 'cache-and-network'
+          }
+
+          // Leave all other fetch policies unchanged.
+          return currentFetchPolicy
+        },
       },
     },
     cache,

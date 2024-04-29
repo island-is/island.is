@@ -24,7 +24,7 @@ import {
   useListDocumentsLazyQuery,
 } from '../../graphql/types/schema'
 import { createNavigationOptionHooks } from '../../hooks/create-navigation-option-hooks'
-import { useOfflineUpdateNavigation } from '../../hooks/use-offline-update-navigation'
+import { useConnectivityIndicator } from '../../hooks/use-connectivity-indicator'
 import { toggleAction } from '../../lib/post-mail-action'
 import { authStore } from '../../stores/auth-store'
 import { useOrganizationsStore } from '../../stores/organizations-store'
@@ -220,13 +220,16 @@ export const DocumentDetailScreen: NavigationFunctionComponent<{
   const hasPdf = Document.fileType?.toLocaleLowerCase() === 'pdf'
   const isHtml = typeof Document.html === 'string' && Document.html !== ''
 
-  useOfflineUpdateNavigation(
+  useConnectivityIndicator(
     componentId,
     getRightButtons({
       archived: doc.data?.archived ?? false,
       bookmarked: doc.data?.bookmarked ?? false,
     }),
-    doc.data,
+    undefined,
+    {
+      data: doc.data,
+    },
   )
 
   useNavigationButtonPress(({ buttonId }) => {

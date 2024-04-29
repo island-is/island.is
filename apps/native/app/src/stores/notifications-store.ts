@@ -5,7 +5,7 @@ import { Navigation } from 'react-native-navigation'
 import createUse from 'zustand'
 import { persist } from 'zustand/middleware'
 import create, { State } from 'zustand/vanilla'
-import { getApolloClient } from '../graphql/client'
+import { getApolloClientAsync } from '../graphql/client'
 import {
   AddUserProfileDeviceTokenDocument,
   AddUserProfileDeviceTokenMutationVariables,
@@ -144,7 +144,7 @@ export const notificationsStore = create<NotificationsStore>(
       },
       actions: {
         async syncToken() {
-          const client = getApolloClient()
+          const client = await getApolloClientAsync()
           const token = await messaging().getToken()
           const { pushToken } = get()
 

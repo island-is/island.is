@@ -16,7 +16,7 @@ import illustrationSrc from '../../assets/illustrations/le-moving-s1.png'
 import { BottomTabsIndicator } from '../../components/bottom-tabs-indicator/bottom-tabs-indicator'
 import { useListAssetsQuery } from '../../graphql/types/schema'
 import { createNavigationOptionHooks } from '../../hooks/create-navigation-option-hooks'
-import { useOfflineUpdateNavigation } from '../../hooks/use-offline-update-navigation'
+import { useConnectivityIndicator } from '../../hooks/use-connectivity-indicator'
 import { navigateTo } from '../../lib/deep-linking'
 import { testIDs } from '../../utils/test-ids'
 
@@ -65,7 +65,7 @@ export const AssetsOverviewScreen: NavigationFunctionComponent = ({
   componentId,
 }) => {
   useNavigationOptions(componentId)
-  useOfflineUpdateNavigation(componentId)
+  useConnectivityIndicator(componentId)
   const flatListRef = useRef<FlatList>(null)
   const [loading, setLoading] = useState(false)
   const intl = useIntl()
@@ -74,12 +74,16 @@ export const AssetsOverviewScreen: NavigationFunctionComponent = ({
   const loadingTimeout = useRef<number>()
 
   const assetsRes = useListAssetsQuery({
-    fetchPolicy: 'cache-first',
     variables: {
       input: {
         cursor: '1',
       },
     },
+  })
+
+  useConnectivityIndicator(componentId, [], {
+    ...assetsRes,
+    pullToRefresh: loading,
   })
 
   const isSkeleton = assetsRes.loading && !assetsRes.data

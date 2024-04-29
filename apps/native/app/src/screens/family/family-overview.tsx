@@ -16,7 +16,7 @@ import illustrationSrc from '../../assets/illustrations/hero_spring.png'
 import { BottomTabsIndicator } from '../../components/bottom-tabs-indicator/bottom-tabs-indicator'
 import { useNationalRegistryChildrenQuery } from '../../graphql/types/schema'
 import { createNavigationOptionHooks } from '../../hooks/create-navigation-option-hooks'
-import { useOfflineUpdateNavigation } from '../../hooks/use-offline-update-navigation'
+import { useConnectivityIndicator } from '../../hooks/use-connectivity-indicator'
 import { navigateTo } from '../../lib/deep-linking'
 import { formatNationalId } from '../../lib/format-national-id'
 import { testIDs } from '../../utils/test-ids'
@@ -61,7 +61,6 @@ export const FamilyOverviewScreen: NavigationFunctionComponent = ({
   componentId,
 }) => {
   useNavigationOptions(componentId)
-  useOfflineUpdateNavigation(componentId)
 
   const flatListRef = useRef<FlatList>(null)
   const [loading, setLoading] = useState(false)
@@ -69,10 +68,13 @@ export const FamilyOverviewScreen: NavigationFunctionComponent = ({
   const theme = useTheme()
   const scrollY = useRef(new Animated.Value(0)).current
   const loadingTimeout = useRef<number>()
+  const familyRes = useNationalRegistryChildrenQuery()
 
-  const familyRes = useNationalRegistryChildrenQuery({
-    fetchPolicy: 'cache-and-network',
+  useConnectivityIndicator(componentId, [], {
+    ...familyRes,
+    pullToRefresh: loading,
   })
+
   const { nationalRegistryUser, nationalRegistryChildren = [] } =
     familyRes?.data || {}
 

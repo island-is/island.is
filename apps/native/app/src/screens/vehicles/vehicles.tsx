@@ -19,7 +19,7 @@ import {
   useListVehiclesQuery,
 } from '../../graphql/types/schema'
 import { createNavigationOptionHooks } from '../../hooks/create-navigation-option-hooks'
-import { useOfflineUpdateNavigation } from '../../hooks/use-offline-update-navigation'
+import { useConnectivityIndicator } from '../../hooks/use-connectivity-indicator'
 import { getRightButtons } from '../../utils/get-main-root'
 import { testIDs } from '../../utils/test-ids'
 import { VehicleItem } from './components/vehicle-item'
@@ -96,17 +96,22 @@ export const VehiclesScreen: NavigationFunctionComponent = ({
   componentId,
 }) => {
   useNavigationOptions(componentId)
-  useOfflineUpdateNavigation(componentId)
+
   const flatListRef = useRef<FlatList>(null)
   const [loading, setLoading] = useState(false)
   const [loadingMore, setLoadingMore] = useState(false)
   const scrollY = useRef(new Animated.Value(0)).current
   const loadingTimeout = useRef<ReturnType<typeof setTimeout>>()
+
   const res = useListVehiclesQuery({
-    fetchPolicy: 'cache-first',
     variables: {
       input,
     },
+  })
+
+  useConnectivityIndicator(componentId, [], {
+    ...res,
+    pullToRefresh: loading,
   })
 
   // Get feature flag for mileage

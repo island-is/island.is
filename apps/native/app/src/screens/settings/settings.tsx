@@ -172,6 +172,7 @@ export const SettingsScreen: NavigationFunctionComponent = ({
         title={intl.formatMessage({ id: 'setting.screenTitle' })}
         onClosePress={() => Navigation.dismissModal(componentId)}
         style={{ marginHorizontal: 16 }}
+        loading={userProfile.loading}
       />
       <ScrollView style={{ flex: 1 }} testID={testIDs.USER_SCREEN_SETTINGS}>
         <Alert
