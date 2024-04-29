@@ -82,7 +82,6 @@ export class CmsSyncService implements ContentSearchImporter<PostSyncOptions> {
     private readonly manualSyncService: ManualSyncService,
     private readonly manualChapterItemSyncService: ManualChapterItemSyncService,
     private readonly customPageSyncService: CustomPageSyncService,
-    private readonly genericListSyncService: GenericListSyncService,
     private readonly genericListItemSyncService: GenericListItemSyncService,
   ) {
     this.contentSyncProviders = [
@@ -108,7 +107,6 @@ export class CmsSyncService implements ContentSearchImporter<PostSyncOptions> {
       this.manualSyncService,
       this.manualChapterItemSyncService,
       this.customPageSyncService,
-      this.genericListSyncService,
       this.genericListItemSyncService,
     ]
   }

@@ -554,9 +554,6 @@ export interface IChartFields {
   /** Components */
   components: IChartComponent[]
 
-  /** Interval */
-  interval?: number | undefined
-
   /** Date From */
   dateFrom?: string | undefined
 
@@ -1130,9 +1127,6 @@ export interface IFeatured extends Entry<IFeaturedFields> {
 export interface IFeaturedArticlesFields {
   /** Title */
   title: string
-
-  /** Intro text */
-  introText?: Document | undefined
 
   /** Image */
   image?: Asset | undefined
@@ -2035,34 +2029,6 @@ export interface ILifeEventPage extends Entry<ILifeEventPageFields> {
     contentType: {
       sys: {
         id: 'lifeEventPage'
-        linkType: 'ContentType'
-        type: 'Link'
-      }
-    }
-  }
-}
-
-export interface ILifeEventPageListSliceFields {
-  /** Title */
-  title?: string | undefined
-
-  /** List */
-  lifeEventPageList?: (ILifeEventPage | IAnchorPage)[] | undefined
-}
-
-/** !!DO NOT USE!! - This content type has been deprecated. Use Anchor Page List */
-
-export interface ILifeEventPageListSlice
-  extends Entry<ILifeEventPageListSliceFields> {
-  sys: {
-    id: string
-    type: string
-    createdAt: string
-    updatedAt: string
-    locale: string
-    contentType: {
-      sys: {
-        id: 'lifeEventPageListSlice'
         linkType: 'ContentType'
         type: 'Link'
       }

@@ -24,7 +24,7 @@ export class GenericListItemSyncService
 
   doMapping(entries: IGenericListItem[]) {
     if (entries.length > 0) {
-      logger.info('Mapping list items', { count: entries.length })
+      logger.info('Mapping generic list items', { count: entries.length })
     }
 
     return entries
