@@ -29,7 +29,7 @@ padding does have default values, and so can be left as is.
 ### Layout Components
 
 Two layout components have been created in the web app. `SubpageMainContent` and
-`SubpageDetailsContent`. These components were based on figma designs, so they
+`SubpageDetailsContent`. These components were based on figma designs so they
 should be universally used to maintain UX consistency between subpages.
 
 #### Main Subpage Content
