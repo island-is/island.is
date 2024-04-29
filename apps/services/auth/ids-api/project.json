@@ -72,6 +72,16 @@
         "buildTarget": "services-auth-ids-api:esbuild"
       }
     },
+    "cleanup": {
+      "executor": "@nx/js:node",
+      "options": {
+        "buildTarget": "services-auth-ids-api:esbuild",
+        "buildTargetOptions": {
+          "outputPath": "dist/apps/services/auth/ids-api/cleanup"
+        },
+        "args": ["--job", "cleanup"]
+      }
+    },
     "lint": {
       "executor": "@nx/linter:eslint",
       "options": {
