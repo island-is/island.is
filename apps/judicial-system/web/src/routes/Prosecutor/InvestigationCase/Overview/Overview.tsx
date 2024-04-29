@@ -16,7 +16,6 @@ import {
   formatCaseType,
   formatDate,
 } from '@island.is/judicial-system/formatters'
-import { getLatestDateType } from '@island.is/judicial-system/types'
 import {
   core,
   errors,
@@ -46,8 +45,6 @@ import InfoCardCaseScheduled from '@island.is/judicial-system-web/src/components
 import {
   CaseState,
   CaseTransition,
-  DateLog,
-  DateType,
   NotificationType,
 } from '@island.is/judicial-system-web/src/graphql/schema'
 import { useCase } from '@island.is/judicial-system-web/src/utils/hooks'
@@ -116,11 +113,6 @@ export const Overview: React.FC<React.PropsWithChildren<unknown>> = () => {
   const caseFiles =
     workingCase.caseFiles?.filter((file) => !file.category) ?? []
 
-  const courtDate = getLatestDateType(
-    DateType.COURT_DATE,
-    workingCase.dateLogs,
-  ) as DateLog
-
   return (
     <PageLayout
       workingCase={workingCase}
@@ -162,14 +154,13 @@ export const Overview: React.FC<React.PropsWithChildren<unknown>> = () => {
         </Box>
         <ProsecutorCaseInfo workingCase={workingCase} />
         {workingCase.state === CaseState.RECEIVED &&
-          courtDate &&
-          courtDate.date &&
+          workingCase.arraignmentDate?.date &&
           workingCase.court && (
             <Box component="section" marginBottom={5}>
               <InfoCardCaseScheduled
                 court={workingCase.court}
-                courtDate={courtDate.date}
-                courtRoom={workingCase.courtRoom}
+                courtDate={workingCase.arraignmentDate.date}
+                courtRoom={workingCase.arraignmentDate.location}
               />
             </Box>
           )}
@@ -241,14 +232,18 @@ export const Overview: React.FC<React.PropsWithChildren<unknown>> = () => {
                 title: formatMessage(core.caseType),
                 value: capitalize(formatCaseType(workingCase.type)),
               },
-              ...(courtDate && courtDate.date
+              ...(workingCase.arraignmentDate?.date
                 ? [
                     {
                       title: formatMessage(core.confirmedCourtDate),
                       value: `${capitalize(
-                        formatDate(courtDate.date, 'PPPP', true) ?? '',
+                        formatDate(
+                          workingCase.arraignmentDate.date,
+                          'PPPP',
+                          true,
+                        ) ?? '',
                       )} kl. ${formatDate(
-                        courtDate.date,
+                        workingCase.arraignmentDate.date,
                         constants.TIME_FORMAT,
                       )}`,
                     },

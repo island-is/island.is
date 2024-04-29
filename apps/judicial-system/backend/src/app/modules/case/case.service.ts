@@ -35,6 +35,7 @@ import {
   CaseState,
   CaseTransition,
   CaseType,
+  CommentType,
   completedCaseStates,
   DateType,
   EventType,
@@ -64,10 +65,15 @@ import { CreateCaseDto } from './dto/createCase.dto'
 import { getCasesQueryFilter } from './filters/cases.filter'
 import { Case } from './models/case.model'
 import { DateLog } from './models/dateLog.model'
+import { ExplanatoryComment } from './models/explanatoryComment.model'
 import { SignatureConfirmationResponse } from './models/signatureConfirmation.response'
 import { transitionCase } from './state/case.state'
 import { caseModuleConfig } from './case.config'
 
+interface UpdateDateLog {
+  date?: Date
+  location?: string
+}
 export interface UpdateCase
   extends Pick<
     Case,
@@ -101,7 +107,6 @@ export interface UpdateCase
     | 'courtCaseNumber'
     | 'sessionArrangements'
     | 'courtLocation'
-    | 'courtRoom'
     | 'courtStartDate'
     | 'courtEndTime'
     | 'isClosedCourtHidden'
@@ -161,11 +166,31 @@ export interface UpdateCase
   courtRecordSignatoryId?: string | null
   courtRecordSignatureDate?: Date | null
   parentCaseId?: string | null
-  courtDate?: Date | null
+  arraignmentDate?: UpdateDateLog | null
+  courtDate?: UpdateDateLog | null
+  postponedIndefinitelyExplanation?: string | null
+}
+
+type DateLogKeys = keyof Pick<UpdateCase, 'arraignmentDate' | 'courtDate'>
+
+const dateLogTypes: Record<DateLogKeys, DateType> = {
+  arraignmentDate: DateType.ARRAIGNMENT_DATE,
+  courtDate: DateType.COURT_DATE,
+}
+
+type ExplanatoryCommentKeys = keyof Pick<
+  UpdateCase,
+  'postponedIndefinitelyExplanation'
+>
+
+const explanatoryCommentTypes: Record<ExplanatoryCommentKeys, CommentType> = {
+  postponedIndefinitelyExplanation:
+    CommentType.POSTPONED_INDEFINITELY_EXPLANATION,
 }
 
 const eventTypes = Object.values(EventType)
 const dateTypes = Object.values(DateType)
+const commentTypes = Object.values(CommentType)
 
 export const include: Includeable[] = [
   { model: Institution, as: 'prosecutorsOffice' },
@@ -252,6 +277,12 @@ export const include: Includeable[] = [
     required: false,
     where: { dateType: { [Op.in]: dateTypes } },
   },
+  {
+    model: ExplanatoryComment,
+    as: 'explanatoryComments',
+    required: false,
+    where: { commentType: { [Op.in]: commentTypes } },
+  },
   { model: Notification, as: 'notifications' },
 ]
 
@@ -304,6 +335,8 @@ export class CaseService {
     @InjectConnection() private readonly sequelize: Sequelize,
     @InjectModel(Case) private readonly caseModel: typeof Case,
     @InjectModel(DateLog) private readonly dateLogModel: typeof DateLog,
+    @InjectModel(ExplanatoryComment)
+    private readonly explanatoryCommentModel: typeof ExplanatoryComment,
     @Inject(caseModuleConfig.KEY)
     private readonly config: ConfigType<typeof caseModuleConfig>,
     private readonly defendantService: DefendantService,
@@ -1189,17 +1222,86 @@ export class CaseService {
     update: UpdateCase,
     transaction: Transaction,
   ) {
-    if (update.courtDate) {
-      await this.dateLogModel.create(
-        {
-          dateType: DateType.COURT_DATE,
-          caseId: theCase.id,
-          date: update.courtDate,
-        },
-        { transaction },
-      )
+    // Iterate over all known date log types
+    for (const key in dateLogTypes) {
+      const dateKey = key as DateLogKeys
+      const updateDateLog = update[dateKey]
 
-      delete update.courtDate
+      if (updateDateLog !== undefined) {
+        const dateType = dateLogTypes[dateKey]
+
+        const dateLog = await this.dateLogModel.findOne({
+          where: { caseId: theCase.id, dateType },
+          transaction,
+        })
+
+        if (dateLog) {
+          if (updateDateLog === null) {
+            await this.dateLogModel.destroy({
+              where: { caseId: theCase.id, dateType },
+              transaction,
+            })
+          } else {
+            await this.dateLogModel.update(updateDateLog, {
+              where: { caseId: theCase.id, dateType },
+              transaction,
+            })
+          }
+        } else {
+          await this.dateLogModel.create(
+            {
+              caseId: theCase.id,
+              dateType,
+              ...updateDateLog,
+            },
+            { transaction },
+          )
+        }
+
+        delete update[dateKey]
+      }
+    }
+  }
+
+  private async handleCommentUpdates(
+    theCase: Case,
+    update: UpdateCase,
+    transaction: Transaction,
+  ) {
+    // Iterate over all known explanatory comment types
+    for (const key in explanatoryCommentTypes) {
+      const commentKey = key as ExplanatoryCommentKeys
+      const updateComment = update[commentKey]
+
+      if (updateComment !== undefined) {
+        const commentType = explanatoryCommentTypes[commentKey]
+
+        const comment = await this.explanatoryCommentModel.findOne({
+          where: { caseId: theCase.id, commentType },
+          transaction,
+        })
+
+        if (comment) {
+          if (updateComment === null) {
+            await this.explanatoryCommentModel.destroy({
+              where: { caseId: theCase.id, commentType },
+              transaction,
+            })
+          } else {
+            await this.explanatoryCommentModel.update(
+              { comment: updateComment },
+              { where: { caseId: theCase.id, commentType }, transaction },
+            )
+          }
+        } else {
+          await this.explanatoryCommentModel.create(
+            { caseId: theCase.id, commentType, comment: updateComment },
+            { transaction },
+          )
+        }
+
+        delete update[commentKey]
+      }
     }
   }
 
@@ -1223,6 +1325,7 @@ export class CaseService {
         }
 
         await this.handleDateUpdates(theCase, update, transaction)
+        await this.handleCommentUpdates(theCase, update, transaction)
 
         if (Object.keys(update).length === 0) {
           return
