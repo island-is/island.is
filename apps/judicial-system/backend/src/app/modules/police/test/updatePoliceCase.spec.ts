@@ -31,6 +31,7 @@ describe('PoliceController - Update Police Case', () => {
   const caseType = CaseType.CUSTODY
   const caseState = CaseState.ACCEPTED
   const policeCaseNumber = uuid()
+  const courtCaseNumber = uuid()
   const defendantNationalId = uuid()
   const validToDate = randomDate()
   const caseConclusion = 'test conclusion'
@@ -70,6 +71,7 @@ describe('PoliceController - Update Police Case', () => {
           caseType,
           caseState,
           policeCaseNumber,
+          courtCaseNumber,
           defendantNationalId,
           validToDate,
           caseConclusion,
@@ -104,6 +106,7 @@ describe('PoliceController - Update Police Case', () => {
           body: JSON.stringify({
             rvMal_ID: caseId,
             caseNumber: policeCaseNumber,
+            courtCaseNumber,
             ssn: defendantNationalId,
             type: caseType,
             courtVerdict: caseState,

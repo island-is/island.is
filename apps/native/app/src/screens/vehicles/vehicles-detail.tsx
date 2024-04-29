@@ -6,6 +6,7 @@ import { NavigationFunctionComponent } from 'react-native-navigation'
 import { useFeatureFlag } from '../../contexts/feature-flag-provider'
 import { useGetVehicleQuery } from '../../graphql/types/schema'
 import { createNavigationOptionHooks } from '../../hooks/create-navigation-option-hooks'
+import { useOfflineUpdateNavigation } from '../../hooks/use-offline-update-navigation'
 import { navigateTo } from '../../lib/deep-linking'
 import { testIDs } from '../../utils/test-ids'
 
@@ -21,6 +22,7 @@ export const VehicleDetailScreen: NavigationFunctionComponent<{
   id: string
 }> = ({ componentId, title, id }) => {
   useNavigationOptions(componentId)
+  useOfflineUpdateNavigation(componentId)
   const intl = useIntl()
 
   // Get feature flag for mileage

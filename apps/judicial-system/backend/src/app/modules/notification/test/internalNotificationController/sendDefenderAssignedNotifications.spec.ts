@@ -358,7 +358,7 @@ describe('InternalNotificationController - Send defender assigned notifications'
       defenderEmail: 'recipient@gmail.com',
       defenderName: 'John Doe',
       defenderNationalId: '1234567890',
-      dateLogs: [{ date: new Date(), dateType: DateType.COURT_DATE }],
+      dateLogs: [{ date: new Date(), dateType: DateType.ARRAIGNMENT_DATE }],
     } as Case
 
     beforeEach(async () => {
@@ -404,7 +404,7 @@ describe('InternalNotificationController - Send defender assigned notifications'
       courtCaseNumber: 'R-123/2022',
       defenderEmail: 'recipient@gmail.com',
       defenderName: 'John Doe',
-      dateLogs: [{ date: new Date(), dateType: DateType.COURT_DATE }],
+      dateLogs: [{ date: new Date(), dateType: DateType.ARRAIGNMENT_DATE }],
     } as Case
 
     beforeEach(async () => {
@@ -450,7 +450,7 @@ describe('InternalNotificationController - Send defender assigned notifications'
       courtCaseNumber: 'R-123/2022',
       defenderEmail: 'recipient@gmail.com',
       defenderName: 'John Doe',
-      dateLogs: [{ date: new Date(), dateType: DateType.COURT_DATE }],
+      dateLogs: [{ date: new Date(), dateType: DateType.ARRAIGNMENT_DATE }],
     } as Case
 
     beforeEach(async () => {

@@ -12,7 +12,6 @@ import {
   Tooltip,
 } from '@island.is/island-ui/core'
 import * as constants from '@island.is/judicial-system/consts'
-import { getLatestDateType } from '@island.is/judicial-system/types'
 import {
   closedCourt,
   core,
@@ -34,8 +33,6 @@ import {
 } from '@island.is/judicial-system-web/src/components'
 import {
   CaseType,
-  DateLog,
-  DateType,
   SessionArrangements,
 } from '@island.is/judicial-system-web/src/graphql/schema'
 import { TempCase as Case } from '@island.is/judicial-system-web/src/types'
@@ -117,10 +114,6 @@ const CourtRecord = () => {
 
   const initialize = useCallback(() => {
     const autofillAttendees = []
-    const courtDate = getLatestDateType(
-      DateType.COURT_DATE,
-      workingCase.dateLogs,
-    ) as DateLog
 
     if (workingCase.sessionArrangements === SessionArrangements.NONE_PRESENT) {
       autofillAttendees.push(formatMessage(core.sessionArrangementsNonePresent))
@@ -168,7 +161,7 @@ const CourtRecord = () => {
     setAndSendCaseToServer(
       [
         {
-          courtStartDate: courtDate?.date,
+          courtStartDate: workingCase.arraignmentDate?.date,
           courtLocation: workingCase.court?.name
             ? `í ${
                 workingCase.court.name.indexOf('dómur') > -1

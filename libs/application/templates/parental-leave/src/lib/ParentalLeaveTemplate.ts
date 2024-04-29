@@ -67,6 +67,7 @@ import {
   otherParentApprovalStatePendingAction,
   employerApprovalStatePendingAction,
   calculatePruneDate,
+  getSpouse,
 } from '../lib/parentalLeaveUtils'
 import { ChildrenApi, GetPersonInformation } from '../dataProviders'
 
@@ -93,6 +94,7 @@ const ParentalLeaveTemplate: ApplicationTemplate<
     states: {
       [States.PREREQUISITES]: {
         exit: [
+          'otherParentToSpouse',
           'attemptToSetPrimaryParentAsOtherParent',
           'setRightsToOtherParent',
           'setMultipleBirthsIfNo',
@@ -927,12 +929,14 @@ const ParentalLeaveTemplate: ApplicationTemplate<
         exit: [
           'removeAddedEmployers',
           'removeAddedPeriods',
+          'clearChangeEmployerFileIfAddEmployerIsNo',
           'restorePeriodsFromTemp',
           'removeNullPeriod',
           'setNavId',
           'setActionName',
           'clearEmployers',
           'restoreEmployersFromTemp',
+          'clearChangeEmployerFileIfCancel',
         ],
         meta: {
           name: States.EDIT_OR_ADD_EMPLOYERS_AND_PERIODS,
@@ -1828,6 +1832,17 @@ const ParentalLeaveTemplate: ApplicationTemplate<
 
         return context
       }),
+      otherParentToSpouse: assign((context) => {
+        const { application } = context
+        const { answers } = application
+        const spouse = getSpouse(application)
+
+        if (spouse) {
+          set(answers, 'otherParentObj.chooseOtherParent', SPOUSE)
+        }
+
+        return context
+      }),
       correctTransferRights: assign((context) => {
         const { application } = context
         const { answers } = application
@@ -2019,6 +2034,42 @@ const ParentalLeaveTemplate: ApplicationTemplate<
           unemploymentBenefits !== UnEmployedBenefitTypes.healthInsurance
         ) {
           unset(application.answers, 'fileUpload.benefitsFile')
+        }
+
+        return context
+      }),
+      /**
+       * Clear changeEmployerFile if applicant decides not to change employer info.
+       */
+      clearChangeEmployerFileIfAddEmployerIsNo: assign((context) => {
+        const { application } = context
+        const { addEmployer, changeEmployerFile } = getApplicationAnswers(
+          application.answers,
+        )
+
+        if (addEmployer === NO) {
+          if (changeEmployerFile) {
+            unset(application.answers, 'fileUpload.changeEmployerFile')
+          }
+        }
+
+        return context
+      }),
+      /**
+       * The user canceled the edits.
+       * Clear changeEmployerFile.
+       */
+      clearChangeEmployerFileIfCancel: assign((context, event) => {
+        if (event.type !== DefaultEvents.ABORT) {
+          return context
+        }
+
+        const { application } = context
+        const { changeEmployerFile } = getApplicationAnswers(
+          application.answers,
+        )
+        if (changeEmployerFile) {
+          unset(application.answers, 'fileUpload.changeEmployerFile')
         }
 
         return context
