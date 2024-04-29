@@ -21,7 +21,7 @@ import {
 } from './Text.css'
 import { TestSupport } from '@island.is/island-ui/utils'
 
-type TextElements =
+export type TextElements =
   | 'h1'
   | 'h2'
   | 'h3'

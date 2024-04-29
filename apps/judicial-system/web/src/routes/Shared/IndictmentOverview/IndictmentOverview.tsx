@@ -2,7 +2,7 @@ import React, { useCallback, useContext, useState } from 'react'
 import { useIntl } from 'react-intl'
 import { useRouter } from 'next/router'
 
-import { Box, RadioButton, Text } from '@island.is/island-ui/core'
+import { Box, RadioButton, Section, Text } from '@island.is/island-ui/core'
 import * as constants from '@island.is/judicial-system/consts'
 import {
   getLatestDateType,
@@ -24,6 +24,7 @@ import {
   PageHeader,
   PageLayout,
   PageTitle,
+  SectionHeading,
   useIndictmentsLawsBroken,
   UserContext,
 } from '@island.is/judicial-system-web/src/components'
@@ -34,11 +35,10 @@ import {
   DateType,
   ServiceRequirement,
 } from '@island.is/judicial-system-web/src/graphql/schema'
+import { useDefendants } from '@island.is/judicial-system-web/src/utils/hooks'
 
 import ReturnIndictmentModal from '../../Court/Indictments/ReturnIndictmentCaseModal/ReturnIndictmentCaseModal'
 import { strings } from './IndictmentOverview.strings'
-import RequiredStar from '@island.is/judicial-system-web/src/components/RequiredStar/RequiredStar'
-import { useDefendants } from '@island.is/judicial-system-web/src/utils/hooks'
 
 const IndictmentOverview = () => {
   const router = useRouter()
@@ -128,12 +128,12 @@ const IndictmentOverview = () => {
                 }
               >
                 <BlueBox>
-                  <Box marginBottom={2}>
-                    <Text variant="h4" as="h4">
-                      {`${defendant.name} `}
-                      <RequiredStar />
-                    </Text>
-                  </Box>
+                  <SectionHeading
+                    title={defendant.name || ''}
+                    marginBottom={2}
+                    heading="h4"
+                    required
+                  />
                   <Box marginBottom={2}>
                     <RadioButton
                       id={`defendant-${defendant.id}-service-requirement-not-applicable`}
