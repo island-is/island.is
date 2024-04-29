@@ -1,6 +1,6 @@
 import { defineMessages } from 'react-intl'
 
-export const indictmentCaseFilesList = defineMessages({
+export const strings = defineMessages({
   title: {
     id: 'judicial.system.core:indictment_case_files_list.title',
     defaultMessage: 'Skjöl málsins',
