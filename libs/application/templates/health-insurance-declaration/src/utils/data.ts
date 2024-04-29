@@ -21,7 +21,7 @@ const getChildrenFromExternalData = (externalData: ExternalData) => {
     ?.data as ApplicantChildCustodyInformation[]
 }
 const getSpouseFromExternalData = (externalData: ExternalData) => {
-  return externalData?.nationalRegistrySpouse?.data as NationalRegistrySpouse[]
+  return externalData?.nationalRegistrySpouse?.data as NationalRegistrySpouse
 }
 
 export const getInsuranceStatus = (externalData: ExternalData) => {
@@ -108,6 +108,27 @@ export const getChildrenAsOptions = (externalData: ExternalData): Option[] => {
   return []
 }
 
+export const getSpouseAsOptions = (externalData: ExternalData): Option[] => {
+  const spouse = getSpouseFromExternalData(externalData)
+
+  console.log(spouse)
+  if (spouse) {
+    return [
+      {
+        value: spouse.nationalId,
+        label: spouse.fullName
+          ? spouse.fullName
+          : spouse.name
+          ? spouse.name
+          : '',
+        subLabel: `${format(spouse.nationalId)}`,
+      },
+    ]
+  }
+
+  return []
+}
+
 export const getSelectedFamiliy = (
   answers: HealthInsuranceDeclaration,
   externalData: ExternalData,
@@ -117,11 +138,17 @@ export const getSelectedFamiliy = (
   let selectedFamiliy: StaticText[][] = []
 
   if (spouse) {
-    selectedFamiliy = selectedFamiliy.concat([
-      spouse[0].fullName || '',
-      spouse[0].nationalId,
-      m.overview.familyTableRelationSpuoseText,
-    ])
+    selectedFamiliy = selectedFamiliy.concat(
+      answers.registerPersonsSpouseCheckboxField.map((s) => {
+        if (s === spouse.nationalId) {
+          return [
+            spouse.fullName ? spouse.fullName : spouse.name ? spouse.name : '',
+            spouse.nationalId,
+            m.overview.familyTableRelationSpouseText,
+          ]
+        } else return []
+      }),
+    )
   }
   selectedFamiliy = selectedFamiliy.concat(
     answers.registerPersonsChildrenCheckboxField.map((childNationalId) => {

@@ -104,6 +104,11 @@ export const application = {
       defaultMessage: 'Veldu land úr lista þar sem nám verður stundað',
       description: 'Student residency section description',
     },
+    studentSectionSelectionTitle: {
+      id: 'hid.application:residency.section.student.Title',
+      defaultMessage: 'Land',
+      description: 'Student residency section selection title',
+    },
     studentSectionPlaceholderText: {
       id: 'hid.application:residency.section.student.placeholderSelectText',
       defaultMessage: 'Veldur land sem þú ferðast til',
@@ -207,7 +212,7 @@ export const application = {
       defaultMessage: 'Tengsl',
       description: 'Overview section family table title',
     },
-    familyTableRelationSpuoseText: {
+    familyTableRelationSpouseText: {
       id: 'hid.application:overview.section.familyTableSpouseRelationText',
       defaultMessage: 'Maki',
       description: 'Overview section family table spouse relation text',

@@ -34,6 +34,7 @@ import {
   getFullNameFromExternalData,
   getInsuranceStatus,
   getSelectedFamiliy,
+  getSpouseAsOptions,
 } from '../utils'
 import { HealthInsuranceDeclaration } from '../lib/dataSchema'
 import {
@@ -241,13 +242,7 @@ export const HealthInsuranceDeclarationForm: Form = buildForm({
             buildCheckboxField({
               id: 'registerPersonsSpouseCheckboxField',
               title: m.application.registerPersons.spousetitle,
-              options: [
-                {
-                  value: '1201345850',
-                  label: 'Lísa Jónsdóttir',
-                  subLabel: 'Kennitala 120134-5850',
-                },
-              ],
+              options: ({ externalData }) => getSpouseAsOptions(externalData),
             }),
             buildCheckboxField({
               id: 'registerPersonsChildrenCheckboxField',
@@ -291,7 +286,7 @@ export const HealthInsuranceDeclarationForm: Form = buildForm({
           children: [
             buildSelectField({
               id: 'residencyStudentSelectField',
-              title: '',
+              title: m.application.residency.studentSectionSelectionTitle,
               required: true,
               options: ({ externalData }) => getCountriesAsOption(externalData),
               defaultValue: '',
