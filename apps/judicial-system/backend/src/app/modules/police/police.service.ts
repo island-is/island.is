@@ -63,7 +63,7 @@ const getChapter = (category?: string): number | undefined => {
 
 const formatCrimeScenePlace = (
   street?: string,
-  streetNumber?: string,
+  streetNumber?: string | null,
   municipality?: string,
 ) => {
   if (!street && !municipality) {
@@ -337,7 +337,7 @@ export class PoliceService {
               brotFra?: string
               licencePlate?: string
               gotuHeiti?: string
-              gotuNumer?: string
+              gotuNumer?: string | null
               sveitafelag?: string
             }) => {
               const policeCaseNumber = info.upprunalegtMalsnumer
