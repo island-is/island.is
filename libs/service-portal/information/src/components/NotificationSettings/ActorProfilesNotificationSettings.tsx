@@ -3,6 +3,7 @@ import { useLocale } from '@island.is/localization'
 import {
   AlertMessage,
   Box,
+  Hidden,
   SkeletonLoader,
   Stack,
   Text,
@@ -12,6 +13,7 @@ import { mNotifications } from '../../lib/messages'
 import { NotificationSettingsCard } from './cards/NotificationSettingsCard'
 import { ActorProfileSettingsCard } from './cards/ActorProfileSettingsCard'
 import { useActorProfilesQuery } from './graphql/ActorProfiles.generated'
+import * as styles from './ActorProfilesNotificationSettings.css'
 
 const ActorProfilesNotificationSettings = () => {
   const { data, loading, error } = useActorProfilesQuery()
@@ -29,6 +31,42 @@ const ActorProfilesNotificationSettings = () => {
           title={formatMessage(mNotifications.fetchErrorTitle)}
           type="warning"
         />
+      )
+    }
+
+    if (data?.userProfileActorProfiles.data.length === 0) {
+      return (
+        <Box
+          display="flex"
+          justifyContent="spaceBetween"
+          alignItems="center"
+          flexDirection="row"
+          paddingLeft={[2, 4, 4, 10]}
+          paddingRight={[2, 4, 4, 5]}
+          paddingY={[2]}
+          border="standard"
+          borderRadius="large"
+        >
+          <Box flexGrow={1}>
+            <Text variant="h4" as="h5" paddingBottom={1}>
+              {formatMessage(mNotifications.noDelegationsTitle)}
+            </Text>
+            <Text>
+              {formatMessage(mNotifications.noDelegationsDescriptions)}
+            </Text>
+          </Box>
+          <Hidden below="lg">
+            <Box>
+              <img
+                src={
+                  'https://images.ctfassets.net/8k0h54kbe6bj/3owSRG31o0rRjJzn5AHkzg/b679bbb20caa6fbd4720938bac0b2b9b/LE_-_Company_-_S2.svg'
+                }
+                className={styles.imageWrap}
+                alt=""
+              />
+            </Box>
+          </Hidden>
+        </Box>
       )
     }
 

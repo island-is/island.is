@@ -434,4 +434,12 @@ export const mNotifications = defineMessages({
     id: 'sp.notifications:update-error',
     defaultMessage: 'Ekki tókst að vista stillingar',
   },
+  noDelegationsTitle: {
+    id: 'sp.notifications:no-delegations-title',
+    defaultMessage: 'Engin umboð skráð',
+  },
+  noDelegationsDescriptions: {
+    id: 'sp.notifications:no-delegations-description',
+    defaultMessage: 'Stillingar fyrir umboð munu birtast hér.',
+  },
 })
