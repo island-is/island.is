@@ -77,4 +77,9 @@ export const tables = defineMessages({
     defaultMessage: 'Rannsóknarmál',
     description: 'Notaður sem titill fyrir Rannsóknarmál í síun.',
   },
+  prosecutor: {
+    id: 'judicial.system.core:tables.prosecutor',
+    defaultMessage: 'Sækjandi',
+    description: 'Notaður sem titill fyrir sækjanda í málalista.',
+  },
 })

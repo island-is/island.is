@@ -73,7 +73,7 @@ test.describe.serial('Custody tests', () => {
     await page.locator('#react-select-defenderName-option-0').click()
     await page
       .locator('input[name=defenderEmail]')
-      .fill('jl-auto-defender@kolibri.is')
+      .fill('jl+auto+defender@kolibri.is')
     await page.locator('input[id=defender-access-ready-for-court]').click()
     await page.locator('input[name=leadInvestigator]').fill('Stjórinn')
     await expect(
