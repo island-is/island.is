@@ -114,6 +114,7 @@ describe('PoliceController - Get police case info', () => {
               upprunalegtMalsnumer: '007-2020-000057',
               brotFra: '2021-02-23T13:17:00',
               gotuHeiti: 'Teststígur',
+              sveitafelag: null,
             },
           ],
         }),
