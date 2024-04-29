@@ -8,7 +8,7 @@ import {
   toast,
 } from '@island.is/island-ui/core'
 import { formatNationalId, IntroHeader } from '@island.is/portals/core'
-import { maskString } from '@island.is/shared/utils'
+import { encryptText } from '@island.is/shared/utils'
 import { useLocale } from '@island.is/localization'
 import { useAuth } from '@island.is/auth/react'
 import { replaceParams, useSubmitting } from '@island.is/react-spa/shared'
@@ -102,17 +102,17 @@ const Users = () => {
                         variant="text"
                         icon="arrowForward"
                         size="small"
-                        onClick={() =>
+                        onClick={async () =>
                           navigate(
                             replaceParams({
                               href: ServiceDeskPaths.User,
                               params: {
                                 nationalId:
-                                  maskString(
+                                  (await encryptText(
                                     nationalId,
                                     userProfile.userInfo?.profile?.nationalId ??
                                       '',
-                                  ) ?? '',
+                                  )) ?? '',
                               },
                             }),
                           )
