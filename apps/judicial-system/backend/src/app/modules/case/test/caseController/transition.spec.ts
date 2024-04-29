@@ -192,6 +192,8 @@ describe('CaseController - Transition', () => {
                 transition === CaseTransition.REOPEN ? null : undefined,
               courtRecordSignatureDate:
                 transition === CaseTransition.REOPEN ? null : undefined,
+              judgeId:
+                transition === CaseTransition.REDISTRIBUTE ? null : undefined,
             },
             { where: { id: caseId }, transaction },
           )

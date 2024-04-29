@@ -136,6 +136,14 @@ export const caseStateMachine: Map<CaseTransition, Rule> = new Map([
       to: { state: CaseState.RECEIVED },
     },
   ],
+  [
+    CaseTransition.REDISTRIBUTE,
+    {
+      fromStates: [CaseState.RECEIVED],
+      fromAppealStates: [undefined],
+      to: { state: CaseState.MAIN_HEARING },
+    },
+  ],
   // APPEAL, RECEIVE_APPEAL and COMPLETE_APPEAL transitions do not affect the case state,
   // but they should be blocked if case is not in a state that allows for this transition to take place
   [
@@ -176,14 +184,6 @@ export const caseStateMachine: Map<CaseTransition, Rule> = new Map([
       fromStates: [CaseState.ACCEPTED, CaseState.REJECTED, CaseState.DISMISSED],
       fromAppealStates: [CaseAppealState.APPEALED, CaseAppealState.RECEIVED],
       to: { appealState: CaseAppealState.WITHDRAWN },
-    },
-  ],
-  [
-    CaseTransition.REDISTRIBUTE,
-    {
-      fromStates: [CaseState.RECEIVED],
-      fromAppealStates: [undefined],
-      to: { state: CaseState.MAIN_HEARING },
     },
   ],
 ])
