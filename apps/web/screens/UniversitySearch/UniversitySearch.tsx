@@ -1039,7 +1039,7 @@ const UniversitySearch: Screen<UniversitySearchProps> = ({
                 display="flex"
                 justifyContent="flexStart"
                 alignItems={'center'}
-                style={{ gap: '0.5rem' }}
+                style={{ gap: '1rem' }}
                 marginBottom={2}
               >
                 {Array.from(countOccurrencesInResults())
