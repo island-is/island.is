@@ -81,7 +81,6 @@ export class UniversityCareersResolver {
     if (!input.trackNumber) {
       return null
     }
-
     const student = await this.service.getStudentTrack(
       user,
       input.universityId as OrganizationSlugType,

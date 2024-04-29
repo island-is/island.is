@@ -71,19 +71,21 @@ export class UniversityCareersClientService implements UniversityCareerService {
     }
   }
 
-  getUniversityByOrganizationSlug = (
-    slug: OrganizationSlugType,
-  ): UniversityId | undefined => {
+  getUniversityBySlug = (slug: string): UniversityId | undefined => {
     switch (slug) {
       case 'haskoli-islands':
+      case 'university-of-iceland':
         return UniversityId.UNIVERSITY_OF_ICELAND
       case 'holaskoli-haskolinn-a-holum':
+      case 'holar-university-college':
         return UniversityId.HOLAR_UNIVERSITY
       case 'haskolinn-a-akureyri':
+      case 'university-of-akureyri':
         return UniversityId.UNIVERSITY_OF_AKUREYRI
       case 'bifrost':
         return UniversityId.BIFROST_UNIVERSITY
       case 'landbunadarhaskoli-islands':
+      case 'agricultural-university-of-iceland':
         return UniversityId.AGRICULTURAL_UNIVERSITY_OF_ICELAND
       default:
         return undefined

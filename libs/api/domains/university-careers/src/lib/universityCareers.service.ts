@@ -85,7 +85,7 @@ export class UniversityCareersService {
     locale: Locale,
   ): Promise<StudentTrack | null> {
     const universityEnum =
-      this.universityCareers.getUniversityByOrganizationSlug(university)
+      this.universityCareers.getUniversityBySlug(university)
 
     if (!universityEnum) {
       this.logger.warning('Invalid university', {
@@ -109,7 +109,6 @@ export class UniversityCareersService {
       })
       return null
     }
-
     const organization = (await this.cmsContentfulService.getOrganization(
       university,
       locale,
