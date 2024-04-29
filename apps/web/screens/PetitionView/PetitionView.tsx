@@ -187,18 +187,16 @@ const PetitionView: Screen<PetitionViewProps> = ({ namespace }) => {
               </T.Head>
               <T.Body>
                 {loadingEndorsements &&
-                  Array(10)
-                    .fill()
-                    .map((_, i) => (
-                      <T.Row key={i}>
-                        <T.Data>
-                          <SkeletonLoader height={20} />
-                        </T.Data>
-                        <T.Data>
-                          <SkeletonLoader height={20} />
-                        </T.Data>
-                      </T.Row>
-                    ))}
+                  Array.from({ length: 10 }, (_, i) => (
+                    <T.Row key={i}>
+                      <T.Data>
+                        <SkeletonLoader height={20} />
+                      </T.Data>
+                      <T.Data>
+                        <SkeletonLoader height={20} />
+                      </T.Data>
+                    </T.Row>
+                  ))}
                 {!loadingEndorsements &&
                   listEndorsements.data
                     // eslint-disable-next-line @typescript-eslint/ban-ts-comment
