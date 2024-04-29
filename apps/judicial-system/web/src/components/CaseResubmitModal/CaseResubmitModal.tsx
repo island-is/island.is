@@ -22,7 +22,7 @@ export const getCaseResubmittedText = (
     requestSharedWithDefender:
       (workingCase.requestSharedWithDefender ===
         RequestSharedWithDefender.COURT_DATE &&
-        Boolean(workingCase.courtDate)) ||
+        Boolean(workingCase.arraignmentDate?.date)) ||
       workingCase.requestSharedWithDefender ===
         RequestSharedWithDefender.READY_FOR_COURT,
   })

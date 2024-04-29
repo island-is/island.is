@@ -36,6 +36,10 @@ import { Notification } from '../notification.model'
 import { FIREBASE_PROVIDER } from '../../../../constants'
 import { NotificationsService } from '../notifications.service'
 
+const workingHoursDelta = 1000 * 60 * 60 // 1 hour
+const insideWorkingHours = new Date(2021, 1, 1, 9, 0, 0)
+const outsideWorkingHours = new Date(2021, 1, 1, 7, 0, 0)
+
 export const MockV2UsersApi = {
   userProfileControllerFindUserProfile: jest.fn(
     ({ xParamNationalId }: { xParamNationalId: string }) => {
@@ -68,8 +72,6 @@ describe('NotificationsWorkerService', () => {
   let notificationsService: NotificationsService
   let userProfileApi: V2UsersApi
 
-  const insideWorkingHours = new Date(2021, 1, 1, 10, 0, 0)
-
   beforeAll(async () => {
     app = await testServer({
       appModule: AppModule,
@@ -92,12 +94,6 @@ describe('NotificationsWorkerService', () => {
       ],
     })
 
-    // ensure tests always work by setting time to 10 AM (working hour)
-    jest.useFakeTimers({
-      advanceTimers: 10,
-      now: insideWorkingHours,
-    })
-
     sequelize = await app.resolve(getConnectionToken() as Type<Sequelize>)
     notificationDispatch = app.get<NotificationDispatchService>(
       NotificationDispatchService,
@@ -110,6 +106,12 @@ describe('NotificationsWorkerService', () => {
   })
 
   beforeEach(async () => {
+    // ensure tests always work by setting time to 10 AM (working hour)
+    jest.useFakeTimers({
+      advanceTimers: true,
+      now: insideWorkingHours,
+    })
+
     jest.clearAllMocks()
 
     jest
@@ -333,7 +335,7 @@ describe('NotificationsWorkerService', () => {
   })
 
   it('should not send email or push notification if we are outside working hours (8 AM - 11 PM) ', async () => {
-    const outsideWorkingHours = new Date(2021, 1, 1, 7, 59, 58) // 2 seconds before 8 AM
+    // set time to be outside of working hours
     jest.setSystemTime(outsideWorkingHours)
 
     await addToQueue(userWithNoDelegations.nationalId)
@@ -341,12 +343,13 @@ describe('NotificationsWorkerService', () => {
     expect(emailService.sendEmail).not.toHaveBeenCalled()
     expect(notificationDispatch.sendPushNotification).not.toHaveBeenCalled()
 
-    await wait(2) // ensure we are at 8 AM by waiting 2 seconds
+    // reset time to inside working hour
+    jest.advanceTimersByTime(workingHoursDelta)
+    // give worker some time to process message
+    await wait(2)
 
     expect(emailService.sendEmail).toHaveBeenCalledTimes(1)
     expect(notificationDispatch.sendPushNotification).toHaveBeenCalledTimes(1)
-
-    jest.setSystemTime(insideWorkingHours) // reset time
   }, 10_000)
 
   it('should not send email or push notification if no profile is found for recipient', async () => {

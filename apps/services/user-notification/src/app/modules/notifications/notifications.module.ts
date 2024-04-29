@@ -19,7 +19,6 @@ import { FIREBASE_PROVIDER } from '../../../constants'
 import { NotificationsService } from './notifications.service'
 import { MeNotificationsController } from './me-notifications.controller'
 import { Notification } from './notification.model'
-import { UserNotificationsInfraController } from './infra.controller'
 import { NotificationDispatchService } from './notificationDispatch.service'
 import {
   IS_RUNNING_AS_WORKER,
@@ -38,7 +37,7 @@ import { UserNotificationsConfig } from '../../../config'
     SequelizeModule.forFeature([Notification]),
     CacheModule.register({
       ttl: 60 * 10 * 1000, // 10 minutes
-      max: 100, // 100 items max
+      max: 1000, // 1000 items max
     }),
     LoggingModule,
     CmsTranslationsModule,
@@ -58,11 +57,7 @@ import { UserNotificationsConfig } from '../../../config'
     NationalRegistryV3ClientModule,
     AuthDelegationApiClientModule,
   ],
-  controllers: [
-    NotificationsController,
-    MeNotificationsController,
-    UserNotificationsInfraController,
-  ],
+  controllers: [NotificationsController, MeNotificationsController],
   providers: [
     NotificationsService,
     NotificationDispatchService,

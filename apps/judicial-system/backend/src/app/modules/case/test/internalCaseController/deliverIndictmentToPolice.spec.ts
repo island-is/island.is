@@ -73,6 +73,7 @@ describe('InternalCaseController - Deliver indictment to police', () => {
     const caseType = CaseType.INDICTMENT
     const caseState = CaseState.ACCEPTED
     const policeCaseNumber = uuid()
+    const courtCaseNumber = uuid()
     const defendantNationalId = '0123456789'
     const indictmentKey = uuid()
     const indictmentPdf = 'test indictment'
@@ -82,6 +83,7 @@ describe('InternalCaseController - Deliver indictment to police', () => {
       type: caseType,
       state: caseState,
       policeCaseNumbers: [policeCaseNumber],
+      courtCaseNumber,
       defendants: [{ nationalId: defendantNationalId }],
       caseFiles: [
         { key: indictmentKey, category: CaseFileCategory.INDICTMENT },
@@ -108,6 +110,7 @@ describe('InternalCaseController - Deliver indictment to police', () => {
         caseType,
         caseState,
         policeCaseNumber,
+        courtCaseNumber,
         defendantNationalId,
         date,
         '',
@@ -127,6 +130,7 @@ describe('InternalCaseController - Deliver indictment to police', () => {
     const caseType = CaseType.INDICTMENT
     const caseState = CaseState.ACCEPTED
     const policeCaseNumber = uuid()
+    const courtCaseNumber = uuid()
     const defendantNationalId = '0123456789'
     const indictmentPdf = 'test indictment'
     const theCase = {
@@ -135,6 +139,7 @@ describe('InternalCaseController - Deliver indictment to police', () => {
       type: caseType,
       state: caseState,
       policeCaseNumbers: [policeCaseNumber],
+      courtCaseNumber,
       defendants: [{ nationalId: defendantNationalId }],
     } as Case
 
@@ -162,6 +167,7 @@ describe('InternalCaseController - Deliver indictment to police', () => {
         caseType,
         caseState,
         policeCaseNumber,
+        courtCaseNumber,
         defendantNationalId,
         date,
         '',

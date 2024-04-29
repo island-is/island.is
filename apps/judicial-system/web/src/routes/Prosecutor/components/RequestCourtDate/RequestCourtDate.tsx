@@ -30,11 +30,11 @@ const RequestCourtDate: React.FC<React.PropsWithChildren<Props>> = (props) => {
         selectedDate={workingCase.requestedCourtDate}
         onChange={onChange}
         timeLabel={formatMessage(m.dateInput.timeLabel)}
-        locked={Boolean(workingCase.courtDate)}
+        locked={Boolean(workingCase.arraignmentDate?.date)}
         minDate={new Date()}
         required
       />
-      {workingCase.courtDate && (
+      {workingCase.arraignmentDate?.date && (
         <Box marginTop={1}>
           <Text variant="eyebrow">{formatMessage(m.courtDate)}</Text>
         </Box>

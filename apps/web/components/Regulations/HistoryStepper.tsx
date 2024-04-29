@@ -1,11 +1,12 @@
-import * as s from './RegulationDisplay.css'
-
 import React, { memo, useMemo } from 'react'
-import { Icon, Link } from '@island.is/island-ui/core'
+
+import { Icon, LinkV2 } from '@island.is/island-ui/core'
+import { RegulationMaybeDiff, toISODate } from '@island.is/regulations'
+import { useNamespaceStrict as useNamespace } from '@island.is/web/hooks'
+
 import { RegulationPageTexts } from './RegulationTexts.types'
 import { useRegulationLinkResolver } from './regulationUtils'
-import { useNamespaceStrict as useNamespace } from '@island.is/web/hooks'
-import { toISODate, RegulationMaybeDiff } from '@island.is/regulations'
+import * as s from './RegulationDisplay.css'
 
 const useStepperState = (regulation: RegulationMaybeDiff) =>
   useMemo(() => {
@@ -78,7 +79,7 @@ export const HistoryStepper = memo((props: HistoryStepperProps) => {
   return (
     <div className={s.historyStepper}>
       {nextDate ? (
-        <Link
+        <LinkV2
           href={linkToRegulation(name, {
             diff: !!showingDiff,
             d: nextDate !== 'current' ? nextDate : undefined,
@@ -88,7 +89,7 @@ export const HistoryStepper = memo((props: HistoryStepperProps) => {
           underline="small"
         >
           {nextContent}
-        </Link>
+        </LinkV2>
       ) : (
         <span className={s.historyStepperLink} aria-hidden="true">
           {nextContent}
@@ -96,7 +97,7 @@ export const HistoryStepper = memo((props: HistoryStepperProps) => {
       )}
       {'  '}
       {previousDate ? (
-        <Link
+        <LinkV2
           href={linkToRegulation(name, {
             diff: !!showingDiff && previousDate !== 'original',
             ...(previousDate === 'original'
@@ -110,7 +111,7 @@ export const HistoryStepper = memo((props: HistoryStepperProps) => {
           underline="small"
         >
           {prevContent}
-        </Link>
+        </LinkV2>
       ) : (
         <span className={s.historyStepperLink} aria-hidden="true">
           {prevContent}

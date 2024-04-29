@@ -183,7 +183,7 @@ export enum SessionArrangements {
 
 export enum RequestSharedWithDefender {
   READY_FOR_COURT = 'READY_FOR_COURT',
-  COURT_DATE = 'COURT_DATE',
+  COURT_DATE = 'COURT_DATE', // TODO: Rename to ARRAIGNMENT_DATE at some point
   NOT_SHARED = 'NOT_SHARED',
 }
 

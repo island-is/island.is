@@ -30,6 +30,7 @@ import { SignatureCollectionManagerService } from './signatureCollectionManager.
 import { SignatureCollectionNationalIdInput } from './dto/nationalId.input'
 import { SignatureCollectionSignatureIdInput } from './dto/signatureId.input'
 import { SignatureCollectionIdInput } from './dto/collectionId.input'
+import { SignatureCollectionCandidateIdInput } from './dto/candidateId.input'
 
 @UseGuards(IdsUserGuard, ScopesGuard)
 @Scopes(AdminPortalScope.signatureCollectionProcess)
@@ -158,6 +159,15 @@ export class SignatureCollectionAdminResolver {
     @Args('input') input: SignatureCollectionListInput,
   ): Promise<SignatureCollectionSlug> {
     return this.signatureCollectionService.create(user, input)
+  }
+
+  @Mutation(() => SignatureCollectionSuccess)
+  @Audit()
+  async signatureCollectionAdminRemoveCandidate(
+    @CurrentUser() user: User,
+    @Args('input') { candidateId }: SignatureCollectionCandidateIdInput,
+  ): Promise<SignatureCollectionSuccess> {
+    return this.signatureCollectionService.removeCandidate(candidateId, user)
   }
 
   @Mutation(() => SignatureCollectionSuccess)
