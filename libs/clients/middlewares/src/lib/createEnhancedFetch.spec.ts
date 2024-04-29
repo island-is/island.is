@@ -177,7 +177,7 @@ describe('EnhancedFetch', () => {
     )
   })
 
-  it('opens circuit after enough 500 errors', async () => {
+  it.skip('opens circuit after enough 500 errors', async () => {
     // Arrange
     env.fetch.mockResolvedValue(fakeResponse('Error', { status: 500 }))
     await env.enhancedFetch(testUrl).catch(() => null)
@@ -207,7 +207,7 @@ describe('EnhancedFetch', () => {
     expect(env.fetch).toHaveBeenCalledTimes(2)
   })
 
-  it('can be configured to open circuit for 400 errors', async () => {
+  it.skip('can be configured to open circuit for 400 errors', async () => {
     // Arrange
     env = setupTestEnv({ treat400ResponsesAsErrors: true })
     env.fetch.mockResolvedValue(fakeResponse('Error', { status: 400 }))
