@@ -1519,11 +1519,8 @@ export interface IGenericListFields {
   /** Card Intro Template */
   cardIntroTemplate?: Document | undefined
 
-  /** Search Input Label */
-  searchInputLabel?: string | undefined
-
   /** Search Input Placeholder */
-  searchInputPlaceholder?: string | undefined
+  searchInputPlaceholder: string
 }
 
 /** A list of items which can be embedded into rich text */
@@ -1556,7 +1553,7 @@ export interface IGenericListItemFields {
   title: string
 
   /** Date */
-  date?: string | undefined
+  date: string
 
   /** Card Intro */
   cardIntro?: Document | undefined

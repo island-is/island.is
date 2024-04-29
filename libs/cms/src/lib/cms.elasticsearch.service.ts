@@ -424,12 +424,9 @@ export class CmsElasticsearchService {
 
     let queryString = input.queryString ? input.queryString.toLowerCase() : ''
 
-    // TODO: consider if this should be in frontend instead, or just skipped entirely?
     if (input.lang === 'is') {
       queryString = queryString.replace('`', '')
     }
-
-    // TODO: tweak and test out search
 
     must.push({
       simple_query_string: {
@@ -441,21 +438,17 @@ export class CmsElasticsearchService {
 
     const size = input.size ?? 10
 
-    const sort: ('_score' | sortRule)[] =
-      input.sort?.field === SortField.TITLE
-        ? [{ 'title.sort': { order: input.sort.order } }]
-        : [
-            {
-              [input.sort?.field ?? SortField.RELEASE_DATE]: {
-                order: input.sort?.order ?? SortDirection.DESC,
-              },
-            },
-            // Sort items with equal values by ascending title order
-            { 'title.sort': { order: SortDirection.ASC } },
-          ]
+    const sort: ('_score' | sortRule)[] = [
+      {
+        [SortField.RELEASE_DATE]: {
+          order: SortDirection.DESC,
+        },
+      },
+      // Sort items with equal values by ascending title order
+      { 'title.sort': { order: SortDirection.ASC } },
+    ]
 
     // Order by score first in case there is a query string
-    // TODO: reconsider the *
     if (queryString.length > 0 && queryString !== '*') {
       sort.unshift('_score')
     }

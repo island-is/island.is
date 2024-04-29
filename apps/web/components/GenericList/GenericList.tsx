@@ -36,6 +36,7 @@ const getResultsFoundText = (totalItems: number, locale: Locale) => {
     return plural
   }
 
+  // Handle Icelandic locale specifically
   if (totalItems % 10 === 1 && totalItems % 100 !== 11) {
     return singular
   }

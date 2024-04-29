@@ -32,7 +32,6 @@ export class GenericListItemSyncService
         try {
           const mapped = mapGenericListItem(entry)
 
-          // TODO: extractStringsFromObject only extracts the last rich text line
           const content = extractStringsFromObject(
             mapped.cardIntro.map(pruneNonSearchableSliceUnionFields),
             100,
