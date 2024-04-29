@@ -334,7 +334,7 @@ export const isCourtHearingArrangemenstStepValidRC = (
   return validate([
     [workingCase.defenderEmail, ['email-format']],
     [workingCase.defenderPhoneNumber, ['phonenumber']],
-    [courtDate, ['empty', 'date-format']],
+    [courtDate ?? workingCase.arraignmentDate?.date, ['empty', 'date-format']],
   ]).isValid
 }
 
@@ -347,7 +347,10 @@ export const isCourtHearingArrangementsStepValidIC = (
       validate([
         [workingCase.defenderEmail, ['email-format']],
         [workingCase.defenderPhoneNumber, ['phonenumber']],
-        [courtDate, ['empty', 'date-format']],
+        [
+          courtDate ?? workingCase.arraignmentDate?.date,
+          ['empty', 'date-format'],
+        ],
       ]).isValid,
   )
 }
@@ -409,7 +412,9 @@ export const isSubpoenaStepValid = (
   workingCase: Case,
   courtDate?: string | null,
 ): boolean => {
-  return validate([[courtDate, ['empty', 'date-format']]]).isValid
+  return validate([
+    [courtDate ?? workingCase.arraignmentDate?.date, ['empty', 'date-format']],
+  ]).isValid
 }
 
 export const isDefenderStepValid = (workingCase: Case): boolean => {

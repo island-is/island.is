@@ -7,16 +7,19 @@ import {
 } from '@nestjs/common'
 
 import {
+  DateType,
   isCompletedCase,
   RequestSharedWithDefender,
 } from '@island.is/judicial-system/types'
+
+import { Case } from '../models/case.model'
 
 @Injectable()
 export class RequestSharedWithDefenderGuard implements CanActivate {
   canActivate(context: ExecutionContext): boolean {
     const request = context.switchToHttp().getRequest()
 
-    const theCase = request.case
+    const theCase: Case = request.case
 
     if (!theCase) {
       throw new InternalServerErrorException('Missing case')
@@ -27,10 +30,14 @@ export class RequestSharedWithDefenderGuard implements CanActivate {
       return true
     }
 
+    const arraignmentDate = theCase.dateLogs?.find(
+      (d) => d.dateType === DateType.ARRAIGNMENT_DATE,
+    )?.date
+
     if (
       theCase.requestSharedWithDefender ===
         RequestSharedWithDefender.COURT_DATE &&
-      Boolean(theCase.courtDate)
+      Boolean(arraignmentDate)
     ) {
       return true
     }

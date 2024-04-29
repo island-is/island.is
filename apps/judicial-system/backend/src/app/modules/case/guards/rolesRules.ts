@@ -57,9 +57,9 @@ const districtCourtFields: (keyof UpdateCaseDto)[] = [
   'defenderPhoneNumber',
   'courtCaseNumber',
   'sessionArrangements',
+  'arraignmentDate',
   'courtDate',
   'courtLocation',
-  'courtRoom',
   'courtStartDate',
   'courtEndTime',
   'isClosedCourtHidden',
@@ -89,6 +89,7 @@ const districtCourtFields: (keyof UpdateCaseDto)[] = [
   'defendantWaivesRightToCounsel',
   'prosecutorId',
   'indictmentReturnedExplanation',
+  'postponedIndefinitelyExplanation',
 ]
 
 const courtOfAppealsFields: (keyof UpdateCaseDto)[] = [
