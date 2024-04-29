@@ -37,8 +37,7 @@
       "options": {
         "parallel": false,
         "command": "graphql-codegen --config apps/native/app/codegen.yml"
-      },
-      "outputs": ["{projectRoot}/src/graphql/types/schema.ts"]
+      }
     },
     "docker-native": {}
   },

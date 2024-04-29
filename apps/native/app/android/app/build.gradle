@@ -91,6 +91,11 @@ def reactNativeArchitectures() {
     return value ? value.split(",") : ["armeabi-v7a", "x86", "x86_64", "arm64-v8a"]
 }
 
+// get version code from the specified property argument `-PversionCode` during the build call
+def getMyVersionCode(fallbackVersionCode = -1) {
+    return project.hasProperty('versionCode') ? versionCode.toInteger() : fallbackVersionCode
+}
+
 Properties properties = new Properties()
 if (project.rootProject.file('local.properties').exists()) {
     properties.load(project.rootProject.file('local.properties').newDataInputStream())
@@ -113,7 +118,7 @@ android {
         applicationId "is.island.app"
         minSdkVersion rootProject.ext.minSdkVersion
         targetSdkVersion rootProject.ext.targetSdkVersion
-        versionCode 143
+        versionCode getMyVersionCode(143)
         versionName "1.2.6"
         manifestPlaceholders = [
             appAuthRedirectScheme: "is.island.app" // project.config.get("BUNDLE_ID_ANDROID")
@@ -136,10 +141,18 @@ android {
             keyPassword 'android'
         }
         release {
-            storeFile file(properties.getProperty('ISLANDAPP_UPLOAD_STORE_FILE'))
-            storePassword properties.getProperty('ISLANDAPP_UPLOAD_STORE_PASSWORD')
-            keyAlias properties.getProperty('ISLANDAPP_UPLOAD_KEY_ALIAS')
-            keyPassword properties.getProperty('ISLANDAPP_UPLOAD_STORE_PASSWORD')
+            // CI=true is exported by Codemagic
+            if (System.getenv()["CI"]) {
+                storeFile file(System.getenv()["CM_KEYSTORE_PATH"])
+                storePassword System.getenv()["CM_KEYSTORE_PASSWORD"]
+                keyAlias System.getenv()["CM_KEY_ALIAS"]
+                keyPassword System.getenv()["CM_KEY_PASSWORD"]
+            } else {
+                storeFile file(properties.getProperty('ISLANDAPP_UPLOAD_STORE_FILE'))
+                storePassword properties.getProperty('ISLANDAPP_UPLOAD_STORE_PASSWORD')
+                keyAlias properties.getProperty('ISLANDAPP_UPLOAD_KEY_ALIAS')
+                keyPassword properties.getProperty('ISLANDAPP_UPLOAD_STORE_PASSWORD')
+            }
         }
     }
     buildTypes {

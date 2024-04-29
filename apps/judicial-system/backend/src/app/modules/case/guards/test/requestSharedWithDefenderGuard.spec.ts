@@ -7,6 +7,7 @@ import {
 import {
   CaseState,
   completedCaseStates,
+  DateType,
   RequestSharedWithDefender,
 } from '@island.is/judicial-system/types'
 
@@ -73,7 +74,9 @@ describe('Request Shared With Defender Guard', () => {
           case: {
             state,
             requestSharedWithDefender: RequestSharedWithDefender.COURT_DATE,
-            courtDate: new Date(),
+            dateLogs: [
+              { dateType: DateType.ARRAIGNMENT_DATE, date: new Date() },
+            ],
           },
         }))
 
