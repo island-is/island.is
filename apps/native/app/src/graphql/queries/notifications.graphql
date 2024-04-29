@@ -1,5 +1,5 @@
 query GetUserNotifications($input: NotificationsInput!) {
-  userNotifications: notifications(input: $input) {
+  userNotifications(input: $input) {
     data {
       ...NotificationDataFields
       recipient {
@@ -13,18 +13,18 @@ query GetUserNotifications($input: NotificationsInput!) {
       endCursor
     }
     unreadCount
-    # unseenCount
+    unseenCount
     totalCount
   }
 }
 
 query GetUserNotificationsOverview($input: NotificationsInput!) {
-  userNotificationsOverview: notifications(input: $input) {
+  userNotificationsOverview: userNotifications(input: $input) {
     data {
       ...NotificationDataFields
     }
     totalCount
-    # unseenCount
+    unseenCount
   }
 }
 
@@ -36,8 +36,8 @@ mutation MarkUserNotificationAsRead($id: Float!) {
   }
 }
 
-# mutation MarkAllNotificationsAsSeen {
-#   markAllNotificationsSeen {
-#     success
-#   }
-# }
+mutation MarkAllNotificationsAsSeen {
+  markAllNotificationsSeen {
+    success
+  }
+}

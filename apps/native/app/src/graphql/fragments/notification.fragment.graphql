@@ -6,17 +6,16 @@ fragment NotificationMetadataFields on NotificationMetadata {
 }
 
 fragment NotificationSenderFields on NotificationSender {
-  # id
-  # logoUrl
-  name
-  logo
+  id
+  logoUrl
 }
 
 fragment NotificationMessageFields on NotificationMessage {
   title
   body
+  displayBody
   link {
-    uri
+    url
   }
 }
 
