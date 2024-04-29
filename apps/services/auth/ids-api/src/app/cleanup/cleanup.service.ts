@@ -4,6 +4,7 @@ import { GrantsService } from '@island.is/auth-api-lib'
 import { LOGGER_PROVIDER } from '@island.is/logging'
 
 import type { Logger } from '@island.is/logging'
+
 export class CleanupService {
   constructor(
     @Inject(LOGGER_PROVIDER)
