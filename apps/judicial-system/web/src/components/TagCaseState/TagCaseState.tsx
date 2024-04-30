@@ -60,6 +60,8 @@ export const mapCaseStateToTagVariant = (
       return { color: 'dark', text: formatMessage(m.dismissed) }
     default:
       return { color: 'white', text: formatMessage(m.unknown) }
+    case CaseState.MAIN_HEARING:
+      return { color: 'blue', text: formatMessage(m.reassignment) }
   }
 }
 
