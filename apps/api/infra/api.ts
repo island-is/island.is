@@ -268,6 +268,7 @@ export const serviceSetup = (services: {
       UNIVERSITY_GATEWAY_API_URL: ref(
         (h) => `http://${h.svc(services.universityGatewayApi)}`,
       ),
+      LOG_LEVEL: 'debug',
     })
 
     .secrets({
