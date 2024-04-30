@@ -13,7 +13,7 @@ inputs:
     description: 'Hash for generated files'
     required: false
     default: ''
-  calculateCacheKey:
+  calculateCacheKeys:
     description: 'If steps to calculate cache keys should be run'
     required: false
     default: 'false'
@@ -40,7 +40,7 @@ runs:
   using: 'composite'
   steps:
     - name: Calculate cache key for node modules
-      if: ${{ inputs.calculateCacheKey == 'true' }}
+      if: ${{ inputs.calculateCacheKeys == 'true' }}
       id: calculate-node-modules-cache
       shell: bash
       run: |
@@ -56,7 +56,7 @@ runs:
         echo "mobile-node-modules-key=$NODE_MODULES_HASH" >> $GITHUB_OUTPUT
 
     - name: Calculate cache keys for generated files
-      if: ${{ inputs.calculateCacheKey == 'true' }}
+      if: ${{ inputs.calculateCacheKeys == 'true' }}
       id: calculate-generated-files-cache
       shell: bash
       run: |
