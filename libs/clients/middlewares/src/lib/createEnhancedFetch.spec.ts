@@ -209,7 +209,7 @@ describe('EnhancedFetch', () => {
 
   it('can be configured to open circuit for 400 errors', async () => {
     // Arrange
-    env = setupTestEnv({ treat400ResponsesAsErrors: true })
+    env = setupTestEnv({})
     env.fetch.mockResolvedValue(fakeResponse('Error', { status: 400 }))
     await env.enhancedFetch(testUrl).catch(() => null)
 
