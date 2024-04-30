@@ -7,11 +7,13 @@ import {
   Column,
   CreatedAt,
   DataType,
+  HasMany,
   Model,
   PrimaryKey,
   Table,
   UpdatedAt,
 } from 'sequelize-typescript'
+import { DelegationTypeModel } from './delegation-type.model'
 
 @Table({
   tableName: 'delegation_provider',
@@ -40,6 +42,9 @@ export class DelegationProviderModel extends Model<
     allowNull: false,
   })
   description!: string
+
+  @HasMany(() => DelegationTypeModel)
+  delegationTypes!: DelegationTypeModel[]
 
   @CreatedAt
   readonly created!: CreationOptional<Date>
