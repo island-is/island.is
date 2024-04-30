@@ -4,6 +4,7 @@ import type {
   InferCreationAttributes,
 } from 'sequelize'
 import {
+  BelongsTo,
   Column,
   CreatedAt,
   DataType,
@@ -35,9 +36,13 @@ export class DelegationTypeModel extends Model<
   @Column({
     type: DataType.STRING,
     allowNull: false,
+    field: 'provider',
   })
   @ForeignKey(() => DelegationProviderModel)
-  provider!: string
+  providerId!: string
+
+  @BelongsTo(() => DelegationProviderModel)
+  provider!: DelegationProviderModel
 
   @Column({
     type: DataType.STRING,
