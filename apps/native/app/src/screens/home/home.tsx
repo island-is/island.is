@@ -111,9 +111,11 @@ export const MainHomeScreen: NavigationFunctionComponent = ({
 
   const applicationsRes = useListApplicationsQuery()
 
-  useConnectivityIndicator(componentId, getRightButtons(), {
-    ...applicationsRes,
-    pullToRefresh: refetching,
+  useConnectivityIndicator({
+    componentId,
+    rightButtons: getRightButtons(),
+    queryResult: applicationsRes,
+    refetching,
   })
 
   // Get feature flag for mileage

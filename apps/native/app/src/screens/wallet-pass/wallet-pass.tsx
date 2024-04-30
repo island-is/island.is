@@ -124,7 +124,7 @@ export const WalletPassScreen: NavigationFunctionComponent<{
   cardHeight?: number
 }> = ({ id, item, componentId, cardHeight = 140 }) => {
   useNavigationOptions(componentId)
-  useConnectivityIndicator(componentId)
+  useConnectivityIndicator({ componentId })
   const theme = useTheme()
   const intl = useIntl()
   const [addingToWallet, setAddingToWallet] = useState(false)

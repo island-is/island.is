@@ -103,7 +103,7 @@ export const AirDiscountScreen: NavigationFunctionComponent = ({
   componentId,
 }) => {
   useNavigationOptions(componentId)
-  useConnectivityIndicator(componentId)
+  useConnectivityIndicator({ componentId })
 
   const intl = useIntl()
   const theme = useTheme()

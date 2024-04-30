@@ -220,17 +220,16 @@ export const DocumentDetailScreen: NavigationFunctionComponent<{
   const hasPdf = Document.fileType?.toLocaleLowerCase() === 'pdf'
   const isHtml = typeof Document.html === 'string' && Document.html !== ''
 
-  useConnectivityIndicator(
+  useConnectivityIndicator({
     componentId,
-    getRightButtons({
+    rightButtons: getRightButtons({
       archived: doc.data?.archived ?? false,
       bookmarked: doc.data?.bookmarked ?? false,
     }),
-    undefined,
-    {
+    extraData: {
       data: doc.data,
     },
-  )
+  })
 
   useNavigationButtonPress(({ buttonId }) => {
     if (buttonId === ButtonRegistry.DocumentArchiveButton) {

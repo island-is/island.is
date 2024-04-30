@@ -34,7 +34,7 @@ export const LicenseScanDetailScreen: NavigationFunctionComponent<
   LicenseScanDetailScreenProps
 > = ({ componentId, verifyLicenseBarcode: { licenseType, data, error } }) => {
   const intl = useIntl()
-  useConnectivityIndicator(componentId, RIGHT_BUTTONS)
+  useConnectivityIndicator({ componentId, rightButtons: RIGHT_BUTTONS })
 
   // We need to cast licenseType to SupportedGenericLicenseTypes because not all GenericLicenseTypes are supported
   const type = licenseType as unknown as SupportedGenericLicenseTypes

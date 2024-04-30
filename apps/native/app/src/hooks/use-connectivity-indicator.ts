@@ -33,24 +33,34 @@ const loadingButton: OptionsTopBarButton = {
   },
 }
 
+type PickedQueryResult = Pick<QueryResult, 'loading' | 'data'>
+
+type UseConnectivityIndicatorProps<Data> = {
+  componentId: string
+  rightButtons?: OptionsTopBar['rightButtons']
+  queryResult?: PickedQueryResult | PickedQueryResult[]
+  refetching?: boolean
+  extraData?: Data
+}
+
 /**
  * `useConnectivityIndicator` is a hook designed to enhance app navigation by dynamically displaying connectivity-related UI elements.
  * It manages the visual indication of the app’s network status by showing a loading spinner when data is being fetched and an offline icon when no internet connection is available.
  * This hook helps improve user experience by providing real-time feedback on the app's connectivity state.
  *
  * @param componentId - The unique ID of the component.
- * @param optionsTopBarRightButtons - The right buttons to be displayed in the top bar.
+ * @param rightButtons - The right buttons to be displayed in the top bar.
  * @param queryResult - The result of the query. **Note that if queryResult.pullToRefresh is true, the loading spinner will not be displayed.**
+ * @param refetching - A boolean value indicating whether the app is currently refetching data.
  * @param extraData - Additional data to trigger navigation update
  */
-export const useConnectivityIndicator = <Data extends Record<string, unknown>>(
-  componentId: string,
-  optionsTopBarRightButtons: OptionsTopBar['rightButtons'] = [],
-  queryResult?: Pick<QueryResult, 'data' | 'loading'> & {
-    pullToRefresh?: boolean
-  },
-  extraData?: Data,
-) => {
+export const useConnectivityIndicator = <Data extends Record<string, unknown>>({
+  componentId,
+  rightButtons = [],
+  queryResult,
+  refetching = false,
+  extraData,
+}: UseConnectivityIndicatorProps<Data>) => {
   const netInfo = useNetInfo()
   const pastIsConnected = useOfflineStore(
     ({ pastIsConnected }) => pastIsConnected,
@@ -58,19 +68,16 @@ export const useConnectivityIndicator = <Data extends Record<string, unknown>>(
   const isConnected = useOfflineStore(({ isConnected }) => isConnected)
   const { resetConnectionState } = useOfflineActions()
 
-  const updateNavigationButtons = () => {
+  const updateNavigationButtons = (showLoading = false) => {
     Navigation.mergeOptions(componentId, {
       topBar: {
         rightButtons: isConnected
           ? // Only show loading button if the user is connected
-            [
-              ...optionsTopBarRightButtons,
-              queryResult?.loading && !queryResult?.pullToRefresh
-                ? loadingButton
-                : undefined,
-            ].filter(isDefined)
-          : optionsTopBarRightButtons
-          ? [...optionsTopBarRightButtons, offlineButton]
+            [...rightButtons, showLoading ? loadingButton : undefined].filter(
+              isDefined,
+            )
+          : rightButtons
+          ? [...rightButtons, offlineButton]
           : [offlineButton],
       },
     })
@@ -98,8 +105,19 @@ export const useConnectivityIndicator = <Data extends Record<string, unknown>>(
   }, [extraData])
 
   useEffect(() => {
-    if (queryResult?.data) {
-      updateNavigationButtons()
+    if (queryResult) {
+      if (Array.isArray(queryResult)) {
+        const hasData = queryResult.some(({ data }) => data)
+        const loading = queryResult.some(
+          (result) => result?.loading && !refetching,
+        )
+
+        if (hasData) {
+          updateNavigationButtons(loading)
+        }
+      } else if (queryResult?.data) {
+        updateNavigationButtons(queryResult?.loading && !refetching)
+      }
     }
   }, [queryResult])
 }

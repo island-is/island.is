@@ -37,7 +37,7 @@ const { useNavigationOptions, getNavigationOptions } =
 
 export const FinanceScreen: NavigationFunctionComponent = ({ componentId }) => {
   useNavigationOptions(componentId)
-  useConnectivityIndicator(componentId)
+  useConnectivityIndicator({ componentId })
 
   const theme = useTheme()
   const intl = useIntl()

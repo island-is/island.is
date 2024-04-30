@@ -78,7 +78,7 @@ export const ApplicationsScreen: NavigationFunctionComponent = ({
   useNavigationOptions(componentId)
 
   const flatListRef = useRef<FlatList>(null)
-  const [refreshing, setRefreshing] = useState(false)
+  const [refetching, setRefetching] = useState(false)
   const intl = useIntl()
   const scrollY = useRef(new Animated.Value(0)).current
 
@@ -96,10 +96,11 @@ export const ApplicationsScreen: NavigationFunctionComponent = ({
 
   const applicationsRes = useListApplicationsQuery()
 
-  useConnectivityIndicator(componentId, getRightButtons(), {
-    loading: applicationsRes.loading || res.loading,
-    data: applicationsRes.data || res.data,
-    pullToRefresh: refreshing,
+  useConnectivityIndicator({
+    componentId,
+    rightButtons: getRightButtons(),
+    refetching,
+    queryResult: [applicationsRes, res],
   })
 
   const data = useMemo<ListItem[]>(() => {
@@ -148,14 +149,14 @@ export const ApplicationsScreen: NavigationFunctionComponent = ({
   const keyExtractor = useCallback((item: ListItem) => item.id, [])
 
   const onRefresh = useCallback(async () => {
-    setRefreshing(true)
+    setRefetching(true)
 
     try {
       await res.refetch()
     } catch (e) {
       // noop
     } finally {
-      setRefreshing(false)
+      setRefetching(false)
     }
   }, [applicationsRes])
 
@@ -210,7 +211,7 @@ export const ApplicationsScreen: NavigationFunctionComponent = ({
           </View>
         }
         refreshControl={
-          <RefreshControl refreshing={refreshing} onRefresh={onRefresh} />
+          <RefreshControl refreshing={refetching} onRefresh={onRefresh} />
         }
       />
       <BottomTabsIndicator index={3} total={5} />

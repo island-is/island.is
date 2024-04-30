@@ -301,9 +301,11 @@ export const InboxScreen: NavigationFunctionComponent<{
     subjectContains: queryString,
   })
 
-  useConnectivityIndicator(componentId, getRightButtons(), {
-    ...res,
-    pullToRefresh: res.refetching,
+  useConnectivityIndicator({
+    componentId,
+    rightButtons: getRightButtons(),
+    queryResult: res,
+    refetching: res.refetching,
   })
 
   useEffect(() => {

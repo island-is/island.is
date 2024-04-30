@@ -92,7 +92,7 @@ export const WalletPassportScreen: NavigationFunctionComponent<{
   cardHeight?: number
 }> = ({ id, componentId, cardHeight = 140 }) => {
   useNavigationOptions(componentId)
-  useConnectivityIndicator(componentId)
+  useConnectivityIndicator({ componentId })
   const showChildrenPassport = useFeatureFlag(
     'isChildrenPassportEnabled',
     false,

@@ -88,7 +88,7 @@ const { useNavigationOptions, getNavigationOptions } =
 
 export const WalletScreen: NavigationFunctionComponent = ({ componentId }) => {
   useNavigationOptions(componentId)
-  useConnectivityIndicator(componentId, getRightButtons())
+  useConnectivityIndicator({ componentId, rightButtons: getRightButtons() })
   const theme = useTheme()
   const flatListRef = useRef<FlatList>(null)
   const [loading, setLoading] = useState(false)

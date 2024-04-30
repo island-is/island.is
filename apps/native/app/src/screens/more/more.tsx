@@ -71,7 +71,7 @@ export const MoreScreen: NavigationFunctionComponent = ({ componentId }) => {
   const showAirDiscount = useFeatureFlag('isAirDiscountEnabled', false)
 
   useNavigationOptions(componentId)
-  useConnectivityIndicator(componentId, getRightButtons())
+  useConnectivityIndicator({ componentId, rightButtons: getRightButtons() })
 
   return (
     <>

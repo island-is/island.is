@@ -98,7 +98,7 @@ export const VehiclesScreen: NavigationFunctionComponent = ({
   useNavigationOptions(componentId)
 
   const flatListRef = useRef<FlatList>(null)
-  const [loading, setLoading] = useState(false)
+  const [refetching, setRefetching] = useState(false)
   const [loadingMore, setLoadingMore] = useState(false)
   const scrollY = useRef(new Animated.Value(0)).current
   const loadingTimeout = useRef<ReturnType<typeof setTimeout>>()
@@ -109,9 +109,10 @@ export const VehiclesScreen: NavigationFunctionComponent = ({
     },
   })
 
-  useConnectivityIndicator(componentId, [], {
-    ...res,
-    pullToRefresh: loading,
+  useConnectivityIndicator({
+    componentId,
+    queryResult: res,
+    refetching,
   })
 
   // Get feature flag for mileage
@@ -126,7 +127,7 @@ export const VehiclesScreen: NavigationFunctionComponent = ({
       if (loadingTimeout.current) {
         clearTimeout(loadingTimeout.current)
       }
-      setLoading(true)
+      setRefetching(true)
       res
         .refetch({
           input: {
@@ -136,14 +137,14 @@ export const VehiclesScreen: NavigationFunctionComponent = ({
         })
         .then(() => {
           loadingTimeout.current = setTimeout(() => {
-            setLoading(false)
+            setRefetching(false)
           }, 1331)
         })
         .catch(() => {
-          setLoading(false)
+          setRefetching(false)
         })
     } catch (err) {
-      setLoading(false)
+      setRefetching(false)
     }
   }, [res])
 
@@ -195,7 +196,7 @@ export const VehiclesScreen: NavigationFunctionComponent = ({
           bottom: 32,
         }}
         refreshControl={
-          <RefreshControl refreshing={loading} onRefresh={onRefresh} />
+          <RefreshControl refreshing={refetching} onRefresh={onRefresh} />
         }
         ListEmptyComponent={Empty}
         scrollEventThrottle={16}

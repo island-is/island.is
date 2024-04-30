@@ -25,7 +25,7 @@ export function InboxFilterScreen(props: {
   archived: boolean
   componentId: string
 }) {
-  useConnectivityIndicator(props.componentId)
+  useConnectivityIndicator({ componentId: props.componentId })
 
   const intl = useIntl()
   const [opened, setOpened] = useState(props.opened)

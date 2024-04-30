@@ -41,7 +41,10 @@ export const VehicleDetailScreen: NavigationFunctionComponent<{
     },
   })
 
-  useConnectivityIndicator(componentId, [], { data, loading })
+  useConnectivityIndicator({
+    componentId,
+    queryResult: { data, loading },
+  })
 
   const {
     mainInfo,

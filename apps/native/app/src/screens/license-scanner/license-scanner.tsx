@@ -89,7 +89,7 @@ export const LicenseScannerScreen: NavigationFunctionComponent = ({
   componentId,
 }) => {
   useNavigationOptions(componentId)
-  useConnectivityIndicator(componentId, RIGHT_BUTTONS)
+  useConnectivityIndicator({ componentId, rightButtons: RIGHT_BUTTONS })
   const [hasPermission, setHasPermission] = useState<boolean>()
   const [active, setActive] = useState(true)
   const [invalid, setInvalid] = useState<boolean>(false)

@@ -65,9 +65,9 @@ export const AssetsOverviewScreen: NavigationFunctionComponent = ({
   componentId,
 }) => {
   useNavigationOptions(componentId)
-  useConnectivityIndicator(componentId)
+
   const flatListRef = useRef<FlatList>(null)
-  const [loading, setLoading] = useState(false)
+  const [refetching, setRefetching] = useState(false)
   const intl = useIntl()
   const theme = useTheme()
   const scrollY = useRef(new Animated.Value(0)).current
@@ -81,9 +81,10 @@ export const AssetsOverviewScreen: NavigationFunctionComponent = ({
     },
   })
 
-  useConnectivityIndicator(componentId, [], {
-    ...assetsRes,
-    pullToRefresh: loading,
+  useConnectivityIndicator({
+    componentId,
+    queryResult: assetsRes,
+    refetching,
   })
 
   const isSkeleton = assetsRes.loading && !assetsRes.data
@@ -94,19 +95,19 @@ export const AssetsOverviewScreen: NavigationFunctionComponent = ({
       if (loadingTimeout.current) {
         clearTimeout(loadingTimeout.current)
       }
-      setLoading(true)
+      setRefetching(true)
       assetsRes
         .refetch()
         .then(() => {
           ;(loadingTimeout as any).current = setTimeout(() => {
-            setLoading(false)
+            setRefetching(false)
           }, 1331)
         })
         .catch(() => {
-          setLoading(false)
+          setRefetching(false)
         })
     } catch (err) {
-      setLoading(false)
+      setRefetching(false)
     }
   }, [])
 
@@ -224,7 +225,7 @@ export const AssetsOverviewScreen: NavigationFunctionComponent = ({
           paddingBottom: 16,
         }}
         refreshControl={
-          <RefreshControl refreshing={loading} onRefresh={onRefresh} />
+          <RefreshControl refreshing={refetching} onRefresh={onRefresh} />
         }
         scrollEventThrottle={16}
         scrollToOverflowEnabled={true}
