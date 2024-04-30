@@ -7,7 +7,7 @@ import {
   buildTextField,
 } from '@island.is/application/core'
 import { m } from '../../lib/messages'
-import { overviewAssets } from '../OverviewSections/OverviewAssets'
+// import { overviewAssets } from '../OverviewSections/OverviewAssets'
 import {
   getEstateDataFromApplication,
   shouldShowDeceasedShareField,

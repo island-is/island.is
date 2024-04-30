@@ -30,7 +30,7 @@ export const OverviewAssets: FC<React.PropsWithChildren<FieldBaseProps>> = ({
 }) => {
   const { formatMessage } = useLocale()
   const { answers } = application
-  console.log('answers', answers)
+  // console.log('answers', answers)
 
   const sections: SectionType[] = []
 
