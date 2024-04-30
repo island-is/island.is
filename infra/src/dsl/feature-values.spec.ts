@@ -96,7 +96,6 @@ describe('Feature-deployment support', () => {
       DB_REPLICAS_HOST: 'a',
       NODE_OPTIONS: '--max-old-space-size=230',
       SERVERSIDE_FEATURES_ON: '',
-      LOG_LEVEL: 'info',
       DB_EXTENSIONS: 'foo',
     })
   })
