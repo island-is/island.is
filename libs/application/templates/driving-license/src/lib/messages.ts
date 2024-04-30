@@ -284,6 +284,21 @@ export const m = defineMessages({
     defaultMessage: 'Ljósmynd',
     description: 'title for quality photo section',
   },
+  drivingLicenseImage: {
+    id: 'dl.application:qualityPhoto.drivingLicenseImage',
+    defaultMessage: 'Ég staðfesti að nota núverandi mynd í ökuskírteini',
+    description: 'Use current photo in driving license',
+  },
+  passportImage: {
+    id: 'dl.application:qualityPhoto.passportImage',
+    defaultMessage: 'Ég staðfesti að nota núverandi mynd í vegabréfi',
+    description: 'Use current photo in passport',
+  },
+  newImage: {
+    id: 'dl.application:qualityPhoto.newImage',
+    defaultMessage: 'Ég kem með nýja ljósmynd til sýslumanns',
+    description: 'I will bring a new photo',
+  },
   qualityPhotoTitle: {
     id: 'dl.application:qualityPhotoTitle',
     defaultMessage: 'Ljósmynd í ökuskírteinaskrá',

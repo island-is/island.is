@@ -2,11 +2,10 @@ import {
   buildMultiField,
   buildCheckboxField,
   buildCustomField,
-  buildRadioField,
   buildSubSection,
   getValueViaPath,
-  hasYes,
   buildDescriptionField,
+  buildRadioField,
 } from '@island.is/application/core'
 import { m } from '../../lib/messages'
 import { HasQualityPhotoData } from '../../lib/types'
