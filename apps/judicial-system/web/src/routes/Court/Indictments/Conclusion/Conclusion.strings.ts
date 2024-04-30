@@ -47,11 +47,6 @@ export const strings = defineMessages({
     description:
       'Notaður sem titill á þingbókar hluta á Niðurstaða skrefi í ákærum í dómaraflæði.',
   },
-  rulingTitle: {
-    id: 'judicial.system.core:court.indictments.conclusion.ruling_title',
-    defaultMessage: 'Dómur',
-    description: 'Notaður sem titill á dómur hluta á Niðurstaða skrefi.',
-  },
   inputFieldLabel: {
     id: 'judicial.system.core:court.indictments.conclusion.input_field_label',
     defaultMessage: 'Dragðu gögn hingað til að hlaða upp',
@@ -67,18 +62,5 @@ export const strings = defineMessages({
     id: 'judicial.system.core:court.indictments.conclusion.next_button_text',
     defaultMessage: 'Staðfesta',
     description: 'Notaður sem titill á Staðfesta takka á Niðurstaða skrefi.',
-  },
-  modalTitle: {
-    id: 'judicial.system.core:court.indictments.conclusion.modal_title',
-    defaultMessage: 'Máli hefur verið lokið',
-    description:
-      'Notaður sem titill í modal glugga eftir að máli er lokið í ákærum.',
-  },
-  modalText: {
-    id: 'judicial.system.core:court.indictments.conclusion.modal_text',
-    defaultMessage:
-      'Tilkynning hefur verið send ákæranda og verjanda í málinu.',
-    description:
-      'Notaður sem texti í modal glugga eftir að máli er lokið í ákærum.',
   },
 })

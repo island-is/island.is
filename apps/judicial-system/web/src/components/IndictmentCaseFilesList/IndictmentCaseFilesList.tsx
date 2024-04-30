@@ -21,7 +21,6 @@ import { TempCase as Case } from '@island.is/judicial-system-web/src/types'
 import { useFileList } from '@island.is/judicial-system-web/src/utils/hooks'
 import { isTrafficViolationIndictment } from '@island.is/judicial-system-web/src/utils/stepHelper'
 
-import { strings as conclusion } from '../../routes/Court/Indictments/Conclusion/Conclusion.strings'
 import { caseFiles } from '../../routes/Prosecutor/Indictments/CaseFiles/CaseFiles.strings'
 import { strings } from './IndictmentCaseFilesList.strings'
 
@@ -197,7 +196,7 @@ const IndictmentCaseFilesList: React.FC<React.PropsWithChildren<Props>> = (
           {courtRecords && courtRecords.length > 0 && (
             <Box marginBottom={5}>
               <Text variant="h4" as="h4" marginBottom={1}>
-                {formatMessage(conclusion.courtRecordTitle)}
+                {formatMessage(strings.courtRecordTitle)}
               </Text>
               <RenderFiles
                 caseFiles={courtRecords}
@@ -209,7 +208,7 @@ const IndictmentCaseFilesList: React.FC<React.PropsWithChildren<Props>> = (
           {rulings && rulings.length > 0 && (
             <Box marginBottom={5}>
               <Text variant="h4" as="h4" marginBottom={1}>
-                {formatMessage(conclusion.rulingTitle)}
+                {formatMessage(strings.rulingTitle)}
               </Text>
               <RenderFiles
                 caseFiles={rulings}
