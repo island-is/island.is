@@ -7,7 +7,6 @@ import {
   buildTextField,
 } from '@island.is/application/core'
 import { m } from '../../lib/messages'
-// import { overviewAssets } from '../OverviewSections/OverviewAssets'
 import {
   getEstateDataFromApplication,
   shouldShowDeceasedShareField,
@@ -606,17 +605,5 @@ export const assets = buildSection({
         }),
       ],
     }),
-    // buildSubSection({
-    //   id: 'assetOverviewOld',
-    //   title: m.assetOverview,
-    //   children: [
-    //     buildMultiField({
-    //       id: 'assetOverview',
-    //       title: m.assetOverview,
-    //       description: m.assetOverviewDescription,
-    //       children: [...overviewAssets],
-    //     }),
-    //   ],
-    // }),
   ],
 })

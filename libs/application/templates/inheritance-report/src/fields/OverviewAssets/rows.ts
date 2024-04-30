@@ -178,8 +178,6 @@ export const getStocksDataRow = (answers: FormValue): RowType[] => {
   const values = (answers.assets as unknown as EstateAssets)?.stocks?.data
 
   const data = (values ?? []).map((item) => {
-    // const propertyValuation = roundedValueToNumber(item.amount)
-
     const items: RowItemsType = [
       {
         title: m.nationalId,
@@ -223,10 +221,6 @@ export const getBankAccountsDataRow = (answers: FormValue): RowType[] => {
     const isForeign = item.foreignBankAccount?.length
 
     const items: RowItemsType = [
-      // {
-      //   title: m.bankAccountCapital,
-      //   value: formatCurrency(String(propertyValuation)),
-      // },
       {
         title: m.bankAccountPenaltyInterestRates,
         value: formatCurrency(
