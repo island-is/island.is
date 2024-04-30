@@ -5,7 +5,6 @@ import { useRouter } from 'next/router'
 import { Box, RadioButton, Section, Text } from '@island.is/island-ui/core'
 import * as constants from '@island.is/judicial-system/consts'
 import {
-  getLatestDateType,
   isCompletedCase,
   isDefenceUser,
   isDistrictCourtUser,
@@ -31,8 +30,6 @@ import {
 import InfoCardCaseScheduled from '@island.is/judicial-system-web/src/components/InfoCard/InfoCardCaseScheduled'
 import {
   CaseState,
-  DateLog,
-  DateType,
   ServiceRequirement,
 } from '@island.is/judicial-system-web/src/graphql/schema'
 import { useDefendants } from '@island.is/judicial-system-web/src/utils/hooks'
@@ -56,11 +53,6 @@ const IndictmentOverview = () => {
     (destination: string) => router.push(`${destination}/${workingCase.id}`),
     [router, workingCase.id],
   )
-
-  const courtDate = getLatestDateType(
-    DateType.COURT_DATE,
-    workingCase.dateLogs,
-  ) as DateLog
 
   return (
     <PageLayout
@@ -87,14 +79,13 @@ const IndictmentOverview = () => {
         </PageTitle>
         <CourtCaseInfo workingCase={workingCase} />
         {workingCase.state === CaseState.RECEIVED &&
-          courtDate &&
-          courtDate.date &&
+          workingCase.arraignmentDate?.date &&
           workingCase.court && (
             <Box component="section" marginBottom={5}>
               <InfoCardCaseScheduled
                 court={workingCase.court}
-                courtDate={courtDate.date}
-                courtRoom={workingCase.courtRoom}
+                courtDate={workingCase.arraignmentDate.date}
+                courtRoom={workingCase.arraignmentDate.location}
               />
             </Box>
           )}

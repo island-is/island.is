@@ -593,17 +593,25 @@ export class CourtService {
     caseId: string,
     appealCaseNumber?: string,
     appealAssistantNationalId?: string,
+    appealAssistantName?: string,
     appealJudge1NationalId?: string,
+    appealJudge1Name?: string,
     appealJudge2NationalId?: string,
+    appealJudge2Name?: string,
     appealJudge3NationalId?: string,
+    appealJudge3Name?: string,
   ): Promise<unknown> {
     try {
       const subject = `Landsréttur - ${appealCaseNumber} - aðilar`
       const content = JSON.stringify({
         appealAssistantNationalId,
+        appealAssistantName,
         appealJudge1NationalId,
+        appealJudge1Name,
         appealJudge2NationalId,
+        appealJudge2Name,
         appealJudge3NationalId,
+        appealJudge3Name,
       })
 
       return this.sendToRobot(
@@ -621,9 +629,13 @@ export class CourtService {
           institution: user.institution?.name,
           appealCaseNumber,
           appealAssistantNationalId,
+          appealAssistantName,
           appealJudge1NationalId,
+          appealJudge1Name,
           appealJudge2NationalId,
+          appealJudge2Name,
           appealJudge3NationalId,
+          appealJudge3Name,
         },
         error,
       )
