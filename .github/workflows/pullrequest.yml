@@ -39,9 +39,9 @@ jobs:
       UNAFFECTED: ${{ steps.unaffected.outputs.UNAFFECTED }}
       BUILD_CHUNKS: ${{ steps.build_projects.outputs.CHUNKS }}
       BUILD_MAP: ${{ steps.build_map.outputs.BUILD_MAP }}
-      node-modules-hash: ${{ steps.calculate_node_modules_hash.outputs.node-modules-hash }}
-      mobile-node-modules-hash: ${{ steps.calculate_node_modules_hash.outputs.mobile-node-modules-hash }}
-      generated-files-cache-key: ${{ steps.calculate_generated_files_cache_key.outputs.generated-files-cache-key }}
+      node-modules-key: ${{ steps.prepare-cache.outputs.node-modules-key }}
+      mobile-node-modules-key: ${{ steps.prepare-cache.outputs.mobile-node-modules-key }}
+      generated-files-key: ${{ steps.prepare-cache.outputs.generated-files-key }}
     steps:
       - uses: actions/checkout@v3
         with:
@@ -78,62 +78,19 @@ jobs:
           path: event.json
           retention-days: 60
 
-      - name: Calculate cache key for node modules
-        id: calculate_node_modules_hash
-        run: |
-          PACKAGE_JSON_HASH=$(cat package.json | jq '{resolutions,dependencies,devDependencies}' | sha1sum -t | cut -f1 -d" ")
-          MOBILE_PACKAGE_JSON_HASH=$(cat apps/native/app/package.json | jq '{resolutions,dependencies,devDependencies}' | sha1sum -t | cut -f1 -d" ")
-          echo "PACKAGE_JSON_HASH: $PACKAGE_JSON_HASH"
-          echo "MOBILE_PACKAGE_JSON_HASH: $MOBILE_PACKAGE_JSON_HASH"
-          export NODE_MODULES_HASH=${{ runner.os }}-${{ hashFiles('yarn.lock') }}-$PACKAGE_JSON_HASH
-          export MOBILE_NODE_MODULES_HASH=${{ runner.os }}-$MOBILE_PACKAGE_JSON_HASH
-          echo "NODE_MODULES_HASH: $NODE_MODULES_HASH"
-          echo "MOBILE_NODE_MODULES_HASH: $MOBILE_NODE_MODULES_HASH"
-          echo "node-modules-hash=$NODE_MODULES_HASH" >> $GITHUB_OUTPUT
-          echo "mobile-node-modules-hash=$NODE_MODULES_HASH" >> $GITHUB_OUTPUT
-
-      - name: Calculate cache keys for generated files
-        id: calculate_generated_files_cache_key
-        run: |
-          export HASH=$(./scripts/_hash-generated-files.sh)
-          export GENERATED_FILES_KEY=${{ runner.os }}-$HASH-files-generated-03
-          echo "GENERATED_FILES_KEY: $GENERATED_FILES_KEY"
-          echo "generated-files-cache-key=$GENERATED_FILES_KEY" >> $GITHUB_OUTPUT
-
-      - name: Cache for NodeJS dependencies - host OS
-        id: node-modules
-        continue-on-error: true
-        uses: ./.github/actions/cache
+      - name: Prepare cache
+        id: prepare-cache
+        uses: ./.github/actions/prepare-cache
         with:
-          path: |
-            node_modules
-          key: ${{ steps.calculate_node_modules_hash.outputs.node-modules-hash }}-yarn
+          calculateCacheKeys: true
 
-      - name: Cache for Mobile NodeJS dependencies - host OS
-        id: mobile-node-modules
-        continue-on-error: true
-        uses: ./.github/actions/cache
-        with:
-          path: |
-            apps/native/app/node_modules
-          key: ${{ steps.calculate_node_modules_hash.outputs.mobile-node-modules-hash }}-yarn
-
-      - name: Check node-modules cache success
-        run: |
-          if [[ "${{ steps.node-modules.outputs.success }}" == "false" ]]; then
-            echo "node modules cache for NX apps was not found."
-            exit 1
-          fi
-          if [[ "${{ steps.mobile-node-modules.outputs.success }}" == "false" ]]; then
-            echo "node modules cache for mobile app was not found."
-            exit 1
-          fi
 
       - name: Building NodeJS dependencies
-        if: steps.node-modules.outputs.cache-hit != 'true' || steps.mobile-node-modules.outputs.cache-hit != 'true'
+        if: steps.prepare-cache.outputs.node-modules-cache-hit != 'true' || steps.prepare-cache.outputs.mobile-node-modules-cache-hit != 'true'
         run: ./scripts/ci/10_prepare-host-deps.sh
 
-      - run: |
+      - name: Preparing HEAD and BASE tags
+        run: |
           echo "HEAD=$GITHUB_SHA" >> $GITHUB_ENV
           export HEAD_REF="$GITHUB_HEAD_REF"
           export BASE_REF="$GITHUB_BASE_REF"
@@ -147,7 +104,6 @@ jobs:
           GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
           HTML_URL: ${{ github.event.pull_request.html_url }}
           ISSUE_REPORTING_SLACK_WEBHOOK_URL: ${{ secrets.SLACK_BUILD_ISSUES_REPORTING_WEBHOOK_URL }}
-        name: Preparing HEAD and BASE tags
 
       - name: Cache for cypress
         id: cypress
@@ -155,7 +111,7 @@ jobs:
         uses: ./.github/actions/cache
         with:
           path: /github/home/.cache/Cypress
-          key: cypress-cache-${{ steps.calculate_node_modules_hash.outputs.node-modules-hash }}
+          key: cypress-cache-${{ steps.prepare-cache.outputs.node-modules-key }}
 
       - name: Check cypress cache success
         run: '[[ "${{ steps.cypress.outputs.success }}" != "false" ]] || exit 1'
@@ -169,20 +125,8 @@ jobs:
         if: steps.cypress-check.outcome != 'success'
         run: npx cypress install
 
-      - name: Cache for generated files
-        id: generated-files-cache
-        continue-on-error: true
-        uses: ./.github/actions/cache
-        with:
-          path: generated_files.tar.gz
-          key: ${{ steps.calculate_generated_files_cache_key.outputs.generated-files-cache-key }}
-          # force-cache-save: ${{ env.SKIP_GENERATED_CACHE }}
-
-      - name: Check generated files cache success
-        run: '[[ "${{ steps.generated-files-cache.outputs.success }}" != "false" ]] || exit 1'
-
       - name: Run codegen
-        if: steps.generated-files-cache.outputs.cache-hit != 'true'
+        if: steps.prepare-cache.outputs.generated-files-cache-hit != 'true'
         run: |
           node --version
           tar zcvf generated_files.tar.gz $(./scripts/ci/get-files-touched-by.sh yarn codegen --skip-cache | xargs realpath --relative-to $(pwd))
@@ -280,9 +224,9 @@ jobs:
       - name: Prepare node-modules and generated-files cache
         uses: ./.github/actions/prepare-cache
         with:
-          nodeModulesHash: ${{ needs.prepare.outputs.node-modules-hash }}
-          mobileNodeModulesHash: ${{ needs.prepare.outputs.mobile-node-modules-hash }}
-          generatedFilesCacheKey: ${{ needs.prepare.outputs.generated-files-cache-key }}
+          nodeModulesHash: ${{ needs.prepare.outputs.node-modules-key }}
+          mobileNodeModulesHash: ${{ needs.prepare.outputs.mobile-node-modules-key }}
+          generatedFilesCacheKey: ${{ needs.prepare.outputs.generated-files-key }}
 
       - uses: ./.github/actions/unit-test
         with:
@@ -323,9 +267,9 @@ jobs:
       - name: Prepare node-modules and generated-files cache
         uses: ./.github/actions/prepare-cache
         with:
-          nodeModulesHash: ${{ needs.prepare.outputs.node-modules-hash }}
-          mobileNodeModulesHash: ${{ needs.prepare.outputs.mobile-node-modules-hash }}
-          generatedFilesCacheKey: ${{ needs.prepare.outputs.generated-files-cache-key }}
+          nodeModulesHash: ${{ needs.prepare.outputs.node-modules-key }}
+          mobileNodeModulesHash: ${{ needs.prepare.outputs.mobile-node-modules-key }}
+          generatedFilesCacheKey: ${{ needs.prepare.outputs.generated-files-key }}
 
       - name: Cache for cypress
         id: cypress
@@ -337,20 +281,6 @@ jobs:
 
       - name: Check cypress cache success
         run: '[[ "${{ steps.cypress.outputs.success }}" != "false" ]] || exit 1'
-
-      - name: Cache for generated files
-        id: generated-files-cache
-        continue-on-error: true
-        uses: ./.github/actions/cache
-        with:
-          path: generated_files.tar.gz
-          key: ${{ needs.prepare.outputs.generated-files-cache-key }}
-
-      - name: Check generated-files cache success
-        run: '[[ "${{ steps.generated-files-cache.outputs.success }}" != "false" ]] || exit 1'
-
-      - name: Untar generated files
-        run: tar zxvf generated_files.tar.gz
 
       - name: Running e2e tests
         run: ./scripts/ci/40_e2e.sh ${AFFECTED_PROJECT}
@@ -364,13 +294,13 @@ jobs:
     timeout-minutes: 5
     steps:
       - uses: actions/checkout@v3
-      - name: Cache for NodeJS dependencies - host OS
-        id: node-modules
-        continue-on-error: true
-        uses: ./.github/actions/cache
+
+      - name: Prepare node-modules and generated-files cache
+        uses: ./.github/actions/prepare-cache
         with:
-          path: node_modules
-          key: ${{ needs.prepare.outputs.node-modules-hash }}-yarn
+          nodeModulesHash: ${{ needs.prepare.outputs.node-modules-key }}
+          mobileNodeModulesHash: ${{ needs.prepare.outputs.mobile-node-modules-key }}
+          generatedFilesCacheKey: ${{ needs.prepare.outputs.generated-files-key }}
 
       - uses: actions/setup-node@v3
         with:
@@ -421,16 +351,12 @@ jobs:
       - name: Setup yarn
         run: npm install -g yarn
 
-      - name: Cache for NodeJS dependencies - host OS
-        id: node-modules
-        continue-on-error: true
-        uses: ./.github/actions/cache
+      - name: Prepare node-modules and generated-files cache
+        uses: ./.github/actions/prepare-cache
         with:
-          path: node_modules
-          key: ${{ needs.prepare.outputs.node-modules-hash }}-yarn
-
-      - name: Check node-modules cache success
-        run: '[[ "${{ steps.node-modules.outputs.success }}" != "false" ]] || exit 1'
+          nodeModulesHash: ${{ needs.prepare.outputs.node-modules-key }}
+          mobileNodeModulesHash: ${{ needs.prepare.outputs.mobile-node-modules-key }}
+          generatedFilesCacheKey: ${{ needs.prepare.outputs.generated-files-key }}
 
       - name: NX format:check
         if: ${{ github.ref == 'ref/heads/main' }}
@@ -469,9 +395,9 @@ jobs:
       - name: Prepare node-modules and generated-files cache
         uses: ./.github/actions/prepare-cache
         with:
-          nodeModulesHash: ${{ needs.prepare.outputs.node-modules-hash }}
-          mobileNodeModulesHash: ${{ needs.prepare.outputs.mobile-node-modules-hash }}
-          generatedFilesCacheKey: ${{ needs.prepare.outputs.generated-files-cache-key }}
+          nodeModulesHash: ${{ needs.prepare.outputs.node-modules-key }}
+          mobileNodeModulesHash: ${{ needs.prepare.outputs.mobile-node-modules-key }}
+          generatedFilesCacheKey: ${{ needs.prepare.outputs.generated-files-key }}
 
       - name: Linting
         run: ./scripts/ci/run-in-parallel-native.sh lint
@@ -501,9 +427,9 @@ jobs:
       - name: Prepare node-modules and generated-files cache
         uses: ./.github/actions/prepare-cache
         with:
-          nodeModulesHash: ${{ needs.prepare.outputs.node-modules-hash }}
-          mobileNodeModulesHash: ${{ needs.prepare.outputs.mobile-node-modules-hash }}
-          generatedFilesCacheKey: ${{ needs.prepare.outputs.generated-files-cache-key }}
+          nodeModulesHash: ${{ needs.prepare.outputs.node-modules-key }}
+          mobileNodeModulesHash: ${{ needs.prepare.outputs.mobile-node-modules-key }}
+          generatedFilesCacheKey: ${{ needs.prepare.outputs.generated-files-key }}
 
       - name: Building
         run: ./scripts/ci/run-in-parallel-native.sh build

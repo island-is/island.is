@@ -3,24 +3,83 @@ description: 'Caches dependencies and setup environment'
 inputs:
   nodeModulesHash:
     description: 'Hash for NodeJS modules'
-    required: true
+    required: false
+    default: ''
   mobileNodeModulesHash:
     description: 'Hash for mobile NodeJS modules'
-    required: true
+    required: false
+    default: ''
   generatedFilesCacheKey:
-    description: 'Key for caching generated files'
-    required: true
-
+    description: 'Hash for generated files'
+    required: false
+    default: ''
+  calculateCacheKey:
+    description: 'If steps to calculate cache keys should be run'
+    required: false
+    default: 'false'
+outputs:
+  node-modules-key:
+    value: ${{ steps.set-cache-keys.outputs.node-modules-key }}
+    description: 'node_modules cache key'
+  mobile-node-modules-key:
+    value: ${{ steps.set-cache-keys.outputs.mobile-node-modules-key }}
+    description: 'mobile app node_modules key'
+  generated-files-key:
+    value: ${{  steps.set-cache-keys.outputs.generated-files-key  }}
+    description: 'generated files cache key'
+  node-modules-cache-hit:
+    value: ${{ steps.node-modules.outputs.cache-hit }}
+    description: 'Boolean indicating if cache existed'
+  mobile-node-modules-cache-hit:
+    value: ${{ steps.mobile-node-modules.outputs.cache-hit }}
+    description: 'Boolean indicating if cache existed'
+  generated-files-cache-hit:
+    value: ${{ steps.generated-files-cache.outputs.cache-hit }}
+    description: 'Boolean indicating if cache existed'
 runs:
   using: 'composite'
   steps:
+    - name: Calculate cache key for node modules
+      if: ${{ inputs.calculateCacheKey == 'true' }}
+      id: calculate-node-modules-cache
+      shell: bash
+      run: |
+        PACKAGE_JSON_HASH=$(cat package.json | jq '{resolutions,dependencies,devDependencies}' | sha1sum -t | cut -f1 -d" ")
+        MOBILE_PACKAGE_JSON_HASH=$(cat apps/native/app/package.json | jq '{resolutions,dependencies,devDependencies}' | sha1sum -t | cut -f1 -d" ")
+        echo "PACKAGE_JSON_HASH: $PACKAGE_JSON_HASH"
+        echo "MOBILE_PACKAGE_JSON_HASH: $MOBILE_PACKAGE_JSON_HASH"
+        export NODE_MODULES_HASH=${{ runner.os }}-${{ hashFiles('yarn.lock') }}-$PACKAGE_JSON_HASH
+        export MOBILE_NODE_MODULES_HASH=${{ runner.os }}-$MOBILE_PACKAGE_JSON_HASH
+        echo "NODE_MODULES_HASH: $NODE_MODULES_HASH"
+        echo "MOBILE_NODE_MODULES_HASH: $MOBILE_NODE_MODULES_HASH"
+        echo "node-modules-key=$NODE_MODULES_HASH" >> $GITHUB_OUTPUT
+        echo "mobile-node-modules-key=$NODE_MODULES_HASH" >> $GITHUB_OUTPUT
+
+    - name: Calculate cache keys for generated files
+      if: ${{ inputs.calculateCacheKey == 'true' }}
+      id: calculate-generated-files-cache
+      shell: bash
+      run: |
+        export HASH=$(./scripts/_hash-generated-files.sh)
+        export GENERATED_FILES_KEY=${{ runner.os }}-$HASH-files-generated-03
+        echo "GENERATED_FILES_KEY: $GENERATED_FILES_KEY"
+        echo "generated-files-key=$GENERATED_FILES_KEY" >> $GITHUB_OUTPUT
+
+    - name: Determine cache keys
+      shell: bash
+      id: set-cache-keys
+      run: |
+        echo "node-modules-key=${{ inputs.nodeModulesHash || steps.calculate-node-modules-cache.outputs.node-modules-key }}-yarn" >> $GITHUB_OUTPUT
+        echo "mobile-node-modules-key=${{ inputs.mobileNodeModulesHash || steps.calculate-node-modules-cache.outputs.mobile-node-modules-key }}-yarn"
+        echo "generated-files-key=${{ inputs.generatedFilesCacheKey || steps.calculate-generated-files-cache.outputs.generated-files-key }}" >> $GITHUB_OUTPUT
+
     - name: Cache for NodeJS dependencies - host OS
       id: node-modules
       continue-on-error: true
       uses: ./.github/actions/cache
       with:
         path: node_modules
-        key: ${{ inputs.nodeModulesHash }}-yarn
+        key: ${{ steps.set-cache-keys.outputs.node-modules-key }}-yarn
 
     - name: Cache for Mobile NodeJS dependencies - host OS
       id: mobile-node-modules
@@ -28,11 +87,20 @@ runs:
       uses: ./.github/actions/cache
       with:
         path: apps/native/app/node_modules
-        key: ${{ inputs.mobileNodeModulesHash }}-yarn
+        key: ${{ steps.set-cache-keys.outputs.mobile-node-modules-key }}-yarn
 
     - name: Check node-modules cache success
+      id: check-node-modules-cache-success
       shell: bash
-      run: '[[ "${{ steps.node-modules.outputs.success }}" != "false" ]] || exit 1'
+      run: |
+        if [[ "${{ steps.node-modules.outputs.success }}" == "false" ]]; then
+          echo "node modules cache for NX apps was not found."
+          exit 1
+        fi
+        if [[ "${{ steps.mobile-node-modules.outputs.success }}" == "false" ]]; then
+          echo "node modules cache for mobile app was not found."
+          exit 1
+        fi
 
     - name: Cache for generated files
       id: generated-files-cache
@@ -40,12 +108,14 @@ runs:
       uses: ./.github/actions/cache
       with:
         path: generated_files.tar.gz
-        key: ${{ inputs.generatedFilesCacheKey }}
+        key: ${{ steps.set-cache-keys.outputs.generated-files-key }}
 
     - name: Check generated-files cache success
+      id: check-generated-files-cache-success
       shell: bash
       run: '[[ "${{ steps.generated-files-cache.outputs.success }}" != "false" ]] || exit 1'
 
     - name: Untar generated files
+      id: untar-generated-files
       shell: bash
       run: tar zxvf generated_files.tar.gz
