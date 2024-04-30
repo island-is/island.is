@@ -51,7 +51,7 @@ export const mapCustomPage = ({
     content: fields.content
       ? mapDocument(fields.content, sys.id + ':content')
       : [],
-    ogTitle: fields.title,
+    ogTitle: fields.ogTitle,
     ogDescription: fields.ogDescription,
     ogImage: fields.ogImage ? mapImage(fields.ogImage) : null,
   }
