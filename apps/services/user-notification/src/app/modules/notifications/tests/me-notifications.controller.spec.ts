@@ -1,14 +1,15 @@
 import request from 'supertest'
-import { AppModule } from '../../../app.module'
+
+import { createCurrentUser } from '@island.is/testing/fixtures'
 import {
   getRequestMethod,
   setupApp,
   setupAppWithoutAuth,
   TestEndpointOptions,
 } from '@island.is/testing/nest'
+
+import { AppModule } from '../../../app.module'
 import { SequelizeConfigService } from '../../../sequelizeConfig.service'
-import { NotificationsScope } from '@island.is/auth/scopes'
-import { createCurrentUser } from '@island.is/testing/fixtures'
 
 beforeAll(async () => {
   process.env.INIT_SCHEMA = 'true' // Disabling Firebase init
