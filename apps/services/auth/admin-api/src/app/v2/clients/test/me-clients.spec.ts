@@ -833,8 +833,6 @@ describe('MeClientsController with auth', () => {
               value: 'value1',
             },
           ],
-          addedDelegationTypes: [],
-          removedDelegationTypes: [],
         }
 
         // Act
