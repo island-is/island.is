@@ -4,6 +4,7 @@ import { SequelizeModule } from '@nestjs/sequelize'
 import { NationalRegistryClientModule } from '@island.is/clients/national-registry-v2'
 import { RskRelationshipsClientModule } from '@island.is/clients-rsk-relationships'
 import { FeatureFlagModule } from '@island.is/nest/feature-flags'
+import { UserSystemNotificationModule } from '../user-notification'
 
 import { ClientAllowedScope } from '../clients/models/client-allowed-scope.model'
 import { Client } from '../clients/models/client.model'
@@ -27,6 +28,8 @@ import { DelegationIndex } from './models/delegation-index.model'
 import { DelegationIndexMeta } from './models/delegation-index-meta.model'
 import { DelegationsIndexService } from './delegations-index.service'
 import { UserIdentitiesModule } from '../user-identities/user-identities.module'
+import { DelegationTypeModel } from './models/delegation-type.model'
+import { DelegationProviderModel } from './models/delegation-provider.model'
 
 @Module({
   imports: [
@@ -46,7 +49,10 @@ import { UserIdentitiesModule } from '../user-identities/user-identities.module'
       Client,
       ClientAllowedScope,
       ApiScopeUserAccess,
+      DelegationTypeModel,
+      DelegationProviderModel,
     ]),
+    UserSystemNotificationModule,
   ],
   providers: [
     DelegationsService,

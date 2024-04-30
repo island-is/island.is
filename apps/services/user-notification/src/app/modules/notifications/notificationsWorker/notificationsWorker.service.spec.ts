@@ -4,7 +4,7 @@ import { INestApplication, Type } from '@nestjs/common'
 import { TestingModuleBuilder } from '@nestjs/testing'
 
 import { testServer, truncate, useDatabase } from '@island.is/testing/nest'
-import { V2UsersApi } from '@island.is/clients/user-profile'
+import { UserProfileDto, V2UsersApi } from '@island.is/clients/user-profile'
 import { getQueueServiceToken, QueueService } from '@island.is/message-queue'
 import { FeatureFlagService } from '@island.is/nest/feature-flags'
 import { NationalRegistryV3ClientService } from '@island.is/clients/national-registry-v3'
@@ -18,21 +18,49 @@ import { SequelizeConfigService } from '../../../sequelizeConfig.service'
 import {
   MockDelegationsService,
   MockFeatureFlagService,
-  mockHnippTemplate,
   MockNationalRegistryV3ClientService,
-  MockV2UsersApi,
   userWithDelegations,
   userWithDelegations2,
   userWithDocumentNotificationsDisabled,
   userWithEmailNotificationsDisabled,
   userWithFeatureFlagDisabled,
   userWithSendToDelegationsFeatureFlagDisabled,
-  userWitNoDelegations,
+  getMockHnippTemplate,
+  mockTemplateId,
+  delegationSubjectId,
+  userWithNoDelegations,
+  userProfiles,
 } from './mocks'
 import { wait } from './helpers'
 import { Notification } from '../notification.model'
 import { FIREBASE_PROVIDER } from '../../../../constants'
 import { NotificationsService } from '../notifications.service'
+
+const workingHoursDelta = 1000 * 60 * 60 // 1 hour
+const insideWorkingHours = new Date(2021, 1, 1, 9, 0, 0)
+const outsideWorkingHours = new Date(2021, 1, 1, 7, 0, 0)
+
+export const MockV2UsersApi = {
+  userProfileControllerFindUserProfile: jest.fn(
+    ({ xParamNationalId }: { xParamNationalId: string }) => {
+      return Promise.resolve(
+        userProfiles.find(
+          (u) => u.nationalId === xParamNationalId,
+        ) as UserProfileDto,
+      )
+    },
+  ),
+
+  userProfileControllerGetActorProfile: jest.fn(
+    ({ xParamToNationalId }: { xParamToNationalId: string }) => {
+      return Promise.resolve(
+        userProfiles.find(
+          (u) => u.nationalId === xParamToNationalId,
+        ) as UserProfileDto,
+      )
+    },
+  ),
+}
 
 describe('NotificationsWorkerService', () => {
   let app: INestApplication
@@ -42,8 +70,7 @@ describe('NotificationsWorkerService', () => {
   let queue: QueueService
   let notificationModel: typeof Notification
   let notificationsService: NotificationsService
-
-  const insideWorkingHours = new Date(2021, 1, 1, 10, 0, 0)
+  let userProfileApi: V2UsersApi
 
   beforeAll(async () => {
     app = await testServer({
@@ -57,7 +84,7 @@ describe('NotificationsWorkerService', () => {
           .overrideProvider(FeatureFlagService)
           .useClass(MockFeatureFlagService)
           .overrideProvider(V2UsersApi)
-          .useClass(MockV2UsersApi)
+          .useValue(MockV2UsersApi)
           .overrideProvider(IS_RUNNING_AS_WORKER)
           .useValue(true)
           .overrideProvider(FIREBASE_PROVIDER)
@@ -65,12 +92,6 @@ describe('NotificationsWorkerService', () => {
       hooks: [
         useDatabase({ type: 'postgres', provider: SequelizeConfigService }),
       ],
-    })
-
-    // ensure tests always work by setting time to 10 AM (working hour)
-    jest.useFakeTimers({
-      advanceTimers: 10,
-      now: insideWorkingHours,
     })
 
     sequelize = await app.resolve(getConnectionToken() as Type<Sequelize>)
@@ -81,9 +102,16 @@ describe('NotificationsWorkerService', () => {
     queue = app.get<QueueService>(getQueueServiceToken('notifications'))
     notificationModel = app.get(getModelToken(Notification))
     notificationsService = app.get<NotificationsService>(NotificationsService)
+    userProfileApi = app.get(V2UsersApi)
   })
 
   beforeEach(async () => {
+    // ensure tests always work by setting time to 10 AM (working hour)
+    jest.useFakeTimers({
+      advanceTimers: true,
+      now: insideWorkingHours,
+    })
+
     jest.clearAllMocks()
 
     jest
@@ -96,7 +124,7 @@ describe('NotificationsWorkerService', () => {
 
     jest
       .spyOn(notificationsService, 'getTemplate')
-      .mockReturnValue(Promise.resolve(mockHnippTemplate))
+      .mockReturnValue(Promise.resolve(getMockHnippTemplate({})))
   })
 
   afterAll(async () => {
@@ -110,7 +138,7 @@ describe('NotificationsWorkerService', () => {
   const addToQueue = async (recipient: string) => {
     await queue.add({
       recipient,
-      templateId: mockHnippTemplate.templateId,
+      templateId: mockTemplateId,
       args: [{ key: 'organization', value: 'Test Crew' }],
     })
 
@@ -129,6 +157,17 @@ describe('NotificationsWorkerService', () => {
           name: userWithDelegations.name,
           address: userWithDelegations.email,
         }),
+        // email body should have a call-to-action button
+        template: expect.objectContaining({
+          body: expect.arrayContaining([
+            expect.objectContaining({
+              component: 'Button',
+              context: expect.objectContaining({
+                href: 'https://island.is/minarsidur/postholf',
+              }),
+            }),
+          ]),
+        }),
       }),
     )
 
@@ -138,7 +177,18 @@ describe('NotificationsWorkerService', () => {
       expect.objectContaining({
         to: expect.objectContaining({
           name: userWithDelegations.name, // should use the original recipient name
-          address: userWitNoDelegations.email,
+          address: userWithNoDelegations.email,
+        }),
+        // should not have 3rd party login - because subjectId is null for the delegation between userWithDelegations and userWitNoDelegations
+        template: expect.objectContaining({
+          body: expect.arrayContaining([
+            expect.objectContaining({
+              component: 'Button',
+              context: expect.objectContaining({
+                href: 'https://island.is/minarsidur/postholf',
+              }),
+            }),
+          ]),
         }),
       }),
     )
@@ -156,6 +206,24 @@ describe('NotificationsWorkerService', () => {
     // should write the messages to db
     const messages = await notificationModel.findAll()
     expect(messages).toHaveLength(2)
+
+    // should have gotten user profile for primary recipient
+    expect(
+      userProfileApi.userProfileControllerFindUserProfile,
+    ).toHaveBeenCalledWith(
+      expect.objectContaining({
+        xParamNationalId: userWithDelegations.nationalId,
+      }),
+    )
+
+    // should have gotten actor profile for delegation holder
+    expect(
+      userProfileApi.userProfileControllerGetActorProfile,
+    ).toHaveBeenCalledWith(
+      expect.objectContaining({
+        xParamToNationalId: userWithNoDelegations.nationalId,
+      }),
+    )
   })
 
   it('should not send email or push notifications to delegation holders if recipient is a delegation holder (test correct propagation of emails to delegation holders)', async () => {
@@ -173,6 +241,16 @@ describe('NotificationsWorkerService', () => {
           name: userWithDelegations2.name,
           address: userWithDelegations2.email,
         }),
+        template: expect.objectContaining({
+          body: expect.arrayContaining([
+            expect.objectContaining({
+              component: 'Button',
+              context: expect.objectContaining({
+                href: 'https://island.is/minarsidur/postholf',
+              }),
+            }),
+          ]),
+        }),
       }),
     )
 
@@ -184,25 +262,94 @@ describe('NotificationsWorkerService', () => {
           name: userWithDelegations2.name, // should use the original recipient name
           address: userWithDelegations.email,
         }),
+        // should use 3rd party login - because subjectId is not null for the delegation between userWithDelegations2 and userWithDelegations
+        template: expect.objectContaining({
+          body: expect.arrayContaining([
+            expect.objectContaining({
+              component: 'Button',
+              context: expect.objectContaining({
+                href: `https://island.is/minarsidur/login?login_hint=${delegationSubjectId}&target_link_uri=https://island.is/minarsidur/postholf`,
+              }),
+            }),
+          ]),
+        }),
+      }),
+    )
+  })
+
+  it('should use clickActionUrl that is provided if the url is not a service portal url', async () => {
+    const notServicePortalUrl = 'https://island.is/something-else/'
+    jest
+      .spyOn(notificationsService, 'getTemplate')
+      .mockReturnValue(
+        Promise.resolve(
+          getMockHnippTemplate({ clickActionUrl: notServicePortalUrl }),
+        ),
+      )
+
+    await addToQueue(userWithDelegations2.nationalId)
+
+    // should send email to primary recipient
+    expect(emailService.sendEmail).toHaveBeenNthCalledWith(
+      1,
+      expect.objectContaining({
+        to: expect.objectContaining({
+          name: userWithDelegations2.name,
+          address: userWithDelegations2.email,
+        }),
+        // should not use 3rd party login because the clickActionUrl is not a service portal url
+        template: expect.objectContaining({
+          body: expect.arrayContaining([
+            expect.objectContaining({
+              component: 'Button',
+              context: expect.objectContaining({
+                href: notServicePortalUrl,
+              }),
+            }),
+          ]),
+        }),
+      }),
+    )
+
+    // should send email to delegation recipient
+    expect(emailService.sendEmail).toHaveBeenNthCalledWith(
+      2,
+      expect.objectContaining({
+        to: expect.objectContaining({
+          name: userWithDelegations2.name, // should use the original recipient name
+          address: userWithDelegations.email,
+        }),
+        // should not use 3rd party login because the clickActionUrl is not a service portal url
+        template: expect.objectContaining({
+          body: expect.arrayContaining([
+            expect.objectContaining({
+              component: 'Button',
+              context: expect.objectContaining({
+                href: notServicePortalUrl,
+              }),
+            }),
+          ]),
+        }),
       }),
     )
   })
 
   it('should not send email or push notification if we are outside working hours (8 AM - 11 PM) ', async () => {
-    const outsideWorkingHours = new Date(2021, 1, 1, 7, 59, 58) // 2 seconds before 8 AM
+    // set time to be outside of working hours
     jest.setSystemTime(outsideWorkingHours)
 
-    await addToQueue(userWitNoDelegations.nationalId)
+    await addToQueue(userWithNoDelegations.nationalId)
 
     expect(emailService.sendEmail).not.toHaveBeenCalled()
     expect(notificationDispatch.sendPushNotification).not.toHaveBeenCalled()
 
-    await wait(2) // ensure we are at 8 AM by waiting 2 seconds
+    // reset time to inside working hour
+    jest.advanceTimersByTime(workingHoursDelta)
+    // give worker some time to process message
+    await wait(2)
 
     expect(emailService.sendEmail).toHaveBeenCalledTimes(1)
     expect(notificationDispatch.sendPushNotification).toHaveBeenCalledTimes(1)
-
-    jest.setSystemTime(insideWorkingHours) // reset time
   }, 10_000)
 
   it('should not send email or push notification if no profile is found for recipient', async () => {

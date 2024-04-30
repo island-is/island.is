@@ -22,7 +22,7 @@ export class AwsS3Service {
       this.s3.createPresignedPost(
         {
           Bucket: this.config.bucket,
-          Expires: +this.config.timeToLivePost, // convert to number with +
+          Expires: this.config.timeToLivePost,
           Fields: {
             key,
             'content-type': type,
@@ -40,20 +40,20 @@ export class AwsS3Service {
     })
   }
 
-  getSignedUrl(key: string): Promise<{ url: string }> {
+  getSignedUrl(key: string, timeToLive?: number): Promise<string> {
     return new Promise((resolve, reject) => {
       this.s3.getSignedUrl(
         'getObject',
         {
           Bucket: this.config.bucket,
           Key: key,
-          Expires: +this.config.timeToLiveGet, // convert to number with +
+          Expires: timeToLive ?? this.config.timeToLiveGet,
         },
         (err, url) => {
           if (err) {
             reject(err)
           } else {
-            resolve({ url })
+            resolve(url)
           }
         },
       )

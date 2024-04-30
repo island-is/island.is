@@ -2,9 +2,9 @@ import { Field, InputType } from '@nestjs/graphql'
 
 @InputType('RightsPortalCopaymentPeriodInput')
 export class CopaymentPeriodInput {
-  @Field(() => String)
-  dateFrom!: string
+  @Field(() => Date)
+  dateFrom!: Date
 
-  @Field(() => String)
-  dateTo!: string
+  @Field(() => Date)
+  dateTo!: Date
 }

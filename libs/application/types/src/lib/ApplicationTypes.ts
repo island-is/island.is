@@ -66,6 +66,7 @@ export enum ApplicationTypes {
   REQUEST_INSPECTION_FOR_MACHINE = 'RequestInspectionForMachine',
   OFFICIAL_JOURNAL_OF_ICELAND = 'OfficialJournalOfIceland',
   ID_CARD = 'IdCard',
+  STREET_REGISTRATION = 'StreetRegistration',
 }
 
 export const ApplicationConfigurations = {
@@ -340,5 +341,9 @@ export const ApplicationConfigurations = {
   [ApplicationTypes.ID_CARD]: {
     slug: 'nafnskirteini',
     translation: 'id.application',
+  },
+  [ApplicationTypes.STREET_REGISTRATION]: {
+    slug: 'gotuskraning-taekis',
+    translation: 'sr.application',
   },
 }

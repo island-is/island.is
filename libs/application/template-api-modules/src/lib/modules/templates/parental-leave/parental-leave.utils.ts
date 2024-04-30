@@ -90,8 +90,12 @@ export const getEmployer = (
   application: Application,
   isSelfEmployed = false,
 ): Employer[] => {
-  const { applicantEmail, employers, employerNationalRegistryId } =
-    getApplicationAnswers(application.answers)
+  const {
+    applicantEmail,
+    employers,
+    employerNationalRegistryId,
+    employerReviewerNationalRegistryId,
+  } = getApplicationAnswers(application.answers)
 
   if (isSelfEmployed) {
     return [
@@ -106,6 +110,8 @@ export const getEmployer = (
     email: e.email,
     nationalRegistryId:
       e.companyNationalRegistryId ?? employerNationalRegistryId ?? '',
+    approverNationalRegistryId:
+      e.reviewerNationalRegistryId ?? employerReviewerNationalRegistryId ?? '',
   }))
 }
 
@@ -357,6 +363,8 @@ export const transformApplicationToParentalLeaveDTO = (
     | 'document'
     | 'empper'
     | 'employer'
+    | 'empdoc'
+    | 'empdocper'
     | undefined,
 ): ParentalLeave => {
   const selectedChild = getSelectedChild(
@@ -522,7 +530,9 @@ export const checkActionName = (
     actionName === 'documentPeriod' ||
     actionName === 'period' ||
     actionName === 'empper' ||
-    actionName === 'employer'
+    actionName === 'employer' ||
+    actionName === 'empdoc' ||
+    actionName === 'empdocper'
   ) {
     return actionName
   }

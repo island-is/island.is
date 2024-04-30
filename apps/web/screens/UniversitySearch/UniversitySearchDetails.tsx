@@ -1,6 +1,7 @@
-import React, { useEffect, useMemo, useState } from 'react'
+import React, { useMemo, useState } from 'react'
 import ReactHtmlParser from 'react-html-parser'
 import format from 'date-fns/format'
+import en from 'date-fns/locale/en-US'
 import is from 'date-fns/locale/is'
 import getConfig from 'next/config'
 import NextLink from 'next/link'
@@ -21,10 +22,8 @@ import {
   Navigation,
   NavigationItem,
   Stack,
-  TabType,
   Text,
 } from '@island.is/island-ui/core'
-import { Requirement } from '@island.is/university-gateway'
 import {
   IconTitleCard,
   OrganizationFooter,
@@ -296,10 +295,16 @@ const UniversityDetails: Screen<UniversityDetailsProps> = ({
               }}
             />
             <IconTitleCard
-              heading={universityData.contentfulTitle || ''}
-              // eslint-disable-next-line @typescript-eslint/ban-ts-comment
-              // @ts-ignore make web strict
-              href={universityData.contentfulLink || ''}
+              heading={
+                locale === 'is'
+                  ? universityData.contentfulTitle || ''
+                  : universityData.contentfulTitleEn || ''
+              }
+              href={
+                locale === 'is'
+                  ? universityData.contentfulLink || ''
+                  : universityData.contentfulLinkEn || ''
+              }
               imgSrc={universityData.contentfulLogoUrl || ''}
               alt="University infomation"
             />
@@ -356,7 +361,10 @@ const UniversityDetails: Screen<UniversityDetailsProps> = ({
                 {n('applyForProgram', 'Umsókn í háskólanám')}
               </Text>
 
-              <Button onClick={() => router.push(applicationUrlParser())}>
+              <Button
+                onClick={() => router.push(applicationUrlParser())}
+                disabled={!data.applicationPeriodOpen}
+              >
                 <Box display={'flex'} style={{ gap: '0.5rem' }}>
                   {n('apply', 'Sækja um')}
                   <Icon icon="open" type="outline" />
@@ -471,11 +479,11 @@ const UniversityDetails: Screen<UniversityDetailsProps> = ({
                       )}: ${format(
                         new Date(data.applicationStartDate),
                         'd. MMMM yyyy',
-                        { locale: is },
+                        { locale: locale === 'en' ? en : is },
                       )} - ${format(
                         new Date(data.applicationEndDate),
                         'd. MMMM yyyy',
-                        { locale: is },
+                        { locale: locale === 'en' ? en : is },
                       )}`}</Text>
                     </Box>
                   </GridColumn>

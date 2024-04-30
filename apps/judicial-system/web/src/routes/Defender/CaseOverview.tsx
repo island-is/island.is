@@ -130,13 +130,13 @@ export const CaseOverview: React.FC<React.PropsWithChildren<unknown>> = () => {
             </Box>
           )}
           {workingCase.state === CaseState.RECEIVED &&
-            workingCase.courtDate &&
+            workingCase.arraignmentDate?.date &&
             workingCase.court && (
               <Box component="section" marginBottom={5}>
                 <InfoCardCaseScheduled
                   court={workingCase.court}
-                  courtDate={workingCase.courtDate}
-                  courtRoom={workingCase.courtRoom}
+                  courtDate={workingCase.arraignmentDate.date}
+                  courtRoom={workingCase.arraignmentDate.location}
                 />
               </Box>
             )}

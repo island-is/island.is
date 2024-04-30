@@ -1,6 +1,7 @@
 import { Module } from '@nestjs/common'
 import { SequelizeModule } from '@nestjs/sequelize'
 import { CacheModule } from '@nestjs/cache-manager'
+import { ConfigType } from '@nestjs/config'
 import * as firebaseAdmin from 'firebase-admin'
 
 import { NationalRegistryV3ClientModule } from '@island.is/clients/national-registry-v3'
@@ -18,16 +19,17 @@ import { FIREBASE_PROVIDER } from '../../../constants'
 import { NotificationsService } from './notifications.service'
 import { MeNotificationsController } from './me-notifications.controller'
 import { Notification } from './notification.model'
-import { UserNotificationsInfraController } from './infra.controller'
 import { NotificationDispatchService } from './notificationDispatch.service'
 import {
   IS_RUNNING_AS_WORKER,
   NotificationsWorkerService,
+  SERVICE_PORTAL_CLICK_ACTION_URL,
 } from './notificationsWorker/notificationsWorker.service'
 import {
   APP_PROTOCOL,
   MessageProcessorService,
 } from './messageProcessor.service'
+import { UserNotificationsConfig } from '../../../config'
 
 @Module({
   exports: [NotificationsService],
@@ -35,7 +37,7 @@ import {
     SequelizeModule.forFeature([Notification]),
     CacheModule.register({
       ttl: 60 * 10 * 1000, // 10 minutes
-      max: 100, // 100 items max
+      max: 1000, // 1000 items max
     }),
     LoggingModule,
     CmsTranslationsModule,
@@ -55,11 +57,7 @@ import {
     NationalRegistryV3ClientModule,
     AuthDelegationApiClientModule,
   ],
-  controllers: [
-    NotificationsController,
-    MeNotificationsController,
-    UserNotificationsInfraController,
-  ],
+  controllers: [NotificationsController, MeNotificationsController],
   providers: [
     NotificationsService,
     NotificationDispatchService,
@@ -67,22 +65,33 @@ import {
     MessageProcessorService,
     {
       provide: FIREBASE_PROVIDER,
-      useFactory: () =>
+      useFactory: (config: ConfigType<typeof UserNotificationsConfig>) =>
         process.env.INIT_SCHEMA === 'true'
           ? {}
           : firebaseAdmin.initializeApp({
               credential: firebaseAdmin.credential.cert(
-                JSON.parse(environment.firebaseCredentials),
+                JSON.parse(config.firebaseCredentials),
               ),
             }),
+      inject: [UserNotificationsConfig.KEY],
     },
     {
       provide: IS_RUNNING_AS_WORKER,
-      useValue: environment.isWorker,
+      useFactory: (config: ConfigType<typeof UserNotificationsConfig>) =>
+        config.isWorker,
+      inject: [UserNotificationsConfig.KEY],
     },
     {
       provide: APP_PROTOCOL,
-      useValue: environment.appProtocol,
+      useFactory: (config: ConfigType<typeof UserNotificationsConfig>) =>
+        config.appProtocol,
+      inject: [UserNotificationsConfig.KEY],
+    },
+    {
+      provide: SERVICE_PORTAL_CLICK_ACTION_URL,
+      useFactory: (config: ConfigType<typeof UserNotificationsConfig>) =>
+        config.servicePortalClickActionUrl,
+      inject: [UserNotificationsConfig.KEY],
     },
   ],
 })

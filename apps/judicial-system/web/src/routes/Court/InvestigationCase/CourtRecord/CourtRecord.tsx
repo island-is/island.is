@@ -157,10 +157,11 @@ const CourtRecord = () => {
         }
       }
     }
+
     setAndSendCaseToServer(
       [
         {
-          courtStartDate: workingCase.courtDate,
+          courtStartDate: workingCase.arraignmentDate?.date,
           courtLocation: workingCase.court?.name
             ? `í ${
                 workingCase.court.name.indexOf('dómur') > -1

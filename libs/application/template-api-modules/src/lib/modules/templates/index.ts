@@ -105,8 +105,8 @@ import { CarRecyclingModule } from './car-recycling/car-recycling.module'
 import { CarRecyclingService } from './car-recycling/car-recycling.service'
 import { DrivingLicenseDuplicateModule } from './driving-license-duplicate/driving-license-duplicate.module'
 import { DrivingLicenseDuplicateService } from './driving-license-duplicate/driving-license-duplicate.service'
-import { OfficialJournalOfIcelandModule } from './official-journal-of-iceland/official-journal-of-iceland.module'
-import { OfficialJournalOfIcelandService } from './official-journal-of-iceland/official-journal-of-iceland.service'
+import { OfficialJournalOfIcelandTemplateModule } from './official-journal-of-iceland/official-journal-of-iceland.module'
+import { OfficialJournalOfIcelandTemaplateService } from './official-journal-of-iceland/official-journal-of-iceland.service'
 import { SocialInsuranceAdministrationModule } from './social-insurance-administration/social-insurance-administration.module'
 import { SocialInsuranceAdministrationService } from './social-insurance-administration/social-insurance-administration.service'
 import { ChangeMachineSupervisorTemplateModule } from './aosh/change-machine-supervisor/change-machine-supervisor.module'
@@ -121,6 +121,8 @@ import { DeregisterMachineTemplateModule } from './aosh/deregister-machine/dereg
 import { DeregisterMachineTemplateService } from './aosh/deregister-machine/deregister-machine.service'
 import { GrindavikHousingBuyoutModule } from './grindavik-housing-buyout/grindavik-housing-buyout.module'
 import { GrindavikHousingBuyoutService } from './grindavik-housing-buyout/grindavik-housing-buyout.service'
+import { StreetRegistrationTemplateModule } from './aosh/street-registration/street-registration.module'
+import { StreetRegistrationTemplateService } from './aosh/street-registration/street-registration.service'
 import { RequestInspectionTemplateModule } from './aosh/request-inspection/request-inspection.module'
 import { RequestInspectionTemplateService } from './aosh/request-inspection/request-inspection.service'
 
@@ -190,7 +192,8 @@ export const modules = [
   DeregisterMachineTemplateModule,
   GrindavikHousingBuyoutModule,
   RequestInspectionTemplateModule,
-  OfficialJournalOfIcelandModule,
+  OfficialJournalOfIcelandTemplateModule,
+  StreetRegistrationTemplateModule,
   IdCardModule,
 ]
 
@@ -257,6 +260,7 @@ export const services = [
   DeregisterMachineTemplateService,
   GrindavikHousingBuyoutService,
   RequestInspectionTemplateService,
-  OfficialJournalOfIcelandService,
+  OfficialJournalOfIcelandTemaplateService,
+  StreetRegistrationTemplateService,
   IdCardService,
 ]
