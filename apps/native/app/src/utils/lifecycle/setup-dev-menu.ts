@@ -3,8 +3,8 @@ import AsyncStorage from '@react-native-community/async-storage'
 import { ActionSheetIOS, DevSettings } from 'react-native'
 import DialogAndroid from 'react-native-dialogs'
 import { Navigation } from 'react-native-navigation'
-import { mkkvStorage } from '../../graphql/client'
 import { authStore } from '../../stores/auth-store'
+import { apolloMKKVStorage } from '../../stores/mkkv'
 import { preferencesStore } from '../../stores/preferences-store'
 import { ComponentRegistry } from '../component-registry'
 import { isAndroid, isIos } from '../devices'
@@ -110,7 +110,7 @@ export function setupDevMenu() {
         case 'CLEAR_ASYNC_STORAGE':
           return clearAsyncStorage()
         case 'CLEAR_MKKV':
-          return mkkvStorage.clearStore()
+          return apolloMKKVStorage.clearStore()
       }
     }
 

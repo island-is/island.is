@@ -11,18 +11,14 @@ import { setContext } from '@apollo/client/link/context'
 import { onError } from '@apollo/client/link/error'
 import { RetryLink } from '@apollo/client/link/retry'
 import { MMKVStorageWrapper, persistCache } from 'apollo3-cache-persist'
-import { MMKVLoader } from 'react-native-mmkv-storage'
 import { config, getConfig } from '../config'
 import { openBrowser } from '../lib/rn-island'
 import { cognitoAuthUrl } from '../screens/cognito-auth/config-switcher'
 import { authStore } from '../stores/auth-store'
 import { environmentStore } from '../stores/environment-store'
+import { apolloMKKVStorage } from '../stores/mkkv'
 import { offlineStore } from '../stores/offline-store'
 import { MainBottomTabs } from '../utils/component-registry'
-
-export const mkkvStorage = new MMKVLoader()
-  .withEncryption() // Generates a random key and stores it securely in Keychain
-  .initialize()
 
 const httpLink = new HttpLink({
   uri() {
@@ -189,7 +185,7 @@ export const getApolloClient = () => {
 export const initializeApolloClient = async () => {
   await persistCache({
     cache,
-    storage: new MMKVStorageWrapper(mkkvStorage),
+    storage: new MMKVStorageWrapper(apolloMKKVStorage),
   })
 
   apolloClient = new ApolloClient({
