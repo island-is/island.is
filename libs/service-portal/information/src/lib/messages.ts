@@ -422,14 +422,6 @@ export const mNotifications = defineMessages({
     id: 'sp.notifications:delegations',
     defaultMessage: 'Umboð',
   },
-  fetchErrorTitle: {
-    id: 'sp.notifications:fetch-error-title',
-    defaultMessage: 'Samband næst ekki',
-  },
-  fetchErrorMessage: {
-    id: 'sp.notifications:fetch-error-message',
-    defaultMessage: 'Villa kom upp í samskiptum við þjónustuaðila.',
-  },
   updateError: {
     id: 'sp.notifications:update-error',
     defaultMessage: 'Ekki tókst að vista stillingar',

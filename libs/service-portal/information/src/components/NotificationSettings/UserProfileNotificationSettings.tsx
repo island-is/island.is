@@ -1,7 +1,6 @@
 import React, { useEffect, useState } from 'react'
 import { NotificationSettingsCard } from './cards/NotificationSettingsCard'
 import {
-  AlertMessage,
   Divider,
   SkeletonLoader,
   Stack,
@@ -16,13 +15,14 @@ import {
   useUpdateUserProfileSettingsMutation,
   useUserProfileSettingsQuery,
 } from './graphql/UserProfile.generated'
+import { Problem } from '@island.is/react-spa/shared'
 
 type UserProfileNotificationSettings = {
   documentNotifications: boolean
   canNudge: boolean
 }
 
-const UserProfileNotificationSettings = () => {
+export const UserProfileNotificationSettings = () => {
   const { userInfo } = useAuth()
   const { formatMessage } = useLocale()
   const {
@@ -72,13 +72,7 @@ const UserProfileNotificationSettings = () => {
   }
 
   if (fetchError) {
-    return (
-      <AlertMessage
-        message={formatMessage(mNotifications.fetchErrorMessage)}
-        title={formatMessage(mNotifications.fetchErrorTitle)}
-        type="warning"
-      />
-    )
+    return <Problem error={fetchError} size="small" />
   }
 
   return (
@@ -107,5 +101,3 @@ const UserProfileNotificationSettings = () => {
     </NotificationSettingsCard>
   )
 }
-
-export default UserProfileNotificationSettings

@@ -1,11 +1,12 @@
 import { ISLANDIS_SLUG, IntroHeader, m } from '@island.is/service-portal/core'
-import { useLocale } from '@island.is/localization'
+import { useLocale, useNamespaces } from '@island.is/localization'
 
 import { mNotifications } from '../../lib/messages'
-import UserProfileNotificationSettings from '../../components/NotificationSettings/UserProfileNotificationSettings'
-import ActorProfilesNotificationSettings from '../../components/NotificationSettings/ActorProfilesNotificationSettings'
+import { UserProfileNotificationSettings } from '../../components/NotificationSettings/UserProfileNotificationSettings'
+import { ActorProfilesNotificationSettings } from '../../components/NotificationSettings/ActorProfilesNotificationSettings'
 
 const UserProfile = () => {
+  useNamespaces('sp.notifications')
   const { formatMessage } = useLocale()
 
   return (

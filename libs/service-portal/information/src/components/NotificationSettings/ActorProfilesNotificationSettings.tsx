@@ -1,7 +1,6 @@
 import React from 'react'
 import { useLocale } from '@island.is/localization'
 import {
-  AlertMessage,
   Box,
   Hidden,
   SkeletonLoader,
@@ -14,8 +13,9 @@ import { NotificationSettingsCard } from './cards/NotificationSettingsCard'
 import { ActorProfileSettingsCard } from './cards/ActorProfileSettingsCard'
 import { useActorProfilesQuery } from './graphql/ActorProfiles.generated'
 import * as styles from './ActorProfilesNotificationSettings.css'
+import { Problem } from '@island.is/react-spa/shared'
 
-const ActorProfilesNotificationSettings = () => {
+export const ActorProfilesNotificationSettings = () => {
   const { data, loading, error } = useActorProfilesQuery()
   const { formatMessage } = useLocale()
 
@@ -25,13 +25,7 @@ const ActorProfilesNotificationSettings = () => {
     }
 
     if (error) {
-      return (
-        <AlertMessage
-          message={formatMessage(mNotifications.fetchErrorMessage)}
-          title={formatMessage(mNotifications.fetchErrorTitle)}
-          type="warning"
-        />
-      )
+      return <Problem error={error} size="small" />
     }
 
     if (data?.userProfileActorProfiles.data.length === 0) {
@@ -42,8 +36,8 @@ const ActorProfilesNotificationSettings = () => {
           alignItems="center"
           flexDirection="row"
           paddingLeft={[2, 4, 4, 10]}
-          paddingRight={[2, 4, 4, 5]}
-          paddingY={[2]}
+          paddingRight={[2, 4, 4, 12]}
+          paddingY={2}
           border="standard"
           borderRadius="large"
         >
@@ -56,14 +50,13 @@ const ActorProfilesNotificationSettings = () => {
             </Text>
           </Box>
           <Hidden below="lg">
-            <Box>
-              <img
-                src={
-                  'https://images.ctfassets.net/8k0h54kbe6bj/3owSRG31o0rRjJzn5AHkzg/b679bbb20caa6fbd4720938bac0b2b9b/LE_-_Company_-_S2.svg'
-                }
-                className={styles.imageWrap}
-                alt=""
-              />
+            <Box
+              className={styles.imageWrap}
+              alignItems="center"
+              justifyContent="flexEnd"
+              display="flex"
+            >
+              <img src={'./assets/images/company.svg'} alt="" />
             </Box>
           </Hidden>
         </Box>
@@ -93,5 +86,3 @@ const ActorProfilesNotificationSettings = () => {
     </Box>
   )
 }
-
-export default ActorProfilesNotificationSettings
