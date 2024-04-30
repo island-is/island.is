@@ -24,7 +24,6 @@ import {
   useUpdateVehicleMileageMutation,
 } from '../../graphql/types/schema'
 import { createNavigationOptionHooks } from '../../hooks/create-navigation-option-hooks'
-import { useConnectivityIndicator } from '../../hooks/use-connectivity-indicator'
 import { openBrowser } from '../../lib/rn-island'
 import { MileageCell } from './components/mileage-cell'
 
@@ -54,7 +53,7 @@ export const VehicleMileageScreen: NavigationFunctionComponent<{
   title?: { type: string; year: string; color: string }
 }> = ({ componentId, id, title }) => {
   useNavigationOptions(componentId)
-  useConnectivityIndicator(componentId)
+
   const intl = useIntl()
   const dynamicColor = useDynamicColor()
   const [input, setInput] = useState('')
@@ -254,6 +253,7 @@ export const VehicleMileageScreen: NavigationFunctionComponent<{
         }
         onClosePress={() => Navigation.dismissModal(componentId)}
         style={{ marginHorizontal: 16 }}
+        loading={res.loading}
       />
       <FlatList
         data={data}

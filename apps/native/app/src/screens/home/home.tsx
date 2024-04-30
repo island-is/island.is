@@ -100,6 +100,8 @@ export const MainHomeScreen: NavigationFunctionComponent = ({
   componentId,
 }) => {
   useNavigationOptions(componentId)
+
+  const [refetching, setRefetching] = useState(false)
   const flatListRef = useRef<FlatList>(null)
   const ui = useUiStore()
 
@@ -107,16 +109,18 @@ export const MainHomeScreen: NavigationFunctionComponent = ({
     flatListRef.current?.scrollToOffset({ offset: -150, animated: true })
   })
 
-  useConnectivityIndicator(componentId, getRightButtons())
-
   const applicationsRes = useListApplicationsQuery()
+
+  useConnectivityIndicator(componentId, getRightButtons(), {
+    ...applicationsRes,
+    pullToRefresh: refetching,
+  })
 
   // Get feature flag for mileage
   const isMileageEnabled = useFeatureFlag(
     'isServicePortalVehicleMileagePageEnabled',
     false,
   )
-  const [loading, setLoading] = useState(false)
 
   const renderItem = useCallback(
     ({ item }: ListRenderItemInfo<ListItem>) => item.component,
@@ -130,15 +134,17 @@ export const MainHomeScreen: NavigationFunctionComponent = ({
     notificationsStore.getState().actions.syncToken()
   }, [])
 
-  const refetch = async () => {
-    setLoading(true)
+  const refetch = useCallback(async () => {
+    setRefetching(true)
+
     try {
       await applicationsRes.refetch()
     } catch (err) {
       // noop
     }
-    setLoading(false)
-  }
+
+    setRefetching(false)
+  }, [applicationsRes])
 
   if (!ui.initializedApp) {
     return null
@@ -198,7 +204,7 @@ export const MainHomeScreen: NavigationFunctionComponent = ({
           },
         )}
         refreshControl={
-          <RefreshControl refreshing={loading} onRefresh={refetch} />
+          <RefreshControl refreshing={refetching} onRefresh={refetch} />
         }
       />
       <TopLine scrollY={scrollY} />

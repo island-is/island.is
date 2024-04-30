@@ -41,6 +41,7 @@ const loadingButton: OptionsTopBarButton = {
  * @param componentId - The unique ID of the component.
  * @param optionsTopBarRightButtons - The right buttons to be displayed in the top bar.
  * @param queryResult - The result of the query. **Note that if queryResult.pullToRefresh is true, the loading spinner will not be displayed.**
+ * @param extraData - Additional data to trigger navigation update
  */
 export const useConnectivityIndicator = <Data extends Record<string, unknown>>(
   componentId: string,

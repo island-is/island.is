@@ -107,6 +107,7 @@ export const WalletScreen: NavigationFunctionComponent = ({ componentId }) => {
   // Query list of licenses
   const res = useListLicensesQuery({
     fetchPolicy: 'network-only',
+    nextFetchPolicy: 'network-only',
     variables: {
       input: {
         includedTypes: [
@@ -126,6 +127,7 @@ export const WalletScreen: NavigationFunctionComponent = ({ componentId }) => {
   // Additional licenses
   const resPassport = useGetIdentityDocumentQuery({
     fetchPolicy: 'network-only',
+    nextFetchPolicy: 'network-only',
   })
 
   useActiveTabItemPress(1, () => {

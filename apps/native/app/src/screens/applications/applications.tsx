@@ -76,9 +76,9 @@ export const ApplicationsScreen: NavigationFunctionComponent = ({
   componentId,
 }) => {
   useNavigationOptions(componentId)
-  useConnectivityIndicator(componentId, getRightButtons())
+
   const flatListRef = useRef<FlatList>(null)
-  const [loading, setLoading] = useState(false)
+  const [refreshing, setRefreshing] = useState(false)
   const intl = useIntl()
   const scrollY = useRef(new Animated.Value(0)).current
 
@@ -96,6 +96,12 @@ export const ApplicationsScreen: NavigationFunctionComponent = ({
 
   const applicationsRes = useListApplicationsQuery()
 
+  useConnectivityIndicator(componentId, getRightButtons(), {
+    loading: applicationsRes.loading || res.loading,
+    data: applicationsRes.data || res.data,
+    pullToRefresh: refreshing,
+  })
+
   const data = useMemo<ListItem[]>(() => {
     if (!res.data && res.loading) {
       return Array.from({ length: 8 }).map((_, id) => ({
@@ -104,13 +110,11 @@ export const ApplicationsScreen: NavigationFunctionComponent = ({
       }))
     }
 
-    if (!res.loading && res.data) {
-      const articles = [
-        ...(res?.data?.searchResults?.items ?? []),
-      ] as SearchArticleFragmentFragment[]
-      return articles.sort((a, b) => a.title.localeCompare(b.title))
-    }
-    return []
+    const articles = [
+      ...(res?.data?.searchResults?.items ?? []),
+    ] as SearchArticleFragmentFragment[]
+
+    return articles.sort((a, b) => a.title.localeCompare(b.title))
   }, [res.data, res.loading])
 
   const renderItem = useCallback(
@@ -143,6 +147,32 @@ export const ApplicationsScreen: NavigationFunctionComponent = ({
 
   const keyExtractor = useCallback((item: ListItem) => item.id, [])
 
+  const onRefresh = useCallback(async () => {
+    setRefreshing(true)
+
+    try {
+      await res.refetch()
+    } catch (e) {
+      // noop
+    } finally {
+      setRefreshing(false)
+    }
+  }, [applicationsRes])
+
+  const Empty = () => (
+    <View style={{ marginTop: 80, paddingHorizontal: 16 }}>
+      <EmptyList
+        title={intl.formatMessage({ id: 'applications.emptyListTitle' })}
+        description={intl.formatMessage({
+          id: 'applications.emptyListDescription',
+        })}
+        image={
+          <Image source={illustrationSrc} style={{ height: 176, width: 134 }} />
+        }
+      />
+    </View>
+  )
+
   return (
     <>
       <Animated.FlatList
@@ -159,22 +189,7 @@ export const ApplicationsScreen: NavigationFunctionComponent = ({
         keyExtractor={keyExtractor}
         keyboardDismissMode="on-drag"
         data={data}
-        ListEmptyComponent={
-          <View style={{ marginTop: 80, paddingHorizontal: 16 }}>
-            <EmptyList
-              title={intl.formatMessage({ id: 'applications.emptyListTitle' })}
-              description={intl.formatMessage({
-                id: 'applications.emptyListDescription',
-              })}
-              image={
-                <Image
-                  source={illustrationSrc}
-                  style={{ height: 176, width: 134 }}
-                />
-              }
-            />
-          </View>
-        }
+        ListEmptyComponent={Empty}
         renderItem={renderItem}
         ListHeaderComponent={
           <View style={{ flex: 1 }}>
@@ -195,25 +210,7 @@ export const ApplicationsScreen: NavigationFunctionComponent = ({
           </View>
         }
         refreshControl={
-          <RefreshControl
-            refreshing={loading}
-            onRefresh={() => {
-              setLoading(true)
-              try {
-                res
-                  ?.refetch?.()
-                  ?.then(() => {
-                    setLoading(false)
-                  })
-                  .catch(() => {
-                    setLoading(false)
-                  })
-              } catch (err) {
-                // noop
-                setLoading(false)
-              }
-            }}
-          />
+          <RefreshControl refreshing={refreshing} onRefresh={onRefresh} />
         }
       />
       <BottomTabsIndicator index={3} total={5} />

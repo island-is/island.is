@@ -182,7 +182,6 @@ function useInboxQuery(incomingFilters?: Filters) {
 
   const [getListDocument] = useListDocumentsLazyQuery({
     query: ListDocumentsDocument,
-    fetchPolicy: 'network-only',
   })
 
   useEffect(() => {
@@ -302,7 +301,10 @@ export const InboxScreen: NavigationFunctionComponent<{
     subjectContains: queryString,
   })
 
-  useConnectivityIndicator(componentId, getRightButtons())
+  useConnectivityIndicator(componentId, getRightButtons(), {
+    ...res,
+    pullToRefresh: res.refetching,
+  })
 
   useEffect(() => {
     setRefetching(false)
