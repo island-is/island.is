@@ -1,12 +1,6 @@
 import React from 'react'
 
-import {
-  Box,
-  ResponsiveProp,
-  Space,
-  Text,
-  TextElements,
-} from '@island.is/island-ui/core'
+import { Box, ResponsiveProp, Space, Text } from '@island.is/island-ui/core'
 
 import RequiredStar from '../RequiredStar/RequiredStar'
 
