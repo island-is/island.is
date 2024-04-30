@@ -111,4 +111,11 @@ describe('mapCaseStateToTagVariant', () => {
       text: m.unknown.defaultMessage,
     })
   })
+
+  test('should return reassignment state', () => {
+    expect(fn(CaseState.MAIN_HEARING, false, CaseType.INDICTMENT)).toEqual({
+      color: 'blue',
+      text: m.reassignment.defaultMessage,
+    })
+  })
 })

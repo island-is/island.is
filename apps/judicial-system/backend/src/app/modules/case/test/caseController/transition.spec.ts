@@ -114,6 +114,7 @@ describe('CaseController - Transition', () => {
       ${CaseTransition.DELETE}            | ${CaseState.RECEIVED}                     | ${CaseState.DELETED}
       ${CaseTransition.REOPEN}            | ${CaseState.ACCEPTED}                     | ${CaseState.RECEIVED}
       ${CaseTransition.RETURN_INDICTMENT} | ${CaseState.RECEIVED}                     | ${CaseState.DRAFT}
+      ${CaseTransition.REDISTRIBUTE}      | ${CaseState.RECEIVED}                     | ${CaseState.MAIN_HEARING}
     `.describe(
     '$transition $oldState case transitioning to $newState case',
     ({ transition, oldState, newState }) => {
@@ -191,6 +192,8 @@ describe('CaseController - Transition', () => {
                 transition === CaseTransition.REOPEN ? null : undefined,
               courtRecordSignatureDate:
                 transition === CaseTransition.REOPEN ? null : undefined,
+              judgeId:
+                transition === CaseTransition.REDISTRIBUTE ? null : undefined,
             },
             { where: { id: caseId }, transaction },
           )
