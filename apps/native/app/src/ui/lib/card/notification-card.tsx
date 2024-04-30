@@ -63,21 +63,19 @@ const Date = styled.View`
 `
 
 interface CardProps {
-  id: string
+  id: number
   icon?: ImageSourcePropType | React.ReactNode
-  category?: string
   date?: Date
   title: string
   message: string
   unread?: boolean
   actions?: Array<{ text: string; onPress(): void }>
-  onPress(id: string): void
+  onPress(id: number): void
 }
 
 export function NotificationCard({
   id,
   onPress,
-  category,
   title,
   message,
   date,
@@ -94,14 +92,14 @@ export function NotificationCard({
       <Cell>
         {icon && isValidElement(icon) ? (
           icon
-        ) : (
+        ) : icon ? (
           <Icon unread={unread}>
             <Image
-              source={1 as ImageSourcePropType}
+              source={icon as ImageSourcePropType}
               style={{ width: 16, height: 16 }}
             />
           </Icon>
-        )}
+        ) : null}
         <Container>
           <Row>
             <Title>

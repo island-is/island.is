@@ -59,6 +59,7 @@
     "expo-notifications": "0.17.0",
     "intl": "1.2.5",
     "lodash": "4.17.21",
+    "path-to-regexp": "6.2.2",
     "react": "18.2.0",
     "react-intl": "5.20.12",
     "react-native": "0.71.1",
