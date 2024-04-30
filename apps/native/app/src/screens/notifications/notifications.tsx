@@ -22,6 +22,7 @@ import {
   GetUserNotificationsQuery,
   Notification,
   useGetUserNotificationsQuery,
+  useMarkAllNotificationsAsSeenMutation,
   useMarkUserNotificationAsReadMutation,
 } from '../../graphql/types/schema'
 
@@ -59,16 +60,23 @@ export const NotificationsScreen: NavigationFunctionComponent = ({
   })
 
   const [markUserNotificationAsRead] = useMarkUserNotificationAsReadMutation()
+  const [markAllUserNotificationsAsSeen] =
+    useMarkAllNotificationsAsSeenMutation()
+
+  // On mount, mark all notifications as seen
+  useEffect(() => {
+    markAllUserNotificationsAsSeen()
+  }, [])
+
+  useEffect(() => {
+    dismissAllNotificationsAsync()
+  })
 
   const onNotificationPress = useCallback((notification: Notification) => {
     // Mark notification as read and seen
     markUserNotificationAsRead({ variables: { id: notification.id } })
     navigateToNotification(notification, componentId)
   }, [])
-
-  useEffect(() => {
-    dismissAllNotificationsAsync()
-  })
 
   const SkeletonItem = () => {
     const theme = useTheme()
