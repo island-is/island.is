@@ -49,6 +49,7 @@ describe('getCasesQueryFilter', () => {
             CaseState.ACCEPTED,
             CaseState.REJECTED,
             CaseState.DISMISSED,
+            CaseState.MAIN_HEARING,
           ],
         },
         {
@@ -104,6 +105,7 @@ describe('getCasesQueryFilter', () => {
             CaseState.ACCEPTED,
             CaseState.REJECTED,
             CaseState.DISMISSED,
+            CaseState.MAIN_HEARING,
           ],
         },
         {
@@ -176,6 +178,7 @@ describe('getCasesQueryFilter', () => {
                       CaseState.ACCEPTED,
                       CaseState.REJECTED,
                       CaseState.DISMISSED,
+                      CaseState.MAIN_HEARING,
                     ],
                   },
                 ],
@@ -224,6 +227,7 @@ describe('getCasesQueryFilter', () => {
               CaseState.ACCEPTED,
               CaseState.REJECTED,
               CaseState.DISMISSED,
+              CaseState.MAIN_HEARING,
             ],
           },
         ],

@@ -46,4 +46,10 @@ export const tagCaseState = defineMessages({
     defaultMessage: 'Óþekkt',
     description: 'Notað sem merki þegar mál í stöðu "Óþekkt" í málalista',
   },
+  reassignment: {
+    id: 'judicial.system.core:tag_case_state.reassignment',
+    defaultMessage: 'Endurúthlutun',
+    description:
+      'Notað sem merki þegar mál í stöðu "Endurúthlutun" í málalista',
+  },
 })
