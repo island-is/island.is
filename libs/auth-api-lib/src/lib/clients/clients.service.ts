@@ -29,7 +29,8 @@ import { ClientSecretDTO } from './dto/client-secret.dto'
 import { ClientsTranslationService } from './clients-translation.service'
 import { BulkCreateOptions, DestroyOptions } from 'sequelize'
 import { ClientDelegationType } from './models/client-delegation-type.model'
-import { AuthDelegationType } from 'delegation'
+import { AuthDelegationProvider, AuthDelegationType } from 'delegation'
+import { DelegationTypeModel } from '../delegations/models/delegation-type.model'
 
 @Injectable()
 export class ClientsService {
@@ -52,6 +53,8 @@ export class ClientsService {
     private clientClaim: typeof ClientClaim,
     @InjectModel(ClientDelegationType)
     private readonly clientDelegationType: typeof ClientDelegationType,
+    @InjectModel(DelegationTypeModel)
+    private readonly delegationTypeModel: typeof DelegationTypeModel,
     @InjectModel(ClientPostLogoutRedirectUri)
     private clientPostLogoutUri: typeof ClientPostLogoutRedirectUri,
 
@@ -678,13 +681,45 @@ export class ClientsService {
       )
     }
 
-    if (delegationTypes.length === 0) {
-      return []
+    // Support for new supportedDelegationTypes array
+    const delegationTypesToAdd: string[] = delegationTypes
+
+    // When using boolean fields to add support for delegation types, also add to client_delegation_types table
+    if (delegationTypesToAdd.length === 0) {
+      delegationTypesToAdd.push(
+        ...[
+          supportsCustomDelegation ? AuthDelegationType.Custom : '',
+          supportsLegalGuardians ? AuthDelegationType.LegalGuardian : '',
+          supportsProcuringHolders ? AuthDelegationType.ProcurationHolder : '',
+        ].filter(Boolean),
+      )
+
+      if (supportsPersonalRepresentatives) {
+        const personalRepresentativeDelegationTypes =
+          await this.delegationTypeModel.findAll({
+            where: {
+              provider: AuthDelegationProvider.PersonalRepresentativeRegistry,
+            },
+          })
+
+        delegationTypesToAdd.push(
+          ...personalRepresentativeDelegationTypes.map(
+            (delegationType) => delegationType.id,
+          ),
+        )
+      }
     }
 
-    return this.clientDelegationType.bulkCreate(
-      delegationTypes.map((delegationType) => ({ clientId, delegationType })),
-      options,
+    return Promise.all(
+      delegationTypesToAdd.map((delegationType) =>
+        this.clientDelegationType.upsert(
+          {
+            clientId,
+            delegationType,
+          },
+          options,
+        ),
+      ),
     )
   }
 
@@ -705,7 +740,7 @@ export class ClientsService {
     }
     options: DestroyOptions
   }) {
-    // support for old boolean fields
+    // Support for old boolean fields
     const supportsCustomDelegation = delegationTypes.includes(
       AuthDelegationType.Custom,
     )
@@ -727,6 +762,7 @@ export class ClientsService {
       ? false
       : delegationBooleanTypes.supportsPersonalRepresentatives
 
+    // Update boolean fields in client table
     if (
       supportsCustomDelegation !== undefined ||
       supportsLegalGuardians !== undefined ||
@@ -749,12 +785,41 @@ export class ClientsService {
       )
     }
 
-    if (delegationTypes.length === 0) {
-      return []
+    // Support for new supportedDelegationTypes array
+    const delegationTypesToRemove: string[] = delegationTypes
+
+    // When using boolean fields to remove support for delegation types, also remove from client_delegation_types table
+    if (delegationTypesToRemove.length === 0) {
+      delegationTypesToRemove.push(
+        ...[
+          supportsCustomDelegation === false ? AuthDelegationType.Custom : '',
+          supportsLegalGuardians === false
+            ? AuthDelegationType.LegalGuardian
+            : '',
+          supportsProcuringHolders === false
+            ? AuthDelegationType.ProcurationHolder
+            : '',
+        ].filter(Boolean),
+      )
+
+      if (supportsPersonalRepresentatives === false) {
+        const personalRepresentativeDelegationTypes =
+          await this.delegationTypeModel.findAll({
+            where: {
+              provider: AuthDelegationProvider.PersonalRepresentativeRegistry,
+            },
+          })
+
+        delegationTypesToRemove.push(
+          ...personalRepresentativeDelegationTypes.map(
+            (delegationType) => delegationType.id,
+          ),
+        )
+      }
     }
 
     return Promise.all(
-      delegationTypes.map((delegationType) =>
+      delegationTypesToRemove.map((delegationType) =>
         this.clientDelegationType.destroy({
           ...options,
           where: {
