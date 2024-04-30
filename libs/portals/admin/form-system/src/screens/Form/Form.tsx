@@ -1,5 +1,5 @@
 import { useLoaderData } from 'react-router-dom'
-import { useReducer, useState } from 'react'
+import { useCallback, useEffect, useMemo, useReducer, useState } from 'react'
 import { NavbarSelectStatus } from '../../lib/utils/interfaces'
 import { FormLoaderResponse } from './Form.loader'
 import { ControlState, controlReducer } from '../../hooks/controlReducer'
@@ -43,14 +43,6 @@ const Form = () => {
   const [updateInput] = useFormSystemUpdateInputMutation()
   const [updateForm] = useFormSystemUpdateFormMutation()
   const [updateFormSettings] = useFormSystemUpdateFormSettingsMutation()
-  const updateActiveItem = (updatedActiveItem?: ActiveItem) =>
-    updateActiveItemFn(
-      control.activeItem,
-      updateStep,
-      updateGroup,
-      updateInput,
-      updatedActiveItem,
-    )
 
   const initialControl: ControlState = {
     activeItem: {
@@ -58,22 +50,44 @@ const Form = () => {
       data: inSettings
         ? baseSettingsStep
         : removeTypename(form?.stepsList)?.find(
-            (s: FormSystemStep) => s?.type === 'Innsláttur',
-          ) ?? defaultStep,
+          (s: FormSystemStep) => s?.type === 'Innsláttur',
+        ) ?? defaultStep,
     },
     activeListItem: null,
     form: removeTypename(form) as FormSystemForm,
   }
-
   const [control, controlDispatch] = useReducer(controlReducer, initialControl)
 
-  const updateDragAndDrop = (type: ItemType) =>
-    updateDnd(type, control, updateForm)
+  const updateActiveItem = useCallback(
+    (updatedActiveItem?: ActiveItem) =>
+      updateActiveItemFn(
+        control.activeItem,
+        updateStep,
+        updateGroup,
+        updateInput,
+        updatedActiveItem,
+      ),
+    [control.activeItem, updateStep, updateGroup, updateInput]
+  )
 
-  const updateSettings = (updatedForm?: FormSystemForm) =>
-    us(control, updatedForm, updateFormSettings)
-  const formUpdate = (updatedForm?: FormSystemForm) =>
-    entireFormUpdate(control, updateForm, updatedForm)
+  const updateDragAndDrop = useMemo(() => ((type: ItemType) =>
+    updateDnd(type, control, updateForm)), [control, updateForm])
+
+  const updateSettings = useMemo(
+    () => (updatedForm?: FormSystemForm) =>
+      us(control, updatedForm, updateFormSettings),
+    [control, updateFormSettings]
+  )
+
+  const formUpdate = useMemo(
+    () => (updatedForm?: FormSystemForm) =>
+      entireFormUpdate(control, updateForm, updatedForm),
+    [control, updateForm]
+  )
+
+  useEffect(() => {
+    console.log('form', form)
+  }, [])
 
   const context: IControlContext = {
     control,
