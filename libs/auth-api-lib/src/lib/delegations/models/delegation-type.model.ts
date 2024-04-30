@@ -1,4 +1,4 @@
-import type {
+import {
   CreationOptional,
   InferAttributes,
   InferCreationAttributes,
@@ -12,9 +12,12 @@ import {
   PrimaryKey,
   Table,
   UpdatedAt,
+  BelongsToMany,
 } from 'sequelize-typescript'
 
 import { DelegationProviderModel } from './delegation-provider.model'
+import { ClientDelegationType } from '../../clients/models/client-delegation-type.model'
+import { Client } from '../../clients/models/client.model'
 
 @Table({
   tableName: 'delegation_type',
@@ -50,6 +53,9 @@ export class DelegationTypeModel extends Model<
     allowNull: false,
   })
   description!: string
+
+  @BelongsToMany(() => Client, () => ClientDelegationType)
+  clients!: Client[]
 
   @CreatedAt
   readonly created!: CreationOptional<Date>

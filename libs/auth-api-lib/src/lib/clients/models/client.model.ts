@@ -9,6 +9,7 @@ import {
   UpdatedAt,
   PrimaryKey,
   HasMany,
+  BelongsToMany,
 } from 'sequelize-typescript'
 import { ApiProperty } from '@nestjs/swagger'
 import { ClientAllowedScope } from './client-allowed-scope.model'
@@ -21,6 +22,7 @@ import { ClientGrantType } from './client-grant-type.model'
 import { ClientClaim } from './client-claim.model'
 import { Domain } from '../../resources/models/domain.model'
 import { ClientDelegationType } from './client-delegation-type.model'
+import { DelegationTypeModel } from '../../delegations/models/delegation-type.model'
 
 @Table({
   tableName: 'client',
@@ -550,6 +552,9 @@ export class Client extends Model {
 
   @HasMany(() => ClientDelegationType)
   supportedDelegationTypes?: ClientDelegationType[]
+
+  @BelongsToMany(() => DelegationTypeModel, () => ClientDelegationType)
+  delegationTypes?: DelegationTypeModel[]
 
   // Signing algorithm for identity token. If empty, will use the server default signing algorithm.
   // readonly allowedIdentityTokenSigningAlgorithms
