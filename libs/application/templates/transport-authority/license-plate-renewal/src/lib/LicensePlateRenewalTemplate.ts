@@ -129,30 +129,9 @@ const template: ApplicationTemplate<
           ],
         },
         on: {
-          [DefaultEvents.SUBMIT]: [
-            {
-              target: States.COMPLETED,
-              cond: isOver64(true),
-            },
-            {
-              target: States.PAYMENT,
-              cond: isOver64(false),
-            },
-          ],
+          [DefaultEvents.SUBMIT]: { target: States.COMPLETED },
         },
       },
-      [States.PAYMENT]: buildPaymentState({
-        organizationId: InstitutionNationalIds.SAMGONGUSTOFA,
-        chargeItemCodes: getChargeItemCodes,
-        extraData: getExtraData,
-        submitTarget: States.COMPLETED,
-        onExit: [
-          defineTemplateApi({
-            action: ApiActions.submitApplication,
-            triggerEvent: DefaultEvents.SUBMIT,
-          }),
-        ],
-      }),
       [States.COMPLETED]: {
         meta: {
           name: 'Completed',

@@ -123,6 +123,6 @@ export class LicensePlateRenewalService extends BaseTemplateApiService {
     const regno = answers?.pickPlate?.regno
 
     // Submit the application
-    await this.vehiclePlateRenewalClient.renewPlateOwnership(auth, regno)
+    // await this.vehiclePlateRenewalClient.renewPlateOwnership(auth, regno)
   }
 }

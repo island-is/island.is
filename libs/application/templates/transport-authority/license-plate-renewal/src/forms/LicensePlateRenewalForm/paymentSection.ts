@@ -6,29 +6,33 @@ import {
   buildPaymentChargeOverviewField,
 } from '@island.is/application/core'
 import { DefaultEvents } from '@island.is/application/types'
-import { payment } from '../../lib/messages'
+// import { payment } from '../../lib/messages'
 import { getChargeItemCodes } from '../../utils'
 
 export const paymentSection = buildSection({
   id: 'payment',
-  title: payment.general.sectionTitle,
+  title: 'test44444',
   condition: () => {
-    console.log('here')
+    console.log('OMG')
     return false
   },
   children: [
     buildMultiField({
       id: 'paymentMultiField',
-      title: payment.general.pageTitle,
+      title: 'test11111',
+      condition: () => {
+        console.log('here')
+        return false
+      },
       space: 1,
       children: [
         buildPaymentChargeOverviewField({
           id: 'uiForms.paymentChargeOverviewMultifield',
           title: '',
-          forPaymentLabel: payment.paymentChargeOverview.forPayment,
-          totalLabel: payment.paymentChargeOverview.total,
-          getSelectedChargeItems: (_) =>
-            getChargeItemCodes().map((x) => ({
+          forPaymentLabel: 'test22222',
+          totalLabel: 'test3333',
+          getSelectedChargeItems: (application) =>
+            getChargeItemCodes(application).map((x) => ({
               chargeItemCode: x,
             })),
         }),
@@ -40,12 +44,12 @@ export const paymentSection = buildSection({
         buildSubmitField({
           id: 'submit',
           placement: 'footer',
-          title: payment.confirmation.confirm,
+          title: 'test',
           refetchApplicationAfterSubmit: true,
           actions: [
             {
               event: DefaultEvents.SUBMIT,
-              name: payment.confirmation.confirm,
+              name: 'test',
               type: 'primary',
             },
           ],

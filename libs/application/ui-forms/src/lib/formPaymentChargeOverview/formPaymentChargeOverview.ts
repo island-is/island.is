@@ -35,8 +35,8 @@ type props = {
  */
 export const buildFormPaymentChargeOverviewSection = (props: props) =>
   buildSection({
-    condition: props.condition,
     id: 'uiForms.paymentChargeOverviewSection',
+    condition: props.condition,
     title: props.sectionTitle
       ? props.sectionTitle
       : paymentChargeOverview.information.sectionTitle,
