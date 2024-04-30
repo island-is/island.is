@@ -2,14 +2,14 @@ import React, { useCallback, useContext, useState } from 'react'
 import { useIntl } from 'react-intl'
 import { useRouter } from 'next/router'
 
-import { Box, RadioButton, Section, Text } from '@island.is/island-ui/core'
+import { Box, RadioButton, toast } from '@island.is/island-ui/core'
 import * as constants from '@island.is/judicial-system/consts'
 import {
   isCompletedCase,
   isDefenceUser,
   isDistrictCourtUser,
 } from '@island.is/judicial-system/types'
-import { core, titles } from '@island.is/judicial-system-web/messages'
+import { core, errors, titles } from '@island.is/judicial-system-web/messages'
 import {
   BlueBox,
   CourtCaseInfo,
@@ -20,6 +20,7 @@ import {
   IndictmentsLawsBrokenAccordionItem,
   InfoCardActiveIndictment,
   InfoCardClosedIndictment,
+  Modal,
   PageHeader,
   PageLayout,
   PageTitle,
@@ -44,8 +45,10 @@ const IndictmentOverview = () => {
     useContext(FormContext)
   const { formatMessage } = useIntl()
   const lawsBroken = useIndictmentsLawsBroken(workingCase)
-  const { setAndSendDefendantToServer } = useDefendants()
-  const [modalVisible, setModalVisible] = useState<boolean>(false)
+  const { updateDefendant, updateDefendantState } = useDefendants()
+  const [modalVisible, setModalVisible] = useState<
+    'RETURN_INDICTMENT' | 'SEND_TO_PUBLIC_PROSECUTOR'
+  >()
 
   const caseIsClosed = isCompletedCase(workingCase.state)
 
@@ -107,6 +110,7 @@ const IndictmentOverview = () => {
           </Box>
         )}
         {caseIsClosed &&
+          isDistrictCourtUser(user) &&
           workingCase.defendants?.map((defendant, index) => {
             return (
               <Box
@@ -134,7 +138,7 @@ const IndictmentOverview = () => {
                         ServiceRequirement.NOT_APPLICABLE
                       }
                       onChange={() => {
-                        setAndSendDefendantToServer(
+                        updateDefendantState(
                           {
                             defendantId: defendant.id,
                             caseId: workingCase.id,
@@ -160,7 +164,7 @@ const IndictmentOverview = () => {
                         ServiceRequirement.REQUIRED
                       }
                       onChange={() => {
-                        setAndSendDefendantToServer(
+                        updateDefendantState(
                           {
                             defendantId: defendant.id,
                             caseId: workingCase.id,
@@ -182,7 +186,7 @@ const IndictmentOverview = () => {
                       ServiceRequirement.NOT_REQUIRED
                     }
                     onChange={() => {
-                      setAndSendDefendantToServer(
+                      updateDefendantState(
                         {
                           defendantId: defendant.id,
                           caseId: workingCase.id,
@@ -215,18 +219,60 @@ const IndictmentOverview = () => {
             actionButtonText={formatMessage(strings.returnIndictmentButtonText)}
             actionButtonColorScheme={'destructive'}
             actionButtonIsDisabled={!workingCase.courtCaseNumber}
-            onActionButtonClick={() => setModalVisible(true)}
+            onActionButtonClick={() => setModalVisible('RETURN_INDICTMENT')}
           />
         </FormContentContainer>
       )}
-      {isDistrictCourtUser(user) && modalVisible && (
+      {caseIsClosed && isDistrictCourtUser(user) && (
+        <FormContentContainer isFooter>
+          <FormFooter
+            nextButtonIcon="arrowForward"
+            previousUrl={`${constants.CASES_ROUTE}`}
+            nextIsLoading={isLoadingWorkingCase}
+            onNextButtonClick={async () => {
+              const promises = workingCase.defendants
+                ? workingCase.defendants.map(async (defendant) => {
+                    const updatedDefendant = await updateDefendant({
+                      caseId: workingCase.id,
+                      defendantId: defendant.id,
+                      serviceRequirement: defendant.serviceRequirement,
+                    })
+
+                    return updatedDefendant
+                  })
+                : []
+
+              const allDefendantsUpdated = await Promise.all(promises)
+
+              if (allDefendantsUpdated.length > 0) {
+                setModalVisible('SEND_TO_PUBLIC_PROSECUTOR')
+              } else {
+                toast.error(formatMessage(errors.updateDefendant))
+              }
+            }}
+            nextButtonText={formatMessage(
+              strings.sendToPublicProsecutorModalNextButtonText,
+            )}
+          />
+        </FormContentContainer>
+      )}
+      {isDistrictCourtUser(user) && modalVisible === 'RETURN_INDICTMENT' && (
         <ReturnIndictmentModal
           workingCase={workingCase}
           setWorkingCase={setWorkingCase}
-          onClose={() => setModalVisible(false)}
+          onClose={() => setModalVisible(undefined)}
           onComplete={() => router.push(constants.CASES_ROUTE)}
         />
       )}
+      {isDistrictCourtUser(user) &&
+        modalVisible === 'SEND_TO_PUBLIC_PROSECUTOR' && (
+          <Modal
+            title={formatMessage(strings.sendToPublicProsecutorModalTitle)}
+            text={formatMessage(strings.sendToPublicProsecutorModalText)}
+            primaryButtonText={formatMessage(core.closeModal)}
+            onPrimaryButtonClick={() => setModalVisible(undefined)}
+          />
+        )}
     </PageLayout>
   )
 }

@@ -35,4 +35,22 @@ export const strings = defineMessages({
     description:
       'Notaður sem texti í valmöguleika fyrir það þegar birting dóms á ekki við.',
   },
+  sendToPublicProsecutorModalTitle: {
+    id: 'judicial.system.core:indictment_overview.send_to_public_prosecutor_modal_title',
+    defaultMessage: 'Mál hefur verið sent til Ríkissaksóknara',
+    description:
+      'Notaður sem titill á staðfestingarglugga um að mál hafi verið sent til Ríkissaksóknara.',
+  },
+  sendToPublicProsecutorModalText: {
+    id: 'judicial.system.core:indictment_overview.send_to_public_prosecutor_modal_text',
+    defaultMessage: 'Gögn hafa verið send til Ríkissaksóknara til yfirlesturs',
+    description:
+      'Notaður sem texti í staðfestingarglugga um að mál hafi verið sent til Ríkissaksóknara.',
+  },
+  sendToPublicProsecutorModalNextButtonText: {
+    id: 'judicial.system.core:indictment_overview.send_to_public_prosecutor_modal_next_button_text',
+    defaultMessage: 'Senda til ákæruvalds',
+    description:
+      'Notaður sem texti á takka í staðfestingarglugga um að mál hafi verið sent til Ríkissaksóknara.',
+  },
 })
