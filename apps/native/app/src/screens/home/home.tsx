@@ -30,7 +30,6 @@ import { isAndroid } from '../../utils/devices'
 import { getRightButtons } from '../../utils/get-main-root'
 import { testIDs } from '../../utils/test-ids'
 import { ApplicationsModule } from './applications-module'
-import { NotificationsModule } from './notifications-module'
 import { OnboardingModule } from './onboarding-module'
 import { VehiclesModule } from './vehicles-module'
 
@@ -168,10 +167,6 @@ export const MainHomeScreen: NavigationFunctionComponent = ({
           component: <VehiclesModule />,
         }
       : null,
-    {
-      id: 'notifications',
-      component: <NotificationsModule componentId={componentId} />,
-    },
   ].filter(Boolean) as Array<{
     id: string
     component: React.JSX.Element
