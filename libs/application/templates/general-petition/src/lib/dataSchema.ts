@@ -9,12 +9,13 @@ const FileSchema = z.object({
 
 const isValidPhoneNumber = (phoneNumber: string) => {
   const phone = parsePhoneNumberFromString(phoneNumber, 'IS')
-  return phone && phone.isValid()
+  return phone && phone.isValid() && phoneNumber.length > 0
 }
 
 const emailRegex =
   /^[\w!#$%&'*+/=?`{|}~^-]+(?:\.[\w!#$%&'*+/=?`{|}~^-]+)*@(?:[A-Z0-9-]+\.)+[A-Z]{2,6}$/i
-export const isValidEmail = (value: string) => emailRegex.test(value)
+export const isValidEmail = (value: string): boolean =>
+  emailRegex.test(value) && value.length > 0
 
 export const GeneralPetitionSchema = z.object({
   approveTermsAndConditions: z
@@ -50,14 +51,18 @@ export const GeneralPetitionSchema = z.object({
     })
     .refine(
       ({ dateFrom, dateTil }) =>
-        !dateFrom || !dateTil || new Date(dateFrom) <= new Date(dateTil),
+        !dateFrom || !dateTil || new Date(dateFrom) < new Date(dateTil),
       {
         message: m.validationTilBeforeFrom.defaultMessage as string,
         path: ['dateTil'],
       },
     ),
-  phone: z.string().refine((v) => isValidPhoneNumber(v)),
-  email: z.string().refine((v) => isValidEmail(v)),
+  phone: z.string().refine((v) => isValidPhoneNumber(v), {
+    message: m.validationPhone.defaultMessage as string,
+  }),
+  email: z.string().refine((v) => isValidEmail(v), {
+    message: m.validationEmail.defaultMessage as string,
+  }),
 })
 
 export type File = z.TypeOf<typeof FileSchema>
