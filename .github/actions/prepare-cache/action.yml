@@ -79,7 +79,7 @@ runs:
       uses: ./.github/actions/cache
       with:
         path: node_modules
-        key: ${{ steps.set-cache-keys.outputs.node-modules-key }}-yarn
+        key: ${{ steps.set-cache-keys.outputs.node-modules-key }}
 
     - name: Cache for Mobile NodeJS dependencies - host OS
       id: mobile-node-modules
@@ -87,7 +87,7 @@ runs:
       uses: ./.github/actions/cache
       with:
         path: apps/native/app/node_modules
-        key: ${{ steps.set-cache-keys.outputs.mobile-node-modules-key }}-yarn
+        key: ${{ steps.set-cache-keys.outputs.mobile-node-modules-key }}
 
     - name: Check node-modules cache success
       id: check-node-modules-cache-success
