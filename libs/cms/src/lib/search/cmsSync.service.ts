@@ -34,7 +34,6 @@ import { EventSyncService } from './importers/event.service'
 import { ManualSyncService } from './importers/manual.service'
 import { ManualChapterItemSyncService } from './importers/manualChapterItem.service'
 import { CustomPageSyncService } from './importers/customPage.service'
-import { GenericListSyncService } from './importers/genericList.service'
 import { GenericListItemSyncService } from './importers/genericListItem.service'
 
 export interface PostSyncOptions {
