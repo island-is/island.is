@@ -594,7 +594,7 @@ export const assets = buildSection({
       ],
     }),
     buildSubSection({
-      id: 'assetOverview1',
+      id: 'assetOverview',
       title: m.assetOverview,
       children: [
         buildCustomField({
@@ -606,17 +606,17 @@ export const assets = buildSection({
         }),
       ],
     }),
-    buildSubSection({
-      id: 'assetOverview2',
-      title: m.assetOverview,
-      children: [
-        buildMultiField({
-          id: 'assetOverview',
-          title: m.assetOverview,
-          description: m.assetOverviewDescription,
-          children: [...overviewAssets],
-        }),
-      ],
-    }),
+    // buildSubSection({
+    //   id: 'assetOverviewOld',
+    //   title: m.assetOverview,
+    //   children: [
+    //     buildMultiField({
+    //       id: 'assetOverview',
+    //       title: m.assetOverview,
+    //       description: m.assetOverviewDescription,
+    //       children: [...overviewAssets],
+    //     }),
+    //   ],
+    // }),
   ],
 })

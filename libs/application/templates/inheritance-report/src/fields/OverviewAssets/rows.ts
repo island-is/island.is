@@ -120,6 +120,14 @@ export const getInventoryDataRow = (answers: FormValue): RowType[] => {
 
   const deceasedShare = valueToNumber(values.deceasedShare)
 
+  if (values?.info) {
+    items.push({
+      title: m.moneyText,
+      value: values?.info,
+      type: 'info',
+    })
+  }
+
   if (hasYes(values.deceasedShareEnabled)) {
     items.push({
       title: m.deceasedShare,
@@ -129,45 +137,82 @@ export const getInventoryDataRow = (answers: FormValue): RowType[] => {
 
   return [
     {
-      title: m.inventoryTextField,
-      value: values?.info,
       items,
     },
   ]
 }
 
-// const isForeign = account.foreignBankAccount?.length
+export const getClaimsDataRow = (answers: FormValue): RowType[] => {
+  const values = (answers.assets as unknown as EstateAssets)?.claims?.data
 
-// const description = [
-//   `${m.bankAccountCapital.defaultMessage}: ${formatCurrency(
-//     String(valueToNumber(account.propertyValuation)),
-//   )}`,
-//   `${
-//     m.bankAccountPenaltyInterestRates.defaultMessage
-//   }: ${formatCurrency(
-//     String(valueToNumber(account.exchangeRateOrInterest)),
-//   )}`,
-//   `${m.bankAccountForeign.defaultMessage}: ${
-//     isForeign ? m.yes.defaultMessage : m.no.defaultMessage
-//   }`,
-// ]
+  const data = (values ?? []).map((item) => {
+    const propertyValuation = roundedValueToNumber(item.propertyValuation)
 
-// const deceasedShare = valueToNumber(account.deceasedShare)
+    const items: RowItemsType = [
+      {
+        title: m.claimsAmount,
+        value: formatCurrency(String(valueToNumber(item.value))),
+      },
+    ]
 
-// if (hasYes(account.deceasedShareEnabled)) {
-//   description.push(
-//     m.deceasedShare.defaultMessage + `: ${String(deceasedShare)}%`,
-//   )
-// }
+    const deceasedShare = valueToNumber(item.deceasedShare)
 
-// return {
-//   titleRequired: false,
-//   title: isForeign
-//     ? account.assetNumber
-//     : formatBankInfo(account.assetNumber ?? ''),
-//   description,
-// }
-// }),
+    if (hasYes(item.deceasedShareEnabled)) {
+      items.push({
+        title: m.deceasedShare,
+        value: `${String(deceasedShare)}%`,
+      })
+    }
+
+    return {
+      title: item.description,
+      value: formatCurrency(String(propertyValuation)),
+      items,
+    }
+  })
+
+  return data
+}
+
+export const getStocksDataRow = (answers: FormValue): RowType[] => {
+  const values = (answers.assets as unknown as EstateAssets)?.stocks?.data
+
+  const data = (values ?? []).map((item) => {
+    // const propertyValuation = roundedValueToNumber(item.amount)
+
+    const items: RowItemsType = [
+      {
+        title: m.nationalId,
+        value: item.nationalId ?? '-',
+      },
+      {
+        title: m.stocksFaceValue,
+        value: formatCurrency(String(valueToNumber(item.amount))),
+      },
+      {
+        title: m.stocksRateOfChange,
+        value: item.exchangeRateOrInterest,
+      },
+    ]
+
+    const deceasedShare = valueToNumber(item.deceasedShare)
+
+    if (hasYes(item.deceasedShareEnabled)) {
+      items.push({
+        title: m.deceasedShare,
+        value: `${String(deceasedShare)}%`,
+      })
+    }
+
+    return {
+      title: item.description,
+      value: formatCurrency(String(valueToNumber(item.value))),
+      items,
+    }
+  })
+
+  return data
+}
 
 export const getBankAccountsDataRow = (answers: FormValue): RowType[] => {
   const values = (answers.assets as unknown as EstateAssets)?.bankAccounts?.data
@@ -178,17 +223,15 @@ export const getBankAccountsDataRow = (answers: FormValue): RowType[] => {
     const isForeign = item.foreignBankAccount?.length
 
     const items: RowItemsType = [
-      {
-        title: m.estateBankInfo,
-        value: item.assetNumber?.toUpperCase() ?? '',
-      },
-      {
-        title: m.bankAccountCapital,
-        value: formatCurrency(String(propertyValuation)),
-      },
+      // {
+      //   title: m.bankAccountCapital,
+      //   value: formatCurrency(String(propertyValuation)),
+      // },
       {
         title: m.bankAccountPenaltyInterestRates,
-        value: String(valueToNumber(item.exchangeRateOrInterest)),
+        value: formatCurrency(
+          String(valueToNumber(item.exchangeRateOrInterest)),
+        ),
       },
     ]
 
@@ -211,4 +254,62 @@ export const getBankAccountsDataRow = (answers: FormValue): RowType[] => {
   })
 
   return data
+}
+
+export const getOtherAssetsDataRow = (answers: FormValue): RowType[] => {
+  const values = (answers.assets as unknown as EstateAssets)?.otherAssets?.data
+
+  const items: RowItemsType = []
+
+  const data = (values ?? []).map((item) => {
+    const value = roundedValueToNumber(item.value)
+
+    const deceasedShare = valueToNumber(item.deceasedShare)
+
+    if (hasYes(item.deceasedShareEnabled)) {
+      items.push({
+        title: m.deceasedShare,
+        value: `${String(deceasedShare)}%`,
+      })
+    }
+
+    return {
+      title: item.info,
+      value: formatCurrency(String(value)),
+      items,
+    }
+  })
+
+  return data
+}
+
+export const getMoneyDataRow = (answers: FormValue): RowType[] => {
+  const values = (answers.assets as unknown as EstateAssets)?.money
+
+  const items: RowItemsType = []
+
+  const deceasedShare = valueToNumber(values.deceasedShare)
+
+  if (values?.info) {
+    items.push({
+      title: m.moneyText,
+      value: values?.info,
+      type: 'info',
+    })
+  }
+
+  if (hasYes(values.deceasedShareEnabled)) {
+    items.push({
+      title: m.deceasedShare,
+      value: `${String(deceasedShare)}%`,
+    })
+  }
+
+  return [
+    {
+      title: m.totalValue,
+      value: formatCurrency(String(values?.value)),
+      items,
+    },
+  ]
 }
