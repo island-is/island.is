@@ -147,7 +147,7 @@ export const WalletPassScreen: NavigationFunctionComponent<{
   const res = useGetLicenseQuery({
     variables: {
       input: {
-        licenseType: item?.license.type ?? '',
+        licenseType: item?.license.type ?? id,
       },
     },
   })
@@ -337,6 +337,17 @@ export const WalletPassScreen: NavigationFunctionComponent<{
 
     return (
       <Button title="Add to Wallet" onPress={onAddPkPass} color="#111111" />
+    )
+  }
+
+  // If we don't have an item we want to return a loading spinner for the whole screen to prevent showing the wrong license while fetching
+  if (loading && !item) {
+    return (
+      <ActivityIndicator
+        size="large"
+        color="#0061FF"
+        style={{ marginTop: theme.spacing[4] }}
+      />
     )
   }
 
