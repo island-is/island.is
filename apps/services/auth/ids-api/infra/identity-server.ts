@@ -162,7 +162,7 @@ export const serviceSetup = (services: {
       default: 2,
       min: 2,
       max: 10,
-      })
+    })
     .serviceAccount('identity-server')
     .readiness('/readiness')
     .liveness('/liveness')
