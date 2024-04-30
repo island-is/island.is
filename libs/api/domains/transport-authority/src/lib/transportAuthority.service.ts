@@ -106,7 +106,6 @@ export class TransportAuthorityApi {
         auth,
         permno,
       )
-
     return {
       isDebtLess: debtStatus.isDebtLess,
       validationErrorMessages: ownerChangeValidation?.hasError
@@ -117,6 +116,7 @@ export class TransportAuthorityApi {
         make: `${vehicle.make} ${vehicle.vehcom}`,
         color: vehicle.color,
         requireMileage: vehicle.requiresMileageRegistration,
+        mileageReading: vehicle?.mileageReadings?.[0]?.mileage || '',
       },
     }
   }
@@ -293,6 +293,7 @@ export class TransportAuthorityApi {
         make: `${vehicle.make} ${vehicle.vehcom}`,
         permno: vehicle.permno,
         requireMileage: vehicle.requiresMileageRegistration,
+        mileageReading: vehicle?.mileageReadings?.[0]?.mileage || '',
       },
     }
   }
@@ -373,6 +374,7 @@ export class TransportAuthorityApi {
         make: `${vehicleInfo.make} ${vehicleInfo.vehcom}`,
         permno: vehicleInfo.permno,
         requireMileage: vehicleInfo.requiresMileageRegistration,
+        mileageReading: vehicleInfo?.mileageReadings?.[0]?.mileage || '',
       },
     }
   }

@@ -138,6 +138,8 @@ export enum FileType {
   DOCUMENTPERIOD = 'documentPeriod',
   EMPPER = 'empper',
   EMPLOYER = 'employer',
+  EMPDOC = 'empdoc',
+  EMPDOCPER = 'empdocper',
 }
 
 export enum Languages {
@@ -155,6 +157,7 @@ export enum AttachmentTypes {
   ADOPTION = 'adoption',
   EMPLOYMENT_TERMINATION_CERTIFICATE = 'employmentTerminationCertificateFile',
   FILE = 'file',
+  CHANGE_EMPLOYER = 'changeEmployerFile',
 }
 
 export const AttachmentLabel: {
@@ -174,4 +177,6 @@ export const AttachmentLabel: {
     parentalLeaveFormMessages.attachmentScreen
       .employmentTerminationCertificateTitle,
   file: parentalLeaveFormMessages.attachmentScreen.title,
+  changeEmployerFile:
+    parentalLeaveFormMessages.attachmentScreen.changeEmployerTitle,
 }

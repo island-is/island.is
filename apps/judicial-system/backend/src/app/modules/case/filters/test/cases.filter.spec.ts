@@ -8,6 +8,7 @@ import {
   CaseType,
   completedCaseStates,
   courtOfAppealsRoles,
+  DateType,
   districtCourtRoles,
   indictmentCases,
   InstitutionType,
@@ -375,7 +376,7 @@ describe('getCasesQueryFilter', () => {
                     {
                       [Op.and]: [
                         { state: CaseState.RECEIVED },
-                        { court_date: { [Op.not]: null } },
+                        { '$dateLogs.date_type$': DateType.ARRAIGNMENT_DATE },
                       ],
                     },
                     { state: completedCaseStates },
