@@ -96,6 +96,7 @@ export const serviceSetup = (): ServiceBuilder<'services-auth-public-api'> => {
     .readiness('/health/check')
     .liveness('/liveness')
     .replicaCount({
+      scalingMagicNumber: 10,
       default: 2,
       min: 2,
       max: 10,
