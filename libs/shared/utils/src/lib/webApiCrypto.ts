@@ -58,8 +58,6 @@ export const encryptText = async (
   const ivStr = bufferToBase64(iv)
   const encryptedStr = bufferToBase64(encrypted)
 
-  console.log(encryptedStr)
-
   return ivStr + DELIMITER + encryptedStr
 }
 
