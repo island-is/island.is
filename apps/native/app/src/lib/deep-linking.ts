@@ -1,10 +1,11 @@
 import { Navigation } from 'react-native-navigation'
 import createUse from 'zustand'
 import create, { State } from 'zustand/vanilla'
+import { match, compile } from 'path-to-regexp'
 import { bundleId } from '../config'
-import { notificationsStore } from '../stores/notifications-store'
 import { ComponentRegistry, MainBottomTabs } from '../utils/component-registry'
 import { openBrowser } from './rn-island'
+import { GenericLicenseType, Notification } from '../graphql/types/schema'
 
 export type RouteCallbackArgs =
   | boolean
@@ -181,30 +182,79 @@ export function navigateTo(url: string, extraProps: any = {}) {
 }
 
 /**
- * Navigate to a notification detail screen, or its link if defined.
- * You may pass any one of its actions link if you want to go there as well.
+ * Navigate to a notification ClickActionUrl, if our mapping does not return a valid screen within the app - open a webview .
  * @param notification Notification object, requires `id` and an optional `link`
  * @param componentId use specific componentId to open web browser in
  */
 export function navigateToNotification(
-  notification: { id: string; link?: string },
+  notification: Notification,
   componentId?: string,
 ) {
-  const { id, link } = notification
-  // mark notification as read
+  const { id, message } = notification
+  const { link } = message
+
   if (id) {
-    notificationsStore.getState().actions.setRead(id)
-    const didNavigate = navigateTo(link ?? `/notification/${id}`)
-    if (!didNavigate && link) {
-      if (!componentId) {
-        // Use home tab for browser
-        Navigation.mergeOptions(MainBottomTabs, {
-          bottomTabs: {
-            currentTabIndex: 1,
-          },
-        })
+    if (link.url) {
+      const appRoute = findRoute(link.url)
+
+      if (appRoute) {
+        navigateTo(appRoute)
+      } else {
+        if (!componentId) {
+          // Use home tab for browser
+          Navigation.mergeOptions(MainBottomTabs, {
+            bottomTabs: {
+              currentTabIndex: 1,
+            },
+          })
+        }
+        openBrowser(link.url, componentId ?? ComponentRegistry.HomeScreen)
       }
-      openBrowser(link, componentId ?? ComponentRegistry.HomeScreen)
     }
   }
+  // If no link do nothing
+}
+
+const findRoute = (url: string) => {
+  // Remove trailing slash and spacess
+  const cleanLink = url.replace(/\/\s*$/, '')
+  // Remove domain
+  const path = cleanLink.replace(/https?:\/\/[^/]+/, '')
+
+  for (const [pattern, routeTemplate] of Object.entries(urlMapping)) {
+    const matcher = match(pattern, { decode: decodeURIComponent })
+    const matchResult = matcher(path)
+
+    console.log(matchResult, pattern, path, routeTemplate)
+
+    if (matchResult) {
+      const compiler = compile(routeTemplate)
+      return compiler(matchResult.params)
+    }
+  }
+  return null
+}
+
+// Map between notification link and app screen
+const urlMapping: { [key: string]: string } = {
+  '/minarsidur/postholf/:id': '/inbox/:id',
+  '/minarsidur/min-gogn/stillingar': '/settings',
+  '/minarsidur/skirteini': '/wallet',
+  '/minarsidur/skirteini/tjodskra/vegabref/:id': '/walletpassport/:id',
+  '/minarsidur/skirteini/:provider/ehic/:id': `/wallet/${GenericLicenseType.Ehic}`,
+  '/minarsidur/skirteini/:provider/veidikort/:id': `/wallet/${GenericLicenseType.HuntingLicense}`,
+  '/minarsidur/skirteini/:provider/pkort/:id': `/wallet/${GenericLicenseType.PCard}`,
+  '/minarsidur/skirteini/:provider/okurettindi/:id': `/wallet/${GenericLicenseType.DriversLicense}`,
+  '/minarsidur/skirteini/:provider/adrrettindi/:id': `/wallet/${GenericLicenseType.AdrLicense}`,
+  '/minarsidur/skirteini/:provider/vinnuvelarettindi/:id': `/wallet/${GenericLicenseType.MachineLicense}`,
+  '/minarsidur/skirteini/:provider/skotvopnaleyfi/:id': `/wallet/${GenericLicenseType.FirearmLicense}`,
+  '/minarsidur/skirteini/:provider/ororkuskirteini/:id': `/wallet/${GenericLicenseType.DisabilityLicense}`,
+  '/minarsidur/eignir/fasteignir': '/assets',
+  '/minarsidur/eignir/fasteignir/:id': '/asset/:id',
+  '/minarsidur/fjarmal/stada': '/finance',
+  '/minarsidur/eignir/okutaeki/min-okutaeki': '/vehicles',
+  '/minarsidur/eignir/okutaeki/min-okutaeki/:id': '/vehicle/:id',
+  '/minarsidur/eignir/okutaeki/min-okutaeki/:id/kilometrastada':
+    '/vehicle-mileage/:id',
+  '/minarsidur/loftbru': '/air-discount',
 }
