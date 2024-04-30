@@ -1,4 +1,5 @@
 import React, { useEffect, useState } from 'react'
+import { useIntl } from 'react-intl'
 import compareAsc from 'date-fns/compareAsc'
 
 import { Box, Input } from '@island.is/island-ui/core'
@@ -10,9 +11,12 @@ import { NotificationType } from '@island.is/judicial-system-web/src/graphql/sch
 import { TempCase as Case } from '@island.is/judicial-system-web/src/types'
 import {
   formatDateForServer,
+  UpdateCase,
   useCase,
 } from '@island.is/judicial-system-web/src/utils/hooks'
 import { hasSentNotification } from '@island.is/judicial-system-web/src/utils/stepHelper'
+
+import { strings } from './CourtArrangements.string'
 
 interface CourtDate {
   date?: string | null
@@ -75,9 +79,10 @@ export const useCourtArrangements = (
     )
   }
 
-  const sendCourtDateToServer = () => {
+  const sendCourtDateToServer = (otherUpdates: UpdateCase[] = []) => {
     return setAndSendCaseToServer(
       [
+        ...otherUpdates,
         {
           [dateKey]: courtDate?.date
             ? {
@@ -112,6 +117,8 @@ export const CourtArrangements: React.FC<Props> = (props) => {
     dateTimeDisabled,
     courtRoomDisabled,
   } = props
+  const { formatMessage } = useIntl()
+
   const [courtRoomValue, setCourtRoomValue] = useState<string>('')
 
   const isCorrectingRuling = workingCase.notifications?.some(
@@ -140,7 +147,7 @@ export const CourtArrangements: React.FC<Props> = (props) => {
       <Input
         data-testid="courtroom"
         name="courtroom"
-        label="Dómsalur"
+        label={formatMessage(strings.courtRoomLabel)}
         autoComplete="off"
         value={courtRoomValue}
         placeholder="Skráðu inn dómsal"
