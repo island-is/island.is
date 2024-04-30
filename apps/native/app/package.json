@@ -112,8 +112,5 @@
   },
   "resolutions": {
     "eslint": "8.12.0"
-  },
-  "volta": {
-    "node": "18.16.0"
   }
 }
