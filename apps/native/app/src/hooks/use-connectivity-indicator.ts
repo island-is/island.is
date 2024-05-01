@@ -111,20 +111,18 @@ export const useConnectivityIndicator = <Data extends Record<string, unknown>>({
 
   useEffect(() => {
     // We need to deep compare the query result to avoid unnecessary re-renders
-    if (!isEqual(prevQueryResultRef.current, queryResult)) {
+    if (queryResult && !isEqual(prevQueryResultRef.current, queryResult)) {
       prevQueryResultRef.current = queryResult
 
-      if (queryResult) {
-        if (Array.isArray(queryResult)) {
-          // Make sure all queries are loaded and have data before removing the loading button
-          if (queryResult.every(({ loading, data }) => !loading && data)) {
-            updateNavigationButtons(false)
-          } else if (queryResult.some(({ data }) => data)) {
-            updateNavigationButtons(!refetching)
-          }
-        } else if (queryResult?.data) {
-          updateNavigationButtons(queryResult?.loading && !refetching)
+      if (Array.isArray(queryResult)) {
+        // Make sure all queries are loaded and have data before removing the loading button
+        if (queryResult.every(({ loading, data }) => !loading && data)) {
+          updateNavigationButtons(false)
+        } else if (queryResult.some(({ data }) => data)) {
+          updateNavigationButtons(!refetching)
         }
+      } else if (queryResult?.data) {
+        updateNavigationButtons(queryResult?.loading && !refetching)
       }
     }
   }, [queryResult])
