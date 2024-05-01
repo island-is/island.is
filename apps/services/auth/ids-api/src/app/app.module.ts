@@ -30,6 +30,7 @@ import { ResourcesModule } from './resources/resources.module'
 import { TranslationModule } from './translation/translation.module'
 import { UserProfileModule } from './user-profile/user-profile.module'
 import { UsersModule } from './users/users.module'
+import { PasskeysModule } from './passkeys/passkeys.module'
 
 @Module({
   imports: [
@@ -49,6 +50,7 @@ import { UsersModule } from './users/users.module'
     UserProfileModule,
     NotificationsModule,
     LoginRestrictionsModule,
+    PasskeysModule,
     ConfigModule.forRoot({
       isGlobal: true,
       load: [

@@ -4,7 +4,7 @@
   "license": "MIT",
   "engines": {
     "npm": "please-use-yarn",
-    "node": "18.16.0",
+    "node": "20.12.2",
     "yarn": "3.2"
   },
   "repository": {
@@ -109,6 +109,7 @@
     "@nestjs/terminus": "10.2.0",
     "@react-pdf/renderer": "^3.1.9",
     "@rehooks/component-size": "1.0.3",
+    "@simplewebauthn/server": "10.0.0",
     "@sindresorhus/slugify": "1.0.0",
     "@statoscope/webpack-plugin": "5.20.1",
     "@storybook/core-server": "7.4.1",
@@ -482,7 +483,7 @@
     "react-native-navigation@7.32.1": "patch:react-native-navigation@npm%3A7.32.1#./.yarn/patches/react-native-navigation-npm-7.32.1-262dc5c010.patch"
   },
   "volta": {
-    "node": "18.16.0",
+    "node": "20.12.2",
     "yarn": "3.2.3"
   },
   "packageManager": "yarn@3.2.3"

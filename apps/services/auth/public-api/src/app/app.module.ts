@@ -19,6 +19,7 @@ import { RskRelationshipsClientConfig } from '@island.is/clients-rsk-relationshi
 
 import { environment } from '../environments'
 import { DelegationsModule } from './modules/delegations/delegations.module'
+import { PasskeysModule } from './modules/passkeys/passkeys.module'
 
 @Module({
   imports: [
@@ -29,6 +30,7 @@ import { DelegationsModule } from './modules/delegations/delegations.module'
     }),
     ProblemModule,
     DelegationsModule,
+    PasskeysModule,
     ConfigModule.forRoot({
       isGlobal: true,
       load: [
