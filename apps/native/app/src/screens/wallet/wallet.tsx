@@ -88,10 +88,10 @@ const { useNavigationOptions, getNavigationOptions } =
 
 export const WalletScreen: NavigationFunctionComponent = ({ componentId }) => {
   useNavigationOptions(componentId)
-  useConnectivityIndicator({ componentId, rightButtons: getRightButtons() })
+
   const theme = useTheme()
   const flatListRef = useRef<FlatList>(null)
-  const [loading, setLoading] = useState(false)
+  const [refetching, setRefetching] = useState(false)
   const loadingTimeout = useRef<ReturnType<typeof setTimeout>>()
   const intl = useIntl()
   const scrollY = useRef(new Animated.Value(0)).current
@@ -106,8 +106,6 @@ export const WalletScreen: NavigationFunctionComponent = ({ componentId }) => {
 
   // Query list of licenses
   const res = useListLicensesQuery({
-    fetchPolicy: 'network-only',
-    nextFetchPolicy: 'network-only',
     variables: {
       input: {
         includedTypes: [
@@ -125,9 +123,13 @@ export const WalletScreen: NavigationFunctionComponent = ({ componentId }) => {
   })
 
   // Additional licenses
-  const resPassport = useGetIdentityDocumentQuery({
-    fetchPolicy: 'network-only',
-    nextFetchPolicy: 'network-only',
+  const resPassport = useGetIdentityDocumentQuery()
+
+  useConnectivityIndicator({
+    componentId,
+    rightButtons: getRightButtons(),
+    queryResult: [res, resPassport],
+    refetching,
   })
 
   useActiveTabItemPress(1, () => {
@@ -182,19 +184,19 @@ export const WalletScreen: NavigationFunctionComponent = ({ componentId }) => {
       if (loadingTimeout.current) {
         clearTimeout(loadingTimeout.current)
       }
-      setLoading(true)
+      setRefetching(true)
       res
         .refetch()
         .then(() => {
           ;(loadingTimeout as any).current = setTimeout(() => {
-            setLoading(false)
+            setRefetching(false)
           }, 1331)
         })
         .catch(() => {
-          setLoading(false)
+          setRefetching(false)
         })
     } catch (err) {
-      setLoading(false)
+      setRefetching(false)
     }
   }, [])
 
@@ -273,7 +275,7 @@ export const WalletScreen: NavigationFunctionComponent = ({ componentId }) => {
           bottom: 32,
         }}
         refreshControl={
-          <RefreshControl refreshing={loading} onRefresh={onRefresh} />
+          <RefreshControl refreshing={refetching} onRefresh={onRefresh} />
         }
         scrollEventThrottle={16}
         scrollToOverflowEnabled={true}

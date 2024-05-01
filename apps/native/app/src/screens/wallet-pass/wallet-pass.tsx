@@ -132,6 +132,7 @@ export const WalletPassScreen: NavigationFunctionComponent<{
 
   const [generatePkPass] = useGeneratePkPassMutation()
   const res = useGetLicenseQuery({
+    fetchPolicy: 'network-only',
     variables: {
       input: {
         licenseType: item?.license.type ?? '',

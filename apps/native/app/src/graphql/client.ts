@@ -7,6 +7,7 @@ import {
   InMemoryCache,
   NormalizedCacheObject,
 } from '@apollo/client'
+
 import { setContext } from '@apollo/client/link/context'
 import { onError } from '@apollo/client/link/error'
 import { RetryLink } from '@apollo/client/link/retry'
@@ -19,6 +20,22 @@ import { environmentStore } from '../stores/environment-store'
 import { apolloMKKVStorage } from '../stores/mkkv'
 import { offlineStore } from '../stores/offline-store'
 import { MainBottomTabs } from '../utils/component-registry'
+import { Alert } from 'react-native'
+
+const connectivityLink = new ApolloLink((operation, forward) => {
+  return forward(operation).map((response) => {
+    // Check if the network response was successful
+    const success =
+      response.errors === undefined || response.errors.length === 0
+
+    // This is a fallback check if the @react-native-community/netinfo will fail to detect if the network status is available again.
+    if (success && !offlineStore.getState().isConnected) {
+      offlineStore.setState({ isConnected: true })
+    }
+
+    return response
+  })
+})
 
 const httpLink = new HttpLink({
   uri() {
@@ -87,13 +104,9 @@ const errorLink = onError(
         ) {
           authStore.setState({ cognitoAuthUrl: redirectUrl })
           if (config.isTestingApp && authStore.getState().authorizeResult) {
-            openBrowser(cognitoAuthUrl(), MainBottomTabs)
+            void openBrowser(cognitoAuthUrl(), MainBottomTabs)
           }
         }
-      } else {
-        // This might be an SSL error, a socket error because your app is offline, or a 500 or any other HTTP error.
-        // We determine that we are offline if we receive a network error
-        offlineStore.getState().actions.setIsConnected(false)
       }
     }
   },
@@ -120,10 +133,7 @@ const authLink = setContext(async (_, { headers }) => ({
     'X-Cognito-Token': `Bearer ${
       environmentStore.getState().cognito?.accessToken
     }`,
-    cookie: [
-      // ...(await CookieManager.get(config.apiEndpoint, true).then(obj2cookie)),
-      authStore.getState().cookies,
-    ]
+    cookie: [authStore.getState().cookies]
       .filter((x) => String(x) !== '')
       .join('; '),
   },
@@ -189,27 +199,16 @@ export const initializeApolloClient = async () => {
   })
 
   apolloClient = new ApolloClient({
-    link: ApolloLink.from([retryLink, errorLink, authLink, httpLink]),
+    link: ApolloLink.from([
+      connectivityLink,
+      retryLink,
+      errorLink,
+      authLink,
+      httpLink,
+    ]),
     defaultOptions: {
       watchQuery: {
-        fetchPolicy: 'network-only',
-        nextFetchPolicy(currentFetchPolicy, { reason, initialFetchPolicy }) {
-          if (reason === 'variables-changed') {
-            return initialFetchPolicy
-          }
-
-          if (
-            currentFetchPolicy === 'network-only' ||
-            currentFetchPolicy === 'cache-and-network'
-          ) {
-            // Demote the network policies (except "no-cache") to "cache-and-network"
-            // after the first request.
-            return 'cache-and-network'
-          }
-
-          // Leave all other fetch policies unchanged.
-          return currentFetchPolicy
-        },
+        fetchPolicy: 'cache-and-network',
       },
     },
     cache,

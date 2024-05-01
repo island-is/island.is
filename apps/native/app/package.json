@@ -58,6 +58,7 @@
     "expo-local-authentication": "13.0.2",
     "expo-notifications": "0.17.0",
     "intl": "1.2.5",
+    "lodash": "4.17.21",
     "react": "18.2.0",
     "react-intl": "5.20.12",
     "react-native": "0.71.1",
@@ -93,6 +94,7 @@
     "@tsconfig/react-native": "^2.0.2",
     "@types/intl": "^1",
     "@types/jest": "^29.2.1",
+    "@types/lodash": "4.17.0",
     "@types/react": "^18.0.24",
     "@types/react-dom": "^18",
     "@types/react-test-renderer": "^18.0.0",
@@ -112,5 +114,8 @@
   },
   "resolutions": {
     "eslint": "8.12.0"
+  },
+  "volta": {
+    "node": "18.16.0"
   }
 }

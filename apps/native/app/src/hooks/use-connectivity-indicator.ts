@@ -1,7 +1,9 @@
-import { QueryResult } from '@apollo/client/react/types/types'
+import { QueryResult } from '@apollo/client'
 import { useNetInfo } from '@react-native-community/netinfo'
+import isEqual from 'lodash/isEqual'
+
 import { theme } from '@ui'
-import { useEffect, useState } from 'react'
+import { useCallback, useEffect, useRef, useState } from 'react'
 import { Navigation, OptionsTopBar } from 'react-native-navigation'
 import { OptionsTopBarButton } from 'react-native-navigation/lib/src/interfaces/Options'
 
@@ -67,21 +69,24 @@ export const useConnectivityIndicator = <Data extends Record<string, unknown>>({
   )
   const isConnected = useOfflineStore(({ isConnected }) => isConnected)
   const { resetConnectionState } = useOfflineActions()
+  const prevQueryResultRef = useRef<PickedQueryResult | PickedQueryResult[]>()
 
-  const updateNavigationButtons = (showLoading = false) => {
-    Navigation.mergeOptions(componentId, {
-      topBar: {
-        rightButtons: isConnected
-          ? // Only show loading button if the user is connected
-            [...rightButtons, showLoading ? loadingButton : undefined].filter(
-              isDefined,
-            )
-          : rightButtons
-          ? [...rightButtons, offlineButton]
-          : [offlineButton],
-      },
-    })
-  }
+  const updateNavigationButtons = useCallback(
+    (showLoading = false) => {
+      Navigation.mergeOptions(componentId, {
+        topBar: {
+          rightButtons: isConnected
+            ? [...rightButtons, showLoading ? loadingButton : undefined].filter(
+                isDefined,
+              )
+            : rightButtons
+            ? [...rightButtons, offlineButton]
+            : [offlineButton],
+        },
+      })
+    },
+    [componentId, isConnected, rightButtons],
+  )
 
   useEffect(() => {
     if (!isConnected || (isConnected && isConnected !== pastIsConnected)) {
@@ -105,18 +110,21 @@ export const useConnectivityIndicator = <Data extends Record<string, unknown>>({
   }, [extraData])
 
   useEffect(() => {
-    if (queryResult) {
-      if (Array.isArray(queryResult)) {
-        const hasData = queryResult.some(({ data }) => data)
-        const loading = queryResult.some(
-          (result) => result?.loading && !refetching,
-        )
+    // We need to deep compare the query result to avoid unnecessary re-renders
+    if (!isEqual(prevQueryResultRef.current, queryResult)) {
+      prevQueryResultRef.current = queryResult
 
-        if (hasData) {
-          updateNavigationButtons(loading)
+      if (queryResult) {
+        if (Array.isArray(queryResult)) {
+          // Make sure all queries are loaded and have data before removing the loading button
+          if (queryResult.every(({ loading, data }) => !loading && data)) {
+            updateNavigationButtons(false)
+          } else if (queryResult.some(({ data }) => data)) {
+            updateNavigationButtons(!refetching)
+          }
+        } else if (queryResult?.data) {
+          updateNavigationButtons(queryResult?.loading && !refetching)
         }
-      } else if (queryResult?.data) {
-        updateNavigationButtons(queryResult?.loading && !refetching)
       }
     }
   }, [queryResult])
