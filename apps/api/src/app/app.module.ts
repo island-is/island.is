@@ -97,7 +97,6 @@ import { AircraftRegistryClientConfig } from '@island.is/clients/aircraft-regist
 import { UniversityCareersModule } from '@island.is/api/domains/university-careers'
 import {
   UserNotificationClientConfig,
-  UserNotificationSystemClientConfig,
 } from '@island.is/clients/user-notification'
 import {
   HealthDirectorateClientConfig,
@@ -342,7 +341,6 @@ const environment = getConfig
         DrivingDigitalLicenseClientConfig,
         IntellectualPropertiesClientConfig,
         UserNotificationClientConfig,
-        UserNotificationSystemClientConfig,
         GraphQLConfig,
         VehiclesClientConfig,
         VehiclesMileageClientConfig,

@@ -41,7 +41,6 @@ import {
   CaseState,
   CaseType,
   DateType,
-  getLatestDateType,
   getStatementDeadline,
   isDefenceUser,
   isIndictmentCase,
@@ -77,7 +76,7 @@ import {
 } from '../../formatters'
 import { formatCourtOfAppealJudgeAssignedEmailNotification } from '../../formatters/formatters'
 import { notifications } from '../../messages'
-import { Case, DateLog } from '../case'
+import { Case } from '../case'
 import { CourtService } from '../court'
 import { Defendant, DefendantService } from '../defendant'
 import { CaseEvent, EventService } from '../event'
@@ -95,6 +94,10 @@ interface Attachment {
 interface RecipientInfo {
   name?: string
   email?: string
+}
+
+const getArraignmentDate = (theCase: Case) => {
+  return theCase.dateLogs?.find((d) => d.dateType === DateType.ARRAIGNMENT_DATE)
 }
 
 @Injectable()
@@ -312,12 +315,9 @@ export class NotificationService {
   }
 
   private createICalAttachment(theCase: Case): Attachment | undefined {
-    const courtDate = getLatestDateType(
-      DateType.COURT_DATE,
-      theCase.dateLogs,
-    ) as DateLog
+    const arraignmentDate = getArraignmentDate(theCase)
 
-    if (!courtDate) {
+    if (!arraignmentDate?.date) {
       return
     }
 
@@ -334,14 +334,16 @@ export class NotificationService {
         : '',
     }
 
-    const courtDateStart = new Date(courtDate.date.toString().split('.')[0])
-    const courtDateEnd = new Date(courtDate.date.getTime() + 30 * 60000)
+    const courtDateStart = new Date(
+      arraignmentDate.date.toString().split('.')[0],
+    )
+    const courtDateEnd = new Date(arraignmentDate.date.getTime() + 30 * 60000)
 
     const icalendar = new ICalendar({
       title: `Fyrirtaka í máli ${theCase.courtCaseNumber} - ${theCase.prosecutorsOffice?.name} gegn X`,
       location: `${theCase.court?.name} - ${
-        theCase.courtRoom
-          ? `Dómsalur ${theCase.courtRoom}`
+        arraignmentDate.location
+          ? `Dómsalur ${arraignmentDate.location}`
           : 'Dómsalur hefur ekki verið skráður.'
       }`,
       start: courtDateStart,
@@ -621,18 +623,15 @@ export class NotificationService {
     theCase: Case,
     user: User,
   ): Promise<Recipient> {
-    const courtDate = getLatestDateType(
-      DateType.COURT_DATE,
-      theCase.dateLogs,
-    ) as DateLog
+    const arraignmentDate = getArraignmentDate(theCase)
 
     const { subject, body } = formatProsecutorCourtDateEmailNotification(
       this.formatMessage,
       theCase.type,
       theCase.courtCaseNumber,
       theCase.court?.name,
-      courtDate?.date,
-      theCase.courtRoom,
+      arraignmentDate?.date,
+      arraignmentDate?.location,
       theCase.judge?.name,
       theCase.registrar?.name,
       theCase.defenderName,
@@ -674,10 +673,7 @@ export class NotificationService {
       { caseType: theCase.type, courtCaseNumber: theCase.courtCaseNumber },
     )
 
-    const courtDate = getLatestDateType(
-      DateType.COURT_DATE,
-      theCase.dateLogs,
-    ) as DateLog
+    const arraignmentDate = getArraignmentDate(theCase)?.date
 
     // Assume there is at most one defendant
     const html = formatPrisonCourtDateEmailNotification(
@@ -685,7 +681,7 @@ export class NotificationService {
       theCase.type,
       theCase.prosecutorsOffice?.name,
       theCase.court?.name,
-      courtDate?.date,
+      arraignmentDate,
       theCase.defendants && theCase.defendants.length > 0
         ? theCase.defendants[0].gender
         : undefined,
@@ -711,9 +707,7 @@ export class NotificationService {
     theCase: Case,
     user: User,
   ): Promise<Recipient> {
-    const courtDate = theCase.dateLogs?.find(
-      (dateLog) => (dateLog.dateType = DateType.COURT_DATE),
-    )
+    const arraignmentDate = getArraignmentDate(theCase)
 
     const subject = `Fyrirtaka í máli ${theCase.courtCaseNumber}`
     const calendarInvite = this.createICalAttachment(theCase)
@@ -722,8 +716,8 @@ export class NotificationService {
       this.formatMessage,
       theCase.court?.name,
       theCase.courtCaseNumber,
-      courtDate?.date,
-      theCase.courtRoom,
+      arraignmentDate?.date,
+      arraignmentDate?.location,
       theCase.judge?.name,
       theCase.registrar?.name,
       theCase.prosecutor?.name,
@@ -1211,17 +1205,14 @@ export class NotificationService {
   }
 
   private sendRevokedSmsNotificationToCourt(theCase: Case): Promise<Recipient> {
-    const courtDate = getLatestDateType(
-      DateType.COURT_DATE,
-      theCase.dateLogs,
-    ) as DateLog
+    const arraignmentDate = getArraignmentDate(theCase)?.date
 
     const smsText = formatCourtRevokedSmsNotification(
       this.formatMessage,
       theCase.type,
       theCase.prosecutor?.name,
       theCase.requestedCourtDate,
-      courtDate?.date,
+      arraignmentDate,
     )
 
     return this.sendSms(smsText, this.getCourtMobileNumbers(theCase.courtId))
@@ -1230,10 +1221,7 @@ export class NotificationService {
   private sendRevokedEmailNotificationToPrison(
     theCase: Case,
   ): Promise<Recipient> {
-    const courtDate = getLatestDateType(
-      DateType.COURT_DATE,
-      theCase.dateLogs,
-    ) as DateLog
+    const arraignmentDate = getArraignmentDate(theCase)?.date
 
     const subject = this.formatMessage(
       notifications.prisonRevokedEmail.subject,
@@ -1246,7 +1234,7 @@ export class NotificationService {
       theCase.type,
       theCase.prosecutorsOffice?.name,
       theCase.court?.name,
-      courtDate?.date,
+      arraignmentDate,
       theCase.defenderName,
       Boolean(theCase.parentCase),
       theCase.courtCaseNumber,
@@ -1265,7 +1253,7 @@ export class NotificationService {
     defendant: Defendant,
     defenderName?: string,
     defenderEmail?: string,
-    courtDate?: Date,
+    arraignmentDate?: Date,
     courtName?: string,
   ): Promise<Recipient> {
     const subject = isIndictmentCase(caseType)
@@ -1281,7 +1269,7 @@ export class NotificationService {
       defendant.name,
       defendant.noNationalId,
       courtName,
-      courtDate,
+      arraignmentDate,
     )
 
     return this.sendEmail(subject, html, defenderName, defenderEmail)
@@ -1291,10 +1279,7 @@ export class NotificationService {
     theCase: Case,
   ): Promise<SendNotificationResponse> {
     const promises: Promise<Recipient>[] = []
-    const courtDate = getLatestDateType(
-      DateType.COURT_DATE,
-      theCase.dateLogs,
-    ) as DateLog
+    const arraignmentDate = getArraignmentDate(theCase)?.date
 
     const courtWasNotified =
       !isIndictmentCase(theCase.type) &&
@@ -1334,7 +1319,7 @@ export class NotificationService {
               defendant,
               defendant.defenderName,
               defendant.defenderEmail,
-              courtDate?.date,
+              arraignmentDate,
               theCase.court?.name,
             ),
           )
@@ -1353,7 +1338,7 @@ export class NotificationService {
             theCase.defendants[0],
             theCase.defenderName,
             theCase.defenderEmail,
-            courtDate?.date,
+            arraignmentDate,
             theCase.court?.name,
           ),
         )
@@ -1447,10 +1432,7 @@ export class NotificationService {
     theCase: Case,
   ): Promise<SendNotificationResponse> {
     const promises: Promise<Recipient>[] = []
-    const courtDate = getLatestDateType(
-      DateType.COURT_DATE,
-      theCase.dateLogs,
-    ) as DateLog
+    const arraignmentDate = getArraignmentDate(theCase)?.date
 
     if (isIndictmentCase(theCase.type)) {
       const uniqDefendants = _uniqBy(
@@ -1476,7 +1458,7 @@ export class NotificationService {
           )
         }
       }
-    } else if (courtDate?.date) {
+    } else if (arraignmentDate) {
       const shouldSend = await this.shouldSendDefenderAssignedNotification(
         theCase,
         theCase.defenderEmail,

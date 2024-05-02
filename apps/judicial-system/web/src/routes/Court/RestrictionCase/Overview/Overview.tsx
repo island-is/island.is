@@ -12,7 +12,6 @@ import {
 } from '@island.is/island-ui/core'
 import * as constants from '@island.is/judicial-system/consts'
 import { capitalize, formatDate } from '@island.is/judicial-system/formatters'
-import { getLatestDateType } from '@island.is/judicial-system/types'
 import {
   core,
   laws,
@@ -42,8 +41,6 @@ import InfoCardCaseScheduled from '@island.is/judicial-system-web/src/components
 import {
   CaseLegalProvisions,
   CaseState,
-  DateLog,
-  DateType,
 } from '@island.is/judicial-system-web/src/graphql/schema'
 import {
   UploadState,
@@ -60,10 +57,6 @@ export const JudgeOverview: React.FC<React.PropsWithChildren<unknown>> = () => {
   const { formatMessage } = useIntl()
   const router = useRouter()
   const id = router.query.id
-  const courtDate = getLatestDateType(
-    DateType.COURT_DATE,
-    workingCase.dateLogs,
-  ) as DateLog
 
   const { uploadState } = useCourtUpload(workingCase, setWorkingCase)
 
@@ -117,14 +110,16 @@ export const JudgeOverview: React.FC<React.PropsWithChildren<unknown>> = () => {
         </Box>
         <CourtCaseInfo workingCase={workingCase} />
         {workingCase.state === CaseState.RECEIVED &&
-          courtDate &&
-          courtDate.date &&
+          workingCase.arraignmentDate?.date &&
           workingCase.court && (
             <Box component="section" marginBottom={5}>
               <InfoCardCaseScheduled
                 court={workingCase.court}
-                courtDate={courtDate.date}
-                courtRoom={workingCase.courtRoom}
+                courtDate={workingCase.arraignmentDate.date}
+                courtRoom={workingCase.arraignmentDate.location}
+                postponedIndefinitelyExplanation={
+                  workingCase.postponedIndefinitelyExplanation
+                }
               />
             </Box>
           )}

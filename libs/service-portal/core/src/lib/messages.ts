@@ -1245,6 +1245,10 @@ export const m = defineMessages({
     id: 'service.portal:userprofile-tooltip',
     defaultMessage: 'Ísland.is hefur umsjón með gögnum á þínum stillingum.',
   },
+  notificationsProfileTooltip: {
+    id: 'service.portal:notifications-tooltip',
+    defaultMessage: 'Ísland.is hefur umsjón með tilkynningum.',
+  },
 
   universityOfIcelandTooltip: {
     id: 'service.portal:uni-iceland-tooltip',
