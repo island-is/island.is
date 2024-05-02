@@ -1,4 +1,25 @@
-import { LbhiApi, UnakApi, HolarApi, BifrostApi, HIApi, UnakLocale, LbhiLocale, BifrostLocale, HolarLocale, HILocale, UnakTranscriptLocale, LbhiTranscriptLocale, BifrostTranscriptLocale, HolarTranscriptLocale, HITranscriptLocale, UnakFerillLocale, LbhiFerillLocale, BifrostFerillLocale, HolarFerillLocale, HIFerillLocale } from "../clients"
+import {
+  LbhiApi,
+  UnakApi,
+  HolarApi,
+  BifrostApi,
+  HIApi,
+  UnakLocale,
+  LbhiLocale,
+  BifrostLocale,
+  HolarLocale,
+  HILocale,
+  UnakTranscriptLocale,
+  LbhiTranscriptLocale,
+  BifrostTranscriptLocale,
+  HolarTranscriptLocale,
+  HITranscriptLocale,
+  UnakFerillLocale,
+  LbhiFerillLocale,
+  BifrostFerillLocale,
+  HolarFerillLocale,
+  HIFerillLocale,
+} from '../clients'
 
 export interface UniversityDto {
   api: LbhiApi | UnakApi | HolarApi | BifrostApi | HIApi
@@ -22,3 +43,4 @@ export interface UniversityDto {
       | typeof HolarFerillLocale
       | typeof HIFerillLocale
   }
+}
