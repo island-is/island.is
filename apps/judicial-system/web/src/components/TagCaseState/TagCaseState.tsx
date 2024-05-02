@@ -27,7 +27,7 @@ export const mapCaseStateToTagVariant = (
   state?: CaseState | null,
   caseType?: CaseType | null,
   isValidToDateInThePast?: boolean | null,
-  courtDate?: string | null,
+  scheduledDate?: string | null,
   isCourtRole?: boolean,
 ): { color: TagVariant; text: string } => {
   switch (state) {
@@ -41,7 +41,7 @@ export const mapCaseStateToTagVariant = (
         text: formatMessage(isCourtRole ? tables.newTag : m.sent),
       }
     case CaseState.RECEIVED:
-      return courtDate
+      return scheduledDate
         ? { color: 'mint', text: formatMessage(m.scheduled) }
         : { color: 'blueberry', text: formatMessage(tables.receivedTag) }
     case CaseState.ACCEPTED:
