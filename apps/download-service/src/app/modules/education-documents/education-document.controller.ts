@@ -6,7 +6,6 @@ import {
   Res,
   Param,
   UseGuards,
-  Inject,
 } from '@nestjs/common'
 import { ApiOkResponse } from '@nestjs/swagger'
 import { Response } from 'express'
