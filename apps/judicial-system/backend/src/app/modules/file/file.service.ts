@@ -233,6 +233,7 @@ export class FileService {
     })
 
     if (
+      theCase.appealCaseNumber &&
       file.category &&
       [
         CaseFileCategory.PROSECUTOR_APPEAL_STATEMENT,

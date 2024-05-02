@@ -5,7 +5,6 @@ import { useRouter } from 'next/router'
 import { Box } from '@island.is/island-ui/core'
 import * as constants from '@island.is/judicial-system/consts'
 import {
-  getLatestDateType,
   isCompletedCase,
   isDefenceUser,
   isDistrictCourtUser,
@@ -19,6 +18,7 @@ import {
   IndictmentCaseFilesList,
   IndictmentsLawsBrokenAccordionItem,
   InfoCardActiveIndictment,
+  InfoCardCaseScheduledIndictment,
   InfoCardClosedIndictment,
   PageHeader,
   PageLayout,
@@ -26,12 +26,7 @@ import {
   useIndictmentsLawsBroken,
   UserContext,
 } from '@island.is/judicial-system-web/src/components'
-import InfoCardCaseScheduled from '@island.is/judicial-system-web/src/components/InfoCard/InfoCardCaseScheduled'
-import {
-  CaseState,
-  DateLog,
-  DateType,
-} from '@island.is/judicial-system-web/src/graphql/schema'
+import { CaseState } from '@island.is/judicial-system-web/src/graphql/schema'
 
 import ReturnIndictmentModal from '../../Court/Indictments/ReturnIndictmentCaseModal/ReturnIndictmentCaseModal'
 import { strings } from './IndictmentOverview.strings'
@@ -46,16 +41,12 @@ const IndictmentOverview = () => {
   const [modalVisible, setModalVisible] = useState<boolean>(false)
 
   const caseIsClosed = isCompletedCase(workingCase.state)
+  const latestDate = workingCase.courtDate ?? workingCase.arraignmentDate
 
   const handleNavigationTo = useCallback(
     (destination: string) => router.push(`${destination}/${workingCase.id}`),
     [router, workingCase.id],
   )
-
-  const courtDate = getLatestDateType(
-    DateType.COURT_DATE,
-    workingCase.dateLogs,
-  ) as DateLog
 
   return (
     <PageLayout
@@ -82,14 +73,16 @@ const IndictmentOverview = () => {
         </PageTitle>
         <CourtCaseInfo workingCase={workingCase} />
         {workingCase.state === CaseState.RECEIVED &&
-          courtDate &&
-          courtDate.date &&
-          workingCase.court && (
+          workingCase.court &&
+          latestDate?.date && (
             <Box component="section" marginBottom={5}>
-              <InfoCardCaseScheduled
+              <InfoCardCaseScheduledIndictment
                 court={workingCase.court}
-                courtDate={courtDate.date}
-                courtRoom={workingCase.courtRoom}
+                courtDate={latestDate.date}
+                courtRoom={latestDate.location}
+                postponedIndefinitelyExplanation={
+                  workingCase.postponedIndefinitelyExplanation
+                }
               />
             </Box>
           )}

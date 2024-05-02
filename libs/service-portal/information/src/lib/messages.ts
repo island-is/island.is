@@ -144,6 +144,13 @@ export const spmm = defineMessages({
   },
 })
 
+export const mInformationNotifications = defineMessages({
+  description: {
+    id: 'sp.information-notifications:description',
+    defaultMessage: 'Hér getur þú nálgast tilkynningar þínar.',
+  },
+})
+
 export const msg = defineMessages({
   email: {
     id: 'sp.settings:email',

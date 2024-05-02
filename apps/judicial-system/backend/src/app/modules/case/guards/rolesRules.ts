@@ -57,9 +57,9 @@ const districtCourtFields: (keyof UpdateCaseDto)[] = [
   'defenderPhoneNumber',
   'courtCaseNumber',
   'sessionArrangements',
+  'arraignmentDate',
   'courtDate',
   'courtLocation',
-  'courtRoom',
   'courtStartDate',
   'courtEndTime',
   'isClosedCourtHidden',
@@ -89,6 +89,7 @@ const districtCourtFields: (keyof UpdateCaseDto)[] = [
   'defendantWaivesRightToCounsel',
   'prosecutorId',
   'indictmentReturnedExplanation',
+  'postponedIndefinitelyExplanation',
 ]
 
 const courtOfAppealsFields: (keyof UpdateCaseDto)[] = [
@@ -278,6 +279,7 @@ export const districtCourtJudgeTransitionRule: RolesRule = {
     CaseTransition.REOPEN,
     CaseTransition.RECEIVE_APPEAL,
     CaseTransition.RETURN_INDICTMENT,
+    CaseTransition.REDISTRIBUTE,
   ],
   canActivate: (request) => {
     const theCase = request.case

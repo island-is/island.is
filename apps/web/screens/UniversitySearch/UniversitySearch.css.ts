@@ -196,3 +196,8 @@ export const courseListItems = style({
   alignItems: 'center',
   gap: '1rem',
 })
+
+export const searchResultIcon = style({
+  width: '24px',
+  height: '24px',
+})
