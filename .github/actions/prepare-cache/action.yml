@@ -104,24 +104,6 @@ runs:
         path: apps/native/app/node_modules
         key: ${{ steps.set-cache-keys.outputs.mobile-node-modules-key }}
 
-    - name: Check node-modules cache success
-      id: check-node-modules-cache-success
-      shell: bash
-      run: |
-        if [[ "${{ steps.node-modules.outputs.success }}" != "false" ]]; then
-          echo "node modules cache for NX apps was not found."
-          exit 1
-        fi
-        if [[ "${{ steps.mobile-node-modules.outputs.success }}" != "false" ]]; then
-          echo "node modules cache for mobile app was not found."
-          exit 1
-        fi
-
-    - name: Building NodeJS dependencies
-      shell: bash
-      if: steps.node-modules.outputs.cache-hit != 'true' || steps.mobile-node-modules.outputs.cache-hit != 'true'
-      run: ./scripts/ci/10_prepare-host-deps.sh
-
     - name: Cache for generated files
       id: generated-files-cache
       continue-on-error: true
@@ -130,19 +112,51 @@ runs:
         path: generated_files.tar.gz
         key: ${{ steps.set-cache-keys.outputs.generated-files-key }}
 
-    - name: Check generated-files cache success
-      id: check-generated-files-cache-success
+    - name: Check mobile-node-modules cache success
+      id: check-mobile-node-modules-cache
       shell: bash
       run: |
-        echo "generated-files cache success: ${{ steps.generated-files-cache.outputs.success }}"
+        if [[ "${{ steps.mobile-node-modules.outputs.success }}" != "false" ]]; then
+          echo "mobile-node-modules cache was not found."
+          echo "success=false" >> $GITHUB_OUTPUT
+        else
+          echo "mobile-node-modules cache found!"
+          echo "success=true" >> $GITHUB_OUTPUT
+        fi
+
+    - name: Check node-modules cache success
+      id: check-node-modules-cache
+      shell: bash
+      run: |
+        if [[ "${{ steps.node-modules.outputs.success }}" != "false" ]]; then
+          echo "node-modules-cache was not found."
+          echo "success=false" >> $GITHUB_OUTPUT
+        else
+          echo "node-modules-cache found!"
+          echo "success=true" >> $GITHUB_OUTPUT
+        fi
+
+    - name: Check generated-files cache success
+      id: check-generated-files-cache
+      shell: bash
+      run: |
         if [[ "${{ steps.generated-files-cache.outputs.success }}" != "false" ]]; then
           echo "generated-files-cache was not found."
-          exit 1
+          echo "success=false" >> $GITHUB_OUTPUT
+        else
+          echo "generated-files-cache found!"
+          echo "success=true" >> $GITHUB_OUTPUT
         fi
+
+    - name: Building NodeJS dependencies
+      shell: bash
+      if: ${{ steps.check-mobile-node-modules-cache.outputs.success == 'false' || steps.check-node-modules-cache.outputs.success == 'false' }}
+      run: ./scripts/ci/10_prepare-host-deps.sh
+
 
     - name: Untar generated files
       id: untar-generated-files
-      if: ${{ steps.generated-files-cache.outputs.success != 'false' }}"
+      if: ${{ steps.check-generated-files-cache.outputs.success == 'false' }}"
       shell: bash
       run: |
         echo "Untar generated-files"
