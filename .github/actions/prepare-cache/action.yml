@@ -132,5 +132,6 @@ runs:
 
     - name: Untar generated files
       id: untar-generated-files
+      if: ${{ steps.generated-files-cache.outputs.success == 'true' }}"
       shell: bash
       run: tar zxvf generated_files.tar.gz
