@@ -108,7 +108,9 @@ export const AirDiscountScreen: NavigationFunctionComponent = ({
   const intl = useIntl()
   const theme = useTheme()
 
-  const { data, loading, error } = useGetAirDiscountQuery()
+  const { data, loading, error } = useGetAirDiscountQuery({
+    fetchPolicy: 'network-only',
+  })
 
   const {
     data: flightLegsData,

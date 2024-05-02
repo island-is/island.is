@@ -3,7 +3,7 @@ import { useNetInfo } from '@react-native-community/netinfo'
 import isEqual from 'lodash/isEqual'
 
 import { theme } from '@ui'
-import { useCallback, useEffect, useRef, useState } from 'react'
+import { useCallback, useEffect, useRef } from 'react'
 import { Navigation, OptionsTopBar } from 'react-native-navigation'
 import { OptionsTopBarButton } from 'react-native-navigation/lib/src/interfaces/Options'
 
@@ -16,7 +16,7 @@ export const offlineButton: OptionsTopBarButton = {
   accessibilityLabel: 'Offline',
   id: BR.OfflineButton,
   testID: testIDs.TOPBAR_OFFLINE_BUTTON,
-  icon: require('../assets/icons/warning.png'),
+  icon: require('../assets/icons/cloud-offline-outline.png'),
   iconBackground: {
     color: 'transparent',
     cornerRadius: 8,
