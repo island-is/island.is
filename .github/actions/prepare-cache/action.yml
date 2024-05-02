@@ -61,7 +61,7 @@ runs:
       shell: bash
       run: |
         export HASH=$(./scripts/_hash-generated-files.sh)
-        export GENERATED_FILES_KEY=${{ runner.os }}-$HASH-files-generated-03
+        export GENERATED_FILES_KEY=${{ runner.os }}-$HASH-generated-files
         echo "GENERATED_FILES_KEY: $GENERATED_FILES_KEY"
         echo "generated-files-key=$GENERATED_FILES_KEY" >> $GITHUB_OUTPUT
 
@@ -69,7 +69,12 @@ runs:
       shell: bash
       id: set-cache-keys
       run: |
-        echo "determine cache keys"
+        echo "inputs.mobileNodeModulesHash: ${{ inputs.mobileNodeModulesHash }}"
+        echo "inputs.nodeModulesHash: ${{ inputs.nodeModulesHash }}"
+        echo "inputs.generatedFilesCacheKey: ${{ inputs.generatedFilesCacheKey }}"
+        echo "steps.calculate-node-modules-cache.outputs.node-modules-key: ${{ steps.calculate-node-modules-cache.outputs.node-modules-key }}"
+        echo "steps.calculate-node-modules-cache.outputs.mobile-node-modules-key: ${{ steps.calculate-node-modules-cache.outputs.mobile-node-modules-key }}"
+        echo "steps.calculate-generated-files-cache.outputs.generated-files-key: ${{ steps.calculate-generated-files-cache.outputs.generated-files-key }}"
         node_modules_key="${{ inputs.nodeModulesHash || steps.calculate-node-modules-cache.outputs.node-modules-key }}"
         mobile_node_modules_key="${{ inputs.mobileNodeModulesHash || steps.calculate-node-modules-cache.outputs.mobile-node-modules-key }}"
         generated_files_key="${{ inputs.generatedFilesCacheKey || steps.calculate-generated-files-cache.outputs.generated-files-key }}"
