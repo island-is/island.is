@@ -63,4 +63,10 @@ export const strings = defineMessages({
     defaultMessage: 'Staðfesta',
     description: 'Notaður sem titill á Staðfesta takka á Niðurstaða skrefi.',
   },
+  redistribute: {
+    id: 'judicial.system.core:court.indictments.conclusion.redistribute',
+    defaultMessage: 'Fer í útlutun til dómara',
+    description:
+      'Notaður sem texti fyrir Fer í útlutun til dómara á Niðurstaða skrefi.',
+  },
 })
