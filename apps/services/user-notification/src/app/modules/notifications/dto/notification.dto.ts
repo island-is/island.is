@@ -107,7 +107,7 @@ export class RenderedNotificationDto {
   @IsOptional()
   clickAction?: string
 
-  @ApiPropertyOptional({ example: '//inbox/document-uuid' })
+  @ApiPropertyOptional({ example: 'https://island.is/minarsidur/postholf' })
   @IsString()
   @IsOptional()
   clickActionUrl?: string

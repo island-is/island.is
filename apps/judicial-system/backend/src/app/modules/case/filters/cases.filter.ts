@@ -9,6 +9,7 @@ import {
   CaseState,
   CaseType,
   completedCaseStates,
+  DateType,
   indictmentCases,
   InstitutionType,
   investigationCases,
@@ -22,7 +23,7 @@ import {
   UserRole,
 } from '@island.is/judicial-system/types'
 
-function getProsecutionUserCasesQueryFilter(user: User): WhereOptions {
+const getProsecutionUserCasesQueryFilter = (user: User): WhereOptions => {
   const options: WhereOptions = [
     { isArchived: false },
     {
@@ -35,6 +36,7 @@ function getProsecutionUserCasesQueryFilter(user: User): WhereOptions {
         CaseState.ACCEPTED,
         CaseState.REJECTED,
         CaseState.DISMISSED,
+        CaseState.MAIN_HEARING,
       ],
     },
     {
@@ -66,7 +68,7 @@ function getProsecutionUserCasesQueryFilter(user: User): WhereOptions {
   }
 }
 
-function getDistrictCourtUserCasesQueryFilter(user: User): WhereOptions {
+const getDistrictCourtUserCasesQueryFilter = (user: User): WhereOptions => {
   const options: WhereOptions = [
     { isArchived: false },
     {
@@ -87,6 +89,7 @@ function getDistrictCourtUserCasesQueryFilter(user: User): WhereOptions {
           CaseState.ACCEPTED,
           CaseState.REJECTED,
           CaseState.DISMISSED,
+          CaseState.MAIN_HEARING,
         ],
       },
     )
@@ -118,6 +121,7 @@ function getDistrictCourtUserCasesQueryFilter(user: User): WhereOptions {
                 CaseState.ACCEPTED,
                 CaseState.REJECTED,
                 CaseState.DISMISSED,
+                CaseState.MAIN_HEARING,
               ],
             },
           ],
@@ -131,7 +135,7 @@ function getDistrictCourtUserCasesQueryFilter(user: User): WhereOptions {
   }
 }
 
-function getAppealsCourtUserCasesQueryFilter(): WhereOptions {
+const getAppealsCourtUserCasesQueryFilter = (): WhereOptions => {
   return {
     [Op.and]: [
       { isArchived: false },
@@ -154,7 +158,7 @@ function getAppealsCourtUserCasesQueryFilter(): WhereOptions {
   }
 }
 
-function getPrisonSystemStaffUserCasesQueryFilter(user: User): WhereOptions {
+const getPrisonSystemStaffUserCasesQueryFilter = (user: User): WhereOptions => {
   const options: WhereOptions = [
     { isArchived: false },
     { state: CaseState.ACCEPTED },
@@ -187,7 +191,7 @@ function getPrisonSystemStaffUserCasesQueryFilter(user: User): WhereOptions {
   return { [Op.and]: options }
 }
 
-function getDefenceUserCasesQueryFilter(user: User): WhereOptions {
+const getDefenceUserCasesQueryFilter = (user: User): WhereOptions => {
   const options: WhereOptions = [
     { isArchived: false },
     {
@@ -209,7 +213,7 @@ function getDefenceUserCasesQueryFilter(user: User): WhereOptions {
                 {
                   [Op.and]: [
                     { state: CaseState.RECEIVED },
-                    { court_date: { [Op.not]: null } },
+                    { '$dateLogs.date_type$': DateType.ARRAIGNMENT_DATE },
                   ],
                 },
                 { state: completedCaseStates },
@@ -236,7 +240,7 @@ function getDefenceUserCasesQueryFilter(user: User): WhereOptions {
   }
 }
 
-export function getCasesQueryFilter(user: User): WhereOptions {
+export const getCasesQueryFilter = (user: User): WhereOptions => {
   // TODO: Convert to switch
   if (isProsecutionUser(user)) {
     return getProsecutionUserCasesQueryFilter(user)

@@ -12,10 +12,12 @@ interface Props {
   court: Institution
   courtDate: string
   courtRoom?: string | null
+  postponedIndefinitelyExplanation?: string | null
 }
 
 const InfoCardCaseScheduled: React.FC<Props> = (props) => {
-  const { court, courtDate, courtRoom } = props
+  const { court, courtDate, courtRoom, postponedIndefinitelyExplanation } =
+    props
   const { formatMessage } = useIntl()
 
   return (
@@ -26,7 +28,9 @@ const InfoCardCaseScheduled: React.FC<Props> = (props) => {
           value: (
             <>
               <Text variant="eyebrow" marginBottom={1} marginTop={2}>
-                {formatDate(courtDate, 'PPPp')}
+                {postponedIndefinitelyExplanation
+                  ? formatMessage(strings.postponed)
+                  : formatDate(courtDate, 'PPPp')}
               </Text>
               {<Text>{court.name}</Text>}
               <Text>

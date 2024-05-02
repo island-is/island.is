@@ -78,6 +78,7 @@ import {
   getRatioTitle,
   getRightsDescTitle,
   getSelectedChild,
+  getSpouse,
   getStartDateDesc,
   getStartDateTitle,
   isParentWithoutBirthParent,
@@ -191,7 +192,47 @@ export const ParentalLeaveForm: Form = buildForm({
           },
           children: [
             buildMultiField({
+              id: 'otherParentSpouse',
+              condition: (_, externalData) => {
+                const application = { externalData } as Application
+                const spouse = getSpouse(application)
+                return !!spouse
+              },
+              title: parentalLeaveFormMessages.shared.otherParentTitle,
+              description: parentalLeaveFormMessages.shared.otherParentSpouse,
+              children: [
+                buildTextField({
+                  id: 'otherParentSpouse.otherParentName',
+                  dataTestId: 'other-parent-name',
+                  title: parentalLeaveFormMessages.shared.otherParentName,
+                  width: 'half',
+                  disabled: true,
+                  defaultValue: (application: Application) => {
+                    const spouse = getSpouse(application)
+                    return spouse?.name
+                  },
+                }),
+                buildTextField({
+                  id: 'otherParentSpouse.otherParentId',
+                  dataTestId: 'other-parent-kennitala',
+                  title: parentalLeaveFormMessages.shared.otherParentID,
+                  width: 'half',
+                  format: '######-####',
+                  disabled: true,
+                  defaultValue: (application: Application) => {
+                    const spouse = getSpouse(application)
+                    return spouse?.nationalId
+                  },
+                }),
+              ],
+            }),
+            buildMultiField({
               id: 'otherParentObj',
+              condition: (_, externalData) => {
+                const application = { externalData } as Application
+                const spouse = getSpouse(application)
+                return !spouse
+              },
               title: parentalLeaveFormMessages.shared.otherParentTitle,
               description:
                 parentalLeaveFormMessages.shared.otherParentDescription,
@@ -199,11 +240,7 @@ export const ParentalLeaveForm: Form = buildForm({
                 buildRadioField({
                   id: 'otherParentObj.chooseOtherParent',
                   title: '',
-                  options: (application) => getOtherParentOptions(application),
-                  defaultValue: (application: Application) =>
-                    getOtherParentOptions(application)[0].value === SPOUSE
-                      ? SPOUSE
-                      : '',
+                  options: getOtherParentOptions,
                 }),
                 buildTextField({
                   id: 'otherParentObj.otherParentName',

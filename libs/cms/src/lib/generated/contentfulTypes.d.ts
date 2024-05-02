@@ -739,7 +739,10 @@ export interface ICustomPageFields {
   title?: string | undefined
 
   /** Unique Identifier */
-  uniqueIdentifier: 'PensionCalculator'
+  uniqueIdentifier:
+    | 'PensionCalculator'
+    | 'OfficialJournalOfIceland'
+    | 'Vacancies'
 
   /** Alert Banner */
   alertBanner?: IAlertBanner | undefined
@@ -749,6 +752,18 @@ export interface ICustomPageFields {
 
   /** Configuration */
   configJson?: Record<string, any> | undefined
+
+  /** Content */
+  content?: Document | undefined
+
+  /** Open Graph Title */
+  ogTitle?: string | undefined
+
+  /** Open Graph Description */
+  ogDescription?: string | undefined
+
+  /** Open Graph Image */
+  ogImage?: Asset | undefined
 }
 
 /** This content type is meant to represent a custom made page. Examples include (/starfatorg, /reglugerdir and many more).
@@ -2900,7 +2915,6 @@ export interface IOrganizationPageFields {
     | 'vinnueftirlitid'
     | 'hljodbokasafn-islands'
     | 'thjodskjalasafn'
-    | 'stjornartidindi'
 
   /** Theme Properties */
   themeProperties?: Record<string, any> | undefined

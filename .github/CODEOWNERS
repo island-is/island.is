@@ -105,6 +105,7 @@ libs/clients/rsk/relationships/                                                 
 /libs/service-portal/restrictions                                                                        @island-is/aranja
 /libs/service-portal/sessions                                                                            @island-is/aranja
 /apps/native/app/                                                                                        @island-is/aranja-app
+codemagic.yaml                                                                                           @island-is/aranja-app
 
 /apps/judicial-system/                                                                                   @island-is/kolibri-justice-league
 /libs/judicial-system/                                                                                   @island-is/kolibri-justice-league
@@ -127,6 +128,8 @@ libs/clients/rsk/relationships/                                                 
 /apps/services/user-profile/                                                                             @island-is/hugsmidjan @island-is/juni @island-is/aranja
 /apps/web/screens/Regulations/                                                                           @island-is/hugsmidjan
 /apps/web/components/Regulations/                                                                        @island-is/hugsmidjan
+/apps/web/screens/OfficialJournalOfIceland/                                                              @island-is/hugsmidjan
+/apps/web/components/OfficialJournalOfIceland/                                                           @island-is/hugsmidjan
 /libs/api/domains/air-discount-scheme                                                                    @island-is/hugsmidjan
 /libs/api/domains/documents/                                                                             @island-is/hugsmidjan
 /libs/api/domains/finance/                                                                               @island-is/hugsmidjan
