@@ -103,11 +103,13 @@ const Conclusion: React.FC = () => {
       router.push(`${destination}/${workingCase.id}`)
     },
     [
-      postponement,
-      sendCourtDateToServer,
-      updateCase,
-      workingCase.id,
       selectedAction,
+      postponement?.postponedIndefinitely,
+      postponement?.reason,
+      workingCase.id,
+      handleRedistribution,
+      updateCase,
+      sendCourtDateToServer,
     ],
   )
 
@@ -130,13 +132,26 @@ const Conclusion: React.FC = () => {
     workingCase.postponedIndefinitelyExplanation,
   ])
 
-  const stepIsValid =
-    Boolean(selectedAction) &&
-    ((postponement?.postponedIndefinitely
-      ? postponement.reason
-      : courtDate?.date) ||
-      selectedAction === 'REDISTRIBUTE') &&
-    allFilesDoneOrError
+  const stepIsValid = () => {
+    if (!selectedAction) {
+      return false
+    }
+
+    if (selectedAction === 'REDISTRIBUTE') {
+      return uploadFiles.find(
+        (file) => file.category === CaseFileCategory.COURT_RECORD,
+      )
+    }
+
+    if (selectedAction === 'POSTPONE')
+      return (
+        Boolean(
+          postponement?.postponedIndefinitely
+            ? postponement.reason
+            : courtDate?.date,
+        ) && allFilesDoneOrError
+      )
+  }
 
   return (
     <PageLayout
@@ -237,29 +252,34 @@ const Conclusion: React.FC = () => {
                 />
               </BlueBox>
             </Box>
-            <Box component="section" marginBottom={5}>
-              <SectionHeading title={formatMessage(strings.courtRecordTitle)} />
-              <InputFileUpload
-                fileList={uploadFiles.filter(
-                  (file) => file.category === CaseFileCategory.COURT_RECORD,
-                )}
-                accept="application/pdf"
-                header={formatMessage(strings.inputFieldLabel)}
-                description={formatMessage(core.uploadBoxDescription, {
-                  fileEndings: '.pdf',
-                })}
-                buttonLabel={formatMessage(strings.uploadButtonText)}
-                onChange={(files) => {
-                  handleUpload(
-                    addUploadFiles(files, CaseFileCategory.COURT_RECORD),
-                    updateUploadFile,
-                  )
-                }}
-                onRemove={(file) => handleRemove(file, removeUploadFile)}
-                onRetry={(file) => handleRetry(file, updateUploadFile)}
-              />
-            </Box>
           </>
+        )}
+        {selectedAction && (
+          <Box component="section" marginBottom={5}>
+            <SectionHeading
+              title={formatMessage(strings.courtRecordTitle)}
+              required={selectedAction === 'REDISTRIBUTE'}
+            />
+            <InputFileUpload
+              fileList={uploadFiles.filter(
+                (file) => file.category === CaseFileCategory.COURT_RECORD,
+              )}
+              accept="application/pdf"
+              header={formatMessage(strings.inputFieldLabel)}
+              description={formatMessage(core.uploadBoxDescription, {
+                fileEndings: '.pdf',
+              })}
+              buttonLabel={formatMessage(strings.uploadButtonText)}
+              onChange={(files) => {
+                handleUpload(
+                  addUploadFiles(files, CaseFileCategory.COURT_RECORD),
+                  updateUploadFile,
+                )
+              }}
+              onRemove={(file) => handleRemove(file, removeUploadFile)}
+              onRetry={(file) => handleRetry(file, updateUploadFile)}
+            />
+          </Box>
         )}
       </FormContentContainer>
       <FormContentContainer isFooter>
@@ -269,7 +289,7 @@ const Conclusion: React.FC = () => {
           onNextButtonClick={() =>
             handleNavigationTo(constants.INDICTMENTS_COURT_OVERVIEW_ROUTE)
           }
-          nextIsDisabled={!stepIsValid}
+          nextIsDisabled={!stepIsValid()}
           nextIsLoading={isUpdatingCase}
           nextButtonText={formatMessage(strings.nextButtonText)}
         />
