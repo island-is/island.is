@@ -770,6 +770,10 @@ export const m = defineMessages({
     id: 'service.portal:educationDegree',
     defaultMessage: 'Prófgráður',
   },
+  noTranscriptForDownload: {
+    id: 'service.portal:educationCareerNoTranscriptForDownload',
+    defaultMessage: 'Námsmat ófáanlegt',
+  },
   accessControl: {
     id: 'service.portal:accessControl',
     defaultMessage: 'Aðgangsstýring',

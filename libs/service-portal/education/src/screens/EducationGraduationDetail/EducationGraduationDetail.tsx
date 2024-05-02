@@ -1,6 +1,8 @@
 import { defineMessage } from 'react-intl'
 
+import { UniversityCareersUniversityId } from '@island.is/api/schema'
 import {
+  AlertMessage,
   Box,
   Button,
   Divider,
@@ -10,20 +12,19 @@ import {
   Text,
 } from '@island.is/island-ui/core'
 import { useLocale, useNamespaces } from '@island.is/localization'
-import {
-  formatDate,
-  formSubmit,
-  IntroHeader,
-  m,
-  UserInfoLine,
-} from '@island.is/service-portal/core'
 import { formatNationalId } from '@island.is/portals/core'
-import { useParams } from 'react-router-dom'
-import { useStudentTrackQuery } from './EducationGraduationDetail.generated'
 import { Problem } from '@island.is/react-spa/shared'
+import {
+  IntroHeader,
+  UserInfoLine,
+  formSubmit,
+  formatDate,
+  m,
+} from '@island.is/service-portal/core'
 import { OrganizationSlugType } from '@island.is/shared/constants'
-import { UniversityCareersUniversityId } from '@island.is/api/schema'
+import { useParams } from 'react-router-dom'
 import { mapSlugToUniversity } from '../../utils/mapUniversitySlug'
+import { useStudentTrackQuery } from './EducationGraduationDetail.generated'
 type UseParams = {
   id: string
   uni: string
@@ -56,7 +57,7 @@ export const EducationGraduationDetail = () => {
     ? formatDate(studentInfo?.graduationDate)
     : undefined
 
-  const noFiles = files?.length === 0
+  const filesAvailable = (files?.length ?? 0) > 0
 
   return (
     <Box marginBottom={[6, 6, 10]}>
@@ -75,9 +76,9 @@ export const EducationGraduationDetail = () => {
             printHidden
           >
             {files &&
-              files?.length > 0 &&
+              filesAvailable &&
               downloadServiceURL &&
-              files?.map((item, index) => {
+              files.map((item, index) => {
                 const shortOrgId =
                   data.universityCareersStudentTrack?.transcript?.institution
                     ?.shortId
@@ -105,22 +106,15 @@ export const EducationGraduationDetail = () => {
                   </Box>
                 )
               })}
-            {noFiles ? (
-              <Box marginTop={1}>
-                {text?.unconfirmedData && (
-                  <Button
-                    variant="utility"
-                    size="small"
-                    icon="document"
-                    iconType="outline"
-                    disabled
-                  >
-                    {formatMessage(m.educationCareer)}
-                  </Button>
-                )}
-                <Text marginTop={1}>{text?.unconfirmedData || ''}</Text>
+            {!filesAvailable && !loading && (
+              <Box width="full">
+                <AlertMessage
+                  type="warning"
+                  title={formatMessage(m.noTranscriptForDownload)}
+                  message={text?.unconfirmedData}
+                />
               </Box>
-            ) : undefined}
+            )}
           </Box>
         </GridColumn>
       </GridRow>
