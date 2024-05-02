@@ -540,8 +540,8 @@ const ParentalLeaveTemplate: ApplicationTemplate<
               },
               {
                 onEvent: DefaultEvents.SUBMIT,
-                logMessage:
-                  statesMessages.vinnumalastofnunApprovalSubmitHistoryLogMessage,
+                logMessage: '',
+                  //statesMessages.vinnumalastofnunApprovalSubmitHistoryLogMessage,
               },
             ],
           },
@@ -713,11 +713,12 @@ const ParentalLeaveTemplate: ApplicationTemplate<
             historyLogs: [
               {
                 onEvent: DefaultEvents.REJECT,
-                logMessage: statesMessages.editHistoryLogMessage,
+                logMessage: '', //statesMessages.editHistoryLogMessage,
               },
               {
                 onEvent: DefaultEvents.APPROVE,
-                logMessage: statesMessages.editHistoryLogMessage,
+                logMessage: '',
+                //statesMessages.editHistoryLogMessage,
               },
             ],
           },
@@ -777,11 +778,11 @@ const ParentalLeaveTemplate: ApplicationTemplate<
             historyLogs: [
               {
                 onEvent: DefaultEvents.REJECT,
-                logMessage: statesMessages.editHistoryLogMessage,
+                logMessage: '', //statesMessages.editHistoryLogMessage,
               },
               {
                 onEvent: DefaultEvents.APPROVE,
-                logMessage: statesMessages.editHistoryLogMessage,
+                logMessage: 'Umsækjandi sótti um dvalarstyrk', //statesMessages.editHistoryLogMessage,
               },
             ],
           },
@@ -850,8 +851,8 @@ const ParentalLeaveTemplate: ApplicationTemplate<
               },
               {
                 onEvent: DefaultEvents.SUBMIT,
-                logMessage:
-                  statesMessages.vinnumalastofnunApprovalSubmitHistoryLogMessage,
+                logMessage: 'Bla Blú',
+                  //statesMessages.vinnumalastofnunApprovalSubmitHistoryLogMessage,
               },
             ],
           },
@@ -1238,8 +1239,8 @@ const ParentalLeaveTemplate: ApplicationTemplate<
               },
               {
                 onEvent: DefaultEvents.SUBMIT,
-                logMessage:
-                  statesMessages.vinnumalastofnunApprovalSubmitHistoryLogMessage,
+                logMessage: 'Bla bla',
+                  //statesMessages.vinnumalastofnunApprovalSubmitHistoryLogMessage,
               },
             ],
           },
