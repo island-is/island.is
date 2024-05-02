@@ -117,6 +117,9 @@ export const JudgeOverview: React.FC<React.PropsWithChildren<unknown>> = () => {
                 court={workingCase.court}
                 courtDate={workingCase.arraignmentDate.date}
                 courtRoom={workingCase.arraignmentDate.location}
+                postponedIndefinitelyExplanation={
+                  workingCase.postponedIndefinitelyExplanation
+                }
               />
             </Box>
           )}
