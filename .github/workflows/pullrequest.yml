@@ -125,11 +125,6 @@ jobs:
         if: steps.cypress-check.outcome != 'success'
         run: npx cypress install
 
-      - name: Run codegen
-        if: steps.prepare-cache.outputs.generated-files-cache-hit != 'true'
-        run: |
-          node --version
-          tar zcvf generated_files.tar.gz $(./scripts/ci/get-files-touched-by.sh yarn codegen --skip-cache | xargs realpath --relative-to $(pwd))
 
       # - name: Security audit Node modules
       #   run: ./scripts/ci/20_security-audit.sh

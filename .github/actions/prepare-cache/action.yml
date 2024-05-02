@@ -108,14 +108,19 @@ runs:
       id: check-node-modules-cache-success
       shell: bash
       run: |
-        if [[ "${{ steps.node-modules.outputs.success }}" == "false" ]]; then
+        if [[ "${{ steps.node-modules.outputs.success }}" != "false" ]]; then
           echo "node modules cache for NX apps was not found."
           exit 1
         fi
-        if [[ "${{ steps.mobile-node-modules.outputs.success }}" == "false" ]]; then
+        if [[ "${{ steps.mobile-node-modules.outputs.success }}" != "false" ]]; then
           echo "node modules cache for mobile app was not found."
           exit 1
         fi
+
+    - name: Building NodeJS dependencies
+      shell: bash
+      if: steps.node-modules.outputs.cache-hit != 'true' || steps.mobile-node-modules.outputs.cache-hit != 'true'
+      run: ./scripts/ci/10_prepare-host-deps.sh
 
     - name: Cache for generated files
       id: generated-files-cache
@@ -130,14 +135,14 @@ runs:
       shell: bash
       run: |
         echo "generated-files cache success: ${{ steps.generated-files-cache.outputs.success }}"
-        if [[ "${{ steps.generated-files-cache.outputs.success }}" == "false" ]]; then
+        if [[ "${{ steps.generated-files-cache.outputs.success }}" != "false" ]]; then
           echo "generated-files-cache was not found."
           exit 1
         fi
 
     - name: Untar generated files
       id: untar-generated-files
-      if: ${{ steps.generated-files-cache.outputs.success == 'true' }}"
+      if: ${{ steps.generated-files-cache.outputs.success != 'false' }}"
       shell: bash
       run: |
         echo "Untar generated-files"
