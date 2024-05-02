@@ -130,7 +130,10 @@ runs:
       shell: bash
       run: |
         echo "generated-files cache success: ${{ steps.generated-files-cache.outputs.success }}"
-        [[ "${{ steps.generated-files-cache.outputs.success }}" != "false" ]] || exit 1
+        if [[ "${{ steps.generated-files-cache.outputs.success }}" == "false" ]]; then
+          echo "generated-files-cache was not found."
+          exit 1
+        fi
 
     - name: Untar generated files
       id: untar-generated-files
