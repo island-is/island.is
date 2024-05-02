@@ -65,9 +65,7 @@ const CasesAwaitingConfirmationTable: React.FC<
                   title: formatMessage(tables.type),
                 },
                 {
-                  title: capitalize(
-                    formatMessage(tables.created, { suffix: 'i' }),
-                  ),
+                  title: capitalize(formatMessage(tables.created)),
                   sortable: { isSortable: true, key: 'createdAt' },
                 },
                 { title: formatMessage(tables.state) },
