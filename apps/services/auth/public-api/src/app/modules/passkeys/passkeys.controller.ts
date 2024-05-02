@@ -23,6 +23,8 @@ import {
 } from './dto/registrationOptions.dto'
 
 import { RegistrationResponse } from './dto/registrationResponse.dto'
+import { AuthenticationOptions } from './dto/authenticationOptions.dto'
+import { AuthenticationResponse } from './dto/authenticationResponse.dto'
 
 @ApiTags('passkeys')
 @UseGuards(IdsUserGuard, ScopesGuard)
@@ -37,12 +39,12 @@ export class PasskeysController {
 
   @Get('register')
   @Documentation({
-    summary: 'Gets registration options for the authenicated user.',
-    description: 'Registration Options for the authenticated user.',
+    summary: 'Gets passkey registration options for the authenicated user.',
+    description: 'Passkey registration options for the authenticated user.',
     response: { status: 200, type: RegistrationOptions },
   })
   @ApiCreatedResponse({ type: RegistrationOptions })
-  async registerPasskey(
+  async getPasskeyRegistrationOptions(
     @CurrentActor() actor: User,
   ): Promise<RegistrationOptions> {
     const response = await this.passkeysCoreService.generateRegistrationOptions(
@@ -55,7 +57,7 @@ export class PasskeysController {
   @Post('register')
   @Documentation({
     summary: 'Validates registration based on input from authenicated user.',
-    description: 'Verifies authenticated user registration response.',
+    description: 'Verifies authenticated user passkey registration response.',
     response: { status: 200, type: RegistrationResult },
   })
   @ApiCreatedResponse({ type: RegistrationResult })
@@ -64,6 +66,42 @@ export class PasskeysController {
     @Body() body: RegistrationResponse,
   ): Promise<RegistrationResult> {
     const response = await this.passkeysCoreService.verifyRegistration(
+      actor,
+      body as any,
+    )
+
+    return response
+  }
+
+  @Get('authenticate')
+  @Documentation({
+    summary: 'Gets passkey authentication options for the authenticated user.',
+    description: 'Passkey authenticate options for the authenticated user.',
+    response: { status: 200, type: AuthenticationOptions },
+  })
+  @ApiCreatedResponse({ type: AuthenticationOptions })
+  async getPasskeyAuthenticationOptions(
+    @CurrentActor() actor: User,
+  ): Promise<AuthenticationOptions> {
+    const response =
+      await this.passkeysCoreService.generateAuthenticationOptions(actor)
+
+    return response as RegistrationOptions
+  }
+
+  @Post('authenticate')
+  @Documentation({
+    summary:
+      'Validates passkey authentication based on input from authenticated user.',
+    description: 'Verifies authenticated user passkey authentication response.',
+    response: { status: 200, type: RegistrationResult },
+  })
+  @ApiCreatedResponse({ type: RegistrationResult })
+  async verifyAuthentication(
+    @CurrentActor() actor: User,
+    @Body() body: AuthenticationResponse,
+  ): Promise<RegistrationResult> {
+    const response = await this.passkeysCoreService.verifyAuthentication(
       actor,
       body as any,
     )

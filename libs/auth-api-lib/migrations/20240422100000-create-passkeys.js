@@ -8,19 +8,20 @@ module.exports = {
         {
           passkey_id: {
             type: Sequelize.STRING,
-            primaryKey: true,
             allowNull: false,
           },
           public_key: {
-            type: Sequelize.STRING,
+            type: Sequelize.BLOB,
             allowNull: false,
           },
           user_sub: {
             type: Sequelize.STRING,
+            primaryKey: true,
             allowNull: false,
           },
           type: {
             type: Sequelize.STRING,
+            primaryKey: true,
             allowNull: false,
           },
           idp: {
@@ -47,7 +48,17 @@ module.exports = {
         { transaction },
       )
 
-      await queryInterface.addIndex('passkey', ['passkey_id'], { transaction })
+      await queryInterface.addConstraint('passkey', {
+        fields: ['user_sub', 'type'], // Only possible to have one passkey of each type per user
+        type: 'unique',
+        name: 'passkey_primary_key',
+        transaction,
+      })
+
+      await queryInterface.addIndex('passkey', ['user_sub', 'type'], {
+        name: 'passkey_user_sub_type_idx',
+        transaction,
+      })
     })
   },
 

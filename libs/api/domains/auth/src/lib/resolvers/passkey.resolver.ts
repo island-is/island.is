@@ -8,6 +8,8 @@ import { PasskeyRegistrationOptions } from '../models/registrationOptions.model'
 import { PasskeyService } from '../services/passkey.service'
 import { PasskeyRegistrationObject } from '../dto/registrationObject.input'
 import { PasskeyRegistrationVerification } from '../models/verifyRegistration.model'
+import { PasskeyAuthenticationOptions } from '../models/authenticationOptions.model'
+import { PasskeyAuthenticationObject } from '../dto/authenticationObject.input'
 
 @UseGuards(IdsUserGuard)
 @Resolver(() => PasskeyRegistrationOptions)
@@ -24,7 +26,7 @@ export class PasskeyResolver {
   }
 
   @Mutation(() => PasskeyRegistrationVerification, {
-    name: 'verifyRegistration',
+    name: 'authPasskeyVerifyRegistration',
   })
   async verifyRegistration(
     @CurrentUser() user: User,
@@ -32,5 +34,25 @@ export class PasskeyResolver {
     input: PasskeyRegistrationObject,
   ): Promise<PasskeyRegistrationVerification> {
     return this.passkey.verifyRegistration(user, input)
+  }
+
+  @Query(() => PasskeyAuthenticationOptions, {
+    name: 'authPasskeyAuthenticationOptions',
+  })
+  getAuthenticationOptions(
+    @CurrentUser() user: User,
+  ): Promise<PasskeyAuthenticationOptions> {
+    return this.passkey.getAuthenticationOptions(user)
+  }
+
+  @Mutation(() => PasskeyRegistrationVerification, {
+    name: 'authPasskeyVerifyAuthentication',
+  })
+  async verifyAuthentication(
+    @CurrentUser() user: User,
+    @Args('input', { type: () => PasskeyAuthenticationObject })
+    input: PasskeyAuthenticationObject,
+  ): Promise<PasskeyRegistrationVerification> {
+    return this.passkey.verifyAuthentication(user, input)
   }
 }

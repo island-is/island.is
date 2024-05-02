@@ -6,6 +6,8 @@ import { PasskeysApi } from '@island.is/clients/auth/public-api'
 import { PasskeyRegistrationOptions } from '../models/registrationOptions.model'
 import { PasskeyRegistrationVerification } from '../models/verifyRegistration.model'
 import { PasskeyRegistrationObject } from '../dto/registrationObject.input'
+import { PasskeyAuthenticationOptions } from '../models/authenticationOptions.model'
+import { PasskeyAuthenticationObject } from '../dto/authenticationObject.input'
 
 @Injectable()
 export class PasskeyService {
@@ -16,7 +18,9 @@ export class PasskeyService {
   }
 
   getRegistrationOptions(user: User): Promise<PasskeyRegistrationOptions> {
-    return this.passkeysApiWithAuth(user).passkeysControllerRegisterPasskey()
+    return this.passkeysApiWithAuth(
+      user,
+    ).passkeysControllerGetPasskeyRegistrationOptions()
   }
 
   verifyRegistration(
@@ -25,6 +29,23 @@ export class PasskeyService {
   ): Promise<PasskeyRegistrationVerification> {
     return this.passkeysApiWithAuth(user).passkeysControllerVerifyRegistration({
       registrationResponse: input,
+    })
+  }
+
+  getAuthenticationOptions(user: User): Promise<PasskeyAuthenticationOptions> {
+    return this.passkeysApiWithAuth(
+      user,
+    ).passkeysControllerGetPasskeyAuthenticationOptions()
+  }
+
+  verifyAuthentication(
+    user: User,
+    input: PasskeyAuthenticationObject,
+  ): Promise<PasskeyRegistrationVerification> {
+    return this.passkeysApiWithAuth(
+      user,
+    ).passkeysControllerVerifyAuthentication({
+      authenticationResponse: input,
     })
   }
 }
