@@ -15,7 +15,7 @@ const isValidPhoneNumber = (phoneNumber: string) => {
 const emailRegex =
   /^[\w!#$%&'*+/=?`{|}~^-]+(?:\.[\w!#$%&'*+/=?`{|}~^-]+)*@(?:[A-Z0-9-]+\.)+[A-Z]{2,6}$/i
 export const isValidEmail = (value: string): boolean =>
-  emailRegex.test(value) && value.length > 0
+  emailRegex.test(value) && value.trim().length > 0
 
 export const GeneralPetitionSchema = z.object({
   approveTermsAndConditions: z
