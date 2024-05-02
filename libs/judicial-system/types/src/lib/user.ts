@@ -12,6 +12,8 @@ export enum UserRole {
   ADMIN = 'ADMIN', // Does not exist in the database // notendaumsjón
   PRISON_SYSTEM_STAFF = 'PRISON_SYSTEM_STAFF', // fangelsismálastarfsmaður
   DEFENDER = 'DEFENDER', // Does not exist in the database // verjandi
+  PUBLIC_PROSECUTOR = 'PUBLIC_PROSECUTOR', // saksóknari hjá ríkissaksóknara
+  PUBLIC_PROSECUTOR_STAFF = 'PUBLIC_PROSECUTOR_STAFF', // skrifstofufólk hjá ríkissaksóknara
 }
 
 export interface User {
