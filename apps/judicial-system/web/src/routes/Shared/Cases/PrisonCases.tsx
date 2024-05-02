@@ -2,17 +2,37 @@ import React, { useContext, useMemo } from 'react'
 import { useIntl } from 'react-intl'
 import partition from 'lodash/partition'
 
-import { AlertMessage, Box } from '@island.is/island-ui/core'
-import { errors, titles } from '@island.is/judicial-system-web/messages'
+import { AlertMessage, Box, Text } from '@island.is/island-ui/core'
+import { capitalize } from '@island.is/judicial-system/formatters'
+import {
+  core,
+  errors,
+  tables,
+  titles,
+} from '@island.is/judicial-system-web/messages'
 import {
   Logo,
   PageHeader,
   SectionHeading,
   SharedPageLayout,
+  TagCaseState,
   UserContext,
 } from '@island.is/judicial-system-web/src/components'
-import { PastCasesTable } from '@island.is/judicial-system-web/src/components/Table'
-import { InstitutionType } from '@island.is/judicial-system-web/src/graphql/schema'
+import { useContextMenu } from '@island.is/judicial-system-web/src/components/ContextMenu/ContextMenu'
+import {
+  ColumnCaseType,
+  CourtCaseNumber,
+  CreatedDate,
+  DefendantInfo,
+  getDurationDate,
+  PastCasesTable,
+} from '@island.is/judicial-system-web/src/components/Table'
+import Table from '@island.is/judicial-system-web/src/components/Table/Table'
+import {
+  CaseListEntry,
+  CaseState,
+  InstitutionType,
+} from '@island.is/judicial-system-web/src/graphql/schema'
 
 import { usePrisonCasesQuery } from './prisonCases.generated'
 import { cases as m } from './Cases.strings'
@@ -21,6 +41,7 @@ import * as styles from './Cases.css'
 export const PrisonCases: React.FC = () => {
   const { formatMessage } = useIntl()
   const { user } = useContext(UserContext)
+  const { openCaseInNewTabMenuItem } = useContextMenu()
 
   const isPrisonUser = user?.institution?.type === InstitutionType.PRISON
 
@@ -38,6 +59,74 @@ export const PrisonCases: React.FC = () => {
 
     return partition(resCases, (c) => !c.isValidToDateInThePast)
   }, [resCases])
+
+  const renderTable = (cases: CaseListEntry[]) => {
+    return (
+      <Table
+        thead={[
+          {
+            title: formatMessage(tables.caseNumber),
+          },
+          {
+            title: capitalize(formatMessage(core.defendant, { suffix: 'i' })),
+            sortable: { isSortable: true, key: 'defendant' },
+          },
+          {
+            title: formatMessage(tables.type),
+          },
+          {
+            title: capitalize(formatMessage(tables.created, { suffix: 'i' })),
+            sortable: { isSortable: true, key: 'createdAt' },
+          },
+          { title: formatMessage(tables.state) },
+          {
+            title: formatMessage(tables.duration),
+          },
+        ]}
+        data={cases}
+        columns={[
+          {
+            cell: (row: CaseListEntry) => (
+              <CourtCaseNumber
+                courtCaseNumber={row.courtCaseNumber ?? ''}
+                policeCaseNumbers={row.policeCaseNumbers ?? []}
+                appealCaseNumber={row.appealCaseNumber ?? ''}
+              />
+            ),
+          },
+          {
+            cell: (row: CaseListEntry) => (
+              <DefendantInfo defendants={row.defendants} />
+            ),
+          },
+          {
+            cell: (row: CaseListEntry) => <ColumnCaseType type={row.type} />,
+          },
+          {
+            cell: (row: CaseListEntry) => <CreatedDate created={row.created} />,
+          },
+          {
+            cell: () => <TagCaseState caseState={CaseState.ACCEPTED} />,
+          },
+          {
+            cell: (row: CaseListEntry) => (
+              <Text>
+                {getDurationDate(
+                  row.state,
+                  row.validToDate,
+                  row.initialRulingDate,
+                  row.rulingDate,
+                )}
+              </Text>
+            ),
+          },
+        ]}
+        generateContextMenuItems={(row: CaseListEntry) => [
+          openCaseInNewTabMenuItem(row.id),
+        ]}
+      />
+    )
+  }
 
   return (
     <SharedPageLayout>
@@ -68,7 +157,7 @@ export const PrisonCases: React.FC = () => {
           />
           <Box marginBottom={[5, 5, 12]}>
             {loading || !user || activeCases.length > 0 ? (
-              <PastCasesTable cases={activeCases} loading={loading} />
+              renderTable(activeCases)
             ) : (
               <div className={styles.infoContainer}>
                 <AlertMessage
@@ -94,11 +183,7 @@ export const PrisonCases: React.FC = () => {
         )}
       />
       {loading || pastCases.length > 0 ? (
-        <PastCasesTable
-          cases={pastCases}
-          loading={loading}
-          testid="pastCasesTable"
-        />
+        renderTable(pastCases)
       ) : (
         <div className={styles.infoContainer}>
           <AlertMessage
