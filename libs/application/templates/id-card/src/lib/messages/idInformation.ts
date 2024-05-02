@@ -51,5 +51,10 @@ export const idInformation = {
         'Þú getur sótt um nafnskírteini / ferðaskilríki fyrir þig og eftirfarandi einstaklinga í þinni umsjón. Veldu þann einstakling sem þú vilt hefja umsókn fyrir og haltu síðan áfram í næsta skref.',
       description: 'description of chosen applicants page',
     },
+    idNumber: {
+      id: 'uni.application:idInformation.labels.idNumber',
+      defaultMessage: 'Nafnskírteinisnúmer',
+      description: 'Id number label',
+    },
   }),
 }

@@ -19,6 +19,7 @@ export const TypeOfIdSubSection = buildSubSection({
           id: Routes.TYPEOFID,
           title: idInformation.labels.typeOfIdRadioLabel,
           width: 'half',
+          required: true,
           options: [
             {
               label: idInformation.labels.typeOfIdRadioAnswerOne,

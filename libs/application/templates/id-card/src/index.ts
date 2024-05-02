@@ -6,7 +6,7 @@ export const getDataProviders = () => import('./dataProviders/')
 
 export type IdCardAnswers = IdCard
 
-// export * from './utils'
+export * from './utils'
 // export * from './shared/types'
 
 export default IdCardTemplate
