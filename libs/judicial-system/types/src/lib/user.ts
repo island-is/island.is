@@ -49,6 +49,19 @@ export function isProsecutionUser(user?: InstitutionUser): boolean {
   )
 }
 
+export const publicProsecutorRoles: string[] = [
+  UserRole.PUBLIC_PROSECUTOR,
+  UserRole.PUBLIC_PROSECUTOR_STAFF,
+]
+
+export function isPublicProsecutorUser(user?: InstitutionUser): boolean {
+  return Boolean(
+    user?.role &&
+      publicProsecutorRoles.includes(user.role) &&
+      user?.institution?.type === InstitutionType.PROSECUTORS_OFFICE,
+  )
+}
+
 export const districtCourtRoles: string[] = [
   UserRole.DISTRICT_COURT_JUDGE,
   UserRole.DISTRICT_COURT_REGISTRAR,

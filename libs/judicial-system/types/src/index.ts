@@ -14,6 +14,8 @@ export {
   UserRole,
   prosecutionRoles,
   isProsecutionUser,
+  publicProsecutorRoles,
+  isPublicProsecutorUser,
   districtCourtRoles,
   isDistrictCourtUser,
   courtOfAppealsRoles,

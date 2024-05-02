@@ -18,6 +18,7 @@ import {
   isDistrictCourtUser,
   isPrisonSystemUser,
   isProsecutionUser,
+  isPublicProsecutorUser,
   RequestSharedWithDefender,
   restrictionCases,
   UserRole,
@@ -62,6 +63,21 @@ const getProsecutionUserCasesQueryFilter = (user: User): WhereOptions => {
   } else {
     options.push({ type: indictmentCases })
   }
+
+  return {
+    [Op.and]: options,
+  }
+}
+
+const getPublicProsecutionUserCasesQueryFilter = (user: User): WhereOptions => {
+  const options: WhereOptions = [
+    { isArchived: false },
+    {
+      state: [CaseState.ACCEPTED, CaseState.REJECTED, CaseState.DISMISSED],
+    },
+  ]
+
+  options.push({ type: indictmentCases })
 
   return {
     [Op.and]: options,
@@ -260,6 +276,10 @@ export const getCasesQueryFilter = (user: User): WhereOptions => {
 
   if (isDefenceUser(user)) {
     return getDefenceUserCasesQueryFilter(user)
+  }
+
+  if (isPublicProsecutorUser(user)) {
+    return getPublicProsecutionUserCasesQueryFilter(user)
   }
 
   throw new ForbiddenException(`User ${user.id} does not have access to cases`)
