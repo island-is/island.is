@@ -24,21 +24,26 @@ const startSQS = async () => {
 }
 
 const setupSqsQueue = async () => {
-  const client = new SQSClient({
-    region: environment.SQS_REGION,
-    endpoint: process.env.SQS_ENDPOINT,
-    credentials: {
-      accessKeyId: environment.SQS_ACCESS_KEY,
-      secretAccessKey: environment.SQS_SECRET_ACCESS_KEY,
-    },
-  })
+  try {
+    const client = new SQSClient({
+      region: environment.SQS_REGION,
+      endpoint: process.env.SQS_ENDPOINT,
+      credentials: {
+        accessKeyId: environment.SQS_ACCESS_KEY,
+        secretAccessKey: environment.SQS_SECRET_ACCESS_KEY,
+      },
+    })
 
-  await client.send(
-    new CreateQueueCommand({ QueueName: environment.MAIN_QUEUE_NAME }),
-  )
-  await client.send(
-    new CreateQueueCommand({ QueueName: environment.DEAD_LETTER_QUEUE_NAME }),
-  )
+    await client.send(
+      new CreateQueueCommand({ QueueName: environment.MAIN_QUEUE_NAME }),
+    )
+    await client.send(
+      new CreateQueueCommand({ QueueName: environment.DEAD_LETTER_QUEUE_NAME }),
+    )
+  } catch (error) {
+    console.error('Error setting up SQS queue', error)
+    throw error
+  }
 }
 
 export default async () => {
