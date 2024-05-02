@@ -38,7 +38,8 @@ import {
 
 import { strings } from './Conclusion.strings'
 
-type Actions = 'POSTPONE' | 'REDISTRIBUTE'
+type Actions = 'POSTPONE' | 'REDISTRIBUTE' | 'COMPLETE'
+type Decision = 'RULING' | 'FINE'
 
 interface Postponement {
   postponedIndefinitely?: boolean
@@ -51,6 +52,7 @@ const Conclusion: React.FC = () => {
     useContext(FormContext)
 
   const [selectedAction, setSelectedAction] = useState<Actions>()
+  const [selectedDecision, setSelectedDecision] = useState<Decision>()
   const [postponement, setPostponement] = useState<Postponement>()
   const {
     courtDate,
@@ -184,11 +186,24 @@ const Conclusion: React.FC = () => {
                 label={formatMessage(strings.postponed)}
               />
             </Box>
+            <Box marginBottom={2}>
+              <RadioButton
+                id="conclusion-complete"
+                name="conclusion-decision"
+                checked={selectedAction === 'COMPLETE'}
+                onChange={() => {
+                  setSelectedAction('COMPLETE')
+                }}
+                large
+                backgroundColor="white"
+                label={formatMessage(strings.complete)}
+              />
+            </Box>
             <RadioButton
               id="conclusion-redistribute"
               name="conclusion-redistribute"
               checked={selectedAction === 'REDISTRIBUTE'}
-              onChange={async () => {
+              onChange={() => {
                 setSelectedAction('REDISTRIBUTE')
               }}
               large
@@ -253,6 +268,37 @@ const Conclusion: React.FC = () => {
             </Box>
           </>
         )}
+        {selectedAction === 'COMPLETE' && (
+          <Box marginBottom={5}>
+            <SectionHeading title={formatMessage(strings.decision)} required />
+            <BlueBox>
+              <Box marginBottom={2}>
+                <RadioButton
+                  id="decision-ruling"
+                  name="decision"
+                  checked={selectedDecision === 'RULING'}
+                  onChange={() => {
+                    setSelectedDecision('RULING')
+                  }}
+                  large
+                  backgroundColor="white"
+                  label={formatMessage(strings.ruling)}
+                />
+              </Box>
+              <RadioButton
+                id="decision-fine"
+                name="decision"
+                checked={selectedDecision === 'FINE'}
+                onChange={() => {
+                  setSelectedDecision('FINE')
+                }}
+                large
+                backgroundColor="white"
+                label={formatMessage(strings.fine)}
+              />
+            </BlueBox>
+          </Box>
+        )}
         {selectedAction && (
           <Box component="section" marginBottom={5}>
             <SectionHeading
@@ -272,6 +318,30 @@ const Conclusion: React.FC = () => {
               onChange={(files) => {
                 handleUpload(
                   addUploadFiles(files, CaseFileCategory.COURT_RECORD),
+                  updateUploadFile,
+                )
+              }}
+              onRemove={(file) => handleRemove(file, removeUploadFile)}
+              onRetry={(file) => handleRetry(file, updateUploadFile)}
+            />
+          </Box>
+        )}
+        {selectedDecision === 'RULING' && (
+          <Box component="section" marginBottom={10}>
+            <SectionHeading title={formatMessage(strings.rulingUploadTitle)} />
+            <InputFileUpload
+              fileList={uploadFiles.filter(
+                (file) => file.category === CaseFileCategory.RULING,
+              )}
+              accept="application/pdf"
+              header={formatMessage(strings.inputFieldLabel)}
+              description={formatMessage(core.uploadBoxDescription, {
+                fileEndings: '.pdf',
+              })}
+              buttonLabel={formatMessage(strings.uploadButtonText)}
+              onChange={(files) => {
+                handleUpload(
+                  addUploadFiles(files, CaseFileCategory.RULING),
                   updateUploadFile,
                 )
               }}
