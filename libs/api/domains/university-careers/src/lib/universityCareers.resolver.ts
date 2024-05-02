@@ -12,16 +12,12 @@ import { ApiScope } from '@island.is/auth/scopes'
 import { DownloadServiceConfig } from '@island.is/nest/config'
 import type { ConfigType } from '@island.is/nest/config'
 import { StudentInfoByUniversityInput } from './dto/studentInfoByUniversity.input'
-import { UniversityId } from '@island.is/clients/university-careers'
 import { Locale } from '@island.is/shared/types'
 import { StudentTrack } from './models/studentTrack.model'
 import { LOGGER_PROVIDER, type Logger } from '@island.is/logging'
 import { StudentInfoInput } from './dto/studentInfo.input'
 import { UniversityCareersService } from './universityCareers.service'
 import { StudentTrackHistory } from './models/studentTrackHistory.model'
-import { StudentTrackTranscriptResult } from './models/studentTrackTranscriptResult.model'
-import { isDefined } from '@island.is/shared/utils'
-import { OrganizationSlugType } from '@island.is/shared/constants'
 
 @UseGuards(IdsUserGuard, ScopesGuard)
 @Scopes(ApiScope.internal)
@@ -45,28 +41,10 @@ export class UniversityCareersResolver {
     @CurrentUser() user: User,
     @Args('input') input: StudentInfoInput,
   ): Promise<StudentTrackHistory | null> {
-    const data = (
-      await Promise.all(
-        Object.values(UniversityId).map((u) =>
-          this.service.getStudentTrackHistoryByUniversity(
-            user,
-            u,
-            input.locale as Locale,
-          ),
-        ),
-      )
-    ).filter(isDefined)
-
-    let normalizedResults: Array<typeof StudentTrackTranscriptResult> = []
-    data.forEach((result) =>
-      Array.isArray(result)
-        ? (normalizedResults = normalizedResults.concat(result))
-        : normalizedResults.push(result),
+    return await this.service.getStudentTrackHistory(
+      user,
+      input.locale as Locale,
     )
-
-    return {
-      trackResults: normalizedResults,
-    }
   }
 
   @Query(() => StudentTrack, {
@@ -83,7 +61,7 @@ export class UniversityCareersResolver {
     }
     const student = await this.service.getStudentTrack(
       user,
-      input.universityId as OrganizationSlugType,
+      input.universityId,
       input.trackNumber,
       input.locale as Locale,
     )

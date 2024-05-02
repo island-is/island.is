@@ -8,37 +8,17 @@ import {
   IntroHeader,
   m,
 } from '@island.is/service-portal/core'
-import { getOrganizationLogoUrl, isDefined } from '@island.is/shared/utils'
+import { isDefined } from '@island.is/shared/utils'
 import { EducationPaths } from '../../lib/paths'
 import { Problem } from '@island.is/react-spa/shared'
-import { OrganizationSlugType } from '@island.is/shared/constants'
 import { useStudentInfoQuery } from './EducationGraduation.generated'
 import {
   UniversityCareersStudentTrackTranscript,
   UniversityCareersStudentTrackTranscriptError,
-  UniversityCareersUniversityId,
 } from '@island.is/api/schema'
 import { useOrganizations } from '@island.is/service-portal/graphql'
 import { useMemo } from 'react'
-
-const mapUniversityToOrganization = (
-  university: UniversityCareersUniversityId,
-): OrganizationSlugType | null => {
-  switch (university) {
-    case UniversityCareersUniversityId.AGRICULTURAL_UNIVERSITY_OF_ICELAND:
-      return 'landbunadarhaskoli-islands'
-    case UniversityCareersUniversityId.HOLAR_UNIVERSITY:
-      return 'holaskoli-haskolinn-a-holum'
-    case UniversityCareersUniversityId.UNIVERSITY_OF_ICELAND:
-      return 'haskoli-islands'
-    case UniversityCareersUniversityId.UNIVERSITY_OF_AKUREYRI:
-      return 'haskolinn-a-akureyri'
-    case UniversityCareersUniversityId.BIFROST_UNIVERSITY:
-      return 'bifrost'
-    default:
-      return null
-  }
-}
+import { mapUniversityToSlug } from '../../utils/mapUniversitySlug'
 
 export const EducationGraduation = () => {
   useNamespaces('sp.education-graduation')
@@ -75,7 +55,7 @@ export const EducationGraduation = () => {
 
   const errorString = useMemo(() => {
     return errors
-      .map((e) => mapUniversityToOrganization(e.university))
+      .map((e) => mapUniversityToSlug(e.university))
       .map((e) => (organizations ?? []).find((o) => o.slug === e)?.title)
       .filter(isDefined)
       .join(', ')
@@ -119,6 +99,9 @@ export const EducationGraduation = () => {
       <Stack space={2}>
         {!!tracks?.length &&
           tracks?.map((item, index) => {
+            if (!item.institution.id) {
+              return null
+            }
             return (
               <ActionCard
                 key={`education-graduation-${index}`}
@@ -136,7 +119,10 @@ export const EducationGraduation = () => {
                       ? EducationPaths.EducationHaskoliGraduationDetail.replace(
                           ':id',
                           item.trackNumber.toString(),
-                        ).replace(':uni', item.institution.id.toString())
+                        ).replace(
+                          ':uni',
+                          mapUniversityToSlug(item.institution.id),
+                        )
                       : '',
                 }}
                 image={

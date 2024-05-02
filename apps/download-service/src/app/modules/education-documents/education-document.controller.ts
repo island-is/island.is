@@ -6,11 +6,13 @@ import {
   Res,
   Param,
   UseGuards,
+  Inject,
 } from '@nestjs/common'
 import { ApiOkResponse } from '@nestjs/swagger'
 import { Response } from 'express'
 import { ApiScope } from '@island.is/auth/scopes'
 import type { User } from '@island.is/auth-nest-tools'
+import { LOGGER_PROVIDER, Logger } from '@island.is/logging'
 import {
   CurrentUser,
   IdsUserGuard,
@@ -21,9 +23,10 @@ import { AuditService } from '@island.is/nest/audit'
 import { GetEducationGraduationDocumentDto } from './dto/getEducationGraduationDocument'
 import {
   UniversityCareersClientService,
-  UniversityId,
+  UniversityIdShort,
 } from '@island.is/clients/university-careers'
 import { Locale } from '@island.is/shared/types'
+import { UniversityShortIdMap } from '@island.is/clients/university-careers'
 
 @UseGuards(IdsUserGuard, ScopesGuard)
 @Scopes(ApiScope.education)
@@ -32,9 +35,11 @@ export class EducationController {
   constructor(
     private readonly universitiesApi: UniversityCareersClientService,
     private readonly auditService: AuditService,
+    @Inject(LOGGER_PROVIDER)
+    private readonly logger: Logger,
   ) {}
 
-  @Post('/graduation/:lang/:trackNumber')
+  @Post('/graduation/:lang/:university/:trackNumber')
   @Header('Content-Type', 'application/pdf')
   @ApiOkResponse({
     content: { 'application/pdf': {} },
@@ -44,7 +49,9 @@ export class EducationController {
   async getEducationGraduationPDF(
     @Param('trackNumber') trackNumber: string,
     @Param('lang') lang: string,
-    @CurrentUser() user: User,
+    @Param('university') uni: UniversityIdShort,
+    @CurrentUser()
+    user: User,
     @Body() resource: GetEducationGraduationDocumentDto,
     @Res() res: Response,
   ) {
@@ -56,15 +63,15 @@ export class EducationController {
     const documentResponse = await this.universitiesApi.getStudentTrackPdf(
       authUser,
       parseInt(trackNumber),
-      UniversityId.UNIVERSITY_OF_ICELAND,
+      UniversityShortIdMap[uni],
       lang as Locale,
     )
 
     if (documentResponse) {
       this.auditService.audit({
-        action: 'getVehicleHistoryPdf',
+        action: 'getStudentTrackEducationGraduationPdf',
         auth: user,
-        resources: trackNumber,
+        resources: `${trackNumber}/${lang}/${uni}`,
       })
 
       const contentArrayBuffer = await documentResponse.arrayBuffer()
@@ -73,7 +80,7 @@ export class EducationController {
       res.header('Content-length', buffer.length.toString())
       res.header(
         'Content-Disposition',
-        `inline; filename=${user.nationalId}-brautskraning-${trackNumber}.pdf`,
+        `inline; filename=${user.nationalId}-skoli-${UniversityShortIdMap[uni]}-brautskraning-${trackNumber}.pdf`,
       )
       res.header('Content-Type: application/pdf')
       res.header('Pragma: no-cache')

@@ -1,6 +1,11 @@
 export * from './lib/universityCareers.module'
 export * from './lib/universityCareers.service'
-export { UniversityId } from './lib/universityCareers.types'
+export {
+  UniversityId,
+  UniversityIdShort,
+  UniversityIdMap,
+  UniversityShortIdMap,
+} from './lib/universityCareers.types'
 export {
   UniversityOfIcelandCareerClientConfig,
   AgriculturalUniversityOfIcelandCareerClientConfig,

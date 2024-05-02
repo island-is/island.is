@@ -22,6 +22,8 @@ import { useParams } from 'react-router-dom'
 import { useStudentTrackQuery } from './EducationGraduationDetail.generated'
 import { Problem } from '@island.is/react-spa/shared'
 import { OrganizationSlugType } from '@island.is/shared/constants'
+import { UniversityCareersUniversityId } from '@island.is/api/schema'
+import { mapSlugToUniversity } from '../../utils/mapUniversitySlug'
 type UseParams = {
   id: string
   uni: string
@@ -37,7 +39,9 @@ export const EducationGraduationDetail = () => {
       input: {
         trackNumber: parseInt(id),
         locale: lang,
-        universityId: uni,
+        universityId:
+          mapSlugToUniversity(uni) ??
+          UniversityCareersUniversityId.UNIVERSITY_OF_ICELAND,
       },
     },
   })
@@ -74,6 +78,9 @@ export const EducationGraduationDetail = () => {
               files?.length > 0 &&
               downloadServiceURL &&
               files?.map((item, index) => {
+                const shortOrgId =
+                  data.universityCareersStudentTrack?.transcript?.institution
+                    ?.shortId
                 return (
                   <Box
                     key={`education-graduation-button-${index}`}
@@ -87,7 +94,9 @@ export const EducationGraduationDetail = () => {
                       iconType="outline"
                       onClick={() =>
                         formSubmit(
-                          `${downloadServiceURL}${item.locale}/${studentInfo?.trackNumber}`,
+                          `${downloadServiceURL}${item.locale}/${
+                            shortOrgId ?? uni
+                          }/${studentInfo?.trackNumber}`,
                         )
                       }
                     >

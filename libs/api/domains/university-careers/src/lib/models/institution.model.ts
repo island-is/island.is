@@ -1,9 +1,16 @@
+import {
+  UniversityId,
+  UniversityIdShort,
+} from '@island.is/clients/university-careers'
 import { ObjectType, Field } from '@nestjs/graphql'
 
-@ObjectType('UnversityCareersInstitution')
+@ObjectType('UniversityCareersInstitution')
 export class Institution {
+  @Field(() => UniversityId)
+  id!: UniversityId
+
   @Field(() => String)
-  id!: string
+  shortId!: UniversityIdShort
 
   @Field(() => String, { nullable: true })
   displayName?: string

@@ -1,17 +1,16 @@
+import { UniversityId } from '@island.is/clients/university-careers'
 import { Field, InputType } from '@nestjs/graphql'
-import { IsNumber, IsOptional, IsString } from 'class-validator'
+import { IsEnum, IsNumber, IsString } from 'class-validator'
 
 @InputType('UniversityCareersStudentInfoByUniversityInput')
 export class StudentInfoByUniversityInput {
-  @Field()
-  @IsString()
-  @IsOptional()
-  universityId!: string
+  @Field(() => UniversityId)
+  @IsEnum(UniversityId)
+  universityId!: UniversityId
 
-  @Field({ nullable: true })
+  @Field()
   @IsNumber()
-  @IsOptional()
-  trackNumber?: number
+  trackNumber!: number
 
   @Field()
   @IsString()

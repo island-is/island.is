@@ -5,13 +5,20 @@ import {
   LbhiStudentTrackInstitution,
   UnakStudentTrackInstitution,
 } from '../clients'
+import {
+  UniversityId,
+  UniversityIdMap,
+  UniversityIdShort,
+} from '../universityCareers.types'
 
 export interface StudentTrackInstitutionDto {
-  id?: string
+  id: UniversityId
+  idShort: UniversityIdShort
   displayName?: string
 }
 
 export const mapToStudentTrackInstitutionDto = (
+  institutionId: UniversityId,
   institution?:
     | HolarStudentTrackInstitution
     | LbhiStudentTrackInstitution
@@ -19,9 +26,9 @@ export const mapToStudentTrackInstitutionDto = (
     | UnakStudentTrackInstitution
     | HIStudentTrackInstitution,
 ): StudentTrackInstitutionDto | undefined => {
-  if (!institution?.id || !institution?.displayName) {
-    return
+  return {
+    ...institution,
+    id: institutionId,
+    idShort: UniversityIdMap[institutionId],
   }
-
-  return institution
 }

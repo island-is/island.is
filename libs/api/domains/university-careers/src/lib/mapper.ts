@@ -6,10 +6,11 @@ import { isDefined } from '@island.is/shared/utils'
 import { StudentTrack } from './models/studentTrack.model'
 import { StudentTrackTranscript } from './models/studentTrackTranscript.model'
 import { Institution } from './models/institution.model'
+import { InstitutionProps } from './universityCareers.types'
 
 export const mapToStudent = (
   data: StudentTrackDto,
-  institutionFallback: Institution,
+  institution: InstitutionProps,
 ): StudentTrackTranscript | null => {
   if (
     !data ||
@@ -24,22 +25,23 @@ export const mapToStudent = (
     return null
   }
 
-  let institution: Institution | undefined = undefined
+  let institutionMapped: Institution | undefined
 
-  if (data.institution?.id && data.institution?.displayName) {
-    institution = {
+  if (data.institution?.id) {
+    institutionMapped = {
       id: data.institution.id,
-      displayName: data.institution.displayName,
-      logoUrl: institutionFallback.logoUrl,
+      shortId: data.institution.idShort,
+      displayName: institution.displayName,
+      logoUrl: institution.logoUrl,
     }
   } else {
-    institution = institutionFallback
+    institutionMapped = institution
   }
 
   return {
     name: data.name,
     trackNumber: data.trackNumber,
-    institution,
+    institution: institutionMapped,
     school: data.school,
     faculty: data.faculty,
     studyProgram: data.studyProgram,
@@ -50,7 +52,7 @@ export const mapToStudent = (
 
 export const mapToStudentTrackModel = (
   data: StudentTrackOverviewDto,
-  institution: Institution,
+  institution: InstitutionProps,
 ): StudentTrack | null => {
   if (
     !data.transcript ||

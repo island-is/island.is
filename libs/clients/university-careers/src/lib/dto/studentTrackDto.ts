@@ -5,6 +5,7 @@ import {
   UnakStudentTrack,
   HIStudentTrack,
 } from '../clients'
+import { UniversityId } from '../universityCareers.types'
 import {
   StudentTrackInstitutionDto,
   mapToStudentTrackInstitutionDto,
@@ -29,14 +30,20 @@ export const mapToStudentTrackDto = (
     | BifrostStudentTrack
     | UnakStudentTrack
     | HIStudentTrack,
+  institutionId: UniversityId,
 ): StudentTrackDto | null => {
   if (!transcript.graduationDate) {
     return null
   }
 
+  const institution = mapToStudentTrackInstitutionDto(
+    institutionId,
+    transcript.institution,
+  )
+
   return {
     ...transcript,
-    institution: mapToStudentTrackInstitutionDto(transcript.institution),
+    institution,
     graduationDate: new Date(transcript.graduationDate),
   }
 }

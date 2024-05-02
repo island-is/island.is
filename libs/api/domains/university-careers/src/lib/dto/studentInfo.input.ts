@@ -1,6 +1,6 @@
 import { UniversityId } from '@island.is/clients/university-careers'
 import { Field, InputType, registerEnumType } from '@nestjs/graphql'
-import { IsEnum, IsNumber, IsOptional, IsString } from 'class-validator'
+import { IsString } from 'class-validator'
 
 registerEnumType(UniversityId, { name: 'UniversityCareersUniversityId' })
 

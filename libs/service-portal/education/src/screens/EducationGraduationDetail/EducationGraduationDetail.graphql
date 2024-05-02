@@ -6,6 +6,7 @@ query studentTrack($input: UniversityCareersStudentInfoByUniversityInput!) {
       graduationDate
       institution {
         id
+        shortId
         displayName
       }
       name

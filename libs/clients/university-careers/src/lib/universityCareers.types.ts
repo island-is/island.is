@@ -1,8 +1,26 @@
-import { User } from '@island.is/auth-nest-tools'
-import { Locale } from 'locale'
 import { z } from 'zod'
-import { StudentTrackDto } from './dto/studentTrackDto'
-import { StudentTrackOverviewDto } from './dto/studentTrackOverviewDto'
+import {
+  UnakLocale,
+  LbhiLocale,
+  BifrostLocale,
+  HolarLocale,
+  HILocale,
+  BifrostFerillLocale,
+  BifrostTranscriptLocale,
+  HIFerillLocale,
+  HITranscriptLocale,
+  HolarFerillLocale,
+  HolarTranscriptLocale,
+  LbhiFerillLocale,
+  LbhiTranscriptLocale,
+  UnakFerillLocale,
+  UnakTranscriptLocale,
+  UnakApi,
+  BifrostApi,
+  HIApi,
+  HolarApi,
+  LbhiApi,
+} from './clients'
 
 export const schema = z.object({
   xroadPath: z.string(),
@@ -10,31 +28,56 @@ export const schema = z.object({
 })
 
 export enum UniversityId {
-  UNIVERSITY_OF_AKUREYRI = 'UniversityOfAkureyri',
-  BIFROST_UNIVERSITY = 'BifrostUniversity',
-  HOLAR_UNIVERSITY = 'HolarUniversity',
-  AGRICULTURAL_UNIVERSITY_OF_ICELAND = 'AgriculturalUniversityOfIceland',
-  UNIVERSITY_OF_ICELAND = 'UniversityOfIceland',
+  UNIVERSITY_OF_AKUREYRI = 'unak',
+  BIFROST_UNIVERSITY = 'bifrost',
+  HOLAR_UNIVERSITY = 'holar',
+  AGRICULTURAL_UNIVERSITY_OF_ICELAND = 'lbhi',
+  UNIVERSITY_OF_ICELAND = 'hi',
 }
 
-export interface UniversityCareerService {
-  getStudentTrackHistory: (
-    user: User,
-    university: UniversityId,
-    locale: Locale,
-  ) => Promise<Array<StudentTrackDto> | null>
-
-  getStudentTrack: (
-    user: User,
-    trackNumber: number,
-    university: UniversityId,
-    locale?: Locale,
-  ) => Promise<StudentTrackOverviewDto | null>
-
-  getStudentTrackPdf: (
-    user: User,
-    trackNumber: number,
-    university: UniversityId,
-    locale?: Locale,
-  ) => Promise<Blob | null>
+export const UniversityShortIdMap: Record<UniversityIdShort, UniversityId> = {
+  unak: UniversityId.UNIVERSITY_OF_AKUREYRI,
+  bifrost: UniversityId.BIFROST_UNIVERSITY,
+  holar: UniversityId.HOLAR_UNIVERSITY,
+  lbhi: UniversityId.AGRICULTURAL_UNIVERSITY_OF_ICELAND,
+  hi: UniversityId.UNIVERSITY_OF_ICELAND,
 }
+
+export const UniversityIdMap: Record<UniversityId, UniversityIdShort> = {
+  unak: 'unak',
+  bifrost: 'bifrost',
+  holar: 'holar',
+  lbhi: 'lbhi',
+  hi: 'hi',
+}
+
+export type UniversityIdShort = 'unak' | 'bifrost' | 'holar' | 'lbhi' | 'hi'
+
+export type UniversityApi = LbhiApi | UnakApi | HolarApi | BifrostApi | HIApi
+
+export type UniversityLocales = {
+  studentLocale: StudentLocale
+  studentTransriptLocale: StudentTranscriptLocale
+  studentTrackLocale: StudentTrackLocale
+}
+
+export type StudentLocale =
+  | typeof UnakLocale
+  | typeof LbhiLocale
+  | typeof BifrostLocale
+  | typeof HolarLocale
+  | typeof HILocale
+
+export type StudentTranscriptLocale =
+  | typeof UnakTranscriptLocale
+  | typeof LbhiTranscriptLocale
+  | typeof BifrostTranscriptLocale
+  | typeof HolarTranscriptLocale
+  | typeof HITranscriptLocale
+
+export type StudentTrackLocale =
+  | typeof UnakFerillLocale
+  | typeof LbhiFerillLocale
+  | typeof BifrostFerillLocale
+  | typeof HolarFerillLocale
+  | typeof HIFerillLocale
