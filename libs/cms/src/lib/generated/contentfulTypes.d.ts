@@ -752,6 +752,18 @@ export interface ICustomPageFields {
 
   /** Configuration */
   configJson?: Record<string, any> | undefined
+
+  /** Content */
+  content?: Document | undefined
+
+  /** Open Graph Title */
+  ogTitle?: string | undefined
+
+  /** Open Graph Description */
+  ogDescription?: string | undefined
+
+  /** Open Graph Image */
+  ogImage?: Asset | undefined
 }
 
 /** This content type is meant to represent a custom made page. Examples include (/starfatorg, /reglugerdir and many more).
