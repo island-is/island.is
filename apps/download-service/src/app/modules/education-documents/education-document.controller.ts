@@ -34,8 +34,6 @@ export class EducationController {
   constructor(
     private readonly universitiesApi: UniversityCareersClientService,
     private readonly auditService: AuditService,
-    @Inject(LOGGER_PROVIDER)
-    private readonly logger: Logger,
   ) {}
 
   @Post('/graduation/:lang/:university/:trackNumber')
