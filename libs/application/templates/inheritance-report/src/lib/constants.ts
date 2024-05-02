@@ -2,6 +2,8 @@ import { DefaultEvents } from '@island.is/application/types'
 
 export const YES = 'Yes'
 export const NO = 'No'
+export const PREPAID_INHERITANCE = 'EFS-Pre-paid'
+export const INHERITANCE = 'EFS'
 
 export const States = {
   prerequisites: 'prerequisites',
@@ -18,6 +20,7 @@ export type InheritanceReportEvent =
 
 export enum Roles {
   APPLICANT = 'applicant',
+  PREPAID = 'prepaid',
 }
 
 export enum ApiActions {

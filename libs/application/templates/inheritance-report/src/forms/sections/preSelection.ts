@@ -1,13 +1,18 @@
 import {
+  buildActionCardListField,
+  buildAlertMessageField,
   buildDataProviderItem,
   buildExternalDataProvider,
+  buildMessageWithLinkButtonField,
   buildMultiField,
+  buildRadioField,
   buildSection,
   buildSelectField,
 } from '@island.is/application/core'
 import { m } from '../../lib/messages'
 import { EstateOnEntryApi } from '../../dataProviders'
 import { InheritanceReportInfo } from '@island.is/clients/syslumenn'
+import { INHERITANCE, NO, PREPAID_INHERITANCE, YES } from '../../lib/constants'
 
 export const preSelection = buildSection({
   id: 'deceasedPreselection',
@@ -31,6 +36,7 @@ export const preSelection = buildSection({
     buildMultiField({
       id: 'estate',
       title: m.applicationName,
+      condition: (answers) => answers.applicationFor === INHERITANCE,
       children: [
         buildSelectField({
           id: 'estateInfoSelection',

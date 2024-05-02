@@ -30,7 +30,21 @@ export const m = defineMessages({
     defaultMessage: 'Foröflun gagna',
     description: 'Title for pre-collection of data',
   },
-
+  preDataCollectionApplicationFor: {
+    id: 'ir.application:preDataCollectionApplicationFor',
+    defaultMessage: 'Tegund umsóknar',
+    description: 'Get application for',
+  },
+  preDataCollectionApplicationForPrepaid: {
+    id: 'ir.application:preDataCollectionApplicationForPrepaid',
+    defaultMessage: 'Fyrirframgreiddur arfur',
+    description: '',
+  },
+  preDataCollectionApplicationForDefault: {
+    id: 'ir.application:preDataCollectionApplicationForDefault',
+    defaultMessage: 'Dánarbú',
+    description: '',
+  },
   // Application begin
   applicationName: {
     id: 'ir.application:applicationName',
