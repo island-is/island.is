@@ -873,8 +873,7 @@ describe('CaseController - Update', () => {
     const caseToUpdate = { arraignmentDate }
 
     beforeEach(async () => {
-      const newLocal = await givenWhenThen(caseId, user, theCase, caseToUpdate)
-      console.log('!!!!!!!!!!!!!!!!!!!!!!', { newLocal })
+      await givenWhenThen(caseId, user, theCase, caseToUpdate)
     })
 
     it('should update case', () => {
