@@ -53,7 +53,7 @@ runs:
         echo "NODE_MODULES_HASH: $NODE_MODULES_HASH"
         echo "MOBILE_NODE_MODULES_HASH: $MOBILE_NODE_MODULES_HASH"
         echo "node-modules-key=$NODE_MODULES_HASH" >> $GITHUB_OUTPUT
-        echo "mobile-node-modules-key=$NODE_MODULES_HASH" >> $GITHUB_OUTPUT
+        echo "mobile-node-modules-key=$MOBILE_NODE_MODULES_HASH" >> $GITHUB_OUTPUT
 
     - name: Calculate cache keys for generated files
       if: ${{ inputs.calculateCacheKeys == 'true' }}
