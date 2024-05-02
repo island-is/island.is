@@ -41,6 +41,12 @@ type FlatListItem =
   | { __typename: 'Skeleton'; id: string }
   | { __typename: 'Error'; id: string }
 
+const getSkeletonArr = (): FlatListItem[] =>
+  Array.from({ length: 5 }).map((_, id) => ({
+    id: String(id),
+    __typename: 'Skeleton',
+  }))
+
 const { useNavigationOptions, getNavigationOptions } =
   createNavigationOptionHooks(
     (theme, intl, initialized) => ({
@@ -141,7 +147,7 @@ export const WalletScreen: NavigationFunctionComponent = ({ componentId }) => {
 
   // Filter licenses
   const licenseItems = useMemo(() => {
-    if (!res.loading && !res.error) {
+    if ((!res.loading && !res.error) || res.data) {
       return (res.data?.genericLicenses ?? []).filter(({ license }) => {
         if (license.status === 'Unknown') {
           return false
@@ -161,6 +167,7 @@ export const WalletScreen: NavigationFunctionComponent = ({ componentId }) => {
         return true
       })
     }
+
     return []
   }, [res, showDisability, showPCard, showEhic, showHuntingLicense])
 
@@ -251,12 +258,13 @@ export const WalletScreen: NavigationFunctionComponent = ({ componentId }) => {
   }, [])
 
   const data = useMemo<FlatListItem[]>(() => {
-    if (res.loading && !res.data) {
-      return Array.from({ length: 5 }).map((_, id) => ({
-        id: String(id),
-        __typename: 'Skeleton',
-      }))
+    if (
+      (res.loading && !res.data) ||
+      (resPassport.loading && !resPassport.data)
+    ) {
+      return getSkeletonArr()
     }
+
     return [
       ...licenseItems,
       ...(showPassport ? resPassport?.data?.getIdentityDocument ?? [] : []),

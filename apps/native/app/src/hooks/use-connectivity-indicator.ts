@@ -118,7 +118,7 @@ export const useConnectivityIndicator = <Data extends Record<string, unknown>>({
         // Make sure all queries are loaded and have data before removing the loading button
         if (queryResult.every(({ loading, data }) => !loading && data)) {
           updateNavigationButtons(false)
-        } else if (queryResult.some(({ data }) => data)) {
+        } else if (queryResult.every(({ data }) => data)) {
           updateNavigationButtons(!refetching)
         }
       } else if (queryResult?.data) {
