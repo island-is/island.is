@@ -1,4 +1,5 @@
 import React from 'react'
+import { useIntl } from 'react-intl'
 
 import { Box, Icon, IconMapIcon, LinkV2, Text } from '@island.is/island-ui/core'
 import { formatDOB } from '@island.is/judicial-system/formatters'
@@ -7,6 +8,7 @@ import {
   SessionArrangements,
 } from '@island.is/judicial-system-web/src/graphql/schema'
 
+import { strings } from './InfoCard.strings'
 import { link } from '../MarkdownWrapper/MarkdownWrapper.css'
 import * as styles from './InfoCard.css'
 
@@ -44,6 +46,8 @@ export const NameAndEmail = (name?: string | null, email?: string | null) => [
 const UniqueDefenders: React.FC<
   React.PropsWithChildren<UniqueDefendersProps>
 > = (props) => {
+  const { formatMessage } = useIntl()
+
   const { defenders } = props
   const uniqueDefenders = defenders?.filter(
     (defender, index, self) =>
@@ -55,8 +59,10 @@ const UniqueDefenders: React.FC<
       <Text variant="h4">
         {defenders[0].sessionArrangement ===
         SessionArrangements.ALL_PRESENT_SPOKESPERSON
-          ? 'Talsmaður'
-          : `Verj${uniqueDefenders.length > 1 ? 'endur' : 'andi'}`}
+          ? formatMessage(strings.spokesperson)
+          : uniqueDefenders.length > 1
+          ? formatMessage(strings.defenders)
+          : formatMessage(strings.defender)}
       </Text>
       {uniqueDefenders.map((defender, index) =>
         defender?.name ? (
@@ -70,7 +76,7 @@ const UniqueDefenders: React.FC<
           </Box>
         ) : (
           <Text key={`defender_not_registered_${index}`}>
-            Hefur ekki verið skráður
+            {formatMessage(strings.noDefender)}
           </Text>
         ),
       )}
