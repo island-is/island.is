@@ -31,6 +31,7 @@ import {
   FormContext,
   FormFooter,
   InfoCard,
+  InfoCardCaseScheduled,
   Modal,
   PageHeader,
   PageLayout,
@@ -39,7 +40,6 @@ import {
   UserContext,
 } from '@island.is/judicial-system-web/src/components'
 import { NameAndEmail } from '@island.is/judicial-system-web/src/components/InfoCard/InfoCard'
-import InfoCardCaseScheduled from '@island.is/judicial-system-web/src/components/InfoCard/InfoCardCaseScheduled'
 import {
   CaseLegalProvisions,
   CaseState,
@@ -164,9 +164,6 @@ export const Overview: React.FC<React.PropsWithChildren<unknown>> = () => {
                 court={workingCase.court}
                 courtDate={workingCase.arraignmentDate.date}
                 courtRoom={workingCase.arraignmentDate.location}
-                postponedIndefinitelyExplanation={
-                  workingCase.postponedIndefinitelyExplanation
-                }
               />
             </Box>
           )}
