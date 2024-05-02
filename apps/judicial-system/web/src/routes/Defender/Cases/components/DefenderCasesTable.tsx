@@ -33,6 +33,7 @@ import {
   useSortCases,
 } from '@island.is/judicial-system-web/src/utils/hooks'
 
+import { strings } from './DefenderCasesTable.string'
 import * as styles from './DefenderCasesTable.css'
 
 interface Props {
@@ -179,26 +180,31 @@ export const DefenderCasesTable: React.FC<React.PropsWithChildren<Props>> = (
                   </td>
                 ) : (
                   <td className={styles.td}>
-                    {column.courtDate && (
-                      <>
-                        <Text>
-                          <Box component="span" className={styles.blockColumn}>
-                            {capitalize(
-                              format(
-                                parseISO(column.courtDate),
-                                'EEEE d. LLLL y',
-                                {
-                                  locale: localeIS,
-                                },
-                              ),
-                            ).replace('dagur', 'd.')}
-                          </Box>
-                        </Text>
-                        <Text as="span" variant="small">
-                          kl. {format(parseISO(column.courtDate), 'kk:mm')}
-                        </Text>
-                      </>
-                    )}
+                    {column.postponedIndefinitelyExplanation
+                      ? formatMessage(strings.postponed)
+                      : column.courtDate && (
+                          <>
+                            <Text>
+                              <Box
+                                component="span"
+                                className={styles.blockColumn}
+                              >
+                                {capitalize(
+                                  format(
+                                    parseISO(column.courtDate),
+                                    'EEEE d. LLLL y',
+                                    {
+                                      locale: localeIS,
+                                    },
+                                  ),
+                                ).replace('dagur', 'd.')}
+                              </Box>
+                            </Text>
+                            <Text as="span" variant="small">
+                              kl. {format(parseISO(column.courtDate), 'kk:mm')}
+                            </Text>
+                          </>
+                        )}
                   </td>
                 )}
                 <td>

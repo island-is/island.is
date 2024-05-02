@@ -7,7 +7,7 @@ import {
   NestInterceptor,
 } from '@nestjs/common'
 
-import { DateType } from '@island.is/judicial-system/types'
+import { CommentType, DateType } from '@island.is/judicial-system/types'
 
 import { Case } from '../models/case.model'
 
@@ -26,6 +26,13 @@ export class CaseListInterceptor implements NestInterceptor {
               d.dateType,
             ),
           )?.date
+
+          const postponedIndefinitelyExplanation =
+            theCase.explanatoryComments?.find(
+              (c) =>
+                c.commentType ===
+                CommentType.POSTPONED_INDEFINITELY_EXPLANATION,
+            )?.comment
 
           return {
             id: theCase.id,
@@ -56,6 +63,7 @@ export class CaseListInterceptor implements NestInterceptor {
             appealCaseNumber: theCase.appealCaseNumber,
             appealRulingDecision: theCase.appealRulingDecision,
             prosecutorsOffice: theCase.prosecutorsOffice,
+            postponedIndefinitelyExplanation,
           }
         }),
       ),

@@ -142,5 +142,6 @@ query LimitedAccessCase($input: CaseQueryInput!) {
       id
       name
     }
+    postponedIndefinitelyExplanation
   }
 }

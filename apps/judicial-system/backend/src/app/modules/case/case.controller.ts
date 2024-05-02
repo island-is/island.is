@@ -400,6 +400,9 @@ export class CaseController {
       case CaseTransition.RETURN_INDICTMENT:
         update.courtCaseNumber = ''
         break
+      case CaseTransition.REDISTRIBUTE:
+        update.judgeId = null
+        break
     }
 
     const updatedCase = await this.caseService.update(

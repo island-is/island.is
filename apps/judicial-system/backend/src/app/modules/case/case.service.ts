@@ -130,7 +130,6 @@ export interface UpdateCase
     | 'prosecutorAppealAnnouncement'
     | 'accusedPostponedAppealDate'
     | 'prosecutorPostponedAppealDate'
-    | 'judgeId'
     | 'registrarId'
     | 'caseModifiedExplanation'
     | 'rulingModifiedHistory'
@@ -169,6 +168,7 @@ export interface UpdateCase
   arraignmentDate?: UpdateDateLog | null
   courtDate?: UpdateDateLog | null
   postponedIndefinitelyExplanation?: string | null
+  judgeId?: string | null
 }
 
 type DateLogKeys = keyof Pick<UpdateCase, 'arraignmentDate' | 'courtDate'>
@@ -321,6 +321,12 @@ export const caseListInclude: Includeable[] = [
     as: 'dateLogs',
     required: false,
     where: { dateType: { [Op.in]: dateTypes } },
+  },
+  {
+    model: ExplanatoryComment,
+    as: 'explanatoryComments',
+    required: false,
+    where: { commentType: { [Op.in]: commentTypes } },
   },
 ]
 
@@ -1247,7 +1253,7 @@ export class CaseService {
               transaction,
             })
           }
-        } else {
+        } else if (updateDateLog !== null) {
           await this.dateLogModel.create(
             {
               caseId: theCase.id,
@@ -1293,7 +1299,7 @@ export class CaseService {
               { where: { caseId: theCase.id, commentType }, transaction },
             )
           }
-        } else {
+        } else if (updateComment !== null) {
           await this.explanatoryCommentModel.create(
             { caseId: theCase.id, commentType, comment: updateComment },
             { transaction },

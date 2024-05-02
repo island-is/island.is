@@ -25,6 +25,7 @@ import {
   FormContentContainer,
   FormContext,
   InfoCard,
+  InfoCardCaseScheduled,
   MarkdownWrapper,
   Modal,
   PageHeader,
@@ -41,7 +42,6 @@ import { useAppealAlertBanner } from '@island.is/judicial-system-web/src/utils/h
 import { sortByIcelandicAlphabet } from '@island.is/judicial-system-web/src/utils/sortHelper'
 
 import { NameAndEmail } from '../../components/InfoCard/InfoCard'
-import InfoCardCaseScheduled from '../../components/InfoCard/InfoCardCaseScheduled'
 import { strings } from './CaseOverview.strings'
 import * as styles from './CaseOverview.css'
 

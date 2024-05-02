@@ -126,6 +126,13 @@
         "cwd": "libs/auth-api-lib"
       }
     },
+    "migrate/undo": {
+      "executor": "nx:run-commands",
+      "options": {
+        "command": "sequelize-cli db:migrate:undo",
+        "cwd": "{workspaceRoot}/libs/auth-api-lib"
+      }
+    },
     "seed": {
       "executor": "nx:run-commands",
       "options": {
