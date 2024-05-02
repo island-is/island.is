@@ -23,7 +23,10 @@ import {
 } from '@island.is/service-portal/core'
 import { OrganizationSlugType } from '@island.is/shared/constants'
 import { useParams } from 'react-router-dom'
-import { mapSlugToUniversity } from '../../utils/mapUniversitySlug'
+import {
+  mapSlugToContentfulSlug,
+  mapSlugToUniversity,
+} from '../../utils/mapUniversitySlug'
 import { useStudentTrackQuery } from './EducationGraduationDetail.generated'
 type UseParams = {
   id: string
@@ -64,7 +67,7 @@ export const EducationGraduationDetail = () => {
       <IntroHeader
         title={m.educationGraduation}
         intro={text?.description || ''}
-        serviceProviderSlug={uni as OrganizationSlugType}
+        serviceProviderSlug={mapSlugToContentfulSlug(uni) ?? 'haskoli-islands'}
       />
       <GridRow marginBottom={[1, 1, 1, 3]}>
         <GridColumn span="12/12">
