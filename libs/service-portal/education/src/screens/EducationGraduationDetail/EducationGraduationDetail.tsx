@@ -21,7 +21,6 @@ import {
   formatDate,
   m,
 } from '@island.is/service-portal/core'
-import { OrganizationSlugType } from '@island.is/shared/constants'
 import { useParams } from 'react-router-dom'
 import {
   mapSlugToContentfulSlug,
