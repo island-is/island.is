@@ -18,15 +18,20 @@ export const UtlendingastofnunPaymentCatalogApi = PaymentCatalogApi.configure({
   externalDataId: 'payment',
 })
 
+export const ApplicantInformationApi = defineTemplateApi({
+  action: ApiActions.applicantInformation,
+  externalDataId: 'applicantInformation',
+})
+
 export const ResidenceConditionInfoApi = defineTemplateApi({
   action: ApiActions.getResidenceConditionInfo,
   externalDataId: 'residenceConditionInfo',
 })
 
-export const CurrentCountryOfResidenceListApi = defineTemplateApi({
-  action: ApiActions.getCurrentCountryOfResidenceList,
-  externalDataId: 'currentCountryOfResidenceList',
-})
+// export const CurrentCountryOfResidenceListApi = defineTemplateApi({
+//   action: ApiActions.getCurrentCountryOfResidenceList,
+//   externalDataId: 'currentCountryOfResidenceList',
+// })
 
 export const ResidenceInIcelandLastChangeDateApi = defineTemplateApi({
   action: ApiActions.getResidenceInIcelandLastChangeDate,
@@ -45,17 +50,17 @@ export const TravelDocumentTypesApi = defineTemplateApi({
   namespace: 'DirectorateOfImmigrationShared',
 })
 
-export const CurrentStayAbroadListApi = defineTemplateApi({
-  action: 'getCurrentStayAbroadList',
-  externalDataId: 'currentStayAbroadList',
-  namespace: 'DirectorateOfImmigrationShared',
-})
+// export const CurrentStayAbroadListApi = defineTemplateApi({
+//   action: 'getCurrentStayAbroadList',
+//   externalDataId: 'currentStayAbroadList',
+//   namespace: 'DirectorateOfImmigrationShared',
+// })
 
-export const CurrentPassportItemApi = defineTemplateApi({
-  action: 'getCurrentPassportItem',
-  externalDataId: 'currentPassportItem',
-  namespace: 'DirectorateOfImmigrationShared',
-})
+// export const CurrentPassportItemApi = defineTemplateApi({
+//   action: 'getCurrentPassportItem',
+//   externalDataId: 'currentPassportItem',
+//   namespace: 'DirectorateOfImmigrationShared',
+// })
 
 export const NationalRegistryIndividualApi = defineTemplateApi({
   action: 'nationalRegistry',
