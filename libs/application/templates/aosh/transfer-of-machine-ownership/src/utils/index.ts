@@ -20,7 +20,7 @@ export const getChargeItemCodes = (
   application: Application<FormValue>,
 ): Array<string> => {
   const answers = application.answers as TransferOfMachineOwnershipAnswers
-  if (answers.machine.paymentRequiredForOwnerChange === false) {
+  if (answers.machine?.paymentRequiredForOwnerChange === false) {
     return []
   }
 
