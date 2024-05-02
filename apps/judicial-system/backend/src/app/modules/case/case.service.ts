@@ -322,6 +322,12 @@ export const caseListInclude: Includeable[] = [
     required: false,
     where: { dateType: { [Op.in]: dateTypes } },
   },
+  {
+    model: ExplanatoryComment,
+    as: 'explanatoryComments',
+    required: false,
+    where: { commentType: { [Op.in]: commentTypes } },
+  },
 ]
 
 export const listOrder: OrderItem[] = [
@@ -1247,7 +1253,7 @@ export class CaseService {
               transaction,
             })
           }
-        } else {
+        } else if (updateDateLog !== null) {
           await this.dateLogModel.create(
             {
               caseId: theCase.id,
@@ -1293,7 +1299,7 @@ export class CaseService {
               { where: { caseId: theCase.id, commentType }, transaction },
             )
           }
-        } else {
+        } else if (updateComment !== null) {
           await this.explanatoryCommentModel.create(
             { caseId: theCase.id, commentType, comment: updateComment },
             { transaction },

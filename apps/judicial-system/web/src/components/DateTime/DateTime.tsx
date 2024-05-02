@@ -8,7 +8,7 @@ import {
 } from '@island.is/judicial-system-web/src/utils/validate'
 
 import { BlueBox, TimeInputField } from '../../components'
-import { dateTime as strings } from './DateTime.strings'
+import { strings } from './DateTime.strings'
 import * as styles from './DateTime.css'
 
 interface Props {
