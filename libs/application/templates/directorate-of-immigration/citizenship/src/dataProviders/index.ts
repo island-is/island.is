@@ -28,11 +28,6 @@ export const ResidenceConditionInfoApi = defineTemplateApi({
   externalDataId: 'residenceConditionInfo',
 })
 
-// export const CurrentCountryOfResidenceListApi = defineTemplateApi({
-//   action: ApiActions.getCurrentCountryOfResidenceList,
-//   externalDataId: 'currentCountryOfResidenceList',
-// })
-
 export const ResidenceInIcelandLastChangeDateApi = defineTemplateApi({
   action: ApiActions.getResidenceInIcelandLastChangeDate,
   externalDataId: 'residenceInIcelandLastChangeDate',
@@ -49,18 +44,6 @@ export const TravelDocumentTypesApi = defineTemplateApi({
   externalDataId: 'travelDocumentTypes',
   namespace: 'DirectorateOfImmigrationShared',
 })
-
-// export const CurrentStayAbroadListApi = defineTemplateApi({
-//   action: 'getCurrentStayAbroadList',
-//   externalDataId: 'currentStayAbroadList',
-//   namespace: 'DirectorateOfImmigrationShared',
-// })
-
-// export const CurrentPassportItemApi = defineTemplateApi({
-//   action: 'getCurrentPassportItem',
-//   externalDataId: 'currentPassportItem',
-//   namespace: 'DirectorateOfImmigrationShared',
-// })
 
 export const NationalRegistryIndividualApi = defineTemplateApi({
   action: 'nationalRegistry',
