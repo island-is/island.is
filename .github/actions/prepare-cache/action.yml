@@ -69,15 +69,16 @@ runs:
       shell: bash
       id: set-cache-keys
       run: |
-        node_modules_key="${{ inputs.nodeModulesHash || steps.calculate-node-modules-cache.outputs.node-modules-key }}-yarn"
-        mobile_node_modules_key="${{ inputs.mobileNodeModulesHash || steps.calculate-node-modules-cache.outputs.mobile-node-modules-key }}-yarn"
+        echo "determine cache keys"
+        node_modules_key="${{ inputs.nodeModulesHash || steps.calculate-node-modules-cache.outputs.node-modules-key }}"
+        mobile_node_modules_key="${{ inputs.mobileNodeModulesHash || steps.calculate-node-modules-cache.outputs.mobile-node-modules-key }}"
         generated_files_key="${{ inputs.generatedFilesCacheKey || steps.calculate-generated-files-cache.outputs.generated-files-key }}"
         echo "debug info:"
         echo "node-modules-key=$node_modules_key"
         echo "mobile-node-modules-key=$mobile_node_modules_key"
         echo "generated-files-key=$generated_files_key"
         echo
-        echo "set GITHUB_OUTPUT:"
+        echo "set GITHUB_OUTPUT"
         echo "node-modules-key=$node_modules_key" >> $GITHUB_OUTPUT
         echo "mobile-node-modules-key=$mobile_node_modules_key" >> $GITHUB_OUTPUT
         echo "generated-files-key=$generated_files_key" >> $GITHUB_OUTPUT
