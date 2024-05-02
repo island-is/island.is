@@ -16,7 +16,7 @@
       "executor": "nx:run-commands",
       "options": {
         "cwd": "apps/native/app",
-        "command": "yarn nx:typecheck"
+        "command": "yarn build-mock"
       }
     },
     "test": {
