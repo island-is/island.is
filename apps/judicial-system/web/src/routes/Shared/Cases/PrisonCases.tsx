@@ -25,7 +25,6 @@ import {
   CreatedDate,
   DefendantInfo,
   getDurationDate,
-  PastCasesTable,
 } from '@island.is/judicial-system-web/src/components/Table'
 import Table from '@island.is/judicial-system-web/src/components/Table/Table'
 import {
