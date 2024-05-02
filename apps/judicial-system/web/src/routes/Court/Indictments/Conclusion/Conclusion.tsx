@@ -190,7 +190,6 @@ const Conclusion: React.FC = () => {
               checked={selectedAction === 'REDISTRIBUTE'}
               onChange={async () => {
                 setSelectedAction('REDISTRIBUTE')
-               
               }}
               large
               backgroundColor="white"
