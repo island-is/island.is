@@ -12,7 +12,6 @@ import { ApiOkResponse } from '@nestjs/swagger'
 import { Response } from 'express'
 import { ApiScope } from '@island.is/auth/scopes'
 import type { User } from '@island.is/auth-nest-tools'
-import { LOGGER_PROVIDER, Logger } from '@island.is/logging'
 import {
   CurrentUser,
   IdsUserGuard,
