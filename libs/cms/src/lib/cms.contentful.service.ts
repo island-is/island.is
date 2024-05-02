@@ -352,7 +352,7 @@ export class CmsContentfulService {
     const params = {
       ['content_type']: 'organization',
       include: 10,
-      'fields.referenceIdentifier[match]': referenceId,
+      'fields.referenceIdentifier': referenceId,
     }
 
     const result = await this.contentfulRepository
