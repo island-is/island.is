@@ -128,10 +128,14 @@ runs:
     - name: Check generated-files cache success
       id: check-generated-files-cache-success
       shell: bash
-      run: '[[ "${{ steps.generated-files-cache.outputs.success }}" != "false" ]] || exit 1'
+      run: |
+        echo "generated-files cache success: ${{ steps.generated-files-cache.outputs.success }}"
+        [[ "${{ steps.generated-files-cache.outputs.success }}" != "false" ]] || exit 1
 
     - name: Untar generated files
       id: untar-generated-files
       if: ${{ steps.generated-files-cache.outputs.success == 'true' }}"
       shell: bash
-      run: tar zxvf generated_files.tar.gz
+      run: |
+        echo "Untar generated-files"
+        tar zxvf generated_files.tar.gz
