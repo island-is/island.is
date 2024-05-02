@@ -8,9 +8,10 @@ import {
   Input,
   InputFileUpload,
   RadioButton,
+  toast,
 } from '@island.is/island-ui/core'
 import * as constants from '@island.is/judicial-system/consts'
-import { core, titles } from '@island.is/judicial-system-web/messages'
+import { core, errors, titles } from '@island.is/judicial-system-web/messages'
 import {
   BlueBox,
   CourtArrangements,
@@ -24,7 +25,10 @@ import {
   SectionHeading,
   useCourtArrangements,
 } from '@island.is/judicial-system-web/src/components'
-import { CaseFileCategory } from '@island.is/judicial-system-web/src/graphql/schema'
+import {
+  CaseFileCategory,
+  CaseTransition,
+} from '@island.is/judicial-system-web/src/graphql/schema'
 import { stepValidationsType } from '@island.is/judicial-system-web/src/utils/formHelper'
 import {
   useCase,
@@ -34,7 +38,7 @@ import {
 
 import { strings } from './Conclusion.strings'
 
-type Actions = 'POSTPONE'
+type Actions = 'POSTPONE' | 'REDISTRIBUTE'
 
 interface Postponement {
   postponedIndefinitely?: boolean
@@ -55,7 +59,7 @@ const Conclusion: React.FC = () => {
     sendCourtDateToServer,
   } = useCourtArrangements(workingCase, setWorkingCase, 'courtDate')
 
-  const { updateCase, isUpdatingCase } = useCase()
+  const { updateCase, isUpdatingCase, transitionCase } = useCase()
 
   const {
     uploadFiles,
@@ -68,9 +72,24 @@ const Conclusion: React.FC = () => {
     workingCase.id,
   )
 
+  const handleRedistribution = useCallback(async () => {
+    const transitionSuccessful = await transitionCase(
+      workingCase.id,
+      CaseTransition.REDISTRIBUTE,
+    )
+
+    if (transitionSuccessful) {
+      router.push(constants.CASES_ROUTE)
+    } else {
+      toast.error(formatMessage(errors.transitionCase))
+    }
+  }, [transitionCase, workingCase.id, formatMessage])
+
   const handleNavigationTo = useCallback(
     async (destination: keyof stepValidationsType) => {
-      if (postponement?.postponedIndefinitely) {
+      if (selectedAction === 'REDISTRIBUTE') {
+        handleRedistribution()
+      } else if (postponement?.postponedIndefinitely) {
         await updateCase(workingCase.id, {
           courtDate: null,
           postponedIndefinitelyExplanation: postponement.reason,
@@ -83,7 +102,13 @@ const Conclusion: React.FC = () => {
 
       router.push(`${destination}/${workingCase.id}`)
     },
-    [postponement, sendCourtDateToServer, updateCase, workingCase.id],
+    [
+      postponement,
+      sendCourtDateToServer,
+      updateCase,
+      workingCase.id,
+      selectedAction,
+    ],
   )
 
   useEffect(() => {
@@ -107,9 +132,10 @@ const Conclusion: React.FC = () => {
 
   const stepIsValid =
     Boolean(selectedAction) &&
-    (postponement?.postponedIndefinitely
+    ((postponement?.postponedIndefinitely
       ? postponement.reason
-      : courtDate?.date) &&
+      : courtDate?.date) ||
+      selectedAction === 'REDISTRIBUTE') &&
     allFilesDoneOrError
 
   return (
@@ -130,16 +156,30 @@ const Conclusion: React.FC = () => {
             required
           />
           <BlueBox>
+            <Box marginBottom={2}>
+              <RadioButton
+                id="conclusion-postpone"
+                name="conclusion-decision"
+                checked={selectedAction === 'POSTPONE'}
+                onChange={() => {
+                  setSelectedAction('POSTPONE')
+                }}
+                large
+                backgroundColor="white"
+                label={formatMessage(strings.postponed)}
+              />
+            </Box>
             <RadioButton
-              id="conclusion-postpone"
-              name="conclusion-decision"
-              checked={selectedAction === 'POSTPONE'}
-              onChange={() => {
-                setSelectedAction('POSTPONE')
+              id="conclusion-redistribute"
+              name="conclusion-redistribute"
+              checked={selectedAction === 'REDISTRIBUTE'}
+              onChange={async () => {
+                setSelectedAction('REDISTRIBUTE')
+                console.log(selectedAction)
               }}
               large
               backgroundColor="white"
-              label={formatMessage(strings.postponed)}
+              label={formatMessage(strings.redistribute)}
             />
           </BlueBox>
         </Box>
