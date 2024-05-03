@@ -41,6 +41,7 @@ const canProsecutionUserAccessCase = (
       CaseState.ACCEPTED,
       CaseState.REJECTED,
       CaseState.DISMISSED,
+      CaseState.MAIN_HEARING,
     ].includes(theCase.state)
   ) {
     return false
@@ -101,6 +102,7 @@ const canDistrictCourtUserAccessCase = (theCase: Case, user: User): boolean => {
       CaseState.ACCEPTED,
       CaseState.REJECTED,
       CaseState.DISMISSED,
+      CaseState.MAIN_HEARING,
     ].includes(theCase.state)
   ) {
     return false

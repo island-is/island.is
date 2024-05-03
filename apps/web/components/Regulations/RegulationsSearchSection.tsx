@@ -184,6 +184,10 @@ export const RegulationsSearchSection = (
     keyOrFilters: RegulationSearchKey | Partial<RegulationSearchFilters>,
     value?: string,
   ) => {
+    if (typeof keyOrFilters === 'string' && !filters[keyOrFilters] && !value) {
+      // prevent infinite refresh loop on initial load
+      return
+    }
     let newFilters =
       typeof keyOrFilters !== 'string'
         ? { ...filters, ...keyOrFilters }

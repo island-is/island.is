@@ -114,6 +114,7 @@ export const formatUpdates = (
     if (entry.force) {
       return overwrite(entry)
     }
+
     return update(entry, workingCase)
   })
 

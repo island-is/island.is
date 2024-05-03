@@ -18,6 +18,7 @@ import {
   IndictmentCaseFilesList,
   IndictmentsLawsBrokenAccordionItem,
   InfoCardActiveIndictment,
+  InfoCardCaseScheduledIndictment,
   InfoCardClosedIndictment,
   PageHeader,
   PageLayout,
@@ -25,7 +26,6 @@ import {
   useIndictmentsLawsBroken,
   UserContext,
 } from '@island.is/judicial-system-web/src/components'
-import InfoCardCaseScheduled from '@island.is/judicial-system-web/src/components/InfoCard/InfoCardCaseScheduled'
 import { CaseState } from '@island.is/judicial-system-web/src/graphql/schema'
 
 import ReturnIndictmentModal from '../../Court/Indictments/ReturnIndictmentCaseModal/ReturnIndictmentCaseModal'
@@ -41,6 +41,7 @@ const IndictmentOverview = () => {
   const [modalVisible, setModalVisible] = useState<boolean>(false)
 
   const caseIsClosed = isCompletedCase(workingCase.state)
+  const latestDate = workingCase.courtDate ?? workingCase.arraignmentDate
 
   const handleNavigationTo = useCallback(
     (destination: string) => router.push(`${destination}/${workingCase.id}`),
@@ -72,13 +73,16 @@ const IndictmentOverview = () => {
         </PageTitle>
         <CourtCaseInfo workingCase={workingCase} />
         {workingCase.state === CaseState.RECEIVED &&
-          workingCase.arraignmentDate?.date &&
-          workingCase.court && (
+          workingCase.court &&
+          latestDate?.date && (
             <Box component="section" marginBottom={5}>
-              <InfoCardCaseScheduled
+              <InfoCardCaseScheduledIndictment
                 court={workingCase.court}
-                courtDate={workingCase.arraignmentDate.date}
-                courtRoom={workingCase.arraignmentDate.location}
+                courtDate={latestDate.date}
+                courtRoom={latestDate.location}
+                postponedIndefinitelyExplanation={
+                  workingCase.postponedIndefinitelyExplanation
+                }
               />
             </Box>
           )}
