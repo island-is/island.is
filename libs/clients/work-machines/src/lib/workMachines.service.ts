@@ -116,6 +116,8 @@ export class WorkMachinesClientService {
             category: machine?.category || '',
             regNumber: machine?.registrationNumber || '',
             status: machine?.status || '',
+            paymentRequiredForOwnerChange:
+              machine?.paymentRequiredForOwnerChange || false,
           }
         }) || [],
       totalCount: result?.pagination?.totalCount || 0,
