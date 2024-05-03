@@ -498,15 +498,13 @@ const VehicleNumberField = ({
   }, [assetNumberInput])
 
   return (
-    <span className={styles.uppercase}>
-      <InputController
-        id={fieldName}
-        name={fieldName}
-        label={formatMessage(m.propertyNumber)}
-        defaultValue={assetNumberInput}
-        error={error ? formatMessage(m.errorPropertyNumber) : undefined}
-        {...props}
-      />
-    </span>
+    <InputController
+      id={fieldName}
+      name={fieldName}
+      label={formatMessage(m.propertyNumber)}
+      defaultValue={assetNumberInput}
+      error={error ? formatMessage(m.errorPropertyNumber) : undefined}
+      {...props}
+    />
   )
 }
