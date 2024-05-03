@@ -19,6 +19,7 @@ import { consentModule } from '@island.is/service-portal/consent'
 import { occupationalLicensesModule } from '@island.is/service-portal/occupational-licenses'
 import { signatureCollectionModule } from '@island.is/service-portal/signature-collection'
 import { socialInsuranceMaintenanceModule } from '@island.is/service-portal/social-insurance-maintenance'
+import { lawAndOrderModule } from '@island.is/service-portal/law-and-order'
 
 /**
  * NOTE:
@@ -47,4 +48,5 @@ export const modules: PortalModule[] = [
   socialInsuranceMaintenanceModule,
   signatureCollectionModule,
   petitionsModule,
+  lawAndOrderModule,
 ]

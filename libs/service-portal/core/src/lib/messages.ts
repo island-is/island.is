@@ -1506,4 +1506,8 @@ export const m = defineMessages({
     defaultMessage:
       'Ef þú telur að þú eigir að vera með skráðann {arg}, vinsamlegast hafðu samband við þjónustuaðila.',
   },
+  lawAndOrder: {
+    id: 'service.portal:law-and-order',
+    defaultMessage: 'Lög og reglur',
+  },
 })

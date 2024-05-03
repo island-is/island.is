@@ -991,6 +991,9 @@
       "@island.is/service-portal/information/messages": [
         "libs/service-portal/information/src/lib/messages.ts"
       ],
+      "@island.is/service-portal/law-and-order": [
+        "libs/service-portal/law-and-order/src/index.ts"
+      ],
       "@island.is/service-portal/licenses": [
         "libs/service-portal/licenses/src/index.ts"
       ],
