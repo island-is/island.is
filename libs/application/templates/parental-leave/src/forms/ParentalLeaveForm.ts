@@ -1351,30 +1351,6 @@ export const ParentalLeaveForm: Form = buildForm({
             }),
           ],
         }),
-        /*
-        TODO: add back once payment plan is implemented
-        buildSubSection({
-          id: 'rightsReview',
-          title: parentalLeaveFormMessages.shared.rightsSummarySubSection,
-          children: [
-            buildMultiField({
-              id: 'reviewRights',
-              title: parentalLeaveFormMessages.shared.rightsSummaryName,
-              description: (application) =>
-                `${formatIsk(
-                  getEstimatedMonthlyPay(application),
-                )} er áætluð mánaðarleg útborgun þín fyrir hvern heilan mánuð eftir skatt.`, // TODO messages
-              children: [
-                buildCustomField({
-                  id: 'reviewRights',
-                  title: '',
-                  component: 'ReviewRights',
-                }),
-              ],
-            }),
-          ],
-        }),
-        */
       ],
     }),
     buildSection({

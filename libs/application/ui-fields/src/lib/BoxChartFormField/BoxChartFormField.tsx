@@ -1,34 +1,14 @@
-import React from 'react'
 import cn from 'classnames'
-
-import { Box, Text } from '@island.is/island-ui/core'
-
-import * as styles from './BoxChart.css'
-import { formatText } from '@island.is/application/core'
-import { Application, FormText } from '@island.is/application/types'
+import React, { FC } from 'react'
+import * as styles from './BoxChartFormField.css'
 import { useLocale } from '@island.is/localization'
-
-type boxStyle =
-  | 'blue'
-  | 'green'
-  | 'gray'
-  | 'purple'
-  | 'greenWithLines'
-  | 'grayWithLines'
-  | 'purpleWithLines'
-
-export interface BoxChartKey {
-  label: FormText
-  bulletStyle: boxStyle
-}
-
-export interface BoxChartProps {
-  application: Application
-  titleLabel?: FormText
-  boxes: number
-  calculateBoxStyle: (index: number) => boxStyle
-  keys?: BoxChartKey[]
-}
+import { formatText } from '@island.is/application/core'
+import { Box, Text } from '@island.is/island-ui/core'
+import {
+  Application,
+  BoxChartField,
+  BoxChartKey,
+} from '@island.is/application/types'
 
 /**************************************************
  Example usage:
@@ -55,13 +35,18 @@ export interface BoxChartProps {
 
 ***************************************************/
 
-const BoxChart = ({
+export const BoxChartFormField: FC<
+  React.PropsWithChildren<{
+    field: Omit<
+      BoxChartField,
+      'type' | 'component' | 'title' | 'id' | 'children'
+    >
+    application: Application
+  }>
+> = ({
   application,
-  boxes,
-  calculateBoxStyle,
-  keys,
-  titleLabel,
-}: BoxChartProps) => {
+  field: { boxes, calculateBoxStyle, keys, titleLabel },
+}) => {
   const { formatMessage } = useLocale()
   return (
     <Box>
@@ -140,5 +125,3 @@ const BoxChart = ({
     </Box>
   )
 }
-
-export default BoxChart

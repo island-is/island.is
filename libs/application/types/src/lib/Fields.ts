@@ -190,6 +190,7 @@ export enum FieldTypes {
   HIDDEN_INPUT_WITH_WATCHED_VALUE = 'HIDDEN_INPUT_WITH_WATCHED_VALUE',
   FIND_VEHICLE = 'FIND_VEHICLE',
   STATIC_TABLE = 'STATIC_TABLE',
+  BOX_CHART = 'BOX_CHART',
 }
 
 export enum FieldComponents {
@@ -221,6 +222,7 @@ export enum FieldComponents {
   HIDDEN_INPUT = 'HiddenInputFormField',
   FIND_VEHICLE = 'FindVehicleFormField',
   STATIC_TABLE = 'StaticTableFormField',
+  BOX_CHART = 'BoxChartFormField',
 }
 
 export interface CheckboxField extends BaseField {
@@ -581,6 +583,32 @@ export interface StaticTableField extends BaseField {
     | ((application: Application) => { label: StaticText; value: StaticText }[])
 }
 
+export type boxStyle =
+  | 'blue'
+  | 'green'
+  | 'gray'
+  | 'purple'
+  | 'greenWithLines'
+  | 'grayWithLines'
+  | 'purpleWithLines'
+
+export interface BoxChartKey {
+  label: FormText
+  bulletStyle: boxStyle
+}
+
+export interface BoxChartField extends BaseField {
+  readonly type: FieldTypes.BOX_CHART
+  component: FieldComponents.BOX_CHART
+  titleLabel?: FormText
+  boxes: number
+  calculateBoxStyle: (index: number) => boxStyle
+  keys?: {
+    label: FormText
+    bulletStyle: boxStyle
+  }[]
+}
+
 export type Field =
   | CheckboxField
   | CustomField
@@ -612,3 +640,4 @@ export type Field =
   | HiddenInputField
   | FindVehicleField
   | StaticTableField
+  | BoxChartField

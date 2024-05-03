@@ -1,5 +1,5 @@
 import React, { FC, useState } from 'react'
-import { FieldBaseProps } from '@island.is/application/types'
+import { FieldBaseProps, BoxChartKey } from '@island.is/application/types'
 import { Controller, useFormContext } from 'react-hook-form'
 import { Box } from '@island.is/island-ui/core'
 import { theme } from '@island.is/island-ui/theme'
@@ -11,7 +11,6 @@ import {
 } from '../../lib/parentalLeaveUtils'
 import { parentalLeaveFormMessages } from '../../lib/messages'
 import Slider from '../components/Slider'
-import BoxChart, { BoxChartKey } from '../components/BoxChart'
 import {
   defaultMonths,
   daysInMonth,
@@ -19,6 +18,7 @@ import {
 } from '../../config'
 import { YES } from '../../constants'
 import { useEffectOnce } from 'react-use'
+import { BoxChartFormField } from '@island.is/application/ui-fields'
 
 const RequestDaysSlider: FC<React.PropsWithChildren<FieldBaseProps>> = ({
   field,
@@ -121,29 +121,30 @@ const RequestDaysSlider: FC<React.PropsWithChildren<FieldBaseProps>> = ({
           )}
         />
       </Box>
-      <BoxChart
+      <BoxChartFormField
         application={application}
-        boxes={Math.ceil(maxMonths)}
-        calculateBoxStyle={(index) => {
-          if (index < defaultMonths) {
-            return 'blue'
-          }
+        field={{
+          boxes: Math.ceil(maxMonths),
+          calculateBoxStyle: (index) => {
+            if (index < defaultMonths) {
+              return 'blue'
+            }
 
-          if (index < alreadySelectedMonths) {
-            return 'purple'
-          }
+            if (index < alreadySelectedMonths) {
+              return 'purple'
+            }
 
-          if (index < requestedMonths) {
-            return 'greenWithLines'
-          }
+            if (index < requestedMonths) {
+              return 'greenWithLines'
+            }
 
-          return 'grayWithLines'
+            return 'grayWithLines'
+          },
+          keys:
+            defaultMonths === alreadySelectedMonths
+              ? boxChartKeys
+              : boxChartKeysWithMultipleBirths,
         }}
-        keys={
-          defaultMonths === alreadySelectedMonths
-            ? boxChartKeys
-            : boxChartKeysWithMultipleBirths
-        }
       />
     </Box>
   )
