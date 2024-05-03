@@ -177,8 +177,8 @@ export enum CaseAppealRulingDecision {
 }
 
 export enum CaseIndictmentRulingDecision {
-  RULING = 'RULING',
-  FINED = 'FINED',
+  POSTPONING = 'POSTPONING',
+  MAKE_RULING = 'MAKE_RULING',
 }
 
 export enum SessionArrangements {

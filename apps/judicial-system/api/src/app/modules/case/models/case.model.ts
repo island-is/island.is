@@ -9,6 +9,7 @@ import type {
 import {
   CaseAppealDecision,
   CaseAppealRulingDecision,
+  CaseIndictmentRulingDecision,
   CaseAppealState,
   CaseCustodyRestrictions,
   CaseDecision,
@@ -43,6 +44,9 @@ registerEnumType(CaseDecision, { name: 'CaseDecision' })
 registerEnumType(CaseAppealDecision, { name: 'CaseAppealDecision' })
 registerEnumType(RequestSharedWithDefender, {
   name: 'RequestSharedWithDefender',
+})
+registerEnumType(CaseIndictmentRulingDecision, {
+  name: 'CaseIndictmentRulingDecision',
 })
 
 @ObjectType()
@@ -409,4 +413,7 @@ export class Case {
 
   @Field({ nullable: true })
   readonly postponedIndefinitelyExplanation?: string
+
+  @Field(() => CaseIndictmentRulingDecision, { nullable: true })
+  readonly indictmentRulingDecision?: CaseIndictmentRulingDecision
 }

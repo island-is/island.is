@@ -155,6 +155,7 @@ export interface UpdateCase
     | 'appealIsolationToDate'
     | 'indictmentDeniedExplanation'
     | 'indictmentReturnedExplanation'
+    | 'indictmentRulingDecision'
   > {
   type?: CaseType
   state?: CaseState

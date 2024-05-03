@@ -27,6 +27,7 @@ import {
 } from '@island.is/judicial-system-web/src/components'
 import {
   CaseFileCategory,
+  CaseIndictmentRulingDecision,
   CaseTransition,
 } from '@island.is/judicial-system-web/src/graphql/schema'
 import { stepValidationsType } from '@island.is/judicial-system-web/src/utils/formHelper'
@@ -61,7 +62,8 @@ const Conclusion: React.FC = () => {
     sendCourtDateToServer,
   } = useCourtArrangements(workingCase, setWorkingCase, 'courtDate')
 
-  const { updateCase, isUpdatingCase, transitionCase } = useCase()
+  const { updateCase, isUpdatingCase, transitionCase, setAndSendCaseToServer } =
+    useCase()
 
   const {
     uploadFiles,
@@ -177,9 +179,21 @@ const Conclusion: React.FC = () => {
               <RadioButton
                 id="conclusion-postpone"
                 name="conclusion-decision"
-                checked={selectedAction === 'POSTPONE'}
+                checked={
+                  workingCase.indictmentRulingDecision ===
+                  CaseIndictmentRulingDecision.POSTPONING
+                }
                 onChange={() => {
-                  setSelectedAction('POSTPONE')
+                  setAndSendCaseToServer(
+                    [
+                      {
+                        indictmentRulingDecision:
+                          CaseIndictmentRulingDecision.POSTPONING,
+                      },
+                    ],
+                    workingCase,
+                    setWorkingCase,
+                  )
                 }}
                 large
                 backgroundColor="white"

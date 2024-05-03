@@ -20,6 +20,7 @@ import type {
 import {
   CaseAppealDecision,
   CaseAppealRulingDecision,
+  CaseIndictmentRulingDecision,
   CaseAppealState,
   CaseCustodyRestrictions,
   CaseDecision,
@@ -1222,4 +1223,15 @@ export class Case extends Model {
   @HasMany(() => Notification, 'caseId')
   @ApiPropertyOptional({ type: Notification, isArray: true })
   notifications?: Notification[]
+
+  /**********
+   * The ruling decision in indictment cases - example: MAKE_RULING
+   **********/
+  @Column({
+    type: DataType.ENUM,
+    allowNull: true,
+    values: Object.values(CaseIndictmentRulingDecision),
+  })
+  @ApiPropertyOptional({ enum: CaseIndictmentRulingDecision })
+  indictmentRulingDecision?: CaseIndictmentRulingDecision
 }
