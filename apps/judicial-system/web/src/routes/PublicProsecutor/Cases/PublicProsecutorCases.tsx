@@ -25,22 +25,12 @@ export const PublicProsecutorCases: React.FC = () => {
 
   const resCases = data?.cases
 
-  const [casesForReview] = useMemo(() => {
-    if (!resCases) {
-      return [[]]
-    }
-
-    const filterCases = (predicate: (c: CaseListEntry) => boolean) =>
-      resCases.filter(predicate)
-
-    const casesForReview = filterCases(
-      (c) =>
-        c.state !== null &&
-        c.state !== undefined &&
-        completedCaseStates.includes(c.state),
+  const casesForReview = useMemo(() => {
+    return (
+      resCases?.filter(
+        (c) => c.state && completedCaseStates.includes(c.state),
+      ) || []
     )
-
-    return [casesForReview as CaseListEntry[]]
   }, [resCases])
 
   return (
