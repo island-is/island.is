@@ -20,10 +20,10 @@ import type {
 import {
   CaseAppealDecision,
   CaseAppealRulingDecision,
-  CaseIndictmentRulingDecision,
   CaseAppealState,
   CaseCustodyRestrictions,
   CaseDecision,
+  CaseIndictmentRulingDecision,
   CaseLegalProvisions,
   CaseOrigin,
   CaseState,

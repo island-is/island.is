@@ -40,7 +40,6 @@ import {
 import { strings } from './Conclusion.strings'
 
 type Actions = 'POSTPONE' | 'REDISTRIBUTE' | 'COMPLETE'
-type Decision = 'RULING' | 'FINE'
 
 interface Postponement {
   postponedIndefinitely?: boolean
@@ -53,7 +52,6 @@ const Conclusion: React.FC = () => {
     useContext(FormContext)
 
   const [selectedAction, setSelectedAction] = useState<Actions>()
-  const [selectedDecision, setSelectedDecision] = useState<Decision>()
   const [postponement, setPostponement] = useState<Postponement>()
   const {
     courtDate,
@@ -179,21 +177,9 @@ const Conclusion: React.FC = () => {
               <RadioButton
                 id="conclusion-postpone"
                 name="conclusion-decision"
-                checked={
-                  workingCase.indictmentRulingDecision ===
-                  CaseIndictmentRulingDecision.POSTPONING
-                }
+                checked={selectedAction === 'POSTPONE'}
                 onChange={() => {
-                  setAndSendCaseToServer(
-                    [
-                      {
-                        indictmentRulingDecision:
-                          CaseIndictmentRulingDecision.POSTPONING,
-                      },
-                    ],
-                    workingCase,
-                    setWorkingCase,
-                  )
+                  setSelectedAction('POSTPONE')
                 }}
                 large
                 backgroundColor="white"
@@ -290,9 +276,22 @@ const Conclusion: React.FC = () => {
                 <RadioButton
                   id="decision-ruling"
                   name="decision"
-                  checked={selectedDecision === 'RULING'}
+                  checked={
+                    workingCase.indictmentRulingDecision ===
+                    CaseIndictmentRulingDecision.RULING
+                  }
                   onChange={() => {
-                    setSelectedDecision('RULING')
+                    setAndSendCaseToServer(
+                      [
+                        {
+                          indictmentRulingDecision:
+                            CaseIndictmentRulingDecision.RULING,
+                          force: true,
+                        },
+                      ],
+                      workingCase,
+                      setWorkingCase,
+                    )
                   }}
                   large
                   backgroundColor="white"
@@ -302,9 +301,22 @@ const Conclusion: React.FC = () => {
               <RadioButton
                 id="decision-fine"
                 name="decision"
-                checked={selectedDecision === 'FINE'}
+                checked={
+                  workingCase.indictmentRulingDecision ===
+                  CaseIndictmentRulingDecision.FINE
+                }
                 onChange={() => {
-                  setSelectedDecision('FINE')
+                  setAndSendCaseToServer(
+                    [
+                      {
+                        indictmentRulingDecision:
+                          CaseIndictmentRulingDecision.FINE,
+                        force: true,
+                      },
+                    ],
+                    workingCase,
+                    setWorkingCase,
+                  )
                 }}
                 large
                 backgroundColor="white"
@@ -340,7 +352,8 @@ const Conclusion: React.FC = () => {
             />
           </Box>
         )}
-        {selectedDecision === 'RULING' && (
+        {workingCase.indictmentRulingDecision ===
+          CaseIndictmentRulingDecision.RULING && (
           <Box component="section" marginBottom={10}>
             <SectionHeading title={formatMessage(strings.rulingUploadTitle)} />
             <InputFileUpload

@@ -11,9 +11,9 @@ import type {
 import {
   CaseAppealDecision,
   CaseAppealRulingDecision,
-  CaseIndictmentRulingDecision,
   CaseCustodyRestrictions,
   CaseDecision,
+  CaseIndictmentRulingDecision,
   CaseLegalProvisions,
   CaseType,
   RequestSharedWithDefender,
