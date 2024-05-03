@@ -6,6 +6,7 @@ import {
 } from '@island.is/judicial-system/types'
 
 import { UpdateCaseDto } from '../dto/updateCase.dto'
+import { Case } from '../models/case.model'
 
 const prosecutorFields: (keyof UpdateCaseDto)[] = [
   'type',
@@ -187,7 +188,7 @@ export const prosecutorTransitionRule: RolesRule = {
     CaseTransition.DENY_INDICTMENT,
   ],
   canActivate: (request) => {
-    const theCase = request.case
+    const theCase: Case = request.case
 
     // Deny if the case is missing - shuould never happen
     if (!theCase) {
@@ -243,7 +244,7 @@ export const defenderTransitionRule: RolesRule = {
   dtoField: 'transition',
   dtoFieldValues: [CaseTransition.APPEAL, CaseTransition.WITHDRAW_APPEAL],
   canActivate: (request) => {
-    const theCase = request.case
+    const theCase: Case = request.case
 
     // Deny if the case is missing - should never happen
     if (!theCase) {
@@ -283,7 +284,7 @@ export const districtCourtJudgeTransitionRule: RolesRule = {
     CaseTransition.REDISTRIBUTE,
   ],
   canActivate: (request) => {
-    const theCase = request.case
+    const theCase: Case = request.case
 
     // Deny if the case is missing - should never happen
     if (!theCase) {
@@ -327,7 +328,7 @@ export const districtCourtRegistrarTransitionRule: RolesRule = {
     CaseTransition.RECEIVE_APPEAL,
   ],
   canActivate: (request) => {
-    const theCase = request.case
+    const theCase: Case = request.case
 
     // Deny if the case is missing - shuould never happen
     if (!theCase) {

@@ -1037,6 +1037,20 @@ export class CaseService {
     )
   }
 
+  private addMessagesForNewCourtDateToQueue(
+    theCase: Case,
+    user: TUser,
+  ): Promise<void> {
+    return this.messageService.sendMessagesToQueue([
+      {
+        type: MessageType.NOTIFICATION,
+        user,
+        caseId: theCase.id,
+        body: { type: NotificationType.COURT_DATE },
+      },
+    ])
+  }
+
   private async addMessagesForUpdatedCaseToQueue(
     theCase: Case,
     updatedCase: Case,
@@ -1163,6 +1177,14 @@ export class CaseService {
         // New appeal court
         await this.addMessagesForAssignedAppealRolesToQueue(updatedCase, user)
       }
+    }
+
+    // This only applies to indictments
+    const courtDate = DateLog.courtDate(theCase.dateLogs)
+    const updatedCourtDate = DateLog.courtDate(updatedCase.dateLogs)
+    if (updatedCourtDate && updatedCourtDate.date !== courtDate?.date) {
+      // New court date
+      await this.addMessagesForNewCourtDateToQueue(updatedCase, user)
     }
   }
 
