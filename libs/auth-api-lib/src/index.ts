@@ -47,6 +47,8 @@ export * from './lib/delegations/models/delegation.model'
 export * from './lib/delegations/models/delegation-scope.model'
 export * from './lib/delegations/models/delegation-index.model'
 export * from './lib/delegations/models/delegation-index-meta.model'
+export * from './lib/delegations/models/delegation-type.model'
+export * from './lib/delegations/models/delegation-provider.model'
 export * from './lib/delegations/DelegationConfig'
 export * from './lib/delegations/utils/scopes'
 
@@ -116,6 +118,7 @@ export * from './lib/clients/admin/admin-clients.service'
 export * from './lib/clients/admin/dto/admin-client.dto'
 export * from './lib/clients/admin/dto/admin-create-client.dto'
 export * from './lib/clients/admin/dto/admin-patch-client.dto'
+export * from './lib/user-notification/user-system-notification.config'
 
 // Translation module
 export * from './lib/translation/translation.module'

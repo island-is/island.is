@@ -23,8 +23,10 @@ import {
 } from '../../graphql/types/schema'
 import { createNavigationOptionHooks } from '../../hooks/create-navigation-option-hooks'
 import { useActiveTabItemPress } from '../../hooks/use-active-tab-item-press'
+import { useOfflineUpdateNavigation } from '../../hooks/use-offline-update-navigation'
 import { notificationsStore } from '../../stores/notifications-store'
 import { useUiStore } from '../../stores/ui-store'
+import { isAndroid } from '../../utils/devices'
 import { getRightButtons } from '../../utils/get-main-root'
 import { testIDs } from '../../utils/test-ids'
 import { ApplicationsModule } from './applications-module'
@@ -60,7 +62,7 @@ const { useNavigationOptions, getNavigationOptions } =
         // selectedIconColor: null as any,
         // iconColor: null as any,
         textColor: initialized
-          ? Platform.OS === 'android'
+          ? isAndroid
             ? theme.shade.foreground
             : { light: 'black', dark: 'white' }
           : theme.shade.background,
@@ -104,6 +106,8 @@ export const MainHomeScreen: NavigationFunctionComponent = ({
   useActiveTabItemPress(2, () => {
     flatListRef.current?.scrollToOffset({ offset: -150, animated: true })
   })
+
+  useOfflineUpdateNavigation(componentId, getRightButtons())
 
   const applicationsRes = useListApplicationsQuery()
 
@@ -198,6 +202,7 @@ export const MainHomeScreen: NavigationFunctionComponent = ({
         }
       />
       <TopLine scrollY={scrollY} />
+
       <BottomTabsIndicator index={2} total={5} />
     </>
   )

@@ -2,6 +2,8 @@ import each from 'jest-each'
 import { Transaction } from 'sequelize'
 import { uuid } from 'uuidv4'
 
+import { ConfigType } from '@island.is/nest/config'
+
 import { MessageService, MessageType } from '@island.is/judicial-system/message'
 import {
   CaseAppealRulingDecision,
@@ -24,6 +26,7 @@ import { createTestingCaseModule } from '../createTestingCaseModule'
 
 import { nowFactory } from '../../../../factories'
 import { randomDate } from '../../../../test'
+import { caseModuleConfig } from '../../case.config'
 import { include, order } from '../../case.service'
 import { TransitionCaseDto } from '../../dto/transitionCase.dto'
 import { Case } from '../../models/case.model'
@@ -48,14 +51,16 @@ describe('CaseController - Transition', () => {
 
   let mockMessageService: MessageService
   let transaction: Transaction
+  let mockConfig: ConfigType<typeof caseModuleConfig>
   let mockCaseModel: typeof Case
   let givenWhenThen: GivenWhenThen
 
   beforeEach(async () => {
-    const { messageService, sequelize, caseModel, caseController } =
+    const { messageService, sequelize, caseConfig, caseModel, caseController } =
       await createTestingCaseModule()
 
     mockMessageService = messageService
+    mockConfig = caseConfig
     mockCaseModel = caseModel
 
     const mockTransaction = sequelize.transaction as jest.Mock
@@ -109,6 +114,7 @@ describe('CaseController - Transition', () => {
       ${CaseTransition.DELETE}            | ${CaseState.RECEIVED}                     | ${CaseState.DELETED}
       ${CaseTransition.REOPEN}            | ${CaseState.ACCEPTED}                     | ${CaseState.RECEIVED}
       ${CaseTransition.RETURN_INDICTMENT} | ${CaseState.RECEIVED}                     | ${CaseState.DRAFT}
+      ${CaseTransition.REDISTRIBUTE}      | ${CaseState.RECEIVED}                     | ${CaseState.MAIN_HEARING}
     `.describe(
     '$transition $oldState case transitioning to $newState case',
     ({ transition, oldState, newState }) => {
@@ -186,6 +192,8 @@ describe('CaseController - Transition', () => {
                 transition === CaseTransition.REOPEN ? null : undefined,
               courtRecordSignatureDate:
                 transition === CaseTransition.REOPEN ? null : undefined,
+              judgeId:
+                transition === CaseTransition.REDISTRIBUTE ? null : undefined,
             },
             { where: { id: caseId }, transaction },
           )
@@ -415,6 +423,24 @@ describe('CaseController - Transition', () => {
                 },
               ],
             )
+          } else if (
+            isIndictmentCase(theCase.type) &&
+            newState === CaseState.DRAFT &&
+            oldState === CaseState.RECEIVED
+          ) {
+            expect(mockMessageService.sendMessagesToQueue).toHaveBeenCalledWith(
+              [
+                {
+                  type: MessageType.NOTIFICATION,
+                  user: {
+                    ...defaultUser,
+                    canConfirmIndictment: isIndictmentCase(theCase.type),
+                  },
+                  caseId,
+                  body: { type: NotificationType.INDICTMENT_RETURNED },
+                },
+              ],
+            )
           } else {
             expect(
               mockMessageService.sendMessagesToQueue,
@@ -626,6 +652,8 @@ describe('CaseController - Transition', () => {
                     canConfirmIndictment: isIndictmentCase(theCase.type),
                   },
                   caseId,
+                  nextRetry:
+                    date.getTime() + mockConfig.robotMessageDelay * 1000,
                 },
                 {
                   type: MessageType.DELIVERY_TO_POLICE_APPEAL,

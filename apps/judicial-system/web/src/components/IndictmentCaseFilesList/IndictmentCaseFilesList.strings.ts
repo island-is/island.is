@@ -1,6 +1,6 @@
 import { defineMessages } from 'react-intl'
 
-export const indictmentCaseFilesList = defineMessages({
+export const strings = defineMessages({
   title: {
     id: 'judicial.system.core:indictment_case_files_list.title',
     defaultMessage: 'Skjöl málsins',
@@ -16,5 +16,16 @@ export const indictmentCaseFilesList = defineMessages({
     defaultMessage: 'Skjalaskrá {policeCaseNumber}.pdf',
     description:
       'Notaður sem texti á PDF takka til að sækja gagnapakka í ákærum.',
+  },
+  courtRecordTitle: {
+    id: 'judicial.system.core:court.indictment_case_files_list.court_record_title',
+    defaultMessage: 'Þingbók',
+    description:
+      'Notaður sem titill á þingbókar hluta á dómskjalaskjá í ákærum.',
+  },
+  rulingTitle: {
+    id: 'judicial.system.core:court.indictment_case_files_list.ruling_title',
+    defaultMessage: 'Dómur',
+    description: 'Notaður sem titill á dómur hluta á dómskjalaskjá í ákærum.',
   },
 })

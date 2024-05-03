@@ -87,4 +87,32 @@ export class InternalFileController {
 
     return { delivered: success }
   }
+
+  @UseGuards(CaseExistsGuard, CaseFileExistsGuard)
+  @Post(
+    `${
+      messageEndpoint[MessageType.DELIVERY_TO_COURT_OF_APPEALS_CASE_FILE]
+    }/:fileId`,
+  )
+  @ApiCreatedResponse({
+    type: DeliverResponse,
+    description: 'Delivers a case file to court of appeals',
+  })
+  deliverCaseFileToCourtOfAppeals(
+    @Param('caseId') caseId: string,
+    @Param('fileId') fileId: string,
+    @CurrentCase() theCase: Case,
+    @CurrentCaseFile() caseFile: CaseFile,
+    @Body() deliverDto: DeliverDto,
+  ): Promise<DeliverResponse> {
+    this.logger.debug(
+      `Delivering file ${fileId} of case ${caseId} to court of appeals`,
+    )
+
+    return this.fileService.deliverCaseFileToCourtOfAppeals(
+      caseFile,
+      theCase,
+      deliverDto.user,
+    )
+  }
 }

@@ -27,6 +27,7 @@ import parseISO from 'date-fns/parseISO'
 import subDays from 'date-fns/subDays'
 import subMonths from 'date-fns/subMonths'
 import round from 'lodash/round'
+import set from 'lodash/set'
 import { MessageDescriptor } from 'react-intl'
 import {
   additionalSingleParentMonths,
@@ -39,6 +40,7 @@ import {
   ADOPTION,
   AttachmentLabel,
   AttachmentTypes,
+  FileType,
   MANUAL,
   NO,
   OTHER_NO_CHILDREN_FOUND,
@@ -405,7 +407,7 @@ export const getSpouse = (
   return null
 }
 
-export const getOtherParentOptions = (application: Application) => {
+export const getOtherParentOptions = () => {
   const options: Option[] = [
     {
       value: NO,
@@ -423,24 +425,6 @@ export const getOtherParentOptions = (application: Application) => {
       label: parentalLeaveFormMessages.shared.otherParentOption,
     },
   ]
-
-  const spouse = getSpouse(application)
-
-  if (spouse) {
-    options.forEach((o) => {
-      o.disabled = true
-    })
-    options.unshift({
-      value: SPOUSE,
-      label: {
-        ...parentalLeaveFormMessages.shared.otherParentSpouse,
-        values: {
-          spouseName: spouse.name,
-          spouseId: spouse.nationalId,
-        },
-      },
-    })
-  }
 
   return options
 }
@@ -954,6 +938,11 @@ export const getApplicationAnswers = (answers: Application['answers']) => {
     'fileUpload.employmentTerminationCertificateFile',
   ) as Files[]
 
+  const changeEmployerFile = getValueViaPath(
+    answers,
+    'fileUpload.changeEmployerFile',
+  ) as Files[]
+
   const dateOfBirth = getValueViaPath(answers, 'dateOfBirth') as string
 
   const commonFiles = getValueViaPath(answers, 'fileUpload.file') as Files[]
@@ -964,6 +953,8 @@ export const getApplicationAnswers = (answers: Application['answers']) => {
     | 'documentPeriod'
     | 'empper'
     | 'employer'
+    | 'empdoc'
+    | 'empdocper'
     | undefined
 
   const previousState = getValueViaPath(answers, 'previousState') as string
@@ -1045,6 +1036,7 @@ export const getApplicationAnswers = (answers: Application['answers']) => {
     dateOfBirth,
     residenceGrantFiles,
     employmentTerminationCertificateFiles,
+    changeEmployerFile,
     hasAppliedForReidenceGrant,
     previousState,
     addEmployer,
@@ -2002,6 +1994,7 @@ export const getAttachments = (application: Application) => {
     employerLastSixMonths,
     isNotStillEmployed,
     commonFiles,
+    changeEmployerFile,
   } = getApplicationAnswers(answers)
 
   const attachments: Attachments[] = []
@@ -2060,6 +2053,12 @@ export const getAttachments = (application: Application) => {
   if (commonFiles?.length > 0) {
     getAttachmentDetails(fileUpload?.file, AttachmentTypes.FILE)
   }
+  if (changeEmployerFile?.length > 0) {
+    getAttachmentDetails(
+      fileUpload?.changeEmployerFile,
+      AttachmentTypes.CHANGE_EMPLOYER,
+    )
+  }
 
   return attachments
 }
@@ -2093,4 +2092,53 @@ export const getSelectOptionLabel = (options: SelectOption[], id?: string) => {
   }
 
   return options.find((option) => option.value === id)?.label
+}
+
+export const getActionName = (
+  application: Application,
+): FileType | undefined => {
+  const { state } = application
+  const {
+    addEmployer,
+    addPeriods,
+    changeEmployer,
+    changePeriods,
+    changeEmployerFile,
+  } = getApplicationAnswers(application.answers)
+
+  switch (state) {
+    case States.RESIDENCE_GRANT_APPLICATION_NO_BIRTH_DATE:
+    case States.RESIDENCE_GRANT_APPLICATION:
+    case States.ADDITIONAL_DOCUMENTS_REQUIRED:
+      return FileType.DOCUMENT
+    case States.EDIT_OR_ADD_EMPLOYERS_AND_PERIODS: {
+      const employerChanged = changeEmployer || addEmployer === YES
+      const periodsChanged = changePeriods || addPeriods === YES
+
+      // Keep book keeping of what has been selected
+      if (!changeEmployer && addEmployer === YES) {
+        set(application.answers, 'changeEmployer', true)
+      }
+      if (!changePeriods && addPeriods === YES) {
+        set(application.answers, 'changePeriods', true)
+      }
+
+      if (changeEmployerFile && changeEmployerFile.length !== 0) {
+        if (employerChanged && periodsChanged) {
+          return FileType.EMPDOCPER
+        } else if (employerChanged) {
+          return FileType.EMPDOC
+        }
+      }
+      if (employerChanged && periodsChanged) {
+        return FileType.EMPPER
+      } else if (employerChanged) {
+        return FileType.EMPLOYER
+      } else if (periodsChanged) {
+        return FileType.PERIOD
+      }
+      break
+    }
+  }
+  return undefined
 }
