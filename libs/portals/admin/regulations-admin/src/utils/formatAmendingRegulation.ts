@@ -26,16 +26,18 @@ export const formatAmendingRegTitle = (draft: RegDraftForm) => {
 
     const amendingTitles = amendingArray.map(
       (item, i) =>
-        `${i === 0 ? `${PREFIX_AMENDING}` : ''} ${item.name}${removeRegPrefix(
-          item.regTitle,
-        )}`,
+        `${i === 0 ? `${PREFIX_AMENDING}` : ''} ${item.name.replace(
+          /^0+/,
+          '',
+        )}${removeRegPrefix(item.regTitle)}`,
     )
 
     const repealTitles = repealArray.map(
       (item, i) =>
-        `${i === 0 ? `${PREFIX_REPEALING}` : ''} ${item.name}${removeRegPrefix(
-          item.regTitle,
-        )}`,
+        `${i === 0 ? `${PREFIX_REPEALING}` : ''} ${item.name.replace(
+          /^0+/,
+          '',
+        )}${removeRegPrefix(item.regTitle)}`,
     )
 
     return PREFIX + [...amendingTitles, ...repealTitles].join(' og ')
