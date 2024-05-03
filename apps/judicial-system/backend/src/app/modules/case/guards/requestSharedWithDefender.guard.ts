@@ -7,12 +7,12 @@ import {
 } from '@nestjs/common'
 
 import {
-  DateType,
   isCompletedCase,
   RequestSharedWithDefender,
 } from '@island.is/judicial-system/types'
 
 import { Case } from '../models/case.model'
+import { DateLog } from '../models/dateLog.model'
 
 @Injectable()
 export class RequestSharedWithDefenderGuard implements CanActivate {
@@ -30,14 +30,10 @@ export class RequestSharedWithDefenderGuard implements CanActivate {
       return true
     }
 
-    const arraignmentDate = theCase.dateLogs?.find(
-      (d) => d.dateType === DateType.ARRAIGNMENT_DATE,
-    )?.date
-
     if (
       theCase.requestSharedWithDefender ===
         RequestSharedWithDefender.COURT_DATE &&
-      Boolean(arraignmentDate)
+      Boolean(DateLog.arraignmentDate(theCase.dateLogs))
     ) {
       return true
     }
