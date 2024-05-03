@@ -34,6 +34,7 @@ import { EventSyncService } from './importers/event.service'
 import { ManualSyncService } from './importers/manual.service'
 import { ManualChapterItemSyncService } from './importers/manualChapterItem.service'
 import { CustomPageSyncService } from './importers/customPage.service'
+import { GenericListItemSyncService } from './importers/genericListItem.service'
 
 export interface PostSyncOptions {
   folderHash: string
@@ -80,6 +81,7 @@ export class CmsSyncService implements ContentSearchImporter<PostSyncOptions> {
     private readonly manualSyncService: ManualSyncService,
     private readonly manualChapterItemSyncService: ManualChapterItemSyncService,
     private readonly customPageSyncService: CustomPageSyncService,
+    private readonly genericListItemSyncService: GenericListItemSyncService,
   ) {
     this.contentSyncProviders = [
       this.articleSyncService,
@@ -104,6 +106,7 @@ export class CmsSyncService implements ContentSearchImporter<PostSyncOptions> {
       this.manualSyncService,
       this.manualChapterItemSyncService,
       this.customPageSyncService,
+      this.genericListItemSyncService,
     ]
   }
 
@@ -274,6 +277,18 @@ export class CmsSyncService implements ContentSearchImporter<PostSyncOptions> {
       return this.elasticService.deleteByIds(
         elasticIndex,
         [document.sys.id].concat(subArticles.map((s) => s.sys.id)),
+      )
+    }
+
+    if (document.sys.contentType.sys.id === 'genericList') {
+      const listItems = await this.contentfulService.getContentfulData(100, {
+        content_type: 'genericListItem',
+        'fields.genericList.sys.id': document.sys.id,
+      })
+
+      return this.elasticService.deleteByIds(
+        elasticIndex,
+        [document.sys.id].concat(listItems.map((i) => i.sys.id)),
       )
     }
 
