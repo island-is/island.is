@@ -175,6 +175,7 @@ export const Services: EnvironmentServices = {
     universityGatewayService,
     universityGatewayWorker,
     contentfulApps,
+    contentfulEntryTagger,
   ],
   staging: [
     appSystemApi,

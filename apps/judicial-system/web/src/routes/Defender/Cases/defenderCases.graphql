@@ -8,6 +8,7 @@ query DefenderCases($input: CaseListQueryInput) {
     courtCaseNumber
     validToDate
     policeCaseNumbers
+    courtDate
     parentCaseId
     appealCaseNumber
     appealState
