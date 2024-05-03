@@ -13,6 +13,7 @@ import { PersonalRepresentativeRightType } from '../models/personal-representati
 import { PersonalRepresentativeRight } from '../models/personal-representative-right.model'
 import { InactiveReason } from '../models/personal-representative.enum'
 import { PersonalRepresentative } from '../models/personal-representative.model'
+import { PersonalRepresentativeDelegationTypeModel } from '../models/personal-representative-delegation-type.model'
 
 type GetByPersonalRepresentativeOptions = {
   nationalIdPersonalRepresentative: string
@@ -29,6 +30,8 @@ export class PersonalRepresentativeService {
     private personalRepresentativeRightModel: typeof PersonalRepresentativeRight,
     @InjectModel(PersonalRepresentativeRightType)
     private personalRepresentativeRightTypeModel: typeof PersonalRepresentativeRightType,
+    @InjectModel(PersonalRepresentativeDelegationTypeModel)
+    private personalRepresentativeDelegationTypeModel: typeof PersonalRepresentativeDelegationTypeModel,
     @Inject(LOGGER_PROVIDER)
     private logger: Logger,
     private sequelize: Sequelize,
@@ -72,6 +75,15 @@ export class PersonalRepresentativeService {
       orderOption: [['id', 'ASC']],
       where: whereClause,
     })
+
+    await Promise.all(
+      result.data.map(async (rec) => {
+        rec.personalRepresentativeDelegationTypes =
+          await this.personalRepresentativeDelegationTypeModel.findAll({
+            where: { personalRepresentativeId: rec.id },
+          })
+      }),
+    )
 
     // Since paginate in sequlize does not support include correctly we need to fetch the rights array separately
     for await (const rec of result.data) {

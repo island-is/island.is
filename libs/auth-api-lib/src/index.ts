@@ -158,6 +158,7 @@ export * from './lib/personal-representative/models/personal-representative-righ
 export * from './lib/personal-representative/models/personal-representative-right-type.model'
 export * from './lib/personal-representative/models/personal-representative-access.model'
 export * from './lib/personal-representative/models/personal-representative-scope-permission.model'
+export * from './lib/personal-representative/models/personal-representative-delegation-type.model'
 export * from './lib/personal-representative/dto/pagination-with-national-ids.dto'
 export * from './lib/personal-representative/dto/personal-representative.dto'
 export * from './lib/personal-representative/dto/personal-representative-create.dto'

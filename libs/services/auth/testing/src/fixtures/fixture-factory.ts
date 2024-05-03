@@ -23,7 +23,9 @@ import {
   ClientSecret,
   Delegation,
   DelegationIndex,
+  DelegationProviderModel,
   DelegationScope,
+  DelegationTypeModel,
   Domain,
   IdentityResource,
   Language,
@@ -31,6 +33,7 @@ import {
   PersonalRepresentativeRight,
   PersonalRepresentativeRightType,
   PersonalRepresentativeScopePermission,
+  PersonalRepresentativeDelegationTypeModel,
   PersonalRepresentativeType,
   Translation,
   UserIdentity,
@@ -381,6 +384,36 @@ export class FixtureFactory {
     return personalRepresentativeRightType
   }
 
+  async createDelegationTypeForPersonalRepresentative(id: string) {
+    // create DelegationProvider first to attach to the delegation Type
+    const [delegationProvider] = await this.get(
+      DelegationProviderModel,
+    ).findCreateFind({
+      where: { id: 'talsmannagrunnur' },
+      defaults: {
+        id: 'talsmannagrunnur',
+        name: 'Talsmannagrunnur',
+        description: 'Talsmannagrunnur',
+        delegationTypes: [],
+      },
+    })
+
+    const [delegationType] = await this.get(DelegationTypeModel).findCreateFind(
+      {
+        where: { id },
+        defaults: {
+          id: `PersonalRepresentative:${id}`,
+          name: `Personal Representative: ${id}`,
+          providerId: delegationProvider.id,
+          provider: delegationProvider,
+          description: `Personal representative delegation type for right type ${id}`,
+        },
+      },
+    )
+
+    return delegationType
+  }
+
   async createPersonalRepresentativeRight({
     rightTypeCode,
     personalRepresentativeId,
@@ -394,6 +427,22 @@ export class FixtureFactory {
       id: id ?? faker.datatype.uuid(),
       personalRepresentativeId,
       rightTypeCode,
+    })
+  }
+
+  async createPersonalRepresentativeDelegationType({
+    delegationTypeCode,
+    personalRepresentativeId,
+    id,
+  }: {
+    delegationTypeCode: string
+    personalRepresentativeId: string
+    id?: string | null
+  }) {
+    return await this.get(PersonalRepresentativeDelegationTypeModel).create({
+      id: id ?? faker.datatype.uuid(),
+      personalRepresentativeId: personalRepresentativeId,
+      delegationTypeId: delegationTypeCode,
     })
   }
 
@@ -455,13 +504,35 @@ export class FixtureFactory {
         : [this.createPersonalRepresentativeRightType()],
     )
 
+    const delegationTypes = await Promise.all(
+      rightTypes
+        ? rightTypes.map((rightType) =>
+            this.createDelegationTypeForPersonalRepresentative(
+              rightType?.code ?? '',
+            ),
+          )
+        : [],
+    )
+
     await Promise.all(
-      personalRepresentativeRightTypes.map((personalRepresentativeRightType) =>
-        this.createPersonalRepresentativeRight({
+      delegationTypes.map((delegationType) => {
+        this.createPersonalRepresentativeDelegationType({
           id: personalRepresentative.id,
           personalRepresentativeId: personalRepresentative.id,
-          rightTypeCode: personalRepresentativeRightType.code,
-        }),
+          delegationTypeCode: delegationType.id,
+        })
+      }),
+    )
+
+    await Promise.all(
+      personalRepresentativeRightTypes.map(
+        (personalRepresentativeRightType) => {
+          this.createPersonalRepresentativeRight({
+            id: personalRepresentative.id,
+            personalRepresentativeId: personalRepresentative.id,
+            rightTypeCode: personalRepresentativeRightType.code,
+          })
+        },
       ),
     )
 

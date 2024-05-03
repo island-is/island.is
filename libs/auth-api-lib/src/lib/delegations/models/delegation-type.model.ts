@@ -1,14 +1,16 @@
-import type {
+import {
   CreationOptional,
   InferAttributes,
   InferCreationAttributes,
 } from 'sequelize'
 import {
   BelongsTo,
+  BelongsToMany,
   Column,
   CreatedAt,
   DataType,
   ForeignKey,
+  HasMany,
   Model,
   PrimaryKey,
   Table,
@@ -16,6 +18,9 @@ import {
 } from 'sequelize-typescript'
 
 import { DelegationProviderModel } from './delegation-provider.model'
+import { ApiProperty } from '@nestjs/swagger'
+import { PersonalRepresentativeDelegationTypeModel } from '../../personal-representative/models/personal-representative-delegation-type.model'
+import { DelegationTypeDto } from '../dto/delegation-type.dto'
 
 @Table({
   tableName: 'delegation_type',
@@ -61,4 +66,20 @@ export class DelegationTypeModel extends Model<
 
   @UpdatedAt
   readonly modified?: Date
+
+  @ApiProperty({
+    type: () => PersonalRepresentativeDelegationTypeModel,
+    required: true,
+  })
+  @HasMany(() => PersonalRepresentativeDelegationTypeModel)
+  personalRepresentativeDelegationType?: PersonalRepresentativeDelegationTypeModel[]
+
+  toDTO(): DelegationTypeDto {
+    return {
+      id: this.id,
+      providerId: this.providerId,
+      name: this.name,
+      description: this.description,
+    }
+  }
 }
