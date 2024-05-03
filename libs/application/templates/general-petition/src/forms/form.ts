@@ -141,7 +141,7 @@ export const form: Form = buildForm({
               backgroundColor: 'white',
               defaultValue: ({ externalData }: Application) => {
                 const data = externalData.userProfile?.data as UserProfile
-                return data?.email
+                return data?.email ?? ''
               },
             }),
           ],
