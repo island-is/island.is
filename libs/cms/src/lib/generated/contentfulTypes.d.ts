@@ -1521,6 +1521,72 @@ export interface IFrontpageSlider extends Entry<IFrontpageSliderFields> {
   }
 }
 
+export interface IGenericListFields {
+  /** Internal Title */
+  internalTitle: string
+
+  /** Card Intro Template */
+  cardIntroTemplate?: Document | undefined
+
+  /** Search Input Placeholder */
+  searchInputPlaceholder: string
+}
+
+/** A list of items which can be embedded into rich text */
+
+export interface IGenericList extends Entry<IGenericListFields> {
+  sys: {
+    id: string
+    type: string
+    createdAt: string
+    updatedAt: string
+    locale: string
+    contentType: {
+      sys: {
+        id: 'genericList'
+        linkType: 'ContentType'
+        type: 'Link'
+      }
+    }
+  }
+}
+
+export interface IGenericListItemFields {
+  /** Generic List */
+  genericList: IGenericList
+
+  /** Internal Title */
+  internalTitle: string
+
+  /** Title */
+  title: string
+
+  /** Date */
+  date: string
+
+  /** Card Intro */
+  cardIntro?: Document | undefined
+}
+
+/** An item that belongs to a generic list */
+
+export interface IGenericListItem extends Entry<IGenericListItemFields> {
+  sys: {
+    id: string
+    type: string
+    createdAt: string
+    updatedAt: string
+    locale: string
+    contentType: {
+      sys: {
+        id: 'genericListItem'
+        linkType: 'ContentType'
+        type: 'Link'
+      }
+    }
+  }
+}
+
 export interface IGenericOverviewPageFields {
   /** Title */
   title: string
@@ -4870,6 +4936,8 @@ export type CONTENT_TYPE =
   | 'formField'
   | 'frontpage'
   | 'frontpageSlider'
+  | 'genericList'
+  | 'genericListItem'
   | 'genericOverviewPage'
   | 'genericPage'
   | 'genericTag'

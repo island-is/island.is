@@ -19,6 +19,16 @@ import { Case } from './case.model'
   timestamps: false,
 })
 export class DateLog extends Model {
+  static arraignmentDate(dateLogs?: DateLog[]) {
+    return dateLogs?.find(
+      (dateLog) => dateLog.dateType === DateType.ARRAIGNMENT_DATE,
+    )
+  }
+
+  static courtDate(dateLogs?: DateLog[]) {
+    return dateLogs?.find((dateLog) => dateLog.dateType === DateType.COURT_DATE)
+  }
+
   @Column({
     type: DataType.UUID,
     primaryKey: true,
