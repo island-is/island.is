@@ -847,6 +847,30 @@ export const slices = gql`
     numberBoxDate
   }
 
+  fragment GenericListFields on GenericList {
+    __typename
+    id
+    searchInputPlaceholder
+    firstPageListItemResponse {
+      input {
+        genericListId
+        lang
+        page
+        queryString
+        size
+      }
+      items {
+        id
+        date
+        title
+        cardIntro {
+          ...HtmlFields
+        }
+      }
+      total
+    }
+  }
+
   fragment BaseSlices on Slice {
     ...TimelineFields
     ...StoryFields
@@ -890,6 +914,7 @@ export const slices = gql`
     ...ChartFields
     ...ChartNumberBoxFields
     ...FeaturedEventsFields
+    ...GenericListFields
   }
 
   fragment AllSlices on Slice {
