@@ -165,13 +165,6 @@ export const prosecutorRepresentativeUpdateRule: RolesRule = {
   dtoFields: prosecutorFields,
 }
 
-// Allows public prosecutors to update a specific set of fields
-export const publicProsecutorUpdateRule: RolesRule = {
-  role: UserRole.PUBLIC_PROSECUTOR,
-  type: RulesType.FIELD,
-  dtoFields: publicProsecutorFields,
-}
-
 // Allows public prosecutor staff to update a specific set of fields
 export const publicProsecutorStaffUpdateRule: RolesRule = {
   role: UserRole.PUBLIC_PROSECUTOR_STAFF,
@@ -290,15 +283,6 @@ export const prosecutorRepresentativeTransitionRule: RolesRule = {
     CaseTransition.SUBMIT,
     CaseTransition.DELETE,
   ],
-}
-
-// Allows public prosecutors to transition cases
-// Note that public prosecutors can only access non-indictment cases
-export const publicProsecutorTransitionRule: RolesRule = {
-  role: UserRole.PUBLIC_PROSECUTOR,
-  type: RulesType.FIELD_VALUES,
-  dtoField: 'transition',
-  dtoFieldValues: [],
 }
 
 // Allows public prosecutor staff to transition cases
