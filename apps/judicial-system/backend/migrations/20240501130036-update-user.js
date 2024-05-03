@@ -21,6 +21,7 @@ module.exports = {
         'COURT_OF_APPEALS_REGISTRAR',
         'COURT_OF_APPEALS_ASSISTANT',
         'PRISON_SYSTEM_STAFF',
+        'PUBLIC_PROSECUTOR', // new value
         'PUBLIC_PROSECUTOR_STAFF', // new value
       ],
     })
