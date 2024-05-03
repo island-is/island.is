@@ -153,6 +153,34 @@ export class BrokerService {
     return data && formatCitizenship(data)
   }
 
+  async getBiologicalFamily(
+    parentNationalId: string,
+    rawData?: EinstaklingurDTOAllt | null,
+    useFakeData?: boolean,
+  ): Promise<Array<ChildCustodyV3> | null> {
+    const parentData =
+      rawData ??
+      (await this.nationalRegistryV3.getAllDataIndividual(
+        parentNationalId,
+        useFakeData,
+      ))
+
+    if (!parentData) {
+      return null
+    }
+
+    const children = parentData.logforeldrar?.born ?? []
+
+    return children
+      .map((c) => formatChildCustody(c, useFakeData))
+      .filter(isDefined)
+      .sort((a, b) => {
+        return (
+          kennitala.info(b.nationalId).age - kennitala.info(a.nationalId).age
+        )
+      })
+  }
+
   async getChildrenCustodyInformation(
     parentNationalId: string,
     rawData?: EinstaklingurDTOAllt | null,

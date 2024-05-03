@@ -24,7 +24,8 @@ const UserInfoOverview = () => {
     variables: { api: 'v3' },
   })
 
-  const { spouse, childCustody } = data?.nationalRegistryPerson || {}
+  const { spouse, childCustody, biologicalChildren } =
+    data?.nationalRegistryPerson || {}
 
   return (
     <>
@@ -68,6 +69,17 @@ const UserInfoOverview = () => {
             />
           )}
           {childCustody?.map((child) => (
+            <FamilyMemberCard
+              key={child.nationalId}
+              title={child.fullName || ''}
+              nationalId={child.nationalId}
+              baseId={
+                maskString(child.nationalId, userInfo.profile.nationalId) ?? ''
+              }
+              familyRelation="child"
+            />
+          ))}
+          {biologicalChildren?.map((child) => (
             <FamilyMemberCard
               key={child.nationalId}
               title={child.fullName || ''}

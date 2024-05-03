@@ -2,7 +2,7 @@ import { User } from '@island.is/auth-nest-tools'
 import type { Logger } from '@island.is/logging'
 import { LOGGER_PROVIDER } from '@island.is/logging'
 import { FeatureFlagService, Features } from '@island.is/nest/feature-flags'
-import { Inject, Injectable, NotImplementedException } from '@nestjs/common'
+import { Inject, Injectable } from '@nestjs/common'
 import { Birthplace, Citizenship, Housing, Spouse } from './shared/models'
 import { Name } from './shared/models/name.model'
 import { SharedPerson } from './shared/types'
@@ -64,6 +64,12 @@ export class NationalRegistryService {
       return this.v3.getChildDetails(nationalId, useFakeData)
     }
     return this.v1.getPerson(nationalId)
+  }
+
+  async getBiologicalChildren(nationalId: string, data?: SharedPerson) {
+    return data?.api === 'v3'
+      ? this.v3.getBiologicalFamily(nationalId, data?.rawData)
+      : null
   }
 
   getCustodians(

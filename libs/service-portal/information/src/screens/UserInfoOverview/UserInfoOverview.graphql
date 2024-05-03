@@ -10,5 +10,9 @@ query UserInfoOverview($api: String, $useFakeData: Boolean) {
       nationalId
       fullName
     }
+    biologicalChildren {
+      nationalId
+      fullName
+    }
   }
 }

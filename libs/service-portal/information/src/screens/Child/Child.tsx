@@ -44,7 +44,10 @@ const Child = () => {
     },
   })
 
-  const child = data?.nationalRegistryPerson?.childCustody?.[0]?.details
+  const child =
+    data?.nationalRegistryPerson?.childCustody?.[0]?.details ??
+    data?.nationalRegistryPerson?.biologicalChildren?.[0].details
+
   const nationalId = child?.nationalId
 
   const parent1 = child?.birthParents ? child.birthParents[0] : undefined
@@ -55,9 +58,13 @@ const Child = () => {
 
   //Either the user is the child or a parent of the child being vieweds
   const isChild = nationalId === userInfo.profile.nationalId
-  const isChildOfUser = child?.custodians?.some(
-    (c) => c.nationalId === userInfo.profile.nationalId,
-  )
+  const isChildOfUser =
+    child?.custodians?.some(
+      (c) => c.nationalId === userInfo.profile.nationalId,
+    ) ||
+    child?.birthParents?.some(
+      (c) => c.nationalId === userInfo.profile.nationalId,
+    )
 
   const isChildOrChildOfUser = isChild || isChildOfUser
   const noChildFound = !loading && !isChildOrChildOfUser && !error
