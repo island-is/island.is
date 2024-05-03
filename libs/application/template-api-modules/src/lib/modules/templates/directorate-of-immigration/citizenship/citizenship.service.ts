@@ -74,7 +74,6 @@ export class CitizenshipService extends BaseTemplateApiService {
     auth,
   }: TemplateApiModuleActionProps): Promise<ApplicantInformation> {
     const validApplicant = await this.getApplicantValidity(auth)
-    console.log('validApplicant', validApplicant)
     if (
       validApplicant.applicantExists === false &&
       validApplicant.isEESCitizen === false
@@ -91,10 +90,12 @@ export class CitizenshipService extends BaseTemplateApiService {
     const applicantInformationItem: ApplicantInformation = {}
 
     if (validApplicant.applicantExists === true) {
-      const countryOfResidenceList =
-        await this.getCurrentCountryOfResidenceList(auth)
-      const passportItem = await this.getCurrentPassportItem(auth)
-      const staysAbroadList = await this.getCurrentStayAbroadList(auth)
+      const [countryOfResidenceList, passportItem, staysAbroadList] =
+        await Promise.all([
+          this.getCurrentCountryOfResidenceList(auth),
+          this.getCurrentPassportItem(auth),
+          this.getCurrentStayAbroadList(auth),
+        ])
 
       applicantInformationItem.currentCountryOfResidenceList =
         countryOfResidenceList
