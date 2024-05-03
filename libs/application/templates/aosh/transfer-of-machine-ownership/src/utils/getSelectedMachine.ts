@@ -13,5 +13,6 @@ export const getSelectedMachine = (
     'machinesList.data',
     {},
   ) as MachinesWithTotalCount
+
   return machinesWithTotal.machines.find((machine) => machine.id === machineId)
 }
