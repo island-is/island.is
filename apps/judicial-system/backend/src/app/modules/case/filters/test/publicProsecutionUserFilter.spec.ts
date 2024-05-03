@@ -45,11 +45,7 @@ describe.each([UserRole.PUBLIC_PROSECUTOR_STAFF])(
   },
 )
 
-describe.each(
-  publicProsecutorRoles.filter(
-    (role) => role !== UserRole.PUBLIC_PROSECUTOR_STAFF,
-  ),
-)('public prosecution user %s', (role) => {
+describe.each(publicProsecutorRoles)('public prosecution user %s', (role) => {
   const user = {
     role,
     institution: { id: uuid(), type: InstitutionType.PROSECUTORS_OFFICE },
