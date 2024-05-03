@@ -4,11 +4,14 @@ import {
   buildRadioField,
   getValueViaPath,
   formatText,
+  buildCheckboxField,
 } from '@island.is/application/core'
 import { Routes } from '../../../lib/constants'
 import { idInformation } from '../../../lib/messages/idInformation'
 import { useLocale } from '@island.is/localization'
 import { GetFormattedText } from '../../../utils'
+import { Application } from '@island.is/api/schema'
+import { IdCardAnswers } from '../../..'
 
 export const ChosenApplicantsSubSection = buildSubSection({
   id: Routes.CHOSENAPPLICANTS,
@@ -23,6 +26,55 @@ export const ChosenApplicantsSubSection = buildSubSection({
           id: `${Routes.CHOSENAPPLICANTS}.applicant`,
           title: '',
           largeButtons: true,
+          condition: (formValue, _) => {
+            const isApplicantChosen = getValueViaPath(
+              formValue,
+              `${Routes.CHOSENAPPLICANTS}.children`,
+              'empty',
+            )
+            console.log('isChildChosen', isApplicantChosen)
+            return true
+          },
+          options: (application) => {
+            const applicantName = getValueViaPath(
+              application.externalData,
+              'nationalRegistry.data.fullName',
+              '',
+            ) as string
+
+            const applicantIdNumber = getValueViaPath(
+              application.externalData,
+              'identityDocument.data.userPassport.number', // TODO CHANGE THIS TO ID NOT PASSPORT
+              '',
+            ) as string
+
+            const subLabel = GetFormattedText(
+              application,
+              idInformation.labels.idNumber,
+            )
+
+            return [
+              {
+                label: applicantName,
+                subLabel: `${subLabel}: ${applicantIdNumber}`,
+                value: 'yes',
+              },
+            ]
+          },
+        }),
+        buildRadioField({
+          id: `${Routes.CHOSENAPPLICANTS}.children`,
+          title: '',
+          largeButtons: true,
+          defaultValue: (application: Application) => {
+            const isApplicantChosen = getValueViaPath(
+              application.answers,
+              `${Routes.CHOSENAPPLICANTS}.applicant[0]`,
+              'empty',
+            )
+
+            console.log('isApplicantChosen', isApplicantChosen)
+          },
           options: (application) => {
             const applicantName = getValueViaPath(
               application.externalData,
