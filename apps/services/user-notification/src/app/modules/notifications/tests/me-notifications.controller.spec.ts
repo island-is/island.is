@@ -10,6 +10,7 @@ import {
 
 import { AppModule } from '../../../app.module'
 import { SequelizeConfigService } from '../../../sequelizeConfig.service'
+import { NotificationsScope } from '@island.is/auth/scopes'
 
 beforeAll(async () => {
   process.env.INIT_SCHEMA = 'true' // Disabling Firebase init
@@ -24,6 +25,7 @@ describe('MeNotificationsController - No Auth', () => {
     ${'GET'}   | ${'/v1/me/notifications/unseen-count'}
     ${'PATCH'} | ${'/v1/me/notifications/some-notification-id'}
     ${'PATCH'} | ${'/v1/me/notifications/mark-all-as-seen'}
+    ${'PATCH'} | ${'/v1/me/notifications/mark-all-as-read'}
   `(
     '$method $endpoint should return 401 when user is unauthenticated',
     async ({ method, endpoint }: TestEndpointOptions) => {
@@ -54,6 +56,7 @@ describe('MeNotificationsController - With Auth No Scope', () => {
     ${'GET'}   | ${'/v1/me/notifications/unseen-count'}
     ${'PATCH'} | ${'/v1/me/notifications/some-notification-id'}
     ${'PATCH'} | ${'/v1/me/notifications/mark-all-as-seen'}
+    ${'PATCH'} | ${'/v1/me/notifications/mark-all-as-read'}
   `(
     '$method $endpoint should return 403 when user is unauthorized',
     async ({ method, endpoint }: TestEndpointOptions) => {
@@ -76,35 +79,36 @@ describe('MeNotificationsController - With Auth No Scope', () => {
   )
 })
 
-// describe('MeNotificationsController - With Auth And Scope', () => {
-//   it.each`
-//     method     | endpoint
-//     ${'GET'}   | ${'/v1/me/notifications'}
-//     ${'GET'}   | ${'/v1/me/notifications/some-notification-id'}
-//     ${'GET'}   | ${'/v1/me/notifications/unread-count'}
-//     ${'GET'}   | ${'/v1/me/notifications/unseen-count'}
-//     ${'PATCH'} | ${'/v1/me/notifications/some-notification-id'}
-//     ${'PATCH'} | ${'/v1/me/notifications/mark-all-as-seen'}
-//   `(
-//     '$method $endpoint should return 200 when user is authorized',
-//     async ({ method, endpoint }: TestEndpointOptions) => {
-//       //Arrange
-//       const app = await setupApp({
-//         AppModule,
-//         SequelizeConfigService,
-//         user: createCurrentUser({
-//           scope: [NotificationsScope.read, NotificationsScope.write],
-//         }),
-//       })
-//       const server = request(app.getHttpServer())
+describe('MeNotificationsController - With Auth And Scope', () => {
+  it.each`
+    method     | endpoint
+    ${'GET'}   | ${'/v1/me/notifications'}
+    ${'GET'}   | ${'/v1/me/notifications/some-notification-id'}
+    ${'GET'}   | ${'/v1/me/notifications/unread-count'}
+    ${'GET'}   | ${'/v1/me/notifications/unseen-count'}
+    ${'PATCH'} | ${'/v1/me/notifications/some-notification-id'}
+    ${'PATCH'} | ${'/v1/me/notifications/mark-all-as-seen'}
+    ${'PATCH'} | ${'/v1/me/notifications/mark-all-as-read'}
+  `(
+    '$method $endpoint should return 200 when user is authorized',
+    async ({ method, endpoint }: TestEndpointOptions) => {
+      //Arrange
+      const app = await setupApp({
+        AppModule,
+        SequelizeConfigService,
+        user: createCurrentUser({
+          scope: [NotificationsScope.read, NotificationsScope.write],
+        }),
+      })
+      const server = request(app.getHttpServer())
 
-//       //Act
-//       const res = await getRequestMethod(server, method)(endpoint)
+      //Act
+      const res = await getRequestMethod(server, method)(endpoint)
 
-//       //Assert
-//       expect([200, 204].includes(res.status)).toBe(true)
+      //Assert
+      expect([200, 204].includes(res.status)).toBe(true)
 
-//       app.cleanUp()
-//     },
-//   )
-// })
+      app.cleanUp()
+    },
+  )
+})
