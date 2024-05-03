@@ -114,42 +114,9 @@ export const spmm = defineMessages({
     id: 'sp.family:user-famly-on-nr',
     defaultMessage: 'Einstaklingar með sömu lögheimilistengsl',
   },
-  childRegisterSuccess: {
-    id: 'sp.family:child-registration-generic-success',
-    defaultMessage: 'Athugasemd send til þjóðskrár',
-  },
-  childRegisterError: {
-    id: 'sp.family:child-registration-generic-error',
-    defaultMessage:
-      'Villa við innsendingu á formi. Vinsamlegast reynið aftur síðar',
-  },
   childRegisterModalButton: {
     id: 'sp.family:child-registration-modal-button',
     defaultMessage: 'Gera athugasemd við skráningu',
-  },
-  childRegisterRegistrationText: {
-    id: 'sp.family:child-registration-text',
-    defaultMessage: 'Athugasemdir vegna skráningar barns',
-  },
-  childRegisterParentName: {
-    id: 'sp.family:child-registration-parent-name',
-    defaultMessage: 'Nafn þess sem tilkynnir ranga skráningu: ',
-  },
-  childRegisterParentSSN: {
-    id: 'sp.family:child-registration-parent-id',
-    defaultMessage: 'Kennitala þess sem tilkynnir ranga skráningu: ',
-  },
-  childRegisterName: {
-    id: 'sp.family:child-registration-name',
-    defaultMessage: 'Nafn barns sem tilkynning á við: ',
-  },
-  childRegisterSSN: {
-    id: 'sp.family:child-registration-ssn',
-    defaultMessage: 'Kennitala barns sem tilkynning á við: ',
-  },
-  childRegisterSend: {
-    id: 'sp.family:child-registration-send',
-    defaultMessage: 'Senda tilkynningu',
   },
   givenName: {
     id: 'sp.family:person-given-name',
@@ -174,6 +141,13 @@ export const spmm = defineMessages({
   editLink: {
     id: 'sp.family:edit-link',
     defaultMessage: 'Breyta hjá Þjóðskrá',
+  },
+})
+
+export const mInformationNotifications = defineMessages({
+  description: {
+    id: 'sp.information-notifications:description',
+    defaultMessage: 'Hér getur þú nálgast tilkynningar þínar.',
   },
 })
 
@@ -357,6 +331,10 @@ export const urls = defineMessages({
   editBanmarking: {
     id: 'sp.family:url-edit-banmarking-adult',
     defaultMessage: 'https://www.skra.is/umsoknir/rafraen-skil/bannmerking/',
+  },
+  contactThjodskra: {
+    id: 'sp.family:contact-thjodskra',
+    defaultMessage: 'https://www.skra.is/um-okkur/hafa-samband/',
   },
 })
 

@@ -242,7 +242,18 @@ export const m = defineMessages({
   },
   validationTilBeforeFrom: {
     id: 'gpl.application:validationTilBeforeFrom',
-    defaultMessage: 'Lokadagsetning má ekki vera á undan upphafsdagsetningu',
+    defaultMessage:
+      'Lokadagsetning má ekki vera á undan eða sú sama og upphafsdagsetning',
+    description: '',
+  },
+  validationPhone: {
+    id: 'gpl.application:validationPhone',
+    defaultMessage: 'Vinsamlegast sláðu inn gilt símanúmer',
+    description: '',
+  },
+  validationEmail: {
+    id: 'gpl.application:validationEmail',
+    defaultMessage: 'Vinsamlegast sláðu inn gilt netfang',
     description: '',
   },
 

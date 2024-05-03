@@ -23,10 +23,10 @@ import {
   setTitle,
 } from './pdfHelpers'
 
-function constructCustodyNoticePdf(
+const constructCustodyNoticePdf = (
   theCase: Case,
   formatMessage: FormatMessage,
-): Promise<Buffer> {
+): Promise<Buffer> => {
   const doc = new PDFDocument({
     size: 'A4',
     margins: {
@@ -184,18 +184,18 @@ function constructCustodyNoticePdf(
   )
 }
 
-export function getCustodyNoticePdfAsString(
+export const getCustodyNoticePdfAsString = (
   theCase: Case,
   formatMessage: FormatMessage,
-): Promise<string> {
+): Promise<string> => {
   return constructCustodyNoticePdf(theCase, formatMessage).then((buffer) =>
     buffer.toString('binary'),
   )
 }
 
-export function getCustodyNoticePdfAsBuffer(
+export const getCustodyNoticePdfAsBuffer = (
   theCase: Case,
   formatMessage: FormatMessage,
-): Promise<Buffer> {
+): Promise<Buffer> => {
   return constructCustodyNoticePdf(theCase, formatMessage)
 }
