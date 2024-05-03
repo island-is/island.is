@@ -16,7 +16,6 @@ import {
   formatCaseType,
   formatDate,
 } from '@island.is/judicial-system/formatters'
-import { getLatestDateType } from '@island.is/judicial-system/types'
 import {
   core,
   icCourtOverview,
@@ -34,18 +33,14 @@ import {
   FormContext,
   FormFooter,
   InfoCard,
+  InfoCardCaseScheduled,
   PageHeader,
   PageLayout,
   PdfButton,
   UserContext,
 } from '@island.is/judicial-system-web/src/components'
 import { NameAndEmail } from '@island.is/judicial-system-web/src/components/InfoCard/InfoCard'
-import InfoCardCaseScheduled from '@island.is/judicial-system-web/src/components/InfoCard/InfoCardCaseScheduled'
-import {
-  CaseState,
-  DateLog,
-  DateType,
-} from '@island.is/judicial-system-web/src/graphql/schema'
+import { CaseState } from '@island.is/judicial-system-web/src/graphql/schema'
 import {
   UploadState,
   useCourtUpload,
@@ -61,11 +56,6 @@ const Overview = () => {
   const { user } = useContext(UserContext)
   const { uploadState } = useCourtUpload(workingCase, setWorkingCase)
   const [isDraftingConclusion, setIsDraftingConclusion] = useState<boolean>()
-
-  const courtDate = getLatestDateType(
-    DateType.COURT_DATE,
-    workingCase.dateLogs,
-  ) as DateLog
 
   const handleNavigationTo = useCallback(
     (destination: string) => router.push(`${destination}/${workingCase.id}`),
@@ -115,14 +105,13 @@ const Overview = () => {
         </Box>
         <CourtCaseInfo workingCase={workingCase} />
         {workingCase.state === CaseState.RECEIVED &&
-          courtDate &&
-          courtDate.date &&
+          workingCase.arraignmentDate?.date &&
           workingCase.court && (
             <Box component="section" marginBottom={5}>
               <InfoCardCaseScheduled
                 court={workingCase.court}
-                courtDate={courtDate.date}
-                courtRoom={workingCase.courtRoom}
+                courtDate={workingCase.arraignmentDate.date}
+                courtRoom={workingCase.arraignmentDate.location}
               />
             </Box>
           )}

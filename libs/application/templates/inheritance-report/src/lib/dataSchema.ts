@@ -34,12 +34,19 @@ const validateDeceasedShare = ({
   return true
 }
 
+const validateAssetNumber = (assetNumber: string) => {
+  const assetNumberPattern = /^(F\d{3}-\d{4}|\d{7}|\d{3}-\d{4}|F\d{7})$/
+  return assetNumberPattern.test(assetNumber)
+}
+
 const assetSchema = ({ withShare }: { withShare?: boolean } = {}) =>
   z
     .object({
       data: z
         .object({
-          assetNumber: z.string(),
+          assetNumber: z
+            .string()
+            .refine((v) => (withShare ? validateAssetNumber(v) : true)),
           description: z.string(),
           propertyValuation: z.string(),
           ...(withShare ? { share: z.string() } : {}),

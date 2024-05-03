@@ -1,13 +1,10 @@
 import { Injectable } from '@nestjs/common'
-import { Notification } from './types'
-import { NotificationsService } from './notifications.service'
-import { CreateHnippNotificationDto } from './dto/createHnippNotification.dto'
-import type { Locale } from '@island.is/shared/types'
-export const APP_PROTOCOL = Symbol('APP_PROTOCOL')
 
-export interface MessageProcessorServiceConfig {
-  appProtocol: string
-}
+import type { Locale } from '@island.is/shared/types'
+
+import { CreateHnippNotificationDto } from './dto/createHnippNotification.dto'
+import { NotificationsService } from './notifications.service'
+import { Notification } from './types'
 
 @Injectable()
 export class MessageProcessorService {

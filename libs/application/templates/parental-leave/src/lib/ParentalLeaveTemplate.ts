@@ -1,60 +1,53 @@
-import { assign } from 'xstate'
+import cloneDeep from 'lodash/cloneDeep'
 import set from 'lodash/set'
 import unset from 'lodash/unset'
-import cloneDeep from 'lodash/cloneDeep'
+import { assign } from 'xstate'
 
 import {
-  coreMessages,
   EphemeralStateLifeCycle,
-  pruneAfterDays,
   coreHistoryMessages,
+  coreMessages,
+  pruneAfterDays,
 } from '@island.is/application/core'
 import {
-  ApplicationContext,
+  Application,
   ApplicationConfigurations,
+  ApplicationContext,
   ApplicationRole,
   ApplicationStateSchema,
-  ApplicationTypes,
   ApplicationTemplate,
-  Application,
+  ApplicationTypes,
   DefaultEvents,
-  defineTemplateApi,
-  UserProfileApi,
   StateLifeCycle,
+  UserProfileApi,
+  defineTemplateApi,
 } from '@island.is/application/types'
 
 import {
-  YES,
   ApiModuleActions,
-  States,
-  ParentalRelations,
-  NO,
-  MANUAL,
-  SPOUSE,
-  TransferRightsOption,
-  SINGLE,
-  FileType,
-  NO_MULTIPLE_BIRTHS,
-  UnEmployedBenefitTypes,
-  PLEvents,
-  Roles,
   Events,
+  MANUAL,
+  NO,
+  NO_MULTIPLE_BIRTHS,
   PARENTAL_GRANT,
   PARENTAL_GRANT_STUDENTS,
   PARENTAL_LEAVE,
+  PLEvents,
+  ParentalRelations,
+  Roles,
+  SINGLE,
+  SPOUSE,
+  States,
+  TransferRightsOption,
+  UnEmployedBenefitTypes,
+  YES,
 } from '../constants'
-import { dataSchema } from './dataSchema'
-import { answerValidators } from './answerValidators'
-import { parentalLeaveFormMessages, statesMessages } from './messages'
+import { ChildrenApi, GetPersonInformation } from '../dataProviders'
 import {
-  allEmployersHaveApproved,
-  findActionName,
-  goToState,
-  hasDateOfBirth,
-  hasEmployer,
-  needsOtherParentApproval,
-} from './parentalLeaveTemplateUtils'
-import {
+  calculatePruneDate,
+  determineNameFromApplicationAnswers,
+  employerApprovalStatePendingAction,
+  getActionName,
   getApplicationAnswers,
   getApplicationExternalData,
   getApprovedEmployers,
@@ -62,14 +55,20 @@ import {
   getMultipleBirthRequestDays,
   getOtherParentId,
   getSelectedChild,
-  determineNameFromApplicationAnswers,
   isParentWithoutBirthParent,
   otherParentApprovalStatePendingAction,
-  employerApprovalStatePendingAction,
-  calculatePruneDate,
   getSpouse,
 } from '../lib/parentalLeaveUtils'
-import { ChildrenApi, GetPersonInformation } from '../dataProviders'
+import { answerValidators } from './answerValidators'
+import { dataSchema } from './dataSchema'
+import { parentalLeaveFormMessages, statesMessages } from './messages'
+import {
+  allEmployersHaveApproved,
+  goToState,
+  hasDateOfBirth,
+  hasEmployer,
+  needsOtherParentApproval,
+} from './parentalLeaveTemplateUtils'
 
 export const birthDayLifeCycle: StateLifeCycle = {
   shouldBeListed: true,
@@ -760,7 +759,7 @@ const ParentalLeaveTemplate: ApplicationTemplate<
         },
       },
       [States.RESIDENCE_GRANT_APPLICATION]: {
-        entry: ['assignToVMST', 'setResidenceGrant'],
+        entry: ['assignToVMST', 'setResidenceGrant', 'setActionName'],
         exit: ['setPreviousState', 'setHasAppliedForReidenceGrant'],
         meta: {
           status: 'inprogress',
@@ -789,9 +788,9 @@ const ParentalLeaveTemplate: ApplicationTemplate<
           onExit: defineTemplateApi({
             action: ApiModuleActions.validateApplication,
             triggerEvent: DefaultEvents.APPROVE,
-            params: FileType.DOCUMENTPERIOD,
             throwOnError: true,
           }),
+
           roles: [
             {
               id: Roles.APPLICANT,
@@ -1198,7 +1197,6 @@ const ParentalLeaveTemplate: ApplicationTemplate<
           'removeNullPeriod',
           'setHasAppliedForReidenceGrant',
           'setNavId',
-          'clearChangedPeriodsNEmployers',
         ],
         exit: [
           'clearTemp',
@@ -1206,6 +1204,7 @@ const ParentalLeaveTemplate: ApplicationTemplate<
           'clearAssignees',
           'setPreviousState',
           'setNavId',
+          'clearChangedPeriodsNEmployers',
         ],
         meta: {
           name: States.VINNUMALASTOFNUN_APPROVE_EDITS,
@@ -1248,14 +1247,12 @@ const ParentalLeaveTemplate: ApplicationTemplate<
             defineTemplateApi({
               triggerEvent: DefaultEvents.APPROVE,
               action: ApiModuleActions.sendApplication,
-              params: FileType.DOCUMENTPERIOD,
               shouldPersistToExternalData: true,
               throwOnError: true,
             }),
             defineTemplateApi({
               triggerEvent: DefaultEvents.SUBMIT,
               action: ApiModuleActions.sendApplication,
-              params: FileType.DOCUMENTPERIOD,
               shouldPersistToExternalData: true,
               throwOnError: true,
             }),
@@ -1964,9 +1961,8 @@ const ParentalLeaveTemplate: ApplicationTemplate<
       setActionName: assign((context) => {
         const { application } = context
         const { answers } = application
-        const actionName = findActionName(context)
+        const actionName = getActionName(application)
         set(answers, 'actionName', actionName)
-
         return context
       }),
       clearChangedPeriodsNEmployers: assign((context) => {
@@ -1975,6 +1971,8 @@ const ParentalLeaveTemplate: ApplicationTemplate<
 
         unset(answers, 'changeEmployer')
         unset(answers, 'changePeriods')
+        unset(answers, 'addPeriods')
+        unset(answers, 'addEmployer')
 
         return context
       }),

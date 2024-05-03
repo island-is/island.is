@@ -9,6 +9,7 @@ import {
   CaseState,
   CaseType,
   completedCaseStates,
+  DateType,
   indictmentCases,
   InstitutionType,
   investigationCases,
@@ -35,6 +36,7 @@ const getProsecutionUserCasesQueryFilter = (user: User): WhereOptions => {
         CaseState.ACCEPTED,
         CaseState.REJECTED,
         CaseState.DISMISSED,
+        CaseState.MAIN_HEARING,
       ],
     },
     {
@@ -87,6 +89,7 @@ const getDistrictCourtUserCasesQueryFilter = (user: User): WhereOptions => {
           CaseState.ACCEPTED,
           CaseState.REJECTED,
           CaseState.DISMISSED,
+          CaseState.MAIN_HEARING,
         ],
       },
     )
@@ -118,6 +121,7 @@ const getDistrictCourtUserCasesQueryFilter = (user: User): WhereOptions => {
                 CaseState.ACCEPTED,
                 CaseState.REJECTED,
                 CaseState.DISMISSED,
+                CaseState.MAIN_HEARING,
               ],
             },
           ],
@@ -209,7 +213,7 @@ const getDefenceUserCasesQueryFilter = (user: User): WhereOptions => {
                 {
                   [Op.and]: [
                     { state: CaseState.RECEIVED },
-                    { '$dateLogs.date_type$': 'COURT_DATE' },
+                    { '$dateLogs.date_type$': DateType.ARRAIGNMENT_DATE },
                   ],
                 },
                 { state: completedCaseStates },
