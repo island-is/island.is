@@ -26,7 +26,7 @@ import {
 } from '@island.is/judicial-system/types'
 
 import { core, custodyNotice, notifications } from '../messages'
-import { Case } from '../modules/case'
+import { Case, DateLog } from '../modules/case'
 
 type SubjectAndBody = {
   subject: string
@@ -230,6 +230,35 @@ export const formatProsecutorReceivedByCourtSmsNotification = (
   })
 }
 
+export const formatPostponedCourtDateEmailNotification = (
+  formatMessage: FormatMessage,
+  theCase: Case,
+  courtDate: DateLog,
+  overviewUrl?: string,
+): SubjectAndBody => {
+  const subject = formatMessage(notifications.postponedCourtDateEmail.subject, {
+    courtCaseNumber: theCase.courtCaseNumber,
+  })
+  const courtRoomText = formatMessage(notifications.courtRoom, {
+    courtRoom: courtDate.location || 'NONE',
+  })
+  const judgeText = formatMessage(notifications.judge, {
+    judgeName: theCase.judge?.name || 'NONE',
+  })
+  const body = formatMessage(notifications.postponedCourtDateEmail.body, {
+    courtName: theCase.court?.name ?? '',
+    courtCaseNumber: theCase.courtCaseNumber,
+    courtDate: formatDate(courtDate.date, 'PPPp')?.replace(' kl.', ', kl.'),
+    courtRoomText,
+    judgeText,
+    hasAccessToRvg: Boolean(overviewUrl),
+    linkStart: `<a href="${overviewUrl}">`,
+    linkEnd: '</a>',
+  })
+
+  return { subject, body }
+}
+
 export const formatProsecutorCourtDateEmailNotification = (
   formatMessage: FormatMessage,
   type: CaseType,
@@ -264,7 +293,6 @@ export const formatProsecutorCourtDateEmailNotification = (
   const courtRoomText = formatMessage(notifications.courtRoom, {
     courtRoom: courtRoom || 'NONE',
   })
-
   const judgeText = formatMessage(notifications.judge, {
     judgeName: judgeName || 'NONE',
   })

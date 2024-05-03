@@ -4,6 +4,7 @@ export enum ApiActions {
   getResidenceInIcelandLastChangeDate = 'getResidenceInIcelandLastChangeDate',
   submitApplication = 'submitApplication',
   validateApplication = 'validateApplication',
+  applicantInformation = 'getApplicantInformation',
 }
 
 export const MAX_CNT_APPLICANTS = 18
