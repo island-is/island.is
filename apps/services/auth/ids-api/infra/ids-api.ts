@@ -136,13 +136,7 @@ export const cleanupSetup = (): ServiceBuilder<typeof cleanupId> =>
     })
     .db()
     .extraAttributes({
-      dev: {
-        schedule,
-      },
-      staging: {
-        schedule,
-      },
-      prod: {
-        schedule,
-      },
+      dev: schedule,
+      staging: schedule,
+      prod: schedule,
     })

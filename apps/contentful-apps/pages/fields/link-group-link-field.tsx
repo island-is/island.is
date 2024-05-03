@@ -37,6 +37,12 @@ const useSubpageData = (): SubpageData => {
     const fetchPageAbove = async (
       pageAboveContentTypeId: string,
     ): Promise<boolean> => {
+      await new Promise((resolve) => {
+        setTimeout(() => {
+          resolve('')
+        }, 1000)
+      })
+
       const pageAboveResponse = await cma.entry.getMany({
         query: {
           links_to_entry: sdk.entry.getSys().id,
