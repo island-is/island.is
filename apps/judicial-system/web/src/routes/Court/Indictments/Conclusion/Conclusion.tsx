@@ -40,6 +40,9 @@ import {
 import { strings } from './Conclusion.strings'
 
 type Actions = 'POSTPONE' | 'REDISTRIBUTE' | 'COMPLETE'
+type Decision =
+  | CaseIndictmentRulingDecision.FINE
+  | CaseIndictmentRulingDecision.RULING
 
 interface Postponement {
   postponedIndefinitely?: boolean
@@ -52,6 +55,7 @@ const Conclusion: React.FC = () => {
     useContext(FormContext)
 
   const [selectedAction, setSelectedAction] = useState<Actions>()
+  const [selectedDecision, setSelectedDecision] = useState<Decision>()
   const [postponement, setPostponement] = useState<Postponement>()
   const {
     courtDate,
@@ -87,10 +91,27 @@ const Conclusion: React.FC = () => {
     }
   }, [transitionCase, workingCase.id, formatMessage])
 
+  const handleCompletion = useCallback(() => {
+    setAndSendCaseToServer(
+      [
+        {
+          indictmentRulingDecision:
+            selectedDecision === 'FINE'
+              ? CaseIndictmentRulingDecision.FINE
+              : CaseIndictmentRulingDecision.RULING,
+        },
+      ],
+      workingCase,
+      setWorkingCase,
+    )
+  }, [setAndSendCaseToServer, setWorkingCase, workingCase])
+
   const handleNavigationTo = useCallback(
     async (destination: keyof stepValidationsType) => {
       if (selectedAction === 'REDISTRIBUTE') {
         handleRedistribution()
+      } else if (selectedAction === 'COMPLETE') {
+        handleCompletion()
       } else if (postponement?.postponedIndefinitely) {
         await updateCase(workingCase.id, {
           courtDate: null,
@@ -278,20 +299,11 @@ const Conclusion: React.FC = () => {
                   name="decision"
                   checked={
                     workingCase.indictmentRulingDecision ===
-                    CaseIndictmentRulingDecision.RULING
+                      CaseIndictmentRulingDecision.RULING ||
+                    selectedDecision === CaseIndictmentRulingDecision.RULING
                   }
                   onChange={() => {
-                    setAndSendCaseToServer(
-                      [
-                        {
-                          indictmentRulingDecision:
-                            CaseIndictmentRulingDecision.RULING,
-                          force: true,
-                        },
-                      ],
-                      workingCase,
-                      setWorkingCase,
-                    )
+                    setSelectedDecision(CaseIndictmentRulingDecision.RULING)
                   }}
                   large
                   backgroundColor="white"
@@ -303,20 +315,11 @@ const Conclusion: React.FC = () => {
                 name="decision"
                 checked={
                   workingCase.indictmentRulingDecision ===
-                  CaseIndictmentRulingDecision.FINE
+                    CaseIndictmentRulingDecision.FINE ||
+                  selectedDecision === CaseIndictmentRulingDecision.FINE
                 }
                 onChange={() => {
-                  setAndSendCaseToServer(
-                    [
-                      {
-                        indictmentRulingDecision:
-                          CaseIndictmentRulingDecision.FINE,
-                        force: true,
-                      },
-                    ],
-                    workingCase,
-                    setWorkingCase,
-                  )
+                  setSelectedDecision(CaseIndictmentRulingDecision.FINE)
                 }}
                 large
                 backgroundColor="white"
