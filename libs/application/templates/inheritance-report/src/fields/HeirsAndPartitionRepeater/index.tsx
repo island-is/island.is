@@ -107,14 +107,14 @@ export const HeirsAndPartitionRepeater: FC<
     inheritanceReportInfos: Array<InheritanceReportInfo>
   }
 
-  const estateData = getEstateDataFromApplication(application)
+  const estateData = undefined //getEstateDataFromApplication(application)
 
   const inheritanceTaxFreeLimit =
     externalData?.inheritanceReportInfos?.[0]?.inheritanceTax
       ?.taxExemptionLimit ?? DEFAULT_TAX_FREE_LIMIT
 
   const relations =
-    externalData.relationOptions?.map((relation) => ({
+    externalData?.relationOptions?.map((relation) => ({
       value: relation,
       label: relation,
     })) || []
@@ -267,12 +267,12 @@ export const HeirsAndPartitionRepeater: FC<
   useEffect(() => {
     if (
       fields.length === 0 &&
-      estateData?.inheritanceReportInfo?.heirs &&
+      estateData && (estateData as any)?.inheritanceReportInfo?.heirs &&
       !(application.answers as any)?.heirs?.hasModified
     ) {
       // Keeping this in for now, it may not be needed, will find out later
-      const heirsData = estateData?.inheritanceReportInfo?.heirs?.map(
-        (heir) => {
+      const heirsData = (estateData as any)?.inheritanceReportInfo?.heirs?.map(
+        (heir: any) => {
           return {
             ...heir,
             initial: true,
