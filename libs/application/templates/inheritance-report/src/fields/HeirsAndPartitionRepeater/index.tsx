@@ -267,7 +267,8 @@ export const HeirsAndPartitionRepeater: FC<
   useEffect(() => {
     if (
       fields.length === 0 &&
-      estateData && (estateData as any)?.inheritanceReportInfo?.heirs &&
+      estateData &&
+      (estateData as any)?.inheritanceReportInfo?.heirs &&
       !(application.answers as any)?.heirs?.hasModified
     ) {
       // Keeping this in for now, it may not be needed, will find out later
