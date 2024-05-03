@@ -74,10 +74,7 @@ export class CitizenshipService extends BaseTemplateApiService {
     auth,
   }: TemplateApiModuleActionProps): Promise<ApplicantInformation> {
     const validApplicant = await this.getApplicantValidity(auth)
-    if (
-      validApplicant.applicantExists === false &&
-      validApplicant.isEESCitizen === false
-    ) {
+    if (!validApplicant.applicantExists && !validApplicant.isEESCitizen) {
       throw new TemplateApiError(
         {
           title: errorMessages.applicationConditionsNotMet,
