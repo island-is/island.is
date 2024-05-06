@@ -14,13 +14,12 @@ import {
   HealthInsuranceCountry,
   InsuranceStatementData,
 } from '../types'
-import { content } from 'pdfkit/js/page'
 
-const getChildrenFromExternalData = (externalData: ExternalData) => {
+export const getChildrenFromExternalData = (externalData: ExternalData) => {
   return externalData?.childrenCustodyInformation
     ?.data as ApplicantChildCustodyInformation[]
 }
-const getSpouseFromExternalData = (externalData: ExternalData) => {
+export const getSpouseFromExternalData = (externalData: ExternalData) => {
   return externalData?.nationalRegistrySpouse?.data as NationalRegistrySpouse
 }
 

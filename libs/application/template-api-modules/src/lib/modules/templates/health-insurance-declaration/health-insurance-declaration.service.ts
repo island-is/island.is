@@ -1,6 +1,6 @@
 import { ApplicationTypes } from '@island.is/application/types'
 import { InsurancestatementsApi } from '@island.is/clients/icelandic-health-insurance/rights-portal'
-import { Injectable } from '@nestjs/common'
+import { HttpException, Injectable } from '@nestjs/common'
 import { BaseTemplateApiService } from '../../base-template-api.service'
 import { TemplateApiModuleActionProps } from '../../../types'
 import { AuthMiddleware, Auth } from '@island.is/auth-nest-tools'
@@ -9,6 +9,8 @@ import {
   applicationToStudentApplication,
   applicationToTravellerApplication,
   getApplicantType,
+  getApplicantsFromExternalData,
+  getPersonsFromExternalData,
 } from './health-insurance-declaration.utils'
 import { ApplicantType } from '@island.is/application/templates/health-insurance-declaration'
 
@@ -61,7 +63,7 @@ export class HealthInsuranceDeclarationService extends BaseTemplateApiService {
     }
   }
 
-  async submitApplicaiton({ application, auth }: TemplateApiModuleActionProps) {
+  async submitApplication({ application, auth }: TemplateApiModuleActionProps) {
     // Different endpoints are used base on if applicant is a student or not
     const applicationType = getApplicantType(application)
     if (applicationType === ApplicantType.STUDENT) {
@@ -89,5 +91,34 @@ export class HealthInsuranceDeclarationService extends BaseTemplateApiService {
           applicationTravellerRequest,
       })
     }
+  }
+  async getPdfForApplicants({
+    application,
+    auth,
+  }: TemplateApiModuleActionProps) {
+    const applicants = getApplicantsFromExternalData(application)
+    const persons = getPersonsFromExternalData(application)
+
+    const applicantsWtihPdfData = applicants.map(async (applicant) => {
+      let pdfDataResponse
+      const person = persons.find((p) => p.nationalId === applicant.nationalId)
+      if (!person) {
+        throw new HttpException('Applicant data not found', 500)
+      }
+      if (applicant.approved) {
+        pdfDataResponse = await this.insuranceStatementsApiWithAuth(
+          auth,
+        ).getInsuranceStatementPdf({ documentId: applicant.documentId })
+      }
+
+      return {
+        applicantName: person.name,
+        nationalId: person.nationalId,
+        pdfData: pdfDataResponse,
+        comment: applicant.comment,
+        approved: applicant.approved,
+      }
+    })
+    return applicantsWtihPdfData
   }
 }

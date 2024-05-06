@@ -1,7 +1,12 @@
-import { Application } from '@island.is/application/types'
+import {
+  Application,
+  NationalRegistryIndividual,
+} from '@island.is/application/types'
 import {
   ApplicantType,
   HealthInsuranceDeclarationApplication,
+  getChildrenFromExternalData,
+  getSpouseFromExternalData,
 } from '@island.is/application/templates/health-insurance-declaration'
 import { DocumentInfo } from './attachments/provider'
 import {
@@ -89,6 +94,38 @@ const getApplicants = (
     }
   })
   return applicants
+}
+
+export const getApplicantsFromExternalData = (application: Application) => {
+  const healthInsuranceApplication =
+    application as HealthInsuranceDeclarationApplication
+  return healthInsuranceApplication.externalData.submitApplication.data
+    .applicants
+}
+
+export const getPersonsFromExternalData = ({ externalData }: Application) => {
+  const children = getChildrenFromExternalData(externalData)
+  const spouse = getSpouseFromExternalData(externalData)
+  const persons = [
+    {
+      nationalId: (
+        externalData.nationalRegistry.data as NationalRegistryIndividual
+      ).nationalId,
+      name: (externalData.nationalRegistry.data as NationalRegistryIndividual)
+        .fullName,
+    },
+  ]
+  persons.push({
+    nationalId: spouse.nationalId,
+    name: spouse.fullName ? spouse.fullName : spouse.name ? spouse.name : '',
+  })
+  children.map((child) => {
+    persons.push({
+      nationalId: child.nationalId,
+      name: child.fullName,
+    })
+  })
+  return persons
 }
 
 const getResidencyCode = (
