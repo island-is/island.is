@@ -1,9 +1,9 @@
 import { useMemo } from 'react'
+import dynamic from 'next/dynamic'
 import { EditorExtensionSDK } from '@contentful/app-sdk'
 import { Box } from '@contentful/f36-components'
 import { useSDK } from '@contentful/react-apps-toolkit'
 
-import { ContentfulField } from '../ContentfulField'
 import { mapLocalesToFieldApis } from '../utils'
 
 const createLocaleToFieldMapping = (sdk: EditorExtensionSDK) => {
@@ -23,7 +23,16 @@ const createLocaleToFieldMapping = (sdk: EditorExtensionSDK) => {
   }
 }
 
-const GenericListItemEditor = () => {
+const ContentfulField = dynamic(
+  () =>
+    // Dynamically import via client side rendering since the @contentful/default-field-editors package accesses the window and navigator global objects
+    import('../ContentfulField').then(({ ContentfulField }) => ContentfulField),
+  {
+    ssr: false,
+  },
+)
+
+export const GenericListItemEditor = () => {
   const sdk = useSDK<EditorExtensionSDK>()
 
   const localeToFieldMapping = useMemo(() => {
@@ -73,5 +82,3 @@ const GenericListItemEditor = () => {
     </Box>
   )
 }
-
-export default GenericListItemEditor

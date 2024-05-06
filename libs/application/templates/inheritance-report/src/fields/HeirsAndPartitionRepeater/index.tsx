@@ -190,12 +190,10 @@ export const HeirsAndPartitionRepeater: FC<
         })
       }
 
-      const spouseTotal = valueToNumber(getValueViaPath(answers, 'spouseTotal'))
       const netPropertyForExchange = valueToNumber(
         getValueViaPath(answers, 'netPropertyForExchange'),
       )
-      const inheritanceValue =
-        netPropertyForExchange * percentage + (isSpouse ? spouseTotal : 0)
+      const inheritanceValue = netPropertyForExchange * percentage
 
       const taxFreeInheritanceValue = isSpouse
         ? inheritanceValue

@@ -82,17 +82,19 @@ describe('EndorsementList', () => {
   })
 
   // gp try to get non gp list and fail
-  it(`GET /endorsement-list/general-petition-list/{listId} should return 404 and fail`, async () => {
+  it(`GET /endorsement-list/general-petition-list/{listId} should return closed list`, async () => {
     const app = await getAuthenticatedApp({
       nationalId: authNationalId,
       scope: [EndorsementsScope.main],
     })
-    await request(app.getHttpServer())
+    const response = await request(app.getHttpServer())
       .get(
         `/endorsement-list/general-petition-list/9c0b4106-4213-43be-a6b2-ff324f4ba016`,
       )
       .send()
-      .expect(404)
+      .expect(200)
+    const endorsementList = new EndorsementList({ ...response.body })
+    await expect(endorsementList.validate()).resolves.not.toThrow()
   })
 
   // /endorsement-list/endorsementLists
