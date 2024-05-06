@@ -104,6 +104,18 @@ jobs:
           echo "GENERATED_FILES_KEY: $GENERATED_FILES_KEY"
           echo "generated-files-key=$GENERATED_FILES_KEY" >> $GITHUB_OUTPUT
 
+      - name: Prepare node-modules cache
+        uses: ./.github/actions/prepare-cache
+        with:
+          path: node_modules
+          key: ${{ steps.calculate-node-modules-cache-key.node-modules-key }}
+
+      - name: Prepare mobile-node-modules cache
+        uses: ./.github/actions/prepare-cache
+        with:
+          path: apps/native/app/node_modules
+          key: ${{ steps.calculate-mobile-node-modules-cache-key.outputs.mobile-node-modules-key }}
+
       - name: Preparing HEAD and BASE tags
         run: |
           echo "HEAD=$GITHUB_SHA" >> $GITHUB_ENV
