@@ -43,7 +43,7 @@ export const notifications = {
     id: 'judicial.system.backend:notifications.email_tail',
     defaultMessage:
       'Hægt er að nálgast yfirlitssíðu málsins á <a href="https://rettarvorslugatt.island.is">rettarvorslugatt.island.is</a>.',
-    description: 'Notaður sem texti í sms-i til þess að tilgreina slóð á RVG',
+    description: 'Notaður sem texti í email til þess að tilgreina slóð á RVG',
   }),
   readyForCourt: defineMessages({
     subject: {
@@ -192,6 +192,21 @@ export const notifications = {
     defaultMessage:
       '{court} hefur móttekið {caseType, select, otherInvestigationCase {kröfu um rannsóknarheimild} investigationCase {kröfu um rannsóknarheimild ({caseTypeName})} restrictionCase {kröfu um {caseTypeName}} other {ákæru}} sem þú sendir og úthlutað málsnúmerinu {courtCaseNumber}. Sjá nánar á rettarvorslugatt.island.is.',
     description: 'Notaður sem texti í sms-i þegar sækjandi fær kröfuskjal',
+  }),
+  postponedCourtDateEmail: defineMessages({
+    subject: {
+      id: 'judicial.system.backend:notifications.postponed_court_date_email.subject',
+      defaultMessage: 'Frestun - nýtt þinghald í máli {courtCaseNumber}',
+      description:
+        'Notaður sem titill á pósti til sækjanda og verjenda þegar þinghaldi er frestað',
+    },
+    body: {
+      id: 'judicial.system.backend:notifications.postponed_court_date_email.body_v3',
+      defaultMessage:
+        '{courtName} boðar til þinghalds í máli {courtCaseNumber}.<br />Fyrirtaka mun fara fram {courtDate}.<br /><br />{courtRoomText}<br /><br />{judgeText}<br /><br />{hasAccessToRvg, select, false {Hægt er að nálgast gögn málsins hjá {courtName}} other {Hægt er að nálgast gögn málsins á {linkStart}yfirlitssíðu málsins í Réttarvörslugátt{linkEnd}}}.',
+      description:
+        'Notaður sem texti á pósti til sækjanda og verjenda þegar þinghaldi er frestað',
+    },
   }),
   prosecutorCourtDateEmail: defineMessages({
     scheduledCase: {

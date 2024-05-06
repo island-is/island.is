@@ -20,10 +20,7 @@ import {
 } from '@island.is/judicial-system-web/src/components'
 import { NotificationType } from '@island.is/judicial-system-web/src/graphql/schema'
 import type { stepValidationsType } from '@island.is/judicial-system-web/src/utils/formHelper'
-import {
-  formatDateForServer,
-  useCase,
-} from '@island.is/judicial-system-web/src/utils/hooks'
+import { useCase } from '@island.is/judicial-system-web/src/utils/hooks'
 import { hasSentNotification } from '@island.is/judicial-system-web/src/utils/stepHelper'
 import { isSubpoenaStepValid } from '@island.is/judicial-system-web/src/utils/validate'
 
@@ -34,24 +31,18 @@ const Subpoena: React.FC<React.PropsWithChildren<unknown>> = () => {
     useContext(FormContext)
   const [navigateTo, setNavigateTo] = useState<keyof stepValidationsType>()
   const { formatMessage } = useIntl()
-  const { courtDate, handleCourtDateChange, courtDateHasChanged } =
-    useCourtArrangements(workingCase)
-  const { setAndSendCaseToServer, sendNotification } = useCase()
+  const {
+    courtDate,
+    courtDateHasChanged,
+    handleCourtDateChange,
+    handleCourtRoomChange,
+    sendCourtDateToServer,
+  } = useCourtArrangements(workingCase, setWorkingCase, 'arraignmentDate')
+  const { sendNotification } = useCase()
 
   const handleNavigationTo = useCallback(
     async (destination: keyof stepValidationsType) => {
-      await setAndSendCaseToServer(
-        [
-          {
-            courtDate: courtDate
-              ? formatDateForServer(new Date(courtDate))
-              : undefined,
-            force: true,
-          },
-        ],
-        workingCase,
-        setWorkingCase,
-      )
+      await sendCourtDateToServer()
 
       if (
         hasSentNotification(
@@ -66,15 +57,17 @@ const Subpoena: React.FC<React.PropsWithChildren<unknown>> = () => {
       }
     },
     [
-      workingCase,
-      setAndSendCaseToServer,
-      courtDate,
-      setWorkingCase,
+      sendCourtDateToServer,
+      workingCase.notifications,
+      workingCase.id,
       courtDateHasChanged,
     ],
   )
 
-  const stepIsValid = isSubpoenaStepValid(workingCase, courtDate)
+  const stepIsValid = isSubpoenaStepValid(workingCase, courtDate?.date)
+  const isPostponed = Boolean(
+    workingCase.courtDate?.date || workingCase.postponedIndefinitelyExplanation,
+  )
 
   return (
     <PageLayout
@@ -94,9 +87,11 @@ const Subpoena: React.FC<React.PropsWithChildren<unknown>> = () => {
           />
           <CourtArrangements
             workingCase={workingCase}
-            setWorkingCase={setWorkingCase}
             handleCourtDateChange={handleCourtDateChange}
-            selectedCourtDate={courtDate}
+            handleCourtRoomChange={handleCourtRoomChange}
+            courtDate={courtDate}
+            courtRoomDisabled={isPostponed}
+            dateTimeDisabled={isPostponed}
           />
         </Box>
       </FormContentContainer>
@@ -105,10 +100,18 @@ const Subpoena: React.FC<React.PropsWithChildren<unknown>> = () => {
           nextButtonIcon="arrowForward"
           previousUrl={`${constants.INDICTMENTS_RECEPTION_AND_ASSIGNMENT_ROUTE}/${workingCase.id}`}
           nextIsLoading={isLoadingWorkingCase}
-          onNextButtonClick={() =>
-            handleNavigationTo(constants.INDICTMENTS_DEFENDER_ROUTE)
+          onNextButtonClick={() => {
+            if (isPostponed) {
+              router.push(
+                `${constants.INDICTMENTS_DEFENDER_ROUTE}/${workingCase.id}`,
+              )
+            } else {
+              handleNavigationTo(constants.INDICTMENTS_DEFENDER_ROUTE)
+            }
+          }}
+          nextButtonText={
+            isPostponed ? undefined : formatMessage(strings.nextButtonText)
           }
-          nextButtonText={formatMessage(strings.nextButtonText)}
           nextIsDisabled={!stepIsValid}
         />
       </FormContentContainer>

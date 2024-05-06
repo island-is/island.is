@@ -75,6 +75,8 @@ export class UniversityGatewayApi {
         modeOfDelivery: item.modeOfDelivery.map((m) =>
           m.modeOfDelivery.toString(),
         ),
+        applicationPeriodOpen: item.applicationPeriodOpen,
+        applicationInUniversityGateway: item.applicationInUniversityGateway,
       })),
     }
   }
@@ -140,6 +142,8 @@ export class UniversityGatewayApi {
       allowException: item.allowException,
       allowThirdLevelQualification: item.allowThirdLevelQualification,
       extraApplicationFields: item.extraApplicationFields,
+      applicationPeriodOpen: item.applicationPeriodOpen,
+      applicationInUniversityGateway: item.applicationInUniversityGateway,
     }
   }
 

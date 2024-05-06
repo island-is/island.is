@@ -4,6 +4,7 @@ import {
   CaseDecision,
   CaseState,
   CaseType,
+  DateType,
   InstitutionType,
   isCourtOfAppealsUser,
   isDefenceUser,
@@ -12,6 +13,7 @@ import {
   isInvestigationCase,
   isPrisonSystemUser,
   isProsecutionUser,
+  isPublicProsecutorUser,
   isRestrictionCase,
   RequestSharedWithDefender,
   UserRole,
@@ -19,11 +21,11 @@ import {
 
 import { Case } from '../models/case.model'
 
-function canProsecutionUserAccessCase(
+const canProsecutionUserAccessCase = (
   theCase: Case,
   user: User,
   forUpdate = true,
-): boolean {
+): boolean => {
   // Check case type access
   if (user.role !== UserRole.PROSECUTOR && !isIndictmentCase(theCase.type)) {
     return false
@@ -40,6 +42,7 @@ function canProsecutionUserAccessCase(
       CaseState.ACCEPTED,
       CaseState.REJECTED,
       CaseState.DISMISSED,
+      CaseState.MAIN_HEARING,
     ].includes(theCase.state)
   ) {
     return false
@@ -66,7 +69,25 @@ function canProsecutionUserAccessCase(
   return true
 }
 
-function canDistrictCourtUserAccessCase(theCase: Case, user: User): boolean {
+const canPublicProsecutionUserAccessCase = (theCase: Case): boolean => {
+  // Check case type access
+  if (!isIndictmentCase(theCase.type)) {
+    return false
+  }
+
+  // Check case state access
+  if (
+    ![CaseState.ACCEPTED, CaseState.REJECTED, CaseState.DISMISSED].includes(
+      theCase.state,
+    )
+  ) {
+    return false
+  }
+
+  return true
+}
+
+const canDistrictCourtUserAccessCase = (theCase: Case, user: User): boolean => {
   // Check case type access
   if (
     ![
@@ -100,6 +121,7 @@ function canDistrictCourtUserAccessCase(theCase: Case, user: User): boolean {
       CaseState.ACCEPTED,
       CaseState.REJECTED,
       CaseState.DISMISSED,
+      CaseState.MAIN_HEARING,
     ].includes(theCase.state)
   ) {
     return false
@@ -113,7 +135,7 @@ function canDistrictCourtUserAccessCase(theCase: Case, user: User): boolean {
   return true
 }
 
-function canAppealsCourtUserAccessCase(theCase: Case): boolean {
+const canAppealsCourtUserAccessCase = (theCase: Case): boolean => {
   // Check case type access
   if (!isRestrictionCase(theCase.type) && !isInvestigationCase(theCase.type)) {
     return false
@@ -150,11 +172,11 @@ function canAppealsCourtUserAccessCase(theCase: Case): boolean {
   return true
 }
 
-function canPrisonSystemUserAccessCase(
+const canPrisonSystemUserAccessCase = (
   theCase: Case,
   user: User,
   forUpdate = true,
-): boolean {
+): boolean => {
   // Prison system users cannot update cases
   if (forUpdate) {
     return false
@@ -209,7 +231,7 @@ function canPrisonSystemUserAccessCase(
   return true
 }
 
-function canDefenceUserAccessCase(theCase: Case, user: User): boolean {
+const canDefenceUserAccessCase = (theCase: Case, user: User): boolean => {
   // Check case state access
   if (
     ![
@@ -222,6 +244,10 @@ function canDefenceUserAccessCase(theCase: Case, user: User): boolean {
   ) {
     return false
   }
+
+  const arraignmentDate = theCase.dateLogs?.find(
+    (d) => d.dateType === DateType.ARRAIGNMENT_DATE,
+  )?.date
 
   // Check submitted case access
   const canDefenderAccessSubmittedCase =
@@ -241,7 +267,7 @@ function canDefenceUserAccessCase(theCase: Case, user: User): boolean {
     const canDefenderAccessReceivedCase =
       isIndictmentCase(theCase.type) ||
       canDefenderAccessSubmittedCase ||
-      Boolean(theCase.courtDate)
+      Boolean(arraignmentDate)
 
     if (!canDefenderAccessReceivedCase) {
       return false
@@ -266,11 +292,11 @@ function canDefenceUserAccessCase(theCase: Case, user: User): boolean {
   return true
 }
 
-export function canUserAccessCase(
+export const canUserAccessCase = (
   theCase: Case,
   user: User,
   forUpdate = true,
-): boolean {
+): boolean => {
   if (isProsecutionUser(user)) {
     return canProsecutionUserAccessCase(theCase, user, forUpdate)
   }
@@ -289,6 +315,10 @@ export function canUserAccessCase(
 
   if (isDefenceUser(user)) {
     return canDefenceUserAccessCase(theCase, user)
+  }
+
+  if (isPublicProsecutorUser(user)) {
+    return canPublicProsecutionUserAccessCase(theCase)
   }
 
   // Other users cannot access cases

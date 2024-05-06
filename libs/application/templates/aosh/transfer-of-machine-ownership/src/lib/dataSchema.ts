@@ -85,6 +85,7 @@ export const MachineAnswersSchema = z.object({
     category: z.string().optional(),
     regNumber: z.string().optional(),
     ownerNumber: z.string().optional(),
+    paymentRequiredForOwnerChange: z.boolean().optional(),
   }),
   pickMachine: z.object({
     index: z.string().optional(),
