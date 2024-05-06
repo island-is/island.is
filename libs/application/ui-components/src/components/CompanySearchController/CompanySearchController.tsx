@@ -4,7 +4,7 @@ import React, { FC, useEffect, useMemo, useState } from 'react'
 import {
   useIsEmployerValidLazyQuery,
   useSearchCompaniesLazyQuery,
-} from '../../../gen/graphql'
+} from '../../../gen/schema'
 
 import { CompanySearchItem } from './CompanySearchItem'
 import { coreErrorMessages, getErrorViaPath } from '@island.is/application/core'
