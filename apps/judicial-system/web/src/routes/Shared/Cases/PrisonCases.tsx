@@ -15,6 +15,7 @@ import {
   PageHeader,
   SectionHeading,
   SharedPageLayout,
+  TagAppealState,
   TagCaseState,
   UserContext,
 } from '@island.is/judicial-system-web/src/components'
@@ -105,7 +106,20 @@ export const PrisonCases: React.FC = () => {
             cell: (row: CaseListEntry) => <CreatedDate created={row.created} />,
           },
           {
-            cell: () => <TagCaseState caseState={CaseState.ACCEPTED} />,
+            cell: (row: CaseListEntry) => (
+              <Box
+                marginRight={row.appealState ? 1 : 0}
+                marginBottom={row.appealState ? 1 : 0}
+              >
+                <TagCaseState caseState={CaseState.ACCEPTED} />
+                {row.appealState && (
+                  <TagAppealState
+                    appealState={row.appealState}
+                    appealRulingDecision={row.appealRulingDecision}
+                  />
+                )}
+              </Box>
+            ),
           },
           {
             cell: (row: CaseListEntry) => (
