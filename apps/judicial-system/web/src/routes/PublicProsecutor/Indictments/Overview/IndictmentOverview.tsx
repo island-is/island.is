@@ -10,6 +10,7 @@ import { useRouter } from 'next/router'
 
 import { Box, Option, Select, Text } from '@island.is/island-ui/core'
 import * as constants from '@island.is/judicial-system/consts'
+import { formatDate } from '@island.is/judicial-system/formatters'
 import { core, titles } from '@island.is/judicial-system-web/messages'
 import {
   BlueBox,
@@ -130,7 +131,14 @@ export const IndictmentOverview = () => {
           <SectionHeading
             title={fm(strings.reviewerTitle)}
             description={
-              <Text variant="eyebrow">{fm(strings.reviewerSubtitle)}</Text>
+              <Text variant="eyebrow">
+                {fm(strings.reviewerSubtitle, {
+                  indictmentAppealDeadline: formatDate(
+                    workingCase.indictmentAppealDeadline,
+                    'P',
+                  ),
+                })}
+              </Text>
             }
           />
           <BlueBox>

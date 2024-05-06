@@ -4,6 +4,7 @@ import {
   UserRole,
 } from '@island.is/judicial-system/types'
 
+import { CaseListEntry } from '../../case-list'
 import { Case } from '../models/case.model'
 
 const getDays = (days: number) => days * 24 * 60 * 60 * 1000
@@ -17,6 +18,10 @@ interface AppealInfo {
   statementDeadline?: string
   canProsecutorAppeal?: boolean
   canDefenderAppeal?: boolean
+}
+
+interface IndictmentInfo {
+  indictmentAppealDeadline?: string
 }
 
 const isAppealableDecision = (decision?: CaseAppealDecision | null) => {
@@ -87,9 +92,24 @@ export const getAppealInfo = (theCase: Case): AppealInfo => {
   return appealInfo
 }
 
+export const getIndictmentInfo = (rulingDate?: string): IndictmentInfo => {
+  const indictmentInfo: IndictmentInfo = {}
+
+  if (!rulingDate) {
+    return indictmentInfo
+  }
+
+  const theRulingDate = new Date(rulingDate)
+  indictmentInfo.indictmentAppealDeadline = new Date(
+    theRulingDate.setDate(theRulingDate.getDate() + 28),
+  ).toISOString()
+
+  return indictmentInfo
+}
+
 export const transformCase = (theCase: Case): Case => {
   const appealInfo = getAppealInfo(theCase)
-
+  const indictmentInfo = getIndictmentInfo(theCase.rulingDate)
   return {
     ...theCase,
     requestProsecutorOnlySession: theCase.requestProsecutorOnlySession ?? false,
@@ -111,5 +131,6 @@ export const transformCase = (theCase: Case): Case => {
         new Date(theCase.appealReceivedByCourtDate).getTime() + getDays(1)
       : false,
     ...appealInfo,
+    ...indictmentInfo,
   }
 }

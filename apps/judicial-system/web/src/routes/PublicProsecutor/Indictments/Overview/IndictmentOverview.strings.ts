@@ -23,7 +23,8 @@ export const strings = defineMessages({
   },
   reviewerSubtitle: {
     id: 'judicial.system.core:indictment_overview.reviewer_subtitle',
-    defaultMessage: 'Frestur til að áfrýja dómi rennur út ',
+    defaultMessage:
+      'Frestur til að áfrýja dómi rennur út {indictmentAppealDeadline}',
     description: 'Notaður sem undirtitill á yfirliti ákæru.',
   },
   reviewerAssignedModalTitle: {

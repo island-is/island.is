@@ -107,4 +107,7 @@ export class CaseListEntry {
 
   @Field(() => User, { nullable: true })
   readonly indictmentReviewer?: User
+
+  @Field({ nullable: true })
+  readonly indictmentAppealDeadline?: string
 }

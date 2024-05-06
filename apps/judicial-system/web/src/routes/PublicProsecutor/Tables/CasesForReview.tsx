@@ -3,7 +3,7 @@ import { useIntl } from 'react-intl'
 import { AnimatePresence } from 'framer-motion'
 
 import { Box, Text } from '@island.is/island-ui/core'
-import { capitalize } from '@island.is/judicial-system/formatters'
+import { capitalize, formatDate } from '@island.is/judicial-system/formatters'
 import { core, tables } from '@island.is/judicial-system-web/messages'
 import { SectionHeading } from '@island.is/judicial-system-web/src/components'
 import { useContextMenu } from '@island.is/judicial-system-web/src/components/ContextMenu/ContextMenu'
@@ -94,7 +94,9 @@ const CasesForReview: React.FC<CasesForReviewTableProps> = ({
                   ),
                 },
                 {
-                  cell: () => <Text>-</Text>, //TODO: Add deadline
+                  cell: (row: CaseListEntry) => (
+                    <Text>{formatDate(row.indictmentAppealDeadline, 'P')}</Text>
+                  ),
                 },
               ]}
             />

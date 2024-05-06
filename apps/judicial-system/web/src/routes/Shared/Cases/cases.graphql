@@ -87,5 +87,6 @@ query Cases {
       id
       name
     }
+    indictmentAppealDeadline
   }
 }

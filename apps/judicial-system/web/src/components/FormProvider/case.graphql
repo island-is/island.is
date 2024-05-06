@@ -256,5 +256,6 @@ query Case($input: CaseQueryInput!) {
       id
       name
     }
+    indictmentAppealDeadline
   }
 }
