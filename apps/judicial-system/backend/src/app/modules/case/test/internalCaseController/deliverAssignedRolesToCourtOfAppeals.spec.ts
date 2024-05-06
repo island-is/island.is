@@ -24,9 +24,13 @@ describe('InternalCaseController - Deliver assigned roles to court of appeals', 
   const appealJudge2Id = uuid()
   const appealJudge3Id = uuid()
   const appealAssistantNationalId = uuid()
+  const appealAssistantName = uuid()
   const appealJudge1NationalId = uuid()
+  const appealJudge1Name = uuid()
   const appealJudge2NationalId = uuid()
+  const appealJudge2Name = uuid()
   const appealJudge3NationalId = uuid()
+  const appealJudge3Name = uuid()
 
   const theCase = {
     id: caseId,
@@ -36,10 +40,22 @@ describe('InternalCaseController - Deliver assigned roles to court of appeals', 
     appealJudge1Id,
     appealJudge2Id,
     appealJudge3Id,
-    appealAssistant: { nationalId: appealAssistantNationalId },
-    appealJudge1: { nationalId: appealJudge1NationalId },
-    appealJudge2: { nationalId: appealJudge2NationalId },
-    appealJudge3: { nationalId: appealJudge3NationalId },
+    appealAssistant: {
+      nationalId: appealAssistantNationalId,
+      name: appealAssistantName,
+    },
+    appealJudge1: {
+      nationalId: appealJudge1NationalId,
+      name: appealJudge1Name,
+    },
+    appealJudge2: {
+      nationalId: appealJudge2NationalId,
+      name: appealJudge2Name,
+    },
+    appealJudge3: {
+      nationalId: appealJudge3NationalId,
+      name: appealJudge3Name,
+    },
   } as Case
 
   let mockCourtService: CourtService
@@ -83,9 +99,13 @@ describe('InternalCaseController - Deliver assigned roles to court of appeals', 
         caseId,
         appealCaseNumber,
         appealAssistantNationalId,
+        appealAssistantName,
         appealJudge1NationalId,
+        appealJudge1Name,
         appealJudge2NationalId,
+        appealJudge2Name,
         appealJudge3NationalId,
+        appealJudge3Name,
       )
       expect(then.result).toEqual({ delivered: true })
     })

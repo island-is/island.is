@@ -5,6 +5,7 @@ import {
   ForeignKey,
   Model,
   Table,
+  UpdatedAt,
 } from 'sequelize-typescript'
 
 import { ApiProperty, ApiPropertyOptional } from '@nestjs/swagger'
@@ -18,6 +19,16 @@ import { Case } from './case.model'
   timestamps: false,
 })
 export class DateLog extends Model {
+  static arraignmentDate(dateLogs?: DateLog[]) {
+    return dateLogs?.find(
+      (dateLog) => dateLog.dateType === DateType.ARRAIGNMENT_DATE,
+    )
+  }
+
+  static courtDate(dateLogs?: DateLog[]) {
+    return dateLogs?.find((dateLog) => dateLog.dateType === DateType.COURT_DATE)
+  }
+
   @Column({
     type: DataType.UUID,
     primaryKey: true,
@@ -27,9 +38,12 @@ export class DateLog extends Model {
   id!: string
 
   @CreatedAt
-  @Column({ type: DataType.DATE })
   @ApiProperty()
   created!: Date
+
+  @UpdatedAt
+  @ApiProperty()
+  modified!: Date
 
   @Column({ type: DataType.STRING })
   @ApiProperty()
@@ -37,10 +51,14 @@ export class DateLog extends Model {
 
   @ForeignKey(() => Case)
   @Column({ type: DataType.UUID })
-  @ApiPropertyOptional()
+  @ApiProperty()
   caseId!: string
 
   @Column({ type: DataType.DATE })
-  @ApiPropertyOptional()
+  @ApiProperty()
   date!: Date
+
+  @Column({ type: DataType.STRING })
+  @ApiPropertyOptional()
+  location?: string
 }

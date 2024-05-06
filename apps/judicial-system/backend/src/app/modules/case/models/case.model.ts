@@ -41,6 +41,7 @@ import { Institution } from '../../institution'
 import { Notification } from '../../notification'
 import { User } from '../../user'
 import { DateLog } from './dateLog.model'
+import { ExplanatoryComment } from './explanatoryComment.model'
 
 @Table({
   tableName: 'case',
@@ -489,16 +490,6 @@ export class Case extends Model {
   })
   @ApiPropertyOptional()
   courtLocation?: string
-
-  /**********
-   * The assigned court room for the court session
-   **********/
-  @Column({
-    type: DataType.STRING,
-    allowNull: true,
-  })
-  @ApiPropertyOptional()
-  courtRoom?: string
 
   /**********
    * The date and time the court session started
@@ -1134,6 +1125,13 @@ export class Case extends Model {
   @HasMany(() => DateLog, 'caseId')
   @ApiPropertyOptional({ type: DateLog, isArray: true })
   dateLogs?: DateLog[]
+
+  /**********
+   * The case's explanatory comments
+   **********/
+  @HasMany(() => ExplanatoryComment, 'caseId')
+  @ApiPropertyOptional({ type: ExplanatoryComment, isArray: true })
+  explanatoryComments?: ExplanatoryComment[]
 
   /**********
    * The appeal ruling expiration date and time - example: the end of custody in custody cases -
