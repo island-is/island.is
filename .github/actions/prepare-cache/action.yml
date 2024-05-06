@@ -27,15 +27,12 @@ outputs:
   generated-files-key:
     value: ${{  steps.set-cache-keys.outputs.generated-files-key  }}
     description: 'generated files cache key'
-  node-modules-cache-hit:
-    value: ${{ steps.node-modules.outputs.cache-hit }}
-    description: 'Boolean indicating if cache existed'
-  mobile-node-modules-cache-hit:
-    value: ${{ steps.mobile-node-modules.outputs.cache-hit }}
-    description: 'Boolean indicating if cache existed'
-  generated-files-cache-hit:
-    value: ${{ steps.generated-files-cache.outputs.cache-hit }}
-    description: 'Boolean indicating if cache existed'
+  success:
+    description: 'success'
+    value: ${{ steps.computed-outputs.outputs.success }}
+  cache-hit:
+    description: 'cache-hit'
+    value: ${{ steps.computed-outputs.outputs.cache-hit }}
 runs:
   using: 'composite'
   steps:
@@ -112,59 +109,82 @@ runs:
         path: generated_files.tar.gz
         key: ${{ steps.set-cache-keys.outputs.generated-files-key }}
 
-    - name: Check mobile-node-modules cache success
-      id: check-mobile-node-modules-cache
-      shell: bash
-      run: |
-        if [[ "${{ steps.mobile-node-modules.outputs.success }}" != "false" ]]; then
-          echo "mobile-node-modules cache was not found."
-          echo "success=false" >> $GITHUB_OUTPUT
-        else
-          echo "mobile-node-modules cache found!"
-          echo "success=true" >> $GITHUB_OUTPUT
-        fi
-
-    - name: Check node-modules cache success
-      id: check-node-modules-cache
-      shell: bash
-      run: |
-        if [[ "${{ steps.node-modules.outputs.success }}" != "false" ]]; then
-          echo "node-modules-cache was not found."
-          echo "success=false" >> $GITHUB_OUTPUT
-        else
-          echo "node-modules-cache found!"
-          echo "success=true" >> $GITHUB_OUTPUT
-        fi
-
-    - name: Check generated-files cache success
-      id: check-generated-files-cache
-      shell: bash
-      run: |
-        if [[ "${{ steps.generated-files-cache.outputs.success }}" != "false" ]]; then
-          echo "generated-files-cache was not found."
-          echo "success=false" >> $GITHUB_OUTPUT
-        else
-          echo "generated-files-cache found!"
-          echo "success=true" >> $GITHUB_OUTPUT
-        fi
+    # - name: Check mobile-node-modules cache success
+    #   id: check-mobile-node-modules-cache
+    #   shell: bash
+    #   run: |
+    #     if [[ "${{ steps.mobile-node-modules.outputs.success }}" == "true" ]]; then
+    #       echo "mobile-node-modules cache found!"
+    #       echo "success=true" >> $GITHUB_OUTPUT
+    #     else
+    #       echo "mobile-node-modules cache was not found."
+    #       echo "success=false" >> $GITHUB_OUTPUT
+    #     fi
+    #
+    # - name: Check node-modules cache success
+    #   id: check-node-modules-cache
+    #   shell: bash
+    #   run: |
+    #     if [[ "${{ steps.node-modules.outputs.success }}" != "false" ]]; then
+    #       echo "node-modules-cache was not found."
+    #       echo "success=false" >> $GITHUB_OUTPUT
+    #     else
+    #       echo "node-modules-cache found!"
+    #       echo "success=true" >> $GITHUB_OUTPUT
+    #     fi
+    #
+    # - name: Check generated-files cache success
+    #   id: check-generated-files-cache
+    #   shell: bash
+    #   run: |
+    #     if [[ "${{ steps.generated-files-cache.outputs.success }}" != "false" ]]; then
+    #       echo "generated-files-cache was not found."
+    #       echo "success=false" >> $GITHUB_OUTPUT
+    #     else
+    #       echo "generated-files-cache found!"
+    #       echo "success=true" >> $GITHUB_OUTPUT
+    #     fi
 
     - name: Building NodeJS dependencies
       shell: bash
-      if: ${{ steps.check-mobile-node-modules-cache.outputs.success == 'false' || steps.check-node-modules-cache.outputs.success == 'false' }}
+      if: ${{ steps.mobile-node-modules-cache.outputs.cache-hit != 'true' || steps.node-modules-cache.outputs.cache-hit != 'true' }}
       run: ./scripts/ci/10_prepare-host-deps.sh
 
     - name: Run codegen
       id: run-codegen
       shell: bash
-      if: ${{ steps.check-generated-files-cache.outputs.success == 'false' }}"
+      if: ${{ steps.generated-files-cache.outputs.cache-hit != 'true' }}"
       run: |
         node --version
         tar zcvf generated_files.tar.gz $(./scripts/ci/get-files-touched-by.sh yarn codegen --skip-cache | xargs realpath --relative-to $(pwd))
 
     - name: Untar generated files
       id: untar-generated-files
-      if: ${{ steps.check-generated-files-cache.outputs.success == 'false' }}"
+      if: ${{ steps.generated-files-cache.outputs.success == 'true' }}"
       shell: bash
       run: |
         echo "Untar generated-files"
         tar zxvf generated_files.tar.gz
+
+    - name: Gather outputs
+      id: computed-outputs
+      if: always()
+      shell: bash
+      run: |
+        if [[ "${{ steps.node-modules.outputs.success }}" == "true" ]] || \
+           [[ "${{ steps.mobile-node-modules.outputs.success }}" == "true" ]] || \
+           [[ "${{ steps.generated-files-cache.outputs.success }}" == "true" ]]
+        then
+          echo "success=true" >> $GITHUB_OUTPUT
+        else
+          echo "success=false" >> $GITHUB_OUTPUT
+        fi
+
+        if [[ "${{ steps.node-modules.outputs.cache-hit }}" == "true" ]] || \
+           [[ "${{ steps.mobile-node-modules.outputs.cache-hit }}" == "true" ]] || \
+           [[ "${{ steps.generated-files-cache.outputs.cache-hit }}" == "true" ]]
+        then
+          echo "cache-hit=true" >> $GITHUB_OUTPUT
+        else
+          echo "cache-hit=false" >> $GITHUB_OUTPUT
+        fi
