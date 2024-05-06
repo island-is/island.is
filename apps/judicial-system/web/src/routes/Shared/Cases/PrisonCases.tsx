@@ -60,86 +60,85 @@ export const PrisonCases: React.FC = () => {
     return partition(resCases, (c) => !c.isValidToDateInThePast)
   }, [resCases])
 
-  const renderTable = (cases: CaseListEntry[]) => {
-    return (
-      <Table
-        thead={[
-          {
-            title: formatMessage(tables.caseNumber),
-          },
-          {
-            title: capitalize(formatMessage(core.defendant, { suffix: 'i' })),
-            sortable: { isSortable: true, key: 'defendant' },
-          },
-          {
-            title: formatMessage(tables.type),
-          },
-          {
-            title: capitalize(formatMessage(tables.created)),
-            sortable: { isSortable: true, key: 'createdAt' },
-          },
-          { title: formatMessage(tables.state) },
-          {
-            title: formatMessage(tables.duration),
-          },
-        ]}
-        data={cases}
-        columns={[
-          {
-            cell: (row: CaseListEntry) => (
-              <CourtCaseNumber
-                courtCaseNumber={row.courtCaseNumber ?? ''}
-                policeCaseNumbers={row.policeCaseNumbers ?? []}
-                appealCaseNumber={row.appealCaseNumber ?? ''}
-              />
-            ),
-          },
-          {
-            cell: (row: CaseListEntry) => (
-              <DefendantInfo defendants={row.defendants} />
-            ),
-          },
-          {
-            cell: (row: CaseListEntry) => <ColumnCaseType type={row.type} />,
-          },
-          {
-            cell: (row: CaseListEntry) => <CreatedDate created={row.created} />,
-          },
-          {
-            cell: (row: CaseListEntry) => (
-              <Box
-                marginRight={row.appealState ? 1 : 0}
-                marginBottom={row.appealState ? 1 : 0}
-              >
-                <TagCaseState caseState={CaseState.ACCEPTED} />
-                {row.appealState && (
-                  <TagAppealState
-                    appealState={row.appealState}
-                    appealRulingDecision={row.appealRulingDecision}
-                  />
-                )}
-              </Box>
-            ),
-          },
-          {
-            cell: (row: CaseListEntry) => (
-              <Text>
-                {getDurationDate(
-                  row.state,
-                  row.validToDate,
-                  row.initialRulingDate,
-                  row.rulingDate,
-                )}
-              </Text>
-            ),
-          },
-        ]}
-        generateContextMenuItems={(row: CaseListEntry) => [
-          openCaseInNewTabMenuItem(row.id),
-        ]}
-      />
-    )
-  }
+  const renderTable = useMemo(
+    () => (cases: CaseListEntry[]) => {
+      return (
+        <Table
+          thead={[
+            {
+              title: formatMessage(tables.caseNumber),
+            },
+            {
+              title: capitalize(formatMessage(core.defendant, { suffix: 'i' })),
+              sortable: { isSortable: true, key: 'defendant' },
+            },
+            {
+              title: formatMessage(tables.type),
+            },
+            {
+              title: capitalize(formatMessage(tables.created)),
+              sortable: { isSortable: true, key: 'createdAt' },
+            },
+            { title: formatMessage(tables.state) },
+            {
+              title: formatMessage(tables.duration),
+            },
+          ]}
+          data={cases}
+          columns={[
+            {
+              cell: (row) => (
+                <CourtCaseNumber
+                  courtCaseNumber={row.courtCaseNumber ?? ''}
+                  policeCaseNumbers={row.policeCaseNumbers ?? []}
+                  appealCaseNumber={row.appealCaseNumber ?? ''}
+                />
+              ),
+            },
+            {
+              cell: (row) => <DefendantInfo defendants={row.defendants} />,
+            },
+            {
+              cell: (row) => <ColumnCaseType type={row.type} />,
+            },
+            {
+              cell: (row) => <CreatedDate created={row.created} />,
+            },
+            {
+              cell: (row) => (
+                <Box
+                  marginRight={row.appealState ? 1 : 0}
+                  marginBottom={row.appealState ? 1 : 0}
+                >
+                  <TagCaseState caseState={CaseState.ACCEPTED} />
+                  {row.appealState && (
+                    <TagAppealState
+                      appealState={row.appealState}
+                      appealRulingDecision={row.appealRulingDecision}
+                    />
+                  )}
+                </Box>
+              ),
+            },
+            {
+              cell: (row) => (
+                <Text>
+                  {getDurationDate(
+                    row.state,
+                    row.validToDate,
+                    row.initialRulingDate,
+                    row.rulingDate,
+                  )}
+                </Text>
+              ),
+            },
+          ]}
+          generateContextMenuItems={(row) => [openCaseInNewTabMenuItem(row.id)]}
+        />
+      )
+    },
+    [formatMessage, openCaseInNewTabMenuItem],
+  )
 
   return (
     <SharedPageLayout>
