@@ -13,6 +13,7 @@ import {
   indictmentCases,
   InstitutionType,
   investigationCases,
+  publicProsecutorRoles,
   RequestSharedWithDefender,
   restrictionCases,
   UserRole,
@@ -276,6 +277,35 @@ describe('getCasesQueryFilter', () => {
                 ],
               },
             ],
+          },
+        ],
+      })
+    })
+  })
+
+  describe.each(publicProsecutorRoles)('given %s role', (role) => {
+    it('should get public prosecutor filter', () => {
+      // Arrange
+      const user = {
+        role,
+        institution: {
+          id: 'Prosecutors Office Id',
+          type: InstitutionType.PROSECUTORS_OFFICE,
+        },
+      }
+
+      // Act
+      const res = getCasesQueryFilter(user as User)
+
+      // Assert
+      expect(res).toStrictEqual({
+        [Op.and]: [
+          { isArchived: false },
+          {
+            state: [CaseState.ACCEPTED],
+          },
+          {
+            type: indictmentCases,
           },
         ],
       })
