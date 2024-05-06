@@ -31,17 +31,16 @@ export class Defendant extends Model {
 
   @CreatedAt
   @ApiProperty()
+  @Column({ type: DataType.DATE, allowNull: false })
   created!: Date
 
   @UpdatedAt
+  @Column({ type: DataType.DATE, allowNull: false })
   @ApiProperty()
   modified!: Date
 
   @ForeignKey(() => Case)
-  @Column({
-    type: DataType.UUID,
-    allowNull: false,
-  })
+  @Column({ type: DataType.UUID, allowNull: false })
   @ApiProperty()
   caseId!: string
 
