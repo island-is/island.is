@@ -71,13 +71,13 @@ export function NavigationBarSheet({
   title,
   onClosePress,
   style,
-  loading,
+  showLoading,
 }: {
   title?: React.ReactNode
   componentId: string
   onClosePress(): void
   style?: ViewStyle
-  loading?: boolean
+  showLoading?: boolean
 }) {
   const isConnected = useOfflineStore(({ isConnected }) => isConnected)
   const wd = useWindowDimensions()
@@ -100,7 +100,7 @@ export function NavigationBarSheet({
           )}
           <IconsWrapper>
             {/*Only show loading icon if connected*/}
-            {loading && isConnected ? <LoadingIcon /> : null}
+            {showLoading && isConnected ? <LoadingIcon /> : null}
             <OfflineIcon />
             <CloseButton
               onPress={onClosePress}

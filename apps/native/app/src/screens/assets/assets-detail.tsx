@@ -45,7 +45,7 @@ export const AssetsDetailScreen: NavigationFunctionComponent<{ item: any }> = ({
         title={item?.defaultAddress?.displayShort}
         onClosePress={() => Navigation.dismissModal(componentId)}
         style={{ marginHorizontal: 16 }}
-        loading={loading}
+        showLoading={loading}
       />
       <ScrollView style={{ flex: 1 }}>
         <View>

@@ -103,7 +103,6 @@ export const AirDiscountScreen: NavigationFunctionComponent = ({
   componentId,
 }) => {
   useNavigationOptions(componentId)
-  useConnectivityIndicator({ componentId })
 
   const intl = useIntl()
   const theme = useTheme()
@@ -112,13 +111,15 @@ export const AirDiscountScreen: NavigationFunctionComponent = ({
     fetchPolicy: 'network-only',
   })
 
-  const {
-    data: flightLegsData,
-    loading: flightLegsLoading,
-    error: flightLegsError,
-  } = useGetAirDiscountFlightLegsQuery()
+  const airDiscountFlightLegsRes = useGetAirDiscountFlightLegsQuery()
 
-  const flightLegs = flightLegsData?.airDiscountSchemeUserAndRelationsFlights
+  useConnectivityIndicator({
+    componentId,
+    queryResult: airDiscountFlightLegsRes,
+  })
+
+  const flightLegs =
+    airDiscountFlightLegsRes.data?.airDiscountSchemeUserAndRelationsFlights
 
   const connectionCodes = data?.airDiscountSchemeDiscounts?.filter(
     (discount) => discount.connectionDiscountCodes.length > 0,
@@ -173,7 +174,9 @@ export const AirDiscountScreen: NavigationFunctionComponent = ({
           </Link>
         </TOSLink>
 
-        {(loading || flightLegsLoading) && !error && <SkeletonItem />}
+        {(loading || airDiscountFlightLegsRes.loading) && !error && (
+          <SkeletonItem />
+        )}
         {!loading && !error && noRights && <Empty />}
 
         {data && !noRights && (

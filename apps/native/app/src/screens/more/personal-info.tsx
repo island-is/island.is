@@ -38,7 +38,7 @@ export const PersonalInfoScreen: NavigationFunctionComponent = ({
         title={intl.formatMessage({ id: 'personalInfo.screenTitle' })}
         onClosePress={() => Navigation.dismissModal(componentId)}
         style={{ marginHorizontal: 16 }}
-        loading={natRegRes.loading}
+        showLoading={natRegRes.loading}
       />
       <ScrollView style={{ flex: 1 }} testID={testIDs.USER_SCREEN_PROFILE_INFO}>
         <Alert
