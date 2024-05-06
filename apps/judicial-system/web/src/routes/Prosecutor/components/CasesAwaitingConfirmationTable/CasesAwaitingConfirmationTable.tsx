@@ -65,9 +65,7 @@ const CasesAwaitingConfirmationTable: React.FC<
                   title: formatMessage(tables.type),
                 },
                 {
-                  title: capitalize(
-                    formatMessage(tables.created, { suffix: 'i' }),
-                  ),
+                  title: capitalize(formatMessage(tables.created)),
                   sortable: { isSortable: true, key: 'createdAt' },
                 },
                 { title: formatMessage(tables.state) },
@@ -76,7 +74,7 @@ const CasesAwaitingConfirmationTable: React.FC<
                 },
               ]}
               data={cases}
-              generateContextMenuItems={(row: CaseListEntry) => {
+              generateContextMenuItems={(row) => {
                 return [
                   openCaseInNewTabMenuItem(row.id),
                   {
@@ -90,7 +88,7 @@ const CasesAwaitingConfirmationTable: React.FC<
               }}
               columns={[
                 {
-                  cell: (row: CaseListEntry) => (
+                  cell: (row) => (
                     <CourtCaseNumber
                       courtCaseNumber={row.courtCaseNumber ?? ''}
                       policeCaseNumbers={row.policeCaseNumbers ?? []}
@@ -99,19 +97,13 @@ const CasesAwaitingConfirmationTable: React.FC<
                   ),
                 },
                 {
-                  cell: (row: CaseListEntry) => (
-                    <DefendantInfo defendants={row.defendants} />
-                  ),
+                  cell: (row) => <DefendantInfo defendants={row.defendants} />,
                 },
                 {
-                  cell: (row: CaseListEntry) => (
-                    <ColumnCaseType type={row.type} />
-                  ),
+                  cell: (row) => <ColumnCaseType type={row.type} />,
                 },
                 {
-                  cell: (row: CaseListEntry) => (
-                    <CreatedDate created={row.created} />
-                  ),
+                  cell: (row) => <CreatedDate created={row.created} />,
                 },
                 {
                   cell: () => (
@@ -121,9 +113,7 @@ const CasesAwaitingConfirmationTable: React.FC<
                   ),
                 },
                 {
-                  cell: (row: CaseListEntry) => (
-                    <Text as="span">{row.prosecutor?.name}</Text>
-                  ),
+                  cell: (row) => <Text as="span">{row.prosecutor?.name}</Text>,
                 },
               ]}
             />
