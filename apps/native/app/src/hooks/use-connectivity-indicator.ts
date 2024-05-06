@@ -75,13 +75,11 @@ export const useConnectivityIndicator = <Data extends Record<string, unknown>>({
     (showLoading = false) => {
       Navigation.mergeOptions(componentId, {
         topBar: {
-          rightButtons: isConnected
-            ? [...rightButtons, showLoading ? loadingButton : undefined].filter(
-                isDefined,
-              )
-            : rightButtons
-            ? [...rightButtons, offlineButton]
-            : [offlineButton],
+          rightButtons: [
+            ...rightButtons,
+            isConnected && showLoading ? loadingButton : undefined,
+            !isConnected ? offlineButton : undefined,
+          ].filter(isDefined),
         },
       })
     },
