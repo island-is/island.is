@@ -1,6 +1,7 @@
 import { useMemo, useRef, useState } from 'react'
 import { useDebounce } from 'react-use'
 import { CollectionProp, EntryProps, KeyValueMap } from 'contentful-management'
+import dynamic from 'next/dynamic'
 import { EditorExtensionSDK } from '@contentful/app-sdk'
 import {
   Box,
@@ -16,7 +17,6 @@ import {
 import { PlusIcon } from '@contentful/f36-icons'
 import { useCMA, useSDK } from '@contentful/react-apps-toolkit'
 
-import { ContentfulField } from '../ContentfulField'
 import { mapLocalesToFieldApis } from '../utils'
 
 const SEARCH_DEBOUNCE_TIME_IN_MS = 300
@@ -43,7 +43,16 @@ const createLocaleToFieldMapping = (sdk: EditorExtensionSDK) => {
   }
 }
 
-const GenericListEditor = () => {
+const ContentfulField = dynamic(
+  () =>
+    // Dynamically import via client side rendering since the @contentful/default-field-editors package accesses the window and navigator global objects
+    import('../ContentfulField').then(({ ContentfulField }) => ContentfulField),
+  {
+    ssr: false,
+  },
+)
+
+export const GenericListEditor = () => {
   const sdk = useSDK<EditorExtensionSDK>()
   const cma = useCMA()
 
@@ -244,5 +253,3 @@ const GenericListEditor = () => {
     </Box>
   )
 }
-
-export default GenericListEditor
