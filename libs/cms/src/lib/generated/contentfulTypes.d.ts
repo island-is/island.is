@@ -3010,6 +3010,9 @@ export interface IOrganizationSubpageFields {
   /** Title */
   title: string
 
+  /** Short Title */
+  shortTitle?: string | undefined
+
   /** Slug */
   slug: string
 
@@ -3422,6 +3425,9 @@ export interface IProjectPage extends Entry<IProjectPageFields> {
 export interface IProjectSubpageFields {
   /** Title */
   title: string
+
+  /** Short Title */
+  shortTitle?: string | undefined
 
   /** Slug */
   slug: string
