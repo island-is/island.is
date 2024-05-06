@@ -409,4 +409,7 @@ export class Case {
 
   @Field({ nullable: true })
   readonly postponedIndefinitelyExplanation?: string
+
+  @Field(() => User, { nullable: true })
+  readonly indictmentReviewer?: User
 }

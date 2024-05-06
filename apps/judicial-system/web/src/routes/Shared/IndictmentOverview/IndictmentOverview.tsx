@@ -8,6 +8,7 @@ import {
   isCompletedCase,
   isDefenceUser,
   isDistrictCourtUser,
+  isPublicProsecutorUser,
 } from '@island.is/judicial-system/types'
 import { core, titles } from '@island.is/judicial-system-web/messages'
 import {
@@ -29,6 +30,7 @@ import {
 import { CaseState } from '@island.is/judicial-system-web/src/graphql/schema'
 
 import ReturnIndictmentModal from '../../Court/Indictments/ReturnIndictmentCaseModal/ReturnIndictmentCaseModal'
+import { IndictmentOverview as PublicProsecutorIndictmentOverview } from '../../PublicProsecutor/Indictments/Overview/IndictmentOverview'
 import { strings } from './IndictmentOverview.strings'
 
 const IndictmentOverview = () => {
@@ -48,91 +50,96 @@ const IndictmentOverview = () => {
     [router, workingCase.id],
   )
 
-  return (
-    <PageLayout
-      workingCase={workingCase}
-      isLoading={isLoadingWorkingCase}
-      notFound={caseNotFound}
-      isValid={true}
-      onNavigationTo={handleNavigationTo}
-    >
-      <PageHeader
-        title={
-          caseIsClosed
-            ? formatMessage(titles.shared.closedCaseOverview, {
-                courtCaseNumber: workingCase.courtCaseNumber,
-              })
-            : formatMessage(titles.court.indictments.overview)
-        }
-      />
-      <FormContentContainer>
-        <PageTitle>
-          {caseIsClosed
-            ? formatMessage(strings.completedTitle)
-            : formatMessage(strings.inProgressTitle)}
-        </PageTitle>
-        <CourtCaseInfo workingCase={workingCase} />
-        {workingCase.state === CaseState.RECEIVED &&
-          workingCase.court &&
-          latestDate?.date && (
-            <Box component="section" marginBottom={5}>
-              <InfoCardCaseScheduledIndictment
-                court={workingCase.court}
-                courtDate={latestDate.date}
-                courtRoom={latestDate.location}
-                postponedIndefinitelyExplanation={
-                  workingCase.postponedIndefinitelyExplanation
-                }
-              />
+  if (isPublicProsecutorUser(user)) {
+    return <PublicProsecutorIndictmentOverview />
+  } else
+    return (
+      <PageLayout
+        workingCase={workingCase}
+        isLoading={isLoadingWorkingCase}
+        notFound={caseNotFound}
+        isValid={true}
+        onNavigationTo={handleNavigationTo}
+      >
+        <PageHeader
+          title={
+            caseIsClosed
+              ? formatMessage(titles.shared.closedCaseOverview, {
+                  courtCaseNumber: workingCase.courtCaseNumber,
+                })
+              : formatMessage(titles.court.indictments.overview)
+          }
+        />
+        <FormContentContainer>
+          <PageTitle>
+            {caseIsClosed
+              ? formatMessage(strings.completedTitle)
+              : formatMessage(strings.inProgressTitle)}
+          </PageTitle>
+          <CourtCaseInfo workingCase={workingCase} />
+          {workingCase.state === CaseState.RECEIVED &&
+            workingCase.court &&
+            latestDate?.date && (
+              <Box component="section" marginBottom={5}>
+                <InfoCardCaseScheduledIndictment
+                  court={workingCase.court}
+                  courtDate={latestDate.date}
+                  courtRoom={latestDate.location}
+                  postponedIndefinitelyExplanation={
+                    workingCase.postponedIndefinitelyExplanation
+                  }
+                />
+              </Box>
+            )}
+          <Box component="section" marginBottom={5}>
+            {caseIsClosed ? (
+              <InfoCardClosedIndictment />
+            ) : (
+              <InfoCardActiveIndictment />
+            )}
+          </Box>
+          {lawsBroken.size > 0 && (
+            <Box marginBottom={5}>
+              <IndictmentsLawsBrokenAccordionItem workingCase={workingCase} />
             </Box>
           )}
-        <Box component="section" marginBottom={5}>
-          {caseIsClosed ? (
-            <InfoCardClosedIndictment />
-          ) : (
-            <InfoCardActiveIndictment />
+          {workingCase.caseFiles && (
+            <Box component="section" marginBottom={10}>
+              <IndictmentCaseFilesList workingCase={workingCase} />
+            </Box>
           )}
-        </Box>
-        {lawsBroken.size > 0 && (
-          <Box marginBottom={5}>
-            <IndictmentsLawsBrokenAccordionItem workingCase={workingCase} />
-          </Box>
-        )}
-        {workingCase.caseFiles && (
-          <Box component="section" marginBottom={10}>
-            <IndictmentCaseFilesList workingCase={workingCase} />
-          </Box>
-        )}
-      </FormContentContainer>
-      {!caseIsClosed && !isDefenceUser(user) && (
-        <FormContentContainer isFooter>
-          <FormFooter
-            nextButtonIcon="arrowForward"
-            previousUrl={`${constants.CASES_ROUTE}`}
-            nextIsLoading={isLoadingWorkingCase}
-            onNextButtonClick={() =>
-              handleNavigationTo(
-                constants.INDICTMENTS_RECEPTION_AND_ASSIGNMENT_ROUTE,
-              )
-            }
-            nextButtonText={formatMessage(core.continue)}
-            actionButtonText={formatMessage(strings.returnIndictmentButtonText)}
-            actionButtonColorScheme={'destructive'}
-            actionButtonIsDisabled={!workingCase.courtCaseNumber}
-            onActionButtonClick={() => setModalVisible(true)}
-          />
         </FormContentContainer>
-      )}
-      {isDistrictCourtUser(user) && modalVisible && (
-        <ReturnIndictmentModal
-          workingCase={workingCase}
-          setWorkingCase={setWorkingCase}
-          onClose={() => setModalVisible(false)}
-          onComplete={() => router.push(constants.CASES_ROUTE)}
-        />
-      )}
-    </PageLayout>
-  )
+        {!caseIsClosed && !isDefenceUser(user) && (
+          <FormContentContainer isFooter>
+            <FormFooter
+              nextButtonIcon="arrowForward"
+              previousUrl={`${constants.CASES_ROUTE}`}
+              nextIsLoading={isLoadingWorkingCase}
+              onNextButtonClick={() =>
+                handleNavigationTo(
+                  constants.INDICTMENTS_RECEPTION_AND_ASSIGNMENT_ROUTE,
+                )
+              }
+              nextButtonText={formatMessage(core.continue)}
+              actionButtonText={formatMessage(
+                strings.returnIndictmentButtonText,
+              )}
+              actionButtonColorScheme={'destructive'}
+              actionButtonIsDisabled={!workingCase.courtCaseNumber}
+              onActionButtonClick={() => setModalVisible(true)}
+            />
+          </FormContentContainer>
+        )}
+        {isDistrictCourtUser(user) && modalVisible && (
+          <ReturnIndictmentModal
+            workingCase={workingCase}
+            setWorkingCase={setWorkingCase}
+            onClose={() => setModalVisible(false)}
+            onComplete={() => router.push(constants.CASES_ROUTE)}
+          />
+        )}
+      </PageLayout>
+    )
 }
 
 export default IndictmentOverview

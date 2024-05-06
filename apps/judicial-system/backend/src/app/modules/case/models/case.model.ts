@@ -1222,4 +1222,21 @@ export class Case extends Model {
   @HasMany(() => Notification, 'caseId')
   @ApiPropertyOptional({ type: Notification, isArray: true })
   notifications?: Notification[]
+
+  /**********
+   * The surrogate key of the prosecutor assigned to review an indictment
+   **********/
+  @ForeignKey(() => User)
+  @Column({
+    type: DataType.UUID,
+    allowNull: true,
+  })
+  @ApiPropertyOptional()
+  indictmentReviewerId?: string
+  /**********
+   * The prosecutor assigned to review an indictment case
+   **********/
+  @BelongsTo(() => User, 'indictmentReviewerId')
+  @ApiPropertyOptional({ type: User })
+  indictmentReviewer?: User
 }

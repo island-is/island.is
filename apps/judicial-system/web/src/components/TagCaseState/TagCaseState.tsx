@@ -9,6 +9,7 @@ import {
 import {
   CaseState,
   CaseType,
+  User,
 } from '@island.is/judicial-system-web/src/graphql/schema'
 
 import { strings } from './TagCaseState.strings'
@@ -19,22 +20,27 @@ interface Props {
   isCourtRole?: boolean
   isValidToDateInThePast?: boolean | null
   courtDate?: string | null
+  indictmentReviewer?: User | null
   customMapCaseStateToTag?: (
     formatMessage: IntlShape['formatMessage'],
     state?: CaseState | null,
+    indictmentReviewer?: User | null, // TODO: Refactor so we have a more generalized interface for the info passed in to the component
   ) => { color: TagVariant; text: string }
 }
 
 export const mapIndictmentCaseStateToTagVariant = (
   formatMessage: IntlShape['formatMessage'],
   state?: CaseState | null,
+  indictmentReviewer?: User | null,
 ): { color: TagVariant; text: string } => {
   switch (state) {
     case CaseState.ACCEPTED:
-      return {
-        color: 'purple',
-        text: formatMessage(strings.new),
-      }
+      return indictmentReviewer
+        ? { color: 'mint', text: formatMessage(strings.beingReviewed) }
+        : {
+            color: 'purple',
+            text: formatMessage(strings.new),
+          }
     default:
       return { color: 'white', text: formatMessage(strings.unknown) }
   }
@@ -90,11 +96,12 @@ const TagCaseState: React.FC<React.PropsWithChildren<Props>> = (Props) => {
     isCourtRole,
     isValidToDateInThePast,
     courtDate,
+    indictmentReviewer,
     customMapCaseStateToTag,
   } = Props
 
   const tagVariant = customMapCaseStateToTag
-    ? customMapCaseStateToTag(formatMessage, caseState)
+    ? customMapCaseStateToTag(formatMessage, caseState, indictmentReviewer)
     : mapCaseStateToTagVariant(
         formatMessage,
         caseState,

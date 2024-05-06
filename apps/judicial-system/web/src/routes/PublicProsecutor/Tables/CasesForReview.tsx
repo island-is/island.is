@@ -84,6 +84,7 @@ const CasesForReview: React.FC<CasesForReviewTableProps> = ({
                       customMapCaseStateToTag={
                         mapIndictmentCaseStateToTagVariant
                       }
+                      indictmentReviewer={row.indictmentReviewer}
                     />
                   ),
                 },
