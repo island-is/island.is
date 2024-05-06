@@ -160,20 +160,6 @@ export const ApplicationsScreen: NavigationFunctionComponent = ({
     }
   }, [applicationsRes])
 
-  const Empty = () => (
-    <View style={{ marginTop: 80, paddingHorizontal: 16 }}>
-      <EmptyList
-        title={intl.formatMessage({ id: 'applications.emptyListTitle' })}
-        description={intl.formatMessage({
-          id: 'applications.emptyListDescription',
-        })}
-        image={
-          <Image source={illustrationSrc} style={{ height: 176, width: 134 }} />
-        }
-      />
-    </View>
-  )
-
   return (
     <>
       <Animated.FlatList
@@ -190,7 +176,22 @@ export const ApplicationsScreen: NavigationFunctionComponent = ({
         keyExtractor={keyExtractor}
         keyboardDismissMode="on-drag"
         data={data}
-        ListEmptyComponent={Empty}
+        ListEmptyComponent={
+          <View style={{ marginTop: 80, paddingHorizontal: 16 }}>
+            <EmptyList
+              title={intl.formatMessage({ id: 'applications.emptyListTitle' })}
+              description={intl.formatMessage({
+                id: 'applications.emptyListDescription',
+              })}
+              image={
+                <Image
+                  source={illustrationSrc}
+                  style={{ height: 176, width: 134 }}
+                />
+              }
+            />
+          </View>
+        }
         renderItem={renderItem}
         ListHeaderComponent={
           <View style={{ flex: 1 }}>
