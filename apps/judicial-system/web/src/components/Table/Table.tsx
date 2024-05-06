@@ -123,13 +123,17 @@ const Table: React.FC<TableProps> = (props) => {
                   }`}
                 </Text>
               )}
-            {theCase.courtDate && (
-              <Text fontWeight="medium" variant="small">
-                {`${formatMessage(strings.hearing)} ${formatDate(
-                  parseISO(theCase.courtDate),
-                  'd.M.y',
-                )} kl. ${formatDate(parseISO(theCase.courtDate), 'kk:mm')}`}
-              </Text>
+            {theCase.postponedIndefinitelyExplanation ? (
+              <Text>{formatMessage(strings.postponed)}</Text>
+            ) : (
+              theCase.courtDate && (
+                <Text fontWeight="medium" variant="small">
+                  {`${formatMessage(strings.hearing)} ${formatDate(
+                    parseISO(theCase.courtDate),
+                    'd.M.y',
+                  )} kl. ${formatDate(parseISO(theCase.courtDate), 'kk:mm')}`}
+                </Text>
+              )
             )}
           </MobileCase>
         </Box>

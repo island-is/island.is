@@ -14,16 +14,20 @@ if [[ "$*" =~ --project ]]; then
 fi
 
 export TEST_PROJECT TEST_ENVIRONMENT TEST_TYPE TEST_RESULTS_S3 TEST_FILTER
-
-DIR="$(cd "$(dirname "${BASH_SOURCE[0]}")" >/dev/null 2>&1 && pwd)"
+export PATH="./node_modules/.bin:$PATH"
 
 echo "Current test environment: ${TEST_ENVIRONMENT}"
 echo "Playwright args: $*"
-echo "Playwright project: $TEST_PROJECT"
-echo "Playwright version: $(yarn playwright --version)"
+if ! command -v playwright >/dev/null; then
+  echo "Can't find 'playwright'. Is it installed?"
+  echo "Your \$PATH might need updating"
+  echo "  PATH=$PATH"
+  exit 1
+fi
+echo "Playwright version: $(playwright --version)"
 
 TEST_EXIT_CODE=0
-yarn playwright test -c src --project="$TEST_PROJECT" "$@" || TEST_EXIT_CODE=$?
+playwright test -c . "$@" || TEST_EXIT_CODE=$?
 
 # Upload results
 if [[ -n "$TEST_RESULTS_S3" ]]; then
@@ -31,7 +35,7 @@ if [[ -n "$TEST_RESULTS_S3" ]]; then
   aws s3 cp test-results.zip "$TEST_RESULTS_S3"
 fi
 if [ "$TEST_EXIT_CODE" != "0" ]; then
-  yarn node "$DIR/src/notifications/notify.js"
+  node ./src/notifications/notify.*
 fi
 
 cat <<EOF
@@ -46,4 +50,4 @@ Additionally a web-based overview can be found at
   https://www.tesults.com/digital-iceland/monorepo
 EOF
 
-exit $TEST_EXIT_CODE
+exit "$TEST_EXIT_CODE"

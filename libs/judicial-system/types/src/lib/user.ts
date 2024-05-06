@@ -12,6 +12,7 @@ export enum UserRole {
   ADMIN = 'ADMIN', // Does not exist in the database // notendaumsjón
   PRISON_SYSTEM_STAFF = 'PRISON_SYSTEM_STAFF', // fangelsismálastarfsmaður
   DEFENDER = 'DEFENDER', // Does not exist in the database // verjandi
+  PUBLIC_PROSECUTOR_STAFF = 'PUBLIC_PROSECUTOR_STAFF', // skrifstofufólk hjá ríkissaksóknara
 }
 
 export interface User {
@@ -41,10 +42,22 @@ export const prosecutionRoles: string[] = [
   UserRole.PROSECUTOR_REPRESENTATIVE,
 ]
 
-export function isProsecutionUser(user?: InstitutionUser): boolean {
+export const isProsecutionUser = (user?: InstitutionUser): boolean => {
   return Boolean(
     user?.role &&
       prosecutionRoles.includes(user.role) &&
+      user?.institution?.type === InstitutionType.PROSECUTORS_OFFICE,
+  )
+}
+
+export const publicProsecutorRoles: string[] = [
+  UserRole.PUBLIC_PROSECUTOR_STAFF,
+]
+
+export function isPublicProsecutorUser(user?: InstitutionUser): boolean {
+  return Boolean(
+    user?.role &&
+      publicProsecutorRoles.includes(user.role) &&
       user?.institution?.type === InstitutionType.PROSECUTORS_OFFICE,
   )
 }
@@ -55,7 +68,7 @@ export const districtCourtRoles: string[] = [
   UserRole.DISTRICT_COURT_ASSISTANT,
 ]
 
-export function isDistrictCourtUser(user?: InstitutionUser): boolean {
+export const isDistrictCourtUser = (user?: InstitutionUser): boolean => {
   return Boolean(
     user?.role &&
       districtCourtRoles.includes(user.role) &&
@@ -69,7 +82,7 @@ export const courtOfAppealsRoles: string[] = [
   UserRole.COURT_OF_APPEALS_ASSISTANT,
 ]
 
-export function isCourtOfAppealsUser(user?: InstitutionUser): boolean {
+export const isCourtOfAppealsUser = (user?: InstitutionUser): boolean => {
   return Boolean(
     user?.role &&
       courtOfAppealsRoles.includes(user.role) &&
@@ -79,7 +92,7 @@ export function isCourtOfAppealsUser(user?: InstitutionUser): boolean {
 
 export const prisonSystemRoles: string[] = [UserRole.PRISON_SYSTEM_STAFF]
 
-export function isPrisonSystemUser(user?: InstitutionUser): boolean {
+export const isPrisonSystemUser = (user?: InstitutionUser): boolean => {
   return Boolean(
     user?.role &&
       prisonSystemRoles.includes(user.role) &&
@@ -90,17 +103,17 @@ export function isPrisonSystemUser(user?: InstitutionUser): boolean {
 
 export const defenceRoles: string[] = [UserRole.DEFENDER]
 
-export function isDefenceUser(user?: InstitutionUser): boolean {
+export const isDefenceUser = (user?: InstitutionUser): boolean => {
   return Boolean(user?.role && defenceRoles.includes(user.role))
 }
 
 const adminRoles: string[] = [UserRole.ADMIN]
 
-export function isAdminUser(user?: InstitutionUser): boolean {
+export const isAdminUser = (user?: InstitutionUser): boolean => {
   return Boolean(user?.role && adminRoles.includes(user.role))
 }
 
-export function isCoreUser(user?: InstitutionUser): boolean {
+export const isCoreUser = (user?: InstitutionUser): boolean => {
   return (
     isProsecutionUser(user) ||
     isDistrictCourtUser(user) ||

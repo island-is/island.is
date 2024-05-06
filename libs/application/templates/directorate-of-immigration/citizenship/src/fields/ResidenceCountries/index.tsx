@@ -30,7 +30,7 @@ export const ResidenceCountries: FC<FieldBaseProps> = (props) => {
 
   const preRegisteredCountries = getValueViaPath(
     application.externalData,
-    'currentCountryOfResidenceList.data',
+    'applicantInformation.data.currentCountryOfResidenceList',
     [],
   ) as CountryOfResidenceViewModel[]
 

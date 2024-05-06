@@ -2,6 +2,7 @@ import { test, BrowserContext, expect } from '@playwright/test'
 import { icelandicAndNoPopupUrl, urls } from '../../../../support/urls'
 import { session } from '../../../../support/session'
 import { disableI18n } from '../../../../support/disablers'
+import { setupXroadMocks } from './setup-xroad.mocks'
 
 const homeUrl = `${urls.islandisBaseUrl}/minarsidur`
 test.use({ baseURL: urls.islandisBaseUrl })
@@ -25,7 +26,9 @@ test.describe('MS - Social Insurance', () => {
 
   test('payment plan', async () => {
     const page = await context.newPage()
+
     await disableI18n(page)
+    await setupXroadMocks()
 
     await test.step('should display data when switching years', async () => {
       // Arrange
