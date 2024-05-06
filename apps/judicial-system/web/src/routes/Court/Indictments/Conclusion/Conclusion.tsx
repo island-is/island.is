@@ -384,16 +384,12 @@ const Conclusion: React.FC = () => {
         <FormFooter
           nextButtonIcon="arrowForward"
           previousUrl={`${constants.INDICTMENTS_DEFENDER_ROUTE}/${workingCase.id}`}
-          onNextButtonClick={
-            selectedAction === 'COMPLETE'
-              ? undefined
-              : () =>
-                  handleNavigationTo(constants.INDICTMENTS_COURT_OVERVIEW_ROUTE)
-          }
-          nextUrl={
-            selectedAction === 'COMPLETE'
-              ? `${constants.INDICTMENTS_SUMMARY_ROUTE}/${workingCase.id}`
-              : undefined
+          onNextButtonClick={() =>
+            handleNavigationTo(
+              selectedAction === 'COMPLETE'
+                ? constants.INDICTMENTS_SUMMARY_ROUTE
+                : constants.INDICTMENTS_COURT_OVERVIEW_ROUTE,
+            )
           }
           nextIsDisabled={!stepIsValid()}
           nextIsLoading={isUpdatingCase}

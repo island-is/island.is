@@ -21,7 +21,10 @@ import {
 } from '@island.is/judicial-system-web/src/components/CaseInfo/CaseInfo'
 import { RenderFiles } from '@island.is/judicial-system-web/src/components/IndictmentCaseFilesList/IndictmentCaseFilesList'
 import { CaseFileCategory } from '@island.is/judicial-system-web/src/graphql/schema'
-import { useFileList } from '@island.is/judicial-system-web/src/utils/hooks'
+import {
+  useCase,
+  useFileList,
+} from '@island.is/judicial-system-web/src/utils/hooks'
 
 import { strings } from './Summary.strings'
 
@@ -29,6 +32,7 @@ const Summary: React.FC = () => {
   const { formatMessage } = useIntl()
   const { workingCase, isLoadingWorkingCase, caseNotFound } =
     useContext(FormContext)
+  const { transitionCase, isTransitioningCase } = useCase()
 
   const { onOpen } = useFileList({
     caseId: workingCase.id,
@@ -37,6 +41,8 @@ const Summary: React.FC = () => {
   const handleNavigationTo = (destination: string) => {
     return router.push(`${destination}/${workingCase.id}`)
   }
+
+  const handleNextButtonClick = async () => {}
 
   const courtRecordFiles =
     workingCase.caseFiles?.filter(
