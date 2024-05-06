@@ -69,11 +69,7 @@ const canProsecutionUserAccessCase = (
   return true
 }
 
-const canPublicProsecutionUserAccessCase = (
-  theCase: Case,
-  user: User,
-  forUpdate = true,
-): boolean => {
+const canPublicProsecutionUserAccessCase = (theCase: Case): boolean => {
   // Check case type access
   if (!isIndictmentCase(theCase.type)) {
     return false

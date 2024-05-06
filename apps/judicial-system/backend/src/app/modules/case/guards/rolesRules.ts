@@ -247,7 +247,7 @@ export const prosecutorRepresentativeTransitionRule: RolesRule = {
 }
 
 // Allows public prosecutor staff to transition cases
-// Note that public prosecutor staff can only access non-indictment cases
+// Note that public prosecutor staff can only access indictment cases
 export const publicProsecutorStaffTransitionRule: RolesRule = {
   role: UserRole.PUBLIC_PROSECUTOR_STAFF,
   type: RulesType.FIELD_VALUES,

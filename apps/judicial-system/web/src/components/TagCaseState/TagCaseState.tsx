@@ -30,8 +30,6 @@ export const mapIndictmentCaseStateToTagVariant = (
   state?: CaseState | null,
 ): { color: TagVariant; text: string } => {
   switch (state) {
-    case CaseState.REJECTED:
-    case CaseState.DISMISSED:
     case CaseState.ACCEPTED:
       return {
         color: 'purple',

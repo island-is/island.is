@@ -9,7 +9,6 @@ import {
   PageHeader,
   SharedPageLayout,
 } from '@island.is/judicial-system-web/src/components'
-import { CaseListEntry } from '@island.is/judicial-system-web/src/graphql/schema'
 
 import { useCasesQuery } from '../../Shared/Cases/cases.generated'
 import CasesForReview from '../Tables/CasesForReview'

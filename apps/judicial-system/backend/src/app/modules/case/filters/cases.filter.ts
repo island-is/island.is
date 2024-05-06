@@ -69,11 +69,11 @@ const getProsecutionUserCasesQueryFilter = (user: User): WhereOptions => {
   }
 }
 
-const getPublicProsecutionUserCasesQueryFilter = (user: User): WhereOptions => {
+const getPublicProsecutionUserCasesQueryFilter = (): WhereOptions => {
   const options: WhereOptions = [
     { isArchived: false },
     {
-      state: [CaseState.ACCEPTED, CaseState.REJECTED, CaseState.DISMISSED],
+      state: [CaseState.ACCEPTED],
     },
   ]
 
