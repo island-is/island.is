@@ -75,7 +75,7 @@ export class DocumentsClientV2Service {
       authenticationType: 'HIGH',
     })
 
-    return mapToDocument(res)
+    return mapToDocument(document)
   }
 
   async getPageNumber(
