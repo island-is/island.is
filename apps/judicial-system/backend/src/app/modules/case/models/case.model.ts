@@ -1225,7 +1225,7 @@ export class Case extends Model {
   notifications?: Notification[]
 
   /**********
-   * The ruling decision in indictment cases - example: MAKE_RULING
+   * The ruling decision in indictment cases - example: FINE
    **********/
   @Column({
     type: DataType.ENUM,

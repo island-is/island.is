@@ -91,14 +91,12 @@ const Conclusion: React.FC = () => {
     }
   }, [transitionCase, workingCase.id, formatMessage])
 
-  const handleCompletion = useCallback(() => {
-    setAndSendCaseToServer(
+  const handleCompletion = useCallback(async () => {
+    await setAndSendCaseToServer(
       [
         {
-          indictmentRulingDecision:
-            selectedDecision === 'FINE'
-              ? CaseIndictmentRulingDecision.FINE
-              : CaseIndictmentRulingDecision.RULING,
+          indictmentRulingDecision: selectedDecision,
+          force: true,
         },
       ],
       workingCase,
@@ -164,9 +162,7 @@ const Conclusion: React.FC = () => {
       return uploadFiles.find(
         (file) => file.category === CaseFileCategory.COURT_RECORD,
       )
-    }
-
-    if (selectedAction === 'POSTPONE')
+    } else if (selectedAction === 'POSTPONE') {
       return (
         Boolean(
           postponement?.postponedIndefinitely
@@ -174,7 +170,17 @@ const Conclusion: React.FC = () => {
             : courtDate?.date,
         ) && allFilesDoneOrError
       )
+    } else if (selectedAction === 'COMPLETE') {
+      return selectedDecision !== undefined && allFilesDoneOrError
+    }
   }
+
+  useEffect(() => {
+    if (workingCase.indictmentRulingDecision) {
+      setSelectedDecision(workingCase.indictmentRulingDecision)
+      setSelectedAction('COMPLETE')
+    }
+  }, [workingCase.indictmentRulingDecision])
 
   return (
     <PageLayout
@@ -298,8 +304,6 @@ const Conclusion: React.FC = () => {
                   id="decision-ruling"
                   name="decision"
                   checked={
-                    workingCase.indictmentRulingDecision ===
-                      CaseIndictmentRulingDecision.RULING ||
                     selectedDecision === CaseIndictmentRulingDecision.RULING
                   }
                   onChange={() => {
@@ -313,11 +317,7 @@ const Conclusion: React.FC = () => {
               <RadioButton
                 id="decision-fine"
                 name="decision"
-                checked={
-                  workingCase.indictmentRulingDecision ===
-                    CaseIndictmentRulingDecision.FINE ||
-                  selectedDecision === CaseIndictmentRulingDecision.FINE
-                }
+                checked={selectedDecision === CaseIndictmentRulingDecision.FINE}
                 onChange={() => {
                   setSelectedDecision(CaseIndictmentRulingDecision.FINE)
                 }}
@@ -355,8 +355,7 @@ const Conclusion: React.FC = () => {
             />
           </Box>
         )}
-        {workingCase.indictmentRulingDecision ===
-          CaseIndictmentRulingDecision.RULING && (
+        {selectedDecision === 'RULING' && (
           <Box component="section" marginBottom={10}>
             <SectionHeading title={formatMessage(strings.rulingUploadTitle)} />
             <InputFileUpload
