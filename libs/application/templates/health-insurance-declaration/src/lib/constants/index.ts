@@ -3,3 +3,7 @@ export enum States {
   DRAFT = 'draft',
   SUBMITTED = 'submitted',
 }
+
+export enum ApiActions {
+  submitApplication = 'submitApplication',
+}

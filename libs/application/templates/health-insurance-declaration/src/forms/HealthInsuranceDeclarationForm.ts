@@ -37,10 +37,7 @@ import {
   getSpouseAsOptions,
 } from '../utils'
 import { HealthInsuranceDeclaration } from '../lib/dataSchema'
-import {
-  applicantInformationMessages,
-  buildFormConclusionSection,
-} from '@island.is/application/ui-forms'
+import { applicantInformationMessages } from '@island.is/application/ui-forms'
 import { HealthInsuranceDeclarationApplication } from '../types'
 import {
   formatPhoneNumber,
@@ -52,6 +49,8 @@ import { ApplicantType } from '../shared/constants'
 export const HealthInsuranceDeclarationForm: Form = buildForm({
   id: 'HealthInsuranceDeclarationDraft',
   title: m.application.general.name,
+  renderLastScreenButton: true,
+  renderLastScreenBackButton: true,
   logo: Logo,
   mode: FormModes.DRAFT,
   children: [
@@ -359,6 +358,7 @@ export const HealthInsuranceDeclarationForm: Form = buildForm({
     buildSection({
       id: 'overview',
       title: m.application.overview.sectionTitle,
+
       children: [
         buildMultiField({
           id: 'overviewMultiField',
@@ -533,6 +533,5 @@ export const HealthInsuranceDeclarationForm: Form = buildForm({
         }),
       ],
     }),
-    buildFormConclusionSection({}),
   ],
 })

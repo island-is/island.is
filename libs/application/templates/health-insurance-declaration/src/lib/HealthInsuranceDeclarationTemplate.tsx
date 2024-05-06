@@ -12,10 +12,11 @@ import {
   NationalRegistrySpouseApi,
   NationalRegistryUserApi,
   UserProfileApi,
+  defineTemplateApi,
 } from '@island.is/application/types'
 import { application } from './messages/application'
 import { HealthInsuranceDeclarationSchema } from './dataSchema'
-import { States } from './constants'
+import { ApiActions, States } from './constants'
 import {
   DefaultStateLifeCycle,
   coreHistoryMessages,
@@ -131,6 +132,9 @@ const HealthInsuranceDeclarationTemplate: ApplicationTemplate<
           progress: 1,
           status: 'completed',
           lifecycle: DefaultStateLifeCycle,
+          onEntry: defineTemplateApi({
+            action: ApiActions.submitApplication,
+          }),
           roles: [
             {
               id: Roles.APPLICANT,
@@ -138,6 +142,7 @@ const HealthInsuranceDeclarationTemplate: ApplicationTemplate<
                 import('../forms/Submitted').then((val) =>
                   Promise.resolve(val.HealthInsuranceDeclarationSubmitted),
                 ),
+              read: 'all',
             },
           ],
         },
