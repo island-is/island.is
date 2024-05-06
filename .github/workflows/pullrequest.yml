@@ -102,7 +102,7 @@ jobs:
         id: calculate-generated-files-cache-key
         run: |
           HASH=$(./scripts/_hash-generated-files.sh)
-          export GENERATED_FILES_KEY=${{ runner.os }}-$HASH-generated-files
+          export GENERATED_FILES_KEY=${{ runner.os }}-$HASH-generated-files-01
           echo "GENERATED_FILES_KEY: $GENERATED_FILES_KEY"
           echo "generated-files-key=$GENERATED_FILES_KEY" >> $GITHUB_OUTPUT
           cat $GITHUB_OUTPUT
