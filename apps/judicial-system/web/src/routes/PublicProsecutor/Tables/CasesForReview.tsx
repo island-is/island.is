@@ -90,7 +90,7 @@ const CasesForReview: React.FC<CasesForReviewTableProps> = ({
                 },
                 {
                   cell: (row: CaseListEntry) => (
-                    <Text>{row.prosecutor?.name}</Text>
+                    <Text>{row.indictmentReviewer?.name}</Text>
                   ),
                 },
                 {
