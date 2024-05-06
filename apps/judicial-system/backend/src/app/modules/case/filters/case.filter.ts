@@ -4,7 +4,6 @@ import {
   CaseDecision,
   CaseState,
   CaseType,
-  DateType,
   InstitutionType,
   isCourtOfAppealsUser,
   isDefenceUser,
@@ -20,6 +19,7 @@ import {
 } from '@island.is/judicial-system/types'
 
 import { Case } from '../models/case.model'
+import { DateLog } from '../models/dateLog.model'
 
 const canProsecutionUserAccessCase = (
   theCase: Case,
@@ -245,10 +245,6 @@ const canDefenceUserAccessCase = (theCase: Case, user: User): boolean => {
     return false
   }
 
-  const arraignmentDate = theCase.dateLogs?.find(
-    (d) => d.dateType === DateType.ARRAIGNMENT_DATE,
-  )?.date
-
   // Check submitted case access
   const canDefenderAccessSubmittedCase =
     (isRestrictionCase(theCase.type) || isInvestigationCase(theCase.type)) &&
@@ -267,7 +263,7 @@ const canDefenceUserAccessCase = (theCase: Case, user: User): boolean => {
     const canDefenderAccessReceivedCase =
       isIndictmentCase(theCase.type) ||
       canDefenderAccessSubmittedCase ||
-      Boolean(arraignmentDate)
+      Boolean(DateLog.arraignmentDate(theCase.dateLogs))
 
     if (!canDefenderAccessReceivedCase) {
       return false
