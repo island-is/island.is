@@ -108,7 +108,7 @@ jobs:
         uses: ./.github/actions/prepare-cache
         with:
           path: node_modules
-          key: ${{ steps.calculate-node-modules-cache-key.node-modules-key }}
+          key: ${{ steps.calculate-node-modules-cache-key.outputs.node-modules-key }}
 
       - name: Prepare mobile-node-modules cache
         uses: ./.github/actions/prepare-cache
