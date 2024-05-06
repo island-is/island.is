@@ -279,7 +279,7 @@ export const getCasesQueryFilter = (user: User): WhereOptions => {
   }
 
   if (isPublicProsecutorUser(user)) {
-    return getPublicProsecutionUserCasesQueryFilter(user)
+    return getPublicProsecutionUserCasesQueryFilter()
   }
 
   throw new ForbiddenException(`User ${user.id} does not have access to cases`)
