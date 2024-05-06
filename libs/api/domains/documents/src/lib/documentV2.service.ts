@@ -47,7 +47,7 @@ export class DocumentServiceV2 {
     if (!document) {
       this.logger.error('No document content', {
         category: LOG_CATEGORY,
-        document: document,
+        documentId,
       })
       return null
     }
