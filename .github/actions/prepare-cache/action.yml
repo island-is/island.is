@@ -153,6 +153,13 @@ runs:
       if: ${{ steps.check-mobile-node-modules-cache.outputs.success == 'false' || steps.check-node-modules-cache.outputs.success == 'false' }}
       run: ./scripts/ci/10_prepare-host-deps.sh
 
+    - name: Run codegen
+      id: run-codegen
+      shell: bash
+      if: ${{ steps.check-generated-files-cache.outputs.success == 'false' }}"
+      run: |
+        node --version
+        tar zcvf generated_files.tar.gz $(./scripts/ci/get-files-touched-by.sh yarn codegen --skip-cache | xargs realpath --relative-to $(pwd))
 
     - name: Untar generated files
       id: untar-generated-files

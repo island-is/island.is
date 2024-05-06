@@ -85,10 +85,6 @@ jobs:
           calculateCacheKeys: true
 
 
-      - name: Building NodeJS dependencies
-        if: steps.prepare-cache.outputs.node-modules-cache-hit != 'true' || steps.prepare-cache.outputs.mobile-node-modules-cache-hit != 'true'
-        run: ./scripts/ci/10_prepare-host-deps.sh
-
       - name: Preparing HEAD and BASE tags
         run: |
           echo "HEAD=$GITHUB_SHA" >> $GITHUB_ENV
@@ -125,6 +121,11 @@ jobs:
         if: steps.cypress-check.outcome != 'success'
         run: npx cypress install
 
+      - name: Run codegen
+        if: steps.prepare-cache.outputs.generated-files-cache-hit != 'true'
+        run: |
+          node --version
+          tar zcvf generated_files.tar.gz $(./scripts/ci/get-files-touched-by.sh yarn codegen --skip-cache | xargs realpath --relative-to $(pwd))
 
       # - name: Security audit Node modules
       #   run: ./scripts/ci/20_security-audit.sh
