@@ -1,9 +1,3 @@
-import dynamic from 'next/dynamic'
+import { GenericListEditor } from '../../components/lists/GenericListEditor/GenericListEditor'
 
-export default dynamic(
-  () => import('../../components/lists/GenericListEditor/GenericListEditor'),
-  {
-    // Dynamically exported with client side rendering since the @contentful/default-field-editors package accesses the window and navigator global objects
-    ssr: false,
-  },
-)
+export default GenericListEditor
