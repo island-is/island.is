@@ -2,28 +2,24 @@ import { Args, Parent, Query, ResolveField, Resolver } from '@nestjs/graphql'
 import { UseGuards } from '@nestjs/common'
 
 import type { User } from '@island.is/auth-nest-tools'
-import {
-  CurrentUser,
-  IdsUserGuard,
-  ScopesGuard,
-} from '@island.is/auth-nest-tools'
+import { CurrentUser, IdsUserGuard } from '@island.is/auth-nest-tools'
 import { IdentityClientService } from '@island.is/clients/identity'
 
 import { UserProfileService } from './userProfile.service'
 import { PaginatedUserProfileResponse } from './dto/paginated-user-profile.response'
-import { UserProfile } from './userProfile.model'
+import { AdminUserProfile } from './adminUserProfile.model'
 
-@UseGuards(IdsUserGuard, ScopesGuard)
-@Resolver(() => UserProfile)
+@UseGuards(IdsUserGuard)
+@Resolver(() => AdminUserProfile)
 export class AdminUserProfileResolver {
   constructor(
     private readonly userUserProfileService: UserProfileService,
     private readonly identityService: IdentityClientService,
   ) {}
 
-  @Query(() => UserProfile, {
+  @Query(() => AdminUserProfile, {
     nullable: true,
-    name: 'GetUserProfileByNationalId',
+    name: 'UserProfileAdminProfile',
   })
   getUserProfileByNationalId(
     @Args('nationalId') nationalId: string,
@@ -37,18 +33,18 @@ export class AdminUserProfileResolver {
 
   @Query(() => PaginatedUserProfileResponse, {
     nullable: false,
-    name: 'GetPaginatedUserProfiles',
+    name: 'UserProfileAdminProfiles',
   })
   getUserProfiles(@Args('query') query: string, @CurrentUser() user: User) {
     return this.userUserProfileService.getUserProfiles(user, query)
   }
 
   @ResolveField('fullName', () => String, { nullable: true })
-  async getFullName(@Parent() userProfile: UserProfile) {
-    return await this.identityService
-      .getIdentity(userProfile.nationalId ?? '')
-      .then((identity) => {
-        return identity?.name
-      })
+  async getFullName(@Parent() adminUserProfile: AdminUserProfile) {
+    const identity = await this.identityService.getIdentity(
+      adminUserProfile.nationalId ?? '',
+    )
+
+    return identity?.name ?? ''
   }
 }

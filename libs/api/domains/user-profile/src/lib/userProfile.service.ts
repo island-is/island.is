@@ -197,7 +197,7 @@ export class UserProfileService {
   }
 
   async getUserProfileByNationalId(user: User, nationalId: string) {
-    return await this.userProfileServiceV2.getUserProfileByNationalId(
+    return this.userProfileServiceV2.getUserProfileByNationalId(
       user,
       nationalId,
     )

@@ -26,7 +26,7 @@ const Users = () => {
   const actionData = useActionData() as GetUserProfilesResult
   const { formatMessage } = useLocale()
   const navigate = useNavigate()
-  const userProfile = useAuth()
+  const { userInfo } = useAuth()
   const { isSubmitting, isLoading } = useSubmitting()
   const users = actionData?.data?.data
   const [error, setError] = useState({ hasError: false, message: '' })
@@ -35,7 +35,7 @@ const Users = () => {
     if (actionData?.errors) {
       setError({
         hasError: true,
-        message: formatMessage(m.invalidSearchQuery),
+        message: formatMessage(m.invalidSearchInput),
       })
     } else if (actionData?.globalError) {
       toast.error(formatMessage(m.errorDefault))
@@ -54,11 +54,6 @@ const Users = () => {
     <>
       <IntroHeader title={m.users} intro={m.userIntro} />
       <Form method="post">
-        <input
-          type="hidden"
-          name="nationalId"
-          value={userProfile.userInfo?.profile?.nationalId}
-        />
         <Box className={styles.search}>
           <AsyncSearchInput
             hasFocus={focused}
@@ -93,7 +88,7 @@ const Users = () => {
               />
             ) : (
               users?.map(({ nationalId, fullName }) => (
-                <Box key={`procure-${nationalId}`}>
+                <Box key={`users-${nationalId}`}>
                   <Card
                     title={fullName ?? formatNationalId(nationalId)}
                     description={formatNationalId(nationalId)}
@@ -110,15 +105,14 @@ const Users = () => {
                                 nationalId:
                                   maskString(
                                     nationalId,
-                                    userProfile.userInfo?.profile?.nationalId ??
-                                      '',
+                                    userInfo?.profile?.nationalId ?? '',
                                   ) ?? '',
                               },
                             }),
                           )
                         }
                       >
-                        {formatMessage(m.viewProcures)}
+                        {formatMessage(m.viewDetails)}
                       </Button>
                     }
                   />

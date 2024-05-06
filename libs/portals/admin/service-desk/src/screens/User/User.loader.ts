@@ -11,7 +11,7 @@ import { unmaskString } from '@island.is/shared/utils'
 import { ServiceDeskPaths } from '../../lib/paths'
 
 export type UserProfileResult = NonNullable<
-  GetUserProfileByNationalIdQuery['GetUserProfileByNationalId']
+  GetUserProfileByNationalIdQuery['UserProfileAdminProfile']
 >
 
 export const userLoader: WrappedLoaderFn = ({ client, userInfo }) => {
@@ -38,10 +38,10 @@ export const userLoader: WrappedLoaderFn = ({ client, userInfo }) => {
       throw res.error
     }
 
-    if (!res.data?.GetUserProfileByNationalId) {
-      return redirect(ServiceDeskPaths.Root)
+    if (!res.data?.UserProfileAdminProfile) {
+      return redirect(ServiceDeskPaths.Users)
     }
 
-    return res.data.GetUserProfileByNationalId
+    return res.data.UserProfileAdminProfile
   }
 }

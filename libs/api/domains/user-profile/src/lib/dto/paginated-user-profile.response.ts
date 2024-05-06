@@ -1,9 +1,9 @@
 import { ObjectType } from '@nestjs/graphql'
 
 import { PaginatedResponse } from '@island.is/nest/pagination'
-import { UserProfile } from '../userProfile.model'
+import { AdminUserProfile } from '../adminUserProfile.model'
 
-@ObjectType('UserProfilePaginatedResponse')
+@ObjectType('UserProfileAdminUserProfilesResponse')
 export class PaginatedUserProfileResponse extends PaginatedResponse(
-  UserProfile,
+  AdminUserProfile,
 ) {}

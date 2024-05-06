@@ -1,5 +1,5 @@
 query GetUserProfileByNationalId($nationalId: String!) {
-  GetUserProfileByNationalId(nationalId: $nationalId) {
+  UserProfileAdminProfile(nationalId: $nationalId) {
     nationalId
     email
     emailVerified

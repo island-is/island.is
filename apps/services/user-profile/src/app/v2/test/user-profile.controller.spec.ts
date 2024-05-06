@@ -472,18 +472,22 @@ describe('UserProfileController', () => {
       })
     })
 
-    it('GET /v2/users/ with query for invalid search paramas should result in 400 Bad Request', async () => {
-      // Act
-      const res1 = await server.get(
-        `/v2/users/?search=${testUserProfile.nationalId + '1'}`,
-      )
-      const res2 = await server.get(`/v2/users/?search=g@g`)
-      const res3 = await server.get(`/v2/users/?search=+3541234567`)
+    it.each`
+      search                                        | expected
+      ${testUserProfile.nationalId + '1'}           | ${400}
+      ${'g@g'}                                      | ${400}
+      ${'+3541234567'}                              | ${400}
+      ${'1234567'}                                  | ${400}
+      ${testUserProfile.nationalId.substring(0, 9)} | ${400}
+    `(
+      `GET /v2/users/ with query search=$search paramas should result in $expected`,
+      async ({ search, expected }: { search: string; expected: number }) => {
+        // Act
+        const res = await server.get(`/v2/users/?search=${search}`)
 
-      // Assert
-      expect(res1.status).toEqual(400)
-      expect(res2.status).toEqual(400)
-      expect(res3.status).toEqual(400)
-    })
+        // Assert
+        expect(res.status).toEqual(expected)
+      },
+    )
   })
 })

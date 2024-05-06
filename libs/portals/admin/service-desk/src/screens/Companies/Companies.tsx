@@ -105,7 +105,7 @@ const Companies = () => {
                           )
                         }
                       >
-                        {formatMessage(m.viewProcures)}
+                        {formatMessage(m.viewDetails)}
                       </Button>
                     }
                   />

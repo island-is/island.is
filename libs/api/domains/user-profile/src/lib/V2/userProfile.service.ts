@@ -15,6 +15,7 @@ import { UpdateUserProfileInput } from '../dto/updateUserProfileInput'
 import { CreateSmsVerificationInput } from '../dto/createSmsVerificationInput'
 import { CreateEmailVerificationInput } from '../dto/createEmalVerificationInput'
 import { UpdateActorProfileInput } from '../dto/updateActorProfileInput'
+import { AdminUserProfile } from '../adminUserProfile.model'
 
 @Injectable()
 export class UserProfileServiceV2 {
@@ -143,15 +144,18 @@ export class UserProfileServiceV2 {
   }
 
   async getUserProfiles(user: User, search: string) {
-    return await this.v2UserProfileApiWithAuth(
+    return this.v2UserProfileApiWithAuth(
       user,
     ).userProfileControllerFindUserProfiles({
       search: search,
     })
   }
 
-  async getUserProfileByNationalId(user: User, nationalId: string) {
-    return await this.v2UserProfileApiWithAuth(
+  async getUserProfileByNationalId(
+    user: User,
+    nationalId: string,
+  ): Promise<AdminUserProfile> {
+    return this.v2UserProfileApiWithAuth(
       user,
     ).userProfileControllerFindUserProfile({
       clientType: UserProfileControllerFindUserProfileClientTypeEnum.FirstParty,

@@ -33,7 +33,7 @@ export const m = defineMessages({
     id: 'admin-portal.service-desk:list-procurers',
     defaultMessage: 'Listi af prókúruhöfum:',
   },
-  viewProcures: {
+  viewDetails: {
     id: 'admin-portal.service-desk:view-procures',
     defaultMessage: 'Skoða nánar',
   },
@@ -42,7 +42,7 @@ export const m = defineMessages({
     defaultMessage: 'Ekkert fyrirtæki fannst fyrir þessi leitarskilyrði',
   },
   userNotContent: {
-    id: 'admin-portal.service-desk:user-not-content',
+    id: 'admin-portal.service-desk:user-no-content',
     defaultMessage: 'Engir notendur fundust fyrir þessa leitarskilyrði',
   },
   noContentRelationsProcurers: {
@@ -87,7 +87,7 @@ export const m = defineMessages({
   },
   invalidSearchInput: {
     id: 'admin-portal.service-desk:invalid-search-input',
-    defaultMessage: 'Ógild leitarstrengur',
+    defaultMessage: 'Ógildur leitarstrengur',
   },
   unverified: {
     id: 'admin-portal.service-desk:unverified',
@@ -105,7 +105,7 @@ export const m = defineMessages({
   verifiedTooltip: {
     id: 'admin-portal.service-desk:verified-tooltip',
     defaultMessage:
-      'Notandi hefur framkvæmkt 2ja þátta staðfestingu á viðpkomandi upplýsingum',
+      'Notandi hefur framkvæmkt 2ja þátta staðfestingu á viðkomandi upplýsingum',
   },
   documentNotification: {
     id: 'admin-portal.service-desk:document-notification',
@@ -138,9 +138,5 @@ export const m = defineMessages({
   noUsersFound: {
     id: 'admin-portal.service-desk:no-users-found',
     defaultMessage: 'Engir notendur fundust',
-  },
-  invalidSearchQuery: {
-    id: 'admin-portal.service-desk:invalid-search-query',
-    defaultMessage: 'Ógildur leitarstrengur',
   },
 })

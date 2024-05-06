@@ -32,12 +32,6 @@ export class UserProfile {
   @Field(() => Date, { nullable: true })
   modified?: Date
 
-  @Field(() => Date, { nullable: true })
-  lastNudge?: Date
-
-  @Field(() => Date, { nullable: true })
-  nextNudge?: Date
-
   @Field(() => Boolean, { nullable: true })
   emailNotifications?: boolean
 

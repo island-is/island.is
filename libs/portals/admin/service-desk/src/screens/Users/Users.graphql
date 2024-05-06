@@ -1,5 +1,5 @@
 query GetPaginatedUserProfiles($query: String!) {
-  GetPaginatedUserProfiles(query: $query) {
+  UserProfileAdminProfiles(query: $query) {
     totalCount
     data {
       nationalId

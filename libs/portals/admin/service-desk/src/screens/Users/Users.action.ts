@@ -28,11 +28,23 @@ export enum ErrorType {
 }
 
 const schema = z.object({
-  searchQuery: z.string().min(1),
+  searchQuery: z
+    .string()
+    .min(1)
+    .superRefine((value, ctx) => {
+      const isValid = isSearchTermValid(value)
+      if (!isValid)
+        ctx.addIssue({
+          code: z.ZodIssueCode.custom,
+          message: ErrorType.InvalidSearchQuery,
+        })
+
+      return isValid
+    }),
 })
 
 export type GetUserProfilesResult = RawRouterActionResponse<
-  GetPaginatedUserProfilesQuery['GetPaginatedUserProfiles'],
+  GetPaginatedUserProfilesQuery['UserProfileAdminProfiles'],
   ValidateFormDataResult<typeof schema>['errors']
 >
 
@@ -53,56 +65,47 @@ export const UsersAction: WrappedActionFn =
       }
     }
 
-    if (isSearchTermValid(data.searchQuery)) {
-      try {
-        const res = await client.query<
-          GetPaginatedUserProfilesQuery,
-          GetPaginatedUserProfilesQueryVariables
-        >({
-          query: GetPaginatedUserProfilesDocument,
-          fetchPolicy: 'network-only',
-          variables: {
-            query: data.searchQuery,
-          },
-        })
+    try {
+      const res = await client.query<
+        GetPaginatedUserProfilesQuery,
+        GetPaginatedUserProfilesQueryVariables
+      >({
+        query: GetPaginatedUserProfilesDocument,
+        fetchPolicy: 'network-only',
+        variables: {
+          query: data.searchQuery,
+        },
+      })
 
-        if (res.error) {
-          throw res.error
-        }
-
-        const { data: respData, totalCount } = res.data.GetPaginatedUserProfiles
-
-        if (totalCount === 1) {
-          return redirect(
-            replaceParams({
-              href: ServiceDeskPaths.User,
-              params: {
-                nationalId: maskString(
-                  respData[0].nationalId,
-                  userInfo.profile.nationalId,
-                ) as string,
-              },
-            }),
-          )
-        }
-
-        return {
-          data: res.data.GetPaginatedUserProfiles,
-          errors: null,
-        }
-      } catch (e) {
-        return {
-          data: null,
-          errors: null,
-          globalError: true,
-        }
+      if (res.error) {
+        throw res.error
       }
-    } else {
+
+      const { data: respData, totalCount } = res.data.UserProfileAdminProfiles
+
+      if (totalCount === 1) {
+        return redirect(
+          replaceParams({
+            href: ServiceDeskPaths.User,
+            params: {
+              nationalId: maskString(
+                respData[0].nationalId,
+                userInfo.profile.nationalId,
+              ) as string,
+            },
+          }),
+        )
+      }
+
+      return {
+        data: res.data.UserProfileAdminProfiles,
+        errors: null,
+      }
+    } catch (e) {
       return {
         data: null,
-        errors: {
-          searchQuery: ErrorType.InvalidSearchQuery,
-        },
+        errors: null,
+        globalError: true,
       }
     }
   }
