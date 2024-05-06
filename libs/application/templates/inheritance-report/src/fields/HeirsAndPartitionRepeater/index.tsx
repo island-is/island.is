@@ -275,6 +275,7 @@ export const HeirsAndPartitionRepeater: FC<
         (heir) => {
           return {
             ...heir,
+            phone: heir.phone?.replace(/\D/g, '').slice(-7) ?? '', //Remove all non-digit characters and keep the last 7 digits
             initial: true,
             enabled: true,
           }
@@ -562,7 +563,6 @@ export const HeirsAndPartitionRepeater: FC<
       )}
       {fields.map((member: GenericFormField<EstateMember>, index) => {
         if (member.initial) return null
-
         return (
           <Box key={member.id}>
             <AdditionalHeir
@@ -573,7 +573,7 @@ export const HeirsAndPartitionRepeater: FC<
               relationOptions={relations}
               updateValues={updateValues}
               remove={remove}
-              error={error ?? null}
+              error={error[index] ?? null}
             />
           </Box>
         )
