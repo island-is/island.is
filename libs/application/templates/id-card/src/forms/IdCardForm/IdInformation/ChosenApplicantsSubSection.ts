@@ -12,6 +12,7 @@ import { useLocale } from '@island.is/localization'
 import { GetFormattedText } from '../../../utils'
 import { Application } from '@island.is/api/schema'
 import { IdCardAnswers } from '../../..'
+import { useFormContext } from 'react-hook-form'
 
 export const ChosenApplicantsSubSection = buildSubSection({
   id: Routes.CHOSENAPPLICANTS,
@@ -26,15 +27,6 @@ export const ChosenApplicantsSubSection = buildSubSection({
           id: `${Routes.CHOSENAPPLICANTS}.applicant`,
           title: '',
           largeButtons: true,
-          condition: (formValue, _) => {
-            const isApplicantChosen = getValueViaPath(
-              formValue,
-              `${Routes.CHOSENAPPLICANTS}.children`,
-              'empty',
-            )
-            console.log('isChildChosen', isApplicantChosen)
-            return true
-          },
           options: (application) => {
             const applicantName = getValueViaPath(
               application.externalData,
