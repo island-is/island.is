@@ -302,11 +302,7 @@ describe('getCasesQueryFilter', () => {
         [Op.and]: [
           { isArchived: false },
           {
-            state: [
-              CaseState.ACCEPTED,
-              CaseState.REJECTED,
-              CaseState.DISMISSED,
-            ],
+            state: [CaseState.ACCEPTED],
           },
           {
             type: indictmentCases,
