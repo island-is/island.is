@@ -79,18 +79,44 @@ describe('MeNotificationsController - With Auth No Scope', () => {
   )
 })
 
-describe('MeNotificationsController - With Auth And Scope', () => {
+describe('MeNotificationsController - GET With Auth And Scope', () => {
   it.each`
     method     | endpoint
     ${'GET'}   | ${'/v1/me/notifications'}
-    ${'GET'}   | ${'/v1/me/notifications/some-notification-id'}
     ${'GET'}   | ${'/v1/me/notifications/unread-count'}
     ${'GET'}   | ${'/v1/me/notifications/unseen-count'}
+  `(
+    '$method $endpoint should return 200 when user is authorized',
+    async ({ method, endpoint }: TestEndpointOptions) => {
+      //Arrange
+      const app = await setupApp({
+        AppModule,
+        SequelizeConfigService,
+        user: createCurrentUser({
+          scope: [NotificationsScope.read],
+        }),
+      })
+      const server = request(app.getHttpServer())
+
+      //Act
+      const res = await getRequestMethod(server, method)(endpoint)
+
+      //Assert
+      expect(res.status).toEqual(200)
+
+      app.cleanUp()
+    },
+  )
+})
+
+describe('MeNotificationsController - PATCH With Auth And Scope', () => {
+  it.each`
+    method     | endpoint
     ${'PATCH'} | ${'/v1/me/notifications/some-notification-id'}
     ${'PATCH'} | ${'/v1/me/notifications/mark-all-as-seen'}
     ${'PATCH'} | ${'/v1/me/notifications/mark-all-as-read'}
   `(
-    '$method $endpoint should return 200 when user is authorized',
+    '$method $endpoint should return 204 when user is authorized',
     async ({ method, endpoint }: TestEndpointOptions) => {
       //Arrange
       const app = await setupApp({
@@ -106,7 +132,7 @@ describe('MeNotificationsController - With Auth And Scope', () => {
       const res = await getRequestMethod(server, method)(endpoint)
 
       //Assert
-      expect([200, 204].includes(res.status)).toBe(true)
+      expect(res.status).toEqual(204)
 
       app.cleanUp()
     },
