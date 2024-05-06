@@ -11,7 +11,11 @@ import {
 
 import { ApiProperty, ApiPropertyOptional } from '@nestjs/swagger'
 
-import { DefendantPlea, Gender } from '@island.is/judicial-system/types'
+import {
+  DefendantPlea,
+  Gender,
+  ServiceRequirement,
+} from '@island.is/judicial-system/types'
 
 import { Case } from '../../case/models/case.model'
 
@@ -140,5 +144,5 @@ export class Defendant extends Model {
     allowNull: true,
   })
   @ApiProperty()
-  serviceRequirement?: string
+  serviceRequirement?: ServiceRequirement
 }
