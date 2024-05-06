@@ -1,13 +1,13 @@
 import { ApplicationContext } from '@island.is/application/types'
 
+import { getValueViaPath } from '@island.is/application/core'
 import {
-  YES,
   NO,
-  PARENTAL_LEAVE,
   PARENTAL_GRANT,
   PARENTAL_GRANT_STUDENTS,
+  PARENTAL_LEAVE,
   States,
-  FileType,
+  YES,
 } from '../constants'
 import {
   getApplicationAnswers,
@@ -16,9 +16,6 @@ import {
   residentGrantIsOpenForApplication,
 } from '../lib/parentalLeaveUtils'
 import { EmployerRow } from '../types'
-import { getValueViaPath } from '@island.is/application/core'
-import set from 'lodash/set'
-import isEmpty from 'lodash/isEmpty'
 
 export const allEmployersHaveApproved = (context: ApplicationContext) => {
   const employers = getValueViaPath<EmployerRow[]>(
@@ -73,76 +70,6 @@ export const needsOtherParentApproval = (context: ApplicationContext) => {
 export const currentDateStartTime = () => {
   const date = new Date().toDateString()
   return new Date(date).getTime()
-}
-
-export const findActionName = (context: ApplicationContext) => {
-  const { application } = context
-  const { state } = application
-  const {
-    addEmployer,
-    addPeriods,
-    changeEmployerFile,
-    changeEmployer,
-    changePeriods,
-  } = getApplicationAnswers(application.answers)
-
-  if (
-    state === States.RESIDENCE_GRANT_APPLICATION_NO_BIRTH_DATE ||
-    state === States.RESIDENCE_GRANT_APPLICATION
-  )
-    return 'documentPeriod'
-  if (state === States.ADDITIONAL_DOCUMENTS_REQUIRED) return 'document'
-
-  if (state === States.EDIT_OR_ADD_EMPLOYERS_AND_PERIODS) {
-    let tmpChangePeriods = changePeriods
-    let tmpChangeEmployer = changeEmployer
-
-    if (addEmployer === YES && addPeriods === YES) {
-      tmpChangeEmployer = true
-      tmpChangePeriods = true
-
-      // Keep book keeping of what has been selected
-      if (!changeEmployer) {
-        set(application.answers, 'changeEmployer', true)
-      }
-      if (!changePeriods) {
-        set(application.answers, 'changePeriods', true)
-      }
-    }
-
-    if (addEmployer === YES) {
-      tmpChangeEmployer = true
-
-      // Keep book keeping of what has been selected
-      if (!changeEmployer) {
-        set(application.answers, 'changeEmployer', true)
-      }
-    }
-    if (addPeriods === YES) {
-      tmpChangePeriods = true
-
-      // Keep book keeping of what has been selected
-      if (!changePeriods) {
-        set(application.answers, 'changePeriods', true)
-      }
-    }
-
-    // If the applicant has selected add employee and/or period at some point
-    if (!isEmpty(changeEmployerFile) && tmpChangeEmployer && tmpChangePeriods) {
-      return FileType.EMPDOCPER
-    } else if (!isEmpty(changeEmployerFile) && tmpChangeEmployer) {
-      return FileType.EMPDOC
-    }
-    if (tmpChangeEmployer && tmpChangePeriods) {
-      return FileType.EMPPER
-    } else if (tmpChangeEmployer) {
-      return FileType.EMPLOYER
-    } else if (tmpChangePeriods) {
-      return FileType.PERIOD
-    }
-  }
-
-  return undefined
 }
 
 export const disableResidenceGrantApplication = (dateOfBirth: string) => {
