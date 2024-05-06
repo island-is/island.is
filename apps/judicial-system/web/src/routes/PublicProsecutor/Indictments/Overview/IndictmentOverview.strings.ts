@@ -2,38 +2,38 @@ import { defineMessages } from 'react-intl'
 
 export const strings = defineMessages({
   title: {
-    id: 'judicial.system.core:indictment_overview.title',
+    id: 'judicial.system.core:public_prosecutor.indictment_overview.title',
     defaultMessage: 'Máli lokið',
     description: 'Notaður sem titill á yfirliti ákæru.',
   },
   reviewerLabel: {
-    id: 'judicial.system.core:indictment_overview.reviewer_label',
+    id: 'judicial.system.core:public_prosecutor.indictment_overview.reviewer_label',
     defaultMessage: 'Veldu saksóknara',
     description: 'Notaður sem texti fyrir úthlutun til yfirlestrar dropdown.',
   },
   reviewerPlaceholder: {
-    id: 'judicial.system.core:indictment_overview.reviewer_placeholder',
+    id: 'judicial.system.core:public_prosecutor.indictment_overview.reviewer_placeholder',
     defaultMessage: 'Velja saksóknara',
     description: 'Notaður sem skýritexti í dropdown til að velja dómara.',
   },
   reviewerTitle: {
-    id: 'judicial.system.core:indictment_overview.dropdown_title',
+    id: 'judicial.system.core:public_prosecutor.indictment_overview.dropdown_title',
     defaultMessage: 'Úthlutun til yfirlestrar',
     description: 'Notaður sem titill á yfirliti ákæru.',
   },
   reviewerSubtitle: {
-    id: 'judicial.system.core:indictment_overview.reviewer_subtitle',
+    id: 'judicial.system.core:public_prosecutor.indictment_overview.reviewer_subtitle',
     defaultMessage:
       'Frestur til að áfrýja dómi rennur út {indictmentAppealDeadline}',
     description: 'Notaður sem undirtitill á yfirliti ákæru.',
   },
   reviewerAssignedModalTitle: {
-    id: 'judicial.system.core:indictment_overview.reviewer_assigned_modal_title',
+    id: 'judicial.system.core:public_prosecutor.indictment_overview.reviewer_assigned_modal_title',
     defaultMessage: 'Úthlutun tókst',
     description: 'Notaður sem titill á tilkynningaglugga um yfirlesara.',
   },
   reviewerAssignedModalText: {
-    id: 'judicial.system.core:indictment_overview.reviewer_assigned_modal_text',
+    id: 'judicial.system.core:public_prosecutor.indictment_overview.reviewer_assigned_modal_text',
     defaultMessage:
       'Máli {caseNumber} hefur verið úthlutað til yfirlestrar á {reviewer}.',
     description: 'Notaður sem texti í tilkynningaglugga um yfirlesara.',
