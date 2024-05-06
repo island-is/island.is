@@ -67,12 +67,12 @@ const CasesAwaitingAssignmentTable: React.FC<
                 { title: formatMessage(tables.state) },
               ]}
               data={cases}
-              generateContextMenuItems={(row: CaseListEntry) => {
+              generateContextMenuItems={(row) => {
                 return [openCaseInNewTabMenuItem(row.id)]
               }}
               columns={[
                 {
-                  cell: (row: CaseListEntry) => (
+                  cell: (row) => (
                     <CourtCaseNumber
                       courtCaseNumber={row.courtCaseNumber ?? ''}
                       policeCaseNumbers={row.policeCaseNumbers ?? []}
@@ -81,22 +81,16 @@ const CasesAwaitingAssignmentTable: React.FC<
                   ),
                 },
                 {
-                  cell: (row: CaseListEntry) => (
-                    <DefendantInfo defendants={row.defendants} />
-                  ),
+                  cell: (row) => <DefendantInfo defendants={row.defendants} />,
                 },
                 {
-                  cell: (row: CaseListEntry) => (
-                    <ColumnCaseType type={row.type} />
-                  ),
+                  cell: (row) => <ColumnCaseType type={row.type} />,
                 },
                 {
-                  cell: (row: CaseListEntry) => (
-                    <CreatedDate created={row.created} />
-                  ),
+                  cell: (row) => <CreatedDate created={row.created} />,
                 },
                 {
-                  cell: (row: CaseListEntry) => (
+                  cell: (row) => (
                     <TagCaseState caseState={row.state} isCourtRole={true} />
                   ),
                 },
