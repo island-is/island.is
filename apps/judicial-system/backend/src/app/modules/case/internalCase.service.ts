@@ -797,9 +797,6 @@ export class InternalCaseService {
   ): Promise<DeliverResponse> {
     // There is no timestamp for appeal ruling, so we use notifications to approximate the time.
     // We know notifications occur in a decending order by time.
-    this.logger.error('deliverConclusionToCourtOfAppeals', {
-      nots: theCase.notifications,
-    })
     const appealCompletedNotifications = theCase.notifications?.filter(
       (notification) => notification.type === NotificationType.APPEAL_COMPLETED,
     )
