@@ -498,7 +498,6 @@ export class NotificationsService {
   }
 
   async markAllAsRead(user: User): Promise<void> {
-    console.log('markAllAsRead********************************')
     try {
       await this.notificationModel.update(
         { read: true },
