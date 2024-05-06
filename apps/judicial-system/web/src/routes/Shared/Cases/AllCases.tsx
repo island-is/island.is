@@ -1,8 +1,12 @@
 import React, { useContext } from 'react'
 
-import { isPrisonSystemUser } from '@island.is/judicial-system/types'
+import {
+  isPrisonSystemUser,
+  isPublicProsecutorUser,
+} from '@island.is/judicial-system/types'
 import { UserContext } from '@island.is/judicial-system-web/src/components'
 
+import PublicProsecutorCases from '../../PublicProsecutor/Cases/PublicProsecutorCases'
 import Cases from './Cases'
 import PrisonCases from './PrisonCases'
 
@@ -11,6 +15,10 @@ export const AllCases: React.FC = () => {
 
   if (isPrisonSystemUser(user)) {
     return <PrisonCases />
+  }
+
+  if (isPublicProsecutorUser(user)) {
+    return <PublicProsecutorCases />
   }
 
   return <Cases />
