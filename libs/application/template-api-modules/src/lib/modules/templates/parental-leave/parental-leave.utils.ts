@@ -1,40 +1,40 @@
 import jwt from 'jsonwebtoken'
-import { join } from 'path'
 import get from 'lodash/get'
+import { join } from 'path'
 
 import {
-  ParentalLeave,
-  Period,
-  Union,
-  PensionFund,
-  Attachment,
-  Employer,
-} from '@island.is/clients/vmst'
+  ADOPTION,
+  Period as AnswerPeriod,
+  ChildInformation,
+  Languages,
+  NO,
+  PARENTAL_GRANT,
+  PARENTAL_GRANT_STUDENTS,
+  PARENTAL_LEAVE,
+  PERMANENT_FOSTER_CARE,
+  ParentalRelations,
+  YES,
+  applicantIsMale,
+  formatBankInfo,
+  getActionName,
+  getApplicationAnswers,
+  getApplicationExternalData,
+  getOtherParentId,
+  getSelectedChild,
+  getSpouse,
+} from '@island.is/application/templates/parental-leave'
 import {
   Application,
   ApplicationWithAttachments,
 } from '@island.is/application/types'
 import {
-  getSelectedChild,
-  getApplicationAnswers,
-  getSpouse,
-  ParentalRelations,
-  YES,
-  Period as AnswerPeriod,
-  getApplicationExternalData,
-  getOtherParentId,
-  applicantIsMale,
-  PARENTAL_LEAVE,
-  PARENTAL_GRANT,
-  PARENTAL_GRANT_STUDENTS,
-  NO,
-  formatBankInfo,
-  PERMANENT_FOSTER_CARE,
-  ChildInformation,
-  ADOPTION,
-  FileType,
-  Languages,
-} from '@island.is/application/templates/parental-leave'
+  Attachment,
+  Employer,
+  ParentalLeave,
+  PensionFund,
+  Period,
+  Union,
+} from '@island.is/clients/vmst'
 import { isRunningOnEnvironment } from '@island.is/shared/utils'
 
 import { apiConstants } from './constants'
@@ -90,8 +90,12 @@ export const getEmployer = (
   application: Application,
   isSelfEmployed = false,
 ): Employer[] => {
-  const { applicantEmail, employers, employerNationalRegistryId } =
-    getApplicationAnswers(application.answers)
+  const {
+    applicantEmail,
+    employers,
+    employerNationalRegistryId,
+    employerReviewerNationalRegistryId,
+  } = getApplicationAnswers(application.answers)
 
   if (isSelfEmployed) {
     return [
@@ -106,6 +110,8 @@ export const getEmployer = (
     email: e.email,
     nationalRegistryId:
       e.companyNationalRegistryId ?? employerNationalRegistryId ?? '',
+    approverNationalRegistryId:
+      e.reviewerNationalRegistryId ?? employerReviewerNationalRegistryId ?? '',
   }))
 }
 
@@ -494,31 +500,16 @@ export const isDateInTheFuture = (date: string) => {
   return false
 }
 
-export const isParamsActionName = (params: any) => {
-  typeof params === 'string' &&
-  (params === 'period' ||
-    params === 'document' ||
-    params === 'documentPeriod' ||
-    params === 'empper' ||
-    params === 'employer')
-    ? (params as FileType)
-    : undefined
-  return params
-}
-
-export const checkActionName = (
-  application: ApplicationWithAttachments,
-  params: FileType | undefined = undefined,
-) => {
+export const getType = (application: ApplicationWithAttachments) => {
   const { actionName } = getApplicationAnswers(application.answers)
-  if (params) {
-    params === 'document' ||
-      params === 'documentPeriod' ||
-      params === 'period' ||
-      params === 'empper' ||
-      params === 'employer'
-    return params
+
+  // Check if we can get the the action name. Used when valiating application
+  const tmpActionName = getActionName(application)
+
+  if (tmpActionName) {
+    return tmpActionName
   }
+
   if (
     actionName === 'document' ||
     actionName === 'documentPeriod' ||
@@ -530,6 +521,7 @@ export const checkActionName = (
   ) {
     return actionName
   }
+
   return undefined
 }
 

@@ -18,12 +18,13 @@ import {
 } from '@island.is/judicial-system/types'
 
 import { Case } from '../models/case.model'
+import { DateLog } from '../models/dateLog.model'
 
-function canProsecutionUserAccessCase(
+const canProsecutionUserAccessCase = (
   theCase: Case,
   user: User,
   forUpdate = true,
-): boolean {
+): boolean => {
   // Check case type access
   if (user.role !== UserRole.PROSECUTOR && !isIndictmentCase(theCase.type)) {
     return false
@@ -40,6 +41,7 @@ function canProsecutionUserAccessCase(
       CaseState.ACCEPTED,
       CaseState.REJECTED,
       CaseState.DISMISSED,
+      CaseState.MAIN_HEARING,
     ].includes(theCase.state)
   ) {
     return false
@@ -66,7 +68,7 @@ function canProsecutionUserAccessCase(
   return true
 }
 
-function canDistrictCourtUserAccessCase(theCase: Case, user: User): boolean {
+const canDistrictCourtUserAccessCase = (theCase: Case, user: User): boolean => {
   // Check case type access
   if (
     ![
@@ -100,6 +102,7 @@ function canDistrictCourtUserAccessCase(theCase: Case, user: User): boolean {
       CaseState.ACCEPTED,
       CaseState.REJECTED,
       CaseState.DISMISSED,
+      CaseState.MAIN_HEARING,
     ].includes(theCase.state)
   ) {
     return false
@@ -113,7 +116,7 @@ function canDistrictCourtUserAccessCase(theCase: Case, user: User): boolean {
   return true
 }
 
-function canAppealsCourtUserAccessCase(theCase: Case): boolean {
+const canAppealsCourtUserAccessCase = (theCase: Case): boolean => {
   // Check case type access
   if (!isRestrictionCase(theCase.type) && !isInvestigationCase(theCase.type)) {
     return false
@@ -150,11 +153,11 @@ function canAppealsCourtUserAccessCase(theCase: Case): boolean {
   return true
 }
 
-function canPrisonSystemUserAccessCase(
+const canPrisonSystemUserAccessCase = (
   theCase: Case,
   user: User,
   forUpdate = true,
-): boolean {
+): boolean => {
   // Prison system users cannot update cases
   if (forUpdate) {
     return false
@@ -209,7 +212,7 @@ function canPrisonSystemUserAccessCase(
   return true
 }
 
-function canDefenceUserAccessCase(theCase: Case, user: User): boolean {
+const canDefenceUserAccessCase = (theCase: Case, user: User): boolean => {
   // Check case state access
   if (
     ![
@@ -241,7 +244,7 @@ function canDefenceUserAccessCase(theCase: Case, user: User): boolean {
     const canDefenderAccessReceivedCase =
       isIndictmentCase(theCase.type) ||
       canDefenderAccessSubmittedCase ||
-      Boolean(theCase.courtDate)
+      Boolean(DateLog.arraignmentDate(theCase.dateLogs))
 
     if (!canDefenderAccessReceivedCase) {
       return false
@@ -266,11 +269,11 @@ function canDefenceUserAccessCase(theCase: Case, user: User): boolean {
   return true
 }
 
-export function canUserAccessCase(
+export const canUserAccessCase = (
   theCase: Case,
   user: User,
   forUpdate = true,
-): boolean {
+): boolean => {
   if (isProsecutionUser(user)) {
     return canProsecutionUserAccessCase(theCase, user, forUpdate)
   }

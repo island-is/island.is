@@ -87,7 +87,7 @@ const overwrite = (update: UpdateCase): UpdateCase => {
 
 export const fieldHasValue =
   (workingCase: Case) => (value: unknown, key: string) => {
-    const theKey = key as keyof UpdateCaseInput // loadash types are not better than this
+    const theKey = key as keyof UpdateCaseInput
 
     if (
       isChildKey(theKey) // check if key is f.example `judgeId`
@@ -114,6 +114,7 @@ export const formatUpdates = (
     if (entry.force) {
       return overwrite(entry)
     }
+
     return update(entry, workingCase)
   })
 

@@ -46,6 +46,15 @@ registerEnumType(RequestSharedWithDefender, {
 })
 
 @ObjectType()
+class DateLog {
+  @Field({ nullable: true })
+  readonly date?: string
+
+  @Field({ nullable: true })
+  readonly location?: string
+}
+
+@ObjectType()
 export class Case {
   @Field(() => ID)
   readonly id!: string
@@ -164,14 +173,14 @@ export class Case {
   @Field(() => SessionArrangements, { nullable: true })
   readonly sessionArrangements?: SessionArrangements
 
-  @Field({ nullable: true })
-  readonly courtDate?: string
+  @Field(() => DateLog, { nullable: true })
+  readonly arraignmentDate?: DateLog
+
+  @Field(() => DateLog, { nullable: true })
+  readonly courtDate?: DateLog
 
   @Field({ nullable: true })
   readonly courtLocation?: string
-
-  @Field({ nullable: true })
-  readonly courtRoom?: string
 
   @Field({ nullable: true })
   readonly courtStartDate?: string
@@ -397,4 +406,7 @@ export class Case {
 
   @Field({ nullable: true })
   readonly indictmentReturnedExplanation?: string
+
+  @Field({ nullable: true })
+  readonly postponedIndefinitelyExplanation?: string
 }

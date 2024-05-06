@@ -14,7 +14,6 @@ import {
   formatDOB,
 } from '@island.is/judicial-system/formatters'
 import {
-  CaseState,
   isDistrictCourtUser,
   isProsecutionUser,
 } from '@island.is/judicial-system/types'
@@ -33,7 +32,10 @@ import {
   SortButton,
 } from '@island.is/judicial-system-web/src/components/Table'
 import { table as tableStrings } from '@island.is/judicial-system-web/src/components/Table/Table.strings'
-import { CaseListEntry } from '@island.is/judicial-system-web/src/graphql/schema'
+import {
+  CaseListEntry,
+  CaseState,
+} from '@island.is/judicial-system-web/src/graphql/schema'
 import {
   directionType,
   sortableTableColumn,
@@ -46,6 +48,7 @@ import {
 import { compareLocaleIS } from '@island.is/judicial-system-web/src/utils/sortHelper'
 
 import MobileCase from './MobileCase'
+import { strings } from './ActiveCases.strings'
 import { cases as m } from './Cases.strings'
 import * as styles from './Cases.css'
 
@@ -91,7 +94,9 @@ const ActiveCases: React.FC<React.PropsWithChildren<Props>> = (props) => {
             return entry.defendants[0].name ?? ''
           }
           if (sortConfig.column === 'courtDate') {
-            return entry.courtDate ?? ''
+            return entry.postponedIndefinitelyExplanation
+              ? ''
+              : entry.courtDate ?? ''
           }
           return entry.created
         }
@@ -145,14 +150,16 @@ const ActiveCases: React.FC<React.PropsWithChildren<Props>> = (props) => {
                   )}: ${theCase.prosecutor?.name}`}
                 </Text>
               )}
-            {theCase.courtDate && (
-              <Text fontWeight={'medium'} variant="small">
-                {`${formatMessage(tableStrings.hearing)} ${format(
-                  parseISO(theCase.courtDate),
-                  'd.M.y',
-                )} kl. ${format(parseISO(theCase.courtDate), 'kk:mm')}`}
-              </Text>
-            )}
+            {theCase.postponedIndefinitelyExplanation
+              ? formatMessage(strings.postponed)
+              : theCase.courtDate && (
+                  <Text fontWeight={'medium'} variant="small">
+                    {`${formatMessage(tableStrings.hearing)} ${format(
+                      parseISO(theCase.courtDate),
+                      'd.M.y',
+                    )} kl. ${format(parseISO(theCase.courtDate), 'kk:mm')}`}
+                  </Text>
+                )}
           </MobileCase>
         </Box>
       ))}
@@ -327,22 +334,31 @@ const ActiveCases: React.FC<React.PropsWithChildren<Props>> = (props) => {
                     )}
                   </td>
                   <td className={styles.td}>
-                    {c.courtDate && (
-                      <>
-                        <Text>
-                          <Box component="span" className={styles.blockColumn}>
-                            {capitalize(
-                              format(parseISO(c.courtDate), 'EEEE d. LLLL y', {
-                                locale: localeIS,
-                              }),
-                            ).replace('dagur', 'd.')}
-                          </Box>
-                        </Text>
-                        <Text as="span" variant="small">
-                          kl. {format(parseISO(c.courtDate), 'kk:mm')}
-                        </Text>
-                      </>
-                    )}
+                    {c.postponedIndefinitelyExplanation
+                      ? formatMessage(strings.postponed)
+                      : c.courtDate && (
+                          <>
+                            <Text>
+                              <Box
+                                component="span"
+                                className={styles.blockColumn}
+                              >
+                                {capitalize(
+                                  format(
+                                    parseISO(c.courtDate),
+                                    'EEEE d. LLLL y',
+                                    {
+                                      locale: localeIS,
+                                    },
+                                  ),
+                                ).replace('dagur', 'd.')}
+                              </Box>
+                            </Text>
+                            <Text as="span" variant="small">
+                              kl. {format(parseISO(c.courtDate), 'kk:mm')}
+                            </Text>
+                          </>
+                        )}
                   </td>
                   <td className={styles.td}>
                     <AnimatePresence exitBeforeEnter initial={false}>

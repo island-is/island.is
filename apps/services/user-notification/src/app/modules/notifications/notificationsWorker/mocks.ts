@@ -5,10 +5,13 @@ import { createNationalId } from '@island.is/testing/fixtures'
 import { DelegationRecordDTO } from '@island.is/clients/auth/delegation-api'
 import { Features } from '@island.is/feature-flags'
 import type { User } from '@island.is/auth-nest-tools'
+import type { ConfigType } from '@island.is/nest/config'
 
+import { UserNotificationsConfig } from '../../../../config'
 import { HnippTemplate } from '../dto/hnippTemplate.response'
 
 export const mockFullName = 'mockFullName'
+export const delegationSubjectId = 'delegation-subject-id'
 
 interface MockUserProfileDto extends UserProfileDto {
   name: string
@@ -38,8 +41,8 @@ export const userWithDelegations2: MockUserProfileDto = {
   isRestricted: false,
 }
 
-export const userWitNoDelegations: MockUserProfileDto = {
-  name: 'userWitNoDelegations',
+export const userWithNoDelegations: MockUserProfileDto = {
+  name: 'userWithNoDelegations',
   nationalId: createNationalId('person'),
   mobilePhoneNumber: '1234567',
   email: 'email1@email.com',
@@ -98,20 +101,30 @@ export const userWithSendToDelegationsFeatureFlagDisabled: MockUserProfileDto =
     isRestricted: false,
   }
 
-export const mockHnippTemplate: HnippTemplate = {
-  templateId: 'HNIPP.DEMO.ID',
-  notificationTitle: 'Demo title ',
-  notificationBody: 'Demo body {{arg1}}',
-  notificationDataCopy: 'Demo data copy',
-  clickAction: 'Demo click action {{arg2}}',
-  category: 'Demo category',
-  args: ['arg1', 'arg2'],
-}
+export const mockTemplateId = 'HNIPP.DEMO.ID'
 
-const userProfiles = [
+export const getMockHnippTemplate = ({
+  templateId = mockTemplateId,
+  notificationTitle = 'Demo title ',
+  notificationBody = 'Demo body {{arg1}}',
+  notificationDataCopy = 'Demo data copy',
+  clickActionUrl = 'https://island.is/minarsidur/postholf',
+  category = 'Demo category',
+  args = ['arg1', 'arg2'],
+}: Partial<HnippTemplate>): HnippTemplate => ({
+  templateId,
+  notificationTitle,
+  notificationBody,
+  notificationDataCopy,
+  clickActionUrl,
+  category,
+  args,
+})
+
+export const userProfiles = [
   userWithDelegations,
   userWithDelegations2,
-  userWitNoDelegations,
+  userWithNoDelegations,
   userWithEmailNotificationsDisabled,
   userWithDocumentNotificationsDisabled,
   userWithFeatureFlagDisabled,
@@ -122,21 +135,21 @@ const delegations: Record<string, DelegationRecordDTO[]> = {
   [userWithDelegations.nationalId]: [
     {
       fromNationalId: userWithDelegations.nationalId,
-      toNationalId: userWitNoDelegations.nationalId,
-      subjectId: faker.datatype.uuid(),
+      toNationalId: userWithNoDelegations.nationalId,
+      subjectId: null, // test that 3rd party login is not used if subjectId is null
     },
   ],
   [userWithDelegations2.nationalId]: [
     {
       fromNationalId: userWithDelegations2.nationalId,
       toNationalId: userWithDelegations.nationalId,
-      subjectId: faker.datatype.uuid(),
+      subjectId: delegationSubjectId,
     },
   ],
   [userWithSendToDelegationsFeatureFlagDisabled.nationalId]: [
     {
       fromNationalId: userWithSendToDelegationsFeatureFlagDisabled.nationalId,
-      toNationalId: userWitNoDelegations.nationalId,
+      toNationalId: userWithNoDelegations.nationalId,
       subjectId: faker.datatype.uuid(),
     },
   ],
@@ -149,20 +162,6 @@ export class MockDelegationsService {
     xQueryNationalId: string
   }) {
     return { data: delegations[xQueryNationalId] ?? [] }
-  }
-}
-
-export class MockV2UsersApi {
-  userProfileControllerFindUserProfile({
-    xParamNationalId,
-  }: {
-    xParamNationalId: string
-  }) {
-    return Promise.resolve(
-      userProfiles.find(
-        (u) => u.nationalId === xParamNationalId,
-      ) as UserProfileDto,
-    )
   }
 }
 
@@ -191,4 +190,15 @@ export class MockNationalRegistryV3ClientService {
       fulltNafn: user?.name ?? mockFullName,
     }
   }
+}
+
+export const MockUserNotificationsConfig: ConfigType<
+  typeof UserNotificationsConfig
+> = {
+  isWorker: true,
+  firebaseCredentials: 'firebase-credentials',
+  contentfulAccessToken: 'contentful-access-token',
+  emailFromAddress: 'development@island.is',
+  isConfigured: true,
+  servicePortalClickActionUrl: 'https://island.is/minarsidur',
 }

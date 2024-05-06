@@ -64,7 +64,7 @@ export class DocumentResolverV2 {
         this.documentServiceV2.findDocumentById(user.nationalId, input.id),
       )
     } catch (e) {
-      this.logger.error('failed to get single document', {
+      this.logger.info('failed to get single document', {
         category: LOG_CATEGORY,
         provider: input.provider,
         error: e,
@@ -157,7 +157,7 @@ export class DocumentResolverV2 {
         input.action,
       )
     } catch (e) {
-      this.logger.error('failed to post document action', {
+      this.logger.info('failed to post document action', {
         category: LOG_CATEGORY,
         action: input.action,
         error: e,
