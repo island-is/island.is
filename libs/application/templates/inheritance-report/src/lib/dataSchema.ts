@@ -584,13 +584,28 @@ export const inheritanceReportSchema = z.object({
   spouseTotal: z.number(),
   estateTotal: z.number(),
   netPropertyForExchange: z.number(),
-  hasCustomSpouseSharePercentage: z.array(z.enum([YES])).optional(),
-  customSpouseSharePercentage: z
-    .string()
-    .refine((v) => {
-      const val = valueToNumber(v)
-      return val >= 0 && val <= 100
+  customShare: z
+    .object({
+      hasCustomSpouseSharePercentage: z.array(z.enum([YES])).optional(),
+      customSpouseSharePercentage: z.string(),
     })
+    .refine(
+      ({ hasCustomSpouseSharePercentage, customSpouseSharePercentage }) => {
+        if (
+          hasCustomSpouseSharePercentage &&
+          hasCustomSpouseSharePercentage.length > 0
+        ) {
+          const val = valueToNumber(customSpouseSharePercentage)
+          return val >= 50 && val <= 100
+        }
+
+        return true
+      },
+      {
+        path: ['customSpouseSharePercentage'],
+        params: m.assetsToShareHasCustomSpousePercentageError,
+      },
+    )
     .optional(),
 
   /* einkaskipti */

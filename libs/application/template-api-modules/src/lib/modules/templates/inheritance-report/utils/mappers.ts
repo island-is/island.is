@@ -281,8 +281,11 @@ export const expandAnswers = (
     spouseTotal: answers.spouseTotal ?? 0,
     estateTotal: answers.estateTotal ?? 0,
     netPropertyForExchange: answers.netPropertyForExchange ?? 0,
-    hasCustomSpouseSharePercentage:
-      answers.hasCustomSpouseSharePercentage ?? [],
-    customSpouseSharePercentage: answers.customSpouseSharePercentage ?? '50',
+    customShare: {
+      hasCustomSpouseSharePercentage:
+        answers?.customShare?.hasCustomSpouseSharePercentage ?? [],
+      customSpouseSharePercentage:
+        answers?.customShare?.customSpouseSharePercentage ?? '50',
+    },
   }
 }
