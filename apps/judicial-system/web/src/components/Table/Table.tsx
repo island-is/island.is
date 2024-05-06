@@ -31,8 +31,8 @@ interface TableProps {
     }
   }[]
   data: CaseListEntry[]
-  columns: { cell: (row) => ReactNode }[]
-  generateContextMenuItems?: (row) => ContextMenuItem[]
+  columns: { cell: (row: CaseListEntry) => ReactNode }[]
+  generateContextMenuItems?: (row: CaseListEntry) => ContextMenuItem[]
 }
 
 export const useTable = () => {
