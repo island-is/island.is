@@ -4,7 +4,6 @@ import {
   UserRole,
 } from '@island.is/judicial-system/types'
 
-import { CaseListEntry } from '../../case-list'
 import { Case } from '../models/case.model'
 
 const getDays = (days: number) => days * 24 * 60 * 60 * 1000
