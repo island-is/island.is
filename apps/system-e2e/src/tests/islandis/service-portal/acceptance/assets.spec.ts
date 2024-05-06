@@ -28,7 +28,7 @@ test.describe('MS - Fasteignir', () => {
     // Arrange
     const page = await context.newPage()
 
-    await setupXroadMocks()
+    await setupXroadMocks(['assets'])
     await disableI18n(page)
 
     await page.goto(icelandicAndNoPopupUrl('/minarsidur/eignir/fasteignir'))
@@ -52,7 +52,7 @@ test.describe('MS - Fasteignir', () => {
     // Arrange
     const page = await context.newPage()
 
-    await setupXroadMocks()
+    await setupXroadMocks(['assets'])
     await disableI18n(page)
 
     await page.goto(

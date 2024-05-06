@@ -43,7 +43,7 @@ test.describe('MS - Health', () => {
 
   test('dentist registration', async () => {
     const page = await context.newPage()
-    await setupXroadMocks()
+    await setupXroadMocks(['health-insurance'])
     await disableI18n(page)
 
     await test.step('should display registration button', async () => {
@@ -99,7 +99,7 @@ test.describe('MS - Health', () => {
 
   test('health center registration', async () => {
     const page = await context.newPage()
-    await setupXroadMocks()
+    await setupXroadMocks(['health-insurance'])
     await disableI18n(page)
 
     await test.step('should display registration button', async () => {

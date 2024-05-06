@@ -28,7 +28,7 @@ test.describe('MS - Social Insurance', () => {
     const page = await context.newPage()
 
     await disableI18n(page)
-    await setupXroadMocks()
+    await setupXroadMocks(['social-insurance'])
 
     await test.step('should display data when switching years', async () => {
       // Arrange

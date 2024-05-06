@@ -18,7 +18,7 @@ test.describe('MS - Licenses', () => {
       phoneNumber: '0102399',
       idsLoginOn: true,
     })
-    await setupXroadMocks()
+    await setupXroadMocks(['licenses'])
   })
 
   test('licenses', async () => {
