@@ -8,10 +8,10 @@ defaults:
   run:
     shell: bash
 
-concurrency:
-  # See https://docs.github.com/en/actions/using-workflows/workflow-syntax-for-github-actions#example-using-a-fallback-value
-  group: pullrequest-${{ github.head_ref || github.run_id }}
-  cancel-in-progress: true
+# concurrency:
+#   # See https://docs.github.com/en/actions/using-workflows/workflow-syntax-for-github-actions#example-using-a-fallback-value
+#   group: pullrequest-${{ github.head_ref || github.run_id }}
+#   cancel-in-progress: true
 
 env:
   COMPOSE_HTTP_TIMEOUT: 180
@@ -120,12 +120,6 @@ jobs:
       - name: Install cypress
         if: steps.cypress-check.outcome != 'success'
         run: npx cypress install
-
-      - name: Run codegen
-        if: steps.prepare-cache.outputs.generated-files-cache-hit != 'true'
-        run: |
-          node --version
-          tar zcvf generated_files.tar.gz $(./scripts/ci/get-files-touched-by.sh yarn codegen --skip-cache | xargs realpath --relative-to $(pwd))
 
       # - name: Security audit Node modules
       #   run: ./scripts/ci/20_security-audit.sh
