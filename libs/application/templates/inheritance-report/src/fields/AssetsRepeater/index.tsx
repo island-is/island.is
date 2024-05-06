@@ -216,7 +216,7 @@ export const AssetsRepeater: FC<
           onClick={handleAddRepeaterFields}
           size="small"
         >
-          {props.repeaterButtonText}
+          {formatMessage(props.repeaterButtonText)}
         </Button>
       </Box>
       {!!fields.length && props.sumField && (
@@ -274,7 +274,7 @@ const FieldComponent = ({
     id: fieldName,
     name: fieldName,
     format: field.format,
-    label: field.title,
+    label: formatMessage(field.title),
     defaultValue: '',
     type: field.type,
     placeholder: field.placeholder,
