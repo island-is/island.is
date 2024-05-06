@@ -172,9 +172,10 @@ export class InternalProgramService {
         const programWhere: {
           externalId: string
           specializationExternalId?: string
-        } = { externalId: programObj.externalId }
-        if (specialization?.externalId) {
-          programWhere.specializationExternalId = specialization.externalId
+          universityId: string
+        } = {
+          externalId: programObj.externalId,
+          universityId: programObj.universityId,
         }
 
         // 1. UPSERT program (make sure tmpActive becomes true)
