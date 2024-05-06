@@ -989,6 +989,28 @@ const useSections = (
                       )
                   : undefined,
             },
+            {
+              name: formatMessage(sections.indictmentsCourtSection.summary),
+              isActive: isActive(constants.INDICTMENTS_SUMMARY_ROUTE),
+              href: `${constants.INDICTMENTS_SUMMARY_ROUTE}/${id}`,
+              onClick:
+                !isActive(constants.INDICTMENTS_SUMMARY_ROUTE) &&
+                validateFormStepper(
+                  isValid,
+                  [
+                    constants.INDICTMENTS_OVERVIEW_ROUTE,
+                    constants.INDICTMENTS_RECEPTION_AND_ASSIGNMENT_ROUTE,
+                    constants.INDICTMENTS_SUBPOENA_ROUTE,
+                    constants.INDICTMENTS_DEFENDER_ROUTE,
+                    constants.INDICTMENTS_CONCLUSION_ROUTE,
+                  ],
+                  workingCase,
+                ) &&
+                onNavigationTo
+                  ? async () =>
+                      await onNavigationTo(constants.INDICTMENTS_SUMMARY_ROUTE)
+                  : undefined,
+            },
           ]
         : [],
     }

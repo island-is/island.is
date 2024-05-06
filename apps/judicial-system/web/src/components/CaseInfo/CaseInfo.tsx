@@ -67,7 +67,7 @@ interface Props {
   workingCase: Case
 }
 
-const Defendants: React.FC<React.PropsWithChildren<Props>> = ({
+export const Defendants: React.FC<React.PropsWithChildren<Props>> = ({
   workingCase,
 }) => {
   const { defendants, type } = workingCase
@@ -82,6 +82,16 @@ const Defendants: React.FC<React.PropsWithChildren<Props>> = ({
         flatMap(defendants, (d) => (d.name ? [d.name] : [])),
         formatMessage(core.and),
       )}
+    />
+  )
+}
+
+export const Prosecutor: React.FC<Props> = ({ workingCase }) => {
+  const { formatMessage } = useIntl()
+  return (
+    <Entry
+      label={formatMessage(core.prosecutorPerson)}
+      value={workingCase.prosecutor?.institution?.name || ''}
     />
   )
 }
