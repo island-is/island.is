@@ -216,8 +216,9 @@ const UniversitySearch: Screen<UniversitySearchProps> = ({
   }, [])
 
   const fuseOptions = {
-    threshold: 0.3,
+    threshold: 0.2,
     includeScore: true,
+    ignoreLocation: true,
     keys: [
       {
         name: `name${locale === 'is' ? 'Is' : 'En'}`,
@@ -225,6 +226,10 @@ const UniversitySearch: Screen<UniversitySearchProps> = ({
       },
       {
         name: `specializationName${locale === 'is' ? 'Is' : 'En'}`,
+        weight: 0.75,
+      },
+      {
+        name: `description${locale === 'is' ? 'Is' : 'En'}`,
         weight: 0.75,
       },
       'degreeType',
@@ -607,6 +612,8 @@ const UniversitySearch: Screen<UniversitySearchProps> = ({
 
     return occurrenceMap
   }
+
+  console.log(filteredResults)
 
   return (
     <Box>
