@@ -253,7 +253,7 @@ export const VehicleMileageScreen: NavigationFunctionComponent<{
         }
         onClosePress={() => Navigation.dismissModal(componentId)}
         style={{ marginHorizontal: 16 }}
-        showLoading={res.loading}
+        showLoading={res.loading && !!res.data}
       />
       <FlatList
         data={data}
