@@ -35,12 +35,12 @@ export const mapIndictmentCaseStateToTagVariant = (
 ): { color: TagVariant; text: string } => {
   switch (state) {
     case CaseState.ACCEPTED:
-      return indictmentReviewer
-        ? { color: 'mint', text: formatMessage(strings.beingReviewed) }
-        : {
-            color: 'purple',
-            text: formatMessage(strings.new),
-          }
+      return {
+        color: indictmentReviewer ? 'mint' : 'purple',
+        text: formatMessage(
+          indictmentReviewer ? strings.beingReviewed : strings.new,
+        ),
+      }
     default:
       return { color: 'white', text: formatMessage(strings.unknown) }
   }
