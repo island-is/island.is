@@ -10,4 +10,5 @@ export {
   prisonSystemStaffRule,
   adminRule,
   defenderRule,
+  publicProsecutorStaffRule,
 } from './rolesRules'
