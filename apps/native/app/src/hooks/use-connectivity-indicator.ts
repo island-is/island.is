@@ -3,7 +3,7 @@ import { useNetInfo } from '@react-native-community/netinfo'
 import isEqual from 'lodash/isEqual'
 
 import { theme } from '@ui'
-import { useCallback, useEffect, useRef } from 'react'
+import { useCallback, useEffect, useMemo, useRef } from 'react'
 import { Navigation, OptionsTopBar } from 'react-native-navigation'
 import { OptionsTopBarButton } from 'react-native-navigation/lib/src/interfaces/Options'
 
@@ -56,7 +56,7 @@ type UseConnectivityIndicatorProps<Data> = {
  * @param refetching - A boolean value indicating whether the app is currently refetching data.
  * @param extraData - Additional data to trigger navigation update
  */
-export const useConnectivityIndicator = <Data extends Record<string, unknown>>({
+export const useConnectivityIndicator = <Data extends Array<unknown>>({
   componentId,
   rightButtons = [],
   queryResult,
@@ -99,7 +99,8 @@ export const useConnectivityIndicator = <Data extends Record<string, unknown>>({
       // Make sure update the navigation buttons if extraData is passed
       updateNavigationButtons()
     }
-  }, [extraData])
+    // Since extraData is an array of unknown items, we need to stringify it to avoid unnecessary re-renders.
+  }, [JSON.stringify(extraData)])
 
   useEffect(() => {
     // We need to deep compare the query result to avoid unnecessary re-renders

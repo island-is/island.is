@@ -226,9 +226,7 @@ export const DocumentDetailScreen: NavigationFunctionComponent<{
       archived: doc.data?.archived ?? false,
       bookmarked: doc.data?.bookmarked ?? false,
     }),
-    extraData: {
-      data: doc.data,
-    },
+    extraData: [doc.data],
   })
 
   useNavigationButtonPress(({ buttonId }) => {
