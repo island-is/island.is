@@ -7,7 +7,7 @@ import { CleanupService } from './cleanup.service'
 
 export const worker = async () => {
   try {
-    logger.info('Cleanup worker started.')
+    logger.info('Cleanup worker starting.')
     const app = await NestFactory.createApplicationContext(CleanupWorkerModule)
     app.enableShutdownHooks()
     await app.get(CleanupService).run()

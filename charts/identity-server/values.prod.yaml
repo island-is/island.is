@@ -518,8 +518,7 @@ services-auth-ids-api-cleanup:
     requests:
       cpu: '100m'
       memory: '256Mi'
-  schedule:
-    schedule: '0 3 * * *'
+  schedule: '0 3 * * *'
   secrets:
     CONFIGCAT_SDK_KEY: '/k8s/configcat/CONFIGCAT_SDK_KEY'
     DB_PASS: '/k8s/services-auth-ids-api-cleanup/DB_PASSWORD'
