@@ -95,12 +95,6 @@ export const useConnectivityIndicator = <Data extends Record<string, unknown>>({
   }, [isConnected])
 
   useEffect(() => {
-    if (netInfo.isConnected && !pastIsConnected) {
-      resetConnectionState()
-    }
-  }, [netInfo.isConnected])
-
-  useEffect(() => {
     if (extraData) {
       // Make sure update the navigation buttons if extraData is passed
       updateNavigationButtons()
