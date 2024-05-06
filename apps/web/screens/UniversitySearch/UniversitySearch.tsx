@@ -613,8 +613,6 @@ const UniversitySearch: Screen<UniversitySearchProps> = ({
     return occurrenceMap
   }
 
-  console.log(filteredResults)
-
   return (
     <Box>
       {organizationPage && (
