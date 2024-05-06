@@ -13,7 +13,7 @@ export function withErrorLog({
   fetch,
   logger,
 }: ErrorLogOptions): MiddlewareAPI {
-  return (request) => {
+  return async (request) => {
     return fetch(request).catch((error: Error) => {
       const logLevel =
         error instanceof FetchError && error.status < 500 ? 'warn' : 'error'
