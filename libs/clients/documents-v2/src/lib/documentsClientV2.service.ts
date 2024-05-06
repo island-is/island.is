@@ -69,15 +69,13 @@ export class DocumentsClientV2Service {
     customerId: string,
     documentId: string,
   ): Promise<DocumentDto | null> {
-    const res = await this.api.customersDocument({
+    const document = await this.api.customersDocument({
       kennitala: customerId,
       messageId: documentId,
       authenticationType: 'HIGH',
     })
 
-    const document = mapToDocument(res)
-
-    return document
+    return mapToDocument(res)
   }
 
   async getPageNumber(
