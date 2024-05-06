@@ -65,14 +65,32 @@ runs:
     #     echo "mobile-node-modules-key=$mobile_node_modules_key" >> $GITHUB_OUTPUT
     #     echo "generated-files-key=$generated_files_key" >> $GITHUB_OUTPUT
 
-    - name: Prepare cache
-      id: prepare-cache
+    # - name: Prepare NX node-modules cache
+    #   id: prepare-nx-cache
+    #   if: ${{ inputs.path == 'node_modules' }}
+    #   continue-on-error: true
+    #   uses: ./.github/actions/cache
+    #   with:
+    #     path: ${{ inputs.path }}
+    #     key: ${{ inputs.key }}
+
+    - name: Prepare node-modules cache
+      id: prepare-node-modules
+      if: ${{ contains(inputs.path, 'node_modules') }}
       continue-on-error: true
       uses: ./.github/actions/cache
       with:
         path: ${{ inputs.path }}
         key: ${{ inputs.key }}
 
+    - name: Prepare generated-files cache
+      id: prepare-generated-files
+      if: ${{ contains(inputs.path, 'generated_files.tar.gz') }}
+      continue-on-error: true
+      uses: ./.github/actions/cache
+      with:
+        path: ${{ inputs.path }}
+        key: ${{ inputs.key }}
     # - name: Cache for Mobile NodeJS dependencies - host OS
     #   id: mobile-node-modules
     #   continue-on-error: true
@@ -93,33 +111,52 @@ runs:
       id: check-cache-outcome
       shell: bash
       run: |
-        echo "checking ${{ inputs.path }} outcome"
-        echo "outcome: ${{ steps.prepare-cache.outputs.outcome }}"
+        echo "Checking cache outcome for ${{ inputs.path }}"
+        echo "node-modules cache outcome: ${{ steps.prepare-node-modules.outputs.outcome }}"
+        echo "generated-files cache outcome: ${{ steps.prepare-generated-files.outputs.outcome }}"
+
+        if [[ "${{ steps.prepare-node-modules.outputs.outcome }}" == "success" ]] || [[ "${{ steps.prepare-generated-files.outputs.outcome }}" == "success" ]]; then
+          CACHE_OUTCOME="success"
+        else
+          CACHE_OUTCOME="failure"
+        fi
+
+        echo "Overall Cache outcome: $CACHE_OUTCOME"
+        echo "outcome=$CACHE_OUTCOME" >> $GITHUB_OUTPUT
 
     - name: Check cache hit
       id: check-cache-hit
       shell: bash
       run: |
-        echo "checking ${{ inputs.path }} cache hit"
-        echo "success: ${{ steps.prepare-cache.outputs.cache-hit }}"
-        if [[ "${{ steps.prepare-cache.outputs.cache-hit }}" == "true" ]]; then
-          echo "cache-hit=true" >> $GITHUB_OUTPUT
+        echo "Checking cache hit for ${{ inputs.path }}"
+        echo "node-modules cache hit: ${{ steps.prepare-node-modules.outputs.cache-hit }}"
+        echo "generated-files cache outcome: ${{ steps.prepare-generated-files.outputs.cache-hit }}"
+
+        if [[ "${{ steps.prepare-node-modules.outputs.cache-hit }}" == "true" ]] || [[ "${{ steps.prepare-generated-files.outputs.cache-hit }}" == "true" ]]; then
+          CACHE_HIT="true"
         else
-          echo "cache-hit=false" >> $GITHUB_OUTPUT
+          CACHE_HIT="false"
         fi
+
+        echo "Overall Cache hit: $CACHE_HIT"
+        echo "cache-hit=$CACHE_HIT" >> $GITHUB_OUTPUT
 
     - name: Check cache success
       id: check-cache-success
       shell: bash
       run: |
-        echo "checking ${{ inputs.path }} cache hit"
-        echo "success: ${{ steps.prepare-cache.outputs.success }}"
-        if [[ "${{ steps.prepare-cache.outputs.success }}" == "true" ]]; then
-          echo "success=true" >> $GITHUB_OUTPUT
+        echo "Checking cache success for ${{ inputs.path }}"
+        echo "node-modules cache success: ${{ steps.prepare-node-modules.outputs.success }}"
+        echo "generated-files cache success: ${{ steps.prepare-generated-files.outputs.success }}"
+
+        if [[ "${{ steps.prepare-node-modules.outputs.success }}" == "true" ]] || [[ "${{ steps.prepare-generated-files.outputs.success }}" == "true" ]]; then
+          CACHE_SUCCESS="true"
         else
-          echo "success=false" >> $GITHUB_OUTPUT
-          exit 1
+          CACHE_SUCCESS="false"
         fi
+
+        echo "Overall Cache success: $CACHE_SUCCESS"
+        echo "success=$CACHE_SUCCESS" >> $GITHUB_OUTPUT
     #
     # - name: Check node-modules cache success
     #   id: check-node-modules-cache
@@ -147,7 +184,7 @@ runs:
 
     - name: Building NodeJS dependencies
       shell: bash
-      if: ${{ steps.mobile-node-modules-cache.outputs.cache-hit != 'true' || steps.node-modules-cache.outputs.cache-hit != 'true' }}
+      if: ${{ steps.check-cache-hit.outputs.cache-hit != 'true' && contains(inputs.path, 'node_modules') }}
       run: ./scripts/ci/10_prepare-host-deps.sh
 
     - name: Run codegen
@@ -171,14 +208,14 @@ runs:
       if: always()
       shell: bash
       run: |
-        if [[ "${{ steps.prepare-cache.outputs.success }}" == "true" ]]
+        if [[ "${{ steps.check-cache-success.outputs.success }}" == "true" ]]
         then
           echo "success=true" >> $GITHUB_OUTPUT
         else
           echo "success=false" >> $GITHUB_OUTPUT
         fi
 
-        if [[ "${{ steps.prepare-cache.outputs.cache-hit }}" == "true" ]]
+        if [[ "${{ steps.check-cache-hit.outputs.cache-hit }}" == "true" ]]
         then
           echo "cache-hit=true" >> $GITHUB_OUTPUT
         else
