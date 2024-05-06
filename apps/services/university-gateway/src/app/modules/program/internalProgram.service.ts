@@ -178,6 +178,10 @@ export class InternalProgramService {
           universityId: programObj.universityId,
         }
 
+        if (specialization?.externalId) {
+          programWhere.specializationExternalId = specialization.externalId
+        }
+
         // 1. UPSERT program (make sure tmpActive becomes true)
         const oldProgramObj = await this.programModel.findOne({
           attributes: ['id'],
