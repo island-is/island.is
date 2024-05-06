@@ -164,7 +164,7 @@ export const IndictmentOverview = () => {
           previousUrl={`${constants.CASES_ROUTE}`}
           nextIsLoading={isLoadingWorkingCase}
           nextIsDisabled={!selectedIndictmentReviewer || isLoadingWorkingCase}
-          onNextButtonClick={() => assignReviewer()}
+          onNextButtonClick={assignReviewer}
           nextButtonText={fm(core.continue)}
         />
       </FormContentContainer>
