@@ -776,13 +776,13 @@ const ParentalLeaveTemplate: ApplicationTemplate<
               displayStatus: 'warning',
             },
             historyLogs: [
-              {
-                onEvent: DefaultEvents.REJECT,
-                logMessage: '', //statesMessages.editHistoryLogMessage,
-              },
+              // {
+              //   onEvent: DefaultEvents.REJECT,
+              //   logMessage: '', //statesMessages.editHistoryLogMessage,
+              // },
               {
                 onEvent: DefaultEvents.APPROVE,
-                logMessage: 'Umsækjandi sótti um dvalarstyrk', //statesMessages.editHistoryLogMessage,
+                logMessage: statesMessages.residenceGrantSubmitted,
               },
             ],
           },
@@ -849,11 +849,10 @@ const ParentalLeaveTemplate: ApplicationTemplate<
                 onEvent: DefaultEvents.EDIT,
                 logMessage: statesMessages.editHistoryLogMessage,
               },
-              {
-                onEvent: DefaultEvents.SUBMIT,
-                logMessage: 'Bla Blú',
-                  //statesMessages.vinnumalastofnunApprovalSubmitHistoryLogMessage,
-              },
+              // {
+              //   onEvent: DefaultEvents.SUBMIT,
+              //   logMessage: statesMessages.vinnumalastofnunApprovalSubmitHistoryLogMessage,
+              // },
             ],
           },
           lifecycle: birthDayLifeCycle,

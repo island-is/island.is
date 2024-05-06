@@ -2918,6 +2918,12 @@ export const statesMessages = defineMessages({
     defaultMessage: 'Þú ert að sækja um dvalarstyrk.',
     description: 'You are applying for a residence grant',
   },
+  residenceGrantSubmitted: {
+    id: 'pl.application:residence.grant.submitted',
+    defaultMessage: 'Umsækjandi sótti um dvalarstyrk.',
+    description: 'Applicant applied for residence grant',
+  },
+
 
   otherParentRequestApprovalTitle: {
     id: 'pl.application:otherParentRequestApproval.title',
