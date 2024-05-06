@@ -1,13 +1,12 @@
 import { QueryResult } from '@apollo/client'
-import { useNetInfo } from '@react-native-community/netinfo'
-import isEqual from 'lodash/isEqual'
 
 import { theme } from '@ui'
-import { useCallback, useEffect, useMemo, useRef } from 'react'
+import isEqual from 'lodash/isEqual'
+import { useEffect, useRef } from 'react'
 import { Navigation, OptionsTopBar } from 'react-native-navigation'
 import { OptionsTopBarButton } from 'react-native-navigation/lib/src/interfaces/Options'
 
-import { useOfflineActions, useOfflineStore } from '../stores/offline-store'
+import { useOfflineStore } from '../stores/offline-store'
 import { ButtonRegistry as BR } from '../utils/component-registry'
 import { isDefined } from '../utils/is-defined'
 import { testIDs } from '../utils/test-ids'
@@ -63,28 +62,23 @@ export const useConnectivityIndicator = <Data extends Array<unknown>>({
   refetching = false,
   extraData,
 }: UseConnectivityIndicatorProps<Data>) => {
-  const netInfo = useNetInfo()
   const pastIsConnected = useOfflineStore(
     ({ pastIsConnected }) => pastIsConnected,
   )
   const isConnected = useOfflineStore(({ isConnected }) => isConnected)
-  const { resetConnectionState } = useOfflineActions()
   const prevQueryResultRef = useRef<PickedQueryResult | PickedQueryResult[]>()
 
-  const updateNavigationButtons = useCallback(
-    (showLoading = false) => {
-      Navigation.mergeOptions(componentId, {
-        topBar: {
-          rightButtons: [
-            ...rightButtons,
-            isConnected && showLoading ? loadingButton : undefined,
-            !isConnected ? offlineButton : undefined,
-          ].filter(isDefined),
-        },
-      })
-    },
-    [componentId, isConnected, rightButtons],
-  )
+  const updateNavigationButtons = (showLoading = false) => {
+    Navigation.mergeOptions(componentId, {
+      topBar: {
+        rightButtons: [
+          ...rightButtons,
+          isConnected && showLoading ? loadingButton : undefined,
+          !isConnected ? offlineButton : undefined,
+        ].filter(isDefined),
+      },
+    })
+  }
 
   useEffect(() => {
     if (!isConnected || (isConnected && isConnected !== pastIsConnected)) {
