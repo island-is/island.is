@@ -1,4 +1,7 @@
-import React, { useState, useEffect } from 'react'
+import React, { useEffect, useState } from 'react'
+import NextLink from 'next/link'
+import { useRouter } from 'next/router'
+
 import {
   Breadcrumbs,
   GridColumn,
@@ -8,22 +11,21 @@ import {
   Stack,
   Text,
 } from '@island.is/island-ui/core'
-import { withMainLayout } from '@island.is/web/layouts/main'
-import { Box, Button, Table as T, Pagination } from '@island.is/island-ui/core'
-import { Screen } from '../../types'
-import { useRouter } from 'next/router'
-import { useGetPetitionList, useGetPetitionListEndorsements } from './queries'
-import { LinkType, linkResolver, useNamespace } from '@island.is/web/hooks'
-import { SidebarLayout } from '@island.is/web/screens/Layouts/SidebarLayout'
-import NextLink from 'next/link'
+import { Box, Button, Pagination, Table as T } from '@island.is/island-ui/core'
 import { InstitutionPanel } from '@island.is/web/components'
 import {
   GetNamespaceQuery,
   QueryGetNamespaceArgs,
 } from '@island.is/web/graphql/schema'
-import { GET_NAMESPACE_QUERY } from '@island.is/web/screens/queries'
+import { linkResolver, LinkType, useNamespace } from '@island.is/web/hooks'
 import { useI18n } from '@island.is/web/i18n'
+import { withMainLayout } from '@island.is/web/layouts/main'
+import { SidebarLayout } from '@island.is/web/screens/Layouts/SidebarLayout'
+import { GET_NAMESPACE_QUERY } from '@island.is/web/screens/queries'
+
+import { Screen } from '../../types'
 import PetitionSkeleton from './PetitionSkeleton'
+import { useGetPetitionList, useGetPetitionListEndorsements } from './queries'
 import { formatDate, getBaseUrl, pageSize } from './utils'
 
 interface PetitionViewProps {
@@ -166,57 +168,61 @@ const PetitionView: Screen<PetitionViewProps> = ({ namespace }) => {
                 <Text variant="default">{listEndorsements.totalCount}</Text>
               </GridColumn>
             </GridRow>
-            <Box marginTop={6} marginBottom={8}>
-              <Button
-                variant="primary"
-                iconType="outline"
-                icon="open"
-                onClick={() =>
-                  window?.open(`${getBaseUrl()}/${list.meta.applicationId}`)
-                }
-              >
-                {n('putMyNameOnTheList', 'Setja nafn mitt á þennan lista')}
-              </Button>
-            </Box>
-            <T.Table>
-              <T.Head>
-                <T.Row>
-                  <T.HeadData>{n('signedDate', 'Dagsetning')}</T.HeadData>
-                  <T.HeadData>{n('name', 'Nafn')}</T.HeadData>
-                </T.Row>
-              </T.Head>
-              <T.Body>
-                {loadingEndorsements &&
-                  Array.from({ length: 10 }, (_, i) => (
-                    <T.Row key={i}>
-                      <T.Data>
-                        <SkeletonLoader height={20} />
-                      </T.Data>
-                      <T.Data>
-                        <SkeletonLoader height={20} />
-                      </T.Data>
+            {list.closedDate && new Date() <= new Date(list.closedDate) && (
+              <>
+                <Box marginTop={6} marginBottom={8}>
+                  <Button
+                    variant="primary"
+                    iconType="outline"
+                    icon="open"
+                    onClick={() =>
+                      window?.open(`${getBaseUrl()}/${list.meta.applicationId}`)
+                    }
+                  >
+                    {n('putMyNameOnTheList', 'Setja nafn mitt á þennan lista')}
+                  </Button>
+                </Box>
+                <T.Table>
+                  <T.Head>
+                    <T.Row>
+                      <T.HeadData>{n('signedDate', 'Dagsetning')}</T.HeadData>
+                      <T.HeadData>{n('name', 'Nafn')}</T.HeadData>
                     </T.Row>
-                  ))}
-                {!loadingEndorsements &&
-                  listEndorsements.data
-                    // eslint-disable-next-line @typescript-eslint/ban-ts-comment
-                    // @ts-ignore make web strict
-                    ?.map((petition) => {
-                      return (
-                        <T.Row key={petition.id}>
-                          <T.Data text={{ variant: 'medium' }}>
-                            {formatDate(petition.created)}
+                  </T.Head>
+                  <T.Body>
+                    {loadingEndorsements &&
+                      Array.from({ length: 10 }, (_, i) => (
+                        <T.Row key={i}>
+                          <T.Data>
+                            <SkeletonLoader height={20} />
                           </T.Data>
-                          <T.Data text={{ variant: 'medium' }}>
-                            {petition.meta.fullName
-                              ? petition.meta.fullName
-                              : n('noName', 'Nafn ekki skráð')}
+                          <T.Data>
+                            <SkeletonLoader height={20} />
                           </T.Data>
                         </T.Row>
-                      )
-                    })}
-              </T.Body>
-            </T.Table>
+                      ))}
+                    {!loadingEndorsements &&
+                      listEndorsements.data
+                        // eslint-disable-next-line @typescript-eslint/ban-ts-comment
+                        // @ts-ignore make web strict
+                        ?.map((petition) => {
+                          return (
+                            <T.Row key={petition.id}>
+                              <T.Data text={{ variant: 'medium' }}>
+                                {formatDate(petition.created)}
+                              </T.Data>
+                              <T.Data text={{ variant: 'medium' }}>
+                                {petition.meta.fullName
+                                  ? petition.meta.fullName
+                                  : n('noName', 'Nafn ekki skráð')}
+                              </T.Data>
+                            </T.Row>
+                          )
+                        })}
+                  </T.Body>
+                </T.Table>
+              </>
+            )}
             {list.closedDate && new Date() <= new Date(list.closedDate) ? (
               listEndorsements.data && listEndorsements.data.length ? (
                 <Box marginY={3}>

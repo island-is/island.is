@@ -55,9 +55,9 @@ export const CalculateShare: FC<React.PropsWithChildren<FieldBaseProps>> = ({
   const formValues = getValues()
   const [customSpouseSharePercentage, setCustomSpouseSharePercentage] =
     useState(
-      formValues?.customSpouseSharePercentage
-        ? formValues.customSpouseSharePercentage / 100
-        : 0,
+      formValues?.customShare?.customSpouseSharePercentage
+        ? formValues.customShare?.customSpouseSharePercentage / 100
+        : 50 / 100,
     )
 
   const deceasedHadAssets = getDeceasedHadAssets(application)
@@ -65,7 +65,7 @@ export const CalculateShare: FC<React.PropsWithChildren<FieldBaseProps>> = ({
 
   const hasCustomSpouseSharePercentage =
     deceasedWasInCohabitation &&
-    !!formValues?.hasCustomSpouseSharePercentage?.includes(YES)
+    !!formValues?.customShare?.hasCustomSpouseSharePercentage?.includes(YES)
 
   const [shareValues, setShareValues] = useState<
     Record<keyof Partial<EstateAssets>, ShareItem>
@@ -436,7 +436,7 @@ export const CalculateShare: FC<React.PropsWithChildren<FieldBaseProps>> = ({
   useEffect(() => {
     if (!hasCustomSpouseSharePercentage) {
       setCustomSpouseSharePercentage(0)
-      setValue('customSpouseSharePercentage', '0')
+      setValue('customShare.customSpouseSharePercentage', '50')
     }
   }, [hasCustomSpouseSharePercentage, setValue])
 
@@ -448,7 +448,9 @@ export const CalculateShare: FC<React.PropsWithChildren<FieldBaseProps>> = ({
     updateShareCalculations,
   ])
 
-  const inputError = (errors?.customSpouseSharePercentage as string) ?? ''
+  const inputError =
+    (errors?.customShare as { customSpouseSharePercentage: string })
+      ?.customSpouseSharePercentage ?? ''
 
   return (
     <Box>
@@ -456,7 +458,7 @@ export const CalculateShare: FC<React.PropsWithChildren<FieldBaseProps>> = ({
         <GridRow>
           <GridColumn span={['1/1', '1/2']}>
             <ShareInput
-              name="customSpouseSharePercentage"
+              name="customShare.customSpouseSharePercentage"
               label={formatMessage(m.assetsToShareCustomSpousePercentage)}
               onAfterChange={(val) => {
                 setCustomSpouseSharePercentage(val / 100)
