@@ -84,7 +84,6 @@ const Subpoena: React.FC<React.PropsWithChildren<unknown>> = () => {
             title={formatMessage(strings.courtArrangementsHeading)}
           />
           <CourtArrangements
-            workingCase={workingCase}
             handleCourtDateChange={handleCourtDateChange}
             handleCourtRoomChange={handleCourtRoomChange}
             courtDate={courtDate}

@@ -102,7 +102,7 @@ const Conclusion: React.FC = () => {
       workingCase,
       setWorkingCase,
     )
-  }, [setAndSendCaseToServer, setWorkingCase, workingCase])
+  }, [selectedDecision, setAndSendCaseToServer, setWorkingCase, workingCase])
 
   const handleNavigationTo = useCallback(
     async (destination: keyof stepValidationsType) => {
@@ -129,6 +129,7 @@ const Conclusion: React.FC = () => {
       postponement?.reason,
       workingCase.id,
       handleRedistribution,
+      handleCompletion,
       updateCase,
       sendCourtDateToServer,
     ],
@@ -248,7 +249,6 @@ const Conclusion: React.FC = () => {
               <BlueBox>
                 <Box marginBottom={2}>
                   <CourtArrangements
-                    workingCase={workingCase}
                     handleCourtDateChange={handleCourtDateChange}
                     handleCourtRoomChange={handleCourtRoomChange}
                     courtDate={courtDate}
