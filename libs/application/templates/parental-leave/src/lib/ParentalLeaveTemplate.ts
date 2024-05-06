@@ -998,6 +998,14 @@ const ParentalLeaveTemplate: ApplicationTemplate<
               target: States.VINNUMALASTOFNUN_APPROVAL,
             },
             {
+              cond: (application) =>
+                goToState(
+                  application,
+                  States.EMPLOYER_WAITING_TO_ASSIGN_FOR_EDITS,
+                ),
+              target: States.EMPLOYER_WAITING_TO_ASSIGN_FOR_EDITS,
+            },
+            {
               target: States.VINNUMALASTOFNUN_APPROVE_EDITS,
             },
           ],
@@ -1009,6 +1017,7 @@ const ParentalLeaveTemplate: ApplicationTemplate<
           'setEmployerReviewerNationalRegistryId',
           'restorePeriodsFromTemp',
           'restoreEmployersFromTemp',
+          'setPreviousState',
         ],
         meta: {
           name: States.EMPLOYER_WAITING_TO_ASSIGN_FOR_EDITS,
@@ -1943,6 +1952,7 @@ const ParentalLeaveTemplate: ApplicationTemplate<
           return context
         }
 
+        console.log('Previous state set to: ' + state)
         set(answers, 'previousState', state)
         return context
       }),
