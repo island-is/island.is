@@ -270,7 +270,7 @@ export class ServiceBuilder<ServiceType extends string> {
   ): string | undefined
   private stripPostfix(
     name?: string,
-    { postfixes = ['-worker', '-job'], extraPostfixes = [] } = {},
+    { postfixes = ['-workersss', '-jobsss'], extraPostfixes = [] } = {},
   ) {
     if (!name) return
     logger.debug(`Stripping postfixes from ${name} with:`, {
