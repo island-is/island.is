@@ -1079,7 +1079,6 @@ contentful-apps:
 contentful-entry-tagger-service:
   enabled: true
   env:
-    LOG_LEVEL: 'info'
     NODE_OPTIONS: '--max-old-space-size=230'
     SERVERSIDE_FEATURES_ON: 'driving-license-use-v1-endpoint-for-v2-comms'
   grantNamespaces: []
