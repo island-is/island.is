@@ -153,7 +153,7 @@ export const IndictmentOverview = () => {
               }}
               isDisabled={loading}
               required
-            ></Select>
+            />
           </BlueBox>
         </Box>
       </FormContentContainer>
@@ -178,7 +178,7 @@ export const IndictmentOverview = () => {
           })}
           secondaryButtonText={fm(core.back)}
           onSecondaryButtonClick={() => router.push(constants.CASES_ROUTE)}
-        ></Modal>
+        />
       )}
     </PageLayout>
   )
