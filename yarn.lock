@@ -10747,11 +10747,13 @@ __metadata:
     "@tsconfig/react-native": ^2.0.2
     "@types/intl": ^1
     "@types/jest": ^29.2.1
+    "@types/lodash": 4.17.1
     "@types/react": ^18.0.24
     "@types/react-dom": ^18
     "@types/react-test-renderer": ^18.0.0
     "@types/styled-components": ^5
     "@types/styled-components-react-native": 5.2.1
+    apollo3-cache-persist: 0.15.0
     babel-jest: ^29.2.1
     babel-loader: ^8.3.0
     babel-plugin-formatjs: 10.3.9
@@ -10767,6 +10769,7 @@ __metadata:
     expo-notifications: 0.17.0
     intl: 1.2.5
     jest: 29.7.0
+    lodash: 4.17.21
     metro-react-native-babel-preset: 0.72.3
     react: 18.2.0
     react-dom: 18.2.0
@@ -10781,6 +10784,7 @@ __metadata:
     react-native-interactable: 2.0.1
     react-native-keyboard-manager: 6.5.4-3
     react-native-keychain: 8.1.1
+    react-native-mmkv-storage: 0.9.1
     react-native-navigation: 7.32.1
     react-native-navigation-hooks: 6.3.0
     react-native-passkit-wallet: 0.1.6
@@ -18022,10 +18026,10 @@ __metadata:
   languageName: node
   linkType: hard
 
-"@types/lodash@npm:4.14.160":
-  version: 4.14.160
-  resolution: "@types/lodash@npm:4.14.160"
-  checksum: af129ded217ae41de1a7a278d9fc15a762099afbfa5d38cff967f53347c451c53870ee193c322395f6e1f30c80b17df5e6395b3a10e3cca71675ea31406ec5bb
+"@types/lodash@npm:4.17.1":
+  version: 4.17.1
+  resolution: "@types/lodash@npm:4.17.1"
+  checksum: 01984d5b44c09ef45258f8ac6d0cf926900624064722d51a020ba179e5d4a293da0068fb278d87dc695586afe7ebd3362ec57f5c0e7c4f6c1fab9d04a80e77f5
   languageName: node
   linkType: hard
 
@@ -20890,6 +20894,15 @@ __metadata:
   peerDependencies:
     graphql: ^15.3.0 || ^16.0.0
   checksum: 20accd42b65ceb95819a1610c410488fbe548ee309227d7fa22fd17dd1205e557091ba9c9a20efa532192098a4193e34eb58fc91d762b55fdf31229ac9fc7133
+  languageName: node
+  linkType: hard
+
+"apollo3-cache-persist@npm:0.15.0":
+  version: 0.15.0
+  resolution: "apollo3-cache-persist@npm:0.15.0"
+  peerDependencies:
+    "@apollo/client": ^3.7.17
+  checksum: 99d69566154f1a806db22e26c5ed12834c466fd75b05048041b49e8e61483720569f63c68ffdc00314f8a248e13aa3d3014768c90a7993f47f862cd1df94fe4b
   languageName: node
   linkType: hard
 
@@ -34227,7 +34240,7 @@ __metadata:
     "@types/js-base64": 3.0.0
     "@types/js-cookie": 2.2.6
     "@types/js-yaml": 4.0.3
-    "@types/lodash": 4.14.160
+    "@types/lodash": 4.17.1
     "@types/mailparser": 3.4.0
     "@types/memoizee": 0.4.5
     "@types/node": 18.14.2
@@ -44501,6 +44514,17 @@ __metadata:
   version: 8.1.1
   resolution: "react-native-keychain@npm:8.1.1"
   checksum: fce8319ef8f793516982f96b86080d0a85281d35e91585f1490c41751df4703dcb52b0f22523d2e5f1b87ca7e037daf7d412c7098712cdd3913e6baf239cb673
+  languageName: node
+  linkType: hard
+
+"react-native-mmkv-storage@npm:0.9.1":
+  version: 0.9.1
+  resolution: "react-native-mmkv-storage@npm:0.9.1"
+  peerDependencies:
+    react-native: "*"
+  bin:
+    mmkv-link: autolink/postlink/run.js
+  checksum: 564f1cd971d20c9db03cff2d1cf8d55a2c69bd5a907eebbee7bcdc0592917bea5c787b424b1910931c649b3f17c9a361385565af585ec72fb7d1b63b9f2570af
   languageName: node
   linkType: hard
 
