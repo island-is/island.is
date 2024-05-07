@@ -7,32 +7,7 @@ inputs:
   key:
     required: true
     description: 'Path to cache'
-  # nodeModulesHash:
-  #   description: 'Hash for NodeJS modules'
-  #   required: false
-  #   default: ''
-  # mobileNodeModulesHash:
-  #   description: 'Hash for mobile NodeJS modules'
-  #   required: false
-  #   default: ''
-  # generatedFilesCacheKey:
-  #   description: 'Hash for generated files'
-  #   required: false
-  #   default: ''
-  # calculateCacheKeys:
-  #   description: 'If steps to calculate cache keys should be run'
-  #   required: false
-  #   default: 'false'
 outputs:
-  # node-modules-key:
-  #   value: ${{ steps.set-cache-keys.outputs.node-modules-key }}
-  #   description: 'node_modules cache key'
-  # mobile-node-modules-key:
-  #   value: ${{ steps.set-cache-keys.outputs.mobile-node-modules-key }}
-  #   description: 'mobile app node_modules key'
-  # generated-files-key:
-  #   value: ${{  steps.set-cache-keys.outputs.generated-files-key  }}
-  #   description: 'generated files cache key'
   success:
     description: 'success'
     value: ${{ steps.computed-outputs.outputs.success }}
@@ -42,37 +17,6 @@ outputs:
 runs:
   using: 'composite'
   steps:
-    # - name: Determine cache keys
-    #   shell: bash
-    #   id: set-cache-keys
-    #   run: |
-    #     echo "inputs.mobileNodeModulesHash: ${{ inputs.mobileNodeModulesHash }}"
-    #     echo "inputs.nodeModulesHash: ${{ inputs.nodeModulesHash }}"
-    #     echo "inputs.generatedFilesCacheKey: ${{ inputs.generatedFilesCacheKey }}"
-    #     echo "steps.calculate-node-modules-cache.outputs.node-modules-key: ${{ steps.calculate-node-modules-cache.outputs.node-modules-key }}"
-    #     echo "steps.calculate-node-modules-cache.outputs.mobile-node-modules-key: ${{ steps.calculate-node-modules-cache.outputs.mobile-node-modules-key }}"
-    #     echo "steps.calculate-generated-files-cache.outputs.generated-files-key: ${{ steps.calculate-generated-files-cache.outputs.generated-files-key }}"
-    #     export node_modules_key="${{ inputs.nodeModulesHash || steps.calculate-node-modules-cache.outputs.node-modules-key }}"
-    #     export mobile_node_modules_key="${{ inputs.mobileNodeModulesHash || steps.calculate-node-modules-cache.outputs.mobile-node-modules-key }}"
-    #     export generated_files_key="${{ inputs.generatedFilesCacheKey || steps.calculate-generated-files-cache.outputs.generated-files-key }}"
-    #     echo "debug info:"
-    #     echo "node-modules-key: $node_modules_key"
-    #     echo "mobile-node-modules-key: $mobile_node_modules_key"
-    #     echo "generated-files-key: $generated_files_key"
-    #     echo
-    #     echo "set GITHUB_OUTPUT"
-    #     echo "node-modules-key=$node_modules_key" >> $GITHUB_OUTPUT
-    #     echo "mobile-node-modules-key=$mobile_node_modules_key" >> $GITHUB_OUTPUT
-    #     echo "generated-files-key=$generated_files_key" >> $GITHUB_OUTPUT
-
-    # - name: Prepare NX node-modules cache
-    #   id: prepare-nx-cache
-    #   if: ${{ inputs.path == 'node_modules' }}
-    #   continue-on-error: true
-    #   uses: ./.github/actions/cache
-    #   with:
-    #     path: ${{ inputs.path }}
-    #     key: ${{ inputs.key }}
 
     - name: Prepare node-modules cache
       id: prepare-node-modules
@@ -91,21 +35,6 @@ runs:
       with:
         path: ${{ inputs.path }}
         key: ${{ inputs.key }}
-    # - name: Cache for Mobile NodeJS dependencies - host OS
-    #   id: mobile-node-modules
-    #   continue-on-error: true
-    #   uses: ./.github/actions/cache
-    #   with:
-    #     path: apps/native/app/node_modules
-    #     key: ${{ steps.set-cache-keys.outputs.mobile-node-modules-key }}
-    #
-    # - name: Cache for generated files
-    #   id: generated-files-cache
-    #   continue-on-error: true
-    #   uses: ./.github/actions/cache
-    #   with:
-    #     path: generated_files.tar.gz
-    #     key: ${{ steps.set-cache-keys.outputs.generated-files-key }}
 
     - name: Check cache outcome
       id: check-cache-outcome
@@ -157,30 +86,6 @@ runs:
 
         echo "Overall Cache success: $CACHE_SUCCESS"
         echo "success=$CACHE_SUCCESS" >> $GITHUB_OUTPUT
-    #
-    # - name: Check node-modules cache success
-    #   id: check-node-modules-cache
-    #   shell: bash
-    #   run: |
-    #     if [[ "${{ steps.node-modules.outputs.success }}" != "false" ]]; then
-    #       echo "node-modules-cache was not found."
-    #       echo "success=false" >> $GITHUB_OUTPUT
-    #     else
-    #       echo "node-modules-cache found!"
-    #       echo "success=true" >> $GITHUB_OUTPUT
-    #     fi
-    #
-    # - name: Check generated-files cache success
-    #   id: check-generated-files-cache
-    #   shell: bash
-    #   run: |
-    #     if [[ "${{ steps.generated-files-cache.outputs.success }}" != "false" ]]; then
-    #       echo "generated-files-cache was not found."
-    #       echo "success=false" >> $GITHUB_OUTPUT
-    #     else
-    #       echo "generated-files-cache found!"
-    #       echo "success=true" >> $GITHUB_OUTPUT
-    #     fi
 
     - name: Building NodeJS dependencies
       shell: bash
