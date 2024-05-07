@@ -24,8 +24,8 @@ describe('MeNotificationsController - No Auth', () => {
     ${'GET'}   | ${'/v1/me/notifications/unread-count'}
     ${'GET'}   | ${'/v1/me/notifications/unseen-count'}
     ${'PATCH'} | ${'/v1/me/notifications/some-notification-id'}
-    ${'POST'} | ${'/v1/me/notifications/mark-all-as-seen'}
-    ${'POST'} | ${'/v1/me/notifications/mark-all-as-read'}
+    ${'POST'}  | ${'/v1/me/notifications/mark-all-as-seen'}
+    ${'POST'}  | ${'/v1/me/notifications/mark-all-as-read'}
   `(
     '$method $endpoint should return 401 when user is unauthenticated',
     async ({ method, endpoint }: TestEndpointOptions) => {
@@ -55,8 +55,8 @@ describe('MeNotificationsController - With Auth No Scope', () => {
     ${'GET'}   | ${'/v1/me/notifications/unread-count'}
     ${'GET'}   | ${'/v1/me/notifications/unseen-count'}
     ${'PATCH'} | ${'/v1/me/notifications/some-notification-id'}
-    ${'POST'} | ${'/v1/me/notifications/mark-all-as-seen'}
-    ${'POST'} | ${'/v1/me/notifications/mark-all-as-read'}
+    ${'POST'}  | ${'/v1/me/notifications/mark-all-as-seen'}
+    ${'POST'}  | ${'/v1/me/notifications/mark-all-as-read'}
   `(
     '$method $endpoint should return 403 when user is unauthorized',
     async ({ method, endpoint }: TestEndpointOptions) => {
@@ -112,8 +112,8 @@ describe('MeNotificationsController - PATCH With Auth And Scope', () => {
   it.each`
     method     | endpoint
     ${'PATCH'} | ${'/v1/me/notifications/some-notification-id'}
-    ${'POST'} | ${'/v1/me/notifications/mark-all-as-seen'}
-    ${'POST'} | ${'/v1/me/notifications/mark-all-as-read'}
+    ${'POST'}  | ${'/v1/me/notifications/mark-all-as-seen'}
+    ${'POST'}  | ${'/v1/me/notifications/mark-all-as-read'}
   `(
     '$method $endpoint should return 204 when user is authorized',
     async ({ method, endpoint }: TestEndpointOptions) => {
