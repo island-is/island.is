@@ -17,91 +17,104 @@ outputs:
 runs:
   using: 'composite'
   steps:
-    - name: Prepare node-modules cache
-      id: prepare-node-modules
-      if: ${{ contains(inputs.path, 'node_modules') }}
+    - name: Prepare cache
+      id: prepare-cache
       continue-on-error: true
       uses: ./.github/actions/cache
       with:
         path: ${{ inputs.path }}
         key: ${{ inputs.key }}
-
-    - name: Prepare generated-files cache
-      id: prepare-generated-files
-      if: ${{ contains(inputs.path, 'generated_files.tar.gz') }}
-      continue-on-error: true
-      uses: ./.github/actions/cache
-      with:
-        path: ${{ inputs.path }}
-        key: ${{ inputs.key }}
-
-    - name: Check cache outcome
-      id: check-cache-outcome
-      shell: bash
-      run: |
-        echo "Checking cache outcome for ${{ inputs.path }}"
-        echo "node-modules cache outcome: ${{ steps.prepare-node-modules.outputs.outcome }}"
-        echo "generated-files cache outcome: ${{ steps.prepare-generated-files.outputs.outcome }}"
-
-        if [[ "${{ steps.prepare-node-modules.outputs.outcome }}" == "success" ]] || [[ "${{ steps.prepare-generated-files.outputs.outcome }}" == "success" ]]; then
-          CACHE_OUTCOME="success"
-        else
-          CACHE_OUTCOME="failure"
-        fi
-
-        echo "Overall Cache outcome: $CACHE_OUTCOME"
-        echo "outcome=$CACHE_OUTCOME" >> $GITHUB_OUTPUT
 
     - name: Check cache hit
       id: check-cache-hit
       shell: bash
       run: |
-        echo "Checking cache hit for ${{ inputs.path }}"
-        echo "node-modules cache hit: ${{ steps.prepare-node-modules.outputs.cache-hit }}"
-        echo "generated-files cache outcome: ${{ steps.prepare-generated-files.outputs.cache-hit }}"
-
-        if [[ "${{ steps.prepare-node-modules.outputs.cache-hit }}" == "true" ]] || [[ "${{ steps.prepare-generated-files.outputs.cache-hit }}" == "true" ]]; then
-          CACHE_HIT="true"
+        echo "Checking cache hit for ${{ inputs.path }}: ${{ steps.prepare-cache.outputs.cache-hit }}"
+        if [[ "${{ steps.prepare-cache.outputs.cache-hit }}" == "true" ]]; then
+          echo "cache-hit=true" >> $GITHUB_OUTPUT
         else
-          CACHE_HIT="false"
+          echo "cache-hit=false" >> $GITHUB_OUTPUT
         fi
-
-        echo "Overall Cache hit: $CACHE_HIT"
-        echo "cache-hit=$CACHE_HIT" >> $GITHUB_OUTPUT
 
     - name: Check cache success
       id: check-cache-success
       shell: bash
       run: |
-        echo "Checking cache success for ${{ inputs.path }}"
-        echo "node-modules cache success: ${{ steps.prepare-node-modules.outputs.success }}"
-        echo "generated-files cache success: ${{ steps.prepare-generated-files.outputs.success }}"
-
-        if [[ "${{ steps.prepare-node-modules.outputs.success }}" == "true" ]] || [[ "${{ steps.prepare-generated-files.outputs.success }}" == "true" ]]; then
-          CACHE_SUCCESS="true"
+        echo "Checking cache success for ${{ inputs.path }}: ${{ steps.prepare-cache.outputs.success }}"
+        if [[ "${{ steps.prepare-cache.outputs.success }}" == "true" ]]; then
+          echo "success=true" >> $GITHUB_OUTPUT
         else
-          CACHE_SUCCESS="false"
+          echo "success=false" >> $GITHUB_OUTPUT
         fi
 
-        echo "Overall Cache success: $CACHE_SUCCESS"
-        echo "success=$CACHE_SUCCESS" >> $GITHUB_OUTPUT
+    - name: Check cache size
+      shell: bash
+      id: is-valid-cache-size
+      run: |
+        NODE_MODULES_SIZE=0
+        GENERATED_FILES_SIZE=0
+
+        # Check if node_modules directory exists and calculate its size
+        if [ -d "node_modules" ]; then
+          NODE_MODULES_SIZE=$(du -sb node_modules | cut -f1)
+          echo "node_modules size: $NODE_MODULES_SIZE"
+        fi
+        # Check if generated files archive exists and calculate its size
+        if [ -f "generated_files.tar.gz" ]; then
+          GENERATED_FILES_SIZE=$(du -sb generated_files.tar.gz | cut -f1)
+          echo "generated_files.tar.gz size: $GENERATED_FILES_SIZE"
+        fi
+        # Set output based on the size of node_modules
+        if [[ "$NODE_MODULES_SIZE" -gt 1000 ]]; then
+          echo "node-modules=true" >> $GITHUB_OUTPUT
+        else
+          echo "node-modules=false" >> $GITHUB_OUTPUT
+        fi
+        # Set output based on the size of generated files archive
+        if [[ "$GENERATED_FILES_SIZE" -gt 1000 ]]; then
+          echo "generated-files=true" >> $GITHUB_OUTPUT
+        else
+          echo "generated-files=false" >> $GITHUB_OUTPUT
+        fi
+
+    - name: Decide if should run codegen
+      shell: bash
+      id: decide-codegen
+      if: ${{ contains(inputs.path, 'generated_files.tar.gz') }}
+      run: |
+        if [[ "${{ steps.prepare-cache.outputs.cache-hit }}" == "true" && "${{ steps.is-valid-cache-size.outputs.generated-files }}" == "true" ]]; then
+          echo "install=false" >> $GITHUB_OUTPUT
+        else
+          echo "install=true" >> $GITHUB_OUTPUT
+        fi
+
+    - name: Decide if should install node-modules
+      shell: bash
+      id: decide-node-modules
+      if: ${{ contains(inputs.path, 'node_modules') }}
+      run: |
+        if [[ "${{ steps.prepare-cache.outputs.cache-hit }}" == "true" && "${{ steps.is-valid-cache-size.outputs.node-modules }}" == "true" ]]; then
+          echo "install=false" >> $GITHUB_OUTPUT
+        else
+          echo "install=true" >> $GITHUB_OUTPUT
+        fi
 
     - name: Building NodeJS dependencies
       shell: bash
-      if: ${{ steps.check-cache-hit.outputs.cache-hit != 'true' && contains(inputs.path, 'node_modules') }}
+      if: ${{ steps.decide-node-modules.outputs.install == 'true' }}
       run: ./scripts/ci/10_prepare-host-deps.sh
 
     - name: Run codegen
       id: run-codegen
       shell: bash
-      if: ${{ steps.check-cache-hit.outputs.cache-hit == 'true' && contains(inputs.path, 'generated_files.tar.gz') }}
+      if: ${{ steps.decide-codegen.outputs.install == 'true' }}
       run: |
         node --version
         tar zcvf generated_files.tar.gz $(./scripts/ci/get-files-touched-by.sh yarn codegen --skip-cache | xargs realpath --relative-to $(pwd))
 
     - name: Untar generated files
       id: untar-generated-files
-      if: ${{ steps.check-cache-hit.outputs.cache-hit == 'true' && contains(inputs.path, 'generated_files.tar.gz') }}
+      if: contains(inputs.path, 'generated_files.tar.gz') }}
       shell: bash
       run: |
         echo "Untar generated-files"
