@@ -94,6 +94,12 @@ jobs:
           path: apps/native/app/node_modules
           key: ${{ steps.calculate-cache-keys.outputs.mobile-node-modules-key }}
 
+      - name: Prepare generated-files cache
+        uses: ./.github/actions/prepare-cache
+        with:
+          path: generated_files.tar.gz
+          key: ${{ steps.calculate-cache-keys.outputs.mobile-node-modules-key }}
+
       - name: Preparing HEAD and BASE tags
         run: |
           echo "HEAD=$GITHUB_SHA" >> $GITHUB_ENV
