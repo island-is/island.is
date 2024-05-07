@@ -98,7 +98,7 @@ jobs:
         uses: ./.github/actions/prepare-cache
         with:
           path: generated_files.tar.gz
-          key: ${{ steps.calculate-cache-keys.outputs.mobile-node-modules-key }}
+          key: ${{ steps.calculate-cache-keys.outputs.generated-files-key }}
 
       - name: Preparing HEAD and BASE tags
         run: |
