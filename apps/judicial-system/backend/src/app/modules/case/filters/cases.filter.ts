@@ -53,7 +53,6 @@ const getProsecutionUserCasesQueryFilter = (user: User): WhereOptions => {
         { is_heightened_security_level: false },
         { creating_prosecutor_id: user.id },
         { prosecutor_id: user.id },
-        { indictment_reviewer_id: user.id },
       ],
     },
   ]
