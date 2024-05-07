@@ -2,6 +2,8 @@ import { expect, test as base, Page } from '@playwright/test'
 import { disableI18n } from '../../../../support/disablers'
 import { session } from '../../../../support/session'
 import { createApplication } from '../../../../support/application'
+import { m } from '@island.is/application/templates/criminal-record/messages'
+import { label } from '../../../../support/i18n'
 
 const homeUrl = '/umsoknir/sakavottord'
 
@@ -30,15 +32,14 @@ applicationTest.describe('Criminal record application payment test', () => {
     async ({ applicationPage }) => {
       const page = applicationPage
 
-      const buttonStaðfesta = 'Staðfesta'
+      const buttonStaðfesta = label(m.confirm)
       const buttonBætaViðKorti = 'Bæta við korti'
       const buttonGreiða = 'Greiða'
       const buttonTextSubmit3DData = 'Submit 3D data'
       const textGervimaðurAfríka = 'Gervimaður Afríka'
       const textGreiðslaTókst = 'Greiðsla tókst'
-      const textUmsóknStaðfest =
-        'Umsókn þín um sakavottorð hefur verið staðfest'
-      const textAfgreidd = 'Afgreidd'
+      const textUmsóknStaðfest = label(m.successTitle)
+      const textAfgreidd = label(m.actionCardDone)
 
       await applicationTest.step(
         'Create and proceed with application',
@@ -82,9 +83,11 @@ applicationTest.describe('Criminal record application payment test', () => {
             })
             .isVisible()
 
-          await page.goto(`${homeUrl}`, { waitUntil: 'load' })
+          await page.goto(`${homeUrl}`, { waitUntil: 'networkidle' })
           await page.getByTestId('application-card').first().isVisible()
-          await expect(page.getByText(textAfgreidd).first()).toBeVisible()
+          expect(await page.getByText(textAfgreidd).first().isVisible()).toBe(
+            true,
+          )
         },
       )
     },
