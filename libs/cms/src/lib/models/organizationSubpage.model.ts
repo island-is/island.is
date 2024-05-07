@@ -20,6 +20,9 @@ export class OrganizationSubpage {
   @Field()
   title!: string
 
+  @Field(() => String, { nullable: true })
+  shortTitle?: string
+
   @Field()
   slug!: string
 
@@ -63,6 +66,7 @@ export const mapOrganizationSubpage = ({
 }: IOrganizationSubpage): OrganizationSubpage => ({
   id: sys.id,
   title: fields.title ?? '',
+  shortTitle: fields.shortTitle || fields.title,
   slug: (fields.slug ?? '').trim(),
   url: [fields.organizationPage?.fields?.slug, fields.slug],
   intro: fields.intro ?? '',
