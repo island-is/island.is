@@ -26,10 +26,8 @@ import {
   SharedPageLayout,
   UserContext,
 } from '@island.is/judicial-system-web/src/components'
-import {
-  PastCasesTable,
-  TableSkeleton,
-} from '@island.is/judicial-system-web/src/components/Table'
+import { PastCasesTable } from '@island.is/judicial-system-web/src/components/Table'
+import { TableContainer } from '@island.is/judicial-system-web/src/components/Table/Table'
 import {
   CaseListEntry,
   CaseState,
@@ -288,10 +286,8 @@ export const Cases: React.FC = () => {
               />
             )}
             <SectionHeading title={formatMessage(m.activeRequests.title)} />
-            <Box marginBottom={[5, 5, 12]}>
-              {loading || isFiltering ? (
-                <TableSkeleton />
-              ) : activeCases.length > 0 ? (
+            <TableContainer loading={loading || isFiltering}>
+              {activeCases.length > 0 ? (
                 <ActiveCases
                   cases={activeCases}
                   isDeletingCase={isTransitioningCase || isSendingNotification}
@@ -306,7 +302,7 @@ export const Cases: React.FC = () => {
                   />
                 </div>
               )}
-            </Box>
+            </TableContainer>
             <SectionHeading title={formatMessage(tables.completedCasesTitle)} />
             {loading || pastCases.length > 0 ? (
               <PastCasesTable

@@ -19,6 +19,7 @@ import ContextMenu, { ContextMenuItem } from '../ContextMenu/ContextMenu'
 import IconButton from '../IconButton/IconButton'
 import { UserContext } from '../UserProvider/UserProvider'
 import SortButton from './SortButton/SortButton'
+import TableSkeleton from './TableSkeleton/TableSkeleton'
 import { table as strings } from './Table.strings'
 import * as styles from './Table.css'
 
@@ -34,6 +35,18 @@ interface TableProps {
   columns: { cell: (row: CaseListEntry) => ReactNode }[]
   generateContextMenuItems?: (row: CaseListEntry) => ContextMenuItem[]
 }
+
+interface TableContainerProps {
+  children: React.ReactNode
+  loading: boolean
+}
+
+export const TableContainer: React.FC<TableContainerProps> = ({
+  loading,
+  children,
+}) => (
+  <Box marginBottom={[5, 5, 12]}>{loading ? <TableSkeleton /> : children}</Box>
+)
 
 export const useTable = () => {
   const [sortConfig, setSortConfig] = useLocalStorage<SortConfig>(

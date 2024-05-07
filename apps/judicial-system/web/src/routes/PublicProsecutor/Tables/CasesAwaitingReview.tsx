@@ -2,7 +2,7 @@ import React from 'react'
 import { useIntl } from 'react-intl'
 import { AnimatePresence } from 'framer-motion'
 
-import { Box, Text } from '@island.is/island-ui/core'
+import { Text } from '@island.is/island-ui/core'
 import { capitalize, formatDate } from '@island.is/judicial-system/formatters'
 import { core, tables } from '@island.is/judicial-system-web/messages'
 import { SectionHeading } from '@island.is/judicial-system-web/src/components'
@@ -10,9 +10,10 @@ import { useContextMenu } from '@island.is/judicial-system-web/src/components/Co
 import {
   CourtCaseNumber,
   DefendantInfo,
-  TableSkeleton,
 } from '@island.is/judicial-system-web/src/components/Table'
-import Table from '@island.is/judicial-system-web/src/components/Table/Table'
+import Table, {
+  TableContainer,
+} from '@island.is/judicial-system-web/src/components/Table/Table'
 import TableInfoContainer from '@island.is/judicial-system-web/src/components/Table/TableInfoContainer/TableInfoContainer'
 import TagCaseState, {
   mapIndictmentCaseStateToTagVariant,
@@ -37,10 +38,8 @@ const CasesForReview: React.FC<CasesForReviewTableProps> = ({
     <>
       <SectionHeading title={formatMessage(strings.title)} />
       <AnimatePresence initial={false}>
-        <Box marginBottom={[5, 5, 12]}>
-          {loading ? (
-            <TableSkeleton />
-          ) : cases && cases.length > 0 ? (
+        <TableContainer loading={loading}>
+          {cases && cases.length > 0 ? (
             <Table
               thead={[
                 {
@@ -96,7 +95,7 @@ const CasesForReview: React.FC<CasesForReviewTableProps> = ({
               message={formatMessage(strings.infoContainerMessage)}
             />
           )}
-        </Box>
+        </TableContainer>
       </AnimatePresence>
     </>
   )
