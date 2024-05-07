@@ -24,8 +24,8 @@ describe('MeNotificationsController - No Auth', () => {
     ${'GET'}   | ${'/v1/me/notifications/unread-count'}
     ${'GET'}   | ${'/v1/me/notifications/unseen-count'}
     ${'PATCH'} | ${'/v1/me/notifications/some-notification-id'}
-    ${'PATCH'} | ${'/v1/me/notifications/mark-all-as-seen'}
-    ${'PATCH'} | ${'/v1/me/notifications/mark-all-as-read'}
+    ${'POST'} | ${'/v1/me/notifications/mark-all-as-seen'}
+    ${'POST'} | ${'/v1/me/notifications/mark-all-as-read'}
   `(
     '$method $endpoint should return 401 when user is unauthenticated',
     async ({ method, endpoint }: TestEndpointOptions) => {
