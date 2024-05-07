@@ -101,4 +101,7 @@ export class CaseListEntry {
 
   @Field(() => Institution, { nullable: true })
   readonly prosecutorsOffice?: Institution
+
+  @Field({ nullable: true })
+  readonly postponedIndefinitelyExplanation?: string
 }

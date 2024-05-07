@@ -25,6 +25,7 @@ import {
   DrivingInstructorList,
   EmailSignup,
   Form,
+  GenericList,
   KilometerFee,
   MasterList,
   MultipleStatistics,
@@ -56,6 +57,7 @@ import {
   FeaturedEvents as FeaturedEventsSchema,
   FeaturedSupportQnAs as FeaturedSupportQNAsSchema,
   Form as FormSchema,
+  GenericList as GenericListSchema,
   MultipleStatistics as MultipleStatisticsSchema,
   OneColumnText,
   OverviewLinks as OverviewLinksSliceSchema,
@@ -186,6 +188,13 @@ const defaultRenderComponent = {
     <FeaturedEvents slice={slice} />
   ),
   Form: (slice: FormSchema) => <Form form={slice} />,
+  GenericList: (slice: GenericListSchema) => (
+    <GenericList
+      id={slice.id}
+      firstPageItemResponse={slice.firstPageListItemResponse}
+      searchInputPlaceholder={slice.searchInputPlaceholder}
+    />
+  ),
 }
 
 export const webRichText = (

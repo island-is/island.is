@@ -2,7 +2,11 @@ import { Allow } from 'class-validator'
 
 import { Field, InputType } from '@nestjs/graphql'
 
-import { DefendantPlea, Gender } from '@island.is/judicial-system/types'
+import {
+  DefendantPlea,
+  Gender,
+  ServiceRequirement,
+} from '@island.is/judicial-system/types'
 
 @InputType()
 export class UpdateDefendantInput {
@@ -61,4 +65,8 @@ export class UpdateDefendantInput {
   @Allow()
   @Field(() => DefendantPlea, { nullable: true })
   readonly defendantPlea?: DefendantPlea
+
+  @Allow()
+  @Field(() => ServiceRequirement, { nullable: true })
+  readonly serviceRequirement?: ServiceRequirement
 }
