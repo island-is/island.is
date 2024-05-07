@@ -12,6 +12,7 @@ import {
 } from '@island.is/application/templates/healthcare-work-permit'
 import {
   HealthDirectorateClientService,
+  NamsUpplysingar,
   StarfsleyfiUmsoknStarfsleyfi,
   UtbuaStarfsleyfiSkjalResponse,
 } from '@island.is/clients/health-directorate'
@@ -56,12 +57,14 @@ export class HealthcareWorkPermitService extends BaseTemplateApiService {
   async getEducationInfo({
     auth,
   }: TemplateApiModuleActionProps): Promise<StarfsleyfiUmsoknStarfsleyfi[]> {
-    const result =
+    const academicCareer: Transcripts | null =
+      await this.universityOfIcelandService.studentInfo(auth)
+    const educationTracks: NamsUpplysingar[] =
       await this.healthDirectorateClientService.getHealthCareWorkPermitEducationInfo(
         auth,
       )
 
-    if (!result) {
+    if (!educationTracks || !academicCareer) {
       throw new TemplateApiError(
         {
           title: errorMsg.healthcareLicenseErrorTitle,
@@ -71,7 +74,21 @@ export class HealthcareWorkPermitService extends BaseTemplateApiService {
       )
     }
 
-    return result
+    // TODO Here I need to make sure that at least some of the users academic career exist in the workpermit educational info list in order
+    // to make it to the next step.
+    // const educationShortIdMap: { [shortId: string]: boolean } = {};
+    // academicCareer?.transcripts?.forEach(edu => {
+    //     educationShortIdMap[edu.shortId] = true;
+    // });
+
+    // // Match transcripts with education that gives a work permit
+    // const matchedTranscripts: Transcripts = academicCareer?.transcripts?.filter(transcript => {
+    //     return transcript.shortId in educationShortIdMap;
+    // });
+
+    // console.log("Matched Transcripts:", matchedTranscripts);
+
+    return educationTracks
   }
 
   async getMyAcademicCareer({
