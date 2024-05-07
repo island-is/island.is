@@ -8,10 +8,10 @@ defaults:
   run:
     shell: bash
 
-# concurrency:
-#   # See https://docs.github.com/en/actions/using-workflows/workflow-syntax-for-github-actions#example-using-a-fallback-value
-#   group: pullrequest-${{ github.head_ref || github.run_id }}
-#   cancel-in-progress: true
+concurrency:
+  # See https://docs.github.com/en/actions/using-workflows/workflow-syntax-for-github-actions#example-using-a-fallback-value
+  group: pullrequest-${{ github.run_id }}
+  cancel-in-progress: true
 
 env:
   COMPOSE_HTTP_TIMEOUT: 180
@@ -92,7 +92,7 @@ jobs:
         uses: ./.github/actions/prepare-cache
         with:
           path: apps/native/app/node_modules
-          key: ${{ steps.calculate-cache-keys.outputs.mobile-node-modules-key }}
+          key: ${{ steps.calculate-mobile-node-modules-cache-key.outputs.mobile-node-modules-key }}
 
       - name: Preparing HEAD and BASE tags
         run: |
