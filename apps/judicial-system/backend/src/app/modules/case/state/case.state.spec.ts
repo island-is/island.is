@@ -938,4 +938,64 @@ describe('Transition Case', () => {
       )
     })
   })
+
+  describe('redistribute indictment', () => {
+    const allowedFromStates = [CaseState.RECEIVED]
+    const allowedFromAppealStates = [undefined]
+
+    describe.each(allowedFromStates)('state %s', (fromState) => {
+      it.each(allowedFromAppealStates)(
+        'appeal state %s - should prepare indictment for redistribution',
+        (fromAppealState) => {
+          // Act
+          const res = transitionCase(
+            CaseTransition.REDISTRIBUTE,
+            fromState,
+            fromAppealState,
+          )
+
+          // Assert
+          expect(res).toEqual({ state: CaseState.MAIN_HEARING })
+        },
+      )
+
+      it.each(Object.values(CaseAppealState))(
+        'appeal state %s - should not prepare indictment for redistribution',
+        (fromAppealState) => {
+          // Arrange
+          const act = () =>
+            transitionCase(
+              CaseTransition.REDISTRIBUTE,
+              fromState,
+              fromAppealState,
+            )
+
+          // Act and assert
+          expect(act).toThrow(ForbiddenException)
+        },
+      )
+    })
+
+    describe.each(
+      Object.values(CaseState).filter(
+        (state) => !allowedFromStates.includes(state),
+      ),
+    )('state %s', (fromState) => {
+      it.each(Object.values(CaseAppealState))(
+        'appeal state %s - should not prepare indictment for redistribution',
+        (fromAppealState) => {
+          // Arrange
+          const act = () =>
+            transitionCase(
+              CaseTransition.REDISTRIBUTE,
+              fromState,
+              fromAppealState,
+            )
+
+          // Act and assert
+          expect(act).toThrow(ForbiddenException)
+        },
+      )
+    })
+  })
 })

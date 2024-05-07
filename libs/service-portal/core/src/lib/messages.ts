@@ -241,6 +241,10 @@ export const m = defineMessages({
     id: 'service.portal:fetching',
     defaultMessage: 'Sæki',
   },
+  fetchLicense: {
+    id: 'service.portal:fetch-license',
+    defaultMessage: 'Sækja leyfisbréf',
+  },
   assets: {
     id: 'service.portal:assets',
     defaultMessage: 'Eignir',
@@ -1235,6 +1239,10 @@ export const m = defineMessages({
   userProfileTooltip: {
     id: 'service.portal:userprofile-tooltip',
     defaultMessage: 'Ísland.is hefur umsjón með gögnum á þínum stillingum.',
+  },
+  notificationsProfileTooltip: {
+    id: 'service.portal:notifications-tooltip',
+    defaultMessage: 'Ísland.is hefur umsjón með tilkynningum.',
   },
 
   universityOfIcelandTooltip: {

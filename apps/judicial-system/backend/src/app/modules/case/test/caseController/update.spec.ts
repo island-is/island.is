@@ -873,8 +873,7 @@ describe('CaseController - Update', () => {
     const caseToUpdate = { arraignmentDate }
 
     beforeEach(async () => {
-      const newLocal = await givenWhenThen(caseId, user, theCase, caseToUpdate)
-      console.log('!!!!!!!!!!!!!!!!!!!!!!', { newLocal })
+      await givenWhenThen(caseId, user, theCase, caseToUpdate)
     })
 
     it('should update case', () => {
@@ -888,8 +887,15 @@ describe('CaseController - Update', () => {
   describe('court date updated', () => {
     const courtDate = { date: new Date(), location: uuid() }
     const caseToUpdate = { courtDate }
+    const updatedCase = {
+      ...theCase,
+      dateLogs: [{ dateType: DateType.COURT_DATE, ...courtDate }],
+    }
 
     beforeEach(async () => {
+      const mockFindOne = mockCaseModel.findOne as jest.Mock
+      mockFindOne.mockResolvedValueOnce(updatedCase)
+
       await givenWhenThen(caseId, user, theCase, caseToUpdate)
     })
 
@@ -898,6 +904,15 @@ describe('CaseController - Update', () => {
         { dateType: DateType.COURT_DATE, caseId, ...courtDate },
         { transaction },
       )
+
+      expect(mockMessageService.sendMessagesToQueue).toHaveBeenCalledWith([
+        {
+          type: MessageType.NOTIFICATION,
+          user,
+          caseId,
+          body: { type: NotificationType.COURT_DATE },
+        },
+      ])
     })
   })
 

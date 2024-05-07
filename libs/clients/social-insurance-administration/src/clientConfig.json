@@ -1,9 +1,6 @@
 {
   "openapi": "3.0.1",
-  "info": {
-    "title": "TR Portal API",
-    "version": "v1.0"
-  },
+  "info": { "title": "TR Portal API", "version": "v1.0" },
   "paths": {
     "/api/protected/v1/Applicant/{applicationType}/eligible": {
       "get": {
@@ -16,9 +13,7 @@
             "description": "The type of application (e.g. old age pension) to check for eligibility",
             "required": true,
             "style": "simple",
-            "schema": {
-              "type": "string"
-            }
+            "schema": { "type": "string" }
           }
         ],
         "responses": {
@@ -712,29 +707,15 @@
             "description": "The application type, e.g. \"oldagepension\"",
             "required": true,
             "style": "simple",
-            "schema": {
-              "type": "string"
-            }
+            "schema": { "type": "string" }
           }
         ],
         "requestBody": {
           "description": "Input for application, varies by type",
           "content": {
-            "application/json": {
-              "schema": {
-                "type": "object"
-              }
-            },
-            "text/json": {
-              "schema": {
-                "type": "object"
-              }
-            },
-            "application/*+json": {
-              "schema": {
-                "type": "object"
-              }
-            }
+            "application/json": { "schema": { "type": "object" } },
+            "text/json": { "schema": { "type": "object" } },
+            "application/*+json": { "schema": { "type": "object" } }
           }
         },
         "responses": {
@@ -852,9 +833,7 @@
             "description": "The application GUID for the application in Island.is",
             "required": true,
             "style": "simple",
-            "schema": {
-              "type": "string"
-            }
+            "schema": { "type": "string" }
           }
         ],
         "requestBody": {
@@ -968,9 +947,7 @@
               }
             }
           },
-          "204": {
-            "description": "No Content"
-          }
+          "204": { "description": "No Content" }
         }
       }
     },
@@ -983,17 +960,13 @@
             "in": "path",
             "required": true,
             "style": "simple",
-            "schema": {
-              "type": "string"
-            }
+            "schema": { "type": "string" }
           },
           {
             "name": "authenticationType",
             "in": "query",
             "style": "form",
-            "schema": {
-              "type": "string"
-            }
+            "schema": { "type": "string" }
           }
         ],
         "responses": {
@@ -1189,28 +1162,13 @@
             "description": "Success",
             "content": {
               "text/plain": {
-                "schema": {
-                  "type": "array",
-                  "items": {
-                    "type": "string"
-                  }
-                }
+                "schema": { "type": "array", "items": { "type": "string" } }
               },
               "application/json": {
-                "schema": {
-                  "type": "array",
-                  "items": {
-                    "type": "string"
-                  }
-                }
+                "schema": { "type": "array", "items": { "type": "string" } }
               },
               "text/json": {
-                "schema": {
-                  "type": "array",
-                  "items": {
-                    "type": "string"
-                  }
-                }
+                "schema": { "type": "array", "items": { "type": "string" } }
               }
             }
           }
@@ -1461,9 +1419,7 @@
             "in": "query",
             "description": "",
             "style": "form",
-            "schema": {
-              "type": "string"
-            }
+            "schema": { "type": "string" }
           }
         ],
         "responses": {
@@ -1769,28 +1725,19 @@
               "text/plain": {
                 "schema": {
                   "type": "array",
-                  "items": {
-                    "type": "integer",
-                    "format": "int32"
-                  }
+                  "items": { "type": "integer", "format": "int32" }
                 }
               },
               "application/json": {
                 "schema": {
                   "type": "array",
-                  "items": {
-                    "type": "integer",
-                    "format": "int32"
-                  }
+                  "items": { "type": "integer", "format": "int32" }
                 }
               },
               "text/json": {
                 "schema": {
                   "type": "array",
-                  "items": {
-                    "type": "integer",
-                    "format": "int32"
-                  }
+                  "items": { "type": "integer", "format": "int32" }
                 }
               }
             }
@@ -2023,21 +1970,9 @@
           "200": {
             "description": "Success",
             "content": {
-              "text/plain": {
-                "schema": {
-                  "type": "string"
-                }
-              },
-              "application/json": {
-                "schema": {
-                  "type": "string"
-                }
-              },
-              "text/json": {
-                "schema": {
-                  "type": "string"
-                }
-              }
+              "text/plain": { "schema": { "type": "string" } },
+              "application/json": { "schema": { "type": "string" } },
+              "text/json": { "schema": { "type": "string" } }
             }
           }
         }
@@ -2131,21 +2066,9 @@
           "200": {
             "description": "Success",
             "content": {
-              "text/plain": {
-                "schema": {
-                  "type": "string"
-                }
-              },
-              "application/json": {
-                "schema": {
-                  "type": "string"
-                }
-              },
-              "text/json": {
-                "schema": {
-                  "type": "string"
-                }
-              }
+              "text/plain": { "schema": { "type": "string" } },
+              "application/json": { "schema": { "type": "string" } },
+              "text/json": { "schema": { "type": "string" } }
             }
           }
         }
@@ -2366,17 +2289,17 @@
             "content": {
               "text/plain": {
                 "schema": {
-                  "$ref": "#/components/schemas/TrWeb.Commons.ExternalPortals.Api.Models.FormBuilder.ResultSets.ApplicationResultSet"
+                  "$ref": "#/components/schemas/TrWeb.Commons.ExternalPortals.Api.Models.FormBuilder.ResultSets.ValidationResultSet"
                 }
               },
               "application/json": {
                 "schema": {
-                  "$ref": "#/components/schemas/TrWeb.Commons.ExternalPortals.Api.Models.FormBuilder.ResultSets.ApplicationResultSet"
+                  "$ref": "#/components/schemas/TrWeb.Commons.ExternalPortals.Api.Models.FormBuilder.ResultSets.ValidationResultSet"
                 }
               },
               "text/json": {
                 "schema": {
-                  "$ref": "#/components/schemas/TrWeb.Commons.ExternalPortals.Api.Models.FormBuilder.ResultSets.ApplicationResultSet"
+                  "$ref": "#/components/schemas/TrWeb.Commons.ExternalPortals.Api.Models.FormBuilder.ResultSets.ValidationResultSet"
                 }
               }
             }
@@ -2488,7 +2411,24 @@
             }
           },
           "200": {
-            "description": "Success"
+            "description": "Success",
+            "content": {
+              "text/plain": {
+                "schema": {
+                  "$ref": "#/components/schemas/TrWeb.Commons.ExternalPortals.Api.Models.FormBuilder.ResultSets.ValidationResultSet"
+                }
+              },
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/TrWeb.Commons.ExternalPortals.Api.Models.FormBuilder.ResultSets.ValidationResultSet"
+                }
+              },
+              "text/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/TrWeb.Commons.ExternalPortals.Api.Models.FormBuilder.ResultSets.ValidationResultSet"
+                }
+              }
+            }
           }
         }
       }
@@ -2499,77 +2439,37 @@
       "TrWeb.Api.Services.Common.Clients.Models.GetBankInformationReturn": {
         "type": "object",
         "properties": {
-          "bank": {
-            "type": "string",
-            "nullable": true
-          },
-          "ledger": {
-            "type": "string",
-            "nullable": true
-          },
-          "accountNumber": {
-            "type": "string",
-            "nullable": true
-          },
-          "iban": {
-            "type": "string",
-            "nullable": true
-          },
-          "swift": {
-            "type": "string",
-            "nullable": true
-          },
-          "foreignBankName": {
-            "type": "string",
-            "nullable": true
-          },
-          "foreignBankAddress": {
-            "type": "string",
-            "nullable": true
-          },
-          "currency": {
-            "type": "string",
-            "nullable": true
-          }
+          "bank": { "type": "string", "nullable": true },
+          "ledger": { "type": "string", "nullable": true },
+          "accountNumber": { "type": "string", "nullable": true },
+          "iban": { "type": "string", "nullable": true },
+          "swift": { "type": "string", "nullable": true },
+          "foreignBankName": { "type": "string", "nullable": true },
+          "foreignBankAddress": { "type": "string", "nullable": true },
+          "currency": { "type": "string", "nullable": true }
         },
         "additionalProperties": false
       },
       "TrWeb.Api.Services.Domain.Applications.Models.CreateApplicationFromPaperReturn": {
         "type": "object",
         "properties": {
-          "applicationLineId": {
-            "type": "integer",
-            "format": "int32"
-          }
+          "applicationLineId": { "type": "integer", "format": "int32" }
         },
         "additionalProperties": false
       },
       "TrWeb.Api.Services.Domain.DigitalMailbox.Models.Document": {
         "type": "object",
         "properties": {
-          "type": {
-            "type": "string",
-            "nullable": true
-          },
-          "content": {
-            "type": "string",
-            "nullable": true
-          }
+          "type": { "type": "string", "nullable": true },
+          "content": { "type": "string", "nullable": true }
         },
         "additionalProperties": false
       },
       "TrWeb.Api.Services.Domain.Finance.Models.RknMonthDto": {
         "type": "object",
         "properties": {
-          "month": {
-            "type": "integer",
-            "format": "int32"
-          },
-          "amount": {
-            "type": "number",
-            "format": "double",
-            "nullable": true
-          }
+          "month": { "type": "integer", "format": "int32" },
+          "amount": { "type": "number", "format": "double", "nullable": true }
         },
         "additionalProperties": false
       },
@@ -2702,10 +2602,7 @@
             "description": "Identity for application type",
             "nullable": true
           },
-          "applicationName": {
-            "type": "string",
-            "nullable": true
-          },
+          "applicationName": { "type": "string", "nullable": true },
           "Dagssetning": {
             "type": "string",
             "description": "Date when application was last changed",
@@ -2747,42 +2644,15 @@
       "TrWeb.Commons.ExternalPortals.Api.Models.FormBuilder.AssociatedUser": {
         "type": "object",
         "properties": {
-          "kennitala": {
-            "type": "string",
-            "nullable": true
-          },
-          "heiti": {
-            "type": "string",
-            "nullable": true
-          },
-          "heimili": {
-            "type": "string",
-            "nullable": true
-          },
-          "stadur": {
-            "type": "string",
-            "nullable": true
-          },
-          "postnumer": {
-            "type": "string",
-            "nullable": true
-          },
-          "tegund": {
-            "type": "integer",
-            "format": "int32"
-          },
-          "hlutverk": {
-            "type": "string",
-            "nullable": true
-          },
-          "netfang": {
-            "type": "string",
-            "nullable": true
-          },
-          "simi": {
-            "type": "string",
-            "nullable": true
-          }
+          "kennitala": { "type": "string", "nullable": true },
+          "heiti": { "type": "string", "nullable": true },
+          "heimili": { "type": "string", "nullable": true },
+          "stadur": { "type": "string", "nullable": true },
+          "postnumer": { "type": "string", "nullable": true },
+          "tegund": { "type": "integer", "format": "int32" },
+          "hlutverk": { "type": "string", "nullable": true },
+          "netfang": { "type": "string", "nullable": true },
+          "simi": { "type": "string", "nullable": true }
         },
         "additionalProperties": false,
         "description": "The associated user (Adilar)"
@@ -2844,10 +2714,7 @@
       "TrWeb.Commons.ExternalPortals.Api.Models.FormBuilder.InputData": {
         "type": "object",
         "properties": {
-          "guid": {
-            "type": "string",
-            "nullable": true
-          },
+          "guid": { "type": "string", "nullable": true },
           "flokkur": {
             "type": "string",
             "description": "Group name",
@@ -2929,6 +2796,28 @@
         },
         "additionalProperties": false
       },
+      "TrWeb.Commons.ExternalPortals.Api.Models.FormBuilder.ResultSets.ValidationResultSet": {
+        "type": "object",
+        "properties": {
+          "status": {
+            "$ref": "#/components/schemas/TrWeb.Commons.ExternalPortals.Api.Models.FormBuilder.Enums.ExternalResultStatus"
+          },
+          "message": {
+            "type": "string",
+            "description": "Message to be displayed to the user if the application is not valid.",
+            "nullable": true
+          },
+          "data": {
+            "type": "array",
+            "items": {
+              "$ref": "#/components/schemas/TrWeb.Commons.ExternalPortals.Api.Models.FormBuilder.Ruleset"
+            },
+            "description": "Data to be returned to Leyfisveitingagátt, has to match the ruleset that was sent.",
+            "nullable": true
+          }
+        },
+        "additionalProperties": false
+      },
       "TrWeb.Commons.ExternalPortals.Api.Models.FormBuilder.Ruleset": {
         "type": "object",
         "properties": {
@@ -2948,9 +2837,9 @@
             "nullable": true
           },
           "gildi": {
-            "type": "string",
             "description": "The value to be set for the variable",
-            "nullable": true
+            "nullable": true,
+            "type": "string"
           }
         },
         "additionalProperties": false
@@ -3204,10 +3093,7 @@
             "description": "Ellilífeyrir 1\r\nEllilífeyrir sjómanna 2\r\nÖrorkulífeyrir 3\r\nEndurhæfingarlífeyrir 4\r\nHálfur ellilífeyrir 5",
             "format": "int32"
           },
-          "hasSpouse": {
-            "type": "boolean",
-            "description": "Hjúskaparstaða"
-          },
+          "hasSpouse": { "type": "boolean", "description": "Hjúskaparstaða" },
           "livingCondition": {
             "type": "integer",
             "description": "Heimilisaðstæður, býr ein(n) ?\r\nBýr ein(n) = 1\r\nBýr ekki ein(n) = 2",
@@ -3297,10 +3183,7 @@
             "description": "Séreignarlífeyrisgreiðslur",
             "format": "int32"
           },
-          "otherIncome": {
-            "type": "integer",
-            "format": "int32"
-          },
+          "otherIncome": { "type": "integer", "format": "int32" },
           "capitalIncome": {
             "type": "integer",
             "description": "Fjármagnstekjur",
@@ -3355,12 +3238,8 @@
         },
         "additionalProperties": false
       },
-      "ProblemDetails": {
-        "additionalProperties": false
-      },
-      "ValidationProblemDetails": {
-        "additionalProperties": false
-      }
+      "ProblemDetails": { "additionalProperties": false },
+      "ValidationProblemDetails": { "additionalProperties": false }
     },
     "securitySchemes": {
       "Bearer": {
@@ -3370,9 +3249,5 @@
       }
     }
   },
-  "security": [
-    {
-      "Bearer": ["Bearer"]
-    }
-  ]
+  "security": [{ "Bearer": ["Bearer"] }]
 }

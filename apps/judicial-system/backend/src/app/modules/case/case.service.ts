@@ -130,7 +130,6 @@ export interface UpdateCase
     | 'prosecutorAppealAnnouncement'
     | 'accusedPostponedAppealDate'
     | 'prosecutorPostponedAppealDate'
-    | 'judgeId'
     | 'registrarId'
     | 'caseModifiedExplanation'
     | 'rulingModifiedHistory'
@@ -169,6 +168,7 @@ export interface UpdateCase
   arraignmentDate?: UpdateDateLog | null
   courtDate?: UpdateDateLog | null
   postponedIndefinitelyExplanation?: string | null
+  judgeId?: string | null
 }
 
 type DateLogKeys = keyof Pick<UpdateCase, 'arraignmentDate' | 'courtDate'>
@@ -321,6 +321,12 @@ export const caseListInclude: Includeable[] = [
     as: 'dateLogs',
     required: false,
     where: { dateType: { [Op.in]: dateTypes } },
+  },
+  {
+    model: ExplanatoryComment,
+    as: 'explanatoryComments',
+    required: false,
+    where: { commentType: { [Op.in]: commentTypes } },
   },
 ]
 
@@ -908,7 +914,7 @@ export class CaseService {
         type: MessageType.DELIVERY_TO_COURT_OF_APPEALS_CONCLUSION,
         user,
         caseId: theCase.id,
-        // The APPEAL_COMPLETED message must be handled before this message
+        // The APPEAL_COMPLETED notification must be handled before this message
         nextRetry:
           nowFactory().getTime() + this.config.robotMessageDelay * 1000,
       },
@@ -1028,6 +1034,20 @@ export class CaseService {
     return this.messageService.sendMessagesToQueue(
       this.getDeliverAssignedRolesToCourtOfAppealsMessages(user, theCase),
     )
+  }
+
+  private addMessagesForNewCourtDateToQueue(
+    theCase: Case,
+    user: TUser,
+  ): Promise<void> {
+    return this.messageService.sendMessagesToQueue([
+      {
+        type: MessageType.NOTIFICATION,
+        user,
+        caseId: theCase.id,
+        body: { type: NotificationType.COURT_DATE },
+      },
+    ])
   }
 
   private async addMessagesForUpdatedCaseToQueue(
@@ -1157,6 +1177,14 @@ export class CaseService {
         await this.addMessagesForAssignedAppealRolesToQueue(updatedCase, user)
       }
     }
+
+    // This only applies to indictments
+    const courtDate = DateLog.courtDate(theCase.dateLogs)
+    const updatedCourtDate = DateLog.courtDate(updatedCase.dateLogs)
+    if (updatedCourtDate && updatedCourtDate.date !== courtDate?.date) {
+      // New court date
+      await this.addMessagesForNewCourtDateToQueue(updatedCase, user)
+    }
   }
 
   private allAppealRolesAssigned(updatedCase: Case) {
@@ -1247,7 +1275,7 @@ export class CaseService {
               transaction,
             })
           }
-        } else {
+        } else if (updateDateLog !== null) {
           await this.dateLogModel.create(
             {
               caseId: theCase.id,
@@ -1293,7 +1321,7 @@ export class CaseService {
               { where: { caseId: theCase.id, commentType }, transaction },
             )
           }
-        } else {
+        } else if (updateComment !== null) {
           await this.explanatoryCommentModel.create(
             { caseId: theCase.id, commentType, comment: updateComment },
             { transaction },

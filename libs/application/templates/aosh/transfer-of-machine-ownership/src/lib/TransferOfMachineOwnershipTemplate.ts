@@ -37,6 +37,7 @@ import { ApiScope } from '@island.is/auth/scopes'
 import { Features } from '@island.is/feature-flags'
 import { getBuyerNationalId } from '../utils/getBuyerNationalid'
 import { getExtraData } from '../utils/getExtraData'
+import { isPaymentRequired } from '../utils/isPaymentRequired'
 
 const pruneInDaysAtMidnight = (application: Application, days: number) => {
   const date = new Date(application.created)
@@ -181,7 +182,13 @@ const template: ApplicationTemplate<
           ],
         },
         on: {
-          [DefaultEvents.SUBMIT]: { target: States.PAYMENT },
+          [DefaultEvents.SUBMIT]: [
+            {
+              target: States.PAYMENT,
+              cond: (application) => !isPaymentRequired(application),
+            },
+            { target: States.REVIEW },
+          ],
         },
       },
       [States.PAYMENT]: buildPaymentState({

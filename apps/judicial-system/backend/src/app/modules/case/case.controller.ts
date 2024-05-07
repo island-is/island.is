@@ -62,6 +62,7 @@ import {
   prisonSystemStaffRule,
   prosecutorRepresentativeRule,
   prosecutorRule,
+  publicProsecutorStaffRule,
 } from '../../guards'
 import { CaseEvent, EventService } from '../event'
 import { UserService } from '../user'
@@ -400,6 +401,9 @@ export class CaseController {
       case CaseTransition.RETURN_INDICTMENT:
         update.courtCaseNumber = ''
         break
+      case CaseTransition.REDISTRIBUTE:
+        update.judgeId = null
+        break
     }
 
     const updatedCase = await this.caseService.update(
@@ -422,6 +426,7 @@ export class CaseController {
   @RolesRules(
     prosecutorRule,
     prosecutorRepresentativeRule,
+    publicProsecutorStaffRule,
     districtCourtJudgeRule,
     districtCourtRegistrarRule,
     districtCourtAssistantRule,
@@ -448,6 +453,7 @@ export class CaseController {
   @RolesRules(
     prosecutorRule,
     prosecutorRepresentativeRule,
+    publicProsecutorStaffRule,
     districtCourtJudgeRule,
     districtCourtRegistrarRule,
     districtCourtAssistantRule,
