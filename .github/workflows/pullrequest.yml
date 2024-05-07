@@ -92,7 +92,7 @@ jobs:
         uses: ./.github/actions/prepare-cache
         with:
           path: apps/native/app/node_modules
-          key: ${{ steps.calculate-mobile-node-modules-cache-key.outputs.mobile-node-modules-key }}
+          key: ${{ steps.calculate-cache-keys.outputs.mobile-node-modules-key }}
 
       - name: Preparing HEAD and BASE tags
         run: |
