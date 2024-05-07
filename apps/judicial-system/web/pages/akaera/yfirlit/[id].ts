@@ -1,3 +1,2 @@
-import IndictmentOverview from '@island.is/judicial-system-web/src/routes/Shared/IndictmentOverview/IndictmentOverview'
-
-export default IndictmentOverview
+import Overview from '@island.is/judicial-system-web/src/routes/Court/Indictments/Overview/Overview'
+export default Overview
