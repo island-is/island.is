@@ -24,12 +24,17 @@ interface UniqueDefendersProps {
   defenders: Defender[]
 }
 
+interface DataSection {
+  data: Array<{ title: string; value?: React.ReactNode }>
+}
+
 interface Props {
   courtOfAppealData?: Array<{ title: string; value?: React.ReactNode }>
   data: Array<{ title: string; value?: React.ReactNode }>
   defendants?: { title: string; items: Defendant[] }
   defenders?: Defender[]
   icon?: IconMapIcon
+  additionalDataSections?: DataSection[]
 }
 
 export const NameAndEmail = (name?: string | null, email?: string | null) => [
@@ -85,7 +90,14 @@ const UniqueDefenders: React.FC<
 }
 
 const InfoCard: React.FC<Props> = (props) => {
-  const { data, defendants, defenders, courtOfAppealData, icon } = props
+  const {
+    courtOfAppealData,
+    data,
+    defendants,
+    defenders,
+    icon,
+    additionalDataSections,
+  } = props
 
   return (
     <Box
@@ -150,13 +162,12 @@ const InfoCard: React.FC<Props> = (props) => {
         })}
       </Box>
       {courtOfAppealData && (
-        <Box className={styles.infoCardCourtOfAppealDataContainer}>
+        <Box className={styles.infoCardAdditionalSectionContainer}>
           {courtOfAppealData.map((dataItem, index) => {
             return (
               <Box
                 data-testid={`infoCardDataContainer${index}`}
                 key={dataItem.title}
-                margin={1}
               >
                 <Text variant="h4">{dataItem.title}</Text>
                 {typeof dataItem.value === 'string' ? (
@@ -169,6 +180,23 @@ const InfoCard: React.FC<Props> = (props) => {
           })}
         </Box>
       )}
+      {additionalDataSections?.map((section, index) => (
+        <Box className={styles.infoCardAdditionalSectionContainer}>
+          {section.data.map((dataItem, dataIndex) => (
+            <Box
+              key={dataItem.title}
+              data-testid={`infoCardDataContainer-${index}-${dataIndex}`}
+            >
+              <Text variant="h4">{dataItem.title}</Text>
+              {typeof dataItem.value === 'string' ? (
+                <Text>{dataItem.value}</Text>
+              ) : (
+                dataItem.value
+              )}
+            </Box>
+          ))}
+        </Box>
+      ))}
       {icon && (
         <Box position="absolute" top={[2, 2, 3, 3]} right={[2, 2, 3, 3]}>
           <Icon icon={icon} type="outline" color="blue400" size="large" />
