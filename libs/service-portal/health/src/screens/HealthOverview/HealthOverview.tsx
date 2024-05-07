@@ -4,11 +4,9 @@ import {
   useGetInsuranceOverviewQuery,
 } from './HealthOverview.generated'
 import {
-  ErrorScreen,
   IntroHeader,
   UserInfoLine,
   amountFormat,
-  m,
   downloadLink,
   SJUKRATRYGGINGAR_SLUG,
 } from '@island.is/service-portal/core'
@@ -19,14 +17,11 @@ import {
   Button,
   SkeletonLoader,
   Stack,
-  Text,
 } from '@island.is/island-ui/core'
 import { useUserInfo } from '@island.is/auth/react'
 import { CONTENT_GAP, SECTION_GAP } from '../Medicine/constants'
 import { HealthPaths } from '../../lib/paths'
-import { Link } from 'react-router-dom'
-import { useFeatureFlagClient } from '@island.is/react/feature-flags'
-import { useEffect, useState } from 'react'
+import { Problem } from '@island.is/react-spa/shared'
 
 export const HealthOverview = () => {
   useNamespaces('sp.health')
@@ -41,49 +36,16 @@ export const HealthOverview = () => {
     { loading: confirmationLoading, error: confirmationError },
   ] = useGetInsuranceConfirmationLazyQuery()
 
-  const featureFlagClient = useFeatureFlagClient()
-
-  const [enabledPaymentPage, setEnabledPaymentPage] = useState<boolean>(false)
-
-  useEffect(() => {
-    const isFlagEnabled = async () => {
-      const ffEnabled = await featureFlagClient.getValue(
-        `isServicePortalHealthPaymentPageEnabled`,
-        false,
-      )
-      if (ffEnabled) {
-        setEnabledPaymentPage(ffEnabled as boolean)
-      }
-    }
-    isFlagEnabled()
-    // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, [])
-
-  const insurance = data?.rightsPortalInsuranceOverview.items[0]
-  const errors = data?.rightsPortalInsuranceOverview.errors
-
-  async function getInsuranceConfirmation() {
+  const getInsuranceConfirmation = async () => {
     const data = await getInsuranceConfirmationLazyQuery()
-    const downloadData = data.data?.rightsPortalInsuranceConfirmation.items[0]
+    const downloadData = data.data?.rightsPortalInsuranceConfirmation
 
     if (downloadData?.data && downloadData.fileName) {
       downloadLink(downloadData.data, 'application/pdf', downloadData.fileName)
     }
   }
 
-  if (error) {
-    return (
-      <ErrorScreen
-        figure="./assets/images/hourglass.svg"
-        tagVariant="red"
-        tag={formatMessage(m.errorTitle)}
-        title={formatMessage(m.somethingWrong)}
-        children={formatMessage(m.errorFetchModule, {
-          module: formatMessage(m.overview).toLowerCase(),
-        })}
-      />
-    )
-  }
+  const insurance = data?.rightsPortalInsuranceOverview
 
   return (
     <Box>
@@ -95,40 +57,23 @@ export const HealthOverview = () => {
           serviceProviderTooltip={formatMessage(messages.healthTooltip)}
         />
       </Box>
-      {loading ? (
+      {error ? (
+        <Problem error={error} noBorder={false} />
+      ) : loading ? (
         <SkeletonLoader
           repeat={3}
           space={2}
           height={24}
           borderRadius="standard"
         />
-      ) : !insurance || !insurance.isInsured ? (
+      ) : !insurance?.isInsured ? (
         <AlertMessage
           type="info"
           title={formatMessage(messages.noHealthInsurance)}
           message={insurance?.explanation}
         />
       ) : (
-        <Box>
-          {!!errors?.length && (
-            <Box marginBottom={CONTENT_GAP}>
-              <Stack space={2}>
-                {errors?.map((error, i) => (
-                  <AlertMessage
-                    // We can switch on error.status to show different messages, but for now there is only one error message
-                    key={i}
-                    type="warning"
-                    title={formatMessage(
-                      messages.healthInternalServiceErrorTitle,
-                    )}
-                    message={formatMessage(
-                      messages.healthInternalServiceErrorInfo,
-                    )}
-                  />
-                ))}
-              </Stack>
-            </Box>
-          )}
+        <>
           <Box
             marginBottom={SECTION_GAP}
             borderBottomWidth="standard"
@@ -195,7 +140,7 @@ export const HealthOverview = () => {
               />
             </Stack>
           </Box>
-        </Box>
+        </>
       )}
     </Box>
   )

@@ -15,8 +15,8 @@ import {
 } from '@island.is/nest/feature-flags'
 import type { User } from '@island.is/auth-nest-tools'
 import { OverviewService } from './overview.service'
-import { InsuranceConfirmationResponse } from './models/insuranceConfirmation.response'
-import { InsuranceOverviewResponse } from './models/insuranceOverview.response'
+import { InsuranceConfirmation } from './models/insuranceConfirmation.model'
+import { InsuranceOverview } from './models/insuranceOverview.model'
 
 @Resolver()
 @UseGuards(IdsUserGuard, ScopesGuard, FeatureFlagGuard)
@@ -27,23 +27,23 @@ import { InsuranceOverviewResponse } from './models/insuranceOverview.response'
 export class OverviewResolver {
   constructor(private readonly service: OverviewService) {}
 
-  @Query(() => InsuranceConfirmationResponse, {
+  @Query(() => InsuranceConfirmation, {
     name: 'rightsPortalInsuranceConfirmation',
   })
   @Audit()
   async getInsuranceConfirmation(
     @CurrentUser() user: User,
-  ): Promise<InsuranceConfirmationResponse> {
+  ): Promise<InsuranceConfirmation | null> {
     return await this.service.getInsuranceConfirmation(user)
   }
 
-  @Query(() => InsuranceOverviewResponse, {
+  @Query(() => InsuranceOverview, {
     name: 'rightsPortalInsuranceOverview',
   })
   @Audit()
   async getInsuranceOverview(
     @CurrentUser() user: User,
-  ): Promise<InsuranceOverviewResponse> {
+  ): Promise<InsuranceOverview | null> {
     return await this.service.getInsuranceOverview(user)
   }
 }
