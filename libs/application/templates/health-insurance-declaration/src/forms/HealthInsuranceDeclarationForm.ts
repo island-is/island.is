@@ -520,7 +520,7 @@ export const HealthInsuranceDeclarationForm: Form = buildForm({
             }),
             buildSubmitField({
               id: 'submit',
-              title: 'Test',
+              title: '',
               actions: [
                 {
                   event: DefaultEvents.SUBMIT,
@@ -528,6 +528,7 @@ export const HealthInsuranceDeclarationForm: Form = buildForm({
                   type: 'primary',
                 },
               ],
+              refetchApplicationAfterSubmit: true,
             }),
           ],
         }),

@@ -74,7 +74,11 @@ const HealthInsuranceDeclarationTemplate: ApplicationTemplate<
               write: 'all',
               delete: true,
               api: [
-                HealthInsuranceStatementsApi,
+                defineTemplateApi({
+                  action: 'getInsuranceStatementData',
+                  namespace: 'HealthInsuranceDeclaration',
+                  externalDataId: 'insuranceStatementData',
+                }),
                 UserProfileApi,
                 NationalRegistryUserApi,
                 ChildrenCustodyInformationApi,
@@ -129,7 +133,6 @@ const HealthInsuranceDeclarationTemplate: ApplicationTemplate<
       [States.SUBMITTED]: {
         meta: {
           name: States.SUBMITTED,
-          progress: 1,
           status: 'completed',
           lifecycle: DefaultStateLifeCycle,
           onEntry: defineTemplateApi({
@@ -142,7 +145,15 @@ const HealthInsuranceDeclarationTemplate: ApplicationTemplate<
                 import('../forms/Submitted').then((val) =>
                   Promise.resolve(val.HealthInsuranceDeclarationSubmitted),
                 ),
-              read: 'all',
+              write: 'all',
+              api: [
+                defineTemplateApi({
+                  action: 'getPdfDataForApplicants',
+                  namespace: 'HealthInsuranceDeclaration',
+                  externalDataId: 'pdfDataForApplicants',
+                  shouldPersistToExternalData: false,
+                }),
+              ],
             },
           ],
         },

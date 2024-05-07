@@ -5,6 +5,7 @@ import {
 import {
   ApplicantType,
   HealthInsuranceDeclarationApplication,
+  SubmitApplicationData,
   getChildrenFromExternalData,
   getSpouseFromExternalData,
 } from '@island.is/application/templates/health-insurance-declaration'
@@ -96,10 +97,10 @@ const getApplicants = (
   return applicants
 }
 
-export const getApplicantsFromExternalData = (application: Application) => {
-  const healthInsuranceApplication =
-    application as HealthInsuranceDeclarationApplication
-  return healthInsuranceApplication.externalData.submitApplication.data
+export const getApplicantsFromExternalData = ({
+  externalData,
+}: Application) => {
+  return (externalData.submitApplication.data as SubmitApplicationData)
     .applicants
 }
 
