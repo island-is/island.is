@@ -3,16 +3,16 @@ import { Institution, InstitutionType } from './institution'
 export enum UserRole {
   PROSECUTOR = 'PROSECUTOR', // sækjandi
   PROSECUTOR_REPRESENTATIVE = 'PROSECUTOR_REPRESENTATIVE', // fulltrúi
+  PUBLIC_PROSECUTOR_STAFF = 'PUBLIC_PROSECUTOR_STAFF', // skrifstofufólk hjá ríkissaksóknara
   DISTRICT_COURT_JUDGE = 'DISTRICT_COURT_JUDGE', // dómari
   DISTRICT_COURT_REGISTRAR = 'DISTRICT_COURT_REGISTRAR', // dómritari
   DISTRICT_COURT_ASSISTANT = 'DISTRICT_COURT_ASSISTANT', // aðstoðarmaður dómara
   COURT_OF_APPEALS_JUDGE = 'COURT_OF_APPEALS_JUDGE', // dómari
   COURT_OF_APPEALS_REGISTRAR = 'COURT_OF_APPEALS_REGISTRAR', // dómritari
   COURT_OF_APPEALS_ASSISTANT = 'COURT_OF_APPEALS_ASSISTANT', // aðstoðarmaður dómara
-  ADMIN = 'ADMIN', // Does not exist in the database // notendaumsjón
   PRISON_SYSTEM_STAFF = 'PRISON_SYSTEM_STAFF', // fangelsismálastarfsmaður
+  ADMIN = 'ADMIN', // Does not exist in the database // notendaumsjón
   DEFENDER = 'DEFENDER', // Does not exist in the database // verjandi
-  PUBLIC_PROSECUTOR_STAFF = 'PUBLIC_PROSECUTOR_STAFF', // skrifstofufólk hjá ríkissaksóknara
 }
 
 export interface User {
@@ -33,8 +33,9 @@ export interface User {
 }
 
 interface InstitutionUser {
+  id?: string | null
   role?: string | null
-  institution?: { type?: string | null } | null
+  institution?: { id?: string | null; type?: string | null } | null
 }
 
 export const prosecutionRoles: string[] = [
@@ -51,14 +52,17 @@ export const isProsecutionUser = (user?: InstitutionUser): boolean => {
 }
 
 export const publicProsecutorRoles: string[] = [
+  UserRole.PROSECUTOR,
+  UserRole.PROSECUTOR_REPRESENTATIVE,
   UserRole.PUBLIC_PROSECUTOR_STAFF,
 ]
 
-export function isPublicProsecutorUser(user?: InstitutionUser): boolean {
+export const isPublicProsecutorUser = (user?: InstitutionUser): boolean => {
   return Boolean(
     user?.role &&
       publicProsecutorRoles.includes(user.role) &&
-      user?.institution?.type === InstitutionType.PROSECUTORS_OFFICE,
+      user?.institution?.type === InstitutionType.PROSECUTORS_OFFICE &&
+      user?.institution?.id === '8f9e2f6d-6a00-4a5e-b39b-95fd110d762e',
   )
 }
 
@@ -116,6 +120,7 @@ export const isAdminUser = (user?: InstitutionUser): boolean => {
 export const isCoreUser = (user?: InstitutionUser): boolean => {
   return (
     isProsecutionUser(user) ||
+    isPublicProsecutorUser(user) ||
     isDistrictCourtUser(user) ||
     isCourtOfAppealsUser(user) ||
     isPrisonSystemUser(user)
