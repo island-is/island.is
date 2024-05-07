@@ -39,9 +39,9 @@ jobs:
       UNAFFECTED: ${{ steps.unaffected.outputs.UNAFFECTED }}
       BUILD_CHUNKS: ${{ steps.build_projects.outputs.CHUNKS }}
       BUILD_MAP: ${{ steps.build_map.outputs.BUILD_MAP }}
-      node-modules-key: ${{ steps.calculate-node-modules-cache-key.outputs.node-modules-key }}
-      mobile-node-modules-key: ${{ steps.calculate-mobile-node-modules-cache-key.outputs.mobile-node-modules-key }}
-      generated-files-key: ${{ steps.calculate-generated-files-cache-key.outputs.generated-files-key }}
+      node-modules-key: ${{ steps.calculate-cache-keys.outputs.node-modules-key }}
+      mobile-node-modules-key: ${{ steps.calculate-cache-keys.outputs.mobile-node-modules-key }}
+      generated-files-key: ${{ steps.calculate-cache-keys.outputs.generated-files-key }}
     steps:
       - uses: actions/checkout@v3
         with:
