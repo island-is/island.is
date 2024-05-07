@@ -21,3 +21,4 @@ import { CleanupService } from './cleanup.service'
   providers: [CleanupService, GrantsService],
 })
 export class CleanupWorkerModule {}
+
