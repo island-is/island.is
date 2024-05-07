@@ -40,6 +40,7 @@ import { useCase } from '@island.is/judicial-system-web/src/utils/hooks'
 
 import CasesAwaitingAssignmentTable from '../../Court/components/CasesAwaitingAssignmentTable/CasesAwaitingAssignmentTable'
 import CasesAwaitingConfirmationTable from '../../Prosecutor/components/CasesAwaitingConfirmationTable/CasesAwaitingConfirmationTable'
+import CasesAwaitingReview from '../../PublicProsecutor/Tables/CasesAwaitingReview'
 import ActiveCases from './ActiveCases'
 import { useCasesQuery } from './cases.generated'
 import { FilterOption, useFilter } from './useFilter'
@@ -132,6 +133,7 @@ export const Cases: React.FC = () => {
     allActiveCases,
     allPastCases,
     casesAwaitingAssignment,
+    casesAwaitingReview,
   ] = useMemo(() => {
     if (!resCases) {
       return [[], [], [], []]
@@ -146,6 +148,13 @@ export const Cases: React.FC = () => {
 
     const casesAwaitingAssignment = filterCases(
       (c) => isIndictmentCase(c.type) && c.judge === null,
+    )
+
+    const casesAwaitingReview = filterCases(
+      (c) =>
+        isIndictmentCase(c.type) &&
+        c.indictmentReviewer !== null &&
+        c.indictmentReviewer?.id === user?.id,
     )
 
     const activeCases = filterCases((c) => {
@@ -165,7 +174,10 @@ export const Cases: React.FC = () => {
     })
 
     const pastCases = filterCases(
-      (c) => !activeCases.includes(c) && !casesAwaitingAssignment.includes(c),
+      (c) =>
+        !activeCases.includes(c) &&
+        !casesAwaitingAssignment.includes(c) &&
+        !casesAwaitingReview.includes(c),
     )
 
     return [
@@ -173,6 +185,7 @@ export const Cases: React.FC = () => {
       activeCases as CaseListEntry[],
       pastCases as CaseListEntry[],
       casesAwaitingAssignment as CaseListEntry[],
+      casesAwaitingReview as CaseListEntry[],
     ]
   }, [resCases, user])
 
@@ -250,13 +263,20 @@ export const Cases: React.FC = () => {
         ) : (
           <>
             {isProsecutionUser(user) && filter.value !== 'INVESTIGATION' && (
-              <CasesAwaitingConfirmationTable
-                loading={loading}
-                isFiltering={isFiltering}
-                cases={casesAwaitingConfirmation}
-                onContextMenuDeleteClick={setVisibleModal}
-              />
+              <>
+                <CasesAwaitingConfirmationTable
+                  loading={loading}
+                  isFiltering={isFiltering}
+                  cases={casesAwaitingConfirmation}
+                  onContextMenuDeleteClick={setVisibleModal}
+                />
+                <CasesAwaitingReview
+                  loading={loading}
+                  cases={casesAwaitingReview}
+                />
+              </>
             )}
+
             {isDistrictCourtUser(user) && filter.value !== 'INVESTIGATION' && (
               <CasesAwaitingAssignmentTable
                 cases={casesAwaitingAssignment}
