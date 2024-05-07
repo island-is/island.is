@@ -461,4 +461,9 @@ export class UpdateCaseDto {
   @IsString()
   @ApiPropertyOptional()
   readonly postponedIndefinitelyExplanation?: string
+
+  @IsOptional()
+  @IsUUID()
+  @ApiPropertyOptional()
+  readonly indictmentReviewerId?: string
 }
