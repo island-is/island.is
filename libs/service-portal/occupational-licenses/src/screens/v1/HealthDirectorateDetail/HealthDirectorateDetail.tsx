@@ -9,8 +9,8 @@ import {
 } from '@island.is/service-portal/core'
 import { useLocale, useNamespaces } from '@island.is/localization'
 import { useUserInfo } from '@island.is/auth/react'
-import { LicenseDetail } from '../../components/LicenseDetail'
-import { olMessage as om } from '../../lib/messages'
+import { LicenseDetail } from '../../../components/LicenseDetail'
+import { olMessage as om } from '../../../lib/messages'
 import { m } from '@island.is/service-portal/core'
 
 type UseParams = {

@@ -1,9 +1,10 @@
 import { Box, Text, Table, UseBoxStylesProps } from '@island.is/island-ui/core'
-import { UserInfoLine, formatDate } from '@island.is/service-portal/core'
 import { StackWithBottomDivider } from '../StackWithBottomDivider/StackWithBottomDivider'
 import parseISO from 'date-fns/parseISO'
 import isValid from 'date-fns/isValid'
 import { isDefined } from '@island.is/shared/utils'
+import { formatDate } from '../../utils/dateUtils'
+import { UserInfoLine } from '../UserInfoLine/UserInfoLine'
 
 interface Props<T> {
   entries: Array<T>

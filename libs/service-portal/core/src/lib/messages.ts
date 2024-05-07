@@ -241,6 +241,10 @@ export const m = defineMessages({
     id: 'service.portal:fetching',
     defaultMessage: 'Sæki',
   },
+  fetchLicense: {
+    id: 'service.portal:fetch-license',
+    defaultMessage: 'Sækja leyfisbréf',
+  },
   assets: {
     id: 'service.portal:assets',
     defaultMessage: 'Eignir',
