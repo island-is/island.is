@@ -78,46 +78,21 @@ jobs:
           path: event.json
           retention-days: 60
 
-      - name: Calculate cache key for node-modules
-        id: calculate-node-modules-cache-key
-        run: |
-          PACKAGE_JSON_HASH=$(cat package.json | jq '{resolutions,dependencies,devDependencies}' | sha1sum -t | cut -f1 -d" ")
-          echo "PACKAGE_JSON_HASH: $PACKAGE_JSON_HASH"
-          export NODE_MODULES_HASH=${{ runner.os }}-${{ hashFiles('yarn.lock') }}-$PACKAGE_JSON_HASH
-          echo "NODE_MODULES_HASH: $NODE_MODULES_HASH"
-          echo "node-modules-key=$NODE_MODULES_HASH" >> $GITHUB_OUTPUT
-          cat $GITHUB_OUTPUT
-
       - name: Calculate cache key for mobile-node-modules
-        id: calculate-mobile-node-modules-cache-key
-        run: |
-          MOBILE_PACKAGE_JSON_HASH=$(cat apps/native/app/package.json | jq '{resolutions,dependencies,devDependencies}' | sha1sum -t | cut -f1 -d" ")
-          echo "MOBILE_PACKAGE_JSON_HASH: $MOBILE_PACKAGE_JSON_HASH"
-          export MOBILE_NODE_MODULES_HASH=${{ runner.os }}-$MOBILE_PACKAGE_JSON_HASH
-          echo "MOBILE_NODE_MODULES_HASH: $MOBILE_NODE_MODULES_HASH"
-          echo "mobile-node-modules-key=$MOBILE_NODE_MODULES_HASH" >> $GITHUB_OUTPUT
-          cat $GITHUB_OUTPUT
-
-      - name: Calculate cache keys for generated files
-        id: calculate-generated-files-cache-key
-        run: |
-          HASH=$(./scripts/_hash-generated-files.sh)
-          export GENERATED_FILES_KEY=${{ runner.os }}-$HASH-generated-files-01
-          echo "GENERATED_FILES_KEY: $GENERATED_FILES_KEY"
-          echo "generated-files-key=$GENERATED_FILES_KEY" >> $GITHUB_OUTPUT
-          cat $GITHUB_OUTPUT
+        id: calculate-cache-keys
+        uses: ./.github/actions/calculate-cache-keys
 
       - name: Prepare node-modules cache
         uses: ./.github/actions/prepare-cache
         with:
           path: node_modules
-          key: ${{ steps.calculate-node-modules-cache-key.outputs.node-modules-key }}
+          key: ${{ steps.calculate-cache-keys.outputs.node-modules-key }}
 
       - name: Prepare mobile-node-modules cache
         uses: ./.github/actions/prepare-cache
         with:
           path: apps/native/app/node_modules
-          key: ${{ steps.calculate-mobile-node-modules-cache-key.outputs.mobile-node-modules-key }}
+          key: ${{ steps.calculate-cache-keys.outputs.mobile-node-modules-key }}
 
       - name: Preparing HEAD and BASE tags
         run: |
