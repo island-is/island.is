@@ -17,7 +17,6 @@ outputs:
 runs:
   using: 'composite'
   steps:
-
     - name: Prepare node-modules cache
       id: prepare-node-modules
       if: ${{ contains(inputs.path, 'node_modules') }}
