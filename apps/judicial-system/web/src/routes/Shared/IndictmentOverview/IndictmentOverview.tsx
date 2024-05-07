@@ -21,6 +21,7 @@ import {
   PageLayout,
   PageTitle,
   useIndictmentsLawsBroken,
+  UserContext,
 } from '@island.is/judicial-system-web/src/components'
 import { CaseState } from '@island.is/judicial-system-web/src/graphql/schema'
 
