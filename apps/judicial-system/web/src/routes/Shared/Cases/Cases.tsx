@@ -9,6 +9,7 @@ import {
   isDistrictCourtUser,
   isIndictmentCase,
   isProsecutionUser,
+  isPublicProsecutor,
 } from '@island.is/judicial-system/types'
 import {
   core,
@@ -270,10 +271,12 @@ export const Cases: React.FC = () => {
                   cases={casesAwaitingConfirmation}
                   onContextMenuDeleteClick={setVisibleModal}
                 />
-                <CasesAwaitingReview
-                  loading={loading}
-                  cases={casesAwaitingReview}
-                />
+                {isPublicProsecutor(user) && (
+                  <CasesAwaitingReview
+                    loading={loading}
+                    cases={casesAwaitingReview}
+                  />
+                )}
               </>
             )}
 
