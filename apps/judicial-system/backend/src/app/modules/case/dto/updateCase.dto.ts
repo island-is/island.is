@@ -467,4 +467,8 @@ export class UpdateCaseDto {
   @IsEnum(CaseIndictmentRulingDecision)
   @ApiPropertyOptional({ enum: CaseIndictmentRulingDecision })
   readonly indictmentRulingDecision?: CaseIndictmentRulingDecision
+
+  @IsUUID()
+  @ApiPropertyOptional()
+  readonly indictmentReviewerId?: string
 }

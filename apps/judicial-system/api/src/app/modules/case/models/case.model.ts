@@ -416,4 +416,10 @@ export class Case {
 
   @Field(() => CaseIndictmentRulingDecision, { nullable: true })
   readonly indictmentRulingDecision?: CaseIndictmentRulingDecision
+
+  @Field(() => User, { nullable: true })
+  readonly indictmentReviewer?: User
+
+  @Field({ nullable: true })
+  readonly indictmentAppealDeadline?: string
 }

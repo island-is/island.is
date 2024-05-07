@@ -254,5 +254,10 @@ query Case($input: CaseQueryInput!) {
     }
     postponedIndefinitelyExplanation
     indictmentRulingDecision
+    indictmentReviewer {
+      id
+      name
+    }
+    indictmentAppealDeadline
   }
 }
