@@ -275,12 +275,21 @@ export const OccupationalLicenses = new XroadConf({
   },
 })
 
-export const DistrictCommissioners = new XroadConf({
+export const DistrictCommissionersPCard = new XroadConf({
   env: {
-    XROAD_DISTRICT_COMMISSIONERS_PATH: {
+    XROAD_DISTRICT_COMMISSIONERS_P_CARD_PATH: {
       dev: 'IS-DEV/GOV/10016/Syslumenn-Protected/IslandMinarSidur',
       staging: 'IS-DEV/GOV/10016/Syslumenn-Protected/IslandMinarSidur',
       prod: 'IS/GOV/5512201410/Syslumenn-Protected/IslandMinarSidur',
+    },
+  },
+})
+export const DistrictCommissionersLicenses = new XroadConf({
+  env: {
+    XROAD_DISTRICT_COMMISSIONERS_LICENSES_PATH: {
+      dev: 'IS-DEV/GOV/10016/Syslumenn-Protected/RettindiIslandis',
+      staging: 'IS-DEV/GOV/10016/Syslumenn-Protected/RettindiIslandis',
+      prod: 'IS/GOV/5512201410/Syslumenn-Protected/RettindiIslandis',
     },
   },
 })
