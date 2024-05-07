@@ -9,11 +9,8 @@
     "build": {
       "executor": "nx:run-commands",
       "options": {
-        "commands": [
-          "esbuild --bundle $(find apps/system-e2e -name '*.ts' -not -path '*/node_modules/*') --outdir=dist/apps/system-e2e --tsconfig=apps/system-e2e/tsconfig.json --platform=node $(jq -r '.dependencies|keys[]|(\"--external:\"+.)' apps/system-e2e/package.json | xargs) --external:@nestjs/microservices --external:@nestjs/websockets --external:fsevents --external:class-transformer --external:canvas",
-          "cp apps/system-e2e/package.json dist/apps/system-e2e/"
-        ],
-        "outputPath": "dist/apps/system-e2e",
+        "commands": ["bash {projectRoot}/build.sh"],
+        "outputPath": "dist/{projectRoot}",
         "parallel": false
       },
       "configurations": {
@@ -24,19 +21,34 @@
     "lint": {
       "executor": "@nx/linter:eslint",
       "options": {
-        "lintFilePatterns": ["apps/system-e2e/**/*.{ts,tsx,js,jsx}"]
+        "lintFilePatterns": ["{projectRoot}/**/*.{ts,tsx,js,jsx}"]
       }
     },
     "smoke": {
-      "executor": "nx:run-commands",
+      "executor": "@nx/playwright:playwright",
       "options": {
-        "command": "yarn playwright test apps/system-e2e/src/tests/*/smoke -c apps/system-e2e/src"
+        "config": "{projectRoot}/playwright.config.ts"
       }
     },
     "acceptance": {
-      "executor": "nx:run-commands",
+      "executor": "@nx/playwright:playwright",
       "options": {
-        "command": "yarn playwright test apps/system-e2e/src/tests -c apps/system-e2e/src"
+        "config": "{projectRoot}/playwright.config.ts",
+        "grep": "/acceptance/"
+      }
+    },
+    "e2e:all": {
+      "executor": "@nx/playwright:playwright",
+      "options": {
+        "config": "{projectRoot}/playwright.config.ts"
+      }
+    },
+    "e2e": {
+      "executor": "@nx/playwright:playwright",
+      "options": {
+        "config": "{projectRoot}/playwright.config.ts",
+        "grep": "e2e/example.spec.ts",
+        "skipInstall": true
       }
     },
     "docker-playwright": {}
