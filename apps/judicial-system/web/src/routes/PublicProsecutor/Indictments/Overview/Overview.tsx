@@ -32,9 +32,9 @@ import {
 import { useProsecutorSelectionUsersQuery } from '@island.is/judicial-system-web/src/components/ProsecutorSelection/prosecutorSelectionUsers.generated'
 import { useCase } from '@island.is/judicial-system-web/src/utils/hooks'
 
-import { strings } from './IndictmentOverview.strings'
+import { strings } from './Overview.strings'
 
-export const IndictmentOverview = () => {
+export const Overview = () => {
   const router = useRouter()
   const { workingCase, isLoadingWorkingCase, caseNotFound } =
     useContext(FormContext)
@@ -184,4 +184,4 @@ export const IndictmentOverview = () => {
   )
 }
 
-export default IndictmentOverview
+export default Overview

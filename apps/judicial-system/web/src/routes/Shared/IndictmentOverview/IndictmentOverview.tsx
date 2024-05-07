@@ -25,7 +25,7 @@ import {
 } from '@island.is/judicial-system-web/src/components'
 import { CaseState } from '@island.is/judicial-system-web/src/graphql/schema'
 
-import { IndictmentOverview as PublicProsecutorIndictmentOverview } from '../../PublicProsecutor/Indictments/Overview/IndictmentOverview'
+import { Overview as PublicProsecutorIndictmentOverview } from '../../PublicProsecutor/Indictments/Overview/Overview'
 import { strings } from './IndictmentOverview.strings'
 
 const IndictmentOverview = () => {
