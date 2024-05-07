@@ -164,6 +164,16 @@ export interface ApplicationEvent {
   emailSent?: boolean
 }
 
+export interface ApplicationChildren {
+  id: string
+  created: string
+  modified: string
+  applicationId: string
+  childNationalId: string
+  childName: string
+  school?: string
+}
+
 export interface UpdateAdmin {
   id: string
   name: string
