@@ -85,7 +85,7 @@ test.describe('Service portal, in access control', () => {
       ).toBeVisible()
       await expect(
         receiverPage.locator('role=button[name*="Gervimaður Færeyjar"]'),
-      ).toBeHidden()
+      ).not.toBeVisible()
       await receiverPage
         .locator('role=button[name*="Gervimaður Ameríku"]')
         .click()
