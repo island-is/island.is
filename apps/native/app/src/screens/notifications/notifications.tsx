@@ -64,7 +64,7 @@ export const NotificationsScreen: NavigationFunctionComponent = ({
 
   // On mount, mark all notifications as seen
   useEffect(() => {
-    // void markAllUserNotificationsAsSeen()
+    void markAllUserNotificationsAsSeen()
   }, [])
 
   useEffect(() => {
