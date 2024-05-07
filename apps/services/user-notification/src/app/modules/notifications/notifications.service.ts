@@ -89,6 +89,10 @@ export class NotificationsService {
   ): Promise<SenderOrganization> {
     locale = mapToLocale(locale as Locale)
     const cacheKey = `org-${senderId}-${locale}`
+    const bogus = await this.cacheManager.get<SenderOrganization>(
+      "bogus",
+    )
+    console.log(bogus,"bogus")
     const cachedOrganization = await this.cacheManager.get<SenderOrganization>(
       cacheKey,
     )
@@ -149,7 +153,7 @@ export class NotificationsService {
           if (sender.title) {
             organizationArg.value = sender.title
           } else {
-            this.logger.warn('title not found ', {
+            this.logger.info('org title not found ', {
               senderId: notification.senderId,
               locale,
             })
