@@ -4,6 +4,7 @@ import { formatText } from '@island.is/application/core'
 import { Application, KeyValueField } from '@island.is/application/types'
 import { Box, Divider, Text } from '@island.is/island-ui/core'
 import { useLocale } from '@island.is/localization'
+import { Markdown } from '@island.is/shared/components'
 
 export const KeyValueFormField: FC<
   React.PropsWithChildren<{
@@ -38,10 +39,10 @@ export const KeyValueFormField: FC<
         >
           {Array.isArray(values) ? (
             (values as string[]).map((value) => (
-              <Text key={value}>{value}</Text>
+              <Markdown key={value}>{value}</Markdown>
             ))
           ) : (
-            <Text>{values}</Text>
+            <Markdown>{values}</Markdown>
           )}
         </Box>
       </Box>

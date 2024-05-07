@@ -159,7 +159,8 @@ const IdCardTemplate: ApplicationTemplate<
         entry: 'assignToParentB',
         meta: {
           name: 'ParentB',
-          status: 'inprogress',
+          status: 'draft',
+          progress: 0.7, // Þarf þetta?
           lifecycle: pruneAfterDays(7) /*
             Á þetta að vera?
             {
@@ -176,9 +177,11 @@ const IdCardTemplate: ApplicationTemplate<
                 import('../forms/Review').then((val) =>
                   Promise.resolve(val.Review),
                 ),
+              delete: true, // TODO: Remove before production
               // actions: [
               //   { event: DefaultEvents.EDIT, name: '', type: 'primary' },
               // ],
+              write: 'all',
               read: {
                 answers: ['childsPersonalInfo'],
                 externalData: ['submitPassportApplication'],
@@ -208,7 +211,7 @@ const IdCardTemplate: ApplicationTemplate<
           actionCard: {
             historyLogs: [
               {
-                logMessage: applicationMessage.historyConfirmedByParentB,
+                logMessage: applicationMessage.historyWaitingForParentB,
                 onEvent: DefaultEvents.SUBMIT,
               },
             ],
@@ -219,10 +222,10 @@ const IdCardTemplate: ApplicationTemplate<
               }, */
           },
         },
-        on: {
+        /* on: {
           // [DefaultEvents.SUBMIT]: { target: States.DONE },
           [DefaultEvents.SUBMIT]: { target: States.PARENT_B_CONFIRM },
-        },
+        }, */
       },
       [States.COMPLETED]: {
         meta: {

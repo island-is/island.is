@@ -9,66 +9,101 @@ export const review = {
     },
     pageTitle: {
       id: 'id.application:review.general.pageTitle',
-      defaultMessage: 'Yfirlit umsóknar',
+      defaultMessage: 'Yfirlit umsóknar um nafnskírteini',
       description: 'Review page title',
     },
     description: {
       id: 'id.application:review.general.description',
       defaultMessage:
-        'Vinsamlegast farðu yfir gögnin hér að neðan til að staðfesta að réttar upplýsingar hafi verið gefnar upp',
+        'Vinsamlegast lestu yfir umsóknina til að vera viss um að réttar upplýsingar hafi verið gefnar. ',
       description: 'Review description',
     },
   }),
   labels: defineMessages({
-    changeButtonText: {
-      id: 'id.application:review.labels.changeButtonText',
-      defaultMessage: 'Breyta upplýsingum',
-      description: 'change button label',
+    applicantDescription: {
+      id: 'id.application:review.labels.applicantDescription',
+      defaultMessage: 'Umsækjandi',
+      description: 'Application description label',
     },
-    applicant: {
-      id: 'id.application:review.labels.applicant#markdown',
-      defaultMessage: '**Umsækjandi**',
-      description: 'Applicant review label',
+    applicantName: {
+      id: 'id.application:review.labels.applicantName',
+      defaultMessage: 'Nafn umsækjanda',
+      description: 'Applicant name label',
     },
-    chosenProgram: {
-      id: 'id.application:review.labels.chosenProgram#markdown',
-      defaultMessage: '**Valið háskólanám til umsóknar**',
-      description: 'Chosen program review label',
+    licenseType: {
+      id: 'id.application:review.labels.licenseType',
+      defaultMessage: 'Tegund skírteinis',
+      description: 'License type label',
     },
-    schoolCareer: {
-      id: 'id.application:review.labels.schoolCareer#markdown',
-      defaultMessage: '**Námsferill**',
-      description: 'School career review label',
+    applicantEmail: {
+      id: 'id.application:review.labels.applicantEmail',
+      defaultMessage: 'Netfang umsækjanda',
+      description: 'Applicant email label',
     },
-    documents: {
-      id: 'id.application:review.labels.documents#markdown',
-      defaultMessage: '**Önnur fylgigögn**',
-      description: 'documents review label',
+    applicantNumber: {
+      id: 'id.application:review.labels.applicantNumber',
+      defaultMessage: 'Símanúmer umsækjanda',
+      description: 'Applicant phone number label',
     },
-    otherDocuments: {
-      id: 'id.application:review.labels.otherDocuments#markdown',
-      defaultMessage: '**Önnur fylgigögn**',
-      description: 'Other documents review label',
+    parentDescription: {
+      id: 'id.application:review.labels.parentDescription',
+      defaultMessage: 'Forsjáraðilar',
+      description: 'Parent description label',
     },
-    phoneLabel: {
-      id: 'id.application:review.labels.phoneLabel',
-      defaultMessage: 'Sími',
-      description: 'phone label',
+    parentAName: {
+      id: 'id.application:review.labels.parentAName',
+      defaultMessage: 'Nafn forsjáraðila 1',
+      description: 'Parent A name label',
     },
-    exemptionInformation: {
-      id: 'id.application:review.labels.exemptionInformation',
-      defaultMessage: 'Undanþáguupplýsingar',
-      description: 'exemption information label',
+    parentANationalId: {
+      id: 'id.application:review.labels.parentANationalId',
+      defaultMessage: 'Kennitala forsjáraðila 1',
+      description: 'Parent A type label',
     },
-    thirdLevelInformation: {
-      id: 'id.application:review.labels.thirdLevelInformation',
-      defaultMessage: 'Upplýsingar um nám á þriðja hæfnisstigi',
-      description: 'third level education information label',
+    parentAEmail: {
+      id: 'id.application:review.labels.parentAEmail',
+      defaultMessage: 'Netfang forsjáraðila 1',
+      description: 'Parent A email label',
     },
-    notFinishedInformation: {
-      id: 'id.application:review.labels.notFinishedInformation',
-      defaultMessage: 'Upplýsingar um ólokið nám',
-      description: 'not finished education information label',
+    parentANumber: {
+      id: 'id.application:review.labels.parentANumber',
+      defaultMessage: 'Símanúmer forsjáraðila 1',
+      description: 'Parent A phone number label',
+    },
+    parentBName: {
+      id: 'id.application:review.labels.parentBName',
+      defaultMessage: 'Nafn forsjáraðila 2',
+      description: 'Parent B name label',
+    },
+    parentBNationalId: {
+      id: 'id.application:review.labels.parentBNationalId',
+      defaultMessage: 'Kennitala forsjáraðila 2',
+      description: 'Parent B type label',
+    },
+    parentBEmail: {
+      id: 'id.application:review.labels.parentBEmail',
+      defaultMessage: 'Netfang forsjáraðila 2',
+      description: 'Parent B email label',
+    },
+    parentBNumber: {
+      id: 'id.application:review.labels.parentBNumber',
+      defaultMessage: 'Símanúmer forsjáraðila 2',
+      description: 'Parent B phone number label',
+    },
+    deliveryDescription: {
+      id: 'id.application:review.labels.deliveryDescription',
+      defaultMessage: 'Afhending',
+      description: 'Delivery description label',
+    },
+    deliveryOption: {
+      id: 'id.application:review.labels.deliveryOption',
+      defaultMessage: 'Afgreiðslumáti',
+      description: 'Delivery option label',
+    },
+    deliveryLocation: {
+      id: 'id.application:review.labels.deliveryLocation',
+      defaultMessage: 'Afhendingastaður',
+      description: 'Delivery location label',
     },
   }),
   buttons: defineMessages({
@@ -90,22 +125,22 @@ export const review = {
   }),
   confirmationModal: defineMessages({
     title: {
-      id: 'id.application:overview.confirmationModal.title',
+      id: 'id.application:review.confirmationModal.title',
       defaultMessage: 'Hafna tilkynningu',
       description: 'Confirmation modal reject title',
     },
     text: {
-      id: 'id.application:overview.confirmationModal.text',
+      id: 'id.application:review.confirmationModal.text',
       defaultMessage: 'Þú ert að fara að hafna tilkynningu.',
       description: 'Confirmation modal reject text',
     },
     buttonText: {
-      id: 'id.application:overview.confirmationModal.buttonText',
+      id: 'id.application:review.confirmationModal.buttonText',
       defaultMessage: 'Hafna tilkynningu',
       description: 'Confirmation modal reject button',
     },
     cancelButton: {
-      id: 'id.application:overview.confirmationModal.cancelButton',
+      id: 'id.application:review.confirmationModal.cancelButton',
       defaultMessage: 'Hætta við',
       description: 'Confirmation modal cancel button',
     },

@@ -8,14 +8,16 @@ import { Form, FormModes } from '@island.is/application/types'
 // import { Logo } from '../../assets/Logo'
 import { Routes } from '../../lib/constants'
 import { StateSection } from './State'
+import { OverviewSection } from './Overview'
 
 export const Review: Form = buildForm({
   id: 'Review',
   title: '',
   // logo: Logo,
-  mode: FormModes.IN_PROGRESS,
+  mode: FormModes.DRAFT,
   children: [
     StateSection,
+    OverviewSection,
     buildSection({
       id: 'nextSection',
       title: 'Stuff',

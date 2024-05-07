@@ -22,6 +22,7 @@ export const StateSection = buildSection({
         buildActionCardListField({
           id: 'approvalActionCard',
           doesNotRequireAnswer: true,
+          marginTop: 2,
           title: '',
           items: (application) => {
             console.log(application)
@@ -61,7 +62,7 @@ export const StateSection = buildSection({
             ]
           },
         }),
-        buildSubmitField({
+        /* buildSubmitField({
           id: 'goToNextPage',
           title: '',
           refetchApplicationAfterSubmit: false,
@@ -72,7 +73,7 @@ export const StateSection = buildSection({
               type: 'primary',
             },
           ],
-        }),
+        }), */
       ],
     }),
   ],

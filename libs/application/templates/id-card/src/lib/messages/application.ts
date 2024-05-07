@@ -61,9 +61,9 @@ export const application = defineMessages({
     defaultMessage: 'Vinsamlegast staðfestu skólavist',
     description: 'pending action from student label',
   },
-  historyConfirmedByParentB: {
-    id: 'id.application:historyConfirmedByParentB',
-    defaultMessage: '???',
-    description: 'History confirmed by parent B',
+  historyWaitingForParentB: {
+    id: 'id.application:historyWaitingForParentB',
+    defaultMessage: 'Beðið eftir samþykki forráðamanns',
+    description: 'History waiting for parentB',
   },
 })
