@@ -57,7 +57,7 @@ describe('getCasesQueryFilter', () => {
           [Op.or]: [
             { prosecutors_office_id: 'Prosecutors Office Id' },
             { shared_with_prosecutors_office_id: 'Prosecutors Office Id' },
-            { indictment_reviewer_id: 'Prosecutors Office Id' },
+            { indictment_reviewer_id: 'Prosecutor Id' },
           ],
         },
         {
@@ -114,6 +114,7 @@ describe('getCasesQueryFilter', () => {
           [Op.or]: [
             { prosecutors_office_id: 'Prosecutors Office Id' },
             { shared_with_prosecutors_office_id: 'Prosecutors Office Id' },
+            { indictment_reviewer_id: 'Prosecutor Id' },
           ],
         },
         {
