@@ -6,24 +6,16 @@ export type DocumentDto = {
   fileName?: string
   fileType: FileType
   content: string
-  date: Date
+  date?: Date
   bookmarked?: boolean
   archived?: boolean
   senderName?: string
-  senderNationalId: string
+  senderNationalId?: string
   subject: string
   categoryId?: string
 }
 
 export const mapToDocument = (document: DocumentDTO): DocumentDto | null => {
-  if (
-    !document.publicationDate ||
-    !document.senderKennitala ||
-    !document.subject
-  ) {
-    return null
-  }
-
   let fileType: FileType, content: string
   switch (document.fileType) {
     case 'pdf':
@@ -60,7 +52,7 @@ export const mapToDocument = (document: DocumentDTO): DocumentDto | null => {
     archived: document.archived,
     senderName: document.senderName,
     senderNationalId: document.senderKennitala,
-    subject: document.subject,
+    subject: document.subject ?? 'Óþekktur titill', // All of the content in this service is strictly Icelandic. Fallback to match.
     categoryId: document.categoryId?.toString(),
   }
 }

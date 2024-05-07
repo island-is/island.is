@@ -22,6 +22,8 @@ import * as styles from './HousingBenefits.css'
 import * as financeStyles from '../../screens/Finance.css'
 import DropdownExport from '../../components/DropdownExport/DropdownExport'
 
+export const BASE_YEAR = 2017
+
 export type DateSelection = {
   label?: string
   value?: string
@@ -30,7 +32,6 @@ export type DateSelection = {
 interface Props {
   payments?: HousingBenefitsPayments
   paymentOrigin?: string
-  selectedMonth?: string
   clearAllFilters: () => void
   setSelectedMonth: (sm?: string) => void
   setPaymentOrigin: (po?: string) => void
@@ -53,7 +54,7 @@ const HousingBenefitsFilter = ({
       ),
     [formatMessage],
   )
-  const yearOptions = useMemo(() => generateYearArray(2017), [])
+  const yearOptions = useMemo(() => generateYearArray(BASE_YEAR), [])
 
   useEffect(() => {
     if (currentYear?.value) {
