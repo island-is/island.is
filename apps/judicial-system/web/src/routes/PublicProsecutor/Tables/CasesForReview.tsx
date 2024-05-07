@@ -59,12 +59,12 @@ const CasesForReview: React.FC<CasesForReviewTableProps> = ({
                 { title: formatMessage(tables.deadline) },
               ]}
               data={cases}
-              generateContextMenuItems={(row: CaseListEntry) => {
+              generateContextMenuItems={(row) => {
                 return [openCaseInNewTabMenuItem(row.id)]
               }}
               columns={[
                 {
-                  cell: (row: CaseListEntry) => (
+                  cell: (row) => (
                     <CourtCaseNumber
                       courtCaseNumber={row.courtCaseNumber ?? ''}
                       policeCaseNumbers={row.policeCaseNumbers ?? []}
@@ -73,12 +73,10 @@ const CasesForReview: React.FC<CasesForReviewTableProps> = ({
                   ),
                 },
                 {
-                  cell: (row: CaseListEntry) => (
-                    <DefendantInfo defendants={row.defendants} />
-                  ),
+                  cell: (row) => <DefendantInfo defendants={row.defendants} />,
                 },
                 {
-                  cell: (row: CaseListEntry) => (
+                  cell: (row) => (
                     <TagCaseState
                       caseState={row.state}
                       customMapCaseStateToTag={
@@ -88,9 +86,7 @@ const CasesForReview: React.FC<CasesForReviewTableProps> = ({
                   ),
                 },
                 {
-                  cell: (row: CaseListEntry) => (
-                    <Text>{row.prosecutor?.name}</Text>
-                  ),
+                  cell: (row) => <Text>{row.prosecutor?.name}</Text>,
                 },
                 {
                   cell: () => <Text>-</Text>, //TODO: Add deadline

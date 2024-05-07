@@ -17,7 +17,7 @@ export const avatar = style({
     sm: {
       display: 'flex',
       width: 66,
-      height: 66,
+      //height: 66,
     },
   }),
 })

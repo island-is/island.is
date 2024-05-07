@@ -24,16 +24,20 @@ import { VehicleController } from './modules/vehicles-documents/vehicle-document
 import { EducationController } from './modules/education-documents/education-document.controller'
 import { RegulationDocumentsController } from './modules/regulation-documents/regulation-documents.controller'
 import { WorkMachinesController } from './modules/work-machines-documents/work-machines-documents.controller'
-import { OccupationalLicensesEducationController } from './modules/occupational-licenses/education-license.controller'
+import { OccupationalLicensesController } from './modules/occupational-licenses/occupational-license.controller'
 import { MMSClientModule, MMSClientConfig } from '@island.is/clients/mms'
 import {
   VehiclesClientConfig,
   VehiclesClientModule,
 } from '@island.is/clients/vehicles'
 import {
-  UniversityOfIcelandClientConfig,
-  UniversityOfIcelandClientModule,
-} from '@island.is/clients/university-of-iceland'
+  AgriculturalUniversityOfIcelandCareerClientConfig,
+  BifrostUniversityCareerClientConfig,
+  HolarUniversityCareerClientConfig,
+  UniversityCareersClientModule,
+  UniversityOfAkureyriCareerClientConfig,
+  UniversityOfIcelandCareerClientConfig,
+} from '@island.is/clients/university-careers'
 import {
   RegulationsClientConfig,
   RegulationsClientModule,
@@ -51,6 +55,10 @@ import {
   RightsPortalClientConfig,
   RightsPortalClientModule,
 } from '@island.is/clients/icelandic-health-insurance/rights-portal'
+import {
+  DistrictCommissionersLicensesClientConfig,
+  DistrictCommissionersLicensesClientModule,
+} from '@island.is/clients/district-commissioners-licenses'
 @Module({
   controllers: [
     DocumentController,
@@ -60,7 +68,7 @@ import {
     EducationController,
     RegulationDocumentsController,
     WorkMachinesController,
-    OccupationalLicensesEducationController,
+    OccupationalLicensesController,
     HealthPaymentsOverviewController,
   ],
   imports: [
@@ -69,10 +77,11 @@ import {
     DocumentsClientModule,
     FinanceClientModule,
     VehiclesClientModule,
-    UniversityOfIcelandClientModule,
     RegulationsAdminClientModule,
     RegulationsClientModule,
     WorkMachinesClientModule,
+    DistrictCommissionersLicensesClientModule,
+    UniversityCareersClientModule,
     MMSClientModule,
     RightsPortalClientModule,
     ConfigModule.forRoot({
@@ -82,11 +91,16 @@ import {
         IdsClientConfig,
         XRoadConfig,
         VehiclesClientConfig,
-        UniversityOfIcelandClientConfig,
+        UniversityOfIcelandCareerClientConfig,
+        AgriculturalUniversityOfIcelandCareerClientConfig,
+        UniversityOfAkureyriCareerClientConfig,
+        HolarUniversityCareerClientConfig,
+        BifrostUniversityCareerClientConfig,
         RegulationsAdminClientConfig,
         RegulationsClientConfig,
         WorkMachinesClientConfig,
         MMSClientConfig,
+        DistrictCommissionersLicensesClientConfig,
         RightsPortalClientConfig,
         DocumentClientConfig,
       ],

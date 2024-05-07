@@ -1,9 +1,14 @@
 import { Field, ID, ObjectType, registerEnumType } from '@nestjs/graphql'
 
-import { DefendantPlea, Gender } from '@island.is/judicial-system/types'
+import {
+  DefendantPlea,
+  Gender,
+  ServiceRequirement,
+} from '@island.is/judicial-system/types'
 
 registerEnumType(Gender, { name: 'Gender' })
 registerEnumType(DefendantPlea, { name: 'DefendantPlea' })
+registerEnumType(ServiceRequirement, { name: 'ServiceRequirement' })
 
 @ObjectType()
 export class Defendant {
@@ -54,4 +59,7 @@ export class Defendant {
 
   @Field(() => DefendantPlea, { nullable: true })
   readonly defendantPlea?: DefendantPlea
+
+  @Field(() => ServiceRequirement, { nullable: true })
+  readonly serviceRequirement?: ServiceRequirement
 }

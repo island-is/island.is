@@ -5,6 +5,7 @@ import {
   Education,
   Finance,
   HealthInsurance,
+  UniversityCareers,
   UniversityOfIceland,
   Vehicles,
   WorkMachines,
@@ -49,6 +50,7 @@ export const serviceSetup = (services: {
       HealthInsurance,
       Vehicles,
       UniversityOfIceland,
+      UniversityCareers,
       WorkMachines,
       Education,
     )
