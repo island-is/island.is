@@ -2,7 +2,11 @@ import { IsBoolean, IsEnum, IsOptional, IsString } from 'class-validator'
 
 import { ApiPropertyOptional } from '@nestjs/swagger'
 
-import { DefendantPlea, Gender } from '@island.is/judicial-system/types'
+import {
+  DefendantPlea,
+  Gender,
+  ServiceRequirement,
+} from '@island.is/judicial-system/types'
 
 export class UpdateDefendantDto {
   @IsOptional()
@@ -64,4 +68,9 @@ export class UpdateDefendantDto {
   @IsEnum(DefendantPlea)
   @ApiPropertyOptional({ enum: DefendantPlea })
   readonly defendantPlea?: DefendantPlea
+
+  @IsOptional()
+  @IsEnum(ServiceRequirement)
+  @ApiPropertyOptional({ enum: ServiceRequirement })
+  readonly serviceRequirement?: ServiceRequirement
 }
