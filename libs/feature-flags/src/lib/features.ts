@@ -53,6 +53,9 @@ export enum Features {
   //Occupational License Health directorate fetch enabled
   occupationalLicensesHealthDirectorate = 'isHealthDirectorateOccupationalLicenseEnabled',
 
+  //Occupational License Health directorate fetch enabled
+  occupationalLicensesV2 = 'isOccupationalLicensesV2Enabled',
+
   //Possible universities
   isUniversityOfAkureyriEnabled = 'isUniversityOfAkureyriEnabled',
   isAgriculturalUniversityOfIcelandEnabled = 'isAgriculturalUniversityOfIcelandEnabled',
