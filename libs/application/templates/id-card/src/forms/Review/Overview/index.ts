@@ -22,6 +22,7 @@ export const OverviewSection = buildSection({
       space: 3,
       description: review.general.description,
       children: [
+        /* Child Applicant */
         buildDescriptionField({
           id: 'applicantDescription',
           title: review.labels.applicantDescription,
@@ -60,6 +61,8 @@ export const OverviewSection = buildSection({
           //   ),
         }),
         buildDividerField({}),
+
+        /* Parents / Guardians */
         buildDescriptionField({
           id: 'parentDescription',
           title: review.labels.parentDescription,
@@ -149,18 +152,23 @@ export const OverviewSection = buildSection({
         }),
 
         /* SUBMIT OR DECLINE */
-        /* buildSubmitField({
+        buildSubmitField({
           id: 'overviewApproval',
           title: '',
           refetchApplicationAfterSubmit: false,
           actions: [
             {
+              event: DefaultEvents.REJECT,
+              name: 'Hafna',
+              type: 'reject',
+            },
+            {
               event: DefaultEvents.SUBMIT,
-              name: state.buttons.openApproval,
+              name: 'Samþykkja',
               type: 'primary',
             },
           ],
-        }), */
+        }),
       ],
     }),
   ],

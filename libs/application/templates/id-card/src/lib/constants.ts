@@ -4,6 +4,7 @@ export type Events =
   | { type: DefaultEvents.ASSIGN }
   | { type: DefaultEvents.SUBMIT }
   | { type: DefaultEvents.PAYMENT }
+  | { type: DefaultEvents.REJECT }
 
 export enum Routes {
   APPLICATIONINFORMATION = 'applicationInformation',
@@ -19,6 +20,7 @@ export enum States {
   PREREQUISITES = 'prerequisites',
   DRAFT = 'draft',
   PAYMENT = 'payment',
+  REJECTED = 'rejected',
   COMPLETED = 'completed',
 }
 export enum Roles {
