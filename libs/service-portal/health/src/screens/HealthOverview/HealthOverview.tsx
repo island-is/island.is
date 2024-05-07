@@ -12,6 +12,7 @@ import {
   downloadLink,
   SJUKRATRYGGINGAR_SLUG,
 } from '@island.is/service-portal/core'
+import { Problem } from '@island.is/react-spa/shared'
 import { messages } from '../../lib/messages'
 import {
   AlertMessage,
@@ -19,14 +20,10 @@ import {
   Button,
   SkeletonLoader,
   Stack,
-  Text,
 } from '@island.is/island-ui/core'
 import { useUserInfo } from '@island.is/auth/react'
 import { CONTENT_GAP, SECTION_GAP } from '../Medicine/constants'
 import { HealthPaths } from '../../lib/paths'
-import { Link } from 'react-router-dom'
-import { useFeatureFlagClient } from '@island.is/react/feature-flags'
-import { useEffect, useState } from 'react'
 
 export const HealthOverview = () => {
   useNamespaces('sp.health')
@@ -41,28 +38,10 @@ export const HealthOverview = () => {
     { loading: confirmationLoading, error: confirmationError },
   ] = useGetInsuranceConfirmationLazyQuery()
 
-  const featureFlagClient = useFeatureFlagClient()
-
-  const [enabledPaymentPage, setEnabledPaymentPage] = useState<boolean>(false)
-
-  useEffect(() => {
-    const isFlagEnabled = async () => {
-      const ffEnabled = await featureFlagClient.getValue(
-        `isServicePortalHealthPaymentPageEnabled`,
-        false,
-      )
-      if (ffEnabled) {
-        setEnabledPaymentPage(ffEnabled as boolean)
-      }
-    }
-    isFlagEnabled()
-    // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, [])
-
   const insurance = data?.rightsPortalInsuranceOverview.items[0]
   const errors = data?.rightsPortalInsuranceOverview.errors
 
-  async function getInsuranceConfirmation() {
+  const getInsuranceConfirmation = async () => {
     const data = await getInsuranceConfirmationLazyQuery()
     const downloadData = data.data?.rightsPortalInsuranceConfirmation.items[0]
 
@@ -71,30 +50,43 @@ export const HealthOverview = () => {
     }
   }
 
-  if (error) {
-    return (
-      <ErrorScreen
-        figure="./assets/images/hourglass.svg"
-        tagVariant="red"
-        tag={formatMessage(m.errorTitle)}
-        title={formatMessage(m.somethingWrong)}
-        children={formatMessage(m.errorFetchModule, {
-          module: formatMessage(m.overview).toLowerCase(),
-        })}
+  const introHeader = (
+    <Box marginBottom={SECTION_GAP}>
+      <IntroHeader
+        title={formatMessage(user.profile.name)}
+        intro={formatMessage(messages.overviewIntro)}
+        serviceProviderSlug={SJUKRATRYGGINGAR_SLUG}
+        serviceProviderTooltip={formatMessage(messages.healthTooltip)}
       />
+    </Box>
+  )
+
+  if (error && !loading) {
+    return (
+      <>
+        {introHeader}
+        <Problem error={error} noBorder={false} />
+      </>
+    )
+  }
+
+  if (!loading) {
+    return (
+      <>
+        {introHeader}
+        <Problem
+          type="no_data"
+          noBorder={false}
+          title={formatMessage(m.noData)}
+          message={formatMessage(m.noTransactionFound)}
+          imgSrc="./assets/images/sofa.svg"
+        />
+      </>
     )
   }
 
   return (
     <Box>
-      <Box marginBottom={SECTION_GAP}>
-        <IntroHeader
-          title={formatMessage(user.profile.name)}
-          intro={formatMessage(messages.overviewIntro)}
-          serviceProviderSlug={SJUKRATRYGGINGAR_SLUG}
-          serviceProviderTooltip={formatMessage(messages.healthTooltip)}
-        />
-      </Box>
       {loading ? (
         <SkeletonLoader
           repeat={3}
