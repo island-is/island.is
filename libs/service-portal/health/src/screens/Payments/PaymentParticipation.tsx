@@ -21,7 +21,6 @@ import { CONTENT_GAP, SECTION_GAP } from '../Medicine/constants'
 import {
   useGetCopaymentStatusQuery,
   useGetCopaymentPeriodsQuery,
-  useGetCopaymentBillsLazyQuery,
 } from './Payments.generated'
 import sub from 'date-fns/sub'
 import { PaymentsWrapper } from './wrapper/PaymentsWrapper'
@@ -31,7 +30,7 @@ import { exportPaymentParticipationOverview } from '../../utils/FileBreakdown'
 import { PaymentTableRow } from './PaymentTableRow'
 
 export const PaymentPartication = () => {
-  const { formatMessage, formatDateFns, lang } = useLocale()
+  const { formatMessage, lang } = useLocale()
 
   const [startDate, setStartDate] = useState<Date>(
     sub(new Date(), { years: 1 }),
@@ -40,18 +39,15 @@ export const PaymentPartication = () => {
 
   const { data, loading, error } = useGetCopaymentStatusQuery()
 
-  const {
-    data: periods,
-    loading: periodsLoading,
-    error: periodsError,
-  } = useGetCopaymentPeriodsQuery({
-    variables: {
-      input: {
-        dateTo: endDate,
-        dateFrom: startDate,
+  const { data: periods, loading: periodsLoading } =
+    useGetCopaymentPeriodsQuery({
+      variables: {
+        input: {
+          dateTo: endDate,
+          dateFrom: startDate,
+        },
       },
-    },
-  })
+    })
 
   if (error) {
     return (

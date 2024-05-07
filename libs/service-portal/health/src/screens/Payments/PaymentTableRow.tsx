@@ -23,8 +23,6 @@ export const PaymentTableRow = ({ periodId, headerData }: Props) => {
 
   const { formatMessage } = useLocale()
 
-  console.log(data)
-
   return (
     <ExpandRow
       key={`period-row-${periodId}`}
