@@ -3,10 +3,7 @@ import { useIntl } from 'react-intl'
 import { useRouter } from 'next/router'
 
 import { Box } from '@island.is/island-ui/core'
-import {
-  isCompletedCase,
-  isPublicProsecutorUser,
-} from '@island.is/judicial-system/types'
+import { isCompletedCase } from '@island.is/judicial-system/types'
 import { titles } from '@island.is/judicial-system-web/messages'
 import {
   CourtCaseInfo,
@@ -21,18 +18,16 @@ import {
   PageLayout,
   PageTitle,
   useIndictmentsLawsBroken,
-  UserContext,
 } from '@island.is/judicial-system-web/src/components'
 import { CaseState } from '@island.is/judicial-system-web/src/graphql/schema'
 
-import { Overview as PublicProsecutorIndictmentOverview } from '../../PublicProsecutor/Indictments/Overview/Overview'
 import { strings } from './IndictmentOverview.strings'
 
 const IndictmentOverview = () => {
   const router = useRouter()
   const { workingCase, isLoadingWorkingCase, caseNotFound } =
     useContext(FormContext)
-  const { user } = useContext(UserContext)
+
   const { formatMessage } = useIntl()
   const lawsBroken = useIndictmentsLawsBroken(workingCase)
   const caseIsClosed = isCompletedCase(workingCase.state)
@@ -43,67 +38,64 @@ const IndictmentOverview = () => {
     [router, workingCase.id],
   )
 
-  if (isPublicProsecutorUser(user)) {
-    return <PublicProsecutorIndictmentOverview />
-  } else
-    return (
-      <PageLayout
-        workingCase={workingCase}
-        isLoading={isLoadingWorkingCase}
-        notFound={caseNotFound}
-        isValid={true}
-        onNavigationTo={handleNavigationTo}
-      >
-        <PageHeader
-          title={
-            caseIsClosed
-              ? formatMessage(titles.shared.closedCaseOverview, {
-                  courtCaseNumber: workingCase.courtCaseNumber,
-                })
-              : formatMessage(titles.court.indictments.overview)
-          }
-        />
-        <FormContentContainer>
-          <PageTitle>
-            {caseIsClosed
-              ? formatMessage(strings.completedTitle)
-              : formatMessage(strings.inProgressTitle)}
-          </PageTitle>
-          <CourtCaseInfo workingCase={workingCase} />
-          {workingCase.state === CaseState.RECEIVED &&
-            workingCase.court &&
-            latestDate?.date && (
-              <Box component="section" marginBottom={5}>
-                <InfoCardCaseScheduledIndictment
-                  court={workingCase.court}
-                  courtDate={latestDate.date}
-                  courtRoom={latestDate.location}
-                  postponedIndefinitelyExplanation={
-                    workingCase.postponedIndefinitelyExplanation
-                  }
-                />
-              </Box>
-            )}
-          <Box component="section" marginBottom={5}>
-            {caseIsClosed ? (
-              <InfoCardClosedIndictment />
-            ) : (
-              <InfoCardActiveIndictment />
-            )}
+  return (
+    <PageLayout
+      workingCase={workingCase}
+      isLoading={isLoadingWorkingCase}
+      notFound={caseNotFound}
+      isValid={true}
+      onNavigationTo={handleNavigationTo}
+    >
+      <PageHeader
+        title={
+          caseIsClosed
+            ? formatMessage(titles.shared.closedCaseOverview, {
+                courtCaseNumber: workingCase.courtCaseNumber,
+              })
+            : formatMessage(titles.court.indictments.overview)
+        }
+      />
+      <FormContentContainer>
+        <PageTitle>
+          {caseIsClosed
+            ? formatMessage(strings.completedTitle)
+            : formatMessage(strings.inProgressTitle)}
+        </PageTitle>
+        <CourtCaseInfo workingCase={workingCase} />
+        {workingCase.state === CaseState.RECEIVED &&
+          workingCase.court &&
+          latestDate?.date && (
+            <Box component="section" marginBottom={5}>
+              <InfoCardCaseScheduledIndictment
+                court={workingCase.court}
+                courtDate={latestDate.date}
+                courtRoom={latestDate.location}
+                postponedIndefinitelyExplanation={
+                  workingCase.postponedIndefinitelyExplanation
+                }
+              />
+            </Box>
+          )}
+        <Box component="section" marginBottom={5}>
+          {caseIsClosed ? (
+            <InfoCardClosedIndictment />
+          ) : (
+            <InfoCardActiveIndictment />
+          )}
+        </Box>
+        {lawsBroken.size > 0 && (
+          <Box marginBottom={5}>
+            <IndictmentsLawsBrokenAccordionItem workingCase={workingCase} />
           </Box>
-          {lawsBroken.size > 0 && (
-            <Box marginBottom={5}>
-              <IndictmentsLawsBrokenAccordionItem workingCase={workingCase} />
-            </Box>
-          )}
-          {workingCase.caseFiles && (
-            <Box component="section" marginBottom={caseIsClosed ? 5 : 10}>
-              <IndictmentCaseFilesList workingCase={workingCase} />
-            </Box>
-          )}
-        </FormContentContainer>
-      </PageLayout>
-    )
+        )}
+        {workingCase.caseFiles && (
+          <Box component="section" marginBottom={caseIsClosed ? 5 : 10}>
+            <IndictmentCaseFilesList workingCase={workingCase} />
+          </Box>
+        )}
+      </FormContentContainer>
+    </PageLayout>
+  )
 }
 
 export default IndictmentOverview
