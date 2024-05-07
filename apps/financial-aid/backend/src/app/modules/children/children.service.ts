@@ -3,7 +3,7 @@ import { InjectModel } from '@nestjs/sequelize'
 
 import { ChildrenModel } from './models'
 
-import { CreateApplicationEventDto } from '../application/dto'
+import { CreateApplicationChildrenDto } from '../application/dto'
 
 import type { Logger } from '@island.is/logging'
 import { LOGGER_PROVIDER } from '@island.is/logging'
@@ -27,10 +27,8 @@ export class ChildrenService {
     })
   }
 
-  async create(
-    applicationEvent: CreateApplicationEventDto,
-  ): Promise<ChildrenModel> {
+  async create(children: CreateApplicationChildrenDto): Promise<ChildrenModel> {
     this.logger.debug('Adding child')
-    return this.childrenModel.create(applicationEvent)
+    return this.childrenModel.create(children)
   }
 }

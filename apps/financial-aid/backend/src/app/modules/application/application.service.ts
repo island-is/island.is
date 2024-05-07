@@ -54,6 +54,7 @@ import { AmountModel, AmountService, CreateAmountDto } from '../amount'
 import { DeductionFactorsModel } from '../deductionFactors'
 import { DirectTaxPaymentService } from '../directTaxPayment'
 import { DirectTaxPaymentModel } from '../directTaxPayment/models'
+import { ChildrenService } from '../children'
 
 interface Recipient {
   name: string
@@ -76,6 +77,7 @@ export class ApplicationService {
     private readonly fileService: FileService,
     private readonly amountService: AmountService,
     private readonly applicationEventService: ApplicationEventService,
+    private readonly childrenService: ChildrenService,
     private readonly emailService: EmailService,
     private readonly municipalityService: MunicipalityService,
     private readonly directTaxPaymentService: DirectTaxPaymentService,
@@ -309,6 +311,14 @@ export class ApplicationService {
         applicationId: appModel.id,
         eventType: ApplicationEventType[appModel.state.toUpperCase()],
         emailSent: await this.createApplicationEmails(application, appModel),
+      }),
+      application.children?.map((child) => {
+        return this.childrenService.create({
+          applicationId: appModel.id,
+          childName: child.childName,
+          childNationalId: child.childNationalId,
+          school: child?.school,
+        })
       }),
     ])
 

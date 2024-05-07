@@ -5,6 +5,7 @@ import {
   Model,
   Table,
   ForeignKey,
+  UpdatedAt,
 } from 'sequelize-typescript'
 
 import { ApiProperty } from '@nestjs/swagger'
@@ -33,6 +34,10 @@ export class ChildrenModel extends Model<ApplicationChildren> {
   })
   @ApiProperty()
   created: Date
+
+  @UpdatedAt
+  @ApiProperty()
+  modified: Date
 
   @ForeignKey(() => ApplicationModel)
   @Column({
