@@ -900,6 +900,24 @@
             "format": "date-time",
             "nullable": true,
             "example": "2009-11-03T00:00:00.0000000"
+          },
+          "shortId": {
+            "type": "string",
+            "description": "Stutt ID frá háskólunum. Notað til að mappa saman nám.",
+            "nullable": true,
+            "example": "HJÚ273"
+          },
+          "dataOrder": {
+            "type": "integer",
+            "description": "Röðun prófa/gagna, 1 = lægsta stig. NoOfData = hæðsta stig",
+            "format": "int32",
+            "example": 1
+          },
+          "noOfData": {
+            "type": "integer",
+            "description": "Fjöldi prófa/gagna sem þarf að skila.",
+            "format": "int32",
+            "example": 2
           }
         },
         "additionalProperties": false
