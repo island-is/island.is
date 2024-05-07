@@ -6,6 +6,10 @@
  */
 export type OrganizationSlugType =
   | 'haskoli-islands'
+  | 'haskolinn-a-akureyri'
+  | 'holaskoli-haskolinn-a-holum'
+  | 'bifrost'
+  | 'landbunadarhaskoli-islands'
   | 'vinnueftirlitid'
   | 'thjodskra'
   | 'stafraent-island'
