@@ -41,9 +41,8 @@ export const Overview = () => {
   const { formatMessage: fm } = useIntl()
   const { user } = useContext(UserContext)
   const { updateCase } = useCase()
-  const [selectedIndictmentReviewer, setSelectedIndictmentReviewer] = useState<
-    Option<string> | undefined
-  >()
+  const [selectedIndictmentReviewer, setSelectedIndictmentReviewer] =
+    useState<Option<string> | null>()
   const [modalVisible, setModalVisible] = useState<boolean>(false)
 
   useEffect(() => {
@@ -53,9 +52,9 @@ export const Overview = () => {
             label: workingCase.indictmentReviewer?.name ?? '',
             value: workingCase.indictmentReviewer?.id,
           }
-        : undefined,
+        : null,
     )
-  }, [workingCase.indictmentReviewer])
+  }, [workingCase.id, workingCase.indictmentReviewer])
 
   const assignReviewer = async () => {
     if (!selectedIndictmentReviewer) {
@@ -87,15 +86,18 @@ export const Overview = () => {
     if (!data?.users || !user) {
       return []
     }
-
-    return data.users
-      .filter(
-        (prosecutors) => prosecutors.institution?.id === user?.institution?.id,
-      )
-      .map(({ id, name }) => ({
-        label: name ?? '',
-        value: id,
-      }))
+    return data.users.reduce(
+      (acc: { label: string; value: string }[], prosecutor) => {
+        if (prosecutor.institution?.id === user?.institution?.id) {
+          acc.push({
+            label: prosecutor.name ?? '',
+            value: prosecutor.id,
+          })
+        }
+        return acc
+      },
+      [],
+    )
   }, [data?.users, user])
 
   return (
