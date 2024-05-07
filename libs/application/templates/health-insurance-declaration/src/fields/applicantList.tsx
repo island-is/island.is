@@ -2,24 +2,28 @@ import { useMutation } from '@apollo/client'
 import { UPDATE_APPLICATION_EXTERNAL_DATA } from '@island.is/application/graphql'
 import { AlertMessage, Box, Button } from '@island.is/island-ui/core'
 import { useLocale } from '@island.is/localization'
-import { FC, useEffect } from 'react'
+import { FC, useEffect, useState } from 'react'
 
 type ApplicantListProps = {
   application: {
     id: string
-    externalData: {
-      pdfDataForApplicants: {
-        data: {
-          applicantName: string
-          nationalId: string
-          comment: string | undefined
-          approved: boolean
-        }[]
-        date: Date
-        status: 'success' | 'failiure'
-      }
-    }
   }
+}
+
+type PdfDataForApplicantsExternalData = {
+  data: {
+    applicantName: string
+    nationalId: string
+    comment: string | undefined
+    approved: boolean
+    pdfData: {
+      fileName: string
+      contentType: string
+      data: string
+    }
+  }[]
+  date: Date
+  status: 'success' | 'failiure'
 }
 
 export const ApplicantList: FC<React.PropsWithChildren<ApplicantListProps>> = ({
@@ -28,42 +32,53 @@ export const ApplicantList: FC<React.PropsWithChildren<ApplicantListProps>> = ({
   const [updateApplicationExternalData, { loading }] = useMutation(
     UPDATE_APPLICATION_EXTERNAL_DATA,
   )
-  const { locale, formatMessage } = useLocale()
-  useEffect(() => {
-    const fetchPdfData = async () => {
-      await updateApplicationExternalData({
-        variables: {
-          input: {
-            id: application.id,
-            dataProviders: [
-              {
-                actionId: 'HealthInsuranceDeclaration.getPdfDataForApplicants',
-                order: 0,
-              },
-            ],
-          },
-          locale,
+  const fetchPdfData = async () => {
+    const res = await updateApplicationExternalData({
+      variables: {
+        input: {
+          id: application.id,
+          dataProviders: [
+            {
+              actionId: 'HealthInsuranceDeclaration.getPdfDataForApplicants',
+              order: 0,
+            },
+          ],
         },
-      })
-    }
+        locale,
+      },
+    })
+    setPdfData(
+      res?.data?.updateApplicationExternalData?.externalData
+        ?.pdfDataForApplicants,
+    )
+  }
+  const [pdfData, setPdfData] = useState<PdfDataForApplicantsExternalData>()
+  const { locale } = useLocale()
+  useEffect(() => {
     fetchPdfData()
   }, [])
+
   return (
     <Box marginY={2} width="full" flexGrow={1}>
       {!loading &&
-        application.externalData?.pdfDataForApplicants.data.map((applicant) => {
+        pdfData?.data?.map((applicant) => {
           return (
             <>
               <Box marginY={2}>
-                <Button
-                  key={applicant.nationalId}
-                  preTextIcon="download"
-                  variant="ghost"
-                  fluid
-                  disabled={!applicant.approved}
+                <a
+                  href={`data:application/pdf;base64,${applicant.pdfData.data}`}
+                  download={applicant.pdfData.fileName}
                 >
-                  {applicant.applicantName}
-                </Button>
+                  <Button
+                    key={applicant.nationalId}
+                    preTextIcon="download"
+                    variant="ghost"
+                    fluid
+                    disabled={!applicant.approved}
+                  >
+                    {applicant.applicantName}
+                  </Button>
+                </a>
               </Box>
               {!applicant.approved && (
                 <AlertMessage
