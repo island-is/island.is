@@ -21,7 +21,7 @@ import { AuthDelegationType } from '@island.is/shared/types'
 import { Actions } from '../shared'
 import { DataSchema } from './dataSchema'
 import { carRecyclingMessages, statesMessages } from './messages'
-
+import { Features } from '@island.is/feature-flags'
 import { VehicleSearchApi } from '../dataProviders'
 
 const enum States {
@@ -50,6 +50,7 @@ const CarRecyclingTemplate: ApplicationTemplate<
   institution: carRecyclingMessages.shared.institution,
   translationNamespaces: [ApplicationConfigurations.CarRecycling.translation],
   dataSchema: DataSchema,
+  featureFlag: Features.carRecyclingApplication,
   allowedDelegations: [
     { type: AuthDelegationType.ProcurationHolder },
     {
