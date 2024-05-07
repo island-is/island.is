@@ -18,7 +18,7 @@ interface Props {
 }
 
 export const PaymentTableRow = ({ periodId, headerData }: Props) => {
-  const [getCopaymentBillsQuery, { data, loading, error }] =
+  const [getCopaymentBillsQuery, { data, loading }] =
     useGetCopaymentBillsLazyQuery()
 
   const { formatMessage } = useLocale()
