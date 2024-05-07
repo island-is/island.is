@@ -7,6 +7,7 @@ import {
   Patch,
   Controller,
   HttpStatus,
+  Post,
 } from '@nestjs/common'
 import { ApiSecurity, ApiTags } from '@nestjs/swagger'
 
@@ -89,7 +90,7 @@ export class MeNotificationsController {
     return this.notificationService.findOne(user, id, locale)
   }
 
-  @Patch('/mark-all-as-seen')
+  @Post('/mark-all-as-seen')
   @Scopes(NotificationsScope.write)
   @ApiSecurity('oauth2', [NotificationsScope.write])
   @Documentation({
@@ -100,7 +101,7 @@ export class MeNotificationsController {
     await this.notificationService.markAllAsSeen(user)
   }
 
-  @Patch('/mark-all-as-read')
+  @Post('/mark-all-as-read')
   @Scopes(NotificationsScope.write)
   @ApiSecurity('oauth2', [NotificationsScope.write])
   @Documentation({
