@@ -1,6 +1,6 @@
 import React, { isValidElement } from 'react'
 import { FormattedDate } from 'react-intl'
-import { Image, ImageSourcePropType } from 'react-native'
+import { ColorValue, Image, ImageSourcePropType } from 'react-native'
 import styled, { useTheme } from 'styled-components/native'
 import { dynamicColor } from '../../utils/dynamic-color'
 import { Typography } from '../typography/typography'
@@ -13,7 +13,6 @@ const Host = styled.TouchableHighlight<{ unread?: boolean }>`
 `
 
 const Cell = styled.View`
-  flex: 1;
   flex-direction: row;
   padding-horizontal: ${({ theme }) => theme.spacing[2]}px;
   padding-vertical: ${({ theme }) => theme.spacing[3]}px;
@@ -29,7 +28,6 @@ const Cell = styled.View`
 
 const Container = styled.View`
   flex-direction: column;
-  flex: 1;
 `
 
 const Icon = styled.View<{ unread?: boolean }>`
@@ -44,15 +42,8 @@ const Icon = styled.View<{ unread?: boolean }>`
   flex-direction: column;
 `
 
-const Title = styled.View`
-  flex-direction: row;
-  align-items: center;
-  flex: 1;
-`
-
 const Row = styled.View`
   flex-direction: row;
-  flex: 1;
   justify-content: space-between;
   margin-bottom: ${({ theme }) => theme.spacing.smallGutter}px;
 `
@@ -70,6 +61,8 @@ interface CardProps {
   message: string
   unread?: boolean
   actions?: Array<{ text: string; onPress(): void }>
+  underlayColor?: ColorValue
+  testID?: string
   onPress(id: number): void
 }
 
@@ -81,13 +74,19 @@ export function NotificationCard({
   date,
   icon,
   unread,
+  underlayColor,
+  testID,
 }: CardProps) {
   const theme = useTheme()
+
   return (
     <Host
       onPress={() => onPress(id)}
-      underlayColor={theme.isDark ? theme.shade.shade200 : '#EBEBFA'}
+      underlayColor={
+        underlayColor ?? theme.isDark ? theme.shade.shade200 : '#EBEBFA'
+      }
       unread={unread}
+      testID={testID}
     >
       <Cell>
         {icon && isValidElement(icon) ? (
@@ -102,9 +101,7 @@ export function NotificationCard({
         ) : null}
         <Container>
           <Row>
-            <Title>
-              <Typography variant="heading5">{title}</Typography>
-            </Title>
+            <Typography variant="heading5">{title}</Typography>
             {date && (
               <Date>
                 <Typography variant="body3">
