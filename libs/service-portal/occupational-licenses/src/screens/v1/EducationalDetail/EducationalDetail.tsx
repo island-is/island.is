@@ -10,10 +10,10 @@ import {
 } from '@island.is/service-portal/core'
 import { useLocale, useNamespaces } from '@island.is/localization'
 import { useUserInfo } from '@island.is/auth/react'
-import { LicenseDetail } from '../../components/LicenseDetail'
+import { LicenseDetail } from '../../../components/LicenseDetail'
 import { useEffect, useState } from 'react'
 import { m } from '@island.is/service-portal/core'
-import { olMessage as om } from '../../lib/messages'
+import { olMessage as om } from '../../../lib/messages'
 
 type UseParams = {
   id: string
