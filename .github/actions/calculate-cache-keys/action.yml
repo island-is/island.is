@@ -3,13 +3,13 @@ description: 'Calculates cache keys for node_modules, mobile app and code genera
 outputs:
   node-modules-key:
     description: 'Cache key for node_modules'
-    value: ${{ steps.calculate-node-modules-cache-key.outputs.node-modules-key }
+    value: ${{ steps.calculate-node-modules-cache-key.outputs.node-modules-key }}
   mobile-node-modules-key:
     description: 'Cache key for mobile app node_modules'
     value: ${{ steps.calculate-mobile-node-modules-cache-key.outputs.mobile-node-modules-key }}
   generated-files-key:
     description: 'Cache key for generated files'
-    value: ${{ steps.calculate-generated-files-cache-key.outputs.generated-files-key }
+    value: ${{ steps.calculate-generated-files-cache-key.outputs.generated-files-key }}
 runs:
   using: 'composite'
   steps:
