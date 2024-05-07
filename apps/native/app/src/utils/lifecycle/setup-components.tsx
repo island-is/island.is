@@ -1,3 +1,4 @@
+import { LoadingIcon } from '../../components/nav-loading-spinner/loading-icon'
 import { OfflineBanner } from '../../components/offline/offline-banner'
 import { isTestingApp } from '../../config'
 import { AirDiscountScreen } from '../../screens/air-discount/air-discount'
@@ -37,7 +38,10 @@ import { WalletPassScreen } from '../../screens/wallet-pass/wallet-pass'
 import { WalletPassportScreen } from '../../screens/wallet-passport/wallet-passport'
 import { WalletScreen } from '../../screens/wallet/wallet'
 import { WebViewScreen } from '../../screens/webview/webview'
-import { ComponentRegistry as CR } from '../component-registry'
+import {
+  ButtonRegistry as BR,
+  ComponentRegistry as CR,
+} from '../component-registry'
 import { registerComponent } from '../register-component'
 
 export function registerAllComponents() {
@@ -98,4 +102,7 @@ export function registerAllComponents() {
 
   // Overlay
   registerComponent(CR.OfflineBanner, OfflineBanner)
+
+  // Navigation buttons
+  registerComponent(BR.LoadingButton, LoadingIcon)
 }
