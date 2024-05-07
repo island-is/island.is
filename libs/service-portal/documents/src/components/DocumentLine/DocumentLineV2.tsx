@@ -123,8 +123,10 @@ export const DocumentLine: FC<Props> = ({
           const docContent = data?.documentV2?.content
           if (docContent) {
             displayPdf(docContent)
+            setDocumentDisplayError(undefined)
+          } else {
+            setDocumentDisplayError(formatMessage(messages.documentErrorLoad))
           }
-          setDocumentDisplayError(undefined)
         }
       },
       onError: () => {

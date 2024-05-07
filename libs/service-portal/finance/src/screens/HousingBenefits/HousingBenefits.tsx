@@ -17,7 +17,9 @@ import HousingBenefitsTable, {
   ITEMS_ON_PAGE,
 } from '../../components/HousingBenefitsPayments/HousingBenefitsTable'
 import { Problem } from '@island.is/react-spa/shared'
-import HousingBenefitsFilter from '../../components/HousingBenefitsPayments/HousingBenefitsFilter'
+import HousingBenefitsFilter, {
+  BASE_YEAR,
+} from '../../components/HousingBenefitsPayments/HousingBenefitsFilter'
 
 const FinanceHousingBenefits = () => {
   useNamespaces('sp.finance-housing-benefits')
@@ -29,6 +31,8 @@ const FinanceHousingBenefits = () => {
   const [selectedMonth, setSelectedMonth] = useState<string>()
   const { formatMessage } = useLocale()
 
+  const today = new Date()
+
   const [loadHousingPayments, { data, loading, error }] =
     useGetHousingBenefitsListLazyQuery()
 
@@ -37,15 +41,23 @@ const FinanceHousingBenefits = () => {
     setToDate(undefined)
     setPaymentOrigin(undefined)
     setSelectedMonth(undefined)
+    setPage(1)
   }
 
   useMemo(() => {
     const paymentType = Number(paymentOrigin)
+    let dateTo: string | undefined
+    if (!toDate && fromDate) {
+      dateTo = today.toISOString()
+    } else if (toDate && fromDate) {
+      dateTo = toDate.toISOString()
+    }
+
     loadHousingPayments({
       variables: {
         input: {
-          dateFrom: toDate && fromDate ? fromDate.toISOString() : undefined,
-          dateTo: toDate && fromDate ? toDate.toISOString() : undefined,
+          dateFrom: dateTo && fromDate ? fromDate.toISOString() : undefined,
+          dateTo: dateTo,
           pageSize: ITEMS_ON_PAGE,
           pageNumber: page,
           month: selectedMonth,
@@ -69,6 +81,8 @@ const FinanceHousingBenefits = () => {
                 size="xs"
                 handleChange={(d) => setFromDate(d)}
                 selected={fromDate}
+                minYear={BASE_YEAR}
+                maxYear={new Date().getFullYear()}
               />
             </GridColumn>
             <GridColumn
@@ -83,6 +97,8 @@ const FinanceHousingBenefits = () => {
                 size="xs"
                 handleChange={(d) => setToDate(d)}
                 selected={toDate}
+                minYear={BASE_YEAR}
+                maxYear={new Date().getFullYear()}
               />
             </GridColumn>
             <GridColumn
@@ -95,7 +111,6 @@ const FinanceHousingBenefits = () => {
                   clearAllFilters={resetFilter}
                   setSelectedMonth={setSelectedMonth}
                   setPaymentOrigin={setPaymentOrigin}
-                  selectedMonth={selectedMonth}
                   paymentOrigin={paymentOrigin}
                 />
               )}

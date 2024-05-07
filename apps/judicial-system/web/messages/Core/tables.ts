@@ -82,4 +82,14 @@ export const tables = defineMessages({
     defaultMessage: 'Sækjandi',
     description: 'Notaður sem titill fyrir sækjanda í málalista.',
   },
+  prosecutorName: {
+    id: 'judicial.system.core:tables.prosecutor_name',
+    defaultMessage: 'Saksóknari',
+    description: 'Notaður sem titill fyrir saksóknara í málalista.',
+  },
+  deadline: {
+    id: 'judicial.system.core:tables.deadline',
+    defaultMessage: 'Frestur',
+    description: 'Notaður sem titill fyrir frestur dálk í lista yfir mál.',
+  },
 })
