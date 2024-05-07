@@ -10738,7 +10738,7 @@ __metadata:
     "@tsconfig/react-native": ^2.0.2
     "@types/intl": ^1
     "@types/jest": ^29.2.1
-    "@types/lodash": 4.17.0
+    "@types/lodash": 4.17.1
     "@types/react": ^18.0.24
     "@types/react-dom": ^18
     "@types/react-test-renderer": ^18.0.0
@@ -18016,17 +18016,10 @@ __metadata:
   languageName: node
   linkType: hard
 
-"@types/lodash@npm:4.14.160":
-  version: 4.14.160
-  resolution: "@types/lodash@npm:4.14.160"
-  checksum: af129ded217ae41de1a7a278d9fc15a762099afbfa5d38cff967f53347c451c53870ee193c322395f6e1f30c80b17df5e6395b3a10e3cca71675ea31406ec5bb
-  languageName: node
-  linkType: hard
-
-"@types/lodash@npm:4.17.0":
-  version: 4.17.0
-  resolution: "@types/lodash@npm:4.17.0"
-  checksum: 3f98c0b67a93994cbc3403d4fa9dbaf52b0b6bb7f07a764d73875c2dcd5ef91222621bd5bcf8eee7b417a74d175c2f7191b9f595f8603956fd06f0674c0cba93
+"@types/lodash@npm:4.17.1":
+  version: 4.17.1
+  resolution: "@types/lodash@npm:4.17.1"
+  checksum: 01984d5b44c09ef45258f8ac6d0cf926900624064722d51a020ba179e5d4a293da0068fb278d87dc695586afe7ebd3362ec57f5c0e7c4f6c1fab9d04a80e77f5
   languageName: node
   linkType: hard
 
@@ -34228,7 +34221,7 @@ __metadata:
     "@types/js-base64": 3.0.0
     "@types/js-cookie": 2.2.6
     "@types/js-yaml": 4.0.3
-    "@types/lodash": 4.14.160
+    "@types/lodash": 4.17.1
     "@types/mailparser": 3.4.0
     "@types/memoizee": 0.4.5
     "@types/node": 18.14.2

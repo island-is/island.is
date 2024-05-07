@@ -94,7 +94,7 @@
     "@tsconfig/react-native": "^2.0.2",
     "@types/intl": "^1",
     "@types/jest": "^29.2.1",
-    "@types/lodash": "4.17.0",
+    "@types/lodash": "4.17.1",
     "@types/react": "^18.0.24",
     "@types/react-dom": "^18",
     "@types/react-test-renderer": "^18.0.0",
