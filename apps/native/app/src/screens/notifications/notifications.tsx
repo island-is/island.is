@@ -1,23 +1,14 @@
 import { NavigationBarSheet, NotificationCard, Skeleton } from '@ui'
 import { dismissAllNotificationsAsync } from 'expo-notifications'
-import React, { useCallback, useEffect, useMemo, useState } from 'react'
+import { useCallback, useEffect, useMemo, useState } from 'react'
 import { useIntl } from 'react-intl'
-import {
-  ActivityIndicator,
-  FlatList,
-  SafeAreaView,
-  TouchableHighlight,
-  View,
-} from 'react-native'
+import { ActivityIndicator, FlatList, SafeAreaView, View } from 'react-native'
 import {
   Navigation,
   NavigationFunctionComponent,
 } from 'react-native-navigation'
 import { useTheme } from 'styled-components'
-
-import { createNavigationOptionHooks } from '../../hooks/create-navigation-option-hooks'
-import { navigateToNotification } from '../../lib/deep-linking'
-import { testIDs } from '../../utils/test-ids'
+import styled from 'styled-components/native'
 import {
   GetUserNotificationsQuery,
   Notification,
@@ -25,6 +16,18 @@ import {
   useMarkAllNotificationsAsSeenMutation,
   useMarkUserNotificationAsReadMutation,
 } from '../../graphql/types/schema'
+
+import { createNavigationOptionHooks } from '../../hooks/create-navigation-option-hooks'
+import { navigateToNotification } from '../../lib/deep-linking'
+import {
+  createSkeletonArr,
+  SkeletonItem,
+} from '../../utils/create-skeleton-arr'
+import { testIDs } from '../../utils/test-ids'
+
+const LoadingWrapper = styled.View`
+  padding-vertical: ${({ theme }) => theme.spacing[3]}px;
+`
 
 const DEFAULT_PAGE_SIZE = 15
 
@@ -39,12 +42,7 @@ type NotificationItem = NonNullable<
   NonNullable<GetUserNotificationsQuery['userNotifications']>['data']
 >[0]
 
-type ListItem =
-  | {
-      id: number
-      __typename: 'Skeleton'
-    }
-  | NotificationItem
+type ListItem = SkeletonItem | NotificationItem
 
 export const NotificationsScreen: NavigationFunctionComponent = ({
   componentId,
@@ -54,10 +52,11 @@ export const NotificationsScreen: NavigationFunctionComponent = ({
   const theme = useTheme()
   const [loadingMore, setLoadingMore] = useState(false)
 
-  const res = useGetUserNotificationsQuery({
-    fetchPolicy: 'network-only',
-    variables: { input: { limit: DEFAULT_PAGE_SIZE, before: '', after: '' } },
-  })
+  const { data, loading, fetchMore, updateQuery } =
+    useGetUserNotificationsQuery({
+      fetchPolicy: 'network-only',
+      variables: { input: { limit: DEFAULT_PAGE_SIZE } },
+    })
 
   const [markUserNotificationAsRead] = useMarkUserNotificationAsReadMutation()
   const [markAllUserNotificationsAsSeen] =
@@ -65,23 +64,69 @@ export const NotificationsScreen: NavigationFunctionComponent = ({
 
   // On mount, mark all notifications as seen
   useEffect(() => {
-    markAllUserNotificationsAsSeen()
+    // void markAllUserNotificationsAsSeen()
   }, [])
 
   useEffect(() => {
-    dismissAllNotificationsAsync()
+    void dismissAllNotificationsAsync()
   })
+
+  const memoizedData = useMemo<ListItem[]>(() => {
+    if (loading && !data) {
+      return createSkeletonArr(9)
+    }
+
+    return data?.userNotifications?.data || []
+  }, [data, loading])
 
   const onNotificationPress = useCallback((notification: Notification) => {
     // Mark notification as read and seen
-    markUserNotificationAsRead({ variables: { id: notification.id } })
+    void markUserNotificationAsRead({ variables: { id: notification.id } })
     navigateToNotification(notification, componentId)
   }, [])
 
-  const SkeletonItem = () => {
-    const theme = useTheme()
-    return (
-      <View>
+  const handleEndReached = async () => {
+    if (loadingMore || loading) return
+
+    setLoadingMore(true)
+
+    try {
+      await fetchMore({
+        variables: {
+          input: {
+            limit: DEFAULT_PAGE_SIZE,
+            after: data?.userNotifications?.pageInfo.endCursor ?? undefined,
+          },
+        },
+        updateQuery: (prev, { fetchMoreResult }) => {
+          if (
+            !fetchMoreResult ||
+            !fetchMoreResult.userNotifications?.pageInfo?.hasNextPage
+          ) {
+            return prev
+          }
+
+          return {
+            userNotifications: {
+              ...fetchMoreResult.userNotifications,
+              data: [
+                ...(prev.userNotifications?.data || []),
+                ...fetchMoreResult.userNotifications?.data,
+              ],
+            },
+          }
+        },
+      })
+    } catch (e) {
+      // TODO handle error
+    }
+
+    setLoadingMore(false)
+  }
+
+  const renderNotificationItem = ({ item }: { item: ListItem }) => {
+    if (item.__typename === 'Skeleton') {
+      return (
         <Skeleton
           active
           overlayColor={{
@@ -89,61 +134,41 @@ export const NotificationsScreen: NavigationFunctionComponent = ({
             light: theme.color.blue200,
           }}
           overlayOpacity={1}
-          height={126}
+          height={103}
           style={{
             borderBottomWidth: 1,
             borderBottomColor: theme.color.blue200,
           }}
         />
-      </View>
+      )
+    }
+
+    return (
+      <NotificationCard
+        key={item.id}
+        id={item.id}
+        title={item.message.title}
+        message={item.message.displayBody}
+        date={new Date(item.metadata.sent)}
+        icon={
+          item.sender?.logoUrl && {
+            uri: `${item.sender.logoUrl}?w=64&h=64&fit=pad&bg=white&fm=png`,
+          }
+        }
+        underlayColor={
+          theme.isDark ? theme.shades.dark.shade100 : theme.color.blue100
+        }
+        unread={!item.metadata.read}
+        onPress={() => onNotificationPress(item)}
+        testID={testIDs.NOTIFICATION_CARD_BUTTON}
+      />
     )
   }
 
-  // Return skeleton items or real data
-  const data = useMemo<ListItem[]>(() => {
-    if (res?.loading && !res?.data) {
-      return Array.from({ length: 5 }).map((_, id) => ({
-        id,
-        __typename: 'Skeleton',
-      }))
-    }
-    return res?.data?.userNotifications?.data || []
-  }, [res.data, res.loading])
-
-  const renderNotificationItem = ({ item }: { item: ListItem }) => {
-    if (item?.__typename === 'Skeleton') {
-      return <SkeletonItem />
-    } else {
-      return (
-        <TouchableHighlight
-          underlayColor={
-            theme.isDark ? theme.shades.dark.shade100 : theme.color.blue100
-          }
-          onPress={() => onNotificationPress(item)}
-          testID={testIDs.NOTIFICATION_CARD_BUTTON}
-        >
-          <NotificationCard
-            key={item.id}
-            id={item.id}
-            title={item.message.title}
-            message={item.message.displayBody}
-            date={new Date(item.metadata.sent)}
-            icon={
-              item.sender?.logoUrl && {
-                uri: `${item.sender.logoUrl}?w=64&h=64&fit=pad&bg=white&fm=png`,
-              }
-            }
-            unread={!item.metadata.read}
-            onPress={() => onNotificationPress(item)}
-          />
-        </TouchableHighlight>
-      )
-    }
-  }
-
-  const keyExtractor = useCallback((item: ListItem) => {
-    return item.id.toString()
-  }, [])
+  const keyExtractor = useCallback(
+    (item: ListItem, index: number) => item.id.toString(),
+    [memoizedData],
+  )
 
   return (
     <>
@@ -156,48 +181,18 @@ export const NotificationsScreen: NavigationFunctionComponent = ({
       <SafeAreaView style={{ flex: 1 }} testID={testIDs.SCREEN_NOTIFICATIONS}>
         <FlatList
           style={{ flex: 1, paddingTop: 16 }}
-          data={data}
+          data={memoizedData}
           keyExtractor={keyExtractor}
           renderItem={renderNotificationItem}
-          onEndReachedThreshold={0.1}
-          onEndReached={() => {
-            if (loadingMore || res.loading) {
-              return
-            }
-            setLoadingMore(true)
-
-            // TODO: Fix fetchMore so it is only called once and all previous data is kept
-            return res
-              .fetchMore({
-                variables: {
-                  input: {
-                    limit: DEFAULT_PAGE_SIZE,
-                    before: '',
-                    after:
-                      res?.data?.userNotifications?.pageInfo.endCursor ?? '',
-                  },
-                },
-                updateQuery: (prevResult, { fetchMoreResult }) => {
-                  if (
-                    fetchMoreResult?.userNotifications?.data.length &&
-                    prevResult?.userNotifications?.data.length
-                  ) {
-                    fetchMoreResult.userNotifications.data = [
-                      ...prevResult.userNotifications.data,
-                      ...fetchMoreResult.userNotifications.data,
-                    ]
-                    return fetchMoreResult
-                  }
-                  return prevResult
-                },
-              })
-              .finally(() => setLoadingMore(false))
-          }}
+          onEndReachedThreshold={0.5}
+          onEndReached={handleEndReached}
+          scrollEventThrottle={16}
+          scrollToOverflowEnabled
           ListFooterComponent={
             loadingMore ? (
-              <View>
+              <LoadingWrapper>
                 <ActivityIndicator size="small" animating />
-              </View>
+              </LoadingWrapper>
             ) : null
           }
         />
