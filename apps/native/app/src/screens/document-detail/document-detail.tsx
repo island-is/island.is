@@ -1,4 +1,4 @@
-import { useFragment_experimental } from '@apollo/client'
+import { useApolloClient, useFragment_experimental } from '@apollo/client'
 import { blue400, dynamicColor, Header, Loader, Typography } from '@ui'
 import React, { useEffect, useRef, useState } from 'react'
 import { FormattedDate, useIntl } from 'react-intl'
@@ -17,15 +17,14 @@ import Pdf, { Source } from 'react-native-pdf'
 import Share from 'react-native-share'
 import WebView from 'react-native-webview'
 import styled from 'styled-components/native'
-import { client } from '../../graphql/client'
 import {
   Document,
   ListDocumentFragmentDoc,
-  ListDocumentsDocument,
   useGetDocumentQuery,
+  useListDocumentsLazyQuery,
 } from '../../graphql/types/schema'
 import { createNavigationOptionHooks } from '../../hooks/create-navigation-option-hooks'
-import { useOfflineUpdateNavigation } from '../../hooks/use-offline-update-navigation'
+import { useConnectivityIndicator } from '../../hooks/use-connectivity-indicator'
 import { toggleAction } from '../../lib/post-mail-action'
 import { authStore } from '../../stores/auth-store'
 import { useOrganizationsStore } from '../../stores/organizations-store'
@@ -172,6 +171,7 @@ export const DocumentDetailScreen: NavigationFunctionComponent<{
 }> = ({ componentId, docId }) => {
   useNavigationOptions(componentId)
 
+  const client = useApolloClient()
   const intl = useIntl()
   const { getOrganizationLogoUrl } = useOrganizationsStore()
   const [accessToken, setAccessToken] = useState<string>()
@@ -186,8 +186,8 @@ export const DocumentDetailScreen: NavigationFunctionComponent<{
     returnPartialData: true,
   })
 
+  const [getListDocuments] = useListDocumentsLazyQuery()
   const docRes = useGetDocumentQuery({
-    client,
     variables: {
       input: {
         id: docId,
@@ -202,8 +202,7 @@ export const DocumentDetailScreen: NavigationFunctionComponent<{
 
   useEffect(() => {
     if (doc.missing) {
-      client.query({
-        query: ListDocumentsDocument,
+      void getListDocuments({
         variables: {
           input: {
             page: 1,
@@ -221,14 +220,14 @@ export const DocumentDetailScreen: NavigationFunctionComponent<{
   const hasPdf = Document.fileType?.toLocaleLowerCase() === 'pdf'
   const isHtml = typeof Document.html === 'string' && Document.html !== ''
 
-  useOfflineUpdateNavigation(
+  useConnectivityIndicator({
     componentId,
-    getRightButtons({
+    rightButtons: getRightButtons({
       archived: doc.data?.archived ?? false,
       bookmarked: doc.data?.bookmarked ?? false,
     }),
-    doc.data,
-  )
+    extraData: [doc.data],
+  })
 
   useNavigationButtonPress(({ buttonId }) => {
     if (buttonId === ButtonRegistry.DocumentArchiveButton) {

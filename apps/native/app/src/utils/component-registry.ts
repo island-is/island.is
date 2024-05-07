@@ -52,6 +52,7 @@ export const ComponentRegistry = {
 }
 
 export const ButtonRegistry = {
+  LoadingButton: `${prefix}.button.LoadingButton`,
   OfflineButton: `${prefix}.button.OfflineButton`,
   SettingsButton: `${prefix}.button.SettingsButton`,
   // to do remove this unused user button
