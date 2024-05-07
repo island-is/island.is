@@ -10,17 +10,19 @@ type ApplicantListProps = {
   }
 }
 
+type PdfData = {
+  fileName: string
+  contentType: string
+  data: string
+}
+
 type PdfDataForApplicantsExternalData = {
   data: {
     applicantName: string
     nationalId: string
     comment: string | undefined
     approved: boolean
-    pdfData: {
-      fileName: string
-      contentType: string
-      data: string
-    }
+    pdfData: PdfData
   }[]
   date: Date
   status: 'success' | 'failiure'
@@ -32,6 +34,13 @@ export const ApplicantList: FC<React.PropsWithChildren<ApplicantListProps>> = ({
   const [updateApplicationExternalData, { loading }] = useMutation(
     UPDATE_APPLICATION_EXTERNAL_DATA,
   )
+  const onClickDownload = async (pdfData: PdfData) => {
+    const blob = new Blob([Buffer.from(pdfData.data, 'base64')])
+    const link = document.createElement('a')
+    link.href = window.URL.createObjectURL(blob)
+    link.download = pdfData.fileName
+    link.click()
+  }
   const fetchPdfData = async () => {
     const res = await updateApplicationExternalData({
       variables: {
@@ -65,20 +74,17 @@ export const ApplicantList: FC<React.PropsWithChildren<ApplicantListProps>> = ({
           return (
             <>
               <Box marginY={2}>
-                <a
-                  href={`data:application/pdf;base64,${applicant.pdfData.data}`}
-                  download={applicant.pdfData.fileName}
+                <Button
+                  key={applicant.nationalId}
+                  preTextIconType="outline"
+                  preTextIcon="download"
+                  variant="ghost"
+                  fluid
+                  disabled={!applicant.approved}
+                  onClick={() => onClickDownload(applicant.pdfData)}
                 >
-                  <Button
-                    key={applicant.nationalId}
-                    preTextIcon="download"
-                    variant="ghost"
-                    fluid
-                    disabled={!applicant.approved}
-                  >
-                    {applicant.applicantName}
-                  </Button>
-                </a>
+                  {applicant.applicantName}
+                </Button>
               </Box>
               {!applicant.approved && (
                 <AlertMessage

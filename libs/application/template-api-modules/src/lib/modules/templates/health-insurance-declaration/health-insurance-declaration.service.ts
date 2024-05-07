@@ -1,5 +1,8 @@
 import { ApplicationTypes } from '@island.is/application/types'
-import { InsurancestatementsApi } from '@island.is/clients/icelandic-health-insurance/rights-portal'
+import {
+  InsurancestatementsApi,
+  MinarsidurAPIModelsInsuranceStatementsResponseInsuranceStatementApplicationResponseDTO,
+} from '@island.is/clients/icelandic-health-insurance/rights-portal'
 import { HttpException, Injectable } from '@nestjs/common'
 import { BaseTemplateApiService } from '../../base-template-api.service'
 import { TemplateApiModuleActionProps } from '../../../types'
@@ -66,6 +69,7 @@ export class HealthInsuranceDeclarationService extends BaseTemplateApiService {
   async submitApplication({ application, auth }: TemplateApiModuleActionProps) {
     // Different endpoints are used base on if applicant is a student or not
     const applicationType = getApplicantType(application)
+    let response: MinarsidurAPIModelsInsuranceStatementsResponseInsuranceStatementApplicationResponseDTO
     if (applicationType === ApplicantType.STUDENT) {
       const attachments = await this.attachmentProvider.getFiles(
         ['attachments.documents'],
@@ -75,7 +79,7 @@ export class HealthInsuranceDeclarationService extends BaseTemplateApiService {
         application,
         attachments,
       )
-      const response = await this.insuranceStatementsApiWithAuth(
+      response = await this.insuranceStatementsApiWithAuth(
         auth,
       ).insuranceStatementStudentApplication({
         minarsidurAPIModelsInsuranceStatementsStudentApplicationDTO:
@@ -84,22 +88,35 @@ export class HealthInsuranceDeclarationService extends BaseTemplateApiService {
     } else {
       const applicationTravellerRequest =
         applicationToTravellerApplication(application)
-      const response = await this.insuranceStatementsApiWithAuth(
+      response = await this.insuranceStatementsApiWithAuth(
         auth,
       ).insuranceStatementTouristApplication({
         minarsidurAPIModelsInsuranceStatementsTouristApplicationDTO:
           applicationTravellerRequest,
       })
     }
+    if (!response.success) {
+      throw new HttpException(
+        response.errorMessage ?? 'Error when submitting application',
+        500,
+      )
+    }
+    return response
   }
-  async getPdfForApplicants({
+
+  async getPdfDataForApplicants({
     application,
     auth,
   }: TemplateApiModuleActionProps) {
-    const applicants = getApplicantsFromExternalData(application)
     const persons = getPersonsFromExternalData(application)
+    const applicants = getApplicantsFromExternalData(application)
 
-    const applicantsWtihPdfData = applicants.map(async (applicant) => {
+    if (!applicants) {
+      throw new HttpException('No applicants for application', 500)
+    }
+
+    const applicantsWithPdfData = []
+    for (const applicant of applicants) {
       let pdfDataResponse
       const person = persons.find((p) => p.nationalId === applicant.nationalId)
       if (!person) {
@@ -111,14 +128,14 @@ export class HealthInsuranceDeclarationService extends BaseTemplateApiService {
         ).getInsuranceStatementPdf({ documentId: applicant.documentId })
       }
 
-      return {
+      applicantsWithPdfData.push({
         applicantName: person.name,
         nationalId: person.nationalId,
         pdfData: pdfDataResponse,
         comment: applicant.comment,
         approved: applicant.approved,
-      }
-    })
-    return applicantsWtihPdfData
+      })
+    }
+    return applicantsWithPdfData
   }
 }
