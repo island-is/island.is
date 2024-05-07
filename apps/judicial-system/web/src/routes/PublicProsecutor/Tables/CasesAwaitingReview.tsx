@@ -19,11 +19,11 @@ import TagCaseState, {
 } from '@island.is/judicial-system-web/src/components/TagCaseState/TagCaseState'
 import { CaseListEntry } from '@island.is/judicial-system-web/src/graphql/schema'
 
-import { strings } from './CasesForReview.strings'
+import { strings } from './CasesAwaitingReview.strings'
 
 interface CasesForReviewTableProps {
   loading: boolean
-  cases: CaseListEntry[]
+  cases?: CaseListEntry[]
 }
 
 const CasesForReview: React.FC<CasesForReviewTableProps> = ({
@@ -40,7 +40,7 @@ const CasesForReview: React.FC<CasesForReviewTableProps> = ({
         <Box marginBottom={[5, 5, 12]}>
           {loading ? (
             <TableSkeleton />
-          ) : cases.length > 0 ? (
+          ) : cases && cases.length > 0 ? (
             <Table
               thead={[
                 {
@@ -53,7 +53,6 @@ const CasesForReview: React.FC<CasesForReviewTableProps> = ({
                   sortable: { isSortable: true, key: 'defendant' },
                 },
                 { title: formatMessage(tables.state) },
-                { title: formatMessage(tables.prosecutorName) },
                 { title: formatMessage(tables.deadline) },
               ]}
               data={cases}
@@ -82,11 +81,6 @@ const CasesForReview: React.FC<CasesForReviewTableProps> = ({
                       }
                       indictmentReviewer={row.indictmentReviewer}
                     />
-                  ),
-                },
-                {
-                  cell: (row: CaseListEntry) => (
-                    <Text>{row.indictmentReviewer?.name}</Text>
                   ),
                 },
                 {
