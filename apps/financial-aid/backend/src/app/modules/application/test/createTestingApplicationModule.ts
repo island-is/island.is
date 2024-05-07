@@ -14,6 +14,7 @@ import { MunicipalityService } from '../../municipality/municipality.service'
 import { AmountService } from '../../amount/amount.service'
 import { AuditService } from '@island.is/nest/audit'
 import { DirectTaxPaymentService } from '../../directTaxPayment'
+import { ChildrenService } from '../../children'
 
 jest.mock('@island.is/email-service')
 jest.mock('../../file/file.service.ts')
@@ -34,6 +35,7 @@ export const createTestingApplicationModule = async () => {
       FileService,
       StaffService,
       ApplicationEventService,
+      ChildrenService,
       MunicipalityService,
       AmountService,
       AuditService,
@@ -75,6 +77,9 @@ export const createTestingApplicationModule = async () => {
   const applicationEventService =
     applicationModule.get<ApplicationEventService>(ApplicationEventService)
 
+  const childrenService =
+    applicationModule.get<ChildrenService>(ChildrenService)
+
   const municipalityService =
     applicationModule.get<MunicipalityService>(MunicipalityService)
 
@@ -84,6 +89,7 @@ export const createTestingApplicationModule = async () => {
     applicationModel,
     applicationService,
     applicationController,
+    childrenService,
     fileService,
     staffService,
     amountService,
