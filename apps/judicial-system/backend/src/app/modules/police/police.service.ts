@@ -28,6 +28,7 @@ import {
   isIndictmentCase,
 } from '@island.is/judicial-system/types'
 
+import { nowFactory } from '../../factories'
 import { AwsS3Service } from '../aws-s3'
 import { EventService } from '../event'
 import { UploadPoliceCaseFileDto } from './dto/uploadPoliceCaseFile.dto'
@@ -233,6 +234,8 @@ export class PoliceService {
     caseId: string,
     user: User,
   ): Promise<PoliceCaseFile[]> {
+    const startTime = nowFactory()
+
     return this.fetchPoliceDocumentApi(
       `${this.xRoadPath}/V2/GetDocumentListById/${caseId}`,
     )
@@ -292,6 +295,8 @@ export class PoliceService {
             caseId,
             actor: user.name,
             institution: user.institution?.name,
+            startTime,
+            endTime: nowFactory(),
           },
           reason,
         )

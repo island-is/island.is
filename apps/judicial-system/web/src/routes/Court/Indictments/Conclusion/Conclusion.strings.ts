@@ -13,7 +13,7 @@ export const strings = defineMessages({
     description: 'Notaður sem titill á Staða hluta á Niðurstaða skrefi.',
   },
   postponed: {
-    id: 'judicial.system.court.indictments.conclusion.postponed',
+    id: 'judicial.system.core:court.indictments.conclusion.postponed',
     defaultMessage: 'Frestun',
     description: 'Notaður sem texti fyrir frestun valkost á Niðurstaða skrefi.',
   },
@@ -62,5 +62,11 @@ export const strings = defineMessages({
     id: 'judicial.system.core:court.indictments.conclusion.next_button_text',
     defaultMessage: 'Staðfesta',
     description: 'Notaður sem titill á Staðfesta takka á Niðurstaða skrefi.',
+  },
+  redistribute: {
+    id: 'judicial.system.core:court.indictments.conclusion.redistribute',
+    defaultMessage: 'Fer í útlutun til dómara',
+    description:
+      'Notaður sem texti fyrir Fer í útlutun til dómara á Niðurstaða skrefi.',
   },
 })

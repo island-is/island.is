@@ -14,7 +14,7 @@ import {
   useMarkUserNotificationAsReadMutation,
 } from './Notifications.generated'
 
-import { spmm } from '../../lib/messages'
+import { mInformationNotifications } from '../../lib/messages'
 import { ActionCard, CardLoader } from '@island.is/service-portal/core'
 import { Problem } from '@island.is/react-spa/shared'
 import { InformationPaths } from '../../lib/paths'
@@ -23,7 +23,7 @@ import { resolveLink } from '../../utils/notificationLinkResolver'
 const DEFAULT_PAGE_SIZE = 5
 
 const UserNotifications = () => {
-  useNamespaces('sp.notifications')
+  useNamespaces('sp.information-notifications')
   const { formatMessage } = useLocale()
   const [loadingMore, setLoadingMore] = useState(false)
 
@@ -70,10 +70,10 @@ const UserNotifications = () => {
   return (
     <>
       <IntroHeader
-        title={m.myInfo}
-        intro={spmm.userInfoDesc}
+        title={m.notifications}
+        intro={mInformationNotifications.description}
         serviceProviderSlug={ISLANDIS_SLUG}
-        serviceProviderTooltip={formatMessage(m.tjodskraTooltip)}
+        serviceProviderTooltip={formatMessage(m.notificationsProfileTooltip)}
       />
 
       <Box display="flex" marginBottom={3}>

@@ -20,6 +20,7 @@ import {
   IndictmentCaseFilesList,
   IndictmentsLawsBrokenAccordionItem,
   InfoCardActiveIndictment,
+  InfoCardCaseScheduledIndictment,
   Modal,
   PageHeader,
   PageLayout,
@@ -57,8 +58,8 @@ const Overview: React.FC<React.PropsWithChildren<unknown>> = () => {
 
   const isNewIndictment =
     workingCase.state === CaseState.NEW || workingCase.state === CaseState.DRAFT
-
   const caseHasBeenReceivedByCourt = workingCase.state === CaseState.RECEIVED
+  const latestDate = workingCase.courtDate ?? workingCase.arraignmentDate
   const userCanSendCaseToCourt = Boolean(
     user?.canConfirmIndictment &&
       workingCase.state === CaseState.WAITING_FOR_CONFIRMATION,
@@ -153,6 +154,18 @@ const Overview: React.FC<React.PropsWithChildren<unknown>> = () => {
           </Text>
         </Box>
         <ProsecutorCaseInfo workingCase={workingCase} />
+        {caseHasBeenReceivedByCourt && workingCase.court && latestDate?.date && (
+          <Box component="section" marginBottom={5}>
+            <InfoCardCaseScheduledIndictment
+              court={workingCase.court}
+              courtDate={latestDate.date}
+              courtRoom={latestDate.location}
+              postponedIndefinitelyExplanation={
+                workingCase.postponedIndefinitelyExplanation
+              }
+            />
+          </Box>
+        )}
         <Box component="section" marginBottom={5}>
           <InfoCardActiveIndictment />
         </Box>

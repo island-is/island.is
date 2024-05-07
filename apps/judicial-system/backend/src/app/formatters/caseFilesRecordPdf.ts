@@ -12,7 +12,7 @@ import { Case } from '../modules/case'
 import { Defendant } from '../modules/defendant'
 import { Alignment, LineLink, PageLink, PdfDocument } from './pdf'
 
-export function formatDefendant(defendant: Defendant) {
+export const formatDefendant = (defendant: Defendant) => {
   const defendantDOB = formatDOB(
     defendant.nationalId,
     defendant.noNationalId,

@@ -19,6 +19,16 @@ import { Case } from './case.model'
   timestamps: false,
 })
 export class ExplanatoryComment extends Model {
+  static postponedIndefinitelyExplanation(
+    explanatoryComments?: ExplanatoryComment[],
+  ) {
+    return explanatoryComments?.find(
+      (explanatoryComment) =>
+        explanatoryComment.commentType ===
+        CommentType.POSTPONED_INDEFINITELY_EXPLANATION,
+    )
+  }
+
   @Column({
     type: DataType.UUID,
     primaryKey: true,
@@ -28,10 +38,12 @@ export class ExplanatoryComment extends Model {
   id!: string
 
   @CreatedAt
+  @Column({ type: DataType.DATE, allowNull: false })
   @ApiProperty()
   created!: Date
 
   @UpdatedAt
+  @Column({ type: DataType.DATE, allowNull: false })
   @ApiProperty()
   modified!: Date
 
