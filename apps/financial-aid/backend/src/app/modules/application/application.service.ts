@@ -329,6 +329,9 @@ export class ApplicationService {
     if (appModel.getDataValue('applicationEvents') === undefined) {
       appModel.setDataValue('applicationEvents', [])
     }
+    if (appModel.getDataValue('children') === undefined) {
+      appModel.setDataValue('children', [])
+    }
     if (appModel.getDataValue('directTaxPayments') === undefined) {
       appModel.setDataValue('directTaxPayments', [])
     }
