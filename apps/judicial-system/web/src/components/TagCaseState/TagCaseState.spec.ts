@@ -7,7 +7,7 @@ import {
 } from '@island.is/judicial-system-web/src/graphql/schema'
 
 import { mapCaseStateToTagVariant } from './TagCaseState'
-import { tagCaseState as m } from './TagCaseState.strings'
+import { strings } from './TagCaseState.strings'
 
 const formatMessage = createIntl({
   locale: 'is-IS',
@@ -34,11 +34,11 @@ describe('mapCaseStateToTagVariant', () => {
   test('should return draft state', () => {
     expect(fn(CaseState.NEW, false, CaseType.CUSTODY)).toEqual({
       color: 'red',
-      text: m.draft.defaultMessage,
+      text: strings.draft.defaultMessage,
     })
     expect(fn(CaseState.DRAFT, false, CaseType.CUSTODY)).toEqual({
       color: 'red',
-      text: m.draft.defaultMessage,
+      text: strings.draft.defaultMessage,
     })
   })
 
@@ -52,7 +52,7 @@ describe('mapCaseStateToTagVariant', () => {
   test('should return sent state', () => {
     expect(fn(CaseState.SUBMITTED, false, CaseType.CUSTODY)).toEqual({
       color: 'purple',
-      text: m.sent.defaultMessage,
+      text: strings.sent.defaultMessage,
     })
   })
 
@@ -61,7 +61,7 @@ describe('mapCaseStateToTagVariant', () => {
       fn(CaseState.RECEIVED, false, CaseType.CUSTODY, false, '2020-01-01'),
     ).toEqual({
       color: 'mint',
-      text: m.scheduled.defaultMessage,
+      text: strings.scheduled.defaultMessage,
     })
   })
 
@@ -75,47 +75,47 @@ describe('mapCaseStateToTagVariant', () => {
   test('should return active state', () => {
     expect(fn(CaseState.ACCEPTED, false, CaseType.CUSTODY, false)).toEqual({
       color: 'blue',
-      text: m.active.defaultMessage,
+      text: strings.active.defaultMessage,
     })
 
     expect(fn(CaseState.ACCEPTED, false, CaseType.INDICTMENT)).toEqual({
       color: 'darkerBlue',
-      text: m.inactive.defaultMessage,
+      text: strings.inactive.defaultMessage,
     })
   })
 
   test('should return inactive state', () => {
     expect(fn(CaseState.ACCEPTED, false, CaseType.CUSTODY, true)).toEqual({
       color: 'darkerBlue',
-      text: m.inactive.defaultMessage,
+      text: strings.inactive.defaultMessage,
     })
   })
 
   test('should return rejected state', () => {
     expect(fn(CaseState.REJECTED, false, CaseType.CUSTODY)).toEqual({
       color: 'rose',
-      text: m.rejected.defaultMessage,
+      text: strings.rejected.defaultMessage,
     })
   })
 
   test('should return dismissed state', () => {
     expect(fn(CaseState.DISMISSED, false, CaseType.CUSTODY)).toEqual({
       color: 'dark',
-      text: m.dismissed.defaultMessage,
+      text: strings.dismissed.defaultMessage,
     })
   })
 
   test('should return unknown state', () => {
     expect(fn('testing' as CaseState, false, CaseType.CUSTODY)).toEqual({
       color: 'white',
-      text: m.unknown.defaultMessage,
+      text: strings.unknown.defaultMessage,
     })
   })
 
   test('should return reassignment state', () => {
     expect(fn(CaseState.MAIN_HEARING, false, CaseType.INDICTMENT)).toEqual({
       color: 'blue',
-      text: m.reassignment.defaultMessage,
+      text: strings.reassignment.defaultMessage,
     })
   })
 })

@@ -1199,14 +1199,12 @@ const useSections = (
         name: formatMessage(sections.courtOfAppealSection.appealed),
         isActive:
           !isCourtOfAppealsUser(user) &&
-          (appealState === CaseAppealState.RECEIVED ||
-            appealState === CaseAppealState.APPEALED),
+          appealState === CaseAppealState.APPEALED,
         children: [],
       },
       {
         name: formatMessage(sections.courtOfAppealSection.result),
         isActive:
-          appealState === CaseAppealState.APPEALED ||
           appealState === CaseAppealState.RECEIVED ||
           appealState === CaseAppealState.WITHDRAWN,
         children: isCourtOfAppealsUser(user)

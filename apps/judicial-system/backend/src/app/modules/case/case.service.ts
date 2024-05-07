@@ -914,7 +914,7 @@ export class CaseService {
         type: MessageType.DELIVERY_TO_COURT_OF_APPEALS_CONCLUSION,
         user,
         caseId: theCase.id,
-        // The APPEAL_COMPLETED message must be handled before this message
+        // The APPEAL_COMPLETED notification must be handled before this message
         nextRetry:
           nowFactory().getTime() + this.config.robotMessageDelay * 1000,
       },
@@ -1034,6 +1034,20 @@ export class CaseService {
     return this.messageService.sendMessagesToQueue(
       this.getDeliverAssignedRolesToCourtOfAppealsMessages(user, theCase),
     )
+  }
+
+  private addMessagesForNewCourtDateToQueue(
+    theCase: Case,
+    user: TUser,
+  ): Promise<void> {
+    return this.messageService.sendMessagesToQueue([
+      {
+        type: MessageType.NOTIFICATION,
+        user,
+        caseId: theCase.id,
+        body: { type: NotificationType.COURT_DATE },
+      },
+    ])
   }
 
   private async addMessagesForUpdatedCaseToQueue(
@@ -1162,6 +1176,14 @@ export class CaseService {
         // New appeal court
         await this.addMessagesForAssignedAppealRolesToQueue(updatedCase, user)
       }
+    }
+
+    // This only applies to indictments
+    const courtDate = DateLog.courtDate(theCase.dateLogs)
+    const updatedCourtDate = DateLog.courtDate(updatedCase.dateLogs)
+    if (updatedCourtDate && updatedCourtDate.date !== courtDate?.date) {
+      // New court date
+      await this.addMessagesForNewCourtDateToQueue(updatedCase, user)
     }
   }
 

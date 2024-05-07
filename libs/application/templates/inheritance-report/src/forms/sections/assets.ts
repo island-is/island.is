@@ -7,7 +7,6 @@ import {
   buildTextField,
 } from '@island.is/application/core'
 import { m } from '../../lib/messages'
-import { overviewAssets } from '../OverviewSections/OverviewAssets'
 import {
   getEstateDataFromApplication,
   shouldShowDeceasedShareField,
@@ -188,26 +187,26 @@ export const assets = buildSection({
               {
                 fields: [
                   {
-                    title: m.vehicleNumberLabel.defaultMessage,
+                    title: m.vehicleNumberLabel,
                     id: 'assetNumber',
                     placeholder: 'ABC12',
                     required: true,
                   },
                   {
-                    title: m.vehicleType.defaultMessage,
+                    title: m.vehicleType,
                     id: 'description',
                     backgroundColor: 'white',
                     readOnly: true,
                   },
                   {
-                    title: m.vehicleValuation.defaultMessage,
+                    title: m.vehicleValuation,
                     id: 'propertyValuation',
                     required: true,
                     currency: true,
                   },
                 ],
                 assetKey: 'vehicles',
-                repeaterButtonText: m.addVehicle.defaultMessage,
+                repeaterButtonText: m.addVehicle,
                 fromExternalData: 'vehicles.data',
                 sumField: 'propertyValuation',
                 calcWithShareValue: false,
@@ -597,11 +596,12 @@ export const assets = buildSection({
       id: 'assetOverview',
       title: m.assetOverview,
       children: [
-        buildMultiField({
-          id: 'assetOverview',
+        buildCustomField({
           title: m.assetOverview,
           description: m.assetOverviewDescription,
-          children: [...overviewAssets],
+          id: 'overviewAssets',
+          doesNotRequireAnswer: true,
+          component: 'OverviewAssets',
         }),
       ],
     }),
