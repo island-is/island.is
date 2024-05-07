@@ -925,7 +925,7 @@ export class CaseService {
         type: MessageType.DELIVERY_TO_COURT_OF_APPEALS_CONCLUSION,
         user,
         caseId: theCase.id,
-        // The APPEAL_COMPLETED message must be handled before this message
+        // The APPEAL_COMPLETED notification must be handled before this message
         nextRetry:
           nowFactory().getTime() + this.config.robotMessageDelay * 1000,
       },

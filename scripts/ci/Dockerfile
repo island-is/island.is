@@ -11,8 +11,7 @@ WORKDIR /build
 ADD package.json yarn.lock .yarnrc.yml ./
 ADD apps/native/app/package.json ./apps/native/app/
 COPY .yarn/ ./.yarn
-# bash: needed for system-e2e build script
-RUN apk add --update --no-cache python3 build-base gcc bash && ln -sf /usr/bin/python3 /usr/bin/python
+RUN apk add --update --no-cache python3 build-base gcc && ln -sf /usr/bin/python3 /usr/bin/python
 RUN CI=true yarn install --immutable
 
 FROM deps as src
@@ -129,58 +128,39 @@ FROM mcr.microsoft.com/playwright:v${PLAYWRIGHT_VERSION}-focal as playwright-bas
 
 
 FROM playwright-base as output-playwright
-
 # TODO: remove awscli dependency (157 MB extra)
-RUN --mount=type=cache,target=/apt/foo/bar \
-  apt-get update -y && \
-  apt-get install -y --no-install-recommends \
-  zip awscli && \
-  apt-get purge
+RUN apt-get update -y && apt-get install -y zip awscli && apt-get purge
 
 ARG APP_HOME
 ARG APP_DIST_HOME
 
 WORKDIR ${APP_DIST_HOME}
 
-
-COPY .yarn/releases/ .yarn/releases/
-COPY .yarn/patches/ .yarn/patches/
-COPY .yarnrc.yml yarn.lock package.json ./
-
-# We,re using --mount, so no need to `yarn cache clean`
-# hadolint ignore=DL3060
-RUN \
-  --mount=type=cache,target=./.yarn/cache \
-  --mount=type=cache,target=.cache \
-  --mount=type=cache,target=/root/.cache \
-  cp yarn.lock yarn.lock.bak && \
-  diff yarn.lock.bak yarn.lock && \
-  ( yarn install || (cat /tmp/*/*.log && exit 1) )
-
 COPY --from=builder /build/${APP_DIST_HOME} .
-COPY package.json package.json
+COPY ${APP_HOME}/package.json .
+RUN chown -R pwuser:pwuser .
+
+USER pwuser
+ADD .yarnrc.yml ./
+RUN mkdir ./.yarn
+COPY .yarn/releases ./.yarn/releases
+RUN yarn install
 
 ENV PLAYWRIGHT_BROWSER=chromium
 RUN yarn playwright install ${PLAYWRIGHT_BROWSER}
 
-COPY ${APP_HOME}/entrypoint.sh .
-RUN echo ${APP_DIST_HOME}
-RUN env
-RUN chown -R pwuser:pwuser .
+COPY --chown=pwuser:pwuser ${APP_HOME}/entrypoint.sh .
 
-USER pwuser
 ENTRYPOINT ["./entrypoint.sh"]
-
 
 
 FROM playwright-base as output-local
 ARG APP_HOME
-WORKDIR /app
 
 
 # node user exists in the base image
-RUN mkdir -p /out && \
-  chown node:node /out
+RUN mkdir -p /out \
+  && chown node:node /out
 
 COPY --chown=pwuser:pwuser ${APP_HOME}/entrypoint.sh .
 
