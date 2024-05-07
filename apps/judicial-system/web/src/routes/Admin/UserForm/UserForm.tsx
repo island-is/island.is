@@ -353,20 +353,21 @@ export const UserForm: React.FC<React.PropsWithChildren<Props>> = (props) => {
             </Box>
           </Box>
         ) : null}
-        {user.role === UserRole.PROSECUTOR && (
-          <Box marginBottom={2}>
-            <Checkbox
-              name="canConfirmIndictment"
-              label="Notandi getur staðfest kærur"
-              checked={Boolean(user.canConfirmIndictment)}
-              onChange={({ target }) =>
-                setUser({ ...user, canConfirmIndictment: target.checked })
-              }
-              large
-              filled
-            />
-          </Box>
-        )}
+        {user.institution?.type === InstitutionType.PROSECUTORS_OFFICE &&
+          user.role === UserRole.PROSECUTOR && (
+            <Box marginBottom={2}>
+              <Checkbox
+                name="canConfirmIndictment"
+                label="Notandi getur staðfest kærur"
+                checked={Boolean(user.canConfirmIndictment)}
+                onChange={({ target }) =>
+                  setUser({ ...user, canConfirmIndictment: target.checked })
+                }
+                large
+                filled
+              />
+            </Box>
+          )}
         <Box marginBottom={2}>
           <Input
             name="title"
