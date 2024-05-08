@@ -407,6 +407,7 @@ const useSections = (
       isActive:
         isProsecutionUser(user) &&
         isIndictmentCase(type) &&
+        state !== CaseState.RECEIVED &&
         !isCompletedCase(state),
       // Prosecutor can only view the overview when case has been received by court
       children: caseHasBeenReceivedByCourt
@@ -898,8 +899,9 @@ const useSections = (
     return {
       name: formatMessage(sections.indictmentsCourtSection.title),
       isActive:
-        (isDistrictCourtUser(user) || isDefenceUser(user)) &&
-        !isCompletedCase(state),
+        (isProsecutionUser(user) && state === CaseState.RECEIVED) ||
+        ((isDistrictCourtUser(user) || isDefenceUser(user)) &&
+          !isCompletedCase(state)),
       children: isDistrictCourtUser(user)
         ? [
             {
