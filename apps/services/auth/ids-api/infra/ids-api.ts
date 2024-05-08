@@ -134,7 +134,7 @@ export const cleanupSetup = (): ServiceBuilder<typeof cleanupId> =>
         memory: '256Mi',
       },
     })
-    .db()
+    .db({ name: 'servicesauth', extensions: ['uuid-ossp'] })
     .extraAttributes({
       dev: schedule,
       staging: schedule,
