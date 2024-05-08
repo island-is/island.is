@@ -347,7 +347,7 @@ export interface Application {
   rejection?: string
   staff?: Staff
   applicationEvents?: ApplicationEvent[]
-  children?: Children[]
+  children?: ApplicationChildren[]
   amount?: Amount
   spouseNationalId?: string
   spouseEmail?: string
