@@ -57,7 +57,7 @@ const IdCardTemplate: ApplicationTemplate<
   featureFlag: Features.idCardApplication,
   dataSchema: IdCardSchema,
   stateMachineConfig: {
-    initial: States.PREREQUISITES,
+    initial: States.PARENT_B_CONFIRM,
     states: {
       [States.PREREQUISITES]: {
         meta: {
@@ -155,69 +155,78 @@ const IdCardTemplate: ApplicationTemplate<
           },
         ],
       }),
-      //   [States.PARENT_B_CONFIRM]: {
-      //     entry: 'assignToParentB',
-      //     meta: {
-      //       name: 'ParentB',
-      //       status: 'inprogress',
-      //       lifecycle: {
-      //         ...pruneAfter(sevenDays),
-      //         shouldDeleteChargeIfPaymentFulfilled: true,
-      //       },
-      //       onEntry: defineTemplateApi({
-      //         action: ApiActions.assignParentB,
-      //       }),
-      //       roles: [
-      //         {
-      //           id: Roles.APPLICANT,
-      //           formLoader: () =>
-      //             import('../forms/WaitingForParentBConfirmation').then((val) =>
-      //               Promise.resolve(val.WaitingForParentBConfirmation),
-      //             ),
-      //           read: {
-      //             answers: ['childsPersonalInfo'],
-      //             externalData: ['submitPassportApplication'],
-      //           },
-      //         },
-      //         {
-      //           id: Roles.ASSIGNEE,
-      //           formLoader: () =>
-      //             import('../forms/ParentB').then((val) =>
-      //               Promise.resolve(val.ParentB),
-      //             ),
-      //           actions: [
-      //             { event: DefaultEvents.SUBMIT, name: '', type: 'primary' },
-      //           ],
-      //           write: 'all',
-      //           api: [
-      //             NationalRegistryUserParentB,
-      //             UserInfoApi,
-      //             SyslumadurPaymentCatalogApi,
-      //             PassportsApi,
-      //             DistrictsApi,
-      //             IdentityDocumentApi,
-      //             DeliveryAddressApi,
-      //           ],
-      //         },
-      //       ],
-      //       actionCard: {
-      //         historyLogs: [
-      //           {
-      //             logMessage: m.confirmedByParentB,
-      //             onEvent: DefaultEvents.SUBMIT,
-      //           },
-      //         ],
-      //         pendingAction: {
-      //           title: m.waitingForConfirmationFromParentBTitle,
-      //           content: m.waitingForConfirmationFromParentBDescription,
-      //           displayStatus: 'warning',
-      //         },
-      //       },
-      //     },
-      //     on: {
-      //       [DefaultEvents.SUBMIT]: { target: States.DONE },
-      //     },
-      //   },
+      [States.PARENT_B_CONFIRM]: {
+        entry: 'assignToParentB',
+        meta: {
+          name: 'ParentB',
+          status: 'draft',
+          progress: 0.7, // Þarf þetta?
+          lifecycle: pruneAfterDays(7) /*
+            Á þetta að vera?
+            {
+              ...pruneAfter(sevenDays),
+              shouldDeleteChargeIfPaymentFulfilled: true,
+            } */,
+          /* onEntry: defineTemplateApi({
+              action: ApiActions.assignParentB,
+            }), */
+          roles: [
+            {
+              id: Roles.APPLICANT,
+              formLoader: () =>
+                import('../forms/Review').then((val) =>
+                  Promise.resolve(val.Review),
+                ),
+              delete: true, // TODO: Remove before production
+              // actions: [
+              //   { event: DefaultEvents.EDIT, name: '', type: 'primary' },
+              // ],
+              write: 'all',
+              read: {
+                answers: ['childsPersonalInfo'],
+                externalData: ['submitPassportApplication'],
+              },
+            },
+            {
+              id: Roles.ASSIGNEE,
+              formLoader: () =>
+                import('../forms/Review').then((val) =>
+                  Promise.resolve(val.Review),
+                ),
+              actions: [
+                { event: DefaultEvents.SUBMIT, name: '', type: 'primary' },
+              ],
+              write: 'all',
+              api: [
+                // NationalRegistryUserParentB,
+                UserInfoApi,
+                SyslumadurPaymentCatalogApi,
+                PassportsApi,
+                DistrictsApi,
+                IdentityDocumentApi,
+                DeliveryAddressApi,
+              ],
+            },
+          ],
+          actionCard: {
+            historyLogs: [
+              {
+                logMessage: applicationMessage.historyWaitingForParentB,
+                onEvent: DefaultEvents.SUBMIT,
+              },
+            ],
+            /* pendingAction: {
+                title: m.waitingForConfirmationFromParentBTitle,
+                content: m.waitingForConfirmationFromParentBDescription,
+                displayStatus: 'warning',
+              }, */
+          },
+        },
+        /* on: {
+          // [DefaultEvents.SUBMIT]: { target: States.DONE },
+          [DefaultEvents.SUBMIT]: { target: States.PARENT_B_CONFIRM },
+        }, */
+      },
       [States.COMPLETED]: {
         meta: {
           name: 'Done',
