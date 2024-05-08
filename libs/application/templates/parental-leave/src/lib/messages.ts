@@ -3011,11 +3011,6 @@ export const statesMessages = defineMessages({
     defaultMessage: 'Vinnuveitanda og tímabili breytt eða bætt við umsókn',
     description: 'Employer and period edited or added to application',
   },
-  editOrAddPeriodsAbortHistoryLogMessage: {
-    id: 'pl.application:editOrAddPeriods.abort.historyLogMessage',
-    defaultMessage: 'Hætti við breytingar',
-    description: 'Changes aborted',
-  },
 
   approvedClosedHistoryLogMessage: {
     id: 'pl.application:approved.closed.historyLogMessage',

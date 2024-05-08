@@ -538,11 +538,6 @@ const ParentalLeaveTemplate: ApplicationTemplate<
                 onEvent: DefaultEvents.EDIT,
                 logMessage: statesMessages.editHistoryLogMessage,
               },
-              {
-                onEvent: DefaultEvents.SUBMIT,
-                logMessage: '',
-                  //statesMessages.vinnumalastofnunApprovalSubmitHistoryLogMessage,
-              },
             ],
           },
           lifecycle: birthDayLifeCycle,
@@ -710,17 +705,6 @@ const ParentalLeaveTemplate: ApplicationTemplate<
                   .residenceGrantClosedDescription,
               displayStatus: 'warning',
             },
-            historyLogs: [
-              {
-                onEvent: DefaultEvents.REJECT,
-                logMessage: '', //statesMessages.editHistoryLogMessage,
-              },
-              {
-                onEvent: DefaultEvents.APPROVE,
-                logMessage: '',
-                //statesMessages.editHistoryLogMessage,
-              },
-            ],
           },
           lifecycle: birthDayLifeCycle,
           onEntry: defineTemplateApi({
@@ -776,10 +760,6 @@ const ParentalLeaveTemplate: ApplicationTemplate<
               displayStatus: 'warning',
             },
             historyLogs: [
-              // {
-              //   onEvent: DefaultEvents.REJECT,
-              //   logMessage: '', //statesMessages.editHistoryLogMessage,
-              // },
               {
                 onEvent: DefaultEvents.APPROVE,
                 logMessage: statesMessages.residenceGrantSubmitted,
@@ -849,10 +829,6 @@ const ParentalLeaveTemplate: ApplicationTemplate<
                 onEvent: DefaultEvents.EDIT,
                 logMessage: statesMessages.editHistoryLogMessage,
               },
-              // {
-              //   onEvent: DefaultEvents.SUBMIT,
-              //   logMessage: statesMessages.vinnumalastofnunApprovalSubmitHistoryLogMessage,
-              // },
             ],
           },
           lifecycle: birthDayLifeCycle,
@@ -950,13 +926,7 @@ const ParentalLeaveTemplate: ApplicationTemplate<
             historyLogs: [
               {
                 onEvent: DefaultEvents.SUBMIT,
-                logMessage:
-                  statesMessages.editOrAddPeriodsSubmitHistoryLogMessage,
-              },
-              {
-                onEvent: DefaultEvents.ABORT,
-                logMessage:
-                  statesMessages.editOrAddPeriodsAbortHistoryLogMessage,
+                logMessage: 'This message is not displayed', //statesMessages.editOrAddPeriodsSubmitHistoryLogMessage,
               },
             ],
           },
@@ -1016,12 +986,12 @@ const ParentalLeaveTemplate: ApplicationTemplate<
           status: 'inprogress',
           actionCard: {
             pendingAction: employerApprovalStatePendingAction,
-            historyLogs: [
-              {
-                onEvent: DefaultEvents.EDIT,
-                logMessage: statesMessages.editHistoryLogMessage,
-              },
-            ],
+            // historyLogs: [
+            //   {
+            //     onEvent: DefaultEvents.EDIT,
+            //     logMessage: 'Blúbb', //statesMessages.editHistoryLogMessage,
+            //   },
+            // ],
           },
           lifecycle: birthDayLifeCycle,
           onEntry: defineTemplateApi({
@@ -1161,11 +1131,6 @@ const ParentalLeaveTemplate: ApplicationTemplate<
                 onEvent: PLEvents.MODIFY,
                 logMessage: statesMessages.editHistoryLogMessage,
               },
-              {
-                onEvent: DefaultEvents.ABORT,
-                logMessage:
-                  statesMessages.editOrAddPeriodsAbortHistoryLogMessage,
-              },
             ],
           },
           lifecycle: birthDayLifeCycle,
@@ -1236,11 +1201,10 @@ const ParentalLeaveTemplate: ApplicationTemplate<
                 onEvent: DefaultEvents.EDIT,
                 logMessage: statesMessages.editHistoryLogMessage,
               },
-              {
-                onEvent: DefaultEvents.SUBMIT,
-                logMessage: 'Bla bla',
-                  //statesMessages.vinnumalastofnunApprovalSubmitHistoryLogMessage,
-              },
+              // {
+              //   onEvent: DefaultEvents.SUBMIT,
+              //   logMessage: statesMessages.vinnumalastofnunApprovalSubmitHistoryLogMessage,
+              // },
             ],
           },
           lifecycle: birthDayLifeCycle,
@@ -1324,11 +1288,6 @@ const ParentalLeaveTemplate: ApplicationTemplate<
               {
                 onEvent: PLEvents.MODIFY,
                 logMessage: statesMessages.editHistoryLogMessage,
-              },
-              {
-                onEvent: DefaultEvents.ABORT,
-                logMessage:
-                  statesMessages.editOrAddPeriodsAbortHistoryLogMessage,
               },
             ],
           },
