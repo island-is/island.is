@@ -27,11 +27,14 @@ export const formatDate = (
 export const formatValueForPresentation = (
   activeLocale: Locale,
   possiblyRawValue: number | string,
-  reduceAndRoundValue = true,
+  reduceAndRoundValue: boolean | null | undefined,
   increasePrecisionBy = 0,
 ) => {
   if (possiblyRawValue === undefined) {
     return ''
+  }
+  if (reduceAndRoundValue === null || reduceAndRoundValue === undefined) {
+    reduceAndRoundValue = true
   }
 
   try {
@@ -54,7 +57,11 @@ export const formatValueForPresentation = (
         postfix = messages[activeLocale].thousandPostfix
       }
 
-      const v = round(value / divider, precision)
+      let v = value
+
+      if (reduceAndRoundValue) {
+        v = round(value / divider, precision)
+      }
 
       return `${v.toString().replace(/\B(?=(\d{3})+(?!\d))/g, '.')}${postfix}`
     }
@@ -73,13 +80,22 @@ export const formatPercentageForPresentation = (
 }
 
 export const createTickFormatter =
-  (activeLocale: Locale, xAxisValueType?: string, xAxisFormat?: string) =>
+  (
+    activeLocale: Locale,
+    xAxisValueType?: string,
+    xAxisFormat?: string,
+    reduceAndRoundValue?: boolean,
+  ) =>
   (value: unknown) => {
     // Date is the default is value type is undefined
     if (!xAxisValueType || xAxisValueType === 'date') {
       return formatDate(activeLocale, value as Date, xAxisFormat || undefined)
     } else if (xAxisValueType === 'number') {
-      return formatValueForPresentation(activeLocale, value as string | number)
+      return formatValueForPresentation(
+        activeLocale,
+        value as string | number,
+        reduceAndRoundValue,
+      )
     }
 
     return value as string

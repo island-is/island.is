@@ -63,7 +63,12 @@ export const CustomTooltipRenderer = (props: CustomTooltipProps) => {
               </span>
               :{' '}
               {item.value
-                ? formatValueForPresentation(activeLocale, item.value, true, 1)
+                ? formatValueForPresentation(
+                    activeLocale,
+                    item.value,
+                    props.slice.reduceAndRoundValue,
+                    1,
+                  )
                 : ''}
             </li>
           )

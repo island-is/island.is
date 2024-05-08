@@ -580,6 +580,9 @@ export interface IChartFields {
 
   /** Custom Style Config */
   customStyleConfig?: Record<string, any> | undefined
+
+  /** Reduce and round value */
+  reduceAndRoundValue?: boolean | undefined
 }
 
 /** A wrapper to render any graphical representation of data using [Chart Component]s. */
