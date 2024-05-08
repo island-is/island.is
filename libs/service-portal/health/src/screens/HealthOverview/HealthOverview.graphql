@@ -8,6 +8,7 @@ query getInsuranceOverview {
       code
     }
     maximumPayment
+    ehicCardExpiryDate
   }
 }
 

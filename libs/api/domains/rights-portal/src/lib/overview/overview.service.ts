@@ -51,12 +51,11 @@ export class OverviewService {
     if (!data) {
       return null
     }
-
     if (
       !data.isInsured ||
       !data.from ||
       !data.status?.display ||
-      !data.status.code ||
+      !data.status?.code ||
       !data.maximumPayment
     ) {
       this.logger.warning('Missing data from external service', {
@@ -67,7 +66,9 @@ export class OverviewService {
 
     const codeEnum: InsuranceStatusType | undefined =
       data.status.code in InsuranceStatusType
-        ? (data.status.code as InsuranceStatusType)
+        ? InsuranceStatusType[
+            data.status.code as keyof typeof InsuranceStatusType
+          ]
         : undefined
 
     if (!codeEnum) {
@@ -82,6 +83,7 @@ export class OverviewService {
       explanation: data.explanation ?? '',
       from: data.from,
       maximumPayment: data.maximumPayment,
+      ehicCardExpiryDate: data.ehicCardExpiryDate ?? undefined,
       status: {
         display: data.status.display,
         code: codeEnum,

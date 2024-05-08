@@ -17,4 +17,7 @@ export class InsuranceOverview {
 
   @Field(() => Int)
   maximumPayment!: number
+
+  @Field(() => Date, { nullable: true })
+  ehicCardExpiryDate?: Date
 }

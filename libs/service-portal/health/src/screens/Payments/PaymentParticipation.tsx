@@ -12,6 +12,7 @@ import {
   ExpandRow,
   UserInfoLine,
   amountFormat,
+  formatDate,
   m,
   numberFormat,
 } from '@island.is/service-portal/core'
@@ -279,7 +280,7 @@ export const PaymentPartication = () => {
                                     <tr key={bill.id}>
                                       <T.Data>{bill.serviceType}</T.Data>
                                       <T.Data>
-                                        {formatDateFns(bill.date, 'dd.MM.yyyy')}
+                                        {formatDate(bill.date, 'dd.MM.yyyy')}
                                       </T.Data>
                                       <T.Data>
                                         {amountFormat(bill.totalAmount ?? 0)}

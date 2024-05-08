@@ -159,6 +159,10 @@ export const messages = defineMessages({
     id: 'sp.health:internal-service-error-title',
     defaultMessage: 'Ekki tókst að sækja gögn frá Sjúkratryggingum',
   },
+  ehic: {
+    id: 'sp.health:ehic',
+    defaultMessage: 'Evrópska sjúkratryggingakortið',
+  },
   healthInternalServiceErrorInfo: {
     id: 'sp.health:internal-service-error-info',
     defaultMessage:
@@ -195,7 +199,8 @@ export const messages = defineMessages({
   },
   healthInsuranceConfirmationTransferError: {
     id: 'sp.health:health-center-registration-transfer-error-title',
-    defaultMessage: 'Villa hefur komið upp',
+    defaultMessage:
+      'Villa kom upp þegar sótt var staðfesting á sjúkratryggingu',
   },
   noHealthInsurance: {
     id: 'sp.health:no-health-insurance',
@@ -918,6 +923,10 @@ export const messages = defineMessages({
   medicineValidTo: {
     id: 'sp.health:medicine-valid-to',
     defaultMessage: 'Gildir til',
+  },
+  validityPeriod: {
+    id: 'sp.health:validity-period',
+    defaultMessage: 'Gildistími',
   },
   medicineValidFrom: {
     id: 'sp.health:medicine-valid-from',

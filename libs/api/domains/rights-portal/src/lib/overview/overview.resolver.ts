@@ -1,6 +1,6 @@
 import { Query, Resolver } from '@nestjs/graphql'
 import { ApiScope } from '@island.is/auth/scopes'
-import { UseGuards } from '@nestjs/common'
+import { Inject, UseGuards } from '@nestjs/common'
 import { Audit } from '@island.is/nest/audit'
 import {
   IdsUserGuard,
@@ -31,19 +31,19 @@ export class OverviewResolver {
     name: 'rightsPortalInsuranceConfirmation',
   })
   @Audit()
-  async getInsuranceConfirmation(
+  getInsuranceConfirmation(
     @CurrentUser() user: User,
   ): Promise<InsuranceConfirmation | null> {
-    return await this.service.getInsuranceConfirmation(user)
+    return this.service.getInsuranceConfirmation(user)
   }
 
   @Query(() => InsuranceOverview, {
     name: 'rightsPortalInsuranceOverview',
   })
   @Audit()
-  async getInsuranceOverview(
+  getInsuranceOverview(
     @CurrentUser() user: User,
   ): Promise<InsuranceOverview | null> {
-    return await this.service.getInsuranceOverview(user)
+    return this.service.getInsuranceOverview(user)
   }
 }
