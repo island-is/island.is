@@ -13,5 +13,5 @@ export const fill = style({
 })
 
 export const search = style({
-  maxWidth: 400,
+  maxWidth: '550px',
 })
