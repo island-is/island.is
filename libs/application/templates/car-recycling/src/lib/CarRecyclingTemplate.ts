@@ -50,7 +50,12 @@ const CarRecyclingTemplate: ApplicationTemplate<
   institution: carRecyclingMessages.shared.institution,
   translationNamespaces: [ApplicationConfigurations.CarRecycling.translation],
   dataSchema: DataSchema,
-  allowedDelegations: [{ type: AuthDelegationType.ProcurationHolder }],
+  allowedDelegations: [
+    { type: AuthDelegationType.ProcurationHolder },
+    {
+      type: AuthDelegationType.Custom,
+    },
+  ],
   allowMultipleApplicationsInDraft: true,
   requiredScopes: [ApiScope.carRecycling],
   stateMachineConfig: {
