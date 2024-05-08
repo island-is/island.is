@@ -5,6 +5,7 @@ import {
 import {
   ApplicantType,
   HealthInsuranceDeclarationApplication,
+  InsuranceStatementData,
   SubmitApplicationData,
   getChildrenFromExternalData,
   getSpouseFromExternalData,
@@ -123,6 +124,11 @@ export const getPersonsFromExternalData = ({ externalData }: Application) => {
     })
   })
   return persons
+}
+
+export const getApplicantInsuranceStatus = ({ externalData }: Application) => {
+  return (externalData.insuranceStatementData.data as InsuranceStatementData)
+    .canApply
 }
 
 const getResidencyCode = (
