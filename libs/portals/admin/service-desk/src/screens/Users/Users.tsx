@@ -1,9 +1,5 @@
-import { useEffect, useState } from 'react'
 import { Form, useActionData, useNavigate } from 'react-router-dom'
-import * as kennitala from 'kennitala'
 
-import { useLocale } from '@island.is/localization'
-import { formatNationalId, IntroHeader } from '@island.is/portals/core'
 import {
   AsyncSearchInput,
   Box,
@@ -11,45 +7,54 @@ import {
   Stack,
   toast,
 } from '@island.is/island-ui/core'
+import { formatNationalId, IntroHeader } from '@island.is/portals/core'
+import { maskString } from '@island.is/shared/utils'
+import { useLocale } from '@island.is/localization'
+import { useAuth } from '@island.is/auth/react'
 import { replaceParams, useSubmitting } from '@island.is/react-spa/shared'
 
+import * as styles from '../Companies/Companies.css'
+import { useEffect, useState } from 'react'
 import { m } from '../../lib/messages'
-import { GetCompaniesResult } from './Companies.action'
 import { Card } from '../../components/Card'
 import { ServiceDeskPaths } from '../../lib/paths'
-import * as styles from './Companies.css'
+import { GetUserProfilesResult } from './Users.action'
 
-const Companies = () => {
+const Users = () => {
   const [focused, setFocused] = useState(false)
   const [searchInput, setSearchInput] = useState('')
-  const [prevSearchInput, setPrevSearchInput] = useState('')
-  const actionData = useActionData() as GetCompaniesResult
+  const actionData = useActionData() as GetUserProfilesResult
   const { formatMessage } = useLocale()
   const navigate = useNavigate()
+  const { userInfo } = useAuth()
   const { isSubmitting, isLoading } = useSubmitting()
-  const companies = actionData?.data?.data
+  const users = actionData?.data?.data
+  const [error, setError] = useState({ hasError: false, message: '' })
+
+  useEffect(() => {
+    if (actionData?.errors) {
+      setError({
+        hasError: true,
+        message: formatMessage(m.invalidSearchInput),
+      })
+    } else if (actionData?.globalError) {
+      toast.error(formatMessage(m.errorDefault))
+    } else {
+      setError({
+        hasError: false,
+        message: '',
+      })
+    }
+  }, [actionData])
 
   const onFocus = () => setFocused(true)
   const onBlur = () => setFocused(false)
 
-  useEffect(() => {
-    if (actionData) {
-      setPrevSearchInput(searchInput)
-    }
-
-    if (actionData?.globalError) {
-      toast.error(formatMessage(m.errorDefault))
-    }
-  }, [actionData])
-
   return (
     <>
-      <IntroHeader
-        title={formatMessage(m.procures)}
-        intro={formatMessage(m.procuresDescription)}
-      />
+      <IntroHeader title={m.users} intro={m.userIntro} />
       <Form method="post">
-        <Box display={['inline', 'inline', 'flex']} className={styles.search}>
+        <Box className={styles.search}>
           <AsyncSearchInput
             hasFocus={focused}
             loading={isSubmitting || isLoading}
@@ -60,34 +65,32 @@ const Companies = () => {
               onChange: (event) => setSearchInput(event.target.value),
               onBlur,
               onFocus,
-              placeholder: formatMessage(m.searchByNationalId),
+              placeholder: formatMessage(m.userSearch),
               colored: true,
             }}
             buttonProps={{
               type: 'submit',
               disabled: searchInput.length === 0,
             }}
+            hasError={error.hasError}
+            errorMessage={error.hasError ? error.message : undefined}
           />
         </Box>
       </Form>
       <Box marginTop={4}>
         <Box className={styles.relative}>
           <Stack space={3}>
-            {companies?.length === 0 ? (
+            {users?.length === 0 ? (
               <Card
-                title={
-                  kennitala.isValid(prevSearchInput)
-                    ? formatNationalId(prevSearchInput)
-                    : prevSearchInput
-                }
-                description={formatMessage(m.noContent)}
+                title={searchInput}
+                description={formatMessage(m.userNotContent)}
                 bgGrey
               />
             ) : (
-              companies?.map(({ nationalId, name }) => (
-                <Box key={`procure-${nationalId}`}>
+              users?.map(({ nationalId, fullName }) => (
+                <Box key={`users-${nationalId}`}>
                   <Card
-                    title={name}
+                    title={fullName ?? formatNationalId(nationalId)}
                     description={formatNationalId(nationalId)}
                     cta={
                       <Button
@@ -97,9 +100,13 @@ const Companies = () => {
                         onClick={() =>
                           navigate(
                             replaceParams({
-                              href: ServiceDeskPaths.Company,
+                              href: ServiceDeskPaths.User,
                               params: {
-                                nationalId,
+                                nationalId:
+                                  maskString(
+                                    nationalId,
+                                    userInfo?.profile?.nationalId ?? '',
+                                  ) ?? '',
                               },
                             }),
                           )
@@ -119,4 +126,4 @@ const Companies = () => {
   )
 }
 
-export default Companies
+export default Users
