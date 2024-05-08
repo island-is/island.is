@@ -11,7 +11,6 @@ import {
   ExpandHeader,
   UserInfoLine,
   amountFormat,
-  formatDate,
   m,
   numberFormat,
 } from '@island.is/service-portal/core'
@@ -84,7 +83,7 @@ export const PaymentPartication = () => {
           </Box>
           <Box marginBottom={SECTION_GAP}>
             <Text variant="small" marginTop={5} marginBottom={2}>
-              {formatMessage(messages.paymentParticationExplination, {
+              {formatMessage(messages.paymentParticationExplanation, {
                 basePayment: numberFormat(
                   data.rightsPortalCopaymentStatus?.basePayment ?? 0,
                 ),
@@ -209,7 +208,7 @@ export const PaymentPartication = () => {
       )}
       <Box>
         <Text variant="small" marginTop={5} marginBottom={2}>
-          {formatMessage(messages.paymentParticationExplinationFooter)}
+          {formatMessage(messages.paymentParticationExplanationFooter)}
         </Text>
       </Box>
     </PaymentsWrapper>
