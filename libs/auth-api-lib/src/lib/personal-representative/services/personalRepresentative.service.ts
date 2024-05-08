@@ -337,6 +337,10 @@ export class PersonalRepresentativeService {
       where: { personalRepresentativeId: id },
     })
 
+    await this.personalRepresentativeDelegationTypeModel.destroy({
+      where: { personalRepresentativeId: id },
+    })
+
     const personalRepresentative =
       await this.personalRepresentativeModel.findByPk(id)
 
