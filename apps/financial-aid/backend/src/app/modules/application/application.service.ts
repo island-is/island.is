@@ -54,7 +54,7 @@ import { AmountModel, AmountService, CreateAmountDto } from '../amount'
 import { DeductionFactorsModel } from '../deductionFactors'
 import { DirectTaxPaymentService } from '../directTaxPayment'
 import { DirectTaxPaymentModel } from '../directTaxPayment/models'
-import { ChildrenService } from '../children'
+import { ChildrenModel, ChildrenService } from '../children'
 
 interface Recipient {
   name: string
@@ -206,6 +206,12 @@ export class ApplicationService {
         {
           model: ApplicationFileModel,
           as: 'files',
+          separate: true,
+          order: [['created', 'DESC']],
+        },
+        {
+          model: ChildrenModel,
+          as: 'children',
           separate: true,
           order: [['created', 'DESC']],
         },
