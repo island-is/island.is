@@ -74,14 +74,4 @@ export class NationalRegistryService {
   getChildren(nationalId: string) {
     return this.v3.getChildren(nationalId)
   }
-
-  getFamily() {
-    // Returning null in v3 as this schema should have no clients.
-    return null
-  }
-
-  getFamilyMemberDetails() {
-    // Returning null in v3 as this schema should have no clients.
-    return null
-  }
 }
