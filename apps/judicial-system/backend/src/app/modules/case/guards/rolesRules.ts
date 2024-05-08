@@ -51,9 +51,7 @@ const prosecutorFields: (keyof UpdateCaseDto)[] = [
   'indictmentDeniedExplanation',
 ]
 
-const publicProsecutorFields: (keyof UpdateCaseDto)[] = [
-  // TODO: add new review assignment field
-]
+const publicProsecutorFields: (keyof UpdateCaseDto)[] = ['indictmentReviewerId']
 
 const districtCourtFields: (keyof UpdateCaseDto)[] = [
   'defenderName',

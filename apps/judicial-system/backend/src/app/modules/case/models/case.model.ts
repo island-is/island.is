@@ -1234,4 +1234,22 @@ export class Case extends Model {
   })
   @ApiPropertyOptional({ enum: CaseIndictmentRulingDecision })
   indictmentRulingDecision?: CaseIndictmentRulingDecision
+
+  /**********
+   * The surrogate key of the prosecutor assigned to review an indictment
+   **********/
+  @ForeignKey(() => User)
+  @Column({
+    type: DataType.UUID,
+    allowNull: true,
+  })
+  @ApiPropertyOptional()
+  indictmentReviewerId?: string
+
+  /**********
+   * The prosecutor assigned to review an indictment case
+   **********/
+  @BelongsTo(() => User, 'indictmentReviewerId')
+  @ApiPropertyOptional({ type: User })
+  indictmentReviewer?: User
 }

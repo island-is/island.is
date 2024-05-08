@@ -111,10 +111,14 @@ const Conclusion: React.FC = () => {
       } else if (selectedAction === 'COMPLETE') {
         handleCompletion()
       } else if (postponement?.postponedIndefinitely) {
-        await updateCase(workingCase.id, {
+        const updateSuccss = await updateCase(workingCase.id, {
           courtDate: null,
           postponedIndefinitelyExplanation: postponement.reason,
         })
+
+        if (!updateSuccss) {
+          return
+        }
       } else {
         await sendCourtDateToServer([
           { postponedIndefinitelyExplanation: null, force: true },
@@ -136,22 +140,28 @@ const Conclusion: React.FC = () => {
   )
 
   useEffect(() => {
-    if (
+    if (workingCase.indictmentRulingDecision) {
+      setSelectedDecision(workingCase.indictmentRulingDecision)
+      setSelectedAction('COMPLETE')
+    } else if (
       workingCase.courtDate?.date ||
       workingCase.postponedIndefinitelyExplanation
     ) {
       setSelectedAction('POSTPONE')
-    }
 
-    if (workingCase.postponedIndefinitelyExplanation) {
-      setPostponement({
-        postponedIndefinitely: true,
-        reason: workingCase.postponedIndefinitelyExplanation,
-      })
+      if (workingCase.postponedIndefinitelyExplanation) {
+        setPostponement({
+          postponedIndefinitely: true,
+          reason: workingCase.postponedIndefinitelyExplanation,
+        })
+      }
+    } else {
+      return
     }
   }, [
     workingCase.courtDate?.date,
     workingCase.postponedIndefinitelyExplanation,
+    workingCase.indictmentRulingDecision,
   ])
 
   const stepIsValid = () => {
@@ -175,13 +185,6 @@ const Conclusion: React.FC = () => {
       return selectedDecision !== undefined && allFilesDoneOrError
     }
   }
-
-  useEffect(() => {
-    if (workingCase.indictmentRulingDecision) {
-      setSelectedDecision(workingCase.indictmentRulingDecision)
-      setSelectedAction('COMPLETE')
-    }
-  }, [workingCase.indictmentRulingDecision])
 
   return (
     <PageLayout

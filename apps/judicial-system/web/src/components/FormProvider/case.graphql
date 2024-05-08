@@ -22,6 +22,7 @@ query Case($input: CaseQueryInput!) {
       defenderPhoneNumber
       defendantWaivesRightToCounsel
       defendantPlea
+      serviceRequirement
     }
     defenderName
     defenderNationalId
@@ -253,5 +254,10 @@ query Case($input: CaseQueryInput!) {
     }
     postponedIndefinitelyExplanation
     indictmentRulingDecision
+    indictmentReviewer {
+      id
+      name
+    }
+    indictmentAppealDeadline
   }
 }
