@@ -925,8 +925,8 @@ const ParentalLeaveTemplate: ApplicationTemplate<
             },
             historyLogs: [
               {
-                onEvent: DefaultEvents.SUBMIT,
-                logMessage: 'This message is not displayed', //statesMessages.editOrAddPeriodsSubmitHistoryLogMessage,
+                onEvent: DefaultEvents.EDIT,
+                logMessage: statesMessages.editOrAddPeriodsSubmitHistoryLogMessage,
               },
             ],
           },
@@ -986,12 +986,6 @@ const ParentalLeaveTemplate: ApplicationTemplate<
           status: 'inprogress',
           actionCard: {
             pendingAction: employerApprovalStatePendingAction,
-            // historyLogs: [
-            //   {
-            //     onEvent: DefaultEvents.EDIT,
-            //     logMessage: 'Blúbb', //statesMessages.editHistoryLogMessage,
-            //   },
-            // ],
           },
           lifecycle: birthDayLifeCycle,
           onEntry: defineTemplateApi({
