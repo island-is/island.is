@@ -73,6 +73,7 @@ describe('ApplicationController - Create event', () => {
       hasFetchedDirectTaxPayment: null,
       spouseHasFetchedDirectTaxPayment: null,
       municipalityCode: '',
+      children: [],
     }
     const applicationEvent: CreateApplicationEventDto = {
       applicationId: id,
