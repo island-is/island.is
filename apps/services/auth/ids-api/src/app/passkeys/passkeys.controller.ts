@@ -3,10 +3,19 @@ import {
   IdsUserGuard,
   ScopesGuard,
 } from '@island.is/auth-nest-tools'
-import { Controller, Post, UseGuards, VERSION_NEUTRAL } from '@nestjs/common'
-import { ApiTags } from '@nestjs/swagger'
+import {
+  Body,
+  Controller,
+  Post,
+  UseGuards,
+  VERSION_NEUTRAL,
+} from '@nestjs/common'
+import { ApiCreatedResponse, ApiTags } from '@nestjs/swagger'
 import type { User } from '@island.is/auth-nest-tools'
 import { PasskeysCoreService } from '@island.is/auth-api-lib'
+import { Documentation } from '@island.is/nest/swagger'
+import { AuthenticationResponse } from './dto/authenticationResponse.dto'
+import { AuthenticationResult } from './dto/authenticationOptions.dto'
 
 @ApiTags('passkeys')
 @UseGuards(IdsUserGuard, ScopesGuard)
@@ -19,8 +28,23 @@ export class PasskeysController {
     console.log('Constructed PasskeysController')
   }
 
-  // @Post('challenges')
-  // async validateAuthentication(@CurrentActor() actor: User) {
-  //   // TODO
-  // }
+  @Post('authenticate')
+  @Documentation({
+    summary:
+      'Validates passkey authentication based on input from authenticated user.',
+    description: 'Verifies authenticated user passkey authentication response.',
+    response: { status: 200, type: AuthenticationResult },
+  })
+  @ApiCreatedResponse({ type: AuthenticationResult })
+  async verifyAuthentication(
+    @CurrentActor() actor: User,
+    @Body() body: AuthenticationResponse,
+  ): Promise<AuthenticationResult> {
+    const response = await this.passkeysCoreService.verifyAuthentication(
+      actor,
+      body as any,
+    )
+
+    return response
+  }
 }
