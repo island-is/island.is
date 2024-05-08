@@ -4,11 +4,11 @@ import {
   NationalRegistryIndividual,
   Option,
   StaticText,
+  NationalRegistrySpouse,
 } from '@island.is/application/types'
 import { format } from 'kennitala'
 import { HealthInsuranceDeclaration } from '../lib/dataSchema'
 import { application as m } from '../lib/messages'
-import { NationalRegistrySpouse } from '@island.is/api/schema'
 import {
   HealthInsuranceContinents,
   HealthInsuranceCountry,
@@ -115,11 +115,7 @@ export const getSpouseAsOptions = (externalData: ExternalData): Option[] => {
     return [
       {
         value: spouse.nationalId,
-        label: spouse.fullName
-          ? spouse.fullName
-          : spouse.name
-          ? spouse.name
-          : '',
+        label: spouse.name,
         subLabel: `${format(spouse.nationalId)}`,
       },
     ]
@@ -141,7 +137,7 @@ export const getSelectedFamiliy = (
       answers.registerPersonsSpouseCheckboxField.map((s) => {
         if (s === spouse.nationalId) {
           return [
-            spouse.fullName ? spouse.fullName : spouse.name ? spouse.name : '',
+            spouse.name,
             spouse.nationalId,
             m.overview.familyTableRelationSpouseText,
           ]

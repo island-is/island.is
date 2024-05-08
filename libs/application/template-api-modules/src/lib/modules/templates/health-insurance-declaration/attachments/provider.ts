@@ -31,7 +31,7 @@ export class ApplicationAttachmentProvider {
       application,
       attachmentAnswers,
     )
-    return files.map((file, index) => {
+    return files.map((file) => {
       const fileName = file.fileName
       return {
         fileName: fileName,

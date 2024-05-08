@@ -2,9 +2,9 @@ import {
   ApplicantChildCustodyInformation,
   Application,
   NationalRegistryIndividual,
+  NationalRegistrySpouse,
 } from '@island.is/application/types'
 import { HealthInsuranceDeclaration } from '../lib/dataSchema'
-import { NationalRegistrySpouse } from '@island.is/api/schema'
 
 export type SubmitApplicationData = {
   success: boolean

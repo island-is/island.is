@@ -72,11 +72,7 @@ const getApplicants = (
     if (externalSpouse) {
       applicants.push({
         nationalId: externalSpouse.nationalId,
-        name: externalSpouse.fullName
-          ? externalSpouse.fullName
-          : externalSpouse.name
-          ? externalSpouse.name
-          : '',
+        name: externalSpouse.name,
         type: 1,
       })
     }
@@ -118,7 +114,7 @@ export const getPersonsFromExternalData = ({ externalData }: Application) => {
   ]
   persons.push({
     nationalId: spouse.nationalId,
-    name: spouse.fullName ? spouse.fullName : spouse.name ? spouse.name : '',
+    name: spouse.name,
   })
   children.map((child) => {
     persons.push({
