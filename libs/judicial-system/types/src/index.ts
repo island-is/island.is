@@ -26,6 +26,7 @@ export {
   isDefenceUser,
   isAdminUser,
   isCoreUser,
+  isPublicProsecutor,
 } from './lib/user'
 export type { User } from './lib/user'
 
@@ -40,6 +41,7 @@ export {
   CaseAppealDecision,
   CaseDecision,
   CaseAppealRulingDecision,
+  CaseIndictmentRulingDecision,
   RequestSharedWithDefender,
   DefendantPlea,
   ServiceRequirement,
