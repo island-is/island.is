@@ -3,7 +3,7 @@ import { Response } from '@anev/ts-mountebank'
 import {
   AdrAndMachine,
   Disability,
-  DistrictCommissioners,
+  DistrictCommissionersPCard,
   DrivingLicense,
   EHIC,
   Firearm,
@@ -306,8 +306,8 @@ export const loadLicensesXroadMocks = async () => {
   //P-card
   await addXroadMock({
     prefixType: 'only-base-path',
-    config: DistrictCommissioners,
-    prefix: 'XROAD_DISTRICT_COMMISSIONERS_PATH',
+    config: DistrictCommissionersPCard,
+    prefix: 'XROAD_DISTRICT_COMMISSIONERS_P_CARD_PATH',
     apiPath: '/api/StaediskortaMal/GetStaediskortToken',
     response: [
       new Response().withJSONBody({

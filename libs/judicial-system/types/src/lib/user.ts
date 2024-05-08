@@ -54,7 +54,9 @@ export const publicProsecutorRoles: string[] = [
   UserRole.PUBLIC_PROSECUTOR_STAFF,
 ]
 
-export function isPublicProsecutorUser(user?: InstitutionUser): boolean {
+export const isPublicProsecutorUser = function (
+  user?: InstitutionUser,
+): boolean {
   return Boolean(
     user?.role &&
       publicProsecutorRoles.includes(user.role) &&
