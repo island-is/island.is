@@ -135,6 +135,13 @@ export const cleanupSetup = (): ServiceBuilder<typeof cleanupId> =>
       },
     })
     .db({ name: 'servicesauth', extensions: ['uuid-ossp'] })
+    .env({
+      IDENTITY_SERVER_ISSUER_URL: {
+        dev: 'https://identity-server.dev01.devland.is',
+        staging: 'https://identity-server.staging01.devland.is',
+        prod: 'https://innskra.island.is',
+      },
+    })
     .extraAttributes({
       dev: schedule,
       staging: schedule,
