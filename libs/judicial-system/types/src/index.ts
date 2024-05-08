@@ -40,6 +40,7 @@ export {
   CaseAppealDecision,
   CaseDecision,
   CaseAppealRulingDecision,
+  CaseIndictmentRulingDecision,
   RequestSharedWithDefender,
   DefendantPlea,
   ServiceRequirement,
