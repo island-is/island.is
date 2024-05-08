@@ -12,9 +12,7 @@ import { conclusion } from './messages'
 
 type Props = Partial<{
   alertTitle: StaticText
-  alertMessage:
-    | StaticText
-    | ((application: Application) => StaticText | StaticText | null | undefined)
+  alertMessage: FormText
   alertType: 'success' | 'warning' | 'error' | 'info'
   multiFieldTitle: StaticText
   secondButtonLink: StaticText
@@ -22,9 +20,7 @@ type Props = Partial<{
   secondButtonMessage: StaticText
   expandableHeader: StaticText
   expandableIntro: StaticText
-  expandableDescription:
-    | StaticText
-    | ((application: Application) => StaticText | StaticText | null | undefined)
+  expandableDescription: FormText
   conclusionLinkS3FileKey: FormText
   conclusionLink: string
   conclusionLinkLabel: StaticText
