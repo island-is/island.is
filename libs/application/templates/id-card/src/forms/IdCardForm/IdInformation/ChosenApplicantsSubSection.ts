@@ -3,16 +3,14 @@ import {
   buildSubSection,
   buildRadioField,
   getValueViaPath,
-  formatText,
-  buildCheckboxField,
 } from '@island.is/application/core'
-import { Routes } from '../../../lib/constants'
+import {
+  IdentityDocument,
+  IdentityDocumentChild,
+  Routes,
+} from '../../../lib/constants'
 import { idInformation } from '../../../lib/messages/idInformation'
-import { useLocale } from '@island.is/localization'
 import { GetFormattedText } from '../../../utils'
-import { Application } from '@island.is/api/schema'
-import { IdCardAnswers } from '../../..'
-import { useFormContext } from 'react-hook-form'
 
 export const ChosenApplicantsSubSection = buildSubSection({
   id: Routes.CHOSENAPPLICANTS,
@@ -24,7 +22,7 @@ export const ChosenApplicantsSubSection = buildSubSection({
       description: idInformation.labels.chosenApplicantsDescription,
       children: [
         buildRadioField({
-          id: `${Routes.CHOSENAPPLICANTS}.applicant`,
+          id: `${Routes.CHOSENAPPLICANTS}`,
           title: '',
           largeButtons: true,
           options: (application) => {
@@ -34,64 +32,48 @@ export const ChosenApplicantsSubSection = buildSubSection({
               '',
             ) as string
 
-            const applicantIdNumber = getValueViaPath(
+            const applicantNationalId = getValueViaPath(
               application.externalData,
-              'identityDocument.data.userPassport.number', // TODO CHANGE THIS TO ID NOT PASSPORT
+              'nationalRegistry.data.nationalId',
               '',
             ) as string
 
-            const subLabel = GetFormattedText(
-              application,
-              idInformation.labels.idNumber,
-            )
+            const applicantPassport = getValueViaPath(
+              application.externalData,
+              'identityDocument.data.userPassport', // TODO CHANGE THIS TO ID NOT PASSPORT
+              {},
+            ) as IdentityDocument
 
-            return [
+            // const subLabel = GetFormattedText(
+            //   application,
+            //   idInformation.labels.idNumber,
+            // )
+
+            const applicantChildren = getValueViaPath(
+              application.externalData,
+              'identityDocument.data.childPassports',
+              [],
+            ) as Array<IdentityDocumentChild>
+
+            const passportList = [
               {
                 label: applicantName,
-                subLabel: `${subLabel}: ${applicantIdNumber}`,
-                value: 'yes',
+                // subLabel: `${subLabel}: ${applicantPassport.number}`,
+                value: applicantNationalId,
               },
             ]
-          },
-        }),
-        buildRadioField({
-          id: `${Routes.CHOSENAPPLICANTS}.children`,
-          title: '',
-          largeButtons: true,
-          defaultValue: (application: Application) => {
-            const isApplicantChosen = getValueViaPath(
-              application.answers,
-              `${Routes.CHOSENAPPLICANTS}.applicant[0]`,
-              'empty',
+            applicantChildren.map((item) =>
+              passportList.push({
+                label: item.childName,
+                // subLabel:
+                //   item.passports && item.passports.length > 0
+                //     ? `${subLabel}: ${item.passports[0].number}`
+                //     : '',
+                value: item.childNationalId,
+              }),
             )
 
-            console.log('isApplicantChosen', isApplicantChosen)
-          },
-          options: (application) => {
-            const applicantName = getValueViaPath(
-              application.externalData,
-              'nationalRegistry.data.fullName',
-              '',
-            ) as string
-
-            const applicantIdNumber = getValueViaPath(
-              application.externalData,
-              'identityDocument.data.userPassport.number', // TODO CHANGE THIS TO ID NOT PASSPORT
-              '',
-            ) as string
-
-            const subLabel = GetFormattedText(
-              application,
-              idInformation.labels.idNumber,
-            )
-
-            return [
-              {
-                label: applicantName,
-                subLabel: `${subLabel}: ${applicantIdNumber}`,
-                value: 'yes',
-              },
-            ]
+            return passportList
           },
         }),
       ],

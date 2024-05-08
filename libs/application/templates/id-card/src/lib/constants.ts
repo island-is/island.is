@@ -12,6 +12,7 @@ export enum Routes {
   APPLICANTSINFORMATION = 'applicantsInformation',
   PRICELIST = 'priceList',
   REVIEW = 'review',
+  CONDITIONINFORMATION = 'conditionInformation',
 }
 
 export enum States {

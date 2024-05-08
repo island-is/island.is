@@ -4,6 +4,5 @@ import { useLocale } from '@island.is/localization'
 export const GetFormattedText = (application: any, messageId: any) => {
   const { formatMessage } = useLocale()
   const message = formatMessage(messageId)
-  console.log('message', message)
   return message
 }
