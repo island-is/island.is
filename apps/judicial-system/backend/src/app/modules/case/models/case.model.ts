@@ -64,7 +64,6 @@ export class Case extends Model {
    * The date and time the case was created in the Database
    **********/
   @CreatedAt
-  @Column({ type: DataType.DATE, allowNull: false })
   @ApiProperty()
   created!: Date
 
@@ -72,7 +71,6 @@ export class Case extends Model {
    * The date and time the case was last updated in the database
    **********/
   @UpdatedAt
-  @Column({ type: DataType.DATE, allowNull: false })
   @ApiProperty()
   modified!: Date
 
@@ -1224,4 +1222,21 @@ export class Case extends Model {
   @HasMany(() => Notification, 'caseId')
   @ApiPropertyOptional({ type: Notification, isArray: true })
   notifications?: Notification[]
+
+  /**********
+   * The surrogate key of the prosecutor assigned to review an indictment
+   **********/
+  @ForeignKey(() => User)
+  @Column({
+    type: DataType.UUID,
+    allowNull: true,
+  })
+  @ApiPropertyOptional()
+  indictmentReviewerId?: string
+  /**********
+   * The prosecutor assigned to review an indictment case
+   **********/
+  @BelongsTo(() => User, 'indictmentReviewerId')
+  @ApiPropertyOptional({ type: User })
+  indictmentReviewer?: User
 }

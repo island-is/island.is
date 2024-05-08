@@ -83,5 +83,10 @@ query Cases {
       canConfirmIndictment
     }
     postponedIndefinitelyExplanation
+    indictmentReviewer {
+      id
+      name
+    }
+    indictmentAppealDeadline
   }
 }

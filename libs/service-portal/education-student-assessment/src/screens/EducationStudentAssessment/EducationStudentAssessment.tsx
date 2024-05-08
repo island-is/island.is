@@ -8,7 +8,7 @@ import {
   MENNTAMALASTOFNUN_SLUG,
 } from '@island.is/service-portal/core'
 
-function EducationStudentAssessment() {
+const EducationStudentAssessment = () => {
   useNamespaces('sp.education-student-assessment')
 
   return (
