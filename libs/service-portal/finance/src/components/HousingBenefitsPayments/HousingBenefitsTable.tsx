@@ -56,6 +56,8 @@ const HousingBenefitsTable = ({ payments, page, setPage }: Props) => {
                     ? `${capitalize(displayMonthOrYear(record.month, lang))}${
                         record.transactionType === 'L'
                           ? ' - ' + formatMessage(hb.transaction?.L)
+                          : record.transactionType === 'AS'
+                          ? ' - ' + formatMessage(hb.transaction?.AS)
                           : ''
                       }`
                     : '',

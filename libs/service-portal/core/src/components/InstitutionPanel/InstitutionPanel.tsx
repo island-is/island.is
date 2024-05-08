@@ -13,7 +13,7 @@ interface InstitutionPanelProps {
   backgroundColor?: 'purple100' | 'blue100' | 'white'
   tooltipText?: string
   tooltipVariant?: 'white' | 'dark' | 'light'
-  fixedImageWidth?: boolean
+  isSvg?: boolean
 }
 
 export const InstitutionPanel = ({
@@ -22,7 +22,7 @@ export const InstitutionPanel = ({
   imgContainerDisplay,
   loading = false,
   backgroundColor = 'purple100',
-  fixedImageWidth = false,
+  isSvg = false,
   tooltipText,
   title,
   tooltipVariant = 'light',
@@ -64,7 +64,7 @@ export const InstitutionPanel = ({
               width={isMobile ? undefined : 'full'}
               height={isMobile ? undefined : 'full'}
               marginRight={isMobile ? 2 : 0}
-              className={fixedImageWidth ? styles.fixedImage : styles.image}
+              className={isSvg ? styles.fixedImage : styles.image}
             />
             {title && (
               <Text variant="h4" as="p" color="purple600" lineHeight="xl">

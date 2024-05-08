@@ -31,7 +31,7 @@ import {
   useGetLicenseQuery,
 } from '../../graphql/types/schema'
 import { createNavigationOptionHooks } from '../../hooks/create-navigation-option-hooks'
-import { useOfflineUpdateNavigation } from '../../hooks/use-offline-update-navigation'
+import { useConnectivityIndicator } from '../../hooks/use-connectivity-indicator'
 import { isAndroid, isIos } from '../../utils/devices'
 import { screenWidth } from '../../utils/dimensions'
 import { FieldRender } from './components/field-render'
@@ -136,7 +136,7 @@ export const WalletPassScreen: NavigationFunctionComponent<{
   cardHeight?: number
 }> = ({ id, item, componentId, cardHeight = 140 }) => {
   useNavigationOptions(componentId)
-  useOfflineUpdateNavigation(componentId)
+  useConnectivityIndicator({ componentId })
   const theme = useTheme()
   const intl = useIntl()
   const [addingToWallet, setAddingToWallet] = useState(false)
@@ -145,6 +145,7 @@ export const WalletPassScreen: NavigationFunctionComponent<{
 
   const [generatePkPass] = useGeneratePkPassMutation()
   const res = useGetLicenseQuery({
+    fetchPolicy: 'network-only',
     variables: {
       input: {
         licenseType: item?.license.type ?? '',
