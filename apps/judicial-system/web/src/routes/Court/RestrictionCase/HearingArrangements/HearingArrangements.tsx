@@ -134,6 +134,10 @@ export const HearingArrangements: React.FC<
     courtDate?.date,
   )
 
+  const isCorrectingRuling = workingCase.notifications?.some(
+    (notification) => notification.type === NotificationType.RULING,
+  )
+
   return (
     <PageLayout
       workingCase={workingCase}
@@ -169,10 +173,11 @@ export const HearingArrangements: React.FC<
           </Box>
           <Box marginBottom={3}>
             <CourtArrangements
-              workingCase={workingCase}
               handleCourtDateChange={handleCourtDateChange}
               handleCourtRoomChange={handleCourtRoomChange}
               courtDate={courtDate}
+              courtRoomDisabled={isCorrectingRuling}
+              dateTimeDisabled={isCorrectingRuling}
             />
           </Box>
         </Box>
