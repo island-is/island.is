@@ -16,7 +16,7 @@ import { Case } from './case.model'
 
 @Table({
   tableName: 'explanatory_comment',
-  timestamps: false,
+  timestamps: true,
 })
 export class ExplanatoryComment extends Model {
   static postponedIndefinitelyExplanation(
@@ -38,12 +38,10 @@ export class ExplanatoryComment extends Model {
   id!: string
 
   @CreatedAt
-  @Column({ type: DataType.DATE, allowNull: false })
   @ApiProperty()
   created!: Date
 
   @UpdatedAt
-  @Column({ type: DataType.DATE, allowNull: false })
   @ApiProperty()
   modified!: Date
 
