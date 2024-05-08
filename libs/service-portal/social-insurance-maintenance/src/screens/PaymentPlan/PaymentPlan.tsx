@@ -56,7 +56,6 @@ const PaymentPlan = () => {
         intro={formatMessage(
           coreMessages.socialInsuranceMaintenanceDescription,
         )}
-        fixedImgWidth
         serviceProviderSlug={'tryggingastofnun'}
         serviceProviderTooltip={formatMessage(
           coreMessages.socialInsuranceTooltip,
