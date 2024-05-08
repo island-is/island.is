@@ -12,7 +12,9 @@ import { conclusion } from './messages'
 
 type Props = Partial<{
   alertTitle: StaticText
-  alertMessage: StaticText
+  alertMessage:
+    | StaticText
+    | ((application: Application) => StaticText | StaticText | null | undefined)
   alertType: 'success' | 'warning' | 'error' | 'info'
   multiFieldTitle: StaticText
   secondButtonLink: StaticText
