@@ -91,6 +91,20 @@ const InfoCardClosedIndictment: React.FC<
           : undefined
       }
       defenders={defenders}
+      additionalDataSections={[
+        ...(workingCase.indictmentReviewer?.name
+          ? [
+              {
+                data: [
+                  {
+                    title: formatMessage(strings.indictmentReviewer),
+                    value: workingCase.indictmentReviewer?.name,
+                  },
+                ],
+              },
+            ]
+          : []),
+      ]}
     />
   )
 }
