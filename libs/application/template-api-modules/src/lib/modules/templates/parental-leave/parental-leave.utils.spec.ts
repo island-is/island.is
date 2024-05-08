@@ -296,6 +296,7 @@ describe('getPensionFund', () => {
 
     set(application.answers, 'payments.privatePensionFund', expectedId)
     set(application.answers, 'applicationType.option', PARENTAL_LEAVE)
+    set(application.answers, 'payments.usePrivatePensionFund', YES)
 
     expect(getPensionFund(application, true)).toEqual({
       id: expectedId,
@@ -337,6 +338,7 @@ describe('getPrivatePensionFundRatio', () => {
       expectedValue.toString(),
     )
     set(application.answers, 'applicationType.option', PARENTAL_LEAVE)
+    set(application.answers, 'payments.usePrivatePensionFund', YES)
 
     expect(getPrivatePensionFundRatio(application)).toBe(expectedValue)
   })
