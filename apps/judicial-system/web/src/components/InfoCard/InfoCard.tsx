@@ -181,7 +181,7 @@ const InfoCard: React.FC<Props> = (props) => {
         </Box>
       )}
       {additionalDataSections?.map((section, index) => (
-        <Box className={styles.infoCardAdditionalSectionContainer}>
+        <Box className={styles.infoCardAdditionalSectionContainer} key={index}>
           {section.data.map((dataItem, dataIndex) => (
             <Box
               key={dataItem.title}
