@@ -27,12 +27,10 @@ export class Institution extends Model {
   id!: string
 
   @CreatedAt
-  @Column({ type: DataType.DATE, allowNull: false })
   @ApiProperty()
   created!: Date
 
   @UpdatedAt
-  @Column({ type: DataType.DATE, allowNull: false })
   @ApiProperty()
   modified!: Date
 
