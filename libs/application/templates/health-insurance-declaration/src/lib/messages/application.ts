@@ -35,29 +35,29 @@ export const application = {
       description: 'Not Health Insured section descriptionField description',
     },
   }),
-  studentOrTraveller: defineMessages({
+  studentOrTourist: defineMessages({
     sectionTitle: {
-      id: 'hid.application:studentOrTraveller.section.title',
+      id: 'hid.application:studentOrTourist.section.title',
       defaultMessage: 'Námsmaður/ferðamaður',
-      description: 'Student or Traveller section title',
+      description: 'Student or Tourist section title',
     },
     sectionDescription: {
-      id: 'hid.application:studentOrTraveller.section.description',
+      id: 'hid.application:studentOrTourist.section.description',
       defaultMessage: 'Ertu ferðamaður eða námsmaður?',
-      description: 'Student or Traveller section description',
+      description: 'Student or Tourist section description',
     },
-    travellerRadioFieldText: {
-      id: 'hid.application:studentOrTraveller.section.traveller.radio.text',
+    touristRadioFieldText: {
+      id: 'hid.application:studentOrTourist.section.tourist.radio.text',
       defaultMessage: 'Frí, vinna og námskeið',
-      description: 'Traveller radio field text',
+      description: 'Tourist radio field text',
     },
     studentRadioFieldText: {
-      id: 'hid.application:studentOrTraveller.section.traveller.radio.text',
+      id: 'hid.application:studentOrTourist.section.tourist.radio.text',
       defaultMessage: 'Námsmaður',
       description: 'Student radio field text',
     },
-    studentOrTravellerAlertMessageText: {
-      id: 'hid.application:studentOrTraveller.section.traveller.alert.text#markdown',
+    studentOrTouristAlertMessageText: {
+      id: 'hid.application:studentOrTourist.section.tourist.alert.text#markdown',
       defaultMessage: `Trygginaryfirlýsing gildir í þeim löndum þar sem Evrópska sjúkratryggingarkortið (ES kortið)
       gildir ekki, Ef ferðinni er heitið til landa innan EES landa eða Sviss skal sækja um ES kortið.
       Athugið að ríkisborgarar utan EES eiga ekki rétt á ES korti og sækja því ávalt um tryggingaryfirlýsingu vegna 
@@ -94,10 +94,10 @@ export const application = {
       defaultMessage: 'Veldu dvalarstað',
       description: 'Residency section title',
     },
-    travellerSectionDescription: {
-      id: 'hid.application:residency.section.traveller.description',
+    touristSectionDescription: {
+      id: 'hid.application:residency.section.tourist.description',
       defaultMessage: 'Veldu staðsetningu',
-      description: 'Traveller residency section description',
+      description: 'Tourist residency section description',
     },
     studentSectionDescription: {
       id: 'hid.application:residency.section.student.description',
@@ -182,20 +182,20 @@ export const application = {
         'Vinsamlegast farðu yfir umsóknina áður en þú sendir hana inn.',
       description: 'Overview section description',
     },
-    studentOrTravellerTitle: {
-      id: 'hid.application:overview.section.studentOrTravellerTitle',
+    studentOrTouristTitle: {
+      id: 'hid.application:overview.section.studentOrTouristTitle',
       defaultMessage: 'Ertu ferðamaður eða námsmaður',
-      description: 'Overview section Student or Traveller title',
+      description: 'Overview section Student or Tourist title',
     },
-    studentOrTravellerTravellerText: {
-      id: 'hid.application:overview.section.studentOrTravellerTravellerText',
+    studentOrTouristTouristText: {
+      id: 'hid.application:overview.section.studentOrTouristTouristText',
       defaultMessage: 'Ferðamaður',
-      description: 'Overview section Student or Traveller: Traveller text',
+      description: 'Overview section Student or Tourist: Tourist text',
     },
-    studentOrTravellerStudentText: {
-      id: 'hid.application:overview.section.studentOrTravellerStudentText',
+    studentOrTouristStudentText: {
+      id: 'hid.application:overview.section.studentOrTouristStudentText',
       defaultMessage: 'Námsmaður',
-      description: 'Overview section Student or Traveller: Student text',
+      description: 'Overview section Student or Tourist: Student text',
     },
     applicantInfoTitle: {
       id: 'hid.application:overview.section.applicantTitle',

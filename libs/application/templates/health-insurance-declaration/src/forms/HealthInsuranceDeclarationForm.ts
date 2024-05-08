@@ -194,36 +194,34 @@ export const HealthInsuranceDeclarationForm: Form = buildForm({
       },
     }),
     buildSection({
-      id: 'studentOrTraveller',
-      title: m.application.studentOrTraveller.sectionTitle,
+      id: 'studentOrTourist',
+      title: m.application.studentOrTourist.sectionTitle,
       children: [
         buildMultiField({
-          id: 'studentOrTravellerMultiField',
-          title: m.application.studentOrTraveller.sectionDescription,
+          id: 'studentOrTouristMultiField',
+          title: m.application.studentOrTourist.sectionDescription,
           children: [
             buildRadioField({
-              id: 'studentOrTravellerRadioFieldTraveller',
+              id: 'studentOrTouristRadioFieldTourist',
               title: '',
               required: true,
               options: [
                 {
-                  label:
-                    m.application.studentOrTraveller.travellerRadioFieldText,
-                  value: ApplicantType.TRAVELLER,
+                  label: m.application.studentOrTourist.touristRadioFieldText,
+                  value: ApplicantType.TOURIST,
                 },
                 {
-                  label: m.application.studentOrTraveller.studentRadioFieldText,
+                  label: m.application.studentOrTourist.studentRadioFieldText,
                   value: ApplicantType.STUDENT,
                 },
               ],
             }),
             buildAlertMessageField({
-              id: 'studentOrTravellerAlertMessage',
+              id: 'studentOrTouristAlertMessage',
               alertType: 'warning',
               title: 'Athugið',
               message:
-                m.application.studentOrTraveller
-                  .studentOrTravellerAlertMessageText,
+                m.application.studentOrTourist.studentOrTouristAlertMessageText,
             }),
           ],
         }),
@@ -253,15 +251,15 @@ export const HealthInsuranceDeclarationForm: Form = buildForm({
       ],
     }),
     buildSection({
-      id: 'residencySectionTraveller',
+      id: 'residencySectionTourist',
       title: m.application.residency.sectionTitle,
       children: [
         buildMultiField({
           id: 'residencyMultiField',
-          title: m.application.residency.travellerSectionDescription,
+          title: m.application.residency.touristSectionDescription,
           children: [
             buildRadioField({
-              id: 'residencyTravellerRadioField',
+              id: 'residencyTouristRadioField',
               title: '',
               required: true,
               options: ({ externalData }) =>
@@ -272,8 +270,7 @@ export const HealthInsuranceDeclarationForm: Form = buildForm({
         }),
       ],
       condition: (answers: FormValue) =>
-        answers.studentOrTravellerRadioFieldTraveller ===
-        ApplicantType.TRAVELLER,
+        answers.studentOrTouristRadioFieldTourist === ApplicantType.TOURIST,
     }),
     buildSection({
       id: 'residencySectionStudent',
@@ -296,7 +293,7 @@ export const HealthInsuranceDeclarationForm: Form = buildForm({
         }),
       ],
       condition: (answers: FormValue) =>
-        answers.studentOrTravellerRadioFieldTraveller === ApplicantType.STUDENT,
+        answers.studentOrTouristRadioFieldTourist === ApplicantType.STUDENT,
     }),
     buildSection({
       id: 'educationConfirmationSection',
@@ -324,7 +321,7 @@ export const HealthInsuranceDeclarationForm: Form = buildForm({
         }),
       ],
       condition: (answers: FormValue) =>
-        answers.studentOrTravellerRadioFieldTraveller === ApplicantType.STUDENT,
+        answers.studentOrTouristRadioFieldTourist === ApplicantType.STUDENT,
     }),
     buildSection({
       id: 'dateSection',
@@ -368,18 +365,17 @@ export const HealthInsuranceDeclarationForm: Form = buildForm({
           children: [
             buildDividerField({}),
             buildDescriptionField({
-              id: 'overviewStudentOrTravellerTtile',
-              title: m.application.overview.studentOrTravellerTitle,
+              id: 'overviewStudentOrTouristTtile',
+              title: m.application.overview.studentOrTouristTitle,
               titleVariant: 'h4',
             }),
             buildKeyValueField({
               label: '',
               value: ({ answers }) =>
                 (answers as HealthInsuranceDeclaration)
-                  .studentOrTravellerRadioFieldTraveller ===
-                ApplicantType.TRAVELLER
-                  ? m.application.overview.studentOrTravellerTravellerText
-                  : m.application.overview.studentOrTravellerStudentText,
+                  .studentOrTouristRadioFieldTourist === ApplicantType.TOURIST
+                  ? m.application.overview.studentOrTouristTouristText
+                  : m.application.overview.studentOrTouristStudentText,
             }),
             buildDividerField({}),
             // Applicant Info
@@ -474,16 +470,14 @@ export const HealthInsuranceDeclarationForm: Form = buildForm({
             buildDividerField({
               condition: (answers) =>
                 (answers as HealthInsuranceDeclaration)
-                  ?.studentOrTravellerRadioFieldTraveller ===
-                ApplicantType.STUDENT,
+                  ?.studentOrTouristRadioFieldTourist === ApplicantType.STUDENT,
             }),
             buildKeyValueField({
               label: m.application.overview.residencyTitle,
               colSpan: '9/12',
               condition: (answers) =>
                 (answers as HealthInsuranceDeclaration)
-                  ?.studentOrTravellerRadioFieldTraveller ===
-                ApplicantType.STUDENT,
+                  ?.studentOrTouristRadioFieldTourist === ApplicantType.STUDENT,
               value: ({ answers, externalData }) =>
                 getCountryNameFromCode(
                   (answers as HealthInsuranceDeclaration)
@@ -496,12 +490,11 @@ export const HealthInsuranceDeclarationForm: Form = buildForm({
               colSpan: '9/12',
               condition: (answers) =>
                 (answers as HealthInsuranceDeclaration)
-                  ?.studentOrTravellerRadioFieldTraveller ===
-                ApplicantType.TRAVELLER,
+                  ?.studentOrTouristRadioFieldTourist === ApplicantType.TOURIST,
               value: ({ answers, externalData }) =>
                 getContinentNameFromCode(
                   (answers as HealthInsuranceDeclaration)
-                    .residencyTravellerRadioField || '',
+                    .residencyTouristRadioField || '',
                   externalData,
                 ),
             }),
@@ -511,8 +504,7 @@ export const HealthInsuranceDeclarationForm: Form = buildForm({
               colSpan: '9/12',
               condition: (answers) =>
                 (answers as HealthInsuranceDeclaration)
-                  ?.studentOrTravellerRadioFieldTraveller ===
-                ApplicantType.STUDENT,
+                  ?.studentOrTouristRadioFieldTourist === ApplicantType.STUDENT,
               value: ({ answers }) =>
                 (
                   answers as HealthInsuranceDeclaration

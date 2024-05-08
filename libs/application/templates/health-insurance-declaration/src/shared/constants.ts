@@ -1,4 +1,4 @@
 export enum ApplicantType {
-  TRAVELLER = 'traveller',
+  TOURIST = 'tourist',
   STUDENT = 'student',
 }

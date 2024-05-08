@@ -10,7 +10,7 @@ import { AuthMiddleware, Auth } from '@island.is/auth-nest-tools'
 import { ApplicationAttachmentProvider } from './attachments/provider'
 import {
   applicationToStudentApplication,
-  applicationToTravellerApplication,
+  applicationToTouristApplication,
   getApplicantInsuranceStatus,
   getApplicantType,
   getApplicantsFromExternalData,
@@ -88,13 +88,13 @@ export class HealthInsuranceDeclarationService extends BaseTemplateApiService {
           applicationStudentRequest,
       })
     } else {
-      const applicationTravellerRequest =
-        applicationToTravellerApplication(application)
+      const applicationTouristRequest =
+        applicationToTouristApplication(application)
       response = await this.insuranceStatementsApiWithAuth(
         auth,
       ).insuranceStatementTouristApplication({
         minarsidurAPIModelsInsuranceStatementsTouristApplicationDTO:
-          applicationTravellerRequest,
+          applicationTouristRequest,
       })
     }
     if (!response.success) {

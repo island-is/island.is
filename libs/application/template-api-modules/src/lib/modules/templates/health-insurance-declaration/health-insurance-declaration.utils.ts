@@ -18,7 +18,7 @@ import {
 } from '@island.is/clients/icelandic-health-insurance/rights-portal'
 
 export const getApplicantType = (application: Application) => {
-  return application.answers.studentOrTravellerRadioFieldTraveller
+  return application.answers.studentOrTouristRadioFieldTourist
 }
 
 export const applicationToStudentApplication = (
@@ -36,7 +36,7 @@ export const applicationToStudentApplication = (
   }
 }
 
-export const applicationToTravellerApplication = (
+export const applicationToTouristApplication = (
   application: Application,
 ): InsuranceStatementsTouristApplicationDTO => {
   const healthInsuranceApplication =
@@ -138,7 +138,7 @@ const getResidencyCode = (
   if (type === ApplicantType.STUDENT) {
     return application.answers.residencyStudentSelectField || ''
   }
-  return application.answers.residencyTravellerRadioField || ''
+  return application.answers.residencyTouristRadioField || ''
 }
 
 const getStartDate = (
