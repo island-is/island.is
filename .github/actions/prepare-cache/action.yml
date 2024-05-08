@@ -114,7 +114,7 @@ runs:
 
     - name: Untar generated files
       id: untar-generated-files
-      if: contains(inputs.path, 'generated_files.tar.gz') }}
+      if: contains(inputs.path, 'generated_files.tar.gz')
       shell: bash
       run: |
         echo "Untar generated-files"
