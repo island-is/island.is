@@ -1,12 +1,14 @@
 import { BadRequestException, Inject, Injectable } from '@nestjs/common'
+import { Op } from 'sequelize'
 import { InjectModel } from '@nestjs/sequelize'
 import { isEmail } from 'class-validator'
 import addMonths from 'date-fns/addMonths'
 import { Sequelize } from 'sequelize-typescript'
 
-import { isDefined } from '@island.is/shared/utils'
+import { isDefined, isSearchTermValid } from '@island.is/shared/utils'
 import { AttemptFailed, NoContentException } from '@island.is/nest/problem'
 import type { User } from '@island.is/auth-nest-tools'
+import type { ConfigType } from '@island.is/nest/config'
 import {
   DelegationsApi,
   DelegationsControllerGetDelegationRecordsDirectionEnum,
@@ -20,9 +22,9 @@ import { UserProfileDto } from './dto/user-profile.dto'
 import { IslykillService } from './islykill.service'
 import { DataStatus } from '../user-profile/types/dataStatusTypes'
 import { NudgeType } from '../types/nudge-type'
+import { PaginatedUserProfileDto } from './dto/paginated-user-profile.dto'
 import { ClientType } from '../types/ClientType'
 import { UserProfileConfig } from '../../config'
-import type { ConfigType } from '@island.is/nest/config'
 import { ActorProfile } from './models/actor-profile.model'
 import {
   ActorProfileDto,
@@ -49,6 +51,44 @@ export class UserProfileService {
     private config: ConfigType<typeof UserProfileConfig>,
     private readonly delegationsApi: DelegationsApi,
   ) {}
+
+  async findAllBySearchTerm(search: string): Promise<PaginatedUserProfileDto> {
+    // Validate search term
+    if (!isSearchTermValid(search)) {
+      throw new BadRequestException('Invalid search term')
+    }
+
+    const userProfiles = await this.userProfileModel.findAll({
+      where: {
+        [Op.or]: [
+          { nationalId: search },
+          { email: search },
+          { mobilePhoneNumber: search },
+        ],
+      },
+    })
+
+    const userProfileDtos = userProfiles.map((userProfile) => ({
+      nationalId: userProfile.nationalId,
+      email: userProfile.email,
+      mobilePhoneNumber: userProfile.mobilePhoneNumber,
+      locale: userProfile.locale,
+      mobilePhoneNumberVerified: userProfile.mobilePhoneNumberVerified,
+      emailVerified: userProfile.emailVerified,
+      documentNotifications: userProfile.documentNotifications,
+      emailNotifications: userProfile.emailNotifications,
+      lastNudge: userProfile.lastNudge,
+      nextNudge: userProfile.nextNudge,
+    }))
+
+    return {
+      data: userProfileDtos,
+      totalCount: userProfileDtos.length,
+      pageInfo: {
+        hasNextPage: false,
+      },
+    }
+  }
 
   async findById(
     nationalId: string,
@@ -517,6 +557,8 @@ export class UserProfileService {
       documentNotifications: userProfile.documentNotifications,
       needsNudge: this.checkNeedsNudge(userProfile),
       emailNotifications: userProfile.emailNotifications,
+      lastNudge: userProfile.lastNudge,
+      nextNudge: userProfile.nextNudge,
       isRestricted: false,
     }
 
