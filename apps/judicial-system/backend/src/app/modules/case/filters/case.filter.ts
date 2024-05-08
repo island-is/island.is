@@ -52,7 +52,8 @@ const canProsecutionUserAccessCase = (
   if (
     user.institution?.id !== theCase.prosecutorsOfficeId &&
     (forUpdate ||
-      user.institution?.id !== theCase.sharedWithProsecutorsOfficeId)
+      user.institution?.id !== theCase.sharedWithProsecutorsOfficeId) &&
+    user.id !== theCase.indictmentReviewerId
   ) {
     return false
   }

@@ -21,6 +21,7 @@ import {
 } from '@island.is/judicial-system-web/src/components'
 import { CaseState } from '@island.is/judicial-system-web/src/graphql/schema'
 
+import { AppealDecision } from '../../PublicProsecutor/Indictments/AppealDecision/AppealDecision'
 import { strings } from './IndictmentOverview.strings'
 
 const IndictmentOverview = () => {
@@ -92,6 +93,9 @@ const IndictmentOverview = () => {
           <Box component="section" marginBottom={caseIsClosed ? 5 : 10}>
             <IndictmentCaseFilesList workingCase={workingCase} />
           </Box>
+        )}
+        {isCompletedCase(workingCase.state) && (
+          <AppealDecision workingCase={workingCase}></AppealDecision>
         )}
       </FormContentContainer>
     </PageLayout>
