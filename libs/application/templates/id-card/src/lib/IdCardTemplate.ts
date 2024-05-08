@@ -12,6 +12,7 @@ import {
   ApplicationTemplate,
   ApplicationTypes,
   DefaultEvents,
+  defineTemplateApi,
   DistrictsApi,
   InstitutionNationalIds,
   PassportsApi,
@@ -26,7 +27,7 @@ import {
   NationalRegistryUser,
 } from '../dataProviders'
 import { application as applicationMessage } from './messages'
-import { Events, Roles, States } from './constants'
+import { Events, Roles, States, ApiActions } from './constants'
 import { IdCardSchema } from './dataSchema'
 import { buildPaymentState } from '@island.is/application/utils'
 // import { needAssignment } from './utils'
@@ -167,9 +168,9 @@ const IdCardTemplate: ApplicationTemplate<
               ...pruneAfter(sevenDays),
               shouldDeleteChargeIfPaymentFulfilled: true,
             } */,
-          /* onEntry: defineTemplateApi({
-              action: ApiActions.assignParentB,
-            }), */
+          onEntry: defineTemplateApi({
+            action: ApiActions.assignParentB,
+          }),
           roles: [
             {
               id: Roles.APPLICANT,

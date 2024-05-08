@@ -11,7 +11,7 @@ import {
   DistrictCommissionerAgencies,
 } from './constants'
 import { info } from 'kennitala'
-// import { generateAssignParentBApplicationEmail } from './emailGenerators/assignParentBEmail'
+import { generateAssignParentBApplicationEmail } from './emailGenerators/assignParentBEmail'
 // import { PassportSchema } from '@island.is/application/templates/passport'
 import { PassportsService } from '@island.is/clients/passports'
 import { BaseTemplateApiService } from '../../base-template-api.service'
@@ -132,12 +132,38 @@ export class IdCardService extends BaseTemplateApiService {
     }
   }
 
-  //   async assignParentB({ application }: TemplateApiModuleActionProps) {
-  //     await this.sharedTemplateAPIService.sendEmail(
-  //       generateAssignParentBApplicationEmail,
-  //       application,
-  //     )
-  //   }
+  async assignParentB({ application, auth }: TemplateApiModuleActionProps) {
+    // 1. Validate payment
+
+    // 1a. Make sure a paymentUrl was created
+    // TODO: Make sure this is correct according to our external data answers
+    const { paymentUrl } = application.externalData.createCharge.data as {
+      paymentUrl: string
+    }
+    if (!paymentUrl) {
+      throw new Error(
+        'Ekki er búið að staðfesta greiðslu, hinkraðu þar til greiðslan er staðfest.',
+      )
+    }
+
+    // 1b. Make sure payment is fulfilled (has been paid)
+    const payment: { fulfilled: boolean } | undefined =
+      await this.sharedTemplateAPIService.getPaymentStatus(auth, application.id)
+    if (!payment?.fulfilled) {
+      throw new Error(
+        'Ekki er búið að staðfesta greiðslu, hinkraðu þar til greiðslan er staðfest.',
+      )
+    }
+
+    // 2. Notify users that need to review
+
+    // TODO: Write in error log email of parentB
+    await this.sharedTemplateAPIService
+      .sendEmail(generateAssignParentBApplicationEmail, application)
+      .catch(() => {
+        this.logger.error(`Error sending email about initReview`)
+      })
+  }
 
   //   async submitPassportApplication({
   //     application,
