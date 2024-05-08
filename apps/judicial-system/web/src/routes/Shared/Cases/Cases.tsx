@@ -27,7 +27,7 @@ import {
   UserContext,
 } from '@island.is/judicial-system-web/src/components'
 import { PastCasesTable } from '@island.is/judicial-system-web/src/components/Table'
-import { TableContainer } from '@island.is/judicial-system-web/src/components/Table/Table'
+import { TableWrapper } from '@island.is/judicial-system-web/src/components/Table/Table'
 import {
   CaseListEntry,
   CaseState,
@@ -286,7 +286,7 @@ export const Cases: React.FC = () => {
               />
             )}
             <SectionHeading title={formatMessage(m.activeRequests.title)} />
-            <TableContainer loading={loading || isFiltering}>
+            <TableWrapper loading={loading || isFiltering}>
               {activeCases.length > 0 ? (
                 <ActiveCases
                   cases={activeCases}
@@ -302,7 +302,7 @@ export const Cases: React.FC = () => {
                   />
                 </div>
               )}
-            </TableContainer>
+            </TableWrapper>
             <SectionHeading title={formatMessage(tables.completedCasesTitle)} />
             {loading || pastCases.length > 0 ? (
               <PastCasesTable

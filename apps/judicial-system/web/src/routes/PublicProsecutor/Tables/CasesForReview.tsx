@@ -12,7 +12,7 @@ import {
   DefendantInfo,
 } from '@island.is/judicial-system-web/src/components/Table'
 import Table, {
-  TableContainer,
+  TableWrapper,
 } from '@island.is/judicial-system-web/src/components/Table/Table'
 import TableInfoContainer from '@island.is/judicial-system-web/src/components/Table/TableInfoContainer/TableInfoContainer'
 import TagCaseState, {
@@ -38,7 +38,7 @@ const CasesForReview: React.FC<CasesForReviewTableProps> = ({
     <>
       <SectionHeading title={formatMessage(strings.title)} />
       <AnimatePresence initial={false}>
-        <TableContainer loading={loading}>
+        <TableWrapper loading={loading}>
           {cases.length > 0 ? (
             <Table
               thead={[
@@ -101,7 +101,7 @@ const CasesForReview: React.FC<CasesForReviewTableProps> = ({
               message={formatMessage(strings.infoContainerMessage)}
             />
           )}
-        </TableContainer>
+        </TableWrapper>
       </AnimatePresence>
     </>
   )

@@ -18,7 +18,7 @@ import {
   DefendantInfo,
 } from '@island.is/judicial-system-web/src/components/Table'
 import Table, {
-  TableContainer,
+  TableWrapper,
 } from '@island.is/judicial-system-web/src/components/Table/Table'
 import TableInfoContainer from '@island.is/judicial-system-web/src/components/Table/TableInfoContainer/TableInfoContainer'
 import {
@@ -47,7 +47,7 @@ const CasesAwaitingConfirmationTable: React.FC<
     <>
       <SectionHeading title={formatMessage(strings.title)} />
       <AnimatePresence initial={false}>
-        <TableContainer loading={loading || isFiltering}>
+        <TableWrapper loading={loading || isFiltering}>
           {cases.length > 0 ? (
             <Table
               thead={[
@@ -122,7 +122,7 @@ const CasesAwaitingConfirmationTable: React.FC<
               message={formatMessage(strings.noCasesMessage)}
             />
           )}
-        </TableContainer>
+        </TableWrapper>
       </AnimatePresence>
     </>
   )

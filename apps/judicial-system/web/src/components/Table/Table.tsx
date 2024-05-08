@@ -1,4 +1,4 @@
-import React, { ReactNode, useContext, useMemo } from 'react'
+import React, { PropsWithChildren, ReactNode, useContext, useMemo } from 'react'
 import { useIntl } from 'react-intl'
 import { useLocalStorage } from 'react-use'
 import parseISO from 'date-fns/parseISO'
@@ -36,12 +36,11 @@ interface TableProps {
   generateContextMenuItems?: (row: CaseListEntry) => ContextMenuItem[]
 }
 
-interface TableContainerProps {
-  children: React.ReactNode
+interface TableWrapperProps {
   loading: boolean
 }
 
-export const TableContainer: React.FC<TableContainerProps> = ({
+export const TableWrapper: React.FC<PropsWithChildren<TableWrapperProps>> = ({
   loading,
   children,
 }) => (
