@@ -1,3 +1,4 @@
+import { useApolloClient } from '@apollo/client'
 import messaging from '@react-native-firebase/messaging'
 import {
   Alert,
@@ -10,11 +11,11 @@ import { authenticateAsync } from 'expo-local-authentication'
 import React, { useEffect, useRef, useState } from 'react'
 import { useIntl } from 'react-intl'
 import {
+  Alert as RNAlert,
   Image,
   Linking,
   Platform,
   Pressable,
-  Alert as RNAlert,
   ScrollView,
   Switch,
   TouchableOpacity,
@@ -29,7 +30,6 @@ import {
 import { useTheme } from 'styled-components/native'
 import editIcon from '../../assets/icons/edit.png'
 import { PressableHighlight } from '../../components/pressable-highlight/pressable-highlight'
-import { client } from '../../graphql/client'
 import {
   UpdateProfileDocument,
   UpdateProfileMutation,
@@ -40,6 +40,7 @@ import { createNavigationOptionHooks } from '../../hooks/create-navigation-optio
 import { navigateTo } from '../../lib/deep-linking'
 import { showPicker } from '../../lib/show-picker'
 import { authStore } from '../../stores/auth-store'
+import { apolloMKKVStorage } from '../../stores/mkkv'
 import {
   preferencesStore,
   usePreferencesStore,
@@ -62,6 +63,7 @@ export const SettingsScreen: NavigationFunctionComponent = ({
 }) => {
   useNavigationOptions(componentId)
 
+  const client = useApolloClient()
   const intl = useIntl()
   const theme = useTheme()
   const {
@@ -85,6 +87,7 @@ export const SettingsScreen: NavigationFunctionComponent = ({
   const biometricType = useBiometricType(authenticationTypes)
 
   const onLogoutPress = async () => {
+    apolloMKKVStorage.clearStore()
     await authStore.getState().logout()
     await Navigation.dismissAllModals()
     await Navigation.setRoot({
@@ -171,6 +174,7 @@ export const SettingsScreen: NavigationFunctionComponent = ({
         title={intl.formatMessage({ id: 'setting.screenTitle' })}
         onClosePress={() => Navigation.dismissModal(componentId)}
         style={{ marginHorizontal: 16 }}
+        showLoading={userProfile.loading && !!userProfile.data}
       />
       <ScrollView style={{ flex: 1 }} testID={testIDs.USER_SCREEN_SETTINGS}>
         <Alert
