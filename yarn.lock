@@ -34460,7 +34460,7 @@ __metadata:
     rosetta: 1.0.0
     rxjs: 7.8.1
     sanitize-html: 2.10.0
-    sequelize: 6.19.0
+    sequelize: 6.19.1
     sequelize-cli: 6.4.1
     sequelize-replace-enum-postgres: 1.6.0
     sequelize-typescript: 2.1.3
@@ -47116,9 +47116,9 @@ __metadata:
   languageName: node
   linkType: hard
 
-"sequelize@npm:6.19.0":
-  version: 6.19.0
-  resolution: "sequelize@npm:6.19.0"
+"sequelize@npm:6.19.1":
+  version: 6.19.1
+  resolution: "sequelize@npm:6.19.1"
   dependencies:
     "@types/debug": ^4.1.7
     "@types/validator": ^13.7.1
@@ -47153,7 +47153,7 @@ __metadata:
       optional: true
     tedious:
       optional: true
-  checksum: e1faa389fe8bf4e58f4781763d313e6a28b5cf8376f9c34ba6a6af9f158a309d8fa30277706bbee004caa8068a5f3030cf1620735a2d9f84a33f204ab2dae2f2
+  checksum: 645db1b9ee8963c3293a911d5ae030bd83769b5ea02762e177228ebbf582fcdd2b327b87ebad74366f0eecb85d9ce7dfbcb5bfb7d87e7383ea4fe1a89b9e9be5
   languageName: node
   linkType: hard
 
