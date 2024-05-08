@@ -176,6 +176,11 @@ export enum CaseAppealRulingDecision {
   DISCONTINUED = 'DISCONTINUED',
 }
 
+export enum CaseIndictmentRulingDecision {
+  RULING = 'RULING',
+  FINE = 'FINE',
+}
+
 export enum SessionArrangements {
   ALL_PRESENT = 'ALL_PRESENT',
   ALL_PRESENT_SPOKESPERSON = 'ALL_PRESENT_SPOKESPERSON',
