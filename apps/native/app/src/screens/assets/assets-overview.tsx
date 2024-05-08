@@ -16,6 +16,7 @@ import illustrationSrc from '../../assets/illustrations/le-moving-s1.png'
 import { BottomTabsIndicator } from '../../components/bottom-tabs-indicator/bottom-tabs-indicator'
 import { useListAssetsQuery } from '../../graphql/types/schema'
 import { createNavigationOptionHooks } from '../../hooks/create-navigation-option-hooks'
+import { useConnectivityIndicator } from '../../hooks/use-connectivity-indicator'
 import { navigateTo } from '../../lib/deep-linking'
 import { testIDs } from '../../utils/test-ids'
 
@@ -64,20 +65,26 @@ export const AssetsOverviewScreen: NavigationFunctionComponent = ({
   componentId,
 }) => {
   useNavigationOptions(componentId)
+
   const flatListRef = useRef<FlatList>(null)
-  const [loading, setLoading] = useState(false)
+  const [refetching, setRefetching] = useState(false)
   const intl = useIntl()
   const theme = useTheme()
   const scrollY = useRef(new Animated.Value(0)).current
   const loadingTimeout = useRef<number>()
 
   const assetsRes = useListAssetsQuery({
-    fetchPolicy: 'cache-first',
     variables: {
       input: {
         cursor: '1',
       },
     },
+  })
+
+  useConnectivityIndicator({
+    componentId,
+    queryResult: assetsRes,
+    refetching,
   })
 
   const isSkeleton = assetsRes.loading && !assetsRes.data
@@ -88,19 +95,19 @@ export const AssetsOverviewScreen: NavigationFunctionComponent = ({
       if (loadingTimeout.current) {
         clearTimeout(loadingTimeout.current)
       }
-      setLoading(true)
+      setRefetching(true)
       assetsRes
         .refetch()
         .then(() => {
           ;(loadingTimeout as any).current = setTimeout(() => {
-            setLoading(false)
+            setRefetching(false)
           }, 1331)
         })
         .catch(() => {
-          setLoading(false)
+          setRefetching(false)
         })
     } catch (err) {
-      setLoading(false)
+      setRefetching(false)
     }
   }, [])
 
@@ -218,7 +225,7 @@ export const AssetsOverviewScreen: NavigationFunctionComponent = ({
           paddingBottom: 16,
         }}
         refreshControl={
-          <RefreshControl refreshing={loading} onRefresh={onRefresh} />
+          <RefreshControl refreshing={refetching} onRefresh={onRefresh} />
         }
         scrollEventThrottle={16}
         scrollToOverflowEnabled={true}

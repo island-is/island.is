@@ -80,10 +80,8 @@ export const valueToNumber = (value: unknown, delimiter = '.'): number => {
 }
 
 export const isValidRealEstate = (value: string) => {
-  const lotRegex = /^[Ll]{0,1}\d{6}$/
-  const houseRegex = /^[Ff]{0,1}\d{7}$/
-
-  return lotRegex.test(value) || houseRegex.test(value)
+  const assetNumberPattern = /^(F\d{3}-\d{4}|\d{7}|\d{3}-\d{4}|F\d{7})$/
+  return assetNumberPattern.test(value)
 }
 
 export const getDeceasedWasMarriedAndHadAssets = (

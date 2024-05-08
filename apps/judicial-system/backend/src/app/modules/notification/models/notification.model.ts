@@ -33,9 +33,7 @@ export class Notification extends Model {
   id!: string
 
   @CreatedAt
-  @Column({
-    type: DataType.DATE,
-  })
+  @Column({ type: DataType.DATE })
   @ApiProperty()
   created!: Date
 

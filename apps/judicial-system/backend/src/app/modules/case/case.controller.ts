@@ -62,6 +62,7 @@ import {
   prisonSystemStaffRule,
   prosecutorRepresentativeRule,
   prosecutorRule,
+  publicProsecutorStaffRule,
 } from '../../guards'
 import { CaseEvent, EventService } from '../event'
 import { UserService } from '../user'
@@ -91,6 +92,7 @@ import {
   prosecutorRepresentativeUpdateRule,
   prosecutorTransitionRule,
   prosecutorUpdateRule,
+  publicProsecutorStaffUpdateRule,
 } from './guards/rolesRules'
 import { CaseInterceptor } from './interceptors/case.interceptor'
 import { CaseListInterceptor } from './interceptors/caseList.interceptor'
@@ -159,6 +161,7 @@ export class CaseController {
     courtOfAppealsJudgeUpdateRule,
     courtOfAppealsRegistrarUpdateRule,
     courtOfAppealsAssistantUpdateRule,
+    publicProsecutorStaffUpdateRule,
   )
   @Patch('case/:caseId')
   @ApiOkResponse({ type: Case, description: 'Updates an existing case' })
@@ -400,6 +403,9 @@ export class CaseController {
       case CaseTransition.RETURN_INDICTMENT:
         update.courtCaseNumber = ''
         break
+      case CaseTransition.REDISTRIBUTE:
+        update.judgeId = null
+        break
     }
 
     const updatedCase = await this.caseService.update(
@@ -422,6 +428,7 @@ export class CaseController {
   @RolesRules(
     prosecutorRule,
     prosecutorRepresentativeRule,
+    publicProsecutorStaffRule,
     districtCourtJudgeRule,
     districtCourtRegistrarRule,
     districtCourtAssistantRule,
@@ -448,6 +455,7 @@ export class CaseController {
   @RolesRules(
     prosecutorRule,
     prosecutorRepresentativeRule,
+    publicProsecutorStaffRule,
     districtCourtJudgeRule,
     districtCourtRegistrarRule,
     districtCourtAssistantRule,

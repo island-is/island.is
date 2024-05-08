@@ -67,7 +67,7 @@ When Vinnumálastofnun requests edits on changes that have been sent to them for
 
 #### Edit or add periods
 
-Applicants make changes in periods or/and add more periods in their application.
+Applicants make changes in periods or employers and/or add more periods or employers to their application. If an applicant changes a previous employer, they will get a file upload field where they have to upload a document confirming they have left their previous place of employment.
 
 #### Employer waiting to assign for edits
 

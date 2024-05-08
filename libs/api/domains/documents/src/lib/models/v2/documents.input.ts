@@ -1,4 +1,4 @@
-import { IsPersonNationalId } from '@island.is/nest/core'
+import { IsNationalId } from '@island.is/nest/core'
 import {
   Field,
   GraphQLISODateTime,
@@ -35,7 +35,7 @@ registerEnumType(DocumentPageOrder, { name: 'DocumentsV2PageOrder' })
 @InputType('DocumentsV2DocumentsInput')
 export class DocumentsInput {
   @Field()
-  @IsPersonNationalId()
+  @IsNationalId()
   readonly nationalId!: string
 
   @Field(() => [String], { nullable: true })

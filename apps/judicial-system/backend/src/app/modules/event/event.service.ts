@@ -12,13 +12,11 @@ import {
   formatDate,
   readableIndictmentSubtypes,
 } from '@island.is/judicial-system/formatters'
-import {
-  DateType,
-  getLatestDateType,
-  isIndictmentCase,
-} from '@island.is/judicial-system/types'
+import { isIndictmentCase } from '@island.is/judicial-system/types'
 
-import { Case } from '../case'
+import { type Case } from '../case'
+import { DateLog } from '../case/models/dateLog.model'
+import { ExplanatoryComment } from '../case/models/explanatoryComment.model'
 import { eventModuleConfig } from './event.config'
 
 const errorEmojis = [
@@ -44,6 +42,7 @@ const caseEvent = {
   CREATE_XRD: ':new: Mál stofnað í gegnum Strauminn',
   EXTEND: ':recycle: Mál framlengt',
   OPEN: ':unlock: Opnað fyrir dómstól',
+  ASK_FOR_CONFIRMATION: ':question: Beðið um staðfestingu',
   SUBMIT: ':mailbox_with_mail: Sent',
   RESUBMIT: ':mailbox_with_mail: Sent aftur',
   RECEIVE: ':eyes: Móttekið',
@@ -66,6 +65,7 @@ export enum CaseEvent {
   CREATE_XRD = 'CREATE_XRD',
   EXTEND = 'EXTEND',
   OPEN = 'OPEN',
+  ASK_FOR_CONFIRMATION = 'ASK_FOR_CONFIRMATION',
   SUBMIT = 'SUBMIT',
   RESUBMIT = 'RESUBMIT',
   RECEIVE = 'RECEIVE',
@@ -98,8 +98,6 @@ export class EventService {
         return
       }
 
-      const courtDate = getLatestDateType(DateType.COURT_DATE, theCase.dateLogs)
-
       const title =
         event === CaseEvent.ACCEPT && isIndictmentCase(theCase.type)
           ? caseEvent[CaseEvent.ACCEPT_INDICTMENT]
@@ -130,7 +128,15 @@ export class EventService {
             }\n>Dómritari ${
               theCase.registrar?.name ?? 'er ekki skráður'
             }\n>Fyrirtaka ${
-              formatDate(courtDate?.date, 'Pp') ?? 'er ekki skráð'
+              ExplanatoryComment.postponedIndefinitelyExplanation(
+                theCase.explanatoryComments,
+              )
+                ? 'ekki ákveðin'
+                : formatDate(
+                    DateLog.courtDate(theCase.dateLogs)?.date ??
+                      DateLog.arraignmentDate(theCase.dateLogs)?.date,
+                    'Pp',
+                  ) ?? 'er ekki skráð'
             }`
           : ''
 

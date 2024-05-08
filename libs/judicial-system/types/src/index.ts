@@ -5,7 +5,8 @@ export { Gender } from './lib/defendant'
 export { InstitutionType } from './lib/institution'
 export { NotificationType } from './lib/notification'
 export { EventType } from './lib/eventLog'
-export { DateType, getLatestDateType } from './lib/dateLog'
+export { DateType } from './lib/dateLog'
+export { CommentType } from './lib/comment'
 
 export { CaseFileState, CaseFileCategory } from './lib/file'
 
@@ -13,6 +14,8 @@ export {
   UserRole,
   prosecutionRoles,
   isProsecutionUser,
+  publicProsecutorRoles,
+  isPublicProsecutorUser,
   districtCourtRoles,
   isDistrictCourtUser,
   courtOfAppealsRoles,
@@ -23,6 +26,7 @@ export {
   isDefenceUser,
   isAdminUser,
   isCoreUser,
+  isPublicProsecutor,
 } from './lib/user'
 export type { User } from './lib/user'
 
@@ -37,8 +41,10 @@ export {
   CaseAppealDecision,
   CaseDecision,
   CaseAppealRulingDecision,
+  CaseIndictmentRulingDecision,
   RequestSharedWithDefender,
   DefendantPlea,
+  ServiceRequirement,
   SessionArrangements,
   restrictionCases,
   investigationCases,

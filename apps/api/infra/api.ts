@@ -37,13 +37,14 @@ import {
   HousingBenefitCalculator,
   OccupationalLicenses,
   ShipRegistry,
-  DistrictCommissioners,
+  DistrictCommissionersPCard,
   DirectorateOfImmigration,
   Hunting,
   SignatureCollection,
   SocialInsuranceAdministration,
   IntellectualProperties,
   Inna,
+  UniversityCareers,
   OfficialJournalOfIceland,
 } from '../../../infra/src/dsl/xroad'
 
@@ -160,11 +161,6 @@ export const serviceSetup = (services: {
         staging:
           'http://web-services-auth-delegation-api.identity-server-delegation.svc.cluster.local',
         prod: 'https://auth-delegation-api.internal.innskra.island.is',
-      },
-      USER_NOTIFICATION_CLIENT_URL: {
-        dev: 'http://user-notification-xrd.internal.dev01.devland.is',
-        staging: 'http://user-notification-xrd.internal.staging01.devland.is',
-        prod: 'https://user-notification-xrd.internal.island.is',
       },
       IDENTITY_SERVER_ISSUER_URL: {
         dev: 'https://identity-server.dev01.devland.is',
@@ -398,7 +394,7 @@ export const serviceSetup = (services: {
       Labor,
       DrivingLicense,
       Payment,
-      DistrictCommissioners,
+      DistrictCommissionersPCard,
       Finance,
       Education,
       NationalRegistry,
@@ -417,6 +413,7 @@ export const serviceSetup = (services: {
       ChargeFjsV2,
       EnergyFunds,
       UniversityOfIceland,
+      UniversityCareers,
       WorkMachines,
       IcelandicGovernmentInstitutionVacancies,
       RskProcuring,
