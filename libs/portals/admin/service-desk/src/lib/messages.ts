@@ -34,7 +34,7 @@ export const m = defineMessages({
     defaultMessage: 'Listi af prókúruhöfum:',
   },
   viewDetails: {
-    id: 'admin-portal.service-desk:view-procures',
+    id: 'admin-portal.service-desk:view-details',
     defaultMessage: 'Skoða nánar',
   },
   noContent: {
@@ -105,7 +105,7 @@ export const m = defineMessages({
   verifiedTooltip: {
     id: 'admin-portal.service-desk:verified-tooltip',
     defaultMessage:
-      'Notandi hefur framkvæmkt 2ja þátta staðfestingu á viðkomandi upplýsingum',
+      'Notandi hefur framkvæmt 2ja þátta staðfestingu á viðkomandi upplýsingum',
   },
   documentNotification: {
     id: 'admin-portal.service-desk:document-notification',

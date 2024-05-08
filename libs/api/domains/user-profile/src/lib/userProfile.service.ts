@@ -193,7 +193,7 @@ export class UserProfileService {
   }
 
   async getUserProfiles(user: User, query: string) {
-    return await this.userProfileServiceV2.getUserProfiles(user, query)
+    return this.userProfileServiceV2.getUserProfiles(user, query)
   }
 
   async getUserProfileByNationalId(user: User, nationalId: string) {
