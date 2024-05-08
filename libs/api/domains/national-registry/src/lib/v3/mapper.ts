@@ -29,7 +29,7 @@ import { Housing } from '../shared/models/housing.model'
 import { Name } from '../shared/models/name.model'
 import * as kennitala from 'kennitala'
 import { maskString, isDefined } from '@island.is/shared/utils'
-import { FamilyChild, User } from '../v1/types'
+import { FamilyChild, User } from './types'
 
 export function formatPersonDiscriminated(
   individual?: EinstaklingurDTOAllt | null,

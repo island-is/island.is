@@ -34,12 +34,6 @@ const prodConfig = () => ({
   fileStorage: {
     uploadBucket: process.env.FILE_STORAGE_UPLOAD_BUCKET,
   },
-  nationalRegistry: {
-    baseSoapUrl: process.env.SOFFIA_SOAP_URL,
-    user: process.env.SOFFIA_USER,
-    password: process.env.SOFFIA_PASS,
-    host: process.env.SOFFIA_HOST_URL,
-  },
   healthInsurance: {
     wsdlUrl: process.env.XROAD_HEALTH_INSURANCE_WSDLURL,
     baseUrl: process.env.XROAD_BASE_PATH,
@@ -147,12 +141,6 @@ const devConfig = () => ({
   },
   fileStorage: {
     uploadBucket: process.env.FILE_STORAGE_UPLOAD_BUCKET,
-  },
-  nationalRegistry: {
-    baseSoapUrl: 'https://localhost:8443',
-    user: process.env.SOFFIA_USER ?? '',
-    password: process.env.SOFFIA_PASS ?? '',
-    host: 'soffiaprufa.skra.is',
   },
   healthInsurance: {
     wsdlUrl:
