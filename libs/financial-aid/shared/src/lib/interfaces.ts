@@ -166,14 +166,14 @@ export interface ApplicationEvent {
 
 export interface CreateChildren {
   applicationId: string
-  childNationalId: string
-  childName: string
+  nationalId: string
+  name: string
   school?: string
 }
 
 export interface Children {
-  childNationalId: string
-  childName: string
+  nationalId: string
+  name: string
   school?: string
 }
 
@@ -182,8 +182,8 @@ export interface ApplicationChildren {
   created: string
   modified: string
   applicationId: string
-  childNationalId: string
-  childName: string
+  nationalId: string
+  name: string
   school?: string
 }
 

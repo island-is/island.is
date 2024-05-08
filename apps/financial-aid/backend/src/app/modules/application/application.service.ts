@@ -315,8 +315,8 @@ export class ApplicationService {
       application.children?.map((child) => {
         return this.childrenService.create({
           applicationId: appModel.id,
-          childName: child.childName,
-          childNationalId: child.childNationalId,
+          name: child.name,
+          nationalId: child.nationalId,
           school: child?.school,
         })
       }),

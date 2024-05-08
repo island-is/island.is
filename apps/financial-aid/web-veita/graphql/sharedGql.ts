@@ -62,8 +62,8 @@ export const ApplicationQuery = gql`
       children {
         id
         applicationId
-        childNationalId
-        childName
+        nationalId
+        name
         school
       }
       amount {
@@ -336,8 +336,8 @@ export const UpdateApplicationMutation = gql`
       children {
         id
         applicationId
-        childNationalId
-        childName
+        nationalId
+        name
         school
       }
       staff {

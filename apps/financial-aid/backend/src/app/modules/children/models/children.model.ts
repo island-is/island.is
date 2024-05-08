@@ -52,14 +52,14 @@ export class ChildrenModel extends Model<ApplicationChildren> {
     allowNull: false,
   })
   @ApiProperty()
-  childName: string
+  name: string
 
   @Column({
     type: DataType.STRING,
     allowNull: false,
   })
   @ApiProperty()
-  childNationalId: string
+  nationalId: string
 
   @Column({
     type: DataType.STRING,

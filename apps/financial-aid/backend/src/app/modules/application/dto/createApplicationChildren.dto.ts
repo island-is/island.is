@@ -16,10 +16,10 @@ export class CreateApplicationChildrenDto {
   @IsNotEmpty()
   @IsString()
   @ApiProperty()
-  readonly childNationalId: string
+  readonly nationalId: string
 
   @IsNotEmpty()
   @IsString()
   @ApiProperty()
-  readonly childName: string
+  readonly name: string
 }

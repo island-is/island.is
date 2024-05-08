@@ -12,11 +12,11 @@ export class CreateChildrenInput implements CreateChildren {
 
   @Allow()
   @Field()
-  readonly childNationalId!: string
+  readonly nationalId!: string
 
   @Allow()
   @Field()
-  readonly childName!: string
+  readonly name!: string
 
   @Allow()
   @Field({ nullable: true })
