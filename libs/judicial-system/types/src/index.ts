@@ -26,6 +26,7 @@ export {
   isDefenceUser,
   isAdminUser,
   isCoreUser,
+  isPublicProsecutor,
 } from './lib/user'
 export type { User } from './lib/user'
 
