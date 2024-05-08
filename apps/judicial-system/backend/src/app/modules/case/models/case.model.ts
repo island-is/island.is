@@ -65,7 +65,6 @@ export class Case extends Model {
    * The date and time the case was created in the Database
    **********/
   @CreatedAt
-  @Column({ type: DataType.DATE, allowNull: false })
   @ApiProperty()
   created!: Date
 
@@ -73,7 +72,6 @@ export class Case extends Model {
    * The date and time the case was last updated in the database
    **********/
   @UpdatedAt
-  @Column({ type: DataType.DATE, allowNull: false })
   @ApiProperty()
   modified!: Date
 

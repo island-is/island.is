@@ -16,7 +16,7 @@ import { Case } from './case.model'
 
 @Table({
   tableName: 'date_log',
-  timestamps: false,
+  timestamps: true,
 })
 export class DateLog extends Model {
   static arraignmentDate(dateLogs?: DateLog[]) {
@@ -38,12 +38,10 @@ export class DateLog extends Model {
   id!: string
 
   @CreatedAt
-  @Column({ type: DataType.DATE, allowNull: false })
   @ApiProperty()
   created!: Date
 
   @UpdatedAt
-  @Column({ type: DataType.DATE, allowNull: false })
   @ApiProperty()
   modified!: Date
 
