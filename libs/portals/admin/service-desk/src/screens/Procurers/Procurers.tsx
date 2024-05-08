@@ -18,7 +18,7 @@ const Procurers = () => {
 
   return (
     <Stack space="containerGutter">
-      <BackButton onClick={() => navigate(ServiceDeskPaths.Root)} />
+      <BackButton onClick={() => navigate(ServiceDeskPaths.Companies)} />
       <div>
         <IntroHeader title={company.name} intro={formattedNationalId} />
         <Box marginTop={[3, 3, 6]}>
