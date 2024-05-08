@@ -8,4 +8,11 @@ export const errors = {
       description: 'Error message a required field is empty',
     },
   }),
+  submitted: defineMessages({
+    externalError: {
+      id: 'hid.application:errors.submitter.externalError',
+      defaultMessage: 'Ekki náðist samband við þjónustu',
+      description: 'Error message when external error occurs',
+    },
+  }),
 }
