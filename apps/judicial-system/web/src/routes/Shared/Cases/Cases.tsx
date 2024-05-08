@@ -135,7 +135,7 @@ export const Cases: React.FC = () => {
     casesAwaitingReview,
   ] = useMemo(() => {
     if (!resCases) {
-      return [[], [], [], []]
+      return [[], [], [], [], []]
     }
 
     const filterCases = (predicate: (c: CaseListEntry) => boolean) =>
