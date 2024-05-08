@@ -12,6 +12,7 @@ import { PersonalRepresentativeScopePermissionService } from './services/persona
 import { PersonalRepresentativeRightTypeService } from './services/personalRepresentativeRightType.service'
 import { PersonalRepresentativeTypeService } from './services/personalRepresentativeType.service'
 import { PersonalRepresentativeDelegationTypeModel } from './models/personal-representative-delegation-type.model'
+import { DelegationTypeModel } from '../delegations/models/delegation-type.model'
 
 @Module({
   imports: [
@@ -23,6 +24,7 @@ import { PersonalRepresentativeDelegationTypeModel } from './models/personal-rep
       PersonalRepresentativeRightType,
       PersonalRepresentativeScopePermission,
       PersonalRepresentativeType,
+      DelegationTypeModel,
     ]),
   ],
   providers: [

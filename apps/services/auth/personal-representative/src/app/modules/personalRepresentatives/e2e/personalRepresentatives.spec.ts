@@ -17,9 +17,12 @@ import {
   PaginatedPersonalRepresentativeDto,
   PersonalRepresentativeType,
   DelegationsIndexService,
+  DelegationTypeModel,
+  DelegationProviderModel,
 } from '@island.is/auth-api-lib'
 import { AuthScope } from '@island.is/auth/scopes'
 import { createCurrentUser } from '@island.is/testing/fixtures'
+import { AuthDelegationProvider } from '@island.is/shared/types'
 
 const user = createCurrentUser({
   nationalId: '1122334455',
@@ -113,6 +116,8 @@ describe('PersonalRepresentativeController', () => {
   let prTypeModel: typeof PersonalRepresentativeType
   let prModel: typeof PersonalRepresentative
   let prRightsModel: typeof PersonalRepresentativeRight
+  let delegationTypeModel: typeof DelegationTypeModel
+  let delegationProviderModel: typeof DelegationProviderModel
   let delegationsIndexService: DelegationsIndexService
 
   beforeAll(async () => {
@@ -134,6 +139,14 @@ describe('PersonalRepresentativeController', () => {
     // Get reference on personal representative right models to seed DB
     prRightsModel = app.get<typeof PersonalRepresentativeRight>(
       'PersonalRepresentativeRightRepository',
+    )
+    // Get reference on delegation type model to seed DB
+    delegationTypeModel = app.get<typeof DelegationTypeModel>(
+      'DelegationTypeModelRepository',
+    )
+    // Get reference on delegation provider model to seed DB
+    delegationProviderModel = app.get<typeof DelegationProviderModel>(
+      'DelegationProviderModelRepository',
     )
 
     jest
@@ -171,6 +184,20 @@ describe('PersonalRepresentativeController', () => {
       truncate: true,
       force: true,
     })
+    await delegationTypeModel.destroy({
+      where: {},
+      cascade: true,
+      truncate: true,
+      force: true,
+    })
+    await delegationProviderModel.destroy({
+      where: {},
+      cascade: true,
+      truncate: true,
+      force: true,
+    })
+
+    await addDelegationType(rightTypeList)
   })
 
   describe('Create', () => {
@@ -287,6 +314,9 @@ describe('PersonalRepresentativeController', () => {
 
     // Test get personal rep
     const response = await server.get(`${path}/${personalRep.id}`).expect(200)
+
+    console.log('response.body', response.body)
+
     expect(response.body).toMatchObject(personalRep)
   })
 
@@ -321,6 +351,31 @@ describe('PersonalRepresentativeController', () => {
     const responseData: PaginatedPersonalRepresentativeDto = response.body
     expect(responseData.data[0]).toMatchObject(personalRep)
   })
+
+  async function addDelegationType(listOfRightTypes: typeof rightTypeList) {
+    // Create delegation provider
+    const [prov] = await delegationProviderModel.findOrCreate({
+      where: {
+        id: AuthDelegationProvider.PersonalRepresentativeRegistry,
+      },
+      defaults: {
+        id: AuthDelegationProvider.PersonalRepresentativeRegistry,
+        name: 'Talsmannagrunnur',
+        description: 'Provider for personal representatives',
+        delegationTypes: [],
+      },
+    })
+
+    // Create delegation type
+    listOfRightTypes.map(async (rt) => {
+      await delegationTypeModel.create({
+        description: rt.description,
+        id: `PersonalRepresentative:${rt.code}`,
+        name: `Personal Representative: ${rt.code}`,
+        providerId: prov.id,
+      })
+    })
+  }
 
   async function setupBasePersonalRep(
     data: PersonalRepresentativeCreateDTO,

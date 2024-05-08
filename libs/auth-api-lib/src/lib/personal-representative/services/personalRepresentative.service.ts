@@ -14,6 +14,7 @@ import { PersonalRepresentativeRight } from '../models/personal-representative-r
 import { InactiveReason } from '../models/personal-representative.enum'
 import { PersonalRepresentative } from '../models/personal-representative.model'
 import { PersonalRepresentativeDelegationTypeModel } from '../models/personal-representative-delegation-type.model'
+import { DelegationTypeModel } from '../../delegations/models/delegation-type.model'
 
 type GetByPersonalRepresentativeOptions = {
   nationalIdPersonalRepresentative: string
@@ -32,6 +33,8 @@ export class PersonalRepresentativeService {
     private personalRepresentativeRightTypeModel: typeof PersonalRepresentativeRightType,
     @InjectModel(PersonalRepresentativeDelegationTypeModel)
     private personalRepresentativeDelegationTypeModel: typeof PersonalRepresentativeDelegationTypeModel,
+    @InjectModel(DelegationTypeModel)
+    private delegationTypeModel: typeof DelegationTypeModel,
     @Inject(LOGGER_PROVIDER)
     private logger: Logger,
     private sequelize: Sequelize,
@@ -76,15 +79,6 @@ export class PersonalRepresentativeService {
       where: whereClause,
     })
 
-    await Promise.all(
-      result.data.map(async (rec) => {
-        rec.personalRepresentativeDelegationTypes =
-          await this.personalRepresentativeDelegationTypeModel.findAll({
-            where: { personalRepresentativeId: rec.id },
-          })
-      }),
-    )
-
     // Since paginate in sequlize does not support include correctly we need to fetch the rights array separately
     for await (const rec of result.data) {
       rec.rights = await this.personalRepresentativeRightModel.findAll({
@@ -97,6 +91,11 @@ export class PersonalRepresentativeService {
           },
         ],
       })
+      rec.personalRepresentativeDelegationTypes =
+        await this.personalRepresentativeDelegationTypeModel.findAll({
+          where: { personalRepresentativeId: rec.id },
+          include: [DelegationTypeModel],
+        })
     }
 
     result.data = result.data.map((rec) => rec.toDTO())
@@ -125,7 +124,6 @@ export class PersonalRepresentativeService {
       ...(skipInactive && { inactive: false }),
     }
     const whereClauseRights: WhereOptions = {}
-
     if (!includeInactive) {
       whereClause['validTo'] = validToClause
       whereClauseRights['validFrom'] = validFromClause
@@ -137,6 +135,11 @@ export class PersonalRepresentativeService {
         useMaster,
         where: whereClause,
         include: [
+          {
+            model: PersonalRepresentativeDelegationTypeModel,
+            required: true,
+            include: [DelegationTypeModel],
+          },
           {
             model: PersonalRepresentativeRight,
             required: true,
@@ -170,16 +173,23 @@ export class PersonalRepresentativeService {
     const whereClause: WhereOptions = {
       nationalIdRepresentedPerson: nationalIdRepresentedPerson,
     }
+
     const whereClauseRights: WhereOptions = {}
     if (!includeInvalid) {
       whereClause['validTo'] = validToClause
       whereClauseRights['validFrom'] = validFromClause
       whereClauseRights['validTo'] = validToClause
     }
+
     const personalRepresentatives =
       await this.personalRepresentativeModel.findAll({
         where: whereClause,
         include: [
+          {
+            model: PersonalRepresentativeDelegationTypeModel,
+            required: true,
+            include: [DelegationTypeModel],
+          },
           {
             model: PersonalRepresentativeRight,
             required: true,
@@ -193,6 +203,7 @@ export class PersonalRepresentativeService {
           },
         ],
       })
+
     if (personalRepresentatives.length === 0) {
       return null
     }
@@ -214,9 +225,15 @@ export class PersonalRepresentativeService {
     this.logger.debug(
       `Finding personal representative right type for id - "${id}"`,
     )
+
     const personalRepresentative =
       await this.personalRepresentativeModel.findByPk(id, {
         include: [
+          {
+            model: PersonalRepresentativeDelegationTypeModel,
+            required: true,
+            include: [DelegationTypeModel],
+          },
           {
             model: PersonalRepresentativeRight,
             required: true,
@@ -224,6 +241,14 @@ export class PersonalRepresentativeService {
           },
         ],
       })
+
+    console.log(
+      'personalRepresentative',
+      personalRepresentative?.personalRepresentativeDelegationTypes?.map(
+        (prdt) => prdt.delegationType,
+      ),
+    )
+
     return personalRepresentative ? personalRepresentative.toDTO() : null
   }
 
@@ -249,9 +274,34 @@ export class PersonalRepresentativeService {
           },
         )
 
-        await this.personalRepresentativeRightModel.bulkCreate(rightCodes, {
-          transaction: t,
-        })
+        const createdPRR =
+          await this.personalRepresentativeRightModel.bulkCreate(rightCodes, {
+            transaction: t,
+          })
+
+        // Loop through the created PersonalRepresentativeRight and create a PersonalRepresentativeDelegationType for each,
+        // this is done to use the same id for the PersonalRepresentativeDelegationType as the PersonalRepresentativeRight
+        await Promise.all(
+          createdPRR.map(async (c) => {
+            try {
+              const created =
+                await this.personalRepresentativeDelegationTypeModel.create(
+                  {
+                    id: c.id,
+                    personalRepresentativeId: newPr.id,
+                    delegationTypeId: `PersonalRepresentative:${c.rightTypeCode}`,
+                  },
+                  { transaction: t },
+                )
+
+              return created.id
+            } catch (error) {
+              throw new BadRequestException(
+                `Error creating personal representative delegation type: ${error}`,
+              )
+            }
+          }),
+        )
 
         /** To tackle replication we need to generate new object without selecting it from database */
         const result = newPr.toDTO()
@@ -260,6 +310,17 @@ export class PersonalRepresentativeService {
             where: { code: rightCodes.map((rc) => rc.rightTypeCode) },
           })
         result.rights = rightTypes.map((rt) => rt.toDTO())
+        const delegationTypes = await this.delegationTypeModel.findAll({
+          where: {
+            id: rightCodes.map(
+              (rc) => `PersonalRepresentative:${rc.rightTypeCode}`,
+            ),
+          },
+        })
+
+        result.personalRepresentativeDelegationTypes = delegationTypes.map(
+          (prdt) => prdt.toDTO(),
+        )
         return result
       })
     } catch (err) {

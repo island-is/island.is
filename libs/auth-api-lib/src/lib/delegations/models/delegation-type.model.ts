@@ -5,7 +5,6 @@ import {
 } from 'sequelize'
 import {
   BelongsTo,
-  BelongsToMany,
   Column,
   CreatedAt,
   DataType,
@@ -18,7 +17,6 @@ import {
 } from 'sequelize-typescript'
 
 import { DelegationProviderModel } from './delegation-provider.model'
-import { ApiProperty } from '@nestjs/swagger'
 import { PersonalRepresentativeDelegationTypeModel } from '../../personal-representative/models/personal-representative-delegation-type.model'
 import { DelegationTypeDto } from '../dto/delegation-type.dto'
 
@@ -47,7 +45,7 @@ export class DelegationTypeModel extends Model<
   providerId!: string
 
   @BelongsTo(() => DelegationProviderModel)
-  provider!: DelegationProviderModel
+  provider!: CreationOptional<DelegationProviderModel>
 
   @Column({
     type: DataType.STRING,
@@ -67,19 +65,18 @@ export class DelegationTypeModel extends Model<
   @UpdatedAt
   readonly modified?: Date
 
-  @ApiProperty({
-    type: () => PersonalRepresentativeDelegationTypeModel,
-    required: true,
-  })
   @HasMany(() => PersonalRepresentativeDelegationTypeModel)
   personalRepresentativeDelegationType?: PersonalRepresentativeDelegationTypeModel[]
 
   toDTO(): DelegationTypeDto {
-    return {
+    const val = {
       id: this.id,
+      description: this.description,
       providerId: this.providerId,
       name: this.name,
-      description: this.description,
     }
+
+    console.log('VAL', this, val, this.description)
+    return val
   }
 }
