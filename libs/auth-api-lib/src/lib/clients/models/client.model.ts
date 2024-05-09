@@ -1,25 +1,27 @@
+import { ApiProperty } from '@nestjs/swagger'
 import {
   BelongsTo,
   Column,
   CreatedAt,
   DataType,
   ForeignKey,
+  HasMany,
   Model,
+  PrimaryKey,
   Table,
   UpdatedAt,
-  PrimaryKey,
-  HasMany,
 } from 'sequelize-typescript'
-import { ApiProperty } from '@nestjs/swagger'
-import { ClientAllowedScope } from './client-allowed-scope.model'
+
+import { Domain } from '../../resources/models/domain.model'
+import { defaultAcrValue } from '../../types'
 import { ClientAllowedCorsOrigin } from './client-allowed-cors-origin.model'
+import { ClientAllowedScope } from './client-allowed-scope.model'
+import { ClientClaim } from './client-claim.model'
+import { ClientGrantType } from './client-grant-type.model'
+import { ClientIdpRestrictions } from './client-idp-restrictions.model'
 import { ClientPostLogoutRedirectUri } from './client-post-logout-redirect-uri.model'
 import { ClientRedirectUri } from './client-redirect-uri.model'
-import { ClientIdpRestrictions } from './client-idp-restrictions.model'
 import { ClientSecret } from './client-secret.model'
-import { ClientGrantType } from './client-grant-type.model'
-import { ClientClaim } from './client-claim.model'
-import { Domain } from '../../resources/models/domain.model'
 
 @Table({
   tableName: 'client',
@@ -546,6 +548,13 @@ export class Client extends Model {
 
   @HasMany(() => ClientClaim)
   claims?: ClientClaim[]
+
+  @Column({
+    type: DataType.ARRAY(DataType.STRING),
+    defaultValue: [defaultAcrValue],
+  })
+  @ApiProperty()
+  allowedAcr!: string[]
 
   // Signing algorithm for identity token. If empty, will use the server default signing algorithm.
   // readonly allowedIdentityTokenSigningAlgorithms

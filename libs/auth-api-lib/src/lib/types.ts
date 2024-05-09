@@ -1,5 +1,7 @@
 export const DEFAULT_DOMAIN = '@island.is'
 
+export const defaultAcrValue = 'eidas-loa-high'
+
 export enum GrantTypeEnum {
   AuthorizationCode = 'authorization_code',
   ClientCredentials = 'client_credentials',

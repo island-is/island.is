@@ -1,24 +1,25 @@
+import { getModelToken } from '@nestjs/sequelize'
 import faker from 'faker'
 import request from 'supertest'
 
-import { AdminPortalScope } from '@island.is/auth/scopes'
 import {
   AdminCreateClientDto,
   AdminPatchClientDto,
   Client,
   clientBaseAttributes,
   ClientGrantType,
+  defaultAcrValue,
   RefreshTokenExpiration,
   SequelizeConfigService,
   translateRefreshTokenExpiration,
 } from '@island.is/auth-api-lib'
 import { User } from '@island.is/auth-nest-tools'
+import { AdminPortalScope } from '@island.is/auth/scopes'
 import { FixtureFactory } from '@island.is/services/auth/testing'
 import { createCurrentUser } from '@island.is/testing/fixtures'
 import { getRequestMethod, setupApp, TestApp } from '@island.is/testing/nest'
 
 import { AppModule } from '../../../app.module'
-import { getModelToken } from '@nestjs/sequelize'
 
 const tenantId = '@test.is'
 const clientId = '@test.is/test-client'
@@ -80,6 +81,7 @@ const createTestClientData = async (app: TestApp, user: User) => {
     supportsProcuringHolders: false,
     promptDelegations: false,
     singleSession: false,
+    allowedAcr: [defaultAcrValue],
   }
 }
 
@@ -313,6 +315,7 @@ describe('MeClientsController with auth', () => {
         promptDelegations: false,
         customClaims: [],
         singleSession: false,
+        allowedAcr: [defaultAcrValue],
       })
 
       // Assert - db record
@@ -412,6 +415,7 @@ describe('MeClientsController with auth', () => {
         promptDelegations: false,
         customClaims: [],
         singleSession: false,
+        allowedAcr: [defaultAcrValue],
       })
 
       // Assert - db record
@@ -534,6 +538,7 @@ describe('MeClientsController with auth', () => {
           : false,
         customClaims: typeSpecificDefaults.customClaims ?? [],
         singleSession: typeSpecificDefaults.singleSession ?? false,
+        allowedAcr: [defaultAcrValue],
       })
 
       // Assert - db record
@@ -824,6 +829,7 @@ describe('MeClientsController with auth', () => {
               value: 'value1',
             },
           ],
+          allowedAcr: [faker.random.word()],
         }
 
         // Act
