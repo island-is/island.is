@@ -1,38 +1,51 @@
-import React, { useCallback, useContext } from 'react'
+import React, { useCallback, useContext, useState } from 'react'
 import { useIntl } from 'react-intl'
 import { useRouter } from 'next/router'
 
 import { Box } from '@island.is/island-ui/core'
-import { isCompletedCase } from '@island.is/judicial-system/types'
+import * as constants from '@island.is/judicial-system/consts'
+import {
+  IndictmentCaseReviewDecision,
+  isCompletedCase,
+} from '@island.is/judicial-system/types'
 import { titles } from '@island.is/judicial-system-web/messages'
 import {
   CourtCaseInfo,
   FormContentContainer,
   FormContext,
+  FormFooter,
   IndictmentCaseFilesList,
   IndictmentsLawsBrokenAccordionItem,
   InfoCardActiveIndictment,
   InfoCardCaseScheduledIndictment,
   InfoCardClosedIndictment,
+  Modal,
   PageHeader,
   PageLayout,
   PageTitle,
   useIndictmentsLawsBroken,
+  UserContext,
 } from '@island.is/judicial-system-web/src/components'
 import { CaseState } from '@island.is/judicial-system-web/src/graphql/schema'
 
-import { AppealDecision } from '../../PublicProsecutor/Indictments/AppealDecision/AppealDecision'
+import { AppealDecision } from '../../PublicProsecutor/Indictments/ReviewDecision/ReviewDecision'
 import { strings } from './IndictmentOverview.strings'
 
 const IndictmentOverview = () => {
   const router = useRouter()
   const { workingCase, isLoadingWorkingCase, caseNotFound } =
     useContext(FormContext)
+  const { user } = useContext(UserContext)
 
   const { formatMessage } = useIntl()
   const lawsBroken = useIndictmentsLawsBroken(workingCase)
   const caseIsClosed = isCompletedCase(workingCase.state)
   const latestDate = workingCase.courtDate ?? workingCase.arraignmentDate
+
+  const [modalVisible, setModalVisible] = React.useState<boolean>(false)
+  const [indictmentReviewDecision, setIndictmentReviewDecision] = useState<
+    IndictmentCaseReviewDecision | undefined
+  >(undefined)
 
   const handleNavigationTo = useCallback(
     (destination: string) => router.push(`${destination}/${workingCase.id}`),
@@ -94,9 +107,36 @@ const IndictmentOverview = () => {
             <IndictmentCaseFilesList workingCase={workingCase} />
           </Box>
         )}
-        {isCompletedCase(workingCase.state) && (
-          <AppealDecision workingCase={workingCase}></AppealDecision>
-        )}
+        {isCompletedCase(workingCase.state) &&
+          workingCase.indictmentReviewer?.id === user?.id && (
+            <>
+              <AppealDecision
+                workingCase={workingCase}
+                onSelect={setIndictmentReviewDecision}
+                selectedOption={indictmentReviewDecision}
+              />
+              <FormFooter
+                previousUrl={`${constants.CASES_ROUTE}`}
+                nextButtonText={formatMessage(strings.completeReview)}
+                onNextButtonClick={() => setModalVisible(true)}
+              />
+              {modalVisible && (
+                <Modal
+                  title={formatMessage(strings.reviewModalTitle)}
+                  text={formatMessage(strings.reviewModalText)}
+                  primaryButtonText={formatMessage(
+                    strings.reviewModalPrimaryButtonText,
+                  )}
+                  secondaryButtonText={formatMessage(
+                    strings.reviewModalSecondaryButtonText,
+                  )}
+                  onClose={() => setModalVisible(false)}
+                  onPrimaryButtonClick={() => console.log('test')}
+                  onSecondaryButtonClick={() => setModalVisible(false)}
+                />
+              )}
+            </>
+          )}
       </FormContentContainer>
     </PageLayout>
   )

@@ -49,6 +49,7 @@ export {
   restrictionCases,
   investigationCases,
   indictmentCases,
+  IndictmentCaseReviewDecision,
   isIndictmentCase,
   isRestrictionCase,
   isInvestigationCase,

@@ -3,7 +3,10 @@ import { useIntl } from 'react-intl'
 
 import { Box, RadioButton, Text } from '@island.is/island-ui/core'
 import { formatDate } from '@island.is/judicial-system/formatters'
-import { isPublicProsecutor } from '@island.is/judicial-system/types'
+import {
+  IndictmentCaseReviewDecision,
+  isPublicProsecutor,
+} from '@island.is/judicial-system/types'
 import {
   BlueBox,
   SectionHeading,
@@ -11,22 +14,19 @@ import {
 } from '@island.is/judicial-system-web/src/components'
 import { Case } from '@island.is/judicial-system-web/src/graphql/schema'
 
-import { strings } from './AppealDecision.strings'
-import * as styles from './AppealDecision.css'
+import { strings } from './ReviewDecision.strings'
+import * as styles from './ReviewDecision.css'
 interface Props {
   workingCase: Case
-  setWorkingCase?: React.Dispatch<React.SetStateAction<Case>>
-  onClose?: () => void
-  onComplete?: () => void
+  selectedOption?: IndictmentCaseReviewDecision
+  onSelect: (decision: IndictmentCaseReviewDecision) => void
 }
 
 export const AppealDecision: React.FC<Props> = (props) => {
-  const { workingCase, setWorkingCase, onClose, onComplete } = props
+  const { workingCase, onSelect, selectedOption } = props
 
   const { user } = useContext(UserContext)
   const { formatMessage: fm } = useIntl()
-
-  const [selectedOption, setSelectedOption] = useState<number | null>(null)
 
   if (!isPublicProsecutor(user)) {
     return null
@@ -35,15 +35,13 @@ export const AppealDecision: React.FC<Props> = (props) => {
   const options = [
     {
       label: fm(strings.appealToCourtOfAppeals),
-      value: 0,
+      value: IndictmentCaseReviewDecision.APPEAL,
     },
     {
       label: fm(strings.acceptDecision),
-      value: 1,
+      value: IndictmentCaseReviewDecision.ACCEPT,
     },
   ]
-
-  fm(strings.appealToCourtOfAppeals)
 
   return (
     <Box marginBottom={5}>
@@ -66,12 +64,12 @@ export const AppealDecision: React.FC<Props> = (props) => {
             return (
               <Box key={'radioButton-' + index}>
                 <RadioButton
-                  name={'options-' + index}
+                  name={'reviewOption-' + index}
                   label={item.label}
                   value={item.value}
-                  checked={false}
+                  checked={selectedOption === item.value}
                   onChange={() => {
-                    console.log(item.value)
+                    onSelect(item.value)
                   }}
                   backgroundColor="white"
                   large
@@ -81,30 +79,6 @@ export const AppealDecision: React.FC<Props> = (props) => {
           })}
         </div>
       </BlueBox>
-
-      {/* <BlueBox>
-        
-        <RadioButton
-          id="appealDecision"
-          name="appealDecision"
-          label={fm(strings.appealToCourtOfAppeals)}
-          value="Krafa um endurskoðun"
-          checked={false}
-          onChange={() => {
-            console.log('Krafa um endurskoðun')
-          }}
-        />
-        <RadioButton
-          id="appealDecision"
-          name="appealDecision"
-          label={fm(strings.acceptDecision)}
-          value="Krafa um endurskoðun"
-          checked={false}
-          onChange={() => {
-            console.log('Krafa um endurskoðun')
-          }}
-        />
-      </BlueBox> */}
     </Box>
   )
 }
