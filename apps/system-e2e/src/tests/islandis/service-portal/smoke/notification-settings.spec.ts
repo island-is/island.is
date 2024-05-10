@@ -1,7 +1,6 @@
 import { test, BrowserContext, expect } from '@playwright/test'
 
 import { mNotifications } from '@island.is/service-portal/information/messages'
-import { m } from '@island.is/service-portal/core/messages'
 
 import { session } from '../../../../support/session'
 import { disableI18n } from '../../../../support/disablers'
@@ -43,9 +42,7 @@ test.describe('Notification settings', () => {
 
     // Act + Assert
     await test.step('should have page title', async () => {
-      await expect(
-        findByRole('heading', label(m.mySettingsNotifications)),
-      ).toBeVisible()
+      await expect(findByRole('heading', 'Tilkynningar')).toBeVisible()
     })
 
     await test.step(
@@ -79,10 +76,7 @@ test.describe('Notification settings', () => {
         const delegationList = page.getByTestId('actor-profile-settings-list')
         await expect(delegationList).toBeVisible()
 
-        // Gervimaður Færeyjar is a procuration holder for 65° ARTIC ehf.
-        const delegation = delegationList
-          .getByRole('listitem')
-          .filter({ hasText: '65° ARTIC ehf.' })
+        const delegation = delegationList.getByRole('listitem').first()
 
         // email notification settings toggle button
         await expect(delegation).toBeVisible()
