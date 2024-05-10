@@ -8,8 +8,8 @@ export class ExtensionCredProps {
 
 @InputType('AuthPasskeyRegistrationObjectClientExtensionResults')
 export class PasskeyRegistrationObjectClientExtensionResults {
-  @Field(() => ExtensionCredProps)
-  credProps!: ExtensionCredProps
+  @Field(() => ExtensionCredProps, { nullable: true })
+  credProps?: ExtensionCredProps
 }
 
 @InputType('AuthPasskeyRegistrationObjectResponse')

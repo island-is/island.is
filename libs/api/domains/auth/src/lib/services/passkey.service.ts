@@ -2,6 +2,7 @@ import { Injectable } from '@nestjs/common'
 
 import { Auth, AuthMiddleware, User } from '@island.is/auth-nest-tools'
 import { PasskeysApi } from '@island.is/clients/auth/public-api'
+// import { api} from '@island.is/clients/auth/ids-api'
 
 import { PasskeyRegistrationOptions } from '../models/registrationOptions.model'
 import { PasskeyRegistrationVerification } from '../models/verifyRegistration.model'

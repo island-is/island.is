@@ -1,6 +1,10 @@
-import { BadRequestException, Inject, Injectable } from '@nestjs/common'
+import {
+  BadRequestException,
+  Inject,
+  Injectable,
+  UnauthorizedException,
+} from '@nestjs/common'
 import { InjectModel } from '@nestjs/sequelize'
-import { Sequelize } from 'sequelize-typescript'
 import { Cache as CacheManager } from 'cache-manager'
 import type { User } from '@island.is/auth-nest-tools'
 
@@ -12,6 +16,8 @@ import {
   generateRegistrationOptions,
   verifyRegistrationResponse,
 } from '@simplewebauthn/server'
+
+// import { verifyAttestation } from 'node-app-attest'
 
 import type {
   GenerateRegistrationOptionsOpts,
@@ -39,13 +45,11 @@ const ALLOWED_ORIGIN = 'http://localhost:4200'
 const CACHE_MANAGER = 'CACHE_MANAGER'
 
 // TODO read from env
-const CHALLENGE_TTL = 15 * 60 * 1000
+const CHALLENGE_TTL = 2 * 60 * 1000
 
 @Injectable()
 export class PasskeysCoreService {
   constructor(
-    @Inject(Sequelize)
-    private sequelize: Sequelize,
     @InjectModel(PasskeyModel)
     private passkeyModel: typeof PasskeyModel,
     @Inject(LOGGER_PROVIDER)
@@ -62,13 +66,15 @@ export class PasskeysCoreService {
       rpID: RP_ID,
       userName: 'Test User',
       timeout: 60000,
-      attestationType: 'none',
+      attestationType: 'direct',
       authenticatorSelection: {
         residentKey: 'discouraged',
         userVerification: 'required',
       },
       // ES256 and RS256
       supportedAlgorithmIDs: [-7, -257],
+      // TODO?
+      // excludeCredentials: [ ... ]
     }
 
     const options = await generateRegistrationOptions(opts)
@@ -84,6 +90,19 @@ export class PasskeysCoreService {
     verificationResponse: RegistrationResponseJSON,
   ) {
     const expectedChallenge = await this.getChallenge(getUserId(user), 'reg')
+
+    // try {
+    //   const { keyId, publicKey } = verifyAttestation({
+    //     attestation: verificationResponse.response.attestationObject,
+    //     challenge: expectedChallenge,
+    //     keyId: 'test',
+    //     bundleIdentifier: 'is.island.app',
+    //     teamIdentifier: 'team.island', // TODO
+    //     allowDevelopmentEnvironment: process.env.NODE_ENV === 'development',
+    //   })
+    // } catch (e) {
+    //   throw new BadRequestException('Device verification failed')
+    // }
 
     let verification: VerifiedRegistrationResponse | undefined
     try {
@@ -186,13 +205,13 @@ export class PasskeysCoreService {
       })
     } catch (error) {
       this.logger.error('Auth verification failed', error)
-      throw new BadRequestException('Auth verification failed')
+      throw new UnauthorizedException('Auth verification failed')
     }
 
     const { verified } = verification
 
     if (!verified) {
-      throw new BadRequestException('Auth verification failed')
+      throw new UnauthorizedException('Auth verification failed')
     }
 
     return {
