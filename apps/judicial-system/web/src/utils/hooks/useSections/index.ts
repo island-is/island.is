@@ -968,10 +968,10 @@ const useSections = (
             },
             {
               name: formatMessage(sections.indictmentsCourtSection.courtRecord),
-              isActive: isActive(constants.INDICTMENTS_COURT_RECORD_ROUTE),
-              href: `${constants.INDICTMENTS_COURT_RECORD_ROUTE}/${id}`,
+              isActive: isActive(constants.INDICTMENTS_CONCLUSION_ROUTE),
+              href: `${constants.INDICTMENTS_CONCLUSION_ROUTE}/${id}`,
               onClick:
-                !isActive(constants.INDICTMENTS_COURT_RECORD_ROUTE) &&
+                !isActive(constants.INDICTMENTS_CONCLUSION_ROUTE) &&
                 validateFormStepper(
                   isValid,
                   [
@@ -985,7 +985,7 @@ const useSections = (
                 onNavigationTo
                   ? async () =>
                       await onNavigationTo(
-                        constants.INDICTMENTS_COURT_RECORD_ROUTE,
+                        constants.INDICTMENTS_CONCLUSION_ROUTE,
                       )
                   : undefined,
             },
@@ -1199,14 +1199,12 @@ const useSections = (
         name: formatMessage(sections.courtOfAppealSection.appealed),
         isActive:
           !isCourtOfAppealsUser(user) &&
-          (appealState === CaseAppealState.RECEIVED ||
-            appealState === CaseAppealState.APPEALED),
+          appealState === CaseAppealState.APPEALED,
         children: [],
       },
       {
         name: formatMessage(sections.courtOfAppealSection.result),
         isActive:
-          appealState === CaseAppealState.APPEALED ||
           appealState === CaseAppealState.RECEIVED ||
           appealState === CaseAppealState.WITHDRAWN,
         children: isCourtOfAppealsUser(user)

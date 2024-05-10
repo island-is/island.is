@@ -1186,6 +1186,8 @@ PensionCalculator.getProps = async ({
 
   let defaultValues = convertQueryParametersToCalculationInput(query)
 
+  const dateOfCalculationsOptions = getDateOfCalculationsOptions(customPageData)
+
   defaultValues = {
     ...defaultValues,
     typeOfBasePension: defaultValues.typeOfBasePension
@@ -1194,13 +1196,16 @@ PensionCalculator.getProps = async ({
     typeOfPeriodIncome: defaultValues.typeOfPeriodIncome
       ? defaultValues.typeOfPeriodIncome
       : PeriodIncomeType.Month,
+    dateOfCalculations: defaultValues.dateOfCalculations
+      ? defaultValues.dateOfCalculations
+      : dateOfCalculationsOptions[0].value,
   }
 
   return {
     organizationPage: getOrganizationPage,
     organization: getOrganization,
     defaultValues,
-    dateOfCalculationsOptions: getDateOfCalculationsOptions(customPageData),
+    dateOfCalculationsOptions,
     ...getThemeConfig(
       getOrganizationPage?.theme,
       getOrganizationPage?.organization,

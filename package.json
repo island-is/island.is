@@ -71,6 +71,7 @@
     "@aws-sdk/credential-provider-node": "3.145.0",
     "@azure/msal-node": "1.14.4",
     "@contentful/app-sdk": "4.16.0",
+    "@contentful/default-field-editors": "1.6.34",
     "@contentful/field-editor-json": "3.1.4",
     "@contentful/field-editor-reference": "5.20.0",
     "@contentful/field-editor-single-line": "1.1.8",
@@ -90,7 +91,7 @@
     "@formatjs/intl-locale": "2.4.33",
     "@formatjs/intl-numberformat": "7.1.5",
     "@hookform/error-message": "2.0.1",
-    "@island.is/regulations-tools": "0.7.14",
+    "@island.is/regulations-tools": "0.8.1",
     "@keyv/redis": "2.6.1",
     "@livechat/widget-core": "1.3.2",
     "@nestjs/apollo": "10.1.0",
@@ -221,7 +222,7 @@
     "node-gyp": "9.1.0",
     "node-html-markdown": "1.3.0",
     "nodemailer": "6.7.2",
-    "oidc-client-ts": "2.0.3",
+    "oidc-client-ts": "2.4.0",
     "openapi3-ts": "2.0.0",
     "opossum": "6.1.0",
     "passport": "0.6.0",
@@ -269,7 +270,7 @@
     "rosetta": "1.0.0",
     "rxjs": "7.8.1",
     "sanitize-html": "2.10.0",
-    "sequelize": "6.19.0",
+    "sequelize": "6.29.0",
     "sequelize-replace-enum-postgres": "1.6.0",
     "sequelize-typescript": "2.1.3",
     "short-unique-id": "5.0.3",
@@ -379,7 +380,7 @@
     "@types/js-base64": "3.0.0",
     "@types/js-cookie": "2.2.6",
     "@types/js-yaml": "4.0.3",
-    "@types/lodash": "4.14.160",
+    "@types/lodash": "4.17.1",
     "@types/mailparser": "3.4.0",
     "@types/memoizee": "0.4.5",
     "@types/node": "18.14.2",
@@ -458,6 +459,7 @@
     "webpack-bundle-analyzer": "4.5.0"
   },
   "resolutions": {
+    "dottie": "2.0.4",
     "marked": "2.0.0",
     "elliptic": "6.5.4",
     "ssri": "8.0.1",
@@ -476,7 +478,10 @@
     "jest-config": "patch:jest-config@npm%3A29.7.0#./.yarn/patches/jest-config-npm-29.7.0-97d8544d74.patch",
     "@nestjs/terminus@10.2.0": "patch:@nestjs/terminus@npm%3A10.2.0#./.yarn/patches/@nestjs-terminus-npm-10.2.0-9e24c129e0.patch",
     "node-request-interceptor@^0.5.1": "patch:node-request-interceptor@npm%3A0.5.9#./.yarn/patches/node-request-interceptor-npm-0.5.9-77e9d9c058.patch",
-    "dd-trace@5.10.0": "patch:dd-trace@npm%3A5.10.0#./.yarn/patches/dd-trace-npm-5.10.0-184ed36e96.patch"
+    "dd-trace@5.10.0": "patch:dd-trace@npm%3A5.10.0#./.yarn/patches/dd-trace-npm-5.10.0-184ed36e96.patch",
+    "expo-modules-core@1.1.1": "patch:expo-modules-core@npm%3A1.1.1#./.yarn/patches/expo-modules-core-npm-1.1.1-c3861d47cb.patch",
+    "react-native@0.71.1": "patch:react-native@npm%3A0.71.1#./.yarn/patches/react-native-npm-0.71.1-f5d237f240.patch",
+    "react-native-navigation@7.32.1": "patch:react-native-navigation@npm%3A7.32.1#./.yarn/patches/react-native-navigation-npm-7.32.1-262dc5c010.patch"
   },
   "volta": {
     "node": "18.16.0",

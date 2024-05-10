@@ -13,12 +13,24 @@ import {
   CaseAppealRulingDecision,
   CaseCustodyRestrictions,
   CaseDecision,
+  CaseIndictmentRulingDecision,
   CaseLegalProvisions,
   CaseType,
   RequestSharedWithDefender,
   SessionArrangements,
   UserRole,
 } from '@island.is/judicial-system/types'
+
+@InputType()
+class UpdateDateLog {
+  @Allow()
+  @Field({ nullable: true })
+  readonly date?: string
+
+  @Allow()
+  @Field({ nullable: true })
+  readonly location?: string
+}
 
 @InputType()
 export class UpdateCaseInput {
@@ -155,16 +167,16 @@ export class UpdateCaseInput {
   readonly sessionArrangements?: SessionArrangements
 
   @Allow()
-  @Field({ nullable: true })
-  readonly courtDate?: string
+  @Field(() => UpdateDateLog, { nullable: true })
+  readonly arraignmentDate?: UpdateDateLog
+
+  @Allow()
+  @Field(() => UpdateDateLog, { nullable: true })
+  readonly courtDate?: UpdateDateLog
 
   @Allow()
   @Field({ nullable: true })
   readonly courtLocation?: string
-
-  @Allow()
-  @Field({ nullable: true })
-  readonly courtRoom?: string
 
   @Allow()
   @Field({ nullable: true })
@@ -353,4 +365,16 @@ export class UpdateCaseInput {
   @Allow()
   @Field({ nullable: true })
   readonly indictmentReturnedExplanation?: string
+
+  @Allow()
+  @Field({ nullable: true })
+  readonly postponedIndefinitelyExplanation?: string
+
+  @Allow()
+  @Field(() => CaseIndictmentRulingDecision, { nullable: true })
+  readonly indictmentRulingDecision?: CaseIndictmentRulingDecision
+
+  @Allow()
+  @Field({ nullable: true })
+  readonly indictmentReviewerId?: string
 }

@@ -146,7 +146,11 @@ export const defaultRenderNodeObject: RenderNode = {
       <hr />
     </Box>
   ),
-  [BLOCKS.TABLE]: (_node, children) => <T.Table>{children}</T.Table>,
+  [BLOCKS.TABLE]: (_node, children) => (
+    <Box className={styles.clearBoth}>
+      <T.Table>{children}</T.Table>
+    </Box>
+  ),
   [BLOCKS.TABLE_ROW]: (_node, children) => {
     if (
       (children as { nodeType: string }[])?.every(

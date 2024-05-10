@@ -1,4 +1,5 @@
 import {
+  ApplicantChildCustodyInformation,
   Application,
   ApplicationAnswerFile,
   FieldBaseProps,
@@ -31,6 +32,10 @@ export interface ExternalData {
     data?: NationalRegistrySpouse
     date: string
     status: StatusProvider
+  }
+  childrenCustodyInformation: {
+    data: ApplicantChildCustodyInformation[]
+    date: string
   }
   municipality: {
     data?: Municipality
