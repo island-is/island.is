@@ -5,8 +5,14 @@ import {
   buildSection,
   buildSubmitField,
   buildSubSection,
+  getValueViaPath,
 } from '@island.is/application/core'
-import { DefaultEvents, Form, FormModes } from '@island.is/application/types'
+import {
+  ApplicantChildCustodyInformation,
+  DefaultEvents,
+  Form,
+  FormModes,
+} from '@island.is/application/types'
 import { ApproveOptions, ExternalData } from '../lib/types'
 
 import * as m from '../lib/messages'
@@ -47,19 +53,25 @@ export const Application: Form = buildForm({
             }),
           ],
         }),
-        // buildSubSection({
-        //   condition: (_, externalData) =>
-        //     (externalData as unknown as ExternalData).childrenCustodyInformation
-        //       .data.,
-        //   title: m.aboutChildrenForm.general.sectionTitle,
-        //   children: [
-        //     buildCustomField({
-        //       id: Routes.CHILDRENSCHOOLINFO,
-        //       title: m.unknownRelationship.general.pageTitle,
-        //       component: 'AboutChildrenForm',
-        //     }),
-        //   ],
-        // }),
+        buildSubSection({
+          condition: (_, externalData) => {
+            const childWithInfo = getValueViaPath(
+              externalData,
+              'childrenCustodyInformation.data',
+              [],
+            ) as ApplicantChildCustodyInformation[]
+
+            return childWithInfo ? childWithInfo.length > 0 : false
+          },
+          title: m.aboutChildrenForm.general.sectionTitle,
+          children: [
+            buildCustomField({
+              id: Routes.CHILDRENSCHOOLINFO,
+              title: m.unknownRelationship.general.pageTitle,
+              component: 'AboutChildrenForm',
+            }),
+          ],
+        }),
         buildSubSection({
           id: Routes.HOMECIRCUMSTANCES,
           title: m.homeCircumstancesForm.general.sectionTitle,

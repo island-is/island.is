@@ -22,6 +22,9 @@ export const dataSchema = z.object({
       params: error.validation.approveSpouse,
     }),
   }),
+  selectedChildren: z
+    .array(z.string())
+    .refine((v) => v && v.length > 0, { params: error.validation.email }),
   relationshipStatus: z
     .object({
       unregisteredCohabitation: z

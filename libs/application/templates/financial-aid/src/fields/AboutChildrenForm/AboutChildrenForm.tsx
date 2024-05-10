@@ -14,22 +14,25 @@ const AboutChildrenForm = ({ application }: FAFieldBaseProps) => {
   const { formatMessage } = useIntl()
   const { lang } = useLocale()
 
+  console.log(application.externalData.childrenCustodyInformation)
+
   return (
     <>
       <Text variant="h3" fontWeight="light" marginBottom={3}>
-        {formatMessage(aboutChildrenForm.general.description, {
-          currentMonth: currentMonth(lang),
-        })}
+        {formatMessage(aboutChildrenForm.general.description)}
       </Text>
       <Box marginBottom={5}>
-        <DescriptionText text={aboutChildrenForm.bulletList.content} />
+        <DescriptionText text={aboutChildrenForm.page.content} />
       </Box>
 
-      <PrivacyPolicyAccordion
-        municipalityPageUrl={
-          application.externalData.municipality.data?.homepage
-        }
-      />
+      <Box marginBottom={5} background="blue100" padding={3}>
+        <Text variant="h3" fontWeight="light" marginBottom={1}>
+          nafn
+        </Text>
+        <Text variant="small" fontWeight="light">
+          fæðingardagur
+        </Text>
+      </Box>
     </>
   )
 }

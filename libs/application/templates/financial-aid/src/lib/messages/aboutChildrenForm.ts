@@ -15,16 +15,16 @@ export const aboutChildrenForm = {
     description: {
       id: 'fa.application:section.aboutChildrenForm.general.description',
       defaultMessage:
-        'Þú ert að sækja um fjárhagsaðstoð hjá þínu sveitarfélagi fyrir {currentMonth} mánuð. Áður en þú heldur áfram er gott að hafa eftirfarandi í huga:',
+        'Samkvæmt upplýsingum frá Þjóðskrá ert þú með börn á þínu framfæri.',
       description: 'About form page description',
     },
   }),
-  bulletList: defineMessages({
+  page: defineMessages({
     content: {
-      id: 'fa.application:section.aboutChildrenForm.bulletList.content#markdown',
+      id: 'fa.application:section.aboutChildrenForm.page.content#markdown',
       defaultMessage:
-        '* Til að eiga rétt á fjárhagsaðstoð þurfa tekjur og eignir þínar að vera undir ákveðnum viðmiðunarmörkum.\n* Fjárhagsaðstoð getur verið í formi láns eða styrks. \n* Áður en þú sækir um fjárhagsaðstoð skaltu athuga hvort þú eigir rétt á annarskonar aðstoð. Dæmi um önnur úrræði eru [almannatryggingar](https://www.stjornarradid.is/verkefni/almannatryggingar-og-lifeyrir/almannatryggingar/), [atvinnuleysisbætur](https://vinnumalastofnun.is/umsoknir/umsokn-um-atvinnuleysisbaetur), [lífeyrissjóðir](https://www.lifeyrismal.is/is/sjodirnir), [Sjúkratryggingar Íslands](https://www.sjukra.is/) og sjúkrasjóðir stéttarfélaga. \n* Ef þú ert í lánshæfu námi gætir þú átt rétt á námsláni hjá [Menntasjóði námsmanna](https://menntasjodur.is/).',
-      description: 'About form Bullet list content',
+        'Hér getur þú skráð leikskóla, grunn– eða framhaldsskóla barnanna og hvort þau séu í frístund eða með skólamat.',
+      description: 'About school for children',
     },
   }),
   goToApplication: defineMessages({
