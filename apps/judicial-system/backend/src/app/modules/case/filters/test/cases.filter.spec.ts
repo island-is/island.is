@@ -55,11 +55,15 @@ describe('getCasesQueryFilter', () => {
             CaseState.COMPLETED,
           ],
         },
+
         {
           [Op.or]: [
             { prosecutors_office_id: 'Prosecutors Office Id' },
             { shared_with_prosecutors_office_id: 'Prosecutors Office Id' },
-            { indictment_reviewer_id: 'Prosecutor Id' },
+            [
+              { indictment_reviewer_id: 'Prosecutor Id' },
+              { indictment_review_decision: null },
+            ],
           ],
         },
         {
@@ -117,7 +121,10 @@ describe('getCasesQueryFilter', () => {
           [Op.or]: [
             { prosecutors_office_id: 'Prosecutors Office Id' },
             { shared_with_prosecutors_office_id: 'Prosecutors Office Id' },
-            { indictment_reviewer_id: 'Prosecutor Id' },
+            [
+              { indictment_reviewer_id: 'Prosecutor Id' },
+              { indictment_review_decision: null },
+            ],
           ],
         },
         {
