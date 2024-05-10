@@ -106,7 +106,10 @@ const IndictmentOverview = () => {
         )}
         {shouldDisplayReviewDecision && (
           <ReviewDecision
-            workingCase={workingCase}
+            caseId={workingCase.id}
+            indictmentAppealDeadline={
+              workingCase.indictmentAppealDeadline ?? ''
+            }
             modalVisible={modalVisible}
             setModalVisible={setModalVisible}
             onSelect={() => setIsReviewDecisionSelected(true)}

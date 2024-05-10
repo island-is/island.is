@@ -7,7 +7,6 @@ import * as constants from '@island.is/judicial-system/consts'
 import { formatDate } from '@island.is/judicial-system/formatters'
 import {
   IndictmentCaseReviewDecision,
-  isCompletedCase,
   isPublicProsecutor,
 } from '@island.is/judicial-system/types'
 import {
@@ -16,17 +15,14 @@ import {
   SectionHeading,
   UserContext,
 } from '@island.is/judicial-system-web/src/components'
-import {
-  Case,
-  CaseState,
-} from '@island.is/judicial-system-web/src/graphql/schema'
 import { useCase } from '@island.is/judicial-system-web/src/utils/hooks'
 
 import { strings } from './ReviewDecision.strings'
 import * as styles from './ReviewDecision.css'
 
 interface Props {
-  workingCase: Case
+  caseId: string
+  indictmentAppealDeadline?: string
   modalVisible?: boolean
   setModalVisible: React.Dispatch<React.SetStateAction<boolean>>
   onSelect?: () => void
@@ -38,7 +34,13 @@ export const ReviewDecision: React.FC<Props> = (props) => {
   const { formatMessage: fm } = useIntl()
   const { updateCase } = useCase()
 
-  const { workingCase, modalVisible, setModalVisible, onSelect } = props
+  const {
+    caseId,
+    indictmentAppealDeadline,
+    modalVisible,
+    setModalVisible,
+    onSelect,
+  } = props
 
   const [indictmentReviewDecision, setIndictmentReviewDecision] = useState<
     IndictmentCaseReviewDecision | undefined
@@ -48,7 +50,7 @@ export const ReviewDecision: React.FC<Props> = (props) => {
     if (!indictmentReviewDecision) {
       return
     }
-    const updateSuccess = await updateCase(workingCase.id, {
+    const updateSuccess = await updateCase(caseId, {
       indictmentReviewDecision: indictmentReviewDecision,
     })
     if (updateSuccess) {
@@ -79,7 +81,7 @@ export const ReviewDecision: React.FC<Props> = (props) => {
           <Text variant="eyebrow">
             {fm(strings.subtitle, {
               indictmentAppealDeadline: formatDate(
-                workingCase.indictmentAppealDeadline,
+                indictmentAppealDeadline,
                 'P',
               ),
             })}
