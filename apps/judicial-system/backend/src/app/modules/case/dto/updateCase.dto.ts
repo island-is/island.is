@@ -22,6 +22,7 @@ import {
   CaseAppealRulingDecision,
   CaseCustodyRestrictions,
   CaseDecision,
+  CaseIndictmentRulingDecision,
   CaseLegalProvisions,
   CaseType,
   CourtDocument,
@@ -461,4 +462,14 @@ export class UpdateCaseDto {
   @IsString()
   @ApiPropertyOptional()
   readonly postponedIndefinitelyExplanation?: string
+
+  @IsOptional()
+  @IsEnum(CaseIndictmentRulingDecision)
+  @ApiPropertyOptional({ enum: CaseIndictmentRulingDecision })
+  readonly indictmentRulingDecision?: CaseIndictmentRulingDecision
+
+  @IsOptional()
+  @IsUUID()
+  @ApiPropertyOptional()
+  readonly indictmentReviewerId?: string
 }

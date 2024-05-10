@@ -13,6 +13,7 @@ import {
   isInvestigationCase,
   isPrisonSystemUser,
   isProsecutionUser,
+  isPublicProsecutorUser,
   isRestrictionCase,
   RequestSharedWithDefender,
   UserRole,
@@ -61,6 +62,24 @@ const canProsecutionUserAccessCase = (
     theCase.isHeightenedSecurityLevel &&
     user.id !== theCase.creatingProsecutorId &&
     user.id !== theCase.prosecutorId
+  ) {
+    return false
+  }
+
+  return true
+}
+
+const canPublicProsecutionUserAccessCase = (theCase: Case): boolean => {
+  // Check case type access
+  if (!isIndictmentCase(theCase.type)) {
+    return false
+  }
+
+  // Check case state access
+  if (
+    ![CaseState.ACCEPTED, CaseState.REJECTED, CaseState.DISMISSED].includes(
+      theCase.state,
+    )
   ) {
     return false
   }
@@ -296,6 +315,10 @@ export const canUserAccessCase = (
 
   if (isDefenceUser(user)) {
     return canDefenceUserAccessCase(theCase, user)
+  }
+
+  if (isPublicProsecutorUser(user)) {
+    return canPublicProsecutionUserAccessCase(theCase)
   }
 
   // Other users cannot access cases

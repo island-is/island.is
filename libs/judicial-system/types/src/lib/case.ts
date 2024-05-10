@@ -176,6 +176,11 @@ export enum CaseAppealRulingDecision {
   DISCONTINUED = 'DISCONTINUED',
 }
 
+export enum CaseIndictmentRulingDecision {
+  RULING = 'RULING',
+  FINE = 'FINE',
+}
+
 export enum SessionArrangements {
   ALL_PRESENT = 'ALL_PRESENT',
   ALL_PRESENT_SPOKESPERSON = 'ALL_PRESENT_SPOKESPERSON',
@@ -193,6 +198,12 @@ export enum DefendantPlea {
   GUILTY = 'GUILTY',
   NOT_GUILTY = 'NOT_GUILTY',
   NO_PLEA = 'NO_PLEA',
+}
+
+export enum ServiceRequirement {
+  REQUIRED = 'REQUIRED',
+  NOT_REQUIRED = 'NOT_REQUIRED',
+  NOT_APPLICABLE = 'NOT_APPLICABLE',
 }
 
 export const indictmentCases = [CaseType.INDICTMENT]

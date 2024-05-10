@@ -791,7 +791,10 @@ export class CourtService {
           )
         })
         .then(() =>
-          this.robotLogModel.update({ sent: true }, { where: { id: logId } }),
+          this.robotLogModel.update(
+            { delivered: true },
+            { where: { id: logId } },
+          ),
         )
     }
 
@@ -815,7 +818,10 @@ export class CourtService {
         text: content,
       })
       .then(() =>
-        this.robotLogModel.update({ sent: true }, { where: { id: logId } }),
+        this.robotLogModel.update(
+          { delivered: true },
+          { where: { id: logId } },
+        ),
       )
   }
 }
