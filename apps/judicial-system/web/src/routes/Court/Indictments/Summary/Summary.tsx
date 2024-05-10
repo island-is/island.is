@@ -20,7 +20,10 @@ import {
   Prosecutor,
 } from '@island.is/judicial-system-web/src/components/CaseInfo/CaseInfo'
 import { RenderFiles } from '@island.is/judicial-system-web/src/components/IndictmentCaseFilesList/IndictmentCaseFilesList'
-import { CaseFileCategory } from '@island.is/judicial-system-web/src/graphql/schema'
+import {
+  CaseFile,
+  CaseFileCategory,
+} from '@island.is/judicial-system-web/src/graphql/schema'
 import {
   useCase,
   useFileList,
@@ -42,12 +45,20 @@ const Summary: React.FC = () => {
     return router.push(`${destination}/${workingCase.id}`)
   }
 
-  const handleNextButtonClick = async () => {}
+  // const handleNextButtonClick = async () => {}
 
-  const courtRecordFiles =
-    workingCase.caseFiles?.filter(
-      (cf) => cf.category === CaseFileCategory.COURT_RECORD,
-    ) || []
+  const [courtRecordFiles, rulingFiles] = (workingCase.caseFiles || []).reduce(
+    (acc, cf) => {
+      if (cf.category === CaseFileCategory.COURT_RECORD) {
+        acc[0].push(cf)
+      } else if (cf.category === CaseFileCategory.RULING) {
+        acc[1].push(cf)
+      }
+
+      return acc
+    },
+    [[] as CaseFile[], [] as CaseFile[]],
+  )
 
   return (
     <PageLayout
@@ -74,9 +85,21 @@ const Summary: React.FC = () => {
           <InfoCardClosedIndictment />
         </Box>
         <SectionHeading title={formatMessage(strings.caseFiles)} />
+        {rulingFiles.length > 0 && (
+          <Box marginBottom={5}>
+            <Text variant="h4" as="h4">
+              {formatMessage(strings.caseFilesSubtitleRuling)}
+            </Text>
+            <RenderFiles
+              caseFiles={rulingFiles}
+              workingCase={workingCase}
+              onOpenFile={onOpen}
+            />
+          </Box>
+        )}
         {courtRecordFiles.length > 0 && (
-          <>
-            <Text variant="h4" as="h4" marginBottom={1}>
+          <Box marginBottom={10}>
+            <Text variant="h4" as="h4">
               {formatMessage(strings.caseFilesSubtitleFine)}
             </Text>
             <RenderFiles
@@ -84,7 +107,7 @@ const Summary: React.FC = () => {
               workingCase={workingCase}
               onOpenFile={onOpen}
             />
-          </>
+          </Box>
         )}
       </FormContentContainer>
       <FormContentContainer isFooter>
