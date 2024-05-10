@@ -829,7 +829,7 @@ describe('MeClientsController with auth', () => {
               value: 'value1',
             },
           ],
-          allowedAcr: [faker.random.word()],
+          allowedAcr: ['some-acr-value'],
         }
 
         // Act
