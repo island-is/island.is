@@ -1,6 +1,5 @@
-import { setupGlobals } from './utils/lifecycle/setup-globals'
-// rest
 import { Navigation } from 'react-native-navigation'
+import { initializeApolloClient } from './graphql/client'
 import { readAuthorizeResult } from './stores/auth-store'
 import { showAppLockOverlay } from './utils/app-lock'
 import { getDefaultOptions } from './utils/get-default-options'
@@ -8,13 +7,13 @@ import { getAppRoot } from './utils/lifecycle/get-app-root'
 import { registerAllComponents } from './utils/lifecycle/setup-components'
 import { setupDevMenu } from './utils/lifecycle/setup-dev-menu'
 import { setupEventHandlers } from './utils/lifecycle/setup-event-handlers'
+import { setupGlobals } from './utils/lifecycle/setup-globals'
 import {
   openInitialNotification,
   setupNotifications,
 } from './utils/lifecycle/setup-notifications'
 import { setupRoutes } from './utils/lifecycle/setup-routes'
 import { performanceMetricsAppLaunched } from './utils/performance-metrics'
-import { preferencesStore } from './stores/preferences-store'
 
 async function startApp() {
   // setup global packages and polyfills
@@ -31,6 +30,9 @@ async function startApp() {
 
   // Setup notifications
   setupNotifications()
+
+  // Initialize Apollo client. This must be done before registering components
+  await initializeApolloClient()
 
   // Register all components (screens, UI elements)
   registerAllComponents()

@@ -12,7 +12,7 @@ definitions:
     #        source: true
   shared_envs: &shared_envs
     XCODE_WORKSPACE: 'IslandApp.xcworkspace'
-    CM_CLONE_DEPTH: 50
+    CM_CLONE_DEPTH: 200
   scripts:
     - &check_changes
       name: Check changes since last build

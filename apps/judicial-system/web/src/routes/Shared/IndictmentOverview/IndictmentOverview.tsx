@@ -27,6 +27,7 @@ const IndictmentOverview = () => {
   const router = useRouter()
   const { workingCase, isLoadingWorkingCase, caseNotFound } =
     useContext(FormContext)
+
   const { formatMessage } = useIntl()
   const lawsBroken = useIndictmentsLawsBroken(workingCase)
   const caseIsClosed = isCompletedCase(workingCase.state)

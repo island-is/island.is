@@ -34,7 +34,7 @@ export interface User {
 
 interface InstitutionUser {
   role?: string | null
-  institution?: { type?: string | null } | null
+  institution?: { type?: string | null; name?: string | null } | null
 }
 
 export const prosecutionRoles: string[] = [
@@ -50,11 +50,21 @@ export const isProsecutionUser = (user?: InstitutionUser): boolean => {
   )
 }
 
+export const isPublicProsecutor = (user?: InstitutionUser): boolean => {
+  return Boolean(
+    user?.role &&
+      user?.role === UserRole.PROSECUTOR &&
+      user?.institution?.name === 'Ríkissaksóknari', // TODO: Find better way to handle this
+  )
+}
+
 export const publicProsecutorRoles: string[] = [
   UserRole.PUBLIC_PROSECUTOR_STAFF,
 ]
 
-export function isPublicProsecutorUser(user?: InstitutionUser): boolean {
+export const isPublicProsecutorUser = function (
+  user?: InstitutionUser,
+): boolean {
   return Boolean(
     user?.role &&
       publicProsecutorRoles.includes(user.role) &&
