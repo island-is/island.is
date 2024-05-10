@@ -59,7 +59,7 @@ export const isValidPhoneNumber = (phoneNumber: string) => {
 }
 
 export const formatPhoneNumber = (phoneNumber: string) => {
-  return phoneNumber.replace(/\D/g, '').slice(-7) ?? ''
+  return phoneNumber.replace(/\D/g, '').slice(-7)
 }
 
 /**
