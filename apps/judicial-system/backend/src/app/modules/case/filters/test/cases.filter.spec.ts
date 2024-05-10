@@ -288,9 +288,10 @@ describe('getCasesQueryFilter', () => {
     it('should get public prosecutor filter', () => {
       // Arrange
       const user = {
+        id: 'Public Prosecutor Office Id',
         role,
         institution: {
-          id: 'Prosecutors Office Id',
+          id: '8f9e2f6d-6a00-4a5e-b39b-95fd110d762e',
           type: InstitutionType.PROSECUTORS_OFFICE,
         },
       }
