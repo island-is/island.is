@@ -206,5 +206,4 @@ describe('EnhancedFetch', () => {
     )
     expect(env.fetch).toHaveBeenCalledTimes(2)
   })
-
 })
