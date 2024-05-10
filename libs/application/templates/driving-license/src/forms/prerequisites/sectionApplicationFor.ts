@@ -35,7 +35,6 @@ export const sectionApplicationFor = (allowBELicense = false) =>
               )
               if (fakeData?.useFakeData === 'yes') {
                 currentLicense = fakeData.currentLicense ?? null
-                console.log(currentLicense)
               }
 
               let options = [
