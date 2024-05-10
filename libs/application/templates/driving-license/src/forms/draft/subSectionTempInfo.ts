@@ -21,7 +21,7 @@ export const subSectionTempInfo = buildSubSection({
   id: 'infoStep',
   title: m.informationApplicant,
   condition: (answers) =>
-    answers.applicationFor === B_TEMP || answers.applicationFor === BE,
+    answers.applicationFor in [B_TEMP, BE]
   children: [
     buildMultiField({
       id: 'info',
