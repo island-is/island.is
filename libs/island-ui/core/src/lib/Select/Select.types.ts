@@ -55,8 +55,9 @@ export type SelectProps<
   Group extends GroupBase<Option> = GroupBase<Option>,
   // eslint-disable-next-line @typescript-eslint/ban-ts-comment
   // @ts-ignore make web strict
-> = Omit<Props<Option, IsMulti, Group>, 'noOptionsMessage'> & {
+> = Omit<Props<Option, IsMulti, Group>, 'noOptionsMessage', 'label'> & {
   noOptionsMessage?: string
+  label?: string
 }
 
 // The Option type needs to be generic as the react-select library is generic.
