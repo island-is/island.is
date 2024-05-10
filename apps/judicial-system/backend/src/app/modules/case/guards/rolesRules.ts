@@ -51,6 +51,8 @@ const prosecutorFields: (keyof UpdateCaseDto)[] = [
   'indictmentDeniedExplanation',
 ]
 
+const publicProsecutorFields: (keyof UpdateCaseDto)[] = ['indictmentReviewerId']
+
 const districtCourtFields: (keyof UpdateCaseDto)[] = [
   'defenderName',
   'defenderNationalId',
@@ -91,6 +93,7 @@ const districtCourtFields: (keyof UpdateCaseDto)[] = [
   'prosecutorId',
   'indictmentReturnedExplanation',
   'postponedIndefinitelyExplanation',
+  'indictmentRulingDecision',
 ]
 
 const courtOfAppealsFields: (keyof UpdateCaseDto)[] = [
@@ -121,6 +124,13 @@ export const prosecutorRepresentativeUpdateRule: RolesRule = {
   role: UserRole.PROSECUTOR_REPRESENTATIVE,
   type: RulesType.FIELD,
   dtoFields: prosecutorFields,
+}
+
+// Allows public prosecutor staff to update a specific set of fields
+export const publicProsecutorStaffUpdateRule: RolesRule = {
+  role: UserRole.PUBLIC_PROSECUTOR_STAFF,
+  type: RulesType.FIELD,
+  dtoFields: publicProsecutorFields,
 }
 
 // Allows district court judges to update a specific set of fields
@@ -234,6 +244,15 @@ export const prosecutorRepresentativeTransitionRule: RolesRule = {
     CaseTransition.SUBMIT,
     CaseTransition.DELETE,
   ],
+}
+
+// Allows public prosecutor staff to transition cases
+// Note that public prosecutor staff can only access indictment cases
+export const publicProsecutorStaffTransitionRule: RolesRule = {
+  role: UserRole.PUBLIC_PROSECUTOR_STAFF,
+  type: RulesType.FIELD_VALUES,
+  dtoField: 'transition',
+  dtoFieldValues: [],
 }
 
 // Allows defenders to transition cases

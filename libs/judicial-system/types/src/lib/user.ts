@@ -12,7 +12,6 @@ export enum UserRole {
   ADMIN = 'ADMIN', // Does not exist in the database // notendaumsjón
   PRISON_SYSTEM_STAFF = 'PRISON_SYSTEM_STAFF', // fangelsismálastarfsmaður
   DEFENDER = 'DEFENDER', // Does not exist in the database // verjandi
-  PUBLIC_PROSECUTOR = 'PUBLIC_PROSECUTOR', // saksóknari hjá ríkissaksóknara
   PUBLIC_PROSECUTOR_STAFF = 'PUBLIC_PROSECUTOR_STAFF', // skrifstofufólk hjá ríkissaksóknara
 }
 
@@ -35,7 +34,7 @@ export interface User {
 
 interface InstitutionUser {
   role?: string | null
-  institution?: { type?: string | null } | null
+  institution?: { type?: string | null; name?: string | null } | null
 }
 
 export const prosecutionRoles: string[] = [
@@ -47,6 +46,28 @@ export const isProsecutionUser = (user?: InstitutionUser): boolean => {
   return Boolean(
     user?.role &&
       prosecutionRoles.includes(user.role) &&
+      user?.institution?.type === InstitutionType.PROSECUTORS_OFFICE,
+  )
+}
+
+export const isPublicProsecutor = (user?: InstitutionUser): boolean => {
+  return Boolean(
+    user?.role &&
+      user?.role === UserRole.PROSECUTOR &&
+      user?.institution?.name === 'Ríkissaksóknari', // TODO: Find better way to handle this
+  )
+}
+
+export const publicProsecutorRoles: string[] = [
+  UserRole.PUBLIC_PROSECUTOR_STAFF,
+]
+
+export const isPublicProsecutorUser = function (
+  user?: InstitutionUser,
+): boolean {
+  return Boolean(
+    user?.role &&
+      publicProsecutorRoles.includes(user.role) &&
       user?.institution?.type === InstitutionType.PROSECUTORS_OFFICE,
   )
 }
