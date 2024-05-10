@@ -242,6 +242,7 @@ export class DrivingLicenseSubmissionService extends BaseTemplateApiService {
     const licences: DriverLicenseWithoutImages[] =
       await this.drivingLicenseService.getAllDriverLicenses(auth.authorization)
     const hasGlasses: boolean = licences.some((license) => {
+      // Visual impairments comments on driving licenses are prefixed with "01."
       return !!license.comments?.some((comment) => comment.nr?.includes('01.'))
     })
     return hasGlasses
