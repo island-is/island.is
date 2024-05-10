@@ -36,6 +36,7 @@ const args: SelectProps<Option<string>> = {
   isDisabled: false,
   noOptionsMessage: 'Enginn valmöguleiki',
   isClearable: false,
+  isSearchable: false,
   size: 'md',
   hasError: false,
 }
@@ -67,6 +68,12 @@ Clearable.args = {
   isClearable: true,
 }
 
+export const Searchable = Template.bind({})
+Searchable.args = {
+  ...args,
+  isSearchable: true,
+}
+
 export const SizeSm = Template.bind({})
 SizeSm.args = {
   ...args,
@@ -83,10 +90,4 @@ export const WithError = Template.bind({})
 WithError.args = {
   ...args,
   hasError: true,
-}
-
-export const Searchable = Template.bind({})
-Searchable.args = {
-  ...args,
-  isSearchable: true,
 }
