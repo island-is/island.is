@@ -12,6 +12,7 @@ import {
 import {
   CaseState,
   CaseType,
+  DateType,
   IndictmentSubtype,
   NotificationType,
   RequestSharedWithDefender,
@@ -57,12 +58,12 @@ describe('InternalNotificationController - Send ready for court notifications fo
     courtId,
     court: { name: 'Héraðsdómur Reykjavíkur' },
     courtCaseNumber,
-    courtDate: randomDate(),
     defenderNationalId: uuid(),
     defenderName: 'Saul Goodman',
     defenderEmail: 'saul@dummy.is',
     requestSharedWithDefender: RequestSharedWithDefender.COURT_DATE,
     prosecutorsOffice: { name: 'Héraðsdómur Derricks' },
+    dateLogs: [{ date: randomDate(), dateType: DateType.ARRAIGNMENT_DATE }],
   } as Case
   const notificationDto = {
     user: { id: userId } as User,

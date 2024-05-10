@@ -233,6 +233,15 @@ export const m = defineMessages({
     id: 'service.portal:could-not-fetch',
     defaultMessage: 'Tókst ekki að sækja',
   },
+  couldNotFetchAllItems: {
+    id: 'service.portal:could-not-fetch-all-items',
+    defaultMessage: 'Ekki tókst að sækja öll gögn',
+  },
+  couldNotFetchAllItemsDetail: {
+    id: 'service.portal:could-not-fetch-all-items-detail',
+    defaultMessage:
+      'Einhverjar tengingar virðast hafa rofnað svo ekki tókst að sækja gögn frá eftirfarandi aðilum: {arg}. Verið er að vinna í að lagfæra tenginuna.',
+  },
   somethingWrong: {
     id: 'service.portal:something-went-wrong',
     defaultMessage: 'Eitthvað fór úrskeiðis',
@@ -240,6 +249,10 @@ export const m = defineMessages({
   fetching: {
     id: 'service.portal:fetching',
     defaultMessage: 'Sæki',
+  },
+  fetchLicense: {
+    id: 'service.portal:fetch-license',
+    defaultMessage: 'Sækja leyfisbréf',
   },
   assets: {
     id: 'service.portal:assets',
@@ -769,6 +782,10 @@ export const m = defineMessages({
     id: 'service.portal:educationDegree',
     defaultMessage: 'Prófgráður',
   },
+  noTranscriptForDownload: {
+    id: 'service.portal:educationCareerNoTranscriptForDownload',
+    defaultMessage: 'Námsmat ófáanlegt',
+  },
   accessControl: {
     id: 'service.portal:accessControl',
     defaultMessage: 'Aðgangsstýring',
@@ -1243,6 +1260,10 @@ export const m = defineMessages({
   userProfileTooltip: {
     id: 'service.portal:userprofile-tooltip',
     defaultMessage: 'Ísland.is hefur umsjón með gögnum á þínum stillingum.',
+  },
+  notificationsProfileTooltip: {
+    id: 'service.portal:notifications-tooltip',
+    defaultMessage: 'Ísland.is hefur umsjón með tilkynningum.',
   },
 
   universityOfIcelandTooltip: {

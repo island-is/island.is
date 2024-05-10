@@ -80,5 +80,6 @@ query PrisonCases {
       role
       active
     }
+    postponedIndefinitelyExplanation
   }
 }

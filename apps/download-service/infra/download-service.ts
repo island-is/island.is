@@ -5,9 +5,11 @@ import {
   Education,
   Finance,
   HealthInsurance,
+  UniversityCareers,
   UniversityOfIceland,
   Vehicles,
   WorkMachines,
+  DistrictCommissionersLicenses,
 } from '../../../infra/src/dsl/xroad'
 
 export const serviceSetup = (services: {
@@ -49,8 +51,10 @@ export const serviceSetup = (services: {
       HealthInsurance,
       Vehicles,
       UniversityOfIceland,
+      UniversityCareers,
       WorkMachines,
       Education,
+      DistrictCommissionersLicenses,
     )
     .ingress({
       primary: {

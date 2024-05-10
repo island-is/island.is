@@ -326,9 +326,11 @@ api:
     USER_NOTIFICATION_API_URL: 'http://web-user-notification.user-notification.svc.cluster.local'
     USER_PROFILE_CLIENT_URL: 'http://web-service-portal-api.service-portal.svc.cluster.local'
     XROAD_ADR_MACHINE_LICENSE_PATH: 'IS-TEST/GOV/4201810439/Vinnueftirlitid-Protected/rettindi-token-v1'
+    XROAD_AGRICULTURAL_UNIVERSITY_OF_ICELAND_PATH: 'IS-DEV/EDU/10056/LBHI-Protected/brautskraning-v1'
     XROAD_AIRCRAFT_REGISTRY_PATH: 'IS-DEV/GOV/10017/Samgongustofa-Protected/Loftfaraskra-V1'
     XROAD_BASE_PATH: 'http://securityserver.staging01.devland.is'
     XROAD_BASE_PATH_WITH_ENV: 'http://securityserver.staging01.devland.is/r1/IS-TEST'
+    XROAD_BIFROST_UNIVERSITY_PATH: 'IS-DEV/EDU/10057/Bifrost-Protected/brautskraning-v1'
     XROAD_CHARGE_FJS_V2_PATH: 'IS-DEV/GOV/10021/FJS-Public/chargeFJS_v2'
     XROAD_CHARGE_FJS_V2_TIMEOUT: '20000'
     XROAD_CLIENT_ID: 'IS-TEST/GOV/5501692829/island-is-client'
@@ -337,7 +339,7 @@ api:
     XROAD_DIGITAL_TACHOGRAPH_DRIVERS_CARD_PATH: 'IS-DEV/GOV/10017/Samgongustofa-Protected/Okuritar-V1'
     XROAD_DIRECTORATE_OF_IMMIGRATION_PATH: 'IS-DEV/GOV/10011/UTL-Protected/Utl-Umsokn-v1'
     XROAD_DISABILITY_LICENSE_PATH: 'IS-TEST/GOV/5012130120/TR-Protected/oryrki-v1'
-    XROAD_DISTRICT_COMMISSIONERS_PATH: 'IS-DEV/GOV/10016/Syslumenn-Protected/IslandMinarSidur'
+    XROAD_DISTRICT_COMMISSIONERS_P_CARD_PATH: 'IS-DEV/GOV/10016/Syslumenn-Protected/IslandMinarSidur'
     XROAD_DRIVING_LICENSE_BOOK_TIMEOUT: '20000'
     XROAD_DRIVING_LICENSE_PATH: 'r1/IS/GOV/5309672079/Logreglan-Protected/RafraentOkuskirteini-v1'
     XROAD_DRIVING_LICENSE_V2_PATH: 'r1/IS/GOV/5309672079/Logreglan-Protected/RafraentOkuskirteini-v2'
@@ -355,6 +357,7 @@ api:
     XROAD_HEALTH_INSURANCE_WSDLURL: 'https://test-huld.sjukra.is/islandrg?wsdl'
     XROAD_HMS_HOUSING_BENEFITS_PATH: 'IS-TEST/GOV/5812191480/HMS-Protected/husbot-v1'
     XROAD_HMS_LOANS_PATH: 'IS-TEST/GOV/5812191480/HMS-Protected/libra-v1'
+    XROAD_HOLAR_UNIVERSITY_PATH: 'IS-DEV/EDU/10055/Holar-Protected/brautskraning-v1'
     XROAD_HOUSING_BENEFIT_CALCULATOR_PATH: 'IS-TEST/GOV/5812191480/HMS-Protected/calc-v1'
     XROAD_HUNTING_LICENSE_PATH: 'IS-DEV/GOV/10009/Umhverfisstofnun-Protected/api'
     XROAD_ICELANDIC_GOVERNMENT_INSTITUTION_VACANCIES_PATH: 'IS-DEV/GOV/10021/FJS-Protected/recruitment-v1'
@@ -383,6 +386,7 @@ api:
     XROAD_TLS_BASE_PATH: 'https://securityserver.staging01.devland.is'
     XROAD_TLS_BASE_PATH_WITH_ENV: 'https://securityserver.staging01.devland.is/r1/IS-TEST'
     XROAD_TR_PATH: 'IS-TEST/GOV/5012130120/TR-Protected/external-v1'
+    XROAD_UNIVERSITY_OF_AKUREYRI_PATH: 'IS-DEV/EDU/10054/UNAK-Protected/brautskraning-v1'
     XROAD_UNIVERSITY_OF_ICELAND_PATH: 'IS-DEV/EDU/10010/HI-Protected/brautskraning-v1'
     XROAD_VEHICLES_MILEAGE_PATH: 'IS/GOV/5405131040/Samgongustofa-Protected/Vehicle-Mileagereading-V1'
     XROAD_VEHICLES_PATH: 'IS/GOV/5405131040/Samgongustofa-Protected/Mitt-Svaedi-V1'
@@ -1034,9 +1038,12 @@ download-service:
     NODE_OPTIONS: '--max-old-space-size=460'
     REGULATIONS_ADMIN_URL: 'http://web-regulations-admin-backend.regulations-admin.svc.cluster.local'
     SERVERSIDE_FEATURES_ON: ''
+    XROAD_AGRICULTURAL_UNIVERSITY_OF_ICELAND_PATH: 'IS-DEV/EDU/10056/LBHI-Protected/brautskraning-v1'
     XROAD_BASE_PATH: 'http://securityserver.staging01.devland.is'
     XROAD_BASE_PATH_WITH_ENV: 'http://securityserver.staging01.devland.is/r1/IS-TEST'
+    XROAD_BIFROST_UNIVERSITY_PATH: 'IS-DEV/EDU/10057/Bifrost-Protected/brautskraning-v1'
     XROAD_CLIENT_ID: 'IS-TEST/GOV/5501692829/island-is-client'
+    XROAD_DISTRICT_COMMISSIONERS_LICENSES_PATH: 'IS-DEV/GOV/10016/Syslumenn-Protected/RettindiIslandis'
     XROAD_FINANCES_PATH: 'IS-DEV/GOV/10021/FJS-Public/financeIsland'
     XROAD_FINANCES_V2_PATH: 'IS-DEV/GOV/10021/FJS-Public/financeServicesFJS_v2'
     XROAD_HEALTH_INSURANCE_ID: 'IS-TEST/GOV/4804080550/SJUKRA-Protected'
@@ -1044,10 +1051,12 @@ download-service:
     XROAD_HEALTH_INSURANCE_WSDLURL: 'https://test-huld.sjukra.is/islandrg?wsdl'
     XROAD_HMS_HOUSING_BENEFITS_PATH: 'IS-TEST/GOV/5812191480/HMS-Protected/husbot-v1'
     XROAD_HMS_LOANS_PATH: 'IS-TEST/GOV/5812191480/HMS-Protected/libra-v1'
+    XROAD_HOLAR_UNIVERSITY_PATH: 'IS-DEV/EDU/10055/Holar-Protected/brautskraning-v1'
     XROAD_MMS_GRADE_SERVICE_ID: 'IS-TEST/EDU/5708150320/MMS-Protected/grade-api-v1'
     XROAD_MMS_LICENSE_SERVICE_ID: 'IS-TEST/EDU/5708150320/MMS-Protected/license-api-v1'
     XROAD_TLS_BASE_PATH: 'https://securityserver.staging01.devland.is'
     XROAD_TLS_BASE_PATH_WITH_ENV: 'https://securityserver.staging01.devland.is/r1/IS-TEST'
+    XROAD_UNIVERSITY_OF_AKUREYRI_PATH: 'IS-DEV/EDU/10054/UNAK-Protected/brautskraning-v1'
     XROAD_UNIVERSITY_OF_ICELAND_PATH: 'IS-DEV/EDU/10010/HI-Protected/brautskraning-v1'
     XROAD_VEHICLES_PATH: 'IS/GOV/5405131040/Samgongustofa-Protected/Mitt-Svaedi-V1'
     XROAD_WORK_MACHINE_LICENSE_PATH: 'IS-TEST/GOV/4201810439/Vinnueftirlitid-Protected/vinnuvelar-token'
@@ -1136,6 +1145,10 @@ endorsement-system-api:
     IDENTITY_SERVER_CLIENT_ID: '@island.is/clients/endorsement'
     IDENTITY_SERVER_ISSUER_URL: 'https://identity-server.staging01.devland.is'
     LOG_LEVEL: 'info'
+    NATIONAL_REGISTRY_B2C_CLIENT_ID: 'ca128c23-b43c-443d-bade-ec5a146a933f'
+    NATIONAL_REGISTRY_B2C_ENDPOINT: 'https://skraidentitydev.b2clogin.com/skraidentitystaging.onmicrosoft.com/b2c_1_midlun_flow/oauth2/v2.0/token'
+    NATIONAL_REGISTRY_B2C_PATH: 'IS-TEST/GOV/6503760649/SKRA-Cloud-Protected/Midlun-v1'
+    NATIONAL_REGISTRY_B2C_SCOPE: 'https://skraidentitystaging.onmicrosoft.com/midlun/.default'
     NODE_OPTIONS: '--max-old-space-size=230'
     SERVERSIDE_FEATURES_ON: ''
     XROAD_BASE_PATH: 'http://securityserver.staging01.devland.is'
@@ -1214,6 +1227,7 @@ endorsement-system-api:
     CONFIGCAT_SDK_KEY: '/k8s/configcat/CONFIGCAT_SDK_KEY'
     DB_PASS: '/k8s/services-endorsements-api/DB_PASSWORD'
     IDENTITY_SERVER_CLIENT_SECRET: '/k8s/endorsement-system-api/IDS-shared-secret'
+    NATIONAL_REGISTRY_B2C_CLIENT_SECRET: '/k8s/api/NATIONAL_REGISTRY_B2C_CLIENT_SECRET'
     SOFFIA_HOST_URL: '/k8s/endorsement-system-api/SOFFIA_HOST_URL'
     SOFFIA_PASS: '/k8s/service-portal/SOFFIA_PASS'
     SOFFIA_SOAP_URL: '/k8s/endorsement-system-api/SOFFIA_SOAP_URL'
@@ -2220,6 +2234,67 @@ services-sessions:
   securityContext:
     allowPrivilegeEscalation: false
     privileged: false
+services-sessions-cleanup:
+  args:
+    - 'main.js'
+    - '--job=cleanup'
+  command:
+    - 'node'
+  enabled: true
+  env:
+    DB_HOST: 'postgres-applications.internal'
+    DB_NAME: 'services_sessions_cleanup'
+    DB_REPLICAS_HOST: 'postgres-applications.internal'
+    DB_USER: 'services_sessions_cleanup'
+    LOG_LEVEL: 'info'
+    NODE_OPTIONS: '--max-old-space-size=460'
+    SERVERSIDE_FEATURES_ON: ''
+  grantNamespaces:
+    - 'nginx-ingress-internal'
+    - 'islandis'
+    - 'identity-server'
+  grantNamespacesEnabled: true
+  healthCheck:
+    liveness:
+      initialDelaySeconds: 3
+      path: '/'
+      timeoutSeconds: 3
+    readiness:
+      initialDelaySeconds: 3
+      path: '/'
+      timeoutSeconds: 3
+  hpa:
+    scaling:
+      metric:
+        cpuAverageUtilization: 90
+        nginxRequestsIrate: 5
+      replicas:
+        max: 3
+        min: 1
+  image:
+    repository: '821090935708.dkr.ecr.eu-west-1.amazonaws.com/services-sessions'
+  namespace: 'services-sessions'
+  podDisruptionBudget:
+    maxUnavailable: 1
+  pvcs: []
+  replicaCount:
+    default: 1
+    max: 3
+    min: 1
+  resources:
+    limits:
+      cpu: '400m'
+      memory: '512Mi'
+    requests:
+      cpu: '100m'
+      memory: '256Mi'
+  schedule: '0 3 * * *'
+  secrets:
+    CONFIGCAT_SDK_KEY: '/k8s/configcat/CONFIGCAT_SDK_KEY'
+    DB_PASS: '/k8s/services-sessions-cleanup/DB_PASSWORD'
+  securityContext:
+    allowPrivilegeEscalation: false
+    privileged: false
 services-sessions-worker:
   args:
     - 'main.js'
@@ -2705,6 +2780,7 @@ user-notification:
     DB_REPLICAS_HOST: 'postgres-applications.internal'
     DB_USER: 'user_notification'
     DEAD_LETTER_QUEUE_NAME: 'user-notification-failure'
+    EMAIL_FROM_ADDRESS: 'development@island.is'
     IDENTITY_SERVER_ISSUER_URL: 'https://identity-server.staging01.devland.is'
     LOG_LEVEL: 'info'
     MAIN_QUEUE_NAME: 'user-notification'
@@ -2715,7 +2791,6 @@ user-notification:
     NODE_OPTIONS: '--max-old-space-size=345'
     SERVERSIDE_FEATURES_ON: ''
     SERVICE_PORTAL_CLICK_ACTION_URL: 'https://island.is/minarsidur'
-    USER_NOTIFICATION_APP_PROTOCOL: 'is.island.app.dev'
     USER_PROFILE_CLIENT_URL: 'http://web-service-portal-api.service-portal.svc.cluster.local'
     XROAD_BASE_PATH: 'http://securityserver.staging01.devland.is'
     XROAD_BASE_PATH_WITH_ENV: 'http://securityserver.staging01.devland.is/r1/IS-TEST'
@@ -2724,6 +2799,7 @@ user-notification:
     XROAD_TLS_BASE_PATH_WITH_ENV: 'https://securityserver.staging01.devland.is/r1/IS-TEST'
   grantNamespaces:
     - 'nginx-ingress-internal'
+    - 'islandis'
     - 'identity-server-delegation'
   grantNamespacesEnabled: true
   healthCheck:
@@ -2733,7 +2809,7 @@ user-notification:
       timeoutSeconds: 3
     readiness:
       initialDelaySeconds: 3
-      path: '/readiness'
+      path: '/health/check'
       timeoutSeconds: 3
   hpa:
     scaling:
@@ -2807,6 +2883,7 @@ user-notification-cleanup-worker:
     SERVERSIDE_FEATURES_ON: ''
   grantNamespaces:
     - 'nginx-ingress-internal'
+    - 'islandis'
     - 'identity-server-delegation'
   grantNamespacesEnabled: true
   healthCheck:
@@ -2897,6 +2974,7 @@ user-notification-worker:
     DB_REPLICAS_HOST: 'postgres-applications.internal'
     DB_USER: 'user_notification'
     DEAD_LETTER_QUEUE_NAME: 'user-notification-failure'
+    EMAIL_FROM_ADDRESS: 'development@island.is'
     EMAIL_REGION: 'eu-west-1'
     IDENTITY_SERVER_ISSUER_URL: 'https://identity-server.staging01.devland.is'
     LOG_LEVEL: 'info'
@@ -2908,7 +2986,6 @@ user-notification-worker:
     NODE_OPTIONS: '--max-old-space-size=345'
     SERVERSIDE_FEATURES_ON: ''
     SERVICE_PORTAL_CLICK_ACTION_URL: 'https://island.is/minarsidur'
-    USER_NOTIFICATION_APP_PROTOCOL: 'is.island.app.dev'
     USER_PROFILE_CLIENT_URL: 'http://web-service-portal-api.service-portal.svc.cluster.local'
     XROAD_BASE_PATH: 'http://securityserver.staging01.devland.is'
     XROAD_BASE_PATH_WITH_ENV: 'http://securityserver.staging01.devland.is/r1/IS-TEST'
@@ -2917,6 +2994,7 @@ user-notification-worker:
     XROAD_TLS_BASE_PATH_WITH_ENV: 'https://securityserver.staging01.devland.is/r1/IS-TEST'
   grantNamespaces:
     - 'nginx-ingress-internal'
+    - 'islandis'
     - 'identity-server-delegation'
   grantNamespacesEnabled: true
   healthCheck:
@@ -2926,7 +3004,7 @@ user-notification-worker:
       timeoutSeconds: 3
     readiness:
       initialDelaySeconds: 3
-      path: '/readiness'
+      path: '/health/check'
       timeoutSeconds: 3
   hpa:
     scaling:

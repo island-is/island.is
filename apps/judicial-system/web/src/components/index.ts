@@ -39,6 +39,8 @@ export { default as InfoBox } from './InfoBox/InfoBox'
 export { default as InfoCard } from './InfoCard/InfoCard'
 export { default as InfoCardActiveIndictment } from './InfoCard/InfoCardActiveIndictment'
 export { default as InfoCardClosedIndictment } from './InfoCard/InfoCardClosedIndictment'
+export { default as InfoCardCaseScheduled } from './InfoCard/InfoCardCaseScheduled'
+export { default as InfoCardCaseScheduledIndictment } from './InfoCard/InfoCardCaseScheduledIndictment'
 export { default as Loading } from './Loading/Loading'
 export { default as Logo } from './Logo/Logo'
 export { default as MarkdownWrapper } from './MarkdownWrapper/MarkdownWrapper'
@@ -60,6 +62,7 @@ export { default as SignedDocument } from './SignedDocument/SignedDocument'
 export { default as OverviewHeader } from './OverviewHeader/OverviewHeader'
 export { default as TagAppealState } from './TagAppealState/TagAppealState'
 export { default as TagCaseState } from './TagCaseState/TagCaseState'
+
 export {
   SigningModal,
   useRequestRulingSignature,

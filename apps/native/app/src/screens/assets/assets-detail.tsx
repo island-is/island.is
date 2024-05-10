@@ -24,7 +24,6 @@ export const AssetsDetailScreen: NavigationFunctionComponent<{ item: any }> = ({
   useNavigationOptions(componentId)
 
   const { data, loading, error } = useGetAssetQuery({
-    fetchPolicy: 'cache-first',
     variables: {
       input: {
         assetId: item?.propertyNumber ?? '',
@@ -34,7 +33,7 @@ export const AssetsDetailScreen: NavigationFunctionComponent<{ item: any }> = ({
 
   const intl = useIntl()
   const isError = !!error
-  const isLoading = loading
+  const isLoading = loading && !data
 
   const appraisal = data?.assetsDetail?.appraisal
   const unitsOfUse = data?.assetsDetail?.unitsOfUse
@@ -46,6 +45,7 @@ export const AssetsDetailScreen: NavigationFunctionComponent<{ item: any }> = ({
         title={item?.defaultAddress?.displayShort}
         onClosePress={() => Navigation.dismissModal(componentId)}
         style={{ marginHorizontal: 16 }}
+        showLoading={loading}
       />
       <ScrollView style={{ flex: 1 }}>
         <View>
