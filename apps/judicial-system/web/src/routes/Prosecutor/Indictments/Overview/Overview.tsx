@@ -56,9 +56,11 @@ const Overview: React.FC<React.PropsWithChildren<unknown>> = () => {
   const { transitionCase, isTransitioningCase } = useCase()
   const lawsBroken = useIndictmentsLawsBroken(workingCase)
 
-  const isNewIndictment =
-    workingCase.state === CaseState.NEW || workingCase.state === CaseState.DRAFT
-  const caseHasBeenReceivedByCourt = workingCase.state === CaseState.RECEIVED
+  const isNewIndictment = workingCase.state === CaseState.DRAFT
+  const isSubmittedIndictment = workingCase.state === CaseState.SUBMITTED
+  const caseHasBeenReceivedByCourt =
+    workingCase.state === CaseState.RECEIVED ||
+    workingCase.state === CaseState.MAIN_HEARING
   const latestDate = workingCase.courtDate ?? workingCase.arraignmentDate
   const userCanSendCaseToCourt = Boolean(
     user?.canConfirmIndictment &&
@@ -89,8 +91,10 @@ const Overview: React.FC<React.PropsWithChildren<unknown>> = () => {
         modalType = 'caseSubmitModal'
       } else if (indictmentConfirmationDecision === 'deny') {
         modalType = 'caseDeniedModal'
+      } else if (isSubmittedIndictment) {
+        transitionType = CaseTransition.ASK_FOR_CONFIRMATION
       }
-    } else if (isNewIndictment) {
+    } else if (isNewIndictment || isSubmittedIndictment) {
       transitionType = CaseTransition.ASK_FOR_CONFIRMATION
       modalType = 'caseSentForConfirmationModal'
     } else if (workingCase.state === CaseState.WAITING_FOR_CONFIRMATION) {
@@ -154,18 +158,20 @@ const Overview: React.FC<React.PropsWithChildren<unknown>> = () => {
           </Text>
         </Box>
         <ProsecutorCaseInfo workingCase={workingCase} />
-        {caseHasBeenReceivedByCourt && workingCase.court && latestDate?.date && (
-          <Box component="section" marginBottom={5}>
-            <InfoCardCaseScheduledIndictment
-              court={workingCase.court}
-              courtDate={latestDate.date}
-              courtRoom={latestDate.location}
-              postponedIndefinitelyExplanation={
-                workingCase.postponedIndefinitelyExplanation
-              }
-            />
-          </Box>
-        )}
+        {workingCase.state === CaseState.RECEIVED &&
+          workingCase.court &&
+          latestDate?.date && (
+            <Box component="section" marginBottom={5}>
+              <InfoCardCaseScheduledIndictment
+                court={workingCase.court}
+                courtDate={latestDate.date}
+                courtRoom={latestDate.location}
+                postponedIndefinitelyExplanation={
+                  workingCase.postponedIndefinitelyExplanation
+                }
+              />
+            </Box>
+          )}
         <Box component="section" marginBottom={5}>
           <InfoCardActiveIndictment />
         </Box>
@@ -217,8 +223,7 @@ const Overview: React.FC<React.PropsWithChildren<unknown>> = () => {
               : `${constants.INDICTMENTS_CASE_FILES_ROUTE}/${workingCase.id}`
           }
           nextButtonText={
-            user?.canConfirmIndictment &&
-            workingCase.state === CaseState.WAITING_FOR_CONFIRMATION
+            userCanSendCaseToCourt
               ? undefined
               : formatMessage(strings.nextButtonText, {
                   isNewIndictment,
@@ -232,9 +237,7 @@ const Overview: React.FC<React.PropsWithChildren<unknown>> = () => {
           }
           onNextButtonClick={handleNextButtonClick}
           nextIsDisabled={
-            userCanSendCaseToCourt &&
-            workingCase.state === CaseState.WAITING_FOR_CONFIRMATION &&
-            !indictmentConfirmationDecision
+            userCanSendCaseToCourt && !indictmentConfirmationDecision
           }
         />
       </FormContentContainer>
