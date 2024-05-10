@@ -34,4 +34,15 @@ export const strings = defineMessages({
     description:
       'Notaður sem titill á Staðfesta takka á Samantektarskjá ákæru.',
   },
+  completedCaseModalTitle: {
+    id: 'judicial.system.core:indictments.summary.completed_case_modal_title',
+    defaultMessage: 'Máli hefur verið lokið',
+    description: 'Notaður sem titill á staðfestingarglugga um að mál sé lokið.',
+  },
+  completedCaseModalBody: {
+    id: 'judicial.system.core:indictments.summary.completed_case_modal_body',
+    defaultMessage:
+      'Gögn hafa verið send á ákæranda og verjanda hafi þeim verið hlaðið upp.',
+    description: 'Notaður sem texti í staðfestingarglugga um að mál sé lokið.',
+  },
 })

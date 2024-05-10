@@ -1,4 +1,4 @@
-import React, { useContext } from 'react'
+import React, { useContext, useState } from 'react'
 import { useIntl } from 'react-intl'
 import router from 'next/router'
 
@@ -10,6 +10,7 @@ import {
   FormContext,
   FormFooter,
   InfoCardClosedIndictment,
+  Modal,
   PageHeader,
   PageLayout,
   PageTitle,
@@ -23,6 +24,7 @@ import { RenderFiles } from '@island.is/judicial-system-web/src/components/Indic
 import {
   CaseFile,
   CaseFileCategory,
+  CaseTransition,
 } from '@island.is/judicial-system-web/src/graphql/schema'
 import {
   useCase,
@@ -33,9 +35,10 @@ import { strings } from './Summary.strings'
 
 const Summary: React.FC = () => {
   const { formatMessage } = useIntl()
-  const { workingCase, isLoadingWorkingCase, caseNotFound } =
+  const { workingCase, setWorkingCase, isLoadingWorkingCase, caseNotFound } =
     useContext(FormContext)
   const { transitionCase, isTransitioningCase } = useCase()
+  const [modalVisible, setModalVisible] = useState<'CONFIRM_INDICTMENT'>()
 
   const { onOpen } = useFileList({
     caseId: workingCase.id,
@@ -45,7 +48,19 @@ const Summary: React.FC = () => {
     return router.push(`${destination}/${workingCase.id}`)
   }
 
-  // const handleNextButtonClick = async () => {}
+  const handleNextButtonClick = async () => {
+    const transitionSuccess = await transitionCase(
+      workingCase.id,
+      CaseTransition.COMPLETE,
+      setWorkingCase,
+    )
+
+    if (!transitionSuccess) {
+      return
+    }
+
+    setModalVisible('CONFIRM_INDICTMENT')
+  }
 
   const [courtRecordFiles, rulingFiles] = (workingCase.caseFiles || []).reduce(
     (acc, cf) => {
@@ -115,10 +130,18 @@ const Summary: React.FC = () => {
           previousUrl={`${constants.INDICTMENTS_CONCLUSION_ROUTE}/${workingCase.id}`}
           nextButtonIcon="checkmark"
           nextButtonText={formatMessage(strings.nextButtonText)}
-          // onNextButtonClick={async () => await handleNextButtonClick()}
-          // nextIsDisabled={isTransitioningCase}
+          onNextButtonClick={async () => await handleNextButtonClick()}
+          nextIsDisabled={isTransitioningCase}
         />
       </FormContentContainer>
+      {modalVisible === 'CONFIRM_INDICTMENT' && (
+        <Modal
+          title={formatMessage(strings.completedCaseModalTitle)}
+          text={formatMessage(strings.completedCaseModalBody)}
+          primaryButtonText={formatMessage(core.closeModal)}
+          onPrimaryButtonClick={() => setModalVisible(undefined)}
+        />
+      )}
     </PageLayout>
   )
 }
