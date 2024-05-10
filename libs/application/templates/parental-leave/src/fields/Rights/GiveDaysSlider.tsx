@@ -5,7 +5,7 @@ import { Box } from '@island.is/island-ui/core'
 import { theme } from '@island.is/island-ui/theme'
 import { useLocale } from '@island.is/localization'
 import { parentalLeaveFormMessages } from '../../lib/messages'
-import Slider from '../components/Slider'
+import { Slider } from '@island.is/application/ui-components'
 import BoxChart, { BoxChartKey } from '../components/BoxChart'
 import { getApplicationAnswers } from '../../lib/parentalLeaveUtils'
 import {

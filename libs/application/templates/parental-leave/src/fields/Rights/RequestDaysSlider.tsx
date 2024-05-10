@@ -10,7 +10,7 @@ import {
   getMaxMultipleBirthsInMonths,
 } from '../../lib/parentalLeaveUtils'
 import { parentalLeaveFormMessages } from '../../lib/messages'
-import Slider from '../components/Slider'
+import { Slider } from '@island.is/application/ui-components'
 import BoxChart, { BoxChartKey } from '../components/BoxChart'
 import {
   defaultMonths,

@@ -4,7 +4,7 @@ import { Controller, useFormContext } from 'react-hook-form'
 import { Box, Text } from '@island.is/island-ui/core'
 import React, { useState } from 'react'
 import { useLocale } from '@island.is/localization'
-import Slider from '../components/Slider/Slider'
+import { Slider } from '@island.is/application/ui-components'
 import { shared } from '../../lib/messages'
 import { theme } from '@island.is/island-ui/theme'
 
