@@ -54,16 +54,16 @@ const Date = styled.View`
 `
 
 interface CardProps {
-  id: number
+  id: number | string
   icon?: ImageSourcePropType | React.ReactNode
   date?: Date
   title: string
   message: string
   unread?: boolean
-  actions?: Array<{ text: string; onPress(): void }>
+  actions?: Array<{ text: string; onPress(id: string | number): void }>
   underlayColor?: ColorValue
   testID?: string
-  onPress(id: number): void
+  onPress(id: number | string): void
 }
 
 export function NotificationCard({

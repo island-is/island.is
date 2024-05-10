@@ -11,6 +11,8 @@ import {
   AddUserProfileDeviceTokenMutationVariables,
   DeleteUserProfileDeviceTokenDocument,
   DeleteUserProfileDeviceTokenMutationVariables,
+  GetUserNotificationsOverviewDocument,
+  GetUserNotificationsOverviewQuery,
 } from '../graphql/types/schema'
 import { navigateToNotification } from '../lib/deep-linking'
 import { ComponentRegistry } from '../utils/component-registry'
@@ -31,6 +33,7 @@ export interface Notification {
 interface NotificationsStore extends State {
   items: Map<string, Notification>
   unreadCount: number
+  unseenCount: number
   pushToken?: string
   getNotifications(): Notification[]
   actions: {
@@ -38,6 +41,7 @@ interface NotificationsStore extends State {
     handleNotificationResponse(response: NotificationResponse): Notification
     setRead(notificationId: string): void
     setUnread(notificationId: string): void
+    checkUnseen(): Promise<void>
   }
 }
 
@@ -58,9 +62,8 @@ export const notificationCategories = [
       {
         identifier: 'ACTION_OPEN_DOCUMENT',
         buttonTitle: 'Opna',
-        onPress: ({ id, data }: Notification, componentId?: string) => {
-          return navigateToNotification({ id, link: data.url }, componentId)
-        },
+        onPress: ({ id, data }: Notification, componentId?: string) =>
+          navigateToNotification({ link: data.url, componentId }),
       },
       {
         identifier: 'ACTION_MARK_AS_READ',
@@ -80,7 +83,7 @@ export const notificationCategories = [
         identifier: 'ACTION_OPEN_ON_ISLAND_IS',
         buttonTitle: 'Opna á Ísland.is',
         onPress: ({ id, data }: Notification, componentId?: string) =>
-          navigateToNotification({ id, link: data.islandIsUrl }, componentId),
+          navigateToNotification({ link: data.islandIsUrl, componentId }),
       },
       {
         identifier: 'ACTION_MARK_AS_READ',
@@ -122,10 +125,7 @@ export function actionsForNotification(
       {
         text: 'Opna viðhengi',
         onPress: () =>
-          navigateToNotification(
-            { id: notification.id, link: notification.data.url },
-            componentId,
-          ),
+          navigateToNotification({ link: notification.data.url, componentId }),
       },
     ]
   }
@@ -138,6 +138,7 @@ export const notificationsStore = create<NotificationsStore>(
     (set, get) => ({
       items: new Map(),
       unreadCount: 0,
+      unseenCount: 0,
       pushToken: undefined,
       getNotifications() {
         return [...get().items.values()].sort((a, b) => b.date - a.date)
@@ -238,6 +239,31 @@ export const notificationsStore = create<NotificationsStore>(
           }
           set({ items: new Map(items) })
         },
+        async checkUnseen() {
+          const client = await getApolloClientAsync()
+
+          try {
+            const res = await client.query<
+              GetUserNotificationsOverviewQuery['userNotificationsOverview']
+            >({
+              query: GetUserNotificationsOverviewDocument,
+              fetchPolicy: 'network-only',
+            })
+            const unseenCount = res?.data?.unseenCount ?? 0
+
+            set({ unseenCount })
+
+            rightButtonScreens.forEach((componentId) => {
+              Navigation.mergeOptions(componentId, {
+                topBar: {
+                  rightButtons: getRightButtons({ unseenCount }),
+                },
+              })
+            })
+          } catch (err) {
+            // noop
+          }
+        },
       },
     }),
     {
@@ -256,23 +282,6 @@ export const notificationsStore = create<NotificationsStore>(
       },
     },
   ),
-)
-
-notificationsStore.subscribe(
-  (items: Map<string, Notification>) => {
-    const unreadCount = [...items.values()].reduce((acc, item) => {
-      return acc + (item.read ? 0 : 1)
-    }, 0)
-    notificationsStore.setState({ unreadCount })
-    rightButtonScreens.forEach((componentId) => {
-      Navigation.mergeOptions(componentId, {
-        topBar: {
-          rightButtons: getRightButtons({ unreadCount }),
-        },
-      })
-    })
-  },
-  (s) => s.items,
 )
 
 if (notificationsStore.getState().items.size === 0) {
