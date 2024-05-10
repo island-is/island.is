@@ -22,6 +22,7 @@ import { InputController } from '@island.is/shared/form-fields'
 import { format as formatNationalId } from 'kennitala'
 import intervalToDuration from 'date-fns/intervalToDuration'
 import {
+  formatPhoneNumber,
   getEstateDataFromApplication,
   valueToNumber,
 } from '../../lib/utils/helpers'
@@ -275,7 +276,7 @@ export const HeirsAndPartitionRepeater: FC<
         (heir) => {
           return {
             ...heir,
-            phone: heir.phone?.replace(/\D/g, '').slice(-7) ?? '', //Remove all non-digit characters and keep the last 7 digits
+            phone: heir.phone ? formatPhoneNumber(heir.phone) : '', //Remove all non-digit characters and keep the last 7 digits
             initial: true,
             enabled: true,
           }

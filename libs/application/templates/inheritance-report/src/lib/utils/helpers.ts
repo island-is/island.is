@@ -58,6 +58,10 @@ export const isValidPhoneNumber = (phoneNumber: string) => {
   return phone && phone.isValid()
 }
 
+export const formatPhoneNumber = (phoneNumber: string) => {
+  return phoneNumber.replace(/\D/g, '').slice(-7) ?? ''
+}
+
 /**
  * Returns zero if value is not a number or number string
  * @param value
