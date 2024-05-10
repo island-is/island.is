@@ -10,6 +10,7 @@ import {
   DEFENDER_ROUTE,
 } from '@island.is/judicial-system/consts'
 import {
+  isCompletedCase,
   isCourtOfAppealsUser,
   isDefenceUser,
   isDistrictCourtUser,
@@ -24,7 +25,6 @@ import { useCaseLazyQuery } from '@island.is/judicial-system-web/src/components/
 import { useLimitedAccessCaseLazyQuery } from '@island.is/judicial-system-web/src/components/FormProvider/limitedAccessCase.generated'
 import {
   CaseAppealState,
-  CaseState,
   User,
 } from '@island.is/judicial-system-web/src/graphql/schema'
 import { TempCase as Case } from '@island.is/judicial-system-web/src/types'
@@ -84,11 +84,7 @@ const useCaseList = () => {
       }
     } else if (isPublicProsecutorUser(user)) {
       routeTo = constants.PUBLIC_PROSECUTOR_STAFF_INDICTMENT_OVERVIEW_ROUTE
-    } else if (
-      caseToOpen.state === CaseState.ACCEPTED ||
-      caseToOpen.state === CaseState.REJECTED ||
-      caseToOpen.state === CaseState.DISMISSED
-    ) {
+    } else if (isCompletedCase(caseToOpen.state)) {
       if (isIndictmentCase(caseToOpen.type)) {
         routeTo = constants.CLOSED_INDICTMENT_OVERVIEW_ROUTE
       } else if (isCourtOfAppealsUser(user)) {
