@@ -374,6 +374,7 @@ export class UpdateCaseInput {
   @Field(() => CaseIndictmentRulingDecision, { nullable: true })
   readonly indictmentRulingDecision?: CaseIndictmentRulingDecision
 
+  @Allow()
   @Field({ nullable: true })
   readonly indictmentReviewerId?: string
 }
