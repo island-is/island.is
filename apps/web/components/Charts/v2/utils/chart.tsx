@@ -78,7 +78,7 @@ export const getCartesianGridComponents = ({
 
   const xAxisFormatter = tickFormatter
   const yAxisFormatter = (v: string | number) =>
-    formatValueForPresentation(activeLocale, v, slice.reduceAndRoundValue)
+    formatValueForPresentation(activeLocale, v, slice.reduceAndRoundValue ?? true)
 
   return [
     <CartesianGrid

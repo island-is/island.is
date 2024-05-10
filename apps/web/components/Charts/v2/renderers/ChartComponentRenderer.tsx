@@ -115,7 +115,7 @@ const renderCustomizedLabel = ({
           percent
             ? formatPercentageForPresentation(percent)
             : value
-            ? formatValueForPresentation(activeLocale, value, true)
+            ? formatValueForPresentation(activeLocale, value)
             : ''
         }`}</tspan>
         <tspan x={x} dy="1.2em">
@@ -137,7 +137,7 @@ export const renderPieChartComponents = (
     (total, { value }) => total + (value ? value : 0),
     0,
   )
-  const formattedTotal = formatValueForPresentation(activeLocale, total, true)
+  const formattedTotal = formatValueForPresentation(activeLocale, total)
 
   const userDefinedInnerRadius = customStyleConfig?.pie?.innerRadius
   const userDefinedOuterRadius = customStyleConfig?.pie?.outerRadius

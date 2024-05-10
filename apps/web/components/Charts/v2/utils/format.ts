@@ -27,14 +27,11 @@ export const formatDate = (
 export const formatValueForPresentation = (
   activeLocale: Locale,
   possiblyRawValue: number | string,
-  reduceAndRoundValue: boolean | null | undefined,
+  reduceAndRoundValue = true,
   increasePrecisionBy = 0,
 ) => {
   if (possiblyRawValue === undefined) {
     return ''
-  }
-  if (reduceAndRoundValue === null || reduceAndRoundValue === undefined) {
-    reduceAndRoundValue = true
   }
 
   try {
@@ -94,7 +91,7 @@ export const createTickFormatter =
       return formatValueForPresentation(
         activeLocale,
         value as string | number,
-        reduceAndRoundValue,
+        reduceAndRoundValue ?? true,
       )
     }
 
