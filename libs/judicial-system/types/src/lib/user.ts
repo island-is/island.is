@@ -52,8 +52,6 @@ export const isProsecutionUser = (user?: InstitutionUser): boolean => {
 }
 
 export const publicProsecutorRoles: string[] = [
-  UserRole.PROSECUTOR,
-  UserRole.PROSECUTOR_REPRESENTATIVE,
   UserRole.PUBLIC_PROSECUTOR_STAFF,
 ]
 
@@ -62,7 +60,7 @@ export const isPublicProsecutorUser = (user?: InstitutionUser): boolean => {
     user?.role &&
       publicProsecutorRoles.includes(user.role) &&
       user?.institution?.type === InstitutionType.PROSECUTORS_OFFICE &&
-      user?.institution?.id === '8f9e2f6d-6a00-4a5e-b39b-95fd110d762e',
+      user?.institution?.id === '8f9e2f6d-6a00-4a5e-b39b-95fd110d762e', // TODO: Create a new institution type to avoid hardcoding
   )
 }
 
