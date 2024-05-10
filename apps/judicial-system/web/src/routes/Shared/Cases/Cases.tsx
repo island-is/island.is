@@ -200,9 +200,10 @@ export const Cases: React.FC = () => {
     if (
       caseToDelete.state === CaseState.NEW ||
       caseToDelete.state === CaseState.DRAFT ||
+      caseToDelete.state === CaseState.WAITING_FOR_CONFIRMATION ||
       caseToDelete.state === CaseState.SUBMITTED ||
       caseToDelete.state === CaseState.RECEIVED ||
-      caseToDelete.state === CaseState.WAITING_FOR_CONFIRMATION
+      caseToDelete.state === CaseState.MAIN_HEARING
     ) {
       await transitionCase(caseToDelete.id, CaseTransition.DELETE)
       refetch()

@@ -38,8 +38,9 @@ const IndictmentOverview = () => {
 
   const { formatMessage } = useIntl()
   const lawsBroken = useIndictmentsLawsBroken(workingCase)
-  const caseIsClosed = isCompletedCase(workingCase.state)
+  const caseHasBeenReceivedByCourt = workingCase.state === CaseState.RECEIVED
   const latestDate = workingCase.courtDate ?? workingCase.arraignmentDate
+  const caseIsClosed = isCompletedCase(workingCase.state)
   const [modalVisible, setModalVisible] = useState<boolean>(false)
   const [isReviewDecisionSelected, setIsReviewDecisionSelected] =
     useState(false)
@@ -73,20 +74,18 @@ const IndictmentOverview = () => {
             : formatMessage(strings.inProgressTitle)}
         </PageTitle>
         <CourtCaseInfo workingCase={workingCase} />
-        {workingCase.state === CaseState.RECEIVED &&
-          workingCase.court &&
-          latestDate?.date && (
-            <Box component="section" marginBottom={5}>
-              <InfoCardCaseScheduledIndictment
-                court={workingCase.court}
-                courtDate={latestDate.date}
-                courtRoom={latestDate.location}
-                postponedIndefinitelyExplanation={
-                  workingCase.postponedIndefinitelyExplanation
-                }
-              />
-            </Box>
-          )}
+        {caseHasBeenReceivedByCourt && workingCase.court && latestDate?.date && (
+          <Box component="section" marginBottom={5}>
+            <InfoCardCaseScheduledIndictment
+              court={workingCase.court}
+              courtDate={latestDate.date}
+              courtRoom={latestDate.location}
+              postponedIndefinitelyExplanation={
+                workingCase.postponedIndefinitelyExplanation
+              }
+            />
+          </Box>
+        )}
         <Box component="section" marginBottom={5}>
           {caseIsClosed ? (
             <InfoCardClosedIndictment />
