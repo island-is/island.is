@@ -4,6 +4,7 @@ import {
   Injectable,
   UnauthorizedException,
 } from '@nestjs/common'
+import jwt from 'jsonwebtoken'
 import { InjectModel } from '@nestjs/sequelize'
 import { Cache as CacheManager } from 'cache-manager'
 import type { User } from '@island.is/auth-nest-tools'
@@ -34,7 +35,7 @@ import type { Logger } from '@island.is/logging'
 import { LOGGER_PROVIDER } from '@island.is/logging'
 
 import { PasskeyModel } from './models/passkey.model'
-import { getUserId } from './passkeys-core.utils'
+import { getTokenInfo, getUserId } from './passkeys-core.utils'
 
 // TODO read from env
 const RP_ID = 'localhost'
@@ -42,10 +43,12 @@ const RP_ID = 'localhost'
 // TODO read from env
 const ALLOWED_ORIGIN = 'http://localhost:4200'
 
-const CACHE_MANAGER = 'CACHE_MANAGER'
-
 // TODO read from env
 const CHALLENGE_TTL = 2 * 60 * 1000
+
+const CACHE_MANAGER = 'CACHE_MANAGER'
+
+const PASSKEY_TYPE = 'IslandApp'
 
 @Injectable()
 export class PasskeysCoreService {
@@ -61,10 +64,12 @@ export class PasskeysCoreService {
   }
 
   async generateRegistrationOptions(user: User) {
+    const tokenInfo = getTokenInfo(user.authorization)
+
     const opts: GenerateRegistrationOptionsOpts = {
       rpName: 'Island.is',
       rpID: RP_ID,
-      userName: 'Test User',
+      userName: tokenInfo.name,
       timeout: 60000,
       attestationType: 'direct',
       authenticatorSelection: {
@@ -89,6 +94,8 @@ export class PasskeysCoreService {
     user: User,
     verificationResponse: RegistrationResponseJSON,
   ) {
+    const tokenInfo = getTokenInfo(user.authorization)
+
     const expectedChallenge = await this.getChallenge(getUserId(user), 'reg')
 
     // try {
@@ -132,10 +139,10 @@ export class PasskeysCoreService {
       passkey_id: registrationInfo.credentialID,
       public_key: Buffer.from(registrationInfo.credentialPublicKey),
       user_sub: getUserId(user),
-      type: 'IslandApp',
+      type: PASSKEY_TYPE,
       audkenni_sim_number: user.audkenniSimNumber ?? '',
-      name: 'TODO',
-      idp: 'TODO',
+      name: tokenInfo.name,
+      idp: tokenInfo.idp,
     }
 
     await this.passkeyModel.upsert(passkey, {
@@ -170,19 +177,26 @@ export class PasskeysCoreService {
     })
 
     // Save to redis
-    await this.saveChallenge(getUserId(user), options.challenge, 'auth')
+    await this.saveChallenge(passkey.passkey_id, options.challenge, 'auth')
 
     return options
   }
 
   async verifyAuthentication(user: User, response: AuthenticationResponseJSON) {
-    const expectedChallenge = await this.getChallenge(getUserId(user), 'auth')
-
     const passkey = await this.passkeyModel.findOne({
       where: {
-        user_sub: user.sub,
+        passkey_id: response.id,
       },
     })
+
+    if (!passkey) {
+      throw new BadRequestException('Passkey not found')
+    }
+
+    const expectedChallenge = await this.getChallenge(
+      passkey.passkey_id,
+      'auth',
+    )
 
     if (!passkey) {
       throw new BadRequestException('Passkey not found')
@@ -198,7 +212,7 @@ export class PasskeysCoreService {
         authenticator: {
           credentialID: passkey.id,
           credentialPublicKey: passkey.public_key,
-          // TODO
+          // TODO?
           counter: 0,
           transports: ['internal'],
         },

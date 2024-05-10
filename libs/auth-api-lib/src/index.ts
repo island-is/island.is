@@ -174,3 +174,4 @@ export * from './lib/clients/admin/dto/admin-client.dto'
 // Passkeys core module
 export * from './lib/passkeys-core/passkeys-core.module'
 export * from './lib/passkeys-core/passkeys-core.service'
+export * from './lib/passkeys-core/passkeys-core.config'
