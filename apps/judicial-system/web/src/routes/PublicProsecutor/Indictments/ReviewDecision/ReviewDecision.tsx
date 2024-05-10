@@ -62,9 +62,9 @@ export const AppealDecision: React.FC<Props> = (props) => {
         <div className={styles.gridRow}>
           {options.map((item, index) => {
             return (
-              <Box key={'radioButton-' + index}>
+              <Box key={`radioButton--${index}`}>
                 <RadioButton
-                  name={'reviewOption-' + index}
+                  name={`reviewOption-${index}`}
                   label={item.label}
                   value={item.value}
                   checked={selectedOption === item.value}
