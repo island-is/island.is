@@ -390,7 +390,7 @@ export const DocumentDetailScreen: NavigationFunctionComponent<{
           >
             {error ? (
               <Typography>
-                {intl.formatMessage({ id: 'licenseScanDetail.errorUnknown' })}
+                {intl.formatMessage({ id: 'documentDetail.errorUnknown' })}
               </Typography>
             ) : (
               <Loader

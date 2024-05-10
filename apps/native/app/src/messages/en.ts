@@ -183,6 +183,7 @@ export const en: TranslatedMessages = {
   // document detail
   'documentDetail.screenTitle': 'Document',
   'documentDetail.loadingText': 'Loading document',
+  'documentDetail.errorUnknown': 'Error occurred while loading document',
 
   // wallet
   'wallet.screenTitle': 'Wallet',
@@ -273,6 +274,7 @@ export const en: TranslatedMessages = {
 
   // notifications
   'notifications.screenTitle': 'Notifications',
+  'notifications.errorUnknown': 'Error occurred while loading notifications',
 
   // profile
   'profile.screenTitle': 'More',

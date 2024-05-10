@@ -1,6 +1,6 @@
-import { NavigationBarSheet, NotificationCard, Skeleton } from '@ui'
+import { NavigationBarSheet, NotificationCard, Skeleton, Typography } from '@ui'
 import { dismissAllNotificationsAsync } from 'expo-notifications'
-import { useCallback, useEffect, useMemo, useState } from 'react'
+import React, { useCallback, useEffect, useMemo, useState } from 'react'
 import { useIntl } from 'react-intl'
 import { ActivityIndicator, FlatList, SafeAreaView, View } from 'react-native'
 import {
@@ -29,6 +29,11 @@ const LoadingWrapper = styled.View`
   padding-vertical: ${({ theme }) => theme.spacing[3]}px;
 `
 
+const ErrorContainer = styled.View`
+  flex: 1;
+  align-items: center;
+`
+
 const DEFAULT_PAGE_SIZE = 15
 
 const { getNavigationOptions, useNavigationOptions } =
@@ -52,7 +57,7 @@ export const NotificationsScreen: NavigationFunctionComponent = ({
   const theme = useTheme()
   const [loadingMore, setLoadingMore] = useState(false)
 
-  const { data, loading, fetchMore, updateQuery } =
+  const { data, loading, error, fetchMore, updateQuery } =
     useGetUserNotificationsQuery({
       fetchPolicy: 'network-only',
       variables: { input: { limit: DEFAULT_PAGE_SIZE } },
@@ -82,7 +87,11 @@ export const NotificationsScreen: NavigationFunctionComponent = ({
   const onNotificationPress = useCallback((notification: Notification) => {
     // Mark notification as read and seen
     void markUserNotificationAsRead({ variables: { id: notification.id } })
-    navigateToNotification(notification, componentId)
+
+    navigateToNotification({
+      componentId,
+      link: notification.message?.link?.url,
+    })
   }, [])
 
   const handleEndReached = async () => {
@@ -179,23 +188,31 @@ export const NotificationsScreen: NavigationFunctionComponent = ({
         style={{ marginHorizontal: 16 }}
       />
       <SafeAreaView style={{ flex: 1 }} testID={testIDs.SCREEN_NOTIFICATIONS}>
-        <FlatList
-          style={{ flex: 1, paddingTop: 16 }}
-          data={memoizedData}
-          keyExtractor={keyExtractor}
-          renderItem={renderNotificationItem}
-          onEndReachedThreshold={0.5}
-          onEndReached={handleEndReached}
-          scrollEventThrottle={16}
-          scrollToOverflowEnabled
-          ListFooterComponent={
-            loadingMore ? (
-              <LoadingWrapper>
-                <ActivityIndicator size="small" animating />
-              </LoadingWrapper>
-            ) : null
-          }
-        />
+        {error ? (
+          <ErrorContainer>
+            <Typography>
+              {intl.formatMessage({ id: 'notifications.errorUnknown' })}
+            </Typography>
+          </ErrorContainer>
+        ) : (
+          <FlatList
+            style={{ flex: 1, paddingTop: 16 }}
+            data={memoizedData}
+            keyExtractor={keyExtractor}
+            renderItem={renderNotificationItem}
+            onEndReachedThreshold={0.5}
+            onEndReached={handleEndReached}
+            scrollEventThrottle={16}
+            scrollToOverflowEnabled
+            ListFooterComponent={
+              loadingMore && !error ? (
+                <LoadingWrapper>
+                  <ActivityIndicator size="small" animating />
+                </LoadingWrapper>
+              ) : null
+            }
+          />
+        )}
       </SafeAreaView>
     </>
   )

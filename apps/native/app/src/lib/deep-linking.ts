@@ -1,11 +1,14 @@
+import { compile, match } from 'path-to-regexp'
 import { Navigation } from 'react-native-navigation'
 import createUse from 'zustand'
 import create, { State } from 'zustand/vanilla'
-import { match, compile } from 'path-to-regexp'
 import { bundleId } from '../config'
+import {
+  GenericLicenseType,
+  NotificationMessage,
+} from '../graphql/types/schema'
 import { ComponentRegistry, MainBottomTabs } from '../utils/component-registry'
 import { openBrowser } from './rn-island'
-import { GenericLicenseType, Notification } from '../graphql/types/schema'
 
 export type RouteCallbackArgs =
   | boolean
@@ -174,7 +177,7 @@ export function navigateTo(url: string, extraProps: any = {}) {
   // setup linking url
   const linkingUrl = `${bundleId}://${String(url).replace(/^\//, '')}`
 
-  // evalute and route
+  // evaluate and route
   return evaluateUrl(linkingUrl, extraProps)
 
   // @todo when to use native linking system?
@@ -182,37 +185,38 @@ export function navigateTo(url: string, extraProps: any = {}) {
 }
 
 /**
- * Navigate to a notification ClickActionUrl, if our mapping does not return a valid screen within the app - open a webview .
- * @param notification Notification object, requires `id` and an optional `link`
- * @param componentId use specific componentId to open web browser in
+ * Navigate to a notification ClickActionUrl, if our mapping does not return a valid screen within the app - open a webview.
  */
-export function navigateToNotification(
-  notification: Notification,
-  componentId?: string,
-) {
-  const { id, message } = notification
-  const { link } = message
-
-  if (id) {
-    if (link.url) {
-      const appRoute = findRoute(link.url)
-
-      if (appRoute) {
-        navigateTo(appRoute)
-      } else {
-        if (!componentId) {
-          // Use home tab for browser
-          Navigation.mergeOptions(MainBottomTabs, {
-            bottomTabs: {
-              currentTabIndex: 1,
-            },
-          })
-        }
-        openBrowser(link.url, componentId ?? ComponentRegistry.HomeScreen)
-      }
-    }
-  }
+export function navigateToNotification({
+  link,
+  componentId,
+}: {
+  // url to navigate to
+  link?: NotificationMessage['link']['url']
+  // componentId to open web browser in
+  componentId?: string
+}) {
   // If no link do nothing
+  if (!link) return
+
+  const appRoute = findRoute(link)
+
+  if (appRoute) {
+    navigateTo(appRoute)
+
+    return
+  }
+
+  if (!componentId) {
+    // Use home tab for browser
+    Navigation.mergeOptions(MainBottomTabs, {
+      bottomTabs: {
+        currentTabIndex: 1,
+      },
+    })
+  }
+
+  void openBrowser(link, componentId ?? ComponentRegistry.HomeScreen)
 }
 
 const findRoute = (url: string) => {
