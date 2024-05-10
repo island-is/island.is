@@ -419,7 +419,6 @@ const RealEstateNumberField = ({
       })
     } else {
       if (propertyNumber.length !== 0) {
-        console.log('POERPTYNUMBER is', propertyNumber)
         setError(fieldName, {
           message: formatMessage(m.errorPropertyNumber),
           type: 'validate',
