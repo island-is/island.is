@@ -15,6 +15,7 @@ import {
   IndictmentCaseFilesList,
   IndictmentsLawsBrokenAccordionItem,
   InfoCardActiveIndictment,
+  InfoCardCaseScheduledIndictment,
   InfoCardClosedIndictment,
   Modal,
   PageHeader,
@@ -23,7 +24,6 @@ import {
   SectionHeading,
   useIndictmentsLawsBroken,
 } from '@island.is/judicial-system-web/src/components'
-import InfoCardCaseScheduled from '@island.is/judicial-system-web/src/components/InfoCard/InfoCardCaseScheduled'
 import {
   CaseState,
   ServiceRequirement,
@@ -44,6 +44,8 @@ const IndictmentOverview = () => {
     'RETURN_INDICTMENT' | 'SEND_TO_PUBLIC_PROSECUTOR'
   >()
 
+  const caseHasBeenReceivedByCourt = workingCase.state === CaseState.RECEIVED
+  const latestDate = workingCase.courtDate ?? workingCase.arraignmentDate
   const caseIsClosed = isCompletedCase(workingCase.state)
 
   const handleNavigationTo = useCallback(
@@ -75,17 +77,18 @@ const IndictmentOverview = () => {
             : formatMessage(strings.inProgressTitle)}
         </PageTitle>
         <CourtCaseInfo workingCase={workingCase} />
-        {workingCase.state === CaseState.RECEIVED &&
-          workingCase.arraignmentDate?.date &&
-          workingCase.court && (
-            <Box component="section" marginBottom={5}>
-              <InfoCardCaseScheduled
-                court={workingCase.court}
-                courtDate={workingCase.arraignmentDate.date}
-                courtRoom={workingCase.arraignmentDate.location}
-              />
-            </Box>
-          )}
+        {caseHasBeenReceivedByCourt && workingCase.court && latestDate?.date && (
+          <Box component="section" marginBottom={5}>
+            <InfoCardCaseScheduledIndictment
+              court={workingCase.court}
+              courtDate={latestDate.date}
+              courtRoom={latestDate.location}
+              postponedIndefinitelyExplanation={
+                workingCase.postponedIndefinitelyExplanation
+              }
+            />
+          </Box>
+        )}
         <Box component="section" marginBottom={5}>
           {caseIsClosed ? (
             <InfoCardClosedIndictment />

@@ -6,7 +6,8 @@ import {
   CaseDecision,
   CaseState,
   CaseType,
-  completedCaseStates,
+  completedIndictmentCaseStates,
+  completedRequestCaseStates,
   courtOfAppealsRoles,
   DateType,
   districtCourtRoles,
@@ -47,10 +48,11 @@ describe('getCasesQueryFilter', () => {
             CaseState.WAITING_FOR_CONFIRMATION,
             CaseState.SUBMITTED,
             CaseState.RECEIVED,
+            CaseState.MAIN_HEARING,
             CaseState.ACCEPTED,
             CaseState.REJECTED,
             CaseState.DISMISSED,
-            CaseState.MAIN_HEARING,
+            CaseState.COMPLETED,
           ],
         },
         {
@@ -104,10 +106,11 @@ describe('getCasesQueryFilter', () => {
             CaseState.WAITING_FOR_CONFIRMATION,
             CaseState.SUBMITTED,
             CaseState.RECEIVED,
+            CaseState.MAIN_HEARING,
             CaseState.ACCEPTED,
             CaseState.REJECTED,
             CaseState.DISMISSED,
-            CaseState.MAIN_HEARING,
+            CaseState.COMPLETED,
           ],
         },
         {
@@ -178,10 +181,8 @@ describe('getCasesQueryFilter', () => {
                     state: [
                       CaseState.SUBMITTED,
                       CaseState.RECEIVED,
-                      CaseState.ACCEPTED,
-                      CaseState.REJECTED,
-                      CaseState.DISMISSED,
                       CaseState.MAIN_HEARING,
+                      CaseState.COMPLETED,
                     ],
                   },
                 ],
@@ -227,10 +228,8 @@ describe('getCasesQueryFilter', () => {
             state: [
               CaseState.SUBMITTED,
               CaseState.RECEIVED,
-              CaseState.ACCEPTED,
-              CaseState.REJECTED,
-              CaseState.DISMISSED,
               CaseState.MAIN_HEARING,
+              CaseState.COMPLETED,
             ],
           },
         ],
@@ -305,7 +304,7 @@ describe('getCasesQueryFilter', () => {
         [Op.and]: [
           { isArchived: false },
           {
-            state: [CaseState.ACCEPTED],
+            state: [CaseState.COMPLETED],
           },
           {
             type: indictmentCases,
@@ -416,7 +415,7 @@ describe('getCasesQueryFilter', () => {
                         { '$dateLogs.date_type$': DateType.ARRAIGNMENT_DATE },
                       ],
                     },
-                    { state: completedCaseStates },
+                    { state: completedRequestCaseStates },
                   ],
                 },
                 { defender_national_id: user.nationalId },
@@ -425,7 +424,13 @@ describe('getCasesQueryFilter', () => {
             {
               [Op.and]: [
                 { type: indictmentCases },
-                { state: [CaseState.RECEIVED, ...completedCaseStates] },
+                {
+                  state: [
+                    CaseState.RECEIVED,
+                    CaseState.MAIN_HEARING,
+                    ...completedIndictmentCaseStates,
+                  ],
+                },
                 {
                   '$defendants.defender_national_id$': user.nationalId,
                 },

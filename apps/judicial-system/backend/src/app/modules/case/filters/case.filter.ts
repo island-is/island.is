@@ -10,10 +10,10 @@ import {
   isDefenceUser,
   isDistrictCourtUser,
   isIndictmentCase,
-  isInvestigationCase,
   isPrisonSystemUser,
   isProsecutionUser,
   isPublicProsecutorUser,
+  isRequestCase,
   isRestrictionCase,
   RequestSharedWithDefender,
   UserRole,
@@ -39,10 +39,11 @@ const canProsecutionUserAccessCase = (
       CaseState.WAITING_FOR_CONFIRMATION,
       CaseState.SUBMITTED,
       CaseState.RECEIVED,
+      CaseState.MAIN_HEARING,
       CaseState.ACCEPTED,
       CaseState.REJECTED,
       CaseState.DISMISSED,
-      CaseState.MAIN_HEARING,
+      CaseState.COMPLETED,
     ].includes(theCase.state)
   ) {
     return false
@@ -76,11 +77,7 @@ const canPublicProsecutionUserAccessCase = (theCase: Case): boolean => {
   }
 
   // Check case state access
-  if (
-    ![CaseState.ACCEPTED, CaseState.REJECTED, CaseState.DISMISSED].includes(
-      theCase.state,
-    )
-  ) {
+  if (theCase.state !== CaseState.COMPLETED) {
     return false
   }
 
@@ -101,7 +98,7 @@ const canDistrictCourtUserAccessCase = (theCase: Case, user: User): boolean => {
   }
 
   // Check case state access
-  if (isRestrictionCase(theCase.type) || isInvestigationCase(theCase.type)) {
+  if (isRequestCase(theCase.type)) {
     if (
       ![
         CaseState.DRAFT,
@@ -118,10 +115,8 @@ const canDistrictCourtUserAccessCase = (theCase: Case, user: User): boolean => {
     ![
       CaseState.SUBMITTED,
       CaseState.RECEIVED,
-      CaseState.ACCEPTED,
-      CaseState.REJECTED,
-      CaseState.DISMISSED,
       CaseState.MAIN_HEARING,
+      CaseState.COMPLETED,
     ].includes(theCase.state)
   ) {
     return false
@@ -137,7 +132,7 @@ const canDistrictCourtUserAccessCase = (theCase: Case, user: User): boolean => {
 
 const canAppealsCourtUserAccessCase = (theCase: Case): boolean => {
   // Check case type access
-  if (!isRestrictionCase(theCase.type) && !isInvestigationCase(theCase.type)) {
+  if (!isRequestCase(theCase.type)) {
     return false
   }
 
@@ -237,9 +232,11 @@ const canDefenceUserAccessCase = (theCase: Case, user: User): boolean => {
     ![
       CaseState.SUBMITTED,
       CaseState.RECEIVED,
+      CaseState.MAIN_HEARING,
       CaseState.ACCEPTED,
       CaseState.REJECTED,
       CaseState.DISMISSED,
+      CaseState.COMPLETED,
     ].includes(theCase.state)
   ) {
     return false
@@ -251,7 +248,7 @@ const canDefenceUserAccessCase = (theCase: Case, user: User): boolean => {
 
   // Check submitted case access
   const canDefenderAccessSubmittedCase =
-    (isRestrictionCase(theCase.type) || isInvestigationCase(theCase.type)) &&
+    isRequestCase(theCase.type) &&
     theCase.requestSharedWithDefender ===
       RequestSharedWithDefender.READY_FOR_COURT
 
