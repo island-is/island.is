@@ -48,7 +48,7 @@ export const Blue = Template.bind({})
 Blue.args = {
   ...args,
   backgroundColor: 'blue',
-} 
+}
 
 export const Disabled = Template.bind({})
 Disabled.args = {
