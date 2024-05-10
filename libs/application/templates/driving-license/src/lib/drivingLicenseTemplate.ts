@@ -105,6 +105,8 @@ const template: ApplicationTemplate<
                     featureFlags[
                       DrivingLicenseFeatureFlags.ALLOW_LICENSE_SELECTION
                     ],
+                  allowBELicense:
+                    featureFlags[DrivingLicenseFeatureFlags.ALLOW_BE_LICENSE],
                 })
               },
               write: 'all',
