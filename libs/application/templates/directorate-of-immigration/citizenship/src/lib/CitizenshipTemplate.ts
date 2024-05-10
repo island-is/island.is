@@ -33,9 +33,7 @@ import {
   ResidenceInIcelandLastChangeDateApi,
   CountriesApi,
   TravelDocumentTypesApi,
-  CurrentCountryOfResidenceListApi,
-  CurrentStayAbroadListApi,
-  CurrentPassportItemApi,
+  ApplicantInformationApi,
 } from '../dataProviders'
 import { buildPaymentState } from '@island.is/application/utils'
 import { getChargeItemCodes } from '../utils'
@@ -97,11 +95,9 @@ const template: ApplicationTemplate<
                 ResidenceConditionInfoApi,
                 ResidenceInIcelandLastChangeDateApi,
                 CountriesApi,
-                TravelDocumentTypesApi,
-                CurrentCountryOfResidenceListApi,
-                CurrentStayAbroadListApi,
-                CurrentPassportItemApi,
                 UtlendingastofnunPaymentCatalogApi,
+                ApplicantInformationApi,
+                TravelDocumentTypesApi,
               ],
             },
           ],

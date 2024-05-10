@@ -137,6 +137,9 @@ export interface Claims {
 
 export interface StocksData extends DeceasedShare {
   value: string
+  assetNumber: string
+  description: string
+  propertyValuation: string
   amount: string
   faceValue: string
   nationalId: string

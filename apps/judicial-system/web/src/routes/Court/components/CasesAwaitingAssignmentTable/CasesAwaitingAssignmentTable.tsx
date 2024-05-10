@@ -2,7 +2,6 @@ import React from 'react'
 import { useIntl } from 'react-intl'
 import { AnimatePresence } from 'framer-motion'
 
-import { Box } from '@island.is/island-ui/core'
 import { capitalize } from '@island.is/judicial-system/formatters'
 import { core, tables } from '@island.is/judicial-system-web/messages'
 import {
@@ -15,9 +14,10 @@ import {
   CourtCaseNumber,
   CreatedDate,
   DefendantInfo,
-  TableSkeleton,
 } from '@island.is/judicial-system-web/src/components/Table'
-import Table from '@island.is/judicial-system-web/src/components/Table/Table'
+import Table, {
+  TableWrapper,
+} from '@island.is/judicial-system-web/src/components/Table/Table'
 import TableInfoContainer from '@island.is/judicial-system-web/src/components/Table/TableInfoContainer/TableInfoContainer'
 import { CaseListEntry } from '@island.is/judicial-system-web/src/graphql/schema'
 
@@ -40,10 +40,8 @@ const CasesAwaitingAssignmentTable: React.FC<
     <>
       <SectionHeading title={formatMessage(strings.title)} />
       <AnimatePresence initial={false}>
-        <Box marginBottom={[5, 5, 12]}>
-          {loading || isFiltering ? (
-            <TableSkeleton />
-          ) : cases.length > 0 ? (
+        <TableWrapper loading={loading || isFiltering}>
+          {cases.length > 0 ? (
             <Table
               thead={[
                 {
@@ -67,12 +65,12 @@ const CasesAwaitingAssignmentTable: React.FC<
                 { title: formatMessage(tables.state) },
               ]}
               data={cases}
-              generateContextMenuItems={(row: CaseListEntry) => {
+              generateContextMenuItems={(row) => {
                 return [openCaseInNewTabMenuItem(row.id)]
               }}
               columns={[
                 {
-                  cell: (row: CaseListEntry) => (
+                  cell: (row) => (
                     <CourtCaseNumber
                       courtCaseNumber={row.courtCaseNumber ?? ''}
                       policeCaseNumbers={row.policeCaseNumbers ?? []}
@@ -81,22 +79,16 @@ const CasesAwaitingAssignmentTable: React.FC<
                   ),
                 },
                 {
-                  cell: (row: CaseListEntry) => (
-                    <DefendantInfo defendants={row.defendants} />
-                  ),
+                  cell: (row) => <DefendantInfo defendants={row.defendants} />,
                 },
                 {
-                  cell: (row: CaseListEntry) => (
-                    <ColumnCaseType type={row.type} />
-                  ),
+                  cell: (row) => <ColumnCaseType type={row.type} />,
                 },
                 {
-                  cell: (row: CaseListEntry) => (
-                    <CreatedDate created={row.created} />
-                  ),
+                  cell: (row) => <CreatedDate created={row.created} />,
                 },
                 {
-                  cell: (row: CaseListEntry) => (
+                  cell: (row) => (
                     <TagCaseState caseState={row.state} isCourtRole={true} />
                   ),
                 },
@@ -108,7 +100,7 @@ const CasesAwaitingAssignmentTable: React.FC<
               message={formatMessage(strings.noCasesMessage)}
             />
           )}
-        </Box>
+        </TableWrapper>
       </AnimatePresence>
     </>
   )

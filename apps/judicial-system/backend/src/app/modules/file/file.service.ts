@@ -21,7 +21,7 @@ import {
   CaseFileCategory,
   CaseFileState,
   CaseState,
-  completedCaseStates,
+  completedIndictmentCaseStates,
   isIndictmentCase,
 } from '@island.is/judicial-system/types'
 
@@ -233,6 +233,7 @@ export class FileService {
     })
 
     if (
+      theCase.appealCaseNumber &&
       file.category &&
       [
         CaseFileCategory.PROSECUTOR_APPEAL_STATEMENT,
@@ -270,7 +271,8 @@ export class FileService {
       [
         CaseState.SUBMITTED,
         CaseState.RECEIVED,
-        ...completedCaseStates,
+        CaseState.MAIN_HEARING,
+        ...completedIndictmentCaseStates,
       ].includes(theCase.state)
     ) {
       key = formatConfirmedIndictmentKey(key)
@@ -424,7 +426,8 @@ export class FileService {
           [
             CaseState.SUBMITTED,
             CaseState.RECEIVED,
-            ...completedCaseStates,
+            CaseState.MAIN_HEARING,
+            ...completedIndictmentCaseStates,
           ].includes(theCase.state)
         ) {
           return this.awsS3Service.copyObject(

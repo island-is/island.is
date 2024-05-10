@@ -6,6 +6,7 @@ import { CacheField } from '@island.is/nest/graphql'
 export enum CustomPageUniqueIdentifier {
   PensionCalculator = 'PensionCalculator',
   OfficialJournalOfIceland = 'OfficialJournalOfIceland',
+  Vacancies = 'Vacancies',
 }
 
 registerEnumType(CustomPageUniqueIdentifier, {
