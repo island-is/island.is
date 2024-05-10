@@ -10,6 +10,7 @@ import {
   Vehicles,
   WorkMachines,
   DistrictCommissionersLicenses,
+  DistrictCommissionersPCard,
 } from '../../../infra/src/dsl/xroad'
 
 export const serviceSetup = (services: {
@@ -54,6 +55,7 @@ export const serviceSetup = (services: {
       UniversityCareers,
       WorkMachines,
       Education,
+      DistrictCommissionersPCard,
       DistrictCommissionersLicenses,
     )
     .ingress({
