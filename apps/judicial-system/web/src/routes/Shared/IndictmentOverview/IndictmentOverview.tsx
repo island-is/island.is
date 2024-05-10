@@ -19,7 +19,6 @@ import {
   InfoCardActiveIndictment,
   InfoCardCaseScheduledIndictment,
   InfoCardClosedIndictment,
-  Modal,
   PageHeader,
   PageLayout,
   PageTitle,
@@ -28,7 +27,7 @@ import {
 } from '@island.is/judicial-system-web/src/components'
 import { CaseState } from '@island.is/judicial-system-web/src/graphql/schema'
 
-import { AppealDecision } from '../../PublicProsecutor/Indictments/ReviewDecision/ReviewDecision'
+import { ReviewDecision } from '../../PublicProsecutor/Indictments/ReviewDecision/ReviewDecision'
 import { strings } from './IndictmentOverview.strings'
 
 const IndictmentOverview = () => {
@@ -41,11 +40,9 @@ const IndictmentOverview = () => {
   const lawsBroken = useIndictmentsLawsBroken(workingCase)
   const caseIsClosed = isCompletedCase(workingCase.state)
   const latestDate = workingCase.courtDate ?? workingCase.arraignmentDate
-
-  const [modalVisible, setModalVisible] = React.useState<boolean>(false)
-  const [indictmentReviewDecision, setIndictmentReviewDecision] = useState<
-    IndictmentCaseReviewDecision | undefined
-  >(undefined)
+  const [modalVisible, setModalVisible] = useState<boolean>(false)
+  const [isReviewDecisionSelected, setIsReviewDecisionSelected] =
+    useState(false)
 
   const handleNavigationTo = useCallback(
     (destination: string) => router.push(`${destination}/${workingCase.id}`),
@@ -110,31 +107,18 @@ const IndictmentOverview = () => {
         {isCompletedCase(workingCase.state) &&
           workingCase.indictmentReviewer?.id === user?.id && (
             <>
-              <AppealDecision
+              <ReviewDecision
                 workingCase={workingCase}
-                onSelect={setIndictmentReviewDecision}
-                selectedOption={indictmentReviewDecision}
+                modalVisible={modalVisible}
+                setModalVisible={setModalVisible}
+                onSelect={() => setIsReviewDecisionSelected(true)}
               />
               <FormFooter
                 previousUrl={`${constants.CASES_ROUTE}`}
                 nextButtonText={formatMessage(strings.completeReview)}
                 onNextButtonClick={() => setModalVisible(true)}
+                nextIsDisabled={!isReviewDecisionSelected}
               />
-              {modalVisible && (
-                <Modal
-                  title={formatMessage(strings.reviewModalTitle)}
-                  text={formatMessage(strings.reviewModalText)}
-                  primaryButtonText={formatMessage(
-                    strings.reviewModalPrimaryButtonText,
-                  )}
-                  secondaryButtonText={formatMessage(
-                    strings.reviewModalSecondaryButtonText,
-                  )}
-                  onClose={() => setModalVisible(false)}
-                  onPrimaryButtonClick={() => console.log('test')}
-                  onSecondaryButtonClick={() => setModalVisible(false)}
-                />
-              )}
             </>
           )}
       </FormContentContainer>

@@ -1,7 +1,9 @@
 import { useContext, useState } from 'react'
 import { useIntl } from 'react-intl'
+import { useRouter } from 'next/router'
 
 import { Box, RadioButton, Text } from '@island.is/island-ui/core'
+import * as constants from '@island.is/judicial-system/consts'
 import { formatDate } from '@island.is/judicial-system/formatters'
 import {
   IndictmentCaseReviewDecision,
@@ -9,27 +11,45 @@ import {
 } from '@island.is/judicial-system/types'
 import {
   BlueBox,
+  Modal,
   SectionHeading,
   UserContext,
 } from '@island.is/judicial-system-web/src/components'
 import { Case } from '@island.is/judicial-system-web/src/graphql/schema'
+import { useCase } from '@island.is/judicial-system-web/src/utils/hooks'
 
 import { strings } from './ReviewDecision.strings'
 import * as styles from './ReviewDecision.css'
+
 interface Props {
   workingCase: Case
-  selectedOption?: IndictmentCaseReviewDecision
-  onSelect: (decision: IndictmentCaseReviewDecision) => void
+  modalVisible?: boolean
+  setModalVisible: React.Dispatch<React.SetStateAction<boolean>>
+  onSelect?: () => void
 }
 
-export const AppealDecision: React.FC<Props> = (props) => {
-  const { workingCase, onSelect, selectedOption } = props
-
+export const ReviewDecision: React.FC<Props> = (props) => {
   const { user } = useContext(UserContext)
+  const router = useRouter()
   const { formatMessage: fm } = useIntl()
+  const { updateCase } = useCase()
 
-  if (!isPublicProsecutor(user)) {
-    return null
+  const { workingCase, modalVisible, setModalVisible, onSelect } = props
+
+  const [indictmentReviewDecision, setIndictmentReviewDecision] = useState<
+    IndictmentCaseReviewDecision | undefined
+  >(undefined)
+
+  const handleReviewDecision = async () => {
+    if (!indictmentReviewDecision) {
+      return
+    }
+    const updateSuccess = await updateCase(workingCase.id, {
+      indictmentReviewDecision: indictmentReviewDecision,
+    })
+    if (updateSuccess) {
+      router.push(constants.CASES_ROUTE)
+    }
   }
 
   const options = [
@@ -42,6 +62,10 @@ export const AppealDecision: React.FC<Props> = (props) => {
       value: IndictmentCaseReviewDecision.ACCEPT,
     },
   ]
+
+  if (!isPublicProsecutor(user)) {
+    return null
+  }
 
   return (
     <Box marginBottom={5}>
@@ -62,23 +86,35 @@ export const AppealDecision: React.FC<Props> = (props) => {
         <div className={styles.gridRow}>
           {options.map((item, index) => {
             return (
-              <Box key={`radioButton--${index}`}>
-                <RadioButton
-                  name={`reviewOption-${index}`}
-                  label={item.label}
-                  value={item.value}
-                  checked={selectedOption === item.value}
-                  onChange={() => {
-                    onSelect(item.value)
-                  }}
-                  backgroundColor="white"
-                  large
-                />
-              </Box>
+              <RadioButton
+                name={`reviewOption-${index}`}
+                label={item.label}
+                value={item.value}
+                checked={indictmentReviewDecision === item.value}
+                onChange={() => {
+                  onSelect && onSelect()
+                  setIndictmentReviewDecision(item.value)
+                }}
+                backgroundColor="white"
+                large
+              />
             )
           })}
         </div>
       </BlueBox>
+      {modalVisible && (
+        <Modal
+          title={fm(strings.reviewModalTitle)}
+          text={fm(strings.reviewModalText, {
+            reviewerDecision: indictmentReviewDecision,
+          })}
+          primaryButtonText={fm(strings.reviewModalPrimaryButtonText)}
+          secondaryButtonText={fm(strings.reviewModalSecondaryButtonText)}
+          onClose={() => setModalVisible(false)}
+          onPrimaryButtonClick={handleReviewDecision}
+          onSecondaryButtonClick={() => setModalVisible(false)}
+        />
+      )}
     </Box>
   )
 }

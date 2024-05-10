@@ -24,4 +24,28 @@ export const strings = defineMessages({
     defaultMessage: 'Una héraðsdómi',
     description: 'Notaður sem texti fyrir "Una héraðsdómi" radio takka.',
   },
+  reviewModalTitle: {
+    id: 'judicial.system.core:indictments_review.title',
+    defaultMessage: 'Staðfesta ákvörðun',
+    description: 'Notaður sem titill á yfirliti ákæru.',
+  },
+  reviewModalText: {
+    id: 'judicial.system.core:indictments_review.modal_text',
+
+    defaultMessage:
+      'Ertu viss um að þú viljir {reviewerDecision, select, ACCEPT {una héraðsdómi} APPEAL {áfrýja héraðsdómi til Landsréttar} other {halda áfram}}?',
+    description: 'Notaður sem texti í yfirlitsglugga um yfirlit ákæru.',
+  },
+  reviewModalPrimaryButtonText: {
+    id: 'judicial.system.core:indictments_review.modal_primary_button_text',
+    defaultMessage: 'Staðfesta',
+    description:
+      'Notaður sem texti á aðal takka í yfirlitsglugga um yfirlit ákæru.',
+  },
+  reviewModalSecondaryButtonText: {
+    id: 'judicial.system.core:indictments_review.modal_secondary_button_text',
+    defaultMessage: 'Hætta við',
+    description:
+      'Notaður sem texti á aukatakka í yfirlitsglugga um yfirlit ákæru.',
+  },
 })
