@@ -7,5 +7,4 @@ export const gridRow = style({
   gridTemplateColumns: '1.6fr 1fr',
   gridGap: theme.spacing[1],
   marginBottom: theme.spacing[1],
-  alignItems: 'stretch',
 })

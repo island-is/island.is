@@ -7,6 +7,7 @@ import * as constants from '@island.is/judicial-system/consts'
 import { formatDate } from '@island.is/judicial-system/formatters'
 import {
   IndictmentCaseReviewDecision,
+  isCompletedCase,
   isPublicProsecutor,
 } from '@island.is/judicial-system/types'
 import {
@@ -15,7 +16,10 @@ import {
   SectionHeading,
   UserContext,
 } from '@island.is/judicial-system-web/src/components'
-import { Case } from '@island.is/judicial-system-web/src/graphql/schema'
+import {
+  Case,
+  CaseState,
+} from '@island.is/judicial-system-web/src/graphql/schema'
 import { useCase } from '@island.is/judicial-system-web/src/utils/hooks'
 
 import { strings } from './ReviewDecision.strings'

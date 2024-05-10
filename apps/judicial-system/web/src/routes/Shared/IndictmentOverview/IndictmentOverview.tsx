@@ -4,10 +4,7 @@ import { useRouter } from 'next/router'
 
 import { Box } from '@island.is/island-ui/core'
 import * as constants from '@island.is/judicial-system/consts'
-import {
-  IndictmentCaseReviewDecision,
-  isCompletedCase,
-} from '@island.is/judicial-system/types'
+import { isCompletedCase } from '@island.is/judicial-system/types'
 import { titles } from '@island.is/judicial-system-web/messages'
 import {
   CourtCaseInfo,
@@ -41,9 +38,13 @@ const IndictmentOverview = () => {
   const caseHasBeenReceivedByCourt = workingCase.state === CaseState.RECEIVED
   const latestDate = workingCase.courtDate ?? workingCase.arraignmentDate
   const caseIsClosed = isCompletedCase(workingCase.state)
+
   const [modalVisible, setModalVisible] = useState<boolean>(false)
   const [isReviewDecisionSelected, setIsReviewDecisionSelected] =
     useState(false)
+  const shouldDisplayReviewDecision =
+    isCompletedCase(workingCase.state) &&
+    workingCase.indictmentReviewer?.id === user?.id
 
   const handleNavigationTo = useCallback(
     (destination: string) => router.push(`${destination}/${workingCase.id}`),
@@ -103,24 +104,25 @@ const IndictmentOverview = () => {
             <IndictmentCaseFilesList workingCase={workingCase} />
           </Box>
         )}
-        {isCompletedCase(workingCase.state) &&
-          workingCase.indictmentReviewer?.id === user?.id && (
-            <>
-              <ReviewDecision
-                workingCase={workingCase}
-                modalVisible={modalVisible}
-                setModalVisible={setModalVisible}
-                onSelect={() => setIsReviewDecisionSelected(true)}
-              />
-              <FormFooter
-                previousUrl={`${constants.CASES_ROUTE}`}
-                nextButtonText={formatMessage(strings.completeReview)}
-                onNextButtonClick={() => setModalVisible(true)}
-                nextIsDisabled={!isReviewDecisionSelected}
-              />
-            </>
-          )}
+        {shouldDisplayReviewDecision && (
+          <ReviewDecision
+            workingCase={workingCase}
+            modalVisible={modalVisible}
+            setModalVisible={setModalVisible}
+            onSelect={() => setIsReviewDecisionSelected(true)}
+          />
+        )}
       </FormContentContainer>
+      {shouldDisplayReviewDecision && (
+        <FormContentContainer isFooter>
+          <FormFooter
+            previousUrl={`${constants.CASES_ROUTE}`}
+            nextButtonText={formatMessage(strings.completeReview)}
+            onNextButtonClick={() => setModalVisible(true)}
+            nextIsDisabled={!isReviewDecisionSelected}
+          />
+        </FormContentContainer>
+      )}
     </PageLayout>
   )
 }
