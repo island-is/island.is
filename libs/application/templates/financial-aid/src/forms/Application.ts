@@ -47,6 +47,19 @@ export const Application: Form = buildForm({
             }),
           ],
         }),
+        // buildSubSection({
+        //   condition: (_, externalData) =>
+        //     (externalData as unknown as ExternalData).childrenCustodyInformation
+        //       .data.,
+        //   title: m.aboutChildrenForm.general.sectionTitle,
+        //   children: [
+        //     buildCustomField({
+        //       id: Routes.CHILDRENSCHOOLINFO,
+        //       title: m.unknownRelationship.general.pageTitle,
+        //       component: 'AboutChildrenForm',
+        //     }),
+        //   ],
+        // }),
         buildSubSection({
           id: Routes.HOMECIRCUMSTANCES,
           title: m.homeCircumstancesForm.general.sectionTitle,

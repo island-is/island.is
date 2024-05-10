@@ -8,7 +8,7 @@ import { currentMonth } from '@island.is/financial-aid/shared/lib'
 import { DescriptionText, PrivacyPolicyAccordion } from '..'
 import { FAFieldBaseProps } from '../../lib/types'
 import withLogo from '../Logo/Logo'
-import { aboutForm } from '../../lib/messages'
+import { aboutChildrenForm } from '../../lib/messages'
 
 const AboutChildrenForm = ({ application }: FAFieldBaseProps) => {
   const { formatMessage } = useIntl()
@@ -17,12 +17,12 @@ const AboutChildrenForm = ({ application }: FAFieldBaseProps) => {
   return (
     <>
       <Text variant="h3" fontWeight="light" marginBottom={3}>
-        {formatMessage(aboutForm.general.description, {
+        {formatMessage(aboutChildrenForm.general.description, {
           currentMonth: currentMonth(lang),
         })}
       </Text>
       <Box marginBottom={5}>
-        <DescriptionText text={aboutForm.bulletList.content} />
+        <DescriptionText text={aboutChildrenForm.bulletList.content} />
       </Box>
 
       <PrivacyPolicyAccordion
