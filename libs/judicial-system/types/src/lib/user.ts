@@ -35,7 +35,10 @@ export interface User {
 interface InstitutionUser {
   id?: string | null
   role?: string | null
-  institution?: { id?: string | null; type?: string | null } | null
+  institution?: {
+    id?: string | null
+    type?: string | null
+  } | null
 }
 
 export const prosecutionRoles: string[] = [
@@ -48,6 +51,14 @@ export const isProsecutionUser = (user?: InstitutionUser): boolean => {
     user?.role &&
       prosecutionRoles.includes(user.role) &&
       user?.institution?.type === InstitutionType.PROSECUTORS_OFFICE,
+  )
+}
+
+export const isPublicProsecutor = (user?: InstitutionUser): boolean => {
+  return Boolean(
+    user?.role &&
+      user?.role === UserRole.PROSECUTOR &&
+      user?.institution?.id === '8f9e2f6d-6a00-4a5e-b39b-95fd110d762e', // TODO: Create a new institution type to avoid hardcoding
   )
 }
 

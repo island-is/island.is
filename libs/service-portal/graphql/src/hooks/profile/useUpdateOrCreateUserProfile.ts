@@ -1,7 +1,6 @@
 import { Locale } from '@island.is/shared/types'
-import { useUserProfile } from './useUserProfile'
+
 import { useUpdateUserProfile } from './useUpdateUserProfile'
-import { useCreateUserProfile } from './useCreateUserProfile'
 
 type UpdateUserProfileData = {
   email?: string

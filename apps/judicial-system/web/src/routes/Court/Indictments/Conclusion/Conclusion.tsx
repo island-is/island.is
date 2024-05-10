@@ -27,6 +27,7 @@ import {
 } from '@island.is/judicial-system-web/src/components'
 import {
   CaseFileCategory,
+  CaseIndictmentRulingDecision,
   CaseTransition,
 } from '@island.is/judicial-system-web/src/graphql/schema'
 import { stepValidationsType } from '@island.is/judicial-system-web/src/utils/formHelper'
@@ -38,7 +39,10 @@ import {
 
 import { strings } from './Conclusion.strings'
 
-type Actions = 'POSTPONE' | 'REDISTRIBUTE'
+type Actions = 'POSTPONE' | 'REDISTRIBUTE' | 'COMPLETE'
+type Decision =
+  | CaseIndictmentRulingDecision.FINE
+  | CaseIndictmentRulingDecision.RULING
 
 interface Postponement {
   postponedIndefinitely?: boolean
@@ -51,6 +55,7 @@ const Conclusion: React.FC = () => {
     useContext(FormContext)
 
   const [selectedAction, setSelectedAction] = useState<Actions>()
+  const [selectedDecision, setSelectedDecision] = useState<Decision>()
   const [postponement, setPostponement] = useState<Postponement>()
   const {
     courtDate,
@@ -59,7 +64,8 @@ const Conclusion: React.FC = () => {
     sendCourtDateToServer,
   } = useCourtArrangements(workingCase, setWorkingCase, 'courtDate')
 
-  const { updateCase, isUpdatingCase, transitionCase } = useCase()
+  const { updateCase, isUpdatingCase, transitionCase, setAndSendCaseToServer } =
+    useCase()
 
   const {
     uploadFiles,
@@ -85,15 +91,34 @@ const Conclusion: React.FC = () => {
     }
   }, [transitionCase, workingCase.id, formatMessage])
 
+  const handleCompletion = useCallback(async () => {
+    await setAndSendCaseToServer(
+      [
+        {
+          indictmentRulingDecision: selectedDecision,
+          force: true,
+        },
+      ],
+      workingCase,
+      setWorkingCase,
+    )
+  }, [selectedDecision, setAndSendCaseToServer, setWorkingCase, workingCase])
+
   const handleNavigationTo = useCallback(
     async (destination: keyof stepValidationsType) => {
       if (selectedAction === 'REDISTRIBUTE') {
         handleRedistribution()
+      } else if (selectedAction === 'COMPLETE') {
+        handleCompletion()
       } else if (postponement?.postponedIndefinitely) {
-        await updateCase(workingCase.id, {
+        const updateSuccss = await updateCase(workingCase.id, {
           courtDate: null,
           postponedIndefinitelyExplanation: postponement.reason,
         })
+
+        if (!updateSuccss) {
+          return
+        }
       } else {
         await sendCourtDateToServer([
           { postponedIndefinitelyExplanation: null, force: true },
@@ -108,28 +133,35 @@ const Conclusion: React.FC = () => {
       postponement?.reason,
       workingCase.id,
       handleRedistribution,
+      handleCompletion,
       updateCase,
       sendCourtDateToServer,
     ],
   )
 
   useEffect(() => {
-    if (
+    if (workingCase.indictmentRulingDecision) {
+      setSelectedDecision(workingCase.indictmentRulingDecision)
+      setSelectedAction('COMPLETE')
+    } else if (
       workingCase.courtDate?.date ||
       workingCase.postponedIndefinitelyExplanation
     ) {
       setSelectedAction('POSTPONE')
-    }
 
-    if (workingCase.postponedIndefinitelyExplanation) {
-      setPostponement({
-        postponedIndefinitely: true,
-        reason: workingCase.postponedIndefinitelyExplanation,
-      })
+      if (workingCase.postponedIndefinitelyExplanation) {
+        setPostponement({
+          postponedIndefinitely: true,
+          reason: workingCase.postponedIndefinitelyExplanation,
+        })
+      }
+    } else {
+      return
     }
   }, [
     workingCase.courtDate?.date,
     workingCase.postponedIndefinitelyExplanation,
+    workingCase.indictmentRulingDecision,
   ])
 
   const stepIsValid = () => {
@@ -141,9 +173,7 @@ const Conclusion: React.FC = () => {
       return uploadFiles.find(
         (file) => file.category === CaseFileCategory.COURT_RECORD,
       )
-    }
-
-    if (selectedAction === 'POSTPONE')
+    } else if (selectedAction === 'POSTPONE') {
       return (
         Boolean(
           postponement?.postponedIndefinitely
@@ -151,6 +181,9 @@ const Conclusion: React.FC = () => {
             : courtDate?.date,
         ) && allFilesDoneOrError
       )
+    } else if (selectedAction === 'COMPLETE') {
+      return selectedDecision !== undefined && allFilesDoneOrError
+    }
   }
 
   return (
@@ -184,11 +217,24 @@ const Conclusion: React.FC = () => {
                 label={formatMessage(strings.postponed)}
               />
             </Box>
+            <Box marginBottom={2}>
+              <RadioButton
+                id="conclusion-complete"
+                name="conclusion-decision"
+                checked={selectedAction === 'COMPLETE'}
+                onChange={() => {
+                  setSelectedAction('COMPLETE')
+                }}
+                large
+                backgroundColor="white"
+                label={formatMessage(strings.complete)}
+              />
+            </Box>
             <RadioButton
               id="conclusion-redistribute"
               name="conclusion-redistribute"
               checked={selectedAction === 'REDISTRIBUTE'}
-              onChange={async () => {
+              onChange={() => {
                 setSelectedAction('REDISTRIBUTE')
               }}
               large
@@ -206,7 +252,6 @@ const Conclusion: React.FC = () => {
               <BlueBox>
                 <Box marginBottom={2}>
                   <CourtArrangements
-                    workingCase={workingCase}
                     handleCourtDateChange={handleCourtDateChange}
                     handleCourtRoomChange={handleCourtRoomChange}
                     courtDate={courtDate}
@@ -253,6 +298,39 @@ const Conclusion: React.FC = () => {
             </Box>
           </>
         )}
+        {selectedAction === 'COMPLETE' && (
+          <Box marginBottom={5}>
+            <SectionHeading title={formatMessage(strings.decision)} required />
+            <BlueBox>
+              <Box marginBottom={2}>
+                <RadioButton
+                  id="decision-ruling"
+                  name="decision"
+                  checked={
+                    selectedDecision === CaseIndictmentRulingDecision.RULING
+                  }
+                  onChange={() => {
+                    setSelectedDecision(CaseIndictmentRulingDecision.RULING)
+                  }}
+                  large
+                  backgroundColor="white"
+                  label={formatMessage(strings.ruling)}
+                />
+              </Box>
+              <RadioButton
+                id="decision-fine"
+                name="decision"
+                checked={selectedDecision === CaseIndictmentRulingDecision.FINE}
+                onChange={() => {
+                  setSelectedDecision(CaseIndictmentRulingDecision.FINE)
+                }}
+                large
+                backgroundColor="white"
+                label={formatMessage(strings.fine)}
+              />
+            </BlueBox>
+          </Box>
+        )}
         {selectedAction && (
           <Box component="section" marginBottom={5}>
             <SectionHeading
@@ -272,6 +350,30 @@ const Conclusion: React.FC = () => {
               onChange={(files) => {
                 handleUpload(
                   addUploadFiles(files, CaseFileCategory.COURT_RECORD),
+                  updateUploadFile,
+                )
+              }}
+              onRemove={(file) => handleRemove(file, removeUploadFile)}
+              onRetry={(file) => handleRetry(file, updateUploadFile)}
+            />
+          </Box>
+        )}
+        {selectedDecision === 'RULING' && (
+          <Box component="section" marginBottom={10}>
+            <SectionHeading title={formatMessage(strings.rulingUploadTitle)} />
+            <InputFileUpload
+              fileList={uploadFiles.filter(
+                (file) => file.category === CaseFileCategory.RULING,
+              )}
+              accept="application/pdf"
+              header={formatMessage(strings.inputFieldLabel)}
+              description={formatMessage(core.uploadBoxDescription, {
+                fileEndings: '.pdf',
+              })}
+              buttonLabel={formatMessage(strings.uploadButtonText)}
+              onChange={(files) => {
+                handleUpload(
+                  addUploadFiles(files, CaseFileCategory.RULING),
                   updateUploadFile,
                 )
               }}

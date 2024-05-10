@@ -155,6 +155,8 @@ export interface UpdateCase
     | 'appealIsolationToDate'
     | 'indictmentDeniedExplanation'
     | 'indictmentReturnedExplanation'
+    | 'indictmentRulingDecision'
+    | 'indictmentReviewerId'
   > {
   type?: CaseType
   state?: CaseState
@@ -284,6 +286,11 @@ export const include: Includeable[] = [
     where: { commentType: { [Op.in]: commentTypes } },
   },
   { model: Notification, as: 'notifications' },
+  {
+    model: User,
+    as: 'indictmentReviewer',
+    include: [{ model: Institution, as: 'institution' }],
+  },
 ]
 
 export const order: OrderItem[] = [
@@ -314,6 +321,11 @@ export const caseListInclude: Includeable[] = [
   {
     model: User,
     as: 'registrar',
+    include: [{ model: Institution, as: 'institution' }],
+  },
+  {
+    model: User,
+    as: 'indictmentReviewer',
     include: [{ model: Institution, as: 'institution' }],
   },
   {
