@@ -1168,6 +1168,7 @@ download-service:
     XROAD_BASE_PATH_WITH_ENV: 'http://securityserver.island.is/r1/IS'
     XROAD_BIFROST_UNIVERSITY_PATH: 'IS/EDU/5502690239/Bifrost-Protected/brautskraning-v1'
     XROAD_CLIENT_ID: 'IS/GOV/5501692829/island-is-client'
+    XROAD_DISTRICT_COMMISSIONERS_LICENSES_PATH: 'IS/GOV/5512201410/Syslumenn-Protected/RettindiIslandis'
     XROAD_FINANCES_PATH: 'IS/GOV/5402697509/FJS-Public/financeIsland'
     XROAD_FINANCES_V2_PATH: 'IS/GOV/5402697509/FJS-Public/financeServicesFJS_v2'
     XROAD_HEALTH_INSURANCE_ID: 'IS/GOV/4804080550/SJUKRA-Protected'
