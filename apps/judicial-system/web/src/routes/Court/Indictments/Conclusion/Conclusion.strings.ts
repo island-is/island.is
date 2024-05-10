@@ -18,7 +18,7 @@ export const strings = defineMessages({
     description: 'Notaður sem texti fyrir frestun valkost á Niðurstaða skrefi.',
   },
   complete: {
-    id: 'judicial.system.court.indictments.conclusion.complete',
+    id: 'judicial.system.core:court.indictments.conclusion.complete',
     defaultMessage: 'Lokið',
     description: 'Notaður sem texti fyrir lokið valkost á Niðurstaða skrefi.',
   },
