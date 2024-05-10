@@ -60,7 +60,10 @@ export class IcelandicTransportAuthorityServices {
     }
   }
 
-  async doGet(restURL: string, queryParams: { [key: string]: string }) {
+  async doGet(
+    restURL: string,
+    queryParams: { [key: string]: string } | undefined,
+  ) {
     const { restAuthUrl, restUsername, restPassword } =
       environment.samgongustofa
 
@@ -70,16 +73,20 @@ export class IcelandicTransportAuthorityServices {
       restPassword,
     )
 
-    // Convert the query parameters to a query string
-    const queryString = Object.entries(queryParams)
-      .map(
-        ([key, value]) =>
-          `${encodeURIComponent(key)}=${encodeURIComponent(value)}`,
-      )
-      .join('&')
+    let fullUrl = restURL
 
-    // Concatenate the URL with the query string
-    const fullUrl = `${restURL}?${queryString}`
+    if (queryParams) {
+      // Convert the query parameters to a query string
+      const queryString = Object.entries(queryParams)
+        .map(
+          ([key, value]) =>
+            `${encodeURIComponent(key)}=${encodeURIComponent(value)}`,
+        )
+        .join('&')
+
+      // Concatenate the URL with the query string
+      fullUrl = `${restURL}?${queryString}`
+    }
 
     const headers = {
       'Content-Type': 'application/json',
@@ -106,13 +113,11 @@ export class IcelandicTransportAuthorityServices {
     try {
       const { restDeRegUrl } = environment.samgongustofa
 
-      const queryParams = {
-        permno,
-      }
-
       return this.doGet(
-        this.getInformationURL(restDeRegUrl) + 'basic',
-        queryParams,
+        this.getInformationURL(restDeRegUrl) +
+          'vehicleinformationmini/' +
+          permno,
+        undefined,
       )
     } catch (err) {
       throw new Error(
@@ -128,25 +133,23 @@ export class IcelandicTransportAuthorityServices {
     const result = await this.getVehicleInformation(permno)
 
     if (result && result.data) {
-      const currentOwnerInfo = result.data.owners.find((owner) => {
-        return owner.current
-      })
+      const ownerSocialSecurityNumber = result.data.ownerSocialSecurityNumber
 
-      if (!currentOwnerInfo) {
+      if (!ownerSocialSecurityNumber) {
         logger.error(
-          `car-recycling: Didnt find the current owner in the basic info ${permno.slice(
+          `car-recycling: Didnt find the current owner in the vehicleinformationmini ${permno.slice(
             -3,
           )}`,
         )
         throw new Error(
-          'car-recycling: Didnt find the current owner in the basic info',
+          'car-recycling: Didnt find the current owner in the vehicleinformationmini',
         )
       }
 
       // If current owner hasn't sent in an car-recycling application, then he is not registered in Vehicle_Owner and therefore he needs to be registered.
       const owner = new VehicleOwnerModel()
-      owner.nationalId = currentOwnerInfo.persidno
-      owner.personname = currentOwnerInfo.fullname
+      owner.nationalId = ownerSocialSecurityNumber
+      owner.personname = ownerSocialSecurityNumber //Samgongustofa REST endpoint doesn't have owner name
 
       const isOwner = await this.ownerService.create(owner)
 
