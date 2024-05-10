@@ -49,7 +49,7 @@ const UserOnboarding = () => {
 
     if (
       (!hiddenByFeatureFlag || isCompany) &&
-      !isDevelopment &&
+      //!isDevelopment &&
       userInfo.scopes.includes(UserProfileScope.write) &&
       showTheModal
     ) {

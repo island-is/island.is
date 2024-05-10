@@ -233,6 +233,7 @@ export const ProfileForm: FC<React.PropsWithChildren<Props>> = ({
                   buttonText={formatMessage(msg.saveEmail)}
                   email={userProfile?.email || ''}
                   emailDirty={(isDirty) => setEmailDirty(isDirty)}
+                  emailVerified={userProfile?.emailVerified}
                   disabled={deleteLoading}
                 />
               ))}

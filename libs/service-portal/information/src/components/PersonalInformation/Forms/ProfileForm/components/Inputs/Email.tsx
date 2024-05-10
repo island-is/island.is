@@ -24,6 +24,7 @@ interface Props {
   buttonText: string
   email?: string
   emailDirty: (isDirty: boolean) => void
+  emailVerified?: boolean
   disabled?: boolean
 }
 
@@ -42,6 +43,7 @@ export const InputEmail: FC<React.PropsWithChildren<Props>> = ({
   email,
   disabled,
   emailDirty,
+  emailVerified,
 }) => {
   useNamespaces('sp.settings')
   const {
@@ -209,7 +211,7 @@ export const InputEmail: FC<React.PropsWithChildren<Props>> = ({
               name="email"
               required={false}
               type="email"
-              icon={inputPristine ? 'checkmark' : undefined}
+              icon={emailVerified ? 'checkmark' : undefined}
               disabled={disabled}
               rules={{
                 pattern: {
@@ -347,6 +349,17 @@ export const InputEmail: FC<React.PropsWithChildren<Props>> = ({
             </Box>
           </form>
         </Box>
+      )}
+
+      {emailVerified === false && !emailVerifyCreated && (
+        <AlertMessage
+          type="warning"
+          title={formatMessage(msg.emailNotVerified)}
+          message={formatMessage(msg.emailNotVerifiedDescription)}
+          action={
+            <Button variant="text">{formatMessage(msg.confirmEmail)}</Button>
+          }
+        />
       )}
     </Box>
   )
