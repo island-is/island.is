@@ -313,9 +313,13 @@ export class CaseController {
       case CaseTransition.REJECT:
       case CaseTransition.DISMISS:
       case CaseTransition.COMPLETE:
-        update.rulingDate = isIndictmentCase(theCase.type)
-          ? nowFactory()
-          : theCase.courtEndTime
+        if (isIndictmentCase(theCase.type)) {
+          update.postponedIndefinitelyExplanation = null
+          update.courtDate = null
+          update.rulingDate === nowFactory()
+        }
+
+        update.rulingDate = theCase.courtEndTime
 
         // Handle appealed in court
         if (
