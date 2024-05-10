@@ -209,6 +209,12 @@ export const titles = {
         description:
           'Notaður sem titill fyrir Niðurstaða úrskurðar skjá hjá dómstólum í ákærum',
       },
+      completed: {
+        id: 'judicial.system.core:titles.court.indictments.completed',
+        defaultMessage: 'Lokið - Réttarvörslugátt',
+        description:
+          'Notaður sem titill fyrir Lokið skjá hjá dómstólum í ákærum',
+      },
     }),
   },
   defender: {

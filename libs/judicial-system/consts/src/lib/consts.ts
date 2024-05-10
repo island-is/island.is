@@ -173,6 +173,7 @@ export const INDICTMENTS_SUBPOENA_ROUTE = '/domur/akaera/fyrirkall'
 export const INDICTMENTS_DEFENDER_ROUTE = '/domur/akaera/malflytjendur'
 export const INDICTMENTS_CONCLUSION_ROUTE = '/domur/akaera/nidurstada'
 export const INDICTMENTS_SUMMARY_ROUTE = '/domur/akaera/samantekt'
+export const INDICTMENTS_COMPLTED_ROUTE = '/domur/akaera/lokid'
 /* DISTRICT COURT ROUTES END */
 
 /* COURT OF APPEALS ROUTES START */
