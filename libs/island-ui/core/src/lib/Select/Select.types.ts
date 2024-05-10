@@ -47,7 +47,7 @@ declare module 'react-select/dist/declarations/src/Select' {
   }
 }
 
-// The typescript declaration customisations above does not allow to change existing props signature.
+// The typescript declaration customizations above does not allow to change existing props signature.
 // Therefore, we create our own Prop type to overwrite props.
 export type SelectProps<
   Option,
@@ -55,9 +55,8 @@ export type SelectProps<
   Group extends GroupBase<Option> = GroupBase<Option>,
   // eslint-disable-next-line @typescript-eslint/ban-ts-comment
   // @ts-ignore make web strict
-> = Omit<Props<Option, IsMulti, Group>, 'noOptionsMessage', 'label'> & {
+> = Omit<Props<Option, IsMulti, Group>, 'noOptionsMessage'> & {
   noOptionsMessage?: string
-  label?: string
 }
 
 // The Option type needs to be generic as the react-select library is generic.

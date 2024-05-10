@@ -10,7 +10,7 @@ export default {
   parameters: withFigma('Select'),
 }
 
-const Template = (args: SelectProps<Option<string>>) => <Select {...args} />
+const Template = (args) => <Select {...args} />
 
 const options = [
   {
@@ -27,7 +27,7 @@ const options = [
   },
 ]
 
-const args: SelectProps<Option<string>> = {
+const args = {
   name: 'select',
   label: 'Label text',
   placeholder: 'Text',
