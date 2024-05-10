@@ -13,6 +13,7 @@ import {
   CaseAppealRulingDecision,
   CaseCustodyRestrictions,
   CaseDecision,
+  CaseIndictmentRulingDecision,
   CaseLegalProvisions,
   CaseType,
   RequestSharedWithDefender,
@@ -368,4 +369,12 @@ export class UpdateCaseInput {
   @Allow()
   @Field({ nullable: true })
   readonly postponedIndefinitelyExplanation?: string
+
+  @Allow()
+  @Field(() => CaseIndictmentRulingDecision, { nullable: true })
+  readonly indictmentRulingDecision?: CaseIndictmentRulingDecision
+
+  @Allow()
+  @Field({ nullable: true })
+  readonly indictmentReviewerId?: string
 }

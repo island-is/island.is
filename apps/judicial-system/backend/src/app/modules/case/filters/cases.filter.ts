@@ -18,6 +18,7 @@ import {
   isDistrictCourtUser,
   isPrisonSystemUser,
   isProsecutionUser,
+  isPublicProsecutorUser,
   RequestSharedWithDefender,
   restrictionCases,
   UserRole,
@@ -36,12 +37,14 @@ const getProsecutionUserCasesQueryFilter = (user: User): WhereOptions => {
         CaseState.ACCEPTED,
         CaseState.REJECTED,
         CaseState.DISMISSED,
+        CaseState.MAIN_HEARING,
       ],
     },
     {
       [Op.or]: [
         { prosecutors_office_id: user.institution?.id },
         { shared_with_prosecutors_office_id: user.institution?.id },
+        { indictment_reviewer_id: user.id },
       ],
     },
     {
@@ -61,6 +64,21 @@ const getProsecutionUserCasesQueryFilter = (user: User): WhereOptions => {
   } else {
     options.push({ type: indictmentCases })
   }
+
+  return {
+    [Op.and]: options,
+  }
+}
+
+const getPublicProsecutionUserCasesQueryFilter = (): WhereOptions => {
+  const options: WhereOptions = [
+    { isArchived: false },
+    {
+      state: [CaseState.ACCEPTED],
+    },
+  ]
+
+  options.push({ type: indictmentCases })
 
   return {
     [Op.and]: options,
@@ -88,6 +106,7 @@ const getDistrictCourtUserCasesQueryFilter = (user: User): WhereOptions => {
           CaseState.ACCEPTED,
           CaseState.REJECTED,
           CaseState.DISMISSED,
+          CaseState.MAIN_HEARING,
         ],
       },
     )
@@ -119,6 +138,7 @@ const getDistrictCourtUserCasesQueryFilter = (user: User): WhereOptions => {
                 CaseState.ACCEPTED,
                 CaseState.REJECTED,
                 CaseState.DISMISSED,
+                CaseState.MAIN_HEARING,
               ],
             },
           ],
@@ -257,6 +277,10 @@ export const getCasesQueryFilter = (user: User): WhereOptions => {
 
   if (isDefenceUser(user)) {
     return getDefenceUserCasesQueryFilter(user)
+  }
+
+  if (isPublicProsecutorUser(user)) {
+    return getPublicProsecutionUserCasesQueryFilter()
   }
 
   throw new ForbiddenException(`User ${user.id} does not have access to cases`)

@@ -74,10 +74,10 @@ const HearingArrangements: React.FC<React.PropsWithChildren<unknown>> = () => {
           previousUrl={`${constants.INDICTMENTS_SUBPOENA_ROUTE}/${workingCase.id}`}
           nextIsLoading={isLoadingWorkingCase || isSendingNotification}
           nextButtonText={formatMessage(core.continue)}
-          nextUrl={`${constants.INDICTMENTS_COURT_RECORD_ROUTE}/${workingCase.id}`}
+          nextUrl={`${constants.INDICTMENTS_CONCLUSION_ROUTE}/${workingCase.id}`}
           nextIsDisabled={!stepIsValid}
           onNextButtonClick={() =>
-            handleNavigationTo(constants.INDICTMENTS_COURT_RECORD_ROUTE)
+            handleNavigationTo(constants.INDICTMENTS_CONCLUSION_ROUTE)
           }
         />
       </FormContentContainer>

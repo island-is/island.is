@@ -15,6 +15,7 @@ import {
   isDistrictCourtUser,
   isIndictmentCase,
   isInvestigationCase,
+  isPublicProsecutorUser,
   isRestrictionCase,
 } from '@island.is/judicial-system/types'
 import { errors } from '@island.is/judicial-system-web/messages'
@@ -81,6 +82,8 @@ const useCaseList = () => {
       } else {
         routeTo = DEFENDER_ROUTE
       }
+    } else if (isPublicProsecutorUser(user)) {
+      routeTo = constants.PUBLIC_PROSECUTOR_STAFF_INDICTMENT_OVERVIEW_ROUTE
     } else if (
       caseToOpen.state === CaseState.ACCEPTED ||
       caseToOpen.state === CaseState.REJECTED ||

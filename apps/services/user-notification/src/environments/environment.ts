@@ -10,7 +10,6 @@ if (!env.NODE_ENV || isDevelopment) {
     SQS_ENDPOINT: 'http://localhost:4566',
     SQS_ACCESS_KEY: 'testing',
     SQS_SECRET_ACCESS_KEY: 'testing',
-    USER_NOTIFICATION_APP_PROTOCOL: 'is.island.app.dev',
     ...env,
   }
 }

@@ -1,46 +1,37 @@
-import React, { useCallback, useContext, useState } from 'react'
+import React, { useCallback, useContext } from 'react'
 import { useIntl } from 'react-intl'
 import { useRouter } from 'next/router'
 
 import { Box } from '@island.is/island-ui/core'
-import * as constants from '@island.is/judicial-system/consts'
-import {
-  isCompletedCase,
-  isDefenceUser,
-  isDistrictCourtUser,
-} from '@island.is/judicial-system/types'
-import { core, titles } from '@island.is/judicial-system-web/messages'
+import { isCompletedCase } from '@island.is/judicial-system/types'
+import { titles } from '@island.is/judicial-system-web/messages'
 import {
   CourtCaseInfo,
   FormContentContainer,
   FormContext,
-  FormFooter,
   IndictmentCaseFilesList,
   IndictmentsLawsBrokenAccordionItem,
   InfoCardActiveIndictment,
+  InfoCardCaseScheduledIndictment,
   InfoCardClosedIndictment,
   PageHeader,
   PageLayout,
   PageTitle,
   useIndictmentsLawsBroken,
-  UserContext,
 } from '@island.is/judicial-system-web/src/components'
-import InfoCardCaseScheduled from '@island.is/judicial-system-web/src/components/InfoCard/InfoCardCaseScheduled'
 import { CaseState } from '@island.is/judicial-system-web/src/graphql/schema'
 
-import ReturnIndictmentModal from '../../Court/Indictments/ReturnIndictmentCaseModal/ReturnIndictmentCaseModal'
 import { strings } from './IndictmentOverview.strings'
 
 const IndictmentOverview = () => {
   const router = useRouter()
-  const { user } = useContext(UserContext)
-  const { workingCase, isLoadingWorkingCase, caseNotFound, setWorkingCase } =
+  const { workingCase, isLoadingWorkingCase, caseNotFound } =
     useContext(FormContext)
+
   const { formatMessage } = useIntl()
   const lawsBroken = useIndictmentsLawsBroken(workingCase)
-  const [modalVisible, setModalVisible] = useState<boolean>(false)
-
   const caseIsClosed = isCompletedCase(workingCase.state)
+  const latestDate = workingCase.courtDate ?? workingCase.arraignmentDate
 
   const handleNavigationTo = useCallback(
     (destination: string) => router.push(`${destination}/${workingCase.id}`),
@@ -72,13 +63,16 @@ const IndictmentOverview = () => {
         </PageTitle>
         <CourtCaseInfo workingCase={workingCase} />
         {workingCase.state === CaseState.RECEIVED &&
-          workingCase.arraignmentDate?.date &&
-          workingCase.court && (
+          workingCase.court &&
+          latestDate?.date && (
             <Box component="section" marginBottom={5}>
-              <InfoCardCaseScheduled
+              <InfoCardCaseScheduledIndictment
                 court={workingCase.court}
-                courtDate={workingCase.arraignmentDate.date}
-                courtRoom={workingCase.arraignmentDate.location}
+                courtDate={latestDate.date}
+                courtRoom={latestDate.location}
+                postponedIndefinitelyExplanation={
+                  workingCase.postponedIndefinitelyExplanation
+                }
               />
             </Box>
           )}
@@ -95,38 +89,11 @@ const IndictmentOverview = () => {
           </Box>
         )}
         {workingCase.caseFiles && (
-          <Box component="section" marginBottom={10}>
+          <Box component="section" marginBottom={caseIsClosed ? 5 : 10}>
             <IndictmentCaseFilesList workingCase={workingCase} />
           </Box>
         )}
       </FormContentContainer>
-      {!caseIsClosed && !isDefenceUser(user) && (
-        <FormContentContainer isFooter>
-          <FormFooter
-            nextButtonIcon="arrowForward"
-            previousUrl={`${constants.CASES_ROUTE}`}
-            nextIsLoading={isLoadingWorkingCase}
-            onNextButtonClick={() =>
-              handleNavigationTo(
-                constants.INDICTMENTS_RECEPTION_AND_ASSIGNMENT_ROUTE,
-              )
-            }
-            nextButtonText={formatMessage(core.continue)}
-            actionButtonText={formatMessage(strings.returnIndictmentButtonText)}
-            actionButtonColorScheme={'destructive'}
-            actionButtonIsDisabled={!workingCase.courtCaseNumber}
-            onActionButtonClick={() => setModalVisible(true)}
-          />
-        </FormContentContainer>
-      )}
-      {isDistrictCourtUser(user) && modalVisible && (
-        <ReturnIndictmentModal
-          workingCase={workingCase}
-          setWorkingCase={setWorkingCase}
-          onClose={() => setModalVisible(false)}
-          onComplete={() => router.push(constants.CASES_ROUTE)}
-        />
-      )}
     </PageLayout>
   )
 }
