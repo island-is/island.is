@@ -41,7 +41,7 @@ export const formContainer = style({
 })
 
 export const codeInput = style({
-  maxWidth: 210,
+  maxWidth: 100,
 })
 
 export const codeButton = style({

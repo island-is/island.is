@@ -10,8 +10,8 @@ export const USER_PROFILE = gql`
       bankInfo
       emailStatus
       mobileStatus
-      modified
       emailNotifications
+      needsNudge
     }
   }
 `

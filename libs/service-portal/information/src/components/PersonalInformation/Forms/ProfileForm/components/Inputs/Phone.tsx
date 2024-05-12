@@ -103,7 +103,6 @@ export const InputPhone: FC<React.PropsWithChildren<Props>> = ({
     } else {
       telDirty(true)
     }
-    checkSetPristineInput()
   }, [telInternal, mobile])
 
   const handleSendTelVerification = async (data: { tel: string }) => {
@@ -247,6 +246,7 @@ export const InputPhone: FC<React.PropsWithChildren<Props>> = ({
                   onChange={(inp) => {
                     setTelInternal(parseFullNumber(inp.target.value || ''))
                     setErrors({ ...formErrors, mobile: undefined })
+                    checkSetPristineInput()
                   }}
                   error={errors.tel?.message || formErrors.mobile}
                   defaultValue={mobile}
@@ -323,9 +323,9 @@ export const InputPhone: FC<React.PropsWithChildren<Props>> = ({
                   backgroundColor="blue"
                   id="code"
                   name="code"
-                  format="######"
+                  format="###"
                   label={formatMessage(m.verificationCode)}
-                  placeholder="000000"
+                  placeholder="000"
                   defaultValue=""
                   error={errors.code?.message || formErrors.code}
                   disabled={verificationValid || disabled}

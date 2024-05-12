@@ -296,6 +296,19 @@ export const msg = defineMessages({
     id: 'sp.settings:save-empty',
     defaultMessage: 'Vista tómt',
   },
+  emailNotVerified: {
+    id: 'sp.settings:email-not-verified',
+    defaultMessage: 'Netfang ekki staðfest',
+  },
+  emailNotVerifiedDescription: {
+    id: 'sp.settings:email-not-verified-description',
+    defaultMessage:
+      'Staðfestu netfang svo að tilkynningar skili sér örugglega til þín.',
+  },
+  confirmEmail: {
+    id: 'sp.settings:confirm-email',
+    defaultMessage: 'Staðfesta netfang',
+  },
 })
 
 export const urls = defineMessages({

@@ -3,7 +3,13 @@ import { useForm } from 'react-hook-form'
 import { m } from '@island.is/service-portal/core'
 import { msg } from '../../../../../../lib/messages'
 import { useLocale, useNamespaces } from '@island.is/localization'
-import { Box, Text, LoadingDots } from '@island.is/island-ui/core'
+import {
+  Box,
+  Text,
+  LoadingDots,
+  AlertMessage,
+  Button,
+} from '@island.is/island-ui/core'
 import { InputController } from '@island.is/shared/form-fields'
 import {
   useVerifyEmail,
@@ -165,6 +171,7 @@ export const InputEmail: FC<React.PropsWithChildren<Props>> = ({
         email: true,
       })
       await refetch()
+
       setVerificationValid(true)
       setInputPristine(true)
       setEmailInternal(undefined)
@@ -295,9 +302,9 @@ export const InputEmail: FC<React.PropsWithChildren<Props>> = ({
                   backgroundColor="blue"
                   id="code"
                   name="code"
-                  format="######"
+                  format="###"
                   label={formatMessage(m.verificationCode)}
-                  placeholder="000000"
+                  placeholder="000"
                   defaultValue=""
                   error={errors?.code?.message || formErrors?.code}
                   disabled={verificationValid || disabled}
