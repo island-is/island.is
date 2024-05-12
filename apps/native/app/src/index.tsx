@@ -2,6 +2,7 @@ import { Navigation } from 'react-native-navigation'
 import { initializeApolloClient } from './graphql/client'
 import { readAuthorizeResult } from './stores/auth-store'
 import { showAppLockOverlay } from './utils/app-lock'
+import { isAndroid } from './utils/devices'
 import { getDefaultOptions } from './utils/get-default-options'
 import { getAppRoot } from './utils/lifecycle/get-app-root'
 import { registerAllComponents } from './utils/lifecycle/setup-components'
@@ -9,7 +10,7 @@ import { setupDevMenu } from './utils/lifecycle/setup-dev-menu'
 import { setupEventHandlers } from './utils/lifecycle/setup-event-handlers'
 import { setupGlobals } from './utils/lifecycle/setup-globals'
 import {
-  openInitialNotification,
+  openInitialNotificationAndroid,
   setupNotifications,
 } from './utils/lifecycle/setup-notifications'
 import { setupRoutes } from './utils/lifecycle/setup-routes'
@@ -52,7 +53,7 @@ async function startApp() {
     await Navigation.dismissAllOverlays()
 
     // Show lock screen overlay
-    showAppLockOverlay({ enforceActivated: true })
+    void showAppLockOverlay({ enforceActivated: true })
 
     // Dismiss all modals
     await Navigation.dismissAllModals()
@@ -60,8 +61,10 @@ async function startApp() {
     // Set the app root
     await Navigation.setRoot({ root })
 
-    // Open initial notification on android
-    openInitialNotification()
+    if (isAndroid) {
+      // Open initial notification on android
+      openInitialNotificationAndroid()
+    }
 
     // Mark app launched
     performanceMetricsAppLaunched()
@@ -69,4 +72,4 @@ async function startApp() {
 }
 
 // Start the app
-startApp()
+void startApp()

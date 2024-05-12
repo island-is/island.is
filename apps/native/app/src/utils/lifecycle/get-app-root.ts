@@ -1,6 +1,5 @@
 import { Layout } from 'react-native-navigation'
 import { checkIsAuthenticated } from '../../stores/auth-store'
-import { notificationsStore } from '../../stores/notifications-store'
 import { ComponentRegistry, StackRegistry } from '../component-registry'
 import { getMainRoot } from '../get-main-root'
 import { getOnboardingScreens } from '../onboarding'
@@ -14,7 +13,6 @@ export async function getAppRoot(): Promise<Layout> {
   const isAuthenticated = await checkIsAuthenticated()
   const onboardingScreens = await getOnboardingScreens()
   const isOnboarding = isAuthenticated && onboardingScreens.length > 0
-  await notificationsStore.getState().actions.checkUnseen()
 
   // Show login screen if not authenticated
   // And if not onboarded yet, show those screens

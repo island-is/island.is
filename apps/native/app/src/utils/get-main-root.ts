@@ -20,7 +20,7 @@ export const getRightButtons = ({
     width: theme.spacing[4],
     height: theme.spacing[4],
   }
-  console.log('unseenCount', unseenCount)
+
   return [
     {
       accessibilityLabel: 'Settings',
