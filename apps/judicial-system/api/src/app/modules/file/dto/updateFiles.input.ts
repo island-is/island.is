@@ -10,12 +10,12 @@ import {
   ValidateNested,
 } from 'class-validator'
 
-import { Field, InputType, Int } from '@nestjs/graphql'
+import { Field, ID, InputType, Int } from '@nestjs/graphql'
 
 @InputType()
 export class UpdateFile {
   @Allow()
-  @Field()
+  @Field(() => ID)
   readonly id!: string
 
   @Allow()
@@ -41,13 +41,13 @@ export class UpdateFile {
   readonly orderWithinChapter?: number
 
   @Allow()
-  @Field({ nullable: true })
+  @Field(() => String, { nullable: true })
   @IsOptional()
   @IsString()
   readonly userGeneratedFilename?: string
 
   @Allow()
-  @Field({ nullable: true })
+  @Field(() => String, { nullable: true })
   @IsOptional()
   @IsString()
   readonly displayDate?: string
@@ -56,7 +56,7 @@ export class UpdateFile {
 @InputType()
 export class UpdateFilesInput {
   @Allow()
-  @Field()
+  @Field(() => ID)
   readonly caseId!: string
 
   @Allow()

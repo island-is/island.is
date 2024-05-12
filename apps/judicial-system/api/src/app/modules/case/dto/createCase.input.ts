@@ -23,7 +23,7 @@ export class CreateCaseInput {
   readonly indictmentSubtypes?: IndictmentSubtypeMap
 
   @Allow()
-  @Field({ nullable: true })
+  @Field(() => String, { nullable: true })
   readonly description?: string
 
   @Allow()
@@ -34,19 +34,19 @@ export class CreateCaseInput {
   readonly policeCaseNumbers!: string[]
 
   @Allow()
-  @Field({ nullable: true })
+  @Field(() => String, { nullable: true })
   readonly defenderName?: string
 
   @Allow()
-  @Field({ nullable: true })
+  @Field(() => String, { nullable: true })
   readonly defenderNationalId?: string
 
   @Allow()
-  @Field({ nullable: true })
+  @Field(() => String, { nullable: true })
   readonly defenderEmail?: string
 
   @Allow()
-  @Field({ nullable: true })
+  @Field(() => String, { nullable: true })
   readonly defenderPhoneNumber?: string
 
   @Allow()
@@ -54,7 +54,7 @@ export class CreateCaseInput {
   readonly requestSharedWithDefender?: RequestSharedWithDefender
 
   @Allow()
-  @Field({ nullable: true })
+  @Field(() => String, { nullable: true })
   readonly leadInvestigator?: string
 
   @Allow()

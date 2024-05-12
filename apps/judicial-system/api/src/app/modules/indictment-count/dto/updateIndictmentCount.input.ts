@@ -1,7 +1,7 @@
 import { Allow } from 'class-validator'
 import { GraphQLJSONObject } from 'graphql-type-json'
 
-import { Field, InputType } from '@nestjs/graphql'
+import { Field, ID, InputType } from '@nestjs/graphql'
 
 import type { SubstanceMap } from '@island.is/judicial-system/types'
 import { IndictmentCountOffense } from '@island.is/judicial-system/types'
@@ -9,19 +9,19 @@ import { IndictmentCountOffense } from '@island.is/judicial-system/types'
 @InputType()
 export class UpdateIndictmentCountInput {
   @Allow()
-  @Field()
+  @Field(() => ID)
   readonly caseId!: string
 
   @Allow()
-  @Field()
+  @Field(() => ID)
   readonly indictmentCountId!: string
 
   @Allow()
-  @Field({ nullable: true })
+  @Field(() => String, { nullable: true })
   readonly policeCaseNumber?: string
 
   @Allow()
-  @Field({ nullable: true })
+  @Field(() => String, { nullable: true })
   readonly vehicleRegistrationNumber?: string
 
   @Allow()
@@ -37,10 +37,10 @@ export class UpdateIndictmentCountInput {
   readonly lawsBroken?: [number, number][]
 
   @Allow()
-  @Field({ nullable: true })
+  @Field(() => String, { nullable: true })
   readonly incidentDescription?: string
 
   @Allow()
-  @Field({ nullable: true })
+  @Field(() => String, { nullable: true })
   readonly legalArguments?: string
 }

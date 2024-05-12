@@ -1,17 +1,17 @@
 import { Allow, IsNumber, Min, ValidateIf } from 'class-validator'
 
-import { Field, InputType, Int } from '@nestjs/graphql'
+import { Field, ID, InputType, Int } from '@nestjs/graphql'
 
 import { CaseFileCategory } from '@island.is/judicial-system/types'
 
 @InputType()
 export class CreateFileInput {
   @Allow()
-  @Field()
+  @Field(() => ID)
   readonly caseId!: string
 
   @Allow()
-  @Field()
+  @Field(() => String)
   readonly type!: string
 
   @Allow()
@@ -19,7 +19,7 @@ export class CreateFileInput {
   readonly category?: CaseFileCategory
 
   @Allow()
-  @Field()
+  @Field(() => String)
   readonly key!: string
 
   @Allow()
@@ -27,7 +27,7 @@ export class CreateFileInput {
   readonly size!: number
 
   @Allow()
-  @Field({ nullable: true })
+  @Field(() => String, { nullable: true })
   readonly policeCaseNumber?: string
 
   @Allow()
@@ -53,10 +53,10 @@ export class CreateFileInput {
   readonly orderWithinChapter?: number
 
   @Allow()
-  @Field({ nullable: true })
+  @Field(() => String, { nullable: true })
   readonly displayDate?: string
 
   @Allow()
-  @Field({ nullable: true })
+  @Field(() => String, { nullable: true })
   readonly policeFileId?: string
 }

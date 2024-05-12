@@ -1,14 +1,14 @@
 import { Allow } from 'class-validator'
 
-import { Field, InputType } from '@nestjs/graphql'
+import { Field, ID, InputType } from '@nestjs/graphql'
 
 @InputType()
 export class GetSignedUrlInput {
   @Allow()
-  @Field()
+  @Field(() => ID)
   readonly id!: string
 
   @Allow()
-  @Field()
+  @Field(() => String)
   readonly caseId!: string
 }
