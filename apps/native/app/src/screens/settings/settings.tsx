@@ -40,7 +40,7 @@ import { createNavigationOptionHooks } from '../../hooks/create-navigation-optio
 import { navigateTo } from '../../lib/deep-linking'
 import { showPicker } from '../../lib/show-picker'
 import { authStore } from '../../stores/auth-store'
-import { apolloMKKVStorage } from '../../stores/mkkv'
+import { clearAllStorages } from '../../stores/mmkv'
 import {
   preferencesStore,
   usePreferencesStore,
@@ -87,7 +87,7 @@ export const SettingsScreen: NavigationFunctionComponent = ({
   const biometricType = useBiometricType(authenticationTypes)
 
   const onLogoutPress = async () => {
-    apolloMKKVStorage.clearStore()
+    void clearAllStorages()
     await authStore.getState().logout()
     await Navigation.dismissAllModals()
     await Navigation.setRoot({
