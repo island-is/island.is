@@ -12,11 +12,11 @@ export const MMSClientConfig = defineConfig<z.infer<typeof schema>>({
   load: (env) => ({
     xroadServicePathLicense: env.required(
       'XROAD_MMS_LICENSE_SERVICE_ID',
-      'IS-DEV/EDU/10020/MMS-Protected/license-api-v1',
+      'IS-DEV/GOV/10066/MMS-Protected/license-api-v1',
     ),
     xroadServicePathGrade: env.required(
       'XROAD_MMS_GRADE_SERVICE_ID',
-      'IS-DEV/EDU/10020/MMS-Protected/grade-api-v1',
+      'IS-DEV/GOV/10066/MMS-Protected/grade-api-v1',
     ),
   }),
 })
