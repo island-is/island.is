@@ -1,4 +1,4 @@
-import { Allow } from 'class-validator'
+import { Allow, IsOptional } from 'class-validator'
 import { GraphQLJSONObject } from 'graphql-type-json'
 
 import { Field, ID, InputType } from '@nestjs/graphql'
@@ -17,30 +17,37 @@ export class UpdateIndictmentCountInput {
   readonly indictmentCountId!: string
 
   @Allow()
+  @IsOptional()
   @Field(() => String, { nullable: true })
   readonly policeCaseNumber?: string
 
   @Allow()
+  @IsOptional()
   @Field(() => String, { nullable: true })
   readonly vehicleRegistrationNumber?: string
 
   @Allow()
+  @IsOptional()
   @Field(() => [IndictmentCountOffense], { nullable: true })
   readonly offenses?: IndictmentCountOffense[]
 
   @Allow()
+  @IsOptional()
   @Field(() => GraphQLJSONObject, { nullable: true })
   readonly substances?: SubstanceMap
 
   @Allow()
+  @IsOptional()
   @Field(() => [[Number, Number]], { nullable: true })
   readonly lawsBroken?: [number, number][]
 
   @Allow()
+  @IsOptional()
   @Field(() => String, { nullable: true })
   readonly incidentDescription?: string
 
   @Allow()
+  @IsOptional()
   @Field(() => String, { nullable: true })
   readonly legalArguments?: string
 }

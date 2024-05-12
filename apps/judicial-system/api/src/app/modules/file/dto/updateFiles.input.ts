@@ -19,6 +19,7 @@ export class UpdateFile {
   readonly id!: string
 
   @Allow()
+  @IsOptional()
   @Field(() => Int, {
     nullable: true,
     description:
@@ -30,6 +31,7 @@ export class UpdateFile {
   readonly chapter?: number
 
   @Allow()
+  @IsOptional()
   @Field(() => Int, {
     nullable: true,
     description:
@@ -41,14 +43,14 @@ export class UpdateFile {
   readonly orderWithinChapter?: number
 
   @Allow()
-  @Field(() => String, { nullable: true })
   @IsOptional()
+  @Field(() => String, { nullable: true })
   @IsString()
   readonly userGeneratedFilename?: string
 
   @Allow()
-  @Field(() => String, { nullable: true })
   @IsOptional()
+  @Field(() => String, { nullable: true })
   @IsString()
   readonly displayDate?: string
 }

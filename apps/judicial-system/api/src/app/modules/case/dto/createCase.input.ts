@@ -1,4 +1,10 @@
-import { Allow, ArrayMinSize, IsArray, IsString } from 'class-validator'
+import {
+  Allow,
+  ArrayMinSize,
+  IsArray,
+  IsOptional,
+  IsString,
+} from 'class-validator'
 import { GraphQLJSONObject } from 'graphql-type-json'
 
 import { Field, InputType } from '@nestjs/graphql'
@@ -19,10 +25,12 @@ export class CreateCaseInput {
   readonly type!: CaseType
 
   @Allow()
+  @IsOptional()
   @Field(() => GraphQLJSONObject, { nullable: true })
   readonly indictmentSubtypes?: IndictmentSubtypeMap
 
   @Allow()
+  @IsOptional()
   @Field(() => String, { nullable: true })
   readonly description?: string
 
@@ -34,30 +42,37 @@ export class CreateCaseInput {
   readonly policeCaseNumbers!: string[]
 
   @Allow()
+  @IsOptional()
   @Field(() => String, { nullable: true })
   readonly defenderName?: string
 
   @Allow()
+  @IsOptional()
   @Field(() => String, { nullable: true })
   readonly defenderNationalId?: string
 
   @Allow()
+  @IsOptional()
   @Field(() => String, { nullable: true })
   readonly defenderEmail?: string
 
   @Allow()
+  @IsOptional()
   @Field(() => String, { nullable: true })
   readonly defenderPhoneNumber?: string
 
   @Allow()
+  @IsOptional()
   @Field(() => RequestSharedWithDefender, { nullable: true })
   readonly requestSharedWithDefender?: RequestSharedWithDefender
 
   @Allow()
+  @IsOptional()
   @Field(() => String, { nullable: true })
   readonly leadInvestigator?: string
 
   @Allow()
+  @IsOptional()
   @Field(() => GraphQLJSONObject, { nullable: true })
   readonly crimeScenes?: CrimeSceneMap
 }

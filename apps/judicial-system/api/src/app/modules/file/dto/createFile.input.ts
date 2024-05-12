@@ -1,4 +1,4 @@
-import { Allow, IsNumber, Min, ValidateIf } from 'class-validator'
+import { Allow, IsNumber, IsOptional, Min, ValidateIf } from 'class-validator'
 
 import { Field, ID, InputType, Int } from '@nestjs/graphql'
 
@@ -15,6 +15,7 @@ export class CreateFileInput {
   readonly type!: string
 
   @Allow()
+  @IsOptional()
   @Field(() => CaseFileCategory, { nullable: true })
   readonly category?: CaseFileCategory
 
@@ -27,10 +28,12 @@ export class CreateFileInput {
   readonly size!: number
 
   @Allow()
+  @IsOptional()
   @Field(() => String, { nullable: true })
   readonly policeCaseNumber?: string
 
   @Allow()
+  @IsOptional()
   @Field(() => Int, {
     nullable: true,
     description:
@@ -42,6 +45,7 @@ export class CreateFileInput {
   readonly chapter?: number
 
   @Allow()
+  @IsOptional()
   @Field(() => Int, {
     nullable: true,
     description:
@@ -53,10 +57,12 @@ export class CreateFileInput {
   readonly orderWithinChapter?: number
 
   @Allow()
+  @IsOptional()
   @Field(() => String, { nullable: true })
   readonly displayDate?: string
 
   @Allow()
+  @IsOptional()
   @Field(() => String, { nullable: true })
   readonly policeFileId?: string
 }
