@@ -16,8 +16,10 @@ import {
 } from '../types'
 
 export const getChildrenFromExternalData = (externalData: ExternalData) => {
-  return externalData?.childrenCustodyInformation
-    ?.data as ApplicantChildCustodyInformation[]
+  return (
+    (externalData?.childrenCustodyInformation
+      ?.data as ApplicantChildCustodyInformation[]) ?? []
+  )
 }
 export const getSpouseFromExternalData = (externalData: ExternalData) => {
   return externalData?.nationalRegistrySpouse?.data as NationalRegistrySpouse
@@ -52,7 +54,7 @@ export const getCountryNameFromCode = (
   const countries = getCountriesFromExternalData(externalData)
   const country = countries.find((c) => c.code === code)
   if (country) {
-    return country.icelandicName
+    return country.icelandicName ?? country.name
   }
   return ''
 }
@@ -72,7 +74,9 @@ export const getContinentNameFromCode = (
 export const getContinentsFromExternalData = (
   externalData: ExternalData,
 ): HealthInsuranceContinents[] => {
-  return getInsuranceStatementDataFromExternalData(externalData)?.continents
+  return (
+    getInsuranceStatementDataFromExternalData(externalData)?.continents ?? []
+  )
 }
 
 export const getContinentsAsOption = (externalData: ExternalData): Option[] => {
@@ -110,7 +114,6 @@ export const getChildrenAsOptions = (externalData: ExternalData): Option[] => {
 export const getSpouseAsOptions = (externalData: ExternalData): Option[] => {
   const spouse = getSpouseFromExternalData(externalData)
 
-  console.log(spouse)
   if (spouse) {
     return [
       {
@@ -124,16 +127,16 @@ export const getSpouseAsOptions = (externalData: ExternalData): Option[] => {
   return []
 }
 
-export const getSelectedFamiliy = (
+export const getSelectedFamily = (
   answers: HealthInsuranceDeclaration,
   externalData: ExternalData,
 ) => {
   const spouse = getSpouseFromExternalData(externalData)
   const children = getChildrenFromExternalData(externalData)
-  let selectedFamiliy: StaticText[][] = []
+  let selectedFamily: StaticText[][] = []
 
   if (spouse) {
-    selectedFamiliy = selectedFamiliy.concat(
+    selectedFamily = selectedFamily.concat(
       answers.registerPersonsSpouseCheckboxField.map((s) => {
         if (s === spouse.nationalId) {
           return [
@@ -145,7 +148,7 @@ export const getSelectedFamiliy = (
       }),
     )
   }
-  selectedFamiliy = selectedFamiliy.concat(
+  selectedFamily = selectedFamily.concat(
     answers.registerPersonsChildrenCheckboxField.map((childNationalId) => {
       const childData = children.find((c) => c.nationalId === childNationalId)
       return [
@@ -155,7 +158,7 @@ export const getSelectedFamiliy = (
       ]
     }),
   )
-  return selectedFamiliy
+  return selectedFamily
 }
 
 export const getInsuranceStatementDataFromExternalData = (

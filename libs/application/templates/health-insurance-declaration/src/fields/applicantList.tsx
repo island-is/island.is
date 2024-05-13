@@ -82,6 +82,7 @@ export const ApplicantList: FC<React.PropsWithChildren<ApplicantListProps>> = ({
               <Box key={applicant.nationalId}>
                 <Box marginY={2}>
                   <Button
+                    aria-label={m.conclution.downloadButtonAriaLabel}
                     preTextIconType="outline"
                     preTextIcon="download"
                     variant="ghost"

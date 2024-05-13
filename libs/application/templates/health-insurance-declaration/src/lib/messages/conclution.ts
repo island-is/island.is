@@ -20,4 +20,9 @@ export const conclution = {
       description: 'Conclution section description field message',
     },
   }),
+  downloadButtonAriaLabel: {
+    id: 'hid.application:conclution.downloadButtonAriaLabel',
+    defaultMessage: 'Hlaða niður skrá',
+    description: 'Aria label for download button',
+  },
 }

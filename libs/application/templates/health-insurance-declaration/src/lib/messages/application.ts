@@ -52,7 +52,7 @@ export const application = {
       description: 'Tourist radio field text',
     },
     studentRadioFieldText: {
-      id: 'hid.application:studentOrTourist.section.tourist.radio.text',
+      id: 'hid.application:studentOrTourist.section.student.radio.text',
       defaultMessage: 'Námsmaður',
       description: 'Student radio field text',
     },
@@ -160,7 +160,7 @@ export const application = {
       description: 'Date field from title',
     },
     dateToTitle: {
-      id: 'hid.application:date.section.dateFrom.title',
+      id: 'hid.application:date.section.dateTo.title',
       defaultMessage: 'Dagsetning til',
       description: 'Date field to title',
     },

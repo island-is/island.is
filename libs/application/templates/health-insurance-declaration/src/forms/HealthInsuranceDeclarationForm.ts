@@ -33,7 +33,7 @@ import {
   getCountryNameFromCode,
   getFullNameFromExternalData,
   getInsuranceStatus,
-  getSelectedFamiliy,
+  getSelectedFamily,
   getSpouseAsOptions,
 } from '../utils'
 import { HealthInsuranceDeclaration } from '../lib/dataSchema'
@@ -433,7 +433,7 @@ export const HealthInsuranceDeclarationForm: Form = buildForm({
             buildStaticTableField({
               title: m.application.overview.familyTableTitle,
               rows: ({ answers, externalData }) =>
-                getSelectedFamiliy(
+                getSelectedFamily(
                   answers as HealthInsuranceDeclaration,
                   externalData,
                 ),
