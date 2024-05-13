@@ -10,7 +10,7 @@ import { FAFieldBaseProps } from '../../lib/types'
 import withLogo from '../Logo/Logo'
 import { aboutForm } from '../../lib/messages'
 
-const AboutChildrenForm = ({ application }: FAFieldBaseProps) => {
+const AboutForm = ({ application }: FAFieldBaseProps) => {
   const { formatMessage } = useIntl()
   const { lang } = useLocale()
 
@@ -34,4 +34,4 @@ const AboutChildrenForm = ({ application }: FAFieldBaseProps) => {
   )
 }
 
-export default withLogo(AboutChildrenForm)
+export default withLogo(AboutForm)

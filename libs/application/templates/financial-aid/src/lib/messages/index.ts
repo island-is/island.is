@@ -1,6 +1,6 @@
 export * from './application'
 export * from './aboutForm'
-export * from './aboutChildrenForm'
+export * from './childrenForm'
 export * from './externalData'
 export * from './homeCircumstancesForm'
 export * from './error'

@@ -63,12 +63,12 @@ export const Application: Form = buildForm({
 
             return childWithInfo ? childWithInfo.length > 0 : false
           },
-          title: m.aboutChildrenForm.general.sectionTitle,
+          title: m.childrenForm.general.sectionTitle,
           children: [
             buildCustomField({
               id: Routes.CHILDRENSCHOOLINFO,
               title: m.unknownRelationship.general.pageTitle,
-              component: 'AboutChildrenForm',
+              component: 'ChildrenForm',
             }),
           ],
         }),
