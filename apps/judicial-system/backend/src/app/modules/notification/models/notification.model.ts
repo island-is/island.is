@@ -29,20 +29,17 @@ export class Notification extends Model {
     allowNull: false,
     defaultValue: DataType.UUIDV4,
   })
-  @ApiProperty()
+  @ApiProperty({ type: String })
   id!: string
 
   @CreatedAt
-  @Column({ type: DataType.DATE })
-  @ApiProperty()
+  @Column({ type: DataType.DATE, allowNull: false })
+  @ApiProperty({ type: Date })
   created!: Date
 
   @ForeignKey(() => Case)
-  @Column({
-    type: DataType.UUID,
-    allowNull: false,
-  })
-  @ApiProperty()
+  @Column({ type: DataType.UUID, allowNull: false })
+  @ApiProperty({ type: String })
   caseId!: string
 
   @Column({
@@ -58,6 +55,6 @@ export class Notification extends Model {
     allowNull: false,
     defaultValue: [],
   })
-  @ApiProperty()
+  @ApiProperty({ type: Object, isArray: true })
   recipients!: Recipient[]
 }

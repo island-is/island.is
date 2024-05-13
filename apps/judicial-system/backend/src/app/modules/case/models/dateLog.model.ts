@@ -32,33 +32,38 @@ export class DateLog extends Model {
   @Column({
     type: DataType.UUID,
     primaryKey: true,
+    allowNull: false,
     defaultValue: DataType.UUIDV4,
   })
-  @ApiProperty()
+  @ApiProperty({ type: String })
   id!: string
 
   @CreatedAt
-  @ApiProperty()
+  @ApiProperty({ type: Date })
   created!: Date
 
   @UpdatedAt
-  @ApiProperty()
+  @ApiProperty({ type: Date })
   modified!: Date
 
-  @Column({ type: DataType.STRING })
-  @ApiProperty()
+  @Column({
+    type: DataType.ENUM,
+    allowNull: false,
+    values: Object.values(DateType),
+  })
+  @ApiProperty({ enum: DateType })
   dateType!: DateType
 
   @ForeignKey(() => Case)
-  @Column({ type: DataType.UUID })
+  @Column({ type: DataType.UUID, allowNull: false })
   @ApiProperty()
   caseId!: string
 
-  @Column({ type: DataType.DATE })
+  @Column({ type: DataType.DATE, allowNull: false })
   @ApiProperty()
   date!: Date
 
-  @Column({ type: DataType.STRING })
+  @Column({ type: DataType.STRING, allowNull: true })
   @ApiPropertyOptional()
   location?: string
 }
