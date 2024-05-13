@@ -67,7 +67,6 @@ import { StatisticsModule } from '@island.is/api/domains/statistics'
 import { SyslumennModule } from '@island.is/api/domains/syslumenn'
 import { TransportAuthorityApiModule } from '@island.is/api/domains/transport-authority'
 import { UniversityGatewayApiModule } from '@island.is/api/domains/university-gateway'
-import { UniversityOfIcelandModule } from '@island.is/api/domains/university-of-iceland'
 import { UserProfileModule } from '@island.is/api/domains/user-profile'
 import { VehiclesModule } from '@island.is/api/domains/vehicles'
 import {
@@ -96,6 +95,7 @@ import { FirearmLicenseClientConfig } from '@island.is/clients/firearm-license'
 import { FishingLicenseClientConfig } from '@island.is/clients/fishing-license'
 import { FiskistofaClientConfig } from '@island.is/clients/fiskistofa'
 import { AircraftRegistryClientConfig } from '@island.is/clients/aircraft-registry'
+import { UniversityCareersModule } from '@island.is/api/domains/university-careers'
 import { UserNotificationClientConfig } from '@island.is/clients/user-notification'
 import {
   HealthDirectorateClientConfig,
@@ -134,14 +134,14 @@ import { ShipRegistryClientConfig } from '@island.is/clients/ship-registry'
 import { SignatureCollectionClientConfig } from '@island.is/clients/signature-collection'
 import { SyslumennClientConfig } from '@island.is/clients/syslumenn'
 import { HuntingLicenseClientConfig } from '@island.is/clients/hunting-license'
-import { UniversityOfIcelandClientConfig } from '@island.is/clients/university-of-iceland'
-import { DocumentsClientV2Config } from '@island.is/clients/documents-v2'
 import { VehiclesClientConfig } from '@island.is/clients/vehicles'
 import { WorkMachinesClientConfig } from '@island.is/clients/work-machines'
 import { CmsModule, PowerBiConfig } from '@island.is/cms'
 import { CmsTranslationsModule } from '@island.is/cms-translations'
 import { FileStorageConfig } from '@island.is/file-storage'
 import { AuditModule } from '@island.is/nest/audit'
+import { DocumentsClientV2Config } from '@island.is/clients/documents-v2'
+
 import {
   ConfigModule,
   DownloadServiceConfig,
@@ -170,6 +170,13 @@ import { GraphqlOptionsFactory } from './graphql-options.factory'
 import { GraphQLConfig } from './graphql.config'
 import { HealthController } from './health.controller'
 import { DocumentClientConfig } from '@island.is/clients/documents'
+import {
+  AgriculturalUniversityOfIcelandCareerClientConfig,
+  UniversityOfIcelandCareerClientConfig,
+  UniversityOfAkureyriCareerClientConfig,
+  HolarUniversityCareerClientConfig,
+  BifrostUniversityCareerClientConfig,
+} from '@island.is/clients/university-careers'
 import { HousingBenefitsConfig } from '@island.is/clients/hms-housing-benefits'
 import { UserProfileClientConfig } from '@island.is/clients/user-profile'
 
@@ -270,6 +277,7 @@ const environment = getConfig
     ShipRegistryModule,
     IntellectualPropertiesModule,
     StatisticsModule,
+    UniversityCareersModule,
     OfficialJournalOfIcelandModule,
     CompanyRegistryModule,
     IcelandicNamesModule.register({
@@ -306,7 +314,6 @@ const environment = getConfig
     MortgageCertificateModule,
     TransportAuthorityApiModule,
     EnergyFundsServiceModule,
-    UniversityOfIcelandModule,
     WorkMachinesModule,
     AdministrationOfOccupationalSafetyAndHealthModule,
     UniversityGatewayApiModule,
@@ -376,7 +383,6 @@ const environment = getConfig
         CommunicationsConfig,
         HealthDirectorateClientConfig,
         OfficialJournalOfIcelandClientConfig,
-        UniversityOfIcelandClientConfig,
         InnaClientConfig,
         SessionsApiClientConfig,
         AuthAdminApiClientConfig,
@@ -389,6 +395,11 @@ const environment = getConfig
         ShipRegistryClientConfig,
         HousingBenefitCalculatorClientConfig,
         MMSClientConfig,
+        AgriculturalUniversityOfIcelandCareerClientConfig,
+        UniversityOfIcelandCareerClientConfig,
+        UniversityOfAkureyriCareerClientConfig,
+        HolarUniversityCareerClientConfig,
+        BifrostUniversityCareerClientConfig,
         StatisticsClientConfig,
         SignatureCollectionClientConfig,
         UniversityGatewayApiClientConfig,

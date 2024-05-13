@@ -11,11 +11,12 @@ import * as kennitala from 'kennitala'
 
 import { Documentation } from '@island.is/nest/swagger'
 import { Audit } from '@island.is/nest/audit'
-import { UserProfileScope } from '@island.is/auth/scopes'
+import { AdminPortalScope, UserProfileScope } from '@island.is/auth/scopes'
 import { IdsAuthGuard, Scopes, ScopesGuard } from '@island.is/auth-nest-tools'
 
 import { UserProfileDto } from './dto/user-profile.dto'
 import { UserProfileService } from './user-profile.service'
+import { PaginatedUserProfileDto } from './dto/paginated-user-profile.dto'
 import { ClientType } from '../types/ClientType'
 import { ActorProfileDto } from './dto/actor-profile.dto'
 
@@ -32,6 +33,30 @@ const namespace = '@island.is/user-profile/v2/users'
 @Audit({ namespace })
 export class UserProfileController {
   constructor(private readonly userProfileService: UserProfileService) {}
+
+  @Get('/')
+  @Documentation({
+    description: 'Get user profiles.',
+    response: { status: 200, type: PaginatedUserProfileDto },
+    request: {
+      query: {
+        search: {
+          required: true,
+          type: 'string',
+          description: 'Search term for user profiles',
+        },
+      },
+    },
+  })
+  @Audit<PaginatedUserProfileDto>({
+    resources: (profile) => profile.data.map((p) => p.nationalId),
+  })
+  @Scopes(AdminPortalScope.serviceDesk)
+  async findUserProfiles(
+    @Query('search') search: string,
+  ): Promise<PaginatedUserProfileDto> {
+    return this.userProfileService.findAllBySearchTerm(search)
+  }
 
   @Get('/.national-id')
   @Documentation({
@@ -56,6 +81,11 @@ export class UserProfileController {
   @Audit<UserProfileDto>({
     resources: (profile) => profile.nationalId,
   })
+  @Scopes(
+    UserProfileScope.system,
+    UserProfileScope.admin,
+    AdminPortalScope.serviceDesk,
+  )
   async findUserProfile(
     @Headers('X-Param-National-Id') nationalId: string,
     @Query('clientType') clientType: ClientType = ClientType.THIRD_PARTY,

@@ -17,6 +17,11 @@ export const strings = defineMessages({
     defaultMessage: 'Frestun',
     description: 'Notaður sem texti fyrir frestun valkost á Niðurstaða skrefi.',
   },
+  complete: {
+    id: 'judicial.system.core:court.indictments.conclusion.complete',
+    defaultMessage: 'Lokið',
+    description: 'Notaður sem texti fyrir lokið valkost á Niðurstaða skrefi.',
+  },
   arrangeAnotherHearing: {
     id: 'judicial.system.core:court.indictments.conclusion.arrange_another_hearing',
     defaultMessage: 'Bóka annað þinghald',
@@ -68,5 +73,27 @@ export const strings = defineMessages({
     defaultMessage: 'Fer í útlutun til dómara',
     description:
       'Notaður sem texti fyrir Fer í útlutun til dómara á Niðurstaða skrefi.',
+  },
+  decision: {
+    id: 'judicial.system.core:court.indictments.conclusion.decision',
+    defaultMessage: 'Lyktir',
+    description: 'Notaður sem titill á lyktir hluta á Niðurstaða skrefi.',
+  },
+  ruling: {
+    id: 'judicial.system.core:court.indictments.conclusion.ruling',
+    defaultMessage: 'Dómur',
+    description: 'Notaður sem texti í dómur valmöguleika á Niðurstaða skrefi.',
+  },
+  rulingUploadTitle: {
+    id: 'judicial.system.core:court.indictments.conclusion.ruling_upload_title',
+    defaultMessage: 'Dómur',
+    description:
+      'Notaður sem fyrirsögn fyrir Dómur upphlöðunarsvæði á Niðurstaða skrefi.',
+  },
+  fine: {
+    id: 'judicial.system.core:court.indictments.conclusion.fine',
+    defaultMessage: 'Viðurlagaákvörðun',
+    description:
+      'Notaður sem texti í viðurlagaákvörðun valmöguleika á Niðurstaða skrefi.',
   },
 })
