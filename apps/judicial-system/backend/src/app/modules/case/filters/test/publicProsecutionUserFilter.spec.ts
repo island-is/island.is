@@ -2,6 +2,7 @@ import { uuid } from 'uuidv4'
 
 import {
   CaseState,
+  completedCaseStates,
   indictmentCases,
   InstitutionType,
   investigationCases,
@@ -23,11 +24,7 @@ describe.each([UserRole.PUBLIC_PROSECUTOR_STAFF])(
     } as User
 
     describe.each(indictmentCases)('accessible case type %s', (type) => {
-      const accessibleCaseStates = [
-        CaseState.ACCEPTED,
-        CaseState.REJECTED,
-        CaseState.DISMISSED,
-      ]
+      const accessibleCaseStates = completedCaseStates
 
       describe.each(
         Object.values(CaseState).filter(

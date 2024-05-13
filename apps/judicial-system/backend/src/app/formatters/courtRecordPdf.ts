@@ -11,7 +11,7 @@ import {
   lowercase,
 } from '@island.is/judicial-system/formatters'
 import {
-  completedCaseStates,
+  completedRequestCaseStates,
   isRestrictionCase,
   SessionArrangements,
   User,
@@ -279,7 +279,7 @@ const constructRestrictionCourtRecordPdf = (
   )
   addFooter(
     doc,
-    completedCaseStates.includes(theCase.state) && user
+    completedRequestCaseStates.includes(theCase.state) && user
       ? formatMessage(courtRecord.smallPrint, {
           actorName: user.name,
           actorInstitution: user.institution?.name || 'NONE',
@@ -530,7 +530,7 @@ const constructInvestigationCourtRecordPdf = (
   )
   addFooter(
     doc,
-    completedCaseStates.includes(theCase.state) && user
+    completedRequestCaseStates.includes(theCase.state) && user
       ? formatMessage(courtRecord.smallPrint, {
           actorName: user.name,
           actorInstitution: user.institution?.name || 'NONE',
