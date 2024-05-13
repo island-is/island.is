@@ -18,6 +18,7 @@ import { YES } from '../lib/constants'
 import { applicationInfo } from './sections/applicationInfo'
 import { preSelection } from './sections/preSelection'
 import { prePaidHeirs } from './sections/prePaidHeirs'
+import { prePaidDataCollection } from './sections/prePaidDataCollection'
 
 export const prePaidForm: Form = buildForm({
   id: 'prePaidInheritanceReport',
@@ -25,7 +26,7 @@ export const prePaidForm: Form = buildForm({
   mode: FormModes.DRAFT,
   renderLastScreenBackButton: true,
   renderLastScreenButton: true,
-  children: [prePaidHeirs],
+  children: [prePaidDataCollection, assets, prePaidHeirs],
 })
 
 export const form: Form = buildForm({

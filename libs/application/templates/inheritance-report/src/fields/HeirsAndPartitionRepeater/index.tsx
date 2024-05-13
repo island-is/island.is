@@ -26,7 +26,11 @@ import {
   valueToNumber,
 } from '../../lib/utils/helpers'
 import { HeirsAndPartitionRepeaterProps } from './types'
-import { DEFAULT_TAX_FREE_LIMIT } from '../../lib/constants'
+import {
+  DEFAULT_TAX_FREE_LIMIT,
+  PREPAID_INHERITANCE,
+  PrePaidHeirsRelations,
+} from '../../lib/constants'
 import DoubleColumnRow from '../../components/DoubleColumnRow'
 import ShareInput from '../../components/ShareInput'
 import { InheritanceReportInfo } from '@island.is/clients/syslumenn'
@@ -114,10 +118,12 @@ export const HeirsAndPartitionRepeater: FC<
       ?.taxExemptionLimit ?? DEFAULT_TAX_FREE_LIMIT
 
   const relations =
-    externalData?.relationOptions?.map((relation) => ({
-      value: relation,
-      label: relation,
-    })) || []
+    answers.applicationFor === PREPAID_INHERITANCE
+      ? PrePaidHeirsRelations
+      : externalData?.relationOptions?.map((relation) => ({
+          value: relation,
+          label: relation,
+        })) || []
 
   const error = (errors as any)?.heirs?.data ?? {}
 

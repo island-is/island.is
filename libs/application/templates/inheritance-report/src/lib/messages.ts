@@ -1464,6 +1464,33 @@ export const m = defineMessages({
     description: '',
   },
 
+  // Pre-paid inheritance relation types
+  spouse: {
+    id: 'ir.application:spouse',
+    defaultMessage: 'Maki',
+    description: '',
+  },
+  child: {
+    id: 'ir.application:child',
+    defaultMessage: 'Barn',
+    description: '',
+  },
+  parent: {
+    id: 'ir.application:parent',
+    defaultMessage: 'Foreldri',
+    description: '',
+  },
+  sibling: {
+    id: 'ir.application:sibling',
+    defaultMessage: 'Systkin',
+    description: '',
+  },
+  other: {
+    id: 'ir.application:other',
+    defaultMessage: 'Annað',
+    description: '',
+  },
+
   // general
   yes: {
     id: 'ir.application:yes',

@@ -12,7 +12,8 @@ import {
   getEstateDataFromApplication,
   shouldShowDeceasedShareField,
 } from '../../lib/utils/helpers'
-import { Application } from '@island.is/application/types'
+import { Application, YES } from '@island.is/application/types'
+import { PREPAID_INHERITANCE } from '../../lib/constants'
 
 export const assets = buildSection({
   id: 'estateProperties',
@@ -25,6 +26,10 @@ export const assets = buildSection({
         buildMultiField({
           id: 'realEstate',
           title: m.propertiesTitle,
+          condition: (answers) =>
+            (answers as any).applicationFor === PREPAID_INHERITANCE
+              ? (answers as any).prepaidInheritance?.realEstate === YES
+              : true,
           description:
             m.propertiesDescription.defaultMessage +
             ' ' +
