@@ -296,7 +296,6 @@ export class CmsSyncService implements ContentSearchImporter<PostSyncOptions> {
 
     // If a generic list gets deleted then all of its items should also be deleted
     if (document.sys.contentType.sys.id === 'genericList') {
-      // TODO: should we instead call elastic?
       const listItems = await this.contentfulService.getContentfulData(100, {
         content_type: 'genericListItem',
         'fields.genericList.sys.id': document.sys.id,
