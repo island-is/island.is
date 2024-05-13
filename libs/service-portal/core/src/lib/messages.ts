@@ -384,6 +384,14 @@ export const m = defineMessages({
     id: 'service.portal:messages',
     defaultMessage: 'Skilaboð',
   },
+  expired: {
+    id: 'service.portal:expired',
+    defaultMessage: 'Útrunnið',
+  },
+  valid: {
+    id: 'service.portal:valid',
+    defaultMessage: 'Í gildi',
+  },
   today: {
     id: 'service.portal:today',
     defaultMessage: 'Í dag',
