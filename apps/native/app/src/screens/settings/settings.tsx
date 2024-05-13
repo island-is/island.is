@@ -49,6 +49,7 @@ import { ComponentRegistry } from '../../utils/component-registry'
 import { getAppRoot } from '../../utils/lifecycle/get-app-root'
 import { testIDs } from '../../utils/test-ids'
 import { useBiometricType } from '../onboarding/onboarding-biometrics'
+import { useFeatureFlag } from '../../contexts/feature-flag-provider'
 
 const { getNavigationOptions, useNavigationOptions } =
   createNavigationOptionHooks(() => ({
@@ -84,6 +85,7 @@ export const SettingsScreen: NavigationFunctionComponent = ({
   const isInfoDismissed = dismissed.includes('userSettingsInformational')
   const { authenticationTypes, isEnrolledBiometrics } = useUiStore()
   const biometricType = useBiometricType(authenticationTypes)
+  const isPasskeyEnabled = useFeatureFlag('isPasskeyEnabled', false)
 
   const onLogoutPress = async () => {
     await authStore.getState().logout()
@@ -485,32 +487,34 @@ export const SettingsScreen: NavigationFunctionComponent = ({
               />
             }
           />
-          <PressableHighlight
-            onPress={() => {
-              hasCreatedPasskey
-                ? onRemovePasskeyPress()
-                : navigateTo('/passkey')
-            }}
-          >
-            <TableViewCell
-              title={intl.formatMessage({
-                id: hasCreatedPasskey
-                  ? 'settings.security.removePasskeyLabel'
-                  : 'settings.security.createPasskeyLabel',
-              })}
-              subtitle={intl.formatMessage({
-                id: hasCreatedPasskey
-                  ? 'settings.security.removePasskeyDescription'
-                  : 'settings.security.createPasskeyDescription',
-              })}
-              accessory={
-                <Image
-                  source={chevronForward}
-                  style={{ width: 24, height: 24 }}
-                />
-              }
-            />
-          </PressableHighlight>
+          {isPasskeyEnabled && (
+            <PressableHighlight
+              onPress={() => {
+                hasCreatedPasskey
+                  ? onRemovePasskeyPress()
+                  : navigateTo('/passkey')
+              }}
+            >
+              <TableViewCell
+                title={intl.formatMessage({
+                  id: hasCreatedPasskey
+                    ? 'settings.security.removePasskeyLabel'
+                    : 'settings.security.createPasskeyLabel',
+                })}
+                subtitle={intl.formatMessage({
+                  id: hasCreatedPasskey
+                    ? 'settings.security.removePasskeyDescription'
+                    : 'settings.security.createPasskeyDescription',
+                })}
+                accessory={
+                  <Image
+                    source={chevronForward}
+                    style={{ width: 24, height: 24 }}
+                  />
+                }
+              />
+            </PressableHighlight>
+          )}
           <PressableHighlight
             onPress={() => {
               showPicker({

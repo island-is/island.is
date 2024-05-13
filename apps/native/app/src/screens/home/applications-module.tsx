@@ -18,6 +18,7 @@ import { Application } from '../../graphql/types/schema'
 import { navigateTo } from '../../lib/deep-linking'
 import { openBrowser } from '../../lib/rn-island'
 import { getApplicationUrl } from '../../utils/applications-utils'
+import { useFeatureFlag } from '../../contexts/feature-flag-provider'
 
 interface ApplicationsModuleProps {
   applications: Application[]
@@ -35,6 +36,7 @@ export const ApplicationsModule = React.memo(
   }: ApplicationsModuleProps) => {
     const intl = useIntl()
     const count = applications.length
+    const isPasskeyEnabled = useFeatureFlag('isPasskeyEnabled', false)
 
     const children = applications.slice(0, 5).map((application) => (
       <StatusCard
@@ -56,7 +58,11 @@ export const ApplicationsModule = React.memo(
               id: 'applicationStatusCard.openButtonLabel',
             }),
             onPress() {
-              openBrowser(getApplicationUrl(application), componentId)
+              openBrowser(
+                getApplicationUrl(application),
+                componentId,
+                isPasskeyEnabled,
+              )
             },
           },
         ]}

@@ -138,9 +138,9 @@ export const PasskeyScreen: NavigationFunctionComponent<{
               try {
                 setIsLoading(true)
                 // Don't show lockscreen behind native passkey modals
-                authStore.setState({
+                authStore.setState(() => ({
                   noLockScreenUntilNextAppStateActive: true,
-                })
+                }))
 
                 const registered = await registerPasskey()
 
@@ -149,9 +149,10 @@ export const PasskeyScreen: NavigationFunctionComponent<{
                 }
                 if (registered && url) {
                   // Don't show lockscreen behind native passkey modals
-                  authStore.setState({
+                  authStore.setState(() => ({
                     noLockScreenUntilNextAppStateActive: true,
-                  })
+                  }))
+
                   const authenticated = await authenticatePasskey()
                   if (authenticated) {
                     setIsLoading(false)

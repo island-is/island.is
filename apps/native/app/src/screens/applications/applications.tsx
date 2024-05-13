@@ -27,6 +27,7 @@ import { getApplicationOverviewUrl } from '../../utils/applications-utils'
 import { getRightButtons } from '../../utils/get-main-root'
 import { testIDs } from '../../utils/test-ids'
 import { ApplicationsModule } from '../home/applications-module'
+import { useFeatureFlag } from '../../contexts/feature-flag-provider'
 
 type ListItem =
   | { id: string; __typename: 'Skeleton' }
@@ -81,6 +82,7 @@ export const ApplicationsScreen: NavigationFunctionComponent = ({
   const [refetching, setRefetching] = useState(false)
   const intl = useIntl()
   const scrollY = useRef(new Animated.Value(0)).current
+  const isPasskeyEnabled = useFeatureFlag('isPasskeyEnabled', false)
 
   const res = useListSearchQuery({
     variables: {
@@ -129,7 +131,11 @@ export const ApplicationsScreen: NavigationFunctionComponent = ({
             key={item.id}
             title={item.title}
             onPress={() =>
-              openBrowser(getApplicationOverviewUrl(item), componentId)
+              openBrowser(
+                getApplicationOverviewUrl(item),
+                componentId,
+                isPasskeyEnabled,
+              )
             }
           />
         )

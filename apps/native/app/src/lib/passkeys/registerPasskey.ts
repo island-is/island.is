@@ -32,7 +32,7 @@ export const registerPasskey = async () => {
         return true
       }
       console.error('Registration not verified', verifyRegisterResponse)
-      return false
+      throw new Error('Registration not verified')
     } catch (error: any) {
       // User cancelled the register flow, swallow the error
       if (error?.error === 'UserCancelled') {

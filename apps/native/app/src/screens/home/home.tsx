@@ -109,6 +109,8 @@ export const MainHomeScreen: NavigationFunctionComponent = ({
   const flatListRef = useRef<FlatList>(null)
   const ui = useUiStore()
 
+  const isPasskeyEnabled = useFeatureFlag('isPasskeyEnabled', false)
+
   useActiveTabItemPress(2, () => {
     flatListRef.current?.scrollToOffset({ offset: -150, animated: true })
   })
@@ -194,7 +196,13 @@ export const MainHomeScreen: NavigationFunctionComponent = ({
           <View style={{ height: 100 }}>
             <Button
               title={'Opna mínar síður'}
-              onPress={() => openBrowser(`http://${IP_ADDRESS}:8000/logged-in`)}
+              onPress={() =>
+                openBrowser(
+                  `http://${IP_ADDRESS}:8000/logged-in`,
+                  componentId,
+                  isPasskeyEnabled,
+                )
+              }
             />
           </View>
         </ScrollView>
