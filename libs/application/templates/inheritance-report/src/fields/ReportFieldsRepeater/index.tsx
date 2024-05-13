@@ -21,7 +21,11 @@ import { getErrorViaPath, getValueViaPath } from '@island.is/application/core'
 import { formatCurrency } from '@island.is/application/ui-components'
 import { useLocale } from '@island.is/localization'
 import { m } from '../../lib/messages'
-import { YES } from '../../lib/constants'
+import {
+  PREPAID_INHERITANCE,
+  PrePaidHeirsRelations,
+  YES,
+} from '../../lib/constants'
 import DoubleColumnRow from '../../components/DoubleColumnRow'
 import {
   getDeceasedHadAssets,
@@ -120,12 +124,14 @@ export const ReportFieldsRepeater: FC<
   }, [calculateTotal])
 
   const relations =
-    (externalData.syslumennOnEntry?.data as any).relationOptions?.map(
-      (relation: any) => ({
-        value: relation,
-        label: relation,
-      }),
-    ) || []
+    answers.applicationFor === PREPAID_INHERITANCE
+      ? PrePaidHeirsRelations
+      : (externalData.syslumennOnEntry?.data as any).relationOptions?.map(
+          (relation: any) => ({
+            value: relation,
+            label: relation,
+          }),
+        ) || []
 
   const handleAddRepeaterFields = () => {
     //reset stocks
@@ -200,7 +206,9 @@ export const ReportFieldsRepeater: FC<
   /* ------ Set fields from external data (realEstate, vehicles) ------ */
   useEffect(() => {
     const estateData =
-      getEstateDataFromApplication(application).inheritanceReportInfo
+      answers.applicationFor === PREPAID_INHERITANCE
+        ? undefined
+        : getEstateDataFromApplication(application).inheritanceReportInfo
     const extData: Array<InheritanceReportAsset> =
       estateData && props.fromExternalData
         ? (estateData[

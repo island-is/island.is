@@ -1,30 +1,23 @@
 import {
   buildCustomField,
-  buildDescriptionField,
   buildMultiField,
   buildSection,
 } from '@island.is/application/core'
-import { YES } from '../../lib/constants'
-import { m } from '../../lib/messages'
+import { m } from '../../../lib/messages'
 
 export const prePaidHeirs = buildSection({
   id: 'prePaidHeirs',
   title: 'Erfingjar',
   children: [
     buildMultiField({
-      id: 'heirs',
+      id: 'prePaidHeirs',
       title: 'Hver á að fá arfinn?',
+      description: 'Lorem ipsum foo bar beep boop meep morp',
       children: [
-        buildDescriptionField({
-          id: 'description',
-          title: '',
-          description: 'Lorem ipsum foo bar beep boop meep morp',
-          marginBottom: 'p4',
-        }),
         buildCustomField(
           {
             title: '',
-            id: 'heirs.data',
+            id: 'prePaidHeirs.data',
             doesNotRequireAnswer: false,
             component: 'HeirsAndPartitionRepeater',
           },

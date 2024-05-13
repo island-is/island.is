@@ -34,6 +34,7 @@ import {
 import { InheritanceReportAsset } from '@island.is/clients/syslumenn'
 import ShareInput from '../../components/ShareInput'
 import DeceasedShare from '../../components/DeceasedShare'
+import { PREPAID_INHERITANCE } from '../../lib/constants'
 
 type RepeaterProps = {
   field: {
@@ -126,7 +127,9 @@ export const AssetsRepeater: FC<
 
   useEffect(() => {
     const estData =
-      getEstateDataFromApplication(application)?.inheritanceReportInfo ?? {}
+      application.answers.applicationFor === PREPAID_INHERITANCE
+        ? {}
+        : getEstateDataFromApplication(application)?.inheritanceReportInfo ?? {}
 
     const extData =
       getValueViaPath<InheritanceReportAsset[]>(estData, assetKey) ?? []

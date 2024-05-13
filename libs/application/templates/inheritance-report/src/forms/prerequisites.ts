@@ -21,11 +21,11 @@ export const getForm = (): Form =>
         title: '',
         children: [
           buildMultiField({
-            title: '',
+            title: m.preDataCollectionApplicationFor,
             children: [
               buildRadioField({
                 id: 'applicationFor',
-                title: m.preDataCollectionApplicationFor,
+                title: '',
                 largeButtons: true,
                 backgroundColor: 'white',
                 options: [

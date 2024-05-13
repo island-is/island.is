@@ -16,9 +16,12 @@ import { dataCollection } from './sections/dataCollection'
 import { deceased } from './sections/deceased'
 import { YES } from '../lib/constants'
 import { applicationInfo } from './sections/applicationInfo'
-import { preSelection } from './sections/preSelection'
-import { prePaidHeirs } from './sections/prePaidHeirs'
-import { prePaidDataCollection } from './sections/prePaidDataCollection'
+import { preSelection } from './sections/applicationTypeSelection'
+import { prePaidHeirs } from './sections/prepaidInheritance/heirs'
+import { prePaidDataCollection } from './sections/prepaidInheritance/dataCollection'
+import { inheritanceExecutor } from './sections/prepaidInheritance/inheritanceExecutor'
+import { inheritance } from './sections/prepaidInheritance/inheritance'
+import { prepaidOverview } from './sections/prepaidInheritance/overview'
 
 export const prePaidForm: Form = buildForm({
   id: 'prePaidInheritanceReport',
@@ -26,7 +29,19 @@ export const prePaidForm: Form = buildForm({
   mode: FormModes.DRAFT,
   renderLastScreenBackButton: true,
   renderLastScreenButton: true,
-  children: [prePaidDataCollection, assets, prePaidHeirs],
+  children: [
+    buildSection({
+      id: 'setup',
+      title: 'Tegund umsókna',
+      children: [],
+    }),
+    prePaidDataCollection,
+    inheritanceExecutor,
+    inheritance,
+    assets,
+    prePaidHeirs,
+    prepaidOverview
+  ]
 })
 
 export const form: Form = buildForm({

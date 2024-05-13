@@ -1444,6 +1444,11 @@ export const m = defineMessages({
     defaultMessage: 'Erfðafjárskýrsla móttekin',
     description: '',
   },
+  prepaidDoneTitle: {
+    id: 'ir.application:prepaidDoneTitle',
+    defaultMessage: 'Umsókn um fyrirframgreiddan arf móttekin',
+    description: '',
+  },
   doneDescription: {
     id: 'ir.application:doneDescription',
     defaultMessage:

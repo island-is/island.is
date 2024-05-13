@@ -22,14 +22,15 @@ export const assets = buildSection({
     buildSubSection({
       id: 'realEstate',
       title: m.realEstate,
+      condition: (answers) => {
+        return (answers as any).applicationFor === PREPAID_INHERITANCE
+          ? (answers as any).prepaidInheritance?.realEstate[0] === YES
+          : true
+      },
       children: [
         buildMultiField({
           id: 'realEstate',
           title: m.propertiesTitle,
-          condition: (answers) =>
-            (answers as any).applicationFor === PREPAID_INHERITANCE
-              ? (answers as any).prepaidInheritance?.realEstate === YES
-              : true,
           description:
             m.propertiesDescription.defaultMessage +
             ' ' +
@@ -98,6 +99,9 @@ export const assets = buildSection({
     buildSubSection({
       id: 'inventory',
       title: m.inventoryTitle,
+      condition: (answers) => {
+        return (answers as any).applicationFor !== PREPAID_INHERITANCE
+      },
       children: [
         buildMultiField({
           id: 'inventory',
@@ -160,6 +164,11 @@ export const assets = buildSection({
     buildSubSection({
       id: 'assets.vehicles',
       title: m.vehicles,
+      condition: (answers) => {
+        return (answers as any).applicationFor === PREPAID_INHERITANCE
+          ? (answers as any).prepaidInheritance?.vehicles[0] === YES
+          : true
+      },
       children: [
         buildMultiField({
           id: 'vehicles',
@@ -225,6 +234,9 @@ export const assets = buildSection({
     buildSubSection({
       id: 'assets.guns',
       title: m.guns,
+      condition: (answers) => {
+        return (answers as any).applicationFor !== PREPAID_INHERITANCE
+      },
       children: [
         buildMultiField({
           id: 'guns',
@@ -286,6 +298,11 @@ export const assets = buildSection({
     buildSubSection({
       id: 'estateBankInfo',
       title: m.estateBankInfo,
+      condition: (answers) => {
+        return (answers as any).applicationFor === PREPAID_INHERITANCE
+          ? (answers as any).prepaidInheritance?.bankMoney[0] === YES
+          : true
+      },
       children: [
         buildMultiField({
           id: 'estateBankInfo',
@@ -365,6 +382,9 @@ export const assets = buildSection({
     buildSubSection({
       id: 'claims',
       title: m.claimsTitle,
+      condition: (answers) => {
+        return (answers as any).applicationFor !== PREPAID_INHERITANCE
+      },
       children: [
         buildMultiField({
           id: 'claims',
@@ -423,6 +443,9 @@ export const assets = buildSection({
     buildSubSection({
       id: 'stocks',
       title: m.stocksTitle,
+      condition: (answers) => {
+        return (answers as any).applicationFor !== PREPAID_INHERITANCE
+      },
       children: [
         buildMultiField({
           id: 'stocks',
@@ -493,6 +516,11 @@ export const assets = buildSection({
     buildSubSection({
       id: 'money',
       title: m.moneyTitle,
+      condition: (answers) => {
+        return (answers as any).applicationFor === PREPAID_INHERITANCE
+          ? (answers as any).prepaidInheritance?.money[0] === YES
+          : true
+      },
       children: [
         buildMultiField({
           id: 'money',
@@ -512,11 +540,12 @@ export const assets = buildSection({
               placeholder: m.moneyPlaceholder,
               variant: 'textarea',
               defaultValue: (application: Application) => {
-                return (
-                  getEstateDataFromApplication(application)
-                    ?.inheritanceReportInfo?.depositsAndMoney?.[0]
-                    ?.description ?? ''
-                )
+                return application.answers.applicationFor ===
+                  PREPAID_INHERITANCE
+                  ? ''
+                  : getEstateDataFromApplication(application)
+                      ?.inheritanceReportInfo?.depositsAndMoney?.[0]
+                      ?.description ?? ''
               },
               rows: 7,
             }),
@@ -526,11 +555,12 @@ export const assets = buildSection({
               width: 'half',
               variant: 'currency',
               defaultValue: (application: Application) => {
-                return (
-                  getEstateDataFromApplication(application)
-                    ?.inheritanceReportInfo?.depositsAndMoney?.[0]
-                    ?.propertyValuation ?? '0'
-                )
+                return application.answers.applicationFor ===
+                  PREPAID_INHERITANCE
+                  ? '0'
+                  : getEstateDataFromApplication(application)
+                      ?.inheritanceReportInfo?.depositsAndMoney?.[0]
+                      ?.propertyValuation ?? '0'
               },
             }),
             buildCustomField(
@@ -554,6 +584,11 @@ export const assets = buildSection({
     buildSubSection({
       id: 'otherAssets',
       title: m.otherAssetsTitle,
+      condition: (answers) => {
+        return (answers as any).applicationFor === PREPAID_INHERITANCE
+          ? (answers as any).prepaidInheritance?.other[0] === YES
+          : true
+      },
       children: [
         buildMultiField({
           id: 'otherAssets',
@@ -601,6 +636,7 @@ export const assets = buildSection({
     buildSubSection({
       id: 'assetOverview',
       title: m.assetOverview,
+      condition: (answers) => answers.applicationFor !== PREPAID_INHERITANCE,
       children: [
         buildMultiField({
           id: 'assetOverview',
