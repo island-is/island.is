@@ -14,13 +14,13 @@ import {
   PageHeader,
   PageLayout,
   PageTitle,
+  RenderFiles,
   SectionHeading,
 } from '@island.is/judicial-system-web/src/components'
 import {
   Defendants,
   Prosecutor,
 } from '@island.is/judicial-system-web/src/components/CaseInfo/CaseInfo'
-import { RenderFiles } from '@island.is/judicial-system-web/src/components/IndictmentCaseFilesList/IndictmentCaseFilesList'
 import {
   CaseFile,
   CaseFileCategory,
