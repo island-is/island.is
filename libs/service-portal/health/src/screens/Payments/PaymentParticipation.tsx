@@ -44,23 +44,18 @@ export const PaymentPartication = () => {
   const [loadingExpand, setLoadingExpand] = useState<number[]>([])
 
   const { data, loading, error } = useGetCopaymentStatusQuery()
-  const [
-    getCopaymentBillsQuery,
-    { data: billsData, loading: billsLoading, error: billsError },
-  ] = useGetCopaymentBillsLazyQuery()
+  const [getCopaymentBillsQuery, { data: billsData, loading: billsLoading }] =
+    useGetCopaymentBillsLazyQuery()
 
-  const {
-    data: periods,
-    loading: periodsLoading,
-    error: periodsError,
-  } = useGetCopaymentPeriodsQuery({
-    variables: {
-      input: {
-        dateTo: endDate,
-        dateFrom: startDate,
+  const { data: periods, loading: periodsLoading } =
+    useGetCopaymentPeriodsQuery({
+      variables: {
+        input: {
+          dateTo: endDate,
+          dateFrom: startDate,
+        },
       },
-    },
-  })
+    })
 
   const getBills = (periodId: number) => {
     getCopaymentBillsQuery({

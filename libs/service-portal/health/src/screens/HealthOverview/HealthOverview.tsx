@@ -4,7 +4,6 @@ import {
   useGetInsuranceOverviewQuery,
 } from './HealthOverview.generated'
 import {
-  ErrorScreen,
   IntroHeader,
   UserInfoLine,
   amountFormat,
