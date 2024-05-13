@@ -1,6 +1,11 @@
 import { defineMessages } from 'react-intl'
 
 export const m = defineMessages({
+  prerequisitesTitle: {
+    id: 'ir.application:prerequisitesTitle',
+    defaultMessage: 'Erfðafjárskýrsla',
+    description: '',
+  },
   // Pre-data collection
   preDataCollectionHeading: {
     id: 'ir.application:preDataCollectionHeading',
@@ -49,6 +54,11 @@ export const m = defineMessages({
   applicationName: {
     id: 'ir.application:applicationName',
     defaultMessage: 'Erfðafjárskýrsla eftir andlát',
+    description: '',
+  },
+  applicationNamePrepaid: {
+    id: 'ir.application:applicationNamePrepaid',
+    defaultMessage: 'Fyrirframgreiddur arfur',
     description: '',
   },
   institutionName: {
@@ -1444,20 +1454,31 @@ export const m = defineMessages({
     defaultMessage: 'Senda inn skýrslu',
     description: '',
   },
-  doneTitle: {
-    id: 'ir.application:doneTitle',
+  doneTitleEFS: {
+    id: 'ir.application:doneTitleEFS',
     defaultMessage: 'Erfðafjárskýrsla móttekin',
     description: '',
   },
-  prepaidDoneTitle: {
-    id: 'ir.application:prepaidDoneTitle',
+  doneTitlePrepaidEFS: {
+    id: 'ir.application:doneTitlePrepaidEFS',
     defaultMessage: 'Umsókn um fyrirframgreiddan arf móttekin',
     description: '',
   },
-  doneDescription: {
-    id: 'ir.application:doneDescription',
+  doneDescriptionEFS: {
+    id: 'ir.application:doneDescriptionEFS#markdown',
     defaultMessage:
       'Sýslumaður hefur móttekið erfðafjárskýrslu. Hún verður nú yfirfarin. Ef sýslumaður staðfestir skýrsluna að þá fá erfingjar/umboðsmaður senda tilkynningu um álagningu erfðafjárskatts í pósthólf á Íslands.is. Ef sýslumaður hefur athugasemdir við innsenda skýrslu mun sýslumaður senda bréf í pósthólf erfingja inn á Ísland.is',
+    description: '',
+  },
+  doneDescriptionPrepaidEFS: {
+    id: 'ir.application:doneDescriptionPrepaidEFS#markdown',
+    defaultMessage:
+      'Lorem ipsum dolor sit amet, consectetur adipiscing elit. Sed sit amet urna nec nunc ultricies ultricies.',
+    description: '',
+  },
+  nextSteps: {
+    id: 'ir.application:nextSteps',
+    defaultMessage: 'Næstu skref',
     description: '',
   },
   errorRelation: {

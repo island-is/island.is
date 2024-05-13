@@ -1,6 +1,5 @@
 import * as z from 'zod'
 import * as kennitala from 'kennitala'
-import { NO, YES } from './constants'
 import {
   customZodError,
   isValidEmail,
@@ -9,6 +8,7 @@ import {
   valueToNumber,
 } from './utils/helpers'
 import { m } from './messages'
+import { NO, YES } from '@island.is/application/core'
 
 const deceasedShare = {
   deceasedShare: z.string().nonempty().optional(),
@@ -21,7 +21,7 @@ const validateDeceasedShare = ({
   deceasedShareEnabled,
 }: {
   deceasedShare: string | undefined
-  deceasedShareEnabled: 'Yes'[] | undefined
+  deceasedShareEnabled: 'yes'[] | undefined
 }) => {
   if (
     Array.isArray(deceasedShareEnabled) &&

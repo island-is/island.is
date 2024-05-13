@@ -17,15 +17,15 @@ import {
 } from '@island.is/island-ui/core'
 import { Answers } from '../../types'
 import * as styles from '../styles.css'
-import { getErrorViaPath, getValueViaPath } from '@island.is/application/core'
+import {
+  YES,
+  getErrorViaPath,
+  getValueViaPath,
+} from '@island.is/application/core'
 import { formatCurrency } from '@island.is/application/ui-components'
 import { useLocale } from '@island.is/localization'
 import { m } from '../../lib/messages'
-import {
-  PREPAID_INHERITANCE,
-  PrePaidHeirsRelations,
-  YES,
-} from '../../lib/constants'
+import { PREPAID_INHERITANCE, PrePaidHeirsRelations } from '../../lib/constants'
 import DoubleColumnRow from '../../components/DoubleColumnRow'
 import {
   getDeceasedHadAssets,

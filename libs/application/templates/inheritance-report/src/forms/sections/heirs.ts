@@ -1,4 +1,5 @@
 import {
+  YES,
   buildCheckboxField,
   buildCustomField,
   buildDescriptionField,
@@ -18,7 +19,6 @@ import {
   shouldShowCustomSpouseShare,
   valueToNumber,
 } from '../../lib/utils/helpers'
-import { YES } from '../../lib/constants'
 
 export const heirs = buildSection({
   id: 'heirs',

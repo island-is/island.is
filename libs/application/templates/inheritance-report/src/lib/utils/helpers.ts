@@ -1,10 +1,9 @@
-import { getValueViaPath } from '@island.is/application/core'
+import { YES, getValueViaPath } from '@island.is/application/core'
 import { Application, FormValue } from '@island.is/application/types'
 import { InheritanceReportInfo } from '@island.is/clients/syslumenn'
 import { parsePhoneNumberFromString } from 'libphonenumber-js'
 import { MessageDescriptor } from 'react-intl'
 import { ZodTypeAny } from 'zod'
-import { YES } from '../constants'
 
 export const currencyStringToNumber = (str: string) => {
   if (!str) {

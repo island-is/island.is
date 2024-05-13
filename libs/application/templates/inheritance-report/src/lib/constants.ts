@@ -1,10 +1,8 @@
 import { DefaultEvents } from '@island.is/application/types'
 import { m } from './messages'
 
-export const YES = 'Yes'
-export const NO = 'No'
-export const PREPAID_INHERITANCE = 'EFS-Pre-paid'
-export const INHERITANCE = 'EFS'
+export const PREPAID_INHERITANCE = 'prepaidInheritance'
+export const ESTATE_INHERITANCE = 'estateInheritance'
 
 export const States = {
   prerequisites: 'prerequisites',
@@ -21,26 +19,25 @@ export enum PrePaidHeirsRelationTypes {
 }
 
 export const PrePaidHeirsRelations = [
-  // Todo: translations?
   {
     value: PrePaidHeirsRelationTypes.SPOUSE,
-    label: m.spouse.defaultMessage,
+    label: m.spouse,
   },
   {
     value: PrePaidHeirsRelationTypes.CHILD,
-    label: m.child.defaultMessage,
+    label: m.child,
   },
   {
     value: PrePaidHeirsRelationTypes.SIBLING,
-    label: m.sibling.defaultMessage,
+    label: m.sibling,
   },
   {
     value: PrePaidHeirsRelationTypes.PARENT,
-    label: m.parent.defaultMessage,
+    label: m.parent,
   },
   {
     value: PrePaidHeirsRelationTypes.OTHER,
-    label: m.other.defaultMessage,
+    label: m.other,
   },
 ]
 
@@ -52,8 +49,8 @@ export type InheritanceReportEvent =
   | { type: DefaultEvents.EDIT }
 
 export enum Roles {
-  APPLICANT = 'applicant',
-  PREPAID = 'prepaid',
+  ESTATE_INHERITANCE_APPLICANT = 'estateInheritanceApplicant',
+  PREPAID_INHERITANCE_APPLICANT = 'prepaidInheritanceApplicant',
 }
 
 export enum ApiActions {

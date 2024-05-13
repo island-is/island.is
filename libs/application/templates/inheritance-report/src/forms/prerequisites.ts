@@ -6,7 +6,7 @@ import {
   buildSubmitField,
 } from '@island.is/application/core'
 import { DefaultEvents, Form, FormModes } from '@island.is/application/types'
-import { INHERITANCE, PREPAID_INHERITANCE } from '../lib/constants'
+import { ESTATE_INHERITANCE, PREPAID_INHERITANCE } from '../lib/constants'
 import { m } from '../lib/messages'
 
 export const getForm = (): Form =>
@@ -30,7 +30,7 @@ export const getForm = (): Form =>
                 backgroundColor: 'white',
                 options: [
                   {
-                    value: INHERITANCE,
+                    value: ESTATE_INHERITANCE,
                     label: m.preDataCollectionApplicationForDefault,
                   },
                   {

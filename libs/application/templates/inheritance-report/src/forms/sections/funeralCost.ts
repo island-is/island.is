@@ -1,4 +1,5 @@
 import {
+  YES,
   buildCustomField,
   buildDescriptionField,
   buildDividerField,
@@ -10,7 +11,6 @@ import {
 } from '@island.is/application/core'
 import { m } from '../../lib/messages'
 import { formatCurrency } from '@island.is/application/ui-components'
-import { YES } from '../../lib/constants'
 
 export const funeralCost = buildSection({
   id: 'funeralCost',

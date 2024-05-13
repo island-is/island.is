@@ -112,7 +112,10 @@ export const HeirsAndPartitionRepeater: FC<
     inheritanceReportInfos: Array<InheritanceReportInfo>
   }
 
-  const estateData = undefined //getEstateDataFromApplication(application)
+  const estateData =
+    answers.applicationFor === PREPAID_INHERITANCE
+      ? undefined
+      : getEstateDataFromApplication(application)
 
   const inheritanceTaxFreeLimit =
     externalData?.inheritanceReportInfos?.[0]?.inheritanceTax
@@ -120,7 +123,10 @@ export const HeirsAndPartitionRepeater: FC<
 
   const relations =
     answers.applicationFor === PREPAID_INHERITANCE
-      ? PrePaidHeirsRelations
+      ? PrePaidHeirsRelations.map((relation) => ({
+          value: relation.value,
+          label: formatMessage(relation.label),
+        }))
       : externalData?.relationOptions?.map((relation) => ({
           value: relation,
           label: relation,

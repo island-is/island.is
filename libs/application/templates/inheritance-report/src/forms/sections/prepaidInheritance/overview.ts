@@ -1,6 +1,15 @@
-import { YES, buildCheckboxField, buildDescriptionField, buildDividerField, buildKeyValueField, buildMultiField, buildSection, buildSubmitField } from "@island.is/application/core";
-import { m } from "../../../lib/messages"
-import { DefaultEvents } from "@island.is/application/types";
+import {
+  YES,
+  buildCheckboxField,
+  buildDescriptionField,
+  buildDividerField,
+  buildKeyValueField,
+  buildMultiField,
+  buildSection,
+  buildSubmitField,
+} from '@island.is/application/core'
+import { m } from '../../../lib/messages'
+import { DefaultEvents } from '@island.is/application/types'
 
 export const prepaidOverview = buildSection({
   id: 'prepaidOverview',
@@ -64,7 +73,7 @@ export const prepaidOverview = buildSection({
         }),
         buildDividerField({}),
         buildCheckboxField({
-          id: 'confirmActionPrepaid',
+          id: 'confirmAction',
           title: '',
           large: false,
           backgroundColor: 'white',
@@ -77,7 +86,7 @@ export const prepaidOverview = buildSection({
           ],
         }),
         buildSubmitField({
-          id: 'prepaid.submit',
+          id: 'prepaidInheritance.submit',
           title: '',
           refetchApplicationAfterSubmit: true,
           actions: [
@@ -92,4 +101,3 @@ export const prepaidOverview = buildSection({
     }),
   ],
 })
-

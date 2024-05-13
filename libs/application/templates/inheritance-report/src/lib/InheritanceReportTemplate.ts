@@ -32,7 +32,12 @@ const InheritanceReportTemplate: ApplicationTemplate<
   InheritanceReportEvent
 > = {
   type: ApplicationTypes.INHERITANCE_REPORT,
-  name: m.applicationName,
+  name: ({ answers }) =>
+    answers.applicationFor === PREPAID_INHERITANCE
+      ? m.prerequisitesTitle.defaultMessage +
+        ' - ' +
+        m.applicationNamePrepaid.defaultMessage
+      : m.prerequisitesTitle.defaultMessage,
   institution: m.institution,
   dataSchema: inheritanceReportSchema,
   featureFlag: Features.inheritanceReport,
@@ -48,7 +53,7 @@ const InheritanceReportTemplate: ApplicationTemplate<
           lifecycle: EphemeralStateLifeCycle,
           roles: [
             {
-              id: Roles.APPLICANT,
+              id: Roles.ESTATE_INHERITANCE_APPLICANT,
               formLoader: async () => {
                 const getForm = await import('../forms/prerequisites').then(
                   (val) => val.getForm,
@@ -84,10 +89,10 @@ const InheritanceReportTemplate: ApplicationTemplate<
           lifecycle: EphemeralStateLifeCycle,
           roles: [
             {
-              id: Roles.APPLICANT,
+              id: Roles.ESTATE_INHERITANCE_APPLICANT,
               formLoader: () =>
                 import('../forms/form').then((module) =>
-                  Promise.resolve(module.form),
+                  Promise.resolve(module.estateInheritanceForm),
                 ),
               actions: [{ event: 'SUBMIT', name: '', type: 'primary' }],
               write: 'all',
@@ -95,10 +100,10 @@ const InheritanceReportTemplate: ApplicationTemplate<
               api: [NationalRegistryUserApi, UserProfileApi, EstateOnEntryApi],
             },
             {
-              id: Roles.PREPAID,
+              id: Roles.PREPAID_INHERITANCE_APPLICANT,
               formLoader: () =>
                 import('../forms/form').then((module) =>
-                  Promise.resolve(module.prePaidForm),
+                  Promise.resolve(module.prepaidInheritanceForm),
                 ),
               actions: [{ event: 'SUBMIT', name: '', type: 'primary' }],
               write: 'all',
@@ -125,7 +130,15 @@ const InheritanceReportTemplate: ApplicationTemplate<
           }),*/
           roles: [
             {
-              id: Roles.APPLICANT,
+              id: Roles.ESTATE_INHERITANCE_APPLICANT,
+              formLoader: () =>
+                import('../forms/done').then((val) =>
+                  Promise.resolve(val.done),
+                ),
+              read: 'all',
+            },
+            {
+              id: Roles.PREPAID_INHERITANCE_APPLICANT,
               formLoader: () =>
                 import('../forms/done').then((val) =>
                   Promise.resolve(val.done),
@@ -143,9 +156,9 @@ const InheritanceReportTemplate: ApplicationTemplate<
   ): ApplicationRole | undefined {
     if (application.applicant === nationalId) {
       if (application.answers.applicationFor === PREPAID_INHERITANCE) {
-        return Roles.PREPAID
+        return Roles.PREPAID_INHERITANCE_APPLICANT
       }
-      return Roles.APPLICANT
+      return Roles.ESTATE_INHERITANCE_APPLICANT
     }
   },
 }

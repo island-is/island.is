@@ -21,7 +21,7 @@ import { valueToNumber } from '../../lib/utils/helpers'
 import DoubleColumnRow from '../../components/DoubleColumnRow'
 import { m } from '../../lib/messages'
 import { Answers } from '../../types'
-import { YES } from '../../lib/constants'
+import { YES } from '@island.is/application/core'
 
 type CustomField = {
   id: string

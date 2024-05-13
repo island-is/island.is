@@ -7,11 +7,13 @@ import {
 } from '@island.is/application/core'
 import { m } from '../../../lib/messages'
 import { format as formatNationalId } from 'kennitala'
-import { Application } from '@island.is/api/schema'
+import { Application, UserProfile } from '@island.is/api/schema'
+import { removeCountryCode } from '@island.is/application/ui-components'
+import { applicant } from '../applicant'
 
 export const inheritanceExecutor = buildSection({
   id: 'inheritanceExecutor',
-  title: m.irSubmitTitle,
+  title: 'Arflátar',
   children: [
     buildMultiField({
       id: 'inheritanceExecutor',
@@ -34,13 +36,38 @@ export const inheritanceExecutor = buildSection({
         }),
         buildTextField({
           id: 'executorNationalId',
-          title: m.name,
+          title: m.nationalId,
           defaultValue: ({ externalData }: Application) =>
             formatNationalId(
               (externalData.nationalRegistry?.data as any)?.nationalId,
             ),
           width: 'half',
           readOnly: true,
+        }),
+        buildTextField({
+          id: 'executorPhone',
+          title: m.phone,
+          width: 'half',
+          format: '###-####',
+          defaultValue: (application: Application) => {
+            const phone =
+              (
+                application.externalData.userProfile?.data as {
+                  mobilePhoneNumber?: string
+                }
+              )?.mobilePhoneNumber ?? ''
+
+            return removeCountryCode(phone)
+          },
+        }),
+        buildTextField({
+          id: 'executorEmail',
+          title: m.email,
+          width: 'half',
+          defaultValue: ({ externalData }: Application) => {
+            const data = externalData.userProfile?.data as UserProfile
+            return data?.email
+          },
         }),
         //Todo: ef hjúskaparstaða er married
         buildDescriptionField({
@@ -58,7 +85,7 @@ export const inheritanceExecutor = buildSection({
         }),
         buildTextField({
           id: 'executorSpouseNationalId',
-          title: m.name,
+          title: m.nationalId,
           defaultValue: '010130-3019',
           width: 'half',
           readOnly: true,
