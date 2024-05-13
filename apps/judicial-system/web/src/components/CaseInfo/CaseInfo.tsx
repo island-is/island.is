@@ -91,7 +91,7 @@ export const Prosecutor: React.FC<Props> = ({ workingCase }) => {
   return (
     <Entry
       label={formatMessage(core.prosecutorPerson)}
-      value={workingCase.prosecutorsOffice?.name || ''}
+      value={workingCase.prosecutorsOffice?.name ?? ''}
     />
   )
 }

@@ -14,13 +14,13 @@ import {
   PageHeader,
   PageLayout,
   PageTitle,
+  RenderFiles,
   SectionHeading,
 } from '@island.is/judicial-system-web/src/components'
 import {
   Defendants,
   Prosecutor,
 } from '@island.is/judicial-system-web/src/components/CaseInfo/CaseInfo'
-import { RenderFiles } from '@island.is/judicial-system-web/src/components/IndictmentCaseFilesList/IndictmentCaseFilesList'
 import {
   CaseFile,
   CaseFileCategory,
@@ -141,7 +141,7 @@ const Summary: React.FC = () => {
           primaryButtonText={formatMessage(core.closeModal)}
           onPrimaryButtonClick={() =>
             router.push(
-              `${constants.INDICTMENTS_COMPLTED_ROUTE}/${workingCase.id}`,
+              `${constants.INDICTMENTS_COMPLETED_ROUTE}/${workingCase.id}`,
             )
           }
         />
