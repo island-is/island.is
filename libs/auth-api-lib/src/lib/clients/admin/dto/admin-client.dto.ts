@@ -104,4 +104,11 @@ export class AdminClientDto {
     type: [AdminClientClaimDto],
   })
   customClaims?: AdminClientClaimDto[]
+
+  @ApiProperty({
+    description: 'Array of allowed acr values for the client.',
+    example: '[eidas-loa-high]',
+  })
+  @ApiProperty()
+  allowedAcr!: string[]
 }

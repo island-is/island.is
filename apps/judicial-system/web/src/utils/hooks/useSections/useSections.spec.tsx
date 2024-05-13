@@ -126,4 +126,22 @@ describe('useSections getSections', () => {
       { children: [], isActive: true, name: 'Heimvísun' },
     ])
   })
+
+  it('should return the correct sections for indictment cases in RECEIVED state', () => {
+    const { result } = renderHook(() => useSections(), { wrapper })
+    const c: Case = {
+      type: CaseType.INDICTMENT,
+      created: faker.date.past().toISOString(),
+      modified: faker.date.past().toISOString(),
+      id: faker.datatype.uuid(),
+      state: CaseState.RECEIVED,
+      policeCaseNumbers: [],
+    }
+
+    expect(result.current.getSections(c, u)).toStrictEqual([
+      { children: [], isActive: false, name: expect.any(String) },
+      { children: [], isActive: true, name: expect.any(String) },
+      { children: [], isActive: false, name: expect.any(String) },
+    ])
+  })
 })

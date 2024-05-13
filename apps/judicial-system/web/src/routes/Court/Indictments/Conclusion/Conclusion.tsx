@@ -111,12 +111,12 @@ const Conclusion: React.FC = () => {
       } else if (selectedAction === 'COMPLETE') {
         handleCompletion()
       } else if (postponement?.postponedIndefinitely) {
-        const updateSuccss = await updateCase(workingCase.id, {
+        const updateSuccess = await updateCase(workingCase.id, {
           courtDate: null,
           postponedIndefinitelyExplanation: postponement.reason,
         })
 
-        if (!updateSuccss) {
+        if (!updateSuccess) {
           return
         }
       } else {
