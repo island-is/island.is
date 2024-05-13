@@ -67,7 +67,7 @@ export class PasskeysController {
   ): Promise<RegistrationResult> {
     const response = await this.passkeysCoreService.verifyRegistration(
       actor,
-      body as any,
+      body,
     )
 
     return response
@@ -100,9 +100,7 @@ export class PasskeysController {
   async verifyAuthentication(
     @Body() body: AuthenticationResponse,
   ): Promise<RegistrationResult> {
-    const response = await this.passkeysCoreService.verifyAuthentication(
-      body as any, // TODO: Fix this
-    )
+    const response = await this.passkeysCoreService.verifyAuthentication(body)
 
     return response
   }

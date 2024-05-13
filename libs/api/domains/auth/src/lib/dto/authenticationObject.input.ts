@@ -11,8 +11,8 @@ export class PasskeyAuthenticationObjectResponse {
   @Field(() => String)
   signature!: string
 
-  @Field(() => String)
-  userHandle!: string
+  @Field(() => String, { nullable: true })
+  userHandle?: string
 }
 
 @InputType('AuthPasskeyAuthenticationObjectCredentialPropertiesOutput')
@@ -52,6 +52,6 @@ export class PasskeyAuthenticationObject {
   @Field(() => PasskeyAuthenticationObjectExtensionsClientOutputs)
   clientExtensionResults!: PasskeyAuthenticationObjectExtensionsClientOutputs
 
-  @Field(() => String)
-  authenticatorAttachment!: string
+  @Field(() => String, { nullable: true })
+  authenticatorAttachment?: string
 }

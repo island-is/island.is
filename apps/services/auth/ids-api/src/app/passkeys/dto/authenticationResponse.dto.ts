@@ -1,8 +1,40 @@
 import { ApiProperty } from '@nestjs/swagger'
 
-import { IsObject, IsOptional, IsString } from 'class-validator'
+import { IsBoolean, IsObject, IsOptional, IsString } from 'class-validator'
 
-export class AuthenticationResponseBody {
+import type {
+  PublicKeyCredentialType,
+  AuthenticatorAttachment,
+} from '@simplewebauthn/types'
+
+class ClientExtensionResultsCredProps {
+  @IsBoolean()
+  @IsOptional()
+  @ApiProperty({ required: false })
+  rk?: boolean
+}
+
+class AuthenticationResponseClientExtensionResults {
+  @IsBoolean()
+  @IsOptional()
+  @ApiProperty({ required: false })
+  appid?: boolean
+
+  @IsObject()
+  @IsOptional()
+  @ApiProperty({
+    type: ClientExtensionResultsCredProps,
+    required: false,
+  })
+  credProps?: ClientExtensionResultsCredProps
+
+  @IsBoolean()
+  @IsOptional()
+  @ApiProperty({ required: false })
+  hmacCreateSecret?: boolean
+}
+
+class AuthenticationResponseBody {
   @IsString()
   @ApiProperty()
   authenticatorData!: string
@@ -17,7 +49,7 @@ export class AuthenticationResponseBody {
 
   @IsString()
   @IsOptional()
-  @ApiProperty()
+  @ApiProperty({ required: false })
   userHandle?: string
 }
 
@@ -38,16 +70,16 @@ export class AuthenticationResponse {
 
   @IsString()
   @IsOptional()
-  @ApiProperty()
-  authenticatorAttachment?: string
+  @ApiProperty({ required: false })
+  authenticatorAttachment?: AuthenticatorAttachment
 
   @IsObject()
   @ApiProperty({
-    type: Object,
+    type: AuthenticationResponseClientExtensionResults,
   })
-  clientExtensionResults!: object
+  clientExtensionResults!: AuthenticationResponseClientExtensionResults
 
   @IsString()
   @ApiProperty()
-  type!: string
+  type!: PublicKeyCredentialType
 }
