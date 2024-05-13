@@ -52,7 +52,7 @@ test.describe('MS - Fasteignir', () => {
     // Arrange
     const page = await context.newPage()
 
-    await setupXroadMocks(['assets'])
+    await setupXroadMocks()
     await disableI18n(page)
 
     await page.goto(
