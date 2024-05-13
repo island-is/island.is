@@ -130,6 +130,9 @@ const Completed: FC = () => {
         {workingCase.indictmentRulingDecision ===
           CaseIndictmentRulingDecision.RULING && (
           <Box marginBottom={10}>
+            <SectionHeading
+              title={formatMessage(strings.serviceRequirementTitle)}
+            />
             {workingCase.defendants?.map((defendant, index) => (
               <Box
                 key={defendant.id}

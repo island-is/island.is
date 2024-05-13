@@ -15,7 +15,14 @@ const strings = defineMessages({
   criminalRecordUpdateTitle: {
     id: 'judicial.system.core:indictments.completed.criminal_record_update_title',
     defaultMessage: 'Tilkynning til sakaskrár',
-    description: 'Notaður sem titill á spurningu um birtingu dóms.',
+    description:
+      'Notaður sem titill á Tilkynning til sakaskrár hluta á máli lokið skjá.',
+  },
+  serviceRequirementTitle: {
+    id: 'judicial.system.core:indictments.completed.service_requirement_title',
+    defaultMessage: 'Ákvörðun um birtingu dóms',
+    description:
+      'Notaður sem titill á Ákvörðun um birtingu dóms hluta á máli lokið skjá.',
   },
   serviceRequirementRequired: {
     id: 'judicial.system.core:indictments.completed.service_requirement_required',
