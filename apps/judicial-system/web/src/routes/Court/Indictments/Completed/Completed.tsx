@@ -61,11 +61,13 @@ const Completed: FC = () => {
   }, [handleUpload, uploadFiles, updateUploadFile, workingCase.id])
 
   const stepIsValid = () =>
-    workingCase.defendants?.every(
-      (defendant) =>
-        defendant.serviceRequirement !== undefined &&
-        defendant.serviceRequirement !== null,
-    )
+    workingCase.indictmentRulingDecision === CaseIndictmentRulingDecision.RULING
+      ? workingCase.defendants?.every(
+          (defendant) =>
+            defendant.serviceRequirement !== undefined &&
+            defendant.serviceRequirement !== null,
+        )
+      : true
 
   const handleRemoveFile = (file: UploadFile) => {
     if (file.key) {
