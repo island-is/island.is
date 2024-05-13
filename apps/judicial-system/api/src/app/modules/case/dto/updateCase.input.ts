@@ -16,6 +16,7 @@ import {
   CaseIndictmentRulingDecision,
   CaseLegalProvisions,
   CaseType,
+  IndictmentCaseReviewDecision,
   RequestSharedWithDefender,
   SessionArrangements,
   UserRole,
@@ -374,6 +375,11 @@ export class UpdateCaseInput {
   @Field(() => CaseIndictmentRulingDecision, { nullable: true })
   readonly indictmentRulingDecision?: CaseIndictmentRulingDecision
 
+  @Allow()
   @Field({ nullable: true })
   readonly indictmentReviewerId?: string
+
+  @Allow()
+  @Field(() => IndictmentCaseReviewDecision, { nullable: true })
+  readonly indictmentReviewDecision?: IndictmentCaseReviewDecision
 }
