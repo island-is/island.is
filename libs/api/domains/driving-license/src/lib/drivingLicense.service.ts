@@ -14,11 +14,13 @@ import {
   NewTemporaryDrivingLicenseInput,
   ApplicationEligibilityRequirement,
   QualitySignatureResult,
+  Renewal65AndOver,
 } from './drivingLicense.type'
 import {
   CanApplyErrorCodeBFull,
   CanApplyErrorCodeBTemporary,
   Disqualification,
+  DriverLicenseWithoutImages,
   DriversLicense,
   DrivingAssessment,
   DrivingLicenseApi,
@@ -62,6 +64,17 @@ export class DrivingLicenseService {
     } catch (e) {
       return this.handleGetLicenseError(e)
     }
+  }
+
+  async getAllDriverLicenses(
+    token: string,
+  ): Promise<DriverLicenseWithoutImages[]> {
+    const drivingLicesnes = await this.drivingLicenseApi
+      .getAllDriverLicenses(token)
+      .catch((e) => {
+        this.logger.log(`${LOGTAG} Error fetching all driver licenses`, e)
+      })
+    return drivingLicesnes ?? []
   }
 
   async legacyGetDrivingLicense(
@@ -434,6 +447,21 @@ export class DrivingLicenseService {
     return {
       success: response,
       errorMessage: null,
+    }
+  }
+
+  async renewDrivingLicense65AndOver(
+    auth: string,
+    input: Renewal65AndOver,
+  ): Promise<NewDrivingLicenseResult> {
+    const response = await this.drivingLicenseApi.postRenewLicenseOver65({
+      districtId: input.districtId,
+      healthCertificate: input.Base64EncodedHealthCertificate,
+      auth: auth,
+    })
+    return {
+      success: response.isOk ?? false,
+      errorMessage: response.errorCode ?? null,
     }
   }
 

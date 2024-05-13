@@ -1,12 +1,12 @@
 import { buildForm, buildSection } from '@island.is/application/core'
 import { Form, FormModes } from '@island.is/application/types'
-import { LogreglanLogo } from '../../assets'
 import { m } from '../../lib/messages'
 import { sectionFakeData } from './sectionFakeData'
 import { sectionExternalData } from './sectionExternalData'
 import { sectionApplicationFor } from './sectionApplicationFor'
 import { sectionRequirements } from './sectionRequirements'
 import { sectionExistingApplication } from './sectionExistingApplication'
+import { Syslumenn } from '../../assets'
 
 export const getForm = ({
   allowFakeData = false,
@@ -15,7 +15,7 @@ export const getForm = ({
   buildForm({
     id: 'DrivingLicenseApplicationPrerequisitesForm',
     title: '',
-    logo: LogreglanLogo,
+    logo: Syslumenn,
     mode: FormModes.DRAFT,
     renderLastScreenButton: true,
     renderLastScreenBackButton: true,

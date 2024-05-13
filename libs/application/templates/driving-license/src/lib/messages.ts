@@ -88,6 +88,18 @@ export const m = defineMessages({
     description:
       "I've lived in Iceland according to VIII and here by confirm that I meet the conditions to apply for a driving license",
   },
+  glassesPrescriptionTitle: {
+    id: 'dl.application:glassesPrescription.title',
+    defaultMessage: 'Gleraugnavottorð',
+    description: 'Glasses prescription',
+  },
+  glassesPrescriptionSubTitle: {
+    id: 'dl.application:glassesPrescription.subtitle',
+    defaultMessage:
+      'Til þess að auðvelda umsóknarferlið er sótt gleraugnavottorð frá samgöngustofu',
+    description:
+      'In order to facilitate the application process, a glasses certificate is obtained from the transport office',
+  },
   informationSectionTitle: {
     id: 'dl.application:informationSection.title',
     defaultMessage: 'Sýslumannsembætti',
@@ -117,6 +129,39 @@ export const m = defineMessages({
     id: 'dl.application:healthDeclarationMultiField.subTitle',
     defaultMessage: 'Yfirlýsing um líkamlegt og andlegt heilbrigði',
     description: 'Statement of physical and mental health',
+  },
+  declaration: {
+    id: 'dl.application:declaration',
+    defaultMessage: 'Yfirlýsing',
+    description: '',
+  },
+  healthDeclarationSubTitle: {
+    id: 'dl.application:healthDeclarationSubTitle',
+    defaultMessage:
+      'Ef einhverri spurningu er svarað játandi í heilbrigðisyfirlýsingu þarf læknisvottorð frá heimilislækni eða viðeigandi sérfræðilækni.',
+    description: '',
+  },
+  uploadHeader: {
+    id: 'dl.application:uploadHeader',
+    defaultMessage: 'Læknisvottorð',
+    description: 'Upload header',
+  },
+  uploadDescription: {
+    id: 'dl.application:uploadDescription',
+    defaultMessage:
+      'Tekið er við skjölum með endingunum: .pdf, .doc, .docx, .rtf',
+    description: 'Upload description',
+  },
+  uploadButtonLabel: {
+    id: 'dl.application:uploadButtonLabel',
+    defaultMessage: 'Velja skjal til að hlaða upp',
+    description: 'Upload button label',
+  },
+  healthDeclarationAge65MultiFieldSubTitle: {
+    id: 'dl.application:healthDeclarationAge65MultiFieldSubTitle.subTitle',
+    defaultMessage:
+      'Við endurnýjun ökuskírteinis fyrir 65 ára og eldri þarf að skila inn læknisvottorði frá heimilislækni. Vottorðið má ekki vera eldra en 3 mánaða.',
+    description: 'Health declaration for 65+',
   },
   healthDeclaration1: {
     id: 'dl.application:healthDeclaration.1',
@@ -187,6 +232,17 @@ export const m = defineMessages({
     id: 'dl.application:overviewSection.title',
     defaultMessage: 'Staðfesting',
     description: 'Confirmation',
+  },
+  errorHealthDeclarationNotFilledOut: {
+    id: 'dl.application:errorHealthDeclarationNotFilledOut',
+    defaultMessage: 'Vinsamlegast fylltu út heilbrigðisyfirlýsingu',
+    description: '',
+  },
+  alertHealthDeclarationGlassesMismatch: {
+    id: 'dl.application:alertHealthDeclarationGlassesMismatch',
+    defaultMessage:
+      'Athugaðu að þar sem breyting hefur orðið á sjón síðan síðast var sótt um ökuskírteini þarftu að skila vottorði frá heimilislækni þess efnis.',
+    description: '',
   },
   overviewMultiFieldTitle: {
     id: 'dl.application:overviewMultiField.title',
@@ -559,6 +615,13 @@ export const m = defineMessages({
     description:
       'Choose district commissioner for returning a temporary license and recieve a new full license',
   },
+  chooseDistrictCommisionerForFullLicenseRenewal65: {
+    id: 'dl.application:chooseDistrictCommisionerForFullLicenseRenewal65',
+    defaultMessage:
+      'Veldu sýslumannsembætti þar sem þú vilt fá afhent nýtt ökuskírteini.',
+    description:
+      'Choose district commissioner for recieving a new full license',
+  },
   chooseDistrictCommisionerForTempLicense: {
     id: 'dl.application:chooseDistrictCommisionerForTempLicense',
     defaultMessage:
@@ -607,6 +670,11 @@ export const m = defineMessages({
       'Eitthvað fór úrskeiðis við að senda inn umsókn. Reyndu aftur síðar.',
     description:
       'Text that shows up when an error occurs while submitting the application',
+  },
+  attachmentMaxSizeError: {
+    id: 'dl.application:error.attachment.maxSizeError',
+    defaultMessage: 'Hámark 10 MB á skrá',
+    description: 'Max 10 MB per file',
   },
   informationTitle: {
     id: 'dl.application:informationTitle',
@@ -691,6 +759,17 @@ export const m = defineMessages({
     description:
       'Option description for selecting to apply for temporary driving license',
   },
+  applicationForRenewalLicenseTitle: {
+    id: 'dl.application:applicationForRenewalLicenseTitle',
+    defaultMessage: 'Endurnýjun ökuskírteina fyrir 65 ára og eldri',
+    description: 'Option title for selecting to renew driving license',
+  },
+  applicationForRenewalLicenseDescription: {
+    id: 'dl.application:applicationForRenewalLicenseDescription',
+    defaultMessage:
+      'Umsókn um endurnýjun ökuréttinda í B flokki (fólksbifreið), fyrir 65 ára og eldri.',
+    description: 'Option description for selecting to renew driving license',
+  },
   declinedOtherCountryHelpText: {
     id: 'dl.application:declinedOtherCountryHelpText',
     defaultMessage:
@@ -719,10 +798,10 @@ export const m = defineMessages({
       'Umsækjandi með ökuskírteini utan EES getur sótt um að skipta yfir í íslenskt ökuskírteini eftir 6 mánaða fasta búsetu. Taka þarf bæði bóklegt og verklegt próf og öðlast fullnaðarskírteini.',
     description: 'Driving license from other country description',
   },
-  nationalCommissionerOfPolice: {
-    id: 'dl.application:nationalCommissionerOfPolice',
-    defaultMessage: 'Ríkislögreglustjóri',
-    description: 'National Commissioner of Police',
+  institution: {
+    id: 'dl.application:institution',
+    defaultMessage: 'Sýslumenn',
+    description: '',
   },
   countryDirectionsTitle: {
     id: 'dl.application:countryDirectionsTitle',

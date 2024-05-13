@@ -11,7 +11,7 @@ import {
   DrivingLicenseApplicationFor,
   B_FULL,
   B_TEMP,
-} from '../../shared/constants'
+} from '../../lib/constants'
 
 export const allowFakeCondition =
   (result = YES) =>
@@ -53,16 +53,16 @@ export const chooseDistrictCommissionerDescription = ({
 }: {
   answers: FormValue
 }) => {
-  const applicationForTemp =
-    getValueViaPath<DrivingLicenseApplicationFor>(
-      answers,
-      'applicationFor',
-      B_FULL,
-    ) === B_TEMP
+  const applicationFor = getValueViaPath<DrivingLicenseApplicationFor>(
+    answers,
+    'applicationFor',
+  )
 
-  return applicationForTemp
+  return applicationFor === B_TEMP
     ? m.chooseDistrictCommisionerForTempLicense.defaultMessage
-    : m.chooseDistrictCommisionerForFullLicense.defaultMessage
+    : applicationFor === B_FULL
+    ? m.chooseDistrictCommisionerForFullLicense.defaultMessage
+    : m.chooseDistrictCommisionerForFullLicenseRenewal65.defaultMessage
 }
 
 export const hasCompletedPrerequisitesStep =

@@ -15,19 +15,29 @@ import {
   UserProfile,
 } from '../../types/schema'
 import { m } from '../../lib/messages'
-import { B_TEMP } from '../../shared/constants'
-import { isApplicationForCondition } from '../../lib/utils'
+import { B_FULL_RENEWAL_65, B_TEMP } from '../../lib/constants'
+import { NationalRegistryIndividual } from '@island.is/application/types'
 
 export const subSectionTempInfo = buildSubSection({
   id: 'infoStep',
   title: m.informationApplicant,
-  condition: isApplicationForCondition(B_TEMP),
+  condition: (answers) =>
+    answers.applicationFor === B_TEMP ||
+    answers.applicationFor === B_FULL_RENEWAL_65,
   children: [
     buildMultiField({
       id: 'info',
       title: m.informationApplicant,
       space: 2,
       children: [
+        buildTextField({
+          id: 'applicant.name',
+          title: m.overviewName,
+          readOnly: true,
+          defaultValue: ({ externalData }: Application) =>
+            (externalData.nationalRegistry?.data as NationalRegistryIndividual)
+              .fullName,
+        }),
         buildKeyValueField({
           label: m.drivingLicenseTypeRequested,
           value: m.applicationForTempLicenseTitle,
@@ -42,11 +52,15 @@ export const subSectionTempInfo = buildSubSection({
             (nationalRegistry.data as NationalRegistryUser).fullName,
           width: 'half',
         }),
-        buildKeyValueField({
-          label: m.informationStreetAddress,
-          value: ({ externalData: { nationalRegistry } }) => {
-            const address = (nationalRegistry.data as NationalRegistryUser)
-              .address
+        buildTextField({
+          id: 'applicant.address',
+          title: m.informationStreetAddress,
+          readOnly: true,
+          width: 'half',
+          defaultValue: ({ externalData }: Application) => {
+            const address =
+              (externalData.nationalRegistry.data as NationalRegistryUser)
+                .address ?? ''
 
             if (!address) {
               return ''
@@ -58,7 +72,6 @@ export const subSectionTempInfo = buildSubSection({
               city ? ', ' + postalCode + ' ' + city : ''
             }`
           },
-          width: 'half',
         }),
         buildPhoneField({
           id: 'phone',
@@ -78,17 +91,20 @@ export const subSectionTempInfo = buildSubSection({
         }),
         buildDividerField({
           title: '',
+          color: 'dark400',
         }),
         buildDescriptionField({
           id: 'drivingInstructorTitle',
           title: m.drivingInstructor,
-          titleVariant: 'h4',
+          titleVariant: 'h3',
           description: m.chooseDrivingInstructor,
+          condition: (answers) => answers.applicationFor !== B_FULL_RENEWAL_65,
         }),
         buildSelectField({
           id: 'drivingInstructor',
           title: m.drivingInstructor,
           required: true,
+          condition: (answers) => answers.applicationFor !== B_FULL_RENEWAL_65,
           options: ({
             externalData: {
               teachers: { data },

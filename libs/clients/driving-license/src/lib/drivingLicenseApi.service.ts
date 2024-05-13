@@ -16,7 +16,7 @@ import {
   Jurisdiction,
 } from './drivingLicenseApi.types'
 import { handleCreateResponse } from './utils/handleCreateResponse'
-import { PracticePermitDto } from '../v5'
+import { DriverLicenseWithoutImagesDto, PracticePermitDto } from '../v5'
 
 @Injectable()
 export class DrivingLicenseApi {
@@ -475,6 +475,24 @@ export class DrivingLicenseApi {
     return handledResponse.success
   }
 
+  async postRenewLicenseOver65(params: {
+    districtId: number
+    healthCertificate: string
+    auth: string
+  }) {
+    return await this.v5.apiDrivinglicenseV5ApplicationsRenewal65Post({
+      apiVersion: v5.DRIVING_LICENSE_API_VERSION_V5,
+      apiVersion2: v5.DRIVING_LICENSE_API_VERSION_V5,
+      jwttoken: params.auth,
+      postRenewal65AndOver: {
+        districtId: params.districtId,
+        healtCertificate: params.healthCertificate,
+        renewalDate: new Date(),
+        userId: v5.DRIVING_LICENSE_API_USER_ID,
+      },
+    })
+  }
+
   async postCanApplyForPracticePermit(params: {
     token: string
     studentSSN: string
@@ -569,5 +587,15 @@ export class DrivingLicenseApi {
     return {
       data: image,
     }
+  }
+
+  async getAllDriverLicenses(
+    token: string,
+  ): Promise<DriverLicenseWithoutImagesDto[]> {
+    return await this.v5.apiDrivinglicenseV5AllGet({
+      apiVersion: v5.DRIVING_LICENSE_API_VERSION_V5,
+      apiVersion2: v5.DRIVING_LICENSE_API_VERSION_V5,
+      jwttoken: token.replace('Bearer ', ''),
+    })
   }
 }

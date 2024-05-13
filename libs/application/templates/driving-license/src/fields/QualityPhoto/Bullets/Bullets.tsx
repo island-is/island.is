@@ -8,7 +8,7 @@ interface BulletsData {
   application: Application
 }
 
-const Bullets = ({ application }: BulletsData) => {
+export const Bullets = ({ application }: BulletsData) => {
   const { formatMessage } = useLocale()
   return (
     <BulletList>
@@ -57,5 +57,3 @@ const Bullets = ({ application }: BulletsData) => {
     </BulletList>
   )
 }
-
-export { Bullets }

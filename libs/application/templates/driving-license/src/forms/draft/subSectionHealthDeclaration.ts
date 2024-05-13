@@ -2,21 +2,45 @@ import {
   buildMultiField,
   buildCustomField,
   buildSubSection,
+  buildFileUploadField,
+  buildAlertMessageField,
+  hasYes,
+  buildDescriptionField,
 } from '@island.is/application/core'
 import { m } from '../../lib/messages'
-import { hasNoDrivingLicenseInOtherCountry } from '../../lib/utils'
 import { hasHealthRemarks } from '../../lib/utils/formUtils'
+import { FILE_SIZE_LIMIT, UPLOAD_ACCEPT } from '../../lib/constants'
+import { NationalRegistryUser } from '@island.is/api/schema'
+import { info } from 'kennitala'
 
 export const subSectionHealthDeclaration = buildSubSection({
   id: 'healthDeclaration',
   title: m.healthDeclarationSectionTitle,
-  condition: hasNoDrivingLicenseInOtherCountry,
   children: [
     buildMultiField({
       id: 'overview',
       title: m.healthDeclarationMultiFieldTitle,
+      description: m.healthDeclarationSubTitle,
       space: 2,
+      condition: (answers, externalData) => {
+        if ((answers.fakeData as any).age) {
+          return (answers.fakeData as any).age < 65
+        }
+
+        return (
+          !hasYes(answers?.drivingLicenseInOtherCountry) &&
+          info(
+            (externalData.nationalRegistry.data as NationalRegistryUser)
+              .nationalId,
+          ).age < 65
+        )
+      },
       children: [
+        buildDescriptionField({
+          id: 'healthDeclaration.header',
+          title: 'Yfirlýsing',
+          titleVariant: 'h3',
+        }),
         buildCustomField({
           id: 'remarks',
           title: '',
@@ -25,18 +49,17 @@ export const subSectionHealthDeclaration = buildSubSection({
         }),
         buildCustomField(
           {
-            id: 'healthDeclaration.usesContactGlasses',
+            id: 'healthDeclaration.answers.usesContactGlasses',
             title: '',
             component: 'HealthDeclaration',
           },
           {
-            title: m.healthDeclarationMultiFieldSubTitle,
             label: m.healthDeclaration1,
           },
         ),
         buildCustomField(
           {
-            id: 'healthDeclaration.hasReducedPeripheralVision',
+            id: 'healthDeclaration.answers.hasReducedPeripheralVision',
             title: '',
             component: 'HealthDeclaration',
           },
@@ -46,7 +69,7 @@ export const subSectionHealthDeclaration = buildSubSection({
         ),
         buildCustomField(
           {
-            id: 'healthDeclaration.hasEpilepsy',
+            id: 'healthDeclaration.answers.hasEpilepsy',
             title: '',
             component: 'HealthDeclaration',
           },
@@ -56,7 +79,7 @@ export const subSectionHealthDeclaration = buildSubSection({
         ),
         buildCustomField(
           {
-            id: 'healthDeclaration.hasHeartDisease',
+            id: 'healthDeclaration.answers.hasHeartDisease',
             title: '',
             component: 'HealthDeclaration',
           },
@@ -66,7 +89,7 @@ export const subSectionHealthDeclaration = buildSubSection({
         ),
         buildCustomField(
           {
-            id: 'healthDeclaration.hasMentalIllness',
+            id: 'healthDeclaration.answers.hasMentalIllness',
             title: '',
             component: 'HealthDeclaration',
           },
@@ -76,7 +99,7 @@ export const subSectionHealthDeclaration = buildSubSection({
         ),
         buildCustomField(
           {
-            id: 'healthDeclaration.usesMedicalDrugs',
+            id: 'healthDeclaration.answers.usesMedicalDrugs',
             title: '',
             component: 'HealthDeclaration',
           },
@@ -86,7 +109,7 @@ export const subSectionHealthDeclaration = buildSubSection({
         ),
         buildCustomField(
           {
-            id: 'healthDeclaration.isAlcoholic',
+            id: 'healthDeclaration.answers.isAlcoholic',
             title: '',
             component: 'HealthDeclaration',
           },
@@ -96,7 +119,7 @@ export const subSectionHealthDeclaration = buildSubSection({
         ),
         buildCustomField(
           {
-            id: 'healthDeclaration.hasDiabetes',
+            id: 'healthDeclaration.answers.hasDiabetes',
             title: '',
             component: 'HealthDeclaration',
           },
@@ -106,7 +129,7 @@ export const subSectionHealthDeclaration = buildSubSection({
         ),
         buildCustomField(
           {
-            id: 'healthDeclaration.isDisabled',
+            id: 'healthDeclaration.answers.isDisabled',
             title: '',
             component: 'HealthDeclaration',
           },
@@ -116,7 +139,7 @@ export const subSectionHealthDeclaration = buildSubSection({
         ),
         buildCustomField(
           {
-            id: 'healthDeclaration.hasOtherDiseases',
+            id: 'healthDeclaration.answers.hasOtherDiseases',
             title: '',
             component: 'HealthDeclaration',
           },
@@ -124,6 +147,66 @@ export const subSectionHealthDeclaration = buildSubSection({
             label: m.healthDeclaration10,
           },
         ),
+        buildAlertMessageField({
+          id: 'healthDeclaration.error',
+          title: '',
+          message: m.errorHealthDeclarationNotFilledOut,
+          alertType: 'error',
+          condition: (answers) => !!(answers.healthDeclaration as any)?.error,
+        }),
+        buildAlertMessageField({
+          id: 'healthDeclaration.contactGlassesMismatch',
+          title: '',
+          message: m.alertHealthDeclarationGlassesMismatch,
+          alertType: 'warning',
+          condition: (answers) =>
+            (answers.healthDeclaration as any)?.contactGlassesMismatch,
+        }),
+        buildFileUploadField({
+          id: 'healthDeclaration.attachment',
+          title: '',
+          maxSize: FILE_SIZE_LIMIT,
+          maxSizeErrorText: m.attachmentMaxSizeError,
+          uploadHeader: m.uploadHeader,
+          uploadDescription: m.uploadDescription,
+          uploadButtonLabel: m.uploadButtonLabel,
+          uploadAccept: UPLOAD_ACCEPT,
+          condition: (answers) =>
+            hasYes((answers.healthDeclaration as any)?.answers) ||
+            (answers.healthDeclaration as any)?.contactGlassesMismatch === true,
+        }),
+      ],
+    }),
+    /* Different set of the Health Declaration screen for people over the age of 65 */
+    buildMultiField({
+      id: 'healthDeclarationAge65',
+      title: m.healthDeclarationMultiFieldTitle,
+      description: m.healthDeclarationAge65MultiFieldSubTitle,
+      space: 1,
+      condition: (answers, externalData) => {
+        if ((answers.fakeData as any).age) {
+          return (answers.fakeData as any).age >= 65
+        }
+
+        return (
+          !hasYes(answers?.drivingLicenseInOtherCountry) &&
+          info(
+            (externalData.nationalRegistry.data as NationalRegistryUser)
+              .nationalId,
+          ).age >= 65
+        )
+      },
+      children: [
+        buildFileUploadField({
+          id: 'healthDeclarationAge65.attachment',
+          title: '',
+          maxSize: FILE_SIZE_LIMIT,
+          maxSizeErrorText: m.attachmentMaxSizeError,
+          uploadAccept: UPLOAD_ACCEPT,
+          uploadHeader: m.uploadHeader,
+          uploadDescription: m.uploadDescription,
+          uploadButtonLabel: m.uploadButtonLabel,
+        }),
       ],
     }),
   ],

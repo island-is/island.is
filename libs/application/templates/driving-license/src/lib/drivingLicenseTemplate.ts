@@ -23,7 +23,7 @@ import {
   Application,
 } from '@island.is/application/types'
 import { FeatureFlagClient } from '@island.is/feature-flags'
-import { ApiActions } from '../shared'
+import { ApiActions, B_FULL, B_FULL_RENEWAL_65, B_TEMP } from '../lib/constants'
 import { Events, States, Roles } from './constants'
 import { dataSchema } from './dataSchema'
 import {
@@ -32,7 +32,7 @@ import {
 } from './getApplicationFeatureFlags'
 import { m } from './messages'
 import { hasCompletedPrerequisitesStep } from './utils'
-import { SyslumadurPaymentCatalogApi } from '../dataProviders'
+import { GlassesCheckApi, SyslumadurPaymentCatalogApi } from '../dataProviders'
 import { buildPaymentState } from '@island.is/application/utils'
 
 const getCodes = (application: Application) => {
@@ -56,8 +56,19 @@ const template: ApplicationTemplate<
   Events
 > = {
   type: ApplicationTypes.DRIVING_LICENSE,
-  name: m.applicationForDrivingLicense,
-  institution: m.nationalCommissionerOfPolice,
+  name: (application) =>
+    application.answers.applicationFor === B_FULL_RENEWAL_65
+      ? m.applicationForRenewalLicenseTitle.defaultMessage
+      : application.answers.applicationFor === B_TEMP
+      ? m.applicationForDrivingLicense.defaultMessage +
+        ' - ' +
+        m.applicationForTempLicenseTitle.defaultMessage
+      : application.answers.applicationFor === B_FULL
+      ? m.applicationForDrivingLicense.defaultMessage +
+        ' - ' +
+        m.applicationForFullLicenseTitle.defaultMessage
+      : m.applicationForDrivingLicense.defaultMessage,
+  institution: m.institution,
   dataSchema,
   stateMachineConfig: {
     initial: States.PREREQUISITES,
@@ -96,6 +107,7 @@ const template: ApplicationTemplate<
                 TeachersApi,
                 UserProfileApi,
                 SyslumadurPaymentCatalogApi,
+                GlassesCheckApi,
                 CurrentLicenseApi.configure({
                   params: {
                     useLegacyVersion: true,
