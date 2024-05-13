@@ -8,7 +8,9 @@ import {
   ClientGrantType,
   DelegationDTO,
   DelegationIndex,
+  DelegationProviderModel,
   DelegationScopeDTO,
+  DelegationTypeModel,
   IdentityResource,
   PersonalRepresentativeRightTypeDTO,
   PersonalRepresentativeTypeDTO,
@@ -105,4 +107,14 @@ export type CreateClaim = Optional<
     'subjectId' | 'type' | 'valueType' | 'value' | 'issuer' | 'originalIssuer'
   >,
   'subjectId' | 'type' | 'valueType' | 'value' | 'issuer' | 'originalIssuer'
+>
+
+export type CreateDelegationProvider = Optional<
+  Pick<DelegationProviderModel, 'id' | 'name' | 'description'>,
+  'id' | 'name' | 'description'
+>
+
+export type CreateDelegationType = Optional<
+  Pick<DelegationTypeModel, 'id' | 'name' | 'description' | 'provider'>,
+  'id' | 'name' | 'description' | 'provider'
 >
