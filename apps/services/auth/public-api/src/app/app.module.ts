@@ -4,6 +4,7 @@ import { SequelizeModule } from '@nestjs/sequelize'
 import {
   SequelizeConfigService,
   DelegationConfig,
+  PasskeysCoreConfig,
 } from '@island.is/auth-api-lib'
 import { AuthModule } from '@island.is/auth-nest-tools'
 import { AuditModule } from '@island.is/nest/audit'
@@ -40,6 +41,7 @@ import { PasskeysModule } from './modules/passkeys/passkeys.module'
         NationalRegistryClientConfig,
         RskRelationshipsClientConfig,
         XRoadConfig,
+        PasskeysCoreConfig,
       ],
     }),
   ],

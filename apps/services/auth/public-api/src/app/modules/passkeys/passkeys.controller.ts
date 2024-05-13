@@ -98,12 +98,10 @@ export class PasskeysController {
   })
   @ApiCreatedResponse({ type: RegistrationResult })
   async verifyAuthentication(
-    @CurrentActor() actor: User,
     @Body() body: AuthenticationResponse,
   ): Promise<RegistrationResult> {
     const response = await this.passkeysCoreService.verifyAuthentication(
-      actor,
-      body as any,
+      body as any, // TODO: Fix this
     )
 
     return response

@@ -7,19 +7,24 @@ import { PasskeysCoreConfig } from './passkeys-core.config'
 
 let CacheModule: DynamicModule
 
+export const CACHE_MODULE_KEY = 'PasskeysCoreModuleCache'
+
 if (process.env.NODE_ENV === 'test' || process.env.INIT_SCHEMA === 'true') {
   CacheModule = NestCacheModule.register()
 } else {
-  CacheModule = NestCacheModule.register({
-    useFactory: (config: ConfigType<typeof PasskeysCoreConfig>) => ({
-      store: redisInsStore(
-        createRedisCluster({
-          name: 'passkeys-core',
-          ssl: config.redis.ssl,
-          nodes: config.redis.nodes,
-        }),
-      ),
-    }),
+  CacheModule = NestCacheModule.registerAsync({
+    useFactory: (config: ConfigType<typeof PasskeysCoreConfig>) => {
+      return {
+        store: redisInsStore(
+          createRedisCluster({
+            name: 'passkeys-core',
+            ssl: config.redis.ssl,
+            nodes: config.redis.nodes,
+          }),
+        ),
+      }
+    },
+    inject: [PasskeysCoreConfig.KEY],
   })
 }
 

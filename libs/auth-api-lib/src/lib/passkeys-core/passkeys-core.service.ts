@@ -4,10 +4,9 @@ import {
   Injectable,
   UnauthorizedException,
 } from '@nestjs/common'
-import jwt from 'jsonwebtoken'
+
 import { InjectModel } from '@nestjs/sequelize'
 import { Cache as CacheManager } from 'cache-manager'
-import type { User } from '@island.is/auth-nest-tools'
 
 import {
   // Authentication
@@ -31,22 +30,15 @@ import type {
   AuthenticationResponseJSON,
 } from '@simplewebauthn/types'
 
+import type { User } from '@island.is/auth-nest-tools'
 import type { Logger } from '@island.is/logging'
 import { LOGGER_PROVIDER } from '@island.is/logging'
 
 import { PasskeyModel } from './models/passkey.model'
 import { getTokenInfo, getUserId } from './passkeys-core.utils'
-
-// TODO read from env
-const RP_ID = 'localhost'
-
-// TODO read from env
-const ALLOWED_ORIGIN = 'http://localhost:4200'
-
-// TODO read from env
-const CHALLENGE_TTL = 2 * 60 * 1000
-
-const CACHE_MANAGER = 'CACHE_MANAGER'
+import { CACHE_MANAGER } from '@nestjs/cache-manager'
+import { PasskeysCoreConfig } from './passkeys-core.config'
+import { ConfigType } from '@nestjs/config'
 
 const PASSKEY_TYPE = 'IslandApp'
 
@@ -59,16 +51,16 @@ export class PasskeysCoreService {
     private logger: Logger,
     @Inject(CACHE_MANAGER)
     private readonly cacheManager: CacheManager,
-  ) {
-    this.logger.info('PasskeysCoreService initialized')
-  }
+    @Inject(PasskeysCoreConfig.KEY)
+    private readonly config: ConfigType<typeof PasskeysCoreConfig>,
+  ) {}
 
   async generateRegistrationOptions(user: User) {
     const tokenInfo = getTokenInfo(user.authorization)
 
     const opts: GenerateRegistrationOptionsOpts = {
-      rpName: 'Island.is',
-      rpID: RP_ID,
+      rpName: this.config.passkey.rpName,
+      rpID: this.config.passkey.rpId,
       userName: tokenInfo.name,
       timeout: 60000,
       attestationType: 'direct',
@@ -85,7 +77,7 @@ export class PasskeysCoreService {
     const options = await generateRegistrationOptions(opts)
 
     // Save to redis
-    await this.saveChallenge(getUserId(user), options.challenge, 'reg')
+    await this.saveToCache(getUserId(user), options.challenge)
 
     return options
   }
@@ -96,7 +88,7 @@ export class PasskeysCoreService {
   ) {
     const tokenInfo = getTokenInfo(user.authorization)
 
-    const expectedChallenge = await this.getChallenge(getUserId(user), 'reg')
+    const expectedChallenge = await this.getFromCache(getUserId(user))
 
     // try {
     //   const { keyId, publicKey } = verifyAttestation({
@@ -116,8 +108,8 @@ export class PasskeysCoreService {
       const verificationOptions = {
         response: verificationResponse,
         expectedChallenge,
-        expectedOrigin: ALLOWED_ORIGIN,
-        expectedRPID: RP_ID,
+        expectedOrigin: this.config.passkey.allowedOrigin,
+        expectedRPID: this.config.passkey.rpId,
         requireUserVerification: false,
       }
 
@@ -167,7 +159,7 @@ export class PasskeysCoreService {
 
     // Generate the authentication options
     const options = await generateAuthenticationOptions({
-      rpID: RP_ID,
+      rpID: this.config.passkey.rpId,
       allowCredentials: [
         {
           id: passkey.passkey_id,
@@ -177,12 +169,12 @@ export class PasskeysCoreService {
     })
 
     // Save to redis
-    await this.saveChallenge(passkey.passkey_id, options.challenge, 'auth')
+    await this.saveToCache(options.challenge, passkey.passkey_id)
 
     return options
   }
 
-  async verifyAuthentication(user: User, response: AuthenticationResponseJSON) {
+  async verifyAuthentication(response: AuthenticationResponseJSON) {
     const passkey = await this.passkeyModel.findOne({
       where: {
         passkey_id: response.id,
@@ -193,12 +185,16 @@ export class PasskeysCoreService {
       throw new BadRequestException('Passkey not found')
     }
 
-    const expectedChallenge = await this.getChallenge(
-      passkey.passkey_id,
-      'auth',
-    )
+    let challenge: string
+    try {
+      challenge = JSON.parse(atob(response.response.clientDataJSON)).challenge
+    } catch {
+      throw new BadRequestException('Invalid clientDataJSON')
+    }
 
-    if (!passkey) {
+    const expectedPasskeyId = await this.getFromCache(challenge)
+
+    if (expectedPasskeyId !== passkey.passkey_id) {
       throw new BadRequestException('Passkey not found')
     }
 
@@ -206,9 +202,9 @@ export class PasskeysCoreService {
     try {
       verification = await verifyAuthenticationResponse({
         response,
-        expectedChallenge,
-        expectedOrigin: ALLOWED_ORIGIN,
-        expectedRPID: RP_ID,
+        expectedChallenge: challenge,
+        expectedOrigin: this.config.passkey.allowedOrigin,
+        expectedRPID: this.config.passkey.rpId,
         authenticator: {
           credentialID: passkey.id,
           credentialPublicKey: passkey.public_key,
@@ -241,28 +237,25 @@ export class PasskeysCoreService {
     })
   }
 
-  private async saveChallenge(
-    userId: string,
-    challenge: string,
-    type: 'reg' | 'auth',
+  private async saveToCache(
+    key: string,
+    value: string,
+    ttl = this.config.passkey.challengeTtl,
   ) {
-    await this.cacheManager.set(`${type}_${userId}`, challenge, CHALLENGE_TTL)
+    await this.cacheManager.set(key, value, ttl)
   }
 
-  private async getChallenge(userId: string, type: 'reg' | 'auth') {
-    const key = `${type}_${userId}`
-    const storedChallenge = await this.cacheManager.get(key)
+  private async getFromCache(key: string, deleteAfterGetting = true) {
+    const value = await this.cacheManager.get(key)
 
-    if (
-      !storedChallenge ||
-      typeof storedChallenge !== 'string' ||
-      !storedChallenge.length
-    ) {
-      throw new BadRequestException('No stored challenge found')
+    if (!value || typeof value !== 'string' || !value.length) {
+      throw new BadRequestException('Not found')
     }
 
-    await this.cacheManager.del(key)
+    if (deleteAfterGetting) {
+      await this.cacheManager.del(key)
+    }
 
-    return storedChallenge
+    return value
   }
 }

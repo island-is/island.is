@@ -6,7 +6,7 @@ import { PasskeysCoreConfig, PasskeysCoreModule } from '@island.is/auth-api-lib'
 // import { FeatureFlagModule } from '@island.is/nest/feature-flags'
 
 @Module({
-  imports: [PasskeysCoreConfig.registerOptional(), PasskeysCoreModule],
+  imports: [PasskeysCoreModule],
   controllers: [PasskeysController],
   providers: [],
 })

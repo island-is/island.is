@@ -54,12 +54,17 @@ export const serviceSetup = (): ServiceBuilder<'services-auth-public-api'> => {
         dev: '10001',
         staging: '6503760649',
       },
+      PASSKEY_CORE_RP_ID: 'island.is',
+      PASSKEY_CORE_RP_NAME: 'Island.is',
+      PASSKEY_CORE_CHALLENGE_TTL_MS: '120000',
     })
     .secrets({
       IDENTITY_SERVER_CLIENT_SECRET:
         '/k8s/services-auth/IDENTITY_SERVER_CLIENT_SECRET',
       NATIONAL_REGISTRY_IDS_CLIENT_SECRET:
         '/k8s/xroad/client/NATIONAL-REGISTRY/IDENTITYSERVER_SECRET',
+      PASSKEY_CORE_ALLOWED_ORIGIN:
+        '/k8s/services-auth/PASSKEY_CORE_ALLOWED_ORIGIN',
     })
     .xroad(Base, Client, RskProcuring)
     .ingress({

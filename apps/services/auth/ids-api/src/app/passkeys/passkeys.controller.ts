@@ -1,8 +1,4 @@
-import {
-  CurrentActor,
-  IdsUserGuard,
-  ScopesGuard,
-} from '@island.is/auth-nest-tools'
+import { IdsUserGuard, ScopesGuard } from '@island.is/auth-nest-tools'
 import {
   Body,
   Controller,
@@ -11,7 +7,7 @@ import {
   VERSION_NEUTRAL,
 } from '@nestjs/common'
 import { ApiCreatedResponse, ApiTags } from '@nestjs/swagger'
-import type { User } from '@island.is/auth-nest-tools'
+
 import { PasskeysCoreService } from '@island.is/auth-api-lib'
 import { Documentation } from '@island.is/nest/swagger'
 import { AuthenticationResponse } from './dto/authenticationResponse.dto'
@@ -37,12 +33,10 @@ export class PasskeysController {
   })
   @ApiCreatedResponse({ type: AuthenticationResult })
   async verifyAuthentication(
-    @CurrentActor() actor: User,
     @Body() body: AuthenticationResponse,
   ): Promise<AuthenticationResult> {
     const response = await this.passkeysCoreService.verifyAuthentication(
-      actor,
-      body as any,
+      body as any, // TODO: Fix this
     )
 
     return response
