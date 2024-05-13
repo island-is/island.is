@@ -33,7 +33,7 @@ export class NationalRegistryService {
     return this.v3.getCustodians(nationalId, data?.rawData)
   }
 
-  getParents(nationalId: string, data?: SharedPerson, userNationalId?: string) {
+  getParents(nationalId: string, data?: SharedPerson) {
     return this.v3.getParents(nationalId, data?.rawData)
   }
 
