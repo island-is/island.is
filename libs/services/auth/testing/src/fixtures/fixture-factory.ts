@@ -574,7 +574,7 @@ export class FixtureFactory {
   }: CreateDelegationProvider) {
     const [provider] = await this.get(DelegationProviderModel).findCreateFind({
       where: { id },
-      defaults: { id, name, description },
+      defaults: { id, name, description, delegationTypes: [] },
     })
 
     return provider
@@ -584,16 +584,23 @@ export class FixtureFactory {
     id = faker.random.word(),
     name = faker.random.word(),
     description = faker.random.words(3),
-    provider,
+    providerId,
   }: CreateDelegationType) {
     const delegationProvider = await this.createDelegationProvider({
-      id: provider,
+      id: providerId,
     })
 
     const [delegationType] = await this.get(DelegationTypeModel).findCreateFind(
       {
         where: { id },
-        defaults: { id, name, description, provider: delegationProvider.id },
+        defaults: {
+          id,
+          name,
+          description,
+          providerId: delegationProvider.id,
+          clients: [],
+          provider: delegationProvider,
+        },
       },
     )
 

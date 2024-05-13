@@ -210,7 +210,10 @@ export class AdminClientsService {
           tenantId,
           displayName,
           refreshTokenExpiration,
-          clientAttributes,
+          clientAttributes: {
+            ...clientAttributes,
+            addedDelegationTypes: clientAttributes.supportedDelegationTypes,
+          },
           redirectUris,
           postLogoutRedirectUris,
           customClaims,

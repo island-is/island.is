@@ -20,7 +20,6 @@ import { createCurrentUser } from '@island.is/testing/fixtures'
 import { getRequestMethod, setupApp, TestApp } from '@island.is/testing/nest'
 
 import { AppModule } from '../../../app.module'
-import { AuthDelegationType } from 'delegation'
 import { AuthDelegationProvider, AuthDelegationType } from 'delegation'
 
 const tenantId = '@test.is'
@@ -49,7 +48,10 @@ const createTestClientData = async (app: TestApp, user: User) => {
         AuthDelegationProvider.NationalRegistry,
       ],
     ].map(async ([delegationType, provider]) =>
-      fixtureFactory.createDelegationType({ id: delegationType, provider }),
+      fixtureFactory.createDelegationType({
+        id: delegationType,
+        providerId: provider,
+      }),
     ),
   )
 
@@ -567,9 +569,21 @@ describe('MeClientsController with auth', () => {
           : false,
         customClaims: typeSpecificDefaults.customClaims ?? [],
         singleSession: typeSpecificDefaults.singleSession ?? false,
-        supportedDelegationTypes:
-          typeSpecificDefaults.supportedDelegationTypes ?? [],
         allowedAcr: [defaultAcrValue],
+        supportedDelegationTypes: [
+          typeSpecificDefaults.supportsCustomDelegation
+            ? AuthDelegationType.Custom
+            : undefined,
+          typeSpecificDefaults.supportsLegalGuardians
+            ? AuthDelegationType.LegalGuardian
+            : undefined,
+          typeSpecificDefaults.supportsPersonalRepresentatives
+            ? AuthDelegationType.PersonalRepresentative
+            : undefined,
+          typeSpecificDefaults.supportsProcuringHolders
+            ? AuthDelegationType.ProcurationHolder
+            : undefined,
+        ].filter(Boolean),
       })
 
       // Assert - db record
@@ -604,6 +618,43 @@ describe('MeClientsController with auth', () => {
       })
     },
   )
+
+  it('should create client with correct delegation types for super user', async () => {
+    const app = await setupApp({
+      AppModule,
+      SequelizeConfigService,
+      user: superUser,
+      dbType: 'postgres',
+    })
+    const server = request(app.getHttpServer())
+    const newClientId = '@test.is/new-test-client'
+    await createTestClientData(app, superUser)
+    const newClient = {
+      clientId: newClientId,
+      clientName: 'test-client',
+      clientType: 'web',
+      supportsCustomDelegation: true,
+      supportsLegalGuardians: true,
+      supportsProcuringHolders: true,
+      supportsPersonalRepresentatives: true,
+    }
+
+    // Act
+    const res = await server
+      .post(`/v2/me/tenants/${tenantId}/clients`)
+      .send(newClient)
+
+    // Assert
+    expect(res.status).toEqual(201)
+    expect(res.body.supportedDelegationTypes).toEqual(
+      expect.arrayContaining([
+        AuthDelegationType.Custom,
+        AuthDelegationType.PersonalRepresentative,
+        AuthDelegationType.ProcurationHolder,
+        AuthDelegationType.LegalGuardian,
+      ]),
+    )
+  })
 
   describe('create client with invalid request body', () => {
     it('should return 400 Bad Request with invalid client id', async () => {
@@ -860,8 +911,6 @@ describe('MeClientsController with auth', () => {
               value: 'value1',
             },
           ],
-          addedDelegationTypes: [],
-          removedDelegationTypes: [],
           allowedAcr: ['some-acr-value'],
         }
 
@@ -903,6 +952,49 @@ describe('MeClientsController with auth', () => {
     })
 
     describe('update supported delegation types', () => {
+      const updateAndAssert = async ({
+        server,
+        body,
+        supportedDelegationTypes,
+        supportsCustomDelegation,
+        supportsLegalGuardians,
+        supportsPersonalRepresentatives,
+        supportsProcuringHolders,
+      }: {
+        server: request.SuperTest<request.Test>
+        body: AdminPatchClientDto
+        supportedDelegationTypes: string[]
+        supportsCustomDelegation: boolean
+        supportsLegalGuardians: boolean
+        supportsPersonalRepresentatives: boolean
+        supportsProcuringHolders: boolean
+      }) => {
+        const res = await server
+          .patch(
+            `/v2/me/tenants/${tenantId}/clients/${encodeURIComponent(
+              clientId,
+            )}`,
+          )
+          .send(body)
+
+        // Assert
+        expect(res.status).toEqual(200)
+        expect(res.body.supportedDelegationTypes.length).toEqual(
+          supportedDelegationTypes.length,
+        )
+        expect(res.body).toEqual(
+          expect.objectContaining({
+            supportedDelegationTypes: expect.arrayContaining(
+              supportedDelegationTypes,
+            ),
+            supportsCustomDelegation,
+            supportsLegalGuardians,
+            supportsPersonalRepresentatives,
+            supportsProcuringHolders,
+          }),
+        )
+      }
+
       it('should add supported delegation types and still support old boolean fields', async () => {
         // Arrange
         const app = await setupApp({
@@ -914,7 +1006,7 @@ describe('MeClientsController with auth', () => {
         const server = request(app.getHttpServer())
         await createTestClientData(app, superUser)
 
-        const updatedClient: AdminPatchClientDto = {
+        const body: AdminPatchClientDto = {
           addedDelegationTypes: [
             AuthDelegationType.Custom,
             AuthDelegationType.LegalGuardian,
@@ -924,31 +1016,20 @@ describe('MeClientsController with auth', () => {
         }
 
         // Act
-        const res = await server
-          .patch(
-            `/v2/me/tenants/${tenantId}/clients/${encodeURIComponent(
-              clientId,
-            )}`,
-          )
-          .send(updatedClient)
-
-        // Assert
-        expect(res.status).toEqual(200)
-        expect(res.body.supportedDelegationTypes.length).toEqual(4)
-        expect(res.body).toEqual(
-          expect.objectContaining({
-            supportedDelegationTypes: expect.arrayContaining([
-              AuthDelegationType.Custom,
-              AuthDelegationType.LegalGuardian,
-              AuthDelegationType.PersonalRepresentative,
-              AuthDelegationType.ProcurationHolder,
-            ]),
-            supportsCustomDelegation: true,
-            supportsLegalGuardians: true,
-            supportsPersonalRepresentatives: true,
-            supportsProcuringHolders: true,
-          }),
-        )
+        await updateAndAssert({
+          server,
+          body,
+          supportedDelegationTypes: [
+            AuthDelegationType.Custom,
+            AuthDelegationType.LegalGuardian,
+            AuthDelegationType.PersonalRepresentative,
+            AuthDelegationType.ProcurationHolder,
+          ],
+          supportsCustomDelegation: true,
+          supportsLegalGuardians: true,
+          supportsPersonalRepresentatives: true,
+          supportsProcuringHolders: true,
+        })
       })
 
       it('should remove supported delegation types and still support old boolean fields', async () => {
@@ -963,13 +1044,9 @@ describe('MeClientsController with auth', () => {
         await createTestClientData(app, superUser)
 
         // add delegation types that we can then remove
-        const setup = await server
-          .patch(
-            `/v2/me/tenants/${tenantId}/clients/${encodeURIComponent(
-              clientId,
-            )}`,
-          )
-          .send({
+        await updateAndAssert({
+          server,
+          body: {
             addedDelegationTypes: [
               AuthDelegationType.Custom,
               AuthDelegationType.LegalGuardian,
@@ -980,24 +1057,20 @@ describe('MeClientsController with auth', () => {
             supportsLegalGuardians: true,
             supportsPersonalRepresentatives: true,
             supportsProcuringHolders: true,
-          })
+          },
+          supportedDelegationTypes: [
+            AuthDelegationType.Custom,
+            AuthDelegationType.LegalGuardian,
+            AuthDelegationType.PersonalRepresentative,
+            AuthDelegationType.ProcurationHolder,
+          ],
+          supportsCustomDelegation: true,
+          supportsLegalGuardians: true,
+          supportsPersonalRepresentatives: true,
+          supportsProcuringHolders: true,
+        })
 
-        expect(setup.body).toEqual(
-          expect.objectContaining({
-            supportedDelegationTypes: expect.arrayContaining([
-              AuthDelegationType.Custom,
-              AuthDelegationType.LegalGuardian,
-              AuthDelegationType.PersonalRepresentative,
-              AuthDelegationType.ProcurationHolder,
-            ]),
-            supportsCustomDelegation: true,
-            supportsLegalGuardians: true,
-            supportsPersonalRepresentatives: true,
-            supportsProcuringHolders: true,
-          }),
-        )
-
-        const updatedClient: AdminPatchClientDto = {
+        const body: AdminPatchClientDto = {
           removedDelegationTypes: [
             AuthDelegationType.Custom,
             AuthDelegationType.LegalGuardian,
@@ -1007,71 +1080,51 @@ describe('MeClientsController with auth', () => {
         }
 
         // Act
-        const res = await server
-          .patch(
-            `/v2/me/tenants/${tenantId}/clients/${encodeURIComponent(
-              clientId,
-            )}`,
-          )
-          .send(updatedClient)
-
-        // Assert
-        expect(res.status).toEqual(200)
-        expect(res.body.supportedDelegationTypes.length).toEqual(0)
-        expect(res.body).toEqual(
-          expect.objectContaining({
-            supportedDelegationTypes: [],
-            supportsCustomDelegation: false,
-            supportsLegalGuardians: false,
-            supportsPersonalRepresentatives: false,
-            supportsProcuringHolders: false,
-          }),
-        )
+        await updateAndAssert({
+          server,
+          body,
+          supportedDelegationTypes: [],
+          supportsCustomDelegation: false,
+          supportsLegalGuardians: false,
+          supportsPersonalRepresentatives: false,
+          supportsProcuringHolders: false,
+        })
       })
-    })
 
-    it('should update client using delegation boolean fields and add to client_delegation_types table', async () => {
-      // Arrange
-      const app = await setupApp({
-        AppModule,
-        SequelizeConfigService,
-        user: superUser,
-        dbType: 'postgres',
-      })
-      const server = request(app.getHttpServer())
-      await createTestClientData(app, superUser)
+      it('should update client using delegation boolean fields and add to client_delegation_types table', async () => {
+        // Arrange
+        const app = await setupApp({
+          AppModule,
+          SequelizeConfigService,
+          user: superUser,
+          dbType: 'postgres',
+        })
+        const server = request(app.getHttpServer())
+        await createTestClientData(app, superUser)
 
-      const updatedClient: AdminPatchClientDto = {
-        supportsCustomDelegation: true,
-        supportsLegalGuardians: true,
-        supportsPersonalRepresentatives: true,
-        supportsProcuringHolders: true,
-      }
-
-      // Act
-      const res = await server
-        .patch(
-          `/v2/me/tenants/${tenantId}/clients/${encodeURIComponent(clientId)}`,
-        )
-        .send(updatedClient)
-
-      // Assert
-      expect(res.status).toEqual(200)
-      expect(res.body.supportedDelegationTypes.length).toEqual(4)
-      expect(res.body).toEqual(
-        expect.objectContaining({
-          supportedDelegationTypes: expect.arrayContaining([
-            AuthDelegationType.Custom,
-            AuthDelegationType.LegalGuardian,
-            AuthDelegationType.PersonalRepresentative,
-            AuthDelegationType.ProcurationHolder,
-          ]),
+        const body: AdminPatchClientDto = {
           supportsCustomDelegation: true,
           supportsLegalGuardians: true,
           supportsPersonalRepresentatives: true,
           supportsProcuringHolders: true,
-        }),
-      )
+        }
+
+        // Act
+        await updateAndAssert({
+          server,
+          body,
+          supportedDelegationTypes: [
+            AuthDelegationType.Custom,
+            AuthDelegationType.LegalGuardian,
+            AuthDelegationType.PersonalRepresentative,
+            AuthDelegationType.ProcurationHolder,
+          ],
+          supportsCustomDelegation: true,
+          supportsLegalGuardians: true,
+          supportsPersonalRepresentatives: true,
+          supportsProcuringHolders: true,
+        })
+      })
     })
   })
 })

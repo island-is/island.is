@@ -116,7 +116,7 @@ export class ClientsService {
     })
   }
 
-  /** Gets a client by it's id */
+  /** Gets a client by its id */
   async findClientById(id: string): Promise<Client | null> {
     this.logger.debug(`Finding client for id - "${id}"`)
 
@@ -637,27 +637,22 @@ export class ClientsService {
     }
     options: BulkCreateOptions
   }) {
-    // support for old boolean fields
-    const supportsCustomDelegation = delegationTypes.includes(
-      AuthDelegationType.Custom,
-    )
-      ? true
-      : delegationBooleanTypes.supportsCustomDelegation
-    const supportsProcuringHolders = delegationTypes.includes(
-      AuthDelegationType.ProcurationHolder,
-    )
-      ? true
-      : delegationBooleanTypes.supportsProcuringHolders
-    const supportsLegalGuardians = delegationTypes.includes(
-      AuthDelegationType.LegalGuardian,
-    )
-      ? true
-      : delegationBooleanTypes.supportsLegalGuardians
-    const supportsPersonalRepresentatives = delegationTypes.some((type) =>
-      type.startsWith(AuthDelegationType.PersonalRepresentative),
-    )
-      ? true
-      : delegationBooleanTypes.supportsPersonalRepresentatives
+    const supportsCustomDelegation =
+      delegationTypes.includes(AuthDelegationType.Custom) ||
+      delegationBooleanTypes.supportsCustomDelegation
+
+    const supportsProcuringHolders =
+      delegationTypes.includes(AuthDelegationType.ProcurationHolder) ||
+      delegationBooleanTypes.supportsProcuringHolders
+
+    const supportsLegalGuardians =
+      delegationTypes.includes(AuthDelegationType.LegalGuardian) ||
+      delegationBooleanTypes.supportsLegalGuardians
+
+    const supportsPersonalRepresentatives =
+      delegationTypes.some((type) =>
+        type.startsWith(AuthDelegationType.PersonalRepresentative),
+      ) || delegationBooleanTypes.supportsPersonalRepresentatives
 
     if (
       supportsCustomDelegation ||
@@ -682,7 +677,7 @@ export class ClientsService {
     }
 
     // Support for new supportedDelegationTypes array
-    const delegationTypesToAdd: string[] = delegationTypes
+    const delegationTypesToAdd = delegationTypes
 
     // When using boolean fields to add support for delegation types, also add to client_delegation_types table
     if (delegationTypesToAdd.length === 0) {
@@ -740,7 +735,6 @@ export class ClientsService {
     }
     options: DestroyOptions
   }) {
-    // Support for old boolean fields
     const supportsCustomDelegation = delegationTypes.includes(
       AuthDelegationType.Custom,
     )
@@ -786,9 +780,9 @@ export class ClientsService {
     }
 
     // Support for new supportedDelegationTypes array
-    const delegationTypesToRemove: string[] = delegationTypes
+    const delegationTypesToRemove = delegationTypes
 
-    // When using boolean fields to remove support for delegation types, also remove from client_delegation_types table
+    // When using boolean fields to remove support for delegation types, remove from client_delegation_types table
     if (delegationTypesToRemove.length === 0) {
       delegationTypesToRemove.push(
         ...[

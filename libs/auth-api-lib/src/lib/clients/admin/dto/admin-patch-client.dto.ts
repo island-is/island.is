@@ -210,6 +210,7 @@ export const superUserFields = [
   'supportsLegalGuardians',
   'supportsProcuringHolders',
   'supportsPersonalRepresentatives',
+  'supportedDelegationTypes',
   'addedDelegationTypes',
   'removedDelegationTypes',
   'promptDelegations',

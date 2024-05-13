@@ -45,7 +45,7 @@ export class DelegationTypeModel extends Model<
   providerId!: string
 
   @BelongsTo(() => DelegationProviderModel)
-  provider!: DelegationProviderModel
+  provider!: CreationOptional<DelegationProviderModel>
 
   @Column({
     type: DataType.STRING,
