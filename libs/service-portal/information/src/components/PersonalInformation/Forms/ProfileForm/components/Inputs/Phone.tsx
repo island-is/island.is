@@ -1,4 +1,4 @@
-import React, { FC, useState, useEffect, useMemo } from 'react'
+import React, { FC, useState, useEffect } from 'react'
 import { useForm } from 'react-hook-form'
 import { m } from '@island.is/service-portal/core'
 import { useLocale, useNamespaces } from '@island.is/localization'
@@ -10,8 +10,6 @@ import {
   Input,
   Text,
   LoadingDots,
-  AlertMessage,
-  Button,
 } from '@island.is/island-ui/core'
 import { InputController } from '@island.is/shared/form-fields'
 import {
@@ -47,9 +45,9 @@ interface UseFormProps {
 export const InputPhone: FC<React.PropsWithChildren<Props>> = ({
   buttonText,
   mobile,
-  telVerified,
   disabled,
   telDirty,
+  telVerified = false,
 }) => {
   useNamespaces('sp.settings')
   const {

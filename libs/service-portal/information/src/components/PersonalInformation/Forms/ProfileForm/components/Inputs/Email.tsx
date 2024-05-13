@@ -1,15 +1,9 @@
-import React, { FC, useState, useEffect, useMemo } from 'react'
+import React, { FC, useState, useEffect } from 'react'
 import { useForm } from 'react-hook-form'
 import { m } from '@island.is/service-portal/core'
 import { msg } from '../../../../../../lib/messages'
 import { useLocale, useNamespaces } from '@island.is/localization'
-import {
-  Box,
-  Text,
-  LoadingDots,
-  AlertMessage,
-  Button,
-} from '@island.is/island-ui/core'
+import { Box, Text, LoadingDots } from '@island.is/island-ui/core'
 import { InputController } from '@island.is/shared/form-fields'
 import {
   useVerifyEmail,
@@ -44,7 +38,7 @@ export const InputEmail: FC<React.PropsWithChildren<Props>> = ({
   email,
   disabled,
   emailDirty,
-  emailVerified,
+  emailVerified = false,
 }) => {
   useNamespaces('sp.settings')
   const {
@@ -196,12 +190,6 @@ export const InputEmail: FC<React.PropsWithChildren<Props>> = ({
       setVerificationValid(false)
     }
   }
-
-  const emailMsgWithUpper = useMemo(() => formatMessage(msg.email), [msg.email])
-  const emailMsgLower = useMemo(
-    () => formatMessage(msg.email).toLowerCase(),
-    [msg.email],
-  )
 
   return (
     <Box>
