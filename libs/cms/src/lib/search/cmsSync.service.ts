@@ -269,7 +269,6 @@ export class CmsSyncService implements ContentSearchImporter<PostSyncOptions> {
       document.sys.contentType.sys.id === 'manual' ||
       document.sys.contentType.sys.id === 'manualChapter'
     ) {
-      // TODO: verify that this still works as expected
       const manualChapterItemIds = await this.fetchIdsFromElasticsearch(
         elasticIndex,
         ['webManualChapterItem'],
@@ -311,7 +310,6 @@ export class CmsSyncService implements ContentSearchImporter<PostSyncOptions> {
 
     // If a custom page gets deleted make sure all of its subpages are also deleted
     if (document.sys.contentType.sys.id === 'customPage') {
-      // TODO: test this out
       const subpageIds = await this.fetchIdsFromElasticsearch(
         elasticIndex,
         ['webCustomPage'],
