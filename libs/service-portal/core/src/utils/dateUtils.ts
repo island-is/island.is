@@ -18,7 +18,7 @@ export const isDateAfterToday = (date: Date | string | undefined) => {
   let argDate: Date
   if (typeof date === 'string') {
     const tmpDate = new Date(date)
-    if (tmpDate instanceof Date) {
+    if (!isNaN(tmpDate.getTime())) {
       argDate = tmpDate
     } else {
       return null
