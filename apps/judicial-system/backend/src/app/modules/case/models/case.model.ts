@@ -23,11 +23,13 @@ import {
   CaseAppealState,
   CaseCustodyRestrictions,
   CaseDecision,
+  CaseIndictmentRulingDecision,
   CaseLegalProvisions,
   CaseOrigin,
   CaseState,
   CaseType,
   CourtDocument,
+  IndictmentCaseReviewDecision,
   RequestSharedWithDefender,
   SessionArrangements,
   UserRole,
@@ -1222,4 +1224,44 @@ export class Case extends Model {
   @HasMany(() => Notification, 'caseId')
   @ApiPropertyOptional({ type: Notification, isArray: true })
   notifications?: Notification[]
+
+  /**********
+   * The ruling decision in indictment cases - example: FINE
+   **********/
+  @Column({
+    type: DataType.ENUM,
+    allowNull: true,
+    values: Object.values(CaseIndictmentRulingDecision),
+  })
+  @ApiPropertyOptional({ enum: CaseIndictmentRulingDecision })
+  indictmentRulingDecision?: CaseIndictmentRulingDecision
+
+  /**********
+   * The surrogate key of the prosecutor assigned to review an indictment
+   **********/
+  @ForeignKey(() => User)
+  @Column({
+    type: DataType.UUID,
+    allowNull: true,
+  })
+  @ApiPropertyOptional()
+  indictmentReviewerId?: string
+
+  /**********
+   * The prosecutor assigned to review an indictment case
+   **********/
+  @BelongsTo(() => User, 'indictmentReviewerId')
+  @ApiPropertyOptional({ type: User })
+  indictmentReviewer?: User
+
+  /**********
+   * The review decision in indictment cases
+   **********/
+  @Column({
+    type: DataType.ENUM,
+    allowNull: true,
+    values: Object.values(IndictmentCaseReviewDecision),
+  })
+  @ApiPropertyOptional({ enum: IndictmentCaseReviewDecision })
+  indictmentReviewDecision?: IndictmentCaseReviewDecision
 }

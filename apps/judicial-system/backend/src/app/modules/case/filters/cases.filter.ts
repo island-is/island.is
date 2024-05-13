@@ -8,7 +8,6 @@ import {
   CaseDecision,
   CaseState,
   CaseType,
-  completedCaseStates,
   DateType,
   indictmentCases,
   InstitutionType,
@@ -18,6 +17,7 @@ import {
   isDistrictCourtUser,
   isPrisonSystemUser,
   isProsecutionUser,
+  isPublicProsecutorUser,
   RequestSharedWithDefender,
   restrictionCases,
   UserRole,
@@ -33,16 +33,23 @@ const getProsecutionUserCasesQueryFilter = (user: User): WhereOptions => {
         CaseState.WAITING_FOR_CONFIRMATION,
         CaseState.SUBMITTED,
         CaseState.RECEIVED,
+        CaseState.MAIN_HEARING,
         CaseState.ACCEPTED,
         CaseState.REJECTED,
         CaseState.DISMISSED,
-        CaseState.MAIN_HEARING,
+        CaseState.COMPLETED,
       ],
     },
     {
       [Op.or]: [
         { prosecutors_office_id: user.institution?.id },
         { shared_with_prosecutors_office_id: user.institution?.id },
+        {
+          [Op.and]: [
+            { indictment_reviewer_id: user.id },
+            { indictment_review_decision: null },
+          ],
+        },
       ],
     },
     {
@@ -68,6 +75,18 @@ const getProsecutionUserCasesQueryFilter = (user: User): WhereOptions => {
   }
 }
 
+const getPublicProsecutionUserCasesQueryFilter = (): WhereOptions => {
+  const options: WhereOptions = [
+    { isArchived: false },
+    { state: [CaseState.COMPLETED] },
+    { type: indictmentCases },
+  ]
+
+  return {
+    [Op.and]: options,
+  }
+}
+
 const getDistrictCourtUserCasesQueryFilter = (user: User): WhereOptions => {
   const options: WhereOptions = [
     { isArchived: false },
@@ -86,10 +105,8 @@ const getDistrictCourtUserCasesQueryFilter = (user: User): WhereOptions => {
         state: [
           CaseState.SUBMITTED,
           CaseState.RECEIVED,
-          CaseState.ACCEPTED,
-          CaseState.REJECTED,
-          CaseState.DISMISSED,
           CaseState.MAIN_HEARING,
+          CaseState.COMPLETED,
         ],
       },
     )
@@ -118,10 +135,8 @@ const getDistrictCourtUserCasesQueryFilter = (user: User): WhereOptions => {
               state: [
                 CaseState.SUBMITTED,
                 CaseState.RECEIVED,
-                CaseState.ACCEPTED,
-                CaseState.REJECTED,
-                CaseState.DISMISSED,
                 CaseState.MAIN_HEARING,
+                CaseState.COMPLETED,
               ],
             },
           ],
@@ -216,7 +231,13 @@ const getDefenceUserCasesQueryFilter = (user: User): WhereOptions => {
                     { '$dateLogs.date_type$': DateType.ARRAIGNMENT_DATE },
                   ],
                 },
-                { state: completedCaseStates },
+                {
+                  state: [
+                    CaseState.ACCEPTED,
+                    CaseState.REJECTED,
+                    CaseState.DISMISSED,
+                  ],
+                },
               ],
             },
             { defender_national_id: user.nationalId },
@@ -225,7 +246,13 @@ const getDefenceUserCasesQueryFilter = (user: User): WhereOptions => {
         {
           [Op.and]: [
             { type: indictmentCases },
-            { state: [CaseState.RECEIVED, ...completedCaseStates] },
+            {
+              state: [
+                CaseState.RECEIVED,
+                CaseState.MAIN_HEARING,
+                CaseState.COMPLETED,
+              ],
+            },
             {
               '$defendants.defender_national_id$': user.nationalId,
             },
@@ -260,6 +287,10 @@ export const getCasesQueryFilter = (user: User): WhereOptions => {
 
   if (isDefenceUser(user)) {
     return getDefenceUserCasesQueryFilter(user)
+  }
+
+  if (isPublicProsecutorUser(user)) {
+    return getPublicProsecutionUserCasesQueryFilter()
   }
 
   throw new ForbiddenException(`User ${user.id} does not have access to cases`)

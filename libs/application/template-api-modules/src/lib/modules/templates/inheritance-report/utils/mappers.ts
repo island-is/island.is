@@ -164,7 +164,8 @@ export const expandAnswers = (
       realEstate: {
         data: (answers.assets.realEstate?.data ?? []).map((realEstate) => {
           return {
-            assetNumber: realEstate.assetNumber ?? '',
+            assetNumber:
+              realEstate.assetNumber.replace('-', '').replace(/\D/g, '') ?? '',
             description: realEstate.description ?? '',
             propertyValuation: realEstate.propertyValuation ?? '0',
             share: realEstate.share ?? '0',
@@ -280,8 +281,11 @@ export const expandAnswers = (
     spouseTotal: answers.spouseTotal ?? 0,
     estateTotal: answers.estateTotal ?? 0,
     netPropertyForExchange: answers.netPropertyForExchange ?? 0,
-    hasCustomSpouseSharePercentage:
-      answers.hasCustomSpouseSharePercentage ?? [],
-    customSpouseSharePercentage: answers.customSpouseSharePercentage ?? '50',
+    customShare: {
+      hasCustomSpouseSharePercentage:
+        answers?.customShare?.hasCustomSpouseSharePercentage ?? [],
+      customSpouseSharePercentage:
+        answers?.customShare?.customSpouseSharePercentage ?? '50',
+    },
   }
 }
