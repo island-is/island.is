@@ -24,10 +24,7 @@ import {
 import { createNavigationOptionHooks } from '../../hooks/create-navigation-option-hooks'
 import { useActiveTabItemPress } from '../../hooks/use-active-tab-item-press'
 import { useConnectivityIndicator } from '../../hooks/use-connectivity-indicator'
-import {
-  notificationsStore,
-  useNotificationsActions,
-} from '../../stores/notifications-store'
+import { useNotificationsActions } from '../../stores/notifications-store'
 import { useUiStore } from '../../stores/ui-store'
 import { isAndroid } from '../../utils/devices'
 import { getRightButtons } from '../../utils/get-main-root'
@@ -103,7 +100,7 @@ export const MainHomeScreen: NavigationFunctionComponent = ({
 }) => {
   useNavigationOptions(componentId)
 
-  const notificationsActions = useNotificationsActions()
+  const { syncToken, checkUnseen } = useNotificationsActions()
   const [refetching, setRefetching] = useState(false)
   const flatListRef = useRef<FlatList>(null)
   const ui = useUiStore()
@@ -135,10 +132,9 @@ export const MainHomeScreen: NavigationFunctionComponent = ({
   const scrollY = useRef(new Animated.Value(0)).current
 
   useEffect(() => {
-    // Sync push tokens
-    void notificationsActions.syncToken()
-    // Sync unseen notifications
-    void notificationsActions.checkUnseen()
+    // Sync push tokens and unseen notifications
+    void syncToken()
+    void checkUnseen()
   }, [])
 
   const refetch = useCallback(async () => {

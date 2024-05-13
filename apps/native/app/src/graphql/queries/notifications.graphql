@@ -18,12 +18,8 @@ query GetUserNotifications($input: NotificationsInput!) {
   }
 }
 
-query GetUserNotificationsOverview($input: NotificationsInput!) {
-  userNotificationsOverview: userNotifications(input: $input) {
-    data {
-      ...NotificationDataFields
-    }
-    totalCount
+query GetUserNotificationsUnseenCount($input: NotificationsInput!) {
+  userNotifications(input: $input) {
     unseenCount
   }
 }

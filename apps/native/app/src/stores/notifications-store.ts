@@ -11,9 +11,9 @@ import {
   DeleteUserProfileDeviceTokenDocument,
   DeleteUserProfileDeviceTokenMutation,
   DeleteUserProfileDeviceTokenMutationVariables,
-  GetUserNotificationsOverviewDocument,
-  GetUserNotificationsOverviewQuery,
-  GetUserNotificationsOverviewQueryVariables,
+  GetUserNotificationsUnseenCountDocument,
+  GetUserNotificationsUnseenCountQuery,
+  GetUserNotificationsUnseenCountQueryVariables,
 } from '../graphql/types/schema'
 import { ComponentRegistry } from '../utils/component-registry'
 import { getRightButtons } from '../utils/get-main-root'
@@ -109,10 +109,10 @@ export const notificationsStore = create<NotificationsStore>(
 
           try {
             const res = await client.query<
-              GetUserNotificationsOverviewQuery,
-              GetUserNotificationsOverviewQueryVariables
+              GetUserNotificationsUnseenCountQuery,
+              GetUserNotificationsUnseenCountQueryVariables
             >({
-              query: GetUserNotificationsOverviewDocument,
+              query: GetUserNotificationsUnseenCountDocument,
               fetchPolicy: 'network-only',
               variables: {
                 input: {
@@ -120,9 +120,9 @@ export const notificationsStore = create<NotificationsStore>(
                 },
               },
             })
-            const unseenCount =
-              res?.data?.userNotificationsOverview?.unseenCount ?? 0
-            console.log('Unseen count', unseenCount)
+
+            const unseenCount = res?.data?.userNotifications?.unseenCount ?? 0
+
             set({ unseenCount })
 
             rightButtonScreens.forEach((componentId) => {
@@ -133,6 +133,7 @@ export const notificationsStore = create<NotificationsStore>(
               })
             })
           } catch (err) {
+            console.log('error', err)
             // noop
             // TODO handle error with toast when implemented
           }
@@ -142,6 +143,17 @@ export const notificationsStore = create<NotificationsStore>(
     {
       name: 'notifications_07',
       getStorage: () => notificationsStorage,
+      serialize({ state, version }) {
+        const res: any = { ...state }
+        res.items = [...res.items]
+        return JSON.stringify({ state: res, version })
+      },
+      deserialize(str: string) {
+        const { state, version } = JSON.parse(str)
+        delete state.actions
+        state.items = new Map(state.items)
+        return { state, version }
+      },
     },
   ),
 )
