@@ -18,7 +18,7 @@ test.describe('MS - Occupational licenses', () => {
       phoneNumber: '0102209',
       idsLoginOn: true,
     })
-    await setupXroadMocks(['occupational-licenses'])
+    await setupXroadMocks()
   })
 
   test('occupational licenses', async () => {
