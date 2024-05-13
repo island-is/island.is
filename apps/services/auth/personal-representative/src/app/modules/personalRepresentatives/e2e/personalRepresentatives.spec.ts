@@ -315,8 +315,6 @@ describe('PersonalRepresentativeController', () => {
     // Test get personal rep
     const response = await server.get(`${path}/${personalRep.id}`).expect(200)
 
-    console.log('response.body', response.body)
-
     expect(response.body).toMatchObject(personalRep)
   })
 

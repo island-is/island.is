@@ -242,14 +242,20 @@ export class PersonalRepresentativeService {
         ],
       })
 
-    console.log(
-      'personalRepresentative',
-      personalRepresentative?.personalRepresentativeDelegationTypes?.map(
-        (prdt) => prdt.delegationType,
-      ),
+    const result = personalRepresentative?.toDTO()
+
+    if (!result) return null
+
+    const delegationTypes = await this.delegationTypeModel.findAll({
+      where: {
+        id: result?.rights.map((rc) => `PersonalRepresentative:${rc.code}`),
+      },
+    })
+    result.personalRepresentativeDelegationTypes = delegationTypes.map((prdt) =>
+      prdt.toDTO(),
     )
 
-    return personalRepresentative ? personalRepresentative.toDTO() : null
+    return result ?? null
   }
 
   /** Create a new personal representative */
@@ -262,7 +268,9 @@ export class PersonalRepresentativeService {
       return await this.sequelize.transaction(async (t) => {
         const newPr = await this.personalRepresentativeModel.create(
           { ...personalRepresentative },
-          { transaction: t },
+          {
+            transaction: t,
+          },
         )
 
         const rightCodes = personalRepresentative.rightCodes.map(
@@ -305,11 +313,13 @@ export class PersonalRepresentativeService {
 
         /** To tackle replication we need to generate new object without selecting it from database */
         const result = newPr.toDTO()
+
         const rightTypes =
           await this.personalRepresentativeRightTypeModel.findAll({
             where: { code: rightCodes.map((rc) => rc.rightTypeCode) },
           })
         result.rights = rightTypes.map((rt) => rt.toDTO())
+
         const delegationTypes = await this.delegationTypeModel.findAll({
           where: {
             id: rightCodes.map(
@@ -317,10 +327,10 @@ export class PersonalRepresentativeService {
             ),
           },
         })
-
         result.personalRepresentativeDelegationTypes = delegationTypes.map(
           (prdt) => prdt.toDTO(),
         )
+
         return result
       })
     } catch (err) {

@@ -143,7 +143,7 @@ export class PersonalRepresentative extends Model {
       ),
       personalRepresentativeDelegationTypes:
         this.personalRepresentativeDelegationTypes?.map((d) =>
-          d.delegationType?.toDTO(),
+          (d.delegationType as DelegationTypeModel)?.toDTO(),
         ),
       inactive: this.inactive,
       inactiveReason: this.inactiveReason,

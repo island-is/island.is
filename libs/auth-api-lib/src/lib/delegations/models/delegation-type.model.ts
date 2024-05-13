@@ -69,14 +69,11 @@ export class DelegationTypeModel extends Model<
   personalRepresentativeDelegationType?: PersonalRepresentativeDelegationTypeModel[]
 
   toDTO(): DelegationTypeDto {
-    const val = {
+    return {
       id: this.id,
       description: this.description,
       providerId: this.providerId,
       name: this.name,
     }
-
-    console.log('VAL', this, val, this.description)
-    return val
   }
 }
