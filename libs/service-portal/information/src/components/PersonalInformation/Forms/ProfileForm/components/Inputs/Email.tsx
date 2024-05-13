@@ -1,4 +1,4 @@
-import React, { FC, useState, useEffect } from 'react'
+import React, { FC, useState, useEffect, useMemo } from 'react'
 import { useForm } from 'react-hook-form'
 import { m } from '@island.is/service-portal/core'
 import { msg } from '../../../../../../lib/messages'
@@ -19,6 +19,7 @@ import {
 } from '@island.is/service-portal/graphql'
 import { FormButton } from '../FormButton'
 import * as styles from './ProfileForms.css'
+import { ContactNotVerified } from '../ContactNotVerified'
 
 interface Props {
   buttonText: string
@@ -67,7 +68,7 @@ export const InputEmail: FC<React.PropsWithChildren<Props>> = ({
 
   const [inputPristine, setInputPristine] = useState(false)
   const [emailVerifyCreated, setEmailVerifyCreated] = useState(false)
-  const [verificationValid, setVerificationValid] = useState(false)
+  const [verificationValid, setVerificationValid] = useState(emailVerified)
 
   const [resendBlock, setResendBlock] = useState(false)
 
@@ -104,7 +105,7 @@ export const InputEmail: FC<React.PropsWithChildren<Props>> = ({
     }
   }, [emailInternal, email])
 
-  const handleSendEmailVerification = async (data: { email: string }) => {
+  const handleSendEmailVerification = async (data: { email?: string }) => {
     const emailError = formatMessage({
       id: 'sp.settings:email-service-error',
       defaultMessage:
@@ -150,7 +151,7 @@ export const InputEmail: FC<React.PropsWithChildren<Props>> = ({
           email: emailToVerify,
           emailCode: codeValue,
         }).then(() => {
-          setInputPristine(true)
+          checkSetPristineInput()
           setVerificationValid(true)
         })
       }
@@ -158,6 +159,9 @@ export const InputEmail: FC<React.PropsWithChildren<Props>> = ({
     } catch (err) {
       console.error(`confirmEmailVerification error: ${err}`)
       setErrors({ ...formErrors, code: codeError })
+    } finally {
+      setCodeInternal('')
+      setValue('code', '')
     }
   }
 
@@ -186,13 +190,18 @@ export const InputEmail: FC<React.PropsWithChildren<Props>> = ({
   const checkSetPristineInput = () => {
     if (getValues().email === email) {
       setInputPristine(true)
-
       setEmailVerifyCreated(false)
     } else {
       setInputPristine(false)
       setVerificationValid(false)
     }
   }
+
+  const emailMsgWithUpper = useMemo(() => formatMessage(msg.email), [msg.email])
+  const emailMsgLower = useMemo(
+    () => formatMessage(msg.email).toLowerCase(),
+    [msg.email],
+  )
 
   return (
     <Box>
@@ -211,7 +220,7 @@ export const InputEmail: FC<React.PropsWithChildren<Props>> = ({
               name="email"
               required={false}
               type="email"
-              icon={emailVerified ? 'checkmark' : undefined}
+              icon={email && verificationValid ? 'checkmark' : undefined}
               disabled={disabled}
               rules={{
                 pattern: {
@@ -244,12 +253,7 @@ export const InputEmail: FC<React.PropsWithChildren<Props>> = ({
               <>
                 {emailVerifyCreated ? (
                   <FormButton
-                    disabled={
-                      verificationValid ||
-                      disabled ||
-                      resendBlock ||
-                      inputPristine
-                    }
+                    disabled={verificationValid || disabled || resendBlock}
                     onClick={
                       emailInternal
                         ? () =>
@@ -286,7 +290,7 @@ export const InputEmail: FC<React.PropsWithChildren<Props>> = ({
           </Box>
         </Box>
       </form>
-      {emailVerifyCreated && !inputPristine && (
+      {emailVerifyCreated && (
         <Box marginTop={3}>
           <Text variant="medium" marginBottom={2}>
             {formatMessage({
@@ -351,16 +355,21 @@ export const InputEmail: FC<React.PropsWithChildren<Props>> = ({
         </Box>
       )}
 
-      {emailVerified === false && !emailVerifyCreated && (
-        <AlertMessage
-          type="warning"
-          title={formatMessage(msg.emailNotVerified)}
-          message={formatMessage(msg.emailNotVerifiedDescription)}
-          action={
-            <Button variant="text">{formatMessage(msg.confirmEmail)}</Button>
-          }
-        />
-      )}
+      {email &&
+        verificationValid === false &&
+        inputPristine &&
+        !emailVerifyCreated && (
+          <Box marginTop={2}>
+            <ContactNotVerified
+              contactType="email"
+              onClick={() =>
+                handleSendEmailVerification({
+                  email: email,
+                })
+              }
+            />
+          </Box>
+        )}
     </Box>
   )
 }

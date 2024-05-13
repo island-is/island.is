@@ -81,6 +81,10 @@ export const errorMessage = style({
   marginTop: theme.spacing[1],
 })
 
+export const notVerifiedContainer = style({
+  maxWidth: 400,
+})
+
 globalStyle(`${hb} input, ${bank} input`, {
   paddingRight: 0,
 })

@@ -296,18 +296,18 @@ export const msg = defineMessages({
     id: 'sp.settings:save-empty',
     defaultMessage: 'Vista tómt',
   },
-  emailNotVerified: {
-    id: 'sp.settings:email-not-verified',
-    defaultMessage: 'Netfang ekki staðfest',
+  contactNotVerified: {
+    id: 'sp.settings:contact-not-verified',
+    defaultMessage: '{contactType} ekki staðfest',
   },
-  emailNotVerifiedDescription: {
-    id: 'sp.settings:email-not-verified-description',
+  contactNotVerifiedDescription: {
+    id: 'sp.settings:contact-not-verified-description',
     defaultMessage:
-      'Staðfestu netfang svo að tilkynningar skili sér örugglega til þín.',
+      'Staðfestu {contactType} svo að tilkynningar skili sér örugglega til þín.',
   },
-  confirmEmail: {
-    id: 'sp.settings:confirm-email',
-    defaultMessage: 'Staðfesta netfang',
+  confirmContact: {
+    id: 'sp.settings:confirm-contact',
+    defaultMessage: 'Staðfesta {contactType}',
   },
 })
 

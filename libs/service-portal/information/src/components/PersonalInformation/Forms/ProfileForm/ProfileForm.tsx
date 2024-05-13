@@ -291,6 +291,7 @@ export const ProfileForm: FC<React.PropsWithChildren<Props>> = ({
                 <InputPhone
                   buttonText={formatMessage(msg.saveTel)}
                   mobile={parseNumber(userProfile?.mobilePhoneNumber || '')}
+                  telVerified={userProfile?.mobilePhoneNumberVerified}
                   telDirty={(isDirty) => setTelDirty(isDirty)}
                   disabled={deleteLoading}
                 />

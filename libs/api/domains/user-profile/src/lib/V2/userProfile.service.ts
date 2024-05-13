@@ -127,7 +127,7 @@ export class UserProfileServiceV2 {
   }
 
   confirmNudge(user: User) {
-    return this.v2UserProfileApiWithAuth(
+    return this.v2MeUserProfileApiWithAuth(
       user,
     ).meUserProfileControllerConfirmNudge({
       postNudgeDto: { nudgeType: PostNudgeDtoNudgeTypeEnum.NUDGE },
