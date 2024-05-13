@@ -1,32 +1,37 @@
-import { useEffect, useMemo, useState } from 'react'
+import { useEffect, useMemo, useRef, useState } from 'react'
 import { useDebounce } from 'react-use'
+import { CollectionProp, EntryProps, KeyValueMap } from 'contentful-management'
 import { FieldExtensionSDK } from '@contentful/app-sdk'
-import { FormControl, Select, TextInput } from '@contentful/f36-components'
-import { useSDK } from '@contentful/react-apps-toolkit'
+import {
+  FormControl,
+  Select,
+  Text,
+  TextInput,
+} from '@contentful/f36-components'
+import { useCMA, useSDK } from '@contentful/react-apps-toolkit'
 
 import { CustomPageUniqueIdentifier } from '@island.is/shared/types'
 
+const DEBOUNCE_TIME_IN_MS = 300
+
 const CustomPageUniqueIdentifierField = () => {
   const sdk = useSDK<FieldExtensionSDK>()
+  const cma = useCMA()
   const [selectedOption, setSelectedOption] = useState(sdk.field.getValue())
   const [isSubpage, setIsSubpage] = useState<boolean | null>(null)
   const [subpageSlug, setSubpageSlug] = useState(
-    sdk.locales.available.reduce((prev, curr) => {
-      console.log(curr, sdk.entry.fields.slug.getForLocale(curr).getValue())
-      prev[curr] = sdk.entry.fields.slug.getForLocale(curr).getValue() || ''
-      return prev
+    sdk.locales.available.reduce((obj, locale) => {
+      obj[locale] = sdk.entry.fields.slug.getForLocale(locale).getValue() || ''
+      return obj
     }, {}),
   )
-
-  useEffect(() => {
-    sdk.entry.fields.parentPage.onValueChanged((parentPage) => {
-      setIsSubpage(Boolean(parentPage?.sys?.id))
-    })
-  }, [sdk.entry.fields.parentPage])
-
-  useEffect(() => {
-    sdk.window.startAutoResizer()
-  }, [sdk.window])
+  const subpageSlugRef = useRef(subpageSlug)
+  const [subpageSlugError, setSubpageSlugError] = useState(
+    sdk.locales.available.reduce((obj, locale) => {
+      obj[locale] = ''
+      return obj
+    }, {}),
+  )
 
   const options = useMemo<string[]>(() => {
     const index = sdk.field.validations.findIndex(
@@ -58,19 +63,88 @@ const CustomPageUniqueIdentifierField = () => {
     return validLocales
   }, [sdk.locales.available, sdk.locales.default])
 
-  // TODO: figure out
+  useEffect(() => {
+    sdk.entry.fields.parentPage.onValueChanged((parentPage) => {
+      const isSubpage = Boolean(parentPage?.sys?.id)
+      setIsSubpage(isSubpage)
+      if (isSubpage) {
+        const fieldValue = sdk.field.getValue()
+        if (!fieldValue && options?.length > 0) {
+          sdk.field.setValue(options[0])
+          setSelectedOption(options[0])
+        }
+      }
+    })
+  }, [options, sdk.entry.fields.parentPage, sdk.field])
+
+  useEffect(() => {
+    sdk.window.startAutoResizer()
+  }, [sdk.window])
+
   useDebounce(
-    () => {
+    async () => {
+      const requests: Promise<{
+        response: CollectionProp<EntryProps<KeyValueMap>>
+        subpageSlug
+        locale: string
+      }>[] = []
       for (const locale in subpageSlug) {
-        console.log(locale, subpageSlug[locale])
-        sdk.entry.fields.slug
-          .setValue(subpageSlug[locale], locale)
-          .then((r) => {
-            console.log(r)
-          })
+        const parentPageId = sdk.entry.fields.parentPage.getValue()?.sys?.id
+        if (parentPageId) {
+          requests.push(
+            (async () => {
+              const response = await cma.entry.getMany({
+                query: {
+                  content_type: 'customPage',
+                  'fields.slug': subpageSlug[locale],
+                  'fields.parentPage.sys.id': parentPageId,
+                  'sys.id[ne]': sdk.entry.getSys().id,
+                  locale,
+                },
+              })
+              return {
+                response,
+                locale,
+                subpageSlug,
+              }
+            })(),
+          )
+        }
+      }
+
+      const responses = await Promise.all(requests)
+
+      const deltaSubpageSlugError = {}
+
+      for (const { response, locale, subpageSlug } of responses) {
+        if (
+          response.total > 0 &&
+          subpageSlug[locale] === subpageSlugRef.current[locale] &&
+          subpageSlug[locale].length > 0
+        ) {
+          deltaSubpageSlugError[
+            locale
+          ] = `Slug is already in use: ${subpageSlug[locale]}`
+        } else {
+          sdk.entry.fields.slug.setValue(subpageSlug[locale], locale)
+        }
+      }
+
+      if (Object.keys(deltaSubpageSlugError).length > 0) {
+        setSubpageSlugError((prev) => ({
+          ...prev,
+          ...deltaSubpageSlugError,
+        }))
+      } else {
+        setSubpageSlugError(
+          sdk.locales.available.reduce((obj, locale) => {
+            obj[locale] = ''
+            return obj
+          }, {}),
+        )
       }
     },
-    300,
+    DEBOUNCE_TIME_IN_MS,
     [subpageSlug],
   )
 
@@ -81,17 +155,24 @@ const CustomPageUniqueIdentifierField = () => {
           {availableLocales.map((locale) => (
             <FormControl key={locale}>
               <FormControl.Label>
-                Subpage slug - {sdk.locales.names[locale]}
+                Subpage Slug - {sdk.locales.names[locale]}
               </FormControl.Label>
               <TextInput
                 value={subpageSlug[locale]}
                 onChange={(ev) => {
-                  setSubpageSlug((prev) => ({
-                    ...prev,
-                    [locale]: ev.target.value,
-                  }))
+                  setSubpageSlug((previousSubpageSlug) => {
+                    const updatedSubpageSlug = {
+                      ...previousSubpageSlug,
+                      [locale]: ev.target.value,
+                    }
+                    subpageSlugRef.current = updatedSubpageSlug
+                    return updatedSubpageSlug
+                  })
                 }}
               />
+              {subpageSlugError[locale] && (
+                <Text fontColor="red700">{subpageSlugError[locale]}</Text>
+              )}
             </FormControl>
           ))}
         </div>

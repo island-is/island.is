@@ -1,3 +1,4 @@
+import { useEffect } from 'react'
 import type { EntryProps } from 'contentful-management'
 import type { FieldExtensionSDK } from '@contentful/app-sdk'
 import {
@@ -16,11 +17,15 @@ const parameters = {
 const CustomPageParentField = () => {
   const sdk = useSDK<FieldExtensionSDK>()
 
+  useEffect(() => {
+    sdk.window.startAutoResizer()
+  }, [sdk.window])
+
   return (
     <SingleEntryReferenceEditor
       sdk={sdk}
-      viewType="card"
-      hasCardEditActions={true}
+      viewType="link"
+      hasCardEditActions={false}
       parameters={parameters}
       renderCustomActions={(props) => (
         <CombinedLinkActions
@@ -36,7 +41,7 @@ const CustomPageParentField = () => {
 
             if (entries[0]?.sys?.id === sdk.entry.getSys().id) {
               sdk.notifier.warning('Custom page parent can not be itself!')
-            } else {
+            } else if (entries.length > 0) {
               props.onLinkedExisting(entries)
             }
           }}
