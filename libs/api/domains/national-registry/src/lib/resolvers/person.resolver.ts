@@ -96,7 +96,7 @@ export class PersonResolver {
     if (
       person.nationalIdType === NationalIdType.NATIONAL_REGISTRY_NATIONAL_ID
     ) {
-      return this.service.getParents(person.nationalId, person, user.nationalId)
+      return this.service.getParents(person.nationalId, person)
     }
     return null
   }
