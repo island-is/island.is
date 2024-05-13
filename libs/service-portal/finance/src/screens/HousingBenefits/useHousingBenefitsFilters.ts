@@ -1,4 +1,4 @@
-import { useCallback, useMemo, useState } from 'react'
+import { useMemo, useState } from 'react'
 import { HousingBenefitsPaymentsInput } from '@island.is/api/schema'
 import { useGetHousingBenefitsListLazyQuery } from './HousingBenefits.generated'
 
@@ -23,7 +23,7 @@ export const useHousingBenefitsFilters = () => {
   const [toDate, setToDate] = useState<Date>()
   const [page, setPage] = useState(1)
 
-  const setSelectedMonth = useCallback((value: string | undefined) => {
+  const setSelectedMonth = (value: string | undefined) => {
     setPage(1)
     setFilterValue({
       ...filterValue,
@@ -32,48 +32,45 @@ export const useHousingBenefitsFilters = () => {
         ? MAX_ITEMS_ON_PAGE
         : DEFAULT_ITEMS_ON_PAGE,
     })
-  }, [])
+  }
 
-  const setDates = useCallback(
-    (fDate: Date | undefined, tDate: Date | undefined) => {
-      setPage(1)
-      setFilterValue((oldState) => {
-        const today = new Date()
-        let dateTo: string | undefined
-        if (!toDate && fromDate) {
-          dateTo = today.toISOString()
-        } else if (toDate && fromDate) {
-          dateTo = toDate.toISOString()
-        }
+  const setDates = (fDate: Date | undefined, tDate: Date | undefined) => {
+    setPage(1)
+    setFilterValue((oldState) => {
+      const today = new Date()
+      let dateTo: string | undefined
+      if (!toDate && fromDate) {
+        dateTo = today.toISOString()
+      } else if (toDate && fromDate) {
+        dateTo = toDate.toISOString()
+      }
 
-        setFromDate(fDate)
-        setToDate(tDate)
+      setFromDate(fDate)
+      setToDate(tDate)
 
-        return {
-          ...oldState,
-          dateFrom: dateTo && fromDate ? fromDate.toISOString() : undefined,
-          dateTo: dateTo,
-        }
-      })
-    },
-    [],
-  )
+      return {
+        ...oldState,
+        dateFrom: dateTo && fromDate ? fromDate.toISOString() : undefined,
+        dateTo: dateTo,
+      }
+    })
+  }
 
-  const setShowFinalPayments = useCallback((value: boolean) => {
+  const setShowFinalPayments = (value: boolean) => {
     setPage(1)
     setFilterValue({
       ...filterValue,
       payments: value,
     })
-  }, [])
+  }
 
-  const setPaymentOrigin = useCallback((value: string) => {
+  const setPaymentOrigin = (value: string) => {
     setPage(1)
     setFilterValue({
       ...filterValue,
       paymentOrigin: Number(value),
     })
-  }, [])
+  }
 
   const resetFilter = () => {
     setPage(1)
@@ -86,6 +83,7 @@ export const useHousingBenefitsFilters = () => {
     useGetHousingBenefitsListLazyQuery()
 
   useMemo(() => {
+    console.log('filterValue', filterValue)
     loadHousingPayments({
       variables: {
         input: {
