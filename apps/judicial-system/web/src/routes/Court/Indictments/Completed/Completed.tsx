@@ -1,9 +1,16 @@
-import React, { FC, useContext } from 'react'
+import React, { FC, useCallback, useContext, useState } from 'react'
 import { useIntl } from 'react-intl'
+import router from 'next/router'
 
-import { Box, RadioButton, Text } from '@island.is/island-ui/core'
+import {
+  Box,
+  InputFileUpload,
+  RadioButton,
+  Text,
+  UploadFile,
+} from '@island.is/island-ui/core'
 import * as constants from '@island.is/judicial-system/consts'
-import { titles } from '@island.is/judicial-system-web/messages'
+import { core, titles } from '@island.is/judicial-system-web/messages'
 import {
   BlueBox,
   FormContentContainer,
@@ -11,6 +18,7 @@ import {
   FormFooter,
   IndictmentCaseFilesList,
   InfoCardClosedIndictment,
+  Modal,
   PageHeader,
   PageLayout,
   SectionHeading,
@@ -18,17 +26,39 @@ import {
 import {
   ServiceRequirement,
   CaseIndictmentRulingDecision,
+  CaseFileCategory,
 } from '@island.is/judicial-system-web/src/graphql/schema'
-import { useDefendants } from '@island.is/judicial-system-web/src/utils/hooks'
+import {
+  useDefendants,
+  useS3Upload,
+  useUploadFiles,
+} from '@island.is/judicial-system-web/src/utils/hooks'
 
 import strings from './Completed.strings'
 
 const Completed: FC = () => {
   const { formatMessage } = useIntl()
   const { updateDefendantState } = useDefendants()
-
   const { workingCase, setWorkingCase, isLoadingWorkingCase, caseNotFound } =
     useContext(FormContext)
+  const { uploadFiles, addUploadFiles, removeUploadFile, updateUploadFile } =
+    useUploadFiles(workingCase.caseFiles)
+  const { handleUpload, handleRemove } = useS3Upload(workingCase.id)
+  const [modalVisible, setModalVisible] =
+    useState<'SENT_TO_PUBLIC_PROSECUTOR'>()
+
+  const handleNextButtonClick = useCallback(async () => {
+    const allSucceeded = await handleUpload(
+      uploadFiles.filter((file) => !file.key),
+      updateUploadFile,
+    )
+
+    if (!allSucceeded) {
+      return
+    }
+
+    setModalVisible('SENT_TO_PUBLIC_PROSECUTOR')
+  }, [handleUpload, uploadFiles, updateUploadFile, workingCase.id])
 
   const stepIsValid = () =>
     workingCase.defendants?.every(
@@ -37,12 +67,29 @@ const Completed: FC = () => {
         defendant.serviceRequirement !== null,
     )
 
+  const handleRemoveFile = (file: UploadFile) => {
+    if (file.key) {
+      handleRemove(file, removeUploadFile)
+    } else {
+      removeUploadFile(file)
+    }
+  }
+
+  const handleChange = (files: File[], type: CaseFileCategory) => {
+    addUploadFiles(files, type, 'done')
+  }
+
+  const handleNavigationTo = useCallback(
+    (destination: string) => router.push(`${destination}/${workingCase.id}`),
+    [router, workingCase.id],
+  )
+
   return (
     <PageLayout
       workingCase={workingCase}
       isLoading={isLoadingWorkingCase}
       notFound={caseNotFound}
-      // onNavigationTo={handleNavigationTo}
+      onNavigationTo={handleNavigationTo}
     >
       <PageHeader title={formatMessage(titles.court.indictments.completed)} />
       <FormContentContainer>
@@ -60,6 +107,22 @@ const Completed: FC = () => {
         <Box marginBottom={5} component="section">
           <SectionHeading
             title={formatMessage(strings.criminalRecordUpdateTitle)}
+          />
+          <InputFileUpload
+            fileList={uploadFiles.filter(
+              (file) =>
+                file.category === CaseFileCategory.CRIMINAL_RECORD_UPDATE,
+            )}
+            accept="application/pdf"
+            header={formatMessage(core.uploadBoxTitle)}
+            buttonLabel={formatMessage(core.uploadBoxButtonLabel)}
+            description={formatMessage(core.uploadBoxDescription, {
+              fileEndings: '.pdf',
+            })}
+            onChange={(files) =>
+              handleChange(files, CaseFileCategory.CRIMINAL_RECORD_UPDATE)
+            }
+            onRemove={(file) => handleRemoveFile(file)}
           />
         </Box>
         {workingCase.indictmentRulingDecision ===
@@ -164,8 +227,17 @@ const Completed: FC = () => {
           previousUrl={constants.CASES_ROUTE}
           nextButtonText={formatMessage(strings.sendToPublicProsecutor)}
           nextIsDisabled={!stepIsValid()}
+          onNextButtonClick={handleNextButtonClick}
         />
       </FormContentContainer>
+      {modalVisible === 'SENT_TO_PUBLIC_PROSECUTOR' && (
+        <Modal
+          title={formatMessage(strings.sentToPublicProsecutorModalTitle)}
+          text={formatMessage(strings.sentToPublicProsecutorModalMessage)}
+          primaryButtonText={formatMessage(core.closeModal)}
+          onPrimaryButtonClick={() => router.push(constants.CASES_ROUTE)}
+        />
+      )}
     </PageLayout>
   )
 }
