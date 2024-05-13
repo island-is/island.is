@@ -399,7 +399,8 @@ const useSections = (
     user?: User,
   ): RouteSection => {
     const { id, type, state } = workingCase
-    const caseHasBeenReceivedByCourt = state === CaseState.RECEIVED
+    const caseHasBeenReceivedByCourt =
+      state === CaseState.RECEIVED || state === CaseState.MAIN_HEARING
     const isTrafficViolation = isTrafficViolationIndictment(workingCase)
 
     return {
@@ -407,6 +408,8 @@ const useSections = (
       isActive:
         isProsecutionUser(user) &&
         isIndictmentCase(type) &&
+        state !== CaseState.RECEIVED &&
+        state !== CaseState.MAIN_HEARING &&
         !isCompletedCase(state),
       // Prosecutor can only view the overview when case has been received by court
       children: caseHasBeenReceivedByCourt
@@ -898,8 +901,10 @@ const useSections = (
     return {
       name: formatMessage(sections.indictmentsCourtSection.title),
       isActive:
-        (isDistrictCourtUser(user) || isDefenceUser(user)) &&
-        !isCompletedCase(state),
+        (isProsecutionUser(user) &&
+          (state === CaseState.RECEIVED || state === CaseState.MAIN_HEARING)) ||
+        ((isDistrictCourtUser(user) || isDefenceUser(user)) &&
+          !isCompletedCase(state)),
       children: isDistrictCourtUser(user)
         ? [
             {
@@ -968,10 +973,10 @@ const useSections = (
             },
             {
               name: formatMessage(sections.indictmentsCourtSection.courtRecord),
-              isActive: isActive(constants.INDICTMENTS_COURT_RECORD_ROUTE),
-              href: `${constants.INDICTMENTS_COURT_RECORD_ROUTE}/${id}`,
+              isActive: isActive(constants.INDICTMENTS_CONCLUSION_ROUTE),
+              href: `${constants.INDICTMENTS_CONCLUSION_ROUTE}/${id}`,
               onClick:
-                !isActive(constants.INDICTMENTS_COURT_RECORD_ROUTE) &&
+                !isActive(constants.INDICTMENTS_CONCLUSION_ROUTE) &&
                 validateFormStepper(
                   isValid,
                   [
@@ -985,7 +990,7 @@ const useSections = (
                 onNavigationTo
                   ? async () =>
                       await onNavigationTo(
-                        constants.INDICTMENTS_COURT_RECORD_ROUTE,
+                        constants.INDICTMENTS_CONCLUSION_ROUTE,
                       )
                   : undefined,
             },
@@ -1199,14 +1204,12 @@ const useSections = (
         name: formatMessage(sections.courtOfAppealSection.appealed),
         isActive:
           !isCourtOfAppealsUser(user) &&
-          (appealState === CaseAppealState.RECEIVED ||
-            appealState === CaseAppealState.APPEALED),
+          appealState === CaseAppealState.APPEALED,
         children: [],
       },
       {
         name: formatMessage(sections.courtOfAppealSection.result),
         isActive:
-          appealState === CaseAppealState.APPEALED ||
           appealState === CaseAppealState.RECEIVED ||
           appealState === CaseAppealState.WITHDRAWN,
         children: isCourtOfAppealsUser(user)

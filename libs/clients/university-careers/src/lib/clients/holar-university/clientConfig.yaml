@@ -1,0 +1,203 @@
+---
+openapi: '3.0.3'
+info:
+  title: 'Útskriftargögn nemenda'
+  version: '1.0.0'
+  contact:
+    email: 'help@hi.is'
+servers:
+  - url: '/api/vottord/brautskraning'
+  - url: '/api/vottord/brautskraning'
+paths:
+  /nemandi:
+    get:
+      summary: 'Listi yfir ferla sem nemandi hefur brauskrást af'
+      tags:
+        - 'studentTranscript'
+      parameters:
+        - $ref: '#/components/parameters/locale'
+      responses:
+        '200':
+          description: 'Skilar lista af ferlum sem nemandi hefur útskrifast af'
+          content:
+            application/json:
+              schema:
+                type: 'object'
+                title: 'transcripts'
+                properties:
+                  transcripts:
+                    type: 'array'
+                    items:
+                      $ref: '#/components/schemas/studentTrack'
+        '400':
+          description: 'Bad request. Invalid kennitala'
+        '404':
+          description: 'Nemandi hefur enga brautskráða ferla'
+        '5XX':
+          description: 'Unexpected error.'
+  /nemandi/ferill/{ferill}:
+    get:
+      summary:
+        "Ferill nemanda með brautskráningu, ásamt listi af fælum tengt brauskrá\
+        ningaryfirliti"
+      tags:
+        - 'studentTranscript'
+      parameters:
+        - $ref: '#/components/parameters/ferill'
+        - $ref: '#/components/parameters/locale'
+      responses:
+        '200':
+          description: 'Skilar lista af ferlum sem nemandi hefur útskrifast af'
+          content:
+            application/json:
+              schema:
+                type: 'object'
+                title: 'studentTrackOverview'
+                properties:
+                  transcript:
+                    type: 'object'
+                    $ref: '#/components/schemas/studentTrack'
+                  files:
+                    type: 'array'
+                    items:
+                      $ref: '#/components/schemas/studentFile'
+                  body:
+                    type: 'object'
+                    properties:
+                      description:
+                        type: 'string'
+                        description: 'Texti fyrir ofan transcript'
+                        example: 'Námsferilsyfirlit ekki til prentunar á pappír...'
+                      footer:
+                        type: 'string'
+                        description: 'Texti fyrir neðan transcript'
+                        example: 'Ef upplýsingar hér eru ekki réttar...'
+                      unconfirmed_data:
+                        type: 'string'
+                        description: 'Texti fyrir neðan transcript'
+                        example: 'Óstaðfest gögn hafið samband við...'
+        '400':
+          description: 'Bad request. Invalid kennitala'
+        '404':
+          description:
+            "Nemandi hefur enga brautskráða ferla, ferill ekki til, er\
+            \ ekki brautskráður fyrir feril."
+        '5XX':
+          description: 'Unexpected error.'
+  /nemandi/ferill/{ferill}/file/transcript:
+    get:
+      summary: 'Skilar útskriftargögnum á pdf formi'
+      tags:
+        - 'studentTranscript'
+      parameters:
+        - $ref: '#/components/parameters/ferill'
+        - $ref: '#/components/parameters/locale'
+      responses:
+        '200':
+          description: 'PDF skjal'
+          content:
+            application/pdf:
+              schema:
+                type: 'string'
+                format: 'binary'
+        '400':
+          description: 'Bad request. Invalid kennitala'
+        '404':
+          description:
+            "Nemandi hefur enga brautskráða ferla, ferill ekki til, er\
+            \ ekki brautskráður fyrir feril."
+        '5XX':
+          description: 'Unexpected error.'
+components:
+  schemas:
+    studentTrack:
+      type: 'object'
+      properties:
+        name:
+          type: 'string'
+          description: 'Fullt nafn leyfisbréfshafa'
+          example: 'Gervimaður Finnland'
+        nationalId:
+          type: 'string'
+          description: 'National ID number'
+          example: '0101302209'
+        graduationDate:
+          type: 'string'
+          description: 'ISO 8601 date'
+          example: '2021-11-24'
+        trackNumber:
+          type: 'integer'
+          description: 'Númer á feril nemenda, hlaupdandi tala frá 1'
+          example: 4
+        institution:
+          type: 'object'
+          properties:
+            id:
+              type: 'string'
+              example: 'hi'
+            displayName:
+              type: 'string'
+              example: 'Háskóli Íslands'
+        school:
+          type: 'string'
+          description: 'Svið sem nemandi er skráður á ferlinum'
+          example: 'Félagsvísindasvið'
+        faculty:
+          type: 'string'
+          description: 'Deild sem er skráð á ferilinn'
+          example: 'Lagadeild'
+        studyProgram:
+          type: 'string'
+          description: 'Námsleið sem nemandinn er skráð á ferilinn'
+          example: 'Lögfræði'
+        programId:
+          type: 'string'
+          description: '6 stafa ID á námsleið'
+          example: '123456'
+        degree:
+          type: 'string'
+          description: 'Námsgráða'
+          example: 'BA'
+    studentFile:
+      type: 'object'
+      properties:
+        type:
+          type: 'string'
+          description: 'TODO'
+          example: 'transcript'
+        locale:
+          type: 'string'
+          description: 'Tungumál fyrir file'
+          example: 'is'
+        displayName:
+          type: 'string'
+          description: 'TODO'
+          example: 'Námsferilsyfirlit með brautskráningu'
+        fileName:
+          type: 'string'
+          description: 'TODO'
+          example: 'utskriftaryfirlit-0101302209.pdf'
+  parameters:
+    locale:
+      name: 'locale'
+      in: 'query'
+      schema:
+        type: 'string'
+        enum:
+          - 'is'
+          - 'en'
+        default: 'is'
+    ferill:
+      in: 'path'
+      name: 'ferill'
+      schema:
+        type: 'integer'
+      required: true
+      description: 'Ferilsnúmer nemenda'
+  securitySchemes:
+    bearerAuth:
+      type: 'http'
+      scheme: 'bearer'
+      bearerFormat: 'JWT'
+security:
+  - bearerAuth: []

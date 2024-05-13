@@ -16,9 +16,19 @@ import { Case } from './case.model'
 
 @Table({
   tableName: 'explanatory_comment',
-  timestamps: false,
+  timestamps: true,
 })
 export class ExplanatoryComment extends Model {
+  static postponedIndefinitelyExplanation(
+    explanatoryComments?: ExplanatoryComment[],
+  ) {
+    return explanatoryComments?.find(
+      (explanatoryComment) =>
+        explanatoryComment.commentType ===
+        CommentType.POSTPONED_INDEFINITELY_EXPLANATION,
+    )
+  }
+
   @Column({
     type: DataType.UUID,
     primaryKey: true,

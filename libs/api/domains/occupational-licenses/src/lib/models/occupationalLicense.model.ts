@@ -41,7 +41,7 @@ registerEnumType(OccupationalLicenseStatus, {
   },
 })
 export abstract class OccupationalLicense {
-  @Field((type) => OccupationalLicenseType)
+  @Field(() => OccupationalLicenseType)
   institution!: OccupationalLicenseType
 
   @Field(() => ID)

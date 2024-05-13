@@ -97,7 +97,7 @@ const Companies = () => {
                         onClick={() =>
                           navigate(
                             replaceParams({
-                              href: ServiceDeskPaths.Procurers,
+                              href: ServiceDeskPaths.Company,
                               params: {
                                 nationalId,
                               },
@@ -105,7 +105,7 @@ const Companies = () => {
                           )
                         }
                       >
-                        {formatMessage(m.viewProcures)}
+                        {formatMessage(m.viewDetails)}
                       </Button>
                     }
                   />
