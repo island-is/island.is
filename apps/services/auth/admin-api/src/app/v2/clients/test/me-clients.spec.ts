@@ -25,12 +25,27 @@ import { AuthDelegationType } from 'delegation'
 const tenantId = '@test.is'
 const clientId = '@test.is/test-client'
 
+const testDelegationType = 'test-delegation-type'
+
 const createTestClientData = async (app: TestApp, user: User) => {
   const fixtureFactory = new FixtureFactory(app)
   await fixtureFactory.createDomain({
     name: tenantId,
     nationalId: user.nationalId,
   })
+
+  await Promise.all(
+    [
+      AuthDelegationType.Custom,
+      AuthDelegationType.ProcurationHolder,
+      AuthDelegationType.PersonalRepresentative,
+      AuthDelegationType.LegalGuardian,
+      testDelegationType,
+    ].map(async (delegationType) =>
+      fixtureFactory.createDelegationType({ id: delegationType }),
+    ),
+  )
+
   const client = await fixtureFactory.createClient({
     ...clientBaseAttributes,
     clientId,
@@ -39,7 +54,7 @@ const createTestClientData = async (app: TestApp, user: User) => {
     postLogoutRedirectUris: [faker.internet.url()],
     allowedGrantTypes: [],
     claims: [{ type: faker.random.word(), value: faker.random.word() }],
-    supportedDelegationTypes: ['test-delegation-type'],
+    supportedDelegationTypes: [testDelegationType],
   })
   const [translation] = await fixtureFactory.createTranslations(client, 'en', {
     clientName: faker.random.word(),
@@ -907,7 +922,7 @@ describe('MeClientsController with auth', () => {
       expect(res.body).toEqual(
         expect.objectContaining({
           supportedDelegationTypes: expect.arrayContaining([
-            'test-delegation-type',
+            testDelegationType,
             AuthDelegationType.Custom,
             AuthDelegationType.LegalGuardian,
             AuthDelegationType.PersonalRepresentative,
@@ -953,7 +968,7 @@ describe('MeClientsController with auth', () => {
       expect(setup.body).toEqual(
         expect.objectContaining({
           supportedDelegationTypes: expect.arrayContaining([
-            'test-delegation-type',
+            testDelegationType,
             AuthDelegationType.Custom,
             AuthDelegationType.LegalGuardian,
             AuthDelegationType.PersonalRepresentative,
@@ -988,7 +1003,7 @@ describe('MeClientsController with auth', () => {
       expect(res.body).toEqual(
         expect.objectContaining({
           supportedDelegationTypes: expect.arrayContaining([
-            'test-delegation-type',
+            testDelegationType,
           ]),
           supportsCustomDelegation: false,
           supportsLegalGuardians: false,
