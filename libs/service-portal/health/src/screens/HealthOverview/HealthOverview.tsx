@@ -21,6 +21,7 @@ import {
   amountFormat,
   downloadLink,
   formatDate,
+  isDateAfterToday,
   m,
 } from '@island.is/service-portal/core'
 import { useEffect, useState } from 'react'
@@ -45,12 +46,16 @@ export const HealthOverview = () => {
 
   const [
     getInsuranceConfirmationLazyQuery,
-    { loading: confirmationLoading, error: confirmationError },
+    {
+      data: confirmationData,
+      loading: confirmationLoading,
+      error: confirmationError,
+    },
   ] = useGetInsuranceConfirmationLazyQuery()
 
   const getInsuranceConfirmation = async () => {
-    const data = await getInsuranceConfirmationLazyQuery()
-    const downloadData = data.data?.rightsPortalInsuranceConfirmation
+    await getInsuranceConfirmationLazyQuery()
+    const downloadData = confirmationData?.rightsPortalInsuranceConfirmation
 
     if (downloadData?.data && downloadData.fileName) {
       downloadLink(downloadData.data, 'application/pdf', downloadData.fileName)
@@ -74,9 +79,9 @@ export const HealthOverview = () => {
 
   const insurance = data?.rightsPortalInsuranceOverview
 
-  const isEhicValid =
-    data?.rightsPortalInsuranceOverview?.ehicCardExpiryDate &&
-    new Date(data.rightsPortalInsuranceOverview.ehicCardExpiryDate) > new Date()
+  const isEhicValid = isDateAfterToday(
+    data?.rightsPortalInsuranceOverview?.ehicCardExpiryDate ?? undefined,
+  )
 
   return (
     <Box>
