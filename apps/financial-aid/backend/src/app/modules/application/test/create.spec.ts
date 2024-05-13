@@ -20,6 +20,7 @@ import { CreateApplicationDto } from '../dto'
 import { ApplicationModel } from '../models/application.model'
 import { createTestingApplicationModule } from './createTestingApplicationModule'
 import { DirectTaxPaymentService } from '../../directTaxPayment'
+import { ChildrenService } from '../../children'
 
 interface Then {
   result: ApplicationModel
@@ -35,6 +36,7 @@ describe('ApplicationController - Create', () => {
   let givenWhenThen: GivenWhenThen
   let mockApplicationModel: typeof ApplicationModel
   let mockApplicationEventService: ApplicationEventService
+  let mockApplicationChildren: ChildrenService
   let mockFileService: FileService
   let mockEmailService: EmailService
   let mockMunicipalityService: MunicipalityService
@@ -45,6 +47,7 @@ describe('ApplicationController - Create', () => {
       applicationController,
       applicationModel,
       applicationEventService,
+      childrenService,
       fileService,
       emailService,
       municipalityService,
@@ -53,6 +56,7 @@ describe('ApplicationController - Create', () => {
 
     mockApplicationModel = applicationModel
     mockApplicationEventService = applicationEventService
+    mockApplicationChildren = childrenService
     mockFileService = fileService
     mockEmailService = emailService
     mockMunicipalityService = municipalityService
