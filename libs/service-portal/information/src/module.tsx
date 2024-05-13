@@ -23,6 +23,9 @@ const Notifications = lazy(() =>
 const UserProfileSettings = lazy(() =>
   import('./screens/UserProfile/UserProfile'),
 )
+const UserNotificationsSettings = lazy(() =>
+  import('./screens/UserNotifications/UserNotifications'),
+)
 
 const sharedRoutes = (userInfo: User) => [
   {
@@ -66,6 +69,13 @@ export const informationModule: PortalModule = {
       path: InformationPaths.UserInfo,
       enabled: userInfo.scopes.includes(ApiScope.meDetails),
       element: <UserInfo />,
+    },
+    {
+      name: m.userInfo,
+      path: InformationPaths.SettingsNotifications,
+      enabled: userInfo.scopes.includes(ApiScope.internal),
+      key: 'NotificationSettings',
+      element: <UserNotificationsSettings />,
     },
     {
       name: 'Child',

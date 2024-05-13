@@ -182,6 +182,13 @@ export class AdminPatchClientDto {
   })
   @IsOptional()
   contactEmail?: string
+
+  @ApiPropertyOptional({
+    description: 'Array of allowed acr values for the client.',
+    example: '[eidas-loa-high]',
+  })
+  @IsOptional()
+  allowedAcr?: string[]
 }
 
 export const superUserFields = [
@@ -198,4 +205,5 @@ export const superUserFields = [
   'accessTokenLifetime',
   'customClaims',
   'singleSession',
+  'allowedAcr',
 ]

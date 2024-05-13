@@ -34,7 +34,7 @@ export const mapIndictmentCaseStateToTagVariant = (
   indictmentReviewer?: User | null,
 ): { color: TagVariant; text: string } => {
   switch (state) {
-    case CaseState.ACCEPTED:
+    case CaseState.COMPLETED:
       return {
         color: indictmentReviewer ? 'mint' : 'purple',
         text: formatMessage(
@@ -68,7 +68,10 @@ export const mapCaseStateToTagVariant = (
       return scheduledDate
         ? { color: 'mint', text: formatMessage(strings.scheduled) }
         : { color: 'blueberry', text: formatMessage(strings.received) }
+    case CaseState.MAIN_HEARING:
+      return { color: 'blue', text: formatMessage(strings.reassignment) }
     case CaseState.ACCEPTED:
+    case CaseState.COMPLETED:
       return isIndictmentCase(caseType) || isValidToDateInThePast
         ? { color: 'darkerBlue', text: formatMessage(strings.inactive) }
         : {
@@ -83,8 +86,6 @@ export const mapCaseStateToTagVariant = (
       return { color: 'dark', text: formatMessage(strings.dismissed) }
     default:
       return { color: 'white', text: formatMessage(strings.unknown) }
-    case CaseState.MAIN_HEARING:
-      return { color: 'blue', text: formatMessage(strings.reassignment) }
   }
 }
 
