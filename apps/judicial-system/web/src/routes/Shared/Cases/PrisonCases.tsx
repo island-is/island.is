@@ -106,18 +106,21 @@ export const PrisonCases: React.FC = () => {
             },
             {
               cell: (row) => (
-                <Box
-                  marginRight={row.appealState ? 1 : 0}
-                  marginBottom={row.appealState ? 1 : 0}
-                >
-                  <TagCaseState caseState={CaseState.ACCEPTED} />
+                <>
+                  <Box
+                    display="inlineBlock"
+                    marginRight={row.appealState ? 1 : 0}
+                    marginBottom={row.appealState ? 1 : 0}
+                  >
+                    <TagCaseState caseState={CaseState.ACCEPTED} />
+                  </Box>
                   {row.appealState && (
                     <TagAppealState
                       appealState={row.appealState}
                       appealRulingDecision={row.appealRulingDecision}
                     />
                   )}
-                </Box>
+                </>
               ),
             },
             {
