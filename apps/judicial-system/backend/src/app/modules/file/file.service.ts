@@ -116,7 +116,6 @@ export class FileService {
       case CaseFileCategory.COVER_LETTER:
       case CaseFileCategory.INDICTMENT:
       case CaseFileCategory.CRIMINAL_RECORD:
-      case CaseFileCategory.CRIMINAL_RECORD_UPDATE:
       case CaseFileCategory.COST_BREAKDOWN:
         courtDocumentFolder = CourtDocumentFolder.INDICTMENT_DOCUMENTS
         break
