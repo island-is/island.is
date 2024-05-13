@@ -1952,7 +1952,6 @@ const ParentalLeaveTemplate: ApplicationTemplate<
           return context
         }
 
-        console.log('Previous state set to: ' + state)
         set(answers, 'previousState', state)
         return context
       }),
