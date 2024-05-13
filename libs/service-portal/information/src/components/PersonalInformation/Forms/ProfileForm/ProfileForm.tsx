@@ -185,6 +185,8 @@ export const ProfileForm: FC<React.PropsWithChildren<Props>> = ({
       }
       if (emailDirty && telDirty) {
         await submitEmptyEmailAndTel()
+      } else {
+        await confirmNudge().then(() => closeAllModals())
       }
     } catch (e) {
       closeAllModals()
