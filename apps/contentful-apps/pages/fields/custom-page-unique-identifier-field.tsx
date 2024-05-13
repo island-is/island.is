@@ -17,7 +17,10 @@ const DEBOUNCE_TIME_IN_MS = 300
 const CustomPageUniqueIdentifierField = () => {
   const sdk = useSDK<FieldExtensionSDK>()
   const cma = useCMA()
-  const [selectedOption, setSelectedOption] = useState(sdk.field.getValue())
+  const [uniqueIdentifier, setUniqueIdentifier] = useState<string | null>(
+    sdk.field.getValue(),
+  )
+  const uniqueIdentifierRef = useRef(uniqueIdentifier)
   const [isSubpage, setIsSubpage] = useState<boolean | null>(null)
   const [subpageSlug, setSubpageSlug] = useState(
     sdk.locales.available.reduce((obj, locale) => {
@@ -32,6 +35,7 @@ const CustomPageUniqueIdentifierField = () => {
       return obj
     }, {}),
   )
+  const [uniqueIdentifierError, setUniqueIdentifierError] = useState('')
 
   const options = useMemo<string[]>(() => {
     const index = sdk.field.validations.findIndex(
@@ -71,7 +75,8 @@ const CustomPageUniqueIdentifierField = () => {
         const fieldValue = sdk.field.getValue()
         if (!fieldValue && options?.length > 0) {
           sdk.field.setValue(options[0])
-          setSelectedOption(options[0])
+          setUniqueIdentifier(options[0])
+          uniqueIdentifierRef.current = options[0]
         }
       }
     })
@@ -148,6 +153,34 @@ const CustomPageUniqueIdentifierField = () => {
     [subpageSlug],
   )
 
+  useDebounce(
+    async () => {
+      const response = await cma.entry.getMany({
+        query: {
+          content_type: 'customPage',
+          'sys.id[ne]': sdk.entry.getSys().id,
+          'fields.uniqueIdentifier': uniqueIdentifier,
+          'fields.parentPage.sys.id[exists]': false,
+        },
+      })
+
+      if (
+        !uniqueIdentifier ||
+        uniqueIdentifier !== uniqueIdentifierRef.current
+      ) {
+        return
+      }
+
+      setUniqueIdentifierError(
+        response.items.length > 0
+          ? `Unique identifier is already in use: ${uniqueIdentifier}`
+          : '',
+      )
+    },
+    DEBOUNCE_TIME_IN_MS,
+    [uniqueIdentifier],
+  )
+
   return (
     <div>
       {isSubpage === true && (
@@ -178,19 +211,25 @@ const CustomPageUniqueIdentifierField = () => {
         </div>
       )}
       {isSubpage === false && (
-        <Select
-          value={selectedOption}
-          onChange={({ target: { value } }) => {
-            setSelectedOption(value)
-            sdk.field.setValue(value)
-          }}
-        >
-          {options?.map((option) => (
-            <Select.Option key={option} value={option}>
-              {option}
-            </Select.Option>
-          ))}
-        </Select>
+        <div>
+          <Select
+            value={uniqueIdentifier}
+            onChange={({ target: { value } }) => {
+              setUniqueIdentifier(value)
+              uniqueIdentifierRef.current = value
+              sdk.field.setValue(value)
+            }}
+          >
+            {options?.map((option) => (
+              <Select.Option key={option} value={option}>
+                {option}
+              </Select.Option>
+            ))}
+          </Select>
+          {uniqueIdentifierError && (
+            <Text fontColor="red700">{uniqueIdentifierError}</Text>
+          )}
+        </div>
       )}
     </div>
   )
