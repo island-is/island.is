@@ -4,7 +4,7 @@ import { Auth, AuthMiddleware, User } from '@island.is/auth-nest-tools'
 import { handle404 } from '@island.is/clients/middlewares'
 import { InsuranceConfirmation } from './models/insuranceConfirmation.model'
 import { InsuranceOverview } from './models/insuranceOverview.model'
-import { LOGGER_PROVIDER, Logger } from '@island.is/logging'
+import { LOGGER_PROVIDER, type Logger } from '@island.is/logging'
 import { InsuranceStatusType } from './overview.types'
 
 const LOG_CATEGORY = 'rights-portal-overview'
