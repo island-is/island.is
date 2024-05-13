@@ -13,9 +13,18 @@ import { SequelizeConfigService } from '../core/sequelizeConfig.service'
 import { PasskeyModel } from './models/passkey.model'
 import { PasskeysCoreModule } from './passkeys-core.module'
 import { PasskeysCoreService } from './passkeys-core.service'
+import { ConfigModule } from '@nestjs/config'
+import { PasskeysCoreConfig } from './passkeys-core.config'
+
+const TEST_AUTHORIZATION_TOKEN =
+  'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJuYW1lIjoiR2VydmltYWR1ciB0ZXN0IiwiaWRwIjoiZ2VydmltYWR1ciJ9.nwPzZbpXWWBh2WFoHdCY0q9EwRBKBWwANVqF_c0cIPs'
 
 @Module({
   imports: [
+    ConfigModule.forRoot({
+      isGlobal: true,
+      load: [PasskeysCoreConfig],
+    }),
     SequelizeModule.forRootAsync({
       useClass: SequelizeConfigService,
     }),
@@ -56,6 +65,7 @@ describe('PasskeyCoreService', () => {
     it('should generate registration options', async () => {
       const user = {
         sub: USER_SUB,
+        authorization: TEST_AUTHORIZATION_TOKEN,
       } as any // since only user.sub is used in the function
 
       const opts = await passkeysCoreService.generateRegistrationOptions(user)
@@ -72,6 +82,7 @@ describe('PasskeyCoreService', () => {
     it('should not generate authentication options when passkey is not found for user', async () => {
       const user = {
         sub: USER_SUB,
+        authorization: TEST_AUTHORIZATION_TOKEN,
       } as any // since only user.sub is used in the function
 
       await expect(() =>
@@ -92,6 +103,7 @@ describe('PasskeyCoreService', () => {
 
       const user = {
         sub: USER_SUB,
+        authorization: TEST_AUTHORIZATION_TOKEN,
       } as any // since only user.sub is used in the function
 
       const opts = await passkeysCoreService.generateAuthenticationOptions(user)
