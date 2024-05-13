@@ -17,7 +17,6 @@ import {
   getPersonsFromExternalData,
 } from './health-insurance-declaration.utils'
 import { ApplicantType } from '@island.is/application/templates/health-insurance-declaration'
-import { is } from 'date-fns/locale'
 
 @Injectable()
 export class HealthInsuranceDeclarationService extends BaseTemplateApiService {
