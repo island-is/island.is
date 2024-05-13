@@ -76,16 +76,10 @@ export class IcelandicTransportAuthorityServices {
     let fullUrl = restURL
 
     if (queryParams) {
-      // Convert the query parameters to a query string
-      const queryString = Object.entries(queryParams)
-        .map(
-          ([key, value]) =>
-            `${encodeURIComponent(key)}=${encodeURIComponent(value)}`,
-        )
-        .join('&')
+      const searchParams = new URLSearchParams(queryParams)
 
       // Concatenate the URL with the query string
-      fullUrl = `${restURL}?${queryString}`
+      fullUrl = `${restURL}?${searchParams.toString()}`
     }
 
     const headers = {
