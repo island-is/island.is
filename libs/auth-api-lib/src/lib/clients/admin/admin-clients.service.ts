@@ -4,15 +4,17 @@ import {
   Injectable,
 } from '@nestjs/common'
 import { InjectModel } from '@nestjs/sequelize'
+import omit from 'lodash/omit'
 import { Includeable, Op, Transaction } from 'sequelize'
 import { Sequelize } from 'sequelize-typescript'
-import omit from 'lodash/omit'
 
 import { User } from '@island.is/auth-nest-tools'
 import { AdminPortalScope } from '@island.is/auth/scopes'
-import { NoContentException } from '@island.is/nest/problem'
 import { validateClientId } from '@island.is/auth/shared'
+import { NoContentException } from '@island.is/nest/problem'
 
+import { AdminScopeDTO } from '../../resources/admin/dto/admin-scope.dto'
+import { AdminTranslationService } from '../../resources/admin/services/admin-translation.service'
 import { ApiScope } from '../../resources/models/api-scope.model'
 import { Domain } from '../../resources/models/domain.model'
 import { TranslatedValueDto } from '../../translation/dto/translated-value.dto'
@@ -24,21 +26,19 @@ import {
   translateRefreshTokenExpiration,
 } from '../../types'
 import { ClientsService } from '../clients.service'
-import { Client } from '../models/client.model'
 import { ClientAllowedScope } from '../models/client-allowed-scope.model'
 import { ClientClaim } from '../models/client-claim.model'
 import { ClientGrantType } from '../models/client-grant-type.model'
-import { ClientRedirectUri } from '../models/client-redirect-uri.model'
 import { ClientPostLogoutRedirectUri } from '../models/client-post-logout-redirect-uri.model'
+import { ClientRedirectUri } from '../models/client-redirect-uri.model'
+import { Client } from '../models/client.model'
+import { AdminClientClaimDto } from './dto/admin-client-claim.dto'
 import { AdminClientDto } from './dto/admin-client.dto'
 import { AdminCreateClientDto } from './dto/admin-create-client.dto'
 import {
   AdminPatchClientDto,
   superUserFields,
 } from './dto/admin-patch-client.dto'
-import { AdminClientClaimDto } from './dto/admin-client-claim.dto'
-import { AdminTranslationService } from '../../resources/admin/services/admin-translation.service'
-import { AdminScopeDTO } from '../../resources/admin/dto/admin-scope.dto'
 
 export const clientBaseAttributes: Partial<Client> = {
   absoluteRefreshTokenLifetime: 8 * 60 * 60, // 8 hours
@@ -548,6 +548,7 @@ export class AdminClientsService {
           type: claim.type,
           value: claim.value,
         })) ?? [],
+      allowedAcr: client.allowedAcr ?? [],
     }
   }
 
