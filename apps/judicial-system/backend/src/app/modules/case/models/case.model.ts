@@ -29,6 +29,7 @@ import {
   CaseState,
   CaseType,
   CourtDocument,
+  IndictmentCaseReviewDecision,
   RequestSharedWithDefender,
   SessionArrangements,
   UserRole,
@@ -1252,4 +1253,15 @@ export class Case extends Model {
   @BelongsTo(() => User, 'indictmentReviewerId')
   @ApiPropertyOptional({ type: User })
   indictmentReviewer?: User
+
+  /**********
+   * The review decision in indictment cases
+   **********/
+  @Column({
+    type: DataType.ENUM,
+    allowNull: true,
+    values: Object.values(IndictmentCaseReviewDecision),
+  })
+  @ApiPropertyOptional({ enum: IndictmentCaseReviewDecision })
+  indictmentReviewDecision?: IndictmentCaseReviewDecision
 }
