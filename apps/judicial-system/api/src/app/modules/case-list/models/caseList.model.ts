@@ -5,6 +5,7 @@ import {
   CaseAppealRulingDecision,
   CaseAppealState,
   CaseDecision,
+  CaseIndictmentRulingDecision,
   CaseState,
   CaseType,
 } from '@island.is/judicial-system/types'
@@ -104,4 +105,10 @@ export class CaseListEntry {
 
   @Field({ nullable: true })
   readonly postponedIndefinitelyExplanation?: string
+
+  @Field(() => User, { nullable: true })
+  readonly indictmentReviewer?: User
+
+  @Field({ nullable: true })
+  readonly indictmentAppealDeadline?: string
 }

@@ -469,6 +469,11 @@ export const m = defineMessages({
       'Umsókn þín um að hefja ökunám og fá bráðabirgðaskírteini hefur verið móttekin. ',
     description: 'Application received',
   },
+  applicationDoneAlertMessageBFull: {
+    id: 'dl.application:applicationDoneAlertMessageBFull',
+    defaultMessage: 'Umsókn þín um fullnaðarskírteini hefur verið móttekin.',
+    description: 'Application received',
+  },
   nextStepsTitle: {
     id: 'dl.application:nextStepsTitle',
     defaultMessage: 'Næstu skref',
@@ -479,6 +484,11 @@ export const m = defineMessages({
     defaultMessage:
       'Næst þarf umsækjandi að mæta til sýslumanns með mynd og gefa rithandarsýnishorn.',
     description: 'Next steps',
+  },
+  nextStepsDescriptionBFull: {
+    id: 'dl.application:nextStepsDescriptionBFull#markdown',
+    defaultMessage: 'Næst þarf umsækjandi að mæta til sýslumanns',
+    description: '',
   },
   congratulationsCertificateTitle: {
     id: 'dl.application:congratulationsCertificateTitle',

@@ -928,14 +928,12 @@ const ParentalLeaveTemplate: ApplicationTemplate<
         exit: [
           'removeAddedEmployers',
           'removeAddedPeriods',
-          'clearChangeEmployerFileIfAddEmployerIsNo',
           'restorePeriodsFromTemp',
           'removeNullPeriod',
           'setNavId',
           'setActionName',
           'clearEmployers',
           'restoreEmployersFromTemp',
-          'clearChangeEmployerFileIfCancel',
         ],
         meta: {
           name: States.EDIT_OR_ADD_EMPLOYERS_AND_PERIODS,
@@ -1214,6 +1212,8 @@ const ParentalLeaveTemplate: ApplicationTemplate<
           'setPreviousState',
           'setNavId',
           'clearChangedPeriodsNEmployers',
+          'clearChangeEmployerFileIfAddEmployerIsNo',
+          'clearChangeEmployerFileIfCancel',
         ],
         meta: {
           name: States.VINNUMALASTOFNUN_APPROVE_EDITS,

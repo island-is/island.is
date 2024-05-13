@@ -16,7 +16,7 @@ import { Case } from './case.model'
 
 @Table({
   tableName: 'date_log',
-  timestamps: false,
+  timestamps: true,
 })
 export class DateLog extends Model {
   static arraignmentDate(dateLogs?: DateLog[]) {

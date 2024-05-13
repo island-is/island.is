@@ -93,11 +93,33 @@ export enum CaseState {
   WAITING_FOR_CONFIRMATION = 'WAITING_FOR_CONFIRMATION',
   SUBMITTED = 'SUBMITTED',
   RECEIVED = 'RECEIVED',
+  MAIN_HEARING = 'MAIN_HEARING',
+  COMPLETED = 'COMPLETED',
   ACCEPTED = 'ACCEPTED',
   REJECTED = 'REJECTED',
-  DELETED = 'DELETED',
   DISMISSED = 'DISMISSED',
-  MAIN_HEARING = 'MAIN_HEARING',
+  DELETED = 'DELETED',
+}
+
+export enum IndictmentCaseState {
+  DRAFT = CaseState.DRAFT,
+  WAITING_FOR_CONFIRMATION = CaseState.WAITING_FOR_CONFIRMATION,
+  SUBMITTED = CaseState.SUBMITTED,
+  RECEIVED = CaseState.RECEIVED,
+  MAIN_HEARING = CaseState.MAIN_HEARING,
+  COMPLETED = CaseState.COMPLETED,
+  DELETED = CaseState.DELETED,
+}
+
+export enum RequestCaseState {
+  NEW = CaseState.NEW,
+  DRAFT = CaseState.DRAFT,
+  SUBMITTED = CaseState.SUBMITTED,
+  RECEIVED = CaseState.RECEIVED,
+  ACCEPTED = CaseState.ACCEPTED,
+  REJECTED = CaseState.REJECTED,
+  DISMISSED = CaseState.DISMISSED,
+  DELETED = CaseState.DELETED,
 }
 
 export enum CaseAppealState {
@@ -110,21 +132,49 @@ export enum CaseAppealState {
 export enum CaseTransition {
   OPEN = 'OPEN',
   ASK_FOR_CONFIRMATION = 'ASK_FOR_CONFIRMATION',
+  DENY_INDICTMENT = 'DENY_INDICTMENT',
   SUBMIT = 'SUBMIT',
   RECEIVE = 'RECEIVE',
+  RETURN_INDICTMENT = 'RETURN_INDICTMENT',
+  REDISTRIBUTE = 'REDISTRIBUTE',
+  COMPLETE = 'COMPLETE',
   ACCEPT = 'ACCEPT',
   REJECT = 'REJECT',
-  DELETE = 'DELETE',
   DISMISS = 'DISMISS',
+  DELETE = 'DELETE',
   REOPEN = 'REOPEN',
   APPEAL = 'APPEAL',
   RECEIVE_APPEAL = 'RECEIVE_APPEAL',
   COMPLETE_APPEAL = 'COMPLETE_APPEAL',
   REOPEN_APPEAL = 'REOPEN_APPEAL',
   WITHDRAW_APPEAL = 'WITHDRAW_APPEAL',
+}
+
+export enum IndictmentCaseTransition {
+  ASK_FOR_CONFIRMATION = 'ASK_FOR_CONFIRMATION',
   DENY_INDICTMENT = 'DENY_INDICTMENT',
+  SUBMIT = 'SUBMIT',
+  RECEIVE = 'RECEIVE',
   RETURN_INDICTMENT = 'RETURN_INDICTMENT',
   REDISTRIBUTE = 'REDISTRIBUTE',
+  COMPLETE = 'COMPLETE',
+  DELETE = 'DELETE',
+}
+
+export enum RequestCaseTransition {
+  OPEN = 'OPEN',
+  SUBMIT = 'SUBMIT',
+  RECEIVE = 'RECEIVE',
+  ACCEPT = 'ACCEPT',
+  REJECT = 'REJECT',
+  DISMISS = 'DISMISS',
+  DELETE = 'DELETE',
+  REOPEN = 'REOPEN',
+  APPEAL = 'APPEAL',
+  RECEIVE_APPEAL = 'RECEIVE_APPEAL',
+  COMPLETE_APPEAL = 'COMPLETE_APPEAL',
+  REOPEN_APPEAL = 'REOPEN_APPEAL',
+  WITHDRAW_APPEAL = 'WITHDRAW_APPEAL',
 }
 
 /* eslint-disable @typescript-eslint/naming-convention */
@@ -176,6 +226,11 @@ export enum CaseAppealRulingDecision {
   DISCONTINUED = 'DISCONTINUED',
 }
 
+export enum CaseIndictmentRulingDecision {
+  RULING = 'RULING',
+  FINE = 'FINE',
+}
+
 export enum SessionArrangements {
   ALL_PRESENT = 'ALL_PRESENT',
   ALL_PRESENT_SPOKESPERSON = 'ALL_PRESENT_SPOKESPERSON',
@@ -193,6 +248,12 @@ export enum DefendantPlea {
   GUILTY = 'GUILTY',
   NOT_GUILTY = 'NOT_GUILTY',
   NO_PLEA = 'NO_PLEA',
+}
+
+export enum ServiceRequirement {
+  REQUIRED = 'REQUIRED',
+  NOT_REQUIRED = 'NOT_REQUIRED',
+  NOT_APPLICABLE = 'NOT_APPLICABLE',
 }
 
 export const indictmentCases = [CaseType.INDICTMENT]
@@ -235,22 +296,33 @@ export const isInvestigationCase = (type?: CaseType | null): boolean => {
   return Boolean(type && investigationCases.includes(type))
 }
 
+export const isRequestCase = (type?: CaseType | null): boolean => {
+  return Boolean(type && (isRestrictionCase(type) || isInvestigationCase(type)))
+}
+
 export const acceptedCaseDecisions = [
   CaseDecision.ACCEPTING,
   CaseDecision.ACCEPTING_PARTIALLY,
 ]
 
+// TODO: Move to the client as it is only used there
 export const isAcceptingCaseDecision = (
   decision?: CaseDecision | null,
 ): boolean => {
   return Boolean(decision && acceptedCaseDecisions.includes(decision))
 }
 
-export const completedCaseStates = [
+export const completedRequestCaseStates = [
   CaseState.ACCEPTED,
   CaseState.REJECTED,
   CaseState.DISMISSED,
 ]
+
+export const completedIndictmentCaseStates = [CaseState.COMPLETED]
+
+export const completedCaseStates = completedRequestCaseStates.concat(
+  completedIndictmentCaseStates,
+)
 
 export const isCompletedCase = (state?: CaseState | null): boolean => {
   return Boolean(state && completedCaseStates.includes(state))
@@ -294,6 +366,36 @@ export const prosecutorCanSelectDefenderForInvestigationCase = (
         CaseType.RESTRAINING_ORDER_AND_EXPULSION_FROM_HOME,
         CaseType.OTHER,
       ].includes(type),
+  )
+}
+
+export const isIndictmentCaseState = (
+  state: string,
+): state is IndictmentCaseState => {
+  return Object.values(IndictmentCaseState).includes(
+    state as IndictmentCaseState,
+  )
+}
+
+export const isRequestCaseState = (
+  state: string,
+): state is RequestCaseState => {
+  return Object.values(RequestCaseState).includes(state as RequestCaseState)
+}
+
+export const isIndictmentCaseTransition = (
+  transition: string,
+): transition is IndictmentCaseTransition => {
+  return Object.values(IndictmentCaseTransition).includes(
+    transition as IndictmentCaseTransition,
+  )
+}
+
+export const isRequestCaseTransition = (
+  transition: string,
+): transition is RequestCaseTransition => {
+  return Object.values(RequestCaseTransition).includes(
+    transition as RequestCaseTransition,
   )
 }
 

@@ -496,4 +496,18 @@ export class NotificationsService {
       )
     }
   }
+
+  async markAllAsRead(user: User): Promise<void> {
+    try {
+      await this.notificationModel.update(
+        { read: true },
+        { where: { recipient: user.nationalId, read: false } },
+      )
+    } catch (error) {
+      this.logger.error('Error marking all notifications as read:', error)
+      throw new InternalServerErrorException(
+        'Error marking all notifications as read',
+      )
+    }
+  }
 }

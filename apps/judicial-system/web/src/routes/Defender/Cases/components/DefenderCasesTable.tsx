@@ -180,31 +180,33 @@ export const DefenderCasesTable: React.FC<React.PropsWithChildren<Props>> = (
                   </td>
                 ) : (
                   <td className={styles.td}>
-                    {column.postponedIndefinitelyExplanation
-                      ? formatMessage(strings.postponed)
-                      : column.courtDate && (
-                          <>
-                            <Text>
-                              <Box
-                                component="span"
-                                className={styles.blockColumn}
-                              >
-                                {capitalize(
-                                  format(
-                                    parseISO(column.courtDate),
-                                    'EEEE d. LLLL y',
-                                    {
-                                      locale: localeIS,
-                                    },
-                                  ),
-                                ).replace('dagur', 'd.')}
-                              </Box>
-                            </Text>
-                            <Text as="span" variant="small">
-                              kl. {format(parseISO(column.courtDate), 'kk:mm')}
-                            </Text>
-                          </>
-                        )}
+                    {column.postponedIndefinitelyExplanation ? (
+                      <Text>{formatMessage(strings.postponed)}</Text>
+                    ) : (
+                      column.courtDate && (
+                        <>
+                          <Text>
+                            <Box
+                              component="span"
+                              className={styles.blockColumn}
+                            >
+                              {capitalize(
+                                format(
+                                  parseISO(column.courtDate),
+                                  'EEEE d. LLLL y',
+                                  {
+                                    locale: localeIS,
+                                  },
+                                ),
+                              ).replace('dagur', 'd.')}
+                            </Box>
+                          </Text>
+                          <Text as="span" variant="small">
+                            kl. {format(parseISO(column.courtDate), 'kk:mm')}
+                          </Text>
+                        </>
+                      )
+                    )}
                   </td>
                 )}
                 <td>

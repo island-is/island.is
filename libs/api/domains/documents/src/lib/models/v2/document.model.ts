@@ -16,8 +16,8 @@ export class Document {
   @Field({ nullable: true })
   categoryId?: string
 
-  @Field(() => GraphQLISODateTime)
-  publicationDate!: Date
+  @Field(() => GraphQLISODateTime, { nullable: true })
+  publicationDate?: Date
 
   @Field(() => GraphQLISODateTime, { nullable: true })
   documentDate?: Date
