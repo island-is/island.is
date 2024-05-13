@@ -51,11 +51,16 @@ const Completed: FC = () => {
             {formatMessage(strings.heading)}
           </Text>
         </Box>
-        <Box marginBottom={5}>
+        <Box marginBottom={5} component="section">
           <InfoCardClosedIndictment />
         </Box>
-        <Box marginBottom={5}>
+        <Box marginBottom={5} component="section">
           <IndictmentCaseFilesList workingCase={workingCase} />
+        </Box>
+        <Box marginBottom={5} component="section">
+          <SectionHeading
+            title={formatMessage(strings.criminalRecordUpdateTitle)}
+          />
         </Box>
         {workingCase.indictmentRulingDecision ===
           CaseIndictmentRulingDecision.RULING && (

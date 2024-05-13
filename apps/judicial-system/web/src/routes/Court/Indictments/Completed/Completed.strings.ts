@@ -12,6 +12,11 @@ const strings = defineMessages({
     description:
       'Notaður sem texti á takka til að senda mál til ríkissaksóknara.',
   },
+  criminalRecordUpdateTitle: {
+    id: 'judicial.system.core:indictments.completed.criminal_record_update_title',
+    defaultMessage: 'Tilkynning til sakaskrár',
+    description: 'Notaður sem titill á spurningu um birtingu dóms.',
+  },
   serviceRequirementRequired: {
     id: 'judicial.system.core:indictments.completed.service_requirement_required',
     defaultMessage: 'Birta skal dómfellda dóminn',
