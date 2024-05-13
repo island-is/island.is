@@ -317,9 +317,9 @@ export class CaseController {
           update.postponedIndefinitelyExplanation = null
           update.courtDate = null
           update.rulingDate === nowFactory()
+        } else {
+          update.rulingDate = theCase.courtEndTime
         }
-
-        update.rulingDate = theCase.courtEndTime
 
         // Handle appealed in court
         if (
