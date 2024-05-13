@@ -2,17 +2,18 @@ import React from 'react'
 import { useIntl } from 'react-intl'
 import { AnimatePresence } from 'framer-motion'
 
-import { Box, Text } from '@island.is/island-ui/core'
-import { capitalize } from '@island.is/judicial-system/formatters'
+import { Text } from '@island.is/island-ui/core'
+import { capitalize, formatDate } from '@island.is/judicial-system/formatters'
 import { core, tables } from '@island.is/judicial-system-web/messages'
 import { SectionHeading } from '@island.is/judicial-system-web/src/components'
 import { useContextMenu } from '@island.is/judicial-system-web/src/components/ContextMenu/ContextMenu'
 import {
   CourtCaseNumber,
   DefendantInfo,
-  TableSkeleton,
 } from '@island.is/judicial-system-web/src/components/Table'
-import Table from '@island.is/judicial-system-web/src/components/Table/Table'
+import Table, {
+  TableWrapper,
+} from '@island.is/judicial-system-web/src/components/Table/Table'
 import TableInfoContainer from '@island.is/judicial-system-web/src/components/Table/TableInfoContainer/TableInfoContainer'
 import TagCaseState, {
   mapIndictmentCaseStateToTagVariant,
@@ -23,13 +24,11 @@ import { strings } from './CasesForReview.strings'
 
 interface CasesForReviewTableProps {
   loading: boolean
-
   cases: CaseListEntry[]
 }
 
 const CasesForReview: React.FC<CasesForReviewTableProps> = ({
   loading,
-
   cases,
 }) => {
   const { formatMessage } = useIntl()
@@ -39,10 +38,8 @@ const CasesForReview: React.FC<CasesForReviewTableProps> = ({
     <>
       <SectionHeading title={formatMessage(strings.title)} />
       <AnimatePresence initial={false}>
-        <Box marginBottom={[5, 5, 12]}>
-          {loading ? (
-            <TableSkeleton />
-          ) : cases.length > 0 ? (
+        <TableWrapper loading={loading}>
+          {cases.length > 0 ? (
             <Table
               thead={[
                 {
@@ -59,12 +56,12 @@ const CasesForReview: React.FC<CasesForReviewTableProps> = ({
                 { title: formatMessage(tables.deadline) },
               ]}
               data={cases}
-              generateContextMenuItems={(row: CaseListEntry) => {
+              generateContextMenuItems={(row) => {
                 return [openCaseInNewTabMenuItem(row.id)]
               }}
               columns={[
                 {
-                  cell: (row: CaseListEntry) => (
+                  cell: (row) => (
                     <CourtCaseNumber
                       courtCaseNumber={row.courtCaseNumber ?? ''}
                       policeCaseNumbers={row.policeCaseNumbers ?? []}
@@ -73,27 +70,28 @@ const CasesForReview: React.FC<CasesForReviewTableProps> = ({
                   ),
                 },
                 {
-                  cell: (row: CaseListEntry) => (
-                    <DefendantInfo defendants={row.defendants} />
-                  ),
+                  cell: (row) => <DefendantInfo defendants={row.defendants} />,
                 },
                 {
-                  cell: (row: CaseListEntry) => (
+                  cell: (row) => (
                     <TagCaseState
                       caseState={row.state}
                       customMapCaseStateToTag={
                         mapIndictmentCaseStateToTagVariant
                       }
+                      indictmentReviewer={row.indictmentReviewer}
                     />
                   ),
                 },
                 {
                   cell: (row: CaseListEntry) => (
-                    <Text>{row.prosecutor?.name}</Text>
+                    <Text>{row.indictmentReviewer?.name}</Text>
                   ),
                 },
                 {
-                  cell: () => <Text>-</Text>, //TODO: Add deadline
+                  cell: (row: CaseListEntry) => (
+                    <Text>{formatDate(row.indictmentAppealDeadline, 'P')}</Text>
+                  ),
                 },
               ]}
             />
@@ -103,7 +101,7 @@ const CasesForReview: React.FC<CasesForReviewTableProps> = ({
               message={formatMessage(strings.infoContainerMessage)}
             />
           )}
-        </Box>
+        </TableWrapper>
       </AnimatePresence>
     </>
   )

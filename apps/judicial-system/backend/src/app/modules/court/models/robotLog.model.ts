@@ -22,6 +22,7 @@ export class RobotLog extends Model {
   id!: string
 
   @CreatedAt
+  @Column({ type: DataType.DATE })
   created!: Date
 
   @Column({ type: DataType.INTEGER })

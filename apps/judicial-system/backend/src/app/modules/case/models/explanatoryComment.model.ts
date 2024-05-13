@@ -16,7 +16,7 @@ import { Case } from './case.model'
 
 @Table({
   tableName: 'explanatory_comment',
-  timestamps: false,
+  timestamps: true,
 })
 export class ExplanatoryComment extends Model {
   static postponedIndefinitelyExplanation(

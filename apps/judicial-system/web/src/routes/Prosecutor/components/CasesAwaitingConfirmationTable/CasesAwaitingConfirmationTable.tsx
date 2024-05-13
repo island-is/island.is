@@ -2,7 +2,7 @@ import React from 'react'
 import { useIntl } from 'react-intl'
 import { AnimatePresence } from 'framer-motion'
 
-import { Box, Text } from '@island.is/island-ui/core'
+import { Text } from '@island.is/island-ui/core'
 import { capitalize } from '@island.is/judicial-system/formatters'
 import { core, tables } from '@island.is/judicial-system-web/messages'
 import {
@@ -16,9 +16,10 @@ import {
   CourtCaseNumber,
   CreatedDate,
   DefendantInfo,
-  TableSkeleton,
 } from '@island.is/judicial-system-web/src/components/Table'
-import Table from '@island.is/judicial-system-web/src/components/Table/Table'
+import Table, {
+  TableWrapper,
+} from '@island.is/judicial-system-web/src/components/Table/Table'
 import TableInfoContainer from '@island.is/judicial-system-web/src/components/Table/TableInfoContainer/TableInfoContainer'
 import {
   CaseListEntry,
@@ -46,10 +47,8 @@ const CasesAwaitingConfirmationTable: React.FC<
     <>
       <SectionHeading title={formatMessage(strings.title)} />
       <AnimatePresence initial={false}>
-        <Box marginBottom={[5, 5, 12]}>
-          {loading || isFiltering ? (
-            <TableSkeleton />
-          ) : cases.length > 0 ? (
+        <TableWrapper loading={loading || isFiltering}>
+          {cases.length > 0 ? (
             <Table
               thead={[
                 {
@@ -65,9 +64,7 @@ const CasesAwaitingConfirmationTable: React.FC<
                   title: formatMessage(tables.type),
                 },
                 {
-                  title: capitalize(
-                    formatMessage(tables.created, { suffix: 'i' }),
-                  ),
+                  title: capitalize(formatMessage(tables.created)),
                   sortable: { isSortable: true, key: 'createdAt' },
                 },
                 { title: formatMessage(tables.state) },
@@ -76,7 +73,7 @@ const CasesAwaitingConfirmationTable: React.FC<
                 },
               ]}
               data={cases}
-              generateContextMenuItems={(row: CaseListEntry) => {
+              generateContextMenuItems={(row) => {
                 return [
                   openCaseInNewTabMenuItem(row.id),
                   {
@@ -90,7 +87,7 @@ const CasesAwaitingConfirmationTable: React.FC<
               }}
               columns={[
                 {
-                  cell: (row: CaseListEntry) => (
+                  cell: (row) => (
                     <CourtCaseNumber
                       courtCaseNumber={row.courtCaseNumber ?? ''}
                       policeCaseNumbers={row.policeCaseNumbers ?? []}
@@ -99,19 +96,13 @@ const CasesAwaitingConfirmationTable: React.FC<
                   ),
                 },
                 {
-                  cell: (row: CaseListEntry) => (
-                    <DefendantInfo defendants={row.defendants} />
-                  ),
+                  cell: (row) => <DefendantInfo defendants={row.defendants} />,
                 },
                 {
-                  cell: (row: CaseListEntry) => (
-                    <ColumnCaseType type={row.type} />
-                  ),
+                  cell: (row) => <ColumnCaseType type={row.type} />,
                 },
                 {
-                  cell: (row: CaseListEntry) => (
-                    <CreatedDate created={row.created} />
-                  ),
+                  cell: (row) => <CreatedDate created={row.created} />,
                 },
                 {
                   cell: () => (
@@ -121,9 +112,7 @@ const CasesAwaitingConfirmationTable: React.FC<
                   ),
                 },
                 {
-                  cell: (row: CaseListEntry) => (
-                    <Text as="span">{row.prosecutor?.name}</Text>
-                  ),
+                  cell: (row) => <Text as="span">{row.prosecutor?.name}</Text>,
                 },
               ]}
             />
@@ -133,7 +122,7 @@ const CasesAwaitingConfirmationTable: React.FC<
               message={formatMessage(strings.noCasesMessage)}
             />
           )}
-        </Box>
+        </TableWrapper>
       </AnimatePresence>
     </>
   )

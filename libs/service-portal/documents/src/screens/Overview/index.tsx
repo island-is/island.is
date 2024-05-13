@@ -3,6 +3,7 @@ import ServicePortalDocuments from './Overview'
 import ServicePortalDocumentsV2 from './OverviewV2'
 import { useEffect, useState } from 'react'
 import { DocumentsProvider } from './DocumentContext'
+import { Box } from '@island.is/island-ui/core'
 
 export const DocumentIndex = () => {
   const featureFlagClient = useFeatureFlagClient()
@@ -22,9 +23,11 @@ export const DocumentIndex = () => {
 
   if (v2Enabled) {
     return (
-      <DocumentsProvider>
-        <ServicePortalDocumentsV2 />
-      </DocumentsProvider>
+      <Box paddingTop={2}>
+        <DocumentsProvider>
+          <ServicePortalDocumentsV2 />
+        </DocumentsProvider>
+      </Box>
     )
   }
   if (v2Enabled === false) {

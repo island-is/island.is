@@ -12,10 +12,6 @@ import { Response } from 'express'
 import { ApiScope } from '@island.is/auth/scopes'
 import type { User } from '@island.is/auth-nest-tools'
 import {
-  NemandiFerillFerillFileTranscriptGetLocaleEnum,
-  UniversityOfIcelandService,
-} from '@island.is/clients/university-of-iceland'
-import {
   CurrentUser,
   IdsUserGuard,
   Scopes,
@@ -23,17 +19,23 @@ import {
 } from '@island.is/auth-nest-tools'
 import { AuditService } from '@island.is/nest/audit'
 import { GetEducationGraduationDocumentDto } from './dto/getEducationGraduationDocument'
+import {
+  UniversityCareersClientService,
+  UniversityIdShort,
+} from '@island.is/clients/university-careers'
+import { Locale } from '@island.is/shared/types'
+import { UniversityShortIdMap } from '@island.is/clients/university-careers'
 
 @UseGuards(IdsUserGuard, ScopesGuard)
 @Scopes(ApiScope.education)
 @Controller('education')
 export class EducationController {
   constructor(
-    private readonly universityOfIcelandApi: UniversityOfIcelandService,
+    private readonly universitiesApi: UniversityCareersClientService,
     private readonly auditService: AuditService,
   ) {}
 
-  @Post('/graduation/:lang/:trackNumber')
+  @Post('/graduation/:lang/:university/:trackNumber')
   @Header('Content-Type', 'application/pdf')
   @ApiOkResponse({
     content: { 'application/pdf': {} },
@@ -43,7 +45,9 @@ export class EducationController {
   async getEducationGraduationPDF(
     @Param('trackNumber') trackNumber: string,
     @Param('lang') lang: string,
-    @CurrentUser() user: User,
+    @Param('university') uni: UniversityIdShort,
+    @CurrentUser()
+    user: User,
     @Body() resource: GetEducationGraduationDocumentDto,
     @Res() res: Response,
   ) {
@@ -52,17 +56,18 @@ export class EducationController {
       authorization: `Bearer ${resource.__accessToken}`,
     }
 
-    const documentResponse = await this.universityOfIcelandApi.studentCareerPDF(
+    const documentResponse = await this.universitiesApi.getStudentTrackPdf(
       authUser,
       parseInt(trackNumber),
-      lang as NemandiFerillFerillFileTranscriptGetLocaleEnum,
+      UniversityShortIdMap[uni],
+      lang as Locale,
     )
 
     if (documentResponse) {
       this.auditService.audit({
-        action: 'getVehicleHistoryPdf',
+        action: 'getStudentTrackEducationGraduationPdf',
         auth: user,
-        resources: trackNumber,
+        resources: `${trackNumber}/${lang}/${uni}`,
       })
 
       const contentArrayBuffer = await documentResponse.arrayBuffer()
@@ -71,7 +76,7 @@ export class EducationController {
       res.header('Content-length', buffer.length.toString())
       res.header(
         'Content-Disposition',
-        `inline; filename=${user.nationalId}-brautskraning-${trackNumber}.pdf`,
+        `inline; filename=${user.nationalId}-skoli-${UniversityShortIdMap[uni]}-brautskraning-${trackNumber}.pdf`,
       )
       res.header('Content-Type: application/pdf')
       res.header('Pragma: no-cache')
