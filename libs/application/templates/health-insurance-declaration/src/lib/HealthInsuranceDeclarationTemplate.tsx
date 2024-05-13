@@ -7,7 +7,6 @@ import {
   ChildrenCustodyInformationApi,
   DefaultEvents,
   FormModes,
-  HealthInsuranceStatementsApi,
   InstitutionNationalIds,
   NationalRegistrySpouseApi,
   NationalRegistryUserApi,
