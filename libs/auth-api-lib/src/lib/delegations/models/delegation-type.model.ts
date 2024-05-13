@@ -1,5 +1,5 @@
 import {
-  CreationOptional,
+  type CreationOptional,
   InferAttributes,
   InferCreationAttributes,
 } from 'sequelize'
