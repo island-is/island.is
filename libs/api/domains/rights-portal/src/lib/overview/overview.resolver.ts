@@ -8,20 +8,13 @@ import {
   Scopes,
   CurrentUser,
 } from '@island.is/auth-nest-tools'
-import {
-  FeatureFlag,
-  FeatureFlagGuard,
-  Features,
-} from '@island.is/nest/feature-flags'
 import type { User } from '@island.is/auth-nest-tools'
 import { OverviewService } from './overview.service'
 import { InsuranceConfirmationResponse } from './models/insuranceConfirmation.response'
 import { InsuranceOverviewResponse } from './models/insuranceOverview.response'
 
 @Resolver()
-@UseGuards(IdsUserGuard, ScopesGuard, FeatureFlagGuard)
-@FeatureFlag(Features.servicePortalHealthRightsModule)
-@FeatureFlag(Features.servicePortalHealthOverviewPage)
+@UseGuards(IdsUserGuard, ScopesGuard)
 @Audit({ namespace: '@island.is/api/rights-portal/overview' })
 @Scopes(ApiScope.healthRightsStatus)
 export class OverviewResolver {
