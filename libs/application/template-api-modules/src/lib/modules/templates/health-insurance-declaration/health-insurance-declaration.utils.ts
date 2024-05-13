@@ -1,14 +1,13 @@
 import {
+  ApplicantChildCustodyInformation,
   Application,
   NationalRegistryIndividual,
+  NationalRegistrySpouse,
 } from '@island.is/application/types'
 import {
-  ApplicantType,
   HealthInsuranceDeclarationApplication,
   InsuranceStatementData,
   SubmitApplicationData,
-  getChildrenFromExternalData,
-  getSpouseFromExternalData,
 } from '@island.is/application/templates/health-insurance-declaration'
 import { DocumentInfo } from './attachments/provider'
 import {
@@ -16,6 +15,7 @@ import {
   InsuranceStatementsApplicantDTO,
   InsuranceStatementsTouristApplicationDTO,
 } from '@island.is/clients/icelandic-health-insurance/rights-portal'
+import { ApplicantType } from './consts'
 
 export const getApplicantType = (application: Application) => {
   return application.answers.studentOrTouristRadioFieldTourist
@@ -100,17 +100,29 @@ export const getApplicantsFromExternalData = ({
   return (externalData.submitApplication.data as SubmitApplicationData)
     .applicants
 }
+export const getChildrenFromExternalData = ({ externalData }: Application) => {
+  return (
+    (externalData?.childrenCustodyInformation
+      ?.data as ApplicantChildCustodyInformation[]) ?? []
+  )
+}
+export const getSpouseFromExternalData = ({ externalData }: Application) => {
+  return externalData?.nationalRegistrySpouse?.data as NationalRegistrySpouse
+}
 
-export const getPersonsFromExternalData = ({ externalData }: Application) => {
-  const children = getChildrenFromExternalData(externalData)
-  const spouse = getSpouseFromExternalData(externalData)
+export const getPersonsFromExternalData = (application: Application) => {
+  const children = getChildrenFromExternalData(application)
+  const spouse = getSpouseFromExternalData(application)
   const persons = [
     {
       nationalId: (
-        externalData.nationalRegistry.data as NationalRegistryIndividual
+        application.externalData.nationalRegistry
+          .data as NationalRegistryIndividual
       ).nationalId,
-      name: (externalData.nationalRegistry.data as NationalRegistryIndividual)
-        .fullName,
+      name: (
+        application.externalData.nationalRegistry
+          .data as NationalRegistryIndividual
+      ).fullName,
     },
   ]
   persons.push({

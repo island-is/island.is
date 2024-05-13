@@ -16,7 +16,7 @@ import {
   getApplicantsFromExternalData,
   getPersonsFromExternalData,
 } from './health-insurance-declaration.utils'
-import { ApplicantType } from '@island.is/application/templates/health-insurance-declaration'
+import { ApplicantType } from './consts'
 
 @Injectable()
 export class HealthInsuranceDeclarationService extends BaseTemplateApiService {
@@ -37,10 +37,7 @@ export class HealthInsuranceDeclarationService extends BaseTemplateApiService {
     ).getInsuranceStatementStatus({
       applicantNationalId: application.auth.nationalId,
     })
-    if (response.canApply) {
-      return true
-    }
-    return false
+    return !!response.canApply
   }
 
   async continents(application: TemplateApiModuleActionProps) {
