@@ -2,7 +2,7 @@ import React, { useMemo } from 'react'
 import { useIntl } from 'react-intl'
 
 import { AlertMessage } from '@island.is/island-ui/core'
-import { completedCaseStates } from '@island.is/judicial-system/types'
+import { isCompletedCase } from '@island.is/judicial-system/types'
 import { errors, titles } from '@island.is/judicial-system-web/messages'
 import {
   Logo,
@@ -25,11 +25,7 @@ export const PublicProsecutorCases: React.FC = () => {
   const resCases = data?.cases
 
   const casesForReview = useMemo(() => {
-    return (
-      resCases?.filter(
-        (c) => c.state && completedCaseStates.includes(c.state),
-      ) || []
-    )
+    return resCases?.filter((c) => c.state && isCompletedCase(c.state)) || []
   }, [resCases])
 
   return (

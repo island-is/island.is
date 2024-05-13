@@ -135,8 +135,8 @@ const devConfig = () => ({
       'r1/IS-DEV/GOV/10005/Logreglan-Protected/Sakavottord-PDF-v2',
   },
   education: {
-    xroadLicenseServiceId: 'IS-DEV/EDU/10020/MMS-Protected/license-api-v1',
-    xroadGradeServiceId: 'IS-DEV/EDU/10020/MMS-Protected/grade-api-v1',
+    xroadLicenseServiceId: 'IS-DEV/GOV/10066/MMS-Protected/license-api-v1',
+    xroadGradeServiceId: 'IS-DEV/GOV/10066/MMS-Protected/grade-api-v1',
     fileDownloadBucket: 'island-is-dev-download-cache-api',
   },
   fileStorage: {
