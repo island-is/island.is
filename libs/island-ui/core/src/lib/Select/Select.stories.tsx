@@ -2,7 +2,6 @@ import React from 'react'
 
 import { withFigma } from '../../utils/withFigma'
 import { Select } from './Select'
-import { Option, SelectProps } from './Select.types'
 
 export default {
   title: 'Form/Select',
@@ -27,7 +26,7 @@ const options = [
   },
 ]
 
-const args = {
+const selectArgs = {
   name: 'select',
   label: 'Label text',
   placeholder: 'Text',
@@ -42,52 +41,52 @@ const args = {
 }
 
 export const Default = Template.bind({})
-Default.args = args
+Default.args = selectArgs
 
 export const Blue = Template.bind({})
 Blue.args = {
-  ...args,
+  ...selectArgs,
   backgroundColor: 'blue',
 }
 
 export const Disabled = Template.bind({})
 Disabled.args = {
-  ...args,
+  ...selectArgs,
   isDisabled: true,
 }
 
 export const NoOption = Template.bind({})
 NoOption.args = {
-  ...args,
+  ...selectArgs,
   noOptionsMessage: 'Enginn valmöguleiki',
 }
 
 export const Clearable = Template.bind({})
 Clearable.args = {
-  ...args,
+  ...selectArgs,
   isClearable: true,
 }
 
 export const Searchable = Template.bind({})
 Searchable.args = {
-  ...args,
+  ...selectArgs,
   isSearchable: true,
 }
 
 export const SizeSm = Template.bind({})
 SizeSm.args = {
-  ...args,
+  ...selectArgs,
   size: 'sm',
 }
 
 export const SizeXs = Template.bind({})
 SizeXs.args = {
-  ...args,
+  ...selectArgs,
   size: 'xs',
 }
 
 export const WithError = Template.bind({})
 WithError.args = {
-  ...args,
+  ...selectArgs,
   hasError: true,
 }
