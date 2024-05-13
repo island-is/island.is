@@ -1,4 +1,12 @@
-import { Allow, IsArray, IsOptional } from 'class-validator'
+import {
+  Allow,
+  ArrayMinSize,
+  IsArray,
+  IsEnum,
+  IsObject,
+  IsOptional,
+  IsString,
+} from 'class-validator'
 import { GraphQLJSONObject } from 'graphql-type-json'
 
 import { Field, ID, InputType } from '@nestjs/graphql'
@@ -59,6 +67,8 @@ export class UpdateCaseInput {
   @Allow()
   @IsOptional()
   @IsArray()
+  @ArrayMinSize(1)
+  @IsString({ each: true })
   @Field(() => [String], { nullable: true })
   readonly policeCaseNumbers?: string[]
 
@@ -140,12 +150,14 @@ export class UpdateCaseInput {
   @Allow()
   @IsOptional()
   @IsArray()
+  @IsEnum(CaseLegalProvisions, { each: true })
   @Field(() => [CaseLegalProvisions], { nullable: true })
   readonly legalProvisions?: CaseLegalProvisions[]
 
   @Allow()
   @IsOptional()
   @IsArray()
+  @IsEnum(CaseCustodyRestrictions, { each: true })
   @Field(() => [CaseCustodyRestrictions], { nullable: true })
   readonly requestedCustodyRestrictions?: CaseCustodyRestrictions[]
 
@@ -247,6 +259,7 @@ export class UpdateCaseInput {
   @Allow()
   @IsOptional()
   @IsArray()
+  @IsObject({ each: true })
   @Field(() => [GraphQLJSONObject], { nullable: true })
   readonly courtDocuments?: CourtDocument[]
 
@@ -443,6 +456,7 @@ export class UpdateCaseInput {
   @Allow()
   @IsOptional()
   @IsArray()
+  @IsEnum(UserRole, { each: true })
   @Field(() => [UserRole], { nullable: true })
   readonly requestAppealRulingNotToBePublished?: UserRole[]
 

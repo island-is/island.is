@@ -18,7 +18,7 @@ export class Notification {
   @Field(() => ID)
   readonly id!: string
 
-  @Field(() => ID, { nullable: true })
+  @Field(() => String, { nullable: true })
   readonly created?: string
 
   @Field(() => ID, { nullable: true })

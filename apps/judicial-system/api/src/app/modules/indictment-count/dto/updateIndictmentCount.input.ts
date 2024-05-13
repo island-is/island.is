@@ -1,4 +1,4 @@
-import { Allow, IsOptional } from 'class-validator'
+import { Allow, IsArray, IsEnum, IsOptional } from 'class-validator'
 import { GraphQLJSONObject } from 'graphql-type-json'
 
 import { Field, ID, InputType } from '@nestjs/graphql'
@@ -28,6 +28,8 @@ export class UpdateIndictmentCountInput {
 
   @Allow()
   @IsOptional()
+  @IsArray()
+  @IsEnum(IndictmentCountOffense, { each: true })
   @Field(() => [IndictmentCountOffense], { nullable: true })
   readonly offenses?: IndictmentCountOffense[]
 
@@ -38,6 +40,7 @@ export class UpdateIndictmentCountInput {
 
   @Allow()
   @IsOptional()
+  @IsArray()
   @Field(() => [[Number, Number]], { nullable: true })
   readonly lawsBroken?: [number, number][]
 

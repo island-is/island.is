@@ -9,6 +9,6 @@ export class GetSignedUrlInput {
   readonly id!: string
 
   @Allow()
-  @Field(() => String)
+  @Field(() => ID)
   readonly caseId!: string
 }

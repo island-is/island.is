@@ -20,38 +20,38 @@ export class UpdateFile {
 
   @Allow()
   @IsOptional()
+  @ValidateIf((file) => typeof file.orderWithinChapter === 'number')
+  @IsNumber()
+  @Min(0)
   @Field(() => Int, {
     nullable: true,
     description:
       'Number of chapter where file is in. 0 or greater. If provided, then order must also be provided.',
   })
-  @ValidateIf((file) => typeof file.orderWithinChapter === 'number')
-  @IsNumber()
-  @Min(0)
   readonly chapter?: number
 
   @Allow()
   @IsOptional()
+  @ValidateIf((file) => typeof file.chapter === 'number')
+  @IsNumber()
+  @Min(0)
   @Field(() => Int, {
     nullable: true,
     description:
       'Number indicating the order within chapter. 0 or greater. If provided, then chapter must also be provided.',
   })
-  @ValidateIf((file) => typeof file.chapter === 'number')
-  @IsNumber()
-  @Min(0)
   readonly orderWithinChapter?: number
 
   @Allow()
   @IsOptional()
-  @Field(() => String, { nullable: true })
   @IsString()
+  @Field(() => String, { nullable: true })
   readonly userGeneratedFilename?: string
 
   @Allow()
   @IsOptional()
-  @Field(() => String, { nullable: true })
   @IsString()
+  @Field(() => String, { nullable: true })
   readonly displayDate?: string
 }
 
@@ -62,9 +62,9 @@ export class UpdateFilesInput {
   readonly caseId!: string
 
   @Allow()
-  @Field(() => [UpdateFile])
   @IsArray()
   @ValidateNested({ each: true })
   @Type(() => UpdateFile)
+  @Field(() => [UpdateFile])
   readonly files!: UpdateFile[]
 }
