@@ -6,6 +6,7 @@ import {
   isCourtOfAppealsUser,
   isDistrictCourtUser,
   isProsecutionUser,
+  isPublicProsecutorUser,
 } from '@island.is/judicial-system/types'
 import { User } from '@island.is/judicial-system-web/src/graphql/schema'
 
@@ -55,7 +56,9 @@ export const UserProvider: React.FC<React.PropsWithChildren<Props>> = ({
           user && // Needed for e2e tests as they do not have a logged in user
           !isProsecutionUser(user) &&
           !isDistrictCourtUser(user) &&
-          !isCourtOfAppealsUser(user),
+          !isCourtOfAppealsUser(user) &&
+          !isPublicProsecutorUser(user),
+
         user,
       }}
     >

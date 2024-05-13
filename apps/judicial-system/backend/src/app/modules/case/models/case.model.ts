@@ -23,11 +23,13 @@ import {
   CaseAppealState,
   CaseCustodyRestrictions,
   CaseDecision,
+  CaseIndictmentRulingDecision,
   CaseLegalProvisions,
   CaseOrigin,
   CaseState,
   CaseType,
   CourtDocument,
+  IndictmentCaseReviewDecision,
   RequestSharedWithDefender,
   SessionArrangements,
   UserRole,
@@ -41,6 +43,7 @@ import { Institution } from '../../institution'
 import { Notification } from '../../notification'
 import { User } from '../../user'
 import { DateLog } from './dateLog.model'
+import { ExplanatoryComment } from './explanatoryComment.model'
 
 @Table({
   tableName: 'case',
@@ -489,16 +492,6 @@ export class Case extends Model {
   })
   @ApiPropertyOptional()
   courtLocation?: string
-
-  /**********
-   * The assigned court room for the court session
-   **********/
-  @Column({
-    type: DataType.STRING,
-    allowNull: true,
-  })
-  @ApiPropertyOptional()
-  courtRoom?: string
 
   /**********
    * The date and time the court session started
@@ -1136,6 +1129,13 @@ export class Case extends Model {
   dateLogs?: DateLog[]
 
   /**********
+   * The case's explanatory comments
+   **********/
+  @HasMany(() => ExplanatoryComment, 'caseId')
+  @ApiPropertyOptional({ type: ExplanatoryComment, isArray: true })
+  explanatoryComments?: ExplanatoryComment[]
+
+  /**********
    * The appeal ruling expiration date and time - example: the end of custody in custody cases -
    * autofilled from validToDate - possibly modified by the court of appeals - only used for
    * custody, admission to facility and travel ban cases
@@ -1224,4 +1224,44 @@ export class Case extends Model {
   @HasMany(() => Notification, 'caseId')
   @ApiPropertyOptional({ type: Notification, isArray: true })
   notifications?: Notification[]
+
+  /**********
+   * The ruling decision in indictment cases - example: FINE
+   **********/
+  @Column({
+    type: DataType.ENUM,
+    allowNull: true,
+    values: Object.values(CaseIndictmentRulingDecision),
+  })
+  @ApiPropertyOptional({ enum: CaseIndictmentRulingDecision })
+  indictmentRulingDecision?: CaseIndictmentRulingDecision
+
+  /**********
+   * The surrogate key of the prosecutor assigned to review an indictment
+   **********/
+  @ForeignKey(() => User)
+  @Column({
+    type: DataType.UUID,
+    allowNull: true,
+  })
+  @ApiPropertyOptional()
+  indictmentReviewerId?: string
+
+  /**********
+   * The prosecutor assigned to review an indictment case
+   **********/
+  @BelongsTo(() => User, 'indictmentReviewerId')
+  @ApiPropertyOptional({ type: User })
+  indictmentReviewer?: User
+
+  /**********
+   * The review decision in indictment cases
+   **********/
+  @Column({
+    type: DataType.ENUM,
+    allowNull: true,
+    values: Object.values(IndictmentCaseReviewDecision),
+  })
+  @ApiPropertyOptional({ enum: IndictmentCaseReviewDecision })
+  indictmentReviewDecision?: IndictmentCaseReviewDecision
 }

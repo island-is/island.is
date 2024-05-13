@@ -13,6 +13,7 @@ import {
   StaffModule,
   ApplicationEventModule,
   DirectTaxPaymentModule,
+  ChildrenModule,
 } from '../index'
 
 @Module({
@@ -21,6 +22,7 @@ import {
     forwardRef(() => FileModule),
     EmailModule.register(environment.emailOptions),
     forwardRef(() => ApplicationEventModule),
+    forwardRef(() => ChildrenModule),
     forwardRef(() => MunicipalityModule),
     forwardRef(() => AmountModule),
     forwardRef(() => DirectTaxPaymentModule),

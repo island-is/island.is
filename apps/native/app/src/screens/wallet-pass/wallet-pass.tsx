@@ -5,12 +5,14 @@ import {
   LicenseCard,
 } from '@ui'
 import * as FileSystem from 'expo-file-system'
-import React, { useCallback, useState } from 'react'
+import React, { useCallback, useEffect, useRef, useState } from 'react'
 import { useIntl } from 'react-intl'
 import {
   ActivityIndicator,
   Alert,
+  Animated,
   Button,
+  Easing,
   Linking,
   NativeModules,
   Platform,
@@ -29,7 +31,7 @@ import {
   useGetLicenseQuery,
 } from '../../graphql/types/schema'
 import { createNavigationOptionHooks } from '../../hooks/create-navigation-option-hooks'
-import { useOfflineUpdateNavigation } from '../../hooks/use-offline-update-navigation'
+import { useConnectivityIndicator } from '../../hooks/use-connectivity-indicator'
 import { isAndroid, isIos } from '../../utils/devices'
 import { screenWidth } from '../../utils/dimensions'
 import { FieldRender } from './components/field-render'
@@ -71,9 +73,19 @@ const LicenseCardWrapper = styled(SafeAreaView)`
   z-index: 100;
 `
 
-const ButtonWrapper = styled(SafeAreaView)`
+const ButtonWrapper = styled(SafeAreaView)<{ floating?: boolean }>`
   margin-left: ${({ theme }) => theme.spacing[2]}px;
   margin-right: ${({ theme }) => theme.spacing[2]}px;
+
+  ${({ floating, theme }) =>
+    floating &&
+    `
+    position: absolute;
+    bottom: ${theme.spacing[2]}px;
+    left: 0;
+    right: 0;
+    z-index: 100;
+    `}
 `
 
 const LoadingOverlay = styled.View`
@@ -124,14 +136,16 @@ export const WalletPassScreen: NavigationFunctionComponent<{
   cardHeight?: number
 }> = ({ id, item, componentId, cardHeight = 140 }) => {
   useNavigationOptions(componentId)
-  useOfflineUpdateNavigation(componentId)
+  useConnectivityIndicator({ componentId })
   const theme = useTheme()
   const intl = useIntl()
   const [addingToWallet, setAddingToWallet] = useState(false)
   const isBarcodeEnabled = useFeatureFlag('isBarcodeEnabled', false)
+  const fadeInAnim = useRef(new Animated.Value(0)).current
 
   const [generatePkPass] = useGeneratePkPassMutation()
   const res = useGetLicenseQuery({
+    fetchPolicy: 'network-only',
     variables: {
       input: {
         licenseType: item?.license.type ?? '',
@@ -151,6 +165,22 @@ export const WalletPassScreen: NavigationFunctionComponent<{
     screenWidth - theme.spacing[4] * 2 - theme.spacing.smallGutter * 2
   const barcodeHeight = barcodeWidth / 3
   const updated = data?.fetch?.updated
+
+  const fadeIn = () => {
+    Animated.timing(fadeInAnim, {
+      toValue: 1,
+      duration: 200,
+      useNativeDriver: true,
+      delay: 300,
+      easing: Easing.in(Easing.ease),
+    }).start()
+  }
+
+  useEffect(() => {
+    if (pkPassAllowed && !isBarcodeEnabled) {
+      fadeIn()
+    }
+  }, [pkPassAllowed, isBarcodeEnabled])
 
   const onAddPkPass = async () => {
     const { canAddPasses, addPass } = Platform.select({
@@ -291,6 +321,26 @@ export const WalletPassScreen: NavigationFunctionComponent<{
       ? barcodeHeight + LICENSE_CARD_ROW_GAP
       : 0
 
+  const renderButtons = () => {
+    if (isIos) {
+      return (
+        <AddPassButton
+          style={{ height: 52 }}
+          addPassButtonStyle={
+            theme.isDark
+              ? PassKit.AddPassButtonStyle.blackOutline
+              : PassKit.AddPassButtonStyle.black
+          }
+          onPress={onAddPkPass}
+        />
+      )
+    }
+
+    return (
+      <Button title="Add to Wallet" onPress={onAddPkPass} color="#111111" />
+    )
+  }
+
   return (
     <View style={{ flex: 1 }}>
       <View style={{ height: cardHeight }} />
@@ -358,29 +408,24 @@ export const WalletPassScreen: NavigationFunctionComponent<{
             <FieldRender data={fields} licenseType={licenseType} />
           )}
         </SafeAreaView>
-        {isAndroid && <Spacer />}
-        {pkPassAllowed && (
-          <ButtonWrapper>
-            {isIos ? (
-              <AddPassButton
-                style={{ height: 52 }}
-                addPassButtonStyle={
-                  theme.isDark
-                    ? PassKit.AddPassButtonStyle.blackOutline
-                    : PassKit.AddPassButtonStyle.black
-                }
-                onPress={onAddPkPass}
-              />
-            ) : (
-              <Button
-                title="Add to Wallet"
-                onPress={onAddPkPass}
-                color="#111111"
-              />
-            )}
-          </ButtonWrapper>
+
+        {pkPassAllowed && isBarcodeEnabled && (
+          <ButtonWrapper>{renderButtons()}</ButtonWrapper>
         )}
+        {isAndroid && <Spacer />}
       </Information>
+      {/*
+          Remove once isBarcodeEnabled will be removed. This is only temporary.
+          The reason for the animation is to avoid rendering flicker.
+          The component will on first render the isBarcodeEnabled flag to be false and then set it to true after Configcat has fetched the flag.
+       */}
+      {pkPassAllowed && !isBarcodeEnabled && (
+        <ButtonWrapper floating>
+          <Animated.View style={{ opacity: fadeInAnim }}>
+            {renderButtons()}
+          </Animated.View>
+        </ButtonWrapper>
+      )}
 
       {addingToWallet && (
         <LoadingOverlay>

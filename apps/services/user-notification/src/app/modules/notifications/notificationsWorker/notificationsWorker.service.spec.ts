@@ -1,7 +1,7 @@
-import { Sequelize } from 'sequelize-typescript'
 import { getConnectionToken, getModelToken } from '@nestjs/sequelize'
 import { INestApplication, Type } from '@nestjs/common'
 import { TestingModuleBuilder } from '@nestjs/testing'
+import { Sequelize } from 'sequelize-typescript'
 
 import { testServer, truncate, useDatabase } from '@island.is/testing/nest'
 import { UserProfileDto, V2UsersApi } from '@island.is/clients/user-profile'
@@ -11,14 +11,19 @@ import { NationalRegistryV3ClientService } from '@island.is/clients/national-reg
 import { EmailService } from '@island.is/email-service'
 import { DelegationsApi } from '@island.is/clients/auth/delegation-api'
 
-import { IS_RUNNING_AS_WORKER } from './notificationsWorker.service'
-import { NotificationDispatchService } from '../notificationDispatch.service'
+import { UserNotificationsConfig } from '../../../../config'
+import { FIREBASE_PROVIDER } from '../../../../constants'
 import { AppModule } from '../../../app.module'
 import { SequelizeConfigService } from '../../../sequelizeConfig.service'
+import { NotificationDispatchService } from '../notificationDispatch.service'
+import { Notification } from '../notification.model'
+import { NotificationsService } from '../notifications.service'
+import { wait } from './helpers'
 import {
   MockDelegationsService,
   MockFeatureFlagService,
   MockNationalRegistryV3ClientService,
+  MockUserNotificationsConfig,
   userWithDelegations,
   userWithDelegations2,
   userWithDocumentNotificationsDisabled,
@@ -31,10 +36,6 @@ import {
   userWithNoDelegations,
   userProfiles,
 } from './mocks'
-import { wait } from './helpers'
-import { Notification } from '../notification.model'
-import { FIREBASE_PROVIDER } from '../../../../constants'
-import { NotificationsService } from '../notifications.service'
 
 const workingHoursDelta = 1000 * 60 * 60 // 1 hour
 const insideWorkingHours = new Date(2021, 1, 1, 9, 0, 0)
@@ -85,8 +86,8 @@ describe('NotificationsWorkerService', () => {
           .useClass(MockFeatureFlagService)
           .overrideProvider(V2UsersApi)
           .useValue(MockV2UsersApi)
-          .overrideProvider(IS_RUNNING_AS_WORKER)
-          .useValue(true)
+          .overrideProvider(UserNotificationsConfig.KEY)
+          .useValue(MockUserNotificationsConfig)
           .overrideProvider(FIREBASE_PROVIDER)
           .useValue({}),
       hooks: [
@@ -136,7 +137,7 @@ describe('NotificationsWorkerService', () => {
   })
 
   const addToQueue = async (recipient: string) => {
-    const messageId = await queue.add({
+    await queue.add({
       recipient,
       templateId: mockTemplateId,
       args: [{ key: 'organization', value: 'Test Crew' }],

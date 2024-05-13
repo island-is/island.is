@@ -12,11 +12,13 @@ import {
   CaseAppealState,
   CaseCustodyRestrictions,
   CaseDecision,
+  CaseIndictmentRulingDecision,
   CaseLegalProvisions,
   CaseOrigin,
   CaseState,
   CaseType,
   CourtDocument,
+  IndictmentCaseReviewDecision,
   RequestSharedWithDefender,
   SessionArrangements,
   UserRole,
@@ -27,7 +29,6 @@ import { CaseFile } from '../../file'
 import { IndictmentCount } from '../../indictment-count'
 import { Institution } from '../../institution'
 import { User } from '../../user'
-import { DateLog } from './dateLog.model'
 import { EventLog } from './eventLog.model'
 import { Notification } from './notification.model'
 
@@ -45,6 +46,21 @@ registerEnumType(CaseAppealDecision, { name: 'CaseAppealDecision' })
 registerEnumType(RequestSharedWithDefender, {
   name: 'RequestSharedWithDefender',
 })
+registerEnumType(CaseIndictmentRulingDecision, {
+  name: 'CaseIndictmentRulingDecision',
+})
+registerEnumType(IndictmentCaseReviewDecision, {
+  name: 'IndictmentCaseReviewDecision',
+})
+
+@ObjectType()
+class DateLog {
+  @Field({ nullable: true })
+  readonly date?: string
+
+  @Field({ nullable: true })
+  readonly location?: string
+}
 
 @ObjectType()
 export class Case {
@@ -165,11 +181,14 @@ export class Case {
   @Field(() => SessionArrangements, { nullable: true })
   readonly sessionArrangements?: SessionArrangements
 
-  @Field({ nullable: true })
-  readonly courtLocation?: string
+  @Field(() => DateLog, { nullable: true })
+  readonly arraignmentDate?: DateLog
+
+  @Field(() => DateLog, { nullable: true })
+  readonly courtDate?: DateLog
 
   @Field({ nullable: true })
-  readonly courtRoom?: string
+  readonly courtLocation?: string
 
   @Field({ nullable: true })
   readonly courtStartDate?: string
@@ -375,9 +394,6 @@ export class Case {
   @Field(() => [EventLog], { nullable: true })
   readonly eventLogs?: EventLog[]
 
-  @Field(() => [DateLog], { nullable: true })
-  readonly dateLogs?: DateLog[]
-
   @Field({ nullable: true })
   readonly appealValidToDate?: string
 
@@ -398,4 +414,19 @@ export class Case {
 
   @Field({ nullable: true })
   readonly indictmentReturnedExplanation?: string
+
+  @Field({ nullable: true })
+  readonly postponedIndefinitelyExplanation?: string
+
+  @Field(() => CaseIndictmentRulingDecision, { nullable: true })
+  readonly indictmentRulingDecision?: CaseIndictmentRulingDecision
+
+  @Field(() => User, { nullable: true })
+  readonly indictmentReviewer?: User
+
+  @Field(() => IndictmentCaseReviewDecision, { nullable: true })
+  readonly indictmentReviewDecision?: IndictmentCaseReviewDecision
+
+  @Field({ nullable: true })
+  readonly indictmentAppealDeadline?: string
 }
