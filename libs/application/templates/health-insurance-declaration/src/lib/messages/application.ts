@@ -7,6 +7,11 @@ export const application = {
       defaultMessage: 'Tryggingaryfirlýsingarvottorð',
       description: 'Health insurance declaration name',
     },
+    institutionName: {
+      id: 'hid.application:general.institutionName',
+      defaultMessage: 'Sjúkratryggingar Íslands',
+      description: 'Institution name',
+    },
   }),
   applicant: defineMessages({
     sectionTitle: {

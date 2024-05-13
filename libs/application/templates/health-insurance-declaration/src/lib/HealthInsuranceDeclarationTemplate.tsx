@@ -42,6 +42,7 @@ const HealthInsuranceDeclarationTemplate: ApplicationTemplate<
   name: application.general.name,
   translationNamespaces: configuration.translation,
   dataSchema: HealthInsuranceDeclarationSchema,
+  institution: application.general.institutionName,
   stateMachineConfig: {
     initial: States.PREREQUISITES,
     states: {
@@ -131,7 +132,7 @@ const HealthInsuranceDeclarationTemplate: ApplicationTemplate<
       },
       [States.SUBMITTED]: {
         meta: {
-          name: States.SUBMITTED,
+          name: application.general.name.defaultMessage,
           status: 'completed',
           lifecycle: DefaultStateLifeCycle,
           onEntry: defineTemplateApi({
