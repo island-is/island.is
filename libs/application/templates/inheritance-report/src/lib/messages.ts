@@ -1054,6 +1054,11 @@ export const m = defineMessages({
     defaultMessage: 'Maki hefur annan búshluta en 50%',
     description: '',
   },
+  assetsToShareHasCustomSpousePercentageError: {
+    id: 'ir.application:assetsToShareHasCustomSpousePercentageError',
+    defaultMessage: 'Búshluti verður að vera á milli 50% og 100%',
+    description: '',
+  },
   assetsToShareCustomSpousePercentage: {
     id: 'ir.application:assetsToShareCustomSpousePercentage',
     defaultMessage: 'Búshluti',

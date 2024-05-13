@@ -14,8 +14,7 @@ const isValidPhoneNumber = (phoneNumber: string) => {
 
 const emailRegex =
   /^[\w!#$%&'*+/=?`{|}~^-]+(?:\.[\w!#$%&'*+/=?`{|}~^-]+)*@(?:[A-Z0-9-]+\.)+[A-Z]{2,6}$/i
-export const isValidEmail = (value: string): boolean =>
-  emailRegex.test(value) && value.trim().length > 0
+export const isValidEmail = (value: string): boolean => emailRegex.test(value)
 
 export const GeneralPetitionSchema = z.object({
   approveTermsAndConditions: z
@@ -60,9 +59,12 @@ export const GeneralPetitionSchema = z.object({
   phone: z.string().refine((v) => isValidPhoneNumber(v), {
     message: m.validationPhone.defaultMessage as string,
   }),
-  email: z.string().refine((v) => isValidEmail(v), {
-    message: m.validationEmail.defaultMessage as string,
-  }),
+  email: z
+    .string()
+    .min(3)
+    .refine((v) => isValidEmail(v), {
+      message: m.validationEmail.defaultMessage as string,
+    }),
 })
 
 export type File = z.TypeOf<typeof FileSchema>

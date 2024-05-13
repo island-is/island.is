@@ -928,14 +928,12 @@ const ParentalLeaveTemplate: ApplicationTemplate<
         exit: [
           'removeAddedEmployers',
           'removeAddedPeriods',
-          'clearChangeEmployerFileIfAddEmployerIsNo',
           'restorePeriodsFromTemp',
           'removeNullPeriod',
           'setNavId',
           'setActionName',
           'clearEmployers',
           'restoreEmployersFromTemp',
-          'clearChangeEmployerFileIfCancel',
         ],
         meta: {
           name: States.EDIT_OR_ADD_EMPLOYERS_AND_PERIODS,
@@ -998,6 +996,14 @@ const ParentalLeaveTemplate: ApplicationTemplate<
               target: States.VINNUMALASTOFNUN_APPROVAL,
             },
             {
+              cond: (application) =>
+                goToState(
+                  application,
+                  States.EMPLOYER_WAITING_TO_ASSIGN_FOR_EDITS,
+                ),
+              target: States.EMPLOYER_WAITING_TO_ASSIGN_FOR_EDITS,
+            },
+            {
               target: States.VINNUMALASTOFNUN_APPROVE_EDITS,
             },
           ],
@@ -1009,6 +1015,7 @@ const ParentalLeaveTemplate: ApplicationTemplate<
           'setEmployerReviewerNationalRegistryId',
           'restorePeriodsFromTemp',
           'restoreEmployersFromTemp',
+          'setPreviousState',
         ],
         meta: {
           name: States.EMPLOYER_WAITING_TO_ASSIGN_FOR_EDITS,
@@ -1205,6 +1212,8 @@ const ParentalLeaveTemplate: ApplicationTemplate<
           'setPreviousState',
           'setNavId',
           'clearChangedPeriodsNEmployers',
+          'clearChangeEmployerFileIfAddEmployerIsNo',
+          'clearChangeEmployerFileIfCancel',
         ],
         meta: {
           name: States.VINNUMALASTOFNUN_APPROVE_EDITS,

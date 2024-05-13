@@ -26,7 +26,7 @@ const useDeb = (workingCase: Case, keys: Array<keyof Case> | keyof Case) => {
         ...update,
       })
     },
-    2000,
+    4000,
     [...newKeys.map((key) => workingCase[key])],
   )
 }

@@ -12,7 +12,7 @@ import airplaneIcon from '../../assets/icons/airplane.png'
 import { BottomTabsIndicator } from '../../components/bottom-tabs-indicator/bottom-tabs-indicator'
 import { useFeatureFlag } from '../../contexts/feature-flag-provider'
 import { createNavigationOptionHooks } from '../../hooks/create-navigation-option-hooks'
-import { useOfflineUpdateNavigation } from '../../hooks/use-offline-update-navigation'
+import { useConnectivityIndicator } from '../../hooks/use-connectivity-indicator'
 import { navigateTo } from '../../lib/deep-linking'
 import { formatNationalId } from '../../lib/format-national-id'
 import { useAuthStore } from '../../stores/auth-store'
@@ -71,7 +71,7 @@ export const MoreScreen: NavigationFunctionComponent = ({ componentId }) => {
   const showAirDiscount = useFeatureFlag('isAirDiscountEnabled', false)
 
   useNavigationOptions(componentId)
-  useOfflineUpdateNavigation(componentId, getRightButtons())
+  useConnectivityIndicator({ componentId, rightButtons: getRightButtons() })
 
   return (
     <>
