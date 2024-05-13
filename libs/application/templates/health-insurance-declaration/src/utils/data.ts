@@ -93,8 +93,10 @@ export const getContinentsAsOption = (externalData: ExternalData): Option[] => {
 }
 
 export const getFullNameFromExternalData = (externalData: ExternalData) => {
-  return (externalData.nationalRegistry?.data as NationalRegistryIndividual)
-    .fullName
+  return (
+    (externalData.nationalRegistry?.data as NationalRegistryIndividual)
+      ?.fullName ?? ''
+  )
 }
 export const getChildrenAsOptions = (externalData: ExternalData): Option[] => {
   const children = getChildrenFromExternalData(externalData)
