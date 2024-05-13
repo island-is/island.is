@@ -38,7 +38,7 @@ export class CreateUserDto {
 
   @IsNotEmpty()
   @IsEnum(UserRole)
-  @ApiProperty({ type: UserRole })
+  @ApiProperty({ enum: UserRole })
   readonly role!: UserRole
 
   @IsNotEmpty()

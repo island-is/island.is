@@ -33,7 +33,7 @@ export class UpdateUserDto {
 
   @IsOptional()
   @IsEnum(UserRole)
-  @ApiPropertyOptional({ type: UserRole })
+  @ApiPropertyOptional({ enum: UserRole })
   readonly role!: UserRole
 
   @IsOptional()
