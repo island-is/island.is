@@ -3,6 +3,7 @@ import {
   ArrayMinSize,
   IsArray,
   IsBoolean,
+  IsDate,
   IsEnum,
   IsObject,
   IsOptional,
@@ -34,57 +35,57 @@ import {
 
 class UpdateDateLog {
   @IsOptional()
-  @IsString()
-  @ApiPropertyOptional()
+  @IsDate()
+  @ApiPropertyOptional({ type: Date })
   readonly date?: Date
 
   @IsOptional()
   @IsString()
-  @ApiPropertyOptional()
+  @ApiPropertyOptional({ type: String })
   readonly location?: string
 }
 
 export class UpdateCaseDto {
   @IsOptional()
-  @IsString()
+  @IsEnum(CaseType)
   @ApiPropertyOptional({ enum: CaseType })
   readonly type?: CaseType
 
   @IsOptional()
   @IsObject()
-  @ApiPropertyOptional()
+  @ApiPropertyOptional({ type: Object })
   readonly indictmentSubtypes?: IndictmentSubtypeMap
 
   @IsOptional()
   @IsString()
-  @ApiPropertyOptional()
+  @ApiPropertyOptional({ type: String })
   readonly description?: string
 
   @IsOptional()
   @IsArray()
   @ArrayMinSize(1)
   @IsString({ each: true })
-  @ApiPropertyOptional()
+  @ApiPropertyOptional({ type: String, isArray: true })
   readonly policeCaseNumbers?: string[]
 
   @IsOptional()
   @IsString()
-  @ApiPropertyOptional()
+  @ApiPropertyOptional({ type: String })
   readonly defenderName?: string
 
   @IsOptional()
   @IsString()
-  @ApiPropertyOptional()
+  @ApiPropertyOptional({ type: String })
   readonly defenderNationalId?: string
 
   @IsOptional()
   @IsString()
-  @ApiPropertyOptional()
+  @ApiPropertyOptional({ type: String })
   readonly defenderEmail?: string
 
   @IsOptional()
   @IsString()
-  @ApiPropertyOptional()
+  @ApiPropertyOptional({ type: String })
   readonly defenderPhoneNumber?: string
 
   @IsOptional()
@@ -94,112 +95,114 @@ export class UpdateCaseDto {
 
   @IsOptional()
   @IsBoolean()
-  @ApiPropertyOptional()
+  @ApiPropertyOptional({ type: Boolean })
   readonly isHeightenedSecurityLevel?: boolean
 
   @IsOptional()
-  @IsString()
-  @ApiPropertyOptional()
+  @IsUUID()
+  @ApiPropertyOptional({ type: String })
   readonly courtId?: string
 
   @IsOptional()
   @IsString()
-  @ApiPropertyOptional()
+  @ApiPropertyOptional({ type: String })
   readonly leadInvestigator?: string
 
   @IsOptional()
-  @IsString()
-  @ApiPropertyOptional()
+  @IsDate()
+  @ApiPropertyOptional({ type: Date })
   readonly arrestDate?: Date
 
   @IsOptional()
-  @IsString()
-  @ApiPropertyOptional()
+  @IsDate()
+  @ApiPropertyOptional({ type: Date })
   readonly requestedCourtDate?: Date
 
   @IsOptional()
   @IsString()
-  @ApiPropertyOptional()
+  @ApiPropertyOptional({ type: String })
   readonly translator?: string
 
   @IsOptional()
-  @IsString()
-  @ApiPropertyOptional()
+  @IsDate()
+  @ApiPropertyOptional({ type: Date })
   readonly requestedValidToDate?: Date
 
   @IsOptional()
   @IsString()
-  @ApiPropertyOptional()
+  @ApiPropertyOptional({ type: String })
   readonly demands?: string
 
   @IsOptional()
   @IsString()
-  @ApiPropertyOptional()
+  @ApiPropertyOptional({ type: String })
   readonly lawsBroken?: string
 
   @IsOptional()
   @IsString()
-  @ApiPropertyOptional()
+  @ApiPropertyOptional({ type: String })
   readonly legalBasis?: string
 
   @IsOptional()
+  @IsArray()
   @IsEnum(CaseLegalProvisions, { each: true })
   @ApiPropertyOptional({ enum: CaseLegalProvisions, isArray: true })
   readonly legalProvisions?: CaseLegalProvisions[]
 
   @IsOptional()
+  @IsArray()
   @IsEnum(CaseCustodyRestrictions, { each: true })
   @ApiPropertyOptional({ enum: CaseCustodyRestrictions, isArray: true })
   readonly requestedCustodyRestrictions?: CaseCustodyRestrictions[]
 
   @IsOptional()
   @IsString()
-  @ApiPropertyOptional()
+  @ApiPropertyOptional({ type: String })
   readonly requestedOtherRestrictions?: string
 
   @IsOptional()
   @IsString()
-  @ApiPropertyOptional()
+  @ApiPropertyOptional({ type: String })
   readonly caseFacts?: string
 
   @IsOptional()
   @IsString()
-  @ApiPropertyOptional()
+  @ApiPropertyOptional({ type: String })
   readonly legalArguments?: string
 
   @IsOptional()
   @IsBoolean()
-  @ApiPropertyOptional()
+  @ApiPropertyOptional({ type: Boolean })
   readonly requestProsecutorOnlySession?: boolean
 
   @IsOptional()
   @IsString()
-  @ApiPropertyOptional()
+  @ApiPropertyOptional({ type: String })
   readonly prosecutorOnlySessionRequest?: string
 
   @IsOptional()
   @IsString()
-  @ApiPropertyOptional()
+  @ApiPropertyOptional({ type: String })
   readonly comments?: string
 
   @IsOptional()
   @IsString()
-  @ApiPropertyOptional()
+  @ApiPropertyOptional({ type: String })
   readonly caseFilesComments?: string
 
   @IsOptional()
   @IsUUID()
-  @ApiPropertyOptional()
+  @ApiPropertyOptional({ type: String })
   readonly prosecutorId?: string
 
   @IsOptional()
   @IsUUID()
-  @ApiPropertyOptional()
+  @ApiPropertyOptional({ type: String })
   readonly sharedWithProsecutorsOfficeId?: string
 
   @IsOptional()
   @IsString()
-  @ApiPropertyOptional()
+  @ApiPropertyOptional({ type: String })
   readonly courtCaseNumber?: string
 
   @IsOptional()
@@ -221,62 +224,63 @@ export class UpdateCaseDto {
 
   @IsOptional()
   @IsString()
-  @ApiPropertyOptional()
+  @ApiPropertyOptional({ type: String })
   readonly courtLocation?: string
 
   @IsOptional()
-  @IsString()
-  @ApiPropertyOptional()
+  @IsDate()
+  @ApiPropertyOptional({ type: Date })
   readonly courtStartDate?: Date
 
   @IsOptional()
-  @IsString()
-  @ApiPropertyOptional()
+  @IsDate()
+  @ApiPropertyOptional({ type: Date })
   readonly courtEndTime?: Date
 
   @IsOptional()
   @IsBoolean()
-  @ApiPropertyOptional()
+  @ApiPropertyOptional({ type: Boolean })
   readonly isClosedCourtHidden?: boolean
 
   @IsOptional()
   @IsString()
-  @ApiPropertyOptional()
+  @ApiPropertyOptional({ type: String })
   readonly courtAttendees?: string
 
   @IsOptional()
   @IsString()
-  @ApiPropertyOptional()
+  @ApiPropertyOptional({ type: String })
   readonly prosecutorDemands?: string
 
   @IsOptional()
+  @IsArray()
   @IsObject({ each: true })
-  @ApiPropertyOptional({ isArray: true })
+  @ApiPropertyOptional({ type: Object, isArray: true })
   readonly courtDocuments?: CourtDocument[]
 
   @IsOptional()
   @IsString()
-  @ApiPropertyOptional()
+  @ApiPropertyOptional({ type: String })
   readonly sessionBookings?: string
 
   @IsOptional()
   @IsString()
-  @ApiPropertyOptional()
+  @ApiPropertyOptional({ type: String })
   readonly courtCaseFacts?: string
 
   @IsOptional()
   @IsString()
-  @ApiPropertyOptional()
+  @ApiPropertyOptional({ type: String })
   readonly introduction?: string
 
   @IsOptional()
   @IsString()
-  @ApiPropertyOptional()
+  @ApiPropertyOptional({ type: String })
   readonly courtLegalArguments?: string
 
   @IsOptional()
   @IsString()
-  @ApiPropertyOptional()
+  @ApiPropertyOptional({ type: String })
   readonly ruling?: string
 
   @IsOptional()
@@ -285,28 +289,28 @@ export class UpdateCaseDto {
   readonly decision?: CaseDecision
 
   @IsOptional()
-  @IsString()
-  @ApiPropertyOptional()
+  @IsDate()
+  @ApiPropertyOptional({ type: Date })
   readonly validToDate?: Date
 
   @IsOptional()
   @IsBoolean()
-  @ApiPropertyOptional()
+  @ApiPropertyOptional({ type: Boolean })
   readonly isCustodyIsolation?: boolean
 
   @IsOptional()
-  @IsString()
-  @ApiPropertyOptional()
+  @IsDate()
+  @ApiPropertyOptional({ type: Date })
   readonly isolationToDate?: Date
 
   @IsOptional()
   @IsString()
-  @ApiPropertyOptional()
+  @ApiPropertyOptional({ type: String })
   readonly conclusion?: string
 
   @IsOptional()
   @IsString()
-  @ApiPropertyOptional()
+  @ApiPropertyOptional({ type: String })
   readonly endOfSessionBookings?: string
 
   @IsOptional()
@@ -316,7 +320,7 @@ export class UpdateCaseDto {
 
   @IsOptional()
   @IsString()
-  @ApiPropertyOptional()
+  @ApiPropertyOptional({ type: String })
   readonly accusedAppealAnnouncement?: string
 
   @IsOptional()
@@ -326,102 +330,102 @@ export class UpdateCaseDto {
 
   @IsOptional()
   @IsString()
-  @ApiPropertyOptional()
+  @ApiPropertyOptional({ type: String })
   readonly prosecutorAppealAnnouncement?: string
 
   @IsOptional()
-  @IsString()
-  @ApiPropertyOptional()
+  @IsDate()
+  @ApiPropertyOptional({ type: Date })
   readonly rulingSignatureDate?: Date
 
   @IsOptional()
   @IsUUID()
-  @ApiPropertyOptional()
+  @ApiPropertyOptional({ type: String })
   readonly judgeId?: string
 
   @IsOptional()
   @IsUUID()
-  @ApiPropertyOptional()
+  @ApiPropertyOptional({ type: String })
   readonly registrarId?: string
 
   @IsOptional()
   @IsString()
-  @ApiPropertyOptional()
+  @ApiPropertyOptional({ type: String })
   readonly caseModifiedExplanation?: string
 
   @IsOptional()
   @IsString()
-  @ApiPropertyOptional()
+  @ApiPropertyOptional({ type: String })
   readonly rulingModifiedHistory?: string
 
   @IsOptional()
   @IsString()
-  @ApiPropertyOptional()
+  @ApiPropertyOptional({ type: String })
   readonly caseResentExplanation?: string
 
   @IsOptional()
   @IsBoolean()
-  @ApiPropertyOptional()
+  @ApiPropertyOptional({ type: Boolean })
   readonly defendantWaivesRightToCounsel?: boolean
 
   @IsOptional()
   @IsObject()
-  @ApiPropertyOptional()
+  @ApiPropertyOptional({ type: Object })
   readonly crimeScenes?: CrimeSceneMap
 
   @IsOptional()
   @IsString()
-  @ApiPropertyOptional()
+  @ApiPropertyOptional({ type: String })
   readonly indictmentIntroduction?: string
 
   @IsOptional()
   @IsBoolean()
-  @ApiPropertyOptional()
+  @ApiPropertyOptional({ type: Boolean })
   readonly requestDriversLicenseSuspension?: boolean
 
   @IsOptional()
-  @IsString()
-  @ApiPropertyOptional()
+  @IsDate()
+  @ApiPropertyOptional({ type: Date })
   readonly prosecutorStatementDate?: Date
 
   @IsOptional()
-  @IsString()
-  @ApiPropertyOptional()
+  @IsDate()
+  @ApiPropertyOptional({ type: Date })
   readonly defendantStatementDate?: Date
 
   @IsOptional()
   @IsString()
-  @ApiPropertyOptional()
+  @ApiPropertyOptional({ type: String })
   readonly appealCaseNumber?: string
 
   @IsOptional()
   @IsUUID()
-  @ApiPropertyOptional()
+  @ApiPropertyOptional({ type: String })
   readonly appealAssistantId?: string
 
   @IsOptional()
   @IsUUID()
-  @ApiPropertyOptional()
+  @ApiPropertyOptional({ type: String })
   readonly appealJudge1Id?: string
 
   @IsOptional()
   @IsUUID()
-  @ApiPropertyOptional()
+  @ApiPropertyOptional({ type: String })
   readonly appealJudge2Id?: string
 
   @IsOptional()
   @IsUUID()
-  @ApiPropertyOptional()
+  @ApiPropertyOptional({ type: String })
   readonly appealJudge3Id?: string
 
   @IsOptional()
   @IsString()
-  @ApiPropertyOptional()
+  @ApiPropertyOptional({ type: String })
   readonly appealConclusion?: string
 
   @IsOptional()
   @IsString()
-  @ApiPropertyOptional()
+  @ApiPropertyOptional({ type: String })
   readonly appealRulingModifiedHistory?: string
 
   @IsOptional()
@@ -430,38 +434,39 @@ export class UpdateCaseDto {
   readonly appealRulingDecision?: CaseAppealRulingDecision
 
   @IsOptional()
-  @IsString()
-  @ApiPropertyOptional()
+  @IsDate()
+  @ApiPropertyOptional({ type: Date })
   readonly appealValidToDate?: Date
 
   @IsOptional()
   @IsBoolean()
-  @ApiPropertyOptional()
+  @ApiPropertyOptional({ type: Boolean })
   readonly isAppealCustodyIsolation?: boolean
 
   @IsOptional()
-  @IsString()
-  @ApiPropertyOptional()
+  @IsDate()
+  @ApiPropertyOptional({ type: Date })
   readonly appealIsolationToDate?: Date
 
   @IsOptional()
+  @IsArray()
   @IsEnum(UserRole, { each: true })
   @ApiPropertyOptional({ enum: UserRole, isArray: true })
   readonly requestAppealRulingNotToBePublished?: UserRole[]
 
   @IsOptional()
   @IsString()
-  @ApiPropertyOptional()
+  @ApiPropertyOptional({ type: String })
   readonly indictmentDeniedExplanation?: string
 
   @IsOptional()
   @IsString()
-  @ApiPropertyOptional()
+  @ApiPropertyOptional({ type: String })
   readonly indictmentReturnedExplanation?: string
 
   @IsOptional()
   @IsString()
-  @ApiPropertyOptional()
+  @ApiPropertyOptional({ type: String })
   readonly postponedIndefinitelyExplanation?: string
 
   @IsOptional()
@@ -471,7 +476,7 @@ export class UpdateCaseDto {
 
   @IsOptional()
   @IsUUID()
-  @ApiPropertyOptional()
+  @ApiPropertyOptional({ type: String })
   readonly indictmentReviewerId?: string
 
   @IsOptional()

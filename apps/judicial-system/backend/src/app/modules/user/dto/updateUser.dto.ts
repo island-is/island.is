@@ -1,47 +1,53 @@
-import { IsBoolean, IsOptional, IsString } from 'class-validator'
+import {
+  IsBoolean,
+  IsEnum,
+  IsOptional,
+  IsString,
+  IsUUID,
+} from 'class-validator'
 
 import { ApiPropertyOptional } from '@nestjs/swagger'
 
-import type { UserRole } from '@island.is/judicial-system/types'
+import { UserRole } from '@island.is/judicial-system/types'
 
 export class UpdateUserDto {
   @IsOptional()
   @IsString()
-  @ApiPropertyOptional()
+  @ApiPropertyOptional({ type: String })
   readonly name!: string
 
   @IsOptional()
   @IsString()
-  @ApiPropertyOptional()
+  @ApiPropertyOptional({ type: String })
   readonly title!: string
 
   @IsOptional()
   @IsString()
-  @ApiPropertyOptional()
+  @ApiPropertyOptional({ type: String })
   readonly mobileNumber!: string
 
   @IsOptional()
   @IsString()
-  @ApiPropertyOptional()
+  @ApiPropertyOptional({ type: String })
   readonly email!: string
 
   @IsOptional()
-  @IsString()
-  @ApiPropertyOptional()
+  @IsEnum(UserRole)
+  @ApiPropertyOptional({ type: UserRole })
   readonly role!: UserRole
 
   @IsOptional()
-  @IsString()
-  @ApiPropertyOptional()
+  @IsUUID()
+  @ApiPropertyOptional({ type: String })
   readonly institutionId!: string
 
   @IsOptional()
   @IsBoolean()
-  @ApiPropertyOptional()
+  @ApiPropertyOptional({ type: Boolean })
   readonly active!: boolean
 
   @IsOptional()
   @IsBoolean()
-  @ApiPropertyOptional()
+  @ApiPropertyOptional({ type: Boolean })
   readonly canConfirmIndictment!: boolean
 }
