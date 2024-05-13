@@ -1284,6 +1284,11 @@ export const m = defineMessages({
     id: 'service.portal:mms-tooltip-secondary',
     defaultMessage: 'Menntamálastofnun hefur umsjón með gögnum um menntaskóla.',
   },
+  domsmalaraduneytidTooltip: {
+    id: 'service.portal:dmr-tooltip',
+    defaultMessage:
+    'Dómsmálaráðuneytið hefur umsjón með gögnum um dómsmál og þeim tengt.',
+  },
   occupationalLicenseTooltip: {
     id: 'service.portal:occupational-license-tooltip',
     defaultMessage:
@@ -1509,5 +1514,13 @@ export const m = defineMessages({
   lawAndOrder: {
     id: 'service.portal:law-and-order',
     defaultMessage: 'Lög og reglur',
+  },
+  lawAndOrderDescription: {
+    id: 'service.portal:law-and-order-description',
+    defaultMessage: 'Hér eru upplýsingar og yfirlit yfir mál sem þú átt hjá dómskerfinu.',
+  },
+  courtCases: {
+    id: 'service.portal:court-cases',
+    defaultMessage: 'Dómsmál',
   },
 })

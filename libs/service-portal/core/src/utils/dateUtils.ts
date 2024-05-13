@@ -61,3 +61,32 @@ export const displayMonthOrYear = (date: string, l: Locale) => {
     return date
   }
 }
+
+export const getDateLocale = (locale: Locale) =>
+  locale === 'en' ? 'en-US' : 'is-IS'
+
+// mánudagur, 30. mars 2020 kl. 01:23
+export const formatDateWithTimeLong = (locale: Locale, date?: Date) => {
+  if (date === undefined || date === null) return undefined
+  const dateLocale = getDateLocale(locale)
+  return new Date(date).toLocaleString(dateLocale.toString(), {
+    weekday: 'long',
+    year: 'numeric',
+    month: 'long',
+    day: 'numeric',
+    hour: 'numeric',
+    minute: 'numeric',
+    hour12: false,
+  })
+}
+
+// 30. mars 2020
+export const formatDateLong = (locale: Locale, date?: Date) => {
+  if (date === undefined || date === null) return undefined
+  const dateLocale = getDateLocale(locale)
+  return new Date(date).toLocaleString(dateLocale.toString(), {
+    year: 'numeric',
+    month: 'long',
+    day: 'numeric',
+  })
+}

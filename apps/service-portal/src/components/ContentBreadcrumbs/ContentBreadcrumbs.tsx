@@ -105,10 +105,8 @@ const ContentBreadcrumbs: FC<React.PropsWithChildren<unknown>> = () => {
   }
 
   findBreadcrumbsPath(navigation, [])
-
   const isMobile = width < theme.breakpoints.md
   if (items.length < 2) return null
-
   return (
     <Box
       display="flex"
