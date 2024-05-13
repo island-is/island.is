@@ -15,7 +15,10 @@ import {
   PageLayout,
   SectionHeading,
 } from '@island.is/judicial-system-web/src/components'
-import { ServiceRequirement } from '@island.is/judicial-system-web/src/graphql/schema'
+import {
+  ServiceRequirement,
+  CaseIndictmentRulingDecision,
+} from '@island.is/judicial-system-web/src/graphql/schema'
 import { useDefendants } from '@island.is/judicial-system-web/src/utils/hooks'
 
 import strings from './Completed.strings'
@@ -54,98 +57,102 @@ const Completed: FC = () => {
         <Box marginBottom={5}>
           <IndictmentCaseFilesList workingCase={workingCase} />
         </Box>
-        <Box marginBottom={10}>
-          {workingCase.defendants?.map((defendant, index) => (
-            <Box
-              key={defendant.id}
-              component="section"
-              marginBottom={
-                workingCase.defendants &&
-                workingCase.defendants?.length - 1 === index
-                  ? 10
-                  : 3
-              }
-            >
-              <BlueBox>
-                <SectionHeading
-                  title={defendant.name || ''}
-                  marginBottom={2}
-                  heading="h4"
-                  required
-                />
-                <Box marginBottom={2}>
+        {workingCase.indictmentRulingDecision ===
+          CaseIndictmentRulingDecision.RULING && (
+          <Box marginBottom={10}>
+            {workingCase.defendants?.map((defendant, index) => (
+              <Box
+                key={defendant.id}
+                component="section"
+                marginBottom={
+                  workingCase.defendants &&
+                  workingCase.defendants.length - 1 === index
+                    ? 10
+                    : 3
+                }
+              >
+                <BlueBox>
+                  <SectionHeading
+                    title={defendant.name || ''}
+                    marginBottom={2}
+                    heading="h4"
+                    required
+                  />
+                  <Box marginBottom={2}>
+                    <RadioButton
+                      id={`defendant-${defendant.id}-service-requirement-not-applicable`}
+                      name={`defendant-${defendant.id}-service-requirement`}
+                      checked={
+                        defendant.serviceRequirement ===
+                        ServiceRequirement.NOT_APPLICABLE
+                      }
+                      onChange={() => {
+                        updateDefendantState(
+                          {
+                            defendantId: defendant.id,
+                            caseId: workingCase.id,
+                            serviceRequirement:
+                              ServiceRequirement.NOT_APPLICABLE,
+                          },
+                          setWorkingCase,
+                        )
+                      }}
+                      large
+                      backgroundColor="white"
+                      label={formatMessage(
+                        strings.serviceRequirementNotApplicable,
+                      )}
+                    />
+                  </Box>
+                  <Box marginBottom={2}>
+                    <RadioButton
+                      id={`defendant-${defendant.id}-service-requirement-required`}
+                      name={`defendant-${defendant.id}-service-requirement`}
+                      checked={
+                        defendant.serviceRequirement ===
+                        ServiceRequirement.REQUIRED
+                      }
+                      onChange={() => {
+                        updateDefendantState(
+                          {
+                            defendantId: defendant.id,
+                            caseId: workingCase.id,
+                            serviceRequirement: ServiceRequirement.REQUIRED,
+                          },
+                          setWorkingCase,
+                        )
+                      }}
+                      large
+                      backgroundColor="white"
+                      label={formatMessage(strings.serviceRequirementRequired)}
+                    />
+                  </Box>
                   <RadioButton
-                    id={`defendant-${defendant.id}-service-requirement-not-applicable`}
+                    id={`defendant-${defendant.id}-service-requirement-not-required`}
                     name={`defendant-${defendant.id}-service-requirement`}
                     checked={
                       defendant.serviceRequirement ===
-                      ServiceRequirement.NOT_APPLICABLE
+                      ServiceRequirement.NOT_REQUIRED
                     }
                     onChange={() => {
                       updateDefendantState(
                         {
                           defendantId: defendant.id,
                           caseId: workingCase.id,
-                          serviceRequirement: ServiceRequirement.NOT_APPLICABLE,
+                          serviceRequirement: ServiceRequirement.NOT_REQUIRED,
                         },
                         setWorkingCase,
                       )
                     }}
                     large
                     backgroundColor="white"
-                    label={formatMessage(
-                      strings.serviceRequirementNotApplicable,
-                    )}
+                    label={formatMessage(strings.serviceRequirementNotRequired)}
                   />
-                </Box>
-                <Box marginBottom={2}>
-                  <RadioButton
-                    id={`defendant-${defendant.id}-service-requirement-required`}
-                    name={`defendant-${defendant.id}-service-requirement`}
-                    checked={
-                      defendant.serviceRequirement ===
-                      ServiceRequirement.REQUIRED
-                    }
-                    onChange={() => {
-                      updateDefendantState(
-                        {
-                          defendantId: defendant.id,
-                          caseId: workingCase.id,
-                          serviceRequirement: ServiceRequirement.REQUIRED,
-                        },
-                        setWorkingCase,
-                      )
-                    }}
-                    large
-                    backgroundColor="white"
-                    label={formatMessage(strings.serviceRequirementRequired)}
-                  />
-                </Box>
-                <RadioButton
-                  id={`defendant-${defendant.id}-service-requirement-not-required`}
-                  name={`defendant-${defendant.id}-service-requirement`}
-                  checked={
-                    defendant.serviceRequirement ===
-                    ServiceRequirement.NOT_REQUIRED
-                  }
-                  onChange={() => {
-                    updateDefendantState(
-                      {
-                        defendantId: defendant.id,
-                        caseId: workingCase.id,
-                        serviceRequirement: ServiceRequirement.NOT_REQUIRED,
-                      },
-                      setWorkingCase,
-                    )
-                  }}
-                  large
-                  backgroundColor="white"
-                  label={formatMessage(strings.serviceRequirementNotRequired)}
-                />
-              </BlueBox>
-            </Box>
-          ))}
-        </Box>
+                </BlueBox>
+              </Box>
+            ))}
+          </Box>
+        )}
       </FormContentContainer>
       <FormContentContainer isFooter>
         <FormFooter

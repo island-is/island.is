@@ -139,7 +139,11 @@ const Summary: React.FC = () => {
           title={formatMessage(strings.completedCaseModalTitle)}
           text={formatMessage(strings.completedCaseModalBody)}
           primaryButtonText={formatMessage(core.closeModal)}
-          onPrimaryButtonClick={() => setModalVisible(undefined)}
+          onPrimaryButtonClick={() =>
+            router.push(
+              `${constants.INDICTMENTS_COMPLTED_ROUTE}/${workingCase.id}`,
+            )
+          }
         />
       )}
     </PageLayout>
