@@ -112,7 +112,6 @@ export class CaseListEntry {
   @Field(() => IndictmentCaseReviewDecision, { nullable: true })
   readonly indictmentReviewDecision?: IndictmentCaseReviewDecision
 
-
   @Field(() => String, { nullable: true })
   readonly indictmentAppealDeadline?: string
 }
