@@ -65,7 +65,7 @@ export interface VMSTPeriod {
   firstPeriodStart: string
   paid: boolean
   rightsCodePeriod: string
-  days?: string // TODO: Er þetta optional?? (strengur eða number?) (Endapunkturinn skilar ekki days í dag)
+  days: string
   approved: boolean
 }
 

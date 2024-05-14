@@ -570,7 +570,7 @@ const ParentalLeaveTemplate: ApplicationTemplate<
               action: ApiModuleActions.setVMSTPeriods,
               triggerEvent: DefaultEvents.EDIT,
               externalDataId: 'VMSTPeriods',
-              throwOnError: false, // TODO: Hvað á að vera hérna? (defaults to true)
+              throwOnError: false,
             }),
           ],
           roles: [
@@ -874,7 +874,7 @@ const ParentalLeaveTemplate: ApplicationTemplate<
               action: ApiModuleActions.setVMSTPeriods,
               triggerEvent: DefaultEvents.EDIT,
               externalDataId: 'VMSTPeriods',
-              throwOnError: false, // TODO: Hvað á að vera hérna? (defaults to true)
+              throwOnError: false,
             }),
           ],
           roles: [
@@ -1047,7 +1047,7 @@ const ParentalLeaveTemplate: ApplicationTemplate<
             action: ApiModuleActions.setVMSTPeriods,
             triggerEvent: DefaultEvents.EDIT,
             externalDataId: 'VMSTPeriods',
-            throwOnError: false, // TODO: Hvað á að vera hérna? (defaults to true)
+            throwOnError: false,
           }),
           roles: [
             {
@@ -1104,7 +1104,7 @@ const ParentalLeaveTemplate: ApplicationTemplate<
             action: ApiModuleActions.setVMSTPeriods,
             triggerEvent: DefaultEvents.EDIT,
             externalDataId: 'VMSTPeriods',
-            throwOnError: false, // TODO: Hvað á að vera hérna? (defaults to true)
+            throwOnError: false,
           }),
           roles: [
             {
@@ -1204,7 +1204,7 @@ const ParentalLeaveTemplate: ApplicationTemplate<
             action: ApiModuleActions.setVMSTPeriods,
             triggerEvent: DefaultEvents.EDIT,
             externalDataId: 'VMSTPeriods',
-            throwOnError: false, // TODO: Hvað á að vera hérna? (defaults to true)
+            throwOnError: false,
           }),
           roles: [
             {
@@ -1303,7 +1303,7 @@ const ParentalLeaveTemplate: ApplicationTemplate<
               action: ApiModuleActions.setVMSTPeriods,
               triggerEvent: DefaultEvents.EDIT,
               externalDataId: 'VMSTPeriods',
-              throwOnError: false, // TODO: Hvað á að vera hérna? (defaults to true)
+              throwOnError: false,
             }),
           ],
           roles: [
@@ -1378,7 +1378,7 @@ const ParentalLeaveTemplate: ApplicationTemplate<
             action: ApiModuleActions.setVMSTPeriods,
             triggerEvent: DefaultEvents.EDIT,
             externalDataId: 'VMSTPeriods',
-            throwOnError: false, // TODO: Hvað á að vera hérna? (defaults to true)
+            throwOnError: false,
           }),
           roles: [
             {

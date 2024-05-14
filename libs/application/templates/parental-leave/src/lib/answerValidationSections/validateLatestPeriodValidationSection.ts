@@ -157,8 +157,8 @@ export const validateLatestPeriodValidationSection = (
     }
   }
 
-  // Stop checking approved periods from VMST
-  if (latestPeriod.approved) {
+  // Stop checking periods synced from VMST
+  if ('approved' in latestPeriod) {
     return undefined
   }
 

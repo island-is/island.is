@@ -164,7 +164,7 @@ export const formatPeriods = (
       duration: calculatedLength,
       canDelete: canDelete,
       title: formatMessage(
-        period.approved
+        'approved' in period
           ? parentalLeaveFormMessages.reviewScreen.vmstPeriod
           : parentalLeaveFormMessages.reviewScreen.period,
         {
@@ -1539,7 +1539,7 @@ export const synchronizeVMSTPeriods = (
   setRepeaterItems: RepeaterProps['setRepeaterItems'],
   setFieldLoadingState: RepeaterProps['setFieldLoadingState'],
 ) => {
-  // If periods is not sync with VMST periods, sync it // TODO: Laga texta??
+  // If periods is not in sync with VMST periods, sync it
   const newPeriods: Period[] = []
   const temptVMSTPeriods: Period[] = []
   const VMSTPeriods: VMSTPeriod[] = data?.getApplicationInformation?.periods
@@ -1568,7 +1568,7 @@ export const synchronizeVMSTPeriods = (
         firstPeriodStart: firstPeriodStart,
         useLength: NO as YesOrNo,
         rightCodePeriod: rightsCodePeriod,
-        daysToUse: period.days, // TODO: Getur verið að er ekki með days? (þarf að gera ehv svo gamalt "daysToUse" haldist ekki inni)
+        daysToUse: period.days,
         paid: period.paid,
         approved: period.approved,
       }

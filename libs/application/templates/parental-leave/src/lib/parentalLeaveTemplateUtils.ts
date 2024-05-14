@@ -97,6 +97,7 @@ export const goToState = (
 export const restructureVMSTPeriods = (context: ApplicationContext) => {
   const { application } = context
   const { VMSTPeriods } = getApplicationExternalData(application.externalData)
+  const { periods } = getApplicationAnswers(application.answers)
 
   const today = new Date()
   const newPeriods: Period[] = []
@@ -113,6 +114,11 @@ export const restructureVMSTPeriods = (context: ApplicationContext) => {
       firstPeriodStart = 'specificDate'
     }
 
+    let useLength = NO
+    if (firstPeriodStart === 'actualDateOfBirth') {
+      useLength = periods[0].useLength ?? NO
+    }
+
     if (!period.rightsCodePeriod.includes('DVAL')) {
       // API returns multiple rightsCodePeriod in string ('M-L-GR, M-FS')
       const rightsCodePeriod = period.rightsCodePeriod.split(',')[0]
@@ -122,9 +128,9 @@ export const restructureVMSTPeriods = (context: ApplicationContext) => {
         ratio: period.ratio.split(',')[0],
         rawIndex: index,
         firstPeriodStart: firstPeriodStart,
-        useLength: NO as YesOrNo, // TODO: Passa þetta?? (ef fer inn í EDIT stöðu áður en búið að vinna með tímabil, á að haldast sem "yes"?)
+        useLength: useLength as YesOrNo,
         rightCodePeriod: rightsCodePeriod,
-        daysToUse: period.days, // TODO: Getur verið að er ekki með days? (þarf að gera ehv svo gamalt "daysToUse" haldist ekki inni)
+        daysToUse: period.days,
         paid: period.paid,
         approved: period.approved,
       }
