@@ -19,6 +19,8 @@ export const generateFirearmApplicantEmail: FirearmsApplicantEmail = (
     .firearmApplicant as AnnouncementOfDeathAnswers['firearmApplicant']
 
   if (!firearmApplicant) throw new Error('Firearm applicant was undefined')
+  if (!application.answers.caseNumber)
+    throw new Error('Case number was undefined')
 
   const subject = 'Tilkynning um vörslu skotvopna'
 
