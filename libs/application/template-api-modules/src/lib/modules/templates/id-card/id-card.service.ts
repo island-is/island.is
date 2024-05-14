@@ -11,6 +11,10 @@ import {
   DistrictCommissionerAgencies,
 } from './constants'
 import { info } from 'kennitala'
+import {
+  ChargeFjsV2ClientService,
+  getPaymentIdFromExternalData,
+} from '@island.is/clients/charge-fjs-v2'
 import { generateAssignParentBApplicationEmail } from './emailGenerators/assignParentBEmail'
 // import { PassportSchema } from '@island.is/application/templates/passport'
 import { PassportsService } from '@island.is/clients/passports'
@@ -26,6 +30,7 @@ export class IdCardService extends BaseTemplateApiService {
   constructor(
     @Inject(LOGGER_PROVIDER) private logger: Logger,
     private readonly sharedTemplateAPIService: SharedTemplateApiService,
+    private readonly chargeFjsV2ClientService: ChargeFjsV2ClientService,
     private passportApi: PassportsService,
   ) {
     super(ApplicationTypes.ID_CARD)
@@ -155,7 +160,7 @@ export class IdCardService extends BaseTemplateApiService {
       )
     }
 
-    // 2. Notify users that need to review
+    // 2. Notify parent B that they need to review
 
     // TODO: Write in error log email of parentB
     await this.sharedTemplateAPIService
@@ -163,6 +168,36 @@ export class IdCardService extends BaseTemplateApiService {
       .catch(() => {
         this.logger.error(`Error sending email about initReview`)
       })
+  }
+
+  async rejectApplication({
+    application,
+    auth,
+  }: TemplateApiModuleActionProps): Promise<void> {
+    // 1. Delete charge so that the seller gets reimburshed
+    const chargeId = getPaymentIdFromExternalData(application)
+    if (chargeId) {
+      await this.chargeFjsV2ClientService.deleteCharge(chargeId)
+    }
+
+    // 2. Notify everyone in the process that the application has been withdrawn
+
+    // TODO: Get correct answers
+    // const answers = application.answers as TransferOfVehicleOwnershipAnswers
+
+    // Email to parent A
+    // await this.sharedTemplateAPIService
+    //   .sendEmail((props) => generateApplicationRejectEmail(props, answers.parentA), application)
+    //   .catch(() => {
+    //     this.logger.error(`Error sending email about initReview`)
+    //   })
+
+    // Email to parent B
+    // await this.sharedTemplateAPIService
+    //   .sendEmail((props) => generateApplicationRejectEmail(props, answers.parentB), application)
+    //   .catch(() => {
+    //     this.logger.error(`Error sending email about initReview`)
+    //   })
   }
 
   //   async submitPassportApplication({
