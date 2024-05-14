@@ -24,9 +24,9 @@ import {
   SectionHeading,
 } from '@island.is/judicial-system-web/src/components'
 import {
-  ServiceRequirement,
-  CaseIndictmentRulingDecision,
   CaseFileCategory,
+  CaseIndictmentRulingDecision,
+  ServiceRequirement,
 } from '@island.is/judicial-system-web/src/graphql/schema'
 import {
   useDefendants,
@@ -58,7 +58,7 @@ const Completed: FC = () => {
     }
 
     setModalVisible('SENT_TO_PUBLIC_PROSECUTOR')
-  }, [handleUpload, uploadFiles, updateUploadFile, workingCase.id])
+  }, [handleUpload, uploadFiles, updateUploadFile])
 
   const stepIsValid = () =>
     workingCase.indictmentRulingDecision === CaseIndictmentRulingDecision.RULING
@@ -83,7 +83,7 @@ const Completed: FC = () => {
 
   const handleNavigationTo = useCallback(
     (destination: string) => router.push(`${destination}/${workingCase.id}`),
-    [router, workingCase.id],
+    [workingCase.id],
   )
 
   return (
