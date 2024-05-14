@@ -69,8 +69,40 @@ export const newPrimarySchoolMessages: MessageDir = {
     },
   }),
 
+  childrenNParents: defineMessages({
+    sectionTitle: {
+      id: 'dess.nps.application:confirmation.section.title',
+      defaultMessage: 'Börn og foreldrar',
+      description: 'Children and parents',
+    },
+  }),
+
+  school: defineMessages({
+    sectionTitle: {
+      id: 'dess.nps.application:school.section.title',
+      defaultMessage: 'Skóli',
+      description: 'School',
+    },
+  }),
+
+  relatives: defineMessages({
+    sectionTitle: {
+      id: 'dess.nps.application:relatives.section.title',
+      defaultMessage: 'Aðstandendur',
+      description: 'Overview',
+    },
+  }),
+
+  meal: defineMessages({
+    sectionTitle: {
+      id: 'dess.nps.application:meal.section.title',
+      defaultMessage: 'Mataráskrift',
+      description: 'Meal subscription',
+    },
+  }),
+
   confirm: defineMessages({
-    overviewTitle: {
+    sectionTitle: {
       id: 'dess.nps.application:confirmation.section.title',
       defaultMessage: 'Yfirlit',
       description: 'Overview',
@@ -118,7 +150,12 @@ export const newPrimarySchoolMessages: MessageDir = {
     },
   }),
 
-  conclusionScreen: defineMessages({
+  conclusion: defineMessages({
+    overviewTitle: {
+      id: 'dess.nps.application:conclusion.section.title',
+      defaultMessage: 'TBD',
+      description: 'TBD',
+    },
     title: {
       id: 'dess.nps.application:conclusion.title',
       defaultMessage: 'Umsókn móttekin',

@@ -23,13 +23,28 @@ export const NewPrimarySchoolForm: Form = buildForm({
       children: [],
     }),
     buildSection({
-      id: 'TBD',
-      title: 'TBD',
+      id: 'childrenNParentsSection',
+      title: newPrimarySchoolMessages.childrenNParents.sectionTitle,
       children: [],
     }),
     buildSection({
-      id: 'confirmation',
-      title: newPrimarySchoolMessages.confirm.overviewTitle,
+      id: 'schoolSection',
+      title: newPrimarySchoolMessages.school.sectionTitle,
+      children: [],
+    }),
+    buildSection({
+      id: 'relativesSection',
+      title: newPrimarySchoolMessages.relatives.sectionTitle,
+      children: [],
+    }),
+    buildSection({
+      id: 'mealSection',
+      title: newPrimarySchoolMessages.meal.sectionTitle,
+      children: [],
+    }),
+    buildSection({
+      id: 'confirmationSection',
+      title: newPrimarySchoolMessages.confirm.sectionTitle,
       children: [
         buildSubSection({
           id: '',
@@ -69,11 +84,9 @@ export const NewPrimarySchoolForm: Form = buildForm({
       ],
     }),
     buildFormConclusionSection({
-      alertTitle: newPrimarySchoolMessages.conclusionScreen.alertTitle,
-      expandableHeader:
-        newPrimarySchoolMessages.conclusionScreen.nextStepsLabel,
-      expandableDescription:
-        newPrimarySchoolMessages.conclusionScreen.accordionText,
+      alertTitle: newPrimarySchoolMessages.conclusion.alertTitle,
+      expandableHeader: newPrimarySchoolMessages.conclusion.nextStepsLabel,
+      expandableDescription: newPrimarySchoolMessages.conclusion.accordionText,
     }),
   ],
 })
