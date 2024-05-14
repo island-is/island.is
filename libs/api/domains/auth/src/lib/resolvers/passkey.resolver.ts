@@ -55,4 +55,12 @@ export class PasskeyResolver {
   ): Promise<PasskeyRegistrationVerification> {
     return this.passkey.verifyAuthentication(user, input)
   }
+
+  @Mutation(() => Boolean, {
+    name: 'authDeletePasskey',
+  })
+  async deletePasskey(@CurrentUser() user: User): Promise<boolean> {
+    await this.passkey.deletePasskey(user)
+    return true
+  }
 }

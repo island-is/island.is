@@ -229,10 +229,18 @@ export class PasskeysCoreService {
     }
   }
 
-  async deletePasskey(passkeyId: string) {
+  async deletePasskeyById(passkeyId: string) {
     await this.passkeyModel.destroy({
       where: {
         passkey_id: passkeyId,
+      },
+    })
+  }
+
+  async deletePasskeyByUser(user: User) {
+    await this.passkeyModel.destroy({
+      where: {
+        user_sub: getUserId(user),
       },
     })
   }

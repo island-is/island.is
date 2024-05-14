@@ -6,6 +6,7 @@ import {
 import {
   Body,
   Controller,
+  Delete,
   Get,
   Post,
   UseGuards,
@@ -35,6 +36,16 @@ import { AuthenticationResponse } from './dto/authenticationResponse.dto'
 export class PasskeysController {
   constructor(private readonly passkeysCoreService: PasskeysCoreService) {
     console.log('Constructed PasskeysController')
+  }
+
+  @Delete('')
+  @Documentation({
+    summary: 'Deletes passkey for the authenticated user.',
+    description: 'Deletes passkey for the authenticated user.',
+    response: { status: 204 },
+  })
+  async deletePasskey(@CurrentActor() actor: User): Promise<void> {
+    await this.passkeysCoreService.deletePasskeyByUser(actor)
   }
 
   @Get('register')

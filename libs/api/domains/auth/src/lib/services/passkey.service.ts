@@ -57,4 +57,8 @@ export class PasskeyService {
       authenticationResponse: input,
     })
   }
+
+  deletePasskey(user: User): Promise<void> {
+    return this.passkeysApiWithAuth(user).passkeysControllerDeletePasskey()
+  }
 }
