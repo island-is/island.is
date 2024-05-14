@@ -1035,7 +1035,7 @@ const ParentalLeaveTemplate: ApplicationTemplate<
               },
               {
                 onEvent: DefaultEvents.EDIT,
-                logMessage: statesMessages.editHistoryLogMessage,
+                logMessage: 'Búp', //statesMessages.editHistoryLogMessage,
               },
             ],
           },
@@ -1119,8 +1119,12 @@ const ParentalLeaveTemplate: ApplicationTemplate<
             },
             historyLogs: [
               {
-                onEvent: PLEvents.MODIFY,
-                logMessage: statesMessages.editHistoryLogMessage,
+                onEvent: DefaultEvents.SUBMIT, //PLEvents.MODIFY,
+                logMessage: 'Beep', //statesMessages.editHistoryLogMessage,
+              },
+              {
+                onEvent: DefaultEvents.ABORT,
+                logMessage: 'umsækjandi eyddi breytingunum',
               },
             ],
           },
@@ -1192,7 +1196,7 @@ const ParentalLeaveTemplate: ApplicationTemplate<
               },
               {
                 onEvent: DefaultEvents.EDIT,
-                logMessage: statesMessages.editHistoryLogMessage,
+                logMessage: 'BREYTA!', //statesMessages.editHistoryLogMessage,
               },
               // {
               //   onEvent: DefaultEvents.SUBMIT,

@@ -4,9 +4,9 @@ import {
   buildSection,
   buildSubmitField,
 } from '@island.is/application/core'
-import { Form } from '@island.is/application/types'
+import { DefaultEvents, Form } from '@island.is/application/types'
 import Logo from '../assets/Logo'
-import { States as ApplicationStates } from '../constants'
+import { States as ApplicationStates, PLEvents } from '../constants'
 import {
   inReviewFormMessages,
   parentalLeaveFormMessages,
@@ -38,13 +38,13 @@ export const EditsRequireAction: Form = buildForm({
               refetchApplicationAfterSubmit: true,
               actions: [
                 {
-                  event: 'ABORT',
+                  event: DefaultEvents.ABORT,
                   name: parentalLeaveFormMessages.editFlow
                     .editsNotApprovedDiscardButton,
                   type: 'reject',
                 },
                 {
-                  event: 'MODIFY',
+                  event: PLEvents.MODIFY,
                   name: parentalLeaveFormMessages.reviewScreen.buttonsEdit,
                   type: 'sign',
                 },
