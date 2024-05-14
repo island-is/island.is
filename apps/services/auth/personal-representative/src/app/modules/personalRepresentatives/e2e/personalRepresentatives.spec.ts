@@ -365,14 +365,16 @@ describe('PersonalRepresentativeController', () => {
     })
 
     // Create delegation type
-    listOfRightTypes.map(async (rt) => {
-      await delegationTypeModel.create({
-        description: rt.description,
-        id: `PersonalRepresentative:${rt.code}`,
-        name: `Personal Representative: ${rt.code}`,
-        providerId: prov.id,
-      })
-    })
+    await Promise.all(
+      listOfRightTypes.map(async (rt) => {
+        await delegationTypeModel.create({
+          description: rt.description,
+          id: `PersonalRepresentative:${rt.code}`,
+          name: `Personal Representative: ${rt.code}`,
+          providerId: prov.id,
+        })
+      }),
+    )
   }
 
   async function setupBasePersonalRep(
