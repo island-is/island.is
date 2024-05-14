@@ -6,7 +6,7 @@ import {
 
 import {
   CaseState,
-  completedCaseStates,
+  completedRequestCaseStates,
   DateType,
   RequestSharedWithDefender,
 } from '@island.is/judicial-system/types'
@@ -44,7 +44,7 @@ describe('Request Shared With Defender Guard', () => {
   describe.each([
     CaseState.SUBMITTED,
     CaseState.RECEIVED,
-    ...completedCaseStates,
+    ...completedRequestCaseStates,
   ])('request shared with defender when ready for court', (state) => {
     let then: Then
 
@@ -64,7 +64,7 @@ describe('Request Shared With Defender Guard', () => {
     })
   })
 
-  describe.each([CaseState.RECEIVED, ...completedCaseStates])(
+  describe.each([CaseState.RECEIVED, ...completedRequestCaseStates])(
     'request shared with defender and court date has been set',
     (state) => {
       let then: Then

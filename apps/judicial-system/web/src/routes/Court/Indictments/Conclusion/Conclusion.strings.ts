@@ -18,7 +18,7 @@ export const strings = defineMessages({
     description: 'Notaður sem texti fyrir frestun valkost á Niðurstaða skrefi.',
   },
   complete: {
-    id: 'judicial.system.court.indictments.conclusion.complete',
+    id: 'judicial.system.core:court.indictments.conclusion.complete',
     defaultMessage: 'Lokið',
     description: 'Notaður sem texti fyrir lokið valkost á Niðurstaða skrefi.',
   },
@@ -62,11 +62,6 @@ export const strings = defineMessages({
     id: 'judicial.system.core:court.indictments.conclusion.upload_button_text',
     defaultMessage: 'Velja gögn til að hlaða upp',
     description: 'Notaður sem titill á hlaða upp takka á Niðurstaða skrefi.',
-  },
-  nextButtonText: {
-    id: 'judicial.system.core:court.indictments.conclusion.next_button_text',
-    defaultMessage: 'Staðfesta',
-    description: 'Notaður sem titill á Staðfesta takka á Niðurstaða skrefi.',
   },
   redistribute: {
     id: 'judicial.system.core:court.indictments.conclusion.redistribute',

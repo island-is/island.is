@@ -2,7 +2,6 @@ import { literal, Op } from 'sequelize'
 
 import {
   CaseState,
-  completedCaseStates,
   indictmentCases,
   investigationCases,
   restrictionCases,
@@ -44,14 +43,16 @@ export const archiveFilter = {
     {
       [Op.and]: [
         { type: investigationCases },
-        { state: completedCaseStates },
+        {
+          state: [CaseState.ACCEPTED, CaseState.REJECTED, CaseState.DISMISSED],
+        },
         { ruling_date: { [Op.lt]: lifetime } },
       ],
     },
     {
       [Op.and]: [
         { type: indictmentCases },
-        { state: completedCaseStates },
+        { state: CaseState.COMPLETED },
         { ruling_date: { [Op.lt]: indictmentLifetime } },
       ],
     },
