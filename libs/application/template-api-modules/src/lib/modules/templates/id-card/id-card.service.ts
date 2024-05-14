@@ -200,6 +200,53 @@ export class IdCardService extends BaseTemplateApiService {
     //   })
   }
 
+  async submitApplication({
+    application,
+    auth,
+  }: TemplateApiModuleActionProps): Promise<void> {
+    // 1. Validate payment
+
+    // 1a. Make sure a paymentUrl was created
+    const { paymentUrl } = application.externalData.createCharge.data as {
+      paymentUrl: string
+    }
+    if (!paymentUrl) {
+      throw new Error(
+        'Ekki er búið að staðfesta greiðslu, hinkraðu þar til greiðslan er staðfest.',
+      )
+    }
+
+    // 1b. Make sure payment is fulfilled (has been paid)
+    const payment: { fulfilled: boolean } | undefined =
+      await this.sharedTemplateAPIService.getPaymentStatus(auth, application.id)
+    if (!payment?.fulfilled) {
+      throw new Error(
+        'Ekki er búið að staðfesta greiðslu, hinkraðu þar til greiðslan er staðfest.',
+      )
+    }
+
+    // TODO: Actually submit application
+
+    // 3. Notify everyone in the process that the application has successfully been submitted
+
+    // TODO: Get correct answers
+    // const answers = application.answers as TransferOfVehicleOwnershipAnswers
+
+    // Email to parent A
+    // await this.sharedTemplateAPIService
+    //   .sendEmail((props) => generateApplicationSubmittedEmail(props, answers.parentA), application)
+    //   .catch(() => {
+    //     this.logger.error(`Error sending email about initReview`)
+    //   })
+
+    // Email to parent B
+    // await this.sharedTemplateAPIService
+    //   .sendEmail((props) => generateApplicationSubmittedEmail(props, answers.parentB), application)
+    //   .catch(() => {
+    //     this.logger.error(`Error sending email about initReview`)
+    //   })
+  }
+
   //   async submitPassportApplication({
   //     application,
   //     auth,
