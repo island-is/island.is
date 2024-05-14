@@ -28,7 +28,7 @@ export class EventLog extends Model {
   id!: string
 
   @CreatedAt
-  @Column({ type: DataType.DATE, allowNull: false })
+  @Column({ type: DataType.DATE })
   @ApiProperty({ type: Date })
   created!: Date
 
