@@ -3,7 +3,7 @@ import { StateStorage } from 'zustand/middleware'
 
 const storages: MMKVInstance[] = []
 
-export const createMKKVStorage = ({ withEncryption = false } = {}) => {
+export const createMMKVStorage = ({ withEncryption = false }: { withEncryption?: boolean } = {}): MMKVInstance => {
   const storage = withEncryption
     ? new MMKVLoader()
         .withEncryption() // Generates a random key and stores it securely in Keychain
