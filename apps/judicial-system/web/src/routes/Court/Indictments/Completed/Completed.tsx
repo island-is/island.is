@@ -60,6 +60,29 @@ const Completed: FC = () => {
     setModalVisible('SENT_TO_PUBLIC_PROSECUTOR')
   }, [handleUpload, uploadFiles, updateUploadFile])
 
+  const handleRemoveFile = useCallback(
+    (file: UploadFile) => {
+      if (file.key) {
+        handleRemove(file, removeUploadFile)
+      } else {
+        removeUploadFile(file)
+      }
+    },
+    [handleRemove, removeUploadFile],
+  )
+
+  const handleCriminalRecordUpdateUpload = useCallback(
+    (files: File[], type: CaseFileCategory) => {
+      addUploadFiles(files, type, 'done')
+    },
+    [addUploadFiles],
+  )
+
+  const handleNavigationTo = useCallback(
+    (destination: string) => router.push(`${destination}/${workingCase.id}`),
+    [workingCase.id],
+  )
+
   const stepIsValid = () =>
     workingCase.indictmentRulingDecision === CaseIndictmentRulingDecision.RULING
       ? workingCase.defendants?.every(
@@ -68,23 +91,6 @@ const Completed: FC = () => {
             defendant.serviceRequirement !== null,
         )
       : true
-
-  const handleRemoveFile = (file: UploadFile) => {
-    if (file.key) {
-      handleRemove(file, removeUploadFile)
-    } else {
-      removeUploadFile(file)
-    }
-  }
-
-  const handleChange = (files: File[], type: CaseFileCategory) => {
-    addUploadFiles(files, type, 'done')
-  }
-
-  const handleNavigationTo = useCallback(
-    (destination: string) => router.push(`${destination}/${workingCase.id}`),
-    [workingCase.id],
-  )
 
   return (
     <PageLayout
@@ -122,7 +128,10 @@ const Completed: FC = () => {
               fileEndings: '.pdf',
             })}
             onChange={(files) =>
-              handleChange(files, CaseFileCategory.CRIMINAL_RECORD_UPDATE)
+              handleCriminalRecordUpdateUpload(
+                files,
+                CaseFileCategory.CRIMINAL_RECORD_UPDATE,
+              )
             }
             onRemove={(file) => handleRemoveFile(file)}
           />
