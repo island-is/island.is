@@ -6,45 +6,67 @@ import {
 } from '@island.is/application/core'
 import { m } from '../../lib/messages'
 import { DrivingLicense } from '../../lib/types'
-import { B_FULL, B_TEMP } from '../../shared'
+import { B_FULL, B_TEMP, BE, DrivingLicenseFakeData } from '../../lib/constants'
 
-export const sectionApplicationFor = buildSubSection({
-  id: 'applicationFor',
-  title: m.applicationDrivingLicenseTitle,
-  children: [
-    buildMultiField({
-      id: 'info',
-      title: m.applicationDrivingLicenseTitle,
-      description: m.drivingLicenseApplyingForTitle,
-      children: [
-        buildRadioField({
-          id: 'applicationFor',
-          title: '',
-          backgroundColor: 'white',
-          largeButtons: true,
-          options: (app) => {
-            const { currentLicense } = getValueViaPath<DrivingLicense>(
-              app.externalData,
-              'currentLicense.data',
-            ) ?? { currentLicense: null }
+export const sectionApplicationFor = (allowBELicense = false) =>
+  buildSubSection({
+    id: 'applicationFor',
+    title: m.applicationDrivingLicenseTitle,
+    children: [
+      buildMultiField({
+        id: 'info',
+        title: m.applicationDrivingLicenseTitle,
+        description: m.drivingLicenseApplyingForTitle,
+        children: [
+          buildRadioField({
+            id: 'applicationFor',
+            title: '',
+            backgroundColor: 'white',
+            largeButtons: true,
+            options: (app) => {
+              let { currentLicense } = getValueViaPath<DrivingLicense>(
+                app.externalData,
+                'currentLicense.data',
+              ) ?? { currentLicense: null }
 
-            return [
-              {
-                label: m.applicationForTempLicenseTitle,
-                subLabel: m.applicationForTempLicenseDescription.defaultMessage,
-                value: B_TEMP,
-                disabled: !!currentLicense,
-              },
-              {
-                label: m.applicationForFullLicenseTitle,
-                subLabel: m.applicationForFullLicenseDescription.defaultMessage,
-                value: B_FULL,
-                disabled: !currentLicense,
-              },
-            ]
-          },
-        }),
-      ],
-    }),
-  ],
-})
+              const fakeData = getValueViaPath<DrivingLicenseFakeData>(
+                app.answers,
+                'fakeData',
+              )
+              if (fakeData?.useFakeData === 'yes') {
+                currentLicense = fakeData.currentLicense ?? null
+              }
+
+              let options = [
+                {
+                  label: m.applicationForTempLicenseTitle,
+                  subLabel:
+                    m.applicationForTempLicenseDescription.defaultMessage,
+                  value: B_TEMP,
+                  disabled: !!currentLicense,
+                },
+                {
+                  label: m.applicationForFullLicenseTitle,
+                  subLabel:
+                    m.applicationForFullLicenseDescription.defaultMessage,
+                  value: B_FULL,
+                  disabled: currentLicense !== 'temp',
+                },
+              ]
+
+              if (allowBELicense) {
+                options = options.concat({
+                  label: m.applicationForBELicenseTitle,
+                  subLabel: m.applicationForBELicenseDescription.defaultMessage,
+                  value: BE,
+                  disabled: currentLicense !== 'full',
+                })
+              }
+
+              return options
+            },
+          }),
+        ],
+      }),
+    ],
+  })
