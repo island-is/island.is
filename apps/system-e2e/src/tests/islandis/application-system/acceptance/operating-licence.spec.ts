@@ -29,6 +29,7 @@ const applicationTest = base.extend<{ applicationPage: Page }>({
     await disableI18n(applicationPage)
     // await disableDelegations(applicationPage)
     await applicationPage.goto(homeUrl)
+    await expect(applicationPage).toBeApplication()
     await use(applicationPage)
 
     await applicationPage.close()
@@ -103,7 +104,7 @@ applicationTest.describe('Operating Licence', () => {
       }
       deleteMockPdf()
       await sleep(1000)
-      await expect(page.getByText('Ógilt gildi.')).toBeHidden()
+      await expect(page.getByText('Ógilt gildi.')).not.toBeVisible()
       await page.getByTestId('proceed').click()
 
       // Overview

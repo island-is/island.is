@@ -1,6 +1,6 @@
 import { expect, Page } from '@playwright/test'
 import { urls, shouldSkipNavigation } from './urls'
-import { logger } from './utils'
+import { debug } from './utils'
 
 export type CognitoCreds = {
   username: string
@@ -67,7 +67,7 @@ export async function idsLogin(
 
   // Handle delegation on login
   if (page.url().startsWith(urls.authUrl)) {
-    logger.debug('Still on auth site')
+    debug('Still on auth site')
     /**
      * Not using accessible selector here because this test needs to work on both the new and current login page at the same time to handle the transition gracefully
      * TODO: use accessible selector when the new login pages is out

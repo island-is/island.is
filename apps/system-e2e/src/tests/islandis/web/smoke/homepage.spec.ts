@@ -39,16 +39,14 @@ test.describe('Front page', () => {
       await page.goto(home)
       const lifeEventsCards = page.locator('[data-testid="lifeevent-card"]')
 
-      expect(await lifeEventsCards.count()).toBeGreaterThan(3)
+      await expect(lifeEventsCards).toHaveCountGreaterThan(3)
       const lifeEventHandles = await lifeEventsCards.elementHandles()
       const lifeEventUrls = await Promise.all(
-        lifeEventHandles.map(
-          async (item) => (await item.getAttribute('href')) ?? '',
-        ),
+        lifeEventHandles.map((item) => item.getAttribute('href')),
       )
       for (const url of lifeEventUrls) {
         const page = await context.newPage()
-        const result = await page.goto(url)
+        const result = await page.goto(url!)
         await expect(
           page.getByRole('link', { name: 'island.is logo' }),
         ).toBeVisible()
@@ -61,7 +59,7 @@ test.describe('Front page', () => {
       const page = await context.newPage()
       await page.goto(home)
       const featuredLinks = page.locator('[data-testid="featured-link"]')
-      expect(await featuredLinks.count()).toBeGreaterThan(3)
+      await expect(featuredLinks).toHaveCountGreaterThan(3)
       const featuredLinksHandles = await featuredLinks.elementHandles()
       const featuresLinksUrls = await Promise.all(
         featuredLinksHandles.map((item) => item.getAttribute('href')),
@@ -114,9 +112,9 @@ test.describe('Front page', () => {
     await page
       .locator('[data-testid="frontpage-burger-button"]:nth-child(2)')
       .click()
-    expect(
-      await page.locator('[data-testid="mega-menu-link"] > a').count(),
-    ).toBeGreaterThan(18)
+    await expect(
+      page.locator('[data-testid="mega-menu-link"] > a'),
+    ).toHaveCountGreaterThan(18)
   })
 
   test('burger menu should open and close', async () => {
@@ -139,6 +137,6 @@ test.describe('Front page', () => {
       .getByTestId('icon-close')
       .click()
     await expect(page.getByTestId('home-heading')).toBeVisible()
-    await expect(page.getByRole('dialog', { name: 'Menu' })).toBeHidden()
+    await expect(page.getByRole('dialog', { name: 'Menu' })).not.toBeVisible()
   })
 })
