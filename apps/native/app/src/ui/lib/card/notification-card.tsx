@@ -13,7 +13,6 @@ const Host = styled.TouchableHighlight<{ unread?: boolean }>`
 `
 
 const Cell = styled.View`
-  flex-direction: row;
   padding-horizontal: ${({ theme }) => theme.spacing[2]}px;
   padding-vertical: ${({ theme }) => theme.spacing[3]}px;
   border-bottom-width: ${({ theme }) => theme.border.width.standard}px;
@@ -27,11 +26,19 @@ const Cell = styled.View`
 `
 
 const Container = styled.View`
-  flex-direction: column;
+  flex-direction: row;
+  align-items: flex-start;
+  justify-content: flex-start;
+  column-gap: ${({ theme }) => theme.spacing[2]}px;
+`
+
+const Heading = styled.View`
+  flex-direction: row;
+  justify-content: space-around;
+  align-items: flex-start;
 `
 
 const Icon = styled.View<{ unread?: boolean }>`
-  margin-right: ${({ theme }) => theme.spacing[2]}px;
   background-color: ${({ theme, unread }) =>
     unread ? theme.color.white : theme.color.blue100};
   height: 40px;
@@ -43,14 +50,9 @@ const Icon = styled.View<{ unread?: boolean }>`
 `
 
 const Row = styled.View`
-  flex-direction: row;
-  justify-content: space-between;
-  margin-bottom: ${({ theme }) => theme.spacing.smallGutter}px;
-`
-
-const Date = styled.View`
-  flex-direction: row;
-  align-items: center;
+  flex-direction: column;
+  flex: 1;
+  row-gap: ${({ theme }) => theme.spacing.smallGutter}px;
 `
 
 interface CardProps {
@@ -89,28 +91,30 @@ export function NotificationCard({
       testID={testID}
     >
       <Cell>
-        {icon && isValidElement(icon) ? (
-          icon
-        ) : icon ? (
-          <Icon unread={unread}>
-            <Image
-              source={icon as ImageSourcePropType}
-              style={{ width: 16, height: 16 }}
-            />
-          </Icon>
-        ) : null}
         <Container>
+          {icon && isValidElement(icon) ? (
+            icon
+          ) : icon ? (
+            <Icon unread={unread}>
+              <Image
+                source={icon as ImageSourcePropType}
+                style={{ width: 16, height: 16 }}
+              />
+            </Icon>
+          ) : null}
           <Row>
-            <Typography variant="heading5">{title}</Typography>
-            {date && (
-              <Date>
+            <Heading>
+              <Typography variant="heading5" style={{ flex: 1 }}>
+                {title}
+              </Typography>
+              {date && (
                 <Typography variant="body3">
                   <FormattedDate value={date} />
                 </Typography>
-              </Date>
-            )}
+              )}
+            </Heading>
+            <Typography>{message}</Typography>
           </Row>
-          <Typography>{message}</Typography>
         </Container>
       </Cell>
     </Host>
