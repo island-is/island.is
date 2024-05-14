@@ -24,11 +24,15 @@ export const sectionApplicationFor = (allowBELicense = false) =>
             backgroundColor: 'white',
             largeButtons: true,
             options: (app) => {
-              let { currentLicense, categories } =
-                getValueViaPath<DrivingLicense>(
-                  app.externalData,
-                  'currentLicense.data',
-                ) ?? { currentLicense: null }
+              let { currentLicense } = getValueViaPath<DrivingLicense>(
+                app.externalData,
+                'currentLicense.data',
+              ) ?? { currentLicense: null }
+
+              const { categories } = getValueViaPath<DrivingLicense>(
+                app.externalData,
+                'currentLicense.data',
+              ) ?? { categories: null }
 
               const fakeData = getValueViaPath<DrivingLicenseFakeData>(
                 app.answers,
