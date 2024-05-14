@@ -8,8 +8,7 @@ import {
 } from '@island.is/application/core'
 import { m } from '../../lib/messages'
 import { HasQualityPhotoData } from '../../lib/types'
-import { NO, YES } from '../../lib/constants'
-import { B_FULL } from '../../shared/constants'
+import { B_FULL, NO, YES } from '../../lib/constants'
 import {
   hasNoDrivingLicenseInOtherCountry,
   isApplicationForCondition,

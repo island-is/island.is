@@ -34,7 +34,7 @@ test.describe('Consultation portal authenticated', () => {
     await expect(
       page.getByRole('button', { name: 'Gervimaður Ameríku' }),
     ).toBeVisible()
-    await expect(page.getByTestId('menu-login-btn')).toBeHidden()
+    await expect(page.getByTestId('menu-login-btn')).not.toBeVisible()
 
     await page.close()
   })
@@ -50,7 +50,7 @@ test.describe('Consultation portal authenticated', () => {
       page.getByRole('button', {
         name: 'Skrá mig inn',
       }),
-    ).toBeHidden()
+    ).not.toBeVisible()
 
     await page.close()
   })
@@ -59,7 +59,7 @@ test.describe('Consultation portal authenticated', () => {
     const page = await context.newPage()
     await page.goto(icelandicAndNoPopupUrl('/samradsgatt/minaraskriftir'))
     await expect(page.getByTestId('subscriptions-title')).toBeVisible()
-    await expect(page.getByTestId('action-card')).toBeHidden()
+    await expect(page.getByTestId('action-card')).not.toBeVisible()
 
     await page.close()
   })
@@ -69,7 +69,7 @@ test.describe('Consultation portal authenticated', () => {
     await page.goto(icelandicAndNoPopupUrl('/samradsgatt'))
 
     await page.goto('/umsagnir')
-    await expect(page.getByTestId('actionCard')).toBeHidden()
+    await expect(page.getByTestId('actionCard')).not.toBeVisible()
 
     await page.close()
   })
