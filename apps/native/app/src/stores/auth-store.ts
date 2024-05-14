@@ -2,7 +2,7 @@ import { Alert } from 'react-native'
 import {
   authorize,
   AuthorizeResult,
-  refresh,
+  refresh as authRefresh,
   RefreshResult,
   revoke,
 } from 'react-native-app-auth'
@@ -62,45 +62,56 @@ export const authStore = create<AuthStore>((set, get) => ({
   cognitoDismissCount: 0,
   cognitoAuthUrl: undefined,
   cookies: '',
-  async fetchUserInfo(_refresh = false) {
+  async fetchUserInfo(shouldRefresh = false) {
     const appAuthConfig = getAppAuthConfig()
     // Detect expired token
     const expiresAt = get().authorizeResult?.accessTokenExpirationDate ?? 0
+
     if (new Date(expiresAt) < new Date()) {
       await get().refresh()
     }
-    return fetch(
+
+    const res = await fetch(
       `${appAuthConfig.issuer.replace(/\/$/, '')}/connect/userinfo`,
       {
         headers: {
           Authorization: `Bearer ${get().authorizeResult?.accessToken}`,
         },
       },
-    ).then(async (res) => {
-      if (res.status === 401) {
-        // Attempt to refresh the access token
-        if (!_refresh && (await get().refresh())) {
-          // Retry the userInfo call
-          return get().fetchUserInfo(true)
-        }
-        throw new Error('Unauthorized')
-      } else if (res.status === 200) {
-        const userInfo = await res.json()
-        set({ userInfo })
-        return userInfo
+    )
+
+    if (res.status === 401) {
+      // Attempt to refresh the access token
+      const successfulRefresh = await get().refresh()
+
+      if (!shouldRefresh && successfulRefresh) {
+        // Retry the userInfo call
+        return get().fetchUserInfo(true)
       }
-      return undefined
-    })
+
+      throw new Error('Unauthorized')
+    } else if (res.status === 200) {
+      const userInfo = await res.json()
+      set({ userInfo })
+
+      return userInfo
+    }
   },
   async refresh() {
     const appAuthConfig = getAppAuthConfig()
+    const refreshToken = get().authorizeResult?.refreshToken
+
+    if (!refreshToken) {
+      return false
+    }
+
     const authorizeResult = {
       ...get().authorizeResult,
-      ...(await refresh(appAuthConfig, {
-        // eslint-disable-next-line @typescript-eslint/no-non-null-assertion
-        refreshToken: get().authorizeResult!.refreshToken!,
+      ...(await authRefresh(appAuthConfig, {
+        refreshToken,
       })),
     }
+
     if (authorizeResult) {
       await Keychain.setGenericPassword(
         KEYCHAIN_AUTH_KEY,
@@ -108,8 +119,10 @@ export const authStore = create<AuthStore>((set, get) => ({
         { service: KEYCHAIN_AUTH_KEY },
       )
       set({ authorizeResult })
+
       return true
     }
+
     return false
   },
   async login() {
@@ -207,12 +220,18 @@ export async function checkIsAuthenticated() {
         intl.formatMessage({ id: 'login.expiredTitle' }),
         intl.formatMessage({ id: 'login.expiredScopesMessage' }),
       )
+
       await logout()
+
       return false
     }
   }
 
-  fetchUserInfo().catch(async (err) => {
+  try {
+    await fetchUserInfo()
+
+    return true
+  } catch (e) {
     Alert.alert(
       intl.formatMessage({ id: 'login.expiredTitle' }),
       intl.formatMessage({ id: 'login.expiredMissingUserMessage' }),
@@ -223,7 +242,5 @@ export async function checkIsAuthenticated() {
     await Navigation.setRoot({
       root: await getAppRoot(),
     })
-  })
-
-  return true
+  }
 }
