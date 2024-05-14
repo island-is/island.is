@@ -253,9 +253,6 @@ const findRoute = (url: string) => {
     const matcher = match(pattern, { decode: decodeURIComponent })
     const matchResult = matcher(path)
 
-    // TODO delete me
-    console.log(matchResult, pattern, path, routeTemplate)
-
     if (matchResult) {
       const compiler = compile(routeTemplate)
       return compiler(matchResult.params)
