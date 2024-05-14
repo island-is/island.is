@@ -211,9 +211,9 @@ export const titles = {
       },
       completed: {
         id: 'judicial.system.core:titles.court.indictments.completed',
-        defaultMessage: 'Lokið - Réttarvörslugátt',
+        defaultMessage: 'Máli lokið - Réttarvörslugátt',
         description:
-          'Notaður sem titill fyrir Lokið skjá hjá dómstólum í ákærum',
+          'Notaður sem titill fyrir Máli lokið skjá hjá dómstólum í ákærum',
       },
     }),
   },
