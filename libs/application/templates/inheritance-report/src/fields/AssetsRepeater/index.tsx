@@ -418,10 +418,12 @@ const RealEstateNumberField = ({
         },
       })
     } else {
-      setError(fieldName, {
-        message: formatMessage(m.errorPropertyNumber),
-        type: 'validate',
-      })
+      if (propertyNumber.length !== 0) {
+        setError(fieldName, {
+          message: formatMessage(m.errorPropertyNumber),
+          type: 'validate',
+        })
+      }
     }
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [propertyNumberInput])
