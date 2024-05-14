@@ -12,4 +12,9 @@ export const strings = defineMessages({
     defaultMessage: 'Máli lokið',
     description: 'Notaður sem titill á yfirliti ákæru þegar máli er lokið.',
   },
+  completeReview: {
+    id: 'judicial.system.core:indictment_overview.complete_review',
+    defaultMessage: 'Ljúka yfirlestri',
+    description: 'Notaður sem texti á takka til að loka yfirliti ákæru.',
+  },
 })

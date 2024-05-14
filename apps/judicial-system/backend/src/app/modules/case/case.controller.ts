@@ -92,6 +92,7 @@ import {
   prosecutorRepresentativeUpdateRule,
   prosecutorTransitionRule,
   prosecutorUpdateRule,
+  publicProsecutorStaffUpdateRule,
 } from './guards/rolesRules'
 import { CaseInterceptor } from './interceptors/case.interceptor'
 import { CaseListInterceptor } from './interceptors/caseList.interceptor'
@@ -160,6 +161,7 @@ export class CaseController {
     courtOfAppealsJudgeUpdateRule,
     courtOfAppealsRegistrarUpdateRule,
     courtOfAppealsAssistantUpdateRule,
+    publicProsecutorStaffUpdateRule,
   )
   @Patch('case/:caseId')
   @ApiOkResponse({ type: Case, description: 'Updates an existing case' })
@@ -284,6 +286,7 @@ export class CaseController {
 
     const states = transitionCase(
       transition.transition,
+      theCase.type,
       theCase.state,
       theCase.appealState,
     )
@@ -309,6 +312,7 @@ export class CaseController {
       case CaseTransition.ACCEPT:
       case CaseTransition.REJECT:
       case CaseTransition.DISMISS:
+      case CaseTransition.COMPLETE:
         update.rulingDate = isIndictmentCase(theCase.type)
           ? nowFactory()
           : theCase.courtEndTime
@@ -329,6 +333,7 @@ export class CaseController {
             ...update,
             ...transitionCase(
               CaseTransition.APPEAL,
+              theCase.type,
               states.state ?? theCase.state,
               states.appealState ?? theCase.appealState,
             ),
