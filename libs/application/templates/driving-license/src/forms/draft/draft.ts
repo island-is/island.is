@@ -44,7 +44,7 @@ export const draft: Form = buildForm({
       children: [],
     }),
     buildSection({
-      id: 'confim',
+      id: 'confirm',
       title: m.overviewSectionTitle,
       children: [],
     }),
