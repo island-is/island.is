@@ -20,7 +20,6 @@ import { PersonalRepresentativePublicDTO } from '../dto/personal-representative-
 import { IsBoolean } from 'class-validator'
 import { InactiveReason } from './personal-representative.enum'
 import { PersonalRepresentativeDelegationTypeModel } from './personal-representative-delegation-type.model'
-import { DelegationTypeModel } from '../../delegations/models/delegation-type.model'
 
 @Table({
   tableName: 'personal_representative',
@@ -102,7 +101,7 @@ export class PersonalRepresentative extends Model {
     type: () => [PersonalRepresentativeDelegationTypeModel],
   })
   @HasMany(() => PersonalRepresentativeDelegationTypeModel)
-  personalRepresentativeDelegationTypes?: PersonalRepresentativeDelegationTypeModel[]
+  prDelegationTypes?: PersonalRepresentativeDelegationTypeModel[]
 
   @ApiProperty({ type: () => PersonalRepresentativeType })
   type!: PersonalRepresentativeType
@@ -141,10 +140,9 @@ export class PersonalRepresentative extends Model {
       rights: this.rights?.map((r) =>
         (r.rightType as PersonalRepresentativeRightType).toDTO(),
       ),
-      personalRepresentativeDelegationTypes:
-        this.personalRepresentativeDelegationTypes?.map((d) =>
-          (d.delegationType as DelegationTypeModel)?.toDTO(),
-        ),
+      personalRepresentativeDelegationTypes: this.prDelegationTypes?.map((d) =>
+        d.delegationType?.toDTO(),
+      ),
       inactive: this.inactive,
       inactiveReason: this.inactiveReason,
     } as PersonalRepresentativeDTO

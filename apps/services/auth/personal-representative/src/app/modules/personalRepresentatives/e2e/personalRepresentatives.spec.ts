@@ -360,20 +360,19 @@ describe('PersonalRepresentativeController', () => {
         id: AuthDelegationProvider.PersonalRepresentativeRegistry,
         name: 'Talsmannagrunnur',
         description: 'Provider for personal representatives',
-        delegationTypes: [],
       },
     })
 
     // Create delegation type
     await Promise.all(
-      listOfRightTypes.map(async (rt) => {
-        await delegationTypeModel.create({
+      listOfRightTypes.map((rt) =>
+        delegationTypeModel.create({
           description: rt.description,
           id: `PersonalRepresentative:${rt.code}`,
           name: `Personal Representative: ${rt.code}`,
           providerId: prov.id,
-        })
-      }),
+        }),
+      ),
     )
   }
 

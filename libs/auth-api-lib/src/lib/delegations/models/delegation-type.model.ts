@@ -66,7 +66,7 @@ export class DelegationTypeModel extends Model<
   readonly modified?: Date
 
   @HasMany(() => PersonalRepresentativeDelegationTypeModel)
-  personalRepresentativeDelegationType?: PersonalRepresentativeDelegationTypeModel[]
+  prDelegationType?: PersonalRepresentativeDelegationTypeModel[]
 
   toDTO(): DelegationTypeDto {
     return {
