@@ -13,18 +13,11 @@ import { navigateTo, navigateToNotification } from '../../lib/deep-linking'
 import { isIos } from '../devices'
 
 export const ACTION_IDENTIFIER_NO_OPERATION = 'NOOP'
-export const ACTION_IDENTIFIER_LINK_NOTIFICATION = 'LINK_NOTIFICATION'
 
 export async function handleNotificationResponse({
   actionIdentifier,
   notification,
 }: NotificationResponse) {
-  if (actionIdentifier === ACTION_IDENTIFIER_LINK_NOTIFICATION) {
-    navigateTo('/notifications')
-
-    return
-  }
-
   const link = notification.request.content.data?.link
 
   if (
@@ -32,6 +25,8 @@ export async function handleNotificationResponse({
     actionIdentifier !== ACTION_IDENTIFIER_NO_OPERATION
   ) {
     navigateToNotification({ link })
+  } else {
+    navigateTo('/notifications')
   }
 }
 
