@@ -50,7 +50,7 @@ export const sectionApplicationFor = (allowBELicense = false) =>
                   subLabel:
                     m.applicationForFullLicenseDescription.defaultMessage,
                   value: B_FULL,
-                  disabled: currentLicense !== 'temp',
+                  disabled: !currentLicense,
                 },
               ]
 
@@ -59,7 +59,7 @@ export const sectionApplicationFor = (allowBELicense = false) =>
                   label: m.applicationForBELicenseTitle,
                   subLabel: m.applicationForBELicenseDescription.defaultMessage,
                   value: BE,
-                  disabled: currentLicense !== 'full',
+                  disabled: !currentLicense,
                 })
               }
 
