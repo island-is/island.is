@@ -24,6 +24,7 @@ describe.each(defenceRoles)('defence user %s', (role) => {
       const accessibleCaseStates = [
         CaseState.SUBMITTED,
         CaseState.RECEIVED,
+        CaseState.MAIN_HEARING,
         ...completedCaseStates,
       ]
 
@@ -169,7 +170,11 @@ describe.each(defenceRoles)('defence user %s', (role) => {
   )
 
   describe.each(indictmentCases)(`s-case type %s`, (type) => {
-    const accessibleCaseStates = [CaseState.RECEIVED, ...completedCaseStates]
+    const accessibleCaseStates = [
+      CaseState.RECEIVED,
+      CaseState.MAIN_HEARING,
+      ...completedCaseStates,
+    ]
 
     describe.each(
       Object.values(CaseState).filter(

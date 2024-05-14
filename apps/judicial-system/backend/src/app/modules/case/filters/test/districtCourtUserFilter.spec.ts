@@ -40,9 +40,7 @@ const continueFromIndictmentType = (user: User, type: string) => {
   const accessibleCaseStates = [
     CaseState.SUBMITTED,
     CaseState.RECEIVED,
-    CaseState.ACCEPTED,
-    CaseState.REJECTED,
-    CaseState.DISMISSED,
+    CaseState.COMPLETED,
   ]
 
   describe.each(
