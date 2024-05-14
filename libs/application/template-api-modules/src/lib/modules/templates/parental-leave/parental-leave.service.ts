@@ -787,9 +787,7 @@ export class ParentalLeaveService extends BaseTemplateApiService {
         }
       } catch (e) {
         this.logger.warn(
-          `Could not fetch applicationInformation on applicationId: {applicationId} with error: {error}`
-            .replace(`{${'applicationId'}}`, application.id)
-            .replace(`{${'error'}}`, e),
+          `Could not fetch applicationInformation on applicationId: ${application.id} with error: ${e}`,
         )
       }
     }
@@ -1546,9 +1544,7 @@ export class ParentalLeaveService extends BaseTemplateApiService {
       return applicationInformation.periods
     } catch (e) {
       this.logger.warn(
-        `Could not fetch applicationInformation on applicationId: {applicationId} with error: {error}`
-          .replace(`{${'applicationId'}}`, application.id)
-          .replace(`{${'error'}}`, e),
+        `Could not fetch applicationInformation on applicationId: ${application.id} with error: ${e}`,
       )
     }
 
