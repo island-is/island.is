@@ -2,7 +2,7 @@ import { buildForm } from '@island.is/application/core'
 import { Form, FormModes } from '@island.is/application/types'
 import { m } from '../lib/messages'
 import { buildFormConclusionSection } from '@island.is/application/ui-forms'
-import { B_TEMP } from '../shared/constants'
+import { B_TEMP } from '../lib/constants'
 
 export const done: Form = buildForm({
   id: 'done',
