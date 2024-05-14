@@ -2,28 +2,57 @@ import React from 'react'
 
 import { withFigma } from '../../utils/withFigma'
 import { Input } from './Input'
+import { size } from 'lodash'
+import { ro } from 'date-fns/locale'
 
 export default {
   title: 'Form/Input',
   component: Input,
   parameters: withFigma('Input'),
+  argTypes: {
+    name: { description: 'Field name' },
+    label: { description: 'Label text', control: { type: 'text' } },
+    placeholder: { description: 'Placeholder text' },
+    type: { description: 'Input type' },
+    backgroundColor: {
+      description: 'Background color',
+      options: ['white', 'blue'],
+      control: { type: 'radio' },
+      defaultValue: 'white'
+    },
+    size: {
+      description: 'Field size',
+      options: ['xs', 'sm', 'md'],
+      control: { type: 'radio' },
+    },
+    disabled: { description: 'Is input field disabled' },
+    withError: { description: 'Does input field has error' },
+    required: { description: 'Is input field required' },
+    readonly: { description: 'Is input field readonly' },
+    rightAlign: { description: 'Is text right aligned' },
+    textarea: { description: 'Is input field textarea' },
+    rows: { description: 'How many rows does Textarea consist of' },
+    icon: { description: 'Field icon' },
+    buttons: { description: 'Field buttons' },
+  },
 }
 
 const Template = (args) => <Input {...args} />
 
 const inputArgs = {
-  name: 'input',
-  label: 'Label text',
+  name: 'Input',
+  label: 'Input label text',
   placeholder: 'Text',
+  type: 'text',
   backgroundColor: 'white',
+  size: 'md',
   disabled: false,
   withError: false,
   required: false,
   readonly: false,
-  type: 'text',
-  textarea: false,
-  size: 'md',
   rightAlign: false,
+  textarea: false,
+  rows: 7,
   icon: undefined,
   buttons: undefined,
 }
