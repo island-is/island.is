@@ -1402,7 +1402,6 @@ const useSections = (
             !workingCase.prosecutorPostponedAppealDate &&
             !workingCase.accusedPostponedAppealDate &&
             workingCase.appealState !== CaseAppealState.COMPLETED),
-
         children: [],
       },
       ...(workingCase.parentCase
