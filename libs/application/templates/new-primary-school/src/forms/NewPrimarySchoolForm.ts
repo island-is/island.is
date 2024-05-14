@@ -2,14 +2,19 @@ import {
   buildCustomField,
   buildForm,
   buildMultiField,
+  buildRadioField,
   buildSection,
   buildSubSection,
   buildSubmitField,
 } from '@island.is/application/core'
 import { DefaultEvents, Form, FormModes } from '@island.is/application/types'
+import { buildFormConclusionSection } from '@island.is/application/ui-forms'
 import Logo from '../assets/Logo'
 import { newPrimarySchoolMessages } from '../lib/messages'
-import { buildFormConclusionSection } from '@island.is/application/ui-forms'
+import {
+  getApplicationExternalData,
+  isChildAtPrimarySchoolAge,
+} from '../lib/newPrimarySchoolUtils'
 
 export const NewPrimarySchoolForm: Form = buildForm({
   id: 'newPrimarySchoolDraft',
@@ -25,7 +30,38 @@ export const NewPrimarySchoolForm: Form = buildForm({
     buildSection({
       id: 'childrenNParentsSection',
       title: newPrimarySchoolMessages.childrenNParents.sectionTitle,
-      children: [],
+      children: [
+        buildSubSection({
+          id: 'children',
+          title: newPrimarySchoolMessages.childrenNParents.children,
+          children: [
+            buildRadioField({
+              id: 'children.option',
+              title: newPrimarySchoolMessages.childrenNParents.children,
+              description: '',
+              options: (application) => {
+                const { children } = getApplicationExternalData(
+                  application.externalData,
+                )
+
+                return children
+                  .filter((child) =>
+                    isChildAtPrimarySchoolAge(child.nationalId),
+                  )
+                  .map((child) => {
+                    return {
+                      value: child.nationalId,
+                      label: child.fullName,
+                      subLabel: child.nationalId,
+                    }
+                  })
+              },
+
+              required: true,
+            }),
+          ],
+        }),
+      ],
     }),
     buildSection({
       id: 'schoolSection',

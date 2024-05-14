@@ -6,7 +6,12 @@ import {
   buildSubmitField,
   coreMessages,
 } from '@island.is/application/core'
-import { Form, FormModes, IdentityApi } from '@island.is/application/types'
+import {
+  ChildrenCustodyInformationApi,
+  Form,
+  FormModes,
+  IdentityApi,
+} from '@island.is/application/types'
 import Logo from '../assets/Logo'
 
 import { newPrimarySchoolMessages } from '../lib/messages'
@@ -44,6 +49,14 @@ export const Prerequisites: Form = buildForm({
           dataProviders: [
             buildDataProviderItem({
               provider: IdentityApi,
+              title:
+                newPrimarySchoolMessages.pre.nationalRegistryInformationTitle,
+              subTitle:
+                newPrimarySchoolMessages.pre
+                  .nationalRegistryInformationSubTitle,
+            }),
+            buildDataProviderItem({
+              provider: ChildrenCustodyInformationApi,
               title:
                 newPrimarySchoolMessages.pre.nationalRegistryInformationTitle,
               subTitle:

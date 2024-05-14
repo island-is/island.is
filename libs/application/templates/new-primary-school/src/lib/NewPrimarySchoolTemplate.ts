@@ -11,6 +11,7 @@ import {
   ApplicationStateSchema,
   ApplicationTemplate,
   ApplicationTypes,
+  ChildrenCustodyInformationApi,
   DefaultEvents,
   IdentityApi,
 } from '@island.is/application/types'
@@ -64,7 +65,7 @@ const NewPrimarySchoolTemplate: ApplicationTemplate<
               ],
               write: 'all',
               delete: true,
-              api: [IdentityApi],
+              api: [IdentityApi, ChildrenCustodyInformationApi],
             },
           ],
         },

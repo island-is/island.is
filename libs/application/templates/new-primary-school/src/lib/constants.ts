@@ -19,3 +19,13 @@ export type Events =
 export enum Roles {
   APPLICANT = 'applicant',
 }
+
+export type Option = {
+  value: string
+  label: string
+}
+
+export type Children = {
+  fullName: string
+  nationalId: string
+}

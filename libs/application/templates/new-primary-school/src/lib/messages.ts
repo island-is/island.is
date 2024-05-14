@@ -71,9 +71,14 @@ export const newPrimarySchoolMessages: MessageDir = {
 
   childrenNParents: defineMessages({
     sectionTitle: {
-      id: 'dess.nps.application:confirmation.section.title',
+      id: 'dess.nps.application:childrenNParents.section.title',
       defaultMessage: 'Börn og foreldrar',
       description: 'Children and parents',
+    },
+    children: {
+      id: 'dess.nps.application:childrenNParents.children',
+      defaultMessage: 'Börn',
+      description: 'Children',
     },
   }),
 
