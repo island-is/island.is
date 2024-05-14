@@ -1,9 +1,9 @@
-import { Field, ID, ObjectType } from '@nestjs/graphql'
+import { Field, ObjectType } from '@nestjs/graphql'
 
 @ObjectType('AuthRegistrationOptionsRp')
 export class RegistrationOptionsRp {
-  @Field(() => String)
-  id!: string
+  @Field(() => String, { nullable: true })
+  id?: string
 
   @Field(() => String)
   name!: string
@@ -32,20 +32,29 @@ export class RegistrationOptionsPublicKeyCredentialOption {
 
 @ObjectType('AuthRegistrationOptionsAuthenticatorSelection')
 export class RegistrationOptionsAuthenticatorSelection {
-  @Field(() => String)
-  residentKey!: string
+  @Field(() => String, { nullable: true })
+  authenticatorAttachment?: string
 
-  @Field(() => String)
-  userVerification!: string
+  @Field(() => Boolean, { nullable: true })
+  requireResidentKey?: boolean
 
   @Field(() => String, { nullable: true })
-  requireResidentKey?: string
+  residentKey?: string
+
+  @Field(() => String, { nullable: true })
+  userVerification?: string
 }
 
 @ObjectType('AuthRegistrationOptionsExtensions')
 export class RegistrationOptionsExtensions {
-  @Field(() => Boolean)
-  credProps!: boolean
+  @Field(() => String, { nullable: true })
+  appid?: string
+
+  @Field(() => Boolean, { nullable: true })
+  credProps?: boolean
+
+  @Field(() => Boolean, { nullable: true })
+  hmacCreateSecret?: boolean
 }
 
 @ObjectType('AuthRegistrationOptionsPublicKeyCredentialDescriptorJSON')
@@ -54,7 +63,7 @@ export class RegistrationOptionsPublicKeyCredentialDescriptorJSON {
   id!: string
 
   @Field(() => String)
-  type!: string
+  type!: 'public-key'
 
   @Field(() => [String])
   transports!: string[]
@@ -74,18 +83,20 @@ export class PasskeyRegistrationOptions {
   @Field(() => [RegistrationOptionsPublicKeyCredentialOption])
   pubKeyCredParams!: RegistrationOptionsPublicKeyCredentialOption[]
 
-  @Field(() => Number)
-  timeout!: number
+  @Field(() => Number, { nullable: true })
+  timeout?: number
 
-  @Field(() => String)
-  attestation!: string
+  @Field(() => String, { nullable: true })
+  attestation?: string
 
-  @Field(() => [RegistrationOptionsPublicKeyCredentialDescriptorJSON])
-  excludeCredentials!: RegistrationOptionsPublicKeyCredentialDescriptorJSON[]
+  @Field(() => [RegistrationOptionsPublicKeyCredentialDescriptorJSON], {
+    nullable: true,
+  })
+  excludeCredentials?: RegistrationOptionsPublicKeyCredentialDescriptorJSON[]
 
-  @Field(() => RegistrationOptionsAuthenticatorSelection)
-  authenticatorSelection!: RegistrationOptionsAuthenticatorSelection
+  @Field(() => RegistrationOptionsAuthenticatorSelection, { nullable: true })
+  authenticatorSelection?: RegistrationOptionsAuthenticatorSelection
 
-  @Field(() => RegistrationOptionsExtensions)
-  extensions!: RegistrationOptionsExtensions
+  @Field(() => RegistrationOptionsExtensions, { nullable: true })
+  extensions?: RegistrationOptionsExtensions
 }

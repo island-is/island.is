@@ -18,10 +18,14 @@ export class PasskeyService {
     return this.passkeysApi.withMiddleware(new AuthMiddleware(auth))
   }
 
-  getRegistrationOptions(user: User): Promise<PasskeyRegistrationOptions> {
-    return this.passkeysApiWithAuth(
+  async getRegistrationOptions(
+    user: User,
+  ): Promise<PasskeyRegistrationOptions> {
+    const options = await this.passkeysApiWithAuth(
       user,
     ).passkeysControllerGetPasskeyRegistrationOptions()
+
+    return options as PasskeyRegistrationOptions
   }
 
   verifyRegistration(
@@ -33,10 +37,14 @@ export class PasskeyService {
     })
   }
 
-  getAuthenticationOptions(user: User): Promise<PasskeyAuthenticationOptions> {
-    return this.passkeysApiWithAuth(
+  async getAuthenticationOptions(
+    user: User,
+  ): Promise<PasskeyAuthenticationOptions> {
+    const options = await this.passkeysApiWithAuth(
       user,
     ).passkeysControllerGetPasskeyAuthenticationOptions()
+
+    return options as PasskeyAuthenticationOptions
   }
 
   verifyAuthentication(

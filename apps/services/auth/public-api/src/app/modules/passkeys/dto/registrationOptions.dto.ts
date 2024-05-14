@@ -1,4 +1,5 @@
 import { ApiProperty } from '@nestjs/swagger'
+
 import { Type } from 'class-transformer'
 import {
   IsArray,
@@ -11,8 +12,9 @@ import {
 
 class RegistrationOptionsRp {
   @IsString()
-  @ApiProperty()
-  id!: string
+  @IsOptional()
+  @ApiProperty({ required: false })
+  id?: string
 
   @IsString()
   @ApiProperty()
@@ -45,17 +47,24 @@ class RegistrationOptionsPublicKeyCredentialOption {
 
 class RegistrationOptionsAuthenticatorSelection {
   @IsString()
-  @ApiProperty()
-  residentKey!: string
-
-  @IsString()
-  @ApiProperty()
-  userVerification!: string
-
   @IsOptional()
+  @ApiProperty({ required: false })
+  authenticatorAttachment?: string
+
+  @IsBoolean()
+  @IsOptional()
+  @ApiProperty({ required: false })
+  requireResidentKey?: boolean
+
   @IsString()
   @ApiProperty()
-  requireResidentKey?: string
+  @ApiProperty({ required: false })
+  residentKey?: string
+
+  @IsString()
+  @IsOptional()
+  @ApiProperty({ required: false })
+  userVerification?: string
 }
 
 class RegistrationOptionsPublicKeyCredentialDescriptorJSON {
@@ -69,16 +78,35 @@ class RegistrationOptionsPublicKeyCredentialDescriptorJSON {
 
   @IsArray()
   @Type(() => String)
+  @IsOptional()
   @ApiProperty({
     type: [String],
+    required: false,
   })
   transports!: string[]
 }
 
 class RegistrationOptionsExtensions {
+  @IsString()
+  @IsOptional()
+  @ApiProperty({
+    required: false,
+  })
+  appid?: string
+
   @IsBoolean()
-  @ApiProperty()
-  credProps!: boolean
+  @IsOptional()
+  @ApiProperty({
+    required: false,
+  })
+  credProps?: boolean
+
+  @IsBoolean()
+  @IsOptional()
+  @ApiProperty({
+    required: false,
+  })
+  hmacCreateSecret?: boolean
 }
 
 export class RegistrationOptions {
@@ -106,31 +134,38 @@ export class RegistrationOptions {
   pubKeyCredParams!: RegistrationOptionsPublicKeyCredentialOption[]
 
   @IsNumber()
-  @ApiProperty()
-  timeout!: number
+  @IsOptional()
+  @ApiProperty({ required: false })
+  timeout?: number
 
   @IsString()
-  @ApiProperty()
-  attestation!: string
+  @IsOptional()
+  @ApiProperty({ required: false })
+  attestation?: string
 
   @IsArray()
   @Type(() => RegistrationOptionsPublicKeyCredentialDescriptorJSON)
   @ApiProperty({
     type: [RegistrationOptionsPublicKeyCredentialDescriptorJSON],
+    required: false,
   })
-  excludeCredentials!: RegistrationOptionsPublicKeyCredentialDescriptorJSON[]
+  excludeCredentials?: RegistrationOptionsPublicKeyCredentialDescriptorJSON[]
 
   @IsObject()
+  @IsOptional()
   @ApiProperty({
     type: RegistrationOptionsAuthenticatorSelection,
+    required: false,
   })
-  authenticatorSelection!: RegistrationOptionsAuthenticatorSelection
+  authenticatorSelection?: RegistrationOptionsAuthenticatorSelection
 
   @IsObject()
+  @IsOptional()
   @ApiProperty({
     type: RegistrationOptionsExtensions,
+    required: false,
   })
-  extensions!: RegistrationOptionsExtensions
+  extensions?: RegistrationOptionsExtensions
 }
 
 export class RegistrationResult {
