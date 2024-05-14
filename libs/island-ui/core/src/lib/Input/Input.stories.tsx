@@ -18,7 +18,7 @@ export default {
       description: 'Background color',
       options: ['white', 'blue'],
       control: { type: 'radio' },
-      defaultValue: 'white'
+      defaultValue: 'white',
     },
     size: {
       description: 'Field size',
