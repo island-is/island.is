@@ -34,6 +34,7 @@ import {
   getApplicant,
   getApplicantMoreInfo,
   getApplicantSpouse,
+  getChildrenInfo,
   getDirectTaxPayments,
   getNationalRegistryInfo,
 } from '@island.is/financial-aid-web/veita/src/utils/applicationHelper'
@@ -140,6 +141,8 @@ const ApplicationProfile = ({
   const applicantMoreInfo = getApplicantMoreInfo(application)
 
   const nationalRegistryInfo = getNationalRegistryInfo(application)
+
+  const childrenInfo = getChildrenInfo(application)
 
   const modalInfo = getAidAmountModalInfo(
     calculationsModal.type,
@@ -255,6 +258,15 @@ const ApplicationProfile = ({
           className={`contentUp delay-125`}
           isPrint={isPrint}
         />
+
+        {childrenInfo?.length > 0 && (
+          <CollapsibleProfileUnit
+            heading="Börn"
+            info={childrenInfo}
+            className={`contentUp delay-125`}
+            isPrint={isPrint}
+          />
+        )}
 
         {application.files && (
           <FilesListWithHeaderContainer applicationFiles={application.files} />

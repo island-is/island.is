@@ -117,6 +117,35 @@ export const getNationalRegistryInfo = (application: Application) => {
   ]
 }
 
+export const getChildrenInfo = (application: Application) => {
+  if (!application.children) {
+    return []
+  }
+
+  const allChildren = application.children?.map((child) => {
+    return [
+      {
+        title: 'Nafn',
+        content: child.name,
+      },
+      {
+        title: 'Kennitala',
+        content: formatNationalId(child.nationalId),
+      },
+      {
+        title: 'Skólastofnun',
+        content: child.school,
+      },
+      {
+        title: '',
+        content: '',
+      },
+    ]
+  })
+
+  return allChildren ? allChildren.flat() : []
+}
+
 export const getApplicantSpouse = (application: Application) => {
   return [
     {
