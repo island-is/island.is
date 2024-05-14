@@ -9,20 +9,28 @@ import {
   NotificationResponse,
   setNotificationHandler,
 } from 'expo-notifications'
-import { navigateToNotification } from '../../lib/deep-linking'
+import { navigateTo, navigateToNotification } from '../../lib/deep-linking'
 import { isIos } from '../devices'
 
-const NO_OPERATION = 'NOOP'
+export const ACTION_IDENTIFIER_NO_OPERATION = 'NOOP'
+export const ACTION_IDENTIFIER_LINK_NOTIFICATION = 'LINK_NOTIFICATION'
 
-export async function handleNotificationResponse(
-  response: NotificationResponse,
-) {
-  const link = response.notification.request.content.data?.link
-  console.log(
-    'response.notification.request.content',
-    response.notification.request.content,
-  )
-  if (typeof link === 'string' && response.actionIdentifier !== NO_OPERATION) {
+export async function handleNotificationResponse({
+  actionIdentifier,
+  notification,
+}: NotificationResponse) {
+  if (actionIdentifier === ACTION_IDENTIFIER_LINK_NOTIFICATION) {
+    navigateTo('/notifications')
+
+    return
+  }
+
+  const link = notification.request.content.data?.link
+
+  if (
+    typeof link === 'string' &&
+    actionIdentifier !== ACTION_IDENTIFIER_NO_OPERATION
+  ) {
     navigateToNotification({ link })
   }
 }
@@ -63,7 +71,7 @@ export function setupNotifications() {
   addNotificationReceivedListener((notification) =>
     handleNotificationResponse({
       notification,
-      actionIdentifier: NO_OPERATION,
+      actionIdentifier: ACTION_IDENTIFIER_NO_OPERATION,
     }),
   )
 
@@ -73,24 +81,24 @@ export function setupNotifications() {
 
   // FCMs
   if (!isIos) {
-    messaging().onNotificationOpenedApp((remoteMessage) => {
+    messaging().onNotificationOpenedApp((remoteMessage) =>
       handleNotificationResponse({
         notification: mapRemoteMessage(remoteMessage),
         actionIdentifier: DEFAULT_ACTION_IDENTIFIER,
-      })
-    })
+      }),
+    )
 
-    messaging().onMessage((remoteMessage) => {
+    messaging().onMessage((remoteMessage) =>
       handleNotificationResponse({
         notification: mapRemoteMessage(remoteMessage),
-        actionIdentifier: NO_OPERATION,
-      })
-    })
+        actionIdentifier: ACTION_IDENTIFIER_NO_OPERATION,
+      }),
+    )
 
     messaging().setBackgroundMessageHandler((remoteMessage) =>
       handleNotificationResponse({
         notification: mapRemoteMessage(remoteMessage),
-        actionIdentifier: NO_OPERATION,
+        actionIdentifier: ACTION_IDENTIFIER_NO_OPERATION,
       }),
     )
   }

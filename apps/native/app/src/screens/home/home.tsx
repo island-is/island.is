@@ -24,7 +24,7 @@ import {
 import { createNavigationOptionHooks } from '../../hooks/create-navigation-option-hooks'
 import { useActiveTabItemPress } from '../../hooks/use-active-tab-item-press'
 import { useConnectivityIndicator } from '../../hooks/use-connectivity-indicator'
-import { useNotificationsActions } from '../../stores/notifications-store'
+import { useNotificationsStore } from '../../stores/notifications-store'
 import { useUiStore } from '../../stores/ui-store'
 import { isAndroid } from '../../utils/devices'
 import { getRightButtons } from '../../utils/get-main-root'
@@ -100,7 +100,8 @@ export const MainHomeScreen: NavigationFunctionComponent = ({
 }) => {
   useNavigationOptions(componentId)
 
-  const { syncToken, checkUnseen } = useNotificationsActions()
+  const syncToken = useNotificationsStore(({ syncToken }) => syncToken)
+  const checkUnseen = useNotificationsStore(({ checkUnseen }) => checkUnseen)
   const [refetching, setRefetching] = useState(false)
   const flatListRef = useRef<FlatList>(null)
   const ui = useUiStore()
