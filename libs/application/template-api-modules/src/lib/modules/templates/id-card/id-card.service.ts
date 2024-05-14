@@ -30,7 +30,7 @@ export class IdCardService extends BaseTemplateApiService {
   constructor(
     @Inject(LOGGER_PROVIDER) private logger: Logger,
     private readonly sharedTemplateAPIService: SharedTemplateApiService,
-    private readonly chargeFjsV2ClientService: ChargeFjsV2ClientService,
+    // private readonly chargeFjsV2ClientService: ChargeFjsV2ClientService,
     private passportApi: PassportsService,
   ) {
     super(ApplicationTypes.ID_CARD)
@@ -175,23 +175,19 @@ export class IdCardService extends BaseTemplateApiService {
     auth,
   }: TemplateApiModuleActionProps): Promise<void> {
     // 1. Delete charge so that the seller gets reimburshed
-    const chargeId = getPaymentIdFromExternalData(application)
-    if (chargeId) {
-      await this.chargeFjsV2ClientService.deleteCharge(chargeId)
-    }
-
+    // const chargeId = getPaymentIdFromExternalData(application)
+    // if (chargeId) {
+    //   await this.chargeFjsV2ClientService.deleteCharge(chargeId)
+    // }
     // 2. Notify everyone in the process that the application has been withdrawn
-
     // TODO: Get correct answers
     // const answers = application.answers as TransferOfVehicleOwnershipAnswers
-
     // Email to parent A
     // await this.sharedTemplateAPIService
     //   .sendEmail((props) => generateApplicationRejectEmail(props, answers.parentA), application)
     //   .catch(() => {
     //     this.logger.error(`Error sending email about initReview`)
     //   })
-
     // Email to parent B
     // await this.sharedTemplateAPIService
     //   .sendEmail((props) => generateApplicationRejectEmail(props, answers.parentB), application)
