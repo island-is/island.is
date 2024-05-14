@@ -20,7 +20,7 @@ import { Features } from '@island.is/feature-flags'
 import { assign } from 'xstate'
 import {
   IdentityDocumentApi,
-  SyslumadurPaymentCatalogApi,
+  // SyslumadurPaymentCatalogApi,
   DeliveryAddressApi,
   UserInfoApi,
   NationalRegistryUser,
@@ -57,7 +57,7 @@ const IdCardTemplate: ApplicationTemplate<
   featureFlag: Features.idCardApplication,
   dataSchema: IdCardSchema,
   stateMachineConfig: {
-    initial: States.PARENT_B_CONFIRM,
+    initial: States.PREREQUISITES,
     states: {
       [States.PREREQUISITES]: {
         meta: {
@@ -96,7 +96,7 @@ const IdCardTemplate: ApplicationTemplate<
               api: [
                 NationalRegistryUser,
                 UserInfoApi,
-                SyslumadurPaymentCatalogApi,
+                // SyslumadurPaymentCatalogApi,
                 PassportsApi,
                 DistrictsApi,
                 IdentityDocumentApi,
@@ -200,7 +200,7 @@ const IdCardTemplate: ApplicationTemplate<
               api: [
                 // NationalRegistryUserParentB,
                 UserInfoApi,
-                SyslumadurPaymentCatalogApi,
+                // SyslumadurPaymentCatalogApi,
                 PassportsApi,
                 DistrictsApi,
                 IdentityDocumentApi,

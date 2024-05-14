@@ -9,7 +9,7 @@ export enum Routes {
   APPLICATIONINFORMATION = 'applicationInformation',
   TYPEOFID = 'typeOfId',
   CHOSENAPPLICANTS = 'chosenApplicants',
-  APPLICANTSINFORMATION = 'applicantsInformation',
+  APPLICANTSINFORMATION = 'applicantInformation',
   PRICELIST = 'priceList',
   REVIEW = 'review',
   CONDITIONINFORMATION = 'conditionInformation',

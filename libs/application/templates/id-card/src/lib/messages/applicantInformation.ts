@@ -45,5 +45,15 @@ export const applicantInformation = {
       defaultMessage: 'Símanúmer',
       description: 'applicant phone number label',
     },
+    name: {
+      id: 'uni.application:applicantInformation.labels.name',
+      defaultMessage: 'Nafn',
+      description: 'name label',
+    },
+    nationalId: {
+      id: 'uni.application:applicantInformation.labels.nationalId',
+      defaultMessage: 'Kennitala',
+      description: 'national id label',
+    },
   },
 }

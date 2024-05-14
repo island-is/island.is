@@ -23,7 +23,7 @@ import {
 import {
   DeliveryAddressApi,
   NationalRegistryUser,
-  SyslumadurPaymentCatalogApi,
+  // SyslumadurPaymentCatalogApi,
   UserInfoApi,
 } from '../../dataProviders'
 import { priceList } from '../../lib/messages/priceList'
@@ -84,10 +84,10 @@ export const Prerequisites: Form = buildForm({
               title: externalData.identityDocument.title,
               subTitle: externalData.identityDocument.subTitle,
             }),
-            buildDataProviderItem({
-              provider: SyslumadurPaymentCatalogApi,
-              title: '',
-            }),
+            // buildDataProviderItem({
+            //   provider: SyslumadurPaymentCatalogApi,
+            //   title: '',
+            // }),
             buildDataProviderItem({
               provider: DeliveryAddressApi,
               title: '',
