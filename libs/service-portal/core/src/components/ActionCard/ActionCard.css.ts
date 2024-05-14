@@ -17,9 +17,15 @@ export const avatar = style({
     sm: {
       display: 'flex',
       width: 66,
-      height: 66,
+      //height: 66,
     },
   }),
+})
+
+export const circleImg = style({
+  width: '28px',
+  height: 'auto',
+  display: 'flex',
 })
 
 export const button = style({

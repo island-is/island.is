@@ -24,7 +24,9 @@ const EditOrAddEmployersAndPeriodsReview: FC<
   React.PropsWithChildren<ReviewScreenProps>
 > = ({ application, goToScreen }) => {
   const { formatMessage } = useLocale()
-  const { addEmployer, addPeriods } = getApplicationAnswers(application.answers)
+  const { addEmployer, addPeriods, changeEmployerFile } = getApplicationAnswers(
+    application.answers,
+  )
 
   const childProps = {
     application,
@@ -76,7 +78,7 @@ const EditOrAddEmployersAndPeriodsReview: FC<
       )}
       <Employers {...childProps} />
       <Periods {...childProps} />
-      <Attachments {...childProps} />
+      {changeEmployerFile && <Attachments {...childProps} />}
     </>
   )
 }

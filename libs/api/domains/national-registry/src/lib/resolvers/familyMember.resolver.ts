@@ -12,15 +12,15 @@ import {
 import { Audit } from '@island.is/nest/audit'
 import { FamilyMember, Child } from '../shared/models'
 import { GetFamilyInfoInput } from '../v1/dto/getFamilyDetailInput'
-import { SoffiaService } from '../v1/soffia.service'
 import { FamilyChild } from '../v1/types'
+import { NationalRegistryService } from '../nationalRegistry.service'
 
 @UseGuards(IdsUserGuard, ScopesGuard)
 @Scopes(ApiScope.meDetails)
 @Resolver(() => FamilyMember)
 @Audit({ namespace: '@island.is/api/national-registry' })
 export class FamilyMemberResolver {
-  constructor(private readonly nationalRegistryService: SoffiaService) {}
+  constructor(private readonly service: NationalRegistryService) {}
 
   @Query(() => [FamilyMember], {
     name: 'nationalRegistryFamily',
@@ -29,8 +29,11 @@ export class FamilyMemberResolver {
       'Up for removal. Query for custodians/parents/children/custodyinfo for the authenticated user instead of this.',
   })
   @Audit()
-  getMyFamily(@CurrentUser() user: AuthUser): Promise<FamilyMember[]> {
-    return this.nationalRegistryService.getFamily(user.nationalId)
+  async getMyFamily(
+    @CurrentUser() user: AuthUser,
+  ): Promise<FamilyMember[] | null> {
+    const api = await this.service.getApi(user)
+    return this.service.getFamily(user.nationalId, api)
   }
 
   @Query(() => Child, {
@@ -38,13 +41,15 @@ export class FamilyMemberResolver {
     nullable: true,
   })
   @Audit()
-  getMyFamilyDetail(
+  async getMyFamilyDetail(
     @CurrentUser() user: AuthUser,
     @Args('input') input: GetFamilyInfoInput,
-  ): Promise<FamilyChild> {
-    return this.nationalRegistryService.getFamilyMemberDetails(
+  ): Promise<FamilyChild | null> {
+    const api = await this.service.getApi(user)
+    return this.service.getFamilyMemberDetails(
       user.nationalId,
       input.familyMemberNationalId,
+      api,
     )
   }
 

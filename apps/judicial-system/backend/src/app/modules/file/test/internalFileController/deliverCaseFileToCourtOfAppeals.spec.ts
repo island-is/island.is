@@ -1,6 +1,6 @@
 import { uuid } from 'uuidv4'
 
-import { ConfigType } from '@nestjs/config'
+import { type ConfigType } from '@island.is/nest/config'
 
 import {
   CaseFileCategory,
@@ -106,6 +106,7 @@ describe('InternalFileController - Deliver case file to court of appeals', () =>
       expect(mockCourtService.updateAppealCaseWithFile).toHaveBeenCalledWith(
         user,
         caseId,
+        caseFileId,
         appealCaseNumber,
         category,
         name,

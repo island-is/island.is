@@ -273,6 +273,9 @@ PODS:
   - JWT (3.0.0-beta.14):
     - Base64 (~> 1.1.2)
   - libevent (2.1.12)
+  - MMKV (1.2.13):
+    - MMKVCore (~> 1.2.13)
+  - MMKVCore (1.2.16)
   - nanopb (2.30909.0):
     - nanopb/decode (= 2.30909.0)
     - nanopb/encode (= 2.30909.0)
@@ -507,6 +510,11 @@ PODS:
     - React-Core
   - react-native-cookies (6.2.1):
     - React-Core
+  - react-native-mmkv-storage (0.9.1):
+    - MMKV (= 1.2.13)
+    - React-Core
+  - react-native-netinfo (11.3.1):
+    - React-Core
   - react-native-passkit-wallet (0.1.6):
     - React
   - react-native-pdf (6.6.2):
@@ -727,6 +735,8 @@ DEPENDENCIES:
   - react-native-app-auth (from `../node_modules/react-native-app-auth`)
   - react-native-blob-util (from `../node_modules/react-native-blob-util`)
   - "react-native-cookies (from `../node_modules/@react-native-cookies/cookies`)"
+  - react-native-mmkv-storage (from `../node_modules/react-native-mmkv-storage`)
+  - "react-native-netinfo (from `../node_modules/@react-native-community/netinfo`)"
   - react-native-passkit-wallet (from `../node_modules/react-native-passkit-wallet`)
   - react-native-pdf (from `../node_modules/react-native-pdf`)
   - "react-native-progress-bar-android (from `../node_modules/@react-native-community/progress-bar-android`)"
@@ -796,6 +806,8 @@ SPEC REPOS:
     - IQKeyboardManagerSwift
     - JWT
     - libevent
+    - MMKV
+    - MMKVCore
     - nanopb
     - OpenSSL-Universal
     - PLCrashReporter
@@ -884,6 +896,10 @@ EXTERNAL SOURCES:
     :path: "../node_modules/react-native-blob-util"
   react-native-cookies:
     :path: "../node_modules/@react-native-cookies/cookies"
+  react-native-mmkv-storage:
+    :path: "../node_modules/react-native-mmkv-storage"
+  react-native-netinfo:
+    :path: "../node_modules/@react-native-community/netinfo"
   react-native-passkit-wallet:
     :path: "../node_modules/react-native-passkit-wallet"
   react-native-pdf:
@@ -1008,6 +1024,8 @@ SPEC CHECKSUMS:
   IQKeyboardManagerSwift: 2dde0fc70110e8eac7ccce2a46fdbec6a850b414
   JWT: ef71dfb03e1f842081e64dc42eef0e164f35d251
   libevent: 4049cae6c81cdb3654a443be001fb9bdceff7913
+  MMKV: aac95d817a100479445633f2b3ed8961b4ac5043
+  MMKVCore: 9cfef4c48c6c46f66226fc2e4634d78490206a48
   nanopb: b552cce312b6c8484180ef47159bc0f65a1f0431
   OpenSSL-Universal: ebc357f1e6bc71fa463ccb2fe676756aff50e88c
   PLCrashReporter: 7a9dff14a23ba5d2e28c6160f0bb6fada5e71a8d
@@ -1029,6 +1047,8 @@ SPEC CHECKSUMS:
   react-native-app-auth: fd1eaa667c0bc014199456d14a6440cb74de814e
   react-native-blob-util: 60453b777610c87a22b3524032c0214e8db555db
   react-native-cookies: f54fcded06bb0cda05c11d86788020b43528a26c
+  react-native-mmkv-storage: cfb6854594cfdc5f7383a9e464bb025417d1721c
+  react-native-netinfo: bdb108d340cdb41875c9ced535977cac6d2ff321
   react-native-passkit-wallet: bd06b26f147016c352013a75271dd22cc11514df
   react-native-pdf: 33c622cbdf776a649929e8b9d1ce2d313347c4fa
   react-native-progress-bar-android: 092e6a794f158642692f25c8839d9aa8eb779afb

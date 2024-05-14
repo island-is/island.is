@@ -9,6 +9,8 @@ import {
 
 import { ApiProperty, ApiPropertyOptional } from '@nestjs/swagger'
 
+import { EventType } from '@island.is/judicial-system/types'
+
 import { Case } from '../../case/models/case.model'
 
 @Table({
@@ -26,15 +28,13 @@ export class EventLog extends Model {
   id!: string
 
   @CreatedAt
-  @Column({
-    type: DataType.DATE,
-  })
+  @Column({ type: DataType.DATE })
   @ApiProperty()
   created!: Date
 
   @Column({ type: DataType.STRING })
   @ApiProperty()
-  eventType!: string
+  eventType!: EventType
 
   @ForeignKey(() => Case)
   @Column({ type: DataType.UUID, allowNull: true })

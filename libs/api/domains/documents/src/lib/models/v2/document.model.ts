@@ -10,17 +10,14 @@ export class Document {
   @Field(() => ID)
   id!: string
 
-  @Field(() => Int, { nullable: true })
-  pageNumber?: number
-
   @Field({ nullable: true })
   name?: string
 
   @Field({ nullable: true })
   categoryId?: string
 
-  @Field(() => GraphQLISODateTime)
-  publicationDate!: Date
+  @Field(() => GraphQLISODateTime, { nullable: true })
+  publicationDate?: Date
 
   @Field(() => GraphQLISODateTime, { nullable: true })
   documentDate?: Date
@@ -42,6 +39,12 @@ export class Document {
 
   @Field(() => DocumentContent, { nullable: true })
   content?: DocumentContent
+
+  @Field({
+    nullable: true,
+    description: 'URL in download service. For downloading PDFs',
+  })
+  downloadUrl?: string
 }
 
 @ObjectType('DocumentsV2')
@@ -57,4 +60,10 @@ export class PaginatedDocuments extends PaginatedResponse(Document) {
 
   @Field(() => [Sender], { nullable: true })
   senders?: Array<Sender>
+}
+
+@ObjectType()
+export class DocumentPageNumber {
+  @Field(() => Int)
+  pageNumber!: number
 }

@@ -1,12 +1,15 @@
-// eslint-disable-next-line
-import { UserProfileScope } from '../../../../../libs/auth/scopes/src/lib/userProfile.scope'
 import { json, service, ServiceBuilder } from '../../../../../infra/src/dsl/dsl'
 import { Base, Client, RskProcuring } from '../../../../../infra/src/dsl/xroad'
+// eslint-disable-next-line
+import { UserProfileScope } from '../../../../../libs/auth/scopes/src/lib/userProfile.scope'
+
+const namespace = 'identity-server'
+const imageName = 'services-auth-ids-api'
 
 export const serviceSetup = (): ServiceBuilder<'services-auth-ids-api'> => {
   return service('services-auth-ids-api')
-    .namespace('identity-server')
-    .image('services-auth-ids-api')
+    .namespace(namespace)
+    .image(imageName)
     .env({
       IDENTITY_SERVER_CLIENT_ID: '@island.is/clients/auth-api',
       IDENTITY_SERVER_ISSUER_URL: {
@@ -110,3 +113,37 @@ export const serviceSetup = (): ServiceBuilder<'services-auth-ids-api'> => {
       max: 15,
     })
 }
+
+const cleanupId = 'services-auth-ids-api-cleanup'
+// run daily at 3am
+const schedule = { schedule: '0 3 * * *' }
+
+export const cleanupSetup = (): ServiceBuilder<typeof cleanupId> =>
+  service(cleanupId)
+    .namespace(namespace)
+    .image(imageName)
+    .command('node')
+    .args('main.js', '--job=cleanup')
+    .resources({
+      limits: {
+        cpu: '400m',
+        memory: '512Mi',
+      },
+      requests: {
+        cpu: '100m',
+        memory: '256Mi',
+      },
+    })
+    .db({ name: 'servicesauth', extensions: ['uuid-ossp'] })
+    .env({
+      IDENTITY_SERVER_ISSUER_URL: {
+        dev: 'https://identity-server.dev01.devland.is',
+        staging: 'https://identity-server.staging01.devland.is',
+        prod: 'https://innskra.island.is',
+      },
+    })
+    .extraAttributes({
+      dev: schedule,
+      staging: schedule,
+      prod: schedule,
+    })
