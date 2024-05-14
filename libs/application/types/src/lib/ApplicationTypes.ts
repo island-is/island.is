@@ -65,7 +65,11 @@ export enum ApplicationTypes {
   GRINDAVIK_HOUSING_BUYOUT = 'GrindavikHousingBuyout',
   REQUEST_INSPECTION_FOR_MACHINE = 'RequestInspectionForMachine',
   OFFICIAL_JOURNAL_OF_ICELAND = 'OfficialJournalOfIceland',
+<<<<<<< HEAD
   ID_CARD = 'IdCard',
+=======
+  HEALTH_INSURANCE_DECLARATION = 'HealthInsuranceDeclaration',
+>>>>>>> main
   STREET_REGISTRATION = 'StreetRegistration',
 }
 
@@ -338,9 +342,15 @@ export const ApplicationConfigurations = {
     slug: 'stjornartidindi',
     translation: 'ojoi.application',
   },
+<<<<<<< HEAD
   [ApplicationTypes.ID_CARD]: {
     slug: 'nafnskirteini',
     translation: 'id.application',
+=======
+  [ApplicationTypes.HEALTH_INSURANCE_DECLARATION]: {
+    slug: 'tryggingaryfirlysing',
+    translation: ['hid.application', 'uiForms.application'],
+>>>>>>> main
   },
   [ApplicationTypes.STREET_REGISTRATION]: {
     slug: 'gotuskraning-taekis',

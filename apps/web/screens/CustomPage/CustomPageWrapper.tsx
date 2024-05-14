@@ -1,6 +1,7 @@
 import { ComponentType } from 'react'
 import { IntlProvider } from 'react-intl'
 
+import { HeadWithSocialSharing } from '@island.is/web/components'
 import {
   CustomPage,
   CustomPageUniqueIdentifier,
@@ -45,6 +46,14 @@ export const withCustomPageWrapper = <Props,>(
         locale={activeLocale}
         messages={customPageData?.translationStrings}
       >
+        <HeadWithSocialSharing
+          title={customPageData?.ogTitle ?? ''}
+          description={customPageData?.ogDescription ?? undefined}
+          imageContentType={customPageData?.ogImage?.contentType}
+          imageWidth={customPageData?.ogImage?.width?.toString()}
+          imageHeight={customPageData?.ogImage?.height?.toString()}
+          imageUrl={customPageData?.ogImage?.url}
+        />
         <Component {...pageProps} customPageData={customPageData} />
       </IntlProvider>
     )

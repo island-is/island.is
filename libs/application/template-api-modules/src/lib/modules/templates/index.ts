@@ -125,6 +125,8 @@ import { StreetRegistrationTemplateModule } from './aosh/street-registration/str
 import { StreetRegistrationTemplateService } from './aosh/street-registration/street-registration.service'
 import { RequestInspectionTemplateModule } from './aosh/request-inspection/request-inspection.module'
 import { RequestInspectionTemplateService } from './aosh/request-inspection/request-inspection.service'
+import { HealthInsuranceDeclarationModule } from './health-insurance-declaration/health-insurance-declaration.module'
+import { HealthInsuranceDeclarationService } from './health-insurance-declaration/health-insurance-declaration.service'
 
 import { IdCardModule } from './id-card/id-card.module'
 import { IdCardService } from './id-card/id-card.service'
@@ -194,7 +196,11 @@ export const modules = [
   RequestInspectionTemplateModule,
   OfficialJournalOfIcelandTemplateModule,
   StreetRegistrationTemplateModule,
+<<<<<<< HEAD
   IdCardModule,
+=======
+  HealthInsuranceDeclarationModule,
+>>>>>>> main
 ]
 
 export const services = [
@@ -262,5 +268,9 @@ export const services = [
   RequestInspectionTemplateService,
   OfficialJournalOfIcelandTemaplateService,
   StreetRegistrationTemplateService,
+<<<<<<< HEAD
   IdCardService,
+=======
+  HealthInsuranceDeclarationService,
+>>>>>>> main
 ]

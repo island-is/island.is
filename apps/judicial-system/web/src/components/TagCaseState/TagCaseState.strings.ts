@@ -1,6 +1,6 @@
 import { defineMessages } from 'react-intl'
 
-export const tagCaseState = defineMessages({
+export const strings = defineMessages({
   draft: {
     id: 'judicial.system.core:tag_case_state.draft',
     defaultMessage: 'Drög',
@@ -45,5 +45,26 @@ export const tagCaseState = defineMessages({
     id: 'judicial.system.core:tag_case_state.unknown',
     defaultMessage: 'Óþekkt',
     description: 'Notað sem merki þegar mál í stöðu "Óþekkt" í málalista',
+  },
+  reassignment: {
+    id: 'judicial.system.core:tag_case_state.reassignment',
+    defaultMessage: 'Endurúthlutun',
+    description:
+      'Notað sem merki þegar mál í stöðu "Endurúthlutun" í málalista',
+  },
+  beingReviewed: {
+    id: 'judicial.system.core:tag_case_state.being_reviewed',
+    defaultMessage: 'Í yfirlestri',
+    description: 'Notað sem merki þegar mál í stöðu "Í yfirlestri" í málalista',
+  },
+  new: {
+    id: 'judicial.system.core:tag_case_state.new',
+    defaultMessage: 'Nýtt',
+    description: 'Notað sem merki þegar mál í stöðu "Nýtt" í málalista',
+  },
+  received: {
+    id: 'judicial.system.core:tag_case_state.received',
+    defaultMessage: 'Móttekið',
+    description: 'Notað sem merki þegar mál í stöðu "Móttekið" í málalista',
   },
 })
