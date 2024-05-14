@@ -94,7 +94,7 @@ export const tables = defineMessages({
   },
   reviewDecision: {
     id: 'judicial.system.core:tables.review_decision',
-    defaultMessage: 'Tillaga',
-    description: 'Notaður sem titill fyrir tillögu dálk í lista yfir mál.',
+    defaultMessage: 'Ákvörðun',
+    description: 'Notaður sem titill fyrir ákvörðun dálk í lista yfir mál.',
   },
 })

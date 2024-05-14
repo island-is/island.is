@@ -20,7 +20,7 @@ export const strings = defineMessages({
   },
   infoContainerMessage: {
     id: 'judicial.system.core:public_prosecutor.tables.cases_reviewed.info_container_message',
-    defaultMessage: 'Engin yfirlsin mál.',
+    defaultMessage: 'Engin yfirlesin mál.',
     description:
       'Notaður sem skilaboð í upplýsingaglugga ef engin yfirlesin mál eru til.',
   },

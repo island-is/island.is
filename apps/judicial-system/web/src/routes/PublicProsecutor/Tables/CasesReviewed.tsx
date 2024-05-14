@@ -1,4 +1,4 @@
-import React from 'react'
+import React, { FC } from 'react'
 import { useIntl } from 'react-intl'
 import { AnimatePresence } from 'framer-motion'
 
@@ -27,7 +27,7 @@ interface Props {
   cases: CaseListEntry[]
 }
 
-const CasesReviewed: React.FC<Props> = ({ loading, cases }) => {
+const CasesReviewed: FC<Props> = ({ loading, cases }) => {
   const { formatMessage } = useIntl()
   const { openCaseInNewTabMenuItem } = useContextMenu()
 
