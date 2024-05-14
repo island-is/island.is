@@ -127,6 +127,8 @@ import { StreetRegistrationTemplateModule } from './aosh/street-registration/str
 import { StreetRegistrationTemplateService } from './aosh/street-registration/street-registration.service'
 import { RequestInspectionTemplateModule } from './aosh/request-inspection/request-inspection.module'
 import { RequestInspectionTemplateService } from './aosh/request-inspection/request-inspection.service'
+import { HealthInsuranceDeclarationModule } from './health-insurance-declaration/health-insurance-declaration.module'
+import { HealthInsuranceDeclarationService } from './health-insurance-declaration/health-insurance-declaration.service'
 
 
 export const modules = [
@@ -195,6 +197,7 @@ export const modules = [
   RequestInspectionTemplateModule,
   OfficialJournalOfIcelandTemplateModule,
   StreetRegistrationTemplateModule,
+  HealthInsuranceDeclarationModule,
 ]
 
 export const services = [
@@ -263,4 +266,5 @@ export const services = [
   RequestInspectionTemplateService,
   OfficialJournalOfIcelandTemaplateService,
   StreetRegistrationTemplateService,
+  HealthInsuranceDeclarationService,
 ]
