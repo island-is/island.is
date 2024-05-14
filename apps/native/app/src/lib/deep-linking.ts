@@ -156,6 +156,7 @@ export const resetSchemes = () => {
 
 const navigateTimeMap = new Map()
 const NAVIGATE_TIMEOUT = 500
+
 /**
  * Navigate to a specific url within the app
  * @param url Navigating url (ex. /inbox, /inbox/my-document-id, /wallet etc.)
@@ -258,5 +259,6 @@ const findRoute = (url: string) => {
       return compiler(matchResult.params)
     }
   }
+
   return null
 }
