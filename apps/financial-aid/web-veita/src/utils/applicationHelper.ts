@@ -122,7 +122,7 @@ export const getChildrenInfo = (application: Application) => {
     return []
   }
 
-  const allChildren = application.children?.map((child) => {
+  const allChildren = application.children.map((child) => {
     return [
       {
         title: 'Nafn',
@@ -143,7 +143,7 @@ export const getChildrenInfo = (application: Application) => {
     ]
   })
 
-  return allChildren ? allChildren.flat() : []
+  return allChildren.flat()
 }
 
 export const getApplicantSpouse = (application: Application) => {
