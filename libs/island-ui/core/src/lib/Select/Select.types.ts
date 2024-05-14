@@ -47,7 +47,7 @@ declare module 'react-select/dist/declarations/src/Select' {
   }
 }
 
-// The typescript declaration customisations above does not allow to change existing props signature.
+// The typescript declaration customizations above does not allow to change existing props signature.
 // Therefore, we create our own Prop type to overwrite props.
 export type SelectProps<
   Option,

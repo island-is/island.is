@@ -3,7 +3,7 @@ import { existsSync, mkdirSync } from 'fs'
 import { join } from 'path'
 import { cognitoLogin, idsLogin } from './login'
 import { JUDICIAL_SYSTEM_HOME_URL, urls } from './urls'
-import { debug } from './utils'
+import { logger } from './utils'
 
 export const sessionsPath = join(__dirname, 'tmp-sessions')
 if (!existsSync(sessionsPath)) {
@@ -33,7 +33,7 @@ async function ensureCognitoSessionIfNeeded(
     await page.goto(homeUrl)
     await cognitoLogin(page, homeUrl, authUrlPrefix)
   } else {
-    debug(`Cognito session exists`)
+    logger.debug(`Cognito session exists`)
   }
 }
 
@@ -69,7 +69,7 @@ async function ensureIDSsession(
       await idsLogin(idsPage, phoneNumber, authTrigger, delegation)
       await idsPage.close()
     } else {
-      debug(`IDS(next-auth) session exists`)
+      logger.debug(`IDS(next-auth) session exists`)
     }
   } else {
     const idsSessionValidation = await page.request.get(
@@ -90,7 +90,7 @@ async function ensureIDSsession(
       await idsLogin(idsPage, phoneNumber, authTrigger, delegation)
       await idsPage.close()
     } else {
-      debug(`IDS session exists`)
+      logger.debug(`IDS session exists`)
     }
   }
 }

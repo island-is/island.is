@@ -1,5 +1,6 @@
 import { Inject, Injectable } from '@nestjs/common'
 import {
+  DrivingLicenseCategory,
   DrivingLicenseService,
   NewDrivingLicenseResult,
 } from '@island.is/api/domains/driving-license'
@@ -22,6 +23,7 @@ import { BaseTemplateApiService } from '../../base-template-api.service'
 import { FetchError } from '@island.is/clients/middlewares'
 import { TemplateApiError } from '@island.is/nest/problem'
 import { User } from '@island.is/auth-nest-tools'
+import { DriverLicenseWithoutImages } from '@island.is/clients/driving-license'
 import {
   PostTemporaryLicenseWithHealthDeclarationMapper,
   DrivingLicenseSchema,
@@ -46,7 +48,7 @@ export class DrivingLicenseSubmissionService extends BaseTemplateApiService {
     application: { id, answers },
     auth,
   }: TemplateApiModuleActionProps) {
-    const applicationFor = getValueViaPath<'B-full' | 'B-temp'>(
+    const applicationFor = getValueViaPath<'B-full' | 'B-temp' | 'BE'>(
       answers,
       'applicationFor',
       'B-full',
@@ -132,7 +134,7 @@ export class DrivingLicenseSubmissionService extends BaseTemplateApiService {
     auth: User,
   ): Promise<NewDrivingLicenseResult> {
     const applicationFor =
-      getValueViaPath<'B-full' | 'B-temp'>(answers, 'applicationFor') ??
+      getValueViaPath<'B-full' | 'B-temp' | 'BE'>(answers, 'applicationFor') ??
       'B-full'
 
     const needsHealthCert = calculateNeedsHealthCert(answers.healthDeclaration)
@@ -163,11 +165,15 @@ export class DrivingLicenseSubmissionService extends BaseTemplateApiService {
         })
     }
 
-    if (applicationFor === 'B-full') {
+    if (applicationFor === 'B-full' || applicationFor === 'BE') {
       return this.drivingLicenseService.newDrivingLicense(nationalId, {
         jurisdictionId: jurisdictionId as number,
         needsToPresentHealthCertificate: needsHealthCert || remarks,
         needsToPresentQualityPhoto: needsQualityPhoto,
+        licenseCategory:
+          applicationFor === 'B-full'
+            ? DrivingLicenseCategory.B
+            : DrivingLicenseCategory.BE,
       })
     } else if (applicationFor === 'B-temp') {
       if (needsHealthCert) {
@@ -230,5 +236,15 @@ export class DrivingLicenseSubmissionService extends BaseTemplateApiService {
         )
       }
     }
+  }
+
+  async glassesCheck({ auth }: TemplateApiModuleActionProps): Promise<boolean> {
+    const licences: DriverLicenseWithoutImages[] =
+      await this.drivingLicenseService.getAllDriverLicenses(auth.authorization)
+    const hasGlasses: boolean = licences.some((license) => {
+      // Visual impairments comments on driving licenses are prefixed with "01."
+      return !!license.comments?.some((comment) => comment.nr?.includes('01.'))
+    })
+    return hasGlasses
   }
 }
