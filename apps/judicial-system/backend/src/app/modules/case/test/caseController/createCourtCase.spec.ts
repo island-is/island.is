@@ -232,7 +232,6 @@ describe('CaseController - Create court case', () => {
     const coverLetterId = uuid()
     const indictmentId = uuid()
     const criminalRecordId = uuid()
-    const criminalRecordUpdateId = uuid()
     const costBreakdownId = uuid()
     const uncategorisedId = uuid()
     const theCase = {
@@ -260,12 +259,6 @@ describe('CaseController - Create court case', () => {
           key: uuid(),
           state: CaseFileState.STORED_IN_RVG,
           category: CaseFileCategory.CRIMINAL_RECORD,
-        },
-        {
-          id: criminalRecordUpdateId,
-          key: uuid(),
-          state: CaseFileState.STORED_IN_RVG,
-          category: CaseFileCategory.CRIMINAL_RECORD_UPDATE,
         },
         {
           id: costBreakdownId,
