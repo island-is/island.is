@@ -75,7 +75,7 @@ export const Prerequisites: Form = buildForm({
       children: [],
     }),
     buildSection({
-      id: 'confirmSection',
+      id: 'confirmationSection',
       title: newPrimarySchoolMessages.confirm.sectionTitle,
       children: [],
     }),
