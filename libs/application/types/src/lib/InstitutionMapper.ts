@@ -267,15 +267,13 @@ export const institutionMapper = {
     nationalId: InstitutionNationalIds.DOMSMALA_RADUNEYTID,
     slug: InstitutionTypes.DOMSMALARADUNEYTID,
   },
-<<<<<<< HEAD
   [ApplicationTypes.ID_CARD]: {
     nationalId: InstitutionNationalIds.SYSLUMENN,
     slug: InstitutionTypes.SYSLUMENN,
-=======
+  },
   [ApplicationTypes.HEALTH_INSURANCE_DECLARATION]: {
     nationalId: InstitutionNationalIds.SJUKRATRYGGINGAR_ISLANDS,
     slug: InstitutionTypes.SJUKRATRYGGINGAR_ISLANDS,
->>>>>>> main
   },
   [ApplicationTypes.STREET_REGISTRATION]: {
     nationalId: InstitutionNationalIds.VINNUEFTIRLITID,

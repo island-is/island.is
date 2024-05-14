@@ -196,11 +196,8 @@ export const modules = [
   RequestInspectionTemplateModule,
   OfficialJournalOfIcelandTemplateModule,
   StreetRegistrationTemplateModule,
-<<<<<<< HEAD
   IdCardModule,
-=======
   HealthInsuranceDeclarationModule,
->>>>>>> main
 ]
 
 export const services = [
@@ -268,9 +265,6 @@ export const services = [
   RequestInspectionTemplateService,
   OfficialJournalOfIcelandTemaplateService,
   StreetRegistrationTemplateService,
-<<<<<<< HEAD
   IdCardService,
-=======
   HealthInsuranceDeclarationService,
->>>>>>> main
 ]

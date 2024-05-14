@@ -341,11 +341,14 @@ export const ApplicationConfigurations = {
   },
   [ApplicationTypes.ID_CARD]: {
     slug: 'nafnskirteini',
+    translation: 'id.application',
   },
   [ApplicationTypes.HEALTH_INSURANCE_DECLARATION]: {
     slug: 'tryggingaryfirlysing',
+    translation: ['hid.application', 'uiForms.application'],
   },
   [ApplicationTypes.STREET_REGISTRATION]: {
+    slug: 'gotuskraning-taekis',
     translation: 'sr.application',
   },
 }
