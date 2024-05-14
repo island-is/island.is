@@ -104,7 +104,7 @@ export function setupNotifications() {
   }
 }
 
-export function openInitialNotificationAndroid() {
+export function handleInitialNotificationAndroid() {
   // FCMs
   messaging()
     .getInitialNotification()

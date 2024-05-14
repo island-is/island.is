@@ -10,7 +10,7 @@ import { setupDevMenu } from './utils/lifecycle/setup-dev-menu'
 import { setupEventHandlers } from './utils/lifecycle/setup-event-handlers'
 import { setupGlobals } from './utils/lifecycle/setup-globals'
 import {
-  openInitialNotificationAndroid,
+  handleInitialNotificationAndroid,
   setupNotifications,
 } from './utils/lifecycle/setup-notifications'
 import { setupRoutes } from './utils/lifecycle/setup-routes'
@@ -62,8 +62,8 @@ async function startApp() {
     await Navigation.setRoot({ root })
 
     if (isAndroid) {
-      // Open initial notification on android
-      openInitialNotificationAndroid()
+      // Handle initial notification on android
+      handleInitialNotificationAndroid()
     }
 
     // Mark app launched
