@@ -51,7 +51,7 @@ export const MedicinePurchase = () => {
   const [fetchedLineItems] = useState(
     new Map<string, RightsPortalDrugBillLine[]>(),
   )
-  const formatDatePeriod = (dateFrom: Date, dateTo: Date) => {
+  const formatDatePeriod = (dateFrom: Date | null, dateTo: Date | null) => {
     if (!dateFrom || !dateTo) return ''
     return `${formatDateFns(dateFrom, DATE_FORMAT)} - ${formatDateFns(
       dateTo,
@@ -131,7 +131,10 @@ export const MedicinePurchase = () => {
               size="xs"
               label={formatMessage(messages.medicinePaymentPeriod)}
               options={data.rightsPortalDrugPeriods.map((period) => ({
-                label: formatDatePeriod(period.dateFrom, period.dateTo),
+                label: formatDatePeriod(
+                  period.dateFrom ? new Date(period.dateFrom) : null,
+                  period.dateTo ? new Date(period.dateTo) : null,
+                ),
                 value: period.id,
               }))}
               backgroundColor="blue"

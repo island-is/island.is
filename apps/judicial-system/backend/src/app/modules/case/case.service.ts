@@ -36,9 +36,9 @@ import {
   CaseTransition,
   CaseType,
   CommentType,
-  completedCaseStates,
   DateType,
   EventType,
+  isCompletedCase,
   isIndictmentCase,
   isRestrictionCase,
   NotificationType,
@@ -419,19 +419,17 @@ export class CaseService {
 
   private async createCase(
     caseToCreate: CreateCaseDto,
-    transaction?: Transaction,
+    transaction: Transaction,
   ): Promise<string> {
-    const theCase = await (transaction
-      ? this.caseModel.create(
-          {
-            ...caseToCreate,
-            state: isIndictmentCase(caseToCreate.type)
-              ? CaseState.DRAFT
-              : undefined,
-          },
-          { transaction },
-        )
-      : this.caseModel.create({ ...caseToCreate }))
+    const theCase = await this.caseModel.create(
+      {
+        ...caseToCreate,
+        state: isIndictmentCase(caseToCreate.type)
+          ? CaseState.DRAFT
+          : undefined,
+      },
+      { transaction },
+    )
 
     return theCase.id
   }
@@ -1082,7 +1080,7 @@ export class CaseService {
           user,
           theCase.state,
         )
-      } else if (completedCaseStates.includes(updatedCase.state)) {
+      } else if (isCompletedCase(updatedCase.state)) {
         if (isIndictment) {
           await this.addMessagesForCompletedIndictmentCaseToQueue(
             updatedCase,
@@ -1359,6 +1357,7 @@ export class CaseService {
         if (receivingCase) {
           update.state = transitionCase(
             CaseTransition.RECEIVE,
+            theCase.type,
             theCase.state,
             theCase.appealState,
           ).state
