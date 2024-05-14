@@ -83,7 +83,6 @@ export const useHousingBenefitsFilters = () => {
     useGetHousingBenefitsListLazyQuery()
 
   useMemo(() => {
-    console.log('filterValue', filterValue)
     loadHousingPayments({
       variables: {
         input: {
