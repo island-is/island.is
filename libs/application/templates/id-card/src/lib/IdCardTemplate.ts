@@ -12,6 +12,7 @@ import {
   ApplicationTemplate,
   ApplicationTypes,
   DefaultEvents,
+  defineTemplateApi,
   DistrictsApi,
   InstitutionNationalIds,
   PassportsApi,
@@ -26,7 +27,7 @@ import {
   NationalRegistryUser,
 } from '../dataProviders'
 import { application as applicationMessage } from './messages'
-import { Events, Roles, States } from './constants'
+import { Events, Roles, States, ApiActions } from './constants'
 import { IdCardSchema } from './dataSchema'
 import { buildPaymentState } from '@island.is/application/utils'
 // import { needAssignment } from './utils'
@@ -167,9 +168,9 @@ const IdCardTemplate: ApplicationTemplate<
               ...pruneAfter(sevenDays),
               shouldDeleteChargeIfPaymentFulfilled: true,
             } */,
-          /* onEntry: defineTemplateApi({
-              action: ApiActions.assignParentB,
-            }), */
+          onEntry: defineTemplateApi({
+            action: ApiActions.assignParentB,
+          }),
           roles: [
             {
               id: Roles.APPLICANT,
@@ -222,48 +223,88 @@ const IdCardTemplate: ApplicationTemplate<
               }, */
           },
         },
-        /* on: {
-          // [DefaultEvents.SUBMIT]: { target: States.DONE },
-          [DefaultEvents.SUBMIT]: { target: States.PARENT_B_CONFIRM },
-        }, */
+        on: {
+          [DefaultEvents.SUBMIT]: { target: States.COMPLETED },
+          // What happens during reject?
+          [DefaultEvents.REJECT]: { target: States.REJECTED },
+        },
       },
-      [States.COMPLETED]: {
+      [States.REJECTED]: {
         meta: {
-          name: 'Done',
-          status: 'completed',
-          lifecycle: pruneAfterDays(30), // TODO HOW MANY DAYS SHOULD THIS BE?
+          name: 'Rejected',
+          status: 'rejected',
+          lifecycle: pruneAfterDays(3 * 30), // TODO HOW MANY DAYS SHOULD THIS BE?
           //   onEntry: defineTemplateApi({
           //     action: ApiActions.submitPassportApplication,
           //   }),
-          //   roles: [
-          //     {
-          //       id: Roles.APPLICANT,
-          //       formLoader: () =>
-          //         import('../forms/Done').then((val) =>
-          //           Promise.resolve(val.Done),
-          //         ),
-          //       read: {
-          //         externalData: ['submitPassportApplication'],
-          //         answers: [
-          //           'submitPassportApplication',
-          //           'childsPersonalInfo',
-          //           'personalInfo',
-          //           'passport',
-          //         ],
-          //       },
-          //     },
-          //     {
-          //       id: Roles.ASSIGNEE,
-          //       formLoader: () =>
-          //         import('../forms/Done').then((val) =>
-          //           Promise.resolve(val.Done),
-          //         ),
-          //       read: {
-          //         externalData: ['submitPassportApplication'],
-          //         answers: ['passport', 'childsPersonalInfo'],
-          //       },
-          //     },
-          //   ],
+          roles: [
+            {
+              id: Roles.APPLICANT,
+              formLoader: () =>
+                import('../forms/Rejected').then((val) =>
+                  Promise.resolve(val.Rejected),
+                ),
+              // read: {
+              //   externalData: ['submitPassportApplication'],
+              //   answers: [
+              //     'submitPassportApplication',
+              //     'childsPersonalInfo',
+              //     'personalInfo',
+              //     'passport',
+              //   ],
+              // },
+            },
+            {
+              id: Roles.ASSIGNEE,
+              formLoader: () =>
+                import('../forms/Rejected').then((val) =>
+                  Promise.resolve(val.Rejected),
+                ),
+              // read: {
+              //   externalData: ['submitPassportApplication'],
+              //   answers: ['passport', 'childsPersonalInfo'],
+              // },
+            },
+          ],
+        },
+      },
+      [States.COMPLETED]: {
+        meta: {
+          name: 'Completed',
+          status: 'completed',
+          lifecycle: pruneAfterDays(3 * 30), // TODO HOW MANY DAYS SHOULD THIS BE?
+          //   onEntry: defineTemplateApi({
+          //     action: ApiActions.submitPassportApplication,
+          //   }),
+          roles: [
+            {
+              id: Roles.APPLICANT,
+              formLoader: () =>
+                import('../forms/Approved').then((val) =>
+                  Promise.resolve(val.Approved),
+                ),
+              // read: {
+              //   externalData: ['submitPassportApplication'],
+              //   answers: [
+              //     'submitPassportApplication',
+              //     'childsPersonalInfo',
+              //     'personalInfo',
+              //     'passport',
+              //   ],
+              // },
+            },
+            {
+              id: Roles.ASSIGNEE,
+              formLoader: () =>
+                import('../forms/Approved').then((val) =>
+                  Promise.resolve(val.Approved),
+                ),
+              // read: {
+              //   externalData: ['submitPassportApplication'],
+              //   answers: ['passport', 'childsPersonalInfo'],
+              // },
+            },
+          ],
           actionCard: {
             pendingAction: {
               title: coreHistoryMessages.applicationReceived,

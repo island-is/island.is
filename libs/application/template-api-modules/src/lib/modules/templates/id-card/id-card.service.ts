@@ -11,7 +11,11 @@ import {
   DistrictCommissionerAgencies,
 } from './constants'
 import { info } from 'kennitala'
-// import { generateAssignParentBApplicationEmail } from './emailGenerators/assignParentBEmail'
+import {
+  ChargeFjsV2ClientService,
+  getPaymentIdFromExternalData,
+} from '@island.is/clients/charge-fjs-v2'
+import { generateAssignParentBApplicationEmail } from './emailGenerators/assignParentBEmail'
 // import { PassportSchema } from '@island.is/application/templates/passport'
 import { PassportsService } from '@island.is/clients/passports'
 import { BaseTemplateApiService } from '../../base-template-api.service'
@@ -26,6 +30,7 @@ export class IdCardService extends BaseTemplateApiService {
   constructor(
     @Inject(LOGGER_PROVIDER) private logger: Logger,
     private readonly sharedTemplateAPIService: SharedTemplateApiService,
+    private readonly chargeFjsV2ClientService: ChargeFjsV2ClientService,
     private passportApi: PassportsService,
   ) {
     super(ApplicationTypes.ID_CARD)
@@ -132,12 +137,111 @@ export class IdCardService extends BaseTemplateApiService {
     }
   }
 
-  //   async assignParentB({ application }: TemplateApiModuleActionProps) {
-  //     await this.sharedTemplateAPIService.sendEmail(
-  //       generateAssignParentBApplicationEmail,
-  //       application,
-  //     )
-  //   }
+  async assignParentB({ application, auth }: TemplateApiModuleActionProps) {
+    // 1. Validate payment
+
+    // 1a. Make sure a paymentUrl was created
+    // TODO: Make sure this is correct according to our external data answers
+    const { paymentUrl } = application.externalData.createCharge.data as {
+      paymentUrl: string
+    }
+    if (!paymentUrl) {
+      throw new Error(
+        'Ekki er búið að staðfesta greiðslu, hinkraðu þar til greiðslan er staðfest.',
+      )
+    }
+
+    // 1b. Make sure payment is fulfilled (has been paid)
+    const payment: { fulfilled: boolean } | undefined =
+      await this.sharedTemplateAPIService.getPaymentStatus(auth, application.id)
+    if (!payment?.fulfilled) {
+      throw new Error(
+        'Ekki er búið að staðfesta greiðslu, hinkraðu þar til greiðslan er staðfest.',
+      )
+    }
+
+    // 2. Notify parent B that they need to review
+
+    // TODO: Write in error log email of parentB
+    await this.sharedTemplateAPIService
+      .sendEmail(generateAssignParentBApplicationEmail, application)
+      .catch(() => {
+        this.logger.error(`Error sending email about initReview`)
+      })
+  }
+
+  async rejectApplication({
+    application,
+    auth,
+  }: TemplateApiModuleActionProps): Promise<void> {
+    // 1. Delete charge so that the seller gets reimburshed
+    const chargeId = getPaymentIdFromExternalData(application)
+    if (chargeId) {
+      await this.chargeFjsV2ClientService.deleteCharge(chargeId)
+    }
+    // 2. Notify everyone in the process that the application has been withdrawn
+    // TODO: Get correct answers
+    // const answers = application.answers as TransferOfVehicleOwnershipAnswers
+    // Email to parent A
+    // await this.sharedTemplateAPIService
+    //   .sendEmail((props) => generateApplicationRejectEmail(props, answers.parentA), application)
+    //   .catch(() => {
+    //     this.logger.error(`Error sending email about initReview`)
+    //   })
+    // Email to parent B
+    // await this.sharedTemplateAPIService
+    //   .sendEmail((props) => generateApplicationRejectEmail(props, answers.parentB), application)
+    //   .catch(() => {
+    //     this.logger.error(`Error sending email about initReview`)
+    //   })
+  }
+
+  async submitApplication({
+    application,
+    auth,
+  }: TemplateApiModuleActionProps): Promise<void> {
+    // 1. Validate payment
+
+    // 1a. Make sure a paymentUrl was created
+    const { paymentUrl } = application.externalData.createCharge.data as {
+      paymentUrl: string
+    }
+    if (!paymentUrl) {
+      throw new Error(
+        'Ekki er búið að staðfesta greiðslu, hinkraðu þar til greiðslan er staðfest.',
+      )
+    }
+
+    // 1b. Make sure payment is fulfilled (has been paid)
+    const payment: { fulfilled: boolean } | undefined =
+      await this.sharedTemplateAPIService.getPaymentStatus(auth, application.id)
+    if (!payment?.fulfilled) {
+      throw new Error(
+        'Ekki er búið að staðfesta greiðslu, hinkraðu þar til greiðslan er staðfest.',
+      )
+    }
+
+    // TODO: Actually submit application
+
+    // 3. Notify everyone in the process that the application has successfully been submitted
+
+    // TODO: Get correct answers
+    // const answers = application.answers as TransferOfVehicleOwnershipAnswers
+
+    // Email to parent A
+    // await this.sharedTemplateAPIService
+    //   .sendEmail((props) => generateApplicationSubmittedEmail(props, answers.parentA), application)
+    //   .catch(() => {
+    //     this.logger.error(`Error sending email about initReview`)
+    //   })
+
+    // Email to parent B
+    // await this.sharedTemplateAPIService
+    //   .sendEmail((props) => generateApplicationSubmittedEmail(props, answers.parentB), application)
+    //   .catch(() => {
+    //     this.logger.error(`Error sending email about initReview`)
+    //   })
+  }
 
   //   async submitPassportApplication({
   //     application,
