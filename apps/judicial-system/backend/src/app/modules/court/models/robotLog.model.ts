@@ -26,10 +26,10 @@ export class RobotLog extends Model {
   @Column({ type: DataType.DATE })
   created!: Date
 
-  @Column({ type: DataType.INTEGER, allowNull: false })
+  @Column({ type: DataType.INTEGER })
   seqNumber!: number
 
-  @Column({ type: DataType.BOOLEAN, allowNull: false })
+  @Column({ type: DataType.BOOLEAN })
   delivered!: boolean
 
   @Column({ type: DataType.STRING, allowNull: false })
