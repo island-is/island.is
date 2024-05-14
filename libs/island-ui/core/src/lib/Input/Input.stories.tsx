@@ -11,139 +11,111 @@ export default {
 
 const Template = (args) => <Input {...args} />
 
+const inputArgs = {
+  name: 'input',
+  label: 'Label text',
+  placeholder: 'Text',
+  backgroundColor: 'white',
+  disabled: false,
+  withError: false,
+  required: false,
+  readonly: false,
+  type: 'text',
+  textarea: false,
+  size: 'md',
+  rightAlign: false,
+  icon: undefined,
+  buttons: undefined,
+}
+
 export const Default = Template.bind({})
-Default.args = {
-  label: 'Tegund fyrirtækis',
-  placeholder: 'This is the placeholder',
-  name: 'Test1',
+Default.args = inputArgs
+
+export const BlueBackground = Template.bind({})
+BlueBackground.args = {
+  ...inputArgs,
+  backgroundColor: 'blue',
 }
 
-export const Tooltip = Template.bind({})
-Tooltip.args = {
-  label: 'This is the label',
-  placeholder: 'This is the placeholder',
-  name: 'Test2',
-  tooltip:
-    'Bacon ipsum dolor amet ball tip leberkas pork belly pork chop, meatloaf swine jerky doner andouille tenderloin',
+export const Disabled = Template.bind({})
+Disabled.args = {
+  ...inputArgs,
+  disabled: true,
 }
 
-export const Error = Template.bind({})
-Error.args = {
-  label: 'This is the label',
-  placeholder: 'This is the placeholder',
-  name: 'Test3',
+export const WithError = Template.bind({})
+WithError.args = {
+  ...inputArgs,
   hasError: true,
   errorMessage: 'This is the error message',
 }
 
 export const Required = Template.bind({})
 Required.args = {
-  label: 'This is the label',
-  placeholder: 'This is the placeholder',
-  name: 'Test4',
+  ...inputArgs,
   required: true,
+}
+
+export const Readonly = Template.bind({})
+Readonly.args = {
+  ...inputArgs,
+  readonly: true,
+}
+
+export const TypeNumber = Template.bind({})
+TypeNumber.args = {
+  ...inputArgs,
+  type: 'number',
 }
 
 export const Textarea = Template.bind({})
 Textarea.args = {
-  label: 'Textarea label',
-  placeholder: 'This is the placeholder',
-  name: 'Test5',
+  ...inputArgs,
   textarea: true,
-  rows: 4,
-}
-
-export const Textarea10Rows = Template.bind({})
-Textarea10Rows.args = {
-  label: 'Textarea label',
-  placeholder: 'This is the placeholder',
-  name: 'Test6',
-  textarea: true,
-  rows: 10,
-}
-
-export const TextareaError = Template.bind({})
-TextareaError.args = {
-  label: 'Textarea label',
-  placeholder: 'This is the placeholder',
-  name: 'Test7',
-  hasError: true,
-  errorMessage: 'This is the error message',
-  textarea: true,
-  rows: 4,
-}
-
-export const TextareaRequired = Template.bind({})
-TextareaRequired.args = {
-  label: 'Textarea label',
-  placeholder: 'This is the placeholder',
-  name: 'Test8',
-  required: true,
-  textarea: true,
-  rows: 4,
-}
-
-export const BlueBackgroundColor = Template.bind({})
-BlueBackgroundColor.args = {
-  label: 'This is the label',
-  placeholder: 'Blue background',
-  name: 'Test9',
-  backgroundColor: 'blue',
+  rows: 7,
 }
 
 export const ResponsiveBackgroundColor = Template.bind({})
 ResponsiveBackgroundColor.args = {
-  label: 'This is the label',
+  ...inputArgs,
   placeholder: 'Try change the window size',
-  name: 'Test10',
   backgroundColor: ['white', 'blue', 'white', 'blue', 'white'],
 }
 
-export const WithLabelAbove = Template.bind({})
-WithLabelAbove.args = {
-  label: 'This is the above label',
-  placeholder: 'This is the placeholder',
-  name: 'Test11',
+export const SizeSm = Template.bind({})
+SizeSm.args = {
+  ...inputArgs,
+  size: 'sm',
+}
+
+export const SizeXs = Template.bind({})
+SizeXs.args = {
+  ...inputArgs,
   size: 'xs',
 }
 
-export const Disabled = Template.bind({})
-Disabled.args = {
-  label: 'This is the label',
-  placeholder: 'This is the placeholder',
-  name: 'Test12',
-  disabled: true,
-}
-
-export const DisabledWithValue = Template.bind({})
-DisabledWithValue.args = {
-  label: 'This is the label',
-  placeholder: 'This is the placeholder',
-  name: 'DisabledWithValue',
-  defaultValue: 'This is the value',
-  disabled: true,
-}
-
-export const ReadOnly = Template.bind({})
-ReadOnly.args = {
-  label: 'Read only label',
-  placeholder: 'Read only',
-  name: 'Test13',
-  backgroundColor: 'blue',
-  readOnly: true,
-  value: 'Read only have a transparent background',
-}
-
-export const RightAligned = Template.bind({})
-RightAligned.args = {
-  label: 'Input Text is right aligned',
-  placeholder: 'This is the placeholder',
-  name: 'Test14',
-  backgroundColor: 'blue',
+export const TextRightAligned = Template.bind({})
+TextRightAligned.args = {
+  ...inputArgs,
   rightAlign: true,
 }
 
-export const CopyPasswordButton = (args) => {
+export const WithIcon = Template.bind({})
+WithIcon.args = {
+  ...inputArgs,
+  icon: { name: 'informationCircle' },
+}
+
+export const WithButtons = Template.bind({})
+WithButtons.args = {
+  ...inputArgs,
+  buttons: [
+    { name: 'copy', type: 'outline', onClick: () => console.log('Copy') },
+    { name: 'close', type: 'outline', onClick: () => console.log('Close') },
+  ],
+}
+
+export const WithCopyPasswordButton = (args) => {
   const [showPassword, setShowPassword] = React.useState(false)
   const ref = React.useRef<HTMLInputElement>(null)
   const handleCopy = (ev: React.MouseEvent<HTMLButtonElement, MouseEvent>) => {
@@ -155,7 +127,6 @@ export const CopyPasswordButton = (args) => {
       ev.target.focus()
     }
 
-    // Maybee trigger a toast here.
     console.log('Copy value', ref.current.value)
   }
 
@@ -184,122 +155,8 @@ export const CopyPasswordButton = (args) => {
     />
   )
 }
-CopyPasswordButton.args = {
-  label: 'Read only label',
-  name: 'Test15',
+WithCopyPasswordButton.args = {
+  ...inputArgs,
   readOnly: true,
-  value: 'AStingThatShouldBeCopied',
-}
-
-export const WithButtonsAndAnError = Template.bind({})
-WithButtonsAndAnError.args = {
-  label: 'Label',
-  placeholder: 'This is the placeholder',
-  name: 'Test17',
-  errorMessage: 'This is the error message',
-  buttons: [
-    { name: 'copy', type: 'outline', onClick: () => console.log('Copy value') },
-    { name: 'eye', onClick: () => console.log('Show'), label: 'Show password' },
-  ],
-}
-
-export const MediumWithIconAndButton = Template.bind({})
-MediumWithIconAndButton.args = {
-  label: 'Label',
-  placeholder: 'This is the placeholder',
-  name: 'Test16',
-
-  icon: { name: 'informationCircle' },
-  buttons: [
-    {
-      name: 'copy',
-      type: 'outline',
-      onClick: () => console.log('Copy value'),
-      label: 'Copy value',
-      disabled: true,
-    },
-  ],
-}
-
-export const SmallWithIconAndButton = Template.bind({})
-SmallWithIconAndButton.args = {
-  label: 'Label',
-  placeholder: 'This is the placeholder',
-  name: 'Test18',
-  size: 'sm',
-  backgroundColor: 'blue',
-  icon: { name: 'informationCircle' },
-  buttons: [
-    { name: 'eye', onClick: () => console.log('Show'), label: 'Show password' },
-    {
-      name: 'copy',
-      type: 'outline',
-      onClick: () => console.log('Copy value'),
-      label: 'Copy value',
-    },
-  ],
-}
-export const ExtraSmallWithIconAndButton = Template.bind({})
-ExtraSmallWithIconAndButton.args = {
-  label: 'Label',
-  placeholder: 'This is the placeholder',
-  name: 'Test19',
-  size: 'xs',
-  icon: { name: 'informationCircle' },
-  buttons: [
-    { name: 'eye', onClick: () => console.log('Show'), label: 'Show password' },
-    {
-      name: 'copy',
-      type: 'outline',
-      onClick: () => console.log('Copy value'),
-      label: 'Copy value',
-    },
-  ],
-}
-
-export const Tiny = Template.bind({})
-Tiny.args = {
-  label: 'Etízólam (ng/ml)',
-  placeholder: 'This is the placeholder',
-  name: '2222',
-  size: 'xs',
-  buttons: [
-    {
-      name: 'close',
-      onClick: () => console.log('Show'),
-      label: 'Show password',
-    },
-  ],
-}
-
-export const WithADisabledButton = Template.bind({})
-WithADisabledButton.args = {
-  label: 'Label',
-  placeholder: 'This is the placeholder',
-  name: 'Test20',
-  buttons: [
-    {
-      name: 'copy',
-      type: 'outline',
-      onClick: () => console.log('Copy value'),
-      label: 'Copy value',
-      disabled: true,
-    },
-  ],
-}
-
-export const Numbers = Template.bind({})
-Numbers.args = {
-  label: 'Numbers Label',
-  placeholder: 'This is the placeholder for numbers',
-  name: 'numbers',
-  type: 'number',
-}
-
-export const InputMode = Template.bind({})
-InputMode.args = {
-  label: 'Kennital',
-  placeholder: 'Placeholder',
-  name: 'inputmode',
-  inputMode: 'numeric',
+  value: 'StringThatShouldBeCopied',
 }
