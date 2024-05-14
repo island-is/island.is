@@ -1083,6 +1083,7 @@ const UniversitySearch: Screen<UniversitySearchProps> = ({
                         display="flex"
                         alignItems="center"
                         style={{ gap: '4px' }}
+                        flexWrap={'wrap'}
                       >
                         <img
                           className={styles.searchResultIcon}
