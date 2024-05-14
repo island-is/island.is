@@ -12,13 +12,13 @@ export const generateFirearmApplicantEmail: FirearmsApplicantEmail = (
 ) => {
   const {
     application,
-    options: { email },
+    options: { email = { sender: 'Ísland.is', address: 'no-reply@island.is' } },
   } = props
 
-  const answers = application.answers as AnnouncementOfDeathAnswers
+  const firearmApplicant = application.answers
+    .firearmApplicant as AnnouncementOfDeathAnswers['firearmApplicant']
 
-  if (!answers.firearmApplicant)
-    throw new Error('Firearm applicant was undefined')
+  if (!firearmApplicant) throw new Error('Firearm applicant was undefined')
 
   const subject = 'Tilkynning um vörslu skotvopna'
 
@@ -29,8 +29,8 @@ export const generateFirearmApplicantEmail: FirearmsApplicantEmail = (
     },
     to: [
       {
-        name: answers.firearmApplicant.name,
-        address: answers.firearmApplicant.email,
+        name: firearmApplicant.name,
+        address: firearmApplicant.email,
       },
     ],
     subject,
@@ -53,7 +53,7 @@ export const generateFirearmApplicantEmail: FirearmsApplicantEmail = (
           context: {
             copy:
               `<span>Góðan dag,</span><br/><br/>` +
-              `<span>þú hefur verið tilnefndur til að taka við vörslu eftirtalinna skotvopna sem tilheyra dánarbúi X: ${'TEST'} og ${'TEST'}</span><br/>` +
+              `<span>þú hefur verið tilnefndur til að taka við vörslu skotvopna sem tilheyra dánarbúi ${application.answers.caseNumber} - ${firearmApplicant.name}</span><br/>` +
               `<span>Með undirritun lýsir þú því yfir að þú hafir leyfi til að varsla skotvopnin og samþykkir jafnframt að taka við vörslu þeirra.</span><br/>`,
           },
         },

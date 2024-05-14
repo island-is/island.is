@@ -2,6 +2,7 @@ import {
   Asset,
   EstateMember,
 } from '@island.is/application/templates/announcement-of-death/types'
+import { isRunningOnEnvironment } from '@island.is/shared/utils'
 import { join } from 'path'
 
 export function baseMapper<T>(entity: T): T {
@@ -12,12 +13,17 @@ export function baseMapper<T>(entity: T): T {
 }
 
 export const pathToAsset = (file: string) => {
-  const a = join(
+  if (isRunningOnEnvironment('local')) {
+    return join(
+      __dirname,
+      `../../../../libs/application/template-api-modules/src/lib/modules/templates/announcement-of-death/emailGenerators/assets/${file}`,
+    )
+  }
+
+  return join(
     __dirname,
     `./announcement-of-death/emailGenerators/assets/${file}`,
   )
-  console.log('FOOBAR:', a)
-  return a
 }
 
 export const dummyAsset: Asset = {

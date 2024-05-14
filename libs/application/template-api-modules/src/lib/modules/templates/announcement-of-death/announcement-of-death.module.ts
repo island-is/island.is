@@ -3,6 +3,7 @@ import { SyslumennClientModule } from '@island.is/clients/syslumenn'
 import { AnnouncementOfDeathService } from './announcement-of-death.service'
 import { SharedTemplateAPIModule } from '../../shared'
 import { BaseTemplateAPIModuleConfig } from '../../../types'
+import { SmsModule } from '@island.is/nova-sms'
 import {
   NationalRegistryClientConfig,
   NationalRegistryClientModule,
@@ -23,6 +24,7 @@ export class AnnouncementOfDeathModule {
           useNodemailerApp: process.env.USE_NODEMAILER_APP === 'true' ?? false,
           useTestAccount: true,
         }),
+        SmsModule.register(config.smsOptions),
         ConfigModule.forRoot({
           isGlobal: true,
           load: [XRoadConfig, NationalRegistryClientConfig],
