@@ -24,10 +24,11 @@ export const sectionApplicationFor = (allowBELicense = false) =>
             backgroundColor: 'white',
             largeButtons: true,
             options: (app) => {
-              let { currentLicense } = getValueViaPath<DrivingLicense>(
-                app.externalData,
-                'currentLicense.data',
-              ) ?? { currentLicense: null }
+              let { currentLicense, categories } =
+                getValueViaPath<DrivingLicense>(
+                  app.externalData,
+                  'currentLicense.data',
+                ) ?? { currentLicense: null }
 
               const fakeData = getValueViaPath<DrivingLicenseFakeData>(
                 app.answers,
@@ -50,7 +51,7 @@ export const sectionApplicationFor = (allowBELicense = false) =>
                   subLabel:
                     m.applicationForFullLicenseDescription.defaultMessage,
                   value: B_FULL,
-                  disabled: currentLicense !== 'temp',
+                  disabled: !currentLicense,
                 },
               ]
 
@@ -59,7 +60,11 @@ export const sectionApplicationFor = (allowBELicense = false) =>
                   label: m.applicationForBELicenseTitle,
                   subLabel: m.applicationForBELicenseDescription.defaultMessage,
                   value: BE,
-                  disabled: currentLicense !== 'full',
+                  disabled:
+                    !currentLicense ||
+                    !categories?.some(
+                      (category) => category.nr.toUpperCase() === 'B',
+                    ),
                 })
               }
 
