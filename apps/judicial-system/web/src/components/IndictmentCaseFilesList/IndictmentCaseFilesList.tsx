@@ -33,7 +33,7 @@ interface RenderFilesProps {
   onOpenFile: (fileId: string) => void
 }
 
-const RenderFiles: React.FC<
+export const RenderFiles: React.FC<
   React.PropsWithChildren<Props & RenderFilesProps>
 > = (props) => {
   const { caseFiles, onOpenFile, workingCase } = props
@@ -190,7 +190,6 @@ const IndictmentCaseFilesList: React.FC<React.PropsWithChildren<Props>> = (
           </Box>
         ))}
       </Box>
-
       {isDistrictCourtUser(user) || isCompletedCase(workingCase.state) ? (
         <>
           {courtRecords && courtRecords.length > 0 && (

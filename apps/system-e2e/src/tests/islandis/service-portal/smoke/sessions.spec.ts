@@ -35,13 +35,13 @@ test.describe('Service portal, in session history', () => {
 
     // Act
     await page.goto(sessionHistoryUrl, {
-      waitUntil: 'networkidle',
+      waitUntil: 'load',
     })
     await expect(page.getByRole('heading', { name: 'Notkun' })).toBeVisible()
     const sessionsRows = page.locator('table > tbody > tr')
 
     // Assert
-    await expect(sessionsRows).toHaveCountGreaterThan(0)
+    expect(await sessionsRows.count()).toBeGreaterThan(0)
   })
 
   test('can filter list of session by national id', async () => {
@@ -61,7 +61,7 @@ test.describe('Service portal, in session history', () => {
     })
 
     // Assert
-    await expect(sessionsRows).toHaveCountGreaterThan(0)
+    expect(await sessionsRows.count()).toBeGreaterThan(0)
   })
 
   test('can view list of sessions as company', async () => {
@@ -76,11 +76,11 @@ test.describe('Service portal, in session history', () => {
 
     // Act
     await page.goto(icelandicAndNoPopupUrl(sessionHistoryUrl), {
-      waitUntil: 'networkidle',
+      waitUntil: 'load',
     })
     const sessionsRows = page.getByRole('row')
 
     // Assert
-    await expect(sessionsRows).toHaveCountGreaterThan(0)
+    expect(await sessionsRows.count()).toBeGreaterThan(0)
   })
 })

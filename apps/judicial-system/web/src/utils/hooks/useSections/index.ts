@@ -408,6 +408,8 @@ const useSections = (
       isActive:
         isProsecutionUser(user) &&
         isIndictmentCase(type) &&
+        state !== CaseState.RECEIVED &&
+        state !== CaseState.MAIN_HEARING &&
         !isCompletedCase(state),
       // Prosecutor can only view the overview when case has been received by court
       children: caseHasBeenReceivedByCourt
@@ -899,8 +901,10 @@ const useSections = (
     return {
       name: formatMessage(sections.indictmentsCourtSection.title),
       isActive:
-        (isDistrictCourtUser(user) || isDefenceUser(user)) &&
-        !isCompletedCase(state),
+        (isProsecutionUser(user) &&
+          (state === CaseState.RECEIVED || state === CaseState.MAIN_HEARING)) ||
+        ((isDistrictCourtUser(user) || isDefenceUser(user)) &&
+          !isCompletedCase(state)),
       children: isDistrictCourtUser(user)
         ? [
             {
@@ -988,6 +992,28 @@ const useSections = (
                       await onNavigationTo(
                         constants.INDICTMENTS_CONCLUSION_ROUTE,
                       )
+                  : undefined,
+            },
+            {
+              name: formatMessage(sections.indictmentsCourtSection.summary),
+              isActive: isActive(constants.INDICTMENTS_SUMMARY_ROUTE),
+              href: `${constants.INDICTMENTS_SUMMARY_ROUTE}/${id}`,
+              onClick:
+                !isActive(constants.INDICTMENTS_SUMMARY_ROUTE) &&
+                validateFormStepper(
+                  isValid,
+                  [
+                    constants.INDICTMENTS_OVERVIEW_ROUTE,
+                    constants.INDICTMENTS_RECEPTION_AND_ASSIGNMENT_ROUTE,
+                    constants.INDICTMENTS_SUBPOENA_ROUTE,
+                    constants.INDICTMENTS_DEFENDER_ROUTE,
+                    constants.INDICTMENTS_CONCLUSION_ROUTE,
+                  ],
+                  workingCase,
+                ) &&
+                onNavigationTo
+                  ? async () =>
+                      await onNavigationTo(constants.INDICTMENTS_SUMMARY_ROUTE)
                   : undefined,
             },
           ]
