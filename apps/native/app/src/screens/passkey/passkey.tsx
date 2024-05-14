@@ -16,11 +16,12 @@ import {
 import { createNavigationOptionHooks } from '../../hooks/create-navigation-option-hooks'
 import logo from '../../assets/logo/logo-64w.png'
 import illustrationSrc from '../../assets/illustrations/digital-services-m1.png'
-import { openBrowser, openNativeBrowser } from '../../lib/rn-island'
+import { openNativeBrowser } from '../../lib/rn-island'
 import { preferencesStore } from '../../stores/preferences-store'
-import { registerPasskey } from '../../lib/passkeys/registerPasskey'
-import { authenticatePasskey } from '../../lib/passkeys/authenticatePasskey'
+import { useRegisterPasskey } from '../../lib/passkeys/useRegisterPasskey'
+import { useAuthenticatePasskey } from '../../lib/passkeys/useAuthenticatePasskey'
 import { authStore } from '../../stores/auth-store'
+import { useBrowser } from '../../lib/useBrowser'
 
 const Text = styled.View`
   margin-horizontal: ${({ theme }) => theme.spacing[7]}px;
@@ -59,7 +60,11 @@ export const PasskeyScreen: NavigationFunctionComponent<{
   useNavigationOptions(componentId)
   const intl = useIntl()
   const theme = useTheme()
+  const { openBrowser } = useBrowser()
   const [isLoading, setIsLoading] = useState(false)
+
+  const { registerPasskey } = useRegisterPasskey()
+  const { authenticatePasskey } = useAuthenticatePasskey()
 
   useEffect(() => {
     preferencesStore.setState({
@@ -154,6 +159,7 @@ export const PasskeyScreen: NavigationFunctionComponent<{
                   }))
 
                   const authenticated = await authenticatePasskey()
+
                   if (authenticated) {
                     setIsLoading(false)
                     Navigation.dismissModal(componentId)

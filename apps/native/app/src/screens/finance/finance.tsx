@@ -9,10 +9,9 @@ import { GetFinanceStatus } from '../../graphql/types/finance.types'
 import { useGetFinanceStatusQuery } from '../../graphql/types/schema'
 import { createNavigationOptionHooks } from '../../hooks/create-navigation-option-hooks'
 import { useConnectivityIndicator } from '../../hooks/use-connectivity-indicator'
-import { openBrowser } from '../../lib/rn-island'
+import { useBrowser } from '../../lib/useBrowser'
 import { FinanceStatusCardContainer } from './components/finance-status-card-container'
 import { LightButton } from './components/light-button'
-import { useFeatureFlag } from '../../contexts/feature-flag-provider'
 
 const { useNavigationOptions, getNavigationOptions } =
   createNavigationOptionHooks(
@@ -39,9 +38,9 @@ const { useNavigationOptions, getNavigationOptions } =
 export const FinanceScreen: NavigationFunctionComponent = ({ componentId }) => {
   useNavigationOptions(componentId)
 
+  const { openBrowser } = useBrowser()
   const theme = useTheme()
   const intl = useIntl()
-  const isPasskeyEnabled = useFeatureFlag('isPasskeyEnabled', false)
   const res = useGetFinanceStatusQuery({
     errorPolicy: 'ignore',
   })
@@ -171,7 +170,6 @@ export const FinanceScreen: NavigationFunctionComponent = ({ componentId }) => {
                 '',
               )}/umsoknir/greidsluaaetlun`,
               componentId,
-              isPasskeyEnabled,
             )
           }}
         />

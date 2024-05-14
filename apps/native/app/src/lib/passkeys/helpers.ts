@@ -74,8 +74,6 @@ export const convertClientDataJSON = (clientDataJSONString: string) => {
     origin: 'http://island.is:8000', //needed since the server is running on this
   }
 
-  console.log({ updatedClientDataJSON })
-
   return convertBase64StringToBase64Url(
     btoa(JSON.stringify(updatedClientDataJSON)),
   )
