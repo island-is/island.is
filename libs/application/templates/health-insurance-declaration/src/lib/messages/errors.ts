@@ -16,7 +16,7 @@ export const errors = {
       id: 'hid.application:errors.fields.startDateAfterEnd',
       defaultMessage: 'Upphafs dagsetning má ekki vera eftir loka dagsetningu',
       description: 'Start date after end date error message',
-      }
+    },
   }),
   submitted: defineMessages({
     externalError: {
