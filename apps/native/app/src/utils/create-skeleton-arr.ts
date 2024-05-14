@@ -3,8 +3,8 @@ export type SkeletonItem = {
   __typename: 'Skeleton'
 }
 
-export const createSkeletonArr = (length: number): SkeletonItem[] =>
-  Array.from({ length }).map((_, id) => ({
+export const createSkeletonArr = (size: number): SkeletonItem[] =>
+  Array.from({ length: size }, (_, id) => ({
     id,
     __typename: 'Skeleton',
   }))
