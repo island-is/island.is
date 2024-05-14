@@ -2,7 +2,7 @@ import { NavigationBarSheet, NotificationCard, Skeleton, Typography } from '@ui'
 import { dismissAllNotificationsAsync } from 'expo-notifications'
 import React, { useCallback, useEffect, useMemo, useState } from 'react'
 import { useIntl } from 'react-intl'
-import { ActivityIndicator, FlatList, SafeAreaView, View } from 'react-native'
+import { ActivityIndicator, FlatList, SafeAreaView } from 'react-native'
 import {
   Navigation,
   NavigationFunctionComponent,
@@ -19,6 +19,7 @@ import {
 
 import { createNavigationOptionHooks } from '../../hooks/create-navigation-option-hooks'
 import { navigateToNotification } from '../../lib/deep-linking'
+import { useNotificationsStore } from '../../stores/notifications-store'
 import {
   createSkeletonArr,
   SkeletonItem,
@@ -56,6 +57,9 @@ export const NotificationsScreen: NavigationFunctionComponent = ({
   const intl = useIntl()
   const theme = useTheme()
   const [loadingMore, setLoadingMore] = useState(false)
+  const updateNavigationUnseenCount = useNotificationsStore(
+    ({ updateNavigationUnseenCount }) => updateNavigationUnseenCount,
+  )
 
   const { data, loading, error, fetchMore, updateQuery } =
     useGetUserNotificationsQuery({
@@ -67,9 +71,11 @@ export const NotificationsScreen: NavigationFunctionComponent = ({
   const [markAllUserNotificationsAsSeen] =
     useMarkAllNotificationsAsSeenMutation()
 
-  // On mount, mark all notifications as seen
+  // On mount, mark all notifications as seen and update all screens navigation badge to 0
   useEffect(() => {
-    void markAllUserNotificationsAsSeen()
+    void markAllUserNotificationsAsSeen().then(() =>
+      updateNavigationUnseenCount(0),
+    )
   }, [])
 
   useEffect(() => {

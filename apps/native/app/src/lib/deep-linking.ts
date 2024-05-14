@@ -219,26 +219,6 @@ export function navigateToNotification({
   void openBrowser(link, componentId ?? ComponentRegistry.HomeScreen)
 }
 
-const findRoute = (url: string) => {
-  // Remove trailing slash and spacess
-  const cleanLink = url.replace(/\/\s*$/, '')
-  // Remove domain
-  const path = cleanLink.replace(/https?:\/\/[^/]+/, '')
-
-  for (const [pattern, routeTemplate] of Object.entries(urlMapping)) {
-    const matcher = match(pattern, { decode: decodeURIComponent })
-    const matchResult = matcher(path)
-
-    console.log(matchResult, pattern, path, routeTemplate)
-
-    if (matchResult) {
-      const compiler = compile(routeTemplate)
-      return compiler(matchResult.params)
-    }
-  }
-  return null
-}
-
 // Map between notification link and app screen
 const urlMapping: { [key: string]: string } = {
   '/minarsidur/postholf/:id': '/inbox/:id',
@@ -261,4 +241,25 @@ const urlMapping: { [key: string]: string } = {
   '/minarsidur/eignir/okutaeki/min-okutaeki/:id/kilometrastada':
     '/vehicle-mileage/:id',
   '/minarsidur/loftbru': '/air-discount',
+}
+
+const findRoute = (url: string) => {
+  // Remove trailing slash and spacess
+  const cleanLink = url.replace(/\/\s*$/, '')
+  // Remove domain
+  const path = cleanLink.replace(/https?:\/\/[^/]+/, '')
+
+  for (const [pattern, routeTemplate] of Object.entries(urlMapping)) {
+    const matcher = match(pattern, { decode: decodeURIComponent })
+    const matchResult = matcher(path)
+
+    // TODO delete me
+    console.log(matchResult, pattern, path, routeTemplate)
+
+    if (matchResult) {
+      const compiler = compile(routeTemplate)
+      return compiler(matchResult.params)
+    }
+  }
+  return null
 }
