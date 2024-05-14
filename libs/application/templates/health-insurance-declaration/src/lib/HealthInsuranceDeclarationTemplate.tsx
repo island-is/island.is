@@ -20,6 +20,7 @@ import {
   DefaultStateLifeCycle,
   coreHistoryMessages,
 } from '@island.is/application/core'
+import { Features } from '@island.is/feature-flags'
 
 type HealthInsuranceDeclarationEvent =
   | { type: DefaultEvents.APPROVE }
@@ -43,6 +44,7 @@ const HealthInsuranceDeclarationTemplate: ApplicationTemplate<
   translationNamespaces: configuration.translation,
   dataSchema: HealthInsuranceDeclarationSchema,
   institution: application.general.institutionName,
+  featureFlag: Features.HealthInsuranceDeclaration,
   stateMachineConfig: {
     initial: States.PREREQUISITES,
     states: {

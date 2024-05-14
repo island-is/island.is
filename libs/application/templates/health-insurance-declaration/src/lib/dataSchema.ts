@@ -1,6 +1,7 @@
 import { applicantInformationSchema } from '@island.is/application/ui-forms'
 import { z } from 'zod'
 import { ApplicantType } from '../shared/constants'
+import { errors } from './messages'
 
 export const HealthInsuranceDeclarationSchema = z.object({
   approveExternalData: z.boolean().refine((v) => v),
@@ -46,10 +47,12 @@ export const HealthInsuranceDeclarationSchema = z.object({
         ctx.addIssue({
           code: z.ZodIssueCode.custom,
           path: ['dateFieldFrom'],
+          params: errors.fields.endDateBeforeStart,
         })
         ctx.addIssue({
           code: z.ZodIssueCode.custom,
           path: ['dateFieldTo'],
+          params: errors.fields.startDateAfterEnd,
         })
         return false
       }
