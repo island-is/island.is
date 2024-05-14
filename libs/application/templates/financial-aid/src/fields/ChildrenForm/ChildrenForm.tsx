@@ -18,10 +18,12 @@ import { sortChildrenByAge } from '@island.is/application/templates/family-matte
 import kennitala from 'kennitala'
 import { getMessageForSchool } from '../../lib/formatters'
 import { getSchoolType } from '../../lib/utils'
+import { useFormContext } from 'react-hook-form'
 export const CHILDREN_INDEX = '{childrenIndex}'
 
 const childrenTypes = (CHILDREN_INDEX: number) => {
   return {
+    nationalId: `children-${CHILDREN_INDEX}.nationalId`,
     school: `children-${CHILDREN_INDEX}.school`,
     hasFoodStamps: `children-${CHILDREN_INDEX}.hasFoodStamps`,
     hasAfterSchool: `children-${CHILDREN_INDEX}.hasAfterSchool`,
@@ -29,15 +31,16 @@ const childrenTypes = (CHILDREN_INDEX: number) => {
   }
 }
 
-const ChildrenForm = ({ application }: FAFieldBaseProps) => {
+const ChildrenForm = ({ application, errors }: FAFieldBaseProps) => {
   const { formatMessage } = useIntl()
   const { answers, externalData } = application
 
   const children = externalData.childrenCustodyInformation.data
 
   const sortChildrenAge = sortChildrenByAge(children).reverse()
+  const { setValue, clearErrors } = useFormContext()
 
-  console.log(answers)
+  console.log(answers, errors)
 
   return (
     <>
@@ -49,8 +52,10 @@ const ChildrenForm = ({ application }: FAFieldBaseProps) => {
       </Box>
 
       {sortChildrenAge.map((child, index) => {
-        const birthday = kennitala.info(child.nationalId)?.birthday
-        const age = kennitala.info(child.nationalId)?.age
+        const nationalId = child.nationalId
+        const kennitalaInfo = kennitala.info(nationalId)
+        const birthday = kennitalaInfo?.birthday
+        const age = kennitalaInfo?.age
         const dateOfBirth = new Date(birthday)
 
         const schoolType = getSchoolType(age)
@@ -62,6 +67,8 @@ const ChildrenForm = ({ application }: FAFieldBaseProps) => {
         if (!schoolType) {
           return null
         }
+        setValue(childrenTypes(index).nationalId, nationalId)
+
         return (
           <Box
             marginBottom={5}
@@ -88,7 +95,6 @@ const ChildrenForm = ({ application }: FAFieldBaseProps) => {
                 )}
                 label={formatMessage(getMessageForSchool[schoolType].label)}
                 defaultValue={defaultValue}
-                onChange={() => {}}
               />
             </Box>
 

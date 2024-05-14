@@ -67,7 +67,7 @@ export const Application: Form = buildForm({
           children: [
             buildCustomField({
               id: Routes.CHILDRENSCHOOLINFO,
-              title: m.unknownRelationship.general.pageTitle,
+              title: m.childrenForm.general.pageTitle,
               component: 'ChildrenForm',
             }),
           ],

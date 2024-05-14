@@ -24,7 +24,8 @@ export const dataSchema = z.object({
   }),
   children: z.array(
     z.object({
-      school: z.string().refine((v) => v !== undefined, {
+      nationalId: z.string(),
+      school: z.string().refine((v) => v !== undefined || v !== '', {
         params: error.validation.inputErrorMessage,
       }),
       hasFoodStamps: z.enum([ApproveOptions.Yes, ApproveOptions.No]),
