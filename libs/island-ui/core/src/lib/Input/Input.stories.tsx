@@ -88,7 +88,7 @@ Required.args = {
 export const Readonly = Template.bind({})
 Readonly.args = {
   ...inputArgs,
-  readonly: true,
+  readOnly: true,
 }
 
 export const TypeNumber = Template.bind({})
