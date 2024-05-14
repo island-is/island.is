@@ -85,6 +85,11 @@ export class VehicleService {
       if (findVehicle) {
         findVehicle.mileage = vehicle.mileage
         if (vehicle.ownerNationalId !== findVehicle.ownerNationalId) {
+          this.logger.info(
+            `car-recycling: Changing owner of the vehicle: ${vehicle.vehicleId.slice(
+              -3,
+            )}`,
+          )
           findVehicle.ownerNationalId = vehicle.ownerNationalId
         }
         await findVehicle.save()
