@@ -17,11 +17,11 @@ import { openBrowser } from '../lib/rn-island'
 import { cognitoAuthUrl } from '../screens/cognito-auth/config-switcher'
 import { authStore } from '../stores/auth-store'
 import { environmentStore } from '../stores/environment-store'
-import { createMKKVStorage } from '../stores/mmkv'
+import { createMMKVStorage } from '../stores/mmkv'
 import { offlineStore } from '../stores/offline-store'
 import { MainBottomTabs } from '../utils/component-registry'
 
-const apolloMMKVStorage = createMKKVStorage({ withEncryption: true })
+const apolloMMKVStorage = createMMKVStorage({ withEncryption: true })
 
 const connectivityLink = new ApolloLink((operation, forward) => {
   return forward(operation).map((response) => {
