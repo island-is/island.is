@@ -22,9 +22,16 @@ export const dataSchema = z.object({
       params: error.validation.approveSpouse,
     }),
   }),
-  selectedChildren: z
-    .array(z.string())
-    .refine((v) => v && v.length > 0, { params: error.validation.email }),
+  children: z.array(
+    z.object({
+      school: z.string().refine((v) => v !== undefined, {
+        params: error.validation.inputErrorMessage,
+      }),
+      hasFoodStamps: z.enum([ApproveOptions.Yes, ApproveOptions.No]),
+      hasAfterSchool: z.enum([ApproveOptions.Yes, ApproveOptions.No]),
+      hasBookAid: z.enum([ApproveOptions.Yes, ApproveOptions.No]),
+    }),
+  ),
   relationshipStatus: z
     .object({
       unregisteredCohabitation: z

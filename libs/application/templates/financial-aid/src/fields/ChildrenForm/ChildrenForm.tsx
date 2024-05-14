@@ -2,10 +2,9 @@ import React from 'react'
 import { useIntl } from 'react-intl'
 
 import { Text, Box } from '@island.is/island-ui/core'
-import { useLocale } from '@island.is/localization'
 
 import { DescriptionText } from '..'
-import { FAFieldBaseProps } from '../../lib/types'
+import { FAFieldBaseProps, SchoolType } from '../../lib/types'
 import withLogo from '../Logo/Logo'
 import { childrenForm } from '../../lib/messages'
 import format from 'date-fns/format'
@@ -16,19 +15,29 @@ import {
 } from '@island.is/shared/form-fields'
 
 import { sortChildrenByAge } from '@island.is/application/templates/family-matters-core/utils'
-const childSchool = 'child.school'
-const childFoodStamp = 'child.school.food.stamp'
-const childAfterSchool = 'child.school.after.school.activity'
 import kennitala from 'kennitala'
+import { getMessageForSchool } from '../../lib/formatters'
+import { getSchoolType } from '../../lib/utils'
+export const CHILDREN_INDEX = '{childrenIndex}'
+
+const childrenTypes = (CHILDREN_INDEX: number) => {
+  return {
+    school: `children-${CHILDREN_INDEX}.school`,
+    hasFoodStamps: `children-${CHILDREN_INDEX}.hasFoodStamps`,
+    hasAfterSchool: `children-${CHILDREN_INDEX}.hasAfterSchool`,
+    hasBookAid: `children-${CHILDREN_INDEX}.hasBookAid`,
+  }
+}
 
 const ChildrenForm = ({ application }: FAFieldBaseProps) => {
   const { formatMessage } = useIntl()
-  const { lang } = useLocale()
-  const { answers } = application
+  const { answers, externalData } = application
 
-  const children = application.externalData.childrenCustodyInformation.data
+  const children = externalData.childrenCustodyInformation.data
 
   const sortChildrenAge = sortChildrenByAge(children).reverse()
+
+  console.log(answers)
 
   return (
     <>
@@ -39,11 +48,20 @@ const ChildrenForm = ({ application }: FAFieldBaseProps) => {
         <DescriptionText text={childrenForm.page.content} />
       </Box>
 
-      {sortChildrenAge.map((child) => {
+      {sortChildrenAge.map((child, index) => {
         const birthday = kennitala.info(child.nationalId)?.birthday
         const age = kennitala.info(child.nationalId)?.age
         const dateOfBirth = new Date(birthday)
 
+        const schoolType = getSchoolType(age)
+
+        const defaultValue = answers?.children
+          ? answers?.children[index].school
+          : ''
+
+        if (!schoolType) {
+          return null
+        }
         return (
           <Box
             marginBottom={5}
@@ -51,57 +69,45 @@ const ChildrenForm = ({ application }: FAFieldBaseProps) => {
             padding={3}
             borderRadius="standard"
           >
-            <Text variant="h3" fontWeight="light" marginBottom={1}>
+            <Text variant="h3" fontWeight="semiBold" marginBottom={1}>
               {child.fullName}
             </Text>
-            <Text variant="small" fontWeight="light">
+            <Text variant="small">
               {formatMessage(childrenForm.page.birthday, {
                 birthday: format(dateOfBirth, 'dd.MM.yyyy'),
               })}
             </Text>
-            {age < 6 && (
-              <Box marginTop={[2, 2, 3]}>
-                <InputController
-                  id={childSchool}
-                  name={childSchool}
-                  type="text"
-                  placeholder={formatMessage(
-                    childrenForm.inputs.kindergardenPlaceholder,
-                  )}
-                  label={formatMessage(childrenForm.inputs.kindergardenLabel)}
-                  defaultValue={''}
-                  onChange={() => {}}
-                />
-              </Box>
-            )}
-            {age > 6 && age < 16 && (
+
+            <Box marginTop={[2, 2, 3]}>
+              <InputController
+                id={childrenTypes(index).school}
+                name={childrenTypes(index).school}
+                type="text"
+                placeholder={formatMessage(
+                  getMessageForSchool[schoolType].placeholder,
+                )}
+                label={formatMessage(getMessageForSchool[schoolType].label)}
+                defaultValue={defaultValue}
+                onChange={() => {}}
+              />
+            </Box>
+
+            {schoolType === SchoolType.ELEMENTARY && (
               <>
-                <Box marginTop={[2, 2, 3]} marginBottom={[3]}>
-                  <InputController
-                    id={childSchool}
-                    name={childSchool}
-                    type="text"
-                    size="md"
-                    icon="search"
-                    placeholder={formatMessage(
-                      childrenForm.inputs.elementarySchoolPlaceholder,
-                    )}
-                    label={formatMessage(
-                      childrenForm.inputs.elementarySchoolLabel,
-                    )}
-                    defaultValue={''}
-                    onChange={() => {}}
-                  />
-                </Box>
                 <Box
                   background="white"
                   borderRadius="standard"
                   marginBottom={[1]}
+                  marginTop={[3]}
                 >
                   <CheckboxController
-                    id={childFoodStamp}
-                    name={childFoodStamp}
-                    defaultValue={[]}
+                    id={childrenTypes(index).hasFoodStamps}
+                    name={childrenTypes(index).hasFoodStamps}
+                    defaultValue={
+                      answers?.children
+                        ? [answers?.children[index].hasFoodStamps]
+                        : []
+                    }
                     large={true}
                     spacing={0}
                     options={[
@@ -114,13 +120,19 @@ const ChildrenForm = ({ application }: FAFieldBaseProps) => {
                     ]}
                   />
                 </Box>
-
-                <Box background="white" borderRadius="standard">
+                <Box
+                  background="white"
+                  borderRadius="standard"
+                  marginBottom={[1]}
+                >
                   <CheckboxController
-                    id={childAfterSchool}
-                    name={childAfterSchool}
-                    backgroundColor="white"
-                    defaultValue={[]}
+                    id={childrenTypes(index).hasAfterSchool}
+                    name={childrenTypes(index).hasAfterSchool}
+                    defaultValue={
+                      answers.children
+                        ? [answers.children[index].hasAfterSchool]
+                        : []
+                    }
                     large={true}
                     spacing={0}
                     options={[
@@ -135,46 +147,32 @@ const ChildrenForm = ({ application }: FAFieldBaseProps) => {
                 </Box>
               </>
             )}
-            {/* TODO: add age <= 20 */}
-            {age >= 16 && (
-              <>
-                <Box marginTop={[2, 2, 3]} marginBottom={[3]}>
-                  <InputController
-                    id={childSchool}
-                    name={childSchool}
-                    type="text"
-                    size="md"
-                    icon="search"
-                    placeholder={formatMessage(
-                      childrenForm.inputs.highSchoolPlaceholder,
-                    )}
-                    label={formatMessage(childrenForm.inputs.highSchoolLabel)}
-                    defaultValue={''}
-                    onChange={() => {}}
-                  />
-                </Box>
-                <Box
-                  background="white"
-                  borderRadius="standard"
-                  marginBottom={[1]}
-                >
-                  <CheckboxController
-                    id={childFoodStamp}
-                    name={childFoodStamp}
-                    defaultValue={[]}
-                    large={true}
-                    spacing={0}
-                    options={[
-                      {
-                        value: 'yes',
-                        label: formatMessage(
-                          childrenForm.inputs.elementarySchoolFoodCheck,
-                        ),
-                      },
-                    ]}
-                  />
-                </Box>
-              </>
+            {schoolType === SchoolType.HIGHSCHOOL && (
+              <Box
+                background="white"
+                borderRadius="standard"
+                marginBottom={[1]}
+              >
+                <CheckboxController
+                  id={childrenTypes(index).hasBookAid}
+                  name={childrenTypes(index).hasBookAid}
+                  defaultValue={
+                    answers.children
+                      ? [answers.children[index].hasAfterSchool]
+                      : []
+                  }
+                  large={true}
+                  spacing={0}
+                  options={[
+                    {
+                      value: 'yes',
+                      label: formatMessage(
+                        childrenForm.inputs.elementarySchoolFoodCheck,
+                      ),
+                    },
+                  ]}
+                />
+              </Box>
             )}
           </Box>
         )
