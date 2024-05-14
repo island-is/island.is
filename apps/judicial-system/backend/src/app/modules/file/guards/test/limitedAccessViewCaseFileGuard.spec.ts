@@ -157,7 +157,6 @@ describe('Limited Access View Case File Guard', () => {
           CaseFileCategory.COVER_LETTER,
           CaseFileCategory.INDICTMENT,
           CaseFileCategory.CRIMINAL_RECORD,
-          CaseFileCategory.CRIMINAL_RECORD_UPDATE,
           CaseFileCategory.COST_BREAKDOWN,
           CaseFileCategory.CASE_FILE,
         ]
