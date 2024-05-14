@@ -24,10 +24,12 @@ import {
   createSkeletonArr,
   SkeletonItem,
 } from '../../utils/create-skeleton-arr'
+import { isAndroid } from '../../utils/devices'
 import { testIDs } from '../../utils/test-ids'
 
 const LoadingWrapper = styled.View`
   padding-vertical: ${({ theme }) => theme.spacing[3]}px;
+  ${({ theme }) => isAndroid && `padding-bottom: ${theme.spacing[6]}px;`}
 `
 
 const ErrorContainer = styled.View`
@@ -213,7 +215,11 @@ export const NotificationsScreen: NavigationFunctionComponent = ({
             ListFooterComponent={
               loadingMore && !error ? (
                 <LoadingWrapper>
-                  <ActivityIndicator size="small" animating />
+                  <ActivityIndicator
+                    size="small"
+                    animating
+                    color={theme.color.blue400}
+                  />
                 </LoadingWrapper>
               ) : null
             }
