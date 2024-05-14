@@ -15,10 +15,11 @@ import { CallToAction } from './StateMachine'
 import { Colors, theme } from '@island.is/island-ui/theme'
 import { Condition } from './Condition'
 import { FormatInputValueFunction } from 'react-number-format'
-import React from 'react'
+import React, { Dispatch, SetStateAction } from 'react'
 import { TestSupport } from '@island.is/island-ui/utils'
 import { MessageDescriptor } from 'react-intl'
 import { Locale } from '@island.is/shared/types'
+import { useFormContext } from 'react-hook-form'
 
 type Space = keyof typeof theme.spacing
 
@@ -189,6 +190,7 @@ export enum FieldTypes {
   HIDDEN_INPUT = 'HIDDEN_INPUT',
   HIDDEN_INPUT_WITH_WATCHED_VALUE = 'HIDDEN_INPUT_WITH_WATCHED_VALUE',
   FIND_VEHICLE = 'FIND_VEHICLE',
+  SELECT_VEHICLE = 'SELECT_VEHICLE',
   STATIC_TABLE = 'STATIC_TABLE',
 }
 
@@ -220,6 +222,7 @@ export enum FieldComponents {
   TABLE_REPEATER = 'TableRepeaterFormField',
   HIDDEN_INPUT = 'HiddenInputFormField',
   FIND_VEHICLE = 'FindVehicleFormField',
+  SELECT_VEHICLE = 'SelectVehicleFormField',
   STATIC_TABLE = 'StaticTableFormField',
 }
 
@@ -539,6 +542,28 @@ export interface FindVehicleField extends BaseField {
   energyFundsMessages?: Record<string, FormText>
 }
 
+export interface SelectVehicleField extends BaseField {
+  readonly type: FieldTypes.SELECT_VEHICLE
+  component: FieldComponents.SELECT_VEHICLE
+  //options: MaybeWithApplicationAndField<Option[]>
+  getDetails?: (plate: string) => Promise<unknown>
+  options?: {
+    value: string
+    label: string
+  }[]
+  placeholder?: FormText
+  backgroundColor?: InputBackgroundColor
+  required?: boolean
+  disabled?: boolean
+  isEnergyFunds?: boolean
+  isMachine?: boolean
+  selectLabel?: FormText
+  selectPlaceholder?: FormText
+  errorTitle?: FormText
+  validError?: FormText
+  validationErrors?: Record<string, FormText>
+}
+
 export interface HiddenInputWithWatchedValueField extends BaseField {
   watchValue: string
   type: FieldTypes.HIDDEN_INPUT_WITH_WATCHED_VALUE
@@ -597,3 +622,4 @@ export type Field =
   | HiddenInputField
   | FindVehicleField
   | StaticTableField
+  | SelectVehicleField
