@@ -25,7 +25,10 @@ export const allEmployersHaveApproved = (context: ApplicationContext) => {
   if (!employers) {
     return false
   }
-  return employers.every((e) => !!e.isApproved)
+
+  // We need to check if the employer has opened the application (has a value in 'reviewerNationalRegistryId')
+  // because it is not recorded if the employer has approved the application until after this check
+  return employers.every((e) => !!e.reviewerNationalRegistryId)
 }
 
 export const hasEmployer = (context: ApplicationContext) => {
