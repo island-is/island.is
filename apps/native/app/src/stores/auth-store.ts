@@ -19,6 +19,7 @@ import { offlineStore } from './offline-store'
 import { preferencesStore } from './preferences-store'
 
 const KEYCHAIN_AUTH_KEY = `@islandis_${bundleId}`
+const REFRESH_TOKEN_ERROR = 'refresh_token_error'
 
 interface UserInfo {
   sub: string
@@ -107,24 +108,28 @@ export const authStore = create<AuthStore>((set, get) => ({
       return false
     }
 
-    const newAuthorizeResult = await authRefresh(appAuthConfig, {
-      refreshToken,
-    })
+    try {
+      const newAuthorizeResult = await authRefresh(appAuthConfig, {
+        refreshToken,
+      })
 
-    const authorizeResult = {
-      ...get().authorizeResult,
-      ...newAuthorizeResult,
-    }
+      const authorizeResult = {
+        ...get().authorizeResult,
+        ...newAuthorizeResult,
+      }
 
-    if (authorizeResult) {
-      await Keychain.setGenericPassword(
-        KEYCHAIN_AUTH_KEY,
-        JSON.stringify(authorizeResult),
-        { service: KEYCHAIN_AUTH_KEY },
-      )
-      set({ authorizeResult })
+      if (authorizeResult) {
+        await Keychain.setGenericPassword(
+          KEYCHAIN_AUTH_KEY,
+          JSON.stringify(authorizeResult),
+          { service: KEYCHAIN_AUTH_KEY },
+        )
+        set({ authorizeResult })
 
-      return true
+        return true
+      }
+    } catch (e) {
+      throw new Error(REFRESH_TOKEN_ERROR)
     }
 
     return false
@@ -234,20 +239,25 @@ export async function checkIsAuthenticated() {
 
     return true
   } catch (e) {
+    const err = e as Error
+
     if (!offlineStore.getState().isConnected) {
-      // Network request failed - likely due to offline
       return true
+    } else if (REFRESH_TOKEN_ERROR === err?.message) {
+      Alert.alert(
+        intl.formatMessage({ id: 'login.expiredTitle' }),
+        intl.formatMessage({ id: 'login.expiredMissingUserMessage' }),
+      )
+      await logout()
+      await Navigation.dismissAllModals()
+      await Navigation.dismissAllOverlays()
+      await Navigation.setRoot({
+        root: await getAppRoot(),
+      })
+
+      return false
     }
 
-    Alert.alert(
-      intl.formatMessage({ id: 'login.expiredTitle' }),
-      intl.formatMessage({ id: 'login.expiredMissingUserMessage' }),
-    )
-    await logout()
-    await Navigation.dismissAllModals()
-    await Navigation.dismissAllOverlays()
-    await Navigation.setRoot({
-      root: await getAppRoot(),
-    })
+    return true
   }
 }
