@@ -44,6 +44,7 @@ interface AuthStore extends State {
 const getAppAuthConfig = () => {
   const config = getConfig()
   const android = isAndroid && !config.isTestingApp ? '.auth' : ''
+
   return {
     issuer: config.idsIssuer,
     clientId: config.idsClientId,
@@ -105,11 +106,13 @@ export const authStore = create<AuthStore>((set, get) => ({
       return false
     }
 
+    const newAuthorizeResult = await authRefresh(appAuthConfig, {
+      refreshToken,
+    })
+
     const authorizeResult = {
       ...get().authorizeResult,
-      ...(await authRefresh(appAuthConfig, {
-        refreshToken,
-      })),
+      ...newAuthorizeResult,
     }
 
     if (authorizeResult) {
@@ -179,27 +182,25 @@ export const authStore = create<AuthStore>((set, get) => ({
 
 export const useAuthStore = createUse(authStore)
 
-export async function readAuthorizeResult(): Promise<AuthorizeResult | null> {
+export async function readAuthorizeResult(): Promise<void> {
   const { authorizeResult } = authStore.getState()
 
-  if (authorizeResult) {
-    return authorizeResult as AuthorizeResult
-  }
+  if (authorizeResult) return
 
   try {
     const res = await Keychain.getGenericPassword({
       service: KEYCHAIN_AUTH_KEY,
     })
+
     if (res) {
       const authRes = JSON.parse(res.password)
       authStore.setState({ authorizeResult: authRes })
-      return authRes
     }
+
+    return
   } catch (err) {
     console.log('Unable to read from keystore: ', err)
   }
-
-  return null
 }
 
 export async function checkIsAuthenticated() {
