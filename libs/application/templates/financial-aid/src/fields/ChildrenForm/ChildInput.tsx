@@ -39,7 +39,6 @@ interface Props {
   application: FAApplication
   field: Partial<FieldArrayWithId<ChildrenField>>
   index: number
-  handleRemoveContact: (index: number) => void
   errors: RecordObject<unknown> | undefined
   childFullName: string
   childNationalId: string
@@ -50,11 +49,12 @@ export const ChildInput: FC<React.PropsWithChildren<Props>> = ({
   application,
   field,
   index,
-  handleRemoveContact,
   errors,
   childFullName,
   childNationalId,
 }) => {
+  const { answers } = application
+
   const fieldIndex = `${id}[${index}]`
   const nationalIdField = `${fieldIndex}.nationalId`
   const schoolField = `${fieldIndex}.school`
@@ -75,7 +75,6 @@ export const ChildInput: FC<React.PropsWithChildren<Props>> = ({
   if (!schoolType) {
     return null
   }
-  console.log(schoolField)
 
   return (
     <Box
@@ -101,80 +100,21 @@ export const ChildInput: FC<React.PropsWithChildren<Props>> = ({
           required={true}
           label={formatMessage(getMessageForSchool[schoolType].label)}
           error={errors && getErrorViaPath(errors, schoolField)}
-          backgroundColor="blue"
+          backgroundColor="white"
         />
-        {/* <InputController
-          id={childrenTypes(index).school}
-          name={childrenTypes(index).school}
-          type="text"
-          placeholder={formatMessage(
-            getMessageForSchool[schoolType].placeholder,
-          )}
-          required={true}
-          label={formatMessage(getMessageForSchool[schoolType].label)}
-          defaultValue={answers?.children[index].school || ''}
-        /> */}
       </Box>
 
-      {/* {schoolType === SchoolType.ELEMENTARY && (
-          <>
-            <Box
-              background="white"
-              borderRadius="standard"
-              marginBottom={[1]}
-              marginTop={[3]}
-            >
-              <CheckboxController
-                id={childrenTypes(index).hasFoodStamps}
-                name={childrenTypes(index).hasFoodStamps}
-                defaultValue={
-                  answers?.children
-                    ? [answers?.children[index].hasFoodStamps]
-                    : []
-                }
-                large={true}
-                spacing={0}
-                options={[
-                  {
-                    value: 'yes',
-                    label: formatMessage(
-                      childrenForm.inputs.elementarySchoolFoodCheck,
-                    ),
-                  },
-                ]}
-              />
-            </Box>
-            <Box background="white" borderRadius="standard" marginBottom={[1]}>
-              <CheckboxController
-                id={childrenTypes(index).hasAfterSchool}
-                name={childrenTypes(index).hasAfterSchool}
-                defaultValue={
-                  answers.children
-                    ? [answers.children[index].hasAfterSchool]
-                    : []
-                }
-                large={true}
-                spacing={0}
-                options={[
-                  {
-                    value: 'yes',
-                    label: formatMessage(
-                      childrenForm.inputs.elementarySchoolAfterSchoolCheck,
-                    ),
-                  },
-                ]}
-              />
-            </Box>
-          </>
-        )}
-        {schoolType === SchoolType.HIGHSCHOOL && (
-          <Box background="white" borderRadius="standard" marginBottom={[1]}>
+      {schoolType === SchoolType.ELEMENTARY && (
+        <>
+          <Box
+            background="white"
+            borderRadius="standard"
+            marginBottom={[1]}
+            marginTop={[3]}
+          >
             <CheckboxController
-              id={childrenTypes(index).hasBookAid}
-              name={childrenTypes(index).hasBookAid}
-              defaultValue={
-                answers.children ? [answers.children[index].hasAfterSchool] : []
-              }
+              id={hasFoodStampsField}
+              name={hasFoodStampsField}
               large={true}
               spacing={0}
               options={[
@@ -187,7 +127,42 @@ export const ChildInput: FC<React.PropsWithChildren<Props>> = ({
               ]}
             />
           </Box>
-        )} */}
+          <Box background="white" borderRadius="standard" marginBottom={[1]}>
+            <CheckboxController
+              id={hasAfterSchool}
+              name={hasAfterSchool}
+              large={true}
+              spacing={0}
+              options={[
+                {
+                  value: 'yes',
+                  label: formatMessage(
+                    childrenForm.inputs.elementarySchoolAfterSchoolCheck,
+                  ),
+                },
+              ]}
+            />
+          </Box>
+        </>
+      )}
+      {schoolType === SchoolType.HIGHSCHOOL && (
+        <Box background="white" borderRadius="standard" marginBottom={[1]}>
+          <CheckboxController
+            id={hasBookAid}
+            name={hasBookAid}
+            large={true}
+            spacing={0}
+            options={[
+              {
+                value: 'yes',
+                label: formatMessage(
+                  childrenForm.inputs.elementarySchoolFoodCheck,
+                ),
+              },
+            ]}
+          />
+        </Box>
+      )}
     </Box>
   )
 }

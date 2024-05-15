@@ -1,7 +1,10 @@
 import { parsePhoneNumberFromString } from 'libphonenumber-js'
 import * as kennitala from 'kennitala'
 import { getValueViaPath } from '@island.is/application/core'
-import { ApplicationContext } from '@island.is/application/types'
+import {
+  ApplicantChildCustodyInformation,
+  ApplicationContext,
+} from '@island.is/application/types'
 
 import {
   FamilyStatus,
@@ -20,6 +23,7 @@ import {
 } from '..'
 import { UploadFile } from '@island.is/island-ui/core'
 import { ApplicationStates } from './constants'
+import sortBy from 'lodash/sortBy'
 
 const emailRegex =
   /^[\w!#$%&'*+/=?`{|}~^-]+(?:\.[\w!#$%&'*+/=?`{|}~^-]+)*@(?:[A-Z0-9-]+\.)+[A-Z]{2,6}$/i
@@ -117,4 +121,15 @@ export const getSchoolType = (age: number) => {
   if (age >= 16 && age < 18) {
     return SchoolType.HIGHSCHOOL
   }
+}
+
+export const sortChildrenUnderAgeByAge = (
+  children: ApplicantChildCustodyInformation[],
+): ApplicantChildCustodyInformation[] => {
+  const childrenUnderAge = children.filter(
+    (child) => kennitala.info(child.nationalId)?.age < 18,
+  )
+  return sortBy(childrenUnderAge, (child) => {
+    return kennitala.info(child.nationalId)?.birthday
+  })
 }
