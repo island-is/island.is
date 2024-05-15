@@ -71,7 +71,7 @@ export const convertClientDataJSON = (clientDataJSONString: string) => {
   const updatedClientDataJSON = {
     ...clientDataJSON,
     challenge: decodedChallenge,
-    origin: 'http://island.is:8000', //needed since the server is running on this
+    origin: 'http://island.is', //needed since the server is running on http locally
   }
 
   return convertBase64StringToBase64Url(

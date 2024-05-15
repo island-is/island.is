@@ -55,7 +55,10 @@ export const useRegisterPasskey = () => {
           preferencesStore.setState({ hasCreatedPasskey: true })
           return true
         }
-        console.error('Registration not verified', verifyRegisterResponse)
+        console.error(
+          'Passkey registration not verified',
+          verifyRegisterResponse,
+        )
       } catch (error: any) {
         // User cancelled the register flow, swallow the error
         if (error?.error === 'UserCancelled') {

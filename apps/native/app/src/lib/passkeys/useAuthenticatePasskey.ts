@@ -7,7 +7,7 @@ import {
 } from '../../graphql/types/schema'
 import { preferencesStore } from '../../stores/preferences-store'
 
-const ONE_HOUR = 3600000
+const ONE_HOUR = 36 //3600000
 
 export const useAuthenticatePasskey = () => {
   const isSupported: boolean = Passkey.isSupported()
@@ -55,13 +55,16 @@ export const useAuthenticatePasskey = () => {
         ) {
           return true
         }
-        console.error('Authentication not verified', verifyAuthenticateResponse)
+        console.error(
+          'Passkey authentication not verified',
+          verifyAuthenticateResponse,
+        )
       } catch (error: any) {
         // User cancelled the authentication flow, swallow the error
         if (error?.error === 'UserCancelled') {
           return false
         }
-        console.error('Error authenticating', error)
+        console.error('Error authenticating with passkey', error)
       }
     }
   }
