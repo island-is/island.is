@@ -2,8 +2,9 @@ import React from 'react'
 
 import { withFigma } from '../../utils/withFigma'
 import { Input } from './Input'
+import type { Meta, StoryObj } from '@storybook/react'
 
-export default {
+const config: Meta<typeof Input> = {
   title: 'Form/Input',
   component: Input,
   parameters: withFigma('Input'),
@@ -11,7 +12,11 @@ export default {
     name: { description: 'Field name' },
     label: { description: 'Label text', control: { type: 'text' } },
     placeholder: { description: 'Placeholder text' },
-    type: { description: 'Input type' },
+    type: {
+      description: 'Input type',
+      options: ['text', 'number', 'email', 'tel', 'password'],
+      control: { type: 'radio' },
+    },
     backgroundColor: {
       description: 'Background color',
       options: ['white', 'blue'],
@@ -24,125 +29,155 @@ export default {
       control: { type: 'radio' },
     },
     disabled: { description: 'Is input field disabled' },
-    withError: { description: 'Does input field has error' },
+    hasError: { description: 'Does input field has error' },
     required: { description: 'Is input field required' },
-    readonly: { description: 'Is input field readonly' },
+    readOnly: { description: 'Is input field readonly' },
     rightAlign: { description: 'Is text right aligned' },
     textarea: { description: 'Is input field textarea' },
-    rows: { description: 'How many rows does Textarea consist of' },
+    rows: { description: 'How many rows does Textarea consist of', control: { type: 'number' }},
     icon: { description: 'Field icon' },
     buttons: { description: 'Field buttons' },
+    tooltip: { description: 'Field tooltip', control: { type: 'text' } },
+    maxLength: {
+      description: 'Maximum length of the input field',
+      control: { type: 'number' },
+    },
   },
 }
 
+export default config
+type InputProps = StoryObj<typeof Input>
+
 const Template = (args) => <Input {...args} />
 
-const inputArgs = {
+export const Default: InputProps = Template.bind({})
+Default.args = {
   name: 'Input',
   label: 'Input label text',
   placeholder: 'Text',
-  type: 'text',
+  type: undefined,
   backgroundColor: 'white',
   size: 'md',
   disabled: false,
-  withError: false,
+  hasError: false,
   required: false,
-  readonly: false,
+  readOnly: false,
   rightAlign: false,
   textarea: false,
-  rows: 7,
+  rows: undefined,
   icon: undefined,
   buttons: undefined,
+  tooltip: undefined,
+  maxLength: undefined,
 }
 
-export const Default = Template.bind({})
-Default.args = inputArgs
-
-export const BlueBackground = Template.bind({})
+export const BlueBackground: InputProps = Template.bind({})
 BlueBackground.args = {
-  ...inputArgs,
+  ...Default.args,
   backgroundColor: 'blue',
 }
 
-export const Disabled = Template.bind({})
+export const Disabled: InputProps = Template.bind({})
 Disabled.args = {
-  ...inputArgs,
+  ...Default.args,
   disabled: true,
 }
 
-export const WithError = Template.bind({})
-WithError.args = {
-  ...inputArgs,
+export const HasError: InputProps = Template.bind({})
+HasError.args = {
+  ...Default.args,
   hasError: true,
   errorMessage: 'This is the error message',
 }
 
-export const Required = Template.bind({})
+export const Required: InputProps = Template.bind({})
 Required.args = {
-  ...inputArgs,
+  ...Default.args,
   required: true,
 }
 
-export const Readonly = Template.bind({})
+export const Readonly: InputProps = Template.bind({})
 Readonly.args = {
-  ...inputArgs,
+  ...Default.args,
   readOnly: true,
 }
 
-export const TypeNumber = Template.bind({})
+export const TypeNumber: InputProps = Template.bind({})
 TypeNumber.args = {
-  ...inputArgs,
+  ...Default.args,
   type: 'number',
 }
 
-export const Textarea = Template.bind({})
+export const Textarea: InputProps = Template.bind({})
 Textarea.args = {
-  ...inputArgs,
+  ...Default.args,
   textarea: true,
   rows: 7,
 }
 
-export const ResponsiveBackgroundColor = Template.bind({})
+export const ResponsiveBackgroundColor: InputProps = Template.bind({})
 ResponsiveBackgroundColor.args = {
-  ...inputArgs,
+  ...Default.args,
   placeholder: 'Try change the window size',
   backgroundColor: ['white', 'blue', 'white', 'blue', 'white'],
 }
 
-export const SizeSm = Template.bind({})
+export const SizeSm: InputProps = Template.bind({})
 SizeSm.args = {
-  ...inputArgs,
+  ...Default.args,
   size: 'sm',
 }
 
-export const SizeXs = Template.bind({})
+export const SizeXs: InputProps = Template.bind({})
 SizeXs.args = {
-  ...inputArgs,
+  ...Default.args,
   size: 'xs',
 }
 
-export const TextRightAligned = Template.bind({})
+export const TextRightAligned: InputProps = Template.bind({})
 TextRightAligned.args = {
-  ...inputArgs,
+  ...Default.args,
   rightAlign: true,
 }
 
-export const WithIcon = Template.bind({})
+export const WithIcon: InputProps = Template.bind({})
 WithIcon.args = {
-  ...inputArgs,
+  ...Default.args,
   icon: { name: 'informationCircle' },
 }
 
-export const WithButtons = Template.bind({})
+export const WithButtons: InputProps = Template.bind({})
 WithButtons.args = {
-  ...inputArgs,
+  ...Default.args,
   buttons: [
-    { name: 'copy', type: 'outline', onClick: () => console.log('Copy') },
-    { name: 'close', type: 'outline', onClick: () => console.log('Close') },
+    {
+      label: 'Copy',
+      name: 'copy',
+      type: 'outline',
+      onClick: () => console.log('Copy'),
+    },
+    {
+      label: 'Close',
+      name: 'close',
+      type: 'outline',
+      onClick: () => console.log('Close'),
+    },
   ],
 }
 
-export const WithCopyPasswordButton = (args) => {
+export const WithMaxLength10: InputProps = Template.bind({})
+WithMaxLength10.args = {
+  ...Default.args,
+  maxLength: 10,
+}
+
+export const WithTooltip: InputProps = Template.bind({})
+WithTooltip.args = {
+  ...Default.args,
+  tooltip: 'Tooltip text',
+}
+
+export const WithCopyPasswordButton: InputProps = (args) => {
   const [showPassword, setShowPassword] = React.useState(false)
   const ref = React.useRef<HTMLInputElement>(null)
   const handleCopy = (ev: React.MouseEvent<HTMLButtonElement, MouseEvent>) => {
@@ -183,7 +218,7 @@ export const WithCopyPasswordButton = (args) => {
   )
 }
 WithCopyPasswordButton.args = {
-  ...inputArgs,
+  ...Default.args,
   readOnly: true,
   value: 'StringThatShouldBeCopied',
 }
