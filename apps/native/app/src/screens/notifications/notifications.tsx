@@ -128,7 +128,7 @@ export const NotificationsScreen: NavigationFunctionComponent = ({
               ...fetchMoreResult.userNotifications,
               data: [
                 ...(prev.userNotifications?.data || []),
-                ...fetchMoreResult.userNotifications?.data,
+                ...(fetchMoreResult.userNotifications?.data || []),
               ],
             },
           }
