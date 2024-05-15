@@ -1,15 +1,4 @@
-import { useParams } from 'react-router-dom'
 import { useUserInfo } from '@island.is/auth/react'
-import { useLocale, useNamespaces } from '@island.is/localization'
-import {
-  formatNationalId,
-  UserInfoLine,
-  m,
-  IntroHeader,
-  THJODSKRA_SLUG,
-  LinkButton,
-} from '@island.is/service-portal/core'
-import { defineMessage } from 'react-intl'
 import {
   Box,
   Button,
@@ -19,13 +8,24 @@ import {
   Inline,
   Stack,
 } from '@island.is/island-ui/core'
+import { useLocale, useNamespaces } from '@island.is/localization'
+import { Problem } from '@island.is/react-spa/shared'
+import {
+  IntroHeader,
+  LinkButton,
+  THJODSKRA_SLUG,
+  UserInfoLine,
+  formatNationalId,
+  m,
+} from '@island.is/service-portal/core'
+import { unmaskString } from '@island.is/shared/utils'
+import { defineMessage } from 'react-intl'
+import { useParams } from 'react-router-dom'
 import { TwoColumnUserInfoLine } from '../../components/TwoColumnUserInfoLine/TwoColumnUserInfoLine'
 import { formatNameBreaks } from '../../helpers/formatting'
+import { natRegGenderMessageDescriptorRecord } from '../../helpers/localizationHelpers'
 import { spmm, urls } from '../../lib/messages'
 import { useNationalRegistryChildCustodyQuery } from './ChildCustody.generated'
-import { natRegGenderMessageDescriptorRecord } from '../../helpers/localizationHelpers'
-import { unmaskString } from '@island.is/shared/utils'
-import { Problem } from '@island.is/react-spa/shared'
 
 type UseParams = {
   baseId: string
