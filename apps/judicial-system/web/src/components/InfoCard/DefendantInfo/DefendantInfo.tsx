@@ -1,7 +1,12 @@
 import React, { FC } from 'react'
 
-import { IconMapIcon } from '@island.is/island-ui/core'
-import { Box, Button, LinkV2, Text } from '@island.is/island-ui/core'
+import {
+  Box,
+  Button,
+  IconMapIcon,
+  LinkV2,
+  Text,
+} from '@island.is/island-ui/core'
 import { formatDOB } from '@island.is/judicial-system/formatters'
 import { Defendant } from '@island.is/judicial-system-web/src/graphql/schema'
 
@@ -13,6 +18,7 @@ export type DefendantActionButton = {
   onClick: () => void
   icon?: IconMapIcon
 }
+
 interface DefendantInfoProps {
   defendant: Defendant
   displayDefenderInfo: boolean
@@ -27,7 +33,9 @@ export const DefendantInfo: FC<DefendantInfoProps> = ({
   return (
     <div key={defendant.id}>
       <span className={styles.infoCardDefendant}>
-        <Text as="span" fontWeight="semiBold">{`${defendant.name}`}</Text>
+        <Text as="span" fontWeight="semiBold">
+          {defendant.name}
+        </Text>
         {defendant.nationalId && (
           <Text as="span" fontWeight="semiBold">
             {`, ${formatDOB(defendant.nationalId, defendant.noNationalId)}`}
