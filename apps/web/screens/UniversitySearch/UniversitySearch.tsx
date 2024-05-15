@@ -1173,6 +1173,7 @@ const UniversitySearch: Screen<UniversitySearchProps> = ({
                                       dataItem.nameIs,
                                       dataItem.nameEn,
                                     ),
+                                    dataItem.id,
                                   )
                                 }
                                 sidePanelConfig={{
@@ -1348,6 +1349,7 @@ const UniversitySearch: Screen<UniversitySearchProps> = ({
                                         dataItem.nameIs,
                                         dataItem.nameEn,
                                       ),
+                                      dataItem.id,
                                     )
                                   }
                                   infoItems={[
