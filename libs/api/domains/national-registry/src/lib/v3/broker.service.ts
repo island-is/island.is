@@ -7,7 +7,7 @@ import {
   EinstaklingurDTOLoghTengsl,
   NationalRegistryV3ClientService,
 } from '@island.is/clients/national-registry-v3'
-import { FamilyChild, User } from '../v1/types'
+import { FamilyChild, User } from './types'
 import {
   formatPersonDiscriminated,
   formatAddress,
