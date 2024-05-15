@@ -16,18 +16,18 @@ export const Child = ({
   goToScreen,
 }: ReviewGroupProps) => {
   const { formatMessage } = useLocale()
-  const { child } = getApplicationAnswers(application.answers)
+  const { childsNationalId } = getApplicationAnswers(application.answers)
   const { children } = getApplicationExternalData(application.externalData)
 
   // Find the child name since we only have nationalId in the answers
-  const selectedChild = children.find((tmpChild) => {
-    return tmpChild.nationalId === child
+  const selectedChild = children.find((child) => {
+    return child.nationalId === childsNationalId
   })
 
   return (
     <ReviewGroup
       isEditable={editable}
-      editAction={() => goToScreen?.('children')}
+      editAction={() => goToScreen?.('childsNationalId')}
     >
       <GridRow>
         <GridColumn span={['12/12', '12/12', '12/12', '12/12']}>
@@ -39,7 +39,7 @@ export const Child = ({
         <ActionCard
           headingVariant="h4"
           heading={selectedChild?.fullName || ''}
-          text={formatKennitala(selectedChild?.nationalId || '')}
+          text={formatKennitala(childsNationalId || '')}
         />
       </Box>
     </ReviewGroup>

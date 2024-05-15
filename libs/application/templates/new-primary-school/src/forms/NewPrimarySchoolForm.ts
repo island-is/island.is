@@ -9,6 +9,7 @@ import {
 } from '@island.is/application/core'
 import { DefaultEvents, Form, FormModes } from '@island.is/application/types'
 import { buildFormConclusionSection } from '@island.is/application/ui-forms'
+import { format as formatKennitala } from 'kennitala'
 import Logo from '../assets/Logo'
 import { newPrimarySchoolMessages } from '../lib/messages'
 import {
@@ -36,7 +37,7 @@ export const NewPrimarySchoolForm: Form = buildForm({
           title: newPrimarySchoolMessages.childrenNParents.children,
           children: [
             buildRadioField({
-              id: 'children.option',
+              id: 'childsNationalId',
               title: newPrimarySchoolMessages.childrenNParents.children,
               description: '',
               options: (application) => {
@@ -52,7 +53,7 @@ export const NewPrimarySchoolForm: Form = buildForm({
                     return {
                       value: child.nationalId,
                       label: child.fullName,
-                      subLabel: child.nationalId,
+                      subLabel: formatKennitala(child.nationalId),
                     }
                   })
               },

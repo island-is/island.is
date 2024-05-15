@@ -3,9 +3,12 @@ import { Application } from '@island.is/application/types'
 import { Children } from './constants'
 
 export const getApplicationAnswers = (answers: Application['answers']) => {
-  const child = getValueViaPath(answers, 'children.option') as string
+  const childsNationalId = getValueViaPath(
+    answers,
+    'childsNationalId',
+  ) as string
 
-  return { child }
+  return { childsNationalId }
 }
 
 export const getApplicationExternalData = (
