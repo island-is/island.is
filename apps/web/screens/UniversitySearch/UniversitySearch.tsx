@@ -622,7 +622,7 @@ const UniversitySearch: Screen<UniversitySearchProps> = ({
   }
 
   const getLocalizedStringValue = (isValue: string, enValue: string) => {
-    return locale === 'localized' ? isValue || '' : enValue || ''
+    return locale === 'is' ? isValue || '' : enValue || ''
   }
 
   return (
