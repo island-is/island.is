@@ -198,6 +198,5 @@ export const courseListItems = style({
 })
 
 export const searchResultIcon = style({
-  width: '24px',
   height: '24px',
 })
