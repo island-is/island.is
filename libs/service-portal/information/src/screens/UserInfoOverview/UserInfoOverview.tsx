@@ -76,7 +76,7 @@ const UserInfoOverview = () => {
               baseId={
                 maskString(child.nationalId, userInfo.profile.nationalId) ?? ''
               }
-              familyRelation="child"
+              familyRelation="custody"
             />
           ))}
           {biologicalChildren?.map((child) => (
