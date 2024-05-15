@@ -21,11 +21,7 @@ const FamilyMember = () => {
 
   const [spouseValue, setSpouseValue] = useState<string>('')
 
-  const { data, loading, error } = useNationalRegistrySpouseQuery({
-    variables: {
-      api: 'v3',
-    },
-  })
+  const { data, loading, error } = useNationalRegistrySpouseQuery()
 
   useEffect(() => {
     if (data?.nationalRegistryPerson) {
