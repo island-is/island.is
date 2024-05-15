@@ -5,12 +5,13 @@ import {
   XRoadConfig,
 } from '@island.is/nest/config'
 import { SocialInsuranceAdministrationClientConfig } from './socialInsuranceAdministrationClient.config'
+import { Scope } from './socialInsuranceAdministrationClient.type'
 
 export const ConfigFactory = (
   xroadConfig: ConfigType<typeof XRoadConfig>,
   config: ConfigType<typeof SocialInsuranceAdministrationClientConfig>,
   idsClientConfig: ConfigType<typeof IdsClientConfig>,
-  scopes: Array<string>,
+  scopes: Array<Scope>,
 ) => ({
   fetchApi: createEnhancedFetch({
     name: 'clients-tr',
