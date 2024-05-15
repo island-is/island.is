@@ -1,5 +1,12 @@
 import { useState } from 'react'
-import { Box, Button, Stack } from '@island.is/island-ui/core'
+import {
+  Box,
+  Button,
+  Column,
+  Columns,
+  Stack,
+  toast,
+} from '@island.is/island-ui/core'
 import { useLocale, useNamespaces } from '@island.is/localization'
 import {
   FootNote,
@@ -11,6 +18,7 @@ import {
 
 import {
   useGetUserNotificationsQuery,
+  useMarkAllNotificationsAsReadMutation,
   useMarkUserNotificationAsReadMutation,
 } from './Notifications.generated'
 
@@ -28,16 +36,26 @@ const UserNotifications = () => {
   const [loadingMore, setLoadingMore] = useState(false)
 
   const [postMarkAsRead] = useMarkUserNotificationAsReadMutation()
-
-  const { data, loading, error, fetchMore } = useGetUserNotificationsQuery({
-    variables: {
-      input: {
-        limit: DEFAULT_PAGE_SIZE,
-        before: '',
-        after: '',
-      },
+  const [postMarkAllAsRead] = useMarkAllNotificationsAsReadMutation({
+    onCompleted: () => {
+      refetch()
+      toast.success(formatMessage(mInformationNotifications.allMarkedAsRead))
+    },
+    onError: () => {
+      toast.error(formatMessage(m.errorTitle))
     },
   })
+
+  const { data, loading, error, refetch, fetchMore } =
+    useGetUserNotificationsQuery({
+      variables: {
+        input: {
+          limit: DEFAULT_PAGE_SIZE,
+          before: '',
+          after: '',
+        },
+      },
+    })
 
   const loadMore = (cursor: string) => {
     if (loadingMore) return
@@ -77,12 +95,30 @@ const UserNotifications = () => {
       />
 
       <Box display="flex" marginBottom={3}>
-        <LinkButton
-          variant="button"
-          icon="settings"
-          to={InformationPaths.Settings}
-          text={formatMessage(m.mySettings)}
-        />
+        <Columns space={2}>
+          <Column width="content">
+            <Button
+              colorScheme="default"
+              icon="mailOpen"
+              iconType="outline"
+              size="default"
+              type="text"
+              as="span"
+              variant="utility"
+              onClick={() => postMarkAllAsRead()}
+            >
+              {formatMessage(mInformationNotifications.markAllRead)}
+            </Button>
+          </Column>
+          <Column width="content">
+            <LinkButton
+              variant="button"
+              icon="settings"
+              to={InformationPaths.Settings}
+              text={formatMessage(m.mySettings)}
+            />
+          </Column>
+        </Columns>
       </Box>
 
       <Stack space={2}>
