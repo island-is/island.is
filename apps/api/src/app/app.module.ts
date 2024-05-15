@@ -185,6 +185,7 @@ import {
 import { HousingBenefitsConfig } from '@island.is/clients/hms-housing-benefits'
 import { UserProfileClientConfig } from '@island.is/clients/user-profile'
 import { UltravioletRadiationClientConfig } from '@island.is/clients/ultraviolet-radiation'
+import { CriminalRecordClientConfig } from '@island.is/clients/criminal-record'
 
 const environment = getConfig
 
@@ -239,10 +240,10 @@ const environment = getConfig
         clientSecret: environment.documentProviderService.prod.clientSecret,
         tokenUrl: environment.documentProviderService.prod.tokenUrl,
       },
-      documentsServiceBasePath:
-        environment.documentProviderService.documentsServiceBasePath!,
-      documentProviderAdmins:
-        environment.documentProviderService.documentProviderAdmins!,
+      documentsServiceBasePath: environment.documentProviderService
+        .documentsServiceBasePath!,
+      documentProviderAdmins: environment.documentProviderService
+        .documentProviderAdmins!,
     }),
     CmsTranslationsModule,
     TerminusModule,
@@ -309,13 +310,7 @@ const environment = getConfig
     ApiDomainsPaymentModule,
     PaymentScheduleModule,
     ProblemModule,
-    CriminalRecordModule.register({
-      clientConfig: {
-        xroadBaseUrl: environment.xroad.baseUrl!,
-        xroadClientId: environment.xroad.clientId!,
-        xroadPath: environment.criminalRecord.xroadPath!,
-      },
-    }),
+    CriminalRecordModule,
     MunicipalitiesFinancialAidModule,
     FishingLicenseModule,
     MortgageCertificateModule,
@@ -414,6 +409,7 @@ const environment = getConfig
         LicenseConfig,
         UserProfileClientConfig,
         UltravioletRadiationClientConfig,
+        CriminalRecordClientConfig,
       ],
     }),
   ],
