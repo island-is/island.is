@@ -35,13 +35,30 @@ export const TabBar = ({ tabs, variant = 'default', ...boxProps }: Props) => {
     }
   }
 
-  const tabItems = tabs?.map((tab, index) => {
+  if (!tabs || tabs.length < 1) {
+    return null
+  }
+
+  const activeTab = tabs.find((tab) => tab.active)
+
+  //must be an active tab
+  if (!activeTab) {
+    return null
+  }
+
+  const activeTabIndex = tabs.indexOf(activeTab)
+
+  const tabItems = tabs.map((tab, index) => {
     return (
       <TabItem
         id={`tab-item-${index}`}
         active={tab.active}
         onClick={tab.onClick}
         variant={variant}
+        isFirstTab={index === 0}
+        isLastTab={index === tabs.length - 1}
+        isNextTabToActive={index - 1 === activeTabIndex}
+        isPrevTabToActive={index + 1 === activeTabIndex}
         onKeyDown={(code) => keyPressHandler(index, tabs.length, code)}
         name={formatMessage(tab.name)}
         ref={(node) => {

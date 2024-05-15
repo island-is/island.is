@@ -6,6 +6,10 @@ import { Ref, forwardRef } from 'react'
 export interface TabItemProps {
   id: string
   active?: boolean
+  isLastTab?: boolean
+  isFirstTab?: boolean
+  isPrevTabToActive?: boolean
+  isNextTabToActive?: boolean
   onClick: () => void
   onKeyDown: (code: string) => void
   name: string
@@ -14,7 +18,21 @@ export interface TabItemProps {
 }
 
 export const TabItem = forwardRef<HTMLElement, TabItemProps>(
-  ({ id, active = false, onClick, onKeyDown, name, variant }, ref) => {
+  (
+    {
+      id,
+      active = false,
+      onClick,
+      isFirstTab,
+      isLastTab,
+      isPrevTabToActive,
+      isNextTabToActive,
+      onKeyDown,
+      name,
+      variant,
+    },
+    ref,
+  ) => {
     if (variant === 'alternative') {
       return (
         <FocusableBox
@@ -46,9 +64,9 @@ export const TabItem = forwardRef<HTMLElement, TabItemProps>(
     return (
       <FocusableBox
         key={id}
+        component={'button'}
         display="flex"
         tabIndex={active ? 0 : -1}
-        component="button"
         role="tab"
         id={id}
         aria-selected={active}
@@ -58,8 +76,13 @@ export const TabItem = forwardRef<HTMLElement, TabItemProps>(
         className={cn(styles.tab, {
           [styles.tabSelected]: active,
           [styles.tabNotSelected]: !active,
+          [styles.tabPreviousToSelectedTab]: isPrevTabToActive,
+          [styles.tabNextToSelectedTab]: isNextTabToActive,
+          [styles.lastTab]: isLastTab,
+          [styles.firstTab]: isFirstTab,
         })}
       >
+        <div className={styles.tabElement} />
         <span className={cn({ [styles.tabText]: active })}>{name}</span>
       </FocusableBox>
     )
