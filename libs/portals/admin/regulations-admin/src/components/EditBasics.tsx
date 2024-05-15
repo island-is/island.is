@@ -122,7 +122,6 @@ export const EditBasics = () => {
     setHasUpdated(true)
   }
 
-  console.log('hasSeenModal', hasSeenModal)
   return (
     <>
       <Box marginBottom={3}>
