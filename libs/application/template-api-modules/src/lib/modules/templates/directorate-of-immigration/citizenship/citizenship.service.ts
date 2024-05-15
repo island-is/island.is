@@ -291,7 +291,7 @@ export class CitizenshipService extends BaseTemplateApiService {
         residenceInIcelandLastChangeDate: residenceInIcelandLastChangeDate,
         birthCountry: nationalRegistryBirthplace?.location,
         maritalStatus: individual?.maritalTitle?.description || '',
-        dateOfMaritalStatus: spouseDetails?.lastModified,
+        dateOfMaritalStatus: null, // the lastModified field no longer exists in V3 of the API
         spouse: spouseDetails?.nationalId
           ? {
               nationalId: spouseDetails.nationalId,
