@@ -34,11 +34,18 @@ type DndAction =
   | 'INPUT_OVER_INPUT'
 
 export default function Navbar() {
-  const { control, controlDispatch, setInSettings, inSettings, formUpdate } =
-    useContext(ControlContext) as IControlContext
+  const {
+    control,
+    controlDispatch,
+    setInSettings,
+    inSettings,
+    formUpdate,
+    translate,
+  } = useContext(ControlContext) as IControlContext
 
   const { activeItem, form } = control
   const { stepsList: steps, groupsList: groups, inputsList: inputs } = form
+
   const stepsIds = useMemo(
     () =>
       steps
@@ -94,6 +101,7 @@ export default function Navbar() {
   }
 
   const focusComponent = (type: ItemType, id: UniqueIdentifier) => {
+    console.log('dasdsadasdsada')
     const data =
       type === 'Step'
         ? steps?.find(
@@ -347,6 +355,14 @@ export default function Navbar() {
             + Bæta við skrefi
           </Button>
         </Box>
+        {/* <Box display="flex" justifyContent="center" paddingTop={3}>
+          <Button variant="ghost" size="small" onClick={async () => {
+            const res = await translate('epli')
+            console.log(res)
+          }}>
+            + Bæta við skrefi
+          </Button>
+        </Box> */}
       </Box>
     )
   }

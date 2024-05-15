@@ -10,6 +10,8 @@ import {
 } from '@island.is/api/schema'
 import {
   ActiveItem,
+  ButtonTypes,
+  InputButton,
   ItemType,
   NavbarSelectStatus,
 } from '../lib/utils/interfaces'
@@ -33,6 +35,8 @@ export interface IControlContext {
   inListBuilder: boolean
   setInListBuilder: Dispatch<boolean>
   updateSettings: (updatedForm?: FormSystemForm) => void
+  translate: (text: string) => Promise<string>
+  translationButtons: (text: string, type: ButtonTypes) => InputButton[]
 }
 
 const ControlContext = createContext<IControlContext>({
@@ -70,6 +74,15 @@ const ControlContext = createContext<IControlContext>({
     throw new Error('Function not implemented.')
   },
   updateSettings: function (_updatedForm?: FormSystemForm): void {
+    throw new Error('Function not implemented.')
+  },
+  translate: function (_text: string): Promise<string> {
+    throw new Error('Function not implemented.')
+  },
+  translationButtons: function (
+    _text: string,
+    _type: ButtonTypes,
+  ): InputButton[] {
     throw new Error('Function not implemented.')
   },
 })

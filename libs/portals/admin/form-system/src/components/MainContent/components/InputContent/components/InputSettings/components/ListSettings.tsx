@@ -10,23 +10,24 @@ import {
   RadioButton,
 } from '@island.is/island-ui/core'
 import { FormSystemInput } from '@island.is/api/schema'
+import { useFormSystemGetCountriesLazyQuery } from '../../../../../../../gql/Service.generated'
 
 const predeterminedLists = [
   {
     label: 'Sveitarfélög',
-    value: 'Sveitarfelog',
+    value: 0,
   },
   {
     label: 'Lönd',
-    value: 'Lond',
+    value: 1,
   },
   {
     label: 'Póstnúmer',
-    value: 'Postnumer',
+    value: 2,
   },
   {
     label: 'Iðngreinarmeistara',
-    value: 'Idngreinarmeistara',
+    value: 3,
   },
 ]
 
@@ -36,14 +37,15 @@ const ListSettings = () => {
   const { activeItem } = control
   const currentItem = activeItem.data as FormSystemInput
   const [radio, setRadio] = useState([true, false, false])
+  //const [getCountries, { data, loading, error }] = useFormSystemGetCountriesLazyQuery()
 
   const radioHandler = (index: number) => {
-    if (!radio[index])
-      setRadio((prev) =>
-        prev.map((_, i) => {
-          return index === i
-        }),
-      )
+    // if (!radio[index])
+    setRadio((prev) =>
+      prev.map((_, i) => {
+        return index === i
+      }),
+    )
   }
 
   return (
@@ -55,8 +57,8 @@ const ListSettings = () => {
               <Box onClick={() => radioHandler(0)}>
                 <RadioButton
                   label="Nýr fellilisti"
-                  onChange={(e) => {
-                    console.log()
+                  onChange={() => {
+                    radioHandler(0)
                   }}
                   checked={radio[0]}
                 />
@@ -65,13 +67,15 @@ const ListSettings = () => {
           </Row>
           <Row>
             <Column>
-              <RadioButton
-                label="Tilbúnir fellilistar"
-                onChange={(e) => {
-                  console.log()
-                }}
-                checked={radio[1]}
-              />
+              <Box onClick={() => radioHandler(1)}>
+                <RadioButton
+                  label="Tilbúnir fellilistar"
+                  onChange={() => {
+                    radioHandler(1)
+                  }}
+                  checked={radio[1]}
+                />
+              </Box>
             </Column>
           </Row>
         </>

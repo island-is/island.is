@@ -13,7 +13,7 @@ export const updateSettings = (
     formId: form.id,
     documentTypeId: dt?.id,
   }))
-  console.log('form', form)
+  console.log('updateSettings', form)
   updateFormSettings({
     variables: {
       input: {

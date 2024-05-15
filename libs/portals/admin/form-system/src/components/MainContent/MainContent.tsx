@@ -15,12 +15,25 @@ import Premises from './components/Premises/Premises'
 import InputContent from './components/InputContent/InputContent'
 import PreviewStepOrGroup from './components/PreviewStepOrGroup/PreviewStepOrGroup'
 import RelevantParties from './components/RelevantParties/RevelantParties'
+import { getTranslationButtons } from '../../lib/utils/getTranslationButtons'
 
 export default function MainContent() {
-  const { control, controlDispatch, updateActiveItem, setFocus, focus } =
-    useContext(ControlContext)
+  const {
+    control,
+    controlDispatch,
+    updateActiveItem,
+    setFocus,
+    focus,
+    translationButtons,
+  } = useContext(ControlContext)
   const { activeItem } = control
   const [openPreview, setOpenPreview] = useState(false)
+
+  const translateNameButton = getTranslationButtons(
+    activeItem?.data?.name?.is ?? '',
+    controlDispatch,
+    'CHANGE_NAME',
+  )
 
   return (
     <Box padding={2}>
@@ -78,6 +91,10 @@ export default function MainContent() {
                 }
                 onFocus={(e) => setFocus(e.target.value)}
                 onBlur={(e) => e.target.value !== focus && updateActiveItem()}
+                buttons={translationButtons(
+                  activeItem?.data?.name?.is ?? '',
+                  'CHANGE_NAME',
+                )}
               />
             </Column>
           </Row>

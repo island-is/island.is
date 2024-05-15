@@ -2,7 +2,6 @@ import { FormSystemInput, FormSystemListItem } from '@island.is/api/schema'
 import { useEffect, useState } from 'react'
 import { Select } from '@island.is/island-ui/core'
 
-
 interface Props {
   currentItem: FormSystemInput
 }

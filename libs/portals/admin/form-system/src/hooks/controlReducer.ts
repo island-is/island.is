@@ -82,7 +82,7 @@ type ChangeActions =
   | { type: 'CHANGE_INVALIDATION_DATE'; payload: { value: Date } }
   | {
       type: 'CHANGE_STOP_PROGRESS_ON_VALIDATING_STEP'
-      payload: { value: boolean }
+      payload: { value: boolean; update: (updatedForm: FormSystemForm) => void }
     }
   | { type: 'CHANGE_FORM_SETTINGS'; payload: { newForm: FormSystemForm } }
   | {
@@ -435,13 +435,15 @@ export const controlReducer = (
       }
     }
     case 'CHANGE_STOP_PROGRESS_ON_VALIDATING_STEP': {
-      return {
+      const updatedState = {
         ...state,
         form: {
           ...form,
           stopProgressOnValidatingStep: action.payload.value,
         },
       }
+      action.payload.update({ ...updatedState.form })
+      return updatedState
     }
     case 'TOGGLE_DEPENDENCY': {
       const { activeId, itemId, update } = action.payload

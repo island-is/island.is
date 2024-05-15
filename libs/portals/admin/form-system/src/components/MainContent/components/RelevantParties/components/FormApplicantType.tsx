@@ -1,4 +1,4 @@
-import React, { useState } from 'react'
+import React, { useContext, useState } from 'react'
 import {
   Box,
   GridColumn as Column,
@@ -12,6 +12,7 @@ import {
   FormSystemFormApplicantType,
   FormSystemLanguageType,
 } from '@island.is/api/schema'
+import ControlContext from '../../../../../context/ControlContext'
 
 interface Props {
   title: string
@@ -45,9 +46,9 @@ const FormApplicantType = ({
   setFormApplicantTypes,
   isOther,
 }: Props) => {
-  const [inputEnabled, setInputEnabled] = useState(false)
+  const [inputEnabled, setInputEnabled] = useState(isOther)
   const other = { label: 'Annað', value: 'Annað' }
-
+  const { translate } = useContext(ControlContext)
   const getOptions = () => {
     const options =
       nameSuggestions?.map((suggestion) => {
@@ -69,10 +70,7 @@ const FormApplicantType = ({
     }
   }
 
-  const handleInputChange = (
-    e: React.ChangeEvent<HTMLInputElement | HTMLTextAreaElement>,
-    language: 'is' | 'en',
-  ) => {
+  const handleInputChange = (value: string, language: 'is' | 'en') => {
     setFormApplicantTypes((prev: FormSystemFormApplicantType[]) => {
       const newApplicantTypes = prev.map(
         (f: FormSystemFormApplicantType, i: number) => {
@@ -81,7 +79,7 @@ const FormApplicantType = ({
               ...f,
               name: {
                 ...f.name,
-                [language]: e.target.value,
+                [language]: value,
               },
             }
           }
@@ -128,7 +126,7 @@ const FormApplicantType = ({
               disabled={!inputEnabled}
               onFocus={(e) => setOnFocus(e.target.value)}
               onBlur={(e) => blur(e.target.value)}
-              onChange={(e) => handleInputChange(e, 'is')}
+              onChange={(e) => handleInputChange(e.target.value, 'is')}
             />
           </Column>
           <Column span="5/10">
@@ -140,7 +138,17 @@ const FormApplicantType = ({
               disabled={!inputEnabled}
               onFocus={(e) => setOnFocus(e.target.value)}
               onBlur={(e) => blur(e.target.value)}
-              onChange={(e) => handleInputChange(e, 'en')}
+              onChange={(e) => handleInputChange(e.target.value, 'en')}
+              buttons={[
+                {
+                  label: 'Translate',
+                  name: 'reader',
+                  onClick: async () => {
+                    const translation = await translate(name.is ?? '')
+                    handleInputChange(translation, 'en')
+                  },
+                },
+              ]}
             />
           </Column>
         </Row>

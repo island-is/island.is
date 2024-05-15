@@ -20,6 +20,8 @@ const BaseInput = () => {
     focus,
     inputTypes,
     updateActiveItem,
+    translate,
+    translationButtons,
   } = useContext(ControlContext)
   const { activeItem } = control
   const currentItem = activeItem.data as FormSystemInput
@@ -104,6 +106,10 @@ const BaseInput = () => {
             }
             onFocus={(e) => setFocus(e.target.value)}
             onBlur={(e) => e.target.value !== focus && updateActiveItem()}
+            buttons={translationButtons(
+              currentItem?.name?.is ?? '',
+              'CHANGE_NAME',
+            )}
           />
         </Column>
       </Row>
@@ -151,6 +157,10 @@ const BaseInput = () => {
                     },
                   })
                 }
+                buttons={translationButtons(
+                  currentItem?.description?.is ?? '',
+                  'CHANGE_DESCRIPTION',
+                )}
               />
             </Column>
           </Row>
@@ -162,7 +172,7 @@ const BaseInput = () => {
           <Checkbox
             label="Krafist"
             checked={currentItem.isRequired ?? false}
-            onChange={(e) =>
+            onChange={() =>
               controlDispatch({
                 type: 'CHANGE_IS_REQUIRED',
                 payload: {

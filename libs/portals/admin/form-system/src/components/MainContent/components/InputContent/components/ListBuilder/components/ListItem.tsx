@@ -11,6 +11,7 @@ import ControlContext from '../../../../../../../context/ControlContext'
 import { useSortable } from '@dnd-kit/sortable'
 import { FormSystemInput, FormSystemListItem } from '@island.is/api/schema'
 import { NavbarSelectStatus } from '../../../../../../../lib/utils/interfaces'
+import { translate } from '../../../../../../../lib/utils/translation'
 
 interface Props {
   listItem: FormSystemListItem
@@ -27,6 +28,7 @@ const ListItem = ({ listItem, connecting, index, setConnecting }: Props) => {
     focus,
     setSelectStatus,
     updateActiveItem,
+    translate,
   } = useContext(ControlContext)
   const { activeItem } = control
   const currentItem = activeItem.data as FormSystemInput
@@ -236,6 +238,25 @@ const ListItem = ({ listItem, connecting, index, setConnecting }: Props) => {
                 },
               })
             }
+            buttons={[
+              {
+                label: 'Translate',
+                name: 'reader',
+                onClick: async () => {
+                  const translation = await translate(listItem?.label?.is ?? '')
+                  controlDispatch({
+                    type: 'CHANGE_LIST_ITEM',
+                    payload: {
+                      property: 'label',
+                      lang: 'en',
+                      value: translation,
+                      guid: listItem.guid ?? '',
+                      update: updateActiveItem,
+                    },
+                  })
+                },
+              },
+            ]}
           />
         </Column>
       </Row>
@@ -286,6 +307,27 @@ const ListItem = ({ listItem, connecting, index, setConnecting }: Props) => {
                   },
                 })
               }
+              buttons={[
+                {
+                  label: 'Translate',
+                  name: 'reader',
+                  onClick: async () => {
+                    const translation = await translate(
+                      listItem?.description?.is ?? '',
+                    )
+                    controlDispatch({
+                      type: 'CHANGE_LIST_ITEM',
+                      payload: {
+                        property: 'description',
+                        lang: 'en',
+                        value: translation,
+                        guid: listItem.guid ?? '',
+                        update: updateActiveItem,
+                      },
+                    })
+                  },
+                },
+              ]}
             />
           </Column>
         </Row>

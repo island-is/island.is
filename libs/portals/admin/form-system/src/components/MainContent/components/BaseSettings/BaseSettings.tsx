@@ -10,8 +10,15 @@ import { useContext } from 'react'
 import ControlContext from '../../../../context/ControlContext'
 
 export const BaseSettings = () => {
-  const { control, controlDispatch, setFocus, focus, formUpdate, updateSettings } =
-    useContext(ControlContext)
+  const {
+    control,
+    controlDispatch,
+    setFocus,
+    focus,
+    formUpdate,
+    updateSettings,
+    translationButtons,
+  } = useContext(ControlContext)
   const { form } = control
   return (
     <Stack space={2}>
@@ -48,6 +55,10 @@ export const BaseSettings = () => {
                 payload: { lang: 'en', newValue: e.target.value },
               })
             }
+            buttons={translationButtons(
+              form?.name?.is ?? '',
+              'CHANGE_FORM_NAME',
+            )}
           />
         </Column>
       </Row>
@@ -102,11 +113,10 @@ export const BaseSettings = () => {
             onChange={(e) => {
               controlDispatch({
                 type: 'CHANGE_STOP_PROGRESS_ON_VALIDATING_STEP',
-                payload: { value: e.target.checked },
-              })
-              updateSettings({
-                ...form,
-                stopProgressOnValidatingStep: e.target.checked,
+                payload: {
+                  value: e.target.checked,
+                  update: updateSettings,
+                },
               })
             }}
           />
