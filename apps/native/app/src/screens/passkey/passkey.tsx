@@ -1,13 +1,7 @@
 import { Button, Typography, NavigationBarSheet } from '@ui'
 import React, { useEffect, useState } from 'react'
 import { useIntl, FormattedMessage } from 'react-intl'
-import {
-  View,
-  Image,
-  SafeAreaView,
-  Alert,
-  ActivityIndicator,
-} from 'react-native'
+import { View, Image, SafeAreaView, ActivityIndicator } from 'react-native'
 import styled, { useTheme } from 'styled-components/native'
 import {
   Navigation,
@@ -153,6 +147,13 @@ export const PasskeyScreen: NavigationFunctionComponent<{
                 if (!registered) {
                   setIsLoading(false)
                 }
+
+                // If we don't get url we are only registering, close modal after registering
+                if (registered && !url) {
+                  setIsLoading(false)
+                  Navigation.dismissModal(componentId)
+                }
+
                 if (registered && url) {
                   // Don't show lockscreen behind native passkey modals
                   authStore.setState(() => ({
