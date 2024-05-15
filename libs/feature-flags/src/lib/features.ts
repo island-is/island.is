@@ -31,6 +31,7 @@ export enum Features {
   RequestInspection = 'isRequestInspectionForMachineEnabled',
   officialJournalOfIceland = 'isOfficialJournalOfIcelandEnabled',
   StreetRegistration = 'isStreetRegistrationEnabled',
+  HealthInsuranceDeclaration = 'isHealthInsuranceDeclarationEnabled',
 
   // Application System Delegations active
   applicationSystemDelegations = 'applicationSystemDelegations',
