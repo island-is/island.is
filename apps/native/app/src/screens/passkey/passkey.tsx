@@ -56,7 +56,8 @@ const { getNavigationOptions, useNavigationOptions } =
 
 export const PasskeyScreen: NavigationFunctionComponent<{
   url?: string
-}> = ({ componentId, url }) => {
+  parentComponentId?: string
+}> = ({ componentId, url, parentComponentId }) => {
   useNavigationOptions(componentId)
   const intl = useIntl()
   const theme = useTheme()
@@ -170,16 +171,9 @@ export const PasskeyScreen: NavigationFunctionComponent<{
                 }
               } catch (error) {
                 setIsLoading(false)
-                Alert.alert(
-                  intl.formatMessage({
-                    id: 'passkeys.errorTitle',
-                    defaultMessage: 'Villa',
-                  }),
-                  intl.formatMessage({
-                    id: 'passkeys.errorRegister',
-                    defaultMessage: 'Ekki tókst að búa til aðgangslykil',
-                  }),
-                )
+                // If we get an error we fail silently - close the modal and open the browser
+                Navigation.dismissModal(componentId)
+                url && openNativeBrowser(url, parentComponentId)
               }
             }}
             style={{ marginBottom: theme.spacing[1] }}
@@ -192,7 +186,7 @@ export const PasskeyScreen: NavigationFunctionComponent<{
             })}
             onPress={() => {
               Navigation.dismissModal(componentId)
-              url && openBrowser(url, componentId)
+              url && openBrowser(url, parentComponentId)
             }}
           />
         </View>

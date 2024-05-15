@@ -27,25 +27,21 @@ export const useBrowser = () => {
         authStore.setState({
           noLockScreenUntilNextAppStateActive: true,
         })
-        try {
-          // Open passkey flow to authenticate
-          const authenticated = await authenticatePasskey()
-          // TODO: if authenticated is true, add login_hint to url
-          if (authenticated) {
-            console.log('user authenticated!')
-            openNativeBrowser(url, componentId)
-          }
-        } catch (error) {
-          // TODO - do we want to show an error here or just open the browser without login_hint?
-          // Alert.alert('Villa', 'Ekki tókst að au aðgangslykil')
+        // Open passkey flow to authenticate
+        const authenticated = await authenticatePasskey()
+        // TODO: if authenticated is true, add login_hint to url
+        if (authenticated) {
+          console.log('user authenticated!')
+          openNativeBrowser(url, componentId)
         }
+        // If something goes wrong we fail silently and open the browser normally
         openNativeBrowser(url, componentId)
       } else if (hasOnboardedPasskeys) {
         // Has gone through onboarding but does not have a passkey, open url without passkeys
         openNativeBrowser(url, componentId)
       } else if (!hasOnboardedPasskeys) {
         // Open passkey onboarding screen
-        navigateTo('/passkey', { url })
+        navigateTo('/passkey', { url, parentComponentId: componentId })
       }
     } else {
       openNativeBrowser(url, componentId)
