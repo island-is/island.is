@@ -5,7 +5,7 @@ import type { EnhancedFetchAPI } from '@island.is/clients/middlewares'
 
 import {
   getMultipleStatistics as _getMultipleStatistics,
-  getStatisticsFromSource,
+  getStatisticsFromCsvUrls,
 } from './statistics.utils'
 import { GetStatisticsQuery } from './types'
 import { StatisticsClientConfig } from './statistics.config'
@@ -26,12 +26,17 @@ export class StatisticsClientService {
 
   async getMultipleStatistics(query: GetStatisticsQuery) {
     try {
-      const sourceData = await getStatisticsFromSource(
+      const csvSourceData = await getStatisticsFromCsvUrls(
         this.fetch,
         this.config?.sourceDataPaths?.split(','),
       )
 
-      const statistics = await _getMultipleStatistics(query, sourceData)
+      // TODO: implement external json client fetching
+      // for (const dataKey of query.sourceDataKeys) {
+      //   if (dataKey.startsWith('...'))
+      // }
+
+      const statistics = await _getMultipleStatistics(query, csvSourceData)
 
       return {
         statistics,

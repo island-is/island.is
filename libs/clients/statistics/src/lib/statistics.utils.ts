@@ -167,9 +167,9 @@ const processResponse = (result: StatisticSourceData, response: string) => {
 
 let fetchStatisticsPromise: Promise<StatisticSourceData> | undefined
 
-export const getStatisticsFromSource = (
+export const getStatisticsFromCsvUrls = (
   fetchClient: EnhancedFetchAPI,
-  dataSources: string[],
+  csvUrls: string[],
 ): Promise<StatisticSourceData> => {
   if (fetchStatisticsPromise) {
     return fetchStatisticsPromise
@@ -179,7 +179,7 @@ export const getStatisticsFromSource = (
   // is in progress reuse the same promise
   fetchStatisticsPromise = new Promise((resolve, reject) => {
     Promise.all<Promise<string>[]>(
-      dataSources.map((source) => fetchClient(source).then(handleResponse)),
+      csvUrls.map((source) => fetchClient(source).then(handleResponse)),
     )
       .then((responses) =>
         resolve(
