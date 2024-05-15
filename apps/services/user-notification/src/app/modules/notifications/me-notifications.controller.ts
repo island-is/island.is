@@ -8,7 +8,6 @@ import {
   Controller,
   HttpStatus,
   Post,
-  HttpCode,
 } from '@nestjs/common'
 import { ApiSecurity, ApiTags } from '@nestjs/swagger'
 
@@ -127,26 +126,26 @@ export class MeNotificationsController {
     return res
   }
 
-  // @Documentation({
-  //   summary: 'Updates current user specific notification',
-  //   response: { status: HttpStatus.OK, type: RenderedNotificationDto },
-  // })
-  // @Patch(':id')
-  // @Scopes(NotificationsScope.write)
-  // @ApiSecurity('oauth2', [NotificationsScope.write])
-  // async update(
-  //   @CurrentUser() user: User,
-  //   @Param('id') id: number,
-  //   @Body() updateNotificationDto: UpdateNotificationDto,
-  //   @Query('locale') locale?: Locale,
-  // ): Promise<RenderedNotificationDto> {
-  //   console.log("PATCH ***************************************************************")
+  @Documentation({
+    summary: 'Updates current user specific notification',
+    response: { status: HttpStatus.OK, type: RenderedNotificationDto },
+  })
+  @Patch(':id')
+  @Scopes(NotificationsScope.write)
+  @ApiSecurity('oauth2', [NotificationsScope.write])
+  async update(
+    @CurrentUser() user: User,
+    @Param('id') id: number,
+    @Body() updateNotificationDto: UpdateNotificationDto,
+    @Query('locale') locale?: Locale,
+  ): Promise<RenderedNotificationDto> {
+    console.log("PATCH ***************************************************************")
 
-  //   return await this.notificationService.update(
-  //     user,
-  //     id,
-  //     updateNotificationDto,
-  //     locale,
-  //   )
-  // }
+    return await this.notificationService.update(
+      user,
+      id,
+      updateNotificationDto,
+      locale,
+    )
+  }
 }
