@@ -45,10 +45,7 @@ const getProsecutionUserCasesQueryFilter = (user: User): WhereOptions => {
         { prosecutors_office_id: user.institution?.id },
         { shared_with_prosecutors_office_id: user.institution?.id },
         {
-          [Op.and]: [
-            { indictment_reviewer_id: user.id },
-            { indictment_review_decision: null },
-          ],
+          [Op.and]: [{ indictment_reviewer_id: user.id }],
         },
       ],
     },
