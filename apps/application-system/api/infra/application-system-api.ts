@@ -224,6 +224,11 @@ export const serviceSetup = (services: {
         staging: 'IS-DEV/GOV/10047/UA-Protected/kvortun-v1/',
         prod: 'IS/GOV/5605882089/UA-Protected/kvortun-v1',
       },
+      DATA_PROTECTION_COMPLAINT_XROAD_PROVIDER_ID: {
+        dev: '',
+        staging: '',
+        prod: '',
+      },
       NOVA_ACCEPT_UNAUTHORIZED: {
         dev: 'true',
         staging: 'false',
