@@ -305,6 +305,7 @@ services-auth-delegation-api:
   grantNamespaces:
     - 'nginx-ingress-internal'
     - 'islandis'
+    - 'service-portal'
   grantNamespacesEnabled: true
   healthCheck:
     liveness:
@@ -479,9 +480,10 @@ services-auth-ids-api-cleanup:
   enabled: true
   env:
     DB_HOST: 'postgres-applications.internal'
-    DB_NAME: 'services_auth_ids_api_cleanup'
+    DB_NAME: 'servicesauth'
     DB_REPLICAS_HOST: 'postgres-applications-reader.internal'
-    DB_USER: 'services_auth_ids_api_cleanup'
+    DB_USER: 'servicesauth'
+    IDENTITY_SERVER_ISSUER_URL: 'https://identity-server.dev01.devland.is'
     LOG_LEVEL: 'info'
     NODE_OPTIONS: '--max-old-space-size=460'
     SERVERSIDE_FEATURES_ON: ''
@@ -524,7 +526,7 @@ services-auth-ids-api-cleanup:
   schedule: '0 3 * * *'
   secrets:
     CONFIGCAT_SDK_KEY: '/k8s/configcat/CONFIGCAT_SDK_KEY'
-    DB_PASS: '/k8s/services-auth-ids-api-cleanup/DB_PASSWORD'
+    DB_PASS: '/k8s/servicesauth/DB_PASSWORD'
   securityContext:
     allowPrivilegeEscalation: false
     privileged: false

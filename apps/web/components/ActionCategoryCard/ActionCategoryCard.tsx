@@ -67,6 +67,7 @@ export type ActionCategoryCardProps = {
   tags?: CategoryCardTag[]
   tagOptions?: Pick<TagProps, 'hyphenate' | 'truncate' | 'textLeft'>
   href?: string
+  onCardClick?: () => void
   colorScheme?: 'blue' | 'purple' | 'red'
   /** The heading above is truncated instead of overflowing */
   truncateHeading?: TextProps['truncate']
@@ -114,6 +115,7 @@ const Component = forwardRef<HTMLElement, ActionCategoryCardProps>(
       icon,
       text,
       href = '/',
+      onCardClick,
       tags = [],
       colorScheme = 'blue',
       truncateHeading = false,
@@ -219,6 +221,7 @@ const Component = forwardRef<HTMLElement, ActionCategoryCardProps>(
               height="full"
               display="flex"
               flexDirection="column"
+              onClick={onCardClick}
             >
               <Box
                 display="flex"

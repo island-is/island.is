@@ -23,11 +23,13 @@ import {
   CaseAppealState,
   CaseCustodyRestrictions,
   CaseDecision,
+  CaseIndictmentRulingDecision,
   CaseLegalProvisions,
   CaseOrigin,
   CaseState,
   CaseType,
   CourtDocument,
+  IndictmentCaseReviewDecision,
   RequestSharedWithDefender,
   SessionArrangements,
   UserRole,
@@ -64,7 +66,6 @@ export class Case extends Model {
    * The date and time the case was created in the Database
    **********/
   @CreatedAt
-  @Column({ type: DataType.DATE, allowNull: false })
   @ApiProperty()
   created!: Date
 
@@ -72,7 +73,6 @@ export class Case extends Model {
    * The date and time the case was last updated in the database
    **********/
   @UpdatedAt
-  @Column({ type: DataType.DATE, allowNull: false })
   @ApiProperty()
   modified!: Date
 
@@ -1226,6 +1226,17 @@ export class Case extends Model {
   notifications?: Notification[]
 
   /**********
+   * The ruling decision in indictment cases - example: FINE
+   **********/
+  @Column({
+    type: DataType.ENUM,
+    allowNull: true,
+    values: Object.values(CaseIndictmentRulingDecision),
+  })
+  @ApiPropertyOptional({ enum: CaseIndictmentRulingDecision })
+  indictmentRulingDecision?: CaseIndictmentRulingDecision
+
+  /**********
    * The surrogate key of the prosecutor assigned to review an indictment
    **********/
   @ForeignKey(() => User)
@@ -1235,10 +1246,22 @@ export class Case extends Model {
   })
   @ApiPropertyOptional()
   indictmentReviewerId?: string
+
   /**********
    * The prosecutor assigned to review an indictment case
    **********/
   @BelongsTo(() => User, 'indictmentReviewerId')
   @ApiPropertyOptional({ type: User })
   indictmentReviewer?: User
+
+  /**********
+   * The review decision in indictment cases
+   **********/
+  @Column({
+    type: DataType.ENUM,
+    allowNull: true,
+    values: Object.values(IndictmentCaseReviewDecision),
+  })
+  @ApiPropertyOptional({ enum: IndictmentCaseReviewDecision })
+  indictmentReviewDecision?: IndictmentCaseReviewDecision
 }
