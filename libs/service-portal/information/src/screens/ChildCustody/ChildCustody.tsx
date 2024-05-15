@@ -22,7 +22,7 @@ import {
 import { TwoColumnUserInfoLine } from '../../components/TwoColumnUserInfoLine/TwoColumnUserInfoLine'
 import { formatNameBreaks } from '../../helpers/formatting'
 import { spmm, urls } from '../../lib/messages'
-import { useNationalRegistryChildCustodyQuery } from './Child.generated'
+import { useNationalRegistryChildCustodyQuery } from './ChildCustody.generated'
 import { natRegGenderMessageDescriptorRecord } from '../../helpers/localizationHelpers'
 import { unmaskString } from '@island.is/shared/utils'
 import { Problem } from '@island.is/react-spa/shared'
@@ -39,7 +39,6 @@ const ChildCustody = () => {
 
   const { data, loading, error } = useNationalRegistryChildCustodyQuery({
     variables: {
-      api: 'v3',
       childNationalId: unmaskString(baseId, userInfo.profile.nationalId),
     },
   })
