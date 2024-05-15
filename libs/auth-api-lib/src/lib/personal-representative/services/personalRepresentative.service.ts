@@ -69,7 +69,7 @@ export class PersonalRepresentativeService {
       whereClause['nationalIdRepresentedPerson'] = query.representedPersonId
     }
 
-    const result = await paginate({
+    const result = await paginate<PersonalRepresentative>({
       Model: this.personalRepresentativeModel,
       limit: query.limit || 10,
       after: query.after ?? '',
@@ -91,15 +91,18 @@ export class PersonalRepresentativeService {
           },
         ],
       })
-      rec.personalRepresentativeDelegationTypes =
+
+      rec.prDelegationTypes =
         await this.personalRepresentativeDelegationTypeModel.findAll({
           where: { personalRepresentativeId: rec.id },
           include: [DelegationTypeModel],
         })
     }
 
-    result.data = result.data.map((rec) => rec.toDTO())
-    return result
+    return {
+      ...result,
+      data: result.data.map((rec) => rec.toDTO()),
+    } as PaginatedPersonalRepresentativeDto
   }
 
   /** Gets all personal representative connections for personal representative  */
@@ -251,9 +254,7 @@ export class PersonalRepresentativeService {
         id: result?.rights.map((rc) => `PersonalRepresentative:${rc.code}`),
       },
     })
-    result.personalRepresentativeDelegationTypes = delegationTypes.map((prdt) =>
-      prdt.toDTO(),
-    )
+    result.prDelegationType = delegationTypes.map((prdt) => prdt.toDTO())
 
     return result ?? null
   }
@@ -327,9 +328,7 @@ export class PersonalRepresentativeService {
             ),
           },
         })
-        result.personalRepresentativeDelegationTypes = delegationTypes.map(
-          (prdt) => prdt.toDTO(),
-        )
+        result.prDelegationType = delegationTypes.map((prdt) => prdt.toDTO())
 
         return result
       })

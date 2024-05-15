@@ -87,7 +87,7 @@ export class PersonalRepresentativeDTO {
     description:
       'A list of delegation types rights that the personal representative has on behalf of represented person',
   })
-  personalRepresentativeDelegationTypes!: DelegationTypeDto[]
+  prDelegationType!: DelegationTypeDto[]
 
   @IsBoolean()
   @ApiProperty({
