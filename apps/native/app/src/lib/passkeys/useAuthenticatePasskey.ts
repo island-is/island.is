@@ -5,9 +5,13 @@ import {
   useGetPasskeyAuthenticationOptionsLazyQuery,
   useVerifyPasskeyAuthenticationMutation,
 } from '../../graphql/types/schema'
+import { preferencesStore } from '../../stores/preferences-store'
+
+const ONE_HOUR = 3600000
 
 export const useAuthenticatePasskey = () => {
   const isSupported: boolean = Passkey.isSupported()
+  const { lastUsedPasskey } = preferencesStore.getState()
 
   const [getPasskeyAuthenticationOptions] =
     useGetPasskeyAuthenticationOptionsLazyQuery()
@@ -15,7 +19,8 @@ export const useAuthenticatePasskey = () => {
   const [verifyPasskeyAuthentication] = useVerifyPasskeyAuthenticationMutation()
 
   const authenticatePasskey = async () => {
-    if (isSupported) {
+    // Ids session should be valid for one hour, so we only need to authenticate once per hour
+    if (isSupported && new Date().getTime() - lastUsedPasskey > ONE_HOUR) {
       try {
         // Get authentication options from server
         const options = await getPasskeyAuthenticationOptions()
@@ -34,6 +39,8 @@ export const useAuthenticatePasskey = () => {
 
         // Converting needed since the server expects base64url strings but react-native-passkey returns base64 strings
         const updatedResult = convertAuthenticationResultsToBase64Url(result)
+
+        preferencesStore.setState({ lastUsedPasskey: new Date().getTime() })
 
         // Verify authentication with server
         const verifyAuthenticateResponse = await verifyPasskeyAuthentication({

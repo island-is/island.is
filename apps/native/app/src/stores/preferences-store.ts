@@ -19,6 +19,7 @@ export interface PreferencesStore extends State {
   hasAcceptedBiometrics: boolean
   hasOnboardedPasskeys: boolean
   hasCreatedPasskey: boolean
+  lastUsedPasskey: number
   notificationsNewDocuments: boolean
   notificationsAppUpdates: boolean
   notificationsApplicationStatusUpdates: boolean
@@ -48,6 +49,7 @@ const defaultPreferences = {
   hasAcceptedBiometrics: false,
   hasOnboardedPasskeys: false,
   hasCreatedPasskey: false,
+  lastUsedPasskey: 0,
   notificationsNewDocuments: true,
   notificationsAppUpdates: true,
   notificationsApplicationStatusUpdates: true,
