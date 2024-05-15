@@ -28,7 +28,7 @@ import {
   PostTemporaryLicenseWithHealthDeclarationMapper,
   DrivingLicenseSchema,
 } from './utils/healthDeclarationMapper'
-import { removeCountryCode } from './utils'
+import { formatPhoneNumber } from './utils'
 
 const calculateNeedsHealthCert = (healthDeclaration = {}) => {
   return !!Object.values(healthDeclaration).find((val) => val === 'yes')
@@ -143,7 +143,7 @@ export class DrivingLicenseSubmissionService extends BaseTemplateApiService {
     const jurisdictionId = answers.jurisdiction
     const teacher = answers.drivingInstructor as string
     const email = answers.email as string
-    const phone = removeCountryCode(answers.phone as string)
+    const phone = formatPhoneNumber(answers.phone as string)
 
     const postHealthDeclaration = async (
       nationalId: string,
