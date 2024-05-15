@@ -109,11 +109,10 @@ export class MeNotificationsController {
   }
 
   @Get(':id')
-  // @HttpCode(HttpStatus.OK)
-  // @Documentation({
-  //   summary: 'Returns current user specific notification',
-  //   response: { status: HttpStatus.OK, type: RenderedNotificationDto },
-  // })
+  @Documentation({
+    summary: 'Returns current user specific notification',
+    response: { status: HttpStatus.OK, type: RenderedNotificationDto },
+  })
   async findOne(
     @CurrentUser() user: User,
     @Param('id') id: number,

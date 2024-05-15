@@ -134,35 +134,34 @@ export class NotificationsService {
       }
 
 
-      // REMEMBER TO UNCOMMENT THIS ..................................................................................................
-      // // check for organization argument to fetch translated organization title
-      // const organizationArg = notification.args.find(
-      //   (arg) => arg.key === 'organization',
-      // )
+      // check for organization argument to fetch translated organization title
+      const organizationArg = notification.args.find(
+        (arg) => arg.key === 'organization',
+      )
 
-      // // if senderId is set and args contains organization, fetch organizationtitle from senderId
-      // if (notification.senderId && organizationArg) {
-      //   try {
-      //     const sender = await this.getSenderOrganization(
-      //       notification.senderId,
-      //       locale,
-      //     )
+      // if senderId is set and args contains organization, fetch organizationtitle from senderId
+      if (notification.senderId && organizationArg) {
+        try {
+          const sender = await this.getSenderOrganization(
+            notification.senderId,
+            locale,
+          )
 
-      //     if (sender.title) {
-      //       organizationArg.value = sender.title
-      //     } else {
-      //       this.logger.warn('title not found ', {
-      //         senderId: notification.senderId,
-      //         locale,
-      //       })
-      //     }
-      //   } catch (error) {
-      //     this.logger.error('error trying to get org title', {
-      //       senderId: notification.senderId,
-      //       locale,
-      //     })
-      //   }
-      // }
+          if (sender.title) {
+            organizationArg.value = sender.title
+          } else {
+            this.logger.warn('title not found ', {
+              senderId: notification.senderId,
+              locale,
+            })
+          }
+        } catch (error) {
+          this.logger.error('error trying to get org title', {
+            senderId: notification.senderId,
+            locale,
+          })
+        }
+      }
 
       // Format the template with arguments from the notification
       const formattedTemplate = this.formatArguments(
