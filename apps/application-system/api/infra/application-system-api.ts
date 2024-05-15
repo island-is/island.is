@@ -225,10 +225,16 @@ export const serviceSetup = (services: {
         prod: 'IS/GOV/5605882089/UA-Protected/kvortun-v1',
       },
       DATA_PROTECTION_COMPLAINT_XROAD_PROVIDER_ID: {
-        dev: '',
-        staging: '',
-        prod: '',
+        dev: 'IS-DEV/GOV/10026/gopro/kvortun-v1',
+        staging: 'IS-DEV/GOV/10026/gopro/kvortun-v1',
+        prod: 'IS/GOV/5608002820/gopro/kvortun-v1',
       },
+      XROAD_CRIMINAL_RECORD_PATH: {
+        dev: 'r1/IS-DEV/GOV/10005/Logreglan-Protected/Sakavottord-PDF-v2',
+        staging: 'r1/IS-DEV/GOV/10005/Logreglan-Protected/Sakavottord-PDF-v2',
+        prod: 'r1/IS/GOV/5309672079/Logreglan-Protected/Sakaskra-v1',
+      },
+
       NOVA_ACCEPT_UNAUTHORIZED: {
         dev: 'true',
         staging: 'false',

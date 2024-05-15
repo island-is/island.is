@@ -1,6 +1,5 @@
 import { Injectable, Type } from '@nestjs/common'
 
-import { Config as CriminalRecordConfig } from '@island.is/api/domains/criminal-record'
 import {
   Application,
   ApplicationWithAttachments,
@@ -34,7 +33,6 @@ export interface BaseTemplateAPIModuleConfig {
     password: string
     acceptUnauthorized?: boolean
   }
-  criminalRecord: CriminalRecordConfig
   attachmentBucket: string
   presignBucket: string
   generalPetition: {
