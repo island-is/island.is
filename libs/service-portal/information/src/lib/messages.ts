@@ -149,6 +149,14 @@ export const mInformationNotifications = defineMessages({
     id: 'sp.information-notifications:description',
     defaultMessage: 'Hér getur þú nálgast tilkynningar þínar.',
   },
+  markAllRead: {
+    id: 'sp.information-notifications:mark-all-read',
+    defaultMessage: 'Merkja allt lesið',
+  },
+  allMarkedAsRead: {
+    id: 'sp.information-notifications:all-marked-as-read',
+    defaultMessage: 'Allar tilkynningar merktar lesnar',
+  },
 })
 
 export const msg = defineMessages({
