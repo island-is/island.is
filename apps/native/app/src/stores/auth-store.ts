@@ -17,6 +17,11 @@ import { offlineStore } from './offline-store'
 import { preferencesStore } from './preferences-store'
 import { clearAllStorages } from '../stores/mmkv'
 import { notificationsStore } from './notifications-store'
+import {
+  DeletePasskeyDocument,
+  DeletePasskeyMutation,
+  DeletePasskeyMutationVariables,
+} from '../graphql/types/schema'
 
 const KEYCHAIN_AUTH_KEY = `@islandis_${bundleId}`
 const INVALID_REFRESH_TOKEN_ERROR = 'invalid_grant'
@@ -159,14 +164,17 @@ export const authStore = create<AuthStore>((set, get) => ({
       notificationsStore.getState().deletePushToken(pushToken)
     }
     notificationsStore.getState().reset()
+    // const client = await getApolloClientAsync()
 
     // remove passkey if exists
     preferencesStore.setState({
       hasCreatedPasskey: false,
       hasOnboardedPasskeys: false,
+      lastUsedPasskey: 0,
     })
-    // TODO: Call remove passkey endpoint
-
+    // await client.mutate<DeletePasskeyMutation, DeletePasskeyMutationVariables>({
+    //   mutation: DeletePasskeyDocument,
+    // })
     const appAuthConfig = getAppAuthConfig()
     // eslint-disable-next-line @typescript-eslint/no-non-null-assertion
     const tokenToRevoke = get().authorizeResult!.accessToken!
