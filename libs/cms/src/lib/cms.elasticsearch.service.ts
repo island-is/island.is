@@ -38,6 +38,7 @@ import { getElasticsearchIndex } from '@island.is/content-search-index-manager'
 import { CustomPage } from './models/customPage.model'
 import { GetGenericListItemsInput } from './dto/getGenericListItems.input'
 import { GenericListItemResponse } from './models/genericListItemResponse.model'
+import { GetCustomSubpageInput } from './dto/getCustomSubpage.input'
 
 @Injectable()
 export class CmsElasticsearchService {
@@ -386,6 +387,57 @@ export class CmsElasticsearchService {
       type: 'webCustomPage',
       slug: input.uniqueIdentifier,
     })
+  }
+
+  async getCustomSubpage(
+    input: GetCustomSubpageInput,
+  ): Promise<CustomPage | null> {
+    const index = getElasticsearchIndex(input.lang)
+    const must = [
+      {
+        term: {
+          type: {
+            value: 'webCustomPage',
+          },
+        },
+      },
+      {
+        nested: {
+          path: 'tags',
+          query: {
+            bool: {
+              must: [
+                {
+                  term: {
+                    'tags.key': input.parentPageId,
+                  },
+                },
+                {
+                  term: {
+                    'tags.type': 'referencedBy',
+                  },
+                },
+              ],
+            },
+          },
+        },
+      },
+    ]
+
+    const response: ApiResponse<SearchResponse<MappedData>> =
+      await this.elasticService.findByQuery(index, {
+        query: {
+          bool: {
+            must,
+          },
+        },
+      })
+
+    return (
+      response.body.hits.hits.map((item) =>
+        JSON.parse(item._source.response ?? 'null'),
+      )[0] ?? null
+    )
   }
 
   async getGenericListItems(
