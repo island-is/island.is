@@ -366,7 +366,7 @@ export const formatAmendingBodyWithArticlePrefix = (
     ([key, impacts]) => {
       const impactArray = impacts.map((item, i) =>
         formatAmendingRegBody(
-          draftImpactLength > 1 ? item.name : '',
+          (item.type === 'repeal' || draftImpactLength > 1) ? item.name : '',
           item.type === 'repeal',
           item.type === 'amend' ? item.diff?.value : undefined,
         ),
