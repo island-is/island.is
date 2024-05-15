@@ -735,6 +735,9 @@ export interface IContactUs extends Entry<IContactUsFields> {
 }
 
 export interface ICustomPageFields {
+  /** Parent Page */
+  parentPage?: ICustomPage | undefined
+
   /** Title */
   title?: string | undefined
 
@@ -743,6 +746,9 @@ export interface ICustomPageFields {
     | 'PensionCalculator'
     | 'OfficialJournalOfIceland'
     | 'Vacancies'
+
+  /** Slug */
+  slug?: string | undefined
 
   /** Alert Banner */
   alertBanner?: IAlertBanner | undefined

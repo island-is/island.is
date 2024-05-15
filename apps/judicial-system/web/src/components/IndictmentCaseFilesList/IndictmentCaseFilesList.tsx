@@ -79,6 +79,9 @@ const IndictmentCaseFilesList: React.FC<React.PropsWithChildren<Props>> = (
   const criminalRecords = cf?.filter(
     (file) => file.category === CaseFileCategory.CRIMINAL_RECORD,
   )
+  const criminalRecordUpdates = cf?.filter(
+    (file) => file.category === CaseFileCategory.CRIMINAL_RECORD_UPDATE,
+  )
   const costBreakdowns = cf?.filter(
     (file) => file.category === CaseFileCategory.COST_BREAKDOWN,
   )
