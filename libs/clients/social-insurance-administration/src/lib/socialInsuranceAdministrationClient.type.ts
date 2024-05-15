@@ -1,4 +1,36 @@
-import { TrWebCommonsExternalPortalsApiModelsDocumentsDocument } from '../../gen/fetch'
+import {
+  ApplicantApi,
+  ApplicationApi,
+  DocumentsApi,
+  GeneralApi,
+  IncomePlanApi,
+  PaymentPlanApi,
+  PensionCalculatorApi,
+  TestApi,
+  TrWebCommonsExternalPortalsApiModelsDocumentsDocument,
+  ValidationApi,
+} from '../../gen/fetch'
+
+export type Scope =
+  | '@tr.is/umsaekjandi:read'
+  | '@tr.is/umsoknir:read'
+  | '@tr.is/umsoknir:write'
+  | '@tr.is/stadgreidsla:read'
+  | '@tr.is/tekjuaetlun:read'
+  | '@tr.is/greidsluaetlun:read'
+  | '@tr.is/almennt:read'
+  | '@tr.is/fylgiskjol:write'
+
+export type Api =
+  | typeof ApplicationApi
+  | typeof ApplicantApi
+  | typeof DocumentsApi
+  | typeof GeneralApi
+  | typeof IncomePlanApi
+  | typeof PaymentPlanApi
+  | typeof PensionCalculatorApi
+  | typeof TestApi
+  | typeof ValidationApi
 
 export interface Period {
   year: number
