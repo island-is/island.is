@@ -920,6 +920,24 @@ describe('ActorDelegationsController', () => {
             truncate: true,
             force: true,
           })
+          await prDelegationTypeModel.destroy({
+            where: {},
+            cascade: true,
+            truncate: true,
+            force: true,
+          })
+          await delegationTypeModel.destroy({
+            where: {},
+            cascade: true,
+            truncate: true,
+            force: true,
+          })
+          await delegationProviderModel.destroy({
+            where: {},
+            cascade: true,
+            truncate: true,
+            force: true,
+          })
         })
       })
     })
