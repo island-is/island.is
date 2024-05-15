@@ -13,6 +13,7 @@ import { SUBMIT_APPLICATION } from '@island.is/application/graphql'
 import { handleServerError } from '@island.is/application/ui-components'
 import { getApplicationAnswers } from '../../lib/newPrimarySchoolUtils'
 import { States } from '../../lib/constants'
+import { Child } from './review-groups/Child'
 
 interface ReviewScreenProps {
   application: Application
@@ -80,7 +81,7 @@ export const Review: FC<ReviewScreenProps> = ({
           <Box>
             <Box marginBottom={2}>
               <Text variant="h2">
-                {formatMessage(newPrimarySchoolMessages.confirm.overviewTitle)}
+                {formatMessage(newPrimarySchoolMessages.confirm.sectionTitle)}
               </Text>
             </Box>
             <Box marginBottom={10}>
@@ -142,6 +143,7 @@ export const Review: FC<ReviewScreenProps> = ({
           </Box>
         </Box>
       )}
+      <Child {...childProps} />
       <BaseInformation {...childProps} />
     </>
   )

@@ -118,6 +118,11 @@ export const newPrimarySchoolMessages: MessageDir = {
         'Vinsamlegast farðu yfir umsóknina áður en þú sendir hana inn.',
       description: 'Please review the application before submitting.',
     },
+    child: {
+      id: 'dess.nps.application:confirmation.child',
+      defaultMessage: 'Barn',
+      description: 'Child',
+    },
     name: {
       id: 'dess.nps.application:review.name',
       defaultMessage: 'Nafn',
