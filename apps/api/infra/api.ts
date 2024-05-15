@@ -382,6 +382,7 @@ export const serviceSetup = (services: {
         '/k8s/api/WATSON_ASSISTANT_CHAT_FEEDBACK_API_KEY',
       LICENSE_SERVICE_BARCODE_SECRET_KEY:
         '/k8s/api/LICENSE_SERVICE_BARCODE_SECRET_KEY',
+      FORM_SYSTEM_MIDEIND_KEY: '/k8s/api/form-system/FORM_SYSTEM_MIDEIND_KEY',
     })
     .xroad(
       AdrAndMachine,

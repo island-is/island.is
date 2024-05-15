@@ -22,7 +22,6 @@ import {
 import { FormResponse } from '../../models/formResponse.model'
 import { FormListResponse } from '../../models/formListResponse.model'
 import { UpdateFormSettingsInput } from '../../dto/updateFormSettings.input'
-import { InputSettings } from '../../models/inputSettings.model'
 
 @Injectable()
 export class FormsService {
@@ -65,19 +64,7 @@ export class FormsService {
     if (!response || response instanceof ApolloError) {
       return {}
     }
-    // const formattedResponse = {
-    //   ...response,
-    //   inputsList: response.form?.inputsList?.map((input) => {
-    //     const { type, ...newInputSettings } = input.inputSettings as InputSettings
-    //     return {
-    //       ...input,
-    //       inputSettings: {
-    //         ...newInputSettings,
-    //         $type: type
-    //       }
-    //     }
-    //   })
-    // }
+
     return response as FormResponse
   }
 
@@ -140,10 +127,7 @@ export class FormsService {
       formId: input.formId,
       formUpdateDto: formattedForm as FormUpdateDto,
     }
-    // const request: ApiFormsFormIdPutRequest = {
-    //   formId: input.formId,
-    //   formUpdateDto: input.form as FormUpdateDto
-    // }
+    console.log(request)
     const response = await this.formsApiWithAuth(auth)
       .apiFormsFormIdPut(request)
       .catch((e) => this.handle4xx(e, 'failed to update form'))
@@ -162,6 +146,7 @@ export class FormsService {
       formSettingsUpdateDto:
         input.formSettingsUpdateDto as FormSettingsUpdateDto,
     }
+    console.log(request)
     const response = await this.formsApiWithAuth(auth)
       .apiFormsFormIdSettingsPut(request)
       .catch((e) => this.handle4xx(e, 'failed to update form settings'))
