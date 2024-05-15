@@ -66,6 +66,11 @@ export enum ApiModuleActions {
   setChildrenInformation = 'setChildrenInformation',
   setBirthDateForNoPrimaryParent = 'setBirthDateForNoPrimaryParent',
   setBirthDate = 'setBirthDate',
+  /**
+   * Fetches and returns VMST periods for the given application.
+   * Need to add this to `onExit` in every state that reaches `EDIT_OR_ADD_EMPLOYERS_AND_PERIODS`,
+   * except states that are still pending employer approval.
+   */
   setVMSTPeriods = 'setVMSTPeriods',
 }
 

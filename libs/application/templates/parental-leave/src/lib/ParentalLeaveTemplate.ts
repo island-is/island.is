@@ -1052,12 +1052,6 @@ const ParentalLeaveTemplate: ApplicationTemplate<
             action: ApiModuleActions.assignEmployer,
             throwOnError: true,
           }),
-          onExit: defineTemplateApi({
-            action: ApiModuleActions.setVMSTPeriods,
-            triggerEvent: DefaultEvents.EDIT,
-            externalDataId: 'VMSTPeriods',
-            throwOnError: false,
-          }),
           roles: [
             {
               id: Roles.APPLICANT,
@@ -1109,12 +1103,6 @@ const ParentalLeaveTemplate: ApplicationTemplate<
             ],
           },
           lifecycle: birthDayLifeCycle,
-          onExit: defineTemplateApi({
-            action: ApiModuleActions.setVMSTPeriods,
-            triggerEvent: DefaultEvents.EDIT,
-            externalDataId: 'VMSTPeriods',
-            throwOnError: false,
-          }),
           roles: [
             {
               id: Roles.ASSIGNEE,
@@ -1208,12 +1196,6 @@ const ParentalLeaveTemplate: ApplicationTemplate<
           onEntry: defineTemplateApi({
             action: ApiModuleActions.notifyApplicantOfRejectionFromEmployer,
             throwOnError: true,
-          }),
-          onExit: defineTemplateApi({
-            action: ApiModuleActions.setVMSTPeriods,
-            triggerEvent: DefaultEvents.EDIT,
-            externalDataId: 'VMSTPeriods',
-            throwOnError: false,
           }),
           roles: [
             {
@@ -2104,6 +2086,18 @@ const ParentalLeaveTemplate: ApplicationTemplate<
           return context
         }
         const { application } = context
+
+        /**
+         * Do not update periods if in these states.
+         * We may be overwriting older edits that have not reached VMST (e.g. still pending employer approval)
+         */
+        if (
+          application.state === States.EMPLOYER_WAITING_TO_ASSIGN_FOR_EDITS ||
+          application.state === States.EMPLOYER_APPROVE_EDITS ||
+          application.state === States.EMPLOYER_EDITS_ACTION
+        ) {
+          return context
+        }
         const newPeriods = restructureVMSTPeriods(context)
 
         if (newPeriods.length > 0) {
