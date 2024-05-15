@@ -6,6 +6,7 @@ const schema = z.object({
   publishKey: z.string(),
   draftKey: z.string(),
   presignedKey: z.string(),
+  regulationPublishKey: z.string(),
 })
 
 export const RegulationsClientConfig = defineConfig<z.infer<typeof schema>>({
@@ -16,5 +17,6 @@ export const RegulationsClientConfig = defineConfig<z.infer<typeof schema>>({
     publishKey: env.required('REGULATIONS_FILE_UPLOAD_KEY_PUBLISH', ''),
     draftKey: env.required('REGULATIONS_FILE_UPLOAD_KEY_DRAFT', ''),
     presignedKey: env.required('REGULATIONS_FILE_UPLOAD_KEY_PRESIGNED', ''),
+    regulationPublishKey: env.required('REGULATION_PUBLISH_SECRET_KEY', ''),
   }),
 })

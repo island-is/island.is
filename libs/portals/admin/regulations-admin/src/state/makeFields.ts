@@ -1,4 +1,4 @@
-import { Appendix, HTMLText } from '@island.is/regulations'
+import { Appendix, HTMLText, toISODate } from '@island.is/regulations'
 import {
   DraftRegulationCancel,
   DraftRegulationChange,
@@ -216,4 +216,27 @@ export const makeDraftForm = (draft: RegulationDraft): RegDraftForm => {
   }
 
   return form
+}
+
+export const makePublishImpact = (impacts: RegDraftForm['impacts']) => {
+  return Object.values(impacts)
+    .flat()
+    .map((impact) => ({
+      type: impact.type,
+      date: toISODate(impact.date.value),
+      title: impact.regTitle,
+      ...(impact.type === 'amend' &&
+        impact.text && { text: impact.text.value }),
+      ...(impact.type === 'amend' && impact.appendixes.length > 0
+        ? {
+            appendixes: impact.appendixes.map((a, i) => ({
+              title: a.title.value,
+              text: a.text.value,
+            })),
+          }
+        : { appendixes: [] }),
+      ...(impact.type === 'amend' &&
+        impact.comments && { comments: impact.comments.value }),
+      name: impact.name,
+    }))
 }
