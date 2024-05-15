@@ -15,6 +15,7 @@ import { getIntl } from '../contexts/i18n-provider'
 import { getApolloClientAsync } from '../graphql/client'
 import { isAndroid } from '../utils/devices'
 import { getAppRoot } from '../utils/lifecycle/get-app-root'
+import { offlineStore } from './offline-store'
 import { preferencesStore } from './preferences-store'
 
 const KEYCHAIN_AUTH_KEY = `@islandis_${bundleId}`
@@ -233,6 +234,11 @@ export async function checkIsAuthenticated() {
 
     return true
   } catch (e) {
+    if (!offlineStore.getState().isConnected) {
+      // Network request failed - likely due to offline
+      return true
+    }
+
     Alert.alert(
       intl.formatMessage({ id: 'login.expiredTitle' }),
       intl.formatMessage({ id: 'login.expiredMissingUserMessage' }),
