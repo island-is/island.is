@@ -103,7 +103,6 @@ describe('MeNotificationsController - GET With Auth And Scope', () => {
 
       //Assert
       expect(res.status).toEqual(200)
-      
 
       app.cleanUp()
     },
