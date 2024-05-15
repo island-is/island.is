@@ -2,8 +2,6 @@ import React from 'react'
 
 import { withFigma } from '../../utils/withFigma'
 import { Input } from './Input'
-import { size } from 'lodash'
-import { ro } from 'date-fns/locale'
 
 export default {
   title: 'Form/Input',
