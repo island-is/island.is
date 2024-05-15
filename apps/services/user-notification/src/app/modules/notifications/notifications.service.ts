@@ -133,7 +133,6 @@ export class NotificationsService {
         template = await this.getTemplate(templateId, locale)
       }
 
-
       // check for organization argument to fetch translated organization title
       const organizationArg = notification.args.find(
         (arg) => arg.key === 'organization',

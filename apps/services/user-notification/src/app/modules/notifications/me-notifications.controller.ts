@@ -54,9 +54,6 @@ export class MeNotificationsController {
   ): Promise<PaginatedNotificationDto> {
     return await this.notificationService.findMany(user, query)
   }
-  
-
-
 
   @Post('/mark-all-as-seen')
   @Scopes(NotificationsScope.write)
@@ -80,10 +77,6 @@ export class MeNotificationsController {
     await this.notificationService.markAllAsRead(user)
   }
 
-
-
-
-
   @Get('/unread-count')
   @Documentation({
     summary: 'Returns a count of unread notifications for the current user',
@@ -92,7 +85,9 @@ export class MeNotificationsController {
   async getUnreadNotificationsCount(
     @CurrentUser() user: User,
   ): Promise<UnreadNotificationsCountDto> {
-    console.log("unread-count ***************************************************************")
+    console.log(
+      'unread-count ***************************************************************',
+    )
     return await this.notificationService.getUnreadNotificationsCount(user)
   }
 
@@ -104,7 +99,9 @@ export class MeNotificationsController {
   async getUnseenNotificationsCount(
     @CurrentUser() user: User,
   ): Promise<UnseenNotificationsCountDto> {
-    console.log("unseen-count ***************************************************************")
+    console.log(
+      'unseen-count ***************************************************************',
+    )
     return await this.notificationService.getUnseenNotificationsCount(user)
   }
 
@@ -118,10 +115,12 @@ export class MeNotificationsController {
     @Param('id') id: number,
     @Query('locale') locale?: Locale,
   ): Promise<RenderedNotificationDto> {
-    console.log("GETGETGET ***************************************************************")
+    console.log(
+      'GETGETGET ***************************************************************',
+    )
 
     const res = await this.notificationService.findOne(user, id, locale)
-    console.log("RES *******************************", res)
+    console.log('RES *******************************', res)
     return res
   }
 
@@ -138,7 +137,9 @@ export class MeNotificationsController {
     @Body() updateNotificationDto: UpdateNotificationDto,
     @Query('locale') locale?: Locale,
   ): Promise<RenderedNotificationDto> {
-    console.log("PATCH ***************************************************************")
+    console.log(
+      'PATCH ***************************************************************',
+    )
 
     return await this.notificationService.update(
       user,
