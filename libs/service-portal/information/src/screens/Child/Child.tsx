@@ -36,7 +36,6 @@ const Child = () => {
 
   const { data, loading, error } = useNationalRegistryChildQuery({
     variables: {
-      api: 'v3',
       childNationalId: unmaskString(baseId, userInfo.profile.nationalId),
     },
   })

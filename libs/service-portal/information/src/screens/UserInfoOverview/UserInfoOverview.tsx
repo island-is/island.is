@@ -20,9 +20,7 @@ const UserInfoOverview = () => {
   const { formatMessage } = useLocale()
   const userInfo = useUserInfo()
 
-  const { data, error, loading } = useUserInfoOverviewQuery({
-    variables: { api: 'v3' },
-  })
+  const { data, error, loading } = useUserInfoOverviewQuery()
 
   const { spouse, childCustody, biologicalChildren } =
     data?.nationalRegistryPerson || {}

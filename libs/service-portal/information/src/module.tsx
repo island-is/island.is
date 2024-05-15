@@ -10,21 +10,24 @@ import { InformationPaths } from './lib/paths'
 import { Navigate } from 'react-router-dom'
 import { User } from '@island.is/shared/types'
 
-const UserInfoOverview = lazy(
-  () => import('./screens/UserInfoOverview/UserInfoOverview'),
+const UserInfoOverview = lazy(() =>
+  import('./screens/UserInfoOverview/UserInfoOverview'),
 )
 const UserInfo = lazy(() => import('./screens/UserInfo/UserInfo'))
-const FamilyMemberChildCustody = lazy(
-  () => import('./screens/ChildCustody/ChildCustody'),
+const FamilyMemberChildCustody = lazy(() =>
+  import('./screens/ChildCustody/ChildCustody'),
 )
 const FamilyMemberChild = lazy(() => import('./screens/Child/Child'))
 const Spouse = lazy(() => import('./screens/Spouse/Spouse'))
 const CompanyInfo = lazy(() => import('./screens/Company/CompanyInfo'))
-const Notifications = lazy(
-  () => import('./screens/Notifications/Notifications'),
+const Notifications = lazy(() =>
+  import('./screens/Notifications/Notifications'),
 )
-const UserProfileSettings = lazy(
-  () => import('./screens/UserProfile/UserProfile'),
+const UserProfileSettings = lazy(() =>
+  import('./screens/UserProfile/UserProfile'),
+)
+const UserNotificationsSettings = lazy(() =>
+  import('./screens/UserNotifications/UserNotifications'),
 )
 
 const sharedRoutes = (userInfo: User) => [
@@ -75,6 +78,13 @@ export const informationModule: PortalModule = {
       path: InformationPaths.ChildCustody,
       enabled: userInfo.scopes.includes(ApiScope.meDetails),
       element: <FamilyMemberChildCustody />,
+    },
+    {
+      name: m.userInfo,
+      path: InformationPaths.SettingsNotifications,
+      enabled: userInfo.scopes.includes(ApiScope.internal),
+      key: 'NotificationSettings',
+      element: <UserNotificationsSettings />,
     },
     {
       name: 'Child',

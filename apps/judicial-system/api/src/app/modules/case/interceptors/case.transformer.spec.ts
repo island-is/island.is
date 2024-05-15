@@ -8,7 +8,11 @@ import {
 } from '@island.is/judicial-system/types'
 
 import { Case } from '../models/case.model'
-import { getAppealInfo, transformCase } from './case.transformer'
+import {
+  getAppealInfo,
+  getIndictmentInfo,
+  transformCase,
+} from './case.transformer'
 
 describe('transformCase', () => {
   each`
@@ -546,6 +550,34 @@ describe('getAppealInfo', () => {
       const appealInfo = getAppealInfo(theCase)
 
       expect(appealInfo).toHaveProperty('canDefenderAppeal', expected)
+    })
+  })
+})
+
+describe('getIndictmentInfo', () => {
+  it('should return empty indictment info when ruling date is not provided', () => {
+    // Arrange
+    const theCase = {} as Case
+
+    // Act
+    const indictmentInfo = getIndictmentInfo(theCase.rulingDate)
+
+    // Assert
+    expect(indictmentInfo).toEqual({})
+  })
+
+  it('should return correct indictment info when ruling date is provided', () => {
+    const rulingDate = new Date().toISOString()
+    const theCase = {
+      rulingDate,
+    } as Case
+
+    const indictmentInfo = getIndictmentInfo(theCase.rulingDate)
+
+    expect(indictmentInfo).toEqual({
+      indictmentAppealDeadline: new Date(
+        new Date(rulingDate).setDate(new Date(rulingDate).getDate() + 28),
+      ).toISOString(),
     })
   })
 })

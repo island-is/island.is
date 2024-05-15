@@ -2,6 +2,6 @@ import { Field, ObjectType } from '@nestjs/graphql'
 
 @ObjectType()
 export class SignedUrl {
-  @Field()
+  @Field(() => String)
   readonly url!: string
 }

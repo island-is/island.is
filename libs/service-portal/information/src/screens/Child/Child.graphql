@@ -1,9 +1,8 @@
-query NationalRegistryChild(
-  $api: String
+query NationalRegistryChildCustody(
   $childNationalId: String
   $useFakeData: Boolean
 ) {
-  nationalRegistryPerson(api: $api, useFakeData: $useFakeData) {
+  nationalRegistryPerson(useFakeData: $useFakeData) {
     nationalId
     fullName
     biologicalChildren(childNationalId: $childNationalId) {

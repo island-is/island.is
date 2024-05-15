@@ -28,11 +28,7 @@ const SubjectInfo = () => {
   const userInfo = useUserInfo()
   const { formatMessage } = useLocale()
 
-  const { data, loading, error } = useNationalRegistryPersonQuery({
-    variables: {
-      api: 'v3',
-    },
-  })
+  const { data, loading, error } = useNationalRegistryPersonQuery()
 
   const { nationalRegistryPerson } = data || {}
   const isDelegation = userInfo && checkDelegation(userInfo)
