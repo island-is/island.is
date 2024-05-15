@@ -34,7 +34,10 @@ const config: Meta<typeof Input> = {
     readOnly: { description: 'Is input field readonly' },
     rightAlign: { description: 'Is text right aligned' },
     textarea: { description: 'Is input field textarea' },
-    rows: { description: 'How many rows does Textarea consist of', control: { type: 'number' }},
+    rows: {
+      description: 'How many rows does Textarea consist of',
+      control: { type: 'number' },
+    },
     icon: { description: 'Field icon' },
     buttons: { description: 'Field buttons' },
     tooltip: { description: 'Field tooltip', control: { type: 'text' } },
