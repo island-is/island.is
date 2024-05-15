@@ -4,5 +4,4 @@ export interface DataProtectionComplaintClientConfig {
   password: string
   xRoadBaseUrl: string
   XRoadProviderId: string
-  xRoadClientId: string
 }

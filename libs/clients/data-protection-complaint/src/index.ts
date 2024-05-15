@@ -9,4 +9,4 @@ export {
   DocumentInfo,
 } from './gen/fetch'
 export { TokenMiddleware } from './lib/data-protection-complaint-client.middleware'
-export { DataProtectionComplaintClientConfig } from './lib/config/'
+export { DataProtectionComplaintClientConfig } from './lib/data-protection-complaint-client.config'
