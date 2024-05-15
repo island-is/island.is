@@ -121,7 +121,6 @@ import {
   MachineDigitalLicenseClientConfig,
 } from '@island.is/clients/license-client'
 import { MunicipalitiesFinancialAidConfig } from '@island.is/clients/municipalities-financial-aid'
-import { NationalRegistrySoffiaClientConfig } from '@island.is/clients/national-registry-v1'
 import { NationalRegistryClientConfig } from '@island.is/clients/national-registry-v2'
 import { NationalRegistryV3ClientConfig } from '@island.is/clients/national-registry-v3'
 import { PassportsClientConfig } from '@island.is/clients/passports'
@@ -331,7 +330,6 @@ const environment = getConfig
         PCardClientConfig,
         DistrictCommissionersLicensesClientConfig,
         AdrAndMachineLicenseClientConfig,
-        NationalRegistrySoffiaClientConfig,
         NationalRegistryV3ClientConfig,
         FirearmLicenseClientConfig,
         DisabilityLicenseClientConfig,
