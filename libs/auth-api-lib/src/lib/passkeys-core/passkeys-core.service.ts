@@ -79,7 +79,13 @@ export class PasskeysCoreService {
     // Save to redis
     await this.saveToCache(getUserId(user), options.challenge)
 
-    return options
+    return {
+      ...options,
+      user: {
+        ...options.user,
+        displayName: tokenInfo.name,
+      },
+    } as PublicKeyCredentialRequestOptionsJSON
   }
 
   async verifyRegistration(
