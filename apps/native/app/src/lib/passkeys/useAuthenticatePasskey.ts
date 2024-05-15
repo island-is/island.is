@@ -49,15 +49,12 @@ export const useAuthenticatePasskey = () => {
           return true
         }
         console.error('Authentication not verified', verifyAuthenticateResponse)
-        throw new Error('Authentication not verified')
-        // TODO throw error here to show in UI?
       } catch (error: any) {
         // User cancelled the authentication flow, swallow the error
         if (error?.error === 'UserCancelled') {
           return false
         }
         console.error('Error authenticating', error)
-        throw error(error)
       }
     }
   }

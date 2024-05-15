@@ -34,11 +34,6 @@ export const useRegisterPasskey = () => {
             ...options.data.authPasskeyRegistrationOptions.user,
             displayName: options.data.authPasskeyRegistrationOptions.user.name,
           },
-          authenticatorSelection: {
-            ...options.data?.authPasskeyRegistrationOptions
-              .authenticatorSelection,
-            requireResidentKey: false,
-          },
         })
 
         // Converting needed since the server expects base64url strings but react-native-passkey returns base64 strings
@@ -61,14 +56,12 @@ export const useRegisterPasskey = () => {
           return true
         }
         console.error('Registration not verified', verifyRegisterResponse)
-        throw new Error('Registration not verified')
       } catch (error: any) {
         // User cancelled the register flow, swallow the error
         if (error?.error === 'UserCancelled') {
           return false
         }
         console.error('Error registering passkey', error)
-        throw error(error)
       }
     }
     return false

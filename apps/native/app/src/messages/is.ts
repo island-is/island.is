@@ -543,7 +543,4 @@ export const is = {
     'Viltu búa til aðgangslykil til að skrá þig inn sjálfkrafa með appinu?',
   'passkeys.createButton': 'Búa til aðgangslykil',
   'passkeys.skipButton': 'Sleppa',
-  'passkeys.errorTitle': 'Villa',
-  'passkeys.errorRegister': 'Ekki tókst að búa til aðgangslykil',
-  'passkeys.errorAuthenticate': 'Ekki tókst að skrá inn með aðgangslykli',
 }
