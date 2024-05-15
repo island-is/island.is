@@ -233,6 +233,7 @@ export const serviceSetup = (services: {
         staging: 'r1/IS-DEV/GOV/10005/Logreglan-Protected/Sakavottord-PDF-v2',
         prod: 'r1/IS/GOV/5309672079/Logreglan-Protected/Sakaskra-v1',
       },
+
       NOVA_ACCEPT_UNAUTHORIZED: {
         dev: 'true',
         staging: 'false',
