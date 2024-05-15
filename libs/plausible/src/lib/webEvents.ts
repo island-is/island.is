@@ -45,7 +45,7 @@ export const haskolanamFilterClicked = (category: string, value: string) => {
     eventName: `haskolanam.filter`,
     featureName: '',
     params: {
-      [category]: value,
+      query: `${category}-${value}`,
     },
   }
   plausibleCustomEvent(event)
