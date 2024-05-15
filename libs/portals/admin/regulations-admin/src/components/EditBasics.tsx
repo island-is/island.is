@@ -33,7 +33,9 @@ export const EditBasics = () => {
   const [titleError, setTitleError] = useState<string | undefined>(undefined)
   const [hasUpdated, setHasUpdated] = useState<boolean>(false)
   const [references, setReferences] = useState<DraftImpactForm[]>()
-  const [isModalVisible, setIsModalVisible] = useState<boolean>(false)
+  const [isModalVisible, setIsModalVisible] = useState<boolean>(true)
+  const [hasConfirmed, setHasConfirmed] = useState<boolean>(false)
+  const [hasSeenModal, setHasSeenModal] = useState<boolean>(false)
 
   const { text, appendixes } = draft
   const { updateState } = actions
@@ -120,6 +122,7 @@ export const EditBasics = () => {
     setHasUpdated(true)
   }
 
+  console.log('hasSeenModal', hasSeenModal)
   return (
     <>
       <Box marginBottom={3}>
@@ -166,7 +169,7 @@ export const EditBasics = () => {
                 error={text.showError && text.error && t(text.error)}
               />
             </Box>
-            {!hasUpdated ? (
+            {!hasConfirmed && hasSeenModal ? (
               <Box marginBottom={3}>
                 <AlertMessage
                   type="default"
@@ -223,22 +226,28 @@ export const EditBasics = () => {
             )}
           </AccordionItem>
         </Accordion>
-
-        <ConfirmModal
-          isVisible={isModalVisible}
-          message={
-            'Uppfæra texta reglugerðar með breytingum frá fyrsta skrefi. Allur viðbættur texti í núverandi skrefi verður hreinsaður út.'
-          }
-          onConfirm={() => {
-            updateEditorText()
-            setIsModalVisible(false)
-          }}
-          onVisibilityChange={(visibility: boolean) => {
-            setIsModalVisible(visibility)
-          }}
-          confirmMessage="Uppfæra"
-          confirmGhost
-        />
+        {!hasUpdated ? (
+          <ConfirmModal
+            isVisible={isModalVisible}
+            title="Uppfæra texta"
+            message={
+              'Uppfæra texta reglugerðar með breytingum frá fyrsta skrefi. Allur viðbættur texti í núverandi skrefi verður hreinsaður út.'
+            }
+            onConfirm={() => {
+              updateEditorText()
+              setIsModalVisible(false)
+              setHasConfirmed(true)
+            }}
+            onVisibilityChange={(visibility: boolean) => {
+              setIsModalVisible(visibility)
+              if (visibility === false && !hasSeenModal) {
+                setHasSeenModal(true)
+              }
+            }}
+            confirmMessage="Uppfæra"
+            confirmGhost
+          />
+        ) : undefined}
         <Appendixes
           draftId={draft.id}
           appendixes={appendixes}
