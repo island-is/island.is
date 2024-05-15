@@ -83,7 +83,6 @@ describe('MeNotificationsController - GET With Auth And Scope', () => {
   it.each`
     method   | endpoint
     ${'GET'} | ${'/v1/me/notifications'}
-    ${'GET'} | ${'/v1/me/notifications/66666'}
     ${'GET'} | ${'/v1/me/notifications/unread-count'}
     ${'GET'} | ${'/v1/me/notifications/unseen-count'}
   `(
@@ -114,6 +113,7 @@ describe('MeNotificationsController - GET With Auth And Scope', () => {
 describe('MeNotificationsController - PATCH With Auth And Scope', () => {
   it.each`
     method     | endpoint
+    ${'GET'}   | ${'/v1/me/notifications/NOT-ONE-OF-MY-NOTIFICATION-IDS'}
     ${'PATCH'} | ${'/v1/me/notifications/some-notification-id'}
     ${'POST'}  | ${'/v1/me/notifications/mark-all-as-seen'}
     ${'POST'}  | ${'/v1/me/notifications/mark-all-as-read'}
