@@ -82,6 +82,8 @@ describe('MeNotificationsController - With Auth No Scope', () => {
 describe('MeNotificationsController - GET With Auth And Scope', () => {
   it.each`
     method   | endpoint
+    ${'GET'} | ${'/v1/me/notifications'}
+    ${'GET'} | ${'/v1/me/notifications/66666'}
     ${'GET'} | ${'/v1/me/notifications/unread-count'}
     ${'GET'} | ${'/v1/me/notifications/unseen-count'}
   `(
@@ -102,6 +104,7 @@ describe('MeNotificationsController - GET With Auth And Scope', () => {
 
       //Assert
       expect(res.status).toEqual(200)
+      
 
       app.cleanUp()
     },

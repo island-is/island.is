@@ -8,6 +8,7 @@ import {
   Controller,
   HttpStatus,
   Post,
+  HttpCode,
 } from '@nestjs/common'
 import { ApiSecurity, ApiTags } from '@nestjs/swagger'
 
@@ -48,47 +49,15 @@ export class MeNotificationsController {
     summary: 'Returns a paginated list of current user notifications',
     response: { status: HttpStatus.OK, type: PaginatedNotificationDto },
   })
-  findMany(
+  async findMany(
     @CurrentUser() user: User,
     @Query() query: ExtendedPaginationDto,
   ): Promise<PaginatedNotificationDto> {
-    return this.notificationService.findMany(user, query)
+    return await this.notificationService.findMany(user, query)
   }
+  
 
-  @Get('/unread-count')
-  @Documentation({
-    summary: 'Returns a count of unread notifications for the current user',
-    response: { status: HttpStatus.OK, type: UnreadNotificationsCountDto },
-  })
-  async getUnreadNotificationsCount(
-    @CurrentUser() user: User,
-  ): Promise<UnreadNotificationsCountDto> {
-    return await this.notificationService.getUnreadNotificationsCount(user)
-  }
 
-  @Get('/unseen-count')
-  @Documentation({
-    summary: 'Returns a count of unseen notifications for the current user',
-    response: { status: HttpStatus.OK, type: UnseenNotificationsCountDto },
-  })
-  async getUnseenNotificationsCount(
-    @CurrentUser() user: User,
-  ): Promise<UnseenNotificationsCountDto> {
-    return await this.notificationService.getUnseenNotificationsCount(user)
-  }
-
-  @Get(':id')
-  @Documentation({
-    summary: 'Returns current user specific notification',
-    response: { status: HttpStatus.OK, type: RenderedNotificationDto },
-  })
-  findOne(
-    @CurrentUser() user: User,
-    @Param('id') id: number,
-    @Query('locale') locale?: Locale,
-  ): Promise<RenderedNotificationDto> {
-    return this.notificationService.findOne(user, id, locale)
-  }
 
   @Post('/mark-all-as-seen')
   @Scopes(NotificationsScope.write)
@@ -112,24 +81,72 @@ export class MeNotificationsController {
     await this.notificationService.markAllAsRead(user)
   }
 
+
+
+
+
+  @Get('/unread-count')
   @Documentation({
-    summary: 'Updates current user specific notification',
-    response: { status: HttpStatus.OK, type: RenderedNotificationDto },
+    summary: 'Returns a count of unread notifications for the current user',
+    response: { status: HttpStatus.OK, type: UnreadNotificationsCountDto },
   })
-  @Patch(':id')
-  @Scopes(NotificationsScope.write)
-  @ApiSecurity('oauth2', [NotificationsScope.write])
-  update(
+  async getUnreadNotificationsCount(
+    @CurrentUser() user: User,
+  ): Promise<UnreadNotificationsCountDto> {
+    console.log("unread-count ***************************************************************")
+    return await this.notificationService.getUnreadNotificationsCount(user)
+  }
+
+  @Get('/unseen-count')
+  @Documentation({
+    summary: 'Returns a count of unseen notifications for the current user',
+    response: { status: HttpStatus.OK, type: UnseenNotificationsCountDto },
+  })
+  async getUnseenNotificationsCount(
+    @CurrentUser() user: User,
+  ): Promise<UnseenNotificationsCountDto> {
+    console.log("unseen-count ***************************************************************")
+    return await this.notificationService.getUnseenNotificationsCount(user)
+  }
+
+  @Get(':id')
+  // @HttpCode(HttpStatus.OK)
+  // @Documentation({
+  //   summary: 'Returns current user specific notification',
+  //   response: { status: HttpStatus.OK, type: RenderedNotificationDto },
+  // })
+  async findOne(
     @CurrentUser() user: User,
     @Param('id') id: number,
-    @Body() updateNotificationDto: UpdateNotificationDto,
     @Query('locale') locale?: Locale,
   ): Promise<RenderedNotificationDto> {
-    return this.notificationService.update(
-      user,
-      id,
-      updateNotificationDto,
-      locale,
-    )
+    console.log("GETGETGET ***************************************************************")
+
+    const res = await this.notificationService.findOne(user, id, locale)
+    console.log("RES *******************************", res)
+    return res
   }
+
+  // @Documentation({
+  //   summary: 'Updates current user specific notification',
+  //   response: { status: HttpStatus.OK, type: RenderedNotificationDto },
+  // })
+  // @Patch(':id')
+  // @Scopes(NotificationsScope.write)
+  // @ApiSecurity('oauth2', [NotificationsScope.write])
+  // async update(
+  //   @CurrentUser() user: User,
+  //   @Param('id') id: number,
+  //   @Body() updateNotificationDto: UpdateNotificationDto,
+  //   @Query('locale') locale?: Locale,
+  // ): Promise<RenderedNotificationDto> {
+  //   console.log("PATCH ***************************************************************")
+
+  //   return await this.notificationService.update(
+  //     user,
+  //     id,
+  //     updateNotificationDto,
+  //     locale,
+  //   )
+  // }
 }

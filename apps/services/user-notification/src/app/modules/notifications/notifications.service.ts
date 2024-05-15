@@ -370,7 +370,7 @@ export class NotificationsService {
       throw new NoContentException()
     }
 
-    return this.formatAndMapNotification(
+    return await this.formatAndMapNotification(
       notification,
       notification.templateId,
       locale,
