@@ -64,7 +64,7 @@ export const authStore = create<AuthStore>((set, get) => ({
   cognitoDismissCount: 0,
   cognitoAuthUrl: undefined,
   cookies: '',
-  async fetchUserInfo(shouldRefresh = false) {
+  async fetchUserInfo(skipRefresh = false) {
     const appAuthConfig = getAppAuthConfig()
     // Detect expired token
     const expiresAt = get().authorizeResult?.accessTokenExpirationDate ?? 0
@@ -86,7 +86,7 @@ export const authStore = create<AuthStore>((set, get) => ({
       // Attempt to refresh the access token
       const successfulRefresh = await get().refresh()
 
-      if (!shouldRefresh && successfulRefresh) {
+      if (!skipRefresh && successfulRefresh) {
         // Retry the userInfo call
         return get().fetchUserInfo(true)
       }
