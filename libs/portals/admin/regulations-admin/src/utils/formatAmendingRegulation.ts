@@ -26,7 +26,7 @@ export const formatAmendingRegTitle = (draft: RegDraftForm) => {
 
     const amendingTitles = amendingArray.map(
       (item, i) =>
-        `${i === 0 ? `${PREFIX_AMENDING}` : ''} ${item.name.replace(
+        `${i === 0 ? `${PREFIX_AMENDING}` : ''}${item.name.replace(
           /^0+/,
           '',
         )}${removeRegPrefix(item.regTitle)}`,
@@ -34,7 +34,7 @@ export const formatAmendingRegTitle = (draft: RegDraftForm) => {
 
     const repealTitles = repealArray.map(
       (item, i) =>
-        `${i === 0 ? `${PREFIX_REPEALING}` : ''} ${item.name.replace(
+        `${i === 0 ? `${PREFIX_REPEALING}` : ''}${item.name.replace(
           /^0+/,
           '',
         )}${removeRegPrefix(item.regTitle)}`,
@@ -264,7 +264,7 @@ export const formatAmendingRegBody = (
         }
       }
 
-      const isDeleted = newText === '' || newText === null
+      const isDeleted = newText === '' || newText === null || newText === '<br />'
       const isAddition = oldText === '' || oldText === null
 
       const regNameDisplay =

@@ -120,7 +120,6 @@ export const EditBasics = () => {
     setHasUpdated(true)
   }
 
-  const isRepeal = references?.every(obj => obj.type === 'repeal');
   return (
     <>
       <Box marginBottom={3}>
@@ -167,7 +166,7 @@ export const EditBasics = () => {
                 error={text.showError && text.error && t(text.error)}
               />
             </Box>
-            {!hasUpdated && !isRepeal ? (
+            {!hasUpdated ? (
               <Box marginBottom={3}>
                 <AlertMessage
                   type="default"
@@ -187,14 +186,16 @@ export const EditBasics = () => {
               </Box>
             ) : undefined}
 
-            {references && references.length === 0 && references[0].type === 'amend' ? (
+            {references &&
+            references.length === 1 &&
+            references[0].type === 'amend' ? (
               <ReferenceText
                 regulation={
                   {
                     title: references[0].regTitle ?? '',
                     text: references[0].diff?.value ?? '',
-                    name: references[0].name as RegName ?? '',
-                    appendixes: (references[0].appendixes ?? []).map((apx) => ({
+                    name: (references[0].name as RegName) ?? '',
+                    appendixes: references[0].appendixes.map((apx) => ({
                       title: apx.title.value,
                       text: apx.text.value,
                     })),
