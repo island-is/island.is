@@ -4,7 +4,6 @@ import * as z from 'zod'
 const schema = z.object({
   username: z.string(),
   password: z.string(),
-  xRoadBaseUrl: z.string(),
   XRoadProviderId: z.string(),
 })
 
@@ -21,7 +20,6 @@ export const DataProtectionComplaintClientConfig = defineConfig<
         'DATA_PROTECTION_COMPLAINT_XROAD_PROVIDER_ID',
         '',
       ),
-      xRoadBaseUrl: env.required('XROAD_BASE_PATH', 'http://localhost:8080'),
     }
   },
 })
