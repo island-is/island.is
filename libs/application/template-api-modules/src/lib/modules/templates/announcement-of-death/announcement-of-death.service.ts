@@ -40,10 +40,6 @@ export class AnnouncementOfDeathService extends BaseTemplateApiService {
     super(ApplicationTypes.ANNOUNCEMENT_OF_DEATH)
   }
 
-  private log(lvl: 'error' | 'info', message: string, meta: unknown) {
-    this.logger.log(lvl, `[driving-license-submission] ${message}`, meta)
-  }
-
   async deathNotice({
     application,
   }: TemplateApiModuleActionProps): Promise<Boolean> {
