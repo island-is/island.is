@@ -179,6 +179,7 @@ import {
 } from '@island.is/clients/university-careers'
 import { HousingBenefitsConfig } from '@island.is/clients/hms-housing-benefits'
 import { UserProfileClientConfig } from '@island.is/clients/user-profile'
+import { CriminalRecordClientConfig } from '@island.is/clients/criminal-record'
 
 const environment = getConfig
 
@@ -302,13 +303,7 @@ const environment = getConfig
     ApiDomainsPaymentModule,
     PaymentScheduleModule,
     ProblemModule,
-    CriminalRecordModule.register({
-      clientConfig: {
-        xroadBaseUrl: environment.xroad.baseUrl!,
-        xroadClientId: environment.xroad.clientId!,
-        xroadPath: environment.criminalRecord.xroadPath!,
-      },
-    }),
+    CriminalRecordModule,
     MunicipalitiesFinancialAidModule,
     FishingLicenseModule,
     MortgageCertificateModule,
@@ -405,6 +400,7 @@ const environment = getConfig
         UniversityGatewayApiClientConfig,
         LicenseConfig,
         UserProfileClientConfig,
+        CriminalRecordClientConfig,
       ],
     }),
   ],

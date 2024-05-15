@@ -38,6 +38,7 @@ import { SignatureCollectionClientConfig } from '@island.is/clients/signature-co
 import { InnaClientConfig } from '@island.is/clients/inna'
 import { OfficialJournalOfIcelandClientConfig } from '@island.is/clients/official-journal-of-iceland'
 import { DataProtectionComplaintClientConfig } from '@island.is/clients/data-protection-complaint'
+import { CriminalRecordClientConfig } from '@island.is/clients/criminal-record'
 
 @Module({
   imports: [
@@ -79,6 +80,7 @@ import { DataProtectionComplaintClientConfig } from '@island.is/clients/data-pro
         InnaClientConfig,
         OfficialJournalOfIcelandClientConfig,
         DataProtectionComplaintClientConfig,
+        CriminalRecordClientConfig,
       ],
     }),
   ],
