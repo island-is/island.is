@@ -206,9 +206,10 @@ export const m = defineMessages({
     description: 'Firearms step title',
   },
   firearmsDescription: {
-    id: 'aod.application:firearmsDescription',
-    defaultMessage: `Skrá þarf upplýsingar um skotvopn látna og nafn og kennitölu þess sem hefur samþykkt að taka við vörslu þeirra.\\n\\n
-      Vörsluaðili þarf að vera með gilt leyfi til að varsla skotvopnin. Hann fær sms/tölvupóst með beiðni um að samþykkja að taka við vörslu skotvopnanna.`,
+    id: 'aod.application:firearmsDescription#markdown',
+    defaultMessage: `Skrá þarf upplýsingar um skotvopn látna og nafn og kennitölu þess sem hefur samþykkt að taka við vörslu þeirra.
+      Vörsluaðili þarf að vera með gilt leyfi til að varsla skotvopnin. 
+      Hann fær sms/tölvupóst með beiðni um að samþykkja að taka við vörslu skotvopnanna.`,
     description: 'Firearms step description',
   },
   firearmsHadFirearms: {

@@ -8,7 +8,7 @@ import { m } from '../../lib/messages'
 
 export const subSectionFirearms = buildSubSection({
   id: 'firearmsStep',
-  title: 'Skotvopn',
+  title: m.firearmsTitle,
   children: [
     buildMultiField({
       id: 'firearmsTitle',
