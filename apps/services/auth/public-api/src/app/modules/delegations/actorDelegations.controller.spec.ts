@@ -7,9 +7,12 @@ import {
   Delegation,
   DelegationDTO,
   DelegationDTOMapper,
+  DelegationProviderModel,
   DelegationScope,
+  DelegationTypeModel,
   MergedDelegationDTO,
   PersonalRepresentative,
+  PersonalRepresentativeDelegationTypeModel,
   PersonalRepresentativeRight,
   PersonalRepresentativeRightType,
   PersonalRepresentativeType,
@@ -735,6 +738,9 @@ describe('ActorDelegationsController', () => {
         let prRightsModel: typeof PersonalRepresentativeRight
         let prRightTypeModel: typeof PersonalRepresentativeRightType
         let prTypeModel: typeof PersonalRepresentativeType
+        let delegationTypeModel: typeof DelegationTypeModel
+        let delegationProviderModel: typeof DelegationProviderModel
+        let prDelegationTypeModel: typeof PersonalRepresentativeDelegationTypeModel
 
         beforeAll(async () => {
           prTypeModel = app.get<typeof PersonalRepresentativeType>(
@@ -749,6 +755,15 @@ describe('ActorDelegationsController', () => {
           prRightsModel = app.get<typeof PersonalRepresentativeRight>(
             'PersonalRepresentativeRightRepository',
           )
+          delegationTypeModel = app.get<typeof DelegationTypeModel>(
+            getModelToken(DelegationTypeModel),
+          )
+          delegationProviderModel = app.get<typeof DelegationProviderModel>(
+            getModelToken(DelegationProviderModel),
+          )
+          prDelegationTypeModel = app.get<
+            typeof PersonalRepresentativeDelegationTypeModel
+          >(getModelToken(PersonalRepresentativeDelegationTypeModel))
 
           const prType = await prTypeModel.create({
             code: 'prTypeCode',
@@ -764,13 +779,32 @@ describe('ActorDelegationsController', () => {
             externalUserId: '1',
           })
 
+          const dp = await delegationProviderModel.create({
+            id: 'talsmannagrunnur',
+            name: 'Talsmannagrunnur',
+            description: 'Talsmannagrunnur',
+          })
+
+          const dt = await delegationTypeModel.create({
+            id: 'PersonalRepresentative:prRightType',
+            providerId: dp.id,
+            name: `Personal Representative: prRightType`,
+            description: `Personal representative delegation type for right type prRightType`,
+          })
+
           const prRightType = await prRightTypeModel.create({
             code: 'prRightType',
             description: 'prRightTypeDescription',
           })
 
-          await prRightsModel.create({
+          const prr = await prRightsModel.create({
             rightTypeCode: prRightType.code,
+            personalRepresentativeId: pr.id,
+          })
+
+          await prDelegationTypeModel.create({
+            id: prr.id,
+            delegationTypeId: dt.id,
             personalRepresentativeId: pr.id,
           })
         })
