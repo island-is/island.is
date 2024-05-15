@@ -8,7 +8,12 @@ export type HasQualityPhotoData = {
 
 export type ConditionFn = (answer: FormValue) => boolean
 
+export type DrivingLicenseCategory = {
+  nr: string
+}
+
 export type DrivingLicense = {
   currentLicense: string | null
   remarks?: string[]
+  categories: DrivingLicenseCategory[]
 }

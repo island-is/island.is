@@ -1,5 +1,5 @@
 import { ApplicationEligibility, RequirementKey } from '../../types/schema'
-import { DrivingLicenseApplicationFor, B_FULL } from '../../shared/constants'
+import { DrivingLicenseApplicationFor, B_FULL } from '../../lib/constants'
 
 export const fakeEligibility = (
   applicationFor: DrivingLicenseApplicationFor,

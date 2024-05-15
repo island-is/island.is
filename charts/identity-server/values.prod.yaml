@@ -302,6 +302,7 @@ services-auth-delegation-api:
   grantNamespaces:
     - 'nginx-ingress-internal'
     - 'islandis'
+    - 'service-portal'
   grantNamespacesEnabled: true
   healthCheck:
     liveness:
