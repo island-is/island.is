@@ -143,4 +143,11 @@ export class Defendant extends Model {
   })
   @ApiProperty()
   serviceRequirement?: ServiceRequirement
+
+  @Column({
+    type: DataType.BOOLEAN,
+    allowNull: true,
+  })
+  @ApiProperty()
+  hasViewedVerdict?: boolean
 }

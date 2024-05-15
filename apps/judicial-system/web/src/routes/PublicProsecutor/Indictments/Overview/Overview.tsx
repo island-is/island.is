@@ -11,6 +11,7 @@ import { useRouter } from 'next/router'
 import { Box, Option, Select, Text } from '@island.is/island-ui/core'
 import * as constants from '@island.is/judicial-system/consts'
 import { formatDate } from '@island.is/judicial-system/formatters'
+import { isPublicProsecutorUser } from '@island.is/judicial-system/types'
 import { core, titles } from '@island.is/judicial-system-web/messages'
 import {
   BlueBox,
@@ -36,25 +37,17 @@ import { strings } from './Overview.strings'
 
 export const Overview = () => {
   const router = useRouter()
-  const { workingCase, isLoadingWorkingCase, caseNotFound } =
-    useContext(FormContext)
   const { formatMessage: fm } = useIntl()
   const { user } = useContext(UserContext)
   const { updateCase } = useCase()
+  const { workingCase, isLoadingWorkingCase, caseNotFound } =
+    useContext(FormContext)
+
   const [selectedIndictmentReviewer, setSelectedIndictmentReviewer] =
     useState<Option<string> | null>()
   const [modalVisible, setModalVisible] = useState<boolean>(false)
-
-  useEffect(() => {
-    setSelectedIndictmentReviewer(
-      workingCase.indictmentReviewer?.id
-        ? {
-            label: workingCase.indictmentReviewer?.name ?? '',
-            value: workingCase.indictmentReviewer?.id,
-          }
-        : null,
-    )
-  }, [workingCase.id, workingCase.indictmentReviewer])
+  const lawsBroken = useIndictmentsLawsBroken(workingCase)
+  const displayReviewerChoices = workingCase.indictmentReviewer === null
 
   const assignReviewer = async () => {
     if (!selectedIndictmentReviewer) {
@@ -69,8 +62,6 @@ export const Overview = () => {
 
     setModalVisible(true)
   }
-
-  const lawsBroken = useIndictmentsLawsBroken(workingCase)
 
   const handleNavigationTo = useCallback(
     (destination: string) => router.push(`${destination}/${workingCase.id}`),
@@ -117,7 +108,15 @@ export const Overview = () => {
         <PageTitle>{fm(strings.title)}</PageTitle>
         <CourtCaseInfo workingCase={workingCase} />
         <Box component="section" marginBottom={5}>
-          <InfoCardClosedIndictment />
+          <InfoCardClosedIndictment
+            defendantActionButton={{
+              text: fm(strings.displayVerdict),
+              onClick: () => {
+                console.log('test')
+              },
+              icon: 'mailOpen',
+            }}
+          />
         </Box>
         {lawsBroken.size > 0 && (
           <Box marginBottom={5}>
@@ -129,47 +128,51 @@ export const Overview = () => {
             <IndictmentCaseFilesList workingCase={workingCase} />
           </Box>
         )}
-        <Box marginBottom={5}>
-          <SectionHeading
-            title={fm(strings.reviewerTitle)}
-            description={
-              <Text variant="eyebrow">
-                {fm(strings.reviewerSubtitle, {
-                  indictmentAppealDeadline: formatDate(
-                    workingCase.indictmentAppealDeadline,
-                    'P',
-                  ),
-                })}
-              </Text>
-            }
-          />
-          <BlueBox>
-            <Select
-              name="reviewer"
-              label={fm(strings.reviewerLabel)}
-              placeholder={fm(strings.reviewerPlaceholder)}
-              value={selectedIndictmentReviewer}
-              options={publicProsecutors}
-              onChange={(value) => {
-                setSelectedIndictmentReviewer(value as Option<string>)
-              }}
-              isDisabled={loading}
-              required
+        {displayReviewerChoices && (
+          <Box marginBottom={5}>
+            <SectionHeading
+              title={fm(strings.reviewerTitle)}
+              description={
+                <Text variant="eyebrow">
+                  {fm(strings.reviewerSubtitle, {
+                    indictmentAppealDeadline: formatDate(
+                      workingCase.indictmentAppealDeadline,
+                      'P',
+                    ),
+                  })}
+                </Text>
+              }
             />
-          </BlueBox>
-        </Box>
+            <BlueBox>
+              <Select
+                name="reviewer"
+                label={fm(strings.reviewerLabel)}
+                placeholder={fm(strings.reviewerPlaceholder)}
+                value={selectedIndictmentReviewer}
+                options={publicProsecutors}
+                onChange={(value) => {
+                  setSelectedIndictmentReviewer(value as Option<string>)
+                }}
+                isDisabled={loading}
+                required
+              />
+            </BlueBox>
+          </Box>
+        )}
       </FormContentContainer>
 
-      <FormContentContainer isFooter>
-        <FormFooter
-          nextButtonIcon="arrowForward"
-          previousUrl={`${constants.CASES_ROUTE}`}
-          nextIsLoading={isLoadingWorkingCase}
-          nextIsDisabled={!selectedIndictmentReviewer || isLoadingWorkingCase}
-          onNextButtonClick={assignReviewer}
-          nextButtonText={fm(core.continue)}
-        />
-      </FormContentContainer>
+      {displayReviewerChoices && (
+        <FormContentContainer isFooter>
+          <FormFooter
+            nextButtonIcon="arrowForward"
+            previousUrl={`${constants.CASES_ROUTE}`}
+            nextIsLoading={isLoadingWorkingCase}
+            nextIsDisabled={!selectedIndictmentReviewer || isLoadingWorkingCase}
+            onNextButtonClick={assignReviewer}
+            nextButtonText={fm(core.continue)}
+          />
+        </FormContentContainer>
+      )}
 
       {modalVisible && (
         <Modal

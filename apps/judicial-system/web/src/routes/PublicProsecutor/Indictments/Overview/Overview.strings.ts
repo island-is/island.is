@@ -38,4 +38,10 @@ export const strings = defineMessages({
       'Máli {caseNumber} hefur verið úthlutað til yfirlestrar á {reviewer}.',
     description: 'Notaður sem texti í tilkynningaglugga um yfirlesara.',
   },
+
+  displayVerdict: {
+    id: 'judicial.system.core:public_prosecutor.indictments.overview.display_verdict',
+    defaultMessage: 'Birta dóm',
+    description: 'Notaður sem texti á takka til að birta dóm.',
+  },
 })
