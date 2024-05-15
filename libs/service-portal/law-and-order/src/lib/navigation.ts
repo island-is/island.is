@@ -16,6 +16,13 @@ export const lawAndOrderNavigation: PortalNavigationItem = {
     {
       name: m.courtCases,
       path: LawAndOrderPaths.CourtCases,
+      children: [
+        {
+          name: m.subpeona,
+          path: LawAndOrderPaths.SubpeonaDetail,
+          navHide: true,
+        },
+      ],
     },
     {
       name: m.courtCases,

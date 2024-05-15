@@ -41,6 +41,10 @@ export const messages = defineMessages({
     id: 'sp.law-and-order:see-subpoena',
     defaultMessage: 'Sjá fyrirkall',
   },
+  subpoenaNotFound: {
+    id: 'sp.law-and-order:subpoena-not-found',
+    defaultMessage: 'Fyrirkall fannst ekki',
+  },
   process: {
     id: 'sp.law-and-order:process',
     defaultMessage: 'Ferill',
@@ -96,5 +100,104 @@ export const messages = defineMessages({
   type: {
     id: 'sp.law-and-order:type',
     defaultMessage: 'Tegund',
+  },
+  information: {
+    id: 'sp.law-and-order:information',
+    defaultMessage: 'Upplýsingar',
+  },
+  caseNumberShort: {
+    id: 'sp.law-and-order:case-nr-short',
+    defaultMessage: 'Mál nr.',
+  },
+  accuser: {
+    id: 'sp.law-and-order:accuser',
+    defaultMessage: 'Ákærandi',
+  },
+  accused: {
+    id: 'sp.law-and-order:accused',
+    defaultMessage: 'Ákærði',
+  },
+  dateOfHearing: {
+    id: 'sp.law-and-order:date-of-hearing',
+    defaultMessage: 'Verður tekið fyrir á dómþingi',
+  },
+  place: {
+    id: 'sp.law-and-order:place',
+    defaultMessage: 'Staður',
+  },
+  courtType: {
+    id: 'sp.law-and-order:court-type',
+    defaultMessage: 'Dómsathöfn',
+  },
+  chooseDefenderTitle: {
+    id: 'sp.law-and-order:choose-defender-title',
+    defaultMessage: 'Val á verjanda',
+  },
+  defenderList: {
+    id: 'sp.law-and-order:defender-list',
+    defaultMessage: 'Listi af verjendum',
+  },
+  chooseDefender: {
+    id: 'sp.law-and-order:choose-defender',
+    defaultMessage: 'Veldu verjanda',
+  },
+  office: {
+    id: 'sp.law-and-order:office',
+    defaultMessage: 'Embætti',
+  },
+  date: {
+    id: 'sp.law-and-order:date',
+    defaultMessage: 'Dagsetning',
+  },
+  openSubpeona: {
+    id: 'sp.law-and-order:open-subpeona',
+    defaultMessage: 'Opna erindi',
+  },
+  confirm: {
+    id: 'sp.law-and-order:confirm',
+    defaultMessage: 'Staðfesta',
+  },
+  cancel: {
+    id: 'sp.law-and-order:cancel',
+    defaultMessage: 'Hætta við',
+  },
+  registrationCompleted: {
+    id: 'sp.law-and-order:registration-completed',
+    defaultMessage: 'Skráning tókst',
+  },
+  firstChoiceNoDefender: {
+    id: 'sp.law-and-order:no-defender',
+    defaultMessage: 'Ég óska ekki eftir verjanda.',
+  },
+  secondChoiceChoosingLawyer: {
+    id: 'sp.law-and-order:choosing-lawyer',
+    defaultMessage:
+      'Ég óska þess að valinn lögmaður verði skipaður verjandi minn.',
+  },
+  thirdChoiceDelayChoice: {
+    id: 'sp.law-and-order:delay-choice',
+    defaultMessage:
+      'Ég óska eftir fresti fram að þingfestingu til þess að tilnefna verjanda.',
+  },
+  fourthChoiceChooseForMe: {
+    id: 'sp.law-and-order:choose-for-me',
+    defaultMessage: 'Ég fel dómara málsins að tilnefna og skipa mér verjanda.',
+  },
+  change: {
+    id: 'sp.law-and-order:change',
+    defaultMessage: 'Breyta',
+  },
+  acknowledgeTitle: {
+    id: 'sp.law-and-order:acknowledge-title',
+    defaultMessage: 'Staðfesting á móttöku',
+  },
+  acknowledgeText: {
+    id: 'sp.law-and-order:acknowledge-text',
+    defaultMessage:
+      'Þú ert að opna erindi frá Lögreglustjóranum á höfuðborgarsvæðinu. Veljir þú að opna erindið fá dómstólar senda staðfestingu á möttöku. Veljir þú að opna ekki erindið munu dómstólar leita annarra leiða til að afhenda þér það, t.d. með aðstoð lögreglu.',
+  },
+  acknowledgementCompleted: {
+    id: 'sp.law-and-order:acknowledgement-completed',
+    defaultMessage: 'Staðfesting á móttöku tókst',
   },
 })

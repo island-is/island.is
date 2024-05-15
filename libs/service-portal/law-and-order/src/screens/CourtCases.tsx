@@ -1,11 +1,9 @@
-import { Box, Text } from '@island.is/island-ui/core'
+import { Box } from '@island.is/island-ui/core'
 import {
   ActionCard,
   DOMSMALARADUNEYTID_SLUG,
   IntroHeader,
   m,
-  THJODSKRA_SLUG,
-  UserInfoLine,
 } from '@island.is/service-portal/core'
 import { messages } from '../lib/messages'
 import { useLocale, useNamespaces } from '@island.is/localization'
@@ -21,7 +19,6 @@ const CourtCases = () => {
       <IntroHeader
         title={messages.courtCases}
         intro={messages.courtCasesDescription}
-        //TODO: replace service provider!
         serviceProviderSlug={DOMSMALARADUNEYTID_SLUG}
         serviceProviderTooltip={formatMessage(m.domsmalaraduneytidTooltip)}
       />
@@ -30,11 +27,11 @@ const CourtCases = () => {
           <ActionCard
             translateLabel="no"
             heading={
-              x.caseNumber ??
+              x.data.caseNumber ??
               formatMessage(messages.courtCaseNumberNotRegistered)
             }
-            text={x.type}
-            tag={{ label: x.status, variant: 'blue', outlined: false }}
+            text={x.data.type}
+            tag={{ label: x.data.status, variant: 'blue', outlined: false }}
             cta={{
               label: formatMessage(messages.seeInfo),
               variant: 'text',

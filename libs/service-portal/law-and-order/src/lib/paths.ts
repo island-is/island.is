@@ -3,5 +3,6 @@ export enum LawAndOrderPaths {
   Overview = '/log-og-reglur/yfirlit',
   CourtCases = '/log-og-reglur/domsmal',
   CourtCaseDetail = '/log-og-reglur/domsmal/:id',
-  SubpeonaPopUp = '/log-og-reglur/fyrirkall',
+  SubpeonaDetail = '/log-og-reglur/domsmal/:id/fyrirkall',
+  SubpeonaPopUp = '/log-og-reglur/domsmal/:id/fyrirkall/pop-up',
 }

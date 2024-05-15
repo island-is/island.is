@@ -1,3 +1,6 @@
+/* eslint-disable local-rules/disallow-kennitalas */
+import { LawAndOrderPaths } from '../lib/paths'
+
 export type Process = {
   state: State
 }
@@ -9,202 +12,345 @@ export type State = {
   icon?: 'attention' | 'checkmark' | 'error'
 }
 
+export type Items = {
+  label: string
+  value?: string
+  link?: string
+  action?: {
+    label: string
+    url: string
+    type?: string
+  }
+}
+
+export type Actions = {
+  type: 'file' | 'url' | 'inbox'
+  title: string
+  data?: string
+}
+
+export type Lawyers = {
+  name: string
+  nationalId: string
+  practice: string
+}
+
 type Cases = {
   texts?: {
     intro?: string
     footnote?: string
   }
-  actions?: {
-    type: 'file' | 'url' | 'inbox'
-    title: string
-    data?: string // þarf þetta að vera e-ð annað?
-  }[]
+  actions?: Actions[]
   data: {
     id: number
-    process: Process[]
+    caseNumber?: string
+    acknowledged?: boolean
+    type: string
+    status: string
+    groups: {
+      label: string
+      items: Items[]
+    }[]
   }
-  type: string // todo: decide if from enum or text from service
-  status: string // todo: decide if from enum or text from service
-  caseNumber?: string // todo: can this be null?
-  description?: string
-  detail: {
-    LOKECaseNumber: string
-    court: string
-    prosecutor: string
-    judge: string
-    requestedDateTime: Date
-    prosecution: string
-    arrestDateTime: Date
-    hearingDateTime: Date
-    fineprint?: string
+}
+
+export type Subpeona = {
+  texts?: {
+    intro?: string
+    confirmation?: string
+    description?: string
+    claim?: string
   }
-  defendant: {
-    name: string
-    nationalId: number
-    address: string // todo: does this need to be seperate or postcode, city, address in one line?
-    email: string
-    phone: number
-    subpoenaDateTime: Date
-  }
-  defenseAttorney: {
+  actions?: Actions[]
+  data: {
     id: number
-    name: string
-    email: string
-    phone: number
-  }[]
+    acknowledged?: boolean
+    chosenDefender?: string // ef null = birta lista ef ekki, birta breyta
+    groups: {
+      label: string
+      items: Items[]
+    }[]
+    displayClaim: boolean
+  }
 }
 
 export const listCases = () => {
   const cases: Cases[] = [
     {
+      actions: [
+        {
+          title: 'Hlaða niður ákæru',
+          type: 'file',
+          data: '123',
+        },
+      ],
       data: {
         id: 123,
-        process: [
+        caseNumber: 'Málsnúmer S-9999/2022',
+        type: 'Ákæra',
+        status: 'Á dagskrá',
+        acknowledged: undefined,
+        groups: [
           {
-            state: {
-              code: '1',
-              title: 'Sent',
-              date: new Date(),
-            },
+            label: 'Varnaraðili',
+            items: [
+              {
+                label: 'Nafn',
+                value: 'Lísa Jónsdóttir',
+              },
+              {
+                label: 'Kennitala',
+                value: '010203-6789',
+              },
+              {
+                label: 'Lögheimili',
+                value: 'Hagamelur 92, 107 Reykjavík',
+              },
+              {
+                label: 'Fyrirkall sent',
+                value: '6.maí 2022',
+                action: {
+                  label: 'Sjá fyrirkall',
+                  url: LawAndOrderPaths.SubpeonaDetail.replace(':id', '123'),
+                  type: 'popup',
+                },
+              },
+            ],
           },
           {
-            state: {
-              code: '2',
-              title: 'Á dagskrá',
-              date: new Date(),
-            },
+            label: 'Verjandi',
+            items: [
+              {
+                label: 'Nafn',
+                value: 'Andri Valur Ívarsson',
+              },
+              {
+                label: 'Netfang',
+                value: 'andri.ivar@fyrirtaeki.is',
+                link: 'mailto:',
+              },
+              {
+                label: 'Símanúmer',
+                value: '555 4789',
+                link: 'tel:',
+              },
+            ],
           },
           {
-            state: {
-              code: '3',
-              title: 'Samþykkt',
-              icon: 'checkmark',
-            },
-          },
-          {
-            state: {
-              code: '4',
-              title: 'Virkt',
-            },
-          },
-          {
-            state: {
-              code: '5',
-              title: 'Lokið',
-            },
+            label: 'Málsupplýsingar',
+            items: [
+              {
+                label: 'Tegund',
+                value: 'Ákæra',
+              },
+              {
+                label: 'Málsnúmer héraðsdóms',
+                value: 'S-999/2022',
+              },
+              {
+                label: 'Dómstóll',
+                value: 'Héraðsdómur Reykjavíkur',
+              },
+              {
+                label: 'Dómari',
+                value: 'Judge Dredd',
+              },
+              {
+                label: 'Embætti',
+                value: 'Lögreglustjórinn á höfuðborgarsvæðinu',
+              },
+              {
+                label: 'Ákærandi',
+                value: 'Katrín Ólöf Einarsdóttir',
+              },
+            ],
           },
         ],
       },
-      type: 'Ákæra',
-      status: 'Á dagskrá',
-      caseNumber: 'Málsnúmer S-9999/2022',
-      description: '???',
-      detail: {
-        LOKECaseNumber: '123-2022-123',
-        court: 'Héraðsdómur Suðurlands',
-        judge: 'Ragnar Tómas Jóhannesarson',
-        prosecutor: 'Anna Sigfríður Hannesardóttir',
-        prosecution: 'Lögreglustjórinn á Suðurlandi',
-        arrestDateTime: new Date(2018, 2, 23, 3, 23, 22, 22),
-        hearingDateTime: new Date(2022, 2, 30, 1, 23, 22, 22),
-        requestedDateTime: new Date(2020, 2, 30, 1, 23, 22, 22),
-      },
-      defendant: {
-        nationalId: 1212902230,
-        name: 'Arnar Jónsson',
-        email: 'nonninuttari@nutnut.is',
-        address: 'Lagarfell 23, 700 Egilsstaðir',
-        phone: 7776655,
-        subpoenaDateTime: new Date(2019, 2, 23, 3, 23, 22, 22),
-      },
-      defenseAttorney: [
-        {
-          id: 123958437234,
-          name: 'Halldór Halldórsson',
-          email: 'dorijudge@judgari.is',
-          phone: 8769988,
-        },
-      ],
     },
     {
-      texts: {
-        footnote:
-          'Lorem ipsum dolor sit amet consectetur. Integer feugiat iaculis ac odio blandit proin feugiat. Vitae eu mattis in elit sapien netus. A ut risus elementum urna egestas laoreet. Gravida velit platea metus ultrices purus viverra.',
-      },
+      actions: [
+        {
+          title: 'Hlaða niður ákæru',
+          type: 'file',
+          data: '123',
+        },
+      ],
       data: {
-        id: 124,
-        process: [
+        id: 1234,
+        caseNumber: 'Málsnúmer S-3322/2022',
+        type: 'Ákæra',
+        status: 'Á dagskrá',
+        acknowledged: true,
+        groups: [
           {
-            state: {
-              code: '1',
-              title: 'Sent',
-              date: new Date(),
-            },
+            label: 'Varnaraðili',
+            items: [
+              {
+                label: 'Nafn',
+                value: 'Lísa Jónsdóttir',
+              },
+              {
+                label: 'Kennitala',
+                value: '010203-6789',
+              },
+              {
+                label: 'Lögheimili',
+                value: 'Hagamelur 92, 107 Reykjavík',
+              },
+              {
+                label: 'Fyrirkall sent',
+                value: '6.maí 2022',
+                action: {
+                  label: 'Sjá fyrirkall',
+                  url: LawAndOrderPaths.SubpeonaDetail.replace(':id', '123'),
+                  type: 'popup',
+                },
+              },
+            ],
           },
           {
-            state: {
-              code: '2',
-              title: 'Á dagskrá',
-              date: new Date(),
-            },
+            label: 'Verjandi',
+            items: [
+              {
+                label: 'Nafn',
+                value: 'Andri Valur Ívarsson',
+              },
+              {
+                label: 'Netfang',
+                value: 'andri.ivar@fyrirtaeki.is',
+                link: 'mailto:',
+              },
+              {
+                label: 'Símanúmer',
+                value: '555 4789',
+                link: 'tel:',
+              },
+            ],
           },
           {
-            state: {
-              code: '3',
-              title: 'Samþykkt',
-              icon: 'checkmark',
-              date: new Date(),
-            },
-          },
-          {
-            state: {
-              code: '4',
-              title: 'Virkt',
-            },
-          },
-          {
-            state: {
-              code: '5',
-              title: 'Lokið',
-            },
+            label: 'Málsupplýsingar',
+            items: [
+              {
+                label: 'Tegund',
+                value: 'Ákæra',
+              },
+              {
+                label: 'Málsnúmer héraðsdóms',
+                value: 'S-999/2022',
+              },
+              {
+                label: 'Dómstóll',
+                value: 'Héraðsdómur Reykjavíkur',
+              },
+              {
+                label: 'Dómari',
+                value: 'Judge Dredd',
+              },
+              {
+                label: 'Embætti',
+                value: 'Lögreglustjórinn á höfuðborgarsvæðinu',
+              },
+              {
+                label: 'Ákærandi',
+                value: 'Katrín Ólöf Einarsdóttir',
+              },
+            ],
           },
         ],
       },
-      type: 'Ákæra',
-      status: 'Á dagskrá',
-      description: '???',
-      detail: {
-        LOKECaseNumber: '123-2022-123',
-        court: 'Héraðsdómur Suðurlands',
-        judge: 'Ragnar Tómas Jóhannesarson',
-        prosecutor: 'Anna Sigfríður Hannesardóttir',
-        prosecution: 'Lögreglustjórinn á Suðurlandi',
-        arrestDateTime: new Date(2018, 2, 23, 3, 23, 22, 22),
-        hearingDateTime: new Date(2022, 2, 30, 1, 23, 22, 22),
-        requestedDateTime: new Date(2020, 2, 30, 1, 23, 22, 22),
-      },
-      defendant: {
-        nationalId: 1212902230,
-        name: 'Arnar Jónsson',
-        email: 'nonninuttari@nutnut.is',
-        address: 'Lagarfell 23, 700 Egilsstaðir',
-        phone: 7776655,
-        subpoenaDateTime: new Date(2019, 2, 23, 3, 23, 22, 22),
-      },
-      defenseAttorney: [
+    },
+    {
+      actions: [
         {
-          id: 123958437234,
-          name: 'Halldór Halldórsson',
-          email: 'dorijudge@judgari.is',
-          phone: 8769988,
-        },
-        {
-          id: 123958412334,
-          name: 'Halldóra Halla Halldórsdóttir',
-          email: 'dorajudge@judgari.is',
-          phone: 8769338,
+          title: 'Hlaða niður ákæru',
+          type: 'file',
+          data: '123',
         },
       ],
+      data: {
+        id: 12345,
+        caseNumber: 'Málsnúmer S-3355/2022',
+        type: 'Ákæra',
+        status: 'Á dagskrá',
+        acknowledged: false,
+        groups: [
+          {
+            label: 'Varnaraðili',
+            items: [
+              {
+                label: 'Nafn',
+                value: 'Lísa Jónsdóttir',
+              },
+              {
+                label: 'Kennitala',
+                value: '010203-6789',
+              },
+              {
+                label: 'Lögheimili',
+                value: 'Hagamelur 92, 107 Reykjavík',
+              },
+              {
+                label: 'Fyrirkall sent',
+                value: '6.maí 2022',
+                action: {
+                  label: 'Sjá fyrirkall',
+                  url: LawAndOrderPaths.SubpeonaDetail.replace(':id', '123'),
+                  type: 'popup',
+                },
+              },
+            ],
+          },
+          {
+            label: 'Verjandi',
+            items: [
+              {
+                label: 'Nafn',
+                value: 'Andri Valur Ívarsson',
+              },
+              {
+                label: 'Netfang',
+                value: 'andri.ivar@fyrirtaeki.is',
+                link: 'mailto:',
+              },
+              {
+                label: 'Símanúmer',
+                value: '555 4789',
+                link: 'tel:',
+              },
+            ],
+          },
+          {
+            label: 'Málsupplýsingar',
+            items: [
+              {
+                label: 'Tegund',
+                value: 'Ákæra',
+              },
+              {
+                label: 'Málsnúmer héraðsdóms',
+                value: 'S-999/2022',
+              },
+              {
+                label: 'Dómstóll',
+                value: 'Héraðsdómur Reykjavíkur',
+              },
+              {
+                label: 'Dómari',
+                value: 'Judge Dredd',
+              },
+              {
+                label: 'Embætti',
+                value: 'Lögreglustjórinn á höfuðborgarsvæðinu',
+              },
+              {
+                label: 'Ákærandi',
+                value: 'Katrín Ólöf Einarsdóttir',
+              },
+            ],
+          },
+        ],
+      },
     },
   ]
 
@@ -220,4 +366,217 @@ export const getCase = (id: number) => {
     courtCaseDetail: detailedCase,
   }
   return { data: courtCaseDetail, loading: false, error: false }
+}
+
+const lawyers: Lawyers[] = [
+  {
+    name: 'Halldór Halldórsson',
+    nationalId: '1010203090',
+    practice: 'Paxma',
+  },
+  {
+    name: 'Agnes Guðmundsdóttir',
+    nationalId: '1004303090',
+    practice: 'Lögfræðingar Reykjavíkur',
+  },
+  {
+    name: 'Jóhann Atli Jóhannesson',
+    nationalId: '1012203090',
+    practice: 'Logos',
+  },
+]
+
+export const getLawyers = () => {
+  const lwrs = { items: lawyers }
+  return {
+    data: lwrs,
+    loading: false,
+    error: false,
+  }
+}
+export const getSubpeona = (id: number) => {
+  const subpeonas: Subpeona[] = [
+    {
+      texts: {
+        intro: 'Héraðsdómur Reykjavíkur, Dómhúsið við Lækjartorg, Reykjavík.',
+        confirmation: 'Staðfesting á móttöku hefur verið send á dómstóla',
+        description:
+          'Ákærði er kvaddur til að koma fyrir dóm, hlýða á ákæru, halda uppi vörnum og sæta dómi. Sæki ákærði ekki þing má hann búast við því að fjarvist hans verði metin til jafns við það að hann viðurkenni að hafa framið brot það sem hann er ákærður fyrir og dómur verði lagður á málið að honum fjarstöddum. Birtingarfrestur er þrír sólarhringar.',
+        claim:
+          'Ég hef jafnframt veitt viðtöku greinargerð/-um vegna bótakröfu/-krafna í málinu.',
+      },
+      actions: [
+        {
+          type: 'file',
+          title: 'Hala niður PDF',
+          data: 'þetta er pdf',
+        },
+      ],
+      data: {
+        id: 123,
+        acknowledged: undefined,
+        displayClaim: false,
+
+        groups: [
+          {
+            label: 'Mál nr. S-2023/2022',
+            items: [
+              {
+                label: 'Dagsetning',
+                value: '6. maí 2022',
+              },
+              {
+                label: 'Embætti',
+                value: 'Lögreglustjórinn á höfuðborgarsvæðinu',
+              },
+              {
+                label: 'Ákærandi',
+                value: 'Katrín Ólöf Einarsdóttir',
+              },
+              {
+                label: 'Ákærði',
+                value: 'Jón Jónsson',
+              },
+              {
+                label: 'Verður tekið fyrir á dómþingi',
+                value: '1.6.2022 kl. 14:15',
+              },
+              {
+                label: 'Staður',
+                value: 'Héraðsdómur Reykjavíkur, Dómsalur 202',
+              },
+              {
+                label: 'Dómsathöfn',
+                value: 'Þingfesting',
+              },
+            ],
+          },
+        ],
+      },
+    },
+    {
+      texts: {
+        intro: 'Héraðsdómur Reykjavíkur, Dómhúsið við Lækjartorg, Reykjavík.',
+        confirmation: 'Staðfesting á móttöku hefur verið send á dómstóla',
+        description:
+          'Ákærði er kvaddur til að koma fyrir dóm, hlýða á ákæru, halda uppi vörnum og sæta dómi. Sæki ákærði ekki þing má hann búast við því að fjarvist hans verði metin til jafns við það að hann viðurkenni að hafa framið brot það sem hann er ákærður fyrir og dómur verði lagður á málið að honum fjarstöddum. Birtingarfrestur er þrír sólarhringar.',
+        claim:
+          'Ég hef jafnframt veitt viðtöku greinargerð/-um vegna bótakröfu/-krafna í málinu.',
+      },
+      actions: [
+        {
+          type: 'file',
+          title: 'Hala niður PDF',
+          data: 'þetta er pdf',
+        },
+      ],
+      data: {
+        id: 1234,
+        acknowledged: true,
+        displayClaim: false,
+
+        groups: [
+          {
+            label: 'Mál nr. S-2023/2022',
+            items: [
+              {
+                label: 'Dagsetning',
+                value: '6. maí 2022',
+              },
+              {
+                label: 'Embætti',
+                value: 'Lögreglustjórinn á höfuðborgarsvæðinu',
+              },
+              {
+                label: 'Ákærandi',
+                value: 'Katrín Ólöf Einarsdóttir',
+              },
+              {
+                label: 'Ákærði',
+                value: 'Jón Jónsson',
+              },
+              {
+                label: 'Verður tekið fyrir á dómþingi',
+                value: '1.6.2022 kl. 14:15',
+              },
+              {
+                label: 'Staður',
+                value: 'Héraðsdómur Reykjavíkur, Dómsalur 202',
+              },
+              {
+                label: 'Dómsathöfn',
+                value: 'Þingfesting',
+              },
+            ],
+          },
+        ],
+      },
+    },
+    {
+      texts: {
+        intro: 'Héraðsdómur Reykjavíkur, Dómhúsið við Lækjartorg, Reykjavík.',
+        confirmation: 'Staðfesting á móttöku hefur verið send á dómstóla',
+        description:
+          'Ákærði er kvaddur til að koma fyrir dóm, hlýða á ákæru, halda uppi vörnum og sæta dómi. Sæki ákærði ekki þing má hann búast við því að fjarvist hans verði metin til jafns við það að hann viðurkenni að hafa framið brot það sem hann er ákærður fyrir og dómur verði lagður á málið að honum fjarstöddum. Birtingarfrestur er þrír sólarhringar.',
+        claim:
+          'Ég hef jafnframt veitt viðtöku greinargerð/-um vegna bótakröfu/-krafna í málinu.',
+      },
+      actions: [
+        {
+          type: 'file',
+          title: 'Hala niður PDF',
+          data: 'þetta er pdf',
+        },
+      ],
+      data: {
+        id: 12345,
+        acknowledged: false,
+        displayClaim: false,
+
+        groups: [
+          {
+            label: 'Mál nr. S-2023/2022',
+            items: [
+              {
+                label: 'Dagsetning',
+                value: '6. maí 2022',
+              },
+              {
+                label: 'Embætti',
+                value: 'Lögreglustjórinn á höfuðborgarsvæðinu',
+              },
+              {
+                label: 'Ákærandi',
+                value: 'Katrín Ólöf Einarsdóttir',
+              },
+              {
+                label: 'Ákærði',
+                value: 'Jón Jónsson',
+              },
+              {
+                label: 'Verður tekið fyrir á dómþingi',
+                value: '1.6.2022 kl. 14:15',
+              },
+              {
+                label: 'Staður',
+                value: 'Héraðsdómur Reykjavíkur, Dómsalur 202',
+              },
+              {
+                label: 'Dómsathöfn',
+                value: 'Þingfesting',
+              },
+            ],
+          },
+        ],
+      },
+    },
+  ]
+
+  const subpeona = subpeonas.find((x) => x.data.id === id) ?? null
+
+  const subpeonaDetail = {
+    subpeonaDetail: subpeona,
+  }
+
+  return { data: subpeonaDetail, loading: false, error: false }
 }
