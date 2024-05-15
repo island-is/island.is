@@ -1,4 +1,6 @@
-mutation formSystemGetTranslation($input: FormSystemGetTranslationInput!) {
+mutation formSystemGetTranslation(
+  $input: FormSystemGetTranslationInput!
+) {
   formSystemGetTranslation(input: $input) {
     translations
   }
@@ -10,3 +12,4 @@ query formSystemGetCountries {
     list
   }
 }
+
