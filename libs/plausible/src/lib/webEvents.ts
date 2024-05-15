@@ -43,7 +43,7 @@ export const webMenuButtonClicked = () => {
 export const haskolanamFilterClicked = (category: string, value: string) => {
   const event: BaseEvent = {
     eventName: `haskolanam.filter`,
-    featureName: 'Haskolanam',
+    featureName: '',
     params: {
       [category]: value,
     },
@@ -68,9 +68,9 @@ export const haskolanamApplyButtonClicked = (
 ) => {
   const event: BaseEvent = {
     eventName: `haskolanam.apply.button`,
-    featureName: 'Haskolanam',
+    featureName: '',
     params: {
-      haskolanamApplyButton: `${university}-${program}`,
+      query: `${university}-${program}`,
     },
   }
   plausibleCustomEvent(event)
@@ -79,9 +79,9 @@ export const haskolanamApplyButtonClicked = (
 export const haskolanamCardClicked = (university: string, program: string) => {
   const event: BaseEvent = {
     eventName: `haskolanam.card.clicked`,
-    featureName: 'Haskolanam',
+    featureName: '',
     params: {
-      haskolanamCardClick: `${university}-${program}`,
+      query: `${university}-${program}`,
     },
   }
   plausibleCustomEvent(event)
