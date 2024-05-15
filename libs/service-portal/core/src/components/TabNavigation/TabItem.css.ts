@@ -37,6 +37,9 @@ export const tabSelected = style({
   fontWeight: theme.typography.semiBold,
   color: theme.color.blue400,
   background: `linear-gradient(180deg, ${theme.color.transparent} 50%, ${theme.color.white} 50%)`,
+  ':hover': {
+    borderBottomColor: theme.color.white,
+  },
   ':after': {
     backgroundColor: theme.color.white,
     position: 'absolute',
@@ -56,6 +59,9 @@ export const firstTab = style({})
 export const lastTab = style({})
 
 export const tabNextToSelectedTab = style({
+  ':hover': {
+    borderBottomColor: theme.color.white,
+  },
   ':after': {
     position: 'absolute',
     content: '',
@@ -69,13 +75,12 @@ export const tabNextToSelectedTab = style({
     pointerEvents: 'none',
     zIndex: 3,
   },
-  ':hover': {
-    borderBottomColor: theme.color.blue400,
-    zIndex: 4,
-  },
 })
 
 export const tabPreviousToSelectedTab = style({
+  ':hover': {
+    borderBottomColor: theme.color.white,
+  },
   ':after': {
     position: 'absolute',
     content: '',
@@ -93,11 +98,6 @@ export const tabPreviousToSelectedTab = style({
 
 export const tabNotSelected = style({
   borderBottomColor: theme.color.blue200,
-  selectors: {
-    [`&.${tabPreviousToSelectedTab}, &.${tabNextToSelectedTab}`]: {
-      borderBottomColor: theme.color.white,
-    },
-  },
   ':hover': {
     borderBottomColor: theme.color.blue400,
   },
@@ -108,6 +108,29 @@ export const tabText = style({
 })
 
 export const tabElement = style({})
+export const borderElement = style({})
+
+globalStyle(`${tabNextToSelectedTab}:hover ${borderElement}:after`, {
+  position: 'absolute',
+  content: '',
+  height: '1px',
+  width: '100%',
+  bottom: -1,
+  left: 5,
+  background: theme.color.blue400,
+  zIndex: 5,
+})
+
+globalStyle(`${tabPreviousToSelectedTab}:hover ${borderElement}:after`, {
+  position: 'absolute',
+  content: '',
+  height: '1px',
+  width: '100%',
+  bottom: -1,
+  right: 5,
+  background: theme.color.blue400,
+  zIndex: 5,
+})
 
 globalStyle(`${tabSelected}:first-of-type span:before`, {
   backgroundColor: theme.color.blue200,
@@ -132,7 +155,7 @@ globalStyle(`${tabSelected}:last-of-type span:before`, {
 // Globals for styling the corners of the selected tab
 
 //top left if selected, block the background
-globalStyle(`${tabSelected}:first-of-type div:after`, {
+globalStyle(`${tabSelected}:first-of-type ${tabElement}:after`, {
   position: 'absolute',
   content: '',
   top: 0,
@@ -143,7 +166,7 @@ globalStyle(`${tabSelected}:first-of-type div:after`, {
 })
 
 //top right if selected, block the background
-globalStyle(`${tabSelected}:last-of-type div:before`, {
+globalStyle(`${tabSelected}:last-of-type ${tabElement}:before`, {
   position: 'absolute',
   content: '',
   top: 0,
@@ -178,27 +201,33 @@ globalStyle(`${tabNextToSelectedTab}:not(:first-of-type) span:before`, {
 })
 
 //right circle
-globalStyle(`${tabPreviousToSelectedTab}:not(:last-of-type) div:after`, {
-  position: 'absolute',
-  content: '',
-  bottom: 0,
-  right: 0,
-  width: '20px',
-  height: '20px',
-  borderRadius: '10px',
-  background: theme.color.blue100,
-  zIndex: 2,
-})
+globalStyle(
+  `${tabPreviousToSelectedTab}:not(:last-of-type) ${tabElement}:after`,
+  {
+    position: 'absolute',
+    content: '',
+    bottom: 0,
+    right: 0,
+    width: '20px',
+    height: '20px',
+    borderRadius: '10px',
+    background: theme.color.blue100,
+    zIndex: 2,
+  },
+)
 
 //left circle
-globalStyle(`${tabNextToSelectedTab}:not(:first-of-type) div:before`, {
-  position: 'absolute',
-  content: '',
-  bottom: 0,
-  left: 0,
-  width: '20px',
-  height: '20px',
-  borderRadius: '10px',
-  background: theme.color.blue100,
-  zIndex: 2,
-})
+globalStyle(
+  `${tabNextToSelectedTab}:not(:first-of-type) ${tabElement}:before`,
+  {
+    position: 'absolute',
+    content: '',
+    bottom: 0,
+    left: 0,
+    width: '20px',
+    height: '20px',
+    borderRadius: '10px',
+    background: theme.color.blue100,
+    zIndex: 2,
+  },
+)

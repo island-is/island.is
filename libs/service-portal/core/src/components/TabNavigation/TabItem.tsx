@@ -75,13 +75,15 @@ export const TabItem = forwardRef<HTMLElement, TabItemProps>(
         ref={ref}
         className={cn(styles.tab, {
           [styles.tabSelected]: active,
-          [styles.tabNotSelected]: !active,
+          [styles.tabNotSelected]:
+            !active && !isPrevTabToActive && !isNextTabToActive,
           [styles.tabPreviousToSelectedTab]: isPrevTabToActive,
           [styles.tabNextToSelectedTab]: isNextTabToActive,
           [styles.lastTab]: isLastTab,
           [styles.firstTab]: isFirstTab,
         })}
       >
+        <div className={styles.borderElement} />
         <div className={styles.tabElement} />
         <span className={cn({ [styles.tabText]: active })}>{name}</span>
       </FocusableBox>
