@@ -95,7 +95,7 @@ const SummaryForm = ({ application, goToScreen }: FAFieldBaseProps) => {
         address={formatAddress(externalData.nationalRegistry.data)}
       />
 
-      {answers?.childrenSchoolInfo && (
+      {answers?.childrenSchoolInfo && answers.childrenSchoolInfo.length > 0 && (
         <ChildrenInfo
           childrenSchoolInfo={answers?.childrenSchoolInfo}
           goToScreen={goToScreen}
