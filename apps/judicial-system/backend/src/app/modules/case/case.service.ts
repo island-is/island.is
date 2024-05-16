@@ -55,7 +55,7 @@ import { AwsS3Service } from '../aws-s3'
 import { CourtService } from '../court'
 import { Defendant, DefendantService } from '../defendant'
 import { CaseEvent, EventService } from '../event'
-import { EventLog } from '../event-log'
+import { EventLog, EventLogService } from '../event-log'
 import { CaseFile, FileService } from '../file'
 import { IndictmentCount } from '../indictment-count'
 import { Institution } from '../institution'
@@ -153,7 +153,6 @@ export interface UpdateCase
     | 'appealValidToDate'
     | 'isAppealCustodyIsolation'
     | 'appealIsolationToDate'
-    | 'indictmentDeniedExplanation'
     | 'indictmentReturnedExplanation'
     | 'indictmentRulingDecision'
     | 'indictmentReviewerId'
@@ -171,6 +170,7 @@ export interface UpdateCase
   courtDate?: UpdateDateLog | null
   postponedIndefinitelyExplanation?: string | null
   judgeId?: string | null
+  indictmentDeniedExplanation?: string | null
 }
 
 type DateLogKeys = keyof Pick<UpdateCase, 'arraignmentDate' | 'courtDate'>
@@ -364,6 +364,7 @@ export class CaseService {
     private readonly signingService: SigningService,
     private readonly intlService: IntlService,
     private readonly eventService: EventService,
+    private readonly eventLogService: EventLogService,
     private readonly messageService: MessageService,
     @Inject(LOGGER_PROVIDER) private readonly logger: Logger,
   ) {}
@@ -1343,6 +1344,29 @@ export class CaseService {
     }
   }
 
+  handleEventLogs(
+    theCase: Case,
+    update: UpdateCase,
+    user: TUser,
+    transaction: Transaction,
+  ) {
+    if (
+      isIndictmentCase(theCase.type) &&
+      update.state === CaseState.SUBMITTED &&
+      theCase.state === CaseState.WAITING_FOR_CONFIRMATION
+    ) {
+      return this.eventLogService.create(
+        {
+          eventType: EventType.INDICTMENT_CONFIRMED,
+          caseId: theCase.id,
+          nationalId: user.nationalId,
+          userRole: user.role,
+        },
+        transaction,
+      )
+    }
+  }
+
   async update(
     theCase: Case,
     update: UpdateCase,
@@ -1365,6 +1389,7 @@ export class CaseService {
 
         await this.handleDateUpdates(theCase, update, transaction)
         await this.handleCommentUpdates(theCase, update, transaction)
+        await this.handleEventLogs(theCase, update, user, transaction)
 
         if (Object.keys(update).length === 0) {
           return

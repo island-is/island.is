@@ -49,6 +49,7 @@ export class TransitionInterceptor implements NestInterceptor {
       theCase.state === CaseState.WAITING_FOR_CONFIRMATION &&
       dto.transition === CaseTransition.SUBMIT
     ) {
+      // TODO: move
       for (const indictment of theCase.caseFiles?.filter(
         (cf) => cf.category === CaseFileCategory.INDICTMENT && cf.key,
       ) ?? []) {
@@ -74,19 +75,6 @@ export class TransitionInterceptor implements NestInterceptor {
       }
     }
 
-    return next.handle().pipe(
-      map((data: Case) => {
-        if (isIndictmentCase(data.type) && data.state === CaseState.SUBMITTED) {
-          this.eventLogService.create({
-            eventType: EventType.INDICTMENT_CONFIRMED,
-            caseId: data.id,
-            nationalId: user.nationalId,
-            userRole: user.role,
-          })
-        }
-
-        return data
-      }),
-    )
+    return next.handle()
   }
 }
