@@ -23,13 +23,20 @@ export class UserProfile {
   @Field(() => Boolean)
   documentNotifications!: boolean
 
+  @Field(() => Boolean, { nullable: true })
+  needsNudge?: boolean
+
   @Field(() => String, { nullable: true })
   emailStatus?: string
 
   @Field(() => String, { nullable: true })
   mobileStatus?: string
 
-  @Field(() => Date, { nullable: true })
+  @Field(() => Date, {
+    nullable: true,
+    deprecationReason:
+      'needsNudge should be used to determine if profile needs nudge. v2 doesnt provide the modified value.',
+  })
   modified?: Date
 
   @Field(() => Boolean, { nullable: true })
