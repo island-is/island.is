@@ -12,7 +12,7 @@ export const UserNotificationClientConfig = defineConfig({
     return {
       basePath: env.required(
         'USER_NOTIFICATION_API_URL',
-        'http://localhost:8080',
+        'http://localhost:3333',
       ),
     }
   },
