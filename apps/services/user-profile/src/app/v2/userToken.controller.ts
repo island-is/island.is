@@ -1,5 +1,12 @@
 import { ApiSecurity, ApiTags } from '@nestjs/swagger'
-import { Controller, Get, UseGuards, Headers, Delete, Param } from '@nestjs/common'
+import {
+  Controller,
+  Get,
+  UseGuards,
+  Headers,
+  Delete,
+  Param,
+} from '@nestjs/common'
 
 import { IdsAuthGuard, Scopes, ScopesGuard } from '@island.is/auth-nest-tools'
 import { UserProfileScope } from '@island.is/auth/scopes'
@@ -57,6 +64,9 @@ export class UserTokenController {
     @Headers('X-Param-National-Id') nationalId: string,
     @Param('deviceToken') deviceToken: string,
   ): Promise<void> {
-    await this.userTokenService.deleteUserTokenByNationalId(nationalId,deviceToken)
+    await this.userTokenService.deleteUserTokenByNationalId(
+      nationalId,
+      deviceToken,
+    )
   }
 }

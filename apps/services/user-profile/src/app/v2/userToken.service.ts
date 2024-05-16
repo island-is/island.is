@@ -18,13 +18,15 @@ export class UserTokenService {
     })
   }
 
-  async deleteUserTokenByNationalId(nationalId: string, deviceToken: string): Promise<void> {
+  async deleteUserTokenByNationalId(
+    nationalId: string,
+    deviceToken: string,
+  ): Promise<void> {
     await this.userDeviceTokensModel.destroy({
       where: {
         nationalId,
         deviceToken,
       },
-    });
+    })
   }
-  
 }

@@ -37,17 +37,23 @@ export class NotificationDispatchService {
     nationalId: string
     messageId: string
   }): Promise<void> {
-    const deviceTokensResponse = await this.userProfileApi.userTokenControllerFindUserDeviceToken({
-      xParamNationalId: nationalId,
-    })
+    const deviceTokensResponse =
+      await this.userProfileApi.userTokenControllerFindUserDeviceToken({
+        xParamNationalId: nationalId,
+      })
 
     const tokens = deviceTokensResponse.map((token) => token.deviceToken)
 
     if (tokens.length === 0) {
-      this.logger.info('No push-notification tokens found for user', { messageId })
+      this.logger.info('No push-notification tokens found for user', {
+        messageId,
+      })
       return
     } else {
-      this.logger.info(`Found user push-notification tokens (${tokens.length})`, { messageId })
+      this.logger.info(
+        `Found user push-notification tokens (${tokens.length})`,
+        { messageId },
+      )
     }
 
     this.logger.info(`Notification content for message (${messageId})`, {
@@ -84,10 +90,16 @@ export class NotificationDispatchService {
             ...(notification.dataCopy && { copy: notification.dataCopy }),
           },
         })
-        this.logger.info('Push notification success', { firebaseMessageId: token, messageId })
+        this.logger.info('Push notification success', {
+          firebaseMessageId: token,
+          messageId,
+        })
       } catch (error) {
         if (isTokenError(error)) {
-          this.logger.info('Invalid/outdated push notification token', { error, messageId })
+          this.logger.info('Invalid/outdated push notification token', {
+            error,
+            messageId,
+          })
           await this.userProfileApi.userTokenControllerDeleteUserDeviceToken({
             xParamNationalId: nationalId,
             deviceToken: token,
