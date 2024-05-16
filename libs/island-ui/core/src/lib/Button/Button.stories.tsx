@@ -69,9 +69,6 @@ Default.args = {
   iconType: 'filled',
   preTextIcon: undefined,
   preTextIconType: 'filled',
-  onClick: () => console.log('Button clicked'),
-  onBlur: () => console.log('Button blurred'),
-  onFocus: () => console.log('Button focused'),
 }
 
 export const Ghost: ButtonProps = Template.bind({})
