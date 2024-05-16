@@ -1315,7 +1315,7 @@ export class NotificationService {
       )
     }
 
-    if (isDefenceUser(user)) {
+    if (theCase.defenderEmail) {
       promises.push(
         this.sendEmail(
           subject,
