@@ -4,7 +4,6 @@ import { useLocale } from '@island.is/localization'
 import get from 'lodash/get'
 import has from 'lodash/has'
 import { FC } from 'react'
-import { BaseInformation } from './review-groups/BaseInformation'
 
 import { newPrimarySchoolMessages } from '../../lib/messages'
 
@@ -14,6 +13,7 @@ import { handleServerError } from '@island.is/application/ui-components'
 import { getApplicationAnswers } from '../../lib/newPrimarySchoolUtils'
 import { States } from '../../lib/constants'
 import { Child } from './review-groups/Child'
+import { Parents } from './review-groups/Parents'
 
 interface ReviewScreenProps {
   application: Application
@@ -144,7 +144,7 @@ export const Review: FC<ReviewScreenProps> = ({
         </Box>
       )}
       <Child {...childProps} />
-      <BaseInformation {...childProps} />
+      <Parents {...childProps} />
     </>
   )
 }
