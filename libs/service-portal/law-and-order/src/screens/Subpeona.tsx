@@ -59,7 +59,7 @@ const Subpeona = () => {
     return <NotFound title={formatMessage(messages.subpoenaNotFound)} />
   }
 
-  if (subpeonaAcknowledged === undefined) {
+  if (typeof subpeonaAcknowledged === 'undefined') {
     return <ConfirmationModal id={subpeona?.data.id} />
   }
 
@@ -85,11 +85,14 @@ const Subpeona = () => {
           </GridColumn>
         </GridContainer>
       )}
-      {subpeona?.data.groups && <InfoLines groups={subpeona?.data.groups} />}
+      {subpeona?.data.groups && (
+        <InfoLines groups={subpeona?.data.groups} loading={loading} />
+      )}
       {(subpeona?.data?.chosenDefender || defenseChoice) && (
         <>
           <Box paddingTop={1} />
           <UserInfoLine
+            loading={loading}
             label={messages.defenseAttorney}
             content={
               subpeona?.data?.chosenDefender ??

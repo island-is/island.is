@@ -43,7 +43,8 @@ type Cases = {
   actions?: Actions[]
   data: {
     id: number
-    caseNumber?: string
+    caseNumber: string
+    caseNumberTitle: string
     acknowledged?: boolean
     type: string
     status: string
@@ -86,7 +87,8 @@ export const listCases = () => {
       ],
       data: {
         id: 123,
-        caseNumber: 'Málsnúmer S-9999/2022',
+        caseNumber: 'S-0000',
+        caseNumberTitle: 'Málsnúmer S-0000/2022',
         type: 'Ákæra',
         status: 'Á dagskrá',
         acknowledged: undefined,
@@ -178,7 +180,8 @@ export const listCases = () => {
       ],
       data: {
         id: 1234,
-        caseNumber: 'Málsnúmer S-3322/2022',
+        caseNumber: 'S-1111',
+        caseNumberTitle: 'Málsnúmer S-1111/2022',
         type: 'Ákæra',
         status: 'Á dagskrá',
         acknowledged: true,
@@ -270,7 +273,8 @@ export const listCases = () => {
       ],
       data: {
         id: 12345,
-        caseNumber: 'Málsnúmer S-3355/2022',
+        caseNumber: 'S-2222',
+        caseNumberTitle: 'Málsnúmer S-2222/2022',
         type: 'Ákæra',
         status: 'Á dagskrá',
         acknowledged: false,
@@ -354,18 +358,18 @@ export const listCases = () => {
     },
   ]
 
-  return cases
+  return { data: cases, loading: true, error: false }
 }
 
 export const getCase = (id: number) => {
   const cases = listCases()
 
-  const detailedCase = cases.find((x) => x.data.id === id) ?? null
+  const detailedCase = cases.data.find((x) => x.data.id === id) ?? null
 
   const courtCaseDetail = {
     courtCaseDetail: detailedCase,
   }
-  return { data: courtCaseDetail, loading: false, error: false }
+  return { data: courtCaseDetail, loading: true, error: false }
 }
 
 const lawyers: Lawyers[] = [
@@ -390,7 +394,7 @@ export const getLawyers = () => {
   const lwrs = { items: lawyers }
   return {
     data: lwrs,
-    loading: false,
+    loading: true,
     error: false,
   }
 }
@@ -578,5 +582,5 @@ export const getSubpeona = (id: number) => {
     subpeonaDetail: subpeona,
   }
 
-  return { data: subpeonaDetail, loading: false, error: false }
+  return { data: subpeonaDetail, loading: true, error: false }
 }

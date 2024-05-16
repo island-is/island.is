@@ -4,6 +4,7 @@ import { LawAndOrderPaths } from './paths'
 
 export const lawAndOrderNavigation: PortalNavigationItem = {
   name: m.lawAndOrder,
+  description: m.lawAndOrderDashboard,
   path: LawAndOrderPaths.Root,
   icon: {
     icon: 'attach',
@@ -18,16 +19,18 @@ export const lawAndOrderNavigation: PortalNavigationItem = {
       path: LawAndOrderPaths.CourtCases,
       children: [
         {
-          name: m.subpeona,
-          path: LawAndOrderPaths.SubpeonaDetail,
-          navHide: true,
+          name: m.courtCases,
+          path: LawAndOrderPaths.CourtCaseDetail,
+          breadcrumbHide: true,
+          children: [
+            {
+              name: m.subpeona,
+              path: LawAndOrderPaths.SubpeonaDetail,
+              navHide: true,
+            },
+          ],
         },
       ],
-    },
-    {
-      name: m.courtCases,
-      path: LawAndOrderPaths.CourtCaseDetail,
-      navHide: true,
     },
   ],
 }

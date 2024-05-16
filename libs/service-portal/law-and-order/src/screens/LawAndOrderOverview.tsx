@@ -1,4 +1,4 @@
-import { Box } from '@island.is/island-ui/core'
+import { Box, Divider } from '@island.is/island-ui/core'
 import {
   DOMSMALARADUNEYTID_SLUG,
   IntroHeader,
@@ -31,6 +31,7 @@ const LawAndOrderOverview = () => {
             icon: 'arrowForward',
           }}
         />
+        <Divider />
       </Box>
     </>
   )

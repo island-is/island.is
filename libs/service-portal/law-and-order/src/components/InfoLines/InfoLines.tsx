@@ -10,6 +10,7 @@ interface Props {
     label: string
     items: Items[] | undefined
   }[]
+  loading?: boolean
 }
 
 const InfoLines: React.FC<React.PropsWithChildren<Props>> = (props) => {
@@ -26,6 +27,7 @@ const InfoLines: React.FC<React.PropsWithChildren<Props>> = (props) => {
               return (
                 <>
                   <UserInfoLine
+                    loading={props.loading}
                     title={x.label && i === 0 ? x.label : undefined}
                     label={y.label}
                     content={y.value}

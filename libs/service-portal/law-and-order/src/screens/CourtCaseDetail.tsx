@@ -49,6 +49,7 @@ const CourtCaseDetail = () => {
   const toggleModal = () => {
     setSubpeonaModalVisible(!subpeonaModalVisible)
   }
+
   if (error && !loading) {
     return (
       <ErrorScreen
@@ -71,7 +72,7 @@ const CourtCaseDetail = () => {
     <Box marginTop={3}>
       <IntroHeader
         title={
-          courtCase?.data.caseNumber ??
+          courtCase?.data.caseNumberTitle ??
           formatMessage(messages.courtCaseNumberNotRegistered)
         }
         intro={messages.courtCasesDescription}
@@ -115,7 +116,9 @@ const CourtCaseDetail = () => {
           )}
         </Box>
       </Box>
-      {courtCase?.data.groups && <InfoLines groups={courtCase?.data.groups} />}
+      {courtCase?.data.groups && (
+        <InfoLines groups={courtCase?.data.groups} loading={loading} />
+      )}
       {subpeonaModalVisible && !subpeonaAcknowledged && (
         <ConfirmationModal id={courtCase?.data.id} />
       )}

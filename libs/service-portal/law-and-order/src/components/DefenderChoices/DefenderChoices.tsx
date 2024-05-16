@@ -23,9 +23,11 @@ interface Props {
 const DefenderChoices: FC<React.PropsWithChildren<Props>> = ({ popUp }) => {
   useNamespaces('sp.law-and-order')
   const { formatMessage } = useLocale()
-  const [lawyer, setLawyer] = useState<string | null>()
+  const [lawyer, setLawyer] = useState<
+    { label: string; value: string } | undefined
+  >()
   const [choice, setChoice] = useState<DefenseDecision>()
-  const { data } = getLawyers()
+  const { data, loading, error } = getLawyers()
   const { defenseChoice, setDefenseChoice } = useLawAndOrderContext()
   const submitDisabled =
     !choice || (choice === DefenseDecision.CHOOSING_LAWYER && !lawyer)
@@ -36,7 +38,7 @@ const DefenderChoices: FC<React.PropsWithChildren<Props>> = ({ popUp }) => {
   }, [])
 
   useEffect(() => {
-    if (defenseChoice !== DefenseDecision.CHOOSING_LAWYER) setLawyer(null)
+    if (defenseChoice !== DefenseDecision.CHOOSING_LAWYER) setLawyer(undefined)
   }, [defenseChoice])
 
   return (
@@ -76,14 +78,20 @@ const DefenderChoices: FC<React.PropsWithChildren<Props>> = ({ popUp }) => {
           label={formatMessage(messages.defenderList)}
           size="xs"
           name="lawyer-choice"
+          isLoading={loading}
           onChange={(e) => {
-            setLawyer(e?.value.toString())
-            setChoice(DefenseDecision.CHOOSING_LAWYER)
+            if (e) {
+              setLawyer({
+                label: e.label.toString(),
+                value: e.value.toString(),
+              })
+              setChoice(DefenseDecision.CHOOSING_LAWYER)
+            }
           }}
           options={data.items.map((x) => {
-            return { label: x.name, value: x.name }
+            return { label: x.name, value: x.nationalId }
           })}
-          value={lawyer ? { label: lawyer, value: lawyer } : null}
+          value={lawyer ? { label: lawyer.label, value: lawyer.value } : null}
           placeholder={formatMessage(messages.chooseDefender)}
         />
         <RadioButton
@@ -107,11 +115,12 @@ const DefenderChoices: FC<React.PropsWithChildren<Props>> = ({ popUp }) => {
             size="small"
             onClick={() => {
               toast.success(
-                [formatMessage(messages.registrationCompleted), lawyer]
+                [formatMessage(messages.registrationCompleted), lawyer?.label]
                   .filter(Boolean)
                   .join(' '),
               )
-              setTimeout(() => setDefenseChoice(choice), 500)
+              // TODO: instead of using context, use service
+              setDefenseChoice(choice)
             }}
             disabled={submitDisabled}
           >
@@ -140,11 +149,15 @@ const DefenderChoices: FC<React.PropsWithChildren<Props>> = ({ popUp }) => {
                 disabled={submitDisabled}
                 onClick={() => {
                   toast.success(
-                    [formatMessage(messages.registrationCompleted), lawyer]
+                    [
+                      formatMessage(messages.registrationCompleted),
+                      lawyer?.label,
+                    ]
                       .filter(Boolean)
                       .join(' '),
                   )
                   popUp.setPopUp(false)
+                  // TODO: instead of using context, use service
                   setDefenseChoice(choice)
                 }}
               >
