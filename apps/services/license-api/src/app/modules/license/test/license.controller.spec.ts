@@ -85,7 +85,6 @@ describe('UserLicensesController - with correct auth and scope', () => {
         app = await setupWithAuth(user)
         server = request(app.getHttpServer())
         //Act
-
         const res = await getRequestMethod(server, method)(endpoint)
           .set('x-param-nationalid', user.nationalId)
           .send({
