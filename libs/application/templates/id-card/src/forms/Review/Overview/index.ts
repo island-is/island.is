@@ -6,6 +6,7 @@ import {
   buildSubmitField,
   buildKeyValueField,
   buildDividerField,
+  buildCustomField,
 } from '@island.is/application/core'
 import { DefaultEvents } from '@island.is/application/types'
 import { Routes } from '../../../lib/constants'
@@ -152,21 +153,27 @@ export const OverviewSection = buildSection({
         }),
 
         /* SUBMIT OR DECLINE */
+        buildCustomField({
+          id: 'overviewApproval',
+          component: 'RejectApproveButtons',
+          title: '',
+          description: '',
+        }),
         buildSubmitField({
           id: 'overviewApproval',
           title: '',
           refetchApplicationAfterSubmit: false,
           actions: [
-            {
-              event: DefaultEvents.REJECT,
-              name: 'Hafna',
-              type: 'reject',
-            },
-            {
-              event: DefaultEvents.SUBMIT,
-              name: 'Samþykkja',
-              type: 'primary',
-            },
+            // {
+            //   event: DefaultEvents.REJECT,
+            //   name: 'Hafna',
+            //   type: 'reject',
+            // },
+            // {
+            //   event: DefaultEvents.SUBMIT,
+            //   name: 'Samþykkja',
+            //   type: 'primary',
+            // },
           ],
         }),
       ],

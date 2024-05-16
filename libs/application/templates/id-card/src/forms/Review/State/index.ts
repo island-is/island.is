@@ -62,18 +62,6 @@ export const StateSection = buildSection({
             ]
           },
         }),
-        /* buildSubmitField({
-          id: 'goToNextPage',
-          title: '',
-          refetchApplicationAfterSubmit: false,
-          actions: [
-            {
-              event: DefaultEvents.SUBMIT,
-              name: state.buttons.openApproval,
-              type: 'primary',
-            },
-          ],
-        }), */
       ],
     }),
   ],
