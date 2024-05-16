@@ -371,6 +371,16 @@ describe('PersonalRepresentativeController', () => {
 
     // Test get personal rep
     const response = await server.get(`${path}/${personalRep.id}`).expect(200)
+    const responseData = response.body as PersonalRepresentativeDTO
+
+    // Order both excepted and actual data to make sure they are the same
+    personalRep.prDelegationType = personalRep.prDelegationType.sort((a, b) =>
+      a.id > b.id ? 1 : -1,
+    )
+
+    responseData.prDelegationType = responseData.prDelegationType.sort((a, b) =>
+      a.id > b.id ? 1 : -1,
+    )
 
     expect(response.body).toMatchObject(personalRep)
   })

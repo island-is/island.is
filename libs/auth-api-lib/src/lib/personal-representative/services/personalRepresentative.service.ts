@@ -245,18 +245,7 @@ export class PersonalRepresentativeService {
         ],
       })
 
-    const result = personalRepresentative?.toDTO()
-
-    if (!result) return null
-
-    const delegationTypes = await this.delegationTypeModel.findAll({
-      where: {
-        id: result?.rights.map((rc) => `PersonalRepresentative:${rc.code}`),
-      },
-    })
-    result.prDelegationType = delegationTypes.map((prdt) => prdt.toDTO())
-
-    return result ?? null
+    return personalRepresentative?.toDTO() ?? null
   }
 
   /** Create a new personal representative */
