@@ -1287,7 +1287,7 @@ export const m = defineMessages({
   domsmalaraduneytidTooltip: {
     id: 'service.portal:dmr-tooltip',
     defaultMessage:
-    'Dómsmálaráðuneytið hefur umsjón með gögnum um dómsmál og þeim tengt.',
+      'Dómsmálaráðuneytið hefur umsjón með gögnum um dómsmál og þeim tengt.',
   },
   occupationalLicenseTooltip: {
     id: 'service.portal:occupational-license-tooltip',
@@ -1517,7 +1517,8 @@ export const m = defineMessages({
   },
   lawAndOrderDescription: {
     id: 'service.portal:law-and-order-description',
-    defaultMessage: 'Hér eru upplýsingar og yfirlit yfir mál sem þú átt hjá dómskerfinu.',
+    defaultMessage:
+      'Hér eru upplýsingar og yfirlit yfir mál sem þú átt hjá dómskerfinu.',
   },
   courtCases: {
     id: 'service.portal:court-cases',
