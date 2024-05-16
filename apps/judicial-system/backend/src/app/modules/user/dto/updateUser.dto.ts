@@ -14,40 +14,40 @@ export class UpdateUserDto {
   @IsOptional()
   @IsString()
   @ApiPropertyOptional({ type: String })
-  readonly name!: string
+  readonly name?: string
 
   @IsOptional()
   @IsString()
   @ApiPropertyOptional({ type: String })
-  readonly title!: string
+  readonly title?: string
 
   @IsOptional()
   @IsString()
   @ApiPropertyOptional({ type: String })
-  readonly mobileNumber!: string
+  readonly mobileNumber?: string
 
   @IsOptional()
   @IsString()
   @ApiPropertyOptional({ type: String })
-  readonly email!: string
+  readonly email?: string
 
   @IsOptional()
   @IsEnum(UserRole)
   @ApiPropertyOptional({ enum: UserRole })
-  readonly role!: UserRole
+  readonly role?: UserRole
 
   @IsOptional()
   @IsUUID()
   @ApiPropertyOptional({ type: String })
-  readonly institutionId!: string
+  readonly institutionId?: string
 
   @IsOptional()
   @IsBoolean()
   @ApiPropertyOptional({ type: Boolean })
-  readonly active!: boolean
+  readonly active?: boolean
 
   @IsOptional()
   @IsBoolean()
   @ApiPropertyOptional({ type: Boolean })
-  readonly canConfirmIndictment!: boolean
+  readonly canConfirmIndictment?: boolean
 }

@@ -13,6 +13,7 @@ export class PoliceCaseFile {
   @ApiPropertyOptional({ type: Number })
   chapter?: number
 
+  // TODO: Make this a Date and transform data coming from LÖKE
   @ApiPropertyOptional({ type: String })
   displayDate?: string
 }

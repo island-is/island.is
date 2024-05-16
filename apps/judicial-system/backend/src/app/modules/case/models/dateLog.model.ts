@@ -56,14 +56,14 @@ export class DateLog extends Model {
 
   @ForeignKey(() => Case)
   @Column({ type: DataType.UUID, allowNull: false })
-  @ApiProperty()
+  @ApiProperty({ type: String })
   caseId!: string
 
   @Column({ type: DataType.DATE, allowNull: false })
-  @ApiProperty()
+  @ApiProperty({ type: Date })
   date!: Date
 
   @Column({ type: DataType.STRING, allowNull: true })
-  @ApiPropertyOptional()
+  @ApiPropertyOptional({ type: String })
   location?: string
 }
