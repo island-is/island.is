@@ -304,6 +304,19 @@ export const msg = defineMessages({
     id: 'sp.settings:save-empty',
     defaultMessage: 'Vista tómt',
   },
+  contactNotVerified: {
+    id: 'sp.settings:contact-not-verified',
+    defaultMessage: '{contactType} ekki staðfest',
+  },
+  contactNotVerifiedDescription: {
+    id: 'sp.settings:contact-not-verified-description',
+    defaultMessage:
+      'Staðfestu {contactType} svo að tilkynningar skili sér örugglega til þín.',
+  },
+  confirmContact: {
+    id: 'sp.settings:confirm-contact',
+    defaultMessage: 'Staðfesta {contactType}',
+  },
 })
 
 export const urls = defineMessages({
