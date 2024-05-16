@@ -45,7 +45,7 @@ export const haskolanamFilterClicked = (category: string, value: string) => {
     eventName: `haskolanam.filter`,
     featureName: '',
     params: {
-      [category]: value,
+      query: `${category}-${value}`,
     },
   }
   plausibleCustomEvent(event)
@@ -65,23 +65,30 @@ export const haskolanamTrackSearchQuery = (query: string) => {
 export const haskolanamApplyButtonClicked = (
   university: string,
   program: string,
+  id: string,
 ) => {
+  const shortenedId = id.split('-')[0]
   const event: BaseEvent = {
     eventName: `haskolanam.apply.button`,
     featureName: '',
     params: {
-      query: `${university}-${program}`,
+      query: `${university}-${program}-${shortenedId}`,
     },
   }
   plausibleCustomEvent(event)
 }
 
-export const haskolanamCardClicked = (university: string, program: string) => {
+export const haskolanamCardClicked = (
+  university: string,
+  program: string,
+  id: string,
+) => {
+  const shortenedId = id.split('-')[0]
   const event: BaseEvent = {
     eventName: `haskolanam.card.clicked`,
     featureName: '',
     params: {
-      query: `${university}-${program}`,
+      query: `${university}-${program}-${shortenedId}`,
     },
   }
   plausibleCustomEvent(event)
