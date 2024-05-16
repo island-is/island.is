@@ -156,6 +156,10 @@ export class PersonalRepresentative extends Model {
       rights: this.rights?.map(
         (r) => (r.rightType as PersonalRepresentativeRightType).code,
       ),
+      prDelegationTypeCodes:
+        this.prDelegationTypes?.map(
+          (d) => `PersonalRepresentative:${d.delegationType?.id}`,
+        ) ?? [],
     }
   }
 }
