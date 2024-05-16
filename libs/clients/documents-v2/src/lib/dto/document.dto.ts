@@ -16,7 +16,6 @@ export type DocumentDto = {
 }
 
 export const mapToDocument = (document: DocumentDTO): DocumentDto | null => {
-  console.log('MAP TO CONTENT: ', document)
   let fileType: FileType, content: string
   switch (document.fileType) {
     case 'pdf':
