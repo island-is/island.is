@@ -4,21 +4,14 @@ import {
   HealthInsuranceResolver,
 } from './graphql'
 import { HealthInsuranceService } from './healthInsurance.service'
-import {
-  HealthInsuranceV2Client,
-  HealthInsuranceV2Options,
-} from '@island.is/clients/icelandic-health-insurance/health-insurance'
+import { HealthInsuranceV2ClientModule } from '@island.is/clients/icelandic-health-insurance/health-insurance'
 import { AccidentNotificationService } from './accident-notification.service'
 
-export interface HealthInsuranceOptions {
-  clientV2Config: HealthInsuranceV2Options
-}
-
 export class HealthInsuranceModule {
-  static register(options: HealthInsuranceOptions): DynamicModule {
+  static register(): DynamicModule {
     return {
       module: HealthInsuranceModule,
-      imports: [HealthInsuranceV2Client.register(options.clientV2Config)],
+      imports: [HealthInsuranceV2ClientModule],
       providers: [
         HealthInsuranceService,
         AccidentNotificationService,

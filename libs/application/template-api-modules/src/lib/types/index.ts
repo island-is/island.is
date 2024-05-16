@@ -5,7 +5,6 @@ import {
   ApplicationWithAttachments,
 } from '@island.is/application/types'
 import { User } from '@island.is/auth-nest-tools'
-import { HealthInsuranceV2Options } from '@island.is/clients/icelandic-health-insurance/health-insurance'
 import { IslykillApiModuleConfig } from '@island.is/clients/islykill'
 import { Message } from '@island.is/email-service'
 
@@ -38,7 +37,6 @@ export interface BaseTemplateAPIModuleConfig {
   generalPetition: {
     endorsementsApiBasePath: string
   }
-  healthInsuranceV2: HealthInsuranceV2Options
   applicationService: Type<BaseTemplateApiApplicationService>
   userProfile: {
     serviceBasePath: string
