@@ -61,7 +61,7 @@ export const FullWidthLayout: FC<FullWidthLayoutProps> = ({
     <Box
       as="main"
       component="main"
-      className={isDocuments || isDashboard ? styles.fullWidthSplit : undefined}
+      className={isDocuments ? styles.fullWidthSplit : undefined}
       paddingTop={isDocuments || isDashboard ? undefined : 9}
       style={{
         marginTop: height,
