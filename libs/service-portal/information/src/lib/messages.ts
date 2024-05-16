@@ -149,6 +149,14 @@ export const mInformationNotifications = defineMessages({
     id: 'sp.information-notifications:description',
     defaultMessage: 'Hér getur þú nálgast tilkynningar þínar.',
   },
+  markAllRead: {
+    id: 'sp.information-notifications:mark-all-read',
+    defaultMessage: 'Merkja allt lesið',
+  },
+  allMarkedAsRead: {
+    id: 'sp.information-notifications:all-marked-as-read',
+    defaultMessage: 'Allar tilkynningar merktar lesnar',
+  },
 })
 
 export const msg = defineMessages({
@@ -295,6 +303,19 @@ export const msg = defineMessages({
   saveEmptyChange: {
     id: 'sp.settings:save-empty',
     defaultMessage: 'Vista tómt',
+  },
+  contactNotVerified: {
+    id: 'sp.settings:contact-not-verified',
+    defaultMessage: '{contactType} ekki staðfest',
+  },
+  contactNotVerifiedDescription: {
+    id: 'sp.settings:contact-not-verified-description',
+    defaultMessage:
+      'Staðfestu {contactType} svo að tilkynningar skili sér örugglega til þín.',
+  },
+  confirmContact: {
+    id: 'sp.settings:confirm-contact',
+    defaultMessage: 'Staðfesta {contactType}',
   },
 })
 
