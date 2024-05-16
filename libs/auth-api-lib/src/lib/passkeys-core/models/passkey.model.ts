@@ -59,10 +59,10 @@ export class PasskeyModel extends Model {
 
   @Column({
     type: DataType.STRING,
-    allowNull: true,
+    allowNull: false,
   })
   @ApiProperty()
-  idp?: string
+  idp!: string
 
   @CreatedAt
   @ApiProperty()

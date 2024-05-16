@@ -14,9 +14,8 @@ export class AuthenticationResult {
   verified!: boolean
 
   @IsString()
-  @IsOptional()
-  @ApiProperty({ required: false })
-  idp?: string
+  @ApiProperty()
+  idp!: string
 
   @IsString()
   @ApiProperty()
