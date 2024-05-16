@@ -1419,6 +1419,3 @@ export const aboutTheAccidentSection = buildSection({
     }),
   ],
 })
-function isProfessionalAthleteAndEmployee(formValue: FormValue): boolean {
-  throw new Error('Function not implemented.')
-}
