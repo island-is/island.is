@@ -349,6 +349,7 @@ export const WalletPassScreen: NavigationFunctionComponent<{
           nativeID={`license-${licenseType}_destination`}
           type={licenseType}
           logo={
+            isBarcodeEnabled &&
             data?.license?.type === GenericLicenseType.DriversLicense
               ? getImageFromRawData(data?.payload?.rawData)
               : undefined

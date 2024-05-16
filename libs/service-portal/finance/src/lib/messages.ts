@@ -341,6 +341,10 @@ export const m = defineMessages({
     id: 'sp.finance-housing-benefits:payment-origin-2',
     defaultMessage: 'Sérstakur húsnæðisstuðningur',
   },
+  onlyShowPayments: {
+    id: 'sp.finance-housing-benefits:only-show-payments',
+    defaultMessage: 'Sýna aðeins bætur',
+  },
 })
 
 export const hb = {
