@@ -635,7 +635,10 @@ export interface SliderField extends BaseField {
       date: string
       message: string
     }
-    end: { date: string; message: string }
+    end: {
+      date: string
+      message: string
+    }
   }
   currentIndex?: number
   onChange?: (index: number) => void
