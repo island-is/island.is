@@ -11,7 +11,7 @@ interface Props {
 }
 
 // Made to inject provider into all components
-// May be deleted when service will be available
+// Will be refactored when service will be available
 const LawAndOrderIndex: FC<React.PropsWithChildren<Props>> = ({
   component,
 }) => {
