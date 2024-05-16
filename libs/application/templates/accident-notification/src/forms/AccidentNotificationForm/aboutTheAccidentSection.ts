@@ -20,7 +20,6 @@ import {
   fatalAccident,
   fatalAccidentAttachment,
   fishingCompanyInfo,
-  hindrances,
   injuredPersonInformation,
   locationAndPurpose,
   rescueSquadInfo,
@@ -208,8 +207,8 @@ export const aboutTheAccidentSection = buildSection({
             }),
             buildAlertMessageField({
               id: 'attachments.injuryCertificate.alert',
-              title: application.general.warningTitle,
-              message: application.general.warningMessage,
+              title: application.labels.warningTitle,
+              message: application.labels.warningMessage,
               alertType: 'info',
               doesNotRequireAnswer: true,
               condition: (formValue) => isSportAccidentAndEmployee(formValue),

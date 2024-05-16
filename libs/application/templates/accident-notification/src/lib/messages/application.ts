@@ -22,6 +22,15 @@ export const application = {
       defaultMessage: 'Nei',
       description: 'No',
     },
+  }),
+  deliveryOfData: defineMessages({
+    name: {
+      id: 'an.application:deliveryOfData.name',
+      defaultMessage: 'Afhending skjala',
+      description: 'Delivery of data',
+    },
+  }),
+  labels: defineMessages({
     warningTitle: {
       id: 'an.application:application.warningTitle',
       defaultMessage: 'Athugið',
@@ -32,13 +41,6 @@ export const application = {
       defaultMessage:
         'Ef hinn slasaði þiggur greiðslur frá íþróttafélaginu þá er málið meðhöndlað sem vinnuslys.',
       description: 'Warning description',
-    },
-  }),
-  deliveryOfData: defineMessages({
-    name: {
-      id: 'an.application:deliveryOfData.name',
-      defaultMessage: 'Afhending skjala',
-      description: 'Delivery of data',
     },
   }),
 }
