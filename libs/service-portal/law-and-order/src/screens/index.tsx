@@ -3,7 +3,7 @@ import { LawAndOrderProvider } from '../helpers/LawAndOrderContext'
 import CourtCaseDetail from './CourtCaseDetail'
 import CourtCases from './CourtCases'
 import LawAndOrderOverview from './LawAndOrderOverview'
-import Subpeona from './Subpeana'
+import Subpeona from './Subpeona'
 import { Components } from '../lib/const'
 
 interface Props {
