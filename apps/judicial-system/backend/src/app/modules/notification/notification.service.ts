@@ -27,6 +27,7 @@ import {
 import {
   formatDate,
   getAppealResultTextByValue,
+  getHumanReadableCaseIndictmentRulingDecision,
 } from '@island.is/judicial-system/formatters'
 import {
   CaseMessage,
@@ -963,6 +964,10 @@ export class NotificationService {
         ? this.formatMessage(notifications.caseCompleted.prosecutorBody, {
             courtCaseNumber: theCase.courtCaseNumber,
             courtName: theCase.court?.name?.replace('dómur', 'dómi'),
+            caseIndictmentRulingDecision:
+              getHumanReadableCaseIndictmentRulingDecision(
+                theCase.indictmentRulingDecision,
+              ),
             linkStart: `<a href="${this.config.clientUrl}${CLOSED_INDICTMENT_OVERVIEW_ROUTE}/${theCase.id}">`,
             linkEnd: '</a>',
           })
@@ -997,6 +1002,10 @@ export class NotificationService {
         ? this.formatMessage(notifications.caseCompleted.defenderBody, {
             courtCaseNumber: theCase.courtCaseNumber,
             courtName: theCase.court?.name?.replace('dómur', 'dómi'),
+            caseIndictmentRulingDecision:
+              getHumanReadableCaseIndictmentRulingDecision(
+                theCase.indictmentRulingDecision,
+              ),
             defenderHasAccessToRvg: Boolean(defenderNationalId),
             linkStart: `<a href="${formatDefenderRoute(
               this.config.clientUrl,
