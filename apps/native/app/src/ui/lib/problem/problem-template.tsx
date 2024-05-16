@@ -128,8 +128,10 @@ export const ProblemTemplate = ({
       )}
       {showIcon && <Icon source={getIcon(variant)} />}
       <Content>
-        <Typography variant="heading3">{title}</Typography>
-        <Typography>{message}</Typography>
+        <Typography variant="heading3" textAlign="center">
+          {title}
+        </Typography>
+        <Typography textAlign="center">{message}</Typography>
       </Content>
     </Host>
   )
