@@ -404,6 +404,17 @@ describe('PersonalRepresentativeController', () => {
       .expect(200)
 
     const responseData: PaginatedPersonalRepresentativeDto = response.body
+
+    // Order both excepted and actual data to make sure they are the same
+    personalRep.prDelegationType = personalRep.prDelegationType.sort((a, b) =>
+      a.id > b.id ? 1 : -1,
+    )
+
+    responseData.data[0].prDelegationType =
+      responseData.data[0].prDelegationType.sort((a, b) =>
+        a.id > b.id ? 1 : -1,
+      )
+
     expect(responseData.data[0]).toMatchObject(personalRep)
   })
 
