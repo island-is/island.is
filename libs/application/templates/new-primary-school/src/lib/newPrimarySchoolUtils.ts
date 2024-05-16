@@ -1,7 +1,9 @@
 import { getValueViaPath } from '@island.is/application/core'
 import { Application } from '@island.is/application/types'
-import { Children } from './constants'
 import * as kennitala from 'kennitala'
+import { RelativesRow } from '../types'
+import { Children, RelationOptions } from './constants'
+import { newPrimarySchoolMessages } from './messages'
 
 export const getApplicationAnswers = (answers: Application['answers']) => {
   const childsNationalId = getValueViaPath(
@@ -9,7 +11,9 @@ export const getApplicationAnswers = (answers: Application['answers']) => {
     'childsNationalId',
   ) as string
 
-  return { childsNationalId }
+  const relatives = getValueViaPath(answers, 'relatives') as RelativesRow[]
+
+  return { childsNationalId, relatives }
 }
 
 export const getApplicationExternalData = (
@@ -67,4 +71,32 @@ export const isChildAtPrimarySchoolAge = (nationalId: string) => {
   }
 
   return false
+}
+
+export const getRelationOptions = () => [
+  {
+    value: RelationOptions.GRANDPARENTS,
+    label: newPrimarySchoolMessages.relatives.relationGrandparents,
+  },
+  {
+    value: RelationOptions.SIBLINGS,
+    label: newPrimarySchoolMessages.relatives.relationSiblings,
+  },
+  {
+    value: RelationOptions.STEP_PARENT,
+    label: newPrimarySchoolMessages.relatives.relationStepParent,
+  },
+  {
+    value: RelationOptions.RELATIVES,
+    label: newPrimarySchoolMessages.relatives.relationRelatives,
+  },
+  {
+    value: RelationOptions.FRIENDS_AND_OTHER,
+    label: newPrimarySchoolMessages.relatives.relationFriendsAndOther,
+  },
+]
+
+export const getRelationOptionLabel = (value: RelationOptions) => {
+  const relationOptions = getRelationOptions()
+  return relationOptions.find((option) => option.value === value)?.label ?? ''
 }

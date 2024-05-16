@@ -1,19 +1,19 @@
+import { useMutation } from '@apollo/client'
+import { SUBMIT_APPLICATION } from '@island.is/application/graphql'
 import { Application, Field, RecordObject } from '@island.is/application/types'
+import { handleServerError } from '@island.is/application/ui-components'
 import { Box, Button, Text } from '@island.is/island-ui/core'
 import { useLocale } from '@island.is/localization'
 import get from 'lodash/get'
 import has from 'lodash/has'
 import { FC } from 'react'
-import { BaseInformation } from './review-groups/BaseInformation'
-
-import { newPrimarySchoolMessages } from '../../lib/messages'
-
-import { useMutation } from '@apollo/client'
-import { SUBMIT_APPLICATION } from '@island.is/application/graphql'
-import { handleServerError } from '@island.is/application/ui-components'
-import { getApplicationAnswers } from '../../lib/newPrimarySchoolUtils'
 import { States } from '../../lib/constants'
+import { newPrimarySchoolMessages } from '../../lib/messages'
+import { getApplicationAnswers } from '../../lib/newPrimarySchoolUtils'
+
+import { BaseInformation } from './review-groups/BaseInformation'
 import { Child } from './review-groups/Child'
+import { Relatives } from './review-groups/Relatives'
 
 interface ReviewScreenProps {
   application: Application
@@ -145,6 +145,7 @@ export const Review: FC<ReviewScreenProps> = ({
       )}
       <Child {...childProps} />
       <BaseInformation {...childProps} />
+      <Relatives {...childProps} />
     </>
   )
 }

@@ -29,3 +29,11 @@ export type Children = {
   fullName: string
   nationalId: string
 }
+
+export enum RelationOptions {
+  GRANDPARENTS = 'grandparents',
+  SIBLINGS = 'siblings',
+  STEP_PARENT = 'stepParent',
+  RELATIVES = 'relatives',
+  FRIENDS_AND_OTHER = 'friendsAndOther',
+}
