@@ -304,9 +304,8 @@ export class CaseController {
               `User ${user.id} does not have permission to confirm indictments`,
             )
           }
-          if (theCase.indictmentDeniedExplanation) {
-            update.indictmentDeniedExplanation = ''
-          }
+
+          update.indictmentDeniedExplanation = null
         }
         break
       case CaseTransition.ACCEPT:
@@ -339,7 +338,6 @@ export class CaseController {
             ),
           }
         }
-
         break
       case CaseTransition.REOPEN:
         update.rulingDate = null
