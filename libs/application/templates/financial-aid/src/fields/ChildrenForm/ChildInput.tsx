@@ -89,66 +89,6 @@ export const ChildInput: FC<React.PropsWithChildren<Props>> = ({
           }}
         />
       </Box>
-
-      {/* {schoolType === SchoolType.ELEMENTARY && (
-        <>
-          <Box
-            background="white"
-            borderRadius="standard"
-            marginBottom={[1]}
-            marginTop={[3]}
-          >
-            <CheckboxController
-              id={hasFoodStampsField}
-              name={hasFoodStampsField}
-              large={true}
-              spacing={0}
-              options={[
-                {
-                  value: 'yes',
-                  label: formatMessage(
-                    childrenForm.inputs.elementarySchoolFoodCheck,
-                  ),
-                },
-              ]}
-            />
-          </Box>
-          <Box background="white" borderRadius="standard" marginBottom={[1]}>
-            <CheckboxController
-              id={hasAfterSchool}
-              name={hasAfterSchool}
-              large={true}
-              spacing={0}
-              options={[
-                {
-                  value: 'yes',
-                  label: formatMessage(
-                    childrenForm.inputs.elementarySchoolAfterSchoolCheck,
-                  ),
-                },
-              ]}
-            />
-          </Box>
-        </>
-      )}
-      {schoolType === SchoolType.HIGHSCHOOL && (
-        <Box background="white" borderRadius="standard" marginBottom={[1]}>
-          <CheckboxController
-            id={hasBookAid}
-            name={hasBookAid}
-            large={true}
-            spacing={0}
-            options={[
-              {
-                value: 'yes',
-                label: formatMessage(
-                  childrenForm.inputs.elementarySchoolFoodCheck,
-                ),
-              },
-            ]}
-          />
-        </Box>
-      )} */}
     </Box>
   )
 }
