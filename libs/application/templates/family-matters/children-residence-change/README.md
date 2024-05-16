@@ -26,9 +26,6 @@ Prerequisites
 
 - Export aws variables `aws eks update-kubeconfig --name dev-cluster01`
 
-3. Socat Þjóðskrá
-
-- Run `kubectl port-forward svc/socat-soffia 8443:443 -n socat`
 - Keep this process running while running the project
 
 ### Test user

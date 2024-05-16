@@ -7,7 +7,7 @@ import { SessionsCleanupService } from './cleanup-worker.service'
 
 export const worker = async () => {
   try {
-    logger.info('Sessions cleanup worker started.')
+    logger.info('Sessions cleanup worker starting.')
     const app = await NestFactory.createApplicationContext(
       SessionsCleanupWorkerModule,
     )
