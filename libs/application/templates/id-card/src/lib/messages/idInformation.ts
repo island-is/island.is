@@ -26,13 +26,13 @@ export const idInformation = {
   labels: defineMessages({
     typeOfIdTitle: {
       id: 'id.application:idInformation.labels.typeOfIdTitle',
-      defaultMessage: 'Tegund nafnskírteinis',
+      defaultMessage: 'Nafnskírteini',
       description: 'Type of id page title',
     },
     typeOfIdDescription: {
       id: 'id.application:idInformation.labels.typeOfIdDescription',
       defaultMessage:
-        'Eget ultricies diam massa aliquet in lobortis. Nulla mi eget amet nisl laoreet aliquam vel enim. Viverra luctus quis ut at sit nunc. Eget risus vel vehicula fusce sed adipiscing donec semper. Sollicitudin adipiscing id.',
+        'Gefnar eru út tvær tegundir nafnskírteina: Nafnskírteini sem gildir sem ferðaskilríki innan EES og nafnskírteini sem ekki er ferðaskilríki.  Báðar tegundir gilda sem fullgilt persónuskilríki og báðar tegundir eru með örgjörva sem geymir lífkenni handhafa.  Nánari upplýsingar um muninn á þessum tegundum, og hvar ferðaskilríkin eru tekin gild, er að finna á: [https://www.skra.is/folk/vegabref-og-onnur-skilriki/nafnskirteini/tegundir-nafnskirteina/](https://www.skra.is/folk/vegabref-og-onnur-skilriki/nafnskirteini/tegundir-nafnskirteina/)',
       description: 'Type of id page description',
     },
     typeOfIdRadioLabel: {
@@ -47,8 +47,14 @@ export const idInformation = {
     },
     typeOfIdRadioAnswerTwo: {
       id: 'id.application:idInformation.labels.typeOfIdRadioAnswerTwo',
-      defaultMessage: 'Nafnskírteini',
+      defaultMessage: 'Nafnskírteini ekki sem ferðaskilríki',
       description: 'Type of id radio answer id card without travel rights',
+    },
+    infoAlert: {
+      id: 'id.application:idInformation.labels.infoAlert',
+      defaultMessage:
+        'Athugaðu að sama gjald er tekið fyrir báðar þessar tegundir',
+      description: 'Information alert for type of ID',
     },
     chosenApplicantsDescription: {
       id: 'id.application:idInformation.labels.chosenApplicantsDescription',

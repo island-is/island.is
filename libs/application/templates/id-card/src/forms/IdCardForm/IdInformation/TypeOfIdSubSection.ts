@@ -2,6 +2,7 @@ import {
   buildMultiField,
   buildSubSection,
   buildRadioField,
+  buildAlertMessageField,
 } from '@island.is/application/core'
 import { Routes } from '../../../lib/constants'
 import { idInformation } from '../../../lib/messages/idInformation'
@@ -30,6 +31,12 @@ export const TypeOfIdSubSection = buildSubSection({
               value: 'WithoutTravel',
             },
           ],
+        }),
+        buildAlertMessageField({
+          id: `${Routes.TYPEOFID}.alertField`,
+          title: '',
+          alertType: 'info',
+          message: idInformation.labels.infoAlert,
         }),
       ],
     }),
