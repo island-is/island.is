@@ -39,7 +39,7 @@ export const externalData = {
     },
     subTitle: {
       id: 'fa.application:section.backgroundInformation.externalData.applicant.subTitle#markdown',
-      defaultMessage: 'Við flettum upp lögheimili og hjúskaparstöðu.',
+      defaultMessage: 'Lögheimili, hjúskaparstaða og börn í þinni forsjá.',
       description:
         'Subtitle: External Info about applicant from the National Registry',
     },

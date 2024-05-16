@@ -9,6 +9,7 @@ import {
 import {
   CaseState,
   CaseType,
+  User,
 } from '@island.is/judicial-system-web/src/graphql/schema'
 
 import { strings } from './TagCaseState.strings'
@@ -19,21 +20,26 @@ interface Props {
   isCourtRole?: boolean
   isValidToDateInThePast?: boolean | null
   courtDate?: string | null
+  indictmentReviewer?: User | null
   customMapCaseStateToTag?: (
     formatMessage: IntlShape['formatMessage'],
     state?: CaseState | null,
+    indictmentReviewer?: User | null, // TODO: Refactor so we have a more generalized interface for the info passed in to the component
   ) => { color: TagVariant; text: string }
 }
 
 export const mapIndictmentCaseStateToTagVariant = (
   formatMessage: IntlShape['formatMessage'],
   state?: CaseState | null,
+  indictmentReviewer?: User | null,
 ): { color: TagVariant; text: string } => {
   switch (state) {
-    case CaseState.ACCEPTED:
+    case CaseState.COMPLETED:
       return {
-        color: 'purple',
-        text: formatMessage(strings.new),
+        color: indictmentReviewer ? 'mint' : 'purple',
+        text: formatMessage(
+          indictmentReviewer ? strings.beingReviewed : strings.new,
+        ),
       }
     default:
       return { color: 'white', text: formatMessage(strings.unknown) }
@@ -62,7 +68,10 @@ export const mapCaseStateToTagVariant = (
       return scheduledDate
         ? { color: 'mint', text: formatMessage(strings.scheduled) }
         : { color: 'blueberry', text: formatMessage(strings.received) }
+    case CaseState.MAIN_HEARING:
+      return { color: 'blue', text: formatMessage(strings.reassignment) }
     case CaseState.ACCEPTED:
+    case CaseState.COMPLETED:
       return isIndictmentCase(caseType) || isValidToDateInThePast
         ? { color: 'darkerBlue', text: formatMessage(strings.inactive) }
         : {
@@ -77,8 +86,6 @@ export const mapCaseStateToTagVariant = (
       return { color: 'dark', text: formatMessage(strings.dismissed) }
     default:
       return { color: 'white', text: formatMessage(strings.unknown) }
-    case CaseState.MAIN_HEARING:
-      return { color: 'blue', text: formatMessage(strings.reassignment) }
   }
 }
 
@@ -90,11 +97,12 @@ const TagCaseState: React.FC<React.PropsWithChildren<Props>> = (Props) => {
     isCourtRole,
     isValidToDateInThePast,
     courtDate,
+    indictmentReviewer,
     customMapCaseStateToTag,
   } = Props
 
   const tagVariant = customMapCaseStateToTag
-    ? customMapCaseStateToTag(formatMessage, caseState)
+    ? customMapCaseStateToTag(formatMessage, caseState, indictmentReviewer)
     : mapCaseStateToTagVariant(
         formatMessage,
         caseState,

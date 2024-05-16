@@ -26,7 +26,7 @@ export class CaseArchive extends Model {
   id!: string
 
   @CreatedAt
-  @Column({ type: DataType.DATE, allowNull: false })
+  @Column({ type: DataType.DATE })
   @ApiProperty({
     type: DataType.DATE,
   })

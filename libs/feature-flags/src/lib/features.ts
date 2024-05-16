@@ -31,6 +31,7 @@ export enum Features {
   RequestInspection = 'isRequestInspectionForMachineEnabled',
   officialJournalOfIceland = 'isOfficialJournalOfIcelandEnabled',
   StreetRegistration = 'isStreetRegistrationEnabled',
+  HealthInsuranceDeclaration = 'isHealthInsuranceDeclarationEnabled',
 
   // Application System Delegations active
   applicationSystemDelegations = 'applicationSystemDelegations',
@@ -55,6 +56,12 @@ export enum Features {
 
   //Occupational License Health directorate fetch enabled
   occupationalLicensesV2 = 'isOccupationalLicensesV2Enabled',
+
+  //Possible universities
+  isUniversityOfAkureyriEnabled = 'isUniversityOfAkureyriEnabled',
+  isAgriculturalUniversityOfIcelandEnabled = 'isAgriculturalUniversityOfIcelandEnabled',
+  isBifrostUniversityEnabled = 'isBifrostUniversityEnabled',
+  isHolarUniversityEnabled = 'isHolarUniversityEnabled',
 
   //License service new drivers license client enabled
   licenseServiceDrivingLicenseClient = 'isLicenseServiceDrivingLicenceClientV2Enabled',
@@ -85,9 +92,6 @@ export enum Features {
   isDelegationNotificationEnabled = 'isDelegationNotificationEnabled',
 
   shouldSendEmailNotificationsToDelegations = 'shouldSendEmailNotificationsToDelegations',
-
-  // National registry integration
-  disableSoffia = 'disableSoffia',
 }
 
 export enum ServerSideFeature {

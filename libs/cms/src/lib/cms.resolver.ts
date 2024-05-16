@@ -114,6 +114,7 @@ import { GetCustomPageInput } from './dto/getCustomPage.input'
 import { GenericListItemResponse } from './models/genericListItemResponse.model'
 import { GetGenericListItemsInput } from './dto/getGenericListItems.input'
 import { GenericList } from './models/genericList.model'
+import { GetCustomSubpageInput } from './dto/getCustomSubpage.input'
 
 const defaultCache: CacheControlOptions = { maxAge: CACHE_CONTROL_MAX_AGE }
 
@@ -649,6 +650,14 @@ export class CmsResolver {
     @Args('input') input: GetCustomPageInput,
   ): Promise<CustomPage | null> {
     return this.cmsElasticsearchService.getCustomPage(input)
+  }
+
+  @CacheControl(defaultCache)
+  @Query(() => CustomPage, { nullable: true })
+  async getCustomSubpage(
+    @Args('input') input: GetCustomSubpageInput,
+  ): Promise<CustomPage | null> {
+    return this.cmsElasticsearchService.getCustomSubpage(input)
   }
 
   @CacheControl(defaultCache)
