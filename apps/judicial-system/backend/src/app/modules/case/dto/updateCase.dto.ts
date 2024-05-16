@@ -1,4 +1,4 @@
-import { Transform, Type } from 'class-transformer'
+import { Type } from 'class-transformer'
 import {
   ArrayMinSize,
   IsArray,
@@ -35,7 +35,7 @@ import {
 
 class UpdateDateLog {
   @IsOptional()
-  @Transform(({ value }) => new Date(value))
+  @Type(() => Date)
   @IsDate()
   @ApiPropertyOptional({ type: Date })
   readonly date?: Date
@@ -110,13 +110,13 @@ export class UpdateCaseDto {
   readonly leadInvestigator?: string
 
   @IsOptional()
-  @Transform(({ value }) => new Date(value))
+  @Type(() => Date)
   @IsDate()
   @ApiPropertyOptional({ type: Date })
   readonly arrestDate?: Date
 
   @IsOptional()
-  @Transform(({ value }) => new Date(value))
+  @Type(() => Date)
   @IsDate()
   @ApiPropertyOptional({ type: Date })
   readonly requestedCourtDate?: Date
@@ -127,7 +127,7 @@ export class UpdateCaseDto {
   readonly translator?: string
 
   @IsOptional()
-  @Transform(({ value }) => new Date(value))
+  @Type(() => Date)
   @IsDate()
   @ApiPropertyOptional({ type: Date })
   readonly requestedValidToDate?: Date
@@ -232,13 +232,13 @@ export class UpdateCaseDto {
   readonly courtLocation?: string
 
   @IsOptional()
-  @Transform(({ value }) => new Date(value))
+  @Type(() => Date)
   @IsDate()
   @ApiPropertyOptional({ type: Date })
   readonly courtStartDate?: Date
 
   @IsOptional()
-  @Transform(({ value }) => new Date(value))
+  @Type(() => Date)
   @IsDate()
   @ApiPropertyOptional({ type: Date })
   readonly courtEndTime?: Date
@@ -295,7 +295,7 @@ export class UpdateCaseDto {
   readonly decision?: CaseDecision
 
   @IsOptional()
-  @Transform(({ value }) => new Date(value))
+  @Type(() => Date)
   @IsDate()
   @ApiPropertyOptional({ type: Date })
   readonly validToDate?: Date
@@ -306,7 +306,7 @@ export class UpdateCaseDto {
   readonly isCustodyIsolation?: boolean
 
   @IsOptional()
-  @Transform(({ value }) => new Date(value))
+  @Type(() => Date)
   @IsDate()
   @ApiPropertyOptional({ type: Date })
   readonly isolationToDate?: Date
@@ -342,7 +342,7 @@ export class UpdateCaseDto {
   readonly prosecutorAppealAnnouncement?: string
 
   @IsOptional()
-  @Transform(({ value }) => new Date(value))
+  @Type(() => Date)
   @IsDate()
   @ApiPropertyOptional({ type: Date })
   readonly rulingSignatureDate?: Date
@@ -393,13 +393,13 @@ export class UpdateCaseDto {
   readonly requestDriversLicenseSuspension?: boolean
 
   @IsOptional()
-  @Transform(({ value }) => new Date(value))
+  @Type(() => Date)
   @IsDate()
   @ApiPropertyOptional({ type: Date })
   readonly prosecutorStatementDate?: Date
 
   @IsOptional()
-  @Transform(({ value }) => new Date(value))
+  @Type(() => Date)
   @IsDate()
   @ApiPropertyOptional({ type: Date })
   readonly defendantStatementDate?: Date
@@ -445,7 +445,7 @@ export class UpdateCaseDto {
   readonly appealRulingDecision?: CaseAppealRulingDecision
 
   @IsOptional()
-  @Transform(({ value }) => new Date(value))
+  @Type(() => Date)
   @IsDate()
   @ApiPropertyOptional({ type: Date })
   readonly appealValidToDate?: Date
@@ -456,7 +456,7 @@ export class UpdateCaseDto {
   readonly isAppealCustodyIsolation?: boolean
 
   @IsOptional()
-  @Transform(({ value }) => new Date(value))
+  @Type(() => Date)
   @IsDate()
   @ApiPropertyOptional({ type: Date })
   readonly appealIsolationToDate?: Date

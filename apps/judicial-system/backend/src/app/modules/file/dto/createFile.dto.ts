@@ -1,4 +1,4 @@
-import { Transform } from 'class-transformer'
+import { Type } from 'class-transformer'
 import {
   IsDate,
   IsEnum,
@@ -49,7 +49,7 @@ export class CreateFileDto {
   readonly orderWithinChapter?: number
 
   @IsOptional()
-  @Transform(({ value }) => new Date(value))
+  @Type(() => Date)
   @IsDate()
   @ApiPropertyOptional({ type: Date })
   readonly displayDate?: Date

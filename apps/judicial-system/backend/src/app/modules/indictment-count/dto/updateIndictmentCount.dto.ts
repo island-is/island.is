@@ -34,7 +34,7 @@ export class UpdateIndictmentCountDto {
   readonly substances?: SubstanceMap
 
   @IsOptional()
-  @IsArray({ each: true })
+  @IsArray()
   @ApiPropertyOptional({ type: [Number, Number], isArray: true })
   readonly lawsBroken?: [number, number][]
 

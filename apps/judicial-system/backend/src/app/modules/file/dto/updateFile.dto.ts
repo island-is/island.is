@@ -1,4 +1,4 @@
-import { Transform, Type } from 'class-transformer'
+import { Type } from 'class-transformer'
 import {
   IsArray,
   IsDate,
@@ -40,7 +40,7 @@ export class UpdateFileDto {
   readonly orderWithinChapter?: number
 
   @IsOptional()
-  @Transform(({ value }) => new Date(value))
+  @Type(() => Date)
   @IsDate()
   @ApiPropertyOptional({ type: Date })
   readonly displayDate?: Date
