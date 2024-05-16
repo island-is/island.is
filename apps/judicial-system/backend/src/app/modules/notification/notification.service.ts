@@ -1290,6 +1290,17 @@ export class NotificationService {
       )
     }
 
+    if (theCase.defenderEmail) {
+      promises.push(
+        this.sendEmail(
+          subject,
+          html,
+          theCase.defenderName,
+          theCase.defenderEmail,
+        ),
+      )
+    }
+
     const recipients = await Promise.all(promises)
 
     return this.recordNotification(
