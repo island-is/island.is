@@ -215,6 +215,9 @@ describe('PersonalRepresentativesController', () => {
         nationalIdRepresentedPerson:
           simpleRequestData.nationalIdRepresentedPerson,
         rights: rightTypeList.map((rt) => rt.code),
+        prDelegationTypeCodes: rightTypeList.map(
+          (rt) => `PersonalRepresentative:${rt.code}`,
+        ),
       }
       // Test get personal rep
       const response = await server
