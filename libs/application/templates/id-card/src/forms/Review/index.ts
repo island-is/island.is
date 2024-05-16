@@ -10,5 +10,5 @@ export const Review: Form = buildForm({
   title: '',
   // logo: Logo,
   mode: FormModes.DRAFT,
-  children: [StateSection, OverviewSection, ConclusionSection],
+  children: [StateSection, OverviewSection /*, ConclusionSection*/],
 })

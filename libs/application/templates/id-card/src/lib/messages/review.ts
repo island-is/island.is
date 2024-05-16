@@ -126,12 +126,17 @@ export const review = {
   confirmationModal: defineMessages({
     title: {
       id: 'id.application:review.confirmationModal.title',
-      defaultMessage: 'Hafna tilkynningu',
+      defaultMessage: 'Umsókn hafnað',
       description: 'Confirmation modal reject title',
     },
     text: {
       id: 'id.application:review.confirmationModal.text',
-      defaultMessage: 'Þú ert að fara að hafna tilkynningu.',
+      defaultMessage: `Þú ert að fara að hafna umsókn um 
+      útgáfu nafnskírteinis fyrir barn: {childName}.  Ef 
+      umsókninni er hafnað verður nafnskírteinið ekki 
+      gefið út, umsóknin eyðist og það verður að hefja 
+      umsóknarferlið að nýju ef ætlunin er að barnið 
+      fái nafnkírteini.`,
       description: 'Confirmation modal reject text',
     },
     buttonText: {
