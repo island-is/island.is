@@ -31,12 +31,15 @@ export const generateAssignParentBApplicationEmail: EmailTemplateGenerator = (
   // TODO: Might need to change data schema url
   const otherParentEmail = get(
     application.answers,
-    'childsPersonalInfo.guardian2.email',
+    'applicantInformation.secondGuardianEmail',
   )
-  const childName = get(application.answers, 'childsPersonalInfo.name')
+  const childName = get(
+    application.answers,
+    'applicantInformation.applicantName',
+  )
   const applicantName = get(
     application.answers,
-    'childsPersonalInfo.guardian1.name',
+    'applicantInformation.firstGuardianName',
   )
 
   if (!otherParentEmail) {

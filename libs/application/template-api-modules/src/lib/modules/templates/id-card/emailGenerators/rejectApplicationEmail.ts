@@ -3,7 +3,7 @@ import get from 'lodash/get'
 import { ApplicationConfigurations } from '@island.is/application/types'
 import { Message } from '@island.is/email-service'
 
-import { EmailTemplateGenerator } from '../../../../types'
+import { EmailTemplateGeneratorProps } from '../../../../types'
 import { isRunningOnEnvironment } from '@island.is/shared/utils'
 import { join } from 'path'
 import { EmailRecipient } from '../types'
@@ -22,7 +22,7 @@ export const pathToAsset = (file: string) => {
 }
 
 export type ApplicationRejectedEmail = (
-  props: EmailTemplateGenerator,
+  props: EmailTemplateGeneratorProps,
   recipient: EmailRecipient,
 ) => Message
 
