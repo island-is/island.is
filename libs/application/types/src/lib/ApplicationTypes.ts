@@ -344,6 +344,6 @@ export const ApplicationConfigurations = {
   },
   [ApplicationTypes.NEW_PRIMARY_SCHOOL]: {
     slug: 'nyr-grunnskoli',
-    translation: 'dess.nps.application',
+    translation: ['dess.nps.application', 'uiForms.application'],
   },
 }

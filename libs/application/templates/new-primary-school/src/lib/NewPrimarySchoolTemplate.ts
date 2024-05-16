@@ -15,11 +15,9 @@ import {
   DefaultEvents,
   IdentityApi,
 } from '@island.is/application/types'
-
-import { DataSchema } from './dataSchema'
-import { newPrimarySchoolMessages, statesMessages } from './messages'
-
 import { Events, Roles, States } from './constants'
+import { dataSchema } from './dataSchema'
+import { newPrimarySchoolMessages, statesMessages } from './messages'
 
 const NewPrimarySchoolTemplate: ApplicationTemplate<
   ApplicationContext,
@@ -29,10 +27,8 @@ const NewPrimarySchoolTemplate: ApplicationTemplate<
   type: ApplicationTypes.NEW_PRIMARY_SCHOOL,
   name: newPrimarySchoolMessages.shared.applicationName,
   institution: newPrimarySchoolMessages.shared.institution,
-  translationNamespaces: [
-    ApplicationConfigurations.NewPrimarySchool.translation,
-  ],
-  dataSchema: DataSchema,
+  translationNamespaces: ApplicationConfigurations.NewPrimarySchool.translation,
+  dataSchema,
   allowMultipleApplicationsInDraft: true,
   // requiredScopes: [ApiScope.carRecycling], ?? do we need scope for the Primary school application ??
   stateMachineConfig: {
