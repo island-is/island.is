@@ -101,17 +101,16 @@ export default function Navbar() {
   }
 
   const focusComponent = (type: ItemType, id: UniqueIdentifier) => {
-    console.log('dasdsadasdsada')
     const data =
       type === 'Step'
         ? steps?.find(
-            (item: Maybe<FormSystemStep> | undefined) => item?.guid === id,
-          )
+          (item: Maybe<FormSystemStep> | undefined) => item?.guid === id,
+        )
         : type === 'Group'
-        ? groups?.find(
+          ? groups?.find(
             (item: Maybe<FormSystemGroup> | undefined) => item?.guid === id,
           )
-        : inputs?.find(
+          : inputs?.find(
             (item: Maybe<FormSystemInput> | undefined) => item?.guid === id,
           )
     if (id === baseSettingsStep.guid) {
@@ -338,9 +337,9 @@ export default function Navbar() {
                     type={activeItem.type}
                     data={
                       activeItem.data as
-                        | FormSystemGroup
-                        | FormSystemStep
-                        | FormSystemInput
+                      | FormSystemGroup
+                      | FormSystemStep
+                      | FormSystemInput
                     }
                     active={activeItem.data?.guid === activeItem.data?.guid}
                     focusComponent={focusComponent}
@@ -355,14 +354,6 @@ export default function Navbar() {
             + Bæta við skrefi
           </Button>
         </Box>
-        {/* <Box display="flex" justifyContent="center" paddingTop={3}>
-          <Button variant="ghost" size="small" onClick={async () => {
-            const res = await translate('epli')
-            console.log(res)
-          }}>
-            + Bæta við skrefi
-          </Button>
-        </Box> */}
       </Box>
     )
   }

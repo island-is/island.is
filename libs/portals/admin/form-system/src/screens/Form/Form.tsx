@@ -58,8 +58,8 @@ const Form = () => {
       data: inSettings
         ? baseSettingsStep
         : removeTypename(form?.stepsList)?.find(
-            (s: FormSystemStep) => s?.type === 'Innsláttur',
-          ) ?? defaultStep,
+          (s: FormSystemStep) => s?.type === 'Innsláttur',
+        ) ?? defaultStep,
     },
     activeListItem: null,
     form: removeTypename(form) as FormSystemForm,
@@ -129,9 +129,6 @@ const Form = () => {
   const formUpdate = (updatedForm?: FormSystemForm) =>
     entireFormUpdate(control, updateForm, updatedForm)
 
-  useEffect(() => {
-    console.log('form', form)
-  }, [])
 
   const context: IControlContext = {
     control,
