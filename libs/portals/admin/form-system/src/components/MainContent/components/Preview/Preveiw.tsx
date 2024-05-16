@@ -10,6 +10,7 @@ import List from './components/List'
 import Radio from './components/Radio'
 import Currency from './components/Currency'
 import CheckboxPreview from './components/CheckboxPreview'
+import PhoneNumber from './components/PhoneNumber'
 
 interface Props {
   data: FormSystemInput
@@ -47,6 +48,7 @@ const Preview = ({ data }: Props) => {
       {type === 'Valhnappar' && <Radio currentItem={data} />}
       {type === 'Krónutölubox' && <Currency currentItem={data} />}
       {type === 'Hakbox' && <CheckboxPreview currentItem={data} />}
+      {type === 'Símanúmer' && <PhoneNumber currentItem={data} />}
     </Box>
   )
 }
