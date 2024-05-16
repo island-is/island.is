@@ -43,6 +43,7 @@ import { VmstClientConfig } from '@island.is/clients/vmst'
 import { HealthInsuranceV2ClientConfig } from '@island.is/clients/icelandic-health-insurance/health-insurance'
 import { DataProtectionComplaintClientConfig } from '@island.is/clients/data-protection-complaint'
 import { CriminalRecordClientConfig } from '@island.is/clients/criminal-record'
+import { HealthInsuranceV2ClientConfig } from '@island.is/clients/icelandic-health-insurance/health-insurance'
 
 @Module({
   imports: [
@@ -90,6 +91,7 @@ import { CriminalRecordClientConfig } from '@island.is/clients/criminal-record'
         HealthInsuranceV2ClientConfig,
         DataProtectionComplaintClientConfig,
         CriminalRecordClientConfig,
+        HealthInsuranceV2ClientConfig,
       ],
     }),
   ],

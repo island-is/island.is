@@ -188,6 +188,7 @@ import { UltravioletRadiationClientConfig } from '@island.is/clients/ultraviolet
 import { VmstClientConfig } from '@island.is/clients/vmst'
 import { HealthInsuranceV2ClientConfig } from '@island.is/clients/icelandic-health-insurance/health-insurance'
 import { CriminalRecordClientConfig } from '@island.is/clients/criminal-record'
+import { HealthInsuranceV2ClientConfig } from '@island.is/clients/icelandic-health-insurance/health-insurance'
 
 const environment = getConfig
 
@@ -406,6 +407,7 @@ const environment = getConfig
         VmstClientConfig,
         HealthInsuranceV2ClientConfig,
         CriminalRecordClientConfig,
+        HealthInsuranceV2ClientConfig,
       ],
     }),
   ],
