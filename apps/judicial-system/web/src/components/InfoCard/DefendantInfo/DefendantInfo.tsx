@@ -11,11 +11,11 @@ import { formatDOB } from '@island.is/judicial-system/formatters'
 import { Defendant } from '@island.is/judicial-system-web/src/graphql/schema'
 
 import { link } from '../../MarkdownWrapper/MarkdownWrapper.css'
-import * as styles from '../InfoCard.css'
+import * as styles from './DefendantInfo.css'
 
 export type DefendantActionButton = {
   text: string
-  onClick: () => void
+  onClick: (defendant: Defendant) => void
   icon?: IconMapIcon
 }
 
@@ -25,26 +25,27 @@ interface DefendantInfoProps {
   defendantActionButton?: DefendantActionButton
 }
 
-export const DefendantInfo: FC<DefendantInfoProps> = ({
-  defendant,
-  displayDefenderInfo,
-  defendantActionButton,
-}) => {
+export const DefendantInfo: FC<DefendantInfoProps> = (props) => {
+  const { defendant, displayDefenderInfo, defendantActionButton } = props
+
   return (
-    <div key={defendant.id}>
-      <span className={styles.infoCardDefendant}>
-        <Text as="span" fontWeight="semiBold">
-          {defendant.name}
-        </Text>
-        {defendant.nationalId && (
+    <div key={defendant.id} className={styles.gridRow}>
+      <div className={styles.infoCardDefendant}>
+        <span>
           <Text as="span" fontWeight="semiBold">
-            {`, ${formatDOB(defendant.nationalId, defendant.noNationalId)}`}
+            {defendant.name}
           </Text>
-        )}
-        {defendant.citizenship && <span>{`, (${defendant.citizenship})`}</span>}
-        {defendant.address && <span>{`, ${defendant.address}`}</span>}
-      </span>
-      <span>
+          {defendant.nationalId && (
+            <Text as="span" fontWeight="semiBold">
+              {`, ${formatDOB(defendant.nationalId, defendant.noNationalId)}`}
+            </Text>
+          )}
+          {defendant.citizenship && (
+            <span>{`, (${defendant.citizenship})`}</span>
+          )}
+          {defendant.address && <span>{`, ${defendant.address}`}</span>}
+        </span>
+
         {defendant.defenderName && displayDefenderInfo && (
           <Text as="span">
             <Box
@@ -67,17 +68,20 @@ export const DefendantInfo: FC<DefendantInfoProps> = ({
             </Box>
           </Text>
         )}
-      </span>
+      </div>
+
       {defendantActionButton && (
-        <Button
-          variant="text"
-          size="small"
-          onClick={defendantActionButton.onClick}
-          icon={defendantActionButton.icon}
-          iconType="outline"
-        >
-          {defendantActionButton.text}
-        </Button>
+        <Box>
+          <Button
+            variant="text"
+            size="small"
+            onClick={() => defendantActionButton.onClick(defendant)}
+            icon={defendantActionButton.icon}
+            iconType="outline"
+          >
+            {defendantActionButton.text}
+          </Button>
+        </Box>
       )}
     </div>
   )
