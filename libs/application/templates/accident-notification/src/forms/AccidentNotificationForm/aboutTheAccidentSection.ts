@@ -64,7 +64,6 @@ import {
   isWorkAccident,
 } from '../../utils'
 import { isHealthInsured } from '../../utils/isHealthInsured'
-import { FormValue } from '@island.is/application/types'
 import { isSportAccidentAndEmployee } from '../../utils/isSportAccidentAndEmployee'
 
 export const aboutTheAccidentSection = buildSection({
