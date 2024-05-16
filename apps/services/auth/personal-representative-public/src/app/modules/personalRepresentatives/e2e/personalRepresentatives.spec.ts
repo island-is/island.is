@@ -222,7 +222,7 @@ describe('PersonalRepresentativesController', () => {
           `${path}?prId=${simpleRequestData.nationalIdPersonalRepresentative}`,
         )
         .expect(200)
-      
+
       const responseData: PersonalRepresentativePublicDTO[] = response.body
       expect(responseData).toMatchObject([personalRepPublic])
     })
