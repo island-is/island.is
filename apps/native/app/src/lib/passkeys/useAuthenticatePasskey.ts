@@ -35,6 +35,13 @@ export const useAuthenticatePasskey = () => {
           challenge: btoa(
             options.data.authPasskeyAuthenticationOptions.challenge,
           ),
+          allowCredentials:
+            options.data.authPasskeyAuthenticationOptions.allowCredentials.map(
+              (cred) => ({
+                ...cred,
+                id: btoa(cred.id),
+              }),
+            ),
         })
 
         // Converting needed since the server expects base64url strings but react-native-passkey returns base64 strings
