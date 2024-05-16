@@ -622,7 +622,7 @@ const UniversitySearch: Screen<UniversitySearchProps> = ({
   }
 
   const getLocalizedStringValue = (isValue: string, enValue: string) => {
-    return locale === 'localized' ? isValue || '' : enValue || ''
+    return locale === 'is' ? isValue || '' : enValue || ''
   }
 
   return (
@@ -1173,6 +1173,7 @@ const UniversitySearch: Screen<UniversitySearchProps> = ({
                                       dataItem.nameIs,
                                       dataItem.nameEn,
                                     ),
+                                    dataItem.id,
                                   )
                                 }
                                 sidePanelConfig={{
@@ -1348,6 +1349,7 @@ const UniversitySearch: Screen<UniversitySearchProps> = ({
                                         dataItem.nameIs,
                                         dataItem.nameEn,
                                       ),
+                                      dataItem.id,
                                     )
                                   }
                                   infoItems={[
