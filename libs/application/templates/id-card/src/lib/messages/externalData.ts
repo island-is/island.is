@@ -9,22 +9,17 @@ export const externalData = {
     },
     pageTitle: {
       id: 'id.application:externalData.dataProvider.pageTitle',
-      defaultMessage: 'Gagnaöflun',
+      defaultMessage: 'Umsókn um nafnskírteini',
       description: 'External data page title',
     },
     subTitle: {
       id: 'id.application:externalData.dataProvider.subTitle',
-      defaultMessage: 'Eftirfarandi gögn verða sótt rafrænt með þínu samþykki.',
+      defaultMessage: 'Eftirfarandi gögn verða sótt rafrænt',
       description: 'External data sub title',
-    },
-    description: {
-      id: 'id.application:externalData.dataProvider.description',
-      defaultMessage: `Lorem ipsum`,
-      description: 'External data description',
     },
     checkboxLabel: {
       id: 'id.application:externalData.dataProvider.checkboxLabel',
-      defaultMessage: 'Ég hef kynnt mér ofangreint varðandi gagnaöflun',
+      defaultMessage: 'Ég skil að ofangreind gögn verði sótt rafrænt',
       description: 'External data checkbox label',
     },
     submitButton: {
@@ -36,7 +31,7 @@ export const externalData = {
   preInformation: defineMessages({
     sectionTitle: {
       id: 'id.application:externalData.preInformation.sectionTitle',
-      defaultMessage: 'Nafnskírteinisumókn',
+      defaultMessage: 'Nafnskírteini',
       description: 'Pre information about application section title ',
     },
     title: {
@@ -47,48 +42,48 @@ export const externalData = {
     description: {
       id: 'id.application:externalData.preInformation.description#markdown',
       defaultMessage:
-        'Í þessari umsókn getur þú sótt um nafnskírteini fyrir þig eða einstaklinga í þinni forsjá. Eftir þetta ferli þarf að mæta í myndatöku hjá næsta sýslumanni til þess að skírteinið geti farið í framleiðslu. Þegar nafnskírteinið er tilbúið þá getur þú sótt það hjá því sýslumannsembætti sem hentar þér best.',
+        'Gefnar eru út tvær tegundir nafnskírteina: Nafnskírteini sem gildir sem ferðaskilríki innan EES og nafnskírteini sem ekki er ferðaskilríki.  Báðar tegundir gilda sem fullgilt persónuskilríki og báðar tegundir eru með örgjörva sem geymir lífkenni handhafa.  Nánari upplýsingar um muninn á þessum tegundum, og hvar ferðaskilríkin eru tekin gild, er að finna á [vef Þjóðskrár](https://www.skra.is/).',
       description: 'Pre information about application description',
+    },
+    hasValidCardAlert: {
+      id: 'id.application:externalData.preInformation.hasValidCardAlert',
+      defaultMessage:
+        'Vinsamlegast athugið að skila þarf inn gildu nafnskírteini áður en sótt er um nýtt.',
+      description: 'Pre information has valid card alert message',
+    },
+    lostOldCardAlert: {
+      id: 'id.application:externalData.preInformation.lostOldCardAlert',
+      defaultMessage:
+        'Vinsamlega athugaðu að ef eldra skírteini hefur glatast þarf að [tilkynna](https://www.skra.is/umsoknir/eydublod-umsoknir-og-vottord/stok-vara/?productid=7a8b6878-757d-11e9-9452-005056851dd2) það.',
+      description: 'Pre information has lost old card alert message',
     },
   }),
   nationalRegistry: defineMessages({
     title: {
       id: 'id.application:externalData.nationalRegistry.title',
-      defaultMessage: 'Upplýsingar úr Þjóðskrá',
+      defaultMessage: 'Persónuupplýsingar',
       description: 'National Registry title',
     },
     subTitle: {
       id: 'id.application:externalData.nationalRegistry.subTitle',
-      defaultMessage: 'Lorem ipsum',
+      defaultMessage:
+        'Upplýsingar frá Þjóðskrá um nafn, kennitölu og lögheimili.',
       description: 'National Registry sub title',
     },
   }),
   userProfile: defineMessages({
     title: {
       id: 'id.application:externalData.userProfile.title',
-      defaultMessage: 'Netfang og símanúmer úr þínum stillingum',
+      defaultMessage: 'Netfang og símanúmer',
       description: 'User profile title',
     },
     subTitle: {
       id: 'id.application:externalData.userProfile.subTitle',
       defaultMessage:
-        'Til þess að auðvelda umsóknarferlið er gott að hafa fyllt út netfang og símanúmer á mínum síðum',
+        'Upplýsingar frá Mínum síðum á Ísland.is um netfang og símanúmer.',
       description: 'User profile sub title',
     },
   }),
-  // districtCommissioner: defineMessages({
-  //   title: {
-  //     id: 'id.application:externalData.districtCommissioner.title',
-  //     defaultMessage: 'Persónuupplýsingar úr Sýslumenn',
-  //     description: 'Some description',
-  //   },
-  //   subTitle: {
-  //     id: 'id.application:externalData.districtCommissioner.subTitle',
-  //     defaultMessage:
-  //       'Til þess að auðvelda fyrir sækjum við persónuupplýsingar úr Sýslumenn til þess að fylla út umsóknina.',
-  //     description: 'Some description',
-  //   },
-  // }), // TODO WILL THIS NOT BE USED?
   identityDocument: defineMessages({
     title: {
       id: 'id.application:externalData.identityDocument.title',
@@ -98,7 +93,7 @@ export const externalData = {
     subTitle: {
       id: 'id.application:externalData.identityDocument.subTitle',
       defaultMessage:
-        'Uppfletting í skilríkjaskrá hjá Þjóðskrá um einstaklinga úr þinni forsjá.',
+        'Til þess að auðvelda þér umsóknarferlið sækjum við núverandi skráningu þína í skílríkjaskrá Þjóðskrár, ásamt börnum sem þú hefur forsjá yfir.',
       description: 'Identity document provider subtitle',
     },
   }),

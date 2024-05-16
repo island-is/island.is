@@ -1,16 +1,19 @@
 import {
+  buildAlertMessageField,
   buildDataProviderItem,
   buildDescriptionField,
   buildExternalDataProvider,
   buildForm,
   buildSection,
   buildSubmitField,
+  buildMultiField,
 } from '@island.is/application/core'
 import {
   DefaultEvents,
   Form,
   FormModes,
   PassportsApi,
+  FormValue,
 } from '@island.is/application/types'
 import {
   applicantInformation,
@@ -40,10 +43,34 @@ export const Prerequisites: Form = buildForm({
       id: 'preInformation',
       title: externalData.preInformation.sectionTitle,
       children: [
-        buildDescriptionField({
-          id: 'preInformation.description',
-          title: externalData.preInformation.title,
+        buildMultiField({
+          id: 'preInformation.multifield',
+          title: externalData.preInformation.sectionTitle,
           description: externalData.preInformation.description,
+          children: [
+            buildAlertMessageField({
+              id: 'preInformation.alertField.hasValidCard',
+              title: '',
+              alertType: 'info',
+              message: externalData.preInformation.hasValidCardAlert,
+              marginTop: 0,
+              condition: (formValue: FormValue) => {
+                // Add condition from service
+                return true
+              },
+            }),
+            buildAlertMessageField({
+              id: 'preInformation.alertField.lostOldCard',
+              title: '',
+              alertType: 'info',
+              message: externalData.preInformation.lostOldCardAlert,
+              marginTop: 0,
+              condition: (formValue: FormValue) => {
+                // Add condition from service
+                return true
+              },
+            }),
+          ],
         }),
       ],
     }),
@@ -85,10 +112,6 @@ export const Prerequisites: Form = buildForm({
               title: externalData.identityDocument.title,
               subTitle: externalData.identityDocument.subTitle,
             }),
-            // buildDataProviderItem({
-            //   provider: SyslumadurPaymentCatalogApi,
-            //   title: '',
-            // }),
             buildDataProviderItem({
               provider: DeliveryAddressApi,
               title: '',

@@ -43,6 +43,7 @@ export const Approved: Form = buildForm({
               title: '',
               alertType: 'info',
               message: reviewConfirmation.general.infoMessageText2,
+              marginBottom: 0,
             }),
             buildAlertMessageField({
               id: 'uiForms.conclusionAlertInfo2',
