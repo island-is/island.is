@@ -189,7 +189,9 @@ export const useAuthStore = createUse(authStore)
 export async function readAuthorizeResult(): Promise<void> {
   const { authorizeResult } = authStore.getState()
 
-  if (authorizeResult) return
+  if (authorizeResult) {
+    return
+  }
 
   try {
     const res = await Keychain.getGenericPassword({
@@ -200,8 +202,6 @@ export async function readAuthorizeResult(): Promise<void> {
       const authRes = JSON.parse(res.password)
       authStore.setState({ authorizeResult: authRes })
     }
-
-    return
   } catch (err) {
     console.log('Unable to read from keystore: ', err)
   }
