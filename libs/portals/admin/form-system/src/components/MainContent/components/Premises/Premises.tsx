@@ -4,7 +4,7 @@ import ControlContext from '../../../../context/ControlContext'
 import { FormSystemDocumentType } from '@island.is/api/schema'
 
 const Premises = () => {
-  const { control, documentTypes, updateSettings } = useContext(ControlContext)
+  const { control, documentTypes, updateSettings, controlDispatch } = useContext(ControlContext)
   const [formDocumentTypes, setFormDocumentTypes] = useState<
     FormSystemDocumentType[]
   >(
@@ -20,11 +20,17 @@ const Premises = () => {
     )
       ? formDocumentTypes.filter((f) => f?.id !== documentTypeId)
       : ([
-          ...formDocumentTypes,
-          documentTypes?.find((d) => d?.id === documentTypeId),
-        ].filter((d) => d !== undefined) as FormSystemDocumentType[])
+        ...formDocumentTypes,
+        documentTypes?.find((d) => d?.id === documentTypeId),
+      ].filter((d) => d !== undefined) as FormSystemDocumentType[])
     setFormDocumentTypes(newDocumentTypes)
     updateSettings({ ...control.form, documentTypes: newDocumentTypes })
+    controlDispatch({
+      type: 'CHANGE_FORM_SETTINGS',
+      payload: {
+        newForm: { ...control.form, documentTypes: newDocumentTypes }
+      },
+    })
   }
 
   return (
