@@ -32,9 +32,10 @@ export const injuredPersonInformation = {
     },
     jobTitleDescription: {
       id: 'an.application:injuredPersonInformation.general.jobTitleDescription',
-      defaultMessage: 'Sláðu inn starfsheiti þess slasaða þegar slysið átti sér stað.',
+      defaultMessage:
+        'Sláðu inn starfsheiti þess slasaða þegar slysið átti sér stað.',
       description: 'Description for job title',
-    }
+    },
   }),
   labels: defineMessages({
     name: {

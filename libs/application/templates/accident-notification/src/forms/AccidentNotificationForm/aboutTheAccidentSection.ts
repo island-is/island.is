@@ -247,7 +247,9 @@ export const aboutTheAccidentSection = buildSection({
           id: 'accidentLocation.generalWorkAccident',
           title: accidentLocation.general.heading,
           description: accidentLocation.general.description,
-          condition: (formValue) => isGeneralWorkplaceAccident(formValue) || isSportAccidentAndEmployee(formValue),
+          condition: (formValue) =>
+            isGeneralWorkplaceAccident(formValue) ||
+            isSportAccidentAndEmployee(formValue),
           children: [
             buildRadioField({
               id: 'accidentLocation.answer',
@@ -359,7 +361,9 @@ export const aboutTheAccidentSection = buildSection({
           id: 'accidentLocation.professionalAthleteAccident',
           title: accidentLocation.general.heading,
           description: accidentLocation.general.description,
-          condition: (formValue) => isProfessionalAthleteAccident(formValue) && !isSportAccidentAndEmployee(formValue),
+          condition: (formValue) =>
+            isProfessionalAthleteAccident(formValue) &&
+            !isSportAccidentAndEmployee(formValue),
           children: [
             buildRadioField({
               id: 'accidentLocation.answer',
@@ -472,7 +476,7 @@ export const aboutTheAccidentSection = buildSection({
       title: workMachine.general.sectionTitle,
       condition: (formValue) =>
         isGeneralWorkplaceAccident(formValue) ||
-        isAgricultureAccident(formValue) || 
+        isAgricultureAccident(formValue) ||
         isSportAccidentAndEmployee(formValue),
       children: [
         buildMultiField({
@@ -1401,4 +1405,3 @@ export const aboutTheAccidentSection = buildSection({
 function isProfessionalAthleteAndEmployee(formValue: FormValue): boolean {
   throw new Error('Function not implemented.')
 }
-
