@@ -11,8 +11,8 @@ enum ProblemTypes {
 type ProblemBaseProps = {
   /**
    * Type of problem
-   * @default 'internal_service_error'
-   * 'internal_service_error' is a generic error that is not caused by the user
+   * @default 'error'
+   * 'error' is a generic error that is not caused by the user
    * 'no_data' is a 200 response, i.e. no data
    */
   type?: `${ProblemTypes}`
