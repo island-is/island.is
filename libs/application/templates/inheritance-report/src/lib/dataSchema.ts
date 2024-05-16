@@ -35,7 +35,13 @@ const validateDeceasedShare = ({
 }
 
 const validateAssetNumber = (assetNumber: string) => {
-  const assetNumberPattern = /^(F\d{3}-\d{4}|\d{7}|\d{3}-\d{4}|F\d{7})$/
+  const assetNumberPattern =
+    /^(F\d{3}-\d{4}|\d{7}|\d{3}-\d{4}|F\d{7}|L\d{3}-\d{3}|L\d{6})$/
+  return assetNumberPattern.test(assetNumber)
+}
+
+const validateDebtBankAccount = (assetNumber: string) => {
+  const assetNumberPattern = /^\d{4}-\d{2}-\d{6}|\d{12}$/
   return assetNumberPattern.test(assetNumber)
 }
 
@@ -313,7 +319,7 @@ export const inheritanceReportSchema = z.object({
           .object({
             description: z.string(),
             nationalId: z.string(),
-            assetNumber: z.string(),
+            assetNumber: z.string().refine((v) => validateDebtBankAccount(v)),
             propertyValuation: z.string(),
           })
           .refine(
