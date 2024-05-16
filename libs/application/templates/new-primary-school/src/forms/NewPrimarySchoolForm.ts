@@ -83,37 +83,31 @@ export const NewPrimarySchoolForm: Form = buildForm({
       id: 'confirmationSection',
       title: newPrimarySchoolMessages.confirm.sectionTitle,
       children: [
-        buildSubSection({
-          id: '',
+        buildMultiField({
+          id: 'confirmation',
           title: '',
+          description: '',
           children: [
-            buildMultiField({
-              id: 'confirmation',
-              title: '',
-              description: '',
-              children: [
-                buildCustomField(
-                  {
-                    id: 'confirmationScreen',
-                    title: newPrimarySchoolMessages.confirm.overviewTitle,
-                    component: 'Review',
-                  },
-                  {
-                    editable: true,
-                  },
-                ),
-                buildSubmitField({
-                  id: 'submit',
-                  placement: 'footer',
-                  title: newPrimarySchoolMessages.confirm.submitButton,
-                  actions: [
-                    {
-                      event: DefaultEvents.SUBMIT,
-                      name: newPrimarySchoolMessages.confirm.submitButton,
-                      type: 'primary',
-                    },
-                  ],
-                }),
+            buildCustomField(
+              {
+                id: 'confirmationScreen',
+                title: newPrimarySchoolMessages.confirm.overviewTitle,
+                component: 'Review',
+              },
+              {
+                editable: true,
+              },
+            ),
+            buildSubmitField({
+              id: 'submit',
+              placement: 'footer',
+              title: newPrimarySchoolMessages.confirm.submitButton,
+              actions: [
+                {
+                  event: DefaultEvents.SUBMIT,
+                  name: newPrimarySchoolMessages.confirm.submitButton,
+                  type: 'primary',
+                },
               ],
             }),
           ],
