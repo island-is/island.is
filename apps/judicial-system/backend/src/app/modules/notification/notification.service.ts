@@ -1204,49 +1204,16 @@ export class NotificationService {
     })
 
     const html = theCase.isCustodyIsolation
-      ? isDefenceUser(user)
-        ? this.formatMessage(notifications.modified.isolationHtmlDefender, {
-            caseType: theCase.type,
-            actorInstitution: user.institution?.name,
-            actorName: user.name,
-            actorTitle: user.title,
-            courtCaseNumber: theCase.courtCaseNumber,
-            defenderHasAccessToRvg: Boolean(theCase.defenderNationalId),
-            linkStart: `<a href="${formatDefenderRoute(
-              this.config.clientUrl,
-              theCase.type,
-              theCase.id,
-            )}">`,
-            linkEnd: '</a>',
-            validToDate: formatDate(theCase.validToDate, 'PPPp'),
-            isolationToDate: formatDate(theCase.isolationToDate, 'PPPp'),
-          })
-        : this.formatMessage(notifications.modified.isolationHtml, {
-            caseType: theCase.type,
-            actorInstitution: user.institution?.name,
-            actorName: user.name,
-            actorTitle: user.title,
-            courtCaseNumber: theCase.courtCaseNumber,
-            linkStart: `<a href="${this.config.clientUrl}${SIGNED_VERDICT_OVERVIEW_ROUTE}/${theCase.id}">`,
-            linkEnd: '</a>',
-            validToDate: formatDate(theCase.validToDate, 'PPPp'),
-            isolationToDate: formatDate(theCase.isolationToDate, 'PPPp'),
-          })
-      : isDefenceUser(user)
-      ? this.formatMessage(notifications.modified.htmlDefender, {
+      ? this.formatMessage(notifications.modified.isolationHtml, {
           caseType: theCase.type,
           actorInstitution: user.institution?.name,
           actorName: user.name,
           actorTitle: user.title,
           courtCaseNumber: theCase.courtCaseNumber,
-          defenderHasAccessToRvg: Boolean(theCase.defenderNationalId),
-          linkStart: `<a href="${formatDefenderRoute(
-            this.config.clientUrl,
-            theCase.type,
-            theCase.id,
-          )}">`,
+          linkStart: `<a href="${this.config.clientUrl}${SIGNED_VERDICT_OVERVIEW_ROUTE}/${theCase.id}">`,
           linkEnd: '</a>',
           validToDate: formatDate(theCase.validToDate, 'PPPp'),
+          isolationToDate: formatDate(theCase.isolationToDate, 'PPPp'),
         })
       : this.formatMessage(notifications.modified.html, {
           caseType: theCase.type,
@@ -1316,10 +1283,43 @@ export class NotificationService {
     }
 
     if (theCase.defenderEmail) {
+      const defenderHtml = theCase.isCustodyIsolation
+        ? this.formatMessage(notifications.modified.isolationHtmlDefender, {
+            caseType: theCase.type,
+            actorInstitution: user.institution?.name,
+            actorName: user.name,
+            actorTitle: user.title,
+            courtCaseNumber: theCase.courtCaseNumber,
+            defenderHasAccessToRvg: Boolean(theCase.defenderNationalId),
+            linkStart: `<a href="${formatDefenderRoute(
+              this.config.clientUrl,
+              theCase.type,
+              theCase.id,
+            )}">`,
+            linkEnd: '</a>',
+            validToDate: formatDate(theCase.validToDate, 'PPPp'),
+            isolationToDate: formatDate(theCase.isolationToDate, 'PPPp'),
+          })
+        : this.formatMessage(notifications.modified.htmlDefender, {
+            caseType: theCase.type,
+            actorInstitution: user.institution?.name,
+            actorName: user.name,
+            actorTitle: user.title,
+            courtCaseNumber: theCase.courtCaseNumber,
+            defenderHasAccessToRvg: Boolean(theCase.defenderNationalId),
+            linkStart: `<a href="${formatDefenderRoute(
+              this.config.clientUrl,
+              theCase.type,
+              theCase.id,
+            )}">`,
+            linkEnd: '</a>',
+            validToDate: formatDate(theCase.validToDate, 'PPPp'),
+          })
+
       promises.push(
         this.sendEmail(
           subject,
-          html,
+          defenderHtml,
           theCase.defenderName,
           theCase.defenderEmail,
         ),
