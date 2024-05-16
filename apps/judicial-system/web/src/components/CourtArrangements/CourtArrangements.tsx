@@ -1,4 +1,5 @@
 import React, { useEffect, useState } from 'react'
+import { useIntl } from 'react-intl'
 import compareAsc from 'date-fns/compareAsc'
 
 import { Box, Input } from '@island.is/island-ui/core'
@@ -10,9 +11,12 @@ import { NotificationType } from '@island.is/judicial-system-web/src/graphql/sch
 import { TempCase as Case } from '@island.is/judicial-system-web/src/types'
 import {
   formatDateForServer,
+  UpdateCase,
   useCase,
 } from '@island.is/judicial-system-web/src/utils/hooks'
 import { hasSentNotification } from '@island.is/judicial-system-web/src/utils/stepHelper'
+
+import { strings } from './CourtArrangements.string'
 
 interface CourtDate {
   date?: string | null
@@ -20,7 +24,6 @@ interface CourtDate {
 }
 
 interface Props {
-  workingCase: Case
   handleCourtDateChange: (date: Date | undefined | null, valid: boolean) => void
   handleCourtRoomChange: (courtRoom?: string) => void
   courtDate?: CourtDate | null
@@ -75,9 +78,10 @@ export const useCourtArrangements = (
     )
   }
 
-  const sendCourtDateToServer = () => {
+  const sendCourtDateToServer = (otherUpdates: UpdateCase[] = []) => {
     return setAndSendCaseToServer(
       [
+        ...otherUpdates,
         {
           [dateKey]: courtDate?.date
             ? {
@@ -104,7 +108,6 @@ export const useCourtArrangements = (
 
 export const CourtArrangements: React.FC<Props> = (props) => {
   const {
-    workingCase,
     handleCourtDateChange,
     handleCourtRoomChange,
     courtDate,
@@ -112,11 +115,9 @@ export const CourtArrangements: React.FC<Props> = (props) => {
     dateTimeDisabled,
     courtRoomDisabled,
   } = props
-  const [courtRoomValue, setCourtRoomValue] = useState<string>('')
+  const { formatMessage } = useIntl()
 
-  const isCorrectingRuling = workingCase.notifications?.some(
-    (notification) => notification.type === NotificationType.RULING,
-  )
+  const [courtRoomValue, setCourtRoomValue] = useState<string>('')
 
   useEffect(() => {
     if (courtDate?.location) {
@@ -134,13 +135,13 @@ export const CourtArrangements: React.FC<Props> = (props) => {
           onChange={handleCourtDateChange}
           blueBox={false}
           required
-          disabled={isCorrectingRuling || dateTimeDisabled}
+          disabled={dateTimeDisabled}
         />
       </Box>
       <Input
         data-testid="courtroom"
         name="courtroom"
-        label="Dómsalur"
+        label={formatMessage(strings.courtRoomLabel)}
         autoComplete="off"
         value={courtRoomValue}
         placeholder="Skráðu inn dómsal"
@@ -150,7 +151,7 @@ export const CourtArrangements: React.FC<Props> = (props) => {
         onBlur={(evt) => {
           handleCourtRoomChange(evt.target.value)
         }}
-        disabled={isCorrectingRuling || courtRoomDisabled}
+        disabled={courtRoomDisabled}
       />
     </>
   )

@@ -31,6 +31,11 @@ import {
 } from '@island.is/island-ui/core'
 import { theme } from '@island.is/island-ui/theme'
 import {
+  haskolanamCardClicked,
+  haskolanamFilterClicked,
+  haskolanamTrackSearchQuery,
+} from '@island.is/plausible'
+import {
   ActionCategoryCard,
   CTAProps,
   ListViewCard,
@@ -151,6 +156,8 @@ const UniversitySearch: Screen<UniversitySearchProps> = ({
   const [totalPages, setTotalPages] = useState<number>(0)
   const [filters, setFilters] = useState<FilterProps>(filtersFromQuery)
   const titleRef = useRef<HTMLDivElement>(null)
+  const [searchTimeoutId, setSearchTimeoutId] =
+    useState<ReturnType<typeof setTimeout>>()
 
   useEffect(() => {
     if (!loading) {
@@ -216,8 +223,10 @@ const UniversitySearch: Screen<UniversitySearchProps> = ({
   }, [])
 
   const fuseOptions = {
-    threshold: 0.3,
+    threshold: 0.1,
     includeScore: true,
+    ignoreLocation: true,
+    minMatchCharLength: 3,
     keys: [
       {
         name: `name${locale === 'is' ? 'Is' : 'En'}`,
@@ -225,6 +234,10 @@ const UniversitySearch: Screen<UniversitySearchProps> = ({
       },
       {
         name: `specializationName${locale === 'is' ? 'Is' : 'En'}`,
+        weight: 0.75,
+      },
+      {
+        name: `description${locale === 'is' ? 'Is' : 'En'}`,
         weight: 0.75,
       },
       'degreeType',
@@ -267,7 +280,7 @@ const UniversitySearch: Screen<UniversitySearchProps> = ({
     } else {
       const results = SearchProducts({
         fuseInstance,
-        query,
+        query: query.trim(),
         activeFilters: activeFiltersFound,
         locale,
       })
@@ -608,6 +621,10 @@ const UniversitySearch: Screen<UniversitySearchProps> = ({
     return occurrenceMap
   }
 
+  const getLocalizedStringValue = (isValue: string, enValue: string) => {
+    return locale === 'localized' ? isValue || '' : enValue || ''
+  }
+
   return (
     <Box>
       {organizationPage && (
@@ -722,13 +739,19 @@ const UniversitySearch: Screen<UniversitySearchProps> = ({
                                       filters[str].filter((x) => x === option)
                                         .length > 0
                                     }
-                                    onChange={(e) =>
+                                    onChange={(e) => {
                                       handleFilters(
                                         filter.field,
                                         e.target.value,
                                         e.target.checked,
                                       )
-                                    }
+                                      if (e.target.checked) {
+                                        haskolanamFilterClicked(
+                                          filter.field,
+                                          formatFilterStrings(option, str),
+                                        )
+                                      }
+                                    }}
                                   />
                                 )
                               })}
@@ -818,6 +841,12 @@ const UniversitySearch: Screen<UniversitySearchProps> = ({
               backgroundColor="blue"
               onChange={(e) => {
                 handleUserInput(e.target.value)
+                clearTimeout(searchTimeoutId)
+                const timeoutId = setTimeout(() => {
+                  if (!e.target.value) return null
+                  haskolanamTrackSearchQuery(e.target.value)
+                }, 750)
+                setSearchTimeoutId(timeoutId)
               }}
             />
             <Box
@@ -1054,6 +1083,7 @@ const UniversitySearch: Screen<UniversitySearchProps> = ({
                         display="flex"
                         alignItems="center"
                         style={{ gap: '4px' }}
+                        flexWrap={'wrap'}
                       >
                         <img
                           className={styles.searchResultIcon}
@@ -1086,6 +1116,9 @@ const UniversitySearch: Screen<UniversitySearchProps> = ({
                         .map((item, index) => {
                           const dataItem =
                             item.item as UniversityGatewayProgramWithStatus
+                          const university = universities.filter(
+                            (x) => x.id === dataItem.universityId,
+                          )[0]
                           const specializedName =
                             locale === 'en'
                               ? dataItem.specializationNameEn ?? undefined
@@ -1129,6 +1162,18 @@ const UniversitySearch: Screen<UniversitySearchProps> = ({
                                         : dataItem.nameIs
                                     } logo`}
                                   />
+                                }
+                                onCardClick={() =>
+                                  haskolanamCardClicked(
+                                    getLocalizedStringValue(
+                                      university.contentfulTitle || '',
+                                      university.contentfulTitleEn || '',
+                                    ),
+                                    getLocalizedStringValue(
+                                      dataItem.nameIs,
+                                      dataItem.nameEn,
+                                    ),
+                                  )
                                 }
                                 sidePanelConfig={{
                                   cta: createPrimaryCTA(dataItem),
@@ -1292,6 +1337,18 @@ const UniversitySearch: Screen<UniversitySearchProps> = ({
                                     linkResolver('universitysearchdetails', [
                                       dataItem.id,
                                     ]).href
+                                  }
+                                  onCardClick={() =>
+                                    haskolanamCardClicked(
+                                      getLocalizedStringValue(
+                                        contentfulUni.contentfulTitle || '',
+                                        contentfulUni.contentfulTitleEn || '',
+                                      ),
+                                      getLocalizedStringValue(
+                                        dataItem.nameIs,
+                                        dataItem.nameEn,
+                                      ),
+                                    )
                                   }
                                   infoItems={[
                                     {

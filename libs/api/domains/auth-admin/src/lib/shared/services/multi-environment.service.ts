@@ -7,10 +7,11 @@ import {
   AdminProdApi,
   AdminStagingApi,
 } from '@island.is/clients/auth/admin-api'
-import type { Logger } from '@island.is/logging'
-import { LOGGER_PROVIDER } from '@island.is/logging'
+import { LOGGER_PROVIDER, type Logger } from '@island.is/logging'
+import { type ApiResponse, handle204 } from '@island.is/clients/middlewares'
 import { Environment } from '@island.is/shared/types'
 import { isDefined } from '@island.is/shared/utils'
+
 import { environments } from '../constants/environments'
 
 @Injectable()
@@ -32,20 +33,17 @@ export abstract class MultiEnvironmentService {
     }
   }
 
-  protected adminDevApiWithAuth(auth: Auth) {
+  private adminDevApiWithAuth(auth: Auth) {
     return this.adminDevApi?.withMiddleware(new AuthMiddleware(auth))
   }
-  protected adminStagingApiWithAuth(auth: Auth) {
+  private adminStagingApiWithAuth(auth: Auth) {
     return this.adminStagingApi?.withMiddleware(new AuthMiddleware(auth))
   }
-  protected adminProdApiWithAuth(auth: Auth) {
+  private adminProdApiWithAuth(auth: Auth) {
     return this.adminProdApi?.withMiddleware(new AuthMiddleware(auth))
   }
 
-  protected adminApiByEnvironmentWithAuth(
-    environment: Environment,
-    auth: Auth,
-  ) {
+  private adminApiByEnvironmentWithAuth(environment: Environment, auth: Auth) {
     switch (environment) {
       case Environment.Development:
         return this.adminDevApiWithAuth(auth)
@@ -58,8 +56,27 @@ export abstract class MultiEnvironmentService {
     }
   }
 
+  /**
+   * Request wrapper that handles 204 responses.
+   * Needs to be passed the Raw functions from the openapi codegen
+   */
+  makeRequest<T>(
+    user: Auth,
+    environment: Environment,
+    request: (api: AdminApi) => Promise<ApiResponse<T>>,
+  ) {
+    const api = this.adminApiByEnvironmentWithAuth(environment, user)
+
+    if (!api) {
+      this.logger.warn(`Environment configuration missing for ${environment}`)
+      return Promise.resolve(null)
+    }
+
+    return handle204(request(api))
+  }
+
   protected handleError(error: Error, environment: Environment) {
-    this.logger.error(`Error while fetching data from ${environment}`, error)
+    this.logger.error(`Error from ${environment}`, error)
 
     // We swallow the errors
     return undefined
@@ -71,7 +88,7 @@ export abstract class MultiEnvironmentService {
    * The return value of the fulfilled promises are mapped with the given mapper function
    */
   public handleSettledPromises<T, K>(
-    settledPromises: PromiseSettledResult<T | undefined>[],
+    settledPromises: PromiseSettledResult<T | undefined | null>[],
     {
       mapper,
       prefixErrorMessage,

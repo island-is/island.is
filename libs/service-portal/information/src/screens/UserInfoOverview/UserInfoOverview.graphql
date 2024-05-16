@@ -1,5 +1,5 @@
-query UserInfoOverview($api: String, $useFakeData: Boolean) {
-  nationalRegistryPerson(api: $api, useFakeData: $useFakeData) {
+query UserInfoOverview($useFakeData: Boolean) {
+  nationalRegistryPerson(useFakeData: $useFakeData) {
     nationalId
     fullName
     spouse {

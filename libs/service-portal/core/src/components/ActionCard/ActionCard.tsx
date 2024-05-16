@@ -15,6 +15,7 @@ import * as React from 'react'
 import { CardLoader, isExternalLink } from '../..'
 import * as styles from './ActionCard.css'
 import LinkResolver from '../LinkResolver/LinkResolver'
+import cn from 'classnames'
 
 type ActionCardProps = {
   capitalizeHeading?: boolean
@@ -117,7 +118,7 @@ export const ActionCard: React.FC<React.PropsWithChildren<ActionCardProps>> = ({
           marginRight={[2, 3]}
           borderRadius="circle"
           background="blue100"
-          className={styles.avatar}
+          className={cn(styles.avatar, styles.image)}
         >
           <Text
             capitalizeFirstLetter={capitalizeHeading}
@@ -141,7 +142,7 @@ export const ActionCard: React.FC<React.PropsWithChildren<ActionCardProps>> = ({
           marginRight={[2, 3]}
           borderRadius="circle"
         >
-          <img className={styles.avatar} src={image.url} alt="action-card" />
+          <img className={styles.image} src={image.url} alt="action-card" />
         </Box>
       )
     }
@@ -155,7 +156,7 @@ export const ActionCard: React.FC<React.PropsWithChildren<ActionCardProps>> = ({
           marginRight={[2, 3]}
           borderRadius="circle"
           background={image.active ? 'white' : 'blue100'}
-          className={styles.avatar}
+          className={cn(styles.avatar, styles.image)}
         >
           <img className={styles.circleImg} src={image.url} alt="action-card" />
         </Box>

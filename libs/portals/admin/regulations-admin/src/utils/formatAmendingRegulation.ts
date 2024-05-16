@@ -26,16 +26,18 @@ export const formatAmendingRegTitle = (draft: RegDraftForm) => {
 
     const amendingTitles = amendingArray.map(
       (item, i) =>
-        `${i === 0 ? `${PREFIX_AMENDING}` : ''} ${item.name}${removeRegPrefix(
-          item.regTitle,
-        )}`,
+        `${i === 0 ? `${PREFIX_AMENDING}` : ''}${item.name.replace(
+          /^0+/,
+          '',
+        )}${removeRegPrefix(item.regTitle)}`,
     )
 
     const repealTitles = repealArray.map(
       (item, i) =>
-        `${i === 0 ? `${PREFIX_REPEALING}` : ''} ${item.name}${removeRegPrefix(
-          item.regTitle,
-        )}`,
+        `${i === 0 ? `${PREFIX_REPEALING}` : ''}${item.name.replace(
+          /^0+/,
+          '',
+        )}${removeRegPrefix(item.regTitle)}`,
     )
 
     return PREFIX + [...amendingTitles, ...repealTitles].join(' og ')
@@ -120,17 +122,14 @@ const formatListItemDiff = (item: Element) => {
       const liLidur = isStaflidur ? 'stafliður' : 'töluliður'
       const liLidurShortened = isStaflidur ? 'stafl.' : 'tölul.'
 
-      const lidurMaybeCapitalized =
-        liItemHtml === ''
-          ? liLidur.charAt(0).toUpperCase() + liLidur.slice(1).toLowerCase()
-          : liLidur
+      const lidurLabel = liItemHtml === '' ? liLidur.toLowerCase() : liLidur
 
       if (isLiDeleted) {
         liItemHtml = (liItemHtml +
-          `${lidurMaybeCapitalized} ${getLiPoint(
+          `${getLiPoint(
             lidur,
             isStaflidur,
-          )}, ${oldLiText} fellur brott og breytist númer annarra liða til samræmis.`) as HTMLText
+          )}. ${lidurLabel} fellur brott og breytist númer annarra liða til samræmis.`) as HTMLText
 
         // Finish up:
         returningArray.push(liItemHtml)
@@ -166,9 +165,11 @@ export const formatAmendingRegBody = (
   diff?: HTMLText | string | undefined,
 ) => {
   if (repeal) {
-    return [
-      `<p>Jafnframt fellur brott reglugerð nr. ${regName}</p>` as HTMLText,
-    ]
+    const text =
+      `<p>Reglugerð nr. ${regName} ásamt síðari breytingum fellur brott</p>` as HTMLText
+    const gildistaka =
+      `<p>Reglugerð þessi er sett með heimild í [].</p><p>Reglugerðin öðlast þegar gildi</p>` as HTMLText
+    return [text, gildistaka]
   }
 
   if (!diff) {
@@ -263,7 +264,8 @@ export const formatAmendingRegBody = (
         }
       }
 
-      const isDeleted = newText === '' || newText === null
+      const isDeleted =
+        newText === '' || newText === null || newText === '<br />'
       const isAddition = oldText === '' || oldText === null
 
       const regNameDisplay =
@@ -365,7 +367,7 @@ export const formatAmendingBodyWithArticlePrefix = (
     ([key, impacts]) => {
       const impactArray = impacts.map((item, i) =>
         formatAmendingRegBody(
-          draftImpactLength > 1 ? item.name : '',
+          item.type === 'repeal' || draftImpactLength > 1 ? item.name : '',
           item.type === 'repeal',
           item.type === 'amend' ? item.diff?.value : undefined,
         ),
