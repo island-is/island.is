@@ -31,6 +31,7 @@ import {
 import { DirectTaxPaymentsModal } from '..'
 import { findFamilyStatus } from '../../lib/utils'
 import withLogo from '../Logo/Logo'
+import ChildrenInfo from './ChildrenInfo'
 
 const SummaryForm = ({ application, goToScreen }: FAFieldBaseProps) => {
   const { formatMessage } = useIntl()
@@ -93,6 +94,13 @@ const SummaryForm = ({ application, goToScreen }: FAFieldBaseProps) => {
         nationalId={externalData.nationalRegistry.data.nationalId}
         address={formatAddress(externalData.nationalRegistry.data)}
       />
+
+      {answers?.childrenSchoolInfo && (
+        <ChildrenInfo
+          childrenSchoolInfo={answers?.childrenSchoolInfo}
+          goToScreen={goToScreen}
+        />
+      )}
 
       <FormInfo
         items={formItems(answers, externalData)}

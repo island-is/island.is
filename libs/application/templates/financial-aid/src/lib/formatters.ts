@@ -18,7 +18,7 @@ import {
   OverrideAnswerSchema,
   SchoolType,
 } from './types'
-import { findChildrenInfo, findFamilyStatus } from './utils'
+import { findFamilyStatus } from './utils'
 import { NationalRegistryIndividual } from '@island.is/application/types'
 
 export const getMessageHomeCircumstances: KeyMapping<
@@ -115,12 +115,6 @@ export const formItems = (
     route: Routes.INRELATIONSHIP,
     label: m.inRelationship.general.sectionTitle,
     info: getMessageFamilyStatus[findFamilyStatus(answers, externalData)],
-  },
-  {
-    route: Routes.CHILDRENSCHOOLINFO,
-    label: m.childrenForm.general.sectionTitle,
-    info: '',
-    comment: findChildrenInfo(answers),
   },
   {
     route: Routes.HOMECIRCUMSTANCES,

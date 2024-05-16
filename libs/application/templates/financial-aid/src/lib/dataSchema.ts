@@ -26,7 +26,7 @@ export const dataSchema = z.object({
     z.object({
       fullName: z.string(),
       nationalId: z.string(),
-      // school: z.string(),
+      school: z.string(),
       // hasFoodStamps: z.enum([ApproveOptions.Yes, ApproveOptions.No]),
       // hasAfterSchool: z.enum([ApproveOptions.Yes, ApproveOptions.No]),
       // hasBookAid: z.enum([ApproveOptions.Yes, ApproveOptions.No]),

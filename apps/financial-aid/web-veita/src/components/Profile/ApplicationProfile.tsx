@@ -34,7 +34,6 @@ import {
   getApplicant,
   getApplicantMoreInfo,
   getApplicantSpouse,
-  getChildrenInfo,
   getDirectTaxPayments,
   getNationalRegistryInfo,
 } from '@island.is/financial-aid-web/veita/src/utils/applicationHelper'

@@ -2,7 +2,6 @@ import React, { FC } from 'react'
 
 import { Text, Box } from '@island.is/island-ui/core'
 
-import { FAApplication, SchoolType } from '../../lib/types'
 import { childrenForm } from '../../lib/messages'
 import format from 'date-fns/format'
 
@@ -17,10 +16,10 @@ import { getSchoolType } from '../../lib/utils'
 import { useLocale } from '@island.is/localization'
 import { RecordObject } from '@island.is/application/types'
 import { getErrorViaPath } from '@island.is/application/core'
+import { useFormContext } from 'react-hook-form'
 
 interface Props {
   id: string
-  application: FAApplication
   index: number
   errors: RecordObject<unknown> | undefined
   childFullName: string
@@ -29,19 +28,20 @@ interface Props {
 
 export const ChildInput: FC<React.PropsWithChildren<Props>> = ({
   id,
-  application,
   index,
   errors,
   childFullName,
   childNationalId,
 }) => {
-  const { answers } = application
+  const { setValue, clearErrors } = useFormContext()
 
   const fieldIndex = `${id}[${index}]`
   const schoolField = `${fieldIndex}.school`
-  // const hasFoodStampsField = `${fieldIndex}.hasFoodStamps`
-  // const hasAfterSchool = `${fieldIndex}.hasAfterSchool`
-  // const hasBookAid = `${fieldIndex}.hasBookAid`
+  const nameField = `${fieldIndex}.fullName`
+  const nationalIdField = `${fieldIndex}.nationalId`
+
+  setValue(nameField, childFullName)
+  setValue(nationalIdField, childNationalId)
 
   const nationalId = childNationalId
   const kennitalaInfo = kennitala.info(nationalId)
@@ -62,7 +62,7 @@ export const ChildInput: FC<React.PropsWithChildren<Props>> = ({
       background="blue100"
       padding={3}
       borderRadius="standard"
-      key={fieldIndex}
+      key={childNationalId}
     >
       <Text variant="h3" fontWeight="semiBold" marginBottom={1}>
         {childFullName}
@@ -81,6 +81,9 @@ export const ChildInput: FC<React.PropsWithChildren<Props>> = ({
           label={formatMessage(getMessageForSchool[schoolType].label)}
           error={errors && getErrorViaPath(errors, schoolField)}
           backgroundColor="white"
+          onChange={() => {
+            clearErrors(schoolField)
+          }}
         />
       </Box>
 

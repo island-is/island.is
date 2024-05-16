@@ -87,25 +87,13 @@ export function findFamilyStatus(
   }
 }
 
-export function findChildrenInfo(answers: FAApplication['answers']) {
-  if (!answers.childrenSchoolInfo) {
-    return undefined
-  }
-  return answers.childrenSchoolInfo
-    .map((child) => {
-      return `Nafn: ${child.fullName} 
-    \n\n Kennitala: ${child.nationalId}
-    \n\n Skóli: `
-    })
-    .join(', ')
-}
-
 export function hasActiveCurrentApplication(context: ApplicationContext) {
   const { externalData } = context.application
   const currentApplication = getValueViaPath(
     externalData,
     'currentApplication.data',
   ) as CurrentApplication
+
   return currentApplication?.currentApplicationId != null
 }
 
