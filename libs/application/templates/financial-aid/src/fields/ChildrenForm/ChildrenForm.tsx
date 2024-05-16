@@ -1,4 +1,4 @@
-import React, { useCallback, useEffect } from 'react'
+import React, { useEffect } from 'react'
 import { useIntl } from 'react-intl'
 
 import { Text, Box } from '@island.is/island-ui/core'
@@ -8,10 +8,9 @@ import { ApproveOptions, FAFieldBaseProps } from '../../lib/types'
 import withLogo from '../Logo/Logo'
 import { childrenForm } from '../../lib/messages'
 
-import { sortChildrenByAge } from '@island.is/application/templates/family-matters-core/utils'
-import { useFieldArray } from 'react-hook-form'
 import { ChildInput } from './ChildInput'
-import { getValueViaPath } from '@island.is/application/core'
+import { sortChildrenUnderAgeByAge } from '../../lib/utils'
+import { useFormContext } from 'react-hook-form'
 
 export type ChildrenField = {
   nationalId: string
@@ -21,37 +20,27 @@ export type ChildrenField = {
   hasBookAid: ApproveOptions.Yes | ApproveOptions.No
 }
 
-const ChildrenForm = ({ application, errors, field }: FAFieldBaseProps) => {
+const ChildrenForm = ({ application, field, errors }: FAFieldBaseProps) => {
   const { formatMessage } = useIntl()
+  const { externalData, answers } = application
+  const childrenExternalData = externalData.childrenCustodyInformation.data
+  const childrenInfo = sortChildrenUnderAgeByAge(childrenExternalData)
 
-  const childrenInfo = application.externalData.childrenCustodyInformation.data
+  const { childrenSchoolInfo } = answers
 
-  const { id } = field
-  const { answers } = application
-  const children = answers?.children
-
-  const { fields, append, remove } = useFieldArray({ name: id })
-
-  const handleAddPerson = useCallback(() => {
-    append({
-      nationalId: '',
-      school: '',
-      hasFoodStamps: ApproveOptions.No,
-      hasAfterSchool: ApproveOptions.No,
-      hasBookAid: ApproveOptions.No,
-    })
-  }, [append])
-
-  const handleRemovePerson = (index: number) => remove(index)
+  const { setValue } = useFormContext()
 
   useEffect(() => {
-    // The repeater should include one line by default
-    if (fields.length === 0) {
-      handleAddPerson()
+    if (childrenSchoolInfo.length === 0) {
+      const formChildren = childrenInfo.map((f) => {
+        return {
+          fullName: f.fullName,
+          nationalId: f.nationalId,
+        }
+      })
+      setValue(field.id, formChildren)
     }
-  }, [fields, handleAddPerson])
-
-  console.log(fields)
+  }, [childrenInfo])
 
   return (
     <>
@@ -62,20 +51,19 @@ const ChildrenForm = ({ application, errors, field }: FAFieldBaseProps) => {
         <DescriptionText text={childrenForm.page.content} />
       </Box>
 
-      {fields.map((field, index) => {
-        return (
-          <ChildInput
-            id={field.id}
-            application={application}
-            field={field}
-            index={index}
-            key={field.id}
-            errors={errors}
-            childFullName="adsa"
-            childNationalId="asd"
-          />
-        )
-      })}
+      {childrenSchoolInfo.length !== 0 &&
+        childrenSchoolInfo.map((child, index) => {
+          return (
+            <ChildInput
+              id={field.id}
+              application={application}
+              index={index}
+              errors={errors}
+              childFullName={child.fullName}
+              childNationalId={child.nationalId}
+            />
+          )
+        })}
     </>
   )
 }

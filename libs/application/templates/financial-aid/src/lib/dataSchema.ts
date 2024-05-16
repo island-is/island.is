@@ -22,13 +22,14 @@ export const dataSchema = z.object({
       params: error.validation.approveSpouse,
     }),
   }),
-  children: z.array(
+  childrenSchoolInfo: z.array(
     z.object({
+      fullName: z.string(),
       nationalId: z.string(),
-      school: z.string(),
-      hasFoodStamps: z.enum([ApproveOptions.Yes, ApproveOptions.No]),
-      hasAfterSchool: z.enum([ApproveOptions.Yes, ApproveOptions.No]),
-      hasBookAid: z.enum([ApproveOptions.Yes, ApproveOptions.No]),
+      // school: z.string(),
+      // hasFoodStamps: z.enum([ApproveOptions.Yes, ApproveOptions.No]),
+      // hasAfterSchool: z.enum([ApproveOptions.Yes, ApproveOptions.No]),
+      // hasBookAid: z.enum([ApproveOptions.Yes, ApproveOptions.No]),
     }),
   ),
   relationshipStatus: z

@@ -32,6 +32,7 @@ export const Application: Form = buildForm({
             (externalData as unknown as ExternalData).nationalRegistrySpouse
               .data != null,
           title: m.inRelationship.general.sectionTitle,
+          id: Routes.INRELATIONSHIP,
           children: [
             buildCustomField({
               id: Routes.INRELATIONSHIP,
@@ -45,6 +46,7 @@ export const Application: Form = buildForm({
             (externalData as unknown as ExternalData).nationalRegistrySpouse
               .data == null,
           title: m.unknownRelationship.general.sectionTitle,
+          id: Routes.UNKNOWNRELATIONSHIP,
           children: [
             buildCustomField({
               id: Routes.UNKNOWNRELATIONSHIP,
@@ -63,6 +65,7 @@ export const Application: Form = buildForm({
 
             return childWithInfo ? childWithInfo.length > 0 : false
           },
+          id: Routes.CHILDRENSCHOOLINFO,
           title: m.childrenForm.general.sectionTitle,
           children: [
             buildCustomField({
