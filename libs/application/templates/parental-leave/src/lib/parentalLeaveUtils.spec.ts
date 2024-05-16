@@ -26,7 +26,7 @@ import { ChildInformation } from '../dataProviders/Children/types'
 import {
   formatIsk,
   getAvailableRightsInMonths,
-  getExpectedDateOfBirthOrAdoptionDate,
+  getExpectedDateOfBirthOrAdoptionDateOrBirthDate,
   getSelectedChild,
   getTransferredDays,
   getOtherParentId,
@@ -109,10 +109,10 @@ const createApplicationBase = (): Application => ({
   status: ApplicationStatus.IN_PROGRESS,
 })
 
-describe('getExpectedDateOfBirthOrAdoptionDate', () => {
+describe('getExpectedDateOfBirthOrAdoptionDateOrBirthDate', () => {
   it('should return undefined when no child is found', () => {
     const application = buildApplication()
-    const res = getExpectedDateOfBirthOrAdoptionDate(application)
+    const res = getExpectedDateOfBirthOrAdoptionDateOrBirthDate(application)
 
     expect(res).toBeUndefined()
   })
@@ -142,9 +142,49 @@ describe('getExpectedDateOfBirthOrAdoptionDate', () => {
       },
     })
 
-    const res = getExpectedDateOfBirthOrAdoptionDate(application)
+    const res = getExpectedDateOfBirthOrAdoptionDateOrBirthDate(application)
 
     expect(res).toEqual('2021-05-17')
+  })
+
+  it('should return the selected child DOB', () => {
+    const application = buildApplication({
+      answers: {
+        selectedChild: 0,
+      },
+      externalData: {
+        children: {
+          data: {
+            children: [
+              {
+                hasRights: true,
+                remainingDays: 180,
+                transferredDays: undefined, // Transferred days are only defined for secondary parents
+                parentalRelation: ParentalRelations.primary,
+                expectedDateOfBirth: '2021-05-17',
+              },
+            ],
+            existingApplications: [],
+          },
+          date: new Date(),
+          status: 'success',
+        },
+        dateOfBirth: {
+          data: {
+            dateOfBirth: '2021-05-10',
+          },
+          date: new Date(),
+          status: 'success',
+        },
+      },
+    })
+
+    const res = getExpectedDateOfBirthOrAdoptionDateOrBirthDate(
+      application,
+      true,
+    )
+
+    expect(res).toEqual('2021-05-10')
   })
 })
 
@@ -1545,7 +1585,7 @@ test.each([
   },
 )
 
-describe.only('getActionName', () => {
+describe('getActionName', () => {
   let application: Application
   beforeEach(() => {
     application = createApplicationBase()
