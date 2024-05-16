@@ -390,7 +390,7 @@ export const DocumentDetailScreen: NavigationFunctionComponent<{
             ]}
           >
             {error ? (
-              <Problem type="error" noContainer />
+              <Problem type="error" withContainer />
             ) : (
               <Loader
                 text={intl.formatMessage({ id: 'documentDetail.loadingText' })}

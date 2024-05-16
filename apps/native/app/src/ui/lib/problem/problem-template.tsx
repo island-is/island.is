@@ -9,7 +9,7 @@ export type ProblemTemplateBaseProps = {
   variant: Variant
   title: string
   message: string | ReactNode
-  noContainer?: boolean
+  withContainer?: boolean
 }
 
 interface WithIconProps extends ProblemTemplateBaseProps {
@@ -110,13 +110,13 @@ export const ProblemTemplate = ({
   message,
   showIcon,
   tag,
-  noContainer,
+  withContainer,
 }: ProblemTemplateProps) => {
   const { borderColor, tagColor, tagBackgroundColor } =
     getColorsByVariant(variant)
 
   return (
-    <Host borderColor={borderColor} noContainer={noContainer}>
+    <Host borderColor={borderColor} noContainer={withContainer}>
       {tag && (
         <Tag
           variant="eyebrow"

@@ -20,7 +20,7 @@ type ProblemBaseProps = {
   title?: string
   message?: string
   logError?: boolean
-} & Pick<ProblemTemplateBaseProps, 'noContainer'>
+} & Pick<ProblemTemplateBaseProps, 'withContainer'>
 
 interface ErrorProps extends ProblemBaseProps {
   type?: 'error'
@@ -59,13 +59,13 @@ export const Problem = ({
   message,
   tag,
   logError = false,
-  noContainer,
+  withContainer,
   showIcon,
 }: ProblemProps) => {
   const t = useTranslate()
   const { isConnected } = useOfflineStore()
 
-  const defaultProps = { noContainer }
+  const defaultProps = { withContainer }
 
   const fallbackProps = {
     ...defaultProps,
