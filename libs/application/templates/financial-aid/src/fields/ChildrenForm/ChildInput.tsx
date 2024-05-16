@@ -78,6 +78,9 @@ export const ChildInput: FC<React.PropsWithChildren<Props>> = ({
           id={schoolField}
           name={schoolField}
           required={true}
+          placeholder={formatMessage(
+            getMessageForSchool[schoolType].placeholder,
+          )}
           label={formatMessage(getMessageForSchool[schoolType].label)}
           error={errors && getErrorViaPath(errors, schoolField)}
           backgroundColor="white"
