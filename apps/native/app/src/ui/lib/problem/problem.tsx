@@ -1,7 +1,7 @@
 import { useEffect } from 'react'
 import { useTranslate } from '../../../hooks/use-translate'
 import { useOfflineStore } from '../../../stores/offline-store'
-import { ProblemTemplate } from './problem-template'
+import { ProblemTemplate, ProblemTemplateBaseProps } from './problem-template'
 
 enum ProblemTypes {
   internalServiceError = 'internal_service_error',
@@ -22,7 +22,7 @@ type ProblemBaseProps = {
   message?: string
   tag?: string
   logError?: boolean
-}
+} & Pick<ProblemTemplateBaseProps, 'noContainer'>
 
 interface InternalServiceErrorProps extends ProblemBaseProps {
   type?: 'internal_service_error'
@@ -47,11 +47,15 @@ export const Problem = ({
   message,
   tag,
   logError = false,
+  noContainer,
 }: ProblemProps) => {
   const t = useTranslate()
   const { isConnected } = useOfflineStore()
 
+  const defaultProps = { noContainer }
+
   const fallbackProps = {
+    ...defaultProps,
     title: title ?? t('problem.error.title'),
     message: message ?? t('problem.error.message'),
     tag: tag ?? t('problem.error.tag'),
@@ -68,6 +72,7 @@ export const Problem = ({
   if (!isConnected) {
     return (
       <ProblemTemplate
+        {...defaultProps}
         showIcon
         variant="warning"
         title={title ?? t('problem.offline.title')}
@@ -83,6 +88,7 @@ export const Problem = ({
     case ProblemTypes.noData:
       return (
         <ProblemTemplate
+          {...defaultProps}
           tag={tag}
           variant="info"
           title={title ?? t('problem.noData.title')}
