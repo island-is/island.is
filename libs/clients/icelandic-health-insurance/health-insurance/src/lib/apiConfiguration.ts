@@ -13,7 +13,6 @@ export const ApiConfiguration = {
       fetchApi: createEnhancedFetch({
         name: 'clients-health-insurance',
         organizationSlug: 'sjukratryggingar',
-        treat400ResponsesAsErrors: true,
         logErrorResponseBody: true,
         timeout: 20000, // needed because the external service is taking a while to respond to submitting the document
       }),
