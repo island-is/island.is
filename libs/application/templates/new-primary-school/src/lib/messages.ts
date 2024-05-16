@@ -85,6 +85,63 @@ export const newPrimarySchoolMessages: MessageDir = {
       defaultMessage: 'Börn',
       description: 'Children',
     },
+    parentsSection: {
+      id: 'dess.nps.application:childrenNParents.parentsSection',
+      defaultMessage: 'Foreldrar/forsjáraðilar',
+      description: 'Parents/guardians',
+    },
+    name: {
+      id: 'dess.nps.application:childrenNParents.name',
+      defaultMessage: 'Nafn',
+      description: 'Name',
+    },
+    nationalId: {
+      id: 'dess.nps.application:childrenNParents.nationalId',
+      defaultMessage: 'Kennitala',
+      description: 'National id',
+    },
+    email: {
+      id: 'dess.nps.application:childrenNParents.email',
+      defaultMessage: 'Netfang',
+      description: 'Email address',
+    },
+    municipality: {
+      id: 'dess.nps.application:childrenNParents.municipality',
+      defaultMessage: 'Sveitarfélag',
+      description: 'Municipality',
+    },
+    postalcode: {
+      id: 'dess.nps.application:childrenNParents.postalcode',
+      defaultMessage: 'Póstfang',
+      description: 'Postalcode',
+    },
+    address: {
+      id: 'dess.nps.application:childrenNParents.address',
+      defaultMessage: 'Heimilisfang',
+      description: 'Address',
+    },
+    phoneNumber: {
+      id: 'dess.nps.application:childrenNParents.phoneNumber',
+      defaultMessage: 'Símanúmer',
+      description: 'Phonenumber',
+    },
+    otherParent: {
+      id: 'dess.nps.application:childrenNParents.otherParent',
+      defaultMessage: 'Upplýsingar um forsjáraðila 2 / Foreldri/forsjáraðili 2',
+      description: 'Information about guardian 2 / parent 2',
+    },
+    parent: {
+      id: 'dess.nps.application:childrenNParents.parent',
+      defaultMessage: 'Upplýsingar um forsjáraðila 1 / Foreldri/forsjáraðili 1',
+      description: 'Information about guardian 1 / parent 1',
+    },
+
+    description: {
+      id: 'dess.nps.application:childrenNParents.description',
+      defaultMessage:
+        'Aðeins forsjáaraðili sem deilir lögheimili með barni getur skráð það í grunnskóla. Ef þú sérð ekki barnið þitt í þessu ferli, þá bendum við á að skoða upplýsingar um forsjá á island.is',
+      description: 'Parents section description',
+    },
   }),
 
   school: defineMessages({
@@ -249,6 +306,21 @@ export const newPrimarySchoolMessages: MessageDir = {
       id: 'dess.nps.application:review.canceled',
       defaultMessage: 'Hætt við afskráningu',
       description: 'Deregistration canceled',
+    },
+    email: {
+      id: 'dess.nps.application:review.email',
+      defaultMessage: 'Netfang',
+      description: 'Email address',
+    },
+    phoneNumber: {
+      id: 'dess.nps.application:review.email',
+      defaultMessage: 'Símanúmer',
+      description: 'Phone number',
+    },
+    parents: {
+      id: 'dess.nps.application:review.parents',
+      defaultMessage: 'Foreldri/forsjáraðili',
+      description: 'Parent / guardian',
     },
   }),
 

@@ -25,11 +25,6 @@ export type Option = {
   label: string
 }
 
-export type Children = {
-  fullName: string
-  nationalId: string
-}
-
 export enum RelationOptions {
   GRANDPARENTS = 'grandparents',
   SIBLINGS = 'siblings',

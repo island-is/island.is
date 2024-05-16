@@ -14,6 +14,8 @@ import {
   ChildrenCustodyInformationApi,
   DefaultEvents,
   IdentityApi,
+  NationalRegistryUserApi,
+  UserProfileApi,
 } from '@island.is/application/types'
 import { Events, Roles, States } from './constants'
 import { dataSchema } from './dataSchema'
@@ -61,7 +63,12 @@ const NewPrimarySchoolTemplate: ApplicationTemplate<
               ],
               write: 'all',
               delete: true,
-              api: [IdentityApi, ChildrenCustodyInformationApi],
+              api: [
+                IdentityApi,
+                ChildrenCustodyInformationApi,
+                NationalRegistryUserApi,
+                UserProfileApi,
+              ],
             },
           ],
         },

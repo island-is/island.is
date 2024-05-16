@@ -11,6 +11,8 @@ import {
   Form,
   FormModes,
   IdentityApi,
+  NationalRegistryUserApi,
+  UserProfileApi,
 } from '@island.is/application/types'
 import Logo from '../assets/Logo'
 import { newPrimarySchoolMessages } from '../lib/messages'
@@ -56,6 +58,22 @@ export const Prerequisites: Form = buildForm({
             }),
             buildDataProviderItem({
               provider: ChildrenCustodyInformationApi,
+              title:
+                newPrimarySchoolMessages.pre.nationalRegistryInformationTitle,
+              subTitle:
+                newPrimarySchoolMessages.pre
+                  .nationalRegistryInformationSubTitle,
+            }),
+            buildDataProviderItem({
+              provider: NationalRegistryUserApi,
+              title:
+                newPrimarySchoolMessages.pre.nationalRegistryInformationTitle,
+              subTitle:
+                newPrimarySchoolMessages.pre
+                  .nationalRegistryInformationSubTitle,
+            }),
+            buildDataProviderItem({
+              provider: UserProfileApi,
               title:
                 newPrimarySchoolMessages.pre.nationalRegistryInformationTitle,
               subTitle:

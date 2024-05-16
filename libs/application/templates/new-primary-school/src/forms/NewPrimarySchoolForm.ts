@@ -1,15 +1,23 @@
 import {
   buildAlertMessageField,
   buildCustomField,
+  buildDescriptionField,
   buildForm,
   buildMultiField,
+  buildPhoneField,
   buildRadioField,
   buildSection,
   buildSubSection,
   buildSubmitField,
   buildTableRepeaterField,
+  buildTextField,
 } from '@island.is/application/core'
-import { DefaultEvents, Form, FormModes } from '@island.is/application/types'
+import {
+  Application,
+  DefaultEvents,
+  Form,
+  FormModes,
+} from '@island.is/application/types'
 import {
   formatPhoneNumber,
   removeCountryCode,
@@ -21,6 +29,7 @@ import { RelationOptions } from '../lib/constants'
 import { newPrimarySchoolMessages } from '../lib/messages'
 import {
   getApplicationExternalData,
+  getOtherParent,
   getRelationOptionLabel,
   getRelationOptions,
   isChildAtPrimarySchoolAge,
@@ -42,7 +51,7 @@ export const NewPrimarySchoolForm: Form = buildForm({
       title: newPrimarySchoolMessages.childrenNParents.sectionTitle,
       children: [
         buildSubSection({
-          id: 'children',
+          id: 'childrenSection',
           title: newPrimarySchoolMessages.childrenNParents.children,
           children: [
             buildRadioField({
@@ -68,6 +77,190 @@ export const NewPrimarySchoolForm: Form = buildForm({
               },
 
               required: true,
+            }),
+          ],
+        }),
+        buildSubSection({
+          id: 'parentsSection',
+          title: newPrimarySchoolMessages.childrenNParents.parentsSection,
+          children: [
+            buildMultiField({
+              id: 'parents',
+              title: '',
+              children: [
+                buildDescriptionField({
+                  id: 'parentsSection',
+                  title:
+                    newPrimarySchoolMessages.childrenNParents.parentsSection,
+                  description:
+                    newPrimarySchoolMessages.childrenNParents.description,
+                  titleVariant: 'h3',
+                  marginBottom: 5,
+                  space: 'gutter',
+                }),
+                buildDescriptionField({
+                  id: 'parentsInfo1',
+                  title: newPrimarySchoolMessages.childrenNParents.parent,
+                  titleVariant: 'h4',
+                }),
+                buildTextField({
+                  title: newPrimarySchoolMessages.childrenNParents.name,
+                  dataTestId: 'name1',
+                  id: 'parent1.fullName',
+                  readOnly: true,
+                  defaultValue: (application: Application) =>
+                    (
+                      application.externalData.nationalRegistry?.data as {
+                        fullName?: string
+                      }
+                    )?.fullName,
+                }),
+                buildTextField({
+                  width: 'half',
+                  title: newPrimarySchoolMessages.childrenNParents.nationalId,
+                  dataTestId: 'nationalId1',
+                  id: 'parent1.nationalId',
+                  format: '######-####',
+                  readOnly: true,
+                  defaultValue: (application: Application) =>
+                    (
+                      application.externalData.nationalRegistry?.data as {
+                        nationalId?: string
+                      }
+                    )?.nationalId,
+                }),
+                buildTextField({
+                  width: 'half',
+                  title: newPrimarySchoolMessages.childrenNParents.address,
+                  dataTestId: 'address1',
+                  id: 'parent1.address.streetAddress',
+                  readOnly: true,
+                  defaultValue: (application: Application) => {
+                    return getApplicationExternalData(application.externalData)
+                      .applicantAddress
+                  },
+                }),
+                buildTextField({
+                  width: 'half',
+                  title: newPrimarySchoolMessages.childrenNParents.postalcode,
+                  dataTestId: 'postalcode1',
+                  id: 'parent1.address.postalcode',
+                  readOnly: true,
+                  defaultValue: (application: Application) => {
+                    return getApplicationExternalData(application.externalData)
+                      .applicantPostalCode
+                  },
+                }),
+                buildTextField({
+                  width: 'half',
+                  title: newPrimarySchoolMessages.childrenNParents.municipality,
+                  dataTestId: 'city1',
+                  id: 'parent1.address.city',
+                  readOnly: true,
+                  defaultValue: (application: Application) => {
+                    return getApplicationExternalData(application.externalData)
+                      .applicantCity
+                  },
+                }),
+                buildTextField({
+                  width: 'half',
+                  title: newPrimarySchoolMessages.childrenNParents.email,
+                  dataTestId: 'email',
+                  id: 'parent1.email',
+                  variant: 'email',
+                  defaultValue: (application: Application) =>
+                    (
+                      application.externalData.userProfile?.data as {
+                        email?: string
+                      }
+                    )?.email,
+                }),
+                buildPhoneField({
+                  width: 'half',
+                  title: newPrimarySchoolMessages.childrenNParents.phoneNumber,
+                  defaultValue: (application: Application) => {
+                    const phoneNumber = (
+                      application.externalData.userProfile?.data as {
+                        mobilePhoneNumber?: string
+                      }
+                    )?.mobilePhoneNumber
+
+                    return formatPhoneNumber(
+                      removeCountryCode(phoneNumber ?? ''),
+                    )
+                  },
+                  id: 'parent1.phoneNumber',
+                  dataTestId: 'phone1',
+                  placeholder: '000-0000',
+                }),
+
+                buildDescriptionField({
+                  id: 'parentsInfo2',
+                  title: newPrimarySchoolMessages.childrenNParents.otherParent,
+                  titleVariant: 'h4',
+                  marginTop: 'containerGutter',
+                }),
+                buildTextField({
+                  title: newPrimarySchoolMessages.childrenNParents.name,
+                  dataTestId: 'name2',
+                  id: 'parent2.fullName',
+                  readOnly: true,
+                  defaultValue: (application: Application) =>
+                    getOtherParent(application)?.fullName,
+                }),
+                buildTextField({
+                  width: 'half',
+                  title: newPrimarySchoolMessages.childrenNParents.nationalId,
+                  dataTestId: 'nationalId2',
+                  id: 'parent2.nationalId',
+                  format: '######-####',
+                  readOnly: true,
+                  defaultValue: (application: Application) =>
+                    getOtherParent(application)?.nationalId,
+                }),
+                buildTextField({
+                  width: 'half',
+                  title: newPrimarySchoolMessages.childrenNParents.address,
+                  dataTestId: 'address2',
+                  id: 'parent2.address.streetAddress',
+                  readOnly: true,
+                  defaultValue: (application: Application) =>
+                    getOtherParent(application)?.address.streetAddress,
+                }),
+                buildTextField({
+                  width: 'half',
+                  title: newPrimarySchoolMessages.childrenNParents.postalcode,
+                  dataTestId: 'postalcode2',
+                  id: 'parent2.address.postalcode',
+                  readOnly: true,
+                  defaultValue: (application: Application) =>
+                    getOtherParent(application)?.address.postalCode,
+                }),
+                buildTextField({
+                  width: 'half',
+                  title: newPrimarySchoolMessages.childrenNParents.municipality,
+                  dataTestId: 'city2',
+                  id: 'parent2.address.city',
+                  readOnly: true,
+                  defaultValue: (application: Application) =>
+                    getOtherParent(application)?.address.city,
+                }),
+                buildTextField({
+                  width: 'half',
+                  title: newPrimarySchoolMessages.childrenNParents.email,
+                  dataTestId: 'email2',
+                  id: 'parent2.email',
+                  variant: 'email',
+                }),
+                buildPhoneField({
+                  width: 'half',
+                  title: newPrimarySchoolMessages.childrenNParents.phoneNumber,
+
+                  id: 'parent2.phoneNumber',
+                  dataTestId: 'phone2',
+                  placeholder: '000-0000',
+                }),
+              ],
             }),
           ],
         }),

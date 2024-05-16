@@ -11,8 +11,8 @@ import { States } from '../../lib/constants'
 import { newPrimarySchoolMessages } from '../../lib/messages'
 import { getApplicationAnswers } from '../../lib/newPrimarySchoolUtils'
 
-import { BaseInformation } from './review-groups/BaseInformation'
 import { Child } from './review-groups/Child'
+import { Parents } from './review-groups/Parents'
 import { Relatives } from './review-groups/Relatives'
 
 interface ReviewScreenProps {
@@ -144,7 +144,7 @@ export const Review: FC<ReviewScreenProps> = ({
         </Box>
       )}
       <Child {...childProps} />
-      <BaseInformation {...childProps} />
+      <Parents {...childProps} />
       <Relatives {...childProps} />
     </>
   )
