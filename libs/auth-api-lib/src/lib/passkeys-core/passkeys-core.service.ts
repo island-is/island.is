@@ -1,9 +1,4 @@
-import {
-  BadRequestException,
-  Inject,
-  Injectable,
-  UnauthorizedException,
-} from '@nestjs/common'
+import { BadRequestException, Inject, Injectable } from '@nestjs/common'
 
 import { InjectModel } from '@nestjs/sequelize'
 import { Cache as CacheManager } from 'cache-manager'
@@ -221,13 +216,13 @@ export class PasskeysCoreService {
       })
     } catch (error) {
       this.logger.error('Auth verification failed', error)
-      throw new UnauthorizedException('Auth verification failed')
+      throw new BadRequestException('Auth verification failed')
     }
 
     const { verified } = verification
 
     if (!verified) {
-      throw new UnauthorizedException('Auth verification failed')
+      throw new BadRequestException('Auth verification failed')
     }
 
     return {
