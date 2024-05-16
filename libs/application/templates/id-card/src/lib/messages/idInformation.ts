@@ -67,6 +67,11 @@ export const idInformation = {
       defaultMessage: 'Nafnskírteinisnúmer {passportNumber}',
       description: 'Id number label',
     },
+    noIdNumber: {
+      id: 'id.application:idInformation.labels.noIdNumber',
+      defaultMessage: 'Ekkert nafnskírteini fannst',
+      description: 'Id number not found label',
+    },
     conditionTitle: {
       id: 'id.application:idInformation.labels.conditionTitle',
       defaultMessage: 'Áður en lengra er haldið',
@@ -74,8 +79,12 @@ export const idInformation = {
     },
     conditionDescription: {
       id: 'id.application:idInformation.labels.conditionDescription#markdown',
-      defaultMessage:
-        'Þegar sótt er um fyrir barn þarf forsjáraðili 2 að samþykkja umsóknina innan 7 daga. Viðkomandi fær tilkynningu um undirritun og getur samþykkt með rafrænum hætti. Samþykkið er vistað rafrænt hjá Þjóðskrá Íslands.Séu rafræn skilríki ekki fyrir hendi er hægt að skila inn skriflegu samþykki til Sýslumanns/Þjóðskrár.',
+      defaultMessage: `Þegar sótt er um fyrir barn þurfa **báðir forsjáraðilar** að 
+        samþykkja umsóknina innan **7 daga**. Viðkomandi fær tilkynningu 
+        um undirritun og getur samþykkt með rafrænum hætti.
+        \n\nSamþykkið er **vistað rafrænt** hjá Þjóðskrá Íslands.
+        \n\nSéu rafræn skilríki ekki fyrir hendi er hægt að skila inn 
+        **skriflegu samþykki til Sýslumanns/Þjóðskrár.**`,
       description: 'Description on condition page',
     },
   }),

@@ -62,8 +62,9 @@ export const ChosenApplicantsSubSection = buildSubSection({
                 value: applicantNationalId,
               },
             ]
-            applicantChildren.map((item) =>
-              passportList.push({
+            applicantChildren.map((item) => {
+              console.log(item)
+              return passportList.push({
                 label: item.childName,
                 subLabel:
                   item.passports && item.passports.length > 0
@@ -72,12 +73,12 @@ export const ChosenApplicantsSubSection = buildSubSection({
                         values: { passportNumber: item.passports[0].number },
                       }
                     : {
-                        ...idInformation.labels.idNumber, // TODO make this "no passport found"
+                        ...idInformation.labels.noIdNumber, // TODO make this "no passport found"
                       },
 
                 value: item.childNationalId,
-              }),
-            )
+              })
+            })
 
             return passportList
           },
