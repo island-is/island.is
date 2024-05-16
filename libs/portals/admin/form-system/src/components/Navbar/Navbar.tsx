@@ -40,7 +40,6 @@ export default function Navbar() {
     setInSettings,
     inSettings,
     formUpdate,
-    translate,
   } = useContext(ControlContext) as IControlContext
 
   const { activeItem, form } = control
