@@ -85,9 +85,7 @@ export const authStore = create<AuthStore>((set, get) => ({
 
     if (res.status === 401) {
       // Attempt to refresh the access token
-      const successfulRefresh = await get().refresh()
-
-      if (!skipRefresh && successfulRefresh) {
+      if (!skipRefresh && (await get().refresh())) {
         // Retry the userInfo call
         return get().fetchUserInfo(true)
       }
