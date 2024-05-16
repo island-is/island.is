@@ -5,7 +5,7 @@ import {
   buildRadioField,
   buildSelectField,
 } from '@island.is/application/core'
-import { Routes } from '../../../lib/constants'
+import { Routes, Services } from '../../../lib/constants'
 import { priceList } from '../../../lib/messages/priceList'
 import { checkForDiscount } from '../../../utils'
 import { Application } from '@island.is/application/types'
@@ -30,14 +30,18 @@ export const PriceListSubSection = buildSection({
                   ? priceList.labels.regularPriceTitle
                   : priceList.labels.discountRegularPriceTitle,
                 subLabel: priceList.labels.regularPriceDescription,
-                value: !hasDiscount ? 'regular' : 'regularDiscount',
+                value: !hasDiscount
+                  ? Services.REGULAR
+                  : Services.REGULAR_DISCOUNT,
               },
               {
                 label: !hasDiscount
                   ? priceList.labels.fastPriceTitle
                   : priceList.labels.discountFastPriceTitle,
                 subLabel: priceList.labels.fastPriceDescription,
-                value: !hasDiscount ? 'fast' : 'fastDiscount',
+                value: !hasDiscount
+                  ? Services.EXPRESS
+                  : Services.EXPRESS_DISCOUNT,
               },
             ]
           },

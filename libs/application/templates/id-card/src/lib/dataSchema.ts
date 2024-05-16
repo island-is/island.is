@@ -47,6 +47,15 @@ export const IdCardSchema = z.object({
     .refine((x) => {
       return true
     }),
+  priceList: z.object({
+    priceChoice: z.enum([
+      Services.EXPRESS,
+      Services.EXPRESS_DISCOUNT,
+      Services.REGULAR,
+      Services.REGULAR_DISCOUNT,
+    ]),
+    location: z.string(),
+  }),
   //   passport: z
   //     .object({
   //       userPassport: z.string(),

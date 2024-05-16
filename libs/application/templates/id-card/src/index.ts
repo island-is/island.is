@@ -7,6 +7,6 @@ export const getFields = () => import('./fields/')
 export type IdCardAnswers = IdCard
 
 export * from './utils'
-// export * from './shared/types'
+export * from './shared/types'
 
 export default IdCardTemplate
