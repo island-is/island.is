@@ -25,6 +25,7 @@ import {
   DeliveryAddressApi,
   UserInfoApi,
   NationalRegistryUser,
+  DisabiltyLicenseApi,
 } from '../dataProviders'
 import { application as applicationMessage } from './messages'
 import { Events, Roles, States, ApiActions } from './constants'
@@ -102,6 +103,7 @@ const IdCardTemplate: ApplicationTemplate<
                 DistrictsApi,
                 IdentityDocumentApi,
                 DeliveryAddressApi,
+                DisabiltyLicenseApi,
               ],
             },
           ],

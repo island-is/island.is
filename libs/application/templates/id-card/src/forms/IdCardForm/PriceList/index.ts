@@ -7,6 +7,8 @@ import {
 } from '@island.is/application/core'
 import { Routes } from '../../../lib/constants'
 import { priceList } from '../../../lib/messages/priceList'
+import { checkForDiscount } from '../../../utils'
+import { Application } from '@island.is/application/types'
 
 export const PriceListSubSection = buildSection({
   id: Routes.PRICELIST,
@@ -21,16 +23,21 @@ export const PriceListSubSection = buildSection({
           id: `${Routes.PRICELIST}.priceChoice`,
           title: '',
           options: (application) => {
+            const hasDiscount = checkForDiscount(application)
             return [
               {
-                label: priceList.labels.regularPriceTitle,
+                label: !hasDiscount
+                  ? priceList.labels.regularPriceTitle
+                  : priceList.labels.discountRegularPriceTitle,
                 subLabel: priceList.labels.regularPriceDescription,
-                value: 'regular',
+                value: !hasDiscount ? 'regular' : 'regularDiscount',
               },
               {
-                label: priceList.labels.fastPriceTitle,
+                label: !hasDiscount
+                  ? priceList.labels.fastPriceTitle
+                  : priceList.labels.discountFastPriceTitle,
                 subLabel: priceList.labels.fastPriceDescription,
-                value: 'fast',
+                value: !hasDiscount ? 'fast' : 'fastDiscount',
               },
             ]
           },

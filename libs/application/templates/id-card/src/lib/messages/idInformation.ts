@@ -58,7 +58,7 @@ export const idInformation = {
     },
     idNumber: {
       id: 'id.application:idInformation.labels.idNumber',
-      defaultMessage: 'Nafnskírteinisnúmer',
+      defaultMessage: 'Nafnskírteinisnúmer {passportNumber}',
       description: 'Id number label',
     },
     conditionTitle: {

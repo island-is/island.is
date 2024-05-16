@@ -11,6 +11,7 @@ import {
 } from '../../../lib/constants'
 import { idInformation } from '../../../lib/messages/idInformation'
 import { GetFormattedText } from '../../../utils'
+import { MessageDescriptor } from 'react-intl'
 
 export const ChosenApplicantsSubSection = buildSubSection({
   id: Routes.CHOSENAPPLICANTS,
@@ -44,31 +45,36 @@ export const ChosenApplicantsSubSection = buildSubSection({
               {},
             ) as IdentityDocument
 
-            // const subLabel = GetFormattedText(
-            //   application,
-            //   idInformation.labels.idNumber,
-            // )
-
             const applicantChildren = getValueViaPath(
               application.externalData,
               'identityDocument.data.childPassports',
               [],
             ) as Array<IdentityDocumentChild>
 
-            const passportList = [
+            // TODO fix this any and type this correctly
+            const passportList: Array<any> = [
               {
                 label: applicantName,
-                // subLabel: `${subLabel}: ${applicantPassport.number}`,
+                subLabel: {
+                  ...idInformation.labels.idNumber,
+                  values: { passportNumber: applicantPassport?.number },
+                },
                 value: applicantNationalId,
               },
             ]
             applicantChildren.map((item) =>
               passportList.push({
                 label: item.childName,
-                // subLabel:
-                //   item.passports && item.passports.length > 0
-                //     ? `${subLabel}: ${item.passports[0].number}`
-                //     : '',
+                subLabel:
+                  item.passports && item.passports.length > 0
+                    ? {
+                        ...idInformation.labels.idNumber,
+                        values: { passportNumber: item.passports[0].number },
+                      }
+                    : {
+                        ...idInformation.labels.idNumber, // TODO make this "no passport found"
+                      },
+
                 value: item.childNationalId,
               }),
             )

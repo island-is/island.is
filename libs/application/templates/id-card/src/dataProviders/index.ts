@@ -7,7 +7,10 @@ import {
 } from '@island.is/application/types'
 import { error } from '../lib/messages'
 
-export { MockProviderApi } from '@island.is/application/types'
+export {
+  MockProviderApi,
+  DisabiltyLicenseApi,
+} from '@island.is/application/types'
 
 export const IdentityDocumentApi = defineTemplateApi({
   action: 'identityDocument',

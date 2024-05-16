@@ -22,6 +22,8 @@ import { HealthInsuranceModule } from './health-insurance/health-insurance.modul
 import { HealthInsuranceService } from './health-insurance/health-insurance.service'
 import { InnaService } from './education/inna.service'
 import { InnaModule } from './education/inna.module'
+import { DisabilityLicenseApiService } from './disability-license/disability-license.service'
+import { DisabilityLicenseModule } from './disability-license/disability-license.module'
 
 export const modules = [
   NationalRegistryModule,
@@ -36,6 +38,7 @@ export const modules = [
   DirectorateOfImmigrationModule,
   HealthInsuranceModule,
   InnaModule,
+  DisabilityLicenseModule,
 ]
 
 export const services = [
@@ -51,4 +54,5 @@ export const services = [
   DirectorateOfImmigrationService,
   HealthInsuranceService,
   InnaService,
+  DisabilityLicenseApiService,
 ]

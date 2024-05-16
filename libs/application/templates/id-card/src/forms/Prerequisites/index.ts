@@ -22,6 +22,7 @@ import {
 } from '../../lib/messages'
 import {
   DeliveryAddressApi,
+  DisabiltyLicenseApi,
   NationalRegistryUser,
   // SyslumadurPaymentCatalogApi,
   UserInfoApi,
@@ -90,6 +91,10 @@ export const Prerequisites: Form = buildForm({
             // }),
             buildDataProviderItem({
               provider: DeliveryAddressApi,
+              title: '',
+            }),
+            buildDataProviderItem({
+              provider: DisabiltyLicenseApi,
               title: '',
             }),
           ],

@@ -32,7 +32,7 @@ export const priceList = {
     },
     regularPriceTitle: {
       id: 'id.application:priceList.labels.regularPriceTitle',
-      defaultMessage: 'Almenn afgreiðsla: börn 4.600 kr.',
+      defaultMessage: 'Almenn afgreiðsla: 18-66 ára - 9.200 kr.',
       description: 'Regular price radio button title',
     },
     regularPriceDescription: {
@@ -42,13 +42,23 @@ export const priceList = {
     },
     fastPriceTitle: {
       id: 'id.application:priceList.labels.fastPriceTitle',
-      defaultMessage: 'Hraðafgreiðsla:  börn, aldraðir, öryrkjar - 9.200 kr.',
+      defaultMessage: 'Hraðafgreiðsla: 18-66 ára 18.400 kr.',
       description: 'Fast price radio button title',
     },
     fastPriceDescription: {
       id: 'id.application:priceList.labels.fastPriceDescription',
       defaultMessage: 'Innan 2 virkra daga frá myndatöku',
       description: 'Fast price radio button description',
+    },
+    discountRegularPriceTitle: {
+      id: 'id.application:priceList.labels.discountRegularPriceTitle',
+      defaultMessage: 'Almenn afgreiðsla: börn 4.600 kr.',
+      description: 'Discount Regular price radio button title',
+    },
+    discountFastPriceTitle: {
+      id: 'id.application:priceList.labels.discountFastPriceTitle',
+      defaultMessage: 'Hraðafgreiðsla:  börn, aldraðir, öryrkjar - 9.200 kr.',
+      description: 'Discount Fast price radio button title',
     },
   }),
 }

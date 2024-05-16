@@ -16,7 +16,6 @@ import {
   getPaymentIdFromExternalData,
 } from '@island.is/clients/charge-fjs-v2'
 import { generateAssignParentBApplicationEmail } from './emailGenerators/assignParentBEmail'
-// import { PassportSchema } from '@island.is/application/templates/passport'
 import { PassportsService } from '@island.is/clients/passports'
 import { BaseTemplateApiService } from '../../base-template-api.service'
 import {
@@ -24,6 +23,7 @@ import {
   InstitutionNationalIds,
 } from '@island.is/application/types'
 import { TemplateApiError } from '@island.is/nest/problem'
+import { IdCardAnswers } from '@island.is/application/templates/id-card'
 
 @Injectable()
 export class IdCardService extends BaseTemplateApiService {
@@ -88,53 +88,6 @@ export class IdCardService extends BaseTemplateApiService {
     )
 
     return deliveryAddresses
-  }
-
-  async createCharge({
-    application: { id, answers },
-    auth,
-  }: TemplateApiModuleActionProps) {
-    const chargeItemCode = getValueViaPath<string>(answers, 'chargeItemCode')
-    if (!chargeItemCode) {
-      throw new Error('chargeItemCode missing in request')
-    }
-    const response = await this.sharedTemplateAPIService.createCharge(
-      auth,
-      id,
-      InstitutionNationalIds.SYSLUMENN,
-      [chargeItemCode],
-    )
-    // last chance to validate before the user receives a dummy
-    if (!response?.paymentUrl) {
-      throw new Error('paymentUrl missing in response')
-    }
-
-    return response
-  }
-
-  async checkForDiscount({ application, auth }: TemplateApiModuleActionProps) {
-    const { answers, externalData } = application
-
-    if (!(externalData.checkForDiscount?.data as DiscountCheck)?.hasDiscount) {
-      const { age } = info(auth.nationalId)
-
-      if (age < 18 || age >= 60) {
-        return {
-          hasDiscount: true,
-        }
-      }
-      const disabilityCheck = getValueViaPath<YesOrNo>(
-        answers,
-        'personalInfo.hasDisabilityDiscount',
-      )
-
-      //TODO: implement check with Tryggingastofnun
-      if (disabilityCheck?.includes(YES)) {
-        return {
-          hasDiscount: true,
-        }
-      }
-    }
   }
 
   async assignParentB({ application, auth }: TemplateApiModuleActionProps) {
@@ -226,7 +179,7 @@ export class IdCardService extends BaseTemplateApiService {
     // 3. Notify everyone in the process that the application has successfully been submitted
 
     // TODO: Get correct answers
-    // const answers = application.answers as TransferOfVehicleOwnershipAnswers
+    const answers = application.answers as IdCardAnswers
 
     // Email to parent A
     // await this.sharedTemplateAPIService
