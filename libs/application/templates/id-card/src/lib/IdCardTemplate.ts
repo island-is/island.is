@@ -58,7 +58,7 @@ const IdCardTemplate: ApplicationTemplate<
   featureFlag: Features.idCardApplication,
   dataSchema: IdCardSchema,
   stateMachineConfig: {
-    initial: States.PARENT_B_CONFIRM,
+    initial: States.PREREQUISITES,
     states: {
       [States.PREREQUISITES]: {
         meta: {

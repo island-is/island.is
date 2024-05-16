@@ -44,12 +44,25 @@ export const reviewConfirmation = {
     },
     accordionText: {
       id: 'id.application:reviewConfirmation.general.accordionText',
-      defaultMessage: `* Umsækjandi skal fara í myndatöku á næsta [afgreiðslustað](https://island.is/nafnskirteini) 
-      og **hafa meðferðis núverandi nafnskírteini til að skila inn** sé það fyrir 
-      hendi.
-      \n* Þú færð senda tilkynningu á Mínar síður þegar nafnskírteinið er tilbúið 
-      og hvenær hægt verður að sækja það á þann afhendingarstað sem þú valdir.\n`,
+      defaultMessage: `* Forsjáraðili þarf að mæta með barni í myndatöku á [umsóknarstað](https://island.is/nafnskirteini).
+      \n* Hafi báðir forsjá raðiliar samþykkt útgáfu nafnskírteinis barns er hún opin í 60 daga.  
+      Ef að einhverjum ástæðum er ekki mætt í myndatöku að þeim tíma liðnum þarf að sækja um 
+      endurgreiðslu með því að senda póst á [endurgreidsla@island.is](endurgreidsla@island.is).
+      \n* Geti FORSJÁRAÐILI ekki mætt með barni í myndatöku þarf að veita þriðja aðila 
+      [umboð til þess](https://island.is/nafnskirteini).\n`,
       description: 'Review confirmation accordion text',
+    },
+    infoMessageText1: {
+      id: 'id.application:reviewConfirmation.general.infoMessageText1',
+      defaultMessage:
+        'Athugaðu að forsjáraðili 2 hefur 7 daga til að samþykkja umsóknina inni á island.is - ef hún er ekki samþykkt að þeim tíma liðnum er endurgreitt sjálfkrafa.',
+      description: 'Review confirmation first information message',
+    },
+    infoMessageText2: {
+      id: 'id.application:reviewConfirmation.general.infoMessageText1',
+      defaultMessage:
+        'Athugaðu að eftir að báðir forsjáraðilar hafa samþykkt umsókn er hún opin í 60 daga inni á island.is - að þeim tíma liðnum þarf að sækja um endurgreiðslu ef ekki er mætt í myndatöku.',
+      description: 'Review confirmation second information message',
     },
     bottomButtonMessage: {
       id: 'id.application:reviewConfirmation.general.bottomButtonMessage',
