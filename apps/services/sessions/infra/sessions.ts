@@ -86,7 +86,7 @@ export const workerSetup = (): ServiceBuilder<'services-sessions-worker'> =>
 
 const cleanupId = 'services-sessions-cleanup'
 // run daily at 3am
-const schedule = '0 3 * * *'
+const extraAttributes = { schedule: '0 3 * * *' }
 
 export const cleanupSetup = (): ServiceBuilder<typeof cleanupId> =>
   service(cleanupId)
@@ -104,15 +104,13 @@ export const cleanupSetup = (): ServiceBuilder<typeof cleanupId> =>
         memory: '256Mi',
       },
     })
-    .db()
+    .db({
+      name: 'services-sessions',
+      extensions: ['uuid-ossp'],
+      readOnly: false,
+    })
     .extraAttributes({
-      dev: {
-        schedule,
-      },
-      staging: {
-        schedule,
-      },
-      prod: {
-        schedule,
-      },
+      dev: extraAttributes,
+      staging: extraAttributes,
+      prod: extraAttributes,
     })
