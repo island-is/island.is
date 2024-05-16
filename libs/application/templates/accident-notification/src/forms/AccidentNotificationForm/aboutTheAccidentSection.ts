@@ -48,6 +48,7 @@ import {
   getAccidentTypeOptions,
   hideLocationAndPurpose,
   isAgricultureAccident,
+  isDateOlderThanAYear,
   isFatalAccident,
   isFishermanAccident,
   isGeneralWorkplaceAccident,
@@ -63,68 +64,13 @@ import {
   isWorkAccident,
 } from '../../utils'
 import { isHealthInsured } from '../../utils/isHealthInsured'
+import { FormValue } from '@island.is/application/types'
+import { isSportAccidentAndEmployee } from '../../utils/isSportAccidentAndEmployee'
 
 export const aboutTheAccidentSection = buildSection({
   id: 'accidentType.section',
   title: accidentType.general.sectionTitle,
   children: [
-    buildSubSection({
-      id: 'hindrances',
-      title: hindrances.general.sectionTitle,
-      children: [
-        buildMultiField({
-          id: 'timePassedHindrancesMultiField',
-          title: hindrances.timePassedHindrance.radioFieldTitle,
-          children: [
-            buildRadioField({
-              id: 'timePassedHindrance',
-              title: '',
-              options: [
-                { value: YES, label: application.general.yesOptionLabel },
-                { value: NO, label: application.general.noOptionLabel },
-              ],
-              width: 'half',
-              largeButtons: true,
-              required: true,
-            }),
-            buildAlertMessageField({
-              id: 'timePassedHindranceFielAlertMessage',
-              title: hindrances.timePassedHindrance.errorTitle,
-              message: hindrances.timePassedHindrance.errorDescription,
-              alertType: 'info',
-              doesNotRequireAnswer: true,
-              condition: (formValue) => formValue.timePassedHindrance === YES,
-            }),
-          ],
-        }),
-        buildMultiField({
-          id: 'carHindrancesMultiField',
-          title: hindrances.carAccident.radioFieldTitle,
-          children: [
-            buildRadioField({
-              title: '',
-              id: 'carAccidentHindrance',
-              options: [
-                { value: YES, label: application.general.yesOptionLabel },
-                { value: NO, label: application.general.noOptionLabel },
-              ],
-              width: 'half',
-              largeButtons: true,
-              required: true,
-            }),
-            buildAlertMessageField({
-              id: 'carAccidentHindranceFielAlertMessage',
-              title: hindrances.carAccident.errorTitle,
-              message: hindrances.carAccident.errorDescription,
-              alertType: 'info',
-              doesNotRequireAnswer: true,
-              condition: (formValue) => formValue.carAccidentHindrance === YES,
-            }),
-          ],
-        }),
-      ],
-    }),
-
     buildSubSection({
       id: 'accidentType.section',
       title: accidentType.general.subsectionTitle,
@@ -242,6 +188,14 @@ export const aboutTheAccidentSection = buildSection({
                 },
               ],
             }),
+            buildAlertMessageField({
+              id: 'attachments.injuryCertificate.alert',
+              title: application.general.warningTitle,
+              message: application.general.warningMessage,
+              alertType: 'info',
+              doesNotRequireAnswer: true,
+              condition: (formValue) => isSportAccidentAndEmployee(formValue),
+            }),
           ],
         }),
 
@@ -293,7 +247,7 @@ export const aboutTheAccidentSection = buildSection({
           id: 'accidentLocation.generalWorkAccident',
           title: accidentLocation.general.heading,
           description: accidentLocation.general.description,
-          condition: (formValue) => isGeneralWorkplaceAccident(formValue),
+          condition: (formValue) => isGeneralWorkplaceAccident(formValue) || isSportAccidentAndEmployee(formValue),
           children: [
             buildRadioField({
               id: 'accidentLocation.answer',
@@ -405,7 +359,7 @@ export const aboutTheAccidentSection = buildSection({
           id: 'accidentLocation.professionalAthleteAccident',
           title: accidentLocation.general.heading,
           description: accidentLocation.general.description,
-          condition: (formValue) => isProfessionalAthleteAccident(formValue),
+          condition: (formValue) => isProfessionalAthleteAccident(formValue) && !isSportAccidentAndEmployee(formValue),
           children: [
             buildRadioField({
               id: 'accidentLocation.answer',
@@ -518,7 +472,8 @@ export const aboutTheAccidentSection = buildSection({
       title: workMachine.general.sectionTitle,
       condition: (formValue) =>
         isGeneralWorkplaceAccident(formValue) ||
-        isAgricultureAccident(formValue),
+        isAgricultureAccident(formValue) || 
+        isSportAccidentAndEmployee(formValue),
       children: [
         buildMultiField({
           id: 'workMachine',
@@ -583,6 +538,15 @@ export const aboutTheAccidentSection = buildSection({
               format: '##:##',
             }),
             buildAlertMessageField({
+              id: 'accidentDetails.moreThanAYearAlertMessage',
+              title: accidentDetails.general.moreThanAYearAlertTitle,
+              message: accidentDetails.general.moreThanAYearAlertMessage,
+              width: 'full',
+              alertType: 'warning',
+              condition: (formValue) => isDateOlderThanAYear(formValue),
+              marginBottom: 0,
+            }),
+            buildAlertMessageField({
               id: 'accidentDetails.notHealthInsuredAlertMessage',
               title: accidentDetails.general.insuranceAlertTitle,
               message: accidentDetails.general.insuranceAlertText,
@@ -600,6 +564,37 @@ export const aboutTheAccidentSection = buildSection({
               rows: 10,
               variant: 'textarea',
               maxLength: 2000,
+            }),
+            buildTextField({
+              id: 'accidentDetails.accidentSymptoms',
+              title: accidentDetails.labels.symptoms,
+              placeholder: accidentDetails.placeholder.symptoms,
+              backgroundColor: 'blue',
+              required: true,
+              rows: 10,
+              variant: 'textarea',
+              maxLength: 2000,
+            }),
+            buildDescriptionField({
+              id: 'accidentDetails.descriptionField',
+              space: 'containerGutter',
+              titleVariant: 'h5',
+              title: accidentDetails.labels.doctorVisit,
+              width: 'full',
+            }),
+            buildCustomField({
+              id: 'accidentDetails.dateOfDoctorVisit',
+              title: accidentDetails.labels.date,
+              component: 'DateOfAccident',
+              width: 'half',
+            }),
+            buildTextField({
+              id: 'accidentDetails.timeOfDoctorVisit',
+              title: accidentDetails.labels.time,
+              placeholder: accidentDetails.placeholder.doctorVisitTime,
+              backgroundColor: 'blue',
+              width: 'half',
+              format: '##:##',
             }),
           ],
         }),
@@ -1403,3 +1398,7 @@ export const aboutTheAccidentSection = buildSection({
     }),
   ],
 })
+function isProfessionalAthleteAndEmployee(formValue: FormValue): boolean {
+  throw new Error('Function not implemented.')
+}
+
