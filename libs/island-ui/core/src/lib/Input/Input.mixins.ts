@@ -221,6 +221,7 @@ export const errorMessage = {
 
 export const inputErrorState = {
   boxShadow: `inset 0 0 0 1px ${theme.color.red600}`,
+  backgroundColor: theme.color.red100,
 }
 
 // For elements where the
