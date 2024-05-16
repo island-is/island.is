@@ -24,7 +24,10 @@ import {
 } from './dto/registrationOptions.dto'
 
 import { RegistrationResponse } from './dto/registrationResponse.dto'
-import { AuthenticationOptions } from './dto/authenticationOptions.dto'
+import {
+  AuthenticationOptions,
+  AuthenticationResult,
+} from './dto/authenticationOptions.dto'
 import { AuthenticationResponse } from './dto/authenticationResponse.dto'
 
 @ApiTags('passkeys')
@@ -105,12 +108,12 @@ export class PasskeysController {
     summary:
       'Validates passkey authentication based on input from authenticated user.',
     description: 'Verifies authenticated user passkey authentication response.',
-    response: { status: 200, type: RegistrationResult },
+    response: { status: 200, type: AuthenticationResult },
   })
-  @ApiCreatedResponse({ type: RegistrationResult })
+  @ApiCreatedResponse({ type: AuthenticationResult })
   async verifyAuthentication(
     @Body() body: AuthenticationResponse,
-  ): Promise<RegistrationResult> {
+  ): Promise<AuthenticationResult> {
     const response = await this.passkeysCoreService.verifyAuthentication(body)
 
     return response

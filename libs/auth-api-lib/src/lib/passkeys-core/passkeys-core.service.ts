@@ -227,6 +227,8 @@ export class PasskeysCoreService {
 
     return {
       verified,
+      idp: passkey.idp,
+      sub: passkey.user_sub,
     }
   }
 

@@ -76,3 +76,18 @@ export class AuthenticationOptions {
   })
   extensions?: AuthenticationOptionsExtensions
 }
+
+export class AuthenticationResult {
+  @IsBoolean()
+  @ApiProperty()
+  verified!: boolean
+
+  @IsString()
+  @IsOptional()
+  @ApiProperty({ required: false })
+  idp?: string
+
+  @IsString()
+  @ApiProperty()
+  sub!: string
+}

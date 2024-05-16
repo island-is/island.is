@@ -1,28 +1,21 @@
-import { IdsUserGuard, ScopesGuard } from '@island.is/auth-nest-tools'
-import {
-  Body,
-  Controller,
-  Post,
-  UseGuards,
-  VERSION_NEUTRAL,
-} from '@nestjs/common'
+import { Body, Controller, Post, VERSION_NEUTRAL } from '@nestjs/common'
 import { ApiCreatedResponse, ApiTags } from '@nestjs/swagger'
+import type { AuthenticationResponseJSON } from '@simplewebauthn/types'
 
 import { PasskeysCoreService } from '@island.is/auth-api-lib'
 import { Documentation } from '@island.is/nest/swagger'
-import { AuthenticationResponse } from './dto/authenticationResponse.dto'
-import { AuthenticationResult } from './dto/authenticationOptions.dto'
+import {
+  AuthenticationOptions,
+  AuthenticationResult,
+} from './dto/authenticationOptions.dto'
 
 @ApiTags('passkeys')
-@UseGuards(IdsUserGuard, ScopesGuard)
 @Controller({
   path: 'passkeys',
   version: ['1', VERSION_NEUTRAL],
 })
 export class PasskeysController {
-  constructor(private readonly passkeysCoreService: PasskeysCoreService) {
-    console.log('Constructed PasskeysController')
-  }
+  constructor(private readonly passkeysCoreService: PasskeysCoreService) {}
 
   @Post('authenticate')
   @Documentation({
@@ -33,9 +26,14 @@ export class PasskeysController {
   })
   @ApiCreatedResponse({ type: AuthenticationResult })
   async verifyAuthentication(
-    @Body() body: AuthenticationResponse,
+    @Body() body: AuthenticationOptions,
   ): Promise<AuthenticationResult> {
-    const response = await this.passkeysCoreService.verifyAuthentication(body)
+    const decodedJson = Buffer.from(body.passkey, 'base64').toString('utf-8')
+    const parsedJson = JSON.parse(decodedJson) as AuthenticationResponseJSON
+
+    const response = await this.passkeysCoreService.verifyAuthentication(
+      parsedJson,
+    )
 
     return response
   }
