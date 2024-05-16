@@ -41,6 +41,7 @@ import {
   StaticTableField,
   HiddenInputWithWatchedValueField,
   HiddenInputField,
+  SliderField,
 } from '@island.is/application/types'
 
 import { Colors } from '@island.is/island-ui/theme'
@@ -843,5 +844,56 @@ export function buildStaticTableField(
     marginTop,
     marginBottom,
     titleVariant,
+  }
+}
+
+export const buildSliderField = (
+  data: Omit<SliderField, 'type' | 'component' | 'children' | 'title'>,
+): SliderField => {
+  const {
+    condition,
+    min,
+    max,
+    step,
+    snap,
+    trackStyle,
+    calculateCellStyle,
+    showLabel,
+    showMinMaxLabels,
+    showRemainderOverlay,
+    showProgressOverlay,
+    showToolTip,
+    label,
+    rangeDates,
+    currentIndex,
+    onChange,
+    onChangeEnd,
+    labelMultiplier,
+    id,
+  } = data
+  return {
+    title: '',
+    id,
+    children: undefined,
+    type: FieldTypes.SLIDER,
+    component: FieldComponents.SLIDER,
+    min,
+    max,
+    step,
+    snap,
+    trackStyle,
+    calculateCellStyle,
+    showLabel,
+    showMinMaxLabels,
+    showRemainderOverlay,
+    showProgressOverlay,
+    showToolTip,
+    label,
+    rangeDates,
+    currentIndex,
+    onChange,
+    onChangeEnd,
+    labelMultiplier,
+    condition,
   }
 }
