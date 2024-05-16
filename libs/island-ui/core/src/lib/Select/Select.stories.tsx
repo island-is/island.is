@@ -3,7 +3,6 @@ import React from 'react'
 import { withFigma } from '../../utils/withFigma'
 import { Select } from './Select'
 import type { Meta, StoryObj } from '@storybook/react'
-import { PropsBase } from './Select.types'
 
 const config: Meta<typeof Select> = {
   title: 'Form/Select',
@@ -29,7 +28,10 @@ const config: Meta<typeof Select> = {
     isDisabled: { description: 'Is select field disabled' },
     isClearable: { description: 'Is select field clearable' },
     isSearchable: { description: 'Is select field searchable' },
+    required: { description: 'Is select field required' },
     hasError: { description: 'Does select field has error' },
+    errorMessage: { description: 'Error message description', control: { type: 'text' } },
+    icon: { description: 'Icon name' },
   },
 }
 
@@ -47,7 +49,7 @@ Default.args = {
   name: 'Select',
   label: 'Select label text',
   placeholder: 'Text',
-  noOptionsMessage: 'Enginn valmöguleiki',
+  noOptionsMessage: 'No options',
   options: [
     {
       label: 'Text 1',
@@ -62,12 +64,15 @@ Default.args = {
       value: '2',
     },
   ],
-  //backgroundColor: 'white',
-  //size: 'md',
+  backgroundColor: 'white',
+  size: 'md',
   isDisabled: false,
   isClearable: false,
   isSearchable: false,
-  //hasError: false,
+  hasError: false,
+  required: false,
+  errorMessage: undefined,
+  icon: undefined,
 }
 
 export const BlueBackground = Template.bind({})
@@ -79,7 +84,8 @@ BlueBackground.args = {
 export const NoOptions = Template.bind({})
 NoOptions.args = {
   ...Default.args,
-  noOptionsMessage: 'Enginn valmöguleiki',
+  options: [],
+  noOptionsMessage: 'No options',
 }
 
 export const SizeSm = Template.bind({})
@@ -110,10 +116,24 @@ export const Searchable = Template.bind({})
 Searchable.args = {
   ...Default.args,
   isSearchable: true,
+  placeholder: 'Type to search',
 }
 
-export const WithError = Template.bind({})
-WithError.args = {
+export const WithDifferentIcon = Template.bind({})
+WithDifferentIcon.args = {
+  ...Default.args,
+  icon: 'ellipsisVertical',
+}
+
+export const Required = Template.bind({})
+Required.args = {
+  ...Default.args,
+  required: true,
+}
+
+export const HasError = Template.bind({})
+HasError.args = {
   ...Default.args,
   hasError: true,
+  errorMessage: 'This is an error message',
 }
