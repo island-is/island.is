@@ -154,6 +154,13 @@ type InputSettingsActions =
       }
     }
   | { type: 'ADD_LIST_ITEM' }
+  | {
+      type: 'SET_LIST_TYPE'
+      payload: {
+        listType: string
+        update: (updatedActiveItem?: ActiveItem) => void
+      }
+    }
 
 export type ControlAction =
   | ActiveItemActions
@@ -706,6 +713,31 @@ export const controlReducer = (
             }
             return l
           }),
+        },
+      }
+      update({ type: 'Input', data: newInput })
+      return {
+        ...state,
+        activeItem: {
+          type: 'Input',
+          data: newInput,
+        },
+        form: {
+          ...form,
+          inputsList: inputs?.map((i) =>
+            i?.guid === input.guid ? newInput : i,
+          ),
+        },
+      }
+    }
+    case 'SET_LIST_TYPE': {
+      const input = activeItem.data as FormSystemInput
+      const { listType, update } = action.payload
+      const newInput = {
+        ...input,
+        inputSettings: {
+          ...input.inputSettings,
+          listType: listType,
         },
       }
       update({ type: 'Input', data: newInput })

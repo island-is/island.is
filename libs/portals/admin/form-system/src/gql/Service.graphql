@@ -1,6 +1,4 @@
-mutation formSystemGetTranslation(
-  $input: FormSystemGetTranslationInput!
-) {
+mutation formSystemGetTranslation($input: FormSystemGetTranslationInput!) {
   formSystemGetTranslation(input: $input) {
     translations
   }
@@ -8,8 +6,52 @@ mutation formSystemGetTranslation(
 
 query formSystemGetCountries {
   formSystemGetCountries {
-    listType
-    list
+    list {
+      guid
+      label {
+        is
+        en
+      }
+      value
+    }
   }
 }
 
+query formSystemGetZipCodes {
+  formSystemGetZipCodes {
+    list {
+      guid
+      label {
+        is
+        en
+      }
+      value
+    }
+  }
+}
+
+query formSystemGetMunicipalities {
+  formSystemGetMunicipalities {
+    list {
+      guid
+      label {
+        is
+        en
+      }
+      value
+    }
+  }
+}
+
+query formSystemGetTradesProfessions {
+  formSystemGetTradesProfessions {
+    list {
+      guid
+      label {
+        is
+        en
+      }
+      value
+    }
+  }
+}

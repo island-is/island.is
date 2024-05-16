@@ -10,7 +10,6 @@ import {
   RadioButton,
 } from '@island.is/island-ui/core'
 import { FormSystemInput } from '@island.is/api/schema'
-import { useFormSystemGetCountriesLazyQuery } from '../../../../../../../gql/Service.generated'
 
 const predeterminedLists = [
   {
@@ -29,15 +28,19 @@ const predeterminedLists = [
     label: 'Iðngreinarmeistara',
     value: 3,
   },
+  {
+    label: 'Skráningarflokkar',
+    value: 4,
+  },
 ]
 
 // Need to fix the radio buttons
 const ListSettings = () => {
-  const { control, setInListBuilder } = useContext(ControlContext)
+  const { control, setInListBuilder, controlDispatch, updateActiveItem } =
+    useContext(ControlContext)
   const { activeItem } = control
   const currentItem = activeItem.data as FormSystemInput
   const [radio, setRadio] = useState([true, false, false])
-  //const [getCountries, { data, loading, error }] = useFormSystemGetCountriesLazyQuery()
 
   const radioHandler = (index: number) => {
     // if (!radio[index])
@@ -48,13 +51,41 @@ const ListSettings = () => {
     )
   }
 
+  const getListType = (index: number) => {
+    switch (index) {
+      case 0:
+        return 'sveitarfelog'
+      case 1:
+        return 'lond'
+      case 2:
+        return 'postnumer'
+      case 3:
+        return 'idngreinarMeistara'
+      case 4:
+        return 'skraningarflokkar'
+      default:
+        return 'customList'
+    }
+  }
+
   return (
     <Stack space={2}>
       {currentItem.type === 'Fellilisti' && (
         <>
           <Row>
             <Column>
-              <Box onClick={() => radioHandler(0)}>
+              <Box
+                onClick={() => {
+                  controlDispatch({
+                    type: 'SET_LIST_TYPE',
+                    payload: {
+                      listType: 'customList',
+                      update: updateActiveItem,
+                    },
+                  })
+                  radioHandler(0)
+                }}
+              >
                 <RadioButton
                   label="Nýr fellilisti"
                   onChange={() => {
@@ -93,7 +124,16 @@ const ListSettings = () => {
             label="Tilbúnir fellilistar"
             options={predeterminedLists}
             backgroundColor="blue"
-            // TODO: add lists
+            onChange={(option) => {
+              const listType = getListType(option?.value as number)
+              controlDispatch({
+                type: 'SET_LIST_TYPE',
+                payload: {
+                  listType: listType,
+                  update: updateActiveItem,
+                },
+              })
+            }}
           />
         </Column>
       )}

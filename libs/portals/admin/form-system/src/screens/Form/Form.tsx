@@ -160,37 +160,28 @@ const Form = () => {
     return <div>Loading...</div>
   }
   return (
-    <Profiler
-      id="Form"
-      onRender={(...args) => {
-        const { [1]: phase, [2]: actualDuration } = args
-
-        console.log({ phase, actualDuration })
-      }}
-    >
-      <ControlContext.Provider value={context}>
-        <Row>
-          <Column span="3/12">
-            {selectStatus !== NavbarSelectStatus.OFF ? (
-              <NavbarSelect />
-            ) : (
-              <Navbar />
-            )}
-          </Column>
-          <Column span="9/12">
-            <Box
-              border="standard"
-              borderRadius="standard"
-              width="full"
-              marginTop={5}
-              style={{ minHeight: '500px' }}
-            >
-              <MainContent />
-            </Box>
-          </Column>
-        </Row>
-      </ControlContext.Provider>
-    </Profiler>
+    <ControlContext.Provider value={context}>
+      <Row>
+        <Column span="3/12">
+          {selectStatus !== NavbarSelectStatus.OFF ? (
+            <NavbarSelect />
+          ) : (
+            <Navbar />
+          )}
+        </Column>
+        <Column span="9/12">
+          <Box
+            border="standard"
+            borderRadius="standard"
+            width="full"
+            marginTop={5}
+            style={{ minHeight: '500px' }}
+          >
+            <MainContent />
+          </Box>
+        </Column>
+      </Row>
+    </ControlContext.Provider>
   )
 }
 
