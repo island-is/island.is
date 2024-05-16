@@ -76,7 +76,6 @@ export const FormOverview: FC<
 > = ({ application, goToScreen, field }) => {
   const isAssignee = field?.props?.isAssignee || false
   const answers = application.answers as AccidentNotification
-  console.log(answers)
   const { formatMessage } = useLocale()
 
   const files = getAttachmentTitles(answers)
