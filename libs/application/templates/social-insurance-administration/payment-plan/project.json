@@ -1,0 +1,40 @@
+{
+  "name": "application-templates-social-insurance-administration-payment-plan",
+  "$schema": "../../../../../node_modules/nx/schemas/project-schema.json",
+  "sourceRoot": "libs/application/templates/social-insurance-administration/payment-plan/src",
+  "projectType": "library",
+  "targets": {
+    "lint": {
+      "executor": "@nx/linter:eslint",
+      "outputs": ["{options.outputFile}"],
+      "options": {
+        "lintFilePatterns": [
+          "libs/application/templates/social-insurance-administration/payment-plan/**/*.{ts,tsx,js,jsx}"
+        ]
+      }
+    },
+    "test": {
+      "executor": "@nx/jest:jest",
+      "outputs": [
+        "{workspaceRoot}/coverage/libs/application/templates/social-insurance-administration/payment-plan"
+      ],
+      "options": {
+        "jestConfig": "libs/application/templates/social-insurance-administration/payment-plan/jest.config.ts",
+        "passWithNoTests": true
+      },
+      "configurations": {
+        "ci": {
+          "ci": true,
+          "codeCoverage": true
+        }
+      }
+    },
+    "extract-strings": {
+      "executor": "nx:run-commands",
+      "options": {
+        "command": "yarn ts-node -P libs/localization/tsconfig.lib.json libs/localization/scripts/extract 'libs/application/templates/social-insurance-administration/payment-plan/src/lib/messages/*.ts'"
+      }
+    }
+  },
+  "tags": ["scope:application-system", "lib:application-system"]
+}
