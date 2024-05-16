@@ -20,6 +20,11 @@ export const newPrimarySchoolMessages: MessageDir = {
       defaultMessage: 'Umsókn',
       description: 'Application',
     },
+    alertTitle: {
+      id: 'dess.nps.application:alert.title',
+      defaultMessage: 'Athugið',
+      description: 'Attention',
+    },
   }),
 
   pre: defineMessages({
@@ -94,7 +99,7 @@ export const newPrimarySchoolMessages: MessageDir = {
     sectionTitle: {
       id: 'dess.nps.application:relatives.section.title',
       defaultMessage: 'Aðstandendur',
-      description: 'Overview',
+      description: 'Relatives',
     },
   }),
 
@@ -161,8 +166,13 @@ export const newPrimarySchoolMessages: MessageDir = {
   }),
 
   conclusion: defineMessages({
-    overviewTitle: {
+    sectionTitle: {
       id: 'dess.nps.application:conclusion.section.title',
+      defaultMessage: 'Staðfesting',
+      description: 'Confirmation',
+    },
+    overviewTitle: {
+      id: 'dess.nps.application:conclusion.overview.title',
       defaultMessage: 'TBD',
       description: 'TBD',
     },

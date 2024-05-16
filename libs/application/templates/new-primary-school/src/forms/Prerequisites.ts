@@ -13,7 +13,6 @@ import {
   IdentityApi,
 } from '@island.is/application/types'
 import Logo from '../assets/Logo'
-
 import { newPrimarySchoolMessages } from '../lib/messages'
 
 export const Prerequisites: Form = buildForm({
@@ -94,7 +93,7 @@ export const Prerequisites: Form = buildForm({
     }),
     buildSection({
       id: 'conclusionSection',
-      title: newPrimarySchoolMessages.conclusion.overviewTitle,
+      title: newPrimarySchoolMessages.conclusion.sectionTitle,
       children: [],
     }),
   ],
