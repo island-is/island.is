@@ -14,9 +14,14 @@ import {
   PersonalRepresentativeCreateDTO,
   PersonalRepresentativeRightTypeService,
   PersonalRepresentativeService,
+  DelegationProviderModel,
+  DelegationTypeModel,
+  PersonalRepresentativeDelegationTypeModel,
 } from '@island.is/auth-api-lib'
 import { AuthScope } from '@island.is/auth/scopes'
 import { createCurrentUser } from '@island.is/testing/fixtures'
+import { getModelToken } from '@nestjs/sequelize'
+import { AuthDelegationProvider } from 'delegation'
 
 const path = '/v1/personal-representatives'
 
@@ -98,6 +103,9 @@ describe('PersonalRepresentativesController', () => {
   let prRightTypeModel: typeof PersonalRepresentativeRightType
   let prModel: typeof PersonalRepresentative
   let prPermissionsModel: typeof PersonalRepresentativeRight
+  let delegationProviderModel: typeof DelegationProviderModel
+  let delegationTypeModel: typeof DelegationTypeModel
+  // let prDelegationTypeModel: typeof PersonalRepresentativeDelegationTypeModel
 
   beforeAll(async () => {
     app = await setupWithAuth({ user })
@@ -123,6 +131,14 @@ describe('PersonalRepresentativesController', () => {
     // Get reference on personal representative right models to seed DB
     prPermissionsModel = app.get<typeof PersonalRepresentativeRight>(
       'PersonalRepresentativeRightRepository',
+    )
+    // Get reference on delegation provider models to seed DB
+    delegationProviderModel = app.get<typeof DelegationProviderModel>(
+      getModelToken(DelegationProviderModel),
+    )
+    // Get reference on delegation type models to seed DB
+    delegationTypeModel = app.get<typeof DelegationTypeModel>(
+      getModelToken(DelegationTypeModel),
     )
   })
 
@@ -151,6 +167,18 @@ describe('PersonalRepresentativesController', () => {
       truncate: true,
       force: true,
     })
+    await delegationTypeModel.destroy({
+      where: {},
+      cascade: true,
+      truncate: true,
+      force: true,
+    })
+    await delegationProviderModel.destroy({
+      where: {},
+      cascade: true,
+      truncate: true,
+      force: true,
+    })
     // Create personal representastive type
     await prTypeModel.create(personalRepresentativeType)
     // Create right types
@@ -160,11 +188,14 @@ describe('PersonalRepresentativesController', () => {
         description: rightType.description,
       })
     }
+
     await prModel.create({
       ...simpleRequestData,
       rightCodes: rightTypeList.map((rt) => rt.code),
       personalRepresentativeTypeCode: personalRepresentativeType.code,
     })
+
+    await addDelegationType(rightTypeList)
 
     // Creating personal rep
     await prService.create({
@@ -172,7 +203,6 @@ describe('PersonalRepresentativesController', () => {
       rightCodes: rightTypeList.map((rt) => rt.code),
       personalRepresentativeTypeCode: personalRepresentativeType.code,
     })
-    //personalRepPublic.rights = rightTypeList.map((rt) => rt.code)
   })
 
   describe('Get', () => {
@@ -192,7 +222,7 @@ describe('PersonalRepresentativesController', () => {
           `${path}?prId=${simpleRequestData.nationalIdPersonalRepresentative}`,
         )
         .expect(200)
-
+      
       const responseData: PersonalRepresentativePublicDTO[] = response.body
       expect(responseData).toMatchObject([personalRepPublic])
     })
@@ -209,4 +239,30 @@ describe('PersonalRepresentativesController', () => {
       await server.get(path).expect(400)
     })
   })
+
+  async function addDelegationType(listOfRightTypes: typeof rightTypeList) {
+    // Create delegation provider
+    const [prov] = await delegationProviderModel.findOrCreate({
+      where: {
+        id: AuthDelegationProvider.PersonalRepresentativeRegistry,
+      },
+      defaults: {
+        id: AuthDelegationProvider.PersonalRepresentativeRegistry,
+        name: 'Talsmannagrunnur',
+        description: 'Provider for personal representatives',
+      },
+    })
+
+    // Create delegation type
+    await Promise.all(
+      listOfRightTypes.map((rt) =>
+        delegationTypeModel.create({
+          description: rt.description,
+          id: `PersonalRepresentative:${rt.code}`,
+          name: `Personal Representative: ${rt.code}`,
+          providerId: prov.id,
+        }),
+      ),
+    )
+  }
 })
