@@ -351,20 +351,37 @@ export class NotificationsWorkerService implements OnApplicationBootstrap {
           }
         }
 
-        // get actor profile if sending to delegation holder, else get user profile
-        let profile: UserProfileDto | ActorProfileDto
+        // // get actor profile if sending to delegation holder, else get user profile
+        // let profile: UserProfileDto | ActorProfileDto
 
-        if (message.onBehalfOf) {
-          profile =
-            await this.userProfileApi.userProfileControllerGetActorProfile({
-              xParamToNationalId: message.recipient,
-              xParamFromNationalId: message.onBehalfOf.nationalId,
-            })
-        } else {
-          profile =
-            await this.userProfileApi.userProfileControllerFindUserProfile({
-              xParamNationalId: message.recipient,
-            })
+        // if (message.onBehalfOf) {
+        //   profile =
+        //     await this.userProfileApi.userProfileControllerGetActorProfile({
+        //       xParamToNationalId: message.recipient,
+        //       xParamFromNationalId: message.onBehalfOf.nationalId,
+        //     })
+        // } else {
+        //   profile =
+        //     await this.userProfileApi.userProfileControllerFindUserProfile({
+        //       xParamNationalId: message.recipient,
+        //     })
+        // }
+
+         // create mock user 
+         const profile: UserProfileDto = {
+          nationalId: '0101302989',
+          email: 'rafnarnason@gmail.com',
+          mobilePhoneNumber: '8632343',
+          locale: 'is',
+          mobilePhoneNumberVerified: true,
+          emailVerified: true,
+          documentNotifications: true,
+          profileImageUrl: 'https://example.com/image.jpg',
+          needsNudge: false,
+          lastNudge: new Date(),
+          nextNudge: new Date(),
+          emailNotifications: true,
+          isRestricted: false,
         }
 
         // can't send message if user has no user profile

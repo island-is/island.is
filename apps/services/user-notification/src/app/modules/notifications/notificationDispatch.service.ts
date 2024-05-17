@@ -1,24 +1,10 @@
-import { Injectable, Inject } from '@nestjs/common'
-import * as firebaseAdmin from 'firebase-admin'
-import type { Logger } from '@island.is/logging'
-import { LOGGER_PROVIDER } from '@island.is/logging'
-import { Notification } from './types'
-import { FIREBASE_PROVIDER } from '../../../constants'
-import { V2UsersApi } from '@island.is/clients/user-profile'
-
-export class PushNotificationError extends Error {
-  constructor(public readonly firebaseErrors: firebaseAdmin.FirebaseError[]) {
-    super(firebaseErrors.map((e) => e.message).join('. '))
-  }
-}
-
-const isTokenError = (e: firebaseAdmin.FirebaseError): boolean => {
-  return (
-    (e.code === 'messaging/invalid-argument' &&
-      e.message.includes('not a valid FCM registration token')) ||
-    e.code === 'messaging/registration-token-not-registered'
-  )
-}
+import { Injectable, Inject, BadRequestException, InternalServerErrorException } from '@nestjs/common';
+import * as firebaseAdmin from 'firebase-admin';
+import type { Logger } from '@island.is/logging';
+import { LOGGER_PROVIDER } from '@island.is/logging';
+import { Notification } from './types';
+import { FIREBASE_PROVIDER } from '../../../constants';
+import { V2UsersApi } from '@island.is/clients/user-profile';
 
 @Injectable()
 export class NotificationDispatchService {
@@ -33,74 +19,109 @@ export class NotificationDispatchService {
     nationalId,
     messageId,
   }: {
-    notification: Notification
-    nationalId: string
-    messageId: string
+    notification: Notification;
+    nationalId: string;
+    messageId: string;
   }): Promise<void> {
-    const deviceTokensResponse = await this.userProfileApi.userTokenControllerFindUserDeviceToken({
-      xParamNationalId: nationalId,
-    })
-
-    const tokens = deviceTokensResponse.map((token) => token.deviceToken)
+    const tokens = await this.getDeviceTokens(nationalId, messageId);
 
     if (tokens.length === 0) {
-      this.logger.info('No push-notification tokens found for user', { messageId })
-      return
-    } else {
-      this.logger.info(`Found user push-notification tokens (${tokens.length})`, { messageId })
+      return;
     }
 
     this.logger.info(`Notification content for message (${messageId})`, {
       messageId,
       ...notification,
-    })
-
-    const errors: firebaseAdmin.FirebaseError[] = []
+    });
 
     for (const token of tokens) {
       try {
-        await this.firebase.messaging().send({
-          token,
-          notification: {
-            title: notification.title,
-            body: notification.body,
-          },
-          ...(notification.category && {
-            apns: {
-              payload: {
-                aps: {
-                  category: notification.category,
-                },
-              },
-            },
-          }),
-          data: {
-            createdAt: new Date().toISOString(),
-            messageId,
-            ...(notification.appURI && {
-              url: notification.appURI,
-              islandIsUrl: notification.appURI,
-            }),
-            ...(notification.dataCopy && { copy: notification.dataCopy }),
-          },
-        })
-        this.logger.info('Push notification success', { firebaseMessageId: token, messageId })
+        await this.sendNotificationToToken(notification, token, messageId);
       } catch (error) {
-        if (isTokenError(error)) {
-          this.logger.info('Invalid/outdated push notification token', { error, messageId })
-          await this.userProfileApi.userTokenControllerDeleteUserDeviceToken({
-            xParamNationalId: nationalId,
-            deviceToken: token,
-          })
-        } else {
-          this.logger.error('Push notification error', { error, messageId })
-          errors.push(error)
-        }
+        await this.handleSendError(error, nationalId, token, messageId);
       }
     }
+  }
 
-    if (errors.length > 0) {
-      throw new PushNotificationError(errors)
+  private async getDeviceTokens(nationalId: string, messageId: string): Promise<string[]> {
+    try {
+      const deviceTokensResponse = await this.userProfileApi.userTokenControllerFindUserDeviceToken({
+        xParamNationalId: nationalId,
+      });
+      const tokens = deviceTokensResponse.map((token) => token.deviceToken);
+
+      if (tokens.length === 0) {
+        this.logger.info('No push-notification tokens found for user', { messageId });
+      } else {
+        this.logger.info(`Found user push-notification tokens (${tokens.length})`, { messageId });
+      }
+
+      return tokens;
+    } catch (error) {
+      this.logger.error('Error fetching device tokens', { error, messageId });
+      throw new InternalServerErrorException('Error fetching device tokens');
+    }
+  }
+
+  private async sendNotificationToToken(notification: Notification, token: string, messageId: string): Promise<void> {
+    const message = {
+      token,
+      notification: {
+        title: notification.title,
+        body: notification.body,
+      },
+      ...(notification.category && {
+        apns: {
+          payload: {
+            aps: {
+              category: notification.category,
+            },
+          },
+        },
+      }),
+      data: {
+        createdAt: new Date().toISOString(),
+        messageId,
+        ...(notification.appURI && {
+          url: notification.appURI,
+          islandIsUrl: notification.appURI,
+        }),
+        ...(notification.dataCopy && { copy: notification.dataCopy }),
+      },
+    };
+
+    await this.firebase.messaging().send(message);
+    this.logger.info('Push notification success', { firebaseMessageId: token, messageId });
+  }
+
+  private async handleSendError(error: any, nationalId: string, token: string, messageId: string): Promise<void> {
+    this.logger.error('Push notification error', { error, messageId });
+
+    switch (error.code) {
+      case 'messaging/invalid-argument':
+      case 'messaging/registration-token-not-registered':
+        await this.removeInvalidToken(nationalId, token, messageId);
+        break;
+      case 'messaging/invalid-recipient':
+      case 'messaging/message-rate-exceeded':
+        throw new BadRequestException(error.code);
+      case 'auth/invalid-credential':
+        throw new InternalServerErrorException(error.code);
+      case 'internal-error':
+      default:
+        throw new InternalServerErrorException(error.code);
+    }
+  }
+
+  private async removeInvalidToken(nationalId: string, token: string, messageId: string): Promise<void> {
+    try {
+      await this.userProfileApi.userTokenControllerDeleteUserDeviceToken({
+        xParamNationalId: nationalId,
+        deviceToken: token,
+      });
+      this.logger.info('Removed invalid device token', { token, messageId });
+    } catch (error) {
+      this.logger.error('Error removing device token for user', { error, messageId });
     }
   }
 }
