@@ -19,7 +19,6 @@ runs:
   steps:
     - name: Prepare cache
       id: prepare-cache
-      continue-on-error: true
       uses: ./.github/actions/cache
       with:
         path: ${{ inputs.path }}
