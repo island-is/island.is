@@ -2,6 +2,7 @@ import {
   buildMultiField,
   buildCustomField,
   buildSubSection,
+  buildAlertMessageField,
 } from '@island.is/application/core'
 import { m } from '../../lib/messages'
 import { hasNoDrivingLicenseInOtherCountry } from '../../lib/utils'
@@ -124,6 +125,14 @@ export const subSectionHealthDeclaration = buildSubSection({
             label: m.healthDeclaration10,
           },
         ),
+        buildAlertMessageField({
+          id: 'healthDeclaration.contactGlassesMismatch',
+          title: '',
+          message: m.alertHealthDeclarationGlassesMismatch,
+          alertType: 'warning',
+          condition: (answers) =>
+            (answers.healthDeclaration as any)?.contactGlassesMismatch,
+        }),
       ],
     }),
   ],

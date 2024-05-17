@@ -9,6 +9,7 @@ import {
   isDistrictCourtUser,
   isIndictmentCase,
   isProsecutionUser,
+  isPublicProsecutor,
 } from '@island.is/judicial-system/types'
 import {
   core,
@@ -25,10 +26,8 @@ import {
   SharedPageLayout,
   UserContext,
 } from '@island.is/judicial-system-web/src/components'
-import {
-  PastCasesTable,
-  TableSkeleton,
-} from '@island.is/judicial-system-web/src/components/Table'
+import { PastCasesTable } from '@island.is/judicial-system-web/src/components/Table'
+import { TableWrapper } from '@island.is/judicial-system-web/src/components/Table/Table'
 import {
   CaseListEntry,
   CaseState,
@@ -40,6 +39,7 @@ import { useCase } from '@island.is/judicial-system-web/src/utils/hooks'
 
 import CasesAwaitingAssignmentTable from '../../Court/components/CasesAwaitingAssignmentTable/CasesAwaitingAssignmentTable'
 import CasesAwaitingConfirmationTable from '../../Prosecutor/components/CasesAwaitingConfirmationTable/CasesAwaitingConfirmationTable'
+import CasesAwaitingReview from '../../PublicProsecutor/Tables/CasesAwaitingReview'
 import ActiveCases from './ActiveCases'
 import { useCasesQuery } from './cases.generated'
 import { FilterOption, useFilter } from './useFilter'
@@ -132,9 +132,10 @@ export const Cases: React.FC = () => {
     allActiveCases,
     allPastCases,
     casesAwaitingAssignment,
+    casesAwaitingReview,
   ] = useMemo(() => {
     if (!resCases) {
-      return [[], [], [], []]
+      return [[], [], [], [], []]
     }
 
     const filterCases = (predicate: (c: CaseListEntry) => boolean) =>
@@ -146,6 +147,13 @@ export const Cases: React.FC = () => {
 
     const casesAwaitingAssignment = filterCases(
       (c) => isIndictmentCase(c.type) && c.judge === null,
+    )
+
+    const casesAwaitingReview = filterCases(
+      (c) =>
+        isIndictmentCase(c.type) &&
+        c.indictmentReviewer !== null &&
+        c.indictmentReviewer?.id === user?.id,
     )
 
     const activeCases = filterCases((c) => {
@@ -165,7 +173,10 @@ export const Cases: React.FC = () => {
     })
 
     const pastCases = filterCases(
-      (c) => !activeCases.includes(c) && !casesAwaitingAssignment.includes(c),
+      (c) =>
+        !activeCases.includes(c) &&
+        !casesAwaitingAssignment.includes(c) &&
+        !casesAwaitingReview.includes(c),
     )
 
     return [
@@ -173,6 +184,7 @@ export const Cases: React.FC = () => {
       activeCases as CaseListEntry[],
       pastCases as CaseListEntry[],
       casesAwaitingAssignment as CaseListEntry[],
+      casesAwaitingReview as CaseListEntry[],
     ]
   }, [resCases, user])
 
@@ -188,9 +200,10 @@ export const Cases: React.FC = () => {
     if (
       caseToDelete.state === CaseState.NEW ||
       caseToDelete.state === CaseState.DRAFT ||
+      caseToDelete.state === CaseState.WAITING_FOR_CONFIRMATION ||
       caseToDelete.state === CaseState.SUBMITTED ||
       caseToDelete.state === CaseState.RECEIVED ||
-      caseToDelete.state === CaseState.WAITING_FOR_CONFIRMATION
+      caseToDelete.state === CaseState.MAIN_HEARING
     ) {
       await transitionCase(caseToDelete.id, CaseTransition.DELETE)
       refetch()
@@ -250,13 +263,22 @@ export const Cases: React.FC = () => {
         ) : (
           <>
             {isProsecutionUser(user) && filter.value !== 'INVESTIGATION' && (
-              <CasesAwaitingConfirmationTable
-                loading={loading}
-                isFiltering={isFiltering}
-                cases={casesAwaitingConfirmation}
-                onContextMenuDeleteClick={setVisibleModal}
-              />
+              <>
+                <CasesAwaitingConfirmationTable
+                  loading={loading}
+                  isFiltering={isFiltering}
+                  cases={casesAwaitingConfirmation}
+                  onContextMenuDeleteClick={setVisibleModal}
+                />
+                {isPublicProsecutor(user) && (
+                  <CasesAwaitingReview
+                    loading={loading}
+                    cases={casesAwaitingReview}
+                  />
+                )}
+              </>
             )}
+
             {isDistrictCourtUser(user) && filter.value !== 'INVESTIGATION' && (
               <CasesAwaitingAssignmentTable
                 cases={casesAwaitingAssignment}
@@ -265,10 +287,8 @@ export const Cases: React.FC = () => {
               />
             )}
             <SectionHeading title={formatMessage(m.activeRequests.title)} />
-            <Box marginBottom={[5, 5, 12]}>
-              {loading || isFiltering ? (
-                <TableSkeleton />
-              ) : activeCases.length > 0 ? (
+            <TableWrapper loading={loading || isFiltering}>
+              {activeCases.length > 0 ? (
                 <ActiveCases
                   cases={activeCases}
                   isDeletingCase={isTransitioningCase || isSendingNotification}
@@ -283,7 +303,7 @@ export const Cases: React.FC = () => {
                   />
                 </div>
               )}
-            </Box>
+            </TableWrapper>
             <SectionHeading title={formatMessage(tables.completedCasesTitle)} />
             {loading || pastCases.length > 0 ? (
               <PastCasesTable

@@ -13,8 +13,7 @@ import { NationalRegistryUser, TeacherV4 } from '../../types/schema'
 import { m } from '../../lib/messages'
 import { format as formatKennitala } from 'kennitala'
 import { StudentAssessment } from '@island.is/api/schema'
-import { YES } from '../../lib/constants'
-import { B_TEMP } from '../../shared/constants'
+import { B_TEMP, YES } from '../../lib/constants'
 import {
   hasNoDrivingLicenseInOtherCountry,
   isApplicationForCondition,
