@@ -63,11 +63,9 @@ export const NotificationsScreen: NavigationFunctionComponent = ({
     ({ updateNavigationUnseenCount }) => updateNavigationUnseenCount,
   )
 
-  const { data, loading, error, fetchMore, updateQuery } =
-    useGetUserNotificationsQuery({
-      fetchPolicy: 'network-only',
-      variables: { input: { limit: DEFAULT_PAGE_SIZE } },
-    })
+  const { data, loading, error, fetchMore } = useGetUserNotificationsQuery({
+    variables: { input: { limit: DEFAULT_PAGE_SIZE } },
+  })
 
   const [markUserNotificationAsRead] = useMarkUserNotificationAsReadMutation()
   const [markAllUserNotificationsAsSeen] =
@@ -183,7 +181,7 @@ export const NotificationsScreen: NavigationFunctionComponent = ({
   }
 
   const keyExtractor = useCallback(
-    (item: ListItem, index: number) => item.id.toString(),
+    (item: ListItem) => item.id.toString(),
     [memoizedData],
   )
 
