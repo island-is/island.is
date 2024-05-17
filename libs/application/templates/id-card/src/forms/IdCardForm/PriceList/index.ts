@@ -5,7 +5,11 @@ import {
   buildRadioField,
   buildSelectField,
 } from '@island.is/application/core'
-import { Routes, Services } from '../../../lib/constants'
+import {
+  DistrictCommissionerAgencies,
+  Routes,
+  Services,
+} from '../../../lib/constants'
 import { priceList } from '../../../lib/messages/priceList'
 import { checkForDiscount } from '../../../utils'
 import { Application } from '@island.is/application/types'
@@ -58,12 +62,18 @@ export const PriceListSubSection = buildSection({
           id: `${Routes.PRICELIST}.location`,
           title: priceList.labels.locationTitle,
           placeholder: priceList.labels.locationPlaceholder,
-          options: [
-            {
-              label: 'todo',
-              value: 'todo',
+          options: ({
+            externalData: {
+              deliveryAddress: { data },
             },
-          ],
+          }) => {
+            return (data as DistrictCommissionerAgencies[])?.map(
+              ({ key, name }) => ({
+                value: key,
+                label: name,
+              }),
+            )
+          },
         }),
       ],
     }),

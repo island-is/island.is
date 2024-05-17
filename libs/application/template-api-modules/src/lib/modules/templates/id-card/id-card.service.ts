@@ -59,6 +59,42 @@ export class IdCardService extends BaseTemplateApiService {
     return identityDocument
   }
 
+  async deliveryAddress({ auth, application }: TemplateApiModuleActionProps) {
+    const res = await this.passportApi.getDeliveryAddress(auth)
+    if (!res) {
+      this.logger.warn(
+        'No delivery address for passport found for user for application: ',
+        application.id,
+      )
+      throw new TemplateApiError(
+        {
+          title: coreErrorMessages.failedDataProvider,
+          summary: coreErrorMessages.errorDataProvider,
+        },
+        400,
+      )
+    }
+
+    // We want to make sure that Þjóðskrá locations are the first to appear, their key starts with a number
+    const deliveryAddresses = (res as DistrictCommissionerAgencies[]).sort(
+      (a, b) => {
+        const keyA = a.key.toUpperCase() // ignore upper and lowercase
+        const keyB = b.key.toUpperCase() // ignore upper and lowercase
+        if (keyA < keyB) {
+          return -1
+        }
+        if (keyA > keyB) {
+          return 1
+        }
+
+        // keys must be equal
+        return 0
+      },
+    )
+
+    return deliveryAddresses
+  }
+
   async assignParentB({ application, auth }: TemplateApiModuleActionProps) {
     // 1. Validate payment
 

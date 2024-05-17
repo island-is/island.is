@@ -55,10 +55,14 @@ export const ChosenApplicantsSubSection = buildSubSection({
             const passportList: Array<any> = [
               {
                 label: applicantName,
-                subLabel: {
-                  ...idInformation.labels.idNumber,
-                  values: { passportNumber: applicantPassport?.number },
-                },
+                subLabel: applicantPassport
+                  ? {
+                      ...idInformation.labels.idNumber,
+                      values: { passportNumber: applicantPassport?.number },
+                    }
+                  : {
+                      ...idInformation.labels.noIdFound,
+                    },
                 value: applicantNationalId,
               },
             ]
@@ -72,7 +76,7 @@ export const ChosenApplicantsSubSection = buildSubSection({
                         values: { passportNumber: item.passports[0].number },
                       }
                     : {
-                        ...idInformation.labels.idNumber, // TODO make this "no passport found"
+                        ...idInformation.labels.noIdFound,
                       },
 
                 value: item.childNationalId,

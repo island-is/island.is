@@ -78,5 +78,10 @@ export const idInformation = {
         'Þegar sótt er um fyrir barn þarf forsjáraðili 2 að samþykkja umsóknina innan 7 daga. Viðkomandi fær tilkynningu um undirritun og getur samþykkt með rafrænum hætti. Samþykkið er vistað rafrænt hjá Þjóðskrá Íslands.Séu rafræn skilríki ekki fyrir hendi er hægt að skila inn skriflegu samþykki til Sýslumanns/Þjóðskrár.',
       description: 'Description on condition page',
     },
+    noIdFound: {
+      id: 'id.application:idInformation.labels.noIdFound',
+      defaultMessage: 'Ekkert nafnskírteini fannst',
+      description: 'title of no id was found',
+    },
   }),
 }

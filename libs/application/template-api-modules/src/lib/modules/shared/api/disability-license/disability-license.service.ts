@@ -21,13 +21,14 @@ export class DisabilityLicenseApiService extends BaseTemplateApiService {
     try {
       res = await this.disabilityLicenseClient.hasDisabilityLicense(auth)
     } catch (e) {
-      throw new TemplateApiError(
-        {
-          title: coreErrorMessages.errorDataProvider,
-          summary: coreErrorMessages.errorDataProvider,
-        },
-        400,
-      )
+      //  throw new TemplateApiError(
+      //    {
+      //      title: coreErrorMessages.errorDataProvider,
+      //      summary: coreErrorMessages.errorDataProvider,
+      //    },
+      //    400,
+      //  )
+      return null
     }
 
     return res
