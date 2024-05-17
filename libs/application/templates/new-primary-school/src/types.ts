@@ -1,3 +1,12 @@
+import { RelationOptions } from './lib/constants'
+
+export interface RelativesRow {
+  fullName: string
+  phoneNumber: string
+  nationalId: string
+  relation: RelationOptions
+}
+
 export type Children = {
   fullName: string
   nationalId: string

@@ -158,6 +158,93 @@ export const newPrimarySchoolMessages: MessageDir = {
       defaultMessage: 'Aðstandendur',
       description: 'Relatives',
     },
+    title: {
+      id: 'dess.nps.application:relatives.title',
+      defaultMessage: 'Aðstandendur barnsins',
+      description: "The child's relatives",
+    },
+    description: {
+      id: 'dess.nps.application:relatives.description',
+      defaultMessage:
+        'Skráðu að minnsta kosti einn tengilið sem má hafa samband við ef ekki næst í foreldra/forsjáraðila barnsins. Þú getur bætt við allt að fjórum aðstandendum.',
+      description:
+        "List at least one contact person who can be contacted if the child's parents/guardian cannot be reached. You can add up to four relatives.",
+    },
+    registrationTitle: {
+      id: 'dess.nps.application:relatives.registration.title',
+      defaultMessage: 'Skráning aðstandanda',
+      description: 'Registration of a relative',
+    },
+    addRelative: {
+      id: 'dess.nps.application:relatives.add.relative',
+      defaultMessage: 'Bæta við aðstandanda',
+      description: 'Add a relative',
+    },
+    registerRelative: {
+      id: 'dess.nps.application:relatives.register.relative',
+      defaultMessage: 'Skrá aðstandanda',
+      description: 'Register relative',
+    },
+    deleteRelative: {
+      id: 'dess.nps.application:relatives.delete.relative',
+      defaultMessage: 'Eyða aðstandanda',
+      description: 'Remove relative',
+    },
+    fullName: {
+      id: 'dess.nps.application:relatives.full.name',
+      defaultMessage: 'Fullt nafn',
+      description: 'Full name',
+    },
+    phoneNumber: {
+      id: 'dess.nps.application:relatives.phone.number',
+      defaultMessage: 'Símanúmer',
+      description: 'Phone number',
+    },
+    nationalId: {
+      id: 'dess.nps.application:relatives.national.id',
+      defaultMessage: 'Kennitala',
+      description: 'Icelandic ID number',
+    },
+    relation: {
+      id: 'dess.nps.application:relatives.relation',
+      defaultMessage: 'Tengsl',
+      description: 'Relation',
+    },
+    relationPlaceholder: {
+      id: 'dess.nps.application:relatives.relation.placeholder',
+      defaultMessage: 'Veldu tengsl',
+      description: 'Select relation',
+    },
+    relationGrandparents: {
+      id: 'dess.nps.application:relatives.relation.randparents',
+      defaultMessage: 'Afi/amma',
+      description: 'Grandparents',
+    },
+    relationSiblings: {
+      id: 'dess.nps.application:relatives.relation.siblings',
+      defaultMessage: 'Systkini',
+      description: 'Siblings',
+    },
+    relationStepParent: {
+      id: 'dess.nps.application:relatives.relation.step.parent',
+      defaultMessage: 'Stjúpforeldri',
+      description: 'Step parent',
+    },
+    relationRelatives: {
+      id: 'dess.nps.application:relatives.relation.relatives',
+      defaultMessage: 'Frændfólk',
+      description: 'Relatives',
+    },
+    relationFriendsAndOther: {
+      id: 'dess.nps.application:relatives.relation..friends.and.other',
+      defaultMessage: 'Vinafólk/annað',
+      description: 'Friends/others',
+    },
+    alertMessage: {
+      id: 'dess.nps.application:relatives.alert.message',
+      defaultMessage: 'Vinsamlegast látið aðstandendur vita af skráningunni.',
+      description: 'Please inform the relatives of the registration.',
+    },
   }),
 
   meal: defineMessages({
@@ -302,4 +389,20 @@ export const statesMessages = defineMessages({
   },
 })
 
-export const errorMessages = defineMessages({})
+export const errorMessages = defineMessages({
+  phoneNumber: {
+    id: 'dess.nps.application:error.phone.number',
+    defaultMessage: 'Símanúmerið þarf að vera gilt.',
+    description: 'The phone number must be valid.',
+  },
+  nationalId: {
+    id: 'dess.nps.application:error.national.id',
+    defaultMessage: 'Kennitala þarf að vera gild.',
+    description: 'Error message when the kennitala is invalid.',
+  },
+  relativesRequired: {
+    id: 'dess.nps.application:error.relatives.required',
+    defaultMessage: 'Nauðsynlegt er að bæta við a.m.k einum aðstandenda',
+    description: 'You must add at least one relative',
+  },
+})
