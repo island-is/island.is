@@ -12,7 +12,6 @@ import {
 } from '@island.is/application/templates/healthcare-work-permit'
 import {
   HealthDirectorateClientService,
-  NamsUpplysingar,
   StarfsleyfiUmsoknStarfsleyfi,
   UtbuaStarfsleyfiSkjalResponse,
 } from '@island.is/clients/health-directorate'
@@ -21,6 +20,7 @@ import {
   UniversityOfIcelandService,
 } from '@island.is/clients/university-of-iceland'
 import { TemplateApiError } from '@island.is/nest/problem'
+import { NationalRegistryService } from '../../shared/api/national-registry/national-registry.service'
 
 @Injectable()
 export class HealthcareWorkPermitService extends BaseTemplateApiService {
@@ -28,8 +28,30 @@ export class HealthcareWorkPermitService extends BaseTemplateApiService {
     private readonly sharedTemplateAPIService: SharedTemplateApiService,
     private readonly healthDirectorateClientService: HealthDirectorateClientService,
     private readonly universityOfIcelandService: UniversityOfIcelandService,
+    private readonly nationalRegistryService: NationalRegistryService,
   ) {
     super(ApplicationTypes.HEALTHCARE_WORK_PERMIT)
+  }
+
+  async getNationalRegistryWithEESValidation({
+    auth,
+  }: TemplateApiModuleActionProps): Promise<NationalRegistryIndividual> {
+    const result = await this.nationalRegistryService.getIndividual(
+      auth.nationalId,
+    )
+
+    // TODO Double check if this fails on empty response
+    if (!result) {
+      throw new TemplateApiError(
+        {
+          title: errorMsg.healthcareLicenseErrorTitle,
+          summary: errorMsg.healthcareLicenseErrorMessage,
+        },
+        400,
+      )
+    }
+
+    return result
   }
 
   async getMyHealthcareLicenses({
@@ -57,14 +79,12 @@ export class HealthcareWorkPermitService extends BaseTemplateApiService {
   async getEducationInfo({
     auth,
   }: TemplateApiModuleActionProps): Promise<StarfsleyfiUmsoknStarfsleyfi[]> {
-    const academicCareer: Transcripts | null =
-      await this.universityOfIcelandService.studentInfo(auth)
-    const educationTracks: NamsUpplysingar[] =
+    const result =
       await this.healthDirectorateClientService.getHealthCareWorkPermitEducationInfo(
         auth,
       )
 
-    if (!educationTracks || !academicCareer) {
+    if (!result) {
       throw new TemplateApiError(
         {
           title: errorMsg.healthcareLicenseErrorTitle,
@@ -74,21 +94,7 @@ export class HealthcareWorkPermitService extends BaseTemplateApiService {
       )
     }
 
-    // TODO Here I need to make sure that at least some of the users academic career exist in the workpermit educational info list in order
-    // to make it to the next step.
-    // const educationShortIdMap: { [shortId: string]: boolean } = {};
-    // academicCareer?.transcripts?.forEach(edu => {
-    //     educationShortIdMap[edu.shortId] = true;
-    // });
-
-    // // Match transcripts with education that gives a work permit
-    // const matchedTranscripts: Transcripts = academicCareer?.transcripts?.filter(transcript => {
-    //     return transcript.shortId in educationShortIdMap;
-    // });
-
-    // console.log("Matched Transcripts:", matchedTranscripts);
-
-    return educationTracks
+    return result
   }
 
   async getMyAcademicCareer({
