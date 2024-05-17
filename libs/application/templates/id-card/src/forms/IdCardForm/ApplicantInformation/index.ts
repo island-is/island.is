@@ -28,6 +28,7 @@ export const ApplicanInformationSubSection = buildSection({
       id: Routes.APPLICANTSINFORMATION,
       title: applicantInformation.general.sectionTitle,
       description: applicantInformation.general.sectionDescription,
+      space: 2,
       children: [
         buildDescriptionField({
           id: `${Routes.APPLICANTSINFORMATION}.title`,

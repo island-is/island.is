@@ -10,8 +10,6 @@ import {
   Routes,
 } from '../../../lib/constants'
 import { idInformation } from '../../../lib/messages/idInformation'
-import { GetFormattedText } from '../../../utils'
-import { MessageDescriptor } from 'react-intl'
 
 export const ChosenApplicantsSubSection = buildSubSection({
   id: Routes.CHOSENAPPLICANTS,
@@ -61,13 +59,14 @@ export const ChosenApplicantsSubSection = buildSubSection({
                       values: { passportNumber: applicantPassport?.number },
                     }
                   : {
-                      ...idInformation.labels.noIdFound,
+                      ...idInformation.labels.noIdNumber,
                     },
                 value: applicantNationalId,
               },
             ]
-            applicantChildren.map((item) =>
-              passportList.push({
+            applicantChildren.map((item) => {
+              console.log(item)
+              return passportList.push({
                 label: item.childName,
                 subLabel:
                   item.passports && item.passports.length > 0
@@ -76,12 +75,12 @@ export const ChosenApplicantsSubSection = buildSubSection({
                         values: { passportNumber: item.passports[0].number },
                       }
                     : {
-                        ...idInformation.labels.noIdFound,
+                        ...idInformation.labels.noIdNumber,
                       },
 
                 value: item.childNationalId,
-              }),
-            )
+              })
+            })
 
             return passportList
           },

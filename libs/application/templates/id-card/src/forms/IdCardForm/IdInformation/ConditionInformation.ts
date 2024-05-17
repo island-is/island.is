@@ -29,6 +29,7 @@ export const ConditionInformationSection = buildSubSection({
       id: `${Routes.CONDITIONINFORMATION}MultiField`,
       title: idInformation.general.conditionSectionTitle,
       description: idInformation.labels.conditionDescription,
+      space: 2,
     }),
   ],
 })
