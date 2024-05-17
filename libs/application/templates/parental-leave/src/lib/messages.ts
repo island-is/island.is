@@ -1818,11 +1818,6 @@ export const parentalLeaveFormMessages = {
       defaultMessage: 'Forsjárskipting á sér stað',
       description: 'Division of custody takes place',
     },
-    birthDate: {
-      id: 'pl.application:review.birth.date',
-      defaultMessage: 'Fæðingardagur',
-      description: 'Date of birth',
-    },
     desc: {
       id: 'pl.application:review.desc',
       defaultMessage: 'Hér að neðan eru skrefin sem gerast næst.',

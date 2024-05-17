@@ -111,7 +111,7 @@ const InReviewSteps: FC<React.PropsWithChildren<FieldBaseProps>> = (props) => {
                 )
               : periods?.[0]?.firstPeriodStart ===
                 StartDateOptions.ACTUAL_DATE_OF_BIRTH
-              ? formatMessage(parentalLeaveFormMessages.reviewScreen.birthDate)
+              ? formatMessage(parentalLeaveFormMessages.shared.dateOfBirthTitle)
               : formatMessage(
                   parentalLeaveFormMessages.reviewScreen.estimatedBirthDate,
                 )}
