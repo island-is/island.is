@@ -86,18 +86,10 @@ export const NewPrimarySchoolForm: Form = buildForm({
           children: [
             buildMultiField({
               id: 'parents',
-              title: '',
+              title: newPrimarySchoolMessages.childrenNParents.parentsSection,
+              description:
+                newPrimarySchoolMessages.childrenNParents.description,
               children: [
-                buildDescriptionField({
-                  id: 'parentsSection',
-                  title:
-                    newPrimarySchoolMessages.childrenNParents.parentsSection,
-                  description:
-                    newPrimarySchoolMessages.childrenNParents.description,
-                  titleVariant: 'h3',
-                  marginBottom: 5,
-                  space: 'gutter',
-                }),
                 buildDescriptionField({
                   id: 'parentsInfo1',
                   title: newPrimarySchoolMessages.childrenNParents.parent,

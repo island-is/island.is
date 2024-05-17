@@ -94,8 +94,6 @@ export const getOtherParent = (
     return child.nationalId === childsNationalId
   })
 
-  console.log('selectedChild', selectedChild?.otherParent)
-
   return selectedChild?.otherParent as Person | undefined
 }
 
