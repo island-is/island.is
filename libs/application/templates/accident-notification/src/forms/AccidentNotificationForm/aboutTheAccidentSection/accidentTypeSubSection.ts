@@ -2,7 +2,7 @@ import { buildRadioField, buildSubSection } from '@island.is/application/core'
 import { accidentType } from '../../../lib/messages'
 import { getAccidentTypeOptions } from '../../../utils'
 
-export const accidentTypeScreen = buildSubSection({
+export const accidentTypeSubSection = buildSubSection({
   id: 'accidentType.section',
   title: accidentType.general.subsectionTitle,
   children: [

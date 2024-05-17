@@ -11,7 +11,7 @@ import { isDateOlderThanAYear } from '../../../utils'
 import { isHealthInsured } from '../../../utils/isHealthInsured'
 
 // Details of the accident
-export const accidentDetailsScreen = buildSubSection({
+export const accidentDetailsSubSection = buildSubSection({
   id: 'accidentDetails.section',
   title: accidentDetails.general.sectionTitle,
   children: [
