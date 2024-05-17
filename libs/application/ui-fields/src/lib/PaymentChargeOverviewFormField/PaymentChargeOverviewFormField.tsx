@@ -28,6 +28,7 @@ export const PaymentChargeOverviewFormField: FC<
       chargeItemCode: string
     },
   ]
+  console.log('selectedChargeList', selectedChargeList)
   const selectedChargeWithInfoList = selectedChargeList.map((charge) => {
     const chargeWithInfo = allChargeWithInfoList.find(
       (chargeWithInfo) =>

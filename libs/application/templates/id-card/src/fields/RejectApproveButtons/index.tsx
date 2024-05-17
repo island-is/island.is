@@ -51,6 +51,10 @@ export const RejectApproveButtons: FC<
     }
   }
 
+  if (application.state === 'draft') {
+    return
+  }
+
   return (
     <>
       <Box marginTop={14}>

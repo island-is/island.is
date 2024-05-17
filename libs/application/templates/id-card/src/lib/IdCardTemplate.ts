@@ -32,18 +32,7 @@ import { application as applicationMessage } from './messages'
 import { Events, Roles, States, ApiActions } from './constants'
 import { IdCardSchema } from './dataSchema'
 import { buildPaymentState } from '@island.is/application/utils'
-import { hasReviewer } from '../utils'
-
-const getCode = (application: Application) => {
-  const chargeItemCode = getValueViaPath<string>(
-    application.answers,
-    'chargeItemCode',
-  )
-  if (!chargeItemCode) {
-    throw new Error('chargeItemCode missing in request')
-  }
-  return [chargeItemCode]
-}
+import { getChargeItemCodes, hasReviewer } from '../utils'
 
 export const needsReview = (context: ApplicationContext) => {
   const { answers, externalData } = context.application
@@ -148,7 +137,7 @@ const IdCardTemplate: ApplicationTemplate<
       },
       [States.PAYMENT]: buildPaymentState({
         organizationId: InstitutionNationalIds.SYSLUMENN,
-        chargeItemCodes: getCode,
+        chargeItemCodes: getChargeItemCodes,
         submitTarget: [
           {
             target: States.PARENT_B_CONFIRM,

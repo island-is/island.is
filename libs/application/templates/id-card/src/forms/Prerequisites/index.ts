@@ -27,6 +27,7 @@ import {
   DeliveryAddressApi,
   DisabiltyLicenseApi,
   NationalRegistryUser,
+  SyslumadurPaymentCatalogApi,
   // SyslumadurPaymentCatalogApi,
   UserInfoApi,
 } from '../../dataProviders'
@@ -118,6 +119,10 @@ export const Prerequisites: Form = buildForm({
             }),
             buildDataProviderItem({
               provider: DisabiltyLicenseApi,
+              title: '',
+            }),
+            buildDataProviderItem({
+              provider: SyslumadurPaymentCatalogApi,
               title: '',
             }),
           ],
