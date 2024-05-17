@@ -595,14 +595,14 @@ export const notifications = {
     isolationHtml: {
       id: 'judicial.system.backend:notifications.modified.isolation_html_v1',
       defaultMessage:
-        '{actorInstitution}, {actorName} {actorTitle}, hefur uppfært lengd gæsluvarðhalds/einangrunar í máli {courtCaseNumber}. Sjá nánar á {linkStart}yfirlitssíðu málsins í Réttarvörslugátt{linkEnd}.<br /><br />Lok gæsluvarðhalds: {validToDate}.<br /><br />Lok einangrunar: {isolationToDate}.'
+        '{actorInstitution}, {actorName} {actorTitle}, hefur uppfært lengd gæsluvarðhalds/einangrunar í máli {courtCaseNumber}. Sjá nánar á {linkStart}yfirlitssíðu málsins í Réttarvörslugátt{linkEnd}.<br /><br />Lok gæsluvarðhalds: {validToDate}.<br /><br />Lok einangrunar: {isolationToDate}.',
       description:
         'Notaður sem texti í tölvupósti vegna breytingar á lengd gæslu/einangrunar/vistunar þar sem úrskurðað var í einangrun.',
     },
     isolationHtmlDefender: {
       id: 'judicial.system.backend:notifications.modified.isolation_html_defender',
       defaultMessage:
-        '{actorInstitution}, {actorName} {actorTitle}, hefur uppfært lengd gæsluvarðhalds/einangrunar í máli {courtCaseNumber}. {defenderHasAccessToRVG, select, true {Sjá nánar á {linkStart}yfirlitssíðu málsins í Réttarvörslugátt{linkEnd}} other {Þú getur nálgast gögn málsins hjá {courtName} ef þau hafa ekki þegar verið afhent}}.<br /><br />Lok gæsluvarðhalds: {validToDate}.<br /><br />Lok einangrunar: {isolationToDate}.'
+        '{actorInstitution}, {actorName} {actorTitle}, hefur uppfært lengd gæsluvarðhalds/einangrunar í máli {courtCaseNumber}. {defenderHasAccessToRVG, select, true {Sjá nánar á {linkStart}yfirlitssíðu málsins í Réttarvörslugátt{linkEnd}} other {Þú getur nálgast gögn málsins hjá {courtName} ef þau hafa ekki þegar verið afhent}}.<br /><br />Lok gæsluvarðhalds: {validToDate}.<br /><br />Lok einangrunar: {isolationToDate}.',
       description:
         'Notaður sem texti í tölvupósti til verjanda vegna breytingar á lengd gæslu/einangrunar/vistunar þar sem úrskurðað var í einangrun.',
     },
