@@ -8,6 +8,8 @@ export type Events =
 
 export enum Routes {
   APPLICATIONINFORMATION = 'applicationInformation',
+  FIRSTGUARDIANINFORMATION = 'firstGuardianInformation',
+  SECONDGUARDIANINFORMATION = 'secondGuardionInformation',
   TYPEOFID = 'typeOfId',
   CHOSENAPPLICANTS = 'chosenApplicants',
   APPLICANTSINFORMATION = 'applicantInformation',

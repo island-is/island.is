@@ -140,17 +140,17 @@ export class IdCardService extends BaseTemplateApiService {
     // 2. Notify everyone in the process that the application has been withdrawn
     const answers = application.answers as IdCardAnswers
     const parentA = {
-      ssn: answers.applicantInformation.firstGuardianNationalId || '',
-      name: answers.applicantInformation.firstGuardianName || '',
-      email: answers.applicantInformation.firstGuardianEmail,
-      phone: answers.applicantInformation.firstGuardianPhoneNumber,
+      ssn: answers.firstGuardianInformation?.nationalId || '',
+      name: answers.firstGuardianInformation?.name || '',
+      email: answers.firstGuardianInformation?.email,
+      phone: answers.firstGuardianInformation?.phoneNumber,
     }
-    const parentB = answers.applicantInformation.secondGuardianNationalId
+    const parentB = answers.secondGuardionInformation?.nationalId
       ? {
-          ssn: answers.applicantInformation.secondGuardianNationalId || '',
-          name: answers.applicantInformation.secondGuardianName || '',
-          email: answers.applicantInformation.secondGuardianEmail,
-          phone: answers.applicantInformation.secondGuardianPhoneNumber,
+          ssn: answers.secondGuardionInformation?.nationalId || '',
+          name: answers.secondGuardionInformation?.name || '',
+          email: answers.secondGuardionInformation?.email,
+          phone: answers.secondGuardionInformation?.phoneNumber,
         }
       : undefined
     // Email to parent A
@@ -208,8 +208,10 @@ export class IdCardService extends BaseTemplateApiService {
     const answers = application.answers as IdCardAnswers
 
     const userIsApplicant =
-      answers.applicantInformation.applicantNationalId === auth.nationalId
+      answers.applicantInformation.nationalId === auth.nationalId
     const applicantInformation = answers.applicantInformation
+    const firstGuardianInformation = answers.firstGuardianInformation
+    const secondGuardionInformation = answers.secondGuardionInformation
 
     let result
     if (userIsApplicant) {
@@ -223,56 +225,54 @@ export class IdCardService extends BaseTemplateApiService {
             : 1,
         deliveryName: answers.priceList.location,
         contactInfo: {
-          phoneAtHome: applicantInformation.applicantPhoneNumber,
-          phoneAtWork: applicantInformation.applicantPhoneNumber,
-          phoneMobile: applicantInformation.applicantPhoneNumber,
-          email: applicantInformation.applicantEmail,
+          phoneAtHome: applicantInformation.phoneNumber,
+          phoneAtWork: applicantInformation.phoneNumber,
+          phoneMobile: applicantInformation.phoneNumber,
+          email: applicantInformation.email,
         },
       })
     } else {
       const approvalB = {
-        personId:
-          applicantInformation.secondGuardianNationalId?.replace('-', '') || '',
-        name: applicantInformation.secondGuardianName || '',
+        personId: secondGuardionInformation?.nationalId?.replace('-', '') || '',
+        name: secondGuardionInformation?.name || '',
         approved: new Date(),
       }
       result = await this.passportApi.preregisterChildIdentityDocument(auth, {
         guid: application.id,
-        appliedForPersonId: applicantInformation.applicantNationalId,
+        appliedForPersonId: applicantInformation.nationalId,
         priority:
           answers.priceList.priceChoice === Services.REGULAR_DISCOUNT ? 0 : 1,
         deliveryName: answers.priceList.location,
         approvalA: {
           personId:
-            applicantInformation.firstGuardianNationalId?.replace('-', '') ||
-            '',
-          name: applicantInformation.firstGuardianName || '',
+            firstGuardianInformation?.nationalId?.replace('-', '') || '',
+          name: firstGuardianInformation?.name || '',
           approved: application.created,
         },
-        approvalB: applicantInformation.secondGuardianNationalId
+        approvalB: secondGuardionInformation?.nationalId
           ? approvalB
           : undefined, // TODO make this better
         contactInfo: {
-          phoneAtHome: applicantInformation.firstGuardianPhoneNumber,
-          phoneAtWork: applicantInformation.firstGuardianPhoneNumber,
-          phoneMobile: applicantInformation.firstGuardianPhoneNumber,
-          email: applicantInformation.firstGuardianEmail,
+          phoneAtHome: firstGuardianInformation?.phoneNumber || '',
+          phoneAtWork: firstGuardianInformation?.phoneNumber || '',
+          phoneMobile: firstGuardianInformation?.phoneNumber || '',
+          email: firstGuardianInformation?.email || '',
         },
       })
     }
 
     const parentA = {
-      ssn: answers.applicantInformation.firstGuardianNationalId || '',
-      name: answers.applicantInformation.firstGuardianName || '',
-      email: answers.applicantInformation.firstGuardianEmail,
-      phone: answers.applicantInformation.firstGuardianPhoneNumber,
+      ssn: firstGuardianInformation?.nationalId || '',
+      name: firstGuardianInformation?.name || '',
+      email: firstGuardianInformation?.email,
+      phone: firstGuardianInformation?.phoneNumber,
     }
-    const parentB = answers.applicantInformation.secondGuardianNationalId
+    const parentB = secondGuardionInformation?.nationalId
       ? {
-          ssn: answers.applicantInformation.secondGuardianNationalId || '',
-          name: answers.applicantInformation.secondGuardianName || '',
-          email: answers.applicantInformation.secondGuardianEmail,
-          phone: answers.applicantInformation.secondGuardianPhoneNumber,
+          ssn: secondGuardionInformation?.nationalId || '',
+          name: secondGuardionInformation?.name || '',
+          email: secondGuardionInformation?.email,
+          phone: secondGuardionInformation?.phoneNumber,
         }
       : undefined
     // Email to parent A

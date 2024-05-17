@@ -29,24 +29,26 @@ export const IdCardSchema = z.object({
   typeOfId: z.enum(['WithTravel', 'WithoutTravel']),
   applicantInformation: z
     .object({
-      applicantName: z.string(),
-      applicantNationalId: z.string(),
-      applicantEmail: z.string().optional(),
-      applicantPhoneNumber: z.string().optional(),
+      name: z.string(),
+      nationalId: z.string(),
+      email: z.string().optional(),
+      phoneNumber: z.string().optional(),
 
-      firstGuardianName: z.string().optional(),
-      firstGuardianNationalId: z.string().optional(),
-      firstGuardianEmail: z.string().optional(),
-      firstGuardianPhoneNumber: z.string().optional(),
+      // firstGuardianName: z.string().optional(),
+      // firstGuardianNationalId: z.string().optional(),
+      // firstGuardianEmail: z.string().optional(),
+      // firstGuardianPhoneNumber: z.string().optional(),
 
-      secondGuardianName: z.string().optional(),
-      secondGuardianNationalId: z.string().optional(),
-      secondGuardianEmail: z.string().optional(),
-      secondGuardianPhoneNumber: z.string().optional(),
+      // secondGuardianName: z.string().optional(),
+      // secondGuardianNationalId: z.string().optional(),
+      // secondGuardianEmail: z.string().optional(),
+      // secondGuardianPhoneNumber: z.string().optional(),
     })
     .refine((x) => {
       return true
     }),
+  firstGuardianInformation: guardian.optional(),
+  secondGuardionInformation: guardian.optional(),
   priceList: z.object({
     priceChoice: z.enum([
       Services.EXPRESS,

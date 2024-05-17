@@ -28,15 +28,17 @@ export const ApplicanInformationSubSection = buildSection({
       id: Routes.APPLICANTSINFORMATION,
       title: applicantInformation.general.sectionTitle,
       description: applicantInformation.general.sectionDescription,
-      space: 2,
       children: [
+        /*** APPLICANT ***/
         buildDescriptionField({
           id: `${Routes.APPLICANTSINFORMATION}.title`,
           title: applicantInformation.labels.applicant,
           titleVariant: 'h5',
+          marginTop: 2,
+          marginBottom: 0,
         }),
         buildTextField({
-          id: `${Routes.APPLICANTSINFORMATION}.applicantName`,
+          id: `${Routes.APPLICANTSINFORMATION}.name`,
           title: applicantInformation.labels.applicantName,
           readOnly: true,
           width: 'half',
@@ -47,7 +49,7 @@ export const ApplicanInformationSubSection = buildSection({
           },
         }),
         buildTextField({
-          id: `${Routes.APPLICANTSINFORMATION}.applicantNationalId`,
+          id: `${Routes.APPLICANTSINFORMATION}.nationalId`,
           title: applicantInformation.labels.applicantNationalId,
           readOnly: true,
           width: 'half',
@@ -59,7 +61,7 @@ export const ApplicanInformationSubSection = buildSection({
           },
         }),
         buildTextField({
-          id: `${Routes.APPLICANTSINFORMATION}.applicantEmail`,
+          id: `${Routes.APPLICANTSINFORMATION}.email`,
           title: applicantInformation.labels.applicantEmail,
           width: 'half',
           condition: (formValue, externalData) => {
@@ -88,7 +90,7 @@ export const ApplicanInformationSubSection = buildSection({
           },
         }),
         buildPhoneField({
-          id: `${Routes.APPLICANTSINFORMATION}.applicantPhoneNumber`,
+          id: `${Routes.APPLICANTSINFORMATION}.phoneNumber`,
           title: applicantInformation.labels.applicantPhoneNumber,
           width: 'half',
           condition: (formValue, externalData) => {
@@ -117,11 +119,13 @@ export const ApplicanInformationSubSection = buildSection({
           },
         }),
 
+        /*** FIRST GUARDIAN ***/
         buildDescriptionField({
-          id: `${Routes.APPLICANTSINFORMATION}.guardianTitle`,
+          id: `${Routes.FIRSTGUARDIANINFORMATION}.title`,
           title: applicantInformation.labels.parent,
           titleVariant: 'h5',
-          marginTop: 'gutter',
+          marginTop: 5,
+          marginBottom: 0,
           condition: (formValue, externalData) => {
             const applicantIdentity = getValueViaPath(
               externalData,
@@ -139,7 +143,7 @@ export const ApplicanInformationSubSection = buildSection({
           },
         }),
         buildTextField({
-          id: `${Routes.APPLICANTSINFORMATION}.firstGuardianName`,
+          id: `${Routes.FIRSTGUARDIANINFORMATION}.name`,
           title: applicantInformation.labels.name,
           width: 'half',
           readOnly: true,
@@ -169,7 +173,7 @@ export const ApplicanInformationSubSection = buildSection({
           },
         }),
         buildTextField({
-          id: `${Routes.APPLICANTSINFORMATION}.firstGuardianNationalId`,
+          id: `${Routes.FIRSTGUARDIANINFORMATION}.nationalId`,
           title: applicantInformation.labels.nationalId,
           width: 'half',
           readOnly: true,
@@ -200,7 +204,7 @@ export const ApplicanInformationSubSection = buildSection({
           },
         }),
         buildTextField({
-          id: `${Routes.APPLICANTSINFORMATION}.firstGuardianEmail`,
+          id: `${Routes.FIRSTGUARDIANINFORMATION}.email`,
           title: applicantInformation.labels.applicantEmail,
           width: 'half',
           required: true,
@@ -230,7 +234,7 @@ export const ApplicanInformationSubSection = buildSection({
           },
         }),
         buildPhoneField({
-          id: `${Routes.APPLICANTSINFORMATION}.firstGuardianPhoneNumber`,
+          id: `${Routes.FIRSTGUARDIANINFORMATION}.phoneNumber`,
           title: applicantInformation.labels.applicantPhoneNumber,
           width: 'half',
           required: true,
@@ -260,11 +264,13 @@ export const ApplicanInformationSubSection = buildSection({
           },
         }),
 
+        /*** SECOND GUARDIAN ***/
         buildDescriptionField({
-          id: `${Routes.APPLICANTSINFORMATION}.secondGuardianTitle`,
+          id: `${Routes.SECONDGUARDIANINFORMATION}.title`,
           title: applicantInformation.labels.parent,
           titleVariant: 'h5',
-          marginTop: 'gutter',
+          marginTop: 5,
+          marginBottom: 0,
           condition: (answers, externalData) => {
             const applicantIdentity = getValueViaPath(
               externalData,
@@ -285,7 +291,7 @@ export const ApplicanInformationSubSection = buildSection({
           },
         }),
         buildTextField({
-          id: `${Routes.APPLICANTSINFORMATION}.secondGuardianName`,
+          id: `${Routes.SECONDGUARDIANINFORMATION}.name`,
           title: applicantInformation.labels.name,
           readOnly: true,
           width: 'half',
@@ -313,7 +319,7 @@ export const ApplicanInformationSubSection = buildSection({
           },
         }),
         buildTextField({
-          id: `${Routes.APPLICANTSINFORMATION}.secondGuardianNationalId`,
+          id: `${Routes.SECONDGUARDIANINFORMATION}.nationalId`,
           title: applicantInformation.labels.nationalId,
           width: 'half',
           readOnly: true,
@@ -342,7 +348,7 @@ export const ApplicanInformationSubSection = buildSection({
           },
         }),
         buildTextField({
-          id: `${Routes.APPLICANTSINFORMATION}.secondGuardianEmail`,
+          id: `${Routes.SECONDGUARDIANINFORMATION}.email`,
           title: applicantInformation.labels.applicantEmail,
           width: 'half',
           required: true,
@@ -366,7 +372,7 @@ export const ApplicanInformationSubSection = buildSection({
           },
         }),
         buildPhoneField({
-          id: `${Routes.APPLICANTSINFORMATION}.secondGuardianPhoneNumber`,
+          id: `${Routes.SECONDGUARDIANINFORMATION}.phoneNumber`,
           title: applicantInformation.labels.applicantPhoneNumber,
           width: 'half',
           required: true,
