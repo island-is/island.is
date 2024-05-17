@@ -588,21 +588,21 @@ export const notifications = {
     htmlDefender: {
       id: 'judicial.system.backend:notifications.modified.html_defender',
       defaultMessage:
-        '{actorInstitution}, {actorName} {actorTitle}, hefur uppfært lengd {caseType, select, ADMISSION_TO_FACILITY {vistunar} TRAVEL_BAN {farbanns} other {gæsluvarðhalds}} í máli {courtCaseNumber}. <br /><br />{defenderHasAccessToRVG, select, true {Gögn málsins eru aðgengileg á {linkStart}yfirlitssíðu málsins í Réttarvörslugátt{linkEnd}} other {Þú getur nálgast gögn málsins hjá {courtName} ef þau hafa ekki þegar verið afhent}}.<br /><br />Ný lokadagsetning: {validToDate}.',
+        '{actorInstitution}, {actorName} {actorTitle}, hefur uppfært lengd {caseType, select, ADMISSION_TO_FACILITY {vistunar} TRAVEL_BAN {farbanns} other {gæsluvarðhalds}} í máli {courtCaseNumber}. <br /><br />{defenderHasAccessToRVG, select, true {Sjá nánar á {linkStart}yfirlitssíðu málsins í Réttarvörslugátt{linkEnd}} other {Þú getur nálgast gögn málsins hjá {courtName} ef þau hafa ekki þegar verið afhent}}.<br /><br />Ný lokadagsetning: {validToDate}.',
       description:
         'Notaður sem texti í tölvupósti til verjanda vegna breytingar á lengd gæslu/farbanns/vistunar þar sem ekki var úrskurðað í einangrun.',
     },
     isolationHtml: {
-      id: 'judicial.system.backend:notifications.modified.isolation_html',
+      id: 'judicial.system.backend:notifications.modified.isolation_html_v1',
       defaultMessage:
-        '{actorInstitution}, {actorName} {actorTitle}, hefur uppfært lengd {caseType, select, ADMISSION_TO_FACILITY {vistunar} other {gæslu}}/einangrunar í máli {courtCaseNumber}. Sjá {linkStart}yfirlitssíðu málsins í Réttarvörslugátt{linkEnd}.<br /><br />Lok {caseType, select, ADMISSION_TO_FACILITY {vistunar} other {gæslu}}: {validToDate}.<br /><br />Lok einangrunar: {isolationToDate}.',
+        '{actorInstitution}, {actorName} {actorTitle}, hefur uppfært lengd gæsluvarðhalds/einangrunar í máli {courtCaseNumber}. Sjá nánar á {linkStart}yfirlitssíðu málsins í Réttarvörslugátt{linkEnd}.<br /><br />Lok gæsluvarðhalds: {validToDate}.<br /><br />Lok einangrunar: {isolationToDate}.'
       description:
         'Notaður sem texti í tölvupósti vegna breytingar á lengd gæslu/einangrunar/vistunar þar sem úrskurðað var í einangrun.',
     },
     isolationHtmlDefender: {
       id: 'judicial.system.backend:notifications.modified.isolation_html_defender',
       defaultMessage:
-        '{actorInstitution}, {actorName} {actorTitle}, hefur uppfært lengd {caseType, select, ADMISSION_TO_FACILITY {vistunar} other {gæslu}}/einangrunar í máli {courtCaseNumber}.<br /><br />{defenderHasAccessToRVG, select, true {Gögn málsins eru aðgengileg á {linkStart}yfirlitssíðu málsins í Réttarvörslugátt{linkEnd}} other {Þú getur nálgast gögn málsins hjá {courtName} ef þau hafa ekki þegar verið afhent}}.<br /><br />Lok {caseType, select, ADMISSION_TO_FACILITY {vistunar} other {gæslu}}: {validToDate}.<br /><br />Lok einangrunar: {isolationToDate}.',
+        '{actorInstitution}, {actorName} {actorTitle}, hefur uppfært lengd gæsluvarðhalds/einangrunar í máli {courtCaseNumber}. {defenderHasAccessToRVG, select, true {Sjá nánar á {linkStart}yfirlitssíðu málsins í Réttarvörslugátt{linkEnd}} other {Þú getur nálgast gögn málsins hjá {courtName} ef þau hafa ekki þegar verið afhent}}.<br /><br />Lok gæsluvarðhalds: {validToDate}.<br /><br />Lok einangrunar: {isolationToDate}.'
       description:
         'Notaður sem texti í tölvupósti til verjanda vegna breytingar á lengd gæslu/einangrunar/vistunar þar sem úrskurðað var í einangrun.',
     },
