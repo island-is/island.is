@@ -17,6 +17,7 @@ export type DefendantActionButton = {
   text: string
   onClick: (defendant: Defendant) => void
   icon?: IconMapIcon
+  isDisabled: (defendant: Defendant) => boolean
 }
 
 interface DefendantInfoProps {
@@ -29,7 +30,14 @@ export const DefendantInfo: FC<DefendantInfoProps> = (props) => {
   const { defendant, displayDefenderInfo, defendantActionButton } = props
 
   return (
-    <div key={defendant.id} className={styles.gridRow}>
+    <div
+      key={defendant.id}
+      className={
+        defendantActionButton
+          ? styles.gridRow.withButton
+          : styles.gridRow.withoutButton
+      }
+    >
       <div className={styles.infoCardDefendant}>
         <span>
           <Text as="span" fontWeight="semiBold">
@@ -78,6 +86,7 @@ export const DefendantInfo: FC<DefendantInfoProps> = (props) => {
             onClick={() => defendantActionButton.onClick(defendant)}
             icon={defendantActionButton.icon}
             iconType="outline"
+            disabled={defendantActionButton.isDisabled(defendant)}
           >
             {defendantActionButton.text}
           </Button>

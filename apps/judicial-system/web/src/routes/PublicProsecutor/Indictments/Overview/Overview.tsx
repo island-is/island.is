@@ -69,7 +69,7 @@ export const Overview = () => {
     setModalVisible('REVIEWER_ASSIGNED')
   }
 
-  const handleDefendantViewVerdict = () => {
+  const handleDefendantViewsVerdict = () => {
     if (!selectedDefendant) {
       return
     }
@@ -113,10 +113,6 @@ export const Overview = () => {
     )
   }, [data?.users, user])
 
-  const handleViewVerdict = () => {
-    setModalVisible(undefined)
-  }
-
   return (
     <PageLayout
       workingCase={workingCase}
@@ -144,6 +140,8 @@ export const Overview = () => {
                       setModalVisible('DEFENDANT_VIEWS_VERDICT')
                     },
                     icon: 'mailOpen',
+                    isDisabled: (defendant) =>
+                      defendant.hasViewedVerdict || false,
                   }
                 : undefined
             }
@@ -224,7 +222,7 @@ export const Overview = () => {
           primaryButtonText={fm(
             strings.defendantViewsVerdictModalPrimaryButtonText,
           )}
-          onPrimaryButtonClick={() => handleDefendantViewVerdict()}
+          onPrimaryButtonClick={() => handleDefendantViewsVerdict()}
           secondaryButtonText={fm(core.back)}
           onSecondaryButtonClick={() => setModalVisible(undefined)}
         />

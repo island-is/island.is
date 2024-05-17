@@ -1,12 +1,16 @@
-import { style } from '@vanilla-extract/css'
+import { style, styleVariants } from '@vanilla-extract/css'
 
 import { theme } from '@island.is/island-ui/theme'
 
-export const gridRow = style({
+const baseGridRow = style({
   display: 'grid',
-  gridTemplateColumns: '5fr 1fr',
   gridGap: theme.spacing[1],
   marginBottom: theme.spacing[1],
+})
+
+export const gridRow = styleVariants({
+  withButton: [baseGridRow, { gridTemplateColumns: '5fr 1fr' }],
+  withoutButton: [baseGridRow, { gridTemplateColumns: '1fr' }],
 })
 
 export const infoCardDefendant = style({
