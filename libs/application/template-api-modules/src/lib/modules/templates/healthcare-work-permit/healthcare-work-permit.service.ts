@@ -100,7 +100,7 @@ export class HealthcareWorkPermitService extends BaseTemplateApiService {
 
   async getMyAcademicCareer({
     auth,
-  }: TemplateApiModuleActionProps): Promise<Array<StudentTrackDto>> {
+  }: TemplateApiModuleActionProps): Promise<Array<StudentTrackDto> | null> {
     const result = await this.universityOfIcelandService.getStudentTrackHistory(
       auth,
       UniversityId.UNIVERSITY_OF_ICELAND,

@@ -8,9 +8,9 @@ import {
   HealthDirectorateClientConfig,
 } from '@island.is/clients/health-directorate'
 import {
-  UniversityOfIcelandClientConfig,
-  UniversityOfIcelandClientModule,
-} from '@island.is/clients/university-of-iceland'
+  UniversityCareersClientModule,
+  UniversityOfIcelandCareerClientConfig,
+} from '@island.is/clients/university-careers'
 import {
   NationalRegistryClientConfig,
   NationalRegistryClientModule,
@@ -23,13 +23,13 @@ export class HealthcareWorkPermitModule {
       imports: [
         SharedTemplateAPIModule.register(baseConfig),
         HealthDirectorateClientModule,
-        UniversityOfIcelandClientModule,
+        UniversityCareersClientModule,
         NationalRegistryClientModule,
         ConfigModule.forRoot({
           isGlobal: true,
           load: [
             HealthDirectorateClientConfig,
-            UniversityOfIcelandClientConfig,
+            UniversityOfIcelandCareerClientConfig,
             NationalRegistryClientConfig,
           ],
         }),
