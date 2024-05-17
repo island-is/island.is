@@ -38,6 +38,7 @@ patterns=(
 	'libs/**/*.graphql'
 	'libs/**/clientConfig.yaml'
 	'libs/**/clientConfig.json'
+	'libs/judicial-system/**'
 )
 HASH="$(for pattern in "${patterns[@]}"; do git ls-files "$pattern"; done | xargs cat | git hash-object --stdin)" 
 echo -n "$HASH"

@@ -38,9 +38,7 @@ const SignPetitionView: FC<React.PropsWithChildren<FieldBaseProps>> = ({
   const petitionList = petitionData as EndorsementList
   const listClosed = new Date() >= new Date(petitionList.closedDate)
   const [createEndorsement, { loading }] = useMutation(EndorseList)
-  const { data: userData } = useQuery(GetFullName, {
-    variables: { api: 'v3' },
-  })
+  const { data: userData } = useQuery(GetFullName)
 
   useEffect(() => setHasSigned(checkForSigned), [checkForSigned])
 

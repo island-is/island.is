@@ -26,8 +26,8 @@ export const GetSingleEndorsementList = gql`
 `
 
 export const GetFullName = gql`
-  query nationalRegistryPersonQuery($api: String, $useFakeData: Boolean) {
-    nationalRegistryPerson(api: $api, useFakeData: $useFakeData) {
+  query nationalRegistryPersonQuery($useFakeData: Boolean) {
+    nationalRegistryPerson(useFakeData: $useFakeData) {
       fullName
     }
   }
