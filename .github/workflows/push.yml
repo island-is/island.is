@@ -162,8 +162,9 @@ jobs:
       UNAFFECTED: ${{ steps.unaffected.outputs.UNAFFECTED }}
       BUILD_CHUNKS: ${{ steps.build_map.outputs.BUILD_CHUNKS }}
       IMAGES: ${{ steps.deploy_map.outputs.IMAGES }}
-      node-modules-hash: ${{ steps.calculate_node_modules_hash.outputs.node-modules-hash }}
-      generated-files-cache-key: ${{ steps.calculate_generated_files_cache_key.outputs.generated-files-cache-key }}
+      node-modules-key: ${{ steps.calculate-cache-keys.outputs.node-modules-key }}
+      mobile-node-modules-key: ${{ steps.calculate-cache-keys.outputs.mobile-node-modules-key }}
+      generated-files-key: ${{ steps.calculate-cache-keys.outputs.generated-files-key }}
     steps:
       - uses: actions/checkout@v3
         with:
@@ -274,39 +275,27 @@ jobs:
         id: git_nx_head
         name: Preparing HEAD tag
 
-      - name: Calculate cache key for node modules
-        id: calculate_node_modules_hash
-        run: |
-          PACKAGE_JSON_HASH=$(cat package.json | jq '{resolutions,dependencies,devDependencies}' | sha1sum -t | cut -f1 -d" ")
-          echo "PACKAGE_JSON_HASH: $PACKAGE_JSON_HASH"
-          export NODE_MODULES_HASH=${{ runner.os }}-${{ hashFiles('yarn.lock') }}-$PACKAGE_JSON_HASH
-          echo "NODE_MODULES_HASH: $NODE_MODULES_HASH"
-          echo "node-modules-hash=$NODE_MODULES_HASH" >> $GITHUB_OUTPUT
+      - name: Calculate cache key for mobile-node-modules
+        id: calculate-cache-keys
+        uses: ./.github/actions/calculate-cache-keys
 
-      - name: Calculate cache keys for generated files
-        id: calculate_generated_files_cache_key
-        run: |
-          export HASH=$(./scripts/_hash-generated-files.sh)
-          export GENERATED_FILES_KEY=${{ runner.os }}-$HASH-files-generated
-          echo "GENERATED_FILES_KEY: $GENERATED_FILES_KEY"
-          echo "generated-files-cache-key=$GENERATED_FILES_KEY" >> $GITHUB_OUTPUT
-
-      - name: Cache for NodeJS dependencies - host OS
-        id: node-modules
-        continue-on-error: true
-        uses: ./.github/actions/cache
+      - name: Prepare node-modules cache
+        uses: ./.github/actions/prepare-cache
         with:
-          path: |
-            node_modules
-            apps/native/app/node_modules
-          key: ${{ steps.calculate_node_modules_hash.outputs.node-modules-hash }}
+          path: node_modules
+          key: ${{ steps.calculate-cache-keys.outputs.node-modules-key }}
 
-      - name: Check cache success
-        run: '[[ "${{ steps.node-modules.outputs.success }}" != "false" ]] || exit 1'
+      - name: Prepare mobile-node-modules cache
+        uses: ./.github/actions/prepare-cache
+        with:
+          path: apps/native/app/node_modules
+          key: ${{ steps.calculate-cache-keys.outputs.mobile-node-modules-key }}
 
-      - name: Building NodeJS dependencies
-        if: steps.node-modules.outputs.cache-hit != 'true'
-        run: ./scripts/ci/10_prepare-host-deps.sh
+      - name: Prepare generated-files cache
+        uses: ./.github/actions/prepare-cache
+        with:
+          path: generated_files.tar.gz
+          key: ${{ steps.calculate-cache-keys.outputs.generated-files-key }}
 
       - name: Preparing BASE tags
         id: git_nx_base
@@ -344,51 +333,23 @@ jobs:
       - name: Set up Docker Buildx
         uses: docker/setup-buildx-action@v1
 
-      - name: Cache for NodeJS dependencies - Docker layer
-        id: cache-deps
-        continue-on-error: true
-        uses: ./.github/actions/cache
-        with:
-          path: cache
-          key: ${{ steps.calculate_node_modules_hash.outputs.node-modules-hash }}-docker-deps-1
-
-      - name: Check cache success
-        run: '[[ "${{ steps.cache-deps.outputs.success }}" != "false" ]] || exit 1'
-
-      - name: Cache for NodeJS dependencies - Docker layer
+      - name: Prepare node-modules cache - Docker layer base
         id: cache-deps-base
-        continue-on-error: true
-        uses: ./.github/actions/cache
+        uses: ./.github/actions/prepare-cache
         with:
           path: cache_output
-          key: ${{ steps.calculate_node_modules_hash.outputs.node-modules-hash }}-docker-output-base-1
+          key: ${{ needs.prepare.outputs.node-modules-key }}-docker-output-base
 
-      - name: Check cache success
-        run: '[[ "${{ steps.cache-deps-base.outputs.success }}" != "false" ]] || exit 1'
+      - name: Prepare node-modules cache - Docker layer
+        id: cache-deps
+        uses: ./.github/actions/prepare-cache
+        with:
+          path: cache
+          key: ${{ needs.prepare.outputs.node-modules-key }}-docker-deps
 
-      - name: Building NodeJS dependencies
-        if: steps.cache-deps.outputs.cache-hit != 'true' || steps.cache-deps-base.outputs.cache-hit != 'true'
-        run: ./scripts/ci/10_prepare-docker-deps.sh
 
       - name: set BRANCH env var
         run: echo "BRANCH=$GIT_BRANCH" >> $GITHUB_ENV
-
-      - name: Cache for generated files
-        id: generated-files-cache
-        continue-on-error: true
-        uses: ./.github/actions/cache
-        with:
-          path: generated_files.tar.gz
-          key: ${{ steps.calculate_generated_files_cache_key.outputs.generated-files-cache-key }}
-
-      - name: Check cache success
-        run: '[[ "${{ steps.generated-files-cache.outputs.success }}" != "false" ]] || exit 1'
-
-      - name: Run codegen
-        if: steps.generated-files-cache.outputs.cache-hit != 'true' || env.SKIP_GENERATED_CACHE == 'true'
-        run: |
-          node --version
-          tar zcvf generated_files.tar.gz $(./scripts/ci/get-files-touched-by.sh yarn codegen --skip-cache | xargs realpath --relative-to $(pwd))
 
       - name: Prepare test targets
         id: test_projects
@@ -457,30 +418,23 @@ jobs:
       - name: Setup yarn
         run: npm install -g yarn
 
-      - name: Cache for NodeJS dependencies - host OS
-        id: node-modules
-        continue-on-error: true
-        uses: ./.github/actions/cache
+      - name: Prepare node-modules cache
+        uses: ./.github/actions/prepare-cache
         with:
           path: node_modules
-          key: ${{ needs.prepare.outputs.node-modules-hash }}
+          key: ${{ needs.prepare.outputs.node-modules-key }}
 
-      - name: Check cache success
-        run: '[[ "${{ steps.node-modules.outputs.success }}" != "false" ]] || exit 1'
+      - name: Prepare mobile-node-modules cache
+        uses: ./.github/actions/prepare-cache
+        with:
+          path: apps/native/app/node_modules
+          key: ${{ needs.prepare.outputs.mobile-node-modules-key }}
 
-      - name: Cache for generated files
-        id: generated-files-cache
-        continue-on-error: true
-        uses: ./.github/actions/cache
+      - name: Prepare generated-files cache
+        uses: ./.github/actions/prepare-cache
         with:
           path: generated_files.tar.gz
-          key: ${{ needs.prepare.outputs.generated-files-cache-key }}
-
-      - name: Check cache success
-        run: '[[ "${{ steps.generated-files-cache.outputs.success }}" != "false" ]] || exit 1'
-
-      - name: Untar generated files
-        run: tar zxvf generated_files.tar.gz
+          key: ${{ needs.prepare.outputs.generated-files-key }}
 
       - uses: ./.github/actions/unit-test
         with:
@@ -517,10 +471,6 @@ jobs:
           echo "AFFECTED_PROJECTS=$AFFECTED_PROJECTS" >> $GITHUB_ENV
           echo "DOCKER_TYPE=$DOCKER_TYPE" >> $GITHUB_ENV
         continue-on-error: true
-      - uses: actions/setup-node@v3
-        with:
-          node-version: '18'
-        if: steps.gather.outcome == 'success'
 
       - uses: actions/setup-node@v3
         with:
@@ -531,59 +481,36 @@ jobs:
         run: npm install -g yarn
         if: steps.gather.outcome == 'success'
 
-      - uses: actions/checkout@v3
-        if: steps.gather.outcome == 'success'
-      - name: Cache for generated files
+      - name: Prepare generated-files cache
+        uses: ./.github/actions/prepare-cache
         id: generated-files-cache
         if: steps.gather.outcome == 'success'
-        continue-on-error: true
-        uses: ./.github/actions/cache
         with:
           path: generated_files.tar.gz
-          key: ${{ needs.prepare.outputs.generated-files-cache-key }}
+          key: ${{ needs.prepare.outputs.generated-files-key }}
 
-      - name: Check cache success
-        run: '[[ "${{ steps.generated-files-cache.outputs.success }}" != "false" ]] || exit 1'
-
-      - name: Untar generated files
-        if: steps.gather.outcome == 'success'
-        run: tar zxvf generated_files.tar.gz
-
-      - name: Cache for dependencies Docker layer
-        if: steps.gather.outcome == 'success'
+      - name: Prepare node-modules cache - Docker layer base
         id: cache-deps-base
-        continue-on-error: true
-        uses: ./.github/actions/cache
+        if: steps.gather.outcome == 'success'
+        uses: ./.github/actions/prepare-cache
         with:
           path: cache_output
-          key: ${{ needs.prepare.outputs.node-modules-hash }}-docker-output-base-1
+          key: ${{ needs.prepare.outputs.node-modules-key }}-docker-output-base
 
-      - name: Check cache success
-        run: '[[ "${{ steps.cache-deps-base.outputs.success }}" != "false" ]] || exit 1'
-
-      - name: Cache for NodeJS dependencies - Docker layer
+      - name: Prepare node-modules cache - Docker layer
         id: cache-deps
         if: steps.gather.outcome == 'success'
-        continue-on-error: true
-        uses: ./.github/actions/cache
+        uses: ./.github/actions/prepare-cache
         with:
           path: cache
-          key: ${{ needs.prepare.outputs.node-modules-hash }}-docker-deps-1
-
-      - name: Check cache success
-        run: '[[ "${{ steps.cache-deps.outputs.success }}" != "false" ]] || exit 1'
+          key: ${{ needs.prepare.outputs.node-modules-key }}-docker-deps
 
       # needed to run `nx show project` in scripts/ci/_docker.sh - should be refactored.
-      - name: Cache for NodeJS dependencies - host OS
-        id: node-modules
-        continue-on-error: true
-        uses: ./.github/actions/cache
+      - name: Prepare node-modules cache
+        uses: ./.github/actions/prepare-cache
         with:
           path: node_modules
-          key: ${{ needs.prepare.outputs.node-modules-hash }}
-
-      - name: Check cache success
-        run: '[[ "${{ steps.node-modules.outputs.success }}" != "false" ]] || exit 1'
+          key: ${{ needs.prepare.outputs.node-modules-key }}-docker-deps
 
       - name: Docker login to ECR repo
         if: steps.gather.outcome == 'success'
