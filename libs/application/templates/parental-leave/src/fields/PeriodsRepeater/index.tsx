@@ -68,8 +68,8 @@ const PeriodsRepeater: FC<React.PropsWithChildren<ScreenProps>> = ({
     variables: {
       applicationId: application.id,
       nationalId: application.applicant,
-      shouldNotCall: !shouldCall,
     },
+    skip: !shouldCall,
   })
 
   useEffect(() => {
@@ -83,7 +83,7 @@ const PeriodsRepeater: FC<React.PropsWithChildren<ScreenProps>> = ({
       setRepeaterItems,
       setFieldLoadingState,
     )
-  }, [loading])
+  }, [loading]) // eslint-disable-line react-hooks/exhaustive-deps
 
   useEffect(() => {
     if (!editable) {

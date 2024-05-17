@@ -164,35 +164,34 @@ export const formatPeriods = (
       }
     }
 
-    if (isActualDob) {
-      timelinePeriods.push({
-        actualDob: isActualDob,
-        startDate: period.startDate,
-        endDate: period.endDate,
-        ratio: period.ratio,
-        duration: calculatedLength,
-        canDelete: canDelete,
-        title: formatMessage(parentalLeaveFormMessages.reviewScreen.period, {
+    const timelinePeriod = {
+      startDate: period.startDate,
+      endDate: period.endDate,
+      ratio: period.ratio,
+      duration: calculatedLength,
+      canDelete: canDelete,
+      title: formatMessage(
+        'approved' in period
+          ? parentalLeaveFormMessages.reviewScreen.vmstPeriod
+          : parentalLeaveFormMessages.reviewScreen.period,
+        {
           index: index + 1,
           ratio: period.ratio,
-        }),
-        rawIndex: period.rawIndex ?? index,
+        },
+      ),
+      rawIndex: period.rawIndex ?? index,
+      paid: period.paid,
+    }
+
+    if (isActualDob) {
+      timelinePeriods.push({
+        ...timelinePeriod,
+        actualDob: isActualDob,
       })
     }
 
     if (!isActualDob && period.startDate && period.endDate) {
-      timelinePeriods.push({
-        startDate: period.startDate,
-        endDate: period.endDate,
-        ratio: period.ratio,
-        duration: calculatedLength,
-        canDelete: canDelete,
-        title: formatMessage(parentalLeaveFormMessages.reviewScreen.period, {
-          index: index + 1,
-          ratio: period.ratio,
-        }),
-        rawIndex: period.rawIndex ?? index,
-      })
+      timelinePeriods.push(timelinePeriod)
     }
   })
 
@@ -578,6 +577,11 @@ export const getApplicationExternalData = (
     ) as string
   }
 
+  const VMSTPeriods = getValueViaPath(
+    externalData,
+    'VMSTPeriods.data',
+  ) as VMSTPeriod[]
+
   return {
     applicantName,
     applicantGenderCode,
@@ -588,6 +592,7 @@ export const getApplicationExternalData = (
     userEmail,
     userPhoneNumber,
     dateOfBirth,
+    VMSTPeriods,
   }
 }
 
@@ -1541,7 +1546,7 @@ export const synchronizeVMSTPeriods = (
   setRepeaterItems: RepeaterProps['setRepeaterItems'],
   setFieldLoadingState: RepeaterProps['setFieldLoadingState'],
 ) => {
-  // If periods is not sync with VMST periods, sync it
+  // If periods is not in sync with VMST periods, sync it
   const newPeriods: Period[] = []
   const temptVMSTPeriods: Period[] = []
   const VMSTPeriods: VMSTPeriod[] = data?.getApplicationInformation?.periods
@@ -1570,12 +1575,15 @@ export const synchronizeVMSTPeriods = (
         firstPeriodStart: firstPeriodStart,
         useLength: NO as YesOrNo,
         rightCodePeriod: rightsCodePeriod,
+        daysToUse: period.days,
+        paid: period.paid,
+        approved: period.approved,
       }
 
       if (period.paid) {
         newPeriods.push(obj)
       } else if (isThisMonth(new Date(period.from))) {
-        if (today.getDay() >= 20) {
+        if (today.getDate() >= 20) {
           newPeriods.push(obj)
         }
       } else if (new Date(period.from).getTime() <= today.getTime()) {
@@ -1642,7 +1650,9 @@ export const synchronizeVMSTPeriods = (
           new Date(period.endDate).getTime() !==
             new Date(periods[i].endDate).getTime() ||
           period.ratio !== periods[i].ratio ||
-          period.firstPeriodStart !== periods[i].firstPeriodStart
+          period.firstPeriodStart !== periods[i].firstPeriodStart ||
+          period.paid !== periods[i].paid ||
+          period.approved !== periods[i].approved
         ) {
           isMustSync = true
         }
