@@ -12,7 +12,12 @@ import format from 'date-fns/format'
 
 import * as m from './messages'
 import { Routes } from './constants'
-import { ApproveOptions, ExternalData, OverrideAnswerSchema } from './types'
+import {
+  ApproveOptions,
+  ExternalData,
+  OverrideAnswerSchema,
+  SchoolType,
+} from './types'
 import { findFamilyStatus } from './utils'
 import { NationalRegistryIndividual } from '@island.is/application/types'
 
@@ -64,6 +69,24 @@ export const getMessageApproveOptionsForIncome: KeyMapping<
 > = {
   Yes: m.incomeForm.summary.yes,
   No: m.incomeForm.summary.no,
+}
+
+export const getMessageForSchool: KeyMapping<
+  SchoolType,
+  { label: MessageDescriptor; placeholder: MessageDescriptor }
+> = {
+  kindergarden: {
+    placeholder: m.childrenForm.inputs.kindergardenPlaceholder,
+    label: m.childrenForm.inputs.kindergardenLabel,
+  },
+  elementary: {
+    placeholder: m.childrenForm.inputs.elementarySchoolPlaceholder,
+    label: m.childrenForm.inputs.elementarySchoolLabel,
+  },
+  highSchool: {
+    placeholder: m.childrenForm.inputs.highSchoolLabel,
+    label: m.childrenForm.inputs.highSchoolPlaceholder,
+  },
 }
 
 export const formatAddress = (applicant?: NationalRegistryIndividual) =>

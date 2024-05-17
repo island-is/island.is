@@ -124,3 +124,9 @@ export enum SummaryComment {
   FORMCOMMENT = 'formComment',
   SPOUSEFORMCOMMENT = 'spouseFormComment',
 }
+
+export enum SchoolType {
+  KINDERGARDEN = 'kindergarden',
+  ELEMENTARY = 'elementary',
+  HIGHSCHOOL = 'highSchool',
+}
