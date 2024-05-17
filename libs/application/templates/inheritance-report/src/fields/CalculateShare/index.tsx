@@ -512,49 +512,6 @@ export const CalculateShare: FC<React.PropsWithChildren<FieldBaseProps>> = ({
 
 export default CalculateShare
 
-const ShareItemRow = ({ item }: { item: ShareItem }) => {
-  const { formatMessage } = useLocale()
-
-  const total = item.items.reduce((acc, item) => acc + item.value, 0)
-  const shareTotal = item.items.reduce(
-    (acc, item) => acc + item.deceasedShareValue,
-    0,
-  )
-
-  return (
-    <GridColumn span={['1/1']}>
-      <GridRow rowGap={0}>
-        <GridColumn span={['1/1', '1/2']}>
-          {item.title && (
-            <Text variant="small">{formatMessage(item.title)}</Text>
-          )}
-        </GridColumn>
-        <GridColumn span={['1/1', '1/2']}>
-          <Box textAlign={['left', 'right']}>
-            <Text variant="small">
-              {formatCurrency(String(roundedValueToNumber(total)))}
-            </Text>
-          </Box>
-        </GridColumn>
-        {shareTotal > 0 && (
-          <>
-            <GridColumn span={['1/1', '1/2']}>
-              <Text variant="small">{formatMessage(m.share)}</Text>
-            </GridColumn>
-            <GridColumn span={['1/1', '1/2']}>
-              <Box textAlign={['left', 'right']}>
-                <Text variant="small">
-                  {formatCurrency(String(roundedValueToNumber(shareTotal)))}
-                </Text>
-              </Box>
-            </GridColumn>
-          </>
-        )}
-      </GridRow>
-    </GridColumn>
-  )
-}
-
 const TitleRow = ({
   title,
   value,
