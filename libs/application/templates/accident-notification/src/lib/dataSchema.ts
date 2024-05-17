@@ -163,6 +163,9 @@ export const AccidentNotificationSchema = z.object({
     descriptionOfAccident: z.string().refine((x) => x.trim().length > 0, {
       params: error.invalidValue,
     }),
+    accidentSymptoms: z.string().refine((x) => x.trim().length > 0, {
+      params: error.invalidValue,
+    }),
   }),
   isRepresentativeOfCompanyOrInstitue: z.array(z.string()).optional(),
   fishingShipInfo: z.object({

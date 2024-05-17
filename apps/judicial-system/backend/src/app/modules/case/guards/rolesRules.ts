@@ -49,6 +49,7 @@ const prosecutorFields: (keyof UpdateCaseDto)[] = [
   'prosecutorStatementDate',
   'requestAppealRulingNotToBePublished',
   'indictmentDeniedExplanation',
+  'indictmentReviewDecision',
 ]
 
 const publicProsecutorFields: (keyof UpdateCaseDto)[] = ['indictmentReviewerId']
@@ -93,6 +94,7 @@ const districtCourtFields: (keyof UpdateCaseDto)[] = [
   'prosecutorId',
   'indictmentReturnedExplanation',
   'postponedIndefinitelyExplanation',
+  'indictmentRulingDecision',
 ]
 
 const courtOfAppealsFields: (keyof UpdateCaseDto)[] = [
@@ -292,13 +294,14 @@ export const districtCourtJudgeTransitionRule: RolesRule = {
   dtoField: 'transition',
   dtoFieldValues: [
     CaseTransition.RECEIVE,
+    CaseTransition.RETURN_INDICTMENT,
+    CaseTransition.REDISTRIBUTE,
     CaseTransition.ACCEPT,
     CaseTransition.REJECT,
     CaseTransition.DISMISS,
+    CaseTransition.COMPLETE,
     CaseTransition.REOPEN,
     CaseTransition.RECEIVE_APPEAL,
-    CaseTransition.RETURN_INDICTMENT,
-    CaseTransition.REDISTRIBUTE,
   ],
   canActivate: (request) => {
     const theCase: Case = request.case
@@ -312,6 +315,7 @@ export const districtCourtJudgeTransitionRule: RolesRule = {
     if (
       isIndictmentCase(theCase.type) &&
       [
+        CaseTransition.ACCEPT,
         CaseTransition.REJECT,
         CaseTransition.DISMISS,
         CaseTransition.REOPEN,
@@ -341,6 +345,7 @@ export const districtCourtRegistrarTransitionRule: RolesRule = {
     CaseTransition.ACCEPT,
     CaseTransition.REJECT,
     CaseTransition.DISMISS,
+    CaseTransition.COMPLETE,
     CaseTransition.REOPEN,
     CaseTransition.RECEIVE_APPEAL,
   ],
@@ -356,6 +361,7 @@ export const districtCourtRegistrarTransitionRule: RolesRule = {
     if (
       isIndictmentCase(theCase.type) &&
       [
+        CaseTransition.ACCEPT,
         CaseTransition.REJECT,
         CaseTransition.DISMISS,
         CaseTransition.REOPEN,
@@ -374,7 +380,7 @@ export const districtCourtAssistantTransitionRule: RolesRule = {
   role: UserRole.DISTRICT_COURT_ASSISTANT,
   type: RulesType.FIELD_VALUES,
   dtoField: 'transition',
-  dtoFieldValues: [CaseTransition.RECEIVE, CaseTransition.ACCEPT],
+  dtoFieldValues: [CaseTransition.RECEIVE, CaseTransition.COMPLETE],
   // canActivate: no need for further restrictions as district court assistants can only access indictment cases
 }
 

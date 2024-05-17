@@ -47,11 +47,11 @@ const caseEvent = {
   RESUBMIT: ':mailbox_with_mail: Sent aftur',
   RECEIVE: ':eyes: Móttekið',
   ACCEPT: ':white_check_mark: Samþykkt',
-  ACCEPT_INDICTMENT: ':white_check_mark: Lokið',
   REJECT: ':negative_squared_cross_mark: Hafnað',
+  DISMISS: ':woman-shrugging: Vísað frá',
+  COMPLETE: ':white_check_mark: Lokað',
   DELETE: ':fire: Afturkallað',
   SCHEDULE_COURT_DATE: ':timer_clock: Fyrirtökutíma úthlutað',
-  DISMISS: ':woman-shrugging: Vísað frá',
   ARCHIVE: ':file_cabinet: Sett í geymslu',
   REOPEN: ':construction: Opnað aftur',
   APPEAL: ':judge: Kæra',
@@ -70,7 +70,6 @@ export enum CaseEvent {
   RESUBMIT = 'RESUBMIT',
   RECEIVE = 'RECEIVE',
   ACCEPT = 'ACCEPT',
-  ACCEPT_INDICTMENT = 'ACCEPT_INDICTMENT',
   REJECT = 'REJECT',
   DELETE = 'DELETE',
   SCHEDULE_COURT_DATE = 'SCHEDULE_COURT_DATE',
@@ -98,10 +97,9 @@ export class EventService {
         return
       }
 
-      const title =
-        event === CaseEvent.ACCEPT && isIndictmentCase(theCase.type)
-          ? caseEvent[CaseEvent.ACCEPT_INDICTMENT]
-          : `${caseEvent[event]}${eventOnly ? ' - aðgerð ekki framkvæmd' : ''}`
+      const title = `${caseEvent[event]}${
+        eventOnly ? ' - aðgerð ekki framkvæmd' : ''
+      }`
       const typeText = `${capitalize(formatCaseType(theCase.type))}${
         isIndictmentCase(theCase.type)
           ? `:(${readableIndictmentSubtypes(

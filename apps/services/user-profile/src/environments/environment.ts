@@ -23,7 +23,7 @@ const devConfig = {
     issuer:
       process.env.IDENTITY_SERVER_ISSUER_URL ??
       'https://identity-server.dev01.devland.is',
-    audience: '@island.is',
+    audience: ['@island.is', '@admin.island.is'],
   },
 }
 
@@ -54,7 +54,7 @@ const prodConfig = {
   },
   auth: {
     issuer: process.env.IDENTITY_SERVER_ISSUER_URL,
-    audience: '@island.is',
+    audience: ['@island.is', '@admin.island.is'],
   },
 }
 

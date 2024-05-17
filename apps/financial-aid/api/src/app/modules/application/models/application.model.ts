@@ -13,6 +13,7 @@ import { StaffModel } from '../../staff'
 import { ApplicationEventModel, ApplicationFiltersModel } from './index'
 import { AmountModel } from '../../amount'
 import { DirectTaxPaymentModel } from './directTaxPayments.model'
+import { ChildrenModel } from './children.model'
 
 @ObjectType()
 export class ApplicationModel implements Application {
@@ -93,6 +94,9 @@ export class ApplicationModel implements Application {
 
   @Field(() => [ApplicationEventModel], { nullable: true })
   readonly applicationEvents?: ApplicationEventModel[]
+
+  @Field(() => [ChildrenModel], { nullable: true })
+  readonly children?: ChildrenModel[]
 
   @Field({ nullable: true })
   readonly amount?: AmountModel
