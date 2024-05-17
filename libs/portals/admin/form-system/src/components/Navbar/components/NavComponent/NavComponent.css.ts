@@ -89,7 +89,6 @@ export const customBackgroundDropdown = style({
   background: theme.color.blue100,
 })
 
-export const flexRow = style({
-  display: 'flex',
-  flexDirection: 'row',
+export const verticalAlign = style({
+  verticalAlign: 'middle',
 })

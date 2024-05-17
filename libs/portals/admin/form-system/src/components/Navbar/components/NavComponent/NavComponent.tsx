@@ -113,10 +113,8 @@ export default function NavComponent({
     >
       {active ? (
         <Box
-          style={{
-            display: 'flex',
-            flexDirection: 'row',
-          }}
+          display="flex"
+          flexDirection="row"
         >
           <Box
             className={cn({
@@ -137,10 +135,8 @@ export default function NavComponent({
             {truncateName(data?.name?.is as string)}
           </Box>
           <Box
-            style={{
-              marginLeft: 'auto',
-              verticalAlign: 'middle',
-            }}
+            marginLeft="auto"
+            className={cn(styles.verticalAlign)}
           >
             {!(
               type === 'Step' && (data as FormSystemStep).type !== 'Innsláttur'
@@ -149,10 +145,8 @@ export default function NavComponent({
         </Box>
       ) : (
         <Box
-          style={{
-            display: 'flex',
-            flexDirection: 'row',
-          }}
+          display="flex"
+          flexDirection="row"
           overflow="hidden"
         >
           <Box
