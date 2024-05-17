@@ -26,8 +26,8 @@ export const form: Form = buildForm({
   renderLastScreenButton: true,
   children: [
     preSelection,
-    deceased,
     dataCollection,
+    deceased,
     applicationInfo,
     applicant,
     assets,
