@@ -16,8 +16,9 @@ import { ApiCreatedResponse, ApiTags } from '@nestjs/swagger'
 import type { User } from '@island.is/auth-nest-tools'
 
 import { PasskeysCoreService } from '@island.is/auth-api-lib'
-
+import { Audit } from '@island.is/nest/audit'
 import { Documentation } from '@island.is/nest/swagger'
+
 import {
   RegistrationOptions,
   RegistrationResult,
@@ -30,16 +31,17 @@ import {
 } from './dto/authenticationOptions.dto'
 import { AuthenticationResponse } from './dto/authenticationResponse.dto'
 
+const namespace = '@island.is/auth-public-api/passkeys'
+
 @ApiTags('passkeys')
 @UseGuards(IdsUserGuard, ScopesGuard)
 @Controller({
   path: 'passkeys',
   version: ['1', VERSION_NEUTRAL],
 })
+@Audit({ namespace })
 export class PasskeysController {
-  constructor(private readonly passkeysCoreService: PasskeysCoreService) {
-    console.log('Constructed PasskeysController')
-  }
+  constructor(private readonly passkeysCoreService: PasskeysCoreService) {}
 
   @Delete('')
   @Documentation({
@@ -47,6 +49,7 @@ export class PasskeysController {
     description: 'Deletes passkey for the authenticated user.',
     response: { status: 204 },
   })
+  @Audit()
   async deletePasskey(@CurrentActor() actor: User): Promise<void> {
     await this.passkeysCoreService.deletePasskeyByUser(actor)
   }
@@ -57,6 +60,7 @@ export class PasskeysController {
     description: 'Passkey registration options for the authenticated user.',
     response: { status: 200, type: RegistrationOptions },
   })
+  @Audit()
   @ApiCreatedResponse({ type: RegistrationOptions })
   async getPasskeyRegistrationOptions(
     @CurrentActor() actor: User,
@@ -75,6 +79,9 @@ export class PasskeysController {
     response: { status: 200, type: RegistrationResult },
   })
   @ApiCreatedResponse({ type: RegistrationResult })
+  @Audit<RegistrationResult>({
+    resources: (result) => result.verified.toString(),
+  })
   async verifyRegistration(
     @CurrentActor() actor: User,
     @Body() body: RegistrationResponse,
@@ -94,6 +101,7 @@ export class PasskeysController {
     response: { status: 200, type: AuthenticationOptions },
   })
   @ApiCreatedResponse({ type: AuthenticationOptions })
+  @Audit()
   async getPasskeyAuthenticationOptions(
     @CurrentActor() actor: User,
   ): Promise<AuthenticationOptions> {
@@ -103,6 +111,8 @@ export class PasskeysController {
     return response as RegistrationOptions
   }
 
+  // TODO remove before merging into main
+  // should only be possible to verify authentication through auth-ids-api
   @Post('authenticate')
   @Documentation({
     summary:

@@ -1,4 +1,10 @@
-import { Body, Controller, Post, VERSION_NEUTRAL } from '@nestjs/common'
+import {
+  Body,
+  Controller,
+  Post,
+  UseGuards,
+  VERSION_NEUTRAL,
+} from '@nestjs/common'
 import { ApiCreatedResponse, ApiTags } from '@nestjs/swagger'
 import type { AuthenticationResponseJSON } from '@simplewebauthn/types'
 
@@ -8,12 +14,18 @@ import {
   AuthenticationOptions,
   AuthenticationResult,
 } from './dto/authenticationOptions.dto'
+import { IdsAuthGuard, ScopesGuard } from '@island.is/auth-nest-tools'
+import { Audit } from '@island.is/nest/audit'
+
+const namespace = '@island.is/auth-ids-api/passkeys'
 
 @ApiTags('passkeys')
 @Controller({
   path: 'passkeys',
   version: ['1', VERSION_NEUTRAL],
 })
+@UseGuards(IdsAuthGuard, ScopesGuard)
+@Audit({ namespace })
 export class PasskeysController {
   constructor(private readonly passkeysCoreService: PasskeysCoreService) {}
 
@@ -25,6 +37,10 @@ export class PasskeysController {
     response: { status: 200, type: AuthenticationResult },
   })
   @ApiCreatedResponse({ type: AuthenticationResult })
+  @Audit<AuthenticationResult>({
+    resources: (authenticationResult) =>
+      authenticationResult.verified.toString(),
+  })
   async verifyAuthentication(
     @Body() body: AuthenticationOptions,
   ): Promise<AuthenticationResult> {
