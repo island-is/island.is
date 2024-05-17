@@ -22,10 +22,12 @@ import { sharedMessages } from '@island.is/shared/translations'
 import { parseFullNumber } from '@island.is/service-portal/core'
 import { FormButton } from '../FormButton'
 import * as styles from './ProfileForms.css'
+import { ContactNotVerified } from '../ContactNotVerified'
 
 interface Props {
   buttonText: string
   mobile?: string
+  telVerified?: boolean
   telDirty: (isDirty: boolean) => void
   disabled?: boolean
 }
@@ -45,6 +47,7 @@ export const InputPhone: FC<React.PropsWithChildren<Props>> = ({
   mobile,
   disabled,
   telDirty,
+  telVerified = false,
 }) => {
   useNamespaces('sp.settings')
   const {
@@ -68,7 +71,7 @@ export const InputPhone: FC<React.PropsWithChildren<Props>> = ({
 
   const [inputPristine, setInputPristine] = useState(false)
   const [telVerifyCreated, setTelVerifyCreated] = useState(false)
-  const [verificationValid, setVerificationValid] = useState(false)
+  const [verificationValid, setVerificationValid] = useState(telVerified)
 
   const [resendBlock, setResendBlock] = useState(false)
 
@@ -103,10 +106,9 @@ export const InputPhone: FC<React.PropsWithChildren<Props>> = ({
     } else {
       telDirty(true)
     }
-    checkSetPristineInput()
   }, [telInternal, mobile])
 
-  const handleSendTelVerification = async (data: { tel: string }) => {
+  const handleSendTelVerification = async (data: { tel?: string }) => {
     try {
       const telValue = data.tel ?? ''
 
@@ -146,7 +148,7 @@ export const InputPhone: FC<React.PropsWithChildren<Props>> = ({
           mobilePhoneNumber: `+354-${telToVerify}`,
           smsCode: codeValue,
         }).then(() => {
-          setInputPristine(true)
+          checkSetPristineInput()
           setVerificationValid(true)
         })
       }
@@ -154,6 +156,9 @@ export const InputPhone: FC<React.PropsWithChildren<Props>> = ({
     } catch (err) {
       console.error(`confirmSmsVerification error: ${err}`)
       setErrors({ ...formErrors, code: codeError })
+    } finally {
+      setCodeInternal('')
+      setValue('code', '')
     }
   }
 
@@ -182,7 +187,6 @@ export const InputPhone: FC<React.PropsWithChildren<Props>> = ({
   const checkSetPristineInput = () => {
     if (getValues().tel === mobile) {
       setInputPristine(true)
-
       setTelVerifyCreated(false)
     } else {
       setInputPristine(false)
@@ -225,7 +229,7 @@ export const InputPhone: FC<React.PropsWithChildren<Props>> = ({
                   type="tel"
                   format="### ####"
                   required={false}
-                  icon={inputPristine ? 'checkmark' : undefined}
+                  icon={mobile && verificationValid ? 'checkmark' : undefined}
                   disabled={disabled}
                   size="xs"
                   rules={{
@@ -247,6 +251,7 @@ export const InputPhone: FC<React.PropsWithChildren<Props>> = ({
                   onChange={(inp) => {
                     setTelInternal(parseFullNumber(inp.target.value || ''))
                     setErrors({ ...formErrors, mobile: undefined })
+                    checkSetPristineInput()
                   }}
                   error={errors.tel?.message || formErrors.mobile}
                   defaultValue={mobile}
@@ -264,12 +269,7 @@ export const InputPhone: FC<React.PropsWithChildren<Props>> = ({
               <>
                 {telVerifyCreated ? (
                   <FormButton
-                    disabled={
-                      verificationValid ||
-                      disabled ||
-                      resendBlock ||
-                      inputPristine
-                    }
+                    disabled={verificationValid || disabled || resendBlock}
                     onClick={
                       telInternal
                         ? () =>
@@ -306,7 +306,7 @@ export const InputPhone: FC<React.PropsWithChildren<Props>> = ({
           </Box>
         </Box>
       </form>
-      {telVerifyCreated && !inputPristine && (
+      {telVerifyCreated && (
         <Box marginTop={3}>
           <Text variant="medium" marginBottom={2}>
             {formatMessage({
@@ -323,9 +323,9 @@ export const InputPhone: FC<React.PropsWithChildren<Props>> = ({
                   backgroundColor="blue"
                   id="code"
                   name="code"
-                  format="######"
+                  format="###"
                   label={formatMessage(m.verificationCode)}
-                  placeholder="000000"
+                  placeholder="000"
                   defaultValue=""
                   error={errors.code?.message || formErrors.code}
                   disabled={verificationValid || disabled}
@@ -369,6 +369,22 @@ export const InputPhone: FC<React.PropsWithChildren<Props>> = ({
           </form>
         </Box>
       )}
+
+      {mobile &&
+        verificationValid === false &&
+        inputPristine &&
+        !telVerifyCreated && (
+          <Box marginTop={2}>
+            <ContactNotVerified
+              contactType="tel"
+              onClick={() =>
+                handleSendTelVerification({
+                  tel: mobile,
+                })
+              }
+            />
+          </Box>
+        )}
     </Box>
   )
 }

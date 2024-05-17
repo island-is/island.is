@@ -2367,9 +2367,9 @@ services-sessions-cleanup:
   enabled: true
   env:
     DB_HOST: 'postgres-applications.internal'
-    DB_NAME: 'services_sessions_cleanup'
+    DB_NAME: 'services_sessions'
     DB_REPLICAS_HOST: 'postgres-applications.internal'
-    DB_USER: 'services_sessions_cleanup'
+    DB_USER: 'services_sessions'
     LOG_LEVEL: 'info'
     NODE_OPTIONS: '--max-old-space-size=460'
     SERVERSIDE_FEATURES_ON: 'driving-license-use-v1-endpoint-for-v2-comms'
@@ -2415,7 +2415,7 @@ services-sessions-cleanup:
   schedule: '0 3 * * *'
   secrets:
     CONFIGCAT_SDK_KEY: '/k8s/configcat/CONFIGCAT_SDK_KEY'
-    DB_PASS: '/k8s/services-sessions-cleanup/DB_PASSWORD'
+    DB_PASS: '/k8s/services-sessions/DB_PASSWORD'
   securityContext:
     allowPrivilegeEscalation: false
     privileged: false
