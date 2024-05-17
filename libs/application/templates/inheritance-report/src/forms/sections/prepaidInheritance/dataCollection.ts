@@ -8,6 +8,7 @@ import {
   NationalRegistryUserApi,
   UserProfileApi,
 } from '@island.is/application/types'
+import { MaritalStatusApi } from '../../../dataProviders'
 
 export const prePaidDataCollection = buildSection({
   id: 'prepaidDataCollection',
@@ -31,6 +32,7 @@ export const prePaidDataCollection = buildSection({
         }),
         buildDataProviderItem({
           //provider: TBD,
+          provider: MaritalStatusApi,
           title: 'Hjúskaparstaða',
           subTitle: 'Hjúskaparstaða falleg lýsing kemur hér.',
         }),

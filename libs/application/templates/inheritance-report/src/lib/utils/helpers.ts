@@ -1,9 +1,15 @@
+import { NationalRegistrySpouse } from '@island.is/api/schema'
 import { YES, getValueViaPath } from '@island.is/application/core'
-import { Application, FormValue } from '@island.is/application/types'
+import {
+  Application,
+  ExternalData,
+  FormValue,
+} from '@island.is/application/types'
 import { InheritanceReportInfo } from '@island.is/clients/syslumenn'
 import { parsePhoneNumberFromString } from 'libphonenumber-js'
 import { MessageDescriptor } from 'react-intl'
 import { ZodTypeAny } from 'zod'
+import { Answers } from '../../types'
 
 export const currencyStringToNumber = (str: string) => {
   if (!str) {
@@ -32,6 +38,21 @@ export const getEstateDataFromApplication = (
   return {
     inheritanceReportInfo: estateData,
   }
+}
+
+export const getSpouseFromExternalData = (
+  externalData: ExternalData,
+): NationalRegistrySpouse | undefined => {
+  const spouse = getValueViaPath(externalData, 'maritalStatus.data', {}) as
+    | NationalRegistrySpouse
+    | undefined
+
+  return spouse
+}
+
+export const isApplicantMarried = (externalData: ExternalData) => {
+  const spouse = getSpouseFromExternalData(externalData)
+  return !!spouse && spouse?.maritalStatus === '3'
 }
 
 export const customZodError = (
@@ -85,6 +106,25 @@ export const valueToNumber = (value: unknown, delimiter = '.'): number => {
 export const isValidRealEstate = (value: string) => {
   const assetNumberPattern = /^(F\d{3}-\d{4}|\d{7}|\d{3}-\d{4}|F\d{7})$/
   return assetNumberPattern.test(value)
+}
+
+export const parseLabel = (
+  label: MessageDescriptor | { [key: string]: MessageDescriptor },
+  answers: Answers | undefined,
+): MessageDescriptor => {
+  if (isMessageDescriptor(label)) {
+    return label
+  }
+  const applicationFor: string = answers?.applicationFor as string
+  return label[applicationFor]
+}
+
+export const isMessageDescriptor = (obj: any): obj is MessageDescriptor => {
+  return (
+    obj &&
+    typeof obj === 'object' &&
+    ('id' in obj || 'defaultMessage' in obj || 'description' in obj)
+  )
 }
 
 export const getDeceasedWasMarriedAndHadAssets = (

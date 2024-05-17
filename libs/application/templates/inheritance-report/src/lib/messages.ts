@@ -289,6 +289,11 @@ export const m = defineMessages({
     defaultMessage: 'Innlendar og erlendar eignir á dánardegi hins látna',
     description: '',
   },
+  propertiesDescriptionPrePaid: {
+    id: 'ir.application:propertiesDescriptionPrePaid',
+    defaultMessage: 'Lorem ipsum lorem ipsum',
+    description: '',
+  },
   propertiesDescription: {
     id: 'ir.application:propertiesDescription',
     defaultMessage:
@@ -384,13 +389,13 @@ export const m = defineMessages({
     defaultMessage: 'Lögheimili',
     description: '',
   },
-  propertyValuation: {
-    id: 'ir.application:propertyValuation',
+  propertyValuationPrePaid: {
+    id: 'ir.application:propertyValuationPrepaid',
     defaultMessage: 'Fasteignamat',
     description: '',
   },
-  propertyValuationOnDeath: {
-    id: 'ir.application:propertyValuationOnDeath',
+  propertyValuation: {
+    id: 'ir.application:propertyValuation',
     defaultMessage: 'Fasteignamat á dánardegi',
     description: '',
   },
@@ -549,6 +554,11 @@ export const m = defineMessages({
     defaultMessage: 'Innstæða með vöxtum á dánardegi',
     description: '',
   },
+  bankAccountCapitalPrePaid: {
+    id: 'ir.application:bankAccountCapitalPrePaid',
+    defaultMessage: 'Upphæð',
+    description: '',
+  },
   bankAccountCapital: {
     id: 'ir.application:bankAccountCapital',
     defaultMessage: 'Höfuðstóll á dánardegi',
@@ -660,6 +670,11 @@ export const m = defineMessages({
     defaultMessage: 'Skráðu inn upplýsingar hér',
     description: '',
   },
+  moneyValuePrePaid: {
+    id: 'ir.application:moneyValuePrePaid',
+    defaultMessage: 'Fjárhæð',
+    description: '',
+  },
   moneyValue: {
     id: 'ir.application:moneyValue',
     defaultMessage: 'Fjárhæð á dánardegi',
@@ -746,18 +761,18 @@ export const m = defineMessages({
       'Vinsamlegast farðu yfir upplýsingarnar og gakktu úr skugga um að þær séu réttar.',
     description: '',
   },
-  realEstateEstimationOnDeath: {
+  realEstateEstimation: {
     id: 'ir.application:realEstateEstimationOnDeath',
     defaultMessage: 'Fasteignamat samtals á dánardegi',
     description: '',
   },
-  realEstateEstimation: {
+  realEstateEstimationPrePaid: {
     id: 'ir.application:realEstateEstimation',
     defaultMessage: 'Fasteignamat samtals',
     description: '',
   },
-  marketValue: {
-    id: 'ir.application:marketValue',
+  marketValueTotal: {
+    id: 'ir.application:marketValueTotal',
     defaultMessage: 'Markaðsverð samtals á dánardegi',
     description: '',
   },
@@ -1185,6 +1200,16 @@ export const m = defineMessages({
     defaultMessage: 'Hrein eign til skipta',
     description: '',
   },
+  heirsTitlePrePaid: {
+    id: 'ir.application:heirsTitlePrePaid',
+    defaultMessage: 'Hver á að fá arfinn?',
+    description: '',
+  },
+  heirsDescriptionPrePaid: {
+    id: 'ir.application:heirsDescriptionPrePaid',
+    defaultMessage: 'Lorem ipsum lorem ipsum',
+    description: '',
+  },
   heirsAndPartition: {
     id: 'ir.application:heirsAndPartition',
     defaultMessage: 'Erfingjar og skipting',
@@ -1531,6 +1556,11 @@ export const m = defineMessages({
   no: {
     id: 'ir.application:no',
     defaultMessage: 'Nei',
+    description: '',
+  },
+  marketValue: {
+    id: 'ir.application:marketValuation',
+    defaultMessage: 'Markaðsverðmæti',
     description: '',
   },
   // Error messages

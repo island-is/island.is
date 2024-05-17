@@ -30,6 +30,7 @@ import {
   isValidRealEstate,
   valueToNumber,
   getDeceasedWasMarriedAndHadAssets,
+  parseLabel,
 } from '../../lib/utils/helpers'
 import { InheritanceReportAsset } from '@island.is/clients/syslumenn'
 import ShareInput from '../../components/ShareInput'
@@ -196,6 +197,7 @@ export const AssetsRepeater: FC<
                     field={field}
                     fieldName={fieldName}
                     error={error}
+                    answers={application.answers}
                   />
                 )
               })}
@@ -256,6 +258,7 @@ interface FieldComponentProps {
   fieldIndex: string
   fieldName: string
   error?: string
+  answers?: Answers
 }
 
 const FieldComponent = ({
@@ -268,6 +271,7 @@ const FieldComponent = ({
   fieldIndex,
   fieldName,
   error,
+  answers,
 }: FieldComponentProps) => {
   const { formatMessage } = useLocale()
 
@@ -277,7 +281,7 @@ const FieldComponent = ({
     id: fieldName,
     name: fieldName,
     format: field.format,
-    label: formatMessage(field.title),
+    label: formatMessage(parseLabel(field.title, answers)),
     defaultValue: '',
     type: field.type,
     placeholder: field.placeholder,

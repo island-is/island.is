@@ -27,7 +27,7 @@ export const getForm = (): Form =>
                 id: 'applicationFor',
                 title: '',
                 largeButtons: true,
-                backgroundColor: 'white',
+                backgroundColor: 'blue',
                 options: [
                   {
                     value: ESTATE_INHERITANCE,

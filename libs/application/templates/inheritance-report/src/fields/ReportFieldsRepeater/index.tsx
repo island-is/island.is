@@ -30,6 +30,7 @@ import DoubleColumnRow from '../../components/DoubleColumnRow'
 import {
   getDeceasedHadAssets,
   getEstateDataFromApplication,
+  parseLabel,
 } from '../../lib/utils/helpers'
 import {
   InheritanceReportAsset,
@@ -282,7 +283,6 @@ export const ReportFieldsRepeater: FC<
     <Box>
       {fields.map((repeaterField: any, mainIndex) => {
         const fieldIndex = `${id}[${mainIndex}]`
-
         return (
           <Box position="relative" key={repeaterField.id} marginTop={4}>
             <Box position="absolute" className={styles.removeFieldButton}>
@@ -313,6 +313,15 @@ export const ReportFieldsRepeater: FC<
 
                 shouldPushRight = pushRight
 
+                if (
+                  field.condition &&
+                  !field.condition(application.answers.applicationFor)
+                ) {
+                  if (field.id === 'exchangeRateOrInterest') {
+                    setValue(`${fieldIndex}.${field.id}`, '0')
+                  }
+                  return null
+                }
                 return field?.sectionTitle ? (
                   <GridColumn key={field.id} span="1/1">
                     <Text
@@ -399,7 +408,11 @@ export const ReportFieldsRepeater: FC<
                       <SelectController
                         id={`${fieldIndex}.${field.id}`}
                         name={`${fieldIndex}.${field.id}`}
-                        label={formatMessage(field.title) ?? ''}
+                        label={
+                          formatMessage(
+                            parseLabel(field.title, application.answers),
+                          ) ?? ''
+                        }
                         placeholder={field.placeholder}
                         options={relations}
                       />
@@ -412,7 +425,11 @@ export const ReportFieldsRepeater: FC<
                           calculateTotal()
                           setIndex(fieldIndex)
                         }}
-                        label={formatMessage(field.title) ?? ''}
+                        label={
+                          formatMessage(
+                            parseLabel(field.title, application.answers),
+                          ) ?? ''
+                        }
                       />
                     ) : (
                       <InputController
@@ -422,7 +439,9 @@ export const ReportFieldsRepeater: FC<
                           repeaterField[field.id] ? repeaterField[field.id] : ''
                         }
                         format={field.format}
-                        label={formatMessage(field.title)}
+                        label={formatMessage(
+                          parseLabel(field.title, application.answers),
+                        )}
                         placeholder={field.placeholder}
                         backgroundColor={field.color ? field.color : 'blue'}
                         currency={field.currency}

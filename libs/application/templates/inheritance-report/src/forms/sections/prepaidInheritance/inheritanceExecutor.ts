@@ -4,12 +4,22 @@ import {
   buildPhoneField,
   buildSection,
   buildTextField,
+  getValueViaPath,
 } from '@island.is/application/core'
 import { m } from '../../../lib/messages'
 import { format as formatNationalId } from 'kennitala'
-import { Application, UserProfile } from '@island.is/api/schema'
+import {
+  Application,
+  NationalRegistrySpouse,
+  UserProfile,
+} from '@island.is/api/schema'
 import { removeCountryCode } from '@island.is/application/ui-components'
+import {
+  getSpouseFromExternalData,
+  isApplicantMarried,
+} from '../../../lib/utils/helpers'
 import { applicant } from '../applicant'
+import { application } from 'express'
 
 export const inheritanceExecutor = buildSection({
   id: 'inheritanceExecutor',
@@ -75,31 +85,40 @@ export const inheritanceExecutor = buildSection({
           title: 'Arfláti 2',
           titleVariant: 'h3',
           space: 'containerGutter',
+          condition: (_, externalData) => isApplicantMarried(externalData),
         }),
         buildTextField({
           id: 'executorSpouseName',
           title: m.name,
-          defaultValue: 'Bobbi Bobbason',
+          defaultValue: ({ externalData }: Application) =>
+            getSpouseFromExternalData(externalData)?.fullName,
           width: 'half',
           readOnly: true,
+          condition: (_, externalData) => isApplicantMarried(externalData),
         }),
         buildTextField({
           id: 'executorSpouseNationalId',
           title: m.nationalId,
-          defaultValue: '010130-3019',
+          defaultValue: ({ externalData }: Application) =>
+            formatNationalId(
+              getSpouseFromExternalData(externalData)?.nationalId ?? '',
+            ),
           width: 'half',
           readOnly: true,
+          condition: (_, externalData) => isApplicantMarried(externalData),
         }),
         buildTextField({
           id: 'executorSpouseEmail',
           title: m.email,
           width: 'half',
           variant: 'email',
+          condition: (_, externalData) => isApplicantMarried(externalData),
         }),
         buildPhoneField({
           id: 'executorSpousePhone',
           title: m.phone,
           width: 'half',
+          condition: (_, externalData) => isApplicantMarried(externalData),
         }),
       ],
     }),

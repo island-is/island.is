@@ -24,7 +24,7 @@ import {
   States,
 } from './constants'
 import { Features } from '@island.is/feature-flags'
-import { EstateOnEntryApi } from '../dataProviders'
+import { EstateOnEntryApi, MaritalStatusApi } from '../dataProviders'
 
 const InheritanceReportTemplate: ApplicationTemplate<
   ApplicationContext,
@@ -108,7 +108,12 @@ const InheritanceReportTemplate: ApplicationTemplate<
               actions: [{ event: 'SUBMIT', name: '', type: 'primary' }],
               write: 'all',
               delete: true,
-              api: [NationalRegistryUserApi, UserProfileApi, EstateOnEntryApi],
+              api: [
+                NationalRegistryUserApi,
+                UserProfileApi,
+                EstateOnEntryApi,
+                MaritalStatusApi,
+              ],
             },
           ],
         },

@@ -11,8 +11,8 @@ export const prePaidHeirs = buildSection({
   children: [
     buildMultiField({
       id: 'prePaidHeirs',
-      title: 'Hver á að fá arfinn?',
-      description: 'Lorem ipsum foo bar beep boop meep morp',
+      title: m.heirsTitlePrePaid,
+      description: m.heirsDescriptionPrePaid,
       children: [
         buildCustomField(
           {
@@ -30,12 +30,6 @@ export const prePaidHeirs = buildSection({
               {
                 title: m.heirsInheritanceRate,
                 id: 'heirsPercentage',
-              },
-              {
-                title: m.taxFreeInheritance,
-                id: 'taxFreeInheritance',
-                readOnly: true,
-                currency: true,
               },
               {
                 title: m.inheritanceAmount,

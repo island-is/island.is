@@ -12,7 +12,7 @@ import {
   shouldShowDeceasedShareField,
 } from '../../lib/utils/helpers'
 import { Application, YES } from '@island.is/application/types'
-import { PREPAID_INHERITANCE } from '../../lib/constants'
+import { ESTATE_INHERITANCE, PREPAID_INHERITANCE } from '../../lib/constants'
 
 export const assets = buildSection({
   id: 'estateProperties',
@@ -30,10 +30,10 @@ export const assets = buildSection({
         buildMultiField({
           id: 'realEstate',
           title: m.propertiesTitle,
-          description:
-            m.propertiesDescription.defaultMessage +
-            ' ' +
-            m.continueWithoutAssests.defaultMessage,
+          description: (application) =>
+            application.answers.applicationFor === PREPAID_INHERITANCE
+              ? m.propertiesDescriptionPrePaid
+              : m.propertiesDescription + ' ' + m.continueWithoutAssests,
           children: [
             buildDescriptionField({
               id: 'realEstateTitle',
@@ -78,7 +78,10 @@ export const assets = buildSection({
                     required: true,
                   },
                   {
-                    title: m.propertyValuation.defaultMessage,
+                    title: {
+                      [ESTATE_INHERITANCE]: m.propertyValuation,
+                      [PREPAID_INHERITANCE]: m.propertyValuationPrePaid,
+                    },
                     id: 'propertyValuation',
                     required: true,
                     currency: true,
@@ -172,10 +175,10 @@ export const assets = buildSection({
         buildMultiField({
           id: 'vehicles',
           title: m.propertiesTitle,
-          description:
-            m.propertiesDescription.defaultMessage +
-            ' ' +
-            m.continueWithoutVehicles.defaultMessage,
+          description: (application) =>
+            application.answers.applicationFor === PREPAID_INHERITANCE
+              ? m.propertiesDescriptionPrePaid
+              : m.propertiesDescription + ' ' + m.continueWithoutVehicles,
           children: [
             buildDescriptionField({
               id: 'vehiclesTitle',
@@ -213,7 +216,10 @@ export const assets = buildSection({
                     readOnly: true,
                   },
                   {
-                    title: m.vehicleValuation,
+                    title: {
+                      [ESTATE_INHERITANCE]: m.vehicleValuation,
+                      [PREPAID_INHERITANCE]: m.marketValue,
+                    },
                     id: 'propertyValuation',
                     required: true,
                     currency: true,
@@ -306,10 +312,10 @@ export const assets = buildSection({
         buildMultiField({
           id: 'estateBankInfo',
           title: m.propertiesTitle,
-          description:
-            m.propertiesDescription.defaultMessage +
-            ' ' +
-            m.continueWithoutBankAccounts.defaultMessage,
+          description: (application) =>
+            application.answers.applicationFor === PREPAID_INHERITANCE
+              ? m.propertiesDescriptionPrePaid
+              : m.propertiesDescription + ' ' + m.continueWithoutBankAccounts,
           children: [
             buildDescriptionField({
               id: 'estateBankInfoTitle',
@@ -342,7 +348,10 @@ export const assets = buildSection({
                     placeholder: '0000-00-000000',
                   },
                   {
-                    title: m.bankAccountCapital,
+                    title: {
+                      [ESTATE_INHERITANCE]: m.bankAccountCapital,
+                      [PREPAID_INHERITANCE]: m.bankAccountCapitalPrePaid,
+                    },
                     id: 'propertyValuation',
                     required: true,
                     currency: true,
@@ -352,6 +361,8 @@ export const assets = buildSection({
                     id: 'exchangeRateOrInterest',
                     required: false,
                     currency: true,
+                    condition: (applicationFor: string) =>
+                      applicationFor === ESTATE_INHERITANCE,
                   },
                   {
                     title: m.total,
@@ -359,6 +370,8 @@ export const assets = buildSection({
                     required: false,
                     readOnly: true,
                     currency: true,
+                    condition: (applicationFor: string) =>
+                      applicationFor === ESTATE_INHERITANCE,
                   },
                   {
                     title: m.bankAccountForeign,
@@ -524,7 +537,10 @@ export const assets = buildSection({
         buildMultiField({
           id: 'money',
           title: m.propertiesTitle,
-          description: m.propertiesDescription,
+          description: (application) =>
+            application.answers.applicationFor === PREPAID_INHERITANCE
+              ? m.propertiesDescriptionPrePaid
+              : m.propertiesDescription + ' ' + m.continueWithoutBankAccounts,
           children: [
             buildDescriptionField({
               id: 'moneyTitle',
@@ -550,7 +566,10 @@ export const assets = buildSection({
             }),
             buildTextField({
               id: 'assets.money.value',
-              title: m.moneyValue,
+              title: (application) =>
+                application.answers?.applicationFor === PREPAID_INHERITANCE
+                  ? m.moneyValuePrePaid
+                  : m.moneyValue,
               width: 'half',
               variant: 'currency',
               defaultValue: (application: Application) => {
@@ -592,7 +611,10 @@ export const assets = buildSection({
         buildMultiField({
           id: 'otherAssets',
           title: m.propertiesTitle,
-          description: m.propertiesDescription,
+          description: (application) =>
+            application.answers.applicationFor === PREPAID_INHERITANCE
+              ? m.propertiesDescriptionPrePaid
+              : m.propertiesDescription + ' ' + m.continueWithoutBankAccounts,
           children: [
             buildDescriptionField({
               id: 'otherAssetsTitle',
@@ -619,7 +641,10 @@ export const assets = buildSection({
                     required: true,
                   },
                   {
-                    title: m.otherAssetsValue,
+                    title: {
+                      [ESTATE_INHERITANCE]: m.otherAssetsValue,
+                      [PREPAID_INHERITANCE]: m.marketValue,
+                    },
                     id: 'value',
                     required: true,
                     currency: true,

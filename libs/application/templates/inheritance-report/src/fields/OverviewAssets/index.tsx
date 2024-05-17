@@ -43,7 +43,7 @@ export const OverviewAssets: FC<React.PropsWithChildren<FieldBaseProps>> = ({
     title: m.realEstate,
     data: realEstateDataRow,
     total: realEstateDataTotal,
-    totalTitle: m.realEstateEstimationOnDeath,
+    totalTitle: m.realEstateEstimation,
   })
 
   // Vehicles
@@ -56,7 +56,7 @@ export const OverviewAssets: FC<React.PropsWithChildren<FieldBaseProps>> = ({
     title: m.vehicles,
     data: vehiclesDataRow,
     total: vehiclesDataTotal,
-    totalTitle: m.marketValue,
+    totalTitle: m.marketValueTotal,
   })
 
   // Guns
@@ -69,7 +69,7 @@ export const OverviewAssets: FC<React.PropsWithChildren<FieldBaseProps>> = ({
     title: m.guns,
     data: gunsDataRow,
     total: gunsDataTotal,
-    totalTitle: m.marketValue,
+    totalTitle: m.marketValueTotal,
   })
 
   // Inventory
@@ -82,7 +82,7 @@ export const OverviewAssets: FC<React.PropsWithChildren<FieldBaseProps>> = ({
     title: m.inventoryTitle,
     data: inventoryDataRow,
     total: inventoryDataTotal,
-    totalTitle: m.marketValue,
+    totalTitle: m.marketValueTotal,
     showTotalFirst: true,
   })
 
