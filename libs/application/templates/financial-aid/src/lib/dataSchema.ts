@@ -22,6 +22,13 @@ export const dataSchema = z.object({
       params: error.validation.approveSpouse,
     }),
   }),
+  childrenSchoolInfo: z.array(
+    z.object({
+      fullName: z.string(),
+      nationalId: z.string(),
+      school: z.string(),
+    }),
+  ),
   relationshipStatus: z
     .object({
       unregisteredCohabitation: z
