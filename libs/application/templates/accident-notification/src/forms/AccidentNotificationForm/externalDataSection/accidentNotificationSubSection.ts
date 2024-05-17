@@ -6,7 +6,7 @@ import {
 import { externalData } from '../../../lib/messages'
 import { NationalRegistryUserApi } from '@island.is/application/types'
 
-export const accidentNotificationScreen = buildSubSection({
+export const accidentNotificationSubSection = buildSubSection({
   id: 'AccidentNotificationForm',
   title: externalData.dataProvider.sectionTitle,
   children: [

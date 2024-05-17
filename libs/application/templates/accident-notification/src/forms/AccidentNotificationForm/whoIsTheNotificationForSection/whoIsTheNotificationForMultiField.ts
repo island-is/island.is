@@ -2,7 +2,7 @@ import { buildMultiField, buildRadioField } from '@island.is/application/core'
 import { whoIsTheNotificationFor } from '../../../lib/messages'
 import { WhoIsTheNotificationForEnum } from '../../../types'
 
-export const whoIsTheNotificationForScreen = buildMultiField({
+export const whoIsTheNotificationForMultiField = buildMultiField({
   id: 'whoIsTheNotificationFor',
   title: whoIsTheNotificationFor.general.heading,
   description: whoIsTheNotificationFor.general.description,

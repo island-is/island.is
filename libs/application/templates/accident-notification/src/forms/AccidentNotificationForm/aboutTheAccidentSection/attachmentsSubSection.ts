@@ -24,7 +24,7 @@ import { AttachmentsEnum } from '../../../types'
 import { FILE_SIZE_LIMIT, NO, UPLOAD_ACCEPT, YES } from '../../../constants'
 
 // Injury Certificate and Fatal accident section
-export const attachmentsScreen = buildSubSection({
+export const attachmentsSubSection = buildSubSection({
   id: 'attachments.section',
   title: attachments.general.sectionTitle,
   children: [

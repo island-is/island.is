@@ -13,7 +13,7 @@ import { isSportAccidentAndEmployee } from '../../../utils/isSportAccidentAndEmp
 import { NO, YES } from '../../../constants'
 
 // Workmachine information only applicable to generic workplace accidents
-export const workMachineScreen = buildSubSection({
+export const workMachineSubSection = buildSubSection({
   id: 'workMachine.section',
   title: workMachine.general.sectionTitle,
   condition: (formValue) =>

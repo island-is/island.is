@@ -18,7 +18,7 @@ import {
 } from '../../../utils'
 import { WorkAccidentTypeEnum } from '../../../types'
 
-export const workAccidentScreen = buildSubSection({
+export const workAccidentSubSection = buildSubSection({
   id: 'workAccident.subSection',
   title: accidentType.workAccidentType.subSectionTitle,
   condition: (formValue) => isWorkAccident(formValue),

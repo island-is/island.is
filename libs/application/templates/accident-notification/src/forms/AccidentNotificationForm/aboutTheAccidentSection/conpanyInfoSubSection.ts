@@ -5,68 +5,35 @@ import {
   buildSubSection,
   buildTextField,
 } from '@island.is/application/core'
+import { companyInfo, representativeInfo } from '../../../lib/messages'
 import {
-  isFishermanAccident,
+  isAgricultureAccident,
+  isGeneralWorkplaceAccident,
+  isHomeActivitiesAccident,
   isInjuredAndRepresentativeOfCompanyOrInstitute,
+  isInternshipStudiesAccident,
   isReportingOnBehalfOfEmployee,
 } from '../../../utils'
-import { fishingCompanyInfo, representativeInfo } from '../../../lib/messages'
 
-// fishery information if fisherman
-export const fishingCompanyInfoScreen = buildSubSection({
-  id: 'fishingCompanyInfo.subSection',
-  title: (application) =>
-    isReportingOnBehalfOfEmployee(application.answers)
-      ? fishingCompanyInfo.general.informationAboutShipTitle
-      : fishingCompanyInfo.general.title,
-  condition: (formValue) => isFishermanAccident(formValue),
+// Company information if work accident without the injured being a fisherman or in agriculture
+export const companyInfoSubSection = buildSubSection({
+  id: 'companyInfo.subSection',
+  title: companyInfo.general.title,
+  condition: (formValue) =>
+    !isAgricultureAccident(formValue) &&
+    !isReportingOnBehalfOfEmployee(formValue) &&
+    !isHomeActivitiesAccident(formValue) &&
+    (isGeneralWorkplaceAccident(formValue) ||
+      isInternshipStudiesAccident(formValue)),
   children: [
     buildMultiField({
-      id: 'fishingShipInfo',
-      title: fishingCompanyInfo.general.informationAboutShipTitle,
-      description: fishingCompanyInfo.general.informationAboutShipDescription,
-      children: [
-        buildTextField({
-          id: 'fishingShipInfo.shipName',
-          title: fishingCompanyInfo.labels.shipName,
-          backgroundColor: 'blue',
-          width: 'half',
-          required: true,
-          maxLength: 100,
-        }),
-        buildTextField({
-          id: 'fishingShipInfo.shipCharacters',
-          title: fishingCompanyInfo.labels.shipCharacters,
-          backgroundColor: 'blue',
-          width: 'half',
-          required: true,
-          maxLength: 100,
-        }),
-        buildTextField({
-          id: 'fishingShipInfo.homePort',
-          title: fishingCompanyInfo.labels.homePort,
-          backgroundColor: 'blue',
-          width: 'half',
-          maxLength: 100,
-        }),
-        buildTextField({
-          id: 'fishingShipInfo.shipRegisterNumber',
-          title: fishingCompanyInfo.labels.shipRegisterNumber,
-          backgroundColor: 'blue',
-          width: 'half',
-          maxLength: 100,
-        }),
-      ],
-    }),
-    buildMultiField({
-      id: 'fishingCompanyInfo',
-      title: fishingCompanyInfo.general.title,
-      description: fishingCompanyInfo.general.description,
-      condition: (formValue) => !isReportingOnBehalfOfEmployee(formValue),
+      id: 'companyInfo',
+      title: companyInfo.general.title,
+      description: companyInfo.general.description,
       children: [
         buildTextField({
           id: 'companyInfo.name',
-          title: fishingCompanyInfo.labels.name,
+          title: companyInfo.labels.name,
           backgroundColor: 'blue',
           required: true,
           width: 'half',
@@ -74,21 +41,22 @@ export const fishingCompanyInfoScreen = buildSubSection({
         }),
         buildTextField({
           id: 'companyInfo.nationalRegistrationId',
-          title: fishingCompanyInfo.labels.nationalId,
+          title: companyInfo.labels.nationalId,
           backgroundColor: 'blue',
+          width: 'half',
           format: '######-####',
           required: true,
-          width: 'half',
         }),
         buildDescriptionField({
-          id: 'fishingCompanyInfo.descriptionField',
-          description: fishingCompanyInfo.labels.subDescription,
+          id: 'companyInfo.descriptionField',
+          description: companyInfo.labels.subDescription,
           space: 'containerGutter',
           titleVariant: 'h5',
-          title: fishingCompanyInfo.labels.descriptionField,
+          title: companyInfo.labels.descriptionField,
           condition: (formValue) =>
             !isInjuredAndRepresentativeOfCompanyOrInstitute(formValue),
         }),
+
         // These should all be required if the user is not the representative of the company.
         // Should look into if we can require conditionally
         buildTextField({
@@ -117,8 +85,8 @@ export const fishingCompanyInfoScreen = buildSubSection({
           backgroundColor: 'blue',
           variant: 'email',
           width: 'half',
-          maxLength: 100,
           required: true,
+          maxLength: 100,
           condition: (formValue) =>
             !isInjuredAndRepresentativeOfCompanyOrInstitute(formValue),
         }),

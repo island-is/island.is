@@ -9,9 +9,8 @@ import {
   isReportingOnBehalfOfEmployee,
   isReportingOnBehalfOfInjured,
 } from '../../../utils'
-import { FormValue } from '@island.is/application/types'
 
-export const injuredPersonInformationScreen = buildSubSection({
+export const injuredPersonInformationSubSection = buildSubSection({
   id: 'injuredPersonInformation.section',
   title: injuredPersonInformation.general.sectionTitle,
   children: [

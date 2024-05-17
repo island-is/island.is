@@ -14,7 +14,7 @@ import {
 } from '../../../utils'
 
 // School information if school accident
-export const schoolInfoScreen = buildSubSection({
+export const schoolInfoSubSection = buildSubSection({
   id: 'schoolInfo.subSection',
   title: schoolInfo.general.title,
   condition: (formValue) =>

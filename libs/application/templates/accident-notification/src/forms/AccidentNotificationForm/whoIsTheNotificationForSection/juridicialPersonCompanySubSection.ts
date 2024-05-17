@@ -8,7 +8,7 @@ import { juridicalPerson } from '../../../lib/messages'
 import { isReportingOnBehalfOfEmployee } from '../../../utils'
 import { YES } from '../../../constants'
 
-export const juridicalPersonCompanyScreen = buildSubSection({
+export const juridicalPersonCompanySubSection = buildSubSection({
   id: 'juridicalPerson.company',
   title: juridicalPerson.general.sectionTitle,
   children: [

@@ -8,7 +8,7 @@ import { error, powerOfAttorney } from '../../../lib/messages'
 import { FILE_SIZE_LIMIT, UPLOAD_ACCEPT } from '../../../constants'
 import { isUploadNow } from '../../../utils/isUploadNow'
 
-export const powerOfAttorneyUploadScreen = buildSubSection({
+export const powerOfAttorneyUploadSubSection = buildSubSection({
   id: 'powerOfAttorney.upload.section',
   title: powerOfAttorney.upload.sectionTitle,
   children: [
