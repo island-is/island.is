@@ -23,7 +23,9 @@ import {
   ClientSecret,
   Delegation,
   DelegationIndex,
+  DelegationProviderModel,
   DelegationScope,
+  DelegationTypeModel,
   Domain,
   IdentityResource,
   Language,
@@ -34,6 +36,7 @@ import {
   PersonalRepresentativeType,
   Translation,
   UserIdentity,
+  ClientDelegationType,
 } from '@island.is/auth-api-lib'
 import { isDefined } from '@island.is/shared/utils'
 import { createNationalId } from '@island.is/testing/fixtures'
@@ -55,6 +58,8 @@ import {
   CreateCustomDelegation,
   CreateCustomDelegationScope,
   CreateDelegationIndexRecord,
+  CreateDelegationProvider,
+  CreateDelegationType,
   CreateIdentityResource,
   CreatePersonalRepresentativeDelegation,
   CreatePersonalRepresentativeRightType,
@@ -101,6 +106,19 @@ export class FixtureFactory {
     const createdClient = await this.get(Client).create(
       createClientFixture(client),
     )
+
+    if (client?.supportedDelegationTypes) {
+      createdClient.supportedDelegationTypes = await Promise.all(
+        client.supportedDelegationTypes.map(async (id) => {
+          const type = await this.createDelegationType({ id })
+
+          return this.get(ClientDelegationType).create({
+            clientId: createdClient.clientId,
+            delegationType: type.id,
+          })
+        }),
+      )
+    }
 
     createdClient.redirectUris = await Promise.all(
       client?.redirectUris
@@ -547,5 +565,45 @@ export class FixtureFactory {
       issuer,
       originalIssuer,
     })
+  }
+
+  async createDelegationProvider({
+    id = faker.random.word(),
+    name = faker.random.word(),
+    description = faker.random.words(3),
+  }: CreateDelegationProvider) {
+    const [provider] = await this.get(DelegationProviderModel).findCreateFind({
+      where: { id },
+      defaults: { id, name, description, delegationTypes: [] },
+    })
+
+    return provider
+  }
+
+  async createDelegationType({
+    id = faker.random.word(),
+    name = faker.random.word(),
+    description = faker.random.words(3),
+    providerId,
+  }: CreateDelegationType) {
+    const delegationProvider = await this.createDelegationProvider({
+      id: providerId,
+    })
+
+    const [delegationType] = await this.get(DelegationTypeModel).findCreateFind(
+      {
+        where: { id },
+        defaults: {
+          id,
+          name,
+          description,
+          providerId: delegationProvider.id,
+          clients: [],
+          provider: delegationProvider,
+        },
+      },
+    )
+
+    return delegationType
   }
 }
