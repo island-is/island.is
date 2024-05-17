@@ -1,8 +1,8 @@
 import { dynamicColor, font } from '@ui'
 import { selectionAsync } from 'expo-haptics'
 import {
-  AuthenticationType,
   authenticateAsync,
+  AuthenticationType,
 } from 'expo-local-authentication'
 import React, { useCallback, useEffect, useRef, useState } from 'react'
 import { useIntl } from 'react-intl'
@@ -97,7 +97,7 @@ export const AppLockScreen: NavigationFunctionComponent<{
       delay: 100,
     }).start(() => {
       resetLockScreen()
-      Navigation.dismissAllOverlays()
+      void Navigation.dismissAllOverlays()
       av.setValue(1)
     })
   }, [componentId])

@@ -6,6 +6,7 @@ import { NavigationFunctionComponent } from 'react-native-navigation'
 import { useFeatureFlag } from '../../contexts/feature-flag-provider'
 import { useGetVehicleQuery } from '../../graphql/types/schema'
 import { createNavigationOptionHooks } from '../../hooks/create-navigation-option-hooks'
+import { useConnectivityIndicator } from '../../hooks/use-connectivity-indicator'
 import { navigateTo } from '../../lib/deep-linking'
 import { testIDs } from '../../utils/test-ids'
 
@@ -21,6 +22,7 @@ export const VehicleDetailScreen: NavigationFunctionComponent<{
   id: string
 }> = ({ componentId, title, id }) => {
   useNavigationOptions(componentId)
+
   const intl = useIntl()
 
   // Get feature flag for mileage
@@ -30,7 +32,6 @@ export const VehicleDetailScreen: NavigationFunctionComponent<{
   )
 
   const { data, loading, error } = useGetVehicleQuery({
-    fetchPolicy: 'cache-first',
     variables: {
       input: {
         regno: '',
@@ -38,6 +39,11 @@ export const VehicleDetailScreen: NavigationFunctionComponent<{
         vin: '',
       },
     },
+  })
+
+  useConnectivityIndicator({
+    componentId,
+    queryResult: { data, loading },
   })
 
   const {
@@ -65,19 +71,21 @@ export const VehicleDetailScreen: NavigationFunctionComponent<{
     )
   }
 
+  const inputLoading = loading && data === undefined
+
   return (
     <View style={{ flex: 1 }} testID={testIDs.SCREEN_VEHICLE_DETAIL}>
       <ScrollView style={{ flex: 1 }}>
         <View>
           <InputRow>
             <Input
-              loading={loading}
+              loading={inputLoading}
               error={isError}
               label={intl.formatMessage({ id: 'vehicleDetail.regno' })}
               value={mainInfo?.regno}
             />
             <Input
-              loading={loading}
+              loading={inputLoading}
               error={isError}
               label={intl.formatMessage({ id: 'vehicleDetail.permno' })}
               value={basicInfo?.permno}
@@ -85,7 +93,7 @@ export const VehicleDetailScreen: NavigationFunctionComponent<{
           </InputRow>
           <InputRow>
             <Input
-              loading={loading}
+              loading={inputLoading}
               error={isError}
               label={intl.formatMessage({ id: 'vehicleDetail.firstReg' })}
               value={
@@ -97,7 +105,7 @@ export const VehicleDetailScreen: NavigationFunctionComponent<{
               }
             />
             <Input
-              loading={loading}
+              loading={inputLoading}
               error={isError}
               label={intl.formatMessage({ id: 'vehicleDetail.color' })}
               value={registrationInfo?.color}
@@ -105,7 +113,7 @@ export const VehicleDetailScreen: NavigationFunctionComponent<{
           </InputRow>
           <InputRow>
             <Input
-              loading={loading}
+              loading={inputLoading}
               error={isError}
               label={intl.formatMessage({
                 id: 'vehicleDetail.nextInspectionDate',
@@ -122,7 +130,7 @@ export const VehicleDetailScreen: NavigationFunctionComponent<{
             {inspectionInfo?.odometer && (
               <Input
                 noBorder
-                loading={loading}
+                loading={inputLoading}
                 error={isError}
                 label={intl.formatMessage({ id: 'vehicleDetail.odometer' })}
                 value={
@@ -159,14 +167,14 @@ export const VehicleDetailScreen: NavigationFunctionComponent<{
 
           <InputRow>
             <Input
-              loading={loading}
+              loading={inputLoading}
               error={isError}
               label={intl.formatMessage({ id: 'vehicleDetail.vehicleWeight' })}
               value={`${technicalInfo?.vehicleWeight} kg`}
             />
             {technicalInfo?.totalWeight ? (
               <Input
-                loading={loading}
+                loading={inputLoading}
                 error={isError}
                 label={intl.formatMessage({ id: 'vehicleDetail.totalWeight' })}
                 value={`${technicalInfo?.totalWeight ?? '-'} kg`}
@@ -176,7 +184,7 @@ export const VehicleDetailScreen: NavigationFunctionComponent<{
 
           <InputRow>
             <Input
-              loading={loading}
+              loading={inputLoading}
               error={isError}
               label={intl.formatMessage({ id: 'vehicleDetail.insured' })}
               value={intl.formatMessage(
@@ -185,7 +193,7 @@ export const VehicleDetailScreen: NavigationFunctionComponent<{
               )}
             />
             <Input
-              loading={loading}
+              loading={inputLoading}
               error={isError}
               label={intl.formatMessage({
                 id: 'vehicleDetail.unpaidVehicleFee',
@@ -203,7 +211,7 @@ export const VehicleDetailScreen: NavigationFunctionComponent<{
             <InputRow>
               {mainInfo?.trailerWithBrakesWeight ? (
                 <Input
-                  loading={loading}
+                  loading={inputLoading}
                   error={isError}
                   label={intl.formatMessage({
                     id: 'vehicleDetail.trailerWithBrakes',
@@ -213,7 +221,7 @@ export const VehicleDetailScreen: NavigationFunctionComponent<{
               ) : null}
               {mainInfo?.trailerWithoutBrakesWeight ? (
                 <Input
-                  loading={loading}
+                  loading={inputLoading}
                   error={isError}
                   label={intl.formatMessage({
                     id: 'vehicleDetail.trailerWithoutBrakes',
@@ -227,7 +235,7 @@ export const VehicleDetailScreen: NavigationFunctionComponent<{
           <InputRow>
             {technicalInfo?.capacityWeight ? (
               <Input
-                loading={loading}
+                loading={inputLoading}
                 error={isError}
                 label={intl.formatMessage({
                   id: 'vehicleDetail.capacityWeight',
@@ -237,7 +245,7 @@ export const VehicleDetailScreen: NavigationFunctionComponent<{
             ) : null}
             {mainInfo?.co2 ? (
               <Input
-                loading={loading}
+                loading={inputLoading}
                 error={isError}
                 label={intl.formatMessage({ id: 'vehicleDetail.nedc' })}
                 value={`${mainInfo?.co2 ?? 0} g/km`}

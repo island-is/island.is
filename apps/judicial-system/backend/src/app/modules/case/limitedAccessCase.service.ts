@@ -24,6 +24,7 @@ import {
   CaseFileCategory,
   CaseFileState,
   CaseState,
+  CommentType,
   DateType,
   NotificationType,
   UserRole,
@@ -40,6 +41,7 @@ import { Institution } from '../institution'
 import { User } from '../user'
 import { Case } from './models/case.model'
 import { DateLog } from './models/dateLog.model'
+import { ExplanatoryComment } from './models/explanatoryComment.model'
 import { PDFService } from './pdf.service'
 
 export const attributes: (keyof Case)[] = [
@@ -108,6 +110,7 @@ export interface LimitedAccessUpdateCase
   > {}
 
 const dateTypes = Object.values(DateType)
+const commentTypes = Object.values(CommentType)
 
 export const include: Includeable[] = [
   { model: Institution, as: 'prosecutorsOffice' },
@@ -186,6 +189,12 @@ export const include: Includeable[] = [
     as: 'dateLogs',
     required: false,
     where: { dateType: { [Op.in]: dateTypes } },
+  },
+  {
+    model: ExplanatoryComment,
+    as: 'explanatoryComments',
+    required: false,
+    where: { commentType: { [Op.in]: commentTypes } },
   },
 ]
 

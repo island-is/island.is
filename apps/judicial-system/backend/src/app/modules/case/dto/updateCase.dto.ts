@@ -1,3 +1,4 @@
+import { Type } from 'class-transformer'
 import {
   ArrayMinSize,
   IsArray,
@@ -7,6 +8,7 @@ import {
   IsOptional,
   IsString,
   IsUUID,
+  ValidateNested,
 } from 'class-validator'
 
 import { ApiPropertyOptional } from '@nestjs/swagger'
@@ -20,13 +22,27 @@ import {
   CaseAppealRulingDecision,
   CaseCustodyRestrictions,
   CaseDecision,
+  CaseIndictmentRulingDecision,
   CaseLegalProvisions,
   CaseType,
   CourtDocument,
+  IndictmentCaseReviewDecision,
   RequestSharedWithDefender,
   SessionArrangements,
   UserRole,
 } from '@island.is/judicial-system/types'
+
+class UpdateDateLog {
+  @IsOptional()
+  @IsString()
+  @ApiPropertyOptional()
+  readonly date?: Date
+
+  @IsOptional()
+  @IsString()
+  @ApiPropertyOptional()
+  readonly location?: string
+}
 
 export class UpdateCaseDto {
   @IsOptional()
@@ -192,19 +208,21 @@ export class UpdateCaseDto {
   readonly sessionArrangements?: SessionArrangements
 
   @IsOptional()
-  @IsString()
-  @ApiPropertyOptional()
-  readonly courtDate?: Date
+  @ValidateNested()
+  @Type(() => UpdateDateLog)
+  @ApiPropertyOptional({ type: UpdateDateLog })
+  readonly arraignmentDate?: UpdateDateLog
+
+  @IsOptional()
+  @ValidateNested()
+  @Type(() => UpdateDateLog)
+  @ApiPropertyOptional({ type: UpdateDateLog })
+  readonly courtDate?: UpdateDateLog
 
   @IsOptional()
   @IsString()
   @ApiPropertyOptional()
   readonly courtLocation?: string
-
-  @IsOptional()
-  @IsString()
-  @ApiPropertyOptional()
-  readonly courtRoom?: string
 
   @IsOptional()
   @IsString()
@@ -440,4 +458,24 @@ export class UpdateCaseDto {
   @IsString()
   @ApiPropertyOptional()
   readonly indictmentReturnedExplanation?: string
+
+  @IsOptional()
+  @IsString()
+  @ApiPropertyOptional()
+  readonly postponedIndefinitelyExplanation?: string
+
+  @IsOptional()
+  @IsEnum(CaseIndictmentRulingDecision)
+  @ApiPropertyOptional({ enum: CaseIndictmentRulingDecision })
+  readonly indictmentRulingDecision?: CaseIndictmentRulingDecision
+
+  @IsOptional()
+  @IsUUID()
+  @ApiPropertyOptional()
+  readonly indictmentReviewerId?: string
+
+  @IsOptional()
+  @IsEnum(IndictmentCaseReviewDecision)
+  @ApiPropertyOptional({ enum: IndictmentCaseReviewDecision })
+  readonly indictmentReviewDecision?: IndictmentCaseReviewDecision
 }

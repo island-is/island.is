@@ -1,5 +1,9 @@
 import { lazy } from 'react'
-import { ApiScope, UserProfileScope } from '@island.is/auth/scopes'
+import {
+  ApiScope,
+  DocumentsScope,
+  UserProfileScope,
+} from '@island.is/auth/scopes'
 import { m } from '@island.is/service-portal/core'
 import { PortalModule } from '@island.is/portals/core'
 import { InformationPaths } from './lib/paths'
@@ -13,8 +17,14 @@ const UserInfo = lazy(() => import('./screens/UserInfo/UserInfo'))
 const FamilyMemberChild = lazy(() => import('./screens/Child/Child'))
 const Spouse = lazy(() => import('./screens/Spouse/Spouse'))
 const CompanyInfo = lazy(() => import('./screens/Company/CompanyInfo'))
+const Notifications = lazy(() =>
+  import('./screens/Notifications/Notifications'),
+)
 const UserProfileSettings = lazy(() =>
   import('./screens/UserProfile/UserProfile'),
+)
+const UserNotificationsSettings = lazy(() =>
+  import('./screens/UserNotifications/UserNotifications'),
 )
 
 const sharedRoutes = (userInfo: User) => [
@@ -29,6 +39,13 @@ const sharedRoutes = (userInfo: User) => [
     path: InformationPaths.Settings,
     enabled: userInfo.scopes.includes(UserProfileScope.write),
     element: <UserProfileSettings />,
+  },
+  {
+    name: 'Notifications',
+    path: InformationPaths.Notifications,
+    enabled: userInfo.scopes.includes(DocumentsScope.main),
+    key: 'Notifications',
+    element: <Notifications />,
   },
 ]
 
@@ -52,6 +69,13 @@ export const informationModule: PortalModule = {
       path: InformationPaths.UserInfo,
       enabled: userInfo.scopes.includes(ApiScope.meDetails),
       element: <UserInfo />,
+    },
+    {
+      name: m.userInfo,
+      path: InformationPaths.SettingsNotifications,
+      enabled: userInfo.scopes.includes(ApiScope.internal),
+      key: 'NotificationSettings',
+      element: <UserNotificationsSettings />,
     },
     {
       name: 'Child',

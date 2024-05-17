@@ -53,6 +53,7 @@ export const VehicleMileageScreen: NavigationFunctionComponent<{
   title?: { type: string; year: string; color: string }
 }> = ({ componentId, id, title }) => {
   useNavigationOptions(componentId)
+
   const intl = useIntl()
   const dynamicColor = useDynamicColor()
   const [input, setInput] = useState('')
@@ -252,6 +253,7 @@ export const VehicleMileageScreen: NavigationFunctionComponent<{
         }
         onClosePress={() => Navigation.dismissModal(componentId)}
         style={{ marginHorizontal: 16 }}
+        showLoading={res.loading && !!res.data}
       />
       <FlatList
         data={data}

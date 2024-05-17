@@ -7,6 +7,27 @@ export const loadHealthInsuranceXroadMocks = async () => {
     prefixType: 'only-base-path',
     config: HealthInsurance,
     prefix: 'XROAD_HEALTH_INSURANCE_MY_PAGES_PATH',
+    apiPath: '/v1/overview/insurance',
+    response: [
+      new Response().withJSONBody({
+        isInsured: true,
+        explanation: 'Testing',
+        from: new Date(),
+        status: {
+          display: 'test status',
+          code: 'ALM',
+        },
+        maximumPayment: 80,
+        refundDate: new Date('2030-05-18T00:00:00.000Z'),
+        ehicCardExpiryDate: new Date('2030-05-18T00:00:00.000Z'),
+      }),
+    ],
+  })
+
+  await addXroadMock({
+    prefixType: 'only-base-path',
+    config: HealthInsurance,
+    prefix: 'XROAD_HEALTH_INSURANCE_MY_PAGES_PATH',
     apiPath: '/v1/dentists/current',
     response: [
       new Response().withJSONBody({

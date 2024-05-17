@@ -20,13 +20,13 @@ export class CaseOriginalAncestorInterceptor implements NestInterceptor {
   ): Promise<Observable<unknown>> {
     const request = context.switchToHttp().getRequest()
 
-    if (!request.case) {
+    const theCase = request.case
+
+    if (!theCase) {
       throw new InternalServerErrorException('Missing case')
     }
 
-    request.case = await this.internalCaseService.findOriginalAncestor(
-      request.case,
-    )
+    request.case = await this.internalCaseService.findOriginalAncestor(theCase)
 
     return next.handle()
   }

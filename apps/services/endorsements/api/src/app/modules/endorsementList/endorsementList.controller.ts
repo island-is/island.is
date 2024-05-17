@@ -109,9 +109,7 @@ export class EndorsementListController {
   async getGeneralPetitionList(
     @Param('listId') listId: string,
   ): Promise<EndorsementList | null> {
-    return await this.endorsementListService.findSingleOpenListTaggedGeneralPetition(
-      listId,
-    )
+    return await this.endorsementListService.findSingleList(listId)
   }
 
   @Scopes(EndorsementsScope.main, AdminPortalScope.petitionsAdmin)

@@ -111,6 +111,10 @@ import { FeaturedEvents } from './models/featuredEvents.model'
 import { GraphQLJSONObject } from 'graphql-type-json'
 import { CustomPage } from './models/customPage.model'
 import { GetCustomPageInput } from './dto/getCustomPage.input'
+import { GenericListItemResponse } from './models/genericListItemResponse.model'
+import { GetGenericListItemsInput } from './dto/getGenericListItems.input'
+import { GenericList } from './models/genericList.model'
+import { GetCustomSubpageInput } from './dto/getCustomSubpage.input'
 
 const defaultCache: CacheControlOptions = { maxAge: CACHE_CONTROL_MAX_AGE }
 
@@ -647,6 +651,22 @@ export class CmsResolver {
   ): Promise<CustomPage | null> {
     return this.cmsElasticsearchService.getCustomPage(input)
   }
+
+  @CacheControl(defaultCache)
+  @Query(() => CustomPage, { nullable: true })
+  async getCustomSubpage(
+    @Args('input') input: GetCustomSubpageInput,
+  ): Promise<CustomPage | null> {
+    return this.cmsElasticsearchService.getCustomSubpage(input)
+  }
+
+  @CacheControl(defaultCache)
+  @Query(() => GenericListItemResponse, { nullable: true })
+  getGenericListItems(
+    @Args('input') input: GetGenericListItemsInput,
+  ): Promise<GenericListItemResponse> {
+    return this.cmsElasticsearchService.getGenericListItems(input)
+  }
 }
 
 @Resolver(() => LatestNewsSlice)
@@ -786,5 +806,20 @@ export class FeaturedEventsResolver {
       // Fallback to empty object in case something goes wrong when fetching or parsing namespace
       return {}
     }
+  }
+}
+
+@Resolver(() => GenericList)
+@CacheControl(defaultCache)
+export class GenericListResolver {
+  constructor(
+    private readonly cmsElasticsearchService: CmsElasticsearchService,
+  ) {}
+
+  @ResolveField(() => GenericListItemResponse)
+  firstPageListItemResponse(
+    @Parent() { firstPageListItemResponse: input }: GenericList,
+  ) {
+    return this.cmsElasticsearchService.getGenericListItems(input)
   }
 }

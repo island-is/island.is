@@ -3,7 +3,10 @@ import {
   AllListsDocument,
   AllListsQuery,
 } from './graphql/getAllSignatureLists.generated'
-import { SignatureCollectionList } from '@island.is/api/schema'
+import {
+  SignatureCollection,
+  SignatureCollectionList,
+} from '@island.is/api/schema'
 import {
   CollectionDocument,
   CollectionQuery,
@@ -12,7 +15,7 @@ import {
 export interface ListsLoaderReturn {
   allLists: SignatureCollectionList[]
   collectionStatus: string
-  collectionId: string
+  collection: SignatureCollection
 }
 
 export const listsLoader: WrappedLoaderFn = ({ client }) => {
@@ -21,20 +24,19 @@ export const listsLoader: WrappedLoaderFn = ({ client }) => {
   }): Promise<{
     allLists: SignatureCollectionList[]
     collectionStatus: string
-    collectionId: string
+    collection: SignatureCollection
   }> => {
     const { data: collectionStatusData } = await client.query<CollectionQuery>({
       query: CollectionDocument,
       fetchPolicy: 'network-only',
     })
-    const collectionId =
-      collectionStatusData?.signatureCollectionAdminCurrent?.id
+    const collection = collectionStatusData?.signatureCollectionAdminCurrent
     const { data } = await client.query<AllListsQuery>({
       query: AllListsDocument,
       fetchPolicy: 'network-only',
       variables: {
         input: {
-          collectionId,
+          collectionId: collection?.id,
         },
       },
     })
@@ -43,6 +45,6 @@ export const listsLoader: WrappedLoaderFn = ({ client }) => {
     const collectionStatus =
       collectionStatusData?.signatureCollectionAdminCurrent?.status
 
-    return { allLists, collectionStatus, collectionId }
+    return { allLists, collectionStatus, collection }
   }
 }

@@ -1,18 +1,18 @@
 import { Allow } from 'class-validator'
 
-import { Field, InputType } from '@nestjs/graphql'
+import { Field, ID, InputType } from '@nestjs/graphql'
 
 @InputType()
 export class CreatePresignedPostInput {
   @Allow()
-  @Field()
+  @Field(() => ID)
   readonly caseId!: string
 
   @Allow()
-  @Field()
+  @Field(() => String)
   readonly fileName!: string
 
   @Allow()
-  @Field()
+  @Field(() => String)
   readonly type!: string
 }

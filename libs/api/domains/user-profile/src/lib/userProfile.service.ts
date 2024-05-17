@@ -1,6 +1,6 @@
 import { Injectable } from '@nestjs/common'
+import { ApolloError } from 'apollo-server-express'
 
-import { Auth, AuthMiddleware, User } from '@island.is/auth-nest-tools'
 import {
   ActorLocaleLocaleEnum,
   ConfirmationDtoResponse,
@@ -8,6 +8,7 @@ import {
 } from '@island.is/clients/user-profile'
 import { handle204 } from '@island.is/clients/middlewares'
 import { FeatureFlagService, Features } from '@island.is/nest/feature-flags'
+import { Auth, AuthMiddleware, User } from '@island.is/auth-nest-tools'
 
 import { DeleteIslykillSettings } from './models/deleteIslykillSettings.model'
 import { UpdateUserProfileInput } from './dto/updateUserProfileInput'
@@ -18,17 +19,15 @@ import { ConfirmSmsVerificationInput } from './dto/confirmSmsVerificationInput'
 import { ConfirmEmailVerificationInput } from './dto/confirmEmailVerificationInput'
 import { DeleteIslykillValueInput } from './dto/deleteIslykillValueInput'
 import { UserProfile } from './userProfile.model'
-import { IslykillService } from './islykill.service'
 import { UserDeviceTokenInput } from './dto/userDeviceTokenInput'
-import { DataStatus } from './types/dataStatus.enum'
 import { UserProfileServiceV1 } from './V1/userProfile.service'
 import { UserProfileServiceV2 } from './V2/userProfile.service'
+import { UpdateActorProfileInput } from './dto/updateActorProfileInput'
 
 @Injectable()
 export class UserProfileService {
   constructor(
     private userProfileApi: UserProfileApi,
-    private readonly islyklarService: IslykillService,
     private userProfileServiceV2: UserProfileServiceV2,
     private userProfileServiceV1: UserProfileServiceV1,
     private featureFlagService: FeatureFlagService,
@@ -90,35 +89,20 @@ export class UserProfileService {
     input: DeleteIslykillValueInput,
     user: User,
   ): Promise<DeleteIslykillSettings> {
-    const islyklarData = await this.islyklarService.getIslykillSettings(
-      user.nationalId,
+    const { nationalId } = await this.userProfileServiceV2.updateUserProfile(
+      {
+        ...(input.email && { email: '' }),
+        ...(input.mobilePhoneNumber && { mobilePhoneNumber: '' }),
+      },
+      user,
     )
-    if (islyklarData.noUserFound) {
-      await this.islyklarService.createIslykillSettings(user.nationalId, {
-        email: undefined,
-        mobile: undefined,
-      })
-    } else {
-      await this.islyklarService.updateIslykillSettings(user.nationalId, {
-        email: input.email ? undefined : islyklarData.email,
-        mobile: input.mobilePhoneNumber ? undefined : islyklarData.mobile,
-        canNudge: islyklarData.canNudge,
-        bankInfo: islyklarData.bankInfo,
-      })
-    }
 
-    const profileUpdate = {
-      ...(input.email && { emailStatus: DataStatus.EMPTY }),
-      ...(input.mobilePhoneNumber && { mobileStatus: DataStatus.EMPTY }),
+    if (!nationalId) {
+      throw new ApolloError('Failed to update user profile')
     }
-
-    await this.userProfileApiWithAuth(user).userProfileControllerUpdate({
-      nationalId: user.nationalId,
-      updateUserProfileDto: profileUpdate,
-    })
 
     return {
-      nationalId: user.nationalId,
+      nationalId,
       valid: true,
     }
   }
@@ -181,5 +165,28 @@ export class UserProfileService {
       nationalId: user.nationalId,
       deviceTokenDto: input,
     })
+  }
+
+  async getActorProfiles(user: User) {
+    return this.userProfileServiceV2.getActorProfiles(user)
+  }
+
+  async updateActorProfile(input: UpdateActorProfileInput, user: User) {
+    return this.userProfileServiceV2.updateActorProfile(input, user)
+  }
+
+  async getUserProfiles(user: User, query: string) {
+    return this.userProfileServiceV2.getUserProfiles(user, query)
+  }
+
+  async getUserProfileByNationalId(user: User, nationalId: string) {
+    return this.userProfileServiceV2.getUserProfileByNationalId(
+      user,
+      nationalId,
+    )
+  }
+
+  confirmNudge(user: User) {
+    return this.userProfileServiceV2.confirmNudge(user)
   }
 }
