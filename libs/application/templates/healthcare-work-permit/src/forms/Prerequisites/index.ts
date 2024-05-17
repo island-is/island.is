@@ -58,11 +58,7 @@ export const Prerequisites: Form = buildForm({
           }),
           dataProviders: [
             buildDataProviderItem({
-              provider: NationalRegistryUserApi.configure({
-                params: {
-                  icelandicCitizenship: true,
-                },
-              }),
+              provider: NationalRegistryUserApi,
               title: externalData.nationalRegistry.title,
               subTitle: externalData.nationalRegistry.subTitle,
             }),
