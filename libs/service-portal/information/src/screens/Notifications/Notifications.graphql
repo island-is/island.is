@@ -75,3 +75,9 @@ mutation MarkAllNotificationsAsSeen {
     success
   }
 }
+
+mutation MarkAllNotificationsAsRead {
+  markAllNotificationsRead {
+    success
+  }
+}

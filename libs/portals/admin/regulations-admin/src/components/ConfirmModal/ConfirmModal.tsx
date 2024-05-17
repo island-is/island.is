@@ -7,6 +7,7 @@ interface ConfirmModalProps {
   onConfirm: () => void
   onVisibilityChange: (visibility: boolean) => void
   message: string
+  title?: string
   confirmMessage?: string
   confirmGhost?: boolean
 }
@@ -14,6 +15,7 @@ interface ConfirmModalProps {
 const ConfirmModal: FC<React.PropsWithChildren<ConfirmModalProps>> = ({
   isVisible,
   message,
+  title,
   confirmMessage = 'Eyða',
   onConfirm,
   onVisibilityChange,
@@ -35,6 +37,7 @@ const ConfirmModal: FC<React.PropsWithChildren<ConfirmModalProps>> = ({
           padding={6}
         >
           <Stack space={3}>
+            <Text variant="h3">{title}</Text>
             <Text>{message}</Text>
             <Box display="flex" justifyContent="spaceBetween">
               <Button onClick={closeModal} size="small" variant="ghost">
