@@ -255,6 +255,12 @@ export const sections = {
       description:
         'Notaður sem texti fyrir Niðurstaða skref í hliðarstiku í ákærum hjá héraðsdómum',
     },
+    summary: {
+      id: 'judicial.system.core:sections.indictments_court_section.summary',
+      defaultMessage: 'Samantekt',
+      description:
+        'Notaður sem texti fyrir Samantekt skref í hliðarstiku í ákærum hjá héraðsdómum',
+    },
   }),
   extensionSection: defineMessages({
     title: {

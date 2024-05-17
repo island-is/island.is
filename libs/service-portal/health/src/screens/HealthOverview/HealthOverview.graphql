@@ -1,32 +1,21 @@
 query getInsuranceOverview {
   rightsPortalInsuranceOverview {
-    items {
-      isInsured
-      explanation
-      from
-      status {
-        display
-        code
-      }
-      maximumPayment
+    isInsured
+    explanation
+    from
+    status {
+      display
+      code
     }
-    errors {
-      message
-      status
-    }
+    maximumPayment
+    ehicCardExpiryDate
   }
 }
 
 query getInsuranceConfirmation {
   rightsPortalInsuranceConfirmation {
-    items {
-      fileName
-      contentType
-      data
-    }
-    errors {
-      message
-      status
-    }
+    fileName
+    contentType
+    data
   }
 }

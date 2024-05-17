@@ -23,6 +23,7 @@ type CardProps = {
   checkboxId?: string
   checked?: boolean
   subHeading?: string
+  onCardClick?: () => void
 }
 
 export const ListViewCard = ({
@@ -36,6 +37,7 @@ export const ListViewCard = ({
   checked,
   href,
   subHeading,
+  onCardClick,
 }: CardProps) => {
   return (
     <Box height="full">
@@ -71,32 +73,35 @@ export const ListViewCard = ({
           )}
           {iconText && <Text variant="small">{iconText}</Text>}
         </Box>
-        <LinkV2 href={href} passHref>
-          <Text
-            as="h3"
-            variant="h4"
-            color="blue400"
-            truncate={false}
-            paddingBottom={subHeading ? 0 : 3}
-            lineHeight="sm"
-          >
-            {heading}
-          </Text>
-          {subHeading && (
-            <Box style={{ paddingTop: '4px' }}>
-              <Text
-                variant="eyebrow"
-                color="blue400"
-                truncate={false}
-                title={subHeading}
-                paddingBottom={3}
-                lineHeight="sm"
-              >
-                {subHeading}
-              </Text>
-            </Box>
-          )}
-        </LinkV2>
+        <Box onClick={onCardClick}>
+          <LinkV2 href={href} passHref>
+            <Text
+              as="h3"
+              variant="h4"
+              color="blue400"
+              truncate={false}
+              paddingBottom={subHeading ? 0 : 3}
+              lineHeight="sm"
+            >
+              {heading}
+            </Text>
+            {subHeading && (
+              <Box style={{ paddingTop: '4px' }}>
+                <Text
+                  variant="eyebrow"
+                  color="blue400"
+                  truncate={false}
+                  title={subHeading}
+                  paddingBottom={3}
+                  lineHeight="sm"
+                >
+                  {subHeading}
+                </Text>
+              </Box>
+            )}
+          </LinkV2>
+        </Box>
+
         {infoItems.map((item) => {
           return (
             <Box

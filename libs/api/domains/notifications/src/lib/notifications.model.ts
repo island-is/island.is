@@ -126,6 +126,12 @@ export class NotificationsMarkAllAsSeenResponse {
 }
 
 @ObjectType()
+export class NotificationsMarkAllAsReadResponse {
+  @Field()
+  success!: boolean
+}
+
+@ObjectType()
 export class NotificationsUnreadCount {
   @Field(() => Int)
   unreadCount!: number

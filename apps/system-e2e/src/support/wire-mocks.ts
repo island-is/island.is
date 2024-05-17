@@ -4,6 +4,7 @@ import {
   HttpMethod,
   Imposter,
   Mountebank,
+  Operator,
   Proxy,
   ProxyMode,
   Response,
@@ -115,6 +116,7 @@ export const addXroadMock = async <Conf extends XroadSectionConfig>(
         response: Response | Response[]
         prefixType: 'base-path-with-env'
         method?: HttpMethod
+        query?: { [key: string]: string }
       }
     | {
         config: XroadConf<Conf>
@@ -123,6 +125,7 @@ export const addXroadMock = async <Conf extends XroadSectionConfig>(
         apiPath: string
         prefixType: 'only-base-path'
         method?: HttpMethod
+        query?: { [key: string]: string }
       },
 ) => {
   const method = options.method === undefined ? HttpMethod.GET : options.method
@@ -146,9 +149,15 @@ export const addXroadMock = async <Conf extends XroadSectionConfig>(
     ? options.response
     : [options.response]
   const stub = new Stub().withPredicate(
-    new EqualPredicate()
-      .withPath(`${prefix}${env}${path}${options.apiPath}`)
-      .withMethod(method),
+    options.query
+      ? new FlexiPredicate()
+          .withOperator(Operator.deepEquals)
+          .withPath(`${prefix}${env}${path}${options.apiPath}`)
+          .withMethod(method)
+          .withQuery(options.query)
+      : new EqualPredicate()
+          .withPath(`${prefix}${env}${path}${options.apiPath}`)
+          .withMethod(method),
   )
   for (const response of stubResponses) {
     stub.withResponse(response)
