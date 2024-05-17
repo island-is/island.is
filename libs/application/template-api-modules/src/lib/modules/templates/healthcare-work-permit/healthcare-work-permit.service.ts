@@ -15,19 +15,20 @@ import {
   StarfsleyfiUmsoknStarfsleyfi,
   UtbuaStarfsleyfiSkjalResponse,
 } from '@island.is/clients/health-directorate'
-import {
-  Transcripts,
-  UniversityOfIcelandService,
-} from '@island.is/clients/university-of-iceland'
 import { TemplateApiError } from '@island.is/nest/problem'
 import { NationalRegistryService } from '../../shared/api/national-registry/national-registry.service'
+import {
+  StudentTrackDto,
+  UniversityCareersClientService,
+  UniversityId,
+} from '@island.is/clients/university-careers'
 
 @Injectable()
 export class HealthcareWorkPermitService extends BaseTemplateApiService {
   constructor(
     private readonly sharedTemplateAPIService: SharedTemplateApiService,
     private readonly healthDirectorateClientService: HealthDirectorateClientService,
-    private readonly universityOfIcelandService: UniversityOfIcelandService,
+    private readonly universityOfIcelandService: UniversityCareersClientService,
     private readonly nationalRegistryService: NationalRegistryService,
   ) {
     super(ApplicationTypes.HEALTHCARE_WORK_PERMIT)
@@ -99,8 +100,11 @@ export class HealthcareWorkPermitService extends BaseTemplateApiService {
 
   async getMyAcademicCareer({
     auth,
-  }: TemplateApiModuleActionProps): Promise<Transcripts> {
-    const result = await this.universityOfIcelandService.studentInfo(auth)
+  }: TemplateApiModuleActionProps): Promise<Array<StudentTrackDto>> {
+    const result = await this.universityOfIcelandService.getStudentTrackHistory(
+      auth,
+      UniversityId.UNIVERSITY_OF_ICELAND,
+    )
 
     if (!result) {
       throw new TemplateApiError(

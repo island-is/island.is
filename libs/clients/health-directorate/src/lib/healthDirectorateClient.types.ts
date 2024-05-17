@@ -56,3 +56,12 @@ export interface HealthDirectorateLicenseToPractice {
   validTo?: Date
   status: HealthDirectorateLicenseStatus
 }
+export interface HealthcareWorkPermitRequest {
+  name: string
+  dateOfBirth: Date
+  email: string
+  phone: string
+  idProfession: string
+  citizenship: string
+  education: Nam[]
+}
