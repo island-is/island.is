@@ -82,11 +82,7 @@ const template: ApplicationTemplate<
               write: 'all',
               delete: true,
               api: [
-                NationalRegistryUserApi.configure({
-                  params: {
-                    // Add is part of EES
-                  },
-                }),
+                NationalRegistryUserApi,
                 UserProfileApi,
                 EmbaettiLandlaeknisPaymentCatalogApi,
                 UniversityOfIcelandApi,
