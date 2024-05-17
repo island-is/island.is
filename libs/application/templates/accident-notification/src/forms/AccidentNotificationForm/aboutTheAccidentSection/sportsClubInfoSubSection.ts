@@ -5,58 +5,51 @@ import {
   buildSubSection,
   buildTextField,
 } from '@island.is/application/core'
-import { companyInfo, representativeInfo } from '../../../lib/messages'
 import {
-  isAgricultureAccident,
-  isGeneralWorkplaceAccident,
-  isHomeActivitiesAccident,
   isInjuredAndRepresentativeOfCompanyOrInstitute,
-  isInternshipStudiesAccident,
+  isProfessionalAthleteAccident,
   isReportingOnBehalfOfEmployee,
 } from '../../../utils'
+import { representativeInfo, sportsClubInfo } from '../../../lib/messages'
 
-// Company information if work accident without the injured being a fisherman or in agriculture
-export const companyInfoScreen = buildSubSection({
-  id: 'companyInfo.subSection',
-  title: companyInfo.general.title,
+// Sports club information when the injured has a sports related accident
+export const sportsClubInfoSubSection = buildSubSection({
+  id: 'sportsClubInfo.subSection',
+  title: sportsClubInfo.general.title,
   condition: (formValue) =>
-    !isAgricultureAccident(formValue) &&
-    !isReportingOnBehalfOfEmployee(formValue) &&
-    !isHomeActivitiesAccident(formValue) &&
-    (isGeneralWorkplaceAccident(formValue) ||
-      isInternshipStudiesAccident(formValue)),
+    isProfessionalAthleteAccident(formValue) &&
+    !isReportingOnBehalfOfEmployee(formValue),
   children: [
     buildMultiField({
-      id: 'companyInfo',
-      title: companyInfo.general.title,
-      description: companyInfo.general.description,
+      id: 'sportsClubInfo',
+      title: sportsClubInfo.general.title,
+      description: sportsClubInfo.general.description,
       children: [
         buildTextField({
           id: 'companyInfo.name',
-          title: companyInfo.labels.name,
+          title: sportsClubInfo.labels.name,
           backgroundColor: 'blue',
-          required: true,
           width: 'half',
+          required: true,
           maxLength: 100,
         }),
         buildTextField({
           id: 'companyInfo.nationalRegistrationId',
-          title: companyInfo.labels.nationalId,
+          title: sportsClubInfo.labels.nationalId,
           backgroundColor: 'blue',
-          width: 'half',
           format: '######-####',
           required: true,
+          width: 'half',
         }),
         buildDescriptionField({
-          id: 'companyInfo.descriptionField',
-          description: companyInfo.labels.subDescription,
+          id: 'sportsClubInfo.descriptionField',
+          description: sportsClubInfo.labels.subDescription,
           space: 'containerGutter',
           titleVariant: 'h5',
-          title: companyInfo.labels.descriptionField,
+          title: sportsClubInfo.labels.descriptionField,
           condition: (formValue) =>
             !isInjuredAndRepresentativeOfCompanyOrInstitute(formValue),
         }),
-
         // These should all be required if the user is not the representative of the company.
         // Should look into if we can require conditionally
         buildTextField({
@@ -85,8 +78,8 @@ export const companyInfoScreen = buildSubSection({
           backgroundColor: 'blue',
           variant: 'email',
           width: 'half',
-          required: true,
           maxLength: 100,
+          required: true,
           condition: (formValue) =>
             !isInjuredAndRepresentativeOfCompanyOrInstitute(formValue),
         }),

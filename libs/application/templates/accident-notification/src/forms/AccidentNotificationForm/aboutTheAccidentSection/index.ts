@@ -1,31 +1,33 @@
 import { buildSection } from '@island.is/application/core'
 import { accidentType } from '../../../lib/messages'
-import { accidentTypeScreen } from './accidentTypeScreen'
-import { workAccidentScreen } from './workAccidentScreen'
-import { studiesAccidentScreen } from './studiesAccidentScreen'
-import { locationScreen } from './locationScreen'
-import { workMachineScreen } from './workMachineScreen'
-import { accidentDetailsScreen } from './accidentDetailScreen'
-import { attachmentsScreen } from './attachmentsScreen'
-import { schoolInfoScreen } from './schoolInfoScreen'
-import { fishingCompanyInfoScreen } from './fishingCompanyInfoScreen'
-import { sportsClubInfoScreen } from './sportsClubInfoScreen'
-import { rescueSquadInfoScreen } from './rescueSquadInfoScreen'
+import { accidentTypeSubSection } from './accidentTypeSubSection'
+import { workAccidentSubSection } from './workAccidentSubSection'
+import { studiesAccidentSubSection } from './studiesAccidentSubSection'
+import { locationSubSection } from './locationSubSection'
+import { workMachineSubSection } from './workMachineSubSection'
+import { accidentDetailsSubSection } from './accidentDetailSubSection'
+import { attachmentsSubSection } from './attachmentsSubSection'
+import { schoolInfoSubSection } from './schoolInfoSubSection'
+import { fishingCompanyInfoSubSection } from './fishingCompanyInfoSubSection'
+import { sportsClubInfoSubSection } from './sportsClubInfoSubSection'
+import { rescueSquadInfoSubSection } from './rescueSquadInfoSubSection'
+import { companyInfoSubSection } from './conpanyInfoSubSection'
 
 export const aboutTheAccidentSection = buildSection({
   id: 'accidentType.section',
   title: accidentType.general.sectionTitle,
   children: [
-    accidentTypeScreen,
-    workAccidentScreen,
-    studiesAccidentScreen,
-    locationScreen,
-    workMachineScreen,
-    accidentDetailsScreen,
-    attachmentsScreen,
-    schoolInfoScreen,
-    fishingCompanyInfoScreen,
-    sportsClubInfoScreen,
-    rescueSquadInfoScreen,
+    accidentTypeSubSection,
+    workAccidentSubSection,
+    studiesAccidentSubSection,
+    locationSubSection,
+    workMachineSubSection,
+    accidentDetailsSubSection,
+    attachmentsSubSection,
+    companyInfoSubSection,
+    schoolInfoSubSection,
+    fishingCompanyInfoSubSection,
+    sportsClubInfoSubSection,
+    rescueSquadInfoSubSection,
   ],
 })

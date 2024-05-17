@@ -9,7 +9,7 @@ import { powerOfAttorney } from '../../../lib/messages'
 import { PowerOfAttorneyUploadEnum } from '../../../types'
 import { isPowerOfAttorney } from '../../../utils'
 
-export const powerOfAttorneyScreen = buildSubSection({
+export const powerOfAttorneySubSection = buildSubSection({
   id: 'powerOfAttorney.type.section',
   title: powerOfAttorney.type.sectionTitle,
   children: [

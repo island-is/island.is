@@ -1,7 +1,7 @@
 import { buildCustomField, buildMultiField } from '@island.is/application/core'
 import { externalData } from '../../../lib/messages'
 
-export const agreementDescriptionScreen = buildMultiField({
+export const agreementDescriptionMultiField = buildMultiField({
   title: externalData.agreementDescription.sectionTitle,
   id: 'agreementDescriptionMultiField',
   space: 2,

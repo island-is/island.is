@@ -35,7 +35,7 @@ import {
 } from '../../../types'
 
 // Location Subsection
-export const locationScreen = buildSubSection({
+export const locationSubSection = buildSubSection({
   id: 'location.subSection',
   title: 'Staðsetning',
   children: [
