@@ -13,7 +13,6 @@ outputs:
 runs:
   using: 'composite'
   steps:
-
     - name: Calculate cache key for node-modules
       shell: bash
       id: calculate-node-modules-cache-key
