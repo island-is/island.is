@@ -1235,6 +1235,8 @@ export class NotificationService {
           }),
       theCase.defenderName,
       theCase.defenderEmail,
+      undefined,
+      Boolean(theCase.defenderNationalId) === false,
     )
   }
 
@@ -2364,6 +2366,8 @@ export class NotificationService {
         html,
         theCase.defenderName,
         theCase.defenderEmail,
+        undefined,
+        Boolean(theCase.defenderNationalId) === false,
       ),
     )
 
