@@ -43,7 +43,7 @@ export class UpdateMunicipalityInput {
   readonly navPassword?: string
 
   @Allow()
-  @Field({ nullable: true })
+  @Field(() => String, { nullable: true })
   readonly childrenAid?: ChildrenAid
 
   @Allow()

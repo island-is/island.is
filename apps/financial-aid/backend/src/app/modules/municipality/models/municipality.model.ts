@@ -139,5 +139,5 @@ export class MunicipalityModel extends Model<Municipality> {
     values: Object.values(ChildrenAid),
   })
   @ApiProperty({ enum: ChildrenAid })
-  childrenAid: string
+  childrenAid: ChildrenAid
 }

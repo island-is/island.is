@@ -55,6 +55,6 @@ export class MunicipalityModel implements Municipality {
   @Field({ nullable: true })
   readonly navPassword?: string
 
-  @Field()
+  @Field(() => String)
   readonly childrenAid!: ChildrenAid
 }
