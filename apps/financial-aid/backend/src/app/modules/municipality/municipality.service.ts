@@ -45,6 +45,7 @@ export class MunicipalityService {
           'navPassword',
           'created',
           'modified',
+          'childrenAid',
         ],
       },
       where: { municipalityId },
