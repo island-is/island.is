@@ -62,7 +62,7 @@ export class HealthcareWorkPermitService extends BaseTemplateApiService {
         auth,
       )
 
-    // TODO Double check if this fails on empty response
+    // TODO Double check if this fails on empty response mhm
     if (!result) {
       throw new TemplateApiError(
         {
