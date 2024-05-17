@@ -83,14 +83,13 @@ export class FinancialAidService extends BaseTemplateApiService {
       }
     }
 
-    const children = externalData.childrenCustodyInformation?.data.map(
-      (child) => {
-        return {
-          name: child.fullName,
-          nationalId: child.nationalId,
-        }
-      },
-    )
+    const children = answers.childrenSchoolInfo?.map((child) => {
+      return {
+        name: child.fullName,
+        nationalId: child.nationalId,
+        school: child.school,
+      }
+    })
 
     const formatFiles = (files: ApplicationAnswerFile[], type: FileType) => {
       if (!files || files.length <= 0) {
