@@ -3,14 +3,8 @@ import type { Logger } from '@island.is/logging'
 import { LOGGER_PROVIDER } from '@island.is/logging'
 import { SharedTemplateApiService } from '../../shared'
 import { TemplateApiModuleActionProps } from '../../../types'
-import { coreErrorMessages, getValueViaPath } from '@island.is/application/core'
-import {
-  YES,
-  YesOrNo,
-  DiscountCheck,
-  DistrictCommissionerAgencies,
-} from './constants'
-import { info } from 'kennitala'
+import { coreErrorMessages } from '@island.is/application/core'
+import { DistrictCommissionerAgencies } from './constants'
 import {
   ChargeFjsV2ClientService,
   getPaymentIdFromExternalData,
@@ -18,10 +12,7 @@ import {
 import { generateAssignParentBApplicationEmail } from './emailGenerators/assignParentBEmail'
 import { PassportsService } from '@island.is/clients/passports'
 import { BaseTemplateApiService } from '../../base-template-api.service'
-import {
-  ApplicationTypes,
-  InstitutionNationalIds,
-} from '@island.is/application/types'
+import { ApplicationTypes } from '@island.is/application/types'
 import { TemplateApiError } from '@island.is/nest/problem'
 import {
   IdCardAnswers,
@@ -213,53 +204,72 @@ export class IdCardService extends BaseTemplateApiService {
     const firstGuardianInformation = answers.firstGuardianInformation
     const secondGuardionInformation = answers.secondGuardionInformation
 
-    let result
-    if (userIsApplicant) {
-      result = await this.passportApi.preregisterIdentityDocument(auth, {
-        guid: application.id,
-        appliedForPersonId: auth.nationalId,
-        priority:
-          answers.priceList.priceChoice === Services.REGULAR ||
-          answers.priceList.priceChoice === Services.REGULAR_DISCOUNT
-            ? 0
-            : 1,
-        deliveryName: answers.priceList.location,
-        contactInfo: {
-          phoneAtHome: applicantInformation.phoneNumber,
-          phoneAtWork: applicantInformation.phoneNumber,
-          phoneMobile: applicantInformation.phoneNumber,
-          email: applicantInformation.email,
-        },
-      })
-    } else {
-      const approvalB = {
-        personId: secondGuardionInformation?.nationalId?.replace('-', '') || '',
-        name: secondGuardionInformation?.name || '',
-        approved: new Date(),
-      }
-      result = await this.passportApi.preregisterChildIdentityDocument(auth, {
-        guid: application.id,
-        appliedForPersonId: applicantInformation.nationalId,
-        priority:
-          answers.priceList.priceChoice === Services.REGULAR_DISCOUNT ? 0 : 1,
-        deliveryName: answers.priceList.location,
-        approvalA: {
-          personId:
-            firstGuardianInformation?.nationalId?.replace('-', '') || '',
-          name: firstGuardianInformation?.name || '',
-          approved: application.created,
-        },
-        approvalB: secondGuardionInformation?.nationalId
-          ? approvalB
-          : undefined, // TODO make this better
-        contactInfo: {
-          phoneAtHome: firstGuardianInformation?.phoneNumber || '',
-          phoneAtWork: firstGuardianInformation?.phoneNumber || '',
-          phoneMobile: firstGuardianInformation?.phoneNumber || '',
-          email: firstGuardianInformation?.email || '',
-        },
-      })
+    const obj = {
+      guid: application.id,
+      appliedForPersonId: auth.nationalId,
+      priority:
+        answers.priceList.priceChoice === Services.REGULAR ||
+        answers.priceList.priceChoice === Services.REGULAR_DISCOUNT
+          ? 0
+          : 1,
+      deliveryName: answers.priceList.location,
+      contactInfo: {
+        phoneAtHome: applicantInformation.phoneNumber,
+        phoneAtWork: applicantInformation.phoneNumber,
+        phoneMobile: applicantInformation.phoneNumber,
+        email: applicantInformation.email,
+      },
     }
+
+    console.log('obj', obj)
+
+    // let result
+    // if (userIsApplicant) {
+    //   result = await this.passportApi.preregisterIdentityDocument(auth, {
+    //     guid: application.id,
+    //     appliedForPersonId: auth.nationalId,
+    //     priority:
+    //       answers.priceList.priceChoice === Services.REGULAR ||
+    //       answers.priceList.priceChoice === Services.REGULAR_DISCOUNT
+    //         ? 0
+    //         : 1,
+    //     deliveryName: answers.priceList.location,
+    //     contactInfo: {
+    //       phoneAtHome: applicantInformation.phoneNumber,
+    //       phoneAtWork: applicantInformation.phoneNumber,
+    //       phoneMobile: applicantInformation.phoneNumber,
+    //       email: applicantInformation.email,
+    //     },
+    //   })
+    // } else {
+    //   const approvalB = {
+    //     personId: secondGuardionInformation?.nationalId?.replace('-', '') || '',
+    //     name: secondGuardionInformation?.name || '',
+    //     approved: new Date(),
+    //   }
+    //   result = await this.passportApi.preregisterChildIdentityDocument(auth, {
+    //     guid: application.id,
+    //     appliedForPersonId: applicantInformation.nationalId,
+    //     priority:
+    //       answers.priceList.priceChoice === Services.REGULAR_DISCOUNT ? 0 : 1,
+    //     deliveryName: answers.priceList.location,
+    //     approvalA: {
+    //       personId:
+    //         firstGuardianInformation?.nationalId?.replace('-', '') || '',
+    //       name: firstGuardianInformation?.name || '',
+    //       approved: application.created,
+    //     },
+    //     approvalB: secondGuardionInformation?.nationalId
+    //       ? approvalB
+    //       : undefined, // TODO make this better
+    //     contactInfo: {
+    //       phoneAtHome: firstGuardianInformation?.phoneNumber || '',
+    //       phoneAtWork: firstGuardianInformation?.phoneNumber || '',
+    //       phoneMobile: firstGuardianInformation?.phoneNumber || '',
+    //       email: firstGuardianInformation?.email || '',
+    //     },
+    //   })
+    // }
 
     const parentA = {
       ssn: firstGuardianInformation?.nationalId || '',

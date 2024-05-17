@@ -26,12 +26,13 @@ import {
   UserInfoApi,
   NationalRegistryUser,
   DisabiltyLicenseApi,
+  SyslumadurPaymentCatalogApi,
 } from '../dataProviders'
 import { application as applicationMessage } from './messages'
 import { Events, Roles, States, ApiActions } from './constants'
 import { IdCardSchema } from './dataSchema'
 import { buildPaymentState } from '@island.is/application/utils'
-// import { needAssignment } from './utils'
+import { hasReviewer } from '../utils'
 
 const getCode = (application: Application) => {
   const chargeItemCode = getValueViaPath<string>(
@@ -44,10 +45,10 @@ const getCode = (application: Application) => {
   return [chargeItemCode]
 }
 
-// export const hasReviewer = (context: ApplicationContext) => {
-//   const { answers, externalData } = context.application
-//   return needAssignment(answers, externalData)
-// }
+export const needsReview = (context: ApplicationContext) => {
+  const { answers, externalData } = context.application
+  return hasReviewer(answers, externalData)
+}
 
 const IdCardTemplate: ApplicationTemplate<
   ApplicationContext,
@@ -98,7 +99,7 @@ const IdCardTemplate: ApplicationTemplate<
               api: [
                 NationalRegistryUser,
                 UserInfoApi,
-                // SyslumadurPaymentCatalogApi,
+                SyslumadurPaymentCatalogApi,
                 PassportsApi,
                 DistrictsApi,
                 IdentityDocumentApi,
@@ -149,10 +150,10 @@ const IdCardTemplate: ApplicationTemplate<
         organizationId: InstitutionNationalIds.SYSLUMENN,
         chargeItemCodes: getCode,
         submitTarget: [
-          //   {
-          //     target: States.PARENT_B_CONFIRM, // TODO CHANGE TO CHECK ALL PARENTS FOR ALL CHILDREN
-          //     // cond: hasReviewer,
-          //   },
+          {
+            target: States.PARENT_B_CONFIRM,
+            cond: needsReview,
+          },
           {
             target: States.COMPLETED,
           },
@@ -163,13 +164,7 @@ const IdCardTemplate: ApplicationTemplate<
         meta: {
           name: 'ParentB',
           status: 'draft',
-          progress: 0.7, // Þarf þetta?
-          lifecycle: pruneAfterDays(7) /*
-            Á þetta að vera?
-            {
-              ...pruneAfter(sevenDays),
-              shouldDeleteChargeIfPaymentFulfilled: true,
-            } */,
+          lifecycle: pruneAfterDays(7),
           onEntry: defineTemplateApi({
             action: ApiActions.assignParentB,
           }),
@@ -275,9 +270,9 @@ const IdCardTemplate: ApplicationTemplate<
           name: 'Completed',
           status: 'completed',
           lifecycle: pruneAfterDays(3 * 30), // TODO HOW MANY DAYS SHOULD THIS BE?
-          //   onEntry: defineTemplateApi({
-          //     action: ApiActions.submitPassportApplication,
-          //   }),
+          onEntry: defineTemplateApi({
+            action: ApiActions.submitPassportApplication,
+          }),
           roles: [
             {
               id: Roles.APPLICANT,
@@ -323,7 +318,7 @@ const IdCardTemplate: ApplicationTemplate<
       assignToParentB: assign((context) => {
         const parentB = getValueViaPath<string>(
           context.application.answers,
-          'childsPersonalInfo.guardian2.nationalId',
+          'secondGuardionInformation.nationalId',
         )
 
         return {

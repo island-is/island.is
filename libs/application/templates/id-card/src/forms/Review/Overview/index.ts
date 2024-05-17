@@ -159,23 +159,23 @@ export const OverviewSection = buildSection({
           title: '',
           description: '',
         }),
-        buildSubmitField({
-          id: 'overviewApproval',
-          title: '',
-          refetchApplicationAfterSubmit: false,
-          actions: [
-            // {
-            //   event: DefaultEvents.REJECT,
-            //   name: 'Hafna',
-            //   type: 'reject',
-            // },
-            // {
-            //   event: DefaultEvents.SUBMIT,
-            //   name: 'Samþykkja',
-            //   type: 'primary',
-            // },
-          ],
-        }),
+        // buildSubmitField({
+        //   id: 'overviewApproval',
+        //   title: '',
+        //   refetchApplicationAfterSubmit: false,
+        //   actions: [
+        //     // {
+        //     //   event: DefaultEvents.REJECT,
+        //     //   name: 'Hafna',
+        //     //   type: 'reject',
+        //     // },
+        //     // {
+        //     //   event: DefaultEvents.SUBMIT,
+        //     //   name: 'Samþykkja',
+        //     //   type: 'primary',
+        //     // },
+        //   ],
+        // }),
       ],
     }),
   ],

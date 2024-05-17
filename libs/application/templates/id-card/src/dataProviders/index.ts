@@ -43,12 +43,12 @@ export const NationalRegistryUserParentB = NationalRegistryUserApi.configure({
   },
 })
 
-// export const SyslumadurPaymentCatalogApi = PaymentCatalogApi.configure({
-//   params: {
-//     organizationId: InstitutionNationalIds.SYSLUMENN,
-//   },
-//   externalDataId: 'payment',
-// })
+export const SyslumadurPaymentCatalogApi = PaymentCatalogApi.configure({
+  params: {
+    organizationId: InstitutionNationalIds.SYSLUMENN,
+  },
+  externalDataId: 'payment',
+})
 
 export const DeliveryAddressApi = defineTemplateApi({
   action: 'deliveryAddress',
