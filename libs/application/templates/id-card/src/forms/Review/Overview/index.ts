@@ -8,10 +8,12 @@ import {
   buildDividerField,
   buildCustomField,
 } from '@island.is/application/core'
+import { formatPhoneNumber } from '@island.is/application/ui-components'
 import { DefaultEvents } from '@island.is/application/types'
 import { Routes } from '../../../lib/constants'
-import { review } from '../../../lib/messages'
+import { review, idInformation } from '../../../lib/messages'
 import { GetFormattedText } from '../../../utils'
+import { IdCard } from '../../../lib/dataSchema'
 
 export const OverviewSection = buildSection({
   id: 'reviewOverview',
@@ -32,30 +34,33 @@ export const OverviewSection = buildSection({
         buildKeyValueField({
           label: review.labels.applicantName,
           colSpan: '6/12',
-          value: 'Barn 1',
-          // value: ({ answers }) => (answers as HomeSupport).applicant.name,
+          value: ({ answers }) => (answers as IdCard).applicantInformation.name,
         }),
         buildKeyValueField({
           label: review.labels.licenseType,
           colSpan: '6/12',
-          value: 'Nafnskírteini með ferðaheimild',
-          // value: ({ answers }) =>
-          //   (answers as HomeSupport).applicant.nationalId,
+          value: ({ answers }) =>
+            (answers as IdCard).typeOfId === 'WithTravel'
+              ? idInformation.labels.typeOfIdRadioAnswerOne
+              : idInformation.labels.typeOfIdRadioAnswerTwo,
         }),
         // TODO: Check if user has email
         buildKeyValueField({
           label: review.labels.applicantEmail,
           colSpan: '6/12',
-          value: 'guddaj@gmail.com',
-          // value: ({ answers }) => (answers as HomeSupport).applicant.email,
+          value: ({ answers }) =>
+            (answers as IdCard).applicantInformation.email,
         }),
         // TODO: Check if user has phonenumber
         buildKeyValueField({
           label: review.labels.applicantNumber,
           colSpan: '6/12',
-          value: '867-8787',
+          value: ({ answers }) => '',
+          //   formatPhoneNumber(
+          //     (answers as IdCard).applicantInformation.phoneNumber,
+          //   ),
           // condition: (answers) =>
-          //   !!(answers as HomeSupport)?.applicant?.phoneNumber,
+          //   !!(answers as IdCard)?.applicantInformation?.nationalId === answers.,
           // value: ({ answers }) =>
           //   formatPhoneNumber(
           //     (answers as HomeSupport).applicant.phoneNumber,

@@ -33,16 +33,6 @@ export const IdCardSchema = z.object({
       nationalId: z.string(),
       email: z.string().optional(),
       phoneNumber: z.string().optional(),
-
-      // firstGuardianName: z.string().optional(),
-      // firstGuardianNationalId: z.string().optional(),
-      // firstGuardianEmail: z.string().optional(),
-      // firstGuardianPhoneNumber: z.string().optional(),
-
-      // secondGuardianName: z.string().optional(),
-      // secondGuardianNationalId: z.string().optional(),
-      // secondGuardianEmail: z.string().optional(),
-      // secondGuardianPhoneNumber: z.string().optional(),
     })
     .refine((x) => {
       return true

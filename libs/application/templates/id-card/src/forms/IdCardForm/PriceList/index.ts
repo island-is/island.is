@@ -26,6 +26,7 @@ export const PriceListSubSection = buildSection({
         buildRadioField({
           id: `${Routes.PRICELIST}.priceChoice`,
           title: '',
+          width: 'half',
           options: (application) => {
             const hasDiscount = checkForDiscount(application)
             return [
