@@ -25,6 +25,11 @@ const UserInfoOverview = () => {
   const { spouse, childCustody, biologicalChildren } =
     data?.nationalRegistryPerson || {}
 
+  //Filter out children with custody
+  const bioChildren = biologicalChildren?.filter(
+    (child) => !childCustody?.some((c) => c.nationalId === child.nationalId),
+  )
+
   return (
     <>
       <IntroHeader
@@ -77,7 +82,7 @@ const UserInfoOverview = () => {
               familyRelation="custody"
             />
           ))}
-          {biologicalChildren?.map((child) => (
+          {bioChildren?.map((child) => (
             <FamilyMemberCard
               key={child.nationalId}
               title={child.fullName || ''}
@@ -85,7 +90,7 @@ const UserInfoOverview = () => {
               baseId={
                 maskString(child.nationalId, userInfo.profile.nationalId) ?? ''
               }
-              familyRelation="child"
+              familyRelation="bio-child"
             />
           ))}
           <FootNote serviceProviderSlug={THJODSKRA_SLUG} />

@@ -1,4 +1,7 @@
-query NationalRegistryChild($childNationalId: String, $useFakeData: Boolean) {
+query NationalRegistryBioChild(
+  $childNationalId: String
+  $useFakeData: Boolean
+) {
   nationalRegistryPerson(useFakeData: $useFakeData) {
     nationalId
     fullName

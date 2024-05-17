@@ -18,7 +18,7 @@ type UniqueProps =
       baseId: string
     }
   | {
-      familyRelation?: 'child'
+      familyRelation?: 'bio-child'
       baseId: string
     }
   | {
@@ -69,7 +69,7 @@ export const FamilyMemberCard: FC<
         id: 'sp.family:child',
         defaultMessage: 'Barn',
       }),
-      path: InformationPaths.Child.replace(':baseId', baseId ?? ''),
+      path: InformationPaths.BioChild.replace(':baseId', baseId ?? ''),
     }
   }
 

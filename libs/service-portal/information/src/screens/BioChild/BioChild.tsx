@@ -22,19 +22,19 @@ import { formatNameBreaks } from '../../helpers/formatting'
 import { spmm } from '../../lib/messages'
 import { unmaskString } from '@island.is/shared/utils'
 import { Problem } from '@island.is/react-spa/shared'
-import { useNationalRegistryChildQuery } from './Child.generated'
+import { useNationalRegistryBioChildQuery } from './BioChild.generated'
 
 type UseParams = {
   baseId: string
 }
 
-const Child = () => {
+const BioChild = () => {
   useNamespaces('sp.family')
   const { formatMessage } = useLocale()
   const userInfo = useUserInfo()
   const { baseId } = useParams() as UseParams
 
-  const { data, loading, error } = useNationalRegistryChildQuery({
+  const { data, loading, error } = useNationalRegistryBioChildQuery({
     variables: {
       childNationalId: unmaskString(baseId, userInfo.profile.nationalId),
     },
@@ -148,4 +148,4 @@ const Child = () => {
   )
 }
 
-export default Child
+export default BioChild

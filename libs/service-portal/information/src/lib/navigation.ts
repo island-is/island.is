@@ -28,7 +28,12 @@ export const informationNavigation: PortalNavigationItem = {
         {
           name: m.familyChild,
           navHide: true,
-          path: InformationPaths.Child,
+          path: InformationPaths.BioChild,
+        },
+        {
+          name: m.familyChild,
+          navHide: true,
+          path: InformationPaths.ChildCustody,
         },
         {
           name: m.familyChild,
