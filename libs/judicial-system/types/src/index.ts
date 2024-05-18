@@ -65,6 +65,7 @@ export {
   completedIndictmentCaseStates,
   completedCaseStates,
   isCompletedCase,
+  hasIndictmentCaseBeenSubmittedToCourt,
   getStatementDeadline,
   prosecutorCanSelectDefenderForInvestigationCase,
   isIndictmentCaseState,

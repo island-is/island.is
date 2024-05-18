@@ -38,11 +38,11 @@ describe('LimitedAccessCaseController - Get case files record pdf', () => {
   ] as CaseFile[]
   const theCase = {
     id: caseId,
-    state: CaseState.ACCEPTED,
+    state: CaseState.COMPLETED,
     policeCaseNumbers: [uuid(), policeCaseNumber, uuid()],
     caseFiles,
   } as Case
-  const pdf = uuid()
+  const pdf = Buffer.from(uuid())
   const res = { end: jest.fn() } as unknown as Response
 
   let mockawsS3Service: AwsS3Service
@@ -55,6 +55,8 @@ describe('LimitedAccessCaseController - Get case files record pdf', () => {
     mockawsS3Service = awsS3Service
     const mockGetObject = mockawsS3Service.getObject as jest.Mock
     mockGetObject.mockRejectedValue(new Error('Some error'))
+    const mockPutObject = mockawsS3Service.putObject as jest.Mock
+    mockPutObject.mockRejectedValue(new Error('Some error'))
 
     givenWhenThen = async (policeCaseNumber: string) => {
       const then = {} as Then
@@ -96,6 +98,10 @@ describe('LimitedAccessCaseController - Get case files record pdf', () => {
         policeCaseNumber,
         expect.any(Array),
         expect.any(Function),
+      )
+      expect(mockawsS3Service.putObject).toHaveBeenCalledWith(
+        `indictments/completed/${caseId}/${policeCaseNumber}/caseFilesRecord.pdf`,
+        pdf.toString('binary'),
       )
       expect(res.end).toHaveBeenCalledWith(pdf)
     })

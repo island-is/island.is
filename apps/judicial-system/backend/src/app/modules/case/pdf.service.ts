@@ -10,8 +10,8 @@ import { LOGGER_PROVIDER } from '@island.is/logging'
 
 import {
   CaseFileCategory,
-  CaseState,
   EventType,
+  hasIndictmentCaseBeenSubmittedToCourt,
   type IndictmentConfirmation,
   isCompletedCase,
   type User as TUser,
@@ -166,6 +166,8 @@ export class PDFService {
     await this.refreshFormatMessage()
 
     let confirmation: IndictmentConfirmation = undefined
+
+    // TODO: Move og nota theCase
     const confirmationEvent = await this.eventLogService.findEventTypeByCaseId(
       EventType.INDICTMENT_CONFIRMED,
       theCase.id,
@@ -193,31 +195,63 @@ export class PDFService {
     return createConfirmedIndictment(confirmation, indictmentPDF)
   }
 
+  async tryGetCaseFilesRecordPdfFromS3(
+    theCase: Case,
+    policeCaseNumber: string,
+  ): Promise<Buffer | undefined> {
+    if (isCompletedCase(theCase.state)) {
+      try {
+        return await this.awsS3Service.getObject(
+          `indictments/completed/${theCase.id}/${policeCaseNumber}/caseFilesRecord.pdf`,
+        )
+      } catch {
+        // Ignore the error and try the original key
+      }
+    }
+
+    try {
+      return await this.awsS3Service.getObject(
+        `indictments/${theCase.id}/${policeCaseNumber}/caseFilesRecord.pdf`,
+      )
+    } catch {
+      // Ignore the error and return undefined
+    }
+
+    return undefined
+  }
+
+  private tryUploadCaseFilesRecordPdfToS3(
+    theCase: Case,
+    policeCaseNumber: string,
+    generatedPdf: Buffer,
+  ) {
+    this.awsS3Service
+      .putObject(
+        `indictments/${isCompletedCase(theCase.state) ? 'completed/' : ''}${
+          theCase.id
+        }/${policeCaseNumber}/caseFilesRecord.pdf`,
+        generatedPdf.toString('binary'),
+      )
+      .catch((reason) => {
+        this.logger.error(
+          `Failed to upload case files record pdf to AWS S3 for case ${theCase.id} and police case ${policeCaseNumber}`,
+          { reason },
+        )
+      })
+  }
+
   async getCaseFilesRecordPdf(
     theCase: Case,
     policeCaseNumber: string,
   ): Promise<Buffer> {
-    if (
-      ![CaseState.NEW, CaseState.DRAFT, CaseState.SUBMITTED].includes(
-        theCase.state,
+    if (hasIndictmentCaseBeenSubmittedToCourt(theCase.state)) {
+      const pdf = await this.tryGetCaseFilesRecordPdfFromS3(
+        theCase,
+        policeCaseNumber,
       )
-    ) {
-      if (isCompletedCase(theCase.state)) {
-        try {
-          return await this.awsS3Service.getObject(
-            `indictments/completed/${theCase.id}/${policeCaseNumber}/caseFilesRecord.pdf`,
-          )
-        } catch {
-          // Ignore the error and try the original key
-        }
-      }
 
-      try {
-        return await this.awsS3Service.getObject(
-          `indictments/${theCase.id}/${policeCaseNumber}/caseFilesRecord.pdf`,
-        )
-      } catch {
-        // Ignore the error and generate the pdf
+      if (pdf) {
+        return pdf
       }
     }
 
@@ -226,6 +260,17 @@ export class PDFService {
       policeCaseNumber,
     )
 
-    return this.throttle
+    const generatedPdf = await this.throttle
+
+    if (hasIndictmentCaseBeenSubmittedToCourt(theCase.state)) {
+      // No need to wait for the upload to finish
+      this.tryUploadCaseFilesRecordPdfToS3(
+        theCase,
+        policeCaseNumber,
+        generatedPdf,
+      )
+    }
+
+    return generatedPdf
   }
 }

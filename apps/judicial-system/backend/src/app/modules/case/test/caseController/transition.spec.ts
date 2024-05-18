@@ -365,6 +365,8 @@ describe('CaseController - Transition', () => {
                 transition === CaseTransition.COMPLETE ? date : undefined,
               judgeId:
                 transition === CaseTransition.REDISTRIBUTE ? null : undefined,
+              indictmentDeniedExplanation:
+                transition === CaseTransition.SUBMIT ? null : undefined,
             },
             { where: { id: caseId }, transaction },
           )
