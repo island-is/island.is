@@ -435,6 +435,7 @@ const RealEstateNumberField = ({
       label={formatMessage(m.propertyNumber)}
       defaultValue={propertyNumberInput}
       error={error ? formatMessage(m.errorPropertyNumber) : undefined}
+      placeholder={propertyNumberInput > 0 ? '' : props.field.placeholder}
       {...props}
     />
   )
