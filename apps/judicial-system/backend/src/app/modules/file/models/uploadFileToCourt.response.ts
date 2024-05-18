@@ -1,6 +1,6 @@
 import { ApiProperty } from '@nestjs/swagger'
 
 export class UploadFileToCourtResponse {
-  @ApiProperty()
+  @ApiProperty({ type: Boolean })
   success!: boolean
 }

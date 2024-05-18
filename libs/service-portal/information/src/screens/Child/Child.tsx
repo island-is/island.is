@@ -39,7 +39,6 @@ const Child = () => {
 
   const { data, loading, error } = useNationalRegistryChildCustodyQuery({
     variables: {
-      api: 'v3',
       childNationalId: unmaskString(baseId, userInfo.profile.nationalId),
     },
   })
