@@ -8,26 +8,26 @@ import {
 
 import { ApiProperty, ApiPropertyOptional } from '@nestjs/swagger'
 
-import { EventType } from '@island.is/judicial-system/types'
+import { EventType, UserRole } from '@island.is/judicial-system/types'
 
 export class CreateEventLogDto {
   @IsNotEmpty()
   @IsEnum(EventType)
-  @ApiProperty()
+  @ApiProperty({ enum: EventType })
   readonly eventType!: EventType
 
   @IsOptional()
   @IsUUID()
-  @ApiPropertyOptional()
+  @ApiPropertyOptional({ type: String })
   readonly caseId?: string
 
   @IsOptional()
   @IsString()
-  @ApiPropertyOptional()
+  @ApiPropertyOptional({ type: String })
   readonly nationalId?: string
 
   @IsOptional()
-  @IsString()
-  @ApiPropertyOptional()
-  readonly userRole?: string
+  @IsEnum(UserRole)
+  @ApiPropertyOptional({ enum: UserRole })
+  readonly userRole?: UserRole
 }
