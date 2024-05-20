@@ -6,6 +6,7 @@ import {
   CaseOrigin,
   CaseState,
   CaseType,
+  IndictmentSubtype,
   User,
 } from '@island.is/judicial-system/types'
 
@@ -15,7 +16,7 @@ import { nowFactory } from '../../../../factories'
 import { createIndictment } from '../../../../formatters'
 import { randomDate } from '../../../../test'
 import { AwsS3Service } from '../../../aws-s3'
-import { CourtDocumentType, PoliceService } from '../../../police'
+import { PoliceDocumentType, PoliceService } from '../../../police'
 import { Case } from '../../models/case.model'
 import { DeliverResponse } from '../../models/deliver.response'
 
@@ -116,7 +117,7 @@ describe('InternalCaseController - Deliver indictment to police', () => {
         '',
         [
           {
-            type: CourtDocumentType.RVAS,
+            type: PoliceDocumentType.RVAS,
             courtDocument: Base64.btoa(indictmentPdf),
           },
         ],
@@ -141,6 +142,9 @@ describe('InternalCaseController - Deliver indictment to police', () => {
       policeCaseNumbers: [policeCaseNumber],
       courtCaseNumber,
       defendants: [{ nationalId: defendantNationalId }],
+      indictmentSubtypes: {
+        [policeCaseNumber]: [IndictmentSubtype.TRAFFIC_VIOLATION],
+      },
     } as Case
 
     let then: Then
@@ -173,7 +177,7 @@ describe('InternalCaseController - Deliver indictment to police', () => {
         '',
         [
           {
-            type: CourtDocumentType.RVAS,
+            type: PoliceDocumentType.RVAS,
             courtDocument: Base64.btoa(indictmentPdf),
           },
         ],

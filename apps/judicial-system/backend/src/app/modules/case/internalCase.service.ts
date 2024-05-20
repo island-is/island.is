@@ -23,11 +23,10 @@ import {
   CaseOrigin,
   CaseState,
   CaseType,
-  EventType,
-  type IndictmentConfirmation,
   isIndictmentCase,
   isProsecutionUser,
   isRestrictionCase,
+  isTrafficViolationCase,
   NotificationType,
   restrictionCases,
   type User as TUser,
@@ -36,7 +35,6 @@ import {
 
 import { nowFactory, uuidFactory } from '../../factories'
 import {
-  createIndictment,
   getCourtRecordPdfAsBuffer,
   getCourtRecordPdfAsString,
   getCustodyNoticePdfAsString,
@@ -51,7 +49,7 @@ import { CaseEvent, EventService } from '../event'
 import { EventLogService } from '../event-log'
 import { CaseFile, FileService } from '../file'
 import { IndictmentCount, IndictmentCountService } from '../indictment-count'
-import { CourtDocumentType, PoliceService } from '../police'
+import { PoliceDocument, PoliceDocumentType, PoliceService } from '../police'
 import { UserService } from '../user'
 import { InternalCreateCaseDto } from './dto/internalCreateCase.dto'
 import { archiveFilter } from './filters/case.archiveFilter'
@@ -728,7 +726,7 @@ export class InternalCaseService {
   private async deliverCaseToPoliceWithFiles(
     theCase: Case,
     user: TUser,
-    courtDocuments: { type: CourtDocumentType; courtDocument: string }[],
+    courtDocuments: PoliceDocument[],
   ): Promise<boolean> {
     const originalAncestor = await this.findOriginalAncestor(theCase)
 
@@ -770,13 +768,13 @@ export class InternalCaseService {
       .then(async () => {
         const courtDocuments = [
           {
-            type: CourtDocumentType.RVKR,
+            type: PoliceDocumentType.RVKR,
             courtDocument: Base64.btoa(
               await getRequestPdfAsString(theCase, this.formatMessage),
             ),
           },
           {
-            type: CourtDocumentType.RVTB,
+            type: PoliceDocumentType.RVTB,
             courtDocument: Base64.btoa(
               await getCourtRecordPdfAsString(theCase, this.formatMessage),
             ),
@@ -786,7 +784,7 @@ export class InternalCaseService {
           ) && theCase.state === CaseState.ACCEPTED
             ? [
                 {
-                  type: CourtDocumentType.RVVI,
+                  type: PoliceDocumentType.RVVI,
                   courtDocument: Base64.btoa(
                     await getCustodyNoticePdfAsString(
                       theCase,
@@ -832,8 +830,8 @@ export class InternalCaseService {
           return {
             type:
               caseFile.category === CaseFileCategory.COURT_RECORD
-                ? CourtDocumentType.RVTB
-                : CourtDocumentType.RVDO,
+                ? PoliceDocumentType.RVTB
+                : PoliceDocumentType.RVDO,
             courtDocument: Base64.btoa(file.toString('binary')),
           }
         }) ?? [],
@@ -857,73 +855,53 @@ export class InternalCaseService {
     theCase: Case,
     user: TUser,
   ): Promise<DeliverResponse> {
-    const delivered = await Promise.all(
-      theCase.caseFiles
-        ?.filter(
-          (caseFile) =>
-            caseFile.category === CaseFileCategory.INDICTMENT && caseFile.key,
-        )
-        .map(async (caseFile) => {
-          const file = await this.awsS3Service.getObject(caseFile.key ?? '')
+    try {
+      let policeDocuments: PoliceDocument[]
 
-          return {
-            type: CourtDocumentType.RVAS,
-            courtDocument: Base64.btoa(file.toString('binary')),
-          }
-        }) ?? [],
-    )
-      .then(async (indictmentDocuments) => {
-        if (indictmentDocuments.length === 0) {
-          // TODO: move
-          let confirmation: IndictmentConfirmation = undefined
-          const confirmationEvent =
-            // TODO: nota theCase
-            await this.eventLogService.findEventTypeByCaseId(
-              EventType.INDICTMENT_CONFIRMED,
-              theCase.id,
-            )
+      if (isTrafficViolationCase(theCase)) {
+        const file = await this.pdfService.getIndictmentPdf(theCase)
 
-          if (confirmationEvent && confirmationEvent.nationalId) {
-            const actor = await this.userService.findByNationalId(
-              confirmationEvent.nationalId,
-            )
-
-            confirmation = {
-              actor: actor.name,
-              institution: actor.institution?.name ?? '',
-              date: confirmationEvent.created,
-            }
-          }
-
-          const file = await this.refreshFormatMessage().then(async () =>
-            createIndictment(theCase, this.formatMessage, confirmation),
-          )
-
-          indictmentDocuments.push({
-            type: CourtDocumentType.RVAS,
-            courtDocument: Base64.btoa(file.toString('binary')),
-          })
-        }
-
-        return this.deliverCaseToPoliceWithFiles(
-          theCase,
-          user,
-          indictmentDocuments,
-        )
-      })
-      .catch((reason) => {
-        // Tolerate failure, but log error
-        this.logger.error(
-          `Failed to deliver indictment for case ${theCase.id} to police`,
+        policeDocuments = [
           {
-            reason,
+            type: PoliceDocumentType.RVAS,
+            courtDocument: Base64.btoa(file.toString('binary')),
           },
+        ]
+      } else {
+        policeDocuments = await Promise.all(
+          theCase.caseFiles
+            ?.filter(
+              (caseFile) =>
+                caseFile.category === CaseFileCategory.INDICTMENT &&
+                caseFile.key,
+            )
+            .map(async (caseFile) => {
+              const file = await this.awsS3Service.getObject(caseFile.key ?? '')
+
+              return {
+                type: PoliceDocumentType.RVAS,
+                courtDocument: Base64.btoa(file.toString('binary')),
+              }
+            }) ?? [],
         )
+      }
 
-        return false
-      })
+      const delivered = await this.deliverCaseToPoliceWithFiles(
+        theCase,
+        user,
+        policeDocuments,
+      )
 
-    return { delivered }
+      return { delivered }
+    } catch (error) {
+      // Tolerate failure, but log error
+      this.logger.error(
+        `Failed to deliver indictment for case ${theCase.id} to police`,
+        { error },
+      )
+
+      return { delivered: false }
+    }
   }
 
   async deliverCaseFilesRecordToPolice(
@@ -936,7 +914,7 @@ export class InternalCaseService {
       .then((pdf) =>
         this.deliverCaseToPoliceWithFiles(theCase, user, [
           {
-            type: CourtDocumentType.RVMG,
+            type: PoliceDocumentType.RVMG,
             courtDocument: Base64.btoa(pdf.toString('binary')),
           },
         ]),
@@ -962,7 +940,7 @@ export class InternalCaseService {
       .then((pdf) =>
         this.deliverCaseToPoliceWithFiles(theCase, user, [
           {
-            type: CourtDocumentType.RVUR,
+            type: PoliceDocumentType.RVUR,
             courtDocument: Base64.btoa(pdf.toString('binary')),
           },
         ]),
@@ -991,7 +969,7 @@ export class InternalCaseService {
           const file = await this.awsS3Service.getObject(caseFile.key ?? '')
 
           return {
-            type: CourtDocumentType.RVUL,
+            type: PoliceDocumentType.RVUL,
             courtDocument: Base64.btoa(file.toString('binary')),
           }
         }) ?? [],

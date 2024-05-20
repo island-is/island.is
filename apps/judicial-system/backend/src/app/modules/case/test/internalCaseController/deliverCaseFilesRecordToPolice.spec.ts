@@ -11,7 +11,7 @@ import { nowFactory } from '../../../../factories'
 import { createCaseFilesRecord } from '../../../../formatters'
 import { randomDate } from '../../../../test'
 import { AwsS3Service } from '../../../aws-s3'
-import { CourtDocumentType, PoliceService } from '../../../police'
+import { PoliceDocumentType, PoliceService } from '../../../police'
 import { Case } from '../../models/case.model'
 import { DeliverResponse } from '../../models/deliver.response'
 
@@ -137,7 +137,7 @@ describe('InternalCaseController - Deliver case files record to police', () => {
         '',
         [
           {
-            type: CourtDocumentType.RVMG,
+            type: PoliceDocumentType.RVMG,
             courtDocument: Base64.btoa(pdf.toString('binary')),
           },
         ],
@@ -167,7 +167,7 @@ describe('InternalCaseController - Deliver case files record to police', () => {
         '',
         [
           {
-            type: CourtDocumentType.RVMG,
+            type: PoliceDocumentType.RVMG,
             courtDocument: Base64.btoa(pdf.toString('binary')),
           },
         ],
@@ -197,7 +197,7 @@ describe('InternalCaseController - Deliver case files record to police', () => {
         '',
         [
           {
-            type: CourtDocumentType.RVMG,
+            type: PoliceDocumentType.RVMG,
             courtDocument: Base64.btoa(pdf.toString('binary')),
           },
         ],

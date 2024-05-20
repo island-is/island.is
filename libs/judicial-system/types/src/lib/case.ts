@@ -427,7 +427,3 @@ export const isRequestCaseTransition = (
     transition as RequestCaseTransition,
   )
 }
-
-export type IndictmentConfirmation =
-  | { actor: string; institution: string; date: Date }
-  | undefined

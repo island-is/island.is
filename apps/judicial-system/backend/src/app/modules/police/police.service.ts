@@ -37,7 +37,7 @@ import { PoliceCaseInfo } from './models/policeCaseInfo.model'
 import { UploadPoliceCaseFileResponse } from './models/uploadPoliceCaseFile.response'
 import { policeModuleConfig } from './police.config'
 
-export enum CourtDocumentType {
+export enum PoliceDocumentType {
   RVKR = 'RVKR', // Krafa
   RVTB = 'RVTB', // Þingbók
   RVUR = 'RVUR', // Úrskurður
@@ -46,6 +46,11 @@ export enum CourtDocumentType {
   RVDO = 'RVDO', // Dómur
   RVAS = 'RVAS', // Ákæra
   RVMG = 'RVMG', // Málsgögn
+}
+
+export interface PoliceDocument {
+  type: PoliceDocumentType
+  courtDocument: string
 }
 
 const getChapter = (category?: string): number | undefined => {
@@ -439,7 +444,7 @@ export class PoliceService {
     defendantNationalId: string,
     validToDate: Date,
     caseConclusion: string,
-    courtDocuments: { type: CourtDocumentType; courtDocument: string }[],
+    courtDocuments: PoliceDocument[],
   ): Promise<boolean> {
     return this.fetchPoliceCaseApi(
       `${this.xRoadPath}/V2/UpdateRVCase/${caseId}`,

@@ -14,7 +14,7 @@ import { createTestingCaseModule } from '../createTestingCaseModule'
 import { nowFactory } from '../../../../factories'
 import { randomDate } from '../../../../test'
 import { AwsS3Service } from '../../../aws-s3'
-import { CourtDocumentType, PoliceService } from '../../../police'
+import { PoliceDocumentType, PoliceService } from '../../../police'
 import { Case } from '../../models/case.model'
 import { DeliverResponse } from '../../models/deliver.response'
 
@@ -115,11 +115,11 @@ describe('InternalCaseController - Deliver indictment case to police', () => {
         '',
         [
           {
-            type: CourtDocumentType.RVTB,
+            type: PoliceDocumentType.RVTB,
             courtDocument: Base64.btoa(courtRecordPdf),
           },
           {
-            type: CourtDocumentType.RVDO,
+            type: PoliceDocumentType.RVDO,
             courtDocument: Base64.btoa(rulingPdf),
           },
         ],
