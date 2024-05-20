@@ -1,5 +1,4 @@
 import { Observable } from 'rxjs'
-import { map } from 'rxjs/operators'
 
 import {
   CallHandler,
@@ -12,7 +11,6 @@ import {
   CaseFileCategory,
   CaseState,
   CaseTransition,
-  EventType,
   isIndictmentCase,
   isTrafficViolationCase,
   User,
@@ -45,7 +43,7 @@ export class TransitionInterceptor implements NestInterceptor {
 
     if (
       isIndictmentCase(theCase.type) &&
-      !isTrafficViolationCase(theCase.indictmentSubtypes, theCase.type) &&
+      !isTrafficViolationCase(theCase) &&
       theCase.state === CaseState.WAITING_FOR_CONFIRMATION &&
       dto.transition === CaseTransition.SUBMIT
     ) {
