@@ -1,8 +1,8 @@
 export enum DefenseDecision {
-  NO_DEFENDER = 'NO_DEFENDER',
-  CHOOSING_LAWYER = 'CHOOSING_LAWYER',
-  DELAY_CHOICE = 'DELAY_CHOICE',
-  CHOOSE_FOR_ME = 'CHOOSE_FOR_ME',
+  NO_DEFENDER = 'Ég óska ekki eftir verjanda.',
+  CHOOSING_LAWYER = 'Ég óska þess að valinn lögmaður verði skipaður verjandi minn.',
+  DELAY_CHOICE = 'Ég óska eftir fresti fram að þingfestingu til þess að tilnefna verjanda.',
+  CHOOSE_FOR_ME = 'Ég fel dómara málsins að tilnefna og skipa mér verjanda.',
 }
 
 export enum Components {

@@ -4,12 +4,11 @@ import { Box, Divider, Link, Stack, Text } from '@island.is/island-ui/core'
 import { useNamespaces } from '@island.is/localization'
 import { UserInfoLine } from '@island.is/service-portal/core'
 import { Items } from '../../helpers/mockData'
+import { LawAndOrderCourtCaseGroups } from '@island.is/api/schema'
 import * as styles from './InfoLines.css'
+
 interface Props {
-  groups: {
-    label: string
-    items: Items[] | undefined
-  }[]
+  groups: Array<LawAndOrderCourtCaseGroups>
   loading?: boolean
 }
 
@@ -29,8 +28,8 @@ const InfoLines: React.FC<React.PropsWithChildren<Props>> = (props) => {
                   <UserInfoLine
                     loading={props.loading}
                     title={x.label && i === 0 ? x.label : undefined}
-                    label={y.label}
-                    content={y.value}
+                    label={y.label ?? ''}
+                    content={y.value ?? ''}
                     renderContent={() =>
                       y.link ? (
                         <Link

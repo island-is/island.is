@@ -170,6 +170,8 @@ import { HealthController } from './health.controller'
 import { DocumentClientConfig } from '@island.is/clients/documents'
 import { HousingBenefitsConfig } from '@island.is/clients/hms-housing-benefits'
 import { UserProfileClientConfig } from '@island.is/clients/user-profile'
+import { LawAndOrderClientConfig } from '@island.is/clients/law-and-order'
+import { LawAndOrderModule } from '@island.is/api/domains/law-and-order'
 
 const environment = getConfig
 
@@ -311,6 +313,7 @@ const environment = getConfig
     AuthAdminModule,
     HousingBenefitCalculatorModule,
     SignatureCollectionModule,
+    LawAndOrderModule,
     ConfigModule.forRoot({
       isGlobal: true,
       load: [
@@ -390,6 +393,7 @@ const environment = getConfig
         UniversityGatewayApiClientConfig,
         LicenseConfig,
         UserProfileClientConfig,
+        LawAndOrderClientConfig,
       ],
     }),
   ],

@@ -1,0 +1,14 @@
+query GetCourtCases {
+  courtCasesList {
+    items {
+      id
+      caseNumber
+      caseNumberTitle
+      type
+      state {
+        title
+      }
+      acknowledged
+    }
+  }
+}

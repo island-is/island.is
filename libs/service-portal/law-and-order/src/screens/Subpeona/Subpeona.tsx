@@ -15,17 +15,17 @@ import {
   NotFound,
   UserInfoLine,
 } from '@island.is/service-portal/core'
-import { messages } from '../lib/messages'
+import { messages } from '../../lib/messages'
 import { useLocale, useNamespaces } from '@island.is/localization'
-import { getSubpeona } from '../helpers/mockData'
+import { getSubpeona } from '../../helpers/mockData'
 import { useParams } from 'react-router-dom'
-import InfoLines from '../components/InfoLines/InfoLines'
-import DefenderChoices from '../components/DefenderChoices/DefenderChoices'
+import InfoLines from '../../components/InfoLines/InfoLines'
+import DefenderChoices from '../../components/DefenderChoices/DefenderChoices'
 import { useState } from 'react'
-import ConfirmationModal from '../components/ConfirmationModal/ConfirmationModal'
-import { useLawAndOrderContext } from '../helpers/LawAndOrderContext'
-import CourtCaseDetail from './CourtCaseDetail'
-import { DefenseDecision } from '../lib/const'
+import ConfirmationModal from '../../components/ConfirmationModal/ConfirmationModal'
+import { useLawAndOrderContext } from '../../helpers/LawAndOrderContext'
+import CourtCaseDetail from '../CourtCaseDetail/CourtCaseDetail'
+import { DefenseDecision } from '../../lib/const'
 
 type UseParams = {
   id: string
@@ -39,7 +39,8 @@ const Subpeona = () => {
   const noInfo = data?.subpeonaDetail === null
   const subpeona = data?.subpeonaDetail
   const [defenderPopUp, setDefenderPopUp] = useState<boolean>(false)
-  const { subpeonaAcknowledged, defenseChoice } = useLawAndOrderContext()
+  const { subpeonaAcknowledged, defenseChoice, lawyerSelected } =
+    useLawAndOrderContext()
 
   if (error && !loading) {
     return (
@@ -60,7 +61,7 @@ const Subpeona = () => {
   }
 
   if (typeof subpeonaAcknowledged === 'undefined') {
-    return <ConfirmationModal id={subpeona?.data.id} />
+    return <ConfirmationModal id={subpeona?.data.id.toString()} />
   }
 
   if (subpeonaAcknowledged === false) {
@@ -88,17 +89,14 @@ const Subpeona = () => {
       {subpeona?.data.groups && (
         <InfoLines groups={subpeona?.data.groups} loading={loading} />
       )}
-      {(subpeona?.data?.chosenDefender || defenseChoice) && (
+      {(subpeona?.data?.chosenDefender || lawyerSelected || defenseChoice) && (
         <>
           <Box paddingTop={1} />
           <UserInfoLine
             loading={loading}
             label={messages.defenseAttorney}
             content={
-              subpeona?.data?.chosenDefender ??
-              (defenseChoice
-                ? DefenseDecision[defenseChoice as keyof typeof DefenseDecision]
-                : undefined)
+              subpeona?.data?.chosenDefender ?? lawyerSelected ?? defenseChoice
             }
             labelColumnSpan={['1/1', '6/12']}
             valueColumnSpan={['1/1', '4/12']}

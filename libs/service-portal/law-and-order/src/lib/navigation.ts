@@ -22,6 +22,7 @@ export const lawAndOrderNavigation: PortalNavigationItem = {
           name: m.courtCases,
           path: LawAndOrderPaths.CourtCaseDetail,
           breadcrumbHide: true,
+          navHide: true,
           children: [
             {
               name: m.subpeona,

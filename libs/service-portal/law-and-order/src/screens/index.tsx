@@ -1,9 +1,9 @@
 import { FC } from 'react'
 import { LawAndOrderProvider } from '../helpers/LawAndOrderContext'
-import CourtCaseDetail from './CourtCaseDetail'
-import CourtCases from './CourtCases'
-import LawAndOrderOverview from './LawAndOrderOverview'
-import Subpeona from './Subpeona'
+import CourtCaseDetail from './CourtCaseDetail/CourtCaseDetail'
+import CourtCases from './CourtCases/CourtCases'
+import LawAndOrderOverview from './Overview/LawAndOrderOverview'
+import Subpeona from './Subpeona/Subpeona'
 import { Components } from '../lib/const'
 
 interface Props {

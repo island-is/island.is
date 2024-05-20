@@ -1517,7 +1517,7 @@ export const m = defineMessages({
   },
   lawAndOrderDashboard: {
     id: 'service.portal:law-and-order-dashboard',
-    defaultMessage: 'Þín mál í dómskerfinu.',
+    defaultMessage: 'Þín mál í dómskerfinu',
   },
   lawAndOrderDescription: {
     id: 'service.portal:law-and-order-description',

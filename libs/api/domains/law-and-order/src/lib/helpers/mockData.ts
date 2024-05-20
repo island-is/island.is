@@ -1,5 +1,4 @@
 /* eslint-disable local-rules/disallow-kennitalas */
-import { LawAndOrderPaths } from '../lib/paths'
 
 export type Process = {
   state: State
@@ -42,7 +41,7 @@ type Cases = {
   }
   actions?: Actions[]
   data: {
-    id: number
+    id: string
     caseNumber: string
     caseNumberTitle: string
     acknowledged?: boolean
@@ -86,7 +85,7 @@ export const listCases = () => {
         },
       ],
       data: {
-        id: 123,
+        id: '123',
         caseNumber: 'S-0000',
         caseNumberTitle: 'Málsnúmer S-0000/2022',
         type: 'Ákæra',
@@ -111,11 +110,6 @@ export const listCases = () => {
               {
                 label: 'Fyrirkall sent',
                 value: '6.maí 2022',
-                action: {
-                  label: 'Sjá fyrirkall',
-                  url: LawAndOrderPaths.SubpeonaDetail.replace(':id', '123'),
-                  type: 'popup',
-                },
               },
             ],
           },
@@ -179,7 +173,7 @@ export const listCases = () => {
         },
       ],
       data: {
-        id: 1234,
+        id: '1234',
         caseNumber: 'S-1111',
         caseNumberTitle: 'Málsnúmer S-1111/2022',
         type: 'Ákæra',
@@ -204,11 +198,6 @@ export const listCases = () => {
               {
                 label: 'Fyrirkall sent',
                 value: '6.maí 2022',
-                action: {
-                  label: 'Sjá fyrirkall',
-                  url: LawAndOrderPaths.SubpeonaDetail.replace(':id', '123'),
-                  type: 'popup',
-                },
               },
             ],
           },
@@ -272,7 +261,7 @@ export const listCases = () => {
         },
       ],
       data: {
-        id: 12345,
+        id: '12345',
         caseNumber: 'S-2222',
         caseNumberTitle: 'Málsnúmer S-2222/2022',
         type: 'Ákæra',
@@ -297,11 +286,6 @@ export const listCases = () => {
               {
                 label: 'Fyrirkall sent',
                 value: '6.maí 2022',
-                action: {
-                  label: 'Sjá fyrirkall',
-                  url: LawAndOrderPaths.SubpeonaDetail.replace(':id', '123'),
-                  type: 'popup',
-                },
               },
             ],
           },
@@ -358,18 +342,18 @@ export const listCases = () => {
     },
   ]
 
-  return { data: cases, loading: false, error: false }
+  return cases
 }
 
-export const getCase = (id: number) => {
+export const getCase = (id: string) => {
   const cases = listCases()
 
-  const detailedCase = cases.data.find((x) => x.data.id === id) ?? null
+  const detailedCase = cases.find((x) => x.data.id === id) ?? null
 
   const courtCaseDetail = {
     courtCaseDetail: detailedCase,
   }
-  return { data: courtCaseDetail, loading: false, error: false }
+  return { data: detailedCase, loading: false, error: false }
 }
 
 const lawyers: Lawyers[] = [

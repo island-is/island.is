@@ -8,16 +8,17 @@ import {
   NotFound,
   m,
 } from '@island.is/service-portal/core'
-import { messages } from '../lib/messages'
+import { messages } from '../../lib/messages'
 import { useLocale, useNamespaces } from '@island.is/localization'
-import { LawAndOrderPaths } from '../lib/paths'
-import { listCases } from '../helpers/mockData'
+import { LawAndOrderPaths } from '../../lib/paths'
+import { listCases } from '../../helpers/mockData'
+import { useGetCourtCasesQuery } from './CourtCases.generated'
 
 const CourtCases = () => {
   useNamespaces('sp.law-and-order')
-  const { data, loading, error } = listCases()
-  const noInfo = data.length === 0
-  const cases = data
+  const { data, loading, error } = useGetCourtCasesQuery()
+  const cases = data?.courtCasesList?.items
+  const noInfo = cases === null
   const { formatMessage } = useLocale()
 
   if (error && !loading) {
@@ -54,19 +55,23 @@ const CourtCases = () => {
       )}
       {!loading &&
         !error &&
-        cases.map((x) => (
+        cases?.map((x) => (
           <Box marginTop={2}>
             <ActionCard
               translateLabel="no"
-              heading={x.data.caseNumberTitle}
-              text={x.data.type}
-              tag={{ label: x.data.status, variant: 'blue', outlined: false }}
+              heading={x.caseNumberTitle ?? ''}
+              text={x.type ?? ''}
+              tag={{
+                label: x.state?.title ?? '',
+                variant: 'blue',
+                outlined: false,
+              }}
               cta={{
                 label: formatMessage(messages.seeInfo),
                 variant: 'text',
                 url: LawAndOrderPaths.CourtCaseDetail.replace(
                   ':id',
-                  x.data.id.toString(),
+                  x.id ?? '',
                 ),
               }}
             />

@@ -156,6 +156,9 @@
       "@island.is/api/domains/islykill": [
         "libs/api/domains/islykill/src/index.ts"
       ],
+      "@island.is/api/domains/law-and-order": [
+        "libs/api/domains/law-and-order/src/index.ts"
+      ],
       "@island.is/api/domains/license-service": [
         "libs/api/domains/license-service/src/index.ts"
       ],
@@ -653,6 +656,9 @@
       "@island.is/clients/islykill": ["libs/clients/islykill/src/index.ts"],
       "@island.is/clients/judicial-administration": [
         "libs/clients/judicial-administration/src/index.ts"
+      ],
+      "@island.is/clients/law-and-order": [
+        "libs/clients/law-and-order/src/index.ts"
       ],
       "@island.is/clients/license-client": [
         "libs/clients/license-client/src/index.ts"

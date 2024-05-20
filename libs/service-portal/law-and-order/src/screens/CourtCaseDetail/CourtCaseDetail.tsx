@@ -7,15 +7,16 @@ import {
   m,
   NotFound,
 } from '@island.is/service-portal/core'
-import { messages } from '../lib/messages'
+import { messages } from '../../lib/messages'
 import { useLocale, useNamespaces } from '@island.is/localization'
-import { getCase } from '../helpers/mockData'
+import { getCase } from '../../helpers/mockData'
 import { useParams } from 'react-router-dom'
-import { LawAndOrderPaths } from '../lib/paths'
-import InfoLines from '../components/InfoLines/InfoLines'
+import { LawAndOrderPaths } from '../../lib/paths'
+import InfoLines from '../../components/InfoLines/InfoLines'
 import { useEffect } from 'react'
-import ConfirmationModal from '../components/ConfirmationModal/ConfirmationModal'
-import { useLawAndOrderContext } from '../helpers/LawAndOrderContext'
+import ConfirmationModal from '../../components/ConfirmationModal/ConfirmationModal'
+import { useLawAndOrderContext } from '../../helpers/LawAndOrderContext'
+import { useGetCourtCaseQuery } from './CourtCaseDetail.generated'
 
 type UseParams = {
   id: string
@@ -27,7 +28,13 @@ const CourtCaseDetail = () => {
 
   const { id } = useParams() as UseParams
 
-  const { data, loading, error } = getCase(parseInt(id))
+  const { data, loading, error } = useGetCourtCaseQuery({
+    variables: {
+      input: {
+        id: id,
+      },
+    },
+  })
 
   const noInfo = data?.courtCaseDetail === null
   const courtCase = data?.courtCaseDetail
@@ -41,7 +48,7 @@ const CourtCaseDetail = () => {
 
   useEffect(() => {
     if (courtCase && subpeonaAcknowledged === undefined) {
-      setSubpeonaAcknowledged(courtCase.data.acknowledged)
+      setSubpeonaAcknowledged(courtCase?.data?.acknowledged ?? undefined)
     }
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [])
@@ -72,7 +79,7 @@ const CourtCaseDetail = () => {
     <Box marginTop={3}>
       <IntroHeader
         title={
-          courtCase?.data.caseNumberTitle ??
+          courtCase?.data?.caseNumberTitle ??
           formatMessage(messages.courtCaseNumberNotRegistered)
         }
         intro={messages.courtCasesDescription}
@@ -115,12 +122,31 @@ const CourtCaseDetail = () => {
             </Button>
           )}
         </Box>
+        <Box paddingRight={2} marginBottom={[1]}>
+          {courtCase?.actions?.map((x, y) => {
+            return (
+              <Button
+                as="span"
+                unfocusable
+                colorScheme="default"
+                icon="download"
+                iconType="outline"
+                size="default"
+                variant="utility"
+                key={`'courtcase-button-'${y}`}
+                onClick={() => alert('hleður niður PDF')}
+              >
+                {x.title}
+              </Button>
+            )
+          })}
+        </Box>
       </Box>
-      {courtCase?.data.groups && (
-        <InfoLines groups={courtCase?.data.groups} loading={loading} />
+      {courtCase?.data?.groups && (
+        <InfoLines groups={courtCase?.data?.groups} loading={loading} />
       )}
       {subpeonaModalVisible && !subpeonaAcknowledged && (
-        <ConfirmationModal id={courtCase?.data.id} />
+        <ConfirmationModal id={courtCase?.data?.id ?? undefined} />
       )}
     </Box>
   )

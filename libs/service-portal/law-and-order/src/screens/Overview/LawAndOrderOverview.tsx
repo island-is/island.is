@@ -5,9 +5,9 @@ import {
   m,
   UserInfoLine,
 } from '@island.is/service-portal/core'
-import { messages } from '../lib/messages'
+import { messages } from '../../lib/messages'
 import { useLocale, useNamespaces } from '@island.is/localization'
-import { LawAndOrderPaths } from '../lib/paths'
+import { LawAndOrderPaths } from '../../lib/paths'
 
 const LawAndOrderOverview = () => {
   useNamespaces('sp.law-and-order')

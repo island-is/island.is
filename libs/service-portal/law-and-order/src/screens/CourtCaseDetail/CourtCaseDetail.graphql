@@ -1,0 +1,32 @@
+query GetCourtCase($input: LawAndOrderCourtCaseInput!) {
+  courtCaseDetail(input: $input) {
+    texts {
+      intro
+      footnote
+    }
+    actions {
+      type
+      title
+      data
+    }
+    data {
+      id
+      acknowledged
+      caseNumber
+      caseNumberTitle
+      groups {
+        label
+        items {
+          label
+          value
+          link
+          action {
+            label
+            url
+            type
+          }
+        }
+      }
+    }
+  }
+}

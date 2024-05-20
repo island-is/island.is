@@ -14,7 +14,7 @@ import { useLawAndOrderContext } from '../../helpers/LawAndOrderContext'
 import * as styles from './ConfirmationModal.css'
 
 interface Props {
-  id?: number
+  id?: string
 }
 
 const SubpoenaConfirmationModal: FC<React.PropsWithChildren<Props>> = ({

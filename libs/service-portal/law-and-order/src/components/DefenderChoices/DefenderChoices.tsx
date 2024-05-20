@@ -28,7 +28,8 @@ const DefenderChoices: FC<React.PropsWithChildren<Props>> = ({ popUp }) => {
   >()
   const [choice, setChoice] = useState<DefenseDecision>()
   const { data, loading, error } = getLawyers()
-  const { defenseChoice, setDefenseChoice } = useLawAndOrderContext()
+  const { defenseChoice, setDefenseChoice, setLawyerSelected } =
+    useLawAndOrderContext()
   const submitDisabled =
     !choice || (choice === DefenseDecision.CHOOSING_LAWYER && !lawyer)
 
@@ -89,7 +90,7 @@ const DefenderChoices: FC<React.PropsWithChildren<Props>> = ({ popUp }) => {
             }
           }}
           options={data.items.map((x) => {
-            return { label: x.name, value: x.nationalId }
+            return { label: x.name + ', ' + x.practice, value: x.nationalId }
           })}
           value={lawyer ? { label: lawyer.label, value: lawyer.value } : null}
           placeholder={formatMessage(messages.chooseDefender)}
@@ -121,6 +122,7 @@ const DefenderChoices: FC<React.PropsWithChildren<Props>> = ({ popUp }) => {
               )
               // TODO: instead of using context, use service
               setDefenseChoice(choice)
+              setLawyerSelected(lawyer?.label)
             }}
             disabled={submitDisabled}
           >
@@ -159,6 +161,7 @@ const DefenderChoices: FC<React.PropsWithChildren<Props>> = ({ popUp }) => {
                   popUp.setPopUp(false)
                   // TODO: instead of using context, use service
                   setDefenseChoice(choice)
+                  setLawyerSelected(lawyer?.label)
                 }}
               >
                 {formatMessage(messages.confirm)}
