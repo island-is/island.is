@@ -1,4 +1,5 @@
-import React, { FC } from 'react'
+import React, { FC, PropsWithChildren } from 'react'
+import { useIntl } from 'react-intl'
 
 import {
   Box,
@@ -7,13 +8,14 @@ import {
   LinkV2,
   Text,
 } from '@island.is/island-ui/core'
-import { formatDOB } from '@island.is/judicial-system/formatters'
+import { formatDate, formatDOB } from '@island.is/judicial-system/formatters'
 import { Defendant } from '@island.is/judicial-system-web/src/graphql/schema'
 
+import { strings } from './DefendantInfo.strings'
 import { link } from '../../MarkdownWrapper/MarkdownWrapper.css'
 import * as styles from './DefendantInfo.css'
 
-export type DefendantActionButton = {
+export type DefendantInfoActionButton = {
   text: string
   onClick: (defendant: Defendant) => void
   icon?: IconMapIcon
@@ -23,17 +25,39 @@ export type DefendantActionButton = {
 interface DefendantInfoProps {
   defendant: Defendant
   displayDefenderInfo: boolean
-  defendantActionButton?: DefendantActionButton
+  defendantInfoActionButton?: DefendantInfoActionButton
 }
 
-export const DefendantInfo: FC<DefendantInfoProps> = (props) => {
-  const { defendant, displayDefenderInfo, defendantActionButton } = props
+export const DefendantInfo: FC<PropsWithChildren<DefendantInfoProps>> = (
+  props,
+) => {
+  const { defendant, displayDefenderInfo, defendantInfoActionButton } = props
+  const { formatMessage } = useIntl()
+
+  const getAppealExpirationInfo = (viewDate?: string) => {
+    if (!viewDate) {
+      return formatMessage(strings.appealDateNotBegun)
+    }
+
+    const today = new Date()
+    const expiryDate = new Date(viewDate)
+    expiryDate.setDate(expiryDate.getDate() + 28)
+
+    const message =
+      today < expiryDate
+        ? strings.appealExpirationDate
+        : strings.appealDateExpired
+
+    return formatMessage(message, {
+      appealExpirationDate: formatDate(expiryDate, 'P'),
+    })
+  }
 
   return (
     <div
       key={defendant.id}
       className={
-        defendantActionButton
+        defendantInfoActionButton
           ? styles.gridRow.withButton
           : styles.gridRow.withoutButton
       }
@@ -53,6 +77,12 @@ export const DefendantInfo: FC<DefendantInfoProps> = (props) => {
           )}
           {defendant.address && <span>{`, ${defendant.address}`}</span>}
         </span>
+
+        <div>
+          <Text as="span">
+            {getAppealExpirationInfo(defendant.verdictViewDate ?? '')}
+          </Text>
+        </div>
 
         {defendant.defenderName && displayDefenderInfo && (
           <Text as="span">
@@ -78,17 +108,17 @@ export const DefendantInfo: FC<DefendantInfoProps> = (props) => {
         )}
       </div>
 
-      {defendantActionButton && (
+      {defendantInfoActionButton && (
         <Box>
           <Button
             variant="text"
             size="small"
-            onClick={() => defendantActionButton.onClick(defendant)}
-            icon={defendantActionButton.icon}
+            onClick={() => defendantInfoActionButton.onClick(defendant)}
+            icon={defendantInfoActionButton.icon}
             iconType="outline"
-            disabled={defendantActionButton.isDisabled(defendant)}
+            disabled={defendantInfoActionButton.isDisabled(defendant)}
           >
-            {defendantActionButton.text}
+            {defendantInfoActionButton.text}
           </Button>
         </Box>
       )}

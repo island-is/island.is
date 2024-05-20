@@ -75,7 +75,7 @@ export class UpdateDefendantDto {
   readonly serviceRequirement?: ServiceRequirement
 
   @IsOptional()
-  @IsBoolean()
+  @IsString()
   @ApiPropertyOptional()
-  readonly hasViewedVerdict?: boolean
+  readonly verdictViewDate?: string
 }

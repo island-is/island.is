@@ -23,7 +23,7 @@ query Case($input: CaseQueryInput!) {
       defendantWaivesRightToCounsel
       defendantPlea
       serviceRequirement
-      hasViewedVerdict
+      verdictViewDate
     }
     defenderName
     defenderNationalId

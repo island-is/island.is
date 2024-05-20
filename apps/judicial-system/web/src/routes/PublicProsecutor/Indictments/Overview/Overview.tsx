@@ -31,6 +31,7 @@ import {
 import { useProsecutorSelectionUsersQuery } from '@island.is/judicial-system-web/src/components/ProsecutorSelection/prosecutorSelectionUsers.generated'
 import { Defendant } from '@island.is/judicial-system-web/src/graphql/schema'
 import {
+  formatDateForServer,
   useCase,
   useDefendants,
 } from '@island.is/judicial-system-web/src/utils/hooks'
@@ -77,7 +78,7 @@ export const Overview = () => {
     const updatedDefendant = {
       caseId: workingCase.id,
       defendantId: selectedDefendant.id,
-      hasViewedVerdict: true,
+      verdictViewDate: formatDateForServer(new Date()),
     }
 
     setAndSendDefendantToServer(updatedDefendant, setWorkingCase)
@@ -131,7 +132,7 @@ export const Overview = () => {
         <CourtCaseInfo workingCase={workingCase} />
         <Box component="section" marginBottom={5}>
           <InfoCardClosedIndictment
-            defendantActionButton={
+            defendantInfoActionButton={
               isCompletedCase(workingCase.state)
                 ? {
                     text: fm(strings.displayVerdict),
@@ -141,7 +142,7 @@ export const Overview = () => {
                     },
                     icon: 'mailOpen',
                     isDisabled: (defendant) =>
-                      defendant.hasViewedVerdict || false,
+                      defendant.verdictViewDate !== null,
                   }
                 : undefined
             }

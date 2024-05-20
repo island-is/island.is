@@ -8,8 +8,8 @@ import {
 } from '@island.is/judicial-system-web/src/graphql/schema'
 
 import {
-  DefendantActionButton,
   DefendantInfo,
+  DefendantInfoActionButton,
 } from './DefendantInfo/DefendantInfo'
 import { strings } from './InfoCard.strings'
 import { link } from '../MarkdownWrapper/MarkdownWrapper.css'
@@ -37,7 +37,7 @@ interface Props {
   defendants?: {
     title: string
     items: Defendant[]
-    defendantActionButton?: DefendantActionButton
+    defendantInfoActionButton?: DefendantInfoActionButton
   }
   defenders?: Defender[]
   icon?: IconMapIcon
@@ -125,7 +125,9 @@ const InfoCard: React.FC<Props> = (props) => {
                 <DefendantInfo
                   defendant={defendant}
                   displayDefenderInfo={!defenders}
-                  defendantActionButton={defendants.defendantActionButton}
+                  defendantInfoActionButton={
+                    defendants.defendantInfoActionButton
+                  }
                 />
               ))}
             </Box>

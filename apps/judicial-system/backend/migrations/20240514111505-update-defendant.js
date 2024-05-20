@@ -5,11 +5,8 @@ module.exports = {
     return queryInterface.sequelize.transaction((t) =>
       queryInterface.addColumn(
         'defendant',
-        'has_viewed_verdict',
-        {
-          type: Sequelize.BOOLEAN,
-          allowNull: true,
-        },
+        'verdict_view_date',
+        { type: Sequelize.DATE, allowNull: true },
         { transaction: t },
       ),
     )
@@ -17,7 +14,7 @@ module.exports = {
 
   down: (queryInterface) => {
     return queryInterface.sequelize.transaction((t) =>
-      queryInterface.removeColumn('defendant', 'has_viewed_verdict', {
+      queryInterface.removeColumn('defendant', 'verdict_view_date', {
         transaction: t,
       }),
     )

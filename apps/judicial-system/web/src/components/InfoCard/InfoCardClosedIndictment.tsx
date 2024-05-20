@@ -9,19 +9,19 @@ import {
 import { core } from '@island.is/judicial-system-web/messages'
 
 import { FormContext } from '../FormProvider/FormProvider'
-import { DefendantActionButton } from './DefendantInfo/DefendantInfo'
+import { DefendantInfoActionButton } from './DefendantInfo/DefendantInfo'
 import InfoCard, { NameAndEmail } from './InfoCard'
 import { strings } from './InfoCardIndictment.strings'
 
 export interface Props {
-  defendantActionButton?: DefendantActionButton
+  defendantInfoActionButton?: DefendantInfoActionButton
 }
 
 const InfoCardClosedIndictment: React.FC<Props> = (props) => {
   const { workingCase } = useContext(FormContext)
   const { formatMessage } = useIntl()
 
-  const { defendantActionButton } = props
+  const { defendantInfoActionButton } = props
 
   return (
     <InfoCard
@@ -83,7 +83,7 @@ const InfoCardClosedIndictment: React.FC<Props> = (props) => {
                     }),
               ),
               items: workingCase.defendants,
-              defendantActionButton: defendantActionButton,
+              defendantInfoActionButton: defendantInfoActionButton,
             }
           : undefined
       }

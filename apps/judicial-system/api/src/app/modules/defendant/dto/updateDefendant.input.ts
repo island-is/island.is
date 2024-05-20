@@ -85,6 +85,6 @@ export class UpdateDefendantInput {
 
   @Allow()
   @IsOptional()
-  @Field(() => Boolean, { nullable: true })
-  readonly hasViewedVerdict?: boolean
+  @Field(() => String, { nullable: true })
+  readonly verdictViewDate?: string
 }
