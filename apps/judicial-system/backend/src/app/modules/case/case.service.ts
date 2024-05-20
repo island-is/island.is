@@ -41,6 +41,7 @@ import {
   isCompletedCase,
   isIndictmentCase,
   isRestrictionCase,
+  isTrafficViolationCase,
   NotificationType,
   prosecutorCanSelectDefenderForInvestigationCase,
   UserRole,
@@ -644,6 +645,19 @@ export class CaseService {
         elementId: policeCaseNumber,
       }))
 
+    const caseFilesCategories = isTrafficViolationCase(theCase)
+      ? [
+          CaseFileCategory.COVER_LETTER,
+          CaseFileCategory.CRIMINAL_RECORD,
+          CaseFileCategory.COST_BREAKDOWN,
+        ]
+      : [
+          CaseFileCategory.COVER_LETTER,
+          CaseFileCategory.INDICTMENT,
+          CaseFileCategory.CRIMINAL_RECORD,
+          CaseFileCategory.COST_BREAKDOWN,
+        ]
+
     const deliverCaseFileToCourtMessages =
       theCase.caseFiles
         ?.filter(
@@ -651,12 +665,7 @@ export class CaseService {
             caseFile.state === CaseFileState.STORED_IN_RVG &&
             caseFile.key &&
             ((caseFile.category &&
-              [
-                CaseFileCategory.COVER_LETTER,
-                CaseFileCategory.INDICTMENT,
-                CaseFileCategory.CRIMINAL_RECORD,
-                CaseFileCategory.COST_BREAKDOWN,
-              ].includes(caseFile.category)) ||
+              caseFilesCategories.includes(caseFile.category)) ||
               (caseFile.category === CaseFileCategory.CASE_FILE &&
                 !caseFile.policeCaseNumber)),
         )
@@ -667,12 +676,20 @@ export class CaseService {
           elementId: caseFile.id,
         })) ?? []
 
-    return this.messageService.sendMessagesToQueue(
-      this.getDeliverProsecutorToCourtMessages(theCase, user)
-        .concat(this.getDeliverDefendantToCourtMessages(theCase, user))
-        .concat(deliverCaseFilesRecordToCourtMessages)
-        .concat(deliverCaseFileToCourtMessages),
-    )
+    const messages = this.getDeliverProsecutorToCourtMessages(theCase, user)
+      .concat(this.getDeliverDefendantToCourtMessages(theCase, user))
+      .concat(deliverCaseFilesRecordToCourtMessages)
+      .concat(deliverCaseFileToCourtMessages)
+
+    if (isTrafficViolationCase(theCase)) {
+      messages.push({
+        type: MessageType.DELIVERY_TO_COURT_INDICTMENT,
+        user,
+        caseId: theCase.id,
+      })
+    }
+
+    return this.messageService.sendMessagesToQueue(messages)
   }
 
   private addMessagesForDefenderEmailChangeToQueue(

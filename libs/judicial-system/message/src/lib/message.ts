@@ -3,6 +3,7 @@ import type { User } from '@island.is/judicial-system/types'
 export enum MessageType {
   DELIVERY_TO_COURT_PROSECUTOR = 'DELIVERY_TO_COURT_PROSECUTOR',
   DELIVERY_TO_COURT_DEFENDANT = 'DELIVERY_TO_COURT_DEFENDANT',
+  DELIVERY_TO_COURT_INDICTMENT = 'DELIVERY_TO_COURT_INDICTMENT',
   DELIVERY_TO_COURT_CASE_FILE = 'DELIVERY_TO_COURT_CASE_FILE',
   DELIVERY_TO_COURT_CASE_FILES_RECORD = 'DELIVERY_TO_COURT_CASE_FILES_RECORD',
   DELIVERY_TO_COURT_REQUEST = 'DELIVERY_TO_COURT_REQUEST',
@@ -27,6 +28,7 @@ export enum MessageType {
 export const messageEndpoint: { [key in MessageType]: string } = {
   DELIVERY_TO_COURT_PROSECUTOR: 'deliverProsecutorToCourt',
   DELIVERY_TO_COURT_DEFENDANT: 'deliverDefendantToCourt',
+  DELIVERY_TO_COURT_INDICTMENT: 'deliverIndictmentToCourt',
   DELIVERY_TO_COURT_CASE_FILE: 'deliverCaseFileToCourt',
   DELIVERY_TO_COURT_CASE_FILES_RECORD: 'deliverCaseFilesRecordToCourt',
   DELIVERY_TO_COURT_REQUEST: 'deliverRequestToCourt',

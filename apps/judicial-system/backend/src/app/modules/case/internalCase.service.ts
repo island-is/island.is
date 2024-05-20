@@ -498,12 +498,47 @@ export class InternalCaseService {
       })
   }
 
+  async deliverIndictmentToCourt(
+    theCase: Case,
+    user: TUser,
+  ): Promise<DeliverResponse> {
+    return this.pdfService
+      .getIndictmentPdf(theCase)
+      .then(async (pdf) => {
+        await this.refreshFormatMessage()
+
+        const fileName = this.formatMessage(courtUpload.indictment)
+
+        return this.courtService.createDocument(
+          user,
+          theCase.id,
+          theCase.courtId,
+          theCase.courtCaseNumber,
+          CourtDocumentFolder.INDICTMENT_DOCUMENTS,
+          fileName,
+          `${fileName}.pdf`,
+          'application/pdf',
+          pdf,
+        )
+      })
+      .then(() => ({ delivered: true }))
+      .catch((reason) => {
+        // Tolerate failure, but log error
+        this.logger.warn(
+          `Failed to upload indictment pdf to court for case ${theCase.id}`,
+          { reason },
+        )
+
+        return { delivered: false }
+      })
+  }
+
   async deliverCaseFilesRecordToCourt(
     theCase: Case,
     policeCaseNumber: string,
     user: TUser,
   ): Promise<DeliverResponse> {
-    const delivered = await this.pdfService
+    return this.pdfService
       .getCaseFilesRecordPdf(theCase, policeCaseNumber)
       .then(async (pdf) => {
         await this.refreshFormatMessage()
@@ -524,20 +559,16 @@ export class InternalCaseService {
           pdf,
         )
       })
-      .then(() => {
-        return true
-      })
-      .catch((error) => {
-        // Tolerate failure, but log error
+      .then(() => ({ delivered: true }))
+      .catch((reason) => {
+        // Tolerate failure, but log reason
         this.logger.warn(
           `Failed to upload case files record pdf to court for case ${theCase.id}`,
-          { error },
+          { reason },
         )
 
-        return false
+        return { delivered: false }
       })
-
-    return { delivered }
   }
 
   async archiveCaseFilesRecord(
@@ -581,9 +612,9 @@ export class InternalCaseService {
   ): Promise<DeliverResponse> {
     await this.refreshFormatMessage()
 
-    const delivered = await this.upploadRequestPdfToCourt(theCase, user)
-
-    return { delivered }
+    return this.upploadRequestPdfToCourt(theCase, user).then((delivered) => ({
+      delivered,
+    }))
   }
 
   async deliverCourtRecordToCourt(
@@ -592,9 +623,9 @@ export class InternalCaseService {
   ): Promise<DeliverResponse> {
     await this.refreshFormatMessage()
 
-    const delivered = await this.uploadCourtRecordPdfToCourt(theCase, user)
-
-    return { delivered }
+    return this.uploadCourtRecordPdfToCourt(theCase, user).then(
+      (delivered) => ({ delivered }),
+    )
   }
 
   async deliverSignedRulingToCourt(
@@ -603,9 +634,9 @@ export class InternalCaseService {
   ): Promise<DeliverResponse> {
     await this.refreshFormatMessage()
 
-    const delivered = await this.deliverSignedRulingPdfToCourt(theCase, user)
-
-    return { delivered }
+    return this.deliverSignedRulingPdfToCourt(theCase, user).then(
+      (delivered) => ({ delivered }),
+    )
   }
 
   async deliverCaseConclusionToCourt(
