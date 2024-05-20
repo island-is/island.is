@@ -60,13 +60,6 @@ export class EventLogService {
     }
   }
 
-  async findEventTypeByCaseId(eventType: EventType, caseId: string) {
-    return this.eventLogModel.findOne({
-      where: { eventType, caseId },
-      order: [['created', 'DESC']],
-    })
-  }
-
   async loginMap(
     nationalIds: string[],
   ): Promise<Map<string, { latest: Date; count: number }>> {

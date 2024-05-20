@@ -216,11 +216,9 @@ export class PDFService {
         return existingPdf
       }
 
-      const confirmationEvent =
-        await this.eventLogService.findEventTypeByCaseId(
-          EventType.INDICTMENT_CONFIRMED,
-          theCase.id,
-        )
+      const confirmationEvent = theCase.eventLogs?.find(
+        (event) => event.eventType === EventType.INDICTMENT_CONFIRMED,
+      )
 
       if (confirmationEvent && confirmationEvent.nationalId) {
         const actor = await this.userService.findByNationalId(

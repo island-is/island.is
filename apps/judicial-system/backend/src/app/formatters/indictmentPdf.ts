@@ -8,7 +8,6 @@ import {
   formatDate,
   lowercase,
 } from '@island.is/judicial-system/formatters'
-import { CaseState } from '@island.is/judicial-system/types'
 
 import { nowFactory } from '../factories'
 import { indictment } from '../messages'
@@ -84,7 +83,7 @@ export const createIndictment = async (
 
   setTitle(doc, title)
 
-  if (theCase.state === CaseState.SUBMITTED && confirmation) {
+  if (confirmation) {
     addIndictmentConfirmation(
       doc,
       confirmation.actor,
