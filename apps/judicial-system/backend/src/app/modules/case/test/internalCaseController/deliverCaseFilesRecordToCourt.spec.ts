@@ -33,7 +33,7 @@ describe('InternalCaseController - Deliver case files record to court', () => {
   const courtCaseNumber = uuid()
   const theCase = {
     id: caseId,
-    state: CaseState.ACCEPTED,
+    state: CaseState.COMPLETED,
     policeCaseNumbers: [policeCaseNumber],
     courtId,
     courtCaseNumber,

@@ -25,7 +25,6 @@ import {
   CaseType,
   EventType,
   type IndictmentConfirmation,
-  isCompletedCase,
   isIndictmentCase,
   isProsecutionUser,
   isRestrictionCase,
@@ -37,7 +36,6 @@ import {
 
 import { nowFactory, uuidFactory } from '../../factories'
 import {
-  createCaseFilesRecord,
   createIndictment,
   getCourtRecordPdfAsBuffer,
   getCourtRecordPdfAsString,
@@ -62,6 +60,7 @@ import { Case } from './models/case.model'
 import { CaseArchive } from './models/caseArchive.model'
 import { DeliverResponse } from './models/deliver.response'
 import { caseModuleConfig } from './case.config'
+import { PDFService } from './pdf.service'
 
 const caseEncryptionProperties: (keyof Case)[] = [
   'description',
@@ -159,6 +158,7 @@ export class InternalCaseService {
     private readonly defendantService: DefendantService,
     @Inject(forwardRef(() => EventLogService))
     private readonly eventLogService: EventLogService,
+    private readonly pdfService: PDFService,
     @Inject(LOGGER_PROVIDER) private readonly logger: Logger,
   ) {}
 
@@ -276,133 +276,6 @@ export class InternalCaseService {
         // Tolerate failure, but log error
         this.logger.warn(
           `Failed to upload request pdf to court for case ${theCase.id}`,
-          { error },
-        )
-
-        return false
-      })
-  }
-
-  private async getCaseFilesRecordPdf(
-    theCase: Case,
-    policeCaseNumber: string,
-  ): Promise<Buffer> {
-    if (isCompletedCase(theCase.state)) {
-      try {
-        return await this.awsS3Service.getObject(
-          `indictments/completed/${theCase.id}/${policeCaseNumber}/caseFilesRecord.pdf`,
-        )
-      } catch {
-        // Ignore the error and try the original key
-      }
-    }
-
-    try {
-      return await this.awsS3Service.getObject(
-        `indictments/${theCase.id}/${policeCaseNumber}/caseFilesRecord.pdf`,
-      )
-    } catch {
-      // Ignore the error and generate the pdf
-    }
-
-    const caseFiles = theCase.caseFiles
-      ?.filter(
-        (caseFile) =>
-          caseFile.policeCaseNumber === policeCaseNumber &&
-          caseFile.category === CaseFileCategory.CASE_FILE &&
-          caseFile.type === 'application/pdf' &&
-          caseFile.key &&
-          caseFile.chapter !== null &&
-          caseFile.orderWithinChapter !== null,
-      )
-      ?.sort(
-        (caseFile1, caseFile2) =>
-          (caseFile1.chapter ?? 0) - (caseFile2.chapter ?? 0) ||
-          (caseFile1.orderWithinChapter ?? 0) -
-            (caseFile2.orderWithinChapter ?? 0),
-      )
-      ?.map((caseFile) => async () => {
-        const buffer = await this.awsS3Service
-          .getObject(caseFile.key ?? '')
-          .catch((reason) => {
-            // Tolerate failure, but log error
-            this.logger.error(
-              `Unable to get file ${caseFile.id} of case ${theCase.id} from AWS S3`,
-              { reason },
-            )
-          })
-
-        return {
-          chapter: caseFile.chapter as number,
-          date: caseFile.displayDate ?? caseFile.created,
-          name: caseFile.userGeneratedFilename ?? caseFile.name,
-          buffer: buffer ?? undefined,
-        }
-      })
-
-    const pdf = await createCaseFilesRecord(
-      theCase,
-      policeCaseNumber,
-      caseFiles ?? [],
-      this.formatMessage,
-    )
-
-    await this.awsS3Service
-      .putObject(
-        `indictments/${isCompletedCase(theCase.state) ? 'completed/' : ''}${
-          theCase.id
-        }/${policeCaseNumber}/caseFilesRecord.pdf`,
-        pdf.toString('binary'),
-      )
-      .catch((reason) => {
-        this.logger.error(
-          `Failed to upload case files record pdf to AWS S3 for case ${theCase.id} and police case ${policeCaseNumber}`,
-          { reason },
-        )
-      })
-
-    return pdf
-  }
-
-  private async throttleUploadCaseFilesRecordPdfToCourt(
-    theCase: Case,
-    policeCaseNumber: string,
-    user: TUser,
-  ): Promise<boolean> {
-    // Serialize all case files record pdf deliveries in this process
-    await this.throttle.catch((reason) => {
-      this.logger.info('Previous case files record pdf delivery failed', {
-        reason,
-      })
-    })
-
-    await this.refreshFormatMessage()
-
-    return this.getCaseFilesRecordPdf(theCase, policeCaseNumber)
-      .then((pdf) => {
-        const fileName = this.formatMessage(courtUpload.caseFilesRecord, {
-          policeCaseNumber,
-        })
-
-        return this.courtService.createDocument(
-          user,
-          theCase.id,
-          theCase.courtId,
-          theCase.courtCaseNumber,
-          CourtDocumentFolder.CASE_DOCUMENTS,
-          fileName,
-          `${fileName}.pdf`,
-          'application/pdf',
-          pdf,
-        )
-      })
-      .then(() => {
-        return true
-      })
-      .catch((error) => {
-        // Tolerate failure, but log error
-        this.logger.warn(
-          `Failed to upload case files record pdf to court for case ${theCase.id}`,
           { error },
         )
 
@@ -632,13 +505,39 @@ export class InternalCaseService {
     policeCaseNumber: string,
     user: TUser,
   ): Promise<DeliverResponse> {
-    this.throttle = this.throttleUploadCaseFilesRecordPdfToCourt(
-      theCase,
-      policeCaseNumber,
-      user,
-    )
+    const delivered = await this.pdfService
+      .getCaseFilesRecordPdf(theCase, policeCaseNumber)
+      .then(async (pdf) => {
+        await this.refreshFormatMessage()
 
-    const delivered = await this.throttle
+        const fileName = this.formatMessage(courtUpload.caseFilesRecord, {
+          policeCaseNumber,
+        })
+
+        return this.courtService.createDocument(
+          user,
+          theCase.id,
+          theCase.courtId,
+          theCase.courtCaseNumber,
+          CourtDocumentFolder.CASE_DOCUMENTS,
+          fileName,
+          `${fileName}.pdf`,
+          'application/pdf',
+          pdf,
+        )
+      })
+      .then(() => {
+        return true
+      })
+      .catch((error) => {
+        // Tolerate failure, but log error
+        this.logger.warn(
+          `Failed to upload case files record pdf to court for case ${theCase.id}`,
+          { error },
+        )
+
+        return false
+      })
 
     return { delivered }
   }
@@ -975,8 +874,10 @@ export class InternalCaseService {
     )
       .then(async (indictmentDocuments) => {
         if (indictmentDocuments.length === 0) {
+          // TODO: move
           let confirmation: IndictmentConfirmation = undefined
           const confirmationEvent =
+            // TODO: nota theCase
             await this.eventLogService.findEventTypeByCaseId(
               EventType.INDICTMENT_CONFIRMED,
               theCase.id,
@@ -1025,20 +926,13 @@ export class InternalCaseService {
     return { delivered }
   }
 
-  private async throttleUploadCaseFilesRecordPdfToPolice(
+  async deliverCaseFilesRecordToPolice(
     theCase: Case,
     policeCaseNumber: string,
     user: TUser,
-  ): Promise<boolean> {
-    // Serialize all case files record pdf deliveries in this process
-    await this.throttle.catch((reason) => {
-      this.logger.info('Previous case files record pdf delivery failed', {
-        reason,
-      })
-    })
-
-    return this.refreshFormatMessage()
-      .then(() => this.getCaseFilesRecordPdf(theCase, policeCaseNumber))
+  ): Promise<DeliverResponse> {
+    const delivered = await this.pdfService
+      .getCaseFilesRecordPdf(theCase, policeCaseNumber)
       .then((pdf) =>
         this.deliverCaseToPoliceWithFiles(theCase, user, [
           {
@@ -1056,20 +950,6 @@ export class InternalCaseService {
 
         return false
       })
-  }
-
-  async deliverCaseFilesRecordToPolice(
-    theCase: Case,
-    policeCaseNumber: string,
-    user: TUser,
-  ): Promise<DeliverResponse> {
-    this.throttle = this.throttleUploadCaseFilesRecordPdfToPolice(
-      theCase,
-      policeCaseNumber,
-      user,
-    )
-
-    const delivered = await this.throttle
 
     return { delivered }
   }
