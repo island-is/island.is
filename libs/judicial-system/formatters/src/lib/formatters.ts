@@ -109,7 +109,7 @@ export const getHumanReadableCaseIndictmentRulingDecision = (
     case CaseIndictmentRulingDecision.RULING:
       return 'Dómur'
     default:
-      'Ekki skráð'
+      return 'Ekki skráð'
   }
 }
 
