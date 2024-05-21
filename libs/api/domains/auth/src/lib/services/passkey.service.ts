@@ -53,7 +53,7 @@ export class PasskeyService {
     return this.passkeysApiWithAuth(
       user,
     ).passkeysControllerVerifyAuthentication({
-      authenticationResponseAsString: input,
+      authenticationResponse: input,
     })
   }
 
