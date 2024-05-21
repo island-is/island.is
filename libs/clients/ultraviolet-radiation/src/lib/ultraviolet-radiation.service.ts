@@ -1,5 +1,5 @@
 import { Injectable } from '@nestjs/common'
-import type { StatisticSourceData } from '@island.is/clients/statistics'
+import type { StatisticSourceData } from '@island.is/shared/types'
 import {
   DefaultApi,
   type InlineResponse2001BodyDataLatest,
