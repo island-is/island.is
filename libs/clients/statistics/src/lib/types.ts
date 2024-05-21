@@ -20,6 +20,6 @@ export interface GetSingleStatisticQuery {
   sourceData: StatisticSourceData
 }
 
-export type StatisticSourceData = {
-  data: Record<string, SourceValue[]>
+export type StatisticSourceData<T extends string = string> = {
+  data: Record<T, SourceValue[]>
 }

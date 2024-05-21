@@ -2,6 +2,9 @@ import { Inject, Injectable } from '@nestjs/common'
 
 import type { ConfigType } from '@island.is/nest/config'
 import type { EnhancedFetchAPI } from '@island.is/clients/middlewares'
+import type { Logger } from '@island.is/logging'
+import { LOGGER_PROVIDER } from '@island.is/logging'
+import { UltravioletRadiationClientService } from '@island.is/clients/ultraviolet-radiation'
 
 import {
   getMultipleStatistics as _getMultipleStatistics,
@@ -10,8 +13,6 @@ import {
 import { GetStatisticsQuery } from './types'
 import { StatisticsClientConfig } from './statistics.config'
 import { FetchWithCache } from './fetchConfig'
-import type { Logger } from '@island.is/logging'
-import { LOGGER_PROVIDER } from '@island.is/logging'
 
 @Injectable()
 export class StatisticsClientService {
@@ -22,21 +23,33 @@ export class StatisticsClientService {
     private fetch: EnhancedFetchAPI,
     @Inject(LOGGER_PROVIDER)
     private logger: Logger,
+    private ultravioletRadiationService: UltravioletRadiationClientService,
   ) {}
 
   async getMultipleStatistics(query: GetStatisticsQuery) {
     try {
-      const csvSourceData = await getStatisticsFromCsvUrls(
-        this.fetch,
-        this.config?.sourceDataPaths?.split(','),
-      )
+      const promises = [
+        getStatisticsFromCsvUrls(
+          this.fetch,
+          this.config?.sourceDataPaths?.split(','),
+        ),
+      ]
 
-      // TODO: implement external json client fetching
-      // for (const dataKey of query.sourceDataKeys) {
-      //   if (dataKey.startsWith('...'))
-      // }
+      if (query.sourceDataKeys.includes('web.uv.latest')) {
+        promises.push(this.ultravioletRadiationService.getLatestMeasurement())
+      }
+      if (query.sourceDataKeys.includes('web.uv.series')) {
+        promises.push(this.ultravioletRadiationService.getMeasurementSeries())
+      }
 
-      const statistics = await _getMultipleStatistics(query, csvSourceData)
+      const [csvSourceData, ...rest] = await Promise.all(promises)
+
+      const statistics = await _getMultipleStatistics(query, {
+        data: {
+          ...csvSourceData.data,
+          ...rest.reduce((acc, item) => ({ ...acc, ...item.data }), {}),
+        },
+      })
 
       return {
         statistics,
