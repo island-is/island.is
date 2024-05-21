@@ -90,11 +90,11 @@ const getRedisClusterOptions = (
     reconnectOnError: (err) => {
       logger.error(`Reconnect on error: ${err}`)
       const targetError = 'READONLY'
-      if (err.message.slice(0, targetError.length) === targetError) {
+      /* if (err.message.slice(0, targetError.length) === targetError) {
         // Only reconnect when the error starts with "READONLY"
         return true
-      }
-      return false
+      } */
+      return true
     },
     retryStrategy: (times) => {
       logger.info(`Redis Retry: ${times}`)
