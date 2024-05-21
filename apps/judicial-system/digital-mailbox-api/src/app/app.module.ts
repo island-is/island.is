@@ -8,7 +8,7 @@ import {
   auditTrailModuleConfig,
 } from '@island.is/judicial-system/audit-trail'
 
-import appModuleConfig from './app.config'
+import { authModuleConfig } from './app.config'
 import { AppController } from './app.controller'
 import { AppService } from './app.service'
 
@@ -18,7 +18,7 @@ import { AppService } from './app.service'
     ProblemModule.forRoot({ logAllErrors: true }),
     ConfigModule.forRoot({
       isGlobal: true,
-      load: [appModuleConfig, auditTrailModuleConfig],
+      load: [authModuleConfig, auditTrailModuleConfig],
     }),
   ],
   controllers: [AppController],
