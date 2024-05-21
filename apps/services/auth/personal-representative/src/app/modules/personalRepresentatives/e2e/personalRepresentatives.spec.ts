@@ -7,23 +7,23 @@ import {
 import { errorExpectedStructure } from '../../../../../test/testHelpers'
 import { TestEndpointOptions } from '../../../../../test/types'
 import request from 'supertest'
-import { TestApp, getRequestMethod } from '@island.is/testing/nest'
+import { getRequestMethod, TestApp } from '@island.is/testing/nest'
 import {
-  PersonalRepresentative,
-  PersonalRepresentativeRight,
-  PersonalRepresentativeDTO,
-  PersonalRepresentativeCreateDTO,
-  PersonalRepresentativeRightType,
-  PaginatedPersonalRepresentativeDto,
-  PersonalRepresentativeType,
+  DelegationProviderModel,
   DelegationsIndexService,
   DelegationTypeModel,
-  DelegationProviderModel,
+  PaginatedPersonalRepresentativeDto,
+  PersonalRepresentative,
+  PersonalRepresentativeCreateDTO,
   PersonalRepresentativeDelegationTypeModel,
+  PersonalRepresentativeDTO,
+  PersonalRepresentativeRight,
+  PersonalRepresentativeRightType,
+  PersonalRepresentativeType,
 } from '@island.is/auth-api-lib'
 import { AuthScope } from '@island.is/auth/scopes'
 import { createCurrentUser } from '@island.is/testing/fixtures'
-import { AuthDelegationProvider } from '@island.is/shared/types'
+import { addDelegationTypesAndProvider } from '@island.is/services/auth/testing'
 
 const user = createCurrentUser({
   nationalId: '1122334455',
@@ -203,7 +203,11 @@ describe('PersonalRepresentativeController', () => {
       force: true,
     })
 
-    await addDelegationType(rightTypeList)
+    await addDelegationTypesAndProvider(
+      rightTypeList,
+      delegationProviderModel,
+      delegationTypeModel,
+    )
   })
 
   describe('Create', () => {
@@ -427,32 +431,6 @@ describe('PersonalRepresentativeController', () => {
 
     expect(responseData.data[0]).toMatchObject(personalRep)
   })
-
-  async function addDelegationType(listOfRightTypes: typeof rightTypeList) {
-    // Create delegation provider
-    const [prov] = await delegationProviderModel.findOrCreate({
-      where: {
-        id: AuthDelegationProvider.PersonalRepresentativeRegistry,
-      },
-      defaults: {
-        id: AuthDelegationProvider.PersonalRepresentativeRegistry,
-        name: 'Talsmannagrunnur',
-        description: 'Provider for personal representatives',
-      },
-    })
-
-    // Create delegation type
-    await Promise.all(
-      listOfRightTypes.map((rt) =>
-        delegationTypeModel.create({
-          description: rt.description,
-          id: `PersonalRepresentative:${rt.code}`,
-          name: `Personal Representative: ${rt.code}`,
-          providerId: prov.id,
-        }),
-      ),
-    )
-  }
 
   async function setupBasePersonalRep(
     data: PersonalRepresentativeCreateDTO,

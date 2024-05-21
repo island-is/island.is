@@ -439,7 +439,7 @@ export class FixtureFactory {
     personalRepresentativeId: string
     id?: string | null
   }) {
-    return await this.get(PersonalRepresentativeDelegationTypeModel).create({
+    return this.get(PersonalRepresentativeDelegationTypeModel).create({
       id: id ?? faker.datatype.uuid(),
       personalRepresentativeId: personalRepresentativeId,
       delegationTypeId: delegationTypeCode,

@@ -6,22 +6,22 @@ import {
 import request from 'supertest'
 import { TestApp } from '@island.is/testing/nest'
 import {
+  DelegationProviderModel,
+  DelegationTypeModel,
+  getPersonalRepresentativeDelegationType,
   PersonalRepresentative,
+  PersonalRepresentativeCreateDTO,
   PersonalRepresentativePublicDTO,
   PersonalRepresentativeRight,
   PersonalRepresentativeRightType,
-  PersonalRepresentativeType,
-  PersonalRepresentativeCreateDTO,
   PersonalRepresentativeRightTypeService,
   PersonalRepresentativeService,
-  DelegationProviderModel,
-  DelegationTypeModel,
-  PersonalRepresentativeDelegationTypeModel,
+  PersonalRepresentativeType,
 } from '@island.is/auth-api-lib'
 import { AuthScope } from '@island.is/auth/scopes'
 import { createCurrentUser } from '@island.is/testing/fixtures'
 import { getModelToken } from '@nestjs/sequelize'
-import { AuthDelegationProvider } from 'delegation'
+import { addDelegationTypesAndProvider } from '@island.is/services/auth/testing'
 
 const path = '/v1/personal-representatives'
 
@@ -105,7 +105,6 @@ describe('PersonalRepresentativesController', () => {
   let prPermissionsModel: typeof PersonalRepresentativeRight
   let delegationProviderModel: typeof DelegationProviderModel
   let delegationTypeModel: typeof DelegationTypeModel
-  // let prDelegationTypeModel: typeof PersonalRepresentativeDelegationTypeModel
 
   beforeAll(async () => {
     app = await setupWithAuth({ user })
@@ -195,7 +194,11 @@ describe('PersonalRepresentativesController', () => {
       personalRepresentativeTypeCode: personalRepresentativeType.code,
     })
 
-    await addDelegationType(rightTypeList)
+    await addDelegationTypesAndProvider(
+      rightTypeList,
+      delegationProviderModel,
+      delegationTypeModel,
+    )
 
     // Creating personal rep
     await prService.create({
@@ -215,8 +218,8 @@ describe('PersonalRepresentativesController', () => {
         nationalIdRepresentedPerson:
           simpleRequestData.nationalIdRepresentedPerson,
         rights: rightTypeList.map((rt) => rt.code),
-        prDelegationTypeCodes: rightTypeList.map(
-          (rt) => `PersonalRepresentative:${rt.code}`,
+        prDelegationTypeCodes: rightTypeList.map((rt) =>
+          getPersonalRepresentativeDelegationType(rt.code),
         ),
       }
       // Test get personal rep
@@ -242,30 +245,4 @@ describe('PersonalRepresentativesController', () => {
       await server.get(path).expect(400)
     })
   })
-
-  async function addDelegationType(listOfRightTypes: typeof rightTypeList) {
-    // Create delegation provider
-    const [prov] = await delegationProviderModel.findOrCreate({
-      where: {
-        id: AuthDelegationProvider.PersonalRepresentativeRegistry,
-      },
-      defaults: {
-        id: AuthDelegationProvider.PersonalRepresentativeRegistry,
-        name: 'Talsmannagrunnur',
-        description: 'Provider for personal representatives',
-      },
-    })
-
-    // Create delegation type
-    await Promise.all(
-      listOfRightTypes.map((rt) =>
-        delegationTypeModel.create({
-          description: rt.description,
-          id: `PersonalRepresentative:${rt.code}`,
-          name: `Personal Representative: ${rt.code}`,
-          providerId: prov.id,
-        }),
-      ),
-    )
-  }
 })

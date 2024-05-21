@@ -12,6 +12,11 @@ import {
 import { ApiProperty } from '@nestjs/swagger'
 import { PersonalRepresentative } from './personal-representative.model'
 import { DelegationTypeModel } from '../../delegations/models/delegation-type.model'
+import {
+  type CreationOptional,
+  InferAttributes,
+  InferCreationAttributes,
+} from 'sequelize'
 
 @Table({
   tableName: 'personal_representative_delegation_type',
@@ -24,7 +29,10 @@ import { DelegationTypeModel } from '../../delegations/models/delegation-type.mo
     },
   ],
 })
-export class PersonalRepresentativeDelegationTypeModel extends Model {
+export class PersonalRepresentativeDelegationTypeModel extends Model<
+  InferAttributes<PersonalRepresentativeDelegationTypeModel>,
+  InferCreationAttributes<PersonalRepresentativeDelegationTypeModel>
+> {
   @PrimaryKey
   @Column({
     type: DataType.UUID,
@@ -32,11 +40,11 @@ export class PersonalRepresentativeDelegationTypeModel extends Model {
     allowNull: false,
     defaultValue: DataType.UUIDV4,
   })
-  id!: string
+  id!: CreationOptional<string>
 
   @CreatedAt
   @ApiProperty()
-  readonly created!: Date
+  readonly created!: CreationOptional<Date>
 
   @UpdatedAt
   @ApiProperty()

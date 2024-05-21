@@ -13,6 +13,7 @@ import {
   DelegationType,
   DelegationTypeModel,
   Domain,
+  getPersonalRepresentativeDelegationType,
   InactiveReason,
   MergedDelegationDTO,
   PersonalRepresentative,
@@ -55,6 +56,7 @@ import {
   getScopePermission,
   personalRepresentativeType,
 } from '../../../test/stubs/personalRepresentativeStubs'
+import { AuthDelegationProvider } from 'delegation'
 
 describe('DelegationsController', () => {
   describe('Given a user is authenticated', () => {
@@ -125,8 +127,8 @@ describe('DelegationsController', () => {
     })
 
     const createDelegationTypeAndProvider = async (rightCode: string[]) => {
-      const newDelegaitonProvider = await delegationProviderModel.create({
-        id: 'talsmannagrunnur',
+      const newDelegationProvider = await delegationProviderModel.create({
+        id: AuthDelegationProvider.PersonalRepresentativeRegistry,
         name: 'Talsmannagrunnur',
         description: 'Talsmannagrunnur',
         delegationTypes: [],
@@ -135,9 +137,9 @@ describe('DelegationsController', () => {
       await delegationTypeModel.bulkCreate(
         rightCode.map((code) => {
           return {
-            id: `PersonalRepresentative:${code}`,
-            providerId: newDelegaitonProvider.id,
-            name: `Personal Representative: ${code}`,
+            id: getPersonalRepresentativeDelegationType(code),
+            providerId: newDelegationProvider.id,
+            name: getPersonalRepresentativeDelegationType(code),
             description: `Personal representative delegation type for right type ${code}`,
           }
         }),
@@ -243,7 +245,8 @@ describe('DelegationsController', () => {
               )
               await prDelegationTypeModel.create({
                 personalRepresentativeId: relationship.id,
-                delegationTypeId: `PersonalRepresentative:valid1`,
+                delegationTypeId:
+                  getPersonalRepresentativeDelegationType('valid1'),
               })
             }
 
@@ -263,7 +266,8 @@ describe('DelegationsController', () => {
               )
               await prDelegationTypeModel.create({
                 personalRepresentativeId: relationship.id,
-                delegationTypeId: `PersonalRepresentative:outdated`,
+                delegationTypeId:
+                  getPersonalRepresentativeDelegationType('outdated'),
               })
             }
 
@@ -283,7 +287,8 @@ describe('DelegationsController', () => {
               )
               await prDelegationTypeModel.create({
                 personalRepresentativeId: relationship.id,
-                delegationTypeId: `PersonalRepresentative:unactivated`,
+                delegationTypeId:
+                  getPersonalRepresentativeDelegationType('unactivated'),
               })
             }
 
@@ -303,7 +308,8 @@ describe('DelegationsController', () => {
               )
               await prDelegationTypeModel.create({
                 personalRepresentativeId: relationship.id,
-                delegationTypeId: `PersonalRepresentative:valid1`,
+                delegationTypeId:
+                  getPersonalRepresentativeDelegationType('valid1'),
               })
             }
 
@@ -326,7 +332,8 @@ describe('DelegationsController', () => {
               )
               await prDelegationTypeModel.create({
                 personalRepresentativeId: relationship.id,
-                delegationTypeId: `PersonalRepresentative:valid1`,
+                delegationTypeId:
+                  getPersonalRepresentativeDelegationType('valid1'),
               })
             }
 
@@ -561,7 +568,7 @@ describe('DelegationsController', () => {
               await prDelegationTypeModel.bulkCreate(
                 rights.map((r) => ({
                   personalRepresentativeId: relationship.id,
-                  delegationTypeId: `PersonalRepresentative:${r}`,
+                  delegationTypeId: getPersonalRepresentativeDelegationType(r),
                 })),
               )
             })
@@ -715,7 +722,8 @@ describe('DelegationsController', () => {
               )
               await prDelegationTypeModel.create({
                 personalRepresentativeId: relationship.id,
-                delegationTypeId: `PersonalRepresentative:valid1`,
+                delegationTypeId:
+                  getPersonalRepresentativeDelegationType('valid1'),
               })
             }
 
@@ -735,7 +743,8 @@ describe('DelegationsController', () => {
               )
               await prDelegationTypeModel.create({
                 personalRepresentativeId: relationship.id,
-                delegationTypeId: `PersonalRepresentative:outdated`,
+                delegationTypeId:
+                  getPersonalRepresentativeDelegationType('outdated'),
               })
             }
 
@@ -755,7 +764,8 @@ describe('DelegationsController', () => {
               )
               await prDelegationTypeModel.create({
                 personalRepresentativeId: relationship.id,
-                delegationTypeId: `PersonalRepresentative:unactivated`,
+                delegationTypeId:
+                  getPersonalRepresentativeDelegationType('unactivated'),
               })
             }
 
@@ -775,7 +785,8 @@ describe('DelegationsController', () => {
               )
               await prDelegationTypeModel.create({
                 personalRepresentativeId: relationship.id,
-                delegationTypeId: `PersonalRepresentative:valid1`,
+                delegationTypeId:
+                  getPersonalRepresentativeDelegationType('valid1'),
               })
             }
 
@@ -798,7 +809,8 @@ describe('DelegationsController', () => {
               )
               await prDelegationTypeModel.create({
                 personalRepresentativeId: relationship.id,
-                delegationTypeId: `PersonalRepresentative:valid1`,
+                delegationTypeId:
+                  getPersonalRepresentativeDelegationType('valid1'),
               })
             }
 
@@ -1037,7 +1049,8 @@ describe('DelegationsController', () => {
                 rights.map((r) => {
                   return {
                     personalRepresentativeId: relationship.id,
-                    delegationTypeId: `PersonalRepresentative:${r}`,
+                    delegationTypeId:
+                      getPersonalRepresentativeDelegationType(r),
                   }
                 }),
               )

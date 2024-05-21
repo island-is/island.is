@@ -10,6 +10,7 @@ import {
   DelegationProviderModel,
   DelegationScope,
   DelegationTypeModel,
+  getPersonalRepresentativeDelegationType,
   MergedDelegationDTO,
   PersonalRepresentative,
   PersonalRepresentativeDelegationTypeModel,
@@ -17,7 +18,10 @@ import {
   PersonalRepresentativeRightType,
   PersonalRepresentativeType,
 } from '@island.is/auth-api-lib'
-import { AuthDelegationType } from '@island.is/shared/types'
+import {
+  AuthDelegationProvider,
+  AuthDelegationType,
+} from '@island.is/shared/types'
 import { AuthScope } from '@island.is/auth/scopes'
 import { NationalRegistryClientService } from '@island.is/clients/national-registry-v2'
 import { RskRelationshipsClient } from '@island.is/clients-rsk-relationships'
@@ -60,10 +64,10 @@ const swapNames = (
   return delegation
 }
 
-function updateDelegationFromNameToPersonName(
+const updateDelegationFromNameToPersonName = (
   delegations: MergedDelegationDTO[] | MergedDelegationDTO,
   nationalRegistryUsers: NationalRegistryClientPerson[],
-) {
+) => {
   if (Array.isArray(delegations)) {
     return delegations.map((delegation) =>
       swapNames(delegation, nationalRegistryUsers),
@@ -780,13 +784,13 @@ describe('ActorDelegationsController', () => {
           })
 
           const dp = await delegationProviderModel.create({
-            id: 'talsmannagrunnur',
+            id: AuthDelegationProvider.PersonalRepresentativeRegistry,
             name: 'Talsmannagrunnur',
             description: 'Talsmannagrunnur',
           })
 
           const dt = await delegationTypeModel.create({
-            id: 'PersonalRepresentative:prRightType',
+            id: getPersonalRepresentativeDelegationType('prRightType'),
             providerId: dp.id,
             name: `Personal Representative: prRightType`,
             description: `Personal representative delegation type for right type prRightType`,

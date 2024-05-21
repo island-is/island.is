@@ -15,6 +15,7 @@ import { InactiveReason } from '../models/personal-representative.enum'
 import { PersonalRepresentative } from '../models/personal-representative.model'
 import { PersonalRepresentativeDelegationTypeModel } from '../models/personal-representative-delegation-type.model'
 import { DelegationTypeModel } from '../../delegations/models/delegation-type.model'
+import { getPersonalRepresentativeDelegationType } from '../../delegations/delegations-index.service'
 
 type GetByPersonalRepresentativeOptions = {
   nationalIdPersonalRepresentative: string
@@ -255,11 +256,11 @@ export class PersonalRepresentativeService {
     // Create new personal representative connection
 
     try {
-      return await this.sequelize.transaction(async (t) => {
+      return await this.sequelize.transaction(async (transaction) => {
         const newPr = await this.personalRepresentativeModel.create(
           { ...personalRepresentative },
           {
-            transaction: t,
+            transaction,
           },
         )
 
@@ -274,7 +275,7 @@ export class PersonalRepresentativeService {
 
         const createdPRR =
           await this.personalRepresentativeRightModel.bulkCreate(rightCodes, {
-            transaction: t,
+            transaction,
           })
 
         // Loop through the created PersonalRepresentativeRight and create a PersonalRepresentativeDelegationType for each,
@@ -287,16 +288,24 @@ export class PersonalRepresentativeService {
                   {
                     id: c.id,
                     personalRepresentativeId: newPr.id,
-                    delegationTypeId: `PersonalRepresentative:${c.rightTypeCode}`,
+                    delegationTypeId: getPersonalRepresentativeDelegationType(
+                      c.rightTypeCode,
+                    ),
                   },
-                  { transaction: t },
+                  { transaction },
                 )
 
               return created.id
             } catch (error) {
-              throw new BadRequestException(
-                `Error creating personal representative delegation type: ${error}`,
-              )
+              // Check if error is due to foreign key constraint
+              if (error.name === 'SequelizeForeignKeyConstraintError') {
+                throw new BadRequestException(
+                  `Error creating personal representative delegation type`,
+                  error,
+                )
+              } else {
+                throw error
+              }
             }
           }),
         )
@@ -312,8 +321,8 @@ export class PersonalRepresentativeService {
 
         const delegationTypes = await this.delegationTypeModel.findAll({
           where: {
-            id: rightCodes.map(
-              (rc) => `PersonalRepresentative:${rc.rightTypeCode}`,
+            id: rightCodes.map((rc) =>
+              getPersonalRepresentativeDelegationType(rc.rightTypeCode),
             ),
           },
         })
