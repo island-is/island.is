@@ -122,4 +122,10 @@ export class UserProfileResolver {
   ): Promise<DeleteTokenResponse> {
     return this.userProfileService.deleteDeviceToken(input, user)
   }
+
+  @Mutation(() => Boolean, { name: 'userProfileConfirmNudge' })
+  async confirmNudge(@CurrentUser() user: User): Promise<boolean> {
+    await this.userProfileService.confirmNudge(user)
+    return true
+  }
 }
