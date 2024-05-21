@@ -33,9 +33,10 @@ export interface CachePolicyInternal extends CachePolicy {
 
 export interface CacheConfig {
   /**
-   * Cache to store responses in.
+   * Cache to store responses in. This can be undefined if a failure happened during
+   * setup of the cache
    */
-  cacheManager: Cache
+  cacheManager: Cache | undefined
 
   /**
    * Provides a way to override the cache key for each request. Defaults to `request.url`.

@@ -17,6 +17,7 @@ export const reserveCache = async (
   res: express.Response,
   next: express.NextFunction,
 ) => {
+  if (!cache) return
   const { version, key } = req.body
   const cacheId = getCacheId(key, version)
   const objectParams = {
@@ -54,6 +55,7 @@ export const uploadChunk = async (
   res: express.Response,
   next: express.NextFunction,
 ) => {
+  if (!cache) return
   const { cacheId } = req.params
   logger.debug(`Uploading chunk for ${cacheId}`)
   const uploadId = await cache.getKey(cacheId, 'uploadId')
@@ -100,6 +102,7 @@ export const commitCache = async (
   res: express.Response,
   next: express.NextFunction,
 ) => {
+  if (!cache) return
   const { cacheId } = req.params
   logger.debug(`Finalizing cache upload for ${cacheId}`)
   const uploadInfo = await cache.getMap(cacheId)
@@ -138,6 +141,7 @@ export const retrieveCache = async (
   res: express.Response,
   next: express.NextFunction,
 ) => {
+  if (!cache) return
   logger.debug('Query: ', req.query)
   const { version, keys } = req.query
   if (!keys || !version) {

@@ -88,7 +88,7 @@ const getRedisClusterOptions = (
     dnsLookup: (address, callback) => callback(null, address, 0),
     redisOptions,
     reconnectOnError: (err) => {
-      logger.error(`Reconnect on error: ${err}`)
+      logger.error(`Reconnect on error`, { error: err })
       const targetError = 'READONLY'
       if (err.message.slice(0, targetError.length) === targetError) {
         // Only reconnect when the error starts with "READONLY"
@@ -107,24 +107,33 @@ const getRedisClusterOptions = (
   }
 }
 
-export const createCache = (options: Options) =>
-  new Cache(createRedisCluster(options))
-
-export const createRedisApolloCache = (options: Options) => {
-  return new KeyvAdapter(
-    new Keyv({ store: new KeyvRedis(createRedisCluster(options)) }),
-    {
-      disableBatchReads: true,
-    },
-  )
-}
-
 export const createRedisCluster = (options: Options) => {
   const nodes = parseNodes(options.nodes)
   logger.info(`Making caching connection with nodes: `, nodes)
-  return new Cluster(nodes, getRedisClusterOptions(options))
+  try {
+    return new Cluster(nodes, getRedisClusterOptions(options))
+  } catch (err) {
+    logger.error('Error setting up caching via Redis', { error: err })
+    return
+  }
+}
+
+export const createCache = (options: Options) => {
+  const cluster = createRedisCluster(options)
+  if (!cluster) return
+  return new Cache(cluster)
+}
+
+export const createRedisApolloCache = (options: Options) => {
+  const cluster = createRedisCluster(options)
+  if (!cluster) return
+  return new KeyvAdapter(new Keyv({ store: new KeyvRedis(cluster) }), {
+    disableBatchReads: true,
+  })
 }
 
 export const createRedisCacheManager = (options: Options & Config) => {
-  return caching(() => redisInsStore(createRedisCluster(options), options))
+  const cluster = createRedisCluster(options)
+  if (!cluster) return
+  return caching(() => redisInsStore(cluster, options))
 }

@@ -45,7 +45,7 @@ export function withCache({
     }
 
     const cacheKey = cacheKeyFor(request, isShared)
-    const entry = await cacheManager.get<CacheEntry>(cacheKey)
+    const entry = await cacheManager?.get<CacheEntry>(cacheKey)
 
     if (!entry) {
       const response = await fetch(request).catch(handleFetchErrors)
@@ -168,7 +168,7 @@ export function withCache({
 
     cacheResponse.cacheStatus.stored = true
     debugLog('Storing', cacheResponse)
-    await cacheManager.set(cacheKey, entry, ttl)
+    await cacheManager?.set(cacheKey, entry, ttl)
   }
 
   /**
