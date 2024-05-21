@@ -36,9 +36,9 @@ export class NotificationDispatchService {
 
     for (const token of tokens) {
       try {
-        await this.sendNotificationToToken(notification, token, messageId);
+        await this.sendNotificationToToken(notification, token, messageId); // are token ok to log
       } catch (error) {
-        await this.handleSendError(error, nationalId, token, messageId);
+        await this.handleSendError(error, nationalId, token, messageId); // are token ok to log
       }
     }
   }
@@ -102,7 +102,7 @@ export class NotificationDispatchService {
       case 'messaging/registration-token-not-registered':
         await this.removeInvalidToken(nationalId, token, messageId);
         break;
-      case 'messaging/invalid-recipient':
+      case 'messaging/invalid-recipient': // should this be a cause for removing the token?........................
       case 'messaging/message-rate-exceeded':
         throw new BadRequestException(error.code);
       case 'auth/invalid-credential':
