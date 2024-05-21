@@ -31,7 +31,6 @@ import { getRightButtons } from '../../utils/get-main-root'
 import { testIDs } from '../../utils/test-ids'
 import { ApplicationsModule } from './applications-module'
 import { OnboardingModule } from './onboarding-module'
-import { VehiclesModule } from './vehicles-module'
 
 interface ListItem {
   id: string
@@ -172,12 +171,6 @@ export const MainHomeScreen: NavigationFunctionComponent = ({
         />
       ),
     },
-    isMileageEnabled
-      ? {
-          id: 'vehicles',
-          component: <VehiclesModule />,
-        }
-      : null,
   ].filter(Boolean) as Array<{
     id: string
     component: React.JSX.Element
