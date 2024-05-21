@@ -113,10 +113,10 @@ export const formatAmendingRegBody = (
         isArticleTitle = true
         paragraph = 0 // Reset paragraph count for the new article
         // } else if (element.tagName.toLowerCase() === 'p') {
-      } else if (element.nodeName === 'P') {
+      } else if (element.nodeName.toLowerCase() === 'p') {
         paragraph++
         isParagraph = true
-      } else if (element.nodeName === 'OL') {
+      } else if (element.nodeName.toLowerCase() === 'ol') {
         if (element.getAttribute('type')?.toLowerCase() === 'a') {
           isLetterList = true
         } else {

@@ -39,7 +39,7 @@ export const formatListItemDiff = (item: Element) => {
         if (containing) {
           returning = true
         }
-        const needsMoreDrilling = e.nodeName === 'EM' || e.nodeName === 'STRONG'
+        const needsMoreDrilling = e.nodeName.toLowerCase() === 'em' || e.nodeName.toLowerCase() === 'strong'
         if (needsMoreDrilling) {
           const nestedArray = Array.from(e.children)
           returning = !!nestedArray.find(
