@@ -11,7 +11,7 @@ import {
   getPersonalRepresentativeDelegationType,
 } from '@island.is/auth-api-lib'
 import { CreateDelegation } from '../fixtures/delegation.fixture'
-import { AuthDelegationProvider } from 'delegation'
+import { AuthDelegationProvider } from '@island.is/shared/types'
 
 const compareById = (a: { id?: string | null }, b: { id?: string | null }) => {
   // eslint-disable-next-line @typescript-eslint/no-non-null-assertion
