@@ -1,6 +1,6 @@
 import { ApiProperty } from '@nestjs/swagger'
 
 export class DeliverResponse {
-  @ApiProperty()
+  @ApiProperty({ type: Boolean })
   delivered!: boolean
 }
