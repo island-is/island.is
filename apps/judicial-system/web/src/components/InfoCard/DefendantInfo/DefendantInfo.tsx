@@ -92,7 +92,9 @@ export const DefendantInfo: FC<PropsWithChildren<DefendantInfoProps>> = (
               role="paragraph"
               marginBottom={1}
             >
-              <Text as="span">{defendant.defenderName}</Text>
+              <Text as="span">{`${formatMessage(strings.defender)}: ${
+                defendant.defenderName
+              }`}</Text>
               {defendant.defenderEmail && (
                 <Text as="span" whiteSpace="pre">{`, `}</Text>
               )}

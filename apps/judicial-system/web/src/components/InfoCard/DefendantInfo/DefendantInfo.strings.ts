@@ -18,4 +18,9 @@ export const strings = defineMessages({
     description:
       'Notaður til að láta vita að áfrýjunarfrestur dómfellda er ekki hafinn.',
   },
+  defender: {
+    id: 'judicial.system.core:info_card.defendant_info.defender',
+    defaultMessage: 'Verjandi',
+    description: 'Notað til að birta titil á verjanda í ákæru.',
+  },
 })
