@@ -1,4 +1,4 @@
-import { IsBoolean, IsOptional, IsString } from 'class-validator'
+import { IsBoolean, IsEnum, IsOptional, IsString } from 'class-validator'
 
 import { ApiPropertyOptional } from '@nestjs/swagger'
 
@@ -7,56 +7,56 @@ import { Gender } from '@island.is/judicial-system/types'
 export class CreateDefendantDto {
   @IsOptional()
   @IsBoolean()
-  @ApiPropertyOptional()
+  @ApiPropertyOptional({ type: Boolean })
   readonly noNationalId?: boolean
 
   @IsOptional()
   @IsString()
-  @ApiPropertyOptional()
+  @ApiPropertyOptional({ type: String })
   readonly nationalId?: string
 
   @IsOptional()
   @IsString()
-  @ApiPropertyOptional()
+  @ApiPropertyOptional({ type: String })
   readonly name?: string
 
   @IsOptional()
-  @IsString()
+  @IsEnum(Gender)
   @ApiPropertyOptional({ enum: Gender })
   readonly gender?: Gender
 
   @IsOptional()
   @IsString()
-  @ApiPropertyOptional()
+  @ApiPropertyOptional({ type: String })
   readonly address?: string
 
   @IsOptional()
   @IsString()
-  @ApiPropertyOptional()
+  @ApiPropertyOptional({ type: String })
   readonly citizenship?: string
 
   @IsOptional()
   @IsString()
-  @ApiPropertyOptional()
+  @ApiPropertyOptional({ type: String })
   readonly defenderName?: string
 
   @IsOptional()
   @IsString()
-  @ApiPropertyOptional()
+  @ApiPropertyOptional({ type: String })
   readonly defenderNationalId?: string
 
   @IsOptional()
   @IsString()
-  @ApiPropertyOptional()
+  @ApiPropertyOptional({ type: String })
   readonly defenderEmail?: string
 
   @IsOptional()
   @IsString()
-  @ApiPropertyOptional()
+  @ApiPropertyOptional({ type: String })
   readonly defenderPhoneNumber?: string
 
   @IsOptional()
   @IsBoolean()
-  @ApiPropertyOptional()
+  @ApiPropertyOptional({ type: Boolean })
   readonly defendantWaivesRightToCounsel?: boolean
 }
