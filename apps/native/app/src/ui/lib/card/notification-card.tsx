@@ -7,7 +7,7 @@ import { Typography } from '../typography/typography'
 
 const Host = styled.TouchableHighlight<{ unread?: boolean }>`
   background-color: ${dynamicColor((props) => ({
-    dark: props.unread ? props.theme.shades.dark.shade200 : 'transparent',
+    dark: props.unread ? props.theme.shades.dark.shade300 : 'transparent',
     light: props.unread ? props.theme.color.blue100 : 'transparent',
   }))};
 `
@@ -19,7 +19,7 @@ const Cell = styled.View`
   border-bottom-color: ${dynamicColor(
     ({ theme }) => ({
       light: theme.color.blue200,
-      dark: theme.shades.dark.shade300,
+      dark: theme.shades.dark.shade400,
     }),
     true,
   )};
@@ -86,7 +86,7 @@ export function NotificationCard({
       onPress={() => onPress(id)}
       underlayColor={
         underlayColor ?? theme.isDark
-          ? theme.shade.shade300
+          ? theme.shade.shade400
           : theme.color.blue100
       }
       unread={unread}
