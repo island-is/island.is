@@ -48,15 +48,14 @@ export class IcelandicTransportAuthorityServices {
       )
 
       if (authRes.status > 299 || authRes.status < 200) {
-        const errorMessage = `Authentication failed to information services: ${authRes.statusText}`
+        const errorMessage = `Authentication failed: ${authRes.statusText}`
         logger.error(`car-recycling: ${errorMessage}`)
         throw new Error(errorMessage)
       }
 
       return authRes.data['jwtToken']
     } catch (error) {
-      delete error.config
-      logger.error('car-recycling: Authentication failed on information', error)
+      logger.error('car-recycling: Authentication failed', error)
       throw error
     }
   }
