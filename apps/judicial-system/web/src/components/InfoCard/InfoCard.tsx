@@ -115,7 +115,7 @@ const InfoCard: React.FC<Props> = (props) => {
       <Box
         className={(defendants || defenders) && styles.infoCardTitleContainer}
         marginBottom={(defendants || defenders) && [2, 2, 3, 3]}
-        paddingBottom={(defendants || defenders) && [2, 2, 3, 3]}
+        paddingBottom={(defendants || defenders) && [2, 2, 0, 0]}
       >
         {defendants && (
           <>
