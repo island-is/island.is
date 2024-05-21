@@ -6,6 +6,7 @@ import {
   RadioButton,
   toast,
   Select,
+  GridColumn,
 } from '@island.is/island-ui/core'
 import { useLocale, useNamespaces } from '@island.is/localization'
 import { messages } from '../../lib/messages'
@@ -73,28 +74,32 @@ const DefenderChoices: FC<React.PropsWithChildren<Props>> = ({ popUp }) => {
             setChoice(DefenseDecision.CHOOSING_LAWYER)
           }}
         />
-        <Select
-          isClearable
-          required={choice === DefenseDecision.CHOOSING_LAWYER}
-          label={formatMessage(messages.defenderList)}
-          size="xs"
-          name="lawyer-choice"
-          isLoading={loading}
-          onChange={(e) => {
-            if (e) {
-              setLawyer({
-                label: e.label.toString(),
-                value: e.value.toString(),
-              })
-              setChoice(DefenseDecision.CHOOSING_LAWYER)
-            }
-          }}
-          options={data.items.map((x) => {
-            return { label: x.name + ', ' + x.practice, value: x.nationalId }
-          })}
-          value={lawyer ? { label: lawyer.label, value: lawyer.value } : null}
-          placeholder={formatMessage(messages.chooseDefender)}
-        />
+        <GridColumn
+          span={popUp ? '12/12' : ['12/12', '12/12', '10/12', '6/8', '4/8']}
+        >
+          <Select
+            isClearable
+            required={choice === DefenseDecision.CHOOSING_LAWYER}
+            label={formatMessage(messages.defenderList)}
+            size="xs"
+            name="lawyer-choice"
+            isLoading={loading}
+            onChange={(e) => {
+              if (e) {
+                setLawyer({
+                  label: e.label.toString(),
+                  value: e.value.toString(),
+                })
+                setChoice(DefenseDecision.CHOOSING_LAWYER)
+              }
+            }}
+            options={data.items.map((x) => {
+              return { label: x.name + ', ' + x.practice, value: x.nationalId }
+            })}
+            value={lawyer ? { label: lawyer.label, value: lawyer.value } : null}
+            placeholder={formatMessage(messages.chooseDefender)}
+          />
+        </GridColumn>
         <RadioButton
           name="defender-choices"
           id={DefenseDecision.DELAY_CHOICE}

@@ -149,7 +149,7 @@ export const listCases = () => {
               },
               {
                 label: 'Dómari',
-                value: 'Judge Dredd',
+                value: 'Halldór Jón Sigurðsson',
               },
               {
                 label: 'Embætti',
@@ -237,7 +237,7 @@ export const listCases = () => {
               },
               {
                 label: 'Dómari',
-                value: 'Judge Dredd',
+                value: 'Halldór Jón Sigurðsson',
               },
               {
                 label: 'Embætti',
@@ -325,7 +325,7 @@ export const listCases = () => {
               },
               {
                 label: 'Dómari',
-                value: 'Judge Dredd',
+                value: 'Halldór Jón Sigurðsson',
               },
               {
                 label: 'Embætti',

@@ -16,7 +16,7 @@ export const LawAndOrderClientConfig = defineConfig<z.infer<typeof schema>>({
     return {
       xRoadServicePath: env.required(
         'XROAD_LAW_AND_ORDER_PATH',
-        'IS-DEV/GOV/10014/Rettarvorslugatt-Private/judicial-system-mailbox-api/api',
+        'IS-DEV/GOV/10014/Rettarvorslugatt-Private/judicial-system-mailbox-api',
       ),
       fetch: {
         timeout: 30000,
