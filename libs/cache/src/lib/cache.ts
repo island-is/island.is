@@ -94,8 +94,8 @@ const getRedisClusterOptions = (
   }
   return {
     keyPrefix: options.noPrefix ? undefined : `${options.name}:`,
-    slotsRefreshTimeout: getEnvValueToNumber("REDIS_SLOTS_REFRESH_TIMEOUT"),
-    slotsRefreshInterval: getEnvValueToNumber("REDIS_SLOTS_REFRESH_INTERVAL"),
+    slotsRefreshTimeout: getEnvValueToNumber("REDIS_SLOTS_REFRESH_TIMEOUT", 1000),
+    slotsRefreshInterval: getEnvValueToNumber("REDIS_SLOTS_REFRESH_INTERVAL", 5000),
     connectTimeout: 5000,
     // https://www.npmjs.com/package/ioredis#special-note-aws-elasticache-clusters-with-tls
     dnsLookup: (address, callback) => callback(null, address),
