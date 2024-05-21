@@ -217,7 +217,7 @@ export class UserProfileService {
           emailVerified: userProfile.email !== '',
           emailStatus: userProfile.email
             ? DataStatus.VERIFIED
-            : currentUserProfile.emailStatus === DataStatus.NOT_VERIFIED
+            : currentUserProfile?.emailStatus === DataStatus.NOT_VERIFIED
             ? DataStatus.NOT_DEFINED
             : DataStatus.EMPTY,
         }),
@@ -226,7 +226,7 @@ export class UserProfileService {
           mobilePhoneNumberVerified: formattedPhoneNumber !== '',
           mobileStatus: formattedPhoneNumber
             ? DataStatus.VERIFIED
-            : currentUserProfile.mobileStatus === DataStatus.NOT_VERIFIED
+            : currentUserProfile?.mobileStatus === DataStatus.NOT_VERIFIED
             ? DataStatus.NOT_DEFINED
             : DataStatus.EMPTY,
         }),
