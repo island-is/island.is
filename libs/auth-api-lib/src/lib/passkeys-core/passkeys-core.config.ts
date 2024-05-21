@@ -21,7 +21,7 @@ export const PasskeysCoreConfig = defineConfig({
   load: (env) => {
     const config: z.infer<typeof PasskeysCoreModuleSchema> = {
       redis: {
-        nodes: env.requiredJSON('REDIS_URL_NODE_01', [
+        nodes: env.requiredJSON('REDIS_NODES', [
           'localhost:7000',
           'localhost:7001',
           'localhost:7002',

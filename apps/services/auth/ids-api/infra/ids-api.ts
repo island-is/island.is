@@ -83,6 +83,17 @@ export const serviceSetup = (): ServiceBuilder<'services-auth-ids-api'> => {
       PASSKEY_CORE_RP_ID: 'island.is',
       PASSKEY_CORE_RP_NAME: 'Island.is',
       PASSKEY_CORE_CHALLENGE_TTL_MS: '120000',
+      REDIS_NODES: {
+        dev: json([
+          'clustercfg.general-redis-cluster-group.5fzau3.euw1.cache.amazonaws.com:6379',
+        ]),
+        staging: json([
+          'clustercfg.general-redis-cluster-group.ab9ckb.euw1.cache.amazonaws.com:6379',
+        ]),
+        prod: json([
+          'clustercfg.general-redis-cluster-group.dnugi2.euw1.cache.amazonaws.com:6379',
+        ]),
+      },
     })
     .secrets({
       IDENTITY_SERVER_CLIENT_SECRET:
