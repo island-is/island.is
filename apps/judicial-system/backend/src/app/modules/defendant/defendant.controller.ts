@@ -27,6 +27,7 @@ import {
   districtCourtRegistrarRule,
   prosecutorRepresentativeRule,
   prosecutorRule,
+  publicProsecutorStaffRule,
 } from '../../guards'
 import { Case, CaseExistsGuard, CaseWriteGuard, CurrentCase } from '../case'
 import { CreateDefendantDto } from './dto/createDefendant.dto'
@@ -71,6 +72,7 @@ export class DefendantController {
     districtCourtJudgeRule,
     districtCourtRegistrarRule,
     districtCourtAssistantRule,
+    publicProsecutorStaffRule,
   )
   @Patch(':defendantId')
   @ApiOkResponse({
