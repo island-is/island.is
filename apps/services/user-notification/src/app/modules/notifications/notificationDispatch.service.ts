@@ -1,10 +1,15 @@
-import { Injectable, Inject, BadRequestException, InternalServerErrorException } from '@nestjs/common';
-import * as firebaseAdmin from 'firebase-admin';
-import type { Logger } from '@island.is/logging';
-import { LOGGER_PROVIDER } from '@island.is/logging';
-import { Notification } from './types';
-import { FIREBASE_PROVIDER } from '../../../constants';
-import { V2UsersApi } from '@island.is/clients/user-profile';
+import {
+  Injectable,
+  Inject,
+  BadRequestException,
+  InternalServerErrorException,
+} from '@nestjs/common'
+import * as firebaseAdmin from 'firebase-admin'
+import type { Logger } from '@island.is/logging'
+import { LOGGER_PROVIDER } from '@island.is/logging'
+import { Notification } from './types'
+import { FIREBASE_PROVIDER } from '../../../constants'
+import { V2UsersApi } from '@island.is/clients/user-profile'
 
 @Injectable()
 export class NotificationDispatchService {
@@ -19,51 +24,64 @@ export class NotificationDispatchService {
     nationalId,
     messageId,
   }: {
-    notification: Notification;
-    nationalId: string;
-    messageId: string;
+    notification: Notification
+    nationalId: string
+    messageId: string
   }): Promise<void> {
-    const tokens = await this.getDeviceTokens(nationalId, messageId);
+    const tokens = await this.getDeviceTokens(nationalId, messageId)
 
     if (tokens.length === 0) {
-      return;
+      return
     }
 
     this.logger.info(`Notification content for message (${messageId})`, {
       messageId,
       ...notification,
-    });
+    })
 
     for (const token of tokens) {
       try {
-        await this.sendNotificationToToken(notification, token, messageId); // are token ok to log
+        await this.sendNotificationToToken(notification, token, messageId)
       } catch (error) {
-        await this.handleSendError(error, nationalId, token, messageId); // are token ok to log
+        await this.handleSendError(error, nationalId, token, messageId)
       }
     }
   }
 
-  private async getDeviceTokens(nationalId: string, messageId: string): Promise<string[]> {
+  private async getDeviceTokens(
+    nationalId: string,
+    messageId: string,
+  ): Promise<string[]> {
     try {
-      const deviceTokensResponse = await this.userProfileApi.userTokenControllerFindUserDeviceToken({
-        xParamNationalId: nationalId,
-      });
-      const tokens = deviceTokensResponse.map((token) => token.deviceToken);
+      const deviceTokensResponse =
+        await this.userProfileApi.userTokenControllerFindUserDeviceToken({
+          xParamNationalId: nationalId,
+        })
+      const tokens = deviceTokensResponse.map((token) => token.deviceToken)
 
       if (tokens.length === 0) {
-        this.logger.info('No push-notification tokens found for user', { messageId });
+        this.logger.info('No push-notification tokens found for user', {
+          messageId,
+        })
       } else {
-        this.logger.info(`Found user push-notification tokens (${tokens.length})`, { messageId });
+        this.logger.info(
+          `Found user push-notification tokens (${tokens.length})`,
+          { messageId },
+        )
       }
 
-      return tokens;
+      return tokens
     } catch (error) {
-      this.logger.error('Error fetching device tokens', { error, messageId });
-      throw new InternalServerErrorException('Error fetching device tokens');
+      this.logger.error('Error fetching device tokens', { error, messageId })
+      throw new InternalServerErrorException('Error fetching device tokens')
     }
   }
 
-  private async sendNotificationToToken(notification: Notification, token: string, messageId: string): Promise<void> {
+  private async sendNotificationToToken(
+    notification: Notification,
+    token: string,
+    messageId: string,
+  ): Promise<void> {
     const message = {
       token,
       notification: {
@@ -88,40 +106,55 @@ export class NotificationDispatchService {
         }),
         ...(notification.dataCopy && { copy: notification.dataCopy }),
       },
-    };
+    }
 
-    await this.firebase.messaging().send(message);
-    this.logger.info('Push notification success', { firebaseMessageId: token, messageId });
+    await this.firebase.messaging().send(message)
+    this.logger.info('Push notification success', {
+      firebaseMessageId: token,
+      messageId,
+    })
   }
 
-  private async handleSendError(error: any, nationalId: string, token: string, messageId: string): Promise<void> {
-    this.logger.error('Push notification error', { error, messageId });
+  private async handleSendError(
+    error: any,
+    nationalId: string,
+    token: string,
+    messageId: string,
+  ): Promise<void> {
+    this.logger.error('Push notification error', { error, messageId })
 
     switch (error.code) {
       case 'messaging/invalid-argument':
       case 'messaging/registration-token-not-registered':
-        await this.removeInvalidToken(nationalId, token, messageId);
-        break;
-      case 'messaging/invalid-recipient': // should this be a cause for removing the token?........................
+        await this.removeInvalidToken(nationalId, token, messageId)
+        break
+      case 'messaging/invalid-recipient':
       case 'messaging/message-rate-exceeded':
-        throw new BadRequestException(error.code);
+        throw new BadRequestException(error.code)
       case 'auth/invalid-credential':
-        throw new InternalServerErrorException(error.code);
+        throw new InternalServerErrorException(error.code)
       case 'internal-error':
       default:
-        throw new InternalServerErrorException(error.code);
+        throw new InternalServerErrorException(error.code)
     }
   }
 
-  private async removeInvalidToken(nationalId: string, token: string, messageId: string): Promise<void> {
+  private async removeInvalidToken(
+    nationalId: string,
+    token: string,
+    messageId: string,
+  ): Promise<void> {
     try {
       await this.userProfileApi.userTokenControllerDeleteUserDeviceToken({
         xParamNationalId: nationalId,
         deviceToken: token,
-      });
-      this.logger.info('Removed invalid device token', { token, messageId });
+      })
+      this.logger.info('Removed invalid device token', { token, messageId })
     } catch (error) {
-      this.logger.error('Error removing device token for user', { error, messageId });
+      this.logger.error('Error removing device token for user', {
+        error,
+        messageId,
+      })
     }
   }
 }
