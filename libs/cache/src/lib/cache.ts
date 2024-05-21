@@ -77,7 +77,7 @@ const getRedisClusterOptions = (
 ): RedisOptions | ClusterOptions => {
   const redisOptions: RedisOptions = {}
   if (options.ssl) {
-    redisOptions['tls'] = {}
+    redisOptions['tls'] = {rejectUnauthorized: false}
   }
   return {
     keyPrefix: options.noPrefix ? undefined : `${options.name}:`,
