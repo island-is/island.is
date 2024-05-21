@@ -264,4 +264,27 @@ export class SharedTemplateApiService {
     const fileContent = file.Body as Buffer
     return fileContent?.toString('base64') || ''
   }
+
+  async getAttachmentContentAsMultiUpload(
+    application: ApplicationWithAttachments,
+    attachmentKey: string,
+  ): Promise<string> {
+    const fileName = (
+      application.attachments as {
+        [key: string]: string
+      }
+    )[attachmentKey]
+
+    const { bucket, key } = AmazonS3URI(fileName)
+
+    const uploadBucket = bucket
+
+    const file = await this.s3
+      .createMultipartUpload({ Bucket: uploadBucket, Key: key })
+      .promise()
+
+    // const fileContent = file.Body as Buffer
+    const fileContent = file.UploadId
+    return fileContent || ''
+  }
 }
