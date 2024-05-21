@@ -30,45 +30,36 @@ export class Defendant extends Model {
     allowNull: false,
     defaultValue: DataType.UUIDV4,
   })
-  @ApiProperty()
+  @ApiProperty({ type: String })
   id!: string
 
   @CreatedAt
-  @ApiProperty()
+  @ApiProperty({ type: Date })
   created!: Date
 
   @UpdatedAt
-  @ApiProperty()
+  @ApiProperty({ type: Date })
   modified!: Date
 
   @ForeignKey(() => Case)
   @Column({ type: DataType.UUID, allowNull: false })
-  @ApiProperty()
+  @ApiProperty({ type: String })
   caseId!: string
 
   @BelongsTo(() => Case, 'case_id')
   @ApiPropertyOptional({ type: () => Case })
   case?: Case
 
-  @Column({
-    type: DataType.BOOLEAN,
-    allowNull: true,
-  })
-  @ApiPropertyOptional()
+  @Column({ type: DataType.BOOLEAN, allowNull: true })
+  @ApiPropertyOptional({ type: Boolean })
   noNationalId?: boolean
 
-  @Column({
-    type: DataType.STRING,
-    allowNull: true,
-  })
-  @ApiPropertyOptional()
+  @Column({ type: DataType.STRING, allowNull: true })
+  @ApiPropertyOptional({ type: String })
   nationalId?: string
 
-  @Column({
-    type: DataType.STRING,
-    allowNull: true,
-  })
-  @ApiPropertyOptional()
+  @Column({ type: DataType.STRING, allowNull: true })
+  @ApiPropertyOptional({ type: String })
   name?: string
 
   @Column({
@@ -76,57 +67,35 @@ export class Defendant extends Model {
     allowNull: true,
     values: Object.values(Gender),
   })
-  @ApiPropertyOptional()
+  @ApiPropertyOptional({ enum: Gender })
   gender?: Gender
 
-  @Column({
-    type: DataType.STRING,
-    allowNull: true,
-  })
-  @ApiPropertyOptional()
+  @Column({ type: DataType.STRING, allowNull: true })
+  @ApiPropertyOptional({ type: String })
   address?: string
 
-  @Column({
-    type: DataType.STRING,
-    allowNull: true,
-  })
-  @ApiPropertyOptional()
+  @Column({ type: DataType.STRING, allowNull: true })
+  @ApiPropertyOptional({ type: String })
   citizenship?: string
 
-  @Column({
-    type: DataType.STRING,
-    allowNull: true,
-  })
-  @ApiPropertyOptional()
+  @Column({ type: DataType.STRING, allowNull: true })
+  @ApiPropertyOptional({ type: String })
   defenderName?: string
 
-  @Column({
-    type: DataType.STRING,
-    allowNull: true,
-  })
-  @ApiPropertyOptional()
+  @Column({ type: DataType.STRING, allowNull: true })
+  @ApiPropertyOptional({ type: String })
   defenderNationalId?: string
 
-  @Column({
-    type: DataType.STRING,
-    allowNull: true,
-  })
-  @ApiPropertyOptional()
+  @Column({ type: DataType.STRING, allowNull: true })
+  @ApiPropertyOptional({ type: String })
   defenderEmail?: string
 
-  @Column({
-    type: DataType.STRING,
-    allowNull: true,
-  })
-  @ApiPropertyOptional()
+  @Column({ type: DataType.STRING, allowNull: true })
+  @ApiPropertyOptional({ type: String })
   defenderPhoneNumber?: string
 
-  @Column({
-    type: DataType.BOOLEAN,
-    allowNull: false,
-    defaultValue: false,
-  })
-  @ApiProperty()
+  @Column({ type: DataType.BOOLEAN, allowNull: false, defaultValue: false })
+  @ApiProperty({ type: Boolean })
   defendantWaivesRightToCounsel!: boolean
 
   @Column({
@@ -138,9 +107,10 @@ export class Defendant extends Model {
   defendantPlea?: DefendantPlea
 
   @Column({
-    type: DataType.STRING,
+    type: DataType.ENUM,
     allowNull: true,
+    values: Object.values(ServiceRequirement),
   })
-  @ApiProperty()
+  @ApiProperty({ enum: ServiceRequirement })
   serviceRequirement?: ServiceRequirement
 }

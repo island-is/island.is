@@ -469,6 +469,7 @@ export const UpdateMunicipalityMutation = gql`
       navUrl
       navUsername
       navPassword
+      childrenAid
       individualAid {
         ownPlace
         registeredRenting
