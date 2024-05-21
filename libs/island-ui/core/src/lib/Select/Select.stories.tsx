@@ -30,7 +30,10 @@ const config: Meta<typeof Select> = {
     isSearchable: { description: 'Is select field searchable' },
     required: { description: 'Is select field required' },
     hasError: { description: 'Does select field has error' },
-    errorMessage: { description: 'Error message description', control: { type: 'text' } },
+    errorMessage: {
+      description: 'Error message description',
+      control: { type: 'text' },
+    },
     icon: { description: 'Icon name' },
   },
 }
