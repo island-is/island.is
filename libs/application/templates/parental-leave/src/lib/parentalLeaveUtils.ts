@@ -1069,21 +1069,6 @@ export const getUnApprovedEmployers = (
   return newEmployers
 }
 
-export const getApprovedEmployers = (
-  answers: Application['answers'],
-): EmployerRow[] => {
-  const { employers } = getApplicationAnswers(answers)
-  const newEmployers: EmployerRow[] = []
-
-  employers?.forEach((e) => {
-    if (e.isApproved) {
-      newEmployers.push(e)
-    }
-  })
-
-  return newEmployers
-}
-
 export const isParentWithoutBirthParent = (answers: Application['answers']) => {
   const questionOne = getValueViaPath(answers, 'noPrimaryParent.questionOne')
   const questionTwo = getValueViaPath(answers, 'noPrimaryParent.questionTwo')

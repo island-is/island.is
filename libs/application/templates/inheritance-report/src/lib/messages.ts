@@ -1469,7 +1469,8 @@ export const m = defineMessages({
   // Error messages
   errorPropertyNumber: {
     id: 'es.application:error.errorPropertyNumber',
-    defaultMessage: 'Verður að innihalda L og 6 tölustafi eða F og 7 tölustafi',
+    defaultMessage:
+      'Verður að innihalda 6 tölustafi eða L + 6 fyrir landeignanúmeri, 7 tölustafi, F + 7 fyrir fasteignanúmeri',
     description: 'Property number is invalid',
   },
 })
