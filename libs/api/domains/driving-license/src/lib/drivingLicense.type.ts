@@ -7,12 +7,13 @@ export interface DrivingLicenseType {
   name: string
 }
 
-export type DrivingLicenseApplicationType = 'B-full' | 'B-temp'
+export type DrivingLicenseApplicationType = 'B-full' | 'B-temp' | 'BE'
 
 export interface NewDrivingLicenseInput {
   jurisdictionId: number
   needsToPresentHealthCertificate: boolean
   needsToPresentQualityPhoto: boolean
+  licenseCategory: DrivingLicenseCategory
 }
 
 export interface NewTemporaryDrivingLicenseInput {
@@ -74,6 +75,7 @@ export interface ApplicationEligibility {
 
 export enum DrivingLicenseCategory {
   B = 'B',
+  BE = 'BE',
 }
 
 export enum NeedsHealhCertificate {

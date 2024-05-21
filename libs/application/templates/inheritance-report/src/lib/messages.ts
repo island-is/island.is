@@ -1040,6 +1040,11 @@ export const m = defineMessages({
     defaultMessage: 'Maki hefur annan búshluta en 50%',
     description: '',
   },
+  assetsToShareHasCustomSpousePercentageError: {
+    id: 'ir.application:assetsToShareHasCustomSpousePercentageError',
+    defaultMessage: 'Búshluti verður að vera á milli 50% og 100%',
+    description: '',
+  },
   assetsToShareCustomSpousePercentage: {
     id: 'ir.application:assetsToShareCustomSpousePercentage',
     defaultMessage: 'Búshluti',
@@ -1464,7 +1469,8 @@ export const m = defineMessages({
   // Error messages
   errorPropertyNumber: {
     id: 'es.application:error.errorPropertyNumber',
-    defaultMessage: 'Verður að innihalda L og 6 tölustafi eða F og 7 tölustafi',
+    defaultMessage:
+      'Verður að innihalda 6 tölustafi eða L + 6 fyrir landeignanúmeri, 7 tölustafi, F + 7 fyrir fasteignanúmeri',
     description: 'Property number is invalid',
   },
 })

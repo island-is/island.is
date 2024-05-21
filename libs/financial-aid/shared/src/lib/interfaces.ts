@@ -10,6 +10,7 @@ import {
   AidType,
   UserType,
   ApplicationHeaderSortByEnum,
+  ChildrenAid,
 } from './enums'
 
 export interface GetSignedUrl {
@@ -164,6 +165,29 @@ export interface ApplicationEvent {
   emailSent?: boolean
 }
 
+export interface CreateChildren {
+  applicationId: string
+  nationalId: string
+  name: string
+  school?: string
+}
+
+export interface Children {
+  nationalId: string
+  name: string
+  school?: string
+}
+
+export interface ApplicationChildren {
+  id: string
+  created: string
+  modified: string
+  applicationId: string
+  nationalId: string
+  name: string
+  school?: string
+}
+
 export interface UpdateAdmin {
   id: string
   name: string
@@ -187,6 +211,7 @@ export interface Municipality {
   municipalityId: string
   individualAid: Aid
   cohabitationAid: Aid
+  childrenAid: ChildrenAid
   homepage?: string
   email?: string
   rulesHomepage?: string
@@ -324,6 +349,7 @@ export interface Application {
   rejection?: string
   staff?: Staff
   applicationEvents?: ApplicationEvent[]
+  children?: ApplicationChildren[]
   amount?: Amount
   spouseNationalId?: string
   spouseEmail?: string

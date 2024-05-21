@@ -27,6 +27,7 @@ import parseISO from 'date-fns/parseISO'
 import subDays from 'date-fns/subDays'
 import subMonths from 'date-fns/subMonths'
 import round from 'lodash/round'
+import set from 'lodash/set'
 import { MessageDescriptor } from 'react-intl'
 import {
   additionalSingleParentMonths,
@@ -39,6 +40,7 @@ import {
   ADOPTION,
   AttachmentLabel,
   AttachmentTypes,
+  FileType,
   MANUAL,
   NO,
   OTHER_NO_CHILDREN_FOUND,
@@ -155,35 +157,34 @@ export const formatPeriods = (
       }
     }
 
-    if (isActualDob) {
-      timelinePeriods.push({
-        actualDob: isActualDob,
-        startDate: period.startDate,
-        endDate: period.endDate,
-        ratio: period.ratio,
-        duration: calculatedLength,
-        canDelete: canDelete,
-        title: formatMessage(parentalLeaveFormMessages.reviewScreen.period, {
+    const timelinePeriod = {
+      startDate: period.startDate,
+      endDate: period.endDate,
+      ratio: period.ratio,
+      duration: calculatedLength,
+      canDelete: canDelete,
+      title: formatMessage(
+        'approved' in period
+          ? parentalLeaveFormMessages.reviewScreen.vmstPeriod
+          : parentalLeaveFormMessages.reviewScreen.period,
+        {
           index: index + 1,
           ratio: period.ratio,
-        }),
-        rawIndex: period.rawIndex ?? index,
+        },
+      ),
+      rawIndex: period.rawIndex ?? index,
+      paid: period.paid,
+    }
+
+    if (isActualDob) {
+      timelinePeriods.push({
+        ...timelinePeriod,
+        actualDob: isActualDob,
       })
     }
 
     if (!isActualDob && period.startDate && period.endDate) {
-      timelinePeriods.push({
-        startDate: period.startDate,
-        endDate: period.endDate,
-        ratio: period.ratio,
-        duration: calculatedLength,
-        canDelete: canDelete,
-        title: formatMessage(parentalLeaveFormMessages.reviewScreen.period, {
-          index: index + 1,
-          ratio: period.ratio,
-        }),
-        rawIndex: period.rawIndex ?? index,
-      })
+      timelinePeriods.push(timelinePeriod)
     }
   })
 
@@ -569,6 +570,11 @@ export const getApplicationExternalData = (
     ) as string
   }
 
+  const VMSTPeriods = getValueViaPath(
+    externalData,
+    'VMSTPeriods.data',
+  ) as VMSTPeriod[]
+
   return {
     applicantName,
     applicantGenderCode,
@@ -579,6 +585,7 @@ export const getApplicationExternalData = (
     userEmail,
     userPhoneNumber,
     dateOfBirth,
+    VMSTPeriods,
   }
 }
 
@@ -1062,21 +1069,6 @@ export const getUnApprovedEmployers = (
   return newEmployers
 }
 
-export const getApprovedEmployers = (
-  answers: Application['answers'],
-): EmployerRow[] => {
-  const { employers } = getApplicationAnswers(answers)
-  const newEmployers: EmployerRow[] = []
-
-  employers?.forEach((e) => {
-    if (e.isApproved) {
-      newEmployers.push(e)
-    }
-  })
-
-  return newEmployers
-}
-
 export const isParentWithoutBirthParent = (answers: Application['answers']) => {
   const questionOne = getValueViaPath(answers, 'noPrimaryParent.questionOne')
   const questionTwo = getValueViaPath(answers, 'noPrimaryParent.questionTwo')
@@ -1532,7 +1524,7 @@ export const synchronizeVMSTPeriods = (
   setRepeaterItems: RepeaterProps['setRepeaterItems'],
   setFieldLoadingState: RepeaterProps['setFieldLoadingState'],
 ) => {
-  // If periods is not sync with VMST periods, sync it
+  // If periods is not in sync with VMST periods, sync it
   const newPeriods: Period[] = []
   const temptVMSTPeriods: Period[] = []
   const VMSTPeriods: VMSTPeriod[] = data?.getApplicationInformation?.periods
@@ -1561,12 +1553,15 @@ export const synchronizeVMSTPeriods = (
         firstPeriodStart: firstPeriodStart,
         useLength: NO as YesOrNo,
         rightCodePeriod: rightsCodePeriod,
+        daysToUse: period.days,
+        paid: period.paid,
+        approved: period.approved,
       }
 
       if (period.paid) {
         newPeriods.push(obj)
       } else if (isThisMonth(new Date(period.from))) {
-        if (today.getDay() >= 20) {
+        if (today.getDate() >= 20) {
           newPeriods.push(obj)
         }
       } else if (new Date(period.from).getTime() <= today.getTime()) {
@@ -1633,7 +1628,9 @@ export const synchronizeVMSTPeriods = (
           new Date(period.endDate).getTime() !==
             new Date(periods[i].endDate).getTime() ||
           period.ratio !== periods[i].ratio ||
-          period.firstPeriodStart !== periods[i].firstPeriodStart
+          period.firstPeriodStart !== periods[i].firstPeriodStart ||
+          period.paid !== periods[i].paid ||
+          period.approved !== periods[i].approved
         ) {
           isMustSync = true
         }
@@ -2090,4 +2087,53 @@ export const getSelectOptionLabel = (options: SelectOption[], id?: string) => {
   }
 
   return options.find((option) => option.value === id)?.label
+}
+
+export const getActionName = (
+  application: Application,
+): FileType | undefined => {
+  const { state } = application
+  const {
+    addEmployer,
+    addPeriods,
+    changeEmployer,
+    changePeriods,
+    changeEmployerFile,
+  } = getApplicationAnswers(application.answers)
+
+  switch (state) {
+    case States.RESIDENCE_GRANT_APPLICATION_NO_BIRTH_DATE:
+    case States.RESIDENCE_GRANT_APPLICATION:
+    case States.ADDITIONAL_DOCUMENTS_REQUIRED:
+      return FileType.DOCUMENT
+    case States.EDIT_OR_ADD_EMPLOYERS_AND_PERIODS: {
+      const employerChanged = changeEmployer || addEmployer === YES
+      const periodsChanged = changePeriods || addPeriods === YES
+
+      // Keep book keeping of what has been selected
+      if (!changeEmployer && addEmployer === YES) {
+        set(application.answers, 'changeEmployer', true)
+      }
+      if (!changePeriods && addPeriods === YES) {
+        set(application.answers, 'changePeriods', true)
+      }
+
+      if (changeEmployerFile && changeEmployerFile.length !== 0) {
+        if (employerChanged && periodsChanged) {
+          return FileType.EMPDOCPER
+        } else if (employerChanged) {
+          return FileType.EMPDOC
+        }
+      }
+      if (employerChanged && periodsChanged) {
+        return FileType.EMPPER
+      } else if (employerChanged) {
+        return FileType.EMPLOYER
+      } else if (periodsChanged) {
+        return FileType.PERIOD
+      }
+      break
+    }
+  }
+  return undefined
 }

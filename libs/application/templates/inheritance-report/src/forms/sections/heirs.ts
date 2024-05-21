@@ -62,11 +62,11 @@ export const heirs = buildSection({
               title: '',
             }),
             buildDescriptionField({
-              id: 'customSpouseSharePercentage',
+              id: 'customShare.customSpouseSharePercentage',
               title: '',
             }),
             buildCheckboxField({
-              id: 'hasCustomSpouseSharePercentage',
+              id: 'customShare.hasCustomSpouseSharePercentage',
               title: '',
               large: false,
               backgroundColor: 'white',
@@ -124,14 +124,14 @@ export const heirs = buildSection({
                     id: 'heirsPercentage',
                   },
                   {
-                    title: m.taxFreeInheritance,
-                    id: 'taxFreeInheritance',
+                    title: m.inheritanceAmount,
+                    id: 'inheritance',
                     readOnly: true,
                     currency: true,
                   },
                   {
-                    title: m.inheritanceAmount,
-                    id: 'inheritance',
+                    title: m.taxFreeInheritance,
+                    id: 'taxFreeInheritance',
                     readOnly: true,
                     currency: true,
                   },

@@ -4,7 +4,7 @@ const Skeleton = () => {
   return (
     <Stack space={3}>
       <SkeletonLoader height={70} width="100%" borderRadius="large" />
-      <SkeletonLoader height={350} borderRadius="large" />
+      <SkeletonLoader height={250} borderRadius="large" />
       <Box display="flex" justifyContent="spaceBetween">
         <SkeletonLoader height={70} width="30%" borderRadius="large" />
         <SkeletonLoader height={70} width="30%" borderRadius="large" />
@@ -13,7 +13,7 @@ const Skeleton = () => {
       <Box marginY={3}>
         <SkeletonLoader height={70} width="45%" borderRadius="large" />
       </Box>
-      <SkeletonLoader height={250} borderRadius="large" />
+      <SkeletonLoader height={350} borderRadius="large" />
     </Stack>
   )
 }

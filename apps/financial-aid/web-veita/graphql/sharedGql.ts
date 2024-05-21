@@ -59,6 +59,13 @@ export const ApplicationQuery = gql`
         staffNationalId
         emailSent
       }
+      children {
+        id
+        applicationId
+        nationalId
+        name
+        school
+      }
       amount {
         aidAmount
         income
@@ -326,6 +333,13 @@ export const UpdateApplicationMutation = gql`
         staffNationalId
         emailSent
       }
+      children {
+        id
+        applicationId
+        nationalId
+        name
+        school
+      }
       staff {
         name
         municipalityIds
@@ -455,6 +469,7 @@ export const UpdateMunicipalityMutation = gql`
       navUrl
       navUsername
       navPassword
+      childrenAid
       individualAid {
         ownPlace
         registeredRenting

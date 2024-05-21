@@ -6,7 +6,7 @@ import { formatDate } from '@island.is/judicial-system/formatters'
 
 import { Institution } from '../../graphql/schema'
 import InfoCard from './InfoCard'
-import { infoCardCaseScheduled as strings } from './InfoCard.strings'
+import { strings } from './InfoCardCaseScheduled.strings'
 
 interface Props {
   court: Institution
@@ -31,7 +31,7 @@ const InfoCardCaseScheduled: React.FC<Props> = (props) => {
               {<Text>{court.name}</Text>}
               <Text>
                 {formatMessage(strings.courtRoom, {
-                  courtRoom: courtRoom ?? 'NONE',
+                  courtRoom: courtRoom || 'NONE', // Must use || because courtRoom can be an empty string
                 })}
               </Text>
             </>

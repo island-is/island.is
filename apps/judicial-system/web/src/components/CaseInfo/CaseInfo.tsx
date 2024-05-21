@@ -1,4 +1,4 @@
-import React from 'react'
+import React, { FC, PropsWithChildren } from 'react'
 import { IntlShape, useIntl } from 'react-intl'
 import flatMap from 'lodash/flatMap'
 
@@ -21,7 +21,7 @@ import { TempCase as Case } from '@island.is/judicial-system-web/src/types'
 
 import { strings } from './CaseInfo.strings'
 
-const PoliceCaseNumbersTags: React.FC<{
+const PoliceCaseNumbersTags: FC<{
   policeCaseNumbers?: string[] | null
 }> = ({ policeCaseNumbers }) => (
   <Box display="flex" flexWrap="wrap">
@@ -33,9 +33,10 @@ const PoliceCaseNumbersTags: React.FC<{
   </Box>
 )
 
-const Entry: React.FC<
-  React.PropsWithChildren<{ label: string; value: string }>
-> = ({ label, value }) => {
+const Entry: FC<PropsWithChildren<{ label: string; value: string }>> = ({
+  label,
+  value,
+}) => {
   return (
     <Text color="dark400" fontWeight="semiBold" paddingTop={'smallGutter'}>
       {`${label}: ${value}`}
@@ -67,9 +68,7 @@ interface Props {
   workingCase: Case
 }
 
-const Defendants: React.FC<React.PropsWithChildren<Props>> = ({
-  workingCase,
-}) => {
+export const Defendants: FC<PropsWithChildren<Props>> = ({ workingCase }) => {
   const { defendants, type } = workingCase
   const { formatMessage } = useIntl()
 
@@ -86,8 +85,18 @@ const Defendants: React.FC<React.PropsWithChildren<Props>> = ({
   )
 }
 
-export const ProsecutorCaseInfo: React.FC<
-  React.PropsWithChildren<Props & { hideCourt?: boolean }>
+export const Prosecutor: FC<Props> = ({ workingCase }) => {
+  const { formatMessage } = useIntl()
+  return (
+    <Entry
+      label={formatMessage(core.prosecutor)}
+      value={workingCase.prosecutorsOffice?.name ?? ''}
+    />
+  )
+}
+
+export const ProsecutorCaseInfo: FC<
+  PropsWithChildren<Props & { hideCourt?: boolean }>
 > = ({ workingCase, hideCourt = false }) => {
   const { policeCaseNumbers, court } = workingCase
   const { formatMessage } = useIntl()
@@ -105,7 +114,7 @@ export const ProsecutorCaseInfo: React.FC<
   )
 }
 
-export const CourtCaseInfo: React.FC<React.PropsWithChildren<Props>> = ({
+export const CourtCaseInfo: FC<PropsWithChildren<Props>> = ({
   workingCase,
 }) => {
   const { formatMessage } = useIntl()

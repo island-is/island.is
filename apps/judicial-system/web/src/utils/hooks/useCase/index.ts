@@ -47,6 +47,7 @@ type ChildKeys = Pick<
   | 'appealJudge1Id'
   | 'appealJudge2Id'
   | 'appealJudge3Id'
+  | 'indictmentReviewerId'
 >
 
 export type UpdateCase = Omit<UpdateCaseInput, 'id'> & {
@@ -64,6 +65,7 @@ const isChildKey = (key: keyof UpdateCaseInput): key is keyof ChildKeys => {
     'appealJudge1Id',
     'appealJudge2Id',
     'appealJudge3Id',
+    'indictmentReviewerId',
   ].includes(key)
 }
 
@@ -77,6 +79,7 @@ const childof: { [Property in keyof ChildKeys]-?: keyof Case } = {
   appealJudge1Id: 'appealJudge1',
   appealJudge2Id: 'appealJudge2',
   appealJudge3Id: 'appealJudge3',
+  indictmentReviewerId: 'indictmentReviewer',
 }
 
 const overwrite = (update: UpdateCase): UpdateCase => {
@@ -87,7 +90,7 @@ const overwrite = (update: UpdateCase): UpdateCase => {
 
 export const fieldHasValue =
   (workingCase: Case) => (value: unknown, key: string) => {
-    const theKey = key as keyof Omit<UpdateCaseInput, 'courtDate'> // loadash types are not better than this
+    const theKey = key as keyof UpdateCaseInput
 
     if (
       isChildKey(theKey) // check if key is f.example `judgeId`
@@ -114,6 +117,7 @@ export const formatUpdates = (
     if (entry.force) {
       return overwrite(entry)
     }
+
     return update(entry, workingCase)
   })
 

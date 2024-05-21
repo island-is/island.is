@@ -11,7 +11,11 @@ import {
 
 import { ApiProperty, ApiPropertyOptional } from '@nestjs/swagger'
 
-import { DefendantPlea, Gender } from '@island.is/judicial-system/types'
+import {
+  DefendantPlea,
+  Gender,
+  ServiceRequirement,
+} from '@island.is/judicial-system/types'
 
 import { Case } from '../../case/models/case.model'
 
@@ -26,48 +30,36 @@ export class Defendant extends Model {
     allowNull: false,
     defaultValue: DataType.UUIDV4,
   })
-  @ApiProperty()
+  @ApiProperty({ type: String })
   id!: string
 
   @CreatedAt
-  @ApiProperty()
+  @ApiProperty({ type: Date })
   created!: Date
 
   @UpdatedAt
-  @ApiProperty()
+  @ApiProperty({ type: Date })
   modified!: Date
 
   @ForeignKey(() => Case)
-  @Column({
-    type: DataType.UUID,
-    allowNull: false,
-  })
-  @ApiProperty()
+  @Column({ type: DataType.UUID, allowNull: false })
+  @ApiProperty({ type: String })
   caseId!: string
 
   @BelongsTo(() => Case, 'case_id')
   @ApiPropertyOptional({ type: () => Case })
   case?: Case
 
-  @Column({
-    type: DataType.BOOLEAN,
-    allowNull: true,
-  })
-  @ApiPropertyOptional()
+  @Column({ type: DataType.BOOLEAN, allowNull: true })
+  @ApiPropertyOptional({ type: Boolean })
   noNationalId?: boolean
 
-  @Column({
-    type: DataType.STRING,
-    allowNull: true,
-  })
-  @ApiPropertyOptional()
+  @Column({ type: DataType.STRING, allowNull: true })
+  @ApiPropertyOptional({ type: String })
   nationalId?: string
 
-  @Column({
-    type: DataType.STRING,
-    allowNull: true,
-  })
-  @ApiPropertyOptional()
+  @Column({ type: DataType.STRING, allowNull: true })
+  @ApiPropertyOptional({ type: String })
   name?: string
 
   @Column({
@@ -75,57 +67,35 @@ export class Defendant extends Model {
     allowNull: true,
     values: Object.values(Gender),
   })
-  @ApiPropertyOptional()
+  @ApiPropertyOptional({ enum: Gender })
   gender?: Gender
 
-  @Column({
-    type: DataType.STRING,
-    allowNull: true,
-  })
-  @ApiPropertyOptional()
+  @Column({ type: DataType.STRING, allowNull: true })
+  @ApiPropertyOptional({ type: String })
   address?: string
 
-  @Column({
-    type: DataType.STRING,
-    allowNull: true,
-  })
-  @ApiPropertyOptional()
+  @Column({ type: DataType.STRING, allowNull: true })
+  @ApiPropertyOptional({ type: String })
   citizenship?: string
 
-  @Column({
-    type: DataType.STRING,
-    allowNull: true,
-  })
-  @ApiPropertyOptional()
+  @Column({ type: DataType.STRING, allowNull: true })
+  @ApiPropertyOptional({ type: String })
   defenderName?: string
 
-  @Column({
-    type: DataType.STRING,
-    allowNull: true,
-  })
-  @ApiPropertyOptional()
+  @Column({ type: DataType.STRING, allowNull: true })
+  @ApiPropertyOptional({ type: String })
   defenderNationalId?: string
 
-  @Column({
-    type: DataType.STRING,
-    allowNull: true,
-  })
-  @ApiPropertyOptional()
+  @Column({ type: DataType.STRING, allowNull: true })
+  @ApiPropertyOptional({ type: String })
   defenderEmail?: string
 
-  @Column({
-    type: DataType.STRING,
-    allowNull: true,
-  })
-  @ApiPropertyOptional()
+  @Column({ type: DataType.STRING, allowNull: true })
+  @ApiPropertyOptional({ type: String })
   defenderPhoneNumber?: string
 
-  @Column({
-    type: DataType.BOOLEAN,
-    allowNull: false,
-    defaultValue: false,
-  })
-  @ApiProperty()
+  @Column({ type: DataType.BOOLEAN, allowNull: false, defaultValue: false })
+  @ApiProperty({ type: Boolean })
   defendantWaivesRightToCounsel!: boolean
 
   @Column({
@@ -135,4 +105,12 @@ export class Defendant extends Model {
   })
   @ApiProperty({ enum: DefendantPlea })
   defendantPlea?: DefendantPlea
+
+  @Column({
+    type: DataType.ENUM,
+    allowNull: true,
+    values: Object.values(ServiceRequirement),
+  })
+  @ApiProperty({ enum: ServiceRequirement })
+  serviceRequirement?: ServiceRequirement
 }
