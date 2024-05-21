@@ -10,8 +10,8 @@ bootstrap({
 })
 
 /** A comment */
-const PID_X = 1;
-let BLE = 2;
+const PID_X = 1
+let BLE = 2
 if (PID_X == BLE) {
-  BLE = 3;
+  BLE = 3
 }
