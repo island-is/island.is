@@ -1,4 +1,4 @@
-import { NavigationBarSheet, NotificationCard, Skeleton, Typography } from '@ui'
+import { NavigationBarSheet, NotificationCard, Skeleton } from '@ui'
 import { dismissAllNotificationsAsync } from 'expo-notifications'
 import React, { useCallback, useEffect, useMemo, useState } from 'react'
 import { useIntl } from 'react-intl'
@@ -26,15 +26,11 @@ import {
 } from '../../utils/create-skeleton-arr'
 import { isAndroid } from '../../utils/devices'
 import { testIDs } from '../../utils/test-ids'
+import { Problem } from '@ui/lib/problem/problem'
 
 const LoadingWrapper = styled.View`
   padding-vertical: ${({ theme }) => theme.spacing[3]}px;
   ${({ theme }) => isAndroid && `padding-bottom: ${theme.spacing[6]}px;`}
-`
-
-const ErrorContainer = styled.View`
-  flex: 1;
-  align-items: center;
 `
 
 const DEFAULT_PAGE_SIZE = 50
@@ -192,11 +188,7 @@ export const NotificationsScreen: NavigationFunctionComponent = ({
       />
       <SafeAreaView style={{ flex: 1 }} testID={testIDs.SCREEN_NOTIFICATIONS}>
         {error ? (
-          <ErrorContainer>
-            <Typography>
-              {intl.formatMessage({ id: 'notifications.errorUnknown' })}
-            </Typography>
-          </ErrorContainer>
+          <Problem type="error" withContainer />
         ) : (
           <FlatList
             style={{ flex: 1, paddingTop: 16 }}
