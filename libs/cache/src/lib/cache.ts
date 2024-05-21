@@ -72,6 +72,19 @@ const parseNodes = (nodes: string[]): ClusterNode[] =>
       }
     })
 
+const getEnvValueToNumber = <T extends number | undefined = undefined>(key: string, defaultValue: T = undefined as unknown as T): number | typeof defaultValue => {
+  const envValue = process.env[key];
+  if (envValue) {
+    try {
+      return parseInt(envValue, 10)   
+    } catch (e) {
+      logger.error(`Failed parsing key ${key} with value ${envValue}`)
+    }
+  }
+  return defaultValue;
+}
+
+
 const getRedisClusterOptions = (
   options: Options,
 ): RedisOptions | ClusterOptions => {
@@ -81,6 +94,8 @@ const getRedisClusterOptions = (
   }
   return {
     keyPrefix: options.noPrefix ? undefined : `${options.name}:`,
+    slotsRefreshTimeout: getEnvValueToNumber("REDIS_SLOTS_REFRESH_TIMEOUT", 1000),
+    slotsRefreshInterval: getEnvValueToNumber("REDIS_SLOTS_REFRESH_INTERVAL", 5000),
     connectTimeout: 5000,
     // https://www.npmjs.com/package/ioredis#special-note-aws-elasticache-clusters-with-tls
     dnsLookup: (address, callback) => callback(null, address),
