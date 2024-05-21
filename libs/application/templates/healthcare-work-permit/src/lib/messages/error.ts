@@ -46,4 +46,14 @@ export const error = defineMessages({
     description:
       'No response or faulty response when fetching info on education paths',
   },
+  nationalRegistryOutsideEESErrorTitle: {
+    id: 'hlc.application:error.nationalRegistryOutsideEESErrorTitle',
+    defaultMessage: 'Þú ert ekki ríkisborgari innan EES',
+    description: 'You are not a citizen within EES',
+  },
+  nationalRegistryOutsideEESErrorMessage: {
+    id: 'hlc.application:error.nationalRegistryOutsideEESErrorMessage',
+    defaultMessage: 'Lorem ipsum',
+    description: 'Lorem ipsum',
+  },
 })
