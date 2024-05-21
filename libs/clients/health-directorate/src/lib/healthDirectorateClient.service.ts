@@ -12,6 +12,7 @@ import {
   HealthcareLicense,
   HealthcareLicenseCertificate,
   HealthcareLicenseCertificateRequest,
+  HealthcareWorkPermitRequest,
   HealthDirectorateLicenseStatus,
   HealthDirectorateLicenseToPractice,
 } from './healthDirectorateClient.types'

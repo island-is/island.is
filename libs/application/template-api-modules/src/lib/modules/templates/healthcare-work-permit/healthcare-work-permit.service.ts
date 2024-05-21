@@ -15,28 +15,31 @@ import {
   StarfsleyfiUmsoknStarfsleyfi,
   UtbuaStarfsleyfiSkjalResponse,
 } from '@island.is/clients/health-directorate'
-import {
-  Transcripts,
-  UniversityOfIcelandService,
-} from '@island.is/clients/university-of-iceland'
 import { TemplateApiError } from '@island.is/nest/problem'
-import { NationalRegistryService } from '../../shared/api/national-registry/national-registry.service'
+import {
+  UniversityCareersClientService,
+  UniversityId,
+} from '@island.is/clients/university-careers'
+import {
+  EinstaklingurDTOAllt,
+  NationalRegistryV3ClientService,
+} from '@island.is/clients/national-registry-v3'
 
 @Injectable()
 export class HealthcareWorkPermitService extends BaseTemplateApiService {
   constructor(
     private readonly sharedTemplateAPIService: SharedTemplateApiService,
     private readonly healthDirectorateClientService: HealthDirectorateClientService,
-    private readonly universityOfIcelandService: UniversityOfIcelandService,
-    private readonly nationalRegistryService: NationalRegistryService,
+    // private readonly universityCareersClientService: UniversityCareersClientService,
+    private readonly nationalRegistryService: NationalRegistryV3ClientService,
   ) {
     super(ApplicationTypes.HEALTHCARE_WORK_PERMIT)
   }
 
   async getNationalRegistryWithEESValidation({
     auth,
-  }: TemplateApiModuleActionProps): Promise<NationalRegistryIndividual> {
-    const result = await this.nationalRegistryService.getIndividual(
+  }: TemplateApiModuleActionProps): Promise<EinstaklingurDTOAllt> {
+    const result = await this.nationalRegistryService.getAllDataIndividual(
       auth.nationalId,
     )
 
@@ -99,20 +102,24 @@ export class HealthcareWorkPermitService extends BaseTemplateApiService {
 
   async getMyAcademicCareer({
     auth,
-  }: TemplateApiModuleActionProps): Promise<Transcripts> {
-    const result = await this.universityOfIcelandService.studentInfo(auth)
+  }: TemplateApiModuleActionProps): Promise<[]> {
+    // const result =
+    //   await this.universityCareersClientService.getStudentTrackHistory(
+    //     auth,
+    //     UniversityId.UNIVERSITY_OF_ICELAND,
+    //   )
 
-    if (!result) {
-      throw new TemplateApiError(
-        {
-          title: errorMsg.emptyCareerResponseTitle,
-          summary: errorMsg.emptyCareerResponseMessage,
-        },
-        400,
-      )
-    }
+    // if (!result) {
+    //   throw new TemplateApiError(
+    //     {
+    //       title: errorMsg.emptyCareerResponseTitle,
+    //       summary: errorMsg.emptyCareerResponseMessage,
+    //     },
+    //     400,
+    //   )
+    // }
 
-    return result
+    return []
   }
 
   async submitApplication({

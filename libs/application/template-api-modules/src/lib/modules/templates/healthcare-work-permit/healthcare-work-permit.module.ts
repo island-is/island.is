@@ -8,13 +8,10 @@ import {
   HealthDirectorateClientConfig,
 } from '@island.is/clients/health-directorate'
 import {
-  UniversityOfIcelandClientConfig,
-  UniversityOfIcelandClientModule,
-} from '@island.is/clients/university-of-iceland'
-import {
-  NationalRegistryClientConfig,
-  NationalRegistryClientModule,
-} from '@island.is/clients/national-registry-v2'
+  NationalRegistryV3ClientConfig,
+  NationalRegistryV3ClientModule,
+} from '@island.is/clients/national-registry-v3'
+import { UniversityCareersClientModule } from '@island.is/clients/university-careers'
 
 export class HealthcareWorkPermitModule {
   static register(baseConfig: BaseTemplateAPIModuleConfig): DynamicModule {
@@ -23,15 +20,11 @@ export class HealthcareWorkPermitModule {
       imports: [
         SharedTemplateAPIModule.register(baseConfig),
         HealthDirectorateClientModule,
-        UniversityOfIcelandClientModule,
-        NationalRegistryClientModule,
+        NationalRegistryV3ClientModule,
+        // UniversityCareersClientModule,
         ConfigModule.forRoot({
           isGlobal: true,
-          load: [
-            HealthDirectorateClientConfig,
-            UniversityOfIcelandClientConfig,
-            NationalRegistryClientConfig,
-          ],
+          load: [HealthDirectorateClientConfig, NationalRegistryV3ClientConfig],
         }),
       ],
       providers: [HealthcareWorkPermitService],
