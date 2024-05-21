@@ -11,57 +11,57 @@ import {
 export class UpdateDefendantDto {
   @IsOptional()
   @IsBoolean()
-  @ApiPropertyOptional()
+  @ApiPropertyOptional({ type: Boolean })
   readonly noNationalId?: boolean
 
   @IsOptional()
   @IsString()
-  @ApiPropertyOptional()
+  @ApiPropertyOptional({ type: String })
   readonly nationalId?: string
 
   @IsOptional()
   @IsString()
-  @ApiPropertyOptional()
+  @ApiPropertyOptional({ type: String })
   readonly name?: string
 
   @IsOptional()
-  @IsString()
+  @IsEnum(Gender)
   @ApiPropertyOptional({ enum: Gender })
   readonly gender?: Gender
 
   @IsOptional()
   @IsString()
-  @ApiPropertyOptional()
+  @ApiPropertyOptional({ type: String })
   readonly address?: string
 
   @IsOptional()
   @IsString()
-  @ApiPropertyOptional()
+  @ApiPropertyOptional({ type: String })
   readonly citizenship?: string
 
   @IsOptional()
   @IsString()
-  @ApiPropertyOptional()
+  @ApiPropertyOptional({ type: String })
   readonly defenderName?: string
 
   @IsOptional()
   @IsString()
-  @ApiPropertyOptional()
+  @ApiPropertyOptional({ type: String })
   readonly defenderNationalId?: string
 
   @IsOptional()
   @IsString()
-  @ApiPropertyOptional()
+  @ApiPropertyOptional({ type: String })
   readonly defenderEmail?: string
 
   @IsOptional()
   @IsString()
-  @ApiPropertyOptional()
+  @ApiPropertyOptional({ type: String })
   readonly defenderPhoneNumber?: string
 
   @IsOptional()
   @IsBoolean()
-  @ApiPropertyOptional()
+  @ApiPropertyOptional({ type: Boolean })
   readonly defendantWaivesRightToCounsel?: boolean
 
   @IsOptional()
@@ -73,4 +73,9 @@ export class UpdateDefendantDto {
   @IsEnum(ServiceRequirement)
   @ApiPropertyOptional({ enum: ServiceRequirement })
   readonly serviceRequirement?: ServiceRequirement
+
+  @IsOptional()
+  @IsString()
+  @ApiPropertyOptional()
+  readonly verdictViewDate?: string
 }

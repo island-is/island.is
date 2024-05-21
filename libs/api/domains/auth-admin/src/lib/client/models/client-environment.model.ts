@@ -42,6 +42,9 @@ export class ClientEnvironment {
   @Field(() => RefreshTokenExpiration)
   refreshTokenExpiration!: RefreshTokenExpiration
 
+  @Field(() => [String], { nullable: true })
+  supportedDelegationTypes?: string[]
+
   @Field(() => Boolean)
   supportsCustomDelegation!: boolean
 
