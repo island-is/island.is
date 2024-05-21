@@ -17,7 +17,9 @@ export const getApplicationAnswers = (answers: Application['answers']) => {
 
   const relatives = getValueViaPath(answers, 'relatives') as RelativesRow[]
 
-  return { childsNationalId, parent1, parent2, relatives }
+  const reason = getValueViaPath(answers, 'reason') as string
+
+  return { childsNationalId, parent1, parent2, relatives, reason }
 }
 
 export const getApplicationExternalData = (

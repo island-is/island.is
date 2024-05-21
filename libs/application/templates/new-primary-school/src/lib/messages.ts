@@ -150,6 +150,26 @@ export const newPrimarySchoolMessages: MessageDir = {
       defaultMessage: 'Skóli',
       description: 'School',
     },
+    reasonSection: {
+      id: 'dess.nps.application:school.reason.section',
+      defaultMessage: 'Sækja um í nýjum skóla',
+      description: 'Reason section',
+    },
+    reasonTitle: {
+      id: 'dess.nps.application:school.reason.title',
+      defaultMessage: 'Ástæða flutnings',
+      description: 'Reason for moving title',
+    },
+    reasonLabel: {
+      id: 'dess.nps.application:school.reason.label',
+      defaultMessage: 'Ástæða',
+      description: 'Reason label',
+    },
+    reasonPlaceholder: {
+      id: 'dess.nps.application:school.reason.placeholder',
+      defaultMessage: 'Skrifaðu hér ástæðu',
+      description: 'Reason placeholder',
+    },
   }),
 
   relatives: defineMessages({

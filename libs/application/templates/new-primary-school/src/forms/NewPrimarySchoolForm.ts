@@ -269,7 +269,13 @@ export const NewPrimarySchoolForm: Form = buildForm({
     buildSection({
       id: 'schoolSection',
       title: newPrimarySchoolMessages.school.sectionTitle,
-      children: [],
+      children: [
+        buildSubSection({
+          id: 'reasonSection',
+          title: newPrimarySchoolMessages.school.reasonSection,
+          children: [],
+        }),
+      ],
     }),
     buildSection({
       id: 'relativesSection',
