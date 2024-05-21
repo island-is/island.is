@@ -112,7 +112,7 @@ const getRedisClusterOptions = (
     redisOptions,
     reconnectOnError: (err) => {
       logger.error(`Reconnect on error: ${err}`)
-      return false
+      return true
     },
     retryStrategy: (times) => {
       logger.info(`Redis Retry: ${times}`)
