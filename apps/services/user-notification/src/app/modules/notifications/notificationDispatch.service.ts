@@ -125,31 +125,43 @@ export class NotificationDispatchService {
       case 'messaging/invalid-argument':
       case 'messaging/registration-token-not-registered':
       case 'messaging/invalid-recipient':
-        await this.removeInvalidToken(nationalId, token, messageId);
-        break;
+        await this.removeInvalidToken(nationalId, token, messageId)
+        break
       case 'messaging/invalid-payload':
       case 'messaging/invalid-data-key':
       case 'messaging/invalid-options':
-        this.logger.warn('Invalid message payload or options', { error, messageId });
-        break;
+        this.logger.warn('Invalid message payload or options', {
+          error,
+          messageId,
+        })
+        break
       case 'messaging/quota-exceeded':
-        this.logger.error('Quota exceeded for sending messages', { error, messageId });
-        break;
+        this.logger.error('Quota exceeded for sending messages', {
+          error,
+          messageId,
+        })
+        break
       case 'messaging/server-unavailable':
       case 'messaging/unavailable':
-        this.logger.warn('FCM server unavailable, retrying', { error, messageId });
-        break;
+        this.logger.warn('FCM server unavailable, retrying', {
+          error,
+          messageId,
+        })
+        break
       case 'messaging/message-rate-exceeded':
-        throw new BadRequestException(error.code);
+        throw new BadRequestException(error.code)
       case 'auth/invalid-credential':
-        throw new InternalServerErrorException(error.code);
+        throw new InternalServerErrorException(error.code)
       case 'messaging/too-many-messages':
-        this.logger.warn('Too many messages sent to the device', { error, messageId });
-        break;
+        this.logger.warn('Too many messages sent to the device', {
+          error,
+          messageId,
+        })
+        break
       case 'internal-error':
       case 'messaging/unknown-error':
       default:
-        throw new InternalServerErrorException(error.code);
+        throw new InternalServerErrorException(error.code)
     }
   }
 
