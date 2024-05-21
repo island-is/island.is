@@ -4,6 +4,7 @@ import { caching } from 'cache-manager'
 import type { Config } from 'cache-manager'
 import { redisInsStore } from 'cache-manager-ioredis-yet'
 import { Cluster, ClusterNode, RedisOptions, ClusterOptions } from 'ioredis'
+import { DEFAULT_CLUSTER_OPTIONS } from 'ioredis/built/cluster/ClusterOptions';
 
 import { logger } from '@island.is/logging'
 import Keyv from 'keyv'
@@ -94,15 +95,20 @@ const getRedisClusterOptions = (
   }
   return {
     keyPrefix: options.noPrefix ? undefined : `${options.name}:`,
-    slotsRefreshTimeout: getEnvValueToNumber("REDIS_SLOTS_REFRESH_TIMEOUT", 1000),
-    slotsRefreshInterval: getEnvValueToNumber("REDIS_SLOTS_REFRESH_INTERVAL", 5000),
+    slotsRefreshTimeout: getEnvValueToNumber("REDIS_SLOTS_REFRESH_TIMEOUT", DEFAULT_CLUSTER_OPTIONS.slotsRefreshTimeout),
+    slotsRefreshInterval: getEnvValueToNumber("REDIS_SLOTS_REFRESH_INTERVAL", DEFAULT_CLUSTER_OPTIONS.slotsRefreshInterval),
     connectTimeout: 5000,
     // https://www.npmjs.com/package/ioredis#special-note-aws-elasticache-clusters-with-tls
     dnsLookup: (address, callback) => callback(null, address),
     redisOptions,
     reconnectOnError: (err) => {
       logger.error(`Reconnect on error: ${err}`)
-      return true
+      const targetError = 'READONLY'
+      if (err.message.slice(0, targetError.length) === targetError) {
+        // Only reconnect when the error starts with "READONLY"
+        return true
+      }
+      return false
     },
     retryStrategy: (times) => {
       logger.info(`Redis Retry: ${times}`)
