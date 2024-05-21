@@ -62,7 +62,7 @@ export const workAccidentSubSection = buildSubSection({
           marginBottom: 5,
         }),
         buildDescriptionField({
-          id: 'accidentDetails.descriptionField',
+          id: 'workAccident.descriptionField',
           space: 'containerGutter',
           title: injuredPersonInformation.general.jobTitle,
           description: injuredPersonInformation.general.jobTitleDescription,
@@ -71,7 +71,7 @@ export const workAccidentSubSection = buildSubSection({
           condition: (formValue) => isReportingOnBehalfSelf(formValue),
         }),
         buildTextField({
-          id: 'injuredPersonInformation.jobTitle',
+          id: 'workAccident.jobTitle',
           title: injuredPersonInformation.labels.jobTitle,
           backgroundColor: 'white',
           width: 'full',
