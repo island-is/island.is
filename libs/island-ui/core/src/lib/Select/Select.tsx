@@ -4,7 +4,6 @@ import cn from 'classnames'
 // @ts-ignore make web strict
 import ReactSelect, { createFilter, GroupBase } from 'react-select'
 import CreatableReactSelect from 'react-select/creatable'
-import { Props } from 'react-select'
 
 import {
   Option,
