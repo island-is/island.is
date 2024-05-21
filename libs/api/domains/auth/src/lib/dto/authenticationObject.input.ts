@@ -38,20 +38,5 @@ export class PasskeyAuthenticationObjectExtensionsClientOutputs {
 @InputType('AuthPasskeyAuthenticationObject')
 export class PasskeyAuthenticationObject {
   @Field(() => String)
-  id!: string
-
-  @Field(() => String)
-  rawId!: string
-
-  @Field(() => PasskeyAuthenticationObjectResponse)
-  response!: PasskeyAuthenticationObjectResponse
-
-  @Field(() => String)
-  type!: string
-
-  @Field(() => PasskeyAuthenticationObjectExtensionsClientOutputs)
-  clientExtensionResults!: PasskeyAuthenticationObjectExtensionsClientOutputs
-
-  @Field(() => String, { nullable: true })
-  authenticatorAttachment?: string
+  passkey!: string
 }

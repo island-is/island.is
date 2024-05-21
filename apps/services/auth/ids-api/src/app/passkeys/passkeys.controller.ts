@@ -44,13 +44,6 @@ export class PasskeysController {
   async verifyAuthentication(
     @Body() body: AuthenticationOptions,
   ): Promise<AuthenticationResult> {
-    const decodedJson = Buffer.from(body.passkey, 'base64').toString('utf-8')
-    const parsedJson = JSON.parse(decodedJson) as AuthenticationResponseJSON
-
-    const response = await this.passkeysCoreService.verifyAuthentication(
-      parsedJson,
-    )
-
-    return response
+    return this.passkeysCoreService.verifyAuthenticationString(body.passkey)
   }
 }

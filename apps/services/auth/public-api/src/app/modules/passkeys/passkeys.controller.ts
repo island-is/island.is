@@ -124,8 +124,6 @@ export class PasskeysController {
   async verifyAuthentication(
     @Body() body: AuthenticationResponse,
   ): Promise<AuthenticationResult> {
-    const response = await this.passkeysCoreService.verifyAuthentication(body)
-
-    return response
+    return this.passkeysCoreService.verifyAuthenticationString(body.passkey)
   }
 }

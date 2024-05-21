@@ -175,6 +175,15 @@ export class PasskeysCoreService {
     return options
   }
 
+  async verifyAuthenticationString(responseAsString: string) {
+    const decodedJson = Buffer.from(responseAsString, 'base64').toString(
+      'utf-8',
+    )
+    const parsedJson = JSON.parse(decodedJson) as AuthenticationResponseJSON
+
+    return this.verifyAuthentication(parsedJson)
+  }
+
   async verifyAuthentication(response: AuthenticationResponseJSON) {
     const passkey = await this.passkeyModel.findOne({
       where: {
