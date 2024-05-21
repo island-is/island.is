@@ -38,6 +38,13 @@ describe('CaseController - Get court record signature confirmation', () => {
     mockAwsS3Service = awsS3Service
     mockCaseModel = caseModel
 
+    const mockPutRequestObject = mockAwsS3Service.putRequestObject as jest.Mock
+    mockPutRequestObject.mockRejectedValue(new Error('Some error'))
+    const mockUpdate = mockCaseModel.update as jest.Mock
+    mockUpdate.mockRejectedValue(new Error('Some error'))
+    const mockFindOne = mockCaseModel.findOne as jest.Mock
+    mockFindOne.mockRejectedValue(new Error('Some error'))
+
     const mockTransaction = sequelize.transaction as jest.Mock
     transaction = {} as Transaction
     mockTransaction.mockImplementationOnce(
@@ -92,8 +99,9 @@ describe('CaseController - Get court record signature confirmation', () => {
       let then: Then
 
       beforeEach(async () => {
-        const mockPutObject = mockAwsS3Service.putObject as jest.Mock
-        mockPutObject.mockResolvedValueOnce(Promise.resolve())
+        const mockPutRequestObject =
+          mockAwsS3Service.putRequestObject as jest.Mock
+        mockPutRequestObject.mockResolvedValueOnce(Promise.resolve())
         const mockUpdate = mockCaseModel.update as jest.Mock
         mockUpdate.mockResolvedValueOnce([1, [theCase]])
         const mockFindOne = mockCaseModel.findOne as jest.Mock
@@ -120,9 +128,6 @@ describe('CaseController - Get court record signature confirmation', () => {
       let then: Then
 
       beforeEach(async () => {
-        const mockPutObject = mockAwsS3Service.putObject as jest.Mock
-        mockPutObject.mockRejectedValueOnce(new Error('Some error'))
-
         then = await givenWhenThen(caseId, user, theCase, documentToken)
       })
 
@@ -138,10 +143,9 @@ describe('CaseController - Get court record signature confirmation', () => {
       let then: Then
 
       beforeEach(async () => {
-        const mockPutObject = mockAwsS3Service.putObject as jest.Mock
-        mockPutObject.mockResolvedValueOnce(Promise.resolve())
-        const mockUpdate = mockCaseModel.update as jest.Mock
-        mockUpdate.mockRejectedValueOnce(new Error('Some error'))
+        const mockPutRequestObject =
+          mockAwsS3Service.putRequestObject as jest.Mock
+        mockPutRequestObject.mockResolvedValueOnce(Promise.resolve())
 
         then = await givenWhenThen(caseId, user, theCase, documentToken)
       })

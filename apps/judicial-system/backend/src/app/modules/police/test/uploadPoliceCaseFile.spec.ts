@@ -4,7 +4,7 @@ import { uuid } from 'uuidv4'
 
 import { BadGatewayException, NotFoundException } from '@nestjs/common'
 
-import { CaseType, User } from '@island.is/judicial-system/types'
+import { CaseState, CaseType, User } from '@island.is/judicial-system/types'
 
 import { createTestingPoliceModule } from './createTestingPoliceModule'
 
@@ -22,6 +22,8 @@ interface Then {
 
 type GivenWhenThen = (
   caseId: string,
+  caseType: CaseType,
+  caseSate: CaseState,
   user: User,
   uploadPoliceCaseFile: UploadPoliceCaseFileDto,
 ) => Promise<Then>
@@ -35,8 +37,16 @@ describe('PoliceController - Upload police case file', () => {
 
     mockAwsS3Service = awsS3Service
 
+    const mockPutRequestObject = mockAwsS3Service.putRequestObject as jest.Mock
+    mockPutRequestObject.mockRejectedValue(new Error('Some error'))
+    const mockPutIndictmentObject =
+      mockAwsS3Service.putIndictmentObject as jest.Mock
+    mockPutIndictmentObject.mockRejectedValue(new Error('Some error'))
+
     givenWhenThen = async (
       caseId: string,
+      caseType: CaseType,
+      caseSate: CaseState,
       user: User,
       uploadPoliceCaseFile: UploadPoliceCaseFileDto,
     ): Promise<Then> => {
@@ -44,7 +54,9 @@ describe('PoliceController - Upload police case file', () => {
 
       await policeController
         .uploadPoliceCaseFile(caseId, user, uploadPoliceCaseFile, {
-          type: CaseType.CUSTODY,
+          id: caseId,
+          type: caseType,
+          state: caseSate,
         } as Case)
         .then((result) => (then.result = result))
         .catch((error) => (then.error = error))
@@ -53,67 +65,16 @@ describe('PoliceController - Upload police case file', () => {
     }
   })
 
-  describe('remote police call', () => {
-    const caseId = uuid()
-    const user = {} as User
-    const policeFileId = uuid()
-    const uploadPoliceCaseFile = {
-      id: policeFileId,
-    } as UploadPoliceCaseFileDto
-
-    beforeEach(async () => {
-      await givenWhenThen(caseId, user, uploadPoliceCaseFile)
-    })
-
-    it('should get the police file', () => {
-      expect(fetch).toHaveBeenCalledWith(
-        expect.stringMatching(
-          new RegExp(`.*/GetPDFDocumentByID/${policeFileId}`),
-        ),
-        expect.anything(),
-      )
-    })
-  })
-
-  describe('remote AWS S3 call', () => {
-    const caseId = uuid()
-    const user = {} as User
-    const policeFileId = uuid()
-    const fileName = 'test.txt'
-    const uploadPoliceCaseFile = {
-      id: policeFileId,
-      name: fileName,
-    } as UploadPoliceCaseFileDto
-    let mockPutObject: jest.Mock
-
-    beforeEach(async () => {
-      mockPutObject = mockAwsS3Service.putObject as jest.Mock
-      const mockFetch = fetch as jest.Mock
-      mockFetch.mockResolvedValueOnce({
-        ok: true,
-        json: () => Base64.btoa('Test content'),
-      })
-
-      await givenWhenThen(caseId, user, uploadPoliceCaseFile)
-    })
-
-    it('should updload the file to ASW S3', () => {
-      expect(mockPutObject).toHaveBeenCalledWith(
-        expect.stringMatching(new RegExp(`^uploads/${caseId}/.{36}/test.txt$`)),
-        'Test content',
-      )
-    })
-  })
-
   describe('file uploaded to AWS S3', () => {
     const caseId = uuid()
-    const user = {} as User
+    const user = { id: uuid() } as User
     const policeFileId = uuid()
     const fileName = 'test.txt'
     const uploadPoliceCaseFile = {
       id: policeFileId,
       name: fileName,
     } as UploadPoliceCaseFileDto
+    const key = uuid()
     let then: Then
 
     beforeEach(async () => {
@@ -122,17 +83,78 @@ describe('PoliceController - Upload police case file', () => {
         ok: true,
         json: () => Base64.btoa('Test content'),
       })
+      const mockPutRequestObject =
+        mockAwsS3Service.putRequestObject as jest.Mock
+      mockPutRequestObject.mockResolvedValueOnce(key)
 
-      then = await givenWhenThen(caseId, user, uploadPoliceCaseFile)
+      then = await givenWhenThen(
+        caseId,
+        CaseType.CUSTODY,
+        CaseState.DRAFT,
+        user,
+        uploadPoliceCaseFile,
+      )
     })
 
     it('should updload the file to ASW S3', () => {
-      expect(then.result).toEqual({
-        key: expect.stringMatching(
-          new RegExp(`^uploads/${caseId}/.{36}/test.txt$`),
+      expect(fetch).toHaveBeenCalledWith(
+        expect.stringMatching(
+          new RegExp(`.*/GetPDFDocumentByID/${policeFileId}`),
         ),
-        size: 12,
+        expect.anything(),
+      )
+      expect(mockAwsS3Service.putRequestObject).toHaveBeenCalledWith(
+        expect.stringMatching(new RegExp(`^${caseId}/.{36}/test.txt$`)),
+        'Test content',
+      )
+      expect(then.result).toEqual({ key, size: 12 })
+    })
+  })
+
+  describe('indictment case file uploaded to AWS S3', () => {
+    const caseId = uuid()
+    const user = { id: uuid() } as User
+    const policeFileId = uuid()
+    const fileName = 'test.txt'
+    const uploadPoliceCaseFile = {
+      id: policeFileId,
+      name: fileName,
+    } as UploadPoliceCaseFileDto
+    const key = uuid()
+    let then: Then
+
+    beforeEach(async () => {
+      const mockFetch = fetch as jest.Mock
+      mockFetch.mockResolvedValueOnce({
+        ok: true,
+        json: () => Base64.btoa('Test content'),
       })
+      const mockPutIndictmentObject =
+        mockAwsS3Service.putIndictmentObject as jest.Mock
+      mockPutIndictmentObject.mockResolvedValueOnce(key)
+
+      then = await givenWhenThen(
+        caseId,
+        CaseType.INDICTMENT,
+        CaseState.DRAFT,
+        user,
+        uploadPoliceCaseFile,
+      )
+    })
+
+    it('should updload the file to ASW S3', () => {
+      expect(fetch).toHaveBeenCalledWith(
+        expect.stringMatching(
+          new RegExp(`.*/GetPDFDocumentByID/${policeFileId}`),
+        ),
+        expect.anything(),
+      )
+      expect(mockAwsS3Service.putIndictmentObject).toHaveBeenCalledWith(
+        expect.stringMatching(new RegExp(`^${caseId}/.{36}/test.txt$`)),
+        'Test content',
+        false,
+      )
+      expect(then.result).toEqual({ key, size: 12 })
     })
   })
 
@@ -146,10 +168,13 @@ describe('PoliceController - Upload police case file', () => {
     let then: Then
 
     beforeEach(async () => {
-      const mockFetch = fetch as jest.Mock
-      mockFetch.mockRejectedValueOnce(new Error('Some error'))
-
-      then = await givenWhenThen(caseId, user, uploadPoliceCaseFile)
+      then = await givenWhenThen(
+        caseId,
+        CaseType.BANKING_SECRECY_WAIVER,
+        CaseState.NEW,
+        user,
+        uploadPoliceCaseFile,
+      )
     })
 
     it('should throw bad gateway exception', () => {
@@ -173,7 +198,13 @@ describe('PoliceController - Upload police case file', () => {
       const mockFetch = fetch as jest.Mock
       mockFetch.mockResolvedValueOnce({ ok: false, text: () => 'Some error' })
 
-      then = await givenWhenThen(caseId, user, policeCaseFile)
+      then = await givenWhenThen(
+        caseId,
+        CaseType.SEARCH_WARRANT,
+        CaseState.NEW,
+        user,
+        policeCaseFile,
+      )
     })
 
     it('should throw not found exception', () => {
@@ -199,10 +230,14 @@ describe('PoliceController - Upload police case file', () => {
         ok: true,
         json: () => Base64.btoa('Test content'),
       })
-      const mockPutObject = mockAwsS3Service.putObject as jest.Mock
-      mockPutObject.mockRejectedValueOnce(new Error('Some error'))
 
-      then = await givenWhenThen(caseId, user, uploadPoliceCaseFile)
+      then = await givenWhenThen(
+        caseId,
+        CaseType.TELECOMMUNICATIONS,
+        CaseState.NEW,
+        user,
+        uploadPoliceCaseFile,
+      )
     })
 
     it('should throw error', () => {

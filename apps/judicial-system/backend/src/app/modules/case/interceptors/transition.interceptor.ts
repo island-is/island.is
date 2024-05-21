@@ -51,6 +51,10 @@ export class TransitionInterceptor implements NestInterceptor {
       for (const indictment of theCase.caseFiles?.filter(
         (cf) => cf.category === CaseFileCategory.INDICTMENT && cf.key,
       ) ?? []) {
+        if (!indictment.key) {
+          continue
+        }
+
         // Get indictment PDF from S3
         const file = await this.awsService.getObject(indictment.key)
 
@@ -66,8 +70,8 @@ export class TransitionInterceptor implements NestInterceptor {
           )
 
         // Save the PDF to S3
-        await this.awsService.putObject(
-          formatConfirmedIndictmentKey(indictment.key),
+        await this.awsService.putConfirmedObject(
+          indictment.key,
           confirmedIndictment.toString('binary'),
         )
       }

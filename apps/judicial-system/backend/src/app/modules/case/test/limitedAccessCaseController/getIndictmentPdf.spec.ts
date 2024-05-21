@@ -45,12 +45,13 @@ describe('LimitedCaseController - Get indictment pdf', () => {
 
     mockawsS3Service = awsS3Service
     const mockGetGeneratedIndictmentCaseObject =
-      mockawsS3Service.getGeneratedIndictmentCaseObject as jest.Mock
+      mockawsS3Service.getIndictmentObject as jest.Mock
     mockGetGeneratedIndictmentCaseObject.mockRejectedValue(
       new Error('Some error'),
     )
-    const mockPutObject = mockawsS3Service.putObject as jest.Mock
-    mockPutObject.mockRejectedValue(new Error('Some error'))
+    const mockPutIndictmentObject =
+      mockawsS3Service.putIndictmentObject as jest.Mock
+    mockPutIndictmentObject.mockRejectedValue(new Error('Some error'))
 
     givenWhenThen = async () => {
       const then = {} as Then
@@ -74,17 +75,19 @@ describe('LimitedCaseController - Get indictment pdf', () => {
     })
 
     it('should generate pdf', () => {
-      expect(
-        mockawsS3Service.getGeneratedIndictmentCaseObject,
-      ).toHaveBeenCalledWith(`${caseId}/indictment.pdf`, true)
+      expect(mockawsS3Service.getIndictmentObject).toHaveBeenCalledWith(
+        `${caseId}/indictment.pdf`,
+        true,
+      )
       expect(createIndictment).toHaveBeenCalledWith(
         theCase,
         expect.any(Function),
         undefined,
       )
-      expect(mockawsS3Service.putObject).toHaveBeenCalledWith(
-        `indictments/completed/${caseId}/indictment.pdf`,
+      expect(mockawsS3Service.putIndictmentObject).toHaveBeenCalledWith(
+        `${caseId}/indictment.pdf`,
         pdf.toString('binary'),
+        true,
       )
       expect(res.end).toHaveBeenCalledWith(pdf)
     })
@@ -93,7 +96,7 @@ describe('LimitedCaseController - Get indictment pdf', () => {
   describe('pdf returned from AWS S3', () => {
     beforeEach(async () => {
       const mockGetGeneratedIndictmentCaseObject =
-        mockawsS3Service.getGeneratedIndictmentCaseObject as jest.Mock
+        mockawsS3Service.getIndictmentObject as jest.Mock
       mockGetGeneratedIndictmentCaseObject.mockResolvedValueOnce(pdf)
 
       await givenWhenThen()

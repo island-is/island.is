@@ -120,7 +120,7 @@ export class PDFService {
   async getCourtRecordPdf(theCase: Case, user: TUser): Promise<Buffer> {
     if (theCase.courtRecordSignatureDate) {
       try {
-        return await this.awsS3Service.getGeneratedRequestCaseObject(
+        return await this.awsS3Service.getRequestObject(
           `${theCase.id}/courtRecord.pdf`,
         )
       } catch (error) {
@@ -145,7 +145,7 @@ export class PDFService {
   async getRulingPdf(theCase: Case): Promise<Buffer> {
     if (theCase.rulingSignatureDate) {
       try {
-        return await this.awsS3Service.getGeneratedRequestCaseObject(
+        return await this.awsS3Service.getRequestObject(
           `${theCase.id}/ruling.pdf`,
         )
       } catch (error) {
@@ -168,20 +168,17 @@ export class PDFService {
   }
 
   private async tryGetPdfFromS3(
-    key: string,
+    uri: string,
     isCompletedCase: boolean,
   ): Promise<Buffer | undefined> {
     return await this.awsS3Service
-      .getGeneratedIndictmentCaseObject(key, isCompletedCase)
+      .getIndictmentObject(uri, isCompletedCase)
       .catch(() => undefined) // Ignore errors and return undefined
   }
 
   private tryUploadPdfToS3(state: CaseState, uri: string, pdf: Buffer) {
     this.awsS3Service
-      .putObject(
-        `indictments/${isCompletedCase(state) ? 'completed/' : ''}${uri}`,
-        pdf.toString('binary'),
-      )
+      .putIndictmentObject(uri, pdf.toString('binary'), isCompletedCase(state))
       .catch((reason) => {
         this.logger.error(`Failed to upload pdf ${uri} to AWS S3`, { reason })
       })

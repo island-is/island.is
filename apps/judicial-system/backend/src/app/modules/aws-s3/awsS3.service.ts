@@ -6,9 +6,12 @@ import type { ConfigType } from '@island.is/nest/config'
 
 import { awsS3ModuleConfig } from './awsS3.config'
 
-const generatedPrefix = 'generated/'
+const requestPrefix = 'generated/'
 const indictmentPrefix = 'indictments/'
 const completedIndictmentPrefix = 'indictments/completed/'
+
+const formatConfirmedKey = (key?: string) =>
+  key?.replace(/\/([^/]*)$/, '/confirmed/$1') ?? ''
 
 @Injectable()
 export class AwsS3Service {
@@ -107,11 +110,11 @@ export class AwsS3Service {
       .then((data) => data.Body as Buffer)
   }
 
-  async getGeneratedRequestCaseObject(key: string): Promise<Buffer> {
-    return this.getObject(`${generatedPrefix}${key}`)
+  getRequestObject(key: string): Promise<Buffer> {
+    return this.getObject(`${requestPrefix}${key}`)
   }
 
-  async getGeneratedIndictmentCaseObject(
+  async getIndictmentObject(
     key: string,
     isCompletedCase: boolean,
   ): Promise<Buffer> {
@@ -126,7 +129,7 @@ export class AwsS3Service {
     return await this.getObject(`${indictmentPrefix}/${key}`)
   }
 
-  async putObject(key: string, content: string): Promise<string> {
+  private async putObject(key: string, content: string): Promise<string> {
     return this.s3
       .putObject({
         Bucket: this.config.bucket,
@@ -136,6 +139,25 @@ export class AwsS3Service {
       })
       .promise()
       .then(() => key)
+  }
+
+  putConfirmedObject(key: string, content: string): Promise<string> {
+    return this.putObject(formatConfirmedKey(key), content)
+  }
+
+  putRequestObject(key: string, content: string): Promise<string> {
+    return this.putObject(`${requestPrefix}${key}`, content)
+  }
+
+  async putIndictmentObject(
+    key: string,
+    content: string,
+    isCompletedCase: boolean,
+  ): Promise<string> {
+    return this.putObject(
+      `${isCompletedCase ? completedIndictmentPrefix : indictmentPrefix}${key}`,
+      content,
+    )
   }
 
   async copyObject(key: string, newKey: string): Promise<string> {

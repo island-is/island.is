@@ -56,12 +56,13 @@ describe('InternalCaseController - Deliver indictment to court', () => {
     const mockGetObject = mockAwsS3Service.getObject as jest.Mock
     mockGetObject.mockRejectedValue(new Error('Some error'))
     const mockGetGeneratedIndictmentCaseObject =
-      awsS3Service.getGeneratedIndictmentCaseObject as jest.Mock
+      awsS3Service.getIndictmentObject as jest.Mock
     mockGetGeneratedIndictmentCaseObject.mockRejectedValue(
       new Error('Some error'),
     )
-    const mockPutObject = mockAwsS3Service.putObject as jest.Mock
-    mockPutObject.mockRejectedValue(new Error('Some error'))
+    const mockPutIndictmentObject =
+      mockAwsS3Service.putIndictmentObject as jest.Mock
+    mockPutIndictmentObject.mockRejectedValue(new Error('Some error'))
 
     const mockCreateIndictment = createIndictment as jest.Mock
     mockCreateIndictment.mockRejectedValue(new Error('Some error'))
@@ -95,17 +96,19 @@ describe('InternalCaseController - Deliver indictment to court', () => {
     })
 
     it('should deliver the indictment', () => {
-      expect(
-        mockAwsS3Service.getGeneratedIndictmentCaseObject,
-      ).toHaveBeenCalledWith(`${theCase.id}/indictment.pdf`, true)
+      expect(mockAwsS3Service.getIndictmentObject).toHaveBeenCalledWith(
+        `${theCase.id}/indictment.pdf`,
+        true,
+      )
       expect(createIndictment).toHaveBeenCalledWith(
         theCase,
         expect.any(Function),
         undefined,
       )
-      expect(mockAwsS3Service.putObject).toHaveBeenCalledWith(
-        `indictments/completed/${theCase.id}/indictment.pdf`,
+      expect(mockAwsS3Service.putIndictmentObject).toHaveBeenCalledWith(
+        `${theCase.id}/indictment.pdf`,
         pdf.toString(),
+        true,
       )
       expect(mockCourtService.createDocument).toHaveBeenCalledWith(
         user,
@@ -125,7 +128,7 @@ describe('InternalCaseController - Deliver indictment to court', () => {
   describe('deliver indictment pdf from AWS S3 to court', () => {
     beforeEach(async () => {
       const mockGetGeneratedIndictmentCaseObject =
-        mockAwsS3Service.getGeneratedIndictmentCaseObject as jest.Mock
+        mockAwsS3Service.getIndictmentObject as jest.Mock
       mockGetGeneratedIndictmentCaseObject.mockResolvedValueOnce(pdf)
 
       await givenWhenThen(caseId, theCase)

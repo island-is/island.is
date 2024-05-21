@@ -67,12 +67,13 @@ describe('InternalCaseController - Deliver case files record to police', () => {
     const mockToday = nowFactory as jest.Mock
     mockToday.mockReturnValueOnce(date)
     const mockGetGeneratedIndictmentCaseObject =
-      mockAwsS3Service.getGeneratedIndictmentCaseObject as jest.Mock
+      mockAwsS3Service.getIndictmentObject as jest.Mock
     mockGetGeneratedIndictmentCaseObject.mockRejectedValue(
       new Error('Some error'),
     )
-    const mockPutObject = mockAwsS3Service.putObject as jest.Mock
-    mockPutObject.mockRejectedValue(new Error('Some error'))
+    const mockPutIndictmentObject =
+      mockAwsS3Service.putIndictmentObject as jest.Mock
+    mockPutIndictmentObject.mockRejectedValue(new Error('Some error'))
     const mockCreateCaseFilesRecord = createCaseFilesRecord as jest.Mock
     mockCreateCaseFilesRecord.mockRejectedValue(new Error('Some error'))
     const mockUpdatePoliceCase = mockPoliceService.updatePoliceCase as jest.Mock
@@ -110,9 +111,7 @@ describe('InternalCaseController - Deliver case files record to police', () => {
     })
 
     it('should update the police case', () => {
-      expect(
-        mockAwsS3Service.getGeneratedIndictmentCaseObject,
-      ).toHaveBeenCalledWith(
+      expect(mockAwsS3Service.getIndictmentObject).toHaveBeenCalledWith(
         `${theCase.id}/${policeCaseNumber}/caseFilesRecord.pdf`,
         true,
       )
@@ -122,9 +121,10 @@ describe('InternalCaseController - Deliver case files record to police', () => {
         [],
         expect.any(Function),
       )
-      expect(mockAwsS3Service.putObject).toHaveBeenCalledWith(
-        `indictments/completed/${theCase.id}/${policeCaseNumber}/caseFilesRecord.pdf`,
+      expect(mockAwsS3Service.putIndictmentObject).toHaveBeenCalledWith(
+        `${theCase.id}/${policeCaseNumber}/caseFilesRecord.pdf`,
         pdf.toString(),
+        true,
       )
       expect(mockPoliceService.updatePoliceCase).toHaveBeenCalledWith(
         user,
@@ -150,7 +150,7 @@ describe('InternalCaseController - Deliver case files record to police', () => {
   describe('pdf returned from AWS S3', () => {
     beforeEach(async () => {
       const mockGetGeneratedIndictmentCaseObject =
-        mockAwsS3Service.getGeneratedIndictmentCaseObject as jest.Mock
+        mockAwsS3Service.getIndictmentObject as jest.Mock
       mockGetGeneratedIndictmentCaseObject.mockResolvedValueOnce(pdf)
 
       await givenWhenThen(caseId, policeCaseNumber, theCase)

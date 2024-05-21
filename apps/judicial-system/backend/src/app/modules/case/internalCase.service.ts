@@ -282,9 +282,7 @@ export class InternalCaseService {
   }
 
   private getSignedRulingPdf(theCase: Case) {
-    return this.awsS3Service.getGeneratedRequestCaseObject(
-      `${theCase.id}/ruling.pdf`,
-    )
+    return this.awsS3Service.getRequestObject(`${theCase.id}/ruling.pdf`)
   }
 
   private async deliverSignedRulingPdfToCourt(

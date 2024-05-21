@@ -391,7 +391,7 @@ export class CaseService {
     pdf: string,
   ): Promise<boolean> {
     return this.awsS3Service
-      .putObject(`generated/${theCase.id}/ruling.pdf`, pdf)
+      .putRequestObject(`${theCase.id}/ruling.pdf`, pdf)
       .then(() => true)
       .catch((reason) => {
         this.logger.error(
@@ -408,7 +408,7 @@ export class CaseService {
     pdf: string,
   ): Promise<boolean> {
     return this.awsS3Service
-      .putObject(`generated/${theCase.id}/courtRecord.pdf`, pdf)
+      .putRequestObject(`${theCase.id}/courtRecord.pdf`, pdf)
       .then(() => true)
       .catch((reason) => {
         this.logger.error(

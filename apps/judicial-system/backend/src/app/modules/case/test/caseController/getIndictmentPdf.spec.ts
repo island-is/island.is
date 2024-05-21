@@ -36,20 +36,21 @@ describe('CaseController - Get indictment pdf', () => {
   const pdf = Buffer.from(uuid())
   const res = { end: jest.fn() } as unknown as Response
 
-  let mockawsS3Service: AwsS3Service
+  let mockAwsS3Service: AwsS3Service
   let givenWhenThen: GivenWhenThen
 
   beforeEach(async () => {
     const { awsS3Service, caseController } = await createTestingCaseModule()
 
-    mockawsS3Service = awsS3Service
+    mockAwsS3Service = awsS3Service
     const mockGetGeneratedIndictmentCaseObject =
-      mockawsS3Service.getGeneratedIndictmentCaseObject as jest.Mock
+      mockAwsS3Service.getIndictmentObject as jest.Mock
     mockGetGeneratedIndictmentCaseObject.mockRejectedValue(
       new Error('Some error'),
     )
-    const mockPutObject = mockawsS3Service.putObject as jest.Mock
-    mockPutObject.mockRejectedValue(new Error('Some error'))
+    const mockPutIndictmentObject =
+      mockAwsS3Service.putIndictmentObject as jest.Mock
+    mockPutIndictmentObject.mockRejectedValue(new Error('Some error'))
 
     givenWhenThen = async () => {
       const then = {} as Then
@@ -73,17 +74,19 @@ describe('CaseController - Get indictment pdf', () => {
     })
 
     it('should generate pdf after failing to get it from AWS S3', () => {
-      expect(
-        mockawsS3Service.getGeneratedIndictmentCaseObject,
-      ).toHaveBeenCalledWith(`${caseId}/indictment.pdf`, true)
+      expect(mockAwsS3Service.getIndictmentObject).toHaveBeenCalledWith(
+        `${caseId}/indictment.pdf`,
+        true,
+      )
       expect(createIndictment).toHaveBeenCalledWith(
         theCase,
         expect.any(Function),
         undefined,
       )
-      expect(mockawsS3Service.putObject).toHaveBeenCalledWith(
-        `indictments/completed/${caseId}/indictment.pdf`,
+      expect(mockAwsS3Service.putIndictmentObject).toHaveBeenCalledWith(
+        `${caseId}/indictment.pdf`,
         pdf.toString('binary'),
+        true,
       )
       expect(res.end).toHaveBeenCalledWith(pdf)
     })
@@ -92,7 +95,7 @@ describe('CaseController - Get indictment pdf', () => {
   describe('pdf returned from AWS S3', () => {
     beforeEach(async () => {
       const mockGetGeneratedIndictmentCaseObject =
-        mockawsS3Service.getGeneratedIndictmentCaseObject as jest.Mock
+        mockAwsS3Service.getIndictmentObject as jest.Mock
       mockGetGeneratedIndictmentCaseObject.mockResolvedValueOnce(pdf)
 
       await givenWhenThen()
