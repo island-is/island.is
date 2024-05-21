@@ -34,7 +34,7 @@ const SubpoenaConfirmationModal: FC<React.PropsWithChildren<Props>> = ({
       }}
     >
       <GridRow>
-        <GridColumn span={['8/12']}>
+        <GridColumn span={['12/12', '12/12', '8/12']}>
           <Box
             display="flex"
             flexDirection="column"
@@ -51,7 +51,7 @@ const SubpoenaConfirmationModal: FC<React.PropsWithChildren<Props>> = ({
             </Box>
             <Box
               display="flex"
-              justifyContent="flexStart"
+              justifyContent={['spaceBetween', 'spaceBetween', 'flexStart']}
               width="full"
               flexDirection="row"
               marginTop={5}
@@ -93,7 +93,7 @@ const SubpoenaConfirmationModal: FC<React.PropsWithChildren<Props>> = ({
             </Box>
           </Box>
         </GridColumn>
-        <GridColumn span={['4/12']}>
+        <GridColumn span={['0', '0', '4/12']}>
           <Box
             justifyContent="center"
             alignItems="center"

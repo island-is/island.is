@@ -113,9 +113,9 @@ const Subpeona = () => {
         </>
       )}
 
-      <Box marginTop={5} paddingRight={20}>
+      <GridColumn span={['8/8', '8/8', '6/8']} paddingTop={5}>
         <Text>{subpeona?.texts?.description}</Text>
-      </Box>
+      </GridColumn>
       {!subpeona?.data.chosenDefender && !defenseChoice && <DefenderChoices />}
 
       {defenderPopUp && (

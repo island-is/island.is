@@ -28,7 +28,7 @@ const CourtCaseDetail = () => {
 
   const { id } = useParams() as UseParams
 
-  const { data, loading, error } = useGetCourtCaseQuery({
+  const { data, error, loading } = useGetCourtCaseQuery({
     variables: {
       input: {
         id: id,
@@ -78,6 +78,7 @@ const CourtCaseDetail = () => {
   return (
     <Box marginTop={3}>
       <IntroHeader
+        loading={loading}
         title={
           courtCase?.data?.caseNumberTitle ??
           formatMessage(messages.courtCaseNumberNotRegistered)
