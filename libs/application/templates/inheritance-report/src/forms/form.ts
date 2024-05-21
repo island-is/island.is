@@ -8,9 +8,8 @@ import {
 import { m } from '../lib/messages'
 import { DefaultEvents, Form, FormModes } from '@island.is/application/types'
 import { assets } from './sections/assets'
-import { debts } from './sections/debts'
+import { debtsAndFuneralCost } from './sections/debtsAndFuneralCost'
 import { heirs } from './sections/heirs'
-import { funeralCost } from './sections/funeralCost'
 import { applicant } from './sections/applicant'
 import { dataCollection } from './sections/dataCollection'
 import { deceased } from './sections/deceased'
@@ -31,8 +30,7 @@ export const form: Form = buildForm({
     applicationInfo,
     applicant,
     assets,
-    funeralCost,
-    debts,
+    debtsAndFuneralCost,
     heirs,
     buildSection({
       id: 'finalStep',

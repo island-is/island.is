@@ -711,9 +711,9 @@ export const m = defineMessages({
     defaultMessage: 'Yfirlit eigna',
     description: '',
   },
-  debtsOverview: {
-    id: 'ir.application:debtsOverview',
-    defaultMessage: 'Yfirlit skulda',
+  debtsAndFuneralCostOverview: {
+    id: 'ir.application:debtsAndFuneralCostOverview',
+    defaultMessage: 'Yfirlit',
     description: '',
   },
   assetOverviewDescription: {
@@ -931,6 +931,30 @@ export const m = defineMessages({
   totalAmount: {
     id: 'ir.application:totalAmount',
     defaultMessage: 'Samtals fjárhæð',
+    description: '',
+  },
+
+  totalAmountDebts: {
+    id: 'ir.application:totalAmountDebts',
+    defaultMessage: 'Samtals fjárhæð skuldir',
+    description: '',
+  },
+
+  totalAmountPublic: {
+    id: 'ir.application:totalAmountPublic',
+    defaultMessage: 'Samtals fjárhæð opinber gjöld',
+    description: '',
+  },
+
+  totalAmountFuneralCost: {
+    id: 'ir.application:totalAmountFuneralCost',
+    defaultMessage: 'Samtals fjárhæð útfararkostnaðar',
+    description: '',
+  },
+
+  debtsAndFuneralCostTitle: {
+    id: 'ir.application:debtsAndFuneralCostTitle',
+    defaultMessage: 'Skuldir og útfararkostnaður',
     description: '',
   },
 
