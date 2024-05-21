@@ -113,4 +113,11 @@ export class Defendant extends Model {
   })
   @ApiProperty({ enum: ServiceRequirement })
   serviceRequirement?: ServiceRequirement
+
+  @Column({
+    type: DataType.STRING,
+    allowNull: true,
+  })
+  @ApiProperty()
+  verdictViewDate?: string
 }
