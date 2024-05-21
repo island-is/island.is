@@ -129,7 +129,8 @@ export const Overview = () => {
         <Box component="section" marginBottom={5}>
           <InfoCardClosedIndictment
             defendantInfoActionButton={
-              isCompletedCase(workingCase.state)
+              isCompletedCase(workingCase.state) &&
+              workingCase.indictmentReviewer !== null
                 ? {
                     text: fm(strings.displayVerdict),
                     onClick: (defendant) => {
