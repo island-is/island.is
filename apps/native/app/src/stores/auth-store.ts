@@ -16,6 +16,7 @@ import { getApolloClientAsync } from '../graphql/client'
 import { isAndroid } from '../utils/devices'
 import { getAppRoot } from '../utils/lifecycle/get-app-root'
 import { preferencesStore } from './preferences-store'
+import { clearAllStorages } from '../stores/mmkv'
 
 const KEYCHAIN_AUTH_KEY = `@islandis_${bundleId}`
 
@@ -136,6 +137,8 @@ export const authStore = create<AuthStore>((set, get) => ({
     return false
   },
   async logout() {
+    // Clear all MMKV storages
+    void clearAllStorages()
     const appAuthConfig = getAppAuthConfig()
     // eslint-disable-next-line @typescript-eslint/no-non-null-assertion
     const tokenToRevoke = get().authorizeResult!.accessToken!

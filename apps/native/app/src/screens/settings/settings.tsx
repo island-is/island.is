@@ -39,7 +39,6 @@ import { createNavigationOptionHooks } from '../../hooks/create-navigation-optio
 import { navigateTo } from '../../lib/deep-linking'
 import { showPicker } from '../../lib/show-picker'
 import { authStore } from '../../stores/auth-store'
-import { clearAllStorages } from '../../stores/mmkv'
 import { useNotificationsStore } from '../../stores/notifications-store'
 import {
   preferencesStore,
@@ -96,9 +95,6 @@ export const SettingsScreen: NavigationFunctionComponent = ({
     }
 
     resetNotificationsStore()
-
-    // Clear all MMKV storages
-    void clearAllStorages()
 
     await authStore.getState().logout()
     await Navigation.dismissAllModals()
