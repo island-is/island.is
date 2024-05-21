@@ -35,11 +35,6 @@ export const informationNavigation: PortalNavigationItem = {
           navHide: true,
           path: InformationPaths.ChildCustody,
         },
-        {
-          name: m.familyChild,
-          navHide: true,
-          path: InformationPaths.ChildCustody,
-        },
       ],
     },
     {
