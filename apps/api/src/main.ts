@@ -8,3 +8,5 @@ bootstrap({
   stripNonClassValidatorInputs: false,
   jsonBodyLimit: '300kb',
 })
+
+/** A comment */
