@@ -809,3 +809,14 @@ export const OfficialJournalOfIceland = new XroadConf({
     },
   },
 })
+
+export const LawAndOrder = new XroadConf({
+  env: {
+    XROAD_LAW_AND_ORDER_PATH: {
+      dev: 'IS-DEV/GOV/10014/Rettarvorslugatt-Private/judicial-system-mailbox-api',
+      staging:
+        'IS-DEV/GOV/10014/Rettarvorslugatt-Private/judicial-system-mailbox-api',
+      prod: 'IS-GOV/GOV/10014/Rettarvorslugatt-Private/judicial-system-mailbox-api',
+    },
+  },
+})
