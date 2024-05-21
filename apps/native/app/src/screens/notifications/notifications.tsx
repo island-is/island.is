@@ -37,7 +37,7 @@ const ErrorContainer = styled.View`
   align-items: center;
 `
 
-const DEFAULT_PAGE_SIZE = 15
+const DEFAULT_PAGE_SIZE = 50
 
 const { getNavigationOptions, useNavigationOptions } =
   createNavigationOptionHooks(() => ({
