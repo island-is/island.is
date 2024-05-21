@@ -7,7 +7,7 @@ import { Typography } from '../typography/typography'
 
 const Host = styled.TouchableHighlight<{ unread?: boolean }>`
   background-color: ${dynamicColor((props) => ({
-    dark: props.unread ? 'shade100' : 'transparent',
+    dark: props.unread ? props.theme.shades.dark.shade200 : 'transparent',
     light: props.unread ? props.theme.color.blue100 : 'transparent',
   }))};
 `
@@ -85,7 +85,9 @@ export function NotificationCard({
     <Host
       onPress={() => onPress(id)}
       underlayColor={
-        underlayColor ?? theme.isDark ? theme.shade.shade200 : '#EBEBFA'
+        underlayColor ?? theme.isDark
+          ? theme.shade.shade300
+          : theme.color.blue100
       }
       unread={unread}
       testID={testID}
