@@ -4,7 +4,6 @@ import { FC } from 'react'
 import { useLocale } from '@island.is/localization'
 import { RadioController } from '@island.is/shared/form-fields'
 import { information } from '../../lib/messages'
-import { Transcripts } from '@island.is/clients/university-of-iceland'
 
 interface Option {
   value: string
@@ -18,7 +17,7 @@ export const SelectWorkPermitField: FC<
   const { lang, formatMessage } = useLocale()
   const { application } = props
 
-  const workPermitOptions = (workPermits: Transcripts) => {
+  const workPermitOptions = (workPermits: any) => {
     const options: Option[] = []
 
     for (const workPermit of workPermits.transcripts ?? []) {
@@ -79,7 +78,7 @@ export const SelectWorkPermitField: FC<
         backgroundColor="blue"
         defaultValue={[]}
         options={workPermitOptions(
-          application?.externalData?.universityOfIceland?.data as Transcripts,
+          application?.externalData?.universityOfIceland?.data as any,
         )}
       />
     </Box>

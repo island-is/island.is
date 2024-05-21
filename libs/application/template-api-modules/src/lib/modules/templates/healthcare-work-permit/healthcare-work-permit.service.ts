@@ -17,6 +17,7 @@ import {
 } from '@island.is/clients/health-directorate'
 import { TemplateApiError } from '@island.is/nest/problem'
 import {
+  StudentTrackDto,
   UniversityCareersClientService,
   UniversityId,
 } from '@island.is/clients/university-careers'
@@ -30,7 +31,7 @@ export class HealthcareWorkPermitService extends BaseTemplateApiService {
   constructor(
     private readonly sharedTemplateAPIService: SharedTemplateApiService,
     private readonly healthDirectorateClientService: HealthDirectorateClientService,
-    // private readonly universityCareersClientService: UniversityCareersClientService,
+    //private readonly universityCareersClientService: UniversityCareersClientService,
     private readonly nationalRegistryService: NationalRegistryV3ClientService,
   ) {
     super(ApplicationTypes.HEALTHCARE_WORK_PERMIT)
@@ -43,7 +44,17 @@ export class HealthcareWorkPermitService extends BaseTemplateApiService {
       auth.nationalId,
     )
 
-    // TODO Double check if this fails on empty response
+    // TODO Check if user has EES citizenship
+    // if(!hasEESCitizenship) {
+    //   throw new TemplateApiError(
+    //     {
+    //       title: errorMsg.healthcareLicenseErrorTitle,
+    //       summary: errorMsg.healthcareLicenseErrorMessage,
+    //     },
+    //     400,
+    //   )
+    // }
+
     if (!result) {
       throw new TemplateApiError(
         {
@@ -57,6 +68,7 @@ export class HealthcareWorkPermitService extends BaseTemplateApiService {
     return result
   }
 
+  /* Which health care licenses does this user already have */
   async getMyHealthcareLicenses({
     auth,
   }: TemplateApiModuleActionProps): Promise<StarfsleyfiUmsoknStarfsleyfi[]> {
@@ -79,6 +91,7 @@ export class HealthcareWorkPermitService extends BaseTemplateApiService {
     return result
   }
 
+  /* Info on different education programs that give work permit licenses */
   async getEducationInfo({
     auth,
   }: TemplateApiModuleActionProps): Promise<StarfsleyfiUmsoknStarfsleyfi[]> {
@@ -100,9 +113,10 @@ export class HealthcareWorkPermitService extends BaseTemplateApiService {
     return result
   }
 
+  /* The academic career of the logged in uses. Used to find which programmes are valid for work permit */
   async getMyAcademicCareer({
     auth,
-  }: TemplateApiModuleActionProps): Promise<[]> {
+  }: TemplateApiModuleActionProps): Promise<StudentTrackDto[]> {
     // const result =
     //   await this.universityCareersClientService.getStudentTrackHistory(
     //     auth,
