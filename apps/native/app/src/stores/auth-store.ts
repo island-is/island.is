@@ -19,7 +19,7 @@ import { preferencesStore } from './preferences-store'
 
 const KEYCHAIN_AUTH_KEY = `@islandis_${bundleId}`
 
-// Optional scopes that are not required a full logout of the app if not present
+// Optional scopes (not required for all users so we do not want to force a logout)
 const OPTIONAL_SCOPES = ['@island.is/licenses:barcode']
 
 interface UserInfo {
