@@ -8,7 +8,6 @@ import { TestApp } from '@island.is/testing/nest'
 import {
   DelegationProviderModel,
   DelegationTypeModel,
-  getPersonalRepresentativeDelegationType,
   PersonalRepresentative,
   PersonalRepresentativeCreateDTO,
   PersonalRepresentativePublicDTO,
@@ -22,6 +21,7 @@ import { AuthScope } from '@island.is/auth/scopes'
 import { createCurrentUser } from '@island.is/testing/fixtures'
 import { getModelToken } from '@nestjs/sequelize'
 import { addDelegationTypesAndProvider } from '@island.is/services/auth/testing'
+import { getPersonalRepresentativeDelegationType } from '@island.is/shared/types'
 
 const path = '/v1/personal-representatives'
 
