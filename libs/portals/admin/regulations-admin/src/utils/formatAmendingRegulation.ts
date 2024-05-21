@@ -1,7 +1,8 @@
 import { asDiv, HTMLText } from '@island.is/regulations'
-import qq from '@hugsmidjan/qj/qq'
 import { GroupedDraftImpactForms, RegDraftForm } from '../state/types'
 import flatten from 'lodash/flatten'
+import { groupElementsByArticleTitleFromDiv } from './groupByArticleTitle'
+import { getDeletionOrAddition } from './getDeletionOrAddition'
 
 // ----------------------------------------------------------------------
 const PREFIX = 'Reglugerð um '
@@ -48,117 +49,6 @@ export const formatAmendingRegTitle = (draft: RegDraftForm) => {
 
 // ----------------------------------------------------------------------
 
-const getLiPoint = (num: number, isStaflidur: boolean) => {
-  const charNum = num > 22 ? 23 : num - 1
-  const bulletPoint = isStaflidur ? String.fromCharCode(97 + charNum) : num
-
-  return bulletPoint
-}
-
-// List item recursion for nested lists
-const formatListItemDiff = (item: Element) => {
-  let oldLiText = ''
-  let newLiText = ''
-  let liItemHtml = '' as HTMLText
-  let lidur = 0
-  const returningArray: HTMLText[] = []
-  qq('ol > li', item).forEach((liItem) => {
-    lidur++
-
-    const liHasDeletion = !!liItem.querySelector('del')
-    const liHasInsert = !!liItem.querySelector('ins')
-
-    if (liHasDeletion || liHasInsert) {
-      const oldLiElement = liItem.cloneNode(true) as Element
-      oldLiElement.querySelectorAll('ins').forEach((e) => e.remove())
-      oldLiText = oldLiElement.textContent || ''
-
-      const newLiElement = liItem.cloneNode(true) as Element
-      newLiElement.querySelectorAll('del').forEach((e) => e.remove())
-      newLiText = newLiElement.textContent || ''
-
-      const directArray = Array.from(liItem.children)
-      const containsDirect = directArray.find((e) => {
-        let returning = false
-        const containing =
-          e.classList.contains('diffdel') ||
-          e.classList.contains('diffmod') ||
-          e.classList.contains('diffins')
-        if (containing) {
-          returning = true
-        }
-        const needsMoreDrilling = e.nodeName === 'EM' || e.nodeName === 'STRONG'
-        if (needsMoreDrilling) {
-          const nestedArray = Array.from(e.children)
-          returning = !!nestedArray.find(
-            (ee) =>
-              ee.classList.contains('diffdel') ||
-              ee.classList.contains('diffins') ||
-              ee.classList.contains('diffmod'),
-          )
-        }
-        return returning
-      })
-
-      const isStaflidur =
-        liItem?.parentElement?.getAttribute('type')?.toLowerCase() === 'a'
-
-      if (containsDirect) {
-        liItemHtml = (liItemHtml + formatListItemDiff(liItem)) as HTMLText
-      } else {
-        liItemHtml = (liItemHtml +
-          `${isStaflidur ? 'Stafliður' : 'Töluliður'} ${getLiPoint(
-            lidur,
-            isStaflidur,
-          )}, `) as HTMLText
-        formatListItemDiff(liItem)
-        lidur = 0
-        return
-      }
-
-      const isLiDeleted = newLiText === '' || newLiText === null
-      const isLiAddition = oldLiText === '' || oldLiText === null
-
-      const liLidur = isStaflidur ? 'stafliður' : 'töluliður'
-      const liLidurShortened = isStaflidur ? 'stafl.' : 'tölul.'
-
-      const lidurLabel = liItemHtml === '' ? liLidur.toLowerCase() : liLidur
-
-      if (isLiDeleted) {
-        liItemHtml = (liItemHtml +
-          `${getLiPoint(
-            lidur,
-            isStaflidur,
-          )}. ${lidurLabel} fellur brott og breytist númer annarra liða til samræmis.`) as HTMLText
-
-        // Finish up:
-        returningArray.push(liItemHtml)
-        liItemHtml = '' as HTMLText
-      } else if (isLiAddition) {
-        liItemHtml = (liItemHtml +
-          `Á eftir ${getLiPoint(lidur - 1, isStaflidur)}. ${
-            isStaflidur ? 'staflið' : 'tölulið'
-          } kemur nýr liður svohljóðandi, og breytist númer annarra lið til samræmis: ${newLiText}`) as HTMLText
-
-        // Finish up:
-        returningArray.push(liItemHtml)
-        liItemHtml = '' as HTMLText
-      } else {
-        liItemHtml = (liItemHtml +
-          `${getLiPoint(
-            lidur,
-            isStaflidur,
-          )}. ${liLidurShortened} orðast svo: ${newLiText}`) as HTMLText
-
-        // Finish up:
-        returningArray.push(liItemHtml)
-        liItemHtml = '' as HTMLText
-      }
-    }
-  })
-  return returningArray
-}
-
 export const formatAmendingRegBody = (
   regName: string,
   repeal?: boolean,
@@ -176,97 +66,36 @@ export const formatAmendingRegBody = (
     return []
   }
 
-  const additionArray: HTMLText[] = []
+  const additionArray: HTMLText[][] = []
 
   const diffString = diff as string
   const diffDiv = asDiv(diffString)
-  let grein = 0
-  let malsgrein = 0
 
-  qq('div > *', diffDiv).forEach((item) => {
-    // Increment grein number on every article title
-    if (item.classList.contains('article__title')) {
-      grein++
-      malsgrein = 0
+  let paragraph = 0
+  const groupedArticles = groupElementsByArticleTitleFromDiv(diffDiv)
+
+  groupedArticles.forEach((group) => {
+    // Er allt inni í sub array 'deletion'?
+    let articleTitle = ''
+    const testGroup: {
+      arr: HTMLText[]
+      title: string
+      isDeletion?: boolean
+    } = {
+      arr: [],
+      title: '',
+      isDeletion: undefined,
     }
 
-    let isMalsgrein = false
-    let isGreinTitle = false
-    let isTolulidur = false
-    let isStaflidur = false
-
-    // Increment malsgrein number on every paragraph after article
-    if (item.nodeName === 'P') {
-      malsgrein++
-      isMalsgrein = true
-    }
-
-    if (item.nodeName === 'H3') {
-      isGreinTitle = true
-    }
-
-    if (item.nodeName === 'OL') {
-      if (item.getAttribute('type')?.toLowerCase() === 'a') {
-        isStaflidur = true
-      } else {
-        isTolulidur = true
-      }
-    }
-
-    const hasDeletion = !!item.querySelector('del')
-    const hasInsert = !!item.querySelector('ins')
-    const isGildistokuGrein =
-      isMalsgrein &&
-      /(öðlast|tekur).*gildi|sett.*með.*(?:heimild|stoð)/.test(
-        (item.textContent || '').toLowerCase(),
-      )
-
-    if (hasDeletion || hasInsert || isGildistokuGrein) {
-      const oldTextElement = item.cloneNode(true) as Element
-      const newTextElement = item.cloneNode(true) as Element
-      let oldText = ''
-      let newText = ''
-
-      oldTextElement.querySelectorAll('ins').forEach((e) => e.remove())
-      oldText = oldTextElement.textContent || ''
-
-      newTextElement.querySelectorAll('del').forEach((e) => e.remove())
-      newText = newTextElement.textContent || ''
-
-      let liHtml = '' as HTMLText
-      if (isStaflidur || isTolulidur) {
-        liHtml = `<p>${formatListItemDiff(item).join(
-          '</p><p>',
-        )}</p>` as HTMLText
-      } else {
-        oldTextElement.querySelectorAll('ins').forEach((e) => e.remove())
-        oldText = oldTextElement.textContent || ''
-
-        newTextElement.querySelectorAll('del').forEach((e) => e.remove())
-
-        if (isGreinTitle) {
-          const tempElement = newTextElement
-
-          // Select all <ins> elements within the temporary element
-          const insElements = tempElement.querySelectorAll('ins')
-
-          // Iterate through each <ins> element and insert a space before and after its content
-          insElements.forEach((insElement) => {
-            const content = insElement.textContent
-            insElement.textContent = ` ${content}<br />`
-          })
-
-          // Retrieve the modified text content from the temporary element
-          const modifiedTextContent = tempElement?.textContent?.trim()
-          newText = modifiedTextContent ?? ''
-        } else {
-          newText = newTextElement.textContent || ''
-        }
-      }
-
-      const isDeleted =
-        newText === '' || newText === null || newText === '<br />'
-      const isAddition = oldText === '' || oldText === null
+    group.forEach((element) => {
+      const {
+        newText,
+        oldText,
+        isDeleted,
+        isAddition,
+        liHtml,
+        newTextElement,
+      } = getDeletionOrAddition(element)
 
       const regNameDisplay =
         regName && regName !== 'self'
@@ -274,88 +103,136 @@ export const formatAmendingRegBody = (
           : 'reglugerðarinnar'
       let pushHtml = '' as HTMLText
 
-      if (isGildistokuGrein) {
-        pushHtml = `<p>${oldText}</p>` as HTMLText
-      } else if (isDeleted) {
-        if (isMalsgrein) {
-          // Paragraph was deleted
-          pushHtml =
-            `<p>${malsgrein}. mgr. ${grein}. gr. ${regNameDisplay} fellur brott</p>` as HTMLText
-        } else if (isGreinTitle) {
-          // Title was deleted
-          pushHtml =
-            `<p>Fyrirsögn ${grein}. gr. ${regNameDisplay} fellur brott</p>` as HTMLText
-        } else if (isStaflidur || isTolulidur) {
-          // List was deleted
-          pushHtml = `<p>${
-            isStaflidur ? 'Stafliðir' : 'Töluliðir'
-          } eftir ${malsgrein}. mgr. ${grein}. gr. ${regNameDisplay} falla brott</p>` as HTMLText
+      let isParagraph = false
+      let isArticleTitle = false
+      let isNumberList = false
+      let isLetterList = false
+      if (element.classList.contains('article__title')) {
+        articleTitle = element.innerText
+        testGroup.title = articleTitle
+        isArticleTitle = true
+        paragraph = 0 // Reset paragraph count for the new article
+        // } else if (element.tagName.toLowerCase() === 'p') {
+      } else if (element.nodeName === 'P') {
+        paragraph++
+        isParagraph = true
+      } else if (element.nodeName === 'OL') {
+        if (element.getAttribute('type')?.toLowerCase() === 'a') {
+          isLetterList = true
         } else {
-          // We don't know what you deleted, but there was a deletion, and here's the deletelog:
-          pushHtml =
-            `<p>Texti í ${grein}. gr. ${regNameDisplay} fellur brott:</p><p>${oldText}</p>` as HTMLText
-        }
-      } else if (isAddition) {
-        if (isMalsgrein) {
-          // Paragraph was added
-          pushHtml =
-            malsgrein > 1
-              ? (`<p>Á eftir ${
-                  malsgrein - 1
-                }. mgr. ${grein}. gr. ${regNameDisplay} kemur ný málsgrein sem orðast svo:</p><p>${newText}</p>` as HTMLText)
-              : (`<p>1. mgr. ${grein}. gr. ${regNameDisplay} orðast svo:</p><p>${newText}</p>` as HTMLText)
-        } else if (isGreinTitle) {
-          // Title was added
-          pushHtml =
-            `<p>Fyrirsögn ${grein}. gr. ${regNameDisplay} orðast svo:</p><p>${newText}</p>` as HTMLText
-        } else if (isStaflidur || isTolulidur) {
-          // List was added
-
-          // Clean list addition:
-          const liCleanArray: (string | null)[] = []
-          newTextElement.querySelectorAll('ins').forEach((e) => {
-            if (e.textContent) liCleanArray.push(e.textContent)
-          })
-
-          const newLiTextBody =
-            liCleanArray.length > 0
-              ? `<ol><li>${liCleanArray.join('</li><li>')}</li><ol>`
-              : `<p>${newText}</p>`
-
-          pushHtml = `<p>${
-            isStaflidur ? 'Stafliðum' : 'Töluliðum'
-          } eftir ${malsgrein}. mgr. ${grein}. gr. ${regNameDisplay} er bætt við:</p>${newLiTextBody}` as HTMLText
-        } else {
-          // We don't know what you added, but there was an addition, and here's the additionlog:
-          pushHtml =
-            `<p>Eftirfarandi texta ${regNameDisplay} var bætt við:</p><p>${newText}</p>` as HTMLText
-        }
-      } else {
-        if (isGreinTitle) {
-          // Title was changed
-          pushHtml =
-            `<p>Fyrirsögn ${grein}. gr. ${regNameDisplay} orðast svo:</p><p>${newText}</p>` as HTMLText
-        } else if (isMalsgrein) {
-          // Paragraph was changed
-          pushHtml =
-            `<p>${malsgrein}. mgr. ${grein}. gr. ${regNameDisplay} orðast svo:</p><p>${newText}</p>` as HTMLText
-        } else if (isStaflidur || isTolulidur) {
-          // List was changed
-          pushHtml =
-            `<p>${malsgrein}. mgr. ${grein}. gr. ${regNameDisplay} breytist:</p> ${liHtml}` as HTMLText
-        } else {
-          // We don't know what you changed, but there was a change, and here's the changelog:
-          pushHtml =
-            `<p>Eftirfarandi breytingar ${regNameDisplay} áttu sér stað:</p><p>${
-              oldText ? `Í stað ${oldText} kemur ` : ''
-            }${newText}</p>` as HTMLText
+          isNumberList = true
         }
       }
-      additionArray.push(pushHtml)
+
+      const hasDeletion = !!element.querySelector('del')
+      const hasInsert = !!element.querySelector('ins')
+
+      const isGildistokuGrein =
+        isParagraph &&
+        /(öðlast|tekur).*gildi|sett.*með.*(?:heimild|stoð)/.test(
+          (element.textContent || '').toLowerCase(),
+        )
+
+      if (hasDeletion || hasInsert || isGildistokuGrein) {
+        if (isGildistokuGrein) {
+          pushHtml = `<p>${oldText}</p>` as HTMLText
+        } else if (isDeleted) {
+          // If deletion has never been false, everything is deleted, so it will stay true.
+          if (testGroup.isDeletion !== false) {
+            testGroup.isDeletion = true
+          }
+          if (isParagraph) {
+            // Paragraph was deleted
+            pushHtml =
+              `<p>${paragraph}. mgr. ${articleTitle} ${regNameDisplay} fellur brott</p>` as HTMLText
+          } else if (isArticleTitle) {
+            // Title was deleted
+            pushHtml =
+              `<p>Fyrirsögn ${articleTitle} ${regNameDisplay} fellur brott</p>` as HTMLText
+          } else if (isLetterList || isNumberList) {
+            // List was deleted
+            pushHtml = `<p>${
+              isLetterList ? 'Stafliðir' : 'Töluliðir'
+            } eftir ${paragraph}. mgr. ${articleTitle} ${regNameDisplay} falla brott</p>` as HTMLText
+          } else {
+            // We don't know what you deleted, but there was a deletion, and here's the deletelog:
+            pushHtml =
+              `<p>Texti í ${articleTitle} ${regNameDisplay} fellur brott:</p><p>${oldText}</p>` as HTMLText
+          }
+        } else if (isAddition) {
+          testGroup.isDeletion = false
+          if (isParagraph) {
+            // Paragraph was added
+            pushHtml =
+              paragraph > 1
+                ? (`<p>Á eftir ${
+                    paragraph - 1
+                  }. mgr. ${articleTitle} ${regNameDisplay} kemur ný málsgrein sem orðast svo:</p><p>${newText}</p>` as HTMLText)
+                : (`<p>1. mgr. ${articleTitle} ${regNameDisplay} orðast svo:</p><p>${newText}</p>` as HTMLText)
+          } else if (isArticleTitle) {
+            // Title was added
+            pushHtml =
+              `<p>Fyrirsögn ${articleTitle} ${regNameDisplay} orðast svo:</p><p>${newText}</p>` as HTMLText
+          } else if (isLetterList || isNumberList) {
+            // List was added
+
+            // Clean list addition:
+            const liCleanArray: (string | null)[] = []
+            newTextElement.querySelectorAll('ins').forEach((e) => {
+              if (e.textContent) liCleanArray.push(e.textContent)
+            })
+
+            const newLiTextBody =
+              liCleanArray.length > 0
+                ? `<ol><li>${liCleanArray.join('</li><li>')}</li><ol>`
+                : `<p>${newText}</p>`
+
+            pushHtml = `<p>${
+              isLetterList ? 'Stafliðum' : 'Töluliðum'
+            } eftir ${paragraph}. mgr. ${articleTitle} ${regNameDisplay} er bætt við:</p>${newLiTextBody}` as HTMLText
+          } else {
+            // We don't know what you added, but there was an addition, and here's the additionlog:
+            pushHtml =
+              `<p>Eftirfarandi texta ${regNameDisplay} var bætt við:</p><p>${newText}</p>` as HTMLText
+          }
+        } else {
+          testGroup.isDeletion = false
+          if (isArticleTitle) {
+            // Title was changed
+            pushHtml =
+              `<p>Fyrirsögn ${articleTitle} ${regNameDisplay} orðast svo:</p><p>${newText}</p>` as HTMLText
+          } else if (isParagraph) {
+            // Paragraph was changed
+            pushHtml =
+              `<p>${paragraph}. mgr. ${articleTitle} ${regNameDisplay} orðast svo:</p><p>${newText}</p>` as HTMLText
+          } else if (isLetterList || isNumberList) {
+            // List was changed
+            pushHtml =
+              `<p>${paragraph}. mgr. ${articleTitle} ${regNameDisplay} breytist:</p> ${liHtml}` as HTMLText
+          } else {
+            // We don't know what you changed, but there was a change, and here's the changelog:
+            pushHtml =
+              `<p>Eftirfarandi breytingar ${regNameDisplay} áttu sér stað:</p><p>${
+                oldText ? `Í stað ${oldText} kemur ` : ''
+              }${newText}</p>` as HTMLText
+          }
+        }
+        testGroup.arr.push(pushHtml)
+      } else {
+        testGroup.isDeletion = false
+      }
+    })
+    if (testGroup.isDeletion === true) {
+      const articleTitleNumber = testGroup.title
+      additionArray.push([
+        `<p>${articleTitleNumber} fellur brott</p>` as HTMLText,
+      ])
+    } else {
+      additionArray.push(testGroup.arr)
     }
   })
 
-  return additionArray
+  return additionArray.flat()
 }
 
 export const formatAmendingBodyWithArticlePrefix = (
