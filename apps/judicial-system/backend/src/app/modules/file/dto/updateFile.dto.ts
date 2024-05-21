@@ -1,10 +1,12 @@
 import { Type } from 'class-transformer'
 import {
-  Allow,
   IsArray,
+  IsDate,
+  IsNotEmpty,
   IsNumber,
   IsOptional,
   IsString,
+  IsUUID,
   Min,
   ValidateIf,
   ValidateNested,
@@ -13,40 +15,42 @@ import {
 import { ApiProperty, ApiPropertyOptional } from '@nestjs/swagger'
 
 export class UpdateFileDto {
-  @IsString()
-  @ApiProperty()
+  @IsNotEmpty()
+  @IsUUID()
+  @ApiProperty({ type: String })
   readonly id!: string
 
   @IsOptional()
   @IsString()
-  @ApiPropertyOptional()
+  @ApiPropertyOptional({ type: String })
   readonly userGeneratedFilename?: string
 
   @IsOptional()
   @ValidateIf((file) => typeof file.orderWithinChapter === 'number')
   @IsNumber()
   @Min(0)
-  @ApiPropertyOptional()
+  @ApiPropertyOptional({ type: Number })
   readonly chapter?: number
 
   @IsOptional()
   @ValidateIf((file) => typeof file.chapter === 'number')
   @IsNumber()
   @Min(0)
-  @ApiPropertyOptional()
+  @ApiPropertyOptional({ type: Number })
   readonly orderWithinChapter?: number
 
   @IsOptional()
-  @IsString()
-  @ApiPropertyOptional()
+  @Type(() => Date)
+  @IsDate()
+  @ApiPropertyOptional({ type: Date })
   readonly displayDate?: Date
 }
 
 export class UpdateFilesDto {
-  @Allow()
+  @IsNotEmpty()
   @IsArray()
   @ValidateNested({ each: true })
   @Type(() => UpdateFileDto)
-  @ApiProperty()
+  @ApiProperty({ type: UpdateFileDto, isArray: true })
   readonly files!: UpdateFileDto[]
 }
