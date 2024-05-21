@@ -1203,6 +1203,52 @@ export class NotificationService {
   //#endregion
 
   //#region MODIFIED notifications
+  private async sendModifiedNotificationToDefender(
+    subject: string,
+    theCase: Case,
+    user: User,
+  ): Promise<Recipient> {
+    return this.sendEmail(
+      subject,
+      theCase.isCustodyIsolation
+        ? this.formatMessage(notifications.modified.isolationHtmlDefender, {
+            caseType: theCase.type,
+            actorInstitution: user.institution?.name,
+            actorName: user.name,
+            actorTitle: user.title,
+            courtCaseNumber: theCase.courtCaseNumber,
+            defenderHasAccessToRvg: Boolean(theCase.defenderNationalId),
+            linkStart: `<a href="${formatDefenderRoute(
+              this.config.clientUrl,
+              theCase.type,
+              theCase.id,
+            )}">`,
+            linkEnd: '</a>',
+            validToDate: formatDate(theCase.validToDate, 'PPPp'),
+            isolationToDate: formatDate(theCase.isolationToDate, 'PPPp'),
+          })
+        : this.formatMessage(notifications.modified.htmlDefender, {
+            caseType: theCase.type,
+            actorInstitution: user.institution?.name,
+            actorName: user.name,
+            actorTitle: user.title,
+            courtCaseNumber: theCase.courtCaseNumber,
+            defenderHasAccessToRvg: Boolean(theCase.defenderNationalId),
+            linkStart: `<a href="${formatDefenderRoute(
+              this.config.clientUrl,
+              theCase.type,
+              theCase.id,
+            )}">`,
+            linkEnd: '</a>',
+            validToDate: formatDate(theCase.validToDate, 'PPPp'),
+          }),
+      theCase.defenderName,
+      theCase.defenderEmail,
+      undefined,
+      Boolean(theCase.defenderNationalId) === false,
+    )
+  }
+
   private async sendModifiedNotifications(
     theCase: Case,
     user: User,
@@ -1211,6 +1257,7 @@ export class NotificationService {
       courtCaseNumber: theCase.courtCaseNumber,
       caseType: theCase.type,
     })
+
     const html = theCase.isCustodyIsolation
       ? this.formatMessage(notifications.modified.isolationHtml, {
           caseType: theCase.type,
@@ -1292,12 +1339,7 @@ export class NotificationService {
 
     if (theCase.defenderEmail) {
       promises.push(
-        this.sendEmail(
-          subject,
-          html,
-          theCase.defenderName,
-          theCase.defenderEmail,
-        ),
+        this.sendModifiedNotificationToDefender(subject, theCase, user),
       )
     }
 
@@ -2333,6 +2375,8 @@ export class NotificationService {
         html,
         theCase.defenderName,
         theCase.defenderEmail,
+        undefined,
+        Boolean(theCase.defenderNationalId) === false,
       ),
     )
 
