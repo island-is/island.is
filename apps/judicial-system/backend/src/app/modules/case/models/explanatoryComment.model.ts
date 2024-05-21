@@ -32,29 +32,34 @@ export class ExplanatoryComment extends Model {
   @Column({
     type: DataType.UUID,
     primaryKey: true,
+    allowNull: false,
     defaultValue: DataType.UUIDV4,
   })
-  @ApiProperty()
+  @ApiProperty({ type: String })
   id!: string
 
   @CreatedAt
-  @ApiProperty()
+  @ApiProperty({ type: Date })
   created!: Date
 
   @UpdatedAt
-  @ApiProperty()
+  @ApiProperty({ type: Date })
   modified!: Date
 
-  @Column({ type: DataType.STRING })
-  @ApiProperty()
+  @Column({
+    type: DataType.ENUM,
+    allowNull: false,
+    values: Object.values(CommentType),
+  })
+  @ApiProperty({ enum: CommentType })
   commentType!: CommentType
 
   @ForeignKey(() => Case)
-  @Column({ type: DataType.UUID })
-  @ApiPropertyOptional()
+  @Column({ type: DataType.UUID, allowNull: false })
+  @ApiPropertyOptional({ type: String })
   caseId!: string
 
-  @Column({ type: DataType.STRING })
-  @ApiPropertyOptional()
+  @Column({ type: DataType.STRING, allowNull: false })
+  @ApiPropertyOptional({ type: String })
   comment!: string
 }
