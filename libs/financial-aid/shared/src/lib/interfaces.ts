@@ -10,6 +10,7 @@ import {
   AidType,
   UserType,
   ApplicationHeaderSortByEnum,
+  ChildrenAid,
 } from './enums'
 
 export interface GetSignedUrl {
@@ -210,6 +211,7 @@ export interface Municipality {
   municipalityId: string
   individualAid: Aid
   cohabitationAid: Aid
+  childrenAid: ChildrenAid
   homepage?: string
   email?: string
   rulesHomepage?: string
