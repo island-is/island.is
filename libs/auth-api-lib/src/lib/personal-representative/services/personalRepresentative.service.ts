@@ -5,6 +5,9 @@ import { BadRequestException, Inject, Injectable } from '@nestjs/common'
 import { InjectModel } from '@nestjs/sequelize'
 import { Op, WhereOptions } from 'sequelize'
 import { Sequelize } from 'sequelize-typescript'
+
+import { getPersonalRepresentativeDelegationType } from '@island.is/shared/types'
+
 import { PaginatedPersonalRepresentativeDto } from '../dto/paginated-personal-representative.dto'
 import { PaginationWithNationalIdsDto } from '../dto/pagination-with-national-ids.dto'
 import { PersonalRepresentativeCreateDTO } from '../dto/personal-representative-create.dto'
@@ -15,7 +18,6 @@ import { InactiveReason } from '../models/personal-representative.enum'
 import { PersonalRepresentative } from '../models/personal-representative.model'
 import { PersonalRepresentativeDelegationTypeModel } from '../models/personal-representative-delegation-type.model'
 import { DelegationTypeModel } from '../../delegations/models/delegation-type.model'
-import { getPersonalRepresentativeDelegationType } from '../../delegations/delegations-index.service'
 
 type GetByPersonalRepresentativeOptions = {
   nationalIdPersonalRepresentative: string

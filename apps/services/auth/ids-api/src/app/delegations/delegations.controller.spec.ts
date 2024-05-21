@@ -13,7 +13,6 @@ import {
   DelegationType,
   DelegationTypeModel,
   Domain,
-  getPersonalRepresentativeDelegationType,
   InactiveReason,
   MergedDelegationDTO,
   PersonalRepresentative,
@@ -57,6 +56,7 @@ import {
   personalRepresentativeType,
 } from '../../../test/stubs/personalRepresentativeStubs'
 import { AuthDelegationProvider } from 'delegation'
+import { getPersonalRepresentativeDelegationType } from '@island.is/shared/types'
 
 describe('DelegationsController', () => {
   describe('Given a user is authenticated', () => {

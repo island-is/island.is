@@ -25,7 +25,6 @@ import { DelegationProviderModel } from '../delegations/models/delegation-provid
       PersonalRepresentativeRightType,
       PersonalRepresentativeScopePermission,
       PersonalRepresentativeType,
-      PersonalRepresentativeDelegationTypeModel,
       DelegationProviderModel,
       DelegationTypeModel,
     ]),
