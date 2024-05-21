@@ -11,7 +11,7 @@ import { schoolInfoSubSection } from './schoolInfoSubSection'
 import { fishingCompanyInfoSubSection } from './fishingCompanyInfoSubSection'
 import { sportsClubInfoSubSection } from './sportsClubInfoSubSection'
 import { rescueSquadInfoSubSection } from './rescueSquadInfoSubSection'
-import { companyInfoSubSection } from './conpanyInfoSubSection'
+import { companyInfoSubSection } from './companyInfoSubSection'
 
 export const aboutTheAccidentSection = buildSection({
   id: 'accidentType.section',
