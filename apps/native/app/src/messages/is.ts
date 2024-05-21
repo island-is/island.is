@@ -502,7 +502,17 @@ export const is = {
   'airDiscount.emptyListDescription':
     'Einungis íbúar landsbyggðarinnar sem eiga lögheimili fjarri höfuðborgarsvæðinu og eyjum eiga rétt á Loftbrú.',
 
-  // Offline
+  // offline
   'offline.title': 'Ekkert netsamband',
   'offline.message': 'Upplýsingar hafa ekki verið uppfærðar.',
+
+  // problems
+  'problem.error.tag': 'Villa',
+  'problem.error.title': 'Þjónusta liggur tímabundið niðri',
+  'problem.error.message': 'Vinsamlegast reyndu aftur síðar',
+  'problem.noData.title': 'Engin gögn',
+  'problem.noData.message':
+    'Ef þú telur þig eiga gögn sem ættu að birtast hér, vinsamlegast hafðu samband við þjónustuaðila.',
+  'problem.offline.title': 'Samband næst ekki',
+  'problem.offline.message': 'Villa kom upp í samskiptum við þjónustuaðila',
 }
