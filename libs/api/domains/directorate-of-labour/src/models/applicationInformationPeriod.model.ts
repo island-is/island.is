@@ -22,4 +22,7 @@ export class ApplicationInformationPeriod {
 
   @Field(() => String)
   firstPeriodStart!: string
+
+  @Field(() => String)
+  days!: string
 }

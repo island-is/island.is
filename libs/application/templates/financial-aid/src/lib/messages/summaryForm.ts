@@ -62,6 +62,23 @@ export const summaryForm = {
       description: 'Summary form users information title of national id ',
     },
   }),
+  childrenInfo: defineMessages({
+    name: {
+      id: 'fa.application:section.summaryForm.childrenInfo.name',
+      defaultMessage: 'Nafn',
+      description: 'Summary form children information title of name ',
+    },
+    nationalId: {
+      id: 'fa.application:section.summaryForm.childrenInfo.nationalId',
+      defaultMessage: 'Kennitala',
+      description: 'Summary form children information title of national id ',
+    },
+    school: {
+      id: 'fa.application:section.summaryForm.childrenInfo.school',
+      defaultMessage: 'Skóli',
+      description: 'Summary form children information title of school ',
+    },
+  }),
   formInfo: defineMessages({
     personalTaxCreditTitle: {
       id: 'fa.application:section.summaryForm.formInfo.personalTaxCreditTitle',

@@ -7,6 +7,7 @@ import {
   Patch,
   Controller,
   HttpStatus,
+  Post,
 } from '@nestjs/common'
 import { ApiSecurity, ApiTags } from '@nestjs/swagger'
 
@@ -19,6 +20,7 @@ import {
   ScopesGuard,
 } from '@island.is/auth-nest-tools'
 import type { User } from '@island.is/auth-nest-tools'
+import type { Locale } from '@island.is/shared/types'
 
 import {
   UpdateNotificationDto,
@@ -83,12 +85,12 @@ export class MeNotificationsController {
   findOne(
     @CurrentUser() user: User,
     @Param('id') id: number,
-    @Query('locale') locale: string,
+    @Query('locale') locale?: Locale,
   ): Promise<RenderedNotificationDto> {
     return this.notificationService.findOne(user, id, locale)
   }
 
-  @Patch('/mark-all-as-seen')
+  @Post('/mark-all-as-seen')
   @Scopes(NotificationsScope.write)
   @ApiSecurity('oauth2', [NotificationsScope.write])
   @Documentation({
@@ -97,6 +99,17 @@ export class MeNotificationsController {
   })
   async markAllAsSeen(@CurrentUser() user: User): Promise<void> {
     await this.notificationService.markAllAsSeen(user)
+  }
+
+  @Post('/mark-all-as-read')
+  @Scopes(NotificationsScope.write)
+  @ApiSecurity('oauth2', [NotificationsScope.write])
+  @Documentation({
+    summary: 'Updates all of  current user notifications as read',
+    response: { status: HttpStatus.NO_CONTENT },
+  })
+  async markAllAsRead(@CurrentUser() user: User): Promise<void> {
+    await this.notificationService.markAllAsRead(user)
   }
 
   @Documentation({
@@ -110,7 +123,7 @@ export class MeNotificationsController {
     @CurrentUser() user: User,
     @Param('id') id: number,
     @Body() updateNotificationDto: UpdateNotificationDto,
-    @Query('locale') locale: string,
+    @Query('locale') locale?: Locale,
   ): Promise<RenderedNotificationDto> {
     return this.notificationService.update(
       user,

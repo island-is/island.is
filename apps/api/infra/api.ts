@@ -1,5 +1,4 @@
 import { json, ref, service, ServiceBuilder } from '../../../infra/src/dsl/dsl'
-import { settings } from '../../../infra/src/dsl/settings'
 import {
   AdrAndMachine,
   Base,
@@ -37,13 +36,15 @@ import {
   HousingBenefitCalculator,
   OccupationalLicenses,
   ShipRegistry,
-  DistrictCommissioners,
+  DistrictCommissionersPCard,
+  DistrictCommissionersLicenses,
   DirectorateOfImmigration,
   Hunting,
   SignatureCollection,
   SocialInsuranceAdministration,
   IntellectualProperties,
   Inna,
+  UniversityCareers,
   OfficialJournalOfIceland,
 } from '../../../infra/src/dsl/xroad'
 
@@ -58,6 +59,7 @@ export const serviceSetup = (services: {
   sessionsApi: ServiceBuilder<'services-sessions'>
   authAdminApi: ServiceBuilder<'services-auth-admin-api'>
   universityGatewayApi: ServiceBuilder<'services-university-gateway'>
+  userNotificationService: ServiceBuilder<'services-user-notification'>
 }): ServiceBuilder<'api'> => {
   return service('api')
     .namespace('islandis')
@@ -67,6 +69,9 @@ export const serviceSetup = (services: {
     .env({
       APPLICATION_SYSTEM_API_URL: ref(
         (h) => `http://${h.svc(services.appSystemApi)}`,
+      ),
+      USER_NOTIFICATION_API_URL: ref(
+        (h) => `http://${h.svc(services.userNotificationService)}`,
       ),
       ICELANDIC_NAMES_REGISTRY_BACKEND_URL: ref(
         (h) => `http://${h.svc(services.icelandicNameRegistryBackend)}`,
@@ -121,7 +126,7 @@ export const serviceSetup = (services: {
         staging: 'development@island.is',
         prod: 'island@island.is',
       },
-      SERVICE_USER_PROFILE_URL: ref(
+      USER_PROFILE_CLIENT_URL: ref(
         (h) => `http://${h.svc(services.servicePortalApi)}`,
       ),
       FILE_DOWNLOAD_BUCKET: {
@@ -162,11 +167,6 @@ export const serviceSetup = (services: {
         staging: 'https://identity-server.staging01.devland.is',
         prod: 'https://innskra.island.is',
       },
-      USER_NOTIFICATION_CLIENT_URL: {
-        dev: 'http://user-notification-xrd.internal.dev01.devland.is',
-        staging: 'http://user-notification-xrd.internal.staging01.devland.is',
-        prod: 'https://user-notification-xrd.internal.island.is',
-      },
       MUNICIPALITIES_FINANCIAL_AID_BACKEND_URL: {
         dev: 'http://web-financial-aid-backend',
         staging: 'http://web-financial-aid-backend',
@@ -197,12 +197,6 @@ export const serviceSetup = (services: {
         prod: 'https://samradapi.island.is',
       },
       FISKISTOFA_ZENTER_CLIENT_ID: '1114',
-      SOFFIA_SOAP_URL: {
-        dev: ref((h) => h.svc('https://soffiaprufa.skra.is')),
-        staging: ref((h) => h.svc('https://soffiaprufa.skra.is')),
-        prod: ref((h) => h.svc('https://soffia2.skra.is')),
-        local: ref((h) => h.svc('https://localhost:8443')),
-      },
       HSN_WEB_FORM_ID: '1dimJFHLFYtnhoYEA3JxRK',
       SESSIONS_API_URL: ref((h) => `http://${h.svc(services.sessionsApi)}`),
       AUTH_ADMIN_API_PATHS: {
@@ -287,12 +281,9 @@ export const serviceSetup = (services: {
         '/k8s/api/REGULATIONS_FILE_UPLOAD_KEY_PUBLISH',
       REGULATIONS_FILE_UPLOAD_KEY_PRESIGNED:
         '/k8s/api/REGULATIONS_FILE_UPLOAD_KEY_PRESIGNED',
-      SOFFIA_HOST_URL: '/k8s/api/SOFFIA_HOST_URL',
       CONTENTFUL_ACCESS_TOKEN: '/k8s/api/CONTENTFUL_ACCESS_TOKEN',
       ZENDESK_CONTACT_FORM_EMAIL: '/k8s/api/ZENDESK_CONTACT_FORM_EMAIL',
       ZENDESK_CONTACT_FORM_TOKEN: '/k8s/api/ZENDESK_CONTACT_FORM_TOKEN',
-      SOFFIA_USER: settings.SOFFIA_USER,
-      SOFFIA_PASS: settings.SOFFIA_PASS,
       POSTHOLF_CLIENTID: '/k8s/documents/POSTHOLF_CLIENTID',
       POSTHOLF_CLIENT_SECRET: '/k8s/documents/POSTHOLF_CLIENT_SECRET',
       POSTHOLF_TOKEN_URL: '/k8s/documents/POSTHOLF_TOKEN_URL',
@@ -394,7 +385,8 @@ export const serviceSetup = (services: {
       Labor,
       DrivingLicense,
       Payment,
-      DistrictCommissioners,
+      DistrictCommissionersPCard,
+      DistrictCommissionersLicenses,
       Finance,
       Education,
       NationalRegistry,
@@ -413,6 +405,7 @@ export const serviceSetup = (services: {
       ChargeFjsV2,
       EnergyFunds,
       UniversityOfIceland,
+      UniversityCareers,
       WorkMachines,
       IcelandicGovernmentInstitutionVacancies,
       RskProcuring,

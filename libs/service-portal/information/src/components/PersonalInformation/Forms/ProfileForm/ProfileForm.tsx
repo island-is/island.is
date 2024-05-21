@@ -1,6 +1,7 @@
 import React, { FC, useEffect, useState } from 'react'
+
+import { useAuth } from '@island.is/auth/react'
 import { useLocale, useNamespaces } from '@island.is/localization'
-import { LoadModal, m, parseNumber } from '@island.is/service-portal/core'
 import {
   GridColumn,
   GridContainer,
@@ -9,10 +10,18 @@ import {
   PhoneInput,
 } from '@island.is/island-ui/core'
 import {
+  FeatureFlagClient,
+  Features,
+  useFeatureFlagClient,
+} from '@island.is/react/feature-flags'
+import { LoadModal, m, parseNumber } from '@island.is/service-portal/core'
+import {
   useDeleteIslykillValue,
-  useUpdateOrCreateUserProfile,
   useUserProfile,
 } from '@island.is/service-portal/graphql'
+
+import { msg } from '../../../../lib/messages'
+import { bankInfoObject } from '../../../../utils/bankInfoHelper'
 import { OnboardingIntro } from './components/Intro'
 import { InputSection } from './components/InputSection'
 import { InputEmail } from './components/Inputs/Email'
@@ -20,19 +29,10 @@ import { InputPhone } from './components/Inputs/Phone'
 import { DropModal } from './components/DropModal'
 import { BankInfoForm } from './components/Inputs/BankInfoForm'
 import { Nudge } from './components/Inputs/Nudge'
-import { msg } from '../../../../lib/messages'
-import { DataStatus, DropModalType } from './types/form'
-import { bankInfoObject } from '../../../../utils/bankInfoHelper'
-import { diffModifiedOverMaxDate } from '../../../../utils/showUserOnboardingModal'
 import { PaperMail } from './components/Inputs/PaperMail'
 import { ReadOnlyWithLinks } from './components/Inputs/ReadOnlyWithLinks'
-
-import {
-  FeatureFlagClient,
-  Features,
-  useFeatureFlagClient,
-} from '@island.is/react/feature-flags'
-import { useAuth } from '@island.is/auth/react'
+import { DropModalType } from './types/form'
+import { useConfirmNudgeMutation } from './confirmNudge.generated'
 
 enum IdsUserProfileLinks {
   EMAIL = '/app/user-profile/email',
@@ -67,14 +67,14 @@ export const ProfileForm: FC<React.PropsWithChildren<Props>> = ({
   const [showPaperMail, setShowPaperMail] = useState(false)
   const [showDropModal, setShowDropModal] = useState<DropModalType>()
   const [v2UserProfileEnabled, setV2UserProfileEnabled] = useState(false)
-  const { updateOrCreateUserProfile, loading: updateLoading } =
-    useUpdateOrCreateUserProfile()
   const { deleteIslykillValue, loading: deleteLoading } =
     useDeleteIslykillValue()
-  const { authority } = useAuth()
+  const { authority, userInfo } = useAuth()
   const { data: userProfile, loading: userLoading, refetch } = useUserProfile()
   const featureFlagClient: FeatureFlagClient = useFeatureFlagClient()
   const { formatMessage } = useLocale()
+  const [confirmNudge] = useConfirmNudgeMutation()
+  const isCompany = userInfo?.profile?.subjectType === 'legalEntity'
 
   const isV2UserProfileEnabled = async () => {
     const ffEnabled = await featureFlagClient.getValue(
@@ -83,7 +83,7 @@ export const ProfileForm: FC<React.PropsWithChildren<Props>> = ({
     )
 
     if (ffEnabled) {
-      setV2UserProfileEnabled(ffEnabled as boolean)
+      setV2UserProfileEnabled(!isCompany)
     }
   }
 
@@ -121,11 +121,10 @@ export const ProfileForm: FC<React.PropsWithChildren<Props>> = ({
   }, [])
 
   useEffect(() => {
-    const isLoadingForm = updateLoading || deleteLoading
     if (setFormLoading) {
-      setFormLoading(isLoadingForm)
+      setFormLoading(deleteLoading)
     }
-  }, [updateLoading, deleteLoading])
+  }, [deleteLoading])
 
   useEffect(() => {
     if (canDrop && onCloseOverlay) {
@@ -137,7 +136,7 @@ export const ProfileForm: FC<React.PropsWithChildren<Props>> = ({
         setShowDropModal(showDropModal)
       } else {
         setInternalLoading(true)
-        migratedUserUpdate()
+        confirmNudge().then(() => closeAllModals())
       }
     }
   }, [canDrop])
@@ -150,53 +149,13 @@ export const ProfileForm: FC<React.PropsWithChildren<Props>> = ({
     }
   }
 
-  const migratedUserUpdate = async () => {
-    try {
-      const refetchUserProfile = await refetch()
-      const userProfileData = refetchUserProfile?.data?.getUserProfile
-      const hasModification = userProfileData?.modified
-
-      const hasEmailNoVerification =
-        userProfileData?.emailStatus === DataStatus.NOT_VERIFIED &&
-        userProfile?.email
-      const hasTelNoVerification =
-        userProfileData?.mobileStatus === DataStatus.NOT_VERIFIED &&
-        userProfile?.mobilePhoneNumber
-
-      const diffOverMax = diffModifiedOverMaxDate(userProfileData?.modified)
-
-      // If user is migrating. Then process migration, else close modal without action.
-      if (
-        ((hasEmailNoVerification || hasTelNoVerification) &&
-          !hasModification) ||
-        diffOverMax
-      ) {
-        /**
-         * If email is present in data, but has status of 'NOT_VERIFIED',
-         * And the user has no modification date in the userprofile data,
-         * This implies a MIGRATED user. Therefore set the status to 'VERIFIED',
-         * After asking the user to verify the data themselves.
-         */
-        await updateOrCreateUserProfile({
-          ...(hasEmailNoVerification && { emailStatus: DataStatus.VERIFIED }),
-          ...(hasTelNoVerification && { mobileStatus: DataStatus.VERIFIED }),
-        }).then(() => closeAllModals())
-      } else {
-        closeAllModals()
-      }
-    } catch {
-      // do nothing
-      closeAllModals()
-    }
-  }
-
   const submitEmptyEmailAndTel = async () => {
     try {
       const refetchUserProfile = await refetch()
       const userProfileData = refetchUserProfile?.data?.getUserProfile
-      const hasModification = userProfileData?.modified
 
-      const emptyProfile = userProfileData === null || !hasModification
+      const emptyProfile =
+        !userProfileData || userProfileData.needsNudge === null
       if (emptyProfile && emailDirty && telDirty) {
         /**
          * If the user has no email or tel data, and the inputs are empty,
@@ -227,7 +186,7 @@ export const ProfileForm: FC<React.PropsWithChildren<Props>> = ({
       if (emailDirty && telDirty) {
         await submitEmptyEmailAndTel()
       } else {
-        await migratedUserUpdate()
+        await confirmNudge().then(() => closeAllModals())
       }
     } catch (e) {
       closeAllModals()
@@ -276,7 +235,8 @@ export const ProfileForm: FC<React.PropsWithChildren<Props>> = ({
                   buttonText={formatMessage(msg.saveEmail)}
                   email={userProfile?.email || ''}
                   emailDirty={(isDirty) => setEmailDirty(isDirty)}
-                  disabled={updateLoading || deleteLoading}
+                  emailVerified={userProfile?.emailVerified}
+                  disabled={deleteLoading}
                 />
               ))}
           </InputSection>
@@ -333,8 +293,9 @@ export const ProfileForm: FC<React.PropsWithChildren<Props>> = ({
                 <InputPhone
                   buttonText={formatMessage(msg.saveTel)}
                   mobile={parseNumber(userProfile?.mobilePhoneNumber || '')}
+                  telVerified={userProfile?.mobilePhoneNumberVerified}
                   telDirty={(isDirty) => setTelDirty(isDirty)}
-                  disabled={updateLoading || deleteLoading}
+                  disabled={deleteLoading}
                 />
               ))}
           </InputSection>
@@ -364,7 +325,7 @@ export const ProfileForm: FC<React.PropsWithChildren<Props>> = ({
             <DropModal
               type={showDropModal}
               onDrop={dropSideEffects}
-              loading={updateLoading || deleteLoading || userLoading}
+              loading={deleteLoading || userLoading}
               onClose={() => {
                 onCloseDropModal && onCloseDropModal()
                 setShowDropModal(undefined)
