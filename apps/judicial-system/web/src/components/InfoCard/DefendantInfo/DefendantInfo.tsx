@@ -66,16 +66,13 @@ export const DefendantInfo: FC<PropsWithChildren<DefendantInfoProps>> = (
         <span>
           <Text as="span" fontWeight="semiBold">
             {defendant.name}
+            {defendant.nationalId &&
+              `, ${formatDOB(defendant.nationalId, defendant.noNationalId)}`}
           </Text>
-          {defendant.nationalId && (
-            <Text as="span" fontWeight="semiBold">
-              {`, ${formatDOB(defendant.nationalId, defendant.noNationalId)}`}
-            </Text>
-          )}
-          {defendant.citizenship && (
-            <span>{`, (${defendant.citizenship})`}</span>
-          )}
-          {defendant.address && <span>{`, ${defendant.address}`}</span>}
+          <Text as="span" fontWeight="light">
+            {defendant.citizenship && `, (${defendant.citizenship})`}
+            {defendant.address && `, ${defendant.address}`}
+          </Text>
         </span>
 
         <div>
@@ -85,28 +82,28 @@ export const DefendantInfo: FC<PropsWithChildren<DefendantInfoProps>> = (
         </div>
 
         {defendant.defenderName && displayDefenderInfo && (
-          <Text as="span">
-            <Box
-              display="flex"
-              key={defendant.defenderName}
-              role="paragraph"
-              marginBottom={1}
-            >
-              <Text as="span">{`${formatMessage(strings.defender)}: ${
-                defendant.defenderName
-              }`}</Text>
-              {defendant.defenderEmail && (
+          <Box
+            display="flex"
+            key={defendant.defenderName}
+            role="paragraph"
+            marginBottom={1}
+          >
+            <Text as="span">{`${formatMessage(strings.defender)}: ${
+              defendant.defenderName
+            }`}</Text>
+            {defendant.defenderEmail && (
+              <>
                 <Text as="span" whiteSpace="pre">{`, `}</Text>
-              )}
-              <LinkV2
-                href={`mailto:${defendant.defenderEmail}`}
-                key={defendant.defenderEmail}
-                className={link}
-              >
-                <Text as="span">{defendant.defenderEmail}</Text>
-              </LinkV2>
-            </Box>
-          </Text>
+                <LinkV2
+                  href={`mailto:${defendant.defenderEmail}`}
+                  key={defendant.defenderEmail}
+                  className={link}
+                >
+                  <Text as="span">{defendant.defenderEmail}</Text>
+                </LinkV2>
+              </>
+            )}
+          </Box>
         )}
       </div>
 
