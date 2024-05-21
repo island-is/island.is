@@ -77,7 +77,7 @@ const getRedisClusterOptions = (
 ): RedisOptions | ClusterOptions => {
   const redisOptions: RedisOptions = {}
   if (options.ssl) {
-    redisOptions['tls'] = {rejectUnauthorized: false}
+    redisOptions['tls'] = {}
   }
   return {
     keyPrefix: options.noPrefix ? undefined : `${options.name}:`,
@@ -85,7 +85,7 @@ const getRedisClusterOptions = (
     slotsRefreshInterval: 10000,
     connectTimeout: 5000,
     // https://www.npmjs.com/package/ioredis#special-note-aws-elasticache-clusters-with-tls
-    dnsLookup: (address, callback) => callback(null, address, 0),
+    dnsLookup: (address, callback) => callback(null, address),
     redisOptions,
     reconnectOnError: (err) => {
       logger.error(`Reconnect on error: ${err}`)
