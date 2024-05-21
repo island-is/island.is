@@ -63,7 +63,7 @@ export class DelegationTypeModel extends Model<
   description!: string
 
   @BelongsToMany(() => Client, () => ClientDelegationType)
-  clients!: Client[]
+  clients!: CreationOptional<Client[]>
 
   @CreatedAt
   readonly created!: CreationOptional<Date>
