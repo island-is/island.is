@@ -38,8 +38,9 @@ describe('InternalCaseController - Deliver signed ruling to police', () => {
     mockAwsS3Service = awsS3Service
     mockPoliceService = policeService
 
-    const mockGetObject = awsS3Service.getObject as jest.Mock
-    mockGetObject.mockRejectedValue(new Error('Some error'))
+    const mockGetGeneratedRequestCaseObject =
+      awsS3Service.getGeneratedRequestCaseObject as jest.Mock
+    mockGetGeneratedRequestCaseObject.mockRejectedValue(new Error('Some error'))
     const mockUpdatePoliceCase = mockPoliceService.updatePoliceCase as jest.Mock
     mockUpdatePoliceCase.mockRejectedValue(new Error('Some error'))
 
@@ -80,8 +81,9 @@ describe('InternalCaseController - Deliver signed ruling to police', () => {
     let then: Then
 
     beforeEach(async () => {
-      const mockGetObject = mockAwsS3Service.getObject as jest.Mock
-      mockGetObject.mockResolvedValueOnce(rulingPdf)
+      const mockGetGeneratedRequestCaseObject =
+        mockAwsS3Service.getGeneratedRequestCaseObject as jest.Mock
+      mockGetGeneratedRequestCaseObject.mockResolvedValueOnce(rulingPdf)
       const mockUpdatePoliceCase =
         mockPoliceService.updatePoliceCase as jest.Mock
       mockUpdatePoliceCase.mockResolvedValueOnce(true)
@@ -90,9 +92,9 @@ describe('InternalCaseController - Deliver signed ruling to police', () => {
     })
 
     it('should update the police case', async () => {
-      expect(mockAwsS3Service.getObject).toHaveBeenCalledWith(
-        `generated/${caseId}/ruling.pdf`,
-      )
+      expect(
+        mockAwsS3Service.getGeneratedRequestCaseObject,
+      ).toHaveBeenCalledWith(`${caseId}/ruling.pdf`)
       expect(mockPoliceService.updatePoliceCase).toHaveBeenCalledWith(
         user,
         caseId,

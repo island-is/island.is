@@ -154,7 +154,7 @@ export class FileService {
       this.logger.info('Previous upload failed', { reason })
     })
 
-    const content = await this.awsS3Service.getObject(file.key ?? '')
+    const content = await this.awsS3Service.getObject(file.key)
 
     const courtDocumentFolder = this.getCourtDocumentFolder(file)
 

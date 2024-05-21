@@ -38,8 +38,9 @@ describe('InternalCaseController - Deliver signed ruling to court', () => {
     mockCreateDocument.mockRejectedValue(new Error('Some error'))
 
     mockAwsS3Service = awsS3Service
-    const mockGetObject = mockAwsS3Service.getObject as jest.Mock
-    mockGetObject.mockRejectedValue(new Error('Some error'))
+    const mockGetGeneratedRequestCaseObject =
+      mockAwsS3Service.getGeneratedRequestCaseObject as jest.Mock
+    mockGetGeneratedRequestCaseObject.mockRejectedValue(new Error('Some error'))
 
     givenWhenThen = async (caseId: string, theCase: Case) => {
       const then = {} as Then
@@ -66,21 +67,19 @@ describe('InternalCaseController - Deliver signed ruling to court', () => {
     beforeEach(async () => {
       const mockNowFactory = nowFactory as jest.Mock
       mockNowFactory.mockReturnValue(now)
-      const mockGetObject = mockAwsS3Service.getObject as jest.Mock
-      mockGetObject.mockResolvedValueOnce(pdf)
+      const mockGetGeneratedRequestCaseObject =
+        mockAwsS3Service.getGeneratedRequestCaseObject as jest.Mock
+      mockGetGeneratedRequestCaseObject.mockResolvedValueOnce(pdf)
       const mockCreateDocument = mockCourtService.createDocument as jest.Mock
       mockCreateDocument.mockResolvedValueOnce(uuid())
 
       then = await givenWhenThen(caseId, theCase)
     })
 
-    it('should get the signed ruling from S3', async () => {
-      expect(mockAwsS3Service.getObject).toHaveBeenCalledWith(
-        `generated/${caseId}/ruling.pdf`,
-      )
-    })
-
-    it('should create a ruling at court', async () => {
+    it('should deliver the signed ruling to court', async () => {
+      expect(
+        mockAwsS3Service.getGeneratedRequestCaseObject,
+      ).toHaveBeenCalledWith(`${caseId}/ruling.pdf`)
       expect(mockCourtService.createDocument).toHaveBeenCalledWith(
         user,
         caseId,
@@ -92,9 +91,6 @@ describe('InternalCaseController - Deliver signed ruling to court', () => {
         'application/pdf',
         pdf,
       )
-    })
-
-    it('should return a success response', async () => {
       expect(then.result.delivered).toEqual(true)
     })
   })
@@ -108,8 +104,9 @@ describe('InternalCaseController - Deliver signed ruling to court', () => {
     let then: Then
 
     beforeEach(async () => {
-      const mockGetObject = mockAwsS3Service.getObject as jest.Mock
-      mockGetObject.mockResolvedValueOnce(pdf)
+      const mockGetGeneratedRequestCaseObject =
+        mockAwsS3Service.getGeneratedRequestCaseObject as jest.Mock
+      mockGetGeneratedRequestCaseObject.mockResolvedValueOnce(pdf)
 
       then = await givenWhenThen(caseId, theCase)
     })

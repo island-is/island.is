@@ -49,8 +49,11 @@ describe('InternalCaseController - Deliver case files record to court', () => {
       await createTestingCaseModule()
 
     mockAwsS3Service = awsS3Service
-    const mockGetObject = mockAwsS3Service.getObject as jest.Mock
-    mockGetObject.mockRejectedValue(new Error('Some error'))
+    const mockGetGeneratedIndictmentCaseObject =
+      mockAwsS3Service.getGeneratedIndictmentCaseObject as jest.Mock
+    mockGetGeneratedIndictmentCaseObject.mockRejectedValue(
+      new Error('Some error'),
+    )
     const mockPutObject = mockAwsS3Service.putObject as jest.Mock
     mockPutObject.mockRejectedValue(new Error('Some error'))
 
@@ -92,13 +95,11 @@ describe('InternalCaseController - Deliver case files record to court', () => {
     })
 
     it('should deliver the case files record', () => {
-      expect(mockAwsS3Service.getObject).toHaveBeenNthCalledWith(
-        1,
-        `indictments/completed/${theCase.id}/${policeCaseNumber}/caseFilesRecord.pdf`,
-      )
-      expect(mockAwsS3Service.getObject).toHaveBeenNthCalledWith(
-        2,
-        `indictments/${theCase.id}/${policeCaseNumber}/caseFilesRecord.pdf`,
+      expect(
+        mockAwsS3Service.getGeneratedIndictmentCaseObject,
+      ).toHaveBeenCalledWith(
+        `${theCase.id}/${policeCaseNumber}/caseFilesRecord.pdf`,
+        true,
       )
       expect(createCaseFilesRecord).toHaveBeenCalledWith(
         theCase,
@@ -125,34 +126,11 @@ describe('InternalCaseController - Deliver case files record to court', () => {
     })
   })
 
-  describe('pdf returned from AWS S3 indictment completed folder', () => {
+  describe('pdf returned from AWS S3', () => {
     beforeEach(async () => {
-      const mockGetObject = mockAwsS3Service.getObject as jest.Mock
-      mockGetObject.mockReturnValueOnce(pdf)
-
-      await givenWhenThen(caseId, policeCaseNumber, theCase)
-    })
-
-    it('should use the AWS S3 pdf', () => {
-      expect(mockCourtService.createDocument).toHaveBeenCalledWith(
-        user,
-        caseId,
-        courtId,
-        courtCaseNumber,
-        CourtDocumentFolder.CASE_DOCUMENTS,
-        `Skjalaskrá ${policeCaseNumber}`,
-        `Skjalaskrá ${policeCaseNumber}.pdf`,
-        'application/pdf',
-        pdf,
-      )
-    })
-  })
-
-  describe('pdf returned from AWS S3 indictment folder', () => {
-    beforeEach(async () => {
-      const mockGetObject = mockAwsS3Service.getObject as jest.Mock
-      mockGetObject.mockRejectedValueOnce(new Error('Some error'))
-      mockGetObject.mockReturnValueOnce(pdf)
+      const mockGetGeneratedIndictmentCaseObject =
+        mockAwsS3Service.getGeneratedIndictmentCaseObject as jest.Mock
+      mockGetGeneratedIndictmentCaseObject.mockResolvedValueOnce(pdf)
 
       await givenWhenThen(caseId, policeCaseNumber, theCase)
     })

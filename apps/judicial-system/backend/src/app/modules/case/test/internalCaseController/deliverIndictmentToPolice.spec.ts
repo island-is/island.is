@@ -50,6 +50,13 @@ describe('InternalCaseController - Deliver indictment to police', () => {
     mockToday.mockReturnValueOnce(date)
     const mockGetObject = awsS3Service.getObject as jest.Mock
     mockGetObject.mockRejectedValue(new Error('Some error'))
+    const mockGetGeneratedIndictmentCaseObject =
+      awsS3Service.getGeneratedIndictmentCaseObject as jest.Mock
+    mockGetGeneratedIndictmentCaseObject.mockRejectedValue(
+      new Error('Some error'),
+    )
+    const mockPutObject = awsS3Service.putObject as jest.Mock
+    mockPutObject.mockRejectedValue(new Error('Some error'))
     const mockCreateIndictment = createIndictment as jest.Mock
     mockCreateIndictment.mockRejectedValue(new Error('Some error'))
     const mockUpdatePoliceCase = mockPoliceService.updatePoliceCase as jest.Mock
@@ -72,7 +79,7 @@ describe('InternalCaseController - Deliver indictment to police', () => {
   describe('deliver indictment case files to police', () => {
     const caseId = uuid()
     const caseType = CaseType.INDICTMENT
-    const caseState = CaseState.ACCEPTED
+    const caseState = CaseState.COMPLETED
     const policeCaseNumber = uuid()
     const courtCaseNumber = uuid()
     const defendantNationalId = '0123456789'
@@ -129,7 +136,7 @@ describe('InternalCaseController - Deliver indictment to police', () => {
   describe('deliver generated indictment pdf to police', () => {
     const caseId = uuid()
     const caseType = CaseType.INDICTMENT
-    const caseState = CaseState.ACCEPTED
+    const caseState = CaseState.COMPLETED
     const policeCaseNumber = uuid()
     const courtCaseNumber = uuid()
     const defendantNationalId = '0123456789'
@@ -160,10 +167,17 @@ describe('InternalCaseController - Deliver indictment to police', () => {
     })
 
     it('should update the police case', async () => {
+      expect(
+        mockAwsS3Service.getGeneratedIndictmentCaseObject,
+      ).toHaveBeenCalledWith(`${caseId}/indictment.pdf`, true)
       expect(createIndictment).toHaveBeenCalledWith(
         theCase,
         expect.any(Function),
         undefined,
+      )
+      expect(mockAwsS3Service.putObject).toHaveBeenCalledWith(
+        `indictments/completed/${caseId}/indictment.pdf`,
+        indictmentPdf,
       )
       expect(mockPoliceService.updatePoliceCase).toHaveBeenCalledWith(
         user,
@@ -183,6 +197,56 @@ describe('InternalCaseController - Deliver indictment to police', () => {
         ],
       )
       expect(then.result.delivered).toEqual(true)
+    })
+  })
+
+  describe('deliver indictment pdf from AWS S3 to police', () => {
+    const caseId = uuid()
+    const caseType = CaseType.INDICTMENT
+    const caseState = CaseState.COMPLETED
+    const policeCaseNumber = uuid()
+    const courtCaseNumber = uuid()
+    const defendantNationalId = '0123456789'
+    const indictmentPdf = 'test indictment'
+    const theCase = {
+      id: caseId,
+      origin: CaseOrigin.LOKE,
+      type: caseType,
+      state: caseState,
+      policeCaseNumbers: [policeCaseNumber],
+      courtCaseNumber,
+      defendants: [{ nationalId: defendantNationalId }],
+      indictmentSubtypes: {
+        [policeCaseNumber]: [IndictmentSubtype.TRAFFIC_VIOLATION],
+      },
+    } as Case
+
+    beforeEach(async () => {
+      const mockGetGeneratedIndictmentCaseObject =
+        mockAwsS3Service.getGeneratedIndictmentCaseObject as jest.Mock
+      mockGetGeneratedIndictmentCaseObject.mockResolvedValueOnce(indictmentPdf)
+
+      await givenWhenThen(caseId, theCase)
+    })
+
+    it('should update the police case', async () => {
+      expect(mockPoliceService.updatePoliceCase).toHaveBeenCalledWith(
+        user,
+        caseId,
+        caseType,
+        caseState,
+        policeCaseNumber,
+        courtCaseNumber,
+        defendantNationalId,
+        date,
+        '',
+        [
+          {
+            type: PoliceDocumentType.RVAS,
+            courtDocument: Base64.btoa(indictmentPdf),
+          },
+        ],
+      )
     })
   })
 })

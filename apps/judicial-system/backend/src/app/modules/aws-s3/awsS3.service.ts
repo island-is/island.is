@@ -6,6 +6,10 @@ import type { ConfigType } from '@island.is/nest/config'
 
 import { awsS3ModuleConfig } from './awsS3.config'
 
+const generatedPrefix = 'generated/'
+const indictmentPrefix = 'indictments/'
+const completedIndictmentPrefix = 'indictments/completed/'
+
 @Injectable()
 export class AwsS3Service {
   private readonly s3: S3
@@ -89,7 +93,11 @@ export class AwsS3Service {
       )
   }
 
-  async getObject(key: string): Promise<Buffer> {
+  async getObject(key?: string): Promise<Buffer> {
+    if (!key) {
+      throw new Error('Key is required')
+    }
+
     return this.s3
       .getObject({
         Bucket: this.config.bucket,
@@ -97,6 +105,25 @@ export class AwsS3Service {
       })
       .promise()
       .then((data) => data.Body as Buffer)
+  }
+
+  async getGeneratedRequestCaseObject(key: string): Promise<Buffer> {
+    return this.getObject(`${generatedPrefix}${key}`)
+  }
+
+  async getGeneratedIndictmentCaseObject(
+    key: string,
+    isCompletedCase: boolean,
+  ): Promise<Buffer> {
+    if (isCompletedCase) {
+      try {
+        return await this.getObject(`${completedIndictmentPrefix}${key}`)
+      } catch {
+        // Ignore the error and try the original key
+      }
+    }
+
+    return await this.getObject(`${indictmentPrefix}/${key}`)
   }
 
   async putObject(key: string, content: string): Promise<string> {

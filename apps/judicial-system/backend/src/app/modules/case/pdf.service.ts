@@ -90,20 +90,22 @@ export class PDFService {
       )
       ?.map((caseFile) => async () => {
         const buffer = await this.awsS3Service
-          .getObject(caseFile.key ?? '')
+          .getObject(caseFile.key)
           .catch((reason) => {
             // Tolerate failure, but log error
             this.logger.error(
               `Unable to get file ${caseFile.id} of case ${theCase.id} from AWS S3`,
               { reason },
             )
+
+            return undefined
           })
 
         return {
           chapter: caseFile.chapter as number,
           date: caseFile.displayDate ?? caseFile.created,
           name: caseFile.userGeneratedFilename ?? caseFile.name,
-          buffer: buffer ?? undefined,
+          buffer: buffer,
         }
       })
 
@@ -118,8 +120,8 @@ export class PDFService {
   async getCourtRecordPdf(theCase: Case, user: TUser): Promise<Buffer> {
     if (theCase.courtRecordSignatureDate) {
       try {
-        return await this.awsS3Service.getObject(
-          `generated/${theCase.id}/courtRecord.pdf`,
+        return await this.awsS3Service.getGeneratedRequestCaseObject(
+          `${theCase.id}/courtRecord.pdf`,
         )
       } catch (error) {
         this.logger.info(
@@ -143,8 +145,8 @@ export class PDFService {
   async getRulingPdf(theCase: Case): Promise<Buffer> {
     if (theCase.rulingSignatureDate) {
       try {
-        return await this.awsS3Service.getObject(
-          `generated/${theCase.id}/ruling.pdf`,
+        return await this.awsS3Service.getGeneratedRequestCaseObject(
+          `${theCase.id}/ruling.pdf`,
         )
       } catch (error) {
         this.logger.info(
@@ -166,24 +168,12 @@ export class PDFService {
   }
 
   private async tryGetPdfFromS3(
-    state: CaseState,
-    uri: string,
+    key: string,
+    isCompletedCase: boolean,
   ): Promise<Buffer | undefined> {
-    if (isCompletedCase(state)) {
-      try {
-        return await this.awsS3Service.getObject(`indictments/completed/${uri}`)
-      } catch {
-        // Ignore the error and try the original key
-      }
-    }
-
-    try {
-      return await this.awsS3Service.getObject(`indictments/${uri}`)
-    } catch {
-      // Ignore the error and return undefined
-    }
-
-    return undefined
+    return await this.awsS3Service
+      .getGeneratedIndictmentCaseObject(key, isCompletedCase)
+      .catch(() => undefined) // Ignore errors and return undefined
   }
 
   private tryUploadPdfToS3(state: CaseState, uri: string, pdf: Buffer) {
@@ -208,8 +198,8 @@ export class PDFService {
 
     if (hasIndictmentCaseBeenSubmittedToCourt(theCase.state)) {
       const existingPdf = await this.tryGetPdfFromS3(
-        theCase.state,
         `${theCase.id}/indictment.pdf`,
+        isCompletedCase(theCase.state),
       )
 
       if (existingPdf) {
@@ -266,8 +256,8 @@ export class PDFService {
   ): Promise<Buffer> {
     if (hasIndictmentCaseBeenSubmittedToCourt(theCase.state)) {
       const existingPdf = await this.tryGetPdfFromS3(
-        theCase.state,
         `${theCase.id}/${policeCaseNumber}/caseFilesRecord.pdf`,
+        isCompletedCase(theCase.state),
       )
 
       if (existingPdf) {

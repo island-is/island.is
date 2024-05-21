@@ -1,6 +1,7 @@
 import { uuid } from 'uuidv4'
 
 import {
+  CaseFileCategory,
   CaseState,
   CaseType,
   IndictmentSubtype,
@@ -54,6 +55,11 @@ describe('InternalCaseController - Deliver indictment to court', () => {
     mockAwsS3Service = awsS3Service
     const mockGetObject = mockAwsS3Service.getObject as jest.Mock
     mockGetObject.mockRejectedValue(new Error('Some error'))
+    const mockGetGeneratedIndictmentCaseObject =
+      awsS3Service.getGeneratedIndictmentCaseObject as jest.Mock
+    mockGetGeneratedIndictmentCaseObject.mockRejectedValue(
+      new Error('Some error'),
+    )
     const mockPutObject = mockAwsS3Service.putObject as jest.Mock
     mockPutObject.mockRejectedValue(new Error('Some error'))
 
@@ -76,7 +82,7 @@ describe('InternalCaseController - Deliver indictment to court', () => {
     }
   })
 
-  describe('indictment delivered', () => {
+  describe('deliver generated indictment pdf to court', () => {
     let then: Then
 
     beforeEach(async () => {
@@ -89,14 +95,9 @@ describe('InternalCaseController - Deliver indictment to court', () => {
     })
 
     it('should deliver the indictment', () => {
-      expect(mockAwsS3Service.getObject).toHaveBeenNthCalledWith(
-        1,
-        `indictments/completed/${theCase.id}/indictment.pdf`,
-      )
-      expect(mockAwsS3Service.getObject).toHaveBeenNthCalledWith(
-        2,
-        `indictments/${theCase.id}/indictment.pdf`,
-      )
+      expect(
+        mockAwsS3Service.getGeneratedIndictmentCaseObject,
+      ).toHaveBeenCalledWith(`${theCase.id}/indictment.pdf`, true)
       expect(createIndictment).toHaveBeenCalledWith(
         theCase,
         expect.any(Function),
@@ -121,34 +122,11 @@ describe('InternalCaseController - Deliver indictment to court', () => {
     })
   })
 
-  describe('pdf returned from AWS S3 indictment completed folder', () => {
+  describe('deliver indictment pdf from AWS S3 to court', () => {
     beforeEach(async () => {
-      const mockGetObject = mockAwsS3Service.getObject as jest.Mock
-      mockGetObject.mockReturnValueOnce(pdf)
-
-      await givenWhenThen(caseId, theCase)
-    })
-
-    it('should use the AWS S3 pdf', () => {
-      expect(mockCourtService.createDocument).toHaveBeenCalledWith(
-        user,
-        caseId,
-        courtId,
-        courtCaseNumber,
-        CourtDocumentFolder.INDICTMENT_DOCUMENTS,
-        `Ákæra`,
-        `Ákæra.pdf`,
-        'application/pdf',
-        pdf,
-      )
-    })
-  })
-
-  describe('pdf returned from AWS S3 indictment folder', () => {
-    beforeEach(async () => {
-      const mockGetObject = mockAwsS3Service.getObject as jest.Mock
-      mockGetObject.mockRejectedValueOnce(new Error('Some error'))
-      mockGetObject.mockReturnValueOnce(pdf)
+      const mockGetGeneratedIndictmentCaseObject =
+        mockAwsS3Service.getGeneratedIndictmentCaseObject as jest.Mock
+      mockGetGeneratedIndictmentCaseObject.mockResolvedValueOnce(pdf)
 
       await givenWhenThen(caseId, theCase)
     })

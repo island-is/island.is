@@ -52,8 +52,11 @@ describe('CaseController - Get case files record pdf', () => {
     const { awsS3Service, caseController } = await createTestingCaseModule()
 
     mockawsS3Service = awsS3Service
-    const mockGetObject = mockawsS3Service.getObject as jest.Mock
-    mockGetObject.mockRejectedValue(new Error('Some error'))
+    const mockGetGeneratedIndictmentCaseObject =
+      mockawsS3Service.getGeneratedIndictmentCaseObject as jest.Mock
+    mockGetGeneratedIndictmentCaseObject.mockRejectedValue(
+      new Error('Some error'),
+    )
     const mockPutObject = mockawsS3Service.putObject as jest.Mock
     mockPutObject.mockRejectedValue(new Error('Some error'))
 
@@ -84,13 +87,11 @@ describe('CaseController - Get case files record pdf', () => {
     })
 
     it('should generate pdf after failing to get it from AWS S3', () => {
-      expect(mockawsS3Service.getObject).toHaveBeenNthCalledWith(
-        1,
-        `indictments/completed/${caseId}/${policeCaseNumber}/caseFilesRecord.pdf`,
-      )
-      expect(mockawsS3Service.getObject).toHaveBeenNthCalledWith(
-        2,
-        `indictments/${caseId}/${policeCaseNumber}/caseFilesRecord.pdf`,
+      expect(
+        mockawsS3Service.getGeneratedIndictmentCaseObject,
+      ).toHaveBeenCalledWith(
+        `${caseId}/${policeCaseNumber}/caseFilesRecord.pdf`,
+        true,
       )
       expect(createCaseFilesRecord).toHaveBeenCalledWith(
         theCase,
@@ -106,24 +107,11 @@ describe('CaseController - Get case files record pdf', () => {
     })
   })
 
-  describe('pdf returned from AWS S3 indictment completed folder', () => {
+  describe('pdf returned from AWS S3', () => {
     beforeEach(async () => {
-      const mockGetObject = mockawsS3Service.getObject as jest.Mock
-      mockGetObject.mockReturnValueOnce(pdf)
-
-      await givenWhenThen(policeCaseNumber)
-    })
-
-    it('should return pdf', () => {
-      expect(res.end).toHaveBeenCalledWith(pdf)
-    })
-  })
-
-  describe('pdf returned from AWS S3 indictment folder', () => {
-    beforeEach(async () => {
-      const mockGetObject = mockawsS3Service.getObject as jest.Mock
-      mockGetObject.mockRejectedValueOnce(new Error('Some error'))
-      mockGetObject.mockReturnValueOnce(pdf)
+      const mockGetGeneratedIndictmentCaseObject =
+        mockawsS3Service.getGeneratedIndictmentCaseObject as jest.Mock
+      mockGetGeneratedIndictmentCaseObject.mockResolvedValueOnce(pdf)
 
       await givenWhenThen(policeCaseNumber)
     })

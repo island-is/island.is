@@ -52,7 +52,7 @@ export class TransitionInterceptor implements NestInterceptor {
         (cf) => cf.category === CaseFileCategory.INDICTMENT && cf.key,
       ) ?? []) {
         // Get indictment PDF from S3
-        const file = await this.awsService.getObject(indictment.key ?? '')
+        const file = await this.awsService.getObject(indictment.key)
 
         // Create a stamped indictment PDF
         const confirmedIndictment =

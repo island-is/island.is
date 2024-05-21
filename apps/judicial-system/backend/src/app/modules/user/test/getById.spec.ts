@@ -40,7 +40,7 @@ describe('UserController - Get by id', () => {
 
     beforeEach(async () => {
       const mockFindByPk = mockUserModel.findByPk as jest.Mock
-      mockFindByPk.mockReturnValueOnce(user)
+      mockFindByPk.mockResolvedValueOnce(user)
 
       then = await givenWhenThen()
     })

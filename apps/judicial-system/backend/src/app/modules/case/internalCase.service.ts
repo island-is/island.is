@@ -282,7 +282,9 @@ export class InternalCaseService {
   }
 
   private getSignedRulingPdf(theCase: Case) {
-    return this.awsS3Service.getObject(`generated/${theCase.id}/ruling.pdf`)
+    return this.awsS3Service.getGeneratedRequestCaseObject(
+      `${theCase.id}/ruling.pdf`,
+    )
   }
 
   private async deliverSignedRulingPdfToCourt(
@@ -856,7 +858,8 @@ export class InternalCaseService {
             caseFile.key,
         )
         .map(async (caseFile) => {
-          const file = await this.awsS3Service.getObject(caseFile.key ?? '')
+          // TODO: Tolerate failure, but log error
+          const file = await this.awsS3Service.getObject(caseFile.key)
 
           return {
             type:
@@ -907,7 +910,8 @@ export class InternalCaseService {
                 caseFile.key,
             )
             .map(async (caseFile) => {
-              const file = await this.awsS3Service.getObject(caseFile.key ?? '')
+              // TODO: Tolerate failure, but log error
+              const file = await this.awsS3Service.getObject(caseFile.key)
 
               return {
                 type: PoliceDocumentType.RVAS,
@@ -997,7 +1001,8 @@ export class InternalCaseService {
       theCase.caseFiles
         ?.filter((file) => file.category === CaseFileCategory.APPEAL_RULING)
         .map(async (caseFile) => {
-          const file = await this.awsS3Service.getObject(caseFile.key ?? '')
+          // TODO: Tolerate failure, but log error
+          const file = await this.awsS3Service.getObject(caseFile.key)
 
           return {
             type: PoliceDocumentType.RVUL,
