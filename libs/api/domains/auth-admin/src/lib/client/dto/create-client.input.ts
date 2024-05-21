@@ -20,4 +20,7 @@ export class CreateClientInput {
 
   @Field(() => ID, { nullable: false })
   tenantId!: string
+
+  @Field(() => [String], { nullable: true })
+  supportedDelegationTypes!: string[]
 }
