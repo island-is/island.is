@@ -129,6 +129,7 @@ export class ClientsService extends MultiEnvironmentService {
             clientType: input.clientType as string as CreateClientType,
             clientName: input.displayName,
             contactEmail: tenant?.contactEmail,
+            supportedDelegationTypes: input.supportedDelegationTypes,
           },
         }
 

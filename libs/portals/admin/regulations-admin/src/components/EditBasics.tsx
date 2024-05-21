@@ -227,7 +227,10 @@ export const EditBasics = () => {
         </Accordion>
         {!hasUpdated ? (
           <ConfirmModal
-            isVisible={isModalVisible}
+            isVisible={
+              draft.type.value === RegulationDraftTypes.amending &&
+              isModalVisible
+            }
             title="Uppfæra texta"
             message={
               'Uppfæra texta reglugerðar með breytingum frá fyrsta skrefi. Allur viðbættur texti í núverandi skrefi verður hreinsaður út.'
