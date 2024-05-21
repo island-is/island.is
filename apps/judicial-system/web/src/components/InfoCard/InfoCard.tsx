@@ -2,12 +2,15 @@ import React from 'react'
 import { useIntl } from 'react-intl'
 
 import { Box, Icon, IconMapIcon, LinkV2, Text } from '@island.is/island-ui/core'
-import { formatDOB } from '@island.is/judicial-system/formatters'
 import {
   Defendant,
   SessionArrangements,
 } from '@island.is/judicial-system-web/src/graphql/schema'
 
+import {
+  DefendantInfo,
+  DefendantInfoActionButton,
+} from './DefendantInfo/DefendantInfo'
 import { strings } from './InfoCard.strings'
 import { link } from '../MarkdownWrapper/MarkdownWrapper.css'
 import * as styles from './InfoCard.css'
@@ -31,7 +34,11 @@ interface DataSection {
 interface Props {
   courtOfAppealData?: Array<{ title: string; value?: React.ReactNode }>
   data: Array<{ title: string; value?: React.ReactNode }>
-  defendants?: { title: string; items: Defendant[] }
+  defendants?: {
+    title: string
+    items: Defendant[]
+    defendantInfoActionButton?: DefendantInfoActionButton
+  }
   defenders?: Defender[]
   icon?: IconMapIcon
   additionalDataSections?: DataSection[]
@@ -108,35 +115,20 @@ const InfoCard: React.FC<Props> = (props) => {
       <Box
         className={(defendants || defenders) && styles.infoCardTitleContainer}
         marginBottom={(defendants || defenders) && [2, 2, 3, 3]}
-        paddingBottom={(defendants || defenders) && [2, 2, 3, 3]}
+        paddingBottom={(defendants || defenders) && [2, 2, 0, 0]}
       >
         {defendants && (
           <>
             <Text variant="h4">{defendants.title}</Text>
-            <Box marginBottom={defenders ? [2, 2, 3, 3] : 0}>
+            <Box marginBottom={defenders ? [2, 2, 3, 3] : 0} marginTop={1}>
               {defendants.items.map((defendant) => (
-                <Text key={defendant.id}>
-                  <span className={styles.infoCardDefendant}>
-                    <Text
-                      as="span"
-                      fontWeight="semiBold"
-                    >{`${defendant.name}, `}</Text>
-                    <Text as="span" fontWeight="semiBold">
-                      {defendant.nationalId
-                        ? `${formatDOB(
-                            defendant.nationalId,
-                            defendant.noNationalId,
-                          )}, `
-                        : ''}
-                    </Text>
-                    <Text as="span">
-                      {defendant.citizenship && ` (${defendant.citizenship}), `}
-                    </Text>
-                    {defendant.address && (
-                      <Text as="span">{`${defendant.address}`}</Text>
-                    )}
-                  </span>
-                </Text>
+                <DefendantInfo
+                  defendant={defendant}
+                  displayDefenderInfo={!defenders}
+                  defendantInfoActionButton={
+                    defendants.defendantInfoActionButton
+                  }
+                />
               ))}
             </Box>
           </>
