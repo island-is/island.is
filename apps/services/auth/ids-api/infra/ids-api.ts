@@ -80,6 +80,9 @@ export const serviceSetup = (): ServiceBuilder<'services-auth-ids-api'> => {
         staging: 'false',
         prod: 'false',
       },
+      PASSKEY_CORE_RP_ID: 'island.is',
+      PASSKEY_CORE_RP_NAME: 'Island.is',
+      PASSKEY_CORE_CHALLENGE_TTL_MS: '120000',
     })
     .secrets({
       IDENTITY_SERVER_CLIENT_SECRET:
@@ -87,6 +90,8 @@ export const serviceSetup = (): ServiceBuilder<'services-auth-ids-api'> => {
       NOVA_URL: '/k8s/services-auth/NOVA_URL',
       NOVA_USERNAME: '/k8s/services-auth/NOVA_USERNAME',
       NOVA_PASSWORD: '/k8s/services-auth/NOVA_PASSWORD',
+      PASSKEY_CORE_ALLOWED_ORIGIN:
+        '/k8s/services-auth/PASSKEY_CORE_ALLOWED_ORIGIN',
     })
     .xroad(Base, Client, RskProcuring)
     .readiness('/health/check')
