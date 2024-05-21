@@ -100,11 +100,11 @@ const getRedisClusterOptions = (
     keyPrefix: options.noPrefix ? undefined : `${options.name}:`,
     slotsRefreshTimeout: getEnvValueToNumber(
       'REDIS_SLOTS_REFRESH_TIMEOUT',
-      DEFAULT_CLUSTER_OPTIONS.slotsRefreshTimeout,
+      5000,
     ),
     slotsRefreshInterval: getEnvValueToNumber(
       'REDIS_SLOTS_REFRESH_INTERVAL',
-      DEFAULT_CLUSTER_OPTIONS.slotsRefreshInterval,
+      10000,
     ),
     connectTimeout: 5000,
     // https://www.npmjs.com/package/ioredis#special-note-aws-elasticache-clusters-with-tls
@@ -112,7 +112,12 @@ const getRedisClusterOptions = (
     redisOptions,
     reconnectOnError: (err) => {
       logger.error(`Reconnect on error: ${err}`)
-      return true
+      const targetError = 'READONLY'
+      if (err.message.slice(0, targetError.length) === targetError) {
+        // Only reconnect when the error starts with "READONLY"
+        return true
+      }
+      return false
     },
     retryStrategy: (times) => {
       logger.info(`Redis Retry: ${times}`)
