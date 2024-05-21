@@ -10,7 +10,6 @@ import {
   DelegationProviderModel,
   DelegationScope,
   DelegationTypeModel,
-  getPersonalRepresentativeDelegationType,
   MergedDelegationDTO,
   PersonalRepresentative,
   PersonalRepresentativeDelegationTypeModel,
@@ -21,6 +20,7 @@ import {
 import {
   AuthDelegationProvider,
   AuthDelegationType,
+  getPersonalRepresentativeDelegationType,
 } from '@island.is/shared/types'
 import { AuthScope } from '@island.is/auth/scopes'
 import { NationalRegistryClientService } from '@island.is/clients/national-registry-v2'
