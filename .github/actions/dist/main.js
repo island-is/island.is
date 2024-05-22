@@ -25779,11 +25779,11 @@ var LocalRunner = class {
   constructor(octokit) {
     this.octokit = octokit;
   }
-  getChangedComponents(git, sha1, sha2) {
+  getChangedComponents(git2, sha1, sha2) {
     return __async(this, null, function* () {
       const log = app.extend("calculate-distance");
       log(`Calculating distance between ${sha1} and ${sha2}`);
-      const diffNames = yield git.raw("diff", "--name-only", sha1, sha2);
+      const diffNames = yield git2.raw("diff", "--name-only", sha1, sha2);
       const changedFiles = [
         ...new Set(
           diffNames.split("\n").map((l2) => l2.trim()).filter((s) => s.length > 0)
@@ -25805,8 +25805,8 @@ var LocalRunner = class {
           ],
           {
             encoding: "utf-8",
-            cwd: git.cwd,
-            shell: git.shell
+            cwd: git2.cwd,
+            shell: git2.shell
           }
         );
         if (printAffected.status !== 0) {
@@ -25820,8 +25820,8 @@ var LocalRunner = class {
             [`nx`, `print-affected`, `--select=projects`, "--all"],
             {
               encoding: "utf-8",
-              cwd: git.cwd,
-              shell: git.shell
+              cwd: git2.cwd,
+              shell: git2.shell
             }
           );
           if (printAffected.status !== 0) {
@@ -26105,11 +26105,11 @@ stdout: %O`,
 // change-detection.ts
 var import_debug2 = __toESM(require_src());
 var app2 = (0, import_debug2.default)("change-detection");
-function findBestGoodRefBranch(commitScore, git, githubApi, headBranch, baseBranch, workflowId) {
+function findBestGoodRefBranch(commitScore, git2, githubApi, headBranch, baseBranch, workflowId) {
   return __async(this, null, function* () {
     const log = app2.extend("findBestGoodRefBranch");
     log(`Starting with head branch ${headBranch} and base branch ${baseBranch}`);
-    const commits = yield getCommits(git, headBranch, baseBranch, "HEAD~1");
+    const commits = yield getCommits(git2, headBranch, baseBranch, "HEAD~1");
     const builds = yield githubApi.getLastGoodBranchBuildRun(
       headBranch,
       workflowId,
@@ -26137,10 +26137,10 @@ function findBestGoodRefBranch(commitScore, git, githubApi, headBranch, baseBran
     return "rebuild";
   });
 }
-function getCommits(git, headBranch, baseBranch, head, maxCount = 300) {
+function getCommits(git2, headBranch, baseBranch, head, maxCount = 300) {
   return __async(this, null, function* () {
-    const mergeBaseCommit = yield git.raw("merge-base", headBranch, baseBranch);
-    const commits = (yield git.raw(
+    const mergeBaseCommit = yield git2.raw("merge-base", headBranch, baseBranch);
+    const commits = (yield git2.raw(
       "rev-list",
       "--date-order",
       `--max-count=${maxCount}`,
@@ -26150,12 +26150,12 @@ function getCommits(git, headBranch, baseBranch, head, maxCount = 300) {
     return commits;
   });
 }
-function findBestGoodRefPR(diffWeight, git, githubApi, headBranch, baseBranch, prBranch, workflowId) {
+function findBestGoodRefPR(diffWeight2, git2, githubApi, headBranch, baseBranch, prBranch, workflowId) {
   return __async(this, null, function* () {
     const log = app2.extend("findBestGoodRefPR");
     log(`Starting with head branch ${headBranch} and base branch ${baseBranch}`);
-    const lastCommitSha = yield git.lastCommit();
-    const prCommits = yield getCommits(git, headBranch, baseBranch, "HEAD");
+    const lastCommitSha = yield git2.lastCommit();
+    const prCommits = yield getCommits(git2, headBranch, baseBranch, "HEAD");
     const prRun = yield githubApi.getLastGoodPRRun(
       headBranch,
       workflowId,
@@ -26166,18 +26166,18 @@ function findBestGoodRefPR(diffWeight, git, githubApi, headBranch, baseBranch, p
       log(`Found a PR run candidate: ${JSON.stringify(prRun)}`);
       try {
         const tempBranch = `${headBranch}-${Math.round(Math.random() * 1e6)}`;
-        yield git.checkoutBranch(tempBranch, prRun.base_commit);
+        yield git2.checkoutBranch(tempBranch, prRun.base_commit);
         log(`Branch checked out`);
-        const mergeCommitSha = yield git.merge(prRun.head_commit);
+        const mergeCommitSha = yield git2.merge(prRun.head_commit);
         log(`Simulated previous PR merge commit`);
         const distance = yield githubApi.getChangedComponents(
-          git,
+          git2,
           lastCommitSha,
           mergeCommitSha
         );
         log(`Affected components since candidate PR run are ${distance}`);
         prBuilds.push({
-          distance: diffWeight(distance),
+          distance: diffWeight2(distance),
           hash: prRun.head_commit,
           run_nr: prRun.run_nr,
           branch: headBranch,
@@ -26189,10 +26189,10 @@ function findBestGoodRefPR(diffWeight, git, githubApi, headBranch, baseBranch, p
           e
         );
       } finally {
-        yield git.checkout(prBranch);
+        yield git2.checkout(prBranch);
       }
     }
-    const baseCommits = yield getCommits(git, prBranch, baseBranch, "HEAD~1");
+    const baseCommits = yield getCommits(git2, prBranch, baseBranch, "HEAD~1");
     const baseGoodBuilds = yield githubApi.getLastGoodBranchBuildRun(
       baseBranch,
       "push",
@@ -26200,12 +26200,12 @@ function findBestGoodRefPR(diffWeight, git, githubApi, headBranch, baseBranch, p
     );
     if (baseGoodBuilds) {
       let affectedComponents = yield githubApi.getChangedComponents(
-        git,
+        git2,
         lastCommitSha,
         baseGoodBuilds.head_commit
       );
       prBuilds.push({
-        distance: diffWeight(affectedComponents),
+        distance: diffWeight2(affectedComponents),
         hash: baseGoodBuilds.head_commit,
         run_nr: baseGoodBuilds.run_nr,
         branch: baseBranch,
@@ -26318,34 +26318,57 @@ var SimpleGit = class {
 };
 
 // main.ts
-(() => __async(exports, null, function* () {
-  const runner = new LocalRunner(new import_action.Octokit());
-  let git = new SimpleGit(process.env.REPO_ROOT, process.env.SHELL);
-  const diffWeight = (s) => s.length;
-  const rev = process.env.TEST_EVERYTHING ? "rebuild" : process.env.GITHUB_EVENT_NAME === "pull_request" ? yield findBestGoodRefPR(
-    diffWeight,
-    git,
-    runner,
-    `'${process.env.HEAD_REF}'`,
-    `'${process.env.BASE_REF}'`,
-    `'${process.env.PR_REF}'`,
-    process.env.WORKFLOW_ID
-  ) : yield findBestGoodRefBranch(
-    diffWeight,
-    git,
-    runner,
-    `'${process.env.HEAD_REF}'`,
-    `'${process.env.BASE_REF}'`,
-    process.env.WORKFLOW_ID
-  );
-  if (rev === "rebuild") {
-    console.log(`Full rebuild needed`);
-  } else {
-    rev.branch = rev.branch.replace(/'/g, "");
-    rev.ref = rev.ref.replace(/'/g, "");
+var SHOULD_TEST_EVERYTHING = !!process.env.TEST_EVERYTHING;
+var EVENT_IS_A_PULL_REQUEST = process.env.GITHUB_EVENT_NAME === "pull_request";
+var git = new SimpleGit(process.env.REPO_ROOT, process.env.SHELL);
+var runner = new LocalRunner(new import_action.Octokit());
+main();
+function main() {
+  return __async(this, null, function* () {
+    const rev = yield findRev();
+    if (rev === "rebuild") {
+      console.log(`Full rebuild needed`);
+      return;
+    }
     console.log(JSON.stringify(rev));
-  }
-}))();
+  });
+}
+function diffWeight(s) {
+  return s.length;
+}
+function findRev() {
+  return __async(this, null, function* () {
+    if (SHOULD_TEST_EVERYTHING) {
+      return "rebuild";
+    }
+    let value;
+    if (EVENT_IS_A_PULL_REQUEST) {
+      value = yield findBestGoodRefPR(
+        diffWeight,
+        git,
+        runner,
+        `'${process.env.HEAD_REF}'`,
+        `'${process.env.BASE_REF}'`,
+        `'${process.env.PR_REF}'`,
+        process.env.WORKFLOW_ID
+      );
+    } else {
+      value = yield findBestGoodRefBranch(
+        diffWeight,
+        git,
+        runner,
+        `'${process.env.HEAD_REF}'`,
+        `'${process.env.BASE_REF}'`,
+        process.env.WORKFLOW_ID
+      );
+    }
+    if (value === "rebuild") {
+      return value;
+    }
+    value.branch = value.branch.replace(/'/g, "");
+    value.ref = value.ref.replace(/'/g, "");
+  });
+}
 /*!
  * is-plain-object <https://github.com/jonschlinkert/is-plain-object>
  *
