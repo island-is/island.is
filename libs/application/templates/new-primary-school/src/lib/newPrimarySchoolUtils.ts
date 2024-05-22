@@ -79,8 +79,7 @@ export const isChildAtPrimarySchoolAge = (nationalId: string): boolean => {
     return true
   }
 
-  // TODO: set as false
-  return true
+  return false
 }
 
 export const getOtherParent = (
@@ -93,8 +92,6 @@ export const getOtherParent = (
   const selectedChild = children.find((child) => {
     return child.nationalId === childsNationalId
   })
-
-  console.log('selectedChild', selectedChild?.otherParent)
 
   return selectedChild?.otherParent as Person | undefined
 }

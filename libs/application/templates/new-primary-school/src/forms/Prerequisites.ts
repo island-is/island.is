@@ -1,7 +1,9 @@
 import {
   buildDataProviderItem,
+  buildDescriptionField,
   buildExternalDataProvider,
   buildForm,
+  buildMultiField,
   buildSection,
   buildSubmitField,
   coreMessages,
@@ -22,8 +24,8 @@ export const Prerequisites: Form = buildForm({
   title: newPrimarySchoolMessages.shared.formTitle,
   logo: Logo,
   mode: FormModes.NOT_STARTED,
-  renderLastScreenButton: true,
-  renderLastScreenBackButton: true,
+  renderLastScreenButton: false,
+  renderLastScreenBackButton: false,
   children: [
     buildSection({
       id: 'prerequisites',
@@ -79,6 +81,25 @@ export const Prerequisites: Form = buildForm({
               subTitle:
                 newPrimarySchoolMessages.pre
                   .nationalRegistryInformationSubTitle,
+            }),
+          ],
+        }),
+        buildMultiField({
+          id: 'hasNoChildren',
+          title: newPrimarySchoolMessages.pre.noChildrenFoundTitle,
+          description: newPrimarySchoolMessages.pre.noChildrenFoundDescription,
+          children: [
+            buildDescriptionField({
+              id: 'noChildrenDecsription',
+              title: '',
+              description: newPrimarySchoolMessages.pre.noChildrenFoundReasons,
+            }),
+
+            // Empty submit field to hide all buttons in the footer
+            buildSubmitField({
+              id: '',
+              title: '',
+              actions: [],
             }),
           ],
         }),
