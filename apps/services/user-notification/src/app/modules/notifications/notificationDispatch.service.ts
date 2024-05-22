@@ -58,7 +58,7 @@ export class NotificationDispatchService {
       //     xParamNationalId: nationalId,
       //   })
       // const tokens = deviceTokensResponse.map((token) => token.deviceToken)
-      const tokens = ['asdfð','asdfdsfdasð']
+      const tokens = ['asdfð', 'asdfdsfdasð']
 
       if (tokens.length === 0) {
         this.logger.info('No push-notification tokens found for user', {

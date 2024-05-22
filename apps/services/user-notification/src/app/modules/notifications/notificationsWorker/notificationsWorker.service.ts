@@ -367,8 +367,8 @@ export class NotificationsWorkerService implements OnApplicationBootstrap {
         //     })
         // }
 
-         // create mock user 
-         const profile: UserProfileDto = {
+        // create mock user
+        const profile: UserProfileDto = {
           nationalId: '0101302989',
           email: 'rafnarnason@gmail.com',
           mobilePhoneNumber: '8632343',
