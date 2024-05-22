@@ -3,58 +3,54 @@ import {
   ActionCard,
   CardLoader,
   DOMSMALARADUNEYTID_SLUG,
-  ErrorScreen,
   IntroHeader,
-  NotFound,
   m,
 } from '@island.is/service-portal/core'
 import { messages } from '../../lib/messages'
 import { useLocale, useNamespaces } from '@island.is/localization'
 import { LawAndOrderPaths } from '../../lib/paths'
-import { listCases } from '../../helpers/mockData'
 import { useGetCourtCasesQuery } from './CourtCases.generated'
+import { Problem } from '@island.is/react-spa/shared'
+import { useEffect } from 'react'
 
 const CourtCases = () => {
   useNamespaces('sp.law-and-order')
-  const { data, loading, error } = useGetCourtCasesQuery()
-  const cases = data?.courtCasesList?.items
-  const noInfo = cases === null
+  const { lang } = useLocale()
+
+  const { data, loading, error, refetch } = useGetCourtCasesQuery({
+    variables: {
+      input: {
+        locale: lang,
+      },
+    },
+  })
+
+  const cases = data?.lawAndOrderCourtCasesList?.items
+
   const { formatMessage } = useLocale()
 
-  if (error && !loading) {
-    return (
-      <ErrorScreen
-        figure="./assets/images/hourglass.svg"
-        tagVariant="red"
-        tag={formatMessage(m.errorTitle)}
-        title={formatMessage(m.somethingWrong)}
-        children={formatMessage(m.errorFetchModule, {
-          module: formatMessage(m.courtCases).toLowerCase(),
-        })}
-      />
-    )
-  }
-
-  if (noInfo && !loading) {
-    return <NotFound title={formatMessage(messages.courtCaseNotFound)} />
-  }
+  useEffect(() => {
+    refetch()
+  }, [lang])
 
   return (
-    <Box marginTop={3}>
+    <>
       <IntroHeader
         title={messages.courtCases}
         intro={messages.courtCasesDescription}
         serviceProviderSlug={DOMSMALARADUNEYTID_SLUG}
         serviceProviderTooltip={formatMessage(m.domsmalaraduneytidTooltip)}
       />
-
       {loading && !error && (
         <Box width="full">
           <CardLoader />
         </Box>
       )}
-      {!loading &&
-        !error &&
+
+      {error && !loading && <Problem error={error} noBorder={false} />}
+
+      {cases &&
+        cases.length > 0 &&
         cases?.map((x) => (
           <Box marginTop={2}>
             <ActionCard
@@ -77,7 +73,7 @@ const CourtCases = () => {
             />
           </Box>
         ))}
-    </Box>
+    </>
   )
 }
 export default CourtCases

@@ -38,10 +38,10 @@ export const lawAndOrderModule: PortalModule = {
       element: <IndexComponent component={Components.COURT_CASE_DETAIL} />,
     },
     {
-      name: m.subpeona,
-      path: LawAndOrderPaths.SubpeonaDetail,
+      name: m.subpoena,
+      path: LawAndOrderPaths.SubpoenaDetail,
       enabled: userInfo.scopes.includes(ApiScope.meDetails),
-      element: <IndexComponent component={Components.SUBPEONA} />,
+      element: <IndexComponent component={Components.SUBPOENA} />,
     },
   ],
 }

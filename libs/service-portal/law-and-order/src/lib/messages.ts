@@ -149,8 +149,8 @@ export const messages = defineMessages({
     id: 'sp.law-and-order:date',
     defaultMessage: 'Dagsetning',
   },
-  openSubpeona: {
-    id: 'sp.law-and-order:open-subpeona',
+  openSubpoena: {
+    id: 'sp.law-and-order:open-subpoena',
     defaultMessage: 'Opna erindi',
   },
   confirm: {
@@ -164,6 +164,10 @@ export const messages = defineMessages({
   registrationCompleted: {
     id: 'sp.law-and-order:registration-completed',
     defaultMessage: 'Skráning tókst',
+  },
+  registrationError: {
+    id: 'sp.law-and-order:registration-error',
+    defaultMessage: 'Skráning tókst ekki',
   },
   firstChoiceNoDefender: {
     id: 'sp.law-and-order:no-defender',

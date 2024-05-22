@@ -1,8 +1,9 @@
-query GetCourtCase($input: LawAndOrderCourtCaseInput!) {
-  lawAndOrderCourtCaseDetail(input: $input) {
+query GetSubpoena($input: LawAndOrderSubpoenaInput!) {
+  lawAndOrderSubpoena(input: $input) {
     texts {
       intro
-      footnote
+      confirmation
+      description
     }
     actions {
       type
@@ -12,8 +13,8 @@ query GetCourtCase($input: LawAndOrderCourtCaseInput!) {
     data {
       id
       acknowledged
-      caseNumber
-      caseNumberTitle
+      displayClaim
+      chosenDefender
       groups {
         label
         items {

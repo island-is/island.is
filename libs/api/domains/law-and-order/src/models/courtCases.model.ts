@@ -13,9 +13,9 @@ export class State {
 }
 
 @ObjectType('LawAndOrderCourtCasesCase')
-export class Case {
-  @Field(() => ID, { nullable: true })
-  id?: string
+export class Item {
+  @Field(() => ID)
+  id!: string
 
   @Field(() => String, { nullable: true })
   caseNumber?: string
@@ -35,6 +35,6 @@ export class Case {
 
 @ObjectType('LawAndOrderCourtCases')
 export class CourtCases {
-  @Field(() => [Case], { nullable: true })
-  items?: Array<Case>
+  @Field(() => [Item], { nullable: true })
+  items?: Array<Item>
 }

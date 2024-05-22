@@ -4,11 +4,14 @@ import { Box, Divider, Link, Stack, Text } from '@island.is/island-ui/core'
 import { useNamespaces } from '@island.is/localization'
 import { UserInfoLine } from '@island.is/service-portal/core'
 import { Items } from '../../helpers/mockData'
-import { LawAndOrderCourtCaseGroups } from '@island.is/api/schema'
+import {
+  LawAndOrderCourtCaseGroups,
+  LawAndOrderSubpoenaGroups,
+} from '@island.is/api/schema'
 import * as styles from './InfoLines.css'
 
 interface Props {
-  groups: Array<LawAndOrderCourtCaseGroups>
+  groups: Array<LawAndOrderCourtCaseGroups | LawAndOrderSubpoenaGroups>
   loading?: boolean
 }
 

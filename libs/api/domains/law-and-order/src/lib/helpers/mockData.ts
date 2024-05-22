@@ -1,5 +1,7 @@
 /* eslint-disable local-rules/disallow-kennitalas */
 
+import { Groups, Items as SubpoenaItems } from '../../models/subpoena.model'
+
 export type Process = {
   state: State
 }
@@ -54,7 +56,7 @@ type Cases = {
   }
 }
 
-export type Subpeona = {
+export type Subpoena = {
   texts?: {
     intro?: string
     confirmation?: string
@@ -63,18 +65,106 @@ export type Subpeona = {
   }
   actions?: Actions[]
   data: {
-    id: number
+    id: string
     acknowledged?: boolean
     chosenDefender?: string // ef null = birta lista ef ekki, birta breyta
-    groups: {
-      label: string
-      items: Items[]
-    }[]
+    groups: Array<Groups>
     displayClaim: boolean
   }
 }
 
-export const listCases = () => {
+export const listCases = (locale: 'is' | 'en') => {
+  const casesEN: Cases[] = [
+    {
+      actions: [
+        {
+          title: 'Download charge',
+          type: 'file',
+          data: '123',
+        },
+      ],
+      data: {
+        id: '123',
+        caseNumber: 'S-0000',
+        caseNumberTitle: 'Case number S-0000/2022',
+        type: 'Charge',
+        status: 'On the agenda',
+        acknowledged: undefined,
+        groups: [
+          {
+            label: 'Defender',
+            items: [
+              {
+                label: 'Name',
+                value: 'Lísa Jónsdóttir',
+              },
+              {
+                label: 'National ID',
+                value: '010203-6789',
+              },
+              {
+                label: 'Legal residence',
+                value: 'Hagamelur 92, 107 Reykjavík',
+              },
+              {
+                label: 'Subpoena sent',
+                value: '6.maí 2022',
+              },
+            ],
+          },
+          {
+            label: 'Defendant',
+            items: [
+              {
+                label: 'Name',
+                value: 'Andri Valur Ívarsson',
+              },
+              {
+                label: 'Email',
+                value: 'andri.ivar@fyrirtaeki.is',
+                link: 'mailto:',
+              },
+              {
+                label: 'Telephone',
+                value: '555 4789',
+                link: 'tel:',
+              },
+            ],
+          },
+          {
+            label: 'Case information',
+            items: [
+              {
+                label: 'Type',
+                value: 'Charge',
+              },
+              {
+                label: 'Case number district court',
+                value: 'S-999/2022',
+              },
+              {
+                label: 'Court',
+                value: 'District court of Reykjavík',
+              },
+              {
+                label: 'Judge',
+                value: 'Halldór Jón Sigurðsson',
+              },
+              {
+                label: 'Office',
+                value: 'Lögreglustjórinn á höfuðborgarsvæðinu',
+              },
+              {
+                label: 'Accuser',
+                value: 'Katrín Ólöf Einarsdóttir',
+              },
+            ],
+          },
+        ],
+      },
+    },
+  ]
+
   const cases: Cases[] = [
     {
       actions: [
@@ -342,11 +432,11 @@ export const listCases = () => {
     },
   ]
 
-  return cases
+  return locale === 'is' ? cases : casesEN
 }
 
-export const getCase = (id: string) => {
-  const cases = listCases()
+export const getCase = (id: string, locale: 'is' | 'en') => {
+  const cases = listCases(locale)
 
   const detailedCase = cases.find((x) => x.data.id === id) ?? null
 
@@ -382,8 +472,8 @@ export const getLawyers = () => {
     error: false,
   }
 }
-export const getSubpeona = (id: number) => {
-  const subpeonas: Subpeona[] = [
+export const getSubpoena = (id: string) => {
+  const subpoenas: Subpoena[] = [
     {
       texts: {
         intro: 'Héraðsdómur Reykjavíkur, Dómhúsið við Lækjartorg, Reykjavík.',
@@ -401,7 +491,7 @@ export const getSubpeona = (id: number) => {
         },
       ],
       data: {
-        id: 123,
+        id: '123',
         acknowledged: undefined,
         displayClaim: false,
 
@@ -437,7 +527,7 @@ export const getSubpeona = (id: number) => {
                 label: 'Dómsathöfn',
                 value: 'Þingfesting',
               },
-            ],
+            ] as Array<SubpoenaItems>,
           },
         ],
       },
@@ -459,7 +549,7 @@ export const getSubpeona = (id: number) => {
         },
       ],
       data: {
-        id: 1234,
+        id: '1234',
         acknowledged: true,
         displayClaim: false,
 
@@ -517,7 +607,7 @@ export const getSubpeona = (id: number) => {
         },
       ],
       data: {
-        id: 12345,
+        id: '12345',
         acknowledged: false,
         displayClaim: false,
 
@@ -560,11 +650,7 @@ export const getSubpeona = (id: number) => {
     },
   ]
 
-  const subpeona = subpeonas.find((x) => x.data.id === id) ?? null
+  const subpoena = subpoenas.find((x) => x.data.id === id) ?? null
 
-  const subpeonaDetail = {
-    subpeonaDetail: subpeona,
-  }
-
-  return { data: subpeonaDetail, loading: false, error: false }
+  return { data: subpoena, loading: false, error: false }
 }

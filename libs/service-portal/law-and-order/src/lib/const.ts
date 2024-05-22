@@ -9,5 +9,5 @@ export enum Components {
   OVERVIEW = 'overview',
   COURT_CASES = 'courtCases',
   COURT_CASE_DETAIL = 'courtCaseDetail',
-  SUBPEONA = 'subpeona',
+  SUBPOENA = 'subpoena',
 }

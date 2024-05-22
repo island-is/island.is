@@ -9,25 +9,25 @@ import {
 import { DefenseDecision } from '../lib/const'
 
 export type LawAndOrderStateProps = {
-  subpeonaAcknowledged: boolean | undefined
-  subpeonaModalVisible: boolean
+  subpoenaAcknowledged: boolean | undefined
+  subpoenaModalVisible: boolean
   defenseChoice: DefenseDecision | undefined
   lawyerSelected: string | undefined
 
-  setSubpeonaAcknowledged: Dispatch<SetStateAction<boolean | undefined>>
-  setSubpeonaModalVisible: Dispatch<SetStateAction<boolean>>
+  setSubpoenaAcknowledged: Dispatch<SetStateAction<boolean | undefined>>
+  setSubpoenaModalVisible: Dispatch<SetStateAction<boolean>>
   setDefenseChoice: Dispatch<SetStateAction<DefenseDecision | undefined>>
   setLawyerSelected: Dispatch<SetStateAction<string | undefined>>
 }
 
 export const LawAndOrderContext = createContext<LawAndOrderStateProps>({
-  subpeonaAcknowledged: undefined,
-  subpeonaModalVisible: false,
+  subpoenaAcknowledged: undefined,
+  subpoenaModalVisible: false,
   defenseChoice: undefined,
   lawyerSelected: undefined,
 
-  setSubpeonaAcknowledged: () => undefined,
-  setSubpeonaModalVisible: () => undefined,
+  setSubpoenaAcknowledged: () => undefined,
+  setSubpoenaModalVisible: () => undefined,
   setDefenseChoice: () => undefined,
   setLawyerSelected: () => undefined,
 })
@@ -35,11 +35,11 @@ export const LawAndOrderContext = createContext<LawAndOrderStateProps>({
 export const LawAndOrderProvider: FC<React.PropsWithChildren<unknown>> = ({
   children,
 }) => {
-  const [subpeonaAcknowledged, setSubpeonaAcknowledged] = useState<
+  const [subpoenaAcknowledged, setSubpoenaAcknowledged] = useState<
     boolean | undefined
   >(undefined)
 
-  const [subpeonaModalVisible, setSubpeonaModalVisible] =
+  const [subpoenaModalVisible, setSubpoenaModalVisible] =
     useState<boolean>(false)
 
   const [defenseChoice, setDefenseChoice] = useState<
@@ -53,12 +53,12 @@ export const LawAndOrderProvider: FC<React.PropsWithChildren<unknown>> = ({
   return (
     <LawAndOrderContext.Provider
       value={{
-        subpeonaAcknowledged,
-        subpeonaModalVisible,
+        subpoenaAcknowledged,
+        subpoenaModalVisible,
         defenseChoice,
         lawyerSelected,
-        setSubpeonaAcknowledged,
-        setSubpeonaModalVisible,
+        setSubpoenaAcknowledged,
+        setSubpoenaModalVisible,
         setDefenseChoice,
         setLawyerSelected,
       }}

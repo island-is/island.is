@@ -55,7 +55,7 @@ type Cases = {
   }
 }
 
-export type Subpeona = {
+export type Subpoena = {
   texts?: {
     intro?: string
     confirmation?: string
@@ -113,7 +113,7 @@ export const listCases = () => {
                 value: '6.maí 2022',
                 action: {
                   label: 'Sjá fyrirkall',
-                  url: LawAndOrderPaths.SubpeonaDetail.replace(':id', '123'),
+                  url: LawAndOrderPaths.SubpoenaDetail.replace(':id', '123'),
                   type: 'popup',
                 },
               },
@@ -206,7 +206,7 @@ export const listCases = () => {
                 value: '6.maí 2022',
                 action: {
                   label: 'Sjá fyrirkall',
-                  url: LawAndOrderPaths.SubpeonaDetail.replace(':id', '123'),
+                  url: LawAndOrderPaths.SubpoenaDetail.replace(':id', '123'),
                   type: 'popup',
                 },
               },
@@ -299,7 +299,7 @@ export const listCases = () => {
                 value: '6.maí 2022',
                 action: {
                   label: 'Sjá fyrirkall',
-                  url: LawAndOrderPaths.SubpeonaDetail.replace(':id', '123'),
+                  url: LawAndOrderPaths.SubpoenaDetail.replace(':id', '123'),
                   type: 'popup',
                 },
               },
@@ -398,8 +398,8 @@ export const getLawyers = () => {
     error: false,
   }
 }
-export const getSubpeona = (id: number) => {
-  const subpeonas: Subpeona[] = [
+export const getSubpoena = (id: number) => {
+  const subpoenas: Subpoena[] = [
     {
       texts: {
         intro: 'Héraðsdómur Reykjavíkur, Dómhúsið við Lækjartorg, Reykjavík.',
@@ -576,11 +576,7 @@ export const getSubpeona = (id: number) => {
     },
   ]
 
-  const subpeona = subpeonas.find((x) => x.data.id === id) ?? null
+  const subpoena = subpoenas.find((x) => x.data.id === id) ?? null
 
-  const subpeonaDetail = {
-    subpeonaDetail: subpeona,
-  }
-
-  return { data: subpeonaDetail, loading: false, error: false }
+  return { data: subpoena, loading: false, error: false }
 }

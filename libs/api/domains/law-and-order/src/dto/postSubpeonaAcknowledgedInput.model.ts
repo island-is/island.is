@@ -1,9 +1,9 @@
 import { Field, ID, InputType } from '@nestjs/graphql'
 
-@InputType('LawAndOrderSubpeonaAcknowledgedInput')
-export class PostSubpeonaAcknowledgedInput {
+@InputType('LawAndOrderSubpoenaAcknowledgedInput')
+export class PostSubpoenaAcknowledgedInput {
   @Field(() => ID)
-  id!: string
+  caseId!: string
 
   @Field(() => Boolean)
   acknowledged!: boolean | undefined

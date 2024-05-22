@@ -25,8 +25,8 @@ export const lawAndOrderNavigation: PortalNavigationItem = {
           navHide: true,
           children: [
             {
-              name: m.subpeona,
-              path: LawAndOrderPaths.SubpeonaDetail,
+              name: m.subpoena,
+              path: LawAndOrderPaths.SubpoenaDetail,
               navHide: true,
             },
           ],

@@ -4,6 +4,7 @@ import {
   GridColumn,
   GridRow,
   Text,
+  toast,
 } from '@island.is/island-ui/core'
 import { useLocale, useNamespaces } from '@island.is/localization'
 import { LinkResolver, Modal } from '@island.is/service-portal/core'
@@ -12,9 +13,10 @@ import { FC } from 'react'
 import { LawAndOrderPaths } from '../../lib/paths'
 import { useLawAndOrderContext } from '../../helpers/LawAndOrderContext'
 import * as styles from './ConfirmationModal.css'
+import { usePostSubpoenaAcknowledgedMutation } from './SubpoenaAcknowledged.generated'
 
 interface Props {
-  id?: string
+  id: string | null
 }
 
 const SubpoenaConfirmationModal: FC<React.PropsWithChildren<Props>> = ({
@@ -22,15 +24,40 @@ const SubpoenaConfirmationModal: FC<React.PropsWithChildren<Props>> = ({
 }) => {
   useNamespaces('sp.law-and-order')
   const { formatMessage } = useLocale()
-  const { setSubpeonaAcknowledged, setSubpeonaModalVisible } =
+  const { setSubpoenaAcknowledged, setSubpoenaModalVisible } =
     useLawAndOrderContext()
 
+  const [postAction, { loading: postActionLoading, data: updateData }] =
+    usePostSubpoenaAcknowledgedMutation({
+      onError: () => {
+        toast.error(formatMessage(messages.registrationError))
+      },
+      onCompleted: () => {
+        setSubpoenaModalVisible(false)
+        //TODO: What to do if user closes or cancel the pop up?
+        updateData?.lawAndOrderSubpoenaAcknowledged?.acknowledged &&
+          toast.success(formatMessage(messages.registrationCompleted))
+      },
+    })
+
+  const handleSubmit = (status: boolean) => {
+    // TODO: What to do if error ?
+    if (!id) return
+    setSubpoenaAcknowledged(status)
+    postAction({
+      variables: {
+        input: {
+          caseId: id,
+          acknowledged: status,
+        },
+      },
+    })
+  }
   return (
     <Modal
-      id="subpeona-confirmation-modal"
+      id="subpoena-confirmation-modal"
       onCloseModal={() => {
-        setSubpeonaModalVisible(false)
-        setSubpeonaAcknowledged(false)
+        setSubpoenaModalVisible(false)
       }}
     >
       <GridRow>
@@ -61,8 +88,7 @@ const SubpoenaConfirmationModal: FC<React.PropsWithChildren<Props>> = ({
                   size="small"
                   variant="ghost"
                   onClick={() => {
-                    setSubpeonaAcknowledged(false)
-                    setSubpeonaModalVisible(false)
+                    handleSubmit(false)
                   }}
                 >
                   {formatMessage(messages.cancel)}
@@ -70,7 +96,7 @@ const SubpoenaConfirmationModal: FC<React.PropsWithChildren<Props>> = ({
               </Box>
               <Box marginLeft={2}>
                 <LinkResolver
-                  href={LawAndOrderPaths.SubpeonaDetail.replace(
+                  href={LawAndOrderPaths.SubpoenaDetail.replace(
                     ':id',
                     id?.toString() || '',
                   )}
@@ -80,13 +106,12 @@ const SubpoenaConfirmationModal: FC<React.PropsWithChildren<Props>> = ({
                     size="small"
                     type="text"
                     as="span"
-                    unfocusable
+                    loading={postActionLoading}
                     onClick={() => {
-                      setSubpeonaAcknowledged(true)
-                      setSubpeonaModalVisible(false)
+                      handleSubmit(true)
                     }}
                   >
-                    {formatMessage(messages.openSubpeona)}
+                    {formatMessage(messages.openSubpoena)}
                   </Button>
                 </LinkResolver>
               </Box>

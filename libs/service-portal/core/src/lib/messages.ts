@@ -1528,8 +1528,8 @@ export const m = defineMessages({
     id: 'service.portal:court-cases',
     defaultMessage: 'Dómsmál',
   },
-  subpeona: {
-    id: 'service.portal:subpeona',
+  subpoena: {
+    id: 'service.portal:subpoena',
     defaultMessage: 'Fyrirkall',
   },
 })

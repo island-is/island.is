@@ -1,15 +1,21 @@
 import { Field, ID, ObjectType } from '@nestjs/graphql'
 
-@ObjectType('LawAndOrderCourtCaseTexts')
+@ObjectType('LawAndOrderSubpoenaTexts')
 export class Texts {
   @Field(() => String, { nullable: true })
   intro?: string
 
   @Field(() => String, { nullable: true })
-  footnote?: string
+  confirmation?: string
+
+  @Field(() => String, { nullable: true })
+  description?: string
+
+  @Field(() => String, { nullable: true })
+  claim?: string
 }
 
-@ObjectType('LawAndOrderCourtCaseActions')
+@ObjectType('LawAndOrderSubpoenaActions')
 export class Actions {
   @Field(() => String, { nullable: true })
   type?: 'file' | 'url' | 'inbox'
@@ -21,7 +27,7 @@ export class Actions {
   data?: string
 }
 
-@ObjectType('LawAndOrderCourtCaseItemActions')
+@ObjectType('LawAndOrderSubpoenaItemActions')
 export class ItemActions {
   @Field(() => String, { nullable: true })
   label?: string
@@ -33,7 +39,7 @@ export class ItemActions {
   type?: string
 }
 
-@ObjectType('LawAndOrderCourtCaseItems')
+@ObjectType('LawAndOrderSubpoenaItems')
 export class Items {
   @Field(() => String, { nullable: true })
   label?: string
@@ -48,7 +54,7 @@ export class Items {
   action?: ItemActions
 }
 
-@ObjectType('LawAndOrderCourtCaseGroups')
+@ObjectType('LawAndOrderSubpoenaGroups')
 export class Groups {
   @Field(() => String, { nullable: true })
   label?: string
@@ -57,7 +63,7 @@ export class Groups {
   items?: Array<Items>
 }
 
-@ObjectType('LawAndOrderCourtCaseData')
+@ObjectType('LawAndOrderSubpoenaData')
 export class Data {
   @Field(() => ID)
   id!: string
@@ -65,19 +71,19 @@ export class Data {
   @Field(() => Boolean, { nullable: true })
   acknowledged?: boolean
 
-  @Field(() => String, { nullable: true })
-  caseNumber?: string
+  @Field(() => Boolean, { nullable: true })
+  displayClaim?: boolean
 
   @Field(() => String, { nullable: true })
-  caseNumberTitle?: string
+  chosenDefender?: string
 
   @Field(() => [Groups], { nullable: true })
   groups?: Array<Groups>
 }
 
-@ObjectType('LawAndOrderCourtCase')
-export class CourtCase {
-  @Field(() => Texts, { nullable: true })
+@ObjectType('LawAndOrderSubpoena')
+export class Subpoena {
+  @Field({ nullable: true })
   texts?: Texts
 
   @Field(() => [Actions], { nullable: true })

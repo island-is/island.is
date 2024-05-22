@@ -9,7 +9,6 @@ import {
 } from '@island.is/service-portal/core'
 import { messages } from '../../lib/messages'
 import { useLocale, useNamespaces } from '@island.is/localization'
-import { getCase } from '../../helpers/mockData'
 import { useParams } from 'react-router-dom'
 import { LawAndOrderPaths } from '../../lib/paths'
 import InfoLines from '../../components/InfoLines/InfoLines'
@@ -17,6 +16,7 @@ import { useEffect } from 'react'
 import ConfirmationModal from '../../components/ConfirmationModal/ConfirmationModal'
 import { useLawAndOrderContext } from '../../helpers/LawAndOrderContext'
 import { useGetCourtCaseQuery } from './CourtCaseDetail.generated'
+import { Problem } from '@island.is/react-spa/shared'
 
 type UseParams = {
   id: string
@@ -24,59 +24,50 @@ type UseParams = {
 
 const CourtCaseDetail = () => {
   useNamespaces('sp.law-and-order')
-  const { formatMessage } = useLocale()
+  const { formatMessage, lang } = useLocale()
 
   const { id } = useParams() as UseParams
 
-  const { data, error, loading } = useGetCourtCaseQuery({
+  const { data, error, loading, refetch } = useGetCourtCaseQuery({
     variables: {
       input: {
-        id: id,
+        id,
+        locale: lang,
       },
     },
   })
 
-  const noInfo = data?.courtCaseDetail === null
-  const courtCase = data?.courtCaseDetail
+  const courtCase = data?.lawAndOrderCourtCaseDetail
 
   const {
-    subpeonaAcknowledged,
-    setSubpeonaAcknowledged,
-    subpeonaModalVisible,
-    setSubpeonaModalVisible,
+    subpoenaAcknowledged,
+    setSubpoenaAcknowledged,
+    subpoenaModalVisible,
+    setSubpoenaModalVisible,
   } = useLawAndOrderContext()
 
   useEffect(() => {
-    if (courtCase && subpeonaAcknowledged === undefined) {
-      setSubpeonaAcknowledged(courtCase?.data?.acknowledged ?? undefined)
+    refetch()
+  }, [lang])
+
+  useEffect(() => {
+    if (courtCase && subpoenaAcknowledged === undefined) {
+      setSubpoenaAcknowledged(courtCase?.data?.acknowledged ?? undefined)
     }
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [])
 
   const toggleModal = () => {
-    setSubpeonaModalVisible(!subpeonaModalVisible)
+    setSubpoenaModalVisible(!subpoenaModalVisible)
   }
 
-  if (error && !loading) {
-    return (
-      <ErrorScreen
-        figure="./assets/images/hourglass.svg"
-        tagVariant="red"
-        tag={formatMessage(m.errorTitle)}
-        title={formatMessage(m.somethingWrong)}
-        children={formatMessage(m.errorFetchModule, {
-          module: formatMessage(m.courtCases).toLowerCase(),
-        })}
-      />
-    )
-  }
-
-  if (noInfo && !loading) {
+  //TODO: Samræma við þjónustu
+  if (data?.lawAndOrderCourtCaseDetail == null && !loading) {
     return <NotFound title={formatMessage(messages.courtCaseNotFound)} />
   }
 
   return (
-    <Box marginTop={3}>
+    <>
       <IntroHeader
         loading={loading}
         title={
@@ -89,9 +80,9 @@ const CourtCaseDetail = () => {
       />
       <Box marginBottom={3} display="flex" flexWrap="wrap">
         <Box paddingRight={2} marginBottom={[1]}>
-          {subpeonaAcknowledged ? (
+          {subpoenaAcknowledged ? (
             <LinkResolver
-              href={LawAndOrderPaths.SubpeonaDetail.replace(
+              href={LawAndOrderPaths.SubpoenaDetail.replace(
                 ':id',
                 id?.toString() || '',
               )}
@@ -123,33 +114,53 @@ const CourtCaseDetail = () => {
             </Button>
           )}
         </Box>
-        <Box paddingRight={2} marginBottom={[1]}>
-          {courtCase?.actions?.map((x, y) => {
-            return (
-              <Button
-                as="span"
-                unfocusable
-                colorScheme="default"
-                icon="download"
-                iconType="outline"
-                size="default"
-                variant="utility"
-                key={`'courtcase-button-'${y}`}
-                onClick={() => alert('hleður niður PDF')}
-              >
-                {x.title}
-              </Button>
-            )
-          })}
-        </Box>
+        {error && !loading && <Problem error={error} noBorder={false} />}
+        {!error && !loading && !courtCase && (
+          <Problem
+            type="no_data"
+            noBorder={false}
+            title={formatMessage(m.noDataFoundVariable, {
+              arg: formatMessage(messages.courtCases).toLowerCase(),
+            })}
+            message={formatMessage(m.noDataFoundVariableDetail, {
+              arg: formatMessage(messages.courtCases).toLowerCase(),
+            })}
+            imgSrc="./assets/images/sofa.svg"
+          />
+        )}
+        {!error && !loading && courtCase && (
+          <Box paddingRight={2} marginBottom={[1]}>
+            {courtCase?.actions?.map((x, y) => {
+              return (
+                <Button
+                  as="span"
+                  unfocusable
+                  colorScheme="default"
+                  icon="download"
+                  iconType="outline"
+                  size="default"
+                  variant="utility"
+                  key={`'courtcase-button-'${y}`}
+                  onClick={() => alert('hleður niður PDF')}
+                >
+                  {x.title}
+                </Button>
+              )
+            })}
+          </Box>
+        )}
       </Box>
-      {courtCase?.data?.groups && (
-        <InfoLines groups={courtCase?.data?.groups} loading={loading} />
+      {!error && !loading && courtCase && (
+        <>
+          {courtCase?.data?.groups && (
+            <InfoLines groups={courtCase?.data?.groups} loading={loading} />
+          )}
+          {courtCase?.data && subpoenaModalVisible && !subpoenaAcknowledged && (
+            <ConfirmationModal id={courtCase.data.id} />
+          )}
+        </>
       )}
-      {subpeonaModalVisible && !subpeonaAcknowledged && (
-        <ConfirmationModal id={courtCase?.data?.id ?? undefined} />
-      )}
-    </Box>
+    </>
   )
 }
 export default CourtCaseDetail
