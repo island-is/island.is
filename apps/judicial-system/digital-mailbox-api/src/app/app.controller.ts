@@ -1,15 +1,12 @@
-import { Controller, Get, Headers, Inject } from '@nestjs/common'
-import { UseGuards } from '@nestjs/common'
+import { Controller, Get, Headers, Inject, Req } from '@nestjs/common'
 import { ApiCreatedResponse } from '@nestjs/swagger'
 
 import type { Logger } from '@island.is/logging'
 import { LOGGER_PROVIDER } from '@island.is/logging'
 
-import { AuthGuard } from './guards/auth.guard'
 import { AppService } from './app.service'
 
 @Controller('api')
-@UseGuards(AuthGuard)
 export class AppController {
   constructor(
     private readonly appService: AppService,
@@ -18,9 +15,10 @@ export class AppController {
 
   @Get('test')
   @ApiCreatedResponse({ type: String, description: 'Test connection' })
-  async test(): Promise<string> {
+  async test(@Headers('authorization') authToken: string): Promise<string> {
     this.logger.debug('Testing connection')
+    const token = authToken.split(' ')[1]
 
-    return this.appService.testConnection()
+    return this.appService.testConnection(token)
   }
 }

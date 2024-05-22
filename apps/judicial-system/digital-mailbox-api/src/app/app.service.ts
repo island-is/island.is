@@ -24,7 +24,54 @@ export class AppService {
     return 'OK'
   }
 
-  async testConnection(): Promise<string> {
+  async testConnection(token: string): Promise<string> {
+    //TODO: Audit
+    const verifiedUserToken = await this.verifyIdsToken(token)
+
+    if (!verifiedUserToken.sub) {
+      throw new UnauthorizedException('Invalid token')
+    }
+
     return this.test()
+  }
+
+  async verifyIdsToken(token: string) {
+    try {
+      const secretClient = jwksClient({
+        cache: true,
+        rateLimit: true,
+        jwksUri: `${this.config.issuer}/.well-known/openid-configuration/jwks`,
+      })
+
+      const decodedToken = jwt.decode(token, { complete: true })
+      const tokenHeader = decodedToken?.header
+
+      if (!tokenHeader) {
+        throw new Error('Invalid access token header')
+      }
+
+      const signingKeys = await secretClient.getSigningKeys()
+      const matchingKey = signingKeys.find((sk) => sk.kid === tokenHeader.kid)
+
+      if (!matchingKey) {
+        throw new Error(`No matching key found for kid ${tokenHeader.kid}`)
+      }
+
+      const publicKey = matchingKey.getPublicKey()
+
+      const verifiedToken = jwt.verify(token, publicKey, {
+        issuer: this.config.issuer,
+        clockTimestamp: Date.now() / 1000,
+        ignoreNotBefore: false,
+        audience: this.config.clientId,
+      })
+
+      return verifiedToken as {
+        sub: string
+      }
+    } catch (error) {
+      console.error('Token verification failed:', error)
+      throw error
+    }
   }
 }
