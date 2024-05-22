@@ -8,7 +8,7 @@ export class JwtAuthGuard extends AuthGuard('jwt') {
       console.error('Auth error:', err)
       throw err || new UnauthorizedException()
     }
-    console.log('Auth user national id:', user.nationalId)
+    console.log('Auth user national id:', user)
     return user
   }
 }
