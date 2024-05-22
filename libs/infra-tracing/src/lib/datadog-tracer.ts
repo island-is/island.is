@@ -26,7 +26,6 @@ if (process.env.NODE_ENV !== 'development') {
   tracer.use('ioredis', {
     enabled: true,
   })
-  tracer.use('winston', { enabled: true })
   tracer.use('express', {
     blacklist: ['/liveness', '/readiness', '/metrics'],
     hooks: {
