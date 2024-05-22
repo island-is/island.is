@@ -82,4 +82,9 @@ export class UpdateDefendantInput {
   @IsOptional()
   @Field(() => ServiceRequirement, { nullable: true })
   readonly serviceRequirement?: ServiceRequirement
+
+  @Allow()
+  @IsOptional()
+  @Field(() => String, { nullable: true })
+  readonly verdictViewDate?: string
 }
