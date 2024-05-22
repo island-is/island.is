@@ -63,6 +63,8 @@ export const NotificationsScreen: NavigationFunctionComponent = ({
     variables: { input: { limit: DEFAULT_PAGE_SIZE } },
   })
 
+  const showError = error && !data
+
   const [markUserNotificationAsRead] = useMarkUserNotificationAsReadMutation()
   const [markAllUserNotificationsAsSeen] =
     useMarkAllNotificationsAsSeenMutation()
@@ -187,7 +189,7 @@ export const NotificationsScreen: NavigationFunctionComponent = ({
         style={{ marginHorizontal: 16 }}
       />
       <SafeAreaView style={{ flex: 1 }} testID={testIDs.SCREEN_NOTIFICATIONS}>
-        {error ? (
+        {showError ? (
           <Problem type="error" withContainer />
         ) : (
           <FlatList
