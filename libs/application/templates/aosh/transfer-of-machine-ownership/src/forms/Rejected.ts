@@ -9,6 +9,8 @@ import {
 } from '../lib/messages'
 import { Logo } from '../assets/Logo'
 import { buildFormConclusionSection } from '@island.is/application/ui-forms'
+import { Machine } from '../shared'
+import { getSelectedMachine } from '../utils'
 
 export const Rejected: Form = buildForm({
   id: 'RejectedApplicationForm',
@@ -37,12 +39,23 @@ export const Rejected: Form = buildForm({
       children: [],
     }),
     buildFormConclusionSection({
-      sectionTitle: conclusion.general.rejectedTitle,
-      multiFieldTitle: conclusion.general.title,
+      sectionTitle: conclusion.general.sectionTitle,
       alertTitle: conclusion.rejected.alertMessage,
+      multiFieldTitle: conclusion.general.title,
       alertMessage: conclusion.rejected.thirdText,
-      expandableHeader: conclusion.rejected.firstText,
-      expandableDescription: conclusion.rejected.secondText,
+      expandableHeader: (application) => {
+        const machine = getSelectedMachine(
+          application.externalData,
+          application.answers,
+        ) as Machine
+        return {
+          ...conclusion.rejected.firstText,
+          values: { regNumber: machine.regNumber },
+        }
+      },
+      expandableDescription: '',
+      expandableIntro: conclusion.rejected.secondText,
+      alertType: 'error',
     }),
   ],
 })
