@@ -20,7 +20,6 @@ import {
 import { uploadFileToS3 } from './utils'
 import { Action, ActionTypes } from './types'
 import { InputImageUpload } from '../../components/InputImageUpload/InputImageUpload'
-import { log } from 'console'
 
 type UploadFileAnswer = {
   name: string
@@ -90,7 +89,7 @@ export const FileUploadController: FC<
   accept,
   maxSize,
   maxSizeErrorText,
-  totalMaxSize = 70000,
+  totalMaxSize = 100000000, // 100MB default, too high?
   forImageUpload,
 }) => {
   const { formatMessage } = useLocale()
@@ -153,7 +152,6 @@ export const FileUploadController: FC<
   }
 
   const onFileChange = async (newFiles: File[]) => {
-    console.log('newFiles: ', newFiles)
     if (!multiple && state.length > 0) return
 
     const addedUniqueFiles = newFiles.filter((newFile: File) => {
@@ -172,12 +170,11 @@ export const FileUploadController: FC<
     const totalNewFileSize = addedUniqueFiles
       .map((f) => f.size)
       .reduce((a, b) => a + b, 0)
-    console.log('totalNewFileSize: ', totalNewFileSize)
 
     // Show an error if the sum im the file sizes exceeds totalMaxSize.
     if (totalNewFileSize + sumOfFileSizes > totalMaxSize) {
       setUploadError(
-        formatMessage(coreErrorMessages.fileMaxSizeLimitExceeded, {
+        formatMessage(coreErrorMessages.fileMaxSumSizeLimitExceeded, {
           maxSizeInMb: totalMaxSize / 1000000,
         }),
       )
@@ -231,6 +228,10 @@ export const FileUploadController: FC<
             },
           },
         })
+
+        setSumOfFileSizes(
+          sumOfFileSizes - (fileToRemove.originalFileObj?.size ?? 0),
+        )
       } catch {
         setUploadError(formatMessage(coreErrorMessages.fileRemove))
         return
