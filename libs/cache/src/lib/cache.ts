@@ -99,11 +99,11 @@ const getRedisClusterOptions = (
     keyPrefix: options.noPrefix ? undefined : `${options.name}:`,
     slotsRefreshTimeout: getEnvValueToNumber(
       'REDIS_SLOTS_REFRESH_TIMEOUT',
-      5000,
+      10000,
     ),
     slotsRefreshInterval: getEnvValueToNumber(
       'REDIS_SLOTS_REFRESH_INTERVAL',
-      10000,
+      15000,
     ),
     connectTimeout: 5000,
     // https://www.npmjs.com/package/ioredis#special-note-aws-elasticache-clusters-with-tls
