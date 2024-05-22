@@ -279,6 +279,8 @@ describe('ApplicationController - Update', () => {
       const getDirectTaxPayment =
         mockDirectTaxPaymentService.getByApplicationId as jest.Mock
       getDirectTaxPayment.mockReturnValueOnce(Promise.resolve([]))
+      const getChildren = mockChildrenService.findById as jest.Mock
+      getChildren.mockReturnValueOnce(Promise.resolve([]))
     })
 
     describe('Allowed events', () => {
@@ -388,6 +390,8 @@ describe('ApplicationController - Update', () => {
       const getDirectTaxPayment =
         mockDirectTaxPaymentService.getByApplicationId as jest.Mock
       getDirectTaxPayment.mockReturnValueOnce(Promise.resolve([]))
+      const getChildren = mockChildrenService.findById as jest.Mock
+      getChildren.mockReturnValueOnce(Promise.resolve([]))
     })
 
     describe('Forbidden events', () => {
@@ -504,6 +508,8 @@ describe('ApplicationController - Update', () => {
       const getDirectTaxPayment =
         mockDirectTaxPaymentService.getByApplicationId as jest.Mock
       getDirectTaxPayment.mockReturnValueOnce(Promise.resolve([]))
+      const getChildren = mockChildrenService.findById as jest.Mock
+      getChildren.mockReturnValueOnce(Promise.resolve([]))
 
       then = await givenWhenThen(id, applicationUpdate, staff)
     })
