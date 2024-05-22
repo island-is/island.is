@@ -1,4 +1,4 @@
-import { Controller, Get, Inject } from '@nestjs/common'
+import { Controller, Get, Headers, Inject } from '@nestjs/common'
 import { UseGuards } from '@nestjs/common'
 import { ApiCreatedResponse } from '@nestjs/swagger'
 
