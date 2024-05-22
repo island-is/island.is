@@ -17,9 +17,10 @@ import {
   DELETE_ATTACHMENT,
 } from '@island.is/application/graphql'
 
-import { uploadFileToS3 } from './utils'
 import { Action, ActionTypes } from './types'
 import { InputImageUpload } from '../../components/InputImageUpload/InputImageUpload'
+// import { DEFAULT_TOTAL_FILE_SIZE_SUM } from '../../constants'
+import { uploadFileToS3 } from './utils'
 
 type UploadFileAnswer = {
   name: string
@@ -89,7 +90,7 @@ export const FileUploadController: FC<
   accept,
   maxSize,
   maxSizeErrorText,
-  totalMaxSize = 100000000, // 100MB default, too high?
+  totalMaxSize,
   forImageUpload,
 }) => {
   const { formatMessage } = useLocale()
@@ -172,7 +173,7 @@ export const FileUploadController: FC<
       .reduce((a, b) => a + b, 0)
 
     // Show an error if the sum im the file sizes exceeds totalMaxSize.
-    if (totalNewFileSize + sumOfFileSizes > totalMaxSize) {
+    if (totalMaxSize && totalNewFileSize + sumOfFileSizes > totalMaxSize) {
       setUploadError(
         formatMessage(coreErrorMessages.fileMaxSumSizeLimitExceeded, {
           maxSizeInMb: totalMaxSize / 1000000,
