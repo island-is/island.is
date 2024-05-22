@@ -24,5 +24,5 @@ export class AppController {
 
     console.log(user)
     return this.appService.testConnection(user.nationalId)
-  }      
+  }
 }
