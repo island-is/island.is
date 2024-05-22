@@ -367,7 +367,6 @@ export class NotificationsWorkerService implements OnApplicationBootstrap {
             })
         }
 
-       
         // can't send message if user has no user profile
         if (!profile) {
           this.logger.info('No user profile found for user', { messageId })
