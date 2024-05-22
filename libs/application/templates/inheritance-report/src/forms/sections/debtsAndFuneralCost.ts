@@ -80,6 +80,7 @@ export const debtsAndFuneralCost = buildSection({
               description: m.publicChargesDescription,
               titleVariant: 'h3',
               space: 'containerGutter',
+              marginBottom: 'gutter',
             }),
             buildDescriptionField({
               id: 'debts.publicCharges.total',
