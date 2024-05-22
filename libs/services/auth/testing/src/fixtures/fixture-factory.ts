@@ -600,6 +600,7 @@ export class FixtureFactory {
           providerId: delegationProvider.id,
           clients: [],
           provider: delegationProvider,
+          apiScopes: [],
         },
       },
     )
