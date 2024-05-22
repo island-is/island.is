@@ -77,11 +77,6 @@ export const SettingsScreen: NavigationFunctionComponent = ({
     setUseBiometrics,
     appLockTimeout,
   } = usePreferencesStore()
-  const pushToken = useNotificationsStore(({ pushToken }) => pushToken)
-  const deletePushToken = useNotificationsStore(
-    ({ deletePushToken }) => deletePushToken,
-  )
-  const resetNotificationsStore = useNotificationsStore(({ reset }) => reset)
   const [loadingCP, setLoadingCP] = useState(false)
   const [localPackage, setLocalPackage] = useState<LocalPackage | null>(null)
   const efficient = useRef<any>({}).current
@@ -90,12 +85,6 @@ export const SettingsScreen: NavigationFunctionComponent = ({
   const biometricType = useBiometricType(authenticationTypes)
 
   const onLogoutPress = async () => {
-    if (pushToken) {
-      await deletePushToken(pushToken)
-    }
-
-    resetNotificationsStore()
-
     await authStore.getState().logout()
     await Navigation.dismissAllModals()
     await Navigation.setRoot({
