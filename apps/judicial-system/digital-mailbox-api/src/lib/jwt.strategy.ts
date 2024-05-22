@@ -20,7 +20,7 @@ export class JwtStrategy extends PassportStrategy(Strategy) {
         rateLimit: true,
         jwksUri: `${config.issuer}/.well-known/openid-configuration/jwks`,
       }),
-      audience: config.clientId,
+      // audience: config.clientId,
       issuer: config.issuer,
       algorithms: ['RS256'],
     })
@@ -28,7 +28,7 @@ export class JwtStrategy extends PassportStrategy(Strategy) {
 
   async validate(payload: { nationalId: string }) {
     return {
-      user: payload?.nationalId, //TODO: create type?
+      nationalId: payload?.nationalId, //TODO: create type?
     }
   }
 }

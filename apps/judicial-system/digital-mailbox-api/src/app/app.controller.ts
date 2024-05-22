@@ -6,6 +6,7 @@ import type { Logger } from '@island.is/logging'
 import { LOGGER_PROVIDER } from '@island.is/logging'
 
 import { JwtAuthGuard } from './guards/auth.guard'
+import { User } from './guards/user.decorator'
 import { AppService } from './app.service'
 
 @Controller('api')
@@ -18,9 +19,10 @@ export class AppController {
 
   @Get('test')
   @ApiCreatedResponse({ type: String, description: 'Test connection' })
-  async test(): Promise<string> {
+  async test(@User() user: any): Promise<string> {
     this.logger.debug('Testing connection')
 
-    return this.appService.testConnection()
-  }
+    console.log(user)
+    return this.appService.testConnection(user.nationalId)
+  }      
 }

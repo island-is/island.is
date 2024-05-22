@@ -17,11 +17,11 @@ export class AppService {
     private readonly auditTrailService: AuditTrailService,
   ) {}
 
-  private async test(): Promise<string> {
-    return 'OK'
+  private async test(nationalId: string): Promise<string> {
+    return `OK ${nationalId}`
   }
 
-  async testConnection(): Promise<string> {
-    return this.test()
+  async testConnection(nationalId: string): Promise<string> {
+    return this.test(nationalId)
   }
 }
