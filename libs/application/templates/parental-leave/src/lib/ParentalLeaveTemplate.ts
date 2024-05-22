@@ -50,7 +50,6 @@ import {
   getActionName,
   getApplicationAnswers,
   getApplicationExternalData,
-  getApprovedEmployers,
   getMaxMultipleBirthsDays,
   getMultipleBirthRequestDays,
   getOtherParentId,
@@ -1532,11 +1531,7 @@ const ParentalLeaveTemplate: ApplicationTemplate<
             set(answers, `employers[${i}].ratio`, val.ratio)
             set(answers, `employers[${i}].email`, val.email)
             set(answers, `employers[${i}].reviewerNationalRegistryId`, '')
-            set(
-              answers,
-              `employers[${i}].companyNationalRegistryId`,
-              val.companyNationalRegistryId,
-            )
+            set(answers, `employers[${i}].companyNationalRegistryId`, '')
             set(answers, `employers[${i}].isApproved`, false)
           })
         }
@@ -1688,18 +1683,34 @@ const ParentalLeaveTemplate: ApplicationTemplate<
 
         return context
       }),
-      setIsApprovedOnEmployer: assign((context) => {
+      /**
+       * The employer approved the application.
+       * Set isApproved to true and register companyNationalRegistryId
+       */
+      setIsApprovedOnEmployer: assign((context, event) => {
+        // Only set if employer approves application
+        if (event.type !== DefaultEvents.APPROVE) {
+          return context
+        }
+
         const { application } = context
         const { answers } = application
-        const { employerNationalRegistryId } = getApplicationAnswers(answers)
-        const employers = getApprovedEmployers(answers)
-        if (employers?.length > 0) {
-          set(
-            answers,
-            `employers[${employers.length - 1}].companyNationalRegistryId`,
-            employerNationalRegistryId,
-          )
-        }
+        const { employerNationalRegistryId, employers } =
+          getApplicationAnswers(answers)
+
+        // Multiple employers and we mark first 'available' employer
+        let isAlreadyDone = false
+        employers.forEach((e, i) => {
+          if (!isAlreadyDone && !e.isApproved) {
+            set(answers, `employers[${i}].isApproved`, true)
+            set(
+              answers,
+              `employers[${i}].companyNationalRegistryId`,
+              employerNationalRegistryId,
+            )
+            isAlreadyDone = true
+          }
+        })
 
         return context
       }),
@@ -1834,7 +1845,6 @@ const ParentalLeaveTemplate: ApplicationTemplate<
         let isAlreadyDone = false
         employers.forEach((e, i) => {
           if (!isAlreadyDone && !e.isApproved) {
-            set(answers, `employers[${i}].isApproved`, true)
             set(
               answers,
               `employers[${i}].reviewerNationalRegistryId`,
