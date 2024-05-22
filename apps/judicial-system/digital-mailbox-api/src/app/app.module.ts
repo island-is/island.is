@@ -9,7 +9,7 @@ import {
 } from '@island.is/judicial-system/audit-trail'
 
 import { AuthModule } from '../lib/auth.module'
-import { authModuleConfig } from './app.config'
+import { digitalMailboxModuleConfig } from './app.config'
 import { AppController } from './app.controller'
 import { AppService } from './app.service'
 
@@ -20,7 +20,7 @@ import { AppService } from './app.service'
     ProblemModule.forRoot({ logAllErrors: true }),
     ConfigModule.forRoot({
       isGlobal: true,
-      load: [authModuleConfig, auditTrailModuleConfig],
+      load: [digitalMailboxModuleConfig, auditTrailModuleConfig],
     }),
   ],
   controllers: [AppController],

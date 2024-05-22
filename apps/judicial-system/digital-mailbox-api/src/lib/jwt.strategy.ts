@@ -5,13 +5,13 @@ import { Inject, Injectable } from '@nestjs/common'
 import { ConfigType } from '@nestjs/config'
 import { PassportStrategy } from '@nestjs/passport'
 
-import { authModuleConfig } from '../app/app.config'
+import { digitalMailboxModuleConfig } from '../app/app.config'
 
 @Injectable()
 export class JwtStrategy extends PassportStrategy(Strategy) {
   constructor(
-    @Inject(authModuleConfig.KEY)
-    config: ConfigType<typeof authModuleConfig>,
+    @Inject(digitalMailboxModuleConfig.KEY)
+    config: ConfigType<typeof digitalMailboxModuleConfig>,
   ) {
     super({
       jwtFromRequest: ExtractJwt.fromAuthHeaderAsBearerToken(),
