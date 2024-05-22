@@ -12,7 +12,7 @@ import {
 } from '@island.is/auth-nest-tools'
 import { Audit } from '@island.is/nest/audit'
 
-import { User } from '../v1/types'
+import { User } from '../v3/types'
 import { NationalRegistryUser } from '../shared/models/user.model'
 import { Citizenship } from '../shared/models/citizenship.model'
 import { NationalRegistryService } from '../nationalRegistry.service'
@@ -31,8 +31,7 @@ export class UserResolver {
   })
   @Audit()
   async user(@CurrentUser() user: AuthUser): Promise<User | null> {
-    const api = await this.service.getApi(user)
-    return this.service.getUser(user.nationalId, api)
+    return this.service.getUser(user.nationalId)
   }
 
   @ResolveField('citizenship', () => Citizenship, { nullable: true })

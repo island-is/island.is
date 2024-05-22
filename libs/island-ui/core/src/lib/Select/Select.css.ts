@@ -258,13 +258,13 @@ export const optionDescriptionTruncated = style({
 export const optionSizes = styleVariants({
   xs: wrapMedia(inputMixins.inputSizes.xs, `${wrapper} &`),
   sm: wrapMedia(inputMixins.inputSizes.sm, `${wrapper} &`),
-  md: wrapMedia(inputMixins.inputSizes.md, `${wrapper} &`),
+  md: wrapMedia(inputMixins.inputSizes.sm, `${wrapper} &`),
 })
 
 export const optionDescriptionSizes = styleVariants({
   xs: wrapMedia(inputMixins.optionDescriptionSizes.xs, `${wrapper} &`),
   sm: wrapMedia(inputMixins.optionDescriptionSizes.sm, `${wrapper} &`),
-  md: wrapMedia(inputMixins.optionDescriptionSizes.md, `${wrapper} &`),
+  md: wrapMedia(inputMixins.optionDescriptionSizes.sm, `${wrapper} &`),
 })
 
 export const dontRotateIconOnOpen = style({})

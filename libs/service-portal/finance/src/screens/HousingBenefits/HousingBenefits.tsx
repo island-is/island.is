@@ -1,4 +1,3 @@
-import { useEffect, useMemo, useState } from 'react'
 import {
   Box,
   DatePicker,
@@ -12,60 +11,36 @@ import {
 import { useLocale, useNamespaces } from '@island.is/localization'
 import { FootNote, m } from '@island.is/service-portal/core'
 
-import { useGetHousingBenefitsListLazyQuery } from './HousingBenefits.generated'
-import HousingBenefitsTable, {
-  ITEMS_ON_PAGE,
-} from '../../components/HousingBenefitsPayments/HousingBenefitsTable'
+import HousingBenefitsTable from '../../components/HousingBenefitsPayments/HousingBenefitsTable'
 import { Problem } from '@island.is/react-spa/shared'
 import HousingBenefitsFilter, {
   BASE_YEAR,
 } from '../../components/HousingBenefitsPayments/HousingBenefitsFilter'
+import { useHousingBenefitsFilters } from './useHousingBenefitsFilters'
+
+const DEFAULT_ITEMS_ON_PAGE = 12
+const MAX_ITEMS_ON_PAGE = 75
 
 const FinanceHousingBenefits = () => {
   useNamespaces('sp.finance-housing-benefits')
 
-  const [fromDate, setFromDate] = useState<Date>()
-  const [toDate, setToDate] = useState<Date>()
-  const [page, setPage] = useState(1)
-  const [paymentOrigin, setPaymentOrigin] = useState<string>()
-  const [selectedMonth, setSelectedMonth] = useState<string>()
+  const {
+    page,
+    data,
+    loading,
+    error,
+    fromDate,
+    toDate,
+    filterValue,
+    resetFilter,
+    setPaymentOrigin,
+    setShowFinalPayments,
+    setDates,
+    setSelectedMonth,
+    setPage,
+  } = useHousingBenefitsFilters()
+
   const { formatMessage } = useLocale()
-
-  const today = new Date()
-
-  const [loadHousingPayments, { data, loading, error }] =
-    useGetHousingBenefitsListLazyQuery()
-
-  const resetFilter = () => {
-    setFromDate(undefined)
-    setToDate(undefined)
-    setPaymentOrigin(undefined)
-    setSelectedMonth(undefined)
-    setPage(1)
-  }
-
-  useMemo(() => {
-    const paymentType = Number(paymentOrigin)
-    let dateTo: string | undefined
-    if (!toDate && fromDate) {
-      dateTo = today.toISOString()
-    } else if (toDate && fromDate) {
-      dateTo = toDate.toISOString()
-    }
-
-    loadHousingPayments({
-      variables: {
-        input: {
-          dateFrom: dateTo && fromDate ? fromDate.toISOString() : undefined,
-          dateTo: dateTo,
-          pageSize: ITEMS_ON_PAGE,
-          pageNumber: page,
-          month: selectedMonth,
-          paymentOrigin: paymentType || undefined,
-        },
-      },
-    })
-  }, [toDate, fromDate, page, paymentOrigin, selectedMonth])
 
   return (
     <Box marginTop={[1, 1, 2, 2, 4]} marginBottom={[6, 6, 10]}>
@@ -79,7 +54,7 @@ const FinanceHousingBenefits = () => {
                 locale="is"
                 backgroundColor="blue"
                 size="xs"
-                handleChange={(d) => setFromDate(d)}
+                handleChange={(d) => setDates(d, undefined)}
                 selected={fromDate}
                 minYear={BASE_YEAR}
                 maxYear={new Date().getFullYear()}
@@ -95,7 +70,7 @@ const FinanceHousingBenefits = () => {
                 locale="is"
                 backgroundColor="blue"
                 size="xs"
-                handleChange={(d) => setToDate(d)}
+                handleChange={(d) => setDates(undefined, d)}
                 selected={toDate}
                 minYear={BASE_YEAR}
                 maxYear={new Date().getFullYear()}
@@ -111,7 +86,9 @@ const FinanceHousingBenefits = () => {
                   clearAllFilters={resetFilter}
                   setSelectedMonth={setSelectedMonth}
                   setPaymentOrigin={setPaymentOrigin}
-                  paymentOrigin={paymentOrigin}
+                  setShowFinalPayments={setShowFinalPayments}
+                  paymentOrigin={filterValue?.paymentOrigin ?? undefined}
+                  showFinalPayments={!!filterValue?.payments}
                 />
               )}
             </GridColumn>
@@ -140,11 +117,16 @@ const FinanceHousingBenefits = () => {
                 setPage={setPage}
                 page={page}
                 payments={data.housingBenefitsPayments}
+                itemsOnPage={
+                  /^\d+$/.test(filterValue?.month ?? '')
+                    ? MAX_ITEMS_ON_PAGE
+                    : DEFAULT_ITEMS_ON_PAGE
+                }
               />
             )}
         </Box>
       </Stack>
-      <FootNote serviceProviderSlug={'hms'} />
+      <FootNote serviceProviderSlug="hms" />
     </Box>
   )
 }

@@ -50,6 +50,7 @@ export class Client {
   requireClientSecret!: boolean
   archived!: Date
   contactEmail!: string
+  supportedDelegationTypes!: string[]
   supportsCustomDelegation!: boolean
   supportsLegalGuardians!: boolean
   supportsPersonalRepresentatives!: boolean

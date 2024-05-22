@@ -67,8 +67,10 @@ export const UserOnboardingModal = () => {
           </GridColumn>
         </GridRow>
         <GridRow>
-          <GridColumn span={['12/12', '12/12', '12/12', '3/12']} />
-          <GridColumn span={['12/12', '12/12', '12/12', '9/12']}>
+          <GridColumn
+            span={['12/12', '12/12', '12/12', '9/12']}
+            offset={['0', '0', '0', '3/12']}
+          >
             <ProfileForm
               title={userInfo?.profile?.name || ''}
               onCloseOverlay={closeModal}
@@ -77,8 +79,8 @@ export const UserOnboardingModal = () => {
               setFormLoading={(val: boolean) => setFormLoadingState(val)}
               showIntroTitle
             />
-            <Columns>
-              <Column width="9/12">
+            <GridRow>
+              <GridColumn span={['12/12', '12/12', '12/12', '9/12']}>
                 <Box
                   display="flex"
                   alignItems="flexEnd"
@@ -93,8 +95,8 @@ export const UserOnboardingModal = () => {
                     {formatMessage(m.continue)}
                   </Button>
                 </Box>
-              </Column>
-            </Columns>
+              </GridColumn>
+            </GridRow>
           </GridColumn>
         </GridRow>
       </GridContainer>
