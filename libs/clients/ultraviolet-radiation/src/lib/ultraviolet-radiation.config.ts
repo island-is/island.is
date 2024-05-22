@@ -10,7 +10,7 @@ export const UltravioletRadiationClientConfig = defineConfig({
   schema,
   load(env) {
     return {
-      apiKey: env.required('ULTRAVIOLET_RADIATION_API_KEY'), // TODO: should I add an empty string fallback?
+      apiKey: env.required('ULTRAVIOLET_RADIATION_API_KEY'),
     }
   },
 })
