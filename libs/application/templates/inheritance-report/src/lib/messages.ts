@@ -27,7 +27,12 @@ export const m = defineMessages({
 
   preDataCollectionChooseEstateSelectTitle: {
     id: 'ir.application:preDataCollectionChooseEstateSelectTitle',
-    defaultMessage: 'Foröflun gagna',
+    defaultMessage: 'Upplýsingaöflun',
+    description: 'Title for pre-collection of data',
+  },
+  preDataCollectionChooseEstateSelectTitleDropdown: {
+    id: 'ir.application:preDataCollectionChooseEstateSelectTitleDropdown',
+    defaultMessage: 'Upplýsingaöflun (nýr textareitur)',
     description: 'Title for pre-collection of data',
   },
 
@@ -421,7 +426,7 @@ export const m = defineMessages({
     description: '',
   },
   propertyNumber: {
-    id: 'es.application:propertyNumber',
+    id: 'ir.application:propertyNumber',
     defaultMessage: 'Fastanúmer',
     description: 'Property number label',
   },
@@ -1492,7 +1497,7 @@ export const m = defineMessages({
   },
   // Error messages
   errorPropertyNumber: {
-    id: 'es.application:error.errorPropertyNumber',
+    id: 'ir.application:error.errorPropertyNumber',
     defaultMessage:
       'Verður að innihalda 6 tölustafi eða L + 6 fyrir landeignanúmeri, 7 tölustafi, F + 7 fyrir fasteignanúmeri',
     description: 'Property number is invalid',
