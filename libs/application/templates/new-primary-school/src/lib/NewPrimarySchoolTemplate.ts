@@ -13,7 +13,6 @@ import {
   ApplicationTypes,
   ChildrenCustodyInformationApi,
   DefaultEvents,
-  IdentityApi,
   NationalRegistryUserApi,
   UserProfileApi,
 } from '@island.is/application/types'
@@ -64,7 +63,6 @@ const NewPrimarySchoolTemplate: ApplicationTemplate<
               write: 'all',
               delete: true,
               api: [
-                IdentityApi,
                 ChildrenCustodyInformationApi,
                 NationalRegistryUserApi,
                 UserProfileApi,

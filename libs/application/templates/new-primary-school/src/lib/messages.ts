@@ -85,6 +85,13 @@ export const newPrimarySchoolMessages: MessageDir = {
       defaultMessage: 'Börn',
       description: 'Children',
     },
+    childrenDescription: {
+      id: 'dess.nps.application:childrenNParents.childrenDescription',
+      defaultMessage:
+        'Samkvæmt uppflettingu í Þjóðskrá hefur þú forsjá með eftirfarandi barni/börnum. Aðeins forsjáaraðili sem deilir lögheimili með barni getur skráð það í grunnskóla. Ef þú sérð ekki barnið þitt í þessu ferli, þá bendum við á að hafa samband við Þjóðskrá',
+      description:
+        'According to the Registers Iceland database you have the following children. Only the guardian who shares the residence with the child can register it in the primary school. If you do not see your child in this process, please contact the Registers Iceland',
+    },
     parentsSection: {
       id: 'dess.nps.application:childrenNParents.parentsSection',
       defaultMessage: 'Foreldrar/forsjáraðilar',

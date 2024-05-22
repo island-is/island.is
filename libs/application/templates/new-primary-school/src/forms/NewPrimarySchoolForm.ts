@@ -55,9 +55,10 @@ export const NewPrimarySchoolForm: Form = buildForm({
           title: newPrimarySchoolMessages.childrenNParents.children,
           children: [
             buildRadioField({
-              id: 'childsNationalId',
+              id: 'childNationalId',
               title: newPrimarySchoolMessages.childrenNParents.children,
-              description: '',
+              description:
+                newPrimarySchoolMessages.childrenNParents.childrenDescription,
               options: (application) => {
                 const { children } = getApplicationExternalData(
                   application.externalData,
