@@ -12,15 +12,15 @@ let logFormat = format.combine(
   maskNationalIdFormatter(),
 )
 const correlateFormat = format((info) => {
-  const span = tracer.scope().active();
+  const span = tracer.scope().active()
   if (span) {
     info.dd = {
       trace_id: span.context().toTraceId(),
       span_id: span.context().toSpanId(),
-    };
+    }
   }
-  return info;
-});
+  return info
+})
 
 // Production overrides
 if (process.env.NODE_ENV === 'production') {
@@ -30,7 +30,7 @@ if (process.env.NODE_ENV === 'production') {
     format.timestamp(),
     format.json(),
     maskNationalIdFormatter(),
-    correlateFormat()
+    correlateFormat(),
   )
 }
 
