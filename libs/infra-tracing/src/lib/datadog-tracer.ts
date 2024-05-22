@@ -37,6 +37,7 @@ if (process.env.NODE_ENV !== 'development') {
       },
     },
   })
+  
   tracer.use('http', {
     client: {
       hooks: {
