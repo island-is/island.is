@@ -1,21 +1,29 @@
 [
   {
-    "relation": ["delegate_permission/common.get_login_creds"],
+    "relation": [
+      "delegate_permission/common.handle_all_urls",
+      "delegate_permission/common.get_login_creds"
+    ],
     "target": {
       "namespace": "android_app",
       "package_name": "is.island.app",
       "sha256_cert_fingerprints": [
-        "12:C2:D3:52:EE:64:69:8E:D7:3E:63:25:D9:FE:E7:6E:AE:1A:9A:EF:8F:37:37:58:BB:71:5E:70:D7:FD:D3:05"
+        "12:C2:D3:52:EE:64:69:8E:D7:3E:63:25:D9:FE:E7:6E:AE:1A:9A:EF:8F:37:37:58:BB:71:5E:70:D7:FD:D3:05",
+        "26:03:DE:A3:F1:7A:29:89:3E:9E:04:5A:DB:AB:4E:D9:2B:00:B4:C8:93:05:00:9C:ED:6B:52:80:DF:A3:45:7D"
       ]
     }
   },
   {
-    "relation": ["delegate_permission/common.get_login_creds"],
+    "relation": [
+      "delegate_permission/common.handle_all_urls",
+      "delegate_permission/common.get_login_creds"
+    ],
     "target": {
       "namespace": "android_app",
       "package_name": "is.island.app.dev",
       "sha256_cert_fingerprints": [
-        "C2:B9:0C:C4:3F:7C:22:2E:65:C6:02:5D:AB:B8:5E:06:AF:F1:4E:AD:FC:FE:CF:46:28:B2:E0:11:23:9B:9C:C4"
+        "C2:B9:0C:C4:3F:7C:22:2E:65:C6:02:5D:AB:B8:5E:06:AF:F1:4E:AD:FC:FE:CF:46:28:B2:E0:11:23:9B:9C:C4",
+        "26:03:DE:A3:F1:7A:29:89:3E:9E:04:5A:DB:AB:4E:D9:2B:00:B4:C8:93:05:00:9C:ED:6B:52:80:DF:A3:45:7D"
       ]
     }
   }
