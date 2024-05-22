@@ -139,7 +139,7 @@ export const authStore = create<AuthStore>((set, get) => ({
   },
   async logout() {
     // Clear all MMKV storages
-    void clearAllStorages()
+    clearAllStorages()
 
     // Clear push token if exists
     const pushToken = notificationsStore.getState().pushToken
