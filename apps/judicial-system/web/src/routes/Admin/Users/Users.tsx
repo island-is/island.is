@@ -191,7 +191,9 @@ export const Users: React.FC<React.PropsWithChildren<unknown>> = () => {
                   <Text as="span">{user.active ? 'Já' : 'Nei'}</Text>
                 </Box>
                 <Box component="td" paddingX={3} paddingY={2}>
-                  <Text as="span">{user.canConfirmAppeal ? 'Já' : 'Nei'}</Text>
+                  <Text as="span">
+                    {user.canConfirmIndictment ? 'Já' : 'Nei'}
+                  </Text>
                 </Box>
                 <Box component="td" paddingX={3} paddingY={2}>
                   <Text as="span">
@@ -211,7 +213,7 @@ export const Users: React.FC<React.PropsWithChildren<unknown>> = () => {
           <AlertMessage
             type="info"
             title="Enginn notandi fannst"
-            message="Vinsamlegast veldur aðra stofnun"
+            message="Vinsamlegast veldu aðra stofnun"
           />
         </Box>
       )}

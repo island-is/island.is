@@ -6,9 +6,9 @@ export interface ReligionDto {
   name: string | null
 }
 
-export function formatReligionDto(
+export const formatReligionDto = (
   religions: Kodar[] | null | undefined,
-): ReligionDto[] | null {
+): ReligionDto[] | null => {
   if (religions == null) {
     return null
   }

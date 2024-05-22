@@ -22,7 +22,7 @@ export const getChildPassport = (
 ) => {
   return (
     externalData.identityDocument?.data as IdentityDocumentData
-  )?.childPassports.find((child) => {
+  )?.childPassports?.find((child) => {
     return (
       child.childNationalId === (answers.passport as Passport)?.childPassport
     )

@@ -94,7 +94,7 @@ export const personalOverview = buildMultiField({
           application.externalData.identityDocument.data as IdentityDocumentData
         ).userPassport?.expirationDate
         return date
-          ? m.validTag + ' ' + format(new Date(date), 'dd/MM/yy')
+          ? m.validTag.defaultMessage + ' ' + format(new Date(date), 'dd/MM/yy')
           : m.noPassport.defaultMessage
       },
     }),

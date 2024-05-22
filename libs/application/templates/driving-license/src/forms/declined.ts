@@ -4,7 +4,7 @@ import { m } from '../lib/messages'
 
 export const declined: Form = buildForm({
   id: 'declined',
-  title: m.applicationDenied,
+  title: '',
   mode: FormModes.REJECTED,
   children: [
     buildCustomField({

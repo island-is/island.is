@@ -26,7 +26,7 @@ import {
 import { createNavigationOptionHooks } from '../../hooks/create-navigation-option-hooks'
 import { openBrowser } from '../../lib/rn-island'
 import { MileageCell } from './components/mileage-cell'
-import { useTheme } from 'styled-components'
+
 const { getNavigationOptions, useNavigationOptions } =
   createNavigationOptionHooks(() => ({
     topBar: {
@@ -53,6 +53,7 @@ export const VehicleMileageScreen: NavigationFunctionComponent<{
   title?: { type: string; year: string; color: string }
 }> = ({ componentId, id, title }) => {
   useNavigationOptions(componentId)
+
   const intl = useIntl()
   const dynamicColor = useDynamicColor()
   const [input, setInput] = useState('')
@@ -67,7 +68,6 @@ export const VehicleMileageScreen: NavigationFunctionComponent<{
     },
   })
   const res = useGetVehicleMileageQuery({
-    fetchPolicy: 'cache-and-network',
     variables: {
       input: {
         permno: id,
@@ -252,6 +252,7 @@ export const VehicleMileageScreen: NavigationFunctionComponent<{
         }
         onClosePress={() => Navigation.dismissModal(componentId)}
         style={{ marginHorizontal: 16 }}
+        showLoading={res.loading && !!res.data}
       />
       <FlatList
         data={data}
@@ -264,7 +265,9 @@ export const VehicleMileageScreen: NavigationFunctionComponent<{
                 originCodes[item.originCode as keyof typeof originCodes] ??
                 item.originCode
               }
-              subtitle={<FormattedDate value={item.readDate} />}
+              subtitle={
+                item.readDate ? <FormattedDate value={item.readDate} /> : '-'
+              }
               accessory={
                 item.mileage
                   ? `${intl.formatNumber(parseInt(item.mileage, 10))} km`

@@ -25,6 +25,17 @@ export const injuredPersonInformation = {
       description:
         'Description label for injured person information section when submitting for juridical person.',
     },
+    jobTitle: {
+      id: 'an.application:injuredPersonInformation.general.jobTitle',
+      defaultMessage: 'Starfsheiti',
+      description: 'Job title',
+    },
+    jobTitleDescription: {
+      id: 'an.application:injuredPersonInformation.general.jobTitleDescription',
+      defaultMessage:
+        'Sláðu inn starfsheiti þess slasaða þegar slysið átti sér stað.',
+      description: 'Description for job title',
+    },
   }),
   labels: defineMessages({
     name: {
@@ -46,6 +57,11 @@ export const injuredPersonInformation = {
       id: 'an.application:injuredPersonInformation.labels.tel',
       defaultMessage: 'Símanúmer',
       description: 'Telephone number',
+    },
+    jobTitle: {
+      id: 'an.application:injuredPersonInformation.labels.jobTitle',
+      defaultMessage: 'Starfsheiti',
+      description: 'Job title',
     },
   }),
   upload: defineMessages({

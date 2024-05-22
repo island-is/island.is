@@ -99,6 +99,8 @@ export class EnergyFundsService {
       color: vehicle.color,
       requireMileage: vehicle.requiresMileageRegistration,
       newRegistrationDate: vehicle.newregdate,
+      firstRegistrationDate: vehicle.firstregdate,
+      vin: vehicle.vin,
     }
   }
 }

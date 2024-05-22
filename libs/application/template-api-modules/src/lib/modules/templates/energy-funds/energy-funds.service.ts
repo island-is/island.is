@@ -8,10 +8,10 @@ import { TemplateApiError } from '@island.is/nest/problem'
 import { LOGGER_PROVIDER } from '@island.is/logging'
 import type { Logger } from '@island.is/logging'
 import { Auth, AuthMiddleware, User } from '@island.is/auth-nest-tools'
-import { coreErrorMessages } from '@island.is/application/core'
+import { coreErrorMessages, getValueViaPath } from '@island.is/application/core'
 import { EnergyFundsClientService } from '@island.is/clients/energy-funds'
 import format from 'date-fns/format'
-import { VehiclesCurrentVehicle } from './types'
+import { VehiclesCurrentVehicle, VehiclesWithTotalCount } from './types'
 
 @Injectable()
 export class EnergyFundsService extends BaseTemplateApiService {
@@ -28,7 +28,20 @@ export class EnergyFundsService extends BaseTemplateApiService {
   }
 
   async getCurrentVehiclesWithDetails({ auth }: TemplateApiModuleActionProps) {
-    const countResult =
+    const totalCount =
+      (
+        await this.vehiclesApiWithAuth(
+          auth,
+        ).currentvehicleswithmileageandinspGet({
+          showOwned: true,
+          showCoowned: false,
+          showOperated: false,
+          page: 1,
+          pageSize: 1,
+          onlyMileageRequiredVehicles: false,
+        })
+      ).totalRecords || 0
+    const electricCount =
       (
         await this.vehiclesApiWithAuth(
           auth,
@@ -41,9 +54,19 @@ export class EnergyFundsService extends BaseTemplateApiService {
           onlyMileageRequiredVehicles: true,
         })
       ).totalRecords || 0
-    if (countResult && countResult > 20) {
+
+    if (electricCount === 0) {
+      throw new TemplateApiError(
+        {
+          title: coreErrorMessages.electricVehicleListEmptyOwner,
+          summary: coreErrorMessages.electricVehicleListEmptyOwner,
+        },
+        400,
+      )
+    }
+    if (totalCount && totalCount > 20) {
       return {
-        totalRecords: countResult,
+        totalRecords: totalCount,
         vehicles: [],
       }
     }
@@ -139,11 +162,16 @@ export class EnergyFundsService extends BaseTemplateApiService {
   }: TemplateApiModuleActionProps): Promise<void> {
     const applicationAnswers = application.answers as EnergyFundsAnswers
     const currentVehicleList = application.externalData?.currentVehicles
-      ?.data as Array<VehiclesCurrentVehicle>
-    const currentvehicleDetails = currentVehicleList.find(
-      (x) => x.permno === applicationAnswers.selectVehicle.plate,
-    )
+      ?.data as VehiclesWithTotalCount
 
+    const currentvehicleDetails = application.answers.findVehicle
+      ? (getValueViaPath(
+          application.answers,
+          'selectVehicle',
+        ) as VehiclesCurrentVehicle)
+      : currentVehicleList?.vehicles?.find(
+          (x) => x.permno === applicationAnswers.selectVehicle.plate,
+        ) || undefined
     try {
       const vehicleApiDetails = await this.vehiclesApiWithAuth(
         auth,

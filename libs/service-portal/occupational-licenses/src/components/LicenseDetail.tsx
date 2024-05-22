@@ -121,6 +121,10 @@ export const LicenseDetail: React.FC<LicenseDetailProps> = ({
                       ? om.validLicense
                       : status === 'limited'
                       ? om.validWithLimitationsLicense
+                      : status === 'revoked'
+                      ? om.revokedLicense
+                      : status === 'waived'
+                      ? om.waivedLicense
                       : om.invalidLicense,
                   )}
                 </Text>

@@ -142,7 +142,7 @@ export const Ruling: React.FC<React.PropsWithChildren<unknown>> = () => {
       [
         {
           introduction: formatMessage(m.sections.introduction.autofill, {
-            date: formatDate(workingCase.courtDate, 'PPP'),
+            date: formatDate(workingCase.arraignmentDate?.date, 'PPP'),
           }),
           prosecutorDemands: workingCase.demands,
           courtCaseFacts: formatMessage(
@@ -606,6 +606,7 @@ export const Ruling: React.FC<React.PropsWithChildren<unknown>> = () => {
               )}
               onChange={(decision) => {
                 let conclusion = undefined
+                let ruling = undefined
 
                 if (
                   workingCase.defendants &&
@@ -622,8 +623,16 @@ export const Ruling: React.FC<React.PropsWithChildren<unknown>> = () => {
                   )
                 }
 
+                if (
+                  isAcceptingCaseDecision(decision) &&
+                  workingCase.parentCase &&
+                  !workingCase.ruling
+                ) {
+                  ruling = workingCase.parentCase.ruling
+                }
+
                 setAndSendCaseToServer(
-                  [{ conclusion, decision, force: true }],
+                  [{ conclusion, decision, ruling, force: true }],
                   workingCase,
                   setWorkingCase,
                 )

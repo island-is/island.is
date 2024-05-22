@@ -1,11 +1,8 @@
 import { RolesRule, RulesType } from '@island.is/judicial-system/auth'
-import {
-  CaseTransition,
-  isIndictmentCase,
-  UserRole,
-} from '@island.is/judicial-system/types'
+import { CaseTransition, UserRole } from '@island.is/judicial-system/types'
 
 import { UpdateCaseDto } from '../dto/updateCase.dto'
+import { Case } from '../models/case.model'
 
 const prosecutorFields: (keyof UpdateCaseDto)[] = [
   'type',
@@ -47,7 +44,11 @@ const prosecutorFields: (keyof UpdateCaseDto)[] = [
   'requestDriversLicenseSuspension',
   'prosecutorStatementDate',
   'requestAppealRulingNotToBePublished',
+  'indictmentDeniedExplanation',
+  'indictmentReviewDecision',
 ]
+
+const publicProsecutorFields: (keyof UpdateCaseDto)[] = ['indictmentReviewerId']
 
 const districtCourtFields: (keyof UpdateCaseDto)[] = [
   'defenderName',
@@ -56,9 +57,9 @@ const districtCourtFields: (keyof UpdateCaseDto)[] = [
   'defenderPhoneNumber',
   'courtCaseNumber',
   'sessionArrangements',
+  'arraignmentDate',
   'courtDate',
   'courtLocation',
-  'courtRoom',
   'courtStartDate',
   'courtEndTime',
   'isClosedCourtHidden',
@@ -80,12 +81,16 @@ const districtCourtFields: (keyof UpdateCaseDto)[] = [
   'accusedAppealAnnouncement',
   'prosecutorAppealDecision',
   'prosecutorAppealAnnouncement',
+  'rulingSignatureDate',
   'judgeId',
   'registrarId',
   'caseModifiedExplanation',
   'rulingModifiedHistory',
   'defendantWaivesRightToCounsel',
   'prosecutorId',
+  'indictmentReturnedExplanation',
+  'postponedIndefinitelyExplanation',
+  'indictmentRulingDecision',
 ]
 
 const courtOfAppealsFields: (keyof UpdateCaseDto)[] = [
@@ -116,6 +121,13 @@ export const prosecutorRepresentativeUpdateRule: RolesRule = {
   role: UserRole.PROSECUTOR_REPRESENTATIVE,
   type: RulesType.FIELD,
   dtoFields: prosecutorFields,
+}
+
+// Allows public prosecutor staff to update a specific set of fields
+export const publicProsecutorStaffUpdateRule: RolesRule = {
+  role: UserRole.PUBLIC_PROSECUTOR_STAFF,
+  type: RulesType.FIELD,
+  dtoFields: publicProsecutorFields,
 }
 
 // Allows district court judges to update a specific set of fields
@@ -179,20 +191,13 @@ export const prosecutorTransitionRule: RolesRule = {
     CaseTransition.DELETE,
     CaseTransition.APPEAL,
     CaseTransition.WITHDRAW_APPEAL,
+    CaseTransition.DENY_INDICTMENT,
   ],
   canActivate: (request) => {
-    const theCase = request.case
+    const theCase: Case = request.case
 
     // Deny if the case is missing - shuould never happen
     if (!theCase) {
-      return false
-    }
-
-    // Deny certain transitions on indictment cases
-    if (
-      isIndictmentCase(theCase.type) &&
-      request.body.transition === CaseTransition.APPEAL
-    ) {
       return false
     }
 
@@ -209,17 +214,11 @@ export const prosecutorTransitionRule: RolesRule = {
 }
 
 // Allows prosecutor representatives to transition cases
-// Note that prosecutor representatives can only access indictment cases
 export const prosecutorRepresentativeTransitionRule: RolesRule = {
   role: UserRole.PROSECUTOR_REPRESENTATIVE,
   type: RulesType.FIELD_VALUES,
   dtoField: 'transition',
-  dtoFieldValues: [
-    CaseTransition.OPEN,
-    CaseTransition.ASK_FOR_CONFIRMATION,
-    CaseTransition.SUBMIT,
-    CaseTransition.DELETE,
-  ],
+  dtoFieldValues: [CaseTransition.ASK_FOR_CONFIRMATION, CaseTransition.DELETE],
 }
 
 // Allows defenders to transition cases
@@ -229,15 +228,10 @@ export const defenderTransitionRule: RolesRule = {
   dtoField: 'transition',
   dtoFieldValues: [CaseTransition.APPEAL, CaseTransition.WITHDRAW_APPEAL],
   canActivate: (request) => {
-    const theCase = request.case
+    const theCase: Case = request.case
 
     // Deny if the case is missing - should never happen
     if (!theCase) {
-      return false
-    }
-
-    // Deny transitions on indictment cases
-    if (isIndictmentCase(theCase.type)) {
       return false
     }
 
@@ -260,35 +254,15 @@ export const districtCourtJudgeTransitionRule: RolesRule = {
   dtoField: 'transition',
   dtoFieldValues: [
     CaseTransition.RECEIVE,
+    CaseTransition.RETURN_INDICTMENT,
+    CaseTransition.REDISTRIBUTE,
     CaseTransition.ACCEPT,
     CaseTransition.REJECT,
     CaseTransition.DISMISS,
+    CaseTransition.COMPLETE,
     CaseTransition.REOPEN,
     CaseTransition.RECEIVE_APPEAL,
   ],
-  canActivate: (request) => {
-    const theCase = request.case
-
-    // Deny if the case is missing - shuould never happen
-    if (!theCase) {
-      return false
-    }
-
-    // Deny certain transitions on indictment cases
-    if (
-      isIndictmentCase(theCase.type) &&
-      [
-        CaseTransition.REJECT,
-        CaseTransition.DISMISS,
-        CaseTransition.REOPEN,
-        CaseTransition.RECEIVE_APPEAL,
-      ].includes(request.body.transition)
-    ) {
-      return false
-    }
-
-    return true
-  },
 }
 
 // Allows registrars to transition cases
@@ -299,37 +273,12 @@ export const districtCourtRegistrarTransitionRule: RolesRule = {
   dtoFieldValues: [
     CaseTransition.RECEIVE,
     CaseTransition.ACCEPT,
+    CaseTransition.REJECT,
+    CaseTransition.DISMISS,
+    CaseTransition.COMPLETE,
     CaseTransition.REOPEN,
     CaseTransition.RECEIVE_APPEAL,
   ],
-  canActivate: (request) => {
-    const theCase = request.case
-
-    // Deny if the case is missing - shuould never happen
-    if (!theCase) {
-      return false
-    }
-
-    // Deny certain transactions on non indictment cases
-    if (
-      !isIndictmentCase(theCase.type) &&
-      request.body.transition === CaseTransition.ACCEPT
-    ) {
-      return false
-    }
-
-    // Deny certain transitions on indictment cases
-    if (
-      isIndictmentCase(theCase.type) &&
-      [CaseTransition.REOPEN, CaseTransition.RECEIVE_APPEAL].includes(
-        request.body.transition,
-      )
-    ) {
-      return false
-    }
-
-    return true
-  },
 }
 
 // Allows district court assistants to transition cases.
@@ -337,8 +286,7 @@ export const districtCourtAssistantTransitionRule: RolesRule = {
   role: UserRole.DISTRICT_COURT_ASSISTANT,
   type: RulesType.FIELD_VALUES,
   dtoField: 'transition',
-  dtoFieldValues: [CaseTransition.RECEIVE, CaseTransition.ACCEPT],
-  // canActivate: no need for further restrictions as district court assistants can only access indictment cases
+  dtoFieldValues: [CaseTransition.RECEIVE, CaseTransition.COMPLETE],
 }
 
 // Allows court of appeals judges to transition cases.
@@ -350,7 +298,6 @@ export const courtOfAppealsJudgeTransitionRule: RolesRule = {
     CaseTransition.COMPLETE_APPEAL,
     CaseTransition.REOPEN_APPEAL,
   ],
-  // canActivate: no need for further restrictions as court of appeals judges can only access appealed non-indictment cases
 }
 
 // Allows court of appeals registrars to transition cases.
@@ -362,7 +309,6 @@ export const courtOfAppealsRegistrarTransitionRule: RolesRule = {
     CaseTransition.COMPLETE_APPEAL,
     CaseTransition.REOPEN_APPEAL,
   ],
-  // canActivate: no need for further restrictions as court of appeals registrars can only access appealed non-indictment cases
 }
 
 // Allows court of appeals assistants to transition cases.
@@ -374,5 +320,4 @@ export const courtOfAppealsAssistantTransitionRule: RolesRule = {
     CaseTransition.COMPLETE_APPEAL,
     CaseTransition.REOPEN_APPEAL,
   ],
-  // canActivate: no need for further restrictions as court of appeals assistants can only access appealed non-indictment cases
 }

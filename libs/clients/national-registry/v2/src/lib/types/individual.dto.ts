@@ -15,9 +15,9 @@ export interface IndividualDto {
   residence: AddressDto | null
 }
 
-export function formatIndividualDto(
+export const formatIndividualDto = (
   individual: Einstaklingsupplysingar | null | undefined,
-): IndividualDto | null {
+): IndividualDto | null => {
   if (individual == null) {
     return null
   }

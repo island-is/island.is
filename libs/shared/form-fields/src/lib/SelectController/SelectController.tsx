@@ -1,7 +1,12 @@
 import React from 'react'
 import { Controller, useFormContext, RegisterOptions } from 'react-hook-form'
 
-import { Select, Option, InputBackgroundColor } from '@island.is/island-ui/core'
+import {
+  Select,
+  Option,
+  InputBackgroundColor,
+  SelectProps,
+} from '@island.is/island-ui/core'
 import { TestSupport } from '@island.is/island-ui/utils'
 
 interface SelectControllerProps<Value> {
@@ -19,6 +24,7 @@ interface SelectControllerProps<Value> {
   required?: boolean
   rules?: RegisterOptions
   size?: 'xs' | 'sm' | 'md'
+  internalKey?: string
 }
 
 export const SelectController = <Value,>({
@@ -37,6 +43,7 @@ export const SelectController = <Value,>({
   required = false,
   rules,
   size,
+  internalKey,
 }: SelectControllerProps<Value> & TestSupport) => {
   const { clearErrors } = useFormContext()
   return (
@@ -46,6 +53,7 @@ export const SelectController = <Value,>({
       rules={rules}
       render={({ field: { onChange, value } }) => (
         <Select
+          key={internalKey}
           required={required}
           backgroundColor={backgroundColor}
           hasError={error !== undefined}

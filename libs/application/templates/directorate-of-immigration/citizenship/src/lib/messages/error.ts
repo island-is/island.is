@@ -43,9 +43,19 @@ export const error = defineMessages({
     defaultMessage: 'Notandi uppfyllir ekki nein búsetuskilyrði',
     description: 'User does not fulfill any residence conditions',
   },
+  applicationConditionsNotMet: {
+    id: 'doi.cs.application:error.applicationConditionsNotMet',
+    defaultMessage: 'Notandi uppfyllir ekki skilyrði fyrir umsókn',
+    description: 'User does not fulfill conditions for application',
+  },
   notOldEnough: {
     id: 'doi.cs.application:error.notOldEnough',
     defaultMessage: 'Umsækjandi er ekki orðinn 18 ára',
     description: 'Applicant is not old enough',
+  },
+  passportDateError: {
+    id: 'doi.cs.application:error.passportDateError',
+    defaultMessage: 'Útgáfudagsetning verður að vera á undan gildistíma',
+    description: 'Passport date validation error',
   },
 })

@@ -6,13 +6,13 @@ import {
 } from '@island.is/application/types'
 import { m } from '../messages'
 import { ConditionFn, DrivingLicense } from '../types'
-import { YES } from '../constants'
 import {
-  DrivingLicenseApplicationFor,
   B_FULL,
   B_TEMP,
-} from '../../shared/constants'
-import { hasYes } from '@island.is/application/core'
+  DrivingLicenseApplicationFor,
+  NO,
+  YES,
+} from '../constants'
 
 export const allowFakeCondition =
   (result = YES) =>
@@ -21,10 +21,11 @@ export const allowFakeCondition =
 
 export const needsHealthCertificateCondition =
   (result = YES) =>
-  (answers: FormValue) => {
+  (answers: FormValue, externalData: ExternalData) => {
     return (
       Object.values(answers?.healthDeclaration || {}).includes(result) ||
-      answers?.hasHealthRemarks === result
+      answers?.hasHealthRemarks === result ||
+      externalData.glassesCheck?.data === true
     )
   }
 
@@ -46,7 +47,8 @@ export const isApplicationForCondition =
   }
 
 export const hasNoDrivingLicenseInOtherCountry = (answers: FormValue) =>
-  !hasYes(answers?.drivingLicenseInOtherCountry)
+  getValueViaPath(answers, 'otherCountry.drivingLicenseInOtherCountry') ===
+    NO || true
 
 export const chooseDistrictCommissionerDescription = ({
   answers,
@@ -74,9 +76,6 @@ export const hasCompletedPrerequisitesStep =
         'requirementsMet',
         false,
       ) === true
-
-    // TODO: check for gdpr approval as well?
-
     return requirementsMet === value
   }
 

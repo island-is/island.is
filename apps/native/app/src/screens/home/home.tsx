@@ -23,14 +23,14 @@ import {
 } from '../../graphql/types/schema'
 import { createNavigationOptionHooks } from '../../hooks/create-navigation-option-hooks'
 import { useActiveTabItemPress } from '../../hooks/use-active-tab-item-press'
-import { notificationsStore } from '../../stores/notifications-store'
+import { useConnectivityIndicator } from '../../hooks/use-connectivity-indicator'
+import { useNotificationsStore } from '../../stores/notifications-store'
 import { useUiStore } from '../../stores/ui-store'
+import { isAndroid } from '../../utils/devices'
 import { getRightButtons } from '../../utils/get-main-root'
 import { testIDs } from '../../utils/test-ids'
 import { ApplicationsModule } from './applications-module'
-import { NotificationsModule } from './notifications-module'
 import { OnboardingModule } from './onboarding-module'
-import { VehiclesModule } from './vehicles-module'
 
 interface ListItem {
   id: string
@@ -60,7 +60,7 @@ const { useNavigationOptions, getNavigationOptions } =
         // selectedIconColor: null as any,
         // iconColor: null as any,
         textColor: initialized
-          ? Platform.OS === 'android'
+          ? isAndroid
             ? theme.shade.foreground
             : { light: 'black', dark: 'white' }
           : theme.shade.background,
@@ -98,6 +98,10 @@ export const MainHomeScreen: NavigationFunctionComponent = ({
   componentId,
 }) => {
   useNavigationOptions(componentId)
+
+  const syncToken = useNotificationsStore(({ syncToken }) => syncToken)
+  const checkUnseen = useNotificationsStore(({ checkUnseen }) => checkUnseen)
+  const [refetching, setRefetching] = useState(false)
   const flatListRef = useRef<FlatList>(null)
   const ui = useUiStore()
 
@@ -107,12 +111,18 @@ export const MainHomeScreen: NavigationFunctionComponent = ({
 
   const applicationsRes = useListApplicationsQuery()
 
+  useConnectivityIndicator({
+    componentId,
+    rightButtons: getRightButtons(),
+    queryResult: applicationsRes,
+    refetching,
+  })
+
   // Get feature flag for mileage
   const isMileageEnabled = useFeatureFlag(
     'isServicePortalVehicleMileagePageEnabled',
     false,
   )
-  const [loading, setLoading] = useState(false)
 
   const renderItem = useCallback(
     ({ item }: ListRenderItemInfo<ListItem>) => item.component,
@@ -122,19 +132,22 @@ export const MainHomeScreen: NavigationFunctionComponent = ({
   const scrollY = useRef(new Animated.Value(0)).current
 
   useEffect(() => {
-    // Sync push tokens
-    notificationsStore.getState().actions.syncToken()
+    // Sync push tokens and unseen notifications
+    void syncToken()
+    void checkUnseen()
   }, [])
 
-  const refetch = async () => {
-    setLoading(true)
+  const refetch = useCallback(async () => {
+    setRefetching(true)
+
     try {
       await applicationsRes.refetch()
     } catch (err) {
       // noop
     }
-    setLoading(false)
-  }
+
+    setRefetching(false)
+  }, [applicationsRes])
 
   if (!ui.initializedApp) {
     return null
@@ -157,16 +170,6 @@ export const MainHomeScreen: NavigationFunctionComponent = ({
           componentId={componentId}
         />
       ),
-    },
-    isMileageEnabled
-      ? {
-          id: 'vehicles',
-          component: <VehiclesModule />,
-        }
-      : null,
-    {
-      id: 'notifications',
-      component: <NotificationsModule componentId={componentId} />,
     },
   ].filter(Boolean) as Array<{
     id: string
@@ -194,10 +197,11 @@ export const MainHomeScreen: NavigationFunctionComponent = ({
           },
         )}
         refreshControl={
-          <RefreshControl refreshing={loading} onRefresh={refetch} />
+          <RefreshControl refreshing={refetching} onRefresh={refetch} />
         }
       />
       <TopLine scrollY={scrollY} />
+
       <BottomTabsIndicator index={2} total={5} />
     </>
   )

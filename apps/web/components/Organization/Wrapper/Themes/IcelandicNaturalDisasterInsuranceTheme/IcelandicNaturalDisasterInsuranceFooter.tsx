@@ -1,3 +1,5 @@
+import { useEffect, useState } from 'react'
+
 import { SliceType } from '@island.is/island-ui/contentful'
 import {
   Box,
@@ -25,7 +27,11 @@ const IcelandicNaturalDisasterInsuranceFooter = ({
 }: IcelandicNaturalDisasterInsuranceFooterProps) => {
   const n = useNamespace(namespace)
   const { width } = useWindowSize()
-  const shouldWrap = width < theme.breakpoints.xl
+  const [shouldWrap, setShouldWrap] = useState(false)
+
+  useEffect(() => {
+    setShouldWrap(width < theme.breakpoints.xl)
+  }, [width])
 
   return (
     <footer className={styles.footer}>

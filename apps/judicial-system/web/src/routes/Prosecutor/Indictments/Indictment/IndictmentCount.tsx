@@ -454,7 +454,7 @@ export const IndictmentCount: React.FC<React.PropsWithChildren<Props>> = (
       </Box>
       <Box marginBottom={2}>
         <InputMask
-          mask={'**-*99'}
+          mask={[/[A-Z]/i, /[A-Z]/i, /[A-Z]|[0-9]/i, /[0-9]/, /[0-9]/]}
           maskPlaceholder={null}
           value={indictmentCount.vehicleRegistrationNumber ?? ''}
           beforeMaskedStateChange={({ nextState }) => {

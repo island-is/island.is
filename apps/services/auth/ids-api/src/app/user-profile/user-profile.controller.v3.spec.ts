@@ -12,9 +12,9 @@ import {
   CompanyRegistryClientService,
 } from '@island.is/clients/rsk/company-registry'
 import {
-  UserProfile,
-  UserProfileApi,
+  UserProfileDto,
   UserProfileLocaleEnum,
+  V2MeApi,
 } from '@island.is/clients/user-profile'
 import { Logger, LOGGER_PROVIDER } from '@island.is/logging'
 import {
@@ -70,23 +70,21 @@ function createCompany(): CompanyExtendedInfo {
   } as CompanyExtendedInfo
 }
 
-function createUserProfile(): UserProfile {
+function createUserProfile({ isRestricted = false }): UserProfileDto {
   return {
+    nationalId: faker.datatype.string(),
     email: faker.internet.email(),
-    emailVerified: faker.datatype.boolean(),
     mobilePhoneNumber: faker.phone.phoneNumber(),
-    mobilePhoneNumberVerified: faker.datatype.boolean(),
-    profileImageUrl: faker.internet.url(),
     locale: faker.random.arrayElement(
       Object.values(UserProfileLocaleEnum) as UserProfileLocaleEnum[],
     ),
-    created: faker.date.past(),
-    id: faker.datatype.uuid(),
+    mobilePhoneNumberVerified: faker.datatype.boolean(),
+    emailVerified: faker.datatype.boolean(),
     documentNotifications: faker.datatype.boolean(),
-    emailStatus: faker.datatype.string(),
-    mobileStatus: faker.datatype.string(),
-    modified: faker.date.past(),
-    nationalId: faker.datatype.string(),
+    profileImageUrl: faker.internet.url(),
+    needsNudge: false,
+    emailNotifications: false,
+    isRestricted,
   }
 }
 
@@ -122,7 +120,7 @@ describe('UserProfileController', () => {
           .spyOn(app.get<Logger>(LOGGER_PROVIDER), 'error')
           .mockImplementation()
         mocked(
-          app.get(UserProfileApi).userProfileControllerFindOneByNationalId,
+          app.get(V2MeApi).meUserProfileControllerFindUserProfile,
         ).mockRejectedValue({ status: 404 })
         mocked(
           app.get(NationalRegistryV3ClientService).getAllDataIndividual,
@@ -142,7 +140,7 @@ describe('UserProfileController', () => {
           .spyOn(app.get<Logger>(LOGGER_PROVIDER), 'error')
           .mockImplementation()
         mocked(
-          app.get(UserProfileApi).userProfileControllerFindOneByNationalId,
+          app.get(V2MeApi).meUserProfileControllerFindUserProfile,
         ).mockRejectedValue(new Error('500'))
         mocked(
           app.get(NationalRegistryV3ClientService).getAllDataIndividual,
@@ -158,12 +156,12 @@ describe('UserProfileController', () => {
 
       it('with full registries should return all claims', async () => {
         // Arrange
-        const userProfile = createUserProfile()
+        const userProfile = createUserProfile({})
         const individual = createNationalRegistryV3User({
           kyn: { kynKodi: faker.random.arrayElement(['1', '3']) },
         })
         mocked(
-          app.get(UserProfileApi).userProfileControllerFindOneByNationalId,
+          app.get(V2MeApi).meUserProfileControllerFindUserProfile,
         ).mockResolvedValue(userProfile)
         mockNationalRegistry(
           app.get(NationalRegistryV3ClientService),

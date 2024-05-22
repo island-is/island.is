@@ -1,11 +1,11 @@
-import React from 'react'
-
 import { RadioController } from '@island.is/shared/form-fields'
 import { useLocale } from '@island.is/localization'
 import { Box, Text, GridRow, GridColumn } from '@island.is/island-ui/core'
 import { getValueViaPath, formatText } from '@island.is/application/core'
 import { CustomField, FieldBaseProps } from '@island.is/application/types'
 import { m } from '../lib/messages'
+import { useFormContext } from 'react-hook-form'
+import { NO, YES } from '../lib/constants'
 
 interface PropTypes extends FieldBaseProps {
   field: CustomField
@@ -14,6 +14,26 @@ interface PropTypes extends FieldBaseProps {
 function HealthDeclaration({ field, application }: PropTypes): JSX.Element {
   const { formatMessage } = useLocale()
   const props = field.props as { title?: string; label: string }
+
+  const {
+    setValue,
+    formState: { errors },
+  } = useFormContext()
+
+  const checkForGlassesMismatch = (value: string) => {
+    if (field.id === 'healthDeclaration.usesContactGlasses') {
+      const glassesUsedPreviously = application.externalData.glassesCheck.data
+
+      if (
+        (glassesUsedPreviously && value === NO) ||
+        (!glassesUsedPreviously && value === YES)
+      ) {
+        setValue('healthDeclaration.contactGlassesMismatch', true)
+      } else {
+        setValue('healthDeclaration.contactGlassesMismatch', false)
+      }
+    }
+  }
 
   return (
     <>
@@ -48,6 +68,11 @@ function HealthDeclaration({ field, application }: PropTypes): JSX.Element {
                 value: 'no',
               },
             ]}
+            onSelect={(value) => {
+              if (field.id === 'healthDeclaration.usesContactGlasses') {
+                checkForGlassesMismatch(value)
+              }
+            }}
           />
         </GridColumn>
       </GridRow>

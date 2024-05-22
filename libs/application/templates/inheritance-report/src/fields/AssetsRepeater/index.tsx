@@ -1,5 +1,5 @@
 /* eslint-disable @typescript-eslint/no-explicit-any */
-import { FC, useState, useEffect, useCallback, ChangeEvent } from 'react'
+import { FC, useState, useEffect, useCallback } from 'react'
 import { useFieldArray, useFormContext, useWatch } from 'react-hook-form'
 import { useLazyQuery } from '@apollo/client'
 import { GET_VEHICLE_QUERY, SEARCH_FOR_PROPERTY_QUERY } from '../../graphql'
@@ -25,7 +25,15 @@ import { formatCurrency } from '@island.is/application/ui-components'
 import { useLocale } from '@island.is/localization'
 import { m } from '../../lib/messages'
 import DoubleColumnRow from '../../components/DoubleColumnRow'
-import { isValidRealEstate, valueToNumber } from '../../lib/utils/helpers'
+import {
+  getEstateDataFromApplication,
+  isValidRealEstate,
+  valueToNumber,
+  getDeceasedWasMarriedAndHadAssets,
+} from '../../lib/utils/helpers'
+import { InheritanceReportAsset } from '@island.is/clients/syslumenn'
+import ShareInput from '../../components/ShareInput'
+import DeceasedShare from '../../components/DeceasedShare'
 
 type RepeaterProps = {
   field: {
@@ -45,9 +53,10 @@ type RepeaterProps = {
 export const AssetsRepeater: FC<
   React.PropsWithChildren<FieldBaseProps<Answers> & RepeaterProps>
 > = ({ application, field, errors }) => {
-  const { externalData } = application
   const { id, props } = field
-  const { calcWithShareValue, assetKey, fromExternalData } = props
+  const { calcWithShareValue, assetKey } = props
+
+  const deceasedHadAssets = getDeceasedWasMarriedAndHadAssets(application)
 
   if (typeof calcWithShareValue !== 'boolean' || !assetKey) {
     throw new Error('calcWithShareValue and assetKey are required')
@@ -71,12 +80,13 @@ export const AssetsRepeater: FC<
 
     const total = values.reduce((acc: number, current: any) => {
       const propertyValuation = valueToNumber(current[props.sumField])
-      const shareValue = valueToNumber(current?.share)
+      const shareValue = valueToNumber(current?.share, '.')
 
       return (
         Number(acc) +
         (calcWithShareValue
-          ? Math.floor(propertyValuation * (shareValue / 100))
+          ? // TODO?: might need to fix the total value to support decimals
+            Math.round(propertyValuation * (shareValue / 100))
           : propertyValuation)
       )
     }, 0)
@@ -115,10 +125,11 @@ export const AssetsRepeater: FC<
   }
 
   useEffect(() => {
-    const extData = getValueViaPath(
-      (externalData.syslumennOnEntry?.data as any).estate,
-      fromExternalData ?? '',
-    ) as Record<string, unknown>[]
+    const estData =
+      getEstateDataFromApplication(application)?.inheritanceReportInfo ?? {}
+
+    const extData =
+      getValueViaPath<InheritanceReportAsset[]>(estData, assetKey) ?? []
 
     if (
       !(application?.answers as any)?.assets?.[assetKey]?.hasModified &&
@@ -128,7 +139,7 @@ export const AssetsRepeater: FC<
       replace(
         extData.map((x) => ({
           ...x,
-          share: '100',
+          share: String(x.share),
         })),
       )
       setValue(`assets.${assetKey}.hasModified`, true)
@@ -136,10 +147,12 @@ export const AssetsRepeater: FC<
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [assetKey])
 
+  let shouldPushRight = false
+
   return (
     <Box>
-      {fields.map((repeaterField: any, index) => {
-        const fieldIndex = `${id}[${index}]`
+      {fields.map((repeaterField: any, mainIndex) => {
+        const fieldIndex = `${id}[${mainIndex}]`
 
         return (
           <Box position="relative" key={repeaterField.id} marginTop={4}>
@@ -150,7 +163,7 @@ export const AssetsRepeater: FC<
                 circle
                 icon="remove"
                 onClick={() => {
-                  remove(index)
+                  remove(mainIndex)
                   calculateTotal()
                 }}
               />
@@ -163,6 +176,8 @@ export const AssetsRepeater: FC<
 
                 const fieldName = `${fieldIndex}.${field.id}`
                 const error = errors && getErrorViaPath(errors, fieldName)
+
+                shouldPushRight = pushRight
 
                 return (
                   <FieldComponent
@@ -182,6 +197,13 @@ export const AssetsRepeater: FC<
                 )
               })}
             </GridRow>
+            {deceasedHadAssets && (
+              <DeceasedShare
+                pushRight={shouldPushRight}
+                paddingBottom={2}
+                id={fieldIndex}
+              />
+            )}
           </Box>
         )
       })}
@@ -194,7 +216,7 @@ export const AssetsRepeater: FC<
           onClick={handleAddRepeaterFields}
           size="small"
         >
-          {props.repeaterButtonText}
+          {formatMessage(props.repeaterButtonText)}
         </Button>
       </Box>
       {!!fields.length && props.sumField && (
@@ -245,15 +267,14 @@ const FieldComponent = ({
   error,
 }: FieldComponentProps) => {
   const { formatMessage } = useLocale()
-  const { setValue } = useFormContext()
 
   let content = null
 
-  let defaultProps = {
+  const defaultProps = {
     id: fieldName,
     name: fieldName,
     format: field.format,
-    label: field.title,
+    label: formatMessage(field.title),
     defaultValue: '',
     type: field.type,
     placeholder: field.placeholder,
@@ -283,7 +304,7 @@ const FieldComponent = ({
         </GridColumn>
       )
     case 'assetNumber':
-      if (assetKey === 'realEstate') {
+      if (assetKey === 'assets') {
         content = (
           <RealEstateNumberField
             field={field}
@@ -307,27 +328,11 @@ const FieldComponent = ({
 
       break
     case 'share':
-      defaultProps = {
-        ...defaultProps,
-        label: formatMessage(m.propertyShare),
-      }
-
       content = (
-        <InputController
-          {...defaultProps}
-          onChange={(
-            e: ChangeEvent<HTMLInputElement | HTMLTextAreaElement>,
-          ) => {
-            const value = valueToNumber(e.target.value)
-
-            if (value >= 0 && value <= 100) {
-              onAfterChange?.()
-            }
-
-            if (value === 0) {
-              setValue(fieldName, '0%')
-            }
-          }}
+        <ShareInput
+          name={fieldName}
+          label={formatMessage(m.propertyShare)}
+          onAfterChange={onAfterChange}
         />
       )
 
@@ -372,12 +377,18 @@ const RealEstateNumberField = ({
       SEARCH_FOR_PROPERTY_QUERY,
       {
         onCompleted: (data) => {
-          clearErrors(descriptionFieldName)
-
-          setValue(
-            descriptionFieldName,
-            data.searchForProperty?.defaultAddress?.display ?? '',
-          )
+          if (isValidRealEstate(propertyNumberInput)) {
+            clearErrors(descriptionFieldName)
+            setValue(
+              descriptionFieldName,
+              data.searchForProperty?.defaultAddress?.display ?? '',
+            )
+          } else {
+            setError(fieldName, {
+              message: formatMessage(m.errorPropertyNumber),
+              type: 'validate',
+            })
+          }
         },
         fetchPolicy: 'network-only',
       },
@@ -389,7 +400,10 @@ const RealEstateNumberField = ({
   }, [queryLoading])
 
   useEffect(() => {
-    const propertyNumber = propertyNumberInput.trim().toUpperCase()
+    const propertyNumber = propertyNumberInput
+      .trim()
+      .toUpperCase()
+      .replace('-', '')
 
     setValue(descriptionFieldName, '')
 
@@ -404,10 +418,12 @@ const RealEstateNumberField = ({
         },
       })
     } else {
-      setError(fieldName, {
-        message: formatMessage(m.errorPropertyNumber),
-        type: 'validate',
-      })
+      if (propertyNumber.length !== 0) {
+        setError(fieldName, {
+          message: formatMessage(m.errorPropertyNumber),
+          type: 'validate',
+        })
+      }
     }
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [propertyNumberInput])
@@ -419,6 +435,7 @@ const RealEstateNumberField = ({
       label={formatMessage(m.propertyNumber)}
       defaultValue={propertyNumberInput}
       error={error ? formatMessage(m.errorPropertyNumber) : undefined}
+      placeholder={propertyNumberInput > 0 ? '' : props.field.placeholder}
       {...props}
     />
   )
@@ -484,15 +501,13 @@ const VehicleNumberField = ({
   }, [assetNumberInput])
 
   return (
-    <span className={styles.uppercase}>
-      <InputController
-        id={fieldName}
-        name={fieldName}
-        label={formatMessage(m.propertyNumber)}
-        defaultValue={assetNumberInput}
-        error={error ? formatMessage(m.errorPropertyNumber) : undefined}
-        {...props}
-      />
-    </span>
+    <InputController
+      id={fieldName}
+      name={fieldName}
+      label={formatMessage(m.propertyNumber)}
+      defaultValue={assetNumberInput}
+      error={error ? formatMessage(m.errorPropertyNumber) : undefined}
+      {...props}
+    />
   )
 }

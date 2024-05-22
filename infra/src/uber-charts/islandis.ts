@@ -29,7 +29,6 @@ import { serviceSetup as serviceDocumentsSetup } from '../../../apps/services/do
 import { serviceSetup as serviceNameRegistryBackendSetup } from '../../../apps/icelandic-names-registry/backend/infra/icelandic-names-registry-backend'
 
 import { serviceSetup as storybookSetup } from '../../../libs/island-ui/storybook/infra/storybook'
-import { serviceSetup as contentfulTranslationExtensionSetup } from '../../../libs/contentful-extensions/translation/infra/contentful-translation-extension'
 
 import { serviceSetup as downloadServiceSetup } from '../../../apps/download-service/infra/download-service'
 import { serviceSetup as endorsementServiceSetup } from '../../../apps/services/endorsements/api/infra/endorsement-system-api'
@@ -57,7 +56,7 @@ import {
 import {
   serviceSetup as sessionsServiceSetup,
   workerSetup as sessionsWorkerSetup,
-  geoipSetup as sessionsGeoipSetup,
+  cleanupSetup as sessionsCleanupWorkerSetup,
 } from '../../../apps/services/sessions/infra/sessions'
 
 import { serviceSetup as authAdminApiSetup } from '../../../apps/services/auth/admin-api/infra/auth-admin-api'
@@ -90,12 +89,16 @@ const rabBackend = rabBackendSetup()
 
 const sessionsService = sessionsServiceSetup()
 const sessionsWorker = sessionsWorkerSetup()
-const sessionsGeoip = sessionsGeoipSetup()
+const sessionsCleanupWorker = sessionsCleanupWorkerSetup()
 
 const authAdminApi = authAdminApiSetup()
 
 const universityGatewayService = universityGatewaySetup()
 const universityGatewayWorker = universityGatewayWorkerSetup()
+
+const userNotificationService = userNotificationServiceSetup({
+  userProfileApi: servicePortalApi,
+})
 
 const api = apiSetup({
   appSystemApi,
@@ -108,6 +111,7 @@ const api = apiSetup({
   sessionsApi: sessionsService,
   authAdminApi,
   universityGatewayApi: universityGatewayService,
+  userNotificationService,
 })
 const servicePortal = servicePortalSetup({ graphql: api })
 const appSystemForm = appSystemFormSetup({ api: api })
@@ -122,14 +126,9 @@ const xroadCollector = xroadCollectorSetup()
 const licenseApi = licenseApiSetup()
 
 const storybook = storybookSetup({})
-const contentfulTranslationExtension = contentfulTranslationExtensionSetup()
 
 const downloadService = downloadServiceSetup({
   regulationsAdminBackend: rabBackend,
-})
-
-const userNotificationService = userNotificationServiceSetup({
-  userProfileApi: servicePortalApi,
 })
 const userNotificationWorkerService = userNotificationWorkerSetup({
   userProfileApi: servicePortalApi,
@@ -157,7 +156,6 @@ export const Services: EnvironmentServices = {
     skilavottordWs,
     documentsService,
     storybook,
-    contentfulTranslationExtension,
     xroadCollector,
     downloadService,
     nameRegistryBackend,
@@ -173,10 +171,11 @@ export const Services: EnvironmentServices = {
     licenseApi,
     sessionsService,
     sessionsWorker,
-    sessionsGeoip,
+    sessionsCleanupWorker,
     universityGatewayService,
     universityGatewayWorker,
     contentfulApps,
+    contentfulEntryTagger,
   ],
   staging: [
     appSystemApi,
@@ -193,7 +192,6 @@ export const Services: EnvironmentServices = {
     searchIndexer,
     documentsService,
     storybook,
-    contentfulTranslationExtension,
     xroadCollector,
     downloadService,
     nameRegistryBackend,
@@ -209,7 +207,7 @@ export const Services: EnvironmentServices = {
     licenseApi,
     sessionsService,
     sessionsWorker,
-    sessionsGeoip,
+    sessionsCleanupWorker,
     universityGatewayService,
     universityGatewayWorker,
   ],
@@ -229,7 +227,6 @@ export const Services: EnvironmentServices = {
     skilavottordWs,
     documentsService,
     storybook,
-    contentfulTranslationExtension,
     downloadService,
     nameRegistryBackend,
     endorsement,
@@ -247,7 +244,7 @@ export const Services: EnvironmentServices = {
     licenseApi,
     sessionsService,
     sessionsWorker,
-    sessionsGeoip,
+    sessionsCleanupWorker,
     contentfulApps,
     universityGatewayService,
     universityGatewayWorker,

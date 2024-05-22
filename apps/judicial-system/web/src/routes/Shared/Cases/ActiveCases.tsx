@@ -25,12 +25,17 @@ import {
   TagCaseState,
   UserContext,
 } from '@island.is/judicial-system-web/src/components'
+import { contextMenu as contextMenuStrings } from '@island.is/judicial-system-web/src/components/ContextMenu/ContextMenu.strings'
 import IconButton from '@island.is/judicial-system-web/src/components/IconButton/IconButton'
 import {
   ColumnCaseType,
   SortButton,
 } from '@island.is/judicial-system-web/src/components/Table'
-import { CaseListEntry } from '@island.is/judicial-system-web/src/graphql/schema'
+import { table as tableStrings } from '@island.is/judicial-system-web/src/components/Table/Table.strings'
+import {
+  CaseListEntry,
+  CaseState,
+} from '@island.is/judicial-system-web/src/graphql/schema'
 import {
   directionType,
   sortableTableColumn,
@@ -43,6 +48,7 @@ import {
 import { compareLocaleIS } from '@island.is/judicial-system-web/src/utils/sortHelper'
 
 import MobileCase from './MobileCase'
+import { strings } from './ActiveCases.strings'
 import { cases as m } from './Cases.strings'
 import * as styles from './Cases.css'
 
@@ -88,7 +94,9 @@ const ActiveCases: React.FC<React.PropsWithChildren<Props>> = (props) => {
             return entry.defendants[0].name ?? ''
           }
           if (sortConfig.column === 'courtDate') {
-            return entry.courtDate ?? ''
+            return entry.postponedIndefinitelyExplanation
+              ? ''
+              : entry.courtDate ?? ''
           }
           return entry.created
         }
@@ -134,15 +142,25 @@ const ActiveCases: React.FC<React.PropsWithChildren<Props>> = (props) => {
             isCourtRole={isDistrictCourtUser(user)}
             isLoading={isOpeningCaseId === theCase.id && showLoading}
           >
-            {theCase.courtDate && (
-              <Text fontWeight={'medium'} variant="small">
-                {`${formatMessage(
-                  m.activeRequests.table.headers.hearing,
-                )} ${format(parseISO(theCase.courtDate), 'd.M.y')} kl. ${format(
-                  parseISO(theCase.courtDate),
-                  'kk:mm',
-                )}`}
-              </Text>
+            {theCase.state &&
+              theCase.state === CaseState.WAITING_FOR_CONFIRMATION && (
+                <Text fontWeight={'medium'} variant="small">
+                  {`${formatMessage(
+                    m.activeRequests.table.headers.prosecutor,
+                  )}: ${theCase.prosecutor?.name}`}
+                </Text>
+              )}
+            {theCase.postponedIndefinitelyExplanation ? (
+              <Text>{formatMessage(strings.postponed)}</Text>
+            ) : (
+              theCase.courtDate && (
+                <Text fontWeight={'medium'} variant="small">
+                  {`${formatMessage(tableStrings.hearing)} ${format(
+                    parseISO(theCase.courtDate),
+                    'd.M.y',
+                  )} kl. ${format(parseISO(theCase.courtDate), 'kk:mm')}`}
+                </Text>
+              )
             )}
           </MobileCase>
         </Box>
@@ -194,11 +212,7 @@ const ActiveCases: React.FC<React.PropsWithChildren<Props>> = (props) => {
             </th>
             <th className={styles.th}>
               <SortButton
-                title={capitalize(
-                  formatMessage(m.activeRequests.table.headers.hearing, {
-                    suffix: 'i',
-                  }),
-                )}
+                title={capitalize(formatMessage(tableStrings.hearing))}
                 onClick={() => requestSort('courtDate')}
                 sortAsc={getClassNamesFor('courtDate') === 'ascending'}
                 sortDes={getClassNamesFor('courtDate') === 'descending'}
@@ -322,21 +336,32 @@ const ActiveCases: React.FC<React.PropsWithChildren<Props>> = (props) => {
                     )}
                   </td>
                   <td className={styles.td}>
-                    {c.courtDate && (
-                      <>
-                        <Text>
-                          <Box component="span" className={styles.blockColumn}>
-                            {capitalize(
-                              format(parseISO(c.courtDate), 'EEEE d. LLLL y', {
-                                locale: localeIS,
-                              }),
-                            ).replace('dagur', 'd.')}
-                          </Box>
-                        </Text>
-                        <Text as="span" variant="small">
-                          kl. {format(parseISO(c.courtDate), 'kk:mm')}
-                        </Text>
-                      </>
+                    {c.postponedIndefinitelyExplanation ? (
+                      <Text>{formatMessage(strings.postponed)}</Text>
+                    ) : (
+                      c.courtDate && (
+                        <>
+                          <Text>
+                            <Box
+                              component="span"
+                              className={styles.blockColumn}
+                            >
+                              {capitalize(
+                                format(
+                                  parseISO(c.courtDate),
+                                  'EEEE d. LLLL y',
+                                  {
+                                    locale: localeIS,
+                                  },
+                                ),
+                              ).replace('dagur', 'd.')}
+                            </Box>
+                          </Text>
+                          <Text as="span" variant="small">
+                            kl. {format(parseISO(c.courtDate), 'kk:mm')}
+                          </Text>
+                        </>
+                      )
                     )}
                   </td>
                   <td className={styles.td}>
@@ -350,7 +375,9 @@ const ActiveCases: React.FC<React.PropsWithChildren<Props>> = (props) => {
                           menuLabel={`Valmynd fyrir mál ${c.courtCaseNumber}`}
                           items={[
                             {
-                              title: formatMessage(m.contextMenu.openCase),
+                              title: formatMessage(
+                                contextMenuStrings.openInNewTab,
+                              ),
                               onClick: () => handleOpenCase(c.id, true),
                               icon: 'open',
                             },
@@ -358,7 +385,7 @@ const ActiveCases: React.FC<React.PropsWithChildren<Props>> = (props) => {
                               ? [
                                   {
                                     title: formatMessage(
-                                      m.contextMenu.deleteCase,
+                                      contextMenuStrings.deleteCase,
                                     ),
                                     onClick: () => {
                                       setRequestToRemoveIndex(i)

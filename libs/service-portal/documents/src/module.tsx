@@ -11,7 +11,7 @@ const rootName = defineMessage({
   defaultMessage: 'Pósthólf',
 })
 
-const Overview = lazy(() => import('./screens/Overview/Overview'))
+const Overview = lazy(() => import('./screens/Overview/index'))
 
 export const documentsModule: PortalModule = {
   name: rootName,
@@ -23,6 +23,15 @@ export const documentsModule: PortalModule = {
       enabled: userInfo.scopes?.includes(DocumentsScope.main),
       loader: documentLoader({ userInfo, ...rest }),
       element: <Overview />,
+      children: [
+        {
+          name: rootName,
+          path: DocumentsPaths.ElectronicDocumentSingle,
+          enabled: userInfo.scopes?.includes(DocumentsScope.main),
+          loader: documentLoader({ userInfo, ...rest }),
+          element: <Overview />,
+        },
+      ],
     },
   ],
 }

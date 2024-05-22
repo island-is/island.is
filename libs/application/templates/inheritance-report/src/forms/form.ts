@@ -9,7 +9,6 @@ import { m } from '../lib/messages'
 import { DefaultEvents, Form, FormModes } from '@island.is/application/types'
 import { assets } from './sections/assets'
 import { debts } from './sections/debts'
-import { business } from './sections/business'
 import { heirs } from './sections/heirs'
 import { funeralCost } from './sections/funeralCost'
 import { applicant } from './sections/applicant'
@@ -17,6 +16,7 @@ import { dataCollection } from './sections/dataCollection'
 import { deceased } from './sections/deceased'
 import { YES } from '../lib/constants'
 import { applicationInfo } from './sections/applicationInfo'
+import { preSelection } from './sections/preSelection'
 
 export const form: Form = buildForm({
   id: 'inheritanceReport',
@@ -25,6 +25,7 @@ export const form: Form = buildForm({
   renderLastScreenBackButton: true,
   renderLastScreenButton: true,
   children: [
+    preSelection,
     deceased,
     dataCollection,
     applicationInfo,
@@ -32,7 +33,6 @@ export const form: Form = buildForm({
     assets,
     funeralCost,
     debts,
-    business,
     heirs,
     buildSection({
       id: 'finalStep',

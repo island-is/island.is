@@ -1,3 +1,5 @@
+import flatten from 'lodash/flatten'
+
 export enum CaseOrigin {
   UNKNOWN = 'UNKNOWN',
   RVG = 'RVG',
@@ -34,20 +36,24 @@ export enum CaseType {
 export enum IndictmentSubtype {
   AGGRAVATED_ASSAULT = 'AGGRAVATED_ASSAULT',
   ALCOHOL_LAWS = 'ALCOHOL_LAWS',
+  ANIMAL_PROTECTION = 'ANIMAL_PROTECTION',
   ASSAULT_LEADING_TO_DEATH = 'ASSAULT_LEADING_TO_DEATH',
   ATTEMPTED_MURDER = 'ATTEMPTED_MURDER',
+  BODILY_INJURY = 'BODILY_INJURY',
   BREAKING_AND_ENTERING = 'BREAKING_AND_ENTERING',
   CHILD_PROTECTION_LAWS = 'CHILD_PROTECTION_LAWS',
   COVER_UP = 'COVER_UP',
   CUSTOMS_VIOLATION = 'CUSTOMS_VIOLATION',
   DOMESTIC_VIOLENCE = 'DOMESTIC_VIOLENCE',
   EMBEZZLEMENT = 'EMBEZZLEMENT',
+  FOREIGN_NATIONALS = 'FOREIGN_NATIONALS',
   FRAUD = 'FRAUD',
   INDECENT_EXPOSURE = 'INDECENT_EXPOSURE',
   INTIMATE_RELATIONS = 'INTIMATE_RELATIONS',
   LEGAL_ENFORCEMENT_LAWS = 'LEGAL_ENFORCEMENT_LAWS',
   LOOTING = 'LOOTING',
   MAJOR_ASSAULT = 'MAJOR_ASSAULT',
+  MEDICINES_OFFENSE = 'MEDICINES_OFFENSE',
   MINOR_ASSAULT = 'MINOR_ASSAULT',
   MONEY_LAUNDERING = 'MONEY_LAUNDERING',
   MURDER = 'MURDER',
@@ -87,10 +93,33 @@ export enum CaseState {
   WAITING_FOR_CONFIRMATION = 'WAITING_FOR_CONFIRMATION',
   SUBMITTED = 'SUBMITTED',
   RECEIVED = 'RECEIVED',
+  MAIN_HEARING = 'MAIN_HEARING',
+  COMPLETED = 'COMPLETED',
   ACCEPTED = 'ACCEPTED',
   REJECTED = 'REJECTED',
-  DELETED = 'DELETED',
   DISMISSED = 'DISMISSED',
+  DELETED = 'DELETED',
+}
+
+export enum IndictmentCaseState {
+  DRAFT = CaseState.DRAFT,
+  WAITING_FOR_CONFIRMATION = CaseState.WAITING_FOR_CONFIRMATION,
+  SUBMITTED = CaseState.SUBMITTED,
+  RECEIVED = CaseState.RECEIVED,
+  MAIN_HEARING = CaseState.MAIN_HEARING,
+  COMPLETED = CaseState.COMPLETED,
+  DELETED = CaseState.DELETED,
+}
+
+export enum RequestCaseState {
+  NEW = CaseState.NEW,
+  DRAFT = CaseState.DRAFT,
+  SUBMITTED = CaseState.SUBMITTED,
+  RECEIVED = CaseState.RECEIVED,
+  ACCEPTED = CaseState.ACCEPTED,
+  REJECTED = CaseState.REJECTED,
+  DISMISSED = CaseState.DISMISSED,
+  DELETED = CaseState.DELETED,
 }
 
 export enum CaseAppealState {
@@ -103,12 +132,43 @@ export enum CaseAppealState {
 export enum CaseTransition {
   OPEN = 'OPEN',
   ASK_FOR_CONFIRMATION = 'ASK_FOR_CONFIRMATION',
+  DENY_INDICTMENT = 'DENY_INDICTMENT',
+  SUBMIT = 'SUBMIT',
+  RECEIVE = 'RECEIVE',
+  RETURN_INDICTMENT = 'RETURN_INDICTMENT',
+  REDISTRIBUTE = 'REDISTRIBUTE',
+  COMPLETE = 'COMPLETE',
+  ACCEPT = 'ACCEPT',
+  REJECT = 'REJECT',
+  DISMISS = 'DISMISS',
+  DELETE = 'DELETE',
+  REOPEN = 'REOPEN',
+  APPEAL = 'APPEAL',
+  RECEIVE_APPEAL = 'RECEIVE_APPEAL',
+  COMPLETE_APPEAL = 'COMPLETE_APPEAL',
+  REOPEN_APPEAL = 'REOPEN_APPEAL',
+  WITHDRAW_APPEAL = 'WITHDRAW_APPEAL',
+}
+
+export enum IndictmentCaseTransition {
+  ASK_FOR_CONFIRMATION = 'ASK_FOR_CONFIRMATION',
+  DENY_INDICTMENT = 'DENY_INDICTMENT',
+  SUBMIT = 'SUBMIT',
+  RECEIVE = 'RECEIVE',
+  RETURN_INDICTMENT = 'RETURN_INDICTMENT',
+  REDISTRIBUTE = 'REDISTRIBUTE',
+  COMPLETE = 'COMPLETE',
+  DELETE = 'DELETE',
+}
+
+export enum RequestCaseTransition {
+  OPEN = 'OPEN',
   SUBMIT = 'SUBMIT',
   RECEIVE = 'RECEIVE',
   ACCEPT = 'ACCEPT',
   REJECT = 'REJECT',
-  DELETE = 'DELETE',
   DISMISS = 'DISMISS',
+  DELETE = 'DELETE',
   REOPEN = 'REOPEN',
   APPEAL = 'APPEAL',
   RECEIVE_APPEAL = 'RECEIVE_APPEAL',
@@ -124,6 +184,7 @@ export enum CaseLegalProvisions {
   _95_1_C = '_95_1_C', // c-lið 1. mgr. 95. gr.
   _95_1_D = '_95_1_D', // d-lið 1. mgr. 95. gr.
   _95_2 = '_95_2', // 2. mgr. 95. gr.
+  _97_1 = '_97_1', // 1. mgr. 97. gr. sml.
   _99_1_B = '_99_1_B', // b-lið 1. mgr. 99. gr.
   _100_1 = '_100_1', // 1. mgr. 100. gr. sml.
 }
@@ -165,6 +226,16 @@ export enum CaseAppealRulingDecision {
   DISCONTINUED = 'DISCONTINUED',
 }
 
+export enum CaseIndictmentRulingDecision {
+  RULING = 'RULING',
+  FINE = 'FINE',
+}
+
+export enum IndictmentCaseReviewDecision {
+  APPEAL = 'APPEAL',
+  ACCEPT = 'ACCEPT',
+}
+
 export enum SessionArrangements {
   ALL_PRESENT = 'ALL_PRESENT',
   ALL_PRESENT_SPOKESPERSON = 'ALL_PRESENT_SPOKESPERSON',
@@ -174,7 +245,7 @@ export enum SessionArrangements {
 
 export enum RequestSharedWithDefender {
   READY_FOR_COURT = 'READY_FOR_COURT',
-  COURT_DATE = 'COURT_DATE',
+  COURT_DATE = 'COURT_DATE', // TODO: Rename to ARRAIGNMENT_DATE at some point
   NOT_SHARED = 'NOT_SHARED',
 }
 
@@ -182,6 +253,12 @@ export enum DefendantPlea {
   GUILTY = 'GUILTY',
   NOT_GUILTY = 'NOT_GUILTY',
   NO_PLEA = 'NO_PLEA',
+}
+
+export enum ServiceRequirement {
+  REQUIRED = 'REQUIRED',
+  NOT_REQUIRED = 'NOT_REQUIRED',
+  NOT_APPLICABLE = 'NOT_APPLICABLE',
 }
 
 export const indictmentCases = [CaseType.INDICTMENT]
@@ -224,25 +301,54 @@ export const isInvestigationCase = (type?: CaseType | null): boolean => {
   return Boolean(type && investigationCases.includes(type))
 }
 
+export const isRequestCase = (type?: CaseType | null): boolean => {
+  return Boolean(type && (isRestrictionCase(type) || isInvestigationCase(type)))
+}
+
 export const acceptedCaseDecisions = [
   CaseDecision.ACCEPTING,
   CaseDecision.ACCEPTING_PARTIALLY,
 ]
 
+// TODO: Move to the client as it is only used there
 export const isAcceptingCaseDecision = (
   decision?: CaseDecision | null,
 ): boolean => {
   return Boolean(decision && acceptedCaseDecisions.includes(decision))
 }
 
-export const completedCaseStates = [
+export const completedRequestCaseStates = [
   CaseState.ACCEPTED,
   CaseState.REJECTED,
   CaseState.DISMISSED,
 ]
 
+export const completedIndictmentCaseStates = [CaseState.COMPLETED]
+
+export const completedCaseStates = completedRequestCaseStates.concat(
+  completedIndictmentCaseStates,
+)
+
 export const isCompletedCase = (state?: CaseState | null): boolean => {
   return Boolean(state && completedCaseStates.includes(state))
+}
+
+export const isTrafficViolationCase = (
+  indictmentSubtypes?: IndictmentSubtypeMap,
+  type?: CaseType,
+): boolean => {
+  if (!indictmentSubtypes || type !== CaseType.INDICTMENT) {
+    return false
+  }
+
+  const flatIndictmentSubtypes = flatten(Object.values(indictmentSubtypes))
+
+  return Boolean(
+    flatIndictmentSubtypes.length > 0 &&
+      flatIndictmentSubtypes.every(
+        (val) => val === IndictmentSubtype.TRAFFIC_VIOLATION,
+      ),
+  )
 }
 
 export const getStatementDeadline = (appealReceived: Date): string => {
@@ -267,3 +373,37 @@ export const prosecutorCanSelectDefenderForInvestigationCase = (
       ].includes(type),
   )
 }
+
+export const isIndictmentCaseState = (
+  state: string,
+): state is IndictmentCaseState => {
+  return Object.values(IndictmentCaseState).includes(
+    state as IndictmentCaseState,
+  )
+}
+
+export const isRequestCaseState = (
+  state: string,
+): state is RequestCaseState => {
+  return Object.values(RequestCaseState).includes(state as RequestCaseState)
+}
+
+export const isIndictmentCaseTransition = (
+  transition: string,
+): transition is IndictmentCaseTransition => {
+  return Object.values(IndictmentCaseTransition).includes(
+    transition as IndictmentCaseTransition,
+  )
+}
+
+export const isRequestCaseTransition = (
+  transition: string,
+): transition is RequestCaseTransition => {
+  return Object.values(RequestCaseTransition).includes(
+    transition as RequestCaseTransition,
+  )
+}
+
+export type IndictmentConfirmation =
+  | { actor: string; institution: string; date: Date }
+  | undefined

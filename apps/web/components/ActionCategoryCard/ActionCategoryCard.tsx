@@ -11,6 +11,7 @@ import {
   Hyphen,
   IconMapIcon,
   Inline,
+  LinkV2,
   Tag,
   TagProps,
   Text,
@@ -39,6 +40,7 @@ export type CTAProps = {
   icon?: IconMapIcon
   iconType?: 'filled' | 'outline'
   onClick?: () => void
+  href?: string
   disabled?: boolean
 }
 
@@ -65,6 +67,7 @@ export type ActionCategoryCardProps = {
   tags?: CategoryCardTag[]
   tagOptions?: Pick<TagProps, 'hyphenate' | 'truncate' | 'textLeft'>
   href?: string
+  onCardClick?: () => void
   colorScheme?: 'blue' | 'purple' | 'red'
   /** The heading above is truncated instead of overflowing */
   truncateHeading?: TextProps['truncate']
@@ -112,6 +115,7 @@ const Component = forwardRef<HTMLElement, ActionCategoryCardProps>(
       icon,
       text,
       href = '/',
+      onCardClick,
       tags = [],
       colorScheme = 'blue',
       truncateHeading = false,
@@ -139,19 +143,37 @@ const Component = forwardRef<HTMLElement, ActionCategoryCardProps>(
             display="flex"
             justifyContent={['flexStart', 'flexEnd']}
             flexDirection="row"
+            style={{ cursor: cta.disabled ? 'not-allowed' : undefined }}
           >
             <Box>
-              <Button
-                {...(cta.buttonType ?? { variant: cta.variant })}
-                size={cta.size}
-                onClick={cta.onClick}
-                disabled={cta.disabled}
-                icon={cta.icon}
-                iconType={cta.iconType}
-                nowrap
-              >
-                {cta.label}
-              </Button>
+              {cta.href ? (
+                <Button
+                  {...(cta.buttonType ?? { variant: cta.variant })}
+                  size={cta.size}
+                  fluid
+                  disabled={cta.disabled}
+                  icon={cta.icon}
+                  iconType={cta.iconType}
+                  nowrap
+                >
+                  <LinkV2 href={cta.href} newTab={true}>
+                    {cta.label}
+                  </LinkV2>
+                </Button>
+              ) : (
+                <Button
+                  {...(cta.buttonType ?? { variant: cta.variant })}
+                  size={cta.size}
+                  fluid
+                  onClick={cta.onClick}
+                  disabled={cta.disabled}
+                  icon={cta.icon}
+                  iconType={cta.iconType}
+                  nowrap
+                >
+                  {cta.label}
+                </Button>
+              )}
             </Box>
           </Box>
         )
@@ -199,6 +221,7 @@ const Component = forwardRef<HTMLElement, ActionCategoryCardProps>(
               height="full"
               display="flex"
               flexDirection="column"
+              onClick={onCardClick}
             >
               <Box
                 display="flex"

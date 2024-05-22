@@ -15,9 +15,25 @@ interface AppealInfo {
   appealedByRole?: UserRole
   appealedDate?: string
   statementDeadline?: string
+  canProsecutorAppeal?: boolean
+  canDefenderAppeal?: boolean
 }
 
-function getAppealInfo(theCase: Case): AppealInfo {
+interface IndictmentInfo {
+  indictmentAppealDeadline?: string
+}
+
+const isAppealableDecision = (decision?: CaseAppealDecision | null) => {
+  if (!decision) {
+    return false
+  }
+  return [
+    CaseAppealDecision.POSTPONE,
+    CaseAppealDecision.NOT_APPLICABLE,
+  ].includes(decision)
+}
+
+export const getAppealInfo = (theCase: Case): AppealInfo => {
   const {
     rulingDate,
     appealState,
@@ -34,13 +50,21 @@ function getAppealInfo(theCase: Case): AppealInfo {
     return appealInfo
   }
 
+  const hasBeenAppealed = Boolean(appealState)
+
   appealInfo.canBeAppealed = Boolean(
-    !appealState &&
-      (accusedAppealDecision === CaseAppealDecision.POSTPONE ||
-        prosecutorAppealDecision === CaseAppealDecision.POSTPONE),
+    !hasBeenAppealed &&
+      (isAppealableDecision(accusedAppealDecision) ||
+        isAppealableDecision(prosecutorAppealDecision)),
   )
 
-  appealInfo.hasBeenAppealed = Boolean(appealState)
+  appealInfo.canProsecutorAppeal =
+    !hasBeenAppealed && isAppealableDecision(prosecutorAppealDecision)
+
+  appealInfo.canDefenderAppeal =
+    !hasBeenAppealed && isAppealableDecision(accusedAppealDecision)
+
+  appealInfo.hasBeenAppealed = hasBeenAppealed
 
   appealInfo.appealedByRole = prosecutorPostponedAppealDate
     ? UserRole.PROSECUTOR
@@ -67,9 +91,24 @@ function getAppealInfo(theCase: Case): AppealInfo {
   return appealInfo
 }
 
-export function transformCase(theCase: Case): Case {
-  const appealInfo = getAppealInfo(theCase)
+export const getIndictmentInfo = (rulingDate?: string): IndictmentInfo => {
+  const indictmentInfo: IndictmentInfo = {}
 
+  if (!rulingDate) {
+    return indictmentInfo
+  }
+
+  const theRulingDate = new Date(rulingDate)
+  indictmentInfo.indictmentAppealDeadline = new Date(
+    theRulingDate.setDate(theRulingDate.getDate() + 28),
+  ).toISOString()
+
+  return indictmentInfo
+}
+
+export const transformCase = (theCase: Case): Case => {
+  const appealInfo = getAppealInfo(theCase)
+  const indictmentInfo = getIndictmentInfo(theCase.rulingDate)
   return {
     ...theCase,
     requestProsecutorOnlySession: theCase.requestProsecutorOnlySession ?? false,
@@ -91,5 +130,6 @@ export function transformCase(theCase: Case): Case {
         new Date(theCase.appealReceivedByCourtDate).getTime() + getDays(1)
       : false,
     ...appealInfo,
+    ...indictmentInfo,
   }
 }

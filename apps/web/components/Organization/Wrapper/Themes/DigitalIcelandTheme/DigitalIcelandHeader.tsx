@@ -86,7 +86,7 @@ const DigitalIcelandHeader: React.FC<React.PropsWithChildren<HeaderProps>> = ({
             />
           </Link>
         )}
-        <Text variant="h1" marginTop={2}>
+        <Text variant="h1" as="h1" marginTop={2}>
           {organizationPage.title}
         </Text>
       </Box>

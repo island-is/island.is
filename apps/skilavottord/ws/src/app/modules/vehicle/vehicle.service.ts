@@ -68,7 +68,11 @@ export class VehicleService {
       return true
     } else {
       const errorMsg = `failed to update mileage: ${mileage} on vehicle: ${permno}`
-      this.logger.error(errorMsg)
+      this.logger.error(
+        `car-recycling: Failed to update mileage: ${mileage} on vehicle: ${permno.slice(
+          -3,
+        )}`,
+      )
       throw new Error(errorMsg)
     }
   }
@@ -81,6 +85,11 @@ export class VehicleService {
       if (findVehicle) {
         findVehicle.mileage = vehicle.mileage
         if (vehicle.ownerNationalId !== findVehicle.ownerNationalId) {
+          this.logger.info(
+            `car-recycling: Changing owner of the vehicle: ${vehicle.vehicleId.slice(
+              -3,
+            )}`,
+          )
           findVehicle.ownerNationalId = vehicle.ownerNationalId
         }
         await findVehicle.save()

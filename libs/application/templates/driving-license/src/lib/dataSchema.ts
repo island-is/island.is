@@ -1,6 +1,5 @@
 import { z } from 'zod'
-import { YES, NO } from './constants'
-import { B_FULL, B_TEMP } from '../shared/constants'
+import { YES, NO, B_TEMP, B_FULL, BE } from './constants'
 import { parsePhoneNumberFromString } from 'libphonenumber-js'
 
 const isValidPhoneNumber = (phoneNumber: string) => {
@@ -24,20 +23,35 @@ export const dataSchema = z.object({
     isDisabled: z.enum([YES, NO]),
     hasOtherDiseases: z.enum([YES, NO]),
   }),
+  contactGlassesMismatch: z.boolean(),
   willBringQualityPhoto: z.union([
     z.array(z.enum([YES, NO])).nonempty(),
     z.enum([YES, NO]),
   ]),
   requirementsMet: z.boolean().refine((v) => v),
   certificate: z.array(z.enum([YES, NO])).nonempty(),
-  applicationFor: z.enum([B_FULL, B_TEMP]),
+  applicationFor: z.enum([B_FULL, B_TEMP, BE]),
   email: z.string().email(),
   phone: z.string().refine((v) => isValidPhoneNumber(v)),
   drivingInstructor: z.string().min(1),
-  drivingLicenseInOtherCountry: z.enum([YES, NO]),
-  drivingLicenseDeprivedOrRestrictedInOtherCountry: z.union([
-    z.array(z.enum([YES, NO])).nonempty(),
-    z.enum([YES, NO]),
-  ]),
+  otherCountry: z
+    .object({
+      drivingLicenseInOtherCountry: z.enum([YES, NO]),
+      drivingLicenseDeprivedOrRestrictedInOtherCountry: z
+        .array(z.string())
+        .optional(),
+    })
+    .refine(
+      ({
+        drivingLicenseInOtherCountry,
+        drivingLicenseDeprivedOrRestrictedInOtherCountry,
+      }) => {
+        return drivingLicenseInOtherCountry === YES
+          ? !!drivingLicenseDeprivedOrRestrictedInOtherCountry &&
+              drivingLicenseDeprivedOrRestrictedInOtherCountry.length > 0
+          : true
+      },
+      { path: ['drivingLicenseDeprivedOrRestrictedInOtherCountry'] },
+    ),
   hasHealthRemarks: z.enum([YES, NO]),
 })

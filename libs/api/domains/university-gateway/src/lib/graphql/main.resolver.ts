@@ -2,7 +2,6 @@ import { Args, Query, Resolver } from '@nestjs/graphql'
 import { CurrentUser } from '@island.is/auth-nest-tools'
 import type { User } from '@island.is/auth-nest-tools'
 import { CacheControl, CacheControlOptions } from '@island.is/nest/graphql'
-import { CACHE_CONTROL_MAX_AGE } from '@island.is/shared/constants'
 import { UniversityGatewayApi } from '../universityGateway.service'
 import {
   UniversityGatewayGetPogramInput,
@@ -13,8 +12,11 @@ import {
   UniversityGatewayProgramFilter,
   UniversityGatewayApplication,
 } from './models'
+import { UNIVERSITY_GATEWAY_CACHE_CONTROL_MAX_AGE } from '../cacheControl'
 
-const defaultCache: CacheControlOptions = { maxAge: CACHE_CONTROL_MAX_AGE }
+const defaultCache: CacheControlOptions = {
+  maxAge: UNIVERSITY_GATEWAY_CACHE_CONTROL_MAX_AGE,
+}
 
 @Resolver()
 export class MainResolver {

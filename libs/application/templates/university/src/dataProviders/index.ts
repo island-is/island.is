@@ -1,12 +1,9 @@
 import { defineTemplateApi } from '@island.is/application/types'
 
-export { UserProfileApi } from '@island.is/application/types'
-
-export const NationalRegistryIndividualApi = defineTemplateApi({
-  action: 'nationalRegistry',
-  externalDataId: 'individual',
-  namespace: 'NationalRegistry',
-})
+export {
+  UserProfileApi,
+  NationalRegistryUserApi,
+} from '@island.is/application/types'
 
 export const UniversityApi = defineTemplateApi({
   action: 'getUniversities',
@@ -18,4 +15,13 @@ export const ProgramApi = defineTemplateApi({
   action: 'getPrograms',
   externalDataId: 'programs',
   namespace: 'University',
+})
+
+export const InnaApi = defineTemplateApi({
+  action: 'getInnaDiplomas',
+  externalDataId: 'innaEducation',
+  namespace: 'EducationShared',
+  params: {
+    allowEmpty: true,
+  },
 })

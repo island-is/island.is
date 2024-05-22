@@ -13,8 +13,9 @@ import {
   ContextMenu,
   TagAppealState,
   TagCaseState,
+  useWithdrawAppealMenuOption,
+  WithdrawAppealContextMenuModal,
 } from '@island.is/judicial-system-web/src/components'
-import { useContextMenu } from '@island.is/judicial-system-web/src/components/ContextMenu/ContextMenu'
 import { contextMenu } from '@island.is/judicial-system-web/src/components/ContextMenu/ContextMenu.strings'
 import IconButton from '@island.is/judicial-system-web/src/components/IconButton/IconButton'
 import {
@@ -32,6 +33,7 @@ import {
   useSortCases,
 } from '@island.is/judicial-system-web/src/utils/hooks'
 
+import { strings } from './DefenderCasesTable.string'
 import * as styles from './DefenderCasesTable.css'
 
 interface Props {
@@ -50,8 +52,12 @@ export const DefenderCasesTable: React.FC<React.PropsWithChildren<Props>> = (
   const { isOpeningCaseId, LoadingIndicator, showLoading, handleOpenCase } =
     useCaseList()
 
-  const { withdrawAppealMenuOption, shouldDisplayWithdrawAppealOption } =
-    useContextMenu()
+  const {
+    withdrawAppealMenuOption,
+    caseToWithdraw,
+    setCaseToWithdraw,
+    shouldDisplayWithdrawAppealOption,
+  } = useWithdrawAppealMenuOption()
 
   return (
     <Box marginBottom={7}>
@@ -116,48 +122,48 @@ export const DefenderCasesTable: React.FC<React.PropsWithChildren<Props>> = (
             </tr>
           </thead>
           <tbody>
-            {sortedData?.map((c: CaseListEntry) => (
+            {sortedData?.map((column: CaseListEntry) => (
               <tr
                 className={cn(styles.tableRowContainer)}
-                key={c.id}
-                onClick={() => handleOpenCase(c.id)}
+                key={column.id}
+                onClick={() => handleOpenCase(column.id)}
               >
                 <td className={styles.td}>
                   <CourtCaseNumber
-                    courtCaseNumber={c.courtCaseNumber}
-                    policeCaseNumbers={c.policeCaseNumbers}
-                    appealCaseNumber={c.appealCaseNumber}
+                    courtCaseNumber={column.courtCaseNumber}
+                    policeCaseNumbers={column.policeCaseNumbers}
+                    appealCaseNumber={column.appealCaseNumber}
                   />
                 </td>
                 <td className={cn(styles.td)}>
-                  <DefendantInfo defendants={c.defendants} />
+                  <DefendantInfo defendants={column.defendants} />
                 </td>
                 <td className={styles.td}>
                   <ColumnCaseType
-                    type={c.type}
-                    decision={c.decision}
-                    parentCaseId={c.parentCaseId}
+                    type={column.type}
+                    decision={column.decision}
+                    parentCaseId={column.parentCaseId}
                   />
                 </td>
                 <td className={cn(styles.td)}>
-                  <CreatedDate created={c.created} />
+                  <CreatedDate created={column.created} />
                 </td>
                 <td className={styles.td} data-testid="tdTag">
                   <Box
-                    marginRight={c.appealState ? 1 : 0}
-                    marginBottom={c.appealState ? 1 : 0}
+                    marginRight={column.appealState ? 1 : 0}
+                    marginBottom={column.appealState ? 1 : 0}
                   >
                     <TagCaseState
-                      caseState={c.state}
-                      caseType={c.type}
-                      isValidToDateInThePast={c.isValidToDateInThePast}
-                      courtDate={c.courtDate}
+                      caseState={column.state}
+                      caseType={column.type}
+                      isValidToDateInThePast={column.isValidToDateInThePast}
+                      courtDate={column.courtDate}
                     />
                   </Box>
-                  {c.appealState && (
+                  {column.appealState && (
                     <TagAppealState
-                      appealState={c.appealState}
-                      appealRulingDecision={c.appealRulingDecision}
+                      appealState={column.appealState}
+                      appealRulingDecision={column.appealRulingDecision}
                     />
                   )}
                 </td>
@@ -165,36 +171,47 @@ export const DefenderCasesTable: React.FC<React.PropsWithChildren<Props>> = (
                   <td className={styles.td}>
                     <Text>
                       {getDurationDate(
-                        c.state,
-                        c.validToDate,
-                        c.initialRulingDate,
-                        c.rulingDate,
+                        column.state,
+                        column.validToDate,
+                        column.initialRulingDate,
+                        column.rulingDate,
                       )}
                     </Text>
                   </td>
                 ) : (
                   <td className={styles.td}>
-                    {c.courtDate && (
-                      <>
-                        <Text>
-                          <Box component="span" className={styles.blockColumn}>
-                            {capitalize(
-                              format(parseISO(c.courtDate), 'EEEE d. LLLL y', {
-                                locale: localeIS,
-                              }),
-                            ).replace('dagur', 'd.')}
-                          </Box>
-                        </Text>
-                        <Text as="span" variant="small">
-                          kl. {format(parseISO(c.courtDate), 'kk:mm')}
-                        </Text>
-                      </>
+                    {column.postponedIndefinitelyExplanation ? (
+                      <Text>{formatMessage(strings.postponed)}</Text>
+                    ) : (
+                      column.courtDate && (
+                        <>
+                          <Text>
+                            <Box
+                              component="span"
+                              className={styles.blockColumn}
+                            >
+                              {capitalize(
+                                format(
+                                  parseISO(column.courtDate),
+                                  'EEEE d. LLLL y',
+                                  {
+                                    locale: localeIS,
+                                  },
+                                ),
+                              ).replace('dagur', 'd.')}
+                            </Box>
+                          </Text>
+                          <Text as="span" variant="small">
+                            kl. {format(parseISO(column.courtDate), 'kk:mm')}
+                          </Text>
+                        </>
+                      )
                     )}
                   </td>
                 )}
                 <td>
                   <AnimatePresence>
-                    {isOpeningCaseId === c.id && showLoading ? (
+                    {isOpeningCaseId === column.id && showLoading ? (
                       <LoadingIndicator />
                     ) : (
                       <Box>
@@ -202,11 +219,11 @@ export const DefenderCasesTable: React.FC<React.PropsWithChildren<Props>> = (
                           items={[
                             {
                               title: formatMessage(contextMenu.openInNewTab),
-                              onClick: () => handleOpenCase(c.id, true),
+                              onClick: () => handleOpenCase(column.id, true),
                               icon: 'open',
                             },
-                            ...(shouldDisplayWithdrawAppealOption(c)
-                              ? [withdrawAppealMenuOption(c.id, cases)]
+                            ...(shouldDisplayWithdrawAppealOption(column)
+                              ? [withdrawAppealMenuOption(column.id)]
                               : []),
                           ]}
                           menuLabel="Opna valmöguleika á máli"
@@ -229,6 +246,13 @@ export const DefenderCasesTable: React.FC<React.PropsWithChildren<Props>> = (
             ))}
           </tbody>
         </table>
+      )}
+      {caseToWithdraw && (
+        <WithdrawAppealContextMenuModal
+          caseId={caseToWithdraw}
+          cases={cases}
+          onClose={() => setCaseToWithdraw(undefined)}
+        />
       )}
     </Box>
   )

@@ -4,6 +4,7 @@ import {
   NO_ANSWER,
   buildCustomField,
   buildDateField,
+  buildFileUploadField,
   buildForm,
   buildMultiField,
   buildRadioField,
@@ -21,6 +22,7 @@ import {
   FormModes,
 } from '@island.is/application/types'
 import {
+  FILE_SIZE_LIMIT,
   NO,
   PARENTAL_GRANT,
   PARENTAL_GRANT_STUDENTS,
@@ -339,48 +341,71 @@ export const EditOrAddEmployersAndPeriods: Form = buildForm({
             }),
           ],
         }),
+        buildSubSection({
+          id: 'reviewUpload',
+          title: parentalLeaveFormMessages.fileUpload.additionalAttachmentTitle,
+          children: [
+            buildFileUploadField({
+              id: 'fileUpload.changeEmployerFile',
+              title:
+                parentalLeaveFormMessages.fileUpload.additionalAttachmentTitle,
+              introduction:
+                parentalLeaveFormMessages.fileUpload
+                  .additionalAttachmentDescription,
+              condition: (answers) => {
+                const { addEmployer } = getApplicationAnswers(answers)
+
+                return addEmployer === YES
+              },
+              maxSize: FILE_SIZE_LIMIT,
+              maxSizeErrorText:
+                parentalLeaveFormMessages.fileUpload.attachmentMaxSizeError,
+              uploadAccept: '.pdf',
+              uploadHeader: '',
+              uploadDescription:
+                parentalLeaveFormMessages.fileUpload.uploadDescription,
+              uploadButtonLabel:
+                parentalLeaveFormMessages.fileUpload.attachmentButton,
+              uploadMultiple: true,
+            }),
+          ],
+        }),
       ],
     }),
     buildSection({
       id: 'confirmation',
-      title: parentalLeaveFormMessages.confirmation.section,
+      title: parentalLeaveFormMessages.confirmation.title,
       children: [
-        buildSubSection({
+        buildMultiField({
+          id: 'confirmation',
           title: '',
           children: [
-            buildMultiField({
-              id: 'confirmation',
+            buildCustomField({
+              id: 'confirmationScreen',
               title: '',
-              description: '',
-              children: [
-                buildCustomField({
-                  id: 'confirmationScreen',
-                  title: '',
-                  component: 'EditOrAddEmployersAndPeriodsReview',
-                }),
-                buildSubmitField({
-                  id: 'submit',
-                  placement: 'footer',
-                  title: parentalLeaveFormMessages.confirmation.title,
-                  actions: [
-                    {
-                      event: DefaultEvents.ABORT,
-                      name: parentalLeaveFormMessages.confirmation.cancel,
-                      type: 'reject',
-                    },
-                    {
-                      event: DefaultEvents.SUBMIT,
-                      name: parentalLeaveFormMessages.confirmation.title,
-                      type: 'primary',
-                      condition: (answers) => {
-                        // Only display Submit button if changes made
-                        const { addPeriods, addEmployer } =
-                          getApplicationAnswers(answers)
-                        return addPeriods === YES || addEmployer === YES
-                      },
-                    },
-                  ],
-                }),
+              component: 'EditOrAddEmployersAndPeriodsReview',
+            }),
+            buildSubmitField({
+              id: 'submit',
+              placement: 'footer',
+              title: '',
+              actions: [
+                {
+                  event: DefaultEvents.ABORT,
+                  name: parentalLeaveFormMessages.confirmation.cancel,
+                  type: 'reject',
+                },
+                {
+                  event: DefaultEvents.SUBMIT,
+                  name: parentalLeaveFormMessages.confirmation.submitButton,
+                  type: 'primary',
+                  condition: (answers) => {
+                    // Only display Submit button if changes made
+                    const { addPeriods, addEmployer } =
+                      getApplicationAnswers(answers)
+                    return addPeriods === YES || addEmployer === YES
+                  },
+                },
               ],
             }),
           ],

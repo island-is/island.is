@@ -11,7 +11,7 @@ import { RskRelationshipsClient } from '@island.is/clients-rsk-relationships'
 import { NationalRegistryClientService } from '@island.is/clients/national-registry-v2'
 import { NationalRegistryV3ClientService } from '@island.is/clients/national-registry-v3'
 import { CompanyRegistryClientService } from '@island.is/clients/rsk/company-registry'
-import { UserProfileApi } from '@island.is/clients/user-profile'
+import { V2MeApi } from '@island.is/clients/user-profile'
 import { FeatureFlagService, Features } from '@island.is/nest/feature-flags'
 import {
   createApiScope,
@@ -81,7 +81,7 @@ class MockNationalRegistryV3ClientService
 
 class MockUserProfile {
   withMiddleware = () => this
-  userProfileControllerFindOneByNationalId = jest.fn().mockResolvedValue({})
+  meUserProfileControllerFindUserProfile = jest.fn().mockResolvedValue({})
 }
 
 interface SetupOptions {
@@ -114,7 +114,7 @@ export const setupWithAuth = async ({
         .useClass(MockNationalRegistryClientService)
         .overrideProvider(NationalRegistryV3ClientService)
         .useClass(MockNationalRegistryV3ClientService)
-        .overrideProvider(UserProfileApi)
+        .overrideProvider(V2MeApi)
         .useClass(MockUserProfile)
         .overrideProvider(CompanyRegistryClientService)
         .useValue({

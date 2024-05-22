@@ -180,6 +180,10 @@ export const m = defineMessages({
     id: 'service.portal:more-options',
     defaultMessage: 'Fleiri möguleikar',
   },
+  owner: {
+    id: 'service.portal:owner',
+    defaultMessage: 'Eigandi',
+  },
   get: {
     id: 'service.portal:get',
     defaultMessage: 'Sækja',
@@ -229,6 +233,15 @@ export const m = defineMessages({
     id: 'service.portal:could-not-fetch',
     defaultMessage: 'Tókst ekki að sækja',
   },
+  couldNotFetchAllItems: {
+    id: 'service.portal:could-not-fetch-all-items',
+    defaultMessage: 'Ekki tókst að sækja öll gögn',
+  },
+  couldNotFetchAllItemsDetail: {
+    id: 'service.portal:could-not-fetch-all-items-detail',
+    defaultMessage:
+      'Einhverjar tengingar virðast hafa rofnað svo ekki tókst að sækja gögn frá eftirfarandi aðilum: {arg}. Verið er að vinna í að lagfæra tenginuna.',
+  },
   somethingWrong: {
     id: 'service.portal:something-went-wrong',
     defaultMessage: 'Eitthvað fór úrskeiðis',
@@ -236,6 +249,10 @@ export const m = defineMessages({
   fetching: {
     id: 'service.portal:fetching',
     defaultMessage: 'Sæki',
+  },
+  fetchLicense: {
+    id: 'service.portal:fetch-license',
+    defaultMessage: 'Sækja leyfisbréf',
   },
   assets: {
     id: 'service.portal:assets',
@@ -367,6 +384,14 @@ export const m = defineMessages({
     id: 'service.portal:messages',
     defaultMessage: 'Skilaboð',
   },
+  expired: {
+    id: 'service.portal:expired',
+    defaultMessage: 'Útrunnið',
+  },
+  valid: {
+    id: 'service.portal:valid',
+    defaultMessage: 'Í gildi',
+  },
   today: {
     id: 'service.portal:today',
     defaultMessage: 'Í dag',
@@ -478,6 +503,14 @@ export const m = defineMessages({
   signatureCollectionLists: {
     id: 'service.portal:signatureCollectionLists',
     defaultMessage: 'Meðmælasöfnun',
+  },
+  notifications: {
+    id: 'service.portal:notifications',
+    defaultMessage: 'Tilkynningar',
+  },
+  notificationsViewAll: {
+    id: 'service.portal:notifications-view-all',
+    defaultMessage: 'Sjá allar tilkynningar',
   },
   viewSignatureList: {
     id: 'service.portal:viewSignatureList',
@@ -634,6 +667,14 @@ export const m = defineMessages({
     defaultMessage:
       'Hér getur þú gert greiðsluáætlun ef þú vilt dreifa greiðslum á skuld þinni við ríkissjóð og stofnanir. Hér getur þú einnig séð eldri greiðsluáætlanir. Ef Greiðsluáætlunin er greidd hraðar niður en áætlunin segir til um, munu greiðsluseðlar ekki berast þegar hún er upp greidd og engar eftirstöðvar eftir.',
   },
+  financeHousingBenefits: {
+    id: 'service.portal:finance-housing-benefits',
+    defaultMessage: 'Húsnæðisbætur',
+  },
+  financeHousingBenefitsDesc: {
+    id: 'service.portal:finance-housing-benefits-description',
+    defaultMessage: 'Hér sérð þú sundurliðun húsnæðisbóta',
+  },
   financeClaims: {
     id: 'service.portal:finance-claims',
     defaultMessage: 'Kröfur',
@@ -692,6 +733,14 @@ export const m = defineMessages({
     id: 'service.portal:my-settings',
     defaultMessage: 'Mínar stillingar',
   },
+  mySettingsInformation: {
+    id: 'service.portal:my-settings-information',
+    defaultMessage: 'Upplýsingar',
+  },
+  mySettingsNotifications: {
+    id: 'service.portal:my-settings-notifications',
+    defaultMessage: 'Tilkynningar',
+  },
   lists: {
     id: 'service.portal:lists',
     defaultMessage: 'Listar',
@@ -740,6 +789,10 @@ export const m = defineMessages({
   educationDegree: {
     id: 'service.portal:educationDegree',
     defaultMessage: 'Prófgráður',
+  },
+  noTranscriptForDownload: {
+    id: 'service.portal:educationCareerNoTranscriptForDownload',
+    defaultMessage: 'Námsmat ófáanlegt',
   },
   accessControl: {
     id: 'service.portal:accessControl',
@@ -855,6 +908,10 @@ export const m = defineMessages({
   noDataFound: {
     id: 'service.portal:no-data-found',
     defaultMessage: 'Engin gögn fundust fyrir þig',
+  },
+  noTransactionFound: {
+    id: 'service.portal:no-transaction-found',
+    defaultMessage: 'Engar færslur eru innan þeirra skilyrða sem valin eru',
   },
   noData: {
     id: 'service.portal:no-data-found-simple',
@@ -1212,6 +1269,10 @@ export const m = defineMessages({
     id: 'service.portal:userprofile-tooltip',
     defaultMessage: 'Ísland.is hefur umsjón með gögnum á þínum stillingum.',
   },
+  notificationsProfileTooltip: {
+    id: 'service.portal:notifications-tooltip',
+    defaultMessage: 'Ísland.is hefur umsjón með tilkynningum.',
+  },
 
   universityOfIcelandTooltip: {
     id: 'service.portal:uni-iceland-tooltip',
@@ -1226,6 +1287,11 @@ export const m = defineMessages({
     id: 'service.portal:real-estate-tooltip',
     defaultMessage:
       'Húsnæðis- og mannvirkjastofnun hefur umsjón með gögnum um fasteignir.',
+  },
+  hmsHousingBenefitsTooltip: {
+    id: 'service.portal:housing-benefits-tooltip',
+    defaultMessage:
+      'Húsnæðis- og mannvirkjastofnun hefur umsjón með gögnum um húsnæðisbætur.',
   },
   socialInsuranceTooltip: {
     id: 'service.portal:social-insurance-tooltip',
@@ -1307,6 +1373,10 @@ export const m = defineMessages({
   closeActiveDocument: {
     id: 'service.portal:close-active-document',
     defaultMessage: 'Loka skjali',
+  },
+  backToList: {
+    id: 'service.portal:back-to-list',
+    defaultMessage: 'Aftur í lista',
   },
   month: {
     id: 'service.portal:month',
@@ -1425,26 +1495,48 @@ export const m = defineMessages({
     id: 'service.portal:icelandic',
     defaultMessage: 'Íslenska',
   },
-  noDataFoundVariable: {
-    id: 'sp.health:no-data-found',
+  noDataFoundVariableSingular: {
+    id: 'service.portal:no-data-found-variable-singular',
+    defaultMessage: 'Ekkert {arg} skráð',
+  },
+  noDataFoundVariableSingularFeminine: {
+    id: 'service.portal:no-data-found-variable-singular-feminine',
     defaultMessage: 'Engin {arg} skráð',
   },
+  noDataFoundVariableSingularMasculine: {
+    id: 'service.portal:no-data-found-variable-singular-masculine',
+    defaultMessage: 'Enginn {arg} skráður',
+  },
   noDataFoundVariableMasculine: {
-    id: 'sp.health:no-data-found-masculine',
+    id: 'service.portal:no-data-found-variable-masculine',
     defaultMessage: 'Engir {arg} skráðir',
   },
   noDataFoundVariableFeminine: {
-    id: 'sp.health:no-data-found-feminine',
+    id: 'service.portal:no-data-found-variable-feminine',
     defaultMessage: 'Engar {arg} skráðar',
   },
+  noDataFoundVariable: {
+    id: 'service.portal:no-data-found-variable',
+    defaultMessage: 'Engin {arg} skráð',
+  },
   noDataFoundVariableDetail: {
-    id: 'sp.health:no-data-found-detail',
+    id: 'service.portal:no-data-found-variable-detail',
     defaultMessage:
       'Ef þú telur að þú eigir að vera með skráða {arg}, vinsamlegast hafðu samband við þjónustuaðila.',
   },
   noDataFoundVariableDetailVariation: {
-    id: 'sp.health:no-data-found-detail-variation',
+    id: 'service.portal:no-data-found-variable-detail-variation',
     defaultMessage:
       'Ef þú telur að þú eigir að vera með skráð {arg}, vinsamlegast hafðu samband við þjónustuaðila.',
+  },
+  noDataFoundVariableDetailVariationFeminine: {
+    id: 'service.portal:no-data-found-variable-detail-variation-feminine',
+    defaultMessage:
+      'Ef þú telur að þú eigir að vera með skráðar {arg}, vinsamlegast hafðu samband við þjónustuaðila.',
+  },
+  noDataFoundVariableDetailVariationMasculine: {
+    id: 'service.portal:no-data-variable-found-detail-variation-masculine',
+    defaultMessage:
+      'Ef þú telur að þú eigir að vera með skráðann {arg}, vinsamlegast hafðu samband við þjónustuaðila.',
   },
 })

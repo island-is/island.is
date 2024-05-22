@@ -74,7 +74,8 @@ const CourtCaseNumber: React.FC<React.PropsWithChildren<Props>> = (props) => {
       <Box marginBottom={2}>
         <Text>
           {workingCase.state !== CaseState.SUBMITTED &&
-          workingCase.state !== CaseState.RECEIVED
+          workingCase.state !== CaseState.RECEIVED &&
+          workingCase.state !== CaseState.MAIN_HEARING
             ? formatMessage(courtCaseNumber.explanationDisabled)
             : formatMessage(courtCaseNumber.explanation)}
         </Text>
@@ -89,7 +90,8 @@ const CourtCaseNumber: React.FC<React.PropsWithChildren<Props>> = (props) => {
                 loading={isCreatingCourtCase}
                 disabled={Boolean(
                   (workingCase.state !== CaseState.SUBMITTED &&
-                    workingCase.state !== CaseState.RECEIVED) ||
+                    workingCase.state !== CaseState.RECEIVED &&
+                    workingCase.state !== CaseState.MAIN_HEARING) ||
                     workingCase.courtCaseNumber,
                 )}
                 fluid
@@ -150,7 +152,8 @@ const CourtCaseNumber: React.FC<React.PropsWithChildren<Props>> = (props) => {
                 }}
                 disabled={
                   workingCase.state !== CaseState.SUBMITTED &&
-                  workingCase.state !== CaseState.RECEIVED
+                  workingCase.state !== CaseState.RECEIVED &&
+                  workingCase.state !== CaseState.MAIN_HEARING
                 }
                 required
               />

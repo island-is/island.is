@@ -1,20 +1,19 @@
 import { IsString } from 'class-validator'
 import { Field, InputType, registerEnumType } from '@nestjs/graphql'
 import { ElasticsearchIndexLocale } from '@island.is/content-search-index-manager'
+import { CustomPageUniqueIdentifier as CustomPageUniqueIdentifierEnum } from '@island.is/shared/types'
 import { CacheField } from '@island.is/nest/graphql'
 
-export enum CustomPageUniqueIdentifier {
-  PensionCalculator = 'PensionCalculator',
-}
+export const CustomPageUniqueIdentifier = CustomPageUniqueIdentifierEnum
 
-registerEnumType(CustomPageUniqueIdentifier, {
+registerEnumType(CustomPageUniqueIdentifierEnum, {
   name: 'CustomPageUniqueIdentifier',
 })
 
 @InputType()
 export class GetCustomPageInput {
-  @CacheField(() => CustomPageUniqueIdentifier)
-  uniqueIdentifier!: CustomPageUniqueIdentifier
+  @CacheField(() => CustomPageUniqueIdentifierEnum)
+  uniqueIdentifier!: CustomPageUniqueIdentifierEnum
 
   @Field(() => String)
   @IsString()

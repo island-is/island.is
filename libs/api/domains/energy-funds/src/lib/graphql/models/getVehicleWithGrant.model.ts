@@ -25,4 +25,10 @@ export class VehicleDetailsWithGrant {
 
   @Field(() => Date, { nullable: true })
   newRegistrationDate?: Date
+
+  @Field(() => Date, { nullable: true })
+  firstRegistrationDate?: Date
+
+  @Field(() => String, { nullable: true })
+  vin?: string
 }

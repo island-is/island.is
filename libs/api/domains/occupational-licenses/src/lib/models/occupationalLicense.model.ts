@@ -16,6 +16,8 @@ export enum OccupationalLicenseStatus {
   valid = 'valid',
   error = 'error',
   limited = 'limited',
+  revoked = 'revoked',
+  waived = 'waived',
 }
 
 registerEnumType(OccupationalLicenseType, {
@@ -39,7 +41,7 @@ registerEnumType(OccupationalLicenseStatus, {
   },
 })
 export abstract class OccupationalLicense {
-  @Field((type) => OccupationalLicenseType)
+  @Field(() => OccupationalLicenseType)
   institution!: OccupationalLicenseType
 
   @Field(() => ID)

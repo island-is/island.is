@@ -1,6 +1,6 @@
 import type { DistributiveOmit } from '@island.is/shared/types'
-
-import { YES, NO, ParentalRelations } from './constants'
+import { MessageDescriptor } from 'react-intl'
+import { NO, ParentalRelations, YES } from './constants'
 
 export interface MultipleBirths {
   hasMultipleBirths: YesOrNo
@@ -40,6 +40,24 @@ export interface Files {
   key: string
 }
 
+export interface Attachments {
+  attachments: Files[]
+  label: MessageDescriptor
+}
+
+export interface FileUpload {
+  selfEmployedFile?: Files[]
+  studentFile?: Files[]
+  benefitsFile?: Files[]
+  singleParent?: Files[]
+  parentWithoutBirthParent?: Files[]
+  permanentFosterCare?: Files[]
+  adoption?: Files[]
+  employmentTerminationCertificateFile?: Files[]
+  file?: Files[]
+  changeEmployerFile?: Files[]
+}
+
 export interface VMSTPeriod {
   from: string
   to: string
@@ -47,6 +65,8 @@ export interface VMSTPeriod {
   firstPeriodStart: string
   paid: boolean
   rightsCodePeriod: string
+  days: string
+  approved: boolean
 }
 
 export interface Period {
@@ -58,6 +78,8 @@ export interface Period {
   daysToUse?: string
   rawIndex?: number
   rightCodePeriod?: string
+  paid?: boolean
+  approved?: boolean
 }
 
 export interface Payment {
@@ -152,4 +174,9 @@ export interface EmployerRow {
   reviewerNationalRegistryId?: string
   companyNationalRegistryId?: string
   stillEmployed?: YesOrNo
+}
+
+export type SelectOption = {
+  label: string
+  value: string
 }

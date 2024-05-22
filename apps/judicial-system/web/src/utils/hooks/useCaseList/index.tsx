@@ -4,18 +4,19 @@ import { motion } from 'framer-motion'
 import { useRouter } from 'next/router'
 
 import { LoadingDots, toast } from '@island.is/island-ui/core'
-import { theme } from '@island.is/island-ui/theme'
 import * as constants from '@island.is/judicial-system/consts'
 import {
   DEFENDER_INDICTMENT_ROUTE,
   DEFENDER_ROUTE,
 } from '@island.is/judicial-system/consts'
 import {
+  isCompletedCase,
   isCourtOfAppealsUser,
   isDefenceUser,
   isDistrictCourtUser,
   isIndictmentCase,
   isInvestigationCase,
+  isPublicProsecutorUser,
   isRestrictionCase,
 } from '@island.is/judicial-system/types'
 import { errors } from '@island.is/judicial-system-web/messages'
@@ -24,13 +25,12 @@ import { useCaseLazyQuery } from '@island.is/judicial-system-web/src/components/
 import { useLimitedAccessCaseLazyQuery } from '@island.is/judicial-system-web/src/components/FormProvider/limitedAccessCase.generated'
 import {
   CaseAppealState,
-  CaseState,
   User,
 } from '@island.is/judicial-system-web/src/graphql/schema'
 import { TempCase as Case } from '@island.is/judicial-system-web/src/types'
 
 import { findFirstInvalidStep } from '../../formHelper'
-import { isTrafficViolationCase } from '../../stepHelper'
+import { isTrafficViolationIndictment } from '../../stepHelper'
 import useCase from '../useCase'
 
 const useCaseList = () => {
@@ -74,7 +74,7 @@ const useCaseList = () => {
 
   const openCase = (caseToOpen: Case, user: User) => {
     let routeTo = null
-    const isTrafficViolation = isTrafficViolationCase(caseToOpen)
+    const isTrafficViolation = isTrafficViolationIndictment(caseToOpen)
 
     if (isDefenceUser(user)) {
       if (isIndictmentCase(caseToOpen.type)) {
@@ -82,11 +82,9 @@ const useCaseList = () => {
       } else {
         routeTo = DEFENDER_ROUTE
       }
-    } else if (
-      caseToOpen.state === CaseState.ACCEPTED ||
-      caseToOpen.state === CaseState.REJECTED ||
-      caseToOpen.state === CaseState.DISMISSED
-    ) {
+    } else if (isPublicProsecutorUser(user)) {
+      routeTo = constants.PUBLIC_PROSECUTOR_STAFF_INDICTMENT_OVERVIEW_ROUTE
+    } else if (isCompletedCase(caseToOpen.state)) {
       if (isIndictmentCase(caseToOpen.type)) {
         routeTo = constants.CLOSED_INDICTMENT_OVERVIEW_ROUTE
       } else if (isCourtOfAppealsUser(user)) {
@@ -164,7 +162,6 @@ const useCaseList = () => {
           ? getLimitedAccessCase({ variables: { input: { id } } })
           : getCase({ variables: { input: { id } } })
       }
-
       if (
         isTransitioningCase ||
         isSendingNotification ||
@@ -194,12 +191,6 @@ const useCaseList = () => {
         initial={{ opacity: 0 }}
         animate={{ opacity: 1 }}
         exit={{ opacity: 0 }}
-        style={{
-          display: 'flex',
-          alignItems: 'center',
-          justifyContent: 'center',
-          height: theme.spacing[3],
-        }}
       >
         <LoadingDots single />
       </motion.div>

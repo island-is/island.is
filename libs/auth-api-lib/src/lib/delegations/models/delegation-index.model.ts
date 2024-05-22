@@ -11,6 +11,7 @@ import {
   InferAttributes,
   InferCreationAttributes,
 } from 'sequelize'
+import { DelegationRecordDTO } from '../dto/delegation-index.dto'
 
 @Table({
   tableName: 'delegation_index',
@@ -60,9 +61,23 @@ export class DelegationIndex extends Model<
   })
   customDelegationScopes?: string[]
 
+  @Column({
+    type: DataType.STRING,
+    allowNull: true,
+  })
+  subjectId?: string | null
+
   @CreatedAt
   readonly created!: CreationOptional<Date>
 
   @UpdatedAt
   readonly modified?: Date
+
+  toDTO(): DelegationRecordDTO {
+    return {
+      fromNationalId: this.fromNationalId,
+      toNationalId: this.toNationalId,
+      subjectId: this.subjectId,
+    }
+  }
 }

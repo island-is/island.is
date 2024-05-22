@@ -4,6 +4,7 @@ import {
   Scopes,
   ScopesGuard,
 } from '@island.is/auth-nest-tools'
+import { isUuid } from 'uuidv4'
 import type { User } from '@island.is/auth-nest-tools'
 import { Inject, UseGuards } from '@nestjs/common'
 import { ApiScope } from '@island.is/auth/scopes'
@@ -91,6 +92,9 @@ export class WorkMachinesResolver {
     @Args('input', { type: () => GetWorkMachineInput })
     input: GetWorkMachineInput,
   ) {
+    if (!isUuid(input.id)) {
+      return null
+    }
     return this.workMachinesService.getWorkMachineById(user, input)
   }
 
@@ -100,8 +104,9 @@ export class WorkMachinesResolver {
   async getWorkerMachineDetails(
     @CurrentUser() auth: User,
     @Args('id') id: string,
+    @Args('rel') rel: string,
   ) {
-    return this.workMachinesService.getMachineDetails(auth, id)
+    return this.workMachinesService.getMachineDetails(auth, id, rel)
   }
 
   @Scopes(ApiScope.vinnueftirlitid)
@@ -120,7 +125,8 @@ export class WorkMachinesResolver {
   async getWorkerMachineByRegno(
     @CurrentUser() auth: User,
     @Args('regno') regno: string,
+    @Args('rel') rel: string,
   ) {
-    return this.workMachinesService.getMachineByRegno(auth, regno)
+    return this.workMachinesService.getMachineByRegno(auth, regno, rel)
   }
 }

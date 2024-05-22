@@ -8,12 +8,13 @@ import {
   NestInterceptor,
 } from '@nestjs/common'
 
+import { getIndictmentInfo } from '../../case/interceptors/case.transformer'
 import { CaseListEntry } from '../models/caseList.model'
 
-function getAppealedDate(
+const getAppealedDate = (
   prosecutorPostponedAppealDate?: string,
   accusedPostponedAppealDate?: string,
-): string | undefined {
+): string | undefined => {
   return prosecutorPostponedAppealDate ?? accusedPostponedAppealDate
 }
 
@@ -35,6 +36,8 @@ export class CaseListInterceptor implements NestInterceptor {
               theCase.prosecutorPostponedAppealDate,
               theCase.accusedPostponedAppealDate,
             ),
+            indictmentAppealDeadline: getIndictmentInfo(theCase.rulingDate)
+              .indictmentAppealDeadline,
           }
         })
       }),

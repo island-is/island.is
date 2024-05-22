@@ -1,4 +1,5 @@
 import { Alert, EmptyList, Skeleton, TopLine } from '@ui'
+
 import React, { useCallback, useEffect, useMemo, useRef, useState } from 'react'
 import { useIntl } from 'react-intl'
 import {
@@ -6,13 +7,13 @@ import {
   FlatList,
   Image,
   ListRenderItemInfo,
-  Platform,
   RefreshControl,
   View,
 } from 'react-native'
 import { NavigationFunctionComponent } from 'react-native-navigation'
 import SpotlightSearch from 'react-native-spotlight-search'
 import { useTheme } from 'styled-components/native'
+
 import illustrationSrc from '../../assets/illustrations/le-moving-s6.png'
 import { BottomTabsIndicator } from '../../components/bottom-tabs-indicator/bottom-tabs-indicator'
 import { useFeatureFlag } from '../../contexts/feature-flag-provider'
@@ -25,9 +26,12 @@ import {
 } from '../../graphql/types/schema'
 import { createNavigationOptionHooks } from '../../hooks/create-navigation-option-hooks'
 import { useActiveTabItemPress } from '../../hooks/use-active-tab-item-press'
+import { useConnectivityIndicator } from '../../hooks/use-connectivity-indicator'
 import { usePreferencesStore } from '../../stores/preferences-store'
 import { ButtonRegistry } from '../../utils/component-registry'
+import { isIos } from '../../utils/devices'
 import { getRightButtons } from '../../utils/get-main-root'
+import { isDefined } from '../../utils/is-defined'
 import { testIDs } from '../../utils/test-ids'
 import { WalletItem } from './components/wallet-item'
 
@@ -36,6 +40,12 @@ type FlatListItem =
   | IdentityDocumentModel
   | { __typename: 'Skeleton'; id: string }
   | { __typename: 'Error'; id: string }
+
+const getSkeletonArr = (): FlatListItem[] =>
+  Array.from({ length: 5 }).map((_, id) => ({
+    id: String(id),
+    __typename: 'Skeleton',
+  }))
 
 const { useNavigationOptions, getNavigationOptions } =
   createNavigationOptionHooks(
@@ -87,8 +97,8 @@ export const WalletScreen: NavigationFunctionComponent = ({ componentId }) => {
 
   const theme = useTheme()
   const flatListRef = useRef<FlatList>(null)
-  const [loading, setLoading] = useState(false)
-  const loadingTimeout = useRef<NodeJS.Timeout>()
+  const [refetching, setRefetching] = useState(false)
+  const loadingTimeout = useRef<ReturnType<typeof setTimeout>>()
   const intl = useIntl()
   const scrollY = useRef(new Animated.Value(0)).current
   const { dismiss, dismissed } = usePreferencesStore()
@@ -97,10 +107,11 @@ export const WalletScreen: NavigationFunctionComponent = ({ componentId }) => {
   const showPassport = useFeatureFlag('isPassportEnabled', false)
   const showDisability = useFeatureFlag('isDisabilityFlagEnabled', false)
   const showPCard = useFeatureFlag('isPCardEnabled', false)
+  const showEhic = useFeatureFlag('isEhicEnabled', false)
+  const showHuntingLicense = useFeatureFlag('isHuntingLicenseEnabled', false)
 
   // Query list of licenses
   const res = useListLicensesQuery({
-    fetchPolicy: 'network-only',
     variables: {
       input: {
         includedTypes: [
@@ -110,14 +121,21 @@ export const WalletScreen: NavigationFunctionComponent = ({ componentId }) => {
           GenericLicenseType.FirearmLicense,
           showDisability ? GenericLicenseType.DisabilityLicense : null,
           showPCard ? GenericLicenseType.PCard : null,
-        ].filter(Boolean) as GenericLicenseType[],
+          showEhic ? GenericLicenseType.Ehic : null,
+          showHuntingLicense ? GenericLicenseType.HuntingLicense : null,
+        ].filter(isDefined),
       },
     },
   })
 
   // Additional licenses
-  const resPassport = useGetIdentityDocumentQuery({
-    fetchPolicy: 'network-only',
+  const resPassport = useGetIdentityDocumentQuery()
+
+  useConnectivityIndicator({
+    componentId,
+    rightButtons: getRightButtons(),
+    queryResult: [res, resPassport],
+    refetching,
   })
 
   useActiveTabItemPress(1, () => {
@@ -129,7 +147,7 @@ export const WalletScreen: NavigationFunctionComponent = ({ componentId }) => {
 
   // Filter licenses
   const licenseItems = useMemo(() => {
-    if (!res.loading && !res.error) {
+    if ((!res.loading && !res.error) || res.data) {
       return (res.data?.genericLicenses ?? []).filter(({ license }) => {
         if (license.status === 'Unknown') {
           return false
@@ -140,11 +158,18 @@ export const WalletScreen: NavigationFunctionComponent = ({ componentId }) => {
         if (license.type === GenericLicenseType.PCard) {
           return showPCard
         }
+        if (license.type === GenericLicenseType.Ehic) {
+          return showEhic
+        }
+        if (license.type === GenericLicenseType.HuntingLicense) {
+          return showHuntingLicense
+        }
         return true
       })
     }
+
     return []
-  }, [res, showDisability, showPCard])
+  }, [res, showDisability, showPCard, showEhic, showHuntingLicense])
 
   // indexing list for spotlight search IOS
   useEffect(() => {
@@ -156,7 +181,7 @@ export const WalletScreen: NavigationFunctionComponent = ({ componentId }) => {
         domain: 'licences',
       }
     })
-    if (Platform.OS === 'ios') {
+    if (isIos) {
       SpotlightSearch.indexItems(indexItems)
     }
   }, [licenseItems])
@@ -166,19 +191,19 @@ export const WalletScreen: NavigationFunctionComponent = ({ componentId }) => {
       if (loadingTimeout.current) {
         clearTimeout(loadingTimeout.current)
       }
-      setLoading(true)
+      setRefetching(true)
       res
         .refetch()
         .then(() => {
           ;(loadingTimeout as any).current = setTimeout(() => {
-            setLoading(false)
+            setRefetching(false)
           }, 1331)
         })
         .catch(() => {
-          setLoading(false)
+          setRefetching(false)
         })
     } catch (err) {
-      setLoading(false)
+      setRefetching(false)
     }
   }, [])
 
@@ -189,8 +214,14 @@ export const WalletScreen: NavigationFunctionComponent = ({ componentId }) => {
           <View style={{ paddingHorizontal: 16 }}>
             <Skeleton
               active
-              backgroundColor={theme.color.blue100}
-              overlayColor={theme.color.blue200}
+              backgroundColor={{
+                dark: theme.shades.dark.shade300,
+                light: theme.color.blue100,
+              }}
+              overlayColor={{
+                dark: theme.shades.dark.shade200,
+                light: theme.color.blue200,
+              }}
               overlayOpacity={1}
               height={111}
               style={{
@@ -215,22 +246,25 @@ export const WalletScreen: NavigationFunctionComponent = ({ componentId }) => {
 
   const keyExtractor = useCallback((item: FlatListItem, index: number) => {
     const fallback = String(index)
-    if (item.__typename === 'GenericUserLicense') {
+    const type = item.__typename
+
+    if (type === 'GenericUserLicense') {
       return item.license.type ?? fallback
-    }
-    if (item.__typename === 'IdentityDocumentModel') {
+    } else if (type === 'IdentityDocumentModel') {
       return item.number ?? fallback
     }
+
     return (item as { id: string })?.id ?? fallback
   }, [])
 
   const data = useMemo<FlatListItem[]>(() => {
-    if (res.loading && !res.data) {
-      return Array.from({ length: 5 }).map((_, id) => ({
-        id: String(id),
-        __typename: 'Skeleton',
-      }))
+    if (
+      (res.loading && !res.data) ||
+      (resPassport.loading && !resPassport.data)
+    ) {
+      return getSkeletonArr()
     }
+
     return [
       ...licenseItems,
       ...(showPassport ? resPassport?.data?.getIdentityDocument ?? [] : []),
@@ -249,7 +283,7 @@ export const WalletScreen: NavigationFunctionComponent = ({ componentId }) => {
           bottom: 32,
         }}
         refreshControl={
-          <RefreshControl refreshing={loading} onRefresh={onRefresh} />
+          <RefreshControl refreshing={refetching} onRefresh={onRefresh} />
         }
         scrollEventThrottle={16}
         scrollToOverflowEnabled={true}
@@ -260,7 +294,7 @@ export const WalletScreen: NavigationFunctionComponent = ({ componentId }) => {
           },
         )}
         ListHeaderComponent={
-          Platform.OS === 'ios' ? (
+          isIos ? (
             <View style={{ marginBottom: 16 }}>
               <Alert
                 type="info"

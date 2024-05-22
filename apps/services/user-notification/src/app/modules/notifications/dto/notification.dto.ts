@@ -12,6 +12,7 @@ import {
   IsBoolean,
 } from 'class-validator'
 import { Type } from 'class-transformer'
+import type { Locale } from '@island.is/shared/types'
 
 export class ExtendedPaginationDto extends PaginationDto {
   @IsOptional()
@@ -20,7 +21,7 @@ export class ExtendedPaginationDto extends PaginationDto {
     type: 'string',
   })
   @IsString()
-  locale!: string
+  locale!: Locale
 }
 
 class ArgItem {
@@ -105,6 +106,11 @@ export class RenderedNotificationDto {
   @IsString()
   @IsOptional()
   clickAction?: string
+
+  @ApiPropertyOptional({ example: 'https://island.is/minarsidur/postholf' })
+  @IsString()
+  @IsOptional()
+  clickActionUrl?: string
 
   @ApiProperty({ example: new Date().toISOString() })
   @IsDate()

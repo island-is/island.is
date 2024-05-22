@@ -13,14 +13,19 @@ import { InjectConnection, InjectModel } from '@nestjs/sequelize'
 
 import type { Logger } from '@island.is/logging'
 import { LOGGER_PROVIDER } from '@island.is/logging'
+import type { ConfigType } from '@island.is/nest/config'
 
+import { MessageService, MessageType } from '@island.is/judicial-system/message'
 import type { User } from '@island.is/judicial-system/types'
 import {
   CaseFileCategory,
   CaseFileState,
+  CaseState,
+  completedIndictmentCaseStates,
   isIndictmentCase,
 } from '@island.is/judicial-system/types'
 
+import { formatConfirmedIndictmentKey } from '../../formatters/formatters'
 import { AwsS3Service } from '../aws-s3'
 import { Case } from '../case'
 import { CourtDocumentFolder, CourtService } from '../court'
@@ -28,10 +33,12 @@ import { CreateFileDto } from './dto/createFile.dto'
 import { CreatePresignedPostDto } from './dto/createPresignedPost.dto'
 import { UpdateFileDto } from './dto/updateFile.dto'
 import { DeleteFileResponse } from './models/deleteFile.response'
+import { DeliverResponse } from './models/deliver.response'
 import { CaseFile } from './models/file.model'
 import { PresignedPost } from './models/presignedPost.model'
 import { SignedUrl } from './models/signedUrl.model'
 import { UploadFileToCourtResponse } from './models/uploadFileToCourt.response'
+import { fileModuleConfig } from './file.config'
 
 // Files are stored in AWS S3 under a key which has the following formats:
 // uploads/<uuid>/<uuid>/<filename> for restriction and investigation cases
@@ -50,6 +57,9 @@ export class FileService {
     @InjectModel(CaseFile) private readonly fileModel: typeof CaseFile,
     private readonly courtService: CourtService,
     private readonly awsS3Service: AwsS3Service,
+    private readonly messageService: MessageService,
+    @Inject(fileModuleConfig.KEY)
+    private readonly config: ConfigType<typeof fileModuleConfig>,
     @Inject(LOGGER_PROVIDER) private readonly logger: Logger,
   ) {}
 
@@ -192,6 +202,7 @@ export class FileService {
   async createCaseFile(
     theCase: Case,
     createFile: CreateFileDto,
+    user: User,
   ): Promise<CaseFile> {
     const { key } = createFile
 
@@ -213,30 +224,70 @@ export class FileService {
         : NAME_BEGINS_INDEX,
     )
 
-    return this.fileModel.create({
+    const file = await this.fileModel.create({
       ...createFile,
       state: CaseFileState.STORED_IN_RVG,
       caseId: theCase.id,
       name: fileName,
       userGeneratedFilename: fileName.replace(/\.pdf$/, ''),
     })
+
+    if (
+      theCase.appealCaseNumber &&
+      file.category &&
+      [
+        CaseFileCategory.PROSECUTOR_APPEAL_STATEMENT,
+        CaseFileCategory.DEFENDANT_APPEAL_STATEMENT,
+        CaseFileCategory.PROSECUTOR_APPEAL_STATEMENT_CASE_FILE,
+        CaseFileCategory.DEFENDANT_APPEAL_STATEMENT_CASE_FILE,
+        CaseFileCategory.PROSECUTOR_APPEAL_CASE_FILE,
+        CaseFileCategory.DEFENDANT_APPEAL_CASE_FILE,
+      ].includes(file.category)
+    ) {
+      await this.messageService.sendMessagesToQueue([
+        {
+          type: MessageType.DELIVERY_TO_COURT_OF_APPEALS_CASE_FILE,
+          user,
+          caseId: theCase.id,
+          elementId: file.id,
+        },
+      ])
+    }
+    return file
   }
 
-  async getCaseFileSignedUrl(file: CaseFile): Promise<SignedUrl> {
+  async getCaseFileSignedUrl(
+    theCase: Case,
+    file: CaseFile,
+  ): Promise<SignedUrl> {
     if (!file.key) {
-      throw new NotFoundException(`File ${file.id} does not exists in AWS S3`)
+      throw new NotFoundException(`File ${file.id} does not exist in AWS S3`)
     }
 
-    const exists = await this.awsS3Service.objectExists(file.key)
+    let key = file.key
+
+    if (
+      file.category === CaseFileCategory.INDICTMENT &&
+      [
+        CaseState.SUBMITTED,
+        CaseState.RECEIVED,
+        CaseState.MAIN_HEARING,
+        ...completedIndictmentCaseStates,
+      ].includes(theCase.state)
+    ) {
+      key = formatConfirmedIndictmentKey(key)
+    }
+
+    const exists = await this.awsS3Service.objectExists(key)
 
     if (!exists) {
       // Fire and forget, no need to wait for the result
       this.fileModel.update({ key: null }, { where: { id: file.id } })
 
-      throw new NotFoundException(`File ${file.id} does not exists in AWS S3`)
+      throw new NotFoundException(`File ${file.id} does not exist in AWS S3`)
     }
 
-    return this.awsS3Service.getSignedUrl(file.key)
+    return this.awsS3Service.getSignedUrl(key).then((url) => ({ url }))
   }
 
   async deleteCaseFile(
@@ -263,7 +314,7 @@ export class FileService {
     }
 
     if (!file.key) {
-      throw new NotFoundException(`File ${file.id} does not exists in AWS S3`)
+      throw new NotFoundException(`File ${file.id} does not exist in AWS S3`)
     }
 
     const exists = await this.awsS3Service.objectExists(file.key)
@@ -272,7 +323,7 @@ export class FileService {
       // Fire and forget, no need to wait for the result
       this.fileModel.update({ key: null }, { where: { id: file.id } })
 
-      throw new NotFoundException(`File ${file.id} does not exists in AWS S3`)
+      throw new NotFoundException(`File ${file.id} does not exist in AWS S3`)
     }
 
     this.throttle = this.throttleUpload(file, theCase, user)
@@ -352,7 +403,7 @@ export class FileService {
     })
   }
 
-  async archive(file: CaseFile): Promise<boolean> {
+  async archive(theCase: Case, file: CaseFile): Promise<boolean> {
     if (
       !file.key ||
       !file.key.startsWith('indictments/') ||
@@ -369,6 +420,25 @@ export class FileService {
       .then((newKey) =>
         this.fileModel.update({ key: newKey }, { where: { id: file.id } }),
       )
+      .then(async () => {
+        if (
+          file.category === CaseFileCategory.INDICTMENT &&
+          [
+            CaseState.SUBMITTED,
+            CaseState.RECEIVED,
+            CaseState.MAIN_HEARING,
+            ...completedIndictmentCaseStates,
+          ].includes(theCase.state)
+        ) {
+          return this.awsS3Service.copyObject(
+            formatConfirmedIndictmentKey(file.key),
+            formatConfirmedIndictmentKey(file.key).replace(
+              'indictments/',
+              'indictments/completed/',
+            ) ?? '',
+          )
+        }
+      })
       .then(() => {
         // Fire and forget, no need to wait for the result
         this.tryDeleteFileFromS3(file)
@@ -390,5 +460,50 @@ export class FileService {
       { state: CaseFileState.STORED_IN_RVG },
       { where: { caseId, state: CaseFileState.STORED_IN_COURT }, transaction },
     )
+  }
+
+  async deliverCaseFileToCourtOfAppeals(
+    file: CaseFile,
+    theCase: Case,
+    user: User,
+  ): Promise<DeliverResponse> {
+    if (!file.key) {
+      throw new NotFoundException(`File ${file.id} does not exist in AWS S3`)
+    }
+
+    const exists = await this.awsS3Service.objectExists(file.key)
+
+    if (!exists) {
+      // Fire and forget, no need to wait for the result
+      this.fileModel.update({ key: null }, { where: { id: file.id } })
+
+      throw new NotFoundException(`File ${file.id} does not exist in AWS S3`)
+    }
+
+    const url = await this.awsS3Service.getSignedUrl(
+      file.key ?? '',
+      this.config.robotS3TimeToLiveGet,
+    )
+
+    return this.courtService
+      .updateAppealCaseWithFile(
+        user,
+        theCase.id,
+        file.id,
+        theCase.appealCaseNumber,
+        file.category,
+        file.name,
+        url,
+        file.created,
+      )
+      .then(() => ({ delivered: true }))
+      .catch((reason) => {
+        this.logger.error(
+          `Failed to update appeal case ${theCase.id} with file`,
+          { reason },
+        )
+
+        return { delivered: false }
+      })
   }
 }

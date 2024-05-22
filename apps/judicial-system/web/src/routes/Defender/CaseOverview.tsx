@@ -25,6 +25,7 @@ import {
   FormContentContainer,
   FormContext,
   InfoCard,
+  InfoCardCaseScheduled,
   MarkdownWrapper,
   Modal,
   PageHeader,
@@ -33,7 +34,6 @@ import {
   SignedDocument,
 } from '@island.is/judicial-system-web/src/components'
 import {
-  CaseAppealDecision,
   CaseState,
   RequestSharedWithDefender,
 } from '@island.is/judicial-system-web/src/graphql/schema'
@@ -66,8 +66,7 @@ export const CaseOverview: React.FC<React.PropsWithChildren<unknown>> = () => {
 
   const shouldDisplayAlertBanner =
     isCompletedCase(workingCase.state) &&
-    (workingCase.accusedAppealDecision === CaseAppealDecision.POSTPONE ||
-      workingCase.hasBeenAppealed)
+    (workingCase.canDefenderAppeal || workingCase.hasBeenAppealed)
 
   return (
     <>
@@ -130,6 +129,17 @@ export const CaseOverview: React.FC<React.PropsWithChildren<unknown>> = () => {
               />
             </Box>
           )}
+          {workingCase.state === CaseState.RECEIVED &&
+            workingCase.arraignmentDate?.date &&
+            workingCase.court && (
+              <Box component="section" marginBottom={5}>
+                <InfoCardCaseScheduled
+                  court={workingCase.court}
+                  courtDate={workingCase.arraignmentDate.date}
+                  courtRoom={workingCase.arraignmentDate.location}
+                />
+              </Box>
+            )}
           <Box marginBottom={6}>
             <InfoCard
               data={[

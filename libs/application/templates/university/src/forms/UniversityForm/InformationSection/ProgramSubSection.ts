@@ -22,7 +22,7 @@ export const ProgramSubSection = buildSubSection({
           titleVariant: 'h5',
         }),
         buildCustomField({
-          id: `${Routes.PROGRAMINFORMATION}.selection`,
+          id: `${Routes.PROGRAMINFORMATION}`,
           title: '',
           component: 'ProgramSelection',
         }),

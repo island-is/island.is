@@ -24,6 +24,7 @@ type FieldError =
         nationalId?: string
         email?: string
         phone?: string
+        bankInfo?: string
       }[]
     }
   | undefined
@@ -95,6 +96,18 @@ export const AdditionalOwnersRepeater = ({
                   disableDropdown
                   label={formatMessage(applicantInformationMessages.labels.tel)}
                   error={fieldError?.additionalOwners?.[index]?.phone}
+                  required
+                />
+              </GridColumn>
+              <GridColumn span="1/1">
+                <InputController
+                  id={`${field.id}[${index}].bankInfo`}
+                  control={control}
+                  backgroundColor="blue"
+                  placeholder="0000-00-000000"
+                  format="####-##-######"
+                  label={formatMessage(m.application.applicant.bankInfo)}
+                  error={fieldError?.additionalOwners?.[index]?.bankInfo}
                   required
                 />
               </GridColumn>

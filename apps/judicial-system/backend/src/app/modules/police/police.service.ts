@@ -6,6 +6,7 @@ import { z } from 'zod'
 
 import {
   BadGatewayException,
+  forwardRef,
   Inject,
   Injectable,
   NotFoundException,
@@ -27,6 +28,7 @@ import {
   isIndictmentCase,
 } from '@island.is/judicial-system/types'
 
+import { nowFactory } from '../../factories'
 import { AwsS3Service } from '../aws-s3'
 import { EventService } from '../event'
 import { UploadPoliceCaseFileDto } from './dto/uploadPoliceCaseFile.dto'
@@ -43,6 +45,7 @@ export enum CourtDocumentType {
   RVUL = 'RVUL', // Úrskurður Landsréttar
   RVDO = 'RVDO', // Dómur
   RVAS = 'RVAS', // Ákæra
+  RVMG = 'RVMG', // Málsgögn
 }
 
 const getChapter = (category?: string): number | undefined => {
@@ -57,6 +60,28 @@ const getChapter = (category?: string): number | undefined => {
   }
 
   return +chapter[1] - 1
+}
+
+const formatCrimeScenePlace = (
+  street?: string | null,
+  streetNumber?: string | null,
+  municipality?: string | null,
+) => {
+  if (!street && !municipality) {
+    return ''
+  }
+
+  // Format the street and street number
+  const formattedStreet =
+    street && streetNumber ? `${street} ${streetNumber}` : street
+
+  // Format the municipality
+  const formattedMunicipality =
+    municipality && street ? `, ${municipality}` : municipality
+
+  const address = `${formattedStreet ?? ''}${formattedMunicipality ?? ''}`
+
+  return address.trim()
 }
 
 @Injectable()
@@ -77,6 +102,10 @@ export class PoliceService {
     brotFra: z.optional(z.string()),
     upprunalegtMalsnumer: z.string(),
     licencePlate: z.optional(z.string()),
+    gotuHeiti: z.optional(z.string()),
+    gotuNumer: z.string().nullish(),
+    sveitafelag: z.string().nullish(),
+    postnumer: z.string().nullish(),
   })
   private responseStructure = z.object({
     malsnumer: z.string(),
@@ -87,7 +116,9 @@ export class PoliceService {
   constructor(
     @Inject(policeModuleConfig.KEY)
     private readonly config: ConfigType<typeof policeModuleConfig>,
+    @Inject(forwardRef(() => EventService))
     private readonly eventService: EventService,
+    @Inject(forwardRef(() => AwsS3Service))
     private readonly awsS3Service: AwsS3Service,
     @Inject(LOGGER_PROVIDER) private readonly logger: Logger,
   ) {
@@ -203,6 +234,8 @@ export class PoliceService {
     caseId: string,
     user: User,
   ): Promise<PoliceCaseFile[]> {
+    const startTime = nowFactory()
+
     return this.fetchPoliceDocumentApi(
       `${this.xRoadPath}/V2/GetDocumentListById/${caseId}`,
     )
@@ -262,6 +295,8 @@ export class PoliceService {
             caseId,
             actor: user.name,
             institution: user.institution?.name,
+            startTime,
+            endTime: nowFactory(),
           },
           reason,
         )
@@ -306,9 +341,17 @@ export class PoliceService {
               vettvangur?: string
               brotFra?: string
               licencePlate?: string
+              gotuHeiti?: string | null
+              gotuNumer?: string | null
+              sveitafelag?: string | null
             }) => {
               const policeCaseNumber = info.upprunalegtMalsnumer
-              const place = (info.vettvangur || '').trim()
+
+              const place = formatCrimeScenePlace(
+                info.gotuHeiti,
+                info.gotuNumer,
+                info.sveitafelag,
+              )
               const date = info.brotFra ? new Date(info.brotFra) : undefined
               const licencePlate = info.licencePlate
 
@@ -392,6 +435,7 @@ export class PoliceService {
     caseType: CaseType,
     caseState: CaseState,
     policeCaseNumber: string,
+    courtCaseNumber: string,
     defendantNationalId: string,
     validToDate: Date,
     caseConclusion: string,
@@ -411,6 +455,7 @@ export class PoliceService {
         body: JSON.stringify({
           rvMal_ID: caseId,
           caseNumber: policeCaseNumber,
+          courtCaseNumber,
           ssn: defendantNationalId,
           type: caseType,
           courtVerdict: caseState,
@@ -449,6 +494,7 @@ export class PoliceService {
             caseType,
             caseState,
             policeCaseNumber,
+            courtCaseNumber,
           },
           reason,
         )

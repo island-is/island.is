@@ -11,7 +11,7 @@ import {
   NationalRegistryV3ClientService,
 } from '@island.is/clients/national-registry-v3'
 import { CompanyRegistryClientService } from '@island.is/clients/rsk/company-registry'
-import { UserProfileApi } from '@island.is/clients/user-profile'
+import { V2MeApi } from '@island.is/clients/user-profile'
 import { LOGGER_PROVIDER } from '@island.is/logging'
 import { FeatureFlagService, Features } from '@island.is/nest/feature-flags'
 
@@ -41,7 +41,7 @@ export class UserProfileService {
     private individualClient: NationalRegistryClientService,
     private readonly featureFlagService: FeatureFlagService,
     private readonly nationalRegistryV3: NationalRegistryV3ClientService,
-    private userProfileApi: UserProfileApi,
+    private userProfileApi: V2MeApi,
     private companyRegistryApi: CompanyRegistryClientService,
     @Inject(LOGGER_PROVIDER)
     private logger: Logger,
@@ -172,14 +172,18 @@ export class UserProfileService {
   private async getClaimsFromUserProfile(auth: User): Promise<UserProfileDTO> {
     const userProfile = await this.userProfileApiWithAuth(
       auth,
-    ).userProfileControllerFindOneByNationalId({
-      nationalId: auth.nationalId,
-    })
+    ).meUserProfileControllerFindUserProfile()
     return {
-      email: userProfile.email,
-      emailVerified: userProfile.emailVerified,
-      phoneNumber: userProfile.mobilePhoneNumber,
-      phoneNumberVerified: userProfile.mobilePhoneNumberVerified,
+      email: userProfile.isRestricted ? undefined : userProfile.email,
+      emailVerified: userProfile.isRestricted
+        ? undefined
+        : userProfile.emailVerified,
+      phoneNumber: userProfile.isRestricted
+        ? undefined
+        : userProfile.mobilePhoneNumber,
+      phoneNumberVerified: userProfile.isRestricted
+        ? undefined
+        : userProfile.mobilePhoneNumberVerified,
       locale: userProfile.locale,
       picture: userProfile.profileImageUrl,
     }
