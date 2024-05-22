@@ -337,6 +337,7 @@ export function buildFileUploadField(
     uploadAccept,
     maxSize,
     maxSizeErrorText,
+    totalMaxSize,
     forImageUpload,
   } = data
   return {
@@ -356,6 +357,7 @@ export function buildFileUploadField(
       uploadAccept ?? '.pdf, .doc, .docx, .rtf, .jpg, .jpeg, .png, .heic',
     maxSize: maxSize ?? 10000000,
     maxSizeErrorText,
+    totalMaxSize: totalMaxSize ?? 100000000,
     forImageUpload,
     type: FieldTypes.FILEUPLOAD,
     component: FieldComponents.FILEUPLOAD,

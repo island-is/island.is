@@ -20,6 +20,7 @@ import {
 import { uploadFileToS3 } from './utils'
 import { Action, ActionTypes } from './types'
 import { InputImageUpload } from '../../components/InputImageUpload/InputImageUpload'
+import { log } from 'console'
 
 type UploadFileAnswer = {
   name: string
@@ -72,6 +73,7 @@ interface FileUploadControllerProps {
   readonly accept?: string
   readonly maxSize?: number
   readonly maxSizeErrorText?: string
+  readonly totalMaxSize?: number
   readonly forImageUpload?: boolean
 }
 
@@ -88,6 +90,7 @@ export const FileUploadController: FC<
   accept,
   maxSize,
   maxSizeErrorText,
+  totalMaxSize = 70000,
   forImageUpload,
 }) => {
   const { formatMessage } = useLocale()
@@ -97,6 +100,7 @@ export const FileUploadController: FC<
   const [createUploadUrl] = useMutation(CREATE_UPLOAD_URL)
   const [addAttachment] = useMutation(ADD_ATTACHMENT)
   const [deleteAttachment] = useMutation(DELETE_ATTACHMENT)
+  const [sumOfFileSizes, setSumOfFileSizes] = useState(0)
   const initialUploadFiles: UploadFile[] =
     (val && val.map((f) => answerToUploadFile(f))) || []
   const [state, dispatch] = useReducer(reducer, initialUploadFiles)
@@ -149,6 +153,7 @@ export const FileUploadController: FC<
   }
 
   const onFileChange = async (newFiles: File[]) => {
+    console.log('newFiles: ', newFiles)
     if (!multiple && state.length > 0) return
 
     const addedUniqueFiles = newFiles.filter((newFile: File) => {
@@ -163,6 +168,23 @@ export const FileUploadController: FC<
 
     clearErrors(id)
     setUploadError(undefined)
+
+    const totalNewFileSize = addedUniqueFiles
+      .map((f) => f.size)
+      .reduce((a, b) => a + b, 0)
+    console.log('totalNewFileSize: ', totalNewFileSize)
+
+    // Show an error if the sum im the file sizes exceeds totalMaxSize.
+    if (totalNewFileSize + sumOfFileSizes > totalMaxSize) {
+      setUploadError(
+        formatMessage(coreErrorMessages.fileMaxSizeLimitExceeded, {
+          maxSizeInMb: totalMaxSize / 1000000,
+        }),
+      )
+      return
+    }
+
+    setSumOfFileSizes(totalNewFileSize + sumOfFileSizes)
 
     const newUploadFiles = addedUniqueFiles.map((f) =>
       fileToObject(f, 'uploading'),
