@@ -17,6 +17,7 @@ import {
   DefaultEvents,
   Form,
   FormModes,
+  YES,
 } from '@island.is/application/types'
 import {
   formatPhoneNumber,
@@ -297,6 +298,7 @@ export const NewPrimarySchoolForm: Form = buildForm({
               removeButtonTooltipText:
                 newPrimarySchoolMessages.relatives.deleteRelative,
               marginTop: 0,
+              maxValues: 6,
               fields: {
                 fullName: {
                   component: 'input',
@@ -329,8 +331,21 @@ export const NewPrimarySchoolForm: Form = buildForm({
                   width: 'half',
                   placeholder:
                     newPrimarySchoolMessages.relatives.relationPlaceholder,
+                  // TODO: Nota gögn fá Júní
                   options: getRelationOptions(),
                   dataTestId: 'relative-relation',
+                },
+                canPickUpChild: {
+                  component: 'checkbox',
+                  width: 'full',
+                  large: true,
+                  options: [
+                    {
+                      label: newPrimarySchoolMessages.relatives.canPickUpChild,
+                      value: YES,
+                    },
+                  ],
+                  dataTestId: 'relative-can-pick-up-child',
                 },
               },
               table: {
@@ -340,7 +355,18 @@ export const NewPrimarySchoolForm: Form = buildForm({
                   nationalId: (value) => formatKennitala(value),
                   relation: (value) =>
                     getRelationOptionLabel(value as RelationOptions),
+                  canPickUpChild: (value) =>
+                    value?.includes(YES)
+                      ? newPrimarySchoolMessages.shared.yes
+                      : newPrimarySchoolMessages.shared.no,
                 },
+                header: [
+                  newPrimarySchoolMessages.relatives.fullName,
+                  newPrimarySchoolMessages.relatives.phoneNumber,
+                  newPrimarySchoolMessages.relatives.nationalId,
+                  newPrimarySchoolMessages.relatives.relation,
+                  newPrimarySchoolMessages.relatives.canPickUpChildTableHeader,
+                ],
               },
             }),
           ],

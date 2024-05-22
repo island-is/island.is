@@ -25,6 +25,16 @@ export const newPrimarySchoolMessages: MessageDir = {
       defaultMessage: 'Athugið',
       description: 'Attention',
     },
+    yes: {
+      id: 'dess.nps.application:yes',
+      defaultMessage: 'Já',
+      description: 'Yes',
+    },
+    no: {
+      id: 'dess.nps.application:no',
+      defaultMessage: 'Nei',
+      description: 'No',
+    },
   }),
 
   pre: defineMessages({
@@ -166,9 +176,9 @@ export const newPrimarySchoolMessages: MessageDir = {
     description: {
       id: 'dess.nps.application:relatives.description',
       defaultMessage:
-        'Skráðu að minnsta kosti einn tengilið sem má hafa samband við ef ekki næst í foreldra/forsjáraðila barnsins. Þú getur bætt við allt að fjórum aðstandendum.',
+        'Skráðu að minnsta kosti einn tengilið sem má hafa samband við ef ekki næst í foreldra/forsjáraðila barnsins. Þú getur bætt við allt að sex aðstandendum.',
       description:
-        "List at least one contact person who can be contacted if the child's parents/guardian cannot be reached. You can add up to four relatives.",
+        "List at least one contact person who can be contacted if the child's parents/guardian cannot be reached. You can add up to six relatives.",
     },
     registrationTitle: {
       id: 'dess.nps.application:relatives.registration.title',
@@ -236,7 +246,7 @@ export const newPrimarySchoolMessages: MessageDir = {
       description: 'Relatives',
     },
     relationFriendsAndOther: {
-      id: 'dess.nps.application:relatives.relation..friends.and.other',
+      id: 'dess.nps.application:relatives.relation.friends.and.other',
       defaultMessage: 'Vinafólk/annað',
       description: 'Friends/others',
     },
@@ -244,6 +254,16 @@ export const newPrimarySchoolMessages: MessageDir = {
       id: 'dess.nps.application:relatives.alert.message',
       defaultMessage: 'Vinsamlegast látið aðstandendur vita af skráningunni.',
       description: 'Please inform the relatives of the registration.',
+    },
+    canPickUpChild: {
+      id: 'dess.nps.application:relatives.can.pick.up.child',
+      defaultMessage: 'Má sækja barn í skólann',
+      description: 'Can pick up the child from school',
+    },
+    canPickUpChildTableHeader: {
+      id: 'dess.nps.application:relatives.can.pick.up.child.table.header',
+      defaultMessage: 'Má sækja barn',
+      description: 'Can pick up the child',
     },
   }),
 
