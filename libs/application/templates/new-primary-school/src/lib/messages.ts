@@ -72,6 +72,24 @@ export const newPrimarySchoolMessages: MessageDir = {
       description:
         'I understand that the above information will be collected during the application process',
     },
+    noChildrenFoundTitle: {
+      id: 'dess.nps.application:prerequisites.nochildren.title',
+      defaultMessage: 'Því miður fann ekki barn á grunnskólaaldri',
+      description: 'Sorry but no children were found at primary school age',
+    },
+    noChildrenFoundDescription: {
+      id: 'dess.nps.application:prerequisites.nochildren.description',
+      defaultMessage: 'Ástæður fyrir því gætu verið eftirfarandi:',
+      description: 'The reasons for this could be:',
+    },
+
+    noChildrenFoundReasons: {
+      id: 'dess.nps.application:prerequisites.nochildren.reasons#markdown',
+      defaultMessage:
+        '* Gögn vantar frá Þjóðskrá. \n* TBA. \n* TBA. \n\nEf þú telur þessi atriði ekki eiga við um þig vinsamlegast hafðu samband við [mms@mms.is](mailto:mms@mms.is).',
+      description:
+        'Data missing from Icelandic National Registry, If these items do not apply to you please contact the mms@mms.is',
+    },
   }),
 
   childrenNParents: defineMessages({
