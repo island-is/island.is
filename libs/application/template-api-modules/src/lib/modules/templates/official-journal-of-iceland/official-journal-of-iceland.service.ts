@@ -5,7 +5,7 @@ import { User } from '@island.is/auth-nest-tools'
 import { BaseTemplateApiService } from '../../base-template-api.service'
 import { OfficialJournalOfIcelandService } from '@island.is/api/domains/official-journal-of-iceland'
 import { TemplateApiModuleActionProps } from '../../../types'
-import { OJOIApplication } from '@island.is/application-templates-official-journal-of-iceland'
+import { OJOIApplication } from '@island.is/application/templates/official-journal-of-iceland'
 
 type Props = Omit<TemplateApiModuleActionProps, 'application'> & {
   application: OJOIApplication

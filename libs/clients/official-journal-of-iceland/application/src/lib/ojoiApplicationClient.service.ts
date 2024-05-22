@@ -1,10 +1,10 @@
 import { Injectable } from '@nestjs/common'
 import {
-  AddCommentRequest,
-  CaseComment,
   DefaultApi as OfficialJournalOfIcelandApplicationApi,
-  SubmitApplicationRequest,
-  Application as OJOIApplication,
+  GetCommentsRequest,
+  PostCommentRequest,
+  PostApplicationRequest,
+  GetCaseCommentsResponse,
 } from '../../gen/fetch'
 
 @Injectable()
@@ -13,19 +13,17 @@ export class OfficialJournalOfIcelandApplicationClientService {
     private readonly ojoiApplicationApi: OfficialJournalOfIcelandApplicationApi,
   ) {}
 
-  async getComments(applicationId: string): Promise<CaseComment[]> {
-    return await this.ojoiApplicationApi.getComments({
-      id: applicationId,
-    })
+  async getComments(
+    params: GetCommentsRequest,
+  ): Promise<GetCaseCommentsResponse> {
+    return await this.ojoiApplicationApi.getComments(params)
   }
 
-  async postComment(body: AddCommentRequest): Promise<CaseComment[]> {
-    return await this.ojoiApplicationApi.addComment(body)
+  async postComment(params: PostCommentRequest): Promise<void> {
+    await this.ojoiApplicationApi.postComment(params)
   }
 
-  async submitApplication(
-    body: SubmitApplicationRequest,
-  ): Promise<OJOIApplication> {
-    return await this.ojoiApplicationApi.submitApplication(body)
+  async postApplicaton(params: PostApplicationRequest): Promise<void> {
+    await this.ojoiApplicationApi.postApplication(params)
   }
 }

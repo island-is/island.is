@@ -1,7 +1,8 @@
 import { OfficialJournalOfIcelandApplicationClientService } from '@island.is/clients/official-journal-of-iceland/application'
 import { Injectable } from '@nestjs/common'
 import { PostCommentInput } from '../models/postComment.input'
-import { SubmitApplicationInput } from '../models/submitApplication.input'
+import { PostApplicationInput } from '../models/postApplication.input'
+import { GetCommentsInput } from '../models/getComments.input'
 
 @Injectable()
 export class OfficialJournalOfIcelandApplicationService {
@@ -9,15 +10,20 @@ export class OfficialJournalOfIcelandApplicationService {
     private readonly ojoiApplicationService: OfficialJournalOfIcelandApplicationClientService,
   ) {}
 
-  async getComments(applicationId: string) {
-    return await this.ojoiApplicationService.getComments(applicationId)
+  async getComments(input: GetCommentsInput) {
+    return await this.ojoiApplicationService.getComments(input)
   }
 
   async postComment(input: PostCommentInput) {
     return await this.ojoiApplicationService.postComment(input)
   }
 
-  async submitApplication(input: SubmitApplicationInput) {
-    return await this.ojoiApplicationService.submitApplication(input)
+  async postApplication(input: PostApplicationInput): Promise<boolean> {
+    try {
+      await this.ojoiApplicationService.postApplicaton(input)
+      return Promise.resolve(true)
+    } catch (error) {
+      return Promise.reject(false)
+    }
   }
 }
