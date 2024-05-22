@@ -42,16 +42,6 @@ const devConfig = {
     generalPetition: {
       endorsementsApiBasePath: 'http://localhost:4246',
     },
-    healthInsuranceV2: {
-      xRoadBaseUrl: process.env.XROAD_BASE_PATH ?? 'http://localhost:8080',
-      xRoadProviderId:
-        process.env.XROAD_HEALTH_INSURANCE_ID ??
-        'IS-DEV/GOV/10007/SJUKRA-Protected',
-      xRoadClientId:
-        process.env.XROAD_CLIENT_ID ?? 'IS-DEV/GOV/10000/island-is-client',
-      username: process.env.XROAD_HEALTH_INSURANCE_V2_XROAD_USERNAME ?? '',
-      password: process.env.XROAD_HEALTH_INSURANCE_V2_XROAD_PASSWORD ?? '',
-    },
     userProfile: {
       serviceBasePath: 'http://localhost:3366',
     },
@@ -108,13 +98,6 @@ const prodConfig = {
     attachmentBucket: process.env.APPLICATION_ATTACHMENT_BUCKET,
     generalPetition: {
       endorsementsApiBasePath: process.env.ENDORSEMENTS_API_BASE_PATH,
-    },
-    healthInsuranceV2: {
-      xRoadBaseUrl: process.env.XROAD_BASE_PATH,
-      xRoadProviderId: process.env.XROAD_HEALTH_INSURANCE_ID,
-      xRoadClientId: process.env.XROAD_CLIENT_ID,
-      username: process.env.XROAD_HEALTH_INSURANCE_V2_XROAD_USERNAME,
-      password: process.env.XROAD_HEALTH_INSURANCE_V2_XROAD_PASSWORD,
     },
     userProfile: {
       serviceBasePath: process.env.SERVICE_USER_PROFILE_URL,

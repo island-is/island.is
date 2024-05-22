@@ -187,6 +187,7 @@ import { UserProfileClientConfig } from '@island.is/clients/user-profile'
 import { UltravioletRadiationClientConfig } from '@island.is/clients/ultraviolet-radiation'
 import { CriminalRecordClientConfig } from '@island.is/clients/criminal-record'
 import { VmstClientConfig } from '@island.is/clients/vmst'
+import { HealthInsuranceV2ClientConfig } from '@island.is/clients/icelandic-health-insurance/health-insurance'
 
 const environment = getConfig
 
@@ -248,15 +249,7 @@ const environment = getConfig
     }),
     CmsTranslationsModule,
     TerminusModule,
-    HealthInsuranceModule.register({
-      clientV2Config: {
-        xRoadBaseUrl: environment.healthInsuranceV2.xRoadBaseUrl!,
-        xRoadProviderId: environment.healthInsuranceV2.xRoadProviderId!,
-        xRoadClientId: environment.healthInsuranceV2.xRoadClientId!,
-        username: environment.healthInsuranceV2.username!,
-        password: environment.healthInsuranceV2.password!,
-      },
-    }),
+    HealthInsuranceModule,
     UserProfileModule.register({
       islykill: {
         cert: environment.islykill.cert!,
@@ -412,6 +405,7 @@ const environment = getConfig
         UltravioletRadiationClientConfig,
         CriminalRecordClientConfig,
         VmstClientConfig,
+        HealthInsuranceV2ClientConfig,
       ],
     }),
   ],

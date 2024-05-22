@@ -41,6 +41,7 @@ import { OfficialJournalOfIcelandApplicationClientConfig } from '@island.is/clie
 import { DataProtectionComplaintClientConfig } from '@island.is/clients/data-protection-complaint'
 import { CriminalRecordClientConfig } from '@island.is/clients/criminal-record'
 import { VmstClientConfig } from '@island.is/clients/vmst'
+import { HealthInsuranceV2ClientConfig } from '@island.is/clients/icelandic-health-insurance/health-insurance'
 
 @Module({
   imports: [
@@ -85,6 +86,7 @@ import { VmstClientConfig } from '@island.is/clients/vmst'
         DataProtectionComplaintClientConfig,
         CriminalRecordClientConfig,
         VmstClientConfig,
+        HealthInsuranceV2ClientConfig,
       ],
     }),
   ],
