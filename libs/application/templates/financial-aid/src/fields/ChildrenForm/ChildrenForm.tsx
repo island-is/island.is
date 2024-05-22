@@ -1,21 +1,29 @@
 import React from 'react'
 import { useIntl } from 'react-intl'
 
-import { Text, Box } from '@island.is/island-ui/core'
+import { Text, Box, Input } from '@island.is/island-ui/core'
 
 import { DescriptionText } from '..'
-import { FAFieldBaseProps } from '../../lib/types'
+import {
+  FAFieldBaseProps,
+  SummaryComment as SummaryCommentType,
+} from '../../lib/types'
 import withLogo from '../Logo/Logo'
 import { childrenForm } from '../../lib/messages'
 
 import { ChildInput } from './ChildInput'
 import { sortChildrenUnderAgeByAge } from '../../lib/utils'
+import { SummaryComment } from '../Summary'
+import { Controller, useFormContext } from 'react-hook-form'
 
 const ChildrenForm = ({ application, field, errors }: FAFieldBaseProps) => {
   const { formatMessage } = useIntl()
-  const { externalData } = application
+  const { setValue } = useFormContext()
+
+  const { externalData, answers } = application
   const childrenExternalData = externalData.childrenCustodyInformation.data
   const childrenInfo = sortChildrenUnderAgeByAge(childrenExternalData)
+  const summaryCommentType = SummaryCommentType.CHILDRENCOMMENT
 
   return (
     <>
@@ -37,6 +45,33 @@ const ChildrenForm = ({ application, field, errors }: FAFieldBaseProps) => {
           />
         )
       })}
+
+      <Box marginTop={[3, 3, 4]} marginBottom={4}>
+        <Controller
+          name={summaryCommentType}
+          defaultValue={answers?.childrenComment}
+          render={({ field: { onChange, value } }) => {
+            return (
+              <Input
+                id={summaryCommentType}
+                name={summaryCommentType}
+                label={formatMessage(childrenForm.inputs.commentLabel)}
+                placeholder={formatMessage(
+                  childrenForm.inputs.commentPlaceholder,
+                )}
+                value={value}
+                textarea={true}
+                rows={8}
+                backgroundColor="blue"
+                onChange={(e) => {
+                  onChange(e.target.value)
+                  setValue(summaryCommentType, e.target.value)
+                }}
+              />
+            )
+          }}
+        />
+      </Box>
     </>
   )
 }

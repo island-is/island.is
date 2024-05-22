@@ -5,14 +5,9 @@ import { Text, Box } from '@island.is/island-ui/core'
 import { childrenForm } from '../../lib/messages'
 import format from 'date-fns/format'
 
-import {
-  CheckboxController,
-  InputController,
-} from '@island.is/shared/form-fields'
+import { InputController } from '@island.is/shared/form-fields'
 
 import kennitala from 'kennitala'
-import { getMessageForSchool } from '../../lib/formatters'
-import { getSchoolType } from '../../lib/utils'
 import { useLocale } from '@island.is/localization'
 import { RecordObject } from '@island.is/application/types'
 import { getErrorViaPath } from '@island.is/application/core'
@@ -49,11 +44,9 @@ export const ChildInput: FC<React.PropsWithChildren<Props>> = ({
   const age = kennitalaInfo?.age
   const dateOfBirth = new Date(birthday)
 
-  const schoolType = getSchoolType(age)
-
   const { formatMessage } = useLocale()
 
-  if (!schoolType) {
+  if (age >= 18) {
     return null
   }
   return (
@@ -78,10 +71,8 @@ export const ChildInput: FC<React.PropsWithChildren<Props>> = ({
           id={schoolField}
           name={schoolField}
           required={true}
-          placeholder={formatMessage(
-            getMessageForSchool[schoolType].placeholder,
-          )}
-          label={formatMessage(getMessageForSchool[schoolType].label)}
+          placeholder={formatMessage(childrenForm.inputs.schoollPlaceholder)}
+          label={formatMessage(childrenForm.inputs.schoolLabel)}
           error={errors && getErrorViaPath(errors, schoolField)}
           backgroundColor="white"
           onChange={() => {
