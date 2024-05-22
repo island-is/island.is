@@ -11,4 +11,4 @@ import { OfficialJournalOfIcelandApplicationResolver } from './ojoiApplication.r
   ],
   exports: [OfficialJournalOfIcelandApplicationService],
 })
-export class OfficialJournalOfIcelandModule {}
+export class OfficialJournalOfIcelandApplicationModule {}
