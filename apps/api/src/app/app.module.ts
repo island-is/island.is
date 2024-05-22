@@ -186,7 +186,6 @@ import { HousingBenefitsConfig } from '@island.is/clients/hms-housing-benefits'
 import { UserProfileClientConfig } from '@island.is/clients/user-profile'
 import { UltravioletRadiationClientConfig } from '@island.is/clients/ultraviolet-radiation'
 import { CriminalRecordClientConfig } from '@island.is/clients/criminal-record'
-import { HealthInsuranceV2ClientConfig } from '@island.is/clients/icelandic-health-insurance/health-insurance'
 import { VmstClientConfig } from '@island.is/clients/vmst'
 
 const environment = getConfig
@@ -412,7 +411,6 @@ const environment = getConfig
         UserProfileClientConfig,
         UltravioletRadiationClientConfig,
         CriminalRecordClientConfig,
-        HealthInsuranceV2ClientConfig,
         VmstClientConfig,
       ],
     }),
