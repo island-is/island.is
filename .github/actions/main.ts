@@ -1,57 +1,39 @@
 import { LocalRunner } from './ci-io'
-import { LastGoodBuild, findBestGoodRefBranch, findBestGoodRefPR } from './change-detection'
+import { findBestGoodRefBranch, findBestGoodRefPR } from './change-detection'
 import { Octokit } from '@octokit/action'
 import { SimpleGit } from './simple-git'
 import { WorkflowID } from './git-action-status'
+;(async () => {
+  const runner = new LocalRunner(new Octokit())
+  let git = new SimpleGit(process.env.REPO_ROOT!, process.env.SHELL!)
 
-const SHOULD_TEST_EVERYTHING = !!process.env.TEST_EVERYTHING;
-const EVENT_IS_A_PULL_REQUEST = process.env.GITHUB_EVENT_NAME === "pull_request";
+  const diffWeight = (s: string[]) => s.length
+  const rev = process.env.TEST_EVERYTHING
+    ? 'rebuild'
+    : process.env.GITHUB_EVENT_NAME === 'pull_request'
+    ? await findBestGoodRefPR(
+        diffWeight,
+        git,
+        runner,
+        `'${process.env.HEAD_REF!}'`,
+        `'${process.env.BASE_REF!}'`,
+        `'${process.env.PR_REF!}'`,
+        process.env.WORKFLOW_ID! as WorkflowID,
+      )
+    : await findBestGoodRefBranch(
+        diffWeight,
+        git,
+        runner,
+        `'${process.env.HEAD_REF!}'`,
+        `'${process.env.BASE_REF!}'`,
+        process.env.WORKFLOW_ID! as WorkflowID,
+      )
 
-const git = new SimpleGit(process.env.REPO_ROOT!, process.env.SHELL!)
-const runner = new LocalRunner(new Octokit())
-
-
-async function main() {
-  const rev = await findRev();
   if (rev === 'rebuild') {
     console.log(`Full rebuild needed`)
-    return;
-  }
-  console.log(JSON.stringify(rev))
-}
-function diffWeight(s: string[]) {
-  return s.length
-}
-
-async function findRev() {
-  if (SHOULD_TEST_EVERYTHING) {
-    return 'rebuild'
-  }
-  let value: LastGoodBuild;
-  if (EVENT_IS_A_PULL_REQUEST) {
-    value = await findBestGoodRefPR(
-      diffWeight,
-      git,
-      runner,
-      `'${process.env.HEAD_REF!}'`,
-      `'${process.env.BASE_REF!}'`,
-      `'${process.env.PR_REF!}'`,
-      process.env.WORKFLOW_ID! as WorkflowID,
-    )
   } else {
-    value = await findBestGoodRefBranch(
-      diffWeight,
-      git,
-      runner,
-      `'${process.env.HEAD_REF!}'`,
-      `'${process.env.BASE_REF!}'`,
-      process.env.WORKFLOW_ID! as WorkflowID,
-    )
+    rev.branch = rev.branch.replace(/'/g, '')
+    rev.ref = rev.ref.replace(/'/g, '')
+    console.log(JSON.stringify(rev))
   }
-  if (value === "rebuild") {
-    return value;
-  }
-  value.branch = value.branch.replace(/'/g, '')
-  value.ref = value.ref.replace(/'/g, '')
-  return value;
-}
+})()
