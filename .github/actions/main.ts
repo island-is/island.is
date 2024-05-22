@@ -10,7 +10,6 @@ const EVENT_IS_A_PULL_REQUEST = process.env.GITHUB_EVENT_NAME === "pull_request"
 const git = new SimpleGit(process.env.REPO_ROOT!, process.env.SHELL!)
 const runner = new LocalRunner(new Octokit())
 
-main();
 
 async function main() {
   const rev = await findRev();
@@ -54,4 +53,5 @@ async function findRev() {
   }
   value.branch = value.branch.replace(/'/g, '')
   value.ref = value.ref.replace(/'/g, '')
+  return value;
 }
