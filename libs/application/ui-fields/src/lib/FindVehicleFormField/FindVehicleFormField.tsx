@@ -94,7 +94,7 @@ const extractDetails = function (
     return {
       ...extractCommonVehicleInfo(response.basicVehicleInformation),
       isDebtLess: response.isDebtLess ?? true,
-      validationErrorMessages: response.validationErrorMessages ?? [],
+      validationErrorMessages: response?.validationErrorMessages ?? [],
     }
   } else if (
     isVehicleType<VehiclePlateOrderChecksByPermno>(
@@ -104,6 +104,7 @@ const extractDetails = function (
   ) {
     return {
       ...extractCommonVehicleInfo(response.basicVehicleInformation),
+      validationErrorMessages: response?.validationErrorMessages ?? [],
     }
   } else if (
     isVehicleType<VehicleOperatorChangeChecksByPermno>(
@@ -114,7 +115,7 @@ const extractDetails = function (
     return {
       ...extractCommonVehicleInfo(response.basicVehicleInformation),
       isDebtLess: response.isDebtLess ?? true,
-      validationErrorMessages: response.validationErrorMessages ?? [],
+      validationErrorMessages: response?.validationErrorMessages ?? [],
     }
   } else if (isVehicleType<MachineDetails>(response, 'MachineDetails')) {
     return {
@@ -263,7 +264,11 @@ export const FindVehicleFormField: FC<React.PropsWithChildren<Props>> = ({
         }
       }
     }
-
+    setValue('findVehicle', true)
+    setValue(
+      `${field.id}.paymentRequiredForOwnerChange`,
+      machineDetails.paymentRequiredForOwnerChange,
+    )
     setValue(`${field.id}.regNumber`, machineDetails.regNumber)
     setValue(`${field.id}.category`, machineDetails.category)
     setValue(`${field.id}.type`, machineDetails.type || '')
