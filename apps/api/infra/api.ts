@@ -263,8 +263,8 @@ export const serviceSetup = (services: {
       UNIVERSITY_GATEWAY_API_URL: ref(
         (h) => `http://${h.svc(services.universityGatewayApi)}`,
       ),
-      REDIS_SLOTS_REFRESH_TIMEOUT: "3000",
-      REDIS_SLOTS_REFRESH_INTERVAL: "10000"
+      REDIS_SLOTS_REFRESH_TIMEOUT: '3000',
+      REDIS_SLOTS_REFRESH_INTERVAL: '10000',
     })
 
     .secrets({
