@@ -53,11 +53,12 @@ export class NotificationDispatchService {
     messageId: string,
   ): Promise<string[]> {
     try {
-      const deviceTokensResponse =
-        await this.userProfileApi.userTokenControllerFindUserDeviceToken({
-          xParamNationalId: nationalId,
-        })
-      const tokens = deviceTokensResponse.map((token) => token.deviceToken)
+      // const deviceTokensResponse =
+      //   await this.userProfileApi.userTokenControllerFindUserDeviceToken({
+      //     xParamNationalId: nationalId,
+      //   })
+      // const tokens = deviceTokensResponse.map((token) => token.deviceToken)
+      const tokens = ['asdfð','asdfdsfdasð']
 
       if (tokens.length === 0) {
         this.logger.info('No push-notification tokens found for user', {
