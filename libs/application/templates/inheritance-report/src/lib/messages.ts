@@ -492,8 +492,8 @@ export const m = defineMessages({
     defaultMessage: 'Markaðsverðmæti á dánardegi',
     description: '',
   },
-  gunNumber: {
-    id: 'ir.application:gunNumber',
+  gunSerialNumber: {
+    id: 'ir.application:gunSerialNumber',
     defaultMessage: 'Raðnúmer',
     description: '',
   },
