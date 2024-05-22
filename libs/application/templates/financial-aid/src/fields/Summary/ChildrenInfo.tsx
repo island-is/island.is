@@ -17,7 +17,6 @@ interface Props {
 }
 
 const ChildrenInfo = ({ childrenSchoolInfo, goToScreen }: Props) => {
-  const { formatMessage } = useIntl()
   return (
     <SummaryBlock
       editAction={() => goToScreen?.(Routes.CHILDRENSCHOOLINFO)}
@@ -50,7 +49,7 @@ const ChildInfo = ({ name, nationalId, school }: PropsInfo) => {
   const { formatMessage } = useIntl()
   return (
     <GridRow marginBottom={3}>
-      <GridColumn span={['12/12', '12/12', '12/12', '4/12']}>
+      <GridColumn span={['12/12', '12/12', '6/12', '4/12']}>
         <Box>
           <Text fontWeight="semiBold">
             {formatMessage(summaryForm.childrenInfo.name)}
@@ -58,8 +57,8 @@ const ChildInfo = ({ name, nationalId, school }: PropsInfo) => {
           <Text>{name}</Text>
         </Box>
       </GridColumn>
-      <GridColumn span={['12/12', '12/12', '12/12', '4/12']}>
-        <Box marginTop={[3, 3, 3, 0]}>
+      <GridColumn span={['12/12', '12/12', '6/12', '4/12']}>
+        <Box marginTop={[3, 3, 0, 0]}>
           <Text fontWeight="semiBold">
             {formatMessage(summaryForm.childrenInfo.nationalId)}
           </Text>
