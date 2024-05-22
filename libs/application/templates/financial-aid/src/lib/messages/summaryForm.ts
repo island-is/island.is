@@ -45,6 +45,19 @@ export const summaryForm = {
       description: 'Summary form when fails to submit application',
     },
   }),
+  childrenAidAlert: defineMessages({
+    aidGoesToInstution: {
+      id: 'fa.application:section.summaryForm.childrenAidAlert.aidGoesToInstution',
+      defaultMessage:
+        'Styrkur vegna barna er greiddur beint til viðeigandi skólastofnunar.',
+      description: 'Alert banner when children aid goes to instution',
+    },
+    aidGoesToUser: {
+      id: 'fa.application:section.summaryForm.general.aidGoesToUser',
+      defaultMessage: 'Styrkur vegna barna bætist við þessa upphæð.',
+      description: 'Alert banner when children aid is paid from municipality',
+    },
+  }),
   userInfo: defineMessages({
     name: {
       id: 'fa.application:section.summaryForm.userInfo.name',
