@@ -4,7 +4,11 @@ import type { ConfigType } from '@island.is/nest/config'
 import type { EnhancedFetchAPI } from '@island.is/clients/middlewares'
 import type { Logger } from '@island.is/logging'
 import { LOGGER_PROVIDER } from '@island.is/logging'
-import { UltravioletRadiationClientService } from '@island.is/clients/ultraviolet-radiation'
+import {
+  LATEST_MEASUREMENT_KEY as LATEST_UV_MEASUREMENT_KEY,
+  MEASUREMENT_SERIES_KEY as UV_MEASUREMENT_SERIES_KEY,
+  UltravioletRadiationClientService,
+} from '@island.is/clients/ultraviolet-radiation'
 
 import {
   getMultipleStatistics as _getMultipleStatistics,
@@ -35,10 +39,10 @@ export class StatisticsClientService {
         ),
       ]
 
-      if (query.sourceDataKeys.includes('web.uv.latest')) {
+      if (query.sourceDataKeys.includes(LATEST_UV_MEASUREMENT_KEY)) {
         promises.push(this.ultravioletRadiationService.getLatestMeasurement())
       }
-      if (query.sourceDataKeys.includes('web.uv.series')) {
+      if (query.sourceDataKeys.includes(UV_MEASUREMENT_SERIES_KEY)) {
         promises.push(this.ultravioletRadiationService.getMeasurementSeries())
       }
 

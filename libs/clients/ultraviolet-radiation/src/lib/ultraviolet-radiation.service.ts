@@ -5,6 +5,11 @@ import {
   type InlineResponse2001BodyDataLatest,
 } from '../../gen/fetch'
 
+export const LATEST_MEASUREMENT_KEY =
+  'icelandicRadiationSafetyAuthority.ultravioletRadiation.latestMeasurement' as const
+export const MEASUREMENT_SERIES_KEY =
+  'icelandicRadiationSafetyAuthority.ultravioletRadiation.measurementSeries' as const
+
 export const isValidMeasurement = (
   item: InlineResponse2001BodyDataLatest | undefined,
 ): item is Required<InlineResponse2001BodyDataLatest> => {
@@ -15,17 +20,22 @@ export const isValidMeasurement = (
 export class UltravioletRadiationClientService {
   constructor(private readonly api: DefaultApi) {}
 
-  async getLatestMeasurement(): Promise<StatisticSourceData> {
+  async getLatestMeasurement(): Promise<
+    StatisticSourceData<typeof LATEST_MEASUREMENT_KEY>
+  > {
     const response = await this.api.returnDailyUV()
-    const measurement = response?.body?.dataLatest
+    const measurement =
+      response?.body?.dataLatest ?? response?.body?.dataAll?.at(-1)
     if (!isValidMeasurement(measurement)) {
       return {
-        data: { 'web.uv.latest': [] },
+        data: {
+          [LATEST_MEASUREMENT_KEY]: [],
+        },
       }
     }
     return {
       data: {
-        'web.uv.latest': [
+        [LATEST_MEASUREMENT_KEY]: [
           {
             header: measurement.time,
             value: measurement.uvVal,
@@ -35,12 +45,14 @@ export class UltravioletRadiationClientService {
     }
   }
 
-  async getMeasurementSeries(): Promise<StatisticSourceData<'web.uv.series'>> {
+  async getMeasurementSeries(): Promise<
+    StatisticSourceData<typeof MEASUREMENT_SERIES_KEY>
+  > {
     const response = await this.api.returnHourlyUV()
     const series = response.body?.dataAll?.filter(isValidMeasurement) ?? []
     return {
       data: {
-        'web.uv.series': series.map((measurement) => ({
+        [MEASUREMENT_SERIES_KEY]: series.map((measurement) => ({
           header: measurement.time,
           value: measurement.uvVal,
         })),
