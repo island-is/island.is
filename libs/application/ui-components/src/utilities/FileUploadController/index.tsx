@@ -90,7 +90,7 @@ export const FileUploadController: FC<
   accept,
   maxSize,
   maxSizeErrorText,
-  totalMaxSize,
+  totalMaxSize = 100000000,
   forImageUpload,
 }) => {
   const { formatMessage } = useLocale()
@@ -173,6 +173,8 @@ export const FileUploadController: FC<
       .reduce((a, b) => a + b, 0)
 
     // Show an error if the sum im the file sizes exceeds totalMaxSize.
+    console.log(maxSize, totalMaxSize)
+
     if (totalMaxSize && totalNewFileSize + sumOfFileSizes > totalMaxSize) {
       setUploadError(
         formatMessage(coreErrorMessages.fileMaxSumSizeLimitExceeded, {
