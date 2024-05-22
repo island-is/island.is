@@ -188,7 +188,7 @@ export const heirs = buildSection({
               marginBottom: 'smallGutter',
             }),
             buildFileUploadField({
-              id: 'heirsAdditionalInfoFiles',
+              id: 'heirsAdditionalInfoPrivateTransferFiles',
               uploadMultiple: false,
               title: '',
               description: '',

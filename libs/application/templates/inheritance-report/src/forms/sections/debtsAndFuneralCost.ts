@@ -173,7 +173,7 @@ export const debtsAndFuneralCost = buildSection({
     }),
     buildSubSection({
       id: 'debtsAndFuneralCostOverview',
-      title: 'Yfirlit',
+      title: m.debtsAndFuneralCostOverview,
       children: [
         buildMultiField({
           id: 'debtsAndFuneralCostOverview',
