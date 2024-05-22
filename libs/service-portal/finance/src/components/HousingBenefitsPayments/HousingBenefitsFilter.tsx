@@ -4,6 +4,7 @@ import {
   AccordionItem,
   Box,
   Button,
+  Checkbox,
   FilterMultiChoice,
   Select,
   Stack,
@@ -21,6 +22,9 @@ import cn from 'classnames'
 import * as styles from './HousingBenefits.css'
 import * as financeStyles from '../../screens/Finance.css'
 import DropdownExport from '../../components/DropdownExport/DropdownExport'
+import { DEFAULT_PAYMENT_ORIGIN } from '../../screens/HousingBenefits/useHousingBenefitsFilters'
+
+export const BASE_YEAR = 2017
 
 export type DateSelection = {
   label?: string
@@ -29,18 +33,21 @@ export type DateSelection = {
 
 interface Props {
   payments?: HousingBenefitsPayments
-  paymentOrigin?: string
-  selectedMonth?: string
+  paymentOrigin?: number
+  showFinalPayments: boolean
   clearAllFilters: () => void
+  setPaymentOrigin: (po: string) => void
   setSelectedMonth: (sm?: string) => void
-  setPaymentOrigin: (po?: string) => void
+  setShowFinalPayments: (p: boolean) => void
 }
 const HousingBenefitsFilter = ({
   payments,
   paymentOrigin,
+  showFinalPayments,
   clearAllFilters,
   setSelectedMonth,
   setPaymentOrigin,
+  setShowFinalPayments,
 }: Props) => {
   const { formatMessage } = useLocale()
   const [currentMonth, setCurrentMonth] = useState<DateSelection>()
@@ -53,7 +60,7 @@ const HousingBenefitsFilter = ({
       ),
     [formatMessage],
   )
-  const yearOptions = useMemo(() => generateYearArray(2017), [])
+  const yearOptions = useMemo(() => generateYearArray(BASE_YEAR), [])
 
   useEffect(() => {
     if (currentYear?.value) {
@@ -114,14 +121,17 @@ const HousingBenefitsFilter = ({
           }}
           onClear={(categoryId) => {
             if (categoryId === 'payment-type') {
-              setPaymentOrigin(undefined)
+              setPaymentOrigin(DEFAULT_PAYMENT_ORIGIN)
             }
           }}
           categories={[
             {
               id: 'payment-type',
               label: formatMessage(messages.hbPaymentType),
-              selected: paymentOrigin ? [paymentOrigin] : [],
+              selected:
+                typeof paymentOrigin === 'number'
+                  ? [String(paymentOrigin)]
+                  : [],
               filters: [
                 {
                   value: '0',
@@ -195,6 +205,20 @@ const HousingBenefitsFilter = ({
               </Box>
             </AccordionItem>
           </Accordion>
+          <Box
+            borderBottomWidth="standard"
+            borderColor="blue200"
+            width="full"
+            marginTop={1}
+            marginBottom={1}
+          />
+          <Box paddingY={2}>
+            <Checkbox
+              label={formatMessage(messages.onlyShowPayments)}
+              onChange={(e) => setShowFinalPayments(e.target.checked)}
+              checked={showFinalPayments}
+            />
+          </Box>
         </Box>
       </Box>
     </Filter>

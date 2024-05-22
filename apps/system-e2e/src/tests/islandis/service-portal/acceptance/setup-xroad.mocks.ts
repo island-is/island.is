@@ -6,14 +6,20 @@ import { EnvironmentConfig } from '../../../../../../../infra/src/dsl/types/char
 import { loadAssetsXroadMocks } from './mocks/assets.mock'
 import { loadHealthInsuranceXroadMocks } from './mocks/healthInsurance.mock'
 import { loadSocialInsuranceXroadMocks } from './mocks/socialInsurance.mock'
+import { loadLicensesXroadMocks } from './mocks/licenses.mock'
+import { loadOccupationalLicensesXroadMocks } from './mocks/occupationalLicenses.mock'
 
 export const setupXroadMocks = async () => {
   await resetMocks()
 
-  /* Xroad mocks */
-  await loadAssetsXroadMocks()
-  await loadHealthInsuranceXroadMocks()
-  await loadSocialInsuranceXroadMocks()
+  /** Xroad mocks */
+  await Promise.all([
+    loadAssetsXroadMocks(),
+    loadHealthInsuranceXroadMocks(),
+    loadSocialInsuranceXroadMocks(),
+    loadLicensesXroadMocks(),
+    loadOccupationalLicensesXroadMocks(),
+  ])
 
   const { envs } = getEnvVariables(Base.getEnv(), 'system-e2e', env)
   const xroadBasePath = envs['XROAD_BASE_PATH']

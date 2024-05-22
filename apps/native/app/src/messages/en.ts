@@ -183,6 +183,7 @@ export const en: TranslatedMessages = {
   // document detail
   'documentDetail.screenTitle': 'Document',
   'documentDetail.loadingText': 'Loading document',
+  'documentDetail.errorUnknown': 'Error occurred while loading document',
 
   // wallet
   'wallet.screenTitle': 'Wallet',
@@ -273,9 +274,7 @@ export const en: TranslatedMessages = {
 
   // notifications
   'notifications.screenTitle': 'Notifications',
-
-  // notification detail
-  'notificationDetail.screenTitle': 'Notification',
+  'notifications.errorUnknown': 'Error occurred while loading notifications',
 
   // profile
   'profile.screenTitle': 'More',
@@ -500,4 +499,19 @@ export const en: TranslatedMessages = {
   'airDiscount.emptyListTitle': 'No benefits',
   'airDiscount.emptyListDescription':
     'Only inhabitants with a legal domicile in rural areas far away from the Capital area and on islands are eligible for a discount with Loftbru. (see map on loftbru.is)',
+
+  // offline
+  'offline.title': 'No internet connection',
+  'offline.message': 'Information has not been updated.',
+
+  // problem
+  'problem.error.tag': 'Error',
+  'problem.error.title': 'Service is temporarily down',
+  'problem.error.message': 'Please try again later',
+  'problem.noData.title': 'No data',
+  'problem.noData.message':
+    'If you believe you have data that should appear here, please contact service provider.',
+  'problem.offline.title': 'No internet connection',
+  'problem.offline.message':
+    'An error occurred while communicating with the service provider',
 }

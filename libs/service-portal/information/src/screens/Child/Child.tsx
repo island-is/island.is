@@ -3,11 +3,11 @@ import { useUserInfo } from '@island.is/auth/react'
 import { useLocale, useNamespaces } from '@island.is/localization'
 import {
   formatNationalId,
-  NotFound,
   UserInfoLine,
   m,
   IntroHeader,
   THJODSKRA_SLUG,
+  LinkButton,
 } from '@island.is/service-portal/core'
 import { defineMessage } from 'react-intl'
 import {
@@ -19,10 +19,9 @@ import {
   Inline,
   Stack,
 } from '@island.is/island-ui/core'
-import ChildRegistrationModal from './ChildRegistrationModal'
 import { TwoColumnUserInfoLine } from '../../components/TwoColumnUserInfoLine/TwoColumnUserInfoLine'
 import { formatNameBreaks } from '../../helpers/formatting'
-import { spmm } from '../../lib/messages'
+import { spmm, urls } from '../../lib/messages'
 import { useNationalRegistryChildCustodyQuery } from './Child.generated'
 import { natRegGenderMessageDescriptorRecord } from '../../helpers/localizationHelpers'
 import { unmaskString } from '@island.is/shared/utils'
@@ -40,7 +39,6 @@ const Child = () => {
 
   const { data, loading, error } = useNationalRegistryChildCustodyQuery({
     variables: {
-      api: 'v3',
       childNationalId: unmaskString(baseId, userInfo.profile.nationalId),
     },
   })
@@ -96,14 +94,11 @@ const Child = () => {
                   <Inline space={2}>
                     {!loading && !isChild && (
                       <>
-                        <ChildRegistrationModal
-                          data={{
-                            parentName:
-                              data?.nationalRegistryPerson?.fullName || '',
-                            parentNationalId: userInfo.profile.nationalId || '',
-                            childName: child?.fullName || '',
-                            childNationalId: nationalId || '',
-                          }}
+                        <LinkButton
+                          to={formatMessage(urls.contactThjodskra)}
+                          text={formatMessage(spmm.childRegisterModalButton)}
+                          variant="button"
+                          icon="receipt"
                         />
 
                         <Button

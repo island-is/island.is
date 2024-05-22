@@ -44,12 +44,15 @@ export const BlowoutList = ({
             component="button"
             onClick={() => setShowList(!showList)}
             className={styles.blowout}
+            title="show-list"
+            aria-label="show-list"
           >
             <Icon
               icon={showList ? 'remove' : 'add'}
               type="outline"
               size="small"
               color="blue400"
+              ariaHidden
             />
           </FocusableBox>
           {showList && (

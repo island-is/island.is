@@ -16,24 +16,22 @@ export enum Features {
   alcoholTaxRedemption = 'isAlcoholTaxRedemptionEnabled',
   consultationPortalApplication = 'isConsultationPortalEnabled',
   childrenResidenceChangeV2 = 'isChildrenResidenceChangeV2Enabled',
-  oldAgePensionApplication = 'isOldAgePensionEnable',
-  householdSupplementApplication = 'isHouseholdSupplementEnable',
   signatureListCreation = 'isSignatureListCreationEnabled',
   citizenship = 'isCitizenshipEnabled',
   energyFunds = 'isEnergyFundsEnabled',
   carRecyclingApplication = 'isCarRecyclingApplicationEnabled',
   complaintsToAlthingiOmbudsman = 'isComplaintToAlthingiOmbudsmanEnabled',
   healthcareLicenseCertificate = 'isHealthcareLicenseCertificateEnabled',
-  pensionSupplementApplication = 'isPensionSupplementEnable',
   transferOfMachineOwnership = 'isTransferOfMachineOwnershipEnabled',
   university = 'isUniversityEnabled',
-  additionalSupportForTheElderlyApplication = 'isAdditionalSupportForTheElderlyEnable',
   homeSupport = 'isHomeSupportEnabled',
   ChangeMachineSupervisor = 'isChangeMachineSupervisorEnabled',
   DeregisterMachine = 'isDeregisterMachineEnabled',
   grindavikHousingBuyout = 'isGrindavikHousingBuyoutEnabled',
   RequestInspection = 'isRequestInspectionForMachineEnabled',
   officialJournalOfIceland = 'isOfficialJournalOfIcelandEnabled',
+  StreetRegistration = 'isStreetRegistrationEnabled',
+  HealthInsuranceDeclaration = 'isHealthInsuranceDeclarationEnabled',
 
   // Application System Delegations active
   applicationSystemDelegations = 'applicationSystemDelegations',
@@ -51,9 +49,19 @@ export enum Features {
   servicePortalSignatureCollection = 'isServicePortalSignatureCollectionEnabled',
   servicePortalVehicleMileagePageEnabled = 'isServicePortalVehicleMileagePageEnabled',
   servicePortalSocialInsurancePageEnabled = 'isServicePortalSocialInsurancePageEnabled',
+  ServicePortalNotificationsEnabled = 'isServicePortalNotificationsPageEnabled',
 
   //Occupational License Health directorate fetch enabled
   occupationalLicensesHealthDirectorate = 'isHealthDirectorateOccupationalLicenseEnabled',
+
+  //Occupational License Health directorate fetch enabled
+  occupationalLicensesV2 = 'isOccupationalLicensesV2Enabled',
+
+  //Possible universities
+  isUniversityOfAkureyriEnabled = 'isUniversityOfAkureyriEnabled',
+  isAgriculturalUniversityOfIcelandEnabled = 'isAgriculturalUniversityOfIcelandEnabled',
+  isBifrostUniversityEnabled = 'isBifrostUniversityEnabled',
+  isHolarUniversityEnabled = 'isHolarUniversityEnabled',
 
   //License service new drivers license client enabled
   licenseServiceDrivingLicenseClient = 'isLicenseServiceDrivingLicenceClientV2Enabled',
@@ -79,10 +87,11 @@ export enum Features {
 
   // Notifications
   isNotificationEmailWorkerEnabled = 'isnotificationemailworkerenabled',
-  shouldSendEmailNotificationsToDelegations = 'shouldSendEmailNotificationsToDelegations',
 
-  // National registry integration
-  disableSoffia = 'disableSoffia',
+  // New/updated delegation notification
+  isDelegationNotificationEnabled = 'isDelegationNotificationEnabled',
+
+  shouldSendEmailNotificationsToDelegations = 'shouldSendEmailNotificationsToDelegations',
 }
 
 export enum ServerSideFeature {

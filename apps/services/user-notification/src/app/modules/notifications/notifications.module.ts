@@ -1,36 +1,28 @@
 import { Module } from '@nestjs/common'
 import { SequelizeModule } from '@nestjs/sequelize'
 import { CacheModule } from '@nestjs/cache-manager'
-import { ConfigType } from '@nestjs/config'
 import * as firebaseAdmin from 'firebase-admin'
 
-import { NationalRegistryV3ClientModule } from '@island.is/clients/national-registry-v3'
-import { EmailModule } from '@island.is/email-service'
-import { FeatureFlagModule } from '@island.is/nest/feature-flags'
-import { LoggingModule } from '@island.is/logging'
-import { CmsTranslationsModule } from '@island.is/cms-translations'
-import { QueueModule } from '@island.is/message-queue'
-import { UserProfileClientModule } from '@island.is/clients/user-profile'
 import { AuthDelegationApiClientModule } from '@island.is/clients/auth/delegation-api'
+import { NationalRegistryV3ClientModule } from '@island.is/clients/national-registry-v3'
+import { UserProfileClientModule } from '@island.is/clients/user-profile'
+import { CmsTranslationsModule } from '@island.is/cms-translations'
+import { EmailModule } from '@island.is/email-service'
+import { LoggingModule } from '@island.is/logging'
+import { QueueModule } from '@island.is/message-queue'
+import { FeatureFlagModule } from '@island.is/nest/feature-flags'
+import { type ConfigType } from '@island.is/nest/config'
 
-import { NotificationsController } from './notifications.controller'
-import { environment } from '../../../environments/environment'
+import { UserNotificationsConfig } from '../../../config'
 import { FIREBASE_PROVIDER } from '../../../constants'
+import { environment } from '../../../environments/environment'
+import { NotificationsController } from './notifications.controller'
 import { NotificationsService } from './notifications.service'
 import { MeNotificationsController } from './me-notifications.controller'
 import { Notification } from './notification.model'
-import { UserNotificationsInfraController } from './infra.controller'
 import { NotificationDispatchService } from './notificationDispatch.service'
-import {
-  IS_RUNNING_AS_WORKER,
-  NotificationsWorkerService,
-  SERVICE_PORTAL_CLICK_ACTION_URL,
-} from './notificationsWorker/notificationsWorker.service'
-import {
-  APP_PROTOCOL,
-  MessageProcessorService,
-} from './messageProcessor.service'
-import { UserNotificationsConfig } from '../../../config'
+import { NotificationsWorkerService } from './notificationsWorker/notificationsWorker.service'
+import { MessageProcessorService } from './messageProcessor.service'
 
 @Module({
   exports: [NotificationsService],
@@ -38,7 +30,7 @@ import { UserNotificationsConfig } from '../../../config'
     SequelizeModule.forFeature([Notification]),
     CacheModule.register({
       ttl: 60 * 10 * 1000, // 10 minutes
-      max: 100, // 100 items max
+      max: 1000, // 1000 items max
     }),
     LoggingModule,
     CmsTranslationsModule,
@@ -58,11 +50,7 @@ import { UserNotificationsConfig } from '../../../config'
     NationalRegistryV3ClientModule,
     AuthDelegationApiClientModule,
   ],
-  controllers: [
-    NotificationsController,
-    MeNotificationsController,
-    UserNotificationsInfraController,
-  ],
+  controllers: [NotificationsController, MeNotificationsController],
   providers: [
     NotificationsService,
     NotificationDispatchService,
@@ -78,24 +66,6 @@ import { UserNotificationsConfig } from '../../../config'
                 JSON.parse(config.firebaseCredentials),
               ),
             }),
-      inject: [UserNotificationsConfig.KEY],
-    },
-    {
-      provide: IS_RUNNING_AS_WORKER,
-      useFactory: (config: ConfigType<typeof UserNotificationsConfig>) =>
-        config.isWorker,
-      inject: [UserNotificationsConfig.KEY],
-    },
-    {
-      provide: APP_PROTOCOL,
-      useFactory: (config: ConfigType<typeof UserNotificationsConfig>) =>
-        config.appProtocol,
-      inject: [UserNotificationsConfig.KEY],
-    },
-    {
-      provide: SERVICE_PORTAL_CLICK_ACTION_URL,
-      useFactory: (config: ConfigType<typeof UserNotificationsConfig>) =>
-        config.servicePortalClickActionUrl,
       inject: [UserNotificationsConfig.KEY],
     },
   ],

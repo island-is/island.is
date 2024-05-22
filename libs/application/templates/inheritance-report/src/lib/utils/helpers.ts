@@ -58,6 +58,10 @@ export const isValidPhoneNumber = (phoneNumber: string) => {
   return phone && phone.isValid()
 }
 
+export const formatPhoneNumber = (phoneNumber: string) => {
+  return phoneNumber.replace(/\D/g, '').slice(-7)
+}
+
 /**
  * Returns zero if value is not a number or number string
  * @param value
@@ -80,10 +84,8 @@ export const valueToNumber = (value: unknown, delimiter = '.'): number => {
 }
 
 export const isValidRealEstate = (value: string) => {
-  const lotRegex = /^[Ll]{0,1}\d{6}$/
-  const houseRegex = /^[Ff]{0,1}\d{7}$/
-
-  return lotRegex.test(value) || houseRegex.test(value)
+  const assetNumberPattern = /^[Ff]{0,1}\d{7}$|^[Ll]{0,1}\d{6}$/
+  return assetNumberPattern.test(value)
 }
 
 export const getDeceasedWasMarriedAndHadAssets = (

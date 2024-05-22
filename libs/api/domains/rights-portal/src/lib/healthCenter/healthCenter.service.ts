@@ -77,10 +77,8 @@ export class HealthCenterService {
       api.getCurrentHealthCenter().catch(handle404),
       api
         .getHealthCenterHistory({
-          dateFrom: dateFrom
-            ? dateFrom.toDateString()
-            : subYears(new Date(), 5).toDateString(),
-          dateTo: dateTo ? dateTo.toDateString() : new Date().toDateString(),
+          dateFrom: dateFrom ? dateFrom : subYears(new Date(), 5),
+          dateTo: dateTo ? dateTo : new Date(),
         })
         .catch(handle404),
     ])

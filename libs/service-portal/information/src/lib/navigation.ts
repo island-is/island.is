@@ -35,6 +35,16 @@ export const informationNavigation: PortalNavigationItem = {
     {
       name: m.mySettings,
       path: InformationPaths.Settings,
+      children: [
+        {
+          name: m.mySettingsInformation,
+          path: InformationPaths.Settings,
+        },
+        {
+          name: m.mySettingsNotifications,
+          path: InformationPaths.SettingsNotifications,
+        },
+      ],
     },
     {
       name: m.lists,
@@ -68,6 +78,10 @@ export const informationNavigation: PortalNavigationItem = {
           ],
         },
       ],
+    },
+    {
+      name: m.notifications,
+      path: InformationPaths.Notifications,
     },
   ],
   description: m.userInfoDescription,

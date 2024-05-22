@@ -43,7 +43,7 @@ export const notifications = {
     id: 'judicial.system.backend:notifications.email_tail',
     defaultMessage:
       'Hægt er að nálgast yfirlitssíðu málsins á <a href="https://rettarvorslugatt.island.is">rettarvorslugatt.island.is</a>.',
-    description: 'Notaður sem texti í sms-i til þess að tilgreina slóð á RVG',
+    description: 'Notaður sem texti í email til þess að tilgreina slóð á RVG',
   }),
   readyForCourt: defineMessages({
     subject: {
@@ -193,6 +193,21 @@ export const notifications = {
       '{court} hefur móttekið {caseType, select, otherInvestigationCase {kröfu um rannsóknarheimild} investigationCase {kröfu um rannsóknarheimild ({caseTypeName})} restrictionCase {kröfu um {caseTypeName}} other {ákæru}} sem þú sendir og úthlutað málsnúmerinu {courtCaseNumber}. Sjá nánar á rettarvorslugatt.island.is.',
     description: 'Notaður sem texti í sms-i þegar sækjandi fær kröfuskjal',
   }),
+  postponedCourtDateEmail: defineMessages({
+    subject: {
+      id: 'judicial.system.backend:notifications.postponed_court_date_email.subject',
+      defaultMessage: 'Frestun - nýtt þinghald í máli {courtCaseNumber}',
+      description:
+        'Notaður sem titill á pósti til sækjanda og verjenda þegar þinghaldi er frestað',
+    },
+    body: {
+      id: 'judicial.system.backend:notifications.postponed_court_date_email.body_v3',
+      defaultMessage:
+        '{courtName} boðar til þinghalds í máli {courtCaseNumber}.<br />Fyrirtaka mun fara fram {courtDate}.<br /><br />{courtRoomText}<br /><br />{judgeText}<br /><br />{hasAccessToRvg, select, false {Hægt er að nálgast gögn málsins hjá {courtName}} other {Hægt er að nálgast gögn málsins á {linkStart}yfirlitssíðu málsins í Réttarvörslugátt{linkEnd}}}.',
+      description:
+        'Notaður sem texti á pósti til sækjanda og verjenda þegar þinghaldi er frestað',
+    },
+  }),
   prosecutorCourtDateEmail: defineMessages({
     scheduledCase: {
       id: 'judicial.system.backend:notifications.prosecutor_court_date_email.scheduled_case',
@@ -282,22 +297,22 @@ export const notifications = {
   }),
   caseCompleted: defineMessages({
     subject: {
-      id: 'judicial.system.backend:notifications.case_completed.subject',
-      defaultMessage: 'Dómur í máli {courtCaseNumber}',
+      id: 'judicial.system.backend:notifications.case_completed.subject_v1',
+      defaultMessage: 'Máli lokið {courtCaseNumber}',
       description:
         'Notaður sem titill í pósti til hagaðila vegna staðfests dóms',
     },
     prosecutorBody: {
-      id: 'judicial.system.backend:notifications.case_completed.prosecutor_body',
+      id: 'judicial.system.backend:notifications.case_completed.prosecutor_body_v1',
       defaultMessage:
-        'Dómari hefur staðfest dóm í máli {courtCaseNumber} hjá {courtName}.<br /><br />Skjöl málsins eru aðengileg á {linkStart}yfirlitssíðu málsins í Réttarvörslugátt{linkEnd}.',
+        'Máli {courtCaseNumber} hjá {courtName} hefur verið lokið.<br /><br />Niðurstaða: {caseIndictmentRulingDecision}<br /><br />Skjöl málsins eru aðengileg á {linkStart}yfirlitssíðu málsins í Réttarvörslugátt{linkEnd}.',
       description:
         'Notaður sem texti í pósti til sækjanda vegna staðfests dóms',
     },
     defenderBody: {
-      id: 'judicial.system.backend:notifications.case_completed.defender_body_v2',
+      id: 'judicial.system.backend:notifications.case_completed.defender_body_v3',
       defaultMessage:
-        'Dómari hefur staðfest dóm í máli {courtCaseNumber} hjá {courtName}.<br /><br />{defenderHasAccessToRvg, select, false {Þú getur nálgast gögn málsins hjá {courtName} ef þau hafa ekki þegar verið afhent} other {Þú getur nálgast gögn málsins á {linkStart}yfirlitssíðu málsins í Réttarvörslugátt{linkEnd}}}.',
+        'Máli {courtCaseNumber} hjá {courtName} hefur verið lokið.<br /><br />Niðurstaða: {caseIndictmentRulingDecision}<br /><br />{defenderHasAccessToRvg, select, false {Þú getur nálgast gögn málsins hjá {courtName} ef þau hafa ekki þegar verið afhent} other {Þú getur nálgast gögn málsins á {linkStart}yfirlitssíðu málsins í Réttarvörslugátt{linkEnd}}}.',
       description:
         'Notaður sem texti í pósti til verjanda vegna staðfests dóms',
     },
@@ -570,12 +585,26 @@ export const notifications = {
       description:
         'Notaður sem texti í tölvupósti vegna breytingar á lengd gæslu/farbanns/vistunar þar sem ekki var úrskurðað í einangrun.',
     },
-    isolationHtml: {
-      id: 'judicial.system.backend:notifications.modified.isolation_html',
+    htmlDefender: {
+      id: 'judicial.system.backend:notifications.modified.html_defender',
       defaultMessage:
-        '{actorInstitution}, {actorName} {actorTitle}, hefur uppfært lengd {caseType, select, ADMISSION_TO_FACILITY {vistunar} other {gæslu}}/einangrunar í máli {courtCaseNumber}. Sjá {linkStart}yfirlitssíðu málsins í Réttarvörslugátt{linkEnd}.<br /><br />Lok {caseType, select, ADMISSION_TO_FACILITY {vistunar} other {gæslu}}: {validToDate}.<br /><br />Lok einangrunar: {isolationToDate}.',
+        '{actorInstitution}, {actorName} {actorTitle}, hefur uppfært lengd {caseType, select, ADMISSION_TO_FACILITY {vistunar} TRAVEL_BAN {farbanns} other {gæsluvarðhalds}} í máli {courtCaseNumber}. <br /><br />{defenderHasAccessToRvg, select, true {Sjá nánar á {linkStart}yfirlitssíðu málsins í Réttarvörslugátt{linkEnd}} other {Þú getur nálgast gögn málsins hjá {courtName} ef þau hafa ekki þegar verið afhent}}.<br /><br />Ný lokadagsetning: {validToDate}.',
+      description:
+        'Notaður sem texti í tölvupósti til verjanda vegna breytingar á lengd gæslu/farbanns/vistunar þar sem ekki var úrskurðað í einangrun.',
+    },
+    isolationHtml: {
+      id: 'judicial.system.backend:notifications.modified.isolation_html_v1',
+      defaultMessage:
+        '{actorInstitution}, {actorName} {actorTitle}, hefur uppfært lengd gæsluvarðhalds/einangrunar í máli {courtCaseNumber}. Sjá nánar á {linkStart}yfirlitssíðu málsins í Réttarvörslugátt{linkEnd}.<br /><br />Lok gæsluvarðhalds: {validToDate}.<br /><br />Lok einangrunar: {isolationToDate}.',
       description:
         'Notaður sem texti í tölvupósti vegna breytingar á lengd gæslu/einangrunar/vistunar þar sem úrskurðað var í einangrun.',
+    },
+    isolationHtmlDefender: {
+      id: 'judicial.system.backend:notifications.modified.isolation_html_defender',
+      defaultMessage:
+        '{actorInstitution}, {actorName} {actorTitle}, hefur uppfært lengd gæsluvarðhalds/einangrunar í máli {courtCaseNumber}. {defenderHasAccessToRvg, select, true {Sjá nánar á {linkStart}yfirlitssíðu málsins í Réttarvörslugátt{linkEnd}} other {Þú getur nálgast gögn málsins hjá {courtName} ef þau hafa ekki þegar verið afhent}}.<br /><br />Lok gæsluvarðhalds: {validToDate}.<br /><br />Lok einangrunar: {isolationToDate}.',
+      description:
+        'Notaður sem texti í tölvupósti til verjanda vegna breytingar á lengd gæslu/einangrunar/vistunar þar sem úrskurðað var í einangrun.',
     },
   }),
   defenderAssignedEmail: defineMessages({

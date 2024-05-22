@@ -1,5 +1,4 @@
 import { style } from '@vanilla-extract/css'
-import { theme, spacing } from '@island.is/island-ui/theme'
 
 export const advancedFields = style({
   maxHeight: '40rem',

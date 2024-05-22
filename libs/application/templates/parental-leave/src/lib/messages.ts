@@ -206,9 +206,9 @@ export const parentalLeaveFormMessages = {
     otherParentDescription: {
       id: 'pl.application:otherParent.description',
       defaultMessage:
-        'Skráður maki í þjóðskrá er valinn sjálfkrafa. Finnist ekki maki í þjóðskrá getur þú haldið áfram án skráningar, skráð þig sem einstætt foreldri eða skráð hitt foreldrið handvirkt.',
+        'Enginn maki fannst í Þjóðskrá. Þú getur haldið áfram án skráningar, skráð þig sem einstætt foreldri eða skráð hitt foreldrið handvirkt.',
       description:
-        'Your spouse according to Registers Iceland is preselected. If no spouse is found, you can continue without registration, register as a single parent or register the other parent manually.',
+        'No spouse was found in the National Registry. You can continue without registration, register as a single parent or register the other parent manually.',
     },
     otherParentTitle: {
       id: 'pl.application:otherParent.title',
@@ -248,8 +248,10 @@ export const parentalLeaveFormMessages = {
     },
     otherParentSpouse: {
       id: 'pl.application:otherParent.spouse',
-      defaultMessage: 'Hitt foreldrið er {spouseName} (kt. {spouseId})',
-      description: `The other parent is {spouseName} (kt. {spouseId})`,
+      defaultMessage:
+        'Hérna eru upplýsingar um maka/sambúðaraðila. Athugið ef eftirfarandi upplýsingar eru ekki réttar þá þarf að breyta þeim í Þjóðskrá.',
+      description:
+        'Here is information about spouses/partners. Note that if the following information is not correct, it must be changed in the National Registry.',
     },
     otherParentEmailSubSection: {
       id: 'pl.application:otherParentEmail.subSection',
@@ -909,6 +911,21 @@ export const parentalLeaveFormMessages = {
       id: 'pl.application:edit.periods.review.alert.message',
       defaultMessage: 'Engar breytingar fundust.',
       description: 'No changes were found.',
+    },
+    deletePeriod: {
+      id: 'pl.application:delete.period',
+      defaultMessage: 'Eyða tímabili',
+      description: 'Delete period',
+    },
+    periodPaid: {
+      id: 'pl.application:period.paid',
+      defaultMessage: 'Búið að greiða',
+      description: 'Paid',
+    },
+    periodInProgress: {
+      id: 'pl.application:period.in.progress',
+      defaultMessage: 'Tímabil í gangi, ekki hægt að breyta',
+      description: 'Period in progress, unable to edit',
     },
     additionalInformationSection: {
       id: 'pl.application:additional.information.section',
@@ -1910,6 +1927,11 @@ export const parentalLeaveFormMessages = {
       id: 'pl.application:review.period',
       defaultMessage: 'Tímabilinu {index} - {ratio}%',
       description: 'Period copy',
+    },
+    vmstPeriod: {
+      id: 'pl.application:review.vmst.period',
+      defaultMessage: 'Greiðslutímabil {index} - {ratio}%',
+      description: 'Payment period {index} - {ratio}%',
     },
     periodActualDob: {
       id: 'pl.application:review.period.actual.dob',
