@@ -13,7 +13,6 @@ const runner = new LocalRunner(new Octokit())
 main();
 
 async function main() {
-
   const rev = await findRev();
   if (rev === 'rebuild') {
     console.log(`Full rebuild needed`)
