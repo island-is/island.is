@@ -17,9 +17,10 @@ import {
   DELETE_ATTACHMENT,
 } from '@island.is/application/graphql'
 
-import { uploadFileToS3 } from './utils'
 import { Action, ActionTypes } from './types'
 import { InputImageUpload } from '../../components/InputImageUpload/InputImageUpload'
+// import { DEFAULT_TOTAL_FILE_SIZE_SUM } from '../../constants'
+import { uploadFileToS3 } from './utils'
 
 type UploadFileAnswer = {
   name: string
@@ -72,6 +73,7 @@ interface FileUploadControllerProps {
   readonly accept?: string
   readonly maxSize?: number
   readonly maxSizeErrorText?: string
+  readonly totalMaxSize?: number
   readonly forImageUpload?: boolean
 }
 
@@ -88,6 +90,7 @@ export const FileUploadController: FC<
   accept,
   maxSize,
   maxSizeErrorText,
+  totalMaxSize,
   forImageUpload,
 }) => {
   const { formatMessage } = useLocale()
@@ -97,6 +100,7 @@ export const FileUploadController: FC<
   const [createUploadUrl] = useMutation(CREATE_UPLOAD_URL)
   const [addAttachment] = useMutation(ADD_ATTACHMENT)
   const [deleteAttachment] = useMutation(DELETE_ATTACHMENT)
+  const [sumOfFileSizes, setSumOfFileSizes] = useState(0)
   const initialUploadFiles: UploadFile[] =
     (val && val.map((f) => answerToUploadFile(f))) || []
   const [state, dispatch] = useReducer(reducer, initialUploadFiles)
@@ -163,6 +167,22 @@ export const FileUploadController: FC<
 
     clearErrors(id)
     setUploadError(undefined)
+
+    const totalNewFileSize = addedUniqueFiles
+      .map((f) => f.size)
+      .reduce((a, b) => a + b, 0)
+
+    // Show an error if the sum im the file sizes exceeds totalMaxSize.
+    if (totalMaxSize && totalNewFileSize + sumOfFileSizes > totalMaxSize) {
+      setUploadError(
+        formatMessage(coreErrorMessages.fileMaxSumSizeLimitExceeded, {
+          maxSizeInMb: totalMaxSize / 1000000,
+        }),
+      )
+      return
+    }
+
+    setSumOfFileSizes(totalNewFileSize + sumOfFileSizes)
 
     const newUploadFiles = addedUniqueFiles.map((f) =>
       fileToObject(f, 'uploading'),
