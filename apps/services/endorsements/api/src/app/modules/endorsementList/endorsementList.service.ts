@@ -5,7 +5,7 @@ import {
   BadRequestException,
 } from '@nestjs/common'
 import { InjectModel } from '@nestjs/sequelize'
-import { Op } from 'sequelize'
+import { Op, Sequelize } from 'sequelize'
 import type { Logger } from '@island.is/logging'
 import { LOGGER_PROVIDER } from '@island.is/logging'
 import { EndorsementList } from './endorsementList.model'
@@ -70,15 +70,39 @@ export class EndorsementListService {
   // generic reusable query with pagination defaults
   async findListsGenericQuery(query: any, where: any = {}) {
     this.logger.info(`Finding endorsement lists`)
-    return await paginate({
+    const results = await paginate({
       Model: this.endorsementListModel,
       limit: query.limit || 10,
       after: query.after,
       before: query.before,
       primaryKeyField: 'counter',
-      orderOption: [['counter', 'DESC']],
+      orderOption: [
+        ['endorsementCounter', 'DESC'],
+        ['counter', 'DESC'],
+      ],
       where: where,
+      attributes: {
+        include: [
+          [
+            Sequelize.fn('COUNT', Sequelize.col('endorsements.id')),
+            'endorsementCounter',
+          ],
+        ],
+      },
+      include: [
+        {
+          model: Endorsement,
+          required: false, // Required false for left outer join so that counts come for 0 as well
+          duplicating: false,
+          attributes: [],
+        },
+      ],
+      group: ['EndorsementList.id'],
     })
+
+    console.log('HAVE RESULTS', results)
+
+    return results
   }
 
   async findListsByTags(tags: string[], query: any, user: User) {

@@ -65,7 +65,8 @@ export const GeneralPetitionLists: FC<
               text={
                 t('openTil', 'Virkur til:') +
                 ' ' +
-                formatDate(petition.closedDate)
+                formatDate(petition.closedDate) +
+                ` | ${petition?.endorsementCounter} undirskriftir`
               }
               cta={{
                 label: t('viewList', 'Skoða lista'),
