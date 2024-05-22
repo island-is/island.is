@@ -31,7 +31,7 @@ import {
   useGetLicenseQuery,
 } from '../../graphql/types/schema'
 import { createNavigationOptionHooks } from '../../hooks/create-navigation-option-hooks'
-import { useOfflineUpdateNavigation } from '../../hooks/use-offline-update-navigation'
+import { useConnectivityIndicator } from '../../hooks/use-connectivity-indicator'
 import { isAndroid, isIos } from '../../utils/devices'
 import { screenWidth } from '../../utils/dimensions'
 import { FieldRender } from './components/field-render'
@@ -136,7 +136,7 @@ export const WalletPassScreen: NavigationFunctionComponent<{
   cardHeight?: number
 }> = ({ id, item, componentId, cardHeight = 140 }) => {
   useNavigationOptions(componentId)
-  useOfflineUpdateNavigation(componentId)
+  useConnectivityIndicator({ componentId })
   const theme = useTheme()
   const intl = useIntl()
   const [addingToWallet, setAddingToWallet] = useState(false)
@@ -145,9 +145,10 @@ export const WalletPassScreen: NavigationFunctionComponent<{
 
   const [generatePkPass] = useGeneratePkPassMutation()
   const res = useGetLicenseQuery({
+    fetchPolicy: 'network-only',
     variables: {
       input: {
-        licenseType: item?.license.type ?? '',
+        licenseType: item?.license.type ?? id,
       },
     },
   })
@@ -340,6 +341,17 @@ export const WalletPassScreen: NavigationFunctionComponent<{
     )
   }
 
+  // If we don't have an item we want to return a loading spinner for the whole screen to prevent showing the wrong license while fetching
+  if (loading && !item) {
+    return (
+      <ActivityIndicator
+        size="large"
+        color="#0061FF"
+        style={{ marginTop: theme.spacing[4] }}
+      />
+    )
+  }
+
   return (
     <View style={{ flex: 1 }}>
       <View style={{ height: cardHeight }} />
@@ -348,6 +360,7 @@ export const WalletPassScreen: NavigationFunctionComponent<{
           nativeID={`license-${licenseType}_destination`}
           type={licenseType}
           logo={
+            isBarcodeEnabled &&
             data?.license?.type === GenericLicenseType.DriversLicense
               ? getImageFromRawData(data?.payload?.rawData)
               : undefined

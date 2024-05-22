@@ -36,9 +36,9 @@ import {
   CaseTransition,
   CaseType,
   CommentType,
-  completedCaseStates,
   DateType,
   EventType,
+  isCompletedCase,
   isIndictmentCase,
   isRestrictionCase,
   NotificationType,
@@ -155,6 +155,8 @@ export interface UpdateCase
     | 'appealIsolationToDate'
     | 'indictmentDeniedExplanation'
     | 'indictmentReturnedExplanation'
+    | 'indictmentRulingDecision'
+    | 'indictmentReviewerId'
   > {
   type?: CaseType
   state?: CaseState
@@ -284,6 +286,11 @@ export const include: Includeable[] = [
     where: { commentType: { [Op.in]: commentTypes } },
   },
   { model: Notification, as: 'notifications' },
+  {
+    model: User,
+    as: 'indictmentReviewer',
+    include: [{ model: Institution, as: 'institution' }],
+  },
 ]
 
 export const order: OrderItem[] = [
@@ -314,6 +321,11 @@ export const caseListInclude: Includeable[] = [
   {
     model: User,
     as: 'registrar',
+    include: [{ model: Institution, as: 'institution' }],
+  },
+  {
+    model: User,
+    as: 'indictmentReviewer',
     include: [{ model: Institution, as: 'institution' }],
   },
   {
@@ -407,19 +419,17 @@ export class CaseService {
 
   private async createCase(
     caseToCreate: CreateCaseDto,
-    transaction?: Transaction,
+    transaction: Transaction,
   ): Promise<string> {
-    const theCase = await (transaction
-      ? this.caseModel.create(
-          {
-            ...caseToCreate,
-            state: isIndictmentCase(caseToCreate.type)
-              ? CaseState.DRAFT
-              : undefined,
-          },
-          { transaction },
-        )
-      : this.caseModel.create({ ...caseToCreate }))
+    const theCase = await this.caseModel.create(
+      {
+        ...caseToCreate,
+        state: isIndictmentCase(caseToCreate.type)
+          ? CaseState.DRAFT
+          : undefined,
+      },
+      { transaction },
+    )
 
     return theCase.id
   }
@@ -914,7 +924,7 @@ export class CaseService {
         type: MessageType.DELIVERY_TO_COURT_OF_APPEALS_CONCLUSION,
         user,
         caseId: theCase.id,
-        // The APPEAL_COMPLETED message must be handled before this message
+        // The APPEAL_COMPLETED notification must be handled before this message
         nextRetry:
           nowFactory().getTime() + this.config.robotMessageDelay * 1000,
       },
@@ -1070,7 +1080,7 @@ export class CaseService {
           user,
           theCase.state,
         )
-      } else if (completedCaseStates.includes(updatedCase.state)) {
+      } else if (isCompletedCase(updatedCase.state)) {
         if (isIndictment) {
           await this.addMessagesForCompletedIndictmentCaseToQueue(
             updatedCase,
@@ -1347,6 +1357,7 @@ export class CaseService {
         if (receivingCase) {
           update.state = transitionCase(
             CaseTransition.RECEIVE,
+            theCase.type,
             theCase.state,
             theCase.appealState,
           ).state

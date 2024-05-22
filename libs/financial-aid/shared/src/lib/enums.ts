@@ -123,3 +123,9 @@ export enum FilterType {
   APPLICATIONSTATE = 'applicationState',
   STAFF = 'staff',
 }
+
+export enum ChildrenAid {
+  NOTDEFINED = 'NotDefined',
+  INSTITUTION = 'Institution',
+  APPLICANT = 'Applicant',
+}

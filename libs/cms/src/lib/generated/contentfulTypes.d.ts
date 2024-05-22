@@ -738,6 +738,9 @@ export interface IContactUs extends Entry<IContactUsFields> {
 }
 
 export interface ICustomPageFields {
+  /** Parent Page */
+  parentPage?: ICustomPage | undefined
+
   /** Title */
   title?: string | undefined
 
@@ -746,6 +749,9 @@ export interface ICustomPageFields {
     | 'PensionCalculator'
     | 'OfficialJournalOfIceland'
     | 'Vacancies'
+
+  /** Slug */
+  slug?: string | undefined
 
   /** Alert Banner */
   alertBanner?: IAlertBanner | undefined
@@ -3013,6 +3019,9 @@ export interface IOrganizationSubpageFields {
   /** Title */
   title: string
 
+  /** Short Title */
+  shortTitle?: string | undefined
+
   /** Slug */
   slug: string
 
@@ -3425,6 +3434,9 @@ export interface IProjectPage extends Entry<IProjectPageFields> {
 export interface IProjectSubpageFields {
   /** Title */
   title: string
+
+  /** Short Title */
+  shortTitle?: string | undefined
 
   /** Slug */
   slug: string

@@ -35,7 +35,12 @@ const validateDeceasedShare = ({
 }
 
 const validateAssetNumber = (assetNumber: string) => {
-  const assetNumberPattern = /^(F\d{3}-\d{4}|\d{7}|\d{3}-\d{4}|F\d{7})$/
+  const assetNumberPattern = /^[Ff]{0,1}\d{7}$|^[Ll]{0,1}\d{6}$/
+  return assetNumberPattern.test(assetNumber)
+}
+
+const validateDebtBankAccount = (assetNumber: string) => {
+  const assetNumberPattern = /^\d{4}-\d{2}-\d{6}|\d{12}$/
   return assetNumberPattern.test(assetNumber)
 }
 
@@ -313,7 +318,7 @@ export const inheritanceReportSchema = z.object({
           .object({
             description: z.string(),
             nationalId: z.string(),
-            assetNumber: z.string(),
+            assetNumber: z.string().refine((v) => validateDebtBankAccount(v)),
             propertyValuation: z.string(),
           })
           .refine(
@@ -584,13 +589,28 @@ export const inheritanceReportSchema = z.object({
   spouseTotal: z.number(),
   estateTotal: z.number(),
   netPropertyForExchange: z.number(),
-  hasCustomSpouseSharePercentage: z.array(z.enum([YES])).optional(),
-  customSpouseSharePercentage: z
-    .string()
-    .refine((v) => {
-      const val = valueToNumber(v)
-      return val >= 0 && val <= 100
+  customShare: z
+    .object({
+      hasCustomSpouseSharePercentage: z.array(z.enum([YES])).optional(),
+      customSpouseSharePercentage: z.string(),
     })
+    .refine(
+      ({ hasCustomSpouseSharePercentage, customSpouseSharePercentage }) => {
+        if (
+          hasCustomSpouseSharePercentage &&
+          hasCustomSpouseSharePercentage.length > 0
+        ) {
+          const val = valueToNumber(customSpouseSharePercentage)
+          return val >= 50 && val <= 100
+        }
+
+        return true
+      },
+      {
+        path: ['customSpouseSharePercentage'],
+        params: m.assetsToShareHasCustomSpousePercentageError,
+      },
+    )
     .optional(),
 
   /* einkaskipti */

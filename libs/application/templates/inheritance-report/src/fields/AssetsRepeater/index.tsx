@@ -216,7 +216,7 @@ export const AssetsRepeater: FC<
           onClick={handleAddRepeaterFields}
           size="small"
         >
-          {props.repeaterButtonText}
+          {formatMessage(props.repeaterButtonText)}
         </Button>
       </Box>
       {!!fields.length && props.sumField && (
@@ -274,7 +274,7 @@ const FieldComponent = ({
     id: fieldName,
     name: fieldName,
     format: field.format,
-    label: field.title,
+    label: formatMessage(field.title),
     defaultValue: '',
     type: field.type,
     placeholder: field.placeholder,
@@ -418,10 +418,12 @@ const RealEstateNumberField = ({
         },
       })
     } else {
-      setError(fieldName, {
-        message: formatMessage(m.errorPropertyNumber),
-        type: 'validate',
-      })
+      if (propertyNumber.length !== 0) {
+        setError(fieldName, {
+          message: formatMessage(m.errorPropertyNumber),
+          type: 'validate',
+        })
+      }
     }
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [propertyNumberInput])
@@ -433,6 +435,7 @@ const RealEstateNumberField = ({
       label={formatMessage(m.propertyNumber)}
       defaultValue={propertyNumberInput}
       error={error ? formatMessage(m.errorPropertyNumber) : undefined}
+      placeholder={propertyNumberInput > 0 ? '' : props.field.placeholder}
       {...props}
     />
   )
