@@ -50,6 +50,24 @@ export const getSpouseFromExternalData = (
   return spouse
 }
 
+export const getPrePaidTotalValueFromApplication = (
+  application: Application<FormValue>,
+): number => {
+  const { answers } = application
+  const money = valueToNumber(
+    getValueViaPath(answers, 'assets.money.value', '0'),
+  )
+  const vehicleTotal =
+    getValueViaPath<number>(answers, 'assets.vehicles.total', 0) ?? 0
+  const realEstateTotal =
+    getValueViaPath<number>(answers, 'assets.realEstate.total', 0) ?? 0
+  const otherTotal =
+    getValueViaPath<number>(answers, 'assets.otherAssets.total', 0) ?? 0
+  const bankAccountTotal =
+    getValueViaPath<number>(answers, 'assets.bankAccounts.total', 0) ?? 0
+  return money + vehicleTotal + realEstateTotal + otherTotal + bankAccountTotal
+}
+
 export const isApplicantMarried = (externalData: ExternalData) => {
   const spouse = getSpouseFromExternalData(externalData)
   return !!spouse && spouse?.maritalStatus === '3'

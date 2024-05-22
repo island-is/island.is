@@ -24,6 +24,7 @@ import intervalToDuration from 'date-fns/intervalToDuration'
 import {
   formatPhoneNumber,
   getEstateDataFromApplication,
+  getPrePaidTotalValueFromApplication,
   valueToNumber,
 } from '../../lib/utils/helpers'
 import { HeirsAndPartitionRepeaterProps } from './types'
@@ -118,8 +119,10 @@ export const HeirsAndPartitionRepeater: FC<
       : getEstateDataFromApplication(application)
 
   const inheritanceTaxFreeLimit =
-    externalData?.inheritanceReportInfos?.[0]?.inheritanceTax
-      ?.taxExemptionLimit ?? DEFAULT_TAX_FREE_LIMIT
+    answers.applicationFor === PREPAID_INHERITANCE
+      ? 0
+      : externalData?.inheritanceReportInfos?.[0]?.inheritanceTax
+          ?.taxExemptionLimit ?? DEFAULT_TAX_FREE_LIMIT
 
   const relations =
     answers.applicationFor === PREPAID_INHERITANCE
@@ -203,9 +206,11 @@ export const HeirsAndPartitionRepeater: FC<
         })
       }
 
-      const netPropertyForExchange = valueToNumber(
-        getValueViaPath(answers, 'netPropertyForExchange'),
-      )
+      const netPropertyForExchange =
+        answers.applicationFor === PREPAID_INHERITANCE
+          ? getPrePaidTotalValueFromApplication(application)
+          : valueToNumber(getValueViaPath(answers, 'netPropertyForExchange'))
+
       const inheritanceValue = netPropertyForExchange * percentage
 
       const taxFreeInheritanceValue = isSpouse
