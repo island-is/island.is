@@ -1385,6 +1385,16 @@ export const m = defineMessages({
     defaultMessage: 'Athugasemdir erfingja',
     description: '',
   },
+  fileUploadPrivateTransfer: {
+    id: 'ir.application:fileUploadPrivateTransfer',
+    defaultMessage: 'Einkaskiptagerð',
+    description: '',
+  },
+  fileUploadOtherDocuments: {
+    id: 'ir.application:fileUploadOtherDocuments',
+    defaultMessage: 'Önnur fylgigögn',
+    description: '',
+  },
   heirShare: {
     id: 'ir.application:heirShare',
     defaultMessage: 'Arfur og erfðafjárskattur',
