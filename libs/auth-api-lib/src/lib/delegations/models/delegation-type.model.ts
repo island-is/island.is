@@ -19,6 +19,8 @@ import {
 import { DelegationProviderModel } from './delegation-provider.model'
 import { ClientDelegationType } from '../../clients/models/client-delegation-type.model'
 import { Client } from '../../clients/models/client.model'
+import { ApiScopeDelegationType } from '../../resources/models/api-scope-delegation-type.model'
+import { ApiScope } from '../../resources/models/api-scope.model'
 
 @Table({
   tableName: 'delegation_type',
@@ -61,6 +63,9 @@ export class DelegationTypeModel extends Model<
 
   @BelongsToMany(() => Client, () => ClientDelegationType)
   clients!: Client[]
+
+  @BelongsToMany(() => ApiScope, () => ApiScopeDelegationType)
+  apiScopes!: ApiScope[]
 
   @CreatedAt
   readonly created!: CreationOptional<Date>
