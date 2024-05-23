@@ -12,6 +12,7 @@ import {
   NotificationsResponse,
   NotificationsUnreadCount,
   NotificationsUnseenCount,
+  NotificationsMarkAllAsReadResponse,
 } from './notifications.model'
 import { notificationMapper } from '../utils/helpers'
 
@@ -86,6 +87,20 @@ export class NotificationsService {
     }
   }
 
+  async markAllNotificationsAsRead(
+    user: User,
+  ): Promise<NotificationsMarkAllAsReadResponse | null> {
+    this.logger.debug('marking all notifications as read')
+
+    await this.userNotificationsWAuth(
+      user,
+    ).meNotificationsControllerMarkAllAsRead()
+
+    return {
+      success: true,
+    }
+  }
+
   async getUnreadCount(user: User): Promise<NotificationsUnreadCount | null> {
     this.logger.debug('getting unread count')
 
@@ -121,6 +136,7 @@ export class NotificationsService {
       id,
       updateNotificationDto: {
         read: true,
+        seen: true,
       },
     })
 

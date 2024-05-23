@@ -54,11 +54,9 @@ export class PersonResolver {
   @Audit()
   async nationalRegistryPerson(
     @CurrentUser() user: AuthUser,
-    @Args('api', { nullable: true }) requestedApi?: 'v1' | 'v3',
     @Args('useFakeData', { nullable: true }) useFakeData?: boolean,
   ): Promise<Person | null> {
-    const api = await this.service.getApi(user, requestedApi)
-    return this.service.getPerson(user.nationalId, api, useFakeData)
+    return this.service.getPerson(user.nationalId, useFakeData)
   }
 
   @ResolveField('custodians', () => [Custodian], {
@@ -77,11 +75,7 @@ export class PersonResolver {
     if (
       person.nationalIdType === NationalIdType.NATIONAL_REGISTRY_NATIONAL_ID
     ) {
-      return this.service.getCustodians(
-        person.nationalId,
-        user.nationalId,
-        person,
-      )
+      return this.service.getCustodians(person.nationalId, person)
     }
     return null
   }
@@ -102,7 +96,7 @@ export class PersonResolver {
     if (
       person.nationalIdType === NationalIdType.NATIONAL_REGISTRY_NATIONAL_ID
     ) {
-      return this.service.getParents(person.nationalId, person, user.nationalId)
+      return this.service.getParents(person.nationalId, person)
     }
     return null
   }

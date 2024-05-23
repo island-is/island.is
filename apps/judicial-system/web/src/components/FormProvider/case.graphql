@@ -23,6 +23,7 @@ query Case($input: CaseQueryInput!) {
       defendantWaivesRightToCounsel
       defendantPlea
       serviceRequirement
+      verdictViewDate
     }
     defenderName
     defenderNationalId
@@ -253,6 +254,7 @@ query Case($input: CaseQueryInput!) {
       policeCaseNumberPrefix
     }
     postponedIndefinitelyExplanation
+    indictmentRulingDecision
     indictmentReviewer {
       id
       name

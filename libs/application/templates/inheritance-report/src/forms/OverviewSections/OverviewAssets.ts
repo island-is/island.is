@@ -159,7 +159,7 @@ export const overviewAssets = [
         return (
           gunAssets.map((asset) => {
             const description = [
-              `${m.gunNumber.defaultMessage}: ${asset.assetNumber}`,
+              `${m.gunSerialNumber.defaultMessage}: ${asset.assetNumber}`,
               m.gunValuation.defaultMessage +
                 ': ' +
                 (asset.propertyValuation

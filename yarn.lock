@@ -10771,6 +10771,7 @@ __metadata:
     jest: 29.7.0
     lodash: 4.17.21
     metro-react-native-babel-preset: 0.72.3
+    path-to-regexp: 6.2.2
     react: 18.2.0
     react-dom: 18.2.0
     react-intl: 5.20.12
@@ -11508,12 +11509,12 @@ __metadata:
   languageName: node
   linkType: hard
 
-"@keyv/redis@npm:2.6.1":
-  version: 2.6.1
-  resolution: "@keyv/redis@npm:2.6.1"
+"@keyv/redis@npm:2.8.5":
+  version: 2.8.5
+  resolution: "@keyv/redis@npm:2.8.5"
   dependencies:
-    ioredis: ^5.3.2
-  checksum: c0c0aa7d0b449ef295ab65bcc38d42a2f6f606f49bf1d9bc95cd0276d60854c4d579d6dfce9e070f350a07987dfde9d452884ee05e8f87215c49c304b27a68ab
+    ioredis: ^5.4.1
+  checksum: 87ffec61d31fa9de128ba3e5a7b616535ddbdaa4d92cbc9e1a9fab143adf967135e9cca16e192e8f52cc1ba00ed2a7f10eca9944d7550385530dab95333e81ef
   languageName: node
   linkType: hard
 
@@ -23022,19 +23023,18 @@ __metadata:
   languageName: node
   linkType: hard
 
-"bull@npm:4.10.4":
-  version: 4.10.4
-  resolution: "bull@npm:4.10.4"
+"bull@npm:4.12.8":
+  version: 4.12.8
+  resolution: "bull@npm:4.12.8"
   dependencies:
     cron-parser: ^4.2.1
-    debuglog: ^1.0.0
     get-port: ^5.1.1
-    ioredis: ^5.0.0
+    ioredis: ^5.3.2
     lodash: ^4.17.21
-    msgpackr: ^1.5.2
-    semver: ^7.3.2
+    msgpackr: ^1.10.1
+    semver: ^7.5.2
     uuid: ^8.3.0
-  checksum: 84d0066cc695f9a185e315b792e1eac326ebd2dd89a2d309b41e25b237451c550baa7dce48cb7a7571062253fed5cab82c02ef74f345b0494f80cc8aaccec6d6
+  checksum: ae979ce1e9d15e0aac62eda41091f5047b624e2abd3166feed19fe7b357dabbdb1f2c61be6f396f3a80e814275ec68bcebdebbc50805140fd05ec058b70c54de
   languageName: node
   linkType: hard
 
@@ -23168,27 +23168,30 @@ __metadata:
   languageName: node
   linkType: hard
 
-"cache-manager-ioredis-yet@npm:1.1.0":
-  version: 1.1.0
-  resolution: "cache-manager-ioredis-yet@npm:1.1.0"
+"cache-manager-ioredis-yet@npm:2.0.4":
+  version: 2.0.4
+  resolution: "cache-manager-ioredis-yet@npm:2.0.4"
   dependencies:
-    cache-manager: ^5.1.0
-    ioredis: ^5.2.3
-  checksum: bc6679e0f7275f99ffaddb03178b6fc88d2c02695c49829c14f858060a31280c39b04b3530541b5f1d66f68619d5710cee927643b8a1e738af8bfcbef080edc5
+    cache-manager: "*"
+    ioredis: ^5.4.1
+    telejson: ^7.2.0
+  checksum: 4c009883ec60f28339e21c934b778f7b0b354aaccc306832b2b5ee441fa3a503bebf1d5c77c4955bba097a80c6532955218b3723aeda00cabf55675b5317b47b
   languageName: node
   linkType: hard
 
-"cache-manager-ioredis-yet@patch:cache-manager-ioredis-yet@npm%3A1.1.0#./.yarn/patches/cache-manager-ioredis-yet-npm-1.1.0-da7d1a9865.patch::locator=island.is%40workspace%3A.":
-  version: 1.1.0
-  resolution: "cache-manager-ioredis-yet@patch:cache-manager-ioredis-yet@npm%3A1.1.0#./.yarn/patches/cache-manager-ioredis-yet-npm-1.1.0-da7d1a9865.patch::version=1.1.0&hash=5e3e7d&locator=island.is%40workspace%3A."
+"cache-manager@npm:*":
+  version: 5.5.2
+  resolution: "cache-manager@npm:5.5.2"
   dependencies:
-    cache-manager: ^5.1.0
-    ioredis: ^5.2.3
-  checksum: 80b199d2ba7f8d8bca47aee267bde3a466401392eeb5103dcb1d9cbfb13567b92da0ec919c7bc84cd7a8d09a59d2de159ede6c6ad38501cdab5ad2ea5aca349a
+    eventemitter3: ^5.0.1
+    lodash.clonedeep: ^4.5.0
+    lru-cache: ^10.2.2
+    promise-coalesce: ^1.1.2
+  checksum: d30648aff3649d8a8582736684720870ab4442837197bcb3268cc8c06c6ae8be863ba0005d3e000b9fef382dee2e4a6b23c7b9333033bca39b5b2b02a1a3b86e
   languageName: node
   linkType: hard
 
-"cache-manager@npm:5.2.3, cache-manager@npm:^5.1.0":
+"cache-manager@npm:5.2.3":
   version: 5.2.3
   resolution: "cache-manager@npm:5.2.3"
   dependencies:
@@ -25511,7 +25514,7 @@ __metadata:
   languageName: node
   linkType: hard
 
-"crypto-js@npm:4.2.0, crypto-js@npm:^4.0.0, crypto-js@npm:^4.1.1":
+"crypto-js@npm:4.2.0, crypto-js@npm:^4.0.0, crypto-js@npm:^4.2.0":
   version: 4.2.0
   resolution: "crypto-js@npm:4.2.0"
   checksum: f051666dbc077c8324777f44fbd3aaea2986f198fe85092535130d17026c7c2ccf2d23ee5b29b36f7a4a07312db2fae23c9094b644cc35f7858b1b4fcaf27774
@@ -26307,7 +26310,7 @@ __metadata:
   languageName: node
   linkType: hard
 
-"debuglog@npm:^1.0.0, debuglog@npm:^1.0.1":
+"debuglog@npm:^1.0.1":
   version: 1.0.1
   resolution: "debuglog@npm:1.0.1"
   checksum: 970679f2eb7a73867e04d45b52583e7ec6dee1f33c058e9147702e72a665a9647f9c3d6e7c2f66f6bf18510b23eb5ded1b617e48ac1db23603809c5ddbbb9763
@@ -27323,10 +27326,10 @@ __metadata:
   languageName: node
   linkType: hard
 
-"dottie@npm:^2.0.2":
-  version: 2.0.2
-  resolution: "dottie@npm:2.0.2"
-  checksum: 046a5818033725a5a12b60270473cd9a19b0e88bd007a0c9a66be36983e53626de949aee9d0290fbfe0275aa31837491adbbbb8bf74ef09f78d21598793d6268
+"dottie@npm:2.0.4":
+  version: 2.0.4
+  resolution: "dottie@npm:2.0.4"
+  checksum: 9d25445a446f781aae275d36d3c88a6a94d4d8acf15403aa93f4118bcfc6547a5d7c71f9c533da6c6af5a55ffd2f0b3915999ecd80bb6bf447e476ff2be47cff
   languageName: node
   linkType: hard
 
@@ -29069,6 +29072,13 @@ __metadata:
   version: 4.0.7
   resolution: "eventemitter3@npm:4.0.7"
   checksum: 1875311c42fcfe9c707b2712c32664a245629b42bb0a5a84439762dd0fd637fc54d078155ea83c2af9e0323c9ac13687e03cfba79b03af9f40c89b4960099374
+  languageName: node
+  linkType: hard
+
+"eventemitter3@npm:^5.0.1":
+  version: 5.0.1
+  resolution: "eventemitter3@npm:5.0.1"
+  checksum: 543d6c858ab699303c3c32e0f0f47fc64d360bf73c3daf0ac0b5079710e340d6fe9f15487f94e66c629f5f82cd1a8678d692f3dbb6f6fcd1190e1b97fcad36f8
   languageName: node
   linkType: hard
 
@@ -33153,9 +33163,9 @@ __metadata:
   languageName: node
   linkType: hard
 
-"ioredis@npm:5.3.2, ioredis@npm:^5.0.0, ioredis@npm:^5.2.3, ioredis@npm:^5.3.2":
-  version: 5.3.2
-  resolution: "ioredis@npm:5.3.2"
+"ioredis@npm:5.4.1, ioredis@npm:^5.3.2, ioredis@npm:^5.4.1":
+  version: 5.4.1
+  resolution: "ioredis@npm:5.4.1"
   dependencies:
     "@ioredis/commands": ^1.1.1
     cluster-key-slot: ^1.1.0
@@ -33166,7 +33176,7 @@ __metadata:
     redis-errors: ^1.2.0
     redis-parser: ^3.0.0
     standard-as-callback: ^2.1.0
-  checksum: 9a23559133e862a768778301efb68ae8c2af3c33562174b54a4c2d6574b976e85c75a4c34857991af733e35c48faf4c356e7daa8fb0a3543d85ff1768c8754bc
+  checksum: 92210294f75800febe7544c27b07e4892480172363b11971aa575be5b68f023bfed4bc858abc9792230c153aa80409047a358f174062c14d17536aa4499fe10b
   languageName: node
   linkType: hard
 
@@ -34169,7 +34179,7 @@ __metadata:
     "@graphql-codegen/typescript-resolvers": 2.7.3
     "@hookform/error-message": 2.0.1
     "@island.is/regulations-tools": 0.8.1
-    "@keyv/redis": 2.6.1
+    "@keyv/redis": 2.8.5
     "@livechat/widget-core": 1.3.2
     "@nestjs/apollo": 10.1.0
     "@nestjs/axios": 2.0.0
@@ -34296,9 +34306,9 @@ __metadata:
     babel-plugin-transform-imports: 2.0.0
     beygla: 1.4.0
     bottleneck: 2.19.5
-    bull: 4.10.4
+    bull: 4.12.8
     cache-manager: 5.2.3
-    cache-manager-ioredis-yet: 1.1.0
+    cache-manager-ioredis-yet: 2.0.4
     chalk: 4.1.2
     class-transformer: 0.5.1
     class-validator: 0.14.0
@@ -34370,7 +34380,7 @@ __metadata:
     inspectpack: 4.7.1
     intl: 1.2.5
     intl-locales-supported: 1.8.12
-    ioredis: 5.3.2
+    ioredis: 5.4.1
     ip3country: 5.0.0
     is-circular: 1.0.2
     is-url: 1.2.4
@@ -34411,7 +34421,7 @@ __metadata:
     node-html-markdown: 1.3.0
     nodemailer: 6.7.2
     nx: 16.9.0
-    oidc-client-ts: 2.0.3
+    oidc-client-ts: 2.4.0
     openapi3-ts: 2.0.0
     opossum: 6.1.0
     passport: 0.6.0
@@ -34460,7 +34470,7 @@ __metadata:
     rosetta: 1.0.0
     rxjs: 7.8.1
     sanitize-html: 2.10.0
-    sequelize: 6.19.0
+    sequelize: 6.29.0
     sequelize-cli: 6.4.1
     sequelize-replace-enum-postgres: 1.6.0
     sequelize-typescript: 2.1.3
@@ -37485,6 +37495,13 @@ __metadata:
   languageName: node
   linkType: hard
 
+"lru-cache@npm:^10.2.2":
+  version: 10.2.2
+  resolution: "lru-cache@npm:10.2.2"
+  checksum: 98e8fc93691c546f719a76103ef2bee5a3ac823955c755a47641ec41f8c7fafa1baeaba466937cc1cbfa9cfd47e03536d10e2db3158a64ad91ff3a58a32c893e
+  languageName: node
+  linkType: hard
+
 "lru-cache@npm:^4.1.5":
   version: 4.1.5
   resolution: "lru-cache@npm:4.1.5"
@@ -39785,19 +39802,26 @@ __metadata:
   languageName: node
   linkType: hard
 
-"moment-timezone@npm:^0.5.34":
-  version: 0.5.34
-  resolution: "moment-timezone@npm:0.5.34"
+"moment-timezone@npm:^0.5.35":
+  version: 0.5.45
+  resolution: "moment-timezone@npm:0.5.45"
   dependencies:
-    moment: ">= 2.9.0"
-  checksum: 12a1d3d52e4ba509cf1fa36bbda59d898a08fa80ab35f6c358747e93aec1f07e617cec647eaf2e8acf5f9132e581d4704d34a9edffa9a80c5cd04bf23b277595
+    moment: ^2.29.4
+  checksum: a22e9f983fbe1a01757ce30685bce92e3f6efa692eb682afd47b82da3ff960b3c8c2c3883ec6715c124bc985a342b57cba1f6ba25a1c8b4c7ad766db3cd5e1d0
   languageName: node
   linkType: hard
 
-"moment@npm:>= 2.9.0, moment@npm:^2.18.1, moment@npm:^2.20.0, moment@npm:^2.22.2, moment@npm:^2.29.1":
+"moment@npm:^2.18.1, moment@npm:^2.20.0, moment@npm:^2.22.2, moment@npm:^2.29.1":
   version: 2.29.4
   resolution: "moment@npm:2.29.4"
   checksum: 0ec3f9c2bcba38dc2451b1daed5daded747f17610b92427bebe1d08d48d8b7bdd8d9197500b072d14e326dd0ccf3e326b9e3d07c5895d3d49e39b6803b76e80e
+  languageName: node
+  linkType: hard
+
+"moment@npm:^2.29.4":
+  version: 2.30.1
+  resolution: "moment@npm:2.30.1"
+  checksum: 859236bab1e88c3e5802afcf797fc801acdbd0ee509d34ea3df6eea21eb6bcc2abd4ae4e4e64aa7c986aa6cba563c6e62806218e6412a765010712e5fa121ba6
   languageName: node
   linkType: hard
 
@@ -39895,15 +39919,15 @@ __metadata:
   languageName: node
   linkType: hard
 
-"msgpackr@npm:^1.5.2":
-  version: 1.10.1
-  resolution: "msgpackr@npm:1.10.1"
+"msgpackr@npm:^1.10.1":
+  version: 1.10.2
+  resolution: "msgpackr@npm:1.10.2"
   dependencies:
     msgpackr-extract: ^3.0.2
   dependenciesMeta:
     msgpackr-extract:
       optional: true
-  checksum: e422d18b01051598b23701eebeb4b9e2c686b9c7826b20f564724837ba2b5cd4af74c91a549eaeaf8186645cc95e8196274a4a19442aa3286ac611b98069c194
+  checksum: f7d9aae68196b3612e522a81c939b226045d115e97233541bf8475d170ca686f814bfdb6255865912d052f87f37466dbadf09ca17541b315f03d9ad9f6b439ef
   languageName: node
   linkType: hard
 
@@ -41285,13 +41309,13 @@ __metadata:
   languageName: node
   linkType: hard
 
-"oidc-client-ts@npm:2.0.3":
-  version: 2.0.3
-  resolution: "oidc-client-ts@npm:2.0.3"
+"oidc-client-ts@npm:2.4.0":
+  version: 2.4.0
+  resolution: "oidc-client-ts@npm:2.4.0"
   dependencies:
-    crypto-js: ^4.1.1
+    crypto-js: ^4.2.0
     jwt-decode: ^3.1.2
-  checksum: 84becba2400fcfadf83b445d1b54d9f48df9669f46c5f7209180040d54dd8c31bb45bf99100bb19fe5648d6eb32a9ad6dcd86974d81916be3d89ea4c026095d8
+  checksum: 8467db689298221f706d3358961efb0ddc789f6bd7d4765e71ae5fe62067999d2ce6e8e7584b9d991b8caa6f7fb383f75841e1cfa9e05808c34632de374f5e68
   languageName: node
   linkType: hard
 
@@ -42144,6 +42168,13 @@ __metadata:
   version: 3.2.0
   resolution: "path-to-regexp@npm:3.2.0"
   checksum: c3d35cda3b26d9e604d789b9a1764bb9845f53ca8009d5809356b4677a3c064b0f01117a05a5b4b77bafd5ae002a82592e3f3495e885c22961f8b1dab8bd6ae7
+  languageName: node
+  linkType: hard
+
+"path-to-regexp@npm:6.2.2":
+  version: 6.2.2
+  resolution: "path-to-regexp@npm:6.2.2"
+  checksum: b7b0005c36f5099f9ed1fb20a820d2e4ed1297ffe683ea1d678f5e976eb9544f01debb281369dabdc26da82e6453901bf71acf2c7ed14b9243536c2a45286c33
   languageName: node
   linkType: hard
 
@@ -43337,6 +43368,13 @@ __metadata:
   dependencies:
     tdigest: ^0.1.1
   checksum: 88f8e67020c0af07d09ab8f15caaa2a3d0810b01d903d0977d82947d3b0100a539db77bcccfde0bf2449a85060475f7fb05b64e7c34951c8a54b84240ae7ae81
+  languageName: node
+  linkType: hard
+
+"promise-coalesce@npm:^1.1.2":
+  version: 1.1.2
+  resolution: "promise-coalesce@npm:1.1.2"
+  checksum: 6f951b5db40ca78d09ad0f72adea0a2e9c5bdb0fc5b3ef218c611e2191c6ce2e9f752f815630fd07875dd1c9f04cc7327d6bada04b662dce986ce86ab88c2d5e
   languageName: node
   linkType: hard
 
@@ -46389,10 +46427,10 @@ __metadata:
   languageName: node
   linkType: hard
 
-"retry-as-promised@npm:^5.0.0":
-  version: 5.0.0
-  resolution: "retry-as-promised@npm:5.0.0"
-  checksum: 4d17e0597f967db0516714f0f2b085e2d1e8ea592450b013a1e0cd41dad74a9c3d1eb3c45351887de4bca1c3ac5f74dd07ef9942a3fb0e4db996a83bb28cb46e
+"retry-as-promised@npm:^7.0.3":
+  version: 7.0.4
+  resolution: "retry-as-promised@npm:7.0.4"
+  checksum: 2b0dcddb06649d42b1384ec1f933c7cb4461939c28004460b0c4be0c8ae16cabaed2411aa5d46e734a320f33f4a1d480078a19b97c743c754bd32e896b3f8ea2
   languageName: node
   linkType: hard
 
@@ -47029,6 +47067,15 @@ __metadata:
   languageName: node
   linkType: hard
 
+"semver@npm:^7.5.2":
+  version: 7.6.2
+  resolution: "semver@npm:7.6.2"
+  bin:
+    semver: bin/semver.js
+  checksum: 40f6a95101e8d854357a644da1b8dd9d93ce786d5c6a77227bc69dbb17bea83d0d1d1d7c4cd5920a6df909f48e8bd8a5909869535007f90278289f2451d0292d
+  languageName: node
+  linkType: hard
+
 "semver@npm:~5.3.0":
   version: 5.3.0
   resolution: "semver@npm:5.3.0"
@@ -47116,9 +47163,9 @@ __metadata:
   languageName: node
   linkType: hard
 
-"sequelize@npm:6.19.0":
-  version: 6.19.0
-  resolution: "sequelize@npm:6.19.0"
+"sequelize@npm:6.29.0":
+  version: 6.29.0
+  resolution: "sequelize@npm:6.29.0"
   dependencies:
     "@types/debug": ^4.1.7
     "@types/validator": ^13.7.1
@@ -47127,9 +47174,9 @@ __metadata:
     inflection: ^1.13.2
     lodash: ^4.17.21
     moment: ^2.29.1
-    moment-timezone: ^0.5.34
+    moment-timezone: ^0.5.35
     pg-connection-string: ^2.5.0
-    retry-as-promised: ^5.0.0
+    retry-as-promised: ^7.0.3
     semver: ^7.3.5
     sequelize-pool: ^7.1.0
     toposort-class: ^1.0.1
@@ -47143,6 +47190,8 @@ __metadata:
       optional: true
     mysql2:
       optional: true
+    oracledb:
+      optional: true
     pg:
       optional: true
     pg-hstore:
@@ -47153,7 +47202,7 @@ __metadata:
       optional: true
     tedious:
       optional: true
-  checksum: e1faa389fe8bf4e58f4781763d313e6a28b5cf8376f9c34ba6a6af9f158a309d8fa30277706bbee004caa8068a5f3030cf1620735a2d9f84a33f204ab2dae2f2
+  checksum: 3b25ef91cdf828f987deca28d5b46a5771b225687485b2f34c7a0e85269952fb7bf26cf689d1e32c94908238d6968fbab4694350407f56820f879769339c62b6
   languageName: node
   linkType: hard
 

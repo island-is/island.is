@@ -384,6 +384,14 @@ export const m = defineMessages({
     id: 'service.portal:messages',
     defaultMessage: 'Skilaboð',
   },
+  expired: {
+    id: 'service.portal:expired',
+    defaultMessage: 'Útrunnið',
+  },
+  valid: {
+    id: 'service.portal:valid',
+    defaultMessage: 'Í gildi',
+  },
   today: {
     id: 'service.portal:today',
     defaultMessage: 'Í dag',
@@ -724,6 +732,14 @@ export const m = defineMessages({
   mySettings: {
     id: 'service.portal:my-settings',
     defaultMessage: 'Mínar stillingar',
+  },
+  mySettingsInformation: {
+    id: 'service.portal:my-settings-information',
+    defaultMessage: 'Upplýsingar',
+  },
+  mySettingsNotifications: {
+    id: 'service.portal:my-settings-notifications',
+    defaultMessage: 'Tilkynningar',
   },
   lists: {
     id: 'service.portal:lists',

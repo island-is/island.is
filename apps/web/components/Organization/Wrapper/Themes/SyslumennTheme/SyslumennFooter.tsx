@@ -118,7 +118,14 @@ const SyslumennFooter: React.FC<React.PropsWithChildren<FooterProps>> = ({
                 <GridColumn span={['12/12', '12/12', '1/5']} paddingBottom={4}>
                   <HeaderLink
                     linkType="serviceweborganization"
-                    slug="syslumenn"
+                    slug={
+                      n(
+                        'organizationSlug',
+                        activeLocale === 'is'
+                          ? 'syslumenn'
+                          : 'district-commissioner',
+                      ) as string
+                    }
                   >
                     {questionsAndAnswersText}
                   </HeaderLink>
