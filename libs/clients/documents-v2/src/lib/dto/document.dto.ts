@@ -40,6 +40,17 @@ export const mapToDocument = (document: DocumentDTO): DocumentDto | null => {
       content = document.url
       break
     default:
+      // Some document providers can not explicitly set the fileType so we have to guess the fileType by checking for the content, in case the fileType is not set.
+      if (document.htmlContent) {
+        fileType = 'html'
+        content = document.htmlContent
+        break
+      }
+      if (document.url) {
+        fileType = 'url'
+        content = document.url
+        break
+      }
       return null
   }
 

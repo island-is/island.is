@@ -151,9 +151,7 @@ export const Cases: React.FC = () => {
 
     const casesAwaitingReview = filterCases(
       (c) =>
-        isIndictmentCase(c.type) &&
-        c.indictmentReviewer !== null &&
-        c.indictmentReviewer?.id === user?.id,
+        c.indictmentReviewer?.id === user?.id && !c.indictmentReviewDecision,
     )
 
     const activeCases = filterCases((c) => {
