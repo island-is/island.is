@@ -56,6 +56,9 @@ export class Chart {
 
   @Field({ nullable: true })
   customStyleConfig?: string
+
+  @Field({ nullable: true })
+  reduceAndRoundValue?: boolean
 }
 
 export const mapChart = ({ sys, fields }: IChart): SystemMetadata<Chart> => {
@@ -81,5 +84,6 @@ export const mapChart = ({ sys, fields }: IChart): SystemMetadata<Chart> => {
     customStyleConfig: fields.customStyleConfig
       ? JSON.stringify(fields.customStyleConfig)
       : undefined,
+    reduceAndRoundValue: fields.reduceAndRoundValue ?? true,
   }
 }
