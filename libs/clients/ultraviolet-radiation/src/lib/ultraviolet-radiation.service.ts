@@ -37,7 +37,7 @@ export class UltravioletRadiationClientService {
       data: {
         [LATEST_MEASUREMENT_KEY]: [
           {
-            header: measurement.time,
+            header: String(Date.parse(measurement.time)),
             value: measurement.uvVal,
           },
         ],
@@ -53,7 +53,7 @@ export class UltravioletRadiationClientService {
     return {
       data: {
         [MEASUREMENT_SERIES_KEY]: series.map((measurement) => ({
-          header: measurement.time,
+          header: String(Date.parse(measurement.time)),
           value: measurement.uvVal,
         })),
       },
