@@ -446,7 +446,7 @@ api:
       cpu: '1200m'
       memory: '2048Mi'
     requests:
-      cpu: '250m'
+      cpu: '350m'
       memory: '896Mi'
   secrets:
     ADR_LICENSE_FETCH_TIMEOUT: '/k8s/api/ADR_LICENSE_FETCH_TIMEOUT'
