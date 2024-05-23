@@ -195,7 +195,7 @@ export const NotificationsScreen: NavigationFunctionComponent = ({
         date={new Date(item.metadata.sent)}
         icon={
           item.sender?.logoUrl && {
-            uri: `${item.sender.logoUrl}?w=64&h=64&fit=pad&bg=white&fm=png`,
+            uri: `${item.sender.logoUrl}?w=64&h=64&fit=pad&fm=png`,
           }
         }
         underlayColor={
