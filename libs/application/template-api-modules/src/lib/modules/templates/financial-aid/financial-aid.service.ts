@@ -212,7 +212,6 @@ export class FinancialAidService extends BaseTemplateApiService {
         return { currentApplicationId: res.id }
       })
       .catch((err) => {
-        console.log('err:', err)
         throw new TemplateApiError(
           {
             title: messages.serviceErrors.createApplication.title,
