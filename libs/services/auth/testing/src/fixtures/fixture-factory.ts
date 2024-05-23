@@ -598,7 +598,6 @@ export class FixtureFactory {
           name,
           description,
           providerId: delegationProvider.id,
-          clients: [],
           provider: delegationProvider,
         },
       },
