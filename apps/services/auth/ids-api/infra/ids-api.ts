@@ -2,7 +2,7 @@ import { json, service, ServiceBuilder } from '../../../../../infra/src/dsl/dsl'
 import {
   Base,
   Client,
-  NationalRegistryB2C,
+  NationalRegistryAuthB2C,
   RskProcuring,
 } from '../../../../../infra/src/dsl/xroad'
 // eslint-disable-next-line
@@ -95,8 +95,10 @@ export const serviceSetup = (): ServiceBuilder<'services-auth-ids-api'> => {
       NOVA_URL: '/k8s/services-auth/NOVA_URL',
       NOVA_USERNAME: '/k8s/services-auth/NOVA_USERNAME',
       NOVA_PASSWORD: '/k8s/services-auth/NOVA_PASSWORD',
+      NATIONAL_REGISTRY_B2C_CLIENT_SECRET:
+        '/k8s/services-auth/NATIONAL_REGISTRY_B2C_CLIENT_SECRET',
     })
-    .xroad(Base, Client, RskProcuring, NationalRegistryB2C)
+    .xroad(Base, Client, RskProcuring, NationalRegistryAuthB2C)
     .readiness('/health/check')
     .liveness('/liveness')
     .db({ name: 'servicesauth', extensions: ['uuid-ossp'] })
