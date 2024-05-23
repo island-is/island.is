@@ -5,9 +5,15 @@ import {
   ApiScope,
   Delegation,
   DelegationDTO,
+  DelegationProviderModel,
   DelegationScope,
+  DelegationTypeModel,
 } from '@island.is/auth-api-lib'
 import { CreateDelegation } from '../fixtures/delegation.fixture'
+import {
+  AuthDelegationProvider,
+  getPersonalRepresentativeDelegationType,
+} from '@island.is/shared/types'
 
 const compareById = (a: { id?: string | null }, b: { id?: string | null }) => {
   // eslint-disable-next-line @typescript-eslint/no-non-null-assertion
@@ -111,4 +117,34 @@ export async function findExpectedDelegationModels(
   } else {
     return expectedModels[0].toDTO()
   }
+}
+
+export const addDelegationTypesAndProvider = async (
+  listOfRightTypes: { code: string; description: string }[],
+  delegationProviderModel: typeof DelegationProviderModel,
+  delegationTypeModel: typeof DelegationTypeModel,
+) => {
+  // Create delegation provider
+  const [prov] = await delegationProviderModel.findOrCreate({
+    where: {
+      id: AuthDelegationProvider.PersonalRepresentativeRegistry,
+    },
+    defaults: {
+      id: AuthDelegationProvider.PersonalRepresentativeRegistry,
+      name: AuthDelegationProvider.PersonalRepresentativeRegistry,
+      description: 'Provider for personal representatives',
+    },
+  })
+
+  // Create delegation type
+  await Promise.all(
+    listOfRightTypes.map((rt) =>
+      delegationTypeModel.create({
+        description: rt.description,
+        id: getPersonalRepresentativeDelegationType(rt.code),
+        name: getPersonalRepresentativeDelegationType(` ${rt.code}`),
+        providerId: prov.id,
+      }),
+    ),
+  )
 }
