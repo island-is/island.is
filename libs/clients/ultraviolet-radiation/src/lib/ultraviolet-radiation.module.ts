@@ -1,9 +1,18 @@
 import { Module } from '@nestjs/common'
-import { ApiConfig, ApiProviders } from './ultraviolet-radiation.provider'
+import {
+  ApiLatestMeasurementConfig,
+  ApiMeasurementSeriesConfig,
+  ApiProviders,
+} from './ultraviolet-radiation.provider'
 import { UltravioletRadiationClientService } from './ultraviolet-radiation.service'
 
 @Module({
-  providers: [ApiConfig, ...ApiProviders, UltravioletRadiationClientService],
+  providers: [
+    ApiLatestMeasurementConfig,
+    ApiMeasurementSeriesConfig,
+    ...ApiProviders,
+    UltravioletRadiationClientService,
+  ],
   exports: [UltravioletRadiationClientService],
 })
 export class UltravioletRadiationClientModule {}
