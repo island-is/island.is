@@ -40,6 +40,33 @@ const CasesReviewed: FC<Props> = ({ loading, cases }) => {
     ),
   }
 
+  const getVerdictViewTag = (row: CaseListEntry) => {
+    if (!row.indictmentVerdictViewedByAll) {
+      return (
+        <Tag variant="red" outlined disabled truncate>
+          {formatMessage(strings.tagVerdictUnviewed)}
+        </Tag>
+      )
+    }
+
+    const today = new Date()
+    const deadline = new Date(row.indictmentVerdictAppealDeadline ?? '')
+
+    if (today < deadline) {
+      return (
+        <Tag variant="mint" outlined disabled truncate>
+          {formatMessage(strings.tagVerdictViewComplete)}
+        </Tag>
+      )
+    }
+
+    return (
+      <Tag variant="blue" outlined disabled truncate>
+        {formatMessage(strings.tagVerdictViewOnDeadline)}
+      </Tag>
+    )
+  }
+
   return (
     <>
       <SectionHeading title={formatMessage(strings.title)} />
@@ -58,6 +85,7 @@ const CasesReviewed: FC<Props> = ({ loading, cases }) => {
                   sortable: { isSortable: true, key: 'defendant' },
                 },
                 { title: formatMessage(tables.reviewDecision) },
+                { title: formatMessage(tables.verdictViewState) },
                 { title: formatMessage(tables.prosecutorName) },
               ]}
               data={cases}
@@ -86,9 +114,10 @@ const CasesReviewed: FC<Props> = ({ loading, cases }) => {
                   ),
                 },
                 {
-                  cell: (row: CaseListEntry) => (
-                    <Text>{row.indictmentReviewer?.name}</Text>
-                  ),
+                  cell: (row) => getVerdictViewTag(row),
+                },
+                {
+                  cell: (row) => <Text>{row.indictmentReviewer?.name}</Text>,
                 },
               ]}
             />

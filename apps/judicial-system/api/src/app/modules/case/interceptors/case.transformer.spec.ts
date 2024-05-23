@@ -575,7 +575,7 @@ describe('getIndictmentInfo', () => {
     const indictmentInfo = getIndictmentInfo(theCase.rulingDate)
 
     expect(indictmentInfo).toEqual({
-      indictmentAppealDeadline: new Date(
+    indictmentAppealDeadline: new Date(
         new Date(rulingDate).setDate(new Date(rulingDate).getDate() + 28),
       ).toISOString(),
     })
