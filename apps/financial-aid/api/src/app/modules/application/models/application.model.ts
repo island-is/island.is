@@ -78,6 +78,9 @@ export class ApplicationModel implements Application {
   readonly formComment?: string
 
   @Field({ nullable: true })
+  readonly childrenComment?: string
+
+  @Field({ nullable: true })
   readonly spouseFormComment?: string
 
   @Field(() => String)
