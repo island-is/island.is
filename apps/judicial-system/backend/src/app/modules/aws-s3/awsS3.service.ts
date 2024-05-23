@@ -435,6 +435,19 @@ export class AwsS3Service {
     const oldKey = formatS3IndictmentKey(key)
     const newKey = formatS3CompletedIndictmentKey(key)
 
+    const oldConfirmedKey = formatConfirmedKey(oldKey)
+
+    if (await this.objectExistsInS3(oldConfirmedKey)) {
+      const newConfirmedKey = formatConfirmedKey(newKey)
+
+      if (!(await this.objectExistsInS3(newConfirmedKey))) {
+        await this.copyObject(oldConfirmedKey, newConfirmedKey)
+      }
+
+      // No need to wait for the delete to finish
+      this.deleteObjectFromS3(oldConfirmedKey)
+    }
+
     if (!(await this.objectExistsInS3(newKey))) {
       await this.copyObject(oldKey, newKey)
     }
