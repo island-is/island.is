@@ -369,10 +369,11 @@ export const ReportFieldsRepeater: FC<
                         }}
                       />
                     ) : field.type !== 'nationalId' &&
-                      field.id === 'assetNumber' ? (
+                      field.id === 'assetNumber' &&
+                      field.props?.assetKey === 'bankAccounts' ? (
                       <InputController
                         id={`${fieldIndex}.${field.id}`}
-                        label={formatMessage(m.bankAccount)}
+                        label={formatMessage(field.title)}
                         backgroundColor="blue"
                         {...(!foreignBankAccountIndexes.includes(mainIndex) && {
                           format: '####-##-######',

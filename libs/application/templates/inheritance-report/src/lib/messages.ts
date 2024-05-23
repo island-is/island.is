@@ -32,7 +32,12 @@ export const m = defineMessages({
 
   preDataCollectionChooseEstateSelectTitle: {
     id: 'ir.application:preDataCollectionChooseEstateSelectTitle',
-    defaultMessage: 'Foröflun gagna',
+    defaultMessage: 'Upplýsingaöflun',
+    description: 'Title for pre-collection of data',
+  },
+  preDataCollectionChooseEstateSelectTitleDropdown: {
+    id: 'ir.application:preDataCollectionChooseEstateSelectTitleDropdown',
+    defaultMessage: 'Upplýsingaöflun (nýr textareitur)',
     description: 'Title for pre-collection of data',
   },
   preDataCollectionApplicationFor: {
@@ -450,7 +455,7 @@ export const m = defineMessages({
     description: '',
   },
   propertyNumber: {
-    id: 'es.application:propertyNumber',
+    id: 'ir.application:propertyNumber',
     defaultMessage: 'Fastanúmer',
     description: 'Property number label',
   },
@@ -516,8 +521,8 @@ export const m = defineMessages({
     defaultMessage: 'Markaðsverðmæti á dánardegi',
     description: '',
   },
-  gunNumber: {
-    id: 'ir.application:gunNumber',
+  gunSerialNumber: {
+    id: 'ir.application:gunSerialNumber',
     defaultMessage: 'Raðnúmer',
     description: '',
   },
@@ -750,9 +755,9 @@ export const m = defineMessages({
     defaultMessage: 'Yfirlit eigna',
     description: '',
   },
-  debtsOverview: {
-    id: 'ir.application:debtsOverview',
-    defaultMessage: 'Yfirlit skulda',
+  debtsAndFuneralCostOverview: {
+    id: 'ir.application:debtsAndFuneralCostOverview',
+    defaultMessage: 'Yfirlit',
     description: '',
   },
   assetOverviewDescription: {
@@ -970,6 +975,30 @@ export const m = defineMessages({
   totalAmount: {
     id: 'ir.application:totalAmount',
     defaultMessage: 'Samtals fjárhæð',
+    description: '',
+  },
+
+  totalAmountDebts: {
+    id: 'ir.application:totalAmountDebts',
+    defaultMessage: 'Samtals fjárhæð skuldir',
+    description: '',
+  },
+
+  totalAmountPublic: {
+    id: 'ir.application:totalAmountPublic',
+    defaultMessage: 'Samtals fjárhæð opinber gjöld',
+    description: '',
+  },
+
+  totalAmountFuneralCost: {
+    id: 'ir.application:totalAmountFuneralCost',
+    defaultMessage: 'Samtals fjárhæð útfararkostnaðar',
+    description: '',
+  },
+
+  debtsAndFuneralCostTitle: {
+    id: 'ir.application:debtsAndFuneralCostTitle',
+    defaultMessage: 'Skuldir og útfararkostnaður',
     description: '',
   },
 
@@ -1405,6 +1434,16 @@ export const m = defineMessages({
     defaultMessage: 'Athugasemdir erfingja',
     description: '',
   },
+  fileUploadPrivateTransfer: {
+    id: 'ir.application:fileUploadPrivateTransfer',
+    defaultMessage: 'Einkaskiptagerð',
+    description: '',
+  },
+  fileUploadOtherDocuments: {
+    id: 'ir.application:fileUploadOtherDocuments',
+    defaultMessage: 'Önnur fylgigögn',
+    description: '',
+  },
   heirShare: {
     id: 'ir.application:heirShare',
     defaultMessage: 'Arfur og erfðafjárskattur',
@@ -1565,8 +1604,9 @@ export const m = defineMessages({
   },
   // Error messages
   errorPropertyNumber: {
-    id: 'es.application:error.errorPropertyNumber',
-    defaultMessage: 'Verður að innihalda L og 6 tölustafi eða F og 7 tölustafi',
+    id: 'ir.application:error.errorPropertyNumber',
+    defaultMessage:
+      'Verður að innihalda 6 tölustafi eða L + 6 fyrir landeignanúmeri, 7 tölustafi, F + 7 fyrir fasteignanúmeri',
     description: 'Property number is invalid',
   },
 })

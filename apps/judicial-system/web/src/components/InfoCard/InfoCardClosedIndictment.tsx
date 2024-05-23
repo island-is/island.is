@@ -9,23 +9,19 @@ import {
 import { core } from '@island.is/judicial-system-web/messages'
 
 import { FormContext } from '../FormProvider/FormProvider'
+import { DefendantInfoActionButton } from './DefendantInfo/DefendantInfo'
 import InfoCard, { NameAndEmail } from './InfoCard'
 import { strings } from './InfoCardIndictment.strings'
 
-const InfoCardClosedIndictment: React.FC<
-  React.PropsWithChildren<unknown>
-> = () => {
+export interface Props {
+  defendantInfoActionButton?: DefendantInfoActionButton
+}
+
+const InfoCardClosedIndictment: React.FC<Props> = (props) => {
   const { workingCase } = useContext(FormContext)
   const { formatMessage } = useIntl()
-  const defenders = workingCase.defendants?.map((defendant) => {
-    return {
-      name: defendant.defenderName || '',
-      defenderNationalId: defendant.defenderNationalId || '',
-      sessionArrangement: undefined,
-      email: defendant.defenderEmail || '',
-      phoneNumber: defendant.defenderPhoneNumber || '',
-    }
-  })
+
+  const { defendantInfoActionButton } = props
 
   return (
     <InfoCard
@@ -81,16 +77,16 @@ const InfoCardClosedIndictment: React.FC<
           ? {
               title: capitalize(
                 workingCase.defendants.length > 1
-                  ? formatMessage(core.indictmentDefendants)
-                  : formatMessage(core.indictmentDefendant, {
+                  ? formatMessage(strings.indictmentDefendants)
+                  : formatMessage(strings.indictmentDefendant, {
                       gender: workingCase.defendants[0].gender,
                     }),
               ),
               items: workingCase.defendants,
+              defendantInfoActionButton: defendantInfoActionButton,
             }
           : undefined
       }
-      defenders={defenders}
       additionalDataSections={[
         ...(workingCase.indictmentReviewer?.name
           ? [

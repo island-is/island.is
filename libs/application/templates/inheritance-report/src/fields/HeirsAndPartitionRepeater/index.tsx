@@ -135,7 +135,9 @@ export const HeirsAndPartitionRepeater: FC<
           label: relation,
         })) || []
 
-  const error = (errors as any)?.heirs?.data ?? {}
+  const error =
+    ((errors as any)?.heirs?.data || (errors as any)?.heirs?.total) ?? []
+  console.log(error)
 
   const handleAddMember = () =>
     append({
@@ -635,7 +637,7 @@ export const HeirsAndPartitionRepeater: FC<
                 readOnly
                 hasError={
                   (props.sumField === 'heirsPercentage' &&
-                    error &&
+                    !!error.length &&
                     total !== 100) ??
                   false
                 }

@@ -63,11 +63,6 @@ export const strings = defineMessages({
     defaultMessage: 'Velja gögn til að hlaða upp',
     description: 'Notaður sem titill á hlaða upp takka á Niðurstaða skrefi.',
   },
-  nextButtonText: {
-    id: 'judicial.system.core:court.indictments.conclusion.next_button_text',
-    defaultMessage: 'Staðfesta',
-    description: 'Notaður sem titill á Staðfesta takka á Niðurstaða skrefi.',
-  },
   redistribute: {
     id: 'judicial.system.core:court.indictments.conclusion.redistribute',
     defaultMessage: 'Fer í útlutun til dómara',

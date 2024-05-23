@@ -122,7 +122,7 @@ export const valueToNumber = (value: unknown, delimiter = '.'): number => {
 }
 
 export const isValidRealEstate = (value: string) => {
-  const assetNumberPattern = /^(F\d{3}-\d{4}|\d{7}|\d{3}-\d{4}|F\d{7})$/
+  const assetNumberPattern = /^[Ff]{0,1}\d{7}$|^[Ll]{0,1}\d{6}$/
   return assetNumberPattern.test(value)
 }
 

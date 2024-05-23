@@ -36,7 +36,7 @@ export const preSelection = buildSection({
       children: [
         buildSelectField({
           id: 'estateInfoSelection',
-          title: m.preDataCollectionChooseEstateSelectTitle,
+          title: m.preDataCollectionChooseEstateSelectTitleDropdown,
           defaultValue: (application: {
             externalData: {
               syslumennOnEntry: {

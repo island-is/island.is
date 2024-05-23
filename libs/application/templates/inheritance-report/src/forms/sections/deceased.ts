@@ -11,6 +11,8 @@ import {
 import { m } from '../../lib/messages'
 import format from 'date-fns/format'
 import { getEstateDataFromApplication } from '../../lib/utils/helpers'
+import { NO, YES } from '../../lib/constants'
+import { format as formatNationalId } from 'kennitala'
 
 export const deceased = buildSection({
   id: 'deceasedInfo',
@@ -31,8 +33,10 @@ export const deceased = buildSection({
         buildKeyValueField({
           label: m.nationalId,
           value: (application) =>
-            getEstateDataFromApplication(application)?.inheritanceReportInfo
-              ?.nationalId ?? '',
+            formatNationalId(
+              getEstateDataFromApplication(application)?.inheritanceReportInfo
+                ?.nationalId ?? '',
+            ),
           width: 'half',
         }),
         buildDescriptionField({
