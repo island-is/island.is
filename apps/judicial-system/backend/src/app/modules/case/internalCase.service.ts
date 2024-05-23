@@ -1151,4 +1151,14 @@ export class InternalCaseService {
 
     return originalAncestor
   }
+
+  async getIndictmentCases(): Promise<Case[]> {
+    return this.caseModel.findAll({
+      attributes: ['id', 'courtCaseNumber', 'type'],
+      where: {
+        type: CaseType.INDICTMENT,
+        state: CaseState.COMPLETED,
+      },
+    })
+  }
 }

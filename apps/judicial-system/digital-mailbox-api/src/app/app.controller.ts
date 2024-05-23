@@ -1,4 +1,4 @@
-import { Controller, Get, Inject } from '@nestjs/common'
+import { Controller, Get, Inject, Query } from '@nestjs/common'
 import { ApiCreatedResponse } from '@nestjs/swagger'
 
 import type { Logger } from '@island.is/logging'
@@ -19,5 +19,13 @@ export class AppController {
     this.logger.debug('Testing connection')
 
     return this.appService.testConnection()
+  }
+
+  @Get('cases')
+  @ApiCreatedResponse({ type: String, description: 'Get all cases' })
+  async getAllCases(@Query() query?: { lang: string }): Promise<any[]> {
+    this.logger.debug('Getting all cases')
+
+    return this.appService.getCases(query?.lang)
   }
 }

@@ -2,6 +2,7 @@ import {
   BadRequestException,
   Body,
   Controller,
+  Get,
   Inject,
   Param,
   Post,
@@ -66,6 +67,18 @@ export class InternalCaseController {
     this.logger.debug('Archiving a case')
 
     return this.internalCaseService.archive()
+  }
+
+  @Get('cases/indictments')
+  @ApiOkResponse({
+    type: Case,
+    isArray: true,
+    description: 'Gets all indictment cases',
+  })
+  getIndictmentCases(): Promise<Case[]> {
+    this.logger.debug('Getting all indictment cases')
+
+    return this.internalCaseService.getIndictmentCases()
   }
 
   @UseGuards(CaseExistsGuard)
