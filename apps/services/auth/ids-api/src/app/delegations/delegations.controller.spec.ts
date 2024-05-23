@@ -9,11 +9,14 @@ import {
   ClientAllowedScope,
   Delegation,
   DelegationDTO,
+  DelegationProviderModel,
   DelegationType,
+  DelegationTypeModel,
   Domain,
   InactiveReason,
   MergedDelegationDTO,
   PersonalRepresentative,
+  PersonalRepresentativeDelegationTypeModel,
   PersonalRepresentativeRight,
   PersonalRepresentativeRightType,
   PersonalRepresentativeScopePermission,
@@ -52,6 +55,8 @@ import {
   getScopePermission,
   personalRepresentativeType,
 } from '../../../test/stubs/personalRepresentativeStubs'
+import { AuthDelegationProvider } from 'delegation'
+import { getPersonalRepresentativeDelegationType } from '@island.is/shared/types'
 
 describe('DelegationsController', () => {
   describe('Given a user is authenticated', () => {
@@ -63,7 +68,10 @@ describe('DelegationsController', () => {
     let prRightsModel: typeof PersonalRepresentativeRight
     let prRightTypeModel: typeof PersonalRepresentativeRightType
     let prTypeModel: typeof PersonalRepresentativeType
+    let prDelegationTypeModel: typeof PersonalRepresentativeDelegationTypeModel
+    let delegationTypeModel: typeof DelegationTypeModel
     let nationalRegistryApi: NationalRegistryClientService
+    let delegationProviderModel: typeof DelegationProviderModel
 
     const userNationalId = getFakeNationalId()
 
@@ -102,12 +110,41 @@ describe('DelegationsController', () => {
       prScopePermission = app.get<typeof PersonalRepresentativeScopePermission>(
         getModelToken(PersonalRepresentativeScopePermission),
       )
+      prDelegationTypeModel = app.get<
+        typeof PersonalRepresentativeDelegationTypeModel
+      >(getModelToken(PersonalRepresentativeDelegationTypeModel))
+      delegationTypeModel = app.get<typeof DelegationTypeModel>(
+        getModelToken(DelegationTypeModel),
+      )
+      delegationProviderModel = app.get<typeof DelegationProviderModel>(
+        getModelToken(DelegationProviderModel),
+      )
       nationalRegistryApi = app.get(NationalRegistryClientService)
     })
 
     afterAll(async () => {
       await app.cleanUp()
     })
+
+    const createDelegationTypeAndProvider = async (rightCode: string[]) => {
+      const newDelegationProvider = await delegationProviderModel.create({
+        id: AuthDelegationProvider.PersonalRepresentativeRegistry,
+        name: 'Talsmannagrunnur',
+        description: 'Talsmannagrunnur',
+        delegationTypes: [],
+      })
+
+      await delegationTypeModel.bulkCreate(
+        rightCode.map((code) => {
+          return {
+            id: getPersonalRepresentativeDelegationType(code),
+            providerId: newDelegationProvider.id,
+            name: getPersonalRepresentativeDelegationType(code),
+            description: `Personal representative delegation type for right type ${code}`,
+          }
+        }),
+      )
+    }
 
     describe('and given we have 3 valid, 1 not yet active and 1 outdate right types', () => {
       type rightsTypeStatus = 'valid' | 'unactivated' | 'outdated'
@@ -139,10 +176,23 @@ describe('DelegationsController', () => {
             }
           }),
         )
+        await createDelegationTypeAndProvider(rightsTypes.map(([code]) => code))
       })
 
       afterAll(async () => {
         await prRightTypeModel.destroy({
+          where: {},
+          cascade: true,
+          truncate: true,
+          force: true,
+        })
+        await delegationTypeModel.destroy({
+          where: {},
+          cascade: true,
+          truncate: true,
+          force: true,
+        })
+        await delegationProviderModel.destroy({
           where: {},
           cascade: true,
           truncate: true,
@@ -193,6 +243,11 @@ describe('DelegationsController', () => {
               await prRightsModel.create(
                 getPersonalRepresentativeRights('valid1', relationship.id),
               )
+              await prDelegationTypeModel.create({
+                personalRepresentativeId: relationship.id,
+                delegationTypeId:
+                  getPersonalRepresentativeDelegationType('valid1'),
+              })
             }
 
             for (let i = 0; i < outdated; i++) {
@@ -209,6 +264,11 @@ describe('DelegationsController', () => {
               await prRightsModel.create(
                 getPersonalRepresentativeRights('outdated', relationship.id),
               )
+              await prDelegationTypeModel.create({
+                personalRepresentativeId: relationship.id,
+                delegationTypeId:
+                  getPersonalRepresentativeDelegationType('outdated'),
+              })
             }
 
             for (let i = 0; i < unactivated; i++) {
@@ -225,6 +285,11 @@ describe('DelegationsController', () => {
               await prRightsModel.create(
                 getPersonalRepresentativeRights('unactivated', relationship.id),
               )
+              await prDelegationTypeModel.create({
+                personalRepresentativeId: relationship.id,
+                delegationTypeId:
+                  getPersonalRepresentativeDelegationType('unactivated'),
+              })
             }
 
             for (let i = 0; i < deceased; i++) {
@@ -241,6 +306,11 @@ describe('DelegationsController', () => {
               await prRightsModel.create(
                 getPersonalRepresentativeRights('valid1', relationship.id),
               )
+              await prDelegationTypeModel.create({
+                personalRepresentativeId: relationship.id,
+                delegationTypeId:
+                  getPersonalRepresentativeDelegationType('valid1'),
+              })
             }
 
             for (let i = 0; i < nationalRegistryErrors; i++) {
@@ -260,6 +330,11 @@ describe('DelegationsController', () => {
               await prRightsModel.create(
                 getPersonalRepresentativeRights('valid1', relationship.id),
               )
+              await prDelegationTypeModel.create({
+                personalRepresentativeId: relationship.id,
+                delegationTypeId:
+                  getPersonalRepresentativeDelegationType('valid1'),
+              })
             }
 
             const nationalRegistryUsers = [
@@ -309,6 +384,12 @@ describe('DelegationsController', () => {
               force: true,
             })
             await prModel.destroy({
+              where: {},
+              cascade: true,
+              truncate: true,
+              force: true,
+            })
+            await prDelegationTypeModel.destroy({
               where: {},
               cascade: true,
               truncate: true,
@@ -484,6 +565,12 @@ describe('DelegationsController', () => {
                   getPersonalRepresentativeRights(r, relationship.id),
                 ),
               )
+              await prDelegationTypeModel.bulkCreate(
+                rights.map((r) => ({
+                  personalRepresentativeId: relationship.id,
+                  delegationTypeId: getPersonalRepresentativeDelegationType(r),
+                })),
+              )
             })
 
             afterAll(async () => {
@@ -494,6 +581,12 @@ describe('DelegationsController', () => {
                 force: true,
               })
               await prModel.destroy({
+                where: {},
+                cascade: true,
+                truncate: true,
+                force: true,
+              })
+              await prDelegationTypeModel.destroy({
                 where: {},
                 cascade: true,
                 truncate: true,
@@ -559,10 +652,24 @@ describe('DelegationsController', () => {
             }
           }),
         )
+
+        await createDelegationTypeAndProvider(rightsTypes.map(([code]) => code))
       })
 
       afterAll(async () => {
         await prRightTypeModel.destroy({
+          where: {},
+          cascade: true,
+          truncate: true,
+          force: true,
+        })
+        await delegationTypeModel.destroy({
+          where: {},
+          cascade: true,
+          truncate: true,
+          force: true,
+        })
+        await delegationProviderModel.destroy({
           where: {},
           cascade: true,
           truncate: true,
@@ -613,6 +720,11 @@ describe('DelegationsController', () => {
               await prRightsModel.create(
                 getPersonalRepresentativeRights('valid1', relationship.id),
               )
+              await prDelegationTypeModel.create({
+                personalRepresentativeId: relationship.id,
+                delegationTypeId:
+                  getPersonalRepresentativeDelegationType('valid1'),
+              })
             }
 
             for (let i = 0; i < outdated; i++) {
@@ -629,6 +741,11 @@ describe('DelegationsController', () => {
               await prRightsModel.create(
                 getPersonalRepresentativeRights('outdated', relationship.id),
               )
+              await prDelegationTypeModel.create({
+                personalRepresentativeId: relationship.id,
+                delegationTypeId:
+                  getPersonalRepresentativeDelegationType('outdated'),
+              })
             }
 
             for (let i = 0; i < unactivated; i++) {
@@ -645,6 +762,11 @@ describe('DelegationsController', () => {
               await prRightsModel.create(
                 getPersonalRepresentativeRights('unactivated', relationship.id),
               )
+              await prDelegationTypeModel.create({
+                personalRepresentativeId: relationship.id,
+                delegationTypeId:
+                  getPersonalRepresentativeDelegationType('unactivated'),
+              })
             }
 
             for (let i = 0; i < deceased; i++) {
@@ -661,6 +783,11 @@ describe('DelegationsController', () => {
               await prRightsModel.create(
                 getPersonalRepresentativeRights('valid1', relationship.id),
               )
+              await prDelegationTypeModel.create({
+                personalRepresentativeId: relationship.id,
+                delegationTypeId:
+                  getPersonalRepresentativeDelegationType('valid1'),
+              })
             }
 
             for (let i = 0; i < nationalRegistryErrors; i++) {
@@ -680,6 +807,11 @@ describe('DelegationsController', () => {
               await prRightsModel.create(
                 getPersonalRepresentativeRights('valid1', relationship.id),
               )
+              await prDelegationTypeModel.create({
+                personalRepresentativeId: relationship.id,
+                delegationTypeId:
+                  getPersonalRepresentativeDelegationType('valid1'),
+              })
             }
 
             const nationalRegistryUsers = [
@@ -723,6 +855,12 @@ describe('DelegationsController', () => {
           afterAll(async () => {
             jest.clearAllMocks()
             await prRightsModel.destroy({
+              where: {},
+              cascade: true,
+              truncate: true,
+              force: true,
+            })
+            await prDelegationTypeModel.destroy({
               where: {},
               cascade: true,
               truncate: true,
@@ -907,6 +1045,15 @@ describe('DelegationsController', () => {
                   getPersonalRepresentativeRights(r, relationship.id),
                 ),
               )
+              await prDelegationTypeModel.bulkCreate(
+                rights.map((r) => {
+                  return {
+                    personalRepresentativeId: relationship.id,
+                    delegationTypeId:
+                      getPersonalRepresentativeDelegationType(r),
+                  }
+                }),
+              )
             })
 
             afterAll(async () => {
@@ -917,6 +1064,12 @@ describe('DelegationsController', () => {
                 force: true,
               })
               await prModel.destroy({
+                where: {},
+                cascade: true,
+                truncate: true,
+                force: true,
+              })
+              await prDelegationTypeModel.destroy({
                 where: {},
                 cascade: true,
                 truncate: true,

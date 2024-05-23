@@ -44,7 +44,7 @@ export class DelegationProviderModel extends Model<
   description!: string
 
   @HasMany(() => DelegationTypeModel)
-  delegationTypes!: DelegationTypeModel[]
+  delegationTypes!: CreationOptional<DelegationTypeModel[]>
 
   @CreatedAt
   readonly created!: CreationOptional<Date>
