@@ -124,7 +124,12 @@ export const NotificationsScreen: NavigationFunctionComponent = ({
   }, [])
 
   const handleEndReached = async () => {
-    if (loadingMore || loading) return
+    if (
+      loadingMore ||
+      loading ||
+      (data && !data?.userNotifications?.pageInfo.hasNextPage)
+    )
+      return
 
     setLoadingMore(true)
 
