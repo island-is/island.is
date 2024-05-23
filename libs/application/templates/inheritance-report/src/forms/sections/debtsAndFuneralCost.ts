@@ -16,7 +16,6 @@ import { formatCurrency } from '@island.is/application/ui-components'
 import { m } from '../../lib/messages'
 import { ApplicationDebts, Debt } from '../../types'
 import { getEstateDataFromApplication } from '../../lib/utils/helpers'
-import { YES } from '../../lib/constants'
 
 export const debtsAndFuneralCost = buildSection({
   id: 'debts',
