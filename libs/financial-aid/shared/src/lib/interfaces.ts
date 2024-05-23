@@ -342,6 +342,7 @@ export interface Application {
   homeCircumstancesCustom?: string
   studentCustom?: string
   formComment?: string
+  childrenComment?: string
   spouseFormComment?: string
   state: ApplicationState
   files?: ApplicationFile[]
