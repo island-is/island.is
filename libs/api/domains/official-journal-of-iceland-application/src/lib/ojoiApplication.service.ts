@@ -15,7 +15,12 @@ export class OfficialJournalOfIcelandApplicationService {
   }
 
   async postComment(input: PostCommentInput) {
-    return await this.ojoiApplicationService.postComment(input)
+    return await this.ojoiApplicationService.postComment({
+      id: input.id,
+      postApplicationComment: {
+        comment: input.comment,
+      },
+    })
   }
 
   async postApplication(input: PostApplicationInput): Promise<boolean> {
