@@ -26,7 +26,6 @@ A new library providing an createEnhancedFetch function.
 - `name: string` - Name of fetch function. Used in logs and opossum stats.
 - `enableCircuitBreaker?: boolean` - Should use circuit breaker for requests. Defaults to `true`.
 - `timeout?: number | false` - Timeout for requests. Logged and thrown as errors. May cause circuit breaker to open. Defaults to `10000`ms. Can be disabled by passing false.
-- `treat400ResponsesAsErrors?: boolean` - If `true`, then too many 400 responses may cause the circuit to open. Either way these responses will be logged and thrown. Defaults to `false`.
 - `logErrorResponseBody?: boolean` - If `true`, then non-200 response bodies will be consumed and included in the error object and logged as `body`.
 - `keepAlive?: boolean | number` - Configures keepAlive for requests. If `false`, never reuse connections. If `true`, reuse connection with a maximum idle timeout of 10 seconds. By passing a number you can override the idle connection timeout. Defaults to `true`.
 - `clientCertificate?: ClientCertificateOptions` - Configures client certificate for requests.
