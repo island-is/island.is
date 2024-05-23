@@ -507,6 +507,12 @@ export class ApplicationService {
         updatedApplication?.setDataValue('applicationEvents', eventsResolved)
       })
 
+    const children = this.childrenService
+      .findById(id)
+      .then((childrenResolved) => {
+        updatedApplication?.setDataValue('children', childrenResolved)
+      })
+
     const files = this.fileService
       .getAllApplicationFiles(id)
       .then((filesResolved) => {
@@ -534,7 +540,7 @@ export class ApplicationService {
       ])
     }
 
-    await Promise.all([events, files, directTaxPayments])
+    await Promise.all([events, files, directTaxPayments, children])
 
     return updatedApplication
   }
