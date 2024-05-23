@@ -103,7 +103,9 @@ const extractDetails = function (
     )
   ) {
     return {
+      isDebtLess: true,
       ...extractCommonVehicleInfo(response.basicVehicleInformation),
+      validationErrorMessages: response?.validationErrorMessages ?? [],
     }
   } else if (
     isVehicleType<VehicleOperatorChangeChecksByPermno>(
