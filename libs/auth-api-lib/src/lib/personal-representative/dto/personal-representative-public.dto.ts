@@ -52,7 +52,7 @@ export class PersonalRepresentativePublicDTO {
       nationalIdPersonalRepresentative: dto.nationalIdPersonalRepresentative,
       nationalIdRepresentedPerson: dto.nationalIdRepresentedPerson,
       rights: dto.rights.map((rc) => rc.code),
-      prDelegationTypeCodes: dto.prDelegationType.map((dt) => dt.id),
+      prDelegationTypeCodes: dto.prDelegationTypes.map((dt) => dt.id),
     } as PersonalRepresentativePublicDTO
   }
 }

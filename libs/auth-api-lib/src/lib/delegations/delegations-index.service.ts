@@ -102,9 +102,6 @@ const validateCrudParams = (delegation: DelegationRecordInputDTO) => {
   }
 }
 
-// export const getPersonalRepresentativeDelegationType = (right: string) =>
-//   `${AuthDelegationType.PersonalRepresentative}:${right}` as PersonalRepresentativeDelegationType
-
 const hasAllSameScopes = (
   a: string[] | undefined,
   b: string[] | undefined,

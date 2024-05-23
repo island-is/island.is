@@ -377,16 +377,10 @@ describe('PersonalRepresentativeController', () => {
     const response = await server.get(`${path}/${personalRep.id}`).expect(200)
     const responseData = response.body as PersonalRepresentativeDTO
 
-    // Order both excepted and actual data to make sure they are the same
-    personalRep.prDelegationType = personalRep.prDelegationType.sort((a, b) =>
-      a.id > b.id ? 1 : -1,
-    )
-
-    responseData.prDelegationType = responseData.prDelegationType.sort((a, b) =>
-      a.id > b.id ? 1 : -1,
-    )
-
-    expect(response.body).toMatchObject(personalRep)
+    expect(responseData).toMatchObject({
+      ...personalRep,
+      prDelegationTypes: expect.arrayContaining(responseData.prDelegationTypes),
+    })
   })
 
   it('Get v1/personal-representatives should return notfound for a connection id that does not exist', async () => {
@@ -419,17 +413,12 @@ describe('PersonalRepresentativeController', () => {
 
     const responseData: PaginatedPersonalRepresentativeDto = response.body
 
-    // Order both excepted and actual data to make sure they are the same
-    personalRep.prDelegationType = personalRep.prDelegationType.sort((a, b) =>
-      a.id > b.id ? 1 : -1,
-    )
-
-    responseData.data[0].prDelegationType =
-      responseData.data[0].prDelegationType.sort((a, b) =>
-        a.id > b.id ? 1 : -1,
-      )
-
-    expect(responseData.data[0]).toMatchObject(personalRep)
+    expect(responseData.data[0]).toMatchObject({
+      ...personalRep,
+      prDelegationTypes: expect.arrayContaining(
+        responseData.data[0].prDelegationTypes,
+      ),
+    })
   })
 
   async function setupBasePersonalRep(

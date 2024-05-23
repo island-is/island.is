@@ -328,7 +328,7 @@ export class PersonalRepresentativeService {
             ),
           },
         })
-        result.prDelegationType = delegationTypes.map((prdt) => prdt.toDTO())
+        result.prDelegationTypes = delegationTypes.map((prdt) => prdt.toDTO())
 
         return result
       })

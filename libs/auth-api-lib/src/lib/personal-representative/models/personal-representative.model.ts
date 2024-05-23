@@ -140,7 +140,7 @@ export class PersonalRepresentative extends Model {
       rights: this.rights?.map((r) =>
         (r.rightType as PersonalRepresentativeRightType).toDTO(),
       ),
-      prDelegationType: this.prDelegationTypes?.map((d) =>
+      prDelegationTypes: this.prDelegationTypes?.map((d) =>
         d.delegationType?.toDTO(),
       ),
       inactive: this.inactive,
