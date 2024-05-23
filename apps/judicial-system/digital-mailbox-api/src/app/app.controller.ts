@@ -4,6 +4,7 @@ import { ApiCreatedResponse } from '@nestjs/swagger'
 import type { Logger } from '@island.is/logging'
 import { LOGGER_PROVIDER } from '@island.is/logging'
 
+import { CasesResponse } from './models/cases.response'
 import { AppService } from './app.service'
 
 @Controller('api')
@@ -23,7 +24,9 @@ export class AppController {
 
   @Get('cases')
   @ApiCreatedResponse({ type: String, description: 'Get all cases' })
-  async getAllCases(@Query() query?: { lang: string }): Promise<any[]> {
+  async getAllCases(
+    @Query() query?: { lang: string },
+  ): Promise<CasesResponse[]> {
     this.logger.debug('Getting all cases')
 
     return this.appService.getCases(query?.lang)

@@ -9,19 +9,9 @@ import {
   AuditTrailService,
 } from '@island.is/judicial-system/audit-trail'
 
+import { CasesResponse } from './models/cases.response'
+import { InternalCasesResponse } from './models/internalCases.response'
 import appModuleConfig from './app.config'
-
-interface IndictmentCase {
-  id: string
-  courtCaseNumber: string
-  type: string
-}
-
-interface Response {
-  id: string
-  caseNumber: string
-  type: string
-}
 
 @Injectable()
 export class AppService {
@@ -41,8 +31,11 @@ export class AppService {
     return this.test()
   }
 
-  private format(response: IndictmentCase[], lang?: string): Response[] {
-    return response.map((item: IndictmentCase) => {
+  private format(
+    response: InternalCasesResponse[],
+    lang?: string,
+  ): CasesResponse[] {
+    return response.map((item: InternalCasesResponse) => {
       const language = lang?.toLowerCase()
 
       return {
@@ -56,7 +49,7 @@ export class AppService {
     })
   }
 
-  private async getAllCases(lang?: string): Promise<Response[]> {
+  private async getAllCases(lang?: string): Promise<CasesResponse[]> {
     console.log(this.config.backend.url)
     return fetch(`${this.config.backend.url}/api/internal/cases/indictments`, {
       method: 'GET',
@@ -88,7 +81,7 @@ export class AppService {
       })
   }
 
-  async getCases(lang?: string): Promise<Response[]> {
+  async getCases(lang?: string): Promise<CasesResponse[]> {
     return this.auditTrailService.audit(
       'digital-mailbox-api',
       AuditedAction.GET_INDICTMENTS,
