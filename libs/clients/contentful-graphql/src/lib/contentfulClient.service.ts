@@ -1,8 +1,20 @@
 import { Inject, Injectable } from '@nestjs/common'
 import { print } from 'graphql'
+
+import { User } from '@island.is/auth-nest-tools'
 import type { EnhancedFetchAPI } from '@island.is/clients/middlewares'
 import type { ConfigType } from '@island.is/nest/config'
 
+import {
+  SkilavottordRecyclingRequestDocument,
+  SkilavottordRecyclingRequestMutationVariables,
+  SkilavottordVehicleDocument,
+  SkilavottordVehicleMutationVariables,
+  SkilavottordVehicleOwnerDocument,
+  SkilavottordVehicleOwnerMutationVariables,
+} from './createRecyclingRequest.generated'
+
+import { RecyclingRequestTypes } from '../../gen/schema'
 import { ContentfulClientConfig } from './contentfulClient.config'
 import { ContentfulFetchProviderKey } from './contentfulFetchProvider'
 
@@ -15,7 +27,9 @@ const baseGqlRequestOptions = {
 
 interface RequestBody {
   query: string
-  variables: { [key: string]: any }
+  variables: {
+    input: object
+  }
 }
 
 @Injectable()
@@ -27,25 +41,90 @@ export class ContentfulClientService {
     private readonly fetch: EnhancedFetchAPI,
   ) {}
 
-  async gqlRequest(body: RequestBody) {
-    return await this.fetch(
-      `https://graphql.contentful.com/content/v1/spaces/${this.config.spaceId}/environments/${this.config.environment}`,
-      {
-        ...baseGqlRequestOptions,
-        headers: {
-          ...baseGqlRequestOptions.headers,
-          Authorization: `Bearer ${this.config.apiKey}`,
-        },
-        body: JSON.stringify(body),
-      },
-    )
+  async gqlRequestWithAuth(user: User, body: RequestBody) {
+    return await this.fetch(this.config.gqlBasePath, {
+      ...baseGqlRequestOptions,
+      auth: user,
+      body: JSON.stringify(body),
+    })
   }
 
-  async fetchContent(query: string, variables: { [key: string]: any } = {}) {
-    const response = await this.gqlRequest({ query, variables })
+  async createOwner(user: User, applicantName: string) {
+    const response = await this.gqlRequestWithAuth(user, {
+      query: print(SkilavottordVehicleOwnerDocument),
+      variables: {
+        input: {
+          name: applicantName,
+        },
+      } as SkilavottordVehicleOwnerMutationVariables,
+    })
+
     if (!response || !response.ok) {
-      throw new Error(`Failed to fetch content from Contentful`)
+      throw new Error(`Failed to creating owner`)
     }
+
+    return await response.json()
+  }
+
+  async createVehicle(
+    user: User,
+    permno: string,
+    mileage: number,
+    vin: string,
+    make: string,
+    firstRegistrationDate: Date,
+    color: string,
+  ) {
+    try {
+      const response = await this.gqlRequestWithAuth(user, {
+        query: print(SkilavottordVehicleDocument),
+        variables: {
+          input: {
+            permno,
+            mileage,
+            vin,
+            make,
+            firstRegistrationDate,
+            color,
+          },
+        } as SkilavottordVehicleMutationVariables,
+      })
+
+      if (!response || !response.ok) {
+        throw new Error(`Failed to creating vehicle ${permno.slice(-3)}`)
+      }
+
+      return await response.json()
+    } catch (e) {
+      throw new Error(`Failed to creating vehicle ${permno.slice(-3)}`)
+    }
+  }
+
+  async recycleVehicle(
+    user: User,
+    fullName: string,
+    permno: string,
+    requestType: RecyclingRequestTypes,
+  ) {
+    const response = await this.gqlRequestWithAuth(user, {
+      query: print(SkilavottordRecyclingRequestDocument),
+      variables: {
+        input: {
+          permno,
+          requestType,
+          fullName,
+        },
+      } as SkilavottordRecyclingRequestMutationVariables,
+    })
+
+    if (!response || !response.ok) {
+      throw new Error(
+        `Failed to recycle vehicle ${permno.slice(
+          -3,
+        )} - RequestType: ${requestType}`,
+      )
+    }
+
     return await response.json()
   }
 }

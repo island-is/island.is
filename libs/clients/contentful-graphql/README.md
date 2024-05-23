@@ -1,29 +1,29 @@
-# Contentful GraphQL Client
+# Car recycling Client (Úrvinnslusjóður)
 
 ## About
 
-This library implements a GraphQL client to interact with Contentful's GraphQL APIs.
+This library implements a GraphQL client code to use Car recycling (Skilavottorð) GraphQL APIs.
 
-## Configuration
+## Skilavottord-ws backend URL
 
-The following environment variables need to be configured:
+The `RECYCLING_FUND_GQL_BASE_PATH` config needs to be configured as to Skilavottord GraphQL server URL.
 
-- `CONTENTFUL_API_KEY`: Your Contentful API key.
-- `CONTENTFUL_SPACE_ID`: Your Contentful space ID.
-- `CONTENTFUL_ENVIRONMENT`: Your Contentful environment (default is `master`).
+## GraphQL client code generation
 
-## Usage
+To be able to generate the GraphQL library to use couple of things is needed to be done before code generation.
 
-To use the Contentful client, import the `ContentfulClientModule` into your NestJS application and inject the `ContentfulClientService` to interact with the API.
+- Use `graphql-codegen`, config it in `project.json`
+- Implement mutation and queries in a .graphql file
+- Config the `codegen.yaml` to point to GraphQL schema and our .graphql file. In our case we are using the api.graphql schema from the skilavottord-ws backend
 
-## Running Unit Tests
+Run `yarn codegen`
 
-Run `nx test contentful-graphql-client` to execute the unit tests via [Jest](https://jestjs.io).
+The code generation doesn't generate the functions to fetch data the from the backend, only types, the queries and mutations. We implemented the fetch "manually" to be abel to fit in token exhange.
 
-## Code Generation
+## Running unit tests
 
-To generate the necessary GraphQL types and queries, use `graphql-codegen` and configure it in `codegen.yaml`.
+Run `nx test clients-contentful-graphql` to execute the unit tests via [Jest](https://jestjs.io).
 
-## Maintainers
+## Code owners and maintainers
 
-- Your Team
+- [Deloitte](https://github.com/orgs/island-is/teams/deloitte/members)

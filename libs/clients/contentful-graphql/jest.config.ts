@@ -1,10 +1,16 @@
-module.exports = {
-  preset: 'ts-jest',
-  testEnvironment: 'node',
-  moduleFileExtensions: ['ts', 'tsx', 'js', 'jsx', 'json', 'node'],
-  rootDir: './',
-  testMatch: ['**/?(*.)+(spec|test).+(ts|tsx|js)'],
+/* eslint-disable */
+export default {
+  displayName: 'clients-contentful-graphql',
+  preset: './jest.preset.js',
+  rootDir: '../../..',
+  roots: [__dirname],
+  globals: {},
   transform: {
-    '^.+.(ts|tsx)$': 'ts-jest',
+    '^.+\\.[tj]sx?$': [
+      'ts-jest',
+      { tsconfig: `${__dirname}/tsconfig.spec.json` },
+    ],
   },
+  moduleFileExtensions: ['ts', 'tsx', 'js', 'jsx'],
+  coverageDirectory: '<rootDir>/coverage/libs/clients/contentful-graphql',
 }

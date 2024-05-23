@@ -1,4 +1,5 @@
 import { Module } from '@nestjs/common'
+
 import { ContentfulClientService } from './contentfulClient.service'
 import { ContentfulFetchProvider } from './contentfulFetchProvider'
 
