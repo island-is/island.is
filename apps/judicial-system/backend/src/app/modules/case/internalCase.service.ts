@@ -876,7 +876,6 @@ export class InternalCaseService {
     return { delivered }
   }
 
-  // TODO: Confirm indictment files
   async deliverIndictmentToPolice(
     theCase: Case,
     user: TUser,

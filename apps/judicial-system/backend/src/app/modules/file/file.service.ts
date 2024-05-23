@@ -361,7 +361,6 @@ export class FileService {
     }))
   }
 
-  // TODO: Delete confirmed indictment files
   async deleteCaseFile(
     theCase: Case,
     file: CaseFile,

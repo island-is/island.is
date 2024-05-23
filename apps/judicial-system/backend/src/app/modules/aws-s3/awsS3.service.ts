@@ -383,11 +383,19 @@ export class AwsS3Service {
       const completedKey = formatS3CompletedIndictmentKey(key)
 
       if (await this.objectExistsInS3(completedKey)) {
+        // No need to wait for the delete to finish
+        this.deleteObjectFromS3(formatConfirmedKey(completedKey))
+
         return await this.deleteObjectFromS3(completedKey)
       }
     }
 
-    return this.deleteObjectFromS3(formatS3IndictmentKey(key))
+    const originalKey = formatS3IndictmentKey(key)
+
+    // No need to wait for the delete to finish
+    this.deleteObjectFromS3(formatConfirmedKey(originalKey))
+
+    return this.deleteObjectFromS3(originalKey)
   }
 
   async deleteObject(
