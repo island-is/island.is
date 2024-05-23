@@ -1,4 +1,10 @@
-import { NavigationBarSheet, NotificationCard, Skeleton } from '@ui'
+import {
+  Button,
+  NavigationBarSheet,
+  NotificationCard,
+  Skeleton,
+  Problem,
+} from '@ui'
 import { dismissAllNotificationsAsync } from 'expo-notifications'
 import React, { useCallback, useEffect, useMemo, useState } from 'react'
 import { useIntl } from 'react-intl'
@@ -13,12 +19,13 @@ import {
   GetUserNotificationsQuery,
   Notification,
   useGetUserNotificationsQuery,
+  useMarkAllNotificationsAsReadMutation,
   useMarkAllNotificationsAsSeenMutation,
   useMarkUserNotificationAsReadMutation,
 } from '../../graphql/types/schema'
 
 import { createNavigationOptionHooks } from '../../hooks/create-navigation-option-hooks'
-import { navigateToNotification } from '../../lib/deep-linking'
+import { navigateTo, navigateToNotification } from '../../lib/deep-linking'
 import { useNotificationsStore } from '../../stores/notifications-store'
 import {
   createSkeletonArr,
@@ -26,11 +33,18 @@ import {
 } from '../../utils/create-skeleton-arr'
 import { isAndroid } from '../../utils/devices'
 import { testIDs } from '../../utils/test-ids'
-import { Problem } from '@ui/lib/problem/problem'
+import settings from '../../assets/icons/settings.png'
+import inboxRead from '../../assets/icons/inbox-read.png'
 
 const LoadingWrapper = styled.View`
   padding-vertical: ${({ theme }) => theme.spacing[3]}px;
   ${({ theme }) => isAndroid && `padding-bottom: ${theme.spacing[6]}px;`}
+`
+
+const ButtonWrapper = styled.View`
+  flex-direction: row;
+  margin-horizontal: ${({ theme }) => theme.spacing[2]}px;
+  margin-top: ${({ theme }) => theme.spacing[2]}px;
 `
 
 const DEFAULT_PAGE_SIZE = 50
@@ -59,15 +73,18 @@ export const NotificationsScreen: NavigationFunctionComponent = ({
     ({ updateNavigationUnseenCount }) => updateNavigationUnseenCount,
   )
 
-  const { data, loading, error, fetchMore } = useGetUserNotificationsQuery({
-    variables: { input: { limit: DEFAULT_PAGE_SIZE } },
-  })
+  const { data, loading, error, fetchMore, refetch } =
+    useGetUserNotificationsQuery({
+      variables: { input: { limit: DEFAULT_PAGE_SIZE } },
+    })
 
   const showError = error && !data
 
   const [markUserNotificationAsRead] = useMarkUserNotificationAsReadMutation()
   const [markAllUserNotificationsAsSeen] =
     useMarkAllNotificationsAsSeenMutation()
+  const [markAllUserNotificationsAsRead] =
+    useMarkAllNotificationsAsReadMutation()
 
   // On mount, mark all notifications as seen and update all screens navigation badge to 0
   useEffect(() => {
@@ -87,6 +104,14 @@ export const NotificationsScreen: NavigationFunctionComponent = ({
 
     return data?.userNotifications?.data || []
   }, [data, loading])
+
+  const onMarkAllAsReadPress = async () => {
+    const { data } = await markAllUserNotificationsAsRead()
+    if (data?.markAllNotificationsRead?.success) {
+      // Fetch again to get correct status of read for all notifications
+      await refetch()
+    }
+  }
 
   const onNotificationPress = useCallback((notification: Notification) => {
     // Mark notification as read and seen
@@ -192,6 +217,37 @@ export const NotificationsScreen: NavigationFunctionComponent = ({
         style={{ marginHorizontal: 16 }}
       />
       <SafeAreaView style={{ flex: 1 }} testID={testIDs.SCREEN_NOTIFICATIONS}>
+        <ButtonWrapper>
+          <Button
+            isOutlined
+            isUtilityButton
+            title={intl.formatMessage({
+              id: 'notifications.markAllAsRead',
+              defaultMessage: 'Merkja allt lesið',
+            })}
+            style={{
+              marginRight: theme.spacing[2],
+              maxWidth: 145,
+            }}
+            icon={inboxRead}
+            iconStyle={{ tintColor: theme.color.blue400 }}
+            onPress={onMarkAllAsReadPress}
+          />
+          <Button
+            isOutlined
+            isUtilityButton
+            title={intl.formatMessage({
+              id: 'notifications.settings',
+              defaultMessage: 'Mínar stillingar',
+            })}
+            onPress={() => navigateTo('/settings', componentId)}
+            icon={settings}
+            style={{
+              maxWidth: 145,
+            }}
+            iconStyle={{ tintColor: theme.color.blue400 }}
+          />
+        </ButtonWrapper>
         {showError ? (
           <Problem type="error" withContainer />
         ) : (
