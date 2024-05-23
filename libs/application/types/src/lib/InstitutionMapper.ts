@@ -275,7 +275,7 @@ export const institutionMapper = {
     nationalId: InstitutionNationalIds.VINNUEFTIRLITID,
     slug: InstitutionTypes.VINNUEFTIRLITID,
   },
-  [ApplicationTypes.PAYMENT_PLAN]: {
+  [ApplicationTypes.INCOME_PLAN]: {
     nationalId: InstitutionNationalIds.TRYGGINGASTOFNUN,
     slug: InstitutionTypes.TRYGGINGASTOFNUN,
   },

@@ -17,21 +17,21 @@ import {
 } from '@island.is/application/core'
 import { Events, Roles, States } from './constants'
 import { dataSchema } from './dataSchema'
-import { paymentPlanFormMessage } from './messages'
+import { incomePlanFormMessage } from './messages'
 import {
   socialInsuranceAdministrationMessage,
 } from '@island.is/application/templates/social-insurance-administration-core/lib/messages'
 
-const PaymentPlanTemplate: ApplicationTemplate<
+const IncomePlanTemplate: ApplicationTemplate<
   ApplicationContext,
   ApplicationStateSchema<Events>,
   Events
 > = {
-  type: ApplicationTypes.PAYMENT_PLAN,
-  name: paymentPlanFormMessage.shared.applicationTitle,
+  type: ApplicationTypes.INCOME_PLAN,
+  name: incomePlanFormMessage.shared.applicationTitle,
   institution: socialInsuranceAdministrationMessage.shared.institution,
   translationNamespaces: [
-    ApplicationConfigurations.PaymentPlan.translation,
+    ApplicationConfigurations.IncomePlan.translation,
   ],
   dataSchema,
   stateMachineConfig: {
@@ -82,8 +82,8 @@ const PaymentPlanTemplate: ApplicationTemplate<
             {
               id: Roles.APPLICANT,
               formLoader: () =>
-                import('../forms/PaymentPlanForm').then((val) =>
-                  Promise.resolve(val.PaymentPlanForm),
+                import('../forms/IncomePlanForm').then((val) =>
+                  Promise.resolve(val.IncomePlanForm),
                 ),
               actions: [
                 {
@@ -114,4 +114,4 @@ const PaymentPlanTemplate: ApplicationTemplate<
   },
 }
 
-export default PaymentPlanTemplate
+export default IncomePlanTemplate

@@ -1,18 +1,18 @@
 import { defineMessages, MessageDescriptor } from 'react-intl'
 type MessageDir = Record<string, Record<string, MessageDescriptor>>
 
-export const paymentPlanFormMessage: MessageDir = {
+export const incomePlanFormMessage: MessageDir = {
   shared: defineMessages({
     applicationTitle: {
-      id: 'pp.application:applicationTitle',
+      id: 'ip.application:applicationTitle',
       defaultMessage: 'Tekjuáætlun',
-      description: 'Payment Plan',
+      description: 'Income Plan',
     },
   }),
 
   pre: defineMessages({
     registryIcelandDescription: {
-      id: 'pp.application:registry.iceland.description',
+      id: 'ip.application:registry.iceland.description',
       defaultMessage: 'Upplýsingar um þig.',
       description: 'Information about you.',
     },
@@ -20,36 +20,36 @@ export const paymentPlanFormMessage: MessageDir = {
 
   info: defineMessages({
     section: {
-      id: 'pp.application:section',
+      id: 'ip.application:section',
       defaultMessage: 'Tekjuáætlun',
-      description: 'Payment Plan',
+      description: 'Income Plan',
     },
     instructionsTitle: {
-      id: 'pp.application:instructions.title',
+      id: 'ip.application:instructions.title',
       defaultMessage: 'Leiðbeiningar um skráningu tekjuáætlunar',
-      description: 'Instructions on filling out your payment plan',
+      description: 'Instructions on filling out your income plan',
     },
   }),
 
   confirm: defineMessages({
     section: {
-      id: 'pp.application:confirmation.section',
+      id: 'ip.application:confirmation.section',
       defaultMessage: 'Staðfesting',
       description: 'Confirmation',
     },
     title: {
-      id: 'pp.application:confirmation.title',
+      id: 'ip.application:confirmation.title',
       defaultMessage: 'Senda inn umsókn',
       description: 'Review and submit',
     },
     description: {
-      id: 'pp.application:confirm.description',
+      id: 'ip.application:confirm.description',
       defaultMessage:
         'Vinsamlegast farðu yfir umsóknina áður en þú sendir hana inn.',
       description: 'Please review the application before submitting.',
     },
     buttonEdit: {
-      id: 'pp.application:button.edit',
+      id: 'ip.application:button.edit',
       defaultMessage: 'Breyta umsókn',
       description: 'Edit application',
     },

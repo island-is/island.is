@@ -481,8 +481,8 @@
       "@island.is/application/templates/social-insurance-administration/old-age-pension": [
         "libs/application/templates/social-insurance-administration/old-age-pension/src/index.ts"
       ],
-      "@island.is/application/templates/social-insurance-administration/payment-plan": [
-        "libs/application/templates/social-insurance-administration/payment-plan/src/index.ts"
+      "@island.is/application/templates/social-insurance-administration/income-plan": [
+        "libs/application/templates/social-insurance-administration/income-plan/src/index.ts"
       ],
       "@island.is/application/templates/social-insurance-administration/pension-supplement": [
         "libs/application/templates/social-insurance-administration/pension-supplement/src/index.ts"

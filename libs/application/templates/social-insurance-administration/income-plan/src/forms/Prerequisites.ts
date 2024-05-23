@@ -13,11 +13,11 @@ import {
   NationalRegistryUserApi,
 } from '@island.is/application/types'
 import { socialInsuranceAdministrationMessage } from '@island.is/application/templates/social-insurance-administration-core/lib/messages'
-import { paymentPlanFormMessage } from '../lib/messages'
+import { incomePlanFormMessage } from '../lib/messages'
 import Logo from '@island.is/application/templates/social-insurance-administration-core/assets/Logo'
 
 export const PrerequisitesForm: Form = buildForm({
-  id: 'PaymentPlanPrerequisites',
+  id: 'IncomePlanPrerequisites',
   title: socialInsuranceAdministrationMessage.shared.formTitle,
   logo: Logo,
   mode: FormModes.NOT_STARTED,
@@ -50,7 +50,7 @@ export const PrerequisitesForm: Form = buildForm({
               provider: NationalRegistryUserApi,
               title: socialInsuranceAdministrationMessage.pre.skraInformationTitle,
               subTitle:
-                paymentPlanFormMessage.pre.registryIcelandDescription,
+                incomePlanFormMessage.pre.registryIcelandDescription,
             }),
             buildDataProviderItem({
               provider: UserProfileApi,

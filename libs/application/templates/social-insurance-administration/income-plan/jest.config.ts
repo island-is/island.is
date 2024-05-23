@@ -1,7 +1,7 @@
 /* eslint-disable */
 export default {
   displayName:
-    'application-templates-social-insurance-administration-payment-plan',
+    'application-templates-social-insurance-administration-income-plan',
   preset: '../../../../../jest.preset.js',
   transform: {
     '^(?!.*\\.(js|jsx|ts|tsx|css|json)$)': '@nx/react/plugins/jest',
@@ -9,5 +9,5 @@ export default {
   },
   moduleFileExtensions: ['ts', 'tsx', 'js', 'jsx'],
   coverageDirectory:
-    '../../../../../coverage/libs/application/templates/social-insurance-administration/payment-plan',
+    '../../../../../coverage/libs/application/templates/social-insurance-administration/income-plan',
 }

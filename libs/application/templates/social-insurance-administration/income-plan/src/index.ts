@@ -1,4 +1,4 @@
-import template from './lib/PaymentPlanTemplate'
+import template from './lib/IncomePlanTemplate'
 
 export const getDataProviders = () => import('./dataProviders/')
 export * from './lib/messages'

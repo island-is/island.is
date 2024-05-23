@@ -175,9 +175,9 @@ const templates: Record<ApplicationTypes, () => Promise<unknown>> = {
     import('@island.is/application/templates/aosh/request-for-inspection'),
   [ApplicationTypes.HEALTH_INSURANCE_DECLARATION]: () =>
     import('@island.is/application/templates/health-insurance-declaration'), 
-  [ApplicationTypes.PAYMENT_PLAN]: () =>
+  [ApplicationTypes.INCOME_PLAN]: () =>
     import(
-      '@island.is/application/templates/social-insurance-administration/payment-plan'
+      '@island.is/application/templates/social-insurance-administration/income-plan'
     ),   
 }
 
