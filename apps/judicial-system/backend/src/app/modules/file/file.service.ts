@@ -342,7 +342,12 @@ export class FileService {
       )
     }
 
-    return this.awsS3Service.getSignedUrl(theCase.type, theCase.state, file.key)
+    return this.awsS3Service.getSignedUrl(
+      theCase.type,
+      theCase.state,
+      file.key,
+      timeToLive,
+    )
   }
 
   async getCaseFileSignedUrl(
