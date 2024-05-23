@@ -194,6 +194,15 @@ export const acceptedAmountBreakDown = (amount?: Amount): Calculations[] => {
       }
     }) ?? []
 
+  const childrenAid = amount?.childrenAidAmount
+    ? {
+        title: 'Styrkur vegna barna',
+        calculation: `+ ${amount?.childrenAidAmount?.toLocaleString(
+          'de-DE',
+        )} kr.`,
+      }
+    : {}
+
   const basicCalc = [
     {
       title: 'Grunnupphæð',
