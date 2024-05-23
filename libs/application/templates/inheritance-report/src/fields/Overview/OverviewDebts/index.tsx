@@ -25,7 +25,7 @@ export const OverviewDebts: FC<React.PropsWithChildren<FieldBaseProps>> = ({
 
   return (
     <Box marginTop={2}>
-      {!!debtsData.length ? (
+      {debtsData && debtsData.length ? (
         debtsData.map((debt: DebtType, index: number) => (
           <Debt
             key={index}
