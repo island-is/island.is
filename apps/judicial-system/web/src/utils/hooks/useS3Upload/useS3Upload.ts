@@ -267,7 +267,7 @@ const useS3Upload = (caseId: string) => {
         return presignedPost
       }
 
-      const promises = files.map(async (file, idx) => {
+      const promises = files.map(async (file) => {
         try {
           updateFile({ ...file, status: 'uploading' })
 

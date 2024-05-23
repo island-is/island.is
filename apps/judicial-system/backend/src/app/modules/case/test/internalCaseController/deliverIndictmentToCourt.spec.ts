@@ -1,7 +1,6 @@
 import { uuid } from 'uuidv4'
 
 import {
-  CaseFileCategory,
   CaseState,
   CaseType,
   IndictmentSubtype,

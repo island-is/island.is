@@ -22,12 +22,7 @@ import {
 } from '@island.is/shared/utils/server'
 
 import type { User } from '@island.is/judicial-system/types'
-import {
-  CaseState,
-  CaseType,
-  isCompletedCase,
-  isIndictmentCase,
-} from '@island.is/judicial-system/types'
+import { CaseState, CaseType } from '@island.is/judicial-system/types'
 
 import { nowFactory } from '../../factories'
 import { AwsS3Service } from '../aws-s3'
