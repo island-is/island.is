@@ -215,6 +215,7 @@ export interface Debt {
   nationalId: string
   description: string
   propertyValuation: string
+  debtType: string
 }
 
 export interface ApplicationDebts {

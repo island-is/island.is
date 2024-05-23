@@ -3,13 +3,13 @@ import {
   formatBankInfo,
   formatCurrency,
 } from '@island.is/application/ui-components'
-import { m } from '../../lib/messages'
+import { m } from '../../../lib/messages'
 import {
   roundedValueToNumber,
   valueToNumber,
   hasYes,
-} from '../../lib/utils/helpers'
-import { EstateAssets } from '../../types'
+} from '../../../lib/utils/helpers'
+import { EstateAssets } from '../../../types'
 import { RowType, RowItemsType } from './types'
 
 export const getRealEstateDataRow = (answers: FormValue): RowType[] => {

@@ -119,13 +119,8 @@ export const ReportFieldsRepeater: FC<
     calculateTotal()
   }, [calculateTotal])
 
-  const relations =
-    (externalData.syslumennOnEntry?.data as any).relationOptions?.map(
-      (relation: any) => ({
-        value: relation,
-        label: relation,
-      }),
-    ) || []
+  //TODO: connect to API
+  const debtTypes = [] as any
 
   const handleAddRepeaterFields = () => {
     //reset stocks
@@ -388,13 +383,14 @@ export const ReportFieldsRepeater: FC<
                         suffix="%"
                         required
                       />
-                    ) : field.id === 'relation' ? (
+                    ) : field.id === 'debtType' ? (
                       <SelectController
                         id={`${fieldIndex}.${field.id}`}
                         name={`${fieldIndex}.${field.id}`}
                         label={formatMessage(field.title) ?? ''}
                         placeholder={field.placeholder}
-                        options={relations}
+                        options={debtTypes}
+                        backgroundColor="blue"
                       /> /* Commenting out for testing purposes of this field
                     
                     : field.id === 'exchangeRateOrInterest' ? (

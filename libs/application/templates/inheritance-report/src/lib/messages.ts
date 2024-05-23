@@ -707,7 +707,7 @@ export const m = defineMessages({
   },
   debtsAndFuneralCostOverview: {
     id: 'ir.application:debtsAndFuneralCostOverview',
-    defaultMessage: 'Yfirlit',
+    defaultMessage: 'Yfirlit skulda og útfararkostnaðar',
     description: '',
   },
   assetOverviewDescription: {
@@ -878,6 +878,11 @@ export const m = defineMessages({
   debtsLoanIdentity: {
     id: 'ir.application:debtsLoanIdentity',
     defaultMessage: 'Auðkenni / Lánsnúmer',
+    description: '',
+  },
+  debtType: {
+    id: 'ir.application:debtsType',
+    defaultMessage: 'Tegund skuldar',
     description: '',
   },
   creditorsNationalId: {
