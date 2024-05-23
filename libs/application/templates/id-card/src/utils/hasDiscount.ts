@@ -10,8 +10,6 @@ export const checkForDiscount = (application: Application) => {
     'hasDisability.data',
   ) as boolean | undefined
 
-  console.log('hasDisability.data', hasDisability)
-
   if (!hasDisability) {
     const { age } = info(application.applicant)
 

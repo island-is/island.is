@@ -12,7 +12,7 @@ import { formatPhoneNumber } from '@island.is/application/ui-components'
 import { DefaultEvents } from '@island.is/application/types'
 import { Routes } from '../../../lib/constants'
 import { review, idInformation } from '../../../lib/messages'
-import { GetFormattedText } from '../../../utils'
+import { GetFormattedText, hasReviewer } from '../../../utils'
 import { IdCard } from '../../../lib/dataSchema'
 
 export const OverviewSection = buildSection({
@@ -50,6 +50,8 @@ export const OverviewSection = buildSection({
           colSpan: '6/12',
           value: ({ answers }) =>
             (answers as IdCard).applicantInformation.email,
+          condition: (answers, externalData) =>
+            hasReviewer(answers, externalData),
         }),
         // TODO: Check if user has phonenumber
         buildKeyValueField({
@@ -164,23 +166,6 @@ export const OverviewSection = buildSection({
           title: '',
           description: '',
         }),
-        // buildSubmitField({
-        //   id: 'overviewApproval',
-        //   title: '',
-        //   refetchApplicationAfterSubmit: false,
-        //   actions: [
-        //     // {
-        //     //   event: DefaultEvents.REJECT,
-        //     //   name: 'Hafna',
-        //     //   type: 'reject',
-        //     // },
-        //     // {
-        //     //   event: DefaultEvents.SUBMIT,
-        //     //   name: 'Samþykkja',
-        //     //   type: 'primary',
-        //     // },
-        //   ],
-        // }),
       ],
     }),
   ],

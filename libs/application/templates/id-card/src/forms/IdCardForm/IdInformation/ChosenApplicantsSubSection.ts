@@ -3,6 +3,7 @@ import {
   buildSubSection,
   buildRadioField,
   getValueViaPath,
+  buildCustomField,
 } from '@island.is/application/core'
 import {
   IdentityDocument,
@@ -65,7 +66,6 @@ export const ChosenApplicantsSubSection = buildSubSection({
               },
             ]
             applicantChildren.map((item) => {
-              console.log(item)
               return passportList.push({
                 label: item.childName,
                 subLabel:
@@ -84,6 +84,12 @@ export const ChosenApplicantsSubSection = buildSubSection({
 
             return passportList
           },
+        }),
+        buildCustomField({
+          id: 'clearAnswers',
+          component: 'ClearAnswers',
+          title: '',
+          description: '',
         }),
       ],
     }),

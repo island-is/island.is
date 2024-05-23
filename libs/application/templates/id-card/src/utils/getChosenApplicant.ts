@@ -12,6 +12,7 @@ export interface ChosenApplicant {
 
 export const getChosenApplicant = (
   application: Application,
+  nationalId?: string,
 ): ChosenApplicant => {
   const applicantIdentity = getValueViaPath(
     application.externalData,
@@ -25,11 +26,13 @@ export const getChosenApplicant = (
     [],
   ) as Array<IdentityDocumentChild>
 
-  const chosenApplicantNationalId = getValueViaPath(
-    application.answers,
-    Routes.CHOSENAPPLICANTS,
-    '',
-  ) as string
+  const chosenApplicantNationalId =
+    nationalId ??
+    (getValueViaPath(
+      application.answers,
+      Routes.CHOSENAPPLICANTS,
+      '',
+    ) as string)
 
   if (applicantIdentity?.nationalId === chosenApplicantNationalId) {
     return {

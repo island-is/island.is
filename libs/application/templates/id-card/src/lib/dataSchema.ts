@@ -12,33 +12,37 @@ const isValidPhoneNumber = (phoneNumber: string) => {
   return phone && phone.isValid()
 }
 
-const guardian = z.object({
-  name: z.string().min(1),
-  nationalId: z.string().refine((x) => (x ? nationalIdRegex.test(x) : false)),
-  email: z
-    .string()
-    .refine((v) => isValidEmail(v), { params: error.invalidValue }),
-  phoneNumber: z
-    .string()
-    .min(7)
-    .refine((v) => isValidPhoneNumber(v), { params: error.invalidValue }),
-})
+const personInfo = z
+  .object({
+    name: z.string(),
+    nationalId: z.string(),
+    email: z
+      .string()
+      .refine((v) => isValidEmail(v), { params: error.invalidValue }),
+    phoneNumber: z.string().refine((v) => isValidPhoneNumber(v), {
+      params: error.invalidValue,
+    }),
+  })
+  .refine((x) => {
+    return true
+  })
 
 export const IdCardSchema = z.object({
   approveExternalData: z.boolean().refine((v) => v),
   typeOfId: z.enum(['WithTravel', 'WithoutTravel']),
-  applicantInformation: z
-    .object({
-      name: z.string(),
-      nationalId: z.string(),
-      email: z.string().optional(),
-      phoneNumber: z.string().optional(),
-    })
-    .refine((x) => {
-      return true
+  chosenApplicants: z.string(),
+  applicantInformation: personInfo,
+  firstGuardianInformation: personInfo,
+  secondGuardianInformation: z.object({
+    name: z.string().min(1),
+    nationalId: z.string().refine((x) => (x ? nationalIdRegex.test(x) : false)),
+    email: z.string().refine((v) => isValidEmail(v) || v === '', {
+      params: error.invalidValue,
     }),
-  firstGuardianInformation: guardian.optional(),
-  secondGuardionInformation: guardian.optional(),
+    phoneNumber: z.string().refine((v) => isValidPhoneNumber(v) || v === '', {
+      params: error.invalidValue,
+    }),
+  }),
   priceList: z.object({
     priceChoice: z.enum([
       Services.EXPRESS,
@@ -48,43 +52,6 @@ export const IdCardSchema = z.object({
     ]),
     location: z.string(),
   }),
-  //   passport: z
-  //     .object({
-  //       userPassport: z.string(),
-  //       childPassport: z.string(),
-  //     })
-  //     .partial()
-  //     .refine(
-  //       ({ userPassport, childPassport }) => userPassport || childPassport,
-  //       {
-  //         message: error.invalidValue.defaultMessage,
-  //         path: ['userPassport'],
-  //       },
-  //     ),
-  //   personalInfo: z.object({
-  //     name: z.string().min(1),
-  //     nationalId: z.string().refine((x) => (x ? nationalIdRegex.test(x) : false)),
-  //     email: z
-  //       .string()
-  //       .refine((v) => isValidEmail(v), { params: error.invalidValue }),
-  //     phoneNumber: z
-  //       .string()
-  //       .refine((v) => isValidPhoneNumber(v), { params: error.invalidValue }),
-  //     disabilityCheckbox: z.array(z.string()).optional(),
-  //     hasDisabilityLicense: z.boolean().optional(),
-  //   }),
-  //   childsPersonalInfo: z.object({
-  //     name: z.string().min(1),
-  //     nationalId: z.string().refine((x) => (x ? nationalIdRegex.test(x) : false)),
-  //     guardian1: guardian,
-  //     guardian2: guardian.optional(),
-  //   }),
-  //   service: z.object({
-  //     type: z.enum([Services.REGULAR, Services.EXPRESS]),
-  //     dropLocation: z.string().min(1),
-  //   }),
-  //   approveExternalDataParentB: z.boolean().refine((v) => v),
-  //   chargeItemCode: z.string(),
 })
 
 export type IdCard = z.TypeOf<typeof IdCardSchema>

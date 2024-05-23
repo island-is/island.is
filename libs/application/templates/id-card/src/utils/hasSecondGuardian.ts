@@ -5,12 +5,11 @@ import { getValueViaPath } from '@island.is/application/core'
 export const getChildPassport = (
   answers: FormValue,
   externalData: ExternalData,
+  nationalId?: string,
 ) => {
-  const chosenApplicantNationalId = getValueViaPath(
-    answers,
-    Routes.CHOSENAPPLICANTS,
-    '',
-  ) as string
+  const chosenApplicantNationalId =
+    nationalId ??
+    (getValueViaPath(answers, Routes.CHOSENAPPLICANTS, '') as string)
   return (
     externalData.identityDocument?.data as IdentityDocumentData
   )?.childPassports?.find((child) => {

@@ -1,4 +1,5 @@
 import {
+  buildCustomField,
   buildDescriptionField,
   buildMultiField,
   buildPhoneField,
@@ -347,35 +348,10 @@ export const ApplicanInformationSubSection = buildSection({
             return child?.secondParent ?? ''
           },
         }),
-        buildTextField({
-          id: `${Routes.SECONDGUARDIANINFORMATION}.email`,
-          title: applicantInformation.labels.applicantEmail,
-          width: 'half',
-          required: true,
-          condition: (answers, externalData) => {
-            const applicantIdentity = getValueViaPath(
-              externalData,
-              'nationalRegistry.data',
-              undefined,
-            ) as NationalRegistryIndividual | undefined
-
-            const chosenApplicantNationalId = getValueViaPath(
-              answers,
-              Routes.CHOSENAPPLICANTS,
-              '',
-            ) as string
-
-            return (
-              applicantIdentity?.nationalId !== chosenApplicantNationalId &&
-              hasSecondGuardian(answers, externalData)
-            )
-          },
-        }),
-        buildPhoneField({
-          id: `${Routes.SECONDGUARDIANINFORMATION}.phoneNumber`,
-          title: applicantInformation.labels.applicantPhoneNumber,
-          width: 'half',
-          required: true,
+        buildCustomField({
+          id: `${Routes.SECONDGUARDIANINFORMATION}`,
+          component: 'SecondGuardianEmailAndPhone',
+          title: '',
           condition: (answers, externalData) => {
             const applicantIdentity = getValueViaPath(
               externalData,

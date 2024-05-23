@@ -136,12 +136,12 @@ export class IdCardService extends BaseTemplateApiService {
       email: answers.firstGuardianInformation?.email,
       phone: answers.firstGuardianInformation?.phoneNumber,
     }
-    const parentB = answers.secondGuardionInformation?.nationalId
+    const parentB = answers.secondGuardianInformation?.nationalId
       ? {
-          ssn: answers.secondGuardionInformation?.nationalId || '',
-          name: answers.secondGuardionInformation?.name || '',
-          email: answers.secondGuardionInformation?.email,
-          phone: answers.secondGuardionInformation?.phoneNumber,
+          ssn: answers.secondGuardianInformation?.nationalId || '',
+          name: answers.secondGuardianInformation?.name || '',
+          email: answers.secondGuardianInformation?.email,
+          phone: answers.secondGuardianInformation?.phoneNumber,
         }
       : undefined
     // Email to parent A
@@ -202,7 +202,7 @@ export class IdCardService extends BaseTemplateApiService {
       answers.applicantInformation.nationalId === auth.nationalId
     const applicantInformation = answers.applicantInformation
     const firstGuardianInformation = answers.firstGuardianInformation
-    const secondGuardionInformation = answers.secondGuardionInformation
+    const secondGuardianInformation = answers.secondGuardianInformation
 
     const obj = {
       guid: application.id,
@@ -243,8 +243,8 @@ export class IdCardService extends BaseTemplateApiService {
     //   })
     // } else {
     //   const approvalB = {
-    //     personId: secondGuardionInformation?.nationalId?.replace('-', '') || '',
-    //     name: secondGuardionInformation?.name || '',
+    //     personId: secondGuardianInformation?.nationalId?.replace('-', '') || '',
+    //     name: secondGuardianInformation?.name || '',
     //     approved: new Date(),
     //   }
     //   result = await this.passportApi.preregisterChildIdentityDocument(auth, {
@@ -259,7 +259,7 @@ export class IdCardService extends BaseTemplateApiService {
     //       name: firstGuardianInformation?.name || '',
     //       approved: application.created,
     //     },
-    //     approvalB: secondGuardionInformation?.nationalId
+    //     approvalB: secondGuardianInformation?.nationalId
     //       ? approvalB
     //       : undefined, // TODO make this better
     //     contactInfo: {
@@ -277,12 +277,12 @@ export class IdCardService extends BaseTemplateApiService {
       email: firstGuardianInformation?.email,
       phone: firstGuardianInformation?.phoneNumber,
     }
-    const parentB = secondGuardionInformation?.nationalId
+    const parentB = secondGuardianInformation?.nationalId
       ? {
-          ssn: secondGuardionInformation?.nationalId || '',
-          name: secondGuardionInformation?.name || '',
-          email: secondGuardionInformation?.email,
-          phone: secondGuardionInformation?.phoneNumber,
+          ssn: secondGuardianInformation?.nationalId || '',
+          name: secondGuardianInformation?.name || '',
+          email: secondGuardianInformation?.email,
+          phone: secondGuardianInformation?.phoneNumber,
         }
       : undefined
     // Email to parent A
