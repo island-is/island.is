@@ -103,8 +103,8 @@ const extractDetails = function (
     )
   ) {
     return {
-      isDebtLess: true,
       ...extractCommonVehicleInfo(response.basicVehicleInformation),
+      isDebtLess: true,
       validationErrorMessages: response?.validationErrorMessages ?? [],
     }
   } else if (
