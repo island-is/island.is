@@ -137,7 +137,6 @@ export const HeirsAndPartitionRepeater: FC<
 
   const error =
     ((errors as any)?.heirs?.data || (errors as any)?.heirs?.total) ?? []
-  console.log(error)
 
   const handleAddMember = () =>
     append({
