@@ -24,7 +24,10 @@ export const useRegisterPasskey = () => {
         // Get registration options from server
         const options = await getPasskeyRegistrationOptions()
 
-        if (!options.data?.authPasskeyRegistrationOptions) {
+        if (
+          !options.data?.authPasskeyRegistrationOptions ||
+          !options.data?.authPasskeyRegistrationOptions?.rp.id
+        ) {
           return false
         }
         // Register Passkey on device
@@ -35,6 +38,10 @@ export const useRegisterPasskey = () => {
               options.data.authPasskeyRegistrationOptions.challenge,
             ),
           ),
+          rp: {
+            id: options.data?.authPasskeyRegistrationOptions?.rp.id,
+            name: options.data.authPasskeyRegistrationOptions.rp.name,
+          },
         })
 
         // Converting needed since the server expects base64url strings but react-native-passkey returns base64 strings
@@ -43,10 +50,7 @@ export const useRegisterPasskey = () => {
         // Verify registration with server
         const verifyRegisterResponse = await verifyPasskeyRegistration({
           variables: {
-            input: {
-              ...updatedResult,
-              clientExtensionResults: {},
-            },
+            input: updatedResult,
           },
         })
 

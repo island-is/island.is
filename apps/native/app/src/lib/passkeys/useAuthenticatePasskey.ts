@@ -49,9 +49,7 @@ export const useAuthenticatePasskey = () => {
 
         // Verify authentication with server
         const verifyAuthenticateResponse = await verifyPasskeyAuthentication({
-          variables: {
-            input: { ...updatedResult, clientExtensionResults: {} },
-          },
+          variables: { input: updatedResult },
         })
 
         if (

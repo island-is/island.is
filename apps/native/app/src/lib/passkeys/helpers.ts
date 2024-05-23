@@ -30,6 +30,7 @@ export const convertRegisterResultsToBase64Url = (
     type: 'public-key',
     id: convertBase64StringToBase64Url(result.id),
     rawId: convertBase64StringToBase64Url(result.rawId),
+    clientExtensionResults: {},
     response: {
       ...result.response,
       clientDataJSON: convertBase64StringToBase64Url(
@@ -50,6 +51,7 @@ export const convertAuthenticationResultsToBase64Url = (
     type: 'public-key',
     id: convertBase64StringToBase64Url(result.id),
     rawId: convertBase64StringToBase64Url(result.rawId),
+    clientExtensionResults: {},
     response: {
       ...result.response,
       authenticatorData: convertBase64StringToBase64Url(
