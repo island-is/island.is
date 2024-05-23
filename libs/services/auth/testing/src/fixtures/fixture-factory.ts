@@ -523,9 +523,7 @@ export class FixtureFactory {
     const delegationTypes = await Promise.all(
       rightTypes
         ? rightTypes.map((rightType) =>
-            this.createDelegationTypeForPersonalRepresentative(
-              rightType?.code ?? '',
-            ),
+            this.createDelegationType({ id: rightType?.code ?? '' }),
           )
         : [],
     )
