@@ -276,9 +276,12 @@ export class RecyclingRequestService {
       // If we encounter error with 'partnerId' then there is no request saved
       if (requestType == 'deregistered') {
         // 0. We need to be sure that the current owner is registered in our database
+
+        /*
         await this.icelandicTransportAuthorityServices.checkIfCurrentUser(
           permno,
         )
+        */
 
         // 1. Check 'pendingRecycle'/'handOver' requestType
         const resRequestType = await this.findAllWithPermno(permno)

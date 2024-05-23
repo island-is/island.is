@@ -28,13 +28,13 @@ export const injuredPersonInformation = {
     jobTitle: {
       id: 'an.application:injuredPersonInformation.general.jobTitle',
       defaultMessage: 'Starfsheiti',
-      description: 'Job title',
+      description: 'Title above the job title input field',
     },
     jobTitleDescription: {
       id: 'an.application:injuredPersonInformation.general.jobTitleDescription',
       defaultMessage:
         'Sláðu inn starfsheiti þess slasaða þegar slysið átti sér stað.',
-      description: 'Description for job title',
+      description: 'Description for job title input field',
     },
   }),
   labels: defineMessages({
@@ -61,7 +61,7 @@ export const injuredPersonInformation = {
     jobTitle: {
       id: 'an.application:injuredPersonInformation.labels.jobTitle',
       defaultMessage: 'Starfsheiti',
-      description: 'Job title',
+      description: 'Label for job title input field',
     },
   }),
   upload: defineMessages({
