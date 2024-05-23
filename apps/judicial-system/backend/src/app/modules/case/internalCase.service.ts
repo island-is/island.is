@@ -903,10 +903,9 @@ export class InternalCaseService {
             )
             .map(async (caseFile) => {
               // TODO: Tolerate failure, but log error
-              const file = await this.awsS3Service.getObject(
-                theCase.type,
-                theCase.state,
-                caseFile.key,
+              const file = await this.fileService.getCaseFileFromS3(
+                theCase,
+                caseFile,
               )
 
               return {

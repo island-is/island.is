@@ -183,10 +183,7 @@ export class FileService {
       })
   }
 
-  private async getCaseFileFromS3(
-    theCase: Case,
-    file: CaseFile,
-  ): Promise<Buffer> {
+  async getCaseFileFromS3(theCase: Case, file: CaseFile): Promise<Buffer> {
     if (
       isIndictmentCase(theCase.type) &&
       file.category === CaseFileCategory.INDICTMENT &&
