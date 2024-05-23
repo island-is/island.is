@@ -3,6 +3,7 @@ import {
   Application,
   ExternalData,
   FormValue,
+  YesOrNo,
 } from '@island.is/application/types'
 import * as kennitala from 'kennitala'
 import { Child, Parents, Person, RelativesRow } from '../types'
@@ -16,7 +17,29 @@ export const getApplicationAnswers = (answers: Application['answers']) => {
 
   const relatives = getValueViaPath(answers, 'relatives') as RelativesRow[]
 
-  return { childNationalId, parents, relatives }
+  const photographyConsent = getValueViaPath(
+    answers,
+    'photography.photographyConsent',
+  ) as YesOrNo
+
+  const photoSchoolPublication = getValueViaPath(
+    answers,
+    'photography.photoSchoolPublication',
+  ) as YesOrNo
+
+  const photoMediaPublication = getValueViaPath(
+    answers,
+    'photography.photoMediaPublication',
+  ) as YesOrNo
+
+  return {
+    childNationalId,
+    parents,
+    relatives,
+    photographyConsent,
+    photoSchoolPublication,
+    photoMediaPublication,
+  }
 }
 
 export const getApplicationExternalData = (

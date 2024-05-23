@@ -14,6 +14,7 @@ import { getApplicationAnswers } from '../../lib/newPrimarySchoolUtils'
 import { Child } from './review-groups/Child'
 import { Parents } from './review-groups/Parents'
 import { Relatives } from './review-groups/Relatives'
+import { Photography } from './review-groups/Photography'
 
 interface ReviewScreenProps {
   application: Application
@@ -146,6 +147,7 @@ export const Review: FC<ReviewScreenProps> = ({
       <Child {...childProps} />
       <Parents {...childProps} />
       <Relatives {...childProps} />
+      <Photography {...childProps} />
     </>
   )
 }
