@@ -109,7 +109,10 @@ const AcceptModal = ({
   )
 
   const taxAmount = calculateTaxOfAmount(
-    (state.amount || 0) - checkingValue(state.income) - sumValues,
+    (state.amount || 0) +
+      (state.childrenAidAmount || 0) -
+      checkingValue(state.income) -
+      sumValues,
   )
 
   const areRequiredFieldsFilled =
