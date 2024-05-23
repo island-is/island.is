@@ -1,4 +1,3 @@
-import { btoa, atob } from 'react-native-quick-base64'
 import {
   PasskeyRegistrationResult,
   PasskeyAuthenticationResult,
@@ -33,7 +32,9 @@ export const convertRegisterResultsToBase64Url = (
     rawId: convertBase64StringToBase64Url(result.rawId),
     response: {
       ...result.response,
-      clientDataJSON: convertClientDataJSON(result.response.clientDataJSON),
+      clientDataJSON: convertBase64StringToBase64Url(
+        result.response.clientDataJSON,
+      ),
       attestationObject: convertBase64StringToBase64Url(
         result.response.attestationObject,
       ),
@@ -55,30 +56,17 @@ export const convertAuthenticationResultsToBase64Url = (
         result.response.authenticatorData,
       ),
       signature: convertBase64StringToBase64Url(result.response.signature),
-      clientDataJSON: convertClientDataJSON(result.response.clientDataJSON),
+      clientDataJSON: convertBase64StringToBase64Url(
+        result.response.clientDataJSON,
+      ),
     },
   }
 }
 
-// Server wants challenge to be base64URL but the client sends us it as base64 so we need to unpack clientDataJSON and fix it
-export const convertClientDataJSON = (clientDataJSONString: string) => {
-  const decodedClientDataJSONString = atob(clientDataJSONString)
-
-  const clientDataJSON: ClientDataJSON = JSON.parse(decodedClientDataJSONString)
-
-  const decodedChallenge = atob(padChallenge(clientDataJSON.challenge))
-
-  const updatedClientDataJSON = {
-    ...clientDataJSON,
-    challenge: decodedChallenge,
-    origin: 'http://island.is', //needed since the server is running on http locally
-  }
-
-  return convertBase64StringToBase64Url(
-    btoa(JSON.stringify(updatedClientDataJSON)),
-  )
-}
-
 export const convertBase64StringToBase64Url = (base64String: string) => {
   return base64String.replace(/\+/g, '-').replace(/\//g, '_').replace(/=/g, '')
+}
+
+export const convertBase64UrlToBase64String = (base64Url: string) => {
+  return base64Url.replace(/-/g, '+').replace(/_/g, '/')
 }

@@ -1,6 +1,9 @@
 import { Passkey, PasskeyRegistrationResult } from 'react-native-passkey'
-import { btoa } from 'react-native-quick-base64'
-import { convertRegisterResultsToBase64Url } from './helpers'
+import {
+  convertBase64UrlToBase64String,
+  convertRegisterResultsToBase64Url,
+  padChallenge,
+} from './helpers'
 import {
   useGetPasskeyRegistrationOptionsLazyQuery,
   useVerifyPasskeyRegistrationMutation,
@@ -27,13 +30,11 @@ export const useRegisterPasskey = () => {
         // Register Passkey on device
         const result: PasskeyRegistrationResult = await Passkey.register({
           ...options.data.authPasskeyRegistrationOptions,
-          challenge: btoa(
-            options.data.authPasskeyRegistrationOptions.challenge,
+          challenge: padChallenge(
+            convertBase64UrlToBase64String(
+              options.data.authPasskeyRegistrationOptions.challenge,
+            ),
           ),
-          user: {
-            ...options.data.authPasskeyRegistrationOptions.user,
-            displayName: options.data.authPasskeyRegistrationOptions.user.name,
-          },
         })
 
         // Converting needed since the server expects base64url strings but react-native-passkey returns base64 strings

@@ -1,6 +1,9 @@
 import { Passkey, PasskeyAuthenticationResult } from 'react-native-passkey'
-import { btoa } from 'react-native-quick-base64'
-import { convertAuthenticationResultsToBase64Url } from './helpers'
+import {
+  convertAuthenticationResultsToBase64Url,
+  convertBase64UrlToBase64String,
+  padChallenge,
+} from './helpers'
 import {
   useGetPasskeyAuthenticationOptionsLazyQuery,
   useVerifyPasskeyAuthenticationMutation,
@@ -32,16 +35,11 @@ export const useAuthenticatePasskey = () => {
         // Authenticate Passkey on device
         const result: PasskeyAuthenticationResult = await Passkey.authenticate({
           ...options.data.authPasskeyAuthenticationOptions,
-          challenge: btoa(
-            options.data.authPasskeyAuthenticationOptions.challenge,
-          ),
-          allowCredentials:
-            options.data.authPasskeyAuthenticationOptions.allowCredentials.map(
-              (cred) => ({
-                ...cred,
-                id: btoa(cred.id),
-              }),
+          challenge: padChallenge(
+            convertBase64UrlToBase64String(
+              options.data.authPasskeyAuthenticationOptions.challenge,
             ),
+          ),
         })
 
         // Converting needed since the server expects base64url strings but react-native-passkey returns base64 strings
