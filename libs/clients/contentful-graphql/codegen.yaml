@@ -3,13 +3,13 @@ schema:
       headers:
         Authorization: Bearer ${CONTENTFUL_ACCESS_TOKEN}
 documents:
-  - "src/**/*.graphql"
+  - 'src/**/*.graphql'
 generates:
   gen/schema.ts:
     plugins:
-      - "typescript"
-      - "typescript-operations"
-      - "typescript-graphql-request"
+      - 'typescript'
+      - 'typescript-operations'
+      - 'typescript-graphql-request'
     config:
       rawRequest: true
   src/:
@@ -18,6 +18,6 @@ generates:
       extension: .generated.ts
       baseTypesPath: gen/schema.ts
     plugins:
-      - "typescript"
-      - "typescript-operations"
-      - "typescript-graphql-request"
+      - 'typescript'
+      - 'typescript-operations'
+      - 'typescript-graphql-request'
