@@ -73,4 +73,9 @@ export class UpdateDefendantDto {
   @IsEnum(ServiceRequirement)
   @ApiPropertyOptional({ enum: ServiceRequirement })
   readonly serviceRequirement?: ServiceRequirement
+
+  @IsOptional()
+  @IsString()
+  @ApiPropertyOptional()
+  readonly verdictViewDate?: string
 }

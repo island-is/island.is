@@ -297,22 +297,22 @@ export const notifications = {
   }),
   caseCompleted: defineMessages({
     subject: {
-      id: 'judicial.system.backend:notifications.case_completed.subject',
-      defaultMessage: 'Dómur í máli {courtCaseNumber}',
+      id: 'judicial.system.backend:notifications.case_completed.subject_v1',
+      defaultMessage: 'Máli lokið {courtCaseNumber}',
       description:
         'Notaður sem titill í pósti til hagaðila vegna staðfests dóms',
     },
     prosecutorBody: {
-      id: 'judicial.system.backend:notifications.case_completed.prosecutor_body',
+      id: 'judicial.system.backend:notifications.case_completed.prosecutor_body_v1',
       defaultMessage:
-        'Dómari hefur staðfest dóm í máli {courtCaseNumber} hjá {courtName}.<br /><br />Skjöl málsins eru aðengileg á {linkStart}yfirlitssíðu málsins í Réttarvörslugátt{linkEnd}.',
+        'Máli {courtCaseNumber} hjá {courtName} hefur verið lokið.<br /><br />Niðurstaða: {caseIndictmentRulingDecision}<br /><br />Skjöl málsins eru aðengileg á {linkStart}yfirlitssíðu málsins í Réttarvörslugátt{linkEnd}.',
       description:
         'Notaður sem texti í pósti til sækjanda vegna staðfests dóms',
     },
     defenderBody: {
-      id: 'judicial.system.backend:notifications.case_completed.defender_body_v2',
+      id: 'judicial.system.backend:notifications.case_completed.defender_body_v3',
       defaultMessage:
-        'Dómari hefur staðfest dóm í máli {courtCaseNumber} hjá {courtName}.<br /><br />{defenderHasAccessToRvg, select, false {Þú getur nálgast gögn málsins hjá {courtName} ef þau hafa ekki þegar verið afhent} other {Þú getur nálgast gögn málsins á {linkStart}yfirlitssíðu málsins í Réttarvörslugátt{linkEnd}}}.',
+        'Máli {courtCaseNumber} hjá {courtName} hefur verið lokið.<br /><br />Niðurstaða: {caseIndictmentRulingDecision}<br /><br />{defenderHasAccessToRvg, select, false {Þú getur nálgast gögn málsins hjá {courtName} ef þau hafa ekki þegar verið afhent} other {Þú getur nálgast gögn málsins á {linkStart}yfirlitssíðu málsins í Réttarvörslugátt{linkEnd}}}.',
       description:
         'Notaður sem texti í pósti til verjanda vegna staðfests dóms',
     },

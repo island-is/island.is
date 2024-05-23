@@ -23,7 +23,6 @@ export class GraphqlOptionsFactory implements GqlOptionsFactory {
       ? true
       : 'apps/api/src/api.graphql'
     const bypassCacheSecret = this.config.bypassCacheSecret
-
     return {
       debug,
       playground,
