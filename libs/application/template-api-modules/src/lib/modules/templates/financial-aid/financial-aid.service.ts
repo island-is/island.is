@@ -211,7 +211,7 @@ export class FinancialAidService extends BaseTemplateApiService {
       .then((res) => {
         return { currentApplicationId: res.id }
       })
-      .catch((err) => {
+      .catch(() => {
         throw new TemplateApiError(
           {
             title: messages.serviceErrors.createApplication.title,
