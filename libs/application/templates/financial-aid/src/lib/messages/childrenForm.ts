@@ -31,6 +31,11 @@ export const childrenForm = {
       defaultMessage: 'Fæðingardagur {birthday}',
       description: 'Text before birthday',
     },
+    commentTitle: {
+      id: 'fa.application:section.personalInterest.childrenForm.page.commentTitle',
+      defaultMessage: 'Frekari upplýsingar',
+      description: 'Heading for input, with comment about children',
+    },
   }),
   inputs: defineMessages({
     schoolLabel: {

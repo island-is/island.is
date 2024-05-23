@@ -46,7 +46,19 @@ const ChildrenForm = ({ application, field, errors }: FAFieldBaseProps) => {
         )
       })}
 
-      <Box marginTop={[3, 3, 4]} marginBottom={4}>
+      <Box
+        marginTop={[3, 3, 4]}
+        marginBottom={4}
+        background="blue100"
+        padding={3}
+        borderRadius="standard"
+      >
+        <Box marginBottom={4}>
+          <Text as="h3" variant="h3">
+            {formatMessage(childrenForm.page.commentTitle)}
+          </Text>
+        </Box>
+
         <Controller
           name={summaryCommentType}
           defaultValue={answers?.childrenComment}
@@ -62,7 +74,7 @@ const ChildrenForm = ({ application, field, errors }: FAFieldBaseProps) => {
                 value={value}
                 textarea={true}
                 rows={8}
-                backgroundColor="blue"
+                backgroundColor="white"
                 onChange={(e) => {
                   onChange(e.target.value)
                   setValue(summaryCommentType, e.target.value)
