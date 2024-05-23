@@ -4,13 +4,6 @@ import tracer from '@island.is/infra-tracing'
 import { maskNationalIdFormatter } from './formatters'
 // Default log settings for debug mode
 
-let logLevel = 'debug'
-let logFormat = format.combine(
-  format.errors({ stack: true }),
-  format.timestamp(),
-  utilities.format.nestLike('App'),
-  maskNationalIdFormatter(),
-)
 const correlateFormat = format((info) => {
   const span = tracer.scope().active()
   if (span) {
@@ -21,6 +14,14 @@ const correlateFormat = format((info) => {
   }
   return info
 })
+let logLevel = 'debug'
+let logFormat = format.combine(
+  format.errors({ stack: true }),
+  format.timestamp(),
+  utilities.format.nestLike('App'),
+  maskNationalIdFormatter(),
+  correlateFormat()
+)
 
 // Production overrides
 if (process.env.NODE_ENV === 'production') {
