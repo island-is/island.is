@@ -1,12 +1,13 @@
 import React, { useMemo, useState } from 'react'
 import { useIntl } from 'react-intl'
 
-import { Text, Box } from '@island.is/island-ui/core'
+import { Text, Box, AlertMessage } from '@island.is/island-ui/core'
 import {
   getNextPeriod,
   estimatedBreakDown,
   aidCalculator,
   FamilyStatus,
+  ChildrenAid,
 } from '@island.is/financial-aid/shared/lib'
 import { useLocale } from '@island.is/localization'
 
@@ -54,6 +55,10 @@ const SummaryForm = ({ application, goToScreen }: FAFieldBaseProps) => {
     }
   }, [externalData.municipality.data])
 
+  const showAlertMessageAboutChildrenAid =
+    externalData.childrenCustodyInformation.data.length > 0 &&
+    externalData.municipality.data?.childrenAid !== ChildrenAid.NOTDEFINED
+
   return (
     <>
       <Box display="flex" alignItems="center" flexWrap="wrap">
@@ -82,6 +87,33 @@ const SummaryForm = ({ application, goToScreen }: FAFieldBaseProps) => {
               answers.personalTaxCredit === ApproveOptions.Yes,
             )}
           />
+        </Box>
+      )}
+
+      {showAlertMessageAboutChildrenAid && (
+        <Box marginTop={[4, 4, 5]}>
+          {externalData.municipality.data?.childrenAid ===
+          ChildrenAid.APPLICANT ? (
+            <AlertMessage
+              type="info"
+              message={
+                <Text variant="medium">
+                  {formatMessage(m.summaryForm.childrenAidAlert.aidGoesToUser)}
+                </Text>
+              }
+            />
+          ) : (
+            <AlertMessage
+              type="info"
+              message={
+                <Text variant="medium">
+                  {formatMessage(
+                    m.summaryForm.childrenAidAlert.aidGoesToInstution,
+                  )}
+                </Text>
+              }
+            />
+          )}
         </Box>
       )}
 
