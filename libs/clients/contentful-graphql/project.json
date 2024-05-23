@@ -1,0 +1,23 @@
+
+{
+  "name": "contentful-graphql-client",
+  "version": "1.0.0",
+  "main": "dist/index.js",
+  "scripts": {
+    "build": "tsc -p tsconfig.lib.json",
+    "test": "jest"
+  },
+  "dependencies": {
+    "@island.is/clients/middlewares": "^0.0.1",
+    "@island.is/nest/config": "^0.0.1",
+    "@nestjs/common": "^7.6.15",
+    "graphql": "^15.5.0",
+    "zod": "^3.0.0"
+  },
+  "devDependencies": {
+    "@types/jest": "^26.0.20",
+    "jest": "^26.6.3",
+    "ts-jest": "^26.4.4",
+    "typescript": "^4.1.3"
+  }
+}

@@ -1,0 +1,9 @@
+
+schema: "https://graphql.contentful.com/content/v1/spaces/${CONTENTFUL_SPACE_ID}/environments/${CONTENTFUL_ENVIRONMENT}"
+documents: "src/lib/**/*.graphql"
+generates:
+  src/lib/generated/graphql.ts:
+    plugins:
+      - "typescript"
+      - "typescript-operations"
+      - "typescript-graphql-request"
