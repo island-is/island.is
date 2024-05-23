@@ -2,7 +2,7 @@ import React, { FC } from 'react'
 import { useIntl } from 'react-intl'
 import { AnimatePresence } from 'framer-motion'
 
-import { Tag, Text } from '@island.is/island-ui/core'
+import { Tag, TagVariant, Text } from '@island.is/island-ui/core'
 import { capitalize } from '@island.is/judicial-system/formatters'
 import { core, tables } from '@island.is/judicial-system-web/messages'
 import { SectionHeading } from '@island.is/judicial-system-web/src/components'
@@ -41,28 +41,25 @@ const CasesReviewed: FC<Props> = ({ loading, cases }) => {
   }
 
   const getVerdictViewTag = (row: CaseListEntry) => {
+    let variant: TagVariant = 'blue'
+    let message = strings.tagVerdictViewOnDeadline
+
     if (!row.indictmentVerdictViewedByAll) {
-      return (
-        <Tag variant="red" outlined disabled truncate>
-          {formatMessage(strings.tagVerdictUnviewed)}
-        </Tag>
-      )
-    }
+      variant = 'red'
+      message = strings.tagVerdictUnviewed
+    } else {
+      const today = new Date()
+      const deadline = new Date(row.indictmentVerdictAppealDeadline ?? '')
 
-    const today = new Date()
-    const deadline = new Date(row.indictmentVerdictAppealDeadline ?? '')
-
-    if (today < deadline) {
-      return (
-        <Tag variant="mint" outlined disabled truncate>
-          {formatMessage(strings.tagVerdictViewComplete)}
-        </Tag>
-      )
+      if (today < deadline) {
+        variant = 'mint'
+        message = strings.tagVerdictViewComplete
+      }
     }
 
     return (
-      <Tag variant="blue" outlined disabled truncate>
-        {formatMessage(strings.tagVerdictViewOnDeadline)}
+      <Tag variant={variant} outlined disabled truncate>
+        {formatMessage(message)}
       </Tag>
     )
   }
