@@ -1,4 +1,3 @@
-
 # Contentful GraphQL Client
 
 ## About
@@ -8,6 +7,7 @@ This library implements a GraphQL client to interact with Contentful's GraphQL A
 ## Configuration
 
 The following environment variables need to be configured:
+
 - `CONTENTFUL_API_KEY`: Your Contentful API key.
 - `CONTENTFUL_SPACE_ID`: Your Contentful space ID.
 - `CONTENTFUL_ENVIRONMENT`: Your Contentful environment (default is `master`).
