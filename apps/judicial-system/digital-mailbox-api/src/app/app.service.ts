@@ -50,13 +50,13 @@ export class AppService {
   }
 
   private async getAllCases(lang?: string): Promise<CasesResponse[]> {
-    console.log(this.config.backend.url)
     return fetch(`${this.config.backend.url}/api/internal/cases/indictments`, {
-      method: 'GET',
+      method: 'POST',
       headers: {
         'Content-Type': 'application/json',
         authorization: `Bearer ${this.config.backend.accessToken}`,
       },
+      body: JSON.stringify({ nationalId: '1112902539' }),
     })
       .then(async (res) => {
         const response = await res.json()

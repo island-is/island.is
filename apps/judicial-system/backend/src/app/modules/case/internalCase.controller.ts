@@ -2,7 +2,6 @@ import {
   BadRequestException,
   Body,
   Controller,
-  Get,
   Inject,
   Param,
   Post,
@@ -35,6 +34,7 @@ import { ArchiveResponse } from './models/archive.response'
 import { Case } from './models/case.model'
 import { DeliverResponse } from './models/deliver.response'
 import { InternalCaseService } from './internalCase.service'
+import { InternalCasesDto } from './dto/internalCases.dto'
 
 @Controller('api/internal')
 @ApiTags('internal cases')
@@ -69,16 +69,19 @@ export class InternalCaseController {
     return this.internalCaseService.archive()
   }
 
-  @Get('cases/indictments')
+  @Post('cases/indictments')
   @ApiOkResponse({
     type: Case,
     isArray: true,
     description: 'Gets all indictment cases',
   })
-  getIndictmentCases(): Promise<Case[]> {
+  getIndictmentCases(
+    @Body() internalCasesDto: InternalCasesDto,
+  ): Promise<Case[]> {
     this.logger.debug('Getting all indictment cases')
+    const nationalId = internalCasesDto.nationalId.replace('-', '')
 
-    return this.internalCaseService.getIndictmentCases('111290-2539')
+    return this.internalCaseService.getIndictmentCases(nationalId)
   }
 
   @UseGuards(CaseExistsGuard)
