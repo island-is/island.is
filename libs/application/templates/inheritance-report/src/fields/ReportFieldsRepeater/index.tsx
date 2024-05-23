@@ -395,8 +395,9 @@ export const ReportFieldsRepeater: FC<
                         label={formatMessage(field.title) ?? ''}
                         placeholder={field.placeholder}
                         options={relations}
-                      />
-                    ) : field.id === 'exchangeRateOrInterest' ? (
+                      /> /* Commenting out for testing purposes of this field
+                    
+                    : field.id === 'exchangeRateOrInterest' ? (
                       <NumberInput
                         name={`${fieldIndex}.${field.id}`}
                         placeholder={field.placeholder}
@@ -407,6 +408,7 @@ export const ReportFieldsRepeater: FC<
                         }}
                         label={formatMessage(field.title) ?? ''}
                       />
+                    )*/
                     ) : (
                       <InputController
                         id={`${fieldIndex}.${field.id}`}
