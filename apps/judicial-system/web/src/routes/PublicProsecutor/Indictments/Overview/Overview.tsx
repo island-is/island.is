@@ -1,16 +1,11 @@
-import React, {
-  useCallback,
-  useContext,
-  useEffect,
-  useMemo,
-  useState,
-} from 'react'
+import React, { useCallback, useContext, useMemo, useState } from 'react'
 import { useIntl } from 'react-intl'
 import { useRouter } from 'next/router'
 
 import { Box, Option, Select, Text } from '@island.is/island-ui/core'
 import * as constants from '@island.is/judicial-system/consts'
 import { formatDate } from '@island.is/judicial-system/formatters'
+import { isCompletedCase } from '@island.is/judicial-system/types'
 import { core, titles } from '@island.is/judicial-system-web/messages'
 import {
   BlueBox,
@@ -30,31 +25,32 @@ import {
   UserContext,
 } from '@island.is/judicial-system-web/src/components'
 import { useProsecutorSelectionUsersQuery } from '@island.is/judicial-system-web/src/components/ProsecutorSelection/prosecutorSelectionUsers.generated'
-import { useCase } from '@island.is/judicial-system-web/src/utils/hooks'
+import { Defendant } from '@island.is/judicial-system-web/src/graphql/schema'
+import {
+  formatDateForServer,
+  useCase,
+  useDefendants,
+} from '@island.is/judicial-system-web/src/utils/hooks'
 
 import { strings } from './Overview.strings'
+type VisibleModal = 'REVIEWER_ASSIGNED' | 'DEFENDANT_VIEWS_VERDICT'
 
 export const Overview = () => {
   const router = useRouter()
-  const { workingCase, isLoadingWorkingCase, caseNotFound } =
-    useContext(FormContext)
   const { formatMessage: fm } = useIntl()
   const { user } = useContext(UserContext)
   const { updateCase } = useCase()
+  const { workingCase, isLoadingWorkingCase, caseNotFound, setWorkingCase } =
+    useContext(FormContext)
   const [selectedIndictmentReviewer, setSelectedIndictmentReviewer] =
     useState<Option<string> | null>()
-  const [modalVisible, setModalVisible] = useState<boolean>(false)
+  const [modalVisible, setModalVisible] = useState<VisibleModal>()
+  const lawsBroken = useIndictmentsLawsBroken(workingCase)
 
-  useEffect(() => {
-    setSelectedIndictmentReviewer(
-      workingCase.indictmentReviewer?.id
-        ? {
-            label: workingCase.indictmentReviewer?.name ?? '',
-            value: workingCase.indictmentReviewer?.id,
-          }
-        : null,
-    )
-  }, [workingCase.id, workingCase.indictmentReviewer])
+  const displayReviewerChoices = workingCase.indictmentReviewer === null
+
+  const [selectedDefendant, setSelectedDefendant] = useState<Defendant | null>()
+  const { setAndSendDefendantToServer } = useDefendants()
 
   const assignReviewer = async () => {
     if (!selectedIndictmentReviewer) {
@@ -67,10 +63,24 @@ export const Overview = () => {
       return
     }
 
-    setModalVisible(true)
+    setModalVisible('REVIEWER_ASSIGNED')
   }
 
-  const lawsBroken = useIndictmentsLawsBroken(workingCase)
+  const handleDefendantViewsVerdict = () => {
+    if (!selectedDefendant) {
+      return
+    }
+
+    const updatedDefendant = {
+      caseId: workingCase.id,
+      defendantId: selectedDefendant.id,
+      verdictViewDate: formatDateForServer(new Date()),
+    }
+
+    setAndSendDefendantToServer(updatedDefendant, setWorkingCase)
+
+    setModalVisible(undefined)
+  }
 
   const handleNavigationTo = useCallback(
     (destination: string) => router.push(`${destination}/${workingCase.id}`),
@@ -117,7 +127,23 @@ export const Overview = () => {
         <PageTitle>{fm(strings.title)}</PageTitle>
         <CourtCaseInfo workingCase={workingCase} />
         <Box component="section" marginBottom={5}>
-          <InfoCardClosedIndictment />
+          <InfoCardClosedIndictment
+            defendantInfoActionButton={
+              isCompletedCase(workingCase.state) &&
+              workingCase.indictmentReviewer !== null
+                ? {
+                    text: fm(strings.displayVerdict),
+                    onClick: (defendant) => {
+                      setSelectedDefendant(defendant)
+                      setModalVisible('DEFENDANT_VIEWS_VERDICT')
+                    },
+                    icon: 'mailOpen',
+                    isDisabled: (defendant) =>
+                      defendant.verdictViewDate !== null,
+                  }
+                : undefined
+            }
+          />
         </Box>
         {lawsBroken.size > 0 && (
           <Box marginBottom={5}>
@@ -129,49 +155,53 @@ export const Overview = () => {
             <IndictmentCaseFilesList workingCase={workingCase} />
           </Box>
         )}
-        <Box marginBottom={5}>
-          <SectionHeading
-            title={fm(strings.reviewerTitle)}
-            description={
-              <Text variant="eyebrow">
-                {fm(strings.reviewerSubtitle, {
-                  indictmentAppealDeadline: formatDate(
-                    workingCase.indictmentAppealDeadline,
-                    'P',
-                  ),
-                })}
-              </Text>
-            }
-          />
-          <BlueBox>
-            <Select
-              name="reviewer"
-              label={fm(strings.reviewerLabel)}
-              placeholder={fm(strings.reviewerPlaceholder)}
-              value={selectedIndictmentReviewer}
-              options={publicProsecutors}
-              onChange={(value) => {
-                setSelectedIndictmentReviewer(value as Option<string>)
-              }}
-              isDisabled={loading}
-              required
+        {displayReviewerChoices && (
+          <Box marginBottom={5}>
+            <SectionHeading
+              title={fm(strings.reviewerTitle)}
+              description={
+                <Text variant="eyebrow">
+                  {fm(strings.reviewerSubtitle, {
+                    indictmentAppealDeadline: formatDate(
+                      workingCase.indictmentAppealDeadline,
+                      'P',
+                    ),
+                  })}
+                </Text>
+              }
             />
-          </BlueBox>
-        </Box>
+            <BlueBox>
+              <Select
+                name="reviewer"
+                label={fm(strings.reviewerLabel)}
+                placeholder={fm(strings.reviewerPlaceholder)}
+                value={selectedIndictmentReviewer}
+                options={publicProsecutors}
+                onChange={(value) => {
+                  setSelectedIndictmentReviewer(value as Option<string>)
+                }}
+                isDisabled={loading}
+                required
+              />
+            </BlueBox>
+          </Box>
+        )}
       </FormContentContainer>
 
-      <FormContentContainer isFooter>
-        <FormFooter
-          nextButtonIcon="arrowForward"
-          previousUrl={`${constants.CASES_ROUTE}`}
-          nextIsLoading={isLoadingWorkingCase}
-          nextIsDisabled={!selectedIndictmentReviewer || isLoadingWorkingCase}
-          onNextButtonClick={assignReviewer}
-          nextButtonText={fm(core.continue)}
-        />
-      </FormContentContainer>
+      {displayReviewerChoices && (
+        <FormContentContainer isFooter>
+          <FormFooter
+            nextButtonIcon="arrowForward"
+            previousUrl={`${constants.CASES_ROUTE}`}
+            nextIsLoading={isLoadingWorkingCase}
+            nextIsDisabled={!selectedIndictmentReviewer || isLoadingWorkingCase}
+            onNextButtonClick={assignReviewer}
+            nextButtonText={fm(core.continue)}
+          />
+        </FormContentContainer>
+      )}
 
-      {modalVisible && (
+      {modalVisible === 'REVIEWER_ASSIGNED' && (
         <Modal
           title={fm(strings.reviewerAssignedModalTitle)}
           text={fm(strings.reviewerAssignedModalText, {
@@ -180,6 +210,19 @@ export const Overview = () => {
           })}
           secondaryButtonText={fm(core.back)}
           onSecondaryButtonClick={() => router.push(constants.CASES_ROUTE)}
+        />
+      )}
+
+      {modalVisible === 'DEFENDANT_VIEWS_VERDICT' && (
+        <Modal
+          title={fm(strings.defendantViewsVerdictModalTitle)}
+          text={fm(strings.defendantViewsVerdictModalText)}
+          primaryButtonText={fm(
+            strings.defendantViewsVerdictModalPrimaryButtonText,
+          )}
+          onPrimaryButtonClick={() => handleDefendantViewsVerdict()}
+          secondaryButtonText={fm(core.back)}
+          onSecondaryButtonClick={() => setModalVisible(undefined)}
         />
       )}
     </PageLayout>

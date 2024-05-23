@@ -35,14 +35,3 @@ export const infoCardAdditionalSectionContainer = style({
     },
   },
 })
-
-export const infoCardDefendant = style({
-  display: 'flex',
-  flexDirection: 'column',
-
-  '@media': {
-    [`screen and (min-width: ${theme.breakpoints.lg}px)`]: {
-      display: 'block',
-    },
-  },
-})
