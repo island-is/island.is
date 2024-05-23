@@ -26,6 +26,7 @@ import { FavAndStash } from '../FavAndStash'
 import { useSubmitMailAction } from '../../utils/useSubmitMailAction'
 import { useIsChildFocusedorHovered } from '../../hooks/useIsChildFocused'
 import { ActiveDocumentType } from '../../lib/types'
+import ImportantTag from './ImportantTag'
 
 interface Props {
   documentLine: Document
@@ -73,6 +74,7 @@ export const DocumentLine: FC<Props> = ({
   const navigate = useNavigate()
   const location = useLocation()
   const date = format(new Date(documentLine.date), dateFormat.is)
+  const isImportant = true // TODO: documentLine.isImportant ?? CA svona, bíðum eftir þjónustunni
   const { id } = useParams<{
     id: string
   }>()
@@ -199,6 +201,8 @@ export const DocumentLine: FC<Props> = ({
         borderBottomWidth="standard"
         borderTopWidth={includeTopBorder ? 'standard' : undefined}
         paddingX={2}
+        paddingTop="p2"
+        paddingBottom={isImportant ? 'smallGutter' : 'p2'}
         width="full"
         className={cn(styles.docline, {
           [styles.active]: active,
@@ -251,6 +255,7 @@ export const DocumentLine: FC<Props> = ({
             <Text variant="small" truncate>
               {documentLine.senderName}
             </Text>
+
             <Text variant="small">{date}</Text>
           </Box>
           <Box display="flex" flexDirection="row" justifyContent="spaceBetween">
@@ -271,6 +276,7 @@ export const DocumentLine: FC<Props> = ({
                 {documentLine.subject}
               </Text>
             </button>
+            {asFrame && <ImportantTag isImportant={isImportant} />}
             {(hasFocusOrHover || isBookmarked || isArchived) &&
               !postLoading &&
               !asFrame && (

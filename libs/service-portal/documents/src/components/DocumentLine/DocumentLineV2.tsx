@@ -23,6 +23,7 @@ import { useGetDocumentInboxLineV2LazyQuery } from '../../screens/Overview/Overv
 import { useDocumentContext } from '../../screens/Overview/DocumentContext'
 import { useDocumentList } from '../../hooks/useDocumentList'
 import { useMailAction } from '../../hooks/useMailActionV2'
+import ImportantTag from './ImportantTag'
 
 interface Props {
   documentLine: DocumentV2
@@ -54,6 +55,7 @@ export const DocumentLine: FC<Props> = ({
   const { id } = useParams<{
     id: string
   }>()
+  const isImportant = false // TODO: documentLine.isImportant ?? CA svona, bíðum eftir þjónustunni
 
   const {
     submitMailAction,
@@ -173,6 +175,8 @@ export const DocumentLine: FC<Props> = ({
         borderBottomWidth="standard"
         borderTopWidth={includeTopBorder ? 'standard' : undefined}
         paddingX={2}
+        paddingTop="p2"
+        paddingBottom={isImportant ? 'smallGutter' : 'p2'}
         width="full"
         className={cn(styles.docline, {
           [styles.active]: active,
@@ -222,10 +226,10 @@ export const DocumentLine: FC<Props> = ({
         >
           {active && <div className={styles.fakeBorder} />}
           <Box display="flex" flexDirection="row" justifyContent="spaceBetween">
-            <Text variant="small" truncate>
+            <Text variant="medium" truncate>
               {documentLine.sender?.name ?? ''}
             </Text>
-            <Text variant="small">{date}</Text>
+            <Text variant="medium">{date}</Text>
           </Box>
           <Box display="flex" flexDirection="row" justifyContent="spaceBetween">
             <button
@@ -245,6 +249,8 @@ export const DocumentLine: FC<Props> = ({
                 {documentLine.subject}
               </Text>
             </button>
+            {<ImportantTag isImportant={isImportant} />}
+
             {(hasFocusOrHover || isBookmarked || isArchived) &&
               !postLoading &&
               !fileLoading &&

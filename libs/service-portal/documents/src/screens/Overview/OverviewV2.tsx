@@ -161,7 +161,7 @@ export const ServicePortalDocumentsV2 = () => {
               padding={2}
             >
               <Box display="flex">
-                <Box className={styles.checkboxWrap} marginRight={3}>
+                <Box className={styles.checkboxWrap} marginRight={2}>
                   {!activeArchive && (
                     <Checkbox
                       name="checkbox-select-all"

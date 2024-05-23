@@ -6,8 +6,6 @@ export const wrapper = style({
 })
 
 export const docline = style({
-  paddingTop: theme.spacing.smallGutter * 3,
-  paddingBottom: theme.spacing.smallGutter * 3,
   selectors: {
     '&:hover': {
       backgroundColor: theme.color.blue100,
