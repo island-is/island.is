@@ -20,7 +20,7 @@ let logFormat = format.combine(
   format.timestamp(),
   utilities.format.nestLike('App'),
   maskNationalIdFormatter(),
-  correlateFormat()
+  correlateFormat(),
 )
 
 // Production overrides
