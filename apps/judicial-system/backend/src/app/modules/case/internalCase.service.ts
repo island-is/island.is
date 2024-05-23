@@ -60,6 +60,7 @@ import { archiveFilter } from './filters/case.archiveFilter'
 import { ArchiveResponse } from './models/archive.response'
 import { Case } from './models/case.model'
 import { CaseArchive } from './models/caseArchive.model'
+import { DateLog } from './models/dateLog.model'
 import { DeliverResponse } from './models/deliver.response'
 import { caseModuleConfig } from './case.config'
 
@@ -1152,12 +1153,17 @@ export class InternalCaseService {
     return originalAncestor
   }
 
-  async getIndictmentCases(): Promise<Case[]> {
+  async getIndictmentCases(nationalId: string): Promise<Case[]> {
     return this.caseModel.findAll({
+      include: [
+        { model: Defendant, as: 'defendants' },
+        { model: DateLog, as: 'dateLogs' },
+      ],
+      order: [[{ model: DateLog, as: 'dateLogs' }, 'created', 'DESC']],
       attributes: ['id', 'courtCaseNumber', 'type'],
       where: {
         type: CaseType.INDICTMENT,
-        state: CaseState.COMPLETED,
+        '$defendants.national_id$': nationalId,
       },
     })
   }

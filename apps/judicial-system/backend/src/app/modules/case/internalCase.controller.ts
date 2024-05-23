@@ -78,7 +78,7 @@ export class InternalCaseController {
   getIndictmentCases(): Promise<Case[]> {
     this.logger.debug('Getting all indictment cases')
 
-    return this.internalCaseService.getIndictmentCases()
+    return this.internalCaseService.getIndictmentCases('111290-2539')
   }
 
   @UseGuards(CaseExistsGuard)
