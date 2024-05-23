@@ -393,6 +393,7 @@ export const assets = buildSection({
                   {
                     title: m.nationalId,
                     id: 'assetNumber',
+                    type: 'nationalId',
                     format: '######-####',
                   },
                   {

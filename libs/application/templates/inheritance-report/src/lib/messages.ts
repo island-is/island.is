@@ -1384,6 +1384,12 @@ export const m = defineMessages({
     defaultMessage: 'Einkaskiptagerð',
     description: '',
   },
+  fileUploadFileTypes: {
+    id: 'ir.application:fileUploadFileTypes',
+    defaultMessage:
+      'Samþykktar skráargerðir eru .pdf, .doc, .docx, .jpg, .jpeg, .png, .xls og .xlsx',
+    description: '',
+  },
   fileUploadOtherDocuments: {
     id: 'ir.application:fileUploadOtherDocuments',
     defaultMessage: 'Önnur fylgigögn',
@@ -1438,6 +1444,16 @@ export const m = defineMessages({
   overviewPrint: {
     id: 'ir.application:overviewPrint',
     defaultMessage: 'Prenta yfirlit',
+    description: '',
+  },
+  overviewHeirsTitle: {
+    id: 'ir.application:overviewHeirsTitle',
+    defaultMessage: 'Yfirlit erfingja',
+    description: '',
+  },
+  overviewHeirsDescription: {
+    id: 'ir.application:overviewHeirsDescription',
+    defaultMessage: 'Yfirlit yfir erfingja og skiptingu',
     description: '',
   },
 

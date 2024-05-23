@@ -25,22 +25,24 @@ export const OverviewDebts: FC<React.PropsWithChildren<FieldBaseProps>> = ({
 
   return (
     <Box marginTop={2}>
-      {debtsData.map((debt: DebtType, index: number) => (
-        <Debt
-          key={index}
-          assetNumber={debt.assetNumber}
-          debtType={debt.debtType}
-          description={debt.description}
-          nationalId={debt.nationalId}
-          propertyValuation={debt.propertyValuation}
-        />
-      ))}
+      {!!debtsData.length ? (
+        debtsData.map((debt: DebtType, index: number) => (
+          <Debt
+            key={index}
+            assetNumber={debt.assetNumber}
+            debtType={debt.debtType}
+            description={debt.description}
+            nationalId={debt.nationalId}
+            propertyValuation={debt.propertyValuation}
+          />
+        ))
+      ) : (
+        <TopRow title={formatMessage(m.domesticAndForeignDebts)} value={'0'} />
+      )}
       <Box>
         <TopRow
           title={formatMessage(m.funeralCostTitle)}
-          value={formatCurrency(
-            getValueViaPath<string>(answers, 'funeralCost.total') || '0',
-          )}
+          value={getValueViaPath<string>(answers, 'funeralCost.total') || '0'}
         />
 
         <Box marginLeft={[0, 4]}>

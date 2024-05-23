@@ -470,7 +470,7 @@ export const CalculateShare: FC<React.PropsWithChildren<FieldBaseProps>> = ({
         </GridRow>
       )}
 
-      <Box marginTop={4}>
+      <Box marginTop={2}>
         <TitleRow
           title={m.assetsToShareTotalAssets}
           value={roundedValueToNumber(total)}

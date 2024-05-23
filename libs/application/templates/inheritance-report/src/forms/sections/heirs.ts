@@ -189,11 +189,11 @@ export const heirs = buildSection({
             }),
             buildFileUploadField({
               id: 'heirsAdditionalInfoPrivateTransferFiles',
+              uploadAccept: '.pdf, .doc, .docx, .jpg, .jpeg, .png, .xls, .xlsx',
+              uploadDescription: m.fileUploadFileTypes,
               uploadMultiple: false,
               title: '',
-              description: '',
               uploadHeader: '',
-              uploadDescription: '',
             }),
             buildDescriptionField({
               id: 'heirsAdditionalInfoFiles',
@@ -204,10 +204,10 @@ export const heirs = buildSection({
             }),
             buildFileUploadField({
               id: 'heirsAdditionalInfoFiles',
+              uploadAccept: '.pdf, .doc, .docx, .jpg, .jpeg, .png, .xls, .xlsx',
+              uploadDescription: m.fileUploadFileTypes,
               title: '',
-              description: '',
               uploadHeader: '',
-              uploadDescription: '',
             }),
           ],
         }),
@@ -219,7 +219,8 @@ export const heirs = buildSection({
       children: [
         buildMultiField({
           id: 'heirsOverview',
-          title: m.overview,
+          title: m.overviewHeirsTitle,
+          description: m.overviewHeirsDescription,
           children: [
             buildDividerField({}),
             buildDescriptionField({

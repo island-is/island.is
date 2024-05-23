@@ -32,7 +32,6 @@ import {
   InheritanceReportInfo,
 } from '@island.is/clients/syslumenn'
 import { valueToNumber } from '../../lib/utils/helpers'
-import NumberInput from '../../components/NumberInput'
 import DeceasedShare from '../../components/DeceasedShare'
 
 type RepeaterProps = {
@@ -418,7 +417,7 @@ export const ReportFieldsRepeater: FC<
                         backgroundColor={field.color ? field.color : 'blue'}
                         currency={field.currency}
                         readOnly={field.readOnly}
-                        type={field.type}
+                        type={field.type !== 'nationalId' ? field.type : 'text'}
                         textarea={field.variant}
                         rows={field.rows}
                         required={field.required}
