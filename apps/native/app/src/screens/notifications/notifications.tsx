@@ -252,7 +252,7 @@ export const NotificationsScreen: NavigationFunctionComponent = ({
           <Problem type="error" withContainer />
         ) : (
           <FlatList
-            style={{ flex: 1, paddingTop: 16 }}
+            style={{ flex: 1, marginTop: theme.spacing[2] }}
             data={memoizedData}
             keyExtractor={keyExtractor}
             renderItem={renderNotificationItem}

@@ -85,7 +85,7 @@ const Text = styled.Text<{
         ? props.theme.color.blue400
         : props.theme.color.white,
   })}
-  font-size: ${(props) => props.isUtilityButton && '12px'};
+  font-size: ${(props) => (props.isUtilityButton ? '12px' : '16px')};
   text-align: ${(props) => (props.isUtilityButton ? 'left' : 'center')};
 `
 
