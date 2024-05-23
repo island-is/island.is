@@ -660,6 +660,11 @@ export const m = defineMessages({
     defaultMessage: 'Peningar og bankahólf',
     description: '',
   },
+  moneyTitlePrePaid: {
+    id: 'ir.application:moneyTitlePrePaid',
+    defaultMessage: 'Peningar',
+    description: '',
+  },
   moneyDescription: {
     id: 'ir.application:moneyDescription',
     defaultMessage: 'Peningar sem varðveittir eru utan fjármálastofnanna.',

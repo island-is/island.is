@@ -307,18 +307,14 @@ export const assets = buildSection({
       id: 'estateBankInfo',
       title: m.estateBankInfo,
       condition: (answers) => {
-        return (answers as any).applicationFor === PREPAID_INHERITANCE
-          ? (answers as any).prepaidInheritance?.bankMoney[0] === YES
-          : true
+        return (answers as any).applicationFor !== PREPAID_INHERITANCE
       },
       children: [
         buildMultiField({
           id: 'estateBankInfo',
           title: m.propertiesTitle,
-          description: (application) =>
-            application.answers.applicationFor === PREPAID_INHERITANCE
-              ? m.propertiesDescriptionPrePaid
-              : m.propertiesDescription + ' ' + m.continueWithoutBankAccounts,
+          description:
+            m.propertiesDescription + ' ' + m.continueWithoutBankAccounts,
           children: [
             buildDescriptionField({
               id: 'estateBankInfoTitle',

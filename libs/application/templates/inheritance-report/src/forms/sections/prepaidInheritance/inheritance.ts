@@ -16,33 +16,6 @@ export const inheritance = buildSection({
       description: 'Lorem ipsum foo bar beep boop meep morp.',
       children: [
         buildCheckboxField({
-          id: 'prepaidInheritance.bankMoney',
-          title: '',
-          large: true,
-          backgroundColor: 'blue',
-          defaultValue: [],
-          options: [
-            {
-              value: YES,
-              label: m.estateBankInfo,
-              subLabel: m.estateBankInfoDescription,
-            },
-          ],
-        }),
-        buildCheckboxField({
-          id: 'prepaidInheritance.money',
-          title: '',
-          large: true,
-          defaultValue: [],
-          options: [
-            {
-              value: YES,
-              label: m.moneyTitle,
-              subLabel: m.moneyDescription,
-            },
-          ],
-        }),
-        buildCheckboxField({
           id: 'prepaidInheritance.realEstate',
           title: '',
           large: true,
@@ -65,6 +38,18 @@ export const inheritance = buildSection({
               value: YES,
               label: m.vehicles,
               subLabel: m.vehiclesDescription,
+            },
+          ],
+        }),
+        buildCheckboxField({
+          id: 'prepaidInheritance.money',
+          title: '',
+          large: true,
+          defaultValue: [],
+          options: [
+            {
+              value: YES,
+              label: m.moneyTitlePrePaid,
             },
           ],
         }),
