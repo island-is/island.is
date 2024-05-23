@@ -43,7 +43,6 @@ type RepeaterProps = {
       fields: Array<object>
       repeaterButtonText: string
       sumField: string
-      fromExternalData?: string
       calcWithShareValue?: boolean
       assetKey?: string
     }
@@ -140,6 +139,7 @@ export const AssetsRepeater: FC<
         extData.map((x) => ({
           ...x,
           share: String(x.share),
+          initial: true,
         })),
       )
       setValue(`assets.${assetKey}.hasModified`, true)
@@ -193,6 +193,7 @@ export const AssetsRepeater: FC<
                     field={field}
                     fieldName={fieldName}
                     error={error}
+                    readOnly={repeaterField.initial}
                   />
                 )
               })}
@@ -253,6 +254,7 @@ interface FieldComponentProps {
   fieldIndex: string
   fieldName: string
   error?: string
+  readOnly?: boolean
 }
 
 const FieldComponent = ({
@@ -265,6 +267,7 @@ const FieldComponent = ({
   fieldIndex,
   fieldName,
   error,
+  readOnly,
 }: FieldComponentProps) => {
   const { formatMessage } = useLocale()
 
@@ -280,12 +283,12 @@ const FieldComponent = ({
     placeholder: field.placeholder,
     backgroundColor: field.color ? field.color : 'blue',
     currency: field.currency,
-    readOnly: field.readOnly,
     required: field.required,
     loading: fieldName === loadingFieldName,
     suffix: '',
     onChange: () => onAfterChange?.(),
     error: error,
+    readOnly: readOnly,
     ...field,
   }
 
@@ -333,6 +336,7 @@ const FieldComponent = ({
           name={fieldName}
           label={formatMessage(m.propertyShare)}
           onAfterChange={onAfterChange}
+          readOnly={readOnly}
         />
       )
 

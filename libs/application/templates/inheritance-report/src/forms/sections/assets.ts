@@ -27,7 +27,7 @@ export const assets = buildSection({
           description:
             m.propertiesDescription.defaultMessage +
             ' ' +
-            m.continueWithoutAssests.defaultMessage,
+            m.continueWithoutAssets.defaultMessage,
           children: [
             buildDescriptionField({
               id: 'realEstateTitle',
@@ -53,35 +53,31 @@ export const assets = buildSection({
               {
                 fields: [
                   {
-                    title: m.assetNumber.defaultMessage,
+                    title: m.assetNumber,
                     id: 'assetNumber',
                     placeholder: 'F1234567',
                   },
                   {
-                    title: m.assetAddress.defaultMessage,
+                    title: m.assetAddress,
                     id: 'description',
                     backgroundColor: 'white',
                     readOnly: true,
                   },
                   {
-                    title: m.propertyShare.defaultMessage,
+                    title: m.propertyShare,
                     id: 'share',
                     type: 'number',
-                    defaultValue: '100',
                     suffix: '%',
-                    required: true,
                   },
                   {
-                    title: m.propertyValuation.defaultMessage,
+                    title: m.propertyValuation,
                     id: 'propertyValuation',
-                    required: true,
                     currency: true,
                   },
                 ],
                 assetKey: 'assets',
                 calcWithShareValue: true,
-                repeaterButtonText: m.addRealEstate.defaultMessage,
-                fromExternalData: 'assets',
+                repeaterButtonText: m.addRealEstate,
                 sumField: 'propertyValuation',
               },
             ),

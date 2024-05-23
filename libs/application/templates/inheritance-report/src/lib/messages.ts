@@ -150,17 +150,6 @@ export const m = defineMessages({
       'Persónustillingar þínar (sími og netfang) þínar frá Ísland.is.',
     description: '',
   },
-  funeralExpensesTitle: {
-    id: 'ir.application:funeralExpensesTitle',
-    defaultMessage: 'Yfirlit um útfararkostnað',
-    description: '',
-  },
-  funeralExpensesSubtitle: {
-    id: 'ir.application:funeralExpensesSubtitle',
-    defaultMessage:
-      'Athugað er hvort að skráningaraðili sé búinn að fylla út yfirlit um útfararkostnað',
-    description: '',
-  },
 
   // Applicant's Information
   applicantsInfo: {
@@ -276,8 +265,8 @@ export const m = defineMessages({
       'Vinsamlegast tilgreindu allar hjúskapareignir beggja hjóna utan einstaklingsatvinnurekstrar á dánardegi hins látna. Einnig séreign hins látna.',
     description: '',
   },
-  continueWithoutAssests: {
-    id: 'ir.application:continueWithoutAssests',
+  continueWithoutAssets: {
+    id: 'ir.application:continueWithoutAssets',
     defaultMessage:
       'Ef hinn látni átti ekki fasteign vinsamlegast haltu áfram í ferlinu.',
     description: '',

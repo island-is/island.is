@@ -77,6 +77,7 @@ export const applicant = buildSection({
           id: 'applicant.relation',
           title: m.relation,
           width: 'half',
+          required: true,
           options: [
             { label: m.heir, value: RelationEnum.HEIR },
             { label: m.representative, value: RelationEnum.REPRESENTATIVE },
