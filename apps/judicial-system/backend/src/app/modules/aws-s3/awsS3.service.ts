@@ -169,9 +169,13 @@ export class AwsS3Service {
   getSignedUrl(
     caseType: CaseType,
     caseState: CaseState,
-    key: string,
+    key?: string,
     timeToLive?: number,
   ): Promise<string> {
+    if (!key) {
+      throw new Error('Key is required')
+    }
+
     return isIndictmentCase(caseType)
       ? this.getIndictmentSignedUrl(caseState, key, timeToLive)
       : this.getRequestSignedUrl(key, timeToLive)
@@ -180,27 +184,31 @@ export class AwsS3Service {
   async getConfirmedSignedUrl(
     caseType: CaseType,
     caseState: CaseState,
-    key: string,
+    key: string | undefined,
     confirmContent: (content: Buffer) => Promise<string | undefined>,
+    timeToLive?: number,
   ): Promise<string> {
+    if (!key) {
+      throw new Error('Key is required')
+    }
+
     if (!isIndictmentCase(caseType)) {
       throw new Error('Only indictment case objects can be confirmed')
     }
 
     const confirmedKey = formatConfirmedKey(key)
 
-    if (await this.objectExistsInS3(confirmedKey)) {
-      return this.getSignedUrl(caseType, caseState, confirmedKey)
+    if (await this.indictmentObjectExists(caseState, confirmedKey)) {
+      return this.getIndictmentSignedUrl(caseState, confirmedKey, timeToLive)
     }
 
-    const confirmedContent = await this.getObject(
-      caseType,
+    const confirmedContent = await this.getIndictmentObject(
       caseState,
       key,
     ).then((content) => confirmContent(content))
 
     if (!confirmedContent) {
-      return this.getSignedUrl(caseType, caseState, key)
+      return this.getIndictmentSignedUrl(caseState, key, timeToLive)
     }
 
     return this.putConfirmedObject(
@@ -208,7 +216,9 @@ export class AwsS3Service {
       caseState,
       key,
       confirmedContent,
-    ).then(() => this.getSignedUrl(caseType, caseState, confirmedKey))
+    ).then(() =>
+      this.getIndictmentSignedUrl(caseState, confirmedKey, timeToLive),
+    )
   }
 
   private async getObjectFromS3(key: string): Promise<Buffer> {
@@ -260,6 +270,42 @@ export class AwsS3Service {
     }
 
     return this.getObjectFromS3(`${generatedPrefix}${key}`)
+  }
+
+  async getConfirmedObject(
+    caseType: CaseType,
+    caseState: CaseState,
+    key: string | undefined,
+    confirmContent: (content: Buffer) => Promise<string | undefined>,
+  ): Promise<Buffer> {
+    if (!key) {
+      throw new Error('Key is required')
+    }
+
+    if (!isIndictmentCase(caseType)) {
+      throw new Error('Only indictment case objects can be confirmed')
+    }
+
+    const confirmedKey = formatConfirmedKey(key)
+
+    if (await this.indictmentObjectExists(caseState, confirmedKey)) {
+      return this.getIndictmentObject(caseState, confirmedKey)
+    }
+
+    const content = await this.getIndictmentObject(caseState, key)
+
+    const confirmedContent = await confirmContent(content)
+
+    if (!confirmedContent) {
+      return this.getIndictmentObject(caseState, key)
+    }
+
+    return this.putConfirmedObject(
+      caseType,
+      caseState,
+      key,
+      confirmedContent,
+    ).then(() => this.getIndictmentObject(caseState, confirmedKey))
   }
 
   private async putObjectToS3(key: string, content: string): Promise<string> {

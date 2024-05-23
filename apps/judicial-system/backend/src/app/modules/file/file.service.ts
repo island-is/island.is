@@ -148,6 +148,61 @@ export class FileService {
     return courtDocumentFolder
   }
 
+  private async confirmIndictmentCaseFile(
+    theCase: Case,
+    pdf: Buffer,
+  ): Promise<string | undefined> {
+    const confirmationEvent = theCase.eventLogs?.find(
+      (event) => event.eventType === EventType.INDICTMENT_CONFIRMED,
+    )
+
+    if (!confirmationEvent || !confirmationEvent.nationalId) {
+      return undefined
+    }
+
+    return this.userService
+      .findByNationalId(confirmationEvent.nationalId)
+      .then((user) =>
+        createConfirmedIndictment(
+          {
+            actor: user.name,
+            institution: user.institution?.name ?? '',
+            date: confirmationEvent.created,
+          },
+          pdf,
+        ),
+      )
+      .then((confirmedPdf) => confirmedPdf.toString('binary'))
+      .catch((reason) => {
+        this.logger.error(
+          `Failed to create confirmed indictment for case ${theCase.id}`,
+          { reason },
+        )
+
+        return undefined
+      })
+  }
+
+  private async getCaseFileFromS3(
+    theCase: Case,
+    file: CaseFile,
+  ): Promise<Buffer> {
+    if (
+      isIndictmentCase(theCase.type) &&
+      file.category === CaseFileCategory.INDICTMENT &&
+      hasIndictmentCaseBeenSubmittedToCourt(theCase.state)
+    ) {
+      return this.awsS3Service.getConfirmedObject(
+        theCase.type,
+        theCase.state,
+        file.key,
+        (content: Buffer) => this.confirmIndictmentCaseFile(theCase, content),
+      )
+    }
+
+    return this.awsS3Service.getObject(theCase.type, theCase.state, file.key)
+  }
+
   private async throttleUpload(
     file: CaseFile,
     theCase: Case,
@@ -158,11 +213,7 @@ export class FileService {
       this.logger.info('Previous upload failed', { reason })
     })
 
-    const content = await this.awsS3Service.getObject(
-      theCase.type,
-      theCase.state,
-      file.key,
-    )
+    const content = await this.getCaseFileFromS3(theCase, file)
 
     const courtDocumentFolder = this.getCourtDocumentFolder(file)
 
@@ -256,10 +307,7 @@ export class FileService {
     return file
   }
 
-  async getCaseFileSignedUrl(
-    theCase: Case,
-    file: CaseFile,
-  ): Promise<SignedUrl> {
+  private async verifyCaseFile(file: CaseFile, theCase: Case) {
     if (!file.key) {
       throw new NotFoundException(`File ${file.id} does not exist in AWS S3`)
     }
@@ -276,25 +324,39 @@ export class FileService {
 
       throw new NotFoundException(`File ${file.id} does not exist in AWS S3`)
     }
+  }
 
+  private async getCaseFileSignedUrlFromS3(
+    theCase: Case,
+    file: CaseFile,
+    timeToLive?: number,
+  ): Promise<string> {
     if (
       isIndictmentCase(theCase.type) &&
       file.category === CaseFileCategory.INDICTMENT &&
       hasIndictmentCaseBeenSubmittedToCourt(theCase.state)
     ) {
-      return this.awsS3Service
-        .getConfirmedSignedUrl(
-          theCase.type,
-          theCase.state,
-          file.key,
-          (content: Buffer) => this.confirmIndictmentCaseFile(theCase, content),
-        )
-        .then((url) => ({ url }))
+      return this.awsS3Service.getConfirmedSignedUrl(
+        theCase.type,
+        theCase.state,
+        file.key,
+        (content: Buffer) => this.confirmIndictmentCaseFile(theCase, content),
+        timeToLive,
+      )
     }
 
-    return this.awsS3Service
-      .getSignedUrl(theCase.type, theCase.state, file.key)
-      .then((url) => ({ url }))
+    return this.awsS3Service.getSignedUrl(theCase.type, theCase.state, file.key)
+  }
+
+  async getCaseFileSignedUrl(
+    theCase: Case,
+    file: CaseFile,
+  ): Promise<SignedUrl> {
+    await this.verifyCaseFile(file, theCase)
+
+    return this.getCaseFileSignedUrlFromS3(theCase, file).then((url) => ({
+      url,
+    }))
   }
 
   // TODO: Delete confirmed indictment files
@@ -313,7 +375,6 @@ export class FileService {
     return { success }
   }
 
-  // TODO: Confirm indictment files
   async uploadCaseFileToCourt(
     theCase: Case,
     file: CaseFile,
@@ -323,22 +384,7 @@ export class FileService {
       return { success: true }
     }
 
-    if (!file.key) {
-      throw new NotFoundException(`File ${file.id} does not exist in AWS S3`)
-    }
-
-    const exists = await this.awsS3Service.objectExists(
-      theCase.type,
-      theCase.state,
-      file.key,
-    )
-
-    if (!exists) {
-      // Fire and forget, no need to wait for the result
-      this.fileModel.update({ key: null }, { where: { id: file.id } })
-
-      throw new NotFoundException(`File ${file.id} does not exist in AWS S3`)
-    }
+    await this.verifyCaseFile(file, theCase)
 
     this.throttle = this.throttleUpload(file, theCase, user)
 
@@ -448,27 +494,11 @@ export class FileService {
     file: CaseFile,
     user: User,
   ): Promise<DeliverResponse> {
-    if (!file.key) {
-      throw new NotFoundException(`File ${file.id} does not exist in AWS S3`)
-    }
+    await this.verifyCaseFile(file, theCase)
 
-    const exists = await this.awsS3Service.objectExists(
-      theCase.type,
-      theCase.state,
-      file.key,
-    )
-
-    if (!exists) {
-      // Fire and forget, no need to wait for the result
-      this.fileModel.update({ key: null }, { where: { id: file.id } })
-
-      throw new NotFoundException(`File ${file.id} does not exist in AWS S3`)
-    }
-
-    const url = await this.awsS3Service.getSignedUrl(
-      theCase.type,
-      theCase.state,
-      file.key,
+    const url = await this.getCaseFileSignedUrlFromS3(
+      theCase,
+      file,
       this.config.robotS3TimeToLiveGet,
     )
 
@@ -491,41 +521,6 @@ export class FileService {
         )
 
         return { delivered: false }
-      })
-  }
-
-  async confirmIndictmentCaseFile(
-    theCase: Case,
-    pdf: Buffer,
-  ): Promise<string | undefined> {
-    const confirmationEvent = theCase.eventLogs?.find(
-      (event) => event.eventType === EventType.INDICTMENT_CONFIRMED,
-    )
-
-    if (!confirmationEvent || !confirmationEvent.nationalId) {
-      return undefined
-    }
-
-    return this.userService
-      .findByNationalId(confirmationEvent.nationalId)
-      .then((user) =>
-        createConfirmedIndictment(
-          {
-            actor: user.name,
-            institution: user.institution?.name ?? '',
-            date: confirmationEvent.created,
-          },
-          pdf,
-        ),
-      )
-      .then((confirmedPdf) => confirmedPdf.toString('binary'))
-      .catch((reason) => {
-        this.logger.error(
-          `Failed to create confirmed indictment for case ${theCase.id}`,
-          { reason },
-        )
-
-        return undefined
       })
   }
 }
