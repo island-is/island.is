@@ -106,9 +106,7 @@ export const getNationalRegistryInfo = (application: Application) => {
     },
     {
       title: 'Maki',
-      content: application.spouseNationalId
-        ? formatNationalId(application.spouseNationalId)
-        : 'Enginn maki',
+      content: application.spouseNationalId ? 'Já' : 'Nei',
     },
     {
       title: 'Aldur',
