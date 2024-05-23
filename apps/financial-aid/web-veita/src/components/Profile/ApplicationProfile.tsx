@@ -300,6 +300,7 @@ const ApplicationProfile = ({
           setIsLoading={setIsLoading}
           applicationCreated={application.created}
           applicationMunicipality={applicationMunicipality}
+          hasApplicantChildren={application?.children !== undefined}
         />
       )}
 
