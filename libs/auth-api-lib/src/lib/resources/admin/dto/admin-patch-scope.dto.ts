@@ -84,6 +84,22 @@ export class AdminPatchScopeDto {
     example: false,
   })
   grantToPersonalRepresentatives?: boolean
+
+  @IsArray()
+  @IsOptional()
+  @ApiPropertyOptional({
+    type: [String],
+    example: ['Custom'],
+  })
+  addedDelegationTypes?: string[]
+
+  @IsArray()
+  @IsOptional()
+  @ApiPropertyOptional({
+    type: [String],
+    example: ['Custom'],
+  })
+  removedDelegationTypes?: string[]
 }
 
 export const superUserScopeFields = [
