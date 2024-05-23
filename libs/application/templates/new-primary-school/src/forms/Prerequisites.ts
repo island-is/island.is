@@ -4,34 +4,32 @@ import {
   buildForm,
   buildSection,
   buildSubmitField,
-  coreMessages,
 } from '@island.is/application/core'
 import {
   ChildrenCustodyInformationApi,
+  DefaultEvents,
   Form,
   FormModes,
   IdentityApi,
   NationalRegistryUserApi,
   UserProfileApi,
 } from '@island.is/application/types'
-import Logo from '../assets/Logo'
 import { newPrimarySchoolMessages } from '../lib/messages'
 
 export const Prerequisites: Form = buildForm({
   id: 'newPrimarySchoolPrerequisites',
   title: newPrimarySchoolMessages.shared.formTitle,
-  logo: Logo,
   mode: FormModes.NOT_STARTED,
   renderLastScreenButton: true,
   renderLastScreenBackButton: true,
   children: [
     buildSection({
       id: 'prerequisites',
-      title: newPrimarySchoolMessages.pre.prerequisitesSection,
+      title: newPrimarySchoolMessages.pre.externalDataSection,
       children: [
         buildExternalDataProvider({
           id: 'approveExternalData',
-          title: newPrimarySchoolMessages.pre.externalDataSubSection,
+          title: newPrimarySchoolMessages.pre.externalDataSection,
           subTitle: newPrimarySchoolMessages.pre.externalDataDescription,
           checkboxLabel: newPrimarySchoolMessages.pre.checkboxProvider,
           submitField: buildSubmitField({
@@ -41,8 +39,8 @@ export const Prerequisites: Form = buildForm({
             refetchApplicationAfterSubmit: true,
             actions: [
               {
-                event: 'SUBMIT',
-                name: coreMessages.buttonNext,
+                event: DefaultEvents.SUBMIT,
+                name: newPrimarySchoolMessages.pre.startApplication,
                 type: 'primary',
               },
             ],
@@ -90,18 +88,13 @@ export const Prerequisites: Form = buildForm({
       children: [],
     }),
     buildSection({
-      id: 'schoolSection',
-      title: newPrimarySchoolMessages.school.sectionTitle,
+      id: 'primarySchoolSection',
+      title: newPrimarySchoolMessages.primarySchool.sectionTitle,
       children: [],
     }),
     buildSection({
-      id: 'relativesSection',
-      title: newPrimarySchoolMessages.relatives.sectionTitle,
-      children: [],
-    }),
-    buildSection({
-      id: 'mealSection',
-      title: newPrimarySchoolMessages.meal.sectionTitle,
+      id: 'differentNeedsSection',
+      title: newPrimarySchoolMessages.differentNeeds.sectionTitle,
       children: [],
     }),
     buildSection({

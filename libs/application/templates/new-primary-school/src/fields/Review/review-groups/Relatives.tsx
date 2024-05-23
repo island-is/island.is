@@ -44,7 +44,10 @@ export const Relatives = ({
       <GridRow>
         <GridColumn span={['12/12', '12/12', '12/12', '12/12']}>
           <Label>
-            {formatMessage(newPrimarySchoolMessages.relatives.sectionTitle)}
+            {formatMessage(
+              newPrimarySchoolMessages.childrenNParents
+                .relativesSubSectionTitle,
+            )}
           </Label>
           {relatives?.length > 0 && (
             <Box paddingTop={3}>
@@ -57,12 +60,12 @@ export const Relatives = ({
                   id: 'relativesTable',
                   title: '',
                   header: [
-                    newPrimarySchoolMessages.relatives.fullName,
-                    newPrimarySchoolMessages.relatives.phoneNumber,
-                    newPrimarySchoolMessages.relatives.nationalId,
-                    newPrimarySchoolMessages.relatives.relation,
-                    newPrimarySchoolMessages.relatives
-                      .canPickUpChildTableHeader,
+                    newPrimarySchoolMessages.childrenNParents.fullName,
+                    newPrimarySchoolMessages.childrenNParents.phoneNumber,
+                    newPrimarySchoolMessages.childrenNParents.nationalId,
+                    newPrimarySchoolMessages.childrenNParents.relativesRelation,
+                    newPrimarySchoolMessages.childrenNParents
+                      .relativesCanPickUpChildTableHeader,
                   ],
                   rows,
                 }}

@@ -25,7 +25,6 @@ import {
 } from '@island.is/application/ui-components'
 import { buildFormConclusionSection } from '@island.is/application/ui-forms'
 import { format as formatKennitala } from 'kennitala'
-import Logo from '../assets/Logo'
 import { RelationOptions } from '../lib/constants'
 import { newPrimarySchoolMessages } from '../lib/messages'
 import {
@@ -39,12 +38,11 @@ import {
 export const NewPrimarySchoolForm: Form = buildForm({
   id: 'newPrimarySchoolDraft',
   title: newPrimarySchoolMessages.shared.formTitle,
-  logo: Logo,
   mode: FormModes.DRAFT,
   children: [
     buildSection({
       id: 'prerequisites',
-      title: newPrimarySchoolMessages.pre.prerequisitesSection,
+      title: newPrimarySchoolMessages.pre.externalDataSection,
       children: [],
     }),
     buildSection({
@@ -52,13 +50,15 @@ export const NewPrimarySchoolForm: Form = buildForm({
       title: newPrimarySchoolMessages.childrenNParents.sectionTitle,
       children: [
         buildSubSection({
-          id: 'childrenSection',
-          title: newPrimarySchoolMessages.childrenNParents.children,
+          id: 'childrenSubSection',
+          title:
+            newPrimarySchoolMessages.childrenNParents.childrenSubSectionTitle,
           children: [
             buildRadioField({
               id: 'childsNationalId',
-              title: newPrimarySchoolMessages.childrenNParents.children,
-              description: '',
+              title:
+                newPrimarySchoolMessages.childrenNParents
+                  .childrenSubSectionTitle,
               options: (application) => {
                 const { children } = getApplicationExternalData(
                   application.externalData,
@@ -82,31 +82,32 @@ export const NewPrimarySchoolForm: Form = buildForm({
           ],
         }),
         buildSubSection({
-          id: 'parentsSection',
-          title: newPrimarySchoolMessages.childrenNParents.parentsSection,
+          id: 'childInfoSubSection',
+          title:
+            newPrimarySchoolMessages.childrenNParents.childInfoSubSectionTitle,
+          children: [],
+        }),
+        buildSubSection({
+          id: 'parentsSubSection',
+          title:
+            newPrimarySchoolMessages.childrenNParents.parentsSubSectionTitle,
           children: [
             buildMultiField({
               id: 'parents',
-              title: '',
+              title:
+                newPrimarySchoolMessages.childrenNParents
+                  .parentsSubSectionTitle,
+              description:
+                newPrimarySchoolMessages.childrenNParents.parentsDescription,
               children: [
-                buildDescriptionField({
-                  id: 'parentsSection',
-                  title:
-                    newPrimarySchoolMessages.childrenNParents.parentsSection,
-                  description:
-                    newPrimarySchoolMessages.childrenNParents.description,
-                  titleVariant: 'h3',
-                  marginBottom: 5,
-                  space: 'gutter',
-                }),
                 buildDescriptionField({
                   id: 'parentsInfo1',
                   title: newPrimarySchoolMessages.childrenNParents.parent,
                   titleVariant: 'h4',
                 }),
                 buildTextField({
-                  title: newPrimarySchoolMessages.childrenNParents.name,
-                  dataTestId: 'name1',
+                  title: newPrimarySchoolMessages.childrenNParents.fullName,
+                  dataTestId: 'fullName1',
                   id: 'parent1.fullName',
                   readOnly: true,
                   defaultValue: (application: Application) =>
@@ -202,8 +203,8 @@ export const NewPrimarySchoolForm: Form = buildForm({
                   marginTop: 'containerGutter',
                 }),
                 buildTextField({
-                  title: newPrimarySchoolMessages.childrenNParents.name,
-                  dataTestId: 'name2',
+                  title: newPrimarySchoolMessages.childrenNParents.fullName,
+                  dataTestId: 'fullName2',
                   id: 'parent2.fullName',
                   readOnly: true,
                   defaultValue: (application: Application) =>
@@ -256,7 +257,6 @@ export const NewPrimarySchoolForm: Form = buildForm({
                 buildPhoneField({
                   width: 'half',
                   title: newPrimarySchoolMessages.childrenNParents.phoneNumber,
-
                   id: 'parent2.phoneNumber',
                   dataTestId: 'phone2',
                   placeholder: '000-0000',
@@ -265,118 +265,213 @@ export const NewPrimarySchoolForm: Form = buildForm({
             }),
           ],
         }),
-      ],
-    }),
-    buildSection({
-      id: 'schoolSection',
-      title: newPrimarySchoolMessages.school.sectionTitle,
-      children: [],
-    }),
-    buildSection({
-      id: 'relativesSection',
-      title: newPrimarySchoolMessages.relatives.sectionTitle,
-      children: [
-        buildMultiField({
-          id: 'relatives',
-          title: newPrimarySchoolMessages.relatives.title,
-          description: newPrimarySchoolMessages.relatives.description,
+        buildSubSection({
+          id: 'relativesSubSection',
+          title:
+            newPrimarySchoolMessages.childrenNParents.relativesSubSectionTitle,
           children: [
-            buildAlertMessageField({
-              id: 'relatives.alertMessage',
-              title: newPrimarySchoolMessages.shared.alertTitle,
-              message: newPrimarySchoolMessages.relatives.alertMessage,
-              doesNotRequireAnswer: true,
-              alertType: 'info',
-            }),
-            buildTableRepeaterField({
+            buildMultiField({
               id: 'relatives',
-              title: '',
-              formTitle: newPrimarySchoolMessages.relatives.registrationTitle,
-              addItemButtonText: newPrimarySchoolMessages.relatives.addRelative,
-              saveItemButtonText:
-                newPrimarySchoolMessages.relatives.registerRelative,
-              removeButtonTooltipText:
-                newPrimarySchoolMessages.relatives.deleteRelative,
-              marginTop: 0,
-              maxValues: 6,
-              fields: {
-                fullName: {
-                  component: 'input',
-                  label: newPrimarySchoolMessages.relatives.fullName,
-                  width: 'half',
-                  type: 'text',
-                  dataTestId: 'relative-full-name',
-                },
-                phoneNumber: {
-                  component: 'input',
-                  label: newPrimarySchoolMessages.relatives.phoneNumber,
-                  width: 'half',
-                  type: 'tel',
-                  format: '###-####',
-                  placeholder: '000-0000',
-                  dataTestId: 'relative-phone-number',
-                },
-                nationalId: {
-                  component: 'input',
-                  label: newPrimarySchoolMessages.relatives.nationalId,
-                  width: 'half',
-                  type: 'text',
-                  format: '######-####',
-                  placeholder: '000000-0000',
-                  dataTestId: 'relative-national-id',
-                },
-                relation: {
-                  component: 'select',
-                  label: newPrimarySchoolMessages.relatives.relation,
-                  width: 'half',
-                  placeholder:
-                    newPrimarySchoolMessages.relatives.relationPlaceholder,
-                  // TODO: Nota gögn fá Júní
-                  options: getRelationOptions(),
-                  dataTestId: 'relative-relation',
-                },
-                canPickUpChild: {
-                  component: 'checkbox',
-                  width: 'full',
-                  large: true,
-                  options: [
-                    {
-                      label: newPrimarySchoolMessages.relatives.canPickUpChild,
-                      value: YES,
+              title: newPrimarySchoolMessages.childrenNParents.relativesTitle,
+              description:
+                newPrimarySchoolMessages.childrenNParents.relativesDescription,
+              children: [
+                buildAlertMessageField({
+                  id: 'relatives.alertMessage',
+                  title: newPrimarySchoolMessages.shared.alertTitle,
+                  message:
+                    newPrimarySchoolMessages.childrenNParents
+                      .relativesAlertMessage,
+                  doesNotRequireAnswer: true,
+                  alertType: 'info',
+                }),
+                buildTableRepeaterField({
+                  id: 'relatives',
+                  title: '',
+                  formTitle:
+                    newPrimarySchoolMessages.childrenNParents
+                      .relativesRegistrationTitle,
+                  addItemButtonText:
+                    newPrimarySchoolMessages.childrenNParents
+                      .relativesAddRelative,
+                  saveItemButtonText:
+                    newPrimarySchoolMessages.childrenNParents
+                      .relativesRegisterRelative,
+                  removeButtonTooltipText:
+                    newPrimarySchoolMessages.childrenNParents
+                      .relativesDeleteRelative,
+                  marginTop: 0,
+                  maxValues: 6,
+                  fields: {
+                    fullName: {
+                      component: 'input',
+                      label: newPrimarySchoolMessages.childrenNParents.fullName,
+                      width: 'half',
+                      type: 'text',
+                      dataTestId: 'relative-full-name',
                     },
-                  ],
-                  dataTestId: 'relative-can-pick-up-child',
-                },
-              },
-              table: {
-                format: {
-                  phoneNumber: (value) =>
-                    formatPhoneNumber(removeCountryCode(value ?? '')),
-                  nationalId: (value) => formatKennitala(value),
-                  relation: (value) =>
-                    getRelationOptionLabel(value as RelationOptions),
-                  canPickUpChild: (value) =>
-                    value?.includes(YES)
-                      ? newPrimarySchoolMessages.shared.yes
-                      : newPrimarySchoolMessages.shared.no,
-                },
-                header: [
-                  newPrimarySchoolMessages.relatives.fullName,
-                  newPrimarySchoolMessages.relatives.phoneNumber,
-                  newPrimarySchoolMessages.relatives.nationalId,
-                  newPrimarySchoolMessages.relatives.relation,
-                  newPrimarySchoolMessages.relatives.canPickUpChildTableHeader,
-                ],
-              },
+                    phoneNumber: {
+                      component: 'input',
+                      label:
+                        newPrimarySchoolMessages.childrenNParents.phoneNumber,
+                      width: 'half',
+                      type: 'tel',
+                      format: '###-####',
+                      placeholder: '000-0000',
+                      dataTestId: 'relative-phone-number',
+                    },
+                    nationalId: {
+                      component: 'input',
+                      label:
+                        newPrimarySchoolMessages.childrenNParents.nationalId,
+                      width: 'half',
+                      type: 'text',
+                      format: '######-####',
+                      placeholder: '000000-0000',
+                      dataTestId: 'relative-national-id',
+                    },
+                    relation: {
+                      component: 'select',
+                      label:
+                        newPrimarySchoolMessages.childrenNParents
+                          .relativesRelation,
+                      width: 'half',
+                      placeholder:
+                        newPrimarySchoolMessages.childrenNParents
+                          .relativesRelationPlaceholder,
+                      // TODO: Nota gögn fá Júní
+                      options: getRelationOptions(),
+                      dataTestId: 'relative-relation',
+                    },
+                    canPickUpChild: {
+                      component: 'checkbox',
+                      width: 'full',
+                      large: true,
+                      options: [
+                        {
+                          label:
+                            newPrimarySchoolMessages.childrenNParents
+                              .relativesCanPickUpChild,
+                          value: YES,
+                        },
+                      ],
+                      dataTestId: 'relative-can-pick-up-child',
+                    },
+                  },
+                  table: {
+                    format: {
+                      phoneNumber: (value) =>
+                        formatPhoneNumber(removeCountryCode(value ?? '')),
+                      nationalId: (value) => formatKennitala(value),
+                      relation: (value) =>
+                        getRelationOptionLabel(value as RelationOptions),
+                      canPickUpChild: (value) =>
+                        value?.includes(YES)
+                          ? newPrimarySchoolMessages.shared.yes
+                          : newPrimarySchoolMessages.shared.no,
+                    },
+                    header: [
+                      newPrimarySchoolMessages.childrenNParents.fullName,
+                      newPrimarySchoolMessages.childrenNParents.phoneNumber,
+                      newPrimarySchoolMessages.childrenNParents.nationalId,
+                      newPrimarySchoolMessages.childrenNParents
+                        .relativesRelation,
+                      newPrimarySchoolMessages.childrenNParents
+                        .relativesCanPickUpChildTableHeader,
+                    ],
+                  },
+                }),
+              ],
             }),
           ],
         }),
       ],
     }),
     buildSection({
-      id: 'mealSection',
-      title: newPrimarySchoolMessages.meal.sectionTitle,
-      children: [],
+      id: 'primarySchoolSection',
+      title: newPrimarySchoolMessages.primarySchool.sectionTitle,
+      children: [
+        buildSubSection({
+          id: 'startingSchoolSubSection',
+          title:
+            newPrimarySchoolMessages.primarySchool
+              .startingSchoolSubSectionTitle,
+          children: [],
+        }),
+        buildSubSection({
+          id: 'currentSchoolSubSection',
+          title:
+            newPrimarySchoolMessages.primarySchool.currentSchoolSubSectionTitle,
+          children: [],
+        }),
+        buildSubSection({
+          id: 'reasonForTransferSubSection',
+          title:
+            newPrimarySchoolMessages.primarySchool
+              .reasonForTransferSubSectionTitle,
+          children: [],
+        }),
+        buildSubSection({
+          id: 'newSchoolSubSection',
+          title:
+            newPrimarySchoolMessages.primarySchool.newSchoolSubSectionTitle,
+          children: [],
+        }),
+        buildSubSection({
+          id: 'siblingsSubSection',
+          title: newPrimarySchoolMessages.primarySchool.siblingsSubSectionTitle,
+          children: [],
+        }),
+      ],
+    }),
+    buildSection({
+      id: 'differentNeedsSection',
+      title: newPrimarySchoolMessages.differentNeeds.sectionTitle,
+      children: [
+        buildSubSection({
+          id: 'languageSubSection',
+          title:
+            newPrimarySchoolMessages.differentNeeds.languageSubSectionTitle,
+          children: [],
+        }),
+        buildSubSection({
+          id: 'foodAllergiesAndIntolerancesSubSection',
+          title:
+            newPrimarySchoolMessages.differentNeeds
+              .foodAllergiesAndIntolerancesSubSectionTitle,
+          children: [],
+        }),
+        buildSubSection({
+          id: 'schoolMealsSubSection',
+          title:
+            newPrimarySchoolMessages.differentNeeds.schoolMealsSubSectionTitle,
+          children: [],
+        }),
+        buildSubSection({
+          id: 'supportSubSection',
+          title: newPrimarySchoolMessages.differentNeeds.supportSubSectionTitle,
+          children: [],
+        }),
+        buildSubSection({
+          id: 'requestAConversationSubSection',
+          title:
+            newPrimarySchoolMessages.differentNeeds
+              .requestAConversationSubSectionTitle,
+          children: [],
+        }),
+        buildSubSection({
+          id: 'schoolBusSubSection',
+          title:
+            newPrimarySchoolMessages.differentNeeds.schoolBusSubSectionTitle,
+          children: [],
+        }),
+        buildSubSection({
+          id: 'useOfFootageSubSection',
+          title:
+            newPrimarySchoolMessages.differentNeeds.useOfFootageSubSectionTitle,
+          children: [],
+        }),
+      ],
     }),
     buildSection({
       id: 'confirmationSection',
