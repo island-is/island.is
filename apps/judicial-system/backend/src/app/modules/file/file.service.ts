@@ -464,7 +464,6 @@ export class FileService {
     })
   }
 
-  // TODO archive confirmed indictment files
   async archive(theCase: Case, file: CaseFile): Promise<boolean> {
     if (!file.key) {
       return true
