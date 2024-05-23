@@ -5,7 +5,10 @@ import { Sequelize } from 'sequelize-typescript'
 
 import { TestApp, truncate } from '@island.is/testing/nest'
 import { FixtureFactory } from '@island.is/services/auth/testing'
-import { DelegationRecordDTO } from '@island.is/auth-api-lib'
+import {
+  DelegationRecordDTO,
+  DelegationProviderDto,
+} from '@island.is/auth-api-lib'
 
 import {
   user,
@@ -19,6 +22,31 @@ import {
 } from './delegations.controller.test-cases'
 
 const path = '/v1/delegations'
+
+const delegationProviderTypesData = [
+  {
+    id: 'custom',
+    delegationTypes: [
+      {
+        id: 'custom:1',
+        name: 'custom:1',
+      },
+    ],
+  },
+  {
+    id: 'procuration',
+    delegationTypes: [
+      {
+        id: 'procuration:1',
+        name: 'procuration:1',
+      },
+      {
+        id: 'procuration:2',
+        name: 'procuration:2',
+      },
+    ],
+  },
+]
 
 describe('DelegationsController', () => {
   let app: TestApp
@@ -184,6 +212,49 @@ describe('DelegationsController', () => {
 
       // Assert
       expect(response.status).toBe(403)
+    })
+  })
+
+  describe('GET(getDelegationProviders)', () => {
+    beforeAll(async () => {
+      app = await setupWithAuth({
+        user,
+      })
+
+      server = request(app.getHttpServer())
+      factory = new FixtureFactory(app)
+      sequelize = await app.resolve(getConnectionToken() as Type<Sequelize>)
+
+      for (const { id: dpId, delegationTypes } of delegationProviderTypesData) {
+        for (const _ of delegationTypes) {
+          await factory.createDelegationType({ providerId: dpId })
+        }
+      }
+    })
+
+    afterAll(async () => {
+      await app.cleanUp()
+    })
+
+    it('should return all delegation providers and their delegation types', async () => {
+      // Act
+      const response = await server.get(`${path}/providers`)
+
+      // Assert
+      expect(response.status).toBe(200)
+      expect(response.body.totalCount).toBe(delegationProviderTypesData.length)
+      expect(response.body.data.length).toBe(delegationProviderTypesData.length)
+
+      response.body.data.forEach((dp: DelegationProviderDto) => {
+        const expectedDp = delegationProviderTypesData.find(
+          ({ id }) => id === dp.id,
+        )
+
+        expect(expectedDp).toBeDefined()
+        expect(dp.delegationTypes.length).toBe(
+          expectedDp?.delegationTypes.length,
+        )
+      })
     })
   })
 })
