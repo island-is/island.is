@@ -384,7 +384,7 @@ const ParentalLeaveTemplate: ApplicationTemplate<
               {
                 onEvent: DefaultEvents.APPROVE,
                 logMessage:
-                  statesMessages.employerApprovalApproveHistoryLogMessage,
+                  statesMessages.employerApprovalApprovePeriodHistoryLogMessage,
               },
               {
                 onEvent: DefaultEvents.REJECT,
@@ -392,10 +392,10 @@ const ParentalLeaveTemplate: ApplicationTemplate<
                   parentalLeaveFormMessages.draftFlow
                     .draftNotApprovedEmployerDesc,
               },
-              {
-                onEvent: DefaultEvents.EDIT,
-                logMessage: statesMessages.editHistoryLogMessage,
-              },
+              // {
+              //   onEvent: DefaultEvents.EDIT,
+              //   logMessage: statesMessages.editHistoryLogMessage,
+              // },
             ],
           },
           lifecycle: birthDayLifeCycle,
@@ -533,10 +533,10 @@ const ParentalLeaveTemplate: ApplicationTemplate<
                 logMessage:
                   parentalLeaveFormMessages.draftFlow.draftNotApprovedVMLSTDesc,
               },
-              {
-                onEvent: DefaultEvents.EDIT,
-                logMessage: statesMessages.editHistoryLogMessage,
-              },
+              // {
+              //   onEvent: DefaultEvents.EDIT,
+              //   logMessage: statesMessages.editHistoryLogMessage,
+              // },
             ],
           },
           lifecycle: birthDayLifeCycle,
@@ -824,10 +824,10 @@ const ParentalLeaveTemplate: ApplicationTemplate<
                 onEvent: PLEvents.CLOSED,
                 logMessage: statesMessages.approvedClosedHistoryLogMessage,
               },
-              {
-                onEvent: DefaultEvents.EDIT,
-                logMessage: statesMessages.editHistoryLogMessage,
-              },
+              // {
+              //   onEvent: DefaultEvents.EDIT,
+              //   logMessage: statesMessages.editHistoryLogMessage,
+              // },
             ],
           },
           lifecycle: birthDayLifeCycle,
@@ -922,6 +922,10 @@ const ParentalLeaveTemplate: ApplicationTemplate<
             },
             historyLogs: [
               {
+                onEvent: DefaultEvents.SUBMIT,
+                logMessage: statesMessages.editOrAddPeriodsSubmitHistoryLogMessage,
+              },
+              {
                 onEvent: DefaultEvents.EDIT,
                 logMessage: statesMessages.editOrAddPeriodsSubmitHistoryLogMessage,
               },
@@ -983,6 +987,12 @@ const ParentalLeaveTemplate: ApplicationTemplate<
           status: 'inprogress',
           actionCard: {
             pendingAction: employerApprovalStatePendingAction,
+            historyLogs: [
+              {
+                onEvent: DefaultEvents.SUBMIT,
+                logMessage: statesMessages.editOrAddPeriodsSubmitHistoryLogMessage,
+              },
+            ],
           },
           lifecycle: birthDayLifeCycle,
           onEntry: defineTemplateApi({
@@ -1032,11 +1042,12 @@ const ParentalLeaveTemplate: ApplicationTemplate<
                 logMessage:
                   parentalLeaveFormMessages.draftFlow
                     .draftNotApprovedEmployerDesc,
-              },
-              {
-                onEvent: DefaultEvents.EDIT,
-                logMessage: 'Búp', //statesMessages.editHistoryLogMessage,
-              },
+              }, 
+              // Is not doing the right thing
+              // {
+              //   onEvent: DefaultEvents.EDIT,
+              //   logMessage: statesMessages.editHistoryLogMessage,
+              // },
             ],
           },
           lifecycle: birthDayLifeCycle,
@@ -1119,12 +1130,8 @@ const ParentalLeaveTemplate: ApplicationTemplate<
             },
             historyLogs: [
               {
-                onEvent: DefaultEvents.SUBMIT, //PLEvents.MODIFY,
-                logMessage: 'Beep', //statesMessages.editHistoryLogMessage,
-              },
-              {
-                onEvent: DefaultEvents.ABORT,
-                logMessage: 'umsækjandi eyddi breytingunum',
+                onEvent: DefaultEvents.SUBMIT,
+                logMessage: statesMessages.employerActionDeleteChanges,
               },
             ],
           },
@@ -1149,7 +1156,32 @@ const ParentalLeaveTemplate: ApplicationTemplate<
           MODIFY: {
             target: States.EDIT_OR_ADD_EMPLOYERS_AND_PERIODS,
           },
-          [DefaultEvents.ABORT]: { target: States.APPROVED },
+          [DefaultEvents.ABORT]: [
+            {
+              cond: (application) =>
+                goToState(
+                  application,
+                  States.VINNUMALASTOFNUN_APPROVAL,
+                ),
+              target: States.VINNUMALASTOFNUN_APPROVAL,
+            },
+            {
+              cond: (application) =>
+                goToState(
+                  application,
+                  States.VINNUMALASTOFNUN_APPROVE_EDITS,
+                ),
+              target: States.VINNUMALASTOFNUN_APPROVE_EDITS,
+            },
+            {
+              cond: (application) =>
+                goToState(
+                  application,
+                  States.APPROVED,
+                ),
+              target: States.APPROVED,
+            },
+          ],
         },
       },
       [States.VINNUMALASTOFNUN_APPROVE_EDITS]: {
@@ -1194,10 +1226,10 @@ const ParentalLeaveTemplate: ApplicationTemplate<
                 logMessage:
                   statesMessages.vinnumalastofnunApproveEditsRejectHistoryLogMessage,
               },
-              {
-                onEvent: DefaultEvents.EDIT,
-                logMessage: 'BREYTA!', //statesMessages.editHistoryLogMessage,
-              },
+              // {
+              //   onEvent: DefaultEvents.EDIT,
+              //   logMessage: statesMessages.editHistoryLogMessage,
+              // },
               // {
               //   onEvent: DefaultEvents.SUBMIT,
               //   logMessage: statesMessages.vinnumalastofnunApprovalSubmitHistoryLogMessage,

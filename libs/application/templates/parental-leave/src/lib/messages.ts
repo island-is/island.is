@@ -2787,6 +2787,11 @@ export const statesMessages = defineMessages({
     defaultMessage: 'Vinnuveitandi krefst aðgerða vegna umsóknar þinnar.',
     description: 'Description of the state - employerAction',
   },
+  employerActionDeleteChanges: {
+    id: 'pl.application:employerAction.delete.changes',
+    defaultMessage: 'Umsækjandi eyddi ósamþykktu tímabili.',
+    description: 'Applicant deleted unapproved period.',
+  },
 
   vinnumalastofnunApprovalTitle: {
     id: 'pl.application:vinnumalastofnunApproval.title',
@@ -2979,6 +2984,12 @@ export const statesMessages = defineMessages({
 
   employerApprovalApproveHistoryLogMessage: {
     id: 'pl.application:employerApproval.approve.historyLogMessage',
+    defaultMessage: 'Vinnuveitandi hefur samþykkt dagsetningar',
+    description: 'The employer has approved the dates',
+  },
+
+  employerApprovalApprovePeriodHistoryLogMessage: {
+    id: 'pl.application:employerApproval.approve.period.historyLogMessage',
     defaultMessage: 'Vinnuveitandi hefur samþykkt dagsetningar',
     description: 'The employer has approved the dates',
   },
