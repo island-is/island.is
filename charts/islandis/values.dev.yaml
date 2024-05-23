@@ -453,7 +453,7 @@ api:
     min: 2
   resources:
     limits:
-      cpu: '600m'
+      cpu: '1200m'
       memory: '2048Mi'
     requests:
       cpu: '250m'
