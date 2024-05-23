@@ -11,10 +11,8 @@ import { LOGGER_PROVIDER } from '@island.is/logging'
 
 import {
   CaseFileCategory,
-  CaseState,
   EventType,
   hasIndictmentCaseBeenSubmittedToCourt,
-  isCompletedCase,
   isTrafficViolationCase,
   type User as TUser,
 } from '@island.is/judicial-system/types'
@@ -28,7 +26,6 @@ import {
   getRulingPdfAsBuffer,
   IndictmentConfirmation,
 } from '../../formatters'
-import { createConfirmedIndictment } from '../../formatters/confirmedIndictmentPdf'
 import { AwsS3Service } from '../aws-s3'
 import { EventLogService } from '../event-log'
 import { UserService } from '../user'
@@ -240,13 +237,6 @@ export class PDFService {
     }
 
     return generatedPdf
-  }
-
-  async getConfirmedIndictmentPdf(
-    confirmation: IndictmentConfirmation,
-    indictmentPDF: Buffer,
-  ): Promise<Buffer> {
-    return createConfirmedIndictment(confirmation, indictmentPDF)
   }
 
   async getCaseFilesRecordPdf(

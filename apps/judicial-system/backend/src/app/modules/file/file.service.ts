@@ -20,14 +20,16 @@ import type { User } from '@island.is/judicial-system/types'
 import {
   CaseFileCategory,
   CaseFileState,
-  CaseState,
-  completedIndictmentCaseStates,
+  EventType,
+  hasIndictmentCaseBeenSubmittedToCourt,
+  isIndictmentCase,
 } from '@island.is/judicial-system/types'
 
-import { formatConfirmedIndictmentKey } from '../../formatters/formatters'
+import { createConfirmedIndictment } from '../../formatters'
 import { AwsS3Service } from '../aws-s3'
 import { Case } from '../case'
 import { CourtDocumentFolder, CourtService } from '../court'
+import { UserService } from '../user'
 import { CreateFileDto } from './dto/createFile.dto'
 import { CreatePresignedPostDto } from './dto/createPresignedPost.dto'
 import { UpdateFileDto } from './dto/updateFile.dto'
@@ -51,6 +53,7 @@ export class FileService {
   constructor(
     @InjectConnection() private readonly sequelize: Sequelize,
     @InjectModel(CaseFile) private readonly fileModel: typeof CaseFile,
+    private readonly userService: UserService,
     private readonly courtService: CourtService,
     private readonly awsS3Service: AwsS3Service,
     private readonly messageService: MessageService,
@@ -261,24 +264,10 @@ export class FileService {
       throw new NotFoundException(`File ${file.id} does not exist in AWS S3`)
     }
 
-    let key = file.key
-
-    if (
-      file.category === CaseFileCategory.INDICTMENT &&
-      [
-        CaseState.SUBMITTED,
-        CaseState.RECEIVED,
-        CaseState.MAIN_HEARING,
-        ...completedIndictmentCaseStates,
-      ].includes(theCase.state)
-    ) {
-      key = formatConfirmedIndictmentKey(key)
-    }
-
     const exists = await this.awsS3Service.objectExists(
       theCase.type,
       theCase.state,
-      key,
+      file.key,
     )
 
     if (!exists) {
@@ -288,11 +277,27 @@ export class FileService {
       throw new NotFoundException(`File ${file.id} does not exist in AWS S3`)
     }
 
+    if (
+      isIndictmentCase(theCase.type) &&
+      file.category === CaseFileCategory.INDICTMENT &&
+      hasIndictmentCaseBeenSubmittedToCourt(theCase.state)
+    ) {
+      return this.awsS3Service
+        .getConfirmedSignedUrl(
+          theCase.type,
+          theCase.state,
+          file.key,
+          (content: Buffer) => this.confirmIndictmentCaseFile(theCase, content),
+        )
+        .then((url) => ({ url }))
+    }
+
     return this.awsS3Service
-      .getSignedUrl(theCase.type, theCase.state, key)
+      .getSignedUrl(theCase.type, theCase.state, file.key)
       .then((url) => ({ url }))
   }
 
+  // TODO: Delete confirmed indictment files
   async deleteCaseFile(
     theCase: Case,
     file: CaseFile,
@@ -308,6 +313,7 @@ export class FileService {
     return { success }
   }
 
+  // TODO: Confirm indictment files
   async uploadCaseFileToCourt(
     theCase: Case,
     file: CaseFile,
@@ -411,12 +417,12 @@ export class FileService {
     })
   }
 
+  // TODO archive confirmed indictment files
   async archive(theCase: Case, file: CaseFile): Promise<boolean> {
     if (!file.key) {
       return true
     }
 
-    // TODO archive confirmed indictment files
     return this.awsS3Service
       .archiveObject(theCase.type, theCase.state, file.key)
       .then(() => true)
@@ -485,6 +491,41 @@ export class FileService {
         )
 
         return { delivered: false }
+      })
+  }
+
+  async confirmIndictmentCaseFile(
+    theCase: Case,
+    pdf: Buffer,
+  ): Promise<string | undefined> {
+    const confirmationEvent = theCase.eventLogs?.find(
+      (event) => event.eventType === EventType.INDICTMENT_CONFIRMED,
+    )
+
+    if (!confirmationEvent || !confirmationEvent.nationalId) {
+      return undefined
+    }
+
+    return this.userService
+      .findByNationalId(confirmationEvent.nationalId)
+      .then((user) =>
+        createConfirmedIndictment(
+          {
+            actor: user.name,
+            institution: user.institution?.name ?? '',
+            date: confirmationEvent.created,
+          },
+          pdf,
+        ),
+      )
+      .then((confirmedPdf) => confirmedPdf.toString('binary'))
+      .catch((reason) => {
+        this.logger.error(
+          `Failed to create confirmed indictment for case ${theCase.id}`,
+          { reason },
+        )
+
+        return undefined
       })
   }
 }

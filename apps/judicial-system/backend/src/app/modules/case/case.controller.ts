@@ -96,7 +96,6 @@ import {
 } from './guards/rolesRules'
 import { CaseInterceptor } from './interceptors/case.interceptor'
 import { CaseListInterceptor } from './interceptors/caseList.interceptor'
-import { TransitionInterceptor } from './interceptors/transition.interceptor'
 import { Case } from './models/case.model'
 import { SignatureConfirmationResponse } from './models/signatureConfirmation.response'
 import { transitionCase } from './state/case.state'
@@ -260,7 +259,6 @@ export class CaseController {
   }
 
   @UseGuards(JwtAuthGuard, CaseExistsGuard, RolesGuard, CaseWriteGuard)
-  @UseInterceptors(TransitionInterceptor)
   @RolesRules(
     prosecutorTransitionRule,
     prosecutorRepresentativeTransitionRule,

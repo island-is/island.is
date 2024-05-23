@@ -177,6 +177,40 @@ export class AwsS3Service {
       : this.getRequestSignedUrl(key, timeToLive)
   }
 
+  async getConfirmedSignedUrl(
+    caseType: CaseType,
+    caseState: CaseState,
+    key: string,
+    confirmContent: (content: Buffer) => Promise<string | undefined>,
+  ): Promise<string> {
+    if (!isIndictmentCase(caseType)) {
+      throw new Error('Only indictment case objects can be confirmed')
+    }
+
+    const confirmedKey = formatConfirmedKey(key)
+
+    if (await this.objectExistsInS3(confirmedKey)) {
+      return this.getSignedUrl(caseType, caseState, confirmedKey)
+    }
+
+    const confirmedContent = await this.getObject(
+      caseType,
+      caseState,
+      key,
+    ).then((content) => confirmContent(content))
+
+    if (!confirmedContent) {
+      return this.getSignedUrl(caseType, caseState, key)
+    }
+
+    return this.putConfirmedObject(
+      caseType,
+      caseState,
+      key,
+      confirmedContent,
+    ).then(() => this.getSignedUrl(caseType, caseState, confirmedKey))
+  }
+
   private async getObjectFromS3(key: string): Promise<Buffer> {
     return this.s3
       .getObject({
@@ -331,7 +365,11 @@ export class AwsS3Service {
       .then(() => newKey)
   }
 
-  async archiveObject(caseType: CaseType, caseState: CaseState, key: string) {
+  async archiveObject(
+    caseType: CaseType,
+    caseState: CaseState,
+    key: string,
+  ): Promise<string> {
     if (!isIndictmentCase(caseType)) {
       throw new Error('Only indictment case objects can be archived')
     }
