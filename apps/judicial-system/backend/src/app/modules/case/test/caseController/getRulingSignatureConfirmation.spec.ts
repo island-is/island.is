@@ -65,8 +65,9 @@ describe('CaseController - Get ruling signature confirmation', () => {
 
     const mockToday = nowFactory as jest.Mock
     mockToday.mockReturnValueOnce(date)
-    const mockPutRequestObject = mockAwsS3Service.putRequestObject as jest.Mock
-    mockPutRequestObject.mockResolvedValue(uuid())
+    const mockPutGeneratedObject =
+      mockAwsS3Service.putGeneratedObject as jest.Mock
+    mockPutGeneratedObject.mockResolvedValue(uuid())
     const mockUpdate = mockCaseModel.update as jest.Mock
     mockUpdate.mockResolvedValue([1])
     const mockPostMessageToQueue =
@@ -130,7 +131,7 @@ describe('CaseController - Get ruling signature confirmation', () => {
         { rulingSignatureDate: date },
         { where: { id: caseId }, transaction },
       )
-      expect(mockAwsS3Service.putRequestObject).toHaveBeenCalled()
+      expect(mockAwsS3Service.putGeneratedObject).toHaveBeenCalled()
       expect(mockMessageService.sendMessagesToQueue).toHaveBeenCalledWith([
         { type: MessageType.DELIVERY_TO_COURT_SIGNED_RULING, user, caseId },
         {
@@ -166,7 +167,7 @@ describe('CaseController - Get ruling signature confirmation', () => {
         { rulingSignatureDate: date },
         { where: { id: caseId }, transaction },
       )
-      expect(mockAwsS3Service.putRequestObject).toHaveBeenCalled()
+      expect(mockAwsS3Service.putGeneratedObject).toHaveBeenCalled()
       expect(mockMessageService.sendMessagesToQueue).toHaveBeenCalledWith([
         { type: MessageType.DELIVERY_TO_COURT_SIGNED_RULING, user, caseId },
         {
@@ -263,9 +264,9 @@ describe('CaseController - Get ruling signature confirmation', () => {
     let then: Then
 
     beforeEach(async () => {
-      const mockPutRequestObject =
-        mockAwsS3Service.putRequestObject as jest.Mock
-      mockPutRequestObject.mockRejectedValueOnce(new Error('Some error'))
+      const mockPutGeneratedObject =
+        mockAwsS3Service.putGeneratedObject as jest.Mock
+      mockPutGeneratedObject.mockRejectedValueOnce(new Error('Some error'))
 
       then = await givenWhenThen(caseId, user, theCase, documentToken)
     })

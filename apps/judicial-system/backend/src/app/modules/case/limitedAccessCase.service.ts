@@ -425,7 +425,7 @@ export class LimitedAccessCaseService {
     // TODO: speed this up by fetching all files in parallel
     for (const file of caseFilesByCategory) {
       await this.awsS3Service
-        .getObject(file.key)
+        .getObject(theCase.type, theCase.state, file.key)
         .then((content) => filesToZip.push({ data: content, name: file.name }))
         .catch((reason) =>
           // Tolerate failure, but log what happened

@@ -391,7 +391,7 @@ export class CaseService {
     pdf: string,
   ): Promise<boolean> {
     return this.awsS3Service
-      .putRequestObject(`${theCase.id}/ruling.pdf`, pdf)
+      .putGeneratedObject(theCase.type, `${theCase.id}/ruling.pdf`, pdf)
       .then(() => true)
       .catch((reason) => {
         this.logger.error(
@@ -408,7 +408,7 @@ export class CaseService {
     pdf: string,
   ): Promise<boolean> {
     return this.awsS3Service
-      .putRequestObject(`${theCase.id}/courtRecord.pdf`, pdf)
+      .putGeneratedObject(theCase.type, `${theCase.id}/courtRecord.pdf`, pdf)
       .then(() => true)
       .catch((reason) => {
         this.logger.error(
@@ -468,7 +468,11 @@ export class CaseService {
         ) {
           for (const caseFile of theCase.caseFiles) {
             if (caseFile.policeCaseNumber === oldPoliceCaseNumbers[i]) {
-              await this.fileService.deleteCaseFile(caseFile, transaction)
+              await this.fileService.deleteCaseFile(
+                theCase,
+                caseFile,
+                transaction,
+              )
             }
           }
 

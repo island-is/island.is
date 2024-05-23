@@ -3,7 +3,11 @@ import { uuid } from 'uuidv4'
 
 import { BadRequestException } from '@nestjs/common'
 
-import { CaseFileCategory, CaseState } from '@island.is/judicial-system/types'
+import {
+  CaseFileCategory,
+  CaseState,
+  CaseType,
+} from '@island.is/judicial-system/types'
 
 import { createTestingCaseModule } from '../createTestingCaseModule'
 
@@ -38,6 +42,7 @@ describe('LimitedAccessCaseController - Get case files record pdf', () => {
   ] as CaseFile[]
   const theCase = {
     id: caseId,
+    type: CaseType.INDICTMENT,
     state: CaseState.COMPLETED,
     policeCaseNumbers: [uuid(), policeCaseNumber, uuid()],
     caseFiles,
@@ -53,14 +58,10 @@ describe('LimitedAccessCaseController - Get case files record pdf', () => {
       await createTestingCaseModule()
 
     mockawsS3Service = awsS3Service
-    const mockGetGeneratedIndictmentCaseObject =
-      mockawsS3Service.getIndictmentObject as jest.Mock
-    mockGetGeneratedIndictmentCaseObject.mockRejectedValue(
-      new Error('Some error'),
-    )
-    const mockPutIndictmentObject =
-      mockawsS3Service.putIndictmentObject as jest.Mock
-    mockPutIndictmentObject.mockRejectedValue(new Error('Some error'))
+    const mockGetObject = mockawsS3Service.getObject as jest.Mock
+    mockGetObject.mockRejectedValue(new Error('Some error'))
+    const mockPutObject = mockawsS3Service.putObject as jest.Mock
+    mockPutObject.mockRejectedValue(new Error('Some error'))
 
     givenWhenThen = async (policeCaseNumber: string) => {
       const then = {} as Then
@@ -89,9 +90,10 @@ describe('LimitedAccessCaseController - Get case files record pdf', () => {
     })
 
     it('should generate pdf after failing to get it from AWS S3', () => {
-      expect(mockawsS3Service.getIndictmentObject).toHaveBeenCalledWith(
+      expect(mockawsS3Service.getObject).toHaveBeenCalledWith(
+        theCase.type,
+        theCase.state,
         `${caseId}/${policeCaseNumber}/caseFilesRecord.pdf`,
-        true,
       )
       expect(createCaseFilesRecord).toHaveBeenCalledWith(
         theCase,
@@ -99,10 +101,11 @@ describe('LimitedAccessCaseController - Get case files record pdf', () => {
         expect.any(Array),
         expect.any(Function),
       )
-      expect(mockawsS3Service.putIndictmentObject).toHaveBeenCalledWith(
+      expect(mockawsS3Service.putObject).toHaveBeenCalledWith(
+        theCase.type,
+        theCase.state,
         `${caseId}/${policeCaseNumber}/caseFilesRecord.pdf`,
         pdf.toString('binary'),
-        true,
       )
       expect(res.end).toHaveBeenCalledWith(pdf)
     })
@@ -110,9 +113,8 @@ describe('LimitedAccessCaseController - Get case files record pdf', () => {
 
   describe('pdf returned from AWS S3', () => {
     beforeEach(async () => {
-      const mockGetGeneratedIndictmentCaseObject =
-        mockawsS3Service.getIndictmentObject as jest.Mock
-      mockGetGeneratedIndictmentCaseObject.mockResolvedValueOnce(pdf)
+      const mockGetObject = mockawsS3Service.getObject as jest.Mock
+      mockGetObject.mockResolvedValueOnce(pdf)
 
       await givenWhenThen(policeCaseNumber)
     })

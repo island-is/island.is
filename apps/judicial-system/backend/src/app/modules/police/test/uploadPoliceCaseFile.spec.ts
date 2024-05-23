@@ -37,11 +37,8 @@ describe('PoliceController - Upload police case file', () => {
 
     mockAwsS3Service = awsS3Service
 
-    const mockPutRequestObject = mockAwsS3Service.putRequestObject as jest.Mock
-    mockPutRequestObject.mockRejectedValue(new Error('Some error'))
-    const mockPutIndictmentObject =
-      mockAwsS3Service.putIndictmentObject as jest.Mock
-    mockPutIndictmentObject.mockRejectedValue(new Error('Some error'))
+    const mockPutObject = mockAwsS3Service.putObject as jest.Mock
+    mockPutObject.mockRejectedValue(new Error('Some error'))
 
     givenWhenThen = async (
       caseId: string,
@@ -83,9 +80,8 @@ describe('PoliceController - Upload police case file', () => {
         ok: true,
         json: () => Base64.btoa('Test content'),
       })
-      const mockPutRequestObject =
-        mockAwsS3Service.putRequestObject as jest.Mock
-      mockPutRequestObject.mockResolvedValueOnce(key)
+      const mockPutObject = mockAwsS3Service.putObject as jest.Mock
+      mockPutObject.mockResolvedValueOnce(key)
 
       then = await givenWhenThen(
         caseId,
@@ -103,11 +99,16 @@ describe('PoliceController - Upload police case file', () => {
         ),
         expect.anything(),
       )
-      expect(mockAwsS3Service.putRequestObject).toHaveBeenCalledWith(
+      expect(mockAwsS3Service.putObject).toHaveBeenCalledWith(
+        CaseType.CUSTODY,
+        CaseState.DRAFT,
         expect.stringMatching(new RegExp(`^${caseId}/.{36}/test.txt$`)),
         'Test content',
       )
-      expect(then.result).toEqual({ key, size: 12 })
+      expect(then.result).toEqual({
+        key: expect.stringMatching(new RegExp(`^${caseId}/.{36}/test.txt$`)),
+        size: 12,
+      })
     })
   })
 
@@ -129,9 +130,8 @@ describe('PoliceController - Upload police case file', () => {
         ok: true,
         json: () => Base64.btoa('Test content'),
       })
-      const mockPutIndictmentObject =
-        mockAwsS3Service.putIndictmentObject as jest.Mock
-      mockPutIndictmentObject.mockResolvedValueOnce(key)
+      const mockPutObject = mockAwsS3Service.putObject as jest.Mock
+      mockPutObject.mockResolvedValueOnce(key)
 
       then = await givenWhenThen(
         caseId,
@@ -149,12 +149,16 @@ describe('PoliceController - Upload police case file', () => {
         ),
         expect.anything(),
       )
-      expect(mockAwsS3Service.putIndictmentObject).toHaveBeenCalledWith(
+      expect(mockAwsS3Service.putObject).toHaveBeenCalledWith(
+        CaseType.INDICTMENT,
+        CaseState.DRAFT,
         expect.stringMatching(new RegExp(`^${caseId}/.{36}/test.txt$`)),
         'Test content',
-        false,
       )
-      expect(then.result).toEqual({ key, size: 12 })
+      expect(then.result).toEqual({
+        key: expect.stringMatching(new RegExp(`^${caseId}/.{36}/test.txt$`)),
+        size: 12,
+      })
     })
   })
 

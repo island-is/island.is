@@ -22,7 +22,6 @@ import {
   CaseFileState,
   CaseState,
   completedIndictmentCaseStates,
-  isIndictmentCase,
 } from '@island.is/judicial-system/types'
 
 import { formatConfirmedIndictmentKey } from '../../formatters/formatters'
@@ -40,13 +39,10 @@ import { SignedUrl } from './models/signedUrl.model'
 import { UploadFileToCourtResponse } from './models/uploadFileToCourt.response'
 import { fileModuleConfig } from './file.config'
 
-// Files are stored in AWS S3 under a key which has the following formats:
-// uploads/<uuid>/<uuid>/<filename> for restriction and investigation cases
+// File keys have the following format:
+// <uuid>/<uuid>/<filename>
 // As uuid-s have length 36, the filename starts at position 82 in the key.
-const NAME_BEGINS_INDEX = 82
-// indictments/<uuid>/<uuid>/<filename> for indictment cases
-// As uuid-s have length 36, the filename starts at position 82 in the key.
-const INDICTMENT_NAME_BEGINS_INDEX = 86
+const NAME_BEGINS_INDEX = 74
 
 @Injectable()
 export class FileService {
@@ -91,22 +87,27 @@ export class FileService {
     return numberOfAffectedRows > 0
   }
 
-  private async tryDeleteFileFromS3(file: CaseFile): Promise<boolean> {
+  private async tryDeleteFileFromS3(
+    theCase: Case,
+    file: CaseFile,
+  ): Promise<boolean> {
     this.logger.debug(`Attempting to delete file ${file.key} from AWS S3`)
 
     if (!file.key) {
       return true
     }
 
-    return this.awsS3Service.deleteObject(file.key).catch((reason) => {
-      // Tolerate failure, but log what happened
-      this.logger.error(
-        `Could not delete file ${file.id} of case ${file.caseId} from AWS S3`,
-        { reason },
-      )
+    return this.awsS3Service
+      .deleteObject(theCase.type, theCase.state, file.key)
+      .catch((reason) => {
+        // Tolerate failure, but log what happened
+        this.logger.error(
+          `Could not delete file ${file.id} of case ${file.caseId} from AWS S3`,
+          { reason },
+        )
 
-      return false
-    })
+        return false
+      })
   }
 
   private getCourtDocumentFolder(file: CaseFile) {
@@ -154,7 +155,11 @@ export class FileService {
       this.logger.info('Previous upload failed', { reason })
     })
 
-    const content = await this.awsS3Service.getObject(file.key)
+    const content = await this.awsS3Service.getObject(
+      theCase.type,
+      theCase.state,
+      file.key,
+    )
 
     const courtDocumentFolder = this.getCourtDocumentFolder(file)
 
@@ -192,9 +197,9 @@ export class FileService {
     const { fileName, type } = createPresignedPost
 
     return this.awsS3Service.createPresignedPost(
-      `${isIndictmentCase(theCase.type) ? 'indictments' : 'uploads'}/${
-        theCase.id
-      }/${uuid()}/${fileName}`,
+      theCase.type,
+      theCase.state,
+      `${theCase.id}/${uuid()}/${fileName}`,
       type,
     )
   }
@@ -206,11 +211,7 @@ export class FileService {
   ): Promise<CaseFile> {
     const { key } = createFile
 
-    const regExp = new RegExp(
-      `^${isIndictmentCase(theCase.type) ? 'indictments' : 'uploads'}/${
-        theCase.id
-      }/.{36}/(.*)$`,
-    )
+    const regExp = new RegExp(`^${theCase.id}/.{36}/(.*)$`)
 
     if (!regExp.test(key)) {
       throw new BadRequestException(
@@ -218,11 +219,7 @@ export class FileService {
       )
     }
 
-    const fileName = createFile.key.slice(
-      isIndictmentCase(theCase.type)
-        ? INDICTMENT_NAME_BEGINS_INDEX
-        : NAME_BEGINS_INDEX,
-    )
+    const fileName = createFile.key.slice(NAME_BEGINS_INDEX)
 
     const file = await this.fileModel.create({
       ...createFile,
@@ -278,7 +275,11 @@ export class FileService {
       key = formatConfirmedIndictmentKey(key)
     }
 
-    const exists = await this.awsS3Service.objectExists(key)
+    const exists = await this.awsS3Service.objectExists(
+      theCase.type,
+      theCase.state,
+      key,
+    )
 
     if (!exists) {
       // Fire and forget, no need to wait for the result
@@ -287,10 +288,13 @@ export class FileService {
       throw new NotFoundException(`File ${file.id} does not exist in AWS S3`)
     }
 
-    return this.awsS3Service.getSignedUrl(key).then((url) => ({ url }))
+    return this.awsS3Service
+      .getSignedUrl(theCase.type, theCase.state, key)
+      .then((url) => ({ url }))
   }
 
   async deleteCaseFile(
+    theCase: Case,
     file: CaseFile,
     transaction?: Transaction,
   ): Promise<DeleteFileResponse> {
@@ -298,15 +302,15 @@ export class FileService {
 
     if (success) {
       // Fire and forget, no need to wait for the result
-      this.tryDeleteFileFromS3(file)
+      this.tryDeleteFileFromS3(theCase, file)
     }
 
     return { success }
   }
 
   async uploadCaseFileToCourt(
-    file: CaseFile,
     theCase: Case,
+    file: CaseFile,
     user: User,
   ): Promise<UploadFileToCourtResponse> {
     if (file.state === CaseFileState.STORED_IN_COURT) {
@@ -317,7 +321,11 @@ export class FileService {
       throw new NotFoundException(`File ${file.id} does not exist in AWS S3`)
     }
 
-    const exists = await this.awsS3Service.objectExists(file.key)
+    const exists = await this.awsS3Service.objectExists(
+      theCase.type,
+      theCase.state,
+      file.key,
+    )
 
     if (!exists) {
       // Fire and forget, no need to wait for the result
@@ -404,47 +412,14 @@ export class FileService {
   }
 
   async archive(theCase: Case, file: CaseFile): Promise<boolean> {
-    if (
-      !file.key ||
-      !file.key.startsWith('indictments/') ||
-      file.key.startsWith('indictments/completed/')
-    ) {
+    if (!file.key) {
       return true
     }
 
+    // TODO archive confirmed indictment files
     return this.awsS3Service
-      .copyObject(
-        file.key,
-        file.key.replace('indictments/', 'indictments/completed/'),
-      )
-      .then((newKey) =>
-        this.fileModel.update({ key: newKey }, { where: { id: file.id } }),
-      )
-      .then(async () => {
-        if (
-          file.category === CaseFileCategory.INDICTMENT &&
-          [
-            CaseState.SUBMITTED,
-            CaseState.RECEIVED,
-            CaseState.MAIN_HEARING,
-            ...completedIndictmentCaseStates,
-          ].includes(theCase.state)
-        ) {
-          return this.awsS3Service.copyObject(
-            formatConfirmedIndictmentKey(file.key),
-            formatConfirmedIndictmentKey(file.key).replace(
-              'indictments/',
-              'indictments/completed/',
-            ) ?? '',
-          )
-        }
-      })
-      .then(() => {
-        // Fire and forget, no need to wait for the result
-        this.tryDeleteFileFromS3(file)
-
-        return true
-      })
+      .archiveObject(theCase.type, theCase.state, file.key)
+      .then(() => true)
       .catch((reason) => {
         this.logger.error(
           `Failed to archive file ${file.id} of case ${file.caseId}`,
@@ -463,15 +438,19 @@ export class FileService {
   }
 
   async deliverCaseFileToCourtOfAppeals(
-    file: CaseFile,
     theCase: Case,
+    file: CaseFile,
     user: User,
   ): Promise<DeliverResponse> {
     if (!file.key) {
       throw new NotFoundException(`File ${file.id} does not exist in AWS S3`)
     }
 
-    const exists = await this.awsS3Service.objectExists(file.key)
+    const exists = await this.awsS3Service.objectExists(
+      theCase.type,
+      theCase.state,
+      file.key,
+    )
 
     if (!exists) {
       // Fire and forget, no need to wait for the result
@@ -481,7 +460,9 @@ export class FileService {
     }
 
     const url = await this.awsS3Service.getSignedUrl(
-      file.key ?? '',
+      theCase.type,
+      theCase.state,
+      file.key,
       this.config.robotS3TimeToLiveGet,
     )
 

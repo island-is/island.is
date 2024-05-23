@@ -3,7 +3,7 @@ import { uuid } from 'uuidv4'
 
 import { Logger } from '@island.is/logging'
 
-import { User } from '@island.is/judicial-system/types'
+import { CaseState, CaseType, User } from '@island.is/judicial-system/types'
 
 import { createTestingCaseModule } from '../createTestingCaseModule'
 
@@ -37,9 +37,9 @@ describe('LimitedAccessCaseController - Get court record pdf', () => {
     mockAwsS3Service = awsS3Service
     mockLogger = logger
 
-    const mockGetGeneratedRequestCaseObject =
-      mockAwsS3Service.getRequestObject as jest.Mock
-    mockGetGeneratedRequestCaseObject.mockRejectedValue(new Error('Some error'))
+    const mockGetGeneratedObject =
+      mockAwsS3Service.getGeneratedObject as jest.Mock
+    mockGetGeneratedObject.mockRejectedValue(new Error('Some error'))
     const getMock = getCourtRecordPdfAsBuffer as jest.Mock
     getMock.mockRejectedValue(new Error('Some error'))
 
@@ -69,23 +69,28 @@ describe('LimitedAccessCaseController - Get court record pdf', () => {
   describe('AWS S3 pdf returned', () => {
     const user = {} as User
     const caseId = uuid()
+    const caseType = CaseType.EXPULSION_FROM_HOME
+    const caseState = CaseState.DISMISSED
     const theCase = {
       id: caseId,
+      type: caseType,
+      state: caseState,
       courtRecordSignatureDate: nowFactory(),
     } as Case
     const res = { end: jest.fn() } as unknown as Response
     const pdf = {}
 
     beforeEach(async () => {
-      const mockGetGeneratedRequestCaseObject =
-        mockAwsS3Service.getRequestObject as jest.Mock
-      mockGetGeneratedRequestCaseObject.mockResolvedValueOnce(pdf)
+      const mockGetGeneratedObject =
+        mockAwsS3Service.getGeneratedObject as jest.Mock
+      mockGetGeneratedObject.mockResolvedValueOnce(pdf)
 
       await givenWhenThen(caseId, user, theCase, res)
     })
 
     it('should return pdf', () => {
-      expect(mockAwsS3Service.getRequestObject).toHaveBeenCalledWith(
+      expect(mockAwsS3Service.getGeneratedObject).toHaveBeenCalledWith(
+        caseType,
         `${caseId}/courtRecord.pdf`,
       )
       expect(res.end).toHaveBeenCalledWith(pdf)

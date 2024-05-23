@@ -2,7 +2,7 @@ import { uuid } from 'uuidv4'
 
 import { BadRequestException } from '@nestjs/common'
 
-import { CaseState, User } from '@island.is/judicial-system/types'
+import { CaseState, CaseType, User } from '@island.is/judicial-system/types'
 
 import { createTestingCaseModule } from '../createTestingCaseModule'
 
@@ -33,6 +33,7 @@ describe('InternalCaseController - Deliver case files record to court', () => {
   const courtCaseNumber = uuid()
   const theCase = {
     id: caseId,
+    type: CaseType.INDICTMENT,
     state: CaseState.COMPLETED,
     policeCaseNumbers: [policeCaseNumber],
     courtId,
@@ -49,14 +50,10 @@ describe('InternalCaseController - Deliver case files record to court', () => {
       await createTestingCaseModule()
 
     mockAwsS3Service = awsS3Service
-    const mockGetGeneratedIndictmentCaseObject =
-      mockAwsS3Service.getIndictmentObject as jest.Mock
-    mockGetGeneratedIndictmentCaseObject.mockRejectedValue(
-      new Error('Some error'),
-    )
-    const mockPutIndictmentObject =
-      mockAwsS3Service.putIndictmentObject as jest.Mock
-    mockPutIndictmentObject.mockRejectedValue(new Error('Some error'))
+    const mockGetObject = mockAwsS3Service.getObject as jest.Mock
+    mockGetObject.mockRejectedValue(new Error('Some error'))
+    const mockPutObject = mockAwsS3Service.putObject as jest.Mock
+    mockPutObject.mockRejectedValue(new Error('Some error'))
 
     const mockCreateCaseFilesRecord = createCaseFilesRecord as jest.Mock
     mockCreateCaseFilesRecord.mockRejectedValue(new Error('Some error'))
@@ -96,9 +93,10 @@ describe('InternalCaseController - Deliver case files record to court', () => {
     })
 
     it('should deliver the case files record', () => {
-      expect(mockAwsS3Service.getIndictmentObject).toHaveBeenCalledWith(
+      expect(mockAwsS3Service.getObject).toHaveBeenCalledWith(
+        theCase.type,
+        theCase.state,
         `${theCase.id}/${policeCaseNumber}/caseFilesRecord.pdf`,
-        true,
       )
       expect(createCaseFilesRecord).toHaveBeenCalledWith(
         theCase,
@@ -106,10 +104,11 @@ describe('InternalCaseController - Deliver case files record to court', () => {
         [],
         expect.any(Function),
       )
-      expect(mockAwsS3Service.putIndictmentObject).toHaveBeenCalledWith(
+      expect(mockAwsS3Service.putObject).toHaveBeenCalledWith(
+        theCase.type,
+        theCase.state,
         `${theCase.id}/${policeCaseNumber}/caseFilesRecord.pdf`,
         pdf.toString(),
-        true,
       )
       expect(mockCourtService.createDocument).toHaveBeenCalledWith(
         user,
@@ -128,9 +127,8 @@ describe('InternalCaseController - Deliver case files record to court', () => {
 
   describe('pdf returned from AWS S3', () => {
     beforeEach(async () => {
-      const mockGetGeneratedIndictmentCaseObject =
-        mockAwsS3Service.getIndictmentObject as jest.Mock
-      mockGetGeneratedIndictmentCaseObject.mockResolvedValueOnce(pdf)
+      const mockGetObject = mockAwsS3Service.getObject as jest.Mock
+      mockGetObject.mockResolvedValueOnce(pdf)
 
       await givenWhenThen(caseId, policeCaseNumber, theCase)
     })

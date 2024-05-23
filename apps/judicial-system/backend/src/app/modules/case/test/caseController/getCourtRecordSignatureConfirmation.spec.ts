@@ -38,8 +38,9 @@ describe('CaseController - Get court record signature confirmation', () => {
     mockAwsS3Service = awsS3Service
     mockCaseModel = caseModel
 
-    const mockPutRequestObject = mockAwsS3Service.putRequestObject as jest.Mock
-    mockPutRequestObject.mockRejectedValue(new Error('Some error'))
+    const mockPutGeneratedObject =
+      mockAwsS3Service.putGeneratedObject as jest.Mock
+    mockPutGeneratedObject.mockRejectedValue(new Error('Some error'))
     const mockUpdate = mockCaseModel.update as jest.Mock
     mockUpdate.mockRejectedValue(new Error('Some error'))
     const mockFindOne = mockCaseModel.findOne as jest.Mock
@@ -99,9 +100,9 @@ describe('CaseController - Get court record signature confirmation', () => {
       let then: Then
 
       beforeEach(async () => {
-        const mockPutRequestObject =
-          mockAwsS3Service.putRequestObject as jest.Mock
-        mockPutRequestObject.mockResolvedValueOnce(Promise.resolve())
+        const mockPutGeneratedObject =
+          mockAwsS3Service.putGeneratedObject as jest.Mock
+        mockPutGeneratedObject.mockResolvedValueOnce(Promise.resolve())
         const mockUpdate = mockCaseModel.update as jest.Mock
         mockUpdate.mockResolvedValueOnce([1, [theCase]])
         const mockFindOne = mockCaseModel.findOne as jest.Mock
@@ -143,9 +144,9 @@ describe('CaseController - Get court record signature confirmation', () => {
       let then: Then
 
       beforeEach(async () => {
-        const mockPutRequestObject =
-          mockAwsS3Service.putRequestObject as jest.Mock
-        mockPutRequestObject.mockResolvedValueOnce(Promise.resolve())
+        const mockPutGeneratedObject =
+          mockAwsS3Service.putGeneratedObject as jest.Mock
+        mockPutGeneratedObject.mockResolvedValueOnce(Promise.resolve())
 
         then = await givenWhenThen(caseId, user, theCase, documentToken)
       })

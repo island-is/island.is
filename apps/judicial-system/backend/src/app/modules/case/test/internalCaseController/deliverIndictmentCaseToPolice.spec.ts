@@ -101,8 +101,16 @@ describe('InternalCaseController - Deliver indictment case to police', () => {
     })
 
     it('should update the police case', async () => {
-      expect(mockAwsS3Service.getObject).toHaveBeenCalledWith(courtRecordKey)
-      expect(mockAwsS3Service.getObject).toHaveBeenCalledWith(rulingKey)
+      expect(mockAwsS3Service.getObject).toHaveBeenCalledWith(
+        caseType,
+        caseState,
+        courtRecordKey,
+      )
+      expect(mockAwsS3Service.getObject).toHaveBeenCalledWith(
+        caseType,
+        caseState,
+        rulingKey,
+      )
       expect(mockPoliceService.updatePoliceCase).toHaveBeenCalledWith(
         user,
         caseId,

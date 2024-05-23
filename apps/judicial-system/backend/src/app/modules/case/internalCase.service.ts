@@ -282,7 +282,10 @@ export class InternalCaseService {
   }
 
   private getSignedRulingPdf(theCase: Case) {
-    return this.awsS3Service.getRequestObject(`${theCase.id}/ruling.pdf`)
+    return this.awsS3Service.getGeneratedObject(
+      theCase.type,
+      `${theCase.id}/ruling.pdf`,
+    )
   }
 
   private async deliverSignedRulingPdfToCourt(
@@ -576,26 +579,12 @@ export class InternalCaseService {
     policeCaseNumber: string,
   ): Promise<DeliverResponse> {
     return this.awsS3Service
-      .copyObject(
-        `indictments/${theCase.id}/${policeCaseNumber}/caseFilesRecord.pdf`,
-        `indictments/completed/${theCase.id}/${policeCaseNumber}/caseFilesRecord.pdf`,
+      .archiveObject(
+        theCase.type,
+        theCase.state,
+        `${theCase.id}/${policeCaseNumber}/caseFilesRecord.pdf`,
       )
-      .then(() => {
-        // Fire and forget, no need to wait for the result
-        this.awsS3Service
-          .deleteObject(
-            `indictments/${theCase.id}/${policeCaseNumber}/caseFilesRecord.pdf`,
-          )
-          .catch((reason) => {
-            // Tolerate failure, but log what happened
-            this.logger.error(
-              `Could not delete case files record for case ${theCase.id} and police case ${policeCaseNumber} from AWS S3`,
-              { reason },
-            )
-          })
-
-        return { delivered: true }
-      })
+      .then(() => ({ delivered: true }))
       .catch((reason) => {
         this.logger.error(
           `Failed to archive case files record for case ${theCase.id} and police case ${policeCaseNumber}`,
@@ -857,7 +846,11 @@ export class InternalCaseService {
         )
         .map(async (caseFile) => {
           // TODO: Tolerate failure, but log error
-          const file = await this.awsS3Service.getObject(caseFile.key)
+          const file = await this.awsS3Service.getObject(
+            theCase.type,
+            theCase.state,
+            caseFile.key,
+          )
 
           return {
             type:
@@ -909,7 +902,11 @@ export class InternalCaseService {
             )
             .map(async (caseFile) => {
               // TODO: Tolerate failure, but log error
-              const file = await this.awsS3Service.getObject(caseFile.key)
+              const file = await this.awsS3Service.getObject(
+                theCase.type,
+                theCase.state,
+                caseFile.key,
+              )
 
               return {
                 type: PoliceDocumentType.RVAS,
@@ -1000,7 +997,11 @@ export class InternalCaseService {
         ?.filter((file) => file.category === CaseFileCategory.APPEAL_RULING)
         .map(async (caseFile) => {
           // TODO: Tolerate failure, but log error
-          const file = await this.awsS3Service.getObject(caseFile.key)
+          const file = await this.awsS3Service.getObject(
+            theCase.type,
+            theCase.state,
+            caseFile.key,
+          )
 
           return {
             type: PoliceDocumentType.RVUL,

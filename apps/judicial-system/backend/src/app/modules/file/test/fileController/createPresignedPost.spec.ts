@@ -1,6 +1,7 @@
 import { uuid } from 'uuidv4'
 
 import {
+  CaseState,
   indictmentCases,
   investigationCases,
   restrictionCases,
@@ -53,7 +54,7 @@ describe('FileController - Create presigned post', () => {
     'presigned post created for %s case',
     (type) => {
       const caseId = uuid()
-      const theCase = { id: caseId, type } as Case
+      const theCase = { id: caseId, type, state: CaseState.SUBMITTED } as Case
       const createPresignedPost: CreatePresignedPostDto = {
         fileName: 'test.txt',
         type: 'text/plain',
@@ -63,11 +64,11 @@ describe('FileController - Create presigned post', () => {
       beforeEach(async () => {
         const mockCreatePresignedPost =
           mockAwsS3Service.createPresignedPost as jest.Mock
-        mockCreatePresignedPost.mockImplementationOnce((key: string) =>
+        mockCreatePresignedPost.mockImplementationOnce((_1, _2, key: string) =>
           Promise.resolve({
             url: 'https://s3.eu-west-1.amazonaws.com/island-is-dev-upload-judicial-system',
             fields: {
-              key,
+              key: `uploads/${key}`,
               bucket: 'island-is-dev-upload-judicial-system',
               'X-Amz-Algorithm': 'Some Algorithm',
               'X-Amz-Credential': 'Some Credentials',
@@ -82,16 +83,14 @@ describe('FileController - Create presigned post', () => {
         then = await givenWhenThen(caseId, createPresignedPost, theCase)
       })
 
-      it('should request a presigned post from AWS S3', () => {
+      it('should return a presigned post', () => {
         expect(mockAwsS3Service.createPresignedPost).toHaveBeenCalledWith(
-          expect.stringMatching(
-            new RegExp(`^uploads/${caseId}/.{36}/test.txt$`),
-          ),
+          type,
+          CaseState.SUBMITTED,
+          expect.stringMatching(new RegExp(`^${caseId}/.{36}/test.txt$`)),
           'text/plain',
         )
-      })
 
-      it('should return a presigned post', () => {
         expect(then.result).toEqual({
           url: 'https://s3.eu-west-1.amazonaws.com/island-is-dev-upload-judicial-system',
           fields: {
@@ -117,7 +116,11 @@ describe('FileController - Create presigned post', () => {
     'presigned post created for %s case',
     (type) => {
       const caseId = uuid()
-      const theCase = { id: caseId, type } as Case
+      const theCase = {
+        id: caseId,
+        type,
+        state: CaseState.MAIN_HEARING,
+      } as Case
       const createPresignedPost: CreatePresignedPostDto = {
         fileName: 'test.txt',
         type: 'text/plain',
@@ -127,11 +130,11 @@ describe('FileController - Create presigned post', () => {
       beforeEach(async () => {
         const mockCreatePresignedPost =
           mockAwsS3Service.createPresignedPost as jest.Mock
-        mockCreatePresignedPost.mockImplementationOnce((key: string) =>
+        mockCreatePresignedPost.mockImplementationOnce((_1, _2, key: string) =>
           Promise.resolve({
             url: 'https://s3.eu-west-1.amazonaws.com/island-is-dev-upload-judicial-system',
             fields: {
-              key,
+              key: `indictments/${key}`,
               bucket: 'island-is-dev-upload-judicial-system',
               'X-Amz-Algorithm': 'Some Algorithm',
               'X-Amz-Credential': 'Some Credentials',
@@ -146,16 +149,14 @@ describe('FileController - Create presigned post', () => {
         then = await givenWhenThen(caseId, createPresignedPost, theCase)
       })
 
-      it('should request a presigned post from AWS S3', () => {
+      it('should return a presigned post', () => {
         expect(mockAwsS3Service.createPresignedPost).toHaveBeenCalledWith(
-          expect.stringMatching(
-            new RegExp(`^indictments/${caseId}/.{36}/test.txt$`),
-          ),
+          type,
+          CaseState.MAIN_HEARING,
+          expect.stringMatching(new RegExp(`^${caseId}/.{36}/test.txt$`)),
           'text/plain',
         )
-      })
 
-      it('should return a presigned post', () => {
         expect(then.result).toEqual({
           url: 'https://s3.eu-west-1.amazonaws.com/island-is-dev-upload-judicial-system',
           fields: {

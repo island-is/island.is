@@ -90,7 +90,7 @@ export class PDFService {
       )
       ?.map((caseFile) => async () => {
         const buffer = await this.awsS3Service
-          .getObject(caseFile.key)
+          .getObject(theCase.type, theCase.state, caseFile.key)
           .catch((reason) => {
             // Tolerate failure, but log error
             this.logger.error(
@@ -120,7 +120,8 @@ export class PDFService {
   async getCourtRecordPdf(theCase: Case, user: TUser): Promise<Buffer> {
     if (theCase.courtRecordSignatureDate) {
       try {
-        return await this.awsS3Service.getRequestObject(
+        return await this.awsS3Service.getGeneratedObject(
+          theCase.type,
           `${theCase.id}/courtRecord.pdf`,
         )
       } catch (error) {
@@ -145,7 +146,8 @@ export class PDFService {
   async getRulingPdf(theCase: Case): Promise<Buffer> {
     if (theCase.rulingSignatureDate) {
       try {
-        return await this.awsS3Service.getRequestObject(
+        return await this.awsS3Service.getGeneratedObject(
+          theCase.type,
           `${theCase.id}/ruling.pdf`,
         )
       } catch (error) {
@@ -168,19 +170,19 @@ export class PDFService {
   }
 
   private async tryGetPdfFromS3(
-    uri: string,
-    isCompletedCase: boolean,
+    theCase: Case,
+    key: string,
   ): Promise<Buffer | undefined> {
     return await this.awsS3Service
-      .getIndictmentObject(uri, isCompletedCase)
+      .getObject(theCase.type, theCase.state, key)
       .catch(() => undefined) // Ignore errors and return undefined
   }
 
-  private tryUploadPdfToS3(state: CaseState, uri: string, pdf: Buffer) {
+  private tryUploadPdfToS3(theCase: Case, key: string, pdf: Buffer) {
     this.awsS3Service
-      .putIndictmentObject(uri, pdf.toString('binary'), isCompletedCase(state))
+      .putObject(theCase.type, theCase.state, key, pdf.toString('binary'))
       .catch((reason) => {
-        this.logger.error(`Failed to upload pdf ${uri} to AWS S3`, { reason })
+        this.logger.error(`Failed to upload pdf ${key} to AWS S3`, { reason })
       })
   }
 
@@ -195,8 +197,8 @@ export class PDFService {
 
     if (hasIndictmentCaseBeenSubmittedToCourt(theCase.state)) {
       const existingPdf = await this.tryGetPdfFromS3(
+        theCase,
         `${theCase.id}/indictment.pdf`,
-        isCompletedCase(theCase.state),
       )
 
       if (existingPdf) {
@@ -231,7 +233,7 @@ export class PDFService {
     if (hasIndictmentCaseBeenSubmittedToCourt(theCase.state)) {
       // No need to wait for the upload to finish
       this.tryUploadPdfToS3(
-        theCase.state,
+        theCase,
         `${theCase.id}/indictment.pdf`,
         generatedPdf,
       )
@@ -253,8 +255,8 @@ export class PDFService {
   ): Promise<Buffer> {
     if (hasIndictmentCaseBeenSubmittedToCourt(theCase.state)) {
       const existingPdf = await this.tryGetPdfFromS3(
+        theCase,
         `${theCase.id}/${policeCaseNumber}/caseFilesRecord.pdf`,
-        isCompletedCase(theCase.state),
       )
 
       if (existingPdf) {
@@ -272,7 +274,7 @@ export class PDFService {
     if (hasIndictmentCaseBeenSubmittedToCourt(theCase.state)) {
       // No need to wait for the upload to finish
       this.tryUploadPdfToS3(
-        theCase.state,
+        theCase,
         `${theCase.id}/${policeCaseNumber}/caseFilesRecord.pdf`,
         generatedPdf,
       )

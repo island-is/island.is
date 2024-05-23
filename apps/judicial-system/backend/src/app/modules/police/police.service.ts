@@ -228,14 +228,9 @@ export class PoliceService {
         })
       })
 
-    const uri = `${caseId}/${uuid()}/${uploadPoliceCaseFile.name}`
-    const key = isIndictmentCase(caseType)
-      ? await this.awsS3Service.putIndictmentObject(
-          uri,
-          pdf,
-          isCompletedCase(caseState),
-        )
-      : await this.awsS3Service.putRequestObject(uri, pdf)
+    const key = `${caseId}/${uuid()}/${uploadPoliceCaseFile.name}`
+
+    await this.awsS3Service.putObject(caseType, caseState, key, pdf)
 
     return { key, size: pdf.length }
   }
