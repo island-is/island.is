@@ -154,6 +154,19 @@ const cache = new InMemoryCache({
     }
   },
   typePolicies: {
+    Query: {
+      fields: {
+        userNotifications: {
+          merge(existing, incoming) {
+            return {
+              ...existing,
+              ...incoming,
+              data: incoming.data || existing.data,
+            }
+          },
+        },
+      },
+    },
     Document: {
       fields: {
         archived: {

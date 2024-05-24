@@ -5,6 +5,8 @@ import {
   Skeleton,
   Problem,
 } from '@ui'
+import { Reference, useApolloClient } from '@apollo/client'
+
 import { dismissAllNotificationsAsync } from 'expo-notifications'
 import React, { useCallback, useEffect, useMemo, useState } from 'react'
 import { useIntl } from 'react-intl'
@@ -68,23 +70,60 @@ export const NotificationsScreen: NavigationFunctionComponent = ({
   useNavigationOptions(componentId)
   const intl = useIntl()
   const theme = useTheme()
+  const client = useApolloClient()
   const [loadingMore, setLoadingMore] = useState(false)
   const updateNavigationUnseenCount = useNotificationsStore(
     ({ updateNavigationUnseenCount }) => updateNavigationUnseenCount,
   )
 
-  const { data, loading, error, fetchMore, refetch } =
-    useGetUserNotificationsQuery({
-      variables: { input: { limit: DEFAULT_PAGE_SIZE } },
-    })
-
+  const { data, loading, error, fetchMore } = useGetUserNotificationsQuery({
+    variables: { input: { limit: DEFAULT_PAGE_SIZE } },
+  })
   const showError = error && !data
 
   const [markUserNotificationAsRead] = useMarkUserNotificationAsReadMutation()
   const [markAllUserNotificationsAsSeen] =
     useMarkAllNotificationsAsSeenMutation()
+
   const [markAllUserNotificationsAsRead] =
-    useMarkAllNotificationsAsReadMutation()
+    useMarkAllNotificationsAsReadMutation({
+      onCompleted: (data) => {
+        if (data.markAllNotificationsRead?.success) {
+          // If all notifications are marked as read, update cache to reflect that
+          client.cache.modify({
+            fields: {
+              userNotifications(existingNotifications = {}) {
+                const existingDataRefs = existingNotifications.data || []
+
+                const updatedData = existingDataRefs.forEach(
+                  (ref: Reference | NotificationItem) => {
+                    const id = client.cache.identify(ref)
+                    client.cache.modify({
+                      id,
+                      fields: {
+                        metadata(existingMetadata) {
+                          return {
+                            ...existingMetadata,
+                            read: false,
+                          }
+                        },
+                      },
+                    })
+                    return ref
+                  },
+                )
+
+                return {
+                  ...existingNotifications,
+                  data: updatedData,
+                  unreadCount: 0,
+                }
+              },
+            },
+          })
+        }
+      },
+    })
 
   // On mount, mark all notifications as seen and update all screens navigation badge to 0
   useEffect(() => {
@@ -104,14 +143,6 @@ export const NotificationsScreen: NavigationFunctionComponent = ({
 
     return data?.userNotifications?.data || []
   }, [data, loading])
-
-  const onMarkAllAsReadPress = async () => {
-    const { data } = await markAllUserNotificationsAsRead()
-    if (data?.markAllNotificationsRead?.success) {
-      // Fetch again to get correct status of read for all notifications
-      await refetch()
-    }
-  }
 
   const onNotificationPress = useCallback((notification: Notification) => {
     // Mark notification as read and seen
@@ -236,7 +267,7 @@ export const NotificationsScreen: NavigationFunctionComponent = ({
             }}
             icon={inboxRead}
             iconStyle={{ tintColor: theme.color.blue400 }}
-            onPress={onMarkAllAsReadPress}
+            onPress={() => markAllUserNotificationsAsRead()}
           />
           <Button
             isOutlined
