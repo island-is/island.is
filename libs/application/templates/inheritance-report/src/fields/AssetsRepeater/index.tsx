@@ -306,7 +306,7 @@ const FieldComponent = ({
           </Text>
         </GridColumn>
       )
-      
+
     case 'assetNumber':
       if (assetKey === 'assets') {
         content = (
@@ -342,7 +342,7 @@ const FieldComponent = ({
         />
       )
       break
-    
+
     default:
       content = <InputController {...defaultProps} />
 
