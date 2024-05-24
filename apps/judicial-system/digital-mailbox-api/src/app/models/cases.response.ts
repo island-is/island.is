@@ -9,4 +9,10 @@ export class CasesResponse {
 
   @ApiProperty({ type: String })
   type!: string
+
+  @ApiProperty({ type: Object })
+  state!: {
+    color: string
+    label: string
+  }
 }
