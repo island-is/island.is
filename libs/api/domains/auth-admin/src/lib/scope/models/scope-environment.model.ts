@@ -47,6 +47,9 @@ export class ScopeEnvironment {
   @Field(() => Boolean)
   grantToPersonalRepresentatives!: boolean
 
+  @Field(() => [String])
+  supportedDelegationTypes!: string[]
+
   @Field(() => Boolean)
   allowExplicitDelegationGrant!: boolean
 

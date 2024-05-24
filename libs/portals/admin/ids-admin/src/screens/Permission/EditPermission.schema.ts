@@ -3,6 +3,7 @@ import { z } from 'zod'
 import { Languages } from '../../utils/languages'
 import { booleanCheckbox } from '../../utils/forms'
 import { defaultEnvironmentSchema } from '../../utils/schemas'
+import { zfd } from 'zod-form-data'
 
 export enum PermissionFormTypes {
   CONTENT = 'CONTENT',
@@ -53,10 +54,9 @@ const accessControlSchema = z
   .object({
     isAccessControlled: booleanCheckbox,
     grantToAuthenticatedUser: booleanCheckbox,
-    grantToProcuringHolders: booleanCheckbox,
-    grantToLegalGuardians: booleanCheckbox,
-    allowExplicitDelegationGrant: booleanCheckbox,
     grantToPersonalRepresentatives: booleanCheckbox,
+    removedDelegationTypes: zfd.repeatable(z.optional(z.array(z.string()))),
+    addedDelegationTypes: zfd.repeatable(z.optional(z.array(z.string()))),
   })
   .merge(defaultEnvironmentSchema)
 

@@ -109,11 +109,11 @@ export class ApiScopeBaseDTO {
   readonly automaticDelegationGrant!: boolean
 
   @IsArray()
-  @ApiPropertyOptional({
+  @ApiProperty({
     type: [String],
     example: ['Custom'],
   })
-  supportedDelegationTypes?: string[]
+  supportedDelegationTypes!: string[]
 
   @IsBoolean()
   @IsNotEmpty()

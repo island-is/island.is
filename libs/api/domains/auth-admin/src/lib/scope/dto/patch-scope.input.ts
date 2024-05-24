@@ -37,4 +37,10 @@ export class AdminPatchScopeInput {
 
   @Field(() => Boolean, { nullable: true })
   grantToPersonalRepresentatives?: boolean
+
+  @Field(() => [String], { nullable: true })
+  addedDelegationTypes?: string[]
+
+  @Field(() => [String], { nullable: true })
+  removedDelegationTypes?: string[]
 }
