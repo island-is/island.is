@@ -54,7 +54,6 @@ export const debtsAndFuneralCost = buildSection({
                   {
                     title: m.debtType,
                     id: 'debtType',
-                    currency: true,
                   },
                   {
                     title: m.debtsBalance,

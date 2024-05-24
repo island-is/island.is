@@ -112,7 +112,7 @@ export const AssetsRepeater: FC<
         acc[elem] = ''
 
         if (elem === 'share') {
-          acc[elem] = '100'
+          acc[elem] = '0'
         }
 
         return acc
