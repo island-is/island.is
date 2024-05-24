@@ -4,6 +4,7 @@ import { ApiCreatedResponse } from '@nestjs/swagger'
 
 import type { Logger } from '@island.is/logging'
 import { LOGGER_PROVIDER } from '@island.is/logging'
+
 import type { User as TUser } from '@island.is/judicial-system/types'
 
 import { JwtAuthGuard } from './guards/auth.guard'

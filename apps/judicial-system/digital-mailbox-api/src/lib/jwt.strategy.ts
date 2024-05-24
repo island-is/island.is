@@ -22,7 +22,7 @@ export class JwtStrategy extends PassportStrategy(Strategy) {
         rateLimit: true,
         jwksUri: `${config.issuer}/.well-known/openid-configuration/jwks`,
       }),
-      // audience: config.clientId,
+      audience: config.clientId,
       issuer: config.issuer,
       algorithms: ['RS256'],
     })
