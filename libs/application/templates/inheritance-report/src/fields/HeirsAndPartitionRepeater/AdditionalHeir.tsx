@@ -58,7 +58,7 @@ export const AdditionalHeir = ({
 
   const advocateField = `${fieldIndex}.advocate`
   const advocatePhoneField = `${advocateField}.phone`
-  const advocateEmailFeild = `${advocateField}.email`
+  const advocateEmailField = `${advocateField}.email`
 
   const foreignCitizenship = useWatch({
     name: `${fieldIndex}.foreignCitizenship`,
@@ -98,7 +98,7 @@ export const AdditionalHeir = ({
     clearErrors(relationField)
     clearErrors(dateOfBirthField)
     clearErrors(advocatePhoneField)
-    clearErrors(advocateEmailFeild)
+    clearErrors(advocateEmailField)
     clearErrors(`${fieldIndex}.nationalId`)
 
     if (!requiresAdvocate) {
@@ -279,6 +279,7 @@ export const AdditionalHeir = ({
                         : undefined
                     }
                     required
+                    hasError={false}
                   />
                 </GridColumn>
               ) : (
@@ -345,8 +346,8 @@ export const AdditionalHeir = ({
             </GridColumn>
             <GridColumn span={['1/1', '1/2']} paddingBottom={2}>
               <InputController
-                id={advocateEmailFeild}
-                name={advocateEmailFeild}
+                id={advocateEmailField}
+                name={advocateEmailField}
                 label={formatMessage(m.email)}
                 backgroundColor="blue"
                 error={(error?.advocate as unknown as ErrorValue)?.email}

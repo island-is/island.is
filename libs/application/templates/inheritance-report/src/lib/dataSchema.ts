@@ -80,7 +80,7 @@ const assetSchema = ({ withShare }: { withShare?: boolean } = {}) =>
 
               const value = isNaN(num) ? 0 : num
 
-              return value > 0 && value <= 100
+              return value >= 0 && value <= 100
             }
 
             return true

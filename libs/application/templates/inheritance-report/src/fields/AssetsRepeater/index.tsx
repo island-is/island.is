@@ -176,6 +176,7 @@ export const AssetsRepeater: FC<
 
                 const fieldName = `${fieldIndex}.${field.id}`
                 const error = errors && getErrorViaPath(errors, fieldName)
+                console.log(error, field.id)
 
                 shouldPushRight = pushRight
 

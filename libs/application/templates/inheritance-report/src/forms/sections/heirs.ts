@@ -181,7 +181,7 @@ export const heirs = buildSection({
               maxLength: 1800,
             }),
             buildDescriptionField({
-              id: 'heirsAdditionalInfoFiles',
+              id: 'heirsAdditionalInfoFilesPrivate',
               title: m.fileUploadPrivateTransfer,
               titleVariant: 'h5',
               space: 'containerGutter',
@@ -196,14 +196,14 @@ export const heirs = buildSection({
               uploadHeader: '',
             }),
             buildDescriptionField({
-              id: 'heirsAdditionalInfoFiles',
+              id: 'heirsAdditionalInfoFilesOtherDocuments',
               title: m.fileUploadOtherDocuments,
               titleVariant: 'h5',
               space: 'containerGutter',
               marginBottom: 'smallGutter',
             }),
             buildFileUploadField({
-              id: 'heirsAdditionalInfoFiles',
+              id: 'heirsAdditionalInfoFilesFileTypes',
               uploadAccept: '.pdf, .doc, .docx, .jpg, .jpeg, .png, .xls, .xlsx',
               uploadDescription: m.fileUploadFileTypes,
               title: '',

@@ -81,6 +81,15 @@ export const ShareInput = ({
     }
   }, [ref])
 
+  let shareError = errorMessage
+
+  if (
+    !errorMessage &&
+    ((watchedField && watchedField < 0) || watchedField > 100)
+  ) {
+    shareError = formatMessage(m.invalidShareValue)
+  }
+
   useEffect(() => {
     const currentRef = ref?.current
 
