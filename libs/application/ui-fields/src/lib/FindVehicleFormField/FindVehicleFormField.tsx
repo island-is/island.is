@@ -94,7 +94,7 @@ const extractDetails = function (
     return {
       ...extractCommonVehicleInfo(response.basicVehicleInformation),
       isDebtLess: response.isDebtLess ?? true,
-      validationErrorMessages: response.validationErrorMessages ?? [],
+      validationErrorMessages: response?.validationErrorMessages ?? [],
     }
   } else if (
     isVehicleType<VehiclePlateOrderChecksByPermno>(
@@ -104,6 +104,7 @@ const extractDetails = function (
   ) {
     return {
       ...extractCommonVehicleInfo(response.basicVehicleInformation),
+      validationErrorMessages: response?.validationErrorMessages ?? [],
     }
   } else if (
     isVehicleType<VehicleOperatorChangeChecksByPermno>(
@@ -114,7 +115,7 @@ const extractDetails = function (
     return {
       ...extractCommonVehicleInfo(response.basicVehicleInformation),
       isDebtLess: response.isDebtLess ?? true,
-      validationErrorMessages: response.validationErrorMessages ?? [],
+      validationErrorMessages: response?.validationErrorMessages ?? [],
     }
   } else if (isVehicleType<MachineDetails>(response, 'MachineDetails')) {
     return {
@@ -175,9 +176,7 @@ export const FindVehicleFormField: FC<React.PropsWithChildren<Props>> = ({
   )
   const [energyDetails, setEnergyDetails] =
     useState<EnergyFundVehicleDetailsWithGrant | null>(null)
-  const [machineId, setMachineId] = useState<string>(
-    getValueViaPath(application.answers, 'pickMachine.id', '') as string,
-  )
+
   const MAX_LENGTH = isMachine ? 6 : 5
   const [submitButtonDisabledCalled, setSubmitButtonDisabledCalled] =
     useState(false)
@@ -263,7 +262,11 @@ export const FindVehicleFormField: FC<React.PropsWithChildren<Props>> = ({
         }
       }
     }
-
+    setValue('findVehicle', true)
+    setValue(
+      `${field.id}.paymentRequiredForOwnerChange`,
+      machineDetails.paymentRequiredForOwnerChange,
+    )
     setValue(`${field.id}.regNumber`, machineDetails.regNumber)
     setValue(`${field.id}.category`, machineDetails.category)
     setValue(`${field.id}.type`, machineDetails.type || '')
@@ -274,7 +277,6 @@ export const FindVehicleFormField: FC<React.PropsWithChildren<Props>> = ({
     setValue('pickMachine.id', machineDetails.id)
     setValue(`${field.id}.date`, new Date().toISOString())
     setValue('pickMachine.isValid', machineDetails.disabled ? undefined : true)
-    setMachineId(machineDetails?.id || '')
     setSubmitButtonDisabled &&
       setSubmitButtonDisabled(!machineDetails.disabled || false)
     setMachineDetails(machineDetails)
