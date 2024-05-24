@@ -1,12 +1,12 @@
-# Car recycling Client (Úrvinnslusjóður)
+# Contentful GraphQL Client
 
 ## About
 
-This library implements a GraphQL client code to use Car recycling (Skilavottorð) GraphQL APIs.
+This library implements a GraphQL client code to use Contentful GraphQL APIs.
 
-## Skilavottord-ws backend URL
+## GraphQL API endpoint
 
-The `RECYCLING_FUND_GQL_BASE_PATH` config needs to be configured as to Skilavottord GraphQL server URL.
+The `GRAPHQL_API_ENDPOINT` config needs to be configured.
 
 ## GraphQL client code generation
 
@@ -26,4 +26,4 @@ Run `nx test clients-contentful-graphql` to execute the unit tests via [Jest](ht
 
 ## Code owners and maintainers
 
-- [Deloitte](https://github.com/orgs/island-is/teams/deloitte/members)
+- [Júní](https://github.com/orgs/island-is/teams/juni/members)

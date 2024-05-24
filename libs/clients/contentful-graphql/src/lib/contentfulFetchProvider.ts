@@ -1,6 +1,5 @@
 import { Provider } from '@nestjs/common'
 
-import { RecyclingFundScope } from '@island.is/auth/scopes'
 import {
   createEnhancedFetch,
   type EnhancedFetchAPI,
@@ -17,17 +16,18 @@ export const ContentfulFetchProvider: Provider<EnhancedFetchAPI> = {
   provide: ContentfulFetchProviderKey,
   scope: LazyDuringDevScope,
   useFactory: (idsClientConfig: ConfigType<typeof IdsClientConfig>) =>
-    createEnhancedFetch({
+    createEnhancedFetch({ // search ..................................................
       name: 'clients-contentful-graphql',
-      autoAuth: idsClientConfig.isConfigured
-        ? {
-            mode: 'tokenExchange',
-            issuer: idsClientConfig.issuer,
-            clientId: idsClientConfig.clientId,
-            clientSecret: idsClientConfig.clientSecret,
-            scope: [RecyclingFundScope.carRecycling],
-          }
-        : undefined,
+      autoAuth: undefined // bamm bamm bamm 
+      // idsClientConfig.isConfigured
+      //   ? {
+      //       mode: 'tokenExchange',
+      //       issuer: idsClientConfig.issuer,
+      //       clientId: idsClientConfig.clientId,
+      //       clientSecret: idsClientConfig.clientSecret,
+      //       scope: [RecyclingFundScope.carRecycling],
+      //     }
+      //   : undefined,
     }),
   inject: [IdsClientConfig.KEY],
 }
