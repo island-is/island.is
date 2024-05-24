@@ -8,7 +8,9 @@
     "lint": {
       "executor": "@nx/linter:eslint",
       "options": {
-        "lintFilePatterns": ["libs/clients/contentful-graphql/**/*.{ts,tsx,js,jsx}"]
+        "lintFilePatterns": [
+          "libs/clients/contentful-graphql/**/*.{ts,tsx,js,jsx}"
+        ]
       }
     },
     "test": {

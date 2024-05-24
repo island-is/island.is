@@ -2,10 +2,14 @@ schema:
   - https://graphql.contentful.com/content/v1/spaces/8k0h54kbe6bj/environments/master:
       headers:
         Authorization: Bearer ${CONTENTFUL_ACCESS_TOKEN}
+documents:
+  - 'src/**/*.graphql'
 generates:
   libs/clients/contentful-graphql/gen/schema.ts:
     plugins:
-      - typescript
+      - 'typescript'
+      - 'typescript-operations'
+      - 'typescript-graphql-request'
     config:
       namingConvention:
         enumValues: keep
@@ -17,14 +21,6 @@ generates:
       # location from the `src` folder of the library
       baseTypesPath: '../gen/schema'
     plugins:
-      # Only use the typescript and typescript-operations plugins to generate types
-      - typescript-operations
-      - typescript-document-nodes
-    config:
-      namingConvention:
-        enumValues: keep
-      skipTypename: true
-      nameSuffix: 'Document'
-hooks:
-  afterAllFileWrite:
-    - prettier --write
+      - 'typescript'
+      - 'typescript-operations'
+      - 'typescript-graphql-request'
