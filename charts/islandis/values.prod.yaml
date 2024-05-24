@@ -309,7 +309,6 @@ api:
     SERVERSIDE_FEATURES_ON: 'driving-license-use-v1-endpoint-for-v2-comms'
     SERVICE_DOCUMENTS_BASEPATH: 'http://web-services-documents.services-documents.svc.cluster.local'
     SESSIONS_API_URL: 'http://web-services-sessions.services-sessions.svc.cluster.local'
-    SOFFIA_SOAP_URL: 'https://soffia2.skra.is'
     SYSLUMENN_TIMEOUT: '40000'
     TELL_US_A_STORY_EMAIL: 'sogur@island.is'
     UNIVERSITY_GATEWAY_API_URL: 'http://web-services-university-gateway.services-university-gateway.svc.cluster.local'
@@ -444,10 +443,10 @@ api:
     min: 2
   resources:
     limits:
-      cpu: '600m'
+      cpu: '1200m'
       memory: '2048Mi'
     requests:
-      cpu: '250m'
+      cpu: '350m'
       memory: '896Mi'
   secrets:
     ADR_LICENSE_FETCH_TIMEOUT: '/k8s/api/ADR_LICENSE_FETCH_TIMEOUT'
@@ -521,9 +520,6 @@ api:
     REGULATIONS_FILE_UPLOAD_KEY_PUBLISH: '/k8s/api/REGULATIONS_FILE_UPLOAD_KEY_PUBLISH'
     RLS_PKPASS_API_KEY: '/k8s/api/RLS_PKPASS_API_KEY'
     SMART_SOLUTIONS_API_URL: '/k8s/api/SMART_SOLUTIONS_API_URL'
-    SOFFIA_HOST_URL: '/k8s/api/SOFFIA_HOST_URL'
-    SOFFIA_PASS: '/k8s/service-portal/SOFFIA_PASS'
-    SOFFIA_USER: '/k8s/service-portal/SOFFIA_USER'
     SYSLUMENN_HOST: '/k8s/api/SYSLUMENN_HOST'
     SYSLUMENN_PASSWORD: '/k8s/api/SYSLUMENN_PASSWORD'
     SYSLUMENN_USERNAME: '/k8s/api/SYSLUMENN_USERNAME'
@@ -1354,10 +1350,6 @@ endorsement-system-api:
     DB_PASS: '/k8s/services-endorsements-api/DB_PASSWORD'
     IDENTITY_SERVER_CLIENT_SECRET: '/k8s/endorsement-system-api/IDS-shared-secret'
     NATIONAL_REGISTRY_B2C_CLIENT_SECRET: '/k8s/api/NATIONAL_REGISTRY_B2C_CLIENT_SECRET'
-    SOFFIA_HOST_URL: '/k8s/endorsement-system-api/SOFFIA_HOST_URL'
-    SOFFIA_PASS: '/k8s/service-portal/SOFFIA_PASS'
-    SOFFIA_SOAP_URL: '/k8s/endorsement-system-api/SOFFIA_SOAP_URL'
-    SOFFIA_USER: '/k8s/service-portal/SOFFIA_USER'
   securityContext:
     allowPrivilegeEscalation: false
     privileged: false
@@ -2373,9 +2365,9 @@ services-sessions-cleanup:
   enabled: true
   env:
     DB_HOST: 'postgres-applications.internal'
-    DB_NAME: 'services_sessions_cleanup'
+    DB_NAME: 'services_sessions'
     DB_REPLICAS_HOST: 'postgres-applications.internal'
-    DB_USER: 'services_sessions_cleanup'
+    DB_USER: 'services_sessions'
     LOG_LEVEL: 'info'
     NODE_OPTIONS: '--max-old-space-size=460'
     SERVERSIDE_FEATURES_ON: 'driving-license-use-v1-endpoint-for-v2-comms'
@@ -2421,7 +2413,7 @@ services-sessions-cleanup:
   schedule: '0 3 * * *'
   secrets:
     CONFIGCAT_SDK_KEY: '/k8s/configcat/CONFIGCAT_SDK_KEY'
-    DB_PASS: '/k8s/services-sessions-cleanup/DB_PASSWORD'
+    DB_PASS: '/k8s/services-sessions/DB_PASSWORD'
   securityContext:
     allowPrivilegeEscalation: false
     privileged: false

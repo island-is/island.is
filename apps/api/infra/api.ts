@@ -1,5 +1,4 @@
 import { json, ref, service, ServiceBuilder } from '../../../infra/src/dsl/dsl'
-import { settings } from '../../../infra/src/dsl/settings'
 import {
   AdrAndMachine,
   Base,
@@ -198,12 +197,6 @@ export const serviceSetup = (services: {
         prod: 'https://samradapi.island.is',
       },
       FISKISTOFA_ZENTER_CLIENT_ID: '1114',
-      SOFFIA_SOAP_URL: {
-        dev: ref((h) => h.svc('https://soffiaprufa.skra.is')),
-        staging: ref((h) => h.svc('https://soffiaprufa.skra.is')),
-        prod: ref((h) => h.svc('https://soffia2.skra.is')),
-        local: ref((h) => h.svc('https://localhost:8443')),
-      },
       HSN_WEB_FORM_ID: '1dimJFHLFYtnhoYEA3JxRK',
       SESSIONS_API_URL: ref((h) => `http://${h.svc(services.sessionsApi)}`),
       AUTH_ADMIN_API_PATHS: {
@@ -288,12 +281,9 @@ export const serviceSetup = (services: {
         '/k8s/api/REGULATIONS_FILE_UPLOAD_KEY_PUBLISH',
       REGULATIONS_FILE_UPLOAD_KEY_PRESIGNED:
         '/k8s/api/REGULATIONS_FILE_UPLOAD_KEY_PRESIGNED',
-      SOFFIA_HOST_URL: '/k8s/api/SOFFIA_HOST_URL',
       CONTENTFUL_ACCESS_TOKEN: '/k8s/api/CONTENTFUL_ACCESS_TOKEN',
       ZENDESK_CONTACT_FORM_EMAIL: '/k8s/api/ZENDESK_CONTACT_FORM_EMAIL',
       ZENDESK_CONTACT_FORM_TOKEN: '/k8s/api/ZENDESK_CONTACT_FORM_TOKEN',
-      SOFFIA_USER: settings.SOFFIA_USER,
-      SOFFIA_PASS: settings.SOFFIA_PASS,
       POSTHOLF_CLIENTID: '/k8s/documents/POSTHOLF_CLIENTID',
       POSTHOLF_CLIENT_SECRET: '/k8s/documents/POSTHOLF_CLIENT_SECRET',
       POSTHOLF_TOKEN_URL: '/k8s/documents/POSTHOLF_TOKEN_URL',
@@ -450,8 +440,8 @@ export const serviceSetup = (services: {
     .readiness('/health')
     .liveness('/liveness')
     .resources({
-      limits: { cpu: '600m', memory: '2048Mi' },
-      requests: { cpu: '250m', memory: '896Mi' },
+      limits: { cpu: '1200m', memory: '2048Mi' },
+      requests: { cpu: '350m', memory: '896Mi' },
     })
     .replicaCount({
       default: 2,
