@@ -6,17 +6,22 @@ import {
 import request from 'supertest'
 import { TestApp } from '@island.is/testing/nest'
 import {
+  DelegationProviderModel,
+  DelegationTypeModel,
   PersonalRepresentative,
+  PersonalRepresentativeCreateDTO,
   PersonalRepresentativePublicDTO,
   PersonalRepresentativeRight,
   PersonalRepresentativeRightType,
-  PersonalRepresentativeType,
-  PersonalRepresentativeCreateDTO,
   PersonalRepresentativeRightTypeService,
   PersonalRepresentativeService,
+  PersonalRepresentativeType,
 } from '@island.is/auth-api-lib'
 import { AuthScope } from '@island.is/auth/scopes'
 import { createCurrentUser } from '@island.is/testing/fixtures'
+import { getModelToken } from '@nestjs/sequelize'
+import { addDelegationTypesAndProvider } from '@island.is/services/auth/testing'
+import { getPersonalRepresentativeDelegationType } from '@island.is/shared/types'
 
 const path = '/v1/personal-representatives'
 
@@ -98,6 +103,8 @@ describe('PersonalRepresentativesController', () => {
   let prRightTypeModel: typeof PersonalRepresentativeRightType
   let prModel: typeof PersonalRepresentative
   let prPermissionsModel: typeof PersonalRepresentativeRight
+  let delegationProviderModel: typeof DelegationProviderModel
+  let delegationTypeModel: typeof DelegationTypeModel
 
   beforeAll(async () => {
     app = await setupWithAuth({ user })
@@ -123,6 +130,14 @@ describe('PersonalRepresentativesController', () => {
     // Get reference on personal representative right models to seed DB
     prPermissionsModel = app.get<typeof PersonalRepresentativeRight>(
       'PersonalRepresentativeRightRepository',
+    )
+    // Get reference on delegation provider models to seed DB
+    delegationProviderModel = app.get<typeof DelegationProviderModel>(
+      getModelToken(DelegationProviderModel),
+    )
+    // Get reference on delegation type models to seed DB
+    delegationTypeModel = app.get<typeof DelegationTypeModel>(
+      getModelToken(DelegationTypeModel),
     )
   })
 
@@ -151,6 +166,18 @@ describe('PersonalRepresentativesController', () => {
       truncate: true,
       force: true,
     })
+    await delegationTypeModel.destroy({
+      where: {},
+      cascade: true,
+      truncate: true,
+      force: true,
+    })
+    await delegationProviderModel.destroy({
+      where: {},
+      cascade: true,
+      truncate: true,
+      force: true,
+    })
     // Create personal representastive type
     await prTypeModel.create(personalRepresentativeType)
     // Create right types
@@ -160,11 +187,18 @@ describe('PersonalRepresentativesController', () => {
         description: rightType.description,
       })
     }
+
     await prModel.create({
       ...simpleRequestData,
       rightCodes: rightTypeList.map((rt) => rt.code),
       personalRepresentativeTypeCode: personalRepresentativeType.code,
     })
+
+    await addDelegationTypesAndProvider(
+      rightTypeList,
+      delegationProviderModel,
+      delegationTypeModel,
+    )
 
     // Creating personal rep
     await prService.create({
@@ -172,7 +206,6 @@ describe('PersonalRepresentativesController', () => {
       rightCodes: rightTypeList.map((rt) => rt.code),
       personalRepresentativeTypeCode: personalRepresentativeType.code,
     })
-    //personalRepPublic.rights = rightTypeList.map((rt) => rt.code)
   })
 
   describe('Get', () => {
@@ -185,6 +218,9 @@ describe('PersonalRepresentativesController', () => {
         nationalIdRepresentedPerson:
           simpleRequestData.nationalIdRepresentedPerson,
         rights: rightTypeList.map((rt) => rt.code),
+        prDelegationTypeCodes: rightTypeList.map((rt) =>
+          getPersonalRepresentativeDelegationType(rt.code),
+        ),
       }
       // Test get personal rep
       const response = await server
