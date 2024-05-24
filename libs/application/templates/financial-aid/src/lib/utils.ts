@@ -112,18 +112,6 @@ export const waitingForSpouse = (state: string) => {
   )
 }
 
-export const getSchoolType = (age: number) => {
-  if (age < 6) {
-    return SchoolType.KINDERGARDEN
-  }
-  if (age >= 6 && age < 16) {
-    return SchoolType.ELEMENTARY
-  }
-  if (age >= 16 && age < 18) {
-    return SchoolType.HIGHSCHOOL
-  }
-}
-
 export const sortChildrenUnderAgeByAge = (
   children: ApplicantChildCustodyInformation[],
 ): ApplicantChildCustodyInformation[] => {

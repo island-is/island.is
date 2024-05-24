@@ -6,8 +6,9 @@ import {
   IsInt,
   Min,
   Max,
+  IsArray,
 } from 'class-validator'
-import { ApiProperty } from '@nestjs/swagger'
+import { ApiProperty, ApiPropertyOptional } from '@nestjs/swagger'
 
 export class ApiScopeBaseDTO {
   @IsBoolean()
@@ -106,6 +107,13 @@ export class ApiScopeBaseDTO {
     example: false,
   })
   readonly automaticDelegationGrant!: boolean
+
+  @IsArray()
+  @ApiPropertyOptional({
+    type: [String],
+    example: ['Custom'],
+  })
+  supportedDelegationTypes?: string[]
 
   @IsBoolean()
   @IsNotEmpty()

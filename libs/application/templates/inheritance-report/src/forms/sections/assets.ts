@@ -252,12 +252,15 @@ export const assets = buildSection({
               {
                 fields: [
                   {
-                    title: m.gunNumber,
+                    title: m.gunSerialNumber,
                     id: 'assetNumber',
+                    placeholder: 'VantarHér',
+                    required: true,
                   },
                   {
                     title: m.gunType,
                     id: 'description',
+                    required: true,
                   },
                   {
                     title: m.gunValuation,

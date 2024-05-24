@@ -22,6 +22,7 @@ import { AdminTranslationService } from '../resources/admin/services/admin-trans
 import { ClientDelegationType } from './models/client-delegation-type.model'
 import { DelegationTypeModel } from '../delegations/models/delegation-type.model'
 import { DelegationProviderModel } from '../delegations/models/delegation-provider.model'
+import { ApiScopeDelegationType } from '../resources/models/api-scope-delegation-type.model'
 
 @Module({
   imports: [
@@ -41,6 +42,7 @@ import { DelegationProviderModel } from '../delegations/models/delegation-provid
       Domain,
       ApiScope,
       ApiScopeUserClaim,
+      ApiScopeDelegationType,
     ]),
     TranslationModule,
   ],

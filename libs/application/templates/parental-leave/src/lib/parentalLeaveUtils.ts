@@ -82,8 +82,9 @@ import {
 } from '../types'
 import { currentDateStartTime } from './parentalLeaveTemplateUtils'
 
-export const getExpectedDateOfBirthOrAdoptionDate = (
+export const getExpectedDateOfBirthOrAdoptionDateOrBirthDate = (
   application: Application,
+  returnBirthDate = false,
 ): string | undefined => {
   const selectedChild = getSelectedChild(
     application.answers,
@@ -92,6 +93,12 @@ export const getExpectedDateOfBirthOrAdoptionDate = (
 
   if (!selectedChild) {
     return undefined
+  }
+
+  if (returnBirthDate) {
+    const { dateOfBirth } = getApplicationExternalData(application.externalData)
+
+    if (dateOfBirth?.data?.dateOfBirth) return dateOfBirth?.data?.dateOfBirth
   }
 
   if (selectedChild.expectedDateOfBirth === '')
@@ -1302,8 +1309,8 @@ export const getLastValidPeriodEndDate = (
 }
 
 export const getMinimumStartDate = (application: Application): Date => {
-  const expectedDateOfBirthOrAdoptionDate =
-    getExpectedDateOfBirthOrAdoptionDate(application)
+  const expectedDateOfBirthOrAdoptionDateOrBirthDate =
+    getExpectedDateOfBirthOrAdoptionDateOrBirthDate(application, true)
   const lastPeriodEndDate = getLastValidPeriodEndDate(application)
   const { applicationFundId } = getApplicationExternalData(
     application.externalData,
@@ -1312,15 +1319,15 @@ export const getMinimumStartDate = (application: Application): Date => {
   const today = new Date()
   if (lastPeriodEndDate) {
     return lastPeriodEndDate
-  } else if (expectedDateOfBirthOrAdoptionDate) {
-    const expectedDateOfBirthOrAdoptionDateDate = new Date(
-      expectedDateOfBirthOrAdoptionDate,
+  } else if (expectedDateOfBirthOrAdoptionDateOrBirthDate) {
+    const expectedDateOfBirthOrAdoptionDateOrBirthDateDate = new Date(
+      expectedDateOfBirthOrAdoptionDateOrBirthDate,
     )
 
     if (isParentalGrant(application)) {
       const beginningOfMonthOfExpectedDateOfBirth = addDays(
-        expectedDateOfBirthOrAdoptionDateDate,
-        expectedDateOfBirthOrAdoptionDateDate.getDate() * -1 + 1,
+        expectedDateOfBirthOrAdoptionDateOrBirthDateDate,
+        expectedDateOfBirthOrAdoptionDateOrBirthDateDate.getDate() * -1 + 1,
       )
       return beginningOfMonthOfExpectedDateOfBirth
     }
@@ -1328,7 +1335,7 @@ export const getMinimumStartDate = (application: Application): Date => {
     const beginningOfMonth = getBeginningOfThisMonth()
     const beginningOfMonth3MonthsAgo = getBeginningOfMonth3MonthsAgo()
     const leastStartDate = addMonths(
-      expectedDateOfBirthOrAdoptionDateDate,
+      expectedDateOfBirthOrAdoptionDateOrBirthDateDate,
       -minimumPeriodStartBeforeExpectedDateOfBirth,
     )
 
