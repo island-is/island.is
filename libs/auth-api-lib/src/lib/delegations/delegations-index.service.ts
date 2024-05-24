@@ -8,6 +8,7 @@ import { User } from '@island.is/auth-nest-tools'
 import {
   AuthDelegationProvider,
   AuthDelegationType,
+  getPersonalRepresentativeDelegationType,
 } from '@island.is/shared/types'
 
 import { ApiScope } from '../resources/models/api-scope.model'
@@ -16,8 +17,8 @@ import { DelegationIndex } from './models/delegation-index.model'
 import { DelegationIndexMeta } from './models/delegation-index-meta.model'
 import { DelegationDTO } from './dto/delegation.dto'
 import {
-  DelegationRecordInputDTO,
   DelegationRecordDTO,
+  DelegationRecordInputDTO,
   PaginatedDelegationRecordDTO,
 } from './dto/delegation-index.dto'
 import { DelegationsIncomingCustomService } from './delegations-incoming-custom.service'
@@ -29,9 +30,9 @@ import {
   PersonalRepresentativeDelegationType,
 } from './types/delegationRecord'
 import {
+  delegationProviderTypeMap,
   validateDelegationTypeAndProvider,
   validateToAndFromNationalId,
-  delegationProviderTypeMap,
 } from './utils/delegations'
 import { DelegationDirection } from './types/delegationDirection'
 import { UserIdentitiesService } from '../user-identities/user-identities.service'
@@ -100,9 +101,6 @@ const validateCrudParams = (delegation: DelegationRecordInputDTO) => {
     throw new BadRequestException('Invalid validTo')
   }
 }
-
-const getPersonalRepresentativeDelegationType = (right: string) =>
-  `${AuthDelegationType.PersonalRepresentative}:${right}` as PersonalRepresentativeDelegationType
 
 const hasAllSameScopes = (
   a: string[] | undefined,
@@ -457,7 +455,9 @@ export class DelegationsIndexService {
 
             const delegations = delegation.rights.map((right) => ({
               ...delegation,
-              type: getPersonalRepresentativeDelegationType(right.code),
+              type: getPersonalRepresentativeDelegationType(
+                right.code,
+              ) as PersonalRepresentativeDelegationType,
             }))
 
             return [...acc, ...delegations]
