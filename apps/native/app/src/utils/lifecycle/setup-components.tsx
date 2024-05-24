@@ -21,7 +21,6 @@ import { LoginScreen } from '../../screens/login/login'
 import { TestingLoginScreen } from '../../screens/login/testing-login'
 import { MoreScreen } from '../../screens/more/more'
 import { PersonalInfoScreen } from '../../screens/more/personal-info'
-import { NotificationDetailScreen } from '../../screens/notification-detail/notification-detail'
 import { NotificationsScreen } from '../../screens/notifications/notifications'
 import { OnboardingBiometricsScreen } from '../../screens/onboarding/onboarding-biometrics'
 import { OnboardingNotificationsScreen } from '../../screens/onboarding/onboarding-notifications'
@@ -77,7 +76,6 @@ export function registerAllComponents() {
   registerComponent(CR.WalletPassportScreen, WalletPassportScreen)
   registerComponent(CR.DocumentDetailScreen, DocumentDetailScreen)
   registerComponent(CR.NotificationsScreen, NotificationsScreen)
-  registerComponent(CR.NotificationDetailScreen, NotificationDetailScreen)
   registerComponent(CR.WebViewScreen, WebViewScreen)
   registerComponent(CR.LicenseScannerScreen, LicenseScannerScreen)
   registerComponent(CR.LicenseScanDetailScreen, LicenseScanDetailScreen)

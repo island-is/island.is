@@ -9,7 +9,7 @@ import {
 import { core } from '@island.is/judicial-system-web/messages'
 
 import { FormContext } from '../FormProvider/FormProvider'
-import { DefendantInfoActionButton } from '../InfoCards/DefendantInfo/DefendantInfo'
+import { DefendantInfoActionButton } from './DefendantInfo/DefendantInfo'
 import InfoCard, { NameAndEmail } from './InfoCard'
 import { strings } from './InfoCardIndictment.strings'
 
