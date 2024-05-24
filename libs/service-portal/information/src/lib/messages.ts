@@ -149,6 +149,14 @@ export const mInformationNotifications = defineMessages({
     id: 'sp.information-notifications:description',
     defaultMessage: 'Hér getur þú nálgast tilkynningar þínar.',
   },
+  markAllRead: {
+    id: 'sp.information-notifications:mark-all-read',
+    defaultMessage: 'Merkja allt lesið',
+  },
+  allMarkedAsRead: {
+    id: 'sp.information-notifications:all-marked-as-read',
+    defaultMessage: 'Allar tilkynningar merktar lesnar',
+  },
 })
 
 export const msg = defineMessages({
@@ -296,6 +304,19 @@ export const msg = defineMessages({
     id: 'sp.settings:save-empty',
     defaultMessage: 'Vista tómt',
   },
+  contactNotVerified: {
+    id: 'sp.settings:contact-not-verified',
+    defaultMessage: '{contactType} ekki staðfest',
+  },
+  contactNotVerifiedDescription: {
+    id: 'sp.settings:contact-not-verified-description',
+    defaultMessage:
+      'Staðfestu {contactType} svo að tilkynningar skili sér örugglega til þín.',
+  },
+  confirmContact: {
+    id: 'sp.settings:confirm-contact',
+    defaultMessage: 'Staðfesta {contactType}',
+  },
 })
 
 export const urls = defineMessages({
@@ -363,5 +384,53 @@ export const mCompany = defineMessages({
   industryClass: {
     id: 'sp.company:idustry-class',
     defaultMessage: 'ÍSAT Atvinnugreinaflokkun',
+  },
+})
+
+export const mNotifications = defineMessages({
+  intro: {
+    id: 'sp.notifications:intro-text',
+    defaultMessage:
+      'Veldu hvernig þú vilt að stofnanir geti sent þér tilkynningar.',
+  },
+  emailNotifications: {
+    id: 'sp.notifications:email-notifications',
+    defaultMessage: 'Tilkynningar í tölvupósti',
+  },
+  emailNotificationsDescription: {
+    id: 'sp.notifications:email-notifications-description',
+    defaultMessage: 'Stofnanir geta sent þér tilkynningu með tölvupósti.',
+  },
+  emailNotificationsAriaLabel: {
+    id: 'sp.notifications:email-notifications-aria-label',
+    defaultMessage: 'Fá tilkynningar í tölvupósti?',
+  },
+  appNotifications: {
+    id: 'sp.notifications:app-notifications',
+    defaultMessage: 'Tilkynningar í Ísland.is appinu',
+  },
+  appNotificationsDescription: {
+    id: 'sp.notifications:app-notifications-description',
+    defaultMessage: 'Stofnanir geta sent þér tilkynniningar í Ísland.is appið.',
+  },
+  appNotificationsAriaLabel: {
+    id: 'sp.notifications:app-notifications-aria-label',
+    defaultMessage: 'Fá tilkynningar í Ísland.is appinu?',
+  },
+  delegations: {
+    id: 'sp.notifications:delegations',
+    defaultMessage: 'Umboð',
+  },
+  updateError: {
+    id: 'sp.notifications:update-error',
+    defaultMessage: 'Ekki tókst að vista stillingar',
+  },
+  noDelegationsTitle: {
+    id: 'sp.notifications:no-delegations-title',
+    defaultMessage: 'Engin umboð skráð',
+  },
+  noDelegationsDescriptions: {
+    id: 'sp.notifications:no-delegations-description',
+    defaultMessage: 'Stillingar fyrir umboð munu birtast hér.',
   },
 })

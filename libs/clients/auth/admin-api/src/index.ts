@@ -1,6 +1,7 @@
 export {
   AdminApi,
   AdminCreateClientDto,
+  AdminScopeDTO,
   ClientSecretDto,
   ClientType,
   CreateClientType,

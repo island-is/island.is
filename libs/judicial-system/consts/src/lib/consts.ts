@@ -139,6 +139,9 @@ export const INDICTMENTS_PROCESSING_ROUTE = '/akaera/malsmedferd'
 export const INDICTMENTS_TRAFFIC_VIOLATION_ROUTE = '/akaera/akaera'
 export const INDICTMENTS_CASE_FILES_ROUTE = '/akaera/domskjol'
 export const INDICTMENTS_OVERVIEW_ROUTE = '/akaera/stadfesta'
+
+export const PUBLIC_PROSECUTOR_STAFF_INDICTMENT_OVERVIEW_ROUTE =
+  '/rikissaksoknari/akaera/yfirlit'
 /* PROSECUTOR ROUTES END */
 
 /* DISTRICT COURT ROUTES START */
@@ -169,6 +172,8 @@ export const INDICTMENTS_RECEPTION_AND_ASSIGNMENT_ROUTE =
 export const INDICTMENTS_SUBPOENA_ROUTE = '/domur/akaera/fyrirkall'
 export const INDICTMENTS_DEFENDER_ROUTE = '/domur/akaera/malflytjendur'
 export const INDICTMENTS_CONCLUSION_ROUTE = '/domur/akaera/nidurstada'
+export const INDICTMENTS_SUMMARY_ROUTE = '/domur/akaera/samantekt'
+export const INDICTMENTS_COMPLETED_ROUTE = '/domur/akaera/lokid'
 /* DISTRICT COURT ROUTES END */
 
 /* COURT OF APPEALS ROUTES START */

@@ -62,7 +62,7 @@ export const FullWidthLayout: FC<FullWidthLayoutProps> = ({
       as="main"
       component="main"
       className={isDocuments ? styles.fullWidthSplit : undefined}
-      paddingTop={9}
+      paddingTop={isDocuments || isDashboard ? undefined : 9}
       style={{
         marginTop: height,
         minHeight: `calc(100vh - ${theme.headerHeight.large}px`,

@@ -5,7 +5,9 @@ import { createNationalId } from '@island.is/testing/fixtures'
 import { DelegationRecordDTO } from '@island.is/clients/auth/delegation-api'
 import { Features } from '@island.is/feature-flags'
 import type { User } from '@island.is/auth-nest-tools'
+import type { ConfigType } from '@island.is/nest/config'
 
+import { UserNotificationsConfig } from '../../../../config'
 import { HnippTemplate } from '../dto/hnippTemplate.response'
 
 export const mockFullName = 'mockFullName'
@@ -188,4 +190,15 @@ export class MockNationalRegistryV3ClientService {
       fulltNafn: user?.name ?? mockFullName,
     }
   }
+}
+
+export const MockUserNotificationsConfig: ConfigType<
+  typeof UserNotificationsConfig
+> = {
+  isWorker: true,
+  firebaseCredentials: 'firebase-credentials',
+  contentfulAccessToken: 'contentful-access-token',
+  emailFromAddress: 'development@island.is',
+  isConfigured: true,
+  servicePortalClickActionUrl: 'https://island.is/minarsidur',
 }

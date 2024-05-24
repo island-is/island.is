@@ -4,12 +4,8 @@ import { useRouter } from 'next/router'
 
 import { Box } from '@island.is/island-ui/core'
 import * as constants from '@island.is/judicial-system/consts'
-import {
-  isCompletedCase,
-  isDefenceUser,
-  isDistrictCourtUser,
-} from '@island.is/judicial-system/types'
-import { core, titles } from '@island.is/judicial-system-web/messages'
+import { isCompletedCase } from '@island.is/judicial-system/types'
+import { titles } from '@island.is/judicial-system-web/messages'
 import {
   CourtCaseInfo,
   FormContentContainer,
@@ -28,20 +24,27 @@ import {
 } from '@island.is/judicial-system-web/src/components'
 import { CaseState } from '@island.is/judicial-system-web/src/graphql/schema'
 
-import ReturnIndictmentModal from '../../Court/Indictments/ReturnIndictmentCaseModal/ReturnIndictmentCaseModal'
+import { ReviewDecision } from '../../PublicProsecutor/components/ReviewDecision/ReviewDecision'
 import { strings } from './IndictmentOverview.strings'
 
 const IndictmentOverview = () => {
   const router = useRouter()
-  const { user } = useContext(UserContext)
-  const { workingCase, isLoadingWorkingCase, caseNotFound, setWorkingCase } =
+  const { workingCase, isLoadingWorkingCase, caseNotFound } =
     useContext(FormContext)
+  const { user } = useContext(UserContext)
+
   const { formatMessage } = useIntl()
   const lawsBroken = useIndictmentsLawsBroken(workingCase)
-  const [modalVisible, setModalVisible] = useState<boolean>(false)
-
-  const caseIsClosed = isCompletedCase(workingCase.state)
+  const caseHasBeenReceivedByCourt = workingCase.state === CaseState.RECEIVED
   const latestDate = workingCase.courtDate ?? workingCase.arraignmentDate
+  const caseIsClosed = isCompletedCase(workingCase.state)
+
+  const [modalVisible, setModalVisible] = useState<boolean>(false)
+  const [isReviewDecisionSelected, setIsReviewDecisionSelected] =
+    useState(false)
+  const shouldDisplayReviewDecision =
+    isCompletedCase(workingCase.state) &&
+    workingCase.indictmentReviewer?.id === user?.id
 
   const handleNavigationTo = useCallback(
     (destination: string) => router.push(`${destination}/${workingCase.id}`),
@@ -72,20 +75,18 @@ const IndictmentOverview = () => {
             : formatMessage(strings.inProgressTitle)}
         </PageTitle>
         <CourtCaseInfo workingCase={workingCase} />
-        {workingCase.state === CaseState.RECEIVED &&
-          workingCase.court &&
-          latestDate?.date && (
-            <Box component="section" marginBottom={5}>
-              <InfoCardCaseScheduledIndictment
-                court={workingCase.court}
-                courtDate={latestDate.date}
-                courtRoom={latestDate.location}
-                postponedIndefinitelyExplanation={
-                  workingCase.postponedIndefinitelyExplanation
-                }
-              />
-            </Box>
-          )}
+        {caseHasBeenReceivedByCourt && workingCase.court && latestDate?.date && (
+          <Box component="section" marginBottom={5}>
+            <InfoCardCaseScheduledIndictment
+              court={workingCase.court}
+              courtDate={latestDate.date}
+              courtRoom={latestDate.location}
+              postponedIndefinitelyExplanation={
+                workingCase.postponedIndefinitelyExplanation
+              }
+            />
+          </Box>
+        )}
         <Box component="section" marginBottom={5}>
           {caseIsClosed ? (
             <InfoCardClosedIndictment />
@@ -99,37 +100,31 @@ const IndictmentOverview = () => {
           </Box>
         )}
         {workingCase.caseFiles && (
-          <Box component="section" marginBottom={10}>
+          <Box component="section" marginBottom={caseIsClosed ? 5 : 10}>
             <IndictmentCaseFilesList workingCase={workingCase} />
           </Box>
         )}
+        {shouldDisplayReviewDecision && (
+          <ReviewDecision
+            caseId={workingCase.id}
+            indictmentAppealDeadline={
+              workingCase.indictmentAppealDeadline ?? ''
+            }
+            modalVisible={modalVisible}
+            setModalVisible={setModalVisible}
+            onSelect={() => setIsReviewDecisionSelected(true)}
+          />
+        )}
       </FormContentContainer>
-      {!caseIsClosed && !isDefenceUser(user) && (
+      {shouldDisplayReviewDecision && (
         <FormContentContainer isFooter>
           <FormFooter
-            nextButtonIcon="arrowForward"
             previousUrl={`${constants.CASES_ROUTE}`}
-            nextIsLoading={isLoadingWorkingCase}
-            onNextButtonClick={() =>
-              handleNavigationTo(
-                constants.INDICTMENTS_RECEPTION_AND_ASSIGNMENT_ROUTE,
-              )
-            }
-            nextButtonText={formatMessage(core.continue)}
-            actionButtonText={formatMessage(strings.returnIndictmentButtonText)}
-            actionButtonColorScheme={'destructive'}
-            actionButtonIsDisabled={!workingCase.courtCaseNumber}
-            onActionButtonClick={() => setModalVisible(true)}
+            nextButtonText={formatMessage(strings.completeReview)}
+            onNextButtonClick={() => setModalVisible(true)}
+            nextIsDisabled={!isReviewDecisionSelected}
           />
         </FormContentContainer>
-      )}
-      {isDistrictCourtUser(user) && modalVisible && (
-        <ReturnIndictmentModal
-          workingCase={workingCase}
-          setWorkingCase={setWorkingCase}
-          onClose={() => setModalVisible(false)}
-          onComplete={() => router.push(constants.CASES_ROUTE)}
-        />
       )}
     </PageLayout>
   )

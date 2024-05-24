@@ -233,6 +233,15 @@ export const m = defineMessages({
     id: 'service.portal:could-not-fetch',
     defaultMessage: 'Tókst ekki að sækja',
   },
+  couldNotFetchAllItems: {
+    id: 'service.portal:could-not-fetch-all-items',
+    defaultMessage: 'Ekki tókst að sækja öll gögn',
+  },
+  couldNotFetchAllItemsDetail: {
+    id: 'service.portal:could-not-fetch-all-items-detail',
+    defaultMessage:
+      'Einhverjar tengingar virðast hafa rofnað svo ekki tókst að sækja gögn frá eftirfarandi aðilum: {arg}. Verið er að vinna í að lagfæra tenginuna.',
+  },
   somethingWrong: {
     id: 'service.portal:something-went-wrong',
     defaultMessage: 'Eitthvað fór úrskeiðis',
@@ -240,6 +249,10 @@ export const m = defineMessages({
   fetching: {
     id: 'service.portal:fetching',
     defaultMessage: 'Sæki',
+  },
+  fetchLicense: {
+    id: 'service.portal:fetch-license',
+    defaultMessage: 'Sækja leyfisbréf',
   },
   assets: {
     id: 'service.portal:assets',
@@ -370,6 +383,14 @@ export const m = defineMessages({
   messages: {
     id: 'service.portal:messages',
     defaultMessage: 'Skilaboð',
+  },
+  expired: {
+    id: 'service.portal:expired',
+    defaultMessage: 'Útrunnið',
+  },
+  valid: {
+    id: 'service.portal:valid',
+    defaultMessage: 'Í gildi',
   },
   today: {
     id: 'service.portal:today',
@@ -712,6 +733,14 @@ export const m = defineMessages({
     id: 'service.portal:my-settings',
     defaultMessage: 'Mínar stillingar',
   },
+  mySettingsInformation: {
+    id: 'service.portal:my-settings-information',
+    defaultMessage: 'Upplýsingar',
+  },
+  mySettingsNotifications: {
+    id: 'service.portal:my-settings-notifications',
+    defaultMessage: 'Tilkynningar',
+  },
   lists: {
     id: 'service.portal:lists',
     defaultMessage: 'Listar',
@@ -760,6 +789,10 @@ export const m = defineMessages({
   educationDegree: {
     id: 'service.portal:educationDegree',
     defaultMessage: 'Prófgráður',
+  },
+  noTranscriptForDownload: {
+    id: 'service.portal:educationCareerNoTranscriptForDownload',
+    defaultMessage: 'Námsmat ófáanlegt',
   },
   accessControl: {
     id: 'service.portal:accessControl',

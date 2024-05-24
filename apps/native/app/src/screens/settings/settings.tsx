@@ -1,4 +1,4 @@
-import messaging from '@react-native-firebase/messaging'
+import { useApolloClient } from '@apollo/client'
 import {
   Alert,
   NavigationBarSheet,
@@ -10,11 +10,11 @@ import { authenticateAsync } from 'expo-local-authentication'
 import React, { useEffect, useRef, useState } from 'react'
 import { useIntl } from 'react-intl'
 import {
+  Alert as RNAlert,
   Image,
   Linking,
   Platform,
   Pressable,
-  Alert as RNAlert,
   ScrollView,
   Switch,
   TouchableOpacity,
@@ -29,7 +29,6 @@ import {
 import { useTheme } from 'styled-components/native'
 import editIcon from '../../assets/icons/edit.png'
 import { PressableHighlight } from '../../components/pressable-highlight/pressable-highlight'
-import { client } from '../../graphql/client'
 import {
   UpdateProfileDocument,
   UpdateProfileMutation,
@@ -40,6 +39,8 @@ import { createNavigationOptionHooks } from '../../hooks/create-navigation-optio
 import { navigateTo } from '../../lib/deep-linking'
 import { showPicker } from '../../lib/show-picker'
 import { authStore } from '../../stores/auth-store'
+import { clearAllStorages } from '../../stores/mmkv'
+import { useNotificationsStore } from '../../stores/notifications-store'
 import {
   preferencesStore,
   usePreferencesStore,
@@ -62,6 +63,7 @@ export const SettingsScreen: NavigationFunctionComponent = ({
 }) => {
   useNavigationOptions(componentId)
 
+  const client = useApolloClient()
   const intl = useIntl()
   const theme = useTheme()
   const {
@@ -76,15 +78,28 @@ export const SettingsScreen: NavigationFunctionComponent = ({
     setUseBiometrics,
     appLockTimeout,
   } = usePreferencesStore()
+  const pushToken = useNotificationsStore(({ pushToken }) => pushToken)
+  const deletePushToken = useNotificationsStore(
+    ({ deletePushToken }) => deletePushToken,
+  )
+  const resetNotificationsStore = useNotificationsStore(({ reset }) => reset)
   const [loadingCP, setLoadingCP] = useState(false)
   const [localPackage, setLocalPackage] = useState<LocalPackage | null>(null)
-  const [pushToken, setPushToken] = useState('loading...')
   const efficient = useRef<any>({}).current
   const isInfoDismissed = dismissed.includes('userSettingsInformational')
   const { authenticationTypes, isEnrolledBiometrics } = useUiStore()
   const biometricType = useBiometricType(authenticationTypes)
 
   const onLogoutPress = async () => {
+    if (pushToken) {
+      await deletePushToken(pushToken)
+    }
+
+    resetNotificationsStore()
+
+    // Clear all MMKV storages
+    void clearAllStorages()
+
     await authStore.getState().logout()
     await Navigation.dismissAllModals()
     await Navigation.setRoot({
@@ -125,10 +140,6 @@ export const SettingsScreen: NavigationFunctionComponent = ({
         setLoadingCP(false)
         setLocalPackage(p)
       })
-      messaging()
-        .getToken()
-        .then((token) => setPushToken(token))
-        .catch(() => setPushToken('no token in simulator'))
     }, 330)
   }, [])
 
@@ -171,6 +182,7 @@ export const SettingsScreen: NavigationFunctionComponent = ({
         title={intl.formatMessage({ id: 'setting.screenTitle' })}
         onClosePress={() => Navigation.dismissModal(componentId)}
         style={{ marginHorizontal: 16 }}
+        showLoading={userProfile.loading && !!userProfile.data}
       />
       <ScrollView style={{ flex: 1 }} testID={testIDs.USER_SCREEN_SETTINGS}>
         <Alert

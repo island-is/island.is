@@ -34,6 +34,7 @@ import {
   getApplicant,
   getApplicantMoreInfo,
   getApplicantSpouse,
+  getChildrenInfo,
   getDirectTaxPayments,
   getNationalRegistryInfo,
 } from '@island.is/financial-aid-web/veita/src/utils/applicationHelper'
@@ -141,6 +142,8 @@ const ApplicationProfile = ({
 
   const nationalRegistryInfo = getNationalRegistryInfo(application)
 
+  const childrenInfo = getChildrenInfo(application)
+
   const modalInfo = getAidAmountModalInfo(
     calculationsModal.type,
     aidAmount,
@@ -206,17 +209,11 @@ const ApplicationProfile = ({
         />
 
         <CollapsibleProfileUnit
-          heading="Upplýsingar um staðgreiðslu"
-          info={getDirectTaxPayments(applicantDirectPayments)}
-          className={`contentUp delay-75`}
+          heading="Þjóðskrá"
+          info={nationalRegistryInfo}
+          className={`contentUp delay-125`}
           isPrint={isPrint}
-        >
-          {getDirectTaxPaymentsContent(
-            applicantDirectPayments,
-            application.hasFetchedDirectTaxPayment,
-            application.created,
-          )}
-        </CollapsibleProfileUnit>
+        />
 
         {showSpouseData[application.familyStatus] && (
           <>
@@ -242,16 +239,31 @@ const ApplicationProfile = ({
           </>
         )}
 
+        {childrenInfo?.length > 0 && (
+          <CollapsibleProfileUnit
+            heading="Börn"
+            info={childrenInfo}
+            className={`contentUp delay-125`}
+            isPrint={isPrint}
+          />
+        )}
+
+        <CollapsibleProfileUnit
+          heading="Upplýsingar um staðgreiðslu"
+          info={getDirectTaxPayments(applicantDirectPayments)}
+          className={`contentUp delay-75`}
+          isPrint={isPrint}
+        >
+          {getDirectTaxPaymentsContent(
+            applicantDirectPayments,
+            application.hasFetchedDirectTaxPayment,
+            application.created,
+          )}
+        </CollapsibleProfileUnit>
+
         <CollapsibleProfileUnit
           heading="Umsóknarferli"
           info={applicantMoreInfo}
-          className={`contentUp delay-125`}
-          isPrint={isPrint}
-        />
-
-        <CollapsibleProfileUnit
-          heading="Þjóðskrá"
-          info={nationalRegistryInfo}
           className={`contentUp delay-125`}
           isPrint={isPrint}
         />

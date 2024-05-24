@@ -302,6 +302,7 @@ services-auth-delegation-api:
   grantNamespaces:
     - 'nginx-ingress-internal'
     - 'islandis'
+    - 'service-portal'
   grantNamespacesEnabled: true
   healthCheck:
     liveness:
@@ -476,9 +477,10 @@ services-auth-ids-api-cleanup:
   enabled: true
   env:
     DB_HOST: 'postgres-ids.internal'
-    DB_NAME: 'services_auth_ids_api_cleanup'
+    DB_NAME: 'servicesauth'
     DB_REPLICAS_HOST: 'postgres-ids.internal'
-    DB_USER: 'services_auth_ids_api_cleanup'
+    DB_USER: 'servicesauth'
+    IDENTITY_SERVER_ISSUER_URL: 'https://innskra.island.is'
     LOG_LEVEL: 'info'
     NODE_OPTIONS: '--max-old-space-size=460'
     SERVERSIDE_FEATURES_ON: 'driving-license-use-v1-endpoint-for-v2-comms'
@@ -518,11 +520,10 @@ services-auth-ids-api-cleanup:
     requests:
       cpu: '100m'
       memory: '256Mi'
-  schedule:
-    schedule: '0 3 * * *'
+  schedule: '0 3 * * *'
   secrets:
     CONFIGCAT_SDK_KEY: '/k8s/configcat/CONFIGCAT_SDK_KEY'
-    DB_PASS: '/k8s/services-auth-ids-api-cleanup/DB_PASSWORD'
+    DB_PASS: '/k8s/servicesauth/DB_PASSWORD'
   securityContext:
     allowPrivilegeEscalation: false
     privileged: false

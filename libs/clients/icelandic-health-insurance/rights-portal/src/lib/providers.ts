@@ -9,6 +9,7 @@ import {
   OverviewInsuranceApi as OverviewApi,
   PaymentsCopaymentApi,
   PaymentsOverviewApi,
+  InsurancestatementsApi,
 } from '../../gen/fetch'
 import { SharedApiConfig } from './sharedApiConfig'
 
@@ -18,6 +19,7 @@ export const exportedApis = [
   DentistApi,
   HealthcenterApi,
   EhicApi,
+  InsurancestatementsApi,
   DrugApi,
   OverviewApi,
   PaymentsCopaymentApi,
