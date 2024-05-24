@@ -54,7 +54,7 @@ describe('CaseController - Get indictment pdf', () => {
       } catch (error) {
         then.error = error as Error
       }
-      console.log('then', then)
+
       return then
     }
   })
