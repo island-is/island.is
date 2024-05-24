@@ -14,15 +14,44 @@ import { spmm } from '../../lib/messages'
 import { maskString } from '@island.is/shared/utils'
 import { useUserInfoOverviewQuery } from './UserInfoOverview.generated'
 import { Problem } from '@island.is/react-spa/shared'
+import { useEffect, useState } from 'react'
 
 const UserInfoOverview = () => {
   useNamespaces('sp.family')
   const { formatMessage } = useLocale()
   const userInfo = useUserInfo()
+  const [childCards, setChildCards] = useState<JSX.Element[]>([])
 
   const { data, error, loading } = useUserInfoOverviewQuery()
 
   const { spouse, childCustody } = data?.nationalRegistryPerson || {}
+
+  useEffect(() => {
+    const fetchChildCustodyData = async () => {
+      if (data?.nationalRegistryPerson?.childCustody) {
+        const childrenData = await Promise.all(
+          data.nationalRegistryPerson.childCustody.map(async (child) => {
+            const baseId = await maskString(
+              child.nationalId,
+              userInfo.profile.nationalId,
+            )
+            return (
+              <FamilyMemberCard
+                key={child.nationalId}
+                title={child.fullName || ''}
+                nationalId={child.nationalId}
+                baseId={baseId || ''}
+                familyRelation="child"
+              />
+            )
+          }),
+        )
+        setChildCards(childrenData)
+      }
+    }
+
+    fetchChildCustodyData()
+  }, [data, userInfo.profile.nationalId])
 
   return (
     <>
@@ -65,17 +94,7 @@ const UserInfoOverview = () => {
               familyRelation="spouse"
             />
           )}
-          {childCustody?.map((child) => (
-            <FamilyMemberCard
-              key={child.nationalId}
-              title={child.fullName || ''}
-              nationalId={child.nationalId}
-              baseId={
-                maskString(child.nationalId, userInfo.profile.nationalId) ?? ''
-              }
-              familyRelation="child"
-            />
-          ))}
+          {childCards}
           <FootNote serviceProviderSlug={THJODSKRA_SLUG} />
         </Stack>
       )}

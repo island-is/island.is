@@ -8,7 +8,7 @@ import {
   toast,
 } from '@island.is/island-ui/core'
 import { formatNationalId, IntroHeader } from '@island.is/portals/core'
-import { encryptText } from '@island.is/shared/utils'
+import { maskString } from '@island.is/shared/utils'
 import { useLocale } from '@island.is/localization'
 import { useAuth } from '@island.is/auth/react'
 import { replaceParams, useSubmitting } from '@island.is/react-spa/shared'
@@ -103,7 +103,7 @@ const Users = () => {
                               href: ServiceDeskPaths.User,
                               params: {
                                 nationalId:
-                                  (await encryptText(
+                                  (await maskString(
                                     nationalId,
                                     userInfo?.profile?.nationalId ?? '',
                                   )) ?? '',

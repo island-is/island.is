@@ -10,7 +10,7 @@ import {
   validateFormData,
   ValidateFormDataResult,
 } from '@island.is/react-spa/shared'
-import { encryptText, isSearchTermValid } from '@island.is/shared/utils'
+import { maskString, isSearchTermValid } from '@island.is/shared/utils'
 
 import {
   GetPaginatedUserProfilesDocument,
@@ -85,7 +85,7 @@ export const UsersAction: WrappedActionFn =
           replaceParams({
             href: ServiceDeskPaths.User,
             params: {
-              nationalId: (await encryptText(
+              nationalId: (await maskString(
                 respData[0].nationalId,
                 userInfo.profile.nationalId,
               )) as string,

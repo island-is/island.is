@@ -31,12 +31,12 @@ import * as kennitala from 'kennitala'
 import { maskString, isDefined } from '@island.is/shared/utils'
 import { FamilyChild, User } from './types'
 
-export function formatPersonDiscriminated(
+export async function formatPersonDiscriminated(
   individual?: EinstaklingurDTOAllt | null,
   nationalId?: string,
   useFakeData?: boolean,
-): PersonV3 | null {
-  const person = formatPerson(individual, nationalId)
+): Promise<PersonV3 | null> {
+  const person = await formatPerson(individual, nationalId)
   if (!person) {
     return null
   }
@@ -64,13 +64,17 @@ export function formatChildCustody(
   }
 }
 
-export function formatPerson(
+export async function formatPerson(
   individual?: EinstaklingurDTOAllt | null,
   nationalId?: string,
-): Person | null {
+): Promise<Person | null> {
   if (individual === null || !individual?.kennitala || !individual?.nafn) {
     return null
   }
+
+  const maskedNationalId = nationalId
+    ? await maskString(individual.kennitala, nationalId)
+    : null
 
   return {
     nationalId: individual.kennitala,
@@ -84,7 +88,7 @@ export function formatPerson(
     ),
     ...(nationalId &&
       individual.kennitala && {
-        baseId: maskString(individual.kennitala, nationalId),
+        baseId: maskedNationalId,
       }),
 
     //DEPRECATION LINE -- below shall be removed

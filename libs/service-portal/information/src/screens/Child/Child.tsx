@@ -3,11 +3,11 @@ import { useUserInfo } from '@island.is/auth/react'
 import { useLocale, useNamespaces } from '@island.is/localization'
 import {
   formatNationalId,
-  UserInfoLine,
-  m,
   IntroHeader,
-  THJODSKRA_SLUG,
   LinkButton,
+  m,
+  THJODSKRA_SLUG,
+  UserInfoLine,
 } from '@island.is/service-portal/core'
 import { defineMessage } from 'react-intl'
 import {
@@ -24,8 +24,9 @@ import { formatNameBreaks } from '../../helpers/formatting'
 import { spmm, urls } from '../../lib/messages'
 import { useNationalRegistryChildCustodyQuery } from './Child.generated'
 import { natRegGenderMessageDescriptorRecord } from '../../helpers/localizationHelpers'
-import { unmaskString } from '@island.is/shared/utils'
 import { Problem } from '@island.is/react-spa/shared'
+import { useEffect, useState } from 'react'
+import { unmaskString } from '@island.is/shared/utils'
 
 type UseParams = {
   baseId: string
@@ -36,11 +37,31 @@ const Child = () => {
   const { formatMessage } = useLocale()
   const userInfo = useUserInfo()
   const { baseId } = useParams() as UseParams
+  const [unmaskedBaseId, setUnmaskedBaseId] = useState<string | undefined>(
+    undefined,
+  )
+
+  useEffect(() => {
+    const encrypt = async () => {
+      try {
+        const encrypted = await unmaskString(
+          baseId,
+          userInfo.profile.nationalId,
+        )
+        setUnmaskedBaseId(encrypted)
+      } catch (error) {
+        console.error('Error encrypting text:', error)
+      }
+    }
+
+    encrypt()
+  }, [baseId, userInfo])
 
   const { data, loading, error } = useNationalRegistryChildCustodyQuery({
     variables: {
-      childNationalId: unmaskString(baseId, userInfo.profile.nationalId),
+      childNationalId: unmaskedBaseId,
     },
+    skip: !unmaskedBaseId,
   })
 
   const child = data?.nationalRegistryPerson?.childCustody?.[0]?.details

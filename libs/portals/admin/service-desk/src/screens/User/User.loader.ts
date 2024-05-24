@@ -6,7 +6,7 @@ import {
 import { redirect } from 'react-router-dom'
 
 import { WrappedLoaderFn } from '@island.is/portals/core'
-import { decryptText } from '@island.is/shared/utils'
+import { unmaskString } from '@island.is/shared/utils'
 
 import { ServiceDeskPaths } from '../../lib/paths'
 
@@ -21,7 +21,7 @@ export const userLoader: WrappedLoaderFn = ({ client, userInfo }) => {
     if (!nationalId) throw new Error('User not found')
 
     const unMaskedNationalId =
-      (await decryptText(nationalId, userInfo.profile.nationalId)) ?? ''
+      (await unmaskString(nationalId, userInfo.profile.nationalId)) ?? ''
 
     const res = await client.query<
       GetUserProfileByNationalIdQuery,
