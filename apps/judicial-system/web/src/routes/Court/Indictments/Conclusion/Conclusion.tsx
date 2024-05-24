@@ -111,12 +111,12 @@ const Conclusion: React.FC = () => {
       } else if (selectedAction === 'COMPLETE') {
         handleCompletion()
       } else if (postponement?.postponedIndefinitely) {
-        const updateSuccss = await updateCase(workingCase.id, {
+        const updateSuccess = await updateCase(workingCase.id, {
           courtDate: null,
           postponedIndefinitelyExplanation: postponement.reason,
         })
 
-        if (!updateSuccss) {
+        if (!updateSuccess) {
           return
         }
       } else {
@@ -388,11 +388,14 @@ const Conclusion: React.FC = () => {
           nextButtonIcon="arrowForward"
           previousUrl={`${constants.INDICTMENTS_DEFENDER_ROUTE}/${workingCase.id}`}
           onNextButtonClick={() =>
-            handleNavigationTo(constants.INDICTMENTS_COURT_OVERVIEW_ROUTE)
+            handleNavigationTo(
+              selectedAction === 'COMPLETE'
+                ? constants.INDICTMENTS_SUMMARY_ROUTE
+                : constants.INDICTMENTS_COURT_OVERVIEW_ROUTE,
+            )
           }
           nextIsDisabled={!stepIsValid()}
           nextIsLoading={isUpdatingCase}
-          nextButtonText={formatMessage(strings.nextButtonText)}
         />
       </FormContentContainer>
     </PageLayout>

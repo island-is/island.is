@@ -10,26 +10,45 @@ import {
 } from '@island.is/service-portal/core'
 import { ExpandRow, ExpandHeader } from '@island.is/service-portal/core'
 import { hb, m as messages } from '../../lib/messages'
-import { HousingBenefitsPayments } from '@island.is/api/schema'
+import {
+  HousingBenefitsPayment,
+  HousingBenefitsPayments,
+} from '@island.is/api/schema'
 import { HousingBenefitsFooter } from './HousingBenefitsFooter'
-
-export const ITEMS_ON_PAGE = 12
 
 interface Props {
   payments: HousingBenefitsPayments
   page: number
+  itemsOnPage: number
   setPage: (n: number) => void
 }
 
-const HousingBenefitsTable = ({ payments, page, setPage }: Props) => {
+const HousingBenefitsTable = ({
+  payments,
+  page,
+  itemsOnPage,
+  setPage,
+}: Props) => {
   const { formatMessage, lang } = useLocale()
 
   const recordsArray = payments.data
 
   const totalPages =
-    payments.totalCount > ITEMS_ON_PAGE
-      ? Math.ceil(payments.totalCount / ITEMS_ON_PAGE)
+    payments.totalCount > itemsOnPage
+      ? Math.ceil(payments.totalCount / itemsOnPage)
       : 0
+
+  const yearTransactionType = (record: HousingBenefitsPayment) => {
+    try {
+      const message =
+        /^\d+$/.test(record?.month ?? '') &&
+        record.transactionType &&
+        formatMessage(hb.transaction?.[record.transactionType])
+      return message ? ' - ' + message : ''
+    } catch (e) {
+      return ''
+    }
+  }
 
   return (
     <>
@@ -53,13 +72,9 @@ const HousingBenefitsTable = ({ payments, page, setPage }: Props) => {
                 { value: formatDate(record.dateTransfer) },
                 {
                   value: record.month
-                    ? `${capitalize(displayMonthOrYear(record.month, lang))}${
-                        record.transactionType === 'L'
-                          ? ' - ' + formatMessage(hb.transaction?.L)
-                          : record.transactionType === 'AS'
-                          ? ' - ' + formatMessage(hb.transaction?.AS)
-                          : ''
-                      }`
+                    ? `${capitalize(
+                        displayMonthOrYear(record.month, lang),
+                      )}${yearTransactionType(record)}`
                     : '',
                 },
                 { value: amountFormat(record.paymentBeforeDebt) },

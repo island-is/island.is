@@ -52,11 +52,12 @@ export const mapPensionCalculationInput = (
     typeof input.birthMonth === 'number' &&
     typeof input.birthYear === 'number'
   ) {
-    const birthdate = new Date(input.birthYear, input.birthMonth)
-
     const defaultPensionAge =
       (pageData?.configJson?.['defaultPensionAge'] as number) ?? 67
-    const defaultPensionDate = addYears(birthdate, defaultPensionAge)
+    const defaultPensionDate = addYears(
+      new Date(input.birthYear, input.birthMonth + 1),
+      defaultPensionAge,
+    )
 
     const startDate =
       typeof input.startMonth === 'number' &&

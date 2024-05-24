@@ -55,6 +55,7 @@ describe('getCasesQueryFilter', () => {
             CaseState.COMPLETED,
           ],
         },
+
         {
           [Op.or]: [
             { prosecutors_office_id: 'Prosecutors Office Id' },

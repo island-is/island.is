@@ -15,43 +15,43 @@ export class Defendant {
   @Field(() => ID)
   readonly id!: string
 
-  @Field({ nullable: true })
+  @Field(() => String, { nullable: true })
   readonly created?: string
 
-  @Field({ nullable: true })
+  @Field(() => String, { nullable: true })
   readonly modified?: string
 
-  @Field({ nullable: true })
+  @Field(() => ID, { nullable: true })
   readonly caseId?: string
 
   @Field(() => Boolean, { nullable: true })
   readonly noNationalId?: boolean
 
-  @Field({ nullable: true })
+  @Field(() => String, { nullable: true })
   readonly nationalId?: string
 
-  @Field({ nullable: true })
+  @Field(() => String, { nullable: true })
   readonly name?: string
 
   @Field(() => Gender, { nullable: true })
   readonly gender?: Gender
 
-  @Field({ nullable: true })
+  @Field(() => String, { nullable: true })
   readonly address?: string
 
-  @Field({ nullable: true })
+  @Field(() => String, { nullable: true })
   readonly citizenship?: string
 
-  @Field({ nullable: true })
+  @Field(() => String, { nullable: true })
   readonly defenderName?: string
 
-  @Field({ nullable: true })
+  @Field(() => String, { nullable: true })
   readonly defenderNationalId?: string
 
-  @Field({ nullable: true })
+  @Field(() => String, { nullable: true })
   readonly defenderEmail?: string
 
-  @Field({ nullable: true })
+  @Field(() => String, { nullable: true })
   readonly defenderPhoneNumber?: string
 
   @Field(() => Boolean, { nullable: true })
@@ -62,4 +62,7 @@ export class Defendant {
 
   @Field(() => ServiceRequirement, { nullable: true })
   readonly serviceRequirement?: ServiceRequirement
+
+  @Field(() => String, { nullable: true })
+  readonly verdictViewDate?: string
 }

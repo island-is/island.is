@@ -192,6 +192,7 @@ export type stepValidationsType = {
   [constants.INDICTMENTS_DEFENDER_ROUTE]: (theCase: Case) => boolean
   [constants.INDICTMENTS_CONCLUSION_ROUTE]: () => boolean
   [constants.INDICTMENTS_COURT_OVERVIEW_ROUTE]: () => boolean
+  [constants.INDICTMENTS_SUMMARY_ROUTE]: () => boolean
   [constants.COURT_OF_APPEAL_OVERVIEW_ROUTE]: () => boolean
   [constants.COURT_OF_APPEAL_CASE_ROUTE]: (theCase: Case) => boolean
   [constants.COURT_OF_APPEAL_RULING_ROUTE]: (theCase: Case) => boolean
@@ -246,6 +247,7 @@ export const stepValidations = (): stepValidationsType => {
       validations.isTrafficViolationStepValidIndictments(theCase),
     [constants.INDICTMENTS_CASE_FILES_ROUTE]: (theCase) =>
       validations.isCaseFilesStepValidIndictments(theCase),
+    [constants.INDICTMENTS_SUMMARY_ROUTE]: () => true,
     [constants.RESTRICTION_CASE_RECEPTION_AND_ASSIGNMENT_ROUTE]: (
       theCase: Case,
     ) => validations.isReceptionAndAssignmentStepValid(theCase),
