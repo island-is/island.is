@@ -1161,7 +1161,7 @@ export class InternalCaseService {
         { model: DateLog, as: 'dateLogs' },
       ],
       order: [[{ model: DateLog, as: 'dateLogs' }, 'created', 'DESC']],
-      attributes: ['id', 'courtCaseNumber', 'type'],
+      attributes: ['id', 'courtCaseNumber', 'type', 'state'],
       where: {
         type: CaseType.INDICTMENT,
         '$defendants.national_id$': nationalId,

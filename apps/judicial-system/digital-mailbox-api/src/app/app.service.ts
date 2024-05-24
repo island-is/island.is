@@ -7,6 +7,7 @@ import {
   AuditedAction,
   AuditTrailService,
 } from '@island.is/judicial-system/audit-trail'
+import { isCompletedCase } from '@island.is/judicial-system/types'
 
 import { CasesResponse } from './models/cases.response'
 import { InternalCasesResponse } from './models/internalCases.response'
@@ -38,6 +39,17 @@ export class AppService {
 
       return {
         id: item.id,
+        state: {
+          color: isCompletedCase(item.state) ? 'purple' : 'blue',
+          label:
+            language === 'en'
+              ? isCompletedCase(item.state)
+                ? 'Completed'
+                : 'Active'
+              : isCompletedCase(item.state)
+              ? 'Lokið'
+              : 'Í vinnslu',
+        },
         caseNumber:
           language === 'en'
             ? `Case number ${item.courtCaseNumber}`
