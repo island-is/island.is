@@ -98,7 +98,7 @@ export class AppService {
       'digital-mailbox-api',
       AuditedAction.GET_INDICTMENTS,
       this.getAllCases(nationalId, lang),
-      'OK',
+      nationalId,
     )
   }
 }
