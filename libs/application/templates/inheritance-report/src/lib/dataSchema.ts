@@ -372,6 +372,8 @@ export const inheritanceReportSchema = z.object({
     debtsTotal: z.number().optional(),
   }),
 
+  estateInfoSelection: z.string().min(1),
+
   funeralCost: z
     .object({
       build: z.string().optional(),
