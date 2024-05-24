@@ -19,7 +19,8 @@ import { offlineStore } from './offline-store'
 import { preferencesStore } from './preferences-store'
 
 const KEYCHAIN_AUTH_KEY = `@islandis_${bundleId}`
-const REFRESH_TOKEN_ERROR = 'refresh_token_error'
+const INVALID_REFRESH_TOKEN_ERROR = 'invalid_grant'
+const UNAUTHORIZED_USER_INFO = 'Got 401 when fetching user info'
 
 interface UserInfo {
   sub: string
@@ -37,8 +38,8 @@ interface AuthStore extends State {
   cognitoDismissCount: number
   cognitoAuthUrl?: string
   cookies: string
-  fetchUserInfo(_refresh?: boolean): Promise<UserInfo>
-  refresh(): Promise<boolean>
+  fetchUserInfo(skipRefresh?: boolean): Promise<UserInfo>
+  refresh(): Promise<void>
   login(): Promise<boolean>
   logout(): Promise<boolean>
 }
@@ -70,7 +71,7 @@ export const authStore = create<AuthStore>((set, get) => ({
     // Detect expired token
     const expiresAt = get().authorizeResult?.accessTokenExpirationDate ?? 0
 
-    if (new Date(expiresAt) < new Date()) {
+    if (!skipRefresh && new Date(expiresAt) < new Date()) {
       await get().refresh()
     }
 
@@ -85,12 +86,12 @@ export const authStore = create<AuthStore>((set, get) => ({
 
     if (res.status === 401) {
       // Attempt to refresh the access token
-      if (!skipRefresh && (await get().refresh())) {
+      if (!skipRefresh) {
+        await get().refresh()
         // Retry the userInfo call
         return get().fetchUserInfo(true)
       }
-
-      throw new Error('Unauthorized')
+      throw new Error(UNAUTHORIZED_USER_INFO)
     } else if (res.status === 200) {
       const userInfo = await res.json()
       set({ userInfo })
@@ -103,34 +104,24 @@ export const authStore = create<AuthStore>((set, get) => ({
     const refreshToken = get().authorizeResult?.refreshToken
 
     if (!refreshToken) {
-      return false
+      return
     }
 
-    try {
-      const newAuthorizeResult = await authRefresh(appAuthConfig, {
-        refreshToken,
-      })
+    const newAuthorizeResult = await authRefresh(appAuthConfig, {
+      refreshToken,
+    })
 
-      const authorizeResult = {
-        ...get().authorizeResult,
-        ...newAuthorizeResult,
-      }
-
-      if (authorizeResult) {
-        await Keychain.setGenericPassword(
-          KEYCHAIN_AUTH_KEY,
-          JSON.stringify(authorizeResult),
-          { service: KEYCHAIN_AUTH_KEY },
-        )
-        set({ authorizeResult })
-
-        return true
-      }
-    } catch (e) {
-      throw new Error(REFRESH_TOKEN_ERROR)
+    const authorizeResult = {
+      ...get().authorizeResult,
+      ...newAuthorizeResult,
     }
 
-    return false
+    await Keychain.setGenericPassword(
+      KEYCHAIN_AUTH_KEY,
+      JSON.stringify(authorizeResult),
+      { service: KEYCHAIN_AUTH_KEY },
+    )
+    set({ authorizeResult })
   },
   async login() {
     const appAuthConfig = getAppAuthConfig()
@@ -232,30 +223,32 @@ export async function checkIsAuthenticated() {
     }
   }
 
+  if (!offlineStore.getState().isConnected) {
+    return true
+  }
+
   try {
     await fetchUserInfo()
 
     return true
   } catch (e) {
-    const err = e as Error
+    const err = e as Error & { code?: string }
+    console.warn('checkIsAuthenticated: ', err)
 
-    if (!offlineStore.getState().isConnected) {
+    const shouldLogout =
+      err.code === INVALID_REFRESH_TOKEN_ERROR ||
+      err.message === UNAUTHORIZED_USER_INFO
+
+    if (!shouldLogout) {
       return true
-    } else if (REFRESH_TOKEN_ERROR === err?.message) {
-      Alert.alert(
-        intl.formatMessage({ id: 'login.expiredTitle' }),
-        intl.formatMessage({ id: 'login.expiredMissingUserMessage' }),
-      )
-      await logout()
-      await Navigation.dismissAllModals()
-      await Navigation.dismissAllOverlays()
-      await Navigation.setRoot({
-        root: await getAppRoot(),
-      })
-
-      return false
     }
 
-    return true
+    Alert.alert(
+      intl.formatMessage({ id: 'login.expiredTitle' }),
+      intl.formatMessage({ id: 'login.expiredMissingUserMessage' }),
+    )
+    await logout()
+
+    return false
   }
 }
