@@ -255,12 +255,14 @@ export class FileService {
   ): Promise<PresignedPost> {
     const { fileName, type } = createPresignedPost
 
-    return this.awsS3Service.createPresignedPost(
-      theCase.type,
-      theCase.state,
-      `${theCase.id}/${uuid()}/${fileName}`,
-      type,
-    )
+    const key = `${theCase.id}/${uuid()}/${fileName}`
+
+    return this.awsS3Service
+      .createPresignedPost(theCase.type, theCase.state, key, type)
+      .then((presignedPost) => ({
+        ...presignedPost,
+        key,
+      }))
   }
 
   async createCaseFile(
