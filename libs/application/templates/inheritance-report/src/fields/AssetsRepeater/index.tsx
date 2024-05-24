@@ -285,7 +285,7 @@ const FieldComponent = ({
     currency: field.currency,
     required: field.required,
     loading: fieldName === loadingFieldName,
-    suffix: '',
+    suffix: field.suffix,
     onChange: () => onAfterChange?.(),
     error: error,
     readOnly: readOnly,
@@ -306,6 +306,7 @@ const FieldComponent = ({
           </Text>
         </GridColumn>
       )
+      
     case 'assetNumber':
       if (assetKey === 'assets') {
         content = (
@@ -328,8 +329,8 @@ const FieldComponent = ({
           />
         )
       }
-
       break
+
     case 'share':
       content = (
         <ShareInput
@@ -340,8 +341,8 @@ const FieldComponent = ({
           hasError={!!error}
         />
       )
-
       break
+    
     default:
       content = <InputController {...defaultProps} />
 
