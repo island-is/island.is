@@ -1,13 +1,17 @@
-import { Controller, Get, Inject, Query } from '@nestjs/common'
+import { Controller, Get, Inject, Query, UseGuards } from '@nestjs/common'
 import { ApiCreatedResponse } from '@nestjs/swagger'
 
-import type { Logger } from '@island.is/logging'
-import { LOGGER_PROVIDER } from '@island.is/logging'
+import { type Logger, LOGGER_PROVIDER } from '@island.is/logging'
 
+import type { User as TUser } from '@island.is/judicial-system/types'
+
+import { JwtAuthGuard } from './guards/auth.guard'
+import { User } from './guards/user.decorator'
 import { CasesResponse } from './models/cases.response'
 import { AppService } from './app.service'
 
 @Controller('api')
+@UseGuards(JwtAuthGuard)
 export class AppController {
   constructor(
     private readonly appService: AppService,
@@ -16,10 +20,10 @@ export class AppController {
 
   @Get('test')
   @ApiCreatedResponse({ type: String, description: 'Test connection' })
-  async test(): Promise<string> {
+  async test(@User() user: Pick<TUser, 'nationalId'>): Promise<string> {
     this.logger.debug('Testing connection')
 
-    return this.appService.testConnection()
+    return this.appService.testConnection(user.nationalId)
   }
 
   @Get('cases')

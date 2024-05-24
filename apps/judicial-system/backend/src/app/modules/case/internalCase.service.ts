@@ -1154,6 +1154,7 @@ export class InternalCaseService {
   }
 
   async getIndictmentCases(nationalId: string): Promise<Case[]> {
+    console.log('nationalId', nationalId)
     return this.caseModel.findAll({
       include: [
         { model: Defendant, as: 'defendants' },

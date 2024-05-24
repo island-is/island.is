@@ -25,6 +25,7 @@ import {
 
 import { CaseEvent, EventService } from '../event'
 import { DeliverDto } from './dto/deliver.dto'
+import { InternalCasesDto } from './dto/internalCases.dto'
 import { InternalCreateCaseDto } from './dto/internalCreateCase.dto'
 import { CurrentCase } from './guards/case.decorator'
 import { CaseCompletedGuard } from './guards/caseCompleted.guard'
@@ -34,7 +35,6 @@ import { ArchiveResponse } from './models/archive.response'
 import { Case } from './models/case.model'
 import { DeliverResponse } from './models/deliver.response'
 import { InternalCaseService } from './internalCase.service'
-import { InternalCasesDto } from './dto/internalCases.dto'
 
 @Controller('api/internal')
 @ApiTags('internal cases')

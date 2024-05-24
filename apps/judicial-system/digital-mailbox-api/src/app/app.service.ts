@@ -1,7 +1,6 @@
 import { BadGatewayException, Inject, Injectable } from '@nestjs/common'
 
-import type { Logger } from '@island.is/logging'
-import { LOGGER_PROVIDER } from '@island.is/logging'
+import { type Logger, LOGGER_PROVIDER } from '@island.is/logging'
 import { type ConfigType } from '@island.is/nest/config'
 
 import {
@@ -11,24 +10,23 @@ import {
 
 import { CasesResponse } from './models/cases.response'
 import { InternalCasesResponse } from './models/internalCases.response'
-import appModuleConfig from './app.config'
+import { digitalMailboxModuleConfig } from './app.config'
 
 @Injectable()
 export class AppService {
   constructor(
-    @Inject(appModuleConfig.KEY)
-    private readonly config: ConfigType<typeof appModuleConfig>,
+    @Inject(digitalMailboxModuleConfig.KEY)
+    private readonly config: ConfigType<typeof digitalMailboxModuleConfig>,
     @Inject(LOGGER_PROVIDER) private readonly logger: Logger,
     private readonly auditTrailService: AuditTrailService,
   ) {}
 
-  private async test(): Promise<string> {
-    return 'OK'
+  private async test(nationalId: string): Promise<string> {
+    return `OK ${nationalId}`
   }
 
-  async testConnection(): Promise<string> {
-    //TODO: Audit
-    return this.test()
+  async testConnection(nationalId: string): Promise<string> {
+    return this.test(nationalId)
   }
 
   private format(
@@ -50,13 +48,13 @@ export class AppService {
   }
 
   private async getAllCases(lang?: string): Promise<CasesResponse[]> {
-    return fetch(`${this.config.backend.url}/api/internal/cases/indictments`, {
+    return fetch(`${this.config.backendUrl}/api/internal/cases/indictments`, {
       method: 'POST',
       headers: {
         'Content-Type': 'application/json',
-        authorization: `Bearer ${this.config.backend.accessToken}`,
+        authorization: `Bearer ${this.config.secretToken}`,
       },
-      body: JSON.stringify({ nationalId: '1112902539' }),
+      body: JSON.stringify({ nationalId: '111290-2539' }),
     })
       .then(async (res) => {
         const response = await res.json()
