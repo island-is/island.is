@@ -43,7 +43,7 @@ export const childrenForm = {
       defaultMessage: 'Skóli',
       description: 'Label for school input',
     },
-    schoollPlaceholder: {
+    schoolPlaceholder: {
       id: 'fa.application:section.personalInterest.childrenForm.inputs.schoollPlaceholder',
       defaultMessage: 'Í hvaða skóla er barnið?',
       description:
