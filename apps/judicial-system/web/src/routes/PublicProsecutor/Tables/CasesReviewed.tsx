@@ -41,22 +41,18 @@ const CasesReviewed: FC<Props> = ({ loading, cases }) => {
   }
 
   const getVerdictViewTag = (row: CaseListEntry) => {
-    let variant: TagVariant = 'blue'
-    let message = strings.tagVerdictViewOnDeadline
-
-    if (!row.indictmentVerdictViewedByAll) {
-      variant = 'red'
-      message = strings.tagVerdictUnviewed
-    } else {
-      const today = new Date()
-      const deadline = new Date(row.indictmentVerdictAppealDeadline ?? '')
-
-      if (today < deadline) {
-        variant = 'mint'
-        message = strings.tagVerdictViewComplete
-      }
-    }
-
+    const today = new Date()
+    const deadline = new Date(row.indictmentVerdictAppealDeadline ?? '')
+    const variant = !row.indictmentVerdictViewedByAll
+      ? 'red'
+      : today > deadline
+      ? 'mint'
+      : 'blue'
+    const message = !row.indictmentVerdictViewedByAll
+      ? strings.tagVerdictUnviewed
+      : today > deadline
+      ? strings.tagVerdictViewComplete
+      : strings.tagVerdictViewOnDeadline
     return (
       <Tag variant={variant} outlined disabled truncate>
         {formatMessage(message)}
