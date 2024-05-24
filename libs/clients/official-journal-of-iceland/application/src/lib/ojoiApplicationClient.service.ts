@@ -23,7 +23,7 @@ export class OfficialJournalOfIcelandApplicationClientService {
     await this.ojoiApplicationApi.postComment(params)
   }
 
-  async postApplicaton(params: PostApplicationRequest): Promise<boolean> {
+  async postApplication(params: PostApplicationRequest): Promise<boolean> {
     try {
       await this.ojoiApplicationApi.postApplication(params)
       return Promise.resolve(true)

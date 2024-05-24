@@ -24,6 +24,6 @@ export class OfficialJournalOfIcelandApplicationService {
   }
 
   async postApplication(input: PostApplicationInput): Promise<boolean> {
-    return await this.ojoiApplicationService.postApplicaton(input)
+    return await this.ojoiApplicationService.postApplication(input)
   }
 }
