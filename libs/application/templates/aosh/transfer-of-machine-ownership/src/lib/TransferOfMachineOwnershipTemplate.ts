@@ -180,14 +180,22 @@ const template: ApplicationTemplate<
               delete: true,
             },
           ],
+          onExit: [
+            defineTemplateApi({
+              action: ApiActions.initReview,
+            }),
+          ],
         },
         on: {
           [DefaultEvents.SUBMIT]: [
             {
               target: States.PAYMENT,
+              cond: (application) => isPaymentRequired(application),
+            },
+            {
+              target: States.REVIEW,
               cond: (application) => !isPaymentRequired(application),
             },
-            { target: States.REVIEW },
           ],
         },
       },

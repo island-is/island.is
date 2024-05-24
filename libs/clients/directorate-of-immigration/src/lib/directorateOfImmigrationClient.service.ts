@@ -310,6 +310,7 @@ export class DirectorateOfImmigrationClient {
               ? new Date(selectedChild.otherParentBirtDate).toISOString()
               : undefined,
             parent2Name: selectedChild.otherParentName,
+            nationality: childInfo.citizenship,
           },
         },
       })

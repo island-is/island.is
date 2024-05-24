@@ -68,6 +68,7 @@ export interface CitizenshipApplication {
     fullName: string
     givenName?: string | null
     familyName?: string | null
+    citizenship?: string
   }[]
   childrenPassport: {
     nationalId: string
