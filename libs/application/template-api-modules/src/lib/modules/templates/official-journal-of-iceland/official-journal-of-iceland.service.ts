@@ -28,11 +28,13 @@ export class OfficialJournalOfIcelandTemaplateService extends BaseTemplateApiSer
     return this.ojoiService.types({})
   }
 
-  async postApplication({ application, auth }: Props) {
-    const success = await this.ojoiApplicationService.postApplication({
-      id: application.id,
-    })
-
-    return success
+  async postApplication({ application, auth }: Props): Promise<boolean> {
+    try {
+      return await this.ojoiApplicationService.postApplication({
+        id: application.id,
+      })
+    } catch (error) {
+      return false
+    }
   }
 }
