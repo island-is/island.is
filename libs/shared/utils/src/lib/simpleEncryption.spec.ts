@@ -3,7 +3,7 @@ import { maskString, unmaskString } from './simpleEncryption'
 const originalText = 'Original Jest Text!'
 const secretKey = 'not-really-secret-key'
 
-describe('Encryption and Decryption Functions', async () => {
+describe('Encryption and Decryption Functions', () => {
   test('Encrypt and decrypt a string successfully', async () => {
     const encrypted = await maskString(originalText, secretKey)
 
