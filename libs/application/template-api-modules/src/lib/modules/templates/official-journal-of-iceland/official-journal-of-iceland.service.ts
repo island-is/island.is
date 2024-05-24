@@ -33,8 +33,6 @@ export class OfficialJournalOfIcelandTemaplateService extends BaseTemplateApiSer
       id: application.id,
     })
 
-    console.log(success)
-
     return success
   }
 }
