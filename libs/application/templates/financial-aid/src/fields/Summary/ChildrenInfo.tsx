@@ -14,17 +14,25 @@ interface Props {
     fullName: string
   }[]
   goToScreen: ((id: string) => void) | undefined
+  childrenComment?: string
 }
 
-const ChildrenInfo = ({ childrenSchoolInfo, goToScreen }: Props) => {
+const ChildrenInfo = ({
+  childrenSchoolInfo,
+  goToScreen,
+  childrenComment,
+}: Props) => {
   const { formatMessage } = useIntl()
+
   return (
     <SummaryBlock
       editAction={() => goToScreen?.(Routes.CHILDRENSCHOOLINFO)}
       key="children-block"
     >
       <Box marginBottom={3}>
-        <Text fontWeight="semiBold">Börn</Text>
+        <Text fontWeight="semiBold">
+          {formatMessage(summaryForm.childrenInfo.title)}
+        </Text>
       </Box>
 
       {childrenSchoolInfo.map((child) => {
@@ -36,6 +44,14 @@ const ChildrenInfo = ({ childrenSchoolInfo, goToScreen }: Props) => {
           />
         )
       })}
+      {childrenComment && (
+        <>
+          <Text fontWeight="semiBold">
+            {formatMessage(summaryForm.childrenInfo.comment)}
+          </Text>
+          <Text marginTop={2}>{childrenComment}</Text>
+        </>
+      )}
     </SummaryBlock>
   )
 }
@@ -50,7 +66,7 @@ const ChildInfo = ({ name, nationalId, school }: PropsInfo) => {
   const { formatMessage } = useIntl()
   return (
     <GridRow marginBottom={3}>
-      <GridColumn span={['12/12', '12/12', '12/12', '4/12']}>
+      <GridColumn span={['12/12', '12/12', '6/12', '4/12']}>
         <Box>
           <Text fontWeight="semiBold">
             {formatMessage(summaryForm.childrenInfo.name)}
@@ -58,8 +74,8 @@ const ChildInfo = ({ name, nationalId, school }: PropsInfo) => {
           <Text>{name}</Text>
         </Box>
       </GridColumn>
-      <GridColumn span={['12/12', '12/12', '12/12', '4/12']}>
-        <Box marginTop={[3, 3, 3, 0]}>
+      <GridColumn span={['12/12', '12/12', '6/12', '4/12']}>
+        <Box marginTop={[3, 3, 0, 0]}>
           <Text fontWeight="semiBold">
             {formatMessage(summaryForm.childrenInfo.nationalId)}
           </Text>

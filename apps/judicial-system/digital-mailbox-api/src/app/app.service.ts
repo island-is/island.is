@@ -6,23 +6,22 @@ import { type ConfigType } from '@island.is/nest/config'
 
 import { AuditTrailService } from '@island.is/judicial-system/audit-trail'
 
-import appModuleConfig from './app.config'
+import { digitalMailboxModuleConfig } from './app.config'
 
 @Injectable()
 export class AppService {
   constructor(
-    @Inject(appModuleConfig.KEY)
-    private readonly config: ConfigType<typeof appModuleConfig>,
+    @Inject(digitalMailboxModuleConfig.KEY)
+    private readonly config: ConfigType<typeof digitalMailboxModuleConfig>,
     @Inject(LOGGER_PROVIDER) private readonly logger: Logger,
     private readonly auditTrailService: AuditTrailService,
   ) {}
 
-  private async test(): Promise<string> {
-    return 'OK'
+  private async test(nationalId: string): Promise<string> {
+    return `OK ${nationalId}`
   }
 
-  async testConnection(): Promise<string> {
-    //TODO: Audit
-    return this.test()
+  async testConnection(nationalId: string): Promise<string> {
+    return this.test(nationalId)
   }
 }

@@ -1,4 +1,5 @@
 import {
+  ApplicantResidenceConditionViewModel,
   CountryOfResidenceViewModel,
   ResidenceAbroadViewModel,
   TravelDocumentViewModel,
@@ -8,4 +9,8 @@ export interface ApplicantInformation {
   currentCountryOfResidenceList?: CountryOfResidenceViewModel[]
   currentPassportItem?: TravelDocumentViewModel
   currentStaysAbroadList?: ResidenceAbroadViewModel[]
+  residenceConditionInfo?: ApplicantResidenceConditionViewModel
+  eesNordicCitizen?: boolean
+  eesResidenceCondition?: boolean
+  spouseIsCitizen?: boolean
 }
