@@ -29,6 +29,7 @@ export class OverviewResolver {
 
   @Query(() => InsuranceConfirmation, {
     name: 'rightsPortalInsuranceConfirmation',
+    nullable: true,
   })
   @Audit()
   getInsuranceConfirmation(
@@ -39,6 +40,7 @@ export class OverviewResolver {
 
   @Query(() => InsuranceOverview, {
     name: 'rightsPortalInsuranceOverview',
+    nullable: true,
   })
   @Audit()
   getInsuranceOverview(
