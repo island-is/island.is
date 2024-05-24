@@ -46,8 +46,6 @@ describe('LimitedCaseController - Get indictment pdf', () => {
     mockawsS3Service = awsS3Service
     const mockGetObject = mockawsS3Service.getObject as jest.Mock
     mockGetObject.mockRejectedValue(new Error('Some error'))
-    const mockPutObject = mockawsS3Service.putObject as jest.Mock
-    mockPutObject.mockRejectedValue(new Error('Some error'))
 
     givenWhenThen = async () => {
       const then = {} as Then
@@ -80,12 +78,6 @@ describe('LimitedCaseController - Get indictment pdf', () => {
         theCase,
         expect.any(Function),
         undefined,
-      )
-      expect(mockawsS3Service.putObject).toHaveBeenCalledWith(
-        theCase.type,
-        theCase.state,
-        `${caseId}/indictment.pdf`,
-        pdf.toString('binary'),
       )
       expect(res.end).toHaveBeenCalledWith(pdf)
     })

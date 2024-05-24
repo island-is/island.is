@@ -16,6 +16,7 @@ import { nowFactory } from '../../../../factories'
 import { createIndictment } from '../../../../formatters'
 import { randomDate } from '../../../../test'
 import { AwsS3Service } from '../../../aws-s3'
+import { FileService } from '../../../file'
 import { PoliceDocumentType, PoliceService } from '../../../police'
 import { Case } from '../../models/case.model'
 import { DeliverResponse } from '../../models/deliver.response'
@@ -36,22 +37,24 @@ describe('InternalCaseController - Deliver indictment to police', () => {
   const user = { id: userId } as User
 
   let mockAwsS3Service: AwsS3Service
+  let mockFileService: FileService
   let mockPoliceService: PoliceService
   let givenWhenThen: GivenWhenThen
 
   beforeEach(async () => {
-    const { awsS3Service, policeService, internalCaseController } =
+    const { awsS3Service, fileService, policeService, internalCaseController } =
       await createTestingCaseModule()
 
     mockAwsS3Service = awsS3Service
+    mockFileService = fileService
     mockPoliceService = policeService
 
     const mockToday = nowFactory as jest.Mock
     mockToday.mockReturnValueOnce(date)
     const mockGetObject = mockAwsS3Service.getObject as jest.Mock
     mockGetObject.mockRejectedValue(new Error('Some error'))
-    const mockPutObject = mockAwsS3Service.putObject as jest.Mock
-    mockPutObject.mockRejectedValue(new Error('Some error'))
+    const mockGetCaseFileFromS3 = mockFileService.getCaseFileFromS3 as jest.Mock
+    mockGetCaseFileFromS3.mockRejectedValue(new Error('Some error'))
     const mockCreateIndictment = createIndictment as jest.Mock
     mockCreateIndictment.mockRejectedValue(new Error('Some error'))
     const mockUpdatePoliceCase = mockPoliceService.updatePoliceCase as jest.Mock
@@ -74,12 +77,17 @@ describe('InternalCaseController - Deliver indictment to police', () => {
   describe('deliver indictment case files to police', () => {
     const caseId = uuid()
     const caseType = CaseType.INDICTMENT
-    const caseState = CaseState.COMPLETED
+    const caseState = CaseState.WAITING_FOR_CONFIRMATION
     const policeCaseNumber = uuid()
     const courtCaseNumber = uuid()
     const defendantNationalId = '0123456789'
     const indictmentKey = uuid()
     const indictmentPdf = 'test indictment'
+    const caseFile = {
+      id: uuid(),
+      key: indictmentKey,
+      category: CaseFileCategory.INDICTMENT,
+    }
     const theCase = {
       id: caseId,
       origin: CaseOrigin.LOKE,
@@ -88,16 +96,15 @@ describe('InternalCaseController - Deliver indictment to police', () => {
       policeCaseNumbers: [policeCaseNumber],
       courtCaseNumber,
       defendants: [{ nationalId: defendantNationalId }],
-      caseFiles: [
-        { key: indictmentKey, category: CaseFileCategory.INDICTMENT },
-      ],
+      caseFiles: [caseFile],
     } as Case
 
     let then: Then
 
     beforeEach(async () => {
-      const mockGetObject = mockAwsS3Service.getObject as jest.Mock
-      mockGetObject.mockResolvedValueOnce(indictmentPdf)
+      const mockGetCaseFileFromS3 =
+        mockFileService.getCaseFileFromS3 as jest.Mock
+      mockGetCaseFileFromS3.mockResolvedValueOnce(indictmentPdf)
       const mockUpdatePoliceCase =
         mockPoliceService.updatePoliceCase as jest.Mock
       mockUpdatePoliceCase.mockResolvedValueOnce(true)
@@ -106,10 +113,9 @@ describe('InternalCaseController - Deliver indictment to police', () => {
     })
 
     it('should update the police case', async () => {
-      expect(mockAwsS3Service.getObject).toHaveBeenCalledWith(
-        caseType,
-        caseState,
-        indictmentKey,
+      expect(mockFileService.getCaseFileFromS3).toHaveBeenCalledWith(
+        theCase,
+        caseFile,
       )
       expect(mockPoliceService.updatePoliceCase).toHaveBeenCalledWith(
         user,
@@ -175,12 +181,6 @@ describe('InternalCaseController - Deliver indictment to police', () => {
         theCase,
         expect.any(Function),
         undefined,
-      )
-      expect(mockAwsS3Service.putObject).toHaveBeenCalledWith(
-        theCase.type,
-        theCase.state,
-        `${caseId}/indictment.pdf`,
-        indictmentPdf,
       )
       expect(mockPoliceService.updatePoliceCase).toHaveBeenCalledWith(
         user,

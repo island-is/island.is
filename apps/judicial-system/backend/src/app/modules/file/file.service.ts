@@ -172,7 +172,15 @@ export class FileService {
           pdf,
         ),
       )
-      .then((confirmedPdf) => confirmedPdf.toString('binary'))
+      .then((confirmedPdf) => {
+        const binaryPdf = confirmedPdf.toString('binary')
+        const hash = CryptoJS.MD5(binaryPdf).toString(CryptoJS.enc.Hex)
+
+        // No need to wait for the update to finish
+        this.fileModel.update({ hash }, { where: { id: theCase.id } })
+
+        return binaryPdf
+      })
       .catch((reason) => {
         this.logger.error(
           `Failed to create confirmed indictment for case ${theCase.id}`,

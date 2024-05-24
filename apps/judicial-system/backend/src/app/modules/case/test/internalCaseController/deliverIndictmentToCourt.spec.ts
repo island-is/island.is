@@ -54,8 +54,6 @@ describe('InternalCaseController - Deliver indictment to court', () => {
     mockAwsS3Service = awsS3Service
     const mockGetObject = mockAwsS3Service.getObject as jest.Mock
     mockGetObject.mockRejectedValue(new Error('Some error'))
-    const mockPutObject = mockAwsS3Service.putObject as jest.Mock
-    mockPutObject.mockRejectedValue(new Error('Some error'))
 
     const mockCreateIndictment = createIndictment as jest.Mock
     mockCreateIndictment.mockRejectedValue(new Error('Some error'))
@@ -98,12 +96,6 @@ describe('InternalCaseController - Deliver indictment to court', () => {
         theCase,
         expect.any(Function),
         undefined,
-      )
-      expect(mockAwsS3Service.putObject).toHaveBeenCalledWith(
-        theCase.type,
-        theCase.state,
-        `${theCase.id}/indictment.pdf`,
-        pdf.toString(),
       )
       expect(mockCourtService.createDocument).toHaveBeenCalledWith(
         user,

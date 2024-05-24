@@ -1,9 +1,12 @@
+import CryptoJS from 'crypto-js'
+
 import {
   BadRequestException,
   Inject,
   Injectable,
   InternalServerErrorException,
 } from '@nestjs/common'
+import { InjectModel } from '@nestjs/sequelize'
 
 import { FormatMessage, IntlService } from '@island.is/cms-translations'
 import type { Logger } from '@island.is/logging'
@@ -27,7 +30,6 @@ import {
   IndictmentConfirmation,
 } from '../../formatters'
 import { AwsS3Service } from '../aws-s3'
-import { EventLogService } from '../event-log'
 import { UserService } from '../user'
 import { Case } from './models/case.model'
 
@@ -38,8 +40,8 @@ export class PDFService {
   constructor(
     private readonly awsS3Service: AwsS3Service,
     private readonly intlService: IntlService,
-    private readonly eventLogService: EventLogService,
     private readonly userService: UserService,
+    @InjectModel(Case) private readonly caseModel: typeof Case,
     @Inject(LOGGER_PROVIDER) private readonly logger: Logger,
   ) {}
 
@@ -106,12 +108,23 @@ export class PDFService {
         }
       })
 
-    return createCaseFilesRecord(
+    const generatedPdf = await createCaseFilesRecord(
       theCase,
       policeCaseNumber,
       caseFiles ?? [],
       this.formatMessage,
     )
+
+    if (hasIndictmentCaseBeenSubmittedToCourt(theCase.state)) {
+      // No need to wait for the upload to finish
+      this.tryUploadPdfToS3(
+        theCase,
+        `${theCase.id}/${policeCaseNumber}/caseFilesRecord.pdf`,
+        generatedPdf,
+      )
+    }
+
+    return generatedPdf
   }
 
   async getCourtRecordPdf(theCase: Case, user: TUser): Promise<Buffer> {
@@ -227,13 +240,21 @@ export class PDFService {
       confirmation,
     )
 
-    if (hasIndictmentCaseBeenSubmittedToCourt(theCase.state)) {
-      // No need to wait for the upload to finish
-      this.tryUploadPdfToS3(
-        theCase,
-        `${theCase.id}/indictment.pdf`,
-        generatedPdf,
-      )
+    if (hasIndictmentCaseBeenSubmittedToCourt(theCase.state) && confirmation) {
+      const indictmentHash = CryptoJS.MD5(
+        generatedPdf.toString('binary'),
+      ).toString(CryptoJS.enc.Hex)
+
+      // No need to wait for this to finish
+      this.caseModel
+        .update({ indictmentHash }, { where: { id: theCase.id } })
+        .then(() =>
+          this.tryUploadPdfToS3(
+            theCase,
+            `${theCase.id}/indictment.pdf`,
+            generatedPdf,
+          ),
+        )
     }
 
     return generatedPdf
@@ -259,17 +280,6 @@ export class PDFService {
       policeCaseNumber,
     )
 
-    const generatedPdf = await this.throttle
-
-    if (hasIndictmentCaseBeenSubmittedToCourt(theCase.state)) {
-      // No need to wait for the upload to finish
-      this.tryUploadPdfToS3(
-        theCase,
-        `${theCase.id}/${policeCaseNumber}/caseFilesRecord.pdf`,
-        generatedPdf,
-      )
-    }
-
-    return generatedPdf
+    return await this.throttle
   }
 }

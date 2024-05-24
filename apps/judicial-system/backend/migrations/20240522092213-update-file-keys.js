@@ -1,10 +1,11 @@
 'use strict'
 
 module.exports = {
-  async up(queryInterface) {
+  async up(queryInterface, Sequelize) {
     return queryInterface.sequelize.transaction((transaction) =>
-      queryInterface.sequelize.query(
-        `UPDATE case_file
+      Promise.all([
+        queryInterface.sequelize.query(
+          `UPDATE case_file
          SET key = SUBSTRING(key FROM 9)
          WHERE key LIKE 'uploads/' || '%';
          UPDATE case_file
@@ -13,15 +14,29 @@ module.exports = {
          UPDATE case_file
          SET key = SUBSTRING(key FROM 13)
          WHERE key LIKE 'indictments/' || '%';`,
-        { transaction },
-      ),
+          { transaction },
+        ),
+        queryInterface.addColumn(
+          'case',
+          'indictment_hash',
+          { type: Sequelize.STRING, allowNull: true },
+          { transaction },
+        ),
+        queryInterface.addColumn(
+          'case_file',
+          'hash',
+          { type: Sequelize.STRING, allowNull: true },
+          { transaction },
+        ),
+      ]),
     )
   },
 
   async down(queryInterface) {
     return queryInterface.sequelize.transaction((transaction) =>
-      queryInterface.sequelize.query(
-        `UPDATE case_file
+      Promise.all([
+        queryInterface.sequelize.query(
+          `UPDATE case_file
          SET key = 'uploads/' || key
          WHERE key IS NOT NULL AND case_id IN (
            SELECT id
@@ -42,8 +57,11 @@ module.exports = {
            FROM "case"
            WHERE type = 'INDICTMENT' AND state != 'COMPLETED'
          );`,
-        { transaction },
-      ),
+          { transaction },
+        ),
+        queryInterface.removeColumn('case', 'indictment_hash', { transaction }),
+        queryInterface.removeColumn('case_file', 'hash', { transaction }),
+      ]),
     )
   },
 }

@@ -99,6 +99,7 @@ describe('LimitedAccessFileController - Get case file signed url', () => {
         theCase.type,
         theCase.state,
         key,
+        undefined,
       )
     })
   })

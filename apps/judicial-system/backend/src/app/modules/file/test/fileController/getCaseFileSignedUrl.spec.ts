@@ -84,6 +84,7 @@ describe('FileController - Get case file signed url', () => {
         theCase.type,
         theCase.state,
         key,
+        undefined,
       )
       expect(then.result).toEqual({ url })
     })
