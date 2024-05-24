@@ -17,7 +17,7 @@ export const OfficialJournalOfIcelandApplicationClientConfig = defineConfig<
   load: (env) => ({
     xRoadServicePath: env.required(
       'XROAD_OFFICIAL_JOURNAL_PATH',
-      'IS-DEV/GOV/10014/DMR-Protected/official-journal',
+      'IS-DEV/GOV/10014/DMR-Protected/official-journal-application',
     ),
     fetch: {
       timeout: 10000,

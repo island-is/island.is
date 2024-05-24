@@ -45,7 +45,10 @@ export const AdvertModal = ({
   const { data, loading } = useQuery<
     OfficialJournalOfIcelandGraphqlResponse<'adverts'>
   >(ADVERTS_QUERY, {
-    variables: { input: { search } },
+    variables: { input: { search: '' } },
+    onError: (error) => {
+      console.log(error)
+    },
   })
 
   const debouncedSearch = debounce(updateSearch, DEBOUNCE_INPUT_TIMER)

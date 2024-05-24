@@ -36,11 +36,6 @@ export const ADVERTS_QUERY = gql`
           title
           slug
         }
-        involvedParty {
-          id
-          title
-          slug
-        }
         document {
           isLegacy
           html
@@ -178,5 +173,3 @@ export const CATEGORIES_QUERY = gql`
     }
   }
 `
-
-export const COMMENTS_QUERY = gql``

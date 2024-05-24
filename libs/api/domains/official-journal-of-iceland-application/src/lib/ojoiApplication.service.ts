@@ -24,11 +24,6 @@ export class OfficialJournalOfIcelandApplicationService {
   }
 
   async postApplication(input: PostApplicationInput): Promise<boolean> {
-    try {
-      await this.ojoiApplicationService.postApplicaton(input)
-      return Promise.resolve(true)
-    } catch (error) {
-      return Promise.reject(false)
-    }
+    return await this.ojoiApplicationService.postApplicaton(input)
   }
 }
