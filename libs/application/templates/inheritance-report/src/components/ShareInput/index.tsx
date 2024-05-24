@@ -14,6 +14,7 @@ interface ShareInputProps {
   disabled?: boolean
   required?: boolean
   readOnly?: boolean
+  hasError?: boolean
 }
 
 const onFocusInput = (
@@ -55,6 +56,7 @@ export const ShareInput = ({
   disabled,
   required,
   readOnly,
+  hasError,
 }: ShareInputProps) => {
   const ref = useRef<HTMLInputElement | HTMLTextAreaElement>(null)
   const prevLen = useRef(0)
@@ -78,15 +80,6 @@ export const ShareInput = ({
       }
     }
   }, [ref])
-
-  let shareError = errorMessage
-
-  if (
-    !errorMessage &&
-    ((watchedField && watchedField < 0) || watchedField > 100)
-  ) {
-    shareError = formatMessage(m.invalidShareValue)
-  }
 
   useEffect(() => {
     const currentRef = ref?.current
@@ -156,8 +149,8 @@ export const ShareInput = ({
               return onAfterChange?.(numberValue)
             }
           }}
-          hasError={!!shareError}
-          errorMessage={shareError}
+          hasError={hasError}
+          errorMessage={formatMessage(m.invalidShareValue)}
           disabled={disabled}
           required={required}
           readOnly={readOnly}

@@ -95,7 +95,7 @@ export const assets = buildSection({
           description:
             m.propertiesDescription.defaultMessage +
             ' ' +
-            m.continueWithoutInnventory.defaultMessage,
+            m.continueWithoutInventory.defaultMessage,
           children: [
             buildDescriptionField({
               id: 'inventoryTitle',
@@ -115,7 +115,8 @@ export const assets = buildSection({
                     ?.inheritanceReportInfo?.cash?.[0]?.description ?? ''
                 )
               },
-              rows: 7,
+              rows: 4,
+              maxLength: 1800,
             }),
             buildTextField({
               id: 'assets.inventory.value',
@@ -250,7 +251,6 @@ export const assets = buildSection({
                   {
                     title: m.gunSerialNumber,
                     id: 'assetNumber',
-                    placeholder: 'VantarHér',
                     required: true,
                   },
                   {
@@ -327,7 +327,7 @@ export const assets = buildSection({
                   {
                     title: m.bankAccountPenaltyInterestRates,
                     id: 'exchangeRateOrInterest',
-                    required: false,
+                    required: true,
                     currency: true,
                   },
                   {
@@ -459,11 +459,13 @@ export const assets = buildSection({
                     title: m.stocksFaceValue,
                     id: 'amount',
                     currency: true,
+                    required: true,
                   },
                   {
                     title: m.stocksRateOfChange,
                     id: 'exchangeRateOrInterest',
                     type: 'number',
+                    required: true,
                   },
                   {
                     title: m.stocksValue,
@@ -512,7 +514,8 @@ export const assets = buildSection({
                     ?.description ?? ''
                 )
               },
-              rows: 7,
+              rows: 4,
+              maxLength: 1800,
             }),
             buildTextField({
               id: 'assets.money.value',

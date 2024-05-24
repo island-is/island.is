@@ -283,8 +283,8 @@ export const m = defineMessages({
       'Ef hinn látni átti ekki skotvopn vinsamlegast haltu áfram í ferlinu.',
     description: '',
   },
-  continueWithoutInnventory: {
-    id: 'ir.application:continueWithoutInnventory',
+  continueWithoutInventory: {
+    id: 'ir.application:continueWithoutInventory',
     defaultMessage:
       'Ef hinn látni átti ekki innbú vinsamlegast haltu áfram í ferlinu.',
     description: '',
@@ -1519,7 +1519,7 @@ export const m = defineMessages({
   errorPropertyNumber: {
     id: 'ir.application:error.errorPropertyNumber',
     defaultMessage:
-      'Verður að innihalda 6 tölustafi eða L + 6 fyrir landeignanúmeri, 7 tölustafi, F + 7 fyrir fasteignanúmeri',
+      'Verður að innihalda 6 tölustafi eða L + 6 fyrir landeignanúmer, 7 tölustafi eða F + 7 fyrir fasteignanúmer',
     description: 'Property number is invalid',
   },
 })

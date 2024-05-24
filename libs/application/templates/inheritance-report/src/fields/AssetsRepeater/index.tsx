@@ -337,6 +337,7 @@ const FieldComponent = ({
           label={formatMessage(m.propertyShare)}
           onAfterChange={onAfterChange}
           readOnly={readOnly}
+          hasError={!!error}
         />
       )
 
@@ -510,7 +511,7 @@ const VehicleNumberField = ({
       name={fieldName}
       label={formatMessage(m.propertyNumber)}
       defaultValue={assetNumberInput}
-      error={error ? formatMessage(m.errorPropertyNumber) : undefined}
+      error={error}
       {...props}
     />
   )
