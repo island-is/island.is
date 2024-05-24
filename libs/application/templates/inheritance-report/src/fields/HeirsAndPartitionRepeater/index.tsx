@@ -22,6 +22,7 @@ import { InputController } from '@island.is/shared/form-fields'
 import { format as formatNationalId } from 'kennitala'
 import intervalToDuration from 'date-fns/intervalToDuration'
 import {
+  formatPhoneNumber,
   getEstateDataFromApplication,
   valueToNumber,
 } from '../../lib/utils/helpers'
@@ -119,7 +120,9 @@ export const HeirsAndPartitionRepeater: FC<
       label: relation,
     })) || []
 
-  const error = (errors as any)?.heirs?.data ?? {}
+  const error =
+    ((errors as any)?.heirs?.data || (errors as any)?.heirs?.total) ?? []
+  console.log(error)
 
   const handleAddMember = () =>
     append({
@@ -190,12 +193,10 @@ export const HeirsAndPartitionRepeater: FC<
         })
       }
 
-      const spouseTotal = valueToNumber(getValueViaPath(answers, 'spouseTotal'))
       const netPropertyForExchange = valueToNumber(
         getValueViaPath(answers, 'netPropertyForExchange'),
       )
-      const inheritanceValue =
-        netPropertyForExchange * percentage + (isSpouse ? spouseTotal : 0)
+      const inheritanceValue = netPropertyForExchange * percentage
 
       const taxFreeInheritanceValue = isSpouse
         ? inheritanceValue
@@ -275,6 +276,7 @@ export const HeirsAndPartitionRepeater: FC<
         (heir) => {
           return {
             ...heir,
+            phone: heir.phone ? formatPhoneNumber(heir.phone) : '', //Remove all non-digit characters and keep the last 7 digits
             initial: true,
             enabled: true,
           }
@@ -562,7 +564,6 @@ export const HeirsAndPartitionRepeater: FC<
       )}
       {fields.map((member: GenericFormField<EstateMember>, index) => {
         if (member.initial) return null
-
         return (
           <Box key={member.id}>
             <AdditionalHeir
@@ -573,7 +574,7 @@ export const HeirsAndPartitionRepeater: FC<
               relationOptions={relations}
               updateValues={updateValues}
               remove={remove}
-              error={error ?? null}
+              error={error[index] ?? null}
             />
           </Box>
         )
@@ -618,7 +619,7 @@ export const HeirsAndPartitionRepeater: FC<
                 readOnly
                 hasError={
                   (props.sumField === 'heirsPercentage' &&
-                    error &&
+                    !!error.length &&
                     total !== 100) ??
                   false
                 }

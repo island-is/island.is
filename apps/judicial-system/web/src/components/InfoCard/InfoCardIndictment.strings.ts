@@ -17,4 +17,19 @@ export const strings = defineMessages({
     defaultMessage: 'Brot',
     description: 'Notaður sem titill á "brot" hluta af yfirliti ákæru.',
   },
+  indictmentReviewer: {
+    id: 'judicial.system.core:info_card_indictment.indictment_reviewer',
+    defaultMessage: 'Yfirlestur',
+    description: 'Notaður sem titill á "yfirlestur" hluta af yfirliti ákæru.',
+  },
+  indictmentDefendant: {
+    id: 'judicial.system.core:info_card_indictment.indictment_defendant',
+    defaultMessage: 'Dómfelldi',
+    description: 'Notaður sem titill á "dómfelldi" hluta af yfirliti ákæru.',
+  },
+  indictmentDefendants: {
+    id: 'judicial.system.core:info_card_indictment.indictment_defendants',
+    defaultMessage: 'Dómfelldu',
+    description: 'Notaður sem titill á "dómfelldu" hluta af yfirliti ákæru.',
+  },
 })

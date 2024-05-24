@@ -11,7 +11,7 @@ import {
 } from '@island.is/island-ui/core'
 import { useLocale } from '@island.is/localization'
 import { FC, useState } from 'react'
-import { review, error, location } from '../../lib/messages'
+import { review, error, location as locationMessage } from '../../lib/messages'
 import { InputController } from '@island.is/shared/form-fields'
 import { MachineLocation, ReviewScreenProps } from '../../shared'
 import { useFormContext } from 'react-hook-form'
@@ -30,7 +30,6 @@ export const Location: FC<
     'location',
     undefined,
   ) as MachineLocation | undefined
-
   const [selectedValue, setSelectedValue] = useState<MachineLocation>({
     address: savedSelectedValue?.address || '',
     postCode: savedSelectedValue?.postCode || 0,
@@ -78,19 +77,21 @@ export const Location: FC<
   return (
     <Box>
       <Text marginBottom={1} variant="h2">
-        {formatMessage(location.general.title)}
+        {formatMessage(locationMessage.general.title)}
       </Text>
       <Text marginBottom={5}>
-        {formatMessage(location.general.description)}
+        {formatMessage(locationMessage.general.description)}
       </Text>
-      <Text variant="h5">{formatMessage(location.labels.addressTitle)}</Text>
+      <Text variant="h5">
+        {formatMessage(locationMessage.labels.addressTitle)}
+      </Text>
       <GridRow>
         <GridColumn span={['1/1', '1/1', '1/2']} paddingTop={2}>
           <InputController
             id="address"
             name="address"
             type="text"
-            label={formatMessage(location.labels.addressLabel)}
+            label={formatMessage(locationMessage.labels.addressLabel)}
             backgroundColor="blue"
             onChange={(event) => {
               setSelectedValue({
@@ -107,7 +108,7 @@ export const Location: FC<
             name="postcode"
             type="text"
             format="###"
-            label={formatMessage(location.labels.postCodeLabel)}
+            label={formatMessage(locationMessage.labels.postCodeLabel)}
             backgroundColor="blue"
             onChange={(event) => {
               setSelectedValue({
@@ -127,7 +128,7 @@ export const Location: FC<
             id="moreInfo"
             name="moreInfo"
             type="text"
-            label={formatMessage(location.labels.moreInfoLabel)}
+            label={formatMessage(locationMessage.labels.moreInfoLabel)}
             backgroundColor="blue"
             onChange={(event) => {
               setSelectedValue({
@@ -154,7 +155,7 @@ export const Location: FC<
             {formatMessage(review.buttons.back)}
           </Button>
           <Button icon="arrowForward" onClick={onForwardButtonClick}>
-            {formatMessage(location.labels.approveButton)}
+            {formatMessage(locationMessage.labels.approveButton)}
           </Button>
         </Box>
       </Box>

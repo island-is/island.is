@@ -26,10 +26,6 @@ First you need to run this (maybe only once?):
 
 `aws eks update-kubeconfig --name dev-cluster01 --profile <profile-name> --region eu-west-1`
 
-Then:
-
-`kubectl port-forward svc/socat-soffia 8443:443 -n socat`
-
 Fetch all necessary secrets
 
 ### Running locally

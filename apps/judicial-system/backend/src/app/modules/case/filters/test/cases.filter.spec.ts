@@ -6,13 +6,15 @@ import {
   CaseDecision,
   CaseState,
   CaseType,
-  completedCaseStates,
+  completedIndictmentCaseStates,
+  completedRequestCaseStates,
   courtOfAppealsRoles,
   DateType,
   districtCourtRoles,
   indictmentCases,
   InstitutionType,
   investigationCases,
+  publicProsecutorRoles,
   RequestSharedWithDefender,
   restrictionCases,
   UserRole,
@@ -46,16 +48,19 @@ describe('getCasesQueryFilter', () => {
             CaseState.WAITING_FOR_CONFIRMATION,
             CaseState.SUBMITTED,
             CaseState.RECEIVED,
+            CaseState.MAIN_HEARING,
             CaseState.ACCEPTED,
             CaseState.REJECTED,
             CaseState.DISMISSED,
-            CaseState.MAIN_HEARING,
+            CaseState.COMPLETED,
           ],
         },
+
         {
           [Op.or]: [
             { prosecutors_office_id: 'Prosecutors Office Id' },
             { shared_with_prosecutors_office_id: 'Prosecutors Office Id' },
+            { indictment_reviewer_id: 'Prosecutor Id' },
           ],
         },
         {
@@ -102,16 +107,18 @@ describe('getCasesQueryFilter', () => {
             CaseState.WAITING_FOR_CONFIRMATION,
             CaseState.SUBMITTED,
             CaseState.RECEIVED,
+            CaseState.MAIN_HEARING,
             CaseState.ACCEPTED,
             CaseState.REJECTED,
             CaseState.DISMISSED,
-            CaseState.MAIN_HEARING,
+            CaseState.COMPLETED,
           ],
         },
         {
           [Op.or]: [
             { prosecutors_office_id: 'Prosecutors Office Id' },
             { shared_with_prosecutors_office_id: 'Prosecutors Office Id' },
+            { indictment_reviewer_id: 'Prosecutor Id' },
           ],
         },
         {
@@ -175,10 +182,8 @@ describe('getCasesQueryFilter', () => {
                     state: [
                       CaseState.SUBMITTED,
                       CaseState.RECEIVED,
-                      CaseState.ACCEPTED,
-                      CaseState.REJECTED,
-                      CaseState.DISMISSED,
                       CaseState.MAIN_HEARING,
+                      CaseState.COMPLETED,
                     ],
                   },
                 ],
@@ -224,10 +229,8 @@ describe('getCasesQueryFilter', () => {
             state: [
               CaseState.SUBMITTED,
               CaseState.RECEIVED,
-              CaseState.ACCEPTED,
-              CaseState.REJECTED,
-              CaseState.DISMISSED,
               CaseState.MAIN_HEARING,
+              CaseState.COMPLETED,
             ],
           },
         ],
@@ -276,6 +279,36 @@ describe('getCasesQueryFilter', () => {
                 ],
               },
             ],
+          },
+        ],
+      })
+    })
+  })
+
+  describe.each(publicProsecutorRoles)('given %s role', (role) => {
+    it('should get public prosecutor filter', () => {
+      // Arrange
+      const user = {
+        id: 'Public Prosecutor Office Id',
+        role,
+        institution: {
+          id: '8f9e2f6d-6a00-4a5e-b39b-95fd110d762e',
+          type: InstitutionType.PROSECUTORS_OFFICE,
+        },
+      }
+
+      // Act
+      const res = getCasesQueryFilter(user as User)
+
+      // Assert
+      expect(res).toStrictEqual({
+        [Op.and]: [
+          { isArchived: false },
+          {
+            state: [CaseState.COMPLETED],
+          },
+          {
+            type: indictmentCases,
           },
         ],
       })
@@ -383,7 +416,7 @@ describe('getCasesQueryFilter', () => {
                         { '$dateLogs.date_type$': DateType.ARRAIGNMENT_DATE },
                       ],
                     },
-                    { state: completedCaseStates },
+                    { state: completedRequestCaseStates },
                   ],
                 },
                 { defender_national_id: user.nationalId },
@@ -392,7 +425,13 @@ describe('getCasesQueryFilter', () => {
             {
               [Op.and]: [
                 { type: indictmentCases },
-                { state: [CaseState.RECEIVED, ...completedCaseStates] },
+                {
+                  state: [
+                    CaseState.RECEIVED,
+                    CaseState.MAIN_HEARING,
+                    ...completedIndictmentCaseStates,
+                  ],
+                },
                 {
                   '$defendants.defender_national_id$': user.nationalId,
                 },

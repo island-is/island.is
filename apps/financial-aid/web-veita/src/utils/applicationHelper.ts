@@ -117,6 +117,46 @@ export const getNationalRegistryInfo = (application: Application) => {
   ]
 }
 
+export const getChildrenInfo = (application: Application) => {
+  if (!application.children) {
+    return []
+  }
+
+  const allChildren = application.children.map((child) => {
+    return [
+      {
+        title: 'Nafn',
+        content: child.name,
+      },
+      {
+        title: 'Kennitala',
+        content: formatNationalId(child.nationalId),
+      },
+      {
+        title: 'Skólastofnun',
+        content: child.school,
+      },
+      {
+        title: '',
+        content: '',
+      },
+    ]
+  })
+
+  const childrenComment = application.childrenComment
+    ? [
+        {
+          title: 'Athugasemd',
+          content: '',
+          other: application.childrenComment,
+          fullWidth: commentFullWidth(application.childrenComment),
+        },
+      ]
+    : []
+
+  return allChildren.flat().concat(childrenComment)
+}
+
 export const getApplicantSpouse = (application: Application) => {
   return [
     {

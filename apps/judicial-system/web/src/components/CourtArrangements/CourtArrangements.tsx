@@ -24,7 +24,6 @@ interface CourtDate {
 }
 
 interface Props {
-  workingCase: Case
   handleCourtDateChange: (date: Date | undefined | null, valid: boolean) => void
   handleCourtRoomChange: (courtRoom?: string) => void
   courtDate?: CourtDate | null
@@ -109,7 +108,6 @@ export const useCourtArrangements = (
 
 export const CourtArrangements: React.FC<Props> = (props) => {
   const {
-    workingCase,
     handleCourtDateChange,
     handleCourtRoomChange,
     courtDate,
@@ -120,10 +118,6 @@ export const CourtArrangements: React.FC<Props> = (props) => {
   const { formatMessage } = useIntl()
 
   const [courtRoomValue, setCourtRoomValue] = useState<string>('')
-
-  const isCorrectingRuling = workingCase.notifications?.some(
-    (notification) => notification.type === NotificationType.RULING,
-  )
 
   useEffect(() => {
     if (courtDate?.location) {
@@ -141,7 +135,7 @@ export const CourtArrangements: React.FC<Props> = (props) => {
           onChange={handleCourtDateChange}
           blueBox={false}
           required
-          disabled={isCorrectingRuling || dateTimeDisabled}
+          disabled={dateTimeDisabled}
         />
       </Box>
       <Input
@@ -157,7 +151,7 @@ export const CourtArrangements: React.FC<Props> = (props) => {
         onBlur={(evt) => {
           handleCourtRoomChange(evt.target.value)
         }}
-        disabled={isCorrectingRuling || courtRoomDisabled}
+        disabled={courtRoomDisabled}
       />
     </>
   )

@@ -6,24 +6,16 @@ export type DocumentDto = {
   fileName?: string
   fileType: FileType
   content: string
-  date: Date
+  date?: Date
   bookmarked?: boolean
   archived?: boolean
   senderName?: string
-  senderNationalId: string
+  senderNationalId?: string
   subject: string
   categoryId?: string
 }
 
 export const mapToDocument = (document: DocumentDTO): DocumentDto | null => {
-  if (
-    !document.publicationDate ||
-    !document.senderKennitala ||
-    !document.subject
-  ) {
-    return null
-  }
-
   let fileType: FileType, content: string
   switch (document.fileType) {
     case 'pdf':
@@ -48,6 +40,17 @@ export const mapToDocument = (document: DocumentDTO): DocumentDto | null => {
       content = document.url
       break
     default:
+      // Some document providers can not explicitly set the fileType so we have to guess the fileType by checking for the content, in case the fileType is not set.
+      if (document.htmlContent) {
+        fileType = 'html'
+        content = document.htmlContent
+        break
+      }
+      if (document.url) {
+        fileType = 'url'
+        content = document.url
+        break
+      }
       return null
   }
 
@@ -60,7 +63,7 @@ export const mapToDocument = (document: DocumentDTO): DocumentDto | null => {
     archived: document.archived,
     senderName: document.senderName,
     senderNationalId: document.senderKennitala,
-    subject: document.subject,
+    subject: document.subject ?? 'Óþekktur titill', // All of the content in this service is strictly Icelandic. Fallback to match.
     categoryId: document.categoryId?.toString(),
   }
 }

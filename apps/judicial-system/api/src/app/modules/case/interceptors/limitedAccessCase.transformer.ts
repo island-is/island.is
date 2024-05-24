@@ -1,6 +1,6 @@
 import {
   CaseState,
-  completedCaseStates,
+  completedRequestCaseStates,
   RequestSharedWithDefender,
 } from '@island.is/judicial-system/types'
 
@@ -12,13 +12,13 @@ const RequestSharedWithDefenderAllowedStates: {
   [RequestSharedWithDefender.READY_FOR_COURT]: [
     CaseState.SUBMITTED,
     CaseState.RECEIVED,
-    ...completedCaseStates,
+    ...completedRequestCaseStates,
   ],
   [RequestSharedWithDefender.COURT_DATE]: [
     CaseState.RECEIVED,
-    ...completedCaseStates,
+    ...completedRequestCaseStates,
   ],
-  [RequestSharedWithDefender.NOT_SHARED]: completedCaseStates,
+  [RequestSharedWithDefender.NOT_SHARED]: completedRequestCaseStates,
 }
 
 export const canDefenderViewRequest = (theCase: Case) => {
