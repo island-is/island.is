@@ -22,7 +22,6 @@ import {
   NationalRegistryBirthplaceApi,
   NationalRegistryParentsApi,
   NationalRegistrySpouseDetailsApi,
-  ResidenceConditionInfoApi,
   ResidenceInIcelandLastChangeDateApi,
   UserProfileApi,
   UtlendingastofnunPaymentCatalogApi,
@@ -93,10 +92,6 @@ export const Prerequisites: Form = buildForm({
             }),
             buildDataProviderItem({
               provider: ApplicantInformationApi,
-              title: '',
-            }),
-            buildDataProviderItem({
-              provider: ResidenceConditionInfoApi,
               title: '',
             }),
             buildDataProviderItem({
