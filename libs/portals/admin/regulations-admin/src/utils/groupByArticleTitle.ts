@@ -6,7 +6,10 @@ export const groupElementsByArticleTitleFromDiv = (
 
   Array.from(div.children).forEach((child) => {
     const element = child as HTMLElement
-    if (element.classList.contains('article__title')) {
+    if (
+      element.classList.contains('article__title')
+      // || element.classList.contains('Dags')
+    ) {
       if (currentGroup.length > 0) {
         result.push(currentGroup)
       }
