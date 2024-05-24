@@ -89,7 +89,7 @@ export const getGunsDataRow = (answers: FormValue): RowType[] => {
 
     const items: RowItemsType = [
       {
-        title: m.gunNumber,
+        title: m.gunSerialNumber,
         value: item.assetNumber?.toUpperCase() ?? '',
       },
     ]

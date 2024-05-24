@@ -143,7 +143,18 @@ export const getChildrenInfo = (application: Application) => {
     ]
   })
 
-  return allChildren.flat()
+  const childrenComment = application.childrenComment
+    ? [
+        {
+          title: 'Athugasemd',
+          content: '',
+          other: application.childrenComment,
+          fullWidth: commentFullWidth(application.childrenComment),
+        },
+      ]
+    : []
+
+  return allChildren.flat().concat(childrenComment)
 }
 
 export const getApplicantSpouse = (application: Application) => {

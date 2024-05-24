@@ -29,6 +29,7 @@ export const dataSchema = z.object({
       school: z.string(),
     }),
   ),
+  childrenComment: z.string().optional(),
   relationshipStatus: z
     .object({
       unregisteredCohabitation: z
