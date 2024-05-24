@@ -4,6 +4,7 @@ import { ExtractJwt, Strategy } from 'passport-jwt'
 import { Inject, Injectable } from '@nestjs/common'
 import { ConfigType } from '@nestjs/config'
 import { PassportStrategy } from '@nestjs/passport'
+
 import { User as TUser } from '@island.is/judicial-system/types'
 
 import { digitalMailboxModuleConfig } from '../app/app.config'
