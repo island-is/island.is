@@ -59,6 +59,17 @@ export class AppService {
     })
   }
 
+  private formatCase(
+    response: InternalCasesResponse,
+    lang?: string,
+  ): CasesResponse {
+    const language = lang?.toLowerCase()
+
+    return {
+      id: response.id,
+    }
+  }
+
   private async getAllCases(
     nationalId: string,
     lang?: string,
@@ -93,12 +104,54 @@ export class AppService {
       })
   }
 
+  private async getCase(id: string, lang?: string): Promise<CasesResponse> {
+    return fetch(
+      `${this.config.backendUrl}/api/internal/cases/indictments/${id}`,
+      {
+        method: 'GET',
+        headers: {
+          'Content-Type': 'application/json',
+          authorization: `Bearer ${this.config.secretToken}`,
+        },
+      },
+    )
+      .then(async (res) => {
+        const response = await res.json()
+
+        if (res.ok) {
+          return this.format(response, lang)
+        }
+
+        if (res.status < 500) {
+          throw new BadGatewayException(response?.detail)
+        }
+
+        throw response
+      })
+      .catch((reason) => {
+        if (reason instanceof BadGatewayException) {
+          throw reason
+        }
+
+        throw new BadGatewayException(reason)
+      })
+  }
+
   async getCases(nationalId: string, lang?: string): Promise<CasesResponse[]> {
     return this.auditTrailService.audit(
       'digital-mailbox-api',
       AuditedAction.GET_INDICTMENTS,
       this.getAllCases(nationalId, lang),
-      'OK',
+      nationalId,
+    )
+  }
+
+  async getCaseById(id: string, lang?: string): Promise<CasesResponse> {
+    return this.auditTrailService.audit(
+      'digital-mailbox-api',
+      AuditedAction.GET_INDICTMENT,
+      this.getCase(id, lang),
+      id,
     )
   }
 }

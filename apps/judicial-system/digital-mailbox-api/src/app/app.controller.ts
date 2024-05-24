@@ -36,4 +36,16 @@ export class AppController {
 
     return this.appService.getCases(user.nationalId, query?.lang)
   }
+
+  @Get('case')
+  @ApiCreatedResponse({ type: String, description: 'Get case by id' })
+  async getCase(
+    @User() user: Pick<TUser, 'nationalId'>,
+    @Query('id') id: string,
+    @Query() query?: { lang: string },
+  ): Promise<CasesResponse> {
+    this.logger.debug('Getting case by id')
+
+    return this.appService.getCaseById(id, query?.lang)
+  }
 }
