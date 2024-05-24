@@ -143,13 +143,15 @@ const getDefendantsInfo = (defendants: Defendant[] | undefined) => {
     return
   }
 
+  const expiryDays = 28 * 24 * 60 * 60 * 1000
+
   return defendants.map((defendant) => {
+    const { verdictViewDate } = defendant
     return {
       ...defendant,
-      verdictAppealDeadline: defendant.verdictViewDate
+      verdictAppealDeadline: verdictViewDate
         ? new Date(
-            new Date(defendant.verdictViewDate).getTime() +
-              28 * 24 * 60 * 60 * 1000,
+            new Date(verdictViewDate).getTime() + expiryDays,
           ).toISOString()
         : undefined,
     }
