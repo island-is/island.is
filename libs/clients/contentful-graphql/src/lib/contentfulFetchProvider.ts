@@ -16,9 +16,10 @@ export const ContentfulFetchProvider: Provider<EnhancedFetchAPI> = {
   provide: ContentfulFetchProviderKey,
   scope: LazyDuringDevScope,
   useFactory: (idsClientConfig: ConfigType<typeof IdsClientConfig>) =>
-    createEnhancedFetch({ // search ..................................................
+    createEnhancedFetch({
+      // search ..................................................
       name: 'clients-contentful-graphql',
-      autoAuth: undefined // bamm bamm bamm 
+      autoAuth: undefined, // bamm bamm bamm
       // idsClientConfig.isConfigured
       //   ? {
       //       mode: 'tokenExchange',
@@ -29,5 +30,5 @@ export const ContentfulFetchProvider: Provider<EnhancedFetchAPI> = {
       //     }
       //   : undefined,
     }),
-  inject: [ IdsClientConfig.KEY],
+  inject: [IdsClientConfig.KEY],
 }
