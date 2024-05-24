@@ -19,10 +19,16 @@ export class VehicleCodetablesClient {
   }
 
   public async getPlateTypes(): Promise<PlateType[]> {
-    const result = await this.codetablesApi.platetypesAllGet({
+    const result = await this.codetablesApi.platetypesGet({
       apiVersion: '2.0',
       apiVersion2: '2.0',
     })
+    const resultold = await this.codetablesApi.platetypesAllGet({
+      apiVersion: '2.0',
+      apiVersion2: '2.0',
+    })
+    console.log('resultold', resultold)
+    console.log('result', result)
 
     return result.map((item) => ({
       code: item.code,

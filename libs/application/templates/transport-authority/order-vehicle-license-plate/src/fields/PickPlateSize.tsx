@@ -46,10 +46,10 @@ export const PickPlateSize: FC<React.PropsWithChildren<FieldBaseProps>> = (
   const plateTypeList = application.externalData.plateTypeList
     .data as PlateType[]
 
-  const currentPlateTypeFront =
-    data?.vehiclesDetail?.registrationInfo?.plateTypeFront
-  const currentPlateTypeRear =
-    data?.vehiclesDetail?.registrationInfo?.plateTypeRear
+  const currentPlateTypeFront = 'X'
+  // data?.vehiclesDetail?.registrationInfo?.plateTypeFront
+  const currentPlateTypeRear = 'X'
+  // data?.vehiclesDetail?.registrationInfo?.plateTypeRear
 
   // Plate type front should always be defined (rear type can be empty in some cases)
   const plateTypeFrontError = !currentPlateTypeFront
