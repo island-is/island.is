@@ -128,20 +128,14 @@ export const EditClient = () => {
           />
           {isSuperAdmin && !isMachineApplication && (
             <Delegation
-              supportsProcuringHolders={
-                selectedEnvironment.supportsProcuringHolders
-              }
-              supportsLegalGuardians={
-                selectedEnvironment.supportsLegalGuardians
-              }
               promptDelegations={selectedEnvironment.promptDelegations}
               supportsPersonalRepresentatives={
                 selectedEnvironment.supportsPersonalRepresentatives
               }
-              supportsCustomDelegation={
-                selectedEnvironment.supportsCustomDelegation
-              }
               requireApiScopes={selectedEnvironment.requireApiScopes}
+              supportedDelegationTypes={
+                selectedEnvironment.supportedDelegationTypes ?? []
+              }
             />
           )}
           {isSuperAdmin && (

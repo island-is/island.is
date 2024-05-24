@@ -1,5 +1,5 @@
 import { useLocale } from '@island.is/localization'
-import { Checkbox, Stack } from '@island.is/island-ui/core'
+import { Checkbox, Hidden, Stack } from '@island.is/island-ui/core'
 
 import { m } from '../../../lib/messages'
 import { useEnvironmentState } from '../../../hooks/useEnvironmentState'
@@ -8,36 +8,98 @@ import { useSuperAdmin } from '../../../hooks/useSuperAdmin'
 import { checkEnvironmentsSync } from '../../../utils/checkEnvironmentsSync'
 import { useClient } from '../ClientContext'
 import { FormCard } from '../../../components/FormCard/FormCard'
+import { AuthDelegationType } from 'delegation'
+import React from 'react'
 
 interface DelegationProps {
-  supportsProcuringHolders: boolean
-  supportsLegalGuardians: boolean
   promptDelegations: boolean
   supportsPersonalRepresentatives: boolean
-  supportsCustomDelegation: boolean
   requireApiScopes: boolean
+  supportedDelegationTypes: string[]
 }
 
 const Delegation = ({
-  supportsCustomDelegation,
-  supportsLegalGuardians,
   supportsPersonalRepresentatives,
-  supportsProcuringHolders,
   promptDelegations,
   requireApiScopes,
+  supportedDelegationTypes,
 }: DelegationProps) => {
   const { formatMessage } = useLocale()
   const { isSuperAdmin } = useSuperAdmin()
   const { client } = useClient()
 
-  const [inputValues, setInputValues] = useEnvironmentState({
-    supportsCustomDelegation,
-    supportsLegalGuardians,
+  const [inputValues, setInputValues] = useEnvironmentState<{
+    supportsPersonalRepresentatives: boolean
+    promptDelegations: boolean
+    requireApiScopes: boolean
+    supportedDelegationTypes: string[]
+    addedDelegationTypes: string[]
+    removedDelegationTypes: string[]
+  }>({
     supportsPersonalRepresentatives,
-    supportsProcuringHolders,
     promptDelegations,
     requireApiScopes,
+    supportedDelegationTypes,
+    addedDelegationTypes: [],
+    removedDelegationTypes: [],
   })
+
+  const toggleDelegationType = (field: string, checked: boolean) => {
+    const type = field.split('-')[1]
+
+    if (checked) {
+      const newInputValues = { ...inputValues }
+      // should not be in removed delegation types if field is checked
+      if (inputValues.removedDelegationTypes.includes(type)) {
+        newInputValues.removedDelegationTypes =
+          inputValues.removedDelegationTypes.filter((t) => t !== type)
+      }
+
+      // if not in supported delegation types, user is adding it for the first time
+      if (!supportedDelegationTypes.includes(type)) {
+        newInputValues.addedDelegationTypes = [
+          ...inputValues.addedDelegationTypes,
+          type,
+        ]
+        newInputValues.supportedDelegationTypes = [
+          ...inputValues.supportedDelegationTypes,
+          type,
+        ]
+      }
+
+      // if already in supported delegation types, user is re-adding it
+      if (supportedDelegationTypes.includes(type)) {
+        newInputValues.supportedDelegationTypes = [
+          ...inputValues.supportedDelegationTypes,
+          type,
+        ]
+      }
+
+      setInputValues(newInputValues)
+    } else {
+      const newInputValues = { ...inputValues }
+      // should not be in added delegation types if field is not checked
+      if (inputValues.addedDelegationTypes.includes(type)) {
+        newInputValues.addedDelegationTypes =
+          inputValues.addedDelegationTypes.filter((t) => t !== type)
+      }
+      // should not be in supported delegation types if field is not checked
+      if (inputValues.supportedDelegationTypes.includes(type)) {
+        newInputValues.supportedDelegationTypes =
+          inputValues.supportedDelegationTypes.filter((t) => t !== type)
+      }
+
+      // if not in removed delegation types, user is removing it for the first time
+      if (supportedDelegationTypes.includes(type)) {
+        newInputValues.removedDelegationTypes = [
+          ...inputValues.removedDelegationTypes,
+          type,
+        ]
+      }
+
+      setInputValues(newInputValues)
+    }
+  }
 
   return (
     <FormCard
@@ -60,32 +122,30 @@ const Delegation = ({
           label={formatMessage(m.supportCustomDelegation)}
           backgroundColor={'blue'}
           large
-          name="supportsCustomDelegation"
+          name={`field-${AuthDelegationType.Custom}`}
           value="true"
           disabled={!isSuperAdmin}
-          checked={inputValues.supportsCustomDelegation}
-          onChange={() => {
-            setInputValues((prev) => ({
-              ...prev,
-              supportsCustomDelegation: !prev.supportsCustomDelegation,
-            }))
-          }}
+          checked={inputValues.supportedDelegationTypes?.includes(
+            AuthDelegationType.Custom,
+          )}
+          onChange={(e) =>
+            toggleDelegationType(e.target.name, e.target.checked)
+          }
           subLabel={formatMessage(m.supportCustomDelegationDescription)}
         />
         <Checkbox
           label={formatMessage(m.supportLegalGuardianDelegation)}
           backgroundColor={'blue'}
           large
-          name="supportsLegalGuardians"
+          name={`field-${AuthDelegationType.LegalGuardian}`}
           disabled={!isSuperAdmin}
           value="true"
-          checked={inputValues.supportsLegalGuardians}
-          onChange={() => {
-            setInputValues((prev) => ({
-              ...prev,
-              supportsLegalGuardians: !prev.supportsLegalGuardians,
-            }))
-          }}
+          checked={inputValues.supportedDelegationTypes?.includes(
+            AuthDelegationType.LegalGuardian,
+          )}
+          onChange={(e) =>
+            toggleDelegationType(e.target.name, e.target.checked)
+          }
           subLabel={formatMessage(m.supportLegalGuardianDelegationDescription)}
         />
         <Checkbox
@@ -112,15 +172,14 @@ const Delegation = ({
           backgroundColor={'blue'}
           large
           disabled={!isSuperAdmin}
-          name="supportsProcuringHolders"
+          name={`field-${AuthDelegationType.ProcurationHolder}`}
           value="true"
-          checked={inputValues.supportsProcuringHolders}
-          onChange={() => {
-            setInputValues((prev) => ({
-              ...prev,
-              supportsProcuringHolders: !prev.supportsProcuringHolders,
-            }))
-          }}
+          checked={inputValues.supportedDelegationTypes?.includes(
+            AuthDelegationType.ProcurationHolder,
+          )}
+          onChange={(e) =>
+            toggleDelegationType(e.target.name, e.target.checked)
+          }
           subLabel={formatMessage(
             m.supportProcuringHolderDelegationDescription,
           )}
@@ -158,6 +217,16 @@ const Delegation = ({
           subLabel={formatMessage(m.requirePermissionsDescription)}
         />
       </Stack>
+      {inputValues.removedDelegationTypes.map((type) => (
+        <Hidden key={type} print screen>
+          <input type="hidden" name="removedDelegationTypes" value={type} />
+        </Hidden>
+      ))}
+      {inputValues.addedDelegationTypes.map((type) => (
+        <Hidden key={type} print screen>
+          <input type="hidden" name="addedDelegationTypes" value={type} />
+        </Hidden>
+      ))}
     </FormCard>
   )
 }
