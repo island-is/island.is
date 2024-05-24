@@ -1,4 +1,3 @@
-export { DoneImage } from './DoneImage'
 export { ReportFieldsRepeater } from './ReportFieldsRepeater'
 export { AssetsRepeater } from './AssetsRepeater'
 export { HeirsAndPartitionRepeater } from './HeirsAndPartitionRepeater'
@@ -17,4 +16,3 @@ export { CalculateFuneralCost } from './CalculationsOfTotal/CalculateFuneralCost
 export { CalculateShare } from './CalculateShare'
 export { OverviewAssets } from './Overview/OverviewAssets'
 export { OverviewDebts } from './Overview/OverviewDebts'
-export { Cards } from './Cards'
