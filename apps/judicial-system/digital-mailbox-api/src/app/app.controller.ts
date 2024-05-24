@@ -38,14 +38,14 @@ export class AppController {
     return this.appService.getCases(user.nationalId, query?.lang)
   }
 
-  @Get('case')
+  @Get('case/:caseId')
   @ApiCreatedResponse({ type: String, description: 'Get case by id' })
   async getCase(
-    @Query('id') id: string,
+    @Query('caseId') caseId: string,
     @Query() query?: { lang: string },
   ): Promise<CaseResponse> {
     this.logger.debug('Getting case by id')
 
-    return this.appService.getCaseById(id, query?.lang)
+    return this.appService.getCaseById(caseId, query?.lang)
   }
 }

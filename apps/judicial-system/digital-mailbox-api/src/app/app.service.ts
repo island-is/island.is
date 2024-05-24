@@ -61,16 +61,44 @@ export class AppService {
     })
   }
 
-  private formatCase(
-    response: InternalCaseResponse,
-    lang?: string,
-  ): CaseResponse {
+  private formatCase(res: InternalCaseResponse, lang?: string): CaseResponse {
     const language = lang?.toLowerCase()
 
     return {
       data: {
-        caseNumber: response.data.caseNumber,
-        groups: response.data.groups,
+        caseNumber:
+          language === 'en'
+            ? `Case number ${res.courtCaseNumber}`
+            : `Málsnúmer ${res.courtCaseNumber}`,
+        groups: [
+          {
+            label: language === 'en' ? 'Defendant' : 'Varnaraðili',
+            items: [
+              {
+                label: 'b',
+                value: 'a',
+              },
+            ],
+          },
+          {
+            label: language === 'en' ? 'Defender' : 'Verjandi',
+            items: [
+              {
+                label: 'b',
+                value: 'a',
+              },
+            ],
+          },
+          {
+            label: language === 'en' ? 'Information' : 'Málsupplýsingar',
+            items: [
+              {
+                label: 'b',
+                value: 'a',
+              },
+            ],
+          },
+        ],
       },
     }
   }
@@ -156,7 +184,7 @@ export class AppService {
       'digital-mailbox-api',
       AuditedAction.GET_INDICTMENT,
       this.getCase(id, lang),
-      id,
+      () => id,
     )
   }
 }

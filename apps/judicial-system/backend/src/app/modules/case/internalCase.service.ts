@@ -1167,4 +1167,13 @@ export class InternalCaseService {
       },
     })
   }
+
+  async getIndictmentCase(caseId: string): Promise<Case | null> {
+    return this.caseModel.findOne({
+      attributes: ['courtCaseNumber'],
+      where: {
+        type: CaseType.INDICTMENT,
+      },
+    })
+  }
 }

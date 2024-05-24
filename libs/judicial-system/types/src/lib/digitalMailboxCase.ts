@@ -6,5 +6,5 @@ export interface IndictmentCaseData {
       label: string
       value: string
     }[]
-  }
+  }[]
 }

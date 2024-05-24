@@ -2,6 +2,7 @@ import {
   BadRequestException,
   Body,
   Controller,
+  Get,
   Inject,
   Param,
   Post,
@@ -83,6 +84,17 @@ export class InternalCaseController {
     const nationalId = formatNationalId(internalCasesDto.nationalId)
 
     return this.internalCaseService.getIndictmentCases(nationalId)
+  }
+
+  @Get('cases/indictment/:caseId')
+  @ApiOkResponse({
+    type: Case,
+    description: 'Gets indictment case by id',
+  })
+  getIndictmentCase(@Param('caseId') caseId: string): Promise<Case | null> {
+    this.logger.debug(`Getting indictment case ${caseId}`)
+
+    return this.internalCaseService.getIndictmentCase(caseId)
   }
 
   @UseGuards(CaseExistsGuard)
