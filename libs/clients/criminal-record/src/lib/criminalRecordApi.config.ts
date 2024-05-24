@@ -10,7 +10,7 @@ export const CriminalRecordClientConfig = defineConfig<z.infer<typeof schema>>({
     return {
       xRoadServicePath: env.required(
         'XROAD_CRIMINAL_RECORD_PATH',
-        'r1/IS-DEV/GOV/10005/Logreglan-Protected/Sakavottord-PDF-v2',
+        'IS-DEV/GOV/10005/Logreglan-Protected/Sakavottord-PDF-v2',
       ),
     }
   },

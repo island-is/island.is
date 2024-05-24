@@ -16,7 +16,7 @@ export const ApiConfiguration = {
         logErrorResponseBody: true,
         timeout: 20000, // needed because the external service is taking a while to respond to submitting the document
       }),
-      basePath: `${xRoadConfig.xRoadBasePath}/r1/${config.xRoadServicePath}`,
+      basePath: `${xRoadConfig.xRoadBasePath}/r1/${config.xRoadServicePath}/islandis`,
       headers: {
         'X-Road-Client': xRoadConfig.xRoadClient,
         userName: `${config.username}`,
