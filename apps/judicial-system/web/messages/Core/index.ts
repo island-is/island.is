@@ -80,6 +80,11 @@ export const core = defineMessages({
     defaultMessage: 'Sóknaraðili',
     description: 'Notað fyrir orðið sóknaraðili í öllum flæðum.',
   },
+  indictmentProsecutor: {
+    id: 'judicial.system.core:indictment_prosecutor',
+    defaultMessage: 'Ákærandi',
+    description: 'Notað fyrir orðið ákærandi í öllum flæðum.',
+  },
   prosecutorPerson: {
     id: 'judicial.system.core:prosecutor_person',
     defaultMessage: 'Sækjandi',
@@ -302,5 +307,10 @@ export const core = defineMessages({
     id: 'judicial.system.core:appeal_judges_heading',
     defaultMessage: 'Dómarar',
     description: 'Titill dómara á skráningarsíðu Landsréttar',
+  },
+  offence: {
+    id: 'judicial.system.core:offence',
+    defaultMessage: 'Brot',
+    description: 'Notað fyrir Brot texta',
   },
 })

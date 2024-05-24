@@ -59,4 +59,9 @@ export const strings = defineMessages({
     defaultMessage: 'Staðfesta',
     description: 'Notaður sem texti á takka til að birta dóm.',
   },
+  indictmentReviewer: {
+    id: 'judicial.system.core:public_prosecutor.indictments.overview.indictment_reviewer',
+    defaultMessage: 'Yfirlestur',
+    description: 'Notaður sem titill á "yfirlestur" hluta af yfirliti ákæru.',
+  },
 })
