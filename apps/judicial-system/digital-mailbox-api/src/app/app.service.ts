@@ -11,7 +11,9 @@ import { isCompletedCase } from '@island.is/judicial-system/types'
 
 import { CasesResponse } from './models/cases.response'
 import { InternalCasesResponse } from './models/internalCases.response'
+import { InternalCaseResponse } from './models/internalCase.response'
 import { digitalMailboxModuleConfig } from './app.config'
+import { CaseResponse } from './models/case.response'
 
 @Injectable()
 export class AppService {
@@ -60,13 +62,16 @@ export class AppService {
   }
 
   private formatCase(
-    response: InternalCasesResponse,
+    response: InternalCaseResponse,
     lang?: string,
-  ): CasesResponse {
+  ): CaseResponse {
     const language = lang?.toLowerCase()
 
     return {
-      id: response.id,
+      data: {
+        caseNumber: response.data.caseNumber,
+        groups: response.data.groups,
+      },
     }
   }
 
@@ -104,9 +109,9 @@ export class AppService {
       })
   }
 
-  private async getCase(id: string, lang?: string): Promise<CasesResponse> {
+  private async getCase(id: string, lang?: string): Promise<CaseResponse> {
     return fetch(
-      `${this.config.backendUrl}/api/internal/cases/indictments/${id}`,
+      `${this.config.backendUrl}/api/internal/cases/indictment/${id}`,
       {
         method: 'GET',
         headers: {
@@ -119,7 +124,7 @@ export class AppService {
         const response = await res.json()
 
         if (res.ok) {
-          return this.format(response, lang)
+          return this.formatCase(response, lang)
         }
 
         if (res.status < 500) {
@@ -146,7 +151,7 @@ export class AppService {
     )
   }
 
-  async getCaseById(id: string, lang?: string): Promise<CasesResponse> {
+  async getCaseById(id: string, lang?: string): Promise<CaseResponse> {
     return this.auditTrailService.audit(
       'digital-mailbox-api',
       AuditedAction.GET_INDICTMENT,

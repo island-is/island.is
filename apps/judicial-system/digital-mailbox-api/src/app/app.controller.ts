@@ -9,9 +9,10 @@ import { JwtAuthGuard } from './guards/auth.guard'
 import { User } from './guards/user.decorator'
 import { CasesResponse } from './models/cases.response'
 import { AppService } from './app.service'
+import { CaseResponse } from './models/case.response'
 
 @Controller('api')
-@UseGuards(JwtAuthGuard)
+// @UseGuards(JwtAuthGuard)
 export class AppController {
   constructor(
     private readonly appService: AppService,
@@ -40,10 +41,9 @@ export class AppController {
   @Get('case')
   @ApiCreatedResponse({ type: String, description: 'Get case by id' })
   async getCase(
-    @User() user: Pick<TUser, 'nationalId'>,
     @Query('id') id: string,
     @Query() query?: { lang: string },
-  ): Promise<CasesResponse> {
+  ): Promise<CaseResponse> {
     this.logger.debug('Getting case by id')
 
     return this.appService.getCaseById(id, query?.lang)
