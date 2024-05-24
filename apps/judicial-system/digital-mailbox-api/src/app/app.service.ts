@@ -47,14 +47,17 @@ export class AppService {
     })
   }
 
-  private async getAllCases(lang?: string): Promise<CasesResponse[]> {
+  private async getAllCases(
+    nationalId: string,
+    lang?: string,
+  ): Promise<CasesResponse[]> {
     return fetch(`${this.config.backendUrl}/api/internal/cases/indictments`, {
       method: 'POST',
       headers: {
         'Content-Type': 'application/json',
         authorization: `Bearer ${this.config.secretToken}`,
       },
-      body: JSON.stringify({ nationalId: '111290-2539' }),
+      body: JSON.stringify({ nationalId }),
     })
       .then(async (res) => {
         const response = await res.json()
@@ -78,11 +81,11 @@ export class AppService {
       })
   }
 
-  async getCases(lang?: string): Promise<CasesResponse[]> {
+  async getCases(nationalId: string, lang?: string): Promise<CasesResponse[]> {
     return this.auditTrailService.audit(
       'digital-mailbox-api',
       AuditedAction.GET_INDICTMENTS,
-      this.getAllCases(lang),
+      this.getAllCases(nationalId, lang),
       'OK',
     )
   }

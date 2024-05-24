@@ -79,7 +79,13 @@ export class InternalCaseController {
     @Body() internalCasesDto: InternalCasesDto,
   ): Promise<Case[]> {
     this.logger.debug('Getting all indictment cases')
-    const nationalId = internalCasesDto.nationalId.replace('-', '')
+    const nationalId =
+      internalCasesDto.nationalId.indexOf('-') > -1
+        ? internalCasesDto.nationalId
+        : `${internalCasesDto.nationalId.slice(
+            0,
+            6,
+          )}-${internalCasesDto.nationalId.slice(6)}`
 
     return this.internalCaseService.getIndictmentCases(nationalId)
   }

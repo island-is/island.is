@@ -29,10 +29,11 @@ export class AppController {
   @Get('cases')
   @ApiCreatedResponse({ type: String, description: 'Get all cases' })
   async getAllCases(
+    @User() user: Pick<TUser, 'nationalId'>,
     @Query() query?: { lang: string },
   ): Promise<CasesResponse[]> {
     this.logger.debug('Getting all cases')
 
-    return this.appService.getCases(query?.lang)
+    return this.appService.getCases(user.nationalId, query?.lang)
   }
 }
