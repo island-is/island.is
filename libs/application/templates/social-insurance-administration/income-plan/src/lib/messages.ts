@@ -71,4 +71,26 @@ export const incomePlanFormMessage: MessageDir = {
       description: 'Edit application',
     },
   }),
+
+  conclusionScreen: defineMessages({
+    receivedTitle: {
+      id: 'ip.application:conclusionScreen.receivedTitle',
+      defaultMessage:
+        'Tekjuáætlun móttekin',
+      description:
+        'Income plan received',
+    },
+    alertTitle: {
+      id: 'ip.application:conclusionScreen.alertTitle',
+      defaultMessage:
+        'Tekjuáætlun hefur verið send til Tryggingastofnunar',
+      description:
+        'An income plan has been sent to the Social Insurance Administration',
+    },
+    bulletList: {
+      id: `ip.application:conclusionScreen.bulletList#markdown`,
+      defaultMessage: `* Tryggingastofnun fer yfir tekjuáætlun og hefur eftirlit með að tekjur séu í samræmi við rauntekjur og getur verið að tekjuáætlun þinni verði breytt á þeim grundvelli. (Lög um almannatryggingar nr. 100/2007)(https://www.althingi.is/altext/lendu/2007100.html) \n* Hægt er að leiðrétta tekjuáætlun hvenær sem er á árinu en þó aðeins hægt að skila inn breyttri tekjuáætlun á 10 daga fresti. Með vandaðri tekjuáætlun er hægt að koma í veg fyrir of- eða vangreiðslur sem þarf að leiðrétta síðar. \n* Athugið að greitt er 1. hvers mánaðar samkvæmt tekjuáætlun eins og hún er þann 15. mánaðarins á undan. \n* Greiðslur eru endurreiknaðar þegar framtal vegna greiðsluárs liggur fyrir sem tryggir að allir fá réttar greiðslur í samræmi við endanlegar tekjur.`,
+      description: 'BulletList',
+    },
+  }),
 }

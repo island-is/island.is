@@ -6,6 +6,7 @@ import {
   buildSubSection,
 } from '@island.is/application/core'
 import { Form, FormModes } from '@island.is/application/types'
+import { buildFormConclusionSection } from '@island.is/application/ui-forms'
 import Logo from '@island.is/application/templates/social-insurance-administration-core/assets/Logo'
 import { incomePlanFormMessage } from '../lib/messages'
 import { socialInsuranceAdministrationMessage } from '@island.is/application/templates/social-insurance-administration-core/lib/messages'
@@ -44,6 +45,18 @@ export const IncomePlanForm: Form = buildForm({
           ],
         }),
       ],
+    }),
+    buildFormConclusionSection({
+      multiFieldTitle:
+        incomePlanFormMessage.conclusionScreen.receivedTitle,
+      alertTitle:
+        incomePlanFormMessage.conclusionScreen.alertTitle,
+      alertMessage:
+        '',
+      expandableDescription:
+        incomePlanFormMessage.conclusionScreen.bulletList,
+      expandableIntro:
+        '',
     }),
   ],
 })
