@@ -11,8 +11,8 @@ export const ContentfulClientConfig = defineConfig({
   schema,
   load: (env) => ({
     gqlBasePath: env.required(
-      'RECYCLING_FUND_GQL_BASE_PATH',
-      'http://localhost:3339/app/skilavottord/api/graphql',
+      'GRAPHQL_API_ENDPOINT',
+      'https://graphql.contentful.com/content/v1/spaces/8k0h54kbe6bj/environments/master',
     ),
   }),
 })

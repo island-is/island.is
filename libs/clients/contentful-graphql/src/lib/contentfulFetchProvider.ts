@@ -29,5 +29,5 @@ export const ContentfulFetchProvider: Provider<EnhancedFetchAPI> = {
       //     }
       //   : undefined,
     }),
-  inject: [IdsClientConfig.KEY],
+  inject: [ IdsClientConfig.KEY],
 }
