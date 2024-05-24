@@ -38,7 +38,3 @@ mutation formSystemCreateGroup($input: FormSystemCreateGroupInput!) {
 mutation formSystemDeleteGroup($input: FormSystemDeleteGroupInput!) {
   formSystemDeleteGroup(input: $input)
 }
-
-mutation formSystemUpdateGroup($input: FormSystemUpdateGroupInput!) {
-  formSystemUpdateGroup(input: $input)
-}

@@ -51,11 +51,3 @@ mutation formSystemCreateStep($input: FormSystemCreateStepInput!) {
     }
   }
 }
-
-mutation formSystemDeleteStep($input: FormSystemDeleteStepInput!) {
-  formSystemDeleteStep(input: $input)
-}
-
-mutation formSystemUpdateStep($input: FormSystemUpdateStepInput!) {
-  formSystemUpdateStep(input: $input)
-}

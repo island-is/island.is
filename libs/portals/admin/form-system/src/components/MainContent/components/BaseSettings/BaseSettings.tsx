@@ -7,19 +7,28 @@ import {
   Checkbox,
 } from '@island.is/island-ui/core'
 import { useContext } from 'react'
-import ControlContext from '../../../../context/ControlContext'
+import { ControlContext } from '../../../../context/ControlContext'
+import { useIntl } from 'react-intl'
+import { m } from '../../../../lib/messages'
 
 export const BaseSettings = () => {
-  const { control, controlDispatch, setFocus, focus, formUpdate, updateSettings } =
-    useContext(ControlContext)
+  const {
+    control,
+    controlDispatch,
+    setFocus,
+    focus,
+    formUpdate,
+    updateSettings,
+  } = useContext(ControlContext)
   const { form } = control
+  const { formatMessage } = useIntl()
   return (
     <Stack space={2}>
       <Row>
         <Column span="5/10">
           <Input
-            label="Heiti umsóknar"
-            placeholder="Heiti umsóknar"
+            label={formatMessage(m.applicationName)}
+            placeholder={formatMessage(m.applicationName)}
             name="formName"
             value={form?.name?.is ?? ''}
             backgroundColor={'blue'}
@@ -35,8 +44,8 @@ export const BaseSettings = () => {
         </Column>
         <Column span="5/10">
           <Input
-            label="Heiti umsóknar (enska)"
-            placeholder="Heiti umsóknar (enska)"
+            label={formatMessage(m.applicationNameEnglish)}
+            placeholder={formatMessage(m.applicationNameEnglish)}
             name="formNameEn"
             value={form?.name?.en ?? ''}
             backgroundColor="blue"
@@ -54,8 +63,8 @@ export const BaseSettings = () => {
       <Row>
         <Column span="5/10">
           <Input
-            label="Líftími umsóknar"
-            placeholder="Hámark 120 daga"
+            label={formatMessage(m.daysUntilExpiration)}
+            placeholder={formatMessage(m.max120Days)}
             name="applicationsDaysToRemove"
             value={
               form.applicationsDaysToRemove === 0
@@ -78,8 +87,8 @@ export const BaseSettings = () => {
       <Row>
         <Column span="5/10">
           <DatePicker
-            label="Umsóknarfrestur"
-            placeholderText="Veldu dagsetningu"
+            label={formatMessage(m.deadline)}
+            placeholderText={formatMessage(m.chooseDate)}
             backgroundColor="blue"
             selected={
               form.invalidationDate ? new Date(form.invalidationDate) : null
@@ -97,7 +106,7 @@ export const BaseSettings = () => {
       <Row>
         <Column>
           <Checkbox
-            label="Leyfa notanda að halda áfram í umsókninni með ógild/óútfyllt gildi"
+            label={formatMessage(m.allowProgress)}
             checked={form.stopProgressOnValidatingStep ?? false}
             onChange={(e) => {
               controlDispatch({
@@ -115,5 +124,3 @@ export const BaseSettings = () => {
     </Stack>
   )
 }
-
-export default BaseSettings

@@ -1,4 +1,4 @@
-import { Field, Int, InputType } from '@nestjs/graphql'
+import { Field, Int, InputType, ID } from '@nestjs/graphql'
 import { LanguageTypeInput } from './language.input'
 
 @InputType('FormSystemListTypeInput')
@@ -14,4 +14,7 @@ export class ListTypeInput {
 
   @Field(() => LanguageTypeInput, { nullable: true })
   description?: LanguageTypeInput
+
+  @Field(() => ID, { nullable: true })
+  guid?: string
 }

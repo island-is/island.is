@@ -5,13 +5,14 @@ import {
 } from '@island.is/island-ui/core'
 import { useRef, useState } from 'react'
 import { FormSystemInput } from '@island.is/api/schema'
+import { useIntl } from 'react-intl'
+import { m } from '../../../../../lib/messages'
 
 interface Props {
   currentItem: FormSystemInput
-
 }
 
-const Banknumber = ({ currentItem }: Props) => {
+export const Banknumber = ({ currentItem }: Props) => {
   const [banki, setBanki] = useState<string>('')
   const [hb, setHb] = useState<string>('')
   const [reikningur, setReikningur] = useState<string>('')
@@ -60,6 +61,8 @@ const Banknumber = ({ currentItem }: Props) => {
     return leadingZeros + originalNumber
   }
 
+  const { formatMessage } = useIntl()
+
   return (
     <Column>
       <Row marginTop={2}>
@@ -70,7 +73,7 @@ const Banknumber = ({ currentItem }: Props) => {
                 HTMLInputElement | HTMLTextAreaElement
               >
             }
-            label="Banki"
+            label={formatMessage(m.bank)}
             type="number"
             value={banki}
             maxLength={4}
@@ -87,7 +90,7 @@ const Banknumber = ({ currentItem }: Props) => {
                 HTMLInputElement | HTMLTextAreaElement
               >
             }
-            label="Hb"
+            label={formatMessage(m.ledger)}
             maxLength={2}
             type="number"
             value={hb}
@@ -104,7 +107,7 @@ const Banknumber = ({ currentItem }: Props) => {
                 HTMLInputElement | HTMLTextAreaElement
               >
             }
-            label="Reikningsnúmer"
+            label={formatMessage(m.accountNumber)}
             type="number"
             value={reikningur}
             name=""
@@ -117,5 +120,3 @@ const Banknumber = ({ currentItem }: Props) => {
     </Column>
   )
 }
-
-export default Banknumber

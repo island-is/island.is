@@ -1,16 +1,16 @@
 import { Dispatch, SetStateAction, useContext, useEffect } from 'react'
 import { Box, Button, Text } from '@island.is/island-ui/core'
-import ControlContext from '../../../../context/ControlContext'
+import { ControlContext } from '../../../../context/ControlContext'
 import { FormSystemGroup, FormSystemInput } from '@island.is/api/schema'
 import { NavbarSelectStatus } from '../../../../lib/utils/interfaces'
-import Preview from '../Preview/Preveiw'
-import MultiSet from './components/MultiSet'
+import { Preview } from '../Preview/Preveiw'
+import { MultiSet } from './components/MultiSet'
 
 interface Props {
   setOpenPreview: Dispatch<SetStateAction<boolean>>
 }
 
-const PreviewStepOrGroup = ({ setOpenPreview }: Props) => {
+export const PreviewStepOrGroup = ({ setOpenPreview }: Props) => {
   const { control, setSelectStatus } = useContext(ControlContext)
   const { activeItem, form } = control
   const { groupsList: groups, inputsList: inputs } = form
@@ -53,10 +53,10 @@ const PreviewStepOrGroup = ({ setOpenPreview }: Props) => {
         </>
       )}
       {type === 'Group' && (
-        <Box>
-          <Box>
+        <div>
+          <div>
             <Text variant="h2">{activeItem?.data?.name?.is}</Text>
-          </Box>
+          </div>
           {(activeItem.data as FormSystemGroup).multiSet !== 0 ? (
             <MultiSet group={activeItem.data as FormSystemGroup} />
           ) : (
@@ -64,7 +64,7 @@ const PreviewStepOrGroup = ({ setOpenPreview }: Props) => {
               ?.filter((i) => i?.groupGuid === activeItem?.data?.guid)
               .map((i) => <Preview key={i?.guid} data={i as FormSystemInput} />)
           )}
-        </Box>
+        </div>
       )}
       <Box display="flex" justifyContent="flexEnd" alignItems="flexEnd">
         <Button
@@ -79,5 +79,3 @@ const PreviewStepOrGroup = ({ setOpenPreview }: Props) => {
     </Box>
   )
 }
-
-export default PreviewStepOrGroup

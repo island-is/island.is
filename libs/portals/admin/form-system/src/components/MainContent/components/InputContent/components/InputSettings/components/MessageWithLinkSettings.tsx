@@ -1,5 +1,5 @@
 import { useContext } from 'react'
-import ControlContext from '../../../../../../../context/ControlContext'
+import { ControlContext } from '../../../../../../../context/ControlContext'
 import {
   GridRow as Row,
   GridColumn as Column,
@@ -8,18 +8,21 @@ import {
   Stack,
 } from '@island.is/island-ui/core'
 import { FormSystemInput } from '@island.is/api/schema'
+import { useIntl } from 'react-intl'
+import { m } from '../../../../../../../lib/messages'
 
-const MessageWithLinkSettings = () => {
+export const MessageWithLinkSettings = () => {
   const { control, controlDispatch, focus, setFocus, updateActiveItem } =
     useContext(ControlContext)
   const currentItem = control.activeItem.data as FormSystemInput
   const { inputSettings } = currentItem
+  const { formatMessage } = useIntl()
   return (
     <Stack space={2}>
       <Row>
         <Column>
           <Checkbox
-            label="Bæta við hlekk"
+            label={formatMessage(m.addLink)}
             checked={inputSettings?.hasLink ?? false}
             onChange={(e) =>
               controlDispatch({
@@ -39,7 +42,7 @@ const MessageWithLinkSettings = () => {
           <Row>
             <Column span="5/10">
               <Input
-                label="Hnapptexti"
+                label={formatMessage(m.buttonText)}
                 name="buttonTitle"
                 backgroundColor="blue"
                 value={inputSettings?.buttonText?.is ?? ''}
@@ -59,7 +62,7 @@ const MessageWithLinkSettings = () => {
             </Column>
             <Column span="5/10">
               <Input
-                label="Hnapptexti (enska)"
+                label={formatMessage(m.buttonTextEnglish)}
                 name="buttonTitle"
                 backgroundColor="blue"
                 value={inputSettings.buttonText?.en ?? ''}
@@ -81,7 +84,7 @@ const MessageWithLinkSettings = () => {
           <Row>
             <Column span="10/10">
               <Input
-                label="Url"
+                label={formatMessage(m.url)}
                 name="url"
                 backgroundColor="blue"
                 placeholder="island.is"
@@ -105,5 +108,3 @@ const MessageWithLinkSettings = () => {
     </Stack>
   )
 }
-
-export default MessageWithLinkSettings

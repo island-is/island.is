@@ -1,27 +1,29 @@
-import {
-  Box,
-  Input,
-  Stack,
-  GridColumn as Column,
-} from '@island.is/island-ui/core'
+import { Input, Stack, GridColumn as Column } from '@island.is/island-ui/core'
 import { FormSystemInput } from '@island.is/api/schema'
+import { useIntl } from 'react-intl'
+import { m } from '../../../../../lib/messages'
 
 interface Props {
   currentItem: FormSystemInput
 }
 
-const NationalId = ({ currentItem }: Props) => {
+export const NationalId = ({ currentItem }: Props) => {
+  const { formatMessage } = useIntl()
   return (
-    <Box>
+    <div>
       <Stack space={2}>
         <Column span="5/10">
-          <Input label="Kennitala" name="kennitala" type="number" required={currentItem?.isRequired ?? false} />
+          <Input
+            label={formatMessage(m.nationalId)}
+            name="kennitala"
+            type="number"
+            required={currentItem?.isRequired ?? false}
+          />
         </Column>
         <Column>
-          <Input label="Nafn" name="nafn" disabled />
+          <Input label={formatMessage(m.namePerson)} name="nafn" disabled />
         </Column>
       </Stack>
-    </Box>
+    </div>
   )
 }
-export default NationalId

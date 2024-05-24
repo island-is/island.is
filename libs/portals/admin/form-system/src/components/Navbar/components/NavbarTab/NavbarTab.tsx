@@ -3,12 +3,15 @@ import cn from 'classnames'
 import * as styles from './NavbarTab.css'
 import { useContext } from 'react'
 import { baseSettingsStep } from '../../../../utils/getBaseSettingsStep'
-import ControlContext from '../../../../context/ControlContext'
+import { ControlContext } from '../../../../context/ControlContext'
+import { useIntl } from 'react-intl'
+import { m } from '../../../../lib/messages'
 
-export default function NavbarTab() {
+export const NavbarTab = () => {
   const { control, controlDispatch, inSettings, setInSettings } =
     useContext(ControlContext)
   const { stepsList: steps } = control.form
+  const { formatMessage } = useIntl()
   return (
     <Box display="flex" flexDirection="row">
       <Inline space={4}>
@@ -18,7 +21,7 @@ export default function NavbarTab() {
             [styles.selected]: !inSettings,
           })}
           onClick={() => {
-            const step = steps?.find((s) => s?.type === 'Innsláttur')
+            const step = steps?.find((s) => s?.type === 'Input')
             controlDispatch({
               type: 'SET_ACTIVE_ITEM',
               payload: {
@@ -51,7 +54,7 @@ export default function NavbarTab() {
             setInSettings(true)
           }}
         >
-          Grunnstillingar
+          {formatMessage(m.basicSettings)}
         </Box>
       </Inline>
     </Box>

@@ -5,7 +5,7 @@ interface Props {
   data: FormSystemInput
 }
 
-const TextInput = ({ data }: Props) => {
+export const TextInput = ({ data }: Props) => {
   const { inputSettings } = data
 
   return (
@@ -16,5 +16,3 @@ const TextInput = ({ data }: Props) => {
     />
   )
 }
-
-export default TextInput

@@ -18,6 +18,7 @@ import {
   UpdateGroupInput,
 } from '../../dto/groups.input'
 import { Group } from '../../models/group.model'
+import { handle4xx } from '../../utils/errorHandler'
 
 @Injectable()
 export class GroupsService {
@@ -27,6 +28,7 @@ export class GroupsService {
     private formsApi: GroupsApi,
   ) {}
 
+  // eslint-disable-next-line
   handleError(error: any, errorDetail?: string): ApolloError | null {
     const err = {
       error: JSON.stringify(error),
@@ -35,13 +37,6 @@ export class GroupsService {
     this.logger.error(errorDetail || 'Error in groups service', err)
 
     throw new ApolloError(error.message)
-  }
-
-  private handle4xx(error: any, errorDetail?: string): ApolloError | null {
-    if (error.status === 403 || error.status === 404) {
-      return null
-    }
-    return this.handleError(error, errorDetail)
   }
 
   private groupsApiWithAuth(auth: User) {
@@ -54,7 +49,9 @@ export class GroupsService {
     }
     const response = await this.groupsApiWithAuth(auth)
       .apiGroupsGroupIdGet(request)
-      .catch((e) => this.handle4xx(e, 'failed to get group from Id'))
+      .catch((e) =>
+        handle4xx(e, this.handleError, 'failed to get group from Id'),
+      )
     if (!response || response instanceof ApolloError) {
       return {}
     }
@@ -67,7 +64,7 @@ export class GroupsService {
     }
     const response = await this.groupsApiWithAuth(auth)
       .apiGroupsPost(request)
-      .catch((e) => this.handle4xx(e, 'failed to post group'))
+      .catch((e) => handle4xx(e, this.handleError, 'failed to post group'))
 
     if (!response || response instanceof ApolloError) {
       return {}
@@ -82,7 +79,7 @@ export class GroupsService {
 
     const response = await this.groupsApiWithAuth(auth)
       .apiGroupsGroupIdDelete(request)
-      .catch((e) => this.handle4xx(e, 'failed to delete group'))
+      .catch((e) => handle4xx(e, this.handleError, 'failed to delete group'))
 
     if (!response || response instanceof ApolloError) {
       return void 0
@@ -97,7 +94,7 @@ export class GroupsService {
     }
     const response = await this.groupsApiWithAuth(auth)
       .apiGroupsGroupIdPut(request)
-      .catch((e) => this.handle4xx(e, 'failed to update group'))
+      .catch((e) => handle4xx(e, this.handleError, 'failed to update group'))
 
     if (!response || response instanceof ApolloError) {
       return void 0

@@ -85,6 +85,6 @@ export class FormsResolver {
     @Args('input', { type: () => DeleteFormInput }) input: DeleteFormInput,
     @CurrentUser() user: User,
   ): Promise<void> {
-    return await this.formsService.deleteForm(user, input)
+    return this.formsService.deleteForm(user, input)
   }
 }

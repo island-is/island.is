@@ -24,9 +24,6 @@ export class ListItem {
 
 @ObjectType('FormSystemInputSettings')
 export class InputSettings {
-  // @Field(() => String, { nullable: true })
-  // $type?: string
-
   @Field(() => Boolean, { nullable: true })
   isLarge?: boolean
 

@@ -7,7 +7,6 @@ const base = style({
   marginBottom: '2px',
   height: '46px',
   marginLeft: 'auto',
-  backgroundColor: theme.color.white,
   lineHeight: '46px',
   ':hover': {
     fontWeight: 'bolder',
@@ -28,18 +27,42 @@ export const navComponent = styleVariants({
     base,
     {
       width: '100%',
+      backgroundColor: theme.color.blue100,
     },
   ],
   group: [
     base,
     {
       width: '90%',
+      backgroundColor: theme.color.blue100,
     },
   ],
   input: [
     base,
     {
       width: '80%',
+      backgroundColor: theme.color.blue100,
+    },
+  ],
+  stepSelect: [
+    base,
+    {
+      width: '100%',
+      backgroundColor: theme.color.white,
+    },
+  ],
+  groupSelect: [
+    base,
+    {
+      width: '90%',
+      backgroundColor: theme.color.white,
+    },
+  ],
+  inputSelect: [
+    base,
+    {
+      width: '80%',
+      backgroundColor: theme.color.white,
     },
   ],
 })

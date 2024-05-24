@@ -1,5 +1,5 @@
 import { useContext, useState } from 'react'
-import ControlContext from '../../../../context/ControlContext'
+import { ControlContext } from '../../../../context/ControlContext'
 import { Stack, Checkbox, Box, Text } from '@island.is/island-ui/core'
 import {
   FormSystemApplicantType,
@@ -7,7 +7,9 @@ import {
   FormSystemLanguageType,
 } from '@island.is/api/schema'
 import { EFormApplicantTypes } from '../../../../lib/utils/interfaces'
-import FormApplicantType from './components/FormApplicantType'
+import { FormApplicantType } from './components/FormApplicantType'
+import { useIntl } from 'react-intl'
+import { m } from '../../../../lib/messages'
 
 const applicantTypeLabel = [
   'Einstaklingur (innskráður)',
@@ -263,12 +265,12 @@ export const RelevantParties = () => {
     }
   }
 
+  const { formatMessage } = useIntl()
+
   return (
     <Stack space={2}>
       <Box marginBottom={2}>
-        <Text variant="h4">
-          Veldu þá einstaklinga sem mega opna þessa umsókn
-        </Text>
+        <Text variant="h4">{formatMessage(m.selectIndividuals)}</Text>
       </Box>
       <Box padding={2}>
         <Stack space={2}>
@@ -286,14 +288,14 @@ export const RelevantParties = () => {
       </Box>
       {formApplicantTypes.length > 0 && (
         <Box marginTop={1}>
-          <Text variant="h3">Skilgreindu hlutaðeigandi aðila</Text>
+          <Text variant="h3">{formatMessage(m.defineRelevantParties)}</Text>
         </Box>
       )}
       {formApplicantTypes.map((f, i) => (
         <FormApplicantType
           key={i}
           title={
-            applicantTypeLabel[applicantTypes.indexOf(f.type)]
+            f.type && applicantTypeLabel[applicantTypes.indexOf(f.type)]
               ? applicantTypeLabel[applicantTypes.indexOf(f.type)]
               : ''
           }
@@ -316,5 +318,3 @@ export const RelevantParties = () => {
     </Stack>
   )
 }
-
-export default RelevantParties

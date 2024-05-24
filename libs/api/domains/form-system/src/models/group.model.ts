@@ -1,4 +1,4 @@
-import { Field, Int, ObjectType } from '@nestjs/graphql'
+import { Field, ID, Int, ObjectType } from '@nestjs/graphql'
 import { LanguageType } from './global.model'
 import { Input } from './input.model'
 
@@ -10,7 +10,7 @@ export class Group {
   @Field(() => LanguageType, { nullable: true })
   name?: LanguageType
 
-  @Field(() => String, { nullable: true })
+  @Field(() => ID, { nullable: true })
   guid?: string
 
   @Field(() => Int, { nullable: true })
