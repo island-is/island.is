@@ -32,6 +32,7 @@ describe('LimitedCaseController - Get indictment pdf', () => {
     indictmentSubtypes: {
       [policeCaseNumber]: [IndictmentSubtype.TRAFFIC_VIOLATION],
     },
+    indictmentHash: uuid(),
   } as Case
   const pdf = Buffer.from(uuid())
   const res = { end: jest.fn() } as unknown as Response

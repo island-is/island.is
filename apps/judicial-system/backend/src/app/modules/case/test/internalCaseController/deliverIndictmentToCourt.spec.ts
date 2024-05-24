@@ -40,6 +40,7 @@ describe('InternalCaseController - Deliver indictment to court', () => {
     },
     courtId,
     courtCaseNumber,
+    indictmentHash: uuid(),
   } as Case
   const pdf = Buffer.from('test indictment')
 

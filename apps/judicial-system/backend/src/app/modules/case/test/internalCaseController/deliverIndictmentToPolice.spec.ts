@@ -172,11 +172,6 @@ describe('InternalCaseController - Deliver indictment to police', () => {
     })
 
     it('should update the police case', async () => {
-      expect(mockAwsS3Service.getObject).toHaveBeenCalledWith(
-        caseType,
-        caseState,
-        `${caseId}/indictment.pdf`,
-      )
       expect(createIndictment).toHaveBeenCalledWith(
         theCase,
         expect.any(Function),
@@ -222,6 +217,7 @@ describe('InternalCaseController - Deliver indictment to police', () => {
       indictmentSubtypes: {
         [policeCaseNumber]: [IndictmentSubtype.TRAFFIC_VIOLATION],
       },
+      indictmentHash: uuid(),
     } as Case
 
     beforeEach(async () => {
