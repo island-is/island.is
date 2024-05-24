@@ -12,7 +12,7 @@ import { socialInsuranceAdministrationMessage } from '@island.is/application/tem
 
 export const IncomePlanForm: Form = buildForm({
   id: 'IncomePlanDraft',
-  title: socialInsuranceAdministrationMessage.shared.formTitle,
+  title: incomePlanFormMessage.pre.formTitle,
   logo: Logo,
   mode: FormModes.DRAFT,
   children: [
@@ -27,7 +27,7 @@ export const IncomePlanForm: Form = buildForm({
       children: [
         buildSubSection({
           id: 'incomePlanInstructions',
-          title: incomePlanFormMessage.info.instructionsTitle,
+          title: incomePlanFormMessage.info.instructionsShortTitle,
           children: [
             buildMultiField({
               id: 'instructionsSection',
@@ -37,7 +37,7 @@ export const IncomePlanForm: Form = buildForm({
                 buildDescriptionField({
                   id: 'instructions',
                   title: '',
-                  description: '',
+                  description: incomePlanFormMessage.info.instructionsDescription,
                 }),
               ],
             }),

@@ -18,7 +18,7 @@ import Logo from '@island.is/application/templates/social-insurance-administrati
 
 export const PrerequisitesForm: Form = buildForm({
   id: 'IncomePlanPrerequisites',
-  title: socialInsuranceAdministrationMessage.shared.formTitle,
+  title: incomePlanFormMessage.pre.formTitle,
   logo: Logo,
   mode: FormModes.NOT_STARTED,
   renderLastScreenButton: true,
