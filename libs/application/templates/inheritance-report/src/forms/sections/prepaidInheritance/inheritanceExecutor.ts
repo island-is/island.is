@@ -1,16 +1,17 @@
 import {
+  buildCheckboxField,
   buildDescriptionField,
   buildMultiField,
   buildPhoneField,
   buildSection,
   buildTextField,
-  getValueViaPath,
+  YES,
 } from '@island.is/application/core'
 import { m } from '../../../lib/messages'
 import { format as formatNationalId } from 'kennitala'
 import {
   Application,
-  NationalRegistrySpouse,
+  NationalRegistryUser,
   UserProfile,
 } from '@island.is/api/schema'
 import { removeCountryCode } from '@island.is/application/ui-components'
@@ -18,8 +19,6 @@ import {
   getSpouseFromExternalData,
   isApplicantMarried,
 } from '../../../lib/utils/helpers'
-import { applicant } from '../applicant'
-import { application } from 'express'
 
 export const inheritanceExecutor = buildSection({
   id: 'inheritanceExecutor',
@@ -40,7 +39,8 @@ export const inheritanceExecutor = buildSection({
           id: 'executorName',
           title: m.name,
           defaultValue: ({ externalData }: Application) =>
-            (externalData.nationalRegistry?.data as any)?.fullName ?? '',
+            (externalData.nationalRegistry?.data as NationalRegistryUser)
+              ?.fullName ?? '',
           width: 'half',
           readOnly: true,
         }),
@@ -49,7 +49,8 @@ export const inheritanceExecutor = buildSection({
           title: m.nationalId,
           defaultValue: ({ externalData }: Application) =>
             formatNationalId(
-              (externalData.nationalRegistry?.data as any)?.nationalId,
+              (externalData.nationalRegistry?.data as NationalRegistryUser)
+                ?.nationalId,
             ),
           width: 'half',
           readOnly: true,
@@ -80,12 +81,27 @@ export const inheritanceExecutor = buildSection({
           },
         }),
         //Todo: ef hjúskaparstaða er married
+        buildCheckboxField({
+          id: 'skipSpouseExecutor',
+          title: '',
+          large: false,
+          backgroundColor: 'white',
+          defaultValue: [],
+          options: [
+            {
+              value: YES,
+              label: m.skipSpousePrePaid,
+            },
+          ],
+          condition: (_, externalData) => isApplicantMarried(externalData),
+        }),
         buildDescriptionField({
-          id: 'executor2',
+          id: 'executorSpouse',
           title: 'Arfláti 2',
           titleVariant: 'h3',
           space: 'containerGutter',
-          condition: (_, externalData) => isApplicantMarried(externalData),
+          condition: (answers) =>
+            !(answers.skipSpouseExecutor as Array<string>)?.length,
         }),
         buildTextField({
           id: 'executorSpouseName',
@@ -94,7 +110,8 @@ export const inheritanceExecutor = buildSection({
             getSpouseFromExternalData(externalData)?.fullName,
           width: 'half',
           readOnly: true,
-          condition: (_, externalData) => isApplicantMarried(externalData),
+          condition: (answers) =>
+            !(answers.skipSpouseExecutor as Array<string>)?.length,
         }),
         buildTextField({
           id: 'executorSpouseNationalId',
@@ -105,20 +122,23 @@ export const inheritanceExecutor = buildSection({
             ),
           width: 'half',
           readOnly: true,
-          condition: (_, externalData) => isApplicantMarried(externalData),
+          condition: (answers) =>
+            !(answers.skipSpouseExecutor as Array<string>)?.length,
         }),
         buildTextField({
           id: 'executorSpouseEmail',
           title: m.email,
           width: 'half',
           variant: 'email',
-          condition: (_, externalData) => isApplicantMarried(externalData),
+          condition: (answers) =>
+            !(answers.skipSpouseExecutor as Array<string>)?.length,
         }),
         buildPhoneField({
           id: 'executorSpousePhone',
           title: m.phone,
           width: 'half',
-          condition: (_, externalData) => isApplicantMarried(externalData),
+          condition: (answers) =>
+            !(answers.skipSpouseExecutor as Array<string>)?.length,
         }),
       ],
     }),

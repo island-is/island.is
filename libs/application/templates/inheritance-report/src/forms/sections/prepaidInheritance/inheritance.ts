@@ -29,15 +29,14 @@ export const inheritance = buildSection({
           ],
         }),
         buildCheckboxField({
-          id: 'prepaidInheritance.vehicles',
+          id: 'prepaidInheritance.stocks',
           title: '',
           large: true,
           defaultValue: [],
           options: [
             {
               value: YES,
-              label: m.vehicles,
-              subLabel: m.vehiclesDescription,
+              label: m.stocksTitle,
             },
           ],
         }),

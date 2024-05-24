@@ -1607,6 +1607,11 @@ export const m = defineMessages({
     defaultMessage: 'Markaðsverðmæti',
     description: '',
   },
+  skipSpousePrePaid: {
+    id: 'id.application:skipSpouse',
+    defaultMessage: 'Sleppa maka',
+    description: '',
+  },
   // Error messages
   errorPropertyNumber: {
     id: 'ir.application:error.errorPropertyNumber',

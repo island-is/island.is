@@ -167,18 +167,14 @@ export const assets = buildSection({
       id: 'assets.vehicles',
       title: m.vehicles,
       condition: (answers) => {
-        return (answers as any).applicationFor === PREPAID_INHERITANCE
-          ? (answers as any).prepaidInheritance?.vehicles[0] === YES
-          : true
+        return (answers as any).applicationFor !== PREPAID_INHERITANCE
       },
       children: [
         buildMultiField({
           id: 'vehicles',
           title: m.propertiesTitle,
-          description: (application) =>
-            application.answers.applicationFor === PREPAID_INHERITANCE
-              ? m.propertiesDescriptionPrePaid
-              : m.propertiesDescription + ' ' + m.continueWithoutVehicles,
+          description:
+            m.propertiesDescription + ' ' + m.continueWithoutVehicles,
           children: [
             buildDescriptionField({
               id: 'vehiclesTitle',
@@ -456,15 +452,17 @@ export const assets = buildSection({
       title: m.stocksTitle,
       condition: (answers) => {
         return (answers as any).applicationFor !== PREPAID_INHERITANCE
+          ? (answers as any).prepaidInheritance?.vehicles[0] === YES
+          : true
       },
       children: [
         buildMultiField({
           id: 'stocks',
           title: m.propertiesTitle,
-          description:
-            m.propertiesDescription.defaultMessage +
-            ' ' +
-            m.continueWithoutStocks.defaultMessage,
+          description: (application) =>
+            application.answers.applicationFor === PREPAID_INHERITANCE
+              ? m.propertiesDescriptionPrePaid
+              : m.propertiesDescription + ' ' + m.continueWithoutBankAccounts,
           children: [
             buildDescriptionField({
               id: 'stocksTitle',
@@ -526,7 +524,10 @@ export const assets = buildSection({
     }),
     buildSubSection({
       id: 'money',
-      title: m.moneyTitle,
+      title: (application) =>
+        application.answers.applicationFor === PREPAID_INHERITANCE
+          ? m.moneyTitlePrePaid
+          : m.moneyTitle,
       condition: (answers) => {
         return (answers as any).applicationFor === PREPAID_INHERITANCE
           ? (answers as any).prepaidInheritance?.money[0] === YES
