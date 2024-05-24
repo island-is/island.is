@@ -143,7 +143,7 @@ const getDefendantsInfo = (defendants: Defendant[] | undefined) => {
     return
   }
 
-  const expiryDays = 28 * 24 * 60 * 60 * 1000
+  const expiryDays = getDays(28)
 
   return defendants.map((defendant) => {
     const { verdictViewDate } = defendant
