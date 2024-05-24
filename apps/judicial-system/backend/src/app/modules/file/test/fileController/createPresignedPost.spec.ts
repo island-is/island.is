@@ -103,6 +103,7 @@ describe('FileController - Create presigned post', () => {
             Policy: 'Some Policy',
             'X-Amz-Signature': 'Some Signature',
           },
+          key: expect.stringMatching(new RegExp(`^${caseId}/.{36}/test.txt$`)),
         })
 
         expect(then.result.fields.key).toMatch(
@@ -169,6 +170,7 @@ describe('FileController - Create presigned post', () => {
             Policy: 'Some Policy',
             'X-Amz-Signature': 'Some Signature',
           },
+          key: expect.stringMatching(new RegExp(`^${caseId}/.{36}/test.txt$`)),
         })
 
         expect(then.result.fields.key).toMatch(

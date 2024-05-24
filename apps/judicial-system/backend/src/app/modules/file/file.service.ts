@@ -492,10 +492,17 @@ export class FileService {
       })
   }
 
-  async resetCaseFileStates(caseId: string, transaction: Transaction) {
-    await this.fileModel.update(
+  resetCaseFileStates(caseId: string, transaction: Transaction) {
+    return this.fileModel.update(
       { state: CaseFileState.STORED_IN_RVG },
       { where: { caseId, state: CaseFileState.STORED_IN_COURT }, transaction },
+    )
+  }
+
+  resetIndictmentCaseFileHashes(caseId: string, transaction: Transaction) {
+    return this.fileModel.update(
+      { hash: null },
+      { where: { caseId, category: CaseFileCategory.INDICTMENT }, transaction },
     )
   }
 

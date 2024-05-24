@@ -395,12 +395,11 @@ export class CaseController {
         }
         break
       case CaseTransition.ASK_FOR_CONFIRMATION:
-        if (theCase.indictmentReturnedExplanation) {
-          update.indictmentReturnedExplanation = ''
-        }
+        update.indictmentReturnedExplanation = null
         break
       case CaseTransition.RETURN_INDICTMENT:
-        update.courtCaseNumber = ''
+        update.courtCaseNumber = null
+        update.indictmentHash = null
         break
       case CaseTransition.REDISTRIBUTE:
         update.judgeId = null

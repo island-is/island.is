@@ -105,7 +105,6 @@ export interface UpdateCase
     | 'caseFilesComments'
     | 'prosecutorId'
     | 'sharedWithProsecutorsOfficeId'
-    | 'courtCaseNumber'
     | 'sessionArrangements'
     | 'courtLocation'
     | 'courtStartDate'
@@ -154,7 +153,6 @@ export interface UpdateCase
     | 'appealValidToDate'
     | 'isAppealCustodyIsolation'
     | 'appealIsolationToDate'
-    | 'indictmentReturnedExplanation'
     | 'indictmentRulingDecision'
     | 'indictmentReviewerId'
   > {
@@ -164,6 +162,7 @@ export interface UpdateCase
   defendantWaivesRightToCounsel?: boolean
   rulingDate?: Date | null
   rulingSignatureDate?: Date | null
+  courtCaseNumber?: string | null
   courtRecordSignatoryId?: string | null
   courtRecordSignatureDate?: Date | null
   parentCaseId?: string | null
@@ -171,7 +170,9 @@ export interface UpdateCase
   courtDate?: UpdateDateLog | null
   postponedIndefinitelyExplanation?: string | null
   judgeId?: string | null
+  indictmentReturnedExplanation?: string | null
   indictmentDeniedExplanation?: string | null
+  indictmentHash?: string | null
 }
 
 type DateLogKeys = keyof Pick<UpdateCase, 'arraignmentDate' | 'courtDate'>
@@ -1397,6 +1398,8 @@ export class CaseService {
   ): Promise<Case | undefined> {
     const receivingCase =
       update.courtCaseNumber && theCase.state === CaseState.SUBMITTED
+    const returningIndictmentCase =
+      update.state === CaseState.DRAFT && theCase.state === CaseState.RECEIVED
 
     return this.sequelize
       .transaction(async (transaction) => {
@@ -1447,6 +1450,13 @@ export class CaseService {
           update.courtCaseNumber !== theCase.courtCaseNumber
         ) {
           await this.fileService.resetCaseFileStates(theCase.id, transaction)
+        }
+
+        if (returningIndictmentCase) {
+          await this.fileService.resetIndictmentCaseFileHashes(
+            theCase.id,
+            transaction,
+          )
         }
       })
       .then(async () => {
