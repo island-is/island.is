@@ -1,6 +1,14 @@
 import { FC } from 'react'
 import { m } from '@island.is/service-portal/core'
-import { Box, LoadingDots } from '@island.is/island-ui/core'
+import {
+  AlertBanner,
+  AlertMessage,
+  Box,
+  Button,
+  GridColumn,
+  GridRow,
+  LoadingDots,
+} from '@island.is/island-ui/core'
 import { DocumentsV2Category } from '@island.is/api/schema'
 import { useLocale, useNamespaces } from '@island.is/localization'
 import { DocumentRenderer } from '../DocumentRenderer/DocumentRendererV2'
@@ -10,6 +18,7 @@ import { SERVICE_PORTAL_HEADER_HEIGHT_LG } from '@island.is/service-portal/const
 import { useDocumentContext } from '../../screens/Overview/DocumentContext'
 import * as styles from './OverviewDisplay.css'
 import { useDocumentList } from '../../hooks/useDocumentList'
+import DocumentActions from '../DocumentActions/DocumentActions'
 
 interface Props {
   activeBookmark: boolean
@@ -72,6 +81,7 @@ export const DesktopOverview: FC<Props> = ({
           bookmarked: activeBookmark,
         }}
       />
+      <DocumentActions />
       <Box>{<DocumentRenderer doc={activeDocument} />}</Box>
       {activeDocument?.id && (
         <Box className={styles.reveal}>

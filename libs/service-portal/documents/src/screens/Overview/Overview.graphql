@@ -19,6 +19,17 @@ query DocumentsV2($input: DocumentsV2DocumentsInput!) {
         type
         value
       }
+      isImportant
+      actions {
+        type
+        title
+        data
+        icon
+      }
+      alertMessage {
+        type
+        message
+      }
     }
     totalCount
     unreadCount

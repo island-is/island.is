@@ -101,10 +101,10 @@ export class DocumentServiceV2 {
     if (!documents?.totalCount) {
       throw new Error('Incomplete response')
     }
-
     const documentData: Array<Document> =
       documents?.documents
         .map((d) => {
+          const isImportant = Math.random() < 0.3
           if (!d) {
             return null
           }
@@ -117,6 +117,22 @@ export class DocumentServiceV2 {
               name: d.senderName,
               id: d.senderNationalId,
             },
+            isImportant: isImportant,
+            alertMessage: {
+              type: 'success',
+              message:
+                'Staðfesting á möttöku hefur verið send á dómstóla og ákæruvald.',
+            },
+            actions: isImportant
+              ? [
+                  {
+                    title: 'Velja verjanda',
+                    type: 'url',
+                    data: '/domsmal/123/fyrirkall/',
+                    icon: 'receipt',
+                  },
+                ]
+              : undefined,
           }
         })
         .filter(isDefined) ?? []

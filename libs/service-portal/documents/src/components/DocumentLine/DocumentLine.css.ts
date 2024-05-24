@@ -123,3 +123,9 @@ export const badge = style({
   borderRadius: '50%',
   backgroundColor: theme.color.red400,
 })
+
+export const avatar = style({
+  display: 'flex',
+  justifyContent: 'center',
+  alignItems: 'center',
+})

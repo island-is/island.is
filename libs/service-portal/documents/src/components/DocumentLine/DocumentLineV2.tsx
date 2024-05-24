@@ -55,7 +55,7 @@ export const DocumentLine: FC<Props> = ({
   const { id } = useParams<{
     id: string
   }>()
-  const isImportant = false // TODO: documentLine.isImportant ?? CA svona, bíðum eftir þjónustunni
+  const isImportant = documentLine.isImportant ?? false
 
   const {
     submitMailAction,
@@ -176,14 +176,14 @@ export const DocumentLine: FC<Props> = ({
         borderTopWidth={includeTopBorder ? 'standard' : undefined}
         paddingX={2}
         paddingTop="p2"
-        paddingBottom={isImportant ? 'smallGutter' : 'p2'}
+        paddingBottom={isImportant ? 'p1' : 'p2'}
         width="full"
         className={cn(styles.docline, {
           [styles.active]: active,
           [styles.unread]: unread,
         })}
       >
-        <div ref={avatarRef}>
+        <div ref={avatarRef} className={styles.avatar}>
           <AvatarImage
             img={img}
             onClick={(e) => {
@@ -249,7 +249,7 @@ export const DocumentLine: FC<Props> = ({
                 {documentLine.subject}
               </Text>
             </button>
-            {<ImportantTag isImportant={isImportant} />}
+            {isImportant && <ImportantTag />}
 
             {(hasFocusOrHover || isBookmarked || isArchived) &&
               !postLoading &&

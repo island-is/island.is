@@ -74,7 +74,7 @@ export const DocumentLine: FC<Props> = ({
   const navigate = useNavigate()
   const location = useLocation()
   const date = format(new Date(documentLine.date), dateFormat.is)
-  const isImportant = true // TODO: documentLine.isImportant ?? CA svona, bíðum eftir þjónustunni
+  const isImportant = true
   const { id } = useParams<{
     id: string
   }>()
@@ -276,7 +276,7 @@ export const DocumentLine: FC<Props> = ({
                 {documentLine.subject}
               </Text>
             </button>
-            {asFrame && <ImportantTag isImportant={isImportant} />}
+            {asFrame && isImportant && <ImportantTag />}
             {(hasFocusOrHover || isBookmarked || isArchived) &&
               !postLoading &&
               !asFrame && (
