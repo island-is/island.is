@@ -16,7 +16,7 @@ export const OfficialJournalOfIcelandApplicationClientConfig = defineConfig<
   schema,
   load: (env) => ({
     xRoadServicePath: env.required(
-      'XROAD_OFFICIAL_JOURNAL_PATH',
+      'XROAD_OFFICIAL_JOURNAL_APPLICATION_PATH',
       'IS-DEV/GOV/10014/DMR-Protected/official-journal-application',
     ),
     fetch: {
