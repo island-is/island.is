@@ -3,6 +3,7 @@ import {
   buildNationalIdWithNameField,
   buildPhoneField,
   buildSubSection,
+  buildSubmitField,
   buildTextField,
 } from '@island.is/application/core'
 import { information } from '../../../lib/messages'
