@@ -84,31 +84,27 @@ export const _tryToGetDate = (value: string | null) => {
 // as a separator. This function is used in the processDataFromSource
 // function to split each line of the CSV file into an array of strings
 const splitCsvLine = (line: string) => {
-  const indiciesOfCommas = []
-
+  const result: string[] = []
+  let current = ''
   let inQuote = false
-  for (let i = 0; i < line.length; i += 1) {
-    if (line[i] === '"') {
+
+  for (const char of line) {
+    if (char === '"') {
       inQuote = !inQuote
+    } else if (char === ',' && !inQuote) {
+      result.push(current)
+      current = ''
+    } else {
+      current += char
     }
-
-    if (!inQuote && line[i] === ',') {
-      indiciesOfCommas.push(i)
-    }
   }
 
-  const splits = []
-  let lastSplit = 0
-  for (const index of indiciesOfCommas) {
-    splits.push(line.slice(lastSplit, index))
-    lastSplit = index + 1
+  if (current.length > 0) {
+    // Add the last segment
+    result.push(current)
   }
 
-  if (lastSplit < line.length) {
-    splits.push(line.slice(lastSplit))
-  }
-
-  return splits
+  return result
 }
 
 export const processDataFromSource = (data: string) => {

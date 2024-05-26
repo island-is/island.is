@@ -200,7 +200,7 @@ describe('processDataFromSource', () => {
     expect(processed).toEqual(expected)
   })
 
-  it.only('should process numbers that are within strings and contain commas', () => {
+  it('should process numbers that are within strings and contain commas', () => {
     const startDate = new Date(2021, 11)
 
     const expectedNumberValues = [
