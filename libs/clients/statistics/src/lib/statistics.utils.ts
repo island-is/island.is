@@ -83,7 +83,7 @@ export const _tryToGetDate = (value: string | null) => {
 // parsing CSV files since commas inside quotes should not be used
 // as a separator. This function is used in the processDataFromSource
 // function to split each line of the CSV file into an array of strings
-const splitCsvLine = (line: string) => {
+export const splitCsvLine = (line: string) => {
   const result: string[] = []
   let current = ''
   let inQuote = false

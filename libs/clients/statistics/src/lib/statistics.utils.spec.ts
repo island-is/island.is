@@ -3,7 +3,11 @@ import endOfDay from 'date-fns/endOfDay'
 import addMonths from 'date-fns/addMonths'
 import getDaysInMonth from 'date-fns/getDaysInMonth'
 import format from 'date-fns/format'
-import { processDataFromSource, _tryToGetDate } from './statistics.utils'
+import {
+  processDataFromSource,
+  _tryToGetDate,
+  splitCsvLine,
+} from './statistics.utils'
 
 describe('processDataFromSource', () => {
   it('should process number value csv with month+year labels', () => {
@@ -292,5 +296,29 @@ describe('_tryToGetDate', () => {
         expect(result).toEqual(currentDate)
       }
     }
+  })
+})
+
+describe('splitCsvLine', () => {
+  it('should split normal comma separted line', () => {
+    // Arrange
+    const line = '1,2,3,4'
+
+    // Act
+    const result = splitCsvLine(line)
+
+    // Assert
+    expect(result).toEqual(['1', '2', '3', '4'])
+  })
+
+  it('should split line with commas but skip commas in values surrounded by quotes', () => {
+    // Arrange
+    const line = '1,"2, 3",4'
+
+    // Act
+    const result = splitCsvLine(line)
+
+    // Assert
+    expect(result).toEqual(['1', '2, 3', '4'])
   })
 })
