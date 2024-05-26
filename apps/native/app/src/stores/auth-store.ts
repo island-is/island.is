@@ -21,6 +21,8 @@ import { notificationsStore } from './notifications-store'
 
 const KEYCHAIN_AUTH_KEY = `@islandis_${bundleId}`
 
+// App change.
+
 // Optional scopes (not required for all users so we do not want to force a logout)
 const OPTIONAL_SCOPES = ['@island.is/licenses:barcode']
 
