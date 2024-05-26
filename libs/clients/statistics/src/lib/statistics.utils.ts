@@ -78,6 +78,39 @@ export const _tryToGetDate = (value: string | null) => {
   return null
 }
 
+// This function splits a string into a list of strings. The split
+// is done by commas that are not inside quotes. This is useful when
+// parsing CSV files since commas inside quotes should not be used
+// as a separator. This function is used in the processDataFromSource
+// function to split each line of the CSV file into an array of strings
+const splitCsvLine = (line: string) => {
+  const indiciesOfCommas = []
+
+  let inQuote = false
+  for (let i = 0; i < line.length; i += 1) {
+    if (line[i] === '"') {
+      inQuote = !inQuote
+    }
+
+    if (!inQuote && line[i] === ',') {
+      indiciesOfCommas.push(i)
+    }
+  }
+
+  const splits = []
+  let lastSplit = 0
+  for (const index of indiciesOfCommas) {
+    splits.push(line.slice(lastSplit, index))
+    lastSplit = index + 1
+  }
+
+  if (lastSplit < line.length) {
+    splits.push(line.slice(lastSplit))
+  }
+
+  return splits
+}
+
 export const processDataFromSource = (data: string) => {
   const lines = data
     .replace(/\r/g, '')
@@ -85,7 +118,7 @@ export const processDataFromSource = (data: string) => {
     .filter((l) => l.length > 0)
 
   const headers = lines[0].split(',')
-  const dataLines = lines.slice(1).map((line) => line.split(','))
+  const dataLines = lines.slice(1).map(splitCsvLine)
 
   const result: StatisticSourceData['data'] = {}
 
@@ -115,8 +148,15 @@ export const processDataFromSource = (data: string) => {
         result[key] = []
       }
 
-      const isPercentage = lineColumns[i]?.endsWith('%') ?? false
-      const rawValue = lineColumns[i]?.replace('%', '')?.trim()
+      const isPercentage = lineColumns[i]?.endsWith('%') || false
+      const rawValue = lineColumns[i]
+        ?.replace(/%/g, '')
+        // When we have a value like "1,000,000" it is surrounded by quotes
+        ?.replace(/\"/g, '')
+        // We can then safely remove the commas since they are not used to
+        // separate decimal digits but rather to separate thousands
+        ?.replace(/\,/g, '')
+        ?.trim()
 
       const isInvalidValue =
         (typeof rawValue === 'string' && rawValue.length === 0) ||
