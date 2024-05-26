@@ -180,7 +180,6 @@ import { HousingBenefitsConfig } from '@island.is/clients/hms-housing-benefits'
 import { UserProfileClientConfig } from '@island.is/clients/user-profile'
 
 const environment = getConfig
-// Another non-app change.
 
 @Module({
   controllers: [HealthController],
