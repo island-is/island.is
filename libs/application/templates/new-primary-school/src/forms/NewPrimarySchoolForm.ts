@@ -1,5 +1,4 @@
 import {
-  buildAlertMessageField,
   buildCustomField,
   buildDescriptionField,
   buildForm,
@@ -276,15 +275,6 @@ export const NewPrimarySchoolForm: Form = buildForm({
               description:
                 newPrimarySchoolMessages.childrenNParents.relativesDescription,
               children: [
-                buildAlertMessageField({
-                  id: 'relatives.alertMessage',
-                  title: newPrimarySchoolMessages.shared.alertTitle,
-                  message:
-                    newPrimarySchoolMessages.childrenNParents
-                      .relativesAlertMessage,
-                  doesNotRequireAnswer: true,
-                  alertType: 'info',
-                }),
                 buildTableRepeaterField({
                   id: 'relatives',
                   title: '',
@@ -392,16 +382,9 @@ export const NewPrimarySchoolForm: Form = buildForm({
       title: newPrimarySchoolMessages.primarySchool.sectionTitle,
       children: [
         buildSubSection({
-          id: 'startingSchoolSubSection',
+          id: 'newSchoolSubSection',
           title:
-            newPrimarySchoolMessages.primarySchool
-              .startingSchoolSubSectionTitle,
-          children: [],
-        }),
-        buildSubSection({
-          id: 'currentSchoolSubSection',
-          title:
-            newPrimarySchoolMessages.primarySchool.currentSchoolSubSectionTitle,
+            newPrimarySchoolMessages.primarySchool.newSchoolSubSectionTitle,
           children: [],
         }),
         buildSubSection({
@@ -412,14 +395,15 @@ export const NewPrimarySchoolForm: Form = buildForm({
           children: [],
         }),
         buildSubSection({
-          id: 'newSchoolSubSection',
-          title:
-            newPrimarySchoolMessages.primarySchool.newSchoolSubSectionTitle,
+          id: 'siblingsSubSection',
+          title: newPrimarySchoolMessages.primarySchool.siblingsSubSectionTitle,
           children: [],
         }),
         buildSubSection({
-          id: 'siblingsSubSection',
-          title: newPrimarySchoolMessages.primarySchool.siblingsSubSectionTitle,
+          id: 'startingSchoolSubSection',
+          title:
+            newPrimarySchoolMessages.primarySchool
+              .startingSchoolSubSectionTitle,
           children: [],
         }),
       ],
@@ -435,28 +419,14 @@ export const NewPrimarySchoolForm: Form = buildForm({
           children: [],
         }),
         buildSubSection({
-          id: 'foodAllergiesAndIntolerancesSubSection',
+          id: 'schoolMealSubSection',
           title:
-            newPrimarySchoolMessages.differentNeeds
-              .foodAllergiesAndIntolerancesSubSectionTitle,
-          children: [],
-        }),
-        buildSubSection({
-          id: 'schoolMealsSubSection',
-          title:
-            newPrimarySchoolMessages.differentNeeds.schoolMealsSubSectionTitle,
+            newPrimarySchoolMessages.differentNeeds.schoolMealSubSectionTitle,
           children: [],
         }),
         buildSubSection({
           id: 'supportSubSection',
           title: newPrimarySchoolMessages.differentNeeds.supportSubSectionTitle,
-          children: [],
-        }),
-        buildSubSection({
-          id: 'requestAConversationSubSection',
-          title:
-            newPrimarySchoolMessages.differentNeeds
-              .requestAConversationSubSectionTitle,
           children: [],
         }),
         buildSubSection({

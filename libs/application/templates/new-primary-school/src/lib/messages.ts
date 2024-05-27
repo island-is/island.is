@@ -177,9 +177,9 @@ export const newPrimarySchoolMessages: MessageDir = {
     relativesDescription: {
       id: 'dess.nps.application:childrenNParents.relatives.description',
       defaultMessage:
-        'Skráðu að minnsta kosti einn tengilið sem má hafa samband við ef ekki næst í foreldra/forsjáraðila barnsins. Þú getur bætt við allt að sex aðstandendum.',
+        'Skráðu að minnsta kosti einn tengilið sem má hafa samband við ef ekki næst í foreldra/forsjáraðila barnsins. Þú getur bætt við allt að sex aðstandendum. Vinsamlegast látið aðstandendur vita af skráningunni.',
       description:
-        "List at least one contact person who can be contacted if the child's parents/guardian cannot be reached. You can add up to six relatives.",
+        "List at least one contact person who can be contacted if the child's parents/guardian cannot be reached. You can add up to six relatives. Please inform the relatives of the registration.",
     },
     relativesRegistrationTitle: {
       id: 'dess.nps.application:childrenNParents.relatives.registration.title',
@@ -236,11 +236,6 @@ export const newPrimarySchoolMessages: MessageDir = {
       defaultMessage: 'Vinafólk/annað',
       description: 'Friends/others',
     },
-    relativesAlertMessage: {
-      id: 'dess.nps.application:childrenNParents.relatives.alert.message',
-      defaultMessage: 'Vinsamlegast látið aðstandendur vita af skráningunni.',
-      description: 'Please inform the relatives of the registration.',
-    },
     relativesCanPickUpChild: {
       id: 'dess.nps.application:childrenNParents.relatives.can.pick.up.child',
       defaultMessage: 'Má sækja barn í skólann',
@@ -260,18 +255,11 @@ export const newPrimarySchoolMessages: MessageDir = {
       description: 'Primary school',
     },
 
-    // Starting school
-    startingSchoolSubSectionTitle: {
-      id: 'dess.nps.application:primary.school.starting.school.sub.section.title',
-      defaultMessage: 'Byrjar í skóla',
-      description: 'Starting school',
-    },
-
-    // Current school
-    currentSchoolSubSectionTitle: {
-      id: 'dess.nps.application:primary.school.starting.school.current.school.section.title',
-      defaultMessage: 'Núverandi skóli',
-      description: 'Current school',
+    // Apply to a new school
+    newSchoolSubSectionTitle: {
+      id: 'dess.nps.application:primary.school.new.school.section.title',
+      defaultMessage: 'Nýr skóli',
+      description: 'New school',
     },
 
     // Reason for transfer
@@ -281,18 +269,18 @@ export const newPrimarySchoolMessages: MessageDir = {
       description: 'Reason for transfer',
     },
 
-    // Apply to a new school
-    newSchoolSubSectionTitle: {
-      id: 'dess.nps.application:primary.school.starting.school.new.school.section.title',
-      defaultMessage: 'Sækja um í nýjum skóla',
-      description: 'Apply to a new school',
-    },
-
     // Siblings
     siblingsSubSectionTitle: {
       id: 'dess.nps.application:primary.school.starting.school.siblings.section.title',
       defaultMessage: 'Systkini',
       description: 'Siblings',
+    },
+
+    // Starting school
+    startingSchoolSubSectionTitle: {
+      id: 'dess.nps.application:primary.school.starting.school.sub.section.title',
+      defaultMessage: 'Byrjar í skóla',
+      description: 'Starting school',
     },
   }),
 
@@ -310,18 +298,11 @@ export const newPrimarySchoolMessages: MessageDir = {
       description: 'Language',
     },
 
-    // Food allergies and intolerances
-    foodAllergiesAndIntolerancesSubSectionTitle: {
-      id: 'dess.nps.application:different.needs.food.allergies.and.intolerances.section.title',
-      defaultMessage: 'Fæðuofnæmi og -óþol',
-      description: 'Food allergies and intolerances',
-    },
-
-    // School Meals
-    schoolMealsSubSectionTitle: {
-      id: 'dess.nps.application:different.needs.school.meals.section.title',
-      defaultMessage: 'Skólamáltíðir',
-      description: 'School Meals',
+    // School Meal
+    schoolMealSubSectionTitle: {
+      id: 'dess.nps.application:different.needs.school.meal.section.title',
+      defaultMessage: 'Skólamáltíð',
+      description: 'School Meal',
     },
 
     // Support
@@ -331,18 +312,11 @@ export const newPrimarySchoolMessages: MessageDir = {
       description: 'Support',
     },
 
-    // Request a conversation with the school
-    requestAConversationSubSectionTitle: {
-      id: 'dess.nps.application:different.needs.request.a.conversation.section.title',
-      defaultMessage: 'Óska eftir samtali við skóla',
-      description: 'Request a conversation with the school',
-    },
-
-    // School bus from rural areas
+    // School bus
     schoolBusSubSectionTitle: {
       id: 'dess.nps.application:different.needs.school.bus.section.title',
-      defaultMessage: 'Skólaakstur úr dreifbýli',
-      description: 'School bus from rural areas',
+      defaultMessage: 'Skólaakstur',
+      description: 'School bus',
     },
 
     // Use of footage
