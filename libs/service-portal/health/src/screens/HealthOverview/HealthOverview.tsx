@@ -103,7 +103,7 @@ export const HealthOverview = () => {
       ) : loading ? (
         <SkeletonLoader
           repeat={3}
-          space={2}
+          space={CONTENT_GAP}
           height={24}
           borderRadius="standard"
         />
@@ -114,8 +114,15 @@ export const HealthOverview = () => {
           message={insurance?.explanation}
         />
       ) : (
-        <Stack space={5}>
-          <GridRow marginBottom={[1, 1, 1, 3]}>
+        <Stack space={SECTION_GAP}>
+          <GridRow
+            marginBottom={[
+              CONTENT_GAP_SM,
+              CONTENT_GAP_SM,
+              CONTENT_GAP_SM,
+              CONTENT_GAP_LG,
+            ]}
+          >
             <GridColumn span="12/12">
               <Box
                 display="flex"
@@ -124,7 +131,15 @@ export const HealthOverview = () => {
                 justifyContent="flexStart"
                 printHidden
               >
-                <Box paddingRight={2} marginBottom={[1, 1, 1, 0]}>
+                <Box
+                  paddingRight={CONTENT_GAP}
+                  marginBottom={[
+                    CONTENT_GAP_SM,
+                    CONTENT_GAP_SM,
+                    CONTENT_GAP_SM,
+                    0,
+                  ]}
+                >
                   <Button
                     variant="utility"
                     disabled={displayConfirmationErrorAlert}
@@ -140,7 +155,7 @@ export const HealthOverview = () => {
               </Box>
             </GridColumn>
           </GridRow>
-          <StackWithBottomDivider space={1}>
+          <StackWithBottomDivider space={CONTENT_GAP_SM}>
             <UserInfoLine
               title={formatMessage(messages.statusOfRights)}
               label={formatMessage(messages.healthInsuranceStart)}
