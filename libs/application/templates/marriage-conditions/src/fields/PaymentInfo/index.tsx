@@ -3,7 +3,6 @@ import { Box, Divider, Text } from '@island.is/island-ui/core'
 import { FieldBaseProps } from '@island.is/application/types'
 import { useLocale } from '@island.is/localization'
 import { m } from '../../lib/messages'
-import { Application } from '@island.is/api/schema'
 import { formatIsk } from '../../lib/utils'
 
 export type Individual = {
