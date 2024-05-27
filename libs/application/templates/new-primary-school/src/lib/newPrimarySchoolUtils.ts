@@ -67,17 +67,17 @@ export const getApplicationExternalData = (
   }
 }
 
-export const isChildAtPrimarySchoolAge = (nationalId: string): boolean => {
-  // Check if the child is at primary school age
+export const canApply = (child: Child): boolean => {
+  // Check if the child is at primary school age and lives with the applicant
   if (
-    kennitala.info(nationalId).age >= 5 &&
-    kennitala.info(nationalId).age <= 15
+    kennitala.info(child.nationalId).age >= 5 &&
+    kennitala.info(child.nationalId).age <= 15 &&
+    child.livesWithApplicant
   ) {
     return true
   }
 
-  // TODO: set as false
-  return true
+  return false
 }
 
 export const getOtherParent = (

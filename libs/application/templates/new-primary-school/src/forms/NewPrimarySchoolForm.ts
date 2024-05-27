@@ -32,7 +32,7 @@ import {
   getOtherParent,
   getRelationOptionLabel,
   getRelationOptions,
-  isChildAtPrimarySchoolAge,
+  canApply,
 } from '../lib/newPrimarySchoolUtils'
 
 export const NewPrimarySchoolForm: Form = buildForm({
@@ -54,30 +54,49 @@ export const NewPrimarySchoolForm: Form = buildForm({
           id: 'childrenSection',
           title: newPrimarySchoolMessages.childrenNParents.children,
           children: [
-            buildRadioField({
-              id: 'childNationalId',
+            buildMultiField({
+              id: 'childrenMultiField',
               title: newPrimarySchoolMessages.childrenNParents.children,
               description:
                 newPrimarySchoolMessages.childrenNParents.childrenDescription,
-              options: (application) => {
-                const { children } = getApplicationExternalData(
-                  application.externalData,
-                )
+              children: [
+                buildAlertMessageField({
+                  id: 'childrenAlertField',
+                  title:
+                    newPrimarySchoolMessages.childrenNParents.childrenInfoTitle,
+                  alertType: 'info',
+                  doesNotRequireAnswer: true,
+                  marginBottom: 5,
+                  message:
+                    newPrimarySchoolMessages.childrenNParents
+                      .childrenInfoDescription,
+                }),
+                buildRadioField({
+                  id: 'childNationalId',
+                  title:
+                    newPrimarySchoolMessages.childrenNParents
+                      .childrenRadioTitle,
+                  description: '',
 
-                return children
-                  .filter((child) =>
-                    isChildAtPrimarySchoolAge(child.nationalId),
-                  )
-                  .map((child) => {
-                    return {
-                      value: child.nationalId,
-                      label: child.fullName,
-                      subLabel: formatKennitala(child.nationalId),
-                    }
-                  })
-              },
+                  options: (application) => {
+                    const { children } = getApplicationExternalData(
+                      application.externalData,
+                    )
 
-              required: true,
+                    return children
+                      .filter((child) => canApply(child))
+                      .map((child) => {
+                        return {
+                          value: child.nationalId,
+                          label: child.fullName,
+                          subLabel: formatKennitala(child.nationalId),
+                        }
+                      })
+                  },
+
+                  required: true,
+                }),
+              ],
             }),
           ],
         }),

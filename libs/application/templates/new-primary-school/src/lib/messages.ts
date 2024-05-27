@@ -82,15 +82,32 @@ export const newPrimarySchoolMessages: MessageDir = {
     },
     children: {
       id: 'dess.nps.application:childrenNParents.children',
-      defaultMessage: 'Börn',
+      defaultMessage: 'Þá hefst umsóknarferlið! / Börn',
       description: 'Children',
     },
     childrenDescription: {
       id: 'dess.nps.application:childrenNParents.childrenDescription',
       defaultMessage:
-        'Samkvæmt uppflettingu í Þjóðskrá hefur þú forsjá með eftirfarandi barni/börnum. Aðeins forsjáaraðili sem deilir lögheimili með barni getur skráð það í grunnskóla. Ef þú sérð ekki barnið þitt í þessu ferli, þá bendum við á að hafa samband við Þjóðskrá',
+        'Samkvæmt uppflettingu í Þjóðskrá hefur þú forsjá með eftirfarandi barni/börnum. Ef þú sérð ekki barnið þitt hér, þá bendum við þér að hafa samband við Þjóðskrá.',
       description:
-        'According to the Registers Iceland database you have the following children. Only the guardian who shares the residence with the child can register it in the primary school. If you do not see your child in this process, please contact the Registers Iceland',
+        'According to the Registers Iceland database you have the following children. If you do not see your child in this process, please contact the Registers Iceland',
+    },
+    childrenInfoTitle: {
+      id: 'dess.nps.application:childrenNParents.childrenInfoTitle',
+      defaultMessage: 'Athugið',
+      description: 'Attention',
+    },
+    childrenInfoDescription: {
+      id: 'dess.nps.application:childrenNParents.childrenInfoDescription',
+      defaultMessage:
+        'Athugaðu að einungis er hægt að sækja um fyrir eitt barn í einu. Ef skrá á tvö börn svo sem tvíbura er hægt að fara beint í að skrá annað barn þegar búið er að skrá það fyrra.',
+      description:
+        'Please note that you can only apply for one child at a time. If you have two children, such as twins, you can proceed to register the second child directly after completing the registration for the first one.',
+    },
+    childrenRadioTitle: {
+      id: 'dess.nps.application:childrenNParents.childrenRadioTitle',
+      defaultMessage: 'Veldu barn fyrir umsóknina',
+      description: 'Select child for the application',
     },
     parentsSection: {
       id: 'dess.nps.application:childrenNParents.parentsSection',
