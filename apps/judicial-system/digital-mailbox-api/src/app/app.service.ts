@@ -190,7 +190,6 @@ export class AppService {
     nationalId: string,
     lang?: string,
   ): Promise<CaseResponse> {
-    console.log('getCase', id)
     return fetch(
       `${this.config.backendUrl}/api/internal/cases/indictment/${id}`,
       {
