@@ -14,7 +14,7 @@ import {
 } from '@island.is/api/schema'
 import { useIntl } from 'react-intl'
 import { m } from '../../../../../lib/messages'
-import ControlContext from '../../../../../context/ControlContext'
+import { ControlContext } from '../../../../../context/ControlContext'
 
 interface Props {
   title: string

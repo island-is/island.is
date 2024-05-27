@@ -6,11 +6,9 @@ import {
   ApiServicesFasteignFasteignanumerGetRequest,
   ServicesApi,
 } from '@island.is/clients/form-system'
-import { List } from '../../models/services.model'
-import { GetPropertyInput } from '../../dto/services.input'
-import { handle4xx } from '../../utils/errorHandler'
 import { List, Translation } from '../../models/services.model'
 import { GetPropertyInput, GetTranslationInput } from '../../dto/services.input'
+import { handle4xx } from '../../utils/errorHandler'
 
 @Injectable()
 export class FormSystemService {
@@ -114,7 +112,6 @@ export class FormSystemService {
   }
 
   async getTranslation(
-    auth: User,
     input: GetTranslationInput,
   ): Promise<Translation> {
     const { FORM_SYSTEM_MIDEIND_KEY } = process.env

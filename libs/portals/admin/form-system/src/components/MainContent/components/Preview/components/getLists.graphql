@@ -1,0 +1,51 @@
+query formSystemGetCountries {
+  formSystemGetCountries {
+    list {
+      guid
+      value
+      label {
+        is
+        en
+      }
+    }
+  }
+}
+
+query formSystemGetZipCodes {
+  formSystemGetZipCodes {
+    list {
+      guid
+      value
+      label {
+        is
+        en
+      }
+    }
+  }
+}
+
+query formSystemGetMunicipalities {
+  formSystemGetMunicipalities {
+    list {
+      guid
+      value
+      label {
+        is
+        en
+      }
+    }
+  }
+}
+
+query formSystemGetTradesProfessions {
+  formSystemGetTradesProfessions {
+    list {
+      guid
+      value
+      label {
+        is
+        en
+      }
+    }
+  }
+}

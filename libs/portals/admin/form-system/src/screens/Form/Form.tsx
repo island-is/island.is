@@ -1,5 +1,5 @@
 import { useLoaderData } from 'react-router-dom'
-import { Profiler, useCallback, useEffect, useReducer, useState } from 'react'
+import { useCallback, useReducer, useState } from 'react'
 import {
   ButtonTypes,
   InputButton,
@@ -30,6 +30,8 @@ import { useFormSystemUpdateFormMutation } from './Form.generated'
 import { useFormSystemUpdateStepMutation } from './UpdateStep.generated'
 import { useFormSystemUpdateGroupMutation } from './UpdateGroup.generated'
 import { useFormSystemUpdateInputMutation } from './UpdateInput.generated'
+import { useFormSystemGetTranslationMutation } from '../../lib/utils/getTranslation.generated'
+import { translate as translationStation } from '../../lib/utils/translation'
 
 export const Form = () => {
   const { formBuilder } = useLoaderData() as FormLoaderResponse
@@ -47,15 +49,6 @@ export const Form = () => {
   const [updateInput] = useFormSystemUpdateInputMutation()
   const [updateForm] = useFormSystemUpdateFormMutation()
   const [updateFormSettings] = useFormSystemUpdateFormSettingsMutation()
-  const updateActiveItem = (updatedActiveItem?: ActiveItem) =>
-    updateActiveItemFn(
-      control.activeItem,
-      updateStep,
-      updateGroup,
-      updateInput,
-      updatedActiveItem,
-    )
-  console.log(formBuilder)
   const [getTranslation] = useFormSystemGetTranslationMutation()
 
   const initialControl: ControlState = {

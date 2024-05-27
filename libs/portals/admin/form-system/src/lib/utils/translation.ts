@@ -1,4 +1,4 @@
-import { useFormSystemGetTranslationMutation } from '../../gql/Service.generated'
+import { useFormSystemGetTranslationMutation } from "./getTranslation.generated"
 
 export const translate = async (
   text: string,
