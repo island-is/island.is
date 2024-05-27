@@ -743,6 +743,7 @@ export function buildTableRepeaterField(
     saveItemButtonText,
     removeButtonTooltipText,
     getStaticTableData,
+    maxValues,
   } = data
 
   return {
@@ -760,6 +761,7 @@ export function buildTableRepeaterField(
     saveItemButtonText,
     removeButtonTooltipText,
     getStaticTableData,
+    maxValues,
   }
 }
 

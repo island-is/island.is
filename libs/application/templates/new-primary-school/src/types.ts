@@ -5,6 +5,7 @@ export interface RelativesRow {
   phoneNumber: string
   nationalId: string
   relation: RelationOptions
+  canPickUpChild: string[]
 }
 
 export type Child = {
