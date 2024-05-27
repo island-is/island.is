@@ -97,46 +97,6 @@ export const HealthOverview = () => {
           serviceProviderSlug={SJUKRATRYGGINGAR_SLUG}
           serviceProviderTooltip={formatMessage(messages.healthTooltip)}
         />
-        <GridRow
-          marginBottom={[
-            CONTENT_GAP_SM,
-            CONTENT_GAP_SM,
-            CONTENT_GAP_SM,
-            CONTENT_GAP_LG,
-          ]}
-        >
-          <GridColumn span="12/12">
-            <Box
-              display="flex"
-              flexDirection="row"
-              flexWrap="wrap"
-              justifyContent="flexStart"
-              printHidden
-            >
-              <Box
-                paddingRight={CONTENT_GAP}
-                marginBottom={[
-                  CONTENT_GAP_SM,
-                  CONTENT_GAP_SM,
-                  CONTENT_GAP_SM,
-                  0,
-                ]}
-              >
-                <Button
-                  variant="utility"
-                  disabled={displayConfirmationErrorAlert}
-                  size="small"
-                  icon="fileTrayFull"
-                  loading={confirmationLoading}
-                  iconType="outline"
-                  onClick={() => getInsuranceConfirmation()}
-                >
-                  {formatMessage(messages.healthInsuranceConfirmation)}
-                </Button>
-              </Box>
-            </Box>
-          </GridColumn>
-        </GridRow>
       </Box>
       {error ? (
         <Problem error={error} noBorder={false} />
@@ -154,17 +114,42 @@ export const HealthOverview = () => {
           message={insurance?.explanation}
         />
       ) : (
-        <Stack space={SECTION_GAP}>
-          <StackWithBottomDivider space={CONTENT_GAP_SM}>
-            {insurance.from && (
-              <UserInfoLine
-                title={formatMessage(messages.statusOfRights)}
-                label={formatMessage(messages.healthInsuranceStart)}
-                content={formatMessage(
-                  formatDateFns(insurance.from, 'dd.MM.yyyy'),
-                )}
-              />
-            )}
+        <Stack space={5}>
+          <GridRow marginBottom={[1, 1, 1, 3]}>
+            <GridColumn span="12/12">
+              <Box
+                display="flex"
+                flexDirection="row"
+                flexWrap="wrap"
+                justifyContent="flexStart"
+                printHidden
+              >
+                <Box paddingRight={2} marginBottom={[1, 1, 1, 0]}>
+                  <Button
+                    variant="utility"
+                    disabled={displayConfirmationErrorAlert}
+                    size="small"
+                    icon="fileTrayFull"
+                    loading={confirmationLoading}
+                    iconType="outline"
+                    onClick={() => getInsuranceConfirmation()}
+                  >
+                    {formatMessage(messages.healthInsuranceConfirmation)}
+                  </Button>
+                </Box>
+              </Box>
+            </GridColumn>
+          </GridRow>
+          <StackWithBottomDivider space={1}>
+            <UserInfoLine
+              title={formatMessage(messages.statusOfRights)}
+              label={formatMessage(messages.healthInsuranceStart)}
+              content={
+                insurance.from
+                  ? formatMessage(formatDateFns(insurance.from, 'dd.MM.yyyy'))
+                  : ''
+              }
+            />
             <UserInfoLine
               label={formatMessage(messages.status)}
               content={insurance.status?.display ?? undefined}
