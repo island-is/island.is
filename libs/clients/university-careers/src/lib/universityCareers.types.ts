@@ -33,6 +33,7 @@ export enum UniversityId {
   HOLAR_UNIVERSITY = 'holar',
   AGRICULTURAL_UNIVERSITY_OF_ICELAND = 'lbhi',
   UNIVERSITY_OF_ICELAND = 'hi',
+  ICELAND_UNIVERSITY_OF_THE_ARTS = 'lhi',
 }
 
 export const UniversityShortIdMap: Record<UniversityIdShort, UniversityId> = {
@@ -41,6 +42,7 @@ export const UniversityShortIdMap: Record<UniversityIdShort, UniversityId> = {
   holar: UniversityId.HOLAR_UNIVERSITY,
   lbhi: UniversityId.AGRICULTURAL_UNIVERSITY_OF_ICELAND,
   hi: UniversityId.UNIVERSITY_OF_ICELAND,
+  lhi: UniversityId.ICELAND_UNIVERSITY_OF_THE_ARTS,
 }
 
 export const UniversityIdMap: Record<UniversityId, UniversityIdShort> = {
@@ -48,10 +50,17 @@ export const UniversityIdMap: Record<UniversityId, UniversityIdShort> = {
   bifrost: 'bifrost',
   holar: 'holar',
   lbhi: 'lbhi',
+  lhi: 'lhi',
   hi: 'hi',
 }
 
-export type UniversityIdShort = 'unak' | 'bifrost' | 'holar' | 'lbhi' | 'hi'
+export type UniversityIdShort =
+  | 'unak'
+  | 'bifrost'
+  | 'holar'
+  | 'lbhi'
+  | 'hi'
+  | 'lhi'
 
 export type UniversityApi = LbhiApi | UnakApi | HolarApi | BifrostApi | HIApi
 
