@@ -1,19 +1,111 @@
 import React from 'react'
 
 import { ActionCard } from './ActionCard'
+import { Meta, StoryObj } from '@storybook/react'
+import { withFigma } from '../../utils/withFigma'
+import { ActionCardProps } from './types'
+import DialogPrompt from '../DialogPrompt/DialogPrompt'
+import { Icon } from '../IconRC/Icon'
+import { Tag } from '../Tag/Tag'
+import { Box } from '../Box/Box'
+import { VisuallyHidden } from 'reakit'
 
 export default {
   title: 'Cards/ActionCard',
   component: ActionCard,
-}
+  parameters: withFigma('Action Card'),
+  argTypes: {
+    heading: {
+      description: 'Heading text',
+      control: { type: 'text' },
+    },
+    headingVariant: {
+      description: 'Heading element',
+      control: { type: 'radio' },
+      options: ['h3', 'h4'],
+    },
+    text: {
+      description: 'Text below the heading',
+      control: { type: 'text' },
+    },
+    date: {
+      description: 'Display date with an icon',
+      control: { type: 'text' },
+    },
+    eyebrow: {
+      description: 'Eyebrow text',
+      control: { type: 'text' },
+    },
+    avatar: {
+      description: 'Display avatar based on the heading',
+      control: { type: 'boolean' },
+    },
+    cta: {
+      description: 'The main call to action',
+      control: { type: 'object' },
+    },
+    unavailable: {
+      description: 'Show unavailability message. Leave message empty to hide tooltip.',
+      control: { type: 'object' },
+    },
+    backgroundColor: {
+      description: 'Color theme of the card',
+      control: { type: 'radio' },
+      options: ['white', 'blue', 'red'],
+    },
+    tag: {
+      description: 'Tag to display on the card',
+      control: { type: 'object' },
+    },
+    progressMeter: {
+      description: 'Show progress meter',
+      control: { type: 'object' },
+    },
+    focused: {
+      description: 'Show focused state',
+      control: { type: 'boolean' },
+    },
+  }
+} satisfies Meta<typeof ActionCard>
 
-export const Default = () => (
-  <ActionCard
-    heading="Default"
-    text="This is the text"
-    cta={{ label: 'Click me' }}
-  />
-)
+
+const Template = (args) => <ActionCard {...args} />
+export const Default: StoryObj<ActionCardProps> = Template.bind({})
+
+Default.args = {
+  heading: "The main heading",
+  headingVariant: "h3",
+  
+  text: "This is the text",
+
+  date: "17. júní 1944",
+  eyebrow: 'Eyebrow',
+  avatar: true,
+  cta: {
+    label: 'Click me',
+    buttonType: {
+      variant: 'primary',
+      colorScheme: 'default',
+    }
+  },
+  unavailable: {
+    active: false,
+    label: 'Label shown instead of CTA',
+    message: 'The message shown in the optional tooltip',
+  },
+  backgroundColor: undefined,
+  tag: {
+    label: 'Tag',
+    variant: 'blue',
+    outlined: true,
+  },
+  progressMeter: {
+    currentProgress: 86,
+    maxProgress: 100,
+    withLabel: false,
+  },
+  focused: false,
+}
 
 export const SmallHeading = () => (
   <ActionCard
@@ -37,23 +129,15 @@ export const Unavailable = () => (
   />
 )
 
-export const SecondaryCTA = () => (
-  <ActionCard
-    heading="Hello"
-    text="This is the text"
-    cta={{ label: 'Click me' }}
-    secondaryCta={{ label: 'Click me' }}
-  />
-)
 
 export const WithTag = () => (
   <ActionCard
-    heading="Hello"
+    heading="Heading"
     tag={{
-      label: 'This a tag',
+      label: 'The Tag',
       variant: 'blue',
     }}
-    text="Tags go better with secondary CTA"
+    text="This is the text"
     cta={{ label: 'Click me', variant: 'text' }}
   />
 )
@@ -139,5 +223,58 @@ export const Destructive = () => (
       },
       icon: undefined,
     }}
+  />
+)
+
+export const WithDeleteButton = () => (
+  <ActionCard
+    heading="Delete application in staging environment"
+    cta={{
+      label: 'Button',
+    }}
+    tag={{
+      label: 'Tag',
+      variant: 'blue',
+    }}
+    date='17. júní 1944'
+  />
+)
+
+export const WithRenderTag = () => (
+  <ActionCard
+    heading="With a custom tag"
+    text="This story adds tag with a DialogPromp."
+    cta={{
+      label: 'Button',
+    }}
+    tag={{
+      label: 'Tag',
+      variant: 'blue',
+      renderTag: (cld) => (
+        <>
+          {cld}
+          <DialogPrompt
+            baseId="delete_dialog"
+            title="Delete this item?"
+            description="More information about the item you are about to delete."
+            ariaLabel="delete"
+            disclosureElement={
+              <Tag outlined variant="blue">
+                <VisuallyHidden>Delete</VisuallyHidden>
+                <Box display="flex" flexDirection="row" alignItems="center">
+                  <Icon icon="trash" size="small" type="outline" />
+                </Box>
+              </Tag>
+            }
+            onConfirm = {() => 
+              console.log('Delete confirmed')
+            }
+            buttonTextConfirm="Delete"
+            buttonTextCancel="Cancel"
+          />
+        </>
+      )
+    }}
+    date='17. júní 1944'
   />
 )
