@@ -117,6 +117,7 @@ export const EditBasics = () => {
     const additions = formatAmendingBodyWithArticlePrefix(draft.impacts)
 
     setEditorKey(Date.now().toString())
+    updateState('title', formatAmendingRegTitle(draft))
     const additionString = additions.join('') as HTMLText
     updateState('text', additionString)
     setHasUpdated(true)
