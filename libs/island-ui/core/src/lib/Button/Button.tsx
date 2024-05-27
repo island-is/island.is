@@ -8,9 +8,11 @@ import { Icon } from '../IconRC/Icon'
 import { TestSupport } from '@island.is/island-ui/utils'
 import { ButtonProps, ButtonTypes } from './types'
 
+export type ButtonBaseProps = ButtonProps & ButtonTypes
+
 export const Button = forwardRef<
   HTMLButtonElement,
-  ButtonProps & ButtonTypes & TestSupport
+  ButtonBaseProps & TestSupport
 >(
   (
     {

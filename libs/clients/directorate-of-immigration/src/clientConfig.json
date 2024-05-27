@@ -1470,7 +1470,15 @@
         "type": "object",
         "properties": {
           "isAnyResConValid": { "type": "boolean" },
-          "isOnlyMarriedOrCohabitationWithISCitizen": { "type": "boolean" }
+          "domicileResidence7Years": { "type": "boolean" },
+          "cohabitationISCitizen5YrsDomicileMissingDate": { "type": "boolean" },
+          "asylumSeekerOrHumanitarianResPerm5year": { "type": "boolean" },
+          "cohabitationISCitizen5YearDomicile": { "type": "boolean" },
+          "isMarriedOrCohabiationWithISCitizen": { "type": "boolean" },
+          "marriedISCitizenDomicile4Years": { "type": "boolean" },
+          "noNationalityAnd5YearsDomicile": { "type": "boolean" },
+          "nordicCitizenship4YearDomicile": { "type": "boolean" },
+          "marriedISCitizenDomicile4YrsMissingDate": { "type": "boolean" }
         },
         "additionalProperties": false
       },
@@ -1725,7 +1733,10 @@
         "type": "object",
         "properties": {
           "applicantExists": { "type": "boolean" },
-          "isEESCitizen": { "type": "boolean" }
+          "isEESCitizen": { "type": "boolean" },
+          "eesNordicCitizen": { "type": "boolean" },
+          "eesResidenceCondition": { "type": "boolean" },
+          "spouseIsCitizen": { "type": "boolean" }
         },
         "additionalProperties": false
       },
@@ -1928,7 +1939,9 @@
           "parent1Name": { "type": "string", "nullable": true },
           "postalCode": { "type": "string", "nullable": true },
           "parent2SSN": { "type": "string", "nullable": true },
+          "parentOfChild2SSN": { "type": "string", "nullable": true },
           "parent2Name": { "type": "string", "nullable": true },
+          "parentOfChild2Name": { "type": "string", "nullable": true },
           "applicantIsChildOfIcelandicCitizen": {
             "type": "boolean",
             "nullable": true
@@ -1945,7 +1958,8 @@
         "properties": {
           "parent2SSN": { "type": "string", "nullable": true },
           "parent2Name": { "type": "string", "nullable": true },
-          "parent2BirthDate": { "type": "string", "nullable": true }
+          "parent2BirthDate": { "type": "string", "nullable": true },
+          "nationality": { "type": "string", "nullable": true }
         },
         "additionalProperties": false
       },
@@ -1970,7 +1984,9 @@
           "parent1Name": { "type": "string", "nullable": true },
           "postalCode": { "type": "string", "nullable": true },
           "parent2SSN": { "type": "string", "nullable": true },
+          "parentOfChild2SSN": { "type": "string", "nullable": true },
           "parent2Name": { "type": "string", "nullable": true },
+          "parentOfChild2Name": { "type": "string", "nullable": true },
           "applicantIsChildOfIcelandicCitizen": {
             "type": "boolean",
             "nullable": true

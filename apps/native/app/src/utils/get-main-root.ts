@@ -11,7 +11,7 @@ import { getThemeWithPreferences } from './get-theme-with-preferences'
 import { testIDs } from './test-ids'
 
 export const getRightButtons = ({
-  unreadCount = notificationsStore.getState().unreadCount,
+  unseenCount = notificationsStore.getState().unseenCount,
   theme = getThemeWithPreferences(preferencesStore.getState()),
 } = {}): OptionsTopBarButton[] => {
   const iconBackground = {
@@ -34,7 +34,7 @@ export const getRightButtons = ({
       id: ButtonRegistry.NotificationsButton,
       testID: testIDs.TOPBAR_NOTIFICATIONS_BUTTON,
       icon:
-        unreadCount > 0
+        unseenCount > 0
           ? require('../assets/icons/topbar-notifications-bell.png')
           : require('../assets/icons/topbar-notifications.png'),
       iconBackground,

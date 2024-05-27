@@ -12,7 +12,7 @@ export class CustomPageSyncService implements CmsSyncProvider<ICustomPage> {
     return entries.filter(
       (entry) =>
         entry.sys.contentType.sys.id === 'customPage' &&
-        entry.fields.uniqueIdentifier,
+        (entry.fields.uniqueIdentifier || entry.fields.parentPage?.sys?.id),
     )
   }
 
@@ -31,17 +31,31 @@ export class CustomPageSyncService implements CmsSyncProvider<ICustomPage> {
             return false
           }
 
+          const tags =
+            entry.fields.parentPage?.sys?.id && entry.fields.slug
+              ? [
+                  {
+                    key: entry.fields.slug,
+                    type: 'slug',
+                  },
+                  {
+                    key: entry.fields.parentPage.sys.id,
+                    type: 'referencedBy',
+                  },
+                ]
+              : [
+                  {
+                    key: mapped.uniqueIdentifier,
+                    type: 'slug',
+                  },
+                ]
+
           return {
             _id: mapped.id,
             title: entry.fields.title || '',
             type: 'webCustomPage',
             response: JSON.stringify(mapped),
-            tags: [
-              {
-                key: mapped.uniqueIdentifier,
-                type: 'slug',
-              },
-            ],
+            tags,
             dateCreated: entry.sys.createdAt,
             dateUpdated: new Date().getTime().toString(),
           }

@@ -39,3 +39,57 @@ export const webMenuButtonClicked = () => {
   }
   plausibleCustomEvent(event)
 }
+
+export const haskolanamFilterClicked = (category: string, value: string) => {
+  const event: BaseEvent = {
+    eventName: `haskolanam.filter`,
+    featureName: '',
+    params: {
+      query: `${category}-${value}`,
+    },
+  }
+  plausibleCustomEvent(event)
+}
+
+export const haskolanamTrackSearchQuery = (query: string) => {
+  const event: BaseEvent = {
+    eventName: `haskolanam.search`,
+    featureName: '',
+    params: {
+      query: query.trim().toLowerCase(),
+    },
+  }
+  plausibleCustomEvent(event)
+}
+
+export const haskolanamApplyButtonClicked = (
+  university: string,
+  program: string,
+  id: string,
+) => {
+  const shortenedId = id.split('-')[0]
+  const event: BaseEvent = {
+    eventName: `haskolanam.apply.button`,
+    featureName: '',
+    params: {
+      query: `${university}-${program}-${shortenedId}`,
+    },
+  }
+  plausibleCustomEvent(event)
+}
+
+export const haskolanamCardClicked = (
+  university: string,
+  program: string,
+  id: string,
+) => {
+  const shortenedId = id.split('-')[0]
+  const event: BaseEvent = {
+    eventName: `haskolanam.card.clicked`,
+    featureName: '',
+    params: {
+      query: `${university}-${program}-${shortenedId}`,
+    },
+  }
+  plausibleCustomEvent(event)
+}

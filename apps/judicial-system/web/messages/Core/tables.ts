@@ -92,4 +92,15 @@ export const tables = defineMessages({
     defaultMessage: 'Frestur',
     description: 'Notaður sem titill fyrir frestur dálk í lista yfir mál.',
   },
+  reviewDecision: {
+    id: 'judicial.system.core:tables.review_decision',
+    defaultMessage: 'Ákvörðun',
+    description: 'Notaður sem titill fyrir ákvörðun dálk í lista yfir mál.',
+  },
+  verdictViewState: {
+    id: 'judicial.system.core:tables.verdict_view_state',
+    defaultMessage: 'Birtingarstaða',
+    description:
+      'Notaður sem titill fyrir birtingarstaða dálk í lista yfir mál.',
+  },
 })
