@@ -5,6 +5,7 @@ export interface IndictmentCaseData {
     items: {
       label: string
       value: string
+      linkType?: 'email' | 'tel'
     }[]
   }[]
 }

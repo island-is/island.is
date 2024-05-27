@@ -86,10 +86,6 @@ export class AppService {
                 label: language === 'en' ? 'Address' : 'Heimilisfang',
                 value: res.defendants[0].address,
               },
-              {
-                label: language === 'en' ? 'Sent' : 'Fyrirkall sent',
-                value: res.defendants[0].name, // TODO
-              },
             ],
           },
           {
@@ -102,10 +98,12 @@ export class AppService {
               {
                 label: language === 'en' ? 'Email' : 'Netfang',
                 value: res.defendants[0].defenderEmail,
+                linkType: 'email',
               },
               {
                 label: language === 'en' ? 'Phone Nr.' : 'Símanúmer',
                 value: res.defendants[0].defenderPhoneNumber,
+                linkType: 'tel',
               },
             ],
           },
