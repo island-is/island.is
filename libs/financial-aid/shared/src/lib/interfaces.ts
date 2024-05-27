@@ -268,6 +268,7 @@ export interface CreateApplication {
   homeCircumstancesCustom?: string
   studentCustom?: string
   formComment?: string
+  childrenComment?: string
   state?: ApplicationState
   files: CreateApplicationFile[]
   amount?: number
@@ -342,6 +343,7 @@ export interface Application {
   homeCircumstancesCustom?: string
   studentCustom?: string
   formComment?: string
+  childrenComment?: string
   spouseFormComment?: string
   state: ApplicationState
   files?: ApplicationFile[]

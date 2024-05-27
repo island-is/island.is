@@ -10,7 +10,7 @@ import {
 
 import { AppModule } from '../../../app.module'
 import { SequelizeConfigService } from '../../../sequelizeConfig.service'
-import { NotificationsScope } from '@island.is/auth/scopes'
+import { DocumentsScope } from '@island.is/auth/scopes'
 
 beforeAll(async () => {
   process.env.INIT_SCHEMA = 'true' // Disabling Firebase init
@@ -92,7 +92,7 @@ describe('MeNotificationsController - GET With Auth And Scope', () => {
         AppModule,
         SequelizeConfigService,
         user: createCurrentUser({
-          scope: [NotificationsScope.read],
+          scope: [DocumentsScope.main],
         }),
       })
       const server = request(app.getHttpServer())
@@ -122,7 +122,7 @@ describe('MeNotificationsController - PATCH With Auth And Scope', () => {
         AppModule,
         SequelizeConfigService,
         user: createCurrentUser({
-          scope: [NotificationsScope.read, NotificationsScope.write],
+          scope: [DocumentsScope.main],
         }),
       })
       const server = request(app.getHttpServer())
