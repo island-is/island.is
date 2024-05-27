@@ -1,7 +1,6 @@
 import { coreMessages, formatText } from '@island.is/application/core'
 import {
   FieldBaseProps,
-  StaticText,
   TableRepeaterField,
 } from '@island.is/application/types'
 import {
@@ -59,6 +58,8 @@ export const TableRepeaterFormField: FC<Props> = ({
     addItemButtonText = coreMessages.buttonAdd,
     saveItemButtonText = coreMessages.reviewButtonSubmit,
     removeButtonTooltipText = coreMessages.deleteFieldText,
+    updateButtonTooltipText = coreMessages.updateFieldText,
+    updateFields = false,
   } = data
 
   const items = Object.keys(rawItems).map((key) => ({
@@ -102,6 +103,10 @@ export const TableRepeaterFormField: FC<Props> = ({
     if (activeIndex === index) setActiveIndex(-1)
     if (activeIndex > index) setActiveIndex(activeIndex - 1)
     remove(index)
+  }
+
+  const handleChangeItem = (index: number) => {
+    setActiveIndex(index)
   }
 
   const getFieldError = (id: string) => {
@@ -183,6 +188,28 @@ export const TableRepeaterFormField: FC<Props> = ({
                             />
                           </button>
                         </Tooltip>
+                        {updateFields && (
+                          <Tooltip
+                            placement="left"
+                            text={formatText(
+                              updateButtonTooltipText,
+                              application,
+                              formatMessage,
+                            )}
+                          >
+                            <button
+                              type="button"
+                              onClick={() => handleChangeItem(index)}
+                            >
+                              <Icon
+                                icon="pencil"
+                                color="dark200"
+                                type="outline"
+                                size="small"
+                              />
+                            </button>
+                          </Tooltip>
+                        )}
                       </Box>
                     </T.Data>
                     {tableRows.map((item, idx) => (
