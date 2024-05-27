@@ -8,7 +8,7 @@ const nodeVersion = await getPackageVersion()
 const version = await getVersion(nodeVersion)
 
 if (!version) {
-  process.stderr.write(`Failed getting docker image for ${nodeVersion}`)
+  console.error(`Failed getting docker image for ${nodeVersion}`)
   process.exit(1)
 }
 process.stdout.write(version)
