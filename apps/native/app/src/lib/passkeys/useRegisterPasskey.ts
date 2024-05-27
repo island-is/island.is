@@ -30,18 +30,35 @@ export const useRegisterPasskey = () => {
         ) {
           return false
         }
+
+        const { authPasskeyRegistrationOptions } = options.data
+
         // Register Passkey on device
         const result: PasskeyRegistrationResult = await Passkey.register({
           ...options.data.authPasskeyRegistrationOptions,
           challenge: padChallenge(
             convertBase64UrlToBase64String(
-              options.data.authPasskeyRegistrationOptions.challenge,
+              authPasskeyRegistrationOptions.challenge,
             ),
           ),
           rp: {
             id: options.data?.authPasskeyRegistrationOptions?.rp.id,
-            name: options.data.authPasskeyRegistrationOptions.rp.name,
+            name: authPasskeyRegistrationOptions.rp.name,
           },
+          attestation: authPasskeyRegistrationOptions.attestation || undefined,
+          timeout: authPasskeyRegistrationOptions.timeout || undefined,
+          extensions: authPasskeyRegistrationOptions.extensions || undefined,
+          authenticatorSelection:
+            authPasskeyRegistrationOptions.authenticatorSelection
+              ? {
+                  requireResidentKey:
+                    authPasskeyRegistrationOptions.authenticatorSelection
+                      .requireResidentKey || undefined,
+                  userVerification:
+                    authPasskeyRegistrationOptions.authenticatorSelection
+                      .userVerification || undefined,
+                }
+              : undefined,
         })
 
         // Converting needed since the server expects base64url strings but react-native-passkey returns base64 strings
