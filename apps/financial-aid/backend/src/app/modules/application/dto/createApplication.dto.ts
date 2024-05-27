@@ -106,6 +106,11 @@ export class CreateApplicationDto {
   @ApiProperty()
   readonly formComment: string
 
+  @IsOptional()
+  @IsString()
+  @ApiProperty()
+  readonly childrenComment: string
+
   @IsNotEmpty()
   @IsString()
   @ApiProperty()
