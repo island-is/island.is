@@ -1,38 +1,23 @@
 import { ApiProperty } from '@nestjs/swagger'
 
+import { Defendant, Institution, User } from '@island.is/judicial-system/types'
+
 export class InternalCaseResponse {
   @ApiProperty({ type: String })
   courtCaseNumber!: string
 
   @ApiProperty({ type: Object })
-  defendants!: {
-    name: string
-    nationalId: string
-    address: string
-    defenderName: string
-    defenderEmail: string
-    defenderPhoneNumber: string
-  }[] // TODO: Better types
+  defendants!: Defendant[]
 
   @ApiProperty({ type: Object })
-  court!: {
-    name: string
-  }
+  court!: Institution
 
   @ApiProperty({ type: Object })
-  judge!: {
-    name: string
-    institution: string
-  }
+  judge!: User
 
   @ApiProperty({ type: Object })
-  prosecutorsOffice!: {
-    name: string
-  }
+  prosecutorsOffice!: Institution
 
   @ApiProperty({ type: Object })
-  prosecutor!: {
-    name: string
-    institution: string
-  }
+  prosecutor!: User
 }

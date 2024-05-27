@@ -84,7 +84,10 @@ export class AppService {
               },
               {
                 label: language === 'en' ? 'Address' : 'Heimilisfang',
-                value: res.defendants[0].address,
+                value:
+                  res.defendants[0].address ?? language === 'en'
+                    ? 'N/A'
+                    : 'Ekki skráð',
               },
             ],
           },
@@ -97,12 +100,18 @@ export class AppService {
               },
               {
                 label: language === 'en' ? 'Email' : 'Netfang',
-                value: res.defendants[0].defenderEmail,
+                value:
+                  res.defendants[0].defenderEmail ?? language === 'en'
+                    ? 'N/A'
+                    : 'Ekki skráð',
                 linkType: 'email',
               },
               {
                 label: language === 'en' ? 'Phone Nr.' : 'Símanúmer',
-                value: res.defendants[0].defenderPhoneNumber,
+                value:
+                  res.defendants[0].defenderPhoneNumber ?? language === 'en'
+                    ? 'N/A'
+                    : 'Ekki skráð',
                 linkType: 'tel',
               },
             ],
