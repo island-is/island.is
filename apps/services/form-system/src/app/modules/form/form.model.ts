@@ -1,19 +1,28 @@
+import { CreationOptional } from 'sequelize'
 import {
+  AutoIncrement,
   Column,
   DataType,
   Default,
   Model,
+  NotNull,
   PrimaryKey,
   Table,
 } from 'sequelize-typescript'
 
-@Table({ tableName: 'applicationTemplates' })
-export class ApplicationTemplate extends Model<ApplicationTemplate> {
+@Table({ tableName: 'forms' })
+export class Form extends Model<Form> {
+  @AutoIncrement
   @Column({
-    type: DataType.UUID,
+    type: DataType.INTEGER,
     primaryKey: true,
+  })
+  id!: CreationOptional<number>
+
+  @Column({
+    type: DataType.UUIDV4,
     allowNull: false,
     defaultValue: DataType.UUIDV4,
   })
-  id!: string
+  guid!: string
 }
