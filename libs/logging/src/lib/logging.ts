@@ -4,6 +4,7 @@ import tracer from '@island.is/infra-tracing'
 import { maskNationalIdFormatter } from './formatters'
 // Default log settings for debug mode
 
+tracer.init({ logInjection: true })
 const correlateFormat = format((info) => {
   const span = tracer.scope().active()
   if (span) {
