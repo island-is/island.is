@@ -80,10 +80,15 @@ export const newPrimarySchoolMessages: MessageDir = {
       defaultMessage: 'Börn og foreldrar',
       description: 'Children and parents',
     },
+    childrenSectionTitle: {
+      id: 'dess.nps.application:childrenNParents.childrenSectionTitle',
+      defaultMessage: 'Börn',
+      description: 'Children',
+    },
     children: {
       id: 'dess.nps.application:childrenNParents.children',
       defaultMessage: 'Þá hefst umsóknarferlið! / Börn',
-      description: 'Children',
+      description: 'The application process begins! / Children',
     },
     childrenDescription: {
       id: 'dess.nps.application:childrenNParents.childrenDescription',

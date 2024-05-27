@@ -52,7 +52,7 @@ export const NewPrimarySchoolForm: Form = buildForm({
       children: [
         buildSubSection({
           id: 'childrenSection',
-          title: newPrimarySchoolMessages.childrenNParents.children,
+          title: newPrimarySchoolMessages.childrenNParents.childrenSectionTitle,
           children: [
             buildMultiField({
               id: 'childrenMultiField',

@@ -27,7 +27,7 @@ export const Child = ({
   return (
     <ReviewGroup
       isEditable={editable}
-      editAction={() => goToScreen?.('childNationalId')}
+      editAction={() => goToScreen?.('childrenMultiField')}
     >
       <GridRow>
         <GridColumn span={['12/12', '12/12', '12/12', '12/12']}>
