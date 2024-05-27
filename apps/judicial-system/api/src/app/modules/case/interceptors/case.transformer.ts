@@ -143,7 +143,7 @@ const getDefendantsInfo = (
   caseType?: CaseType,
 ) => {
   if (!defendants || !isIndictmentCase(caseType)) {
-    return
+    return defendants
   }
 
   const expiryDays = getDays(28)
