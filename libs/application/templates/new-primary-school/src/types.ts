@@ -7,10 +7,13 @@ export interface RelativesRow {
   relation: RelationOptions
 }
 
-export type Children = {
+export type Child = {
   fullName: string
   nationalId: string
   otherParent: object
+  livesWithApplicant: boolean
+  domicileInIceland: boolean
+  livesWithBothParents: boolean
 }
 
 export type Person = {
