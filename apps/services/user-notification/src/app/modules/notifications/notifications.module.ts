@@ -23,6 +23,7 @@ import { Notification } from './notification.model'
 import { NotificationDispatchService } from './notificationDispatch.service'
 import { NotificationsWorkerService } from './notificationsWorker/notificationsWorker.service'
 import { MessageProcessorService } from './messageProcessor.service'
+import { ContentfulClientModule } from '@island.is/clients/contentful-graphql'
 
 @Module({
   exports: [NotificationsService],
@@ -49,6 +50,7 @@ import { MessageProcessorService } from './messageProcessor.service'
     FeatureFlagModule,
     NationalRegistryV3ClientModule,
     AuthDelegationApiClientModule,
+    ContentfulClientModule
   ],
   controllers: [NotificationsController, MeNotificationsController],
   providers: [
