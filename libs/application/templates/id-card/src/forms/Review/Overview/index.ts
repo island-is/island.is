@@ -3,17 +3,18 @@ import {
   buildMultiField,
   buildSection,
   getValueViaPath,
-  buildSubmitField,
   buildKeyValueField,
   buildDividerField,
   buildCustomField,
 } from '@island.is/application/core'
-import { formatPhoneNumber } from '@island.is/application/ui-components'
-import { DefaultEvents } from '@island.is/application/types'
-import { Routes } from '../../../lib/constants'
-import { review, idInformation } from '../../../lib/messages'
-import { GetFormattedText, hasReviewer } from '../../../utils'
-import { IdCard } from '../../../lib/dataSchema'
+import { format as formatNationalId } from 'kennitala'
+import {
+  DistrictCommissionerAgencies,
+  Routes,
+  Services,
+} from '../../../lib/constants'
+import { review, idInformation, priceList } from '../../../lib/messages'
+import { isChild, formatPhoneNumber, hasSecondGuardian } from '../../../utils'
 
 export const OverviewSection = buildSection({
   id: 'reviewOverview',
@@ -22,51 +23,63 @@ export const OverviewSection = buildSection({
     buildMultiField({
       id: `overviewMultiField`,
       title: review.general.pageTitle,
-      space: 3,
       description: review.general.description,
       children: [
         /* Child Applicant */
         buildDescriptionField({
           id: 'applicantDescription',
           title: review.labels.applicantDescription,
+          marginBottom: 3,
           titleVariant: 'h3',
         }),
         buildKeyValueField({
           label: review.labels.applicantName,
           colSpan: '6/12',
-          value: ({ answers }) => (answers as IdCard).applicantInformation.name,
+          paddingBottom: 3,
+          value: ({ answers }) =>
+            getValueViaPath(
+              answers,
+              `${Routes.APPLICANTSINFORMATION}.name`,
+              '',
+            ) as string,
         }),
         buildKeyValueField({
           label: review.labels.licenseType,
           colSpan: '6/12',
+          paddingBottom: 3,
           value: ({ answers }) =>
-            (answers as IdCard).typeOfId === 'WithTravel'
+            (getValueViaPath(answers, 'typeOfId', '') as string) ===
+            'WithTravel'
               ? idInformation.labels.typeOfIdRadioAnswerOne
               : idInformation.labels.typeOfIdRadioAnswerTwo,
         }),
-        // TODO: Check if user has email
         buildKeyValueField({
           label: review.labels.applicantEmail,
           colSpan: '6/12',
+          paddingBottom: 3,
           value: ({ answers }) =>
-            (answers as IdCard).applicantInformation.email,
-          condition: (answers, externalData) =>
-            hasReviewer(answers, externalData),
+            getValueViaPath(
+              answers,
+              `${Routes.APPLICANTSINFORMATION}.email`,
+              '',
+            ) as string,
+          condition: (formValue, externalData) =>
+            !isChild(formValue, externalData),
         }),
-        // TODO: Check if user has phonenumber
         buildKeyValueField({
           label: review.labels.applicantNumber,
           colSpan: '6/12',
-          value: ({ answers }) => '',
-          //   formatPhoneNumber(
-          //     (answers as IdCard).applicantInformation.phoneNumber,
-          //   ),
-          // condition: (answers) =>
-          //   !!(answers as IdCard)?.applicantInformation?.nationalId === answers.,
-          // value: ({ answers }) =>
-          //   formatPhoneNumber(
-          //     (answers as HomeSupport).applicant.phoneNumber,
-          //   ),
+          paddingBottom: 3,
+          value: ({ answers }) =>
+            formatPhoneNumber(
+              getValueViaPath(
+                answers,
+                `${Routes.APPLICANTSINFORMATION}.phoneNumber`,
+                '',
+              ) as string,
+            ),
+          condition: (formValue, externalData) =>
+            !isChild(formValue, externalData),
         }),
         buildDividerField({}),
 
@@ -75,88 +88,183 @@ export const OverviewSection = buildSection({
           id: 'parentDescription',
           title: review.labels.parentDescription,
           titleVariant: 'h3',
+          marginTop: 3,
+          marginBottom: 3,
+          condition: (formValue, externalData) =>
+            isChild(formValue, externalData),
         }),
         buildKeyValueField({
           label: review.labels.parentAName,
           colSpan: '6/12',
-          value: 'Guðrún Jónsdóttir',
-          // value: ({ answers }) => (answers as HomeSupport).applicant.name,
+          paddingBottom: 3,
+          value: ({ answers }) =>
+            getValueViaPath(
+              answers,
+              `${Routes.FIRSTGUARDIANINFORMATION}.name`,
+              '',
+            ) as string,
+          condition: (formValue, externalData) =>
+            isChild(formValue, externalData),
         }),
         buildKeyValueField({
           label: review.labels.parentANationalId,
           colSpan: '6/12',
-          value: '012345-6789',
-          // value: ({ answers }) =>
-          //   (answers as HomeSupport).applicant.nationalId,
+          paddingBottom: 3,
+          value: ({ answers }) =>
+            formatNationalId(
+              getValueViaPath(
+                answers,
+                `${Routes.FIRSTGUARDIANINFORMATION}.nationalId`,
+                '',
+              ) as string,
+            ),
+          condition: (formValue, externalData) =>
+            isChild(formValue, externalData),
         }),
         buildKeyValueField({
           label: review.labels.parentAEmail,
           colSpan: '6/12',
-          value: 'guddaj@gmail.com',
-          // value: ({ answers }) => (answers as HomeSupport).applicant.email,
+          paddingBottom: 3,
+          value: ({ answers }) =>
+            getValueViaPath(
+              answers,
+              `${Routes.FIRSTGUARDIANINFORMATION}.email`,
+              '',
+            ) as string,
+          condition: (formValue, externalData) =>
+            isChild(formValue, externalData),
         }),
         buildKeyValueField({
           label: review.labels.parentANumber,
           colSpan: '6/12',
-          value: '867-8787',
-          // condition: (answers) =>
-          //   !!(answers as HomeSupport)?.applicant?.phoneNumber,
-          // value: ({ answers }) =>
-          //   formatPhoneNumber(
-          //     (answers as HomeSupport).applicant.phoneNumber,
-          //   ),
+          paddingBottom: 3,
+          value: ({ answers }) =>
+            formatPhoneNumber(
+              getValueViaPath(
+                answers,
+                `${Routes.FIRSTGUARDIANINFORMATION}.phoneNumber`,
+                '',
+              ) as string,
+            ),
+          condition: (formValue, externalData) =>
+            isChild(formValue, externalData),
         }),
+
         buildKeyValueField({
           label: review.labels.parentBName,
           colSpan: '6/12',
-          value: 'Jón Jónsson',
-          // value: ({ answers }) => (answers as HomeSupport).applicant.name,
+          paddingBottom: 3,
+          value: ({ answers }) =>
+            getValueViaPath(
+              answers,
+              `${Routes.SECONDGUARDIANINFORMATION}.name`,
+              '',
+            ) as string,
+          condition: (formValue, externalData) =>
+            isChild(formValue, externalData) &&
+            hasSecondGuardian(formValue, externalData),
         }),
         buildKeyValueField({
           label: review.labels.parentBNationalId,
           colSpan: '6/12',
-          value: '012345-6799',
-          // value: ({ answers }) =>
-          //   (answers as HomeSupport).applicant.nationalId,
+          paddingBottom: 3,
+          value: ({ answers }) =>
+            formatNationalId(
+              getValueViaPath(
+                answers,
+                `${Routes.SECONDGUARDIANINFORMATION}.nationalId`,
+                '',
+              ) as string,
+            ),
+          condition: (formValue, externalData) =>
+            isChild(formValue, externalData) &&
+            hasSecondGuardian(formValue, externalData),
         }),
         buildKeyValueField({
           label: review.labels.parentBEmail,
           colSpan: '6/12',
-          value: 'jj@gmail.com',
-          // value: ({ answers }) => (answers as HomeSupport).applicant.email,
+          paddingBottom: 3,
+          value: ({ answers }) =>
+            getValueViaPath(
+              answers,
+              `${Routes.SECONDGUARDIANINFORMATION}.email`,
+              '',
+            ) as string,
+          condition: (formValue, externalData) =>
+            isChild(formValue, externalData) &&
+            hasSecondGuardian(formValue, externalData),
         }),
         buildKeyValueField({
           label: review.labels.parentBNumber,
           colSpan: '6/12',
-          value: '666-8999',
-          // condition: (answers) =>
-          //   !!(answers as HomeSupport)?.applicant?.phoneNumber,
-          // value: ({ answers }) =>
-          //   formatPhoneNumber(
-          //     (answers as HomeSupport).applicant.phoneNumber,
-          //   ),
+          paddingBottom: 3,
+          value: ({ answers }) =>
+            formatPhoneNumber(
+              getValueViaPath(
+                answers,
+                `${Routes.SECONDGUARDIANINFORMATION}.phoneNumber`,
+                '',
+              ) as string,
+            ),
+          condition: (formValue, externalData) =>
+            isChild(formValue, externalData) &&
+            hasSecondGuardian(formValue, externalData),
         }),
-        buildDividerField({}),
+        buildDividerField({
+          condition: (formValue, externalData) =>
+            isChild(formValue, externalData),
+        }),
+
         buildDescriptionField({
           id: 'deliveryDescription',
           title: review.labels.deliveryDescription,
           titleVariant: 'h3',
+          marginTop: 3,
+          marginBottom: 3,
         }),
         buildKeyValueField({
           label: review.labels.deliveryOption,
           colSpan: '6/12',
-          value: [
-            'Almenn afgreiðsla: börn, aldraðir, öryrkjar ',
-            '**4.600 kr.**',
-          ],
-          // value: ({ answers }) => (answers as HomeSupport).applicant.name,
+          value: ({ answers }) => {
+            const priceChoice = getValueViaPath(
+              answers,
+              `${Routes.PRICELIST}.priceChoice`,
+            ) as string
+            console.log(priceChoice)
+            // TODO: Add priceAmount when we have all chargeItemCodes!
+            // And change the priceList messages
+            return priceChoice === Services.EXPRESS
+              ? [priceList.labels.fastPriceTitle, '**4.600 kr.**']
+              : priceChoice === Services.EXPRESS_DISCOUNT
+              ? [priceList.labels.discountFastPriceTitle, '**4.600 kr.**']
+              : priceChoice === Services.REGULAR
+              ? [priceList.labels.regularPriceTitle, '**4.600 kr.**']
+              : priceChoice === Services.REGULAR_DISCOUNT
+              ? [priceList.labels.discountRegularPriceTitle, '**4.600 kr.**']
+              : ''
+          },
         }),
         buildKeyValueField({
           label: review.labels.deliveryLocation,
           colSpan: '6/12',
-          value: 'Þjóðskrá – Borgartúni xX, 105 Reykjavík',
-          // value: ({ answers }) =>
-          //   (answers as HomeSupport).applicant.nationalId,
+          value: ({
+            answers,
+            externalData: {
+              deliveryAddress: { data },
+            },
+          }) => {
+            const deliveryAddress = (
+              data as DistrictCommissionerAgencies[]
+            )?.find(
+              ({ key }) =>
+                key ===
+                (getValueViaPath(
+                  answers,
+                  `${Routes.PRICELIST}.location`,
+                ) as string),
+            )
+            return `${deliveryAddress?.name} - ${deliveryAddress?.street}, ${deliveryAddress?.zip} ${deliveryAddress?.city}`
+          },
         }),
 
         /* SUBMIT OR DECLINE */

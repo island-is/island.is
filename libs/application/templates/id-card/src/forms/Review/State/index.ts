@@ -3,9 +3,8 @@ import {
   buildMultiField,
   buildSection,
   getValueViaPath,
-  buildSubmitField,
+  buildAlertMessageField,
 } from '@island.is/application/core'
-import { DefaultEvents } from '@island.is/application/types'
 import { Routes } from '../../../lib/constants'
 import { state } from '../../../lib/messages'
 import { GetFormattedText } from '../../../utils'
@@ -15,45 +14,51 @@ export const StateSection = buildSection({
   title: state.general.sectionTitle,
   children: [
     buildMultiField({
-      id: `reviewMultiField`,
+      id: `reviewStateMultiField`,
       title: state.general.pageTitle,
-      description: state.general.description,
+      description: ({ answers }) => ({
+        ...state.general.description,
+        values: {
+          guardianName: getValueViaPath(
+            answers,
+            `${Routes.FIRSTGUARDIANINFORMATION}.name`,
+            '',
+          ) as string,
+          childName: getValueViaPath(
+            answers,
+            `${Routes.APPLICANTSINFORMATION}.name`,
+            '',
+          ) as string,
+        },
+      }),
       children: [
+        buildAlertMessageField({
+          id: 'stateAlertMessage',
+          title: '',
+          message: state.labels.alertMessage,
+          alertType: 'info',
+        }),
         buildActionCardListField({
           id: 'approvalActionCard',
           doesNotRequireAnswer: true,
           marginTop: 2,
           title: '',
           items: (application) => {
-            console.log(application)
-            // TODO: Setja inn rétt id í dataschema
-            const parentBName = getValueViaPath(
-              application.answers,
-              `${Routes.CHOSENAPPLICANTS}.name`,
-              'forsjáraðila 2',
-            )
             const chosenApplicantName = getValueViaPath(
               application.answers,
-              `${Routes.CHOSENAPPLICANTS}.name`,
-              'Barn 1',
-            )
-            const heading = GetFormattedText(
-              application,
-              state.labels.actionCardTitle,
-            )
+              `${Routes.APPLICANTSINFORMATION}.name`,
+              '',
+            ) as string
+            const heading = GetFormattedText(state.labels.actionCardTitle)
             const description = GetFormattedText(
-              application,
               state.labels.actionCardDescription,
             )
-            const label = GetFormattedText(
-              application,
-              state.labels.actionCardTag,
-            )
+            const label = GetFormattedText(state.labels.actionCardTag)
             return [
               {
-                heading: `${heading} ${parentBName}`,
+                heading: heading,
                 tag: {
-                  label: label || 'Samþykki í vinnslu',
+                  label: label,
                   outlined: false,
                   variant: 'purple',
                 },

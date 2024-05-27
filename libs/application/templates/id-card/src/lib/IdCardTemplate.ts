@@ -29,7 +29,7 @@ import {
   SyslumadurPaymentCatalogApi,
 } from '../dataProviders'
 import { application as applicationMessage } from './messages'
-import { Events, Roles, States, ApiActions } from './constants'
+import { Events, Roles, States, ApiActions, Routes } from './constants'
 import { IdCardSchema } from './dataSchema'
 import { buildPaymentState } from '@island.is/application/utils'
 import { getChargeItemCodes, hasReviewer } from '../utils'
@@ -165,14 +165,7 @@ const IdCardTemplate: ApplicationTemplate<
                   Promise.resolve(val.Review),
                 ),
               delete: true, // TODO: Remove before production
-              // actions: [
-              //   { event: DefaultEvents.EDIT, name: '', type: 'primary' },
-              // ],
               write: 'all',
-              read: {
-                answers: ['childsPersonalInfo'],
-                externalData: ['submitPassportApplication'],
-              },
             },
             {
               id: Roles.ASSIGNEE,
@@ -307,7 +300,7 @@ const IdCardTemplate: ApplicationTemplate<
       assignToParentB: assign((context) => {
         const parentB = getValueViaPath<string>(
           context.application.answers,
-          'secondGuardionInformation.nationalId',
+          `${Routes.SECONDGUARDIANINFORMATION}.nationalId`,
         )
 
         return {

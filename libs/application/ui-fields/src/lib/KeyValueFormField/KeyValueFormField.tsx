@@ -20,6 +20,7 @@ export const KeyValueFormField: FC<
       <Box
         paddingY={field.paddingY}
         paddingX={field.paddingX}
+        paddingBottom={field.paddingBottom}
         display={field.display === 'flex' ? 'flex' : 'block'}
         justifyContent="spaceBetween"
       >

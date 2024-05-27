@@ -64,8 +64,9 @@ export type Service = {
 
 export type DistrictCommissionerAgencies = {
   name: string
-  place: string
-  address: string
+  street: string
+  city: string
+  zip: string
   key: string
 }
 

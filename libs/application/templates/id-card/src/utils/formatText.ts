@@ -1,8 +1,7 @@
-import { formatText } from '@island.is/application/core'
 import { useLocale } from '@island.is/localization'
 
-export const GetFormattedText = (application: any, messageId: any) => {
+export const GetFormattedText = (messageId: any) => {
   const { formatMessage } = useLocale()
   const message = formatMessage(messageId)
-  return message
+  return `${message}`
 }

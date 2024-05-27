@@ -6,15 +6,26 @@ import { review } from '../../lib/messages'
 import { useLocale } from '@island.is/localization'
 import { useMutation } from '@apollo/client'
 import { SUBMIT_APPLICATION } from '@island.is/application/graphql'
+import { useAuth } from '@island.is/auth/react'
+import { getValueViaPath } from '@island.is/application/core'
+import { Routes } from '../../lib/constants'
 
 export const RejectApproveButtons: FC<
   React.PropsWithChildren<FieldBaseProps>
 > = (props) => {
   const { formatMessage } = useLocale()
-  const { application, refetch } = props
+  const { application, refetch, goToScreen } = props
+  const { userInfo } = useAuth()
   const [rejectModalVisibility, setRejectModalVisibility] =
     useState<boolean>(false)
   const [loading, setLoading] = useState(false)
+
+  const userNationalId = userInfo?.profile.nationalId || null
+  const reviewerNationalId = getValueViaPath(
+    application.answers,
+    `${Routes.SECONDGUARDIANINFORMATION}.nationalId`,
+    '',
+  ) as string
 
   const [submitApplication, { error }] = useMutation(SUBMIT_APPLICATION, {
     onError: (e) => {
@@ -24,7 +35,7 @@ export const RejectApproveButtons: FC<
   })
 
   const onBackButtonClick = () => {
-    console.log('click back')
+    goToScreen?.('reviewStateMultiField')
   }
 
   const onRejectButtonClick = () => {
@@ -64,26 +75,28 @@ export const RejectApproveButtons: FC<
             {formatMessage(review.buttons.back)}
           </Button>
 
-          <Box display="flex" justifyContent="flexEnd" flexWrap="wrap">
-            <Box marginLeft={3}>
-              <Button
-                icon="close"
-                colorScheme="destructive"
-                onClick={onRejectButtonClick}
-              >
-                {formatMessage(review.buttons.reject)}
-              </Button>
+          {userNationalId === reviewerNationalId && (
+            <Box display="flex" justifyContent="flexEnd" flexWrap="wrap">
+              <Box marginLeft={3}>
+                <Button
+                  icon="close"
+                  colorScheme="destructive"
+                  onClick={onRejectButtonClick}
+                >
+                  {formatMessage(review.buttons.reject)}
+                </Button>
+              </Box>
+              <Box marginLeft={3}>
+                <Button
+                  icon="checkmark"
+                  loading={loading}
+                  onClick={onApproveButtonClick}
+                >
+                  {formatMessage(review.buttons.approve)}
+                </Button>
+              </Box>
             </Box>
-            <Box marginLeft={3}>
-              <Button
-                icon="checkmark"
-                loading={loading}
-                onClick={onApproveButtonClick}
-              >
-                {formatMessage(review.buttons.approve)}
-              </Button>
-            </Box>
-          </Box>
+          )}
         </Box>
       </Box>
       <RejectConfirmationModal
