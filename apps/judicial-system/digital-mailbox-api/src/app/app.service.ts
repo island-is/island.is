@@ -63,7 +63,7 @@ export class AppService {
 
   private formatCase(res: InternalCaseResponse, lang?: string): CaseResponse {
     const language = lang?.toLowerCase()
-    console.log('res', res)
+
     return {
       data: {
         caseNumber:
@@ -96,8 +96,16 @@ export class AppService {
             label: language === 'en' ? 'Defender' : 'Verjandi',
             items: [
               {
-                label: 'b',
-                value: 'a',
+                label: language === 'en' ? 'Name' : 'Nafn',
+                value: res.defendants[0].defenderName,
+              },
+              {
+                label: language === 'en' ? 'Email' : 'Netfang',
+                value: res.defendants[0].defenderEmail,
+              },
+              {
+                label: language === 'en' ? 'Phone Nr.' : 'Símanúmer',
+                value: res.defendants[0].defenderPhoneNumber,
               },
             ],
           },
@@ -105,8 +113,29 @@ export class AppService {
             label: language === 'en' ? 'Information' : 'Málsupplýsingar',
             items: [
               {
-                label: 'b',
-                value: 'a',
+                label: language === 'en' ? 'Type' : 'Tegund',
+                value: language === 'en' ? 'Indictment' : 'Ákæra',
+              },
+              {
+                label:
+                  language === 'en' ? 'Case number' : 'Málsnúmer héraðsdóms',
+                value: res.courtCaseNumber,
+              },
+              {
+                label: language === 'en' ? 'Court' : 'Dómstóll',
+                value: res.court.name,
+              },
+              {
+                label: language === 'en' ? 'Judge' : 'Dómari',
+                value: res.judge.name,
+              },
+              {
+                label: language === 'en' ? 'Institution' : 'Embætti',
+                value: res.prosecutorsOffice.name,
+              },
+              {
+                label: language === 'en' ? 'Prosecutor' : 'Ákærandi',
+                value: res.prosecutor.name,
               },
             ],
           },

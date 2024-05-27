@@ -53,8 +53,9 @@ import { CaseEvent, EventService } from '../event'
 import { EventLogService } from '../event-log'
 import { CaseFile, FileService } from '../file'
 import { IndictmentCount, IndictmentCountService } from '../indictment-count'
+import { Institution } from '../institution'
 import { CourtDocumentType, PoliceService } from '../police'
-import { UserService } from '../user'
+import { User, UserService } from '../user'
 import { InternalCreateCaseDto } from './dto/internalCreateCase.dto'
 import { archiveFilter } from './filters/case.archiveFilter'
 import { ArchiveResponse } from './models/archive.response'
@@ -1173,8 +1174,14 @@ export class InternalCaseService {
     nationalId: string,
   ): Promise<Case | null> {
     return this.caseModel.findOne({
-      include: [{ model: Defendant, as: 'defendants' }],
-      attributes: ['courtCaseNumber', 'defendants.name'],
+      include: [
+        { model: Defendant, as: 'defendants' },
+        { model: Institution, as: 'court' },
+        { model: Institution, as: 'prosecutorsOffice' },
+        { model: User, as: 'judge' },
+        { model: User, as: 'prosecutor' },
+      ],
+      attributes: ['courtCaseNumber'],
       where: {
         type: CaseType.INDICTMENT,
         id: caseId,
