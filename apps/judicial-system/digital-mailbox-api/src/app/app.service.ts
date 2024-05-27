@@ -63,6 +63,7 @@ export class AppService {
 
   private formatCase(res: InternalCaseResponse, lang?: string): CaseResponse {
     const language = lang?.toLowerCase()
+    const defendant = res.defendants[0]
 
     return {
       data: {
@@ -74,47 +75,42 @@ export class AppService {
           {
             label: language === 'en' ? 'Defendant' : 'Varnaraðili',
             items: [
-              {
-                label: language === 'en' ? 'Name' : 'Nafn',
-                value: res.defendants[0].name,
-              },
-              {
-                label: language === 'en' ? 'National ID' : 'Kennitala',
-                value: res.defendants[0].nationalId,
-              },
-              {
-                label: language === 'en' ? 'Address' : 'Heimilisfang',
-                value:
-                  res.defendants[0].address ?? language === 'en'
-                    ? 'N/A'
-                    : 'Ekki skráð',
-              },
-            ],
+              [language === 'en' ? 'Name' : 'Nafn', defendant.name ?? ''],
+              [
+                language === 'en' ? 'National ID' : 'Kennitala',
+                defendant.nationalId ?? '',
+              ],
+              [
+                language === 'en' ? 'Address' : 'Heimilisfang',
+                defendant.address ?? '',
+              ],
+            ].map((item) => ({
+              label: item[0],
+              value: item[1] ?? language === 'en' ? 'N/A' : 'Ekki skráð',
+            })),
           },
           {
             label: language === 'en' ? 'Defender' : 'Verjandi',
             items: [
-              {
-                label: language === 'en' ? 'Name' : 'Nafn',
-                value: res.defendants[0].defenderName,
-              },
-              {
-                label: language === 'en' ? 'Email' : 'Netfang',
-                value:
-                  res.defendants[0].defenderEmail ?? language === 'en'
-                    ? 'N/A'
-                    : 'Ekki skráð',
-                linkType: 'email',
-              },
-              {
-                label: language === 'en' ? 'Phone Nr.' : 'Símanúmer',
-                value:
-                  res.defendants[0].defenderPhoneNumber ?? language === 'en'
-                    ? 'N/A'
-                    : 'Ekki skráð',
-                linkType: 'tel',
-              },
-            ],
+              [
+                language === 'en' ? 'Name' : 'Nafn',
+                defendant.defenderName ?? '',
+              ],
+              [
+                language === 'en' ? 'Email' : 'Netfang',
+                defendant.defenderEmail ?? '',
+                'email',
+              ],
+              [
+                language === 'en' ? 'Phone Nr.' : 'Símanúmer',
+                defendant.defenderPhoneNumber ?? '',
+                'tel',
+              ],
+            ].map((item) => ({
+              label: item[0],
+              value: item[1] ?? language === 'en' ? 'N/A' : 'Ekki skráð',
+              linkType: item[2],
+            })),
           },
           {
             label: language === 'en' ? 'Information' : 'Málsupplýsingar',
@@ -155,34 +151,28 @@ export class AppService {
     nationalId: string,
     lang?: string,
   ): Promise<CasesResponse[]> {
-    return fetch(`${this.config.backendUrl}/api/internal/cases/indictments`, {
-      method: 'POST',
-      headers: {
-        'Content-Type': 'application/json',
-        authorization: `Bearer ${this.config.secretToken}`,
-      },
-      body: JSON.stringify({ nationalId }),
-    })
-      .then(async (res) => {
-        const response = await res.json()
+    try {
+      const res = await fetch(
+        `${this.config.backendUrl}/api/internal/cases/indictments`,
+        {
+          method: 'POST',
+          headers: {
+            'Content-Type': 'application/json',
+            authorization: `Bearer ${this.config.secretToken}`,
+          },
+          body: JSON.stringify({ nationalId }),
+        },
+      )
+      const response = await res.json()
 
-        if (res.ok) {
-          return this.format(response, lang)
-        }
+      if (!res.ok) {
+        throw new BadGatewayException(response?.detail || response)
+      }
 
-        if (res.status < 500) {
-          throw new BadGatewayException(response?.detail)
-        }
-
-        throw response
-      })
-      .catch((reason) => {
-        if (reason instanceof BadGatewayException) {
-          throw reason
-        }
-
-        throw new BadGatewayException(reason)
-      })
+      return this.format(response, lang)
+    } catch (reason) {
+      throw new BadGatewayException(reason)
+    }
   }
 
   private async getCase(
@@ -190,37 +180,29 @@ export class AppService {
     nationalId: string,
     lang?: string,
   ): Promise<CaseResponse> {
-    return fetch(
-      `${this.config.backendUrl}/api/internal/cases/indictment/${id}`,
-      {
-        method: 'POST',
-        headers: {
-          'Content-Type': 'application/json',
-          authorization: `Bearer ${this.config.secretToken}`,
+    try {
+      const res = await fetch(
+        `${this.config.backendUrl}/api/internal/cases/indictment/${id}`,
+        {
+          method: 'POST',
+          headers: {
+            'Content-Type': 'application/json',
+            authorization: `Bearer ${this.config.secretToken}`,
+          },
+          body: JSON.stringify({ nationalId }),
         },
-        body: JSON.stringify({ nationalId }),
-      },
-    )
-      .then(async (res) => {
-        const response = await res.json()
+      )
 
-        if (res.ok) {
-          return this.formatCase(response, lang)
-        }
+      const response = await res.json()
 
-        if (res.status < 500) {
-          throw new BadGatewayException(response?.detail)
-        }
+      if (!res.ok) {
+        throw new BadGatewayException(response?.detail || response)
+      }
 
-        throw response
-      })
-      .catch((reason) => {
-        if (reason instanceof BadGatewayException) {
-          throw reason
-        }
-
-        throw new BadGatewayException(reason)
-      })
+      return this.formatCase(response, lang)
+    } catch (reason) {
+      throw new BadGatewayException(reason)
+    }
   }
 
   async getCases(nationalId: string, lang?: string): Promise<CasesResponse[]> {
