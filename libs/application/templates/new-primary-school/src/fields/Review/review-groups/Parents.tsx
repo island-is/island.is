@@ -19,7 +19,11 @@ export const Parents = ({
   const { formatMessage } = useLocale()
   const { parent1, parent2 } = getApplicationAnswers(application.answers)
 
-  const parents = [parent1, parent2]
+  const parents = [parent1]
+
+  if (parent2) {
+    parents.push(parent2)
+  }
 
   return (
     <>

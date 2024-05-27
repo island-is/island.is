@@ -1,5 +1,9 @@
 import { getValueViaPath } from '@island.is/application/core'
-import { Application } from '@island.is/application/types'
+import {
+  Application,
+  ExternalData,
+  FormValue,
+} from '@island.is/application/types'
 import * as kennitala from 'kennitala'
 import { Children, Person, RelativesRow } from '../types'
 import { RelationOptions } from './constants'
@@ -95,6 +99,14 @@ export const getOtherParent = (
   })
 
   return selectedChild?.otherParent as Person | undefined
+}
+
+export const hasOtherParent = (
+  answers: FormValue,
+  externalData: ExternalData,
+): boolean => {
+  const otherParent = getOtherParent({ answers, externalData } as Application)
+  return !!otherParent
 }
 
 export const getRelationOptions = () => [

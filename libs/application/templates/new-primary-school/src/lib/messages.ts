@@ -92,8 +92,8 @@ export const newPrimarySchoolMessages: MessageDir = {
     },
     name: {
       id: 'dess.nps.application:childrenNParents.name',
-      defaultMessage: 'Nafn',
-      description: 'Name',
+      defaultMessage: 'Fullt nafn',
+      description: 'Full name',
     },
     nationalId: {
       id: 'dess.nps.application:childrenNParents.nationalId',
@@ -112,7 +112,7 @@ export const newPrimarySchoolMessages: MessageDir = {
     },
     postalcode: {
       id: 'dess.nps.application:childrenNParents.postalcode',
-      defaultMessage: 'Póstfang',
+      defaultMessage: 'Póstnúmer',
       description: 'Postalcode',
     },
     address: {
@@ -127,12 +127,12 @@ export const newPrimarySchoolMessages: MessageDir = {
     },
     otherParent: {
       id: 'dess.nps.application:childrenNParents.otherParent',
-      defaultMessage: 'Upplýsingar um forsjáraðila 2 / Foreldri/forsjáraðili 2',
+      defaultMessage: 'Upplýsingar um foreldri/forsjáraðili 2',
       description: 'Information about guardian 2 / parent 2',
     },
     parent: {
       id: 'dess.nps.application:childrenNParents.parent',
-      defaultMessage: 'Upplýsingar um forsjáraðila 1 / Foreldri/forsjáraðili 1',
+      defaultMessage: 'Upplýsingar um foreldri/forsjáraðili 1',
       description: 'Information about guardian 1 / parent 1',
     },
 

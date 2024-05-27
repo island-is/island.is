@@ -32,6 +32,7 @@ import {
   getOtherParent,
   getRelationOptionLabel,
   getRelationOptions,
+  hasOtherParent,
   isChildAtPrimarySchoolAge,
 } from '../lib/newPrimarySchoolUtils'
 
@@ -191,12 +192,16 @@ export const NewPrimarySchoolForm: Form = buildForm({
                   title: newPrimarySchoolMessages.childrenNParents.otherParent,
                   titleVariant: 'h4',
                   marginTop: 'containerGutter',
+                  condition: (answers, externalData) =>
+                    hasOtherParent(answers, externalData),
                 }),
                 buildTextField({
                   title: newPrimarySchoolMessages.childrenNParents.name,
                   dataTestId: 'name2',
                   id: 'parent2.fullName',
                   readOnly: true,
+                  condition: (answers, externalData) =>
+                    hasOtherParent(answers, externalData),
                   defaultValue: (application: Application) =>
                     getOtherParent(application)?.fullName,
                 }),
@@ -207,6 +212,8 @@ export const NewPrimarySchoolForm: Form = buildForm({
                   id: 'parent2.nationalId',
                   format: '######-####',
                   readOnly: true,
+                  condition: (answers, externalData) =>
+                    hasOtherParent(answers, externalData),
                   defaultValue: (application: Application) =>
                     getOtherParent(application)?.nationalId,
                 }),
@@ -216,6 +223,8 @@ export const NewPrimarySchoolForm: Form = buildForm({
                   dataTestId: 'address2',
                   id: 'parent2.address.streetAddress',
                   readOnly: true,
+                  condition: (answers, externalData) =>
+                    hasOtherParent(answers, externalData),
                   defaultValue: (application: Application) =>
                     getOtherParent(application)?.address.streetAddress,
                 }),
@@ -225,6 +234,8 @@ export const NewPrimarySchoolForm: Form = buildForm({
                   dataTestId: 'postalcode2',
                   id: 'parent2.address.postalcode',
                   readOnly: true,
+                  condition: (answers, externalData) =>
+                    hasOtherParent(answers, externalData),
                   defaultValue: (application: Application) =>
                     getOtherParent(application)?.address.postalCode,
                 }),
@@ -234,6 +245,8 @@ export const NewPrimarySchoolForm: Form = buildForm({
                   dataTestId: 'city2',
                   id: 'parent2.address.city',
                   readOnly: true,
+                  condition: (answers, externalData) =>
+                    hasOtherParent(answers, externalData),
                   defaultValue: (application: Application) =>
                     getOtherParent(application)?.address.city,
                 }),
@@ -243,14 +256,19 @@ export const NewPrimarySchoolForm: Form = buildForm({
                   dataTestId: 'email2',
                   id: 'parent2.email',
                   variant: 'email',
+                  required: true,
+                  condition: (answers, externalData) =>
+                    hasOtherParent(answers, externalData),
                 }),
                 buildPhoneField({
                   width: 'half',
                   title: newPrimarySchoolMessages.childrenNParents.phoneNumber,
-
                   id: 'parent2.phoneNumber',
                   dataTestId: 'phone2',
                   placeholder: '000-0000',
+                  required: true,
+                  condition: (answers, externalData) =>
+                    hasOtherParent(answers, externalData),
                 }),
               ],
             }),
