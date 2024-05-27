@@ -38,6 +38,7 @@ interface Props {
     title: string
     items: Defendant[]
     defendantInfoActionButton?: DefendantInfoActionButton
+    displayAppealExpirationInfo?: boolean
   }
   defenders?: Defender[]
   icon?: IconMapIcon
@@ -115,7 +116,7 @@ const InfoCard: React.FC<Props> = (props) => {
       <Box
         className={(defendants || defenders) && styles.infoCardTitleContainer}
         marginBottom={(defendants || defenders) && [2, 2, 3, 3]}
-        paddingBottom={(defendants || defenders) && [2, 2, 0, 0]}
+        paddingBottom={defenders && [2, 2, 2, 2]}
       >
         {defendants && (
           <>
@@ -123,8 +124,12 @@ const InfoCard: React.FC<Props> = (props) => {
             <Box marginBottom={defenders ? [2, 2, 3, 3] : 0} marginTop={1}>
               {defendants.items.map((defendant) => (
                 <DefendantInfo
+                  key={defendant.id}
                   defendant={defendant}
                   displayDefenderInfo={!defenders}
+                  displayAppealExpirationInfo={
+                    defendants.displayAppealExpirationInfo
+                  }
                   defendantInfoActionButton={
                     defendants.defendantInfoActionButton
                   }

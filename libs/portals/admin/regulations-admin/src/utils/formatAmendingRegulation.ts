@@ -74,33 +74,29 @@ export const formatAmendingRegBody = (
   let paragraph = 0
   const groupedArticles = groupElementsByArticleTitleFromDiv(diffDiv)
 
-  groupedArticles.forEach((group) => {
-    // Er allt inni í sub array 'deletion'?
+  groupedArticles.forEach((group, i) => {
+    // Get grouped article index to get name of previous grein for addition text.
     let articleTitle = ''
     const testGroup: {
       arr: HTMLText[]
+      original?: HTMLText[]
       title: string
       isDeletion?: boolean
+      isAddition?: boolean
     } = {
       arr: [],
+      original: [],
       title: '',
       isDeletion: undefined,
+      isAddition: undefined,
     }
 
-    group.forEach((element) => {
-      const {
-        newText,
-        oldText,
-        isDeleted,
-        isAddition,
-        liHtml,
-        newTextElement,
-      } = getDeletionOrAddition(element)
+    const regNameDisplay =
+      regName && regName !== 'self'
+        ? `reglugerðar nr. ${regName}`
+        : 'reglugerðarinnar'
 
-      const regNameDisplay =
-        regName && regName !== 'self'
-          ? `reglugerðar nr. ${regName}`
-          : 'reglugerðarinnar'
+    group.forEach((element) => {
       let pushHtml = '' as HTMLText
 
       let isParagraph = false
@@ -112,7 +108,6 @@ export const formatAmendingRegBody = (
         testGroup.title = articleTitle
         isArticleTitle = true
         paragraph = 0 // Reset paragraph count for the new article
-        // } else if (element.tagName.toLowerCase() === 'p') {
       } else if (element.nodeName.toLowerCase() === 'p') {
         paragraph++
         isParagraph = true
@@ -133,10 +128,27 @@ export const formatAmendingRegBody = (
           (element.textContent || '').toLowerCase(),
         )
 
+      const elementType =
+        isLetterList || isNumberList
+          ? 'lidur'
+          : isArticleTitle
+          ? 'greinTitle'
+          : undefined
+
+      const {
+        newText,
+        oldText,
+        isDeleted,
+        isAddition,
+        liHtml,
+        newTextElement,
+      } = getDeletionOrAddition(element, elementType)
+
       if (hasDeletion || hasInsert || isGildistokuGrein) {
         if (isGildistokuGrein) {
           pushHtml = `<p>${oldText}</p>` as HTMLText
         } else if (isDeleted) {
+          testGroup.isAddition = false
           // If deletion has never been false, everything is deleted, so it will stay true.
           if (testGroup.isDeletion !== false) {
             testGroup.isDeletion = true
@@ -161,8 +173,13 @@ export const formatAmendingRegBody = (
           }
         } else if (isAddition) {
           testGroup.isDeletion = false
+          // If addition has never been false, everything is addition, so it will stay true.
+          if (testGroup.isAddition !== false) {
+            testGroup.isAddition = true
+          }
           if (isParagraph) {
             // Paragraph was added
+            testGroup.original?.push(`<p>${newText}</p>` as HTMLText)
             pushHtml =
               paragraph > 1
                 ? (`<p>Á eftir ${
@@ -171,6 +188,7 @@ export const formatAmendingRegBody = (
                 : (`<p>1. mgr. ${articleTitle} ${regNameDisplay} orðast svo:</p><p>${newText}</p>` as HTMLText)
           } else if (isArticleTitle) {
             // Title was added
+            testGroup.original?.push(`<p>${newText}</p>` as HTMLText)
             pushHtml =
               `<p>Fyrirsögn ${articleTitle} ${regNameDisplay} orðast svo:</p><p>${newText}</p>` as HTMLText
           } else if (isLetterList || isNumberList) {
@@ -187,16 +205,20 @@ export const formatAmendingRegBody = (
                 ? `<ol><li>${liCleanArray.join('</li><li>')}</li><ol>`
                 : `<p>${newText}</p>`
 
+            testGroup.original?.push(newLiTextBody as HTMLText)
             pushHtml = `<p>${
               isLetterList ? 'Stafliðum' : 'Töluliðum'
             } eftir ${paragraph}. mgr. ${articleTitle} ${regNameDisplay} er bætt við:</p>${newLiTextBody}` as HTMLText
           } else {
             // We don't know what you added, but there was an addition, and here's the additionlog:
+            testGroup.original?.push(`<p>${newText}</p>` as HTMLText)
             pushHtml =
               `<p>Eftirfarandi texta ${regNameDisplay} var bætt við:</p><p>${newText}</p>` as HTMLText
           }
         } else {
+          // Change detected. Not additon, not deletion.
           testGroup.isDeletion = false
+          testGroup.isAddition = false
           if (isArticleTitle) {
             // Title was changed
             pushHtml =
@@ -219,13 +241,30 @@ export const formatAmendingRegBody = (
         }
         testGroup.arr.push(pushHtml)
       } else {
+        // Change detected. Not additon, not deletion.
         testGroup.isDeletion = false
+        testGroup.isAddition = false
       }
     })
     if (testGroup.isDeletion === true) {
       const articleTitleNumber = testGroup.title
       additionArray.push([
-        `<p>${articleTitleNumber} fellur brott</p>` as HTMLText,
+        `<p>${articleTitleNumber} ${regNameDisplay} fellur brott</p>` as HTMLText,
+      ])
+    } else if (testGroup.isAddition === true) {
+      let prevArticleTitle = ''
+      const prevArticle = groupedArticles?.[i - 1]
+      if (prevArticle.length > 0) {
+        prevArticleTitle = prevArticle[0]?.innerText
+      }
+      const articleTitleNumber = testGroup.title
+      const originalTextArray = testGroup.original?.length
+        ? flatten(testGroup.original)
+        : []
+      additionArray.push([
+        `<p>Á eftir ${prevArticleTitle} ${regNameDisplay} kemur ný grein, ${articleTitleNumber}, ásamt fyrirsögn, svohljóðandi: ${
+          originalTextArray ? testGroup.original?.join('') : ''
+        }` as HTMLText,
       ])
     } else {
       additionArray.push(testGroup.arr)
