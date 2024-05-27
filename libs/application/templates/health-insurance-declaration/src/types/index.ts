@@ -50,10 +50,9 @@ export type HealthInsuranceDeclarationExternalData = {
   }
 }
 
-export type HealthInsuranceDeclarationApplication =
-  Application<HealthInsuranceDeclaration> & {
-    externalData: HealthInsuranceDeclarationExternalData
-  }
+export type HealthInsuranceDeclarationApplication = Application<HealthInsuranceDeclaration> & {
+  externalData: HealthInsuranceDeclarationExternalData
+}
 
 export type HealthInsuranceCountry = {
   code: string
@@ -69,6 +68,8 @@ export type HealthInsuranceContinents = {
 
 export type InsuranceStatementData = {
   canApply: boolean
+  comment?: string
+  isInsured: boolean
   countries: HealthInsuranceCountry[]
   continents: HealthInsuranceContinents[]
 }

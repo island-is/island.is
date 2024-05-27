@@ -27,6 +27,7 @@ import * as m from '../lib/messages'
 import Logo from '../assets/Logo'
 import {
   getChildrenAsOptions,
+  getCommentFromExternalData,
   getContinentNameFromCode,
   getContinentsAsOption,
   getCountriesAsOption,
@@ -156,6 +157,12 @@ export const HealthInsuranceDeclarationForm: Form = buildForm({
                 application: HealthInsuranceDeclarationApplication,
               ) => getInsuranceStatus(application.externalData),
             }),
+            buildHiddenInput({
+              id: 'isHealthInsuredComment',
+              defaultValue: (
+                application: HealthInsuranceDeclarationApplication,
+              ) => getCommentFromExternalData(application.externalData),
+            }),
           ],
         }),
       ],
@@ -173,6 +180,17 @@ export const HealthInsuranceDeclarationForm: Form = buildForm({
               title: '',
               description:
                 m.application.notHealthInusred.descriptionFieldDescription,
+            }),
+            buildAlertMessageField({
+              id: 'notHealthInsuredAlertMessage',
+              title: '',
+              alertType: 'warning',
+              message: ({ externalData }) =>
+                getCommentFromExternalData(externalData),
+              condition: (answers) => {
+                console.log(answers)
+                return (answers?.isHealthInsuredComment as string)?.length > 0
+              },
             }),
             buildCheckboxField({
               id: 'notHealthInsuredCheckboxField',
@@ -455,9 +473,7 @@ export const HealthInsuranceDeclarationForm: Form = buildForm({
               value: ({ answers }) =>
                 `${format(
                   new Date(
-                    (
-                      answers as HealthInsuranceDeclaration
-                    ).period.dateFieldFrom,
+                    (answers as HealthInsuranceDeclaration).period.dateFieldFrom,
                   ),
                   'dd.MM.yyyy',
                 )} - ${format(
@@ -506,9 +522,9 @@ export const HealthInsuranceDeclarationForm: Form = buildForm({
                 (answers as HealthInsuranceDeclaration)
                   ?.studentOrTouristRadioFieldTourist === ApplicantType.STUDENT,
               value: ({ answers }) =>
-                (
-                  answers as HealthInsuranceDeclaration
-                ).educationConfirmationFileUploadField.map((file) => file.name),
+                (answers as HealthInsuranceDeclaration).educationConfirmationFileUploadField.map(
+                  (file) => file.name,
+                ),
             }),
             buildSubmitField({
               id: 'submit',
