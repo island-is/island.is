@@ -3,8 +3,11 @@ import type { Logger } from '@island.is/logging'
 import { LOGGER_PROVIDER } from '@island.is/logging'
 import { SharedTemplateApiService } from '../../shared'
 import { TemplateApiModuleActionProps } from '../../../types'
-import { coreErrorMessages } from '@island.is/application/core'
-import { DistrictCommissionerAgencies } from './constants'
+import { coreErrorMessages, getValueViaPath } from '@island.is/application/core'
+import {
+  DistrictCommissionerAgencies,
+  IdentityDocumentChild,
+} from './constants'
 import {
   ChargeFjsV2ClientService,
   getPaymentIdFromExternalData,
@@ -191,11 +194,7 @@ export class IdCardService extends BaseTemplateApiService {
       )
     }
 
-    // TODO: Actually submit application
-
-    // 3. Notify everyone in the process that the application has successfully been submitted
-
-    // TODO: Get correct answers
+    // 2. Submit the application
     const answers = application.answers as IdCardAnswers
 
     const userIsApplicant =
@@ -203,81 +202,69 @@ export class IdCardService extends BaseTemplateApiService {
     const applicantInformation = answers.applicantInformation
     const firstGuardianInformation = answers.firstGuardianInformation
     const secondGuardianInformation = answers.secondGuardianInformation
+    const applicantChild = (
+      getValueViaPath(
+        application.externalData,
+        'identityDocument.data.childPassports',
+        [],
+      ) as Array<IdentityDocumentChild>
+    )?.find((child) => {
+      return child.childNationalId === applicantInformation.nationalId
+    })
 
-    const obj = {
-      guid: application.id,
-      appliedForPersonId: auth.nationalId,
-      priority:
-        answers.priceList.priceChoice === Services.REGULAR ||
-        answers.priceList.priceChoice === Services.REGULAR_DISCOUNT
-          ? 0
-          : 1,
-      deliveryName: answers.priceList.location,
-      contactInfo: {
-        phoneAtHome: applicantInformation.phoneNumber,
-        phoneAtWork: applicantInformation.phoneNumber,
-        phoneMobile: applicantInformation.phoneNumber,
-        email: applicantInformation.email,
-      },
+    if (userIsApplicant) {
+      await this.passportApi.preregisterIdentityDocument(auth, {
+        guid: application.id,
+        appliedForPersonId: auth.nationalId,
+        priority:
+          answers.priceList.priceChoice === Services.REGULAR ||
+          answers.priceList.priceChoice === Services.REGULAR_DISCOUNT
+            ? 0
+            : 1,
+        deliveryName: answers.priceList.location,
+        contactInfo: {
+          phoneAtHome: applicantInformation.phoneNumber,
+          phoneAtWork: applicantInformation.phoneNumber,
+          phoneMobile: applicantInformation.phoneNumber,
+          email: applicantInformation.email,
+        },
+      })
+    } else {
+      const approvalB = {
+        personId: secondGuardianInformation?.nationalId?.replace('-', '') || '',
+        name: secondGuardianInformation?.name || '',
+        approved: new Date(),
+      }
+      await this.passportApi.preregisterChildIdentityDocument(auth, {
+        guid: application.id,
+        appliedForPersonId: applicantInformation.nationalId,
+        priority:
+          answers.priceList.priceChoice === Services.REGULAR_DISCOUNT ? 0 : 1,
+        deliveryName: answers.priceList.location,
+        approvalA: {
+          personId:
+            firstGuardianInformation?.nationalId?.replace('-', '') || '',
+          name: firstGuardianInformation?.name || '',
+          approved: application.created,
+        },
+        approvalB: applicantChild?.secondParent ? approvalB : undefined, // TODO make this better
+        contactInfo: {
+          phoneAtHome: firstGuardianInformation?.phoneNumber || '',
+          phoneAtWork: firstGuardianInformation?.phoneNumber || '',
+          phoneMobile: firstGuardianInformation?.phoneNumber || '',
+          email: firstGuardianInformation?.email || '',
+        },
+      })
     }
 
-    console.log('obj', obj)
-
-    // let result
-    // if (userIsApplicant) {
-    //   result = await this.passportApi.preregisterIdentityDocument(auth, {
-    //     guid: application.id,
-    //     appliedForPersonId: auth.nationalId,
-    //     priority:
-    //       answers.priceList.priceChoice === Services.REGULAR ||
-    //       answers.priceList.priceChoice === Services.REGULAR_DISCOUNT
-    //         ? 0
-    //         : 1,
-    //     deliveryName: answers.priceList.location,
-    //     contactInfo: {
-    //       phoneAtHome: applicantInformation.phoneNumber,
-    //       phoneAtWork: applicantInformation.phoneNumber,
-    //       phoneMobile: applicantInformation.phoneNumber,
-    //       email: applicantInformation.email,
-    //     },
-    //   })
-    // } else {
-    //   const approvalB = {
-    //     personId: secondGuardianInformation?.nationalId?.replace('-', '') || '',
-    //     name: secondGuardianInformation?.name || '',
-    //     approved: new Date(),
-    //   }
-    //   result = await this.passportApi.preregisterChildIdentityDocument(auth, {
-    //     guid: application.id,
-    //     appliedForPersonId: applicantInformation.nationalId,
-    //     priority:
-    //       answers.priceList.priceChoice === Services.REGULAR_DISCOUNT ? 0 : 1,
-    //     deliveryName: answers.priceList.location,
-    //     approvalA: {
-    //       personId:
-    //         firstGuardianInformation?.nationalId?.replace('-', '') || '',
-    //       name: firstGuardianInformation?.name || '',
-    //       approved: application.created,
-    //     },
-    //     approvalB: secondGuardianInformation?.nationalId
-    //       ? approvalB
-    //       : undefined, // TODO make this better
-    //     contactInfo: {
-    //       phoneAtHome: firstGuardianInformation?.phoneNumber || '',
-    //       phoneAtWork: firstGuardianInformation?.phoneNumber || '',
-    //       phoneMobile: firstGuardianInformation?.phoneNumber || '',
-    //       email: firstGuardianInformation?.email || '',
-    //     },
-    //   })
-    // }
-
+    // 3. Notify everyone in the process that the application has successfully been submitted
     const parentA = {
       ssn: firstGuardianInformation?.nationalId || '',
       name: firstGuardianInformation?.name || '',
       email: firstGuardianInformation?.email,
       phone: firstGuardianInformation?.phoneNumber,
     }
-    const parentB = secondGuardianInformation?.nationalId
+    const parentB = applicantChild?.secondParent
       ? {
           ssn: secondGuardianInformation?.nationalId || '',
           name: secondGuardianInformation?.name || '',

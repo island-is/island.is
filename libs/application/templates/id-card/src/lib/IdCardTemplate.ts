@@ -253,7 +253,7 @@ const IdCardTemplate: ApplicationTemplate<
           status: 'completed',
           lifecycle: pruneAfterDays(3 * 30), // TODO HOW MANY DAYS SHOULD THIS BE?
           onEntry: defineTemplateApi({
-            action: ApiActions.submitPassportApplication,
+            action: ApiActions.submitApplication,
           }),
           roles: [
             {
