@@ -7,10 +7,13 @@ import {
   Input,
 } from '@island.is/island-ui/core'
 import { Dispatch, SetStateAction, useContext } from 'react'
-import ControlContext from '../../../../../../../context/ControlContext'
+import { ControlContext } from '../../../../../../../context/ControlContext'
 import { useSortable } from '@dnd-kit/sortable'
 import { FormSystemInput, FormSystemListItem } from '@island.is/api/schema'
 import { NavbarSelectStatus } from '../../../../../../../lib/utils/interfaces'
+import { useIntl } from 'react-intl'
+import { m } from '../../../../../../../lib/messages'
+import * as styles from './ListItem.css'
 import { translate } from '../../../../../../../lib/utils/translation'
 
 interface Props {
@@ -20,7 +23,12 @@ interface Props {
   setConnecting: Dispatch<SetStateAction<boolean[]>>
 }
 
-const ListItem = ({ listItem, connecting, index, setConnecting }: Props) => {
+export const ListItem = ({
+  listItem,
+  connecting,
+  index,
+  setConnecting,
+}: Props) => {
   const {
     control,
     controlDispatch,
@@ -32,12 +40,14 @@ const ListItem = ({ listItem, connecting, index, setConnecting }: Props) => {
   } = useContext(ControlContext)
   const { activeItem } = control
   const currentItem = activeItem.data as FormSystemInput
-  const isRadio = currentItem.type === 'Valhnappar'
+  const isRadio = currentItem.type === 'Radio_buttons'
 
   const { setNodeRef, attributes, listeners, isDragging } = useSortable({
     id: listItem.guid ?? '',
     data: { listItem },
   })
+
+  const { formatMessage } = useIntl()
 
   if (isDragging) {
     return (
@@ -47,72 +57,8 @@ const ListItem = ({ listItem, connecting, index, setConnecting }: Props) => {
         borderRadius="standard"
         padding={2}
         marginTop={2}
-      >
-        <Box
-          display="flex"
-          flexDirection="row"
-          justifyContent="spaceBetween"
-          marginTop={2}
-        >
-          <Box
-            display="flex"
-            flexDirection="row"
-            alignItems="center"
-            style={{ width: '30%' }}
-            justifyContent="spaceBetween"
-          >
-            <ToggleSwitchCheckbox
-              label="Tengja"
-              checked={false}
-              // eslint-disable-next-line @typescript-eslint/no-empty-function
-              onChange={() => {}}
-            />
-            <ToggleSwitchCheckbox
-              label="Sjálfvalið"
-              checked={listItem?.isSelected ?? false}
-              // eslint-disable-next-line @typescript-eslint/no-empty-function
-              onChange={() => {}}
-            />
-          </Box>
-          <Box display="flex" flexDirection="row" alignItems="center">
-            <Box
-              marginRight={2}
-              style={{ cursor: 'pointer' }}
-              // eslint-disable-next-line @typescript-eslint/no-empty-function
-              onClick={() => {}}
-            >
-              <Icon icon="trash" color="blue400" />
-            </Box>
-            <Box style={{ cursor: 'grab' }}>
-              <Icon icon="menu" />
-            </Box>
-          </Box>
-        </Box>
-        <Row>
-          <Column span="5/10">
-            <Input
-              name="dummy"
-              label="Heiti"
-              backgroundColor="blue"
-              size="sm"
-              value={listItem?.label?.is ?? ''}
-              // eslint-disable-next-line @typescript-eslint/no-empty-function
-              onChange={() => {}}
-            />
-          </Column>
-          <Column span="5/10">
-            <Input
-              name="dummy"
-              label="Heiti (enska)"
-              backgroundColor="blue"
-              size="sm"
-              value={listItem?.label?.en ?? ''}
-              // eslint-disable-next-line @typescript-eslint/no-empty-function
-              onChange={() => {}}
-            />
-          </Column>
-        </Row>
-      </Box>
+        className={styles.draggingBox}
+      ></Box>
     )
   }
 
@@ -141,7 +87,7 @@ const ListItem = ({ listItem, connecting, index, setConnecting }: Props) => {
           justifyContent="spaceBetween"
         >
           <ToggleSwitchCheckbox
-            label="Tengja"
+            label={formatMessage(m.connect)}
             checked={connecting}
             onChange={(e) => {
               setSelectStatus(
@@ -159,7 +105,7 @@ const ListItem = ({ listItem, connecting, index, setConnecting }: Props) => {
             }}
           />
           <ToggleSwitchCheckbox
-            label="Sjálfvalið"
+            label={formatMessage(m.selected)}
             checked={listItem.isSelected ?? false}
             onChange={() =>
               controlDispatch({
@@ -188,16 +134,16 @@ const ListItem = ({ listItem, connecting, index, setConnecting }: Props) => {
           >
             <Icon icon="trash" color="blue400" />
           </Box>
-          <Box>
+          <div>
             <Icon icon="menu" />
-          </Box>
+          </div>
         </Box>
       </Box>
       <Row>
         <Column span="5/10">
           <Input
             name="name"
-            label="Heiti"
+            label={formatMessage(m.name)}
             backgroundColor="blue"
             size="sm"
             value={listItem?.label?.is ?? ''}
@@ -220,7 +166,7 @@ const ListItem = ({ listItem, connecting, index, setConnecting }: Props) => {
         <Column span="5/10">
           <Input
             name="nameEn"
-            label="Heiti (enska)"
+            label={formatMessage(m.nameEnglish)}
             backgroundColor="blue"
             size="sm"
             value={listItem?.label?.en ?? ''}
@@ -266,7 +212,7 @@ const ListItem = ({ listItem, connecting, index, setConnecting }: Props) => {
           <Column span="5/10">
             <Input
               name="info"
-              label="Upplýsingabóla"
+              label={formatMessage(m.info)}
               backgroundColor="blue"
               size="sm"
               value={listItem?.description?.is ?? ''}
@@ -289,7 +235,7 @@ const ListItem = ({ listItem, connecting, index, setConnecting }: Props) => {
           <Column span="5/10">
             <Input
               name="info"
-              label="Upplýsingabóla (enska)"
+              label={formatMessage(m.infoEnglish)}
               backgroundColor="blue"
               size="sm"
               value={listItem?.description?.en ?? ''}
@@ -335,5 +281,3 @@ const ListItem = ({ listItem, connecting, index, setConnecting }: Props) => {
     </Box>
   )
 }
-
-export default ListItem

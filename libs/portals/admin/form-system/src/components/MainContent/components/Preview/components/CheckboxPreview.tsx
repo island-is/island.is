@@ -5,17 +5,14 @@ interface Props {
   currentItem: FormSystemInput
 }
 
-const CheckboxPreview = ({ currentItem }: Props) => {
+export const CheckboxPreview = ({ currentItem }: Props) => {
   return (
     <Checkbox
       name="checkbox"
       label={currentItem?.name?.is ?? ''}
       checked={currentItem?.inputSettings?.checked ?? false}
-      onChange={() => {
-        console.log()
-      }}
+      // eslint-disable-next-line @typescript-eslint/no-empty-function
+      onChange={() => { }}
     />
   )
 }
-
-export default CheckboxPreview

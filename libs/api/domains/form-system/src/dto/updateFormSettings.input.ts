@@ -1,4 +1,4 @@
-import { Field, InputType, Int } from '@nestjs/graphql'
+import { Field, ID, InputType, Int } from '@nestjs/graphql'
 import { LanguageTypeInput } from './language.input'
 import graphqlTypeJson from 'graphql-type-json'
 import { DocumentTypeUpdateInput } from './documentType.input'
@@ -38,6 +38,9 @@ export class FormSettingsInput {
 
   @Field(() => Int, { nullable: true })
   applicationsDaysToRemove?: number
+
+  @Field(() => ID, { nullable: true })
+  guid?: string
 }
 
 @InputType('FormSystemUpdateFormSettingsInput')

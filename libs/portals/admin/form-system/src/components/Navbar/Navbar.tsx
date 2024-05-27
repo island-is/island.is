@@ -13,18 +13,20 @@ import { useContext, useMemo } from 'react'
 import { createPortal } from 'react-dom'
 import { Box, Button } from '@island.is/island-ui/core'
 import { baseSettingsStep } from '../../utils/getBaseSettingsStep'
-import NavbarTab from './components/NavbarTab/NavbarTab'
-import NavComponent from './components/NavComponent/NavComponent'
+import { NavbarTab } from './components/NavbarTab/NavbarTab'
 import {
   FormSystemGroup,
   FormSystemInput,
   FormSystemStep,
   Maybe,
 } from '@island.is/api/schema'
-import ControlContext, { IControlContext } from '../../context/ControlContext'
-import { useFormSystemCreateStepMutation } from '../../gql/Step.generated'
+import { ControlContext, IControlContext } from '../../context/ControlContext'
 import { ItemType } from '../../lib/utils/interfaces'
 import { removeTypename } from '../../lib/utils/removeTypename'
+import { useFormSystemCreateStepMutation } from './CreateStep.generated'
+import { useIntl } from 'react-intl'
+import { m } from '../../lib/messages'
+import { NavComponent } from '../NavComponent/NavComponent'
 
 type DndAction =
   | 'STEP_OVER_STEP'
@@ -33,14 +35,11 @@ type DndAction =
   | 'INPUT_OVER_GROUP'
   | 'INPUT_OVER_INPUT'
 
-export default function Navbar() {
-  const {
-    control,
-    controlDispatch,
-    setInSettings,
-    inSettings,
-    formUpdate,
-  } = useContext(ControlContext) as IControlContext
+export const Navbar = () => {
+  const { control, controlDispatch, setInSettings, inSettings, formUpdate } =
+    useContext(ControlContext) as IControlContext
+
+  const { formatMessage } = useIntl()
 
   const { activeItem, form } = control
   const { stepsList: steps, groupsList: groups, inputsList: inputs } = form
@@ -199,21 +198,21 @@ export default function Navbar() {
 
   if (inSettings) {
     return (
-      <Box>
+      <div>
         <Box paddingBottom={2} overflow="hidden" flexDirection={'row'}>
           <NavbarTab />
         </Box>
-        <Box>
+        <div>
           <NavComponent
             type="Step"
             data={baseSettingsStep}
             active={activeItem.data?.guid === baseSettingsStep.guid}
             focusComponent={focusComponent}
           />
-        </Box>
+        </div>
         {steps
           ?.filter((s): s is FormSystemStep => s !== null && s !== undefined)
-          .filter((s) => s.type !== 'Innsláttur')
+          .filter((s) => s.type !== 'Input')
           .map((s) => (
             <Box key={s.guid}>
               <NavComponent
@@ -230,7 +229,7 @@ export default function Navbar() {
             size="small"
             onClick={() => {
               setInSettings(false)
-              const step = steps?.find((s) => s?.type === 'Innsláttur')
+              const step = steps?.find((s) => s?.type === 'Input')
               if (step) {
                 controlDispatch({
                   type: 'SET_ACTIVE_ITEM',
@@ -244,14 +243,14 @@ export default function Navbar() {
               }
             }}
           >
-            Vista og halda áfram
+            {formatMessage(m.saveAndContinue)}
           </Button>
         </Box>
-      </Box>
+      </div>
     )
   } else if (activeItem) {
     return (
-      <Box>
+      <div>
         <Box
           paddingBottom={2}
           overflow="hidden"
@@ -272,7 +271,7 @@ export default function Navbar() {
               ?.filter(
                 (s): s is FormSystemStep => s !== null && s !== undefined,
               )
-              .filter((s) => s.type === 'Innsláttur')
+              .filter((s) => s.type === 'Input')
               .map((s, i) => (
                 <Box key={s.guid}>
                   <NavComponent
@@ -322,38 +321,36 @@ export default function Navbar() {
               ))}
           </SortableContext>
 
-          {/* Only render client side */}
-          {typeof window === 'object' &&
-            createPortal(
-              <DragOverlay
-                dropAnimation={{
-                  duration: 500,
-                  easing: 'cubic-bezier(0.18, 0.67, 0.6, 1.22)',
-                }}
-              >
-                {activeItem && (
-                  <NavComponent
-                    type={activeItem.type}
-                    data={
-                      activeItem.data as
-                      | FormSystemGroup
-                      | FormSystemStep
-                      | FormSystemInput
-                    }
-                    active={activeItem.data?.guid === activeItem.data?.guid}
-                    focusComponent={focusComponent}
-                  />
-                )}
-              </DragOverlay>,
-              document.body,
-            )}
+          {createPortal(
+            <DragOverlay
+              dropAnimation={{
+                duration: 500,
+                easing: 'cubic-bezier(0.18, 0.67, 0.6, 1.22)',
+              }}
+            >
+              {activeItem && (
+                <NavComponent
+                  type={activeItem.type}
+                  data={
+                    activeItem.data as
+                    | FormSystemGroup
+                    | FormSystemStep
+                    | FormSystemInput
+                  }
+                  active={activeItem.data?.guid === activeItem.data?.guid}
+                  focusComponent={focusComponent}
+                />
+              )}
+            </DragOverlay>,
+            document.body,
+          )}
         </DndContext>
         <Box display="flex" justifyContent="center" paddingTop={3}>
           <Button variant="ghost" size="small" onClick={addStep}>
-            + Bæta við skrefi
+            {formatMessage(m.addStep)}
           </Button>
         </Box>
-      </Box>
+      </div>
     )
   }
   return null

@@ -1,7 +1,7 @@
+import { useFormSystemUpdateGroupMutation } from '../../screens/Form/UpdateGroup.generated'
+import { useFormSystemUpdateInputMutation } from '../../screens/Form/UpdateInput.generated'
+import { useFormSystemUpdateStepMutation } from '../../screens/Form/UpdateStep.generated'
 import { ActiveItem } from './interfaces'
-import { useFormSystemUpdateStepMutation } from '../../gql/Step.generated'
-import { useFormSystemUpdateGroupMutation } from '../../gql/Group.generated'
-import { useFormSystemUpdateInputMutation } from '../../gql/Input.generated'
 import {
   FormSystemStep,
   FormSystemGroup,

@@ -1,5 +1,5 @@
 import { useContext, useState } from 'react'
-import ControlContext from '../../../../../../../context/ControlContext'
+import { ControlContext } from '../../../../../../../context/ControlContext'
 import {
   GridColumn as Column,
   GridRow as Row,
@@ -10,6 +10,8 @@ import {
   RadioButton,
 } from '@island.is/island-ui/core'
 import { FormSystemInput } from '@island.is/api/schema'
+import { useIntl } from 'react-intl'
+import { m } from '../../../../../../../lib/messages'
 
 const predeterminedLists = [
   {
@@ -34,111 +36,123 @@ const predeterminedLists = [
   },
 ]
 
-// Need to fix the radio buttons
-const ListSettings = () => {
-  const { control, setInListBuilder, controlDispatch, updateActiveItem } =
-    useContext(ControlContext)
-  const { activeItem } = control
-  const currentItem = activeItem.data as FormSystemInput
-  const [radio, setRadio] = useState([true, false, false])
+export const ListSettings = () => {
+  const { control, setInListBuilder } = useContext(ControlContext)
+  // Need to fix the radio buttons
+  const ListSettings = () => {
+    const { control, setInListBuilder, controlDispatch, updateActiveItem } =
+      useContext(ControlContext)
+    const { activeItem } = control
+    const currentItem = activeItem.data as FormSystemInput
+    const [radio, setRadio] = useState([true, false, false])
 
-  const radioHandler = (index: number) => {
-    // if (!radio[index])
-    setRadio((prev) =>
-      prev.map((_, i) => {
-        return index === i
-      }),
-    )
-  }
-
-  const getListType = (index: number) => {
-    switch (index) {
-      case 0:
-        return 'sveitarfelog'
-      case 1:
-        return 'lond'
-      case 2:
-        return 'postnumer'
-      case 3:
-        return 'idngreinarMeistara'
-      case 4:
-        return 'skraningarflokkar'
-      default:
-        return 'customList'
+    const radioHandler = (index: number) => {
+      // if (!radio[index])
+      setRadio((prev) =>
+        prev.map((_, i) => {
+          return index === i
+        }),
+      )
     }
-  }
 
-  return (
-    <Stack space={2}>
-      {currentItem.type === 'Fellilisti' && (
-        <>
-          <Row>
-            <Column>
-              <Box
-                onClick={() => {
-                  controlDispatch({
-                    type: 'SET_LIST_TYPE',
-                    payload: {
-                      listType: 'customList',
-                      update: updateActiveItem,
-                    },
-                  })
-                  radioHandler(0)
-                }}
-              >
-                <RadioButton
-                  label="Nýr fellilisti"
-                  onChange={() => {
+    const { formatMessage } = useIntl()
+
+    const getListType = (index: number) => {
+      switch (index) {
+        case 0:
+          return 'sveitarfelog'
+        case 1:
+          return 'lond'
+        case 2:
+          return 'postnumer'
+        case 3:
+          return 'idngreinarMeistara'
+        case 4:
+          return 'skraningarflokkar'
+        default:
+          return 'customList'
+      }
+    }
+
+    return (
+      <Stack space={2}>
+        {currentItem.type === 'Dropdown_list' && (
+          <>
+            <Row>
+              <Column>
+                <Box
+                  onClick={() => {
+                    controlDispatch({
+                      type: 'SET_LIST_TYPE',
+                      payload: {
+                        listType: 'customList',
+                        update: updateActiveItem,
+                      },
+                    })
+                    radioHandler(0)
+                  }}
+                >
+                  <RadioButton
+                    label={formatMessage(m.customList)}
+                    onChange={(e) => {
+                      console.log()
+                      label = "Nýr fellilisti"
+                      onChange = {() => {
                     radioHandler(0)
                   }}
                   checked={radio[0]}
                 />
-              </Box>
-            </Column>
-          </Row>
-          <Row>
-            <Column>
-              <Box onClick={() => radioHandler(1)}>
+                </Box>
+              </Column>
+            </Row>
+            <Row>
+              <Column>
                 <RadioButton
-                  label="Tilbúnir fellilistar"
-                  onChange={() => {
-                    radioHandler(1)
+                  label={formatMessage(m.predeterminedLists)}
+                  onChange={(e) => {
+                    console.log()
                   }}
                   checked={radio[1]}
                 />
-              </Box>
-            </Column>
-          </Row>
-        </>
-      )}
-      {radio[0] && (
-        <Button variant="ghost" onClick={() => setInListBuilder(true)}>
-          Listasmiður
-        </Button>
-      )}
-      {radio[1] && (
-        <Column span="5/10">
-          <Select
-            placeholder="Veldu lista tegund"
-            name="predeterminedLists"
-            label="Tilbúnir fellilistar"
-            options={predeterminedLists}
-            backgroundColor="blue"
-            onChange={(option) => {
-              const listType = getListType(option?.value as number)
-              controlDispatch({
-                type: 'SET_LIST_TYPE',
-                payload: {
-                  listType: listType,
-                  update: updateActiveItem,
-                },
-              })
-            }}
-          />
-        </Column>
-      )}
-    </Stack>
-  )
-}
-
-export default ListSettings
+                <Box onClick={() => radioHandler(1)}>
+                  <RadioButton
+                    label="Tilbúnir fellilistar"
+                    onChange={() => {
+                      radioHandler(1)
+                    }}
+                    checked={radio[1]}
+                  />
+                </Box>
+              </Column>
+            </Row>
+          </>
+        )}
+        {radio[0] && (
+          <Button variant="ghost" onClick={() => setInListBuilder(true)}>
+            {formatMessage(m.listBuilder)}
+          </Button>
+        )}
+        {radio[1] && (
+          <Column span="5/10">
+            <Select
+              placeholder={formatMessage(m.chooseListType)}
+              name="predeterminedLists"
+              label={formatMessage(m.predeterminedLists)}
+              options={predeterminedLists}
+              backgroundColor="blue"
+              onChange={(option) => {
+                const listType = getListType(option?.value as number)
+                controlDispatch({
+                  type: 'SET_LIST_TYPE',
+                  payload: {
+                    listType: listType,
+                    update: updateActiveItem,
+                  },
+                })
+              }}
+            />
+          </Column>
+        )}
+      </Stack>
+    )
+  }

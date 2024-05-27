@@ -15,6 +15,8 @@ import {
   ItemType,
   NavbarSelectStatus,
 } from '../lib/utils/interfaces'
+import { MessageDescriptor } from 'react-intl'
+import { Options } from 'react-select'
 
 export interface IControlContext {
   control: ControlState
@@ -39,7 +41,7 @@ export interface IControlContext {
   translationButtons: (text: string, type: ButtonTypes) => InputButton[]
 }
 
-const ControlContext = createContext<IControlContext>({
+export const ControlContext = createContext<IControlContext>({
   control: {} as ControlState,
   controlDispatch: function (_value: unknown): void {
     throw new Error('Function not implemented.')
@@ -86,5 +88,3 @@ const ControlContext = createContext<IControlContext>({
     throw new Error('Function not implemented.')
   },
 })
-
-export default ControlContext

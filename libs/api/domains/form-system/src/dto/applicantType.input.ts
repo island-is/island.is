@@ -1,4 +1,4 @@
-import { Field, InputType, Int } from '@nestjs/graphql'
+import { Field, ID, InputType, Int } from '@nestjs/graphql'
 import { LanguageTypeInput } from './language.input'
 import { ApplicantTypeNameSuggestionInput } from './applicantTypeNameSuggestion.input'
 
@@ -21,6 +21,9 @@ export class ApplicantTypeInput {
 
   @Field(() => [ApplicantTypeNameSuggestionInput], { nullable: 'itemsAndList' })
   nameSuggestions?: ApplicantTypeNameSuggestionInput[] | null
+
+  @Field(() => ID, { nullable: true })
+  guid?: string
 }
 
 @InputType('FormSystemFormApplicantTypeInput')
@@ -34,6 +37,6 @@ export class FormApplicantTypeInput {
   @Field(() => LanguageTypeInput, { nullable: true })
   name?: LanguageTypeInput
 
-  @Field(() => String)
+  @Field(() => String, { nullable: true })
   type?: string | null
 }

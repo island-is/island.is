@@ -14,10 +14,10 @@ type FileUploadActions =
       payload: { file: UploadFile; status: UploadFileStatus; percent: number }
     }
 
-export default function fileUploadReducer(
+export const fileUploadReducer = (
   state: UploadFile[],
   action: FileUploadActions,
-) {
+) => {
   switch (action.type) {
     case ActionTypes.add:
       return state.concat(action.payload.newFiles)

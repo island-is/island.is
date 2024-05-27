@@ -8,6 +8,7 @@ import {
 } from '@island.is/clients/form-system'
 import { CreateOrganizationInput } from '../../dto/organization.input'
 import { Organization } from '../../models/organization.model'
+import { handle4xx } from '../../utils/errorHandler'
 
 @Injectable()
 export class OrganizationsService {
@@ -17,6 +18,7 @@ export class OrganizationsService {
     private organizationsApi: OrganizationsApi,
   ) {}
 
+  // eslint-disable-next-line
   handleError(error: any, errorDetail?: string): ApolloError | null {
     const err = {
       error: JSON.stringify(error),
@@ -25,13 +27,6 @@ export class OrganizationsService {
     this.logger.error(errorDetail || 'Error in organizations service', err)
 
     throw new ApolloError(error.message)
-  }
-
-  private handle4xx(error: any, errorDetail?: string): ApolloError | null {
-    if (error.status === 403 || error.status === 404) {
-      return null
-    }
-    return this.handleError(error, errorDetail)
   }
 
   private organizationsApiWithAuth(auth: User) {
@@ -45,13 +40,15 @@ export class OrganizationsService {
     const request: ApiOrganizationsPostRequest = {
       organizationCreationDto: {
         name: input.name,
-        kennitala: input.nationalId,
+        nationalId: input.nationalId,
       },
     }
 
     const response = await this.organizationsApiWithAuth(auth)
       .apiOrganizationsPost(request)
-      .catch((e) => this.handle4xx(e, 'failed to post organization'))
+      .catch((e) =>
+        handle4xx(e, this.handleError, 'failed to post organization'),
+      )
 
     if (!response || response instanceof ApolloError) {
       return {}

@@ -10,8 +10,10 @@ import {
 } from '@island.is/island-ui/core'
 import { useContext } from 'react'
 import { fileTypes } from '../../../../../../../utils/fileTypes'
-import ControlContext from '../../../../../../../context/ControlContext'
+import { ControlContext } from '../../../../../../../context/ControlContext'
 import { FormSystemInput } from '@island.is/api/schema'
+import { m } from '../../../../../../../lib/messages'
+import { useIntl } from 'react-intl'
 
 const fileSizes = {
   fileSizes: [
@@ -58,7 +60,7 @@ const fileSizes = {
   ],
 }
 
-const FileUploadSettings = () => {
+export const FileUploadSettings = () => {
   const { control, controlDispatch, updateActiveItem } =
     useContext(ControlContext)
   const { activeItem } = control
@@ -70,26 +72,21 @@ const FileUploadSettings = () => {
     value: size.value,
   }))
 
-  const fileAmountOptions: Option<number>[] = [
-    { label: '1', value: 1 },
-    { label: '2', value: 2 },
-    { label: '3', value: 3 },
-    { label: '4', value: 4 },
-    { label: '5', value: 5 },
-    { label: '6', value: 6 },
-    { label: '7', value: 7 },
-    { label: '8', value: 8 },
-    { label: '9', value: 9 },
-    { label: '10', value: 10 },
-  ]
-
+  const fileAmountOptions: Option<number>[] = Array.from(
+    { length: 10 },
+    (_, i) => ({
+      label: `${i + 1}`,
+      value: i + 1,
+    }),
+  )
+  const { formatMessage } = useIntl()
   return (
     <Stack space={2}>
       <Row>
         <Column>
           <Checkbox
             name="multi"
-            label="Er fjölval"
+            label={formatMessage(m.allowMultiple)}
             checked={inputSettings?.isMulti ?? false}
             onChange={(e) =>
               controlDispatch({
@@ -107,9 +104,9 @@ const FileUploadSettings = () => {
       <Row>
         <Column span="5/10">
           <Select
-            label="Hámarksstærð skráa"
+            label={formatMessage(m.maxFileSize)}
             name="maxFileSize"
-            placeholder="Veldu hámarksstærð"
+            placeholder={formatMessage(m.selectMaxFileSize)}
             backgroundColor="blue"
             value={fileSizeOptions.find(
               (f) => f.value === inputSettings?.maxSize,
@@ -130,9 +127,9 @@ const FileUploadSettings = () => {
         {inputSettings?.isMulti && (
           <Column span="5/10">
             <Select
-              label="Hámarksfjoldi skráa"
+              label={formatMessage(m.maxFileAmount)}
               name="maxAmount"
-              placeholder="Veldu hámarksfjolda"
+              placeholder={formatMessage(m.selectMaxFileAmount)}
               backgroundColor="blue"
               value={fileAmountOptions.find(
                 (f) => f.value === inputSettings.amount,
@@ -154,7 +151,7 @@ const FileUploadSettings = () => {
       </Row>
       <Row>
         <Column>
-          <Text variant="h5">Leyfa eftirfarandi skjalatýpur</Text>
+          <Text variant="h5">{formatMessage(m.allowFileTypes)}</Text>
         </Column>
       </Row>
       <Row>
@@ -184,5 +181,3 @@ const FileUploadSettings = () => {
     </Stack>
   )
 }
-
-export default FileUploadSettings

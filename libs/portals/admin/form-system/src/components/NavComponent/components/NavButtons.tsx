@@ -1,19 +1,19 @@
 import { Box, Icon } from '@island.is/island-ui/core'
 import { useContext } from 'react'
-import ControlContext from '../../../../../context/ControlContext'
 import { FormSystemGroup, FormSystemInput } from '@island.is/api/schema'
 import {
   useFormSystemCreateGroupMutation,
   useFormSystemDeleteGroupMutation,
-} from '../../../../../gql/Group.generated'
+} from './Group.generated'
 import {
   useFormSystemCreateInputMutation,
   useFormSystemDeleteInputMutation,
-} from '../../../../../gql/Input.generated'
-import { useFormSystemDeleteStepMutation } from '../../../../../gql/Step.generated'
-import { removeTypename } from '../../../../../lib/utils/removeTypename'
+} from './Input.generated'
+import { useFormSystemDeleteStepMutation } from './Step.generated'
+import { ControlContext } from '../../../context/ControlContext'
+import { removeTypename } from '../../../lib/utils/removeTypename'
 
-export default function NavButtons() {
+export const NavButtons = () => {
   const { control, controlDispatch } = useContext(ControlContext)
   const { activeItem, form } = control
   const { groupsList: groups, inputsList: inputs } = form

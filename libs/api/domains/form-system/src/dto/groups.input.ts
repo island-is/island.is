@@ -1,4 +1,4 @@
-import { Field, InputType, Int } from '@nestjs/graphql'
+import { Field, ID, InputType, Int } from '@nestjs/graphql'
 import { LanguageTypeInput } from './language.input'
 import { InputInput } from './inputs.input'
 
@@ -19,7 +19,7 @@ export class UpdateGroup {
   @Field(() => LanguageTypeInput, { nullable: true })
   name?: LanguageTypeInput
 
-  @Field(() => String, { nullable: true })
+  @Field(() => ID, { nullable: true })
   guid?: string
 
   @Field(() => Number, { nullable: true })
@@ -67,7 +67,7 @@ export class GroupInput {
   @Field(() => LanguageTypeInput, { nullable: true })
   name?: LanguageTypeInput
 
-  @Field(() => String, { nullable: true })
+  @Field(() => ID, { nullable: true })
   guid?: string
 
   @Field(() => Int, { nullable: true })

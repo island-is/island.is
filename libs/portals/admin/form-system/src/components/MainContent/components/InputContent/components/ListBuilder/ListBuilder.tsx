@@ -1,5 +1,5 @@
 import { useContext, useEffect, useMemo, useState } from 'react'
-import ControlContext from '../../../../../../context/ControlContext'
+import { ControlContext } from '../../../../../../context/ControlContext'
 import { FormSystemInput, FormSystemListItem } from '@island.is/api/schema'
 import {
   GridRow as Row,
@@ -20,11 +20,13 @@ import {
   useSensors,
 } from '@dnd-kit/core'
 import { NavbarSelectStatus } from '../../../../../../lib/utils/interfaces'
-import ListItem from './components/ListItem'
+import { ListItem } from './components/ListItem'
 import { SortableContext } from '@dnd-kit/sortable'
 import { createPortal } from 'react-dom'
+import { useIntl } from 'react-intl'
+import { m } from '../../../../../../lib/messages'
 
-const ListBuilder = () => {
+export const ListBuilder = () => {
   const {
     control,
     controlDispatch,
@@ -47,6 +49,8 @@ const ListBuilder = () => {
     [listItems],
   )
   const [connecting, setConnecting] = useState<boolean[]>([false])
+
+  const { formatMessage } = useIntl()
 
   const sensors = useSensors(
     useSensor(PointerSensor, {
@@ -113,7 +117,7 @@ const ListBuilder = () => {
       justifyContent="spaceBetween"
       style={{ minHeight: '500px' }}
     >
-      <Box>
+      <div>
         <Row>
           <Column>
             <Text variant="h3">Listasmiður</Text>
@@ -163,7 +167,7 @@ const ListBuilder = () => {
               )}
           </DndContext>
         </Stack>
-      </Box>
+      </div>
       <Box
         display="flex"
         flexDirection="row"
@@ -172,22 +176,20 @@ const ListBuilder = () => {
       >
         <Box marginRight={2}>
           <Button variant="ghost" onClick={addListItem}>
-            + Bæta við gildi
+            {formatMessage(m.addListItem)}
           </Button>
         </Box>
-        <Box>
+        <div>
           <Button
             onClick={() => {
               setInListBuilder(false)
               setSelectStatus(NavbarSelectStatus.OFF)
             }}
           >
-            Ljúka
+            {formatMessage(m.finish)}
           </Button>
-        </Box>
+        </div>
       </Box>
     </Box>
   )
 }
-
-export default ListBuilder

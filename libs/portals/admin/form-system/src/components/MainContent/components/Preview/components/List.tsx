@@ -46,7 +46,7 @@ const List = ({ currentItem }: Props) => {
         let data, loading, error
         switch (type) {
           case 'lond':
-            ;({ data, loading, error } = await getCountries())
+            ; ({ data, loading, error } = await getCountries())
             setListItems(
               data?.formSystemGetCountries?.list?.map((c) => ({
                 label: c?.label?.is ?? '',
@@ -55,7 +55,7 @@ const List = ({ currentItem }: Props) => {
             )
             break
           case 'sveitarfelog':
-            ;({ data, loading, error } = await getMunicipalities())
+            ; ({ data, loading, error } = await getMunicipalities())
             setListItems(
               data?.formSystemGetMunicipalities.list?.map((m) => ({
                 label: m?.label?.is ?? '',
@@ -64,7 +64,7 @@ const List = ({ currentItem }: Props) => {
             )
             break
           case 'postnumer':
-            ;({ data, loading, error } = await getZipCodes())
+            ; ({ data, loading, error } = await getZipCodes())
             setListItems(
               data?.formSystemGetZipCodes.list?.map((z) => ({
                 label: z?.label?.is ?? '',
@@ -73,7 +73,7 @@ const List = ({ currentItem }: Props) => {
             )
             break
           case 'idngreinarMeistara':
-            ;({ data, loading, error } = await getTradesProfessions())
+            ; ({ data, loading, error } = await getTradesProfessions())
             setListItems(
               data?.formSystemGetTradesProfessions.list?.map((t) => ({
                 label: t?.label?.is ?? '',
@@ -105,13 +105,11 @@ const List = ({ currentItem }: Props) => {
         required={currentItem?.isRequired ?? false}
         placeholder={
           ListTypePlaceholder[
-            currentItem.inputSettings
-              ?.listType as keyof typeof ListTypePlaceholder
+          currentItem.inputSettings
+            ?.listType as keyof typeof ListTypePlaceholder
           ]
         }
       />
     </>
   )
 }
-
-export default List

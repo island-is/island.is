@@ -5,11 +5,11 @@ import { ApolloClient, NormalizedCacheObject } from '@apollo/client'
 import {
   FormSystemGetFormDocument,
   FormSystemGetFormQuery,
-} from '../../gql/Form.generated'
+} from './Form.generated'
 import {
-  FormSystemGetInputDocument,
   FormSystemGetInputQuery,
-} from '../../gql/Input.generated'
+  FormSystemGetInputDocument,
+} from './GetInput.generated'
 
 export interface FormLoaderResponse {
   formBuilder: FormSystemFormResponse

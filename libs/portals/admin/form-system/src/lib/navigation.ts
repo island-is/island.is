@@ -3,15 +3,15 @@ import { m } from './messages'
 import { FormSystemPaths } from './paths'
 
 export const formSystemNavigation: PortalNavigationItem = {
-  name: m.formSystemTitle,
+  name: m.rootName,
   icon: {
     icon: 'settings',
   },
-  description: m.formSystemIntro,
+  description: m.rootName,
   path: FormSystemPaths.FormSystemRoot,
   children: [
     {
-      name: m.formSystemTitle,
+      name: m.rootName,
       path: FormSystemPaths.Form,
       activeIfExact: true,
     },

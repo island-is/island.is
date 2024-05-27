@@ -6,6 +6,9 @@ import {
   ApiServicesFasteignFasteignanumerGetRequest,
   ServicesApi,
 } from '@island.is/clients/form-system'
+import { List } from '../../models/services.model'
+import { GetPropertyInput } from '../../dto/services.input'
+import { handle4xx } from '../../utils/errorHandler'
 import { List, Translation } from '../../models/services.model'
 import { GetPropertyInput, GetTranslationInput } from '../../dto/services.input'
 
@@ -15,8 +18,9 @@ export class FormSystemService {
     @Inject(LOGGER_PROVIDER)
     private logger: Logger,
     private servicesApi: ServicesApi,
-  ) {}
+  ) { }
 
+  // eslint-disable-next-line
   handleError(error: any, errorDetail?: string): ApolloError | null {
     const err = {
       error: JSON.stringify(error),
@@ -27,13 +31,6 @@ export class FormSystemService {
     throw new ApolloError(error.message)
   }
 
-  private handle4xx(error: any, errorDetail?: string): ApolloError | null {
-    if (error.status === 403 || error.status === 404) {
-      return null
-    }
-    return this.handleError(error, errorDetail)
-  }
-
   private servicesApiWithAuth(auth: User) {
     return this.servicesApi.withMiddleware(new AuthMiddleware(auth))
   }
@@ -41,7 +38,7 @@ export class FormSystemService {
   async getCountries(auth: User): Promise<List> {
     const response = await this.servicesApiWithAuth(auth)
       .apiServicesLondGet()
-      .catch((e) => this.handle4xx(e, 'failed to get countries'))
+      .catch((e) => handle4xx(e, this.handleError, 'failed to get countries'))
 
     if (!response || response instanceof ApolloError) {
       return {}
@@ -52,7 +49,7 @@ export class FormSystemService {
   async getZipCodes(auth: User): Promise<List> {
     const response = await this.servicesApiWithAuth(auth)
       .apiServicesPostnumerGet()
-      .catch((e) => this.handle4xx(e, 'failed to get zip codes'))
+      .catch((e) => handle4xx(e, this.handleError, 'failed to get zip codes'))
 
     if (!response || response instanceof ApolloError) {
       return {}
@@ -63,7 +60,9 @@ export class FormSystemService {
   async getMunicipalities(auth: User): Promise<List> {
     const response = await this.servicesApiWithAuth(auth)
       .apiServicesSveitarfelogGet()
-      .catch((e) => this.handle4xx(e, 'failed to get municipalities'))
+      .catch((e) =>
+        handle4xx(e, this.handleError, 'failed to get municipalities'),
+      )
 
     if (!response || response instanceof ApolloError) {
       return {}
@@ -74,7 +73,9 @@ export class FormSystemService {
   async getRegistrationCategories(auth: User): Promise<List> {
     const response = await this.servicesApiWithAuth(auth)
       .apiServicesSkraningarflokkarGet()
-      .catch((e) => this.handle4xx(e, 'failed to get registration categories'))
+      .catch((e) =>
+        handle4xx(e, this.handleError, 'failed to get registration categories'),
+      )
 
     if (!response || response instanceof ApolloError) {
       return {}
@@ -86,7 +87,9 @@ export class FormSystemService {
   async getTradesProfessions(auth: User): Promise<List> {
     const response = await this.servicesApiWithAuth(auth)
       .apiServicesIdngreinarMeistaraGet()
-      .catch((e) => this.handle4xx(e, 'failed to get trades professions'))
+      .catch((e) =>
+        handle4xx(e, this.handleError, 'failed to get trades professions'),
+      )
 
     if (!response || response instanceof ApolloError) {
       return {}
@@ -101,7 +104,7 @@ export class FormSystemService {
     }
     const response = await this.servicesApiWithAuth(auth)
       .apiServicesFasteignFasteignanumerGet(request)
-      .catch((e) => this.handle4xx(e, 'failed to get property'))
+      .catch((e) => handle4xx(e, this.handleError, 'failed to get property'))
 
     if (!response || response instanceof ApolloError) {
       return {}

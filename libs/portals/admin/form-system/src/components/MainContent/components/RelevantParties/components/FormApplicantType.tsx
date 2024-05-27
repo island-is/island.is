@@ -12,6 +12,8 @@ import {
   FormSystemFormApplicantType,
   FormSystemLanguageType,
 } from '@island.is/api/schema'
+import { useIntl } from 'react-intl'
+import { m } from '../../../../../lib/messages'
 import ControlContext from '../../../../../context/ControlContext'
 
 interface Props {
@@ -35,7 +37,7 @@ interface Props {
   isOther: boolean
 }
 
-const FormApplicantType = ({
+export const FormApplicantType = ({
   title,
   name,
   nameSuggestions,
@@ -48,6 +50,7 @@ const FormApplicantType = ({
 }: Props) => {
   const [inputEnabled, setInputEnabled] = useState(isOther)
   const other = { label: 'Annað', value: 'Annað' }
+  const { formatMessage } = useIntl()
   const { translate } = useContext(ControlContext)
   const getOptions = () => {
     const options =
@@ -103,7 +106,7 @@ const FormApplicantType = ({
         <Row>
           <Column span="5/10">
             <Select
-              label="Tillögur"
+              label={formatMessage(m.suggestions)}
               name="suggestions"
               backgroundColor="blue"
               defaultValue={
@@ -119,7 +122,7 @@ const FormApplicantType = ({
         <Row>
           <Column span="5/10">
             <Input
-              label="Heiti"
+              label={formatMessage(m.name)}
               name="name"
               backgroundColor="blue"
               value={name.is ?? ''}
@@ -131,7 +134,7 @@ const FormApplicantType = ({
           </Column>
           <Column span="5/10">
             <Input
-              label="Heiti (enska)"
+              label={formatMessage(m.nameEnglish)}
               name="nameEn"
               backgroundColor="blue"
               value={name.en ?? ''}
@@ -156,5 +159,3 @@ const FormApplicantType = ({
     </Box>
   )
 }
-
-export default FormApplicantType

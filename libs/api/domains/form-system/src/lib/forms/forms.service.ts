@@ -22,6 +22,7 @@ import {
 import { FormResponse } from '../../models/formResponse.model'
 import { FormListResponse } from '../../models/formListResponse.model'
 import { UpdateFormSettingsInput } from '../../dto/updateFormSettings.input'
+import { handle4xx } from '../../utils/errorHandler'
 
 @Injectable()
 export class FormsService {
@@ -29,8 +30,9 @@ export class FormsService {
     @Inject(LOGGER_PROVIDER)
     private logger: Logger,
     private formsApi: FormsApi,
-  ) {}
+  ) { }
 
+  // eslint-disable-next-line
   handleError(error: any, errorDetail?: string): ApolloError | null {
     const err = {
       error: JSON.stringify(error),
@@ -39,13 +41,6 @@ export class FormsService {
     this.logger.error(errorDetail || 'Error in forms service', err)
 
     throw new ApolloError(error.message)
-  }
-
-  private handle4xx(error: any, errorDetail?: string): ApolloError | null {
-    if (error.status === 403 || error.status === 404) {
-      return null
-    }
-    return this.handleError(error, errorDetail)
   }
 
   private formsApiWithAuth(auth: User) {
@@ -59,12 +54,13 @@ export class FormsService {
 
     const response = await this.formsApiWithAuth(auth)
       .apiFormsFormIdGet(request)
-      .catch((e) => this.handle4xx(e, 'failed to get form from Id'))
+      .catch((e) =>
+        handle4xx(e, this.handleError, 'failed to get form from Id'),
+      )
 
     if (!response || response instanceof ApolloError) {
       return {}
     }
-
     return response as FormResponse
   }
 
@@ -75,7 +71,11 @@ export class FormsService {
     const response = await this.formsApiWithAuth(auth)
       .apiFormsOrganizationOrganizationIdGet(request)
       .catch((e) =>
-        this.handle4xx(e, 'failed to get forms from organization Id'),
+        handle4xx(
+          e,
+          this.handleError,
+          'failed to get forms from organization Id',
+        ),
       )
 
     if (!response || response instanceof ApolloError) {
@@ -91,7 +91,7 @@ export class FormsService {
     }
     const response = await this.formsApiWithAuth(auth)
       .apiFormsOrganizationIdPost(request)
-      .catch((e) => this.handle4xx(e, 'failed to create form'))
+      .catch((e) => handle4xx(e, this.handleError, 'failed to create form'))
 
     if (!response || response instanceof ApolloError) {
       return {}
@@ -106,7 +106,7 @@ export class FormsService {
     }
     const response = await this.formsApiWithAuth(auth)
       .apiFormsFormIdDelete(request)
-      .catch((e) => this.handle4xx(e, 'failed to delete form'))
+      .catch((e) => handle4xx(e, this.handleError, 'failed to delete form'))
 
     if (!response || response instanceof ApolloError) {
       return void 0
@@ -127,10 +127,9 @@ export class FormsService {
       formId: input.formId,
       formUpdateDto: formattedForm as FormUpdateDto,
     }
-    console.log(request)
     const response = await this.formsApiWithAuth(auth)
       .apiFormsFormIdPut(request)
-      .catch((e) => this.handle4xx(e, 'failed to update form'))
+      .catch((e) => handle4xx(e, this.handleError, 'failed to update form'))
     if (!response || response instanceof ApolloError) {
       return void 0
     }
@@ -149,7 +148,9 @@ export class FormsService {
     console.log(request)
     const response = await this.formsApiWithAuth(auth)
       .apiFormsFormIdSettingsPut(request)
-      .catch((e) => this.handle4xx(e, 'failed to update form settings'))
+      .catch((e) =>
+        handle4xx(e, this.handleError, 'failed to update form settings'),
+      )
 
     if (!response || response instanceof ApolloError) {
       return void 0

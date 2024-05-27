@@ -1,4 +1,4 @@
-import { Field, Int, InputType } from '@nestjs/graphql'
+import { Field, Int, InputType, ID } from '@nestjs/graphql'
 import { InputInput } from './inputs.input'
 import { DocumentTypeInput } from './documentType.input'
 import { FormInput } from './forms.input'
@@ -53,4 +53,7 @@ export class OrganizationInput {
 
   @Field(() => [ExternalEndpointsInput], { nullable: 'itemsAndList' })
   externalEndpoints?: ExternalEndpointsInput[] | null
+
+  @Field(() => ID, { nullable: true })
+  guid?: string
 }

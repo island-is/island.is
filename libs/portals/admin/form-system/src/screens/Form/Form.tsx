@@ -9,32 +9,29 @@ import { FormLoaderResponse } from './Form.loader'
 import { ControlState, controlReducer } from '../../hooks/controlReducer'
 import { baseSettingsStep } from '../../utils/getBaseSettingsStep'
 import { defaultStep } from '../../utils/defaultStep'
-import ControlContext, { IControlContext } from '../../context/ControlContext'
+import { ControlContext, IControlContext } from '../../context/ControlContext'
 import {
   GridRow as Row,
   GridColumn as Column,
   Box,
 } from '@island.is/island-ui/core'
-import Navbar from '../../components/Navbar/Navbar'
+import { Navbar } from '../../components/Navbar/Navbar'
 import { FormSystemForm, FormSystemStep } from '@island.is/api/schema'
-import MainContent from '../../components/MainContent/MainContent'
-import { useFormSystemUpdateGroupMutation } from '../../gql/Group.generated'
-import { useFormSystemUpdateStepMutation } from '../../gql/Step.generated'
-import { useFormSystemUpdateInputMutation } from '../../gql/Input.generated'
+import { MainContent } from '../../components/MainContent/MainContent'
 import { updateActiveItemFn } from '../../lib/utils/updateActiveItem'
-import { useFormSystemUpdateFormMutation } from '../../gql/Form.generated'
 import { ActiveItem, ItemType } from '../../lib/utils/interfaces'
 import { updateDnd } from '../../lib/utils/updateDnd'
 import { entireFormUpdate } from '../../lib/utils/updateForm'
 import { removeTypename } from '../../lib/utils/removeTypename'
-import NavbarSelect from '../../components/NavbarSelect/NavbarSelect'
-import { useFormSystemUpdateFormSettingsMutation } from '../../gql/FormSettings.generated'
+import { NavbarSelect } from '../../components/NavbarSelect/NavbarSelect'
 import { updateSettings as us } from '../../lib/utils/updateFormSettings'
-import { useFormSystemGetTranslationMutation } from '../../gql/Service.generated'
-import { text } from 'stream/consumers'
-import { translate as translationStation } from '../../lib/utils/translation'
+import { useFormSystemUpdateFormSettingsMutation } from './FormSettings.generated'
+import { useFormSystemUpdateFormMutation } from './Form.generated'
+import { useFormSystemUpdateStepMutation } from './UpdateStep.generated'
+import { useFormSystemUpdateGroupMutation } from './UpdateGroup.generated'
+import { useFormSystemUpdateInputMutation } from './UpdateInput.generated'
 
-const Form = () => {
+export const Form = () => {
   const { formBuilder } = useLoaderData() as FormLoaderResponse
   const { form, applicantTypes, documentTypes, inputTypes, listTypes } =
     formBuilder
@@ -50,6 +47,15 @@ const Form = () => {
   const [updateInput] = useFormSystemUpdateInputMutation()
   const [updateForm] = useFormSystemUpdateFormMutation()
   const [updateFormSettings] = useFormSystemUpdateFormSettingsMutation()
+  const updateActiveItem = (updatedActiveItem?: ActiveItem) =>
+    updateActiveItemFn(
+      control.activeItem,
+      updateStep,
+      updateGroup,
+      updateInput,
+      updatedActiveItem,
+    )
+  console.log(formBuilder)
   const [getTranslation] = useFormSystemGetTranslationMutation()
 
   const initialControl: ControlState = {
@@ -58,7 +64,7 @@ const Form = () => {
       data: inSettings
         ? baseSettingsStep
         : removeTypename(form?.stepsList)?.find(
-          (s: FormSystemStep) => s?.type === 'Innsláttur',
+          (s: FormSystemStep) => s?.type === 'Input',
         ) ?? defaultStep,
     },
     activeListItem: null,

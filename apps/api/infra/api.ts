@@ -192,8 +192,8 @@ export const serviceSetup = (services: {
       },
       FORM_SYSTEM_API_BASE_PATH: {
         dev: 'https://profun.island.is/umsoknarkerfi',
-        staging: 'https://profun.island.is/umsoknarkerfi',
-        prod: 'https://profun.island.is/umsoknarkerfi',
+        staging: '',
+        prod: '',
       },
       CONSULTATION_PORTAL_CLIENT_BASE_PATH: {
         dev: 'https://samradapi-test.devland.is',
