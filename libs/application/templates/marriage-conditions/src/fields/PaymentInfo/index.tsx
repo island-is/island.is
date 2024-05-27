@@ -79,8 +79,7 @@ export const PaymentInfo: FC<
   const correctTotal =
     prices.birthCertificate +
       prices.maritalCertificate +
-      prices.surveyCertificate ==
-    prices.marriageConditions
+      prices.surveyCertificate === prices.marriageConditions
 
   return (
     <Box>
