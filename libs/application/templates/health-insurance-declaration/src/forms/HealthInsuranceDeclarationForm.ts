@@ -35,6 +35,7 @@ import {
   getInsuranceStatus,
   getSelectedFamily,
   getSpouseAsOptions,
+  hasFamilySelected,
 } from '../utils'
 import { HealthInsuranceDeclaration } from '../lib/dataSchema'
 import { applicantInformationMessages } from '@island.is/application/ui-forms'
@@ -156,6 +157,18 @@ export const HealthInsuranceDeclarationForm: Form = buildForm({
                 application: HealthInsuranceDeclarationApplication,
               ) => getInsuranceStatus(application.externalData),
             }),
+            buildHiddenInput({
+              id: 'hasSpouse',
+              defaultValue: (
+                application: HealthInsuranceDeclarationApplication,
+              ) => getSpouseAsOptions(application.externalData).length > 0,
+            }),
+            buildHiddenInput({
+              id: 'hasChildren',
+              defaultValue: (
+                application: HealthInsuranceDeclarationApplication,
+              ) => getChildrenAsOptions(application.externalData).length > 0,
+            }),
           ],
         }),
       ],
@@ -240,11 +253,17 @@ export const HealthInsuranceDeclarationForm: Form = buildForm({
               id: 'registerPersonsSpouseCheckboxField',
               title: m.application.registerPersons.spousetitle,
               options: ({ externalData }) => getSpouseAsOptions(externalData),
+              condition: (answers) => {
+                return answers?.hasSpouse as boolean
+              },
             }),
             buildCheckboxField({
               id: 'registerPersonsChildrenCheckboxField',
               title: m.application.registerPersons.childrenTitle,
               options: ({ externalData }) => getChildrenAsOptions(externalData),
+              condition: (answers) => {
+                return answers?.hasChildren as boolean
+              },
             }),
           ],
         }),
@@ -442,8 +461,13 @@ export const HealthInsuranceDeclarationForm: Form = buildForm({
                 applicantInformationMessages.labels.nationalId,
                 'Tengsl',
               ],
+              condition: (answers) =>
+                hasFamilySelected(answers as HealthInsuranceDeclaration),
             }),
-            buildDividerField({}),
+            buildDividerField({
+              condition: (answers) =>
+                hasFamilySelected(answers as HealthInsuranceDeclaration),
+            }),
             // Date period
             buildDescriptionField({
               id: 'overviewDatePeriodTitle',
@@ -455,9 +479,7 @@ export const HealthInsuranceDeclarationForm: Form = buildForm({
               value: ({ answers }) =>
                 `${format(
                   new Date(
-                    (
-                      answers as HealthInsuranceDeclaration
-                    ).period.dateFieldFrom,
+                    (answers as HealthInsuranceDeclaration).period.dateFieldFrom,
                   ),
                   'dd.MM.yyyy',
                 )} - ${format(
@@ -506,9 +528,9 @@ export const HealthInsuranceDeclarationForm: Form = buildForm({
                 (answers as HealthInsuranceDeclaration)
                   ?.studentOrTouristRadioFieldTourist === ApplicantType.STUDENT,
               value: ({ answers }) =>
-                (
-                  answers as HealthInsuranceDeclaration
-                ).educationConfirmationFileUploadField.map((file) => file.name),
+                (answers as HealthInsuranceDeclaration).educationConfirmationFileUploadField.map(
+                  (file) => file.name,
+                ),
             }),
             buildSubmitField({
               id: 'submit',

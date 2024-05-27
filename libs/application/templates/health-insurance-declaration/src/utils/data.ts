@@ -59,6 +59,17 @@ export const getCountryNameFromCode = (
   return ''
 }
 
+export const hasFamilyAvailable = (answers: HealthInsuranceDeclaration) => {
+  return answers.hasSpouse || answers.hasChildren
+}
+
+export const hasFamilySelected = (answers: HealthInsuranceDeclaration) => {
+  return (
+    answers.registerPersonsSpouseCheckboxField?.length > 0 ||
+    answers.registerPersonsChildrenCheckboxField?.length > 0
+  )
+}
+
 export const getContinentNameFromCode = (
   code: string,
   externalData: ExternalData,
@@ -139,7 +150,7 @@ export const getSelectedFamily = (
 
   if (spouse) {
     selectedFamily = selectedFamily.concat(
-      answers.registerPersonsSpouseCheckboxField.map((s) => {
+      answers.registerPersonsSpouseCheckboxField?.map((s) => {
         if (s === spouse.nationalId) {
           return [
             spouse.name,
@@ -150,16 +161,21 @@ export const getSelectedFamily = (
       }),
     )
   }
-  selectedFamily = selectedFamily.concat(
-    answers.registerPersonsChildrenCheckboxField.map((childNationalId) => {
+
+  const selectedChildren = answers.registerPersonsChildrenCheckboxField?.map(
+    (childNationalId) => {
       const childData = children.find((c) => c.nationalId === childNationalId)
       return [
         childData ? childData.fullName : '',
         childData ? childData.nationalId : '',
         m.overview.familyTableRelationChildText,
       ]
-    }),
+    },
   )
+
+  if (selectedChildren) {
+    selectedFamily.concat(selectedChildren)
+  }
   return selectedFamily
 }
 
