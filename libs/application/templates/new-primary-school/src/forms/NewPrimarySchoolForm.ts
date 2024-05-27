@@ -1,5 +1,4 @@
 import {
-  buildAlertMessageField,
   buildCustomField,
   buildDescriptionField,
   buildForm,
@@ -56,27 +55,17 @@ export const NewPrimarySchoolForm: Form = buildForm({
           children: [
             buildMultiField({
               id: 'childrenMultiField',
-              title: newPrimarySchoolMessages.childrenNParents.children,
+              title:
+                newPrimarySchoolMessages.childrenNParents
+                  .childrenSubSectionTitle,
               description:
                 newPrimarySchoolMessages.childrenNParents.childrenDescription,
               children: [
-                buildAlertMessageField({
-                  id: 'childrenAlertField',
-                  title:
-                    newPrimarySchoolMessages.childrenNParents.childrenInfoTitle,
-                  alertType: 'info',
-                  doesNotRequireAnswer: true,
-                  marginBottom: 5,
-                  message:
-                    newPrimarySchoolMessages.childrenNParents
-                      .childrenInfoDescription,
-                }),
                 buildRadioField({
                   id: 'childNationalId',
                   title:
                     newPrimarySchoolMessages.childrenNParents
                       .childrenRadioTitle,
-                  description: '',
                   options: (application) => {
                     const { children } = getApplicationExternalData(
                       application.externalData,
@@ -92,7 +81,6 @@ export const NewPrimarySchoolForm: Form = buildForm({
                         }
                       })
                   },
-
                   required: true,
                 }),
               ],
