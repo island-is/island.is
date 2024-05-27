@@ -188,7 +188,6 @@ export const HealthInsuranceDeclarationForm: Form = buildForm({
               message: ({ externalData }) =>
                 getCommentFromExternalData(externalData),
               condition: (answers) => {
-                console.log(answers)
                 return (answers?.isHealthInsuredComment as string)?.length > 0
               },
             }),
