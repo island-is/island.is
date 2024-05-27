@@ -9,6 +9,7 @@ import {
   Stack,
   Tag,
   Text,
+  VisuallyHidden,
 } from '@island.is/island-ui/core'
 import { useLocale } from '@island.is/localization'
 import { prettyName, RegName } from '@island.is/regulations'
@@ -150,7 +151,7 @@ export const ImpactList = (props: ImpactListProps) => {
                         ),
                         variant: isChange ? 'blueberry' : 'red',
                         renderTag: (child) => (
-                          <>
+                          <Box display="flex" columnGap={1}>
                             {child}
 
                             {idx === impactGroup.length - 1 ? (
@@ -176,6 +177,12 @@ export const ImpactList = (props: ImpactListProps) => {
                                     outlined
                                     variant={isChange ? 'blueberry' : 'red'}
                                   >
+                                    <VisuallyHidden>
+                                      {formatMessage(
+                                        impactMsgs.impactListDeleteButton,
+                                      )}
+                                    </VisuallyHidden>
+
                                     <Box
                                       display="flex"
                                       flexDirection="row"
@@ -185,6 +192,7 @@ export const ImpactList = (props: ImpactListProps) => {
                                         icon="trash"
                                         size="small"
                                         type="outline"
+                                        ariaHidden
                                       />
                                     </Box>
                                   </Tag>
@@ -203,7 +211,7 @@ export const ImpactList = (props: ImpactListProps) => {
                                 )}
                               />
                             ) : null}
-                          </>
+                          </Box>
                         ),
                       }}
                       cta={{
