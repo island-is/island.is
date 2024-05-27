@@ -59,7 +59,7 @@ export const TableRepeaterFormField: FC<Props> = ({
     saveItemButtonText = coreMessages.reviewButtonSubmit,
     removeButtonTooltipText = coreMessages.deleteFieldText,
     editButtonTooltipText = coreMessages.editFieldText,
-    editFields = false,
+    editField = false,
   } = data
 
   const items = Object.keys(rawItems).map((key) => ({
@@ -188,7 +188,7 @@ export const TableRepeaterFormField: FC<Props> = ({
                             />
                           </button>
                         </Tooltip>
-                        {editFields && (
+                        {editField && (
                           <Tooltip
                             placement="left"
                             text={formatText(
