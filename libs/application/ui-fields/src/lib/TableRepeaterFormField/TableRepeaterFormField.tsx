@@ -58,8 +58,8 @@ export const TableRepeaterFormField: FC<Props> = ({
     addItemButtonText = coreMessages.buttonAdd,
     saveItemButtonText = coreMessages.reviewButtonSubmit,
     removeButtonTooltipText = coreMessages.deleteFieldText,
-    updateButtonTooltipText = coreMessages.updateFieldText,
-    updateFields = false,
+    editButtonTooltipText = coreMessages.editFieldText,
+    editFields = false,
   } = data
 
   const items = Object.keys(rawItems).map((key) => ({
@@ -105,7 +105,7 @@ export const TableRepeaterFormField: FC<Props> = ({
     remove(index)
   }
 
-  const handleChangeItem = (index: number) => {
+  const handleEditItem = (index: number) => {
     setActiveIndex(index)
   }
 
@@ -188,18 +188,18 @@ export const TableRepeaterFormField: FC<Props> = ({
                             />
                           </button>
                         </Tooltip>
-                        {updateFields && (
+                        {editFields && (
                           <Tooltip
                             placement="left"
                             text={formatText(
-                              updateButtonTooltipText,
+                              editButtonTooltipText,
                               application,
                               formatMessage,
                             )}
                           >
                             <button
                               type="button"
-                              onClick={() => handleChangeItem(index)}
+                              onClick={() => handleEditItem(index)}
                             >
                               <Icon
                                 icon="pencil"
