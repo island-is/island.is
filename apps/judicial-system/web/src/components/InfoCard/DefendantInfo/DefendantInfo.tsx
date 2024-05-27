@@ -25,13 +25,19 @@ export type DefendantInfoActionButton = {
 interface DefendantInfoProps {
   defendant: Defendant
   displayDefenderInfo: boolean
+  displayAppealExpirationInfo?: boolean
   defendantInfoActionButton?: DefendantInfoActionButton
 }
 
 export const DefendantInfo: FC<PropsWithChildren<DefendantInfoProps>> = (
   props,
 ) => {
-  const { defendant, displayDefenderInfo, defendantInfoActionButton } = props
+  const {
+    defendant,
+    displayDefenderInfo,
+    displayAppealExpirationInfo,
+    defendantInfoActionButton,
+  } = props
   const { formatMessage } = useIntl()
 
   const getAppealExpirationInfo = (viewDate?: string) => {
@@ -47,7 +53,6 @@ export const DefendantInfo: FC<PropsWithChildren<DefendantInfoProps>> = (
       today < expiryDate
         ? strings.appealExpirationDate
         : strings.appealDateExpired
-
     return formatMessage(message, {
       appealExpirationDate: formatDate(expiryDate, 'P'),
     })
@@ -75,19 +80,16 @@ export const DefendantInfo: FC<PropsWithChildren<DefendantInfoProps>> = (
           </Text>
         </span>
 
-        <div>
-          <Text as="span">
-            {getAppealExpirationInfo(defendant.verdictViewDate ?? '')}
-          </Text>
-        </div>
+        {displayAppealExpirationInfo && (
+          <Box>
+            <Text as="span">
+              {getAppealExpirationInfo(defendant.verdictViewDate ?? '')}
+            </Text>
+          </Box>
+        )}
 
         {defendant.defenderName && displayDefenderInfo && (
-          <Box
-            display="flex"
-            key={defendant.defenderName}
-            role="paragraph"
-            marginBottom={1}
-          >
+          <Box display="flex" key={defendant.defenderName} role="paragraph">
             <Text as="span">{`${formatMessage(strings.defender)}: ${
               defendant.defenderName
             }`}</Text>
