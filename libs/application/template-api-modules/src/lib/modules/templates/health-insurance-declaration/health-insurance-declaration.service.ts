@@ -31,7 +31,7 @@ export class HealthInsuranceDeclarationService extends BaseTemplateApiService {
     return this.insuranceStatementApi.withMiddleware(new AuthMiddleware(Auth))
   }
 
-  async canApply(application: TemplateApiModuleActionProps) {
+  async status(application: TemplateApiModuleActionProps) {
     const response = await this.insuranceStatementsApiWithAuth(
       application.auth,
     ).getInsuranceStatementStatus({
@@ -53,7 +53,7 @@ export class HealthInsuranceDeclarationService extends BaseTemplateApiService {
   }
 
   async getInsuranceStatementData(application: TemplateApiModuleActionProps) {
-    const status = await this.canApply(application)
+    const status = await this.status(application)
     const continents = await this.continents(application)
     const countries = await this.countries(application)
 
@@ -80,17 +80,16 @@ export class HealthInsuranceDeclarationService extends BaseTemplateApiService {
       response = await this.insuranceStatementsApiWithAuth(
         auth,
       ).insuranceStatementStudentApplication({
-        minarsidurAPIModelsInsuranceStatementsStudentApplicationDTO:
-          applicationStudentRequest,
+        minarsidurAPIModelsInsuranceStatementsStudentApplicationDTO: applicationStudentRequest,
       })
     } else {
-      const applicationTouristRequest =
-        applicationToTouristApplication(application)
+      const applicationTouristRequest = applicationToTouristApplication(
+        application,
+      )
       response = await this.insuranceStatementsApiWithAuth(
         auth,
       ).insuranceStatementTouristApplication({
-        minarsidurAPIModelsInsuranceStatementsTouristApplicationDTO:
-          applicationTouristRequest,
+        minarsidurAPIModelsInsuranceStatementsTouristApplicationDTO: applicationTouristRequest,
       })
     }
     if (!response.success) {
