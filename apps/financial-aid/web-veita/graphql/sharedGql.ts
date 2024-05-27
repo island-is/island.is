@@ -66,6 +66,8 @@ export const ApplicationQuery = gql`
         nationalId
         name
         school
+        livesWithApplicant
+        livesWithBothParents
       }
       amount {
         aidAmount
@@ -263,6 +265,8 @@ export const ApplicationEventMutation = gql`
         nationalId
         name
         school
+        livesWithApplicant
+        livesWithBothParents
       }
       amount {
         aidAmount
@@ -380,6 +384,8 @@ export const UpdateApplicationMutation = gql`
         nationalId
         name
         school
+        livesWithApplicant
+        livesWithBothParents
       }
       amount {
         aidAmount
