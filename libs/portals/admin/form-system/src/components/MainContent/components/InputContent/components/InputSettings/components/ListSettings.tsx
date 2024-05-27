@@ -44,7 +44,6 @@ export const ListSettings = () => {
   const [radio, setRadio] = useState([true, false, false])
 
   const radioHandler = (index: number) => {
-    // if (!radio[index])
     setRadio((prev) =>
       prev.map((_, i) => {
         return index === i
@@ -92,7 +91,6 @@ export const ListSettings = () => {
                 <RadioButton
                   label={formatMessage(m.customList)}
                   checked={radio[0]}
-                  onChange={() => radioHandler(0)}
                 />
               </Box>
             </Column>
@@ -102,19 +100,10 @@ export const ListSettings = () => {
               <RadioButton
                 label={formatMessage(m.predeterminedLists)}
                 onChange={(e) => {
-                  console.log()
+                  radioHandler(1)
                 }}
                 checked={radio[1]}
               />
-              <Box onClick={() => radioHandler(1)}>
-                <RadioButton
-                  label="Tilbúnir fellilistar"
-                  onChange={() => {
-                    radioHandler(1)
-                  }}
-                  checked={radio[1]}
-                />
-              </Box>
             </Column>
           </Row>
         </>
