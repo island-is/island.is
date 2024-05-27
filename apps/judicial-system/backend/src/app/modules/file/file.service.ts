@@ -1,3 +1,4 @@
+import CryptoJS from 'crypto-js'
 import { Op, Sequelize } from 'sequelize'
 import { Transaction } from 'sequelize/types'
 import { uuid } from 'uuidv4'
@@ -194,13 +195,14 @@ export class FileService {
   async getCaseFileFromS3(theCase: Case, file: CaseFile): Promise<Buffer> {
     if (
       isIndictmentCase(theCase.type) &&
-      file.category === CaseFileCategory.INDICTMENT &&
-      hasIndictmentCaseBeenSubmittedToCourt(theCase.state)
+      hasIndictmentCaseBeenSubmittedToCourt(theCase.state) &&
+      file.category === CaseFileCategory.INDICTMENT
     ) {
       return this.awsS3Service.getConfirmedObject(
         theCase.type,
         theCase.state,
         file.key,
+        !file.hash,
         (content: Buffer) => this.confirmIndictmentCaseFile(theCase, content),
       )
     }
@@ -340,13 +342,14 @@ export class FileService {
   ): Promise<string> {
     if (
       isIndictmentCase(theCase.type) &&
-      file.category === CaseFileCategory.INDICTMENT &&
-      hasIndictmentCaseBeenSubmittedToCourt(theCase.state)
+      hasIndictmentCaseBeenSubmittedToCourt(theCase.state) &&
+      file.category === CaseFileCategory.INDICTMENT
     ) {
       return this.awsS3Service.getConfirmedSignedUrl(
         theCase.type,
         theCase.state,
         file.key,
+        !file.hash,
         (content: Buffer) => this.confirmIndictmentCaseFile(theCase, content),
         timeToLive,
       )

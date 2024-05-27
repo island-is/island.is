@@ -185,6 +185,7 @@ export class AwsS3Service {
     caseType: CaseType,
     caseState: CaseState,
     key: string | undefined,
+    force: boolean,
     confirmContent: (content: Buffer) => Promise<string | undefined>,
     timeToLive?: number,
   ): Promise<string> {
@@ -198,7 +199,10 @@ export class AwsS3Service {
 
     const confirmedKey = formatConfirmedKey(key)
 
-    if (await this.indictmentObjectExists(caseState, confirmedKey)) {
+    if (
+      !force &&
+      (await this.indictmentObjectExists(caseState, confirmedKey))
+    ) {
       return this.getIndictmentSignedUrl(caseState, confirmedKey, timeToLive)
     }
 
@@ -276,6 +280,7 @@ export class AwsS3Service {
     caseType: CaseType,
     caseState: CaseState,
     key: string | undefined,
+    force: boolean,
     confirmContent: (content: Buffer) => Promise<string | undefined>,
   ): Promise<Buffer> {
     if (!key) {
@@ -288,7 +293,10 @@ export class AwsS3Service {
 
     const confirmedKey = formatConfirmedKey(key)
 
-    if (await this.indictmentObjectExists(caseState, confirmedKey)) {
+    if (
+      !force &&
+      (await this.indictmentObjectExists(caseState, confirmedKey))
+    ) {
       return this.getIndictmentObject(caseState, confirmedKey)
     }
 
