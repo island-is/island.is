@@ -84,18 +84,6 @@ const useCaseList = () => {
       }
     } else if (isPublicProsecutorUser(user)) {
       routeTo = constants.PUBLIC_PROSECUTOR_STAFF_INDICTMENT_OVERVIEW_ROUTE
-    } else if (isCompletedCase(caseToOpen.state)) {
-      if (isIndictmentCase(caseToOpen.type)) {
-        routeTo = constants.CLOSED_INDICTMENT_OVERVIEW_ROUTE
-      } else if (isCourtOfAppealsUser(user)) {
-        if (caseToOpen.appealState === CaseAppealState.COMPLETED) {
-          routeTo = constants.COURT_OF_APPEAL_RESULT_ROUTE
-        } else {
-          routeTo = constants.COURT_OF_APPEAL_OVERVIEW_ROUTE
-        }
-      } else {
-        routeTo = constants.SIGNED_VERDICT_OVERVIEW_ROUTE
-      }
     } else if (isDistrictCourtUser(user)) {
       if (isRestrictionCase(caseToOpen.type)) {
         routeTo = findFirstInvalidStep(
@@ -111,6 +99,18 @@ const useCaseList = () => {
         // Route to Indictment Overview section since it always a valid step and
         // would be skipped if we route to the last valid step
         routeTo = constants.INDICTMENTS_COURT_OVERVIEW_ROUTE
+      }
+    } else if (isCompletedCase(caseToOpen.state)) {
+      if (isIndictmentCase(caseToOpen.type)) {
+        routeTo = constants.CLOSED_INDICTMENT_OVERVIEW_ROUTE
+      } else if (isCourtOfAppealsUser(user)) {
+        if (caseToOpen.appealState === CaseAppealState.COMPLETED) {
+          routeTo = constants.COURT_OF_APPEAL_RESULT_ROUTE
+        } else {
+          routeTo = constants.COURT_OF_APPEAL_OVERVIEW_ROUTE
+        }
+      } else {
+        routeTo = constants.SIGNED_VERDICT_OVERVIEW_ROUTE
       }
     } else {
       if (isRestrictionCase(caseToOpen.type)) {
@@ -162,6 +162,7 @@ const useCaseList = () => {
           ? getLimitedAccessCase({ variables: { input: { id } } })
           : getCase({ variables: { input: { id } } })
       }
+
       if (
         isTransitioningCase ||
         isSendingNotification ||
