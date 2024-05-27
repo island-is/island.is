@@ -3,9 +3,7 @@ import {
   createEnhancedFetch,
   type EnhancedFetchAPI,
 } from '@island.is/clients/middlewares'
-import {
-  LazyDuringDevScope,
-} from '@island.is/nest/config'
+import { LazyDuringDevScope } from '@island.is/nest/config'
 
 export const ContentfulFetchProviderKey = 'ContentfulFetchProviderKey'
 
