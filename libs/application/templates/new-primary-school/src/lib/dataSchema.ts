@@ -6,7 +6,7 @@ import { errorMessages } from './messages'
 
 export const dataSchema = z.object({
   approveExternalData: z.boolean().refine((v) => v),
-  childsNationalId: z.string().min(1),
+  childNationalId: z.string().min(1),
   parent1: z.object({
     email: z.string().email(),
     phoneNumber: z.string().refine(

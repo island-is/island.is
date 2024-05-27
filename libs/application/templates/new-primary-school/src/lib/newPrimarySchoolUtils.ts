@@ -5,15 +5,12 @@ import {
   FormValue,
 } from '@island.is/application/types'
 import * as kennitala from 'kennitala'
-import { Children, Person, RelativesRow } from '../types'
+import { Child, Person, RelativesRow } from '../types'
 import { RelationOptions } from './constants'
 import { newPrimarySchoolMessages } from './messages'
 
 export const getApplicationAnswers = (answers: Application['answers']) => {
-  const childsNationalId = getValueViaPath(
-    answers,
-    'childsNationalId',
-  ) as string
+  const childNationalId = getValueViaPath(answers, 'childNationalId') as string
 
   const parent1 = getValueViaPath(answers, 'parent1') as Person
 
@@ -21,7 +18,7 @@ export const getApplicationAnswers = (answers: Application['answers']) => {
 
   const relatives = getValueViaPath(answers, 'relatives') as RelativesRow[]
 
-  return { childsNationalId, parent1, parent2, relatives }
+  return { childNationalId, parent1, parent2, relatives }
 }
 
 export const getApplicationExternalData = (
@@ -31,7 +28,7 @@ export const getApplicationExternalData = (
     externalData,
     'childrenCustodyInformation.data',
     [],
-  ) as Children[]
+  ) as Child[]
 
   const applicantName = getValueViaPath(
     externalData,
@@ -74,28 +71,28 @@ export const getApplicationExternalData = (
   }
 }
 
-export const isChildAtPrimarySchoolAge = (nationalId: string): boolean => {
-  // Check if the child is at primary school age
+export const canApply = (child: Child): boolean => {
+  // Check if the child is at primary school age and lives with the applicant
   if (
-    kennitala.info(nationalId).age >= 5 &&
-    kennitala.info(nationalId).age <= 15
+    kennitala.info(child.nationalId).age >= 5 &&
+    kennitala.info(child.nationalId).age <= 15 &&
+    child.livesWithApplicant
   ) {
     return true
   }
 
-  // TODO: set as false
-  return true
+  return false
 }
 
 export const getOtherParent = (
   application: Application,
 ): Person | undefined => {
-  const { childsNationalId } = getApplicationAnswers(application.answers)
+  const { childNationalId } = getApplicationAnswers(application.answers)
   const { children } = getApplicationExternalData(application.externalData)
 
   // Find the child name since we only have nationalId in the answers
   const selectedChild = children.find((child) => {
-    return child.nationalId === childsNationalId
+    return child.nationalId === childNationalId
   })
 
   return selectedChild?.otherParent as Person | undefined
