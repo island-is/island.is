@@ -206,6 +206,10 @@ export const messages = defineMessages({
     id: 'sp.health:no-health-insurance',
     defaultMessage: 'Þú ert ekki með sjúkratryggingu',
   },
+  noHealthInsuranceMessage: {
+    id: 'sp.health:no-health-insurance-message',
+    defaultMessage: 'Síðasta trygging: {arg}',
+  },
   paymentTarget: {
     id: 'sp.health:payment-target',
     defaultMessage: 'Greiðslumark',
