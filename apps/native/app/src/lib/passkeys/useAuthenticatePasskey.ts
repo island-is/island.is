@@ -1,4 +1,5 @@
 import { Passkey, PasskeyAuthenticationResult } from 'react-native-passkey'
+import { btoa } from 'react-native-quick-base64'
 import {
   convertAuthenticationResultsToBase64Url,
   convertBase64UrlToBase64String,
@@ -47,9 +48,13 @@ export const useAuthenticatePasskey = () => {
 
         preferencesStore.setState({ lastUsedPasskey: new Date().getTime() })
 
+        const passkey = btoa(JSON.stringify(updatedResult))
+
         // Verify authentication with server
         const verifyAuthenticateResponse = await verifyPasskeyAuthentication({
-          variables: { input: updatedResult },
+          variables: {
+            input: { passkey },
+          },
         })
 
         if (

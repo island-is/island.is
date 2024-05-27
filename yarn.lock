@@ -10812,6 +10812,7 @@ __metadata:
     react-native-passkit-wallet: 0.1.6
     react-native-pdf: 6.6.2
     react-native-quick-actions: 0.3.13
+    react-native-quick-base64: 2.1.2
     react-native-share: 7.1.1
     react-native-spotlight-search: 2.0.0
     react-native-svg: 15.1.0
@@ -22633,13 +22634,6 @@ __metadata:
   languageName: node
   linkType: hard
 
-"binascii@npm:0.0.2":
-  version: 0.0.2
-  resolution: "binascii@npm:0.0.2"
-  checksum: d27d4e7942994eb03152fe1ae828cd68cfe69e3a9aadcf7b1d5433761839ee0009c8139305c596d010236c912d65c1889d062784b2514869c61995410ae4ca9a
-  languageName: node
-  linkType: hard
-
 "bindings@npm:^1.5.0":
   version: 1.5.0
   resolution: "bindings@npm:1.5.0"
@@ -34435,7 +34429,6 @@ __metadata:
     babel-plugin-transform-class-properties: 6.24.1
     babel-plugin-transform-imports: 2.0.0
     beygla: 1.4.0
-    binascii: 0.0.2
     bottleneck: 2.19.5
     bull: 4.10.4
     cache-manager: 5.2.3
@@ -34582,6 +34575,7 @@ __metadata:
     react-is: 18.2.0
     react-keyed-flatten-children: 1.2.0
     react-modal: 3.15.1
+    react-native-quick-base64: 2.1.2
     react-number-format: 4.9.1
     react-pdf: 7.5.0
     react-popper: 2.3.0
@@ -44780,6 +44774,18 @@ __metadata:
   version: 0.3.13
   resolution: "react-native-quick-actions@npm:0.3.13"
   checksum: c3d52043d26ce8fd7b95d8158d8b03e4d00463fc60c96e5b8f1b7817b62e8683c758ff665e4e42ece75d3e299c680432937ed5774e28aedf2fe52f02937fa812
+  languageName: node
+  linkType: hard
+
+"react-native-quick-base64@npm:2.1.2":
+  version: 2.1.2
+  resolution: "react-native-quick-base64@npm:2.1.2"
+  dependencies:
+    base64-js: ^1.5.1
+  peerDependencies:
+    react: "*"
+    react-native: "*"
+  checksum: 46f3b26f48b26978686b0c043336220d681e6a02af5abcf3eb4ab7b9216251d1eb2fac5c559e984d963e93f54bd9f323651daac09762196815558abbd551729b
   languageName: node
   linkType: hard
 
