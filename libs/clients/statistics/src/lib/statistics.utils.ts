@@ -148,10 +148,10 @@ export const processDataFromSource = (data: string) => {
       const rawValue = lineColumns[i]
         ?.replace(/%/g, '')
         // When we have a value like "1,000,000" it is surrounded by quotes
-        ?.replace(/\"/g, '')
+        ?.replace(/"/g, '')
         // We can then safely remove the commas since they are not used to
         // separate decimal digits but rather to separate thousands
-        ?.replace(/\,/g, '')
+        ?.replace(/,/g, '')
         ?.trim()
 
       const isInvalidValue =
