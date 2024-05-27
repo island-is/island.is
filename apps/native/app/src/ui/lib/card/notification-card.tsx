@@ -85,9 +85,7 @@ export function NotificationCard({
     <Host
       onPress={() => onPress(id)}
       underlayColor={
-        underlayColor ?? theme.isDark
-          ? theme.shade.shade400
-          : theme.color.blue100
+        underlayColor ?? theme.isDark ? theme.shade.shade400 : '#EBEBFA'
       }
       unread={unread}
       testID={testID}
