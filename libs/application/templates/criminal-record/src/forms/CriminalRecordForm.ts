@@ -7,8 +7,6 @@ import {
 import { Form, FormModes } from '@island.is/application/types'
 import { m } from '../lib/messages'
 import {
-  NationalRegistryUserApi,
-  UserProfileApi,
   SyslumadurPaymentCatalogApi,
   CriminalRecordApi,
 } from '../dataProviders'
@@ -31,16 +29,6 @@ export const CriminalRecordForm: Form = buildForm({
           subTitle: m.externalDataSubTitle,
           checkboxLabel: m.externalDataAgreement,
           dataProviders: [
-            buildDataProviderItem({
-              provider: NationalRegistryUserApi,
-              title: m.nationalRegistryTitle,
-              subTitle: m.nationalRegistrySubTitle,
-            }),
-            buildDataProviderItem({
-              provider: UserProfileApi,
-              title: m.userProfileInformationTitle,
-              subTitle: m.userProfileInformationSubTitle,
-            }),
             buildDataProviderItem({
               provider: CriminalRecordApi,
               title: m.criminalRecordInformationTitle,

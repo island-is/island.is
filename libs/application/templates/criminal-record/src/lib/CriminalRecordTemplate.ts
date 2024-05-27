@@ -21,8 +21,6 @@ import { z } from 'zod'
 import { ApiActions } from '../shared'
 import { m } from './messages'
 import {
-  NationalRegistryUserApi,
-  UserProfileApi,
   SyslumadurPaymentCatalogApi,
   CriminalRecordApi,
 } from '../dataProviders'
@@ -78,12 +76,7 @@ const template: ApplicationTemplate<
                 },
               ],
               write: 'all',
-              api: [
-                NationalRegistryUserApi,
-                UserProfileApi,
-                SyslumadurPaymentCatalogApi,
-                CriminalRecordApi,
-              ],
+              api: [SyslumadurPaymentCatalogApi, CriminalRecordApi],
             },
           ],
         },
