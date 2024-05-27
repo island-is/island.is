@@ -27,6 +27,11 @@ export class CaseListInterceptor implements NestInterceptor {
     return next.handle().pipe(
       map((cases: CaseListEntry[]) => {
         return cases.map((theCase) => {
+          const indictmentInfo = getIndictmentInfo(
+            theCase.rulingDate,
+            theCase.type,
+            theCase.defendants,
+          )
           return {
             ...theCase,
             isValidToDateInThePast: theCase.validToDate
@@ -36,8 +41,7 @@ export class CaseListInterceptor implements NestInterceptor {
               theCase.prosecutorPostponedAppealDate,
               theCase.accusedPostponedAppealDate,
             ),
-            indictmentAppealDeadline: getIndictmentInfo(theCase.rulingDate)
-              .indictmentAppealDeadline,
+            ...indictmentInfo,
           }
         })
       }),

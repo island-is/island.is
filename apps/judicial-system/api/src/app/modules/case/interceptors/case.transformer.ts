@@ -1,9 +1,12 @@
 import {
   CaseAppealDecision,
+  CaseType,
   getStatementDeadline,
+  isIndictmentCase,
   UserRole,
 } from '@island.is/judicial-system/types'
 
+import { Defendant } from '../../defendant'
 import { Case } from '../models/case.model'
 
 const getDays = (days: number) => days * 24 * 60 * 60 * 1000
@@ -21,6 +24,8 @@ interface AppealInfo {
 
 interface IndictmentInfo {
   indictmentAppealDeadline?: string
+  indictmentVerdictViewedByAll?: boolean
+  indictmentVerdictAppealDeadline?: string
 }
 
 const isAppealableDecision = (decision?: CaseAppealDecision | null) => {
@@ -91,10 +96,14 @@ export const getAppealInfo = (theCase: Case): AppealInfo => {
   return appealInfo
 }
 
-export const getIndictmentInfo = (rulingDate?: string): IndictmentInfo => {
+export const getIndictmentInfo = (
+  rulingDate?: string,
+  caseType?: CaseType,
+  defendants?: Defendant[],
+): IndictmentInfo => {
   const indictmentInfo: IndictmentInfo = {}
 
-  if (!rulingDate) {
+  if ((caseType && !isIndictmentCase(caseType)) || !rulingDate) {
     return indictmentInfo
   }
 
@@ -103,12 +112,64 @@ export const getIndictmentInfo = (rulingDate?: string): IndictmentInfo => {
     theRulingDate.setDate(theRulingDate.getDate() + 28),
   ).toISOString()
 
+  if (defendants) {
+    const verdictViewDates = defendants?.map(
+      (defendant) => defendant.verdictViewDate,
+    )
+
+    if (!verdictViewDates || verdictViewDates?.some((date) => !date)) {
+      indictmentInfo.indictmentVerdictViewedByAll = false
+    } else {
+      indictmentInfo.indictmentVerdictViewedByAll = true
+      const newestViewDate = verdictViewDates
+        ?.filter((date): date is string => date !== undefined)
+        .map((date) => new Date(date))
+        .reduce(
+          (newest, current) => (current > newest ? current : newest),
+          new Date(0),
+        )
+      const expiryDate = new Date(newestViewDate.getTime())
+      expiryDate.setDate(newestViewDate.getDate() + 28)
+
+      indictmentInfo.indictmentVerdictAppealDeadline = expiryDate.toISOString()
+    }
+  }
+
   return indictmentInfo
+}
+
+const getDefendantsInfo = (
+  defendants: Defendant[] | undefined,
+  caseType?: CaseType,
+) => {
+  if (!defendants || !isIndictmentCase(caseType)) {
+    return defendants
+  }
+
+  const expiryDays = getDays(28)
+
+  return defendants.map((defendant) => {
+    const { verdictViewDate } = defendant
+    return {
+      ...defendant,
+      verdictAppealDeadline: verdictViewDate
+        ? new Date(
+            new Date(verdictViewDate).getTime() + expiryDays,
+          ).toISOString()
+        : undefined,
+    }
+  })
 }
 
 export const transformCase = (theCase: Case): Case => {
   const appealInfo = getAppealInfo(theCase)
-  const indictmentInfo = getIndictmentInfo(theCase.rulingDate)
+  const indictmentInfo = getIndictmentInfo(
+    theCase.rulingDate,
+    theCase.type,
+    theCase.defendants,
+  )
+  const defendants = getDefendantsInfo(theCase.defendants, theCase.type)
+
   return {
     ...theCase,
     requestProsecutorOnlySession: theCase.requestProsecutorOnlySession ?? false,
@@ -129,6 +190,7 @@ export const transformCase = (theCase: Case): Case => {
       ? Date.now() >=
         new Date(theCase.appealReceivedByCourtDate).getTime() + getDays(1)
       : false,
+    defendants: defendants,
     ...appealInfo,
     ...indictmentInfo,
   }
