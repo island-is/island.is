@@ -2,6 +2,7 @@ import {
   BadRequestException,
   Body,
   Controller,
+  Get,
   Inject,
   Param,
   Post,
@@ -13,6 +14,7 @@ import type { Logger } from '@island.is/logging'
 import { LOGGER_PROVIDER } from '@island.is/logging'
 
 import { TokenGuard } from '@island.is/judicial-system/auth'
+import { formatNationalId } from '@island.is/judicial-system/formatters'
 import {
   messageEndpoint,
   MessageType,
@@ -79,15 +81,20 @@ export class InternalCaseController {
     @Body() internalCasesDto: InternalCasesDto,
   ): Promise<Case[]> {
     this.logger.debug('Getting all indictment cases')
-    const nationalId =
-      internalCasesDto.nationalId.indexOf('-') > -1
-        ? internalCasesDto.nationalId
-        : `${internalCasesDto.nationalId.slice(
-            0,
-            6,
-          )}-${internalCasesDto.nationalId.slice(6)}`
+    const nationalId = formatNationalId(internalCasesDto.nationalId)
 
     return this.internalCaseService.getIndictmentCases(nationalId)
+  }
+
+  @Get('cases/indictment/:caseId')
+  @ApiOkResponse({
+    type: Case,
+    description: 'Gets indictment case by id',
+  })
+  getIndictmentCase(@Param('caseId') caseId: string): Promise<Case | null> {
+    this.logger.debug(`Getting indictment case ${caseId}`)
+
+    return this.internalCaseService.getIndictmentCase(caseId)
   }
 
   @UseGuards(CaseExistsGuard)

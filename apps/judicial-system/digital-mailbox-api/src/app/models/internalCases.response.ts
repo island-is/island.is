@@ -1,5 +1,6 @@
-import { CaseState } from '@island.is/judicial-system/types'
 import { ApiProperty } from '@nestjs/swagger'
+
+import { CaseState } from '@island.is/judicial-system/types'
 
 export class InternalCasesResponse {
   @ApiProperty({ type: String })

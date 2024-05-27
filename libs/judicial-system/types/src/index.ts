@@ -90,3 +90,5 @@ export { type Lawyer, mapToLawyer } from './lib/defender'
 export type { SubstanceMap } from './lib/indictmentCount'
 
 export type { CourtDocument } from './lib/courtDocument'
+
+export type { IndictmentCaseData } from './lib/digitalMailboxCase'
