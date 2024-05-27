@@ -1168,11 +1168,17 @@ export class InternalCaseService {
     })
   }
 
-  async getIndictmentCase(caseId: string): Promise<Case | null> {
+  async getIndictmentCase(
+    caseId: string,
+    nationalId: string,
+  ): Promise<Case | null> {
     return this.caseModel.findOne({
-      attributes: ['courtCaseNumber'],
+      include: [{ model: Defendant, as: 'defendants' }],
+      attributes: ['courtCaseNumber', 'defendants.name'],
       where: {
         type: CaseType.INDICTMENT,
+        id: caseId,
+        '$defendants.national_id$': nationalId,
       },
     })
   }

@@ -9,11 +9,11 @@ import {
 } from '@island.is/judicial-system/audit-trail'
 import { isCompletedCase } from '@island.is/judicial-system/types'
 
-import { CasesResponse } from './models/cases.response'
-import { InternalCasesResponse } from './models/internalCases.response'
-import { InternalCaseResponse } from './models/internalCase.response'
-import { digitalMailboxModuleConfig } from './app.config'
 import { CaseResponse } from './models/case.response'
+import { CasesResponse } from './models/cases.response'
+import { InternalCaseResponse } from './models/internalCase.response'
+import { InternalCasesResponse } from './models/internalCases.response'
+import { digitalMailboxModuleConfig } from './app.config'
 
 @Injectable()
 export class AppService {
@@ -63,7 +63,7 @@ export class AppService {
 
   private formatCase(res: InternalCaseResponse, lang?: string): CaseResponse {
     const language = lang?.toLowerCase()
-
+    console.log('res', res)
     return {
       data: {
         caseNumber:
@@ -75,8 +75,20 @@ export class AppService {
             label: language === 'en' ? 'Defendant' : 'Varnaraðili',
             items: [
               {
-                label: 'b',
-                value: 'a',
+                label: language === 'en' ? 'Name' : 'Nafn',
+                value: res.defendants[0].name,
+              },
+              {
+                label: language === 'en' ? 'National ID' : 'Kennitala',
+                value: res.defendants[0].nationalId,
+              },
+              {
+                label: language === 'en' ? 'Address' : 'Heimilisfang',
+                value: res.defendants[0].address,
+              },
+              {
+                label: language === 'en' ? 'Sent' : 'Fyrirkall sent',
+                value: res.defendants[0].name, // TODO
               },
             ],
           },
@@ -137,15 +149,21 @@ export class AppService {
       })
   }
 
-  private async getCase(id: string, lang?: string): Promise<CaseResponse> {
+  private async getCase(
+    id: string,
+    nationalId: string,
+    lang?: string,
+  ): Promise<CaseResponse> {
+    console.log('getCase', id)
     return fetch(
       `${this.config.backendUrl}/api/internal/cases/indictment/${id}`,
       {
-        method: 'GET',
+        method: 'POST',
         headers: {
           'Content-Type': 'application/json',
           authorization: `Bearer ${this.config.secretToken}`,
         },
+        body: JSON.stringify({ nationalId }),
       },
     )
       .then(async (res) => {
@@ -179,11 +197,15 @@ export class AppService {
     )
   }
 
-  async getCaseById(id: string, lang?: string): Promise<CaseResponse> {
+  async getCaseById(
+    id: string,
+    nationalId: string,
+    lang?: string,
+  ): Promise<CaseResponse> {
     return this.auditTrailService.audit(
       'digital-mailbox-api',
       AuditedAction.GET_INDICTMENT,
-      this.getCase(id, lang),
+      this.getCase(id, nationalId, lang),
       () => id,
     )
   }

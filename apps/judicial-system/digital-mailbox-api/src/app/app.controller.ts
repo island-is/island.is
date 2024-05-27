@@ -1,4 +1,11 @@
-import { Controller, Get, Inject, Query, UseGuards } from '@nestjs/common'
+import {
+  Controller,
+  Get,
+  Inject,
+  Param,
+  Query,
+  UseGuards,
+} from '@nestjs/common'
 import { ApiCreatedResponse } from '@nestjs/swagger'
 
 import { type Logger, LOGGER_PROVIDER } from '@island.is/logging'
@@ -7,12 +14,12 @@ import type { User as TUser } from '@island.is/judicial-system/types'
 
 import { JwtAuthGuard } from './guards/auth.guard'
 import { User } from './guards/user.decorator'
+import { CaseResponse } from './models/case.response'
 import { CasesResponse } from './models/cases.response'
 import { AppService } from './app.service'
-import { CaseResponse } from './models/case.response'
 
 @Controller('api')
-// @UseGuards(JwtAuthGuard)
+@UseGuards(JwtAuthGuard)
 export class AppController {
   constructor(
     private readonly appService: AppService,
@@ -41,11 +48,12 @@ export class AppController {
   @Get('case/:caseId')
   @ApiCreatedResponse({ type: String, description: 'Get case by id' })
   async getCase(
-    @Query('caseId') caseId: string,
+    @Param('caseId') caseId: string,
+    @User() user: Pick<TUser, 'nationalId'>,
     @Query() query?: { lang: string },
   ): Promise<CaseResponse> {
     this.logger.debug('Getting case by id')
 
-    return this.appService.getCaseById(caseId, query?.lang)
+    return this.appService.getCaseById(caseId, user.nationalId, query?.lang)
   }
 }
