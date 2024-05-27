@@ -146,7 +146,7 @@ export const getChildrenInfo = (application: Application) => {
       },
       {
         title: 'Býr hjá báðum foreldrum?',
-        content: `${child.livesWithApplicant ? 'Já' : 'Nei'}`,
+        content: `${child.livesWithBothParents ? 'Já' : 'Nei'}`,
       },
       {
         title: '',
