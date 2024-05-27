@@ -366,6 +366,11 @@ export const UniversityCareers = new XroadConf({
       staging: 'IS-DEV/EDU/10055/Holar-Protected/brautskraning-v1',
       prod: 'IS/EDU/5001694359/Holar-Protected/brautskraning-v1',
     },
+    XROAD_ICELAND_UNIVERSITY_OF_THE_ARTS_PATH: {
+      dev: 'IS-DEV/EDU/10049/LHI-Protected/brautskraning-v1',
+      staging: 'IS-DEV/EDU/10049/LHI-Protected/brautskraning-v1',
+      prod: 'IS/EDU/4210984099/LHI-Protected/brautskraning-v1',
+    },
   },
 })
 
