@@ -111,12 +111,12 @@ const nextConfig = {
         permanent: true,
       },
       {
-        source: '/adstod/tryggingastofnun',
+        source: '/adstod/tryggingastofnun/hafa-samband',
         destination: 'https://minarsidur.tr.is/hafa-samband',
         permanent: true,
       },
       {
-        source: '/en/help/social-insurance-administration',
+        source: '/en/help/social-insurance-administration/contact-us',
         destination: 'https://minarsidur.tr.is/hafa-samband',
         permanent: true,
       },
