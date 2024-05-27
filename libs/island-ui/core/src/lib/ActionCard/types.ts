@@ -14,6 +14,7 @@ export type ActionCardProps = {
     label: string
     variant?: TagVariant
     outlined?: boolean
+    renderTag?: (child: React.ReactNode) => React.ReactNode
   }
   cta?: {
     label: string
@@ -27,30 +28,12 @@ export type ActionCardProps = {
     onClick?: () => void
     disabled?: boolean
   }
-  secondaryCta?: {
-    label: string
-    visible?: boolean
-    size?: ButtonSizes
-    icon?: IconType
-    onClick?: () => void
-    disabled?: boolean
-  }
   unavailable?: {
     active?: boolean
     label?: string
     message?: string
   }
   avatar?: boolean
-  deleteButton?: {
-    visible?: boolean
-    onClick?: () => void
-    disabled?: boolean
-    icon?: IconType
-    dialogTitle?: string
-    dialogDescription?: string
-    dialogConfirmLabel?: string
-    dialogCancelLabel?: string
-  }
   progressMeter?: {
     currentProgress: number
     maxProgress: number
