@@ -5,8 +5,6 @@ import {
   DelegationDirection,
   DelegationsIndexService,
   PaginatedDelegationRecordDTO,
-  DelegationProviderService,
-  PaginatedDelegationProviderDto,
 } from '@island.is/auth-api-lib'
 import { Documentation } from '@island.is/nest/swagger'
 import {
@@ -34,7 +32,6 @@ export class DelegationsController {
   constructor(
     private readonly delegationIndexService: DelegationsIndexService,
     private readonly auditService: AuditService,
-    private readonly delegationProviderService: DelegationProviderService,
   ) {}
 
   @Get()
@@ -89,24 +86,6 @@ export class DelegationsController {
         nationalId,
         direction,
       }),
-    )
-  }
-
-  @Get('/providers')
-  @Documentation({
-    description: 'Fetch all delegationProviders and their delegationTypes',
-    response: { status: 200, type: PaginatedDelegationProviderDto },
-  })
-  async getDelegationProviders(
-    @CurrentAuth() auth: Auth,
-  ): Promise<PaginatedDelegationProviderDto> {
-    return this.auditService.auditPromise(
-      {
-        auth,
-        action: 'getDelegationProviders',
-        resources: (delegations) => delegations.data.map((d) => d.id),
-      },
-      this.delegationProviderService.findAll(),
     )
   }
 }
