@@ -3,8 +3,11 @@ import {
   ActionCard,
   AlertMessage,
   Box,
+  DialogPrompt,
   Divider,
+  Icon,
   Stack,
+  Tag,
   Text,
 } from '@island.is/island-ui/core'
 import { useLocale } from '@island.is/localization'
@@ -146,6 +149,62 @@ export const ImpactList = (props: ImpactListProps) => {
                             : impactMsgs.typeCancellation,
                         ),
                         variant: isChange ? 'blueberry' : 'red',
+                        renderTag: (child) => (
+                          <>
+                            {child}
+
+                            {idx === impactGroup.length - 1 ? (
+                              <DialogPrompt
+                                baseId="delete_dialog"
+                                title={formatMessage(
+                                  impactMsgs.impactListDeleteButton,
+                                )}
+                                description={formatMessage(
+                                  impactMsgs.deleteConfirmation,
+                                )}
+                                ariaLabel="delete"
+                                img={
+                                  <img
+                                    src={`assets/images/settings.svg`}
+                                    alt={'globe'}
+                                    style={{ float: 'right' }}
+                                    width="80%"
+                                  />
+                                }
+                                disclosureElement={
+                                  <Tag
+                                    outlined
+                                    variant={isChange ? 'blueberry' : 'red'}
+                                  >
+                                    <Box
+                                      display="flex"
+                                      flexDirection="row"
+                                      alignItems="center"
+                                    >
+                                      <Icon
+                                        icon="trash"
+                                        size="small"
+                                        type="outline"
+                                      />
+                                    </Box>
+                                  </Tag>
+                                }
+                                onConfirm={() => {
+                                  deleteImpact(impact)
+                                  setTimeout(() => {
+                                    document.location.reload()
+                                  }, 250)
+                                }}
+                                buttonTextConfirm={formatMessage(
+                                  impactMsgs.impactListDeleteButton,
+                                )}
+                                buttonTextCancel={formatMessage(
+                                  impactMsgs.cancelButton,
+                                )}
+                              />
+                            ) : null}
+                          </>
+                        ),
                       }}
                       cta={{
                         icon: undefined,
@@ -159,29 +218,6 @@ export const ImpactList = (props: ImpactListProps) => {
                             impact,
                             readonly: idx !== impactGroup.length - 1,
                           })
-                        },
-                      }}
-                      deleteButton={{
-                        icon: 'trash',
-                        visible: idx === impactGroup.length - 1,
-                        dialogTitle: formatMessage(
-                          impactMsgs.impactListDeleteButton,
-                        ),
-                        dialogDescription: formatMessage(
-                          impactMsgs.deleteConfirmation,
-                        ),
-                        dialogConfirmLabel: formatMessage(
-                          impactMsgs.impactListDeleteButton,
-                        ),
-                        dialogCancelLabel: formatMessage(
-                          impactMsgs.cancelButton,
-                        ),
-                        disabled: idx !== impactGroup.length - 1,
-                        onClick: () => {
-                          deleteImpact(impact)
-                          setTimeout(() => {
-                            document.location.reload()
-                          }, 250)
                         },
                       }}
                       text={

@@ -11,7 +11,6 @@ import { Inline } from '../Inline/Inline'
 import * as styles from './ActionCard.css'
 import { Hidden } from '../Hidden/Hidden'
 import { Icon } from '../IconRC/Icon'
-import DialogPrompt from '../DialogPrompt/DialogPrompt'
 import { ProgressMeter } from '../ProgressMeter/ProgressMeter'
 import { ActionCardProps } from './types'
 
@@ -20,6 +19,7 @@ const defaultCta = {
   icon: 'arrowForward',
   onClick: () => null,
 } as const
+
 const defaultTag = {
   variant: 'blue',
   outlined: true,
@@ -32,17 +32,6 @@ const defaultUnavailable = {
   message: '',
 } as const
 
-const defaultDelete = {
-  visible: false,
-  onClick: () => null,
-  disabled: true,
-  icon: 'trash',
-  dialogTitle: '',
-  dialogDescription: '',
-  dialogConfirmLabel: '',
-  dialogCancelLabel: '',
-} as const
-
 export const ActionCard: React.FC<React.PropsWithChildren<ActionCardProps>> = ({
   date,
   heading,
@@ -51,10 +40,8 @@ export const ActionCard: React.FC<React.PropsWithChildren<ActionCardProps>> = ({
   eyebrow,
   backgroundColor = 'white',
   cta: _cta,
-  secondaryCta,
   tag: _tag,
   unavailable: _unavailable,
-  deleteButton: _delete,
   avatar,
   focused = false,
   progressMeter,
@@ -62,7 +49,6 @@ export const ActionCard: React.FC<React.PropsWithChildren<ActionCardProps>> = ({
   const cta = { ...defaultCta, ..._cta }
   const tag = { ...defaultTag, ..._tag }
   const unavailable = { ...defaultUnavailable, ..._unavailable }
-  const deleteButton = { ...defaultDelete, ..._delete }
   const backgroundMap: Record<typeof backgroundColor, Colors> = {
     blue: 'blue100',
     red: 'red100',
@@ -128,7 +114,6 @@ export const ActionCard: React.FC<React.PropsWithChildren<ActionCardProps>> = ({
         </Text>
 
         {renderTag()}
-        {renderDelete()}
       </Box>
     )
   }
@@ -160,7 +145,6 @@ export const ActionCard: React.FC<React.PropsWithChildren<ActionCardProps>> = ({
         </Box>
         <Inline alignY="center" space={1}>
           {!eyebrow && renderTag()}
-          {!eyebrow && renderDelete()}
         </Inline>
       </Box>
     )
@@ -171,50 +155,17 @@ export const ActionCard: React.FC<React.PropsWithChildren<ActionCardProps>> = ({
       return null
     }
 
-    return (
+    const tagEl = (
       <Tag outlined={tag.outlined} variant={tag.variant} disabled>
         {tag.label}
       </Tag>
     )
-  }
 
-  const renderDelete = () => {
-    if (!deleteButton.visible) {
-      return null
-    }
-
-    return (
-      <DialogPrompt
-        baseId="delete_dialog"
-        title={deleteButton.dialogTitle}
-        description={deleteButton.dialogDescription}
-        ariaLabel="delete"
-        img={
-          <img
-            src={`assets/images/settings.svg`}
-            alt={'globe'}
-            style={{ float: 'right' }}
-            width="80%"
-          />
-        }
-        disclosureElement={
-          <Tag outlined={tag.outlined} variant={tag.variant}>
-            <Box display="flex" flexDirection="row" alignItems="center">
-              <Icon icon={deleteButton.icon} size="small" type="outline" />
-            </Box>
-          </Tag>
-        }
-        onConfirm={deleteButton.onClick}
-        buttonTextConfirm={deleteButton.dialogConfirmLabel}
-        buttonTextCancel={deleteButton.dialogCancelLabel}
-      />
-    )
+    return tag.renderTag ? tag.renderTag(tagEl) : tagEl
   }
 
   const renderDefault = () => {
     const hasCTA = !!cta.label
-    const hasSecondaryCTA =
-      hasCTA && secondaryCta?.label && secondaryCta?.visible
 
     return (
       hasCTA && (
@@ -225,19 +176,6 @@ export const ActionCard: React.FC<React.PropsWithChildren<ActionCardProps>> = ({
           alignItems="center"
           flexDirection="row"
         >
-          {hasSecondaryCTA && (
-            <Box paddingRight={4} paddingLeft={2}>
-              <Button
-                variant="text"
-                size={secondaryCta?.size}
-                onClick={secondaryCta?.onClick}
-                icon={secondaryCta?.icon}
-                disabled={secondaryCta?.disabled}
-              >
-                {secondaryCta?.label}
-              </Button>
-            </Box>
-          )}
           <Box marginLeft={[0, 3]}>
             <Button
               {...(cta.buttonType ?? { variant: cta.variant })}
