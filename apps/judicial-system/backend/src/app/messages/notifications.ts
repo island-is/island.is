@@ -310,9 +310,9 @@ export const notifications = {
         'Notaður sem texti í pósti til sækjanda vegna staðfests dóms',
     },
     defenderBody: {
-      id: 'judicial.system.backend:notifications.case_completed.defender_body_v3',
+      id: 'judicial.system.backend:notifications.case_completed.defender_body_v4',
       defaultMessage:
-        'Máli {courtCaseNumber} hjá {courtName} hefur verið lokið.<br /><br />Niðurstaða: {caseIndictmentRulingDecision}<br /><br />{defenderHasAccessToRvg, select, false {Þú getur nálgast gögn málsins hjá {courtName} ef þau hafa ekki þegar verið afhent} other {Þú getur nálgast gögn málsins á {linkStart}yfirlitssíðu málsins í Réttarvörslugátt{linkEnd}}}.',
+        'Máli {courtCaseNumber} hjá {courtName} hefur verið lokið.<br /><br />Niðurstaða: {caseIndictmentRulingDecision}<br /><br />{defenderHasAccessToRvg, select, false {Þú getur nálgast gögn málsins hjá {courtName} ef þau hafa ekki þegar verið afhent} other {Skjöl málsins eru aðgengileg á {linkStart}yfirlitssíðu málsins í Réttarvörslugátt{linkEnd}.}}.',
       description:
         'Notaður sem texti í pósti til verjanda vegna staðfests dóms',
     },
