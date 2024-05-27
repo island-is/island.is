@@ -71,24 +71,6 @@ export const getMessageApproveOptionsForIncome: KeyMapping<
   No: m.incomeForm.summary.no,
 }
 
-export const getMessageForSchool: KeyMapping<
-  SchoolType,
-  { label: MessageDescriptor; placeholder: MessageDescriptor }
-> = {
-  kindergarden: {
-    placeholder: m.childrenForm.inputs.kindergardenPlaceholder,
-    label: m.childrenForm.inputs.kindergardenLabel,
-  },
-  elementary: {
-    placeholder: m.childrenForm.inputs.elementarySchoolPlaceholder,
-    label: m.childrenForm.inputs.elementarySchoolLabel,
-  },
-  highSchool: {
-    placeholder: m.childrenForm.inputs.highSchoolLabel,
-    label: m.childrenForm.inputs.highSchoolPlaceholder,
-  },
-}
-
 export const formatAddress = (applicant?: NationalRegistryIndividual) =>
   applicant?.address
     ? `${applicant.address.streetAddress}, ${applicant.address.postalCode} ${applicant.address.locality}`
