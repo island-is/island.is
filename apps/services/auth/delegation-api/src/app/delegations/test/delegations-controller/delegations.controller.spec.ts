@@ -20,31 +20,6 @@ import {
 
 const path = '/v1/delegations'
 
-const delegationProviderTypesData = [
-  {
-    id: 'custom',
-    delegationTypes: [
-      {
-        id: 'custom:1',
-        name: 'custom:1',
-      },
-    ],
-  },
-  {
-    id: 'procuration',
-    delegationTypes: [
-      {
-        id: 'procuration:1',
-        name: 'procuration:1',
-      },
-      {
-        id: 'procuration:2',
-        name: 'procuration:2',
-      },
-    ],
-  },
-]
-
 describe('DelegationsController', () => {
   let app: TestApp
   let server: request.SuperTest<request.Test>
