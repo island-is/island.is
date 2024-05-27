@@ -40,19 +40,19 @@ export const DefendantInfo: FC<PropsWithChildren<DefendantInfoProps>> = (
   } = props
   const { formatMessage } = useIntl()
 
-  const getAppealExpirationInfo = (appealDeadline?: string) => {
-    if (!appealDeadline) {
+  const getAppealExpirationInfo = (viewDate?: string) => {
+    if (!viewDate) {
       return formatMessage(strings.appealDateNotBegun)
     }
 
     const today = new Date()
-    const expiryDate = new Date(appealDeadline)
+    const expiryDate = new Date(viewDate)
+    expiryDate.setDate(expiryDate.getDate() + 28)
 
     const message =
       today < expiryDate
         ? strings.appealExpirationDate
         : strings.appealDateExpired
-
     return formatMessage(message, {
       appealExpirationDate: formatDate(expiryDate, 'P'),
     })
@@ -83,7 +83,7 @@ export const DefendantInfo: FC<PropsWithChildren<DefendantInfoProps>> = (
         {displayAppealExpirationInfo && (
           <Box>
             <Text as="span">
-              {getAppealExpirationInfo(defendant.verdictAppealDeadline ?? '')}
+              {getAppealExpirationInfo(defendant.verdictViewDate ?? '')}
             </Text>
           </Box>
         )}
