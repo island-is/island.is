@@ -472,7 +472,9 @@ export const HealthInsuranceDeclarationForm: Form = buildForm({
               value: ({ answers }) =>
                 `${format(
                   new Date(
-                    (answers as HealthInsuranceDeclaration).period.dateFieldFrom,
+                    (
+                      answers as HealthInsuranceDeclaration
+                    ).period.dateFieldFrom,
                   ),
                   'dd.MM.yyyy',
                 )} - ${format(
@@ -521,9 +523,9 @@ export const HealthInsuranceDeclarationForm: Form = buildForm({
                 (answers as HealthInsuranceDeclaration)
                   ?.studentOrTouristRadioFieldTourist === ApplicantType.STUDENT,
               value: ({ answers }) =>
-                (answers as HealthInsuranceDeclaration).educationConfirmationFileUploadField.map(
-                  (file) => file.name,
-                ),
+                (
+                  answers as HealthInsuranceDeclaration
+                ).educationConfirmationFileUploadField.map((file) => file.name),
             }),
             buildSubmitField({
               id: 'submit',

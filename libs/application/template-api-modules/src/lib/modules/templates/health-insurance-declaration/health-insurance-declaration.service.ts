@@ -80,16 +80,17 @@ export class HealthInsuranceDeclarationService extends BaseTemplateApiService {
       response = await this.insuranceStatementsApiWithAuth(
         auth,
       ).insuranceStatementStudentApplication({
-        minarsidurAPIModelsInsuranceStatementsStudentApplicationDTO: applicationStudentRequest,
+        minarsidurAPIModelsInsuranceStatementsStudentApplicationDTO:
+          applicationStudentRequest,
       })
     } else {
-      const applicationTouristRequest = applicationToTouristApplication(
-        application,
-      )
+      const applicationTouristRequest =
+        applicationToTouristApplication(application)
       response = await this.insuranceStatementsApiWithAuth(
         auth,
       ).insuranceStatementTouristApplication({
-        minarsidurAPIModelsInsuranceStatementsTouristApplicationDTO: applicationTouristRequest,
+        minarsidurAPIModelsInsuranceStatementsTouristApplicationDTO:
+          applicationTouristRequest,
       })
     }
     if (!response.success) {
