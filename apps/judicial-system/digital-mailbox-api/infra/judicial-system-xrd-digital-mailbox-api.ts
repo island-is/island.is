@@ -12,6 +12,13 @@ export const serviceSetup = (services: {
       AUDIT_TRAIL_USE_GENERIC_LOGGER: 'false',
       AUDIT_TRAIL_GROUP_NAME: 'k8s/judicial-system/audit-log',
       AUDIT_TRAIL_REGION: 'eu-west-1',
+      AUTH_IDS_SCOPE: 'openid profile',
+      AUTH_IDS_CLIENT_ID: '@rettarvorslugatt.island.is/web',
+      IDENTITY_SERVER_ISSUER_URL: {
+        dev: 'https://identity-server.dev01.devland.is',
+        staging: 'https://identity-server.staging01.devland.is',
+        prod: 'https://innskra.island.is',
+      },
     })
     .secrets({
       ERROR_EVENT_URL: '/k8s/judicial-system/ERROR_EVENT_URL',
