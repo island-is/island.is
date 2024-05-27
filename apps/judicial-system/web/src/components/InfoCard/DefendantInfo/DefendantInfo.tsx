@@ -81,11 +81,11 @@ export const DefendantInfo: FC<PropsWithChildren<DefendantInfoProps>> = (
         </span>
 
         {displayAppealExpirationInfo && (
-          <div>
+          <Box>
             <Text as="span">
               {getAppealExpirationInfo(defendant.verdictAppealDeadline ?? '')}
             </Text>
-          </div>
+          </Box>
         )}
 
         {defendant.defenderName && displayDefenderInfo && (
