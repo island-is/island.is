@@ -107,7 +107,7 @@ export const Header = ({ position }: Props) => {
                               iconType="outline"
                               colorScheme="white"
                               size="small"
-                              type="button"
+                              type="span"
                               variant="utility"
                               unfocusable
                             />
