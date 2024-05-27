@@ -18,7 +18,7 @@ export const pickMachineSubSection = buildSubSection({
       description: information.labels.pickMachine.description,
       children: [
         buildRadioField({
-          id: 'pickMachine.id',
+          id: 'machine.id',
           title: information.labels.pickMachine.title,
           condition: (_, externalData) => {
             const machines = getValueViaPath(

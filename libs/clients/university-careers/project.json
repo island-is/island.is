@@ -58,7 +58,7 @@
           "yarn openapi-generator -o libs/clients/university-careers/src/lib/clients/iceland-university-of-the-arts/gen/fetch -i libs/clients/university-careers/src/lib/clients/iceland-university-of-the-arts/clientConfig.yaml"
         ]
       },
-      "outputs": ["{projectRoot}/gen/fetch"]
+      "outputs": ["{projectRoot}/**/gen/fetch"]
     }
   },
   "tags": ["lib:client", "scope:client"]

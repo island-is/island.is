@@ -1,25 +1,33 @@
-import { IsNotEmpty, IsOptional, IsString, IsUUID } from 'class-validator'
+import {
+  IsEnum,
+  IsNotEmpty,
+  IsOptional,
+  IsString,
+  IsUUID,
+} from 'class-validator'
 
 import { ApiProperty, ApiPropertyOptional } from '@nestjs/swagger'
 
+import { EventType, UserRole } from '@island.is/judicial-system/types'
+
 export class CreateEventLogDto {
   @IsNotEmpty()
-  @IsString()
-  @ApiProperty()
-  readonly eventType!: string
+  @IsEnum(EventType)
+  @ApiProperty({ enum: EventType })
+  readonly eventType!: EventType
 
   @IsOptional()
   @IsUUID()
-  @ApiPropertyOptional()
+  @ApiPropertyOptional({ type: String })
   readonly caseId?: string
 
   @IsOptional()
   @IsString()
-  @ApiPropertyOptional()
+  @ApiPropertyOptional({ type: String })
   readonly nationalId?: string
 
   @IsOptional()
-  @IsString()
-  @ApiPropertyOptional()
-  readonly userRole?: string
+  @IsEnum(UserRole)
+  @ApiPropertyOptional({ enum: UserRole })
+  readonly userRole?: UserRole
 }

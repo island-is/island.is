@@ -5,11 +5,6 @@ import {
   ScopesGuard,
 } from '@island.is/auth-nest-tools'
 import { Audit } from '@island.is/nest/audit'
-import {
-  FeatureFlag,
-  FeatureFlagGuard,
-  Features,
-} from '@island.is/nest/feature-flags'
 import type { User } from '@island.is/auth-nest-tools'
 import { Inject, UseGuards } from '@nestjs/common'
 import { Args, Query, Resolver } from '@nestjs/graphql'
@@ -29,9 +24,7 @@ import { ConfigType } from '@nestjs/config'
 import { CopaymentStatus } from './models/copaymentStatus.model'
 
 @Resolver()
-@UseGuards(IdsUserGuard, ScopesGuard, FeatureFlagGuard)
-@FeatureFlag(Features.servicePortalHealthRightsModule)
-@FeatureFlag(Features.servicePortalHealthPaymentPages)
+@UseGuards(IdsUserGuard, ScopesGuard)
 @Audit({ namespace: '@island.is/api/rights-portal/payment' })
 export class PaymentResolver {
   constructor(
