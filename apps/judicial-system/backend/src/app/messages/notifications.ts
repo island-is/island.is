@@ -267,16 +267,16 @@ export const notifications = {
         'Notaður sem nafn á þingbókarviðhengi í pósti til hagaðila vegna undirritunar úrskurðar',
     },
     prosecutorBodyS3: {
-      id: 'judicial.system.backend:notifications.signed_ruling.prosecutor_body_s3_v2',
+      id: 'judicial.system.backend:notifications.signed_ruling.prosecutor_body_s3_v3',
       defaultMessage:
-        'Dómari hefur {isModifyingRuling, select, true {leiðrétt} other {undirritað og staðfest}} úrskurð í máli {courtCaseNumber} hjá {courtName}.<br /><br />Skjöl málsins eru aðengileg á {linkStart}yfirlitssíðu málsins í Réttarvörslugátt{linkEnd}.',
+        'Dómari hefur {isModifyingRuling, select, true {leiðrétt} other {undirritað og staðfest}} úrskurð í máli {courtCaseNumber} hjá {courtName}.<br /><br />Skjöl málsins eru aðgengileg á {linkStart}yfirlitssíðu málsins í Réttarvörslugátt{linkEnd}.',
       description:
         'Notaður sem texti í pósti til sækjanda vegna undirritunar úrskurðar ef tókst að vista úrskurð í AWS S3',
     },
     courtBody: {
-      id: 'judicial.system.backend:notifications.signed_ruling.court_body',
+      id: 'judicial.system.backend:notifications.signed_ruling.court_body_v1',
       defaultMessage:
-        'Ekki tókst að vista þingbók og/eða úrskurð í máli {courtCaseNumber} í Auði.<br /><br />Skjöl málsins eru aðengileg á {linkStart}yfirlitssíðu málsins í Réttarvörslugátt{linkEnd}.',
+        'Ekki tókst að vista þingbók og/eða úrskurð í máli {courtCaseNumber} í Auði.<br /><br />Skjöl málsins eru aðgengileg á {linkStart}yfirlitssíðu málsins í Réttarvörslugátt{linkEnd}.',
       description:
         'Notaður sem texti í pósti til dómara og dómritara vegna undirritunar úrskurðar ef ekki tókst að vista þingbók eða úrskurð í Auði',
     },
@@ -305,7 +305,7 @@ export const notifications = {
     prosecutorBody: {
       id: 'judicial.system.backend:notifications.case_completed.prosecutor_body_v1',
       defaultMessage:
-        'Máli {courtCaseNumber} hjá {courtName} hefur verið lokið.<br /><br />Niðurstaða: {caseIndictmentRulingDecision}<br /><br />Skjöl málsins eru aðengileg á {linkStart}yfirlitssíðu málsins í Réttarvörslugátt{linkEnd}.',
+        'Máli {courtCaseNumber} hjá {courtName} hefur verið lokið.<br /><br />Niðurstaða: {caseIndictmentRulingDecision}<br /><br />Skjöl málsins eru aðgengileg á {linkStart}yfirlitssíðu málsins í Réttarvörslugátt{linkEnd}.',
       description:
         'Notaður sem texti í pósti til sækjanda vegna staðfests dóms',
     },
