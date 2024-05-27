@@ -5,6 +5,7 @@ import { HolarUniversityCareerClientProvider } from './clients/holar-university/
 import { UniversityOfAkureyriCareerClientProvider } from './clients/university-of-akureyri/universityOfAkureyriCareerClient.provider'
 import { UniversityCareersClientService } from './universityCareers.service'
 import { UniversityOfIcelandCareerClientProvider } from './clients/university-of-iceland/universityOfIcelandCareerClient.provider'
+import { IcelandUniversityOfTheArtsCareerClientProvider } from './clients/iceland-university-of-the-arts/icelandUniversityOfTheArtsCareerClient.provider'
 
 @Module({
   providers: [
@@ -13,6 +14,7 @@ import { UniversityOfIcelandCareerClientProvider } from './clients/university-of
     HolarUniversityCareerClientProvider,
     UniversityOfAkureyriCareerClientProvider,
     UniversityOfIcelandCareerClientProvider,
+    IcelandUniversityOfTheArtsCareerClientProvider,
     UniversityCareersClientService,
   ],
   exports: [UniversityCareersClientService],
