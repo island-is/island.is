@@ -7,7 +7,6 @@ import { Button } from '../Button/Button'
 import { Tag } from '../Tag/Tag'
 import { Text } from '../Text/Text'
 import { Tooltip } from '../Tooltip/Tooltip'
-import { Inline } from '../Inline/Inline'
 import * as styles from './ActionCard.css'
 import { Hidden } from '../Hidden/Hidden'
 import { Icon } from '../IconRC/Icon'
@@ -62,12 +61,14 @@ export const ActionCard: React.FC<React.PropsWithChildren<ActionCardProps>> = ({
   const bgr = backgroundMap[backgroundColor]
   const color = colorMap[backgroundColor]
 
+  const hasEyebrowElements = Boolean(date || eyebrow)
+
   const renderAvatar = () => {
-    if (!avatar) {
+    if (!avatar || !heading) {
       return null
     }
 
-    return heading ? (
+    return (
       <Box
         display="flex"
         justifyContent="center"
@@ -82,16 +83,18 @@ export const ActionCard: React.FC<React.PropsWithChildren<ActionCardProps>> = ({
           {getTitleAbbreviation(heading)}
         </Text>
       </Box>
-    ) : null
+    )
   }
 
   const renderDisabled = () => {
-    const { label, message } = unavailable
+    if (!unavailable?.active) {
+      return null
+    }
 
     return (
       <Box display="flex">
-        <Text variant="small">{label}&nbsp;</Text>
-        <Tooltip placement="top" as="button" text={message} />
+        <Text variant="small">{unavailable.label}&nbsp;</Text>
+        <Tooltip placement="top" as="button" text={unavailable.message} />
       </Box>
     )
   }
@@ -107,16 +110,16 @@ export const ActionCard: React.FC<React.PropsWithChildren<ActionCardProps>> = ({
         display="flex"
         flexDirection="row"
         justifyContent={eyebrow ? 'spaceBetween' : 'flexEnd'}
-        marginBottom={[0, 1]}
       >
         <Text variant="eyebrow" color="purple400">
           {eyebrow}
         </Text>
 
-        {renderTag()}
+        {/* {renderTag()} */}
       </Box>
     )
   }
+
   const renderDate = () => {
     if (!date) {
       return null
@@ -128,7 +131,7 @@ export const ActionCard: React.FC<React.PropsWithChildren<ActionCardProps>> = ({
         display="flex"
         flexDirection="row"
         justifyContent={date ? 'spaceBetween' : 'flexEnd'}
-        marginBottom={[0, 2]}
+        // marginBottom={[0, 2]}
       >
         <Box
           display="flex"
@@ -143,9 +146,9 @@ export const ActionCard: React.FC<React.PropsWithChildren<ActionCardProps>> = ({
             <Text variant="small">{date}</Text>
           </Box>
         </Box>
-        <Inline alignY="center" space={1}>
+        {/* <Inline alignY="center" space={1}>
           {!eyebrow && renderTag()}
-        </Inline>
+        </Inline> */}
       </Box>
     )
   }
@@ -164,32 +167,61 @@ export const ActionCard: React.FC<React.PropsWithChildren<ActionCardProps>> = ({
     return tag.renderTag ? tag.renderTag(tagEl) : tagEl
   }
 
-  const renderDefault = () => {
-    const hasCTA = !!cta.label
+  const renderCTA = () => {
+    if (!cta?.label || unavailable?.active) {
+      return null
+    }
 
     return (
-      hasCTA && (
-        <Box
-          paddingTop={tag.label ? 'gutter' : 0}
-          display="flex"
-          justifyContent={['flexStart', 'flexEnd']}
-          alignItems="center"
-          flexDirection="row"
-        >
-          <Box marginLeft={[0, 3]}>
-            <Button
-              {...(cta.buttonType ?? { variant: cta.variant })}
-              size="small"
-              onClick={cta.onClick}
-              disabled={cta.disabled}
-              icon={cta.icon}
-              iconType={cta.iconType}
-            >
-              {cta.label}
-            </Button>
-          </Box>
+      <Box
+        display="flex"
+        justifyContent={['flexStart', 'flexEnd']}
+        alignItems="center"
+        flexDirection="row"
+        marginTop={tag?.label ? 'auto' : 0}
+      >
+        <Box>
+          <Button
+            {...(cta.buttonType ?? { variant: cta.variant })}
+            size={cta.size ?? 'small'}
+            onClick={cta.onClick}
+            disabled={cta.disabled}
+            icon={cta.icon}
+            iconType={cta.iconType}
+          >
+            {cta.label}
+          </Button>
         </Box>
-      )
+      </Box>
+    )
+  }
+
+  const renderProgressMeter = () => {
+    if (!progressMeter) {
+      return null
+    }
+
+    return (
+      <Box marginTop={2}>
+        <ProgressMeter
+          progress={
+            Number(
+              (
+                progressMeter.currentProgress / progressMeter.maxProgress
+              ).toFixed(1),
+            ) < 1
+              ? Number(
+                  (
+                    progressMeter.currentProgress / progressMeter.maxProgress
+                  ).toFixed(1),
+                )
+              : 1
+          }
+          withLabel={progressMeter.withLabel}
+          labelMin={progressMeter.currentProgress}
+          labelMax={progressMeter.maxProgress}
+        />
+      </Box>
     )
   }
 
@@ -212,15 +244,30 @@ export const ActionCard: React.FC<React.PropsWithChildren<ActionCardProps>> = ({
       paddingY={3}
       background={bgr}
     >
-      {renderEyebrow()}
+      {hasEyebrowElements ? ( // The box box
+        <Box display="flex" marginBottom={1}>
+          <Box
+            display="flex"
+            alignItems="center"
+            flexGrow={1}
+            columnGap={[1, 2]}
+          >
+            {renderDate()}
+            {renderEyebrow()}
+          </Box>
 
-      {renderDate()}
+          {renderTag()}
+        </Box>
+      ) : null}
+
       <Box
+        // The left content box
         alignItems={['flexStart', 'center']}
         display="flex"
         flexDirection={['column', 'row']}
       >
         {renderAvatar()}
+
         <Box flexDirection="row" width="full">
           {heading && (
             <Box
@@ -232,9 +279,9 @@ export const ActionCard: React.FC<React.PropsWithChildren<ActionCardProps>> = ({
               <Text variant={headingVariant} color={color}>
                 {heading}
               </Text>
-              <Hidden above="xs">
-                <Box>{!date && !eyebrow && renderTag()}</Box>
-              </Hidden>
+              {hasEyebrowElements ? null : (
+                <Hidden above="xs">{renderTag()}</Hidden>
+              )}
             </Box>
           )}
 
@@ -243,43 +290,30 @@ export const ActionCard: React.FC<React.PropsWithChildren<ActionCardProps>> = ({
               {text}
             </Text>
           )}
+
+          {renderProgressMeter()}
         </Box>
+
         <Box
+          // The right content box
           display="flex"
           alignItems={['flexStart', 'flexEnd']}
           flexDirection="column"
           flexShrink={0}
-          marginTop={[1, 'auto']}
-          marginBottom={[0, 'auto']}
-          marginLeft={[0, 'auto']}
+          marginTop={[2, 0]}
+          marginLeft={[0, 3]}
           className={styles.button}
+          justifyContent="center"
         >
-          <Hidden below="sm">{!date && !eyebrow && renderTag()}</Hidden>
-          {unavailable.active ? renderDisabled() : renderDefault()}
+          {hasEyebrowElements || !tag?.label ? null : (
+            <Box display={['none', 'block']} marginBottom="auto">
+              {renderTag()}
+            </Box>
+          )}
+
+          {unavailable.active ? renderDisabled() : renderCTA()}
         </Box>
       </Box>
-      {progressMeter && (
-        <Box marginTop={2}>
-          <ProgressMeter
-            progress={
-              Number(
-                (
-                  progressMeter.currentProgress / progressMeter.maxProgress
-                ).toFixed(1),
-              ) < 1
-                ? Number(
-                    (
-                      progressMeter.currentProgress / progressMeter.maxProgress
-                    ).toFixed(1),
-                  )
-                : 1
-            }
-            withLabel={progressMeter.withLabel}
-            labelMin={progressMeter.currentProgress}
-            labelMax={progressMeter.maxProgress}
-          />
-        </Box>
-      )}
     </Box>
   )
 }
