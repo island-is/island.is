@@ -138,8 +138,11 @@ export const getIndictmentInfo = (
   return indictmentInfo
 }
 
-const getDefendantsInfo = (defendants: Defendant[] | undefined) => {
-  if (!defendants) {
+const getDefendantsInfo = (
+  defendants: Defendant[] | undefined,
+  caseType?: CaseType,
+) => {
+  if (!defendants || !isIndictmentCase(caseType)) {
     return
   }
 
@@ -165,7 +168,7 @@ export const transformCase = (theCase: Case): Case => {
     theCase.type,
     theCase.defendants,
   )
-  const defendants = getDefendantsInfo(theCase.defendants)
+  const defendants = getDefendantsInfo(theCase.defendants, theCase.type)
 
   return {
     ...theCase,
