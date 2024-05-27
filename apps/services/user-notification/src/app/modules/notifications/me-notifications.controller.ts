@@ -11,7 +11,7 @@ import {
 } from '@nestjs/common'
 import { ApiSecurity, ApiTags } from '@nestjs/swagger'
 
-import { NotificationsScope } from '@island.is/auth/scopes'
+import { DocumentsScope } from '@island.is/auth/scopes'
 import { NotificationsService } from './notifications.service'
 import {
   CurrentUser,
@@ -33,8 +33,8 @@ import {
 import { Documentation } from '@island.is/nest/swagger'
 
 @UseGuards(IdsUserGuard, ScopesGuard)
-@Scopes(NotificationsScope.read)
-@ApiSecurity('oauth2', [NotificationsScope.read])
+@Scopes(DocumentsScope.main)
+@ApiSecurity('oauth2', [DocumentsScope.main])
 @ApiTags('user-notification')
 @Controller({
   path: 'me/notifications',
@@ -91,8 +91,6 @@ export class MeNotificationsController {
   }
 
   @Post('/mark-all-as-seen')
-  @Scopes(NotificationsScope.write)
-  @ApiSecurity('oauth2', [NotificationsScope.write])
   @Documentation({
     summary: 'Updates all of  current user notifications as seen',
     response: { status: HttpStatus.NO_CONTENT },
@@ -102,8 +100,6 @@ export class MeNotificationsController {
   }
 
   @Post('/mark-all-as-read')
-  @Scopes(NotificationsScope.write)
-  @ApiSecurity('oauth2', [NotificationsScope.write])
   @Documentation({
     summary: 'Updates all of  current user notifications as read',
     response: { status: HttpStatus.NO_CONTENT },
@@ -117,8 +113,6 @@ export class MeNotificationsController {
     response: { status: HttpStatus.OK, type: RenderedNotificationDto },
   })
   @Patch(':id')
-  @Scopes(NotificationsScope.write)
-  @ApiSecurity('oauth2', [NotificationsScope.write])
   update(
     @CurrentUser() user: User,
     @Param('id') id: number,

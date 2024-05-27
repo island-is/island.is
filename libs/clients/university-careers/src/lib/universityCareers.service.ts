@@ -13,6 +13,10 @@ import {
   HolarFerillLocale,
   HolarLocale,
   HolarTranscriptLocale,
+  LHIApi,
+  LHIFerillLocale,
+  LHILocale,
+  LHITranscriptLocale,
   LbhiApi,
   LbhiFerillLocale,
   LbhiLocale,
@@ -39,6 +43,7 @@ export class UniversityCareersClientService {
     private readonly holarApi: HolarApi,
     private readonly bifrostApi: BifrostApi,
     private readonly hiApi: HIApi,
+    private readonly lhiApi: LHIApi,
     @Inject(LOGGER_PROVIDER) private readonly logger: Logger,
   ) {}
 
@@ -87,6 +92,15 @@ export class UniversityCareersClientService {
             studentLocale: HILocale,
             studentTranscriptLocale: HITranscriptLocale,
             studentTrackLocale: HIFerillLocale,
+          },
+        }
+      case UniversityId.ICELAND_UNIVERSITY_OF_THE_ARTS:
+        return {
+          api: this.lhiApi.withMiddleware(new AuthMiddleware(user as Auth)),
+          locales: {
+            studentLocale: LHILocale,
+            studentTranscriptLocale: LHITranscriptLocale,
+            studentTrackLocale: LHIFerillLocale,
           },
         }
     }
