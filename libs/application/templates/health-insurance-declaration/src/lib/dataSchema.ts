@@ -7,6 +7,8 @@ export const HealthInsuranceDeclarationSchema = z.object({
   approveExternalData: z.boolean().refine((v) => v),
   applicant: applicantInformationSchema(),
   isHealthInsured: z.boolean(),
+  hasSpouse: z.boolean(),
+  hasChildren: z.boolean(),
   studentOrTouristRadioFieldTourist: z.enum([
     ApplicantType.STUDENT,
     ApplicantType.TOURIST,
