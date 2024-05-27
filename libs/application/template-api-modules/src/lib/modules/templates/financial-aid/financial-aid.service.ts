@@ -82,14 +82,15 @@ export class FinancialAidService extends BaseTemplateApiService {
           externalData.currentApplication.data.currentApplicationId,
       }
     }
-
-    const children = answers.childrenSchoolInfo?.map((child) => {
-      return {
-        name: child.fullName,
-        nationalId: child.nationalId,
-        school: child.school,
-      }
-    })
+    const children = answers.childrenSchoolInfo
+      ? answers.childrenSchoolInfo.map((child) => {
+          return {
+            name: child.fullName,
+            nationalId: child.nationalId,
+            school: child.school,
+          }
+        })
+      : []
 
     const formatFiles = (files: ApplicationAnswerFile[], type: FileType) => {
       if (!files || files.length <= 0) {
@@ -177,6 +178,7 @@ export class FinancialAidService extends BaseTemplateApiService {
       state: ApplicationState.NEW,
       files: files,
       children: children,
+      childrenComment: answers.childrenComment,
       spouseNationalId:
         externalData.nationalRegistrySpouse.data?.nationalId ||
         answers.relationshipStatus?.spouseNationalId,
