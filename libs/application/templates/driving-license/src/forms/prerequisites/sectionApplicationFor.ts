@@ -29,7 +29,7 @@ export const sectionApplicationFor = (allowBELicense = false) =>
                 'currentLicense.data',
               ) ?? { currentLicense: null }
 
-              const { categories } = getValueViaPath<DrivingLicense>(
+              let { categories } = getValueViaPath<DrivingLicense>(
                 app.externalData,
                 'currentLicense.data',
               ) ?? { categories: null }
@@ -40,6 +40,8 @@ export const sectionApplicationFor = (allowBELicense = false) =>
               )
               if (fakeData?.useFakeData === 'yes') {
                 currentLicense = fakeData.currentLicense ?? null
+                categories =
+                  fakeData.currentLicense === 'full' ? [{ nr: 'B' }] : null
               }
 
               let options = [
