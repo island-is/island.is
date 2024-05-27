@@ -47,22 +47,6 @@ export const Prerequisites: Form = buildForm({
           }),
           dataProviders: [
             buildDataProviderItem({
-              provider: IdentityApi,
-              title:
-                newPrimarySchoolMessages.pre.nationalRegistryInformationTitle,
-              subTitle:
-                newPrimarySchoolMessages.pre
-                  .nationalRegistryInformationSubTitle,
-            }),
-            buildDataProviderItem({
-              provider: ChildrenCustodyInformationApi,
-              title:
-                newPrimarySchoolMessages.pre.nationalRegistryInformationTitle,
-              subTitle:
-                newPrimarySchoolMessages.pre
-                  .nationalRegistryInformationSubTitle,
-            }),
-            buildDataProviderItem({
               provider: NationalRegistryUserApi,
               title:
                 newPrimarySchoolMessages.pre.nationalRegistryInformationTitle,
@@ -71,12 +55,15 @@ export const Prerequisites: Form = buildForm({
                   .nationalRegistryInformationSubTitle,
             }),
             buildDataProviderItem({
+              provider: ChildrenCustodyInformationApi,
+              title: '',
+              subTitle: '',
+            }),
+            buildDataProviderItem({
               provider: UserProfileApi,
-              title:
-                newPrimarySchoolMessages.pre.nationalRegistryInformationTitle,
+              title: newPrimarySchoolMessages.pre.userProfileInformationTitle,
               subTitle:
-                newPrimarySchoolMessages.pre
-                  .nationalRegistryInformationSubTitle,
+                newPrimarySchoolMessages.pre.userProfileInformationSubTitle,
             }),
           ],
         }),

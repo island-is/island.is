@@ -1,4 +1,5 @@
 import {
+  buildAlertMessageField,
   buildCustomField,
   buildDescriptionField,
   buildForm,
@@ -31,7 +32,7 @@ import {
   getOtherParent,
   getRelationOptionLabel,
   getRelationOptions,
-  isChildAtPrimarySchoolAge,
+  canApply,
 } from '../lib/newPrimarySchoolUtils'
 
 export const NewPrimarySchoolForm: Form = buildForm({
@@ -53,30 +54,48 @@ export const NewPrimarySchoolForm: Form = buildForm({
           title:
             newPrimarySchoolMessages.childrenNParents.childrenSubSectionTitle,
           children: [
-            buildRadioField({
-              id: 'childsNationalId',
-              title:
-                newPrimarySchoolMessages.childrenNParents
-                  .childrenSubSectionTitle,
-              options: (application) => {
-                const { children } = getApplicationExternalData(
-                  application.externalData,
-                )
+            buildMultiField({
+              id: 'childrenMultiField',
+              title: newPrimarySchoolMessages.childrenNParents.children,
+              description:
+                newPrimarySchoolMessages.childrenNParents.childrenDescription,
+              children: [
+                buildAlertMessageField({
+                  id: 'childrenAlertField',
+                  title:
+                    newPrimarySchoolMessages.childrenNParents.childrenInfoTitle,
+                  alertType: 'info',
+                  doesNotRequireAnswer: true,
+                  marginBottom: 5,
+                  message:
+                    newPrimarySchoolMessages.childrenNParents
+                      .childrenInfoDescription,
+                }),
+                buildRadioField({
+                  id: 'childNationalId',
+                  title:
+                    newPrimarySchoolMessages.childrenNParents
+                      .childrenRadioTitle,
+                  description: '',
+                  options: (application) => {
+                    const { children } = getApplicationExternalData(
+                      application.externalData,
+                    )
 
-                return children
-                  .filter((child) =>
-                    isChildAtPrimarySchoolAge(child.nationalId),
-                  )
-                  .map((child) => {
-                    return {
-                      value: child.nationalId,
-                      label: child.fullName,
-                      subLabel: formatKennitala(child.nationalId),
-                    }
-                  })
-              },
+                    return children
+                      .filter((child) => canApply(child))
+                      .map((child) => {
+                        return {
+                          value: child.nationalId,
+                          label: child.fullName,
+                          subLabel: formatKennitala(child.nationalId),
+                        }
+                      })
+                  },
 
-              required: true,
+                  required: true,
+                }),
+              ],
             }),
           ],
         }),
