@@ -178,6 +178,7 @@ export class FinancialAidService extends BaseTemplateApiService {
       state: ApplicationState.NEW,
       files: files,
       children: children,
+      childrenComment: answers.childrenComment,
       spouseNationalId:
         externalData.nationalRegistrySpouse.data?.nationalId ||
         answers.relationshipStatus?.spouseNationalId,
