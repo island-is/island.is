@@ -110,6 +110,16 @@ const nextConfig = {
         destination: '/en/help/iceland-health/:subSlug*',
         permanent: true,
       },
+      {
+        source: '/adstod/tryggingastofnun',
+        destination: 'https://minarsidur.tr.is/hafa-samband',
+        permanent: true,
+      },
+      {
+        source: '/en/help/social-insurance-administration',
+        destination: 'https://minarsidur.tr.is/hafa-samband',
+        permanent: true,
+      },
     ]
   },
   webpack: (config, { isServer }) => {
