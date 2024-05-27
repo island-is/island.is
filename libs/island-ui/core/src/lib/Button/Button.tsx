@@ -111,7 +111,7 @@ export const Button = forwardRef<
 )
 
 type ButtonIconProps = {
-  icon: ButtonProps['icon']
+  icon: NonNullable<ButtonProps['icon']>
   type: ButtonProps['iconType']
   transparent?: boolean
   preText?: boolean
@@ -119,8 +119,8 @@ type ButtonIconProps = {
 
 const ButtonIcon = ({ icon, type, transparent, preText }: ButtonIconProps) => (
   <Icon
-    icon={icon!}
-    type={type!}
+    icon={icon}
+    type={type}
     color={transparent ? 'transparent' : 'currentColor'}
     className={cn(
       styles.icon,

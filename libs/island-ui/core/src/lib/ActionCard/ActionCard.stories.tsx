@@ -100,7 +100,7 @@ Default.args = {
     outlined: true,
   },
   progressMeter: {
-    currentProgress: 86,
+    currentProgress: 75,
     maxProgress: 100,
     withLabel: false,
   },
@@ -116,10 +116,18 @@ export const SmallHeading = () => (
   />
 )
 
+export const WithLargerButton = () => (
+  <ActionCard
+    heading="Heading"
+    text="This is the text"
+    cta={{ label: 'Click me', size: 'large' }}
+  />
+)
+
 export const Unavailable = () => (
   <ActionCard
-    heading="Default"
-    text="This one is unavailable"
+    heading="Unavailable"
+    text="The CTA is replaced by the label"
     unavailable={{
       active: true,
       label: 'This is the unavailability label',
@@ -226,20 +234,6 @@ export const Destructive = () => (
   />
 )
 
-export const WithDeleteButton = () => (
-  <ActionCard
-    heading="Delete application in staging environment"
-    cta={{
-      label: 'Button',
-    }}
-    tag={{
-      label: 'Tag',
-      variant: 'blue',
-    }}
-    date='17. júní 1944'
-  />
-)
-
 export const WithRenderTag = () => (
   <ActionCard
     heading="With a custom tag"
@@ -251,7 +245,7 @@ export const WithRenderTag = () => (
       label: 'Tag',
       variant: 'blue',
       renderTag: (cld) => (
-        <>
+        <Box display="flex" alignItems="center" columnGap={1}>
           {cld}
           <DialogPrompt
             baseId="delete_dialog"
@@ -261,7 +255,7 @@ export const WithRenderTag = () => (
             disclosureElement={
               <Tag outlined variant="blue">
                 <VisuallyHidden>Delete</VisuallyHidden>
-                <Box display="flex" flexDirection="row" alignItems="center">
+                <Box display="flex" alignItems="center">
                   <Icon icon="trash" size="small" type="outline" />
                 </Box>
               </Tag>
@@ -272,7 +266,7 @@ export const WithRenderTag = () => (
             buttonTextConfirm="Delete"
             buttonTextCancel="Cancel"
           />
-        </>
+        </Box>
       )
     }}
     date='17. júní 1944'
