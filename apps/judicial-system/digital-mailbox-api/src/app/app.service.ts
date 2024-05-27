@@ -9,9 +9,13 @@ import {
 } from '@island.is/judicial-system/audit-trail'
 import { isCompletedCase } from '@island.is/judicial-system/types'
 
+<<<<<<< HEAD
 import { CaseResponse } from './models/case.response'
 import { CasesResponse } from './models/cases.response'
 import { InternalCaseResponse } from './models/internalCase.response'
+=======
+import { CasesResponse } from './models/cases.response'
+>>>>>>> e651c8b5ecfbed4eef19ec8ad1a7f56cc0afa434
 import { InternalCasesResponse } from './models/internalCases.response'
 import { digitalMailboxModuleConfig } from './app.config'
 
