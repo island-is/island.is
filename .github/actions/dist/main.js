@@ -26322,7 +26322,7 @@ var SimpleGit = class {
   const runner = new LocalRunner(new import_action.Octokit());
   let git = new SimpleGit(process.env.REPO_ROOT, process.env.SHELL);
   const diffWeight = (s) => s.length;
-  const rev = process.env.TEST_EVERYTHING ? "rebuild" : process.env.GITHUB_EVENT_NAME === "pull_request" ? yield findBestGoodRefPR(
+  const rev = process.env.GITHUB_EVENT_NAME === "pull_request" ? yield findBestGoodRefPR(
     diffWeight,
     git,
     runner,
