@@ -9,7 +9,7 @@ import {
   Hidden,
   Logo,
 } from '@island.is/island-ui/core'
-import { theme } from '@island.is/island-ui/theme'
+import { helperStyles, theme } from '@island.is/island-ui/theme'
 import { useLocale } from '@island.is/localization'
 import { PortalPageLoader } from '@island.is/portals/core'
 import { useFeatureFlagClient } from '@island.is/react/feature-flags'
@@ -109,7 +109,11 @@ export const Header = ({ position }: Props) => {
                               size="small"
                               type="button"
                               variant="utility"
+                              unfocusable
                             />
+                            <span className={helperStyles.srOnly}>
+                              {formatMessage(m.openDocuments)}
+                            </span>
                           </LinkResolver>
                         </Box>
                       </Hidden>

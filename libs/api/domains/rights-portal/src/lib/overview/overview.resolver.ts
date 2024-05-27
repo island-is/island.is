@@ -1,6 +1,6 @@
 import { Query, Resolver } from '@nestjs/graphql'
 import { ApiScope } from '@island.is/auth/scopes'
-import { Inject, UseGuards } from '@nestjs/common'
+import { UseGuards } from '@nestjs/common'
 import { Audit } from '@island.is/nest/audit'
 import {
   IdsUserGuard,
