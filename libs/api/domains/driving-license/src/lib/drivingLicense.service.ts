@@ -453,6 +453,23 @@ export class DrivingLicenseService {
     }
   }
 
+  async applyForBELicense(
+    nationalId: User['nationalId'],
+    auth: User['authorization'],
+    jurisdiction: number,
+  ): Promise<NewDrivingLicenseResult> {
+    const response = await this.drivingLicenseApi.postApplyForBELicense({
+      nationalIdApplicant: nationalId,
+      token: auth,
+      jurisdictionId: jurisdiction,
+    })
+
+    return {
+      success: response,
+      errorMessage: null,
+    }
+  }
+
   async getQualityPhotoUri(
     token: User['authorization'],
   ): Promise<string | null> {
