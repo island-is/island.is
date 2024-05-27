@@ -35,7 +35,7 @@ export const PaymentInfo: FC<
   const { formatMessage } = useLocale()
 
   // Get Payment Catalog
-  let paymentCatalog = application.externalData?.paymentDistrictCommissioners
+  const paymentCatalog = application.externalData?.paymentDistrictCommissioners
     ?.data as Array<Payment>
 
   // Get Charge Codes
