@@ -15,4 +15,4 @@ export const removeCountryCode = (phone: string) => {
 }
 
 export const formatIsk = (value: number): string =>
-  `${value.toLocaleString('is-IS')} kr.`;
+  `${value.toLocaleString('is-IS')} kr.`
