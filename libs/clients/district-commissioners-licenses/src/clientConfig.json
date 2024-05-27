@@ -2301,7 +2301,7 @@
         ]
       }
     },
-    "/api/RettindiFyrirIslandIs": {
+    "/api/RettindiFyrirIslandIs/{Kennitala}/{Locale}": {
       "get": {
         "tags": ["RettindiFyrirIslandIs"],
         "operationId": "RettindiFyrirIslandIs_Get",
@@ -2309,16 +2309,59 @@
           {
             "type": "string",
             "name": "Kennitala",
-            "in": "query",
-            "x-nullable": true
+            "in": "path",
+            "required": true,
+            "x-nullable": false
           },
           {
             "type": "string",
             "name": "Locale",
-            "in": "query",
-            "x-nullable": true
+            "in": "path",
+            "required": true,
+            "x-nullable": false
           }
         ],
+        "responses": {
+          "200": {
+            "x-nullable": false,
+            "description": "Success",
+            "schema": {
+              "$ref": "#/definitions/LeyfiListi"
+            }
+          },
+          "404": {
+            "x-nullable": false,
+            "description": "Not found",
+            "schema": {
+              "$ref": "#/definitions/LeyfiListi"
+            }
+          },
+          "400": {
+            "x-nullable": false,
+            "description": "Bad request",
+            "schema": {
+              "$ref": "#/definitions/LeyfiListi"
+            }
+          },
+          "401": {
+            "x-nullable": false,
+            "description": "Unauthorized",
+            "schema": {
+              "$ref": "#/definitions/LeyfiListi"
+            }
+          }
+        },
+        "security": [
+          {
+            "JWT Token": []
+          }
+        ]
+      }
+    },
+    "/api/RettindiFyrirIslandIs": {
+      "get": {
+        "tags": ["RettindiFyrirIslandIs"],
+        "operationId": "RettindiFyrirIslandIs_Get2",
         "responses": {
           "200": {
             "x-nullable": false,
@@ -2720,6 +2763,45 @@
         ]
       }
     },
+    "/api/Vedbokarvottord2": {
+      "post": {
+        "tags": ["Vedbokarvottord2"],
+        "operationId": "Vedbokarvottord2_Post",
+        "consumes": ["application/json", "text/json", "application/*+json"],
+        "parameters": [
+          {
+            "name": "skilabod",
+            "in": "body",
+            "required": true,
+            "schema": {
+              "$ref": "#/definitions/VedbandayfirlitMargirSkeyti"
+            },
+            "x-nullable": false
+          }
+        ],
+        "responses": {
+          "200": {
+            "x-nullable": false,
+            "description": "Success",
+            "schema": {
+              "$ref": "#/definitions/VedbandayfirlitSvarSkeyti"
+            }
+          },
+          "404": {
+            "x-nullable": false,
+            "description": "NotFound",
+            "schema": {
+              "$ref": "#/definitions/VedbandayfirlitSvarSkeyti"
+            }
+          }
+        },
+        "security": [
+          {
+            "JWT Token": []
+          }
+        ]
+      }
+    },
     "/api/Vedbokarvottord": {
       "post": {
         "tags": ["Vedbokarvottord"],
@@ -2749,6 +2831,51 @@
             "description": "NotFound",
             "schema": {
               "$ref": "#/definitions/VedbandayfirlitSvarSkeyti"
+            }
+          }
+        },
+        "security": [
+          {
+            "JWT Token": []
+          }
+        ]
+      }
+    },
+    "/api/Vedbokavottord2Regluverki": {
+      "post": {
+        "tags": ["Vedbokavottord2Regluverki"],
+        "operationId": "Vedbokavottord2Regluverki_Post",
+        "consumes": ["application/json", "text/json", "application/*+json"],
+        "parameters": [
+          {
+            "name": "skilabod",
+            "in": "body",
+            "required": true,
+            "schema": {
+              "$ref": "#/definitions/VedbandayfirlitMargirSkeyti"
+            },
+            "x-nullable": false
+          }
+        ],
+        "responses": {
+          "200": {
+            "x-nullable": false,
+            "description": "Success",
+            "schema": {
+              "type": "array",
+              "items": {
+                "$ref": "#/definitions/VedbandayfirlitReguverkiSvarSkeyti"
+              }
+            }
+          },
+          "404": {
+            "x-nullable": false,
+            "description": "NotFound",
+            "schema": {
+              "type": "array",
+              "items": {
+                "$ref": "#/definitions/VedbandayfirlitReguverkiSvarSkeyti"
+              }
             }
           }
         },
@@ -2838,6 +2965,70 @@
           "default": {
             "x-nullable": false,
             "description": "",
+            "schema": {
+              "$ref": "#/definitions/ProblemDetails"
+            }
+          }
+        },
+        "security": [
+          {
+            "JWT Token": []
+          }
+        ]
+      }
+    },
+    "/api/Verdskra/{Audkenni}/{TBR}/{AudkenniLykill}": {
+      "get": {
+        "tags": ["Verdskra"],
+        "operationId": "Verdskra_Get",
+        "parameters": [
+          {
+            "type": "string",
+            "name": "audkenni",
+            "in": "path",
+            "required": true,
+            "x-nullable": false
+          },
+          {
+            "type": "string",
+            "name": "TBR",
+            "in": "path",
+            "required": true,
+            "x-nullable": false
+          },
+          {
+            "type": "string",
+            "name": "AudkenniLykill",
+            "in": "path",
+            "required": true,
+            "x-nullable": false
+          }
+        ],
+        "responses": {
+          "200": {
+            "x-nullable": false,
+            "description": "Success",
+            "schema": {
+              "$ref": "#/definitions/VerdskraSkeyti"
+            }
+          },
+          "404": {
+            "x-nullable": false,
+            "description": "Not found",
+            "schema": {
+              "$ref": "#/definitions/ProblemDetails"
+            }
+          },
+          "400": {
+            "x-nullable": false,
+            "description": "Bad request",
+            "schema": {
+              "$ref": "#/definitions/ProblemDetails"
+            }
+          },
+          "401": {
+            "x-nullable": false,
+            "description": "Unauthorized",
             "schema": {
               "$ref": "#/definitions/ProblemDetails"
             }
@@ -5438,7 +5629,7 @@
         }
       }
     },
-    "VedbandayfirlitSkeyti": {
+    "VedbandayfirlitMargirSkeyti": {
       "type": "object",
       "required": ["tegundAndlags"],
       "properties": {
@@ -5446,7 +5637,10 @@
           "type": "string"
         },
         "fastanumer": {
-          "type": "string"
+          "type": "array",
+          "items": {
+            "type": "string"
+          }
         },
         "tegundAndlags": {
           "$ref": "#/definitions/VedbondTegundAndlags"
@@ -5465,6 +5659,21 @@
         "Oskrad"
       ],
       "enum": [0, 1, 2, 3, 4, 5]
+    },
+    "VedbandayfirlitSkeyti": {
+      "type": "object",
+      "required": ["tegundAndlags"],
+      "properties": {
+        "audkenni": {
+          "type": "string"
+        },
+        "fastanumer": {
+          "type": "string"
+        },
+        "tegundAndlags": {
+          "$ref": "#/definitions/VedbondTegundAndlags"
+        }
+      }
     },
     "VedbandayfirlitReguverkiSvarSkeyti": {
       "type": "object",
@@ -5511,6 +5720,20 @@
         },
         "kennitala": {
           "type": "string"
+        }
+      }
+    },
+    "VerdskraSkeyti": {
+      "type": "object",
+      "required": ["upphaeð", "gildirFra"],
+      "properties": {
+        "upphaeð": {
+          "type": "number",
+          "format": "decimal"
+        },
+        "gildirFra": {
+          "type": "string",
+          "format": "date-time"
         }
       }
     }
