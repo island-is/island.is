@@ -251,7 +251,6 @@ export const DocumentLine: FC<Props> = ({
                 {documentLine.subject}
               </Text>
             </button>
-            {isImportant && <ImportantTag />}
 
             {(hasFocusOrHover || isBookmarked || isArchived) &&
               !postLoading &&
@@ -286,6 +285,8 @@ export const DocumentLine: FC<Props> = ({
                   }
                 />
               )}
+            {isImportant && <ImportantTag />}
+
             {(postLoading || fileLoading) && (
               <Box display="flex" alignItems="center">
                 <LoadingDots single />
