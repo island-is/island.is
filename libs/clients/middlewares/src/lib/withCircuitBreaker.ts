@@ -34,6 +34,7 @@ export function withCircuitBreaker({
 
     ...opossum,
     errorFilter,
+    enabled: false,
   })
 
   breaker.on('open', () =>

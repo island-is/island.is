@@ -11,6 +11,7 @@ import { createRoutes } from '../lib/routes'
 import { environment } from '../environments'
 import * as styles from './App.css'
 
+// DEPLOYME
 export const App = () => (
   <div className={styles.page}>
     <ApolloProvider client={client}>
