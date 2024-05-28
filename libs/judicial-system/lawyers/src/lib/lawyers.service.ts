@@ -1,0 +1,57 @@
+import fetch from 'isomorphic-fetch'
+
+import { Inject, Injectable } from '@nestjs/common'
+
+import type { Logger } from '@island.is/logging'
+import { LOGGER_PROVIDER } from '@island.is/logging'
+import { type ConfigType } from '@island.is/nest/config'
+
+import { lawyersModuleConfig } from './lawyers.config'
+import { type Lawyer } from './lawyers.types'
+
+@Injectable()
+export class LawyersService {
+  constructor(
+    @Inject(lawyersModuleConfig.KEY)
+    private readonly config: ConfigType<typeof lawyersModuleConfig>,
+    @Inject(LOGGER_PROVIDER)
+    private readonly logger: Logger,
+  ) {}
+
+  async getLawyers(): Promise<Lawyer[]> {
+    const response = await fetch(`${this.config.lawyerRegistryAPI}/lawyers`, {
+      headers: {
+        Authorization: `Basic  ${this.config.lawyerRegistryAPIKey}`,
+        Accept: 'application/json',
+      },
+    })
+
+    if (response.ok) {
+      return await response.json()
+    }
+
+    const reason = await response.text()
+    this.logger.info('Failed to get lawyers from lawyer registry:', reason)
+    throw new Error(reason)
+  }
+
+  async getLawyer(nationalId: string): Promise<Lawyer> {
+    const response = await fetch(
+      `${this.config.lawyerRegistryAPI}/lawyer/${nationalId}`,
+      {
+        headers: {
+          Authorization: `Basic ${this.config.lawyerRegistryAPIKey}`,
+          Accept: 'application/json',
+        },
+      },
+    )
+
+    if (response.ok) {
+      return await response.json()
+    }
+
+    const reason = await response.text()
+    this.logger.info('Failed to get lawyer from lawyer registry:', reason)
+    throw new Error(reason)
+  }
+}
