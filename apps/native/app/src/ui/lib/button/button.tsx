@@ -14,6 +14,7 @@ interface ButtonProps extends TouchableHighlightProps {
   icon?: React.ReactNode
   isTransparent?: boolean
   isOutlined?: boolean
+  isUtilityButton?: boolean
   textStyle?: TextStyle
   textProps?: TextProps
   iconStyle?: ImageStyle
@@ -29,8 +30,8 @@ const Host = styled.TouchableHighlight<HostProps>`
   padding: ${(props) =>
     `${props.theme.spacing.p3}px ${props.theme.spacing.p4}px`};
   background-color: ${dynamicColor<HostProps>(
-    ({ theme, disabled, isTransparent, isOutlined }) =>
-      isTransparent || isOutlined
+    ({ theme, disabled, isTransparent, isOutlined, isUtilityButton }) =>
+      isTransparent || isOutlined || isUtilityButton
         ? 'transparent'
         : {
             dark: disabled ? theme.shades.dark.shade200 : theme.color.blue400,
@@ -38,17 +39,23 @@ const Host = styled.TouchableHighlight<HostProps>`
           },
   )};
 
-  border-color: ${dynamicColor<HostProps>(({ theme, disabled, isOutlined }) =>
-    !isOutlined
-      ? 'transparent'
-      : {
-          dark: disabled ? theme.shades.dark.shade200 : theme.color.blue400,
-          light: disabled ? theme.color.dark200 : theme.color.blue400,
-        },
+  border-color: ${dynamicColor<HostProps>(
+    ({ theme, disabled, isOutlined, isUtilityButton }) =>
+      !isOutlined
+        ? 'transparent'
+        : isUtilityButton
+        ? {
+            dark: '#CCDFFF55',
+            light: theme.color.blue200,
+          }
+        : {
+            dark: disabled ? theme.shades.dark.shade200 : theme.color.blue400,
+            light: disabled ? theme.color.dark200 : theme.color.blue400,
+          },
   )};
 
   border-radius: ${(props) => props.theme.border.radius.large};
-  min-width: 192px;
+  min-width: ${(props) => (props.isUtilityButton ? 0 : '192px')};
   ${(props) =>
     props.isOutlined &&
     `
@@ -61,6 +68,7 @@ const Host = styled.TouchableHighlight<HostProps>`
 const Text = styled.Text<{
   isTransparent?: boolean
   isOutlined?: boolean
+  isUtilityButton?: boolean
   disabled?: boolean
 }>`
   ${font({
@@ -68,11 +76,17 @@ const Text = styled.Text<{
     color: (props) =>
       props.isTransparent && props.disabled
         ? props.theme.color.dark200
+        : props.isUtilityButton
+        ? {
+            light: props.theme.color.dark400,
+            dark: props.theme.color.white,
+          }
         : props.isTransparent || props.isOutlined
         ? props.theme.color.blue400
         : props.theme.color.white,
   })}
-  text-align: center;
+  font-size: ${(props) => (props.isUtilityButton ? '12px' : '16px')};
+  text-align: ${(props) => (props.isUtilityButton ? 'left' : 'center')};
 `
 
 const Icon = styled.Image`
@@ -85,6 +99,7 @@ export function Button({
   title,
   isTransparent,
   isOutlined,
+  isUtilityButton,
   icon,
   textStyle,
   textProps,
@@ -95,10 +110,13 @@ export function Button({
   return (
     <Host
       underlayColor={
-        isTransparent || isOutlined ? theme.shade.shade100 : theme.color.blue600
+        isTransparent || isOutlined || isUtilityButton
+          ? theme.shade.shade100
+          : theme.color.blue600
       }
       isTransparent={isTransparent}
       isOutlined={isOutlined}
+      isUtilityButton={isUtilityButton}
       {...rest}
     >
       <>
@@ -106,6 +124,7 @@ export function Button({
           {...textProps}
           isTransparent={isTransparent}
           isOutlined={isOutlined}
+          isUtilityButton={isUtilityButton}
           disabled={rest.disabled}
           style={textStyle}
         >
