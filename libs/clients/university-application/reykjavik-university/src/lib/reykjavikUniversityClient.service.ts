@@ -72,7 +72,7 @@ export class ReykjavikUniversityApplicationClient {
           allowThirdLevelQualification: false, //TODO missing in api
           modeOfDelivery:
             program.modeOfDelivery?.map((m) => {
-                return mapStringToEnum(m, ModeOfDelivery)
+              return mapStringToEnum(m, ModeOfDelivery)
             }) || [],
           extraApplicationFields: program.extraApplicationFields?.map(
             (field) => ({
