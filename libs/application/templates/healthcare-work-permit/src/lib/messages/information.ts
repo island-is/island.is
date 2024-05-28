@@ -47,6 +47,31 @@ export const information = {
           'Vinsamlega sendið póst á starfsleyfi@landlaeknir.is ef frekari upplýsingar óskast',
         description: 'Select work permit restriction alert message',
       },
+      restrictionGraduationDate: {
+        id: 'hwp.application:information.labels.selectWorkPermit.restrictionGraduationDate',
+        defaultMessage:
+          'Prófgráða er of gömul. Ekki er hægt að veita starfsleyfi',
+        description:
+          'Select work permit restriction message, graduation date too old',
+      },
+      restrictionFoundationMissing: {
+        id: 'hwp.application:information.labels.selectWorkPermit.restrictionFoundationMissing',
+        defaultMessage: 'Ekki fannst grunnnám',
+        description:
+          'Select work permit restriction message, graduation date too old',
+      },
+      restrictionDataError: {
+        id: 'hwp.application:information.labels.selectWorkPermit.restrictionDataError',
+        defaultMessage: 'Villa í gögnum, engin dagsetning fannst',
+        description:
+          'Select work permit restriction message, graduation date too old',
+      },
+      restrictionAlreadyHasLicense: {
+        id: 'hwp.application:information.labels.selectWorkPermit.restrictionAlreadyHasLicense',
+        defaultMessage: 'Þegar útgefið',
+        description:
+          'Select work permit restriction message, user already has this license',
+      },
       infoMessage: {
         id: 'hwp.application:information.labels.selectWorkPermit.infoMessage',
         defaultMessage:

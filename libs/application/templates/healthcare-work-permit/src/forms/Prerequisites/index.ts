@@ -6,12 +6,7 @@ import {
   buildSubmitField,
   coreMessages,
 } from '@island.is/application/core'
-import {
-  DefaultEvents,
-  Form,
-  FormModes,
-  NationalRegistryUserApi,
-} from '@island.is/application/types'
+import { DefaultEvents, Form, FormModes } from '@island.is/application/types'
 import {
   confirmation,
   externalData,
@@ -23,8 +18,10 @@ import {
   EmbaettiLandlaeknisPaymentCatalogApi,
   HealtcareLicenesApi,
   UserProfileApi,
-  UniversityOfIcelandApi,
+  UniversityCareersApi,
   EducationInfoApi,
+  NationalRegistryUserApi,
+  ProcessPermitsApi,
 } from '../../dataProviders'
 
 export const Prerequisites: Form = buildForm({
@@ -68,17 +65,19 @@ export const Prerequisites: Form = buildForm({
               subTitle: externalData.userProfile.subTitle,
             }),
             buildDataProviderItem({
-              provider: HealtcareLicenesApi,
               title: externalData.healtcareLicenses.title,
               subTitle: externalData.healtcareLicenses.subTitle,
             }),
             buildDataProviderItem({
-              provider: UniversityOfIcelandApi,
               title: externalData.universityOfIceland.title,
               subTitle: externalData.universityOfIceland.subTitle,
             }),
             buildDataProviderItem({
               provider: EmbaettiLandlaeknisPaymentCatalogApi,
+              title: '',
+            }),
+            buildDataProviderItem({
+              provider: ProcessPermitsApi,
               title: '',
             }),
             buildDataProviderItem({

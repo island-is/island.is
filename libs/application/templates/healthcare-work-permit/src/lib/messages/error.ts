@@ -35,16 +35,16 @@ export const error = defineMessages({
   healthcareLicenseErrorTitle: {
     id: 'hlc.application:error.healthcareLicenseErrorTitle',
     defaultMessage:
-      'Ekki tóks að sækja gögn frá Landlækni, vinsamlegast prufaðu aftur seinna',
+      'Ekki tókst að sækja gögn frá Landlækni, vinsamlegast prufaðu aftur seinna',
     description:
-      'No response or faulty response when fetching info on education paths',
+      'No response or faulty response when fetching info on healthcare licenses',
   },
   healthcareLicenseErrorMessage: {
     id: 'hlc.application:error.healthcareLicenseErrorMessage',
     defaultMessage:
       'Ekki tóks að sækja gögn frá Landlækni, vinsamlegast prufaðu aftur seinna',
     description:
-      'No response or faulty response when fetching info on education paths',
+      'No response or faulty response when fetching healthcare licenses',
   },
   nationalRegistryOutsideEESErrorTitle: {
     id: 'hlc.application:error.nationalRegistryOutsideEESErrorTitle',
@@ -53,7 +53,30 @@ export const error = defineMessages({
   },
   nationalRegistryOutsideEESErrorMessage: {
     id: 'hlc.application:error.nationalRegistryOutsideEESErrorMessage',
+    defaultMessage: 'Þú ert ekki ríkisborgari innan EES',
+    description: 'You are not a citizen within EES',
+  },
+  nationalRegistryFetchErrorTitle: {
+    id: 'hlc.application:error.nationalRegistryFetchErrorTitle',
+    defaultMessage:
+      'Ekki tókst að sækja gögn frá þjóðskrá, vinsamlegast prufaðu aftur seinna',
+    description:
+      'No response or faulty response when fetching info on current user from nation registry',
+  },
+  nationalRegistryFetchErrorMessage: {
+    id: 'hlc.application:error.nationalRegistryFetchErrorMessage',
     defaultMessage: 'Lorem ipsum',
-    description: 'Lorem ipsum',
+    description:
+      'No response or faulty response when fetching info on current user from nation registry',
+  },
+  noPermitValidGraduationFoundTitle: {
+    id: 'hlc.application:error.noPermitValidGraduationFoundTitle',
+    defaultMessage: 'Ekki fundust brautskráningar sem gefa starfsleyfi',
+    description: 'No graduated programs found that are valid form work permit',
+  },
+  noPermitValidGraduationFoundMessage: {
+    id: 'hlc.application:error.noPermitValidGraduationFoundMessage',
+    defaultMessage: 'Ekki fundust brautskráningar sem gefa starfsleyfi',
+    description: 'No graduated programs found that are valid form work permit',
   },
 })

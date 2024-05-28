@@ -9,7 +9,6 @@ import {
   DefaultEvents,
   defineTemplateApi,
   InstitutionNationalIds,
-  NationalRegistryUserApi,
 } from '@island.is/application/types'
 import {
   EphemeralStateLifeCycle,
@@ -25,8 +24,10 @@ import {
   UserProfileApi,
   EmbaettiLandlaeknisPaymentCatalogApi,
   HealtcareLicenesApi,
-  UniversityOfIcelandApi,
+  UniversityCareersApi,
   EducationInfoApi,
+  NationalRegistryUserApi,
+  ProcessPermitsApi,
 } from '../dataProviders'
 import { buildPaymentState } from '@island.is/application/utils'
 import { HealthcareWorkPermitSchema } from './dataSchema'
@@ -85,9 +86,10 @@ const template: ApplicationTemplate<
                 NationalRegistryUserApi,
                 UserProfileApi,
                 EmbaettiLandlaeknisPaymentCatalogApi,
-                UniversityOfIcelandApi,
+                UniversityCareersApi,
                 HealtcareLicenesApi,
                 EducationInfoApi,
+                ProcessPermitsApi,
               ],
             },
           ],

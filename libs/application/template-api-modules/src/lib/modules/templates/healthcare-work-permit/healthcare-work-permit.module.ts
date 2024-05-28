@@ -11,7 +11,14 @@ import {
   NationalRegistryV3ClientConfig,
   NationalRegistryV3ClientModule,
 } from '@island.is/clients/national-registry-v3'
-import { UniversityCareersClientModule } from '@island.is/clients/university-careers'
+import {
+  AgriculturalUniversityOfIcelandCareerClientConfig,
+  BifrostUniversityCareerClientConfig,
+  HolarUniversityCareerClientConfig,
+  UniversityCareersClientModule,
+  UniversityOfAkureyriCareerClientConfig,
+  UniversityOfIcelandCareerClientConfig,
+} from '@island.is/clients/university-careers'
 
 export class HealthcareWorkPermitModule {
   static register(baseConfig: BaseTemplateAPIModuleConfig): DynamicModule {
@@ -21,10 +28,18 @@ export class HealthcareWorkPermitModule {
         SharedTemplateAPIModule.register(baseConfig),
         HealthDirectorateClientModule,
         NationalRegistryV3ClientModule,
-        // UniversityCareersClientModule,
+        UniversityCareersClientModule,
         ConfigModule.forRoot({
           isGlobal: true,
-          load: [HealthDirectorateClientConfig, NationalRegistryV3ClientConfig],
+          load: [
+            HealthDirectorateClientConfig,
+            NationalRegistryV3ClientConfig,
+            AgriculturalUniversityOfIcelandCareerClientConfig,
+            BifrostUniversityCareerClientConfig,
+            UniversityOfAkureyriCareerClientConfig,
+            UniversityOfIcelandCareerClientConfig,
+            HolarUniversityCareerClientConfig,
+          ],
         }),
       ],
       providers: [HealthcareWorkPermitService],

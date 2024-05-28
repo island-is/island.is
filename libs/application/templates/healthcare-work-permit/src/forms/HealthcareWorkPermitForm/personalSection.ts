@@ -30,7 +30,7 @@ export const PersonalSection = buildSection({
           readOnly: true,
           format: '######-####',
           defaultValue: (application: Application) =>
-            application.externalData?.nationalRegistry?.data?.nationalId,
+            application.externalData?.nationalRegistry?.data?.kennitala,
         }),
         buildTextField({
           id: 'userInformation.name',
@@ -39,7 +39,8 @@ export const PersonalSection = buildSection({
           width: 'half',
           readOnly: true,
           defaultValue: (application: Application) =>
-            application.externalData?.nationalRegistry?.data?.fullName,
+            application.externalData?.nationalRegistry?.data?.fulltNafn
+              ?.fulltNafn,
         }),
         buildTextField({
           id: 'userInformation.birthDate',
@@ -49,15 +50,26 @@ export const PersonalSection = buildSection({
           readOnly: true,
           defaultValue: (application: Application) =>
             formatDate(
-              application.externalData?.nationalRegistry?.data?.birthDate,
+              application.externalData?.nationalRegistry?.data?.faedingarstadur
+                ?.faedingarDagur,
             ),
+        }),
+        buildTextField({
+          id: 'userInformation.birthDate',
+          title: personal.labels.userInformation.citizenship,
+          backgroundColor: 'white',
+          width: 'half',
+          readOnly: true,
+          defaultValue: (application: Application) =>
+            application.externalData?.nationalRegistry?.data?.rikisfang
+              ?.rikisfangLand,
         }),
         buildTextField({
           id: 'userInformation.email',
           title: personal.labels.userInformation.email,
           width: 'half',
           variant: 'email',
-          required: true,
+          readOnly: true,
           defaultValue: (application: Application) =>
             application.externalData?.userProfile?.data?.email,
         }),
@@ -66,7 +78,7 @@ export const PersonalSection = buildSection({
           title: personal.labels.userInformation.phone,
           width: 'half',
           backgroundColor: 'blue',
-          required: true,
+          readOnly: true,
           defaultValue: (application: Application) =>
             application.externalData?.userProfile?.data?.mobilePhoneNumber,
         }),

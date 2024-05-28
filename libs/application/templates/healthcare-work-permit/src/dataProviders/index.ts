@@ -5,10 +5,7 @@ import {
 } from '@island.is/application/types'
 import { ApiActions } from '../shared'
 
-export {
-  NationalRegistryUserApi,
-  UserProfileApi,
-} from '@island.is/application/types'
+export { UserProfileApi } from '@island.is/application/types'
 
 export const EmbaettiLandlaeknisPaymentCatalogApi = PaymentCatalogApi.configure(
   {
@@ -24,12 +21,22 @@ export const HealtcareLicenesApi = defineTemplateApi({
   externalDataId: 'healthcareLicenses',
 })
 
-export const UniversityOfIcelandApi = defineTemplateApi({
+export const UniversityCareersApi = defineTemplateApi({
   action: ApiActions.getMyAcademicCareer,
-  externalDataId: 'universityOfIceland',
+  externalDataId: 'universityCareer',
+})
+
+export const ProcessPermitsApi = defineTemplateApi({
+  action: ApiActions.processPermits,
+  externalDataId: 'permitOptions',
 })
 
 export const EducationInfoApi = defineTemplateApi({
   action: ApiActions.getEducationInfo,
   externalDataId: 'educationInfo',
+})
+
+export const NationalRegistryUserApi = defineTemplateApi({
+  action: ApiActions.getNationalRegistryWithEESValidation,
+  externalDataId: 'nationalRegistry',
 })
