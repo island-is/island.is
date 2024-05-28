@@ -30,6 +30,7 @@ import {
   ArborgWorkpoint,
   Inna,
   OfficialJournalOfIceland,
+  OfficialJournalOfIcelandApplication,
   VehiclesMileage,
 } from '../../../../infra/src/dsl/xroad'
 
@@ -279,6 +280,7 @@ export const serviceSetup = (services: {
       WorkMachines,
       ArborgWorkpoint,
       OfficialJournalOfIceland,
+      OfficialJournalOfIcelandApplication,
     )
     .secrets({
       NOVA_URL: '/k8s/application-system-api/NOVA_URL',

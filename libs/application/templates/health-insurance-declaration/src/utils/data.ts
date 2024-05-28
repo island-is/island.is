@@ -79,6 +79,12 @@ export const getContinentsFromExternalData = (
   )
 }
 
+export const getCommentFromExternalData = (
+  externalData: ExternalData,
+): string => {
+  return getInsuranceStatementDataFromExternalData(externalData).comment ?? ''
+}
+
 export const getContinentsAsOption = (externalData: ExternalData): Option[] => {
   const continents = getContinentsFromExternalData(externalData)
   if (continents && continents.length) {
