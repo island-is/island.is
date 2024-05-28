@@ -37,6 +37,7 @@ query GetMachineByRegno($regno: String!, $rel: String!) {
     plate
     disabled
     supervisorName
+    paymentRequiredForOwnerChange
   }
 }
 `
