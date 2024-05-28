@@ -71,7 +71,7 @@ export type TableRepeaterItem = {
   placeholder?: StaticText
   options?: { label: StaticText; value: string }[]
   backgroundColor?: 'blue' | 'white'
-  width?: 'half' | 'full'
+  width?: 'half' | 'full' | 'third'
   required?: boolean
   condition?: (
     application: Application,

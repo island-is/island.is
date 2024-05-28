@@ -1,7 +1,6 @@
 import { coreMessages, formatText } from '@island.is/application/core'
 import {
   FieldBaseProps,
-  StaticText,
   TableRepeaterField,
 } from '@island.is/application/types'
 import {
@@ -215,7 +214,13 @@ export const TableRepeaterFormField: FC<Props> = ({
                     ...props
                   } = item
                   const isHalfColumn = component !== 'radio' && width === 'half'
-                  const span = isHalfColumn ? '1/2' : '1/1'
+                  const isThirdColumn =
+                    component !== 'radio' && width === 'third'
+                  const span = isHalfColumn
+                    ? '1/2'
+                    : isThirdColumn
+                    ? '1/3'
+                    : '1/1'
                   const Component = componentMapper[component]
                   const id = `${data.id}[${activeIndex}].${itemId}`
                   const activeValues =

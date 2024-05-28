@@ -48,6 +48,84 @@ export const incomePlanFormMessage: MessageDir = {
     },
   }),
 
+  incomePlan: defineMessages({
+    registerIncome: {
+      id: 'pp.application:register.income',
+      defaultMessage: 'Skráning tekna',
+      description: 'Registration of income',
+    },
+    addIncome: {
+      id: 'pp.application:add.income',
+      defaultMessage: 'Bæta við tekjum',
+      description: 'Add income',
+    },
+    saveIncome: {
+      id: 'pp.application:save.income',
+      defaultMessage: 'Vista nýjar tekjur',
+      description: 'Save new income',
+    },
+    removeIncome: {
+      id: 'pp.application:remove.income',
+      defaultMessage: 'Eyða tekjum',
+      description: 'Remove income',
+    },
+    incomeCategory: {
+      id: 'pp.application:income.category',
+      defaultMessage: 'Tekjuflokkur',
+      description: 'Income category',
+    },
+    selectIncomeCategory: {
+      id: 'pp.application:select.income.category',
+      defaultMessage: 'Veldu tekjuflokk',
+      description: 'Select income category',
+    },
+    incomeType: {
+      id: 'pp.application:income.type',
+      defaultMessage: 'Tekjutegund',
+      description: 'Income type',
+    },
+    selectIncomeType: {
+      id: 'pp.application:select.income.type',
+      defaultMessage: 'Veldu tekjutegund',
+      description: 'Select income type',
+    },
+    annualIncome: {
+      id: 'pp.application:annual.income',
+      defaultMessage: 'Árstekjur',
+      description: 'Annual income',
+    },
+    monthlyIncome: {
+      id: 'pp.application:yearly.income',
+      defaultMessage: 'Mánaðartekjur',
+      description: 'Monthly income',
+    },
+    incomePerYear: {
+      id: 'pp.application:income.per.year',
+      defaultMessage: 'Tekjur á ári',
+      description: 'Income per year',
+    },
+    equalIncomePerYear: {
+      id: 'pp.application:equal.income.per.year',
+      defaultMessage: 'Jafnar tekjur á ári',
+      description: 'Equal income per year',
+    },
+    unevenIncomePerYear: {
+      id: 'pp.application:uneven.income.per.year',
+      defaultMessage: 'Ójafnar tekjur á ári',
+      description: 'Uneven income per year',
+    },
+    currency: {
+      id: 'pp.application:currency',
+      defaultMessage: 'Gjaldmiðill',
+      description: 'Currency',
+    },
+    selectCurrency: {
+      id: 'pp.application:select.currency',
+      defaultMessage: 'Veldu gjaldmiðil',
+      description: 'Select a currency',
+    },
+  }),
+
   confirm: defineMessages({
     section: {
       id: 'ip.application:confirmation.section',

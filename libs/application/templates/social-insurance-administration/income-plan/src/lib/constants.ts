@@ -16,3 +16,8 @@ export enum States {
   DRAFT = 'draft',
   DONE = 'done',
 }
+
+export enum RatioType {
+  YEARLY = 'yearly',
+  MONTHLY = 'monthly',
+}

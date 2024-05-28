@@ -4,12 +4,14 @@ import {
   buildMultiField,
   buildSection,
   buildSubSection,
+  buildTableRepeaterField,
 } from '@island.is/application/core'
 import { Form, FormModes } from '@island.is/application/types'
 import { buildFormConclusionSection } from '@island.is/application/ui-forms'
 import Logo from '@island.is/application/templates/social-insurance-administration-core/assets/Logo'
 import { incomePlanFormMessage } from '../lib/messages'
 import { socialInsuranceAdministrationMessage } from '@island.is/application/templates/social-insurance-administration-core/lib/messages'
+import { RatioType, YES } from '../lib/constants'
 
 export const IncomePlanForm: Form = buildForm({
   id: 'IncomePlanDraft',
@@ -32,31 +34,321 @@ export const IncomePlanForm: Form = buildForm({
           children: [
             buildMultiField({
               id: 'instructionsSection',
-              title:
-                incomePlanFormMessage.info.instructionsTitle,
+              title: incomePlanFormMessage.info.instructionsTitle,
               children: [
                 buildDescriptionField({
                   id: 'instructions',
                   title: '',
-                  description: incomePlanFormMessage.info.instructionsDescription,
+                  description:
+                    incomePlanFormMessage.info.instructionsDescription,
                 }),
               ],
+            }),
+          ],
+        }),
+        buildSubSection({
+          id: 'incomePlan',
+          title: incomePlanFormMessage.info.section,
+          children: [
+            buildTableRepeaterField({
+              id: 'incomePlan.table',
+              title: incomePlanFormMessage.info.section,
+              description:
+                'Hér er tillaga að tekjuáætlun. Hér getur þú breytt upphæðum, fjarlægt tekjur og/eða bætt við tekjum sem ekki er búið að setja inn.',
+              formTitle: incomePlanFormMessage.incomePlan.registerIncome,
+              addItemButtonText: incomePlanFormMessage.incomePlan.addIncome,
+              saveItemButtonText: incomePlanFormMessage.incomePlan.saveIncome,
+              removeButtonTooltipText:
+                incomePlanFormMessage.incomePlan.removeIncome,
+              fields: {
+                incomeCategories: {
+                  component: 'select',
+                  label: incomePlanFormMessage.incomePlan.incomeCategory,
+                  placeholder:
+                    incomePlanFormMessage.incomePlan.selectIncomeCategory,
+                  displayInTable: false,
+                  width: 'half',
+                  isSearchable: true,
+                  options: Array(100)
+                    .fill(undefined)
+                    .map((_, idx, array) => ({
+                      value: `${array.length - idx}`,
+                      label: `${array.length - idx}%`,
+                    })),
+                },
+                incomeTypes: {
+                  component: 'select',
+                  label: incomePlanFormMessage.incomePlan.incomeType,
+                  placeholder:
+                    incomePlanFormMessage.incomePlan.selectIncomeType,
+                  width: 'half',
+                  isSearchable: true,
+                  options: Array(100)
+                    .fill(undefined)
+                    .map((_, idx, array) => ({
+                      value: `${array.length - idx}`,
+                      label: `${array.length - idx}%`,
+                    })),
+                },
+                income: {
+                  component: 'radio',
+                  displayInTable: false,
+                  largeButtons: false,
+                  options: [
+                    {
+                      value: RatioType.YEARLY,
+                      label: incomePlanFormMessage.incomePlan.annualIncome,
+                    },
+                    {
+                      value: RatioType.MONTHLY,
+                      label: incomePlanFormMessage.incomePlan.monthlyIncome,
+                    },
+                  ],
+                },
+                incomePerYear: {
+                  component: 'input',
+                  label: incomePlanFormMessage.incomePlan.incomePerYear,
+                  width: 'half',
+                  type: 'number',
+                  condition: (_, activeField) => {
+                    return activeField?.income === RatioType.YEARLY
+                  },
+                },
+                equalIncomePerYear: {
+                  component: 'input',
+                  label: incomePlanFormMessage.incomePlan.equalIncomePerYear,
+                  width: 'half',
+                  type: 'number',
+                  displayInTable: false,
+                  condition: (_, activeField) => {
+                    return activeField?.income === RatioType.MONTHLY
+                  },
+                },
+                currency: {
+                  component: 'select',
+                  label: incomePlanFormMessage.incomePlan.currency,
+                  placeholder: incomePlanFormMessage.incomePlan.selectCurrency,
+                  width: 'half',
+                  isSearchable: true,
+                  condition: (_, activeField) => {
+                    return (
+                      activeField?.income === RatioType.YEARLY ||
+                      activeField?.income === RatioType.MONTHLY
+                    )
+                  },
+                  options: Array(100)
+                    .fill(undefined)
+                    .map((_, idx, array) => ({
+                      value: `${array.length - idx}`,
+                      label: `${array.length - idx}%`,
+                    })),
+                },
+                annualIncome: {
+                  component: 'input',
+                  label: incomePlanFormMessage.incomePlan.annualIncome,
+                  width: 'half',
+                  type: 'number',
+                  displayInTable: false,
+                  condition: (_, activeField) => {
+                    return activeField?.income === RatioType.MONTHLY
+                  },
+                },
+                unevenIncomePerYear: {
+                  component: 'checkbox',
+                  large: false,
+                  options: [
+                    {
+                      value: YES,
+                      label:
+                        incomePlanFormMessage.incomePlan.unevenIncomePerYear,
+                    },
+                  ],
+                  backgroundColor: 'white',
+                  displayInTable: false,
+                  condition: (_, activeField) => {
+                    return activeField?.income === RatioType.MONTHLY
+                  },
+                },
+                january: {
+                  component: 'input',
+                  label: socialInsuranceAdministrationMessage.months.january,
+                  width: 'third',
+                  type: 'number',
+                  backgroundColor: 'white',
+                  displayInTable: false,
+                  condition: (_, activeField) => {
+                    return (
+                      activeField?.income === RatioType.MONTHLY &&
+                      activeField?.unevenIncomePerYear?.[0] === YES
+                    )
+                  },
+                },
+                february: {
+                  component: 'input',
+                  label: socialInsuranceAdministrationMessage.months.february,
+                  width: 'third',
+                  type: 'number',
+                  backgroundColor: 'white',
+                  displayInTable: false,
+                  condition: (_, activeField) => {
+                    return (
+                      activeField?.income === RatioType.MONTHLY &&
+                      activeField?.unevenIncomePerYear?.[0] === YES
+                    )
+                  },
+                },
+                march: {
+                  component: 'input',
+                  label: socialInsuranceAdministrationMessage.months.march,
+                  width: 'third',
+                  type: 'number',
+                  backgroundColor: 'white',
+                  displayInTable: false,
+                  condition: (_, activeField) => {
+                    return (
+                      activeField?.income === RatioType.MONTHLY &&
+                      activeField?.unevenIncomePerYear?.[0] === YES
+                    )
+                  },
+                },
+                april: {
+                  component: 'input',
+                  label: socialInsuranceAdministrationMessage.months.april,
+                  width: 'third',
+                  type: 'number',
+                  backgroundColor: 'white',
+                  displayInTable: false,
+                  condition: (_, activeField) => {
+                    return (
+                      activeField?.income === RatioType.MONTHLY &&
+                      activeField?.unevenIncomePerYear?.[0] === YES
+                    )
+                  },
+                },
+                may: {
+                  component: 'input',
+                  label: socialInsuranceAdministrationMessage.months.may,
+                  width: 'third',
+                  type: 'number',
+                  backgroundColor: 'white',
+                  displayInTable: false,
+                  condition: (_, activeField) => {
+                    return (
+                      activeField?.income === RatioType.MONTHLY &&
+                      activeField?.unevenIncomePerYear?.[0] === YES
+                    )
+                  },
+                },
+                june: {
+                  component: 'input',
+                  label: socialInsuranceAdministrationMessage.months.june,
+                  width: 'third',
+                  type: 'number',
+                  backgroundColor: 'white',
+                  displayInTable: false,
+                  condition: (_, activeField) => {
+                    return (
+                      activeField?.income === RatioType.MONTHLY &&
+                      activeField?.unevenIncomePerYear?.[0] === YES
+                    )
+                  },
+                },
+                july: {
+                  component: 'input',
+                  label: socialInsuranceAdministrationMessage.months.july,
+                  width: 'third',
+                  type: 'number',
+                  backgroundColor: 'white',
+                  displayInTable: false,
+                  condition: (_, activeField) => {
+                    return (
+                      activeField?.income === RatioType.MONTHLY &&
+                      activeField?.unevenIncomePerYear?.[0] === YES
+                    )
+                  },
+                },
+                august: {
+                  component: 'input',
+                  label: socialInsuranceAdministrationMessage.months.august,
+                  width: 'third',
+                  type: 'number',
+                  backgroundColor: 'white',
+                  displayInTable: false,
+                  condition: (_, activeField) => {
+                    return (
+                      activeField?.income === RatioType.MONTHLY &&
+                      activeField?.unevenIncomePerYear?.[0] === YES
+                    )
+                  },
+                },
+                september: {
+                  component: 'input',
+                  label: socialInsuranceAdministrationMessage.months.september,
+                  width: 'third',
+                  type: 'number',
+                  backgroundColor: 'white',
+                  displayInTable: false,
+                  condition: (_, activeField) => {
+                    return (
+                      activeField?.income === RatioType.MONTHLY &&
+                      activeField?.unevenIncomePerYear?.[0] === YES
+                    )
+                  },
+                },
+                october: {
+                  component: 'input',
+                  label: socialInsuranceAdministrationMessage.months.october,
+                  width: 'third',
+                  type: 'number',
+                  backgroundColor: 'white',
+                  displayInTable: false,
+                  condition: (_, activeField) => {
+                    return (
+                      activeField?.income === RatioType.MONTHLY &&
+                      activeField?.unevenIncomePerYear?.[0] === YES
+                    )
+                  },
+                },
+                november: {
+                  component: 'input',
+                  label: socialInsuranceAdministrationMessage.months.november,
+                  width: 'third',
+                  type: 'number',
+                  backgroundColor: 'white',
+                  displayInTable: false,
+                  condition: (_, activeField) => {
+                    return (
+                      activeField?.income === RatioType.MONTHLY &&
+                      activeField?.unevenIncomePerYear?.[0] === YES
+                    )
+                  },
+                },
+                desember: {
+                  component: 'input',
+                  label: socialInsuranceAdministrationMessage.months.desember,
+                  width: 'third',
+                  type: 'number',
+                  backgroundColor: 'white',
+                  displayInTable: false,
+                  condition: (_, activeField) => {
+                    return (
+                      activeField?.income === RatioType.MONTHLY &&
+                      activeField?.unevenIncomePerYear?.[0] === YES
+                    )
+                  },
+                },
+              },
             }),
           ],
         }),
       ],
     }),
     buildFormConclusionSection({
-      multiFieldTitle:
-        incomePlanFormMessage.conclusionScreen.receivedTitle,
-      alertTitle:
-        incomePlanFormMessage.conclusionScreen.alertTitle,
-      alertMessage:
-        '',
-      expandableDescription:
-        incomePlanFormMessage.conclusionScreen.bulletList,
-      expandableIntro:
-        '',
+      multiFieldTitle: incomePlanFormMessage.conclusionScreen.receivedTitle,
+      alertTitle: incomePlanFormMessage.conclusionScreen.alertTitle,
+      alertMessage: '',
+      expandableDescription: incomePlanFormMessage.conclusionScreen.bulletList,
+      expandableIntro: '',
     }),
   ],
 })
