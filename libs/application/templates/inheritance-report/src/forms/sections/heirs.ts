@@ -181,7 +181,7 @@ export const heirs = buildSection({
               maxLength: 1800,
             }),
             buildDescriptionField({
-              id: 'heirsAdditionalInfoFiles',
+              id: 'heirsAdditionalInfoFilesPrivate',
               title: m.fileUploadPrivateTransfer,
               titleVariant: 'h5',
               space: 'containerGutter',
@@ -189,25 +189,25 @@ export const heirs = buildSection({
             }),
             buildFileUploadField({
               id: 'heirsAdditionalInfoPrivateTransferFiles',
+              uploadAccept: '.pdf, .doc, .docx, .jpg, .jpeg, .png, .xls, .xlsx',
+              uploadDescription: m.fileUploadFileTypes,
               uploadMultiple: false,
               title: '',
-              description: '',
               uploadHeader: '',
-              uploadDescription: '',
             }),
             buildDescriptionField({
-              id: 'heirsAdditionalInfoFiles',
+              id: 'heirsAdditionalInfoFilesOtherDocuments',
               title: m.fileUploadOtherDocuments,
               titleVariant: 'h5',
               space: 'containerGutter',
               marginBottom: 'smallGutter',
             }),
             buildFileUploadField({
-              id: 'heirsAdditionalInfoFiles',
+              id: 'heirsAdditionalInfoFilesFileTypes',
+              uploadAccept: '.pdf, .doc, .docx, .jpg, .jpeg, .png, .xls, .xlsx',
+              uploadDescription: m.fileUploadFileTypes,
               title: '',
-              description: '',
               uploadHeader: '',
-              uploadDescription: '',
             }),
           ],
         }),
@@ -219,7 +219,8 @@ export const heirs = buildSection({
       children: [
         buildMultiField({
           id: 'heirsOverview',
-          title: m.overview,
+          title: m.overviewHeirsTitle,
+          description: m.overviewHeirsDescription,
           children: [
             buildDividerField({}),
             buildDescriptionField({

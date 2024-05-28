@@ -13,6 +13,8 @@ interface ShareInputProps {
   onAfterChange?: (value: number) => void
   disabled?: boolean
   required?: boolean
+  readOnly?: boolean
+  hasError?: boolean
 }
 
 const onFocusInput = (
@@ -53,6 +55,8 @@ export const ShareInput = ({
   onAfterChange,
   disabled,
   required,
+  readOnly,
+  hasError,
 }: ShareInputProps) => {
   const ref = useRef<HTMLInputElement | HTMLTextAreaElement>(null)
   const prevLen = useRef(0)
@@ -154,10 +158,11 @@ export const ShareInput = ({
               return onAfterChange?.(numberValue)
             }
           }}
-          hasError={!!shareError}
-          errorMessage={shareError}
+          hasError={hasError}
+          errorMessage={formatMessage(m.invalidShareValue)}
           disabled={disabled}
           required={required}
+          readOnly={readOnly}
         />
       )}
     />

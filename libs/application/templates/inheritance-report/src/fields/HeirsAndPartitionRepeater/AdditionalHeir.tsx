@@ -282,6 +282,7 @@ export const AdditionalHeir = ({
                         : undefined
                     }
                     required
+                    hasError={false}
                   />
                 </GridColumn>
               ) : (

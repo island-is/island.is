@@ -37,7 +37,6 @@ import {
   InheritanceReportInfo,
 } from '@island.is/clients/syslumenn'
 import { valueToNumber } from '../../lib/utils/helpers'
-import NumberInput from '../../components/NumberInput'
 import DeceasedShare from '../../components/DeceasedShare'
 
 type RepeaterProps = {
@@ -133,6 +132,8 @@ export const ReportFieldsRepeater: FC<
             label: relation,
           }),
         ) || []
+  //TODO: connect to API
+  const debtTypes = [] as any
 
   const handleAddRepeaterFields = () => {
     //reset stocks
@@ -405,7 +406,7 @@ export const ReportFieldsRepeater: FC<
                         suffix="%"
                         required
                       />
-                    ) : field.id === 'relation' ? (
+                    ) : field.id === 'debtType' ? (
                       <SelectController
                         id={`${fieldIndex}.${field.id}`}
                         name={`${fieldIndex}.${field.id}`}
@@ -415,9 +416,11 @@ export const ReportFieldsRepeater: FC<
                           ) ?? ''
                         }
                         placeholder={field.placeholder}
-                        options={relations}
-                      />
-                    ) : field.id === 'exchangeRateOrInterest' ? (
+                        options={debtTypes}
+                        backgroundColor="blue"
+                      /> /* Commenting out for testing purposes of this field
+                    
+                    : field.id === 'exchangeRateOrInterest' ? (
                       <NumberInput
                         name={`${fieldIndex}.${field.id}`}
                         placeholder={field.placeholder}
@@ -432,6 +435,7 @@ export const ReportFieldsRepeater: FC<
                           ) ?? ''
                         }
                       />
+                    )*/
                     ) : (
                       <InputController
                         id={`${fieldIndex}.${field.id}`}
@@ -447,7 +451,7 @@ export const ReportFieldsRepeater: FC<
                         backgroundColor={field.color ? field.color : 'blue'}
                         currency={field.currency}
                         readOnly={field.readOnly}
-                        type={field.type}
+                        type={field.type !== 'nationalId' ? field.type : 'text'}
                         textarea={field.variant}
                         rows={field.rows}
                         required={field.required}
