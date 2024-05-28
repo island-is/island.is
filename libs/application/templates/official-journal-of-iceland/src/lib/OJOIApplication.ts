@@ -128,6 +128,11 @@ const OJOITemplate: ApplicationTemplate<
                 },
               ],
             },
+            {
+              id: Roles.ASSIGNEE,
+              read: 'all',
+              write: 'all',
+            },
           ],
         },
         on: {
