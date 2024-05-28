@@ -46,13 +46,17 @@ export const PickPlateSize: FC<React.PropsWithChildren<FieldBaseProps>> = (
   const plateTypeList = application.externalData.plateTypeList
     .data as PlateType[]
 
-  const currentPlateTypeFront = 'X'
-  // data?.vehiclesDetail?.registrationInfo?.plateTypeFront
-  const currentPlateTypeRear = 'X'
-  // data?.vehiclesDetail?.registrationInfo?.plateTypeRear
+  const currentPlateTypeFront =
+    data?.vehiclesDetail?.registrationInfo?.plateTypeFront
+  const currentPlateTypeRear =
+    data?.vehiclesDetail?.registrationInfo?.plateTypeRear
 
   // Plate type front should always be defined (rear type can be empty in some cases)
   const plateTypeFrontError = !currentPlateTypeFront
+
+  const noPlateMatchError =
+    plateTypeList?.filter((x) => x.code === currentPlateTypeFront)?.length ===
+      0 ?? false
 
   useEffect(() => {
     if (!loading && currentPlateTypeRear === null) {
@@ -73,7 +77,7 @@ export const PickPlateSize: FC<React.PropsWithChildren<FieldBaseProps>> = (
           repeat={2}
           borderRadius="large"
         />
-      ) : !error && !plateTypeFrontError ? (
+      ) : !error && !plateTypeFrontError && !noPlateMatchError ? (
         <>
           <Text variant="h5" marginTop={2} marginBottom={1}>
             {formatMessage(information.labels.plateSize.frontPlateSubtitle)}
@@ -85,8 +89,8 @@ export const PickPlateSize: FC<React.PropsWithChildren<FieldBaseProps>> = (
             }
             defaultValue={[]}
             options={plateTypeList
-              ?.filter((x) => x.code === currentPlateTypeFront)
-              ?.map((x) => ({
+              .filter((x) => x.code === currentPlateTypeFront)
+              .map((x) => ({
                 value: x.code || '',
                 label:
                   formatMessage(
@@ -133,7 +137,9 @@ export const PickPlateSize: FC<React.PropsWithChildren<FieldBaseProps>> = (
           <AlertMessage
             type="error"
             title={formatMessage(
-              error
+              noPlateMatchError
+                ? information.labels.plateSize.noPlateMatchError
+                : error
                 ? information.labels.plateSize.error
                 : information.labels.plateSize.errorPlateTypeFront,
             )}

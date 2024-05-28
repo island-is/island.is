@@ -23,12 +23,6 @@ export class VehicleCodetablesClient {
       apiVersion: '2.0',
       apiVersion2: '2.0',
     })
-    const resultold = await this.codetablesApi.platetypesAllGet({
-      apiVersion: '2.0',
-      apiVersion2: '2.0',
-    })
-    console.log('resultold', resultold)
-    console.log('result', result)
 
     return result.map((item) => ({
       code: item.code,
