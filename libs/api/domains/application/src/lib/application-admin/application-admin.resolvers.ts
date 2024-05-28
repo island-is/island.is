@@ -18,6 +18,7 @@ import {
   ApplicationAdminPaginatedResponse,
 } from '../application.model'
 import { ApplicationService } from '../application.service'
+import { start } from 'repl'
 
 @UseGuards(IdsUserGuard, ScopesGuard)
 @Resolver(() => ApplicationAdmin)
@@ -46,5 +47,19 @@ export class ApplicationAdminResolver {
     input: ApplicationApplicationsInstitutionAdminInput,
   ): Promise<ApplicationAdminPaginatedResponse | null> {
     return this.applicationService.findAllInstitutionAdmin(user, locale, input)
+  }
+
+  @Query(() => [ApplicationAdmin], { nullable: true })
+  @Scopes(AdminPortalScope.applicationSystemAdmin)
+  async applicationApplicationsAdminStatistics(
+    @CurrentUser() user: User,
+    @Args('startDate') startDate: string,
+    @Args('endDate') endDate: string,
+  ) {
+    return this.applicationService.getApplicationCountByTypeIdAndStatus(
+      user,
+      startDate,
+      endDate,
+    )
   }
 }

@@ -136,9 +136,22 @@ export const m = defineMessages({
     id: 'admin-portal.application-system:tags.requiresAction',
     defaultMessage: 'Krefst aðgerða',
   },
+  tagsAll: {
+    id: 'admin-portal.application-system:tags.all',
+    defaultMessage: 'Allar',
+  },
   newApplication: {
     id: 'admin-portal.application-system:new.application',
     defaultMessage: 'Ný umsókn',
+  },
+  statistics: {
+    id: 'admin-portal.application-system:statistics',
+    defaultMessage: 'Tölfræði',
+  },
+  statisticsDescription: {
+    id: 'admin-portal.application-system:statisticsDescription',
+    defaultMessage:
+      'Staður til að sækja tölfræði um umsóknir og skoða gröf tengd þeim.',
   },
 
   // Filters

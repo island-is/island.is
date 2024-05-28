@@ -55,6 +55,35 @@ export class ApplicationService {
     })
   }
 
+  async getApplicationCountByTypeIdAndStatus(
+    startDate: string,
+    endDate: string,
+  ): Promise<any> {
+    console.log('startDate', startDate)
+    console.log('endDate', endDate)
+
+    const query = `SELECT 
+        type_id, 
+        COUNT(*) as count, 	
+        COUNT(*) FILTER (WHERE state = 'draft') AS draft,    
+        COUNT(*) FILTER (WHERE state = 'completed' OR state = 'finished') AS completed,    
+        COUNT(*) FILTER (WHERE state = 'approved') AS approved,	
+        COUNT(*) FILTER (WHERE state = 'inReview') AS rejected,	
+        COUNT(*) FILTER (WHERE state = 'inReview') AS inprogress 
+      FROM public.application 
+      WHERE created BETWEEN '2024-05-01' AND '2024-05-30' 
+      GROUP BY type_id;`
+
+    const [results] = await this.sequelize.query(query, {
+      replacements: { startDate, endDate },
+      type: 'select',
+    })
+
+    console.log(results)
+
+    return results
+  }
+
   async updateAttachment(
     id: string,
     nationalId: string,
@@ -163,6 +192,25 @@ export class ApplicationService {
       order: [['modified', 'DESC']],
     })
   }
+
+  // async findApplicationQuantityInAPeriod(
+  //   from: string,
+  //   to: string,
+  //   status: string,
+  //   type_id: string,
+  // ): Promise<Array<number>> {
+  //   const toDate = to ? new Date(to) : undefined
+  //   const fromDate = from ? new Date(from) : undefined
+
+  //   return this.applicationModel.findAndCountAll({
+  //     where: {
+  //       created: {
+  //         [Op.between]: [from, to],
+  //       },
+  //       group: ['typeId'],
+  //     },
+  //   })
+  // }
 
   async findAllByNationalIdAndFilters(
     nationalId: string,

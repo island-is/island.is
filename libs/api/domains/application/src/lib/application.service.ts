@@ -114,6 +114,16 @@ export class ApplicationService {
     })
   }
 
+  async getApplicationCountByTypeIdAndStatus(
+    user: User,
+    startDate: string,
+    endDate: string,
+  ) {
+    return this.applicationApiWithAuth(
+      user,
+    ).adminControllerGetCountsByTypeAndStatus(startDate, endDate)
+  }
+
   async update(input: UpdateApplicationInput, auth: Auth, locale: Locale) {
     const { id, ...updateApplicationDto } = input
 
