@@ -325,7 +325,7 @@ const Conclusion: React.FC = () => {
             />
             <BlueBox>
               <Box marginBottom={2}>
-                <RadioButton
+                <Checkbox
                   id="arrange-verdict"
                   name="arrange-verdict"
                   checked={Boolean(postponement?.postonedUntilVerdict)}
@@ -335,9 +335,10 @@ const Conclusion: React.FC = () => {
                       postonedUntilVerdict: !prev?.postonedUntilVerdict,
                     }))
                   }}
-                  large
                   backgroundColor="white"
                   label={formatMessage(strings.arrangeVerdict)}
+                  large
+                  filled
                 />
               </Box>
               <DateTime
