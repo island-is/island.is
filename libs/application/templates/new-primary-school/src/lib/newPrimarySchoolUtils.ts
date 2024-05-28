@@ -109,23 +109,27 @@ export const hasOtherParent = (
 export const getRelationOptions = () => [
   {
     value: RelationOptions.GRANDPARENTS,
-    label: newPrimarySchoolMessages.relatives.relationGrandparents,
+    label:
+      newPrimarySchoolMessages.childrenNParents.relativesRelationGrandparents,
   },
   {
     value: RelationOptions.SIBLINGS,
-    label: newPrimarySchoolMessages.relatives.relationSiblings,
+    label: newPrimarySchoolMessages.childrenNParents.relativesRelationSiblings,
   },
   {
     value: RelationOptions.STEP_PARENT,
-    label: newPrimarySchoolMessages.relatives.relationStepParent,
+    label:
+      newPrimarySchoolMessages.childrenNParents.relativesRelationStepParent,
   },
   {
     value: RelationOptions.RELATIVES,
-    label: newPrimarySchoolMessages.relatives.relationRelatives,
+    label: newPrimarySchoolMessages.childrenNParents.relativesRelationRelatives,
   },
   {
     value: RelationOptions.FRIENDS_AND_OTHER,
-    label: newPrimarySchoolMessages.relatives.relationFriendsAndOther,
+    label:
+      newPrimarySchoolMessages.childrenNParents
+        .relativesRelationFriendsAndOther,
   },
 ]
 

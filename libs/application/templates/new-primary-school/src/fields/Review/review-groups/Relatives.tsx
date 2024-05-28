@@ -1,4 +1,4 @@
-import { FieldComponents, FieldTypes } from '@island.is/application/types'
+import { FieldComponents, FieldTypes, YES } from '@island.is/application/types'
 import {
   Label,
   ReviewGroup,
@@ -30,6 +30,9 @@ export const Relatives = ({
       formatPhoneNumber(removeCountryCode(r.phoneNumber ?? '')),
       formatKennitala(r.nationalId),
       getRelationOptionLabel(r.relation),
+      r.canPickUpChild?.includes(YES)
+        ? newPrimarySchoolMessages.shared.yes
+        : newPrimarySchoolMessages.shared.no,
     ]
   })
 
@@ -41,7 +44,10 @@ export const Relatives = ({
       <GridRow>
         <GridColumn span={['12/12', '12/12', '12/12', '12/12']}>
           <Label>
-            {formatMessage(newPrimarySchoolMessages.relatives.sectionTitle)}
+            {formatMessage(
+              newPrimarySchoolMessages.childrenNParents
+                .relativesSubSectionTitle,
+            )}
           </Label>
           {relatives?.length > 0 && (
             <Box paddingTop={3}>
@@ -54,10 +60,12 @@ export const Relatives = ({
                   id: 'relativesTable',
                   title: '',
                   header: [
-                    newPrimarySchoolMessages.relatives.fullName,
-                    newPrimarySchoolMessages.relatives.phoneNumber,
-                    newPrimarySchoolMessages.relatives.nationalId,
-                    newPrimarySchoolMessages.relatives.relation,
+                    newPrimarySchoolMessages.childrenNParents.fullName,
+                    newPrimarySchoolMessages.childrenNParents.phoneNumber,
+                    newPrimarySchoolMessages.childrenNParents.nationalId,
+                    newPrimarySchoolMessages.childrenNParents.relativesRelation,
+                    newPrimarySchoolMessages.childrenNParents
+                      .relativesCanPickUpChildTableHeader,
                   ],
                   rows,
                 }}
