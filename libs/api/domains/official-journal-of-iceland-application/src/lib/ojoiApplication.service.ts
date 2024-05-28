@@ -11,11 +11,11 @@ export class OfficialJournalOfIcelandApplicationService {
   ) {}
 
   async getComments(input: GetCommentsInput) {
-    return await this.ojoiApplicationService.getComments(input)
+    return this.ojoiApplicationService.getComments(input)
   }
 
   async postComment(input: PostCommentInput) {
-    return await this.ojoiApplicationService.postComment({
+    return this.ojoiApplicationService.postComment({
       id: input.id,
       postApplicationComment: {
         comment: input.comment,
@@ -24,6 +24,6 @@ export class OfficialJournalOfIcelandApplicationService {
   }
 
   async postApplication(input: PostApplicationInput): Promise<boolean> {
-    return await this.ojoiApplicationService.postApplication(input)
+    return this.ojoiApplicationService.postApplication(input)
   }
 }
