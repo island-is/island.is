@@ -27,6 +27,7 @@ import * as m from '../lib/messages'
 import Logo from '../assets/Logo'
 import {
   getChildrenAsOptions,
+  getCommentFromExternalData,
   getContinentNameFromCode,
   getContinentsAsOption,
   getCountriesAsOption,
@@ -156,6 +157,12 @@ export const HealthInsuranceDeclarationForm: Form = buildForm({
                 application: HealthInsuranceDeclarationApplication,
               ) => getInsuranceStatus(application.externalData),
             }),
+            buildHiddenInput({
+              id: 'isHealthInsuredComment',
+              defaultValue: (
+                application: HealthInsuranceDeclarationApplication,
+              ) => getCommentFromExternalData(application.externalData),
+            }),
           ],
         }),
       ],
@@ -173,6 +180,16 @@ export const HealthInsuranceDeclarationForm: Form = buildForm({
               title: '',
               description:
                 m.application.notHealthInusred.descriptionFieldDescription,
+            }),
+            buildAlertMessageField({
+              id: 'notHealthInsuredAlertMessage',
+              title: '',
+              alertType: 'warning',
+              message: ({ externalData }) =>
+                getCommentFromExternalData(externalData),
+              condition: (answers) => {
+                return (answers?.isHealthInsuredComment as string)?.length > 0
+              },
             }),
             buildCheckboxField({
               id: 'notHealthInsuredCheckboxField',
