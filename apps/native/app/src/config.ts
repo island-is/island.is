@@ -67,8 +67,6 @@ export const config = {
     '@island.is/finance/salary',
     '@island.is/finance/schedule:read',
     '@island.is/licenses:barcode',
-    '@island.is/notifications:read',
-    '@island.is/notifications:write',
   ],
   cognitoUrl: 'https://cognito.shared.devland.is/login',
   cognitoClientId: 'bre6r7d5e7imkcgbt7et1kqlc',
