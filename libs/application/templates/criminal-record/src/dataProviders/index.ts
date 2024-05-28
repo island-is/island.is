@@ -4,6 +4,8 @@ import {
   PaymentCatalogApi,
 } from '@island.is/application/types'
 
+export { UserProfileApi } from '@island.is/application/types'
+
 export const SyslumadurPaymentCatalogApi = PaymentCatalogApi.configure({
   params: {
     organizationId: InstitutionNationalIds.SYSLUMENN,

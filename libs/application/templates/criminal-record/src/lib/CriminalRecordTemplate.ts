@@ -21,6 +21,7 @@ import { z } from 'zod'
 import { ApiActions } from '../shared'
 import { m } from './messages'
 import {
+  UserProfileApi,
   SyslumadurPaymentCatalogApi,
   CriminalRecordApi,
 } from '../dataProviders'
@@ -76,7 +77,11 @@ const template: ApplicationTemplate<
                 },
               ],
               write: 'all',
-              api: [SyslumadurPaymentCatalogApi, CriminalRecordApi],
+              api: [
+                UserProfileApi,
+                SyslumadurPaymentCatalogApi,
+                CriminalRecordApi,
+              ],
             },
           ],
         },
@@ -88,6 +93,12 @@ const template: ApplicationTemplate<
         organizationId: InstitutionNationalIds.SYSLUMENN,
         chargeItemCodes: getChargeItemCodes,
         submitTarget: States.COMPLETED,
+        onExit: [
+          defineTemplateApi({
+            action: ApiActions.submitApplication,
+            triggerEvent: DefaultEvents.SUBMIT,
+          }),
+        ],
       }),
       [States.COMPLETED]: {
         meta: {
@@ -107,10 +118,6 @@ const template: ApplicationTemplate<
           onEntry: [
             VerifyPaymentApi.configure({
               order: 0,
-            }),
-            defineTemplateApi({
-              action: ApiActions.getCriminalRecord,
-              order: 1,
             }),
           ],
           roles: [
