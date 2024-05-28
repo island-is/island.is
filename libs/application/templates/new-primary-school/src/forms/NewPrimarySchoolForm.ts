@@ -1,4 +1,5 @@
 import {
+  buildCheckboxField,
   buildCustomField,
   buildDescriptionField,
   buildForm,
@@ -6,6 +7,7 @@ import {
   buildPhoneField,
   buildRadioField,
   buildSection,
+  buildSelectField,
   buildSubSection,
   buildSubmitField,
   buildTableRepeaterField,
@@ -16,6 +18,7 @@ import {
   DefaultEvents,
   Form,
   FormModes,
+  NO,
   YES,
 } from '@island.is/application/types'
 import {
@@ -27,12 +30,13 @@ import { format as formatKennitala } from 'kennitala'
 import { RelationOptions } from '../lib/constants'
 import { newPrimarySchoolMessages } from '../lib/messages'
 import {
+  canApply,
+  getApplicationAnswers,
   getApplicationExternalData,
   getOtherParent,
   getRelationOptionLabel,
   getRelationOptions,
   hasOtherParent,
-  canApply,
 } from '../lib/newPrimarySchoolUtils'
 
 export const NewPrimarySchoolForm: Form = buildForm({
@@ -442,7 +446,87 @@ export const NewPrimarySchoolForm: Form = buildForm({
           id: 'languageSubSection',
           title:
             newPrimarySchoolMessages.differentNeeds.languageSubSectionTitle,
-          children: [],
+          children: [
+            buildMultiField({
+              id: 'languages',
+              title: newPrimarySchoolMessages.differentNeeds.languageTitle,
+              children: [
+                buildRadioField({
+                  // TODO: Taka þetta út?
+                  id: 'languages.otherLanguages',
+                  title:
+                    newPrimarySchoolMessages.differentNeeds.languageQuestion,
+                  width: 'half',
+                  required: true,
+                  options: [
+                    {
+                      label: newPrimarySchoolMessages.shared.yes,
+                      dataTestId: 'other-languages',
+                      value: YES,
+                    },
+                    {
+                      label: newPrimarySchoolMessages.shared.no,
+                      dataTestId: 'no-other-languages',
+                      value: NO,
+                    },
+                  ],
+                }),
+                buildDescriptionField({
+                  id: 'languages.description',
+                  title:
+                    newPrimarySchoolMessages.differentNeeds
+                      .languageSubSectionTitle,
+                  description:
+                    newPrimarySchoolMessages.differentNeeds.languageDescription,
+                  titleVariant: 'h4',
+                  marginTop: 3,
+                  condition: (answers) => {
+                    const { otherLanguages } = getApplicationAnswers(answers)
+
+                    return otherLanguages === YES
+                  },
+                }),
+                buildSelectField({
+                  // TODO: Multi select
+                  id: 'languages.languages',
+                  dataTestId: 'private-pension-fund-ratio',
+                  title:
+                    newPrimarySchoolMessages.differentNeeds
+                      .languageSubSectionTitle,
+                  placeholder:
+                    newPrimarySchoolMessages.differentNeeds.languagePlaceholder,
+                  // TODO: Nota gögn fá Júní?
+                  options: [
+                    { label: 'Íslenska', value: 'is' },
+                    { label: 'Enska', value: 'en' },
+                    { label: 'Danska', value: 'dk' },
+                  ],
+                  condition: (answers) => {
+                    const { otherLanguages } = getApplicationAnswers(answers)
+
+                    return otherLanguages === YES
+                  },
+                }),
+                buildCheckboxField({
+                  id: 'languages.icelandicNotSpokenAroundChild',
+                  title: '',
+                  options: [
+                    {
+                      label:
+                        newPrimarySchoolMessages.differentNeeds
+                          .languageCheckbox,
+                      value: YES,
+                    },
+                  ],
+                  condition: (answers) => {
+                    const { otherLanguages } = getApplicationAnswers(answers)
+
+                    return otherLanguages === YES
+                  },
+                }),
+              ],
+            }),
+          ],
         }),
         buildSubSection({
           id: 'schoolMealSubSection',

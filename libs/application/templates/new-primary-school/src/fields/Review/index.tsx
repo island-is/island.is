@@ -1,6 +1,11 @@
 import { useMutation } from '@apollo/client'
 import { SUBMIT_APPLICATION } from '@island.is/application/graphql'
-import { Application, Field, RecordObject } from '@island.is/application/types'
+import {
+  Application,
+  DefaultEvents,
+  Field,
+  RecordObject,
+} from '@island.is/application/types'
 import { handleServerError } from '@island.is/application/ui-components'
 import { Box, Button, Text } from '@island.is/island-ui/core'
 import { useLocale } from '@island.is/localization'
@@ -9,9 +14,9 @@ import has from 'lodash/has'
 import { FC } from 'react'
 import { States } from '../../lib/constants'
 import { newPrimarySchoolMessages } from '../../lib/messages'
-import { getApplicationAnswers } from '../../lib/newPrimarySchoolUtils'
 
 import { Child } from './review-groups/Child'
+import { Languages } from './review-groups/Languages'
 import { Parents } from './review-groups/Parents'
 import { Relatives } from './review-groups/Relatives'
 
@@ -56,14 +61,12 @@ export const Review: FC<ReviewScreenProps> = ({
   )
 
   const handleSubmit = async (event: string) => {
-    const TBD = getApplicationAnswers(application.answers)
-
     const res = await submitApplication({
       variables: {
         input: {
           id: application.id,
           event,
-          answers: {},
+          answers: application.answers,
         },
       },
     })
@@ -127,7 +130,7 @@ export const Review: FC<ReviewScreenProps> = ({
                 icon="pencil"
                 loading={loadingSubmit}
                 disabled={loadingSubmit}
-                onClick={() => handleSubmit('EDIT')}
+                onClick={() => handleSubmit(DefaultEvents.EDIT)}
               >
                 {formatMessage(newPrimarySchoolMessages.confirm.editButton)}
               </Button>
@@ -146,6 +149,7 @@ export const Review: FC<ReviewScreenProps> = ({
       <Child {...childProps} />
       <Parents {...childProps} />
       <Relatives {...childProps} />
+      <Languages {...childProps} />
     </>
   )
 }

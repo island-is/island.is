@@ -1,3 +1,4 @@
+import { NO, YES } from '@island.is/application/types'
 import * as kennitala from 'kennitala'
 import { parsePhoneNumberFromString } from 'libphonenumber-js'
 import { z } from 'zod'
@@ -78,6 +79,19 @@ export const dataSchema = z.object({
     .refine((r) => r === undefined || r.length > 0, {
       params: errorMessages.relativesRequired,
     }),
+  languages: z
+    .object({
+      otherLanguages: z.enum([YES, NO]),
+      languages: z.string().optional(),
+    })
+    .refine(
+      ({ otherLanguages, languages }) =>
+        otherLanguages === YES ? !!languages : true,
+      {
+        path: ['languages'],
+        params: errorMessages.languagesRequired,
+      },
+    ),
 })
 
 export type SchemaFormValues = z.infer<typeof dataSchema>

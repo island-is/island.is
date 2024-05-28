@@ -295,21 +295,21 @@ export const newPrimarySchoolMessages: MessageDir = {
 
     // Apply to a new school
     newSchoolSubSectionTitle: {
-      id: 'dess.nps.application:primary.school.new.school.section.title',
+      id: 'dess.nps.application:primary.school.new.school.sub.section.title',
       defaultMessage: 'Nýr skóli',
       description: 'New school',
     },
 
     // Reason for transfer
     reasonForTransferSubSectionTitle: {
-      id: 'dess.nps.application:primary.school.starting.school.reason.for.transfer.section.title',
+      id: 'dess.nps.application:primary.school.starting.school.reason.for.transfer.sub.section.title',
       defaultMessage: 'Ástæða flutnings',
       description: 'Reason for transfer',
     },
 
     // Siblings
     siblingsSubSectionTitle: {
-      id: 'dess.nps.application:primary.school.starting.school.siblings.section.title',
+      id: 'dess.nps.application:primary.school.starting.school.siblings.sub.section.title',
       defaultMessage: 'Systkini',
       description: 'Siblings',
     },
@@ -331,35 +331,68 @@ export const newPrimarySchoolMessages: MessageDir = {
 
     // Language
     languageSubSectionTitle: {
-      id: 'dess.nps.application:different.needs.language.section.title',
+      id: 'dess.nps.application:different.needs.language.sub.section.title',
       defaultMessage: 'Tungumál',
       description: 'Language',
+    },
+    languageTitle: {
+      id: 'dess.nps.application:different.needs.language.title',
+      defaultMessage: 'Tungumál barnsins',
+      description: "The child's languages",
+    },
+    languageQuestion: {
+      id: 'dess.nps.application:different.needs.language.question',
+      defaultMessage:
+        'Eru töluð önnur tungumál en íslenska á heimili barnsins?',
+      description:
+        "Are languages other than Icelandic spoken in the child's home?",
+    },
+    languageDescription: {
+      id: 'dess.nps.application:different.needs.language.description',
+      defaultMessage:
+        'Til að hægt sé að koma til móts við þarfir barns þarf skólinn að vita hvaða tungumál eru töluð í nærumhverfi þess. Veldu þau tungumál, eitt eða fleiri, sem töluð eru dagsdaglega á heimilinu.',
+      description:
+        // TODO: Enskur texti!!
+        "In order to meet a child's needs, the school needs to know which languages are spoken in their local environment. Choose the languages, one or more, that are spoken daily at home.",
+    },
+    languagePlaceholder: {
+      id: 'dess.nps.application:different.needs.language.placeholder',
+      defaultMessage: 'Veldu tungumál',
+      description: 'Choose a language',
+    },
+    languageCheckbox: {
+      id: 'dess.nps.application:different.needs.language.checkbox',
+      defaultMessage: 'Það er ekki töluð íslenska í nærumhverfi barnsins',
+      description:
+        // TODO: Enskur texti!!
+        // "Icelandic is not spoken in the child's immediate environment",
+        'Icelandic is not spoken daily in our home',
     },
 
     // School Meal
     schoolMealSubSectionTitle: {
-      id: 'dess.nps.application:different.needs.school.meal.section.title',
+      id: 'dess.nps.application:different.needs.school.meal.sub.section.title',
       defaultMessage: 'Skólamáltíð',
       description: 'School Meal',
     },
 
     // Support
     supportSubSectionTitle: {
-      id: 'dess.nps.application:different.needs.support.section.title',
+      id: 'dess.nps.application:different.needs.support.sub.section.title',
       defaultMessage: 'Stuðningur',
       description: 'Support',
     },
 
     // School bus
     schoolBusSubSectionTitle: {
-      id: 'dess.nps.application:different.needs.school.bus.section.title',
+      id: 'dess.nps.application:different.needs.school.bus.sub.section.title',
       defaultMessage: 'Skólaakstur',
       description: 'School bus',
     },
 
     // Use of footage
     useOfFootageSubSectionTitle: {
-      id: 'dess.nps.application:different.needs.use.of.footage.section.title',
+      id: 'dess.nps.application:different.needs.use.of.footage.sub.section.title',
       defaultMessage: 'Notkun myndefnis',
       description: 'Use of footage',
     },
@@ -489,5 +522,10 @@ export const errorMessages = defineMessages({
     id: 'dess.nps.application:error.relatives.required',
     defaultMessage: 'Nauðsynlegt er að bæta við a.m.k einum aðstandenda',
     description: 'You must add at least one relative',
+  },
+  languagesRequired: {
+    id: 'dess.nps.application:error.languages.required',
+    defaultMessage: 'Það þarf að velja að minnsta kosti eitt tungumál',
+    description: 'At least one language must be selected',
   },
 })
