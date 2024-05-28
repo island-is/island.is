@@ -68,6 +68,7 @@ export const VehicleMileageScreen: NavigationFunctionComponent<{
     },
   })
   const res = useGetVehicleMileageQuery({
+    fetchPolicy: 'cache-and-network',
     variables: {
       input: {
         permno: id,

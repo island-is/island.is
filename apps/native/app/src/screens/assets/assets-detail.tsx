@@ -52,6 +52,7 @@ export const AssetsDetailScreen: NavigationFunctionComponent<{ item: any }> = ({
           <InputRow>
             <Input
               loading={isLoading}
+              error={isError}
               label={intl.formatMessage({ id: 'assetsDetail.propertyNumber' })}
               value={item?.propertyNumber}
               size="big"
@@ -62,6 +63,7 @@ export const AssetsDetailScreen: NavigationFunctionComponent<{ item: any }> = ({
           <InputRow>
             <Input
               loading={isLoading}
+              error={isError}
               label={intl.formatMessage(
                 { id: 'assetsDetail.activeAppraisal' },
                 { activeYear: appraisal?.activeYear },
@@ -77,6 +79,7 @@ export const AssetsDetailScreen: NavigationFunctionComponent<{ item: any }> = ({
             />
             <Input
               loading={isLoading}
+              error={isError}
               label={intl.formatMessage(
                 { id: 'assetsDetail.plannedAppraisal' },
                 { plannedYear: appraisal?.plannedYear },
@@ -100,6 +103,7 @@ export const AssetsDetailScreen: NavigationFunctionComponent<{ item: any }> = ({
                 <InputRow>
                   <Input
                     loading={isLoading}
+                    error={isError}
                     label={intl.formatMessage({
                       id: 'assetsDetail.explanation',
                     })}
@@ -109,6 +113,7 @@ export const AssetsDetailScreen: NavigationFunctionComponent<{ item: any }> = ({
                   />
                   <Input
                     loading={isLoading}
+                    error={isError}
                     label={intl.formatMessage({
                       id: 'assetsDetail.displaySize',
                     })}
@@ -121,6 +126,7 @@ export const AssetsDetailScreen: NavigationFunctionComponent<{ item: any }> = ({
                 <InputRow>
                   <Input
                     loading={isLoading}
+                    error={isError}
                     label={intl.formatMessage({
                       id: 'assetsDetail.municipality',
                     })}
@@ -130,6 +136,7 @@ export const AssetsDetailScreen: NavigationFunctionComponent<{ item: any }> = ({
                   />
                   <Input
                     loading={isLoading}
+                    error={isError}
                     label={intl.formatMessage({
                       id: 'assetsDetail.postNumber',
                     })}
@@ -143,6 +150,7 @@ export const AssetsDetailScreen: NavigationFunctionComponent<{ item: any }> = ({
                   {unit?.buildYearDisplay ? (
                     <Input
                       loading={isLoading}
+                      error={isError}
                       label={intl.formatMessage({
                         id: 'assetsDetail.buildYearDisplay',
                       })}
@@ -153,6 +161,7 @@ export const AssetsDetailScreen: NavigationFunctionComponent<{ item: any }> = ({
                   ) : null}
                   <Input
                     loading={isLoading}
+                    error={isError}
                     label={intl.formatMessage({ id: 'assetsDetail.marking' })}
                     value={unit?.marking}
                     noBorder
