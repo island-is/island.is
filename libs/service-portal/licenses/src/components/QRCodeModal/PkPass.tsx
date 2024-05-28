@@ -77,9 +77,13 @@ export const PkPass = ({
 
   useEffect(() => {
     if (pkpassUrl && !hasPassedTimeout(linkTimestamp, 10)) {
-      window.location.assign(pkpassUrl)
+      try {
+        window.location.assign(pkpassUrl)
+      } catch {
+        handleError(formatMessage(m.licenseFetchError))
+      }
     }
-  }, [pkpassUrl, linkTimestamp])
+  }, [pkpassUrl, linkTimestamp, formatMessage])
 
   const getLink = async () => {
     await generatePkPass({
