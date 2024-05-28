@@ -197,9 +197,9 @@ const OJOITemplate: ApplicationTemplate<
           progress: 1,
           lifecycle: pruneAfterDays(90),
           onEntry: defineTemplateApi({
-            action: TemplateApiActions.submitApplication,
+            action: TemplateApiActions.postApplication,
             shouldPersistToExternalData: true,
-            externalDataId: 'submitApplication',
+            externalDataId: 'successfullyPosted',
             throwOnError: false,
           }),
           roles: [

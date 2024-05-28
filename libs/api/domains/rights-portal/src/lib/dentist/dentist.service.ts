@@ -1,11 +1,9 @@
-import { Inject, Injectable } from '@nestjs/common'
+import { Injectable } from '@nestjs/common'
 import { DentistApi } from '@island.is/clients/icelandic-health-insurance/rights-portal'
 import { Auth, AuthMiddleware, User } from '@island.is/auth-nest-tools'
 import { handle404 } from '@island.is/clients/middlewares'
 import subYears from 'date-fns/subYears'
 import { isDefined } from '@island.is/shared/utils'
-import { LOGGER_PROVIDER } from '@island.is/logging'
-import type { Logger } from '@island.is/logging'
 import { Dentist, PaginatedDentistsResponse } from './models/dentist.model'
 import { DentistStatus } from './models/status.model'
 import { DentistBill } from './models/bill.model'
@@ -15,12 +13,7 @@ import { DentistRegisterResponse } from './models/registerResponse.model'
 
 @Injectable()
 export class DentistService {
-  constructor(
-    private api: DentistApi,
-
-    @Inject(LOGGER_PROVIDER)
-    private logger: Logger,
-  ) {}
+  constructor(private api: DentistApi) {}
   async getCurrentDentist(user: User): Promise<Dentist | null> {
     const res = await this.api
       .withMiddleware(new AuthMiddleware(user as Auth))
