@@ -175,6 +175,7 @@ import {
   UniversityOfAkureyriCareerClientConfig,
   HolarUniversityCareerClientConfig,
   BifrostUniversityCareerClientConfig,
+  IcelandUniversityOfTheArtsCareerClientConfig,
 } from '@island.is/clients/university-careers'
 import { HousingBenefitsConfig } from '@island.is/clients/hms-housing-benefits'
 import { UserProfileClientConfig } from '@island.is/clients/user-profile'
@@ -398,6 +399,7 @@ const environment = getConfig
         UniversityOfAkureyriCareerClientConfig,
         HolarUniversityCareerClientConfig,
         BifrostUniversityCareerClientConfig,
+        IcelandUniversityOfTheArtsCareerClientConfig,
         StatisticsClientConfig,
         SignatureCollectionClientConfig,
         UniversityGatewayApiClientConfig,
