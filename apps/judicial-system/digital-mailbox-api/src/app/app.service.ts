@@ -171,7 +171,13 @@ export class AppService {
 
       return this.format(response, lang)
     } catch (reason) {
-      throw new BadGatewayException(reason)
+      if (reason instanceof BadGatewayException) {
+        throw reason
+      }
+
+      throw new BadGatewayException(
+        `Failed to fetch all cases: ${reason.message}`,
+      )
     }
   }
 
@@ -201,7 +207,13 @@ export class AppService {
 
       return this.formatCase(response, lang)
     } catch (reason) {
-      throw new BadGatewayException(reason)
+      if (reason instanceof BadGatewayException) {
+        throw reason
+      }
+
+      throw new BadGatewayException(
+        `Failed to fetch case by id: ${reason.message}`,
+      )
     }
   }
 
