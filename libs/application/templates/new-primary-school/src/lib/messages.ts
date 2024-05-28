@@ -169,8 +169,9 @@ export const newPrimarySchoolMessages: MessageDir = {
     parentsDescription: {
       id: 'dess.nps.application:childrenNParents.parents.description',
       defaultMessage:
-        'Aðeins forsjáaraðili sem deilir lögheimili með barni getur skráð það í grunnskóla. Ef þú sérð ekki barnið þitt í þessu ferli, þá bendum við á að skoða upplýsingar um forsjá á island.is',
-      description: 'Parents section description',
+        'Upplýsingar um foreldra og forsjáraðila eru sóttar í Þjóðskrá. Athugaðu hvort símanúmer og netföng séu rétt skráð áður en þú heldur áfram.',
+      description:
+        'Information about parents and guardians is retrieved from the National Register. Check that phone numbers and email addresses are entered correctly before proceeding.',
     },
 
     // Relatives
