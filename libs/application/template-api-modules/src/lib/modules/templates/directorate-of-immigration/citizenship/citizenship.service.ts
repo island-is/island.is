@@ -74,7 +74,15 @@ export class CitizenshipService extends BaseTemplateApiService {
     auth,
   }: TemplateApiModuleActionProps): Promise<ApplicantInformation> {
     const validApplicant = await this.getApplicantValidity(auth)
-    if (!validApplicant.applicantExists && !validApplicant.isEESCitizen) {
+    const validOptions = []
+
+    for (const [key, value] of Object.entries(validApplicant)) {
+      if (value) {
+        validOptions.push(key)
+      }
+    }
+
+    if (validOptions.length === 0) {
       throw new TemplateApiError(
         {
           title: errorMessages.applicationConditionsNotMet,
@@ -167,7 +175,15 @@ export class CitizenshipService extends BaseTemplateApiService {
     auth,
   }: TemplateApiModuleActionProps) {
     const validApplicant = await this.getApplicantValidity(auth)
-    if (!validApplicant.applicantExists && !validApplicant.isEESCitizen) {
+    const validOptions = []
+
+    for (const [key, value] of Object.entries(validApplicant)) {
+      if (value) {
+        validOptions.push(key)
+      }
+    }
+
+    if (validOptions.length === 0) {
       throw new TemplateApiError(
         {
           title: errorMessages.applicationConditionsNotMet,
