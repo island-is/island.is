@@ -30,4 +30,22 @@ export const strings = defineMessages({
     description:
       'Notaður sem titill á upplýsingaglugga ef engin yfirlesin mál eru til.',
   },
+  tagVerdictUnviewed: {
+    id: 'judicial.system.core:public_prosecutor.tables.cases_reviewed.tag_verdict_unviewed',
+    defaultMessage: 'Óbirt',
+    description:
+      'Notað sem texti á taggi fyrir "Dómur óbirtur" í yfirlesin mál málalista',
+  },
+  tagVerdictViewOnDeadline: {
+    id: 'judicial.system.core:public_prosecutor.tables.cases_reviewed.tag_verdict_on_appeal_deadline',
+    defaultMessage: 'Á fresti',
+    description:
+      'Notað sem texti á taggi fyrir "Á fresti" í yfirlesin mál málalista',
+  },
+  tagVerdictViewComplete: {
+    id: 'judicial.system.core:public_prosecutor.tables.cases_reviewed.tag_verdict_viewed',
+    defaultMessage: 'Fullunnið',
+    description:
+      'Notað sem texti á taggi fyrir "Dómur birtur" í yfirlesin mál málalista',
+  },
 })

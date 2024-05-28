@@ -46,6 +46,7 @@ import {
   Inna,
   UniversityCareers,
   OfficialJournalOfIceland,
+  OfficialJournalOfIcelandApplication,
 } from '../../../infra/src/dsl/xroad'
 
 export const serviceSetup = (services: {
@@ -418,6 +419,7 @@ export const serviceSetup = (services: {
       SignatureCollection,
       SocialInsuranceAdministration,
       OfficialJournalOfIceland,
+      OfficialJournalOfIcelandApplication,
     )
     .files({ filename: 'islyklar.p12', env: 'ISLYKILL_CERT' })
     .ingress({

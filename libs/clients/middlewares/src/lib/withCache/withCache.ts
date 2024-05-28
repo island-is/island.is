@@ -8,7 +8,12 @@ import {
   Response,
 } from '../nodeFetch'
 import { FetchError } from '../FetchError'
-import { CacheEntry, CacheMiddlewareConfig, CachePolicyInternal } from './types'
+import {
+  CacheEntry,
+  CacheEntryRaw,
+  CacheMiddlewareConfig,
+  CachePolicyInternal,
+} from './types'
 import { CacheResponse } from './CacheResponse'
 
 export const COMMON_HEADER_PATTERNS = ['X-Param', 'X-Query']
@@ -45,7 +50,7 @@ export function withCache({
     }
 
     const cacheKey = cacheKeyFor(request, isShared)
-    const entry = await cacheManager.get<CacheEntry>(cacheKey)
+    const entry = await getCacheEntry(cacheKey)
 
     if (!entry) {
       const response = await fetch(request).catch(handleFetchErrors)
@@ -69,12 +74,7 @@ export function withCache({
       return cacheResponse.getResponse()
     }
 
-    const { policy: policyRaw, body } = entry
-    let cacheResponse = CacheResponse.fromCache(
-      body,
-      CachePolicy.fromObject(policyRaw) as CachePolicyInternal,
-    )
-
+    let cacheResponse = CacheResponse.fromCache(entry.body, entry.policy)
     const satisfied = cacheResponse.policy.satisfiesWithoutRevalidation(
       policyRequestFrom(request),
     )
@@ -100,6 +100,29 @@ export function withCache({
     }
 
     return cacheResponse.getResponse()
+  }
+
+  const getCacheEntry = async (
+    cacheKey: string,
+  ): Promise<CacheEntry | undefined> => {
+    try {
+      // Catch potential errors from cacheManager.get() and CachePolicy.fromObject().
+      const entry = await cacheManager.get<CacheEntryRaw>(cacheKey)
+      if (entry && entry.body != null && entry.policy) {
+        return {
+          body: entry.body,
+          policy: CachePolicy.fromObject(entry.policy) as CachePolicyInternal,
+        }
+      }
+    } catch (err) {
+      logger.warn(
+        `Fetch cache (${name}): Error fetching from cache - ${err.message}`,
+        {
+          stack: err.stack,
+        },
+      )
+      return undefined
+    }
   }
 
   function handleFetchErrors(error: Error): Response {

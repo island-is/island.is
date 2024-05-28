@@ -8,6 +8,7 @@ interface InstitutionPanelProps {
   title?: string
   img?: string
   linkHref: string
+  linkLabel?: string
   imgContainerDisplay?: BoxProps['display']
   loading?: boolean
   backgroundColor?: 'purple100' | 'blue100' | 'white'
@@ -19,6 +20,7 @@ interface InstitutionPanelProps {
 export const InstitutionPanel = ({
   img,
   linkHref,
+  linkLabel,
   imgContainerDisplay,
   loading = false,
   backgroundColor = 'purple100',
@@ -89,6 +91,7 @@ export const InstitutionPanel = ({
   return linkHref !== '' ? (
     <a
       href={linkHref}
+      aria-label={linkLabel}
       target="_blank"
       rel="noreferrer noopener"
       className={styles.link}
