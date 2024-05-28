@@ -59,6 +59,7 @@ export const ActionCard: React.FC<React.PropsWithChildren<ActionCardProps>> = ({
   date,
   heading,
   headingVariant = 'h3',
+  renderHeading,
   text,
   eyebrow,
   backgroundColor = 'white',
@@ -250,6 +251,12 @@ export const ActionCard: React.FC<React.PropsWithChildren<ActionCardProps>> = ({
     )
   }
 
+  const headingEl = (
+    <Text variant={headingVariant} color={color}>
+      {heading}
+    </Text>
+  )
+
   return (
     <Box
       display="flex"
@@ -294,9 +301,8 @@ export const ActionCard: React.FC<React.PropsWithChildren<ActionCardProps>> = ({
               justifyContent="spaceBetween"
               alignItems={['flexStart', 'flexStart', 'flexEnd']}
             >
-              <Text variant={headingVariant} color={color}>
-                {heading}
-              </Text>
+              {renderHeading ? renderHeading(headingEl) : headingEl}
+
               {hasEyebrowElements ? null : (
                 <Hidden above="xs">{renderTag()}</Hidden>
               )}

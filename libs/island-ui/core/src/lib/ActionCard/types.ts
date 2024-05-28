@@ -9,6 +9,7 @@ export type ActionCardProps = {
   date?: string
   heading?: string
   headingVariant?: 'h3' | 'h4'
+  renderHeading?: (headingEl: React.ReactNode) => React.ReactNode
   text?: string
   eyebrow?: string
   backgroundColor?: BackgroundColor
@@ -17,7 +18,7 @@ export type ActionCardProps = {
     label: string
     variant?: TagVariant
     outlined?: boolean
-    renderTag?: (child: React.ReactNode) => React.ReactNode
+    renderTag?: (tagEl: React.ReactNode) => React.ReactNode
   }
   cta?: {
     label: string
