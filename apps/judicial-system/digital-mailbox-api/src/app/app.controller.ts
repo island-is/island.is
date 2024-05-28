@@ -53,7 +53,7 @@ export class AppController {
     @Query() query?: { lang: string },
   ): Promise<CaseResponse> {
     this.logger.debug('Getting case by id')
-    console.log(user)
+
     return this.appService.getCaseById(caseId, user.nationalId, query?.lang)
   }
 }
