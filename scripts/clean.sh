@@ -31,7 +31,7 @@ Options:
   --cache            Clean cache files
   --node-modules     Clean node_modules folder
   --all              Clean all (generated, yarn, cache, and node_modules files)
-  -d, --dry          Dry run (show what would be done without actually doing it)
+  -n, --dry          Dry run (show what would be done without actually doing it)
   -h, --help         Show this help message
 EOF
 }
@@ -49,7 +49,7 @@ cli() {
     --cache) CLEAN_CACHES=true ;;
     --node-modules) CLEAN_NODE_MODULES=true ;;
     --all) CLEAN_ALL=true ;;
-    -d | --dry) CLEAN_DRY=true ;;
+    -n | --dry) CLEAN_DRY=true ;;
     -h | --help)
       show_help
       exit 0
