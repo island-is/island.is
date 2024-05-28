@@ -74,21 +74,30 @@ export const newPrimarySchoolMessages: MessageDir = {
     },
     noChildrenFoundTitle: {
       id: 'dess.nps.application:prerequisites.nochildren.title',
-      defaultMessage: 'Því miður fann ekki barn á grunnskólaaldri',
-      description: 'Sorry but no children were found at primary school age',
+      defaultMessage: 'Því miður ert þú ekki með skráð barn á grunnskólaaldri',
+      description:
+        'Unfortunately, you do not have a child registered at primary school age.',
     },
-    noChildrenFoundDescription: {
-      id: 'dess.nps.application:prerequisites.nochildren.description',
-      defaultMessage: 'Ástæður fyrir því gætu verið eftirfarandi:',
-      description: 'The reasons for this could be:',
-    },
-
     noChildrenFoundReasons: {
       id: 'dess.nps.application:prerequisites.nochildren.reasons#markdown',
       defaultMessage:
-        '* Gögn vantar frá Þjóðskrá. \n* TBA. \n* TBA. \n\nEf þú telur þessi atriði ekki eiga við um þig vinsamlegast hafðu samband við [mms@mms.is](mailto:mms@mms.is).',
+        'Ástæður fyrir því gætu verið eftirfarandi:\n\n\n* Þú ert ekki skráður forsjáraðili hjá Þjóðskrá með lögheimilistengsl. \n* Barnið er ekki skráð í Þjóðskrá.',
       description:
-        'Data missing from Icelandic National Registry, If these items do not apply to you please contact the mms@mms.is',
+        'You are not registered as a legal guardian with a domicile connection in the National Registry. The child is not registered in the National Registry.',
+    },
+    noChildrenFoundNationalRegistryInfo: {
+      id: 'dess.nps.application:prerequisites.nochildren.national.registry.info#markdown',
+      defaultMessage:
+        'Ef þú telur þessi atriði eiga við þig, vinsamlegast hafið samband við Þjóðskrá:\n\n\nBorgartúni 21, 105 Reykjavík\n\nSími: [515 5300](tel:5155300)\n\nOpið frá 10-15 alla virka daga',
+      description:
+        'If you believe these points apply to you, please contact the National Registry: Borgartún 21, 105 Reykjavík Phone: 515 5300 Open from 10 AM to 3 PM on weekdays',
+    },
+    noChildrenFoundMMSInfo: {
+      id: 'dess.nps.application:prerequisites.nochildren.mmm.info#markdown',
+      defaultMessage:
+        'Annars er hægt að hafa samband við Miðstöð menntunar og skólaþjónustu:\n\n\nSími: [514 7500](tel:5147500)\n\nNetfang: [postur@midstodmenntunar.is](mailto:postur@midstodmenntunar.is)',
+      description:
+        'Otherwise, you can contact the Directorate of Education and School Services: Phone: 514 7500 Email: postur@midstodmenntunar.is',
     },
   }),
 

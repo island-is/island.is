@@ -74,19 +74,26 @@ export const Prerequisites: Form = buildForm({
         buildMultiField({
           id: 'hasNoChildren',
           title: newPrimarySchoolMessages.pre.noChildrenFoundTitle,
-          description: newPrimarySchoolMessages.pre.noChildrenFoundDescription,
+
           children: [
             buildDescriptionField({
               id: 'noChildrenDecsription',
               title: '',
               description: newPrimarySchoolMessages.pre.noChildrenFoundReasons,
             }),
-
-            // Empty submit field to hide all buttons in the footer
-            buildSubmitField({
-              id: '',
+            buildDescriptionField({
+              id: 'noChildrenNationalRegistryDescription',
               title: '',
-              actions: [],
+              marginTop: 5,
+              description:
+                newPrimarySchoolMessages.pre
+                  .noChildrenFoundNationalRegistryInfo,
+            }),
+            buildDescriptionField({
+              id: 'noChildrenMMSDescription',
+              title: '',
+              marginTop: 3,
+              description: newPrimarySchoolMessages.pre.noChildrenFoundMMSInfo,
             }),
           ],
         }),

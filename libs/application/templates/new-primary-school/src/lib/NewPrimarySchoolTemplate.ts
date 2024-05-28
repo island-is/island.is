@@ -19,10 +19,7 @@ import {
 import { Events, Roles, States } from './constants'
 import { dataSchema } from './dataSchema'
 import { newPrimarySchoolMessages, statesMessages } from './messages'
-import {
-  getApplicationExternalData,
-  isChildAtPrimarySchoolAge,
-} from './newPrimarySchoolUtils'
+import { hasChildrenThatCanApply } from './newPrimarySchoolUtils'
 
 const NewPrimarySchoolTemplate: ApplicationTemplate<
   ApplicationContext,
@@ -78,22 +75,8 @@ const NewPrimarySchoolTemplate: ApplicationTemplate<
           SUBMIT: [
             {
               target: States.DRAFT,
-              cond: (application) => {
-                const { children } = getApplicationExternalData(
-                  application?.application?.externalData,
-                )
-
-                //
-                // No child found
-                if (!children || children.length === 0) {
-                  return false
-                }
-
-                // Check if the applicant has some children at primary school age
-                return children.some((child) =>
-                  isChildAtPrimarySchoolAge(child.nationalId),
-                )
-              },
+              cond: (application) =>
+                hasChildrenThatCanApply(application?.application),
             },
             {
               actions: 'setApproveExternalData',
@@ -105,7 +88,6 @@ const NewPrimarySchoolTemplate: ApplicationTemplate<
         meta: {
           name: States.DRAFT,
           status: 'draft',
-
           lifecycle: pruneAfterDays(30),
           /* onExit: defineTemplateApi({
             action: Actions.SEND_APPLICATION,
