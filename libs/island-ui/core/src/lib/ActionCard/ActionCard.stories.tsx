@@ -10,7 +10,7 @@ import { Tag } from '../Tag/Tag'
 import { Box } from '../Box/Box'
 import { VisuallyHidden } from 'reakit'
 
-export default {
+const config: Meta<typeof ActionCard> = {
   title: 'Cards/ActionCard',
   component: ActionCard,
   parameters: withFigma('Action Card'),
@@ -45,7 +45,8 @@ export default {
       control: { type: 'object' },
     },
     unavailable: {
-      description: 'Show unavailability message. Leave message empty to hide tooltip.',
+      description:
+        'Show unavailability message. Leave message empty to hide tooltip.',
       control: { type: 'object' },
     },
     backgroundColor: {
@@ -65,20 +66,20 @@ export default {
       description: 'Show focused state',
       control: { type: 'boolean' },
     },
-  }
-} satisfies Meta<typeof ActionCard>
-
+  },
+}
+export default config
 
 const Template = (args) => <ActionCard {...args} />
 export const Default: StoryObj<ActionCardProps> = Template.bind({})
 
 Default.args = {
-  heading: "The main heading",
-  headingVariant: "h3",
-  
-  text: "This is the text",
+  heading: 'The main heading',
+  headingVariant: 'h3',
 
-  date: "17. júní 1944",
+  text: 'This is the text',
+
+  date: '17. júní 1944',
   eyebrow: 'Eyebrow',
   avatar: true,
   cta: {
@@ -86,7 +87,7 @@ Default.args = {
     buttonType: {
       variant: 'primary',
       colorScheme: 'default',
-    }
+    },
   },
   unavailable: {
     active: false,
@@ -133,10 +134,9 @@ export const Unavailable = () => (
       label: 'This is the unavailability label',
       message: 'And this is the tooltip message shown above',
     }}
-    cta={{ label: `Doesn't matter, not rendered`, }}
+    cta={{ label: `Doesn't matter, not rendered` }}
   />
 )
-
 
 export const WithTag = () => (
   <ActionCard
@@ -261,15 +261,29 @@ export const WithRenderTag = () => (
                 </Box>
               </Tag>
             }
-            onConfirm = {() => 
-              console.log('Delete confirmed')
-            }
+            onConfirm={() => console.log('Delete confirmed')}
             buttonTextConfirm="Delete"
             buttonTextCancel="Cancel"
           />
         </Box>
-      )
+      ),
     }}
-    date='17. júní 1944'
+    date="17. júní 1944"
+  />
+)
+
+export const WithRenderHeading = () => (
+  <ActionCard
+    heading="With a custom heading"
+    text="This story adds a icon in front of the heading"
+    cta={{
+      label: 'Button',
+    }}
+    renderHeading={(heading) => (
+      <Box display="flex" alignItems="center" columnGap={2}>
+        <Icon icon="business" type="filled" />
+        {heading}
+      </Box>
+    )}
   />
 )
