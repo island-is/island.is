@@ -49,13 +49,7 @@ const eyebrowMap: Record<BackgroundColor, Colors> = {
   white: 'blue400',
 }
 
-const avatarMap: Record<
-  BackgroundColor,
-  {
-    circle: Colors
-    text: Colors
-  }
-> = {
+const avatarMap: Record<BackgroundColor, { circle: Colors; text: Colors }> = {
   blue: { circle: 'blue200', text: 'blue400' },
   red: { circle: 'red200', text: 'red600' },
   white: { circle: 'blue100', text: 'blue400' },
@@ -83,6 +77,13 @@ export const ActionCard: React.FC<React.PropsWithChildren<ActionCardProps>> = ({
   const color = colorMap[backgroundColor]
   const eyebrowColor = eyebrowMap[backgroundColor]
   const avatarColors = avatarMap[backgroundColor]
+  const focusColor = focused
+    ? 'mint400'
+    : backgroundColor === 'red'
+    ? 'red200'
+    : backgroundColor === 'blue'
+    ? 'blue100'
+    : 'blue200'
 
   const hasEyebrowElements = Boolean(date || eyebrow)
   const hasCTAElements = Boolean(cta?.label || unavailable?.active)
@@ -138,8 +139,6 @@ export const ActionCard: React.FC<React.PropsWithChildren<ActionCardProps>> = ({
         <Text variant="eyebrow" color={eyebrowColor}>
           {eyebrow}
         </Text>
-
-        {/* {renderTag()} */}
       </Box>
     )
   }
@@ -155,7 +154,6 @@ export const ActionCard: React.FC<React.PropsWithChildren<ActionCardProps>> = ({
         display="flex"
         flexDirection="row"
         justifyContent={date ? 'spaceBetween' : 'flexEnd'}
-        // marginBottom={[0, 2]}
       >
         <Box
           display="flex"
@@ -175,9 +173,6 @@ export const ActionCard: React.FC<React.PropsWithChildren<ActionCardProps>> = ({
             <Text variant="small">{date}</Text>
           </Box>
         </Box>
-        {/* <Inline alignY="center" space={1}>
-          {!eyebrow && renderTag()}
-        </Inline> */}
       </Box>
     )
   }
@@ -259,15 +254,7 @@ export const ActionCard: React.FC<React.PropsWithChildren<ActionCardProps>> = ({
     <Box
       display="flex"
       flexDirection="column"
-      borderColor={
-        focused
-          ? 'mint400'
-          : backgroundColor === 'red'
-          ? 'red200'
-          : backgroundColor === 'blue'
-          ? 'blue100'
-          : 'blue200'
-      }
+      borderColor={focusColor}
       borderRadius="large"
       borderWidth="standard"
       paddingX={[3, 3, 4]}
