@@ -505,9 +505,11 @@ export const NewPrimarySchoolForm: Form = buildForm({
       ],
     }),
     buildFormConclusionSection({
-      alertTitle: newPrimarySchoolMessages.conclusion.alertTitle,
-      expandableHeader: newPrimarySchoolMessages.conclusion.nextStepsLabel,
-      expandableDescription: newPrimarySchoolMessages.conclusion.accordionText,
+      alertMessage: newPrimarySchoolMessages.conclusion.alertMessage,
+      expandableHeader: newPrimarySchoolMessages.conclusion.expandableHeader,
+      expandableIntro: '',
+      expandableDescription:
+        newPrimarySchoolMessages.conclusion.expandableDescription,
     }),
   ],
 })
