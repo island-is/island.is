@@ -7,13 +7,13 @@ export const newPrimarySchoolMessages: MessageDir = {
   shared: defineMessages({
     applicationName: {
       id: 'dess.nps.application:application.name',
-      defaultMessage: 'Nýr grunnskóli',
-      description: 'New primary school',
+      defaultMessage: 'Umsókn í nýjan grunnskóla',
+      description: 'Application for a new primary school',
     },
     institution: {
       id: 'dess.nps.application:institution.name',
-      defaultMessage: 'Miðstöð menntunar og skólaþjónustu',
-      description: 'Directorate of Education and School Services',
+      defaultMessage: 'Sveitarfélög',
+      description: 'Municipalities',
     },
     formTitle: {
       id: 'dess.nps.application:form.title',
@@ -25,16 +25,21 @@ export const newPrimarySchoolMessages: MessageDir = {
       defaultMessage: 'Athugið',
       description: 'Attention',
     },
+    yes: {
+      id: 'dess.nps.application:yes',
+      defaultMessage: 'Já',
+      description: 'Yes',
+    },
+    no: {
+      id: 'dess.nps.application:no',
+      defaultMessage: 'Nei',
+      description: 'No',
+    },
   }),
 
   pre: defineMessages({
-    prerequisitesSection: {
-      id: 'dess.nps.application:prerequisites.section',
-      defaultMessage: 'Forsendur',
-      description: 'Prerequisites',
-    },
-    externalDataSubSection: {
-      id: 'dess.nps.application:external.data.sub.section',
+    externalDataSection: {
+      id: 'dess.nps.application:external.data.section',
       defaultMessage: 'Gagnaöflun',
       description: 'Data collection',
     },
@@ -72,6 +77,11 @@ export const newPrimarySchoolMessages: MessageDir = {
       description:
         'I understand that the above information will be collected during the application process',
     },
+    startApplication: {
+      id: 'dess.nps.application:prerequisites.start.application',
+      defaultMessage: 'Hefja umsókn',
+      description: 'Start application',
+    },
     noChildrenFoundTitle: {
       id: 'dess.nps.application:prerequisites.nochildren.title',
       defaultMessage: 'Því miður ert þú ekki með skráð barn á grunnskólaaldri',
@@ -107,49 +117,41 @@ export const newPrimarySchoolMessages: MessageDir = {
       defaultMessage: 'Börn og foreldrar',
       description: 'Children and parents',
     },
-    childrenSectionTitle: {
-      id: 'dess.nps.application:childrenNParents.childrenSectionTitle',
+
+    // Children
+    childrenSubSectionTitle: {
+      id: 'dess.nps.application:childrenNParents.children.sub.section.title',
       defaultMessage: 'Börn',
       description: 'Children',
     },
-    children: {
-      id: 'dess.nps.application:childrenNParents.children',
-      defaultMessage: 'Þá hefst umsóknarferlið! / Börn',
-      description: 'The application process begins! / Children',
-    },
     childrenDescription: {
-      id: 'dess.nps.application:childrenNParents.childrenDescription',
-      defaultMessage:
-        'Samkvæmt uppflettingu í Þjóðskrá hefur þú forsjá með eftirfarandi barni/börnum. Ef þú sérð ekki barnið þitt hér, þá bendum við þér að hafa samband við Þjóðskrá.',
-      description:
-        'According to the Registers Iceland database you have the following children. If you do not see your child in this process, please contact the Registers Iceland',
-    },
-    childrenInfoTitle: {
-      id: 'dess.nps.application:childrenNParents.childrenInfoTitle',
-      defaultMessage: 'Athugið',
-      description: 'Attention',
-    },
-    childrenInfoDescription: {
-      id: 'dess.nps.application:childrenNParents.childrenInfoDescription',
-      defaultMessage:
-        'Athugaðu að einungis er hægt að sækja um fyrir eitt barn í einu. Ef skrá á tvö börn svo sem tvíbura er hægt að fara beint í að skrá annað barn þegar búið er að skrá það fyrra.',
-      description:
-        'Please note that you can only apply for one child at a time. If you have two children, such as twins, you can proceed to register the second child directly after completing the registration for the first one.',
+      id: 'dess.nps.application:childrenNParents.childrenDescription#markdown',
+      defaultMessage: `Samkvæmt uppflettingu í Þjóðskrá hefur þú forsjá með eftirfarandi barni/börnum. Ef þú sérð ekki barnið þitt hér, þá bendum við þér að hafa samband við Þjóðskrá. \n\nAthugaðu að einungis er hægt að sækja um fyrir eitt barn í einu. Ef skrá á tvö börn svo sem tvíbura er hægt að fara beint í að skrá annað barn þegar búið er að skrá það fyrra.`,
+      description: `According to the Registers Iceland database you have the following children. If you do not see your child in this process, please contact the Registers Iceland. \n\nPlease note that you can only apply for one child at a time. If you have two children, such as twins, you can proceed to register the second child directly after completing the registration for the first one.`,
     },
     childrenRadioTitle: {
       id: 'dess.nps.application:childrenNParents.childrenRadioTitle',
       defaultMessage: 'Veldu barn fyrir umsóknina',
       description: 'Select child for the application',
     },
-    parentsSection: {
-      id: 'dess.nps.application:childrenNParents.parentsSection',
+
+    // Child information
+    childInfoSubSectionTitle: {
+      id: 'dess.nps.application:childrenNParents.child.info.sub.section.title',
+      defaultMessage: 'Upplýsingar um barn',
+      description: 'Information about child',
+    },
+
+    // Parents/guardians
+    parentsSubSectionTitle: {
+      id: 'dess.nps.application:childrenNParents.parents.sub.section.title',
       defaultMessage: 'Foreldrar/forsjáraðilar',
       description: 'Parents/guardians',
     },
-    name: {
-      id: 'dess.nps.application:childrenNParents.name',
-      defaultMessage: 'Nafn',
-      description: 'Name',
+    fullName: {
+      id: 'dess.nps.application:childrenNParents.full.name',
+      defaultMessage: 'Fullt nafn',
+      description: 'Full name',
     },
     nationalId: {
       id: 'dess.nps.application:childrenNParents.nationalId',
@@ -183,131 +185,182 @@ export const newPrimarySchoolMessages: MessageDir = {
     },
     otherParent: {
       id: 'dess.nps.application:childrenNParents.otherParent',
-      defaultMessage: 'Upplýsingar um forsjáraðila 2 / Foreldri/forsjáraðili 2',
-      description: 'Information about guardian 2 / parent 2',
+      defaultMessage: 'Upplýsingar um foreldri/forsjáraðila 2',
+      description: 'Information about parent/guardian 2',
     },
     parent: {
       id: 'dess.nps.application:childrenNParents.parent',
-      defaultMessage: 'Upplýsingar um forsjáraðila 1 / Foreldri/forsjáraðili 1',
-      description: 'Information about guardian 1 / parent 1',
+      defaultMessage: 'Upplýsingar um foreldri/forsjáraðila 1',
+      description: 'Information about parent/guardian 1',
     },
-
-    description: {
-      id: 'dess.nps.application:childrenNParents.description',
+    parentsDescription: {
+      id: 'dess.nps.application:childrenNParents.parents.description',
       defaultMessage:
         'Aðeins forsjáaraðili sem deilir lögheimili með barni getur skráð það í grunnskóla. Ef þú sérð ekki barnið þitt í þessu ferli, þá bendum við á að skoða upplýsingar um forsjá á island.is',
       description: 'Parents section description',
     },
-  }),
 
-  school: defineMessages({
-    sectionTitle: {
-      id: 'dess.nps.application:school.section.title',
-      defaultMessage: 'Skóli',
-      description: 'School',
-    },
-  }),
-
-  relatives: defineMessages({
-    sectionTitle: {
-      id: 'dess.nps.application:relatives.section.title',
+    // Relatives
+    relativesSubSectionTitle: {
+      id: 'dess.nps.application:childrenNParents.relatives.sub.section.title',
       defaultMessage: 'Aðstandendur',
       description: 'Relatives',
     },
-    title: {
-      id: 'dess.nps.application:relatives.title',
+    relativesTitle: {
+      id: 'dess.nps.application:childrenNParents.relatives.title',
       defaultMessage: 'Aðstandendur barnsins',
       description: "The child's relatives",
     },
-    description: {
-      id: 'dess.nps.application:relatives.description',
+    relativesDescription: {
+      id: 'dess.nps.application:childrenNParents.relatives.description',
       defaultMessage:
-        'Skráðu að minnsta kosti einn tengilið sem má hafa samband við ef ekki næst í foreldra/forsjáraðila barnsins. Þú getur bætt við allt að fjórum aðstandendum.',
+        'Skráðu að minnsta kosti einn tengilið sem má hafa samband við ef ekki næst í foreldra/forsjáraðila barnsins. Þú getur bætt við allt að sex aðstandendum. Vinsamlegast látið aðstandendur vita af skráningunni.',
       description:
-        "List at least one contact person who can be contacted if the child's parents/guardian cannot be reached. You can add up to four relatives.",
+        "List at least one contact person who can be contacted if the child's parents/guardian cannot be reached. You can add up to six relatives. Please inform the relatives of the registration.",
     },
-    registrationTitle: {
-      id: 'dess.nps.application:relatives.registration.title',
+    relativesRegistrationTitle: {
+      id: 'dess.nps.application:childrenNParents.relatives.registration.title',
       defaultMessage: 'Skráning aðstandanda',
       description: 'Registration of a relative',
     },
-    addRelative: {
-      id: 'dess.nps.application:relatives.add.relative',
+    relativesAddRelative: {
+      id: 'dess.nps.application:childrenNParents.relatives.add.relative',
       defaultMessage: 'Bæta við aðstandanda',
       description: 'Add a relative',
     },
-    registerRelative: {
-      id: 'dess.nps.application:relatives.register.relative',
+    relativesRegisterRelative: {
+      id: 'dess.nps.application:childrenNParents.relatives.register.relative',
       defaultMessage: 'Skrá aðstandanda',
       description: 'Register relative',
     },
-    deleteRelative: {
-      id: 'dess.nps.application:relatives.delete.relative',
+    relativesDeleteRelative: {
+      id: 'dess.nps.application:childrenNParents.relatives.delete.relative',
       defaultMessage: 'Eyða aðstandanda',
       description: 'Remove relative',
     },
-    fullName: {
-      id: 'dess.nps.application:relatives.full.name',
-      defaultMessage: 'Fullt nafn',
-      description: 'Full name',
-    },
-    phoneNumber: {
-      id: 'dess.nps.application:relatives.phone.number',
-      defaultMessage: 'Símanúmer',
-      description: 'Phone number',
-    },
-    nationalId: {
-      id: 'dess.nps.application:relatives.national.id',
-      defaultMessage: 'Kennitala',
-      description: 'Icelandic ID number',
-    },
-    relation: {
-      id: 'dess.nps.application:relatives.relation',
+    relativesRelation: {
+      id: 'dess.nps.application:childrenNParents.relatives.relation',
       defaultMessage: 'Tengsl',
       description: 'Relation',
     },
-    relationPlaceholder: {
-      id: 'dess.nps.application:relatives.relation.placeholder',
+    relativesRelationPlaceholder: {
+      id: 'dess.nps.application:childrenNParents.relatives.relation.placeholder',
       defaultMessage: 'Veldu tengsl',
       description: 'Select relation',
     },
-    relationGrandparents: {
-      id: 'dess.nps.application:relatives.relation.randparents',
+    relativesRelationGrandparents: {
+      id: 'dess.nps.application:childrenNParents.relatives.relation.randparents',
       defaultMessage: 'Afi/amma',
       description: 'Grandparents',
     },
-    relationSiblings: {
-      id: 'dess.nps.application:relatives.relation.siblings',
+    relativesRelationSiblings: {
+      id: 'dess.nps.application:childrenNParents.relatives.relation.siblings',
       defaultMessage: 'Systkini',
       description: 'Siblings',
     },
-    relationStepParent: {
-      id: 'dess.nps.application:relatives.relation.step.parent',
+    relativesRelationStepParent: {
+      id: 'dess.nps.application:childrenNParents.relatives.relation.step.parent',
       defaultMessage: 'Stjúpforeldri',
       description: 'Step parent',
     },
-    relationRelatives: {
-      id: 'dess.nps.application:relatives.relation.relatives',
+    relativesRelationRelatives: {
+      id: 'dess.nps.application:childrenNParents.relatives.relation.relatives',
       defaultMessage: 'Frændfólk',
       description: 'Relatives',
     },
-    relationFriendsAndOther: {
-      id: 'dess.nps.application:relatives.relation..friends.and.other',
+    relativesRelationFriendsAndOther: {
+      id: 'dess.nps.application:childrenNParents.relatives.relation.friends.and.other',
       defaultMessage: 'Vinafólk/annað',
       description: 'Friends/others',
     },
-    alertMessage: {
-      id: 'dess.nps.application:relatives.alert.message',
-      defaultMessage: 'Vinsamlegast látið aðstandendur vita af skráningunni.',
-      description: 'Please inform the relatives of the registration.',
+    relativesCanPickUpChild: {
+      id: 'dess.nps.application:childrenNParents.relatives.can.pick.up.child',
+      defaultMessage: 'Má sækja barn í skólann',
+      description: 'Can pick up the child from school',
+    },
+    relativesCanPickUpChildTableHeader: {
+      id: 'dess.nps.application:childrenNParents.relatives.can.pick.up.child.table.header',
+      defaultMessage: 'Má sækja barn',
+      description: 'Can pick up the child',
     },
   }),
 
-  meal: defineMessages({
+  primarySchool: defineMessages({
     sectionTitle: {
-      id: 'dess.nps.application:meal.section.title',
-      defaultMessage: 'Mataráskrift',
-      description: 'Meal subscription',
+      id: 'dess.nps.application:primary.school.section.title',
+      defaultMessage: 'Grunnskóli',
+      description: 'Primary school',
+    },
+
+    // Apply to a new school
+    newSchoolSubSectionTitle: {
+      id: 'dess.nps.application:primary.school.new.school.section.title',
+      defaultMessage: 'Nýr skóli',
+      description: 'New school',
+    },
+
+    // Reason for transfer
+    reasonForTransferSubSectionTitle: {
+      id: 'dess.nps.application:primary.school.starting.school.reason.for.transfer.section.title',
+      defaultMessage: 'Ástæða flutnings',
+      description: 'Reason for transfer',
+    },
+
+    // Siblings
+    siblingsSubSectionTitle: {
+      id: 'dess.nps.application:primary.school.starting.school.siblings.section.title',
+      defaultMessage: 'Systkini',
+      description: 'Siblings',
+    },
+
+    // Starting school
+    startingSchoolSubSectionTitle: {
+      id: 'dess.nps.application:primary.school.starting.school.sub.section.title',
+      defaultMessage: 'Byrjar í skóla',
+      description: 'Starting school',
+    },
+  }),
+
+  differentNeeds: defineMessages({
+    sectionTitle: {
+      id: 'dess.nps.application:different.needs.section.title',
+      defaultMessage: 'Ólíkar þarfir',
+      description: 'Different needs',
+    },
+
+    // Language
+    languageSubSectionTitle: {
+      id: 'dess.nps.application:different.needs.language.section.title',
+      defaultMessage: 'Tungumál',
+      description: 'Language',
+    },
+
+    // School Meal
+    schoolMealSubSectionTitle: {
+      id: 'dess.nps.application:different.needs.school.meal.section.title',
+      defaultMessage: 'Skólamáltíð',
+      description: 'School Meal',
+    },
+
+    // Support
+    supportSubSectionTitle: {
+      id: 'dess.nps.application:different.needs.support.section.title',
+      defaultMessage: 'Stuðningur',
+      description: 'Support',
+    },
+
+    // School bus
+    schoolBusSubSectionTitle: {
+      id: 'dess.nps.application:different.needs.school.bus.section.title',
+      defaultMessage: 'Skólaakstur',
+      description: 'School bus',
+    },
+
+    // Use of footage
+    useOfFootageSubSectionTitle: {
+      id: 'dess.nps.application:different.needs.use.of.footage.section.title',
+      defaultMessage: 'Notkun myndefnis',
+      description: 'Use of footage',
     },
   }),
 
@@ -357,11 +410,6 @@ export const newPrimarySchoolMessages: MessageDir = {
       id: 'dess.nps.application:confirm.edit.button',
       defaultMessage: 'Breyta umsókn',
       description: 'Edit application',
-    },
-    canceled: {
-      id: 'dess.nps.application:review.canceled',
-      defaultMessage: 'Hætt við afskráningu',
-      description: 'Deregistration canceled',
     },
     email: {
       id: 'dess.nps.application:review.email',
@@ -422,8 +470,8 @@ export const newPrimarySchoolMessages: MessageDir = {
 export const inReviewFormMessages = defineMessages({
   formTitle: {
     id: 'dess.nps.application:inReview.form.title',
-    defaultMessage: 'Umsókn um nýjan grunnskóla',
-    description: 'New primary school',
+    defaultMessage: 'Umsókn í nýjan grunnskóla',
+    description: 'Application for a new primary school',
   },
 })
 
