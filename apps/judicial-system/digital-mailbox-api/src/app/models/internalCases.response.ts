@@ -7,7 +7,7 @@ export class InternalCasesResponse {
   id!: string
 
   @ApiProperty({ type: String })
-  courtCaseNumber!: string
+  courtCaseNumber?: string
 
   @ApiProperty({ type: String })
   type!: string

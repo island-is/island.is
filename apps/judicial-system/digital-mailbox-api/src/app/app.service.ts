@@ -52,10 +52,11 @@ export class AppService {
               ? 'Lokið'
               : 'Í vinnslu',
         },
-        caseNumber:
-          language === 'en'
-            ? `Case number ${item.courtCaseNumber}`
-            : `Málsnúmer ${item.courtCaseNumber}`,
+        caseNumber: !item.courtCaseNumber
+          ? undefined
+          : language === 'en'
+          ? `Case number ${item.courtCaseNumber}`
+          : `Málsnúmer ${item.courtCaseNumber}`,
         type: language === 'en' ? 'Indictment' : 'Ákæra',
       }
     })
