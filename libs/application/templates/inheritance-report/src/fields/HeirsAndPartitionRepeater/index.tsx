@@ -441,6 +441,11 @@ export const HeirsAndPartitionRepeater: FC<
                             onAfterChange={(val) => {
                               updateValues(fieldIndex, val, customFieldIndex)
                             }}
+                            hasError={
+                              error && error[mainIndex]
+                                ? !!error[mainIndex][customField.id]
+                                : false
+                            }
                             errorMessage={
                               error && error[mainIndex]
                                 ? error[mainIndex][customField.id]

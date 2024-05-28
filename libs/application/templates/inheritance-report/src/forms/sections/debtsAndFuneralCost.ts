@@ -48,12 +48,12 @@ export const debtsAndFuneralCost = buildSection({
                     format: '######-####',
                   },
                   {
-                    title: m.debtsLoanIdentity,
-                    id: 'assetNumber',
-                  },
-                  {
                     title: m.debtType,
                     id: 'debtType',
+                  },
+                  {
+                    title: m.debtsLoanIdentity,
+                    id: 'assetNumber',
                   },
                   {
                     title: m.debtsBalance,
