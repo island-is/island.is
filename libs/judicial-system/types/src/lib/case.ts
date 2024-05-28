@@ -229,6 +229,8 @@ export enum CaseAppealRulingDecision {
 export enum CaseIndictmentRulingDecision {
   RULING = 'RULING',
   FINE = 'FINE',
+  DISMISSAL = 'DISMISSAL',
+  CANCELATION = 'CANCELATION',
 }
 
 export enum IndictmentCaseReviewDecision {

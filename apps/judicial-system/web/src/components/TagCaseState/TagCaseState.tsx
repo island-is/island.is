@@ -2,11 +2,9 @@ import React from 'react'
 import { IntlShape, useIntl } from 'react-intl'
 
 import { Tag, TagVariant } from '@island.is/island-ui/core'
+import { isInvestigationCase } from '@island.is/judicial-system/types'
 import {
-  isIndictmentCase,
-  isInvestigationCase,
-} from '@island.is/judicial-system/types'
-import {
+  CaseIndictmentRulingDecision,
   CaseState,
   CaseType,
   User,
@@ -21,6 +19,7 @@ interface Props {
   isValidToDateInThePast?: boolean | null
   courtDate?: string | null
   indictmentReviewer?: User | null
+  indictmentRulingDecision?: CaseIndictmentRulingDecision | null
   customMapCaseStateToTag?: (
     formatMessage: IntlShape['formatMessage'],
     state?: CaseState | null,
@@ -53,6 +52,7 @@ export const mapCaseStateToTagVariant = (
   isValidToDateInThePast?: boolean | null,
   scheduledDate?: string | null,
   isCourtRole?: boolean,
+  indictmentRulingDecision?: CaseIndictmentRulingDecision | null,
 ): { color: TagVariant; text: string } => {
   switch (state) {
     case CaseState.NEW:
@@ -71,8 +71,7 @@ export const mapCaseStateToTagVariant = (
     case CaseState.MAIN_HEARING:
       return { color: 'blue', text: formatMessage(strings.reassignment) }
     case CaseState.ACCEPTED:
-    case CaseState.COMPLETED:
-      return isIndictmentCase(caseType) || isValidToDateInThePast
+      return isValidToDateInThePast
         ? { color: 'darkerBlue', text: formatMessage(strings.inactive) }
         : {
             color: 'blue',
@@ -84,6 +83,11 @@ export const mapCaseStateToTagVariant = (
       return { color: 'rose', text: formatMessage(strings.rejected) }
     case CaseState.DISMISSED:
       return { color: 'dark', text: formatMessage(strings.dismissed) }
+    case CaseState.COMPLETED:
+      return {
+        color: 'darkerBlue',
+        text: formatMessage(strings.completed, { indictmentRulingDecision }),
+      }
     default:
       return { color: 'white', text: formatMessage(strings.unknown) }
   }
@@ -98,6 +102,7 @@ const TagCaseState: React.FC<React.PropsWithChildren<Props>> = (Props) => {
     isValidToDateInThePast,
     courtDate,
     indictmentReviewer,
+    indictmentRulingDecision,
     customMapCaseStateToTag,
   } = Props
 
@@ -110,6 +115,7 @@ const TagCaseState: React.FC<React.PropsWithChildren<Props>> = (Props) => {
         isValidToDateInThePast,
         courtDate,
         isCourtRole,
+        indictmentRulingDecision,
       )
 
   if (!tagVariant) return null
