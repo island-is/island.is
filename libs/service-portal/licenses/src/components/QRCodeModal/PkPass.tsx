@@ -1,21 +1,21 @@
-import { useEffect, useState } from 'react'
-import { Box, Button, toast } from '@island.is/island-ui/core'
-import { useLocale } from '@island.is/localization'
-import { Locale } from '@island.is/shared/types'
 import { useMutation } from '@apollo/client'
+import { Box, Button, toast } from '@island.is/island-ui/core'
+import { theme } from '@island.is/island-ui/theme'
+import { useLocale } from '@island.is/localization'
+import {
+  FeatureFlagClient,
+  useFeatureFlagClient,
+} from '@island.is/react/feature-flags'
 import {
   CREATE_PK_PASS,
   GenericLicenseType,
   useUserProfile,
 } from '@island.is/service-portal/graphql'
-import { m } from '../../lib/messages'
-import { theme } from '@island.is/island-ui/theme'
-import { hasPassedTimeout } from '../../utils/dateUtils'
-import {
-  FeatureFlagClient,
-  useFeatureFlagClient,
-} from '@island.is/react/feature-flags'
+import { Locale } from '@island.is/shared/types'
+import { useEffect, useState } from 'react'
 import { useWindowSize } from 'react-use'
+import { m } from '../../lib/messages'
+import { hasPassedTimeout } from '../../utils/dateUtils'
 import { DriversLicensePkPass } from './DriversLicensePkPass'
 
 type PkPassProps = {
@@ -75,19 +75,24 @@ export const PkPass = ({
     setTimeout(() => setLinkError(false), 5000)
   }
 
-  const getLink = async () => {
+  useEffect(() => {
     if (pkpassUrl && !hasPassedTimeout(linkTimestamp, 10)) {
-      window.open(pkpassUrl)
-      setDisplayLoader(false)
-      return
+      window.location.assign(pkpassUrl)
     }
+  }, [pkpassUrl, linkTimestamp])
+
+  const getLink = async () => {
     await generatePkPass({
       variables: { locale, input: { licenseType } },
     })
       .then((response) => {
-        if (!response.errors && window && typeof window !== 'undefined') {
-          setPkpassUrl(response?.data?.generatePkPass?.pkpassUrl)
-          window.location.assign(response?.data?.generatePkPass?.pkpassUrl)
+        if (
+          !response.errors &&
+          window &&
+          typeof window !== 'undefined' &&
+          response?.data?.generatePkPass?.pkpassUrl
+        ) {
+          setPkpassUrl(response.data.generatePkPass.pkpassUrl)
           setFetched(true)
           setDisplayLoader(false)
           setLinkTimestamp(new Date())
