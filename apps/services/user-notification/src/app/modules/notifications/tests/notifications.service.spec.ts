@@ -6,7 +6,7 @@ import { CreateHnippNotificationDto } from '../dto/createHnippNotification.dto'
 import { CacheModule } from '@nestjs/cache-manager'
 import { getModelToken } from '@nestjs/sequelize'
 import { Notification } from '../notification.model'
-import { NotificationsScope } from '@island.is/auth/scopes'
+import { DocumentsScope } from '@island.is/auth/scopes'
 import type { User } from '@island.is/auth-nest-tools'
 
 import {
@@ -20,7 +20,7 @@ import {
 
 const user: User = {
   nationalId: '1234567890',
-  scope: [NotificationsScope.read, NotificationsScope.write],
+  scope: [DocumentsScope.main],
   authorization: '',
   client: '',
 }

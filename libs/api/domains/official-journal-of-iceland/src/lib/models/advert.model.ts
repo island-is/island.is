@@ -98,8 +98,8 @@ export class AdvertType {
   @Field(() => String)
   slug!: string
 
-  @Field(() => AdvertEntity)
-  department!: AdvertEntity
+  @Field(() => AdvertEntity, { nullable: true })
+  department!: AdvertEntity | null
 }
 
 @ObjectType('OfficialJournalOfIcelandAdvert')
