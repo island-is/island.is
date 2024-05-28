@@ -8,7 +8,6 @@ import {
 } from 'react-native-navigation'
 import { useGetAssetQuery } from '../../graphql/types/schema'
 import { createNavigationOptionHooks } from '../../hooks/create-navigation-option-hooks'
-import { useOfflineUpdateNavigation } from '../../hooks/use-offline-update-navigation'
 import { testIDs } from '../../utils/test-ids'
 
 const { getNavigationOptions, useNavigationOptions } =
@@ -23,7 +22,6 @@ export const AssetsDetailScreen: NavigationFunctionComponent<{ item: any }> = ({
   item,
 }) => {
   useNavigationOptions(componentId)
-  useOfflineUpdateNavigation(componentId)
 
   const { data, loading, error } = useGetAssetQuery({
     fetchPolicy: 'cache-first',

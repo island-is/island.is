@@ -500,8 +500,4 @@ export const en: TranslatedMessages = {
   'airDiscount.emptyListTitle': 'No benefits',
   'airDiscount.emptyListDescription':
     'Only inhabitants with a legal domicile in rural areas far away from the Capital area and on islands are eligible for a discount with Loftbru. (see map on loftbru.is)',
-
-  // offline
-  'offline.title': 'No internet connection',
-  'offline.message': 'Information has not been updated.',
 }

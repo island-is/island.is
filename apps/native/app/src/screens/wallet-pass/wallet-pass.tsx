@@ -31,7 +31,6 @@ import {
   useGetLicenseQuery,
 } from '../../graphql/types/schema'
 import { createNavigationOptionHooks } from '../../hooks/create-navigation-option-hooks'
-import { useOfflineUpdateNavigation } from '../../hooks/use-offline-update-navigation'
 import { isAndroid, isIos } from '../../utils/devices'
 import { screenWidth } from '../../utils/dimensions'
 import { FieldRender } from './components/field-render'
@@ -136,7 +135,6 @@ export const WalletPassScreen: NavigationFunctionComponent<{
   cardHeight?: number
 }> = ({ id, item, componentId, cardHeight = 140 }) => {
   useNavigationOptions(componentId)
-  useOfflineUpdateNavigation(componentId)
   const theme = useTheme()
   const intl = useIntl()
   const [addingToWallet, setAddingToWallet] = useState(false)

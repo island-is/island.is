@@ -507,8 +507,6 @@ PODS:
     - React-Core
   - react-native-cookies (6.2.1):
     - React-Core
-  - react-native-netinfo (11.3.1):
-    - React-Core
   - react-native-passkit-wallet (0.1.6):
     - React
   - react-native-pdf (6.6.2):
@@ -729,7 +727,6 @@ DEPENDENCIES:
   - react-native-app-auth (from `../node_modules/react-native-app-auth`)
   - react-native-blob-util (from `../node_modules/react-native-blob-util`)
   - "react-native-cookies (from `../node_modules/@react-native-cookies/cookies`)"
-  - "react-native-netinfo (from `../node_modules/@react-native-community/netinfo`)"
   - react-native-passkit-wallet (from `../node_modules/react-native-passkit-wallet`)
   - react-native-pdf (from `../node_modules/react-native-pdf`)
   - "react-native-progress-bar-android (from `../node_modules/@react-native-community/progress-bar-android`)"
@@ -887,8 +884,6 @@ EXTERNAL SOURCES:
     :path: "../node_modules/react-native-blob-util"
   react-native-cookies:
     :path: "../node_modules/@react-native-cookies/cookies"
-  react-native-netinfo:
-    :path: "../node_modules/@react-native-community/netinfo"
   react-native-passkit-wallet:
     :path: "../node_modules/react-native-passkit-wallet"
   react-native-pdf:
@@ -1034,7 +1029,6 @@ SPEC CHECKSUMS:
   react-native-app-auth: fd1eaa667c0bc014199456d14a6440cb74de814e
   react-native-blob-util: 60453b777610c87a22b3524032c0214e8db555db
   react-native-cookies: f54fcded06bb0cda05c11d86788020b43528a26c
-  react-native-netinfo: bdb108d340cdb41875c9ced535977cac6d2ff321
   react-native-passkit-wallet: bd06b26f147016c352013a75271dd22cc11514df
   react-native-pdf: 33c622cbdf776a649929e8b9d1ce2d313347c4fa
   react-native-progress-bar-android: 092e6a794f158642692f25c8839d9aa8eb779afb

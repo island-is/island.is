@@ -1,4 +1,5 @@
 import { ApolloProvider } from '@apollo/client'
+import React from 'react'
 import {
   Navigation,
   NavigationFunctionComponent,
@@ -8,11 +9,11 @@ import { FeatureFlagProvider } from '../contexts/feature-flag-provider'
 import { I18nProvider } from '../contexts/i18n-provider'
 import { ThemeProvider } from '../contexts/theme-provider'
 import { client } from '../graphql/client'
-import { OfflineHoc } from '../hoc/offline-hoc'
 
-export function registerComponent<Props>(
+export function registerComponent(
   name: string,
-  Component: NavigationFunctionComponent<Props>,
+  // eslint-disable-next-line @typescript-eslint/no-explicit-any
+  Component: NavigationFunctionComponent<any>,
 ) {
   Navigation.registerComponent(
     name,
@@ -23,9 +24,7 @@ export function registerComponent<Props>(
             <NavigationProvider value={{ componentId: props.componentId }}>
               <FeatureFlagProvider>
                 <ApolloProvider client={client}>
-                  <OfflineHoc>
-                    <Component {...props} />
-                  </OfflineHoc>
+                  <Component {...props} />
                 </ApolloProvider>
               </FeatureFlagProvider>
             </NavigationProvider>

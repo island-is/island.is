@@ -3,7 +3,6 @@ import { useIntl } from 'react-intl'
 import {
   Navigation,
   NavigationFunctionComponent,
-  OptionsTopBarButton,
 } from 'react-native-navigation'
 import { useNavigationButtonPress } from 'react-native-navigation-hooks/dist'
 import styled from 'styled-components/native'
@@ -11,15 +10,7 @@ import {
   VerifyLicenseBarcodeError,
   VerifyLicenseBarcodeMutation,
 } from '../../graphql/types/schema'
-import { useOfflineUpdateNavigation } from '../../hooks/use-offline-update-navigation'
 import { StackRegistry } from '../../utils/component-registry'
-
-const RIGHT_BUTTONS: OptionsTopBarButton[] = [
-  {
-    id: 'LICENSE_SCANNER_DONE',
-    systemItem: 'done',
-  },
-]
 
 const Host = styled.View`
   flex: 1;
@@ -32,9 +23,8 @@ interface LicenseScanDetailScreenProps {
 
 export const LicenseScanDetailScreen: NavigationFunctionComponent<
   LicenseScanDetailScreenProps
-> = ({ componentId, verifyLicenseBarcode: { licenseType, data, error } }) => {
+> = ({ verifyLicenseBarcode: { licenseType, data, error } }) => {
   const intl = useIntl()
-  useOfflineUpdateNavigation(componentId, RIGHT_BUTTONS)
 
   // We need to cast licenseType to SupportedGenericLicenseTypes because not all GenericLicenseTypes are supported
   const type = licenseType as unknown as SupportedGenericLicenseTypes
@@ -70,6 +60,11 @@ LicenseScanDetailScreen.options = {
     title: {
       text: '',
     },
-    rightButtons: RIGHT_BUTTONS,
+    rightButtons: [
+      {
+        id: 'LICENSE_SCANNER_DONE',
+        systemItem: 'done',
+      },
+    ],
   },
 }

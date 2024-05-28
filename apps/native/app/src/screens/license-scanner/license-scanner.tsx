@@ -15,7 +15,6 @@ import DeviceInfo from 'react-native-device-info'
 import {
   Navigation,
   NavigationFunctionComponent,
-  OptionsTopBarButton,
 } from 'react-native-navigation'
 import styled from 'styled-components/native'
 import flashligth from '../../assets/icons/flashlight.png'
@@ -24,7 +23,6 @@ import {
   VerifyLicenseBarcodeError,
 } from '../../graphql/types/schema'
 import { createNavigationOptionHooks } from '../../hooks/create-navigation-option-hooks'
-import { useOfflineUpdateNavigation } from '../../hooks/use-offline-update-navigation'
 import { ComponentRegistry } from '../../utils/component-registry'
 import { isAndroid, isIos } from '../../utils/devices'
 import { isDefined } from '../../utils/is-defined'
@@ -59,13 +57,6 @@ const BubbleWrapper = styled.View`
   align-items: center;
 `
 
-const RIGHT_BUTTONS: OptionsTopBarButton[] = [
-  {
-    id: 'LICENSE_SCANNER_DONE',
-    systemItem: 'done',
-  },
-]
-
 const { useNavigationOptions, getNavigationOptions } =
   createNavigationOptionHooks(
     (theme, intl, initialized) => ({
@@ -78,7 +69,12 @@ const { useNavigationOptions, getNavigationOptions } =
     {
       topBar: {
         visible: true,
-        rightButtons: RIGHT_BUTTONS,
+        rightButtons: [
+          {
+            id: 'LICENSE_SCANNER_DONE',
+            systemItem: 'done',
+          },
+        ],
       },
     },
   )
@@ -89,7 +85,6 @@ export const LicenseScannerScreen: NavigationFunctionComponent = ({
   componentId,
 }) => {
   useNavigationOptions(componentId)
-  useOfflineUpdateNavigation(componentId, RIGHT_BUTTONS)
   const [hasPermission, setHasPermission] = useState<boolean>()
   const [active, setActive] = useState(true)
   const [invalid, setInvalid] = useState<boolean>(false)

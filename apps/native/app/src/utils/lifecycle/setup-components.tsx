@@ -1,7 +1,6 @@
-import { OfflineBanner } from '../../components/offline/offline-banner'
+import { AppLockScreen } from '../../screens/app-lock/app-lock'
 import { isTestingApp } from '../../config'
 import { AirDiscountScreen } from '../../screens/air-discount/air-discount'
-import { AppLockScreen } from '../../screens/app-lock/app-lock'
 import { ApplicationsScreen } from '../../screens/applications/applications'
 import { AssetsDetailScreen } from '../../screens/assets/assets-detail'
 import { AssetsOverviewScreen } from '../../screens/assets/assets-overview'
@@ -58,16 +57,10 @@ export function registerAllComponents() {
     CR.OnboardingNotificationsScreen,
     OnboardingNotificationsScreen,
   )
-
-  /**
-   * Tab screens
-   */
+  registerComponent(CR.HomeScreen, HomeScreen)
   registerComponent(CR.InboxScreen, InboxScreen)
   registerComponent(CR.WalletScreen, WalletScreen)
-  registerComponent(CR.HomeScreen, HomeScreen)
   registerComponent(CR.ApplicationsScreen, ApplicationsScreen)
-  registerComponent(CR.MoreScreen, MoreScreen)
-
   registerComponent(CR.AppLockScreen, AppLockScreen)
   registerComponent(CR.WalletPassScreen, WalletPassScreen)
   registerComponent(CR.WalletPassportScreen, WalletPassportScreen)
@@ -82,6 +75,7 @@ export function registerAllComponents() {
   registerComponent(CR.VehicleMileageScreen, VehicleMileageScreen)
   registerComponent(CR.FamilyScreen, FamilyOverviewScreen)
   registerComponent(CR.FamilyDetailScreen, FamilyDetailScreen)
+  registerComponent(CR.MoreScreen, MoreScreen)
   registerComponent(CR.PersonalInfoScreen, PersonalInfoScreen)
   registerComponent(CR.AssetsOverviewScreen, AssetsOverviewScreen)
   registerComponent(CR.AssetsDetailScreen, AssetsDetailScreen)
@@ -95,7 +89,4 @@ export function registerAllComponents() {
   registerComponent(CR.FinanceStatusDetailScreen, FinanceStatusDetailScreen)
   registerComponent(CR.InboxFilterScreen, InboxFilterScreen)
   registerComponent(CR.AirDiscountScreen, AirDiscountScreen)
-
-  // Overlay
-  registerComponent(CR.OfflineBanner, OfflineBanner)
 }

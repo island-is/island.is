@@ -20,7 +20,6 @@ import {
 } from '../../graphql/types/schema'
 import { AirDiscountCard } from '@ui/lib/card/air-discount-card'
 import { Bullet } from '@ui/lib/bullet/bullet'
-import { useOfflineUpdateNavigation } from '../../hooks/use-offline-update-navigation'
 import { AirfaresUsageTable } from './airfares-usage-table'
 import illustrationSrc from '../../assets/illustrations/le_jobs_s5.png'
 
@@ -103,8 +102,6 @@ export const AirDiscountScreen: NavigationFunctionComponent = ({
   componentId,
 }) => {
   useNavigationOptions(componentId)
-  useOfflineUpdateNavigation(componentId)
-
   const intl = useIntl()
   const theme = useTheme()
 

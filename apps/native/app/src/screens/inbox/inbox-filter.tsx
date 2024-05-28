@@ -5,7 +5,6 @@ import { Platform, ScrollView, Switch } from 'react-native'
 import { Navigation } from 'react-native-navigation'
 import { PressableHighlight } from '../../components/pressable-highlight/pressable-highlight'
 import { createNavigationOptionHooks } from '../../hooks/create-navigation-option-hooks'
-import { useOfflineUpdateNavigation } from '../../hooks/use-offline-update-navigation'
 import { ComponentRegistry } from '../../utils/component-registry'
 
 const { useNavigationOptions, getNavigationOptions } =
@@ -18,15 +17,12 @@ const { useNavigationOptions, getNavigationOptions } =
       },
     },
   }))
-
 export function InboxFilterScreen(props: {
   opened: boolean
   bookmarked: boolean
   archived: boolean
   componentId: string
 }) {
-  useOfflineUpdateNavigation(props.componentId)
-
   const intl = useIntl()
   const [opened, setOpened] = useState(props.opened)
   const [bookmarked, setBookmarked] = useState(props.bookmarked)

@@ -44,16 +44,9 @@ export const ComponentRegistry = {
   FinanceStatusDetailScreen: `${prefix}.screens.FinanceStatusDetailScreen`,
   InboxFilterScreen: `${prefix}.screens.InboxFilterScreen`,
   AirDiscountScreen: `${prefix}.screens.AirDiscountScreen`,
-
-  // custom navigation icons
-  OfflineIcon: `${prefix}.navigation.OfflineIcon`,
-
-  // overlays
-  OfflineBanner: `${prefix}.overlay.OfflineBanner`,
 }
 
 export const ButtonRegistry = {
-  OfflineButton: `${prefix}.button.OfflineButton`,
   SettingsButton: `${prefix}.button.SettingsButton`,
   // to do remove this unused user button
   UserButton: `${prefix}.button.UserButton`,

@@ -26,7 +26,6 @@ import {
 } from '../../graphql/types/schema'
 import { createNavigationOptionHooks } from '../../hooks/create-navigation-option-hooks'
 import { useActiveTabItemPress } from '../../hooks/use-active-tab-item-press'
-import { useOfflineUpdateNavigation } from '../../hooks/use-offline-update-navigation'
 import { usePreferencesStore } from '../../stores/preferences-store'
 import { ButtonRegistry } from '../../utils/component-registry'
 import { isIos } from '../../utils/devices'
@@ -88,7 +87,7 @@ const { useNavigationOptions, getNavigationOptions } =
 
 export const WalletScreen: NavigationFunctionComponent = ({ componentId }) => {
   useNavigationOptions(componentId)
-  useOfflineUpdateNavigation(componentId, getRightButtons())
+
   const theme = useTheme()
   const flatListRef = useRef<FlatList>(null)
   const [loading, setLoading] = useState(false)

@@ -501,8 +501,4 @@ export const is = {
   'airDiscount.emptyListTitle': 'Enginn réttur',
   'airDiscount.emptyListDescription':
     'Einungis íbúar landsbyggðarinnar sem eiga lögheimili fjarri höfuðborgarsvæðinu og eyjum eiga rétt á Loftbrú.',
-
-  // Offline
-  'offline.title': 'Ekkert netsamband',
-  'offline.message': 'Upplýsingar hafa ekki verið uppfærðar.',
 }

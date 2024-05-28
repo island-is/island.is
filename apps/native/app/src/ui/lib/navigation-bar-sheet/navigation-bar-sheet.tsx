@@ -3,11 +3,10 @@ import {
   ImageSourcePropType,
   Platform,
   SafeAreaView,
-  useWindowDimensions,
   ViewStyle,
+  useWindowDimensions,
 } from 'react-native'
 import styled, { useTheme } from 'styled-components/native'
-import { OfflineIcon } from '../../../components/offline/offline-icon'
 import closeIcon from '../../assets/icons/close.png'
 import { dynamicColor } from '../../utils/dynamic-color'
 import { font } from '../../utils/font'
@@ -40,12 +39,6 @@ const Handle = styled.View`
   left: 50%;
   margin-left: -60px;
   opacity: 1;
-`
-
-const IconsWrapper = styled.View`
-  flex-direction: row;
-  align-items: center;
-  gap: ${({ theme }) => theme.spacing[1]}px;
 `
 
 const CloseButton = styled.TouchableOpacity`
@@ -93,27 +86,24 @@ export function NavigationBarSheet({
           ) : (
             title
           )}
-          <IconsWrapper>
-            <OfflineIcon />
-            <CloseButton
-              onPress={onClosePress}
-              testID="NAVBAR_SHEET_CLOSE_BUTTON"
-              accessibilityLabel="Close"
-              hitSlop={{
-                top: 10,
-                bottom: 10,
-                left: 10,
-                right: 10,
+          <CloseButton
+            onPress={onClosePress}
+            testID="NAVBAR_SHEET_CLOSE_BUTTON"
+            accessibilityLabel="Close"
+            hitSlop={{
+              top: 10,
+              bottom: 10,
+              left: 10,
+              right: 10,
+            }}
+          >
+            <CloseIcon
+              style={{
+                tintColor: theme.color.blue400,
               }}
-            >
-              <CloseIcon
-                style={{
-                  tintColor: theme.color.blue400,
-                }}
-                source={closeIcon as ImageSourcePropType}
-              />
-            </CloseButton>
-          </IconsWrapper>
+              source={closeIcon as ImageSourcePropType}
+            />
+          </CloseButton>
         </Header>
       </SafeAreaView>
     </>

@@ -39,7 +39,6 @@ import {
 } from '../../graphql/types/schema'
 import { createNavigationOptionHooks } from '../../hooks/create-navigation-option-hooks'
 import { useActiveTabItemPress } from '../../hooks/use-active-tab-item-press'
-import { useOfflineUpdateNavigation } from '../../hooks/use-offline-update-navigation'
 import { navigateTo } from '../../lib/deep-linking'
 import { toggleAction } from '../../lib/post-mail-action'
 import { useOrganizationsStore } from '../../stores/organizations-store'
@@ -295,8 +294,6 @@ export const InboxScreen: NavigationFunctionComponent<{
     bookmarked,
     subjectContains: queryString,
   })
-
-  useOfflineUpdateNavigation(componentId, getRightButtons())
 
   useEffect(() => {
     setRefetching(false)

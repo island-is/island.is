@@ -21,7 +21,6 @@ import {
 } from '../../graphql/types/schema'
 import { createNavigationOptionHooks } from '../../hooks/create-navigation-option-hooks'
 import { useActiveTabItemPress } from '../../hooks/use-active-tab-item-press'
-import { useOfflineUpdateNavigation } from '../../hooks/use-offline-update-navigation'
 import { openBrowser } from '../../lib/rn-island'
 import { getApplicationOverviewUrl } from '../../utils/applications-utils'
 import { getRightButtons } from '../../utils/get-main-root'
@@ -76,7 +75,6 @@ export const ApplicationsScreen: NavigationFunctionComponent = ({
   componentId,
 }) => {
   useNavigationOptions(componentId)
-  useOfflineUpdateNavigation(componentId, getRightButtons())
   const flatListRef = useRef<FlatList>(null)
   const [loading, setLoading] = useState(false)
   const intl = useIntl()
