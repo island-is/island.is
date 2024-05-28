@@ -24,13 +24,15 @@ import {
 import { createNavigationOptionHooks } from '../../hooks/create-navigation-option-hooks'
 import { useActiveTabItemPress } from '../../hooks/use-active-tab-item-press'
 import { useConnectivityIndicator } from '../../hooks/use-connectivity-indicator'
-import { useNotificationsStore } from '../../stores/notifications-store'
+import { notificationsStore } from '../../stores/notifications-store'
 import { useUiStore } from '../../stores/ui-store'
 import { isAndroid } from '../../utils/devices'
 import { getRightButtons } from '../../utils/get-main-root'
 import { testIDs } from '../../utils/test-ids'
 import { ApplicationsModule } from './applications-module'
+import { NotificationsModule } from './notifications-module'
 import { OnboardingModule } from './onboarding-module'
+import { VehiclesModule } from './vehicles-module'
 
 interface ListItem {
   id: string
@@ -99,8 +101,6 @@ export const MainHomeScreen: NavigationFunctionComponent = ({
 }) => {
   useNavigationOptions(componentId)
 
-  const syncToken = useNotificationsStore(({ syncToken }) => syncToken)
-  const checkUnseen = useNotificationsStore(({ checkUnseen }) => checkUnseen)
   const [refetching, setRefetching] = useState(false)
   const flatListRef = useRef<FlatList>(null)
   const ui = useUiStore()
@@ -132,9 +132,8 @@ export const MainHomeScreen: NavigationFunctionComponent = ({
   const scrollY = useRef(new Animated.Value(0)).current
 
   useEffect(() => {
-    // Sync push tokens and unseen notifications
-    void syncToken()
-    void checkUnseen()
+    // Sync push tokens
+    notificationsStore.getState().actions.syncToken()
   }, [])
 
   const refetch = useCallback(async () => {
@@ -170,6 +169,16 @@ export const MainHomeScreen: NavigationFunctionComponent = ({
           componentId={componentId}
         />
       ),
+    },
+    isMileageEnabled
+      ? {
+          id: 'vehicles',
+          component: <VehiclesModule />,
+        }
+      : null,
+    {
+      id: 'notifications',
+      component: <NotificationsModule componentId={componentId} />,
     },
   ].filter(Boolean) as Array<{
     id: string

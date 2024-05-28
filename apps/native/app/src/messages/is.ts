@@ -182,7 +182,6 @@ export const is = {
   // document detail
   'documentDetail.screenTitle': 'Skjal',
   'documentDetail.loadingText': 'Sæki skjal',
-  'documentDetail.errorUnknown': 'Villa kom upp við að sækja skjal',
 
   // profile
   'profile.screenTitle': 'Meira',
@@ -408,7 +407,9 @@ export const is = {
 
   // notifications
   'notifications.screenTitle': 'Tilkynningar',
-  'notifications.errorUnknown': 'Villa kom upp við að sækja tilkynningar',
+
+  // notification detail
+  'notificationDetail.screenTitle': 'Tilkynning',
 
   // applications screen
   'applications.title': 'Umsóknir',

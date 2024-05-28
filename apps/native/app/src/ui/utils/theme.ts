@@ -82,7 +82,7 @@ export const theme = {
       standard: '4px',
       large: '8px',
       extraLarge: '16px',
-      circle: '100px',
+      circle: '50%',
     },
     width: {
       standard: 1,

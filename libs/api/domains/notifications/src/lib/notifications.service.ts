@@ -136,7 +136,6 @@ export class NotificationsService {
       id,
       updateNotificationDto: {
         read: true,
-        seen: true,
       },
     })
 

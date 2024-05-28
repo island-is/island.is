@@ -1,5 +1,6 @@
 import { addEventListener } from '@react-native-community/netinfo'
 import { impactAsync, ImpactFeedbackStyle } from 'expo-haptics'
+import { getPresentedNotificationsAsync } from 'expo-notifications'
 import {
   AppState,
   AppStateStatus,
@@ -11,7 +12,6 @@ import SpotlightSearch from 'react-native-spotlight-search'
 import { evaluateUrl, navigateTo } from '../../lib/deep-linking'
 import { authStore } from '../../stores/auth-store'
 import { environmentStore } from '../../stores/environment-store'
-import { notificationsStore } from '../../stores/notifications-store'
 import { offlineStore } from '../../stores/offline-store'
 import { preferencesStore } from '../../stores/preferences-store'
 import { uiStore } from '../../stores/ui-store'
@@ -23,6 +23,8 @@ import {
 import { ButtonRegistry, ComponentRegistry as CR } from '../component-registry'
 import { isIos } from '../devices'
 import { handleQuickAction } from '../quick-actions'
+
+import { handleNotificationResponse } from './setup-notifications'
 
 let backgroundAppLockTimeout: ReturnType<typeof setTimeout>
 
@@ -92,7 +94,14 @@ export function setupEventHandlers() {
     const { appLockTimeout } = preferencesStore.getState()
 
     if (status === 'active') {
-      void notificationsStore.getState().checkUnseen()
+      getPresentedNotificationsAsync().then((notifications) => {
+        notifications.forEach((notification) =>
+          handleNotificationResponse({
+            notification,
+            actionIdentifier: 'NOOP',
+          }),
+        )
+      })
     }
 
     if (!skipAppLock()) {
