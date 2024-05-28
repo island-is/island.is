@@ -295,6 +295,7 @@ export class ApplicationService {
 
     const appModel = await this.applicationModel.create({
       ...application,
+      applied: new Date(),
       nationalId: application.nationalId || user.nationalId,
     })
 
@@ -342,8 +343,6 @@ export class ApplicationService {
     if (appModel.getDataValue('directTaxPayments') === undefined) {
       appModel.setDataValue('directTaxPayments', [])
     }
-
-    appModel.setDataValue('applied', appModel.created)
 
     return appModel
   }
