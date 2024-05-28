@@ -422,14 +422,8 @@ export const NewPrimarySchoolForm: Form = buildForm({
                   .startingSchoolDescription,
               children: [
                 buildDateField({
-                  id: 'startingDate',
-                  title:
-                    newPrimarySchoolMessages.primarySchool.startingSchoolDate,
-                  minDate: () => {
-                    const minDate = new Date()
-                    minDate.setDate(minDate.getDate() - 7)
-                    return minDate
-                  },
+                  id: 'startDate',
+                  title: newPrimarySchoolMessages.shared.date,
                 }),
               ],
             }),
