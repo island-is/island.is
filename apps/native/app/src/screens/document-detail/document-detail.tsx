@@ -1,6 +1,5 @@
 import { useApolloClient, useFragment_experimental } from '@apollo/client'
-import { blue400, dynamicColor, Header, Loader } from '@ui'
-import { Problem } from '@ui/lib/problem/problem'
+import { blue400, dynamicColor, Header, Loader, Typography } from '@ui'
 import React, { useEffect, useRef, useState } from 'react'
 import { FormattedDate, useIntl } from 'react-intl'
 import { Animated, Platform, StyleSheet, View } from 'react-native'
@@ -383,14 +382,16 @@ export const DocumentDetailScreen: NavigationFunctionComponent<{
             style={[
               StyleSheet.absoluteFill,
               {
+                alignItems: 'center',
                 justifyContent: 'center',
-
-                maxHeight: 500,
+                maxHeight: 300,
               },
             ]}
           >
             {error ? (
-              <Problem type="error" withContainer />
+              <Typography>
+                {intl.formatMessage({ id: 'licenseScanDetail.errorUnknown' })}
+              </Typography>
             ) : (
               <Loader
                 text={intl.formatMessage({ id: 'documentDetail.loadingText' })}

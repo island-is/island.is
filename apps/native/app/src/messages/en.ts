@@ -504,15 +504,4 @@ export const en: TranslatedMessages = {
   // offline
   'offline.title': 'No internet connection',
   'offline.message': 'Information has not been updated.',
-
-  // problem
-  'problem.error.tag': 'Error',
-  'problem.error.title': 'Service is temporarily down',
-  'problem.error.message': 'Please try again later',
-  'problem.noData.title': 'No data',
-  'problem.noData.message':
-    'If you believe you have data that should appear here, please contact service provider.',
-  'problem.offline.title': 'No internet connection',
-  'problem.offline.message':
-    'An error occurred while communicating with the service provider',
 }
