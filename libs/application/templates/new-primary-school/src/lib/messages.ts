@@ -292,6 +292,23 @@ export const newPrimarySchoolMessages: MessageDir = {
       defaultMessage: 'Byrjar í skóla',
       description: 'Starting school',
     },
+    startingSchoolTitle: {
+      id: 'dess.nps.application:primary.school.starting.school.title',
+      defaultMessage: 'Hvenær viltu að barnið byrji í nýja skólanum?',
+      description: 'When do you want your child to start at the new school?',
+    },
+    startingSchoolDescription: {
+      id: 'dess.nps.application:primary.school.starting.school.description',
+      defaultMessage:
+        'Við viljum taka vel á móti skólabarninu. Til þess að getað undirbúið komu þess þá biðjum við þig að velja dagsetningu fyrir fyrsta skóladaginn.',
+      description:
+        'We want to welcome the schoolchild properly. To be able to prepare for its arrival, please select a date for the first school day.',
+    },
+    startingSchoolDate: {
+      id: 'dess.nps.application:primary.school.starting.school.sub.section.title',
+      defaultMessage: 'Dagsetning',
+      description: 'Date',
+    },
   }),
 
   differentNeeds: defineMessages({
