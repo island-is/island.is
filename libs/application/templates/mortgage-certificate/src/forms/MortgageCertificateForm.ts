@@ -38,11 +38,11 @@ export const MortgageCertificateForm: Form = buildForm({
               title: m.nationalRegistryTitle,
               subTitle: m.nationalRegistrySubTitle,
             }),
-            buildDataProviderItem({
-              provider: NationalRegistryRealEstateApi,
-              title: m.nationalRegistryRealEstateTitle,
-              subTitle: m.nationalRegistryRealEstateSubTitle,
-            }),
+            // buildDataProviderItem({
+            //   provider: NationalRegistryRealEstateApi,
+            //   title: m.nationalRegistryRealEstateTitle,
+            //   subTitle: m.nationalRegistryRealEstateSubTitle,
+            // }),
             buildDataProviderItem({
               provider: UserProfileApi,
               title: m.userProfileInformationTitle,

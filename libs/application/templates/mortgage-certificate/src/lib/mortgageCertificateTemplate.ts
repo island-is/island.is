@@ -100,7 +100,7 @@ const template: ApplicationTemplate<
               write: 'all',
               api: [
                 IdentityApi,
-                NationalRegistryRealEstateApi,
+                // NationalRegistryRealEstateApi,
                 UserProfileApi,
                 SyslumadurPaymentCatalogApi,
               ],
