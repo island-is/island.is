@@ -79,4 +79,5 @@ export const dataSchema = z.object({
       params: errorMessages.relativesRequired,
     }),
 })
+
 export type SchemaFormValues = z.infer<typeof dataSchema>

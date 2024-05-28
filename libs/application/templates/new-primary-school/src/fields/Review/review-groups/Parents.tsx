@@ -1,16 +1,11 @@
-import {
-  DataValue,
-  Label,
-  ReviewGroup,
-} from '@island.is/application/ui-components'
-
-import { GridColumn, GridRow, Stack } from '@island.is/island-ui/core'
+import { DataValue, ReviewGroup } from '@island.is/application/ui-components'
+import { GridColumn, GridRow, Stack, Text } from '@island.is/island-ui/core'
 import { useLocale } from '@island.is/localization'
 import { format as formatKennitala } from 'kennitala'
+import { formatNumber } from 'libphonenumber-js'
 import { newPrimarySchoolMessages } from '../../../lib/messages'
 import { getApplicationAnswers } from '../../../lib/newPrimarySchoolUtils'
 import { ReviewGroupProps } from './props'
-import { formatNumber } from 'libphonenumber-js'
 
 export const Parents = ({
   application,
@@ -26,14 +21,15 @@ export const Parents = ({
         <ReviewGroup
           isEditable={editable}
           editAction={() => goToScreen?.('parents')}
+          key={index}
         >
           <Stack space={2}>
-            <GridRow rowGap={2}>
+            <GridRow>
               <GridColumn span={['12/12', '12/12', '12/12', '12/12']}>
-                <Label>
+                <Text variant="h3" as="h3">
                   {formatMessage(newPrimarySchoolMessages.confirm.parents)}{' '}
                   {index + 1}
-                </Label>
+                </Text>
               </GridColumn>
             </GridRow>
             <GridRow rowGap={2}>
@@ -61,7 +57,6 @@ export const Parents = ({
                   value={parent.address.streetAddress}
                 />
               </GridColumn>
-
               <GridColumn span={['12/12', '12/12', '12/12', '5/12']}>
                 <DataValue
                   label={formatMessage(
@@ -78,7 +73,6 @@ export const Parents = ({
                   value={parent.email}
                 />
               </GridColumn>
-
               <GridColumn span={['12/12', '12/12', '12/12', '5/12']}>
                 <DataValue
                   label={formatMessage(
