@@ -300,6 +300,9 @@ const ApplicationProfile = ({
           setIsLoading={setIsLoading}
           applicationCreated={application.created}
           applicationMunicipality={applicationMunicipality}
+          hasApplicantChildren={
+            !application?.children || application?.children.length > 0
+          }
         />
       )}
 
