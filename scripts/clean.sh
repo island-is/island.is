@@ -114,6 +114,8 @@ clean_yarn() {
     fi
 
     local fname="${f##*/}"
+    # Match the name literally, as a substring
+    # shellcheck disable=SC2076
     if [[ ! " ${CLEAN_YARN_IGNORES_LIST[*]} " =~ " ${fname} " ]]; then
       if dry "Would delete: $f"; then
         continue
