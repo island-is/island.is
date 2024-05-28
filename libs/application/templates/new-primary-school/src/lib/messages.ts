@@ -35,6 +35,41 @@ export const newPrimarySchoolMessages: MessageDir = {
       defaultMessage: 'Nei',
       description: 'No',
     },
+    fullName: {
+      id: 'dess.nps.application:full.name',
+      defaultMessage: 'Fullt nafn',
+      description: 'Full name',
+    },
+    nationalId: {
+      id: 'dess.nps.application:nationalId',
+      defaultMessage: 'Kennitala',
+      description: 'National id',
+    },
+    email: {
+      id: 'dess.nps.application.email',
+      defaultMessage: 'Netfang',
+      description: 'Email address',
+    },
+    municipality: {
+      id: 'dess.nps.application:municipality',
+      defaultMessage: 'Sveitarfélag',
+      description: 'Municipality',
+    },
+    postalcode: {
+      id: 'dess.nps.application:postalcode',
+      defaultMessage: 'Póstnúmer',
+      description: 'Postalcode',
+    },
+    address: {
+      id: 'dess.nps.application:address',
+      defaultMessage: 'Heimilisfang',
+      description: 'Address',
+    },
+    phoneNumber: {
+      id: 'dess.nps.application:phoneNumber',
+      defaultMessage: 'Símanúmer',
+      description: 'Phonenumber',
+    },
   }),
 
   pre: defineMessages({
@@ -148,41 +183,6 @@ export const newPrimarySchoolMessages: MessageDir = {
       defaultMessage: 'Foreldrar/forsjáraðilar',
       description: 'Parents/guardians',
     },
-    fullName: {
-      id: 'dess.nps.application:childrenNParents.full.name',
-      defaultMessage: 'Fullt nafn',
-      description: 'Full name',
-    },
-    nationalId: {
-      id: 'dess.nps.application:childrenNParents.nationalId',
-      defaultMessage: 'Kennitala',
-      description: 'National id',
-    },
-    email: {
-      id: 'dess.nps.application:childrenNParents.email',
-      defaultMessage: 'Netfang',
-      description: 'Email address',
-    },
-    municipality: {
-      id: 'dess.nps.application:childrenNParents.municipality',
-      defaultMessage: 'Sveitarfélag',
-      description: 'Municipality',
-    },
-    postalcode: {
-      id: 'dess.nps.application:childrenNParents.postalcode',
-      defaultMessage: 'Póstfang',
-      description: 'Postalcode',
-    },
-    address: {
-      id: 'dess.nps.application:childrenNParents.address',
-      defaultMessage: 'Heimilisfang',
-      description: 'Address',
-    },
-    phoneNumber: {
-      id: 'dess.nps.application:childrenNParents.phoneNumber',
-      defaultMessage: 'Símanúmer',
-      description: 'Phonenumber',
-    },
     otherParent: {
       id: 'dess.nps.application:childrenNParents.otherParent',
       defaultMessage: 'Upplýsingar um foreldri/forsjáraðila 2',
@@ -196,8 +196,9 @@ export const newPrimarySchoolMessages: MessageDir = {
     parentsDescription: {
       id: 'dess.nps.application:childrenNParents.parents.description',
       defaultMessage:
-        'Aðeins forsjáaraðili sem deilir lögheimili með barni getur skráð það í grunnskóla. Ef þú sérð ekki barnið þitt í þessu ferli, þá bendum við á að skoða upplýsingar um forsjá á island.is',
-      description: 'Parents section description',
+        'Upplýsingar um foreldra og forsjáraðila eru sóttar í Þjóðskrá. Athugaðu hvort símanúmer og netföng séu rétt skráð áður en þú heldur áfram.',
+      description:
+        'Information about parents and guardians is retrieved from the National Register. Check that phone numbers and email addresses are entered correctly before proceeding.',
     },
 
     // Relatives
@@ -380,26 +381,6 @@ export const newPrimarySchoolMessages: MessageDir = {
       id: 'dess.nps.application:confirmation.child',
       defaultMessage: 'Barn',
       description: 'Child',
-    },
-    name: {
-      id: 'dess.nps.application:review.name',
-      defaultMessage: 'Nafn',
-      description: 'Name',
-    },
-    nationalId: {
-      id: 'dess.nps.application:review.national.id',
-      defaultMessage: 'Kennitala',
-      description: 'Icelandic ID number',
-    },
-    address: {
-      id: 'dess.nps.application:review.address',
-      defaultMessage: 'Heimilisfang',
-      description: 'Address',
-    },
-    municipality: {
-      id: 'dess.nps.application:review.municipality',
-      defaultMessage: 'Sveitarfélag',
-      description: 'Municipality',
     },
     submitButton: {
       id: 'dess.nps.application:confirm.submit.button',

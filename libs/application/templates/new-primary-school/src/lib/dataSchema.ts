@@ -7,6 +7,44 @@ import { errorMessages } from './messages'
 export const dataSchema = z.object({
   approveExternalData: z.boolean().refine((v) => v),
   childNationalId: z.string().min(1),
+  parents: z.object({
+    parent1: z.object({
+      email: z.string().email(),
+      phoneNumber: z.string().refine(
+        (p) => {
+          const phoneNumber = parsePhoneNumberFromString(p, 'IS')
+          const phoneNumberStartStr = ['6', '7', '8']
+          return (
+            phoneNumber &&
+            phoneNumber.isValid() &&
+            phoneNumberStartStr.some((substr) =>
+              phoneNumber.nationalNumber.startsWith(substr),
+            )
+          )
+        },
+        { params: errorMessages.phoneNumber },
+      ),
+    }),
+    parent2: z
+      .object({
+        email: z.string().email(),
+        phoneNumber: z.string().refine(
+          (p) => {
+            const phoneNumber = parsePhoneNumberFromString(p, 'IS')
+            const phoneNumberStartStr = ['6', '7', '8']
+            return (
+              phoneNumber &&
+              phoneNumber.isValid() &&
+              phoneNumberStartStr.some((substr) =>
+                phoneNumber.nationalNumber.startsWith(substr),
+              )
+            )
+          },
+          { params: errorMessages.phoneNumber },
+        ),
+      })
+      .optional(),
+  }),
   relatives: z
     .array(
       z.object({

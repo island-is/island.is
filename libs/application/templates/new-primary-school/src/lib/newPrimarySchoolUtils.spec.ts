@@ -1,5 +1,6 @@
+import { ExternalData } from '@island.is/application/types'
 import { Child } from '../types'
-import { canApply } from './newPrimarySchoolUtils'
+import { canApply, hasOtherParent } from './newPrimarySchoolUtils'
 import * as kennitala from 'kennitala'
 
 describe('canApply', () => {
@@ -44,5 +45,40 @@ describe('canApply', () => {
       livesWithApplicant: false,
     } as Child
     expect(canApply(child)).toBe(false)
+  })
+})
+
+describe('hasOtherParent', () => {
+  it('should return true if otherParent exists in externalData', () => {
+    const answers = {}
+    const externalData = {
+      childrenCustodyInformation: {
+        data: [
+          {
+            fullName: 'Stúfur Maack ',
+            otherParent: {
+              nationalId: '1234567890',
+              name: 'John Doe',
+            },
+          },
+        ],
+      },
+    } as unknown as ExternalData
+
+    expect(hasOtherParent(answers, externalData)).toBe(true)
+  })
+
+  it('should return false if otherParent does not exist in externalData', () => {
+    const answers = {}
+    const externalData = {
+      childrenCustodyInformation: {
+        data: [
+          {
+            fullName: 'Stúfur Maack ',
+          },
+        ],
+      },
+    } as unknown as ExternalData
+    expect(hasOtherParent(answers, externalData)).toBe(false)
   })
 })

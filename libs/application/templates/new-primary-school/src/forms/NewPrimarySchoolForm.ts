@@ -31,6 +31,7 @@ import {
   getOtherParent,
   getRelationOptionLabel,
   getRelationOptions,
+  hasOtherParent,
   canApply,
 } from '../lib/newPrimarySchoolUtils'
 
@@ -112,9 +113,9 @@ export const NewPrimarySchoolForm: Form = buildForm({
                   titleVariant: 'h4',
                 }),
                 buildTextField({
-                  title: newPrimarySchoolMessages.childrenNParents.fullName,
+                  id: 'parents.parent1.fullName',
+                  title: newPrimarySchoolMessages.shared.fullName,
                   dataTestId: 'fullName1',
-                  id: 'parent1.fullName',
                   readOnly: true,
                   defaultValue: (application: Application) =>
                     (
@@ -124,10 +125,10 @@ export const NewPrimarySchoolForm: Form = buildForm({
                     )?.fullName,
                 }),
                 buildTextField({
+                  id: 'parents.parent1.nationalId',
+                  title: newPrimarySchoolMessages.shared.nationalId,
                   width: 'half',
-                  title: newPrimarySchoolMessages.childrenNParents.nationalId,
                   dataTestId: 'nationalId1',
-                  id: 'parent1.nationalId',
                   format: '######-####',
                   readOnly: true,
                   defaultValue: (application: Application) =>
@@ -138,10 +139,10 @@ export const NewPrimarySchoolForm: Form = buildForm({
                     )?.nationalId,
                 }),
                 buildTextField({
+                  id: 'parents.parent1.address.streetAddress',
+                  title: newPrimarySchoolMessages.shared.address,
                   width: 'half',
-                  title: newPrimarySchoolMessages.childrenNParents.address,
                   dataTestId: 'address1',
-                  id: 'parent1.address.streetAddress',
                   readOnly: true,
                   defaultValue: (application: Application) => {
                     return getApplicationExternalData(application.externalData)
@@ -149,10 +150,10 @@ export const NewPrimarySchoolForm: Form = buildForm({
                   },
                 }),
                 buildTextField({
+                  id: 'parents.parent1.address.postalcode',
+                  title: newPrimarySchoolMessages.shared.postalcode,
                   width: 'half',
-                  title: newPrimarySchoolMessages.childrenNParents.postalcode,
                   dataTestId: 'postalcode1',
-                  id: 'parent1.address.postalcode',
                   readOnly: true,
                   defaultValue: (application: Application) => {
                     return getApplicationExternalData(application.externalData)
@@ -160,10 +161,10 @@ export const NewPrimarySchoolForm: Form = buildForm({
                   },
                 }),
                 buildTextField({
+                  id: 'parents.parent1.address.city',
+                  title: newPrimarySchoolMessages.shared.municipality,
                   width: 'half',
-                  title: newPrimarySchoolMessages.childrenNParents.municipality,
                   dataTestId: 'city1',
-                  id: 'parent1.address.city',
                   readOnly: true,
                   defaultValue: (application: Application) => {
                     return getApplicationExternalData(application.externalData)
@@ -171,11 +172,12 @@ export const NewPrimarySchoolForm: Form = buildForm({
                   },
                 }),
                 buildTextField({
+                  id: 'parents.parent1.email',
+                  title: newPrimarySchoolMessages.shared.email,
                   width: 'half',
-                  title: newPrimarySchoolMessages.childrenNParents.email,
                   dataTestId: 'email',
-                  id: 'parent1.email',
                   variant: 'email',
+                  required: true,
                   defaultValue: (application: Application) =>
                     (
                       application.externalData.userProfile?.data as {
@@ -184,8 +186,9 @@ export const NewPrimarySchoolForm: Form = buildForm({
                     )?.email,
                 }),
                 buildPhoneField({
+                  id: 'parents.parent1.phoneNumber',
+                  title: newPrimarySchoolMessages.shared.phoneNumber,
                   width: 'half',
-                  title: newPrimarySchoolMessages.childrenNParents.phoneNumber,
                   defaultValue: (application: Application) => {
                     const phoneNumber = (
                       application.externalData.userProfile?.data as {
@@ -197,9 +200,9 @@ export const NewPrimarySchoolForm: Form = buildForm({
                       removeCountryCode(phoneNumber ?? ''),
                     )
                   },
-                  id: 'parent1.phoneNumber',
                   dataTestId: 'phone1',
                   placeholder: '000-0000',
+                  required: true,
                 }),
 
                 buildDescriptionField({
@@ -207,65 +210,83 @@ export const NewPrimarySchoolForm: Form = buildForm({
                   title: newPrimarySchoolMessages.childrenNParents.otherParent,
                   titleVariant: 'h4',
                   marginTop: 'containerGutter',
+                  condition: (answers, externalData) =>
+                    hasOtherParent(answers, externalData),
                 }),
                 buildTextField({
-                  title: newPrimarySchoolMessages.childrenNParents.fullName,
+                  id: 'parents.parent2.fullName',
+                  title: newPrimarySchoolMessages.shared.fullName,
                   dataTestId: 'fullName2',
-                  id: 'parent2.fullName',
                   readOnly: true,
+                  condition: (answers, externalData) =>
+                    hasOtherParent(answers, externalData),
                   defaultValue: (application: Application) =>
                     getOtherParent(application)?.fullName,
                 }),
                 buildTextField({
+                  id: 'parents.parent2.nationalId',
+                  title: newPrimarySchoolMessages.shared.nationalId,
                   width: 'half',
-                  title: newPrimarySchoolMessages.childrenNParents.nationalId,
                   dataTestId: 'nationalId2',
-                  id: 'parent2.nationalId',
                   format: '######-####',
                   readOnly: true,
+                  condition: (answers, externalData) =>
+                    hasOtherParent(answers, externalData),
                   defaultValue: (application: Application) =>
                     getOtherParent(application)?.nationalId,
                 }),
                 buildTextField({
+                  id: 'parents.parent2.address.streetAddress',
+                  title: newPrimarySchoolMessages.shared.address,
                   width: 'half',
-                  title: newPrimarySchoolMessages.childrenNParents.address,
                   dataTestId: 'address2',
-                  id: 'parent2.address.streetAddress',
                   readOnly: true,
+                  condition: (answers, externalData) =>
+                    hasOtherParent(answers, externalData),
                   defaultValue: (application: Application) =>
                     getOtherParent(application)?.address.streetAddress,
                 }),
                 buildTextField({
+                  id: 'parents.parent2.address.postalcode',
+                  title: newPrimarySchoolMessages.shared.postalcode,
                   width: 'half',
-                  title: newPrimarySchoolMessages.childrenNParents.postalcode,
                   dataTestId: 'postalcode2',
-                  id: 'parent2.address.postalcode',
                   readOnly: true,
+                  condition: (answers, externalData) =>
+                    hasOtherParent(answers, externalData),
                   defaultValue: (application: Application) =>
                     getOtherParent(application)?.address.postalCode,
                 }),
                 buildTextField({
+                  id: 'parents.parent2.address.city',
+                  title: newPrimarySchoolMessages.shared.municipality,
                   width: 'half',
-                  title: newPrimarySchoolMessages.childrenNParents.municipality,
                   dataTestId: 'city2',
-                  id: 'parent2.address.city',
                   readOnly: true,
+                  condition: (answers, externalData) =>
+                    hasOtherParent(answers, externalData),
                   defaultValue: (application: Application) =>
                     getOtherParent(application)?.address.city,
                 }),
                 buildTextField({
+                  id: 'parents.parent2.email',
+                  title: newPrimarySchoolMessages.shared.email,
                   width: 'half',
-                  title: newPrimarySchoolMessages.childrenNParents.email,
                   dataTestId: 'email2',
-                  id: 'parent2.email',
                   variant: 'email',
+                  required: true,
+                  condition: (answers, externalData) =>
+                    hasOtherParent(answers, externalData),
                 }),
                 buildPhoneField({
+                  id: 'parents.parent2.phoneNumber',
+                  title: newPrimarySchoolMessages.shared.phoneNumber,
                   width: 'half',
-                  title: newPrimarySchoolMessages.childrenNParents.phoneNumber,
-                  id: 'parent2.phoneNumber',
                   dataTestId: 'phone2',
                   placeholder: '000-0000',
+                  required: true,
+                  condition: (answers, externalData) =>
+                    hasOtherParent(answers, externalData),
                 }),
               ],
             }),
@@ -302,15 +323,14 @@ export const NewPrimarySchoolForm: Form = buildForm({
                   fields: {
                     fullName: {
                       component: 'input',
-                      label: newPrimarySchoolMessages.childrenNParents.fullName,
+                      label: newPrimarySchoolMessages.shared.fullName,
                       width: 'half',
                       type: 'text',
                       dataTestId: 'relative-full-name',
                     },
                     phoneNumber: {
                       component: 'input',
-                      label:
-                        newPrimarySchoolMessages.childrenNParents.phoneNumber,
+                      label: newPrimarySchoolMessages.shared.phoneNumber,
                       width: 'half',
                       type: 'tel',
                       format: '###-####',
@@ -319,8 +339,7 @@ export const NewPrimarySchoolForm: Form = buildForm({
                     },
                     nationalId: {
                       component: 'input',
-                      label:
-                        newPrimarySchoolMessages.childrenNParents.nationalId,
+                      label: newPrimarySchoolMessages.shared.nationalId,
                       width: 'half',
                       type: 'text',
                       format: '######-####',
@@ -368,9 +387,9 @@ export const NewPrimarySchoolForm: Form = buildForm({
                           : newPrimarySchoolMessages.shared.no,
                     },
                     header: [
-                      newPrimarySchoolMessages.childrenNParents.fullName,
-                      newPrimarySchoolMessages.childrenNParents.phoneNumber,
-                      newPrimarySchoolMessages.childrenNParents.nationalId,
+                      newPrimarySchoolMessages.shared.fullName,
+                      newPrimarySchoolMessages.shared.phoneNumber,
+                      newPrimarySchoolMessages.shared.nationalId,
                       newPrimarySchoolMessages.childrenNParents
                         .relativesRelation,
                       newPrimarySchoolMessages.childrenNParents

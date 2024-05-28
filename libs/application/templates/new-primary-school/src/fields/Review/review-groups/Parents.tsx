@@ -1,12 +1,8 @@
-import {
-  DataValue,
-  Label,
-  ReviewGroup,
-} from '@island.is/application/ui-components'
-
-import { GridColumn, GridRow } from '@island.is/island-ui/core'
+import { DataValue, ReviewGroup } from '@island.is/application/ui-components'
+import { GridColumn, GridRow, Stack, Text } from '@island.is/island-ui/core'
 import { useLocale } from '@island.is/localization'
 import { format as formatKennitala } from 'kennitala'
+import { formatNumber } from 'libphonenumber-js'
 import { newPrimarySchoolMessages } from '../../../lib/messages'
 import { getApplicationAnswers } from '../../../lib/newPrimarySchoolUtils'
 import { ReviewGroupProps } from './props'
@@ -17,88 +13,78 @@ export const Parents = ({
   goToScreen,
 }: ReviewGroupProps) => {
   const { formatMessage } = useLocale()
-  const { parent1, parent2 } = getApplicationAnswers(application.answers)
-
-  const parents = [parent1, parent2]
+  const { parents } = getApplicationAnswers(application.answers)
 
   return (
     <>
-      {parents.map((parent, index) => {
-        const parentIndex = index + 1
-
-        console.log('XXXXparentsInfo' + parentIndex)
-
-        return (
-          <ReviewGroup
-            isEditable={editable}
-            editAction={() => goToScreen?.('parents')}
-          >
+      {Object.values(parents).map((parent, index) => (
+        <ReviewGroup
+          isEditable={editable}
+          editAction={() => goToScreen?.('parents')}
+          key={index}
+        >
+          <Stack space={2}>
             <GridRow>
               <GridColumn span={['12/12', '12/12', '12/12', '12/12']}>
-                <Label>
+                <Text variant="h3" as="h3">
                   {formatMessage(newPrimarySchoolMessages.confirm.parents)}{' '}
-                  {+parentIndex}
-                </Label>
+                  {index + 1}
+                </Text>
               </GridColumn>
             </GridRow>
-            <GridRow marginTop={3}>
+            <GridRow rowGap={2}>
               <GridColumn span={['12/12', '12/12', '12/12', '5/12']}>
                 <DataValue
-                  label={formatMessage(newPrimarySchoolMessages.confirm.name)}
+                  label={formatMessage(
+                    newPrimarySchoolMessages.shared.fullName,
+                  )}
                   value={parent.fullName}
                 />
               </GridColumn>
               <GridColumn span={['12/12', '12/12', '12/12', '5/12']}>
                 <DataValue
                   label={formatMessage(
-                    newPrimarySchoolMessages.confirm.nationalId,
+                    newPrimarySchoolMessages.shared.nationalId,
                   )}
                   value={formatKennitala(parent.nationalId)}
                 />
               </GridColumn>
             </GridRow>
-            <GridRow marginTop={3}>
+            <GridRow rowGap={2}>
               <GridColumn span={['12/12', '12/12', '12/12', '5/12']}>
                 <DataValue
-                  label={formatMessage(
-                    newPrimarySchoolMessages.confirm.address,
-                  )}
+                  label={formatMessage(newPrimarySchoolMessages.shared.address)}
                   value={parent.address.streetAddress}
                 />
               </GridColumn>
-
               <GridColumn span={['12/12', '12/12', '12/12', '5/12']}>
                 <DataValue
                   label={formatMessage(
-                    newPrimarySchoolMessages.confirm.municipality,
+                    newPrimarySchoolMessages.shared.municipality,
                   )}
                   value={parent.address.city}
                 />
               </GridColumn>
             </GridRow>
-            <GridRow marginTop={3}>
-              <GridColumn
-                span={['12/12', '12/12', '12/12', '5/12']}
-                paddingBottom={3}
-              >
+            <GridRow rowGap={2}>
+              <GridColumn span={['12/12', '12/12', '12/12', '5/12']}>
                 <DataValue
-                  label={formatMessage(newPrimarySchoolMessages.confirm.email)}
+                  label={formatMessage(newPrimarySchoolMessages.shared.email)}
                   value={parent.email}
                 />
               </GridColumn>
-
               <GridColumn span={['12/12', '12/12', '12/12', '5/12']}>
                 <DataValue
                   label={formatMessage(
-                    newPrimarySchoolMessages.confirm.phoneNumber,
+                    newPrimarySchoolMessages.shared.phoneNumber,
                   )}
-                  value={parent.phoneNumber}
+                  value={formatNumber(parent.phoneNumber, 'International')}
                 />
               </GridColumn>
             </GridRow>
-          </ReviewGroup>
-        )
-      })}
+          </Stack>
+        </ReviewGroup>
+      ))}
     </>
   )
 }
