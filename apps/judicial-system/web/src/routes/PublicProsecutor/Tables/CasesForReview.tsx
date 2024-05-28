@@ -80,9 +80,7 @@ const CasesForReview: React.FC<CasesForReviewTableProps> = ({
                         mapIndictmentCaseStateToTagVariant
                       }
                       indictmentReviewer={row.indictmentReviewer}
-                      indictmentRulingDecision={
-                        theCase.indictmentRulingDecision
-                      }
+                      indictmentRulingDecision={row.indictmentRulingDecision}
                     />
                   ),
                 },
