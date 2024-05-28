@@ -57,7 +57,7 @@ export class CriminalRecordSubmissionService extends BaseTemplateApiService {
       const uploadDataName = 'Umsókn um sakavottorð frá Ísland.is'
       const uploadDataId = 'Sakavottord2.1'
 
-      await this.syslumennService
+      return await this.syslumennService
         .uploadData(persons, undefined, {}, uploadDataName, uploadDataId)
         .catch(async () => {
           await this.sharedTemplateAPIService.sendEmail(
