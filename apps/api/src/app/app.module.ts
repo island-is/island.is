@@ -51,6 +51,7 @@ import {
 import { IdentityModule } from '@island.is/api/domains/identity'
 import { LicenseServiceModule } from '@island.is/api/domains/license-service'
 import { OfficialJournalOfIcelandModule } from '@island.is/api/domains/official-journal-of-iceland'
+import { OfficialJournalOfIcelandApplicationModule } from '@island.is/api/domains/official-journal-of-iceland-application'
 import { MortgageCertificateModule } from '@island.is/api/domains/mortgage-certificate'
 import { MunicipalitiesFinancialAidModule } from '@island.is/api/domains/municipalities-financial-aid'
 import { NationalRegistryXRoadModule } from '@island.is/api/domains/national-registry-x-road'
@@ -105,6 +106,10 @@ import {
   OfficialJournalOfIcelandClientConfig,
   OfficialJournalOfIcelandClientModule,
 } from '@island.is/clients/official-journal-of-iceland'
+import {
+  OfficialJournalOfIcelandApplicationClientConfig,
+  OfficialJournalOfIcelandApplicationClientModule,
+} from '@island.is/clients/official-journal-of-iceland/application'
 import { HmsLoansClientConfig } from '@island.is/clients/hms-loans'
 import { HousingBenefitCalculatorClientConfig } from '@island.is/clients/housing-benefit-calculator'
 import { IcelandicGovernmentInstitutionVacanciesClientConfig } from '@island.is/clients/icelandic-government-institution-vacancies'
@@ -279,6 +284,7 @@ const environment = getConfig
     StatisticsModule,
     UniversityCareersModule,
     OfficialJournalOfIcelandModule,
+    OfficialJournalOfIcelandApplicationModule,
     CompanyRegistryModule,
     IcelandicNamesModule.register({
       backendUrl: environment.icelandicNamesRegistry.backendUrl!,
@@ -382,6 +388,7 @@ const environment = getConfig
         CommunicationsConfig,
         HealthDirectorateClientConfig,
         OfficialJournalOfIcelandClientConfig,
+        OfficialJournalOfIcelandApplicationClientConfig,
         InnaClientConfig,
         SessionsApiClientConfig,
         AuthAdminApiClientConfig,

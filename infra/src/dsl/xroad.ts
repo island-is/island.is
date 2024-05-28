@@ -848,3 +848,13 @@ export const OfficialJournalOfIceland = new XroadConf({
     },
   },
 })
+
+export const OfficialJournalOfIcelandApplication = new XroadConf({
+  env: {
+    XROAD_OFFICIAL_JOURNAL_APPLICATION_PATH: {
+      dev: 'IS-DEV/GOV/10014/DMR-Protected/official-journal-application',
+      staging: 'IS-DEV/GOV/10014/DMR-Protected/official-journal-application',
+      prod: 'IS/GOV/10014/DMR-Protected/official-journal-application',
+    },
+  },
+})
