@@ -89,8 +89,8 @@ export const PickPlateSize: FC<React.PropsWithChildren<FieldBaseProps>> = (
             }
             defaultValue={[]}
             options={plateTypeList
-              .filter((x) => x.code === currentPlateTypeFront)
-              .map((x) => ({
+              ?.filter((x) => x.code === currentPlateTypeFront)
+              ?.map((x) => ({
                 value: x.code || '',
                 label:
                   formatMessage(
