@@ -23,7 +23,7 @@ import {
 } from '../../graphql/types/schema'
 import { createNavigationOptionHooks } from '../../hooks/create-navigation-option-hooks'
 import { useActiveTabItemPress } from '../../hooks/use-active-tab-item-press'
-import { useConnectivityIndicator } from '../../hooks/use-connectivity-indicator'
+import { useOfflineUpdateNavigation } from '../../hooks/use-offline-update-navigation'
 import { notificationsStore } from '../../stores/notifications-store'
 import { useUiStore } from '../../stores/ui-store'
 import { isAndroid } from '../../utils/devices'
@@ -100,8 +100,6 @@ export const MainHomeScreen: NavigationFunctionComponent = ({
   componentId,
 }) => {
   useNavigationOptions(componentId)
-
-  const [refetching, setRefetching] = useState(false)
   const flatListRef = useRef<FlatList>(null)
   const ui = useUiStore()
 
@@ -109,20 +107,16 @@ export const MainHomeScreen: NavigationFunctionComponent = ({
     flatListRef.current?.scrollToOffset({ offset: -150, animated: true })
   })
 
-  const applicationsRes = useListApplicationsQuery()
+  useOfflineUpdateNavigation(componentId, getRightButtons())
 
-  useConnectivityIndicator({
-    componentId,
-    rightButtons: getRightButtons(),
-    queryResult: applicationsRes,
-    refetching,
-  })
+  const applicationsRes = useListApplicationsQuery()
 
   // Get feature flag for mileage
   const isMileageEnabled = useFeatureFlag(
     'isServicePortalVehicleMileagePageEnabled',
     false,
   )
+  const [loading, setLoading] = useState(false)
 
   const renderItem = useCallback(
     ({ item }: ListRenderItemInfo<ListItem>) => item.component,
@@ -136,17 +130,15 @@ export const MainHomeScreen: NavigationFunctionComponent = ({
     notificationsStore.getState().actions.syncToken()
   }, [])
 
-  const refetch = useCallback(async () => {
-    setRefetching(true)
-
+  const refetch = async () => {
+    setLoading(true)
     try {
       await applicationsRes.refetch()
     } catch (err) {
       // noop
     }
-
-    setRefetching(false)
-  }, [applicationsRes])
+    setLoading(false)
+  }
 
   if (!ui.initializedApp) {
     return null
@@ -206,7 +198,7 @@ export const MainHomeScreen: NavigationFunctionComponent = ({
           },
         )}
         refreshControl={
-          <RefreshControl refreshing={refetching} onRefresh={refetch} />
+          <RefreshControl refreshing={loading} onRefresh={refetch} />
         }
       />
       <TopLine scrollY={scrollY} />

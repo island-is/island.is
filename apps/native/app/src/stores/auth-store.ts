@@ -12,7 +12,7 @@ import createUse from 'zustand'
 import create, { State } from 'zustand/vanilla'
 import { bundleId, getConfig } from '../config'
 import { getIntl } from '../contexts/i18n-provider'
-import { getApolloClientAsync } from '../graphql/client'
+import { client } from '../graphql/client'
 import { isAndroid } from '../utils/devices'
 import { getAppRoot } from '../utils/lifecycle/get-app-root'
 import { preferencesStore } from './preferences-store'
@@ -148,8 +148,6 @@ export const authStore = create<AuthStore>((set, get) => ({
     } catch (e) {
       // NOOP
     }
-
-    const client = await getApolloClientAsync()
     await client.cache.reset()
     await Keychain.resetGenericPassword({ service: KEYCHAIN_AUTH_KEY })
     set(

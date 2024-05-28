@@ -46,7 +46,6 @@
     "@react-native-firebase/app": "16.7.0",
     "@react-native-firebase/messaging": "16.7.0",
     "@react-native-firebase/perf": "16.7.0",
-    "apollo3-cache-persist": "0.15.0",
     "configcat-js": "7.0.0",
     "dynamic-color": "0.3.0",
     "expo": "47.0.13",
@@ -58,7 +57,6 @@
     "expo-local-authentication": "13.0.2",
     "expo-notifications": "0.17.0",
     "intl": "1.2.5",
-    "lodash": "4.17.21",
     "react": "18.2.0",
     "react-intl": "5.20.12",
     "react-native": "0.71.1",
@@ -71,7 +69,6 @@
     "react-native-interactable": "2.0.1",
     "react-native-keyboard-manager": "6.5.4-3",
     "react-native-keychain": "8.1.1",
-    "react-native-mmkv-storage": "0.9.1",
     "react-native-navigation": "7.32.1",
     "react-native-navigation-hooks": "6.3.0",
     "react-native-passkit-wallet": "0.1.6",
@@ -94,7 +91,6 @@
     "@tsconfig/react-native": "^2.0.2",
     "@types/intl": "^1",
     "@types/jest": "^29.2.1",
-    "@types/lodash": "4.17.1",
     "@types/react": "^18.0.24",
     "@types/react-dom": "^18",
     "@types/react-test-renderer": "^18.0.0",
@@ -114,8 +110,5 @@
   },
   "resolutions": {
     "eslint": "8.12.0"
-  },
-  "volta": {
-    "node": "18.16.0"
   }
 }

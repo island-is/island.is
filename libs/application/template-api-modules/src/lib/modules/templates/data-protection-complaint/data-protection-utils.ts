@@ -35,7 +35,7 @@ const extractAnswer = <T>(
     throw new Error(`ComplaintDto.extractAnswer: missing value for ${path}`)
   }
 
-  return value as T
+  return value
 }
 
 export const getComplaintTargets = (

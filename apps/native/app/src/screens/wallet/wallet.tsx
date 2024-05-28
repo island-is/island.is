@@ -26,7 +26,7 @@ import {
 } from '../../graphql/types/schema'
 import { createNavigationOptionHooks } from '../../hooks/create-navigation-option-hooks'
 import { useActiveTabItemPress } from '../../hooks/use-active-tab-item-press'
-import { useConnectivityIndicator } from '../../hooks/use-connectivity-indicator'
+import { useOfflineUpdateNavigation } from '../../hooks/use-offline-update-navigation'
 import { usePreferencesStore } from '../../stores/preferences-store'
 import { ButtonRegistry } from '../../utils/component-registry'
 import { isIos } from '../../utils/devices'
@@ -40,12 +40,6 @@ type FlatListItem =
   | IdentityDocumentModel
   | { __typename: 'Skeleton'; id: string }
   | { __typename: 'Error'; id: string }
-
-const getSkeletonArr = (): FlatListItem[] =>
-  Array.from({ length: 5 }).map((_, id) => ({
-    id: String(id),
-    __typename: 'Skeleton',
-  }))
 
 const { useNavigationOptions, getNavigationOptions } =
   createNavigationOptionHooks(
@@ -94,10 +88,10 @@ const { useNavigationOptions, getNavigationOptions } =
 
 export const WalletScreen: NavigationFunctionComponent = ({ componentId }) => {
   useNavigationOptions(componentId)
-
+  useOfflineUpdateNavigation(componentId, getRightButtons())
   const theme = useTheme()
   const flatListRef = useRef<FlatList>(null)
-  const [refetching, setRefetching] = useState(false)
+  const [loading, setLoading] = useState(false)
   const loadingTimeout = useRef<ReturnType<typeof setTimeout>>()
   const intl = useIntl()
   const scrollY = useRef(new Animated.Value(0)).current
@@ -112,6 +106,7 @@ export const WalletScreen: NavigationFunctionComponent = ({ componentId }) => {
 
   // Query list of licenses
   const res = useListLicensesQuery({
+    fetchPolicy: 'network-only',
     variables: {
       input: {
         includedTypes: [
@@ -129,13 +124,8 @@ export const WalletScreen: NavigationFunctionComponent = ({ componentId }) => {
   })
 
   // Additional licenses
-  const resPassport = useGetIdentityDocumentQuery()
-
-  useConnectivityIndicator({
-    componentId,
-    rightButtons: getRightButtons(),
-    queryResult: [res, resPassport],
-    refetching,
+  const resPassport = useGetIdentityDocumentQuery({
+    fetchPolicy: 'network-only',
   })
 
   useActiveTabItemPress(1, () => {
@@ -147,7 +137,7 @@ export const WalletScreen: NavigationFunctionComponent = ({ componentId }) => {
 
   // Filter licenses
   const licenseItems = useMemo(() => {
-    if ((!res.loading && !res.error) || res.data) {
+    if (!res.loading && !res.error) {
       return (res.data?.genericLicenses ?? []).filter(({ license }) => {
         if (license.status === 'Unknown') {
           return false
@@ -167,7 +157,6 @@ export const WalletScreen: NavigationFunctionComponent = ({ componentId }) => {
         return true
       })
     }
-
     return []
   }, [res, showDisability, showPCard, showEhic, showHuntingLicense])
 
@@ -191,19 +180,19 @@ export const WalletScreen: NavigationFunctionComponent = ({ componentId }) => {
       if (loadingTimeout.current) {
         clearTimeout(loadingTimeout.current)
       }
-      setRefetching(true)
+      setLoading(true)
       res
         .refetch()
         .then(() => {
           ;(loadingTimeout as any).current = setTimeout(() => {
-            setRefetching(false)
+            setLoading(false)
           }, 1331)
         })
         .catch(() => {
-          setRefetching(false)
+          setLoading(false)
         })
     } catch (err) {
-      setRefetching(false)
+      setLoading(false)
     }
   }, [])
 
@@ -258,13 +247,12 @@ export const WalletScreen: NavigationFunctionComponent = ({ componentId }) => {
   }, [])
 
   const data = useMemo<FlatListItem[]>(() => {
-    if (
-      (res.loading && !res.data) ||
-      (resPassport.loading && !resPassport.data)
-    ) {
-      return getSkeletonArr()
+    if (res.loading && !res.data) {
+      return Array.from({ length: 5 }).map((_, id) => ({
+        id: String(id),
+        __typename: 'Skeleton',
+      }))
     }
-
     return [
       ...licenseItems,
       ...(showPassport ? resPassport?.data?.getIdentityDocument ?? [] : []),
@@ -283,7 +271,7 @@ export const WalletScreen: NavigationFunctionComponent = ({ componentId }) => {
           bottom: 32,
         }}
         refreshControl={
-          <RefreshControl refreshing={refetching} onRefresh={onRefresh} />
+          <RefreshControl refreshing={loading} onRefresh={onRefresh} />
         }
         scrollEventThrottle={16}
         scrollToOverflowEnabled={true}

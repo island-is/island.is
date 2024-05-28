@@ -20,7 +20,7 @@ import {
 } from '../../graphql/types/schema'
 import { AirDiscountCard } from '@ui/lib/card/air-discount-card'
 import { Bullet } from '@ui/lib/bullet/bullet'
-import { useConnectivityIndicator } from '../../hooks/use-connectivity-indicator'
+import { useOfflineUpdateNavigation } from '../../hooks/use-offline-update-navigation'
 import { AirfaresUsageTable } from './airfares-usage-table'
 import illustrationSrc from '../../assets/illustrations/le_jobs_s5.png'
 
@@ -103,23 +103,24 @@ export const AirDiscountScreen: NavigationFunctionComponent = ({
   componentId,
 }) => {
   useNavigationOptions(componentId)
+  useOfflineUpdateNavigation(componentId)
 
   const intl = useIntl()
   const theme = useTheme()
 
   const { data, loading, error } = useGetAirDiscountQuery({
-    fetchPolicy: 'network-only',
+    fetchPolicy: 'cache-and-network',
   })
 
-  const airDiscountFlightLegsRes = useGetAirDiscountFlightLegsQuery()
-
-  useConnectivityIndicator({
-    componentId,
-    queryResult: airDiscountFlightLegsRes,
+  const {
+    data: flightLegsData,
+    loading: flightLegsLoading,
+    error: flightLegsError,
+  } = useGetAirDiscountFlightLegsQuery({
+    fetchPolicy: 'cache-and-network',
   })
 
-  const flightLegs =
-    airDiscountFlightLegsRes.data?.airDiscountSchemeUserAndRelationsFlights
+  const flightLegs = flightLegsData?.airDiscountSchemeUserAndRelationsFlights
 
   const connectionCodes = data?.airDiscountSchemeDiscounts?.filter(
     (discount) => discount.connectionDiscountCodes.length > 0,
@@ -174,9 +175,7 @@ export const AirDiscountScreen: NavigationFunctionComponent = ({
           </Link>
         </TOSLink>
 
-        {(loading || airDiscountFlightLegsRes.loading) && !error && (
-          <SkeletonItem />
-        )}
+        {(loading || flightLegsLoading) && !error && <SkeletonItem />}
         {!loading && !error && noRights && <Empty />}
 
         {data && !noRights && (

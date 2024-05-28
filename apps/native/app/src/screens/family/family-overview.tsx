@@ -16,7 +16,7 @@ import illustrationSrc from '../../assets/illustrations/hero_spring.png'
 import { BottomTabsIndicator } from '../../components/bottom-tabs-indicator/bottom-tabs-indicator'
 import { useNationalRegistryChildrenQuery } from '../../graphql/types/schema'
 import { createNavigationOptionHooks } from '../../hooks/create-navigation-option-hooks'
-import { useConnectivityIndicator } from '../../hooks/use-connectivity-indicator'
+import { useOfflineUpdateNavigation } from '../../hooks/use-offline-update-navigation'
 import { navigateTo } from '../../lib/deep-linking'
 import { formatNationalId } from '../../lib/format-national-id'
 import { testIDs } from '../../utils/test-ids'
@@ -61,21 +61,18 @@ export const FamilyOverviewScreen: NavigationFunctionComponent = ({
   componentId,
 }) => {
   useNavigationOptions(componentId)
+  useOfflineUpdateNavigation(componentId)
 
   const flatListRef = useRef<FlatList>(null)
-  const [refetching, setRefetching] = useState(false)
+  const [loading, setLoading] = useState(false)
   const intl = useIntl()
   const theme = useTheme()
   const scrollY = useRef(new Animated.Value(0)).current
   const loadingTimeout = useRef<number>()
-  const familyRes = useNationalRegistryChildrenQuery()
 
-  useConnectivityIndicator({
-    componentId,
-    queryResult: familyRes,
-    refetching,
+  const familyRes = useNationalRegistryChildrenQuery({
+    fetchPolicy: 'network-only',
   })
-
   const { nationalRegistryUser, nationalRegistryChildren = [] } =
     familyRes?.data || {}
 
@@ -94,19 +91,19 @@ export const FamilyOverviewScreen: NavigationFunctionComponent = ({
       if (loadingTimeout.current) {
         clearTimeout(loadingTimeout.current)
       }
-      setRefetching(true)
+      setLoading(true)
       familyRes
         .refetch()
         .then(() => {
           ;(loadingTimeout as any).current = setTimeout(() => {
-            setRefetching(false)
+            setLoading(false)
           }, 1331)
         })
         .catch(() => {
-          setRefetching(false)
+          setLoading(false)
         })
     } catch (err) {
-      setRefetching(false)
+      setLoading(false)
     }
   }, [])
 
@@ -186,7 +183,7 @@ export const FamilyOverviewScreen: NavigationFunctionComponent = ({
           paddingBottom: 16,
         }}
         refreshControl={
-          <RefreshControl refreshing={refetching} onRefresh={onRefresh} />
+          <RefreshControl refreshing={loading} onRefresh={onRefresh} />
         }
         scrollEventThrottle={16}
         scrollToOverflowEnabled={true}

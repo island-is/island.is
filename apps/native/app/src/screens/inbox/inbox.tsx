@@ -29,16 +29,17 @@ import FilterIcon from '../../assets/icons/filter-icon.png'
 import illustrationSrc from '../../assets/illustrations/le-company-s3.png'
 import { BottomTabsIndicator } from '../../components/bottom-tabs-indicator/bottom-tabs-indicator'
 import { PressableHighlight } from '../../components/pressable-highlight/pressable-highlight'
+import { client } from '../../graphql/client'
 import {
   Document,
   ListDocumentsDocument,
   ListDocumentsQuery,
+  ListDocumentsQueryVariables,
   useListDocumentsQuery,
-  useListDocumentsLazyQuery,
 } from '../../graphql/types/schema'
 import { createNavigationOptionHooks } from '../../hooks/create-navigation-option-hooks'
 import { useActiveTabItemPress } from '../../hooks/use-active-tab-item-press'
-import { useConnectivityIndicator } from '../../hooks/use-connectivity-indicator'
+import { useOfflineUpdateNavigation } from '../../hooks/use-offline-update-navigation'
 import { navigateTo } from '../../lib/deep-linking'
 import { toggleAction } from '../../lib/post-mail-action'
 import { useOrganizationsStore } from '../../stores/organizations-store'
@@ -180,10 +181,6 @@ function useInboxQuery(incomingFilters?: Filters) {
   const [refetcher, setRefetcher] = useState(0)
   const pageSize = 50
 
-  const [getListDocument] = useListDocumentsLazyQuery({
-    query: ListDocumentsDocument,
-  })
-
   useEffect(() => {
     const appliedFilters = applyFilters(incomingFilters)
     // deep equal incoming filters
@@ -205,36 +202,34 @@ function useInboxQuery(incomingFilters?: Filters) {
 
   useEffect(() => {
     const numItems = data?.totalCount ?? pageSize
-
     if (pageSize * (page - 1) > numItems) {
       return
     }
-
     setLoading(true)
-
     // Fetch data
-    getListDocument({
-      variables: {
-        input: {
-          page,
-          pageSize,
-          ...filters,
+    client
+      .query<ListDocumentsQuery, ListDocumentsQueryVariables>({
+        query: ListDocumentsDocument,
+        fetchPolicy: 'network-only',
+        variables: {
+          input: {
+            page,
+            pageSize,
+            ...filters,
+          },
         },
-      },
-    })
-      .then(({ data }) => {
-        if (data) {
-          if (page > 1) {
-            setData((prevData) => ({
-              data: [
-                ...(prevData?.data ?? []),
-                ...(data.listDocumentsV2?.data ?? []),
-              ],
-              totalCount: data.listDocumentsV2?.totalCount,
-            }))
-          } else {
-            setData(data.listDocumentsV2)
-          }
+      })
+      .then((res) => {
+        if (page > 1) {
+          setData((prevData) => ({
+            data: [
+              ...(prevData?.data ?? []),
+              ...(res.data.listDocumentsV2?.data ?? []),
+            ],
+            totalCount: res.data.listDocumentsV2?.totalCount,
+          }))
+        } else {
+          setData(res.data.listDocumentsV2)
         }
       })
       .finally(() => {
@@ -301,12 +296,7 @@ export const InboxScreen: NavigationFunctionComponent<{
     subjectContains: queryString,
   })
 
-  useConnectivityIndicator({
-    componentId,
-    rightButtons: getRightButtons(),
-    queryResult: res,
-    refetching: res.refetching,
-  })
+  useOfflineUpdateNavigation(componentId, getRightButtons())
 
   useEffect(() => {
     setRefetching(false)

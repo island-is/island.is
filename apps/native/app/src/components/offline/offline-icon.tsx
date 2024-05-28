@@ -3,7 +3,7 @@ import { Image } from 'react-native'
 import { Navigation } from 'react-native-navigation'
 
 import styled from 'styled-components/native'
-import cloudOfflineIcon from '../../assets/icons/cloud-offline-outline.png'
+import warningIcon from '../../assets/icons/warning.png'
 import { useOfflineStore } from '../../stores/offline-store'
 import { ComponentRegistry as CR } from '../../utils/component-registry'
 import { Pressable } from '../pressable/pressable'
@@ -37,7 +37,7 @@ export const OfflineIcon = () => {
 
   return (
     <Pressable onPress={onPress}>
-      <Icon source={cloudOfflineIcon} />
+      <Icon source={warningIcon} />
     </Pressable>
   )
 }

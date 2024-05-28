@@ -19,7 +19,7 @@ import {
   useListVehiclesQuery,
 } from '../../graphql/types/schema'
 import { createNavigationOptionHooks } from '../../hooks/create-navigation-option-hooks'
-import { useConnectivityIndicator } from '../../hooks/use-connectivity-indicator'
+import { useOfflineUpdateNavigation } from '../../hooks/use-offline-update-navigation'
 import { getRightButtons } from '../../utils/get-main-root'
 import { testIDs } from '../../utils/test-ids'
 import { VehicleItem } from './components/vehicle-item'
@@ -96,23 +96,17 @@ export const VehiclesScreen: NavigationFunctionComponent = ({
   componentId,
 }) => {
   useNavigationOptions(componentId)
-
+  useOfflineUpdateNavigation(componentId)
   const flatListRef = useRef<FlatList>(null)
-  const [refetching, setRefetching] = useState(false)
+  const [loading, setLoading] = useState(false)
   const [loadingMore, setLoadingMore] = useState(false)
   const scrollY = useRef(new Animated.Value(0)).current
   const loadingTimeout = useRef<ReturnType<typeof setTimeout>>()
-
   const res = useListVehiclesQuery({
+    fetchPolicy: 'cache-first',
     variables: {
       input,
     },
-  })
-
-  useConnectivityIndicator({
-    componentId,
-    queryResult: res,
-    refetching,
   })
 
   // Get feature flag for mileage
@@ -127,7 +121,7 @@ export const VehiclesScreen: NavigationFunctionComponent = ({
       if (loadingTimeout.current) {
         clearTimeout(loadingTimeout.current)
       }
-      setRefetching(true)
+      setLoading(true)
       res
         .refetch({
           input: {
@@ -137,14 +131,14 @@ export const VehiclesScreen: NavigationFunctionComponent = ({
         })
         .then(() => {
           loadingTimeout.current = setTimeout(() => {
-            setRefetching(false)
+            setLoading(false)
           }, 1331)
         })
         .catch(() => {
-          setRefetching(false)
+          setLoading(false)
         })
     } catch (err) {
-      setRefetching(false)
+      setLoading(false)
     }
   }, [res])
 
@@ -196,7 +190,7 @@ export const VehiclesScreen: NavigationFunctionComponent = ({
           bottom: 32,
         }}
         refreshControl={
-          <RefreshControl refreshing={refetching} onRefresh={onRefresh} />
+          <RefreshControl refreshing={loading} onRefresh={onRefresh} />
         }
         ListEmptyComponent={Empty}
         scrollEventThrottle={16}

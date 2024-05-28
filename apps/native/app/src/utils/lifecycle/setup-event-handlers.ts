@@ -189,10 +189,6 @@ export function setupEventHandlers() {
       offlineStoreState.actions.setNetInfoNoConnection()
     } else {
       offlineStoreState.actions.setIsConnected(true)
-
-      if (!offlineStoreState.pastIsConnected) {
-        offlineStoreState.actions.resetConnectionState()
-      }
     }
   })
 }

@@ -16,7 +16,7 @@ import illustrationSrc from '../../assets/illustrations/le-moving-s1.png'
 import { BottomTabsIndicator } from '../../components/bottom-tabs-indicator/bottom-tabs-indicator'
 import { useListAssetsQuery } from '../../graphql/types/schema'
 import { createNavigationOptionHooks } from '../../hooks/create-navigation-option-hooks'
-import { useConnectivityIndicator } from '../../hooks/use-connectivity-indicator'
+import { useOfflineUpdateNavigation } from '../../hooks/use-offline-update-navigation'
 import { navigateTo } from '../../lib/deep-linking'
 import { testIDs } from '../../utils/test-ids'
 
@@ -65,26 +65,21 @@ export const AssetsOverviewScreen: NavigationFunctionComponent = ({
   componentId,
 }) => {
   useNavigationOptions(componentId)
-
+  useOfflineUpdateNavigation(componentId)
   const flatListRef = useRef<FlatList>(null)
-  const [refetching, setRefetching] = useState(false)
+  const [loading, setLoading] = useState(false)
   const intl = useIntl()
   const theme = useTheme()
   const scrollY = useRef(new Animated.Value(0)).current
   const loadingTimeout = useRef<number>()
 
   const assetsRes = useListAssetsQuery({
+    fetchPolicy: 'cache-first',
     variables: {
       input: {
         cursor: '1',
       },
     },
-  })
-
-  useConnectivityIndicator({
-    componentId,
-    queryResult: assetsRes,
-    refetching,
   })
 
   const isSkeleton = assetsRes.loading && !assetsRes.data
@@ -95,19 +90,19 @@ export const AssetsOverviewScreen: NavigationFunctionComponent = ({
       if (loadingTimeout.current) {
         clearTimeout(loadingTimeout.current)
       }
-      setRefetching(true)
+      setLoading(true)
       assetsRes
         .refetch()
         .then(() => {
           ;(loadingTimeout as any).current = setTimeout(() => {
-            setRefetching(false)
+            setLoading(false)
           }, 1331)
         })
         .catch(() => {
-          setRefetching(false)
+          setLoading(false)
         })
     } catch (err) {
-      setRefetching(false)
+      setLoading(false)
     }
   }, [])
 
@@ -225,7 +220,7 @@ export const AssetsOverviewScreen: NavigationFunctionComponent = ({
           paddingBottom: 16,
         }}
         refreshControl={
-          <RefreshControl refreshing={refetching} onRefresh={onRefresh} />
+          <RefreshControl refreshing={loading} onRefresh={onRefresh} />
         }
         scrollEventThrottle={16}
         scrollToOverflowEnabled={true}

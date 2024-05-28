@@ -26,10 +26,12 @@ export const PersonalInfoScreen: NavigationFunctionComponent = ({
   useNavigationOptions(componentId)
   const intl = useIntl()
   const { dismiss, dismissed } = usePreferencesStore()
-  const natRegRes = useNationalRegistryUserQuery()
+  const natRegRes = useNationalRegistryUserQuery({
+    fetchPolicy: 'cache-and-network',
+  })
   const natRegData = natRegRes?.data?.nationalRegistryUser
   const errorNatReg = !!natRegRes.error
-  const loadingNatReg = natRegRes.loading && !natRegData
+  const loadingNatReg = natRegRes.loading
 
   return (
     <View style={{ flex: 1 }} testID={testIDs.SCREEN_PERSONAL_INFO}>
@@ -38,7 +40,6 @@ export const PersonalInfoScreen: NavigationFunctionComponent = ({
         title={intl.formatMessage({ id: 'personalInfo.screenTitle' })}
         onClosePress={() => Navigation.dismissModal(componentId)}
         style={{ marginHorizontal: 16 }}
-        showLoading={natRegRes.loading}
       />
       <ScrollView style={{ flex: 1 }} testID={testIDs.USER_SCREEN_PROFILE_INFO}>
         <Alert

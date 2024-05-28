@@ -11,7 +11,7 @@ import {
   VerifyLicenseBarcodeError,
   VerifyLicenseBarcodeMutation,
 } from '../../graphql/types/schema'
-import { useConnectivityIndicator } from '../../hooks/use-connectivity-indicator'
+import { useOfflineUpdateNavigation } from '../../hooks/use-offline-update-navigation'
 import { StackRegistry } from '../../utils/component-registry'
 
 const RIGHT_BUTTONS: OptionsTopBarButton[] = [
@@ -34,7 +34,7 @@ export const LicenseScanDetailScreen: NavigationFunctionComponent<
   LicenseScanDetailScreenProps
 > = ({ componentId, verifyLicenseBarcode: { licenseType, data, error } }) => {
   const intl = useIntl()
-  useConnectivityIndicator({ componentId, rightButtons: RIGHT_BUTTONS })
+  useOfflineUpdateNavigation(componentId, RIGHT_BUTTONS)
 
   // We need to cast licenseType to SupportedGenericLicenseTypes because not all GenericLicenseTypes are supported
   const type = licenseType as unknown as SupportedGenericLicenseTypes

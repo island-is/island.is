@@ -7,9 +7,7 @@ import {
   ViewStyle,
 } from 'react-native'
 import styled, { useTheme } from 'styled-components/native'
-import { LoadingIcon } from '../../../components/nav-loading-spinner/loading-icon'
 import { OfflineIcon } from '../../../components/offline/offline-icon'
-import { useOfflineStore } from '../../../stores/offline-store'
 import closeIcon from '../../assets/icons/close.png'
 import { dynamicColor } from '../../utils/dynamic-color'
 import { font } from '../../utils/font'
@@ -71,15 +69,12 @@ export function NavigationBarSheet({
   title,
   onClosePress,
   style,
-  showLoading,
 }: {
   title?: React.ReactNode
   componentId: string
   onClosePress(): void
   style?: ViewStyle
-  showLoading?: boolean
 }) {
-  const isConnected = useOfflineStore(({ isConnected }) => isConnected)
   const wd = useWindowDimensions()
   const theme = useTheme()
   const isLandscape = wd.width > wd.height
@@ -99,8 +94,6 @@ export function NavigationBarSheet({
             title
           )}
           <IconsWrapper>
-            {/*Only show loading icon if connected*/}
-            {showLoading && isConnected ? <LoadingIcon /> : null}
             <OfflineIcon />
             <CloseButton
               onPress={onClosePress}
