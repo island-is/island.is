@@ -96,6 +96,11 @@ const ApplicationProfile = ({
       title: 'Sótt um',
       content: format(new Date(application.created), 'dd.MM.y  · kk:mm'),
     },
+    {
+      title: 'Sótt um vegna',
+      content: format(new Date(application.applied), 'dd.MM.y'),
+    },
+
     aidAmount
       ? {
           title: 'Áætluð aðstoð',

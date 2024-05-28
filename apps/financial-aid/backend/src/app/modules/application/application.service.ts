@@ -135,6 +135,7 @@ export class ApplicationService {
     })
   }
 
+  // TODO
   async getCurrentApplicationId(nationalId: string): Promise<string | null> {
     const currentApplication = await this.applicationModel.findOne({
       where: {
@@ -341,6 +342,8 @@ export class ApplicationService {
     if (appModel.getDataValue('directTaxPayments') === undefined) {
       appModel.setDataValue('directTaxPayments', [])
     }
+
+    appModel.setDataValue('applied', appModel.created)
 
     return appModel
   }
