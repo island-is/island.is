@@ -35,7 +35,7 @@ RUN --mount=type=cache,target=/var/cache/dnf \
   ${SHELL} the_silver_searcher ripgrep fzf neovim
 
 # Create user and environment
-RUN useradd -m -s /bin/${SHELL} ${USERNAME}
+RUN useradd -m -s /bin/${SHELL} -G wheel ${USERNAME}
 USER ${USERNAME}
 WORKDIR /home/${USERNAME}
 
