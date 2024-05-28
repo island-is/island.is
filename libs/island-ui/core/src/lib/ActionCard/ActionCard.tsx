@@ -49,6 +49,12 @@ const eyebrowMap: Record<BackgroundColor, Colors> = {
   white: 'blue400',
 }
 
+const borderMap: Record<BackgroundColor, Colors> = {
+  blue: 'blue100',
+  red: 'red200',
+  white: 'blue200',
+}
+
 const avatarMap: Record<BackgroundColor, { circle: Colors; text: Colors }> = {
   blue: { circle: 'blue200', text: 'blue400' },
   red: { circle: 'red200', text: 'red600' },
@@ -78,13 +84,7 @@ export const ActionCard: React.FC<React.PropsWithChildren<ActionCardProps>> = ({
   const color = colorMap[backgroundColor]
   const eyebrowColor = eyebrowMap[backgroundColor]
   const avatarColors = avatarMap[backgroundColor]
-  const focusColor = focused
-    ? 'mint400'
-    : backgroundColor === 'red'
-    ? 'red200'
-    : backgroundColor === 'blue'
-    ? 'blue100'
-    : 'blue200'
+  const borderColor = borderMap[backgroundColor]
 
   const hasEyebrowElements = Boolean(date || eyebrow)
   const hasCTAElements = Boolean(cta?.label || unavailable?.active)
@@ -271,7 +271,7 @@ export const ActionCard: React.FC<React.PropsWithChildren<ActionCardProps>> = ({
     <Box
       display="flex"
       flexDirection="column"
-      borderColor={focusColor}
+      borderColor={focused ? 'mint400' : borderColor}
       borderRadius="large"
       borderWidth="standard"
       paddingX={[3, 3, 4]}

@@ -84,7 +84,7 @@ Default.args = {
   eyebrow: 'Eyebrow',
   avatar: true,
   cta: {
-    label: 'Click me!',
+    label: 'Click me',
     variant: 'primary',
   },
   unavailable: {
@@ -177,26 +177,6 @@ export const ApplicationCardInProgressVariant = () => (
     cta={{
       label: 'Open application',
       variant: 'ghost',
-      size: 'small',
-      icon: undefined,
-    }}
-  />
-)
-
-export const ApplicationCardCompletedVariant = () => (
-  <ActionCard
-    date="16/03/2021"
-    heading="Parental Leave"
-    tag={{
-      label: 'Completed',
-      variant: 'blue',
-      outlined: false,
-    }}
-    text="Your application is in progress. Waiting for VMST approval."
-    cta={{
-      label: 'Open application',
-      variant: 'ghost',
-      size: 'small',
       icon: undefined,
     }}
   />
