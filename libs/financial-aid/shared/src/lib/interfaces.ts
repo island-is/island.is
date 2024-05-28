@@ -85,6 +85,7 @@ export interface Amount {
   applicationId?: string
   aidAmount: number
   income?: number
+  childrenAidAmount?: number
   personalTaxCredit: number
   spousePersonalTaxCredit?: number
   tax: number

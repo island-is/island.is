@@ -25,6 +25,13 @@ export class AmountBackendModel extends Model<Amount> {
   @ApiProperty()
   income?: number
 
+  @Column({
+    type: DataType.INTEGER,
+    allowNull: true,
+  })
+  @ApiProperty()
+  childrenAidAmount?: number
+
   @HasMany(() => DeductionFactorsBackendModel, 'amountId')
   @ApiProperty({ type: DeductionFactorsBackendModel, isArray: true })
   deductionFactors?: DeductionFactorsBackendModel[]
