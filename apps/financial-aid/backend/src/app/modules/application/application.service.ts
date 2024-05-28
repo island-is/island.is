@@ -147,7 +147,7 @@ export class ApplicationService {
             spouseNationalId: nationalId,
           },
         ],
-        created: { [Op.gte]: firstDateOfMonth() },
+        applied: { [Op.gte]: firstDateOfMonth() },
       },
     })
 
