@@ -8,6 +8,7 @@ set -euo pipefail
 : "${CLEAN_YARN:=false}"
 : "${CLEAN_GENERATED:=false}"
 : "${CLEAN_NODE_MODULES:=false}"
+: "${CLEAN_ALL:=false}"
 CLEAN_CACHES_LIST=(.cache dist)
 CLEAN_YARN_IGNORES_LIST=(patches releases)
 
@@ -29,18 +30,25 @@ Options:
   --yarn             Clean yarn files
   --cache            Clean cache files
   --node-modules     Clean node_modules folder
+  --all              Clean all (generated, yarn, cache, and node_modules files)
   -d, --dry          Dry run (show what would be done without actually doing it)
   -h, --help         Show this help message
 EOF
 }
 
 cli() {
+  if [[ $# -eq 0 ]]; then
+    show_help
+    exit 0
+  fi
+
   while [[ $# -gt 0 ]]; do
     case "$1" in
     --generated) CLEAN_GENERATED=true ;;
     --yarn) CLEAN_YARN=true ;;
     --cache) CLEAN_CACHES=true ;;
     --node-modules) CLEAN_NODE_MODULES=true ;;
+    --all) CLEAN_ALL=true ;;
     -d | --dry) CLEAN_DRY=true ;;
     -h | --help)
       show_help
@@ -54,7 +62,7 @@ cli() {
     shift
   done
 
-  if [[ "$CLEAN_GENERATED" != "true" && "$CLEAN_YARN" != "true" && "$CLEAN_CACHES" != "true" && "$CLEAN_NODE_MODULES" != "true" ]]; then
+  if [[ "$CLEAN_ALL" == "true" ]]; then
     CLEAN_GENERATED=true
     CLEAN_YARN=true
     CLEAN_CACHES=true
