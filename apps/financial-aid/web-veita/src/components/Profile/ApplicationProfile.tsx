@@ -28,6 +28,7 @@ import {
   ApplicationHeader,
   FilesListWithHeaderContainer,
   RejectionCommentModal,
+  AppliedMonthModal,
 } from '@island.is/financial-aid-web/veita/src/components'
 
 import {
@@ -63,6 +64,8 @@ const ApplicationProfile = ({
   applicationMunicipality,
 }: ApplicationProps) => {
   const [isStateModalVisible, setStateModalVisible] = useState(false)
+  const [appliedMonthModalVisible, setAppliedMonthModalVisible] =
+    useState(false)
 
   const [isRejectedReasonModalVisible, setRejectedReasonModalVisible] =
     useState(false)
@@ -87,18 +90,17 @@ const ApplicationProfile = ({
 
   const applicationInfo: ApplicationProfileInfo[] = [
     {
-      title: 'Tímabil',
-      content:
-        getMonth(new Date(application.created).getMonth()) +
-        format(new Date(application.created), ' y'),
-    },
-    {
-      title: 'Sótt um',
+      title: 'Dagsetning umsóknar',
       content: format(new Date(application.created), 'dd.MM.y  · kk:mm'),
     },
     {
-      title: 'Sótt um vegna',
-      content: format(new Date(application.applied), 'dd.MM.y'),
+      title: 'Fyrir tímabilið',
+      content:
+        getMonth(new Date(application.applied).getMonth()) +
+        format(new Date(application.applied), ' y'),
+      onclick: () => {
+        setAppliedMonthModalVisible(true)
+      },
     },
 
     aidAmount
@@ -323,6 +325,15 @@ const ApplicationProfile = ({
           setRejectedReasonModalVisible(visability)
         }}
         reason={application.rejection ?? ''}
+      />
+
+      <AppliedMonthModal
+        headline="Velja mánuð"
+        isVisible={appliedMonthModalVisible}
+        onVisibilityChange={(isVisibleBoolean) => {
+          setAppliedMonthModalVisible(isVisibleBoolean)
+        }}
+        appliedDate={application.applied}
       />
     </>
   )
