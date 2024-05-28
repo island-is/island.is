@@ -2,6 +2,10 @@ definitions:
   base: &base
     max_build_duration: 120
     working_directory: apps/native/app
+    when:
+      changeset:
+        includes:
+          - 'apps/native/app'
     # To save on build minutes, workflows are currently triggered manually and/or once per day.
     #  default_triggers: &default_triggers
     #    events:

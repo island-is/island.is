@@ -164,11 +164,18 @@ export class ApplicationModel extends Model {
   interview: boolean
 
   @Column({
-    type: DataType.STRING,
+    type: DataType.TEXT,
     allowNull: true,
   })
   @ApiProperty()
   formComment: string
+
+  @Column({
+    type: DataType.TEXT,
+    allowNull: true,
+  })
+  @ApiProperty()
+  childrenComment: string
 
   @Column({
     type: DataType.STRING,
