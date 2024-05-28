@@ -60,9 +60,9 @@ export const Relatives = ({
                   id: 'relativesTable',
                   title: '',
                   header: [
-                    newPrimarySchoolMessages.childrenNParents.fullName,
-                    newPrimarySchoolMessages.childrenNParents.phoneNumber,
-                    newPrimarySchoolMessages.childrenNParents.nationalId,
+                    newPrimarySchoolMessages.shared.fullName,
+                    newPrimarySchoolMessages.shared.phoneNumber,
+                    newPrimarySchoolMessages.shared.nationalId,
                     newPrimarySchoolMessages.childrenNParents.relativesRelation,
                     newPrimarySchoolMessages.childrenNParents
                       .relativesCanPickUpChildTableHeader,

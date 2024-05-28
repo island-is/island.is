@@ -28,3 +28,8 @@ export type Person = {
     city: string
   }
 }
+
+export type Parents = {
+  parent1: Person
+  parent2: Person
+}

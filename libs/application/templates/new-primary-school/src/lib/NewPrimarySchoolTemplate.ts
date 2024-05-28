@@ -19,6 +19,7 @@ import {
 import { Events, Roles, States } from './constants'
 import { dataSchema } from './dataSchema'
 import { newPrimarySchoolMessages, statesMessages } from './messages'
+import { hasChildrenThatCanApply } from './newPrimarySchoolUtils'
 
 const NewPrimarySchoolTemplate: ApplicationTemplate<
   ApplicationContext,
@@ -71,7 +72,16 @@ const NewPrimarySchoolTemplate: ApplicationTemplate<
           ],
         },
         on: {
-          SUBMIT: States.DRAFT,
+          SUBMIT: [
+            {
+              target: States.DRAFT,
+              cond: (application) =>
+                hasChildrenThatCanApply(application?.application),
+            },
+            {
+              actions: 'setApproveExternalData',
+            },
+          ],
         },
       },
       [States.DRAFT]: {

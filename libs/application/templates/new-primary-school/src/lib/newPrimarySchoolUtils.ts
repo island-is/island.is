@@ -1,20 +1,22 @@
 import { getValueViaPath } from '@island.is/application/core'
-import { Application } from '@island.is/application/types'
+import {
+  Application,
+  ExternalData,
+  FormValue,
+} from '@island.is/application/types'
 import * as kennitala from 'kennitala'
-import { Child, Person, RelativesRow } from '../types'
+import { Child, Parents, Person, RelativesRow } from '../types'
 import { RelationOptions } from './constants'
 import { newPrimarySchoolMessages } from './messages'
 
 export const getApplicationAnswers = (answers: Application['answers']) => {
   const childNationalId = getValueViaPath(answers, 'childNationalId') as string
 
-  const parent1 = getValueViaPath(answers, 'parent1') as Person
-
-  const parent2 = getValueViaPath(answers, 'parent2') as Person
+  const parents = getValueViaPath(answers, 'parents') as Parents
 
   const relatives = getValueViaPath(answers, 'relatives') as RelativesRow[]
 
-  return { childNationalId, parent1, parent2, relatives }
+  return { childNationalId, parents, relatives }
 }
 
 export const getApplicationExternalData = (
@@ -80,6 +82,22 @@ export const canApply = (child: Child): boolean => {
   return false
 }
 
+export const hasChildrenThatCanApply = (application: Application) => {
+  if (!application) {
+    return false
+  }
+
+  const { children } = getApplicationExternalData(application.externalData)
+
+  // No child found
+  if (!children || children.length === 0) {
+    return false
+  }
+
+  // Check if the applicant has some children at primary school age
+  return children.some((child) => canApply(child))
+}
+
 export const getOtherParent = (
   application: Application,
 ): Person | undefined => {
@@ -91,9 +109,15 @@ export const getOtherParent = (
     return child.nationalId === childNationalId
   })
 
-  console.log('selectedChild', selectedChild?.otherParent)
-
   return selectedChild?.otherParent as Person | undefined
+}
+
+export const hasOtherParent = (
+  answers: FormValue,
+  externalData: ExternalData,
+): boolean => {
+  const otherParent = getOtherParent({ answers, externalData } as Application)
+  return !!otherParent
 }
 
 export const getRelationOptions = () => [
