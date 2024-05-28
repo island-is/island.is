@@ -41,36 +41,36 @@ export class CriminalRecordSubmissionService extends BaseTemplateApiService {
     const isPayment: { fulfilled: boolean } | undefined =
       await this.sharedTemplateAPIService.getPaymentStatus(auth, application.id)
 
-    if (isPayment?.fulfilled) {
-      const userProfileData = application.externalData.userProfile
-        ?.data as UserProfile
-
-      const person = {
-        ssn: application.applicant,
-        phoneNumber: userProfileData?.mobilePhoneNumber,
-        email: userProfileData?.email,
-        signed: false,
-        type: PersonType.CriminalRecordApplicant,
-      }
-      const persons = [person]
-
-      const uploadDataName = 'Umsókn um sakavottorð frá Ísland.is'
-      const uploadDataId = 'Sakavottord2.1'
-
-      return await this.syslumennService
-        .uploadData(persons, undefined, {}, uploadDataName, uploadDataId)
-        .catch(async () => {
-          await this.sharedTemplateAPIService.sendEmail(
-            generateSyslumennNotifyErrorEmail,
-            application as unknown as Application,
-          )
-          return undefined
-        })
-    } else {
+    if (!isPayment?.fulfilled) {
       throw new Error(
         'Ekki er búið að staðfesta greiðslu, hinkraðu þar til greiðslan er staðfest.',
       )
     }
+
+    const userProfileData = application.externalData.userProfile
+      ?.data as UserProfile
+
+    const person = {
+      ssn: application.applicant,
+      phoneNumber: userProfileData?.mobilePhoneNumber,
+      email: userProfileData?.email,
+      signed: false,
+      type: PersonType.CriminalRecordApplicant,
+    }
+    const persons = [person]
+
+    const uploadDataName = 'Umsókn um sakavottorð frá Ísland.is'
+    const uploadDataId = 'Sakavottord2.1'
+
+    return await this.syslumennService
+      .uploadData(persons, undefined, {}, uploadDataName, uploadDataId)
+      .catch(async () => {
+        await this.sharedTemplateAPIService.sendEmail(
+          generateSyslumennNotifyErrorEmail,
+          application as unknown as Application,
+        )
+        return undefined
+      })
   }
 
   async validateCriminalRecord({ auth }: TemplateApiModuleActionProps) {
