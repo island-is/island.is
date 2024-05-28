@@ -6,18 +6,16 @@ import { formatDate } from '@island.is/judicial-system/formatters'
 
 import { Institution } from '../../graphql/schema'
 import InfoCard from './InfoCard'
-import { infoCardCaseScheduled as strings } from './InfoCard.strings'
+import { strings } from './InfoCardCaseScheduled.strings'
 
 interface Props {
   court: Institution
   courtDate: string
   courtRoom?: string | null
-  postponedIndefinitelyExplanation?: string | null
 }
 
 const InfoCardCaseScheduled: React.FC<Props> = (props) => {
-  const { court, courtDate, courtRoom, postponedIndefinitelyExplanation } =
-    props
+  const { court, courtDate, courtRoom } = props
   const { formatMessage } = useIntl()
 
   return (
@@ -28,14 +26,12 @@ const InfoCardCaseScheduled: React.FC<Props> = (props) => {
           value: (
             <>
               <Text variant="eyebrow" marginBottom={1} marginTop={2}>
-                {postponedIndefinitelyExplanation
-                  ? formatMessage(strings.postponed)
-                  : formatDate(courtDate, 'PPPp')}
+                {formatDate(courtDate, 'PPPp')}
               </Text>
               {<Text>{court.name}</Text>}
               <Text>
                 {formatMessage(strings.courtRoom, {
-                  courtRoom: courtRoom ?? 'NONE',
+                  courtRoom: courtRoom || 'NONE', // Must use || because courtRoom can be an empty string
                 })}
               </Text>
             </>

@@ -275,12 +275,21 @@ export const OccupationalLicenses = new XroadConf({
   },
 })
 
-export const DistrictCommissioners = new XroadConf({
+export const DistrictCommissionersPCard = new XroadConf({
   env: {
-    XROAD_DISTRICT_COMMISSIONERS_PATH: {
+    XROAD_DISTRICT_COMMISSIONERS_P_CARD_PATH: {
       dev: 'IS-DEV/GOV/10016/Syslumenn-Protected/IslandMinarSidur',
       staging: 'IS-DEV/GOV/10016/Syslumenn-Protected/IslandMinarSidur',
       prod: 'IS/GOV/5512201410/Syslumenn-Protected/IslandMinarSidur',
+    },
+  },
+})
+export const DistrictCommissionersLicenses = new XroadConf({
+  env: {
+    XROAD_DISTRICT_COMMISSIONERS_LICENSES_PATH: {
+      dev: 'IS-DEV/GOV/10016/Syslumenn-Protected/RettindiIslandis',
+      staging: 'IS-DEV/GOV/10016/Syslumenn-Protected/RettindiIslandis',
+      prod: 'IS/GOV/5512201410/Syslumenn-Protected/RettindiIslandis',
     },
   },
 })
@@ -335,15 +344,45 @@ export const UniversityOfIceland = new XroadConf({
   },
 })
 
+export const UniversityCareers = new XroadConf({
+  env: {
+    XROAD_UNIVERSITY_OF_AKUREYRI_PATH: {
+      dev: 'IS-DEV/EDU/10054/UNAK-Protected/brautskraning-v1',
+      staging: 'IS-DEV/EDU/10054/UNAK-Protected/brautskraning-v1',
+      prod: 'IS/EDU/5206871229/UNAK-Protected/brautskraning-v1',
+    },
+    XROAD_AGRICULTURAL_UNIVERSITY_OF_ICELAND_PATH: {
+      dev: 'IS-DEV/EDU/10056/LBHI-Protected/brautskraning-v1',
+      staging: 'IS-DEV/EDU/10056/LBHI-Protected/brautskraning-v1',
+      prod: 'IS/EDU/4112043590/LBHI-Protected/brautskraning-v1',
+    },
+    XROAD_BIFROST_UNIVERSITY_PATH: {
+      dev: 'IS-DEV/EDU/10057/Bifrost-Protected/brautskraning-v1',
+      staging: 'IS-DEV/EDU/10057/Bifrost-Protected/brautskraning-v1',
+      prod: 'IS/EDU/5502690239/Bifrost-Protected/brautskraning-v1',
+    },
+    XROAD_HOLAR_UNIVERSITY_PATH: {
+      dev: 'IS-DEV/EDU/10055/Holar-Protected/brautskraning-v1',
+      staging: 'IS-DEV/EDU/10055/Holar-Protected/brautskraning-v1',
+      prod: 'IS/EDU/5001694359/Holar-Protected/brautskraning-v1',
+    },
+    XROAD_ICELAND_UNIVERSITY_OF_THE_ARTS_PATH: {
+      dev: 'IS-DEV/EDU/10049/LHI-Protected/brautskraning-v1',
+      staging: 'IS-DEV/EDU/10049/LHI-Protected/brautskraning-v1',
+      prod: 'IS/EDU/4210984099/LHI-Protected/brautskraning-v1',
+    },
+  },
+})
+
 export const Education = new XroadConf({
   env: {
     XROAD_MMS_LICENSE_SERVICE_ID: {
-      dev: 'IS-DEV/EDU/10020/MMS-Protected/license-api-v1',
+      dev: 'IS-DEV/GOV/10066/MMS-Protected/license-api-v1',
       staging: 'IS-TEST/EDU/5708150320/MMS-Protected/license-api-v1',
       prod: 'IS/EDU/5708150320/MMS-Protected/license-api-v1',
     },
     XROAD_MMS_GRADE_SERVICE_ID: {
-      dev: 'IS-DEV/EDU/10020/MMS-Protected/grade-api-v1',
+      dev: 'IS-DEV/GOV/10066/MMS-Protected/grade-api-v1',
       staging: 'IS-TEST/EDU/5708150320/MMS-Protected/grade-api-v1',
       prod: 'IS/EDU/5708150320/MMS-Protected/grade-api-v1',
     },
@@ -552,7 +591,7 @@ export const Vehicles = new XroadConf({
 export const Inna = new XroadConf({
   env: {
     XROAD_INNA_PATH: {
-      dev: 'IS-DEV/EDU/10020/MMS-Protected/inna-v1',
+      dev: 'IS-DEV/GOV/10066/MMS-Protected/inna-v1',
       staging: 'IS-TEST/EDU/5708150320/MMS-Protected/inna-v1',
       prod: 'IS/EDU/5708150320/MMS-Protected/inna-v1',
     },

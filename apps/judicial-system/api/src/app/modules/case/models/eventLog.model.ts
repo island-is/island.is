@@ -1,6 +1,6 @@
 import { Field, ID, ObjectType, registerEnumType } from '@nestjs/graphql'
 
-import { EventType } from '@island.is/judicial-system/types'
+import { EventType, UserRole } from '@island.is/judicial-system/types'
 
 registerEnumType(EventType, { name: 'EventType' })
 
@@ -9,18 +9,18 @@ export class EventLog {
   @Field(() => ID)
   readonly id!: string
 
-  @Field({ nullable: true })
+  @Field(() => String, { nullable: true })
   readonly created?: string
 
-  @Field({ nullable: true })
+  @Field(() => ID, { nullable: true })
   readonly caseId?: string
 
   @Field(() => EventType, { nullable: true })
   readonly eventType?: EventType
 
-  @Field({ nullable: true })
+  @Field(() => String, { nullable: true })
   readonly nationalId?: string
 
-  @Field({ nullable: true })
-  readonly userRole?: string
+  @Field(() => UserRole, { nullable: true })
+  readonly userRole?: UserRole
 }

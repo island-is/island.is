@@ -417,7 +417,6 @@ export class ParentalLeaveService extends BaseTemplateApiService {
       employerLastSixMonths,
       employers,
       changeEmployerFile,
-      addEmployer,
     } = getApplicationAnswers(application.answers)
     const { applicationFundId } = getApplicationExternalData(
       application.externalData,
@@ -447,20 +446,18 @@ export class ParentalLeaveService extends BaseTemplateApiService {
       }
     }
 
-    if (addEmployer === YES) {
-      if (changeEmployerFile) {
-        changeEmployerFile.forEach(async (item, index) => {
-          const pdf = await this.getPdf(
-            application,
-            index,
-            'fileUpload.changeEmployerFile',
-          )
-          attachments.push({
-            attachmentType: apiConstants.attachments.changeEmployer,
-            attachmentBytes: pdf,
-          })
+    if (changeEmployerFile) {
+      changeEmployerFile.forEach(async (item, index) => {
+        const pdf = await this.getPdf(
+          application,
+          index,
+          'fileUpload.changeEmployerFile',
+        )
+        attachments.push({
+          attachmentType: apiConstants.attachments.changeEmployer,
+          attachmentBytes: pdf,
         })
-      }
+      })
     }
 
     // We don't want to send old files to VMST again
@@ -790,9 +787,7 @@ export class ParentalLeaveService extends BaseTemplateApiService {
         }
       } catch (e) {
         this.logger.warn(
-          `Could not fetch applicationInformation on applicationId: {applicationId} with error: {error}`
-            .replace(`{${'applicationId'}}`, application.id)
-            .replace(`{${'error'}}`, e),
+          `Could not fetch applicationInformation on applicationId: ${application.id} with error: ${e}`,
         )
       }
     }
@@ -1535,5 +1530,24 @@ export class ParentalLeaveService extends BaseTemplateApiService {
       this.logger.error('Failed to validate the parental leave application', e)
       throw this.parseErrors(e as VMSTError)
     }
+  }
+
+  async setVMSTPeriods({ application }: TemplateApiModuleActionProps) {
+    try {
+      const applicationInformation =
+        await this.applicationInformationAPI.applicationGetApplicationInformation(
+          {
+            applicationId: application.id,
+          },
+        )
+
+      return applicationInformation.periods
+    } catch (e) {
+      this.logger.warn(
+        `Could not fetch applicationInformation on applicationId: ${application.id} with error: ${e}`,
+      )
+    }
+
+    return null
   }
 }

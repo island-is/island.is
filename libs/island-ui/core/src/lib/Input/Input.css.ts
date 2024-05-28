@@ -170,8 +170,11 @@ export const inputButton = recipe({
     alignItems: 'center',
     justifyContent: 'center',
     transition: 'background-color .25s',
-    borderTop: `1px solid transparent`,
+    borderTop: `transparent`,
+    borderRight: `transparent`,
+    borderBottom: `transparent`,
     position: 'relative',
+    height: '100%',
 
     ':hover': {
       backgroundColor: theme.color.blue200,

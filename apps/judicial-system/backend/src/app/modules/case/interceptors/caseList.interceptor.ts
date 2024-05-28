@@ -7,9 +7,9 @@ import {
   NestInterceptor,
 } from '@nestjs/common'
 
-import { CommentType, DateType } from '@island.is/judicial-system/types'
-
 import { Case } from '../models/case.model'
+import { DateLog } from '../models/dateLog.model'
+import { ExplanatoryComment } from '../models/explanatoryComment.model'
 
 @Injectable()
 export class CaseListInterceptor implements NestInterceptor {
@@ -21,19 +21,6 @@ export class CaseListInterceptor implements NestInterceptor {
           // If you need to add sensitive information, then you should consider adding a new endpoint
           // for defenders and other user roles that are not allowed to see sensitive information.
 
-          const latestDate = theCase.dateLogs?.find((d) =>
-            [DateType.ARRAIGNMENT_DATE, DateType.COURT_DATE].includes(
-              d.dateType,
-            ),
-          )?.date
-
-          const postponedIndefinitelyExplanation =
-            theCase.explanatoryComments?.find(
-              (c) =>
-                c.commentType ===
-                CommentType.POSTPONED_INDEFINITELY_EXPLANATION,
-            )?.comment
-
           return {
             id: theCase.id,
             created: theCase.created,
@@ -44,7 +31,9 @@ export class CaseListInterceptor implements NestInterceptor {
             courtCaseNumber: theCase.courtCaseNumber,
             decision: theCase.decision,
             validToDate: theCase.validToDate,
-            courtDate: latestDate,
+            courtDate:
+              DateLog.courtDate(theCase.dateLogs)?.date ??
+              DateLog.arraignmentDate(theCase.dateLogs)?.date,
             initialRulingDate: theCase.initialRulingDate,
             rulingDate: theCase.rulingDate,
             rulingSignatureDate: theCase.rulingSignatureDate,
@@ -63,7 +52,12 @@ export class CaseListInterceptor implements NestInterceptor {
             appealCaseNumber: theCase.appealCaseNumber,
             appealRulingDecision: theCase.appealRulingDecision,
             prosecutorsOffice: theCase.prosecutorsOffice,
-            postponedIndefinitelyExplanation,
+            postponedIndefinitelyExplanation:
+              ExplanatoryComment.postponedIndefinitelyExplanation(
+                theCase.explanatoryComments,
+              )?.comment,
+            indictmentReviewer: theCase.indictmentReviewer,
+            indictmentReviewDecision: theCase.indictmentReviewDecision,
           }
         }),
       ),
