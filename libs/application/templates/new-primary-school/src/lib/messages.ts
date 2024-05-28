@@ -30,6 +30,11 @@ export const newPrimarySchoolMessages: MessageDir = {
       defaultMessage: 'Já',
       description: 'Yes',
     },
+    no: {
+      id: 'dess.nps.application:no',
+      defaultMessage: 'Nei',
+      description: 'No',
+    },
     date: {
       id: 'dess.nps.application:date',
       defaultMessage: 'Dagsetning',
