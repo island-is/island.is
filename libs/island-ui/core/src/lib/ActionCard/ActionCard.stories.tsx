@@ -41,7 +41,8 @@ const config: Meta<typeof ActionCard> = {
       control: { type: 'boolean' },
     },
     cta: {
-      description: 'The main call to action',
+      description:
+        "The main call to action. If `fluid: false` then the button isn't full width on mobile.",
       control: { type: 'object' },
     },
     unavailable: {
@@ -83,11 +84,8 @@ Default.args = {
   eyebrow: 'Eyebrow',
   avatar: true,
   cta: {
-    label: 'Click me',
-    buttonType: {
-      variant: 'primary',
-      colorScheme: 'default',
-    },
+    label: 'Click me!',
+    variant: 'primary',
   },
   unavailable: {
     active: false,
@@ -146,7 +144,7 @@ export const WithTag = () => (
       variant: 'blue',
     }}
     text="This is the text"
-    cta={{ label: 'Click me', variant: 'text', size: 'small' }}
+    cta={{ label: 'Click me', variant: 'text' }}
   />
 )
 
@@ -212,8 +210,6 @@ export const Avatar = () => (
     cta={{
       label: 'Skoða upplýsingar',
       variant: 'text',
-      size: 'small',
-      fluid: false,
     }}
   />
 )

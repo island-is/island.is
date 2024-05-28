@@ -5,6 +5,7 @@ import cn from 'classnames'
 import { Box } from '../Box/Box'
 import * as styles from './Button.css'
 import { Icon } from '../IconRC/Icon'
+import { IconProps } from '../IconRC/types'
 import { TestSupport } from '@island.is/island-ui/utils'
 import { ButtonProps, ButtonTypes } from './types'
 
@@ -111,8 +112,8 @@ export const Button = forwardRef<
 )
 
 type ButtonIconProps = {
-  icon: NonNullable<ButtonProps['icon']>
-  type: ButtonProps['iconType']
+  icon: IconProps['icon']
+  type: IconProps['type']
   transparent?: boolean
   preText?: boolean
 }

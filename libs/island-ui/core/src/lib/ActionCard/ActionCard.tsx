@@ -88,6 +88,7 @@ export const ActionCard: React.FC<React.PropsWithChildren<ActionCardProps>> = ({
 
   const hasEyebrowElements = Boolean(date || eyebrow)
   const hasCTAElements = Boolean(cta?.label || unavailable?.active)
+  const hasTag = Boolean(tag?.label)
 
   const renderAvatar = () => {
     if (!avatar || !heading) {
@@ -197,23 +198,32 @@ export const ActionCard: React.FC<React.PropsWithChildren<ActionCardProps>> = ({
       return null
     }
 
+    const isTextVariant =
+      cta?.variant === 'text' || cta.buttonType?.variant === 'text'
+
+    // varinat="text" buttons should be small
+    const smallButton = isTextVariant && _cta?.size === undefined
+
+    // variant="text" buttons should not full width on mobile
+    const intrinsicSize = isTextVariant && _cta?.fluid === undefined
+
     return (
       <Box
         display="flex"
         justifyContent={['flexStart', 'flexEnd']}
         alignItems={['stretch', 'center']}
         flexDirection="row"
-        marginTop={tag?.label ? 'auto' : 0}
-        paddingTop={tag?.label ? 1 : 0}
+        marginTop={hasTag ? 'auto' : 0}
+        paddingTop={hasTag ? 1 : 0}
       >
         <Button
           {...(cta.buttonType ?? { variant: cta.variant })}
-          size={cta.size}
+          size={smallButton ? 'small' : cta.size}
           onClick={cta.onClick}
           disabled={cta.disabled}
           icon={cta.icon}
           iconType={cta.iconType}
-          fluid={cta.fluid}
+          fluid={intrinsicSize ? false : cta.fluid}
         >
           {cta.label}
         </Button>
@@ -333,7 +343,7 @@ export const ActionCard: React.FC<React.PropsWithChildren<ActionCardProps>> = ({
           justifyContent="center"
           display={hasCTAElements ? 'flex' : 'none'}
         >
-          {hasEyebrowElements || !tag?.label ? null : (
+          {hasEyebrowElements || !hasTag ? null : (
             <Box display={['none', 'block']} marginBottom="auto">
               {renderTag()}
             </Box>
