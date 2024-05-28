@@ -114,4 +114,10 @@ export class CaseListEntry {
 
   @Field(() => String, { nullable: true })
   readonly indictmentAppealDeadline?: string
+
+  @Field(() => Boolean, { nullable: true })
+  readonly indictmentVerdictViewedByAll?: boolean
+
+  @Field(() => String, { nullable: true })
+  readonly indictmentVerdictAppealDeadline?: string
 }
