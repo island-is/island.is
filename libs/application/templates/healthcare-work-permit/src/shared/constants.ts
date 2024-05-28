@@ -4,4 +4,5 @@ export enum ApiActions {
   getMyAcademicCareer = 'getMyAcademicCareer',
   getEducationInfo = 'getEducationInfo',
   getNationalRegistryWithEESValidation = 'getNationalRegistryWithEESValidation',
+  processPermits = 'processPermits',
 }

@@ -1,14 +1,35 @@
-import { FieldBaseProps } from '@island.is/application/types'
-import { AlertMessage, Box, Text } from '@island.is/island-ui/core'
-import { FC } from 'react'
+import { FieldBaseProps, FormatMessage } from '@island.is/application/types'
+import { Box, Text } from '@island.is/island-ui/core'
+import { FC, useEffect, useState } from 'react'
 import { useLocale } from '@island.is/localization'
 import { RadioController } from '@island.is/shared/form-fields'
 import { information } from '../../lib/messages'
+import {
+  StudentTrackDto,
+  StudentTrackInstitutionDto,
+} from '@island.is/clients/university-careers'
+import { MessageDescriptor } from 'react-intl'
 
 interface Option {
   value: string
   label: React.ReactNode
   disabled?: boolean
+}
+
+interface Message {
+  id: string
+  defaultMessage: string
+  description: string
+}
+
+interface PermitProgram {
+  name?: string
+  programId?: string
+  institution?: StudentTrackInstitutionDto
+  error?: boolean
+  errorMsg?: Message | string
+  professionId?: string
+  prereq?: StudentTrackDto // TODO Probably don't need this
 }
 
 export const SelectWorkPermitField: FC<
@@ -17,43 +38,26 @@ export const SelectWorkPermitField: FC<
   const { lang, formatMessage } = useLocale()
   const { application } = props
 
-  const workPermitOptions = (workPermits: any) => {
+  const workPermitOptions = (workPermits: PermitProgram[]) => {
     const options: Option[] = []
 
-    for (const workPermit of workPermits.transcripts ?? []) {
-      const disabled = false
+    for (const permitProgram of workPermits) {
+      const disabled = permitProgram.error
+      const formattedErrorMsg = formatMessage(
+        permitProgram.errorMsg as MessageDescriptor,
+      )
 
       options.push({
-        value: `${workPermit.studyProgram}`,
+        value: `${permitProgram.name}`,
         label: (
           <Box display="flex" flexDirection="column">
             <Box>
               <Text variant="default" color={disabled ? 'dark200' : 'dark400'}>
-                {lang === 'is'
-                  ? workPermit.studyProgram
-                  : workPermit.studyProgram}
+                {`${lang === 'is' ? permitProgram.name : permitProgram.name}${
+                  disabled ? ` (${formattedErrorMsg})` : ''
+                }`}
               </Text>
             </Box>
-            {disabled && (
-              <Box marginTop={2}>
-                <AlertMessage
-                  type="error"
-                  title={formatMessage(
-                    information.labels.selectWorkPermit.restrictionAlertTitle,
-                  )}
-                  message={
-                    <Box component="span" display="block">
-                      <Text variant="small">
-                        {formatMessage(
-                          information.labels.selectWorkPermit
-                            .restrictionAlertMessage,
-                        )}
-                      </Text>
-                    </Box>
-                  }
-                />
-              </Box>
-            )}
           </Box>
         ),
         disabled: disabled,
@@ -61,6 +65,10 @@ export const SelectWorkPermitField: FC<
     }
     return options
   }
+
+  useEffect(() => {
+    props.setSubmitButtonDisabled && props.setSubmitButtonDisabled(true)
+  }, [])
 
   return (
     <Box
@@ -74,12 +82,14 @@ export const SelectWorkPermitField: FC<
       </Text>
       <RadioController
         id={`${props.field.id}.studyProgram`}
-        error={props.error as any} // TODO ?
         backgroundColor="blue"
         defaultValue={[]}
         options={workPermitOptions(
-          application?.externalData?.universityOfIceland?.data as any,
+          application.externalData.permitOptions.data as PermitProgram[],
         )}
+        onSelect={() =>
+          props.setSubmitButtonDisabled && props.setSubmitButtonDisabled(false)
+        }
       />
     </Box>
   )

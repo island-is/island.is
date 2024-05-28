@@ -35,6 +35,11 @@ export const personal = {
         defaultMessage: 'Fæðingardagur',
         description: 'User information birth date label',
       },
+      citizenship: {
+        id: 'hwp.application:personal.labels.userInformation.citizenship',
+        defaultMessage: 'Fæðingarstaður',
+        description: 'User information birth place label',
+      },
       email: {
         id: 'hwp.application:personal.labels.userInformation.email',
         defaultMessage: 'Netfang',
