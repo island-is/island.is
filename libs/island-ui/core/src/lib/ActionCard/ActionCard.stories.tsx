@@ -118,8 +118,8 @@ export const SmallHeading = () => (
 
 export const WithLargerButton = () => (
   <ActionCard
-    heading="Heading"
-    text="This is the text"
+    heading="Parental Leave"
+    text="Your application is in progress. Waiting for VMST approval."
     cta={{ label: 'Click me', size: 'large' }}
   />
 )
@@ -133,7 +133,7 @@ export const Unavailable = () => (
       label: 'This is the unavailability label',
       message: 'And this is the tooltip message shown above',
     }}
-    cta={{ label: `Doesn't matter, not rendered` }}
+    cta={{ label: `Doesn't matter, not rendered`, }}
   />
 )
 
@@ -146,7 +146,7 @@ export const WithTag = () => (
       variant: 'blue',
     }}
     text="This is the text"
-    cta={{ label: 'Click me', variant: 'text' }}
+    cta={{ label: 'Click me', variant: 'text', size: 'small' }}
   />
 )
 
@@ -213,6 +213,7 @@ export const Avatar = () => (
       label: 'Skoða upplýsingar',
       variant: 'text',
       size: 'small',
+      fluid: false,
     }}
   />
 )

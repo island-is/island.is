@@ -1,6 +1,9 @@
 import type { ButtonSizes, ButtonTypes } from '../Button/types'
 import type { TagVariant } from '../Tag/types'
 import type { Icon as IconType } from '../IconRC/iconMap'
+import { ProgressMeterVariant } from '../ProgressMeter/ProgressMeter'
+
+export type BackgroundColor = 'white' | 'blue' | 'red'
 
 export type ActionCardProps = {
   date?: string
@@ -8,7 +11,7 @@ export type ActionCardProps = {
   headingVariant?: 'h3' | 'h4'
   text?: string
   eyebrow?: string
-  backgroundColor?: 'white' | 'blue' | 'red'
+  backgroundColor?: BackgroundColor
   focused?: boolean
   tag?: {
     label: string
@@ -27,6 +30,7 @@ export type ActionCardProps = {
     iconType?: 'filled' | 'outline'
     onClick?: () => void
     disabled?: boolean
+    fluid?: boolean
   }
   unavailable?: {
     active?: boolean
@@ -38,5 +42,6 @@ export type ActionCardProps = {
     currentProgress: number
     maxProgress: number
     withLabel?: boolean
+    variant?: ProgressMeterVariant
   }
 }
