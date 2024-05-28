@@ -70,6 +70,7 @@ export const ApplicationQuery = gql`
       }
       amount {
         aidAmount
+        childrenAidAmount
         income
         personalTaxCredit
         spousePersonalTaxCredit
@@ -268,6 +269,7 @@ export const ApplicationEventMutation = gql`
       }
       amount {
         aidAmount
+        childrenAidAmount
         income
         personalTaxCredit
         spousePersonalTaxCredit
@@ -386,6 +388,7 @@ export const UpdateApplicationMutation = gql`
       }
       amount {
         aidAmount
+        childrenAidAmount
         income
         personalTaxCredit
         spousePersonalTaxCredit
