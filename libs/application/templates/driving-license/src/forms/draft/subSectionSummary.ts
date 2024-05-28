@@ -153,8 +153,10 @@ export const subSectionSummary = buildSubSection({
               chargeItemCode: string
             }[]
             const targetCode =
-              answers.applicationFor === B_TEMP || answers.applicationFor === BE
+              answers.applicationFor === B_TEMP
                 ? 'AY114'
+                : answers.applicationFor === BE
+                ? 'AY115'
                 : 'AY110'
 
             const item = items.find(
