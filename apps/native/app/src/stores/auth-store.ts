@@ -19,9 +19,6 @@ import { preferencesStore } from './preferences-store'
 
 const KEYCHAIN_AUTH_KEY = `@islandis_${bundleId}`
 
-// Optional scopes (not required for all users so we do not want to force a logout)
-const OPTIONAL_SCOPES = ['@island.is/licenses:barcode']
-
 interface UserInfo {
   sub: string
   nationalId: string
@@ -202,10 +199,7 @@ export async function checkIsAuthenticated() {
   }
 
   if ('scopes' in authorizeResult) {
-    const requiredScopes = appAuthConfig.scopes.filter(
-      (scope) => !OPTIONAL_SCOPES.includes(scope),
-    )
-    const hasRequiredScopes = requiredScopes.every((scope) =>
+    const hasRequiredScopes = appAuthConfig.scopes.every((scope) =>
       authorizeResult.scopes.includes(scope),
     )
     if (!hasRequiredScopes) {
