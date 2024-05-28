@@ -92,4 +92,32 @@ describe('CriminalRecordSubmissionService', () => {
       CriminalRecordSubmissionService,
     )
   })
+
+  describe('submitApplication', () => {
+    it('should get a success submit response', async () => {
+      const user = createCurrentUser()
+
+      const application = createApplication({
+        externalData: {
+          createCharge: {
+            data: {
+              paymentUrl: 'someurl',
+            },
+            date: new Date(),
+            status: 'success',
+          },
+        },
+        typeId: ApplicationTypes.CRIMINAL_RECORD,
+        status: ApplicationStatus.IN_PROGRESS,
+      })
+
+      const res = await criminalRecordSubmissionService.submitApplication({
+        application,
+        auth: user,
+        currentUserLocale: 'is',
+      })
+
+      expect(res).toEqual(undefined)
+    })
+  })
 })
