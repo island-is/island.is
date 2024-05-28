@@ -88,10 +88,11 @@ export const notificationsStore = create<NotificationsStore>(
               },
             })
 
+            console.log('Registered push token', res)
             // Update push token in store
             set({ pushToken: token })
           } catch (err) {
-            console.error('Failed to register push token', err)
+            console.log('Failed to register push token', err)
           }
         }
       },
