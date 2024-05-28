@@ -85,9 +85,9 @@ clean_generated() {
 
   for pattern in "${patterns[@]}"; do
     if dry "Would delete: $pattern"; then
-      find . -not -path "./.cache/*" -type f -name "$pattern" -print
+      find . -not -path "./.cache/*" -type f -path "$pattern" -print
     else
-      find . -not -path "./.cache/*" -type f -name "$pattern" -delete
+      find . -not -path "./.cache/*" -type f -path "$pattern" -delete
     fi
   done
 
