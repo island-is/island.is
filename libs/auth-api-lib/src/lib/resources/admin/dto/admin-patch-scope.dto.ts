@@ -54,6 +54,7 @@ export class AdminPatchScopeDto {
   @IsOptional()
   @ApiPropertyOptional({
     example: false,
+    deprecated: true,
   })
   grantToLegalGuardians?: boolean
 
@@ -61,6 +62,7 @@ export class AdminPatchScopeDto {
   @IsOptional()
   @ApiPropertyOptional({
     example: false,
+    deprecated: true,
   })
   grantToProcuringHolders?: boolean
 
@@ -68,6 +70,7 @@ export class AdminPatchScopeDto {
   @IsOptional()
   @ApiPropertyOptional({
     example: false,
+    deprecated: true,
   })
   allowExplicitDelegationGrant?: boolean
 

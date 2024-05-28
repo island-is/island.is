@@ -77,6 +77,7 @@ export class ApiScopeBaseDTO {
   @IsNotEmpty()
   @ApiProperty({
     example: false,
+    deprecated: true,
   })
   readonly grantToLegalGuardians!: boolean
 
@@ -84,6 +85,7 @@ export class ApiScopeBaseDTO {
   @IsNotEmpty()
   @ApiProperty({
     example: false,
+    deprecated: true,
   })
   readonly grantToProcuringHolders!: boolean
 
@@ -98,6 +100,7 @@ export class ApiScopeBaseDTO {
   @IsNotEmpty()
   @ApiProperty({
     example: false,
+    deprecated: true,
   })
   readonly allowExplicitDelegationGrant!: boolean
 
