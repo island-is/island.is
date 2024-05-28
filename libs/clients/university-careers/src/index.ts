@@ -12,5 +12,6 @@ export {
   HolarUniversityCareerClientConfig,
   BifrostUniversityCareerClientConfig,
   UniversityOfAkureyriCareerClientConfig,
+  IcelandUniversityOfTheArtsCareerClientConfig,
 } from './lib/clients'
 export * from './lib/dto'

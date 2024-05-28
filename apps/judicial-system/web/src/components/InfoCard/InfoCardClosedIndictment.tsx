@@ -84,6 +84,7 @@ const InfoCardClosedIndictment: React.FC<Props> = (props) => {
               ),
               items: workingCase.defendants,
               defendantInfoActionButton: defendantInfoActionButton,
+              displayAppealExpirationInfo: true,
             }
           : undefined
       }
