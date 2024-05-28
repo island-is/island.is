@@ -17,8 +17,12 @@ log() {
 }
 
 dry() {
-  [[ $# -gt 0 ]] && log "$*"
-  [[ "$CLEAN_DRY" == "true" ]]
+  if [[ "$CLEAN_DRY" == "true" ]]; then
+    log "Dry run: $*"
+    return 0
+  else
+    return 1
+  fi
 }
 
 show_help() {
@@ -87,6 +91,7 @@ clean_generated() {
     if dry "Would delete: $pattern"; then
       find . -not -path "./.cache/*" -type f -path "$pattern" -print
     else
+      log "Deleting now: $pattern"
       find . -not -path "./.cache/*" -type f -path "$pattern" -delete
     fi
   done
@@ -95,6 +100,7 @@ clean_generated() {
   if dry "Would delete directory: $dirs_to_delete"; then
     find . -not -path "./.cache/*" -type d -path "$dirs_to_delete" -print
   else
+    log "Deleting directory now: $dirs_to_delete"
     find . -not -path "./.cache/*" -type d -path "$dirs_to_delete" -exec rm -rf '{}' +
   fi
 }
@@ -104,6 +110,7 @@ clean_caches() {
     if dry "Would delete: $item"; then
       continue
     else
+      log "Deleting now: $item"
       rm -rf "$item"
     fi
   done
@@ -128,6 +135,7 @@ clean_yarn() {
       if dry "Would delete: $f"; then
         continue
       else
+        log "Deleting now: $f"
         rm -rf "$f"
       fi
     fi
@@ -138,6 +146,7 @@ clean_node_modules() {
   if dry "Would delete: node_modules"; then
     return
   else
+    log "Deleting now: node_modules"
     rm -rf node_modules
   fi
 }
