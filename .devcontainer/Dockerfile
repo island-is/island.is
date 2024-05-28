@@ -52,10 +52,11 @@ RUN . ~/.${SHELL}rc && volta install node@$(jq -r '.engines.node' package.json)
 COPY --from=cargo /usr/local/cargo/bin/starship /usr/local/bin/
 
 # Set up user's shell config
-RUN echo "eval \"\$(starship init ${SHELL})\"" >> /home/${USERNAME}/.${SHELL}rc && \
 # Initialize starship prompt
-echo "set -o vi" >> ~/.${SHELL}rc
-# Set vi mode in shell
+RUN echo "eval \"\$(starship init ${SHELL})\"" >> /home/${USERNAME}/.${SHELL}rc && \
+  # Set vi mode in shell
+  echo "set -o vi" >> ~/.${SHELL}rc
+
 # The local machine ID is different from the host, so we get NX cache poisoning warnings.
 # This "fixes" it, but not very clean.
 # Docs: https://nx.dev/troubleshooting/unknown-local-cache
