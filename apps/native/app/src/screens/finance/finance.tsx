@@ -37,14 +37,13 @@ const { useNavigationOptions, getNavigationOptions } =
 
 export const FinanceScreen: NavigationFunctionComponent = ({ componentId }) => {
   useNavigationOptions(componentId)
+  useConnectivityIndicator({ componentId })
 
   const theme = useTheme()
   const intl = useIntl()
   const res = useGetFinanceStatusQuery({
     errorPolicy: 'ignore',
   })
-
-  useConnectivityIndicator({ componentId, queryResult: res })
 
   // Convert JSON scalars to types
   const financeStatusData: GetFinanceStatus = res.data?.getFinanceStatus ?? {
@@ -100,8 +99,6 @@ export const FinanceScreen: NavigationFunctionComponent = ({ componentId }) => {
     />
   ))
 
-  const showLoading = res.loading && !res.data
-
   return (
     <ScrollView style={{ flex: 1 }}>
       <SafeAreaView style={{ marginHorizontal: 16 }}>
@@ -133,7 +130,7 @@ export const FinanceScreen: NavigationFunctionComponent = ({ componentId }) => {
           </Typography>
         }
         subtitle={
-          showLoading ? (
+          res.loading ? (
             <Skeleton
               active
               style={{ borderRadius: 4, width: 150 }}
@@ -174,7 +171,7 @@ export const FinanceScreen: NavigationFunctionComponent = ({ componentId }) => {
         />
       </SafeAreaView>
       <SafeAreaView style={{ marginHorizontal: 16 }}>
-        {showLoading
+        {res.loading
           ? skeletonItems
           : organizations.length > 0 || financeStatusZero
           ? organizations.map((org, i) =>
