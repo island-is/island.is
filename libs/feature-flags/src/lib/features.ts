@@ -56,6 +56,7 @@ export enum Features {
   isAgriculturalUniversityOfIcelandEnabled = 'isAgriculturalUniversityOfIcelandEnabled',
   isBifrostUniversityEnabled = 'isBifrostUniversityEnabled',
   isHolarUniversityEnabled = 'isHolarUniversityEnabled',
+  isIcelandUniversityOfTheArtsEnabled = 'isIcelandUniversityOfTheArtsEnabled',
 
   //License service new drivers license client enabled
   licenseServiceDrivingLicenseClient = 'isLicenseServiceDrivingLicenceClientV2Enabled',
