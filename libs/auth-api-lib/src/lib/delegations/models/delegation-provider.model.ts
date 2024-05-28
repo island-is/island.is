@@ -14,6 +14,7 @@ import {
   UpdatedAt,
 } from 'sequelize-typescript'
 import { DelegationTypeModel } from './delegation-type.model'
+import { DelegationProviderDto } from '../dto/delegation-provider.dto'
 
 @Table({
   tableName: 'delegation_provider',
@@ -51,4 +52,13 @@ export class DelegationProviderModel extends Model<
 
   @UpdatedAt
   readonly modified?: Date
+
+  toDTO(): DelegationProviderDto {
+    return {
+      id: this.id,
+      name: this.name,
+      description: this.description,
+      delegationTypes: this.delegationTypes.map((type) => type.toDTO()),
+    }
+  }
 }
