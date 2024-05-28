@@ -16,6 +16,7 @@ import {
   BlueBox,
   CourtArrangements,
   CourtCaseInfo,
+  DateTime,
   FormContentContainer,
   FormContext,
   FormFooter,
@@ -39,13 +40,18 @@ import {
 
 import { strings } from './Conclusion.strings'
 
-type Actions = 'POSTPONE' | 'REDISTRIBUTE' | 'COMPLETE'
+type Actions =
+  | 'POSTPONE'
+  | 'REDISTRIBUTE'
+  | 'COMPLETE'
+  | 'POSTPONE_UNTIL_VERDICT'
 type Decision =
   | CaseIndictmentRulingDecision.FINE
   | CaseIndictmentRulingDecision.RULING
 
 interface Postponement {
   postponedIndefinitely?: boolean
+  postonedUntilVerdict?: boolean
   reason?: string
 }
 
@@ -57,6 +63,7 @@ const Conclusion: React.FC = () => {
   const [selectedAction, setSelectedAction] = useState<Actions>()
   const [selectedDecision, setSelectedDecision] = useState<Decision>()
   const [postponement, setPostponement] = useState<Postponement>()
+
   const {
     courtDate,
     handleCourtDateChange,
@@ -219,6 +226,19 @@ const Conclusion: React.FC = () => {
             </Box>
             <Box marginBottom={2}>
               <RadioButton
+                id="conclusion-postpone-until-verdict"
+                name="conclusion-decision"
+                checked={selectedAction === 'POSTPONE_UNTIL_VERDICT'}
+                onChange={() => {
+                  setSelectedAction('POSTPONE_UNTIL_VERDICT')
+                }}
+                large
+                backgroundColor="white"
+                label={formatMessage(strings.postponedUntilVerdict)}
+              />
+            </Box>
+            <Box marginBottom={2}>
+              <RadioButton
                 id="conclusion-complete"
                 name="conclusion-decision"
                 checked={selectedAction === 'COMPLETE'}
@@ -298,6 +318,39 @@ const Conclusion: React.FC = () => {
             </Box>
           </>
         )}
+        {selectedAction === 'POSTPONE_UNTIL_VERDICT' && (
+          <Box component="section" marginBottom={5}>
+            <SectionHeading
+              title={formatMessage(strings.arrangeVerdictTitle)}
+            />
+            <BlueBox>
+              <Box marginBottom={2}>
+                <RadioButton
+                  id="arrange-verdict"
+                  name="arrange-verdict"
+                  checked={Boolean(postponement?.postonedUntilVerdict)}
+                  onChange={() => {
+                    setPostponement((prev) => ({
+                      ...prev,
+                      postonedUntilVerdict: !prev?.postonedUntilVerdict,
+                    }))
+                  }}
+                  large
+                  backgroundColor="white"
+                  label={formatMessage(strings.arrangeVerdict)}
+                />
+              </Box>
+              <DateTime
+                name="verdictDate"
+                onChange={(date) => {
+                  console.log('asd')
+                }}
+                blueBox={false}
+                disabled={!postponement?.postonedUntilVerdict}
+              />
+            </BlueBox>
+          </Box>
+        )}
         {selectedAction === 'COMPLETE' && (
           <Box marginBottom={5}>
             <SectionHeading title={formatMessage(strings.decision)} required />
@@ -332,7 +385,10 @@ const Conclusion: React.FC = () => {
           </Box>
         )}
         {selectedAction && (
-          <Box component="section" marginBottom={5}>
+          <Box
+            component="section"
+            marginBottom={selectedDecision === 'RULING' ? 5 : 10}
+          >
             <SectionHeading
               title={formatMessage(strings.courtRecordTitle)}
               required={selectedAction === 'REDISTRIBUTE'}
