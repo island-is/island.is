@@ -2001,6 +2001,52 @@
         ]
       }
     },
+    "/api/KannaSakavottord/{audkenni}/{kennitala}": {
+      "get": {
+        "tags": ["KannaSakavottord"],
+        "operationId": "KannaSakavottord_Get",
+        "parameters": [
+          {
+            "type": "string",
+            "name": "audkenni",
+            "in": "path",
+            "required": true,
+            "x-nullable": false
+          },
+          {
+            "type": "string",
+            "name": "kennitala",
+            "in": "path",
+            "required": true,
+            "x-nullable": false
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": ""
+          },
+          "401": {
+            "x-nullable": false,
+            "description": "",
+            "schema": {
+              "$ref": "#/definitions/ProblemDetails"
+            }
+          },
+          "default": {
+            "x-nullable": false,
+            "description": "",
+            "schema": {
+              "$ref": "#/definitions/ProblemDetails"
+            }
+          }
+        },
+        "security": [
+          {
+            "JWT Token": []
+          }
+        ]
+      }
+    },
     "/api/KaupmaliJaNei/{kennitala}/{audkenni}": {
       "get": {
         "tags": ["KaupmaliJaNei"],
@@ -2301,67 +2347,10 @@
         ]
       }
     },
-    "/api/RettindiFyrirIslandIs/{Kennitala}/{Locale}": {
-      "get": {
-        "tags": ["RettindiFyrirIslandIs"],
-        "operationId": "RettindiFyrirIslandIs_Get",
-        "parameters": [
-          {
-            "type": "string",
-            "name": "Kennitala",
-            "in": "path",
-            "required": true,
-            "x-nullable": false
-          },
-          {
-            "type": "string",
-            "name": "Locale",
-            "in": "path",
-            "required": true,
-            "x-nullable": false
-          }
-        ],
-        "responses": {
-          "200": {
-            "x-nullable": false,
-            "description": "Success",
-            "schema": {
-              "$ref": "#/definitions/LeyfiListi"
-            }
-          },
-          "404": {
-            "x-nullable": false,
-            "description": "Not found",
-            "schema": {
-              "$ref": "#/definitions/LeyfiListi"
-            }
-          },
-          "400": {
-            "x-nullable": false,
-            "description": "Bad request",
-            "schema": {
-              "$ref": "#/definitions/LeyfiListi"
-            }
-          },
-          "401": {
-            "x-nullable": false,
-            "description": "Unauthorized",
-            "schema": {
-              "$ref": "#/definitions/LeyfiListi"
-            }
-          }
-        },
-        "security": [
-          {
-            "JWT Token": []
-          }
-        ]
-      }
-    },
     "/api/RettindiFyrirIslandIs": {
       "get": {
         "tags": ["RettindiFyrirIslandIs"],
-        "operationId": "RettindiFyrirIslandIs_Get2",
+        "operationId": "RettindiFyrirIslandIs_Get",
         "responses": {
           "200": {
             "x-nullable": false,
@@ -2965,70 +2954,6 @@
           "default": {
             "x-nullable": false,
             "description": "",
-            "schema": {
-              "$ref": "#/definitions/ProblemDetails"
-            }
-          }
-        },
-        "security": [
-          {
-            "JWT Token": []
-          }
-        ]
-      }
-    },
-    "/api/Verdskra/{Audkenni}/{TBR}/{AudkenniLykill}": {
-      "get": {
-        "tags": ["Verdskra"],
-        "operationId": "Verdskra_Get",
-        "parameters": [
-          {
-            "type": "string",
-            "name": "audkenni",
-            "in": "path",
-            "required": true,
-            "x-nullable": false
-          },
-          {
-            "type": "string",
-            "name": "TBR",
-            "in": "path",
-            "required": true,
-            "x-nullable": false
-          },
-          {
-            "type": "string",
-            "name": "AudkenniLykill",
-            "in": "path",
-            "required": true,
-            "x-nullable": false
-          }
-        ],
-        "responses": {
-          "200": {
-            "x-nullable": false,
-            "description": "Success",
-            "schema": {
-              "$ref": "#/definitions/VerdskraSkeyti"
-            }
-          },
-          "404": {
-            "x-nullable": false,
-            "description": "Not found",
-            "schema": {
-              "$ref": "#/definitions/ProblemDetails"
-            }
-          },
-          "400": {
-            "x-nullable": false,
-            "description": "Bad request",
-            "schema": {
-              "$ref": "#/definitions/ProblemDetails"
-            }
-          },
-          "401": {
-            "x-nullable": false,
-            "description": "Unauthorized",
             "schema": {
               "$ref": "#/definitions/ProblemDetails"
             }
@@ -5720,20 +5645,6 @@
         },
         "kennitala": {
           "type": "string"
-        }
-      }
-    },
-    "VerdskraSkeyti": {
-      "type": "object",
-      "required": ["upphaeð", "gildirFra"],
-      "properties": {
-        "upphaeð": {
-          "type": "number",
-          "format": "decimal"
-        },
-        "gildirFra": {
-          "type": "string",
-          "format": "date-time"
         }
       }
     }

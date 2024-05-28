@@ -1,7 +1,6 @@
 import { Auth, AuthMiddleware, User } from '@island.is/auth-nest-tools'
 import { Inject, Injectable } from '@nestjs/common'
 import { RettindiFyrirIslandIsApi } from '../../gen/fetch'
-import { RettindiFyrirIslandIs2Api } from '../../gen/fetch'
 import {
   DistrictCommissionersLicenseDto,
   mapLicenseDto,
@@ -19,20 +18,17 @@ import {
 export class DistrictCommissionersLicensesService {
   constructor(
     private readonly api: RettindiFyrirIslandIsApi,
-    private readonly api2: RettindiFyrirIslandIs2Api,
     @Inject(LOGGER_PROVIDER) private readonly logger: Logger,
   ) {}
 
   private apiWithAuth = (user: User) =>
     this.api.withMiddleware(new AuthMiddleware(user as Auth))
-  private api2WithAuth = (user: User) =>
-    this.api2.withMiddleware(new AuthMiddleware(user as Auth))
 
   async getLicenses(
     user: User,
   ): Promise<Array<DistrictCommissionersLicenseInfoDto>> {
-    const licenseInfo = await this.api2WithAuth(user)
-      .rettindiFyrirIslandIsGet2({ kennitala: user.nationalId, locale: 'is' })
+    const licenseInfo = await this.apiWithAuth(user)
+      .rettindiFyrirIslandIsGet()
       .catch(handle404)
 
     return (
