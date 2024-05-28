@@ -13,6 +13,7 @@ import { auditTrailModuleConfig } from './auditTrail.config'
 export enum AuditedAction {
   LOGIN = 'LOGIN',
   GET_CASES = 'GET_CASES',
+  GET_INDICTMENTS = 'GET_INDICTMENTS',
   GET_CASE = 'GET_CASE',
   CREATE_CASE = 'CREATE_CASE',
   UPDATE_CASE = 'UPDATE_CASE',
