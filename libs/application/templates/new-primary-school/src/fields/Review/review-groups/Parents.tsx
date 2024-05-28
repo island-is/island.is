@@ -10,6 +10,7 @@ import { format as formatKennitala } from 'kennitala'
 import { newPrimarySchoolMessages } from '../../../lib/messages'
 import { getApplicationAnswers } from '../../../lib/newPrimarySchoolUtils'
 import { ReviewGroupProps } from './props'
+import { formatNumber } from 'libphonenumber-js'
 
 export const Parents = ({
   application,
@@ -17,91 +18,79 @@ export const Parents = ({
   goToScreen,
 }: ReviewGroupProps) => {
   const { formatMessage } = useLocale()
-  const { parent1, parent2 } = getApplicationAnswers(application.answers)
-
-  const parents = [parent1]
-
-  if (parent2) {
-    parents.push(parent2)
-  }
+  const { parents } = getApplicationAnswers(application.answers)
 
   return (
     <>
-      {parents.map((parent, index) => {
-        const parentIndex = index + 1
+      {Object.values(parents).map((parent, index) => (
+        <ReviewGroup
+          isEditable={editable}
+          editAction={() => goToScreen?.('parents')}
+        >
+          <Stack space={2}>
+            <GridRow rowGap={2}>
+              <GridColumn span={['12/12', '12/12', '12/12', '12/12']}>
+                <Label>
+                  {formatMessage(newPrimarySchoolMessages.confirm.parents)}{' '}
+                  {index + 1}
+                </Label>
+              </GridColumn>
+            </GridRow>
+            <GridRow rowGap={2}>
+              <GridColumn span={['12/12', '12/12', '12/12', '5/12']}>
+                <DataValue
+                  label={formatMessage(
+                    newPrimarySchoolMessages.shared.fullName,
+                  )}
+                  value={parent.fullName}
+                />
+              </GridColumn>
+              <GridColumn span={['12/12', '12/12', '12/12', '5/12']}>
+                <DataValue
+                  label={formatMessage(
+                    newPrimarySchoolMessages.shared.nationalId,
+                  )}
+                  value={formatKennitala(parent.nationalId)}
+                />
+              </GridColumn>
+            </GridRow>
+            <GridRow rowGap={2}>
+              <GridColumn span={['12/12', '12/12', '12/12', '5/12']}>
+                <DataValue
+                  label={formatMessage(newPrimarySchoolMessages.shared.address)}
+                  value={parent.address.streetAddress}
+                />
+              </GridColumn>
 
-        return (
-          <ReviewGroup
-            isEditable={editable}
-            editAction={() => goToScreen?.('parents')}
-          >
-            <Stack space={2}>
-              <GridRow rowGap={2}>
-                <GridColumn span={['12/12', '12/12', '12/12', '12/12']}>
-                  <Label>
-                    {formatMessage(newPrimarySchoolMessages.confirm.parents)}{' '}
-                    {+parentIndex}
-                  </Label>
-                </GridColumn>
-              </GridRow>
-              <GridRow marginTop={3}>
-                <GridColumn span={['12/12', '12/12', '12/12', '5/12']}>
-                  <DataValue
-                    label={formatMessage(newPrimarySchoolMessages.confirm.name)}
-                    value={parent.fullName}
-                  />
-                </GridColumn>
-                <GridColumn span={['12/12', '12/12', '12/12', '5/12']}>
-                  <DataValue
-                    label={formatMessage(
-                      newPrimarySchoolMessages.confirm.nationalId,
-                    )}
-                    value={formatKennitala(parent.nationalId)}
-                  />
-                </GridColumn>
-              </GridRow>
-              <GridRow rowGap={2}>
-                <GridColumn span={['12/12', '12/12', '12/12', '5/12']}>
-                  <DataValue
-                    label={formatMessage(
-                      newPrimarySchoolMessages.confirm.address,
-                    )}
-                    value={parent.address.streetAddress}
-                  />
-                </GridColumn>
+              <GridColumn span={['12/12', '12/12', '12/12', '5/12']}>
+                <DataValue
+                  label={formatMessage(
+                    newPrimarySchoolMessages.shared.municipality,
+                  )}
+                  value={parent.address.city}
+                />
+              </GridColumn>
+            </GridRow>
+            <GridRow rowGap={2}>
+              <GridColumn span={['12/12', '12/12', '12/12', '5/12']}>
+                <DataValue
+                  label={formatMessage(newPrimarySchoolMessages.shared.email)}
+                  value={parent.email}
+                />
+              </GridColumn>
 
-                <GridColumn span={['12/12', '12/12', '12/12', '5/12']}>
-                  <DataValue
-                    label={formatMessage(
-                      newPrimarySchoolMessages.confirm.municipality,
-                    )}
-                    value={parent.address.city}
-                  />
-                </GridColumn>
-              </GridRow>
-              <GridRow rowGap={2}>
-                <GridColumn span={['12/12', '12/12', '12/12', '5/12']}>
-                  <DataValue
-                    label={formatMessage(
-                      newPrimarySchoolMessages.confirm.email,
-                    )}
-                    value={parent.email}
-                  />
-                </GridColumn>
-
-                <GridColumn span={['12/12', '12/12', '12/12', '5/12']}>
-                  <DataValue
-                    label={formatMessage(
-                      newPrimarySchoolMessages.confirm.phoneNumber,
-                    )}
-                    value={parent.phoneNumber}
-                  />
-                </GridColumn>
-              </GridRow>
-            </Stack>
-          </ReviewGroup>
-        )
-      })}
+              <GridColumn span={['12/12', '12/12', '12/12', '5/12']}>
+                <DataValue
+                  label={formatMessage(
+                    newPrimarySchoolMessages.shared.phoneNumber,
+                  )}
+                  value={formatNumber(parent.phoneNumber, 'International')}
+                />
+              </GridColumn>
+            </GridRow>
+          </Stack>
+        </ReviewGroup>
+      ))}
     </>
   )
 }
