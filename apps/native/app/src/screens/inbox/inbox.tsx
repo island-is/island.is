@@ -445,13 +445,25 @@ export const InboxScreen: NavigationFunctionComponent<{
                   id: 'inbox.filterButtonTitle',
                 })}
                 isOutlined
-                isUtilityButton
                 style={{
+                  minWidth: 0,
                   paddingTop: 0,
                   paddingBottom: 0,
+                  minHeight: 0,
+                  borderColor: dynamicColor({
+                    light: '#CCDFFF',
+                    dark: '#CCDFFF55',
+                  }),
                 }}
                 icon={FilterIcon}
                 iconStyle={{ tintColor: theme.color.blue400 }}
+                textStyle={{
+                  fontSize: 12,
+                  color: dynamicColor({
+                    light: '#00003C',
+                    dark: '#fff',
+                  }),
+                }}
                 onPress={() => {
                   navigateTo('/inbox-filter', {
                     opened,

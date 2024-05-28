@@ -408,8 +408,6 @@ export const is = {
 
   // notifications
   'notifications.screenTitle': 'Tilkynningar',
-  'notifications.markAllAsRead': 'Merkja allt lesið',
-  'notifications.settings': 'Mínar stillingar',
   'notifications.errorUnknown': 'Villa kom upp við að sækja tilkynningar',
 
   // applications screen
