@@ -13,6 +13,7 @@ import type { Logger } from '@island.is/logging'
 import { LOGGER_PROVIDER } from '@island.is/logging'
 
 import { TokenGuard } from '@island.is/judicial-system/auth'
+import { formatNationalId } from '@island.is/judicial-system/formatters'
 import {
   messageEndpoint,
   MessageType,
@@ -25,6 +26,7 @@ import {
 
 import { CaseEvent, EventService } from '../event'
 import { DeliverDto } from './dto/deliver.dto'
+import { InternalCasesDto } from './dto/internalCases.dto'
 import { InternalCreateCaseDto } from './dto/internalCreateCase.dto'
 import { CurrentCase } from './guards/case.decorator'
 import { CaseCompletedGuard } from './guards/caseCompleted.guard'
@@ -66,6 +68,21 @@ export class InternalCaseController {
     this.logger.debug('Archiving a case')
 
     return this.internalCaseService.archive()
+  }
+
+  @Post('cases/indictments')
+  @ApiOkResponse({
+    type: Case,
+    isArray: true,
+    description: 'Gets all indictment cases',
+  })
+  getIndictmentCases(
+    @Body() internalCasesDto: InternalCasesDto,
+  ): Promise<Case[]> {
+    this.logger.debug('Getting all indictment cases')
+    const nationalId = formatNationalId(internalCasesDto.nationalId)
+
+    return this.internalCaseService.getIndictmentCases(nationalId)
   }
 
   @UseGuards(CaseExistsGuard)
