@@ -26326,7 +26326,7 @@ var SimpleGit = class {
     diffWeight,
     git,
     runner,
-    `'${process.env.HEAD_REF}'`,
+    `'upgrade-node-version'`,
     `'${process.env.BASE_REF}'`,
     `'${process.env.PR_REF}'`,
     process.env.WORKFLOW_ID
@@ -26334,7 +26334,7 @@ var SimpleGit = class {
     diffWeight,
     git,
     runner,
-    `'${process.env.HEAD_REF}'`,
+    `'upgrade-node-version'`,
     `'${process.env.BASE_REF}'`,
     process.env.WORKFLOW_ID
   );
