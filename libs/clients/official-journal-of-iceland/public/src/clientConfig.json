@@ -527,11 +527,7 @@
             "example": "a-deild"
           }
         },
-        "required": [
-          "id",
-          "title",
-          "slug"
-        ]
+        "required": ["id", "title", "slug"]
       },
       "AdvertType": {
         "type": "object",
@@ -562,12 +558,7 @@
             ]
           }
         },
-        "required": [
-          "id",
-          "title",
-          "slug",
-          "department"
-        ]
+        "required": ["id", "title", "slug", "department"]
       },
       "AdvertPublicationNumber": {
         "type": "object",
@@ -588,11 +579,7 @@
             "example": "1/2024"
           }
         },
-        "required": [
-          "number",
-          "year",
-          "full"
-        ]
+        "required": ["number", "year", "full"]
       },
       "MainCategory": {
         "type": "object",
@@ -619,12 +606,7 @@
             "example": "Hæstiréttur, lögmenn, lögreglumál, dómsmál og landsdómur."
           }
         },
-        "required": [
-          "id",
-          "title",
-          "slug",
-          "description"
-        ]
+        "required": ["id", "title", "slug", "description"]
       },
       "Category": {
         "type": "object",
@@ -656,11 +638,7 @@
             ]
           }
         },
-        "required": [
-          "id",
-          "title",
-          "slug"
-        ]
+        "required": ["id", "title", "slug"]
       },
       "Institution": {
         "type": "object",
@@ -682,11 +660,7 @@
             "example": "domsmalaraduneytid"
           }
         },
-        "required": [
-          "id",
-          "title",
-          "slug"
-        ]
+        "required": ["id", "title", "slug"]
       },
       "AdvertDocument": {
         "type": "object",
@@ -709,10 +683,7 @@
             "nullable": true
           }
         },
-        "required": [
-          "isLegacy",
-          "html"
-        ]
+        "required": ["isLegacy", "html"]
       },
       "AdvertSignatureMember": {
         "type": "object",
@@ -747,10 +718,7 @@
             "nullable": true
           }
         },
-        "required": [
-          "isChairman",
-          "name"
-        ]
+        "required": ["isChairman", "name"]
       },
       "AdvertSignatureData": {
         "type": "object",
@@ -776,11 +744,7 @@
             }
           }
         },
-        "required": [
-          "institution",
-          "date",
-          "members"
-        ]
+        "required": ["institution", "date", "members"]
       },
       "AdvertSignature": {
         "type": "object",
@@ -799,10 +763,7 @@
           "type": {
             "type": "string",
             "description": "Type of the signature",
-            "enum": [
-              "Hefðbundin",
-              "Nefnd"
-            ],
+            "enum": ["Hefðbundin", "Nefnd"],
             "example": "Hefðbundin"
           },
           "additional": {
@@ -820,12 +781,7 @@
             }
           }
         },
-        "required": [
-          "id",
-          "advertId",
-          "type",
-          "data"
-        ]
+        "required": ["id", "advertId", "type", "data"]
       },
       "AdvertAttachment": {
         "type": "object",
@@ -846,11 +802,7 @@
             "example": "<url>"
           }
         },
-        "required": [
-          "name",
-          "type",
-          "url"
-        ]
+        "required": ["name", "type", "url"]
       },
       "Advert": {
         "type": "object",
@@ -1013,9 +965,7 @@
             ]
           }
         },
-        "required": [
-          "advert"
-        ]
+        "required": ["advert"]
       },
       "AdvertNotFound": {
         "type": "object",
@@ -1029,10 +979,7 @@
             "description": "Response message"
           }
         },
-        "required": [
-          "statusCode",
-          "message"
-        ]
+        "required": ["statusCode", "message"]
       },
       "Paging": {
         "type": "object",
@@ -1104,10 +1051,7 @@
             ]
           }
         },
-        "required": [
-          "adverts",
-          "paging"
-        ]
+        "required": ["adverts", "paging"]
       },
       "ValidationResponse": {
         "type": "object",
@@ -1133,10 +1077,7 @@
             "example": 400
           }
         },
-        "required": [
-          "message",
-          "statusCode"
-        ]
+        "required": ["message", "statusCode"]
       },
       "GetDepartmentsResponse": {
         "type": "object",
@@ -1157,10 +1098,7 @@
             ]
           }
         },
-        "required": [
-          "departments",
-          "paging"
-        ]
+        "required": ["departments", "paging"]
       },
       "GetAdvertTypesResponse": {
         "type": "object",
@@ -1181,10 +1119,7 @@
             ]
           }
         },
-        "required": [
-          "types",
-          "paging"
-        ]
+        "required": ["types", "paging"]
       },
       "GetMainCategoriesResponse": {
         "type": "object",
@@ -1205,10 +1140,7 @@
             ]
           }
         },
-        "required": [
-          "mainCategories",
-          "paging"
-        ]
+        "required": ["mainCategories", "paging"]
       },
       "GetCategoriesResponse": {
         "type": "object",
@@ -1229,10 +1161,7 @@
             ]
           }
         },
-        "required": [
-          "categories",
-          "paging"
-        ]
+        "required": ["categories", "paging"]
       },
       "GetInstitutionsResponse": {
         "type": "object",
@@ -1253,10 +1182,7 @@
             ]
           }
         },
-        "required": [
-          "institutions",
-          "paging"
-        ]
+        "required": ["institutions", "paging"]
       },
       "GetAdvertSignatureResponse": {
         "type": "object",
@@ -1279,10 +1205,7 @@
             ]
           }
         },
-        "required": [
-          "items",
-          "paging"
-        ]
+        "required": ["items", "paging"]
       }
     }
   }

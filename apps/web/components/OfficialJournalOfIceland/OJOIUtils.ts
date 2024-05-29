@@ -55,10 +55,7 @@ export const mapEntityToOptions = (
   if (!entities) {
     return []
   }
-  const sortedEntities = sortBy(
-    entities,
-    (d) => d.title.trim(),
-  )
+  const sortedEntities = sortBy(entities, (d) => d.title.trim())
 
   return sortedEntities.map((e) => {
     if (e.__typename === 'OfficialJournalOfIcelandAdvertCategory') {
