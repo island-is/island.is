@@ -140,7 +140,6 @@ describe('ApplicationController - Create', () => {
       expect(mockCreate).toHaveBeenCalledWith({
         nationalId: user.nationalId,
         ...application,
-        applied: new Date(),
       })
     })
 
