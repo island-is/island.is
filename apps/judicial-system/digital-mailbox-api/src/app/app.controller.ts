@@ -33,7 +33,11 @@ export class AppController {
   }
 
   @Get('cases')
-  @ApiCreatedResponse({ type: String, description: 'Get all cases' })
+  @ApiCreatedResponse({
+    type: CasesResponse,
+    isArray: true,
+    description: 'Get all cases',
+  })
   async getAllCases(
     @CurrentUser() user: User,
     @Query() query?: { lang: string },
@@ -44,7 +48,7 @@ export class AppController {
   }
 
   @Get('case/:caseId')
-  @ApiCreatedResponse({ type: String, description: 'Get case by id' })
+  @ApiCreatedResponse({ type: CaseResponse, description: 'Get case by id' })
   async getCase(
     @Param('caseId') caseId: string,
     @CurrentUser() user: User,
