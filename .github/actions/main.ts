@@ -37,11 +37,9 @@ const FULL_REBUILD_NEEDED = 'full_rebuild_needed'
 
   if (rev === 'rebuild') {
     console.log(FULL_REBUILD_NEEDED)
-    process.exit(0);
     return
   }
   rev.branch = rev.branch.replace(/'/g, '')
   rev.ref = rev.ref.replace(/'/g, '')
   console.log(JSON.stringify(rev))
-  process.exit(0);
 })()
