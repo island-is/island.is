@@ -39,6 +39,7 @@ const StudentsOverview: FC<React.PropsWithChildren<FieldBaseProps>> = ({
     variables: {
       licenseCategory: currentTab,
     },
+    fetchPolicy: 'no-cache',
   })
 
   const [pageStudents, setPageStudents] = useState(
