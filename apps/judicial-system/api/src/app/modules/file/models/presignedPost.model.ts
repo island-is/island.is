@@ -9,4 +9,7 @@ export class PresignedPost {
 
   @Field(() => graphqlTypeJson)
   readonly fields!: { [key: string]: string }
+
+  @Field(() => String)
+  readonly key!: string
 }
