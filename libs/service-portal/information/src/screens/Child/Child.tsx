@@ -37,9 +37,7 @@ const Child = () => {
   const { formatMessage } = useLocale()
   const userInfo = useUserInfo()
   const { baseId } = useParams() as UseParams
-  const [unmaskedBaseId, setUnmaskedBaseId] = useState<string | undefined>(
-    undefined,
-  )
+  const [unmaskedBaseId, setUnmaskedBaseId] = useState<string | null>(null)
 
   useEffect(() => {
     const encrypt = async () => {
