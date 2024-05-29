@@ -1,6 +1,10 @@
-FROM rust:latest as cargo
+ARG RUST_VERSION=1.78
+ARG FEDORA_VERSION=39
+FROM rust:${RUST_VERSION} as cargo
 
 # Build dependencies
+# Versions should be pinned, but 🤷
+# hadolint ignore=DL3008
 RUN --mount=type=cache,target=/var/cache/apt \
   apt-get update && \
   apt-get install -y --no-install-recommends \
@@ -11,8 +15,7 @@ RUN --mount=type=cache,target=/root/.cargo \
   cargo install starship
 
 
-# FROM ubuntu:latest as base
-FROM fedora:latest as base
+FROM fedora:${FEDORA_VERSION} as base
 ENV SHELL=bash
 ARG SHELL=${SHELL}
 ENV USERNAME=dev
@@ -21,17 +24,16 @@ ARG USERNAME=${USERNAME}
 #######################
 # System dependencies #
 #######################
+# We're mounting the cache, so we don't need to `clean all` (DL3040).
+# System packages are pretty stable in Fedora, so we're not pinning versions.
+# hadolint ignore=DL3040,DL3041
 RUN --mount=type=cache,target=/var/cache/dnf \
   dnf install -y \
-  java-11-openjdk g++ jq yq graphviz
-# Set up AWS specific env
-RUN --mount=type=cache,target=/var/cache/dnf \
+  java-11-openjdk g++ jq yq graphviz \
+  # AWS/DevOps specific dependencies
   dnf install -y \
-  awscli2
-
-# Niceties
-RUN --mount=type=cache,target=/var/cache/dnf \
-  dnf install -y \
+  awscli2 \
+  # Niceties
   ${SHELL} the_silver_searcher ripgrep fzf neovim
 
 # Create user and environment
@@ -44,9 +46,10 @@ WORKDIR /home/${USERNAME}
 ######################
 
 # Set up node/yarn
+SHELL ["/bin/bash", "-o", "pipefail", "-c"]
 RUN curl -s https://get.volta.sh | ${SHELL}
 COPY package.json .
-RUN . ~/.${SHELL}rc && volta install node@$(jq -r '.engines.node' package.json)
+RUN . ~/.${SHELL}rc && volta install "node@$(jq -r '.engines.node' package.json)"
 
 
 COPY --from=cargo /usr/local/cargo/bin/starship /usr/local/bin/
