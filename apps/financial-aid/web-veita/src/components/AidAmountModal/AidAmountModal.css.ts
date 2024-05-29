@@ -7,4 +7,5 @@ export const modal = style({
   maxWidth: '752px',
   boxShadow: '0px 8px 32px rgba(0, 0, 0, 0.08)',
   borderRadius: '12px',
+  padding: theme.spacing[4],
 })
