@@ -415,28 +415,12 @@ export const newPrimarySchoolMessages: MessageDir = {
       defaultMessage: 'Staðfesting',
       description: 'Confirmation',
     },
-    alertMessage: {
-      id: 'dess.nps.application:conclusion.alert.message',
-      defaultMessage: 'Takk fyrir umsóknina!',
-      description: 'Thanks for your application!',
-    },
-    expandableHeader: {
-      id: 'dess.nps.application:conclusion.screen.next.steps.label',
-      defaultMessage: 'Hvað gerist næst?',
-      description: 'What happens next?',
-    },
     expandableDescription: {
       id: 'dess.nps.application:conclusion.expandable.description#markdown',
       defaultMessage:
         'Skólastjóri mun taka afstöðu til umsóknarinnar eftir aðstæðum í skólanum hversu sinni og svara þér eins fljótt og auðið er í tölvupósti. Svarið mun einnig birtast í stafrænu pósthólfi hér á Island.is',
       description:
         'The principal will evaluate the application based on the current circumstances at the school and will respond to you as soon as possible by email. The response will also appear in the digital mailbox here on Island.is.',
-    },
-
-    buttonsViewApplication: {
-      id: 'dess.nps.application:conclusion.screen.buttons.view.application',
-      defaultMessage: 'Skoða umsókn',
-      description: 'View application',
     },
   }),
 }

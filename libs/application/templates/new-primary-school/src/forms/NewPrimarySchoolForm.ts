@@ -505,8 +505,6 @@ export const NewPrimarySchoolForm: Form = buildForm({
       ],
     }),
     buildFormConclusionSection({
-      alertMessage: newPrimarySchoolMessages.conclusion.alertMessage,
-      expandableHeader: newPrimarySchoolMessages.conclusion.expandableHeader,
       expandableIntro: '',
       expandableDescription:
         newPrimarySchoolMessages.conclusion.expandableDescription,
