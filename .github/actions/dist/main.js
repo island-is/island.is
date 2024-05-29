@@ -617,7 +617,7 @@ var require_node = __commonJS({
     var tty = require("tty");
     var util = require("util");
     exports2.init = init;
-    exports2.log = log;
+    exports2.log = log2;
     exports2.formatArgs = formatArgs;
     exports2.save = save;
     exports2.load = load;
@@ -752,7 +752,7 @@ var require_node = __commonJS({
       }
       return new Date().toISOString() + " ";
     }
-    function log(...args) {
+    function log2(...args) {
       return process.stderr.write(util.format(...args) + "\n");
     }
     function save(namespaces) {
@@ -23697,7 +23697,7 @@ var require_dist_node5 = __commonJS({
       return response.arrayBuffer();
     }
     function fetchWrapper(requestOptions) {
-      const log = requestOptions.request && requestOptions.request.log ? requestOptions.request.log : console;
+      const log2 = requestOptions.request && requestOptions.request.log ? requestOptions.request.log : console;
       if (isPlainObject.isPlainObject(requestOptions.body) || Array.isArray(requestOptions.body)) {
         requestOptions.body = JSON.stringify(requestOptions.body);
       }
@@ -23722,7 +23722,7 @@ var require_dist_node5 = __commonJS({
         if ("deprecation" in headers) {
           const matches = headers.link && headers.link.match(/<([^>]+)>; rel="deprecation"/);
           const deprecationLink = matches && matches.pop();
-          log.warn(`[@octokit/request] "${requestOptions.method} ${requestOptions.url}" is deprecated. It is scheduled to be removed on ${headers.sunset}${deprecationLink ? `. See ${deprecationLink}` : ""}`);
+          log2.warn(`[@octokit/request] "${requestOptions.method} ${requestOptions.url}" is deprecated. It is scheduled to be removed on ${headers.sunset}${deprecationLink ? `. See ${deprecationLink}` : ""}`);
         }
         if (status === 204 || status === 205) {
           return;
@@ -25781,15 +25781,15 @@ var LocalRunner = class {
   }
   getChangedComponents(git, sha1, sha2) {
     return __async(this, null, function* () {
-      const log = app.extend("calculate-distance");
-      log(`Calculating distance between ${sha1} and ${sha2}`);
+      const log2 = app.extend("calculate-distance");
+      log2(`Calculating distance between ${sha1} and ${sha2}`);
       const diffNames = yield git.raw("diff", "--name-only", sha1, sha2);
       const changedFiles = [
         ...new Set(
           diffNames.split("\n").map((l2) => l2.trim()).filter((s) => s.length > 0)
         )
       ];
-      log(`Changed files: ${changedFiles.join(",")}`);
+      log2(`Changed files: ${changedFiles.join(",")}`);
       if (changedFiles.length === 0)
         return [];
       try {
@@ -25810,7 +25810,7 @@ var LocalRunner = class {
           }
         );
         if (printAffected.status !== 0) {
-          log(
+          log2(
             `Error running nx print-affected. Error is %O, stderr is %O`,
             printAffected.error,
             printAffected.stderr
@@ -25825,7 +25825,7 @@ var LocalRunner = class {
             }
           );
           if (printAffected.status !== 0) {
-            log(
+            log2(
               `Error running print-affected --all. Error is %O
 stderr: %O
 stdout: %O`,
@@ -25836,12 +25836,12 @@ stdout: %O`,
           }
         }
         let affectedComponents = printAffected.stdout.split(",").map((s) => s.trim()).filter((c) => c.length > 0);
-        log(
+        log2(
           `Affected components are ${affectedComponents.length}: ${affectedComponents.join(",")}`
         );
         return affectedComponents;
       } catch (e) {
-        log("Error getting affected components: %O", e);
+        log2("Error getting affected components: %O", e);
         throw e;
       }
     });
@@ -26105,13 +26105,13 @@ stdout: %O`,
 // change-detection.ts
 var import_debug2 = __toESM(require_src());
 var app2 = (0, import_debug2.default)("change-detection");
-function findBestGoodRefBranch(commitScore, git, githubApi, headBranch, baseBranch, workflowId) {
+function findBestGoodRefBranch(commitScore, git, githubApi, headBranch2, baseBranch2, workflowId) {
   return __async(this, null, function* () {
-    const log = app2.extend("findBestGoodRefBranch");
-    log(`Starting with head branch ${headBranch} and base branch ${baseBranch}`);
-    const commits = yield getCommits(git, headBranch, baseBranch, "HEAD~1");
+    const log2 = app2.extend("findBestGoodRefBranch");
+    log2(`Starting with head branch ${headBranch2} and base branch ${baseBranch2}`);
+    const commits = yield getCommits(git, headBranch2, baseBranch2, "HEAD~1");
     const builds = yield githubApi.getLastGoodBranchBuildRun(
-      headBranch,
+      headBranch2,
       workflowId,
       commits
     );
@@ -26119,11 +26119,11 @@ function findBestGoodRefBranch(commitScore, git, githubApi, headBranch, baseBran
       return {
         sha: builds.head_commit,
         run_number: builds.run_nr,
-        branch: headBranch,
+        branch: headBranch2,
         ref: builds.head_commit
       };
     const baseCommits = yield githubApi.getLastGoodBranchBuildRun(
-      baseBranch,
+      baseBranch2,
       workflowId,
       commits
     );
@@ -26132,14 +26132,14 @@ function findBestGoodRefBranch(commitScore, git, githubApi, headBranch, baseBran
         ref: baseCommits.head_commit,
         sha: baseCommits.head_commit,
         run_number: baseCommits.run_nr,
-        branch: baseBranch
+        branch: baseBranch2
       };
     return "rebuild";
   });
 }
-function getCommits(git, headBranch, baseBranch, head, maxCount = 300) {
+function getCommits(git, headBranch2, baseBranch2, head, maxCount = 300) {
   return __async(this, null, function* () {
-    const mergeBaseCommit = yield git.raw("merge-base", headBranch, baseBranch);
+    const mergeBaseCommit = yield git.raw("merge-base", headBranch2, baseBranch2);
     const commits = (yield git.raw(
       "rev-list",
       "--date-order",
@@ -26150,41 +26150,41 @@ function getCommits(git, headBranch, baseBranch, head, maxCount = 300) {
     return commits;
   });
 }
-function findBestGoodRefPR(diffWeight, git, githubApi, headBranch, baseBranch, prBranch, workflowId) {
+function findBestGoodRefPR(diffWeight, git, githubApi, headBranch2, baseBranch2, prBranch, workflowId) {
   return __async(this, null, function* () {
-    const log = app2.extend("findBestGoodRefPR");
-    log(`Starting with head branch ${headBranch} and base branch ${baseBranch}`);
+    const log2 = app2.extend("findBestGoodRefPR");
+    log2(`Starting with head branch ${headBranch2} and base branch ${baseBranch2}`);
     const lastCommitSha = yield git.lastCommit();
-    const prCommits = yield getCommits(git, headBranch, baseBranch, "HEAD");
+    const prCommits = yield getCommits(git, headBranch2, baseBranch2, "HEAD");
     const prRun = yield githubApi.getLastGoodPRRun(
-      headBranch,
+      headBranch2,
       workflowId,
       prCommits
     );
     const prBuilds = [];
     if (prRun) {
-      log(`Found a PR run candidate: ${JSON.stringify(prRun)}`);
+      log2(`Found a PR run candidate: ${JSON.stringify(prRun)}`);
       try {
-        const tempBranch = `${headBranch}-${Math.round(Math.random() * 1e6)}`;
+        const tempBranch = `${headBranch2}-${Math.round(Math.random() * 1e6)}`;
         yield git.checkoutBranch(tempBranch, prRun.base_commit);
-        log(`Branch checked out`);
+        log2(`Branch checked out`);
         const mergeCommitSha = yield git.merge(prRun.head_commit);
-        log(`Simulated previous PR merge commit`);
+        log2(`Simulated previous PR merge commit`);
         const distance = yield githubApi.getChangedComponents(
           git,
           lastCommitSha,
           mergeCommitSha
         );
-        log(`Affected components since candidate PR run are ${distance}`);
+        log2(`Affected components since candidate PR run are ${distance}`);
         prBuilds.push({
           distance: diffWeight(distance),
           hash: prRun.head_commit,
           run_nr: prRun.run_nr,
-          branch: headBranch,
+          branch: headBranch2,
           ref: mergeCommitSha
         });
       } catch (e) {
-        log(
+        log2(
           `Error processing PR candidate(${prRun.run_nr}) but continuing: %O`,
           e
         );
@@ -26192,31 +26192,31 @@ function findBestGoodRefPR(diffWeight, git, githubApi, headBranch, baseBranch, p
         yield git.checkout(prBranch);
       }
     }
-    const baseCommits = yield getCommits(git, prBranch, baseBranch, "HEAD~1");
-    log(`Base commits ${baseCommits.join(" ")}`);
+    const baseCommits = yield getCommits(git, prBranch, baseBranch2, "HEAD~1");
+    log2(`Base commits ${baseCommits.join(" ")}`);
     const baseGoodBuilds = yield githubApi.getLastGoodBranchBuildRun(
-      baseBranch,
+      baseBranch2,
       "push",
       baseCommits
     );
     if (baseGoodBuilds) {
-      log(`Found Base good builds ${JSON.stringify(baseGoodBuilds)}`);
+      log2(`Found Base good builds ${JSON.stringify(baseGoodBuilds)}`);
       let affectedComponents = yield githubApi.getChangedComponents(
         git,
         lastCommitSha,
         baseGoodBuilds.head_commit
       );
-      log(`Found affected components ${affectedComponents}`);
+      log2(`Found affected components ${affectedComponents}`);
       prBuilds.push({
         distance: diffWeight(affectedComponents),
         hash: baseGoodBuilds.head_commit,
         run_nr: baseGoodBuilds.run_nr,
-        branch: baseBranch,
+        branch: baseBranch2,
         ref: baseGoodBuilds.head_commit
       });
-      log("stops on push?!?!");
+      log2("stops on push?!?!");
     }
-    log(`pr build ${JSON.stringify(prBuilds)}`);
+    log2(`pr build ${JSON.stringify(prBuilds)}`);
     prBuilds.sort((a, b) => a.distance > b.distance ? 1 : -1);
     if (prBuilds.length > 0) {
       return {
@@ -26324,11 +26324,14 @@ var SimpleGit = class {
 };
 
 // main.ts
+var import_debug4 = __toESM(require_src());
+var log = (0, import_debug4.default)("main.js");
+log(`Starting with head branch ${headBranch} and base branch ${baseBranch}`);
 (() => __async(exports, null, function* () {
   const runner = new LocalRunner(new import_action.Octokit());
   let git = new SimpleGit(process.env.REPO_ROOT, process.env.SHELL);
   const diffWeight = (s) => s.length;
-  const rev = process.env.TEST_EVERYTHING ? "rebuild" : process.env.GITHUB_EVENT_NAME === "pull_request" ? yield findBestGoodRefPR(
+  const rev = process.env.GITHUB_EVENT_NAME === "pull_request" ? yield findBestGoodRefPR(
     diffWeight,
     git,
     runner,
@@ -26345,11 +26348,15 @@ var SimpleGit = class {
     process.env.WORKFLOW_ID
   );
   if (rev === "rebuild") {
+    log(`Returning with rebuild`);
     console.log(`Full rebuild needed`);
+    log(`Done`);
   } else {
+    log(`Returning with app`);
     rev.branch = rev.branch.replace(/'/g, "");
     rev.ref = rev.ref.replace(/'/g, "");
     console.log(JSON.stringify(rev));
+    log(`Done`);
   }
 }))();
 /*!

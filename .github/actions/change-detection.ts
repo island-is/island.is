@@ -155,7 +155,7 @@ export async function findBestGoodRefPR(
         e,
       )
     } finally {
-      // await git.checkout(prBranch)
+      await git.checkout(prBranch)
     }
   }
 

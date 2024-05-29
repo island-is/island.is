@@ -3,6 +3,10 @@ import { findBestGoodRefBranch, findBestGoodRefPR } from './change-detection'
 import { Octokit } from '@octokit/action'
 import { SimpleGit } from './simple-git'
 import { WorkflowID } from './git-action-status'
+import Debug from 'debug'
+const log = Debug('main.js')
+
+  log(`Starting with head branch ${headBranch} and base branch ${baseBranch}`)
 ;(async () => {
   const runner = new LocalRunner(new Octokit())
   let git = new SimpleGit(process.env.REPO_ROOT!, process.env.SHELL!)
@@ -27,10 +31,14 @@ import { WorkflowID } from './git-action-status'
       )
 
   if (rev === 'rebuild') {
+    log(`Returning with rebuild`);
     console.log(`Full rebuild needed`)
+    log(`Done`);
   } else {
+    log(`Returning with app`);
     rev.branch = rev.branch.replace(/'/g, '')
     rev.ref = rev.ref.replace(/'/g, '')
     console.log(JSON.stringify(rev))
+    log(`Done`);
   }
 })()
