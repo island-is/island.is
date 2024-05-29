@@ -81,6 +81,7 @@ describe('ApplicationController - Create', () => {
   describe('database query', () => {
     let mockCreate: jest.Mock
     let mockFindOne: jest.Mock
+    const nowFactory = () => new Date()
 
     const user: User = {
       nationalId: '0000000000',
@@ -139,7 +140,7 @@ describe('ApplicationController - Create', () => {
       expect(mockCreate).toHaveBeenCalledWith({
         nationalId: user.nationalId,
         ...application,
-        applied: new Date(),
+        applied: nowFactory(),
       })
     })
 
