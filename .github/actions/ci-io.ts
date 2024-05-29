@@ -1,5 +1,3 @@
-import async_hooks from "async_hooks";
-import fs from 'fs';
 import { SimpleGit } from './simple-git'
 import {
   BranchWorkflow,
@@ -358,62 +356,3 @@ export class LocalRunner implements GitActionStatus {
     return runs
   }
 }
-const activeAsyncResources = new Map();
-
-// Utility function to get stack trace
-function getStackTrace() {
-    const originalPrepareStackTrace = Error.prepareStackTrace;
-    Error.prepareStackTrace = (err, stack) => stack;
-    const error = new Error();
-    const stack = error.stack;
-    Error.prepareStackTrace = originalPrepareStackTrace;
-    return stack.map((callSite) => ({
-        fileName: callSite.getFileName(),
-        lineNumber: callSite.getLineNumber(),
-        functionName: callSite.getFunctionName(),
-    }));
-}
-
-// Create an async hook to track async resource lifecycle events
-const asyncHook = async_hooks.createHook({
-    init(asyncId, type, triggerAsyncId, resource) {
-        activeAsyncResources.set(asyncId, {
-            type,
-            stackTrace: getStackTrace(),
-        });
-    },
-    destroy(asyncId) {
-        activeAsyncResources.delete(asyncId);
-    }
-});
-
-// Enable the async hook
-asyncHook.enable();
-
-// Function to check for running async functions and exit process if any are found
-function checkAsyncFunctions() {
-    if (activeAsyncResources.size > 0) {
-        console.error('Async functions still running:', Array.from(activeAsyncResources.entries()).map(([id, { type, stackTrace }]) => ({
-            asyncId: id,
-            type,
-            stackTrace: JSON.stringify(stackTrace.slice(1, 5)), // Limit stack trace output for readability
-        })));
-        process.exit(1);
-    }
-}
-
-// Set a timer to run the check after 10 minutes
-setTimeout(checkAsyncFunctions, 5 * 60 * 1000);
-
-// Example async function to demonstrate the functionality
-async function exampleAsyncFunction() {
-    return new Promise<void>((resolve) => {
-        setTimeout(() => {
-            console.log('Async function finished');
-            resolve();
-        }, 5 * 60 * 1000); // 15 minutes delay to simulate long-running async task
-    });
-}
-
-// Call the example async function
-exampleAsyncFunction();

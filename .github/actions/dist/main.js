@@ -25755,7 +25755,6 @@ var require_dist_node12 = __commonJS({
 });
 
 // ci-io.ts
-var import_async_hooks = __toESM(require("async_hooks"));
 var import_child_process = require("child_process");
 var import_debug = __toESM(require_src());
 var unzipper = __toESM(require_unzip2());
@@ -26102,53 +26101,6 @@ stdout: %O`,
     });
   }
 };
-var activeAsyncResources = /* @__PURE__ */ new Map();
-function getStackTrace() {
-  const originalPrepareStackTrace = Error.prepareStackTrace;
-  Error.prepareStackTrace = (err, stack2) => stack2;
-  const error = new Error();
-  const stack = error.stack;
-  Error.prepareStackTrace = originalPrepareStackTrace;
-  return stack.map((callSite) => ({
-    fileName: callSite.getFileName(),
-    lineNumber: callSite.getLineNumber(),
-    functionName: callSite.getFunctionName()
-  }));
-}
-var asyncHook = import_async_hooks.default.createHook({
-  init(asyncId, type, triggerAsyncId, resource) {
-    activeAsyncResources.set(asyncId, {
-      type,
-      stackTrace: getStackTrace()
-    });
-  },
-  destroy(asyncId) {
-    activeAsyncResources.delete(asyncId);
-  }
-});
-asyncHook.enable();
-function checkAsyncFunctions() {
-  if (activeAsyncResources.size > 0) {
-    console.error("Async functions still running:", Array.from(activeAsyncResources.entries()).map(([id, { type, stackTrace }]) => ({
-      asyncId: id,
-      type,
-      stackTrace: JSON.stringify(stackTrace.slice(1, 5))
-    })));
-    process.exit(1);
-  }
-}
-setTimeout(checkAsyncFunctions, 5 * 60 * 1e3);
-function exampleAsyncFunction() {
-  return __async(this, null, function* () {
-    return new Promise((resolve) => {
-      setTimeout(() => {
-        console.log("Async function finished");
-        resolve();
-      }, 5 * 60 * 1e3);
-    });
-  });
-}
-exampleAsyncFunction();
 
 // change-detection.ts
 var import_debug2 = __toESM(require_src());
@@ -26202,82 +26154,84 @@ function findBestGoodRefPR(diffWeight, git, githubApi, headBranch, baseBranch, p
   return __async(this, null, function* () {
     const log = app2.extend("findBestGoodRefPR");
     log(`Starting with head branch ${headBranch} and base branch ${baseBranch}`);
-    const lastCommitSha = yield git.lastCommit();
-    const prCommits = yield getCommits(git, headBranch, baseBranch, "HEAD");
-    const prRun = yield githubApi.getLastGoodPRRun(
-      headBranch,
-      workflowId,
-      prCommits
-    );
-    const prBuilds = [];
-    if (prRun) {
-      log(`Found a PR run candidate: ${JSON.stringify(prRun)}`);
-      try {
-        const tempBranch = `${headBranch}-${Math.round(Math.random() * 1e6)}`;
-        yield git.checkoutBranch(tempBranch, prRun.base_commit);
-        log(`Branch checked out`);
-        const mergeCommitSha = yield git.merge(prRun.head_commit);
-        log(`Simulated previous PR merge commit`);
-        const distance = yield githubApi.getChangedComponents(
+    return new Promise((resolve) => __async(this, null, function* () {
+      const lastCommitSha = yield git.lastCommit();
+      const prCommits = yield getCommits(git, headBranch, baseBranch, "HEAD");
+      const prRun = yield githubApi.getLastGoodPRRun(
+        headBranch,
+        workflowId,
+        prCommits
+      );
+      const prBuilds = [];
+      if (prRun) {
+        log(`Found a PR run candidate: ${JSON.stringify(prRun)}`);
+        try {
+          const tempBranch = `${headBranch}-${Math.round(Math.random() * 1e6)}`;
+          yield git.checkoutBranch(tempBranch, prRun.base_commit);
+          log(`Branch checked out`);
+          const mergeCommitSha = yield git.merge(prRun.head_commit);
+          log(`Simulated previous PR merge commit`);
+          const distance = yield githubApi.getChangedComponents(
+            git,
+            lastCommitSha,
+            mergeCommitSha
+          );
+          log(`Affected components since candidate PR run are ${distance}`);
+          prBuilds.push({
+            distance: diffWeight(distance),
+            hash: prRun.head_commit,
+            run_nr: prRun.run_nr,
+            branch: headBranch,
+            ref: mergeCommitSha
+          });
+        } catch (e) {
+          log(
+            `Error processing PR candidate(${prRun.run_nr}) but continuing: %O`,
+            e
+          );
+        } finally {
+          yield git.checkout(prBranch);
+        }
+      }
+      const baseCommits = yield getCommits(git, prBranch, baseBranch, "HEAD~1");
+      log(`Base commits ${baseCommits.join(" ")}`);
+      const baseGoodBuilds = yield githubApi.getLastGoodBranchBuildRun(
+        baseBranch,
+        "push",
+        baseCommits
+      );
+      if (baseGoodBuilds) {
+        log(`Found Base good builds ${JSON.stringify(baseGoodBuilds)}`);
+        let affectedComponents = yield githubApi.getChangedComponents(
           git,
           lastCommitSha,
-          mergeCommitSha
+          baseGoodBuilds.head_commit
         );
-        log(`Affected components since candidate PR run are ${distance}`);
+        log(`Found affected components ${affectedComponents}`);
         prBuilds.push({
-          distance: diffWeight(distance),
-          hash: prRun.head_commit,
-          run_nr: prRun.run_nr,
-          branch: headBranch,
-          ref: mergeCommitSha
+          distance: diffWeight(affectedComponents),
+          hash: baseGoodBuilds.head_commit,
+          run_nr: baseGoodBuilds.run_nr,
+          branch: baseBranch,
+          ref: baseGoodBuilds.head_commit
         });
-      } catch (e) {
-        log(
-          `Error processing PR candidate(${prRun.run_nr}) but continuing: %O`,
-          e
-        );
-      } finally {
-        yield git.checkout(prBranch);
+        log("stops on push?!?!");
       }
-    }
-    const baseCommits = yield getCommits(git, prBranch, baseBranch, "HEAD~1");
-    log(`Base commits ${baseCommits.join(" ")}`);
-    const baseGoodBuilds = yield githubApi.getLastGoodBranchBuildRun(
-      baseBranch,
-      "push",
-      baseCommits
-    );
-    if (baseGoodBuilds) {
-      log(`Found Base good builds ${JSON.stringify(baseGoodBuilds)}`);
-      let affectedComponents = yield githubApi.getChangedComponents(
-        git,
-        lastCommitSha,
-        baseGoodBuilds.head_commit
-      );
-      log(`Found affected components ${affectedComponents}`);
-      prBuilds.push({
-        distance: diffWeight(affectedComponents),
-        hash: baseGoodBuilds.head_commit,
-        run_nr: baseGoodBuilds.run_nr,
-        branch: baseBranch,
-        ref: baseGoodBuilds.head_commit
-      });
-      log("stops on push?!?!");
-    }
-    log(`pr build ${JSON.stringify(prBuilds)}`);
-    prBuilds.sort((a, b) => a.distance > b.distance ? 1 : -1);
-    log(`sort done`);
-    if (prBuilds.length > 0) {
-      log(`return message`);
-      return {
-        sha: prBuilds[0].hash,
-        run_number: prBuilds[0].run_nr,
-        branch: prBuilds[0].branch.replace("origin/", ""),
-        ref: prBuilds[0].ref
-      };
-    }
-    log(`return rebuild`);
-    return "rebuild";
+      log(`pr build ${JSON.stringify(prBuilds)}`);
+      prBuilds.sort((a, b) => a.distance > b.distance ? 1 : -1);
+      log(`sort done`);
+      if (prBuilds.length > 0) {
+        log(`return message`);
+        resolve({
+          sha: prBuilds[0].hash,
+          run_number: prBuilds[0].run_nr,
+          branch: prBuilds[0].branch.replace("origin/", ""),
+          ref: prBuilds[0].ref
+        });
+      }
+      log(`return rebuild`);
+      resolve("rebuild");
+    }));
   });
 }
 
@@ -26402,11 +26356,13 @@ var FULL_REBUILD_NEEDED = "full_rebuild_needed";
   );
   if (rev === "rebuild") {
     console.log(FULL_REBUILD_NEEDED);
+    process.exit(0);
     return;
   }
   rev.branch = rev.branch.replace(/'/g, "");
   rev.ref = rev.ref.replace(/'/g, "");
   console.log(JSON.stringify(rev));
+  process.exit(0);
 }))();
 /*!
  * is-plain-object <https://github.com/jonschlinkert/is-plain-object>

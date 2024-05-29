@@ -113,6 +113,7 @@ export async function findBestGoodRefPR(
 ): Promise<LastGoodBuild> {
   const log = app.extend('findBestGoodRefPR')
   log(`Starting with head branch ${headBranch} and base branch ${baseBranch}`)
+  return new Promise(async (resolve) => {
   const lastCommitSha = await git.lastCommit()
   const prCommits = await getCommits(git, headBranch, baseBranch, 'HEAD')
 
@@ -188,13 +189,14 @@ export async function findBestGoodRefPR(
   log(`sort done`)
   if (prBuilds.length > 0) {
     log(`return message`)
-    return {
+    resolve({
       sha: prBuilds[0].hash,
       run_number: prBuilds[0].run_nr,
       branch: prBuilds[0].branch.replace('origin/', ''),
       ref: prBuilds[0].ref,
-    }
+    });
   }
   log(`return rebuild`)
-  return 'rebuild'
+  resolve('rebuild')
+})
 }
