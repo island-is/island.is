@@ -111,8 +111,8 @@ export const deceased = buildSection({
           condition: (answers) =>
             getValueViaPath(answers, 'deceasedWasMarried') === YES,
           options: [
-            { value: YES, label: m.spouseShareFull },
-            { value: NO, label: m.spouseSharePart },
+            { value: YES, label: m.spouseSharePart },
+            { value: NO, label: m.spouseShareFull },
           ],
         }),
         buildTextField({
