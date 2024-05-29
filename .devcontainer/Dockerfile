@@ -14,6 +14,7 @@ RUN --mount=type=cache,target=/root/.cargo \
 
 FROM docker.io/rust:${RUST_VERSION} as cargo-volta
 WORKDIR /build/volta
+SHELL ["/bin/bash", "-o", "pipefail", "-c"]
 RUN --mount=type=cache,target=/root/.cargo/ --mount=type=cache,target=/root/.cache/ \
   git init && \
   (git remote | grep -q origin || git remote add origin https://github.com/volta-cli/volta) && \
