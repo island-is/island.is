@@ -1,5 +1,11 @@
 import { CacheInterceptor } from '@nestjs/cache-manager'
-import { Controller, Get, Inject, UseInterceptors } from '@nestjs/common'
+import {
+  Controller,
+  Get,
+  Inject,
+  InternalServerErrorException,
+  UseInterceptors,
+} from '@nestjs/common'
 import { ApiCreatedResponse, ApiTags } from '@nestjs/swagger'
 
 import { type Logger, LOGGER_PROVIDER } from '@island.is/logging'
@@ -20,16 +26,21 @@ export class DefenderController {
   @Get('defenders')
   @ApiCreatedResponse({
     type: [Defender],
-    description: 'Retrieve a list of defenders',
+    description: 'Retrieves a list of defenders',
   })
   async getLawyers(): Promise<Defender[]> {
-    this.logger.debug('Retrieving lawyers from lawyer registry')
+    try {
+      this.logger.debug('Retrieving lawyers from lawyer registry')
 
-    const lawyers = await this.lawyersService.getLawyers()
-    return lawyers.map((lawyer) => ({
-      nationalId: lawyer.SSN,
-      name: lawyer.Name,
-      practice: lawyer.Practice,
-    }))
+      const lawyers = await this.lawyersService.getLawyers()
+      return lawyers.map((lawyer) => ({
+        nationalId: lawyer.SSN,
+        name: lawyer.Name,
+        practice: lawyer.Practice,
+      }))
+    } catch (error) {
+      this.logger.error('Failed to retrieve lawyers', error)
+      throw new InternalServerErrorException('Failed to retrieve lawyers')
+    }
   }
 }
