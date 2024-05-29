@@ -35,6 +35,16 @@ export const newPrimarySchoolMessages: MessageDir = {
       defaultMessage: 'Nei',
       description: 'No',
     },
+    date: {
+      id: 'dess.nps.application:date',
+      defaultMessage: 'Dagsetning',
+      description: 'Date',
+    },
+    datePlaceholder: {
+      id: 'dess.nps.application:date.placeholder',
+      defaultMessage: 'Veldu dagsetningu',
+      description: 'Select date',
+    },
     fullName: {
       id: 'dess.nps.application:full.name',
       defaultMessage: 'Fullt nafn',
@@ -350,6 +360,18 @@ export const newPrimarySchoolMessages: MessageDir = {
       defaultMessage: 'Byrjar í skóla',
       description: 'Starting school',
     },
+    startingSchoolTitle: {
+      id: 'dess.nps.application:primary.school.starting.school.title',
+      defaultMessage: 'Hvenær viltu að barnið byrji í nýja skólanum?',
+      description: 'When do you want your child to start at the new school?',
+    },
+    startingSchoolDescription: {
+      id: 'dess.nps.application:primary.school.starting.school.description',
+      defaultMessage:
+        'Við viljum taka vel á móti skólabarninu. Til þess að getað undirbúið komu þess þá biðjum við þig að velja dagsetningu fyrir fyrsta skóladaginn.',
+      description:
+        'We want to welcome the schoolchild properly. To be able to prepare for its arrival, please select a date for the first school day.',
+    },
   }),
 
   differentNeeds: defineMessages({
@@ -445,35 +467,12 @@ export const newPrimarySchoolMessages: MessageDir = {
       defaultMessage: 'Staðfesting',
       description: 'Confirmation',
     },
-    overviewTitle: {
-      id: 'dess.nps.application:conclusion.overview.title',
-      defaultMessage: 'TBD',
-      description: 'TBD',
-    },
-    title: {
-      id: 'dess.nps.application:conclusion.title',
-      defaultMessage: 'Umsókn móttekin',
-      description: 'Application received',
-    },
-    alertTitle: {
-      id: 'dess.nps.application:conclusion.screen.title',
-      defaultMessage: 'TBD',
-      description: 'TBD',
-    },
-    accordionText: {
-      id: 'dess.nps.application:conclusion.accordion.text#markdown',
-      defaultMessage: 'TBD',
-      description: 'TBD',
-    },
-    nextStepsLabel: {
-      id: 'dess.nps.application:conclusion.screen.next.steps.label',
-      defaultMessage: 'Hvað gerist næst?',
-      description: 'What happens next?',
-    },
-    buttonsViewApplication: {
-      id: 'dess.nps.application:conclusion.screen.buttons.view.application',
-      defaultMessage: 'Skoða umsókn',
-      description: 'View application',
+    expandableDescription: {
+      id: 'dess.nps.application:conclusion.expandable.description#markdown',
+      defaultMessage:
+        'Skólastjóri mun taka afstöðu til umsóknarinnar eftir aðstæðum í skólanum hversu sinni og svara þér eins fljótt og auðið er í tölvupósti. Svarið mun einnig birtast í stafrænu pósthólfi hér á Island.is',
+      description:
+        'The principal will evaluate the application based on the current circumstances at the school and will respond to you as soon as possible by email. The response will also appear in the digital mailbox here on Island.is.',
     },
   }),
 }
