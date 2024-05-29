@@ -1,0 +1,232 @@
+{
+  "openapi": "3.0.0",
+  "paths": {
+    "/api/v1/applications/{id}/post": {
+      "post": {
+        "operationId": "postApplication",
+        "summary": "Post application.",
+        "parameters": [
+          {
+            "name": "id",
+            "required": true,
+            "in": "path",
+            "description": "Id of the application to post.",
+            "allowEmptyValue": false,
+            "schema": { "type": "string" }
+          }
+        ],
+        "responses": { "204": { "description": "" } }
+      }
+    },
+    "/api/v1/applications/{id}/comments": {
+      "get": {
+        "operationId": "getComments",
+        "summary": "Get comments by application ID.",
+        "parameters": [
+          {
+            "name": "id",
+            "required": true,
+            "in": "path",
+            "schema": { "type": "string" }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/GetCaseCommentsResponse"
+                }
+              }
+            }
+          }
+        }
+      },
+      "post": {
+        "operationId": "postComment",
+        "summary": "Add comment to application.",
+        "parameters": [
+          {
+            "name": "id",
+            "required": true,
+            "in": "path",
+            "schema": { "type": "string" }
+          }
+        ],
+        "requestBody": {
+          "required": true,
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/PostApplicationComment"
+              }
+            }
+          }
+        },
+        "responses": {
+          "201": {
+            "description": "",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/PostCaseCommentResponse"
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/api/v1/health": {
+      "get": {
+        "operationId": "HealthController_health",
+        "parameters": [],
+        "responses": { "200": { "description": "Health check endpoint." } }
+      }
+    }
+  },
+  "info": {
+    "title": "The Official Journal of Iceland Application API",
+    "description": "This api is responsible for communications with the island.is application system.",
+    "version": "1.0",
+    "contact": {}
+  },
+  "tags": [],
+  "servers": [],
+  "components": {
+    "schemas": {
+      "CaseCommentTask": {
+        "type": "object",
+        "properties": {
+          "from": {
+            "type": "string",
+            "description": "From who or what initied the task, used by client to show who inited the task.",
+            "example": "Ármann",
+            "nullable": true
+          },
+          "to": {
+            "type": "string",
+            "description": "To whom or what the task is assigned to.",
+            "example": "Pálina J",
+            "nullable": true
+          },
+          "title": {
+            "type": "string",
+            "enum": [
+              "Innsent af:",
+              "merkir sér málið.",
+              "færir mál á",
+              "færir mál í stöðuna:",
+              "gerir athugasemd.",
+              "skráir skilaboð"
+            ],
+            "example": "Innsent af:",
+            "description": "Title for the task action"
+          },
+          "comment": {
+            "type": "string",
+            "description": "The comment itself",
+            "example": "Pálína, getur þú tekið við og staðfest að upplýsingarnar séu réttar?",
+            "nullable": true
+          }
+        },
+        "required": ["from", "to", "title", "comment"]
+      },
+      "CaseComment": {
+        "type": "object",
+        "properties": {
+          "id": {
+            "type": "string",
+            "example": "d290f1ee-6c54-4b01-90e6-d701748f0851",
+            "description": "Id of the case comment."
+          },
+          "createdAt": {
+            "type": "string",
+            "description": "Date and time of the comment, ISO 8601 format, UTC time format.",
+            "example": "2024-01-01T09:00:00Z"
+          },
+          "internal": {
+            "type": "boolean",
+            "description": "Is the comment internal or external.",
+            "example": false
+          },
+          "type": {
+            "type": "string",
+            "enum": ["submit", "assign", "update", "comment", "message"],
+            "example": "comment",
+            "description": "Type of the case task."
+          },
+          "caseStatus": {
+            "type": "string",
+            "enum": [
+              "Innsent",
+              "Grunnvinnsla",
+              "Yfirlestur",
+              "Tilbúið",
+              "Útgefið",
+              "Tekið úr birtingu",
+              "Birtingu hafnað"
+            ],
+            "example": "Innsent",
+            "description": "Status of case when comment was added."
+          },
+          "state": {
+            "type": "string",
+            "description": "JSON state of the application"
+          },
+          "task": {
+            "example": {
+              "from": "Ármann",
+              "to": null,
+              "title": "gerir athugasemd",
+              "comment": "Pálína, getur\n      þú tekið við og staðfest að upplýsingarnar séu réttar?"
+            },
+            "description": "The task itself",
+            "allOf": [{ "$ref": "#/components/schemas/CaseCommentTask" }]
+          }
+        },
+        "required": [
+          "id",
+          "createdAt",
+          "internal",
+          "type",
+          "caseStatus",
+          "state",
+          "task"
+        ]
+      },
+      "GetCaseCommentsResponse": {
+        "type": "object",
+        "properties": {
+          "comments": {
+            "description": "List of case comments.",
+            "type": "array",
+            "items": { "$ref": "#/components/schemas/CaseComment" }
+          }
+        },
+        "required": ["comments"]
+      },
+      "PostApplicationComment": {
+        "type": "object",
+        "properties": {
+          "comment": {
+            "type": "string",
+            "description": "The case comment itself"
+          }
+        },
+        "required": ["comment"]
+      },
+      "PostCaseCommentResponse": {
+        "type": "object",
+        "properties": {
+          "comment": {
+            "description": "The created case comment",
+            "allOf": [{ "$ref": "#/components/schemas/CaseComment" }]
+          }
+        },
+        "required": ["comment"]
+      }
+    }
+  }
+}

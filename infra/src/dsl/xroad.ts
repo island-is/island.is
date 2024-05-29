@@ -1,10 +1,10 @@
+import { json, ref } from './dsl'
 import {
   EnvironmentVariables,
   EnvironmentVariableValue,
   Secrets,
   XroadConfig,
 } from './types/input-types'
-import { json, ref } from './dsl'
 
 export type XroadSectionConfig = {
   secrets?: Secrets
@@ -443,6 +443,32 @@ export const NationalRegistryB2C = new XroadConf({
   },
 })
 
+export const NationalRegistryAuthB2C = new XroadConf({
+  env: {
+    NATIONAL_REGISTRY_B2C_CLIENT_ID: {
+      dev: '6cf94113-d326-4e4d-b97c-1fea12d2f5e1',
+      staging: '',
+      prod: '',
+    },
+    NATIONAL_REGISTRY_B2C_ENDPOINT: {
+      dev: 'https://skraidentitydev.b2clogin.com/skraidentitydev.onmicrosoft.com/b2c_1_midlun_flow/oauth2/v2.0/token',
+      staging:
+        'https://skraidentitydev.b2clogin.com/skraidentitystaging.onmicrosoft.com/b2c_1_midlun_flow/oauth2/v2.0/token',
+      prod: 'https://skraidentity.b2clogin.com/skraidentity.onmicrosoft.com/b2c_1_midlun_flow/oauth2/v2.0/token',
+    },
+    NATIONAL_REGISTRY_B2C_SCOPE: {
+      dev: 'https://skraidentitydev.onmicrosoft.com/midlun/.default',
+      staging: 'https://skraidentitystaging.onmicrosoft.com/midlun/.default',
+      prod: 'https://skraidentity.onmicrosoft.com/midlun/.default',
+    },
+    NATIONAL_REGISTRY_B2C_PATH: {
+      dev: 'IS-DEV/GOV/10001/SKRA-Cloud-Protected/Midlun-v1',
+      staging: 'IS-TEST/GOV/6503760649/SKRA-Cloud-Protected/Midlun-v1',
+      prod: 'IS/GOV/6503760649/SKRA-Cloud-Protected/Midlun-v1',
+    },
+  },
+})
+
 export const Passports = new XroadConf({
   env: {
     XROAD_PASSPORT_LICENSE_PATH: {
@@ -845,6 +871,16 @@ export const OfficialJournalOfIceland = new XroadConf({
       dev: 'IS-DEV/GOV/10014/DMR-Protected/official-journal',
       staging: 'IS-DEV/GOV/10014/DMR-Protected/official-journal',
       prod: 'IS/GOV/10014/DMR-Protected/official-journal',
+    },
+  },
+})
+
+export const OfficialJournalOfIcelandApplication = new XroadConf({
+  env: {
+    XROAD_OFFICIAL_JOURNAL_APPLICATION_PATH: {
+      dev: 'IS-DEV/GOV/10014/DMR-Protected/official-journal-application',
+      staging: 'IS-DEV/GOV/10014/DMR-Protected/official-journal-application',
+      prod: 'IS/GOV/10014/DMR-Protected/official-journal-application',
     },
   },
 })
