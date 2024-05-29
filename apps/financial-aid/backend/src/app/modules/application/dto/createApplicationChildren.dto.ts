@@ -1,4 +1,4 @@
-import { IsNotEmpty, IsString, IsOptional } from 'class-validator'
+import { IsNotEmpty, IsString, IsOptional, IsBoolean } from 'class-validator'
 
 import { ApiProperty } from '@nestjs/swagger'
 
@@ -22,4 +22,14 @@ export class CreateApplicationChildrenDto {
   @IsString()
   @ApiProperty()
   readonly name: string
+
+  @IsNotEmpty()
+  @IsBoolean()
+  @ApiProperty()
+  readonly livesWithApplicant: boolean
+
+  @IsNotEmpty()
+  @IsBoolean()
+  @ApiProperty()
+  readonly livesWithBothParents: boolean
 }
