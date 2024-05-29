@@ -166,8 +166,8 @@ export const ImpactList = (props: ImpactListProps) => {
                                 ariaLabel="delete"
                                 img={
                                   <img
-                                    src={`assets/images/settings.svg`}
-                                    alt={'globe'}
+                                    src="assets/images/settings.svg"
+                                    alt="globe"
                                     style={{ float: 'right' }}
                                     width="80%"
                                   />
