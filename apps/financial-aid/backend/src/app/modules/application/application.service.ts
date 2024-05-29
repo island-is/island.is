@@ -135,7 +135,6 @@ export class ApplicationService {
     })
   }
 
-  // TODO
   async getCurrentApplicationId(nationalId: string): Promise<string | null> {
     const currentApplication = await this.applicationModel.findOne({
       where: {

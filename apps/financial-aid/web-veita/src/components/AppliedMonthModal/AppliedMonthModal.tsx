@@ -8,7 +8,7 @@ import cn from 'classnames'
 
 import * as modalStyles from '../StateModal/StateModal.css'
 
-import { getMonth } from '@island.is/financial-aid/shared/lib'
+import { Application, getMonth } from '@island.is/financial-aid/shared/lib'
 
 interface Props {
   headline: string
@@ -16,7 +16,7 @@ interface Props {
   onVisibilityChange: React.Dispatch<React.SetStateAction<boolean>>
   appliedDate: string
   createdDate: string
-  onClick(event: React.MouseEvent<HTMLButtonElement>, date: Date): void
+  setApplication: React.Dispatch<React.SetStateAction<Application | undefined>>
 }
 
 const AppliedMonthModal = ({
@@ -25,7 +25,7 @@ const AppliedMonthModal = ({
   onVisibilityChange,
   appliedDate,
   createdDate,
-  onClick,
+  setApplication,
 }: Props) => {
   const closeModal = (): void => {
     onVisibilityChange(false)
