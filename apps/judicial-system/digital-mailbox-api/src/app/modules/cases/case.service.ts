@@ -1,6 +1,5 @@
 import { BadGatewayException, Inject, Injectable } from '@nestjs/common'
 
-import { type Logger, LOGGER_PROVIDER } from '@island.is/logging'
 import { type ConfigType } from '@island.is/nest/config'
 
 import {
@@ -14,7 +13,7 @@ import { InternalCasesResponse } from './models/internalCases.response'
 import { digitalMailboxCaseModuleConfig } from './case.config'
 
 @Injectable()
-export class AppService {
+export class CaseService {
   constructor(
     @Inject(digitalMailboxCaseModuleConfig.KEY)
     private readonly config: ConfigType<typeof digitalMailboxCaseModuleConfig>,
@@ -48,6 +47,14 @@ export class AppService {
         type: language === 'en' ? 'Indictment' : 'Ákæra',
       }
     })
+  }
+
+  private async test(nationalId: string): Promise<string> {
+    return `OK ${nationalId}`
+  }
+
+  async testConnection(nationalId: string): Promise<string> {
+    return this.test(nationalId)
   }
 
   private async getAllCases(

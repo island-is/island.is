@@ -16,8 +16,8 @@ import {
 
 import environment from './environments/environment'
 import { digitalMailboxCaseModuleConfig } from './modules/cases/case.config'
-import { AppController } from './modules/cases/case.controller'
-import { AppService } from './modules/cases/case.service'
+import { CaseController } from './modules/cases/case.controller'
+import { CaseService } from './modules/cases/case.service'
 import { DefenderController } from './modules/defenders/defender.controller'
 
 @Module({
@@ -38,7 +38,7 @@ import { DefenderController } from './modules/defenders/defender.controller'
     }),
     AuthModule.register(environment.auth),
   ],
-  controllers: [AppController, DefenderController],
-  providers: [AppService],
+  controllers: [CaseController, DefenderController],
+  providers: [CaseService],
 })
 export class AppModule {}
