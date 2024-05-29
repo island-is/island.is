@@ -60,7 +60,7 @@ export const TableRepeaterFormField: FC<Props> = ({
     removeButtonTooltipText = coreMessages.deleteFieldText,
     editButtonTooltipText = coreMessages.editFieldText,
     editField = false,
-    maxValues,
+    maxRows,
   } = data
 
   const items = Object.keys(rawItems).map((key) => ({
@@ -83,7 +83,7 @@ export const TableRepeaterFormField: FC<Props> = ({
   const tableHeader = table?.header ?? tableItems.map((item) => item.label)
   const tableRows = table?.rows ?? tableItems.map((item) => item.id)
   const staticData = getStaticTableData?.(application)
-  const canAddItem = maxValues ? savedFields.length < maxValues : true
+  const canAddItem = maxRows ? savedFields.length < maxRows : true
 
   const handleSaveItem = async (index: number) => {
     const isValid = await methods.trigger(`${data.id}[${index}]`, {

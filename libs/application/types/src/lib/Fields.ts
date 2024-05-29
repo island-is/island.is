@@ -507,10 +507,10 @@ export type TableRepeaterField = BaseField & {
   titleVariant?: TitleVariants
   fields: Record<string, TableRepeaterItem>
   /**
-   * Maximum values that can be added to the table.
-   * When the maximum is reached, the button to add a new value is disabled.
+   * Maximum rows that can be added to the table.
+   * When the maximum is reached, the button to add a new row is disabled.
    */
-  maxValues?: number
+  maxRows?: number
   table?: {
     /**
      * List of strings to render,

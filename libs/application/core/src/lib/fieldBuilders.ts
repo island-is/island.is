@@ -745,7 +745,7 @@ export function buildTableRepeaterField(
     editButtonTooltipText,
     editField,
     getStaticTableData,
-    maxValues,
+    maxRows,
   } = data
 
   return {
@@ -765,7 +765,7 @@ export function buildTableRepeaterField(
     editButtonTooltipText,
     editField,
     getStaticTableData,
-    maxValues,
+    maxRows,
   }
 }
 
