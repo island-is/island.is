@@ -2,6 +2,8 @@ import { uuid } from 'uuidv4'
 
 import { BadRequestException } from '@nestjs/common'
 
+import { CaseState, CaseType } from '@island.is/judicial-system/types'
+
 import { createTestingCaseModule } from '../createTestingCaseModule'
 
 import { AwsS3Service } from '../../../aws-s3'
@@ -20,6 +22,8 @@ type GivenWhenThen = (
 
 describe('InternalCaseController - Archive case files record', () => {
   const caseId = uuid()
+  const caseType = CaseType.INDICTMENT
+  const caseState = CaseState.COMPLETED
   const policeCaseNumber = uuid()
 
   let mockawsS3Service: AwsS3Service
@@ -30,10 +34,8 @@ describe('InternalCaseController - Archive case files record', () => {
       await createTestingCaseModule()
 
     mockawsS3Service = awsS3Service
-    const mockCopyObject = mockawsS3Service.copyObject as jest.Mock
-    mockCopyObject.mockRejectedValue(new Error('Some error'))
-    const mockDeleteObject = mockawsS3Service.deleteObject as jest.Mock
-    mockDeleteObject.mockRejectedValue(new Error('Some error'))
+    const mockArchiveObject = mockawsS3Service.archiveObject as jest.Mock
+    mockArchiveObject.mockRejectedValue(new Error('Some error'))
 
     givenWhenThen = async (
       policeCaseNumber: string,
@@ -44,6 +46,8 @@ describe('InternalCaseController - Archive case files record', () => {
       await internalCaseController
         .archiveCaseFilesRecord(caseId, policeCaseNumber, {
           id: caseId,
+          type: caseType,
+          state: caseState,
           policeCaseNumbers,
         } as Case)
         .then((result) => (then.result = result))
@@ -57,8 +61,8 @@ describe('InternalCaseController - Archive case files record', () => {
     let then: Then
 
     beforeEach(async () => {
-      const mockCopyObject = mockawsS3Service.copyObject as jest.Mock
-      mockCopyObject.mockResolvedValueOnce(uuid())
+      const mockArchiveObject = mockawsS3Service.archiveObject as jest.Mock
+      mockArchiveObject.mockResolvedValueOnce(uuid())
 
       then = await givenWhenThen(policeCaseNumber, [
         uuid(),
@@ -67,20 +71,12 @@ describe('InternalCaseController - Archive case files record', () => {
       ])
     })
 
-    it('should copy the case files record to the AWS S3 indictment completed folder', () => {
-      expect(mockawsS3Service.copyObject).toHaveBeenCalledWith(
-        `indictments/${caseId}/${policeCaseNumber}/caseFilesRecord.pdf`,
-        `indictments/completed/${caseId}/${policeCaseNumber}/caseFilesRecord.pdf`,
+    it('should archive the case files record', () => {
+      expect(mockawsS3Service.archiveObject).toHaveBeenCalledWith(
+        caseType,
+        caseState,
+        `${caseId}/${policeCaseNumber}/caseFilesRecord.pdf`,
       )
-    })
-
-    it('should delete the case files record from the AWS S3 indictment folder', () => {
-      expect(mockawsS3Service.deleteObject).toHaveBeenCalledWith(
-        `indictments/${caseId}/${policeCaseNumber}/caseFilesRecord.pdf`,
-      )
-    })
-
-    it('should return a success response', () => {
       expect(then.result).toEqual({ delivered: true })
     })
   })
