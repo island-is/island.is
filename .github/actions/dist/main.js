@@ -26354,7 +26354,6 @@ var log = (0, import_debug4.default)("main.js");
       process.env.WORKFLOW_ID
     );
   })();
-  console.log("OK");
   if (rev === "rebuild") {
     log(`Returning with rebuild`);
     console.log(`Full rebuild needed`);
