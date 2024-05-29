@@ -110,13 +110,17 @@ export const tabText = style({
 export const tabElement = style({})
 export const borderElement = style({})
 
+//Underlines when hovering unselected tabs
 globalStyle(`${tabNextToSelectedTab}:hover ${borderElement}:after`, {
   position: 'absolute',
   content: '',
   height: '1px',
-  width: '100%',
+  width: '90%',
   bottom: -1,
-  left: 5,
+  left: 0,
+  right: 0,
+  marginLeft: 'auto',
+  marginRight: 'auto',
   background: theme.color.blue400,
   zIndex: 5,
 })
@@ -125,13 +129,45 @@ globalStyle(`${tabPreviousToSelectedTab}:hover ${borderElement}:after`, {
   position: 'absolute',
   content: '',
   height: '1px',
-  width: '100%',
+  width: '90%',
   bottom: -1,
-  right: 5,
+  left: 0,
+  right: 0,
+  marginLeft: 'auto',
+  marginRight: 'auto',
   background: theme.color.blue400,
   zIndex: 5,
 })
 
+globalStyle(
+  `${tabPreviousToSelectedTab}:first-of-type:hover ${borderElement}:after`,
+  {
+    position: 'absolute',
+    content: '',
+    height: '1px',
+    width: '90%',
+    bottom: -1,
+    left: 0,
+    background: theme.color.blue400,
+    zIndex: 5,
+  },
+)
+
+globalStyle(
+  `${tabNextToSelectedTab}:last-of-type:hover ${borderElement}:after`,
+  {
+    position: 'absolute',
+    content: '',
+    height: '1px',
+    width: '90%',
+    bottom: -1,
+    right: 0,
+    background: theme.color.blue400,
+    zIndex: 5,
+  },
+)
+
+//For styling edges if selected first or last
 globalStyle(`${tabSelected}:first-of-type span:before`, {
   backgroundColor: theme.color.blue200,
   position: 'absolute',
@@ -153,7 +189,6 @@ globalStyle(`${tabSelected}:last-of-type span:before`, {
 })
 
 // Globals for styling the corners of the selected tab
-
 //top left if selected, block the background
 globalStyle(`${tabSelected}:first-of-type ${tabElement}:after`, {
   position: 'absolute',

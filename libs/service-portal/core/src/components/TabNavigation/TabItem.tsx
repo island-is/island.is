@@ -1,4 +1,5 @@
-import { Box, FocusableBox, Text } from '@island.is/island-ui/core'
+import { Text } from '@island.is/island-ui/core'
+import { FocusableBox } from '../FocusableBox/FocusableBox'
 import cn from 'classnames'
 import * as styles from './TabItem.css'
 import { Ref, forwardRef } from 'react'
