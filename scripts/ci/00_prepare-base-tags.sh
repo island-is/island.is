@@ -9,10 +9,10 @@ cp -r "$ROOT/.github/actions/dist/." "$tempRepo"
 
 LAST_GOOD_BUILD=$(DEBUG="*,-simple-git" REPO_ROOT="$ROOT" node $tempRepo/main.js)
 echo "Stickman done"
-LAST_GOOD_BUILD_SHA=$(echo "$LAST_GOOD_BUILD" | jq -r '.sha')
-LAST_GOOD_BUILD_BRANCH=$(echo "$LAST_GOOD_BUILD" | jq -r '.branch')
-LAST_GOOD_BUILD_RUN_NUMBER=$(echo "$LAST_GOOD_BUILD" | jq -r '.run_number')
-BUILD_REF=$(echo "$LAST_GOOD_BUILD" | jq -r '.ref')
+LAST_GOOD_BUILD_SHA=$(echo "$LAST_GOOD_BUILD" | jq -r '.sha') || true
+LAST_GOOD_BUILD_BRANCH=$(echo "$LAST_GOOD_BUILD" | jq -r '.branch') || true
+LAST_GOOD_BUILD_RUN_NUMBER=$(echo "$LAST_GOOD_BUILD" | jq -r '.run_number') || true
+BUILD_REF=$(echo "$LAST_GOOD_BUILD" | jq -r '.ref') || true
 >&2 echo "Last successful build is with SHA '$LAST_GOOD_BUILD_SHA', branch '$LAST_GOOD_BUILD_BRANCH' and number '$LAST_GOOD_BUILD_RUN_NUMBER'"
 if [[ "$BUILD_REF" != "$LAST_GOOD_BUILD_SHA" ]]; then
   echo "This will be an incremental build from a previous successful run in this PR. See parents of the commit below."
