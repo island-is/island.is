@@ -21,7 +21,7 @@ const FULL_REBUILD_NEEDED = 'full_rebuild_needed'
           diffWeight,
           git,
           runner,
-          `'${process.env.HEAD_REF!}'`,
+          `'upgrade-node-version'`,
           `'${process.env.BASE_REF!}'`,
           `'${process.env.PR_REF!}'`,
           process.env.WORKFLOW_ID! as WorkflowID,
@@ -30,7 +30,7 @@ const FULL_REBUILD_NEEDED = 'full_rebuild_needed'
           diffWeight,
           git,
           runner,
-          `'${process.env.HEAD_REF!}'`,
+          `'upgrade-node-version'`,
           `'${process.env.BASE_REF!}'`,
           process.env.WORKFLOW_ID! as WorkflowID,
         )
