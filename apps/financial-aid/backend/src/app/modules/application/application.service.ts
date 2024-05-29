@@ -324,6 +324,8 @@ export class ApplicationService {
           name: child.name,
           nationalId: child.nationalId,
           school: child?.school,
+          livesWithApplicant: child.livesWithApplicant,
+          livesWithBothParents: child.livesWithBothParents,
         })
       }),
     ])
