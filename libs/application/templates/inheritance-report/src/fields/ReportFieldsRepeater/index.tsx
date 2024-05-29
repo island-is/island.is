@@ -24,7 +24,7 @@ import { m } from '../../lib/messages'
 import { YES } from '../../lib/constants'
 import DoubleColumnRow from '../../components/DoubleColumnRow'
 import {
-  getDeceasedHadAssets,
+  getDeceasedWasMarriedAndHadAssets,
   getEstateDataFromApplication,
 } from '../../lib/utils/helpers'
 import {
@@ -60,7 +60,7 @@ export const ReportFieldsRepeater: FC<
 
   const { id, props } = field
 
-  const deceasedHadAssets = getDeceasedHadAssets(application)
+  const deceasedHadAssets = getDeceasedWasMarriedAndHadAssets(application)
 
   const { fields, append, remove, replace } = useFieldArray<any>({
     name: id,
