@@ -35,6 +35,16 @@ export const newPrimarySchoolMessages: MessageDir = {
       defaultMessage: 'Nei',
       description: 'No',
     },
+    date: {
+      id: 'dess.nps.application:date',
+      defaultMessage: 'Dagsetning',
+      description: 'Date',
+    },
+    datePlaceholder: {
+      id: 'dess.nps.application:date.placeholder',
+      defaultMessage: 'Veldu dagsetningu',
+      description: 'Select date',
+    },
     fullName: {
       id: 'dess.nps.application:full.name',
       defaultMessage: 'Fullt nafn',
@@ -319,6 +329,18 @@ export const newPrimarySchoolMessages: MessageDir = {
       id: 'dess.nps.application:primary.school.starting.school.sub.section.title',
       defaultMessage: 'Byrjar í skóla',
       description: 'Starting school',
+    },
+    startingSchoolTitle: {
+      id: 'dess.nps.application:primary.school.starting.school.title',
+      defaultMessage: 'Hvenær viltu að barnið byrji í nýja skólanum?',
+      description: 'When do you want your child to start at the new school?',
+    },
+    startingSchoolDescription: {
+      id: 'dess.nps.application:primary.school.starting.school.description',
+      defaultMessage:
+        'Við viljum taka vel á móti skólabarninu. Til þess að getað undirbúið komu þess þá biðjum við þig að velja dagsetningu fyrir fyrsta skóladaginn.',
+      description:
+        'We want to welcome the schoolchild properly. To be able to prepare for its arrival, please select a date for the first school day.',
     },
   }),
 

@@ -78,6 +78,7 @@ export const dataSchema = z.object({
     .refine((r) => r === undefined || r.length > 0, {
       params: errorMessages.relativesRequired,
     }),
+  startDate: z.string(),
 })
 
 export type SchemaFormValues = z.infer<typeof dataSchema>

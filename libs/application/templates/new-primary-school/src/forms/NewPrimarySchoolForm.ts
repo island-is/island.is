@@ -1,5 +1,6 @@
 import {
   buildCustomField,
+  buildDateField,
   buildDescriptionField,
   buildForm,
   buildMultiField,
@@ -430,7 +431,25 @@ export const NewPrimarySchoolForm: Form = buildForm({
           title:
             newPrimarySchoolMessages.primarySchool
               .startingSchoolSubSectionTitle,
-          children: [],
+          children: [
+            buildMultiField({
+              id: 'startingSchoolMultiField',
+              title: newPrimarySchoolMessages.primarySchool.startingSchoolTitle,
+              description:
+                newPrimarySchoolMessages.primarySchool
+                  .startingSchoolDescription,
+              children: [
+                buildDateField({
+                  id: 'startDate',
+                  title: newPrimarySchoolMessages.shared.date,
+                  placeholder: newPrimarySchoolMessages.shared.datePlaceholder,
+                  required: true,
+                  defaultValue: null,
+                  minDate: () => new Date(),
+                }),
+              ],
+            }),
+          ],
         }),
       ],
     }),
