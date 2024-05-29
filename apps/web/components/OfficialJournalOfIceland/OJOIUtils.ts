@@ -60,7 +60,6 @@ export const mapEntityToOptions = (
     (d) => d.title.trim(),
   )
 
-  console.log('sortedEntities: ', sortedEntities)
   return sortedEntities.map((e) => {
     if (e.__typename === 'OfficialJournalOfIcelandAdvertCategory') {
       return {
