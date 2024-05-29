@@ -14,23 +14,20 @@ import { getErrorViaPath } from '@island.is/application/core'
 import { useFormContext } from 'react-hook-form'
 
 interface Props {
-  id: string
-  index: number
+  fieldIndex: string
   errors: RecordObject<unknown> | undefined
   childFullName: string
   childNationalId: string
 }
 
 export const ChildInput: FC<React.PropsWithChildren<Props>> = ({
-  id,
-  index,
+  fieldIndex,
   errors,
   childFullName,
   childNationalId,
 }) => {
   const { setValue, clearErrors } = useFormContext()
 
-  const fieldIndex = `${id}[${index}]`
   const schoolField = `${fieldIndex}.school`
   const nameField = `${fieldIndex}.fullName`
   const nationalIdField = `${fieldIndex}.nationalId`
