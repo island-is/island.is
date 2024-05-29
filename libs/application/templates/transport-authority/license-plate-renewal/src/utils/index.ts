@@ -1,19 +1,13 @@
 import { LicensePlateRenewal } from '../lib/dataSchema'
 import { ChargeItemCode } from '@island.is/shared/constants'
 import { Application, ExtraData } from '@island.is/application/types'
-
-export const getChargeItemCodeWithAnswers = (
-  application: Application,
-): Array<string> => {
-  const result = [
-    ChargeItemCode.TRANSPORT_AUTHORITY_LICENSE_PLATE_RENEWAL.toString(),
-  ]
-
-  return result
-}
+import { isPaymentRequired } from './isPaymentRequired'
 
 export const getChargeItemCodes = (application: Application): Array<string> => {
-  return getChargeItemCodeWithAnswers(application)
+  const paymentRequired = isPaymentRequired({ application })
+  return paymentRequired
+    ? [ChargeItemCode.TRANSPORT_AUTHORITY_LICENSE_PLATE_RENEWAL.toString()]
+    : []
 }
 
 export const getExtraData = (application: Application): ExtraData[] => {

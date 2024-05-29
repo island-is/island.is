@@ -6,7 +6,6 @@ import {
 } from '@island.is/application/core'
 import {
   Application,
-  Condition,
   DefaultEvents,
   StaticText,
 } from '@island.is/application/types'
@@ -20,7 +19,6 @@ type props = {
   sectionTitle?: MessageDescriptor
   forPaymentLabel?: MessageDescriptor
   totalLabel?: MessageDescriptor
-  condition?: Condition | undefined
 }
 
 /**
@@ -36,7 +34,6 @@ type props = {
 export const buildFormPaymentChargeOverviewSection = (props: props) =>
   buildSection({
     id: 'uiForms.paymentChargeOverviewSection',
-    condition: props.condition,
     title: props.sectionTitle
       ? props.sectionTitle
       : paymentChargeOverview.information.sectionTitle,

@@ -31,6 +31,7 @@ import { ApiScope } from '@island.is/auth/scopes'
 import { buildPaymentState } from '@island.is/application/utils'
 import { getChargeItemCodes, getExtraData } from '../utils'
 import { info } from 'kennitala'
+import { isPaymentRequired } from '../utils/isPaymentRequired'
 
 const determineMessageFromApplicationAnswers = (application: Application) => {
   const regno = getValueViaPath(
@@ -102,7 +103,9 @@ const template: ApplicationTemplate<
             defineTemplateApi({
               action: ApiActions.validateApplication,
             }),
-            //NEEDS A CONDITIONAL SUBMITAPPLICATION
+            // defineTemplateApi({
+            //   action: ApiActions.submitApplication,
+            // }),
           ],
           roles: [
             {
@@ -129,9 +132,30 @@ const template: ApplicationTemplate<
           ],
         },
         on: {
-          [DefaultEvents.SUBMIT]: { target: States.COMPLETED },
+          [DefaultEvents.SUBMIT]: [
+            {
+              target: States.PAYMENT,
+              cond: (application) => isPaymentRequired(application),
+            },
+            {
+              target: States.COMPLETED,
+              cond: (application) => !isPaymentRequired(application),
+            },
+          ],
         },
       },
+      [States.PAYMENT]: buildPaymentState({
+        organizationId: InstitutionNationalIds.SAMGONGUSTOFA,
+        chargeItemCodes: getChargeItemCodes,
+        extraData: getExtraData,
+        submitTarget: States.COMPLETED,
+        onExit: [
+          defineTemplateApi({
+            action: ApiActions.submitApplication,
+            triggerEvent: DefaultEvents.SUBMIT,
+          }),
+        ],
+      }),
       [States.COMPLETED]: {
         meta: {
           name: 'Completed',
