@@ -117,7 +117,7 @@ export class WorkMachinesClientService {
             regNumber: machine?.registrationNumber || '',
             status: machine?.status || '',
             paymentRequiredForOwnerChange:
-              machine?.paymentRequiredForOwnerChange || false,
+              machine?.paymentRequiredForOwnerChange ?? true,
           }
         }) || [],
       totalCount: result?.pagination?.totalCount || 0,
@@ -155,6 +155,8 @@ export class WorkMachinesClientService {
       supervisorName: result?.supervisorName || '',
       status: result?.status || '',
       disabled: !result?.links?.some((link) => link?.rel === rel),
+      paymentRequiredForOwnerChange:
+        result?.paymentRequiredForOwnerChange ?? true,
     }
   }
 
