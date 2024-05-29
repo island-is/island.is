@@ -23,8 +23,8 @@ Stop proxies
 A visual graph of module import resolution can help with debugging, especially in a large monorepo. The following script will output a `dot` file that can be rendered to svg (with GraphViz) and then to `html` to be opened in any browser.
 
 ```bash
-# replace Firefox with a browser of your choice
-yarn cruise -p apps/services/sessions && xdg-open depgraph.html
+# replace firefox with a browser of your choice
+yarn cruise -p apps/services/sessions && firefox depgraph.html
 ```
 
 This uses [dependency-cruiser](https://www.npmjs.com/package/dependency-cruiser) behind the scenes. Feel free to add `.dependency-cruiser.local.js` in the repo root to merge your custom config with the default.
