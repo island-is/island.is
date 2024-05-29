@@ -171,12 +171,16 @@ export interface CreateChildren {
   nationalId: string
   name: string
   school?: string
+  livesWithApplicant: boolean
+  livesWithBothParents: boolean
 }
 
 export interface Children {
   nationalId: string
   name: string
   school?: string
+  livesWithApplicant: boolean
+  livesWithBothParents: boolean
 }
 
 export interface ApplicationChildren {
@@ -187,6 +191,8 @@ export interface ApplicationChildren {
   nationalId: string
   name: string
   school?: string
+  livesWithApplicant: boolean
+  livesWithBothParents: boolean
 }
 
 export interface UpdateAdmin {
