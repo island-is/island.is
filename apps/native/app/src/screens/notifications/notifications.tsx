@@ -5,7 +5,7 @@ import {
   Skeleton,
   Problem,
 } from '@ui'
-import { Reference, useApolloClient } from '@apollo/client'
+import { useApolloClient } from '@apollo/client'
 
 import { dismissAllNotificationsAsync } from 'expo-notifications'
 import React, { useCallback, useEffect, useMemo, useState } from 'react'
@@ -87,39 +87,21 @@ export const NotificationsScreen: NavigationFunctionComponent = ({
 
   const [markAllUserNotificationsAsRead] =
     useMarkAllNotificationsAsReadMutation({
-      onCompleted: (data) => {
-        if (data.markAllNotificationsRead?.success) {
+      onCompleted: (d) => {
+        if (d.markAllNotificationsRead?.success) {
           // If all notifications are marked as read, update cache to reflect that
-          client.cache.modify({
-            fields: {
-              userNotifications(existingNotifications = {}) {
-                const existingDataRefs = existingNotifications.data || []
-
-                const updatedData = existingDataRefs.forEach(
-                  (ref: Reference | NotificationItem) => {
-                    const id = client.cache.identify(ref)
-                    client.cache.modify({
-                      id,
-                      fields: {
-                        metadata(existingMetadata) {
-                          return {
-                            ...existingMetadata,
-                            read: false,
-                          }
-                        },
-                      },
-                    })
-                    return ref
-                  },
-                )
-
-                return {
-                  ...existingNotifications,
-                  data: updatedData,
-                  unreadCount: 0,
-                }
+          data?.userNotifications?.data?.forEach((notification) => {
+            client.cache.modify({
+              id: client.cache.identify(notification),
+              fields: {
+                metadata(existingMetadata) {
+                  return {
+                    ...existingMetadata,
+                    read: true,
+                  }
+                },
               },
-            },
+            })
           })
         }
       },
@@ -282,7 +264,10 @@ export const NotificationsScreen: NavigationFunctionComponent = ({
             style={{
               maxWidth: 145,
             }}
-            iconStyle={{ tintColor: theme.color.blue400 }}
+            iconStyle={{
+              tintColor: theme.color.blue400,
+              resizeMode: 'contain',
+            }}
           />
         </ButtonWrapper>
         {showError ? (
