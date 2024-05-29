@@ -1,12 +1,13 @@
 import React, { useMemo, useState } from 'react'
 import { useIntl } from 'react-intl'
 
-import { Text, Box } from '@island.is/island-ui/core'
+import { Text, Box, AlertMessage } from '@island.is/island-ui/core'
 import {
   getNextPeriod,
   estimatedBreakDown,
   aidCalculator,
   FamilyStatus,
+  ChildrenAid,
 } from '@island.is/financial-aid/shared/lib'
 import { useLocale } from '@island.is/localization'
 
@@ -31,6 +32,7 @@ import {
 import { DirectTaxPaymentsModal } from '..'
 import { findFamilyStatus } from '../../lib/utils'
 import withLogo from '../Logo/Logo'
+import ChildrenInfo from './ChildrenInfo'
 
 const SummaryForm = ({ application, goToScreen }: FAFieldBaseProps) => {
   const { formatMessage } = useIntl()
@@ -52,6 +54,10 @@ const SummaryForm = ({ application, goToScreen }: FAFieldBaseProps) => {
       )
     }
   }, [externalData.municipality.data])
+
+  const showAlertMessageAboutChildrenAid =
+    externalData.childrenCustodyInformation.data.length > 0 &&
+    externalData.municipality.data?.childrenAid !== ChildrenAid.NOTDEFINED
 
   return (
     <>
@@ -84,6 +90,33 @@ const SummaryForm = ({ application, goToScreen }: FAFieldBaseProps) => {
         </Box>
       )}
 
+      {showAlertMessageAboutChildrenAid && (
+        <Box marginTop={[4, 4, 5]}>
+          {externalData.municipality.data?.childrenAid ===
+          ChildrenAid.APPLICANT ? (
+            <AlertMessage
+              type="info"
+              message={
+                <Text variant="medium">
+                  {formatMessage(m.summaryForm.childrenAidAlert.aidGoesToUser)}
+                </Text>
+              }
+            />
+          ) : (
+            <AlertMessage
+              type="info"
+              message={
+                <Text variant="medium">
+                  {formatMessage(
+                    m.summaryForm.childrenAidAlert.aidGoesToInstution,
+                  )}
+                </Text>
+              }
+            />
+          )}
+        </Box>
+      )}
+
       <Box marginTop={[4, 4, 5]}>
         <DescriptionText text={m.summaryForm.general.calculationsOverview} />
       </Box>
@@ -93,6 +126,14 @@ const SummaryForm = ({ application, goToScreen }: FAFieldBaseProps) => {
         nationalId={externalData.nationalRegistry.data.nationalId}
         address={formatAddress(externalData.nationalRegistry.data)}
       />
+
+      {answers?.childrenSchoolInfo && answers.childrenSchoolInfo.length > 0 && (
+        <ChildrenInfo
+          childrenSchoolInfo={answers?.childrenSchoolInfo}
+          goToScreen={goToScreen}
+          childrenComment={answers?.childrenComment}
+        />
+      )}
 
       <FormInfo
         items={formItems(answers, externalData)}

@@ -9,6 +9,7 @@ interface Props {
   children?: ReactNode
   className?: string
   href: string
+  label?: string
   skipOutboundTrack?: boolean
   callback?: () => void
 }

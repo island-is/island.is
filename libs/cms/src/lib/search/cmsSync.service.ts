@@ -16,7 +16,7 @@ import { LifeEventPageSyncService } from './importers/lifeEventPage.service'
 import { ArticleCategorySyncService } from './importers/articleCategory.service'
 import { NewsSyncService } from './importers/news.service'
 import { Entry } from 'contentful'
-import { ElasticService } from '@island.is/content-search-toolkit'
+import { ElasticService, SearchInput } from '@island.is/content-search-toolkit'
 import { AdgerdirPageSyncService } from './importers/adgerdirPage'
 import { MenuSyncService } from './importers/menu.service'
 import { GroupedMenuSyncService } from './importers/groupedMenu.service'
@@ -34,6 +34,7 @@ import { EventSyncService } from './importers/event.service'
 import { ManualSyncService } from './importers/manual.service'
 import { ManualChapterItemSyncService } from './importers/manualChapterItem.service'
 import { CustomPageSyncService } from './importers/customPage.service'
+import { GenericListItemSyncService } from './importers/genericListItem.service'
 
 export interface PostSyncOptions {
   folderHash: string
@@ -80,6 +81,7 @@ export class CmsSyncService implements ContentSearchImporter<PostSyncOptions> {
     private readonly manualSyncService: ManualSyncService,
     private readonly manualChapterItemSyncService: ManualChapterItemSyncService,
     private readonly customPageSyncService: CustomPageSyncService,
+    private readonly genericListItemSyncService: GenericListItemSyncService,
   ) {
     this.contentSyncProviders = [
       this.articleSyncService,
@@ -104,6 +106,7 @@ export class CmsSyncService implements ContentSearchImporter<PostSyncOptions> {
       this.manualSyncService,
       this.manualChapterItemSyncService,
       this.customPageSyncService,
+      this.genericListItemSyncService,
     ]
   }
 
@@ -227,6 +230,36 @@ export class CmsSyncService implements ContentSearchImporter<PostSyncOptions> {
     return true
   }
 
+  private async fetchIdsFromElasticsearch(
+    elasticIndex: string,
+    types: SearchInput['types'],
+    tags: SearchInput['tags'],
+  ) {
+    const ids: string[] = []
+    let shouldContinueFetching = true
+    let page = 1
+
+    while (shouldContinueFetching) {
+      const response = await this.elasticService.search(elasticIndex, {
+        queryString: '*',
+        types,
+        tags,
+        page,
+      })
+
+      const responseItems = response?.body?.hits?.hits ?? []
+
+      for (const item of responseItems) {
+        ids.push(item._id)
+      }
+
+      shouldContinueFetching = responseItems.length > 0
+      page += 1
+    }
+
+    return ids
+  }
+
   async handleDocumentDeletion(
     elasticIndex: string,
     document: Pick<Entry<unknown>, 'sys'>,
@@ -236,27 +269,11 @@ export class CmsSyncService implements ContentSearchImporter<PostSyncOptions> {
       document.sys.contentType.sys.id === 'manual' ||
       document.sys.contentType.sys.id === 'manualChapter'
     ) {
-      const manualChapterItemIds: string[] = []
-      let shouldContinueFetching = true
-      let page = 1
-
-      while (shouldContinueFetching) {
-        const response = await this.elasticService.search(elasticIndex, {
-          queryString: '*',
-          types: ['webManualChapterItem'],
-          tags: [{ key: document.sys.id, type: 'referencedBy' }],
-          page,
-        })
-
-        const responseItems = response?.body?.hits?.hits ?? []
-
-        for (const item of responseItems) {
-          manualChapterItemIds.push(item._id)
-        }
-
-        shouldContinueFetching = responseItems.length > 0
-        page += 1
-      }
+      const manualChapterItemIds = await this.fetchIdsFromElasticsearch(
+        elasticIndex,
+        ['webManualChapterItem'],
+        [{ key: document.sys.id, type: 'referencedBy' }],
+      )
 
       return this.elasticService.deleteByIds(
         elasticIndex,
@@ -274,6 +291,38 @@ export class CmsSyncService implements ContentSearchImporter<PostSyncOptions> {
       return this.elasticService.deleteByIds(
         elasticIndex,
         [document.sys.id].concat(subArticles.map((s) => s.sys.id)),
+      )
+    }
+
+    // If a generic list gets deleted then all of its items should also be deleted
+    if (document.sys.contentType.sys.id === 'genericList') {
+      const listItems = await this.contentfulService.getContentfulData(100, {
+        content_type: 'genericListItem',
+        'fields.genericList.sys.id': document.sys.id,
+      })
+
+      return this.elasticService.deleteByIds(
+        elasticIndex,
+        [document.sys.id].concat(listItems.map((i) => i.sys.id)),
+      )
+    }
+
+    // If a custom page gets deleted make sure all of its subpages are also deleted
+    if (document.sys.contentType.sys.id === 'customPage') {
+      const subpageIds = await this.fetchIdsFromElasticsearch(
+        elasticIndex,
+        ['webCustomPage'],
+        [
+          {
+            key: document.sys.id,
+            type: 'referencedBy',
+          },
+        ],
+      )
+
+      return this.elasticService.deleteByIds(
+        elasticIndex,
+        [document.sys.id].concat(subpageIds),
       )
     }
 

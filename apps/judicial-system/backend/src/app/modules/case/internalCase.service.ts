@@ -60,6 +60,7 @@ import { archiveFilter } from './filters/case.archiveFilter'
 import { ArchiveResponse } from './models/archive.response'
 import { Case } from './models/case.model'
 import { CaseArchive } from './models/caseArchive.model'
+import { DateLog } from './models/dateLog.model'
 import { DeliverResponse } from './models/deliver.response'
 import { caseModuleConfig } from './case.config'
 
@@ -772,9 +773,13 @@ export class InternalCaseService {
         theCase.id,
         theCase.appealCaseNumber,
         theCase.appealAssistant?.nationalId,
+        theCase.appealAssistant?.name,
         theCase.appealJudge1?.nationalId,
+        theCase.appealJudge1?.name,
         theCase.appealJudge2?.nationalId,
+        theCase.appealJudge2?.name,
         theCase.appealJudge3?.nationalId,
+        theCase.appealJudge3?.name,
       )
       .then(() => ({ delivered: true }))
       .catch((reason) => {
@@ -849,6 +854,7 @@ export class InternalCaseService {
       theCase.type,
       theCase.state,
       theCase.policeCaseNumbers.length > 0 ? theCase.policeCaseNumbers[0] : '',
+      theCase.courtCaseNumber ?? '',
       defendantNationalIds && defendantNationalIds[0]
         ? defendantNationalIds[0].replace('-', '')
         : '',
@@ -1145,5 +1151,20 @@ export class InternalCaseService {
     }
 
     return originalAncestor
+  }
+
+  async getIndictmentCases(nationalId: string): Promise<Case[]> {
+    return this.caseModel.findAll({
+      include: [
+        { model: Defendant, as: 'defendants' },
+        { model: DateLog, as: 'dateLogs' },
+      ],
+      order: [[{ model: DateLog, as: 'dateLogs' }, 'created', 'DESC']],
+      attributes: ['id', 'courtCaseNumber', 'type', 'state'],
+      where: {
+        type: CaseType.INDICTMENT,
+        '$defendants.national_id$': nationalId,
+      },
+    })
   }
 }

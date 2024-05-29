@@ -107,11 +107,11 @@ const OJOICategoriesPage: CustomScreen<OJOICategoriesProps> = ({
             : true
         const deildMatch =
           !initial && searchState.deild
-            ? cat.department === searchState.deild
+            ? cat.department?.slug === searchState.deild
             : true
         const flokkurMatch =
           !initial && searchState.yfirflokkur
-            ? cat.mainCategory === searchState.yfirflokkur
+            ? cat.mainCategory?.slug === searchState.yfirflokkur
             : true
 
         if (qMatch && letterMatch && deildMatch && flokkurMatch) {
@@ -403,25 +403,19 @@ OJOICategories.getProps = async ({ apolloClient, locale }) => {
     apolloClient.query<Query, QueryOfficialJournalOfIcelandMainCategoriesArgs>({
       query: MAIN_CATEGORIES_QUERY,
       variables: {
-        params: {
-          search: '',
-        },
+        params: {},
       },
     }),
     apolloClient.query<Query, QueryOfficialJournalOfIcelandCategoriesArgs>({
       query: CATEGORIES_QUERY,
       variables: {
-        params: {
-          search: '',
-        },
+        params: {},
       },
     }),
     apolloClient.query<Query, QueryOfficialJournalOfIcelandDepartmentsArgs>({
       query: DEPARTMENTS_QUERY,
       variables: {
-        params: {
-          search: '',
-        },
+        params: {},
       },
     }),
     apolloClient.query<Query, QueryGetOrganizationArgs>({

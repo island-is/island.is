@@ -36,11 +36,6 @@ export const ADVERTS_QUERY = gql`
           title
           slug
         }
-        involvedParty {
-          id
-          title
-          slug
-        }
         document {
           isLegacy
           html

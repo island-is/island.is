@@ -26,6 +26,7 @@ query Cases {
       name
       noNationalId
       defendantWaivesRightToCounsel
+      verdictViewDate
     }
     courtDate
     isValidToDateInThePast
@@ -82,5 +83,14 @@ query Cases {
       active
       canConfirmIndictment
     }
+    postponedIndefinitelyExplanation
+    indictmentReviewer {
+      id
+      name
+    }
+    indictmentReviewDecision
+    indictmentAppealDeadline
+    indictmentVerdictViewedByAll
+    indictmentVerdictAppealDeadline
   }
 }

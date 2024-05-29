@@ -28,6 +28,7 @@ query LimitedAccessCase($input: CaseQueryInput!) {
       defenderEmail
       defenderPhoneNumber
       defendantWaivesRightToCounsel
+      verdictViewDate
     }
     defenderName
     defenderNationalId
@@ -130,15 +131,18 @@ query LimitedAccessCase($input: CaseQueryInput!) {
       id
       name
     }
-    dateLogs {
-      id
-      caseId
-      dateType
+    arraignmentDate {
       date
+      location
+    }
+    courtDate {
+      date
+      location
     }
     prosecutorsOffice {
       id
       name
     }
+    postponedIndefinitelyExplanation
   }
 }

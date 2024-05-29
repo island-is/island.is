@@ -7,7 +7,10 @@ export const loadSocialInsuranceXroadMocks = async () => {
     prefixType: 'only-base-path',
     config: SocialInsuranceAdministration,
     prefix: 'XROAD_TR_PATH',
-    apiPath: '/api/protected/v1/PaymentPlan?year=2023',
+    apiPath: '/api/protected/v1/PaymentPlan',
+    query: {
+      year: '2023',
+    },
     response: [
       new Response().withJSONBody({
         totalPayment: 61461,
@@ -102,7 +105,10 @@ export const loadSocialInsuranceXroadMocks = async () => {
     prefixType: 'only-base-path',
     config: SocialInsuranceAdministration,
     prefix: 'XROAD_TR_PATH',
-    apiPath: '/api/protected/v1/PaymentPlan?year=2024',
+    apiPath: '/api/protected/v1/PaymentPlan',
+    query: {
+      year: '2024',
+    },
     response: [
       new Response().withJSONBody({
         totalPayment: 1017,

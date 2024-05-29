@@ -17,7 +17,7 @@ export interface CitizenshipApplication {
   citizenshipCode?: string | null
   residenceInIcelandLastChangeDate?: Date | null
   birthCountry?: string | null
-  maritalStatusCode?: string
+  maritalStatus?: string
   dateOfMaritalStatus?: Date | null
   spouse?: {
     nationalId: string
@@ -68,6 +68,7 @@ export interface CitizenshipApplication {
     fullName: string
     givenName?: string | null
     familyName?: string | null
+    citizenship?: string
   }[]
   childrenPassport: {
     nationalId: string

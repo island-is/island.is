@@ -1,3 +1,4 @@
+import { ApiProperty } from '@nestjs/swagger'
 import {
   BelongsTo,
   Column,
@@ -5,14 +6,16 @@ import {
   DataType,
   ForeignKey,
   Model,
+  PrimaryKey,
   Table,
   UpdatedAt,
-  PrimaryKey,
   HasMany,
+  BelongsToMany,
 } from 'sequelize-typescript'
-import { ApiProperty } from '@nestjs/swagger'
-import { ClientAllowedScope } from './client-allowed-scope.model'
+
+import { defaultAcrValue } from '../../types'
 import { ClientAllowedCorsOrigin } from './client-allowed-cors-origin.model'
+import { ClientAllowedScope } from './client-allowed-scope.model'
 import { ClientPostLogoutRedirectUri } from './client-post-logout-redirect-uri.model'
 import { ClientRedirectUri } from './client-redirect-uri.model'
 import { ClientIdpRestrictions } from './client-idp-restrictions.model'
@@ -20,6 +23,8 @@ import { ClientSecret } from './client-secret.model'
 import { ClientGrantType } from './client-grant-type.model'
 import { ClientClaim } from './client-claim.model'
 import { Domain } from '../../resources/models/domain.model'
+import { ClientDelegationType } from './client-delegation-type.model'
+import { DelegationTypeModel } from '../../delegations/models/delegation-type.model'
 
 @Table({
   tableName: 'client',
@@ -546,6 +551,19 @@ export class Client extends Model {
 
   @HasMany(() => ClientClaim)
   claims?: ClientClaim[]
+
+  @HasMany(() => ClientDelegationType)
+  supportedDelegationTypes?: ClientDelegationType[]
+
+  @Column({
+    type: DataType.ARRAY(DataType.STRING),
+    defaultValue: [defaultAcrValue],
+  })
+  @ApiProperty()
+  allowedAcr!: string[]
+
+  @BelongsToMany(() => DelegationTypeModel, () => ClientDelegationType)
+  delegationTypes?: DelegationTypeModel[]
 
   // Signing algorithm for identity token. If empty, will use the server default signing algorithm.
   // readonly allowedIdentityTokenSigningAlgorithms
