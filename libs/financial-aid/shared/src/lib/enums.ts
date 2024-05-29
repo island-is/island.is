@@ -67,6 +67,7 @@ export enum ApplicationEventType {
   FILEUPLOAD = 'FileUpload',
   SPOUSEFILEUPLOAD = 'SpouseFileUpload',
   ASSIGNCASE = 'AssignCase',
+  DATECHANGED = 'DateChanged',
 }
 
 export enum FileType {
