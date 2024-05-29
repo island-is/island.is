@@ -113,12 +113,14 @@ export class PassportsService {
 
   async getIdentityDocument(
     auth: User,
+    type?: string | null,
   ): Promise<IdentityDocument[] | undefined> {
     try {
       const passportResponse = await this.getPassportsWithAuth(
         auth,
       ).identityDocumentGetIdentityDocument({
         xRoadClient: this.xroadConfig.xRoadClient,
+        type,
       })
       const identityDocumentResponse = this.resolvePassports(passportResponse)
 
@@ -220,8 +222,11 @@ export class PassportsService {
     }
   }
 
-  async getCurrentPassport(user: User): Promise<Passport> {
-    const userPassports = await this.getIdentityDocument(user)
+  async getCurrentPassport(
+    user: User,
+    type?: string | null,
+  ): Promise<Passport> {
+    const userPassports = await this.getIdentityDocument(user, type)
     const childPassports = await this.getIdentityDocumentChildren(user)
 
     const userPassport = userPassports
