@@ -33,15 +33,26 @@ export const useAuthenticatePasskey = () => {
           return false
         }
 
-        // Authenticate Passkey on device
-        const result: PasskeyAuthenticationResult = await Passkey.authenticate({
+        const formattedAuthenticateOptions = {
           ...options.data.authPasskeyAuthenticationOptions,
+          allowCredentials:
+            options.data.authPasskeyAuthenticationOptions.allowCredentials.map(
+              (cred) => ({
+                ...cred,
+                id: padChallenge(convertBase64UrlToBase64String(cred.id)),
+              }),
+            ),
           challenge: padChallenge(
             convertBase64UrlToBase64String(
               options.data.authPasskeyAuthenticationOptions.challenge,
             ),
           ),
-        })
+        }
+
+        // Authenticate Passkey on device
+        const result: PasskeyAuthenticationResult = await Passkey.authenticate(
+          formattedAuthenticateOptions,
+        )
 
         // Converting needed since the server expects base64url strings but react-native-passkey returns base64 strings
         const updatedResult = convertAuthenticationResultsToBase64Url(result)

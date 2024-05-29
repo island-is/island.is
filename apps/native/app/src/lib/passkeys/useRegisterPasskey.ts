@@ -33,8 +33,7 @@ export const useRegisterPasskey = () => {
 
         const { authPasskeyRegistrationOptions } = options.data
 
-        // Register Passkey on device
-        const result: PasskeyRegistrationResult = await Passkey.register({
+        const formattedRegistrationOptions = {
           ...options.data.authPasskeyRegistrationOptions,
           challenge: padChallenge(
             convertBase64UrlToBase64String(
@@ -51,6 +50,9 @@ export const useRegisterPasskey = () => {
           authenticatorSelection:
             authPasskeyRegistrationOptions.authenticatorSelection
               ? {
+                  residentKey:
+                    authPasskeyRegistrationOptions.authenticatorSelection
+                      .residentKey || undefined,
                   requireResidentKey:
                     authPasskeyRegistrationOptions.authenticatorSelection
                       .requireResidentKey || undefined,
@@ -59,7 +61,12 @@ export const useRegisterPasskey = () => {
                       .userVerification || undefined,
                 }
               : undefined,
-        })
+        }
+
+        // Register Passkey on device
+        const result: PasskeyRegistrationResult = await Passkey.register(
+          formattedRegistrationOptions,
+        )
 
         // Converting needed since the server expects base64url strings but react-native-passkey returns base64 strings
         const updatedResult = convertRegisterResultsToBase64Url(result)
@@ -81,12 +88,19 @@ export const useRegisterPasskey = () => {
           'Passkey registration not verified',
           verifyRegisterResponse,
         )
+        throw new Error('Error registering passkey')
       } catch (error: any) {
         // User cancelled the register flow, swallow the error
-        if (error?.error === 'UserCancelled') {
+        if (
+          error?.error === 'UserCancelled' ||
+          error?.message?.includes(
+            'androidx.credentials.exceptions.domerrors.NotAllowedError',
+          )
+        ) {
           return false
         }
         console.error('Error registering passkey', error)
+        throw new Error('Register: Error registering passkey')
       }
     }
     return false

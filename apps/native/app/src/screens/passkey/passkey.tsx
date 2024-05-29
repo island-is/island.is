@@ -1,7 +1,13 @@
 import { Button, Typography, NavigationBarSheet } from '@ui'
 import React, { useEffect, useState } from 'react'
 import { useIntl, FormattedMessage } from 'react-intl'
-import { View, Image, SafeAreaView, ActivityIndicator } from 'react-native'
+import {
+  View,
+  Image,
+  SafeAreaView,
+  ActivityIndicator,
+  Alert,
+} from 'react-native'
 import styled, { useTheme } from 'styled-components/native'
 import {
   Navigation,
@@ -172,7 +178,21 @@ export const PasskeyScreen: NavigationFunctionComponent<{
                 }
               } catch (error) {
                 setIsLoading(false)
-                // If we get an error we fail silently - close the modal and open the browser
+                if (
+                  error instanceof Error &&
+                  error.message.startsWith('Register')
+                ) {
+                  // If register errors we show an alert and stay on the screen
+                  Alert.alert(
+                    intl.formatMessage({ id: 'passkeys.errorRegistering' }),
+                    intl.formatMessage({
+                      id: 'passkeys.errorRegisteringMessage',
+                    }),
+                  )
+                  return
+                }
+
+                // If authenticate fails we fail silently - close the modal and open the browser
                 Navigation.dismissModal(componentId)
                 url && openNativeBrowser(url, parentComponentId)
               }

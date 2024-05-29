@@ -544,4 +544,6 @@ export const en: TranslatedMessages = {
     'Do you want to create a passkey to sign in automatically with the app?',
   'passkeys.createButton': 'Create a passkey',
   'passkeys.skipButton': 'Skip',
+  'passkeys.errorRegistering': 'Error',
+  'passkeys.errorRegisteringMessage': 'Could not create a passkey',
 }
