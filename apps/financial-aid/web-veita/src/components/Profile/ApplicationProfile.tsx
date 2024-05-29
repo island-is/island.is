@@ -1,4 +1,4 @@
-import React, { useState, useMemo } from 'react'
+import React, { useState, useMemo, useContext } from 'react'
 import cn from 'classnames'
 import format from 'date-fns/format'
 
@@ -42,6 +42,7 @@ import {
 import { TaxBreakdown } from '@island.is/financial-aid/shared/components'
 
 import * as styles from './Profile.css'
+import { AdminContext } from '../AdminProvider/AdminProvider'
 
 interface ApplicationProps {
   application: Application
@@ -63,6 +64,8 @@ const ApplicationProfile = ({
   isPrint = false,
   applicationMunicipality,
 }: ApplicationProps) => {
+  const { admin } = useContext(AdminContext)
+
   const [isStateModalVisible, setStateModalVisible] = useState(false)
   const [appliedMonthModalVisible, setAppliedMonthModalVisible] =
     useState(false)
@@ -281,8 +284,11 @@ const ApplicationProfile = ({
 
         {!isPrint && (
           <CommentSection
+            applicationId={application.id}
             className={`contentUp delay-125 ${styles.widthAlmostFull}`}
             setApplication={setApplication}
+            adminNationalId={admin?.nationalId}
+            adminName={admin?.name}
           />
         )}
 
@@ -338,6 +344,10 @@ const ApplicationProfile = ({
         }}
         appliedDate={application.applied}
         createdDate={application.created}
+        applicationId={application.id}
+        setApplication={setApplication}
+        adminNationalId={admin?.nationalId}
+        adminName={admin?.name}
       />
     </>
   )

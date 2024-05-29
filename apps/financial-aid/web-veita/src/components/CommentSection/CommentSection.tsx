@@ -1,54 +1,48 @@
-import React, { useContext, useState } from 'react'
-
-import { useRouter } from 'next/router'
+import React, { useState } from 'react'
 
 import { Box, Input, Button } from '@island.is/island-ui/core'
 
-import { useMutation } from '@apollo/client'
-import { ApplicationEventMutation } from '@island.is/financial-aid-web/veita/graphql/sharedGql'
 import {
   Application,
   ApplicationEventType,
 } from '@island.is/financial-aid/shared/lib'
-import { AdminContext } from '../AdminProvider/AdminProvider'
 import AnimateHeight from 'react-animate-height'
+import { useApplicationEvent } from '../../utils/useApplicationEvent'
 
 interface Props {
-  className?: string
+  applicationId: string
   setApplication: React.Dispatch<React.SetStateAction<Application | undefined>>
+  className?: string
+  adminNationalId?: string
+  adminName?: string
 }
 
-const CommentSection = ({ className, setApplication }: Props) => {
-  const router = useRouter()
-
-  const { admin } = useContext(AdminContext)
+const CommentSection = ({
+  className,
+  setApplication,
+  applicationId,
+  adminNationalId,
+  adminName,
+}: Props) => {
   const [showInput, setShowInput] = useState<boolean>(false)
   const [comment, setComment] = useState<string>()
 
-  const [
-    createApplicationEventMutation,
-    { loading: isCreatingApplicationEvent },
-  ] = useMutation(ApplicationEventMutation)
+  const { isCreatingApplicationEvent, creatApplicationEvent } =
+    useApplicationEvent()
 
-  const saveStaffComment = async (staffComment: string | undefined) => {
-    if (staffComment) {
-      const { data } = await createApplicationEventMutation({
-        variables: {
-          input: {
-            applicationId: router.query.id,
-            comment: staffComment,
-            eventType: ApplicationEventType.STAFFCOMMENT,
-            staffNationalId: admin?.nationalId,
-            staffName: admin?.name,
-          },
-        },
-      })
+  const onClickComment = async () => {
+    const updateApplication = await creatApplicationEvent(
+      applicationId,
+      ApplicationEventType.STAFFCOMMENT,
+      adminNationalId,
+      adminName,
+      comment,
+    )
 
-      if (data) {
-        setApplication(data.createApplicationEvent)
-        setComment('')
-        setShowInput(false)
-      }
+    if (updateApplication) {
+      setApplication(updateApplication)
+      setComment('')
+      setShowInput(false)
     }
   }
 
@@ -84,9 +78,7 @@ const CommentSection = ({ className, setApplication }: Props) => {
             icon="checkmark"
             size="small"
             iconType="outline"
-            onClick={() => {
-              saveStaffComment(comment)
-            }}
+            onClick={onClickComment}
             disabled={isCreatingApplicationEvent}
           >
             Vista athugasemd

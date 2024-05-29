@@ -1,4 +1,4 @@
-import React from 'react'
+import React, { useState } from 'react'
 import { ModalBase, Text, Box } from '@island.is/island-ui/core'
 import format from 'date-fns/format'
 
@@ -8,7 +8,13 @@ import cn from 'classnames'
 
 import * as modalStyles from '../StateModal/StateModal.css'
 
-import { getMonth } from '@island.is/financial-aid/shared/lib'
+import {
+  Application,
+  ApplicationEventType,
+  getMonth,
+} from '@island.is/financial-aid/shared/lib'
+import { useApplicationEvent } from '../../utils/useApplicationEvent'
+import { useApplicationState } from '../../utils/useApplicationState'
 
 interface Props {
   headline: string
@@ -16,6 +22,8 @@ interface Props {
   onVisibilityChange: React.Dispatch<React.SetStateAction<boolean>>
   appliedDate: string
   createdDate: string
+  applicationId: string
+  setApplication: React.Dispatch<React.SetStateAction<Application | undefined>>
 }
 
 const AppliedMonthModal = ({
@@ -24,10 +32,15 @@ const AppliedMonthModal = ({
   onVisibilityChange,
   appliedDate,
   createdDate,
+  applicationId,
+  setApplication,
 }: Props) => {
   const closeModal = (): void => {
     onVisibilityChange(false)
   }
+  const currentAppliedMonth = new Date(appliedDate).getMonth()
+
+  const [error, setError] = useState<boolean>(false)
 
   const getSurroundingMonths = (createdDate: string): Date[] => {
     const date = new Date(createdDate)
@@ -47,6 +60,28 @@ const AppliedMonthModal = ({
     const nextMonth = new Date(year, month + 1)
 
     return [prevMonth2, prevMonth1, date, nextMonth]
+  }
+
+  const updateApplication = useApplicationState()
+
+  const onClickComment = async (newDate: Date) => {
+    await updateApplication(
+      applicationId,
+      ApplicationEventType.DATECHANGED,
+      undefined,
+      newDate,
+      undefined,
+      `Tímabilið var breytt frá ${getMonth(currentAppliedMonth)} í ${getMonth(
+        new Date(newDate).getMonth(),
+      )}`,
+    )
+      .then((updatedApplication) => {
+        setApplication(updatedApplication)
+        onVisibilityChange(false)
+      })
+      .catch(() => {
+        setError(true)
+      })
   }
 
   return (
@@ -78,10 +113,9 @@ const AppliedMonthModal = ({
 
           <Box padding={4}>
             <Box>
-              {getSurroundingMonths(createdDate).map((el) => {
-                const date = new Date(el)
-                const isActive =
-                  date.getMonth() === new Date(appliedDate).getMonth()
+              {getSurroundingMonths(createdDate).map((surroundingMonth) => {
+                const date = new Date(surroundingMonth)
+                const isActive = date.getMonth() === currentAppliedMonth
 
                 return (
                   <button
@@ -91,15 +125,23 @@ const AppliedMonthModal = ({
                       [`${modalButtonStyles.statusOptions}`]: true,
                       [`${modalButtonStyles.activeState}`]: isActive,
                     })}
-                    onClick={(e) => {
-                      //TODO here update application and add application event
-                    }}
+                    onClick={() => onClickComment(surroundingMonth)}
                   >
                     {getMonth(date.getMonth()) + format(date, ' y')}
                   </button>
                 )
               })}
             </Box>
+            <div
+              className={cn({
+                [`errorMessage`]: true,
+                [`showErrorMessage`]: error,
+              })}
+            >
+              <Text color="red600" fontWeight="semiBold" variant="small">
+                Eitthvað misstókst, vinsamlegast reyndu aftur síðar
+              </Text>
+            </div>
           </Box>
         </Box>
       </Box>
