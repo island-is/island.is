@@ -19,10 +19,14 @@ import {
   BifrostFerillLocale,
   HolarFerillLocale,
   HIFerillLocale,
+  LHIApi,
+  LHIFerillLocale,
+  LHILocale,
+  LHITranscriptLocale,
 } from '../clients'
 
 export interface UniversityDto {
-  api: LbhiApi | UnakApi | HolarApi | BifrostApi | HIApi
+  api: LbhiApi | UnakApi | HolarApi | BifrostApi | HIApi | LHIApi
   locales: {
     studentLocale:
       | typeof UnakLocale
@@ -30,17 +34,20 @@ export interface UniversityDto {
       | typeof BifrostLocale
       | typeof HolarLocale
       | typeof HILocale
+      | typeof LHILocale
     studentTranscriptLocale:
       | typeof UnakTranscriptLocale
       | typeof LbhiTranscriptLocale
       | typeof BifrostTranscriptLocale
       | typeof HolarTranscriptLocale
       | typeof HITranscriptLocale
+      | typeof LHITranscriptLocale
     studentTrackLocale:
       | typeof UnakFerillLocale
       | typeof LbhiFerillLocale
       | typeof BifrostFerillLocale
       | typeof HolarFerillLocale
       | typeof HIFerillLocale
+      | typeof LHIFerillLocale
   }
 }
