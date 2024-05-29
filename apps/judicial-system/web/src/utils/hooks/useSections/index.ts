@@ -15,6 +15,7 @@ import {
   isInvestigationCase,
   isProsecutionUser,
   isRestrictionCase,
+  isTrafficViolationCase,
 } from '@island.is/judicial-system/types'
 import { core, sections } from '@island.is/judicial-system-web/messages'
 import { RouteSection } from '@island.is/judicial-system-web/src/components/PageLayout/PageLayout'
@@ -30,10 +31,7 @@ import {
 import { TempCase as Case } from '@island.is/judicial-system-web/src/types'
 
 import { stepValidations, stepValidationsType } from '../../formHelper'
-import {
-  isTrafficViolationIndictment,
-  shouldUseAppealWithdrawnRoutes,
-} from '../../stepHelper'
+import { shouldUseAppealWithdrawnRoutes } from '../../stepHelper'
 
 const validateFormStepper = (
   isActiveSubSectionValid: boolean,
@@ -401,7 +399,7 @@ const useSections = (
     const { id, type, state } = workingCase
     const caseHasBeenReceivedByCourt =
       state === CaseState.RECEIVED || state === CaseState.MAIN_HEARING
-    const isTrafficViolation = isTrafficViolationIndictment(workingCase)
+    const isTrafficViolation = isTrafficViolationCase(workingCase)
 
     return {
       name: formatMessage(sections.indictmentCaseProsecutorSection.title),
