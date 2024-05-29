@@ -28,8 +28,6 @@ First you need to run this (maybe only once?):
 
 Then:
 
-`kubectl port-forward svc/socat-soffia 8443:443 -n socat`
-
 Fetch all necessary secrets
 
 ### Running locally

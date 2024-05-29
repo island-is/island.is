@@ -12,6 +12,6 @@ export class SendNotificationDto {
 
   @IsOptional()
   @IsBoolean()
-  @ApiPropertyOptional()
+  @ApiPropertyOptional({ type: Boolean })
   readonly eventOnly?: boolean
 }

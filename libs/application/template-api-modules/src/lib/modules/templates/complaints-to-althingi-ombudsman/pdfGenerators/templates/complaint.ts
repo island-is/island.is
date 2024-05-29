@@ -22,7 +22,7 @@ export async function generateComplaintPdf(application: Application) {
     buffers.push(buffer)
   })
 
-  addHeader('Kvörtun til Umboðsmans Alþingis', doc)
+  addHeader('Kvörtun til umboðsmanns Alþingis', doc)
 
   addValue(
     `${answers.applicant.name}, ${formatNationalId(

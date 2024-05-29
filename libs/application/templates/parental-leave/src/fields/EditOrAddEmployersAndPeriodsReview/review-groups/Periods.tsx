@@ -39,13 +39,7 @@ const Periods: FC<React.PropsWithChildren<ReviewScreenProps>> = ({
           return (
             <DataValue
               key={`SummaryTimeline-${index}`}
-              label={formatMessage(
-                parentalLeaveFormMessages.reviewScreen.period,
-                {
-                  index: index + 1,
-                  ratio: period.ratio,
-                },
-              )}
+              label={period.title}
               value={value}
             />
           )

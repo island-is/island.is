@@ -323,7 +323,7 @@ export const NewPrimarySchoolForm: Form = buildForm({
                     newPrimarySchoolMessages.childrenNParents
                       .relativesDeleteRelative,
                   marginTop: 0,
-                  maxValues: 6,
+                  maxRows: 6,
                   fields: {
                     fullName: {
                       component: 'input',
