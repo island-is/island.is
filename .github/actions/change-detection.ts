@@ -160,18 +160,20 @@ export async function findBestGoodRefPR(
   }
 
   const baseCommits = await getCommits(git, prBranch, baseBranch, 'HEAD~1')
-
+  log(`Base commits ${baseCommits.join(' ')}`)
   const baseGoodBuilds = await githubApi.getLastGoodBranchBuildRun(
     baseBranch,
     'push',
     baseCommits,
   )
   if (baseGoodBuilds) {
+    log(`Found Base good builds ${JSON.stringify(baseGoodBuilds)}`)
     let affectedComponents = await githubApi.getChangedComponents(
       git,
       lastCommitSha,
       baseGoodBuilds.head_commit,
     )
+    log(`Found affected components ${affectedComponents}`)
     prBuilds.push({
       distance: diffWeight(affectedComponents),
       hash: baseGoodBuilds.head_commit,
@@ -180,7 +182,9 @@ export async function findBestGoodRefPR(
       ref: baseGoodBuilds.head_commit,
     })
   }
+  log(`pr build ${JSON.stringify(prBuilds)}`)
   prBuilds.sort((a, b) => (a.distance > b.distance ? 1 : -1))
+  
   if (prBuilds.length > 0)
     return {
       sha: prBuilds[0].hash,

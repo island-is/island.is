@@ -26193,17 +26193,20 @@ function findBestGoodRefPR(diffWeight, git, githubApi, headBranch, baseBranch, p
       }
     }
     const baseCommits = yield getCommits(git, prBranch, baseBranch, "HEAD~1");
+    log(`Base commits ${baseCommits.join(" ")}`);
     const baseGoodBuilds = yield githubApi.getLastGoodBranchBuildRun(
       baseBranch,
       "push",
       baseCommits
     );
     if (baseGoodBuilds) {
+      log(`Found Base good builds ${JSON.stringify(baseGoodBuilds)}`);
       let affectedComponents = yield githubApi.getChangedComponents(
         git,
         lastCommitSha,
         baseGoodBuilds.head_commit
       );
+      log(`Found affected components ${affectedComponents}`);
       prBuilds.push({
         distance: diffWeight(affectedComponents),
         hash: baseGoodBuilds.head_commit,
@@ -26212,6 +26215,7 @@ function findBestGoodRefPR(diffWeight, git, githubApi, headBranch, baseBranch, p
         ref: baseGoodBuilds.head_commit
       });
     }
+    log(`pr build ${JSON.stringify(prBuilds)}`);
     prBuilds.sort((a, b) => a.distance > b.distance ? 1 : -1);
     if (prBuilds.length > 0)
       return {
@@ -26322,7 +26326,7 @@ var SimpleGit = class {
   const runner = new LocalRunner(new import_action.Octokit());
   let git = new SimpleGit(process.env.REPO_ROOT, process.env.SHELL);
   const diffWeight = (s) => s.length;
-  const rev = process.env.GITHUB_EVENT_NAME === "pull_request" ? yield findBestGoodRefPR(
+  const rev = process.env.TEST_EVERYTHING ? "rebuild" : process.env.GITHUB_EVENT_NAME === "pull_request" ? yield findBestGoodRefPR(
     diffWeight,
     git,
     runner,
