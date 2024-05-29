@@ -24,7 +24,7 @@ import {
 } from '@island.is/judicial-system-web/src/components'
 import { CaseState } from '@island.is/judicial-system-web/src/graphql/schema'
 
-import { ReviewDecision } from '../../PublicProsecutor/Indictments/ReviewDecision/ReviewDecision'
+import { ReviewDecision } from '../../PublicProsecutor/components/ReviewDecision/ReviewDecision'
 import { strings } from './IndictmentOverview.strings'
 
 const IndictmentOverview = () => {

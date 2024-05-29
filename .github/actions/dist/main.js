@@ -26318,7 +26318,12 @@ var SimpleGit = class {
 };
 
 // main.ts
+var FULL_REBUILD_NEEDED = "full_rebuild_needed";
 (() => __async(exports, null, function* () {
+  if (!!process.env.NX_AFFECTED_ALL) {
+    console.log(FULL_REBUILD_NEEDED);
+    return;
+  }
   const runner = new LocalRunner(new import_action.Octokit());
   let git = new SimpleGit(process.env.REPO_ROOT, process.env.SHELL);
   const diffWeight = (s) => s.length;
@@ -26339,12 +26344,12 @@ var SimpleGit = class {
     process.env.WORKFLOW_ID
   );
   if (rev === "rebuild") {
-    console.log(`Full rebuild needed`);
-  } else {
-    rev.branch = rev.branch.replace(/'/g, "");
-    rev.ref = rev.ref.replace(/'/g, "");
-    console.log(JSON.stringify(rev));
+    console.log(FULL_REBUILD_NEEDED);
+    return;
   }
+  rev.branch = rev.branch.replace(/'/g, "");
+  rev.ref = rev.ref.replace(/'/g, "");
+  console.log(JSON.stringify(rev));
 }))();
 /*!
  * is-plain-object <https://github.com/jonschlinkert/is-plain-object>

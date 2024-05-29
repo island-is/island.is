@@ -500,6 +500,8 @@ export type TableRepeaterField = BaseField & {
   saveItemButtonText?: StaticText
   getStaticTableData?: (application: Application) => Record<string, string>[]
   removeButtonTooltipText?: StaticText
+  editButtonTooltipText?: StaticText
+  editField?: boolean
   marginTop?: ResponsiveProp<Space>
   marginBottom?: ResponsiveProp<Space>
   titleVariant?: TitleVariants

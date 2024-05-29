@@ -1,5 +1,5 @@
-import type {
-  CreationOptional,
+import {
+  type CreationOptional,
   InferAttributes,
   InferCreationAttributes,
 } from 'sequelize'
@@ -9,13 +9,21 @@ import {
   CreatedAt,
   DataType,
   ForeignKey,
+  HasMany,
   Model,
   PrimaryKey,
   Table,
   UpdatedAt,
+  BelongsToMany,
 } from 'sequelize-typescript'
 
 import { DelegationProviderModel } from './delegation-provider.model'
+import { PersonalRepresentativeDelegationTypeModel } from '../../personal-representative/models/personal-representative-delegation-type.model'
+import { DelegationTypeDto } from '../dto/delegation-type.dto'
+import { ClientDelegationType } from '../../clients/models/client-delegation-type.model'
+import { Client } from '../../clients/models/client.model'
+import { ApiScopeDelegationType } from '../../resources/models/api-scope-delegation-type.model'
+import { ApiScope } from '../../resources/models/api-scope.model'
 
 @Table({
   tableName: 'delegation_type',
@@ -42,7 +50,7 @@ export class DelegationTypeModel extends Model<
   providerId!: string
 
   @BelongsTo(() => DelegationProviderModel)
-  provider!: DelegationProviderModel
+  provider!: CreationOptional<DelegationProviderModel>
 
   @Column({
     type: DataType.STRING,
@@ -56,9 +64,27 @@ export class DelegationTypeModel extends Model<
   })
   description!: string
 
+  @BelongsToMany(() => Client, () => ClientDelegationType)
+  clients!: CreationOptional<Client[]>
+
+  @BelongsToMany(() => ApiScope, () => ApiScopeDelegationType)
+  apiScopes!: CreationOptional<ApiScope[]>
+
   @CreatedAt
   readonly created!: CreationOptional<Date>
 
   @UpdatedAt
   readonly modified?: Date
+
+  @HasMany(() => PersonalRepresentativeDelegationTypeModel)
+  prDelegationType?: PersonalRepresentativeDelegationTypeModel[]
+
+  toDTO(): DelegationTypeDto {
+    return {
+      id: this.id,
+      description: this.description,
+      providerId: this.providerId,
+      name: this.name,
+    }
+  }
 }
