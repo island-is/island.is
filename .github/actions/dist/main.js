@@ -26132,12 +26132,12 @@ function checkAsyncFunctions() {
     console.error("Async functions still running:", Array.from(activeAsyncResources.entries()).map(([id, { type, stackTrace }]) => ({
       asyncId: id,
       type,
-      stackTrace: stackTrace.slice(1, 5)
+      stackTrace: JSON.stringify(stackTrace.slice(1, 5))
     })));
     process.exit(1);
   }
 }
-setTimeout(checkAsyncFunctions, 10 * 60 * 1e3);
+setTimeout(checkAsyncFunctions, 5 * 60 * 1e3);
 function exampleAsyncFunction() {
   return __async(this, null, function* () {
     return new Promise((resolve) => {

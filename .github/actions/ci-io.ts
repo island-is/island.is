@@ -396,14 +396,14 @@ function checkAsyncFunctions() {
         console.error('Async functions still running:', Array.from(activeAsyncResources.entries()).map(([id, { type, stackTrace }]) => ({
             asyncId: id,
             type,
-            stackTrace: stackTrace.slice(1, 5), // Limit stack trace output for readability
+            stackTrace: JSON.stringify(stackTrace.slice(1, 5)), // Limit stack trace output for readability
         })));
         process.exit(1);
     }
 }
 
 // Set a timer to run the check after 10 minutes
-setTimeout(checkAsyncFunctions, 10 * 60 * 1000);
+setTimeout(checkAsyncFunctions, 5 * 60 * 1000);
 
 // Example async function to demonstrate the functionality
 async function exampleAsyncFunction() {
