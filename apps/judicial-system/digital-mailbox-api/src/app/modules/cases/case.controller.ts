@@ -17,6 +17,14 @@ export class AppController {
     @Inject(LOGGER_PROVIDER) private readonly logger: Logger,
   ) {}
 
+  @Get('test')
+  @ApiCreatedResponse({ type: String, description: 'Test connection' })
+  async test(@CurrentUser() user: User): Promise<string> {
+    this.logger.debug('Testing connection')
+
+    return this.appService.testConnection(user.nationalId)
+  }
+
   @Get('cases')
   @ApiCreatedResponse({ type: String, description: 'Get all cases' })
   async getAllCases(

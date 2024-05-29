@@ -575,4 +575,12 @@ export class SyslumennService {
       .map(mapMasterLicence)
       .filter((licence) => Boolean(licence.name) && Boolean(licence.profession))
   }
+
+  async checkCriminalRecord(nationalId: string) {
+    const { id, api } = await this.createApi()
+    return await api.kannaSakavottordGet({
+      audkenni: id,
+      kennitala: nationalId,
+    })
+  }
 }
