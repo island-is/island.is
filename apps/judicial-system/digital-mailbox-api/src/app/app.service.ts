@@ -166,7 +166,10 @@ export class AppService {
       const response = await res.json()
 
       if (!res.ok) {
-        throw new BadGatewayException(response?.detail || response)
+        throw new BadGatewayException(
+          response?.detail ||
+            'Unexpected error occurred while fetching all cases',
+        )
       }
 
       return this.format(response, lang)
@@ -196,7 +199,10 @@ export class AppService {
       const response = await res.json()
 
       if (!res.ok) {
-        throw new BadGatewayException(response?.detail || response)
+        throw new BadGatewayException(
+          response?.detail ||
+            'Unexpected error occurred while fetching case by ID',
+        )
       }
 
       return this.formatCase(response, lang)
