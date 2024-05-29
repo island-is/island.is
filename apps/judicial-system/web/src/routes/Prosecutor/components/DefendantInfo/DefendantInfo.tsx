@@ -110,7 +110,9 @@ const DefendantInfo: React.FC<React.PropsWithChildren<Props>> = (props) => {
         address: personData.items[0].permanent_address.street?.nominative,
       })
     }
-  }, [defendant.id, onChange, personData, personError, workingCase.id])
+    // We only want this to run when a lookup is done in the national registry.
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [personData, personError])
 
   useEffect(() => {
     if (businessError || (businessData && businessData.items?.length === 0)) {
@@ -133,7 +135,9 @@ const DefendantInfo: React.FC<React.PropsWithChildren<Props>> = (props) => {
         citizenship: undefined,
       })
     }
-  }, [businessData, businessError, defendant.id, onChange, workingCase.id])
+    // We only want this to run when a lookup is done in the national registry.
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [businessData, businessError])
 
   return (
     <BlueBox>
