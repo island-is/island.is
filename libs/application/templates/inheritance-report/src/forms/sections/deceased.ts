@@ -6,6 +6,7 @@ import {
   buildMultiField,
   buildRadioField,
   buildSection,
+  buildTextField,
   getValueViaPath,
 } from '@island.is/application/core'
 import { m } from '../../lib/messages'
@@ -96,6 +97,32 @@ export const deceased = buildSection({
             { value: YES, label: m.yes },
             { value: NO, label: m.no },
           ],
+        }),
+        buildDescriptionField({
+          id: 'space4',
+          space: 'gutter',
+          title: '',
+        }),
+        buildRadioField({
+          id: 'test',
+          title: 'Er verið að skipta dánarbúi að fullu eða að hluta?',
+          largeButtons: false,
+          backgroundColor: 'white',
+          width: 'half',
+          condition: (answers) =>
+            getValueViaPath(answers, 'deceasedWasMarried') === YES,
+          options: [
+            { value: 'part', label: 'Að hluta' },
+            { value: 'full', label: 'Að fullu' },
+          ],
+        }),
+        buildTextField({
+          id: 'deceasedShareTest',
+          title: 'Hlutfall séreignar',
+          width: 'half',
+          placeholder: '50%',
+          suffix: '%',
+          condition: (answers) => getValueViaPath(answers, 'test') === 'part',
         }),
       ],
     }),

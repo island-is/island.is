@@ -291,8 +291,12 @@ export const AdditionalHeir = ({
                         ? error[index][customField.id]
                         : undefined
                     }
+                    hasError={
+                      error && error[index]
+                        ? !!error[index][customField.id]
+                        : false
+                    }
                     required
-                    hasError={false}
                   />
                 </GridColumn>
               ) : customField.id === 'taxFreeInheritance' &&
