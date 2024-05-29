@@ -10,6 +10,7 @@ import {
   Amount,
   calculateAcceptedAidFinalAmount,
   calculateTaxOfAmount,
+  ChildrenAid,
   FamilyStatus,
   HomeCircumstances,
   Municipality,
@@ -27,11 +28,13 @@ interface Props {
   homeCircumstances: HomeCircumstances
   familyStatus: FamilyStatus
   applicationMunicipality: Municipality
+  hasApplicantChildren: boolean
 }
 
 interface calculationsState {
   amount: number
   income?: number
+  childrenAidAmount: number
   personalTaxCreditPercentage?: number
   secondPersonalTaxCredit: number
   showSecondPersonalTaxCredit: boolean
@@ -48,9 +51,9 @@ const AcceptModal = ({
   homeCircumstances,
   familyStatus,
   applicationMunicipality,
+  hasApplicantChildren,
 }: Props) => {
   const router = useRouter()
-
   const maximumInputLength = 6
 
   const aidAmount = useMemo(() => {
@@ -78,6 +81,7 @@ const AcceptModal = ({
 
   const [state, setState] = useState<calculationsState>({
     amount: aidAmount,
+    childrenAidAmount: 0,
     income: undefined,
     personalTaxCreditPercentage: undefined,
     secondPersonalTaxCredit: 0,
@@ -96,13 +100,19 @@ const AcceptModal = ({
   const checkingValue = (element?: number) => (element ? element : 0)
 
   const finalAmount = calculateAcceptedAidFinalAmount(
-    state.amount - checkingValue(state.income) - sumValues,
+    state.amount +
+      state.childrenAidAmount -
+      checkingValue(state.income) -
+      sumValues,
     checkingValue(state.personalTaxCreditPercentage),
     state.secondPersonalTaxCredit,
   )
 
   const taxAmount = calculateTaxOfAmount(
-    (state.amount || 0) - checkingValue(state.income) - sumValues,
+    (state.amount || 0) +
+      (state.childrenAidAmount || 0) -
+      checkingValue(state.income) -
+      sumValues,
   )
 
   const areRequiredFieldsFilled =
@@ -121,6 +131,7 @@ const AcceptModal = ({
       {
         applicationId: router.query.id as string,
         aidAmount: state.amount,
+        childrenAidAmount: state.childrenAidAmount,
         income: state.income,
         personalTaxCredit: state.personalTaxCreditPercentage ?? 0,
         spousePersonalTaxCredit: state.secondPersonalTaxCredit,
@@ -155,6 +166,27 @@ const AcceptModal = ({
           maximumInputLength={maximumInputLength}
         />
       </Box>
+
+      {applicationMunicipality.childrenAid === ChildrenAid.APPLICANT &&
+        hasApplicantChildren && (
+          <Box marginBottom={3}>
+            <NumberInput
+              label="Styrkur vegna barna"
+              placeholder="Sláðu inn upphæð"
+              id="childrenAidAmountInput"
+              name="childrenAidAmountInput"
+              value={state.childrenAidAmount.toString()}
+              onUpdate={(input) => {
+                setState({
+                  ...state,
+                  childrenAidAmount: input,
+                  hasError: false,
+                })
+              }}
+              maximumInputLength={maximumInputLength}
+            />
+          </Box>
+        )}
 
       <Box marginBottom={3}>
         <NumberInput
