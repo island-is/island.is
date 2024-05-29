@@ -80,7 +80,6 @@ describe('ApplicationController - Create', () => {
 
   describe('database query', () => {
     let mockCreate: jest.Mock
-    let mockApplied: jest.Mock
     let mockFindOne: jest.Mock
 
     const user: User = {
@@ -140,6 +139,7 @@ describe('ApplicationController - Create', () => {
       expect(mockCreate).toHaveBeenCalledWith({
         nationalId: user.nationalId,
         ...application,
+        applied: mockCreate,
       })
     })
 
