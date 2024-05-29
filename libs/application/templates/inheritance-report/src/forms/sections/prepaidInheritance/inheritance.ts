@@ -60,8 +60,7 @@ export const inheritance = buildSection({
           options: [
             {
               value: YES,
-              label: 'Annað',
-              subLabel: 'Til dæmis bla bla bla',
+              label: m.otherAssetsTitle,
             },
           ],
         }),

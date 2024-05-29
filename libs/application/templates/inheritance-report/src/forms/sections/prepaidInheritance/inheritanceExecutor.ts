@@ -31,12 +31,12 @@ export const inheritanceExecutor = buildSection({
         'Lorem ipsum foo bar beep boop meep morp lorem ipsum foo bar beep boop meep morp lorem ipsum foo bar beep boop meep morp.',
       children: [
         buildDescriptionField({
-          id: 'executor1',
+          id: 'executors.executor',
           title: 'Arfláti 1',
           titleVariant: 'h3',
         }),
         buildTextField({
-          id: 'executorName',
+          id: 'executors.executor.name',
           title: m.name,
           defaultValue: ({ externalData }: Application) =>
             (externalData.nationalRegistry?.data as NationalRegistryUser)
@@ -45,7 +45,7 @@ export const inheritanceExecutor = buildSection({
           readOnly: true,
         }),
         buildTextField({
-          id: 'executorNationalId',
+          id: 'executors.executor.nationalId',
           title: m.nationalId,
           defaultValue: ({ externalData }: Application) =>
             formatNationalId(
@@ -56,10 +56,11 @@ export const inheritanceExecutor = buildSection({
           readOnly: true,
         }),
         buildTextField({
-          id: 'executorPhone',
+          id: 'executors.executor.phone',
           title: m.phone,
           width: 'half',
           format: '###-####',
+          required: true,
           defaultValue: (application: Application) => {
             const phone =
               (
@@ -72,9 +73,10 @@ export const inheritanceExecutor = buildSection({
           },
         }),
         buildTextField({
-          id: 'executorEmail',
+          id: 'executors.executor.email',
           title: m.email,
           width: 'half',
+          required: true,
           defaultValue: ({ externalData }: Application) => {
             const data = externalData.userProfile?.data as UserProfile
             return data?.email
@@ -82,7 +84,7 @@ export const inheritanceExecutor = buildSection({
         }),
         //Todo: ef hjúskaparstaða er married
         buildCheckboxField({
-          id: 'skipSpouseExecutor',
+          id: 'executors.skipSpouse',
           title: '',
           large: false,
           backgroundColor: 'white',
@@ -96,25 +98,25 @@ export const inheritanceExecutor = buildSection({
           condition: (_, externalData) => isApplicantMarried(externalData),
         }),
         buildDescriptionField({
-          id: 'executorSpouse',
+          id: 'executors.spouse',
           title: 'Arfláti 2',
           titleVariant: 'h3',
           space: 'containerGutter',
           condition: (answers) =>
-            !(answers.skipSpouseExecutor as Array<string>)?.length,
+            !((answers.executors as any)?.skipSpouse as Array<string>)?.length,
         }),
         buildTextField({
-          id: 'executorSpouseName',
+          id: 'executors.spouse.name',
           title: m.name,
           defaultValue: ({ externalData }: Application) =>
             getSpouseFromExternalData(externalData)?.fullName,
           width: 'half',
           readOnly: true,
           condition: (answers) =>
-            !(answers.skipSpouseExecutor as Array<string>)?.length,
+            !((answers.executors as any)?.skipSpouse as Array<string>)?.length,
         }),
         buildTextField({
-          id: 'executorSpouseNationalId',
+          id: 'executors.spouse.nationalId',
           title: m.nationalId,
           defaultValue: ({ externalData }: Application) =>
             formatNationalId(
@@ -123,22 +125,24 @@ export const inheritanceExecutor = buildSection({
           width: 'half',
           readOnly: true,
           condition: (answers) =>
-            !(answers.skipSpouseExecutor as Array<string>)?.length,
+            !((answers.executors as any)?.skipSpouse as Array<string>)?.length,
         }),
         buildTextField({
-          id: 'executorSpouseEmail',
+          id: 'executors.spouse.email',
           title: m.email,
           width: 'half',
           variant: 'email',
+          required: true,
           condition: (answers) =>
-            !(answers.skipSpouseExecutor as Array<string>)?.length,
+            !((answers.executors as any)?.skipSpouse as Array<string>)?.length,
         }),
         buildPhoneField({
-          id: 'executorSpousePhone',
+          id: 'executors.spouse.phone',
           title: m.phone,
           width: 'half',
+          required: true,
           condition: (answers) =>
-            !(answers.skipSpouseExecutor as Array<string>)?.length,
+            !((answers.executors as any)?.skipSpouse as Array<string>)?.length,
         }),
       ],
     }),

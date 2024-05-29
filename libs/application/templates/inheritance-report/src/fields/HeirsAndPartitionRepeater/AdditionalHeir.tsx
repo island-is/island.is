@@ -21,7 +21,11 @@ import { GenericFormField, YES } from '@island.is/application/types'
 import { hasYes } from '@island.is/application/core'
 import { Fragment, useEffect, useMemo } from 'react'
 import { EstateMember } from '../../types'
-import { ErrorValue, PREPAID_INHERITANCE } from '../../lib/constants'
+import {
+  ErrorValue,
+  PREPAID_INHERITANCE,
+  PrePaidHeirsRelationTypes,
+} from '../../lib/constants'
 import { LookupPerson } from '../LookupPerson'
 import { HeirsAndPartitionRepeaterProps } from './types'
 import ShareInput from '../../components/ShareInput'
@@ -71,7 +75,10 @@ export const AdditionalHeir = ({
   const values = getValues()
 
   const currentHeir = useMemo(
-    () => values?.heirs?.data?.[index],
+    () =>
+      values?.applicationFor === PREPAID_INHERITANCE
+        ? values?.prePaidHeirs?.data?.[index]
+        : values?.heirs?.data?.[index],
     [values, index],
   )
 
@@ -237,7 +244,10 @@ export const AdditionalHeir = ({
       <GridRow>
         {customFields.map((customField: any, customFieldIndex) => {
           const defaultValue = currentHeir?.[customField.id]
-
+          if (customField.id === 'taxFreeInheritance') {
+            console.log(customField)
+            console.log(currentHeir)
+          }
           return (
             <Fragment key={customFieldIndex}>
               {customField?.sectionTitle ? (
@@ -285,7 +295,9 @@ export const AdditionalHeir = ({
                     hasError={false}
                   />
                 </GridColumn>
-              ) : (
+              ) : customField.id === 'taxFreeInheritance' &&
+                currentHeir?.relation !==
+                  PrePaidHeirsRelationTypes.SPOUSE ? null : (
                 <GridColumn span={['1/2']} paddingBottom={2}>
                   <InputController
                     id={`${fieldIndex}.${customField.id}`}

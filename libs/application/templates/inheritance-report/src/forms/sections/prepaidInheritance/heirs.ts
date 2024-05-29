@@ -4,6 +4,7 @@ import {
   buildSection,
 } from '@island.is/application/core'
 import { m } from '../../../lib/messages'
+import { PrePaidHeirsRelationTypes } from '../../../lib/constants'
 
 export const prePaidHeirs = buildSection({
   id: 'prePaidHeirs',
@@ -32,14 +33,20 @@ export const prePaidHeirs = buildSection({
                 id: 'heirsPercentage',
               },
               {
-                title: m.inheritanceAmount,
-                id: 'inheritance',
+                title: m.taxFreeInheritance,
+                id: 'taxFreeInheritance',
                 readOnly: true,
                 currency: true,
               },
               {
                 title: m.taxableInheritance,
                 id: 'taxableInheritance',
+                readOnly: true,
+                currency: true,
+              },
+              {
+                title: m.inheritanceAmount,
+                id: 'inheritance',
                 readOnly: true,
                 currency: true,
               },

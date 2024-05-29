@@ -47,7 +47,7 @@ export const prepaidOverview = buildSection({
         }),
         buildDividerField({}),
         buildDescriptionField({
-          id: 'temp',
+          id: 'temp1',
           title: 'Boop meep',
           titleVariant: 'h3',
           space: 'gutter',
@@ -58,7 +58,7 @@ export const prepaidOverview = buildSection({
           value: 'yes',
         }),
         buildDescriptionField({
-          id: 'space',
+          id: 'space2',
           title: '',
           space: 'gutter',
         }),
@@ -67,7 +67,7 @@ export const prepaidOverview = buildSection({
           value: 'yes',
         }),
         buildDescriptionField({
-          id: 'space2',
+          id: 'space3',
           title: '',
           space: 'gutter',
         }),

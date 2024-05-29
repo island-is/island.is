@@ -1,6 +1,5 @@
-export { EstateOnEntryApi } from './EstateProvider'
-export { MaritalStatusApi } from './MaritalStatusProvider'
 import { defineTemplateApi } from '@island.is/application/types'
+export { MaritalStatusApi } from './MaritalStatusProvider'
 
 export const EstateOnEntryApi = defineTemplateApi({
   action: 'syslumennOnEntry',

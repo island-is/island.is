@@ -448,8 +448,8 @@ export const assets = buildSection({
       id: 'stocks',
       title: m.stocksTitle,
       condition: (answers) => {
-        return (answers as any).applicationFor !== PREPAID_INHERITANCE
-          ? (answers as any).prepaidInheritance?.vehicles[0] === YES
+        return (answers as any).applicationFor === PREPAID_INHERITANCE
+          ? (answers as any).prepaidInheritance?.stocks[0] === YES
           : true
       },
       children: [
@@ -464,7 +464,10 @@ export const assets = buildSection({
             buildDescriptionField({
               id: 'stocksTitle',
               title: m.stocksTitle,
-              description: m.stocksDescription,
+              description: (application) =>
+                application.answers.applicationFor === PREPAID_INHERITANCE
+                  ? m.stocksDescriptionPrePaid
+                  : m.stocksDescription,
               titleVariant: 'h3',
             }),
             buildDescriptionField({
@@ -503,7 +506,10 @@ export const assets = buildSection({
                     required: true,
                   },
                   {
-                    title: m.stocksValue,
+                    title: {
+                      [ESTATE_INHERITANCE]: m.stocksValue,
+                      [PREPAID_INHERITANCE]: m.marketValue,
+                    },
                     id: 'value',
                     color: 'white',
                     readOnly: true,
@@ -543,8 +549,14 @@ export const assets = buildSection({
           children: [
             buildDescriptionField({
               id: 'moneyTitle',
-              title: m.moneyTitle,
-              description: m.moneyDescription,
+              title: (application) =>
+                application.answers.applicationFor === PREPAID_INHERITANCE
+                  ? m.moneyTitlePrePaid
+                  : m.moneyTitle,
+              description: (application) =>
+                application.answers.applicationFor === PREPAID_INHERITANCE
+                  ? m.moneyDescriptionPrePaid
+                  : m.moneyDescription,
               titleVariant: 'h3',
               marginBottom: 2,
             }),

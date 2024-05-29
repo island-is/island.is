@@ -91,6 +91,17 @@ export const expandAnswers = (
 ): InheritanceReportSchema => {
   return {
     applicant: answers.applicant,
+    executors: {
+      executor: {
+        email: '',
+        phone: '',
+      },
+      spouse: {
+        email: '',
+        phone: '',
+      },
+      skipSpouse: undefined,
+    },
     approveExternalData: answers.approveExternalData,
     assets: {
       assetsTotal: answers.assets.assetsTotal ?? 0,

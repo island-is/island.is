@@ -612,6 +612,12 @@ export const m = defineMessages({
     defaultMessage: 'Nafn og kennitala ef um einstakling er að ræða.',
     description: '',
   },
+  stocksDescriptionPrePaid: {
+    id: 'ir.application:stocksDescriptionPrePaid',
+    defaultMessage:
+      'Upplýsingar um nafnverð hlutabréfa má finna í síðasta skattframtali. Upplýsingar um gengi hlutabréfa er hægt að fá hjá bönkum, félaginu sjálfu eða miða við síðasta ársreikning félagsins sem sækja má á heimasíðu Skattsins, www.skatturinn.is/fyrirtaekjaskra',
+    description: '',
+  },
   stocksOrganization: {
     id: 'ir.application:stocksOrganization',
     defaultMessage: 'Útgefandi',
@@ -656,6 +662,11 @@ export const m = defineMessages({
   },
   moneyDescription: {
     id: 'ir.application:moneyDescription',
+    defaultMessage: 'Peningar sem varðveittir eru utan fjármálastofnanna.',
+    description: '',
+  },
+  moneyDescriptionPrePaid: {
+    id: 'ir.application:moneyDescriptionPrePaid',
     defaultMessage: 'Peningar sem varðveittir eru utan fjármálastofnanna.',
     description: '',
   },

@@ -127,6 +127,46 @@ export const inheritanceReportSchema = z.object({
     relation: z.string(),
   }),
 
+  /* prePaid inheritance executor */
+  executors: z
+    .object({
+      skipSpouse: z.array(z.enum([YES])).optional(),
+      executor: z.object({
+        email: z.string().email(),
+        phone: z.string().refine((v) => isValidPhoneNumber(v)),
+      }),
+      spouse: z
+        .object({
+          email: z.string().optional(),
+          phone: z.string().optional(),
+        })
+        .optional(),
+    })
+    .refine(
+      ({ skipSpouse, spouse }) => {
+        if (skipSpouse && skipSpouse[0] !== YES) {
+          return isValidEmail(spouse?.email ?? '')
+        } else {
+          return true
+        }
+      },
+      {
+        path: ['spouse', 'email'],
+      },
+    )
+    .refine(
+      ({ skipSpouse, spouse }) => {
+        if (skipSpouse && skipSpouse[0] !== YES) {
+          return isValidPhoneNumber(spouse?.phone ?? '')
+        } else {
+          return true
+        }
+      },
+      {
+        path: ['spouse', 'phone'],
+      },
+    ),
+
   /* assets */
   assets: z.object({
     realEstate: assetWithShare,
