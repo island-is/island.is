@@ -8,7 +8,7 @@ import cn from 'classnames'
 
 import * as modalStyles from '../StateModal/StateModal.css'
 
-import { Application, getMonth } from '@island.is/financial-aid/shared/lib'
+import { getMonth } from '@island.is/financial-aid/shared/lib'
 
 interface Props {
   headline: string
@@ -32,7 +32,7 @@ const AppliedMonthModal = ({
   const getSurroundingMonths = (createdDate: string): Date[] => {
     const date = new Date(createdDate)
 
-    if (isNaN(date.getTime())) {
+    if (Number.isNaN(date.getTime())) {
       throw new Error('Invalid date')
     }
 
@@ -60,10 +60,7 @@ const AppliedMonthModal = ({
       }}
       className={modalStyles.modalBase}
     >
-      <Box
-        className={modalStyles.closeModalBackground}
-        onClick={closeModal}
-      ></Box>
+      <Box className={modalStyles.closeModalBackground} onClick={closeModal} />
 
       <Box className={modalStyles.modalContainer}>
         <Box
@@ -88,7 +85,7 @@ const AppliedMonthModal = ({
 
                 return (
                   <button
-                    key={'date-' + date}
+                    key={`date-${date}`}
                     disabled={isActive}
                     className={cn({
                       [`${modalButtonStyles.statusOptions}`]: true,
