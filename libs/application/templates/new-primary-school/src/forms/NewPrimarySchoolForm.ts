@@ -446,9 +446,6 @@ export const NewPrimarySchoolForm: Form = buildForm({
                   required: true,
                   defaultValue: null,
                   minDate: () => new Date(),
-                  maxDate: new Date(
-                    new Date().setFullYear(new Date().getFullYear() + 2),
-                  ),
                 }),
               ],
             }),
