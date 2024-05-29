@@ -185,8 +185,9 @@ export async function findBestGoodRefPR(
   }
   log(`pr build ${JSON.stringify(prBuilds)}`)
   prBuilds.sort((a, b) => (a.distance > b.distance ? 1 : -1))
-
+  log(`sort done`)
   if (prBuilds.length > 0) {
+    log(`return message`)
     return {
       sha: prBuilds[0].hash,
       run_number: prBuilds[0].run_nr,
@@ -194,5 +195,6 @@ export async function findBestGoodRefPR(
       ref: prBuilds[0].ref,
     }
   }
+  log(`return rebuild`)
   return 'rebuild'
 }

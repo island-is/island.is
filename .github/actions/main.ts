@@ -6,13 +6,13 @@ import { WorkflowID } from './git-action-status'
 import Debug from 'debug'
 const log = Debug('main.js')
 
-  log(`Starting with head branch ${headBranch} and base branch ${baseBranch}`)
 ;(async () => {
   const runner = new LocalRunner(new Octokit())
   let git = new SimpleGit(process.env.REPO_ROOT!, process.env.SHELL!)
   const diffWeight = (s: string[]) => s.length
-  const rev = process.env.GITHUB_EVENT_NAME === 'pull_request'
-    ? await findBestGoodRefPR(
+  const rev = await (() => {
+    if (process.env.GITHUB_EVENT_NAME === 'pull_request') {
+      return findBestGoodRefPR(
         diffWeight,
         git,
         runner,
@@ -21,15 +21,16 @@ const log = Debug('main.js')
         `'${process.env.PR_REF!}'`,
         process.env.WORKFLOW_ID! as WorkflowID,
       )
-    : await findBestGoodRefBranch(
-        diffWeight,
-        git,
-        runner,
-        `'${process.env.HEAD_REF!}'`,
-        `'${process.env.BASE_REF!}'`,
-        process.env.WORKFLOW_ID! as WorkflowID,
-      )
-
+    }
+    return findBestGoodRefBranch(
+      diffWeight,
+      git,
+      runner,
+      `'${process.env.HEAD_REF!}'`,
+      `'${process.env.BASE_REF!}'`,
+      process.env.WORKFLOW_ID! as WorkflowID,
+    )
+  })();
   if (rev === 'rebuild') {
     log(`Returning with rebuild`);
     console.log(`Full rebuild needed`)
