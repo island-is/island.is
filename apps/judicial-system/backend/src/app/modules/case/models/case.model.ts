@@ -1013,4 +1013,12 @@ export class Case extends Model {
   })
   @ApiPropertyOptional({ enum: IndictmentCaseReviewDecision })
   indictmentReviewDecision?: IndictmentCaseReviewDecision
+
+  /**********
+   * The md5 hash of the confirmed generated indictment
+   * Only used for traffic violation cases
+   **********/
+  @Column({ type: DataType.STRING, allowNull: true })
+  @ApiPropertyOptional({ type: String })
+  indictmentHash?: string
 }

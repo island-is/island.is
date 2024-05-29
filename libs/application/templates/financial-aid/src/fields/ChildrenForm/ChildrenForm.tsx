@@ -13,7 +13,6 @@ import { childrenForm } from '../../lib/messages'
 
 import { ChildInput } from './ChildInput'
 import { sortChildrenUnderAgeByAge } from '../../lib/utils'
-import { SummaryComment } from '../Summary'
 import { Controller, useFormContext } from 'react-hook-form'
 
 const ChildrenForm = ({ application, field, errors }: FAFieldBaseProps) => {
@@ -35,10 +34,17 @@ const ChildrenForm = ({ application, field, errors }: FAFieldBaseProps) => {
       </Box>
 
       {childrenInfo?.map((child, index) => {
+        const fieldIndex = `${field.id}[${index}]`
+
+        setValue(`${fieldIndex}.livesWithApplicant`, child.livesWithApplicant)
+        setValue(
+          `${fieldIndex}.livesWithBothParents`,
+          child.livesWithBothParents,
+        )
+
         return (
           <ChildInput
-            id={field.id}
-            index={index}
+            fieldIndex={fieldIndex}
             errors={errors}
             childFullName={child.fullName}
             childNationalId={child.nationalId}

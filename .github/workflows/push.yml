@@ -345,6 +345,10 @@ jobs:
           echo "BASE=$BASE" >> $GITHUB_ENV
           echo "LAST_GOOD_BUILD_DOCKER_TAG=${LAST_GOOD_BUILD_DOCKER_TAG}" >> $GITHUB_OUTPUT
 
+          if [ -n "${NX_AFFECTED_ALL+x}" ]; then
+            echo "NX_AFFECTED_ALL=$NX_AFFECTED_ALL" >> $GITHUB_ENV
+          fi
+
       - name: Docker login to ECR repo
         run: ./scripts/ci/docker-login-ecr.sh
         env:
@@ -679,7 +683,7 @@ jobs:
           PUBLISH: 'true'
 
       - name: Retag as latest
-        if: env.GIT_BRANCH == 'main'
+        if: ${{ env.GIT_BRANCH == 'main' && env.NX_AFFECTED_ALL != 'true' }}
         env:
           UNAFFECTED: helm-config
           LAST_GOOD_BUILD_DOCKER_TAG: ${{ env.DOCKER_TAG }}
