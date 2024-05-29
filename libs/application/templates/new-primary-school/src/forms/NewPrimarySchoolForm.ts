@@ -1,4 +1,5 @@
 import {
+  buildCheckboxField,
   buildCustomField,
   buildDescriptionField,
   buildForm,
@@ -6,6 +7,7 @@ import {
   buildPhoneField,
   buildRadioField,
   buildSection,
+  buildSelectField,
   buildSubSection,
   buildSubmitField,
   buildTableRepeaterField,
@@ -17,6 +19,7 @@ import {
   Form,
   FormModes,
   YES,
+  NO,
 } from '@island.is/application/types'
 import {
   formatPhoneNumber,
@@ -27,6 +30,7 @@ import { format as formatKennitala } from 'kennitala'
 import { RelationOptions } from '../lib/constants'
 import { newPrimarySchoolMessages } from '../lib/messages'
 import {
+  getApplicationAnswers,
   getApplicationExternalData,
   getOtherParent,
   getRelationOptionLabel,
@@ -411,7 +415,92 @@ export const NewPrimarySchoolForm: Form = buildForm({
           id: 'newSchoolSubSection',
           title:
             newPrimarySchoolMessages.primarySchool.newSchoolSubSectionTitle,
-          children: [],
+          children: [
+            buildMultiField({
+              id: 'newSchoolMultiField',
+              title:
+                newPrimarySchoolMessages.primarySchool.newSchoolSubSectionTitle,
+              children: [
+                buildCheckboxField({
+                  id: 'school.moveAbroad',
+                  title: '',
+                  dataTestId: 'new-school-move-abroad',
+                  backgroundColor: 'white',
+                  options: [
+                    {
+                      value: YES,
+                      label: newPrimarySchoolMessages.primarySchool.moveAbroad,
+                    },
+                  ],
+                }),
+                buildSelectField({
+                  id: 'school.muncipality',
+                  title: newPrimarySchoolMessages.shared.municipality,
+                  /*  disabled: (application: Application) => {
+                    const { moveAbroad } = getApplicationAnswers(
+                      application.answers,
+                    )
+                    return moveAbroad === NO
+                  },*/
+                  options: [
+                    {
+                      value: 'Reykjavík',
+                      label: 'Reykjavík',
+                    },
+                    {
+                      value: 'Garðarbær',
+                      label: 'Garðarbær',
+                    },
+                  ],
+                  placeholder:
+                    newPrimarySchoolMessages.shared.municipalityPlaceholder,
+                  dataTestId: 'new-school-municipality',
+                }),
+                buildSelectField({
+                  id: 'school.neighborhood',
+                  title: newPrimarySchoolMessages.shared.neighborhood,
+                  condition: (answers) => {
+                    const { moveAbroad } = getApplicationAnswers(answers)
+                    return moveAbroad === NO
+                  },
+                  options: [
+                    {
+                      value: 'Árbær',
+                      label: 'Árbær',
+                    },
+                    {
+                      value: 'Breiðholt',
+                      label: 'Breiðholt',
+                    },
+                  ],
+                  placeholder:
+                    newPrimarySchoolMessages.shared.neighborhoodPlaceholder,
+                  dataTestId: 'new-school-neighborhood',
+                }),
+                buildSelectField({
+                  id: 'school.school',
+                  title: newPrimarySchoolMessages.shared.school,
+                  condition: (answers) => {
+                    const { moveAbroad } = getApplicationAnswers(answers)
+                    return moveAbroad === NO
+                  },
+                  options: [
+                    {
+                      value: 'Ártúnsskóli',
+                      label: 'Ártúnsskóli',
+                    },
+                    {
+                      value: 'Árbæjarskóli',
+                      label: 'Árbæjarskóli',
+                    },
+                  ],
+                  placeholder:
+                    newPrimarySchoolMessages.shared.schoolPlaceholder,
+                  dataTestId: 'new-school-school',
+                }),
+              ],
+            }),
+          ],
         }),
         buildSubSection({
           id: 'reasonForTransferSubSection',

@@ -55,6 +55,11 @@ export const newPrimarySchoolMessages: MessageDir = {
       defaultMessage: 'Sveitarfélag',
       description: 'Municipality',
     },
+    municipalityPlaceholder: {
+      id: 'dess.nps.application:municipality.placeholder',
+      defaultMessage: 'Veldu sveitarfélag',
+      description: 'Select municipality',
+    },
     postalcode: {
       id: 'dess.nps.application:postalcode',
       defaultMessage: 'Póstnúmer',
@@ -69,6 +74,26 @@ export const newPrimarySchoolMessages: MessageDir = {
       id: 'dess.nps.application:phoneNumber',
       defaultMessage: 'Símanúmer',
       description: 'Phonenumber',
+    },
+    neighborhood: {
+      id: 'dess.nps.application:neighborhood',
+      defaultMessage: 'Hverfi',
+      description: 'Neighborhood',
+    },
+    neighborhoodPlaceholder: {
+      id: 'dess.nps.application:neighborhood.placeholder',
+      defaultMessage: 'Veldu hverfi',
+      description: 'Select neighborhood',
+    },
+    school: {
+      id: 'dess.nps.application:school',
+      defaultMessage: 'Skóli',
+      description: 'School',
+    },
+    schoolPlaceholder: {
+      id: 'dess.nps.application:school.placeholder',
+      defaultMessage: 'Veldu skóla',
+      description: 'Select school',
     },
   }),
 
@@ -298,6 +323,11 @@ export const newPrimarySchoolMessages: MessageDir = {
       id: 'dess.nps.application:primary.school.new.school.section.title',
       defaultMessage: 'Nýr skóli',
       description: 'New school',
+    },
+    moveAbroad: {
+      id: 'dess.nps.application:primary.school.new.school.move.abroad',
+      defaultMessage: 'Fluttningur úr landi',
+      description: 'Move abroad',
     },
 
     // Reason for transfer
