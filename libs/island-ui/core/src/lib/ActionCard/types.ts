@@ -1,7 +1,7 @@
 import type { ButtonSizes, ButtonTypes } from '../Button/types'
 import type { TagVariant } from '../Tag/types'
 import type { Icon as IconType } from '../IconRC/iconMap'
-import type { ProgressMeterVariant } from '../ProgressMeter/ProgressMeter'
+import type { ProgressMeterVariant } from '../ProgressMeter/types'
 
 export type BackgroundColor = 'white' | 'blue' | 'red'
 
