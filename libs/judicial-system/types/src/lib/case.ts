@@ -217,9 +217,9 @@ export enum CaseDecision {
 
 export enum IndictmentDecision {
   POSTPONING = 'POSTPONING',
-  REDISTRIBUTING = 'REDISTRIBUTING',
-  COMPLETING = 'COMPLETING',
   POSTPONING_UNTIL_VERDICT = 'POSTPONING_UNTIL_VERDICT',
+  COMPLETING = 'COMPLETING',
+  REDISTRIBUTING = 'REDISTRIBUTING',
 }
 
 export enum CaseAppealRulingDecision {

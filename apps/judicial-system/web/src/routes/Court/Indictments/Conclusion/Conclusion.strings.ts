@@ -82,10 +82,10 @@ export const strings = defineMessages({
     description: 'Notaður sem titill á hlaða upp takka á Niðurstaða skrefi.',
   },
   redistribute: {
-    id: 'judicial.system.core:court.indictments.conclusion.redistribute',
-    defaultMessage: 'Fer í útlutun til dómara',
+    id: 'judicial.system.core:court.indictments.conclusion.redistribute_v1',
+    defaultMessage: 'Fer í úthlutun til dómara',
     description:
-      'Notaður sem texti fyrir Fer í útlutun til dómara á Niðurstaða skrefi.',
+      'Notaður sem texti fyrir Fer í úthlutun til dómara á Niðurstaða skrefi.',
   },
   decision: {
     id: 'judicial.system.core:court.indictments.conclusion.decision',

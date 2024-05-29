@@ -385,7 +385,7 @@ const useCase = () => {
       delete updatesToCase.force
 
       if (Object.keys(updatesToCase).length === 0) {
-        return
+        return false
       }
 
       setWorkingCase((prevWorkingCase) => ({
@@ -394,16 +394,19 @@ const useCase = () => {
       }))
 
       if (!workingCase.id) {
-        return
+        return false
       }
 
       const newWorkingCase = await updateCase(workingCase.id, updatesToCase)
 
       if (!newWorkingCase) {
-        throw new Error()
+        return false
       }
+
+      return true
     } catch (error) {
       toast.error(formatMessage(errors.updateCase))
+      return false
     }
   }
 

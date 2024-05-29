@@ -30,6 +30,7 @@ import {
   CaseFileCategory,
   CaseIndictmentRulingDecision,
   CaseTransition,
+  IndictmentDecision,
 } from '@island.is/judicial-system-web/src/graphql/schema'
 import { stepValidationsType } from '@island.is/judicial-system-web/src/utils/formHelper'
 import {
@@ -40,11 +41,6 @@ import {
 
 import { strings } from './Conclusion.strings'
 
-type Actions =
-  | 'POSTPONE'
-  | 'REDISTRIBUTE'
-  | 'COMPLETE'
-  | 'POSTPONE_UNTIL_VERDICT'
 type Decision =
   | CaseIndictmentRulingDecision.FINE
   | CaseIndictmentRulingDecision.RULING
@@ -60,7 +56,7 @@ const Conclusion: React.FC = () => {
   const { workingCase, setWorkingCase, isLoadingWorkingCase, caseNotFound } =
     useContext(FormContext)
 
-  const [selectedAction, setSelectedAction] = useState<Actions>()
+  const [selectedAction, setSelectedAction] = useState<IndictmentDecision>()
   const [selectedDecision, setSelectedDecision] = useState<Decision>()
   const [postponement, setPostponement] = useState<Postponement>()
 
@@ -85,76 +81,173 @@ const Conclusion: React.FC = () => {
     workingCase.id,
   )
 
-  const handleRedistribution = useCallback(async () => {
-    const transitionSuccessful = await transitionCase(
-      workingCase.id,
-      CaseTransition.REDISTRIBUTE,
-    )
+  const handleRedistribution = useCallback(
+    async (destination: string) => {
+      const transitionSuccessful = await transitionCase(
+        workingCase.id,
+        CaseTransition.REDISTRIBUTE,
+      )
 
-    if (transitionSuccessful) {
-      router.push(constants.CASES_ROUTE)
-    } else {
-      toast.error(formatMessage(errors.transitionCase))
-    }
-  }, [transitionCase, workingCase.id, formatMessage])
+      const success = await setAndSendCaseToServer(
+        [
+          {
+            indictmentDecision: IndictmentDecision.REDISTRIBUTING,
+            force: true,
+          },
+        ],
+        workingCase,
+        setWorkingCase,
+      )
 
-  const handleCompletion = useCallback(async () => {
-    await setAndSendCaseToServer(
-      [
-        {
-          indictmentRulingDecision: selectedDecision,
-          force: true,
-        },
-      ],
-      workingCase,
-      setWorkingCase,
-    )
-  }, [selectedDecision, setAndSendCaseToServer, setWorkingCase, workingCase])
+      if (!transitionSuccessful || !success) {
+        return
+      }
 
-  const handleNavigationTo = useCallback(
-    async (destination: keyof stepValidationsType) => {
-      if (selectedAction === 'REDISTRIBUTE') {
-        handleRedistribution()
-      } else if (selectedAction === 'COMPLETE') {
-        handleCompletion()
-      } else if (postponement?.postponedIndefinitely) {
-        const updateSuccess = await updateCase(workingCase.id, {
-          courtDate: null,
-          postponedIndefinitelyExplanation: postponement.reason,
-        })
+      router.push(destination)
+    },
+    [setAndSendCaseToServer, setWorkingCase, transitionCase, workingCase],
+  )
 
-        if (!updateSuccess) {
-          return
-        }
-      } else {
-        await sendCourtDateToServer([
-          { postponedIndefinitelyExplanation: null, force: true },
-        ])
+  const handleCompletion = useCallback(
+    async (destination: string) => {
+      const success = await setAndSendCaseToServer(
+        [
+          {
+            indictmentRulingDecision: selectedDecision,
+            indictmentDecision: IndictmentDecision.COMPLETING,
+            force: true,
+          },
+        ],
+        workingCase,
+        setWorkingCase,
+      )
+
+      if (!success) {
+        return
+      }
+
+      router.push(`${destination}/${workingCase.id}`)
+    },
+    [selectedDecision, setAndSendCaseToServer, setWorkingCase, workingCase],
+  )
+
+  const handlePostponementUntilVerdict = useCallback(
+    async (destination: string) => {
+      const success = await setAndSendCaseToServer(
+        [
+          {
+            indictmentDecision: IndictmentDecision.POSTPONING_UNTIL_VERDICT,
+            force: true,
+          },
+        ],
+        workingCase,
+        setWorkingCase,
+      )
+
+      if (!success) {
+        return
+      }
+
+      router.push(`${destination}/${workingCase.id}`)
+    },
+    [setAndSendCaseToServer, setWorkingCase, workingCase],
+  )
+
+  const handlePostponementIndefinitely = useCallback(
+    async (destination: string) => {
+      const updateSuccess = await setAndSendCaseToServer(
+        [
+          {
+            courtDate: null,
+            postponedIndefinitelyExplanation: postponement?.reason,
+          },
+        ],
+        workingCase,
+        setWorkingCase,
+      )
+
+      if (!updateSuccess) {
+        return
+      }
+
+      router.push(`${destination}/${workingCase.id}`)
+    },
+    [postponement?.reason, setAndSendCaseToServer, setWorkingCase, workingCase],
+  )
+
+  const handlePostponement = useCallback(
+    async (destination: string) => {
+      const updateCourtDateSuccess = await sendCourtDateToServer([
+        { postponedIndefinitelyExplanation: null, force: true },
+      ])
+
+      const updateSuccess = await setAndSendCaseToServer(
+        [
+          {
+            indictmentDecision: IndictmentDecision.POSTPONING,
+          },
+        ],
+        workingCase,
+        setWorkingCase,
+      )
+
+      if (!updateCourtDateSuccess || !updateSuccess) {
+        return
       }
 
       router.push(`${destination}/${workingCase.id}`)
     },
     [
-      selectedAction,
-      postponement?.postponedIndefinitely,
-      postponement?.reason,
-      workingCase.id,
-      handleRedistribution,
-      handleCompletion,
-      updateCase,
       sendCourtDateToServer,
+      setAndSendCaseToServer,
+      setWorkingCase,
+      workingCase,
     ],
   )
+
+  const handleNavigationTo = useCallback(
+    async (destination: keyof stepValidationsType) => {
+      if (selectedAction === IndictmentDecision.REDISTRIBUTING) {
+        handleRedistribution(destination)
+      } else if (selectedAction === IndictmentDecision.COMPLETING) {
+        handleCompletion(destination)
+      } else if (
+        selectedAction === IndictmentDecision.POSTPONING_UNTIL_VERDICT
+      ) {
+        await handlePostponementUntilVerdict(destination)
+      } else if (postponement?.postponedIndefinitely) {
+        handlePostponementIndefinitely(destination)
+      } else {
+        handlePostponement(destination)
+      }
+    },
+    [
+      selectedAction,
+      postponement?.postponedIndefinitely,
+      handleRedistribution,
+      handleCompletion,
+      handlePostponementUntilVerdict,
+      handlePostponementIndefinitely,
+      handlePostponement,
+    ],
+  )
+
+  const isDecisionChecked = (decision: IndictmentDecision) => {
+    return (
+      selectedAction === decision ||
+      (!selectedAction && workingCase.indictmentDecision === decision)
+    )
+  }
 
   useEffect(() => {
     if (workingCase.indictmentRulingDecision) {
       setSelectedDecision(workingCase.indictmentRulingDecision)
-      setSelectedAction('COMPLETE')
+      setSelectedAction(IndictmentDecision.COMPLETING)
     } else if (
       workingCase.courtDate?.date ||
       workingCase.postponedIndefinitelyExplanation
     ) {
-      setSelectedAction('POSTPONE')
+      setSelectedAction(IndictmentDecision.POSTPONING)
 
       if (workingCase.postponedIndefinitelyExplanation) {
         setPostponement({
@@ -176,11 +269,11 @@ const Conclusion: React.FC = () => {
       return false
     }
 
-    if (selectedAction === 'REDISTRIBUTE') {
+    if (selectedAction === IndictmentDecision.REDISTRIBUTING) {
       return uploadFiles.find(
         (file) => file.category === CaseFileCategory.COURT_RECORD,
       )
-    } else if (selectedAction === 'POSTPONE') {
+    } else if (selectedAction === IndictmentDecision.POSTPONING) {
       return (
         Boolean(
           postponement?.postponedIndefinitely
@@ -188,8 +281,11 @@ const Conclusion: React.FC = () => {
             : courtDate?.date,
         ) && allFilesDoneOrError
       )
-    } else if (selectedAction === 'COMPLETE') {
-      return selectedDecision !== undefined && allFilesDoneOrError
+    } else if (
+      selectedAction === IndictmentDecision.COMPLETING ||
+      selectedAction === IndictmentDecision.POSTPONING_UNTIL_VERDICT
+    ) {
+      return allFilesDoneOrError
     }
   }
 
@@ -215,9 +311,9 @@ const Conclusion: React.FC = () => {
               <RadioButton
                 id="conclusion-postpone"
                 name="conclusion-decision"
-                checked={selectedAction === 'POSTPONE'}
+                checked={isDecisionChecked(IndictmentDecision.POSTPONING)}
                 onChange={() => {
-                  setSelectedAction('POSTPONE')
+                  setSelectedAction(IndictmentDecision.POSTPONING)
                 }}
                 large
                 backgroundColor="white"
@@ -228,9 +324,11 @@ const Conclusion: React.FC = () => {
               <RadioButton
                 id="conclusion-postpone-until-verdict"
                 name="conclusion-decision"
-                checked={selectedAction === 'POSTPONE_UNTIL_VERDICT'}
+                checked={isDecisionChecked(
+                  IndictmentDecision.POSTPONING_UNTIL_VERDICT,
+                )}
                 onChange={() => {
-                  setSelectedAction('POSTPONE_UNTIL_VERDICT')
+                  setSelectedAction(IndictmentDecision.POSTPONING_UNTIL_VERDICT)
                 }}
                 large
                 backgroundColor="white"
@@ -241,9 +339,9 @@ const Conclusion: React.FC = () => {
               <RadioButton
                 id="conclusion-complete"
                 name="conclusion-decision"
-                checked={selectedAction === 'COMPLETE'}
+                checked={isDecisionChecked(IndictmentDecision.COMPLETING)}
                 onChange={() => {
-                  setSelectedAction('COMPLETE')
+                  setSelectedAction(IndictmentDecision.COMPLETING)
                 }}
                 large
                 backgroundColor="white"
@@ -253,9 +351,9 @@ const Conclusion: React.FC = () => {
             <RadioButton
               id="conclusion-redistribute"
               name="conclusion-redistribute"
-              checked={selectedAction === 'REDISTRIBUTE'}
+              checked={isDecisionChecked(IndictmentDecision.REDISTRIBUTING)}
               onChange={() => {
-                setSelectedAction('REDISTRIBUTE')
+                setSelectedAction(IndictmentDecision.REDISTRIBUTING)
               }}
               large
               backgroundColor="white"
@@ -263,7 +361,7 @@ const Conclusion: React.FC = () => {
             />
           </BlueBox>
         </Box>
-        {selectedAction === 'POSTPONE' && (
+        {selectedAction === IndictmentDecision.POSTPONING && (
           <>
             <SectionHeading
               title={formatMessage(strings.arrangeAnotherHearing)}
@@ -318,7 +416,7 @@ const Conclusion: React.FC = () => {
             </Box>
           </>
         )}
-        {selectedAction === 'POSTPONE_UNTIL_VERDICT' && (
+        {selectedAction === IndictmentDecision.POSTPONING_UNTIL_VERDICT && (
           <Box component="section" marginBottom={5}>
             <SectionHeading
               title={formatMessage(strings.arrangeVerdictTitle)}
@@ -352,7 +450,7 @@ const Conclusion: React.FC = () => {
             </BlueBox>
           </Box>
         )}
-        {selectedAction === 'COMPLETE' && (
+        {selectedAction === IndictmentDecision.COMPLETING && (
           <Box marginBottom={5}>
             <SectionHeading title={formatMessage(strings.decision)} required />
             <BlueBox>
@@ -392,7 +490,7 @@ const Conclusion: React.FC = () => {
           >
             <SectionHeading
               title={formatMessage(strings.courtRecordTitle)}
-              required={selectedAction === 'REDISTRIBUTE'}
+              required={selectedAction === IndictmentDecision.REDISTRIBUTING}
             />
             <InputFileUpload
               fileList={uploadFiles.filter(
@@ -446,8 +544,10 @@ const Conclusion: React.FC = () => {
           previousUrl={`${constants.INDICTMENTS_DEFENDER_ROUTE}/${workingCase.id}`}
           onNextButtonClick={() =>
             handleNavigationTo(
-              selectedAction === 'COMPLETE'
+              selectedAction === IndictmentDecision.COMPLETING
                 ? constants.INDICTMENTS_SUMMARY_ROUTE
+                : selectedAction === IndictmentDecision.REDISTRIBUTING
+                ? constants.CASES_ROUTE
                 : constants.INDICTMENTS_COURT_OVERVIEW_ROUTE,
             )
           }
