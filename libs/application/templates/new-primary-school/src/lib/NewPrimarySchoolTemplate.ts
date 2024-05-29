@@ -1,6 +1,7 @@
 import {
   DefaultStateLifeCycle,
   EphemeralStateLifeCycle,
+  NO,
   pruneAfterDays,
 } from '@island.is/application/core'
 import {
@@ -19,7 +20,12 @@ import {
 import { Events, Roles, States } from './constants'
 import { dataSchema } from './dataSchema'
 import { newPrimarySchoolMessages, statesMessages } from './messages'
-import { hasChildrenThatCanApply } from './newPrimarySchoolUtils'
+import { assign } from 'xstate'
+import unset from 'lodash/unset'
+import {
+  hasChildrenThatCanApply,
+  getApplicationAnswers,
+} from './newPrimarySchoolUtils'
 
 const NewPrimarySchoolTemplate: ApplicationTemplate<
   ApplicationContext,
@@ -85,6 +91,7 @@ const NewPrimarySchoolTemplate: ApplicationTemplate<
         },
       },
       [States.DRAFT]: {
+        exit: ['clearPublication'],
         meta: {
           name: States.DRAFT,
           status: 'draft',
@@ -149,6 +156,21 @@ const NewPrimarySchoolTemplate: ApplicationTemplate<
           [DefaultEvents.EDIT]: { target: States.DRAFT },
         },
       },
+    },
+  },
+  stateMachineOptions: {
+    actions: {
+      clearPublication: assign((context) => {
+        const { application } = context
+        const { photographyConsent } = getApplicationAnswers(
+          application.answers,
+        )
+        if (photographyConsent === NO) {
+          unset(application.answers, 'photography.photoSchoolPublication')
+          unset(application.answers, 'photography.photoMediaPublication')
+        }
+        return context
+      }),
     },
   },
 

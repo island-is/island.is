@@ -1,4 +1,5 @@
 import {
+  buildAlertMessageField,
   buildCustomField,
   buildDateField,
   buildDescriptionField,
@@ -18,6 +19,7 @@ import {
   Form,
   FormModes,
   YES,
+  NO,
 } from '@island.is/application/types'
 import {
   formatPhoneNumber,
@@ -28,6 +30,7 @@ import { format as formatKennitala } from 'kennitala'
 import { RelationOptions } from '../lib/constants'
 import { newPrimarySchoolMessages } from '../lib/messages'
 import {
+  getApplicationAnswers,
   getApplicationExternalData,
   getOtherParent,
   getRelationOptionLabel,
@@ -484,7 +487,91 @@ export const NewPrimarySchoolForm: Form = buildForm({
           id: 'useOfFootageSubSection',
           title:
             newPrimarySchoolMessages.differentNeeds.useOfFootageSubSectionTitle,
-          children: [],
+          children: [
+            buildMultiField({
+              id: 'photography',
+              title: newPrimarySchoolMessages.differentNeeds.photography,
+              description:
+                newPrimarySchoolMessages.differentNeeds.photographyDescription,
+              children: [
+                buildRadioField({
+                  id: 'photography.photographyConsent',
+                  title:
+                    newPrimarySchoolMessages.differentNeeds.photographyConsent,
+                  width: 'half',
+                  required: true,
+                  options: [
+                    {
+                      label: newPrimarySchoolMessages.shared.yes,
+                      dataTestId: 'yes-option',
+                      value: YES,
+                    },
+                    {
+                      label: newPrimarySchoolMessages.shared.no,
+                      dataTestId: 'no-option',
+                      value: NO,
+                    },
+                  ],
+                }),
+                buildRadioField({
+                  id: 'photography.photoSchoolPublication',
+                  condition: (answers) => {
+                    const { photographyConsent } =
+                      getApplicationAnswers(answers)
+                    return photographyConsent === YES
+                  },
+                  title:
+                    newPrimarySchoolMessages.differentNeeds
+                      .photoSchoolPublication,
+                  width: 'half',
+                  options: [
+                    {
+                      label: newPrimarySchoolMessages.shared.yes,
+                      dataTestId: 'yes-option',
+                      value: YES,
+                    },
+                    {
+                      label: newPrimarySchoolMessages.shared.no,
+                      dataTestId: 'no-option',
+                      value: NO,
+                    },
+                  ],
+                }),
+                buildRadioField({
+                  id: 'photography.photoMediaPublication',
+                  condition: (answers) => {
+                    const { photographyConsent } =
+                      getApplicationAnswers(answers)
+                    return photographyConsent === YES
+                  },
+                  title:
+                    newPrimarySchoolMessages.differentNeeds
+                      .photoMediaPublication,
+                  width: 'half',
+                  options: [
+                    {
+                      label: newPrimarySchoolMessages.shared.yes,
+                      dataTestId: 'yes-option',
+                      value: YES,
+                    },
+                    {
+                      label: newPrimarySchoolMessages.shared.no,
+                      dataTestId: 'no-option',
+                      value: NO,
+                    },
+                  ],
+                }),
+                buildAlertMessageField({
+                  id: 'differentNeeds.photographyInfo',
+                  title: newPrimarySchoolMessages.shared.alertTitle,
+                  message:
+                    newPrimarySchoolMessages.differentNeeds.photographyInfo,
+                  doesNotRequireAnswer: true,
+                  alertType: 'info',
+                }),
+              ],
+            }),
+          ],
         }),
       ],
     }),

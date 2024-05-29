@@ -3,6 +3,7 @@ import { parsePhoneNumberFromString } from 'libphonenumber-js'
 import { z } from 'zod'
 import { RelationOptions } from './constants'
 import { errorMessages } from './messages'
+import { NO, YES } from '@island.is/application/types'
 
 export const dataSchema = z.object({
   approveExternalData: z.boolean().refine((v) => v),
@@ -79,6 +80,26 @@ export const dataSchema = z.object({
       params: errorMessages.relativesRequired,
     }),
   startDate: z.string(),
+  photography: z
+    .object({
+      photographyConsent: z.enum([YES, NO]),
+      photoSchoolPublication: z.enum([YES, NO]).optional(),
+      photoMediaPublication: z.enum([YES, NO]).optional(),
+    })
+    .refine(
+      ({ photographyConsent, photoSchoolPublication }) =>
+        photographyConsent === YES ? !!photoSchoolPublication : true,
+      {
+        path: ['photoSchoolPublication'],
+      },
+    )
+    .refine(
+      ({ photographyConsent, photoMediaPublication }) =>
+        photographyConsent === YES ? !!photoMediaPublication : true,
+      {
+        path: ['photoMediaPublication'],
+      },
+    ),
 })
 
 export type SchemaFormValues = z.infer<typeof dataSchema>
