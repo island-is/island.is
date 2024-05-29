@@ -1,3 +1,7 @@
+/**
+ * @jest-environment node
+ */
+
 import { maskString, unmaskString } from './simpleEncryption'
 
 const originalText = 'Original Jest Text!'
@@ -9,16 +13,14 @@ describe('Encryption and Decryption Functions', () => {
 
     // Check for successful encryption
     expect(encrypted).not.toBe(originalText)
+    expect(encrypted).not.toBeNull()
 
-    // Check for successful decryption
-    if (encrypted !== null) {
-      const decrypted = await unmaskString(encrypted, secretKey)
-      expect(decrypted).toBe(originalText)
-      expect(encrypted).not.toBe(originalText)
-    } else {
-      // Fail the test explicitly if encryption failed
-      fail('Encryption failed')
-    }
+    // If null check succeeds, we can safely cast to string for the unmasking test
+    const textToDecrypt = encrypted as string
+
+    const decrypted = await unmaskString(textToDecrypt, secretKey)
+    expect(decrypted).toBe(originalText)
+    expect(encrypted).not.toBe(originalText)
   })
 
   test('Return null in case of decryption failure', async () => {
