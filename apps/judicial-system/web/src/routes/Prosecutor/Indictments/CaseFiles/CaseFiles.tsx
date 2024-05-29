@@ -5,6 +5,7 @@ import router from 'next/router'
 import { Box, InputFileUpload, Text } from '@island.is/island-ui/core'
 import { fileExtensionWhitelist } from '@island.is/island-ui/core/types'
 import * as constants from '@island.is/judicial-system/consts'
+import { isTrafficViolationCase } from '@island.is/judicial-system/types'
 import { titles } from '@island.is/judicial-system-web/messages'
 import {
   FormContentContainer,
@@ -21,7 +22,6 @@ import {
   useS3Upload,
   useUploadFiles,
 } from '@island.is/judicial-system-web/src/utils/hooks'
-import { isTrafficViolationIndictment } from '@island.is/judicial-system-web/src/utils/stepHelper'
 
 import * as strings from './CaseFiles.strings'
 
@@ -40,7 +40,7 @@ const CaseFiles: React.FC<React.PropsWithChildren<unknown>> = () => {
     workingCase.id,
   )
 
-  const isTrafficViolationCaseCheck = isTrafficViolationIndictment(workingCase)
+  const isTrafficViolationCaseCheck = isTrafficViolationCase(workingCase)
 
   const stepIsValid =
     uploadFiles.some(
