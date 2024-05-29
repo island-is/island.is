@@ -2347,7 +2347,7 @@
         ]
       }
     },
-    "/api/RettindiFyrirIslandIs": {
+    "/RettindiFyrirIslandIs/RettindiFyrirIslandIs": {
       "get": {
         "tags": ["RettindiFyrirIslandIs"],
         "operationId": "RettindiFyrirIslandIs_Get",
@@ -2388,7 +2388,7 @@
         ]
       }
     },
-    "/api/RettindiFyrirIslandIs/{audkenni}": {
+    "/RettindiFyrirIslandIs/RettindiFyrirIslandIs/{audkenni}": {
       "get": {
         "tags": ["RettindiFyrirIslandIs"],
         "operationId": "RettindiFyrirIslandIs_GetStakt",
