@@ -386,11 +386,6 @@ export const newPrimarySchoolMessages: MessageDir = {
       description: 'Use of footage',
     },
 
-    photographySection: {
-      id: 'dess.nps.application:childrenNParents.photography.section',
-      defaultMessage: 'Notkun myndefnis',
-      description: 'Usage of footage',
-    },
     photography: {
       id: 'dess.nps.application:childrenNParents.photography',
       defaultMessage:
@@ -401,7 +396,7 @@ export const newPrimarySchoolMessages: MessageDir = {
     photographyDescription: {
       id: 'dess.nps.application:childrenNParents.photographyDescription',
       defaultMessage:
-        'Þegar kemur að myndatöku og myndbirtingu skal virða sjálfsákvörðunarrétt barna og ungmenna og taka tillit til þeirra skoðana þeirra og viðhorfa í samræmi við aldur og þroska.',
+        'Þegar kemur að myndatöku og myndbirtingu skal virða sjálfsákvörðunarrétt barna og ungmenna og taka tillit til skoðana og viðhorfa þeirra í samræmi við aldur og þroska.',
       description:
         'When it comes to taking pictures and publishing pictures, the right of self-determination of children and young people must be respected and their views and attitudes taken into account in accordance with their age and maturity.',
     },

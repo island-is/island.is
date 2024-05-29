@@ -487,17 +487,6 @@ export const NewPrimarySchoolForm: Form = buildForm({
           id: 'useOfFootageSubSection',
           title:
             newPrimarySchoolMessages.differentNeeds.useOfFootageSubSectionTitle,
-          children: [],
-        }),
-      ],
-    }),
-    buildSection({
-      id: 'differentNeeds',
-      title: newPrimarySchoolMessages.differentNeeds.sectionTitle,
-      children: [
-        buildSubSection({
-          id: 'photographySection',
-          title: newPrimarySchoolMessages.differentNeeds.photographySection,
           children: [
             buildMultiField({
               id: 'photography',
