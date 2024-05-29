@@ -11,24 +11,15 @@ import { isCompletedCase } from '@island.is/judicial-system/types'
 
 import { CasesResponse } from './models/cases.response'
 import { InternalCasesResponse } from './models/internalCases.response'
-import { digitalMailboxModuleConfig } from './app.config'
+import { digitalMailboxCaseModuleConfig } from './case.config'
 
 @Injectable()
 export class AppService {
   constructor(
-    @Inject(digitalMailboxModuleConfig.KEY)
-    private readonly config: ConfigType<typeof digitalMailboxModuleConfig>,
-    @Inject(LOGGER_PROVIDER) private readonly logger: Logger,
+    @Inject(digitalMailboxCaseModuleConfig.KEY)
+    private readonly config: ConfigType<typeof digitalMailboxCaseModuleConfig>,
     private readonly auditTrailService: AuditTrailService,
   ) {}
-
-  private async test(nationalId: string): Promise<string> {
-    return `OK ${nationalId}`
-  }
-
-  async testConnection(nationalId: string): Promise<string> {
-    return this.test(nationalId)
-  }
 
   private format(
     response: InternalCasesResponse[],

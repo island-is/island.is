@@ -1,3 +1,4 @@
+import { CacheModule } from '@nestjs/cache-manager'
 import { Module } from '@nestjs/common'
 import { ConfigModule } from '@nestjs/config'
 
@@ -14,20 +15,23 @@ import {
 } from '@island.is/judicial-system/lawyers'
 
 import environment from './environments/environment'
-import { digitalMailboxModuleConfig } from './app.config'
-import { AppController } from './app.controller'
-import { AppService } from './app.service'
-import { DefenderController } from './defender.controller'
+import { digitalMailboxCaseModuleConfig } from './modules/cases/case.config'
+import { AppController } from './modules/cases/case.controller'
+import { AppService } from './modules/cases/case.service'
+import { DefenderController } from './modules/defenders/defender.controller'
 
 @Module({
   imports: [
     AuditTrailModule,
     LawyersModule,
+    CacheModule.register({
+      ttl: 60 * 5 * 1000, // 5 minutes
+    }),
     ProblemModule.forRoot({ logAllErrors: true }),
     ConfigModule.forRoot({
       isGlobal: true,
       load: [
-        digitalMailboxModuleConfig,
+        digitalMailboxCaseModuleConfig,
         auditTrailModuleConfig,
         lawyersModuleConfig,
       ],

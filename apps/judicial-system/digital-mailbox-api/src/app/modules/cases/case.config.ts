@@ -1,7 +1,7 @@
 import { defineConfig } from '@island.is/nest/config'
 
-export const digitalMailboxModuleConfig = defineConfig({
-  name: 'DigitalMailboxModule',
+export const digitalMailboxCaseModuleConfig = defineConfig({
+  name: 'DigitalMailboxCaseModule',
   load: (env) => ({
     backendUrl: env.required('BACKEND_URL', 'http://localhost:3344'),
     secretToken: env.required(

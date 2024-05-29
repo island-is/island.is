@@ -1,13 +1,14 @@
-import { Controller, Get, Inject } from '@nestjs/common'
-import { ApiCreatedResponse } from '@nestjs/swagger'
+import { CacheInterceptor } from '@nestjs/cache-manager'
+import { Controller, Get, Inject, UseInterceptors } from '@nestjs/common'
+import { ApiCreatedResponse, ApiTags } from '@nestjs/swagger'
 
 import { type Logger, LOGGER_PROVIDER } from '@island.is/logging'
 
 import { Lawyer, LawyersService } from '@island.is/judicial-system/lawyers'
 
-import { AppService } from './app.service'
-
 @Controller('api')
+@ApiTags('defenders')
+@UseInterceptors(CacheInterceptor)
 export class DefenderController {
   constructor(
     @Inject(LOGGER_PROVIDER) private readonly logger: Logger,
