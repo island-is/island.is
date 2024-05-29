@@ -19,20 +19,18 @@ const generatedPrefix = 'generated/'
 const indictmentPrefix = 'indictments/'
 const completedIndictmentPrefix = 'indictments/completed/'
 
+const formatConfirmedKey = (key: string) =>
+  key.replace(/\/([^/]*)$/, '/confirmed/$1')
 const formatS3RequestKey = (key: string) => `${requestPrefix}${key}`
 const formatS3IndictmentKey = (key: string) => `${indictmentPrefix}${key}`
 const formatS3CompletedIndictmentKey = (key: string) =>
   `${completedIndictmentPrefix}${key}`
-
 const formatS3Key = (caseType: CaseType, caseState: CaseState, key: string) =>
   isIndictmentCase(caseType)
     ? isCompletedCase(caseState)
       ? formatS3CompletedIndictmentKey(key)
       : formatS3IndictmentKey(key)
     : formatS3RequestKey(key)
-
-const formatConfirmedKey = (key: string) =>
-  key.replace(/\/([^/]*)$/, '/confirmed/$1')
 
 @Injectable()
 export class AwsS3Service {
