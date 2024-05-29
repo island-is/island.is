@@ -33,6 +33,7 @@ interface Props {
   familyStatus: FamilyStatus
   applicationCreated: string
   applicationMunicipality: Municipality
+  hasApplicantChildren?: boolean
 }
 
 const StateModal = ({
@@ -46,6 +47,7 @@ const StateModal = ({
   familyStatus,
   applicationCreated,
   applicationMunicipality,
+  hasApplicantChildren = false,
 }: Props) => {
   const [selected, setSelected] = useState<ApplicationState | undefined>()
 
@@ -188,6 +190,7 @@ const StateModal = ({
           homeCircumstances={homeCircumstances}
           familyStatus={familyStatus}
           applicationMunicipality={applicationMunicipality}
+          hasApplicantChildren={hasApplicantChildren}
         />
         <EmailFormatInputModal
           onCancel={onClickCancel}

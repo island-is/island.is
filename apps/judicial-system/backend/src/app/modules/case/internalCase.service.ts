@@ -56,6 +56,7 @@ import { archiveFilter } from './filters/case.archiveFilter'
 import { ArchiveResponse } from './models/archive.response'
 import { Case } from './models/case.model'
 import { CaseArchive } from './models/caseArchive.model'
+import { DateLog } from './models/dateLog.model'
 import { DeliverResponse } from './models/deliver.response'
 import { caseModuleConfig } from './case.config'
 import { PDFService } from './pdf.service'
@@ -1042,5 +1043,20 @@ export class InternalCaseService {
     }
 
     return originalAncestor
+  }
+
+  async getIndictmentCases(nationalId: string): Promise<Case[]> {
+    return this.caseModel.findAll({
+      include: [
+        { model: Defendant, as: 'defendants' },
+        { model: DateLog, as: 'dateLogs' },
+      ],
+      order: [[{ model: DateLog, as: 'dateLogs' }, 'created', 'DESC']],
+      attributes: ['id', 'courtCaseNumber', 'type', 'state'],
+      where: {
+        type: CaseType.INDICTMENT,
+        '$defendants.national_id$': nationalId,
+      },
+    })
   }
 }

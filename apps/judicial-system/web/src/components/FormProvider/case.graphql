@@ -24,6 +24,7 @@ query Case($input: CaseQueryInput!) {
       defendantPlea
       serviceRequirement
       verdictViewDate
+      verdictAppealDeadline
     }
     defenderName
     defenderNationalId
@@ -260,5 +261,7 @@ query Case($input: CaseQueryInput!) {
       name
     }
     indictmentAppealDeadline
+    indictmentVerdictViewedByAll
+    indictmentVerdictAppealDeadline
   }
 }
