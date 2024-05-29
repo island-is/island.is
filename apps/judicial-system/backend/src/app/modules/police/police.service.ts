@@ -22,11 +22,7 @@ import {
 } from '@island.is/shared/utils/server'
 
 import type { User } from '@island.is/judicial-system/types'
-import {
-  CaseState,
-  CaseType,
-  isIndictmentCase,
-} from '@island.is/judicial-system/types'
+import { CaseState, CaseType } from '@island.is/judicial-system/types'
 
 import { nowFactory } from '../../factories'
 import { AwsS3Service } from '../aws-s3'
@@ -37,7 +33,7 @@ import { PoliceCaseInfo } from './models/policeCaseInfo.model'
 import { UploadPoliceCaseFileResponse } from './models/uploadPoliceCaseFile.response'
 import { policeModuleConfig } from './police.config'
 
-export enum CourtDocumentType {
+export enum PoliceDocumentType {
   RVKR = 'RVKR', // Krafa
   RVTB = 'RVTB', // Þingbók
   RVUR = 'RVUR', // Úrskurður
@@ -46,6 +42,11 @@ export enum CourtDocumentType {
   RVDO = 'RVDO', // Dómur
   RVAS = 'RVAS', // Ákæra
   RVMG = 'RVMG', // Málsgögn
+}
+
+export interface PoliceDocument {
+  type: PoliceDocumentType
+  courtDocument: string
 }
 
 const getChapter = (category?: string): number | undefined => {
@@ -164,6 +165,7 @@ export class PoliceService {
   private async throttleUploadPoliceCaseFile(
     caseId: string,
     caseType: CaseType,
+    caseState: CaseState,
     uploadPoliceCaseFile: UploadPoliceCaseFileDto,
     user: User,
   ): Promise<UploadPoliceCaseFileResponse> {
@@ -221,11 +223,9 @@ export class PoliceService {
         })
       })
 
-    const key = `${
-      isIndictmentCase(caseType) ? 'indictments' : 'uploads'
-    }/${caseId}/${uuid()}/${uploadPoliceCaseFile.name}`
+    const key = `${caseId}/${uuid()}/${uploadPoliceCaseFile.name}`
 
-    await this.awsS3Service.putObject(key, pdf)
+    await this.awsS3Service.putObject(caseType, caseState, key, pdf)
 
     return { key, size: pdf.length }
   }
@@ -416,12 +416,14 @@ export class PoliceService {
   async uploadPoliceCaseFile(
     caseId: string,
     caseType: CaseType,
+    caseState: CaseState,
     uploadPoliceCaseFile: UploadPoliceCaseFileDto,
     user: User,
   ): Promise<UploadPoliceCaseFileResponse> {
     this.throttle = this.throttleUploadPoliceCaseFile(
       caseId,
       caseType,
+      caseState,
       uploadPoliceCaseFile,
       user,
     )
@@ -439,7 +441,7 @@ export class PoliceService {
     defendantNationalId: string,
     validToDate: Date,
     caseConclusion: string,
-    courtDocuments: { type: CourtDocumentType; courtDocument: string }[],
+    courtDocuments: PoliceDocument[],
   ): Promise<boolean> {
     return this.fetchPoliceCaseApi(
       `${this.xRoadPath}/V2/UpdateRVCase/${caseId}`,

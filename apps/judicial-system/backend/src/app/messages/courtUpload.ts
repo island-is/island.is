@@ -6,6 +6,11 @@ export const courtUpload = defineMessages({
     defaultMessage: 'Krafa um {caseType} {date}',
     description: 'Notaður sem nafn á kröfuskjali í Auði.',
   },
+  indictment: {
+    id: 'judicial.system.backend:court_upload.indictment',
+    defaultMessage: 'Ákæra',
+    description: 'Notaður sem nafn á ákæru í Auði.',
+  },
   caseFilesRecord: {
     id: 'judicial.system.backend:court_upload.case_files_record',
     defaultMessage: 'Skjalaskrá {policeCaseNumber}',
