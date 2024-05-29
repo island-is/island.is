@@ -26320,7 +26320,7 @@ var SimpleGit = class {
 // main.ts
 var FULL_REBUILD_NEEDED = "full_rebuild_needed";
 (() => __async(exports, null, function* () {
-  if (!!process.env.NX_AFFECTED_ALL) {
+  if (process.env.NX_AFFECTED_ALL === "true") {
     console.log(FULL_REBUILD_NEEDED);
     return;
   }
