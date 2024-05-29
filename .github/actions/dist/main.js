@@ -26329,17 +26329,17 @@ var SimpleGit = class {
     `'${process.env.HEAD_REF}'`,
     `'${process.env.BASE_REF}'`,
     `'${process.env.PR_REF}'`,
-    process.env.WORKFLOW_ID
+    "pullrequest"
   ) : yield findBestGoodRefBranch(
     diffWeight,
     git,
     runner,
     `'${process.env.HEAD_REF}'`,
     `'${process.env.BASE_REF}'`,
-    process.env.WORKFLOW_ID
+    "push"
   );
   if (rev === "rebuild") {
-    console.log(`Full rebuild needed`);
+    console.log(`full_rebuild_needed`);
   } else {
     rev.branch = rev.branch.replace(/'/g, "");
     rev.ref = rev.ref.replace(/'/g, "");
