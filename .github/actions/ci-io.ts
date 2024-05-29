@@ -1,3 +1,4 @@
+import asyncHooks from "async_hooks";
 import { SimpleGit } from './simple-git'
 import {
   BranchWorkflow,
@@ -356,3 +357,43 @@ export class LocalRunner implements GitActionStatus {
     return runs
   }
 }
+
+// Set to store active async resources
+const activeAsyncResources = new Set();
+
+// Create an async hook to track async resource lifecycle events
+const asyncHook = asyncHooks.createHook({
+    init(asyncId, type, triggerAsyncId, resource) {
+        activeAsyncResources.add(asyncId);
+    },
+    destroy(asyncId) {
+        activeAsyncResources.delete(asyncId);
+    }
+});
+
+// Enable the async hook
+asyncHook.enable();
+
+// Function to check for running async functions and exit process if any are found
+function checkAsyncFunctions() {
+    if (activeAsyncResources.size > 0) {
+        console.error('Async functions still running:', Array.from(activeAsyncResources));
+        process.exit(1);
+    }
+}
+
+// Set a timer to run the check after 10 minutes
+setTimeout(checkAsyncFunctions, 10 * 60 * 1000);
+
+// Example async function to demonstrate the functionality
+async function exampleAsyncFunction() {
+    return new Promise<void>((resolve) => {
+        setTimeout(() => {
+            console.log('Async function finished');
+            resolve();
+        }, 15 * 60 * 1000); // 15 minutes delay to simulate long-running async task
+    });
+}
+
+// Call the example async function
+exampleAsyncFunction();

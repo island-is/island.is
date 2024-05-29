@@ -25755,6 +25755,7 @@ var require_dist_node12 = __commonJS({
 });
 
 // ci-io.ts
+var import_async_hooks = __toESM(require("async_hooks"));
 var import_child_process = require("child_process");
 var import_debug = __toESM(require_src());
 var unzipper = __toESM(require_unzip2());
@@ -26101,6 +26102,34 @@ stdout: %O`,
     });
   }
 };
+var activeAsyncResources = /* @__PURE__ */ new Set();
+var asyncHook = import_async_hooks.default.createHook({
+  init(asyncId, type, triggerAsyncId, resource) {
+    activeAsyncResources.add(asyncId);
+  },
+  destroy(asyncId) {
+    activeAsyncResources.delete(asyncId);
+  }
+});
+asyncHook.enable();
+function checkAsyncFunctions() {
+  if (activeAsyncResources.size > 0) {
+    console.error("Async functions still running:", Array.from(activeAsyncResources));
+    process.exit(1);
+  }
+}
+setTimeout(checkAsyncFunctions, 10 * 60 * 1e3);
+function exampleAsyncFunction() {
+  return __async(this, null, function* () {
+    return new Promise((resolve) => {
+      setTimeout(() => {
+        console.log("Async function finished");
+        resolve();
+      }, 15 * 60 * 1e3);
+    });
+  });
+}
+exampleAsyncFunction();
 
 // change-detection.ts
 var import_debug2 = __toESM(require_src());
@@ -26328,7 +26357,6 @@ var SimpleGit = class {
 
 // main.ts
 var FULL_REBUILD_NEEDED = "full_rebuild_needed";
-var IS_PULL_REQUEST = process.env.GITHUB_EVENT_NAME === "pull_request";
 (() => __async(exports, null, function* () {
   if (process.env.NX_AFFECTED_ALL === "true") {
     console.log(FULL_REBUILD_NEEDED);
@@ -26337,27 +26365,22 @@ var IS_PULL_REQUEST = process.env.GITHUB_EVENT_NAME === "pull_request";
   const runner = new LocalRunner(new import_action.Octokit());
   let git = new SimpleGit(process.env.REPO_ROOT, process.env.SHELL);
   const diffWeight = (s) => s.length;
-  const rev = yield (() => {
-    if (IS_PULL_REQUEST) {
-      return findBestGoodRefPR(
-        diffWeight,
-        git,
-        runner,
-        `'${process.env.HEAD_REF}'`,
-        `'${process.env.BASE_REF}'`,
-        `'${process.env.PR_REF}'`,
-        process.env.WORKFLOW_ID
-      );
-    }
-    return findBestGoodRefBranch(
-      diffWeight,
-      git,
-      runner,
-      `'${process.env.HEAD_REF}'`,
-      `'${process.env.BASE_REF}'`,
-      process.env.WORKFLOW_ID
-    );
-  })();
+  const rev = process.env.GITHUB_EVENT_NAME === "pull_request" ? yield findBestGoodRefPR(
+    diffWeight,
+    git,
+    runner,
+    `'${process.env.HEAD_REF}'`,
+    `'${process.env.BASE_REF}'`,
+    `'${process.env.PR_REF}'`,
+    process.env.WORKFLOW_ID
+  ) : yield findBestGoodRefBranch(
+    diffWeight,
+    git,
+    runner,
+    `'${process.env.HEAD_REF}'`,
+    `'${process.env.BASE_REF}'`,
+    process.env.WORKFLOW_ID
+  );
   if (rev === "rebuild") {
     console.log(FULL_REBUILD_NEEDED);
     return;
