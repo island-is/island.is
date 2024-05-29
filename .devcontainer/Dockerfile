@@ -1,6 +1,6 @@
 ARG RUST_VERSION=1.78
 ARG FEDORA_VERSION=39
-FROM docker.io/rust:${RUST_VERSION} as cargo
+FROM docker.io/rust:${RUST_VERSION} as cargo-bins
 
 # Build dependencies
 RUN --mount=type=cache,target=/var/cache/apt \
@@ -8,9 +8,19 @@ RUN --mount=type=cache,target=/var/cache/apt \
   apt-get install -y --no-install-recommends \
   make=4.3-4.1 cmake=3.25.1-1 g++=4:12.2.0-3
 
-# Install cargo stuff
+# Install cargo binaries
 RUN --mount=type=cache,target=/root/.cargo \
   cargo install starship
+
+FROM docker.io/rust:${RUST_VERSION} as cargo-volta
+WORKDIR /build/volta
+RUN --mount=type=cache,target=/root/.cargo/ --mount=type=cache,target=/root/.cache/ \
+  git init && \
+  (git remote | grep -q origin || git remote add origin https://github.com/volta-cli/volta) && \
+  git fetch origin && \
+  git checkout origin/main --force && \
+  cargo build --release
+RUN ls -lah . && ls -lah -R target/
 
 
 FROM registry.fedoraproject.org/fedora:${FEDORA_VERSION} as base
@@ -38,18 +48,26 @@ RUN useradd -m -s /bin/${SHELL} -G wheel ${USERNAME}
 USER ${USERNAME}
 WORKDIR /home/${USERNAME}
 
+
+
 ######################
 # User configuration #
 ######################
 
+
+# "Install" volta & starship
+COPY --from=cargo-bins /usr/local/cargo/bin/starship /usr/local/bin/
+COPY --from=cargo-volta \
+  /build/volta/target/release/volta \
+  /build/volta/target/release/volta-shim \
+  /build/volta/target/release/volta-migrate \
+  /usr/local/bin/
+
+RUN volta setup
+
 # Set up node/yarn
-SHELL ["/bin/bash", "-o", "pipefail", "-c"]
-RUN curl -s https://get.volta.sh | ${SHELL}
 COPY package.json .
 RUN . ~/.${SHELL}rc && volta install "node@$(jq -r '.engines.node' package.json)"
-
-
-COPY --from=cargo /usr/local/cargo/bin/starship /usr/local/bin/
 
 # Set up user's shell config
 # Initialize starship prompt
