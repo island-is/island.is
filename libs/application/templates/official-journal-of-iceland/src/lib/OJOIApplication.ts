@@ -93,6 +93,7 @@ const OJOITemplate: ApplicationTemplate<
         },
       },
       [ApplicationStates.DRAFT]: {
+        entry: 'assignToInstitution',
         meta: {
           name: general.applicationName.defaultMessage,
           status: 'inprogress',
@@ -127,6 +128,11 @@ const OJOITemplate: ApplicationTemplate<
                   type: 'primary',
                 },
               ],
+            },
+            {
+              id: Roles.ASSIGNEE,
+              read: 'all',
+              write: 'all',
             },
           ],
         },
@@ -190,16 +196,15 @@ const OJOITemplate: ApplicationTemplate<
         },
       },
       [ApplicationStates.SUBMITTED]: {
-        entry: 'assignToInstitution',
         meta: {
           name: general.applicationName.defaultMessage,
           status: 'completed',
           progress: 1,
           lifecycle: pruneAfterDays(90),
           onEntry: defineTemplateApi({
-            action: TemplateApiActions.submitApplication,
+            action: TemplateApiActions.postApplication,
             shouldPersistToExternalData: true,
-            externalDataId: 'submitApplication',
+            externalDataId: 'successfullyPosted',
             throwOnError: false,
           }),
           roles: [

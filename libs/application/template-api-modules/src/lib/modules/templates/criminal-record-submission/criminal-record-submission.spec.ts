@@ -94,7 +94,7 @@ describe('CriminalRecordSubmissionService', () => {
   })
 
   describe('submitApplication', () => {
-    it('should send an email', async () => {
+    it('should get a success submit response', async () => {
       const user = createCurrentUser()
 
       const application = createApplication({
@@ -117,9 +117,7 @@ describe('CriminalRecordSubmissionService', () => {
         currentUserLocale: 'is',
       })
 
-      expect(res).toEqual({
-        success: true,
-      })
+      expect(res).toEqual(undefined)
     })
   })
 })

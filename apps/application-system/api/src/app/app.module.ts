@@ -37,6 +37,7 @@ import { SocialInsuranceAdministrationClientConfig } from '@island.is/clients/so
 import { SignatureCollectionClientConfig } from '@island.is/clients/signature-collection'
 import { InnaClientConfig } from '@island.is/clients/inna'
 import { OfficialJournalOfIcelandClientConfig } from '@island.is/clients/official-journal-of-iceland'
+import { OfficialJournalOfIcelandApplicationClientConfig } from '@island.is/clients/official-journal-of-iceland/application'
 
 @Module({
   imports: [
@@ -77,6 +78,7 @@ import { OfficialJournalOfIcelandClientConfig } from '@island.is/clients/officia
         SignatureCollectionClientConfig,
         InnaClientConfig,
         OfficialJournalOfIcelandClientConfig,
+        OfficialJournalOfIcelandApplicationClientConfig,
       ],
     }),
   ],
