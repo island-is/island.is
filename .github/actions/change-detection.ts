@@ -181,10 +181,11 @@ export async function findBestGoodRefPR(
       branch: baseBranch,
       ref: baseGoodBuilds.head_commit,
     })
+    log("stops on push?!?!")
   }
   log(`pr build ${JSON.stringify(prBuilds)}`)
   prBuilds.sort((a, b) => (a.distance > b.distance ? 1 : -1))
-  
+
   if (prBuilds.length > 0)
     return {
       sha: prBuilds[0].hash,

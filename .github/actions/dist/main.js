@@ -26214,6 +26214,7 @@ function findBestGoodRefPR(diffWeight, git, githubApi, headBranch, baseBranch, p
         branch: baseBranch,
         ref: baseGoodBuilds.head_commit
       });
+      log("stops on push?!?!");
     }
     log(`pr build ${JSON.stringify(prBuilds)}`);
     prBuilds.sort((a, b) => a.distance > b.distance ? 1 : -1);
