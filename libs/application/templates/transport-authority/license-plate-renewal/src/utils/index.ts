@@ -5,6 +5,7 @@ import { isPaymentRequired } from './isPaymentRequired'
 
 export const getChargeItemCodes = (application: Application): Array<string> => {
   const paymentRequired = isPaymentRequired({ application })
+  console.log('paymentRequired', paymentRequired)
   return paymentRequired
     ? [ChargeItemCode.TRANSPORT_AUTHORITY_LICENSE_PLATE_RENEWAL.toString()]
     : []

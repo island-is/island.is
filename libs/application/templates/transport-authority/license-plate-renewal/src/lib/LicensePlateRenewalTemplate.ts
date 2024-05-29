@@ -45,19 +45,6 @@ const determineMessageFromApplicationAnswers = (application: Application) => {
   }
 }
 
-export const isOver64 =
-  (value: boolean) =>
-  ({ application }: ApplicationContext) => {
-    const nationalId = getValueViaPath(
-      application.externalData,
-      'identity.data.nationalId',
-      '',
-    ) as string
-    const age = info(nationalId).age
-    console.log('running this', age)
-    return age > 64 === value
-  }
-
 const template: ApplicationTemplate<
   ApplicationContext,
   ApplicationStateSchema<Events>,
@@ -103,9 +90,9 @@ const template: ApplicationTemplate<
             defineTemplateApi({
               action: ApiActions.validateApplication,
             }),
-            // defineTemplateApi({
-            //   action: ApiActions.submitApplication,
-            // }),
+            defineTemplateApi({
+              action: ApiActions.submitApplication,
+            }),
           ],
           roles: [
             {

@@ -12,10 +12,6 @@ import { getChargeItemCodes } from '../../utils'
 export const paymentSection = buildSection({
   id: 'payment',
   title: payment.general.sectionTitle,
-  condition: () => {
-    console.log('here')
-    return false
-  },
   children: [
     buildMultiField({
       id: 'paymentMultiField',
