@@ -26218,13 +26218,14 @@ function findBestGoodRefPR(diffWeight, git, githubApi, headBranch, baseBranch, p
     }
     log(`pr build ${JSON.stringify(prBuilds)}`);
     prBuilds.sort((a, b) => a.distance > b.distance ? 1 : -1);
-    if (prBuilds.length > 0)
+    if (prBuilds.length > 0) {
       return {
         sha: prBuilds[0].hash,
         run_number: prBuilds[0].run_nr,
         branch: prBuilds[0].branch.replace("origin/", ""),
         ref: prBuilds[0].ref
       };
+    }
     return "rebuild";
   });
 }
