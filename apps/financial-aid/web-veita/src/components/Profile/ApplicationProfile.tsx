@@ -337,6 +337,8 @@ const ApplicationProfile = ({
           setAppliedMonthModalVisible(isVisibleBoolean)
         }}
         appliedDate={application.applied}
+        createdDate={application.created}
+        setApplication={setApplication}
       />
     </>
   )

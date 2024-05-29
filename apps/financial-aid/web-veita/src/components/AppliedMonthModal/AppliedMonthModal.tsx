@@ -1,19 +1,22 @@
 import React from 'react'
-import { ModalBase, Text, Box, Button } from '@island.is/island-ui/core'
+import { ModalBase, Text, Box } from '@island.is/island-ui/core'
+import format from 'date-fns/format'
 
 import * as styles from './AidAmountModal.css'
+import * as modalButtonStyles from '../ModalTypes/ModalTypes.css'
+import cn from 'classnames'
 
 import * as modalStyles from '../StateModal/StateModal.css'
 
-import { Calculations, getMonth } from '@island.is/financial-aid/shared/lib'
-
-import { Breakdown } from '@island.is/financial-aid/shared/components'
+import { getMonth } from '@island.is/financial-aid/shared/lib'
 
 interface Props {
   headline: string
   isVisible: boolean
   onVisibilityChange: React.Dispatch<React.SetStateAction<boolean>>
   appliedDate: string
+  createdDate: string
+  onClick(event: React.MouseEvent<HTMLButtonElement>, date: Date): void
 }
 
 const AppliedMonthModal = ({
@@ -21,18 +24,32 @@ const AppliedMonthModal = ({
   isVisible,
   onVisibilityChange,
   appliedDate,
+  createdDate,
+  onClick,
 }: Props) => {
   const closeModal = (): void => {
     onVisibilityChange(false)
   }
 
-  const getMonth = new Date(appliedDate).getMonth()
+  const getSurroundingMonths = (createdDate: string): Date[] => {
+    const date = new Date(createdDate)
 
-  // console.log(
-  //   new Date(appliedDate).getMonth(),
-  //   new Date(appliedDate).getMonth() - 1,
-  //   new Date(appliedDate).getMonth() - 2,
-  // )
+    if (isNaN(date.getTime())) {
+      throw new Error('Invalid date')
+    }
+
+    const year = date.getFullYear()
+    const month = date.getMonth()
+
+    // Calculate the previous two months
+    const prevMonth1 = new Date(year, month - 1)
+    const prevMonth2 = new Date(year, month - 2)
+
+    // Calculate the next month
+    const nextMonth = new Date(year, month + 1)
+
+    return [prevMonth2, prevMonth1, date, nextMonth]
+  }
 
   return (
     <ModalBase
@@ -65,8 +82,26 @@ const AppliedMonthModal = ({
           </Box>
 
           <Box padding={4}>
-            <Box display="flex" justifyContent="flexEnd" marginTop={4}>
-              <Button onClick={closeModal}>Loka</Button>
+            <Box>
+              {getSurroundingMonths(createdDate).map((el) => {
+                const date = new Date(el)
+                const isActive =
+                  date.getMonth() === new Date(appliedDate).getMonth()
+
+                return (
+                  <button
+                    key={'date-' + date}
+                    disabled={isActive}
+                    className={cn({
+                      [`${modalButtonStyles.statusOptions}`]: true,
+                      [`${modalButtonStyles.activeState}`]: isActive,
+                    })}
+                    onClick={(e) => onClick(e, el)}
+                  >
+                    {getMonth(date.getMonth()) + format(date, ' y')}
+                  </button>
+                )
+              })}
             </Box>
           </Box>
         </Box>
