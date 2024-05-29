@@ -431,7 +431,6 @@ export const NewPrimarySchoolForm: Form = buildForm({
           title:
             newPrimarySchoolMessages.primarySchool
               .startingSchoolSubSectionTitle,
-
           children: [
             buildMultiField({
               id: 'startingSchoolMultiField',
@@ -443,6 +442,13 @@ export const NewPrimarySchoolForm: Form = buildForm({
                 buildDateField({
                   id: 'startDate',
                   title: newPrimarySchoolMessages.shared.date,
+                  placeholder: newPrimarySchoolMessages.shared.datePlaceholder,
+                  required: true,
+                  defaultValue: null,
+                  minDate: () => new Date(),
+                  maxDate: new Date(
+                    new Date().setFullYear(new Date().getFullYear() + 2),
+                  ),
                 }),
               ],
             }),

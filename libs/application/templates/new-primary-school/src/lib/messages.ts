@@ -40,6 +40,11 @@ export const newPrimarySchoolMessages: MessageDir = {
       defaultMessage: 'Dagsetning',
       description: 'Date',
     },
+    datePlaceholder: {
+      id: 'dess.nps.application:date.placeholder',
+      defaultMessage: 'Veldu dagsetningu',
+      description: 'Select date',
+    },
     fullName: {
       id: 'dess.nps.application:full.name',
       defaultMessage: 'Fullt nafn',
