@@ -65,7 +65,11 @@ export const UserLanguageSwitcher = ({
         variant="utility"
         colorScheme="white"
         onClick={handleLanguageChange}
-        aria-label={'switch language'}
+        aria-label={formatMessage(
+          lang === 'en'
+            ? sharedMessages.switchToIcelandic
+            : sharedMessages.switchToEnglish,
+        )}
         data-testid="language-switcher-button"
       >
         {lang === 'en' ? 'IS' : 'EN'}
