@@ -6,11 +6,8 @@ import { WorkflowID } from './git-action-status'
 ;(async () => {
   const runner = new LocalRunner(new Octokit())
   let git = new SimpleGit(process.env.REPO_ROOT!, process.env.SHELL!)
-
   const diffWeight = (s: string[]) => s.length
-  const rev = process.env.TEST_EVERYTHING
-    ? 'rebuild'
-    : process.env.GITHUB_EVENT_NAME === 'pull_request'
+  const rev = process.env.GITHUB_EVENT_NAME === 'pull_request'
     ? await findBestGoodRefPR(
         diffWeight,
         git,
