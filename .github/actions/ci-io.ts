@@ -1,4 +1,5 @@
-import asyncHooks from "async_hooks";
+import async_hooks from "async_hooks";
+import fs from 'fs';
 import { SimpleGit } from './simple-git'
 import {
   BranchWorkflow,
@@ -357,14 +358,29 @@ export class LocalRunner implements GitActionStatus {
     return runs
   }
 }
+const activeAsyncResources = new Map();
 
-// Set to store active async resources
-const activeAsyncResources = new Set();
+// Utility function to get stack trace
+function getStackTrace() {
+    const originalPrepareStackTrace = Error.prepareStackTrace;
+    Error.prepareStackTrace = (err, stack) => stack;
+    const error = new Error();
+    const stack = error.stack;
+    Error.prepareStackTrace = originalPrepareStackTrace;
+    return stack.map((callSite) => ({
+        fileName: callSite.getFileName(),
+        lineNumber: callSite.getLineNumber(),
+        functionName: callSite.getFunctionName(),
+    }));
+}
 
 // Create an async hook to track async resource lifecycle events
-const asyncHook = asyncHooks.createHook({
+const asyncHook = async_hooks.createHook({
     init(asyncId, type, triggerAsyncId, resource) {
-        activeAsyncResources.add(asyncId);
+        activeAsyncResources.set(asyncId, {
+            type,
+            stackTrace: getStackTrace(),
+        });
     },
     destroy(asyncId) {
         activeAsyncResources.delete(asyncId);
@@ -377,7 +393,11 @@ asyncHook.enable();
 // Function to check for running async functions and exit process if any are found
 function checkAsyncFunctions() {
     if (activeAsyncResources.size > 0) {
-        console.error('Async functions still running:', Array.from(activeAsyncResources));
+        console.error('Async functions still running:', Array.from(activeAsyncResources.entries()).map(([id, { type, stackTrace }]) => ({
+            asyncId: id,
+            type,
+            stackTrace: stackTrace.slice(1, 5), // Limit stack trace output for readability
+        })));
         process.exit(1);
     }
 }
@@ -391,7 +411,7 @@ async function exampleAsyncFunction() {
         setTimeout(() => {
             console.log('Async function finished');
             resolve();
-        }, 15 * 60 * 1000); // 15 minutes delay to simulate long-running async task
+        }, 5 * 60 * 1000); // 15 minutes delay to simulate long-running async task
     });
 }
 

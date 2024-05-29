@@ -26102,10 +26102,25 @@ stdout: %O`,
     });
   }
 };
-var activeAsyncResources = /* @__PURE__ */ new Set();
+var activeAsyncResources = /* @__PURE__ */ new Map();
+function getStackTrace() {
+  const originalPrepareStackTrace = Error.prepareStackTrace;
+  Error.prepareStackTrace = (err, stack2) => stack2;
+  const error = new Error();
+  const stack = error.stack;
+  Error.prepareStackTrace = originalPrepareStackTrace;
+  return stack.map((callSite) => ({
+    fileName: callSite.getFileName(),
+    lineNumber: callSite.getLineNumber(),
+    functionName: callSite.getFunctionName()
+  }));
+}
 var asyncHook = import_async_hooks.default.createHook({
   init(asyncId, type, triggerAsyncId, resource) {
-    activeAsyncResources.add(asyncId);
+    activeAsyncResources.set(asyncId, {
+      type,
+      stackTrace: getStackTrace()
+    });
   },
   destroy(asyncId) {
     activeAsyncResources.delete(asyncId);
@@ -26114,7 +26129,11 @@ var asyncHook = import_async_hooks.default.createHook({
 asyncHook.enable();
 function checkAsyncFunctions() {
   if (activeAsyncResources.size > 0) {
-    console.error("Async functions still running:", Array.from(activeAsyncResources));
+    console.error("Async functions still running:", Array.from(activeAsyncResources.entries()).map(([id, { type, stackTrace }]) => ({
+      asyncId: id,
+      type,
+      stackTrace: stackTrace.slice(1, 5)
+    })));
     process.exit(1);
   }
 }
@@ -26125,7 +26144,7 @@ function exampleAsyncFunction() {
       setTimeout(() => {
         console.log("Async function finished");
         resolve();
-      }, 15 * 60 * 1e3);
+      }, 5 * 60 * 1e3);
     });
   });
 }
