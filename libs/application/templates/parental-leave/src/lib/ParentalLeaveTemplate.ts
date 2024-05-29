@@ -392,10 +392,6 @@ const ParentalLeaveTemplate: ApplicationTemplate<
                   parentalLeaveFormMessages.draftFlow
                     .draftNotApprovedEmployerDesc,
               },
-              // {
-              //   onEvent: DefaultEvents.EDIT,
-              //   logMessage: statesMessages.editHistoryLogMessage,
-              // },
             ],
           },
           lifecycle: birthDayLifeCycle,
@@ -533,10 +529,6 @@ const ParentalLeaveTemplate: ApplicationTemplate<
                 logMessage:
                   parentalLeaveFormMessages.draftFlow.draftNotApprovedVMLSTDesc,
               },
-              // {
-              //   onEvent: DefaultEvents.EDIT,
-              //   logMessage: statesMessages.editHistoryLogMessage,
-              // },
             ],
           },
           lifecycle: birthDayLifeCycle,
@@ -824,10 +816,6 @@ const ParentalLeaveTemplate: ApplicationTemplate<
                 onEvent: PLEvents.CLOSED,
                 logMessage: statesMessages.approvedClosedHistoryLogMessage,
               },
-              // {
-              //   onEvent: DefaultEvents.EDIT,
-              //   logMessage: statesMessages.editHistoryLogMessage,
-              // },
             ],
           },
           lifecycle: birthDayLifeCycle,
@@ -926,7 +914,7 @@ const ParentalLeaveTemplate: ApplicationTemplate<
                 logMessage: statesMessages.editOrAddPeriodsSubmitHistoryLogMessage,
               },
               {
-                onEvent: DefaultEvents.EDIT,
+                onEvent: DefaultEvents.ASSIGN,
                 logMessage: statesMessages.editOrAddPeriodsSubmitHistoryLogMessage,
               },
             ],
@@ -950,7 +938,7 @@ const ParentalLeaveTemplate: ApplicationTemplate<
           ],
         },
         on: {
-          SUBMIT: [
+          [DefaultEvents.SUBMIT]: [
             {
               target: States.EMPLOYER_WAITING_TO_ASSIGN_FOR_EDITS,
               cond: hasEmployer,
@@ -987,12 +975,6 @@ const ParentalLeaveTemplate: ApplicationTemplate<
           status: 'inprogress',
           actionCard: {
             pendingAction: employerApprovalStatePendingAction,
-            historyLogs: [
-              {
-                onEvent: DefaultEvents.SUBMIT,
-                logMessage: statesMessages.editOrAddPeriodsSubmitHistoryLogMessage,
-              },
-            ],
           },
           lifecycle: birthDayLifeCycle,
           onEntry: defineTemplateApi({
@@ -1043,11 +1025,6 @@ const ParentalLeaveTemplate: ApplicationTemplate<
                   parentalLeaveFormMessages.draftFlow
                     .draftNotApprovedEmployerDesc,
               }, 
-              // Is not doing the right thing
-              // {
-              //   onEvent: DefaultEvents.EDIT,
-              //   logMessage: statesMessages.editHistoryLogMessage,
-              // },
             ],
           },
           lifecycle: birthDayLifeCycle,
@@ -1130,7 +1107,7 @@ const ParentalLeaveTemplate: ApplicationTemplate<
             },
             historyLogs: [
               {
-                onEvent: DefaultEvents.SUBMIT,
+                onEvent: DefaultEvents.EDIT,
                 logMessage: statesMessages.employerActionDeleteChanges,
               },
             ],
@@ -1226,14 +1203,6 @@ const ParentalLeaveTemplate: ApplicationTemplate<
                 logMessage:
                   statesMessages.vinnumalastofnunApproveEditsRejectHistoryLogMessage,
               },
-              // {
-              //   onEvent: DefaultEvents.EDIT,
-              //   logMessage: statesMessages.editHistoryLogMessage,
-              // },
-              // {
-              //   onEvent: DefaultEvents.SUBMIT,
-              //   logMessage: statesMessages.vinnumalastofnunApprovalSubmitHistoryLogMessage,
-              // },
             ],
           },
           lifecycle: birthDayLifeCycle,
