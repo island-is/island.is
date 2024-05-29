@@ -6,5 +6,3 @@ export { Home } from './Home'
 export { NotFound } from './NotFound'
 export { Subsidy } from './Subsidy'
 export { GenericPage } from './GenericPage'
-
-/** Dumb comment to force deployment */
