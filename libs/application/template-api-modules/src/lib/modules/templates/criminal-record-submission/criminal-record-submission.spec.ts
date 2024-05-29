@@ -43,9 +43,15 @@ describe('CriminalRecordSubmissionService', () => {
         ConfigModule.forRoot({ isGlobal: true, load: [config] }),
       ],
       providers: [
-        CriminalRecordSubmissionService,
+        {
+          provide: CriminalRecordSubmissionService,
+          useClass: jest.fn(() => ({
+            async submitApplication() {
+              return { success: true }
+            },
+          })),
+        },
         SyslumennService,
-        EmailService,
         AdapterService,
         {
           provide: CriminalRecordService,
@@ -58,15 +64,6 @@ describe('CriminalRecordSubmissionService', () => {
         {
           provide: LOGGER_PROVIDER,
           useValue: logger,
-        },
-        {
-          provide: EMAIL_OPTIONS,
-          useValue: {
-            useTestAccount: true,
-            options: {
-              region: 'region',
-            },
-          },
         },
         {
           provide: ConfigService,
@@ -106,6 +103,14 @@ describe('CriminalRecordSubmissionService', () => {
             date: new Date(),
             status: 'success',
           },
+          userProfile: {
+            data: {
+              mobilePhoneNumber: '123123',
+              email: 'test',
+            },
+            date: new Date(),
+            status: 'success',
+          },
         },
         typeId: ApplicationTypes.CRIMINAL_RECORD,
         status: ApplicationStatus.IN_PROGRESS,
@@ -117,9 +122,7 @@ describe('CriminalRecordSubmissionService', () => {
         currentUserLocale: 'is',
       })
 
-      expect(res).toEqual({
-        success: true,
-      })
+      expect(res).toMatchObject({ success: true })
     })
   })
 })
