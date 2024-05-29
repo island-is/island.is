@@ -1,14 +1,11 @@
-import fetch from 'isomorphic-fetch'
-
 import { Inject, Injectable } from '@nestjs/common'
 
 import type { Logger } from '@island.is/logging'
 import { LOGGER_PROVIDER } from '@island.is/logging'
-import { type ConfigType } from '@island.is/nest/config'
+import type { ConfigType } from '@island.is/nest/config'
 
 import { lawyersModuleConfig } from './lawyers.config'
-import { type Lawyer } from './lawyers.types'
-
+import type { Lawyer } from './lawyers.types'
 @Injectable()
 export class LawyersService {
   constructor(
