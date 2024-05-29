@@ -110,7 +110,7 @@ export const getHumanReadableCaseIndictmentRulingDecision = (
       return 'Viðurlagaákvörðun'
     case CaseIndictmentRulingDecision.DISMISSAL:
       return 'Frávísun'
-    case CaseIndictmentRulingDecision.CANCELATION:
+    case CaseIndictmentRulingDecision.CANCELLATION:
       return 'Niðurfelling máls'
     default:
       return 'Ekki skráð'

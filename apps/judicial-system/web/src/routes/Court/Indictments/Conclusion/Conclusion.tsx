@@ -44,7 +44,7 @@ type Decision =
   | CaseIndictmentRulingDecision.RULING
   | CaseIndictmentRulingDecision.FINE
   | CaseIndictmentRulingDecision.DISMISSAL
-  | CaseIndictmentRulingDecision.CANCELATION
+  | CaseIndictmentRulingDecision.CANCELLATION
 
 interface Postponement {
   postponedIndefinitely?: boolean
@@ -201,7 +201,7 @@ const Conclusion: React.FC = () => {
               )
             )
           case CaseIndictmentRulingDecision.FINE:
-          case CaseIndictmentRulingDecision.CANCELATION:
+          case CaseIndictmentRulingDecision.CANCELLATION:
             return uploadFiles.some(
               (file) =>
                 file.category === CaseFileCategory.COURT_RECORD &&
@@ -377,13 +377,13 @@ const Conclusion: React.FC = () => {
                 />
               </Box>
               <RadioButton
-                id="decision-cancelation"
+                id="decision-cancellation"
                 name="decision"
                 checked={
-                  selectedDecision === CaseIndictmentRulingDecision.CANCELATION
+                  selectedDecision === CaseIndictmentRulingDecision.CANCELLATION
                 }
                 onChange={() => {
-                  setSelectedDecision(CaseIndictmentRulingDecision.CANCELATION)
+                  setSelectedDecision(CaseIndictmentRulingDecision.CANCELLATION)
                 }}
                 large
                 backgroundColor="white"
