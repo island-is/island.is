@@ -1,21 +1,19 @@
 ARG RUST_VERSION=1.78
 ARG FEDORA_VERSION=39
-FROM rust:${RUST_VERSION} as cargo
+FROM docker.io/rust:${RUST_VERSION} as cargo
 
 # Build dependencies
-# Versions should be pinned, but 🤷
-# hadolint ignore=DL3008
 RUN --mount=type=cache,target=/var/cache/apt \
   apt-get update && \
   apt-get install -y --no-install-recommends \
-  make cmake g++
+  make=4.3-4.1 cmake=3.25.1-1 g++=4:12.2.0-3
 
 # Install cargo stuff
 RUN --mount=type=cache,target=/root/.cargo \
   cargo install starship
 
 
-FROM fedora:${FEDORA_VERSION} as base
+FROM registry.fedoraproject.org/fedora:${FEDORA_VERSION} as base
 ENV SHELL=bash
 ARG SHELL=${SHELL}
 ENV USERNAME=dev
@@ -25,16 +23,14 @@ ARG USERNAME=${USERNAME}
 # System dependencies #
 #######################
 # We're mounting the cache, so we don't need to `clean all` (DL3040).
-# System packages are pretty stable in Fedora, so we're not pinning versions.
-# hadolint ignore=DL3040,DL3041
+# hadolint ignore=DL3040
 RUN --mount=type=cache,target=/var/cache/dnf \
   dnf install -y \
-  java-11-openjdk g++ jq yq graphviz \
+  java-11-openjdk-11.0.20.0.8 gcc-c++-12.2 jq-1.6 graphviz-5.0.0 \
   # AWS/DevOps specific dependencies
-  dnf install -y \
-  awscli2 \
+  awscli2-2.13.4 \
   # Niceties
-  ${SHELL} the_silver_searcher ripgrep fzf neovim
+  bash-5.2.21 zsh-5.9 the_silver_searcher-2.2.0 ripgrep-13.0.0 fzf-0.44.1 neovim-0.9.1
 
 # Create user and environment
 RUN useradd -m -s /bin/${SHELL} -G wheel ${USERNAME}
