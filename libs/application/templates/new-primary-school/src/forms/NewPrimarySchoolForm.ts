@@ -524,9 +524,9 @@ export const NewPrimarySchoolForm: Form = buildForm({
       ],
     }),
     buildFormConclusionSection({
-      alertTitle: newPrimarySchoolMessages.conclusion.alertTitle,
-      expandableHeader: newPrimarySchoolMessages.conclusion.nextStepsLabel,
-      expandableDescription: newPrimarySchoolMessages.conclusion.accordionText,
+      expandableIntro: '',
+      expandableDescription:
+        newPrimarySchoolMessages.conclusion.expandableDescription,
     }),
   ],
 })
