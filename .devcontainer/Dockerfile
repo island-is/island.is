@@ -23,14 +23,15 @@ ARG USERNAME=${USERNAME}
 # System dependencies #
 #######################
 # We're mounting the cache, so we don't need to `clean all` (DL3040).
-# hadolint ignore=DL3040
+# Tried pinning versions, but got errors from version solver (DL3041).
+# hadolint ignore=DL3040,DL3041
 RUN --mount=type=cache,target=/var/cache/dnf \
   dnf install -y \
-  java-11-openjdk-11.0.20.0.8 gcc-c++-12.2 jq-1.6 graphviz-5.0.0 \
+  java-11-openjdk gcc-c++ jq graphviz \
   # AWS/DevOps specific dependencies
-  awscli2-2.13.4 \
+  awscli2 \
   # Niceties
-  bash-5.2.21 zsh-5.9 the_silver_searcher-2.2.0 ripgrep-13.0.0 fzf-0.44.1 neovim-0.9.1
+  bash zsh the_silver_searcher ripgrep fzf neovim
 
 # Create user and environment
 RUN useradd -m -s /bin/${SHELL} -G wheel ${USERNAME}
