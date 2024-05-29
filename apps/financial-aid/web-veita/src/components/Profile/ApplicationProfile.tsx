@@ -338,7 +338,6 @@ const ApplicationProfile = ({
         }}
         appliedDate={application.applied}
         createdDate={application.created}
-        setApplication={setApplication}
       />
     </>
   )

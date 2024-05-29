@@ -16,7 +16,6 @@ interface Props {
   onVisibilityChange: React.Dispatch<React.SetStateAction<boolean>>
   appliedDate: string
   createdDate: string
-  setApplication: React.Dispatch<React.SetStateAction<Application | undefined>>
 }
 
 const AppliedMonthModal = ({
@@ -25,7 +24,6 @@ const AppliedMonthModal = ({
   onVisibilityChange,
   appliedDate,
   createdDate,
-  setApplication,
 }: Props) => {
   const closeModal = (): void => {
     onVisibilityChange(false)
@@ -96,7 +94,9 @@ const AppliedMonthModal = ({
                       [`${modalButtonStyles.statusOptions}`]: true,
                       [`${modalButtonStyles.activeState}`]: isActive,
                     })}
-                    onClick={(e) => onClick(e, el)}
+                    onClick={(e) => {
+                      //TODO here update application and add application event
+                    }}
                   >
                     {getMonth(date.getMonth()) + format(date, ' y')}
                   </button>
