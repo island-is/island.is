@@ -66,20 +66,6 @@ export const heirs = buildSection({
               id: 'customShare.customSpouseSharePercentage',
               title: '',
             }),
-            buildCheckboxField({
-              id: 'customShare.hasCustomSpouseSharePercentage',
-              title: '',
-              large: false,
-              backgroundColor: 'white',
-              defaultValue: [],
-              condition: shouldShowCustomSpouseShare,
-              options: [
-                {
-                  value: YES,
-                  label: m.assetsToShareHasCustomSpousePercentage,
-                },
-              ],
-            }),
             buildCustomField({
               title: '',
               id: 'share',

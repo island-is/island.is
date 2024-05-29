@@ -591,15 +591,12 @@ export const inheritanceReportSchema = z.object({
   netPropertyForExchange: z.number(),
   customShare: z
     .object({
-      hasCustomSpouseSharePercentage: z.array(z.enum([YES])).optional(),
-      customSpouseSharePercentage: z.string(),
+      hasCustomSpouseSharePercentage: z.string().optional(),
+      customSpouseSharePercentage: z.string().optional(),
     })
     .refine(
       ({ hasCustomSpouseSharePercentage, customSpouseSharePercentage }) => {
-        if (
-          hasCustomSpouseSharePercentage &&
-          hasCustomSpouseSharePercentage.length > 0
-        ) {
+        if (hasCustomSpouseSharePercentage === YES) {
           const val = valueToNumber(customSpouseSharePercentage)
           return val >= 50 && val <= 100
         }

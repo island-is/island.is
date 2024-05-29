@@ -103,25 +103,30 @@ export const deceased = buildSection({
           title: '',
         }),
         buildRadioField({
-          id: 'test',
-          title: 'Er verið að skipta dánarbúi að fullu eða að hluta?',
+          id: 'customShare.hasCustomSpouseSharePercentage',
+          title: m.hasCustomSpouseSharePercentage,
           largeButtons: false,
           backgroundColor: 'white',
           width: 'half',
           condition: (answers) =>
             getValueViaPath(answers, 'deceasedWasMarried') === YES,
           options: [
-            { value: 'part', label: 'Að hluta' },
-            { value: 'full', label: 'Að fullu' },
+            { value: YES, label: m.spouseShareFull },
+            { value: NO, label: m.spouseSharePart },
           ],
         }),
         buildTextField({
-          id: 'deceasedShareTest',
-          title: 'Hlutfall séreignar',
+          id: 'customShare.customSpouseSharePercentage',
+          title: m.deceasedShare,
           width: 'half',
           placeholder: '50%',
           suffix: '%',
-          condition: (answers) => getValueViaPath(answers, 'test') === 'part',
+          variant: 'number',
+          condition: (answers) =>
+            getValueViaPath(
+              answers,
+              'customShare.hasCustomSpouseSharePercentage',
+            ) === YES,
         }),
       ],
     }),
