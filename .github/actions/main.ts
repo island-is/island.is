@@ -3,14 +3,7 @@ import { findBestGoodRefBranch, findBestGoodRefPR } from './change-detection'
 import { Octokit } from '@octokit/action'
 import { SimpleGit } from './simple-git'
 import { WorkflowID } from './git-action-status'
-
-const FULL_REBUILD_NEEDED = 'full_rebuild_needed'
-
 ;(async () => {
-  if (!!process.env.NX_AFFECTED_ALL) {
-    console.log(FULL_REBUILD_NEEDED)
-    return
-  }
   const runner = new LocalRunner(new Octokit())
   let git = new SimpleGit(process.env.REPO_ROOT!, process.env.SHELL!)
 
@@ -36,10 +29,10 @@ const FULL_REBUILD_NEEDED = 'full_rebuild_needed'
         )
 
   if (rev === 'rebuild') {
-    console.log(FULL_REBUILD_NEEDED)
-    return
+    console.log(`Full rebuild needed`)
+  } else {
+    rev.branch = rev.branch.replace(/'/g, '')
+    rev.ref = rev.ref.replace(/'/g, '')
+    console.log(JSON.stringify(rev))
   }
-  rev.branch = rev.branch.replace(/'/g, '')
-  rev.ref = rev.ref.replace(/'/g, '')
-  console.log(JSON.stringify(rev))
 })()
