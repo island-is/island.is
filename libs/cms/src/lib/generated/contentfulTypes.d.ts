@@ -1539,6 +1539,9 @@ export interface IGenericListFields {
 
   /** Search Input Placeholder */
   searchInputPlaceholder: string
+
+  /** Item Type */
+  itemType?: 'Non-clickable' | 'Clickable' | undefined
 }
 
 /** A list of items which can be embedded into rich text */
@@ -1575,6 +1578,12 @@ export interface IGenericListItemFields {
 
   /** Card Intro */
   cardIntro?: Document | undefined
+
+  /** Content */
+  content?: Document | undefined
+
+  /** Slug */
+  slug?: string | undefined
 }
 
 /** An item that belongs to a generic list */

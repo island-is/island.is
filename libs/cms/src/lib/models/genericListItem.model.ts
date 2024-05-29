@@ -20,21 +20,45 @@ export class GenericListItem {
 
   @CacheField(() => [SliceUnion])
   cardIntro: Array<typeof SliceUnion> = []
+
+  @CacheField(() => [SliceUnion], { nullable: true })
+  content?: Array<typeof SliceUnion>
+
+  @Field(() => String, { nullable: true })
+  slug?: string
+}
+
+const slugifyDate = (value: string | null) => {
+  if (!value) return ''
+  try {
+    const date = new Date(value)
+    return `${date.getDate()}-${date.getMonth() + 1}-${date.getFullYear()}`
+  } catch {
+    return ''
+  }
 }
 
 export const mapGenericListItem = ({
   fields,
   sys,
 }: IGenericListItem): GenericListItem => {
+  const date = fields.date || null
+  const slugifiedDate = slugifyDate(date)
   return {
     id: sys.id,
     genericList: fields.genericList
       ? mapGenericList(fields.genericList)
       : undefined,
     title: fields.title ?? '',
-    date: fields.date || null,
+    date,
     cardIntro: fields.cardIntro
       ? mapDocument(fields.cardIntro, sys.id + ':cardIntro')
       : [],
+    content: fields.content
+      ? mapDocument(fields.content, sys.id + ':content')
+      : [],
+    slug: fields.slug
+      ? `${fields.slug}${slugifiedDate ? '-' : ''}${slugifiedDate}`
+      : fields.slug,
   }
 }
