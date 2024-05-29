@@ -5,9 +5,9 @@ import cn from 'classnames'
 import { Box } from '../Box/Box'
 import * as styles from './Button.css'
 import { Icon } from '../IconRC/Icon'
-import { IconProps } from '../IconRC/types'
+import type { IconProps } from '../IconRC/types'
 import { TestSupport } from '@island.is/island-ui/utils'
-import { ButtonProps, ButtonTypes } from './types'
+import type { ButtonProps, ButtonTypes } from './types'
 
 export type ButtonBaseProps = ButtonProps & ButtonTypes
 

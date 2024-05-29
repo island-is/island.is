@@ -1,14 +1,14 @@
 import React from 'react'
 
 import { ActionCard } from './ActionCard'
-import { Meta, StoryObj } from '@storybook/react'
+import type { Meta, StoryObj } from '@storybook/react'
 import { withFigma } from '../../utils/withFigma'
-import { ActionCardProps } from './types'
+import type { ActionCardProps } from './types'
 import DialogPrompt from '../DialogPrompt/DialogPrompt'
 import { Icon } from '../IconRC/Icon'
 import { Tag } from '../Tag/Tag'
 import { Box } from '../Box/Box'
-import { VisuallyHidden } from 'reakit'
+import { VisuallyHidden } from '../VisuallyHidden/VisuallyHidden'
 
 const config: Meta<typeof ActionCard> = {
   title: 'Cards/ActionCard',

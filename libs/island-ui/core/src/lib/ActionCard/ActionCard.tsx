@@ -11,7 +11,7 @@ import * as styles from './ActionCard.css'
 import { Hidden } from '../Hidden/Hidden'
 import { Icon } from '../IconRC/Icon'
 import { ProgressMeter } from '../ProgressMeter/ProgressMeter'
-import { ActionCardProps, BackgroundColor } from './types'
+import type { ActionCardProps, BackgroundColor } from './types'
 
 const defaultCta = {
   variant: 'primary',
