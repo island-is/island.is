@@ -195,6 +195,7 @@ export async function findBestGoodRefPR(
       branch: prBuilds[0].branch.replace('origin/', ''),
       ref: prBuilds[0].ref,
     });
+    return;
   }
   log(`return rebuild`)
   resolve('rebuild')

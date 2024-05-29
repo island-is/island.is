@@ -26228,6 +26228,7 @@ function findBestGoodRefPR(diffWeight, git, githubApi, headBranch, baseBranch, p
           branch: prBuilds[0].branch.replace("origin/", ""),
           ref: prBuilds[0].ref
         });
+        return;
       }
       log(`return rebuild`);
       resolve("rebuild");
@@ -26356,11 +26357,12 @@ var FULL_REBUILD_NEEDED = "full_rebuild_needed";
   );
   if (rev === "rebuild") {
     console.log(FULL_REBUILD_NEEDED);
-    return;
+    process.exit(0);
   }
   rev.branch = rev.branch.replace(/'/g, "");
   rev.ref = rev.ref.replace(/'/g, "");
   console.log(JSON.stringify(rev));
+  process.exit(0);
 }))();
 /*!
  * is-plain-object <https://github.com/jonschlinkert/is-plain-object>
