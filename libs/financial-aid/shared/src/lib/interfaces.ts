@@ -85,6 +85,7 @@ export interface Amount {
   applicationId?: string
   aidAmount: number
   income?: number
+  childrenAidAmount?: number
   personalTaxCredit: number
   spousePersonalTaxCredit?: number
   tax: number
@@ -170,12 +171,16 @@ export interface CreateChildren {
   nationalId: string
   name: string
   school?: string
+  livesWithApplicant: boolean
+  livesWithBothParents: boolean
 }
 
 export interface Children {
   nationalId: string
   name: string
   school?: string
+  livesWithApplicant: boolean
+  livesWithBothParents: boolean
 }
 
 export interface ApplicationChildren {
@@ -186,6 +191,8 @@ export interface ApplicationChildren {
   nationalId: string
   name: string
   school?: string
+  livesWithApplicant: boolean
+  livesWithBothParents: boolean
 }
 
 export interface UpdateAdmin {

@@ -940,4 +940,8 @@ export const messages = defineMessages({
     id: 'sp.health:medicine-name-of-doctor',
     defaultMessage: 'Heiti læknis',
   },
+  medicineCalculatorAddToPurchaseLabel: {
+    id: 'sp.health:medicine-calculator-add-to-purchase-label',
+    defaultMessage: 'Bæta {arg} við lyfjakaupalista',
+  },
 })
