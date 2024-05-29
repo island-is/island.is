@@ -76,41 +76,38 @@ export class AppService {
           {
             label: language === 'en' ? 'Defendant' : 'Varnaraðili',
             items: [
-              [language === 'en' ? 'Name' : 'Nafn', defendant.name ?? ''],
+              [language === 'en' ? 'Name' : 'Nafn', defendant.name],
               [
                 language === 'en' ? 'National ID' : 'Kennitala',
-                defendant.nationalId ?? '',
+                defendant.nationalId,
               ],
               [
                 language === 'en' ? 'Address' : 'Heimilisfang',
-                defendant.address ?? '',
+                defendant.address,
               ],
             ].map((item) => ({
-              label: item[0],
+              label: item[0] ?? '',
               value: item[1] ?? language === 'en' ? 'N/A' : 'Ekki skráð',
             })),
           },
           {
             label: language === 'en' ? 'Defender' : 'Verjandi',
             items: [
-              [
-                language === 'en' ? 'Name' : 'Nafn',
-                defendant.defenderName ?? '',
-              ],
+              [language === 'en' ? 'Name' : 'Nafn', defendant.defenderName],
               [
                 language === 'en' ? 'Email' : 'Netfang',
-                defendant.defenderEmail ?? '',
+                defendant.defenderEmail,
                 'email',
               ],
               [
                 language === 'en' ? 'Phone Nr.' : 'Símanúmer',
-                defendant.defenderPhoneNumber ?? '',
+                defendant.defenderPhoneNumber,
                 'tel',
               ],
             ].map((item) => ({
-              label: item[0],
+              label: item[0] ?? '',
               value: item[1] ?? language === 'en' ? 'N/A' : 'Ekki skráð',
-              linkType: item[2],
+              linkType: item[2] ?? undefined,
             })),
           },
           {

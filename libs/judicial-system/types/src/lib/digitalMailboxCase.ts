@@ -4,7 +4,7 @@ export interface IndictmentCaseData {
     label: string
     items: {
       label: string
-      value: string
+      value?: string
       linkType?: 'email' | 'tel'
     }[]
   }[]
