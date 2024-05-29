@@ -17,7 +17,7 @@ import { WorkflowID } from './git-action-status'
           `'${process.env.HEAD_REF!}'`,
           `'${process.env.BASE_REF!}'`,
           `'${process.env.PR_REF!}'`,
-          'pullrequest'
+          'pullrequest',
         )
       : await findBestGoodRefBranch(
           diffWeight,
@@ -25,7 +25,7 @@ import { WorkflowID } from './git-action-status'
           runner,
           `'${process.env.HEAD_REF!}'`,
           `'${process.env.BASE_REF!}'`,
-          'push'
+          'push',
         )
 
   if (rev === 'rebuild') {
