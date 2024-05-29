@@ -29,7 +29,7 @@ import { WorkflowID } from './git-action-status'
         )
 
   if (rev === 'rebuild') {
-    console.log(`full_rebuild_needed`)
+    console.log('full_rebuild_needed')
   } else {
     rev.branch = rev.branch.replace(/'/g, '')
     rev.ref = rev.ref.replace(/'/g, '')
