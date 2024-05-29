@@ -10,13 +10,13 @@ import { isCompletedCase } from '@island.is/judicial-system/types'
 
 import { CasesResponse } from './models/cases.response'
 import { InternalCasesResponse } from './models/internalCases.response'
-import { digitalMailboxCaseModuleConfig } from './case.config'
+import { caseModuleConfig } from './case.config'
 
 @Injectable()
 export class CaseService {
   constructor(
-    @Inject(digitalMailboxCaseModuleConfig.KEY)
-    private readonly config: ConfigType<typeof digitalMailboxCaseModuleConfig>,
+    @Inject(caseModuleConfig.KEY)
+    private readonly config: ConfigType<typeof caseModuleConfig>,
     private readonly auditTrailService: AuditTrailService,
   ) {}
 

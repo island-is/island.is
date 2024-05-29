@@ -15,7 +15,7 @@ import {
 } from '@island.is/judicial-system/lawyers'
 
 import environment from './environments/environment'
-import { digitalMailboxCaseModuleConfig } from './modules/cases/case.config'
+import { caseModuleConfig } from './modules/cases/case.config'
 import { CaseController } from './modules/cases/case.controller'
 import { CaseService } from './modules/cases/case.service'
 import { DefenderController } from './modules/defenders/defender.controller'
@@ -30,11 +30,7 @@ import { DefenderController } from './modules/defenders/defender.controller'
     ProblemModule.forRoot({ logAllErrors: true }),
     ConfigModule.forRoot({
       isGlobal: true,
-      load: [
-        digitalMailboxCaseModuleConfig,
-        auditTrailModuleConfig,
-        lawyersModuleConfig,
-      ],
+      load: [caseModuleConfig, auditTrailModuleConfig, lawyersModuleConfig],
     }),
     AuthModule.register(environment.auth),
   ],

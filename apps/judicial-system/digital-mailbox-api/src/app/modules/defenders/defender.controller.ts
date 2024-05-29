@@ -4,7 +4,9 @@ import { ApiCreatedResponse, ApiTags } from '@nestjs/swagger'
 
 import { type Logger, LOGGER_PROVIDER } from '@island.is/logging'
 
-import { Lawyer, LawyersService } from '@island.is/judicial-system/lawyers'
+import { LawyersService } from '@island.is/judicial-system/lawyers'
+
+import { Defender } from './models/defender.response'
 
 @Controller('api')
 @ApiTags('defenders')
@@ -17,12 +19,17 @@ export class DefenderController {
 
   @Get('defenders')
   @ApiCreatedResponse({
-    type: String,
+    type: [Defender],
     description: 'Retrieve a list of defenders',
   })
-  async getLawyers(): Promise<Lawyer[]> {
+  async getLawyers(): Promise<Defender[]> {
     this.logger.debug('Retrieving lawyers from lawyer registry')
 
-    return this.lawyersService.getLawyers()
+    const lawyers = await this.lawyersService.getLawyers()
+    return lawyers.map((lawyer) => ({
+      nationalId: lawyer.SSN,
+      name: lawyer.Name,
+      practice: lawyer.Practice,
+    }))
   }
 }
