@@ -1,15 +1,18 @@
 {
   "openapi": "3.0.0",
   "paths": {
-    "/api/v1/advert": {
+    "/api/v1/adverts/{id}": {
       "get": {
         "operationId": "JournalController_advert",
         "parameters": [
           {
             "name": "id",
             "required": true,
-            "in": "query",
-            "schema": { "type": "string" }
+            "in": "path",
+            "description": "Advert ID.",
+            "schema": {
+              "type": "string"
+            }
           }
         ],
         "responses": {
@@ -17,7 +20,9 @@
             "description": "Advert by ID.",
             "content": {
               "application/json": {
-                "schema": { "$ref": "#/components/schemas/Advert" }
+                "schema": {
+                  "$ref": "#/components/schemas/GetAdvertResponse"
+                }
               }
             }
           },
@@ -25,7 +30,9 @@
             "description": "Advert not found.",
             "content": {
               "application/json": {
-                "schema": { "$ref": "#/components/schemas/AdvertNotFound" }
+                "schema": {
+                  "$ref": "#/components/schemas/AdvertNotFound"
+                }
               }
             }
           }
@@ -38,59 +45,89 @@
         "parameters": [
           {
             "name": "search",
+            "description": "String to search for in adverts.",
             "required": false,
             "in": "query",
-            "description": "String to search for in adverts.",
-            "schema": { "type": "string" }
+            "schema": {
+              "type": "string"
+            }
           },
           {
             "name": "page",
+            "description": "Page number to return.",
             "required": false,
             "in": "query",
-            "description": "Page number to return.",
-            "schema": { "type": "number" }
+            "schema": {
+              "type": "number"
+            }
           },
           {
             "name": "department",
+            "description": "One or more departments (by `slug`) to filter on.",
             "required": false,
             "in": "query",
-            "description": "One or more departments (by `slug`) to filter on.",
-            "schema": { "type": "array", "items": { "type": "string" } }
+            "schema": {
+              "type": "array",
+              "items": {
+                "type": "string"
+              }
+            }
           },
           {
             "name": "type",
+            "description": "One or more types (by `slug`) to filter on.",
             "required": false,
             "in": "query",
-            "description": "One or more types (by `slug`) to filter on.",
-            "schema": { "type": "array", "items": { "type": "string" } }
+            "schema": {
+              "type": "array",
+              "items": {
+                "type": "string"
+              }
+            }
           },
           {
             "name": "category",
+            "description": "One or more categories (by `slug`) to filter on.",
             "required": false,
             "in": "query",
-            "description": "One or more categories (by `slug`) to filter on.",
-            "schema": { "type": "array", "items": { "type": "string" } }
+            "schema": {
+              "type": "array",
+              "items": {
+                "type": "string"
+              }
+            }
           },
           {
             "name": "involvedParty",
+            "description": "One or more involved parties (by `slug`) to filter on.",
             "required": false,
             "in": "query",
-            "description": "One or more involved parties (by `slug`) to filter on.",
-            "schema": { "type": "array", "items": { "type": "string" } }
+            "schema": {
+              "type": "array",
+              "items": {
+                "type": "string"
+              }
+            }
           },
           {
             "name": "dateFrom",
+            "description": "Date from which to filter adverts on, inclusive, takes into account `createdDate`, `updatedDate` and `signatureDate`.",
             "required": false,
             "in": "query",
-            "description": "Date from which to filter adverts on, inclusive, takes into account `createdDate`, `updatedDate` and `signatureDate`.",
-            "schema": { "format": "date-time", "type": "string" }
+            "schema": {
+              "format": "date-time",
+              "type": "string"
+            }
           },
           {
             "name": "dateTo",
+            "description": "Date to which to filter adverts on, inclusive, takes into account `createdDate`, `updatedDate` and `signatureDate`.",
             "required": false,
             "in": "query",
-            "description": "Date to which to filter adverts on, inclusive, takes into account `createdDate`, `updatedDate` and `signatureDate`.",
-            "schema": { "format": "date-time", "type": "string" }
+            "schema": {
+              "format": "date-time",
+              "type": "string"
+            }
           }
         ],
         "responses": {
@@ -98,7 +135,9 @@
             "description": "List of adverts, optional query parameters.",
             "content": {
               "application/json": {
-                "schema": { "$ref": "#/components/schemas/GetAdvertsResponse" }
+                "schema": {
+                  "$ref": "#/components/schemas/GetAdvertsResponse"
+                }
               }
             }
           },
@@ -106,7 +145,9 @@
             "description": "Query string validation failed.",
             "content": {
               "application/json": {
-                "schema": { "$ref": "#/components/schemas/ValidationResponse" }
+                "schema": {
+                  "$ref": "#/components/schemas/ValidationResponse"
+                }
               }
             }
           }
@@ -122,14 +163,18 @@
             "required": false,
             "in": "query",
             "description": "String to search for in departments.",
-            "schema": { "type": "string" }
+            "schema": {
+              "type": "string"
+            }
           },
           {
             "name": "page",
             "required": false,
             "in": "query",
             "description": "Page number to return.",
-            "schema": { "type": "number" }
+            "schema": {
+              "type": "number"
+            }
           }
         ],
         "responses": {
@@ -147,7 +192,9 @@
             "description": "Query string validation failed.",
             "content": {
               "application/json": {
-                "schema": { "$ref": "#/components/schemas/ValidationResponse" }
+                "schema": {
+                  "$ref": "#/components/schemas/ValidationResponse"
+                }
               }
             }
           }
@@ -163,21 +210,36 @@
             "required": false,
             "in": "query",
             "description": "Department slug to get categories for.",
-            "schema": { "type": "string" }
+            "schema": {
+              "type": "string"
+            }
           },
           {
             "name": "search",
             "required": false,
             "in": "query",
             "description": "String to search for in types.",
-            "schema": { "type": "string" }
+            "schema": {
+              "type": "string"
+            }
           },
           {
             "name": "page",
             "required": false,
             "in": "query",
             "description": "Page number to return.",
-            "schema": { "type": "number" }
+            "schema": {
+              "type": "number"
+            }
+          },
+          {
+            "name": "pageSize",
+            "required": false,
+            "in": "query",
+            "description": "Number of items per page.",
+            "schema": {
+              "type": "number"
+            }
           }
         ],
         "responses": {
@@ -195,7 +257,9 @@
             "description": "Query string validation failed.",
             "content": {
               "application/json": {
-                "schema": { "$ref": "#/components/schemas/ValidationResponse" }
+                "schema": {
+                  "$ref": "#/components/schemas/ValidationResponse"
+                }
               }
             }
           }
@@ -211,14 +275,18 @@
             "required": false,
             "in": "query",
             "description": "String to search for in main categories.",
-            "schema": { "type": "string" }
+            "schema": {
+              "type": "string"
+            }
           },
           {
             "name": "page",
             "required": false,
             "in": "query",
             "description": "Page number to return.",
-            "schema": { "type": "number" }
+            "schema": {
+              "type": "number"
+            }
           }
         ],
         "responses": {
@@ -236,7 +304,9 @@
             "description": "Query string validation failed.",
             "content": {
               "application/json": {
-                "schema": { "$ref": "#/components/schemas/ValidationResponse" }
+                "schema": {
+                  "$ref": "#/components/schemas/ValidationResponse"
+                }
               }
             }
           }
@@ -252,14 +322,18 @@
             "required": false,
             "in": "query",
             "description": "String to search for in categories.",
-            "schema": { "type": "string" }
+            "schema": {
+              "type": "string"
+            }
           },
           {
             "name": "page",
             "required": false,
             "in": "query",
             "description": "Page number to return.",
-            "schema": { "type": "number" }
+            "schema": {
+              "type": "number"
+            }
           }
         ],
         "responses": {
@@ -277,7 +351,9 @@
             "description": "Query string validation failed.",
             "content": {
               "application/json": {
-                "schema": { "$ref": "#/components/schemas/ValidationResponse" }
+                "schema": {
+                  "$ref": "#/components/schemas/ValidationResponse"
+                }
               }
             }
           }
@@ -293,14 +369,18 @@
             "required": false,
             "in": "query",
             "description": "String to search for in institutions.",
-            "schema": { "type": "string" }
+            "schema": {
+              "type": "string"
+            }
           },
           {
             "name": "page",
             "required": false,
             "in": "query",
             "description": "Page number to return.",
-            "schema": { "type": "number" }
+            "schema": {
+              "type": "number"
+            }
           }
         ],
         "responses": {
@@ -318,7 +398,9 @@
             "description": "Query string validation failed.",
             "content": {
               "application/json": {
-                "schema": { "$ref": "#/components/schemas/ValidationResponse" }
+                "schema": {
+                  "$ref": "#/components/schemas/ValidationResponse"
+                }
               }
             }
           }
@@ -334,7 +416,9 @@
             "required": false,
             "in": "query",
             "description": "Search for a specific signature by id",
-            "schema": { "type": "string" }
+            "schema": {
+              "type": "string"
+            }
           },
           {
             "name": "type",
@@ -342,7 +426,9 @@
             "in": "query",
             "description": "Search for a specific signature by type",
             "example": "Regular",
-            "schema": { "type": "string" }
+            "schema": {
+              "type": "string"
+            }
           },
           {
             "name": "search",
@@ -350,14 +436,18 @@
             "in": "query",
             "description": "Search for a specific signature",
             "example": "Dagur B. Eggertsson",
-            "schema": { "type": "string" }
+            "schema": {
+              "type": "string"
+            }
           },
           {
             "name": "page",
             "required": false,
             "in": "query",
             "description": "Page number to return.",
-            "schema": { "type": "number" }
+            "schema": {
+              "type": "number"
+            }
           }
         ],
         "responses": {
@@ -375,7 +465,9 @@
             "description": "Query string validation failed.",
             "content": {
               "application/json": {
-                "schema": { "$ref": "#/components/schemas/ValidationResponse" }
+                "schema": {
+                  "$ref": "#/components/schemas/ValidationResponse"
+                }
               }
             }
           }
@@ -397,7 +489,11 @@
       "get": {
         "operationId": "HealthController_health",
         "parameters": [],
-        "responses": { "200": { "description": "Health check endpoint." } }
+        "responses": {
+          "200": {
+            "description": "Health check endpoint."
+          }
+        }
       }
     }
   },
@@ -431,7 +527,11 @@
             "example": "a-deild"
           }
         },
-        "required": ["id", "title", "slug"]
+        "required": [
+          "id",
+          "title",
+          "slug"
+        ]
       },
       "AdvertType": {
         "type": "object",
@@ -455,10 +555,19 @@
           "department": {
             "description": "Department the advert type belongs to.",
             "nullable": true,
-            "allOf": [{ "$ref": "#/components/schemas/Department" }]
+            "allOf": [
+              {
+                "$ref": "#/components/schemas/Department"
+              }
+            ]
           }
         },
-        "required": ["id", "title", "slug", "department"]
+        "required": [
+          "id",
+          "title",
+          "slug",
+          "department"
+        ]
       },
       "AdvertPublicationNumber": {
         "type": "object",
@@ -479,7 +588,11 @@
             "example": "1/2024"
           }
         },
-        "required": ["number", "year", "full"]
+        "required": [
+          "number",
+          "year",
+          "full"
+        ]
       },
       "MainCategory": {
         "type": "object",
@@ -506,7 +619,12 @@
             "example": "Hæstiréttur, lögmenn, lögreglumál, dómsmál og landsdómur."
           }
         },
-        "required": ["id", "title", "slug", "description"]
+        "required": [
+          "id",
+          "title",
+          "slug",
+          "description"
+        ]
       },
       "Category": {
         "type": "object",
@@ -531,10 +649,18 @@
             "description": "The main category this category belongs to.",
             "nullable": true,
             "example": "Dómstólar og réttarfar",
-            "allOf": [{ "$ref": "#/components/schemas/MainCategory" }]
+            "allOf": [
+              {
+                "$ref": "#/components/schemas/MainCategory"
+              }
+            ]
           }
         },
-        "required": ["id", "title", "slug"]
+        "required": [
+          "id",
+          "title",
+          "slug"
+        ]
       },
       "Institution": {
         "type": "object",
@@ -556,7 +682,11 @@
             "example": "domsmalaraduneytid"
           }
         },
-        "required": ["id", "title", "slug"]
+        "required": [
+          "id",
+          "title",
+          "slug"
+        ]
       },
       "AdvertDocument": {
         "type": "object",
@@ -579,7 +709,10 @@
             "nullable": true
           }
         },
-        "required": ["isLegacy", "html"]
+        "required": [
+          "isLegacy",
+          "html"
+        ]
       },
       "AdvertSignatureMember": {
         "type": "object",
@@ -614,7 +747,10 @@
             "nullable": true
           }
         },
-        "required": ["isChairman", "name"]
+        "required": [
+          "isChairman",
+          "name"
+        ]
       },
       "AdvertSignatureData": {
         "type": "object",
@@ -635,10 +771,16 @@
             "example": true,
             "nullable": false,
             "type": "array",
-            "items": { "$ref": "#/components/schemas/AdvertSignatureMember" }
+            "items": {
+              "$ref": "#/components/schemas/AdvertSignatureMember"
+            }
           }
         },
-        "required": ["institution", "date", "members"]
+        "required": [
+          "institution",
+          "date",
+          "members"
+        ]
       },
       "AdvertSignature": {
         "type": "object",
@@ -657,7 +799,10 @@
           "type": {
             "type": "string",
             "description": "Type of the signature",
-            "enum": ["Hefðbundin", "Nefnd"],
+            "enum": [
+              "Hefðbundin",
+              "Nefnd"
+            ],
             "example": "Hefðbundin"
           },
           "additional": {
@@ -670,10 +815,17 @@
             "example": true,
             "nullable": false,
             "type": "array",
-            "items": { "$ref": "#/components/schemas/AdvertSignatureData" }
+            "items": {
+              "$ref": "#/components/schemas/AdvertSignatureData"
+            }
           }
         },
-        "required": ["id", "advertId", "type", "data"]
+        "required": [
+          "id",
+          "advertId",
+          "type",
+          "data"
+        ]
       },
       "AdvertAttachment": {
         "type": "object",
@@ -694,7 +846,11 @@
             "example": "<url>"
           }
         },
-        "required": ["name", "type", "url"]
+        "required": [
+          "name",
+          "type",
+          "url"
+        ]
       },
       "Advert": {
         "type": "object",
@@ -709,12 +865,20 @@
             "description": "The department the advert is for.",
             "nullable": false,
             "example": "A deild",
-            "allOf": [{ "$ref": "#/components/schemas/Department" }]
+            "allOf": [
+              {
+                "$ref": "#/components/schemas/Department"
+              }
+            ]
           },
           "type": {
             "description": "Type of the advert.",
             "example": "GJALDSKRÁ",
-            "allOf": [{ "$ref": "#/components/schemas/AdvertType" }]
+            "allOf": [
+              {
+                "$ref": "#/components/schemas/AdvertType"
+              }
+            ]
           },
           "subject": {
             "type": "string",
@@ -748,7 +912,9 @@
             "description": "Publication number of the advert",
             "nullable": true,
             "allOf": [
-              { "$ref": "#/components/schemas/AdvertPublicationNumber" }
+              {
+                "$ref": "#/components/schemas/AdvertPublicationNumber"
+              }
             ]
           },
           "createdDate": {
@@ -779,26 +945,42 @@
             "description": "List of advert categories.",
             "nullable": false,
             "type": "array",
-            "items": { "$ref": "#/components/schemas/Category" }
+            "items": {
+              "$ref": "#/components/schemas/Category"
+            }
           },
           "involvedParty": {
             "description": "Involved party for the advert.",
             "nullable": false,
-            "allOf": [{ "$ref": "#/components/schemas/Institution" }]
+            "allOf": [
+              {
+                "$ref": "#/components/schemas/Institution"
+              }
+            ]
           },
           "document": {
             "description": "Advert document in different formats.",
             "nullable": false,
-            "allOf": [{ "$ref": "#/components/schemas/AdvertDocument" }]
+            "allOf": [
+              {
+                "$ref": "#/components/schemas/AdvertDocument"
+              }
+            ]
           },
           "signature": {
             "description": "Signatures for the advert.",
-            "allOf": [{ "$ref": "#/components/schemas/AdvertSignature" }]
+            "allOf": [
+              {
+                "$ref": "#/components/schemas/AdvertSignature"
+              }
+            ]
           },
           "attachments": {
             "description": "Attachments for the advert.",
             "type": "array",
-            "items": { "$ref": "#/components/schemas/AdvertAttachment" }
+            "items": {
+              "$ref": "#/components/schemas/AdvertAttachment"
+            }
           }
         },
         "required": [
@@ -819,6 +1001,22 @@
           "attachments"
         ]
       },
+      "GetAdvertResponse": {
+        "type": "object",
+        "properties": {
+          "advert": {
+            "description": "Advert",
+            "allOf": [
+              {
+                "$ref": "#/components/schemas/Advert"
+              }
+            ]
+          }
+        },
+        "required": [
+          "advert"
+        ]
+      },
       "AdvertNotFound": {
         "type": "object",
         "properties": {
@@ -826,26 +1024,55 @@
             "type": "number",
             "description": "HTTP status code of response"
           },
-          "message": { "type": "string", "description": "Response message" }
+          "message": {
+            "type": "string",
+            "description": "Response message"
+          }
         },
-        "required": ["statusCode", "message"]
+        "required": [
+          "statusCode",
+          "message"
+        ]
       },
       "Paging": {
         "type": "object",
         "properties": {
-          "page": { "type": "number", "example": 1 },
-          "totalPages": { "type": "number", "example": 10 },
-          "totalItems": { "type": "number", "example": 1000 },
-          "nextPage": { "type": "number", "example": 2, "nullable": true },
-          "previousPage": { "type": "number", "example": 1, "nullable": true },
+          "page": {
+            "type": "number",
+            "example": 1
+          },
+          "totalPages": {
+            "type": "number",
+            "example": 10
+          },
+          "totalItems": {
+            "type": "number",
+            "example": 1000
+          },
+          "nextPage": {
+            "type": "number",
+            "example": 2,
+            "nullable": true
+          },
+          "previousPage": {
+            "type": "number",
+            "example": 1,
+            "nullable": true
+          },
           "pageSize": {
             "type": "number",
             "example": 10,
             "minimum": 1,
             "maximum": 100
           },
-          "hasNextPage": { "type": "boolean", "example": true },
-          "hasPreviousPage": { "type": "boolean", "example": false }
+          "hasNextPage": {
+            "type": "boolean",
+            "example": true
+          },
+          "hasPreviousPage": {
+            "type": "boolean",
+            "example": false
+          }
         },
         "required": [
           "page",
@@ -864,14 +1091,23 @@
           "adverts": {
             "description": "List of adverts",
             "type": "array",
-            "items": { "$ref": "#/components/schemas/Advert" }
+            "items": {
+              "$ref": "#/components/schemas/Advert"
+            }
           },
           "paging": {
             "description": "Paging info",
-            "allOf": [{ "$ref": "#/components/schemas/Paging" }]
+            "allOf": [
+              {
+                "$ref": "#/components/schemas/Paging"
+              }
+            ]
           }
         },
-        "required": ["adverts", "paging"]
+        "required": [
+          "adverts",
+          "paging"
+        ]
       },
       "ValidationResponse": {
         "type": "object",
@@ -882,7 +1118,9 @@
               "message must be shorter than or equal to 10 characters"
             ],
             "type": "array",
-            "items": { "type": "string" }
+            "items": {
+              "type": "string"
+            }
           },
           "error": {
             "type": "string",
@@ -895,7 +1133,10 @@
             "example": 400
           }
         },
-        "required": ["message", "statusCode"]
+        "required": [
+          "message",
+          "statusCode"
+        ]
       },
       "GetDepartmentsResponse": {
         "type": "object",
@@ -903,14 +1144,23 @@
           "departments": {
             "description": "List of departments",
             "type": "array",
-            "items": { "$ref": "#/components/schemas/Department" }
+            "items": {
+              "$ref": "#/components/schemas/Department"
+            }
           },
           "paging": {
             "description": "Paging info",
-            "allOf": [{ "$ref": "#/components/schemas/Paging" }]
+            "allOf": [
+              {
+                "$ref": "#/components/schemas/Paging"
+              }
+            ]
           }
         },
-        "required": ["departments", "paging"]
+        "required": [
+          "departments",
+          "paging"
+        ]
       },
       "GetAdvertTypesResponse": {
         "type": "object",
@@ -918,14 +1168,23 @@
           "types": {
             "description": "List of advert types",
             "type": "array",
-            "items": { "$ref": "#/components/schemas/AdvertType" }
+            "items": {
+              "$ref": "#/components/schemas/AdvertType"
+            }
           },
           "paging": {
             "description": "Paging info",
-            "allOf": [{ "$ref": "#/components/schemas/Paging" }]
+            "allOf": [
+              {
+                "$ref": "#/components/schemas/Paging"
+              }
+            ]
           }
         },
-        "required": ["types", "paging"]
+        "required": [
+          "types",
+          "paging"
+        ]
       },
       "GetMainCategoriesResponse": {
         "type": "object",
@@ -933,14 +1192,23 @@
           "mainCategories": {
             "description": "List of main categories",
             "type": "array",
-            "items": { "$ref": "#/components/schemas/MainCategory" }
+            "items": {
+              "$ref": "#/components/schemas/MainCategory"
+            }
           },
           "paging": {
             "description": "Paging info",
-            "allOf": [{ "$ref": "#/components/schemas/Paging" }]
+            "allOf": [
+              {
+                "$ref": "#/components/schemas/Paging"
+              }
+            ]
           }
         },
-        "required": ["mainCategories", "paging"]
+        "required": [
+          "mainCategories",
+          "paging"
+        ]
       },
       "GetCategoriesResponse": {
         "type": "object",
@@ -948,14 +1216,23 @@
           "categories": {
             "description": "List of advert categories",
             "type": "array",
-            "items": { "$ref": "#/components/schemas/Category" }
+            "items": {
+              "$ref": "#/components/schemas/Category"
+            }
           },
           "paging": {
             "description": "Paging info",
-            "allOf": [{ "$ref": "#/components/schemas/Paging" }]
+            "allOf": [
+              {
+                "$ref": "#/components/schemas/Paging"
+              }
+            ]
           }
         },
-        "required": ["categories", "paging"]
+        "required": [
+          "categories",
+          "paging"
+        ]
       },
       "GetInstitutionsResponse": {
         "type": "object",
@@ -963,14 +1240,23 @@
           "institutions": {
             "description": "List of involved parties",
             "type": "array",
-            "items": { "$ref": "#/components/schemas/Institution" }
+            "items": {
+              "$ref": "#/components/schemas/Institution"
+            }
           },
           "paging": {
             "description": "Paging info",
-            "allOf": [{ "$ref": "#/components/schemas/Paging" }]
+            "allOf": [
+              {
+                "$ref": "#/components/schemas/Paging"
+              }
+            ]
           }
         },
-        "required": ["institutions", "paging"]
+        "required": [
+          "institutions",
+          "paging"
+        ]
       },
       "GetAdvertSignatureResponse": {
         "type": "object",
@@ -979,15 +1265,24 @@
             "description": "List of signatures",
             "nullable": false,
             "type": "array",
-            "items": { "$ref": "#/components/schemas/AdvertSignature" }
+            "items": {
+              "$ref": "#/components/schemas/AdvertSignature"
+            }
           },
           "paging": {
             "description": "Paging information",
             "nullable": false,
-            "allOf": [{ "$ref": "#/components/schemas/Paging" }]
+            "allOf": [
+              {
+                "$ref": "#/components/schemas/Paging"
+              }
+            ]
           }
         },
-        "required": ["items", "paging"]
+        "required": [
+          "items",
+          "paging"
+        ]
       }
     }
   }
