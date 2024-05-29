@@ -31,6 +31,7 @@ const log = Debug('main.js')
       process.env.WORKFLOW_ID! as WorkflowID,
     )
   })();
+  console.log("OK")
   if (rev === 'rebuild') {
     log(`Returning with rebuild`);
     console.log(`Full rebuild needed`)
