@@ -31,7 +31,7 @@
       "executor": "nx:run-commands",
       "options": {
         "commands": [
-          "curl https://api.syslumenn.is/staging/swagger/v1/swagger.json > src/clientConfig.json",
+          "curl -H \"X-Road-Client: $XROAD_CLIENT_ID\" http://localhost:8081/r1/IS-DEV/GOV/10016/Syslumenn-Protected/swagger -H 'Accept: application/json' > src/clientConfig.json",
           "prettier --write src/clientConfig.json"
         ],
         "parallel": false,
