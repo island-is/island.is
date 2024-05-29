@@ -31,13 +31,13 @@ export class HealthInsuranceDeclarationService extends BaseTemplateApiService {
     return this.insuranceStatementApi.withMiddleware(new AuthMiddleware(Auth))
   }
 
-  async canApply(application: TemplateApiModuleActionProps): Promise<boolean> {
+  async status(application: TemplateApiModuleActionProps) {
     const response = await this.insuranceStatementsApiWithAuth(
       application.auth,
     ).getInsuranceStatementStatus({
       applicantNationalId: application.auth.nationalId,
     })
-    return !!response.canApply
+    return response
   }
 
   async continents(application: TemplateApiModuleActionProps) {
@@ -53,12 +53,12 @@ export class HealthInsuranceDeclarationService extends BaseTemplateApiService {
   }
 
   async getInsuranceStatementData(application: TemplateApiModuleActionProps) {
-    const canApply = await this.canApply(application)
+    const status = await this.status(application)
     const continents = await this.continents(application)
     const countries = await this.countries(application)
 
     return {
-      canApply: canApply,
+      ...status,
       continents: continents,
       countries: countries,
     }

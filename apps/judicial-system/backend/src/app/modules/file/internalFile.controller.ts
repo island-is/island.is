@@ -57,8 +57,8 @@ export class InternalFileController {
     this.logger.debug(`Delivering file ${fileId} of case ${caseId} to court`)
 
     const { success } = await this.fileService.uploadCaseFileToCourt(
-      caseFile,
       theCase,
+      caseFile,
       deliverDto.user,
     )
 
@@ -110,8 +110,8 @@ export class InternalFileController {
     )
 
     return this.fileService.deliverCaseFileToCourtOfAppeals(
-      caseFile,
       theCase,
+      caseFile,
       deliverDto.user,
     )
   }
