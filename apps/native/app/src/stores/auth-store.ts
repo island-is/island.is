@@ -17,6 +17,7 @@ import { offlineStore } from './offline-store'
 import { preferencesStore } from './preferences-store'
 import { clearAllStorages } from '../stores/mmkv'
 import { notificationsStore } from './notifications-store'
+import { featureFlagClient } from '../contexts/feature-flag-provider'
 import {
   DeletePasskeyDocument,
   DeletePasskeyMutation,
@@ -164,17 +165,34 @@ export const authStore = create<AuthStore>((set, get) => ({
       notificationsStore.getState().deletePushToken(pushToken)
     }
     notificationsStore.getState().reset()
-    // const client = await getApolloClientAsync()
 
-    // remove passkey if exists
-    preferencesStore.setState({
-      hasCreatedPasskey: false,
-      hasOnboardedPasskeys: false,
-      lastUsedPasskey: 0,
-    })
-    // await client.mutate<DeletePasskeyMutation, DeletePasskeyMutationVariables>({
-    //   mutation: DeletePasskeyDocument,
-    // })
+    // Clear passkey if exists
+    const userNationalId = get().userInfo?.nationalId
+    const isPasskeyEnabled = await featureFlagClient?.getValueAsync(
+      'isPasskeyEnabled',
+      false,
+      userNationalId ? { identifier: userNationalId } : undefined,
+    )
+    if (isPasskeyEnabled) {
+      preferencesStore.setState({
+        hasCreatedPasskey: false,
+        hasOnboardedPasskeys: false,
+        lastUsedPasskey: 0,
+      })
+
+      const client = await getApolloClientAsync()
+      try {
+        await client.mutate<
+          DeletePasskeyMutation,
+          DeletePasskeyMutationVariables
+        >({
+          mutation: DeletePasskeyDocument,
+        })
+      } catch (e) {
+        // NOOP
+      }
+    }
+
     const appAuthConfig = getAppAuthConfig()
     // eslint-disable-next-line @typescript-eslint/no-non-null-assertion
     const tokenToRevoke = get().authorizeResult!.accessToken!
