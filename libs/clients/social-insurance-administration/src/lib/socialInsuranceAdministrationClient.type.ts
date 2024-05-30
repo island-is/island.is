@@ -22,6 +22,7 @@ export type Scope =
 
 export type Api =
   | typeof ApplicationApi
+  | typeof ApplicationWriteApi
   | typeof ApplicantApi
   | typeof DocumentsApi
   | typeof GeneralApi
@@ -29,6 +30,8 @@ export type Api =
   | typeof PaymentPlanApi
   | typeof PensionCalculatorApi
   | typeof TestApi
+
+export class ApplicationWriteApi extends ApplicationApi {}
 
 export interface Period {
   year: number
