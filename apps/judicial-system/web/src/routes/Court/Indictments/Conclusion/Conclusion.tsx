@@ -232,17 +232,20 @@ const Conclusion: React.FC = () => {
     ],
   )
 
-  const isDecisionChecked = (decision: IndictmentDecision) => {
-    return (
-      selectedAction === decision ||
-      (!selectedAction && workingCase.indictmentDecision === decision)
-    )
-  }
-
   useEffect(() => {
+    if (
+      workingCase.indictmentDecision ===
+      IndictmentDecision.POSTPONING_UNTIL_VERDICT
+    ) {
+      setSelectedAction(IndictmentDecision.POSTPONING_UNTIL_VERDICT)
+
+      return
+    }
     if (workingCase.indictmentRulingDecision) {
       setSelectedDecision(workingCase.indictmentRulingDecision)
       setSelectedAction(IndictmentDecision.COMPLETING)
+
+      return
     } else if (
       workingCase.courtDate?.date ||
       workingCase.postponedIndefinitelyExplanation
@@ -262,6 +265,7 @@ const Conclusion: React.FC = () => {
     workingCase.courtDate?.date,
     workingCase.postponedIndefinitelyExplanation,
     workingCase.indictmentRulingDecision,
+    workingCase.indictmentDecision,
   ])
 
   const stepIsValid = () => {
@@ -311,7 +315,12 @@ const Conclusion: React.FC = () => {
               <RadioButton
                 id="conclusion-postpone"
                 name="conclusion-decision"
-                checked={isDecisionChecked(IndictmentDecision.POSTPONING)}
+                checked={
+                  selectedAction === IndictmentDecision.POSTPONING ||
+                  (!selectedAction &&
+                    workingCase.indictmentDecision ===
+                      IndictmentDecision.POSTPONING)
+                }
                 onChange={() => {
                   setSelectedAction(IndictmentDecision.POSTPONING)
                 }}
@@ -324,9 +333,13 @@ const Conclusion: React.FC = () => {
               <RadioButton
                 id="conclusion-postpone-until-verdict"
                 name="conclusion-decision"
-                checked={isDecisionChecked(
-                  IndictmentDecision.POSTPONING_UNTIL_VERDICT,
-                )}
+                checked={
+                  selectedAction ===
+                    IndictmentDecision.POSTPONING_UNTIL_VERDICT ||
+                  (!selectedAction &&
+                    workingCase.indictmentDecision ===
+                      IndictmentDecision.POSTPONING_UNTIL_VERDICT)
+                }
                 onChange={() => {
                   setSelectedAction(IndictmentDecision.POSTPONING_UNTIL_VERDICT)
                 }}
@@ -339,7 +352,12 @@ const Conclusion: React.FC = () => {
               <RadioButton
                 id="conclusion-complete"
                 name="conclusion-decision"
-                checked={isDecisionChecked(IndictmentDecision.COMPLETING)}
+                checked={
+                  selectedAction === IndictmentDecision.COMPLETING ||
+                  (!selectedAction &&
+                    workingCase.indictmentDecision ===
+                      IndictmentDecision.COMPLETING)
+                }
                 onChange={() => {
                   setSelectedAction(IndictmentDecision.COMPLETING)
                 }}
@@ -351,7 +369,12 @@ const Conclusion: React.FC = () => {
             <RadioButton
               id="conclusion-redistribute"
               name="conclusion-redistribute"
-              checked={isDecisionChecked(IndictmentDecision.REDISTRIBUTING)}
+              checked={
+                selectedAction === IndictmentDecision.REDISTRIBUTING ||
+                (!selectedAction &&
+                  workingCase.indictmentDecision ===
+                    IndictmentDecision.REDISTRIBUTING)
+              }
               onChange={() => {
                 setSelectedAction(IndictmentDecision.REDISTRIBUTING)
               }}
@@ -550,6 +573,11 @@ const Conclusion: React.FC = () => {
                 ? constants.CASES_ROUTE
                 : constants.INDICTMENTS_COURT_OVERVIEW_ROUTE,
             )
+          }
+          nextButtonText={
+            selectedAction === IndictmentDecision.COMPLETING
+              ? undefined
+              : formatMessage(strings.nextButtonTextConfirm)
           }
           nextIsDisabled={!stepIsValid()}
           nextIsLoading={isUpdatingCase}

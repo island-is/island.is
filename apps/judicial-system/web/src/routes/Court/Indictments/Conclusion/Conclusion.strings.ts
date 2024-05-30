@@ -109,4 +109,9 @@ export const strings = defineMessages({
     description:
       'Notaður sem texti í viðurlagaákvörðun valmöguleika á Niðurstaða skrefi.',
   },
+  nextButtonTextConfirm: {
+    id: 'judicial.system.core:court.indictments.conclusion.next_button_text_confirm',
+    defaultMessage: 'Staðfesta',
+    description: 'Notaður sem texti á halda áfram takka.',
+  },
 })
