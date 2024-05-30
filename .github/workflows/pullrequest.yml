@@ -45,9 +45,9 @@ jobs:
       - uses: actions/checkout@v3
         with:
           fetch-depth: 0
-      - uses: actions/setup-node@v3
+      - uses: actions/setup-node@v4
         with:
-          node-version: '18.8.0'
+          node-version-file: 'package.json'
 
       - name: Setup yarn
         run: npm install -g yarn
@@ -80,11 +80,9 @@ jobs:
       - name: Calculate cache key for node modules
         id: calculate_node_modules_hash
         run: |
-          PACKAGE_JSON_HASH=$(cat package.json | jq '{resolutions,dependencies,devDependencies}' | sha1sum -t | cut -f1 -d" ")
-          echo "PACKAGE_JSON_HASH: $PACKAGE_JSON_HASH"
-          export NODE_MODULES_HASH=${{ runner.os }}-${{ hashFiles('yarn.lock') }}-$PACKAGE_JSON_HASH
-          echo "NODE_MODULES_HASH: $NODE_MODULES_HASH"
-          echo "node-modules-hash=$NODE_MODULES_HASH" >> $GITHUB_OUTPUT
+          HASH="$(./scripts/ci/get-node-modules-hash.mjs)"
+          echo "node-modules-hash: ${HASH}"
+          echo "node-modules-hash=${HASH}" >> $GITHUB_OUTPUT
 
       - name: Calculate cache keys for generated files
         id: calculate_generated_files_cache_key
@@ -249,9 +247,9 @@ jobs:
         with:
           fetch-depth: 0
 
-      - uses: actions/setup-node@v3
+      - uses: actions/setup-node@v4
         with:
-          node-version: '18'
+          node-version-file: 'package.json'
 
       - name: Setup yarn
         run: npm install -g yarn
@@ -310,9 +308,9 @@ jobs:
     steps:
       - uses: actions/checkout@v3
 
-      - uses: actions/setup-node@v3
+      - uses: actions/setup-node@v4
         with:
-          node-version: '18'
+          node-version-file: 'package.json'
 
       - name: Setup yarn
         run: npm install -g yarn
@@ -373,9 +371,9 @@ jobs:
           path: node_modules
           key: ${{ needs.prepare.outputs.node-modules-hash }}-yarn
 
-      - uses: actions/setup-node@v3
+      - uses: actions/setup-node@v4
         with:
-          node-version: '18'
+          node-version-file: 'package.json'
 
       - name: Setup yarn
         run: npm install -g yarn
@@ -416,9 +414,9 @@ jobs:
       - uses: actions/checkout@v3
         if: ${{ github.ref == 'ref/heads/main' }}
 
-      - uses: actions/setup-node@v3
+      - uses: actions/setup-node@v4
         with:
-          node-version: '18'
+          node-version-file: 'package.json'
       - name: Setup yarn
         run: npm install -g yarn
 
@@ -460,9 +458,9 @@ jobs:
       matrix: ${{ fromJson(needs.prepare.outputs.LINT_CHUNKS) }}
     steps:
       - uses: actions/checkout@v3
-      - uses: actions/setup-node@v3
+      - uses: actions/setup-node@v4
         with:
-          node-version: '18'
+          node-version-file: 'package.json'
       - name: Setup yarn
         run: npm install -g yarn
       - name: Cache for NodeJS dependencies - host OS
@@ -509,9 +507,9 @@ jobs:
     if: needs.prepare.outputs.BUILD_CHUNKS
     steps:
       - uses: actions/checkout@v3
-      - uses: actions/setup-node@v3
+      - uses: actions/setup-node@v4
         with:
-          node-version: '18'
+          node-version-file: 'package.json'
       - name: Setup yarn
         run: npm install -g yarn
       - name: Cache for NodeJS dependencies - host OS
