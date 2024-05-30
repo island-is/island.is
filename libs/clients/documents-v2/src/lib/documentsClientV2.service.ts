@@ -19,7 +19,7 @@ const LOG_CATEGORY = 'clients-documents-v2'
 @Injectable()
 export class DocumentsClientV2Service {
   constructor(
-    @Inject(LOGGER_PROVIDER) private logger: Logger,
+    @Inject(LOGGER_PROVIDER) private readonly logger: Logger,
     private api: CustomersApi,
   ) {}
 

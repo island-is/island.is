@@ -41,7 +41,7 @@ export class DocumentServiceV2 {
       return null // Null document logged in clients-documents-v2
     }
 
-    let type
+    let type: FileType
     switch (document.fileType) {
       case 'html':
         type = FileType.HTML
