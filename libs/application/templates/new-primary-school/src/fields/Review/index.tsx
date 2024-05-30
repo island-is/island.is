@@ -13,6 +13,7 @@ import { getApplicationAnswers } from '../../lib/newPrimarySchoolUtils'
 
 import { Child } from './review-groups/Child'
 import { Parents } from './review-groups/Parents'
+import { Support } from './review-groups/Support'
 import { Photography } from './review-groups/Photography'
 import { Relatives } from './review-groups/Relatives'
 import { Siblings } from './review-groups/Siblings'
@@ -149,6 +150,7 @@ export const Review: FC<ReviewScreenProps> = ({
       <Parents {...childProps} />
       <Relatives {...childProps} />
       <Siblings {...childProps} />
+      <Support {...childProps} />
       <Photography {...childProps} />
     </>
   )
