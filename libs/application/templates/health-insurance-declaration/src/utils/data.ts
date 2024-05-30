@@ -64,9 +64,13 @@ export const hasFamilyAvailable = (answers: HealthInsuranceDeclaration) => {
 }
 
 export const hasFamilySelected = (answers: HealthInsuranceDeclaration) => {
-  return (
-    answers.registerPersonsSpouseCheckboxField?.length > 0 ||
-    answers.registerPersonsChildrenCheckboxField?.length > 0
+  return !!(
+    (answers.selectedApplicants?.registerPersonsSpouseCheckboxField &&
+      answers.selectedApplicants?.registerPersonsSpouseCheckboxField?.length >
+        0) ||
+    (answers.selectedApplicants?.registerPersonsChildrenCheckboxField &&
+      answers.selectedApplicants?.registerPersonsChildrenCheckboxField?.length >
+        0)
   )
 }
 
@@ -156,19 +160,23 @@ export const getSelectedFamily = (
 
   if (spouse) {
     selectedFamily = selectedFamily.concat(
-      answers.registerPersonsSpouseCheckboxField?.map((s) => {
-        if (s === spouse.nationalId) {
-          return [
-            spouse.name,
-            spouse.nationalId,
-            m.overview.familyTableRelationSpouseText,
-          ]
-        } else return []
-      }),
+      answers.selectedApplicants?.registerPersonsSpouseCheckboxField
+        ? answers.selectedApplicants?.registerPersonsSpouseCheckboxField?.map(
+            (s) => {
+              if (s === spouse.nationalId) {
+                return [
+                  spouse.name,
+                  spouse.nationalId,
+                  m.overview.familyTableRelationSpouseText,
+                ]
+              } else return []
+            },
+          )
+        : [],
     )
   }
 
-  const selectedChildren = answers.registerPersonsChildrenCheckboxField?.map(
+  const selectedChildren = answers.selectedApplicants?.registerPersonsChildrenCheckboxField?.map(
     (childNationalId) => {
       const childData = children.find((c) => c.nationalId === childNationalId)
       return [

@@ -25,8 +25,7 @@ export const applicationToStudentApplication = (
   application: Application,
   attachments: DocumentInfo[],
 ): InsuranceStatementsStudentApplicationDTO => {
-  const healthInsuranceApplication =
-    application as HealthInsuranceDeclarationApplication
+  const healthInsuranceApplication = application as HealthInsuranceDeclarationApplication
   return {
     applicants: getApplicants(healthInsuranceApplication),
     countryCode: getResidencyCode(healthInsuranceApplication),
@@ -39,8 +38,7 @@ export const applicationToStudentApplication = (
 export const applicationToTouristApplication = (
   application: Application,
 ): InsuranceStatementsTouristApplicationDTO => {
-  const healthInsuranceApplication =
-    application as HealthInsuranceDeclarationApplication
+  const healthInsuranceApplication = application as HealthInsuranceDeclarationApplication
   return {
     applicants: getApplicants(healthInsuranceApplication),
     continentCode: getResidencyCode(healthInsuranceApplication),
@@ -65,7 +63,7 @@ const getApplicants = (
   }
 
   // Spouse
-  answers.registerPersonsSpouseCheckboxField.map((s) => {
+  answers.selectedApplicants?.registerPersonsSpouseCheckboxField?.map((s) => {
     const externalSpouse =
       application.externalData.nationalRegistrySpouse.data.nationalId === s
         ? application.externalData.nationalRegistrySpouse.data
@@ -79,7 +77,7 @@ const getApplicants = (
     }
   })
   // Children
-  answers.registerPersonsChildrenCheckboxField.map((c) => {
+  answers.selectedApplicants?.registerPersonsChildrenCheckboxField?.map((c) => {
     const child = application.externalData.childrenCustodyInformation.data.find(
       (externalChild) => externalChild.nationalId === c,
     )
@@ -115,20 +113,18 @@ export const getPersonsFromExternalData = (application: Application) => {
   const spouse = getSpouseFromExternalData(application)
   const persons = [
     {
-      nationalId: (
-        application.externalData.nationalRegistry
-          .data as NationalRegistryIndividual
-      ).nationalId,
-      name: (
-        application.externalData.nationalRegistry
-          .data as NationalRegistryIndividual
-      ).fullName,
+      nationalId: (application.externalData.nationalRegistry
+        .data as NationalRegistryIndividual).nationalId,
+      name: (application.externalData.nationalRegistry
+        .data as NationalRegistryIndividual).fullName,
     },
   ]
-  persons.push({
-    nationalId: spouse.nationalId,
-    name: spouse.name,
-  })
+  if (spouse) {
+    persons.push({
+      nationalId: spouse.nationalId,
+      name: spouse.name,
+    })
+  }
   children.map((child) => {
     persons.push({
       nationalId: child.nationalId,
