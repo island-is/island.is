@@ -22,6 +22,8 @@ import { ApplicationModel } from '../models/application.model'
 import { createTestingApplicationModule } from './createTestingApplicationModule'
 import { DirectTaxPaymentService } from '../../directTaxPayment'
 import { ChildrenService } from '../../children'
+import { nowFactory } from '../factories/date.factory'
+jest.mock('../factories/date.factory')
 
 interface Then {
   result: ApplicationModel
@@ -81,6 +83,7 @@ describe('ApplicationController - Create', () => {
   describe('database query', () => {
     let mockCreate: jest.Mock
     let mockFindOne: jest.Mock
+    const date = new Date()
 
     const user: User = {
       nationalId: '0000000000',
@@ -132,16 +135,19 @@ describe('ApplicationController - Create', () => {
       const mockFindApplication = mockApplicationModel.findOne as jest.Mock
       mockFindApplication.mockReturnValueOnce(null)
 
+      const mockToday = nowFactory as jest.Mock
+      mockToday.mockReturnValueOnce(date)
+
       await givenWhenThen(user, application)
     })
-    //TODO fix this test
-    // it('should call create on model with application', () => {
-    //   expect(mockCreate).toHaveBeenCalledWith({
-    //     nationalId: user.nationalId,
-    //     ...application,
-    //     applied: mockDate,
-    //   })
-    // })
+
+    it('should call create on model with application', () => {
+      expect(mockCreate).toHaveBeenCalledWith({
+        nationalId: user.nationalId,
+        ...application,
+        applied: date,
+      })
+    })
 
     it('should call find one on model with applicant national id', () => {
       expect(mockFindOne).toHaveBeenCalledWith({
@@ -643,14 +649,6 @@ describe('ApplicationController - Create', () => {
       spouseHasFetchedDirectTaxPayment: false,
       children: [],
       childrenComment: '',
-    }
-
-    const appModel = {
-      id,
-      state: application.state,
-      created: new Date(),
-      applied: new Date(),
-      email: application.email,
     }
 
     beforeEach(async () => {
