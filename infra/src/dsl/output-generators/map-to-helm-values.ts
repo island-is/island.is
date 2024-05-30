@@ -46,7 +46,7 @@ const serializeService: SerializeMethod<HelmService> = async (
     namespace,
     securityContext,
   } = serviceDef
-  const hackMapForNonExistentTracer = [
+  const hackListForNonExistentTracer = [
     "application-system-form",
     "github-actions-cache",
     "portals-admin",
