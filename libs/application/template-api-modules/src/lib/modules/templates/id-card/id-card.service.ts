@@ -38,14 +38,13 @@ export class IdCardService extends BaseTemplateApiService {
   async identityDocument({ auth, application }: TemplateApiModuleActionProps) {
     const identityDocument = await this.passportApi.getCurrentPassport(
       auth,
-      '1',
-    )
-    console.log('identityDocument', identityDocument)
-    this.logger.warn(
-      'No passport found for user for application: ',
-      application.id,
+      'Id',
     )
     if (!identityDocument) {
+      this.logger.warn(
+        'No passport found for user for application: ',
+        application.id,
+      )
       throw new TemplateApiError(
         {
           title: coreErrorMessages.failedDataProvider,
