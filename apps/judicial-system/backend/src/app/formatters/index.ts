@@ -32,4 +32,5 @@ export {
 export { getRequestPdfAsBuffer, getRequestPdfAsString } from './requestPdf'
 export { getRulingPdfAsBuffer, getRulingPdfAsString } from './rulingPdf'
 export { createCaseFilesRecord } from './caseFilesRecordPdf'
-export { createIndictment } from './indictmentPdf'
+export { createIndictment, IndictmentConfirmation } from './indictmentPdf'
+export { createConfirmedIndictment } from './confirmedIndictmentPdf'

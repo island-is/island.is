@@ -7,27 +7,46 @@ import {
   getValueViaPath,
 } from '@island.is/application/core'
 import { information } from '../../../lib/messages'
-import { Answer, YES } from '@island.is/application/types'
+import { Answer, FormValue, YES } from '@island.is/application/types'
 import { Citizenship } from '../../../lib/dataSchema'
-import { ApplicantResidenceConditionViewModel } from '@island.is/clients/directorate-of-immigration'
+import { ApplicantInformation, ParentsToApplicant } from '../../../shared'
 
 export const FormerIcelanderSubSection = buildSubSection({
   id: 'formerIcelander',
   title: information.labels.formerIcelander.subSectionTitle,
-  condition: (answer: Answer, externalData) => {
-    const answers = answer as Citizenship
-    const hasValidParents = answers?.parentInformation?.hasValidParents === YES
-
+  condition: (formValue: FormValue, externalData) => {
     const residenceConditionInfo = getValueViaPath(
       externalData,
-      'residenceConditionInfo.data',
+      'applicantInformation.data.residenceConditionInfo',
       {},
-    ) as ApplicantResidenceConditionViewModel
-    const isAnyResConValid = residenceConditionInfo.isAnyResConValid
+    ) as ApplicantInformation
 
-    // TODO revert
-    // return !isAnyResConValid && !hasValidParents
-    return !hasValidParents
+    const parentAnswer = getValueViaPath(
+      formValue,
+      'parentInformation.parents',
+      [],
+    ) as Array<ParentsToApplicant>
+
+    const totalParentsInAnswer = parentAnswer.filter(
+      (x) => x.wasRemoved === 'false',
+    )
+    const hasResConMaritalStatus =
+      residenceConditionInfo.cohabitationISCitizen5YearDomicile ||
+      residenceConditionInfo.cohabitationISCitizen5YrsDomicileMissingDate ||
+      residenceConditionInfo.marriedISCitizenDomicile4Years ||
+      residenceConditionInfo.marriedISCitizenDomicile4YrsMissingDate
+
+    const hasOtherValidResidenceConditions =
+      residenceConditionInfo.domicileResidence7Years ||
+      residenceConditionInfo.asylumSeekerOrHumanitarianResPerm5year ||
+      residenceConditionInfo.noNationalityAnd5YearsDomicile ||
+      residenceConditionInfo.nordicCitizenship4YearDomicile
+
+    return (
+      !hasResConMaritalStatus &&
+      !hasOtherValidResidenceConditions &&
+      totalParentsInAnswer.length === 0
+    )
   },
   children: [
     buildMultiField({
@@ -49,24 +68,23 @@ export const FormerIcelanderSubSection = buildSubSection({
             { value: NO, label: information.labels.radioButtons.radioOptionNo },
           ],
         }),
-        // TODO revert
-        // buildAlertMessageField({
-        //   id: 'formerIcelanderAlert',
-        //   title: information.labels.formerIcelander.alertTitle,
-        //   alertType: 'error',
-        //   message: information.labels.formerIcelander.alertDescription,
-        //   condition: (answer: Answer) => {
-        //     const answers = answer as Citizenship
-        //     return answers?.formerIcelander === NO
-        //   },
-        //   links: [
-        //     {
-        //       title: information.labels.formerIcelander.alertLinkTitle,
-        //       url: information.labels.formerIcelander.alertLinkUrl,
-        //       isExternal: true,
-        //     },
-        //   ],
-        // }),
+        buildAlertMessageField({
+          id: 'formerIcelanderAlert',
+          title: information.labels.formerIcelander.alertTitle,
+          alertType: 'error',
+          message: information.labels.formerIcelander.alertDescription,
+          condition: (answer: Answer) => {
+            const answers = answer as Citizenship
+            return answers?.formerIcelander === NO
+          },
+          links: [
+            {
+              title: information.labels.formerIcelander.alertLinkTitle,
+              url: information.labels.formerIcelander.alertLinkUrl,
+              isExternal: true,
+            },
+          ],
+        }),
       ],
     }),
   ],

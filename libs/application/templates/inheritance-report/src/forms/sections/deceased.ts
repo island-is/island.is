@@ -4,12 +4,14 @@ import {
   buildMultiField,
   buildRadioField,
   buildSection,
+  buildTextField,
   getValueViaPath,
 } from '@island.is/application/core'
 import { m } from '../../lib/messages'
 import format from 'date-fns/format'
 import { getEstateDataFromApplication } from '../../lib/utils/helpers'
 import { NO, YES } from '../../lib/constants'
+import { format as formatNationalId } from 'kennitala'
 
 export const deceased = buildSection({
   id: 'deceasedInfo',
@@ -30,8 +32,10 @@ export const deceased = buildSection({
         buildKeyValueField({
           label: m.nationalId,
           value: (application) =>
-            getEstateDataFromApplication(application)?.inheritanceReportInfo
-              ?.nationalId ?? '',
+            formatNationalId(
+              getEstateDataFromApplication(application)?.inheritanceReportInfo
+                ?.nationalId ?? '',
+            ),
           width: 'half',
         }),
         buildDescriptionField({
@@ -92,6 +96,37 @@ export const deceased = buildSection({
             { value: YES, label: m.yes },
             { value: NO, label: m.no },
           ],
+        }),
+        buildDescriptionField({
+          id: 'space4',
+          space: 'gutter',
+          title: '',
+        }),
+        buildRadioField({
+          id: 'customShare.hasCustomSpouseSharePercentage',
+          title: m.hasCustomSpouseSharePercentage,
+          largeButtons: false,
+          backgroundColor: 'white',
+          width: 'half',
+          condition: (answers) =>
+            getValueViaPath(answers, 'deceasedWasMarried') === YES,
+          options: [
+            { value: YES, label: m.spouseSharePart },
+            { value: NO, label: m.spouseShareFull },
+          ],
+        }),
+        buildTextField({
+          id: 'customShare.customSpouseSharePercentage',
+          title: m.deceasedShare,
+          width: 'half',
+          placeholder: '50%',
+          suffix: '%',
+          variant: 'number',
+          condition: (answers) =>
+            getValueViaPath(
+              answers,
+              'customShare.hasCustomSpouseSharePercentage',
+            ) === YES,
         }),
       ],
     }),

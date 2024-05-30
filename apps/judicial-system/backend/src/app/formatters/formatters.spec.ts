@@ -46,6 +46,7 @@ export const makeProsecutor = (): User => {
     role: UserRole.PROSECUTOR,
     active: true,
     title: 'aðstoðarsaksóknari',
+    canConfirmIndictment: true,
     institution: {
       id: '',
       created: '',
