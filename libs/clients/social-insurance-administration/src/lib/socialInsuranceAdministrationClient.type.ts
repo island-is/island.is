@@ -8,7 +8,6 @@ import {
   PensionCalculatorApi,
   TestApi,
   TrWebCommonsExternalPortalsApiModelsDocumentsDocument,
-  ValidationApi,
 } from '../../gen/fetch'
 
 export type Scope =
@@ -30,7 +29,6 @@ export type Api =
   | typeof PaymentPlanApi
   | typeof PensionCalculatorApi
   | typeof TestApi
-  | typeof ValidationApi
 
 export interface Period {
   year: number
