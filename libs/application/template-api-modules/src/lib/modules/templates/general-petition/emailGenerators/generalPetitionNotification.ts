@@ -2,7 +2,9 @@ import { getValueViaPath } from '@island.is/application/core'
 import { EmailTemplateGeneratorProps } from '../../../../types'
 import { SendMailOptions } from 'nodemailer'
 
-type GeneralPetitionNotificationEmail = (props: EmailTemplateGeneratorProps) => SendMailOptions;
+type GeneralPetitionNotificationEmail = (
+  props: EmailTemplateGeneratorProps,
+) => SendMailOptions
 
 export const generalPetitionNotificationEmail: GeneralPetitionNotificationEmail =
   (props) => {
@@ -50,13 +52,13 @@ export const generalPetitionNotificationEmail: GeneralPetitionNotificationEmail 
             component: 'Copy',
             align: 'center',
             context: {
-              copy:
-                `<span>Lýsing: ${answers.aboutList} </span><br/>
+              copy: `<span>Lýsing: ${answers.aboutList} </span><br/>
                 <span>Tímabil lista: ${dateFrom} - ${dateTil} </span><br/>
                 <span>Stofnandi lista: ${applicant.fullName} </span><br/>
                 <span>Netfang stofnenda: ${answers.email} </span><br/>
                 <span>Sími notenda: ${answers.phone} </span><br/>
                 <span>Kær kveðja, <br/> Ísland.is</span><br/>`,
+            },
           },
         ],
       },
