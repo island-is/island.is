@@ -39,7 +39,6 @@ import { createNavigationOptionHooks } from '../../hooks/create-navigation-optio
 import { navigateTo } from '../../lib/deep-linking'
 import { showPicker } from '../../lib/show-picker'
 import { authStore } from '../../stores/auth-store'
-import { useNotificationsStore } from '../../stores/notifications-store'
 import {
   preferencesStore,
   usePreferencesStore,

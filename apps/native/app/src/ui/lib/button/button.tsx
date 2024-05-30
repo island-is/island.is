@@ -92,7 +92,7 @@ const Text = styled.Text<{
 const Icon = styled.Image`
   width: 16px;
   height: 16px;
-  margin-left: 10px;
+  margin-left: 8px;
 `
 
 export function Button({
