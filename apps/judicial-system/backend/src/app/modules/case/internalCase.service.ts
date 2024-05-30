@@ -10,6 +10,7 @@ import {
   Inject,
   Injectable,
   InternalServerErrorException,
+  NotFoundException,
 } from '@nestjs/common'
 import { InjectConnection, InjectModel } from '@nestjs/sequelize'
 
@@ -50,8 +51,8 @@ import { EventLogService } from '../event-log'
 import { CaseFile, FileService } from '../file'
 import { IndictmentCount, IndictmentCountService } from '../indictment-count'
 import { Institution } from '../institution'
-import { User, UserService } from '../user'
 import { PoliceDocument, PoliceDocumentType, PoliceService } from '../police'
+import { User, UserService } from '../user'
 import { InternalCreateCaseDto } from './dto/internalCreateCase.dto'
 import { archiveFilter } from './filters/case.archiveFilter'
 import { ArchiveResponse } from './models/archive.response'
@@ -1065,7 +1066,7 @@ export class InternalCaseService {
     caseId: string,
     nationalId: string,
   ): Promise<Case | null> {
-    return this.caseModel.findOne({
+    const caseById = await this.caseModel.findOne({
       include: [
         { model: Defendant, as: 'defendants' },
         { model: Institution, as: 'court' },
@@ -1080,5 +1081,11 @@ export class InternalCaseService {
         '$defendants.national_id$': nationalId,
       },
     })
+
+    if (!caseById) {
+      throw new NotFoundException(`Case ${caseId} not found`)
+    }
+
+    return caseById
   }
 }

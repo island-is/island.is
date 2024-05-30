@@ -1,4 +1,9 @@
-import { BadGatewayException, Inject, Injectable } from '@nestjs/common'
+import {
+  BadGatewayException,
+  Inject,
+  Injectable,
+  NotFoundException,
+} from '@nestjs/common'
 
 import { type Logger, LOGGER_PROVIDER } from '@island.is/logging'
 import { type ConfigType } from '@island.is/nest/config'
@@ -200,18 +205,24 @@ export class AppService {
         },
       )
 
-      const response = await res.json()
-
       if (!res.ok) {
+        if (res.status === 404) {
+          throw new NotFoundException(`Case ${id} not found`)
+        }
+
         throw new BadGatewayException(
-          response?.detail ||
-            'Unexpected error occurred while fetching case by ID',
+          res.text() || 'Unexpected error occurred while fetching case by ID',
         )
       }
 
+      const response = await res.json()
+
       return this.formatCase(response, lang)
     } catch (reason) {
-      if (reason instanceof BadGatewayException) {
+      if (
+        reason instanceof BadGatewayException ||
+        reason instanceof NotFoundException
+      ) {
         throw reason
       }
 
