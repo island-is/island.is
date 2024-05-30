@@ -4,7 +4,6 @@ import {
   buildSection,
 } from '@island.is/application/core'
 import { m } from '../../../lib/messages'
-import { PrePaidHeirsRelationTypes } from '../../../lib/constants'
 
 export const prePaidHeirs = buildSection({
   id: 'prePaidHeirs',

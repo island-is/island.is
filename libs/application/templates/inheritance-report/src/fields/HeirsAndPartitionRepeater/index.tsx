@@ -177,10 +177,15 @@ export const HeirsAndPartitionRepeater: FC<
 
   const updateValues = useCallback(
     (updateIndex: string, value: number, index?: number) => {
+      const isPrePaid = answers.applicationFor === PREPAID_INHERITANCE
       const numValue = isNaN(value) ? 0 : value
       const percentage = numValue > 0 ? numValue / 100 : 0
-      const heirs = getValues()?.heirs?.data as EstateMember[]
-      let currentHeir = getValueViaPath(answers, updateIndex) as EstateMember
+      const heirs = isPrePaid
+        ? (getValues()?.prePaidHeirs?.data as EstateMember[])
+        : (getValues()?.heirs?.data as EstateMember[])
+      let currentHeir = isPrePaid
+        ? heirs[index ?? 0]
+        : (getValueViaPath(answers, updateIndex) as EstateMember)
 
       if (!currentHeir && typeof index === 'number') {
         // if no current heir then it has not been saved yet, so let's
@@ -194,23 +199,29 @@ export const HeirsAndPartitionRepeater: FC<
       const spouse = (heirs ?? []).filter(
         (heir) =>
           heir.enabled &&
-          (heir.relation === 'Maki' || heir.relation === 'Spouse'),
+          (heir.relation === 'Maki' ||
+            heir.relation.toLowerCase() === 'spouse'),
       )
 
       let isSpouse = false
 
       // it is not possible to select more than one spouse but for now we will check for it anyway
       if (spouse.length > 0) {
-        spouse.forEach((currentSpouse) => {
+        if (isPrePaid) {
           isSpouse =
-            valueToNumber(currentSpouse?.nationalId) === currentNationalId
-        })
+            currentHeir?.relation === 'Maki' ||
+            currentHeir?.relation.toLowerCase() === 'spouse'
+        } else {
+          spouse.forEach((currentSpouse) => {
+            isSpouse =
+              valueToNumber(currentSpouse?.nationalId) === currentNationalId
+          })
+        }
       }
 
-      const netPropertyForExchange =
-        answers.applicationFor === PREPAID_INHERITANCE
-          ? getPrePaidTotalValueFromApplication(application)
-          : valueToNumber(getValueViaPath(answers, 'netPropertyForExchange'))
+      const netPropertyForExchange = isPrePaid
+        ? getPrePaidTotalValueFromApplication(application)
+        : valueToNumber(getValueViaPath(answers, 'netPropertyForExchange'))
 
       const inheritanceValue = netPropertyForExchange * percentage
 

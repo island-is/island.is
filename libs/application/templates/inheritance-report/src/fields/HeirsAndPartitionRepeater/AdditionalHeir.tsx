@@ -244,10 +244,6 @@ export const AdditionalHeir = ({
       <GridRow>
         {customFields.map((customField: any, customFieldIndex) => {
           const defaultValue = currentHeir?.[customField.id]
-          if (customField.id === 'taxFreeInheritance') {
-            console.log(customField)
-            console.log(currentHeir)
-          }
           return (
             <Fragment key={customFieldIndex}>
               {customField?.sectionTitle ? (
