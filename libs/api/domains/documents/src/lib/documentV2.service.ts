@@ -26,7 +26,7 @@ export class DocumentServiceV2 {
     @Inject(LOGGER_PROVIDER) private readonly logger: Logger,
     @Inject(DownloadServiceConfig.KEY)
     private downloadServiceConfig: ConfigType<typeof DownloadServiceConfig>,
-  ) { }
+  ) {}
 
   async findDocumentById(
     nationalId: string,
