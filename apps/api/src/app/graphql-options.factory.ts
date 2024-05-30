@@ -23,7 +23,6 @@ export class GraphqlOptionsFactory implements GqlOptionsFactory {
       ? true
       : 'apps/api/src/api.graphql'
     const bypassCacheSecret = this.config.bypassCacheSecret
-
     return {
       debug,
       playground,
@@ -31,7 +30,7 @@ export class GraphqlOptionsFactory implements GqlOptionsFactory {
       path: '/api/graphql',
       cache:
         this.config.redis.nodes.length > 0
-          ? await createRedisApolloCache({
+          ? createRedisApolloCache({
               name: 'apollo-cache',
               nodes: this.config.redis.nodes,
               ssl: this.config.redis.ssl,

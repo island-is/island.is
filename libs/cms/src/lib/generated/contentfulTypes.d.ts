@@ -580,6 +580,9 @@ export interface IChartFields {
 
   /** Custom Style Config */
   customStyleConfig?: Record<string, any> | undefined
+
+  /** Reduce and round value */
+  reduceAndRoundValue?: boolean | undefined
 }
 
 /** A wrapper to render any graphical representation of data using [Chart Component]s. */
@@ -735,6 +738,9 @@ export interface IContactUs extends Entry<IContactUsFields> {
 }
 
 export interface ICustomPageFields {
+  /** Parent Page */
+  parentPage?: ICustomPage | undefined
+
   /** Title */
   title?: string | undefined
 
@@ -743,6 +749,9 @@ export interface ICustomPageFields {
     | 'PensionCalculator'
     | 'OfficialJournalOfIceland'
     | 'Vacancies'
+
+  /** Slug */
+  slug?: string | undefined
 
   /** Alert Banner */
   alertBanner?: IAlertBanner | undefined

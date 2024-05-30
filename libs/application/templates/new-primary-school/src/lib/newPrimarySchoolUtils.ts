@@ -29,6 +29,21 @@ export const getApplicationAnswers = (answers: Application['answers']) => {
     'languages.icelandicNotSpokenAroundChild',
   ) as string[]
 
+  const photographyConsent = getValueViaPath(
+    answers,
+    'photography.photographyConsent',
+  ) as YesOrNo
+
+  const photoSchoolPublication = getValueViaPath(
+    answers,
+    'photography.photoSchoolPublication',
+  ) as YesOrNo
+
+  const photoMediaPublication = getValueViaPath(
+    answers,
+    'photography.photoMediaPublication',
+  ) as YesOrNo
+
   return {
     childNationalId,
     parents,
@@ -36,6 +51,9 @@ export const getApplicationAnswers = (answers: Application['answers']) => {
     otherLanguages,
     languages,
     icelandicNotSpokenAroundChild,
+    photographyConsent,
+    photoSchoolPublication,
+    photoMediaPublication,
   }
 }
 

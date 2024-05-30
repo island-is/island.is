@@ -24,7 +24,7 @@ export class ApiScopeDelegationType extends Model {
   })
   @ForeignKey(() => ApiScope)
   @ApiProperty()
-  api_scope_name!: string
+  apiScopeName!: string
 
   @PrimaryKey
   @Column({
@@ -33,7 +33,7 @@ export class ApiScopeDelegationType extends Model {
   })
   @ForeignKey(() => DelegationTypeModel)
   @ApiProperty()
-  delegation_type!: string
+  delegationType!: string
 
   @CreatedAt
   @ApiProperty()

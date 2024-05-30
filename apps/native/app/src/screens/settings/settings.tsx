@@ -1,5 +1,4 @@
 import { useApolloClient } from '@apollo/client'
-import messaging from '@react-native-firebase/messaging'
 import {
   Alert,
   NavigationBarSheet,
@@ -40,7 +39,7 @@ import { createNavigationOptionHooks } from '../../hooks/create-navigation-optio
 import { navigateTo } from '../../lib/deep-linking'
 import { showPicker } from '../../lib/show-picker'
 import { authStore } from '../../stores/auth-store'
-import { apolloMKKVStorage } from '../../stores/mkkv'
+import { useNotificationsStore } from '../../stores/notifications-store'
 import {
   preferencesStore,
   usePreferencesStore,
@@ -80,14 +79,12 @@ export const SettingsScreen: NavigationFunctionComponent = ({
   } = usePreferencesStore()
   const [loadingCP, setLoadingCP] = useState(false)
   const [localPackage, setLocalPackage] = useState<LocalPackage | null>(null)
-  const [pushToken, setPushToken] = useState('loading...')
   const efficient = useRef<any>({}).current
   const isInfoDismissed = dismissed.includes('userSettingsInformational')
   const { authenticationTypes, isEnrolledBiometrics } = useUiStore()
   const biometricType = useBiometricType(authenticationTypes)
 
   const onLogoutPress = async () => {
-    apolloMKKVStorage.clearStore()
     await authStore.getState().logout()
     await Navigation.dismissAllModals()
     await Navigation.setRoot({
@@ -128,10 +125,6 @@ export const SettingsScreen: NavigationFunctionComponent = ({
         setLoadingCP(false)
         setLocalPackage(p)
       })
-      messaging()
-        .getToken()
-        .then((token) => setPushToken(token))
-        .catch(() => setPushToken('no token in simulator'))
     }, 330)
   }, [])
 

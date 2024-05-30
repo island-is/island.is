@@ -79,6 +79,7 @@ export const dataSchema = z.object({
     .refine((r) => r === undefined || r.length > 0, {
       params: errorMessages.relativesRequired,
     }),
+  startDate: z.string(),
   languages: z
     .object({
       otherLanguages: z.enum([YES, NO]),
@@ -90,6 +91,26 @@ export const dataSchema = z.object({
       {
         path: ['languages'],
         params: errorMessages.languagesRequired,
+      },
+    ),
+  photography: z
+    .object({
+      photographyConsent: z.enum([YES, NO]),
+      photoSchoolPublication: z.enum([YES, NO]).optional(),
+      photoMediaPublication: z.enum([YES, NO]).optional(),
+    })
+    .refine(
+      ({ photographyConsent, photoSchoolPublication }) =>
+        photographyConsent === YES ? !!photoSchoolPublication : true,
+      {
+        path: ['photoSchoolPublication'],
+      },
+    )
+    .refine(
+      ({ photographyConsent, photoMediaPublication }) =>
+        photographyConsent === YES ? !!photoMediaPublication : true,
+      {
+        path: ['photoMediaPublication'],
       },
     ),
 })

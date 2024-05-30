@@ -35,6 +35,16 @@ export const newPrimarySchoolMessages: MessageDir = {
       defaultMessage: 'Nei',
       description: 'No',
     },
+    date: {
+      id: 'dess.nps.application:date',
+      defaultMessage: 'Dagsetning',
+      description: 'Date',
+    },
+    datePlaceholder: {
+      id: 'dess.nps.application:date.placeholder',
+      defaultMessage: 'Veldu dagsetningu',
+      description: 'Select date',
+    },
     fullName: {
       id: 'dess.nps.application:full.name',
       defaultMessage: 'Fullt nafn',
@@ -320,6 +330,18 @@ export const newPrimarySchoolMessages: MessageDir = {
       defaultMessage: 'Byrjar í skóla',
       description: 'Starting school',
     },
+    startingSchoolTitle: {
+      id: 'dess.nps.application:primary.school.starting.school.title',
+      defaultMessage: 'Hvenær viltu að barnið byrji í nýja skólanum?',
+      description: 'When do you want your child to start at the new school?',
+    },
+    startingSchoolDescription: {
+      id: 'dess.nps.application:primary.school.starting.school.description',
+      defaultMessage:
+        'Við viljum taka vel á móti skólabarninu. Til þess að getað undirbúið komu þess þá biðjum við þig að velja dagsetningu fyrir fyrsta skóladaginn.',
+      description:
+        'We want to welcome the schoolchild properly. To be able to prepare for its arrival, please select a date for the first school day.',
+    },
   }),
 
   differentNeeds: defineMessages({
@@ -396,6 +418,48 @@ export const newPrimarySchoolMessages: MessageDir = {
       defaultMessage: 'Notkun myndefnis',
       description: 'Use of footage',
     },
+    photography: {
+      id: 'dess.nps.application:different.needs.photography',
+      defaultMessage:
+        'Samþykki vegna myndatöku, myndbandsupptöku og birtingu myndefnis grunnskóla',
+      description:
+        'Consent for photography, video recording and publication of elementary school footage',
+    },
+    photographyDescription: {
+      id: 'dess.nps.application:different.needs.photography.description',
+      defaultMessage:
+        'Þegar kemur að myndatöku og myndbirtingu skal virða sjálfsákvörðunarrétt barna og ungmenna og taka tillit til skoðana og viðhorfa þeirra í samræmi við aldur og þroska.',
+      description:
+        'When it comes to taking pictures and publishing pictures, the right of self-determination of children and young people must be respected and their views and attitudes taken into account in accordance with their age and maturity.',
+    },
+    photographyConsent: {
+      id: 'dess.nps.application:different.needs.photography.consent',
+      defaultMessage:
+        'Er heimilt að taka ljósmyndir/myndbönd af barni þínu í daglegu skólastarfi?',
+      description:
+        'Is it allowed to take photos/videos of your child during daily school activities?',
+    },
+    photoSchoolPublication: {
+      id: 'dess.nps.application:different.needs.photo.school.publication',
+      defaultMessage:
+        'Má birta myndefni á vettvangi skólans svo sem á vefsíðu hans, í fréttabréfi, samfélagsmiðlum og kynningarefni?',
+      description:
+        "Can footage be published on the school's website, in the newsletter, social media and promotional materials?",
+    },
+    photoMediaPublication: {
+      id: 'dess.nps.application:different.needs.photo.media.publication',
+      defaultMessage:
+        'Má birta myndefni hjá þriðja aðila svo sem í fjölmiðlum?',
+      description:
+        'Can footage be published by third parties such as in the media?',
+    },
+    photographyInfo: {
+      id: 'dess.nps.application:different.needs.photography.info',
+      defaultMessage:
+        'Ef myndefni er notað í öðrum tilgangi, eða myndataka er fyrirhuguð í öðrum tilgangi en samþykki nær til, þarf að upplýsa foreldra og afla sérstaks samþykkis.',
+      description:
+        'If footage is used for other purposes, or photography is planned for purposes other than consented for, parents must be informed and special consent obtained.',
+    },
   }),
 
   confirm: defineMessages({
@@ -448,35 +512,12 @@ export const newPrimarySchoolMessages: MessageDir = {
       defaultMessage: 'Staðfesting',
       description: 'Confirmation',
     },
-    overviewTitle: {
-      id: 'dess.nps.application:conclusion.overview.title',
-      defaultMessage: 'TBD',
-      description: 'TBD',
-    },
-    title: {
-      id: 'dess.nps.application:conclusion.title',
-      defaultMessage: 'Umsókn móttekin',
-      description: 'Application received',
-    },
-    alertTitle: {
-      id: 'dess.nps.application:conclusion.screen.title',
-      defaultMessage: 'TBD',
-      description: 'TBD',
-    },
-    accordionText: {
-      id: 'dess.nps.application:conclusion.accordion.text#markdown',
-      defaultMessage: 'TBD',
-      description: 'TBD',
-    },
-    nextStepsLabel: {
-      id: 'dess.nps.application:conclusion.screen.next.steps.label',
-      defaultMessage: 'Hvað gerist næst?',
-      description: 'What happens next?',
-    },
-    buttonsViewApplication: {
-      id: 'dess.nps.application:conclusion.screen.buttons.view.application',
-      defaultMessage: 'Skoða umsókn',
-      description: 'View application',
+    expandableDescription: {
+      id: 'dess.nps.application:conclusion.expandable.description#markdown',
+      defaultMessage:
+        'Skólastjóri mun taka afstöðu til umsóknarinnar eftir aðstæðum í skólanum hversu sinni og svara þér eins fljótt og auðið er í tölvupósti. Svarið mun einnig birtast í stafrænu pósthólfi hér á Island.is',
+      description:
+        'The principal will evaluate the application based on the current circumstances at the school and will respond to you as soon as possible by email. The response will also appear in the digital mailbox here on Island.is.',
     },
   }),
 }

@@ -21,6 +21,7 @@ const MunicipalityQuery = gql`
       navUrl
       navUsername
       navPassword
+      childrenAid
       individualAid {
         ownPlace
         registeredRenting

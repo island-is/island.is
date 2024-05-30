@@ -3,6 +3,7 @@ import { BadRequestException, Injectable } from '@nestjs/common'
 import {
   ConfirmationDtoResponse,
   UserProfileControllerFindUserProfileClientTypeEnum,
+  PostNudgeDtoNudgeTypeEnum,
   V2MeApi,
   V2UsersApi,
 } from '@island.is/clients/user-profile'
@@ -122,6 +123,14 @@ export class UserProfileServiceV2 {
     ).meUserProfileControllerCreateOrUpdateActorProfile({
       xParamFromNationalId: input.fromNationalId,
       patchActorProfileDto: { emailNotifications: input.emailNotifications },
+    })
+  }
+
+  confirmNudge(user: User) {
+    return this.v2MeUserProfileApiWithAuth(
+      user,
+    ).meUserProfileControllerConfirmNudge({
+      postNudgeDto: { nudgeType: PostNudgeDtoNudgeTypeEnum.NUDGE },
     })
   }
 

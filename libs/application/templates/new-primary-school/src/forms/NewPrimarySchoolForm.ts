@@ -1,6 +1,8 @@
 import {
+  buildAlertMessageField,
   buildCheckboxField,
   buildCustomField,
+  buildDateField,
   buildDescriptionField,
   buildForm,
   buildMultiField,
@@ -323,7 +325,7 @@ export const NewPrimarySchoolForm: Form = buildForm({
                     newPrimarySchoolMessages.childrenNParents
                       .relativesDeleteRelative,
                   marginTop: 0,
-                  maxValues: 6,
+                  maxRows: 6,
                   fields: {
                     fullName: {
                       component: 'input',
@@ -434,7 +436,25 @@ export const NewPrimarySchoolForm: Form = buildForm({
           title:
             newPrimarySchoolMessages.primarySchool
               .startingSchoolSubSectionTitle,
-          children: [],
+          children: [
+            buildMultiField({
+              id: 'startingSchoolMultiField',
+              title: newPrimarySchoolMessages.primarySchool.startingSchoolTitle,
+              description:
+                newPrimarySchoolMessages.primarySchool
+                  .startingSchoolDescription,
+              children: [
+                buildDateField({
+                  id: 'startDate',
+                  title: newPrimarySchoolMessages.shared.date,
+                  placeholder: newPrimarySchoolMessages.shared.datePlaceholder,
+                  required: true,
+                  defaultValue: null,
+                  minDate: () => new Date(),
+                }),
+              ],
+            }),
+          ],
         }),
       ],
     }),
@@ -549,7 +569,91 @@ export const NewPrimarySchoolForm: Form = buildForm({
           id: 'useOfFootageSubSection',
           title:
             newPrimarySchoolMessages.differentNeeds.useOfFootageSubSectionTitle,
-          children: [],
+          children: [
+            buildMultiField({
+              id: 'photography',
+              title: newPrimarySchoolMessages.differentNeeds.photography,
+              description:
+                newPrimarySchoolMessages.differentNeeds.photographyDescription,
+              children: [
+                buildRadioField({
+                  id: 'photography.photographyConsent',
+                  title:
+                    newPrimarySchoolMessages.differentNeeds.photographyConsent,
+                  width: 'half',
+                  required: true,
+                  options: [
+                    {
+                      label: newPrimarySchoolMessages.shared.yes,
+                      dataTestId: 'yes-option',
+                      value: YES,
+                    },
+                    {
+                      label: newPrimarySchoolMessages.shared.no,
+                      dataTestId: 'no-option',
+                      value: NO,
+                    },
+                  ],
+                }),
+                buildRadioField({
+                  id: 'photography.photoSchoolPublication',
+                  condition: (answers) => {
+                    const { photographyConsent } =
+                      getApplicationAnswers(answers)
+                    return photographyConsent === YES
+                  },
+                  title:
+                    newPrimarySchoolMessages.differentNeeds
+                      .photoSchoolPublication,
+                  width: 'half',
+                  options: [
+                    {
+                      label: newPrimarySchoolMessages.shared.yes,
+                      dataTestId: 'yes-option',
+                      value: YES,
+                    },
+                    {
+                      label: newPrimarySchoolMessages.shared.no,
+                      dataTestId: 'no-option',
+                      value: NO,
+                    },
+                  ],
+                }),
+                buildRadioField({
+                  id: 'photography.photoMediaPublication',
+                  condition: (answers) => {
+                    const { photographyConsent } =
+                      getApplicationAnswers(answers)
+                    return photographyConsent === YES
+                  },
+                  title:
+                    newPrimarySchoolMessages.differentNeeds
+                      .photoMediaPublication,
+                  width: 'half',
+                  options: [
+                    {
+                      label: newPrimarySchoolMessages.shared.yes,
+                      dataTestId: 'yes-option',
+                      value: YES,
+                    },
+                    {
+                      label: newPrimarySchoolMessages.shared.no,
+                      dataTestId: 'no-option',
+                      value: NO,
+                    },
+                  ],
+                }),
+                buildAlertMessageField({
+                  id: 'differentNeeds.photographyInfo',
+                  title: newPrimarySchoolMessages.shared.alertTitle,
+                  message:
+                    newPrimarySchoolMessages.differentNeeds.photographyInfo,
+                  doesNotRequireAnswer: true,
+                  alertType: 'info',
+                }),
+              ],
+            }),
+          ],
         }),
       ],
     }),
@@ -589,9 +693,9 @@ export const NewPrimarySchoolForm: Form = buildForm({
       ],
     }),
     buildFormConclusionSection({
-      alertTitle: newPrimarySchoolMessages.conclusion.alertTitle,
-      expandableHeader: newPrimarySchoolMessages.conclusion.nextStepsLabel,
-      expandableDescription: newPrimarySchoolMessages.conclusion.accordionText,
+      expandableIntro: '',
+      expandableDescription:
+        newPrimarySchoolMessages.conclusion.expandableDescription,
     }),
   ],
 })
