@@ -26116,13 +26116,15 @@ function findBestGoodRefBranch(commitScore, git, githubApi, headBranch, baseBran
         workflowId,
         commits
       );
-      if (builds)
-        return {
+      if (builds) {
+        resolve({
           sha: builds.head_commit,
           run_number: builds.run_nr,
           branch: headBranch,
           ref: builds.head_commit
-        };
+        });
+        return;
+      }
       const baseCommits = yield githubApi.getLastGoodBranchBuildRun(
         baseBranch,
         workflowId,
@@ -26171,9 +26173,7 @@ function findBestGoodRefPR(diffWeight, git, githubApi, headBranch, baseBranch, p
       if (prRun) {
         log(`Found a PR run candidate: ${JSON.stringify(prRun)}`);
         try {
-          const tempBranch = `${headBranch}-${Math.round(
-            Math.random() * 1e6
-          )}`;
+          const tempBranch = `${headBranch}-${Math.round(Math.random() * 1e6)}`;
           yield git.checkoutBranch(tempBranch, prRun.base_commit);
           log(`Branch checked out`);
           const mergeCommitSha = yield git.merge(prRun.head_commit);
