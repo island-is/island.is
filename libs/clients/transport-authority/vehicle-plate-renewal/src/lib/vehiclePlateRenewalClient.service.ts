@@ -35,7 +35,6 @@ export class VehiclePlateRenewalClient {
         showExpired: false,
       },
     )
-    console.log('result', result)
     return result.map((item) => ({
       regno: item.regno || '',
       startDate: item.startDate || new Date(),

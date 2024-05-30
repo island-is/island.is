@@ -39,7 +39,7 @@ export const PlateRadioField: FC<
 
     for (const [index, plate] of plates.entries()) {
       const inThreeMonths = new Date().setMonth(new Date().getMonth() + 3)
-      const canRenew = true //+new Date(plate.endDate) <= +inThreeMonths
+      const canRenew = +new Date(plate.endDate) <= +inThreeMonths
       const disabled = !!plate?.validationErrorMessages?.length || !canRenew
       options.push({
         value: `${index}`,
