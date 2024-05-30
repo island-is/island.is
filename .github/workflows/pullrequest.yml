@@ -119,7 +119,6 @@ jobs:
           source ./scripts/ci/00_prepare-base-tags.sh $(git merge-base HEAD $GITHUB_BASE_REF)
           git checkout $GITHUB_SHA
           echo "BASE=$BASE" >> $GITHUB_ENV
-          git fetch origin $BASE || true
           if [ -n "${NX_AFFECTED_ALL+x}" ]; then
             echo "NX_AFFECTED_ALL=$NX_AFFECTED_ALL" >> $GITHUB_ENV
           fi
