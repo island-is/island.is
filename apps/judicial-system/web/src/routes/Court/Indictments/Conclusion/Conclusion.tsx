@@ -67,8 +67,7 @@ const Conclusion: React.FC = () => {
     sendCourtDateToServer,
   } = useCourtArrangements(workingCase, setWorkingCase, 'courtDate')
 
-  const { updateCase, isUpdatingCase, transitionCase, setAndSendCaseToServer } =
-    useCase()
+  const { isUpdatingCase, transitionCase, setAndSendCaseToServer } = useCase()
 
   const {
     uploadFiles,
@@ -143,14 +142,20 @@ const Conclusion: React.FC = () => {
         workingCase,
         setWorkingCase,
       )
+      const updateCourtDateSuccess = await sendCourtDateToServer()
 
-      if (!success) {
+      if (!success || !updateCourtDateSuccess) {
         return
       }
 
       router.push(`${destination}/${workingCase.id}`)
     },
-    [setAndSendCaseToServer, setWorkingCase, workingCase],
+    [
+      sendCourtDateToServer,
+      setAndSendCaseToServer,
+      setWorkingCase,
+      workingCase,
+    ],
   )
 
   const handlePostponementIndefinitely = useCallback(
