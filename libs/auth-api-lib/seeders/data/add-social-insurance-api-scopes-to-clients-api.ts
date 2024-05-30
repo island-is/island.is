@@ -3,13 +3,15 @@
 export const up = compose(
   addScopesToClient({
     clientId: '@island.is/clients/api',
-    scopeNames: ['@tr.is/umsoknir:write',
-                 '@tr.is/umsoknir:read',
-                 '@tr.is/umsaekjandi:read',
-                 '@tr.is/almennt:read',
-                 '@tr.is/fylgiskjol:write',
-                 '@tr.is/tekjuaetlun:read',
-                 '@tr.is/greidsluaetlun:read',
-                 '@tr.is/stadgreidsla:read'],
+    scopeNames: [
+      '@tr.is/umsoknir:write',
+      '@tr.is/umsoknir:read',
+      '@tr.is/umsaekjandi:read',
+      '@tr.is/almennt:read',
+      '@tr.is/fylgiskjol:write',
+      '@tr.is/tekjuaetlun:read',
+      '@tr.is/greidsluaetlun:read',
+      '@tr.is/stadgreidsla:read',
+    ],
   }),
 )
