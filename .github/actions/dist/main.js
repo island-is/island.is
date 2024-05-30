@@ -26173,7 +26173,9 @@ function findBestGoodRefPR(diffWeight, git, githubApi, headBranch, baseBranch, p
       if (prRun) {
         log(`Found a PR run candidate: ${JSON.stringify(prRun)}`);
         try {
-          const tempBranch = `${headBranch}-${Math.round(Math.random() * 1e6)}`;
+          const tempBranch = `${headBranch}-${Math.round(
+            Math.random() * 1e6
+          )}`;
           yield git.checkoutBranch(tempBranch, prRun.base_commit);
           log(`Branch checked out`);
           const mergeCommitSha = yield git.merge(prRun.head_commit);
@@ -26332,7 +26334,7 @@ var SimpleGit = class {
 // main.ts
 var FULL_REBUILD_NEEDED = "full_rebuild_needed";
 (() => __async(exports, null, function* () {
-  if (process.env.NX_AFFECTED_ALL === "true") {
+  if (process.env.NX_AFFECTED_ALL === "true" || process.env.TEST_EVERYTHING === "true") {
     console.log(FULL_REBUILD_NEEDED);
     return;
   }
