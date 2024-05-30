@@ -51,15 +51,15 @@ export const Form = () => {
       updateInput,
       updatedActiveItem,
     )
-  console.log(formBuilder)
+
   const initialControl: ControlState = {
     activeItem: {
       type: 'Step',
       data: inSettings
         ? baseSettingsStep
         : removeTypename(form?.stepsList)?.find(
-            (s: FormSystemStep) => s?.type === 'Input',
-          ) ?? defaultStep,
+          (s: FormSystemStep) => s?.type === 'Input',
+        ) ?? defaultStep,
     },
     activeListItem: null,
     form: removeTypename(form) as FormSystemForm,

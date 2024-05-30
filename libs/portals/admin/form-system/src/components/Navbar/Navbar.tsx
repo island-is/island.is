@@ -101,13 +101,13 @@ export const Navbar = () => {
     const data =
       type === 'Step'
         ? steps?.find(
-            (item: Maybe<FormSystemStep> | undefined) => item?.guid === id,
-          )
+          (item: Maybe<FormSystemStep> | undefined) => item?.guid === id,
+        )
         : type === 'Group'
-        ? groups?.find(
+          ? groups?.find(
             (item: Maybe<FormSystemGroup> | undefined) => item?.guid === id,
           )
-        : inputs?.find(
+          : inputs?.find(
             (item: Maybe<FormSystemInput> | undefined) => item?.guid === id,
           )
     if (id === baseSettingsStep.guid) {
@@ -154,7 +154,6 @@ export const Navbar = () => {
     const overId = over.id
 
     if (activeId === overId) return
-
     const activeStep = active.data?.current?.type === 'Step'
     const activeGroup = active.data?.current?.type === 'Group'
     const activeInput = active.data?.current?.type === 'Input'
@@ -332,9 +331,9 @@ export const Navbar = () => {
                   type={activeItem.type}
                   data={
                     activeItem.data as
-                      | FormSystemGroup
-                      | FormSystemStep
-                      | FormSystemInput
+                    | FormSystemGroup
+                    | FormSystemStep
+                    | FormSystemInput
                   }
                   active={activeItem.data?.guid === activeItem.data?.guid}
                   focusComponent={focusComponent}
