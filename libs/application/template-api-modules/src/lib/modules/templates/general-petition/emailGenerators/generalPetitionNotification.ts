@@ -15,17 +15,17 @@ export const generalPetitionNotificationEmail: GeneralPetitionNotificationEmail 
       },
     } = props
 
-    const subject = 'Tilkynning um vörslu skotvopna'
-    const contactFullName = getValueViaPath<string>(
+    const answers = application.answers
+    const subject = 'Staðfesting á undirskriftalista'
+    const { dateFrom, dateTil } = getValueViaPath(
       application.answers,
-      'fullName',
-    )
-    const contactEmail = getValueViaPath<string>(application.answers, 'email')
-
-    if (!contactFullName || !contactEmail) {
-      throw new Error(
-        'Full name or email is missing in the application answers',
-      )
+      'dates',
+    ) as { dateFrom: string; dateTil: string }
+    const applicant = application.externalData.nationalRegistry?.data as {
+      fullName?: string
+    }
+    if (!applicant.fullName) {
+      throw new Error('Failed to get full name from national registry')
     }
 
     return {
@@ -35,8 +35,8 @@ export const generalPetitionNotificationEmail: GeneralPetitionNotificationEmail 
       },
       to: [
         {
-          name: contactFullName,
-          address: contactEmail,
+          name: applicant.fullName as string,
+          address: answers.email as string,
         },
       ],
       subject,
@@ -45,15 +45,20 @@ export const generalPetitionNotificationEmail: GeneralPetitionNotificationEmail 
         body: [
           {
             component: 'Heading',
-            context: { copy: subject },
+            align: 'center',
+            context: { copy: `Undirskriftalisti ${answers.listName}` },
           },
           {
             component: 'Copy',
+            align: 'center',
             context: {
               copy:
-                `<span>Góðan dag,</span><br/><br/>` +
-                `<span>þú hefur verið tilnefndur til að taka við vörslu skotvopna sem tilheyra dánarbúi /span><br/>` +
-                `<span>Með undirritun lýsir þú því yfir að þú hafir leyfi til að varsla skotvopnin og samþykkir jafnframt að taka við vörslu þeirra.</span><br/>`,
+                `<span>Lýsing: ${answers.aboutList} </span><br/>` +
+                `<span>Tímabil lista: ${dateFrom} - ${dateTil} </span><br/>` +
+                `<span>Stofnandi lista: ${applicant.fullName} </span><br/>` +
+                `<span>Netfang stofnenda: ${answers.email} </span><br/>` +
+                `<span>Sími notenda: ${answers.phone} </span><br/>` +
+                `<span>Kær kveðja, <br/> Ísland.is</span><br/>`,
             },
           },
         ],
