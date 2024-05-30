@@ -506,6 +506,11 @@ export type TableRepeaterField = BaseField & {
   marginBottom?: ResponsiveProp<Space>
   titleVariant?: TitleVariants
   fields: Record<string, TableRepeaterItem>
+  /**
+   * Maximum rows that can be added to the table.
+   * When the maximum is reached, the button to add a new row is disabled.
+   */
+  maxRows?: number
   table?: {
     /**
      * List of strings to render,

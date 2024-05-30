@@ -28,7 +28,7 @@ import { m } from '../../lib/messages'
 import { PREPAID_INHERITANCE, PrePaidHeirsRelations } from '../../lib/constants'
 import DoubleColumnRow from '../../components/DoubleColumnRow'
 import {
-  getDeceasedHadAssets,
+  getDeceasedWasMarriedAndHadAssets,
   getEstateDataFromApplication,
   parseLabel,
 } from '../../lib/utils/helpers'
@@ -65,7 +65,7 @@ export const ReportFieldsRepeater: FC<
 
   const { id, props } = field
 
-  const deceasedHadAssets = getDeceasedHadAssets(application)
+  const deceasedHadAssets = getDeceasedWasMarriedAndHadAssets(application)
 
   const { fields, append, remove, replace } = useFieldArray<any>({
     name: id,
@@ -123,15 +123,6 @@ export const ReportFieldsRepeater: FC<
     calculateTotal()
   }, [calculateTotal])
 
-  const relations =
-    answers.applicationFor === PREPAID_INHERITANCE
-      ? PrePaidHeirsRelations
-      : (externalData.syslumennOnEntry?.data as any).relationOptions?.map(
-          (relation: any) => ({
-            value: relation,
-            label: relation,
-          }),
-        ) || []
   //TODO: connect to API
   const debtTypes = [] as any
 

@@ -12,7 +12,7 @@ import { useLocale } from '@island.is/localization'
 import { m } from '../../lib/messages'
 import DoubleColumnRow from '../../components/DoubleColumnRow'
 import {
-  getDeceasedHadAssets,
+  getDeceasedWasMarriedAndHadAssets,
   getEstateDataFromApplication,
   parseLabel,
   valueToNumber,
@@ -35,7 +35,7 @@ export const OtherAssetsRepeater: FC<
 > = ({ application, field, errors }) => {
   const { id, props } = field
 
-  const deceasedHadAssets = getDeceasedHadAssets(application)
+  const deceasedHadAssets = getDeceasedWasMarriedAndHadAssets(application)
 
   const getDefaultValue = (
     fieldName: keyof InheritanceReportAsset,

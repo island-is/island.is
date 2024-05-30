@@ -1,6 +1,4 @@
 import {
-  YES,
-  buildCheckboxField,
   buildCustomField,
   buildDescriptionField,
   buildDividerField,
@@ -65,20 +63,6 @@ export const heirs = buildSection({
             buildDescriptionField({
               id: 'customShare.customSpouseSharePercentage',
               title: '',
-            }),
-            buildCheckboxField({
-              id: 'customShare.hasCustomSpouseSharePercentage',
-              title: '',
-              large: false,
-              backgroundColor: 'white',
-              defaultValue: [],
-              condition: shouldShowCustomSpouseShare,
-              options: [
-                {
-                  value: YES,
-                  label: m.assetsToShareHasCustomSpousePercentage,
-                },
-              ],
             }),
             buildCustomField({
               title: '',
@@ -177,11 +161,11 @@ export const heirs = buildSection({
               title: '',
               placeholder: m.infoPlaceholder,
               variant: 'textarea',
-              rows: 5,
+              rows: 4,
               maxLength: 1800,
             }),
             buildDescriptionField({
-              id: 'heirsAdditionalInfoFilesPrivate',
+              id: 'heirsAdditionalInfoFilesPrivateTitle',
               title: m.fileUploadPrivateTransfer,
               titleVariant: 'h5',
               space: 'containerGutter',
@@ -196,14 +180,14 @@ export const heirs = buildSection({
               uploadHeader: '',
             }),
             buildDescriptionField({
-              id: 'heirsAdditionalInfoFilesOtherDocuments',
+              id: 'heirsAdditionalInfoFilesOtherDocumentsTitle',
               title: m.fileUploadOtherDocuments,
               titleVariant: 'h5',
               space: 'containerGutter',
               marginBottom: 'smallGutter',
             }),
             buildFileUploadField({
-              id: 'heirsAdditionalInfoFilesFileTypes',
+              id: 'heirsAdditionalInfoFilesOtherDocuments',
               uploadAccept: '.pdf, .doc, .docx, .jpg, .jpeg, .png, .xls, .xlsx',
               uploadDescription: m.fileUploadFileTypes,
               title: '',
@@ -398,6 +382,36 @@ export const heirs = buildSection({
               label: m.info,
               value: ({ answers }) =>
                 getValueViaPath<string>(answers, 'heirsAdditionalInfo'),
+            }),
+            buildDescriptionField({
+              id: 'heirs_space5',
+              title: '',
+              space: 'gutter',
+            }),
+            buildKeyValueField({
+              label: m.fileUploadPrivateTransfer,
+              value: ({ answers }) => {
+                const file = getValueViaPath<any>(
+                  answers,
+                  'heirsAdditionalInfoPrivateTransferFiles',
+                )?.[0]
+                return file?.name
+              },
+            }),
+            buildDescriptionField({
+              id: 'heirs_space6',
+              title: '',
+              space: 'gutter',
+            }),
+            buildKeyValueField({
+              label: m.fileUploadOtherDocuments,
+              value: ({ answers }) => {
+                const files = getValueViaPath<any>(
+                  answers,
+                  'heirsAdditionalInfoFilesOtherDocuments',
+                )
+                return files.map((file: any) => file.name).join(', ')
+              },
             }),
             buildCustomField({
               title: '',

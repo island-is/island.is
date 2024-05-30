@@ -1161,6 +1161,21 @@ export const m = defineMessages({
     defaultMessage: 'Var hinn látni í hjúskap?',
     description: '',
   },
+  hasCustomSpouseSharePercentage: {
+    id: 'ir.application:hasCustomSpouseSharePercentage',
+    defaultMessage: 'Er verið að skipta dánarbúi að fullu eða að hluta?',
+    description: '',
+  },
+  spouseShareFull: {
+    id: 'ir.application:spouseShareFull',
+    defaultMessage: 'Að fullu',
+    description: '',
+  },
+  spouseSharePart: {
+    id: 'ir.application:spouseSharePart',
+    defaultMessage: 'Að hluta',
+    description: '',
+  },
   hadSeparateProperty: {
     id: 'ir.application:hadSeparateProperty',
     defaultMessage:

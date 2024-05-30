@@ -270,6 +270,9 @@ export class DirectorateOfImmigrationClient {
       const childInfo = application.children.find(
         (c) => c.nationalId === childNationalId,
       )
+      const childCitizenship = application.selectedChildren.find(
+        (x) => x.nationalId === childNationalId,
+      )?.citizenship
 
       if (!childInfo) {
         continue
@@ -310,7 +313,7 @@ export class DirectorateOfImmigrationClient {
               ? new Date(selectedChild.otherParentBirtDate).toISOString()
               : undefined,
             parent2Name: selectedChild.otherParentName,
-            nationality: childInfo.citizenship,
+            nationality: childCitizenship,
           },
         },
       })
