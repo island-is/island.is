@@ -378,12 +378,12 @@ export const Education = new XroadConf({
   env: {
     XROAD_MMS_LICENSE_SERVICE_ID: {
       dev: 'IS-DEV/GOV/10066/MMS-Protected/license-api-v1',
-      staging: 'IS-TEST/EDU/5708150320/MMS-Protected/license-api-v1',
+      staging: 'IS-TEST/GOV/6601241280/MMS-Protected/license-api-v1',
       prod: 'IS/EDU/5708150320/MMS-Protected/license-api-v1',
     },
     XROAD_MMS_GRADE_SERVICE_ID: {
       dev: 'IS-DEV/GOV/10066/MMS-Protected/grade-api-v1',
-      staging: 'IS-TEST/EDU/5708150320/MMS-Protected/grade-api-v1',
+      staging: 'IS-TEST/GOV/6601241280/MMS-Protected/grade-api-v1',
       prod: 'IS/EDU/5708150320/MMS-Protected/grade-api-v1',
     },
   },
@@ -618,7 +618,7 @@ export const Inna = new XroadConf({
   env: {
     XROAD_INNA_PATH: {
       dev: 'IS-DEV/GOV/10066/MMS-Protected/inna-v1',
-      staging: 'IS-TEST/EDU/5708150320/MMS-Protected/inna-v1',
+      staging: 'IS-TEST/GOV/6601241280/MMS-Protected/inna-v1',
       prod: 'IS/EDU/5708150320/MMS-Protected/inna-v1',
     },
   },

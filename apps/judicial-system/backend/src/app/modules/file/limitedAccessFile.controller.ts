@@ -137,11 +137,12 @@ export class LimitedAccessFileController {
   })
   deleteCaseFile(
     @Param('caseId') caseId: string,
+    @CurrentCase() theCase: Case,
     @Param('fileId') fileId: string,
     @CurrentCaseFile() caseFile: CaseFile,
   ): Promise<DeleteFileResponse> {
     this.logger.debug(`Deleting file ${fileId} of case ${caseId}`)
 
-    return this.fileService.deleteCaseFile(caseFile)
+    return this.fileService.deleteCaseFile(theCase, caseFile)
   }
 }
