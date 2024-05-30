@@ -63,6 +63,9 @@ const ChildrenForm = ({ application, field, errors }: FAFieldBaseProps) => {
           <Text as="h3" variant="h3">
             {formatMessage(childrenForm.page.commentTitle)}
           </Text>
+          <Text variant="small">
+            {formatMessage(childrenForm.page.commentText)}
+          </Text>
         </Box>
 
         <Controller
@@ -74,9 +77,6 @@ const ChildrenForm = ({ application, field, errors }: FAFieldBaseProps) => {
                 id={summaryCommentType}
                 name={summaryCommentType}
                 label={formatMessage(childrenForm.inputs.commentLabel)}
-                placeholder={formatMessage(
-                  childrenForm.inputs.commentPlaceholder,
-                )}
                 value={value}
                 textarea={true}
                 rows={8}
