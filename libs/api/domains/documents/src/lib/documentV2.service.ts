@@ -37,19 +37,8 @@ export class DocumentServiceV2 {
       documentId,
     )
 
-    if (!document?.senderNationalId || !document?.date) {
-      this.logger.debug('Document display data missing', {
-        category: LOG_CATEGORY,
-        document: document,
-      })
-    }
-
     if (!document) {
-      this.logger.error('No document content', {
-        category: LOG_CATEGORY,
-        documentId,
-      })
-      return null
+      return null // Null document logged in clients-documents-v2
     }
 
     let type
