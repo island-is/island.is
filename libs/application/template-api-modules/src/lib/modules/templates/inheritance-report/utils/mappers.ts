@@ -88,7 +88,9 @@ export const estateTransformer = (estate: EstateInfo): InheritanceData => {
 
 export const expandAnswers = (
   answers: InheritanceReportSchema,
-): InheritanceReportSchema => {
+): Omit<InheritanceReportSchema, 'estateSelectionInfo'> & {
+  caseNumber: string
+} => {
   return {
     applicant: answers.applicant,
     approveExternalData: answers.approveExternalData,
@@ -205,6 +207,7 @@ export const expandAnswers = (
         total: answers.assets.vehicles?.total ?? 0,
       },
     },
+    caseNumber: answers.estateInfoSelection,
     confirmAction: answers.confirmAction,
     debts: {
       debtsTotal: answers.debts.debtsTotal ?? 0,
@@ -223,6 +226,7 @@ export const expandAnswers = (
       },
       publicCharges: (answers.debts.publicCharges ?? 0).toString(),
     },
+    estateInfoSelection: answers.estateInfoSelection,
     funeralCost: {
       build: answers?.funeralCost?.build ?? '',
       cremation: answers?.funeralCost?.cremation ?? '',
