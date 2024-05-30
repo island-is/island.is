@@ -5,6 +5,7 @@ import { preferencesStore } from '../stores/preferences-store'
 import { openNativeBrowser } from './rn-island'
 import { navigateTo } from './deep-linking'
 import { useAuthenticatePasskey } from './passkeys/useAuthenticatePasskey'
+import { addPasskeyAsLoginHint } from './passkeys/helpers'
 
 export const useBrowser = () => {
   const { authenticatePasskey } = useAuthenticatePasskey()
@@ -28,11 +29,10 @@ export const useBrowser = () => {
           noLockScreenUntilNextAppStateActive: true,
         })
         // Open passkey flow to authenticate
-        const authenticated = await authenticatePasskey()
-        // TODO: if authenticated is true, add login_hint to url
-        if (authenticated) {
-          console.log('user authenticated!')
-          openNativeBrowser(url, componentId)
+        const passkey = await authenticatePasskey()
+        if (passkey) {
+          const urlWithLoginHint = addPasskeyAsLoginHint(url, passkey)
+          urlWithLoginHint && openNativeBrowser(urlWithLoginHint, componentId)
         }
         // If something goes wrong we fail silently and open the browser normally
         openNativeBrowser(url, componentId)

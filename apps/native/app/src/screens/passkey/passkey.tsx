@@ -22,6 +22,7 @@ import { useRegisterPasskey } from '../../lib/passkeys/useRegisterPasskey'
 import { useAuthenticatePasskey } from '../../lib/passkeys/useAuthenticatePasskey'
 import { authStore } from '../../stores/auth-store'
 import { useBrowser } from '../../lib/useBrowser'
+import { addPasskeyAsLoginHint } from '../../lib/passkeys/helpers'
 
 const Text = styled.View`
   margin-horizontal: ${({ theme }) => theme.spacing[7]}px;
@@ -166,13 +167,13 @@ export const PasskeyScreen: NavigationFunctionComponent<{
                     noLockScreenUntilNextAppStateActive: true,
                   }))
 
-                  const authenticated = await authenticatePasskey()
+                  const passkey = await authenticatePasskey()
 
-                  if (authenticated) {
+                  if (passkey) {
                     setIsLoading(false)
                     Navigation.dismissModal(componentId)
-                    // TODO: Add login hint
-                    openNativeBrowser(url)
+                    const urlWithLoginHint = addPasskeyAsLoginHint(url, passkey)
+                    urlWithLoginHint && openNativeBrowser(urlWithLoginHint)
                   }
                   setIsLoading(false)
                 }

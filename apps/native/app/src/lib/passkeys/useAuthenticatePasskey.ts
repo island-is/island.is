@@ -61,7 +61,7 @@ export const useAuthenticatePasskey = () => {
 
         const passkey = btoa(JSON.stringify(updatedResult))
 
-        // Verify authentication with server
+        // Verify authentication with server - will be skipped later and done through ids via login_hint instead
         const verifyAuthenticateResponse = await verifyPasskeyAuthentication({
           variables: {
             input: { passkey },
@@ -72,7 +72,7 @@ export const useAuthenticatePasskey = () => {
           verifyAuthenticateResponse?.data?.authPasskeyVerifyAuthentication
             .verified
         ) {
-          return true
+          return passkey
         }
         console.error(
           'Passkey authentication not verified',
