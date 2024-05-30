@@ -42,19 +42,11 @@ export const FullWidthLayout: FC<FullWidthLayoutProps> = ({
   const navigate = useNavigate()
   const { formatMessage } = useLocale()
   const [navItems, setNavItems] = useState<PortalNavigationItem[] | undefined>()
-  const [activeChild, setActiveChild] = useState<
-    PortalNavigationItem | undefined
-  >()
 
   useEffect(() => {
     const visibleNavItems =
       activeParent?.children?.filter((item) => !item.navHide) || undefined
     setNavItems(visibleNavItems)
-
-    const activeVisibleChild = visibleNavItems?.filter(
-      (item) => item.active,
-    )?.[0]
-    setActiveChild(activeVisibleChild)
   }, [activeParent?.children])
 
   return (
@@ -62,7 +54,7 @@ export const FullWidthLayout: FC<FullWidthLayoutProps> = ({
       as="main"
       component="main"
       className={isDocuments ? styles.fullWidthSplit : undefined}
-      paddingTop={isDocuments || isDashboard ? undefined : 9}
+      paddingTop={9}
       style={{
         marginTop: height,
         minHeight: `calc(100vh - ${theme.headerHeight.large}px`,
