@@ -294,6 +294,7 @@ export class CitizenshipService extends BaseTemplateApiService {
             const thisChild = childrenCustodyInformation.find(
               (x) => x.nationalId === c.nationalId,
             )
+
             return {
               nationalId: c.nationalId,
               otherParentNationalId: c.otherParentNationalId,
