@@ -26154,85 +26154,73 @@ function findBestGoodRefPR(diffWeight, git, githubApi, headBranch, baseBranch, p
   return __async(this, null, function* () {
     const log = app2.extend("findBestGoodRefPR");
     log(`Starting with head branch ${headBranch} and base branch ${baseBranch}`);
-    return new Promise((resolve) => __async(this, null, function* () {
-      const lastCommitSha = yield git.lastCommit();
-      const prCommits = yield getCommits(git, headBranch, baseBranch, "HEAD");
-      const prRun = yield githubApi.getLastGoodPRRun(
-        headBranch,
-        workflowId,
-        prCommits
-      );
-      const prBuilds = [];
-      if (prRun) {
-        log(`Found a PR run candidate: ${JSON.stringify(prRun)}`);
-        try {
-          const tempBranch = `${headBranch}-${Math.round(Math.random() * 1e6)}`;
-          yield git.checkoutBranch(tempBranch, prRun.base_commit);
-          log(`Branch checked out`);
-          const mergeCommitSha = yield git.merge(prRun.head_commit);
-          log(`Simulated previous PR merge commit`);
-          const distance = yield githubApi.getChangedComponents(
-            git,
-            lastCommitSha,
-            mergeCommitSha
-          );
-          log(`Affected components since candidate PR run are ${distance}`);
-          prBuilds.push({
-            distance: diffWeight(distance),
-            hash: prRun.head_commit,
-            run_nr: prRun.run_nr,
-            branch: headBranch,
-            ref: mergeCommitSha
-          });
-        } catch (e) {
-          log(
-            `Error processing PR candidate(${prRun.run_nr}) but continuing: %O`,
-            e
-          );
-        } finally {
-          yield git.checkout(prBranch);
-        }
-      }
-      const baseCommits = yield getCommits(git, prBranch, baseBranch, "HEAD~1");
-      log(`Base commits ${baseCommits.join(" ")}`);
-      const baseGoodBuilds = yield githubApi.getLastGoodBranchBuildRun(
-        baseBranch,
-        "push",
-        baseCommits
-      );
-      if (baseGoodBuilds) {
-        log(`Found Base good builds ${JSON.stringify(baseGoodBuilds)}`);
-        let affectedComponents = yield githubApi.getChangedComponents(
+    const lastCommitSha = yield git.lastCommit();
+    const prCommits = yield getCommits(git, headBranch, baseBranch, "HEAD");
+    const prRun = yield githubApi.getLastGoodPRRun(
+      headBranch,
+      workflowId,
+      prCommits
+    );
+    const prBuilds = [];
+    if (prRun) {
+      log(`Found a PR run candidate: ${JSON.stringify(prRun)}`);
+      try {
+        const tempBranch = `${headBranch}-${Math.round(Math.random() * 1e6)}`;
+        yield git.checkoutBranch(tempBranch, prRun.base_commit);
+        log(`Branch checked out`);
+        const mergeCommitSha = yield git.merge(prRun.head_commit);
+        log(`Simulated previous PR merge commit`);
+        const distance = yield githubApi.getChangedComponents(
           git,
           lastCommitSha,
-          baseGoodBuilds.head_commit
+          mergeCommitSha
         );
-        log(`Found affected components ${affectedComponents}`);
+        log(`Affected components since candidate PR run are ${distance}`);
         prBuilds.push({
-          distance: diffWeight(affectedComponents),
-          hash: baseGoodBuilds.head_commit,
-          run_nr: baseGoodBuilds.run_nr,
-          branch: baseBranch,
-          ref: baseGoodBuilds.head_commit
+          distance: diffWeight(distance),
+          hash: prRun.head_commit,
+          run_nr: prRun.run_nr,
+          branch: headBranch,
+          ref: mergeCommitSha
         });
-        log("stops on push?!?!");
+      } catch (e) {
+        log(
+          `Error processing PR candidate(${prRun.run_nr}) but continuing: %O`,
+          e
+        );
+      } finally {
+        yield git.checkout(prBranch);
       }
-      log(`pr build ${JSON.stringify(prBuilds)}`);
-      prBuilds.sort((a, b) => a.distance > b.distance ? 1 : -1);
-      log(`sort done`);
-      if (prBuilds.length > 0) {
-        log(`return message`);
-        resolve({
-          sha: prBuilds[0].hash,
-          run_number: prBuilds[0].run_nr,
-          branch: prBuilds[0].branch.replace("origin/", ""),
-          ref: prBuilds[0].ref
-        });
-        return;
-      }
-      log(`return rebuild`);
-      resolve("rebuild");
-    }));
+    }
+    const baseCommits = yield getCommits(git, prBranch, baseBranch, "HEAD~1");
+    const baseGoodBuilds = yield githubApi.getLastGoodBranchBuildRun(
+      baseBranch,
+      "push",
+      baseCommits
+    );
+    if (baseGoodBuilds) {
+      let affectedComponents = yield githubApi.getChangedComponents(
+        git,
+        lastCommitSha,
+        baseGoodBuilds.head_commit
+      );
+      prBuilds.push({
+        distance: diffWeight(affectedComponents),
+        hash: baseGoodBuilds.head_commit,
+        run_nr: baseGoodBuilds.run_nr,
+        branch: baseBranch,
+        ref: baseGoodBuilds.head_commit
+      });
+    }
+    prBuilds.sort((a, b) => a.distance > b.distance ? 1 : -1);
+    if (prBuilds.length > 0)
+      return {
+        sha: prBuilds[0].hash,
+        run_number: prBuilds[0].run_nr,
+        branch: prBuilds[0].branch.replace("origin/", ""),
+        ref: prBuilds[0].ref
+      };
+    return "rebuild";
   });
 }
 
@@ -26357,12 +26345,11 @@ var FULL_REBUILD_NEEDED = "full_rebuild_needed";
   );
   if (rev === "rebuild") {
     console.log(FULL_REBUILD_NEEDED);
-    process.exit(0);
+    return;
   }
   rev.branch = rev.branch.replace(/'/g, "");
   rev.ref = rev.ref.replace(/'/g, "");
   console.log(JSON.stringify(rev));
-  process.exit(0);
 }))();
 /*!
  * is-plain-object <https://github.com/jonschlinkert/is-plain-object>
