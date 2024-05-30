@@ -58,6 +58,20 @@
           "codeCoverage": true
         }
       }
+    },
+    "migrate": {
+      "executor": "nx:run-commands",
+      "options": {
+        "command": "sequelize-cli db:migrate",
+        "cwd": "apps/services/form-system"
+      }
+    },
+    "migrate/generate": {
+      "executor": "nx:run-commands",
+      "options": {
+        "command": "sequelize-cli migration:generate",
+        "cwd": "apps/services/form-system"
+      }
     }
   },
   "tags": []
