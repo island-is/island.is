@@ -33,10 +33,6 @@ export class NationalRegistryService extends BaseTemplateApiService {
   }: TemplateApiModuleActionProps<NationalRegistryParameters>): Promise<NationalRegistryIndividual | null> {
     console.log('🚀 ~ NationalRegistryService ~ params:', params)
     const individual = await this.getIndividual(auth.nationalId)
-    if (individual && individual.citizenship) {
-      individual.citizenship.code = 'US'
-    }
-    console.log('🚀 ~ NationalRegistryService ~ individual:', individual)
 
     //Check if individual is found in national registry
     if (!individual) {
@@ -53,7 +49,6 @@ export class NationalRegistryService extends BaseTemplateApiService {
     // Case when parent can apply for custody child without fulfilling some requirements
     if (params?.allowPassOnChild) {
       const children = await this.nationalRegistryApi.getCustodyChildren(auth)
-      console.log('🚀 ~ NationalRegistryService ~ children:', children)
       await this.validateChildren(params, children)
     }
 
