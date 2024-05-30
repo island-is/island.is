@@ -71,6 +71,8 @@ export class AppService {
     const language = lang?.toLowerCase()
     const defendant = res.defendants[0]
 
+    console.log(defendant.name)
+
     return {
       data: {
         caseNumber:
@@ -92,7 +94,7 @@ export class AppService {
               ],
             ].map((item) => ({
               label: item[0] ?? '',
-              value: item[1] ?? language === 'en' ? 'N/A' : 'Ekki skráð',
+              value: item[1] ?? (language === 'en' ? 'N/A' : 'Ekki skráð'),
             })),
           },
           {
@@ -111,7 +113,7 @@ export class AppService {
               ],
             ].map((item) => ({
               label: item[0] ?? '',
-              value: item[1] ?? language === 'en' ? 'N/A' : 'Ekki skráð',
+              value: item[1] ?? (language === 'en' ? 'N/A' : 'Ekki skráð'),
               linkType: item[2] ?? undefined,
             })),
           },
