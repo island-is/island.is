@@ -16,13 +16,14 @@ import {
   Jurisdiction,
 } from './drivingLicenseApi.types'
 import { handleCreateResponse } from './utils/handleCreateResponse'
-import { PracticePermitDto } from '../v5'
+import { PracticePermitDto, DriverLicenseWithoutImagesDto } from '../v5'
 
 @Injectable()
 export class DrivingLicenseApi {
   constructor(
     private readonly v4: v4.ApiV4,
     private readonly v5: v5.ApiV5,
+    private readonly applicationV5: v5.ApplicationApiV5,
     private readonly v5CodeTable: v5.CodeTableV5,
   ) {}
 
@@ -475,6 +476,24 @@ export class DrivingLicenseApi {
     return handledResponse.success
   }
 
+  async postApplyForBELicense(params: {
+    nationalIdApplicant: string
+    token: string
+    jurisdictionId: number
+  }): Promise<boolean> {
+    const response = await this.applicationV5.apiApplicationsV5ApplyforBePost({
+      apiVersion: v5.DRIVING_LICENSE_API_VERSION_V5,
+      apiVersion2: v5.DRIVING_LICENSE_API_VERSION_V5,
+      jwttoken: params.token.replace('Bearer ', ''),
+      postApplicationForBEModel: {
+        districtId: params.jurisdictionId,
+        userId: v5.DRIVING_LICENSE_API_USER_ID,
+      },
+    })
+
+    return response.result ?? false
+  }
+
   async postCanApplyForPracticePermit(params: {
     token: string
     studentSSN: string
@@ -569,5 +588,15 @@ export class DrivingLicenseApi {
     return {
       data: image,
     }
+  }
+
+  async getAllDriverLicenses(
+    token: string,
+  ): Promise<DriverLicenseWithoutImagesDto[]> {
+    return await this.v5.apiDrivinglicenseV5AllGet({
+      apiVersion: v5.DRIVING_LICENSE_API_VERSION_V5,
+      apiVersion2: v5.DRIVING_LICENSE_API_VERSION_V5,
+      jwttoken: token.replace('Bearer ', ''),
+    })
   }
 }

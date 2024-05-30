@@ -1,12 +1,19 @@
 import { Auth, AuthMiddleware, User } from '@island.is/auth-nest-tools'
 import { Injectable } from '@nestjs/common'
 import {
+  ApiMachineRequestInspectionPostRequest,
+  ApiMachineStatusChangePostRequest,
   ApiMachinesGetRequest,
   ExcelRequest,
   GetMachineRequest,
   MachineCategoryApi,
   MachineHateoasDto,
+  MachineInspectionRequestCreateDto,
   MachineOwnerChangeApi,
+  MachineRequestInspectionApi,
+  MachineStatusChangeApi,
+  MachineStreetRegistrationApi,
+  MachineStreetRegistrationCreateDto,
   MachineSupervisorChangeApi,
   MachinesApi,
   MachinesDocumentApi,
@@ -36,6 +43,9 @@ export class WorkMachinesClientService {
     private readonly machineOwnerChangeApi: MachineOwnerChangeApi,
     private readonly machineCategoryApi: MachineCategoryApi,
     private readonly machineSupervisorChangeApi: MachineSupervisorChangeApi,
+    private readonly machineStatusApi: MachineStatusChangeApi,
+    private readonly machineStreetApi: MachineStreetRegistrationApi,
+    private readonly machineRequestInspection: MachineRequestInspectionApi,
   ) {}
 
   private machinesApiWithAuth = (user: User) =>
@@ -54,6 +64,20 @@ export class WorkMachinesClientService {
 
   private machineSupervisorChangeApiWithAuth(auth: Auth) {
     return this.machineSupervisorChangeApi.withMiddleware(
+      new AuthMiddleware(auth),
+    )
+  }
+
+  private machineStatusApiWithAuth(auth: Auth) {
+    return this.machineStatusApi.withMiddleware(new AuthMiddleware(auth))
+  }
+
+  private machineStreetApiWithAuth(auth: Auth) {
+    return this.machineStreetApi.withMiddleware(new AuthMiddleware(auth))
+  }
+
+  private machineRequestInspectionApiWithAuth(auth: Auth) {
+    return this.machineRequestInspection.withMiddleware(
       new AuthMiddleware(auth),
     )
   }
@@ -92,24 +116,33 @@ export class WorkMachinesClientService {
             category: machine?.category || '',
             regNumber: machine?.registrationNumber || '',
             status: machine?.status || '',
+            paymentRequiredForOwnerChange:
+              machine?.paymentRequiredForOwnerChange ?? true,
           }
         }) || [],
-      totalCount: result?.pagination?.currentPage || 0,
+      totalCount: result?.pagination?.totalCount || 0,
     }
   }
 
-  async getMachineByRegno(auth: User, regNumber: string): Promise<MachineDto> {
+  async getMachineByRegno(
+    auth: User,
+    regNumber: string,
+    rel: string,
+  ): Promise<MachineDto> {
     const result = await this.machinesApiWithAuth(auth).apiMachinesGet({
       onlyShowOwnedMachines: true,
       searchQuery: regNumber,
     })
 
-    return await this.getMachineDetail(auth, result?.value?.[0]?.id || '')
+    return await this.getMachineDetail(auth, result?.value?.[0]?.id || '', rel)
   }
 
-  async getMachineDetail(auth: User, id: string): Promise<MachineDto> {
+  async getMachineDetail(
+    auth: User,
+    id: string,
+    rel: string,
+  ): Promise<MachineDto> {
     const result = await this.machineApiWithAuth(auth).getMachine({ id })
-
     const [type, ...subType] = result.type?.split(' ') || ''
     return {
       id: result.id,
@@ -121,7 +154,9 @@ export class WorkMachinesClientService {
       regNumber: result?.registrationNumber || '',
       supervisorName: result?.supervisorName || '',
       status: result?.status || '',
-      disabled: !result?.links?.some((link) => link?.rel === 'ownerChange'),
+      disabled: !result?.links?.some((link) => link?.rel === rel),
+      paymentRequiredForOwnerChange:
+        result?.paymentRequiredForOwnerChange ?? true,
     }
   }
 
@@ -163,5 +198,40 @@ export class WorkMachinesClientService {
     await this.machineSupervisorChangeApiWithAuth(
       auth,
     ).apiMachineSupervisorChangePost(input)
+  }
+
+  async deregisterMachine(
+    auth: Auth,
+    deregisterMachine: ApiMachineStatusChangePostRequest,
+  ) {
+    await this.machineStatusApiWithAuth(auth).apiMachineStatusChangePost(
+      deregisterMachine,
+    )
+  }
+
+  async streetRegistration(
+    auth: Auth,
+    streetRegistration: MachineStreetRegistrationCreateDto,
+  ) {
+    await this.machineStreetApiWithAuth(auth).apiMachineStreetRegistrationPost({
+      machineStreetRegistrationCreateDto: streetRegistration,
+    })
+  }
+
+  async requestInspection(
+    auth: Auth,
+    requestInspection: MachineInspectionRequestCreateDto,
+  ) {
+    await this.machineRequestInspectionApiWithAuth(
+      auth,
+    ).apiMachineRequestInspectionPost({
+      machineInspectionRequestCreateDto: requestInspection,
+    })
+  }
+
+  async mustInspectBeforeRegistration(auth: Auth) {
+    return await this.machineStreetApiWithAuth(
+      auth,
+    ).apiMachineStreetRegistrationMustInspectBeforeRegistrationGet()
   }
 }

@@ -52,11 +52,12 @@ export const mapPensionCalculationInput = (
     typeof input.birthMonth === 'number' &&
     typeof input.birthYear === 'number'
   ) {
-    const birthdate = new Date(input.birthYear, input.birthMonth)
-
     const defaultPensionAge =
       (pageData?.configJson?.['defaultPensionAge'] as number) ?? 67
-    const defaultPensionDate = addYears(birthdate, defaultPensionAge)
+    const defaultPensionDate = addYears(
+      new Date(input.birthYear, input.birthMonth + 1),
+      defaultPensionAge,
+    )
 
     const startDate =
       typeof input.startMonth === 'number' &&
@@ -99,11 +100,11 @@ export const mapPensionCalculationInput = (
     installmentClaims: input.installmentClaims,
     livingConditionRatio: input.livingConditionRatio,
     mobilityImpairment: false,
+    start: 1,
 
     // Fields that are calculated or mapped
     hurryPension,
     delayPension,
-    start: startPension,
     startPension,
     typeOfBasePension: input.typeOfBasePension
       ? basePensionTypeMapping[input.typeOfBasePension]
@@ -114,9 +115,9 @@ export const mapPensionCalculationInput = (
     yearOfBirth:
       typeof input.birthYear === 'number'
         ? input.birthYear >= 1952
-          ? 1
-          : 2
-        : 1,
+          ? 2
+          : 1
+        : 2,
     typeOfPeriodIncome: input.typeOfPeriodIncome
       ? periodIncomeTypeMapping[input.typeOfPeriodIncome]
       : input.typeOfPeriodIncome,
@@ -141,12 +142,12 @@ export const groupPensionCalculationItems = (
   const groupCutoffValues = (pageData?.configJson?.[
     'groupCutOffValues'
   ] as string[]) ?? [
-    'Samtals frá TR fyrir skatt:',
-    'Samtals frá TR eftir skatt:',
-    'Samtals frá öðrum eftir skatt:',
-    'Samtals fjármagnstekjur eftir skatt:',
-    'Tekjur samtals:',
-    'Samtals ráðstöfunartekjur eftir skatt:',
+    'REIKNH.SAMTALSTRFYRIRSK',
+    'REIKNH.SAMTALSTREFTIRSK',
+    'REIKNH.SAMTALSEFTIRSK',
+    'REIKNH.SAMTFJARMTEKESK',
+    'REIKNH.TEKJURSAMTALS',
+    'REIKNH.SAMTRADSTTEKESK',
   ]
 
   // These values are used as keys in the frontend to display translations
@@ -185,14 +186,22 @@ export const groupPensionCalculationItems = (
   return groups
 }
 
-export const getPensionCalculationHighlightedItem = (
+export const getPensionCalculationHighlightedItems = (
   calculation: TrWebCommonsExternalPortalsApiModelsPensionCalculatorPensionCalculatorOutput[],
   pageData: CustomPage | null,
-) => {
-  return calculation?.find(
-    (item) =>
-      item?.name ===
-      (pageData?.configJson?.['highlightedItemName'] ??
-        'Samtals frá TR eftir skatt:'),
-  )
+): PensionCalculationResponse['highlightedItems'] => {
+  const higlightedItemNames = (pageData?.configJson?.[
+    'higlightedItemNames'
+  ] as string[]) ?? ['REIKNH.SAMTRADSTTEKESK', 'REIKNH.SAMTALSTREFTIRSK']
+
+  const highlightedItems = []
+
+  for (const itemName of higlightedItemNames) {
+    const item = calculation.find((item) => item?.name === itemName)
+    if (item) {
+      highlightedItems.push(item)
+    }
+  }
+
+  return highlightedItems
 }

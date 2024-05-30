@@ -1,0 +1,83 @@
+fragment NotificationMetadataFields on NotificationMetadata {
+  sent
+  updated
+  created
+  read
+}
+
+fragment NotificationSenderFields on NotificationSender {
+  id
+  logoUrl
+}
+
+fragment NotificationMessageFields on NotificationMessage {
+  title
+  displayBody
+  link {
+    url
+  }
+}
+
+fragment NotificationDataFields on Notification {
+  id
+  notificationId
+  metadata {
+    ...NotificationMetadataFields
+  }
+  sender {
+    ...NotificationSenderFields
+  }
+  message {
+    ...NotificationMessageFields
+  }
+}
+
+query GetUserNotifications($input: NotificationsInput!) {
+  userNotifications(input: $input) {
+    data {
+      ...NotificationDataFields
+      recipient {
+        nationalId
+      }
+    }
+    pageInfo {
+      hasNextPage
+      hasPreviousPage
+      startCursor
+      endCursor
+    }
+    unreadCount
+    unseenCount
+    totalCount
+  }
+}
+
+query GetUserNotificationsOverview($input: NotificationsInput!) {
+  userNotificationsOverview: userNotifications(input: $input) {
+    data {
+      ...NotificationDataFields
+    }
+    totalCount
+    unseenCount
+  }
+}
+
+mutation MarkUserNotificationAsRead($id: Float!) {
+  markNotificationAsRead(id: $id) {
+    data {
+      ...NotificationDataFields
+    }
+  }
+}
+
+mutation MarkAllNotificationsAsSeen {
+  markAllNotificationsSeen {
+    success
+  }
+}
+
+mutation MarkAllNotificationsAsRead {
+  markAllNotificationsRead {
+    success
+  }
+}

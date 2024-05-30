@@ -27,6 +27,7 @@ export const apiConstants = {
     adoption: 'Adoption',
     residenceGrant: 'ResidenceGrant',
     employmentTerminationCertificate: 'EmploymentTerminationCertificate',
+    changeEmployer: 'ChangeEmployer',
   },
 }
 

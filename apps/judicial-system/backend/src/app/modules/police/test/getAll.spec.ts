@@ -96,6 +96,7 @@ describe('PoliceController - Get all', () => {
               vettvangur: '',
               brotFra: '',
               upprunalegtMalsnumer: '',
+              licencePlate: '',
             },
           ],
         }),

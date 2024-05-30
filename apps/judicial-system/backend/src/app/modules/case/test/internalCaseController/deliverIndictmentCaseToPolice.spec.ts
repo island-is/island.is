@@ -11,14 +11,14 @@ import {
 
 import { createTestingCaseModule } from '../createTestingCaseModule'
 
+import { nowFactory } from '../../../../factories'
 import { randomDate } from '../../../../test'
 import { AwsS3Service } from '../../../aws-s3'
-import { nowFactory } from '../../../factories'
-import { CourtDocumentType, PoliceService } from '../../../police'
+import { PoliceDocumentType, PoliceService } from '../../../police'
 import { Case } from '../../models/case.model'
 import { DeliverResponse } from '../../models/deliver.response'
 
-jest.mock('../../../factories')
+jest.mock('../../../../factories')
 
 interface Then {
   result: DeliverResponse
@@ -67,6 +67,7 @@ describe('InternalCaseController - Deliver indictment case to police', () => {
     const caseType = CaseType.INDICTMENT
     const caseState = CaseState.ACCEPTED
     const policeCaseNumber = uuid()
+    const courtCaseNumber = uuid()
     const defendantNationalId = '0123456789'
     const courtRecordKey = uuid()
     const courtRecordPdf = 'test court record'
@@ -78,6 +79,7 @@ describe('InternalCaseController - Deliver indictment case to police', () => {
       type: caseType,
       state: caseState,
       policeCaseNumbers: [policeCaseNumber],
+      courtCaseNumber,
       defendants: [{ nationalId: defendantNationalId }],
       caseFiles: [
         { key: courtRecordKey, category: CaseFileCategory.COURT_RECORD },
@@ -99,24 +101,33 @@ describe('InternalCaseController - Deliver indictment case to police', () => {
     })
 
     it('should update the police case', async () => {
-      expect(mockAwsS3Service.getObject).toHaveBeenCalledWith(courtRecordKey)
-      expect(mockAwsS3Service.getObject).toHaveBeenCalledWith(rulingKey)
+      expect(mockAwsS3Service.getObject).toHaveBeenCalledWith(
+        caseType,
+        caseState,
+        courtRecordKey,
+      )
+      expect(mockAwsS3Service.getObject).toHaveBeenCalledWith(
+        caseType,
+        caseState,
+        rulingKey,
+      )
       expect(mockPoliceService.updatePoliceCase).toHaveBeenCalledWith(
         user,
         caseId,
         caseType,
         caseState,
         policeCaseNumber,
+        courtCaseNumber,
         defendantNationalId,
         date,
         '',
         [
           {
-            type: CourtDocumentType.RVTB,
+            type: PoliceDocumentType.RVTB,
             courtDocument: Base64.btoa(courtRecordPdf),
           },
           {
-            type: CourtDocumentType.RVDO,
+            type: PoliceDocumentType.RVDO,
             courtDocument: Base64.btoa(rulingPdf),
           },
         ],

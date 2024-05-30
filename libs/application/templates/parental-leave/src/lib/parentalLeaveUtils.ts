@@ -1,17 +1,7 @@
-import addDays from 'date-fns/addDays'
-import addMonths from 'date-fns/addMonths'
-import differenceInDays from 'date-fns/differenceInDays'
-import differenceInMonths from 'date-fns/differenceInMonths'
-import eachDayOfInterval from 'date-fns/eachDayOfInterval'
-import getDaysInMonth from 'date-fns/getDaysInMonth'
-import isSameMonth from 'date-fns/isSameMonth'
-import isThisMonth from 'date-fns/isThisMonth'
-import parseISO from 'date-fns/parseISO'
-import round from 'lodash/round'
-
 import { getValueViaPath } from '@island.is/application/core'
 import {
   Application,
+  ApplicationLifecycle,
   ExternalData,
   Field,
   FormValue,
@@ -19,9 +9,38 @@ import {
   PendingAction,
   RepeaterProps,
 } from '@island.is/application/types'
-
+import { FormatMessage } from '@island.is/localization'
+import { dateFormat } from '@island.is/shared/constants'
+import addDays from 'date-fns/addDays'
+import addMonths from 'date-fns/addMonths'
+import differenceInDays from 'date-fns/differenceInDays'
+import differenceInMonths from 'date-fns/differenceInMonths'
+import eachDayOfInterval from 'date-fns/eachDayOfInterval'
+import format from 'date-fns/format'
+import getDaysInMonth from 'date-fns/getDaysInMonth'
+import isAfter from 'date-fns/isAfter'
+import isBefore from 'date-fns/isBefore'
+import isEqual from 'date-fns/isEqual'
+import isSameMonth from 'date-fns/isSameMonth'
+import isThisMonth from 'date-fns/isThisMonth'
+import parseISO from 'date-fns/parseISO'
+import subDays from 'date-fns/subDays'
+import subMonths from 'date-fns/subMonths'
+import round from 'lodash/round'
+import set from 'lodash/set'
+import { MessageDescriptor } from 'react-intl'
+import {
+  additionalSingleParentMonths,
+  daysInMonth,
+  defaultMonths,
+  minimumPeriodStartBeforeExpectedDateOfBirth,
+  multipleBirthsDefaultDays,
+} from '../config'
 import {
   ADOPTION,
+  AttachmentLabel,
+  AttachmentTypes,
+  FileType,
   MANUAL,
   NO,
   OTHER_NO_CHILDREN_FOUND,
@@ -36,49 +55,36 @@ import {
   StartDateOptions,
   States,
   TransferRightsOption,
+  UnEmployedBenefitTypes,
   YES,
 } from '../constants'
 import { TimelinePeriod } from '../fields/components/Timeline/Timeline'
 import { SchemaFormValues } from '../lib/dataSchema'
-import { parentalLeaveFormMessages, statesMessages } from '../lib/messages'
-
-import { FormatMessage } from '@island.is/localization'
-import { dateFormat } from '@island.is/shared/constants'
-import format from 'date-fns/format'
-import isAfter from 'date-fns/isAfter'
-import isBefore from 'date-fns/isBefore'
-import isEqual from 'date-fns/isEqual'
-import subDays from 'date-fns/subDays'
-import subMonths from 'date-fns/subMonths'
-import { MessageDescriptor } from 'react-intl'
-import {
-  additionalSingleParentMonths,
-  daysInMonth,
-  defaultMonths,
-  minimumPeriodStartBeforeExpectedDateOfBirth,
-  multipleBirthsDefaultDays,
-} from '../config'
 import {
   calculatePeriodLength,
   daysToMonths,
   monthsToDays,
 } from '../lib/directorateOfLabour.utils'
+import { parentalLeaveFormMessages, statesMessages } from '../lib/messages'
 import {
+  Attachments,
   ChildInformation,
-  ChildrenAndExistingApplications,
   EmployerRow,
+  FileUpload,
   Files,
   OtherParentObj,
   Period,
   PersonInformation,
   PregnancyStatusAndRightsResults,
+  SelectOption,
   VMSTPeriod,
   YesOrNo,
 } from '../types'
 import { currentDateStartTime } from './parentalLeaveTemplateUtils'
 
-export const getExpectedDateOfBirthOrAdoptionDate = (
+export const getExpectedDateOfBirthOrAdoptionDateOrBirthDate = (
   application: Application,
+  returnBirthDate = false,
 ): string | undefined => {
   const selectedChild = getSelectedChild(
     application.answers,
@@ -87,6 +93,12 @@ export const getExpectedDateOfBirthOrAdoptionDate = (
 
   if (!selectedChild) {
     return undefined
+  }
+
+  if (returnBirthDate) {
+    const { dateOfBirth } = getApplicationExternalData(application.externalData)
+
+    if (dateOfBirth?.data?.dateOfBirth) return dateOfBirth?.data?.dateOfBirth
   }
 
   if (selectedChild.expectedDateOfBirth === '')
@@ -152,35 +164,34 @@ export const formatPeriods = (
       }
     }
 
-    if (isActualDob) {
-      timelinePeriods.push({
-        actualDob: isActualDob,
-        startDate: period.startDate,
-        endDate: period.endDate,
-        ratio: period.ratio,
-        duration: calculatedLength,
-        canDelete: canDelete,
-        title: formatMessage(parentalLeaveFormMessages.reviewScreen.period, {
+    const timelinePeriod = {
+      startDate: period.startDate,
+      endDate: period.endDate,
+      ratio: period.ratio,
+      duration: calculatedLength,
+      canDelete: canDelete,
+      title: formatMessage(
+        'approved' in period
+          ? parentalLeaveFormMessages.reviewScreen.vmstPeriod
+          : parentalLeaveFormMessages.reviewScreen.period,
+        {
           index: index + 1,
           ratio: period.ratio,
-        }),
-        rawIndex: period.rawIndex ?? index,
+        },
+      ),
+      rawIndex: period.rawIndex ?? index,
+      paid: period.paid,
+    }
+
+    if (isActualDob) {
+      timelinePeriods.push({
+        ...timelinePeriod,
+        actualDob: isActualDob,
       })
     }
 
     if (!isActualDob && period.startDate && period.endDate) {
-      timelinePeriods.push({
-        startDate: period.startDate,
-        endDate: period.endDate,
-        ratio: period.ratio,
-        duration: calculatedLength,
-        canDelete: canDelete,
-        title: formatMessage(parentalLeaveFormMessages.reviewScreen.period, {
-          index: index + 1,
-          ratio: period.ratio,
-        }),
-        rawIndex: period.rawIndex ?? index,
-      })
+      timelinePeriods.push(timelinePeriod)
     }
   })
 
@@ -402,7 +413,7 @@ export const getSpouse = (
   return null
 }
 
-export const getOtherParentOptions = (application: Application) => {
+export const getOtherParentOptions = () => {
   const options: Option[] = [
     {
       value: NO,
@@ -420,24 +431,6 @@ export const getOtherParentOptions = (application: Application) => {
       label: parentalLeaveFormMessages.shared.otherParentOption,
     },
   ]
-
-  const spouse = getSpouse(application)
-
-  if (spouse) {
-    options.forEach((o) => {
-      o.disabled = true
-    })
-    options.unshift({
-      value: SPOUSE,
-      label: {
-        ...parentalLeaveFormMessages.shared.otherParentSpouse,
-        values: {
-          spouseName: spouse.name,
-          spouseId: spouse.nationalId,
-        },
-      },
-    })
-  }
 
   return options
 }
@@ -504,12 +497,11 @@ export const getSelectedChild = (
 export const isEligibleForParentalLeave = (
   externalData: ExternalData,
 ): boolean => {
-  const { dataProvider, children, existingApplications } =
-    getApplicationExternalData(externalData)
+  const { dataProvider, children } = getApplicationExternalData(externalData)
 
   return (
     dataProvider?.hasActivePregnancy &&
-    (children.length > 0 || existingApplications.length > 0) &&
+    children.length > 0 &&
     dataProvider?.remainingDays > 0
   )
 }
@@ -548,13 +540,7 @@ export const getApplicationExternalData = (
     externalData,
     'children.data.children',
     [],
-  ) as ChildrenAndExistingApplications['children']
-
-  const existingApplications = getValueViaPath(
-    externalData,
-    'children.data.existingApplications',
-    [],
-  ) as ChildrenAndExistingApplications['existingApplications']
+  ) as ChildInformation[]
 
   const userEmail = getValueViaPath(
     externalData,
@@ -591,17 +577,22 @@ export const getApplicationExternalData = (
     ) as string
   }
 
+  const VMSTPeriods = getValueViaPath(
+    externalData,
+    'VMSTPeriods.data',
+  ) as VMSTPeriod[]
+
   return {
     applicantName,
     applicantGenderCode,
     applicationFundId,
     dataProvider,
     children,
-    existingApplications,
     navId,
     userEmail,
     userPhoneNumber,
     dateOfBirth,
+    VMSTPeriods,
   }
 }
 
@@ -797,6 +788,8 @@ export const getApplicationAnswers = (answers: Application['answers']) => {
     'personalAllowanceFromSpouse.usage',
   ) as string
 
+  const comment = getValueViaPath(answers, 'comment') as string
+
   const employerNationalRegistryId = getValueViaPath(
     answers,
     'employerNationalRegistryId',
@@ -957,6 +950,11 @@ export const getApplicationAnswers = (answers: Application['answers']) => {
     'fileUpload.employmentTerminationCertificateFile',
   ) as Files[]
 
+  const changeEmployerFile = getValueViaPath(
+    answers,
+    'fileUpload.changeEmployerFile',
+  ) as Files[]
+
   const dateOfBirth = getValueViaPath(answers, 'dateOfBirth') as string
 
   const commonFiles = getValueViaPath(answers, 'fileUpload.file') as Files[]
@@ -967,6 +965,8 @@ export const getApplicationAnswers = (answers: Application['answers']) => {
     | 'documentPeriod'
     | 'empper'
     | 'employer'
+    | 'empdoc'
+    | 'empdocper'
     | undefined
 
   const previousState = getValueViaPath(answers, 'previousState') as string
@@ -983,6 +983,9 @@ export const getApplicationAnswers = (answers: Application['answers']) => {
   ) as EmployerRow[]
 
   const language = getValueViaPath(answers, 'applicant.language') as string
+
+  const changeEmployer = getValueViaPath(answers, 'changeEmployer') as boolean
+  const changePeriods = getValueViaPath(answers, 'changePeriods') as boolean
 
   return {
     applicationType,
@@ -1013,6 +1016,7 @@ export const getApplicationAnswers = (answers: Application['answers']) => {
     personalUsage,
     spouseUseAsMuchAsPossible,
     spouseUsage,
+    comment,
     employers,
     employerLastSixMonths,
     isNotStillEmployed,
@@ -1044,6 +1048,7 @@ export const getApplicationAnswers = (answers: Application['answers']) => {
     dateOfBirth,
     residenceGrantFiles,
     employmentTerminationCertificateFiles,
+    changeEmployerFile,
     hasAppliedForReidenceGrant,
     previousState,
     addEmployer,
@@ -1051,6 +1056,8 @@ export const getApplicationAnswers = (answers: Application['answers']) => {
     tempPeriods,
     tempEmployers,
     language,
+    changeEmployer,
+    changePeriods,
   }
 }
 
@@ -1062,21 +1069,6 @@ export const getUnApprovedEmployers = (
 
   employers?.forEach((e) => {
     if (!e.isApproved) {
-      newEmployers.push(e)
-    }
-  })
-
-  return newEmployers
-}
-
-export const getApprovedEmployers = (
-  answers: Application['answers'],
-): EmployerRow[] => {
-  const { employers } = getApplicationAnswers(answers)
-  const newEmployers: EmployerRow[] = []
-
-  employers?.forEach((e) => {
-    if (e.isApproved) {
       newEmployers.push(e)
     }
   })
@@ -1317,8 +1309,8 @@ export const getLastValidPeriodEndDate = (
 }
 
 export const getMinimumStartDate = (application: Application): Date => {
-  const expectedDateOfBirthOrAdoptionDate =
-    getExpectedDateOfBirthOrAdoptionDate(application)
+  const expectedDateOfBirthOrAdoptionDateOrBirthDate =
+    getExpectedDateOfBirthOrAdoptionDateOrBirthDate(application, true)
   const lastPeriodEndDate = getLastValidPeriodEndDate(application)
   const { applicationFundId } = getApplicationExternalData(
     application.externalData,
@@ -1327,15 +1319,15 @@ export const getMinimumStartDate = (application: Application): Date => {
   const today = new Date()
   if (lastPeriodEndDate) {
     return lastPeriodEndDate
-  } else if (expectedDateOfBirthOrAdoptionDate) {
-    const expectedDateOfBirthOrAdoptionDateDate = new Date(
-      expectedDateOfBirthOrAdoptionDate,
+  } else if (expectedDateOfBirthOrAdoptionDateOrBirthDate) {
+    const expectedDateOfBirthOrAdoptionDateOrBirthDateDate = new Date(
+      expectedDateOfBirthOrAdoptionDateOrBirthDate,
     )
 
     if (isParentalGrant(application)) {
       const beginningOfMonthOfExpectedDateOfBirth = addDays(
-        expectedDateOfBirthOrAdoptionDateDate,
-        expectedDateOfBirthOrAdoptionDateDate.getDate() * -1 + 1,
+        expectedDateOfBirthOrAdoptionDateOrBirthDateDate,
+        expectedDateOfBirthOrAdoptionDateOrBirthDateDate.getDate() * -1 + 1,
       )
       return beginningOfMonthOfExpectedDateOfBirth
     }
@@ -1343,7 +1335,7 @@ export const getMinimumStartDate = (application: Application): Date => {
     const beginningOfMonth = getBeginningOfThisMonth()
     const beginningOfMonth3MonthsAgo = getBeginningOfMonth3MonthsAgo()
     const leastStartDate = addMonths(
-      expectedDateOfBirthOrAdoptionDateDate,
+      expectedDateOfBirthOrAdoptionDateOrBirthDateDate,
       -minimumPeriodStartBeforeExpectedDateOfBirth,
     )
 
@@ -1539,7 +1531,7 @@ export const synchronizeVMSTPeriods = (
   setRepeaterItems: RepeaterProps['setRepeaterItems'],
   setFieldLoadingState: RepeaterProps['setFieldLoadingState'],
 ) => {
-  // If periods is not sync with VMST periods, sync it
+  // If periods is not in sync with VMST periods, sync it
   const newPeriods: Period[] = []
   const temptVMSTPeriods: Period[] = []
   const VMSTPeriods: VMSTPeriod[] = data?.getApplicationInformation?.periods
@@ -1568,12 +1560,15 @@ export const synchronizeVMSTPeriods = (
         firstPeriodStart: firstPeriodStart,
         useLength: NO as YesOrNo,
         rightCodePeriod: rightsCodePeriod,
+        daysToUse: period.days,
+        paid: period.paid,
+        approved: period.approved,
       }
 
       if (period.paid) {
         newPeriods.push(obj)
       } else if (isThisMonth(new Date(period.from))) {
-        if (today.getDay() >= 20) {
+        if (today.getDate() >= 20) {
           newPeriods.push(obj)
         }
       } else if (new Date(period.from).getTime() <= today.getTime()) {
@@ -1640,7 +1635,9 @@ export const synchronizeVMSTPeriods = (
           new Date(period.endDate).getTime() !==
             new Date(periods[i].endDate).getTime() ||
           period.ratio !== periods[i].ratio ||
-          period.firstPeriodStart !== periods[i].firstPeriodStart
+          period.firstPeriodStart !== periods[i].firstPeriodStart ||
+          period.paid !== periods[i].paid ||
+          period.approved !== periods[i].approved
         ) {
           isMustSync = true
         }
@@ -1973,4 +1970,177 @@ export const getConclusionScreenSteps = (
   }
 
   return steps
+}
+
+export const getAttachments = (application: Application) => {
+  const getAttachmentDetails = (
+    attachmentsArr: Files[] | undefined,
+    attachmentType: AttachmentTypes,
+  ) => {
+    if (attachmentsArr && attachmentsArr.length > 0) {
+      attachments.push({
+        attachments: attachmentsArr,
+        label: AttachmentLabel[attachmentType],
+      })
+    }
+  }
+
+  const { answers } = application
+  const {
+    isSelfEmployed,
+    applicationType,
+    isReceivingUnemploymentBenefits,
+    unemploymentBenefits,
+    otherParent,
+    noChildrenFoundTypeOfApplication,
+    employerLastSixMonths,
+    isNotStillEmployed,
+    commonFiles,
+    changeEmployerFile,
+  } = getApplicationAnswers(answers)
+
+  const attachments: Attachments[] = []
+
+  const fileUpload = answers.fileUpload as FileUpload
+
+  if (isSelfEmployed === YES) {
+    getAttachmentDetails(
+      fileUpload?.selfEmployedFile,
+      AttachmentTypes.SELF_EMPLOYED,
+    )
+  }
+  if (applicationType === PARENTAL_GRANT_STUDENTS) {
+    getAttachmentDetails(fileUpload?.studentFile, AttachmentTypes.STUDENT)
+  }
+  if (
+    isSelfEmployed === NO &&
+    isReceivingUnemploymentBenefits === YES &&
+    (unemploymentBenefits === UnEmployedBenefitTypes.union ||
+      unemploymentBenefits === UnEmployedBenefitTypes.healthInsurance)
+  ) {
+    getAttachmentDetails(fileUpload?.benefitsFile, AttachmentTypes.BENEFITS)
+  }
+  if (otherParent === SINGLE) {
+    getAttachmentDetails(
+      fileUpload?.singleParent,
+      AttachmentTypes.SINGLE_PARENT,
+    )
+  }
+  if (isParentWithoutBirthParent(answers)) {
+    getAttachmentDetails(
+      fileUpload?.parentWithoutBirthParent,
+      AttachmentTypes.PARENT_WITHOUT_BIRTH_PARENT,
+    )
+  }
+  if (noChildrenFoundTypeOfApplication === PERMANENT_FOSTER_CARE) {
+    getAttachmentDetails(
+      fileUpload?.permanentFosterCare,
+      AttachmentTypes.PERMANENT_FOSTER_CARE,
+    )
+  }
+  if (noChildrenFoundTypeOfApplication === ADOPTION) {
+    getAttachmentDetails(fileUpload?.adoption, AttachmentTypes.ADOPTION)
+  }
+  if (
+    (applicationType === PARENTAL_GRANT ||
+      applicationType === PARENTAL_GRANT_STUDENTS) &&
+    employerLastSixMonths === YES &&
+    isNotStillEmployed
+  ) {
+    getAttachmentDetails(
+      fileUpload?.employmentTerminationCertificateFile,
+      AttachmentTypes.EMPLOYMENT_TERMINATION_CERTIFICATE,
+    )
+  }
+  if (commonFiles?.length > 0) {
+    getAttachmentDetails(fileUpload?.file, AttachmentTypes.FILE)
+  }
+  if (changeEmployerFile?.length > 0) {
+    getAttachmentDetails(
+      fileUpload?.changeEmployerFile,
+      AttachmentTypes.CHANGE_EMPLOYER,
+    )
+  }
+
+  return attachments
+}
+
+export const calculatePruneDate = (application: Application) => {
+  const { pruneAt } = application as unknown as ApplicationLifecycle
+  const { dateOfBirth } = getApplicationExternalData(application.externalData)
+
+  // If date of birth is set then we use that date + 2 years as prune date
+  if (dateOfBirth?.data?.dateOfBirth) {
+    const pruneDate = new Date(dateOfBirth.data.dateOfBirth)
+    pruneDate.setFullYear(pruneDate.getFullYear() + 2)
+
+    return pruneDate
+  }
+
+  // Just to be sure that we have some date set for prune date
+  if (!pruneAt) {
+    const pruneDate = new Date()
+    pruneDate.setMonth(pruneDate.getMonth() + 3)
+
+    return pruneDate
+  }
+
+  return pruneAt
+}
+
+export const getSelectOptionLabel = (options: SelectOption[], id?: string) => {
+  if (id === undefined) {
+    return undefined
+  }
+
+  return options.find((option) => option.value === id)?.label
+}
+
+export const getActionName = (
+  application: Application,
+): FileType | undefined => {
+  const { state } = application
+  const {
+    addEmployer,
+    addPeriods,
+    changeEmployer,
+    changePeriods,
+    changeEmployerFile,
+  } = getApplicationAnswers(application.answers)
+
+  switch (state) {
+    case States.RESIDENCE_GRANT_APPLICATION_NO_BIRTH_DATE:
+    case States.RESIDENCE_GRANT_APPLICATION:
+    case States.ADDITIONAL_DOCUMENTS_REQUIRED:
+      return FileType.DOCUMENT
+    case States.EDIT_OR_ADD_EMPLOYERS_AND_PERIODS: {
+      const employerChanged = changeEmployer || addEmployer === YES
+      const periodsChanged = changePeriods || addPeriods === YES
+
+      // Keep book keeping of what has been selected
+      if (!changeEmployer && addEmployer === YES) {
+        set(application.answers, 'changeEmployer', true)
+      }
+      if (!changePeriods && addPeriods === YES) {
+        set(application.answers, 'changePeriods', true)
+      }
+
+      if (changeEmployerFile && changeEmployerFile.length !== 0) {
+        if (employerChanged && periodsChanged) {
+          return FileType.EMPDOCPER
+        } else if (employerChanged) {
+          return FileType.EMPDOC
+        }
+      }
+      if (employerChanged && periodsChanged) {
+        return FileType.EMPPER
+      } else if (employerChanged) {
+        return FileType.EMPLOYER
+      } else if (periodsChanged) {
+        return FileType.PERIOD
+      }
+      break
+    }
+  }
+  return undefined
 }

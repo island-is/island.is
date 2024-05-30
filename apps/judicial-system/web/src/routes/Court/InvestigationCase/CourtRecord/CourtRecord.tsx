@@ -89,7 +89,7 @@ const getSessionBookingsAutofill = (
     : undefined
 }
 
-const CourtRecord = () => {
+const CourtRecord: React.FC = () => {
   const { setAndSendCaseToServer, updateCase } = useCase()
   const { formatMessage } = useIntl()
   const {
@@ -157,10 +157,11 @@ const CourtRecord = () => {
         }
       }
     }
+
     setAndSendCaseToServer(
       [
         {
-          courtStartDate: workingCase.courtDate,
+          courtStartDate: workingCase.arraignmentDate?.date,
           courtLocation: workingCase.court?.name
             ? `í ${
                 workingCase.court.name.indexOf('dómur') > -1
@@ -455,42 +456,44 @@ const CourtRecord = () => {
               {formatMessage(m.sections.endOfSessionTitle)}
             </Text>
           </Box>
-          <GridContainer>
-            <GridRow>
-              <GridColumn>
-                <DateTime
-                  name="courtEndTime"
-                  datepickerLabel={formatMessage(
-                    m.sections.courtEndTime.dateLabel,
-                  )}
-                  timeLabel={formatMessage(m.sections.courtEndTime.timeLabel)}
-                  minDate={
-                    workingCase.courtStartDate
-                      ? new Date(workingCase.courtStartDate)
-                      : undefined
-                  }
-                  maxDate={new Date()}
-                  selectedDate={workingCase.courtEndTime}
-                  onChange={(date: Date | undefined, valid: boolean) => {
-                    if (date && valid) {
-                      setAndSendCaseToServer(
-                        [
-                          {
-                            courtEndTime: formatDateForServer(date),
-                            force: true,
-                          },
-                        ],
-                        workingCase,
-                        setWorkingCase,
-                      )
+          <BlueBox>
+            <GridContainer>
+              <GridRow>
+                <GridColumn>
+                  <DateTime
+                    name="courtEndTime"
+                    datepickerLabel={formatMessage(
+                      m.sections.courtEndTime.dateLabel,
+                    )}
+                    timeLabel={formatMessage(m.sections.courtEndTime.timeLabel)}
+                    minDate={
+                      workingCase.courtStartDate
+                        ? new Date(workingCase.courtStartDate)
+                        : undefined
                     }
-                  }}
-                  blueBox={false}
-                  required
-                />
-              </GridColumn>
-            </GridRow>
-          </GridContainer>
+                    maxDate={new Date()}
+                    selectedDate={workingCase.courtEndTime}
+                    onChange={(date: Date | undefined, valid: boolean) => {
+                      if (date && valid) {
+                        setAndSendCaseToServer(
+                          [
+                            {
+                              courtEndTime: formatDateForServer(date),
+                              force: true,
+                            },
+                          ],
+                          workingCase,
+                          setWorkingCase,
+                        )
+                      }
+                    }}
+                    blueBox={false}
+                    required
+                  />
+                </GridColumn>
+              </GridRow>
+            </GridContainer>
+          </BlueBox>
         </Box>
         <Box marginBottom={10}>
           <PdfButton

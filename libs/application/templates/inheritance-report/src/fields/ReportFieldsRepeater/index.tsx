@@ -23,34 +23,35 @@ import { useLocale } from '@island.is/localization'
 import { m } from '../../lib/messages'
 import { YES } from '../../lib/constants'
 import DoubleColumnRow from '../../components/DoubleColumnRow'
+import {
+  getDeceasedWasMarriedAndHadAssets,
+  getEstateDataFromApplication,
+} from '../../lib/utils/helpers'
+import {
+  InheritanceReportAsset,
+  InheritanceReportInfo,
+} from '@island.is/clients/syslumenn'
+import { valueToNumber } from '../../lib/utils/helpers'
+import DeceasedShare from '../../components/DeceasedShare'
 
 type RepeaterProps = {
   field: {
     props: {
       sectionTitle?: string
       sectionTitleVariant?: string
-      fields: Array<object>
+      fields: Array<Record<string, unknown>>
       repeaterButtonText: string
       sumField: string
+      sumField2: string
       fromExternalData?: string
       calcWithShareValue?: boolean
+      hideDeceasedShare?: boolean
       skipPushRight?: boolean
     }
   }
 }
 
-function setIfValueIsNotNan(
-  setValue: (id: string, value: string | number) => void,
-  fieldId: string,
-  value: string | number,
-) {
-  if (typeof value === 'number' && isNaN(value)) {
-    return
-  }
-  setValue(fieldId, value)
-}
-
-const valueKeys = ['rateOfExchange', 'faceValue']
+const valueKeys = ['exchangeRateOrInterest', 'amount']
 
 export const ReportFieldsRepeater: FC<
   React.PropsWithChildren<FieldBaseProps<Answers> & RepeaterProps>
@@ -58,13 +59,8 @@ export const ReportFieldsRepeater: FC<
   const { answers, externalData } = application
 
   const { id, props } = field
-  const splitId = id.split('.')
 
-  const error =
-    errors && errors[splitId[0]]
-      ? (errors[splitId[0]] as any)[splitId[1]]?.data ||
-        (errors[splitId[0]] as any)?.total
-      : undefined
+  const deceasedHadAssets = getDeceasedWasMarriedAndHadAssets(application)
 
   const { fields, append, remove, replace } = useFieldArray<any>({
     name: id,
@@ -72,9 +68,6 @@ export const ReportFieldsRepeater: FC<
 
   const { setValue, getValues, clearErrors } = useFormContext()
   const { formatMessage } = useLocale()
-  const taxFreeLimit = Number(
-    formatMessage(m.taxFreeLimit).replace(/[^0-9]/, ''),
-  )
 
   /* ------ Bank accounts and balances ------ */
   const [foreignBankAccountIndexes, setForeignBankAccountIndexes] = useState<
@@ -86,13 +79,6 @@ export const ReportFieldsRepeater: FC<
   const [faceValue, setFaceValue] = useState(0)
   const [index, setIndex] = useState('0')
 
-  /* ------ Heirs ------ */
-  const [percentage, setPercentage] = useState(0)
-  const [taxFreeInheritance, setTaxFreeInheritance] = useState(0)
-  const [inheritance, setInheritance] = useState(0)
-  const [taxableInheritance, setTaxableInheritance] = useState(0)
-  const [inheritanceTax, setInheritanceTax] = useState(0)
-
   /* ------ Total ------ */
   const [total, setTotal] = useState(0)
   const calculateTotal = useCallback(() => {
@@ -101,23 +87,26 @@ export const ReportFieldsRepeater: FC<
       return
     }
 
-    const total = values.reduce((acc: number, current: any) => {
-      const propertyValuationNumber = parseInt(current[props.sumField], 10)
-      const shareValueNumber = parseInt(current?.share, 10)
+    const total = values.reduce((acc: number, current: any, index: number) => {
+      const sumField2 = valueToNumber(current[props?.sumField2], ',')
+      let currentValue = valueToNumber(current[props?.sumField], ',')
+      currentValue = currentValue + sumField2
+      const shareValueNumber = valueToNumber(current?.share, '.')
 
-      const propertyValuation = isNaN(propertyValuationNumber)
-        ? 0
-        : propertyValuationNumber
-      const shareValue = isNaN(shareValueNumber) ? 0 : shareValueNumber / 100
+      if (id === 'assets.bankAccounts.data') {
+        setValue(`${id}[${index}].bankAccountTotal`, currentValue)
+      }
 
-      // TODO: check how precise are these calculations need to be
+      const shareValue = !shareValueNumber ? 0 : shareValueNumber / 100
+
       return (
         Number(acc) +
         (props?.calcWithShareValue
-          ? Math.floor(propertyValuation * shareValue)
-          : propertyValuation)
+          ? Math.round(currentValue * shareValue)
+          : currentValue)
       )
     }, 0)
+
     const addTotal = id.replace('data', 'total')
     setValue(addTotal, total)
 
@@ -129,13 +118,8 @@ export const ReportFieldsRepeater: FC<
     calculateTotal()
   }, [calculateTotal])
 
-  const relations =
-    (externalData.syslumennOnEntry?.data as any).relationOptions?.map(
-      (relation: any) => ({
-        value: relation,
-        label: relation,
-      }),
-    ) || []
+  //TODO: connect to API
+  const debtTypes = [] as any
 
   const handleAddRepeaterFields = () => {
     //reset stocks
@@ -147,8 +131,13 @@ export const ReportFieldsRepeater: FC<
     })
 
     const repeaterFields: Record<string, string> = values.reduce(
-      (acc: Record<string, string>, elem: string) => {
-        acc[elem] = ''
+      (acc: Record<string, unknown>, elem: string) => {
+        if (elem === 'foreignBankAccount') {
+          acc[elem] = []
+        } else {
+          acc[elem] = ''
+        }
+
         return acc
       },
       {},
@@ -157,15 +146,19 @@ export const ReportFieldsRepeater: FC<
     append(repeaterFields)
   }
 
-  const updateValue = (fieldIndex: string) => {
-    const stockValues: { faceValue?: string; rateOfExchange?: string } =
+  const updateValue = (
+    fieldIndex: string,
+    explicitAVal = '0',
+    explicitBVal = '0',
+  ) => {
+    const stockValues: { amount?: string; exchangeRateOrInterest?: string } =
       getValues(fieldIndex)
 
-    const faceValue = stockValues?.faceValue
-    const rateOfExchange = stockValues?.rateOfExchange
+    const faceValue = stockValues?.amount
+    const rateOfExchange = stockValues?.exchangeRateOrInterest
 
-    const a = faceValue?.replace(/[^\d.]/g, '') || '0'
-    const b = rateOfExchange?.replace(/[^\d.]/g, '') || '0'
+    const a = faceValue?.replace(/[^\d.]/g, '') || explicitAVal
+    const b = rateOfExchange?.replace(/[^\d.]/g, '') || explicitBVal
 
     const aVal = parseFloat(a)
     const bVal = parseFloat(b)
@@ -198,77 +191,28 @@ export const ReportFieldsRepeater: FC<
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [faceValue, index, rateOfExchange, setValue])
 
-  /* ------ Set heirs calculations ------ */
-  useEffect(() => {
-    setTaxFreeInheritance(Math.round(taxFreeLimit * percentage))
-    setInheritance(
-      Math.round(
-        (Number(getValueViaPath(answers, 'assets.assetsTotal')) -
-          Number(getValueViaPath(answers, 'debts.debtsTotal')) +
-          Number(getValueViaPath(answers, 'business.businessTotal')) -
-          Number(getValueViaPath(answers, 'totalDeduction'))) *
-          percentage,
-      ),
-    )
-    setTaxableInheritance(Math.round(inheritance - taxFreeInheritance))
-    setInheritanceTax(Math.round(taxableInheritance * 0.1))
-
-    setIfValueIsNotNan(
-      setValue,
-      `${index}.taxFreeInheritance`,
-      taxFreeInheritance,
-    )
-    setIfValueIsNotNan(setValue, `${index}.inheritance`, inheritance)
-    setIfValueIsNotNan(
-      setValue,
-      `${index}.inheritanceTax`,
-      Math.round(taxableInheritance * 0.01),
-    )
-    setIfValueIsNotNan(
-      setValue,
-      `${index}.taxableInheritance`,
-      taxableInheritance,
-    )
-    // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, [
-    index,
-    percentage,
-    taxFreeInheritance,
-    inheritance,
-    taxableInheritance,
-    inheritanceTax,
-    setValue,
-    answers,
-  ])
-
   /* ------ Set fields from external data (realEstate, vehicles) ------ */
   useEffect(() => {
-    const extData = (externalData.syslumennOnEntry?.data as any).estate[
-      props.fromExternalData ? props.fromExternalData : ''
-    ]
+    const estateData =
+      getEstateDataFromApplication(application).inheritanceReportInfo
+    const extData: Array<InheritanceReportAsset> =
+      estateData && props.fromExternalData
+        ? (estateData[
+            props.fromExternalData as keyof InheritanceReportInfo
+          ] as InheritanceReportAsset[])
+        : []
 
     if (
-      !(application?.answers as any)?.assets?.realEstate?.hasModified &&
-      fields.length === 0 &&
-      extData.length
+      extData.length &&
+      !(application?.answers as any)?.modifiers?.[props?.fromExternalData ?? '']
+        ?.hasModified &&
+      fields.length === 0
     ) {
       replace(extData)
-      setValue('assets.realEstate.hasModified', true)
+      setValue(`modifiers.${props?.fromExternalData}.hasModified`, true)
     }
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [])
-
-  const getDefaults = (fieldId: string) => {
-    return fieldId === 'taxFreeInheritance'
-      ? taxFreeInheritance
-      : fieldId === 'inheritance'
-      ? inheritance
-      : fieldId === 'taxableInheritance'
-      ? taxableInheritance
-      : fieldId === 'inheritanceTax'
-      ? inheritanceTax
-      : ''
-  }
 
   useEffect(() => {
     const indexes = fields.reduce<number[]>((acc, _, index) => {
@@ -288,6 +232,37 @@ export const ReportFieldsRepeater: FC<
     setForeignBankAccountIndexes(indexes)
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [])
+
+  useEffect(() => {
+    // The `fields` variable is an empty array at this point
+    // but if we, however, construct the field ids manually the
+    // getValues function will still return their values
+    if (props?.fromExternalData === 'stocks') {
+      let itemIndex = 0
+      // Since there are not an infinite amount of fields
+      // this while(values) loop will terminate when the itemIndex
+      // goes out of bounds (resulting in getValues → undefined)
+      const values = {}
+      while (values) {
+        const fieldIndex = `${id}[${itemIndex}]`
+        const values = getValues(fieldIndex)
+
+        if (values) {
+          updateValue(
+            fieldIndex,
+            values.amount as string,
+            values.exchangeRateOrInterest as string,
+          )
+        } else {
+          break
+        }
+        itemIndex += 1
+      }
+    }
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [])
+
+  let shouldPushRight = false
 
   return (
     <Box>
@@ -319,6 +294,11 @@ export const ReportFieldsRepeater: FC<
                 const fieldId = `${fieldIndex}.${field.id}`
                 const err = errors && getErrorViaPath(errors, fieldId)
 
+                const shouldRecalculateTotal =
+                  props.sumField === field.id || props.sumField2 === field.id
+
+                shouldPushRight = pushRight
+
                 return field?.sectionTitle ? (
                   <GridColumn key={field.id} span="1/1">
                     <Text
@@ -329,7 +309,7 @@ export const ReportFieldsRepeater: FC<
                       }
                       marginBottom={2}
                     >
-                      {field.sectionTitle}
+                      {formatMessage(field.sectionTitle)}
                     </Text>
                   </GridColumn>
                 ) : (
@@ -344,6 +324,9 @@ export const ReportFieldsRepeater: FC<
                     {field.id === 'foreignBankAccount' ? (
                       <CheckboxController
                         id={`${fieldIndex}.${field.id}`}
+                        name={`${fieldIndex}.${field.id}`}
+                        defaultValue={[]}
+                        spacing={0}
                         options={[
                           {
                             label: formatMessage(m.bankAccountForeignLabel),
@@ -351,6 +334,8 @@ export const ReportFieldsRepeater: FC<
                           },
                         ]}
                         onSelect={(val) => {
+                          setValue(`${fieldIndex}.${field.id}`, val)
+
                           setForeignBankAccountIndexes(
                             val.length
                               ? [...foreignBankAccountIndexes, mainIndex]
@@ -360,10 +345,12 @@ export const ReportFieldsRepeater: FC<
                           )
                         }}
                       />
-                    ) : field.id === 'accountNumber' ? (
+                    ) : field.type !== 'nationalId' &&
+                      field.id === 'assetNumber' &&
+                      field.props?.assetKey === 'bankAccounts' ? (
                       <InputController
                         id={`${fieldIndex}.${field.id}`}
-                        label={formatMessage(m.propertyShare)}
+                        label={formatMessage(field.title)}
                         backgroundColor="blue"
                         {...(!foreignBankAccountIndexes.includes(mainIndex) && {
                           format: '####-##-######',
@@ -395,47 +382,52 @@ export const ReportFieldsRepeater: FC<
                         suffix="%"
                         required
                       />
-                    ) : field.id === 'relation' ? (
+                    ) : field.id === 'debtType' ? (
                       <SelectController
                         id={`${fieldIndex}.${field.id}`}
                         name={`${fieldIndex}.${field.id}`}
-                        label={field.title}
+                        label={formatMessage(field.title) ?? ''}
                         placeholder={field.placeholder}
-                        options={relations}
+                        options={debtTypes}
+                        backgroundColor="blue"
+                      /> /* Commenting out for testing purposes of this field
+                    
+                    : field.id === 'exchangeRateOrInterest' ? (
+                      <NumberInput
+                        name={`${fieldIndex}.${field.id}`}
+                        placeholder={field.placeholder}
+                        onAfterChange={() => {
+                          updateValue(fieldIndex)
+                          calculateTotal()
+                          setIndex(fieldIndex)
+                        }}
+                        label={formatMessage(field.title) ?? ''}
                       />
+                    )*/
                     ) : (
                       <InputController
                         id={`${fieldIndex}.${field.id}`}
                         name={`${fieldIndex}.${field.id}`}
                         defaultValue={
-                          repeaterField[field.id]
-                            ? repeaterField[field.id]
-                            : getDefaults(field.id)
+                          repeaterField[field.id] ? repeaterField[field.id] : ''
                         }
                         format={field.format}
-                        label={field.title}
+                        label={formatMessage(field.title)}
                         placeholder={field.placeholder}
                         backgroundColor={field.color ? field.color : 'blue'}
                         currency={field.currency}
                         readOnly={field.readOnly}
-                        type={field.type}
+                        type={field.type !== 'nationalId' ? field.type : 'text'}
                         textarea={field.variant}
                         rows={field.rows}
                         required={field.required}
                         error={err}
-                        onChange={(elem) => {
-                          const value = elem.target.value.replace(/\D/g, '')
-
-                          // heirs
-                          if (field.id === 'heirsPercentage') {
-                            setPercentage(Number(value) / 100)
-                          }
-
+                        onChange={() => {
                           if (valueKeys.includes(field.id)) {
                             updateValue(fieldIndex)
                           }
 
-                          if (props.sumField === field.id) {
+                          if (shouldRecalculateTotal) {
                             calculateTotal()
                           }
 
@@ -447,6 +439,13 @@ export const ReportFieldsRepeater: FC<
                 )
               })}
             </GridRow>
+            {!props?.hideDeceasedShare && deceasedHadAssets && (
+              <DeceasedShare
+                id={fieldIndex}
+                paddingBottom={2}
+                pushRight={shouldPushRight}
+              />
+            )}
           </Box>
         )
       })}
@@ -458,7 +457,7 @@ export const ReportFieldsRepeater: FC<
           onClick={handleAddRepeaterFields}
           size="small"
         >
-          {props.repeaterButtonText}
+          {formatMessage(props.repeaterButtonText)}
         </Button>
       </Box>
       {!!fields.length && props.sumField && (
@@ -469,25 +468,10 @@ export const ReportFieldsRepeater: FC<
                 <Input
                   id={`${id}.total`}
                   name={`${id}.total`}
-                  value={
-                    props.sumField === 'heirsPercentage'
-                      ? String(total) + ' / 100%'
-                      : formatCurrency(String(isNaN(total) ? 0 : total))
-                  }
-                  label={
-                    props.sumField === 'heirsPercentage'
-                      ? formatMessage(m.totalPercentage)
-                      : formatMessage(m.total)
-                  }
+                  value={formatCurrency(String(isNaN(total) ? 0 : total))}
+                  label={formatMessage(m.total)}
                   backgroundColor="white"
                   readOnly
-                  hasError={
-                    (props.sumField === 'heirsPercentage' &&
-                      error &&
-                      total !== 100) ??
-                    false
-                  }
-                  errorMessage={formatMessage(m.totalPercentageError)}
                 />
               }
             />

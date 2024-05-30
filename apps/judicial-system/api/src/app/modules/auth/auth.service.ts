@@ -9,10 +9,10 @@ import {
   NotFoundException,
   UnauthorizedException,
 } from '@nestjs/common'
-import { ConfigType } from '@nestjs/config'
 
 import type { Logger } from '@island.is/logging'
 import { LOGGER_PROVIDER } from '@island.is/logging'
+import { type ConfigType } from '@island.is/nest/config'
 
 import {
   EventType,
@@ -88,6 +88,7 @@ export class AuthService {
           id: uuid(),
           created: new Date().toString(),
           modified: new Date().toString(),
+          canConfirmIndictment: false,
         } as User
       }
     } catch (error) {
@@ -159,7 +160,7 @@ export class AuthService {
         nationalId: string
       }
     } catch (error) {
-      console.error('Token verification failed:', error)
+      this.logger.error('Token verification failed:', error)
       throw error
     }
   }

@@ -23,6 +23,10 @@ export class JwtStrategy extends PassportStrategy(Strategy) {
       algorithms: ['RS256'],
       ignoreExpiration: false,
       passReqToCallback: true,
+      jsonWebTokenOptions: {
+        // Add default clockTolerance of 60 seconds to allow for small time differences between servers
+        clockTolerance: 60,
+      },
     })
   }
 
@@ -57,6 +61,7 @@ export class JwtStrategy extends PassportStrategy(Strategy) {
       ip: String(request.headers['x-forwarded-for'] ?? request.ip),
       userAgent: request.headers['user-agent'],
       audkenniSimNumber: payload.audkenni_sim_number,
+      delegationProvider: payload.client__delegation_provider,
     }
   }
 }

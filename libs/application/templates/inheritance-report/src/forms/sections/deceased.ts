@@ -2,12 +2,16 @@ import {
   buildDescriptionField,
   buildKeyValueField,
   buildMultiField,
+  buildRadioField,
   buildSection,
+  buildTextField,
+  getValueViaPath,
 } from '@island.is/application/core'
 import { m } from '../../lib/messages'
 import format from 'date-fns/format'
+import { getEstateDataFromApplication } from '../../lib/utils/helpers'
+import { NO, YES } from '../../lib/constants'
 import { format as formatNationalId } from 'kennitala'
-import { isEstateInfo } from '../../lib/utils/isEstateInfo'
 
 export const deceased = buildSection({
   id: 'deceasedInfo',
@@ -20,50 +24,109 @@ export const deceased = buildSection({
       children: [
         buildKeyValueField({
           label: m.nameOfTheDeceased,
-          value: ({
-            externalData: {
-              syslumennOnEntry: { data },
-            },
-          }) => (isEstateInfo(data) ? data.estate.nameOfDeceased : ''),
+          value: (application) =>
+            getEstateDataFromApplication(application)?.inheritanceReportInfo
+              ?.nameOfDeceased ?? '',
           width: 'half',
         }),
         buildKeyValueField({
           label: m.nationalId,
-          value: ({
-            externalData: {
-              syslumennOnEntry: { data },
-            },
-          }) =>
-            isEstateInfo(data)
-              ? formatNationalId(data?.estate.nationalIdOfDeceased)
-              : '',
+          value: (application) =>
+            formatNationalId(
+              getEstateDataFromApplication(application)?.inheritanceReportInfo
+                ?.nationalId ?? '',
+            ),
           width: 'half',
         }),
         buildDescriptionField({
-          id: 'space',
+          id: 'space1',
           space: 'gutter',
           title: '',
         }),
         buildKeyValueField({
           label: m.address,
-          value: ({
-            externalData: {
-              syslumennOnEntry: { data },
-            },
-          }) => (isEstateInfo(data) ? data.estate.addressOfDeceased : ''),
+          value: (application) =>
+            getEstateDataFromApplication(application)?.inheritanceReportInfo
+              ?.addressOfDeceased ?? '',
           width: 'half',
         }),
         buildKeyValueField({
           label: m.deathDate,
-          value: ({
-            externalData: {
-              syslumennOnEntry: { data },
-            },
-          }) =>
-            isEstateInfo(data)
-              ? format(new Date(data.estate.dateOfDeath), 'dd.MM.yyyy')
-              : m.deathDateNotRegistered,
+          value: (application) => {
+            const date =
+              getEstateDataFromApplication(application)?.inheritanceReportInfo
+                ?.dateOfDeath
+
+            return date
+              ? format(new Date(date), 'dd.MM.yyyy')
+              : m.deathDateNotRegistered
+          },
           width: 'half',
+        }),
+        buildDescriptionField({
+          id: 'space2',
+          space: 'gutter',
+          title: '',
+        }),
+        buildRadioField({
+          id: 'deceasedWasMarried',
+          title: m.wasInCohabitation,
+          largeButtons: false,
+          backgroundColor: 'white',
+          width: 'half',
+          options: [
+            { value: YES, label: m.yes },
+            { value: NO, label: m.no },
+          ],
+        }),
+        buildDescriptionField({
+          id: 'space3',
+          space: 'gutter',
+          title: '',
+        }),
+        buildRadioField({
+          id: 'deceasedHadAssets',
+          title: m.hadSeparateProperty,
+          largeButtons: false,
+          backgroundColor: 'white',
+          width: 'half',
+          condition: (answers) =>
+            getValueViaPath(answers, 'deceasedWasMarried') === YES,
+          options: [
+            { value: YES, label: m.yes },
+            { value: NO, label: m.no },
+          ],
+        }),
+        buildDescriptionField({
+          id: 'space4',
+          space: 'gutter',
+          title: '',
+        }),
+        buildRadioField({
+          id: 'customShare.hasCustomSpouseSharePercentage',
+          title: m.hasCustomSpouseSharePercentage,
+          largeButtons: false,
+          backgroundColor: 'white',
+          width: 'half',
+          condition: (answers) =>
+            getValueViaPath(answers, 'deceasedWasMarried') === YES,
+          options: [
+            { value: YES, label: m.spouseSharePart },
+            { value: NO, label: m.spouseShareFull },
+          ],
+        }),
+        buildTextField({
+          id: 'customShare.customSpouseSharePercentage',
+          title: m.deceasedShare,
+          width: 'half',
+          placeholder: '50%',
+          suffix: '%',
+          variant: 'number',
+          condition: (answers) =>
+            getValueViaPath(
+              answers,
+              'customShare.hasCustomSpouseSharePercentage',
+            ) === YES,
         }),
       ],
     }),

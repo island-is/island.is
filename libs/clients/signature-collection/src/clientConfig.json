@@ -127,6 +127,36 @@
         }
       }
     },
+    "/Frambod/{ID}/RemoveFrambodAdmin": {
+      "post": {
+        "tags": ["Frambod"],
+        "parameters": [
+          {
+            "name": "ID",
+            "in": "path",
+            "required": true,
+            "style": "simple",
+            "schema": { "type": "integer", "format": "int32" }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "Success",
+            "content": {
+              "application/json": {
+                "schema": { "$ref": "#/components/schemas/FrambodBaseDTO" }
+              }
+            }
+          },
+          "400": {
+            "description": "Bad Request",
+            "content": {
+              "application/json": { "schema": { "type": "string" } }
+            }
+          }
+        }
+      }
+    },
     "/Frambod/{ID}/AddUmbod": {
       "post": {
         "tags": ["Frambod"],
@@ -1329,6 +1359,8 @@
           "sofnunStart": { "type": "string", "format": "date-time" },
           "sofnunEnd": { "type": "string", "format": "date-time" },
           "lokadHandvirkt": { "type": "boolean" },
+          "opnirListar": { "type": "boolean" },
+          "framlengdirListar": { "type": "boolean" },
           "kosning": { "$ref": "#/components/schemas/KosningBaseDTO" }
         },
         "additionalProperties": false
@@ -1344,6 +1376,8 @@
           "sofnunStart": { "type": "string", "format": "date-time" },
           "sofnunEnd": { "type": "string", "format": "date-time" },
           "lokadHandvirkt": { "type": "boolean" },
+          "opnirListar": { "type": "boolean" },
+          "framlengdirListar": { "type": "boolean" },
           "kosning": { "$ref": "#/components/schemas/KosningBaseDTO" },
           "frambodList": {
             "type": "array",
@@ -1395,6 +1429,7 @@
           "notFound": { "type": "array", "items": { "type": "string" } },
           "undirAldri": { "type": "array", "items": { "type": "string" } },
           "ekkiIsRik": { "type": "array", "items": { "type": "string" } },
+          "ekkiBuseta": { "type": "array", "items": { "type": "string" } },
           "ekkiASvaedi": { "type": "array", "items": { "type": "string" } },
           "medMedmaeliALista": {
             "type": "array",

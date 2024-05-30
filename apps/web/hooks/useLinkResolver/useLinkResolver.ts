@@ -211,6 +211,22 @@ export const routesTemplate = {
     is: '/reglugerdir',
     en: '',
   },
+  ojoiadvert: {
+    is: '/stjornartidindi/nr/[number]',
+    en: '',
+  },
+  ojoisearch: {
+    is: '/stjornartidindi/leit',
+    en: '',
+  },
+  ojoicategories: {
+    is: '/stjornartidindi/malaflokkar',
+    en: '',
+  },
+  ojoihome: {
+    is: '/stjornartidindi',
+    en: '',
+  },
   login: {
     is: '/innskraning',
     en: '/en/login',
@@ -262,6 +278,10 @@ export const routesTemplate = {
   universitysearch: {
     is: '/haskolanam/leit',
     en: '/en/university-studies/search',
+  },
+  universitysub: {
+    is: '/haskolanam/upplysingar/[subSlug]',
+    en: '/en/university-studies/info/[subSlug]',
   },
   universitylandingpage: {
     is: '/haskolanam',

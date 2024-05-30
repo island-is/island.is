@@ -203,11 +203,17 @@ export const titles = {
         description:
           'Notaður sem titill fyrir verjenda skjá hjá dómstólum í ákærum',
       },
-      courtRecord: {
-        id: 'judicial.system.core:titles.court.indictments.court_record',
-        defaultMessage: 'Þingbók og dómur - Réttarvörslugátt',
+      conclusion: {
+        id: 'judicial.system.core:titles.court.indictments.conclusion',
+        defaultMessage: 'Niðurstaða - Réttarvörslugátt',
         description:
-          'Notaður sem titill fyrir Þingbók og dómur úrskurðar skjá hjá dómstólum í ákærum',
+          'Notaður sem titill fyrir Niðurstaða úrskurðar skjá hjá dómstólum í ákærum',
+      },
+      completed: {
+        id: 'judicial.system.core:titles.court.indictments.completed',
+        defaultMessage: 'Máli lokið - Réttarvörslugátt',
+        description:
+          'Notaður sem titill fyrir Máli lokið skjá hjá dómstólum í ákærum',
       },
     }),
   },
@@ -246,7 +252,7 @@ export const titles = {
       description: 'Notaður sem titill fyrir Kæra til Landsréttar skjá',
     }),
     withdrawAppeal: defineMessage({
-      id: 'judicial.system.core:titles.shared.appeal_to_court_of_appeals',
+      id: 'judicial.system.core:titles.shared.withdraw_appeal',
       defaultMessage: 'Niðurfelling kæru - Réttarvörslugátt',
       description: 'Notaður sem titill fyrir Niðurfelling kæru skjá',
     }),

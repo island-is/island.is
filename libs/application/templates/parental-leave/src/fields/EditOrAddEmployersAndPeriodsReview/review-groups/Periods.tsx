@@ -1,14 +1,10 @@
-import React, { FC } from 'react'
 import { Application } from '@island.is/application/types'
-import { Box, GridRow, Text, GridColumn } from '@island.is/island-ui/core'
+import { DataValue, ReviewGroup } from '@island.is/application/ui-components'
+import { Box } from '@island.is/island-ui/core'
 import { useLocale } from '@island.is/localization'
-import { Timeline } from '../../components/Timeline/Timeline'
-import {
-  formatPeriods,
-  getExpectedDateOfBirthOrAdoptionDate,
-} from '../../../lib/parentalLeaveUtils'
+import { FC } from 'react'
 import { parentalLeaveFormMessages } from '../../../lib/messages'
-import { ReviewGroup, Label } from '@island.is/application/ui-components'
+import { formatPeriods } from '../../../lib/parentalLeaveUtils'
 
 interface ReviewScreenProps {
   application: Application
@@ -19,43 +15,36 @@ const Periods: FC<React.PropsWithChildren<ReviewScreenProps>> = ({
   application,
   goToScreen,
 }) => {
-  const { formatMessage } = useLocale()
-  const dob = getExpectedDateOfBirthOrAdoptionDate(application)
-  const dobDate = dob ? new Date(dob) : null
-
+  const { formatMessage, formatDateFns } = useLocale()
+  const periods = formatPeriods(application, formatMessage)
   return (
     <ReviewGroup
       isEditable
       editAction={() => goToScreen?.('addPeriods')}
       isLast
     >
-      <GridRow>
-        <GridColumn span={['12/12', '12/12', '12/12', '12/12']}>
-          <Label>
-            {formatMessage(parentalLeaveFormMessages.shared.periodReview)}
-          </Label>
-          <Box paddingTop={3}>
-            {(dobDate && (
-              <Timeline
-                initDate={dobDate}
-                title={formatMessage(
-                  parentalLeaveFormMessages.shared.expectedDateOfBirthTitle,
-                )}
-                titleSmall={formatMessage(
-                  parentalLeaveFormMessages.shared.dateOfBirthTitle,
-                )}
-                periods={formatPeriods(application, formatMessage)}
-              />
-            )) || (
-              <Text>
-                {formatMessage(
-                  parentalLeaveFormMessages.shared.dateOfBirthNotAvailable,
-                )}
-              </Text>
-            )}
-          </Box>
-        </GridColumn>
-      </GridRow>
+      <Box>
+        {periods.map((period, index) => {
+          const value = period.actualDob
+            ? formatMessage(
+                parentalLeaveFormMessages.reviewScreen.periodActualDob,
+                {
+                  duration: period.duration,
+                },
+              )
+            : `${formatDateFns(period.startDate)} — ${formatDateFns(
+                period.endDate,
+              )}`
+
+          return (
+            <DataValue
+              key={`SummaryTimeline-${index}`}
+              label={period.title}
+              value={value}
+            />
+          )
+        })}
+      </Box>
     </ReviewGroup>
   )
 }

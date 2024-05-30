@@ -21,6 +21,7 @@ query GetClient($input: AuthAdminClientInput!) {
       absoluteRefreshTokenLifetime
       slidingRefreshTokenLifetime
       refreshTokenExpiration
+      supportedDelegationTypes
       supportsCustomDelegation
       supportsPersonalRepresentatives
       supportsLegalGuardians
@@ -30,6 +31,7 @@ query GetClient($input: AuthAdminClientInput!) {
       requireApiScopes
       requireConsent
       requirePkce
+      singleSession
       accessTokenLifetime
       customClaims {
         type

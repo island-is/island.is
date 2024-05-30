@@ -35,6 +35,12 @@ export class PatchClientInput {
   @Field(() => RefreshTokenExpiration, { nullable: true })
   refreshTokenExpiration?: RefreshTokenExpiration
 
+  @Field(() => [String], { nullable: true })
+  addedDelegationTypes?: string[]
+
+  @Field(() => [String], { nullable: true })
+  removedDelegationTypes?: string[]
+
   @Field(() => Boolean, { nullable: true })
   supportsCustomDelegation?: boolean
 
@@ -61,6 +67,9 @@ export class PatchClientInput {
 
   @Field(() => Boolean, { nullable: true })
   requirePkce?: boolean
+
+  @Field(() => Boolean, { nullable: true })
+  singleSession?: boolean
 
   @Field(() => Boolean, { nullable: true })
   supportTokenExchange?: boolean

@@ -10,11 +10,11 @@ export const notificationMapper = (
     sent: notification.created,
     created: notification.created,
     updated: notification.updated,
-    status: notification.status,
+    read: notification.read,
+    seen: notification.seen,
   },
   sender: {
-    name: '',
-    logo: '',
+    id: notification.senderId,
   },
   recipient: {
     nationalId: undefined,
@@ -22,8 +22,10 @@ export const notificationMapper = (
   message: {
     title: notification.title,
     body: notification.body,
+    dataCopy: notification.dataCopy,
+    displayBody: notification.dataCopy ?? notification.body,
     link: {
-      uri: notification.clickAction,
+      url: notification.clickActionUrl,
     },
   },
 })

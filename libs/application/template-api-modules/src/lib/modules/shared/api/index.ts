@@ -20,6 +20,8 @@ import { DirectorateOfImmigrationModule } from './directorate-of-immigration/dir
 import { DirectorateOfImmigrationService } from './directorate-of-immigration/directorate-of-immigration.service'
 import { HealthInsuranceModule } from './health-insurance/health-insurance.module'
 import { HealthInsuranceService } from './health-insurance/health-insurance.service'
+import { InnaService } from './education/inna.service'
+import { InnaModule } from './education/inna.module'
 
 export const modules = [
   NationalRegistryModule,
@@ -33,6 +35,7 @@ export const modules = [
   PassportModule,
   DirectorateOfImmigrationModule,
   HealthInsuranceModule,
+  InnaModule,
 ]
 
 export const services = [
@@ -47,4 +50,5 @@ export const services = [
   PassportService,
   DirectorateOfImmigrationService,
   HealthInsuranceService,
+  InnaService,
 ]

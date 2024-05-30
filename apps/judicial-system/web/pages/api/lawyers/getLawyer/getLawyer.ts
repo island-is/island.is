@@ -3,7 +3,7 @@ import { NextApiRequest, NextApiResponse } from 'next'
 import { type Lawyer, mapToLawyer } from '@island.is/judicial-system/types'
 import { validate } from '@island.is/judicial-system-web/src/utils/validate'
 
-async function getLawyer(nationalId: string): Promise<Lawyer> {
+const getLawyer = async (nationalId: string): Promise<Lawyer> => {
   const isValid = validate([[nationalId, ['empty', 'national-id']]]).isValid
   if (!isValid) {
     throw new Error('Invalid national id')

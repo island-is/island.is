@@ -124,7 +124,7 @@ const SignPetitionView: FC<React.PropsWithChildren<FieldBaseProps>> = ({
                       <Input
                         label={formatMessage(m.name)}
                         name={formatMessage(m.name)}
-                        value={userData?.nationalRegistryUser?.fullName}
+                        value={userData?.nationalRegistryPerson?.fullName}
                         readOnly
                       />
                     </Box>

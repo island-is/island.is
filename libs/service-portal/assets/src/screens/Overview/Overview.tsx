@@ -35,6 +35,7 @@ import { useGetExcelVehiclesLazyQuery } from '../../utils/VehicleExcel.generated
 import { exportVehicleOwnedDocument } from '../../utils/vehicleOwnedMapper'
 import useDebounce from 'react-use/lib/useDebounce'
 import { VehiclesDetail } from '@island.is/api/schema'
+import { Problem } from '@island.is/react-spa/shared'
 
 const defaultFilterValues = {
   searchQuery: '',
@@ -126,20 +127,6 @@ const VehiclesOverview = () => {
     usersVehicleQuery.data?.vehiclesListV2?.downloadServiceURL
   const filteredVehicles = vehicles?.vehicleList ?? []
 
-  if (error && !loading) {
-    return (
-      <ErrorScreen
-        figure="./assets/images/hourglass.svg"
-        tagVariant="red"
-        tag={formatMessage(m.errorTitle)}
-        title={formatMessage(m.somethingWrong)}
-        children={formatMessage(m.errorFetchModule, {
-          module: formatMessage(m.vehicles).toLowerCase(),
-        })}
-      />
-    )
-  }
-
   return (
     <>
       <IntroHeader
@@ -149,6 +136,7 @@ const VehiclesOverview = () => {
         serviceProviderTooltip={formatMessage(m.vehiclesTooltip)}
       />
 
+      {error && !loading && <Problem error={error} noBorder={false} />}
       {((!loading && !error && filteredVehicles.length > 0) ||
         searchLoading) && (
         <Box marginBottom={3} display="flex" flexWrap="wrap">
@@ -310,9 +298,17 @@ const VehiclesOverview = () => {
           </Box>
         )}
         {!loading && !error && vehicles?.vehicleList?.length === 0 && (
-          <Box marginTop={[0, 8]}>
-            <EmptyState />
-          </Box>
+          <Problem
+            type="no_data"
+            noBorder={false}
+            title={formatMessage(m.noDataFoundVariable, {
+              arg: formatMessage(messages.title).toLowerCase(),
+            })}
+            message={formatMessage(m.noDataFoundVariableDetailVariation, {
+              arg: formatMessage(messages.title).toLowerCase(),
+            })}
+            imgSrc="./assets/images/sofa.svg"
+          />
         )}
       </Stack>
 

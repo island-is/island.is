@@ -169,12 +169,7 @@ export const MedicineCalulator = () => {
 
       {error && !drugsLoading && (
         <Box marginBottom={SECTION_GAP}>
-          <Problem
-            size="small"
-            noBorder={false}
-            type="internal_service_error"
-            error={error}
-          />
+          <Problem error={error} noBorder={false} />
         </Box>
       )}
       {!error && (
@@ -239,6 +234,13 @@ export const MedicineCalulator = () => {
                 {SHOW_TABLE && (
                   <T.Body>
                     {drugs?.rightsPortalDrugs.data?.map((drug, i) => {
+                      const disableButton =
+                        !drug?.name ||
+                        !drug?.price ||
+                        selectedDrugList.find(
+                          (d) => d.nordicCode === drug.nordicCode,
+                        ) !== undefined
+
                       return (
                         <tr
                           onMouseLeave={() => setHoveredDrug(-1)}
@@ -270,12 +272,16 @@ export const MedicineCalulator = () => {
                                 size="small"
                                 variant="text"
                                 icon="add"
-                                disabled={
-                                  !drug?.name ||
-                                  !drug?.price ||
-                                  selectedDrugList.find(
-                                    (d) => d.nordicCode === drug.nordicCode,
-                                  ) !== undefined
+                                disabled={disableButton}
+                                aria-label={
+                                  disableButton
+                                    ? undefined
+                                    : formatMessage(
+                                        messages.medicineCalculatorAddToPurchaseLabel,
+                                        {
+                                          arg: drug.name,
+                                        },
+                                      )
                                 }
                                 onClick={() => handleAddDrug(drug)}
                               >

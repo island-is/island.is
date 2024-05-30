@@ -12,6 +12,7 @@ import EP from './patentVariations/EP'
 import IS from './patentVariations/IS'
 import SPC from './patentVariations/SPC'
 import { useMemo } from 'react'
+import { ipMessages } from '../../lib/messages'
 
 type UseParams = {
   id: string
@@ -48,13 +49,6 @@ const IntellectualPropertiesPatentDetail = () => {
       }
   }, [data, loading, error])
 
-  if (error && !loading) {
-    return <Problem error={error} />
-  }
-
-  if (!data?.intellectualPropertiesPatent && !loading) {
-    return <Problem type="no_data" />
-  }
   return (
     <>
       <Box marginBottom={[1, 1, 3]}>
@@ -66,7 +60,22 @@ const IntellectualPropertiesPatentDetail = () => {
           )}
         />
       </Box>
-      {
+
+      {error && !loading && <Problem error={error} noBorder={false} />}
+      {!error && !loading && !patent && (
+        <Problem
+          type="no_data"
+          noBorder={false}
+          title={formatMessage(ipMessages.notFound, {
+            arg: formatMessage(ipMessages.patent),
+          })}
+          message={formatMessage(ipMessages.notFoundText, {
+            arg: formatMessage(ipMessages.patent).toLowerCase(),
+          })}
+          imgSrc="./assets/images/sofa.svg"
+        />
+      )}
+      {!error && (
         <Stack space="containerGutter">
           {loading ? (
             <Box marginBottom={[3, 3, 3, 12]}>
@@ -82,7 +91,7 @@ const IntellectualPropertiesPatentDetail = () => {
             patent
           )}
         </Stack>
-      }
+      )}
     </>
   )
 }

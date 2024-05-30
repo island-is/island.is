@@ -34,12 +34,6 @@ const prodConfig = () => ({
   fileStorage: {
     uploadBucket: process.env.FILE_STORAGE_UPLOAD_BUCKET,
   },
-  nationalRegistry: {
-    baseSoapUrl: process.env.SOFFIA_SOAP_URL,
-    user: process.env.SOFFIA_USER,
-    password: process.env.SOFFIA_PASS,
-    host: process.env.SOFFIA_HOST_URL,
-  },
   healthInsurance: {
     wsdlUrl: process.env.XROAD_HEALTH_INSURANCE_WSDLURL,
     baseUrl: process.env.XROAD_BASE_PATH,
@@ -54,9 +48,6 @@ const prodConfig = () => ({
     xRoadProviderId: process.env.XROAD_HEALTH_INSURANCE_ID,
     username: process.env.XROAD_HEALTH_INSURANCE_V2_XROAD_USERNAME,
     password: process.env.XROAD_HEALTH_INSURANCE_V2_XROAD_PASSWORD,
-  },
-  userProfile: {
-    userProfileServiceBasePath: process.env.SERVICE_USER_PROFILE_URL,
   },
   auth: {
     issuer: process.env.IDENTITY_SERVER_ISSUER_URL,
@@ -144,18 +135,12 @@ const devConfig = () => ({
       'r1/IS-DEV/GOV/10005/Logreglan-Protected/Sakavottord-PDF-v2',
   },
   education: {
-    xroadLicenseServiceId: 'IS-DEV/EDU/10020/MMS-Protected/license-api-v1',
-    xroadGradeServiceId: 'IS-DEV/EDU/10020/MMS-Protected/grade-api-v1',
+    xroadLicenseServiceId: 'IS-DEV/GOV/10066/MMS-Protected/license-api-v1',
+    xroadGradeServiceId: 'IS-DEV/GOV/10066/MMS-Protected/grade-api-v1',
     fileDownloadBucket: 'island-is-dev-download-cache-api',
   },
   fileStorage: {
     uploadBucket: process.env.FILE_STORAGE_UPLOAD_BUCKET,
-  },
-  nationalRegistry: {
-    baseSoapUrl: 'https://localhost:8443',
-    user: process.env.SOFFIA_USER ?? '',
-    password: process.env.SOFFIA_PASS ?? '',
-    host: 'soffiaprufa.skra.is',
   },
   healthInsurance: {
     wsdlUrl:
@@ -176,9 +161,6 @@ const devConfig = () => ({
       'IS-DEV/GOV/10007/SJUKRA-Protected',
     username: process.env.XROAD_HEALTH_INSURANCE_V2_XROAD_USERNAME ?? '',
     password: process.env.XROAD_HEALTH_INSURANCE_V2_XROAD_PASSWORD ?? '',
-  },
-  userProfile: {
-    userProfileServiceBasePath: 'http://localhost:3366',
   },
   auth: {
     issuer: 'https://identity-server.dev01.devland.is',

@@ -6,7 +6,11 @@ import { Modal } from '@island.is/react/components'
 import { useRevalidator } from 'react-router-dom'
 import { useProcessCollectionMutation } from './finishCollectionProcess.generated'
 
-const ActionCompleteCollectionProcessing = () => {
+const ActionCompleteCollectionProcessing = ({
+  collectionId,
+}: {
+  collectionId: string
+}) => {
   const { formatMessage } = useLocale()
   const [modalSubmitReviewIsOpen, setModalSubmitReviewIsOpen] = useState(false)
 
@@ -16,7 +20,9 @@ const ActionCompleteCollectionProcessing = () => {
 
   const completeProcessing = async () => {
     try {
-      const res = await processCollectionMutation()
+      const res = await processCollectionMutation({
+        variables: { input: { collectionId } },
+      })
       if (res.data?.signatureCollectionAdminProcess.success) {
         toast.success(formatMessage(m.toggleCollectionProcessSuccess))
         setModalSubmitReviewIsOpen(false)

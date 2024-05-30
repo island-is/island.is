@@ -1,6 +1,6 @@
 import { Heimili } from '../../../gen/fetch'
 
-export interface ResidenceHistoryEntryDto {
+export interface ResidenceEntryDto {
   city: string | null
   postalCode: string | null
   streetName: string
@@ -11,9 +11,12 @@ export interface ResidenceHistoryEntryDto {
   dateOfChange: Date | null
 }
 
-export function formatResidenceHistoryEntryDto(
-  entry: Heimili,
-): ResidenceHistoryEntryDto {
+export const formatResidenceEntryDto = (
+  entry: Heimili | null,
+): ResidenceEntryDto | null => {
+  if (entry == null) {
+    return null
+  }
   return {
     city: entry.stadur ?? null,
     postalCode: entry.postnumer ?? null,

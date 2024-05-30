@@ -14,12 +14,14 @@ import { getErrorViaPath } from '@island.is/application/core'
 import { PlateType, VehiclesCurrentVehicle } from '../shared'
 import { information } from '../lib/messages'
 import { getSelectedVehicle } from '../utils'
+import { useFormContext } from 'react-hook-form'
 
 export const PickPlateSize: FC<React.PropsWithChildren<FieldBaseProps>> = (
   props,
 ) => {
   const { formatMessage } = useLocale()
   const { application, errors, setFieldLoadingState } = props
+  const { setValue } = useFormContext()
 
   const vehicle = getSelectedVehicle(
     application.externalData,
@@ -51,6 +53,12 @@ export const PickPlateSize: FC<React.PropsWithChildren<FieldBaseProps>> = (
 
   // Plate type front should always be defined (rear type can be empty in some cases)
   const plateTypeFrontError = !currentPlateTypeFront
+
+  useEffect(() => {
+    if (!loading && currentPlateTypeRear === null) {
+      setValue(`${props.field.id}.rearPlateSize`, [])
+    }
+  })
 
   useEffect(() => {
     setFieldLoadingState?.(loading || !!error)

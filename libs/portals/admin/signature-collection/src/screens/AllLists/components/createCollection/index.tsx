@@ -17,7 +17,7 @@ import { useCandidateLookupLazyQuery } from './candidateLookup.generated'
 import { setReason } from './utils'
 import { useCreateCollectionMutation } from './createCollection.generated'
 
-const CompareLists = () => {
+const CreateCollection = ({ collectionId }: { collectionId: string }) => {
   const { formatMessage } = useLocale()
   const { control } = useForm()
 
@@ -28,10 +28,12 @@ const CompareLists = () => {
   const [canCreate, setCanCreate] = useState(true)
   const [canCreateErrorReason, setCanCreateErrorReason] = useState('')
 
-  const [candidateLookup] = useCandidateLookupLazyQuery()
+  const [candidateLookup, { loading: loadingCandidate }] =
+    useCandidateLookupLazyQuery()
   const [createCollection, { loading }] = useCreateCollectionMutation({
     variables: {
       input: {
+        collectionId,
         owner: {
           name: name,
           nationalId: nationalIdInput,
@@ -61,7 +63,7 @@ const CompareLists = () => {
       candidateLookup({
         variables: {
           input: {
-            id: nationalIdInput,
+            nationalId: nationalIdInput,
           },
         },
       }).then((res) => {
@@ -134,7 +136,7 @@ const CompareLists = () => {
             onChange={(v) =>
               setNationalIdInput(v.target.value.replace(/\W/g, ''))
             }
-            loading={loading}
+            loading={loadingCandidate}
             error={
               nationalIdNotFound
                 ? formatMessage(m.candidateNationalIdNotFound)
@@ -146,6 +148,7 @@ const CompareLists = () => {
             label={formatMessage(m.candidateName)}
             readOnly
             value={name}
+            placeholder={loadingCandidate ? 'Sæki nafn...' : ''}
           />
         </Stack>
         {!canCreate && (
@@ -173,4 +176,4 @@ const CompareLists = () => {
   )
 }
 
-export default CompareLists
+export default CreateCollection

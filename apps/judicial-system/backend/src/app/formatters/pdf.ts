@@ -258,8 +258,6 @@ export const PdfDocument = async (title?: string): Promise<PdfDocument> => {
             font.widthOfTextAtSize(text, fontSize)
       }
 
-      console.log(marginBottom)
-
       drawText(
         text,
         font,

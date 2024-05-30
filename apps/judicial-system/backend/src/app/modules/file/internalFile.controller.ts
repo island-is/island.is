@@ -12,6 +12,10 @@ import type { Logger } from '@island.is/logging'
 import { LOGGER_PROVIDER } from '@island.is/logging'
 
 import { TokenGuard } from '@island.is/judicial-system/auth'
+import {
+  messageEndpoint,
+  MessageType,
+} from '@island.is/judicial-system/message'
 import { indictmentCases } from '@island.is/judicial-system/types'
 
 import {
@@ -29,7 +33,7 @@ import { CaseFile } from './models/file.model'
 import { FileService } from './file.service'
 
 @UseGuards(TokenGuard)
-@Controller('api/internal/case/:caseId/file/:fileId')
+@Controller('api/internal/case/:caseId')
 @ApiTags('internal files')
 export class InternalFileController {
   constructor(
@@ -38,7 +42,7 @@ export class InternalFileController {
   ) {}
 
   @UseGuards(CaseExistsGuard, CaseFileExistsGuard)
-  @Post('deliverToCourt')
+  @Post(`${messageEndpoint[MessageType.DELIVERY_TO_COURT_CASE_FILE]}/:fileId`)
   @ApiCreatedResponse({
     type: DeliverResponse,
     description: 'Delivers a case file to court',
@@ -53,8 +57,8 @@ export class InternalFileController {
     this.logger.debug(`Delivering file ${fileId} of case ${caseId} to court`)
 
     const { success } = await this.fileService.uploadCaseFileToCourt(
-      caseFile,
       theCase,
+      caseFile,
       deliverDto.user,
     )
 
@@ -66,20 +70,49 @@ export class InternalFileController {
     new CaseTypeGuard(indictmentCases),
     CaseFileExistsGuard,
   )
-  @Post('archive')
+  @Post(`${messageEndpoint[MessageType.ARCHIVING_CASE_FILE]}/:fileId`)
   @ApiCreatedResponse({
     type: DeliverResponse,
     description: 'Archives a case file',
   })
   async archiveCaseFile(
     @Param('caseId') caseId: string,
+    @CurrentCase() theCase: Case,
     @Param('fileId') fileId: string,
     @CurrentCaseFile() caseFile: CaseFile,
   ): Promise<DeliverResponse> {
     this.logger.debug(`Archiving file ${fileId} of case ${caseId}`)
 
-    const success = await this.fileService.archive(caseFile)
+    const success = await this.fileService.archive(theCase, caseFile)
 
     return { delivered: success }
+  }
+
+  @UseGuards(CaseExistsGuard, CaseFileExistsGuard)
+  @Post(
+    `${
+      messageEndpoint[MessageType.DELIVERY_TO_COURT_OF_APPEALS_CASE_FILE]
+    }/:fileId`,
+  )
+  @ApiCreatedResponse({
+    type: DeliverResponse,
+    description: 'Delivers a case file to court of appeals',
+  })
+  deliverCaseFileToCourtOfAppeals(
+    @Param('caseId') caseId: string,
+    @Param('fileId') fileId: string,
+    @CurrentCase() theCase: Case,
+    @CurrentCaseFile() caseFile: CaseFile,
+    @Body() deliverDto: DeliverDto,
+  ): Promise<DeliverResponse> {
+    this.logger.debug(
+      `Delivering file ${fileId} of case ${caseId} to court of appeals`,
+    )
+
+    return this.fileService.deliverCaseFileToCourtOfAppeals(
+      theCase,
+      caseFile,
+      deliverDto.user,
+    )
   }
 }

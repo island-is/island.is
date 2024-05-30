@@ -67,7 +67,7 @@ export const useGetChartData = ({
       (s) =>
         ({
           ...s,
-          ...s.statisticsForDate.reduce((obj, current) => {
+          ...s.statisticsForHeader.reduce((obj, current) => {
             if (current.value !== undefined) {
               obj[current.key] = current.value
             }

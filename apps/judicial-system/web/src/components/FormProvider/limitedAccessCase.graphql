@@ -28,6 +28,7 @@ query LimitedAccessCase($input: CaseQueryInput!) {
       defenderEmail
       defenderPhoneNumber
       defendantWaivesRightToCounsel
+      verdictViewDate
     }
     defenderName
     defenderNationalId
@@ -102,6 +103,7 @@ query LimitedAccessCase($input: CaseQueryInput!) {
     isStatementDeadlineExpired
     statementDeadline
     canBeAppealed
+    canDefenderAppeal
     hasBeenAppealed
     appealedByRole
     appealedDate
@@ -129,9 +131,18 @@ query LimitedAccessCase($input: CaseQueryInput!) {
       id
       name
     }
+    arraignmentDate {
+      date
+      location
+    }
+    courtDate {
+      date
+      location
+    }
     prosecutorsOffice {
       id
       name
     }
+    postponedIndefinitelyExplanation
   }
 }

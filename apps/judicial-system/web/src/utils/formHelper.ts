@@ -89,7 +89,7 @@ export const validateAndSendToServer = (
 /**If entry is included in values then it is removed
  * otherwise it is appended
  */
-export function toggleInArray<T>(values: T[] | undefined | null, entry: T) {
+export const toggleInArray = <T>(values: T[] | undefined | null, entry: T) => {
   if (!values) return [entry]
 
   return values.includes(entry)
@@ -163,7 +163,7 @@ export type stepValidationsType = {
   [constants.INDICTMENTS_CASE_FILE_ROUTE]: () => boolean
   [constants.INDICTMENTS_PROCESSING_ROUTE]: (theCase: Case) => boolean
   [constants.INDICTMENTS_TRAFFIC_VIOLATION_ROUTE]: (theCase: Case) => boolean
-  [constants.INDICTMENTS_CASE_FILES_ROUTE]: () => boolean
+  [constants.INDICTMENTS_CASE_FILES_ROUTE]: (theCase: Case) => boolean
   [constants.RESTRICTION_CASE_RECEPTION_AND_ASSIGNMENT_ROUTE]: (
     theCase: Case,
   ) => boolean
@@ -190,8 +190,9 @@ export type stepValidationsType = {
   ) => boolean
   [constants.INDICTMENTS_SUBPOENA_ROUTE]: (theCase: Case) => boolean
   [constants.INDICTMENTS_DEFENDER_ROUTE]: (theCase: Case) => boolean
-  [constants.INDICTMENTS_COURT_RECORD_ROUTE]: () => boolean
-  [constants.CLOSED_INDICTMENT_OVERVIEW_ROUTE]: () => boolean
+  [constants.INDICTMENTS_CONCLUSION_ROUTE]: () => boolean
+  [constants.INDICTMENTS_COURT_OVERVIEW_ROUTE]: () => boolean
+  [constants.INDICTMENTS_SUMMARY_ROUTE]: () => boolean
   [constants.COURT_OF_APPEAL_OVERVIEW_ROUTE]: () => boolean
   [constants.COURT_OF_APPEAL_CASE_ROUTE]: (theCase: Case) => boolean
   [constants.COURT_OF_APPEAL_RULING_ROUTE]: (theCase: Case) => boolean
@@ -244,7 +245,9 @@ export const stepValidations = (): stepValidationsType => {
       validations.isProcessingStepValidIndictments(theCase),
     [constants.INDICTMENTS_TRAFFIC_VIOLATION_ROUTE]: (theCase: Case) =>
       validations.isTrafficViolationStepValidIndictments(theCase),
-    [constants.INDICTMENTS_CASE_FILES_ROUTE]: () => true,
+    [constants.INDICTMENTS_CASE_FILES_ROUTE]: (theCase) =>
+      validations.isCaseFilesStepValidIndictments(theCase),
+    [constants.INDICTMENTS_SUMMARY_ROUTE]: () => true,
     [constants.RESTRICTION_CASE_RECEPTION_AND_ASSIGNMENT_ROUTE]: (
       theCase: Case,
     ) => validations.isReceptionAndAssignmentStepValid(theCase),
@@ -276,8 +279,8 @@ export const stepValidations = (): stepValidationsType => {
       validations.isSubpoenaStepValid(theCase),
     [constants.INDICTMENTS_DEFENDER_ROUTE]: (theCase: Case) =>
       validations.isDefenderStepValid(theCase),
-    [constants.INDICTMENTS_COURT_RECORD_ROUTE]: () => true,
-    [constants.CLOSED_INDICTMENT_OVERVIEW_ROUTE]: () => true,
+    [constants.INDICTMENTS_CONCLUSION_ROUTE]: () => true,
+    [constants.INDICTMENTS_COURT_OVERVIEW_ROUTE]: () => true,
     [constants.COURT_OF_APPEAL_OVERVIEW_ROUTE]: () => true,
     [constants.COURT_OF_APPEAL_CASE_ROUTE]: (theCase: Case) =>
       validations.isCourtOfAppealCaseStepValid(theCase),

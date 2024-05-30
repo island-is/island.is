@@ -14,15 +14,15 @@ interface Props {
   onClose: () => void
   onContinue: (explanation: string) => void
 }
-export function getCaseResubmittedText(
+export const getCaseResubmittedText = (
   formatMessage: IntlShape['formatMessage'],
   workingCase: Case,
-) {
+) => {
   return formatMessage(strings.text, {
     requestSharedWithDefender:
       (workingCase.requestSharedWithDefender ===
         RequestSharedWithDefender.COURT_DATE &&
-        Boolean(workingCase.courtDate)) ||
+        Boolean(workingCase.arraignmentDate?.date)) ||
       workingCase.requestSharedWithDefender ===
         RequestSharedWithDefender.READY_FOR_COURT,
   })

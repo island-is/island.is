@@ -6,6 +6,7 @@ import { z } from 'zod'
 
 import {
   BadGatewayException,
+  forwardRef,
   Inject,
   Injectable,
   NotFoundException,
@@ -21,12 +22,9 @@ import {
 } from '@island.is/shared/utils/server'
 
 import type { User } from '@island.is/judicial-system/types'
-import {
-  CaseState,
-  CaseType,
-  isIndictmentCase,
-} from '@island.is/judicial-system/types'
+import { CaseState, CaseType } from '@island.is/judicial-system/types'
 
+import { nowFactory } from '../../factories'
 import { AwsS3Service } from '../aws-s3'
 import { EventService } from '../event'
 import { UploadPoliceCaseFileDto } from './dto/uploadPoliceCaseFile.dto'
@@ -35,16 +33,23 @@ import { PoliceCaseInfo } from './models/policeCaseInfo.model'
 import { UploadPoliceCaseFileResponse } from './models/uploadPoliceCaseFile.response'
 import { policeModuleConfig } from './police.config'
 
-export enum CourtDocumentType {
+export enum PoliceDocumentType {
   RVKR = 'RVKR', // Krafa
   RVTB = 'RVTB', // Þingbók
   RVUR = 'RVUR', // Úrskurður
   RVVI = 'RVVI', // Vistunarseðill
   RVUL = 'RVUL', // Úrskurður Landsréttar
   RVDO = 'RVDO', // Dómur
+  RVAS = 'RVAS', // Ákæra
+  RVMG = 'RVMG', // Málsgögn
 }
 
-function getChapter(category?: string): number | undefined {
+export interface PoliceDocument {
+  type: PoliceDocumentType
+  courtDocument: string
+}
+
+const getChapter = (category?: string): number | undefined => {
   if (!category) {
     return undefined
   }
@@ -56,6 +61,28 @@ function getChapter(category?: string): number | undefined {
   }
 
   return +chapter[1] - 1
+}
+
+const formatCrimeScenePlace = (
+  street?: string | null,
+  streetNumber?: string | null,
+  municipality?: string | null,
+) => {
+  if (!street && !municipality) {
+    return ''
+  }
+
+  // Format the street and street number
+  const formattedStreet =
+    street && streetNumber ? `${street} ${streetNumber}` : street
+
+  // Format the municipality
+  const formattedMunicipality =
+    municipality && street ? `, ${municipality}` : municipality
+
+  const address = `${formattedStreet ?? ''}${formattedMunicipality ?? ''}`
+
+  return address.trim()
 }
 
 @Injectable()
@@ -75,6 +102,11 @@ export class PoliceService {
     vettvangur: z.optional(z.string()),
     brotFra: z.optional(z.string()),
     upprunalegtMalsnumer: z.string(),
+    licencePlate: z.optional(z.string()),
+    gotuHeiti: z.optional(z.string()),
+    gotuNumer: z.string().nullish(),
+    sveitafelag: z.string().nullish(),
+    postnumer: z.string().nullish(),
   })
   private responseStructure = z.object({
     malsnumer: z.string(),
@@ -85,7 +117,9 @@ export class PoliceService {
   constructor(
     @Inject(policeModuleConfig.KEY)
     private readonly config: ConfigType<typeof policeModuleConfig>,
+    @Inject(forwardRef(() => EventService))
     private readonly eventService: EventService,
+    @Inject(forwardRef(() => AwsS3Service))
     private readonly awsS3Service: AwsS3Service,
     @Inject(LOGGER_PROVIDER) private readonly logger: Logger,
   ) {
@@ -131,6 +165,7 @@ export class PoliceService {
   private async throttleUploadPoliceCaseFile(
     caseId: string,
     caseType: CaseType,
+    caseState: CaseState,
     uploadPoliceCaseFile: UploadPoliceCaseFileDto,
     user: User,
   ): Promise<UploadPoliceCaseFileResponse> {
@@ -188,11 +223,9 @@ export class PoliceService {
         })
       })
 
-    const key = `${
-      isIndictmentCase(caseType) ? 'indictments' : 'uploads'
-    }/${caseId}/${uuid()}/${uploadPoliceCaseFile.name}`
+    const key = `${caseId}/${uuid()}/${uploadPoliceCaseFile.name}`
 
-    await this.awsS3Service.putObject(key, pdf)
+    await this.awsS3Service.putObject(caseType, caseState, key, pdf)
 
     return { key, size: pdf.length }
   }
@@ -201,6 +234,8 @@ export class PoliceService {
     caseId: string,
     user: User,
   ): Promise<PoliceCaseFile[]> {
+    const startTime = nowFactory()
+
     return this.fetchPoliceDocumentApi(
       `${this.xRoadPath}/V2/GetDocumentListById/${caseId}`,
     )
@@ -260,6 +295,8 @@ export class PoliceService {
             caseId,
             actor: user.name,
             institution: user.institution?.name,
+            startTime,
+            endTime: nowFactory(),
           },
           reason,
         )
@@ -303,10 +340,20 @@ export class PoliceService {
               upprunalegtMalsnumer: string
               vettvangur?: string
               brotFra?: string
+              licencePlate?: string
+              gotuHeiti?: string | null
+              gotuNumer?: string | null
+              sveitafelag?: string | null
             }) => {
               const policeCaseNumber = info.upprunalegtMalsnumer
-              const place = info.vettvangur
+
+              const place = formatCrimeScenePlace(
+                info.gotuHeiti,
+                info.gotuNumer,
+                info.sveitafelag,
+              )
               const date = info.brotFra ? new Date(info.brotFra) : undefined
+              const licencePlate = info.licencePlate
 
               const foundCase = cases.find(
                 (item) => item.policeCaseNumber === policeCaseNumber,
@@ -317,6 +364,7 @@ export class PoliceService {
               } else if (date && (!foundCase.date || date > foundCase.date)) {
                 foundCase.place = place
                 foundCase.date = date
+                foundCase.licencePlate = licencePlate
               }
             },
           )
@@ -368,12 +416,14 @@ export class PoliceService {
   async uploadPoliceCaseFile(
     caseId: string,
     caseType: CaseType,
+    caseState: CaseState,
     uploadPoliceCaseFile: UploadPoliceCaseFileDto,
     user: User,
   ): Promise<UploadPoliceCaseFileResponse> {
     this.throttle = this.throttleUploadPoliceCaseFile(
       caseId,
       caseType,
+      caseState,
       uploadPoliceCaseFile,
       user,
     )
@@ -387,10 +437,11 @@ export class PoliceService {
     caseType: CaseType,
     caseState: CaseState,
     policeCaseNumber: string,
+    courtCaseNumber: string,
     defendantNationalId: string,
     validToDate: Date,
     caseConclusion: string,
-    courtDocuments: { type: CourtDocumentType; courtDocument: string }[],
+    courtDocuments: PoliceDocument[],
   ): Promise<boolean> {
     return this.fetchPoliceCaseApi(
       `${this.xRoadPath}/V2/UpdateRVCase/${caseId}`,
@@ -406,6 +457,7 @@ export class PoliceService {
         body: JSON.stringify({
           rvMal_ID: caseId,
           caseNumber: policeCaseNumber,
+          courtCaseNumber,
           ssn: defendantNationalId,
           type: caseType,
           courtVerdict: caseState,
@@ -444,6 +496,7 @@ export class PoliceService {
             caseType,
             caseState,
             policeCaseNumber,
+            courtCaseNumber,
           },
           reason,
         )

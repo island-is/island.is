@@ -3,11 +3,22 @@ import { Auth, AuthMiddleware } from '@island.is/auth-nest-tools'
 import { IslyklarApi } from '@island.is/clients/islykill'
 import { UserProfileApi } from '@island.is/clients/user-profile'
 import { isRunningOnEnvironment } from '@island.is/shared/utils'
-import { TemplateApiModuleActionProps } from '../../../../types'
+import {
+  BaseTemplateAPIModuleConfig,
+  TemplateApiModuleActionProps,
+} from '../../../../types'
 import { BaseTemplateApiService } from '../../../base-template-api.service'
-import { UserProfileParameters } from '@island.is/application/types'
+import {
+  ApplicationWithAttachments,
+  UserProfile,
+  UserProfileParameters,
+} from '@island.is/application/types'
 import { TemplateApiError } from '@island.is/nest/problem'
-import { coreErrorMessages } from '@island.is/application/core'
+import { coreErrorMessages, getSlugFromType } from '@island.is/application/core'
+import { IdsClientConfig } from '@island.is/nest/config'
+import { Inject } from '@nestjs/common'
+import { ConfigService, ConfigType } from '@nestjs/config'
+import { getConfigValue } from '../../shared.utils'
 
 export const MAX_OUT_OF_DATE_MONTHS = 6
 
@@ -16,6 +27,10 @@ export class UserProfileService extends BaseTemplateApiService {
   constructor(
     private readonly userProfileApi: UserProfileApi,
     private readonly islyklarApi: IslyklarApi,
+    @Inject(IdsClientConfig.KEY)
+    private idsClientConfig: ConfigType<typeof IdsClientConfig>,
+    @Inject(ConfigService)
+    private readonly configService: ConfigService<BaseTemplateAPIModuleConfig>,
   ) {
     super('UserProfile')
   }
@@ -25,11 +40,11 @@ export class UserProfileService extends BaseTemplateApiService {
   }
 
   async userProfile({
+    application,
     auth,
     params,
-  }: TemplateApiModuleActionProps<UserProfileParameters>) {
+  }: TemplateApiModuleActionProps<UserProfileParameters>): Promise<UserProfile> {
     // Temporary solution while we still run the old user profile service.
-
     return this.islyklarApi
       .islyklarGet({ ssn: auth.nationalId })
 
@@ -44,6 +59,20 @@ export class UserProfileService extends BaseTemplateApiService {
             400,
           )
         }
+
+        if (params?.validateEmail && !results?.email) {
+          throw new TemplateApiError(
+            {
+              title: coreErrorMessages.noEmailFound,
+              summary: {
+                ...coreErrorMessages.noEmailFoundDescription,
+                values: { link: this.getIDSLink(application) },
+              },
+            },
+            500,
+          )
+        }
+
         return {
           mobilePhoneNumber: results?.mobile,
           email: results?.email,
@@ -63,5 +92,15 @@ export class UserProfileService extends BaseTemplateApiService {
         }
         throw error
       })
+  }
+
+  private getIDSLink(application: ApplicationWithAttachments) {
+    const slug = getSlugFromType(application.typeId)
+    const clientLocationOrigin = getConfigValue(
+      this.configService,
+      'clientLocationOrigin',
+    ) as string
+
+    return `${this.idsClientConfig.issuer}/app/user-profile/email?state=update&returnUrl=${clientLocationOrigin}/${slug}/${application.id}`
   }
 }

@@ -42,6 +42,9 @@ export class ClientEnvironment {
   @Field(() => RefreshTokenExpiration)
   refreshTokenExpiration!: RefreshTokenExpiration
 
+  @Field(() => [String], { nullable: true })
+  supportedDelegationTypes?: string[]
+
   @Field(() => Boolean)
   supportsCustomDelegation!: boolean
 
@@ -68,6 +71,9 @@ export class ClientEnvironment {
 
   @Field(() => Boolean)
   requirePkce!: boolean
+
+  @Field(() => Boolean)
+  singleSession!: boolean
 
   @Field(() => Boolean)
   supportTokenExchange!: boolean

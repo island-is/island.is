@@ -1,4 +1,3 @@
-import { getValueViaPath } from '@island.is/application/core'
 import { FieldBaseProps } from '@island.is/application/types'
 import { formatCurrency } from '@island.is/application/ui-components'
 import { Box, Text } from '@island.is/island-ui/core'
@@ -6,6 +5,7 @@ import { useLocale } from '@island.is/localization'
 import { FC, useEffect, useState } from 'react'
 import { useFormContext } from 'react-hook-form'
 import { m } from '../../../lib/messages'
+import { calculateTotalAssets } from '../../../lib/utils/calculateTotalAssets'
 
 export const CalculateTotalAssets: FC<
   React.PropsWithChildren<FieldBaseProps>
@@ -14,21 +14,9 @@ export const CalculateTotalAssets: FC<
   const { formatMessage } = useLocale()
   const { setValue } = useFormContext()
 
-  const money = getValueViaPath<string>(answers, 'assets.money.value') || '0'
-  const inventoryValue =
-    getValueViaPath<string>(answers, 'assets.inventory.value') || '0'
+  const acc = calculateTotalAssets(answers)
 
-  const [total] = useState(
-    (getValueViaPath<number>(answers, 'assets.otherAssets.total') || 0) +
-      parseInt(money) +
-      parseInt(inventoryValue) +
-      (getValueViaPath<number>(answers, 'assets.claims.total') || 0) +
-      (getValueViaPath<number>(answers, 'assets.bankAccounts.total') || 0) +
-      (getValueViaPath<number>(answers, 'assets.inventory.total') || 0) +
-      (getValueViaPath<number>(answers, 'assets.vehicles.total') || 0) +
-      (getValueViaPath<number>(answers, 'assets.realEstate.total') || 0) +
-      (getValueViaPath<number>(answers, 'assets.guns.total') || 0),
-  )
+  const [total] = useState(acc)
 
   useEffect(() => {
     setValue('assets.assetsTotal', total)

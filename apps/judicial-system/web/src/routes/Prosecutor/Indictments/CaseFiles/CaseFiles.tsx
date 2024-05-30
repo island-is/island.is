@@ -5,6 +5,7 @@ import router from 'next/router'
 import { Box, InputFileUpload, Text } from '@island.is/island-ui/core'
 import { fileExtensionWhitelist } from '@island.is/island-ui/core/types'
 import * as constants from '@island.is/judicial-system/consts'
+import { isTrafficViolationCase } from '@island.is/judicial-system/types'
 import { titles } from '@island.is/judicial-system-web/messages'
 import {
   FormContentContainer,
@@ -21,7 +22,6 @@ import {
   useS3Upload,
   useUploadFiles,
 } from '@island.is/judicial-system-web/src/utils/hooks'
-import { isTrafficViolationCase } from '@island.is/judicial-system-web/src/utils/stepHelper'
 
 import * as strings from './CaseFiles.strings'
 
@@ -31,7 +31,7 @@ const CaseFiles: React.FC<React.PropsWithChildren<unknown>> = () => {
   const { formatMessage } = useIntl()
   const {
     uploadFiles,
-    allFilesUploaded,
+    allFilesDoneOrError,
     addUploadFiles,
     updateUploadFile,
     removeUploadFile,
@@ -42,7 +42,24 @@ const CaseFiles: React.FC<React.PropsWithChildren<unknown>> = () => {
 
   const isTrafficViolationCaseCheck = isTrafficViolationCase(workingCase)
 
-  const stepIsValid = allFilesUploaded
+  const stepIsValid =
+    uploadFiles.some(
+      (file) =>
+        file.category === CaseFileCategory.COVER_LETTER &&
+        file.status === 'done',
+    ) &&
+    (isTrafficViolationCaseCheck ||
+      uploadFiles.some(
+        (file) =>
+          file.category === CaseFileCategory.INDICTMENT &&
+          file.status === 'done',
+      )) &&
+    uploadFiles.some(
+      (file) =>
+        file.category === CaseFileCategory.CRIMINAL_RECORD &&
+        file.status === 'done',
+    ) &&
+    allFilesDoneOrError
   const handleNavigationTo = useCallback(
     (destination: string) => router.push(`${destination}/${workingCase.id}`),
     [workingCase.id],
@@ -69,6 +86,7 @@ const CaseFiles: React.FC<React.PropsWithChildren<unknown>> = () => {
         <Box component="section" marginBottom={5}>
           <SectionHeading
             title={formatMessage(strings.caseFiles.coverLetterSection)}
+            required
           />
           <InputFileUpload
             fileList={uploadFiles.filter(
@@ -91,6 +109,7 @@ const CaseFiles: React.FC<React.PropsWithChildren<unknown>> = () => {
           <Box component="section" marginBottom={5}>
             <SectionHeading
               title={formatMessage(strings.caseFiles.indictmentSection)}
+              required
             />
             <InputFileUpload
               fileList={uploadFiles.filter(
@@ -113,6 +132,7 @@ const CaseFiles: React.FC<React.PropsWithChildren<unknown>> = () => {
         <Box component="section" marginBottom={5}>
           <SectionHeading
             title={formatMessage(strings.caseFiles.criminalRecordSection)}
+            required
           />
           <InputFileUpload
             fileList={uploadFiles.filter(

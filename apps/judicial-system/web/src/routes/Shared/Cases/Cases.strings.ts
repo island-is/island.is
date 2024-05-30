@@ -1,53 +1,6 @@
 import { defineMessage, defineMessages } from 'react-intl'
 
 export const cases = {
-  tags: defineMessages({
-    draft: {
-      id: 'judicial.system.core:cases.tags.draft',
-      defaultMessage: 'Drög',
-      description: 'Notað sem merki þegar mál í stöðu "Drög" í málalista',
-    },
-    sent: {
-      id: 'judicial.system.core:cases.tags.sent',
-      defaultMessage: 'Sent',
-      description: 'Notað sem merki þegar mál í stöðu "Sent" í málalista',
-    },
-    scheduled: {
-      id: 'judicial.system.core:cases.tags.scheduled',
-      defaultMessage: 'Á dagskrá',
-      description: 'Notað sem merki þegar mál í stöðu "Á dagskrá" í málalista',
-    },
-    inactive: {
-      id: 'judicial.system.core:cases.tags.inactive',
-      defaultMessage: 'Lokið',
-      description: 'Notað sem merki þegar mál í stöðu "Lokið" í málalista',
-    },
-    active: {
-      id: 'judicial.system.core:cases.tags.active',
-      defaultMessage: 'Virkt',
-      description: 'Notað sem merki þegar mál í stöðu "Virkt" í málalista',
-    },
-    accepted: {
-      id: 'judicial.system.core:cases.tags.accepted',
-      defaultMessage: 'Samþykkt',
-      description: 'Notað sem merki þegar mál í stöðu "Samþykkt" í málalista',
-    },
-    rejected: {
-      id: 'judicial.system.core:cases.tags.rejected',
-      defaultMessage: 'Hafnað',
-      description: 'Notað sem merki þegar mál í stöðu "Hafnað" í málalista',
-    },
-    dismissed: {
-      id: 'judicial.system.core:cases.tags.dismissed',
-      defaultMessage: 'Vísað frá',
-      description: 'Notað sem merki þegar mál í stöðu "Vísað frá" í málalista',
-    },
-    unknown: {
-      id: 'judicial.system.core:cases.tags.unknown',
-      defaultMessage: 'Óþekkt',
-      description: 'Notað sem merki þegar mál í stöðu "Óþekkt" í málalista',
-    },
-  }),
   createCaseButton: defineMessage({
     id: 'judicial.system.core:cases.create_case_button',
     defaultMessage: 'Stofna nýtt mál',
@@ -62,20 +15,6 @@ export const cases = {
         'Notaður sem label á filter sem notandi getur notað til að sía mál',
     },
   }),
-  contextMenu: defineMessages({
-    openCase: {
-      id: 'judicial.system.core:cases.context_menu.open_case',
-      defaultMessage: 'Opna mál í nýjum flipa',
-      description:
-        'Notaður sem texti í valmynd fyrir mál til að opna mál í nýjum glugga',
-    },
-    deleteCase: {
-      id: 'judicial.system.core:cases.context_menu.delete_case',
-      defaultMessage: 'Afturkalla',
-      description:
-        'Notaður sem texti í valmynd fyrir mál til að afturkalla mál',
-    },
-  }),
   activeRequests: {
     table: {
       headers: defineMessages({
@@ -85,7 +24,6 @@ export const cases = {
           description:
             'Notaður sem titill fyrir tegund dálk í lista yfir mál í vinnslu.',
         },
-
         date: {
           id: 'judicial.system.core:cases.active_requests.table.headers.date',
           defaultMessage: 'Stofnað/Fyrirtaka',
@@ -98,11 +36,10 @@ export const cases = {
           description:
             'Notaður sem titill fyrir dagsetningu í lista yfir óafgreidd mál í vinnslu.',
         },
-        hearing: {
-          id: 'judicial.system.core:cases.active_requests.table.headers.hearing',
-          defaultMessage: 'Fyrirtaka',
-          description:
-            'Notaður sem titill fyrir dagsetningu í lista yfir óafgreidd mál í vinnslu.',
+        prosecutor: {
+          id: 'judicial.system.core:cases.active_requests.table.headers.prosecutor',
+          defaultMessage: 'Sækjandi',
+          description: 'Notaður sem titill fyrir sækjanda í málalista.',
         },
       }),
     },

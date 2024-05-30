@@ -13,23 +13,16 @@ export const getSelectedVehicle = (
     ) as VehiclesCurrentVehicle
     return vehicle
   }
-  if (
-    externalData &&
-    externalData.currentVehicleList &&
-    externalData.currentVehicleList.data &&
-    answers &&
-    answers['pickVehicle.vehicle']
-  ) {
-    const currentVehicleList = externalData.currentVehicleList
-      .data as CurrentVehiclesAndRecords
+  const currentVehicleList = getValueViaPath(
+    externalData,
+    'currentVehicleList.data',
+  ) as CurrentVehiclesAndRecords
 
-    const vehicleIndex = getValueViaPath(
-      answers,
-      'pickVehicle.vehicle',
-      '',
-    ) as string
+  const vehicleIndex = getValueViaPath(
+    answers,
+    'pickVehicle.vehicle',
+    '',
+  ) as string
 
-    return currentVehicleList.vehicles[parseInt(vehicleIndex, 10)]
-  }
-  return {}
+  return currentVehicleList?.vehicles[parseInt(vehicleIndex, 10)] || {}
 }

@@ -68,9 +68,7 @@ mutation UpdateCase($input: UpdateCaseInput!) {
     }
     courtCaseNumber
     sessionArrangements
-    courtDate
     courtLocation
-    courtRoom
     courtStartDate
     courtEndTime
     isClosedCourtHidden
@@ -219,5 +217,7 @@ mutation UpdateCase($input: UpdateCaseInput!) {
       id
       name
     }
+    indictmentDeniedExplanation
+    indictmentReturnedExplanation
   }
 }

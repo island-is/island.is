@@ -94,7 +94,7 @@ export const Checkbox = ({
       background={background}
     >
       <input
-        className={styles.input}
+        className={cn(styles.input, { [styles.inputLarge]: large })}
         type="checkbox"
         name={name}
         disabled={disabled}

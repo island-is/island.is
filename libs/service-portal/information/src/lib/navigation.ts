@@ -35,11 +35,32 @@ export const informationNavigation: PortalNavigationItem = {
     {
       name: m.mySettings,
       path: InformationPaths.Settings,
+      children: [
+        {
+          name: m.mySettingsInformation,
+          path: InformationPaths.Settings,
+        },
+        {
+          name: m.mySettingsNotifications,
+          path: InformationPaths.SettingsNotifications,
+        },
+      ],
     },
     {
       name: m.lists,
       path: InformationPaths.Lists,
       children: [
+        {
+          name: m.signatureCollectionLists,
+          path: SignatureCollectionPaths.SignatureCollectionLists,
+          children: [
+            {
+              name: m.viewSignatureList,
+              navHide: true,
+              path: SignatureCollectionPaths.ViewList,
+            },
+          ],
+        },
         {
           name: m.generalPetitions,
           path: PetitionPaths.Petitions,
@@ -56,18 +77,11 @@ export const informationNavigation: PortalNavigationItem = {
             },
           ],
         },
-        {
-          name: m.signatureCollectionLists,
-          path: SignatureCollectionPaths.SignatureCollectionLists,
-          children: [
-            {
-              name: m.viewSignatureList,
-              navHide: true,
-              path: SignatureCollectionPaths.ViewList,
-            },
-          ],
-        },
       ],
+    },
+    {
+      name: m.notifications,
+      path: InformationPaths.Notifications,
     },
   ],
   description: m.userInfoDescription,

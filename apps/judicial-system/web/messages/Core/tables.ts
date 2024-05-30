@@ -77,4 +77,30 @@ export const tables = defineMessages({
     defaultMessage: 'Rannsóknarmál',
     description: 'Notaður sem titill fyrir Rannsóknarmál í síun.',
   },
+  prosecutor: {
+    id: 'judicial.system.core:tables.prosecutor',
+    defaultMessage: 'Sækjandi',
+    description: 'Notaður sem titill fyrir sækjanda í málalista.',
+  },
+  prosecutorName: {
+    id: 'judicial.system.core:tables.prosecutor_name',
+    defaultMessage: 'Saksóknari',
+    description: 'Notaður sem titill fyrir saksóknara í málalista.',
+  },
+  deadline: {
+    id: 'judicial.system.core:tables.deadline',
+    defaultMessage: 'Frestur',
+    description: 'Notaður sem titill fyrir frestur dálk í lista yfir mál.',
+  },
+  reviewDecision: {
+    id: 'judicial.system.core:tables.review_decision',
+    defaultMessage: 'Ákvörðun',
+    description: 'Notaður sem titill fyrir ákvörðun dálk í lista yfir mál.',
+  },
+  verdictViewState: {
+    id: 'judicial.system.core:tables.verdict_view_state',
+    defaultMessage: 'Birtingarstaða',
+    description:
+      'Notaður sem titill fyrir birtingarstaða dálk í lista yfir mál.',
+  },
 })

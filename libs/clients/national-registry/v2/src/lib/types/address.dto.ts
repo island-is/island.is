@@ -7,9 +7,9 @@ export interface AddressDto {
   municipalityNumber: string | null
 }
 
-export function formatAddressDto(
+export const formatAddressDto = (
   address: Heimilisfang | null | undefined,
-): AddressDto | null {
+): AddressDto | null => {
   if (address == null) {
     return null
   }

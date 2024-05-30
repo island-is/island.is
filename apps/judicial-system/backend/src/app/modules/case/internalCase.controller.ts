@@ -13,6 +13,11 @@ import type { Logger } from '@island.is/logging'
 import { LOGGER_PROVIDER } from '@island.is/logging'
 
 import { TokenGuard } from '@island.is/judicial-system/auth'
+import { formatNationalId } from '@island.is/judicial-system/formatters'
+import {
+  messageEndpoint,
+  MessageType,
+} from '@island.is/judicial-system/message'
 import {
   indictmentCases,
   investigationCases,
@@ -21,6 +26,7 @@ import {
 
 import { CaseEvent, EventService } from '../event'
 import { DeliverDto } from './dto/deliver.dto'
+import { InternalCasesDto } from './dto/internalCases.dto'
 import { InternalCreateCaseDto } from './dto/internalCreateCase.dto'
 import { CurrentCase } from './guards/case.decorator'
 import { CaseCompletedGuard } from './guards/caseCompleted.guard'
@@ -64,8 +70,25 @@ export class InternalCaseController {
     return this.internalCaseService.archive()
   }
 
+  @Post('cases/indictments')
+  @ApiOkResponse({
+    type: Case,
+    isArray: true,
+    description: 'Gets all indictment cases',
+  })
+  getIndictmentCases(
+    @Body() internalCasesDto: InternalCasesDto,
+  ): Promise<Case[]> {
+    this.logger.debug('Getting all indictment cases')
+    const nationalId = formatNationalId(internalCasesDto.nationalId)
+
+    return this.internalCaseService.getIndictmentCases(nationalId)
+  }
+
   @UseGuards(CaseExistsGuard)
-  @Post('case/:caseId/deliverProsecutorToCourt')
+  @Post(
+    `case/:caseId/${messageEndpoint[MessageType.DELIVERY_TO_COURT_PROSECUTOR]}`,
+  )
   @ApiOkResponse({
     type: DeliverResponse,
     description: 'Delivers a prosecutor to court',
@@ -84,7 +107,32 @@ export class InternalCaseController {
   }
 
   @UseGuards(CaseExistsGuard, new CaseTypeGuard(indictmentCases))
-  @Post('case/:caseId/deliverCaseFilesRecordToCourt/:policeCaseNumber')
+  @Post(
+    `case/:caseId/${messageEndpoint[MessageType.DELIVERY_TO_COURT_INDICTMENT]}`,
+  )
+  @ApiOkResponse({
+    type: DeliverResponse,
+    description: 'Delivers an indictment to court',
+  })
+  deliverIndictmentToCourt(
+    @Param('caseId') caseId: string,
+    @CurrentCase() theCase: Case,
+    @Body() deliverDto: DeliverDto,
+  ): Promise<DeliverResponse> {
+    this.logger.debug(`Delivering the indictment for case ${caseId} to court`)
+
+    return this.internalCaseService.deliverIndictmentToCourt(
+      theCase,
+      deliverDto.user,
+    )
+  }
+
+  @UseGuards(CaseExistsGuard, new CaseTypeGuard(indictmentCases))
+  @Post(
+    `case/:caseId/${
+      messageEndpoint[MessageType.DELIVERY_TO_COURT_CASE_FILES_RECORD]
+    }/:policeCaseNumber`,
+  )
   @ApiOkResponse({
     type: DeliverResponse,
     description: 'Delivers a case files record to court',
@@ -113,7 +161,11 @@ export class InternalCaseController {
   }
 
   @UseGuards(CaseExistsGuard, new CaseTypeGuard(indictmentCases))
-  @Post('case/:caseId/archiveCaseFilesRecord/:policeCaseNumber')
+  @Post(
+    `case/:caseId/${
+      messageEndpoint[MessageType.ARCHIVING_CASE_FILES_RECORD]
+    }/:policeCaseNumber`,
+  )
   @ApiOkResponse({
     type: DeliverResponse,
     description: 'Archives a case files record',
@@ -143,7 +195,9 @@ export class InternalCaseController {
     CaseExistsGuard,
     new CaseTypeGuard([...restrictionCases, ...investigationCases]),
   )
-  @Post('case/:caseId/deliverRequestToCourt')
+  @Post(
+    `case/:caseId/${messageEndpoint[MessageType.DELIVERY_TO_COURT_REQUEST]}`,
+  )
   @ApiOkResponse({
     type: DeliverResponse,
     description: 'Delivers a request to court',
@@ -166,7 +220,11 @@ export class InternalCaseController {
     new CaseTypeGuard([...restrictionCases, ...investigationCases]),
     CaseCompletedGuard,
   )
-  @Post('case/:caseId/deliverCourtRecordToCourt')
+  @Post(
+    `case/:caseId/${
+      messageEndpoint[MessageType.DELIVERY_TO_COURT_COURT_RECORD]
+    }`,
+  )
   @ApiOkResponse({
     type: DeliverResponse,
     description: 'Delivers a court record to court',
@@ -189,7 +247,11 @@ export class InternalCaseController {
     new CaseTypeGuard([...restrictionCases, ...investigationCases]),
     CaseCompletedGuard,
   )
-  @Post('case/:caseId/deliverSignedRulingToCourt')
+  @Post(
+    `case/:caseId/${
+      messageEndpoint[MessageType.DELIVERY_TO_COURT_SIGNED_RULING]
+    }`,
+  )
   @ApiOkResponse({
     type: DeliverResponse,
     description: 'Delivers a court record to court',
@@ -212,7 +274,11 @@ export class InternalCaseController {
     new CaseTypeGuard([...restrictionCases, ...investigationCases]),
     CaseCompletedGuard,
   )
-  @Post('case/:caseId/deliverCaseConclusionToCourt')
+  @Post(
+    `case/:caseId/${
+      messageEndpoint[MessageType.DELIVERY_TO_COURT_CASE_CONCLUSION]
+    }`,
+  )
   @ApiOkResponse({
     type: DeliverResponse,
     description: 'Delivers a case conclusion to court',
@@ -237,7 +303,94 @@ export class InternalCaseController {
     new CaseTypeGuard([...restrictionCases, ...investigationCases]),
     CaseCompletedGuard,
   )
-  @Post('case/:caseId/deliverCaseToPolice')
+  @Post(
+    `case/:caseId/${
+      messageEndpoint[MessageType.DELIVERY_TO_COURT_OF_APPEALS_RECEIVED_DATE]
+    }`,
+  )
+  @ApiOkResponse({
+    type: DeliverResponse,
+    description: 'Delivers a received date to court of appeals',
+  })
+  deliverReceivedDateToCourtOfAppeals(
+    @Param('caseId') caseId: string,
+    @CurrentCase() theCase: Case,
+    @Body() deliverDto: DeliverDto,
+  ): Promise<DeliverResponse> {
+    this.logger.debug(
+      `Delivering the received date for case ${caseId} to court of appeals`,
+    )
+
+    return this.internalCaseService.deliverReceivedDateToCourtOfAppeals(
+      theCase,
+      deliverDto.user,
+    )
+  }
+
+  @UseGuards(
+    CaseExistsGuard,
+    new CaseTypeGuard([...restrictionCases, ...investigationCases]),
+    CaseCompletedGuard,
+  )
+  @Post(
+    `case/:caseId/${
+      messageEndpoint[MessageType.DELIVERY_TO_COURT_OF_APPEALS_ASSIGNED_ROLES]
+    }`,
+  )
+  @ApiOkResponse({
+    type: DeliverResponse,
+    description: 'Delivers assigned roles to court of appeals',
+  })
+  deliverAssignedRolesToCourtOfAppeals(
+    @Param('caseId') caseId: string,
+    @CurrentCase() theCase: Case,
+    @Body() deliverDto: DeliverDto,
+  ): Promise<DeliverResponse> {
+    this.logger.debug(
+      `Delivering the assigned roles for case ${caseId} to court of appeals`,
+    )
+
+    return this.internalCaseService.deliverAssignedRolesToCourtOfAppeals(
+      theCase,
+      deliverDto.user,
+    )
+  }
+
+  @UseGuards(
+    CaseExistsGuard,
+    new CaseTypeGuard([...restrictionCases, ...investigationCases]),
+    CaseCompletedGuard,
+  )
+  @Post(
+    `case/:caseId/${
+      messageEndpoint[MessageType.DELIVERY_TO_COURT_OF_APPEALS_CONCLUSION]
+    }`,
+  )
+  @ApiOkResponse({
+    type: DeliverResponse,
+    description: 'Delivers a conclusion to court of appeals',
+  })
+  deliverConclusionToCourtOfAppeals(
+    @Param('caseId') caseId: string,
+    @CurrentCase() theCase: Case,
+    @Body() deliverDto: DeliverDto,
+  ): Promise<DeliverResponse> {
+    this.logger.debug(
+      `Delivering the conclusion for case ${caseId} to court of appeals`,
+    )
+
+    return this.internalCaseService.deliverConclusionToCourtOfAppeals(
+      theCase,
+      deliverDto.user,
+    )
+  }
+
+  @UseGuards(
+    CaseExistsGuard,
+    new CaseTypeGuard([...restrictionCases, ...investigationCases]),
+    CaseCompletedGuard,
+  )
+  @Post(`case/:caseId/${messageEndpoint[MessageType.DELIVERY_TO_POLICE_CASE]}`)
   @ApiOkResponse({
     type: DeliverResponse,
     description: 'Delivers a completed case to police',
@@ -260,7 +413,11 @@ export class InternalCaseController {
     new CaseTypeGuard(indictmentCases),
     CaseCompletedGuard,
   )
-  @Post('case/:caseId/deliverIndictmentCaseToPolice')
+  @Post(
+    `case/:caseId/${
+      messageEndpoint[MessageType.DELIVERY_TO_POLICE_INDICTMENT_CASE]
+    }`,
+  )
   @ApiOkResponse({
     type: DeliverResponse,
     description: 'Delivers a completed indictment case to police',
@@ -278,12 +435,99 @@ export class InternalCaseController {
     )
   }
 
+  @UseGuards(CaseExistsGuard, new CaseTypeGuard(indictmentCases))
+  @Post(
+    `case/:caseId/${
+      messageEndpoint[MessageType.DELIVERY_TO_POLICE_INDICTMENT]
+    }`,
+  )
+  @ApiOkResponse({
+    type: DeliverResponse,
+    description: 'Delivers an indictment to police',
+  })
+  deliverIndictmentToPolice(
+    @Param('caseId') caseId: string,
+    @CurrentCase() theCase: Case,
+    @Body() deliverDto: DeliverDto,
+  ): Promise<DeliverResponse> {
+    this.logger.debug(`Delivering indictment for case ${caseId} to police`)
+
+    return this.internalCaseService.deliverIndictmentToPolice(
+      theCase,
+      deliverDto.user,
+    )
+  }
+
+  @UseGuards(CaseExistsGuard, new CaseTypeGuard(indictmentCases))
+  @Post(
+    `case/:caseId/${
+      messageEndpoint[MessageType.DELIVERY_TO_POLICE_CASE_FILES_RECORD]
+    }/:policeCaseNumber`,
+  )
+  @ApiOkResponse({
+    type: DeliverResponse,
+    description: 'Delivers a case files record to police',
+  })
+  async deliverCaseFilesRecordToPolice(
+    @Param('caseId') caseId: string,
+    @Param('policeCaseNumber') policeCaseNumber: string,
+    @CurrentCase() theCase: Case,
+    @Body() deliverDto: DeliverDto,
+  ): Promise<DeliverResponse> {
+    this.logger.debug(
+      `Delivering the case files record for case ${caseId} and police case ${policeCaseNumber} to police`,
+    )
+
+    if (!theCase.policeCaseNumbers.includes(policeCaseNumber)) {
+      throw new BadRequestException(
+        `Case ${caseId} does not include police case number ${policeCaseNumber}`,
+      )
+    }
+
+    return this.internalCaseService.deliverCaseFilesRecordToPolice(
+      theCase,
+      policeCaseNumber,
+      deliverDto.user,
+    )
+  }
+
   @UseGuards(
     CaseExistsGuard,
     new CaseTypeGuard([...restrictionCases, ...investigationCases]),
     CaseCompletedGuard,
   )
-  @Post('case/:caseId/deliverAppealToPolice')
+  @Post(
+    `case/:caseId/${
+      messageEndpoint[MessageType.DELIVERY_TO_POLICE_SIGNED_RULING]
+    }`,
+  )
+  @ApiOkResponse({
+    type: DeliverResponse,
+    description: 'Delivers a signed ruling to police',
+  })
+  deliverSignedRulingToPolice(
+    @Param('caseId') caseId: string,
+    @CurrentCase() theCase: Case,
+    @Body() deliverDto: DeliverDto,
+  ): Promise<DeliverResponse> {
+    this.logger.debug(
+      `Delivering the signed ruling for case ${caseId} to police`,
+    )
+
+    return this.internalCaseService.deliverSignedRulingToPolice(
+      theCase,
+      deliverDto.user,
+    )
+  }
+
+  @UseGuards(
+    CaseExistsGuard,
+    new CaseTypeGuard([...restrictionCases, ...investigationCases]),
+    CaseCompletedGuard,
+  )
+  @Post(
+    `case/:caseId/${messageEndpoint[MessageType.DELIVERY_TO_POLICE_APPEAL]}`,
+  )
   @ApiOkResponse({
     type: DeliverResponse,
     description: 'Delivers a completed appeal to police',

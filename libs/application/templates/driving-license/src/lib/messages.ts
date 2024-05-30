@@ -88,6 +88,18 @@ export const m = defineMessages({
     description:
       "I've lived in Iceland according to VIII and here by confirm that I meet the conditions to apply for a driving license",
   },
+  glassesPrescriptionTitle: {
+    id: 'dl.application:glassesPrescription.title',
+    defaultMessage: 'Gleraugnavottorð',
+    description: 'Glasses prescription',
+  },
+  glassesPrescriptionSubTitle: {
+    id: 'dl.application:glassesPrescription.subtitle',
+    defaultMessage:
+      'Til þess að auðvelda umsóknarferlið er sótt gleraugnavottorð frá samgöngustofu',
+    description:
+      'In order to facilitate the application process, a glasses certificate is obtained from the transport office',
+  },
   informationSectionTitle: {
     id: 'dl.application:informationSection.title',
     defaultMessage: 'Sýslumannsembætti',
@@ -117,6 +129,23 @@ export const m = defineMessages({
     id: 'dl.application:healthDeclarationMultiField.subTitle',
     defaultMessage: 'Yfirlýsing um líkamlegt og andlegt heilbrigði',
     description: 'Statement of physical and mental health',
+  },
+  declaration: {
+    id: 'dl.application:declaration',
+    defaultMessage: 'Yfirlýsing',
+    description: '',
+  },
+  healthDeclarationSubTitle: {
+    id: 'dl.application:healthDeclarationSubTitle',
+    defaultMessage:
+      'Ef einhverri spurningu er svarað játandi í heilbrigðisyfirlýsingu þarf læknisvottorð frá heimilislækni eða viðeigandi sérfræðilækni.',
+    description: '',
+  },
+  alertHealthDeclarationGlassesMismatch: {
+    id: 'dl.application:alertHealthDeclarationGlassesMismatch',
+    defaultMessage:
+      'Athugaðu að þar sem breyting hefur orðið á sjón síðan síðast var sótt um ökuskírteini þarftu að skila vottorði frá heimilislækni þess efnis.',
+    description: '',
   },
   healthDeclaration1: {
     id: 'dl.application:healthDeclaration.1',
@@ -221,7 +250,7 @@ export const m = defineMessages({
   },
   overviewStreetAddress: {
     id: 'dl.application:overview.streetAddress',
-    defaultMessage: 'Heimili',
+    defaultMessage: 'Heimilisfang',
     description: 'Street address',
   },
   overviewPostalCode: {
@@ -347,7 +376,7 @@ export const m = defineMessages({
     defaultMessage: 'Ég kem með vottorð frá lækni meðferðis',
     description: `I'll bring a certificate from a doctor`,
   },
-  overviewDone: {
+  applicationDone: {
     id: 'dl.application:overview.done',
     defaultMessage: 'Umsókn móttekin',
     description: 'Confirmation',
@@ -414,7 +443,7 @@ export const m = defineMessages({
   },
   eligibilityRequirementTitle: {
     id: 'dl.application:eligibilityTitle',
-    defaultMessage: 'Skilyrði sem umsækjandi þarf að uppfylla',
+    defaultMessage: 'Skilyrði sem umsækjandi þarf að uppfylla:',
     description: 'title for requirement component',
   },
   applicationEligibilityTitle: {
@@ -462,6 +491,39 @@ export const m = defineMessages({
     id: 'dl.application:congratulationsTitle',
     defaultMessage: 'Til hamingju',
     description: 'Congratulations',
+  },
+  applicationDoneAlertMessage: {
+    id: 'dl.application:applicationDoneAlertMessage',
+    defaultMessage:
+      'Umsókn þín um að hefja ökunám og fá bráðabirgðaskírteini hefur verið móttekin. ',
+    description: 'Application received',
+  },
+  applicationDoneAlertMessageBFull: {
+    id: 'dl.application:applicationDoneAlertMessageBFull',
+    defaultMessage: 'Umsókn þín um fullnaðarskírteini hefur verið móttekin.',
+    description: 'Application received',
+  },
+  applicationDoneAlertMessageBE: {
+    id: 'dl.application:applicationDoneAlertMessageBE',
+    defaultMessage:
+      'Umsókn þín um að hefja ökunám fyrir BE réttindi hefur verið móttekin.',
+    description: 'Application received',
+  },
+  nextStepsTitle: {
+    id: 'dl.application:nextStepsTitle',
+    defaultMessage: 'Næstu skref',
+    description: 'Next steps',
+  },
+  nextStepsDescription: {
+    id: 'dl.application:nextStepsDescription#markdown',
+    defaultMessage:
+      'Næst þarf umsækjandi að mæta til sýslumanns með mynd og gefa rithandarsýnishorn.',
+    description: 'Next steps',
+  },
+  nextStepsDescriptionBFull: {
+    id: 'dl.application:nextStepsDescriptionBFull#markdown',
+    defaultMessage: 'Næst þarf umsækjandi að mæta til sýslumanns',
+    description: '',
   },
   congratulationsCertificateTitle: {
     id: 'dl.application:congratulationsCertificateTitle',
@@ -653,7 +715,7 @@ export const m = defineMessages({
   },
   applicationForTempLicenseTitle: {
     id: 'dl.application:applicationForTempLicenseTitle',
-    defaultMessage: 'Almenn ökuréttindi',
+    defaultMessage: 'Almenn ökuréttindi - B flokkur (Fólksbifreið)',
     description:
       'Option title for selecting to apply for temporary driving license',
   },
@@ -663,6 +725,17 @@ export const m = defineMessages({
       'Umsókn um almenn ökuréttindi í B flokki (fólksbifreið). Fyrsta ökuskírteinið er bráðabirgðaskírteini sem gildir í 3 ár.',
     description:
       'Option description for selecting to apply for temporary driving license',
+  },
+  applicationForBELicenseTitle: {
+    id: 'dl.application:applicationForBELicenseTitle',
+    defaultMessage: 'Kerruréttindi BE',
+    description: 'Option title for selecting to apply for trailer license',
+  },
+  applicationForBELicenseDescription: {
+    id: 'dl.application:applicationForBELicenseDescription',
+    defaultMessage:
+      'Almenn ökuréttindi gefa réttindi til að mega draga kerrur sem eru allt að 750 kg, til að mega draga þyngri kerrur, hjólhýsi, hestakerrur ofl þarf réttindi sem kallast BE réttindi.',
+    description: 'Option title for selecting to apply for trailer license',
   },
   declinedOtherCountryHelpText: {
     id: 'dl.application:declinedOtherCountryHelpText',

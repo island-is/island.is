@@ -1,3 +1,4 @@
+import { uuid } from 'uuidv4'
 import {
   setupWithAuth,
   setupWithoutAuth,
@@ -6,18 +7,23 @@ import {
 import { errorExpectedStructure } from '../../../../../test/testHelpers'
 import { TestEndpointOptions } from '../../../../../test/types'
 import request from 'supertest'
-import { TestApp, getRequestMethod } from '@island.is/testing/nest'
+import { getRequestMethod, TestApp } from '@island.is/testing/nest'
 import {
-  PersonalRepresentative,
-  PersonalRepresentativeRight,
-  PersonalRepresentativeDTO,
-  PersonalRepresentativeCreateDTO,
-  PersonalRepresentativeRightType,
+  DelegationProviderModel,
+  DelegationsIndexService,
+  DelegationTypeModel,
   PaginatedPersonalRepresentativeDto,
+  PersonalRepresentative,
+  PersonalRepresentativeCreateDTO,
+  PersonalRepresentativeDelegationTypeModel,
+  PersonalRepresentativeDTO,
+  PersonalRepresentativeRight,
+  PersonalRepresentativeRightType,
   PersonalRepresentativeType,
 } from '@island.is/auth-api-lib'
 import { AuthScope } from '@island.is/auth/scopes'
 import { createCurrentUser } from '@island.is/testing/fixtures'
+import { addDelegationTypesAndProvider } from '@island.is/services/auth/testing'
 
 const user = createCurrentUser({
   nationalId: '1122334455',
@@ -109,13 +115,18 @@ describe('PersonalRepresentativeController', () => {
   let server: request.SuperTest<request.Test>
   let prRightTypeModel: typeof PersonalRepresentativeRightType
   let prTypeModel: typeof PersonalRepresentativeType
-  let prModel: typeof PersonalRepresentative
   let prRightsModel: typeof PersonalRepresentativeRight
+  let delegationTypeModel: typeof DelegationTypeModel
+  let delegationProviderModel: typeof DelegationProviderModel
+  let personalRepDelegationType: typeof PersonalRepresentativeDelegationTypeModel
+  let prModel: typeof PersonalRepresentative
+  let delegationsIndexService: DelegationsIndexService
 
   beforeAll(async () => {
     // TestApp setup with auth and database
     app = await setupWithAuth({ user })
     server = request(app.getHttpServer())
+    delegationsIndexService = app.get(DelegationsIndexService)
     // Get reference on rightType models to seed DB
     prRightTypeModel = app.get<typeof PersonalRepresentativeRightType>(
       'PersonalRepresentativeRightTypeRepository',
@@ -131,6 +142,22 @@ describe('PersonalRepresentativeController', () => {
     prRightsModel = app.get<typeof PersonalRepresentativeRight>(
       'PersonalRepresentativeRightRepository',
     )
+    // Get reference on delegation type model to seed DB
+    delegationTypeModel = app.get<typeof DelegationTypeModel>(
+      'DelegationTypeModelRepository',
+    )
+    // Get reference on delegation provider model to seed DB
+    delegationProviderModel = app.get<typeof DelegationProviderModel>(
+      'DelegationProviderModelRepository',
+    )
+    // Get reference on personal representative delegation type model to seed DB
+    personalRepDelegationType = app.get<
+      typeof PersonalRepresentativeDelegationTypeModel
+    >('PersonalRepresentativeDelegationTypeModelRepository')
+
+    jest
+      .spyOn(delegationsIndexService, 'indexRepresentativeDelegations')
+      .mockImplementation()
   })
 
   afterAll(async () => {
@@ -138,6 +165,7 @@ describe('PersonalRepresentativeController', () => {
   })
 
   beforeEach(async () => {
+    jest.clearAllMocks()
     await prRightsModel.destroy({
       where: {},
       cascade: true,
@@ -162,6 +190,24 @@ describe('PersonalRepresentativeController', () => {
       truncate: true,
       force: true,
     })
+    await delegationTypeModel.destroy({
+      where: {},
+      cascade: true,
+      truncate: true,
+      force: true,
+    })
+    await delegationProviderModel.destroy({
+      where: {},
+      cascade: true,
+      truncate: true,
+      force: true,
+    })
+
+    await addDelegationTypesAndProvider(
+      rightTypeList,
+      delegationProviderModel,
+      delegationTypeModel,
+    )
   })
 
   describe('Create', () => {
@@ -176,6 +222,9 @@ describe('PersonalRepresentativeController', () => {
         ...errorExpectedStructure,
         statusCode: 400,
       })
+      expect(
+        delegationsIndexService.indexRepresentativeDelegations,
+      ).not.toHaveBeenCalled()
     })
 
     it('POST /v1/personal-representatives should create a new entry', async () => {
@@ -200,6 +249,34 @@ describe('PersonalRepresentativeController', () => {
         ),
       }
       expect(result).toMatchObject(requestData)
+      expect(
+        delegationsIndexService.indexRepresentativeDelegations,
+      ).toHaveBeenCalled()
+
+      // Assert that personal rep is created
+      const personalReps = await prModel.findAll({
+        where: {
+          id: result.id,
+        },
+      })
+      expect(personalReps.length).toBe(1)
+
+      // Assert that personal rep rights are created
+      const personalRepRights = await prRightsModel.findAll({
+        where: {
+          personalRepresentativeId: result.id,
+        },
+      })
+      expect(personalRepRights.length).toBe(2)
+
+      // Assert that personal rep delegation types are created
+      const personalRepDelegationTypes =
+        await personalRepDelegationType.findAll({
+          where: {
+            personalRepresentativeId: result.id,
+          },
+        })
+      expect(personalRepDelegationTypes.length).toBe(2)
     })
   })
 
@@ -216,12 +293,48 @@ describe('PersonalRepresentativeController', () => {
         rightCodes: rightTypeList.map((rt) => rt.code),
         personalRepresentativeTypeCode: personalRepresentativeType.code,
       })
+
       // Test delete personal rep
       await server.delete(`${path}/${personalRep.id}`).expect(204)
+      expect(
+        delegationsIndexService.indexRepresentativeDelegations,
+      ).toHaveBeenCalled()
+
+      // Assert that personal rep is deleted
+      const personalReps = await prModel.findAll({
+        where: {
+          id: personalRep.id,
+        },
+      })
+      expect(personalReps.length).toBe(0)
+
+      // Assert that personal rep rights are deleted
+      const personalRepRights = await prRightsModel.findAll({
+        where: {
+          personalRepresentativeId: personalRep.id,
+        },
+      })
+      expect(personalRepRights.length).toBe(0)
+
+      // Assert that personal rep delegation types are deleted
+      const personalRepDelegationTypes =
+        await personalRepDelegationType.findAll({
+          where: {
+            personalRepresentativeId: personalRep.id,
+          },
+        })
+      expect(personalRepDelegationTypes.length).toBe(0)
     })
-    it('DELETE /v1/personal-representatives should return NotFound when trying to delete non existing personal rep', async () => {
+    it('DELETE /v1/personal-representatives should return success when trying to delete non existing personal rep', async () => {
       // Test delete personal rep
-      await server.delete(`${path}/notexisting`).expect(204)
+      await server.delete(`${path}/${uuid()}`).expect(204)
+    })
+    it('DELETE /v1/personal-representatives should return BadRequest for invalid uuid', async () => {
+      // Test delete personal rep
+      await server.delete(`${path}/notexisting`).expect(400)
+      expect(
+        delegationsIndexService.indexRepresentativeDelegations,
+      ).not.toHaveBeenCalled()
     })
   })
 
@@ -243,7 +356,12 @@ describe('PersonalRepresentativeController', () => {
       const response = await server.get(`${path}?&limit=1`).expect(200)
 
       const responseData: PaginatedPersonalRepresentativeDto = response.body
-      expect(responseData.data[0]).toMatchObject(personalRep)
+      expect(responseData.data[0]).toMatchObject({
+        ...personalRep,
+        prDelegationTypes: expect.arrayContaining(
+          responseData.data[0].prDelegationTypes,
+        ),
+      })
     })
   })
 
@@ -262,11 +380,20 @@ describe('PersonalRepresentativeController', () => {
 
     // Test get personal rep
     const response = await server.get(`${path}/${personalRep.id}`).expect(200)
-    expect(response.body).toMatchObject(personalRep)
+    const responseData = response.body as PersonalRepresentativeDTO
+
+    expect(responseData).toMatchObject({
+      ...personalRep,
+      prDelegationTypes: expect.arrayContaining(responseData.prDelegationTypes),
+    })
   })
 
   it('Get v1/personal-representatives should return notfound for a connection id that does not exist', async () => {
-    await server.get(`${path}/notexisting`).expect(404)
+    await server.get(`${path}/${uuid()}`).expect(404)
+  })
+
+  it('Get v1/personal-representatives should return badrequest for invalid uuids', async () => {
+    await server.get(`${path}/notexisting`).expect(400)
   })
 
   it('Get v1/personal-representatives should get all connections for a personal rep', async () => {
@@ -290,7 +417,13 @@ describe('PersonalRepresentativeController', () => {
       .expect(200)
 
     const responseData: PaginatedPersonalRepresentativeDto = response.body
-    expect(responseData.data[0]).toMatchObject(personalRep)
+
+    expect(responseData.data[0]).toMatchObject({
+      ...personalRep,
+      prDelegationTypes: expect.arrayContaining(
+        responseData.data[0].prDelegationTypes,
+      ),
+    })
   })
 
   async function setupBasePersonalRep(

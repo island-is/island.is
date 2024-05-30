@@ -14,6 +14,7 @@ test.describe('Admin portal access control', () => {
       storageState: 'service-portal-faereyjar.json',
       homeUrl,
       phoneNumber: '0102399',
+      idsLoginOn: true,
     })
   })
 

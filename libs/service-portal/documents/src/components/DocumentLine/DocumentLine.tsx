@@ -9,13 +9,18 @@ import {
 } from '@island.is/api/schema'
 import { Box, Text, LoadingDots, Icon } from '@island.is/island-ui/core'
 import { dateFormat } from '@island.is/shared/constants'
-import { m } from '@island.is/service-portal/core'
+import { ServicePortalPaths, m } from '@island.is/service-portal/core'
 import * as styles from './DocumentLine.css'
 import { gql, useLazyQuery } from '@apollo/client'
 import { useLocale } from '@island.is/localization'
 import { messages } from '../../utils/messages'
 import AvatarImage from './AvatarImage'
-import { useNavigate } from 'react-router-dom'
+import {
+  matchPath,
+  useNavigate,
+  useParams,
+  useLocation,
+} from 'react-router-dom'
 import { DocumentsPaths } from '../../lib/paths'
 import { FavAndStash } from '../FavAndStash'
 import { useSubmitMailAction } from '../../utils/useSubmitMailAction'
@@ -66,7 +71,11 @@ export const DocumentLine: FC<Props> = ({
   const [hasAvatarFocus, setHasAvatarFocus] = useState(false)
   const { formatMessage } = useLocale()
   const navigate = useNavigate()
+  const location = useLocation()
   const date = format(new Date(documentLine.date), dateFormat.is)
+  const { id } = useParams<{
+    id: string
+  }>()
 
   const {
     submitMailAction,
@@ -89,6 +98,12 @@ export const DocumentLine: FC<Props> = ({
   useEffect(() => {
     setHasAvatarFocus(isAvatarFocused)
   }, [isAvatarFocused])
+
+  useEffect(() => {
+    if (id === documentLine.id) {
+      onLineClick()
+    }
+  }, [id, documentLine])
 
   const displayPdf = (docContent?: DocumentDetails) => {
     if (onClick) {
@@ -122,20 +137,12 @@ export const DocumentLine: FC<Props> = ({
       onCompleted: (data) => {
         const docContent = data?.getDocument
         if (asFrame) {
-          navigate(DocumentsPaths.ElectronicDocumentsRoot, {
-            state: {
-              id: documentLine.id,
-              doc: {
-                document: docContent as DocumentDetails,
-                id: documentLine.id,
-                subject: documentLine.subject,
-                sender: documentLine.senderName,
-                downloadUrl: documentLine.url,
-                date: date,
-                img,
-              },
-            },
-          })
+          navigate(
+            DocumentsPaths.ElectronicDocumentSingle.replace(
+              ':id',
+              documentLine.id,
+            ),
+          )
         } else {
           displayPdf(docContent)
           if (onError) {
@@ -161,6 +168,17 @@ export const DocumentLine: FC<Props> = ({
   }, [fileLoading])
 
   const onLineClick = async () => {
+    const pathName = location.pathname
+    const match = matchPath(
+      {
+        path: DocumentsPaths.ElectronicDocumentSingle,
+      },
+      pathName,
+    )
+    if (match?.params?.id && match?.params?.id !== documentLine?.id) {
+      navigate(DocumentsPaths.ElectronicDocumentsRoot, { replace: true })
+    }
+
     getFileByIdData
       ? displayPdf()
       : await getDocument({
@@ -242,6 +260,7 @@ export const DocumentLine: FC<Props> = ({
                 subject: documentLine.subject,
               })}
               type="button"
+              id={active ? `button-${documentLine.id}` : undefined}
               className={styles.docLineButton}
             >
               <Text

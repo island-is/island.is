@@ -7,6 +7,7 @@ import {
   CaseAppealDecision,
   CaseAppealRulingDecision,
   CaseCustodyRestrictions,
+  CaseIndictmentRulingDecision,
   CaseType,
   Gender,
   IndictmentSubtype,
@@ -22,11 +23,11 @@ const getAsDate = (date: Date | string | undefined | null): Date => {
   }
 }
 
-export function formatDate(
+export const formatDate = (
   date: Date | string | undefined | null,
   formatPattern: string,
   shortenDayName?: boolean,
-): string | undefined {
+): string | undefined => {
   const theDate: Date = getAsDate(date)
 
   if (isValid(theDate)) {
@@ -94,8 +95,22 @@ export const laws = {
   _95_1_C: 'c-lið 1. mgr. 95. gr. sml.',
   _95_1_D: 'd-lið 1. mgr. 95. gr. sml.',
   _95_2: '2. mgr. 95. gr. sml.',
+  _97_1: '1. mgr. 97. gr. sml.',
   _99_1_B: 'b-lið 1. mgr. 99. gr. sml.',
   _100_1: '1. mgr. 100. gr. sml.',
+}
+
+export const getHumanReadableCaseIndictmentRulingDecision = (
+  rulingDecision?: CaseIndictmentRulingDecision,
+) => {
+  switch (rulingDecision) {
+    case CaseIndictmentRulingDecision.FINE:
+      return 'Viðurlagaákvæði'
+    case CaseIndictmentRulingDecision.RULING:
+      return 'Dómur'
+    default:
+      return 'Ekki skráð'
+  }
 }
 
 type CaseTypes = { [c in CaseType]: string }
@@ -143,6 +158,8 @@ export const indictmentSubtypes: IndictmentSubtypes = {
   LEGAL_ENFORCEMENT_LAWS: 'brot gegn lögreglulögum',
   POLICE_REGULATIONS: 'brot gegn lögreglusamþykkt',
   INTIMATE_RELATIONS: 'brot í nánu sambandi',
+  ANIMAL_PROTECTION: 'brot á lögum um dýravernd',
+  FOREIGN_NATIONALS: 'brot á lögum um útlendinga',
   PUBLIC_SERVICE_VIOLATION: 'brot í opinberu starfi',
   PROPERTY_DAMAGE: 'eignaspjöll',
   NARCOTICS_OFFENSE: 'fíkniefnalagabrot',
@@ -159,6 +176,8 @@ export const indictmentSubtypes: IndictmentSubtypes = {
   MINOR_ASSAULT: 'líkamsárás - minniháttar',
   AGGRAVATED_ASSAULT: 'líkamsárás - sérlega hættuleg',
   ASSAULT_LEADING_TO_DEATH: 'líkamsárás sem leiðir til dauða',
+  BODILY_INJURY: 'líkamsmeiðingar',
+  MEDICINES_OFFENSE: 'lyfjalög',
   MURDER: 'manndráp',
   RAPE: 'nauðgun',
   UTILITY_THEFT: 'nytjastuldur',
@@ -221,7 +240,7 @@ export const getShortRestrictionByValue = (value: CaseCustodyRestrictions) => {
  * @param values list of strings to enumerate
  * @param endWord the word before last value is enumerated
  */
-export function enumerate(values: string[], endWord: string): string {
+export const enumerate = (values: string[], endWord: string): string => {
   return values.join(', ').replace(/, ([^,]*)$/, ` ${endWord} $1`)
 }
 
@@ -243,9 +262,9 @@ const supportedCaseCustodyRestrictions: SupportedCaseCustodyRestriction[] = [
   { id: 'f', type: CaseCustodyRestrictions.WORKBAN },
 ]
 
-export function getSupportedCaseCustodyRestrictions(
+export const getSupportedCaseCustodyRestrictions = (
   requestedRestrictions?: CaseCustodyRestrictions[] | null,
-): SupportedCaseCustodyRestriction[] {
+): SupportedCaseCustodyRestriction[] => {
   const restrictions = supportedCaseCustodyRestrictions.filter((restriction) =>
     requestedRestrictions?.includes(restriction.type),
   )
@@ -257,7 +276,7 @@ export function getSupportedCaseCustodyRestrictions(
   return restrictions.sort((a, b) => (a.id > b.id ? 1 : -1))
 }
 
-export function formatGender(gender?: Gender): string {
+export const formatGender = (gender?: Gender): string => {
   switch (gender) {
     case Gender.MALE:
       return 'Karl'
@@ -269,10 +288,10 @@ export function formatGender(gender?: Gender): string {
   }
 }
 
-export function formatAppeal(
+export const formatAppeal = (
   appealDecision: CaseAppealDecision | undefined | null,
   stakeholder: string,
-): string {
+): string => {
   const isMultipleDefendants = stakeholder.slice(-2) === 'ar'
 
   switch (appealDecision) {
@@ -297,7 +316,7 @@ export function formatAppeal(
   }
 }
 
-export function formatRequestCaseType(type?: string | null): string {
+export const formatRequestCaseType = (type?: string | null): string => {
   if (!type) {
     return 'óþekkt'
   }

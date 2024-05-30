@@ -69,7 +69,7 @@ const Ruling = () => {
       [
         {
           introduction: formatMessage(m.sections.introduction.autofill, {
-            date: formatDate(workingCase.courtDate, 'PPP'),
+            date: formatDate(workingCase.arraignmentDate?.date, 'PPP'),
           }),
           prosecutorDemands: workingCase.demands,
           courtCaseFacts: formatMessage(
@@ -349,6 +349,16 @@ const Ruling = () => {
                 ruling.investigationCases.sections.decision.dismissLabel,
               )}
               onChange={(decision) => {
+                let ruling = undefined
+
+                if (
+                  isAcceptingCaseDecision(decision) &&
+                  workingCase.parentCase &&
+                  !workingCase.ruling
+                ) {
+                  ruling = workingCase.parentCase.ruling
+                }
+
                 setAndSendCaseToServer(
                   [
                     {
@@ -356,8 +366,7 @@ const Ruling = () => {
                         decision === CaseDecision.ACCEPTING
                           ? workingCase.demands
                           : workingCase.conclusion,
-                    },
-                    {
+                      ruling,
                       decision,
                       force: true,
                     },

@@ -1,5 +1,5 @@
+import { DEFAULT_LICENSE_ID } from '../licenseService.constants'
 import {
-  DEFAULT_LICENSE_ID,
   GenericLicenseDataFieldType,
   GenericLicenseLabels,
   GenericLicenseMapper,

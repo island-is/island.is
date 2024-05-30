@@ -9,11 +9,11 @@ import {
 } from '@island.is/application/types'
 import CarRecyclingTemplate from './CarRecyclingTemplate'
 
-function buildApplication(data: {
+const buildApplication = (data: {
   answers?: FormValue
   externalData?: ExternalData
   state?: string
-}): Application {
+}): Application => {
   const { answers = {}, externalData = {}, state = 'draft' } = data
   return {
     id: '12345',

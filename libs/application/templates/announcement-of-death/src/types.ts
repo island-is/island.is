@@ -46,6 +46,8 @@ export type Answers = {
   }
   financesDataCollectionPermission?: boolean
   knowledgeOfOtherWills: 'yes' | 'no'
+  hadFirearms: 'yes' | 'no'
+  firearmApplicant: FirearmApplicant
   marriageSettlement: boolean
   occupationRightViaCondominium: boolean
   otherProperties: OtherPropertiesEnum
@@ -56,6 +58,13 @@ export type Answers = {
     encountered?: boolean
   }
 } & FormValue
+
+export interface FirearmApplicant {
+  nationalId: string
+  name: string
+  phone: string
+  email: string
+}
 
 export interface ElectPersonType {
   roleConfirmation: RoleConfirmationEnum

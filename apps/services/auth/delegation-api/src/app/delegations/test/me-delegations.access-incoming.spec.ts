@@ -4,7 +4,11 @@ import faker from 'faker'
 import { Op } from 'sequelize'
 import request from 'supertest'
 
-import { Delegation, DelegationScope } from '@island.is/auth-api-lib'
+import {
+  Delegation,
+  DelegationScope,
+  DelegationsIndexService,
+} from '@island.is/auth-api-lib'
 import { NationalRegistryClientService } from '@island.is/clients/national-registry-v2'
 import {
   expectMatchingDelegations,
@@ -27,6 +31,7 @@ describe('MeDelegationsController', () => {
       let factory: FixtureFactory
       let delegations: Delegation[] = []
       const fromName = faker.name.findName()
+      let delegationIndexService: DelegationsIndexService
 
       beforeAll(async () => {
         // Arrange
@@ -35,6 +40,7 @@ describe('MeDelegationsController', () => {
           customScopeRules: testCase.customScopeRules,
         })
         server = request(app.getHttpServer())
+        delegationIndexService = app.get(DelegationsIndexService)
         const nationalRegistryClientService = app.get(
           NationalRegistryClientService,
         )
@@ -46,6 +52,12 @@ describe('MeDelegationsController', () => {
               name: fromName,
             }),
           )
+        jest
+          .spyOn(delegationIndexService, 'indexDelegations')
+          .mockImplementation()
+        jest
+          .spyOn(delegationIndexService, 'indexCustomDelegations')
+          .mockImplementation()
 
         factory = new FixtureFactory(app)
         await Promise.all(
@@ -92,6 +104,7 @@ describe('MeDelegationsController', () => {
         const res = await server.get('/v1/me/delegations?direction=incoming')
 
         // Assert
+        expect(delegationIndexService.indexDelegations).toHaveBeenCalled()
         expect(res.status).toEqual(200)
         expectMatchingDelegations(res.body, expectedDelegations)
       })
@@ -142,6 +155,9 @@ describe('MeDelegationsController', () => {
 
             // Assert
             expect(res.status).toEqual(204)
+            expect(
+              delegationIndexService.indexCustomDelegations,
+            ).toHaveBeenCalled()
 
             const delegationAfter = await delegationModel.findByPk(
               delegation.id,

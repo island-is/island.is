@@ -28,8 +28,12 @@ export const createApp = async ({
   appModule,
   enableVersioning,
   healthCheck,
+  beforeAppInit,
   ...options
 }: RunServerOptions) => {
+  if (beforeAppInit) {
+    await beforeAppInit()
+  }
   monkeyPatchServerLogging()
 
   const app = await NestFactory.create<NestExpressApplication>(

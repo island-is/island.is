@@ -4,6 +4,7 @@ import { EmailService } from '@island.is/email-service'
 
 import {
   CaseType,
+  DateType,
   NotificationType,
   User,
 } from '@island.is/judicial-system/types'
@@ -15,7 +16,7 @@ import { SendInternalNotificationDto } from '../../dto/sendInternalNotification.
 import { DeliverResponse } from '../../models/deliver.response'
 import { Notification } from '../../models/notification.model'
 
-jest.mock('../../../factories')
+jest.mock('../../../../factories')
 
 interface Then {
   result: DeliverResponse
@@ -27,7 +28,7 @@ type GivenWhenThen = (
   notificationDto: SendInternalNotificationDto,
 ) => Promise<Then>
 
-describe('InternalNotificationController - Send court date notification', () => {
+describe('InternalNotificationController - Send court date notifications', () => {
   const userId = uuid()
   const caseId = uuid()
   const prosecutorName = uuid()
@@ -119,7 +120,7 @@ describe('InternalNotificationController - Send court date notification', () => 
     })
   })
 
-  describe('notification sent', () => {
+  describe('link not sent to defender', () => {
     let then: Then
 
     const notificationDto: SendInternalNotificationDto = {
@@ -157,6 +158,58 @@ describe('InternalNotificationController - Send court date notification', () => 
         expect.objectContaining({
           to: [{ name: defenderName, address: defenderEmail }],
           subject: `Yfirlit máls ${courtCaseNumber}`,
+        }),
+      )
+
+      expect(then.result).toEqual({ delivered: true })
+    })
+  })
+
+  describe('notification sent for postponed indictment', () => {
+    let then: Then
+
+    const notificationDto: SendInternalNotificationDto = {
+      user: { id: userId } as User,
+      type: NotificationType.COURT_DATE,
+    }
+
+    const courtDate = new Date(2024, 4, 2, 14, 32)
+    const theCase = {
+      id: caseId,
+      type: CaseType.INDICTMENT,
+      prosecutor: { name: prosecutorName, email: prosecutorEmail },
+      defendants: [
+        {
+          defenderName,
+          defenderEmail,
+        },
+      ],
+      court: { name: courtName },
+      courtCaseNumber,
+      dateLogs: [{ dateType: DateType.COURT_DATE, date: courtDate }],
+    } as Case
+
+    beforeEach(async () => {
+      const mockFindAll = mockNotificationModel.findAll as jest.Mock
+      mockFindAll.mockResolvedValueOnce([])
+
+      then = await givenWhenThen(theCase, notificationDto)
+    })
+
+    it('should send notifications to prosecutor and defender', () => {
+      expect(mockEmailService.sendEmail).toHaveBeenCalledWith(
+        expect.objectContaining({
+          to: [{ name: prosecutorName, address: prosecutorEmail }],
+          subject: `Frestun - nýtt þinghald í máli ${courtCaseNumber}`,
+          html: `Héraðsdómur Reykjavíkur boðar til þinghalds í máli ${courtCaseNumber}.<br />Fyrirtaka mun fara fram 2. maí 2024, kl. 14:32.<br /><br />Dómsalur hefur ekki verið skráður.<br /><br />Dómari hefur ekki verið skráður.<br /><br />Hægt er að nálgast gögn málsins á <a href="http://localhost:4200/akaera/stadfesta/${caseId}">yfirlitssíðu málsins í Réttarvörslugátt</a>.`,
+        }),
+      )
+
+      expect(mockEmailService.sendEmail).toHaveBeenCalledWith(
+        expect.objectContaining({
+          to: [{ name: defenderName, address: defenderEmail }],
+          subject: `Frestun - nýtt þinghald í máli ${courtCaseNumber}`,
+          html: `Héraðsdómur Reykjavíkur boðar til þinghalds í máli ${courtCaseNumber}.<br />Fyrirtaka mun fara fram 2. maí 2024, kl. 14:32.<br /><br />Dómsalur hefur ekki verið skráður.<br /><br />Dómari hefur ekki verið skráður.<br /><br />Hægt er að nálgast gögn málsins hjá Héraðsdómur Reykjavíkur.`,
         }),
       )
 

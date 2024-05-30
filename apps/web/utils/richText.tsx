@@ -24,6 +24,8 @@ import {
   ChartsCardsProps,
   DrivingInstructorList,
   EmailSignup,
+  Form,
+  GenericList,
   KilometerFee,
   MasterList,
   MultipleStatistics,
@@ -54,6 +56,8 @@ import {
   Embed as EmbedSchema,
   FeaturedEvents as FeaturedEventsSchema,
   FeaturedSupportQnAs as FeaturedSupportQNAsSchema,
+  Form as FormSchema,
+  GenericList as GenericListSchema,
   MultipleStatistics as MultipleStatisticsSchema,
   OneColumnText,
   OverviewLinks as OverviewLinksSliceSchema,
@@ -68,6 +72,7 @@ import {
 
 import AdministrationOfOccupationalSafetyAndHealthCourses from '../components/connected/AdministrationOfOccupationalSafetyAndHealthCourses/AdministrationOfOccupationalSafetyAndHealthCourses'
 import { MonthlyStatistics } from '../components/connected/electronicRegistrationStatistics'
+import { GrindavikResidentialPropertyPurchaseCalculator } from '../components/connected/GrindavikResidentialPropertyPurchaseCalculator'
 import HousingBenefitCalculator from '../components/connected/HousingBenefitCalculator/HousingBenefitCalculator'
 import FeaturedEvents from '../components/FeaturedEvents/FeaturedEvents'
 import FeaturedSupportQNAs from '../components/FeaturedSupportQNAs/FeaturedSupportQNAs'
@@ -121,6 +126,8 @@ export const webRenderConnectedComponent = (
       return <KilometerFee slice={slice} />
     case 'SpecificHousingBenefitSupportCalculator':
       return <SpecificHousingBenefitSupportCalculator slice={slice} />
+    case 'GrindavikResidentialPropertyPurchaseCalculator':
+      return <GrindavikResidentialPropertyPurchaseCalculator slice={slice} />
     default:
       break
   }
@@ -179,6 +186,14 @@ const defaultRenderComponent = {
   ),
   FeaturedEvents: (slice: FeaturedEventsSchema) => (
     <FeaturedEvents slice={slice} />
+  ),
+  Form: (slice: FormSchema) => <Form form={slice} />,
+  GenericList: (slice: GenericListSchema) => (
+    <GenericList
+      id={slice.id}
+      firstPageItemResponse={slice.firstPageListItemResponse}
+      searchInputPlaceholder={slice.searchInputPlaceholder}
+    />
   ),
 }
 

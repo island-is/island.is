@@ -1,6 +1,6 @@
 import type { DistributiveOmit } from '@island.is/shared/types'
-
-import { YES, NO, ParentalRelations } from './constants'
+import { MessageDescriptor } from 'react-intl'
+import { NO, ParentalRelations, YES } from './constants'
 
 export interface MultipleBirths {
   hasMultipleBirths: YesOrNo
@@ -40,6 +40,24 @@ export interface Files {
   key: string
 }
 
+export interface Attachments {
+  attachments: Files[]
+  label: MessageDescriptor
+}
+
+export interface FileUpload {
+  selfEmployedFile?: Files[]
+  studentFile?: Files[]
+  benefitsFile?: Files[]
+  singleParent?: Files[]
+  parentWithoutBirthParent?: Files[]
+  permanentFosterCare?: Files[]
+  adoption?: Files[]
+  employmentTerminationCertificateFile?: Files[]
+  file?: Files[]
+  changeEmployerFile?: Files[]
+}
+
 export interface VMSTPeriod {
   from: string
   to: string
@@ -47,6 +65,8 @@ export interface VMSTPeriod {
   firstPeriodStart: string
   paid: boolean
   rightsCodePeriod: string
+  days: string
+  approved: boolean
 }
 
 export interface Period {
@@ -58,6 +78,8 @@ export interface Period {
   daysToUse?: string
   rawIndex?: number
   rightCodePeriod?: string
+  paid?: boolean
+  approved?: boolean
 }
 
 export interface Payment {
@@ -128,11 +150,6 @@ export interface PregnancyStatus {
   expectedDateOfBirth: string
 }
 
-export interface ChildrenAndExistingApplications {
-  children: ChildInformation[]
-  existingApplications: ExistingChildApplication[]
-}
-
 // Has rights and remaining rights is calculated at the end
 // of the data provider. This is to be able to use
 // the same type until the end when we calculate the missing fields
@@ -142,15 +159,8 @@ export type ChildInformationWithoutRights = DistributiveOmit<
   'hasRights' | 'remainingDays'
 >
 
-export type ChildrenWithoutRightsAndExistingApplications = Pick<
-  ChildrenAndExistingApplications,
-  'existingApplications'
-> & {
-  children: ChildInformationWithoutRights[]
-}
-
 export interface PregnancyStatusAndRightsResults {
-  childrenAndExistingApplications: ChildrenAndExistingApplications
+  children: ChildInformation
   remainingDays: number
   hasRights: boolean
   hasActivePregnancy: boolean
@@ -164,4 +174,9 @@ export interface EmployerRow {
   reviewerNationalRegistryId?: string
   companyNationalRegistryId?: string
   stillEmployed?: YesOrNo
+}
+
+export type SelectOption = {
+  label: string
+  value: string
 }

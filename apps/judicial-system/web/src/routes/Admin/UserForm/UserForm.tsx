@@ -119,6 +119,15 @@ export const UserForm: React.FC<React.PropsWithChildren<Props>> = (props) => {
     }
   }
 
+  const saveUser = () => {
+    props.onSave({
+      ...user,
+      // Make sure only prosecutors can confirm indictments
+      canConfirmIndictment:
+        user.role === UserRole.PROSECUTOR && user.canConfirmIndictment,
+    })
+  }
+
   return (
     <div className={styles.userFormContainer}>
       <FormContentContainer>
@@ -228,6 +237,20 @@ export const UserForm: React.FC<React.PropsWithChildren<Props>> = (props) => {
                 large
               />
             </Box>
+            {user.institution.id === '8f9e2f6d-6a00-4a5e-b39b-95fd110d762e' && (
+              <Box className={styles.roleColumn}>
+                <RadioButton
+                  name="role"
+                  id="rolePublicProsecutorStaff"
+                  label="Skrifstofa"
+                  checked={user.role === UserRole.PUBLIC_PROSECUTOR_STAFF}
+                  onChange={() =>
+                    setUser({ ...user, role: UserRole.PUBLIC_PROSECUTOR_STAFF })
+                  }
+                  large
+                />
+              </Box>
+            )}
           </Box>
         ) : user.institution?.type === InstitutionType.DISTRICT_COURT ? (
           <Box display="flex" marginBottom={2}>
@@ -330,6 +353,21 @@ export const UserForm: React.FC<React.PropsWithChildren<Props>> = (props) => {
             </Box>
           </Box>
         ) : null}
+        {user.institution?.type === InstitutionType.PROSECUTORS_OFFICE &&
+          user.role === UserRole.PROSECUTOR && (
+            <Box marginBottom={2}>
+              <Checkbox
+                name="canConfirmIndictment"
+                label="Notandi getur staðfest kærur"
+                checked={Boolean(user.canConfirmIndictment)}
+                onChange={({ target }) =>
+                  setUser({ ...user, canConfirmIndictment: target.checked })
+                }
+                large
+                filled
+              />
+            </Box>
+          )}
         <Box marginBottom={2}>
           <Input
             name="title"
@@ -432,7 +470,7 @@ export const UserForm: React.FC<React.PropsWithChildren<Props>> = (props) => {
       <FormContentContainer isFooter>
         <FormFooter
           nextButtonIcon="arrowForward"
-          onNextButtonClick={() => props.onSave(user)}
+          onNextButtonClick={saveUser}
           nextIsDisabled={!isValid()}
           nextIsLoading={props.loading}
           nextButtonText="Vista"

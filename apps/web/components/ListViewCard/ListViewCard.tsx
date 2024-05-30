@@ -23,6 +23,7 @@ type CardProps = {
   checkboxId?: string
   checked?: boolean
   subHeading?: string
+  onCardClick?: () => void
 }
 
 export const ListViewCard = ({
@@ -36,10 +37,12 @@ export const ListViewCard = ({
   checked,
   href,
   subHeading,
+  onCardClick,
 }: CardProps) => {
   return (
-    <Box>
+    <Box height="full">
       <Box
+        height="full"
         display="flex"
         flexDirection="column"
         position="relative"
@@ -70,28 +73,35 @@ export const ListViewCard = ({
           )}
           {iconText && <Text variant="small">{iconText}</Text>}
         </Box>
-        <LinkV2 href={href} passHref>
-          <Text
-            as="h4"
-            variant="h4"
-            color="blue400"
-            truncate={false}
-            paddingBottom={subHeading ? 0 : 3}
-            lineHeight="sm"
-          >
-            {heading}
-          </Text>
-          <Text
-            variant="eyebrow"
-            color="blue400"
-            truncate={false}
-            title={subHeading}
-            paddingBottom={3}
-            lineHeight="sm"
-          >
-            {subHeading}
-          </Text>
-        </LinkV2>
+        <Box onClick={onCardClick}>
+          <LinkV2 href={href} passHref>
+            <Text
+              as="h3"
+              variant="h4"
+              color="blue400"
+              truncate={false}
+              paddingBottom={subHeading ? 0 : 3}
+              lineHeight="sm"
+            >
+              {heading}
+            </Text>
+            {subHeading && (
+              <Box style={{ paddingTop: '4px' }}>
+                <Text
+                  variant="eyebrow"
+                  color="blue400"
+                  truncate={false}
+                  title={subHeading}
+                  paddingBottom={3}
+                  lineHeight="sm"
+                >
+                  {subHeading}
+                </Text>
+              </Box>
+            )}
+          </LinkV2>
+        </Box>
+
         {infoItems.map((item) => {
           return (
             <Box
@@ -102,7 +112,7 @@ export const ListViewCard = ({
               paddingBottom={1}
             >
               <Box paddingRight={2}>{item.icon}</Box>
-              <Text whiteSpace="nowrap" variant="small">
+              <Text whiteSpace="normal" variant="small">
                 {item.title}
               </Text>
             </Box>
@@ -119,19 +129,43 @@ export const ListViewCard = ({
             />
           </Box>
         )}
-        <Box paddingTop={3} width="full">
-          <Button
-            {...(cta.buttonType ?? { variant: cta.variant })}
-            size={cta.size}
-            fluid
-            onClick={cta.onClick}
-            disabled={cta.disabled}
-            icon={cta.icon}
-            iconType={cta.iconType}
-            nowrap
+        <Box paddingTop={3} width="full" height="full">
+          <Box
+            display={'flex'}
+            alignItems={'flexEnd'}
+            height="full"
+            width="full"
+            style={{ cursor: cta.disabled ? 'not-allowed' : undefined }}
           >
-            {cta.label}
-          </Button>
+            {cta.href ? (
+              <Button
+                {...(cta.buttonType ?? { variant: cta.variant })}
+                size={cta.size}
+                fluid
+                disabled={cta.disabled}
+                icon={cta.icon}
+                iconType={cta.iconType}
+                nowrap
+              >
+                <LinkV2 href={cta.href} newTab={true}>
+                  {cta.label}
+                </LinkV2>
+              </Button>
+            ) : (
+              <Button
+                {...(cta.buttonType ?? { variant: cta.variant })}
+                size={cta.size}
+                fluid
+                onClick={cta.onClick && cta.onClick}
+                disabled={cta.disabled}
+                icon={cta.icon}
+                iconType={cta.iconType}
+                nowrap
+              >
+                {cta.label}
+              </Button>
+            )}
+          </Box>
         </Box>
       </Box>
     </Box>

@@ -1,4 +1,6 @@
 import { DefaultEvents } from '@island.is/application/types'
+import { MessageDescriptor } from 'react-intl'
+import { parentalLeaveFormMessages } from './lib/messages'
 
 export const YES = 'yes'
 export const NO = 'no'
@@ -21,7 +23,6 @@ export const NO_MULTIPLE_BIRTHS = '1'
 export const MINIMUM_PERIOD_LENGTH = 14
 
 export enum PLEvents {
-  MODIFY = 'MODIFY',
   CLOSED = 'CLOSED',
   ADDITIONALDOCUMENTSREQUIRED = 'ADDITIONALDOCUMENTSREQUIRED',
 }
@@ -33,7 +34,6 @@ export type Events =
   | { type: DefaultEvents.SUBMIT }
   | { type: DefaultEvents.ABORT }
   | { type: DefaultEvents.EDIT }
-  | { type: 'MODIFY' } // Ex: The user might modify their 'edits'.
   | { type: 'CLOSED' } // Ex: Close application
   | { type: 'ADDITIONALDOCUMENTSREQUIRED' } // Ex: VMST ask for more documents
 
@@ -66,6 +66,12 @@ export enum ApiModuleActions {
   setChildrenInformation = 'setChildrenInformation',
   setBirthDateForNoPrimaryParent = 'setBirthDateForNoPrimaryParent',
   setBirthDate = 'setBirthDate',
+  /**
+   * Fetches and returns VMST periods for the given application.
+   * Need to add this to `onExit` in every state that reaches `EDIT_OR_ADD_EMPLOYERS_AND_PERIODS`,
+   * except states that are still pending employer approval.
+   */
+  setVMSTPeriods = 'setVMSTPeriods',
 }
 
 export enum StartDateOptions {
@@ -95,7 +101,6 @@ export enum States {
   EMPLOYER_ACTION = 'employerRequiresAction',
 
   VINNUMALASTOFNUN_APPROVAL = 'vinnumalastofnunApproval',
-  VINNUMALASTOFNUN_APPROVAL_ABORT_CHANGE = 'vinnumalastofnunApprovalAbortChange',
   VINNUMALASTOFNUN_ACTION = 'vinnumalastofnunRequiresAction',
 
   ADDITIONAL_DOCUMENTS_REQUIRED = 'additionalDocumentsRequired',
@@ -111,7 +116,6 @@ export enum States {
   EMPLOYER_EDITS_ACTION = 'employerRequiresActionOnEdits',
 
   VINNUMALASTOFNUN_APPROVE_EDITS = 'vinnumalastofnunApproveEdits',
-  VINNUMALASTOFNUN_APPROVE_EDITS_ABORT = 'vinnumalastofnunApproveEditsAbort',
   VINNUMALASTOFNUN_EDITS_ACTION = 'vinnumalastofnunRequiresActionOnEdits',
 
   RESIDENCE_GRANT_APPLICATION = 'residenceGrantApplication',
@@ -129,7 +133,6 @@ export enum AnswerValidationConstants {
   // the repeater sends all the periods saved in 'periods'
   // to this validator, which will validate the latest one
   VALIDATE_LATEST_PERIOD = 'periods',
-  EMPLOYERS = 'employers',
 }
 
 export const DATE_FORMAT = 'yyyy-MM-dd'
@@ -140,9 +143,45 @@ export enum FileType {
   DOCUMENTPERIOD = 'documentPeriod',
   EMPPER = 'empper',
   EMPLOYER = 'employer',
+  EMPDOC = 'empdoc',
+  EMPDOCPER = 'empdocper',
 }
 
 export enum Languages {
   IS = 'IS',
   EN = 'EN',
+}
+
+export enum AttachmentTypes {
+  SELF_EMPLOYED = 'selfEmployedFile',
+  STUDENT = 'studentFile',
+  BENEFITS = 'benefitsFile',
+  SINGLE_PARENT = 'singleParent',
+  PARENT_WITHOUT_BIRTH_PARENT = 'parentWithoutBirthParent',
+  PERMANENT_FOSTER_CARE = 'permanentFosterCare',
+  ADOPTION = 'adoption',
+  EMPLOYMENT_TERMINATION_CERTIFICATE = 'employmentTerminationCertificateFile',
+  FILE = 'file',
+  CHANGE_EMPLOYER = 'changeEmployerFile',
+}
+
+export const AttachmentLabel: {
+  [key: string]: MessageDescriptor
+} = {
+  selfEmployedFile: parentalLeaveFormMessages.selfEmployed.attachmentTitle,
+  studentFile: parentalLeaveFormMessages.attachmentScreen.studentTitle,
+  benefitsFile:
+    parentalLeaveFormMessages.attachmentScreen.unemploymentBenefitsTitle,
+  singleParent: parentalLeaveFormMessages.attachmentScreen.singleParentTitle,
+  parentWithoutBirthParent:
+    parentalLeaveFormMessages.attachmentScreen.parentWithoutBirthParentTitle,
+  permanentFosterCare:
+    parentalLeaveFormMessages.attachmentScreen.permanentFostercareTitle,
+  adoption: parentalLeaveFormMessages.attachmentScreen.adoptionTitle,
+  employmentTerminationCertificateFile:
+    parentalLeaveFormMessages.attachmentScreen
+      .employmentTerminationCertificateTitle,
+  file: parentalLeaveFormMessages.attachmentScreen.title,
+  changeEmployerFile:
+    parentalLeaveFormMessages.attachmentScreen.changeEmployerTitle,
 }

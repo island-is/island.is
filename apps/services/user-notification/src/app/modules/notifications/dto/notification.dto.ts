@@ -2,7 +2,6 @@ import { PageInfoDto, PaginationDto } from '@island.is/nest/pagination'
 
 import { ApiProperty, ApiPropertyOptional } from '@nestjs/swagger'
 import {
-  IsEnum,
   IsString,
   IsInt,
   IsDate,
@@ -10,9 +9,10 @@ import {
   ValidateNested,
   IsOptional,
   IsUUID,
+  IsBoolean,
 } from 'class-validator'
 import { Type } from 'class-transformer'
-import { NotificationStatus } from '../notification.model'
+import type { Locale } from '@island.is/shared/types'
 
 export class ExtendedPaginationDto extends PaginationDto {
   @IsOptional()
@@ -21,7 +21,7 @@ export class ExtendedPaginationDto extends PaginationDto {
     type: 'string',
   })
   @IsString()
-  locale!: string
+  locale!: Locale
 }
 
 class ArgItem {
@@ -66,9 +66,13 @@ export class NotificationDto {
   @IsDate()
   updated!: Date
 
-  @ApiProperty({ enum: NotificationStatus, example: NotificationStatus.UNREAD })
-  @IsEnum(NotificationStatus)
-  status!: NotificationStatus
+  @ApiProperty({ example: false })
+  @IsBoolean()
+  read!: boolean
+
+  @ApiProperty({ example: false })
+  @IsBoolean()
+  seen!: boolean
 }
 
 export class RenderedNotificationDto {
@@ -81,9 +85,14 @@ export class RenderedNotificationDto {
   @IsUUID()
   messageId!: string
 
+  @ApiProperty({ example: '1234567890' })
+  @IsString()
+  senderId!: string
+
   @ApiProperty({ example: 'Catchy notification title' })
   @IsString()
   title!: string
+
   @ApiProperty({ example: 'Compelling nofication body' })
   @IsString()
   body!: string
@@ -98,6 +107,11 @@ export class RenderedNotificationDto {
   @IsOptional()
   clickAction?: string
 
+  @ApiPropertyOptional({ example: 'https://island.is/minarsidur/postholf' })
+  @IsString()
+  @IsOptional()
+  clickActionUrl?: string
+
   @ApiProperty({ example: new Date().toISOString() })
   @IsDate()
   created!: Date
@@ -106,9 +120,13 @@ export class RenderedNotificationDto {
   @IsDate()
   updated!: Date
 
-  @ApiProperty({ enum: NotificationStatus, example: NotificationStatus.UNREAD })
-  @IsEnum(NotificationStatus)
-  status!: NotificationStatus
+  @ApiProperty({ example: false })
+  @IsBoolean()
+  read!: boolean
+
+  @ApiProperty({ example: false })
+  @IsBoolean()
+  seen!: boolean
 }
 
 export class Message {
@@ -160,7 +178,25 @@ export class PaginatedNotificationDto {
 }
 
 export class UpdateNotificationDto {
-  @ApiProperty({ enum: NotificationStatus, example: NotificationStatus.READ })
-  @IsEnum(NotificationStatus)
-  status!: NotificationStatus
+  @ApiPropertyOptional({ example: true })
+  @IsOptional()
+  @IsBoolean()
+  read?: boolean
+
+  @ApiPropertyOptional({ example: true })
+  @IsOptional()
+  @IsBoolean()
+  seen?: boolean
+}
+
+export class UnreadNotificationsCountDto {
+  @ApiProperty({ example: 42 })
+  @IsInt()
+  unreadCount!: number
+}
+
+export class UnseenNotificationsCountDto {
+  @ApiProperty({ example: 42 })
+  @IsInt()
+  unseenCount!: number
 }

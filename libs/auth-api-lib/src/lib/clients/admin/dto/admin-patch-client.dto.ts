@@ -71,6 +71,20 @@ export class AdminPatchClientDto {
     description: 'Only super users can update this value.',
   })
   @IsOptional()
+  @IsArray()
+  addedDelegationTypes?: string[]
+
+  @ApiPropertyOptional({
+    description: 'Only super users can update this value.',
+  })
+  @IsOptional()
+  @IsArray()
+  removedDelegationTypes?: string[]
+
+  @ApiPropertyOptional({
+    description: 'Only super users can update this value.',
+  })
+  @IsOptional()
   @IsBoolean()
   supportsCustomDelegation?: boolean
 
@@ -146,6 +160,13 @@ export class AdminPatchClientDto {
   accessTokenLifetime?: number
 
   @ApiPropertyOptional({
+    description: 'Only super users can update this value.',
+  })
+  @IsOptional()
+  @IsBoolean()
+  singleSession?: boolean
+
+  @ApiPropertyOptional({
     description:
       'Dictionary of custom claims added to access tokens. Only super users can update this value.',
     type: [AdminClientClaimDto],
@@ -175,6 +196,13 @@ export class AdminPatchClientDto {
   })
   @IsOptional()
   contactEmail?: string
+
+  @ApiPropertyOptional({
+    description: 'Array of allowed acr values for the client.',
+    example: '[eidas-loa-high]',
+  })
+  @IsOptional()
+  allowedAcr?: string[]
 }
 
 export const superUserFields = [
@@ -182,6 +210,9 @@ export const superUserFields = [
   'supportsLegalGuardians',
   'supportsProcuringHolders',
   'supportsPersonalRepresentatives',
+  'supportedDelegationTypes',
+  'addedDelegationTypes',
+  'removedDelegationTypes',
   'promptDelegations',
   'requireApiScopes',
   'requireConsent',
@@ -190,4 +221,6 @@ export const superUserFields = [
   'supportTokenExchange',
   'accessTokenLifetime',
   'customClaims',
+  'singleSession',
+  'allowedAcr',
 ]

@@ -48,6 +48,7 @@ export const MachineSelectField: FC<
     async (id: string) => {
       const { data } = await getMachineDetails({
         id: id,
+        rel: 'supervisorChange',
       })
       return data
     },
@@ -111,7 +112,7 @@ export const MachineSelectField: FC<
         options={currentMachineList.map((machine, index) => {
           return {
             value: index.toString(),
-            label: `${machine.type}` || '',
+            label: `${machine.type} (${machine.regNumber})` || '',
           }
         })}
         placeholder={formatMessage(information.labels.pickMachine.placeholder)}

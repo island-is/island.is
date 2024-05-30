@@ -41,20 +41,6 @@ const FinanceSchedule = () => {
 
   const applicationButtonText = formatMessage(messages.scheduleApplication)
 
-  if (paymentSchedulesError && !paymentSchedulesLoading) {
-    return (
-      <ErrorScreen
-        figure="./assets/images/hourglass.svg"
-        tagVariant="red"
-        tag={formatMessage(coreMessage.errorTitle)}
-        title={formatMessage(coreMessage.somethingWrong)}
-        children={formatMessage(coreMessage.errorFetchModule, {
-          module: formatMessage(coreMessage.finance).toLowerCase(),
-        })}
-      />
-    )
-  }
-
   if (
     recordsData.length <= 0 &&
     !paymentSchedulesLoading &&
@@ -127,6 +113,7 @@ const FinanceSchedule = () => {
           ) : null}
         </Box>
       </Stack>
+      )}
       <FootNote serviceProviderSlug={FJARSYSLAN_SLUG} />
     </Box>
   )

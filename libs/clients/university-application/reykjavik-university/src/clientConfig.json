@@ -15,7 +15,7 @@
   "basePath": "/custom",
   "schemes": ["https"],
   "paths": {
-    "/v{version}/hvin/active-programs": {
+    "/active-programs": {
       "get": {
         "tags": ["Hvin"],
         "summary": "Returns all active programs in RU",
@@ -48,7 +48,7 @@
         }
       }
     },
-    "/v{version}/hvin/semesters/{semesterYear}/{semesterSeason}/applications": {
+    "semesters/{semesterYear}/{semesterSeason}/applications": {
       "get": {
         "tags": ["Hvin"],
         "summary": "Finds and returns all the applications on a specific semester",

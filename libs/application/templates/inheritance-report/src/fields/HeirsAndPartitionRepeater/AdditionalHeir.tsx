@@ -1,3 +1,4 @@
+/* eslint-disable @typescript-eslint/no-explicit-any */
 import { Controller, useFormContext, useWatch } from 'react-hook-form'
 import { useLocale } from '@island.is/localization'
 import {
@@ -23,6 +24,7 @@ import { EstateMember } from '../../types'
 import { ErrorValue } from '../../lib/constants'
 import { LookupPerson } from '../LookupPerson'
 import { HeirsAndPartitionRepeaterProps } from './types'
+import ShareInput from '../../components/ShareInput'
 
 export const AdditionalHeir = ({
   field,
@@ -38,7 +40,7 @@ export const AdditionalHeir = ({
   field: GenericFormField<EstateMember>
   index: number
   remove: (index?: number | number[] | undefined) => void
-  updateValues: (updateIndex: string, value: number) => void
+  updateValues: (updateIndex: string, value: number, index?: number) => void
   fieldName: string
   relationOptions: { value: string; label: string }[]
   error: Record<string, string>
@@ -56,7 +58,7 @@ export const AdditionalHeir = ({
 
   const advocateField = `${fieldIndex}.advocate`
   const advocatePhoneField = `${advocateField}.phone`
-  const advocateEmailFeild = `${advocateField}.email`
+  const advocateEmailField = `${advocateField}.email`
 
   const foreignCitizenship = useWatch({
     name: `${fieldIndex}.foreignCitizenship`,
@@ -96,7 +98,7 @@ export const AdditionalHeir = ({
     clearErrors(relationField)
     clearErrors(dateOfBirthField)
     clearErrors(advocatePhoneField)
-    clearErrors(advocateEmailFeild)
+    clearErrors(advocateEmailField)
     clearErrors(`${fieldIndex}.nationalId`)
 
     if (!requiresAdvocate) {
@@ -194,6 +196,7 @@ export const AdditionalHeir = ({
                 requiredNationalId: true,
               },
             }}
+            backgroundColor="blue"
             error={error}
           />
         </Box>
@@ -243,13 +246,16 @@ export const AdditionalHeir = ({
               ) : null}
 
               {customField.id === 'relation' ? (
-                <GridColumn span="1/1" paddingBottom={2}>
+                <GridColumn span="1/2" paddingBottom={2}>
                   <SelectController
                     id={relationField}
                     name={relationField}
                     label={formatMessage(
                       m.inheritanceRelationWithApplicantLabel,
                     )}
+                    onSelect={() => {
+                      clearErrors()
+                    }}
                     defaultValue={currentHeir.relation}
                     options={relationOptions}
                     error={error?.relation}
@@ -259,27 +265,23 @@ export const AdditionalHeir = ({
                   />
                 </GridColumn>
               ) : customField.id === 'heirsPercentage' ? (
-                <GridColumn span={['1/2']} paddingBottom={2}>
-                  <InputController
-                    id={`${fieldIndex}.${customField.id}`}
+                <GridColumn span="1/2" paddingBottom={2}>
+                  <ShareInput
                     name={`${fieldIndex}.${customField.id}`}
                     disabled={!currentHeir.enabled}
-                    label={customField.title}
-                    defaultValue={defaultValue ? defaultValue : '0'}
-                    type="number"
-                    suffix="%"
-                    onChange={(
-                      event: React.ChangeEvent<
-                        HTMLInputElement | HTMLTextAreaElement
-                      >,
-                    ) => {
-                      const val = parseInt(event.target.value, 10)
-                      updateValues(fieldIndex, val)
+                    label={formatMessage(customField.title)}
+                    onAfterChange={(val) => {
+                      updateValues(fieldIndex, val, customFieldIndex)
                     }}
-                    error={
+                    errorMessage={
                       error && error[index]
                         ? error[index][customField.id]
                         : undefined
+                    }
+                    hasError={
+                      error && error[index]
+                        ? !!error[index][customField.id]
+                        : false
                     }
                     required
                   />
@@ -292,7 +294,7 @@ export const AdditionalHeir = ({
                     disabled={!currentHeir.enabled}
                     defaultValue={defaultValue ? defaultValue : ''}
                     format={customField.format}
-                    label={customField.title}
+                    label={formatMessage(customField.title)}
                     currency
                     readOnly
                     error={
@@ -330,6 +332,7 @@ export const AdditionalHeir = ({
                 field={{
                   id: `${fieldIndex}.advocate`,
                 }}
+                backgroundColor="blue"
                 error={error}
               />
             </GridColumn>
@@ -347,8 +350,8 @@ export const AdditionalHeir = ({
             </GridColumn>
             <GridColumn span={['1/1', '1/2']} paddingBottom={2}>
               <InputController
-                id={advocateEmailFeild}
-                name={advocateEmailFeild}
+                id={advocateEmailField}
+                name={advocateEmailField}
                 label={formatMessage(m.email)}
                 backgroundColor="blue"
                 error={(error?.advocate as unknown as ErrorValue)?.email}
@@ -359,25 +362,27 @@ export const AdditionalHeir = ({
           </GridRow>
         </Box>
       )}
-      <GridColumn span="1/1" paddingBottom={2}>
-        <Box width="half">
-          <CheckboxController
-            key={foreignCitizenshipField}
-            id={foreignCitizenshipField}
-            name={foreignCitizenshipField}
-            defaultValue={field?.foreignCitizenship || []}
-            options={[
-              {
-                label: formatMessage(m.inheritanceForeignCitizenshipLabel),
-                value: YES,
-              },
-            ]}
-            onSelect={(val) => {
-              setValue(foreignCitizenshipField, val)
-            }}
-          />
-        </Box>
-      </GridColumn>
+      <GridRow>
+        <GridColumn span="1/1" paddingBottom={2}>
+          <Box width="half">
+            <CheckboxController
+              key={foreignCitizenshipField}
+              id={foreignCitizenshipField}
+              name={foreignCitizenshipField}
+              defaultValue={field?.foreignCitizenship || []}
+              options={[
+                {
+                  label: formatMessage(m.inheritanceForeignCitizenshipLabel),
+                  value: YES,
+                },
+              ]}
+              onSelect={(val) => {
+                setValue(foreignCitizenshipField, val)
+              }}
+            />
+          </Box>
+        </GridColumn>
+      </GridRow>
     </Box>
   )
 }

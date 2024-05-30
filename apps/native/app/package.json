@@ -1,28 +1,31 @@
 {
   "name": "@island.is/native-app",
-  "version": "1.2.4",
+  "version": "1.2.5",
   "private": true,
   "scripts": {
     "release:android": "cd android && ./gradlew bundleProdRelease bundleDevRelease",
-    "android": "react-native run-android",
-    "ios": "react-native run-ios",
-    "typecheck": "tsc --noEmit",
+    "android": "react-native run-android --mode devDebug",
+    "android:prod": "react-native run-android --variant=prodDebug",
+    "ios": "react-native run-ios --scheme Ísland.dev",
+    "ios:prod": "react-native run-ios --scheme Ísland.is",
     "build-mock": "echo FIXME",
     "start": "react-native start",
     "fastlane:ios": "cd ios && fastlane",
     "fastlane:android": "cd android && fastlane",
-    "beta": "yarn fastlane:ios beta && yarn fastlane:android beta",
-    "alpha:upload": "yarn fastlane:ios beta apps:dev && yarn fastlane:android beta apps:dev",
-    "alpha:release": "yarn fastlane:ios promote to:alpha apps:dev && yarn fastlane:android promote to:alpha apps:dev",
-    "codepush:ios": "appcenter codepush release-react -a Stafraent-Island/Island-ios -x -d production  --plist-file ios/IslandApp/Info.plist",
-    "codepush:android": "appcenter codepush release-react -a Stafraent-Island/Island-android -x -d production",
+    "beta": "yarn prerequisites && yarn fastlane:ios beta && yarn fastlane:android beta",
+    "alpha:upload": "yarn prerequisites && yarn fastlane:ios beta apps:dev && yarn fastlane:android beta apps:dev",
+    "alpha:release": "yarn prerequisites && yarn fastlane:ios promote to:alpha apps:dev && yarn fastlane:android promote to:alpha apps:dev",
+    "codepush:ios": "yarn prerequisites && appcenter codepush release-react -a Stafraent-Island/Island-ios -x -d production  --plist-file ios/IslandApp/Info.plist",
+    "codepush:android": "yarn prerequisites && appcenter codepush release-react -a Stafraent-Island/Island-android -x -d production",
     "test": "jest",
     "test-mock": "echo FIXME",
     "storybook": "start-storybook -p 7007",
     "build-storybook": "build-storybook",
+    "nx:typecheck": "tsc --noEmit",
     "nx:codegen": "yarn run -T nx run native-app:codegen/frontend-client",
     "nx:lint": "yarn run -T nx run native-app:lint",
-    "nx:build": "yarn run -T nx run native-app:build"
+    "nx:build": "yarn run -T nx run native-app:build",
+    "prerequisites": "yarn nx:codegen && yarn nx:typecheck && yarn nx:lint"
   },
   "dependencies": {
     "@apollo/client": "3.7.7",
@@ -35,6 +38,7 @@
     "@formatjs/intl-relativetimeformat": "11.1.8",
     "@react-native-clipboard/clipboard": "1.11.2",
     "@react-native-community/async-storage": "1.12.1",
+    "@react-native-community/netinfo": "11.3.1",
     "@react-native-community/progress-bar-android": "1.0.5",
     "@react-native-community/progress-view": "1.3.1",
     "@react-native-cookies/cookies": "6.2.1",
@@ -42,6 +46,7 @@
     "@react-native-firebase/app": "16.7.0",
     "@react-native-firebase/messaging": "16.7.0",
     "@react-native-firebase/perf": "16.7.0",
+    "apollo3-cache-persist": "0.15.0",
     "configcat-js": "7.0.0",
     "dynamic-color": "0.3.0",
     "expo": "47.0.13",
@@ -53,6 +58,8 @@
     "expo-local-authentication": "13.0.2",
     "expo-notifications": "0.17.0",
     "intl": "1.2.5",
+    "lodash": "4.17.21",
+    "path-to-regexp": "6.2.2",
     "react": "18.2.0",
     "react-intl": "5.20.12",
     "react-native": "0.71.1",
@@ -65,6 +72,7 @@
     "react-native-interactable": "2.0.1",
     "react-native-keyboard-manager": "6.5.4-3",
     "react-native-keychain": "8.1.1",
+    "react-native-mmkv-storage": "0.9.1",
     "react-native-navigation": "7.32.1",
     "react-native-navigation-hooks": "6.3.0",
     "react-native-passkit-wallet": "0.1.6",
@@ -72,6 +80,7 @@
     "react-native-quick-actions": "0.3.13",
     "react-native-share": "7.1.1",
     "react-native-spotlight-search": "2.0.0",
+    "react-native-svg": "15.1.0",
     "react-native-webview": "11.26.1",
     "styled-components": "5.3.6",
     "zustand": "3.5.12"
@@ -86,6 +95,7 @@
     "@tsconfig/react-native": "^2.0.2",
     "@types/intl": "^1",
     "@types/jest": "^29.2.1",
+    "@types/lodash": "4.17.1",
     "@types/react": "^18.0.24",
     "@types/react-dom": "^18",
     "@types/react-test-renderer": "^18.0.0",
@@ -105,5 +115,8 @@
   },
   "resolutions": {
     "eslint": "8.12.0"
+  },
+  "volta": {
+    "extends": "../../../package.json"
   }
 }

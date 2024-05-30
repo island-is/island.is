@@ -22,6 +22,7 @@ if (userMocked) {
     baseUrl: `${window.location.origin}/umsoknir`,
     redirectPath: '/signin-oidc',
     redirectPathSilent: '/silent/signin-oidc',
+    initiateLoginPath: '/login',
     authority: environment.identityServer.authority,
     client_id: '@island.is/web',
     scope: [
@@ -48,6 +49,7 @@ if (userMocked) {
       ApiScope.energyFunds,
       ApiScope.vinnueftirlitid,
       ApiScope.signatureCollection,
+      ApiScope.licenses,
     ],
     post_logout_redirect_uri: `${window.location.origin}`,
     userStorePrefix: 'as.',

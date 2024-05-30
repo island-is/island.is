@@ -83,6 +83,7 @@ export interface IAlertBannerFields {
         | 'starfsleyfi'
         | 'loftbru'
         | 'heilsa'
+        | 'fjarmal/stada'
       )[]
     | undefined
 }
@@ -245,6 +246,9 @@ export interface IArticleFields {
   /** Process Entry */
   processEntry?: IProcessEntry | undefined
 
+  /** Baby Articles */
+  subArticles?: ISubArticle[] | undefined
+
   /** Category (Main) */
   category: IArticleCategory
 
@@ -277,9 +281,6 @@ export interface IArticleFields {
 
   /** Related Content */
   relatedContent?: ILink[] | undefined
-
-  /** Baby Articles */
-  subArticles?: ISubArticle[] | undefined
 
   /** Importance */
   importance?: number | undefined
@@ -576,6 +577,12 @@ export interface IChartFields {
 
   /** X Axis Format */
   xAxisFormat?: string | undefined
+
+  /** Custom Style Config */
+  customStyleConfig?: Record<string, any> | undefined
+
+  /** Reduce and round value */
+  reduceAndRoundValue?: boolean | undefined
 }
 
 /** A wrapper to render any graphical representation of data using [Chart Component]s. */
@@ -731,11 +738,20 @@ export interface IContactUs extends Entry<IContactUsFields> {
 }
 
 export interface ICustomPageFields {
+  /** Parent Page */
+  parentPage?: ICustomPage | undefined
+
   /** Title */
   title?: string | undefined
 
   /** Unique Identifier */
-  uniqueIdentifier: 'PensionCalculator'
+  uniqueIdentifier:
+    | 'PensionCalculator'
+    | 'OfficialJournalOfIceland'
+    | 'Vacancies'
+
+  /** Slug */
+  slug?: string | undefined
 
   /** Alert Banner */
   alertBanner?: IAlertBanner | undefined
@@ -745,7 +761,23 @@ export interface ICustomPageFields {
 
   /** Configuration */
   configJson?: Record<string, any> | undefined
+
+  /** Content */
+  content?: Document | undefined
+
+  /** Open Graph Title */
+  ogTitle?: string | undefined
+
+  /** Open Graph Description */
+  ogDescription?: string | undefined
+
+  /** Open Graph Image */
+  ogImage?: Asset | undefined
 }
+
+/** This content type is meant to represent a custom made page. Examples include (/starfatorg, /reglugerdir and many more).
+The idea is that new custom pages should rely on this content type for it's translations, configuration and so forth.
+There should also be an effort made in updating the code for already existing custom pages so that they'll utilize this content type. */
 
 export interface ICustomPage extends Entry<ICustomPageFields> {
   sys: {
@@ -1152,6 +1184,9 @@ export interface IFeaturedArticlesFields {
 
   /** Has Border Above */
   hasBorderAbove?: boolean | undefined
+
+  /** Intro text */
+  introText?: Document | undefined
 }
 
 export interface IFeaturedArticles extends Entry<IFeaturedArticlesFields> {
@@ -1287,7 +1322,7 @@ export interface IFormFields {
   /** Recipient */
   recipient: string
 
-  /** Default field namespace (In development) */
+  /** Default field namespace */
   defaultFieldNamespace?: Record<string, any> | undefined
 
   /** Fields */
@@ -1495,6 +1530,72 @@ export interface IFrontpageSlider extends Entry<IFrontpageSliderFields> {
   }
 }
 
+export interface IGenericListFields {
+  /** Internal Title */
+  internalTitle: string
+
+  /** Card Intro Template */
+  cardIntroTemplate?: Document | undefined
+
+  /** Search Input Placeholder */
+  searchInputPlaceholder: string
+}
+
+/** A list of items which can be embedded into rich text */
+
+export interface IGenericList extends Entry<IGenericListFields> {
+  sys: {
+    id: string
+    type: string
+    createdAt: string
+    updatedAt: string
+    locale: string
+    contentType: {
+      sys: {
+        id: 'genericList'
+        linkType: 'ContentType'
+        type: 'Link'
+      }
+    }
+  }
+}
+
+export interface IGenericListItemFields {
+  /** Generic List */
+  genericList: IGenericList
+
+  /** Internal Title */
+  internalTitle: string
+
+  /** Title */
+  title: string
+
+  /** Date */
+  date: string
+
+  /** Card Intro */
+  cardIntro?: Document | undefined
+}
+
+/** An item that belongs to a generic list */
+
+export interface IGenericListItem extends Entry<IGenericListItemFields> {
+  sys: {
+    id: string
+    type: string
+    createdAt: string
+    updatedAt: string
+    locale: string
+    contentType: {
+      sys: {
+        id: 'genericListItem'
+        linkType: 'ContentType'
+        type: 'Link'
+      }
+    }
+  }
+}
+
 export interface IGenericOverviewPageFields {
   /** Title */
   title: string
@@ -1572,6 +1673,9 @@ export interface IGenericPage extends Entry<IGenericPageFields> {
 export interface IGenericTagFields {
   /** Title */
   title: string
+
+  /** Internal Title */
+  internalTitle?: string | undefined
 
   /** Slug */
   slug: string
@@ -1712,14 +1816,20 @@ export interface IHnippTemplateFields {
   /** Notification Data Copy */
   notificationDataCopy?: string | undefined
 
-  /** Click Action */
-  clickAction?: string | undefined
-
   /** Category */
   category?: 'NEW_DOCUMENT' | 'ISLANDIS_LINK' | undefined
 
   /** Args */
   args?: string[] | undefined
+
+  /** ClickActionUrl */
+  clickActionUrl?: string | undefined
+
+  /** ClickActionWeb DEPRECATED */
+  clickActionWeb?: string | undefined
+
+  /** Click Action DEPRECATED */
+  clickAction?: string | undefined
 }
 
 /** push notification templates for island.is */
@@ -1963,7 +2073,7 @@ export interface ILinkFields {
   /** Link reference */
   linkReference?: IArticle | IArticleCategory | ILinkUrl | INews | undefined
 
-  /** Searchable */
+  /** Display link in search results */
   searchable?: boolean | undefined
 
   /** Search Description */
@@ -2023,7 +2133,7 @@ export interface ILinkGroupFields {
   primaryLink: ILink | IOrganizationSubpage | IProjectSubpage
 
   /** Children Links */
-  childrenLinks?: (ILink | IOrganizationSubpage | IProjectSubpage)[] | undefined
+  childrenLinks?: (ILink | IProjectSubpage | IOrganizationSubpage)[] | undefined
 }
 
 export interface ILinkGroup extends Entry<ILinkGroupFields> {
@@ -2736,6 +2846,9 @@ export interface IOrganizationFields {
 
   /** Reference Identifier */
   referenceIdentifier?: string | undefined
+
+  /** Kennitala */
+  kennitala?: string | undefined
 }
 
 export interface IOrganization extends Entry<IOrganizationFields> {
@@ -2876,6 +2989,7 @@ export interface IOrganizationPageFields {
     | 'rikissaksoknari'
     | 'vinnueftirlitid'
     | 'hljodbokasafn-islands'
+    | 'thjodskjalasafn'
 
   /** Theme Properties */
   themeProperties?: Record<string, any> | undefined
@@ -2904,6 +3018,9 @@ export interface IOrganizationSubpageFields {
 
   /** Title */
   title: string
+
+  /** Short Title */
+  shortTitle?: string | undefined
 
   /** Slug */
   slug: string
@@ -2937,6 +3054,7 @@ export interface IOrganizationSubpageFields {
         | IAnchorPageList
         | ISectionWithVideo
         | ISectionHeading
+        | ILatestEventsSlice
       )[]
     | undefined
 
@@ -3000,6 +3118,9 @@ export interface IOrganizationTag extends Entry<IOrganizationTagFields> {
 }
 
 export interface IOverviewLinksFields {
+  /** Title */
+  title?: string | undefined
+
   /** Overview Links */
   overviewLinks?: IIntroLinkImage[] | undefined
 
@@ -3195,6 +3316,9 @@ export interface IProjectPageFields {
   /** Sidebar */
   sidebar: boolean
 
+  /** Sidebar Frontpage Link */
+  sidebarFrontpageLink?: boolean | undefined
+
   /** Sidebar Links */
   sidebarLinks?: ILinkGroup[] | undefined
 
@@ -3310,6 +3434,9 @@ export interface IProjectPage extends Entry<IProjectPageFields> {
 export interface IProjectSubpageFields {
   /** Title */
   title: string
+
+  /** Short Title */
+  shortTitle?: string | undefined
 
   /** Slug */
   slug: string
@@ -3500,6 +3627,12 @@ export interface IServiceWebPageFields {
 
   /** Footer Items */
   footerItems?: IFooterItem[] | undefined
+
+  /** Email Config */
+  emailConfig?: Record<string, any> | undefined
+
+  /** Contact Form Disclaimer */
+  contactFormDisclaimer?: Document | undefined
 }
 
 export interface IServiceWebPage extends Entry<IServiceWebPageFields> {
@@ -3596,6 +3729,8 @@ export interface ISliceConnectedComponentFields {
     | 'Vinnueftirlitid/Namskeid'
     | 'Meðmælalistar/SignatureLists'
     | 'KilometerFee'
+    | 'SpecificHousingBenefitSupportCalculator'
+    | 'GrindavikResidentialPropertyPurchaseCalculator'
     | undefined
 
   /** Localized JSON */
@@ -4154,6 +4289,9 @@ export interface ITabSection extends Entry<ITabSectionFields> {
 }
 
 export interface ITeamListFields {
+  /** Title */
+  title?: string | undefined
+
   /** Team members */
   teamMembers?: ITeamMember[] | undefined
 }
@@ -4813,6 +4951,8 @@ export type CONTENT_TYPE =
   | 'formField'
   | 'frontpage'
   | 'frontpageSlider'
+  | 'genericList'
+  | 'genericListItem'
   | 'genericOverviewPage'
   | 'genericPage'
   | 'genericTag'

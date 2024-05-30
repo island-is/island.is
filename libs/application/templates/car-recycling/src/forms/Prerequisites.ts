@@ -6,11 +6,7 @@ import {
   buildSubmitField,
   coreMessages,
 } from '@island.is/application/core'
-import {
-  Form,
-  FormModes,
-  NationalRegistryUserApi,
-} from '@island.is/application/types'
+import { Form, FormModes, IdentityApi } from '@island.is/application/types'
 import Logo from '../assets/Logo'
 
 import { VehicleSearchApi } from '../dataProviders'
@@ -48,7 +44,7 @@ export const Prerequisites: Form = buildForm({
           }),
           dataProviders: [
             buildDataProviderItem({
-              provider: NationalRegistryUserApi,
+              provider: IdentityApi,
               title: carRecyclingMessages.pre.nationalRegistryInformationTitle,
               subTitle:
                 carRecyclingMessages.pre.nationalRegistryInformationSubTitle,

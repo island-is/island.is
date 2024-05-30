@@ -1,5 +1,5 @@
 import { ApplicationWithAttachments as Application } from '@island.is/application/types'
-import { DocumentInfo } from '@island.is/clients/data-protection-complaint'
+import { DocumentInfo } from '@island.is/clients/althingi-ombudsman'
 import { AttachmentType } from '../../models/attachments'
 import { AttachmentS3Service } from '../../../../shared/services'
 import { Injectable } from '@nestjs/common'
@@ -27,12 +27,13 @@ export class ApplicationAttachmentProvider {
       application,
       attachmentAnswers,
     )
-    return files.map((file, index) => {
+    return files.map((file) => {
       const type = this.mapAnswerToType(file.answerKey)
+      const fileName = file.fileName
       return {
-        subject: `${type} ${index + 1}`,
+        subject: fileName,
         content: file.fileContent,
-        fileName: file.fileName,
+        fileName: fileName,
         type: type,
       }
     })

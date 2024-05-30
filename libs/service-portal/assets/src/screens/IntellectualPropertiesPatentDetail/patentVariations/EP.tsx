@@ -3,6 +3,8 @@ import {
   UserInfoLine,
   formatDate,
   m as coreMessages,
+  StackOrTableBlock,
+  StackWithBottomDivider,
 } from '@island.is/service-portal/core'
 import { IntellectualPropertiesPatentEp } from '@island.is/api/schema'
 import { Stack, Text, Divider } from '@island.is/island-ui/core'
@@ -11,8 +13,6 @@ import { ipMessages } from '../../../lib/messages'
 import { useMemo } from 'react'
 import Timeline from '../../../components/Timeline/Timeline'
 import { orderTimelineData } from '../../../utils/timelineMapper'
-import { StackOrTableBlock } from '../../../components/StackOrTableBlock/StackOrTableBlock'
-import { StackWithBottomDivider } from '../../../components/StackWithBottomDivider/StackWithBottomDivider'
 import { AssetsPaths } from '../../../lib/paths'
 
 interface Props {
@@ -53,10 +53,6 @@ const PatentEP = ({ data, loading }: Props) => {
       },
     ])
   }, [formatMessage, data.lifecycle, data.epLifecycle])
-
-  if (!data && !loading) {
-    return <Problem type="no_data" />
-  }
 
   const applicationLink = data?.epApplicationNumber
     ? parseInt(data.epApplicationNumber).toString()

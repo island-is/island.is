@@ -1,11 +1,13 @@
 // TODO: Add tests
 import {
-  CaseAppealRulingDecision,
   isIndictmentCase,
+  isTrafficViolationCase,
   prosecutorCanSelectDefenderForInvestigationCase,
 } from '@island.is/judicial-system/types'
 import {
+  CaseAppealRulingDecision,
   CaseAppealState,
+  CaseFileCategory,
   CaseType,
   SessionArrangements,
   User,
@@ -91,8 +93,8 @@ const getRegexByValidation = (validation: Validation) => {
     }
     case 'vehicle-registration-number': {
       return {
-        regex: new RegExp(/^[A-Z]{2}-[A-Z]{1}[0-9]{2}|[0-9]{3}$/),
-        errorMessage: 'Dæmi: AB-123',
+        regex: new RegExp(/^[A-Z]{2}([A-Z]{1}|[0-9]{1})[0-9]{2}$/),
+        errorMessage: 'Dæmi: AB123',
       }
     }
     case 'appeal-case-number-format': {
@@ -330,12 +332,10 @@ export const isCourtHearingArrangemenstStepValidRC = (
   workingCase: Case,
   courtDate?: string | null,
 ): boolean => {
-  const date = courtDate || workingCase.courtDate
-
   return validate([
     [workingCase.defenderEmail, ['email-format']],
     [workingCase.defenderPhoneNumber, ['phonenumber']],
-    [date, ['empty', 'date-format']],
+    [courtDate ?? workingCase.arraignmentDate?.date, ['empty', 'date-format']],
   ]).isValid
 }
 
@@ -343,14 +343,15 @@ export const isCourtHearingArrangementsStepValidIC = (
   workingCase: Case,
   courtDate?: string | null,
 ): boolean => {
-  const date = courtDate || workingCase.courtDate
-
   return Boolean(
     workingCase.sessionArrangements &&
       validate([
         [workingCase.defenderEmail, ['email-format']],
         [workingCase.defenderPhoneNumber, ['phonenumber']],
-        [date, ['empty', 'date-format']],
+        [
+          courtDate ?? workingCase.arraignmentDate?.date,
+          ['empty', 'date-format'],
+        ],
       ]).isValid,
   )
 }
@@ -412,9 +413,9 @@ export const isSubpoenaStepValid = (
   workingCase: Case,
   courtDate?: string | null,
 ): boolean => {
-  const date = courtDate || workingCase.courtDate
-
-  return validate([[date, ['empty', 'date-format']]]).isValid
+  return validate([
+    [courtDate ?? workingCase.arraignmentDate?.date, ['empty', 'date-format']],
+  ]).isValid
 }
 
 export const isDefenderStepValid = (workingCase: Case): boolean => {
@@ -460,24 +461,47 @@ export const isCourtOfAppealCaseStepValid = (workingCase: Case): boolean => {
   )
 }
 
-export const isCourtOfAppealRulingStepValid = (workingCase: Case): boolean => {
-  const { appealRulingDecision, appealConclusion, appealState } = workingCase
+export const isCourtOfAppealRulingStepFieldsValid = (
+  workingCase: Case,
+): boolean => {
+  return Boolean(
+    workingCase.appealRulingDecision &&
+      (workingCase.appealRulingDecision ===
+        CaseAppealRulingDecision.DISCONTINUED ||
+        validate([[workingCase.appealConclusion, ['empty']]]).isValid),
+  )
+}
 
-  return (
-    appealState === CaseAppealState.COMPLETED ||
-    appealState === CaseAppealState.WITHDRAWN ||
-    (appealRulingDecision !== null &&
-      validate([[appealConclusion, ['empty']]]).isValid) ||
-    appealRulingDecision === CaseAppealRulingDecision.DISCONTINUED
+export const isCourtOfAppealRulingStepValid = (workingCase: Case): boolean => {
+  return Boolean(
+    isCourtOfAppealRulingStepFieldsValid(workingCase) &&
+      (workingCase.appealRulingDecision ===
+        CaseAppealRulingDecision.DISCONTINUED ||
+        workingCase.caseFiles?.some(
+          (file) => file.category === CaseFileCategory.APPEAL_RULING,
+        )),
   )
 }
 
 export const isCourtOfAppealWithdrawnCaseStepValid = (
   workingCase: Case,
 ): boolean => {
+  return validate([
+    [workingCase.appealCaseNumber, ['empty', 'appeal-case-number-format']],
+  ]).isValid
+}
+
+export const isCaseFilesStepValidIndictments = (workingCase: Case): boolean => {
   return Boolean(
-    validate([
-      [workingCase.appealCaseNumber, ['empty', 'appeal-case-number-format']],
-    ]).isValid,
+    workingCase.caseFiles?.some(
+      (file) => file.category === CaseFileCategory.COVER_LETTER,
+    ) &&
+      (isTrafficViolationCase(workingCase) ||
+        workingCase.caseFiles?.some(
+          (file) => file.category === CaseFileCategory.INDICTMENT,
+        )) &&
+      workingCase.caseFiles?.some(
+        (file) => file.category === CaseFileCategory.CRIMINAL_RECORD,
+      ),
   )
 }

@@ -22,11 +22,11 @@ import { ApplicationType } from './constants'
 import { MONTHS } from '@island.is/application/templates/social-insurance-administration-core/lib/constants'
 import * as kennitala from 'kennitala'
 
-function buildApplication(data?: {
+const buildApplication = (data?: {
   answers?: FormValue
   externalData?: ExternalData
   state?: string
-}): Application {
+}): Application => {
   const { answers = {}, externalData = {}, state = 'draft' } = data ?? {}
 
   return {
@@ -50,7 +50,8 @@ describe('getStartDateAndEndDate', () => {
     const application = buildApplication()
     const { applicationType } = getApplicationAnswers(application.answers)
     const today = new Date()
-    const startDate = addMonths(addYears(today, -2), 1).toDateString()
+    const monthFromToday = addMonths(today, 1)
+    const startDate = addYears(monthFromToday, -2).toDateString()
     const endDate = addMonths(today, 6).toDateString()
     const res = getStartDateAndEndDate(application.applicant, applicationType)
 

@@ -1,49 +1,61 @@
-import { useRef, useState } from 'react'
+import { useAuth } from '@island.is/auth/react'
 import {
   Box,
-  Hidden,
   Button,
-  Logo,
   FocusableBox,
   GridColumn,
   GridContainer,
   GridRow,
+  Hidden,
+  Logo,
 } from '@island.is/island-ui/core'
-import * as styles from './Header.css'
-import { ServicePortalPaths } from '@island.is/service-portal/core'
+import { helperStyles, theme } from '@island.is/island-ui/theme'
 import { useLocale } from '@island.is/localization'
-import { UserLanguageSwitcher, UserMenu } from '@island.is/shared/components'
-import { m } from '@island.is/service-portal/core'
-import { Link } from 'react-router-dom'
-import { useListDocuments } from '@island.is/service-portal/graphql'
-import cn from 'classnames'
-import { theme } from '@island.is/island-ui/theme'
-import { useWindowSize } from 'react-use'
 import { PortalPageLoader } from '@island.is/portals/core'
-import { useAuth } from '@island.is/auth/react'
-import Sidemenu from '../Sidemenu/Sidemenu'
+import { useFeatureFlagClient } from '@island.is/react/feature-flags'
+import {
+  LinkResolver,
+  ServicePortalPaths,
+  m,
+} from '@island.is/service-portal/core'
 import { DocumentsPaths } from '@island.is/service-portal/documents'
+import { UserLanguageSwitcher, UserMenu } from '@island.is/shared/components'
+import { useEffect, useRef, useState } from 'react'
+import { Link } from 'react-router-dom'
+import { useWindowSize } from 'react-use'
+import NotificationButton from '../Notifications/NotificationButton'
+import Sidemenu from '../Sidemenu/Sidemenu'
+import * as styles from './Header.css'
+export type MenuTypes = 'side' | 'user' | 'notifications' | undefined
 
 interface Props {
   position: number
-  sideMenuOpen: boolean
-  setSideMenuOpen: (set: boolean) => void
 }
-export const Header = ({ position, sideMenuOpen, setSideMenuOpen }: Props) => {
+export const Header = ({ position }: Props) => {
   const { formatMessage } = useLocale()
-  const [userMenuOpen, setUserMenuOpen] = useState(false)
-  const { unreadCounter } = useListDocuments()
+  const [menuOpen, setMenuOpen] = useState<MenuTypes>()
   const { width } = useWindowSize()
   const ref = useRef<HTMLButtonElement>(null)
   const isMobile = width < theme.breakpoints.md
   const { userInfo: user } = useAuth()
-  const badgeActive: keyof typeof styles.badge =
-    unreadCounter > 0 ? 'active' : 'inactive'
 
-  const closeUserMenu = (state: boolean) => {
-    setSideMenuOpen(false)
-    setUserMenuOpen(state)
-  }
+  // Notification feature flag. Remove after feature is live.
+  const [enableNotificationFlag, setEnableNotificationFlag] =
+    useState<boolean>(false)
+  const featureFlagClient = useFeatureFlagClient()
+  useEffect(() => {
+    const isFlagEnabled = async () => {
+      const ffEnabled = await featureFlagClient.getValue(
+        `isServicePortalNotificationsPageEnabled`,
+        false,
+      )
+      if (ffEnabled) {
+        setEnableNotificationFlag(ffEnabled as boolean)
+      }
+    }
+    isFlagEnabled()
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [])
 
   return (
     <div className={styles.placeholder}>
@@ -84,61 +96,77 @@ export const Header = ({ position, sideMenuOpen, setSideMenuOpen }: Props) => {
                       flexWrap="nowrap"
                       marginLeft={[1, 1, 2]}
                     >
+                      {user && <UserLanguageSwitcher user={user} />}
                       <Hidden below="md">
                         <Box marginRight={[1, 1, 2]} position="relative">
-                          <Link to={DocumentsPaths.ElectronicDocumentsRoot}>
+                          <LinkResolver
+                            href={DocumentsPaths.ElectronicDocumentsRoot}
+                          >
                             <Button
-                              variant="utility"
-                              colorScheme="white"
-                              size="small"
                               icon="mail"
                               iconType="outline"
+                              colorScheme="white"
+                              size="small"
                               type="span"
+                              variant="utility"
                               unfocusable
-                            >
-                              {!isMobile && formatMessage(m.documents)}
-                            </Button>
-                          </Link>
-                          <Box
-                            borderRadius="circle"
-                            className={cn(styles.badge[badgeActive])}
-                          />
+                            />
+                            <span className={helperStyles.srOnly}>
+                              {formatMessage(m.openDocuments)}
+                            </span>
+                          </LinkResolver>
                         </Box>
                       </Hidden>
 
-                      {user && <UserLanguageSwitcher user={user} />}
-                      {/* Display X icon instead of dots if open in mobile*/}
+                      {enableNotificationFlag && (
+                        <NotificationButton
+                          setMenuState={(val: MenuTypes) => setMenuOpen(val)}
+                          showMenu={menuOpen === 'notifications'}
+                        />
+                      )}
 
-                      <Box marginRight={[1, 1, 2]}>
+                      <Box className={styles.overview} marginRight={[1, 1, 2]}>
                         <Button
                           variant="utility"
                           colorScheme="white"
-                          icon={sideMenuOpen && isMobile ? 'close' : 'dots'}
+                          icon={
+                            menuOpen === 'side' && isMobile ? 'close' : 'dots'
+                          }
                           onClick={() => {
-                            sideMenuOpen && isMobile
-                              ? setSideMenuOpen(false)
-                              : setSideMenuOpen(true)
-                            setUserMenuOpen(false)
+                            menuOpen === 'side' && isMobile
+                              ? setMenuOpen(undefined)
+                              : setMenuOpen('side')
                           }}
                           ref={ref}
                         >
-                          {formatMessage(m.overview)}
+                          <Hidden below="sm">
+                            {formatMessage(m.overview)}
+                          </Hidden>
                         </Button>
                       </Box>
 
                       <Sidemenu
-                        setSideMenuOpen={(set: boolean) => setSideMenuOpen(set)}
-                        sideMenuOpen={sideMenuOpen}
+                        setSideMenuOpen={(set: boolean) =>
+                          setMenuOpen(set ? 'side' : undefined)
+                        }
+                        sideMenuOpen={menuOpen === 'side'}
                         rightPosition={
                           ref.current?.getBoundingClientRect().right
                         }
                       />
 
-                      {/* Display X button instead if open in mobile*/}
                       <UserMenu
-                        setUserMenuOpen={closeUserMenu}
+                        setUserMenuOpen={(set: boolean) =>
+                          setMenuOpen(
+                            set
+                              ? 'user'
+                              : menuOpen === 'user'
+                              ? undefined
+                              : menuOpen,
+                          )
+                        }
                         showLanguageSwitcher={false}
-                        userMenuOpen={userMenuOpen}
+                        userMenuOpen={menuOpen === 'user'}
                       />
                     </Box>
                   </Hidden>

@@ -1,4 +1,3 @@
-import { coreErrorMessages } from '@island.is/application/core'
 import {
   ApplicationWithAttachments as Application,
   ApplicationStatus,

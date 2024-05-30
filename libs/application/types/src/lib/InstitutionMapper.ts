@@ -251,4 +251,28 @@ export const institutionMapper = {
     nationalId: InstitutionNationalIds.HASKOLARADUNEYTI,
     slug: InstitutionTypes.HASKOLARADUNEYTI,
   },
+  [ApplicationTypes.DEREGISTER_MACHINE]: {
+    nationalId: InstitutionNationalIds.VINNUEFTIRLITID,
+    slug: InstitutionTypes.VINNUEFTIRLITID,
+  },
+  [ApplicationTypes.GRINDAVIK_HOUSING_BUYOUT]: {
+    nationalId: InstitutionNationalIds.SYSLUMENN,
+    slug: InstitutionTypes.SYSLUMENN,
+  },
+  [ApplicationTypes.REQUEST_INSPECTION_FOR_MACHINE]: {
+    nationalId: InstitutionNationalIds.VINNUEFTIRLITID,
+    slug: InstitutionTypes.VINNUEFTIRLITID,
+  },
+  [ApplicationTypes.OFFICIAL_JOURNAL_OF_ICELAND]: {
+    nationalId: InstitutionNationalIds.DOMSMALA_RADUNEYTID,
+    slug: InstitutionTypes.DOMSMALARADUNEYTID,
+  },
+  [ApplicationTypes.HEALTH_INSURANCE_DECLARATION]: {
+    nationalId: InstitutionNationalIds.SJUKRATRYGGINGAR_ISLANDS,
+    slug: InstitutionTypes.SJUKRATRYGGINGAR_ISLANDS,
+  },
+  [ApplicationTypes.STREET_REGISTRATION]: {
+    nationalId: InstitutionNationalIds.VINNUEFTIRLITID,
+    slug: InstitutionTypes.VINNUEFTIRLITID,
+  },
 }

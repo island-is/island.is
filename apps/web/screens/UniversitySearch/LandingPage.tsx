@@ -1,4 +1,4 @@
-import { useState } from 'react'
+import { useEffect, useState } from 'react'
 import cn from 'classnames'
 import { useRouter } from 'next/router'
 
@@ -7,15 +7,17 @@ import {
   AccordionItem,
   Box,
   GridColumn,
+  GridContainer,
+  GridRow,
   Hidden,
   Icon,
   Input,
   LinkV2,
   Text,
 } from '@island.is/island-ui/core'
+import { haskolanamTrackSearchQuery } from '@island.is/plausible'
 import {
   getThemeConfig,
-  NewsCard,
   OrganizationWrapper,
   SliceMachine,
 } from '@island.is/web/components'
@@ -32,11 +34,7 @@ import { withMainLayout } from '@island.is/web/layouts/main'
 import { CustomNextError } from '@island.is/web/units/errors'
 
 import { Screen } from '../../types'
-import {
-  GET_NAMESPACE_QUERY,
-  GET_ORGANIZATION_PAGE_QUERY,
-  GET_ORGANIZATION_QUERY,
-} from '../queries'
+import { GET_NAMESPACE_QUERY, GET_ORGANIZATION_PAGE_QUERY } from '../queries'
 import { GET_UNIVERSITY_GATEWAY_UNIVERSITIES } from '../queries/UniversityGateway'
 import * as styles from './UniversitySearch.css'
 
@@ -49,14 +47,29 @@ interface LandingPageProps {
 }
 const LandingPage: Screen<LandingPageProps> = ({
   organizationPage,
-  organization,
   namespace,
   universities,
+  locale,
 }) => {
   const n = useNamespace(namespace)
   const router = useRouter()
   const { linkResolver } = useLinkResolver()
+  const [sortedUniversities, setSortedUniversities] = useState<
+    UniversityGatewayUniversity[]
+  >([])
 
+  useEffect(() => {
+    const newArray = [...universities]
+    newArray.sort((x, y) => {
+      const titleX =
+        locale === 'is' ? x.contentfulTitle || '' : x.contentfulTitleEn || ''
+      const titleY =
+        locale === 'is' ? y.contentfulTitle || '' : y.contentfulTitleEn || ''
+      return titleX.localeCompare(titleY, locale)
+    })
+
+    setSortedUniversities(newArray)
+  }, [universities, locale])
   const [searchTerm, setSearchTerm] = useState('')
 
   // eslint-disable-next-line @typescript-eslint/ban-ts-comment
@@ -73,6 +86,25 @@ const LandingPage: Screen<LandingPageProps> = ({
     })) ?? []
   const routeToSearch = () => {
     router.push(`${linkResolver('universitysearch').href}?search=${searchTerm}`)
+  }
+
+  const renderFirstSlice = (): React.ReactNode | null => {
+    const slice = organizationPage?.slices?.[0]
+    if (!slice) return null
+    return (
+      <Box>
+        <SliceMachine
+          key={slice.id}
+          slice={slice}
+          // eslint-disable-next-line @typescript-eslint/ban-ts-comment
+          // @ts-ignore make web strict
+          namespace={namespace}
+          slug={organizationPage.slug}
+          fullWidth={false}
+          marginBottom={5}
+        />
+      </Box>
+    )
   }
 
   return (
@@ -101,11 +133,9 @@ const LandingPage: Screen<LandingPageProps> = ({
                   <Box width="full" className={cn(styles.courseListContainer)}>
                     <Box className={cn(styles.courseListContentContainer)}>
                       <Text variant="eyebrow" color="blueberry600">
-                        {' '}
-                        {/* TODO Translations */}
-                        Háskólar
+                        {n('universities', 'Háskólar')}
                       </Text>
-                      {universities.map((university) => {
+                      {sortedUniversities.map((university) => {
                         return (
                           <Box
                             className={cn(styles.courseListItems)}
@@ -119,11 +149,16 @@ const LandingPage: Screen<LandingPageProps> = ({
                             </Box>
                             <LinkV2
                               href={
-                                university.contentfulLink?.toString() || '/'
+                                locale === 'is'
+                                  ? university.contentfulLink?.toString() || '/'
+                                  : university.contentfulLinkEn?.toString() ||
+                                    '/'
                               }
                             >
                               <Text color="blueberry600">
-                                {university.contentfulTitle}
+                                {locale === 'is'
+                                  ? university.contentfulTitle || ''
+                                  : university.contentfulTitleEn || ''}
                               </Text>
                             </LinkV2>
                           </Box>
@@ -142,11 +177,9 @@ const LandingPage: Screen<LandingPageProps> = ({
                 className={cn(styles.courseListContentContainer)}
               >
                 <Text variant="eyebrow" color="blueberry600">
-                  {' '}
-                  {/* TODO Translations */}
                   {n('universities', 'Háskólar')}
                 </Text>
-                {universities.map((university) => {
+                {sortedUniversities.map((university) => {
                   return (
                     <Box
                       className={cn(styles.courseListItems)}
@@ -159,10 +192,16 @@ const LandingPage: Screen<LandingPageProps> = ({
                         />
                       </Box>
                       <LinkV2
-                        href={university.contentfulLink?.toString() || '/'}
+                        href={
+                          locale === 'is'
+                            ? university.contentfulLink?.toString() || '/'
+                            : university.contentfulLinkEn?.toString() || '/'
+                        }
                       >
                         <Text color="blueberry600">
-                          {university.contentfulTitle}
+                          {locale === 'is'
+                            ? university.contentfulTitle || ''
+                            : university.contentfulTitleEn || ''}
                         </Text>
                       </LinkV2>
                     </Box>
@@ -180,7 +219,66 @@ const LandingPage: Screen<LandingPageProps> = ({
           display="flex"
           flexDirection={'column'}
         >
+          {renderFirstSlice()}
+          <GridContainer>
+            <GridRow>
+              <GridColumn
+                span={['9/9', '9/9', '7/9']}
+                offset={['0', '0', '1/9']}
+              >
+                <Box>
+                  <Text variant="h3" paddingBottom={1}>
+                    {n('landingPageIntroTitle', 'Finndu þitt nám hér')}
+                  </Text>
+                  <Text variant="default">
+                    {n(
+                      'landingPageIntroSubTitle',
+                      'Leitaðu upplýsinga um háskólanám á Íslandi.',
+                    )}
+                  </Text>
+                </Box>
+              </GridColumn>
+            </GridRow>
+          </GridContainer>
+          <GridContainer>
+            <GridRow>
+              <GridColumn
+                span={['9/9', '9/9', '7/9']}
+                offset={['0', '0', '1/9']}
+              >
+                <Input
+                  placeholder={n('searchPrograms', 'Leit í háskólanámi')}
+                  id="searchuniversity"
+                  name="filterInput"
+                  size="md"
+                  value={searchTerm}
+                  className={cn(styles.searchInput)}
+                  backgroundColor="blue"
+                  onChange={(e) => {
+                    setSearchTerm(e.target.value)
+                  }}
+                  onKeyDown={(k) => {
+                    if (k.code === 'Enter') {
+                      haskolanamTrackSearchQuery(searchTerm)
+                      routeToSearch()
+                    }
+                  }}
+                />
+                <button
+                  aria-label="Search"
+                  className={cn(styles.searchIcon)}
+                  onClick={() => {
+                    haskolanamTrackSearchQuery(searchTerm)
+                    routeToSearch()
+                  }}
+                >
+                  <Icon size="large" icon="search" color="blue400" />
+                </button>
+              </GridColumn>
+            </GridRow>
+          </GridContainer>
           {organizationPage?.slices?.map((slice, index) => {
+            if (index === 0) return null
             return (
               <Box key={index}>
                 <SliceMachine
@@ -201,55 +299,6 @@ const LandingPage: Screen<LandingPageProps> = ({
               </Box>
             )
           })}
-          <GridColumn
-            span={['9/9', '9/9', '11/12']}
-            offset={['0', '0', '1/12']}
-          >
-            <Input
-              placeholder={n('searchPrograms', 'Leit í háskólanámi')}
-              id="searchuniversity"
-              name="filterInput"
-              size="md"
-              value={searchTerm}
-              className={cn(styles.searchInput)}
-              backgroundColor="blue"
-              onChange={(e) => {
-                setSearchTerm(e.target.value)
-              }}
-              onKeyDown={(k) => {
-                if (k.code === 'Enter') {
-                  routeToSearch()
-                }
-              }}
-            />
-            <button
-              aria-label="Search"
-              className={cn(styles.searchIcon)}
-              onClick={() => routeToSearch()}
-            >
-              <Icon size="large" icon="search" color="blue400" />
-            </button>
-          </GridColumn>
-          <GridColumn
-            span={['9/9', '9/9', '11/12']}
-            offset={['0', '0', '1/12']}
-          >
-            <NewsCard
-              title={n('whatToLearn', 'Veistu hvað þú vilt læra?')}
-              readMoreText={`${n(
-                'applyToUniversityProgram',
-                'Sækja um í Háskóla',
-              )}`}
-              introduction={n(
-                'straightToApplying',
-                'Ef þú hefur ákveðið hvaða námsleið þú stefnir á í háskóla þá geturðu farið beint í umsóknarferlið',
-              )}
-              image={{
-                url: 'https://images.ctfassets.net/8k0h54kbe6bj/442DRqHvfQcYnuffRbnbHD/5d27a2e0a399aef064d5b3702821ff0b/woman_in_chair.png',
-              }}
-              href={''}
-            />
-          </GridColumn>
         </Box>
       }
     >
@@ -279,23 +328,11 @@ LandingPage.getProps = async ({ apolloClient, locale }) => {
     {
       data: { getOrganizationPage },
     },
-    {
-      data: { getOrganization },
-    },
     namespace,
     universities,
   ] = await Promise.all([
     apolloClient.query<Query, QueryGetOrganizationPageArgs>({
       query: GET_ORGANIZATION_PAGE_QUERY,
-      variables: {
-        input: {
-          slug: locale === 'is' ? 'haskolanam' : 'university-studies',
-          lang: locale as ContentLanguage,
-        },
-      },
-    }),
-    apolloClient.query<Query, QueryGetOrganizationPageArgs>({
-      query: GET_ORGANIZATION_QUERY,
       variables: {
         input: {
           slug: locale === 'is' ? 'haskolanam' : 'university-studies',
@@ -323,22 +360,23 @@ LandingPage.getProps = async ({ apolloClient, locale }) => {
     }),
   ])
 
-  if (!getOrganizationPage && !getOrganization?.hasALandingPage) {
+  if (!getOrganizationPage) {
     throw new CustomNextError(404, 'Page not found')
   }
 
   return {
     organizationPage: getOrganizationPage,
-    organization: getOrganization,
     namespace,
     universities: universities.data.universityGatewayUniversities,
     locale,
     showSearchInHeader: false,
     ...getThemeConfig(
       getOrganizationPage?.theme ?? 'landing_page',
-      getOrganization ?? getOrganizationPage?.organization,
+      getOrganizationPage?.organization,
     ),
   }
 }
 
-export default withMainLayout(LandingPage, { showFooter: false })
+export default withMainLayout(LandingPage, {
+  showFooter: false,
+})

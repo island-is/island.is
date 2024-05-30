@@ -58,14 +58,7 @@ const HealthCenter = () => {
     )
 
   if (error && !loading) {
-    return (
-      <Problem
-        size="small"
-        noBorder={false}
-        type="internal_service_error"
-        error={error}
-      />
-    )
+    return <Problem error={error} noBorder={false} />
   }
 
   return (

@@ -6,6 +6,7 @@ import {
   buildDividerField,
   buildTextField,
   buildSubSection,
+  buildPhoneField,
 } from '@island.is/application/core'
 import {
   Application,
@@ -14,22 +15,22 @@ import {
   UserProfile,
 } from '../../types/schema'
 import { m } from '../../lib/messages'
-import { B_TEMP } from '../../shared/constants'
-import { isApplicationForCondition } from '../../lib/utils'
+import { B_TEMP, BE } from '../../lib/constants'
 
 export const subSectionTempInfo = buildSubSection({
   id: 'infoStep',
   title: m.informationApplicant,
-  condition: isApplicationForCondition(B_TEMP),
+  condition: (answers) =>
+    answers.applicationFor === B_TEMP || answers.applicationFor === BE,
   children: [
     buildMultiField({
       id: 'info',
-      title: m.informationTitle,
-      space: 1,
+      title: m.informationApplicant,
+      space: 2,
       children: [
         buildKeyValueField({
           label: m.drivingLicenseTypeRequested,
-          value: 'Almenn ökuréttindi - B flokkur (Fólksbifreið)',
+          value: m.applicationForTempLicenseTitle,
         }),
         buildDividerField({
           title: '',
@@ -51,16 +52,24 @@ export const subSectionTempInfo = buildSubSection({
               return ''
             }
 
-            const { streetAddress, city } = address
+            const { streetAddress, postalCode, city } = address
 
-            return `${streetAddress}${city ? ', ' + city : ''}`
+            return `${streetAddress}${
+              city ? ', ' + postalCode + ' ' + city : ''
+            }`
           },
           width: 'half',
+        }),
+        buildPhoneField({
+          id: 'phone',
+          width: 'half',
+          title: m.phoneNumberTitle,
+          defaultValue: (application: Application) =>
+            application.externalData.userProfile.data.mobilePhoneNumber ?? '',
         }),
         buildTextField({
           id: 'email',
           title: m.informationYourEmail,
-          placeholder: 'Netfang',
           width: 'half',
           defaultValue: ({ externalData }: Application) => {
             const data = externalData.userProfile.data as UserProfile
@@ -69,7 +78,6 @@ export const subSectionTempInfo = buildSubSection({
         }),
         buildDividerField({
           title: '',
-          color: 'dark400',
         }),
         buildDescriptionField({
           id: 'drivingInstructorTitle',
@@ -80,7 +88,6 @@ export const subSectionTempInfo = buildSubSection({
         buildSelectField({
           id: 'drivingInstructor',
           title: m.drivingInstructor,
-          disabled: false,
           required: true,
           options: ({
             externalData: {

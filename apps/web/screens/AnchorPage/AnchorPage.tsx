@@ -203,21 +203,7 @@ export const AnchorPage: Screen<AnchorPageProps> = ({
                   />
                 </Box>
                 <Box className="rs_read" paddingTop={[3, 3, 4]}>
-                  {webRichText(
-                    content as SliceType[],
-                    {
-                      renderComponent: {
-                        // eslint-disable-next-line @typescript-eslint/ban-ts-comment
-                        // @ts-ignore make web strict
-                        Form: (form) => (
-                          // eslint-disable-next-line @typescript-eslint/ban-ts-comment
-                          // @ts-ignore make web strict
-                          <Form form={form} namespace={namespace} />
-                        ),
-                      },
-                    },
-                    activeLocale,
-                  )}
+                  {webRichText(content as SliceType[], undefined, activeLocale)}
                 </Box>
               </GridColumn>
             </GridRow>

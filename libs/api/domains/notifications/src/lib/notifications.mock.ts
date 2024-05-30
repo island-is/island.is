@@ -7,7 +7,7 @@ import {
   NotificationsInput,
   NotificationsResponse,
 } from './notifications.model'
-import { RenderedNotificationDtoStatusEnum } from '@island.is/clients/user-notification'
+// import { RenderedNotificationDtoStatusEnum } from '@island.is/clients/user-notification'
 import { Locale } from '@island.is/shared/types'
 import { faker } from '@island.is/shared/mocking'
 
@@ -34,20 +34,20 @@ export function generateMockNotification(user: User | null): Notification {
   const isRead = faker.datatype.boolean()
   const sent = faker.date.past()
   const num = faker.datatype.number(1000)
+  const senderId = faker.datatype.string(10)
 
   return {
     id: num,
     notificationId: uuid,
     metadata: {
       sent,
-      read: isRead ? faker.date.between(sent, new Date()) : undefined,
-      status: isRead
-        ? RenderedNotificationDtoStatusEnum.Read
-        : RenderedNotificationDtoStatusEnum.Unread,
+      read: isRead,
+      // status: isRead
+      //   ? RenderedNotificationDtoStatusEnum.Read
+      //   : RenderedNotificationDtoStatusEnum.Unread,
     },
     sender: {
-      name: faker.company.companyName(),
-      logo: undefined,
+      id: senderId,
     },
     recipient: {
       nationalId: user?.nationalId ?? '0000000000',
@@ -93,10 +93,10 @@ export function mockNotificationsResponse(
   paging?: NotificationsInput,
 ): NotificationsResponse {
   const totalCount = notifications.length
-  const unreadCount = notifications.filter(
-    (notification) =>
-      notification.metadata.status === RenderedNotificationDtoStatusEnum.Unread,
-  ).length
+  const unreadCount = 1 //notifications.filter(
+  //   (notification) =>
+  //     notification.metadata.status === RenderedNotificationDtoStatusEnum.Unread,
+  // ).length
 
   const afterInt = paging?.after ? parseInt(paging?.after) : undefined
   const beforeInt = paging?.before ? parseInt(paging?.before) : undefined
@@ -169,8 +169,7 @@ export function markMockNotificationRead(
     return null
   }
 
-  notification.metadata.read = new Date()
-  notification.metadata.status = RenderedNotificationDtoStatusEnum.Read
+  notification.metadata.read = true
 
   generated.set(key, notifications)
 
