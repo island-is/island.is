@@ -5,7 +5,7 @@ export class CasesResponse {
   id!: string
 
   @ApiProperty({ type: String })
-  caseNumber?: string
+  caseNumber!: string
 
   @ApiProperty({ type: String })
   type!: string
