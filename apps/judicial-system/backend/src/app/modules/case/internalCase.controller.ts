@@ -13,6 +13,7 @@ import type { Logger } from '@island.is/logging'
 import { LOGGER_PROVIDER } from '@island.is/logging'
 
 import { TokenGuard } from '@island.is/judicial-system/auth'
+import { formatNationalId } from '@island.is/judicial-system/formatters'
 import {
   messageEndpoint,
   MessageType,
@@ -25,6 +26,7 @@ import {
 
 import { CaseEvent, EventService } from '../event'
 import { DeliverDto } from './dto/deliver.dto'
+import { InternalCasesDto } from './dto/internalCases.dto'
 import { InternalCreateCaseDto } from './dto/internalCreateCase.dto'
 import { CurrentCase } from './guards/case.decorator'
 import { CaseCompletedGuard } from './guards/caseCompleted.guard'
@@ -68,6 +70,21 @@ export class InternalCaseController {
     return this.internalCaseService.archive()
   }
 
+  @Post('cases/indictments')
+  @ApiOkResponse({
+    type: Case,
+    isArray: true,
+    description: 'Gets all indictment cases',
+  })
+  getIndictmentCases(
+    @Body() internalCasesDto: InternalCasesDto,
+  ): Promise<Case[]> {
+    this.logger.debug('Getting all indictment cases')
+    const nationalId = formatNationalId(internalCasesDto.nationalId)
+
+    return this.internalCaseService.getIndictmentCases(nationalId)
+  }
+
   @UseGuards(CaseExistsGuard)
   @Post(
     `case/:caseId/${messageEndpoint[MessageType.DELIVERY_TO_COURT_PROSECUTOR]}`,
@@ -84,6 +101,27 @@ export class InternalCaseController {
     this.logger.debug(`Delivering the prosecutor for case ${caseId} to court`)
 
     return this.internalCaseService.deliverProsecutorToCourt(
+      theCase,
+      deliverDto.user,
+    )
+  }
+
+  @UseGuards(CaseExistsGuard, new CaseTypeGuard(indictmentCases))
+  @Post(
+    `case/:caseId/${messageEndpoint[MessageType.DELIVERY_TO_COURT_INDICTMENT]}`,
+  )
+  @ApiOkResponse({
+    type: DeliverResponse,
+    description: 'Delivers an indictment to court',
+  })
+  deliverIndictmentToCourt(
+    @Param('caseId') caseId: string,
+    @CurrentCase() theCase: Case,
+    @Body() deliverDto: DeliverDto,
+  ): Promise<DeliverResponse> {
+    this.logger.debug(`Delivering the indictment for case ${caseId} to court`)
+
+    return this.internalCaseService.deliverIndictmentToCourt(
       theCase,
       deliverDto.user,
     )

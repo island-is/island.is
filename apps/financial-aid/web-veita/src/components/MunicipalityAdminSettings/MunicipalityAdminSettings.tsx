@@ -6,12 +6,14 @@ import {
   Button,
   ToastContainer,
   Checkbox,
+  RadioButton,
 } from '@island.is/island-ui/core'
 
 import {
   Aid,
   AidName,
   ApiKeysForMunicipality,
+  ChildrenAid,
   Municipality,
   scrollToId,
 } from '@island.is/financial-aid/shared/lib'
@@ -378,6 +380,50 @@ const MunicipalityAdminSettings = ({ currentMunicipality }: Props) => {
           </Box>
         )
       })}
+
+      <Box marginBottom={[2, 2, 7]} id="childrenAid" className={`contentUp`}>
+        <Text as="h3" variant="h3" marginBottom={[2, 2, 3]} color="dark300">
+          Börn
+        </Text>
+        <Box
+          display="flex"
+          alignItems="center"
+          width="full"
+          columnGap={3}
+          rowGap={3}
+          flexWrap={'wrap'}
+        >
+          <Box flexGrow={1}>
+            <RadioButton
+              name="children-aid-institution"
+              label="Styrkur greiddur til stofnunar"
+              value={ChildrenAid.INSTITUTION}
+              checked={state.childrenAid === ChildrenAid.INSTITUTION}
+              onChange={() => {
+                setState({ ...state, childrenAid: ChildrenAid.INSTITUTION })
+              }}
+              backgroundColor="blue"
+              large
+            />
+          </Box>
+          <Box flexGrow={1}>
+            <RadioButton
+              name="children-aid-applicant"
+              label="Styrkur greiddur til umsækjanda"
+              value={ChildrenAid.APPLICANT}
+              checked={state.childrenAid === ChildrenAid.APPLICANT}
+              onChange={() => {
+                setState({
+                  ...state,
+                  childrenAid: ChildrenAid.APPLICANT,
+                })
+              }}
+              backgroundColor="blue"
+              large
+            />
+          </Box>
+        </Box>
+      </Box>
 
       <Box display="flex" justifyContent="flexEnd">
         <Button loading={loading} onClick={submit} icon="checkmark">

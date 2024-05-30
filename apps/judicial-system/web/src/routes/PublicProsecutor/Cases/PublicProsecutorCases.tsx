@@ -9,9 +9,11 @@ import {
   PageHeader,
   SharedPageLayout,
 } from '@island.is/judicial-system-web/src/components'
+import { CaseListEntry } from '@island.is/judicial-system-web/src/graphql/schema'
 
 import { useCasesQuery } from '../../Shared/Cases/cases.generated'
 import CasesForReview from '../Tables/CasesForReview'
+import CasesReviewComplete from '../Tables/CasesReviewed'
 import * as styles from '../../Shared/Cases/Cases.css'
 
 export const PublicProsecutorCases: React.FC = () => {
@@ -24,8 +26,25 @@ export const PublicProsecutorCases: React.FC = () => {
 
   const resCases = data?.cases
 
-  const casesForReview = useMemo(() => {
-    return resCases?.filter((c) => c.state && isCompletedCase(c.state)) || []
+  const { casesForReview, reviewedCases } = useMemo(() => {
+    return (resCases || []).reduce(
+      (acc, c) => {
+        if (
+          c.state &&
+          isCompletedCase(c.state) &&
+          !c.indictmentReviewDecision
+        ) {
+          acc.casesForReview.push(c)
+        } else if (c.indictmentReviewDecision) {
+          acc.reviewedCases.push(c)
+        }
+        return acc
+      },
+      { casesForReview: [], reviewedCases: [] } as {
+        casesForReview: CaseListEntry[]
+        reviewedCases: CaseListEntry[]
+      },
+    )
   }, [resCases])
 
   return (
@@ -44,7 +63,10 @@ export const PublicProsecutorCases: React.FC = () => {
           />
         </div>
       ) : (
-        <CasesForReview cases={casesForReview} loading={loading} />
+        <>
+          <CasesForReview cases={casesForReview} loading={loading} />
+          <CasesReviewComplete cases={reviewedCases} loading={loading} />
+        </>
       )}
     </SharedPageLayout>
   )

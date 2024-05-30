@@ -50,11 +50,7 @@ export class ReykjavikUniversityApplicationClient {
           applicationEndDate: program.applicationEndDate || new Date(),
           schoolAnswerDate: undefined, //TODO missing in api
           studentAnswerDate: undefined, //TODO missing in api
-          degreeType: mapStringToEnum(
-            program.degreeType,
-            DegreeType,
-            DegreeType.OTHER,
-          ),
+          degreeType: mapStringToEnum(program.degreeType, DegreeType),
           degreeAbbreviation: program.degreeAbbreviation || '',
           credits: program.credits || 0,
           descriptionIs: program.descriptionIs || '',
@@ -76,16 +72,7 @@ export class ReykjavikUniversityApplicationClient {
           allowThirdLevelQualification: false, //TODO missing in api
           modeOfDelivery:
             program.modeOfDelivery?.map((m) => {
-              // TODO why is this value empty
-              if (!m) {
-                return ModeOfDelivery.UNDEFINED
-              } else {
-                return mapStringToEnum(
-                  m,
-                  ModeOfDelivery,
-                  ModeOfDelivery.UNDEFINED,
-                )
-              }
+              return mapStringToEnum(m, ModeOfDelivery)
             }) || [],
           extraApplicationFields: program.extraApplicationFields?.map(
             (field) => ({

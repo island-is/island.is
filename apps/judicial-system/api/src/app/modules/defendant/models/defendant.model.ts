@@ -62,4 +62,10 @@ export class Defendant {
 
   @Field(() => ServiceRequirement, { nullable: true })
   readonly serviceRequirement?: ServiceRequirement
+
+  @Field(() => String, { nullable: true })
+  readonly verdictViewDate?: string
+
+  @Field(() => String, { nullable: true })
+  readonly verdictAppealDeadline?: string
 }

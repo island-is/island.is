@@ -151,6 +151,7 @@ codemagic.yaml                                                                  
 /libs/api/domains/occupational-licenses-v2/                                                              @island-is/hugsmidjan
 /libs/api/domains/intellectual-properties/                                                               @island-is/hugsmidjan
 /libs/api/domains/official-journal-of-iceland/                                                           @island-is/hugsmidjan
+/libs/api/domains/official-journal-of-iceland-application/                                               @island-is/hugsmidjan
 /libs/api/domains/document-provider/                                                                     @island-is/hugsmidjan @island-is/core
 /libs/api/domains/housing-benefits/                                                                      @island-is/hugsmidjan
 /libs/clients/documents/                                                                                 @island-is/hugsmidjan
@@ -166,7 +167,6 @@ codemagic.yaml                                                                  
 /libs/clients/license-client/                                                                            @island-is/hugsmidjan @island-is/aranja
 /libs/clients/intellectual-properties/                                                                   @island-is/hugsmidjan
 /libs/clients/islykill/                                                                                  @island-is/hugsmidjan
-/libs/clients/national-registry/v1/                                                                      @island-is/hugsmidjan
 /libs/clients/national-registry/v3/                                                                      @island-is/hugsmidjan
 /libs/clients/district-commissioners-licenses/                                                           @island-is/hugsmidjan
 /libs/clients/regulations/                                                                               @island-is/hugsmidjan

@@ -415,6 +415,48 @@ export const newPrimarySchoolMessages: MessageDir = {
       defaultMessage: 'Notkun myndefnis',
       description: 'Use of footage',
     },
+    photography: {
+      id: 'dess.nps.application:different.needs.photography',
+      defaultMessage:
+        'Samþykki vegna myndatöku, myndbandsupptöku og birtingu myndefnis grunnskóla',
+      description:
+        'Consent for photography, video recording and publication of elementary school footage',
+    },
+    photographyDescription: {
+      id: 'dess.nps.application:different.needs.photography.description',
+      defaultMessage:
+        'Þegar kemur að myndatöku og myndbirtingu skal virða sjálfsákvörðunarrétt barna og ungmenna og taka tillit til skoðana og viðhorfa þeirra í samræmi við aldur og þroska.',
+      description:
+        'When it comes to taking pictures and publishing pictures, the right of self-determination of children and young people must be respected and their views and attitudes taken into account in accordance with their age and maturity.',
+    },
+    photographyConsent: {
+      id: 'dess.nps.application:different.needs.photography.consent',
+      defaultMessage:
+        'Er heimilt að taka ljósmyndir/myndbönd af barni þínu í daglegu skólastarfi?',
+      description:
+        'Is it allowed to take photos/videos of your child during daily school activities?',
+    },
+    photoSchoolPublication: {
+      id: 'dess.nps.application:different.needs.photo.school.publication',
+      defaultMessage:
+        'Má birta myndefni á vettvangi skólans svo sem á vefsíðu hans, í fréttabréfi, samfélagsmiðlum og kynningarefni?',
+      description:
+        "Can footage be published on the school's website, in the newsletter, social media and promotional materials?",
+    },
+    photoMediaPublication: {
+      id: 'dess.nps.application:different.needs.photo.media.publication',
+      defaultMessage:
+        'Má birta myndefni hjá þriðja aðila svo sem í fjölmiðlum?',
+      description:
+        'Can footage be published by third parties such as in the media?',
+    },
+    photographyInfo: {
+      id: 'dess.nps.application:different.needs.photography.info',
+      defaultMessage:
+        'Ef myndefni er notað í öðrum tilgangi, eða myndataka er fyrirhuguð í öðrum tilgangi en samþykki nær til, þarf að upplýsa foreldra og afla sérstaks samþykkis.',
+      description:
+        'If footage is used for other purposes, or photography is planned for purposes other than consented for, parents must be informed and special consent obtained.',
+    },
   }),
 
   confirm: defineMessages({
