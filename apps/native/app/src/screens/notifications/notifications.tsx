@@ -233,7 +233,7 @@ export const NotificationsScreen: NavigationFunctionComponent = ({
         title={intl.formatMessage({ id: 'notifications.screenTitle' })}
         onClosePress={() => Navigation.dismissModal(componentId)}
         style={{ marginHorizontal: 16 }}
-        showLoading={loading}
+        showLoading={loading && !!data}
       />
       <SafeAreaView style={{ flex: 1 }} testID={testIDs.SCREEN_NOTIFICATIONS}>
         <ButtonWrapper>
