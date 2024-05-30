@@ -912,6 +912,21 @@ export const parentalLeaveFormMessages = {
       defaultMessage: 'Engar breytingar fundust.',
       description: 'No changes were found.',
     },
+    deletePeriod: {
+      id: 'pl.application:delete.period',
+      defaultMessage: 'Eyða tímabili',
+      description: 'Delete period',
+    },
+    periodPaid: {
+      id: 'pl.application:period.paid',
+      defaultMessage: 'Búið að greiða',
+      description: 'Paid',
+    },
+    periodInProgress: {
+      id: 'pl.application:period.in.progress',
+      defaultMessage: 'Tímabil í gangi, ekki hægt að breyta',
+      description: 'Period in progress, unable to edit',
+    },
     additionalInformationSection: {
       id: 'pl.application:additional.information.section',
       defaultMessage: 'Viðbótarupplýsingar',
@@ -1912,6 +1927,11 @@ export const parentalLeaveFormMessages = {
       id: 'pl.application:review.period',
       defaultMessage: 'Tímabilinu {index} - {ratio}%',
       description: 'Period copy',
+    },
+    vmstPeriod: {
+      id: 'pl.application:review.vmst.period',
+      defaultMessage: 'Greiðslutímabil {index} - {ratio}%',
+      description: 'Payment period {index} - {ratio}%',
     },
     periodActualDob: {
       id: 'pl.application:review.period.actual.dob',

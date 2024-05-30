@@ -43,7 +43,6 @@ type RepeaterProps = {
       fields: Array<object>
       repeaterButtonText: string
       sumField: string
-      fromExternalData?: string
       calcWithShareValue?: boolean
       assetKey?: string
     }
@@ -113,7 +112,7 @@ export const AssetsRepeater: FC<
         acc[elem] = ''
 
         if (elem === 'share') {
-          acc[elem] = '100'
+          acc[elem] = '0'
         }
 
         return acc
@@ -140,6 +139,7 @@ export const AssetsRepeater: FC<
         extData.map((x) => ({
           ...x,
           share: String(x.share),
+          initial: true,
         })),
       )
       setValue(`assets.${assetKey}.hasModified`, true)
@@ -193,6 +193,7 @@ export const AssetsRepeater: FC<
                     field={field}
                     fieldName={fieldName}
                     error={error}
+                    readOnly={repeaterField.initial}
                   />
                 )
               })}
@@ -253,6 +254,7 @@ interface FieldComponentProps {
   fieldIndex: string
   fieldName: string
   error?: string
+  readOnly?: boolean
 }
 
 const FieldComponent = ({
@@ -265,6 +267,7 @@ const FieldComponent = ({
   fieldIndex,
   fieldName,
   error,
+  readOnly,
 }: FieldComponentProps) => {
   const { formatMessage } = useLocale()
 
@@ -280,12 +283,12 @@ const FieldComponent = ({
     placeholder: field.placeholder,
     backgroundColor: field.color ? field.color : 'blue',
     currency: field.currency,
-    readOnly: field.readOnly,
     required: field.required,
     loading: fieldName === loadingFieldName,
-    suffix: '',
+    suffix: field.suffix,
     onChange: () => onAfterChange?.(),
     error: error,
+    readOnly: readOnly,
     ...field,
   }
 
@@ -303,6 +306,7 @@ const FieldComponent = ({
           </Text>
         </GridColumn>
       )
+
     case 'assetNumber':
       if (assetKey === 'assets') {
         content = (
@@ -325,18 +329,20 @@ const FieldComponent = ({
           />
         )
       }
-
       break
+
     case 'share':
       content = (
         <ShareInput
           name={fieldName}
           label={formatMessage(m.propertyShare)}
           onAfterChange={onAfterChange}
+          readOnly={readOnly}
+          hasError={!!error}
         />
       )
-
       break
+
     default:
       content = <InputController {...defaultProps} />
 
@@ -418,10 +424,12 @@ const RealEstateNumberField = ({
         },
       })
     } else {
-      setError(fieldName, {
-        message: formatMessage(m.errorPropertyNumber),
-        type: 'validate',
-      })
+      if (propertyNumber.length !== 0) {
+        setError(fieldName, {
+          message: formatMessage(m.errorPropertyNumber),
+          type: 'validate',
+        })
+      }
     }
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [propertyNumberInput])
@@ -433,6 +441,7 @@ const RealEstateNumberField = ({
       label={formatMessage(m.propertyNumber)}
       defaultValue={propertyNumberInput}
       error={error ? formatMessage(m.errorPropertyNumber) : undefined}
+      placeholder={propertyNumberInput > 0 ? '' : props.field.placeholder}
       {...props}
     />
   )
@@ -503,7 +512,7 @@ const VehicleNumberField = ({
       name={fieldName}
       label={formatMessage(m.propertyNumber)}
       defaultValue={assetNumberInput}
-      error={error ? formatMessage(m.errorPropertyNumber) : undefined}
+      error={error}
       {...props}
     />
   )

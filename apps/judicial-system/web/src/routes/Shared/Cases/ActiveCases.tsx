@@ -326,6 +326,7 @@ const ActiveCases: React.FC<React.PropsWithChildren<Props>> = (props) => {
                         isCourtRole={isDistrictCourtUser(user)}
                         isValidToDateInThePast={c.isValidToDateInThePast}
                         courtDate={c.courtDate}
+                        indictmentRulingDecision={c.indictmentRulingDecision}
                       />
                     </Box>
                     {c.appealState && (

@@ -54,6 +54,7 @@ export {
   indictmentCases,
   restrictionCases,
   investigationCases,
+  IndictmentCaseReviewDecision,
   isIndictmentCase,
   isRestrictionCase,
   isInvestigationCase,
@@ -64,6 +65,7 @@ export {
   completedIndictmentCaseStates,
   completedCaseStates,
   isCompletedCase,
+  hasIndictmentCaseBeenSubmittedToCourt,
   getStatementDeadline,
   prosecutorCanSelectDefenderForInvestigationCase,
   isIndictmentCaseState,
@@ -75,7 +77,6 @@ export type {
   CrimeScene,
   CrimeSceneMap,
   IndictmentSubtypeMap,
-  IndictmentConfirmation,
 } from './lib/case'
 
 export {

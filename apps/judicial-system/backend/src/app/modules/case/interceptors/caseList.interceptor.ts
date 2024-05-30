@@ -57,6 +57,8 @@ export class CaseListInterceptor implements NestInterceptor {
                 theCase.explanatoryComments,
               )?.comment,
             indictmentReviewer: theCase.indictmentReviewer,
+            indictmentReviewDecision: theCase.indictmentReviewDecision,
+            indictmentRulingDecision: theCase.indictmentRulingDecision,
           }
         }),
       ),

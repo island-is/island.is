@@ -17,10 +17,11 @@ import { openBrowser } from '../lib/rn-island'
 import { cognitoAuthUrl } from '../screens/cognito-auth/config-switcher'
 import { authStore } from '../stores/auth-store'
 import { environmentStore } from '../stores/environment-store'
-import { apolloMKKVStorage } from '../stores/mkkv'
+import { createMMKVStorage } from '../stores/mmkv'
 import { offlineStore } from '../stores/offline-store'
 import { MainBottomTabs } from '../utils/component-registry'
-import { Alert } from 'react-native'
+
+const apolloMMKVStorage = createMMKVStorage({ withEncryption: true })
 
 const connectivityLink = new ApolloLink((operation, forward) => {
   return forward(operation).map((response) => {
@@ -153,6 +154,19 @@ const cache = new InMemoryCache({
     }
   },
   typePolicies: {
+    Query: {
+      fields: {
+        userNotifications: {
+          merge(existing, incoming) {
+            return {
+              ...existing,
+              ...incoming,
+              data: incoming.data || existing.data,
+            }
+          },
+        },
+      },
+    },
     Document: {
       fields: {
         archived: {
@@ -195,7 +209,7 @@ export const getApolloClient = () => {
 export const initializeApolloClient = async () => {
   await persistCache({
     cache,
-    storage: new MMKVStorageWrapper(apolloMKKVStorage),
+    storage: new MMKVStorageWrapper(apolloMMKVStorage),
   })
 
   apolloClient = new ApolloClient({

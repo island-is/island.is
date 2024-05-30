@@ -15,6 +15,7 @@ import {
   isInvestigationCase,
   isProsecutionUser,
   isRestrictionCase,
+  isTrafficViolationCase,
 } from '@island.is/judicial-system/types'
 import { core, sections } from '@island.is/judicial-system-web/messages'
 import { RouteSection } from '@island.is/judicial-system-web/src/components/PageLayout/PageLayout'
@@ -30,10 +31,7 @@ import {
 import { TempCase as Case } from '@island.is/judicial-system-web/src/types'
 
 import { stepValidations, stepValidationsType } from '../../formHelper'
-import {
-  isTrafficViolationIndictment,
-  shouldUseAppealWithdrawnRoutes,
-} from '../../stepHelper'
+import { shouldUseAppealWithdrawnRoutes } from '../../stepHelper'
 
 const validateFormStepper = (
   isActiveSubSectionValid: boolean,
@@ -401,13 +399,15 @@ const useSections = (
     const { id, type, state } = workingCase
     const caseHasBeenReceivedByCourt =
       state === CaseState.RECEIVED || state === CaseState.MAIN_HEARING
-    const isTrafficViolation = isTrafficViolationIndictment(workingCase)
+    const isTrafficViolation = isTrafficViolationCase(workingCase)
 
     return {
       name: formatMessage(sections.indictmentCaseProsecutorSection.title),
       isActive:
         isProsecutionUser(user) &&
         isIndictmentCase(type) &&
+        state !== CaseState.RECEIVED &&
+        state !== CaseState.MAIN_HEARING &&
         !isCompletedCase(state),
       // Prosecutor can only view the overview when case has been received by court
       children: caseHasBeenReceivedByCourt
@@ -899,8 +899,10 @@ const useSections = (
     return {
       name: formatMessage(sections.indictmentsCourtSection.title),
       isActive:
-        (isDistrictCourtUser(user) || isDefenceUser(user)) &&
-        !isCompletedCase(state),
+        (isProsecutionUser(user) &&
+          (state === CaseState.RECEIVED || state === CaseState.MAIN_HEARING)) ||
+        ((isDistrictCourtUser(user) || isDefenceUser(user)) &&
+          !isCompletedCase(state)),
       children: isDistrictCourtUser(user)
         ? [
             {
@@ -988,6 +990,28 @@ const useSections = (
                       await onNavigationTo(
                         constants.INDICTMENTS_CONCLUSION_ROUTE,
                       )
+                  : undefined,
+            },
+            {
+              name: formatMessage(sections.indictmentsCourtSection.summary),
+              isActive: isActive(constants.INDICTMENTS_SUMMARY_ROUTE),
+              href: `${constants.INDICTMENTS_SUMMARY_ROUTE}/${id}`,
+              onClick:
+                !isActive(constants.INDICTMENTS_SUMMARY_ROUTE) &&
+                validateFormStepper(
+                  isValid,
+                  [
+                    constants.INDICTMENTS_OVERVIEW_ROUTE,
+                    constants.INDICTMENTS_RECEPTION_AND_ASSIGNMENT_ROUTE,
+                    constants.INDICTMENTS_SUBPOENA_ROUTE,
+                    constants.INDICTMENTS_DEFENDER_ROUTE,
+                    constants.INDICTMENTS_CONCLUSION_ROUTE,
+                  ],
+                  workingCase,
+                ) &&
+                onNavigationTo
+                  ? async () =>
+                      await onNavigationTo(constants.INDICTMENTS_SUMMARY_ROUTE)
                   : undefined,
             },
           ]

@@ -1,8 +1,8 @@
 import {
-  buildCheckboxField,
   buildCustomField,
   buildDescriptionField,
   buildDividerField,
+  buildFileUploadField,
   buildKeyValueField,
   buildMultiField,
   buildSection,
@@ -18,7 +18,6 @@ import {
   shouldShowCustomSpouseShare,
   valueToNumber,
 } from '../../lib/utils/helpers'
-import { YES } from '../../lib/constants'
 
 export const heirs = buildSection({
   id: 'heirs',
@@ -64,20 +63,6 @@ export const heirs = buildSection({
             buildDescriptionField({
               id: 'customShare.customSpouseSharePercentage',
               title: '',
-            }),
-            buildCheckboxField({
-              id: 'customShare.hasCustomSpouseSharePercentage',
-              title: '',
-              large: false,
-              backgroundColor: 'white',
-              defaultValue: [],
-              condition: shouldShowCustomSpouseShare,
-              options: [
-                {
-                  value: YES,
-                  label: m.assetsToShareHasCustomSpousePercentage,
-                },
-              ],
             }),
             buildCustomField({
               title: '',
@@ -165,12 +150,48 @@ export const heirs = buildSection({
           title: m.heirAdditionalInfo,
           description: m.heirAdditionalInfoDescription,
           children: [
+            buildDescriptionField({
+              id: 'heirsAdditionalInfoFiles',
+              title: m.info,
+              titleVariant: 'h5',
+              marginBottom: 'smallGutter',
+            }),
             buildTextField({
               id: 'heirsAdditionalInfo',
-              title: m.info,
+              title: '',
               placeholder: m.infoPlaceholder,
               variant: 'textarea',
-              rows: 7,
+              rows: 4,
+              maxLength: 1800,
+            }),
+            buildDescriptionField({
+              id: 'heirsAdditionalInfoFilesPrivateTitle',
+              title: m.fileUploadPrivateTransfer,
+              titleVariant: 'h5',
+              space: 'containerGutter',
+              marginBottom: 'smallGutter',
+            }),
+            buildFileUploadField({
+              id: 'heirsAdditionalInfoPrivateTransferFiles',
+              uploadAccept: '.pdf, .doc, .docx, .jpg, .jpeg, .png, .xls, .xlsx',
+              uploadDescription: m.fileUploadFileTypes,
+              uploadMultiple: false,
+              title: '',
+              uploadHeader: '',
+            }),
+            buildDescriptionField({
+              id: 'heirsAdditionalInfoFilesOtherDocumentsTitle',
+              title: m.fileUploadOtherDocuments,
+              titleVariant: 'h5',
+              space: 'containerGutter',
+              marginBottom: 'smallGutter',
+            }),
+            buildFileUploadField({
+              id: 'heirsAdditionalInfoFilesOtherDocuments',
+              uploadAccept: '.pdf, .doc, .docx, .jpg, .jpeg, .png, .xls, .xlsx',
+              uploadDescription: m.fileUploadFileTypes,
+              title: '',
+              uploadHeader: '',
             }),
           ],
         }),
@@ -182,7 +203,8 @@ export const heirs = buildSection({
       children: [
         buildMultiField({
           id: 'heirsOverview',
-          title: m.overview,
+          title: m.overviewHeirsTitle,
+          description: m.overviewHeirsDescription,
           children: [
             buildDividerField({}),
             buildDescriptionField({
@@ -360,6 +382,36 @@ export const heirs = buildSection({
               label: m.info,
               value: ({ answers }) =>
                 getValueViaPath<string>(answers, 'heirsAdditionalInfo'),
+            }),
+            buildDescriptionField({
+              id: 'heirs_space5',
+              title: '',
+              space: 'gutter',
+            }),
+            buildKeyValueField({
+              label: m.fileUploadPrivateTransfer,
+              value: ({ answers }) => {
+                const file = getValueViaPath<any>(
+                  answers,
+                  'heirsAdditionalInfoPrivateTransferFiles',
+                )?.[0]
+                return file?.name
+              },
+            }),
+            buildDescriptionField({
+              id: 'heirs_space6',
+              title: '',
+              space: 'gutter',
+            }),
+            buildKeyValueField({
+              label: m.fileUploadOtherDocuments,
+              value: ({ answers }) => {
+                const files = getValueViaPath<any>(
+                  answers,
+                  'heirsAdditionalInfoFilesOtherDocuments',
+                )
+                return files.map((file: any) => file.name).join(', ')
+              },
             }),
             buildCustomField({
               title: '',

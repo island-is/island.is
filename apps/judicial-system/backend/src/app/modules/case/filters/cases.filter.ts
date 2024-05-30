@@ -263,7 +263,6 @@ const getDefenceUserCasesQueryFilter = (user: User): WhereOptions => {
 }
 
 export const getCasesQueryFilter = (user: User): WhereOptions => {
-  // TODO: Convert to switch
   if (isProsecutionUser(user)) {
     return getProsecutionUserCasesQueryFilter(user)
   }

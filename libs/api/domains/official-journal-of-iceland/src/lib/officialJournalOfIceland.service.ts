@@ -48,11 +48,11 @@ export class OfficialJournalOfIcelandService {
   }
 
   async advert(params: AdvertQueryParams): Promise<AdvertResponse> {
-    const data = await this.ojoiService.advert(params)
+    const { advert } = await this.ojoiService.advert(params)
     return {
       advert: {
-        ...data,
-        status: mapAdvertStatus(data.status),
+        ...advert,
+        status: mapAdvertStatus(advert.status),
       },
     }
   }

@@ -6,7 +6,7 @@ import {
 } from '@island.is/application/core'
 import { DefaultEvents, Form } from '@island.is/application/types'
 import Logo from '../assets/Logo'
-import { States as ApplicationStates, PLEvents } from '../constants'
+import { States as ApplicationStates } from '../constants'
 import {
   inReviewFormMessages,
   parentalLeaveFormMessages,
@@ -44,7 +44,7 @@ export const EditsRequireAction: Form = buildForm({
                   type: 'reject',
                 },
                 {
-                  event: PLEvents.MODIFY,
+                  event: DefaultEvents.EDIT,
                   name: parentalLeaveFormMessages.reviewScreen.buttonsEdit,
                   type: 'sign',
                 },

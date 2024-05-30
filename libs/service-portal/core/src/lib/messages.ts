@@ -384,6 +384,14 @@ export const m = defineMessages({
     id: 'service.portal:messages',
     defaultMessage: 'Skilaboð',
   },
+  expired: {
+    id: 'service.portal:expired',
+    defaultMessage: 'Útrunnið',
+  },
+  valid: {
+    id: 'service.portal:valid',
+    defaultMessage: 'Í gildi',
+  },
   today: {
     id: 'service.portal:today',
     defaultMessage: 'Í dag',
@@ -1354,6 +1362,10 @@ export const m = defineMessages({
     id: 'service.portal:remove-from-storage',
     defaultMessage: 'Flytja í pósthólf',
   },
+  goToArg: {
+    id: 'service.portal:go-to-arg',
+    defaultMessage: 'Fara til {arg}',
+  },
   openDocumentAriaLabel: {
     id: 'service.portal:open-document',
     defaultMessage: 'Opna {subject}',
@@ -1530,5 +1542,9 @@ export const m = defineMessages({
     id: 'service.portal:no-data-variable-found-detail-variation-masculine',
     defaultMessage:
       'Ef þú telur að þú eigir að vera með skráðann {arg}, vinsamlegast hafðu samband við þjónustuaðila.',
+  },
+  readMoreAbout: {
+    id: 'service.portal:read-more-about',
+    defaultMessage: 'Lesa meira um {arg}',
   },
 })
