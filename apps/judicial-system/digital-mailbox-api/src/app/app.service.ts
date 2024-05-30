@@ -57,11 +57,10 @@ export class AppService {
               ? 'Lokið'
               : 'Í vinnslu',
         },
-        caseNumber: !item.courtCaseNumber
-          ? undefined
-          : language === 'en'
-          ? `Case number ${item.courtCaseNumber}`
-          : `Málsnúmer ${item.courtCaseNumber}`,
+        caseNumber:
+          language === 'en'
+            ? `Case number ${item.courtCaseNumber}`
+            : `Málsnúmer ${item.courtCaseNumber}`,
         type: language === 'en' ? 'Indictment' : 'Ákæra',
       }
     })
@@ -70,8 +69,6 @@ export class AppService {
   private formatCase(res: InternalCaseResponse, lang?: string): CaseResponse {
     const language = lang?.toLowerCase()
     const defendant = res.defendants[0]
-
-    console.log(defendant.name)
 
     return {
       data: {
