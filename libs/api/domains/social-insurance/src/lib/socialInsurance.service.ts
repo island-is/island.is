@@ -30,7 +30,9 @@ export class SocialInsuranceService {
   ) {}
 
   async getPayments(user: User): Promise<Payments | undefined> {
-    const payments = await this.socialInsuranceApi.getPayments(user)
+    const payments = await this.socialInsuranceApi
+      .getPayments(user)
+      .catch(handle404)
 
     if (!payments) {
       return undefined
