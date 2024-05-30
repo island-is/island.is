@@ -772,12 +772,12 @@ export const m = defineMessages({
     description: '',
   },
   realEstateEstimation: {
-    id: 'ir.application:realEstateEstimationOnDeath',
+    id: 'ir.application:realEstateEstimation',
     defaultMessage: 'Fasteignamat samtals á dánardegi',
     description: '',
   },
   realEstateEstimationPrePaid: {
-    id: 'ir.application:realEstateEstimation',
+    id: 'ir.application:realEstateEstimationPrePaid',
     defaultMessage: 'Fasteignamat samtals',
     description: '',
   },
@@ -789,6 +789,11 @@ export const m = defineMessages({
   totalValue: {
     id: 'ir.application:totalValue',
     defaultMessage: 'Verðmæti samtals á dánardegi',
+    description: '',
+  },
+  totalValuePrePaid: {
+    id: 'ir.application:totalValuePrePaid',
+    defaultMessage: 'Verðmæti samtals',
     description: '',
   },
   banksBalance: {
@@ -1473,6 +1478,11 @@ export const m = defineMessages({
   fileUploadOtherDocuments: {
     id: 'ir.application:fileUploadOtherDocuments',
     defaultMessage: 'Önnur fylgigögn',
+    description: '',
+  },
+  fileUploadOtherDocumentsPrePaid: {
+    id: 'ir.application:fileUploadOtherDocumentsPrePaid',
+    defaultMessage: 'Fylgigögn',
     description: '',
   },
   heirShare: {

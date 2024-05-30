@@ -8,8 +8,9 @@ import {
 import { InheritanceReportInfo } from '@island.is/clients/syslumenn'
 import { parsePhoneNumberFromString } from 'libphonenumber-js'
 import { MessageDescriptor } from 'react-intl'
-import { ZodTypeAny } from 'zod'
+import { boolean, ZodTypeAny } from 'zod'
 import { Answers } from '../../types'
+import { ESTATE_INHERITANCE } from '../constants'
 
 export const currencyStringToNumber = (str: string) => {
   if (!str) {
@@ -48,6 +49,37 @@ export const getSpouseFromExternalData = (
     | undefined
 
   return spouse
+}
+
+export const getPrePaidOverviewSectionsToDisplay = (
+  answers: FormValue,
+): {
+  isMoney: boolean
+  isOther: boolean
+  isStocks: boolean
+  isRealEstate: boolean
+} => {
+  if (answers.applicationFor === ESTATE_INHERITANCE) {
+    return {
+      isMoney: true,
+      isOther: true,
+      isStocks: true,
+      isRealEstate: true,
+    }
+  }
+
+  const { money, stocks, other, realEstate } = answers.prepaidInheritance as {
+    money: []
+    stocks: []
+    other: []
+    realEstate: []
+  }
+  return {
+    isMoney: money.length > 0,
+    isOther: other.length > 0,
+    isStocks: stocks.length > 0,
+    isRealEstate: realEstate.length > 0,
+  }
 }
 
 export const getPrePaidTotalValueFromApplication = (

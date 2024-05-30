@@ -18,7 +18,7 @@ export const calculateTotalAssets = (answers: FormValue): number => {
   const stocksTotal =
     getValueViaPath<number>(answers, 'assets.stocks.total') || 0
   const otherAssetsTotal = valueToNumber(
-    getValueViaPath<number>(answers, 'assets.otherAssets.value') || 0,
+    getValueViaPath<number>(answers, 'assets.otherAssets.total') || 0,
   )
   const realEstateTotal =
     getValueViaPath<number>(answers, 'assets.realEstate.total') || 0
