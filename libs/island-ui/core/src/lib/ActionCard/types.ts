@@ -1,19 +1,24 @@
 import type { ButtonSizes, ButtonTypes } from '../Button/types'
 import type { TagVariant } from '../Tag/types'
 import type { Icon as IconType } from '../IconRC/iconMap'
+import type { ProgressMeterVariant } from '../ProgressMeter/types'
+
+export type BackgroundColor = 'white' | 'blue' | 'red'
 
 export type ActionCardProps = {
   date?: string
   heading?: string
   headingVariant?: 'h3' | 'h4'
+  renderHeading?: (headingEl: React.ReactNode) => React.ReactNode
   text?: string
   eyebrow?: string
-  backgroundColor?: 'white' | 'blue' | 'red'
+  backgroundColor?: BackgroundColor
   focused?: boolean
   tag?: {
     label: string
     variant?: TagVariant
     outlined?: boolean
+    renderTag?: (tagEl: React.ReactNode) => React.ReactNode
   }
   cta?: {
     label: string
@@ -26,14 +31,7 @@ export type ActionCardProps = {
     iconType?: 'filled' | 'outline'
     onClick?: () => void
     disabled?: boolean
-  }
-  secondaryCta?: {
-    label: string
-    visible?: boolean
-    size?: ButtonSizes
-    icon?: IconType
-    onClick?: () => void
-    disabled?: boolean
+    fluid?: boolean
   }
   unavailable?: {
     active?: boolean
@@ -41,19 +39,10 @@ export type ActionCardProps = {
     message?: string
   }
   avatar?: boolean
-  deleteButton?: {
-    visible?: boolean
-    onClick?: () => void
-    disabled?: boolean
-    icon?: IconType
-    dialogTitle?: string
-    dialogDescription?: string
-    dialogConfirmLabel?: string
-    dialogCancelLabel?: string
-  }
   progressMeter?: {
     currentProgress: number
     maxProgress: number
     withLabel?: boolean
+    variant?: ProgressMeterVariant
   }
 }
