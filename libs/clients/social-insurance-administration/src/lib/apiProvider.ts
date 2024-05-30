@@ -14,14 +14,22 @@ import {
   PaymentPlanApi,
   PensionCalculatorApi,
 } from '../../gen/fetch'
-import { Api, Scope } from './socialInsuranceAdministrationClient.type'
+import {
+  Api,
+  ApplicationWriteApi,
+  Scope,
+} from './socialInsuranceAdministrationClient.type'
 import { ConfigFactory } from './configFactory'
 import { SocialInsuranceAdministrationClientConfig } from './socialInsuranceAdministrationClient.config'
 
 const apiCollection: Array<{ api: Api; scopes: Array<Scope> }> = [
   {
-    api: ApplicationApi,
+    api: ApplicationWriteApi,
     scopes: ['@tr.is/umsoknir:write'],
+  },
+  {
+    api: ApplicationApi,
+    scopes: ['@tr.is/umsoknir:read'],
   },
   {
     api: ApplicantApi,
