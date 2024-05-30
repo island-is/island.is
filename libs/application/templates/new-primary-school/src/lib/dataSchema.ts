@@ -1,9 +1,9 @@
+import { NO, YES } from '@island.is/application/types'
 import * as kennitala from 'kennitala'
 import { parsePhoneNumberFromString } from 'libphonenumber-js'
 import { z } from 'zod'
-import { RelationOptions } from './constants'
+import { RelationOptions, SiblingRelationOptions } from './constants'
 import { errorMessages } from './messages'
-import { NO, YES } from '@island.is/application/types'
 
 export const dataSchema = z.object({
   approveExternalData: z.boolean().refine((v) => v),
@@ -68,16 +68,34 @@ export const dataSchema = z.object({
           params: errorMessages.nationalId,
         }),
         relation: z.enum([
-          RelationOptions.GRANDPARENTS,
-          RelationOptions.SIBLINGS,
-          RelationOptions.STEP_PARENT,
-          RelationOptions.RELATIVES,
-          RelationOptions.FRIENDS_AND_OTHER,
+          RelationOptions.GRANDPARENT,
+          RelationOptions.SIBLING,
+          RelationOptions.STEPPARENT,
+          RelationOptions.RELATIVE,
+          RelationOptions.FRIEND_OR_OTHER,
         ]),
       }),
     )
     .refine((r) => r === undefined || r.length > 0, {
       params: errorMessages.relativesRequired,
+    }),
+  siblings: z
+    .array(
+      z.object({
+        fullName: z.string().min(1),
+        nationalId: z.string().refine((n) => kennitala.isValid(n), {
+          params: errorMessages.nationalId,
+        }),
+        relation: z.enum([
+          SiblingRelationOptions.SIBLING,
+          SiblingRelationOptions.HALF_SIBLING,
+          SiblingRelationOptions.STEP_SIBLING,
+        ]),
+      }),
+    )
+    // TODO: Skoða betur þegar Reason for transfer er komið inn?
+    .refine((r) => r === undefined || r.length > 0, {
+      params: errorMessages.siblingsRequired,
     }),
   startDate: z.string(),
   photography: z
