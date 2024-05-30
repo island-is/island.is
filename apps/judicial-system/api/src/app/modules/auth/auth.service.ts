@@ -160,7 +160,7 @@ export class AuthService {
         nationalId: string
       }
     } catch (error) {
-      console.error('Token verification failed:', error)
+      this.logger.error('Token verification failed:', error)
       throw error
     }
   }

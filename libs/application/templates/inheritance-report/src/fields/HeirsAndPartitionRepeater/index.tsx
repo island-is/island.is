@@ -122,7 +122,6 @@ export const HeirsAndPartitionRepeater: FC<
 
   const error =
     ((errors as any)?.heirs?.data || (errors as any)?.heirs?.total) ?? []
-  console.log(error)
 
   const handleAddMember = () =>
     append({
@@ -442,6 +441,11 @@ export const HeirsAndPartitionRepeater: FC<
                             onAfterChange={(val) => {
                               updateValues(fieldIndex, val, customFieldIndex)
                             }}
+                            hasError={
+                              error && error[mainIndex]
+                                ? !!error[mainIndex][customField.id]
+                                : false
+                            }
                             errorMessage={
                               error && error[mainIndex]
                                 ? error[mainIndex][customField.id]

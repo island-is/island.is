@@ -28,7 +28,7 @@ const validateDeceasedShare = ({
     deceasedShareEnabled.includes(YES)
   ) {
     const value = valueToNumber(deceasedShare)
-    return value > 0 && value <= 100
+    return value >= 0 && value <= 100
   }
 
   return true
@@ -80,7 +80,7 @@ const assetSchema = ({ withShare }: { withShare?: boolean } = {}) =>
 
               const value = isNaN(num) ? 0 : num
 
-              return value >= 0 && value <= 100
+              return value > 0 && value <= 100
             }
 
             return true
@@ -318,7 +318,7 @@ export const inheritanceReportSchema = z.object({
           .object({
             description: z.string(),
             nationalId: z.string(),
-            assetNumber: z.string().refine((v) => validateDebtBankAccount(v)),
+            assetNumber: z.string(), //.refine((v) => validateDebtBankAccount(v)),
             propertyValuation: z.string(),
           })
           .refine(
@@ -437,7 +437,7 @@ export const inheritanceReportSchema = z.object({
           if (!v) return true
 
           const num = parseInt(v, 10) ?? 0
-          return num > -1 && num < 101
+          return num > 0 && num < 101
         }),
         taxFreeInheritance: z.string(),
         inheritance: z.string(),
@@ -593,15 +593,12 @@ export const inheritanceReportSchema = z.object({
   netPropertyForExchange: z.number(),
   customShare: z
     .object({
-      hasCustomSpouseSharePercentage: z.array(z.enum([YES])).optional(),
-      customSpouseSharePercentage: z.string(),
+      hasCustomSpouseSharePercentage: z.string().optional(),
+      customSpouseSharePercentage: z.string().optional(),
     })
     .refine(
       ({ hasCustomSpouseSharePercentage, customSpouseSharePercentage }) => {
-        if (
-          hasCustomSpouseSharePercentage &&
-          hasCustomSpouseSharePercentage.length > 0
-        ) {
+        if (hasCustomSpouseSharePercentage === YES) {
           const val = valueToNumber(customSpouseSharePercentage)
           return val >= 50 && val <= 100
         }
@@ -614,8 +611,6 @@ export const inheritanceReportSchema = z.object({
       },
     )
     .optional(),
-
-  /* einkaskipti */
   confirmAction: z.array(z.enum([YES])).length(1),
 })
 
