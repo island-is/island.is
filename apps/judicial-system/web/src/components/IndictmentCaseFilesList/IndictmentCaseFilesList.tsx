@@ -6,6 +6,7 @@ import { Box, Text } from '@island.is/island-ui/core'
 import {
   isCompletedCase,
   isDistrictCourtUser,
+  isTrafficViolationCase,
 } from '@island.is/judicial-system/types'
 import {
   FileNotFoundModal,
@@ -19,7 +20,6 @@ import {
 } from '@island.is/judicial-system-web/src/graphql/schema'
 import { TempCase as Case } from '@island.is/judicial-system-web/src/types'
 import { useFileList } from '@island.is/judicial-system-web/src/utils/hooks'
-import { isTrafficViolationIndictment } from '@island.is/judicial-system-web/src/utils/stepHelper'
 
 import { caseFiles } from '../../routes/Prosecutor/Indictments/CaseFiles/CaseFiles.strings'
 import { strings } from './IndictmentCaseFilesList.strings'
@@ -65,8 +65,7 @@ const IndictmentCaseFilesList: React.FC<React.PropsWithChildren<Props>> = (
     caseId: workingCase.id,
   })
 
-  const showTrafficViolationCaseFiles =
-    isTrafficViolationIndictment(workingCase)
+  const showTrafficViolationCaseFiles = isTrafficViolationCase(workingCase)
 
   const cf = workingCase.caseFiles
 
@@ -78,9 +77,6 @@ const IndictmentCaseFilesList: React.FC<React.PropsWithChildren<Props>> = (
   )
   const criminalRecords = cf?.filter(
     (file) => file.category === CaseFileCategory.CRIMINAL_RECORD,
-  )
-  const criminalRecordUpdates = cf?.filter(
-    (file) => file.category === CaseFileCategory.CRIMINAL_RECORD_UPDATE,
   )
   const costBreakdowns = cf?.filter(
     (file) => file.category === CaseFileCategory.COST_BREAKDOWN,
