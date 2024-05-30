@@ -84,11 +84,13 @@ export class DrivingLicenseBookService {
 
   async getStudent({
     nationalId,
+    licenseCategory,
   }: DrivingLicenseBookStudentInput): Promise<DrivingLicenseBookStudentOverview> {
     this.logger.debug(`driving-license-book: Get student with id ${nationalId}`)
 
     return await this.drivingLicenseBookClientApiFactory.getStudent({
       nationalId,
+      licenseCategory,
     })
   }
 

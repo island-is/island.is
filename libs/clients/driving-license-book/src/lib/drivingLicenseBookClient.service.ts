@@ -200,6 +200,7 @@ export class DrivingLicenseBookClientApiFactory {
 
   async getStudent({
     nationalId,
+    licenseCategory,
   }: DrivingLicenseBookStudentInput): Promise<DrivingLicenseBookStudentOverview> {
     const api = await this.create()
     const { data } = await api.apiStudentGetStudentOverviewSsnGet({
@@ -207,7 +208,9 @@ export class DrivingLicenseBookClientApiFactory {
       showInactiveBooks: false,
     })
 
-    const book = data?.books?.[0]
+    const book = licenseCategory
+      ? data?.books?.find((book) => book.licenseCategory === licenseCategory)
+      : data?.books?.[0]
 
     if (!book || !data) {
       this.logger.warn(

@@ -68,6 +68,7 @@ export interface DrivingLicenseBookStudentForTeacher {
 
 export interface DrivingLicenseBookStudentInput {
   nationalId: string
+  licenseCategory?: 'B' | 'BE' | undefined
 }
 
 export interface DrivingLicenseBook {

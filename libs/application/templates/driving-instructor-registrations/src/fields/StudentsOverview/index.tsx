@@ -230,6 +230,7 @@ const StudentsOverview: FC<React.PropsWithChildren<FieldBaseProps>> = ({
           application={application}
           studentNationalId={studentId}
           setShowStudentOverview={setShowStudentOverview}
+          licenseCategory={currentTab}
         />
       )}
     </Box>
