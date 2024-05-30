@@ -90,7 +90,7 @@ export const NotificationsScreen: NavigationFunctionComponent = ({
       onCompleted: (d) => {
         if (d.markAllNotificationsRead?.success) {
           // If all notifications are marked as read, update cache to reflect that
-          data?.userNotifications?.data?.forEach((notification) => {
+          for (const notification of data?.userNotifications?.data || []) {
             client.cache.modify({
               id: client.cache.identify(notification),
               fields: {
@@ -102,7 +102,7 @@ export const NotificationsScreen: NavigationFunctionComponent = ({
                 },
               },
             })
-          })
+          }
         }
       },
     })
