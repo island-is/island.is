@@ -27,7 +27,7 @@ export const assets = buildSection({
           description:
             m.propertiesDescription.defaultMessage +
             ' ' +
-            m.continueWithoutAssests.defaultMessage,
+            m.continueWithoutAssets.defaultMessage,
           children: [
             buildDescriptionField({
               id: 'realEstateTitle',
@@ -53,35 +53,31 @@ export const assets = buildSection({
               {
                 fields: [
                   {
-                    title: m.assetNumber.defaultMessage,
+                    title: m.assetNumber,
                     id: 'assetNumber',
                     placeholder: 'F1234567',
                   },
                   {
-                    title: m.assetAddress.defaultMessage,
+                    title: m.assetAddress,
                     id: 'description',
                     backgroundColor: 'white',
                     readOnly: true,
                   },
                   {
-                    title: m.propertyShare.defaultMessage,
+                    title: m.propertyShare,
                     id: 'share',
                     type: 'number',
-                    defaultValue: '100',
                     suffix: '%',
-                    required: true,
                   },
                   {
-                    title: m.propertyValuation.defaultMessage,
+                    title: m.propertyValuation,
                     id: 'propertyValuation',
-                    required: true,
                     currency: true,
                   },
                 ],
                 assetKey: 'assets',
                 calcWithShareValue: true,
-                repeaterButtonText: m.addRealEstate.defaultMessage,
-                fromExternalData: 'assets',
+                repeaterButtonText: m.addRealEstate,
                 sumField: 'propertyValuation',
               },
             ),
@@ -99,7 +95,7 @@ export const assets = buildSection({
           description:
             m.propertiesDescription.defaultMessage +
             ' ' +
-            m.continueWithoutInnventory.defaultMessage,
+            m.continueWithoutInventory.defaultMessage,
           children: [
             buildDescriptionField({
               id: 'inventoryTitle',
@@ -119,7 +115,8 @@ export const assets = buildSection({
                     ?.inheritanceReportInfo?.cash?.[0]?.description ?? ''
                 )
               },
-              rows: 7,
+              rows: 4,
+              maxLength: 1800,
             }),
             buildTextField({
               id: 'assets.inventory.value',
@@ -254,7 +251,6 @@ export const assets = buildSection({
                   {
                     title: m.gunSerialNumber,
                     id: 'assetNumber',
-                    placeholder: 'VantarHér',
                     required: true,
                   },
                   {
@@ -331,7 +327,7 @@ export const assets = buildSection({
                   {
                     title: m.bankAccountPenaltyInterestRates,
                     id: 'exchangeRateOrInterest',
-                    required: false,
+                    required: true,
                     currency: true,
                   },
                   {
@@ -397,6 +393,7 @@ export const assets = buildSection({
                   {
                     title: m.nationalId,
                     id: 'assetNumber',
+                    type: 'nationalId',
                     format: '######-####',
                   },
                   {
@@ -462,11 +459,13 @@ export const assets = buildSection({
                     title: m.stocksFaceValue,
                     id: 'amount',
                     currency: true,
+                    required: true,
                   },
                   {
                     title: m.stocksRateOfChange,
                     id: 'exchangeRateOrInterest',
                     type: 'number',
+                    required: true,
                   },
                   {
                     title: m.stocksValue,
@@ -515,7 +514,8 @@ export const assets = buildSection({
                     ?.description ?? ''
                 )
               },
-              rows: 7,
+              rows: 4,
+              maxLength: 1800,
             }),
             buildTextField({
               id: 'assets.money.value',

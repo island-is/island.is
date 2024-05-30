@@ -28,9 +28,7 @@ export class DistrictCommissionersLicensesService {
     user: User,
   ): Promise<Array<DistrictCommissionersLicenseInfoDto>> {
     const licenseInfo = await this.apiWithAuth(user)
-      .rettindiFyrirIslandIsGet({
-        kennitala: '0101303019',
-      })
+      .rettindiFyrirIslandIsGet()
       .catch(handle404)
 
     return (

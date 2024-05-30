@@ -38,9 +38,7 @@ export class OfficialJournalOfIcelandResolver {
     name: 'officialJournalOfIcelandAdverts',
   })
   adverts(@Args('input') input: AdvertsInput) {
-    return this.ojoiService.adverts({
-      search: input.search,
-    })
+    return this.ojoiService.adverts(input)
   }
 
   @Query(() => AdvertDepartmentResponse, {

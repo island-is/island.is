@@ -60,7 +60,7 @@ const serializeService: SerializeMethod<HelmService> = async (
       SERVERSIDE_FEATURES_ON: env1.featuresOn.join(','),
       NODE_OPTIONS: `--max-old-space-size=${getScaledValue(
         serviceDef.resources.limits.memory,
-      )} -r dd-trace/init`,
+      )}`,
       LOG_LEVEL: 'info',
     },
     secrets: {},
