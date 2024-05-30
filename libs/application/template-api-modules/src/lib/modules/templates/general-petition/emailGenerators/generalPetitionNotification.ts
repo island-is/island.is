@@ -2,9 +2,7 @@ import { getValueViaPath } from '@island.is/application/core'
 import { EmailTemplateGeneratorProps } from '../../../../types'
 import { SendMailOptions } from 'nodemailer'
 
-interface GeneralPetitionNotificationEmail {
-  (props: EmailTemplateGeneratorProps): SendMailOptions
-}
+type GeneralPetitionNotificationEmail = (props: EmailTemplateGeneratorProps) => SendMailOptions;
 
 export const generalPetitionNotificationEmail: GeneralPetitionNotificationEmail =
   (props) => {
