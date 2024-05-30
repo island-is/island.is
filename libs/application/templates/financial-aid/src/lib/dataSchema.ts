@@ -27,6 +27,8 @@ export const dataSchema = z.object({
       fullName: z.string(),
       nationalId: z.string(),
       school: z.string(),
+      livesWithApplicant: z.boolean(),
+      livesWithBothParents: z.boolean(),
     }),
   ),
   childrenComment: z.string().optional(),
