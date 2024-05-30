@@ -104,10 +104,14 @@ export const getHumanReadableCaseIndictmentRulingDecision = (
   rulingDecision?: CaseIndictmentRulingDecision,
 ) => {
   switch (rulingDecision) {
-    case CaseIndictmentRulingDecision.FINE:
-      return 'Viðurlagaákvæði'
     case CaseIndictmentRulingDecision.RULING:
       return 'Dómur'
+    case CaseIndictmentRulingDecision.FINE:
+      return 'Viðurlagaákvörðun'
+    case CaseIndictmentRulingDecision.DISMISSAL:
+      return 'Frávísun'
+    case CaseIndictmentRulingDecision.CANCELLATION:
+      return 'Niðurfelling máls'
     default:
       return 'Ekki skráð'
   }

@@ -41,8 +41,10 @@ import { strings } from './Conclusion.strings'
 
 type Actions = 'POSTPONE' | 'REDISTRIBUTE' | 'COMPLETE'
 type Decision =
-  | CaseIndictmentRulingDecision.FINE
   | CaseIndictmentRulingDecision.RULING
+  | CaseIndictmentRulingDecision.FINE
+  | CaseIndictmentRulingDecision.DISMISSAL
+  | CaseIndictmentRulingDecision.CANCELLATION
 
 interface Postponement {
   postponedIndefinitely?: boolean
@@ -165,24 +167,51 @@ const Conclusion: React.FC = () => {
   ])
 
   const stepIsValid = () => {
-    if (!selectedAction) {
+    if (!allFilesDoneOrError) {
       return false
     }
 
-    if (selectedAction === 'REDISTRIBUTE') {
-      return uploadFiles.find(
-        (file) => file.category === CaseFileCategory.COURT_RECORD,
-      )
-    } else if (selectedAction === 'POSTPONE') {
-      return (
-        Boolean(
+    switch (selectedAction) {
+      case 'POSTPONE':
+        return Boolean(
           postponement?.postponedIndefinitely
             ? postponement.reason
             : courtDate?.date,
-        ) && allFilesDoneOrError
-      )
-    } else if (selectedAction === 'COMPLETE') {
-      return selectedDecision !== undefined && allFilesDoneOrError
+        )
+      case 'REDISTRIBUTE':
+        return uploadFiles.some(
+          (file) =>
+            file.category === CaseFileCategory.COURT_RECORD &&
+            file.status === 'done',
+        )
+      case 'COMPLETE':
+        switch (selectedDecision) {
+          case CaseIndictmentRulingDecision.RULING:
+          case CaseIndictmentRulingDecision.DISMISSAL:
+            return (
+              uploadFiles.some(
+                (file) =>
+                  file.category === CaseFileCategory.COURT_RECORD &&
+                  file.status === 'done',
+              ) &&
+              uploadFiles.some(
+                (file) =>
+                  file.category === CaseFileCategory.RULING &&
+                  file.status === 'done',
+              )
+            )
+          case CaseIndictmentRulingDecision.FINE:
+          case CaseIndictmentRulingDecision.CANCELLATION:
+            return uploadFiles.some(
+              (file) =>
+                file.category === CaseFileCategory.COURT_RECORD &&
+                file.status === 'done',
+            )
+          default:
+            return false
+        }
+      default:
+        return false
     }
   }
 
@@ -191,7 +220,7 @@ const Conclusion: React.FC = () => {
       workingCase={workingCase}
       isLoading={isLoadingWorkingCase}
       notFound={caseNotFound}
-      isValid={allFilesDoneOrError}
+      isValid={stepIsValid()}
       onNavigationTo={handleNavigationTo}
     >
       <PageHeader title={formatMessage(titles.court.indictments.conclusion)} />
@@ -317,16 +346,48 @@ const Conclusion: React.FC = () => {
                   label={formatMessage(strings.ruling)}
                 />
               </Box>
+              <Box marginBottom={2}>
+                <RadioButton
+                  id="decision-fine"
+                  name="decision"
+                  checked={
+                    selectedDecision === CaseIndictmentRulingDecision.FINE
+                  }
+                  onChange={() => {
+                    setSelectedDecision(CaseIndictmentRulingDecision.FINE)
+                  }}
+                  large
+                  backgroundColor="white"
+                  label={formatMessage(strings.fine)}
+                />
+              </Box>
+              <Box marginBottom={2}>
+                <RadioButton
+                  id="decision-dismissal"
+                  name="decision"
+                  checked={
+                    selectedDecision === CaseIndictmentRulingDecision.DISMISSAL
+                  }
+                  onChange={() => {
+                    setSelectedDecision(CaseIndictmentRulingDecision.DISMISSAL)
+                  }}
+                  large
+                  backgroundColor="white"
+                  label={formatMessage(strings.dismissal)}
+                />
+              </Box>
               <RadioButton
-                id="decision-fine"
+                id="decision-cancellation"
                 name="decision"
-                checked={selectedDecision === CaseIndictmentRulingDecision.FINE}
+                checked={
+                  selectedDecision === CaseIndictmentRulingDecision.CANCELLATION
+                }
                 onChange={() => {
-                  setSelectedDecision(CaseIndictmentRulingDecision.FINE)
+                  setSelectedDecision(CaseIndictmentRulingDecision.CANCELLATION)
                 }}
                 large
                 backgroundColor="white"
-                label={formatMessage(strings.fine)}
+                label={formatMessage(strings.cancellation)}
               />
             </BlueBox>
           </Box>
@@ -335,7 +396,7 @@ const Conclusion: React.FC = () => {
           <Box component="section" marginBottom={5}>
             <SectionHeading
               title={formatMessage(strings.courtRecordTitle)}
-              required={selectedAction === 'REDISTRIBUTE'}
+              required={selectedAction !== 'POSTPONE'}
             />
             <InputFileUpload
               fileList={uploadFiles.filter(
@@ -358,30 +419,39 @@ const Conclusion: React.FC = () => {
             />
           </Box>
         )}
-        {selectedDecision === 'RULING' && (
-          <Box component="section" marginBottom={10}>
-            <SectionHeading title={formatMessage(strings.rulingUploadTitle)} />
-            <InputFileUpload
-              fileList={uploadFiles.filter(
-                (file) => file.category === CaseFileCategory.RULING,
-              )}
-              accept="application/pdf"
-              header={formatMessage(strings.inputFieldLabel)}
-              description={formatMessage(core.uploadBoxDescription, {
-                fileEndings: '.pdf',
-              })}
-              buttonLabel={formatMessage(strings.uploadButtonText)}
-              onChange={(files) => {
-                handleUpload(
-                  addUploadFiles(files, CaseFileCategory.RULING),
-                  updateUploadFile,
-                )
-              }}
-              onRemove={(file) => handleRemove(file, removeUploadFile)}
-              onRetry={(file) => handleRetry(file, updateUploadFile)}
-            />
-          </Box>
-        )}
+        {selectedAction === 'COMPLETE' &&
+          (selectedDecision === CaseIndictmentRulingDecision.RULING ||
+            selectedDecision === CaseIndictmentRulingDecision.DISMISSAL) && (
+            <Box component="section" marginBottom={10}>
+              <SectionHeading
+                title={formatMessage(
+                  selectedDecision === CaseIndictmentRulingDecision.RULING
+                    ? strings.rulingUploadTitle
+                    : strings.dismissalUploadTitle,
+                )}
+                required
+              />
+              <InputFileUpload
+                fileList={uploadFiles.filter(
+                  (file) => file.category === CaseFileCategory.RULING,
+                )}
+                accept="application/pdf"
+                header={formatMessage(strings.inputFieldLabel)}
+                description={formatMessage(core.uploadBoxDescription, {
+                  fileEndings: '.pdf',
+                })}
+                buttonLabel={formatMessage(strings.uploadButtonText)}
+                onChange={(files) => {
+                  handleUpload(
+                    addUploadFiles(files, CaseFileCategory.RULING),
+                    updateUploadFile,
+                  )
+                }}
+                onRemove={(file) => handleRemove(file, removeUploadFile)}
+                onRetry={(file) => handleRetry(file, updateUploadFile)}
+              />
+            </Box>
+          )}
       </FormContentContainer>
       <FormContentContainer isFooter>
         <FormFooter
