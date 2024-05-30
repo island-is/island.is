@@ -3,14 +3,15 @@ import {
   formatBankInfo,
   formatCurrency,
 } from '@island.is/application/ui-components'
-import { m } from '../../lib/messages'
+import { m } from '../../../lib/messages'
 import {
   roundedValueToNumber,
   valueToNumber,
   hasYes,
-} from '../../lib/utils/helpers'
-import { EstateAssets } from '../../types'
+} from '../../../lib/utils/helpers'
+import { EstateAssets } from '../../../types'
 import { RowType, RowItemsType } from './types'
+import { format as formatNationalId } from 'kennitala'
 
 export const getRealEstateDataRow = (answers: FormValue): RowType[] => {
   const values = (answers.assets as unknown as EstateAssets)?.realEstate?.data
@@ -181,7 +182,7 @@ export const getStocksDataRow = (answers: FormValue): RowType[] => {
     const items: RowItemsType = [
       {
         title: m.nationalId,
-        value: item.nationalId ?? '-',
+        value: formatNationalId(item.assetNumber ?? '-'),
       },
       {
         title: m.stocksFaceValue,
@@ -253,10 +254,14 @@ export const getBankAccountsDataRow = (answers: FormValue): RowType[] => {
 export const getOtherAssetsDataRow = (answers: FormValue): RowType[] => {
   const values = (answers.assets as unknown as EstateAssets)?.otherAssets?.data
 
-  const items: RowItemsType = []
-
   const data = (values ?? []).map((item) => {
     const value = roundedValueToNumber(item.value)
+    const items: RowItemsType = [
+      {
+        title: item.info,
+        value: formatCurrency(String(value)),
+      },
+    ]
 
     const deceasedShare = valueToNumber(item.deceasedShare)
 

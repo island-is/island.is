@@ -151,13 +151,13 @@ export interface DistrictCommissionerAgencies {
 }
 
 export interface Person {
-  name: string
+  name?: string
   ssn: string
   phoneNumber?: string
   email?: string
-  homeAddress: string
-  postalCode: string
-  city: string
+  homeAddress?: string
+  postalCode?: string
+  city?: string
   signed: boolean
   type: number
 }

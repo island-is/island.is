@@ -93,6 +93,7 @@ const OJOITemplate: ApplicationTemplate<
         },
       },
       [ApplicationStates.DRAFT]: {
+        entry: 'assignToInstitution',
         meta: {
           name: general.applicationName.defaultMessage,
           status: 'inprogress',
@@ -127,6 +128,11 @@ const OJOITemplate: ApplicationTemplate<
                   type: 'primary',
                 },
               ],
+            },
+            {
+              id: Roles.ASSIGNEE,
+              read: 'all',
+              write: 'all',
             },
           ],
         },
@@ -190,7 +196,6 @@ const OJOITemplate: ApplicationTemplate<
         },
       },
       [ApplicationStates.SUBMITTED]: {
-        entry: 'assignToInstitution',
         meta: {
           name: general.applicationName.defaultMessage,
           status: 'completed',

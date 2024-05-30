@@ -23,6 +23,16 @@
       "options": {
         "command": "graphql-codegen --config libs/application/templates/marriage-conditions/codegen.yml"
       }
+    },
+    "test": {
+      "executor": "@nx/jest:jest",
+      "options": {
+        "jestConfig": "libs/application/templates/marriage-conditions/jest.config.ts",
+        "passWithNoTests": true
+      },
+      "outputs": [
+        "{workspaceRoot}/coverage/libs/application/templates/marriage-conditions"
+      ]
     }
   },
   "tags": ["scope:application-system", "lib:application-system"]
