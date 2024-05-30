@@ -29,6 +29,7 @@ import {
 } from './dto/notification.dto'
 import type { Locale } from '@island.is/shared/types'
 import { mapToContentfulLocale, mapToLocale } from './utils'
+import { ContentfulGraphQLClientService } from '@island.is/clients/contentful-graphql'
 
 const ACCESS_TOKEN = process.env.CONTENTFUL_ACCESS_TOKEN
 const CONTENTFUL_GQL_ENDPOINT =
@@ -58,7 +59,29 @@ export class NotificationsService {
     @Inject(CACHE_MANAGER) private cacheManager: Cache,
     @InjectModel(Notification)
     private readonly notificationModel: typeof Notification,
+    private readonly contentfulGraphQLClientService: ContentfulGraphQLClientService,
   ) {}
+
+  async tempdude (): Promise<any> {
+    // GraphQL query to fetch all templates for the specified locale
+    const contentfulTemplatesQuery = `{
+      hnippTemplateCollection(locale: "${mapToContentfulLocale('en')}") {
+        items {
+          templateId
+          notificationTitle
+          notificationBody
+          notificationDataCopy
+          clickAction
+          clickActionWeb
+          clickActionUrl
+          category
+          args
+        }
+      }
+    }`
+    console.log("contentfulTemplatesQuery", contentfulTemplatesQuery)
+    return await this.contentfulGraphQLClientService.fetchData(contentfulTemplatesQuery)
+  }
 
   async performGraphQLRequest(query: string) {
     try {

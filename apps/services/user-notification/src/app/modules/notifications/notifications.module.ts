@@ -23,7 +23,7 @@ import { Notification } from './notification.model'
 import { NotificationDispatchService } from './notificationDispatch.service'
 import { NotificationsWorkerService } from './notificationsWorker/notificationsWorker.service'
 import { MessageProcessorService } from './messageProcessor.service'
-import { ContentfulClientModule } from '@island.is/clients/contentful-graphql'
+import { ContentfulGraphQLClientModule } from '@island.is/clients/contentful-graphql'
 
 @Module({
   exports: [NotificationsService],
@@ -50,7 +50,8 @@ import { ContentfulClientModule } from '@island.is/clients/contentful-graphql'
     FeatureFlagModule,
     NationalRegistryV3ClientModule,
     AuthDelegationApiClientModule,
-    ContentfulClientModule
+    ContentfulGraphQLClientModule
+    
   ],
   controllers: [NotificationsController, MeNotificationsController],
   providers: [
@@ -71,5 +72,6 @@ import { ContentfulClientModule } from '@island.is/clients/contentful-graphql'
       inject: [UserNotificationsConfig.KEY],
     },
   ],
+  
 })
 export class NotificationsModule {}

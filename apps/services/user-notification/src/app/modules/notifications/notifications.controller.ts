@@ -34,6 +34,15 @@ export class NotificationsController {
     @InjectQueue('notifications') private queue: QueueService,
   ) {}
 
+
+  @Get('/tempdude')
+  @Version('1')
+  async tempdude(
+    @Query('locale') locale?: Locale,
+  ): Promise<any> {
+    return await this.notificationsService.tempdude()
+  }
+
   @Documentation({
     summary: 'Fetches all notification templates',
     includeNoContentResponse: true,

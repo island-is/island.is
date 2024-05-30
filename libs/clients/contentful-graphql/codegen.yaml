@@ -2,14 +2,14 @@ schema:
   - https://graphql.contentful.com/content/v1/spaces/8k0h54kbe6bj/environments/master:
       headers:
         Authorization: Bearer ${CONTENTFUL_ACCESS_TOKEN}
-documents:
-  - 'src/**/*.graphql'
+# documents:
+#   - 'src/**/*.graphql'
 generates:
   libs/clients/contentful-graphql/gen/schema.ts:
     plugins:
       - 'typescript'
       - 'typescript-operations'
-      - 'typescript-graphql-request'
+      # - 'typescript-graphql-request'
     config:
       namingConvention:
         enumValues: keep
@@ -23,4 +23,4 @@ generates:
     plugins:
       - 'typescript'
       - 'typescript-operations'
-      - 'typescript-graphql-request'
+      # - 'typescript-graphql-request'

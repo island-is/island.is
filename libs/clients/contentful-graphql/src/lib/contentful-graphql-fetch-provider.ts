@@ -17,5 +17,5 @@ export const ContentfulGraphQLFetchProvider: Provider<EnhancedFetchAPI> = {
       name: 'clients-contentful-graphql',
       // autoAuth: undefined
     }),
-  inject: [ContentfulGraphQLFetchProviderKey],
+  inject: [],
 }
