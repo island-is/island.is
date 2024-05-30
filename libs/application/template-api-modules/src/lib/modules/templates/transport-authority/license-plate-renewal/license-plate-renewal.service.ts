@@ -26,7 +26,6 @@ export class LicensePlateRenewalService extends BaseTemplateApiService {
     const result = await this.vehiclePlateRenewalClient.getMyPlateOwnerships(
       auth,
     )
-    console.log('getMyPlateOwnerShipList', result)
     // Validate that user has at least 1 plate ownership
     if (!result || !result.length) {
       throw new TemplateApiError(
@@ -95,11 +94,10 @@ export class LicensePlateRenewalService extends BaseTemplateApiService {
     currentUserLocale,
   }: TemplateApiModuleActionProps): Promise<void> {
     const age = info(auth.nationalId).age
-    //only has to pay if under 65
-    console.log('running submit')
     if (age < 65 && application.state === 'draft') {
       return
     }
+
     await this.handlePayment({
       application,
       auth,
@@ -110,7 +108,7 @@ export class LicensePlateRenewalService extends BaseTemplateApiService {
     const regno = answers?.pickPlate?.regno
 
     // Submit the application
-    // await this.vehiclePlateRenewalClient.renewPlateOwnership(auth, regno)
+    await this.vehiclePlateRenewalClient.renewPlateOwnership(auth, regno)
   }
 
   private async handlePayment({

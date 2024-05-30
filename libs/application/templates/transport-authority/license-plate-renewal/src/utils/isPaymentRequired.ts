@@ -3,7 +3,6 @@ import { ApplicationContext } from '@island.is/application/types'
 import { info } from 'kennitala'
 
 export const isPaymentRequired = ({ application }: ApplicationContext) => {
-  return true
   const nationalId = getValueViaPath(
     application.externalData,
     'identity.data.nationalId',
@@ -12,6 +11,7 @@ export const isPaymentRequired = ({ application }: ApplicationContext) => {
   if (!nationalId) {
     return true
   }
+
   const age = info(nationalId).age
-  return age < 64
+  return age < 65
 }

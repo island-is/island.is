@@ -30,7 +30,6 @@ import { AuthDelegationType } from '@island.is/shared/types'
 import { ApiScope } from '@island.is/auth/scopes'
 import { buildPaymentState } from '@island.is/application/utils'
 import { getChargeItemCodes, getExtraData } from '../utils'
-import { info } from 'kennitala'
 import { isPaymentRequired } from '../utils/isPaymentRequired'
 
 const determineMessageFromApplicationAnswers = (application: Application) => {
