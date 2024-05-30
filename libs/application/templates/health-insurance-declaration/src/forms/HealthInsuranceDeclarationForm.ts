@@ -250,7 +250,7 @@ export const HealthInsuranceDeclarationForm: Form = buildForm({
           title: m.application.registerPersons.sectionDescription,
           children: [
             buildCheckboxField({
-              id: 'registerPersonsSpouseCheckboxField',
+              id: 'selectedApplicants.registerPersonsSpouseCheckboxField',
               title: m.application.registerPersons.spousetitle,
               options: ({ externalData }) => getSpouseAsOptions(externalData),
               condition: (answers) => {
@@ -258,12 +258,18 @@ export const HealthInsuranceDeclarationForm: Form = buildForm({
               },
             }),
             buildCheckboxField({
-              id: 'registerPersonsChildrenCheckboxField',
+              id: 'selectedApplicants.registerPersonsChildrenCheckboxField',
               title: m.application.registerPersons.childrenTitle,
               options: ({ externalData }) => getChildrenAsOptions(externalData),
               condition: (answers) => {
                 return answers?.hasChildren as boolean
               },
+            }),
+            buildHiddenInput({
+              id: 'selectedApplicants.isHealthInsured',
+              defaultValue: (
+                application: HealthInsuranceDeclarationApplication,
+              ) => getInsuranceStatus(application.externalData),
             }),
           ],
         }),

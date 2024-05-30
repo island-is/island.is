@@ -21,8 +21,29 @@ export const HealthInsuranceDeclarationSchema = z.object({
     .string()
     .or(z.undefined())
     .refine((v) => !!v),
-  registerPersonsSpouseCheckboxField: z.string().array(),
-  registerPersonsChildrenCheckboxField: z.string().array(),
+  selectedApplicants: z
+    .object({
+      registerPersonsSpouseCheckboxField: z.string().array().optional(),
+      registerPersonsChildrenCheckboxField: z.string().array().optional(),
+      isHealthInsured: z.boolean(),
+    })
+    .superRefine((v, ctx) => {
+      if (
+        (!v.registerPersonsSpouseCheckboxField ||
+          v.registerPersonsSpouseCheckboxField.length < 1) &&
+        (!v.registerPersonsChildrenCheckboxField ||
+          v.registerPersonsChildrenCheckboxField.length < 1) &&
+        !v.isHealthInsured
+      ) {
+        ctx.addIssue({
+          code: z.ZodIssueCode.custom,
+          path: ['registerPersonsChildrenCheckboxField'],
+          params: errors.fields.required,
+        })
+        return false
+      }
+      return true
+    }),
   educationConfirmationFileUploadField: z
     .object({
       name: z.string(),
