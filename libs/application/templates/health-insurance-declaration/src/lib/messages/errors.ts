@@ -17,6 +17,12 @@ export const errors = {
       defaultMessage: 'Upphafs dagsetning má ekki vera eftir loka dagsetningu',
       description: 'Start date after end date error message',
     },
+    noSelectedApplicant: {
+      id: 'hid.application:errors.fields.noSelectedApplicant',
+      defaultMessage:
+        'Að minnsta kosti einn aðlili þarf að vera valin svo hægt sé að sækja um yfirlýsingu',
+      description: 'No selected applicant error message',
+    },
   }),
   submitted: defineMessages({
     externalError: {

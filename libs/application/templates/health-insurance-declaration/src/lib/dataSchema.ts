@@ -38,7 +38,12 @@ export const HealthInsuranceDeclarationSchema = z.object({
         ctx.addIssue({
           code: z.ZodIssueCode.custom,
           path: ['registerPersonsChildrenCheckboxField'],
-          params: errors.fields.required,
+          params: errors.fields.noSelectedApplicant,
+        })
+        ctx.addIssue({
+          code: z.ZodIssueCode.custom,
+          path: ['registerPersonsSpouseCheckboxField'],
+          params: errors.fields.noSelectedApplicant,
         })
         return false
       }
