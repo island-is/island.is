@@ -51,13 +51,12 @@ export const generalPetitionNotificationEmail: GeneralPetitionNotificationEmail 
             align: 'center',
             context: {
               copy:
-                `<span>Lýsing: ${answers.aboutList} </span><br/>` +
-                `<span>Tímabil lista: ${dateFrom} - ${dateTil} </span><br/>` +
-                `<span>Stofnandi lista: ${applicant.fullName} </span><br/>` +
-                `<span>Netfang stofnenda: ${answers.email} </span><br/>` +
-                `<span>Sími notenda: ${answers.phone} </span><br/>` +
-                `<span>Kær kveðja, <br/> Ísland.is</span><br/>`,
-            },
+                `<span>Lýsing: ${answers.aboutList} </span><br/>
+                <span>Tímabil lista: ${dateFrom} - ${dateTil} </span><br/>
+                <span>Stofnandi lista: ${applicant.fullName} </span><br/>
+                <span>Netfang stofnenda: ${answers.email} </span><br/>
+                <span>Sími notenda: ${answers.phone} </span><br/>
+                <span>Kær kveðja, <br/> Ísland.is</span><br/>`,
           },
         ],
       },
