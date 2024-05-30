@@ -287,7 +287,7 @@ export const expandAnswers = (
     netPropertyForExchange: answers.netPropertyForExchange ?? 0,
     customShare: {
       hasCustomSpouseSharePercentage:
-        answers?.customShare?.hasCustomSpouseSharePercentage ?? [],
+        answers?.customShare?.hasCustomSpouseSharePercentage ?? 'No',
       customSpouseSharePercentage:
         answers?.customShare?.customSpouseSharePercentage ?? '50',
     },
