@@ -45,7 +45,7 @@ export class DocumentServiceV2 {
     }
 
     if (!document) {
-      this.logger.error('No document content', {
+      this.logger.warn('No document content', {
         category: LOG_CATEGORY,
         documentId,
       })

@@ -106,9 +106,7 @@ export const getNationalRegistryInfo = (application: Application) => {
     },
     {
       title: 'Maki',
-      content: application.spouseNationalId
-        ? formatNationalId(application.spouseNationalId)
-        : 'Enginn maki',
+      content: application.spouseNationalId ? 'Já' : 'Nei',
     },
     {
       title: 'Aldur',
@@ -133,12 +131,28 @@ export const getChildrenInfo = (application: Application) => {
         content: formatNationalId(child.nationalId),
       },
       {
+        title: 'Aldur',
+        content: calcAge(child.nationalId) + ' ára',
+      },
+      {
         title: 'Skólastofnun',
         content: child.school,
       },
       {
+        title: 'Býr hjá umsækjanda?',
+        content: `${child.livesWithApplicant ? 'Já' : 'Nei'}`,
+      },
+      {
+        title: 'Býr hjá báðum foreldrum?',
+        content: `${child.livesWithBothParents ? 'Já' : 'Nei'}`,
+      },
+      {
         title: '',
-        content: '',
+        content: ` `,
+      },
+      {
+        title: '',
+        content: ` `,
       },
     ]
   })

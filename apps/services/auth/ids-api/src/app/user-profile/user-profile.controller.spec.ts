@@ -1,3 +1,4 @@
+// TODO: Delete this file when shouldAuthIdsApiUseNationalRegistryV3 feature flag is removed
 import * as faker from 'faker'
 import request from 'supertest'
 
@@ -16,6 +17,7 @@ import {
   V2MeApi,
 } from '@island.is/clients/user-profile'
 import { Logger, LOGGER_PROVIDER } from '@island.is/logging'
+import { Features } from '@island.is/nest/feature-flags'
 import {
   createCurrentUser,
   createNationalId,
@@ -104,6 +106,7 @@ describe('UserProfileController', () => {
           nationalIdType: 'person',
           scope: ['@identityserver.api/authentication'],
         }),
+        features: [Features.userProfileClaims],
       })
       server = request(app.getHttpServer())
     })
