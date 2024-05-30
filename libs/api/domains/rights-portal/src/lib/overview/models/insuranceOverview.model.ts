@@ -10,10 +10,10 @@ export class InsuranceOverview {
   explanation?: string
 
   @Field(() => Date, { nullable: true })
-  from?: Date | null
+  from?: Date
 
-  @Field(() => InsuranceStatus)
-  status!: InsuranceStatus
+  @Field(() => InsuranceStatus, { nullable: true })
+  status?: InsuranceStatus
 
   @Field(() => Int, { nullable: true })
   maximumPayment?: number | null
