@@ -7,7 +7,10 @@ import { WorkflowID } from './git-action-status'
 const FULL_REBUILD_NEEDED = 'full_rebuild_needed'
 
 ;(async () => {
-  if (process.env.NX_AFFECTED_ALL === 'true' || process.env.TEST_EVERYTHING === 'true') {
+  if (
+    process.env.NX_AFFECTED_ALL === 'true' ||
+    process.env.TEST_EVERYTHING === 'true'
+  ) {
     console.log(FULL_REBUILD_NEEDED)
     return
   }
