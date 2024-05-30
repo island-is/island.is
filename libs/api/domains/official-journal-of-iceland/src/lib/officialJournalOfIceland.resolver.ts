@@ -25,56 +25,54 @@ import { FeatureFlag } from '@island.is/nest/feature-flags'
 @FeatureFlag(Features.officialJournalOfIceland)
 @Resolver()
 export class OfficialJournalOfIcelandResolver {
-  constructor(private readonly ojService: OfficialJournalOfIcelandService) {}
+  constructor(private readonly ojoiService: OfficialJournalOfIcelandService) {}
 
   @Query(() => AdvertResponse, {
     name: 'officialJournalOfIcelandAdvert',
   })
   advert(@Args('params') params: AdvertQueryParams) {
-    return this.ojService.advert(params)
+    return this.ojoiService.advert(params)
   }
 
   @Query(() => AdvertsResponse, {
     name: 'officialJournalOfIcelandAdverts',
   })
   adverts(@Args('input') input: AdvertsInput) {
-    return this.ojService.adverts({
-      search: input.search,
-    })
+    return this.ojoiService.adverts(input)
   }
 
   @Query(() => AdvertDepartmentResponse, {
     name: 'officialJournalOfIcelandDepartments',
   })
   departments(@Args('params') params: QueryParams) {
-    return this.ojService.departments(params)
+    return this.ojoiService.departments(params)
   }
 
   @Query(() => AdvertTypeResponse, {
     name: 'officialJournalOfIcelandTypes',
   })
   types(@Args('params') params: TypeQueryParams) {
-    return this.ojService.types(params)
+    return this.ojoiService.types(params)
   }
 
   @Query(() => AdvertMainCategoriesResponse, {
     name: 'officialJournalOfIcelandMainCategories',
   })
   mainCategories(@Args('params') params: QueryParams) {
-    return this.ojService.mainCategories(params)
+    return this.ojoiService.mainCategories(params)
   }
 
   @Query(() => AdvertCategoryResponse, {
     name: 'officialJournalOfIcelandCategories',
   })
   categories(@Args('params') params: QueryParams) {
-    return this.ojService.categories(params)
+    return this.ojoiService.categories(params)
   }
 
   @Query(() => AdvertInstitutionsResponse, {
     name: 'officialJournalOfIcelandInstitutions',
   })
   institutions(@Args('params') params: QueryParams) {
-    return this.ojService.institutions(params)
+    return this.ojoiService.institutions(params)
   }
 }

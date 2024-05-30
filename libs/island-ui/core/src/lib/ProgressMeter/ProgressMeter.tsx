@@ -1,10 +1,10 @@
 import * as React from 'react'
 import cn from 'classnames'
+
 import { Box } from '../Box/Box'
 import { Text } from '../Text/Text'
 import * as styles from './ProgressMeter.css'
-
-export type ProgressMeterVariant = 'blue' | 'red' | 'rose' | 'mint'
+import { ProgressMeterVariant } from './types'
 
 type ProgressMeterProps = {
   /**
