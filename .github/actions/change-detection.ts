@@ -29,36 +29,43 @@ export async function findBestGoodRefBranch(
   baseBranch: string,
   workflowId: WorkflowID,
 ): Promise<LastGoodBuild> {
-  const log = app.extend('findBestGoodRefBranch')
-  log(`Starting with head branch ${headBranch} and base branch ${baseBranch}`)
-  const commits = await getCommits(git, headBranch, baseBranch, 'HEAD~1')
-  const builds = await githubApi.getLastGoodBranchBuildRun(
-    headBranch,
-    workflowId,
-    commits,
-  )
-  if (builds)
-    return {
-      sha: builds.head_commit,
-      run_number: builds.run_nr,
-      branch: headBranch,
-      ref: builds.head_commit,
+  return new Promise(async (resolve) => {
+    const log = app.extend('findBestGoodRefBranch')
+    log(`Starting with head branch ${headBranch} and base branch ${baseBranch}`)
+    const commits = await getCommits(git, headBranch, baseBranch, 'HEAD~1')
+    const builds = await githubApi.getLastGoodBranchBuildRun(
+      headBranch,
+      workflowId,
+      commits,
+    )
+    if (builds) {
+      resolve({
+        sha: builds.head_commit,
+        run_number: builds.run_nr,
+        branch: headBranch,
+        ref: builds.head_commit,
+      })
+      return
     }
 
-  const baseCommits = await githubApi.getLastGoodBranchBuildRun(
-    baseBranch,
-    workflowId,
-    commits,
-  )
-  if (baseCommits)
-    return {
-      ref: baseCommits.head_commit,
-      sha: baseCommits.head_commit,
-      run_number: baseCommits.run_nr,
-      branch: baseBranch,
+    const baseCommits = await githubApi.getLastGoodBranchBuildRun(
+      baseBranch,
+      workflowId,
+      commits,
+    )
+    if (baseCommits) {
+      resolve({
+        ref: baseCommits.head_commit,
+        sha: baseCommits.head_commit,
+        run_number: baseCommits.run_nr,
+        branch: baseBranch,
+      })
+      return
     }
 
-  return 'rebuild'
+    resolve('rebuild')
+    return
+  })
 }
 
 /***
@@ -111,9 +118,9 @@ export async function findBestGoodRefPR(
   prBranch: string,
   workflowId: WorkflowID,
 ): Promise<LastGoodBuild> {
-  const log = app.extend('findBestGoodRefPR')
-  log(`Starting with head branch ${headBranch} and base branch ${baseBranch}`)
   return new Promise(async (resolve) => {
+    const log = app.extend('findBestGoodRefPR')
+    log(`Starting with head branch ${headBranch} and base branch ${baseBranch}`)
     const lastCommitSha = await git.lastCommit()
     const prCommits = await getCommits(git, headBranch, baseBranch, 'HEAD')
 
@@ -163,20 +170,18 @@ export async function findBestGoodRefPR(
     }
 
     const baseCommits = await getCommits(git, prBranch, baseBranch, 'HEAD~1')
-    log(`Base commits ${baseCommits.join(' ')}`)
+
     const baseGoodBuilds = await githubApi.getLastGoodBranchBuildRun(
       baseBranch,
       'push',
       baseCommits,
     )
     if (baseGoodBuilds) {
-      log(`Found Base good builds ${JSON.stringify(baseGoodBuilds)}`)
       let affectedComponents = await githubApi.getChangedComponents(
         git,
         lastCommitSha,
         baseGoodBuilds.head_commit,
       )
-      log(`Found affected components ${affectedComponents}`)
       prBuilds.push({
         distance: diffWeight(affectedComponents),
         hash: baseGoodBuilds.head_commit,
@@ -184,13 +189,9 @@ export async function findBestGoodRefPR(
         branch: baseBranch,
         ref: baseGoodBuilds.head_commit,
       })
-      log('stops on push?!?!')
     }
-    log(`pr build ${JSON.stringify(prBuilds)}`)
     prBuilds.sort((a, b) => (a.distance > b.distance ? 1 : -1))
-    log(`sort done`)
     if (prBuilds.length > 0) {
-      log(`return message`)
       resolve({
         sha: prBuilds[0].hash,
         run_number: prBuilds[0].run_nr,
@@ -199,7 +200,7 @@ export async function findBestGoodRefPR(
       })
       return
     }
-    log(`return rebuild`)
     resolve('rebuild')
+    return
   })
 }
