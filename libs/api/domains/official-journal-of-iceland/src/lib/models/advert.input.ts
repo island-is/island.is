@@ -30,10 +30,10 @@ export class AdvertsInput {
   involvedParty?: string[]
 
   @Field(() => Date, { nullable: true })
-  dateFrom?: string
+  dateFrom?: Date
 
   @Field(() => Date, { nullable: true })
-  dateTo?: string
+  dateTo?: Date
 }
 
 @InputType('OfficialJournalOfIcelandTypesInput')
