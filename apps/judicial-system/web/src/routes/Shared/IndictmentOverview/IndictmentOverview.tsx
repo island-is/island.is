@@ -100,7 +100,10 @@ const IndictmentOverview = () => {
           </Box>
         )}
         {workingCase.caseFiles && (
-          <Box component="section" marginBottom={caseIsClosed ? 5 : 10}>
+          <Box
+            component="section"
+            marginBottom={shouldDisplayReviewDecision ? 5 : 10}
+          >
             <IndictmentCaseFilesList workingCase={workingCase} />
           </Box>
         )}
@@ -116,16 +119,15 @@ const IndictmentOverview = () => {
           />
         )}
       </FormContentContainer>
-      {shouldDisplayReviewDecision && (
-        <FormContentContainer isFooter>
-          <FormFooter
-            previousUrl={`${constants.CASES_ROUTE}`}
-            nextButtonText={formatMessage(strings.completeReview)}
-            onNextButtonClick={() => setModalVisible(true)}
-            nextIsDisabled={!isReviewDecisionSelected}
-          />
-        </FormContentContainer>
-      )}
+      <FormContentContainer isFooter>
+        <FormFooter
+          previousUrl={`${constants.CASES_ROUTE}`}
+          hideNextButton={!shouldDisplayReviewDecision}
+          nextButtonText={formatMessage(strings.completeReview)}
+          onNextButtonClick={() => setModalVisible(true)}
+          nextIsDisabled={!isReviewDecisionSelected}
+        />
+      </FormContentContainer>
     </PageLayout>
   )
 }

@@ -21,4 +21,12 @@ export class CreateChildrenInput implements CreateChildren {
   @Allow()
   @Field({ nullable: true })
   readonly school?: string
+
+  @Allow()
+  @Field()
+  readonly livesWithApplicant!: boolean
+
+  @Allow()
+  @Field()
+  readonly livesWithBothParents!: boolean
 }

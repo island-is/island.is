@@ -6,4 +6,7 @@ export class PresignedPost {
 
   @ApiProperty({ type: Object })
   fields!: { [key: string]: string }
+
+  @ApiProperty({ type: String })
+  key!: string
 }
