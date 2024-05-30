@@ -305,7 +305,7 @@ export const findFirstInvalidStep = (steps: string[], theCase: Case) => {
   }
 
   const [key] =
-    stepsToCheck.find(([, validationFn]) => validationFn(theCase)) ?? []
+    stepsToCheck.find(([, validationFn]) => !validationFn(theCase)) ?? []
 
   return key
 }
