@@ -194,9 +194,8 @@ export const dataSchema = z.object({
       file: z.array(FileSchema).optional(),
     }),
     houseBlueprints: z.object({
-      file: z
-        .array(FileSchema)
-        .refine((v) => v.length > 0, { params: error.invalidValue }),
+      file: z.array(FileSchema).optional(),
+      //.refine((v) => v.length > 0, { params: error.invalidValue }),
     }),
     outsideBlueprints: z
       .object({

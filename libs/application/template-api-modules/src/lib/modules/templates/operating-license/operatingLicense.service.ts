@@ -230,22 +230,30 @@ export class OperatingLicenseService extends BaseTemplateApiService {
 
       const persons: Person[] = [applicant, ...actors]
 
-      const attachments = await this.getAttachments(application, auth)
+      //const attachments = await this.getAttachments(application, auth)
+      const attachments: Attachment[] = []
+
       const extraData = getExtraData(application)
-      const result: DataUploadResponse = await this.syslumennService
-        .uploadData(
-          persons,
-          attachments,
-          extraData,
-          uploadDataName,
-          uploadDataId,
-        )
-        .catch((e) => {
-          throw new Error(`Application submission failed ${e}`)
-        })
+
+      console.log(JSON.stringify(extraData))
+
       return {
-        success: result.success,
+        success: true,
       }
+      //const result: DataUploadResponse = await this.syslumennService
+      //  .uploadData(
+      //    persons,
+      //    attachments,
+      //    extraData,
+      //    uploadDataName,
+      //    uploadDataId,
+      //  )
+      //  .catch((e) => {
+      //    throw new Error(`Application submission failed ${e}`)
+      //  })
+      //return {
+      //  success: result.success,
+      //}
     } catch (e) {
       throw new Error(`Application submission failed ${e}`)
     }

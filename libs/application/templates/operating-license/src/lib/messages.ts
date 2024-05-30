@@ -479,6 +479,17 @@ export const m = defineMessages({
     defaultMessage: 'Velja skjöl til að hlaða upp',
     description: 'Some description',
   },
+  // Guarantor screen
+  guarantor: {
+    id: 'ol.application:guarantor',
+    defaultMessage: 'Ábyrgðaraðili',
+    description: 'Title of Guarantor',
+  },
+  guarantorDescription: {
+    id: 'ol.application:guarantorDescription',
+    defaultMessage: 'Vinsamlegast veldu kennitölu ábyrgðaraðila',
+    description: 'Description of Guarantor',
+  },
   // Overview screen
   overview: {
     id: 'ol.application:overview.title',

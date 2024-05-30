@@ -30,6 +30,7 @@ import {
   SyslumadurPaymentCatalogApi,
 } from '../../dataProviders'
 import { fakeDataSection } from './fakeDataSection'
+import { sectionGuarantor } from './sectionGuarantor'
 
 export const getApplication = ({ allowFakeData = false }): Form => {
   return buildForm({
@@ -175,6 +176,11 @@ export const getApplication = ({ allowFakeData = false }): Form => {
             ],
           }),
         ],
+      }),
+      buildSection({
+        id: 'guarantor',
+        title: m.guarantor,
+        children: [sectionGuarantor],
       }),
       buildSection({
         id: 'overview',
