@@ -94,8 +94,10 @@ const PressableListItem = React.memo(
     const { getOrganizationLogoUrl } = useOrganizationsStore()
     const [starred, setStarred] = useState<boolean>(!!item.bookmarked)
     useEffect(() => setStarred(!!item.bookmarked), [item.bookmarked])
+    const theme = useTheme()
     return (
       <PressableHighlight
+        highlightColor={theme.shade.shade400}
         onPress={() =>
           navigateTo(`/inbox/${item.id}`, {
             title: item.senderName,
