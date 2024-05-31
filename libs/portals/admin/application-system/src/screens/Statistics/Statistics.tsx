@@ -1,41 +1,64 @@
 import { m } from '../../lib/messages'
-import { Box, Breadcrumbs, Text } from '@island.is/island-ui/core'
+import {
+  Box,
+  Breadcrumbs,
+  SkeletonLoader,
+  Text,
+  Table as T,
+} from '@island.is/island-ui/core'
 import { useLocale } from '@island.is/localization'
 import { ApplicationSystemPaths } from '../../lib/paths'
 import { ApplicationFilters, MultiChoiceFilter } from '../../types/filters'
 import { StatisticsForm } from '../../components/StatisticsForm/StatisticsForm'
-import {
-  useGetApplicationsQuery,
-  useGetInstitutionApplicationsQuery,
-  useGetOrganizationsQuery,
-} from '../../queries/overview.generated'
-import { on } from 'events'
+import { useGetApplicationStatisticsQuery } from '../../queries/overview.generated'
+import { useState } from 'react'
+import StatisticsTable from '../../components/StatisticsTable/StatisticsTable'
 
 const Statistics = () => {
   const { formatMessage } = useLocale()
+  const [dateInterval, setDateInterval] = useState<
+    ApplicationFilters['period']
+  >({
+    from: undefined,
+    to: undefined,
+  })
+  const [error, setError] = useState<string | null>(null)
 
-  const onReceiveData = () => {
-    // Todo: Recive the data and feed it to the next component
-    // console.log('Data received')
+  const getFormattedDate = (date?: Date) => {
+    if (!date) {
+      return ''
+    }
+
+    const year = date.getFullYear()
+    const month = String(date.getMonth() + 1).padStart(2, '0')
+    const day = String(date.getDate()).padStart(2, '0')
+
+    return `${year}-${month}-${day}`
   }
 
   const onDateChange = (period: ApplicationFilters['period']) => {
-    console.log('Date changed', period)
+    const dateChanging = period.from
+      ? { from: period.from }
+      : period.to
+      ? { to: period.to }
+      : {}
+    setDateInterval({ ...dateInterval, ...dateChanging })
   }
 
-  // const { data, loading } = useGetApplicationsQuery({
-  //   ssr: false,
-  //   variables: { input: { nationalId: '0101302399' } },
-  //   onCompleted: (q) => {
-  //     console.log('Data received', q)
-  //   },
-  // })
-
-  const { data, loading } = useGetOrganizationsQuery({
+  const { data, loading } = useGetApplicationStatisticsQuery({
     ssr: false,
-    variables: {},
+    skip: !dateInterval.from || !dateInterval.to,
+    variables: {
+      input: {
+        startDate: getFormattedDate(dateInterval.from),
+        endDate: getFormattedDate(dateInterval.to),
+      },
+    },
     onCompleted: (q) => {
-      console.log('Data received', q)
+      setError(null)
+    },
+    onError: (e) => {
+      setError(e.message)
     },
   })
 
@@ -54,10 +77,19 @@ const Statistics = () => {
       <Text variant="h3" as="h1" marginBottom={[3, 3, 6]} marginTop={3}>
         {formatMessage(m.statistics)}
       </Text>
-      <StatisticsForm
-        onReceiveData={onReceiveData}
-        onDateChange={onDateChange}
-      />
+      <StatisticsForm onDateChange={onDateChange} />
+      {loading && (
+        <Box marginTop={[3, 3, 6]}>
+          <SkeletonLoader
+            height={60}
+            repeat={10}
+            space={2}
+            borderRadius="large"
+          />
+        </Box>
+      )}
+      <StatisticsTable data={data} />
+      {error && <Box marginTop={[3, 3, 6]}>{error}</Box>}
     </Box>
   )
 }

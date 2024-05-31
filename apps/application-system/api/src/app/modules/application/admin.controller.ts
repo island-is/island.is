@@ -22,6 +22,7 @@ import { BypassDelegation } from './guards/bypass-delegation.decorator'
 import {
   ApplicationAdminPaginatedResponse,
   ApplicationListAdminResponseDto,
+  ApplicationStatistics,
 } from './dto/applicationAdmin.response.dto'
 import { ApplicationAdminSerializer } from './tools/applicationAdmin.serializer'
 
@@ -45,14 +46,37 @@ export class AdminController {
   @Scopes(AdminPortalScope.applicationSystemAdmin)
   @BypassDelegation()
   @Get('admin/applications-statistics')
-  async getCountsByTypeAndStatus(
+  @Documentation({
+    description: 'Get applications statistics',
+    response: {
+      status: 200,
+      type: [ApplicationStatistics],
+    },
+    request: {
+      query: {
+        startDate: {
+          type: 'string',
+          required: true,
+          description: 'Start date for the statistics',
+        },
+        endDate: {
+          type: 'string',
+          required: true,
+          description: 'End date for the statistics',
+        },
+      },
+    },
+  })
+  async getCountByTypeIdAndStatus(
     @Query('startDate') startDate: string,
     @Query('endDate') endDate: string,
   ) {
-    return this.applicationService.getApplicationCountByTypeIdAndStatus(
-      startDate,
-      endDate,
-    )
+    const test =
+      await this.applicationService.getApplicationCountByTypeIdAndStatus(
+        startDate,
+        endDate,
+      )
+    return test
   }
 
   @Scopes(AdminPortalScope.applicationSystemAdmin)
@@ -183,56 +207,4 @@ export class AdminController {
       to,
     )
   }
-
-  // @Scopes(AdminPortalScope.applicationSystemAdmin)
-  // @BypassDelegation()
-  // @Get('admin/statistics')
-  // @UseInterceptors(ApplicationAdminSerializer)
-  // @Documentation({
-  //   description:
-  //     'Get the number of applications by type and state during a period',
-  //   response: {
-  //     status: 200,
-  //     type: [ApplicationListAdminResponseDto],
-  //   },
-  //   request: {
-  //     params: {
-  //       from: {
-  //         type: 'string',
-  //         required: true,
-  //         description: `Starting date of the period`,
-  //       },
-  //       to: {
-  //         type: 'string',
-  //         required: true,
-  //         description: `Ending date of the period`,
-  //       },
-  //     },
-  //     query: {
-  //       status: {
-  //         type: 'string',
-  //         required: false,
-  //         description: 'Status of the application',
-  //       },
-  //       type_id: {
-  //         type: 'string',
-  //         required: false,
-  //         description: 'Type of application',
-  //       },
-  //     },
-  //   },
-  // })
-  // async findApplicationQuantityByType(
-  //   @Param('from') from: string,
-  //   @Param('to') to: string,
-  //   @Query('status') status: string,
-  //   @Query('type_id') type_id: string,
-  // ) {
-  //   return this.applicationService.findApplicationQuantityInAPeriod(
-  //     from,
-  //     to,
-  //     status,
-  //     type_id,
-  //   )
-  // }
 }

@@ -21,6 +21,7 @@ import { AttachmentPresignedUrlInput } from './dto/AttachmentPresignedUrl.input'
 import { DeleteApplicationInput } from './dto/deleteApplication.input'
 import {
   ApplicationApplicationsAdminInput,
+  ApplicationApplicationsAdminStatisticsInput,
   ApplicationApplicationsInstitutionAdminInput,
 } from './application-admin/dto/applications-applications-admin-input'
 
@@ -116,12 +117,12 @@ export class ApplicationService {
 
   async getApplicationCountByTypeIdAndStatus(
     user: User,
-    startDate: string,
-    endDate: string,
+    locale: Locale,
+    input: ApplicationApplicationsAdminStatisticsInput,
   ) {
     return this.applicationApiWithAuth(
       user,
-    ).adminControllerGetCountsByTypeAndStatus(startDate, endDate)
+    ).adminControllerGetCountByTypeIdAndStatus(input)
   }
 
   async update(input: UpdateApplicationInput, auth: Auth, locale: Locale) {

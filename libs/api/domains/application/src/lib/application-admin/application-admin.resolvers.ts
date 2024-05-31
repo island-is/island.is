@@ -11,14 +11,15 @@ import { AdminPortalScope } from '@island.is/auth/scopes'
 import { Scopes } from '@island.is/auth-nest-tools'
 import {
   ApplicationApplicationsAdminInput,
+  ApplicationApplicationsAdminStatisticsInput,
   ApplicationApplicationsInstitutionAdminInput,
 } from './dto/applications-applications-admin-input'
 import {
   ApplicationAdmin,
   ApplicationAdminPaginatedResponse,
+  ApplicationStatistics,
 } from '../application.model'
 import { ApplicationService } from '../application.service'
-import { start } from 'repl'
 
 @UseGuards(IdsUserGuard, ScopesGuard)
 @Resolver(() => ApplicationAdmin)
@@ -49,17 +50,22 @@ export class ApplicationAdminResolver {
     return this.applicationService.findAllInstitutionAdmin(user, locale, input)
   }
 
-  @Query(() => [ApplicationAdmin], { nullable: true })
+  @Query(() => [ApplicationStatistics], { nullable: true })
   @Scopes(AdminPortalScope.applicationSystemAdmin)
   async applicationApplicationsAdminStatistics(
     @CurrentUser() user: User,
-    @Args('startDate') startDate: string,
-    @Args('endDate') endDate: string,
+    @Args('locale', { type: () => String, nullable: true })
+    locale: Locale = 'is',
+    @Args('input')
+    input: ApplicationApplicationsAdminStatisticsInput,
   ) {
-    return this.applicationService.getApplicationCountByTypeIdAndStatus(
-      user,
-      startDate,
-      endDate,
-    )
+    const test =
+      await this.applicationService.getApplicationCountByTypeIdAndStatus(
+        user,
+        'is',
+        input,
+      )
+
+    return test
   }
 }

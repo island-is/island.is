@@ -132,6 +132,30 @@ export class Application {
 }
 
 @ObjectType()
+export class ApplicationStatistics {
+  @Field(() => String)
+  typeid!: string
+
+  @Field(() => Number)
+  count!: number
+
+  @Field(() => Number)
+  draft!: number
+
+  @Field(() => Number)
+  inprogress!: number
+
+  @Field(() => Number)
+  completed!: number
+
+  @Field(() => Number)
+  rejected!: number
+
+  @Field(() => Number)
+  approved!: number
+}
+
+@ObjectType()
 export class ApplicationAdmin {
   @Field(() => ID)
   id!: string
@@ -201,3 +225,9 @@ export class ApplicationPayment {
   @Field()
   paymentUrl!: string
 }
+
+// @ObjectType()
+// export class AplicationStatistics {
+//   @Field(() => String)
+//   data: string
+// }

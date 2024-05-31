@@ -17,11 +17,10 @@ import { log } from 'console'
 import { ApplicationStatus } from '@island.is/application/types'
 
 type Props = {
-  onReceiveData: () => void
   onDateChange: (period: ApplicationFilters['period']) => void
 }
 
-export const StatisticsForm = ({ onReceiveData, onDateChange }: Props) => {
+export const StatisticsForm = ({ onDateChange }: Props) => {
   const { formatMessage } = useLocale()
   const [isMobile, setIsMobile] = useState(false)
   const { width } = useWindowSize()
@@ -48,52 +47,6 @@ export const StatisticsForm = ({ onReceiveData, onDateChange }: Props) => {
       flexDirection={['column', 'column', 'column', 'row']}
     >
       <Box display="flex" flexDirection={['column', 'column', 'row']}>
-        <Select
-          options={[
-            {
-              label: formatMessage(m.tagsAll),
-              value: 'Allar',
-              descriptionTruncated: false,
-              disabled: false,
-            },
-            {
-              label: formatMessage(m.tagsApproved),
-              value: ApplicationStatus.APPROVED,
-              descriptionTruncated: false,
-              disabled: false,
-            },
-            {
-              label: formatMessage(m.tagsRejected),
-              value: ApplicationStatus.REJECTED,
-              descriptionTruncated: false,
-              disabled: false,
-            },
-            {
-              label: formatMessage(m.tagsInProgress),
-              value: ApplicationStatus.IN_PROGRESS,
-              descriptionTruncated: false,
-              disabled: false,
-            },
-            {
-              label: formatMessage(m.tagsDone),
-              value: ApplicationStatus.COMPLETED,
-              descriptionTruncated: false,
-              disabled: false,
-            },
-            {
-              label: formatMessage(m.tagsDraft),
-              value: ApplicationStatus.DRAFT,
-              descriptionTruncated: false,
-              disabled: false,
-            },
-            {
-              label: formatMessage(m.newApplication),
-              value: ApplicationStatus.NOT_STARTED,
-              descriptionTruncated: false,
-              disabled: false,
-            },
-          ]}
-        ></Select>
         <Box marginX={[0, 0, 2]} marginY={[2, 2, 0]}>
           <DatePicker
             id="periodFrom"

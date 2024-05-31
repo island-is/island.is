@@ -67,7 +67,6 @@ const Overview = () => {
     onCompleted: (q) => {
       // Initialize available applications from the initial response
       // So that we can use them to filter by
-      console.log('Data received', q)
       const names = q.applicationApplicationsAdmin
         ?.filter((x) => !!x.name)
         .map((x) => x.name ?? '')
