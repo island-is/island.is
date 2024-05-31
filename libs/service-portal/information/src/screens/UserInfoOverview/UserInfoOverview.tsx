@@ -21,17 +21,24 @@ const UserInfoOverview = () => {
   const { formatMessage } = useLocale()
   const userInfo = useUserInfo()
   const [childCards, setChildCards] = useState<JSX.Element[]>([])
+  const [bioChildrenCards, setBioChildrenCards] = useState<JSX.Element[]>([])
 
   const { data, error, loading } = useUserInfoOverviewQuery()
 
-  const { spouse, childCustody } = data?.nationalRegistryPerson || {}
+  const { spouse, childCustody, biologicalChildren } =
+    data?.nationalRegistryPerson || {}
+
+  //Filter out children with custody
+  const bioChildren = biologicalChildren?.filter(
+    (child) => !childCustody?.some((c) => c.nationalId === child.nationalId),
+  )
 
   useEffect(() => {
     const fetchChildCustodyData = async () => {
       try {
-        if (data?.nationalRegistryPerson?.childCustody) {
+        if (childCustody) {
           const childrenData = await Promise.all(
-            data.nationalRegistryPerson.childCustody.map(async (child) => {
+            childCustody.map(async (child) => {
               const baseId = await maskString(
                 child.nationalId,
                 userInfo.profile.nationalId,
@@ -41,13 +48,33 @@ const UserInfoOverview = () => {
                   key={child.nationalId}
                   title={child.fullName || ''}
                   nationalId={child.nationalId}
-                  baseId={baseId || ''}
-                  familyRelation="child"
+                  baseId={baseId ?? ''}
+                  familyRelation="custody"
                 />
               )
             }),
           )
           setChildCards(childrenData)
+        }
+        if (bioChildren) {
+          const bioChildrenData = await Promise.all(
+            bioChildren.map(async (child) => {
+              const baseId = await maskString(
+                child.nationalId,
+                userInfo.profile.nationalId,
+              )
+              return (
+                <FamilyMemberCard
+                  key={child.nationalId}
+                  title={child.fullName || ''}
+                  nationalId={child.nationalId}
+                  baseId={baseId ?? ''}
+                  familyRelation="bio-child"
+                />
+              )
+            }),
+          )
+          setBioChildrenCards(bioChildrenData)
         }
       } catch (e) {
         console.error('Failed setting childCards', e)
@@ -99,6 +126,7 @@ const UserInfoOverview = () => {
             />
           )}
           {childCards}
+          {bioChildrenCards}
           <FootNote serviceProviderSlug={THJODSKRA_SLUG} />
         </Stack>
       )}
