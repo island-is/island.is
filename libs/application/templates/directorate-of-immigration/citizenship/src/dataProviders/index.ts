@@ -23,11 +23,6 @@ export const ApplicantInformationApi = defineTemplateApi({
   externalDataId: 'applicantInformation',
 })
 
-export const ResidenceConditionInfoApi = defineTemplateApi({
-  action: ApiActions.getResidenceConditionInfo,
-  externalDataId: 'residenceConditionInfo',
-})
-
 export const ResidenceInIcelandLastChangeDateApi = defineTemplateApi({
   action: ApiActions.getResidenceInIcelandLastChangeDate,
   externalDataId: 'residenceInIcelandLastChangeDate',

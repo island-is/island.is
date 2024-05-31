@@ -24,7 +24,7 @@ import { findRegulationType } from '../utils/guessers'
 import { RegulationDraftTypes } from '../types'
 import ConfirmModal from './ConfirmModal/ConfirmModal'
 import { ReferenceText } from './impacts/ReferenceText'
-import { DraftChangeForm } from '../state/types'
+import { DraftChangeForm, DraftImpactForm } from '../state/types'
 
 export const EditBasics = () => {
   const t = useLocale().formatMessage
@@ -32,8 +32,10 @@ export const EditBasics = () => {
   const [editorKey, setEditorKey] = useState('initial')
   const [titleError, setTitleError] = useState<string | undefined>(undefined)
   const [hasUpdated, setHasUpdated] = useState<boolean>(false)
-  const [references, setReferences] = useState<DraftChangeForm[]>()
-  const [isModalVisible, setIsModalVisible] = useState<boolean>(false)
+  const [references, setReferences] = useState<DraftImpactForm[]>()
+  const [isModalVisible, setIsModalVisible] = useState<boolean>(true)
+  const [hasConfirmed, setHasConfirmed] = useState<boolean>(false)
+  const [hasSeenModal, setHasSeenModal] = useState<boolean>(false)
 
   const { text, appendixes } = draft
   const { updateState } = actions
@@ -115,6 +117,7 @@ export const EditBasics = () => {
     const additions = formatAmendingBodyWithArticlePrefix(draft.impacts)
 
     setEditorKey(Date.now().toString())
+    updateState('title', formatAmendingRegTitle(draft))
     const additionString = additions.join('') as HTMLText
     updateState('text', additionString)
     setHasUpdated(true)
@@ -166,8 +169,7 @@ export const EditBasics = () => {
                 error={text.showError && text.error && t(text.error)}
               />
             </Box>
-            {!hasUpdated &&
-            draft.type.value === RegulationDraftTypes.amending ? (
+            {!hasConfirmed && hasSeenModal ? (
               <Box marginBottom={3}>
                 <AlertMessage
                   type="default"
@@ -187,13 +189,15 @@ export const EditBasics = () => {
               </Box>
             ) : undefined}
 
-            {references && references.length > 0 ? (
+            {references &&
+            references.length === 1 &&
+            references[0].type === 'amend' ? (
               <ReferenceText
                 regulation={
                   {
-                    title: references[0].regTitle,
-                    text: references[0].diff?.value,
-                    name: references[0].name as RegName,
+                    title: references[0].regTitle ?? '',
+                    text: references[0].diff?.value ?? '',
+                    name: (references[0].name as RegName) ?? '',
                     appendixes: references[0].appendixes.map((apx) => ({
                       title: apx.title.value,
                       text: apx.text.value,
@@ -222,22 +226,31 @@ export const EditBasics = () => {
             )}
           </AccordionItem>
         </Accordion>
-
-        <ConfirmModal
-          isVisible={isModalVisible}
-          message={
-            'Uppfæra texta reglugerðar með breytingum frá fyrsta skrefi. Allur viðbættur texti í núverandi skrefi verður hreinsaður út.'
-          }
-          onConfirm={() => {
-            updateEditorText()
-            setIsModalVisible(false)
-          }}
-          onVisibilityChange={(visibility: boolean) => {
-            setIsModalVisible(visibility)
-          }}
-          confirmMessage="Uppfæra"
-          confirmGhost
-        />
+        {!hasUpdated ? (
+          <ConfirmModal
+            isVisible={
+              draft.type.value === RegulationDraftTypes.amending &&
+              isModalVisible
+            }
+            title="Uppfæra texta"
+            message={
+              'Uppfæra texta reglugerðar með breytingum frá fyrsta skrefi. Allur viðbættur texti í núverandi skrefi verður hreinsaður út.'
+            }
+            onConfirm={() => {
+              updateEditorText()
+              setIsModalVisible(false)
+              setHasConfirmed(true)
+            }}
+            onVisibilityChange={(visibility: boolean) => {
+              setIsModalVisible(visibility)
+              if (visibility === false && !hasSeenModal) {
+                setHasSeenModal(true)
+              }
+            }}
+            confirmMessage="Uppfæra"
+            confirmGhost
+          />
+        ) : undefined}
         <Appendixes
           draftId={draft.id}
           appendixes={appendixes}

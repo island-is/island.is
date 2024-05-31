@@ -24,7 +24,7 @@ import { m } from '../../lib/messages'
 import { YES } from '../../lib/constants'
 import DoubleColumnRow from '../../components/DoubleColumnRow'
 import {
-  getDeceasedHadAssets,
+  getDeceasedWasMarriedAndHadAssets,
   getEstateDataFromApplication,
 } from '../../lib/utils/helpers'
 import {
@@ -32,7 +32,6 @@ import {
   InheritanceReportInfo,
 } from '@island.is/clients/syslumenn'
 import { valueToNumber } from '../../lib/utils/helpers'
-import NumberInput from '../../components/NumberInput'
 import DeceasedShare from '../../components/DeceasedShare'
 
 type RepeaterProps = {
@@ -61,7 +60,7 @@ export const ReportFieldsRepeater: FC<
 
   const { id, props } = field
 
-  const deceasedHadAssets = getDeceasedHadAssets(application)
+  const deceasedHadAssets = getDeceasedWasMarriedAndHadAssets(application)
 
   const { fields, append, remove, replace } = useFieldArray<any>({
     name: id,
@@ -119,13 +118,8 @@ export const ReportFieldsRepeater: FC<
     calculateTotal()
   }, [calculateTotal])
 
-  const relations =
-    (externalData.syslumennOnEntry?.data as any).relationOptions?.map(
-      (relation: any) => ({
-        value: relation,
-        label: relation,
-      }),
-    ) || []
+  //TODO: connect to API
+  const debtTypes = [] as any
 
   const handleAddRepeaterFields = () => {
     //reset stocks
@@ -352,10 +346,11 @@ export const ReportFieldsRepeater: FC<
                         }}
                       />
                     ) : field.type !== 'nationalId' &&
-                      field.id === 'assetNumber' ? (
+                      field.id === 'assetNumber' &&
+                      field.props?.assetKey === 'bankAccounts' ? (
                       <InputController
                         id={`${fieldIndex}.${field.id}`}
-                        label={formatMessage(m.bankAccount)}
+                        label={formatMessage(field.title)}
                         backgroundColor="blue"
                         {...(!foreignBankAccountIndexes.includes(mainIndex) && {
                           format: '####-##-######',
@@ -387,15 +382,17 @@ export const ReportFieldsRepeater: FC<
                         suffix="%"
                         required
                       />
-                    ) : field.id === 'relation' ? (
+                    ) : field.id === 'debtType' ? (
                       <SelectController
                         id={`${fieldIndex}.${field.id}`}
                         name={`${fieldIndex}.${field.id}`}
                         label={formatMessage(field.title) ?? ''}
                         placeholder={field.placeholder}
-                        options={relations}
-                      />
-                    ) : field.id === 'exchangeRateOrInterest' ? (
+                        options={debtTypes}
+                        backgroundColor="blue"
+                      /> /* Commenting out for testing purposes of this field
+                    
+                    : field.id === 'exchangeRateOrInterest' ? (
                       <NumberInput
                         name={`${fieldIndex}.${field.id}`}
                         placeholder={field.placeholder}
@@ -406,6 +403,7 @@ export const ReportFieldsRepeater: FC<
                         }}
                         label={formatMessage(field.title) ?? ''}
                       />
+                    )*/
                     ) : (
                       <InputController
                         id={`${fieldIndex}.${field.id}`}
@@ -419,7 +417,7 @@ export const ReportFieldsRepeater: FC<
                         backgroundColor={field.color ? field.color : 'blue'}
                         currency={field.currency}
                         readOnly={field.readOnly}
-                        type={field.type}
+                        type={field.type !== 'nationalId' ? field.type : 'text'}
                         textarea={field.variant}
                         rows={field.rows}
                         required={field.required}

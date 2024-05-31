@@ -85,10 +85,28 @@ export const strings = defineMessages({
     description:
       'Notaður sem fyrirsögn fyrir Dómur upphlöðunarsvæði á Niðurstaða skrefi.',
   },
+  dismissalUploadTitle: {
+    id: 'judicial.system.core:court.indictments.conclusion.dismissal_upload_title',
+    defaultMessage: 'Úrskurður',
+    description:
+      'Notaður sem fyrirsögn fyrir Úrskurður upphlöðunarsvæði á Niðurstaða skrefi.',
+  },
   fine: {
     id: 'judicial.system.core:court.indictments.conclusion.fine',
     defaultMessage: 'Viðurlagaákvörðun',
     description:
       'Notaður sem texti í viðurlagaákvörðun valmöguleika á Niðurstaða skrefi.',
+  },
+  dismissal: {
+    id: 'judicial.system.core:court.indictments.conclusion.dismissal',
+    defaultMessage: 'Frávísun',
+    description:
+      'Notaður sem texti í frávísun valmöguleika á Niðurstaða skrefi.',
+  },
+  cancellation: {
+    id: 'judicial.system.core:court.indictments.conclusion.cancellation',
+    defaultMessage: 'Niðurfelling máls',
+    description:
+      'Notaður sem texti í niðurfelling máls valmöguleika á Niðurstaða skrefi.',
   },
 })

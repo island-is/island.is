@@ -82,8 +82,9 @@ import {
 } from '../types'
 import { currentDateStartTime } from './parentalLeaveTemplateUtils'
 
-export const getExpectedDateOfBirthOrAdoptionDate = (
+export const getExpectedDateOfBirthOrAdoptionDateOrBirthDate = (
   application: Application,
+  returnBirthDate = false,
 ): string | undefined => {
   const selectedChild = getSelectedChild(
     application.answers,
@@ -92,6 +93,12 @@ export const getExpectedDateOfBirthOrAdoptionDate = (
 
   if (!selectedChild) {
     return undefined
+  }
+
+  if (returnBirthDate) {
+    const { dateOfBirth } = getApplicationExternalData(application.externalData)
+
+    if (dateOfBirth?.data?.dateOfBirth) return dateOfBirth?.data?.dateOfBirth
   }
 
   if (selectedChild.expectedDateOfBirth === '')
@@ -157,35 +164,34 @@ export const formatPeriods = (
       }
     }
 
-    if (isActualDob) {
-      timelinePeriods.push({
-        actualDob: isActualDob,
-        startDate: period.startDate,
-        endDate: period.endDate,
-        ratio: period.ratio,
-        duration: calculatedLength,
-        canDelete: canDelete,
-        title: formatMessage(parentalLeaveFormMessages.reviewScreen.period, {
+    const timelinePeriod = {
+      startDate: period.startDate,
+      endDate: period.endDate,
+      ratio: period.ratio,
+      duration: calculatedLength,
+      canDelete: canDelete,
+      title: formatMessage(
+        'approved' in period
+          ? parentalLeaveFormMessages.reviewScreen.vmstPeriod
+          : parentalLeaveFormMessages.reviewScreen.period,
+        {
           index: index + 1,
           ratio: period.ratio,
-        }),
-        rawIndex: period.rawIndex ?? index,
+        },
+      ),
+      rawIndex: period.rawIndex ?? index,
+      paid: period.paid,
+    }
+
+    if (isActualDob) {
+      timelinePeriods.push({
+        ...timelinePeriod,
+        actualDob: isActualDob,
       })
     }
 
     if (!isActualDob && period.startDate && period.endDate) {
-      timelinePeriods.push({
-        startDate: period.startDate,
-        endDate: period.endDate,
-        ratio: period.ratio,
-        duration: calculatedLength,
-        canDelete: canDelete,
-        title: formatMessage(parentalLeaveFormMessages.reviewScreen.period, {
-          index: index + 1,
-          ratio: period.ratio,
-        }),
-        rawIndex: period.rawIndex ?? index,
-      })
+      timelinePeriods.push(timelinePeriod)
     }
   })
 
@@ -571,6 +577,11 @@ export const getApplicationExternalData = (
     ) as string
   }
 
+  const VMSTPeriods = getValueViaPath(
+    externalData,
+    'VMSTPeriods.data',
+  ) as VMSTPeriod[]
+
   return {
     applicantName,
     applicantGenderCode,
@@ -581,6 +592,7 @@ export const getApplicationExternalData = (
     userEmail,
     userPhoneNumber,
     dateOfBirth,
+    VMSTPeriods,
   }
 }
 
@@ -1064,21 +1076,6 @@ export const getUnApprovedEmployers = (
   return newEmployers
 }
 
-export const getApprovedEmployers = (
-  answers: Application['answers'],
-): EmployerRow[] => {
-  const { employers } = getApplicationAnswers(answers)
-  const newEmployers: EmployerRow[] = []
-
-  employers?.forEach((e) => {
-    if (e.isApproved) {
-      newEmployers.push(e)
-    }
-  })
-
-  return newEmployers
-}
-
 export const isParentWithoutBirthParent = (answers: Application['answers']) => {
   const questionOne = getValueViaPath(answers, 'noPrimaryParent.questionOne')
   const questionTwo = getValueViaPath(answers, 'noPrimaryParent.questionTwo')
@@ -1312,8 +1309,8 @@ export const getLastValidPeriodEndDate = (
 }
 
 export const getMinimumStartDate = (application: Application): Date => {
-  const expectedDateOfBirthOrAdoptionDate =
-    getExpectedDateOfBirthOrAdoptionDate(application)
+  const expectedDateOfBirthOrAdoptionDateOrBirthDate =
+    getExpectedDateOfBirthOrAdoptionDateOrBirthDate(application, true)
   const lastPeriodEndDate = getLastValidPeriodEndDate(application)
   const { applicationFundId } = getApplicationExternalData(
     application.externalData,
@@ -1322,15 +1319,15 @@ export const getMinimumStartDate = (application: Application): Date => {
   const today = new Date()
   if (lastPeriodEndDate) {
     return lastPeriodEndDate
-  } else if (expectedDateOfBirthOrAdoptionDate) {
-    const expectedDateOfBirthOrAdoptionDateDate = new Date(
-      expectedDateOfBirthOrAdoptionDate,
+  } else if (expectedDateOfBirthOrAdoptionDateOrBirthDate) {
+    const expectedDateOfBirthOrAdoptionDateOrBirthDateDate = new Date(
+      expectedDateOfBirthOrAdoptionDateOrBirthDate,
     )
 
     if (isParentalGrant(application)) {
       const beginningOfMonthOfExpectedDateOfBirth = addDays(
-        expectedDateOfBirthOrAdoptionDateDate,
-        expectedDateOfBirthOrAdoptionDateDate.getDate() * -1 + 1,
+        expectedDateOfBirthOrAdoptionDateOrBirthDateDate,
+        expectedDateOfBirthOrAdoptionDateOrBirthDateDate.getDate() * -1 + 1,
       )
       return beginningOfMonthOfExpectedDateOfBirth
     }
@@ -1338,7 +1335,7 @@ export const getMinimumStartDate = (application: Application): Date => {
     const beginningOfMonth = getBeginningOfThisMonth()
     const beginningOfMonth3MonthsAgo = getBeginningOfMonth3MonthsAgo()
     const leastStartDate = addMonths(
-      expectedDateOfBirthOrAdoptionDateDate,
+      expectedDateOfBirthOrAdoptionDateOrBirthDateDate,
       -minimumPeriodStartBeforeExpectedDateOfBirth,
     )
 
@@ -1534,7 +1531,7 @@ export const synchronizeVMSTPeriods = (
   setRepeaterItems: RepeaterProps['setRepeaterItems'],
   setFieldLoadingState: RepeaterProps['setFieldLoadingState'],
 ) => {
-  // If periods is not sync with VMST periods, sync it
+  // If periods is not in sync with VMST periods, sync it
   const newPeriods: Period[] = []
   const temptVMSTPeriods: Period[] = []
   const VMSTPeriods: VMSTPeriod[] = data?.getApplicationInformation?.periods
@@ -1563,12 +1560,15 @@ export const synchronizeVMSTPeriods = (
         firstPeriodStart: firstPeriodStart,
         useLength: NO as YesOrNo,
         rightCodePeriod: rightsCodePeriod,
+        daysToUse: period.days,
+        paid: period.paid,
+        approved: period.approved,
       }
 
       if (period.paid) {
         newPeriods.push(obj)
       } else if (isThisMonth(new Date(period.from))) {
-        if (today.getDay() >= 20) {
+        if (today.getDate() >= 20) {
           newPeriods.push(obj)
         }
       } else if (new Date(period.from).getTime() <= today.getTime()) {
@@ -1635,7 +1635,9 @@ export const synchronizeVMSTPeriods = (
           new Date(period.endDate).getTime() !==
             new Date(periods[i].endDate).getTime() ||
           period.ratio !== periods[i].ratio ||
-          period.firstPeriodStart !== periods[i].firstPeriodStart
+          period.firstPeriodStart !== periods[i].firstPeriodStart ||
+          period.paid !== periods[i].paid ||
+          period.approved !== periods[i].approved
         ) {
           isMustSync = true
         }

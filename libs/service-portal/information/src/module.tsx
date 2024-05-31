@@ -14,7 +14,10 @@ const UserInfoOverview = lazy(() =>
   import('./screens/UserInfoOverview/UserInfoOverview'),
 )
 const UserInfo = lazy(() => import('./screens/UserInfo/UserInfo'))
-const FamilyMemberChild = lazy(() => import('./screens/Child/Child'))
+const FamilyMemberChildCustody = lazy(() =>
+  import('./screens/ChildCustody/ChildCustody'),
+)
+const FamilyMemberBioChild = lazy(() => import('./screens/BioChild/BioChild'))
 const Spouse = lazy(() => import('./screens/Spouse/Spouse'))
 const CompanyInfo = lazy(() => import('./screens/Company/CompanyInfo'))
 const Notifications = lazy(() =>
@@ -71,17 +74,23 @@ export const informationModule: PortalModule = {
       element: <UserInfo />,
     },
     {
+      name: 'BioChild',
+      path: InformationPaths.BioChild,
+      enabled: userInfo.scopes.includes(ApiScope.meDetails),
+      element: <FamilyMemberBioChild />,
+    },
+    {
+      name: 'Child',
+      path: InformationPaths.ChildCustody,
+      enabled: userInfo.scopes.includes(ApiScope.meDetails),
+      element: <FamilyMemberChildCustody />,
+    },
+    {
       name: m.userInfo,
       path: InformationPaths.SettingsNotifications,
       enabled: userInfo.scopes.includes(ApiScope.internal),
       key: 'NotificationSettings',
       element: <UserNotificationsSettings />,
-    },
-    {
-      name: 'Child',
-      path: InformationPaths.Child,
-      enabled: userInfo.scopes.includes(ApiScope.meDetails),
-      element: <FamilyMemberChild />,
     },
     {
       name: 'Spouse',
