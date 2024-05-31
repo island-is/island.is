@@ -1,6 +1,10 @@
 import { spawn } from 'node:child_process'
 import { resolve } from 'node:path'
 import { ROOT } from './_common.mjs'
+import { spawn } from "node:child_process";
+import { mkdir } from "node:fs/promises";
+import { dirname, resolve } from "node:path";
+import { ROOT } from "./_common.mjs";
 
 const enableNodeModules = process.env.ENABLE_NODE_MODULES === 'true'
 const enableMobileNodeModules =
@@ -55,7 +59,9 @@ const workflow = {
 console.log(JSON.stringify(workflow, null, 2))
 
 if (YAML_FILE) {
-  await exportToYaml(workflow, YAML_FILE)
+    const YAML_FILE_ROOT = dirname(YAML_FILE);
+    await mkdir(YAML_FILE_ROOT, { recursive: true });
+    await exportToYaml(workflow, YAML_FILE)
 }
 
 function createHeader(name, description) {
