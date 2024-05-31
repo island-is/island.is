@@ -109,8 +109,11 @@ export class DocumentServiceV2 {
       categoryId: mutableCategoryIds.join(),
     })
 
-    if (!documents?.totalCount) {
-      throw new Error('Incomplete response')
+    if (typeof documents?.totalCount !== 'number') {
+      this.logger.warn('Document total count unavailable', {
+        category: LOG_CATEGORY,
+        totalCount: documents?.totalCount,
+      })
     }
 
     const documentData: Array<Document> =
@@ -134,7 +137,7 @@ export class DocumentServiceV2 {
 
     return {
       data: documentData,
-      totalCount: documents?.totalCount,
+      totalCount: documents?.totalCount ?? 0,
       unreadCount: documents?.unreadCount,
       pageInfo: {
         hasNextPage: false,
