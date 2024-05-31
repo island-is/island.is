@@ -23,7 +23,7 @@ const steps = [
             'Cache node_modules',
             'node-modules',
             'node_modules',
-            keys['node-modules-key'],
+            keys['node_modules'],
         )
         : null,
     enableMobileNodeModules
@@ -31,7 +31,7 @@ const steps = [
             'Cache Mobile node_modules',
             'mobile-node-modules',
             'apps/native/app/node_modules',
-            keys['mobile-node-modules-key'],
+            keys['App node_modules'],
         )
         : null,
     enableGeneratedFiles
@@ -39,7 +39,7 @@ const steps = [
             'Cache Generated Files',
             'generated-files',
             'generated_files.tar.gz',
-            keys['generated-files-key'],
+            keys['Generated files'],
         )
         : null,
     enableCypress && cypressPath
@@ -47,7 +47,7 @@ const steps = [
             'Cache Cypress',
             'cypress-cache',
             cypressPath,
-            keys['cypress-cache-modules-key'],
+            keys['Cypress Cache'],
         )
         : null,
 ].filter((e) => e != null)
