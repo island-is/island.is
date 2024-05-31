@@ -95,15 +95,15 @@ export const newPrimarySchoolMessages: MessageDir = {
       defaultMessage: 'Veldu tengsl',
       description: 'Select relation',
     },
-    neighborhood: {
-      id: 'dess.nps.application:neighborhood',
-      defaultMessage: 'Hverfi',
-      description: 'Neighborhood',
+    district: {
+      id: 'dess.nps.application:district',
+      defaultMessage: 'Umdæmi',
+      description: 'District',
     },
-    neighborhoodPlaceholder: {
-      id: 'dess.nps.application:neighborhood.placeholder',
-      defaultMessage: 'Veldu hverfi',
-      description: 'Select neighborhood',
+    districtPlaceholder: {
+      id: 'dess.nps.application:district.placeholder',
+      defaultMessage: 'Veldu umdæmi',
+      description: 'Select disctrict',
     },
     school: {
       id: 'dess.nps.application:school',
@@ -114,6 +114,11 @@ export const newPrimarySchoolMessages: MessageDir = {
       id: 'dess.nps.application:school.placeholder',
       defaultMessage: 'Veldu skóla',
       description: 'Select school',
+    },
+    movingAbroad: {
+      id: 'dess.nps.application:moving.abroad',
+      defaultMessage: 'Fluttningur úr landi',
+      description: 'Moving abroad',
     },
   }),
 
@@ -334,11 +339,6 @@ export const newPrimarySchoolMessages: MessageDir = {
       defaultMessage: 'Nýr skóli',
       description: 'New school',
     },
-    moveAbroad: {
-      id: 'dess.nps.application:primary.school.new.school.move.abroad',
-      defaultMessage: 'Fluttningur úr landi',
-      description: 'Move abroad',
-    },
 
     // Reason for transfer
     reasonForTransferSubSectionTitle: {
@@ -540,6 +540,26 @@ export const newPrimarySchoolMessages: MessageDir = {
       id: 'dess.nps.application:review.parents',
       defaultMessage: 'Foreldri/forsjáraðili',
       description: 'Parent / guardian',
+    },
+    schoolTitle: {
+      id: 'dess.nps.application:review.school.title',
+      defaultMessage: 'Upplýsingar um skóla',
+      description: 'Information about school',
+    },
+    currentSchool: {
+      id: 'dess.nps.application:confirm.current.school',
+      defaultMessage: 'Núverandi skóli',
+      description: 'Current school',
+    },
+    selectedSchool: {
+      id: 'dess.nps.application:confirm.selected.school',
+      defaultMessage: 'Valinn skóli',
+      description: 'Selected school',
+    },
+    class: {
+      id: 'dess.nps.application:confirm.class',
+      defaultMessage: 'Bekkur',
+      description: 'Class',
     },
   }),
 

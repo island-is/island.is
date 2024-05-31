@@ -9,13 +9,17 @@ import has from 'lodash/has'
 import { FC } from 'react'
 import { States } from '../../lib/constants'
 import { newPrimarySchoolMessages } from '../../lib/messages'
-import { getApplicationAnswers } from '../../lib/newPrimarySchoolUtils'
+import {
+  getApplicationAnswers,
+  isMovingAbroad,
+} from '../../lib/newPrimarySchoolUtils'
 
 import { Child } from './review-groups/Child'
 import { Parents } from './review-groups/Parents'
 import { Photography } from './review-groups/Photography'
 import { Relatives } from './review-groups/Relatives'
 import { Siblings } from './review-groups/Siblings'
+import { School } from './review-groups/School'
 
 interface ReviewScreenProps {
   application: Application
@@ -75,6 +79,8 @@ export const Review: FC<ReviewScreenProps> = ({
       refetch?.()
     }
   }
+
+  const movingAbroad = isMovingAbroad(application.answers)
 
   return (
     <>
@@ -147,9 +153,15 @@ export const Review: FC<ReviewScreenProps> = ({
       )}
       <Child {...childProps} />
       <Parents {...childProps} />
-      <Relatives {...childProps} />
-      <Siblings {...childProps} />
-      <Photography {...childProps} />
+      {!movingAbroad && (
+        <>
+          <Relatives {...childProps} />
+          <School {...childProps}></School>
+          <Siblings {...childProps} />
+          <Photography {...childProps} />
+        </>
+      )}
+      {movingAbroad && <School {...childProps}></School>}
     </>
   )
 }

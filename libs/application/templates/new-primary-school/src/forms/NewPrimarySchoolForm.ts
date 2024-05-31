@@ -1,6 +1,7 @@
 import {
-  buildCheckboxField,
   buildAlertMessageField,
+  buildAsyncSelectField,
+  buildCheckboxField,
   buildCustomField,
   buildDateField,
   buildDescriptionField,
@@ -9,7 +10,6 @@ import {
   buildPhoneField,
   buildRadioField,
   buildSection,
-  buildSelectField,
   buildSubSection,
   buildSubmitField,
   buildTableRepeaterField,
@@ -41,6 +41,7 @@ import {
   getSiblingRelationOptionLabel,
   getSiblingRelationOptions,
   hasOtherParent,
+  isMovingAbroad,
 } from '../lib/newPrimarySchoolUtils'
 
 export const NewPrimarySchoolForm: Form = buildForm({
@@ -417,83 +418,96 @@ export const NewPrimarySchoolForm: Form = buildForm({
             newPrimarySchoolMessages.primarySchool.newSchoolSubSectionTitle,
           children: [
             buildMultiField({
-              id: 'newSchoolMultiField',
+              id: 'school',
               title:
                 newPrimarySchoolMessages.primarySchool.newSchoolSubSectionTitle,
               children: [
                 buildCheckboxField({
-                  id: 'school.moveAbroad',
+                  id: 'school.movingAbroad',
                   title: '',
-                  dataTestId: 'new-school-move-abroad',
+                  dataTestId: 'new-school-moving-abroad',
                   backgroundColor: 'white',
+                  defaultValue: '',
                   options: [
                     {
                       value: YES,
-                      label: newPrimarySchoolMessages.primarySchool.moveAbroad,
+                      dataTestId: 'yes-option',
+                      label: newPrimarySchoolMessages.shared.movingAbroad,
                     },
                   ],
                 }),
-                buildSelectField({
+                buildAsyncSelectField({
                   id: 'school.muncipality',
                   title: newPrimarySchoolMessages.shared.municipality,
-                  /*  disabled: (application: Application) => {
-                    const { moveAbroad } = getApplicationAnswers(
-                      application.answers,
-                    )
-                    return moveAbroad === NO
-                  },*/
-                  options: [
-                    {
-                      value: 'Reykjavík',
-                      label: 'Reykjavík',
-                    },
-                    {
-                      value: 'Garðarbær',
-                      label: 'Garðarbær',
-                    },
-                  ],
+                  condition: (answers) => !isMovingAbroad(answers),
+
+                  loadOptions: async ({ apolloClient }) => {
+                    //Todo: get data from Juni
+                    return [
+                      {
+                        value: 'Reykjavík',
+                        label: 'Reykjavík',
+                      },
+                      {
+                        value: 'Garðarbær',
+                        label: 'Garðarbær',
+                      },
+                    ]
+                  },
+
                   placeholder:
                     newPrimarySchoolMessages.shared.municipalityPlaceholder,
                   dataTestId: 'new-school-municipality',
                 }),
-                buildSelectField({
-                  id: 'school.neighborhood',
-                  title: newPrimarySchoolMessages.shared.neighborhood,
+                buildAsyncSelectField({
+                  id: 'school.district',
+                  title: newPrimarySchoolMessages.shared.district,
                   condition: (answers) => {
-                    const { moveAbroad } = getApplicationAnswers(answers)
-                    return moveAbroad === NO
+                    const { schoolMuncipality } = getApplicationAnswers(answers)
+                    return !isMovingAbroad(answers) && !!schoolMuncipality
                   },
-                  options: [
-                    {
-                      value: 'Árbær',
-                      label: 'Árbær',
-                    },
-                    {
-                      value: 'Breiðholt',
-                      label: 'Breiðholt',
-                    },
-                  ],
+                  loadOptions: async ({ apolloClient }) => {
+                    //Todo: get data from Juni
+                    return [
+                      {
+                        value: 'Árbær',
+                        label: 'Árbær',
+                      },
+                      {
+                        value: 'Breiðholt',
+                        label: 'Breiðholt',
+                      },
+                    ]
+                  },
+
                   placeholder:
-                    newPrimarySchoolMessages.shared.neighborhoodPlaceholder,
-                  dataTestId: 'new-school-neighborhood',
+                    newPrimarySchoolMessages.shared.districtPlaceholder,
+                  dataTestId: 'new-school-district',
                 }),
-                buildSelectField({
+                buildAsyncSelectField({
                   id: 'school.school',
                   title: newPrimarySchoolMessages.shared.school,
                   condition: (answers) => {
-                    const { moveAbroad } = getApplicationAnswers(answers)
-                    return moveAbroad === NO
+                    const { schoolMuncipality, schoolDistrict } =
+                      getApplicationAnswers(answers)
+                    return (
+                      !isMovingAbroad(answers) &&
+                      !!schoolMuncipality &&
+                      !!schoolDistrict
+                    )
+                  }, //Todo: get data from Juni
+                  loadOptions: async ({ apolloClient }) => {
+                    return [
+                      {
+                        value: 'Ártúnsskóli',
+                        label: 'Ártúnsskóli',
+                      },
+                      {
+                        value: 'Árbæjarskóli',
+                        label: 'Árbæjarskóli',
+                      },
+                    ]
                   },
-                  options: [
-                    {
-                      value: 'Ártúnsskóli',
-                      label: 'Ártúnsskóli',
-                    },
-                    {
-                      value: 'Árbæjarskóli',
-                      label: 'Árbæjarskóli',
-                    },
-                  ],
                   placeholder:
                     newPrimarySchoolMessages.shared.schoolPlaceholder,
                   dataTestId: 'new-school-school',
@@ -507,14 +521,16 @@ export const NewPrimarySchoolForm: Form = buildForm({
           title:
             newPrimarySchoolMessages.primarySchool
               .reasonForTransferSubSectionTitle,
+          condition: (answers) => !isMovingAbroad(answers),
           children: [],
         }),
         buildSubSection({
           id: 'siblingsSubSection',
           title: newPrimarySchoolMessages.primarySchool.siblingsSubSectionTitle,
+
           condition: (answers, externalData) => {
             // TODO: Only display section if "Siblings" selected as Reason for transfer
-            return true
+            return !isMovingAbroad(answers)
           },
           children: [
             buildMultiField({
@@ -587,6 +603,7 @@ export const NewPrimarySchoolForm: Form = buildForm({
           title:
             newPrimarySchoolMessages.primarySchool
               .startingSchoolSubSectionTitle,
+          condition: (answers) => !isMovingAbroad(answers),
           children: [
             buildMultiField({
               id: 'startingSchoolMultiField',
@@ -612,6 +629,7 @@ export const NewPrimarySchoolForm: Form = buildForm({
     buildSection({
       id: 'differentNeedsSection',
       title: newPrimarySchoolMessages.differentNeeds.sectionTitle,
+      condition: (answers) => !isMovingAbroad(answers),
       children: [
         buildSubSection({
           id: 'languageSubSection',

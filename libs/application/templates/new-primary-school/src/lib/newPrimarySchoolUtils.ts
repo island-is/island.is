@@ -3,6 +3,8 @@ import {
   Application,
   ExternalData,
   FormValue,
+  NO,
+  YES,
   YesOrNo,
 } from '@island.is/application/types'
 import * as kennitala from 'kennitala'
@@ -19,7 +21,22 @@ export const getApplicationAnswers = (answers: Application['answers']) => {
 
   const siblings = getValueViaPath(answers, 'siblings') as SiblingsRow[]
 
-  const moveAbroad = getValueViaPath(answers, 'school.moveAbroad') as string
+  const movingAbroad = getValueViaPath(
+    answers,
+    'school.movingAbroad[0]',
+    NO,
+  ) as YesOrNo
+
+  const startDate = getValueViaPath(answers, 'startDate') as string
+
+  const schoolMuncipality = getValueViaPath(
+    answers,
+    'school.muncipality',
+  ) as string
+
+  const schoolDistrict = getValueViaPath(answers, 'school.district') as string
+
+  const selectedSchool = getValueViaPath(answers, 'school.school') as string
 
   const photographyConsent = getValueViaPath(
     answers,
@@ -44,7 +61,11 @@ export const getApplicationAnswers = (answers: Application['answers']) => {
     photographyConsent,
     photoSchoolPublication,
     photoMediaPublication,
-    moveAbroad,
+    movingAbroad,
+    startDate,
+    schoolMuncipality,
+    schoolDistrict,
+    selectedSchool,
   }
 }
 
@@ -200,4 +221,9 @@ export const getSiblingRelationOptionLabel = (
 ) => {
   const relationOptions = getSiblingRelationOptions()
   return relationOptions.find((option) => option.value === value)?.label ?? ''
+}
+
+export const isMovingAbroad = (answers: FormValue): boolean => {
+  const { movingAbroad } = getApplicationAnswers(answers)
+  return movingAbroad === YES
 }
