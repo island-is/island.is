@@ -99,7 +99,7 @@ export const OverviewAssets: FC<React.PropsWithChildren<FieldBaseProps>> = ({
     // Bank accounts
     const bankAccountsDataRow = getBankAccountsDataRow(answers)
     const bankAccountsDataTotal = formatCurrency(
-      String(getValueViaPath(answers, 'assets.inventory.value')) ?? '',
+      String(getValueViaPath(answers, 'assets.bankAccounts.total')) ?? '',
     )
 
     sections.push({

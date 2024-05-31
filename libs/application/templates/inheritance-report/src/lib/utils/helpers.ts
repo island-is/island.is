@@ -181,23 +181,23 @@ export const getDeceasedWasMarriedAndHadAssets = (
 
 export const getDeceasedHadAssets = (application: Application): boolean =>
   application?.answers &&
-  getValueViaPath(application.answers, 'deceasedHadAssets') === YES
+  getValueViaPath(application.answers, 'customShare.deceasedHadAssets') === YES
 
 export const getDeceasedWasInCohabitation = (
   application: Application,
 ): boolean =>
   application?.answers &&
-  getValueViaPath(application.answers, 'deceasedWasMarried') === YES
+  getValueViaPath(application.answers, 'customShare.deceasedWasMarried') === YES
 
 export const hasYes = (arr?: string[]) =>
   Array.isArray(arr) && arr.includes(YES)
 
 export const shouldShowDeceasedShareField = (answers: FormValue) =>
-  getValueViaPath(answers, 'deceasedHadAssets') === YES &&
-  getValueViaPath(answers, 'deceasedWasMarried') === YES
+  getValueViaPath(answers, 'customShare.deceasedHadAssets') === YES &&
+  getValueViaPath(answers, 'customShare.deceasedWasMarried') === YES
 
 export const shouldShowCustomSpouseShare = (answers: FormValue) =>
-  getValueViaPath(answers, 'deceasedWasMarried') === YES
+  getValueViaPath(answers, 'customShare.deceasedWasMarried') === YES
 
 export const roundedValueToNumber = (value: unknown) =>
   Math.round(valueToNumber(value))

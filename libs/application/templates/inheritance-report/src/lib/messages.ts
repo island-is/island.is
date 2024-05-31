@@ -1479,15 +1479,21 @@ export const m = defineMessages({
     defaultMessage: 'Einkaskiptagerð',
     description: '',
   },
-  fileUploadFileTypes: {
-    id: 'ir.application:fileUploadFileTypes',
+  fileUploadOtherDocuments: {
+    id: 'ir.application:fileUploadOtherDocuments',
+    defaultMessage: 'Önnur fylgigögn',
+    description: '',
+  },
+  uploadPrivateTransferDescription: {
+    id: 'ir.application:uploadPrivateTransferDescription',
     defaultMessage:
       'Samþykktar skráargerðir eru .pdf, .doc, .docx, .jpg, .jpeg, .png, .xls og .xlsx',
     description: '',
   },
-  fileUploadOtherDocuments: {
-    id: 'ir.application:fileUploadOtherDocuments',
-    defaultMessage: 'Önnur fylgigögn',
+  uploadOtherDocumentsDescription: {
+    id: 'ir.application:uploadOtherDocumentsDescription',
+    defaultMessage:
+      'Samþykktar skráargerðir eru .pdf, .doc, .docx, .jpg, .jpeg, .png, .xls og .xlsx',
     description: '',
   },
   fileUploadOtherDocumentsPrePaid: {

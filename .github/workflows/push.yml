@@ -48,6 +48,7 @@ jobs:
       CREATE_PATTERNS: ^release/
       PRE_RELEASE_PATTERN: ^pre-release/
     outputs:
+      NODE_IMAGE_TAG: ${{ steps.git-branch.outputs.NODE_IMAGE_TAG }}
       GIT_BRANCH: ${{ steps.git-branch.outputs.GIT_BRANCH }}
       GIT_BRANCH_DEPLOY: ${{ steps.git-branch-deploy.outputs.GIT_BRANCH_DEPLOY }}
       FEATURE_NAME: ${{ steps.git-branch-deploy.outputs.FEATURE_NAME }}
@@ -75,7 +76,6 @@ jobs:
           echo "GIT_BRANCH_DEPLOY=${GIT_BRANCH_DEPLOY}" >> $GITHUB_OUTPUT
           echo "GIT_BRANCH_DEPLOY=$GIT_BRANCH_DEPLOY" >> $GITHUB_ENV
           echo "FEATURE_NAME=$(echo $GIT_BRANCH_DEPLOY | cut -d"/" -f2- | tr -cd '[:alnum:]-' | tr '[:upper:]' '[:lower:]' | cut -c1-50)" >> $GITHUB_OUTPUT
-
       - name: Check if we want to run workflow
         id: should-run
         env:
@@ -158,6 +158,7 @@ jobs:
     outputs:
       TEST_CHUNKS: ${{ steps.test_projects.outputs.CHUNKS }}
       DOCKER_TAG: ${{ steps.docker_tags.outputs.DOCKER_TAG }}
+      NODE_IMAGE_TAG: ${{ steps.nodejs_image.outputs.NODE_IMAGE_TAG }}
       LAST_GOOD_BUILD_DOCKER_TAG: ${{ steps.git_nx_base.outputs.LAST_GOOD_BUILD_DOCKER_TAG }}
       UNAFFECTED: ${{ steps.unaffected.outputs.UNAFFECTED }}
       BUILD_CHUNKS: ${{ steps.build_map.outputs.BUILD_CHUNKS }}
@@ -168,9 +169,9 @@ jobs:
       - uses: actions/checkout@v3
         with:
           fetch-depth: 0
-      - uses: actions/setup-node@v3
+      - uses: actions/setup-node@v4
         with:
-          node-version: '18.8.0'
+          node-version-file: 'package.json'
 
       - name: Setup yarn
         run: npm install -g yarn
@@ -235,6 +236,15 @@ jobs:
           path: event.json
           retention-days: 60
 
+      - name: Generate nodejs image tag
+        id: nodejs_image
+        continue-on-error: false
+        run: |
+          export NODE_IMAGE_TAG="$(./scripts/ci/get-node-version.mjs)"
+          echo "NODE_IMAGE_TAG: ${NODE_IMAGE_TAG}"
+          echo "NODE_IMAGE_TAG=${NODE_IMAGE_TAG}" >> $GITHUB_OUTPUT
+          echo "NODE_IMAGE_TAG=${NODE_IMAGE_TAG}" >> $GITHUB_ENV
+          echo "**NODE_IMAGE_TAG** ${NODE_IMAGE_TAG}" >> $GITHUB_STEP_SUMMARY
       - name: Generate docker image tag
         id: docker_tags
         run: |
@@ -277,11 +287,9 @@ jobs:
       - name: Calculate cache key for node modules
         id: calculate_node_modules_hash
         run: |
-          PACKAGE_JSON_HASH=$(cat package.json | jq '{resolutions,dependencies,devDependencies}' | sha1sum -t | cut -f1 -d" ")
-          echo "PACKAGE_JSON_HASH: $PACKAGE_JSON_HASH"
-          export NODE_MODULES_HASH=${{ runner.os }}-${{ hashFiles('yarn.lock') }}-$PACKAGE_JSON_HASH
-          echo "NODE_MODULES_HASH: $NODE_MODULES_HASH"
-          echo "node-modules-hash=$NODE_MODULES_HASH" >> $GITHUB_OUTPUT
+          HASH="$(./scripts/ci/get-node-modules-hash.mjs)"
+          echo "node-modules-hash: ${HASH}"
+          echo "node-modules-hash=${HASH}" >> $GITHUB_OUTPUT
 
       - name: Calculate cache keys for generated files
         id: calculate_generated_files_cache_key
@@ -305,6 +313,15 @@ jobs:
       - name: Building NodeJS dependencies
         if: steps.node-modules.outputs.cache-hit != 'true'
         run: ./scripts/ci/10_prepare-host-deps.sh
+
+      - name: Set Test Everything true
+        run: |
+          echo "TEST_EVERYTHING=true" >> $GITHUB_ENV
+        if: github.event_name == 'pull_request' && contains(github.event.pull_request.labels.*.name, 'test everything')
+
+      - name: Set Test Everything false
+        run: echo "TEST_EVERYTHING=false" >> $GITHUB_ENV
+        if: github.event_name != 'pull_request' || !contains(github.event.pull_request.labels.*.name, 'test everything')
 
       - name: Preparing BASE tags
         id: git_nx_base
@@ -370,7 +387,8 @@ jobs:
 
       - name: Building NodeJS dependencies
         if: steps.cache-deps.outputs.cache-hit != 'true' || steps.cache-deps-base.outputs.cache-hit != 'true'
-        run: ./scripts/ci/10_prepare-docker-deps.sh
+        run: |
+          ./scripts/ci/10_prepare-docker-deps.sh
 
       - name: set BRANCH env var
         run: echo "BRANCH=$GIT_BRANCH" >> $GITHUB_ENV
@@ -452,9 +470,9 @@ jobs:
         with:
           fetch-depth: 0
 
-      - uses: actions/setup-node@v3
+      - uses: actions/setup-node@v4
         with:
-          node-version: '18'
+          node-version-file: 'package.json'
 
       - name: Setup yarn
         run: npm install -g yarn
@@ -505,6 +523,7 @@ jobs:
       AFFECTED_ALL: ${{ secrets.AFFECTED_ALL }}
       GIT_BRANCH: ${{ needs.pre-checks.outputs.GIT_BRANCH}}
       DOCKER_TAG: ${{ needs.prepare.outputs.DOCKER_TAG}}
+      NODE_IMAGE_TAG: ${{ needs.prepare.outputs.NODE_IMAGE_TAG}}
       PUBLISH: true
     strategy:
       fail-fast: false
@@ -519,22 +538,17 @@ jobs:
           echo "AFFECTED_PROJECTS=$AFFECTED_PROJECTS" >> $GITHUB_ENV
           echo "DOCKER_TYPE=$DOCKER_TYPE" >> $GITHUB_ENV
         continue-on-error: true
-      - uses: actions/setup-node@v3
-        with:
-          node-version: '18'
+      - uses: actions/checkout@v3
         if: steps.gather.outcome == 'success'
-
-      - uses: actions/setup-node@v3
+      - uses: actions/setup-node@v4
         with:
-          node-version: '18'
+          node-version-file: 'package.json'
         if: steps.gather.outcome == 'success'
 
       - name: Setup yarn
         run: npm install -g yarn
         if: steps.gather.outcome == 'success'
 
-      - uses: actions/checkout@v3
-        if: steps.gather.outcome == 'success'
       - name: Cache for generated files
         id: generated-files-cache
         if: steps.gather.outcome == 'success'
@@ -605,15 +619,25 @@ jobs:
         continue-on-error: true
         id: dockerbuild
         if: steps.gather.outcome == 'success'
-        run: ./scripts/ci/run-in-parallel.sh 90_$DOCKER_TYPE
         env:
-          EXTRA_DOCKER_BUILD_ARGS: '--build-arg DOCKER_IMAGE_REGISTRY=${{ env.DOCKER_BASE_IMAGE_REGISTRY }} --build-arg GIT_SHA=${{ github.sha }}'
+          NODE_IMAGE_TAG: ${{ needs.prepare.outputs.NODE_IMAGE_TAG }}
+          SHA: ${{ github.sha }}
+          DOCKER_BASE_IMAGE_REGISTRY: ${{ env.DOCKER_BASE_IMAGE_REGISTRY }}
+        run: |
+          echo Node image tag is: $NODE_IMAGE_TAG
+          export EXTRA_DOCKER_BUILD_ARGS="--build-arg DOCKER_IMAGE_REGISTRY=$DOCKER_BASE_IMAGE_REGISTRY --build-arg GIT_SHA=$SHA --build-arg NODE_IMAGE_TAG=$NODE_IMAGE_TAG"
+          ./scripts/ci/run-in-parallel.sh 90_$DOCKER_TYPE
 
-      - name: Building Docker images Retry #This only exists until GHA starts supporting this
+      - name: Building Docker images Retry
         if: steps.gather.outcome == 'success' && steps.dockerbuild.outcome == 'failure'
-        run: ./scripts/ci/run-in-parallel.sh 90_$DOCKER_TYPE
         env:
-          EXTRA_DOCKER_BUILD_ARGS: '--build-arg DOCKER_IMAGE_REGISTRY=${{ env.DOCKER_BASE_IMAGE_REGISTRY }} --build-arg GIT_SHA=${{ github.sha }}'
+          NODE_IMAGE_TAG: ${{ needs.prepare.outputs.NODE_IMAGE_TAG }}
+          SHA: ${{ github.sha }}
+          DOCKER_BASE_IMAGE_REGISTRY: ${{ env.DOCKER_BASE_IMAGE_REGISTRY }}
+        run: |
+          echo Node image tag is: $NODE_IMAGE_TAG
+          export EXTRA_DOCKER_BUILD_ARGS="--build-arg DOCKER_IMAGE_REGISTRY=$DOCKER_BASE_IMAGE_REGISTRY --build-arg GIT_SHA=$SHA --build-arg NODE_IMAGE_TAG=$NODE_IMAGE_TAG"
+          ./scripts/ci/run-in-parallel.sh 90_$DOCKER_TYPE
 
   helm-docker-build:
     needs:
@@ -628,6 +652,7 @@ jobs:
       FEATURE_NAME: ${{ needs.pre-checks.outputs.FEATURE_NAME }}
       DOCKER_TAG: ${{ needs.prepare.outputs.DOCKER_TAG}}
       GIT_BRANCH: ${{ needs.pre-checks.outputs.GIT_BRANCH }}
+      NODE_IMAGE_TAG: ${{ needs.prepare.outputs.NODE_IMAGE_TAG }}
     steps:
       - uses: actions/checkout@v3
 
@@ -647,6 +672,9 @@ jobs:
       - name: Docker build image
         working-directory: infra
         run: |
+          echo Registry is: ${{env.DOCKER_BASE_IMAGE_REGISTRY}}
+          echo Image tag is: ${{env.NODE_IMAGE_TAG}}
+          export EXTRA_DOCKER_BUILD_ARGS="--build-arg DOCKER_IMAGE_REGISTRY=${{env.DOCKER_BASE_IMAGE_REGISTRY}} --build-arg NODE_IMAGE_TAG=${{env.NODE_IMAGE_TAG}}"
           ./scripts/build-docker-container.sh $DOCKER_TAG
           echo "COMMENT<<EOF" >> $GITHUB_ENV
           echo "Affected services are: ${{needs.prepare.outputs.IMAGES}}" >> $GITHUB_ENV
@@ -654,7 +682,6 @@ jobs:
           echo 'EOF' >> $GITHUB_ENV
         env:
           PUBLISH: 'true'
-          EXTRA_DOCKER_BUILD_ARGS: '--build-arg DOCKER_IMAGE_REGISTRY=${{ env.DOCKER_BASE_IMAGE_REGISTRY }}'
 
       - name: Retag as latest
         if: ${{ env.GIT_BRANCH == 'main' && env.NX_AFFECTED_ALL != 'true' }}

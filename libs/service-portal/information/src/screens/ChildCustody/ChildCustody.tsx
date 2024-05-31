@@ -1,15 +1,4 @@
-import { useParams } from 'react-router-dom'
 import { useUserInfo } from '@island.is/auth/react'
-import { useLocale, useNamespaces } from '@island.is/localization'
-import {
-  formatNationalId,
-  UserInfoLine,
-  m,
-  IntroHeader,
-  THJODSKRA_SLUG,
-  LinkButton,
-} from '@island.is/service-portal/core'
-import { defineMessage } from 'react-intl'
 import {
   Box,
   Button,
@@ -19,19 +8,30 @@ import {
   Inline,
   Stack,
 } from '@island.is/island-ui/core'
+import { useLocale, useNamespaces } from '@island.is/localization'
+import { Problem } from '@island.is/react-spa/shared'
+import {
+  IntroHeader,
+  LinkButton,
+  THJODSKRA_SLUG,
+  UserInfoLine,
+  formatNationalId,
+  m,
+} from '@island.is/service-portal/core'
+import { unmaskString } from '@island.is/shared/utils'
+import { defineMessage } from 'react-intl'
+import { useParams } from 'react-router-dom'
 import { TwoColumnUserInfoLine } from '../../components/TwoColumnUserInfoLine/TwoColumnUserInfoLine'
 import { formatNameBreaks } from '../../helpers/formatting'
-import { spmm, urls } from '../../lib/messages'
-import { useNationalRegistryChildCustodyQuery } from './Child.generated'
 import { natRegGenderMessageDescriptorRecord } from '../../helpers/localizationHelpers'
-import { unmaskString } from '@island.is/shared/utils'
-import { Problem } from '@island.is/react-spa/shared'
+import { spmm, urls } from '../../lib/messages'
+import { useNationalRegistryChildCustodyQuery } from './ChildCustody.generated'
 
 type UseParams = {
   baseId: string
 }
 
-const Child = () => {
+const ChildCustody = () => {
   useNamespaces('sp.family')
   const { formatMessage } = useLocale()
   const userInfo = useUserInfo()
@@ -44,6 +44,7 @@ const Child = () => {
   })
 
   const child = data?.nationalRegistryPerson?.childCustody?.[0]?.details
+
   const nationalId = child?.nationalId
 
   const parent1 = child?.birthParents ? child.birthParents[0] : undefined
@@ -305,4 +306,4 @@ const Child = () => {
   )
 }
 
-export default Child
+export default ChildCustody
