@@ -1,6 +1,7 @@
 export { Feature } from './lib/feature'
 
-export { Gender, Defendant } from './lib/defendant'
+export { Gender } from './lib/defendant'
+export type { Defendant } from './lib/defendant'
 
 export { InstitutionType, Institution } from './lib/institution'
 export { NotificationType } from './lib/notification'
