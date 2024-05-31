@@ -434,6 +434,11 @@ export const isDefenderStepValid = (workingCase: Case): boolean => {
   return Boolean(workingCase.prosecutor && defendantsAreValid())
 }
 
+export const isConclusionStepValid = (workingCase: Case): boolean => {
+  // TODO: Implement after selected action has been added as a field to the case
+  return true
+}
+
 export const isAdminUserFormValid = (user: User): boolean => {
   return Boolean(
     user.institution &&
