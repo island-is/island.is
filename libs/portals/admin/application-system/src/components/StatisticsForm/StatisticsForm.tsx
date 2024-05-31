@@ -23,12 +23,6 @@ export const StatisticsForm = ({ onDateChange }: Props) => {
   const { formatMessage } = useLocale()
   const { width } = useWindowSize()
 
-  const filters: ApplicationFilters = {
-    nationalId: undefined,
-    period: { from: undefined, to: undefined },
-    institution: undefined,
-    status: undefined,
-  }
 
   return (
     <Box
