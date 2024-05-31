@@ -1,4 +1,4 @@
-import React, { useState } from 'react'
+import React, { useContext, useState } from 'react'
 
 import { Box, Input, Button } from '@island.is/island-ui/core'
 
@@ -8,22 +8,21 @@ import {
 } from '@island.is/financial-aid/shared/lib'
 import AnimateHeight from 'react-animate-height'
 import { useApplicationEvent } from '@island.is/financial-aid-web/veita/src/utils/useApplicationEvent'
+import { AdminContext } from '@island.is/financial-aid-web/veita/src/components/AdminProvider/AdminProvider'
 
 interface Props {
   applicationId: string
   setApplication: React.Dispatch<React.SetStateAction<Application | undefined>>
   className?: string
-  adminNationalId?: string
-  adminName?: string
 }
 
 const CommentSection = ({
   className,
   setApplication,
   applicationId,
-  adminNationalId,
-  adminName,
 }: Props) => {
+  const { admin } = useContext(AdminContext)
+
   const [showInput, setShowInput] = useState<boolean>(false)
   const [comment, setComment] = useState<string>()
 
@@ -31,16 +30,16 @@ const CommentSection = ({
     useApplicationEvent()
 
   const onClickComment = async () => {
-    const updateApplication = await creatApplicationEvent(
+    const updatedApplication = await creatApplicationEvent(
       applicationId,
       ApplicationEventType.STAFFCOMMENT,
-      adminNationalId,
-      adminName,
+      admin?.nationalId,
+      admin?.name,
       comment,
     )
 
-    if (updateApplication) {
-      setApplication(updateApplication)
+    if (updatedApplication) {
+      setApplication(updatedApplication)
       setComment('')
       setShowInput(false)
     }
