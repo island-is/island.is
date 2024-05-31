@@ -11,7 +11,7 @@ import { m } from '../../../lib/messages'
 
 export const prePaidHeirs = buildSection({
   id: 'heirs',
-  title: 'Erfingjar',
+  title: m.heirs,
   children: [
     buildSubSection({
       id: 'heirs',
@@ -109,7 +109,7 @@ export const prePaidHeirs = buildSection({
             buildFileUploadField({
               id: 'heirsAdditionalInfoFilesOtherDocuments',
               uploadAccept: '.pdf, .doc, .docx, .jpg, .jpeg, .png, .xls, .xlsx',
-              uploadDescription: m.fileUploadFileTypes,
+              uploadDescription: m.fileUploadOtherDocumentsPrePaid,
               title: '',
               uploadHeader: '',
             }),

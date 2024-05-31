@@ -1484,6 +1484,11 @@ export const m = defineMessages({
     defaultMessage: 'Önnur fylgigögn',
     description: '',
   },
+  fileUploadOtherDocumentsPrePaid: {
+    id: 'ir.application:fileUploadOtherDocumentsPrePaid',
+    defaultMessage: 'Fylgigögn',
+    description: '',
+  },
   uploadPrivateTransferDescription: {
     id: 'ir.application:uploadPrivateTransferDescription',
     defaultMessage:
