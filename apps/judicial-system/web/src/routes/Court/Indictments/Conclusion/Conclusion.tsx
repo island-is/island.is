@@ -49,7 +49,7 @@ type Decision =
 
 interface Postponement {
   postponedIndefinitely?: boolean
-  postonedUntilVerdict?: boolean
+  isSettingVerdictDate?: boolean
   reason?: string
 }
 
@@ -61,6 +61,7 @@ const Conclusion: React.FC = () => {
   const [selectedAction, setSelectedAction] = useState<IndictmentDecision>()
   const [selectedDecision, setSelectedDecision] = useState<Decision>()
   const [postponement, setPostponement] = useState<Postponement>()
+  const [selectedCourtDate, setSelectedCourtDate] = useState<Date>()
 
   const {
     courtDate,
@@ -276,51 +277,55 @@ const Conclusion: React.FC = () => {
   ])
 
   const stepIsValid = () => {
-    if (!allFilesDoneOrError) {
+    if (selectedAction === IndictmentDecision.POSTPONING_UNTIL_VERDICT) {
+      return postponement?.isSettingVerdictDate
+        ? Boolean(selectedCourtDate)
+        : false
+    } else if (!allFilesDoneOrError) {
       return false
-    }
-
-    switch (selectedAction) {
-      case IndictmentDecision.POSTPONING:
-        return Boolean(
-          postponement?.postponedIndefinitely
-            ? postponement.reason
-            : courtDate?.date,
-        )
-      case IndictmentDecision.REDISTRIBUTING:
-        return uploadFiles.some(
-          (file) =>
-            file.category === CaseFileCategory.COURT_RECORD &&
-            file.status === 'done',
-        )
-      case IndictmentDecision.COMPLETING:
-        switch (selectedDecision) {
-          case CaseIndictmentRulingDecision.RULING:
-          case CaseIndictmentRulingDecision.DISMISSAL:
-            return (
-              uploadFiles.some(
+    } else {
+      switch (selectedAction) {
+        case IndictmentDecision.POSTPONING:
+          return Boolean(
+            postponement?.postponedIndefinitely
+              ? postponement.reason
+              : courtDate?.date,
+          )
+        case IndictmentDecision.REDISTRIBUTING:
+          return uploadFiles.some(
+            (file) =>
+              file.category === CaseFileCategory.COURT_RECORD &&
+              file.status === 'done',
+          )
+        case IndictmentDecision.COMPLETING:
+          switch (selectedDecision) {
+            case CaseIndictmentRulingDecision.RULING:
+            case CaseIndictmentRulingDecision.DISMISSAL:
+              return (
+                uploadFiles.some(
+                  (file) =>
+                    file.category === CaseFileCategory.COURT_RECORD &&
+                    file.status === 'done',
+                ) &&
+                uploadFiles.some(
+                  (file) =>
+                    file.category === CaseFileCategory.RULING &&
+                    file.status === 'done',
+                )
+              )
+            case CaseIndictmentRulingDecision.FINE:
+            case CaseIndictmentRulingDecision.CANCELLATION:
+              return uploadFiles.some(
                 (file) =>
                   file.category === CaseFileCategory.COURT_RECORD &&
                   file.status === 'done',
-              ) &&
-              uploadFiles.some(
-                (file) =>
-                  file.category === CaseFileCategory.RULING &&
-                  file.status === 'done',
               )
-            )
-          case CaseIndictmentRulingDecision.FINE:
-          case CaseIndictmentRulingDecision.CANCELLATION:
-            return uploadFiles.some(
-              (file) =>
-                file.category === CaseFileCategory.COURT_RECORD &&
-                file.status === 'done',
-            )
-          default:
-            return false
-        }
-      default:
-        return false
+            default:
+              return false
+          }
+        default:
+          return false
+      }
     }
   }
 
@@ -480,11 +485,11 @@ const Conclusion: React.FC = () => {
                 <Checkbox
                   id="arrange-verdict"
                   name="arrange-verdict"
-                  checked={Boolean(postponement?.postonedUntilVerdict)}
+                  checked={Boolean(postponement?.isSettingVerdictDate)}
                   onChange={() => {
                     setPostponement((prev) => ({
                       ...prev,
-                      postonedUntilVerdict: !prev?.postonedUntilVerdict,
+                      isSettingVerdictDate: !prev?.isSettingVerdictDate,
                     }))
                   }}
                   backgroundColor="white"
@@ -496,10 +501,11 @@ const Conclusion: React.FC = () => {
               <DateTime
                 name="verdictDate"
                 onChange={(date) => {
-                  console.log('asd')
+                  setSelectedCourtDate(date)
                 }}
                 blueBox={false}
-                disabled={!postponement?.postonedUntilVerdict}
+                disabled={!postponement?.isSettingVerdictDate}
+                required={postponement?.isSettingVerdictDate}
               />
             </BlueBox>
           </Box>
