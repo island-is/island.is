@@ -22,19 +22,19 @@ inputs:
 outputs:
   node-modules-key:
     description: "Cache key for node_modules"
-    value: ${{ steps.get-cache-key.node-modules-key }}
+    value: ${{ steps.get-cache-keys.node-modules-key }}
   mobile-node-modules-key:
     description: "Cache key for mobile app node_modules"
-    value: ${{ steps.get-cache-key.outputs.mobile-node-modules-key }}
+    value: ${{ steps.get-cache-keys.outputs.mobile-node-modules-key }}
   generated-files-key:
     description: "Cache key for generated files"
-    value: ${{ steps.get-cache-key.outputs.generated-files-key }}
+    value: ${{ steps.get-cache-keys.outputs.generated-files-key }}
   cypress-cache-key:
     description: "Cache key for github actions node_modules"
-    value: ${{ steps.get-cache-key.outputs.cypress-cache-key }}
+    value: ${{ steps.get-cache-keys.outputs.cypress-cache-key }}
   keys:
     description: "Keys"
-    value: ${{ steps.get-cahce-key.outputs.keys }}
+    value: ${{ steps.get-cache-keys.outputs.keys }}
 runs:
   using: "composite"
   steps:
