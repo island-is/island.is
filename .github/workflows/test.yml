@@ -20,3 +20,5 @@ jobs:
           fetch-depth: 0
       - name: Get cache
         uses: ./.github/actions/get-cache
+        with:
+            enable-node-modules: 'true'
