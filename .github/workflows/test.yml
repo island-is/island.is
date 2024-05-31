@@ -4,9 +4,8 @@ on:
   pull_request:
 
 concurrency:
-    group: test-${{ github.head_ref || github.run_id }}
-    cancel-in-progress: true
-    
+  group: test-${{ github.head_ref || github.run_id }}
+  cancel-in-progress: true
 
 jobs:
   cache:
@@ -18,7 +17,6 @@ jobs:
       - name: Checkout repository
         uses: actions/checkout@v4
         with:
-            fetch-depth: 0
+          fetch-depth: 0
       - name: Test test
         uses: ./.github/actions/get-cache
-        

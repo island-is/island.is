@@ -6,7 +6,6 @@ import crypto from 'node:crypto'
 
 import { ROOT, getPackageJSON } from './_common.mjs'
 
-
 process.stdout.write(
   `${getPlatformString()}-${await getYarnLockHash()}-${await getPackageHash()}-${await getNodeVersionString()}`,
 )
@@ -42,7 +41,10 @@ async function getPackageHash(
   return crypto.createHash('sha256').update(JSON.stringify(value)).digest('hex')
 }
 
-async function getYarnLockHash(root = ROOT, filePath = resolve(root, 'yarn.lock')) {
+async function getYarnLockHash(
+  root = ROOT,
+  filePath = resolve(root, 'yarn.lock'),
+) {
   const content = await readFile(filePath, 'utf-8')
   return crypto.createHash('sha256').update(content).digest('hex')
 }

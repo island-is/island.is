@@ -1,42 +1,42 @@
-name: "Get Cache Keys"
-description: "Action to get cache"
+name: 'Get Cache Keys'
+description: 'Action to get cache'
 inputs:
   enable-node-modules:
-    description: "Get node modules cache"
-    default: "true"
+    description: 'Get node modules cache'
+    default: 'true'
   enable-mobile-node-modules:
-    description: "Get mobile node modules"
-    default: "false"
+    description: 'Get mobile node modules'
+    default: 'false'
   enable-generated-files:
-    description: "Get generated files"
-    default: "true"
+    description: 'Get generated files'
+    default: 'true'
   enable-cypress:
-    description: "Get cypress"
-    default: "true"
+    description: 'Get cypress'
+    default: 'true'
   keys:
-    description: "Keys"
-    default: "false"
+    description: 'Keys'
+    default: 'false'
   cypress-path:
-    description: "Path to cypress"
-    default: "/github/home/.cache/Cypress"
+    description: 'Path to cypress'
+    default: '/github/home/.cache/Cypress'
 outputs:
   node-modules-key:
-    description: "Cache key for node_modules"
+    description: 'Cache key for node_modules'
     value: ${{ steps.get-cache-keys.node-modules-key }}
   mobile-node-modules-key:
-    description: "Cache key for mobile app node_modules"
+    description: 'Cache key for mobile app node_modules'
     value: ${{ steps.get-cache-keys.outputs.mobile-node-modules-key }}
   generated-files-key:
-    description: "Cache key for generated files"
+    description: 'Cache key for generated files'
     value: ${{ steps.get-cache-keys.outputs.generated-files-key }}
   cypress-cache-key:
-    description: "Cache key for github actions node_modules"
+    description: 'Cache key for github actions node_modules'
     value: ${{ steps.get-cache-keys.outputs.cypress-cache-key }}
   keys:
-    description: "Keys"
+    description: 'Keys'
     value: ${{ steps.get-cache-keys.outputs.keys }}
 runs:
-  using: "composite"
+  using: 'composite'
   steps:
     - uses: cue-lang/setup-cue@v1.0.0
     - shell: bash
