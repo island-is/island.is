@@ -36,8 +36,9 @@ writeToOutput();
 
 function infoScreen(hashes = HASHES) {
     console.log(`Cache keys`);
-    console.table(hashes);
-
+    Object.keys(hashes).forEach((key) => {
+        console.log(`${key}=${hashes[key]}`);
+    })
 }
 
 async function writeToSummary(enabled = !!process.env.GITHUB_STEP_SUMMARY, hashes = HASHES, file = process.env.GITHUB_STEP_SUMMARY ?? "") {
@@ -62,7 +63,7 @@ async function writeToOutput(enabled = !!process.env.GITHUB_OUTPUT, hashes = HAS
         return `${keys[key]}=${hashes[key]}`
     }).join('\n')
     await appendFile(file, values, 'utf-8')
-    await appendFile(file, `keys=${JSON.stringify(hashes)}`, 'utf-8')
+    await appendFile(file, `keys="${JSON.stringify(JSON.stringify(hashes))}"`, 'utf-8')
 }
 
 async function getGeneratedFileHash(scriptPath = GENERATE_HASH_GENERATED_FILES_SCRIPT) {
