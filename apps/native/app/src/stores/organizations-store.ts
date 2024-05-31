@@ -59,7 +59,11 @@ export const organizationsStore = create<OrganizationsStore>(
             orgs.find((o) => o.logo?.title === 'Skjaldarmerki')
           c = match?.logo?.url
           if (c) {
-            logoCache.set(forName, c)
+            if (!c.startsWith('https://')) {
+              logoCache.set(forName, `https:${c}`)
+            } else {
+              logoCache.set(forName, c)
+            }
           }
         }
         const url =
