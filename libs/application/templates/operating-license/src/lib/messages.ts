@@ -490,6 +490,11 @@ export const m = defineMessages({
     defaultMessage: 'Vinsamlegast veldu kennitölu ábyrgðaraðila',
     description: 'Description of Guarantor',
   },
+  loadingGuarantorOptions: {
+    id: 'ol.application:loadingGuarantorOptions',
+    defaultMessage: 'Sæki upplýsingar um ábyrgðaraðila',
+    description: 'Loading Guarantor',
+  },
   // Overview screen
   overview: {
     id: 'ol.application:overview.title',

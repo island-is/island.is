@@ -8,9 +8,9 @@ export const GET_REAL_ESTATE_ADDRESS = gql`
   }
 `
 
-export const IDENTITY_QUERY = gql`
-  query IdentityQuery($input: IdentityInput!) {
-    identity(input: $input) {
+export const IDENTITIES_QUERY = gql`
+  query IdentitiesQuery($input: IdentitiesInput!) {
+    identities(input: $input) {
       name
       nationalId
     }

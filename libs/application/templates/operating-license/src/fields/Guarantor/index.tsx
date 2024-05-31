@@ -1,13 +1,13 @@
 import { FieldBaseProps } from '@island.is/application/types'
-import { Box } from '@island.is/island-ui/core'
+import { Box, LoadingDots, Text } from '@island.is/island-ui/core'
 import { SelectController } from '@island.is/shared/form-fields'
-import React, { useEffect } from 'react'
+import React, { useEffect, useState } from 'react'
 import { FC } from 'react'
 import { m } from '../../lib/messages'
 import { useLocale } from '@island.is/localization'
 import { useLazyQuery } from '@apollo/client'
-import { IDENTITY_QUERY } from '../../graphql'
-import { IdentityInput, Query } from '@island.is/api/schema'
+import { IDENTITIES_QUERY } from '../../graphql'
+import { IdentitiesInput, Query } from '@island.is/api/schema'
 
 export const Guarantor: FC<React.PropsWithChildren<FieldBaseProps>> = ({
   application,
@@ -16,40 +16,61 @@ export const Guarantor: FC<React.PropsWithChildren<FieldBaseProps>> = ({
   const { id } = field
   const { formatMessage } = useLocale()
 
-  let options: Array<{ label: string; value: string }> = []
+  const [options, setOptions] = useState<
+    Array<{ label: string; value: string }>
+  >([])
 
-  const [getIdentity, { loading: identityQueryLoading }] = useLazyQuery<
+  const [loaded, setLoaded] = useState(false)
+
+  const [getIdentities, { loading: _identityQueryLoading }] = useLazyQuery<
     Query,
-    { input: IdentityInput }
-  >(IDENTITY_QUERY, {
+    { input: IdentitiesInput }
+  >(IDENTITIES_QUERY, {
     onCompleted: (data) => {
-      const name = data.identity?.name ?? ''
-      const nationalId = data.identity?.nationalId ?? ''
+      const optionsResponse = data.identities
+        ?.map((identity) => {
+          return {
+            label: `${identity?.name} (${identity?.nationalId})`,
+            value: identity?.nationalId ?? '',
+          }
+        })
+        .filter((option) => option.value.length)
 
-      if (!name || !nationalId) return
-      options.push({
-        label: name,
-        value: nationalId,
-      })
+      setOptions(optionsResponse)
+      setLoaded(true)
+    },
+    onError: (error) => {
+      console.error('Error fetching identity', error)
     },
   })
 
   useEffect(() => {
-    for (const nationalId of [
-      application.applicant,
-      ...application.applicantActors,
-    ]) {
-      getIdentity({ variables: { input: { nationalId } } })
-    }
+    getIdentities({
+      variables: {
+        input: {
+          nationalIds: [application.applicant, ...application.applicantActors],
+        },
+      },
+    })
   }, [])
 
   return (
     <Box>
-      <SelectController
-        id={id}
-        label={formatMessage(m.guarantor)}
-        options={options}
-      ></SelectController>
+      {loaded ? (
+        <SelectController
+          id={id}
+          label={formatMessage(m.guarantor)}
+          options={options}
+          defaultValue={options[0].value}
+        ></SelectController>
+      ) : (
+        <>
+          <LoadingDots />
+          <Text variant="eyebrow">
+            {formatMessage(m.loadingGuarantorOptions)}
+          </Text>
+        </>
+      )}
     </Box>
   )
 }
