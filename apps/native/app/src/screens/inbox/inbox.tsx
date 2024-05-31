@@ -113,13 +113,7 @@ const PressableListItem = React.memo(
             toggleAction(!item.bookmarked ? 'bookmark' : 'unbookmark', item.id)
             setStarred(!item.bookmarked)
           }}
-          icon={
-            <Image
-              source={getOrganizationLogoUrl(item.senderName, 75)}
-              resizeMode="contain"
-              style={{ width: 25, height: 25 }}
-            />
-          }
+          icon={getOrganizationLogoUrl(item.senderName, 75)}
         />
       </PressableHighlight>
     )
