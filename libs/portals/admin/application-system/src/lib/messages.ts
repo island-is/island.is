@@ -199,4 +199,32 @@ export const m = defineMessages({
     id: 'admin-portal.application-system:resultCount',
     defaultMessage: '{count} skjöl fundust',
   },
+  tableHeaderType: {
+    id: 'admin-portal.application-system:tableHeaderType',
+    defaultMessage: 'Týpa',
+  },
+  tableHeaderTotal: {
+    id: 'admin-portal.application-system:tableHeaderTotal',
+    defaultMessage: 'Samtals',
+  },
+  tableHeaderDraft: {
+    id: 'admin-portal.application-system:tableHeaderDraft',
+    defaultMessage: 'Drög',
+  },
+  tableHeaderInProgress: {
+    id: 'admin-portal.application-system:tableHeaderInProgress',
+    defaultMessage: 'Í vinnslu',
+  },
+  tableHeaderCompleted: {
+    id: 'admin-portal.application-system:tableHeaderCompleted',
+    defaultMessage: 'Lokið',
+  },
+  tableHeaderApproved: {
+    id: 'admin-portal.application-system:tableHeaderApproved',
+    defaultMessage: 'Samþykkt',
+  },
+  tableHeaderRejected: {
+    id: 'admin-portal.application-system:tableHeaderRejected',
+    defaultMessage: 'Hafnað',
+  },
 })

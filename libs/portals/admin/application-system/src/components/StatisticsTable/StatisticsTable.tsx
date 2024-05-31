@@ -1,11 +1,14 @@
+import { useLocale } from '@island.is/localization'
 import { GetApplicationStatisticsQuery } from '../../queries/overview.generated'
 import { Box, Table as T } from '@island.is/island-ui/core'
+import { m } from '../../lib/messages'
 
 type Props = {
   data?: GetApplicationStatisticsQuery
 }
 
 export default function StatisticsTable({ data }: Props) {
+  const { formatMessage } = useLocale()
   return (
     <>
       {data && (
@@ -13,13 +16,15 @@ export default function StatisticsTable({ data }: Props) {
           <T.Table>
             <T.Head>
               <T.Row>
-                <T.HeadData>Týpa</T.HeadData>
-                <T.HeadData>Samtals</T.HeadData>
-                <T.HeadData>Drög</T.HeadData>
-                <T.HeadData>Í vinnslu</T.HeadData>
-                <T.HeadData>Lokið</T.HeadData>
-                <T.HeadData>Samþykkt</T.HeadData>
-                <T.HeadData>Hafnað</T.HeadData>
+                <T.HeadData>{formatMessage(m.tableHeaderType)}</T.HeadData>
+                <T.HeadData>{formatMessage(m.tableHeaderTotal)}</T.HeadData>
+                <T.HeadData>{formatMessage(m.tableHeaderDraft)}</T.HeadData>
+                <T.HeadData>
+                  {formatMessage(m.tableHeaderInProgress)}
+                </T.HeadData>
+                <T.HeadData>{formatMessage(m.tableHeaderCompleted)}</T.HeadData>
+                <T.HeadData>{formatMessage(m.tableHeaderRejected)}</T.HeadData>
+                <T.HeadData>{formatMessage(m.tableHeaderApproved)}</T.HeadData>
               </T.Row>
             </T.Head>
             <T.Body>
