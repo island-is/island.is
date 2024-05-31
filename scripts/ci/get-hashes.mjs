@@ -63,7 +63,7 @@ async function writeToOutput(enabled = !!process.env.GITHUB_OUTPUT, hashes = HAS
         return `${keys[key]}=${hashes[key]}`
     }).join('\n')
     await appendFile(file, values, 'utf-8')
-    await appendFile(file, `\nkeys=${JSON.stringify(hashes)}"`, 'utf-8')
+    await appendFile(file, `\nkeys=${JSON.stringify(hashes)}\n`, 'utf-8')
 }
 
 async function getGeneratedFileHash(scriptPath = GENERATE_HASH_GENERATED_FILES_SCRIPT) {
