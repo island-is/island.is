@@ -109,10 +109,7 @@ export const update = (update: UpdateCase, workingCase: Case): UpdateCase => {
   return validUpdates
 }
 
-export const formatUpdates = (
-  updates: Array<UpdateCase>,
-  workingCase: Case,
-) => {
+export const formatUpdates = (updates: UpdateCase[], workingCase: Case) => {
   const changes: UpdateCase[] = updates.map((entry) => {
     if (entry.force) {
       return overwrite(entry)
