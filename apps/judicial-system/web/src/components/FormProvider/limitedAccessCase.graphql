@@ -27,7 +27,7 @@ query LimitedAccessCase($input: CaseQueryInput!) {
       defenderNationalId
       defenderEmail
       defenderPhoneNumber
-      defendantWaivesRightToCounsel
+      defenderChoice
       verdictViewDate
     }
     defenderName

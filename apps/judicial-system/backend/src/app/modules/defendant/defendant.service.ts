@@ -5,6 +5,7 @@ import {
   Inject,
   Injectable,
   InternalServerErrorException,
+  NotFoundException,
 } from '@nestjs/common'
 import { InjectModel } from '@nestjs/sequelize'
 
@@ -141,6 +142,10 @@ export class DefendantService {
     )
   }
 
+  async findByCaseId(caseId: string): Promise<Defendant[]> {
+    return this.defendantModel.findAll({ where: { caseId } })
+  }
+
   async update(
     theCase: Case,
     defendant: Defendant,
@@ -191,6 +196,40 @@ export class DefendantService {
         ])
       }
     }
+
+    return updatedDefendant
+  }
+
+  async updateByNationalId(
+    caseId: string,
+    defendantNationalId: string,
+    update: UpdateDefendantDto,
+  ): Promise<Defendant> {
+    const [numberOfAffectedRows, defendants] = await this.defendantModel.update(
+      update,
+      {
+        where: {
+          national_id: defendantNationalId,
+          caseId,
+        },
+        returning: true,
+      },
+    )
+
+    if (numberOfAffectedRows > 1) {
+      this.logger.error(
+        `Unexpected number of rows (${numberOfAffectedRows}) affected when updating defendant ${defendants[0].id} of case ${caseId}`,
+      )
+    } else if (numberOfAffectedRows < 1) {
+      throw new NotFoundException(`Could not find defendant to update`)
+    }
+
+    const updatedDefendant = this.getUpdatedDefendant(
+      numberOfAffectedRows,
+      defendants,
+      defendants[0].id,
+      caseId,
+    )
 
     return updatedDefendant
   }

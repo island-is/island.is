@@ -16,13 +16,14 @@ import { Defender } from './models/defender.response'
 
 @Controller('api')
 @ApiTags('defenders')
-@UseInterceptors(CacheInterceptor)
 export class DefenderController {
   constructor(
-    @Inject(LOGGER_PROVIDER) private readonly logger: Logger,
     private readonly lawyersService: LawyersService,
+    @Inject(LOGGER_PROVIDER)
+    private readonly logger: Logger,
   ) {}
 
+  @UseInterceptors(CacheInterceptor)
   @Get('defenders')
   @ApiCreatedResponse({
     type: [Defender],
