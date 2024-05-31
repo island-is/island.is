@@ -8,13 +8,13 @@ import { HealthInsuranceV2ClientModule } from '@island.is/clients/icelandic-heal
 import { AccidentNotificationService } from './accident-notification.service'
 
 @Module({
-      imports: [HealthInsuranceV2ClientModule],
-      providers: [
-        HealthInsuranceService,
-        AccidentNotificationService,
-        HealthInsuranceResolver,
-        HealthInsuranceAccidentNotificationResolver,
-      ],
-      exports: [],
+  imports: [HealthInsuranceV2ClientModule],
+  providers: [
+    HealthInsuranceService,
+    AccidentNotificationService,
+    HealthInsuranceResolver,
+    HealthInsuranceAccidentNotificationResolver,
+  ],
+  exports: [],
 })
 export class HealthInsuranceModule {}

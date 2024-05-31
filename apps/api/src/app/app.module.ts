@@ -179,8 +179,8 @@ import {
 import { HousingBenefitsConfig } from '@island.is/clients/hms-housing-benefits'
 import { UserProfileClientConfig } from '@island.is/clients/user-profile'
 import { CriminalRecordClientConfig } from '@island.is/clients/criminal-record'
-import { VmstClientConfig } from '@island.is/clients/vmst'
 import { HealthInsuranceV2ClientConfig } from '@island.is/clients/icelandic-health-insurance/health-insurance'
+import { VmstClientConfig } from '@island.is/clients/vmst'
 
 const environment = getConfig
 
@@ -235,10 +235,10 @@ const environment = getConfig
         clientSecret: environment.documentProviderService.prod.clientSecret,
         tokenUrl: environment.documentProviderService.prod.tokenUrl,
       },
-      documentsServiceBasePath:
-        environment.documentProviderService.documentsServiceBasePath!,
-      documentProviderAdmins:
-        environment.documentProviderService.documentProviderAdmins!,
+      documentsServiceBasePath: environment.documentProviderService
+        .documentsServiceBasePath!,
+      documentProviderAdmins: environment.documentProviderService
+        .documentProviderAdmins!,
     }),
     CmsTranslationsModule,
     TerminusModule,
@@ -393,8 +393,8 @@ const environment = getConfig
         LicenseConfig,
         UserProfileClientConfig,
         CriminalRecordClientConfig,
-        VmstClientConfig,
         HealthInsuranceV2ClientConfig,
+        VmstClientConfig,
       ],
     }),
   ],
