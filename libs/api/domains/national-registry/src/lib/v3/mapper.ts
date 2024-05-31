@@ -64,7 +64,7 @@ export const formatChildCustody = (
   }
 }
 
-export const formatPerson = async(
+export const formatPerson = async (
   individual?: EinstaklingurDTOAllt | null,
   nationalId?: string,
 ): Promise<Person | null> => {
