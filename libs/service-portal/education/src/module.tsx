@@ -5,7 +5,7 @@ import { EducationPaths } from './lib/paths'
 import { Navigate } from 'react-router-dom'
 
 const EducationCareer = lazy(() =>
-  import('../../education-career/src/screens/EducationCareer/EducationCareer'),
+  import('./screens/EducationCareer/EducationCareer'),
 )
 
 const EducationGraduation = lazy(() =>

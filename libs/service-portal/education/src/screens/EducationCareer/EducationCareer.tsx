@@ -8,10 +8,10 @@ import {
   MENNTAMALASTOFNUN_SLUG,
   m,
 } from '@island.is/service-portal/core'
-import { CareerCards } from './components/CareerCards'
+import CareerCards from '../../components/CareerCards/CareerCards'
 
 const EducationCareer = () => {
-  useNamespaces('sp.education-career')
+  useNamespaces('service.portal, sp.education')
   const { formatMessage } = useLocale()
 
   return (
@@ -19,7 +19,7 @@ const EducationCareer = () => {
       <IntroHeader
         title={m.educationCareer}
         intro={defineMessage({
-          id: 'sp.education-career:education-career-intro',
+          id: 'sp.education:education-career-intro',
           defaultMessage:
             'Hér birtast einkunnir þínar og barna þinna úr samræmdum prófum frá árinu 2020 sem sóttar eru til Menntamálastofnunar. Unnið er að því að því að koma öllum einkunnum úr menntakerfi Íslands á einn stað.',
           description: 'education career intro',

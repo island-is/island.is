@@ -974,12 +974,6 @@
       "@island.is/service-portal/education-career": [
         "libs/service-portal/education-career/src/index.ts"
       ],
-      "@island.is/service-portal/education-degree": [
-        "libs/service-portal/education-degree/src/index.ts"
-      ],
-      "@island.is/service-portal/education-license": [
-        "libs/service-portal/education-license/src/index.ts"
-      ],
       "@island.is/service-portal/education-student-assessment": [
         "libs/service-portal/education-student-assessment/src/index.ts"
       ],
