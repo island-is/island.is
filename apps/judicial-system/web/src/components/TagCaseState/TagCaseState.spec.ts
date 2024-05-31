@@ -78,7 +78,7 @@ describe('mapCaseStateToTagVariant', () => {
       text: strings.active.defaultMessage,
     })
 
-    expect(fn(CaseState.ACCEPTED, false, CaseType.INDICTMENT)).toEqual({
+    expect(fn(CaseState.COMPLETED, false, CaseType.INDICTMENT)).toEqual({
       color: 'darkerBlue',
       text: strings.inactive.defaultMessage,
     })

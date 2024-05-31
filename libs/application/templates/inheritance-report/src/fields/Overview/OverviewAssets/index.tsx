@@ -8,7 +8,7 @@ import {
 } from '@island.is/island-ui/core'
 import { useLocale } from '@island.is/localization'
 import { FC, Fragment } from 'react'
-import { m } from '../../lib/messages'
+import { m } from '../../../lib/messages'
 import {
   getBankAccountsDataRow,
   getClaimsDataRow,
@@ -23,7 +23,7 @@ import {
 import { SectionType, RowProps, RowItemType } from './types'
 import { getValueViaPath } from '@island.is/application/core'
 import { formatCurrency } from '@island.is/application/ui-components'
-import { calculateTotalAssets } from '../../lib/utils/calculateTotalAssets'
+import { calculateTotalAssets } from '../../../lib/utils/calculateTotalAssets'
 
 export const OverviewAssets: FC<React.PropsWithChildren<FieldBaseProps>> = ({
   application,
@@ -89,7 +89,7 @@ export const OverviewAssets: FC<React.PropsWithChildren<FieldBaseProps>> = ({
   // Bank accounts
   const bankAccountsDataRow = getBankAccountsDataRow(answers)
   const bankAccountsDataTotal = formatCurrency(
-    String(getValueViaPath(answers, 'assets.inventory.value')) ?? '',
+    String(getValueViaPath(answers, 'assets.bankAccounts.total')) ?? '',
   )
 
   sections.push({

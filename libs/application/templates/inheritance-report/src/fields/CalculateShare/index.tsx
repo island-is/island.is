@@ -21,7 +21,6 @@ import { EstateAssets } from '../../types'
 import { MessageDescriptor } from 'react-intl'
 import { useFormContext } from 'react-hook-form'
 import { YES } from '../../lib/constants'
-import ShareInput from '../../components/ShareInput'
 
 type CalcShared = {
   value: number
@@ -65,7 +64,7 @@ export const CalculateShare: FC<React.PropsWithChildren<FieldBaseProps>> = ({
 
   const hasCustomSpouseSharePercentage =
     deceasedWasInCohabitation &&
-    !!formValues?.customShare?.hasCustomSpouseSharePercentage?.includes(YES)
+    formValues?.customShare?.hasCustomSpouseSharePercentage === YES
 
   const [shareValues, setShareValues] = useState<
     Record<keyof Partial<EstateAssets>, ShareItem>
@@ -454,23 +453,7 @@ export const CalculateShare: FC<React.PropsWithChildren<FieldBaseProps>> = ({
 
   return (
     <Box>
-      {hasCustomSpouseSharePercentage && (
-        <GridRow>
-          <GridColumn span={['1/1', '1/2']}>
-            <ShareInput
-              name="customShare.customSpouseSharePercentage"
-              label={formatMessage(m.assetsToShareCustomSpousePercentage)}
-              onAfterChange={(val) => {
-                setCustomSpouseSharePercentage(val / 100)
-              }}
-              errorMessage={inputError}
-              required
-            />
-          </GridColumn>
-        </GridRow>
-      )}
-
-      <Box marginTop={4}>
+      <Box marginTop={2}>
         <TitleRow
           title={m.assetsToShareTotalAssets}
           value={roundedValueToNumber(total)}

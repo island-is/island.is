@@ -1,6 +1,7 @@
 // TODO: Add tests
 import {
   isIndictmentCase,
+  isTrafficViolationCase,
   prosecutorCanSelectDefenderForInvestigationCase,
 } from '@island.is/judicial-system/types'
 import {
@@ -13,7 +14,7 @@ import {
 } from '@island.is/judicial-system-web/src/graphql/schema'
 import { TempCase as Case } from '@island.is/judicial-system-web/src/types'
 
-import { isBusiness, isTrafficViolationIndictment } from './stepHelper'
+import { isBusiness } from './stepHelper'
 
 export type Validation =
   | 'empty'
@@ -433,6 +434,11 @@ export const isDefenderStepValid = (workingCase: Case): boolean => {
   return Boolean(workingCase.prosecutor && defendantsAreValid())
 }
 
+export const isConclusionStepValid = (workingCase: Case): boolean => {
+  // TODO: Implement after selected action has been added as a field to the case
+  return true
+}
+
 export const isAdminUserFormValid = (user: User): boolean => {
   return Boolean(
     user.institution &&
@@ -495,7 +501,7 @@ export const isCaseFilesStepValidIndictments = (workingCase: Case): boolean => {
     workingCase.caseFiles?.some(
       (file) => file.category === CaseFileCategory.COVER_LETTER,
     ) &&
-      (isTrafficViolationIndictment(workingCase) ||
+      (isTrafficViolationCase(workingCase) ||
         workingCase.caseFiles?.some(
           (file) => file.category === CaseFileCategory.INDICTMENT,
         )) &&
