@@ -281,19 +281,19 @@ const Conclusion: React.FC = () => {
     }
 
     switch (selectedAction) {
-      case 'POSTPONE':
+      case IndictmentDecision.POSTPONING:
         return Boolean(
           postponement?.postponedIndefinitely
             ? postponement.reason
             : courtDate?.date,
         )
-      case 'REDISTRIBUTE':
+      case IndictmentDecision.REDISTRIBUTING:
         return uploadFiles.some(
           (file) =>
             file.category === CaseFileCategory.COURT_RECORD &&
             file.status === 'done',
         )
-      case 'COMPLETE':
+      case IndictmentDecision.COMPLETING:
         switch (selectedDecision) {
           case CaseIndictmentRulingDecision.RULING:
           case CaseIndictmentRulingDecision.DISMISSAL:
@@ -576,11 +576,7 @@ const Conclusion: React.FC = () => {
           >
             <SectionHeading
               title={formatMessage(strings.courtRecordTitle)}
-<<<<<<< HEAD
               required={selectedAction === IndictmentDecision.REDISTRIBUTING}
-=======
-              required={selectedAction !== 'POSTPONE'}
->>>>>>> 8c99a2ba5c7c08486b09c31f3276d3487329f0f3
             />
             <InputFileUpload
               fileList={uploadFiles.filter(
@@ -603,7 +599,7 @@ const Conclusion: React.FC = () => {
             />
           </Box>
         )}
-        {selectedAction === 'COMPLETE' &&
+        {selectedAction === IndictmentDecision.COMPLETING &&
           (selectedDecision === CaseIndictmentRulingDecision.RULING ||
             selectedDecision === CaseIndictmentRulingDecision.DISMISSAL) && (
             <Box component="section" marginBottom={10}>
