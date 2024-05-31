@@ -36,7 +36,6 @@ import {
   getInsuranceStatus,
   getSelectedFamily,
   getSpouseAsOptions,
-  hasFamilyAvailable,
   hasFamilySelected,
 } from '../utils'
 import { HealthInsuranceDeclaration } from '../lib/dataSchema'
@@ -48,7 +47,6 @@ import {
 } from '@island.is/application/ui-components'
 import format from 'date-fns/format'
 import { ApplicantType } from '../shared/constants'
-import { application } from 'express'
 
 export const HealthInsuranceDeclarationForm: Form = buildForm({
   id: 'HealthInsuranceDeclarationDraft',
