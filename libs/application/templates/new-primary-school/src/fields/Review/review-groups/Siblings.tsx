@@ -1,10 +1,5 @@
-import { FieldComponents, FieldTypes, YES } from '@island.is/application/types'
-import {
-  Label,
-  ReviewGroup,
-  formatPhoneNumber,
-  removeCountryCode,
-} from '@island.is/application/ui-components'
+import { FieldComponents, FieldTypes } from '@island.is/application/types'
+import { Label, ReviewGroup } from '@island.is/application/ui-components'
 import { StaticTableFormField } from '@island.is/application/ui-fields'
 import { Box, GridColumn, GridRow } from '@island.is/island-ui/core'
 import { useLocale } from '@island.is/localization'
@@ -12,44 +7,40 @@ import { format as formatKennitala } from 'kennitala'
 import { newPrimarySchoolMessages } from '../../../lib/messages'
 import {
   getApplicationAnswers,
-  getRelationOptionLabel,
+  getSiblingRelationOptionLabel,
 } from '../../../lib/newPrimarySchoolUtils'
 import { ReviewGroupProps } from './props'
 
-export const Relatives = ({
+export const Siblings = ({
   application,
   editable,
   goToScreen,
 }: ReviewGroupProps) => {
   const { formatMessage } = useLocale()
-  const { relatives } = getApplicationAnswers(application.answers)
+  const { siblings } = getApplicationAnswers(application.answers)
 
-  const rows = relatives.map((r) => {
+  const rows = siblings.map((s) => {
     return [
-      r.fullName,
-      formatPhoneNumber(removeCountryCode(r.phoneNumber ?? '')),
-      formatKennitala(r.nationalId),
-      getRelationOptionLabel(r.relation),
-      r.canPickUpChild?.includes(YES)
-        ? newPrimarySchoolMessages.shared.yes
-        : newPrimarySchoolMessages.shared.no,
+      s.fullName,
+      formatKennitala(s.nationalId),
+      getSiblingRelationOptionLabel(s.relation),
     ]
   })
 
   return (
+    // TODO: Only display section if "Siblings" selected as Reason for transfer
     <ReviewGroup
       isEditable={editable}
-      editAction={() => goToScreen?.('relatives')}
+      editAction={() => goToScreen?.('siblings')}
     >
       <GridRow>
         <GridColumn span={['12/12', '12/12', '12/12', '12/12']}>
           <Label>
             {formatMessage(
-              newPrimarySchoolMessages.childrenNParents
-                .relativesSubSectionTitle,
+              newPrimarySchoolMessages.primarySchool.siblingsTitle,
             )}
           </Label>
-          {relatives?.length > 0 && (
+          {siblings?.length > 0 && (
             <Box paddingTop={3}>
               <StaticTableFormField
                 application={application}
@@ -57,15 +48,12 @@ export const Relatives = ({
                   type: FieldTypes.STATIC_TABLE,
                   component: FieldComponents.STATIC_TABLE,
                   children: undefined,
-                  id: 'relativesTable',
+                  id: 'siblingsTable',
                   title: '',
                   header: [
                     newPrimarySchoolMessages.shared.fullName,
-                    newPrimarySchoolMessages.shared.phoneNumber,
                     newPrimarySchoolMessages.shared.nationalId,
                     newPrimarySchoolMessages.shared.relation,
-                    newPrimarySchoolMessages.childrenNParents
-                      .relativesCanPickUpChildTableHeader,
                   ],
                   rows,
                 }}
