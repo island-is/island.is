@@ -13,7 +13,6 @@ import { useWindowSize } from 'react-use'
 import { ApplicationFilters, MultiChoiceFilter } from '../../types/filters'
 import { m } from '../../lib/messages'
 import { statusMapper } from '../../shared/utils'
-import { log } from 'console'
 import { ApplicationStatus } from '@island.is/application/types'
 
 type Props = {
