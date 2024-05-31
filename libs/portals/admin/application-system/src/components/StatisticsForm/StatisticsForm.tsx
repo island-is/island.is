@@ -23,7 +23,6 @@ export const StatisticsForm = ({ onDateChange }: Props) => {
   const { formatMessage } = useLocale()
   const { width } = useWindowSize()
 
-
   return (
     <Box
       display="flex"
