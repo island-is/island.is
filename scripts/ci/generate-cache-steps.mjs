@@ -101,7 +101,12 @@ function exportToYaml(obj, fileName) {
         const jsonString = JSON.stringify(obj);
         const cueProcess = spawn('cue', ['export', '-', '-o', fileName]);
         cueProcess.stdin.write(jsonString);
-        cueProcess.stdin.end();
+        cueProcess.on('message', (msg) => {
+            console.log(msg);
+        })
+        cueProcess.on('error', (msg) => {
+            console.log(msg);
+        })
         cueProcess.on('close', (code) => {
             if (code !== 0) {
                 console.error(`cue export failed with code ${code}`);
@@ -109,6 +114,7 @@ function exportToYaml(obj, fileName) {
             }
             resolve();
         });
+        cueProcess.stdin.end();
     })
 
 }
