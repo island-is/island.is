@@ -209,9 +209,10 @@ export class AppService {
           throw new NotFoundException(`Case ${id} not found`)
         }
 
+        const reason = await res.text()
+
         throw new BadGatewayException(
-          (await res.text()) ||
-            'Unexpected error occurred while fetching case by ID',
+          reason || 'Unexpected error occurred while fetching case by ID',
         )
       }
 
