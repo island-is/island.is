@@ -1501,11 +1501,6 @@ export const m = defineMessages({
       'Samþykktar skráargerðir eru .pdf, .doc, .docx, .jpg, .jpeg, .png, .xls og .xlsx',
     description: '',
   },
-  fileUploadOtherDocumentsPrePaid: {
-    id: 'ir.application:fileUploadOtherDocumentsPrePaid',
-    defaultMessage: 'Fylgigögn',
-    description: '',
-  },
   heirShare: {
     id: 'ir.application:heirShare',
     defaultMessage: 'Arfur og erfðafjárskattur',
