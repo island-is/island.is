@@ -57,6 +57,6 @@ export class CaseController {
   ): Promise<CaseResponse> {
     this.logger.debug('Getting case by id')
 
-    return this.appService.getCaseById(caseId, user.nationalId, query?.lang)
+    return this.caseService.getCaseById(caseId, user.nationalId, query?.lang)
   }
 }
