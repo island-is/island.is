@@ -1,4 +1,6 @@
-import { spawn } from "child_process";
+import { spawn } from "node:child_process";
+import { resolve } from "node:path";
+import { ROOT } from "./_common.mjs";
 
 const enableNodeModules = process.env.ENABLE_NODE_MODULES === "true";
 const enableMobileNodeModules = process.env.ENABLE_MOBILE_NODE_MODULES === "true";
@@ -96,7 +98,7 @@ function generateCacheAction(name, id, path, key) {
     }
 }
 
-function exportToYaml(obj, fileName) {
+function exportToYaml(obj, _fileName, fileName = resolve(ROOT, fileName)) {
     return new Promise((resolve) => {
         const jsonString = JSON.stringify(obj);
         const cueProcess = spawn('cue', ['export', '-', '-o', fileName]);
