@@ -62,7 +62,7 @@ export class ApplicationAdminResolver {
     const test =
       await this.applicationService.getApplicationCountByTypeIdAndStatus(
         user,
-        'is',
+        locale,
         input,
       )
 

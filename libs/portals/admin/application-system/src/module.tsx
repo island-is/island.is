@@ -4,7 +4,6 @@ import React, { lazy } from 'react'
 import { m } from './lib/messages'
 import { ApplicationSystemPaths } from './lib/paths'
 import { Navigate } from 'react-router-dom'
-import { StatisticsAction } from './screens/Statistics/Statistics.action'
 
 const Root = lazy(() => import('./screens/Root/Root'))
 
@@ -52,7 +51,6 @@ export const applicationSystemAdminModule: PortalModule = {
           name: m.statistics,
           path: ApplicationSystemPaths.Statistics,
           element: <Statistics />,
-          action: StatisticsAction(props),
         },
       ],
     },
