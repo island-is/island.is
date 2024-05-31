@@ -28,25 +28,29 @@ const UserInfoOverview = () => {
 
   useEffect(() => {
     const fetchChildCustodyData = async () => {
-      if (data?.nationalRegistryPerson?.childCustody) {
-        const childrenData = await Promise.all(
-          data.nationalRegistryPerson.childCustody.map(async (child) => {
-            const baseId = await maskString(
-              child.nationalId,
-              userInfo.profile.nationalId,
-            )
-            return (
-              <FamilyMemberCard
-                key={child.nationalId}
-                title={child.fullName || ''}
-                nationalId={child.nationalId}
-                baseId={baseId || ''}
-                familyRelation="child"
-              />
-            )
-          }),
-        )
-        setChildCards(childrenData)
+      try {
+        if (data?.nationalRegistryPerson?.childCustody) {
+          const childrenData = await Promise.all(
+            data.nationalRegistryPerson.childCustody.map(async (child) => {
+              const baseId = await maskString(
+                child.nationalId,
+                userInfo.profile.nationalId,
+              )
+              return (
+                <FamilyMemberCard
+                  key={child.nationalId}
+                  title={child.fullName || ''}
+                  nationalId={child.nationalId}
+                  baseId={baseId || ''}
+                  familyRelation="child"
+                />
+              )
+            }),
+          )
+          setChildCards(childrenData)
+        }
+      } catch (e) {
+        console.error('Failed setting childCards', e)
       }
     }
 

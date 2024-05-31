@@ -40,19 +40,19 @@ const Child = () => {
   const [unmaskedBaseId, setUnmaskedBaseId] = useState<string | null>(null)
 
   useEffect(() => {
-    const encrypt = async () => {
+    const decrypt = async () => {
       try {
-        const encrypted = await unmaskString(
+        const decrypted = await unmaskString(
           baseId,
           userInfo.profile.nationalId,
         )
-        setUnmaskedBaseId(encrypted)
+        setUnmaskedBaseId(decrypted)
       } catch (error) {
         console.error('Error encrypting text:', error)
       }
     }
 
-    encrypt()
+    decrypt()
   }, [baseId, userInfo])
 
   const { data, loading, error } = useNationalRegistryChildCustodyQuery({
