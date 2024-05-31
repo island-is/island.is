@@ -34,7 +34,7 @@ interface Props {
 interface calculationsState {
   amount: number
   income?: number
-  childrenAidAmount: number
+  childrenAidAmount?: number
   personalTaxCreditPercentage?: number
   secondPersonalTaxCredit: number
   showSecondPersonalTaxCredit: boolean
@@ -55,6 +55,10 @@ const AcceptModal = ({
 }: Props) => {
   const router = useRouter()
   const maximumInputLength = 6
+
+  const showChildren =
+    applicationMunicipality.childrenAid === ChildrenAid.APPLICANT &&
+    hasApplicantChildren
 
   const aidAmount = useMemo(() => {
     if (applicationMunicipality && homeCircumstances) {
@@ -81,7 +85,7 @@ const AcceptModal = ({
 
   const [state, setState] = useState<calculationsState>({
     amount: aidAmount,
-    childrenAidAmount: 0,
+    childrenAidAmount: showChildren ? undefined : 0,
     income: undefined,
     personalTaxCreditPercentage: undefined,
     secondPersonalTaxCredit: 0,
@@ -101,7 +105,7 @@ const AcceptModal = ({
 
   const finalAmount = calculateAcceptedAidFinalAmount(
     state.amount +
-      state.childrenAidAmount -
+      (state?.childrenAidAmount || 0) -
       checkingValue(state.income) -
       sumValues,
     checkingValue(state.personalTaxCreditPercentage),
@@ -118,6 +122,7 @@ const AcceptModal = ({
   const areRequiredFieldsFilled =
     state.income === undefined ||
     state.personalTaxCreditPercentage === undefined ||
+    state.childrenAidAmount === undefined ||
     !finalAmount ||
     finalAmount === 0
 
@@ -167,26 +172,30 @@ const AcceptModal = ({
         />
       </Box>
 
-      {applicationMunicipality.childrenAid === ChildrenAid.APPLICANT &&
-        hasApplicantChildren && (
-          <Box marginBottom={3}>
-            <NumberInput
-              label="Styrkur vegna barna"
-              placeholder="Sláðu inn upphæð"
-              id="childrenAidAmountInput"
-              name="childrenAidAmountInput"
-              value={state.childrenAidAmount.toString()}
-              onUpdate={(input) => {
-                setState({
-                  ...state,
-                  childrenAidAmount: input,
-                  hasError: false,
-                })
-              }}
-              maximumInputLength={maximumInputLength}
-            />
-          </Box>
-        )}
+      {showChildren && (
+        <Box marginBottom={3}>
+          <NumberInput
+            label="Styrkur vegna barna"
+            placeholder="Sláðu inn upphæð"
+            id="childrenAidAmountInput"
+            name="childrenAidAmountInput"
+            value={
+              state?.childrenAidAmount
+                ? state?.childrenAidAmount.toString()
+                : ''
+            }
+            onUpdate={(input) => {
+              setState({
+                ...state,
+                childrenAidAmount: input,
+                hasError: false,
+              })
+            }}
+            maximumInputLength={maximumInputLength}
+            hasError={state.hasError && state.childrenAidAmount === undefined}
+          />
+        </Box>
+      )}
 
       <Box marginBottom={3}>
         <NumberInput
