@@ -129,13 +129,11 @@ export const EditClient = () => {
           {isSuperAdmin && !isMachineApplication && (
             <Delegation
               promptDelegations={selectedEnvironment.promptDelegations}
-              supportsPersonalRepresentatives={
-                selectedEnvironment.supportsPersonalRepresentatives
-              }
               requireApiScopes={selectedEnvironment.requireApiScopes}
               supportedDelegationTypes={
                 selectedEnvironment.supportedDelegationTypes ?? []
               }
+              selectedEnvironment={selectedEnvironment.environment}
             />
           )}
           {isSuperAdmin && (

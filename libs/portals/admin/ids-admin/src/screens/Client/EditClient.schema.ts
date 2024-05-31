@@ -157,7 +157,6 @@ export const schema = {
   [ClientFormTypes.delegations]: z
     .object({
       promptDelegations: booleanCheckbox,
-      supportsPersonalRepresentatives: booleanCheckbox,
       requireApiScopes: booleanCheckbox,
       removedDelegationTypes: zfd.repeatable(z.optional(z.array(z.string()))),
       addedDelegationTypes: zfd.repeatable(z.optional(z.array(z.string()))),

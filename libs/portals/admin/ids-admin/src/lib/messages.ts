@@ -853,4 +853,8 @@ export const m = defineMessages({
     id: 'ap.ids-admin:type-not-found-message',
     defaultMessage: 'It may have been removed or moved',
   },
+  additionalSettingsLabel: {
+    id: 'ap.ids-admin:additional-settings-label',
+    defaultMessage: 'Additional settings',
+  },
 })
