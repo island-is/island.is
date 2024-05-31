@@ -1,12 +1,11 @@
+// vi: ft=jsonc
 {
   "build": { "dockerfile": "Dockerfile", "context": "../" },
-
   "customizations": {
     "vscode": {
       "extensions": ["dbaeumer.vscode-eslint"]
     }
   },
-  "runArgs": ["--userns=keep-id"],
 
   "forwardPorts": [3000]
 }
