@@ -85,6 +85,16 @@ export const newPrimarySchoolMessages: MessageDir = {
       defaultMessage: 'Símanúmer',
       description: 'Phonenumber',
     },
+    relation: {
+      id: 'dess.nps.application:relation',
+      defaultMessage: 'Tengsl',
+      description: 'Relation',
+    },
+    relationPlaceholder: {
+      id: 'dess.nps.application:relation.placeholder',
+      defaultMessage: 'Veldu tengsl',
+      description: 'Select relation',
+    },
     neighborhood: {
       id: 'dess.nps.application:neighborhood',
       defaultMessage: 'Hverfi',
@@ -274,40 +284,30 @@ export const newPrimarySchoolMessages: MessageDir = {
       defaultMessage: 'Eyða aðstandanda',
       description: 'Remove relative',
     },
-    relativesRelation: {
-      id: 'dess.nps.application:childrenNParents.relatives.relation',
-      defaultMessage: 'Tengsl',
-      description: 'Relation',
-    },
-    relativesRelationPlaceholder: {
-      id: 'dess.nps.application:childrenNParents.relatives.relation.placeholder',
-      defaultMessage: 'Veldu tengsl',
-      description: 'Select relation',
-    },
-    relativesRelationGrandparents: {
-      id: 'dess.nps.application:childrenNParents.relatives.relation.randparents',
+    relativesRelationGrandparent: {
+      id: 'dess.nps.application:childrenNParents.relatives.relation.grandparent',
       defaultMessage: 'Afi/amma',
-      description: 'Grandparents',
+      description: 'Grandparent',
     },
-    relativesRelationSiblings: {
-      id: 'dess.nps.application:childrenNParents.relatives.relation.siblings',
+    relativesRelationSibling: {
+      id: 'dess.nps.application:childrenNParents.relatives.relation.sibling',
       defaultMessage: 'Systkini',
-      description: 'Siblings',
+      description: 'Sibling',
     },
-    relativesRelationStepParent: {
-      id: 'dess.nps.application:childrenNParents.relatives.relation.step.parent',
+    relativesRelationStepparent: {
+      id: 'dess.nps.application:childrenNParents.relatives.relation.stepparent',
       defaultMessage: 'Stjúpforeldri',
-      description: 'Step parent',
+      description: 'Stepparent',
     },
-    relativesRelationRelatives: {
-      id: 'dess.nps.application:childrenNParents.relatives.relation.relatives',
+    relativesRelationRelative: {
+      id: 'dess.nps.application:childrenNParents.relatives.relation.relative',
       defaultMessage: 'Frændfólk',
-      description: 'Relatives',
+      description: 'Relative',
     },
-    relativesRelationFriendsAndOther: {
-      id: 'dess.nps.application:childrenNParents.relatives.relation.friends.and.other',
+    relativesRelationFriendOrOther: {
+      id: 'dess.nps.application:childrenNParents.relatives.relation.friend.or.other',
       defaultMessage: 'Vinafólk/annað',
-      description: 'Friends/others',
+      description: 'Friend/other',
     },
     relativesCanPickUpChild: {
       id: 'dess.nps.application:childrenNParents.relatives.can.pick.up.child',
@@ -352,6 +352,46 @@ export const newPrimarySchoolMessages: MessageDir = {
       id: 'dess.nps.application:primary.school.starting.school.siblings.section.title',
       defaultMessage: 'Systkini',
       description: 'Siblings',
+    },
+    siblingsTitle: {
+      id: 'dess.nps.application:primary.school.starting.school.siblings.title',
+      defaultMessage: 'Systkini í sama grunnskóla',
+      description: 'Siblings in the same primary school',
+    },
+    siblingsRegistrationTitle: {
+      id: 'dess.nps.application:primary.school.siblings.registration.title',
+      defaultMessage: 'Skráning systkinis',
+      description: 'Registration of a sibling',
+    },
+    siblingsAddRelative: {
+      id: 'dess.nps.application:primary.school.siblings.add.relative',
+      defaultMessage: 'Bæta við systkini',
+      description: 'Add a sibling',
+    },
+    siblingsRegisterRelative: {
+      id: 'dess.nps.application:primary.school.siblings.register.relative',
+      defaultMessage: 'Skrá systkini',
+      description: 'Register sibling',
+    },
+    siblingsDeleteRelative: {
+      id: 'dess.nps.application:primary.school.siblings.delete.relative',
+      defaultMessage: 'Eyða systkini',
+      description: 'Remove sibling',
+    },
+    siblingsRelationSibling: {
+      id: 'dess.nps.application:primary.school.siblings.relation.sibling',
+      defaultMessage: 'Alsystkini',
+      description: 'Sibling',
+    },
+    halfSiblingsRelationSibling: {
+      id: 'dess.nps.application:primary.school.siblings.relation.half.sibling',
+      defaultMessage: 'Hálfsystkini',
+      description: 'Half sibling',
+    },
+    stepSiblingsRelationSibling: {
+      id: 'dess.nps.application:primary.school.siblings.relation.step.sibling',
+      defaultMessage: 'Stjúpsystkini',
+      description: 'Step sibling',
     },
 
     // Starting school
@@ -560,5 +600,10 @@ export const errorMessages = defineMessages({
     id: 'dess.nps.application:error.relatives.required',
     defaultMessage: 'Nauðsynlegt er að bæta við a.m.k einum aðstandenda',
     description: 'You must add at least one relative',
+  },
+  siblingsRequired: {
+    id: 'dess.nps.application:error.siblings.required',
+    defaultMessage: 'Nauðsynlegt er að bæta við a.m.k einu systkini',
+    description: 'You must add at least one sibling',
   },
 })

@@ -6,8 +6,8 @@ import {
   YesOrNo,
 } from '@island.is/application/types'
 import * as kennitala from 'kennitala'
-import { Child, Parents, Person, RelativesRow } from '../types'
-import { RelationOptions } from './constants'
+import { Child, Parents, Person, RelativesRow, SiblingsRow } from '../types'
+import { RelationOptions, SiblingRelationOptions } from './constants'
 import { newPrimarySchoolMessages } from './messages'
 
 export const getApplicationAnswers = (answers: Application['answers']) => {
@@ -16,6 +16,8 @@ export const getApplicationAnswers = (answers: Application['answers']) => {
   const parents = getValueViaPath(answers, 'parents') as Parents
 
   const relatives = getValueViaPath(answers, 'relatives') as RelativesRow[]
+
+  const siblings = getValueViaPath(answers, 'siblings') as SiblingsRow[]
 
   const moveAbroad = getValueViaPath(answers, 'school.moveAbroad') as string
 
@@ -38,6 +40,7 @@ export const getApplicationAnswers = (answers: Application['answers']) => {
     childNationalId,
     parents,
     relatives,
+    siblings,
     photographyConsent,
     photoSchoolPublication,
     photoMediaPublication,
@@ -148,32 +151,53 @@ export const hasOtherParent = (
 
 export const getRelationOptions = () => [
   {
-    value: RelationOptions.GRANDPARENTS,
+    value: RelationOptions.GRANDPARENT,
     label:
-      newPrimarySchoolMessages.childrenNParents.relativesRelationGrandparents,
+      newPrimarySchoolMessages.childrenNParents.relativesRelationGrandparent,
   },
   {
-    value: RelationOptions.SIBLINGS,
-    label: newPrimarySchoolMessages.childrenNParents.relativesRelationSiblings,
+    value: RelationOptions.SIBLING,
+    label: newPrimarySchoolMessages.childrenNParents.relativesRelationSibling,
   },
   {
-    value: RelationOptions.STEP_PARENT,
+    value: RelationOptions.STEPPARENT,
     label:
-      newPrimarySchoolMessages.childrenNParents.relativesRelationStepParent,
+      newPrimarySchoolMessages.childrenNParents.relativesRelationStepparent,
   },
   {
-    value: RelationOptions.RELATIVES,
-    label: newPrimarySchoolMessages.childrenNParents.relativesRelationRelatives,
+    value: RelationOptions.RELATIVE,
+    label: newPrimarySchoolMessages.childrenNParents.relativesRelationRelative,
   },
   {
-    value: RelationOptions.FRIENDS_AND_OTHER,
+    value: RelationOptions.FRIEND_OR_OTHER,
     label:
-      newPrimarySchoolMessages.childrenNParents
-        .relativesRelationFriendsAndOther,
+      newPrimarySchoolMessages.childrenNParents.relativesRelationFriendOrOther,
   },
 ]
 
 export const getRelationOptionLabel = (value: RelationOptions) => {
   const relationOptions = getRelationOptions()
+  return relationOptions.find((option) => option.value === value)?.label ?? ''
+}
+
+export const getSiblingRelationOptions = () => [
+  {
+    value: SiblingRelationOptions.SIBLING,
+    label: newPrimarySchoolMessages.primarySchool.siblingsRelationSibling,
+  },
+  {
+    value: SiblingRelationOptions.HALF_SIBLING,
+    label: newPrimarySchoolMessages.primarySchool.halfSiblingsRelationSibling,
+  },
+  {
+    value: SiblingRelationOptions.STEP_SIBLING,
+    label: newPrimarySchoolMessages.primarySchool.stepSiblingsRelationSibling,
+  },
+]
+
+export const getSiblingRelationOptionLabel = (
+  value: SiblingRelationOptions,
+) => {
+  const relationOptions = getSiblingRelationOptions()
   return relationOptions.find((option) => option.value === value)?.label ?? ''
 }
