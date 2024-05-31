@@ -125,7 +125,7 @@ function generateCacheAction(name, id, path, key) {
     return {
         name,
         id,
-        uses: './.github/actions/cache',
+        uses: 'island-is/cache@v0.3',
         continue_on_error: true,
         with: {
             path,
