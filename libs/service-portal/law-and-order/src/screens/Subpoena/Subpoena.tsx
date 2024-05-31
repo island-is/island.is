@@ -104,7 +104,7 @@ const Subpoena = () => {
                 label={messages.defenseAttorney}
                 content={
                   subpoena?.data?.chosenDefender ??
-                  lawyerSelected ??
+                  lawyerSelected?.name ??
                   defenseChoice
                 }
                 labelColumnSpan={['1/1', '6/12']}

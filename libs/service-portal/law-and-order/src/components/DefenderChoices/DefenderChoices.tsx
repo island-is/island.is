@@ -49,7 +49,7 @@ const DefenderChoices: FC<React.PropsWithChildren<Props>> = ({ popUp, id }) => {
     },
   })
   const lawyers = data?.lawAndOrderLawyers?.items
-  const { defenseChoice, setDefenseChoice, setLawyerSelected } =
+  const { defenseChoice, setDefenseChoice, setLawyerSelected, lawyerSelected } =
     useLawAndOrderContext()
   const submitDisabled =
     !choice || (choice === DefenseDecision.CHOOSING_LAWYER && !lawyer)
@@ -79,7 +79,8 @@ const DefenderChoices: FC<React.PropsWithChildren<Props>> = ({ popUp, id }) => {
   const handleSubmitForm = async () => {
     popUp && popUp.setPopUp(false)
     setDefenseChoice(choice)
-    setLawyerSelected(lawyer?.label)
+    lawyer &&
+      setLawyerSelected({ name: lawyer?.label, nationalId: lawyer?.value })
 
     postAction({
       variables: {
@@ -93,14 +94,25 @@ const DefenderChoices: FC<React.PropsWithChildren<Props>> = ({ popUp, id }) => {
   }
 
   useEffect(() => {
-    if (defenseChoice) setChoice(defenseChoice)
+    if (defenseChoice) {
+      setChoice(defenseChoice)
+    }
+
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [])
-
   useEffect(() => {
-    if (defenseChoice !== DefenseDecision.CHOOSING_LAWYER) setLawyer(undefined)
+    if (defenseChoice !== DefenseDecision.CHOOSING_LAWYER) {
+      setLawyer(undefined)
+      setLawyerSelected(undefined)
+    }
   }, [defenseChoice])
 
+  const getValue = () => {
+    if (lawyer) return { label: lawyer.label, value: lawyer.value }
+    if (lawyerSelected)
+      return { label: lawyerSelected.name, value: lawyerSelected.nationalId }
+    return null
+  }
   if (error) {
     return <Problem type="not_found" />
   }
@@ -166,9 +178,7 @@ const DefenderChoices: FC<React.PropsWithChildren<Props>> = ({ popUp, id }) => {
                     value: x.nationalId,
                   }
                 })}
-                value={
-                  lawyer ? { label: lawyer.label, value: lawyer.value } : null
-                }
+                value={getValue()}
                 placeholder={formatMessage(messages.chooseDefender)}
               />
             </GridColumn>
