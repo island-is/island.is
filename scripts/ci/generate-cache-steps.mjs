@@ -140,6 +140,7 @@ function generateCacheAction(name, id, path, key) {
 async function exportToYaml(obj, _fileName, fileName = resolve(ROOT, _fileName)) {
     const YAML_FILE_ROOT = dirname(fileName);
     await mkdir(YAML_FILE_ROOT, { recursive: true });
+    console.log(`Creating file ${fileName}`);
     return /** @type {Promise<void>} */(new Promise((resolve) => {
         const jsonString = JSON.stringify(obj)
         const cueProcess = spawn('cue', ['export', '-', '-o', fileName])
