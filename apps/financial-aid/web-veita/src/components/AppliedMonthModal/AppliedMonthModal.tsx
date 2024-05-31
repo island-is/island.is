@@ -63,7 +63,7 @@ const AppliedMonthModal = ({
 
   const updateApplication = useApplicationState()
 
-  const onClickComment = async (newDate: Date) => {
+  const onClickUpdateAppliedMonth = async (newDate: Date) => {
     await updateApplication(
       applicationId,
       ApplicationEventType.DATECHANGED,
@@ -124,7 +124,7 @@ const AppliedMonthModal = ({
                       [`${modalButtonStyles.statusOptions}`]: true,
                       [`${modalButtonStyles.activeState}`]: isActive,
                     })}
-                    onClick={() => onClickComment(surroundingMonth)}
+                    onClick={() => onClickUpdateAppliedMonth(surroundingMonth)}
                   >
                     {getMonth(date.getMonth()) + format(date, ' y')}
                   </button>
