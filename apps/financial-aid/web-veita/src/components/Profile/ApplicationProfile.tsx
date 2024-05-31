@@ -346,8 +346,6 @@ const ApplicationProfile = ({
         createdDate={application.created}
         applicationId={application.id}
         setApplication={setApplication}
-        adminNationalId={admin?.nationalId}
-        adminName={admin?.name}
       />
     </>
   )

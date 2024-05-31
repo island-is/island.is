@@ -13,8 +13,7 @@ import {
   ApplicationEventType,
   getMonth,
 } from '@island.is/financial-aid/shared/lib'
-import { useApplicationEvent } from '../../utils/useApplicationEvent'
-import { useApplicationState } from '../../utils/useApplicationState'
+import { useApplicationState } from '@island.is/financial-aid-web/veita/src/utils/useApplicationState'
 
 interface Props {
   headline: string
