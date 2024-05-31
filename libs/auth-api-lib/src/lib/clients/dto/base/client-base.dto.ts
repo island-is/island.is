@@ -8,7 +8,7 @@ import {
 } from 'class-validator'
 import { ApiProperty } from '@nestjs/swagger'
 
-export abstract class ClientBaseDTO {
+export class ClientBaseDTO {
   @IsString()
   @IsNotEmpty()
   @ApiProperty({

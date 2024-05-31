@@ -1,6 +1,5 @@
 import { BadGatewayException, Inject, Injectable } from '@nestjs/common'
 
-import { type Logger, LOGGER_PROVIDER } from '@island.is/logging'
 import { type ConfigType } from '@island.is/nest/config'
 
 import {
@@ -11,24 +10,15 @@ import { isCompletedCase } from '@island.is/judicial-system/types'
 
 import { CasesResponse } from './models/cases.response'
 import { InternalCasesResponse } from './models/internalCases.response'
-import { digitalMailboxModuleConfig } from './app.config'
+import { caseModuleConfig } from './case.config'
 
 @Injectable()
-export class AppService {
+export class CaseService {
   constructor(
-    @Inject(digitalMailboxModuleConfig.KEY)
-    private readonly config: ConfigType<typeof digitalMailboxModuleConfig>,
-    @Inject(LOGGER_PROVIDER) private readonly logger: Logger,
+    @Inject(caseModuleConfig.KEY)
+    private readonly config: ConfigType<typeof caseModuleConfig>,
     private readonly auditTrailService: AuditTrailService,
   ) {}
-
-  private async test(nationalId: string): Promise<string> {
-    return `OK ${nationalId}`
-  }
-
-  async testConnection(nationalId: string): Promise<string> {
-    return this.test(nationalId)
-  }
 
   private format(
     response: InternalCasesResponse[],
@@ -57,6 +47,14 @@ export class AppService {
         type: language === 'en' ? 'Indictment' : 'Ákæra',
       }
     })
+  }
+
+  private async test(nationalId: string): Promise<string> {
+    return `OK ${nationalId}`
+  }
+
+  async testConnection(nationalId: string): Promise<string> {
+    return this.test(nationalId)
   }
 
   private async getAllCases(
