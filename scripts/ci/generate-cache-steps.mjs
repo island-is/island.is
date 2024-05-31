@@ -98,7 +98,7 @@ function generateCacheAction(name, id, path, key) {
     }
 }
 
-function exportToYaml(obj, _fileName, fileName = resolve(ROOT, fileName)) {
+function exportToYaml(obj, _fileName, fileName = resolve(ROOT, _fileName)) {
     return new Promise((resolve) => {
         const jsonString = JSON.stringify(obj);
         const cueProcess = spawn('cue', ['export', '-', '-o', fileName]);
@@ -118,5 +118,4 @@ function exportToYaml(obj, _fileName, fileName = resolve(ROOT, fileName)) {
         });
         cueProcess.stdin.end();
     })
-
 }
