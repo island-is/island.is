@@ -142,7 +142,7 @@ const useUnreadCount = () => {
     variables: {
       input: {
         page: 1,
-        pageSize: 50,
+        pageSize: DEFAULT_PAGE_SIZE,
         opened: false,
       },
     },
