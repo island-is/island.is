@@ -7,7 +7,7 @@ import {
   ApplicationEventType,
 } from '@island.is/financial-aid/shared/lib'
 import AnimateHeight from 'react-animate-height'
-import { useApplicationEvent } from '../../utils/useApplicationEvent'
+import { useApplicationEvent } from '@island.is/financial-aid-web/veita/src/utils/useApplicationEvent'
 
 interface Props {
   applicationId: string
