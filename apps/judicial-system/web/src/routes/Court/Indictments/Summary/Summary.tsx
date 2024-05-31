@@ -10,7 +10,6 @@ import {
   FormContext,
   FormFooter,
   InfoCard,
-  InfoCardCaseScheduledIndictment,
   InfoCardClosedIndictment,
   Modal,
   PageHeader,
@@ -27,6 +26,7 @@ import {
   CaseFile,
   CaseFileCategory,
   CaseTransition,
+  IndictmentDecision,
 } from '@island.is/judicial-system-web/src/graphql/schema'
 import {
   useCase,
@@ -98,17 +98,20 @@ const Summary: React.FC = () => {
           <Prosecutor workingCase={workingCase} />
           <Defendants workingCase={workingCase} />
         </Box>
-        <Box component="section" marginBottom={2}>
-          <InfoCard
-            data={[
-              {
-                title: formatMessage(strings.scheduledInfoCardTitle),
-                value: formatMessage(strings.scheduledInfoCardValue),
-              },
-            ]}
-            icon="calendar"
-          />
-        </Box>
+        {workingCase.indictmentDecision ===
+          IndictmentDecision.POSTPONING_UNTIL_VERDICT && (
+          <Box component="section" marginBottom={5}>
+            <InfoCard
+              data={[
+                {
+                  title: formatMessage(strings.scheduledInfoCardTitle),
+                  value: formatMessage(strings.scheduledInfoCardValue),
+                },
+              ]}
+              icon="calendar"
+            />
+          </Box>
+        )}
         <Box component="section" marginBottom={6}>
           <InfoCardClosedIndictment />
         </Box>
