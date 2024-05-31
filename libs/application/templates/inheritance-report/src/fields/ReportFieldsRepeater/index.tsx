@@ -52,6 +52,7 @@ type RepeaterProps = {
       calcWithShareValue?: boolean
       hideDeceasedShare?: boolean
       skipPushRight?: boolean
+      assetKey?: string
     }
   }
 }
@@ -61,7 +62,7 @@ const valueKeys = ['exchangeRateOrInterest', 'amount']
 export const ReportFieldsRepeater: FC<
   React.PropsWithChildren<FieldBaseProps<Answers> & RepeaterProps>
 > = ({ application, field, errors }) => {
-  const { answers, externalData } = application
+  const { answers } = application
 
   const { id, props } = field
 
@@ -362,7 +363,7 @@ export const ReportFieldsRepeater: FC<
                       />
                     ) : field.type !== 'nationalId' &&
                       field.id === 'assetNumber' &&
-                      field.props?.assetKey === 'bankAccounts' ? (
+                      props?.assetKey === 'bankAccounts' ? (
                       <InputController
                         id={`${fieldIndex}.${field.id}`}
                         label={formatMessage(field.title)}

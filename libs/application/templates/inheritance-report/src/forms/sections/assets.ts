@@ -62,18 +62,21 @@ export const assets = buildSection({
                     title: m.assetNumber,
                     id: 'assetNumber',
                     placeholder: 'F1234567',
+                    required: true,
                   },
                   {
                     title: m.assetAddress,
                     id: 'description',
                     backgroundColor: 'white',
                     readOnly: true,
+                    required: true,
                   },
                   {
                     title: m.propertyShare,
                     id: 'share',
                     type: 'number',
                     suffix: '%',
+                    required: true,
                   },
                   {
                     title: {
@@ -82,6 +85,7 @@ export const assets = buildSection({
                     },
                     id: 'propertyValuation',
                     currency: true,
+                    required: true,
                   },
                 ],
                 assetKey: 'assets',

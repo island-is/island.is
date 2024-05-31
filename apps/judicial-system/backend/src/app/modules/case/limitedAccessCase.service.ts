@@ -377,9 +377,7 @@ export class LimitedAccessCaseService {
       })
   }
 
-  private zipFiles(
-    files: Array<{ data: Buffer; name: string }>,
-  ): Promise<Buffer> {
+  private zipFiles(files: { data: Buffer; name: string }[]): Promise<Buffer> {
     return new Promise((resolve, reject) => {
       const buffs: Buffer[] = []
       const converter = new Writable()
@@ -410,7 +408,7 @@ export class LimitedAccessCaseService {
   }
 
   async getAllFilesZip(theCase: Case, user: TUser): Promise<Buffer> {
-    const filesToZip: Array<{ data: Buffer; name: string }> = []
+    const filesToZip: { data: Buffer; name: string }[] = []
 
     const caseFilesByCategory =
       theCase.caseFiles?.filter(
