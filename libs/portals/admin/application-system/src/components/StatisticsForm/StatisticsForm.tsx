@@ -22,7 +22,6 @@ type Props = {
 
 export const StatisticsForm = ({ onDateChange }: Props) => {
   const { formatMessage } = useLocale()
-  const [isMobile, setIsMobile] = useState(false)
   const { width } = useWindowSize()
 
   const filters: ApplicationFilters = {
@@ -31,13 +30,6 @@ export const StatisticsForm = ({ onDateChange }: Props) => {
     institution: undefined,
     status: undefined,
   }
-
-  useEffect(() => {
-    if (width < theme.breakpoints.md) {
-      return setIsMobile(true)
-    }
-    setIsMobile(false)
-  }, [width])
 
   return (
     <Box
