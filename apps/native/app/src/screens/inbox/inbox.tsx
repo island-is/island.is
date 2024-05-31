@@ -51,6 +51,8 @@ type ListItem =
   | { id: string; type: 'skeleton' | 'empty' }
   | (Document & { type: undefined })
 
+const DEFAULT_PAGE_SIZE = 50
+
 const { useNavigationOptions, getNavigationOptions } =
   createNavigationOptionHooks(
     (theme, intl, initialized) => ({
@@ -140,7 +142,7 @@ const useUnreadCount = () => {
     variables: {
       input: {
         page: 1,
-        pageSize: 50,
+        pageSize: DEFAULT_PAGE_SIZE,
         opened: false,
       },
     },
@@ -174,7 +176,7 @@ function useInboxQuery(incomingFilters?: Filters) {
   const [refetching, setRefetching] = useState(true)
   const [loading, setLoading] = useState(false)
   const [refetcher, setRefetcher] = useState(0)
-  const pageSize = 50
+  const pageSize = DEFAULT_PAGE_SIZE
 
   const [getListDocument] = useListDocumentsLazyQuery({
     query: ListDocumentsDocument,
@@ -281,14 +283,12 @@ export const InboxScreen: NavigationFunctionComponent<{
   const intl = useIntl()
   const scrollY = useRef(new Animated.Value(0)).current
   const flatListRef = useRef<FlatList>(null)
-  const keyboardRef = useRef(false)
   const [query, setQuery] = useState('')
   const queryString = useThrottleState(query)
   const theme = useTheme()
   const unreadCount = useUnreadCount()
   const [visible, setVisible] = useState(false)
   const [refetching, setRefetching] = useState(false)
-  const dynamicColor = useDynamicColor()
 
   const res = useInboxQuery({
     opened,
