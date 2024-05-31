@@ -54,7 +54,7 @@ runs:
         ENABLE_GENERATED_FILES: ${{ inputs.enable-generated-files }}
         ENABLE_CYPRESS: ${{ inputs.enable-cypress }}
         CYPRESS_PATH: ${{ inputs.cypress-path }}
-        keys: ${{ steps.get-cahce-key.outputs.keys }}
+        keys: ${{ steps.get-cache-keys.outputs.keys }}
         YAML_FILE: ./.tmp-dynamic-cache/action.yml
       run: |
         node scripts/ci/generate-cache-steps.mjs
