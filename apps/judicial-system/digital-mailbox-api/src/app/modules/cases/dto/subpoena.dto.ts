@@ -2,13 +2,9 @@ import { IsEnum, IsNotEmpty, IsOptional, IsString } from 'class-validator'
 
 import { ApiProperty } from '@nestjs/swagger'
 
-enum DefenderChoice {
-  WAIVE = 'WAIVE',
-  CHOOSE = 'CHOOSE',
-  DELAY = 'DELAY',
-  DELEGATE = 'DELEGATE',
-}
-export class DefenderAssignmentDto {
+import { DefenderChoice } from '@island.is/judicial-system/types'
+
+export class UpdateSubpoenaDto {
   @IsNotEmpty()
   @IsEnum(DefenderChoice)
   @ApiProperty({ enum: DefenderChoice })
