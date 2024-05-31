@@ -3,16 +3,16 @@ description: 'Action to get cache'
 inputs:
   enable-node-modules:
     description: 'Get node modules cache'
-    default: 'true'
+    default: 'false'
   enable-mobile-node-modules:
     description: 'Get mobile node modules'
     default: 'false'
   enable-generated-files:
     description: 'Get generated files'
-    default: 'true'
+    default: 'false'
   enable-cypress:
     description: 'Get cypress'
-    default: 'true'
+    default: 'false'
   keys:
     description: 'Keys'
     default: 'false'
