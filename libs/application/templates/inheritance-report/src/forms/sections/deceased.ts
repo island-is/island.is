@@ -69,11 +69,13 @@ export const deceased = buildSection({
           title: '',
         }),
         buildRadioField({
-          id: 'deceasedWasMarried',
+          id: 'customShare.deceasedWasMarried',
           title: m.wasInCohabitation,
           largeButtons: false,
           backgroundColor: 'white',
+          defaultValue: '',
           width: 'half',
+          required: true,
           options: [
             { value: YES, label: m.yes },
             { value: NO, label: m.no },
@@ -85,13 +87,14 @@ export const deceased = buildSection({
           title: '',
         }),
         buildRadioField({
-          id: 'deceasedHadAssets',
+          id: 'customShare.deceasedHadAssets',
           title: m.hadSeparateProperty,
           largeButtons: false,
           backgroundColor: 'white',
           width: 'half',
+          required: true,
           condition: (answers) =>
-            getValueViaPath(answers, 'deceasedWasMarried') === YES,
+            getValueViaPath(answers, 'customShare.deceasedWasMarried') === YES,
           options: [
             { value: YES, label: m.yes },
             { value: NO, label: m.no },
@@ -108,8 +111,9 @@ export const deceased = buildSection({
           largeButtons: false,
           backgroundColor: 'white',
           width: 'half',
+          required: true,
           condition: (answers) =>
-            getValueViaPath(answers, 'deceasedWasMarried') === YES,
+            getValueViaPath(answers, 'customShare.deceasedWasMarried') === YES,
           options: [
             { value: YES, label: m.spouseSharePart },
             { value: NO, label: m.spouseShareFull },
@@ -126,7 +130,8 @@ export const deceased = buildSection({
             getValueViaPath(
               answers,
               'customShare.hasCustomSpouseSharePercentage',
-            ) === YES,
+            ) === YES &&
+            getValueViaPath(answers, 'customShare.deceasedWasMarried') === YES,
         }),
       ],
     }),
