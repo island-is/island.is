@@ -10,22 +10,26 @@ import {
 import { m } from '../../../lib/messages'
 
 export const prePaidHeirs = buildSection({
-  id: 'prePaidHeirs',
+  id: 'heirs',
   title: 'Erfingjar',
   children: [
     buildSubSection({
-      id: 'prePaidHeirs',
+      id: 'heirs',
       title: m.heirsTitlePrePaid,
       children: [
         buildMultiField({
-          id: 'prePaidHeirs',
+          id: 'heirs',
           title: m.heirsTitlePrePaid,
           description: m.heirsDescriptionPrePaid,
           children: [
+            buildDescriptionField({
+              id: 'heirs.total',
+              title: '',
+            }),
             buildCustomField(
               {
                 title: '',
-                id: 'prePaidHeirs.data',
+                id: 'heirs.data',
                 doesNotRequireAnswer: false,
                 component: 'HeirsAndPartitionRepeater',
               },

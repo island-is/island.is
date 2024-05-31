@@ -180,9 +180,7 @@ export const HeirsAndPartitionRepeater: FC<
       const isPrePaid = answers.applicationFor === PREPAID_INHERITANCE
       const numValue = isNaN(value) ? 0 : value
       const percentage = numValue > 0 ? numValue / 100 : 0
-      const heirs = isPrePaid
-        ? (getValues()?.prePaidHeirs?.data as EstateMember[])
-        : (getValues()?.heirs?.data as EstateMember[])
+      const heirs = getValues()?.heirs?.data as EstateMember[]
       let currentHeir = isPrePaid
         ? heirs[index ?? 0]
         : (getValueViaPath(answers, updateIndex) as EstateMember)

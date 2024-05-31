@@ -1554,6 +1554,12 @@ export const m = defineMessages({
       'Undirritaðir erfingjar eða umboðsmenn þeirra lýsa því yfir með undirskrift sinni og leggja við drengskap sinn:\n\n1. Að á erfðafjárskýrslu þessari séu tilgreindir allir erfingjar búsins, sem þeim er kunnugt um.\n2. Að á erfðafjárskýrslu þessari komi fram tæmandi talning á eignum og skuldum búsins og að réttilega sé frá verðmæti þeirra eða matsverði greint í öllum atriðum.\n3. Að þeir taki sér á hendur einn fyrir alla og allir fyrir einn greiðslu allra skulda búsins, jafnt þeirra sem fram koma í þessari skýrslu, sem þeirra er óþekktar eru en síðar kunna að koma í ljós, svo og með sama skilorði greiðslu erfðafjárskatts.\n4. Ef við á, að gagnvart erfingjum sem eru ófjárráða eða málsvarar koma annars fram fyrir við skiptin, takast erfingjar á hendur ábyrgð á því að þeir fyrrnefndu muni ekki gjalda fyrir ábyrgð sína á skuldum búsins og gjöldum, umfram arfshluta sinn.',
     description: '',
   },
+  beforeSubmitStatementPrePaid: {
+    id: 'ir.application:beforeSubmitStatementPrePaid#markdown',
+    defaultMessage:
+      'Undirritaðir erfingjar eða umboðsmenn þeirra lýsa því yfir með undirskrift sinni og leggja við drengskap sinn:\n\n1. Lorem ipsum dolor sit amet, consectetur adipiscing elit. Nunc vel leo eu nunc varius suscipit.\n2. Lorem ipsum dolor sit amet, consectetur adipiscing elit. Nunc vel leo eu nunc varius suscipit.\n3. Lorem ipsum dolor sit amet, consectetur adipiscing elit. Nunc vel leo eu nunc varius suscipit.\n4. Lorem ipsum dolor sit amet, consectetur adipiscing elit. Nunc vel leo eu nunc varius suscipit.',
+    description: '',
+  },
   readyToSubmit: {
     id: 'ir.application:readyToSubmit',
     defaultMessage: 'Skila inn erfðafjárskýrslu',

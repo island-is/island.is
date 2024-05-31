@@ -36,6 +36,7 @@ export const prepaidInheritanceForm: Form = buildForm({
     assets,
     prePaidHeirs,
     prepaidOverview,
+    finalStep,
   ],
 })
 

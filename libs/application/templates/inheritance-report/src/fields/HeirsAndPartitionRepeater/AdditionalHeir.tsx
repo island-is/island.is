@@ -75,10 +75,7 @@ export const AdditionalHeir = ({
   const values = getValues()
 
   const currentHeir = useMemo(
-    () =>
-      values?.applicationFor === PREPAID_INHERITANCE
-        ? values?.prePaidHeirs?.data?.[index]
-        : values?.heirs?.data?.[index],
+    () => values?.heirs?.data?.[index],
     [values, index],
   )
 

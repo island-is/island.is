@@ -7,6 +7,7 @@ import {
 } from '@island.is/application/core'
 import { m } from '../../lib/messages'
 import { DefaultEvents } from '@island.is/application/types'
+import { PREPAID_INHERITANCE } from '../../lib/constants'
 
 export const finalStep = buildSection({
   id: 'finalStep',
@@ -15,7 +16,10 @@ export const finalStep = buildSection({
     buildMultiField({
       id: 'finalStep',
       title: m.readyToSubmit,
-      description: m.beforeSubmitStatement,
+      description: (application) =>
+        application.answers.applicationFor === PREPAID_INHERITANCE
+          ? m.beforeSubmitStatementPrePaid
+          : m.beforeSubmitStatement,
       children: [
         buildCheckboxField({
           id: 'confirmAction',
