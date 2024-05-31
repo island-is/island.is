@@ -342,7 +342,6 @@ const LicenseDetail = () => {
   useNamespaces('sp.license')
   const { formatMessage } = useLocale()
   const { data: userProfile } = useUserProfile()
-  const { pathname } = useLocation()
   const locale = userProfile?.locale ?? 'is'
   const { type, id } = useParams() as UseParams
   const licenseType = type ? getTypeFromPath(type) : undefined
@@ -370,7 +369,7 @@ const LicenseDetail = () => {
       <ErrorScreen
         figure="./assets/images/hourglass.svg"
         tagVariant="red"
-        tag={formatMessage(coreMessages.errorTitle)}
+        tag={'bing bang bong'}
         title={formatMessage(coreMessages.somethingWrong)}
         children={formatMessage(coreMessages.errorFetchModule, {
           module: formatMessage(coreMessages.licenses).toLowerCase(),
