@@ -20,7 +20,7 @@ export const errors = {
     noSelectedApplicant: {
       id: 'hid.application:errors.fields.noSelectedApplicant',
       defaultMessage:
-        'Að minnsta kosti einn aðlili þarf að vera valin svo hægt sé að sækja um yfirlýsingu',
+        'Að minnsta kosti einn aðlili þarf að vera valinn svo hægt sé að sækja um yfirlýsingu',
       description: 'No selected applicant error message',
     },
   }),

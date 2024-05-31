@@ -65,7 +65,6 @@ export class HealthInsuranceDeclarationService extends BaseTemplateApiService {
     const continents = await this.continents(applicationWithProps)
     const countries = await this.countries(applicationWithProps)
     const { application } = applicationWithProps
-    console.log(application.externalData.childCustodyInformation)
 
     if (status.canApply !== true) {
       const childrenInformation = application.externalData
