@@ -672,7 +672,7 @@ export const assets = buildSection({
     buildSubSection({
       id: 'assetOverview',
       title: m.assetOverview,
-      //condition: (answers) => answers.applicationFor !== PREPAID_INHERITANCE,
+      condition: (answers) => answers.applicationFor !== PREPAID_INHERITANCE,
       children: [
         buildCustomField({
           title: m.assetOverview,

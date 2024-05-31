@@ -19,6 +19,19 @@ export const prepaidOverview = buildSection({
   title: m.overview,
   children: [
     buildSubSection({
+      id: 'assetOverview',
+      title: m.assetOverview,
+      children: [
+        buildCustomField({
+          title: m.assetOverview,
+          description: m.assetOverviewDescription,
+          id: 'overviewAssets',
+          doesNotRequireAnswer: true,
+          component: 'OverviewAssets',
+        }),
+      ],
+    }),
+    buildSubSection({
       id: 'heirsOverview',
       title: m.overviewHeirsTitle,
       children: [
