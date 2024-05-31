@@ -1,4 +1,15 @@
-import { Controller, Get, Inject, Query, UseGuards } from '@nestjs/common'
+import {
+  Body,
+  Controller,
+  Get,
+  HttpCode,
+  Inject,
+  Param,
+  Patch,
+  Post,
+  Query,
+  UseGuards,
+} from '@nestjs/common'
 import { ApiCreatedResponse, ApiTags } from '@nestjs/swagger'
 
 import type { User } from '@island.is/auth-nest-tools'
@@ -6,14 +17,17 @@ import { CurrentUser, IdsUserGuard } from '@island.is/auth-nest-tools'
 import { type Logger, LOGGER_PROVIDER } from '@island.is/logging'
 
 import { CasesResponse } from './models/cases.response'
+import { DefenderAssignmentDto } from './models/subpoena.dto'
+import { SubpoenaResponse } from './models/subpoena.response'
 import { CaseService } from './case.service'
 
 @Controller('api')
 @ApiTags('cases')
-@UseGuards(IdsUserGuard)
+//@UseGuards(IdsUserGuard)
 export class CaseController {
   constructor(
     private readonly caseService: CaseService,
+
     @Inject(LOGGER_PROVIDER) private readonly logger: Logger,
   ) {}
 
@@ -34,5 +48,21 @@ export class CaseController {
     this.logger.debug('Getting all cases')
 
     return this.caseService.getCases(user.nationalId, query?.lang)
+  }
+
+  @HttpCode(200)
+  @Patch('cases/:caseId/subpoena')
+  async assignDefenderToSubpoena(
+    //@CurrentUser() user: User,
+    @Param('caseId') caseId: string,
+    @Body() defenderAssignment: DefenderAssignmentDto,
+  ): Promise<SubpoenaResponse> {
+    this.logger.debug(`Assigning defender to subpoena ${caseId}`)
+
+    return this.caseService.assignDefenderToSubpoena(
+      '0108912489',
+      caseId,
+      defenderAssignment,
+    )
   }
 }
