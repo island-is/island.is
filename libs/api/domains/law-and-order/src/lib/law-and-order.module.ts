@@ -8,6 +8,6 @@ import { LawAndOrderClientModule } from '@island.is/clients/law-and-order'
 
 @Module({
   imports: [LawAndOrderClientModule, AuthModule, FeatureFlagModule],
-  providers: [LawAndOrderClientModule, LawAndOrderResolver, LawAndOrderService],
+  providers: [LawAndOrderResolver, LawAndOrderService],
 })
 export class LawAndOrderModule {}

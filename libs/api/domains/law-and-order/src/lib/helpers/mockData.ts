@@ -84,7 +84,7 @@ export const listCases = (locale: 'is' | 'en') => {
         },
       ],
       data: {
-        id: '123',
+        id: '2f2c4944-04a9-47fe-b02d-faf278af558a',
         caseNumber: 'S-0000',
         caseNumberTitle: 'Case number S-0000/2022',
         type: 'Charge',
@@ -175,7 +175,7 @@ export const listCases = (locale: 'is' | 'en') => {
         },
       ],
       data: {
-        id: '123',
+        id: '2f2c4944-04a9-47fe-b02d-faf278af558a',
         caseNumber: 'S-0000',
         caseNumberTitle: 'Málsnúmer S-0000/2022',
         type: 'Ákæra',
@@ -491,7 +491,7 @@ export const getSubpoena = (id: string) => {
         },
       ],
       data: {
-        id: '123',
+        id: '2f2c4944-04a9-47fe-b02d-faf278af558a',
         acknowledged: undefined,
         displayClaim: false,
 

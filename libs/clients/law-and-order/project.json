@@ -25,10 +25,20 @@
         }
       }
     },
+    "update-openapi-document": {
+      "executor": "nx:run-commands",
+      "options": {
+        "commands": [
+          "curl -H \"X-Road-Client: IS-DEV/GOV/10000/island-is-client\" http://localhost:8081/r1/IS-DEV/GOV/10014/Rettarvorslugatt-Private/getOpenAPI?serviceCode=judicial-system-mailbox-api -H 'Accept: application/json' > src/clientConfig.json"
+        ],
+        "parallel": false,
+        "cwd": "libs/clients/law-and-order"
+      }
+    },
     "codegen/backend-client": {
       "executor": "nx:run-commands",
       "options": {
-        "command": "yarn openapi-generator -o libs/clients/law-and-order/gen/fetch -i libs/clients/law-and-order/src/clientConfig.yml"
+        "command": "yarn openapi-generator -o libs/clients/law-and-order/gen/fetch -i libs/clients/law-and-order/src/clientConfig.json"
       },
       "outputs": ["{projectRoot}/gen/fetch"]
     }
