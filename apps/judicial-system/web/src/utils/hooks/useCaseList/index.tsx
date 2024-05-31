@@ -86,7 +86,7 @@ const useCaseList = () => {
       // Public prosecutor users can only see completed indictments
       routeTo = constants.PUBLIC_PROSECUTOR_STAFF_INDICTMENT_OVERVIEW_ROUTE
     } else if (isCourtOfAppealsUser(user)) {
-      // Court of appeals users can only see appealed cases
+      // Court of appeals users can only see appealed request cases
       if (caseToOpen.appealState === CaseAppealState.COMPLETED) {
         routeTo = constants.COURT_OF_APPEAL_RESULT_ROUTE
       } else {
