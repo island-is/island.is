@@ -173,21 +173,40 @@ paths:
                                 type: 'string'
                               required:
                                 type: 'boolean'
-                        extraApplicationTexts:
+                        extraApplicationTextsIs:
                           type: 'object'
-                          properties:
-                            toptextIs:
-                              type: 'string'
-                            sociallifeIs:
-                              type: 'string'
-                            forYouIs:
-                              type: 'string'
-                            exchangeStudyIs:
-                              type: 'string'
-                            workIs:
-                              type: 'string'
-                            aboutIs:
-                              type: 'string'
+                          items:
+                            type: 'object'
+                            properties:
+                              toptext:
+                                type: 'string'
+                              sociallife:
+                                type: 'string'
+                              forYou:
+                                type: 'string'
+                              exchangeStudy:
+                                type: 'string'
+                              work:
+                                type: 'string'
+                              about:
+                                type: 'string'
+                        extraApplicationTextsEn:
+                          type: 'object'
+                          items:
+                            type: 'object'
+                            properties:
+                              toptext:
+                                type: 'string'
+                              sociallife:
+                                type: 'string'
+                              forYou:
+                                type: 'string'
+                              exchangeStudy:
+                                type: 'string'
+                              work:
+                                type: 'string'
+                              about:
+                                type: 'string'
                         kjorsvid:
                           type: 'array'
                           items:
@@ -494,6 +513,45 @@ paths:
                     description: 'Application ID'
       tags:
         - 'Application'
+  /applications/attachments/{guid}:
+    post:
+      parameters:
+        - name: guid
+          required: true
+          in: path
+          allowEmptyValue: false
+          description: Application ID
+          schema:
+            type: string
+            format: uuid
+      summary: Submit an applications accompanying documents
+      requestBody:
+        required: true
+        content:
+          multipart/form-data:
+            schema:
+              type: object
+              properties:
+                attachment:
+                  type: string
+                  format: binary
+                attachmentKey:
+                  $ref: '#/components/schemas/AttachmentKey'
+      responses:
+        '200':
+          description: Successful submission
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  id:
+                    type: string
+                    description: Attachment ID
+        '400':
+          description: Bad Request - No application with given ID
+      tags:
+        - Application
   /openapi.yaml:
     get:
       operationId: 'InfraController_openapi'
@@ -590,6 +648,23 @@ components:
         - 'universityId'
         - 'programId'
         - 'modeOfDelivery'
+    AttachmentKey:
+      type: string
+      enum:
+        - cv
+        - markmid
+        - rannsoknaraaetlun
+        - namsaaetlun
+        - rannsoknarverkefni
+        - profskirteini
+        - profskirteini2
+        - profskirteini3
+        - onnur_skjol
+        - kynningarbref
+        - ferilsskra
+        - leyfisbref
+        - portofolio
+        - sakavottord
     UpdateApplicationDto:
       type: 'object'
       properties:
