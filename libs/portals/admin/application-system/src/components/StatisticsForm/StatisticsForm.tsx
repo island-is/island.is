@@ -1,6 +1,5 @@
 import { Box, DatePicker } from '@island.is/island-ui/core'
 import { useLocale } from '@island.is/localization'
-import { useWindowSize } from 'react-use'
 import { ApplicationFilters } from '../../types/filters'
 import { m } from '../../lib/messages'
 

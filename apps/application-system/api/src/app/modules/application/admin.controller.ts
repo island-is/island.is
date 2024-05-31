@@ -71,12 +71,10 @@ export class AdminController {
     @Query('startDate') startDate: string,
     @Query('endDate') endDate: string,
   ) {
-    const test =
-      await this.applicationService.getApplicationCountByTypeIdAndStatus(
-        startDate,
-        endDate,
-      )
-    return test
+    return this.applicationService.getApplicationCountByTypeIdAndStatus(
+      startDate,
+      endDate,
+    )
   }
 
   @Scopes(AdminPortalScope.applicationSystemAdmin)
