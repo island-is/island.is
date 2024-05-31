@@ -7,6 +7,7 @@ import {
   isInvestigationCase,
 } from '@island.is/judicial-system/types'
 import {
+  CaseIndictmentRulingDecision,
   CaseState,
   CaseType,
   IndictmentDecision,
@@ -22,6 +23,7 @@ interface Props {
   isValidToDateInThePast?: boolean | null
   courtDate?: string | null
   indictmentReviewer?: User | null
+  indictmentRulingDecision?: CaseIndictmentRulingDecision | null
   customMapCaseStateToTag?: (
     formatMessage: IntlShape['formatMessage'],
     state?: CaseState | null,
@@ -55,6 +57,7 @@ export const mapCaseStateToTagVariant = (
   isValidToDateInThePast?: boolean | null,
   scheduledDate?: string | null,
   isCourtRole?: boolean,
+  indictmentRulingDecision?: CaseIndictmentRulingDecision | null,
   indictmentDecision?: IndictmentDecision | null,
 ): { color: TagVariant; text: string } => {
   if (indictmentDecision === IndictmentDecision.POSTPONING_UNTIL_VERDICT) {
@@ -77,7 +80,6 @@ export const mapCaseStateToTagVariant = (
       case CaseState.MAIN_HEARING:
         return { color: 'blue', text: formatMessage(strings.reassignment) }
       case CaseState.ACCEPTED:
-      case CaseState.COMPLETED:
         return isIndictmentCase(caseType) || isValidToDateInThePast
           ? { color: 'darkerBlue', text: formatMessage(strings.inactive) }
           : {
@@ -92,6 +94,11 @@ export const mapCaseStateToTagVariant = (
         return { color: 'rose', text: formatMessage(strings.rejected) }
       case CaseState.DISMISSED:
         return { color: 'dark', text: formatMessage(strings.dismissed) }
+      case CaseState.COMPLETED:
+        return {
+          color: 'darkerBlue',
+          text: formatMessage(strings.completed, { indictmentRulingDecision }),
+        }
       default:
         return { color: 'white', text: formatMessage(strings.unknown) }
     }
@@ -107,6 +114,7 @@ const TagCaseState: FC<Props> = (props) => {
     isValidToDateInThePast,
     courtDate,
     indictmentReviewer,
+    indictmentRulingDecision,
     customMapCaseStateToTag,
     indictmentDecision,
   } = props
@@ -121,6 +129,7 @@ const TagCaseState: FC<Props> = (props) => {
         courtDate,
         isCourtRole,
         indictmentDecision,
+        indictmentRulingDecision,
       )
 
   if (!tagVariant) return null

@@ -72,4 +72,10 @@ export const strings = defineMessages({
     defaultMessage: 'Dómtekið',
     description: 'Notað sem merki þegar mál í stöðu "Dómtekið" í málalista',
   },
+  completed: {
+    id: 'judicial.system.core:tag_case_state.completed',
+    defaultMessage:
+      '{indictmentRulingDecision, select, RULING {Dómur} FINE {Viðurlagaákvörðun} DISMISSAL {Frávísun} CANCELLATION {Niðurfelling} other {Lokið}}',
+    description: 'Notað sem merki þegar mál í stöðu "Dómþulur" í málalista',
+  },
 })

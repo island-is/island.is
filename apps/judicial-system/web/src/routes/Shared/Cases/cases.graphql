@@ -92,6 +92,6 @@ query Cases {
     indictmentAppealDeadline
     indictmentVerdictViewedByAll
     indictmentVerdictAppealDeadline
-    indictmentDecision
+    indictmentRulingDecision
   }
 }

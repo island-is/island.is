@@ -191,7 +191,7 @@ export type stepValidationsType = {
   ) => boolean
   [constants.INDICTMENTS_SUBPOENA_ROUTE]: (theCase: Case) => boolean
   [constants.INDICTMENTS_DEFENDER_ROUTE]: (theCase: Case) => boolean
-  [constants.INDICTMENTS_CONCLUSION_ROUTE]: () => boolean
+  [constants.INDICTMENTS_CONCLUSION_ROUTE]: (theCase: Case) => boolean
   [constants.INDICTMENTS_COURT_OVERVIEW_ROUTE]: () => boolean
   [constants.INDICTMENTS_SUMMARY_ROUTE]: () => boolean
   [constants.COURT_OF_APPEAL_OVERVIEW_ROUTE]: () => boolean
@@ -281,7 +281,8 @@ export const stepValidations = (): stepValidationsType => {
       validations.isSubpoenaStepValid(theCase),
     [constants.INDICTMENTS_DEFENDER_ROUTE]: (theCase: Case) =>
       validations.isDefenderStepValid(theCase),
-    [constants.INDICTMENTS_CONCLUSION_ROUTE]: () => true,
+    [constants.INDICTMENTS_CONCLUSION_ROUTE]: (theCase: Case) =>
+      validations.isConclusionStepValid(theCase),
     [constants.INDICTMENTS_COURT_OVERVIEW_ROUTE]: () => true,
     [constants.COURT_OF_APPEAL_OVERVIEW_ROUTE]: () => true,
     [constants.COURT_OF_APPEAL_CASE_ROUTE]: (theCase: Case) =>
@@ -301,15 +302,12 @@ export const findFirstInvalidStep = (steps: string[], theCase: Case) => {
     steps.includes(key),
   )
 
-  if (
-    stepsToCheck.every(([, validationFn]) => validationFn(theCase) === true)
-  ) {
+  if (stepsToCheck.every(([, validationFn]) => validationFn(theCase))) {
     return steps[steps.length - 1]
   }
 
   const [key] =
-    stepsToCheck.find(([, validationFn]) => validationFn(theCase) === false) ||
-    []
+    stepsToCheck.find(([, validationFn]) => !validationFn(theCase)) ?? []
 
   return key
 }
