@@ -210,7 +210,8 @@ export class AppService {
         }
 
         throw new BadGatewayException(
-          res.text() || 'Unexpected error occurred while fetching case by ID',
+          (await res.text()) ||
+            'Unexpected error occurred while fetching case by ID',
         )
       }
 
