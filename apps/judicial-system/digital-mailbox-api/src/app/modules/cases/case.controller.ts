@@ -6,7 +6,7 @@ import {
   Query,
   UseGuards,
 } from '@nestjs/common'
-import { ApiCreatedResponse } from '@nestjs/swagger'
+import { ApiCreatedResponse, ApiTags } from '@nestjs/swagger'
 
 import type { User } from '@island.is/auth-nest-tools'
 import { CurrentUser, IdsUserGuard } from '@island.is/auth-nest-tools'
@@ -14,13 +14,14 @@ import { type Logger, LOGGER_PROVIDER } from '@island.is/logging'
 
 import { CaseResponse } from './models/case.response'
 import { CasesResponse } from './models/cases.response'
-import { AppService } from './app.service'
+import { CaseService } from './case.service'
 
 @Controller('api')
+@ApiTags('cases')
 @UseGuards(IdsUserGuard)
-export class AppController {
+export class CaseController {
   constructor(
-    private readonly appService: AppService,
+    private readonly caseService: CaseService,
     @Inject(LOGGER_PROVIDER) private readonly logger: Logger,
   ) {}
 
@@ -29,7 +30,7 @@ export class AppController {
   async test(@CurrentUser() user: User): Promise<string> {
     this.logger.debug('Testing connection')
 
-    return this.appService.testConnection(user.nationalId)
+    return this.caseService.testConnection(user.nationalId)
   }
 
   @Get('cases')
@@ -44,7 +45,7 @@ export class AppController {
   ): Promise<CasesResponse[]> {
     this.logger.debug('Getting all cases')
 
-    return this.appService.getCases(user.nationalId, query?.lang)
+    return this.caseService.getCases(user.nationalId, query?.lang)
   }
 
   @Get('case/:caseId')
