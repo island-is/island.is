@@ -1,27 +1,16 @@
-import {
-  Box,
-  DatePicker,
-  Filter,
-  FilterInput,
-  FilterMultiChoice,
-  Select,
-} from '@island.is/island-ui/core'
-import { theme } from '@island.is/island-ui/theme'
+import { Box, DatePicker } from '@island.is/island-ui/core'
 import { useLocale } from '@island.is/localization'
-import { useEffect, useState } from 'react'
 import { useWindowSize } from 'react-use'
-import { ApplicationFilters, MultiChoiceFilter } from '../../types/filters'
+import { ApplicationFilters } from '../../types/filters'
 import { m } from '../../lib/messages'
-import { statusMapper } from '../../shared/utils'
-import { ApplicationStatus } from '@island.is/application/types'
 
 type Props = {
   onDateChange: (period: ApplicationFilters['period']) => void
+  dateInterval?: ApplicationFilters['period']
 }
 
-export const StatisticsForm = ({ onDateChange }: Props) => {
+export const StatisticsForm = ({ onDateChange, dateInterval }: Props) => {
   const { formatMessage } = useLocale()
-  const { width } = useWindowSize()
 
   return (
     <Box
@@ -36,8 +25,7 @@ export const StatisticsForm = ({ onDateChange }: Props) => {
             id="periodFrom"
             label=""
             backgroundColor="blue"
-            maxDate={filters.period.to}
-            selected={filters.period.from}
+            selected={dateInterval?.from}
             placeholderText={formatMessage(m.filterFrom)}
             handleChange={(from) => onDateChange({ from })}
             size="xs"
@@ -48,8 +36,7 @@ export const StatisticsForm = ({ onDateChange }: Props) => {
           id="periodTo"
           label=""
           backgroundColor="blue"
-          minDate={filters.period.from}
-          selected={filters.period.to}
+          selected={dateInterval?.to}
           placeholderText={formatMessage(m.filterTo)}
           handleChange={(to) => onDateChange({ to })}
           size="xs"

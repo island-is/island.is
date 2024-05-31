@@ -14,13 +14,19 @@ import { useGetApplicationStatisticsQuery } from '../../queries/overview.generat
 import { useState } from 'react'
 import StatisticsTable from '../../components/StatisticsTable/StatisticsTable'
 
+function getFirstDateOfMonth() {
+  const now = new Date()
+  const firstDateOfMonth = new Date(now.getFullYear(), now.getMonth(), 1)
+  return firstDateOfMonth
+}
+
 const Statistics = () => {
   const { formatMessage } = useLocale()
   const [dateInterval, setDateInterval] = useState<
     ApplicationFilters['period']
   >({
-    from: undefined,
-    to: undefined,
+    from: getFirstDateOfMonth(),
+    to: new Date(),
   })
   const [error, setError] = useState<string | null>(null)
 
@@ -77,7 +83,7 @@ const Statistics = () => {
       <Text variant="h3" as="h1" marginBottom={[3, 3, 6]} marginTop={3}>
         {formatMessage(m.statistics)}
       </Text>
-      <StatisticsForm onDateChange={onDateChange} />
+      <StatisticsForm dateInterval={dateInterval} onDateChange={onDateChange} />
       {loading && (
         <Box marginTop={[3, 3, 6]}>
           <SkeletonLoader
