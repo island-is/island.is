@@ -1,0 +1,24 @@
+name: Example Workflow
+
+on:
+  pull_request:
+
+concurrency:
+    group: test-${{ github.head_ref || github.run_id }}
+    cancel-in-progress: true
+    
+
+jobs:
+  cache:
+    runs-on: ubuntu-latest
+    container:
+      image: public.ecr.aws/m3u4c4h9/island-is/actions-runner-public:latest
+    timeout-minutes: 35
+    steps:
+      - name: Checkout repository
+        uses: actions/checkout@v4
+        with:
+            fetch-depth: 0
+      - name: Test test
+        uses: ./.github/actions/get-cache
+        

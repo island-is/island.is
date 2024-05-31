@@ -1,0 +1,66 @@
+name: "Get Cache Keys"
+description: "Action to get cache"
+inputs:
+  enable-node-modules:
+    description: "Get node modules cache"
+    default: "true"
+  enable-mobile-node-modules:
+    description: "Get mobile node modules"
+    default: "false"
+  enable-generated-files:
+    description: "Get generated files"
+    default: "true"
+  enable-cypress:
+    description: "Get cypress"
+    default: "true"
+  keys:
+    description: "Keys"
+    default: "false"
+  cypress-path:
+    description: "Path to cypress"
+    default: "/github/home/.cache/Cypress"
+outputs:
+  node-modules-key:
+    description: "Cache key for node_modules"
+    value: ${{ steps.get-cache-key.node-modules-key }}
+  mobile-node-modules-key:
+    description: "Cache key for mobile app node_modules"
+    value: ${{ steps.get-cache-key.outputs.mobile-node-modules-key }}
+  generated-files-key:
+    description: "Cache key for generated files"
+    value: ${{ steps.get-cache-key.outputs.generated-files-key }}
+  cypress-cache-key:
+    description: "Cache key for github actions node_modules"
+    value: ${{ steps.get-cache-key.outputs.cypress-cache-key }}
+  keys:
+    description: "Keys"
+    value: ${{ steps.get-cahce-key.outputs.keys }}
+runs:
+  using: "composite"
+  steps:
+    - uses: cue-lang/setup-cue@v1.0.0
+    - shell: bash
+      env:
+        CACHE_HASHES: ${{ inputs.keys }}
+      id: get-cache-keys
+      run: |
+        node scripts/ci/get-hashes.mjs
+    - name: Generate Dynamic Steps
+      id: generate-steps
+      shell: bash
+      env:
+        ENABLE_NODE_MODULES: ${{ inputs.enable-node-modules }}
+        ENABLE_MOBILE_NODE_MODULES: ${{ inputs.enable-mobile-node-modules }}
+        ENABLE_GENERATED_FILES: ${{ inputs.enable-generated-files }}
+        ENABLE_CYPRESS: ${{ inputs.enable-cypress }}
+        CYPRESS_PATH: ${{ inputs.cypress-path }}
+        keys: ${{ steps.get-cahce-key.outputs.keys }}
+        YAML_FILE: ./.tmp-dynamic-cache/action.yml
+      run: |
+        node scripts/ci/generate-cache-steps.js
+    - name: Run cache workflow
+      id: run-cache
+      uses: ./.tmp-dynamic-cache/action.yml
+    - name: Cleanup cache workflow
+      shell: bash
+      run: rm -rf ./.tmp-dynamic-cache/action.yml
