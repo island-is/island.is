@@ -183,6 +183,9 @@
       "@island.is/api/domains/official-journal-of-iceland": [
         "libs/api/domains/official-journal-of-iceland/src/index.ts"
       ],
+      "@island.is/api/domains/official-journal-of-iceland-application": [
+        "libs/api/domains/official-journal-of-iceland-application/src/index.ts"
+      ],
       "@island.is/api/domains/passport": [
         "libs/api/domains/passport/src/index.ts"
       ],
@@ -249,9 +252,6 @@
       "@island.is/api/mocks": ["libs/api/mocks/src/index.ts"],
       "@island.is/api/mocks-react": ["libs/api/mocks/src/react.ts"],
       "@island.is/api/schema": ["libs/api/schema/src/index.ts"],
-      "@island.is/application-templates-official-journal-of-iceland": [
-        "libs/application/templates/official-journal-of-iceland/src/index.ts"
-      ],
       "@island.is/application/api/core": [
         "libs/application/api/core/src/index.ts"
       ],
@@ -435,6 +435,9 @@
       ],
       "@island.is/application/templates/no-debt-certificate": [
         "libs/application/templates/no-debt-certificate/src/index.ts"
+      ],
+      "@island.is/application/templates/official-journal-of-iceland": [
+        "libs/application/templates/official-journal-of-iceland/src/index.ts"
       ],
       "@island.is/application/templates/operating-license": [
         "libs/application/templates/operating-license/src/index.ts"
@@ -686,6 +689,9 @@
       "@island.is/clients/official-journal-of-iceland": [
         "libs/clients/official-journal-of-iceland/public/src/index.ts"
       ],
+      "@island.is/clients/official-journal-of-iceland/application": [
+        "libs/clients/official-journal-of-iceland/application/src/index.ts"
+      ],
       "@island.is/clients/p-card": ["libs/clients/p-card/src/index.ts"],
       "@island.is/clients/passports": ["libs/clients/passports/src/index.ts"],
       "@island.is/clients/payment-schedule": [
@@ -865,6 +871,9 @@
       ],
       "@island.is/judicial-system/formatters": [
         "libs/judicial-system/formatters/src/index.ts"
+      ],
+      "@island.is/judicial-system/lawyers": [
+        "libs/judicial-system/lawyers/src/index.ts"
       ],
       "@island.is/judicial-system/message": [
         "libs/judicial-system/message/src/index.ts"

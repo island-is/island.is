@@ -29,6 +29,10 @@ export class NationalRegistryService {
     return this.v3.getChildDetails(nationalId, useFakeData)
   }
 
+  getBiologicalChildren(nationalId: string, data?: SharedPerson) {
+    return this.v3.getBiologicalFamily(nationalId, data?.rawData)
+  }
+
   getCustodians(nationalId: string, data?: SharedPerson) {
     return this.v3.getCustodians(nationalId, data?.rawData)
   }

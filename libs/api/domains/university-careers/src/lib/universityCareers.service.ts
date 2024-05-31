@@ -26,6 +26,7 @@ const FEATURE_FLAGS: Record<Exclude<UniversityId, 'hi'>, Features> = {
   lbhi: Features.isAgriculturalUniversityOfIcelandEnabled,
   bifrost: Features.isBifrostUniversityEnabled,
   holar: Features.isHolarUniversityEnabled,
+  lhi: Features.isIcelandUniversityOfTheArtsEnabled,
 }
 
 @Injectable()

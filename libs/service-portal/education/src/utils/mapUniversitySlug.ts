@@ -1,7 +1,13 @@
 import { UniversityCareersUniversityId } from '@island.is/api/schema'
 import { OrganizationSlugType } from '@island.is/shared/constants'
 
-export type UniversitySlug = 'lbhi' | 'holar' | 'hi' | 'unak' | 'bifrost'
+export type UniversitySlug =
+  | 'lbhi'
+  | 'holar'
+  | 'hi'
+  | 'unak'
+  | 'bifrost'
+  | 'lhi'
 
 const isUniversitySlug = (slug: string): slug is UniversitySlug => {
   return (
@@ -9,7 +15,8 @@ const isUniversitySlug = (slug: string): slug is UniversitySlug => {
     slug === 'holar' ||
     slug === 'hi' ||
     slug === 'unak' ||
-    slug === 'bifrost'
+    slug === 'bifrost' ||
+    slug === 'lhi'
   )
 }
 
@@ -27,6 +34,8 @@ export const mapUniversityToSlug = (
       return 'unak'
     case UniversityCareersUniversityId.BIFROST_UNIVERSITY:
       return 'bifrost'
+    case UniversityCareersUniversityId.ICELAND_UNIVERSITY_OF_THE_ARTS:
+      return 'lhi'
   }
 }
 
@@ -48,6 +57,8 @@ export const mapSlugToUniversity = (
       return UniversityCareersUniversityId.UNIVERSITY_OF_AKUREYRI
     case 'bifrost':
       return UniversityCareersUniversityId.BIFROST_UNIVERSITY
+    case 'lhi':
+      return UniversityCareersUniversityId.ICELAND_UNIVERSITY_OF_THE_ARTS
   }
 }
 
@@ -69,5 +80,7 @@ export const mapSlugToContentfulSlug = (
       return 'haskolinn-a-akureyri'
     case 'bifrost':
       return 'bifrost'
+    case 'lhi':
+      return 'lhi'
   }
 }

@@ -31,6 +31,8 @@ export const OtherAssetsRepeater: FC<
     name: id,
   })
 
+  console.log(fields)
+
   const { getValues } = useFormContext()
   const { formatMessage } = useLocale()
 

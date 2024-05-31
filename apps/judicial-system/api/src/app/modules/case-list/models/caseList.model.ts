@@ -5,6 +5,7 @@ import {
   CaseAppealRulingDecision,
   CaseAppealState,
   CaseDecision,
+  CaseIndictmentRulingDecision,
   CaseState,
   CaseType,
   IndictmentCaseReviewDecision,
@@ -114,4 +115,13 @@ export class CaseListEntry {
 
   @Field(() => String, { nullable: true })
   readonly indictmentAppealDeadline?: string
+
+  @Field(() => Boolean, { nullable: true })
+  readonly indictmentVerdictViewedByAll?: boolean
+
+  @Field(() => String, { nullable: true })
+  readonly indictmentVerdictAppealDeadline?: string
+
+  @Field(() => CaseIndictmentRulingDecision, { nullable: true })
+  readonly indictmentRulingDecision?: CaseIndictmentRulingDecision
 }
