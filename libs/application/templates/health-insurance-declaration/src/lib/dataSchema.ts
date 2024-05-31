@@ -29,11 +29,9 @@ export const HealthInsuranceDeclarationSchema = z.object({
     })
     .superRefine((v, ctx) => {
       if (
-        (!v.registerPersonsSpouseCheckboxField ||
-          v.registerPersonsSpouseCheckboxField.length < 1) &&
-        (!v.registerPersonsChildrenCheckboxField ||
-          v.registerPersonsChildrenCheckboxField.length < 1) &&
-        !v.isHealthInsured
+        !v.isHealthInsured &&
+        !v.registerPersonsSpouseCheckboxField?.length &&
+        !v.registerPersonsChildrenCheckboxField?.length
       ) {
         ctx.addIssue({
           code: z.ZodIssueCode.custom,
