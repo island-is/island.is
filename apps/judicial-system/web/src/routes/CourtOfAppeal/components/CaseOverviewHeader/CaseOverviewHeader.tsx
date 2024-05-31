@@ -87,8 +87,8 @@ const CaseOverviewHeader: React.FC<Props> = (props) => {
         </Box>
       )}
       {workingCase.appealRulingDecision &&
-        workingCase.eventLogs &&
-        workingCase.eventLogs.length > 0 && (
+        filteredEvents &&
+        filteredEvents.length > 0 && (
           <Box marginBottom={2} marginTop={8}>
             {filteredEvents?.map((event, index) => (
               <Box marginBottom={2} key={`event${index}`}>
