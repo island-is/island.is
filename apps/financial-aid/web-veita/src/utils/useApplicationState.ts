@@ -52,7 +52,7 @@ export const useApplicationState = () => {
             applied,
             rejection,
             comment,
-            staffId: admin?.staff?.id,
+            staffId: applied ? undefined : admin?.staff?.id,
             event,
             amount,
           },
