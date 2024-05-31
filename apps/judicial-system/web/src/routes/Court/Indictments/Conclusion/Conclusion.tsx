@@ -280,7 +280,7 @@ const Conclusion: React.FC = () => {
     if (selectedAction === IndictmentDecision.POSTPONING_UNTIL_VERDICT) {
       return postponement?.isSettingVerdictDate
         ? Boolean(selectedCourtDate)
-        : false
+        : true
     } else if (!allFilesDoneOrError) {
       return false
     } else {

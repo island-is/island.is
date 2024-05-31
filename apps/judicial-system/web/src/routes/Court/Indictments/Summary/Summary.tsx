@@ -9,6 +9,8 @@ import {
   FormContentContainer,
   FormContext,
   FormFooter,
+  InfoCard,
+  InfoCardCaseScheduledIndictment,
   InfoCardClosedIndictment,
   Modal,
   PageHeader,
@@ -85,18 +87,29 @@ const Summary: React.FC = () => {
       <PageHeader title={formatMessage(strings.htmlTitle)} />
       <FormContentContainer>
         <PageTitle>{formatMessage(strings.title)}</PageTitle>
-        <Box marginBottom={1}>
+        <Box component="section" marginBottom={1}>
           <Text variant="h2" as="h2">
             {formatMessage(core.caseNumber, {
               caseNumber: workingCase.courtCaseNumber,
             })}
           </Text>
         </Box>
-        <Box marginBottom={2}>
+        <Box component="section" marginBottom={2}>
           <Prosecutor workingCase={workingCase} />
           <Defendants workingCase={workingCase} />
         </Box>
-        <Box marginBottom={6}>
+        <Box component="section" marginBottom={2}>
+          <InfoCard
+            data={[
+              {
+                title: formatMessage(strings.scheduledInfoCardTitle),
+                value: formatMessage(strings.scheduledInfoCardValue),
+              },
+            ]}
+            icon="calendar"
+          />
+        </Box>
+        <Box component="section" marginBottom={6}>
           <InfoCardClosedIndictment />
         </Box>
         <SectionHeading title={formatMessage(strings.caseFiles)} />
