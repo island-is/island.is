@@ -176,16 +176,17 @@ export const getSelectedFamily = (
     )
   }
 
-  const selectedChildren = answers.selectedApplicants?.registerPersonsChildrenCheckboxField?.map(
-    (childNationalId) => {
-      const childData = children.find((c) => c.nationalId === childNationalId)
-      return [
-        childData ? childData.fullName : '',
-        childData ? childData.nationalId : '',
-        m.overview.familyTableRelationChildText,
-      ]
-    },
-  )
+  const selectedChildren =
+    answers.selectedApplicants?.registerPersonsChildrenCheckboxField?.map(
+      (childNationalId) => {
+        const childData = children.find((c) => c.nationalId === childNationalId)
+        return [
+          childData ? childData.fullName : '',
+          childData ? childData.nationalId : '',
+          m.overview.familyTableRelationChildText,
+        ]
+      },
+    )
 
   if (selectedChildren) {
     selectedFamily.concat(selectedChildren)

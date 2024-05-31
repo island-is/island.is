@@ -27,8 +27,7 @@ export const prerequisites = {
         'Prerequisite error message title when no declaration is available',
     },
     noDeclarationAvailable: {
-      id:
-        'hid.application:prerequisites.errors.noDeclarationAvailable#markdown',
+      id: 'hid.application:prerequisites.errors.noDeclarationAvailable#markdown',
       defaultMessage: `Engin yfirlýsing í boði, helstu ástæður eru þessar:
 * Þú ert ekki með gilda sjúkratryggingu á Íslandi.
 * Ekki eru einstaklingar á þínu lögheimili sem þú getur sótt yfirlýsingu fyrir
@@ -52,8 +51,7 @@ Ef þú telur þetta ekki rétt skaltu hafa samband hér: (ehic@sjukra.is)[mailt
       description: 'National registry data provider title',
     },
     nationalRegistryDescription: {
-      id:
-        'hid.application:prerequisites.dataproviders.nationalregistry.description',
+      id: 'hid.application:prerequisites.dataproviders.nationalregistry.description',
       defaultMessage:
         'Upplýsingar um nafn, kennitölu og heimilisfang. Upplýsingar um maka og forsjá barna',
       description: 'National registry data provider description',
@@ -75,8 +73,7 @@ Ef þú telur þetta ekki rétt skaltu hafa samband hér: (ehic@sjukra.is)[mailt
       description: 'Health insurance data provider title',
     },
     healthInsuranceDescription: {
-      id:
-        'hid.application:prerequisites.dataproviders.healthInsurance.description',
+      id: 'hid.application:prerequisites.dataproviders.healthInsurance.description',
       defaultMessage: 'Upplýsingar um stöðu á sjúkratryggingum',
       description: 'Health insurance data provider description',
     },

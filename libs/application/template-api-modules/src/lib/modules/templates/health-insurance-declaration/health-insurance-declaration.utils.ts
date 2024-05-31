@@ -25,7 +25,8 @@ export const applicationToStudentApplication = (
   application: Application,
   attachments: DocumentInfo[],
 ): InsuranceStatementsStudentApplicationDTO => {
-  const healthInsuranceApplication = application as HealthInsuranceDeclarationApplication
+  const healthInsuranceApplication =
+    application as HealthInsuranceDeclarationApplication
   return {
     applicants: getApplicants(healthInsuranceApplication),
     countryCode: getResidencyCode(healthInsuranceApplication),
@@ -38,7 +39,8 @@ export const applicationToStudentApplication = (
 export const applicationToTouristApplication = (
   application: Application,
 ): InsuranceStatementsTouristApplicationDTO => {
-  const healthInsuranceApplication = application as HealthInsuranceDeclarationApplication
+  const healthInsuranceApplication =
+    application as HealthInsuranceDeclarationApplication
   return {
     applicants: getApplicants(healthInsuranceApplication),
     continentCode: getResidencyCode(healthInsuranceApplication),
@@ -113,10 +115,14 @@ export const getPersonsFromExternalData = (application: Application) => {
   const spouse = getSpouseFromExternalData(application)
   const persons = [
     {
-      nationalId: (application.externalData.nationalRegistry
-        .data as NationalRegistryIndividual).nationalId,
-      name: (application.externalData.nationalRegistry
-        .data as NationalRegistryIndividual).fullName,
+      nationalId: (
+        application.externalData.nationalRegistry
+          .data as NationalRegistryIndividual
+      ).nationalId,
+      name: (
+        application.externalData.nationalRegistry
+          .data as NationalRegistryIndividual
+      ).fullName,
     },
   ]
   if (spouse) {
