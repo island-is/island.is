@@ -1,4 +1,4 @@
-name: Example Workflow
+name: Test cache
 
 on:
   pull_request:
@@ -10,7 +10,7 @@ concurrency:
 
 jobs:
   cache:
-    runs-on: ubuntu-latest
+    runs-on: ec2-runners
     container:
       image: public.ecr.aws/m3u4c4h9/island-is/actions-runner-public:latest
     timeout-minutes: 35
