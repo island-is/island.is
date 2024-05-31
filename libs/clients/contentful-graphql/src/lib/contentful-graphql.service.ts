@@ -1,14 +1,13 @@
-import { Inject, Injectable } from '@nestjs/common';
+import { HttpException, Inject, Injectable } from '@nestjs/common';
 import type { EnhancedFetchAPI } from '@island.is/clients/middlewares';
 import type { ConfigType } from '@island.is/nest/config';
 import { ContentfulGraphQLClientConfig } from './contentful-graphql.config';
 import { ContentfulGraphQLFetchProviderKey } from './contentful-graphql-fetch-provider';
-import { GraphQLClient, gql } from 'graphql-request';
+import { GraphQLClient } from 'graphql-request';
 
 @Injectable()
 export class ContentfulGraphQLClientService {
   private readonly client: GraphQLClient;
-
   constructor(
     @Inject(ContentfulGraphQLClientConfig.KEY)
     private readonly config: ConfigType<typeof ContentfulGraphQLClientConfig>,
@@ -19,16 +18,17 @@ export class ContentfulGraphQLClientService {
       headers: {
         Authorization: `Bearer ${process.env.CONTENTFUL_ACCESS_TOKEN}`,
       },
-      fetch: this.fetch as any, // Ensure the custom fetch implementation is compatible
+      fetch: this.fetch as any, // Ensure the custom fetch implementation is compatible .... 
     });
   }
 
-  async fetchData(queryString: string) {
+  async fetchData(queryString: string, variables?: Record<string, any>) {
     try {
-      const result = await this.client.request(queryString);
-      return result;
+      return await this.client.request(queryString, variables);
     } catch (error) {
-      throw new Error(`Failed to fetch data from Contentful: ${error.message}`);
+      console.log(error)
+      throw new HttpException(error.message, error.status);
+      // throw new Error(`Failed to fetch data from Contentful: status ${error.status} ${error.message}`);
     }
   }
 }

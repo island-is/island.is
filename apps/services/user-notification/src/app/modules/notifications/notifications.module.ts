@@ -29,10 +29,10 @@ import { ContentfulGraphQLClientModule } from '@island.is/clients/contentful-gra
   exports: [NotificationsService],
   imports: [
     SequelizeModule.forFeature([Notification]),
-    CacheModule.register({
-      ttl: 60 * 10 * 1000, // 10 minutes
-      max: 1000, // 1000 items max
-    }),
+    // CacheModule.register({
+    //   ttl: 60 * 10 * 1000, // 10 minutes
+    //   max: 1000, // 1000 items max
+    // }),
     LoggingModule,
     CmsTranslationsModule,
     QueueModule.register({

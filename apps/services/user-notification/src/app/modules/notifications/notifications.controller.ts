@@ -26,7 +26,7 @@ import type { Locale } from '@island.is/shared/types'
 @Controller('notifications')
 @ApiTags('notifications')
 @ApiExtraModels(CreateNotificationDto)
-@UseInterceptors(CacheInterceptor)
+// @UseInterceptors(CacheInterceptor)
 export class NotificationsController {
   constructor(
     @Inject(LOGGER_PROVIDER) private logger: Logger,
@@ -35,13 +35,6 @@ export class NotificationsController {
   ) {}
 
 
-  @Get('/tempdude')
-  @Version('1')
-  async tempdude(
-    @Query('locale') locale?: Locale,
-  ): Promise<any> {
-    return await this.notificationsService.tempdude()
-  }
 
   @Documentation({
     summary: 'Fetches all notification templates',
