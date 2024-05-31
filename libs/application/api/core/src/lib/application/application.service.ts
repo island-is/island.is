@@ -1,6 +1,6 @@
 import { Injectable, NotFoundException } from '@nestjs/common'
 import { InjectModel } from '@nestjs/sequelize'
-import { Op, WhereOptions } from 'sequelize'
+import { Op, QueryTypes, WhereOptions } from 'sequelize'
 import { Sequelize } from 'sequelize-typescript'
 import {
   ExternalData,
@@ -8,7 +8,11 @@ import {
   ApplicationStatus,
   ApplicationLifecycle,
 } from '@island.is/application/types'
-import { Application, ApplicationPaginatedResponse } from './application.model'
+import {
+  Application,
+  ApplicationPaginatedResponse,
+  ApplicationsStatistics,
+} from './application.model'
 import { getTypeIdsForInstitution } from '@island.is/application/utils'
 
 const applicationIsNotSetToBePruned = () => ({
@@ -58,7 +62,7 @@ export class ApplicationService {
   async getApplicationCountByTypeIdAndStatus(
     startDate: string,
     endDate: string,
-  ): Promise<string> {
+  ): Promise<ApplicationsStatistics[]> {
     const query = `SELECT 
         type_id as typeid, 
         COUNT(*) as count, 	
@@ -71,11 +75,10 @@ export class ApplicationService {
       WHERE created BETWEEN '${startDate}' AND '${endDate}' 
       GROUP BY typeid;`
 
-    const [results] = await this.sequelize.query(query, {
+    return this.sequelize.query<ApplicationsStatistics>(query, {
       replacements: { startDate, endDate },
+      type: QueryTypes.SELECT,
     })
-
-    return JSON.stringify(results)
   }
 
   async updateAttachment(

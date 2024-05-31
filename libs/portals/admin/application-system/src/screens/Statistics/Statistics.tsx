@@ -4,7 +4,6 @@ import {
   Breadcrumbs,
   SkeletonLoader,
   Text,
-  Table as T,
 } from '@island.is/island-ui/core'
 import { useLocale } from '@island.is/localization'
 import { ApplicationSystemPaths } from '../../lib/paths'
