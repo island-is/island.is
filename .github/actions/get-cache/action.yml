@@ -57,7 +57,7 @@ runs:
         keys: ${{ steps.get-cahce-key.outputs.keys }}
         YAML_FILE: ./.tmp-dynamic-cache/action.yml
       run: |
-        node scripts/ci/generate-cache-steps.js
+        node scripts/ci/generate-cache-steps.mjs
     - name: Run cache workflow
       id: run-cache
       uses: ./.tmp-dynamic-cache/action.yml
