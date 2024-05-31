@@ -593,12 +593,48 @@ export const inheritanceReportSchema = z.object({
   netPropertyForExchange: z.number(),
   customShare: z
     .object({
+      deceasedWasMarried: z.string().min(1),
+      deceasedHadAssets: z.string().optional(),
       hasCustomSpouseSharePercentage: z.string().optional(),
       customSpouseSharePercentage: z.string().optional(),
     })
     .refine(
-      ({ hasCustomSpouseSharePercentage, customSpouseSharePercentage }) => {
-        if (hasCustomSpouseSharePercentage === YES) {
+      ({ deceasedWasMarried, hasCustomSpouseSharePercentage }) => {
+        if (deceasedWasMarried === YES) {
+          return (
+            hasCustomSpouseSharePercentage &&
+            [YES, NO].includes(hasCustomSpouseSharePercentage)
+          )
+        }
+
+        return true
+      },
+      {
+        path: ['hasCustomSpouseSharePercentage'],
+      },
+    )
+    .refine(
+      ({ deceasedWasMarried, deceasedHadAssets }) => {
+        if (deceasedWasMarried === YES) {
+          return deceasedHadAssets && [YES, NO].includes(deceasedHadAssets)
+        }
+
+        return true
+      },
+      {
+        path: ['deceasedHadAssets'],
+      },
+    )
+    .refine(
+      ({
+        hasCustomSpouseSharePercentage,
+        customSpouseSharePercentage,
+        deceasedWasMarried,
+      }) => {
+        if (
+          hasCustomSpouseSharePercentage === YES &&
+          deceasedWasMarried === YES
+        ) {
           const val = valueToNumber(customSpouseSharePercentage)
           return val >= 50 && val <= 100
         }
@@ -609,8 +645,7 @@ export const inheritanceReportSchema = z.object({
         path: ['customSpouseSharePercentage'],
         params: m.assetsToShareHasCustomSpousePercentageError,
       },
-    )
-    .optional(),
+    ),
   confirmAction: z.array(z.enum([YES])).length(1),
 })
 
