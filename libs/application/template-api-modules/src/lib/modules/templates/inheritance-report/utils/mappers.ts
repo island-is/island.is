@@ -102,7 +102,7 @@ export const expandAnswers = (
         email: '',
         phone: '',
       },
-      skipSpouse: undefined,
+      includeSpouse: undefined,
     },
     approveExternalData: answers.approveExternalData,
     assets: {

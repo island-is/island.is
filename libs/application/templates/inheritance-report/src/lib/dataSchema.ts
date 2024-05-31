@@ -130,7 +130,7 @@ export const inheritanceReportSchema = z.object({
   /* prePaid inheritance executor */
   executors: z
     .object({
-      skipSpouse: z.array(z.enum([YES])).optional(),
+      includeSpouse: z.array(z.enum([YES])).optional(),
       executor: z.object({
         email: z.string().email(),
         phone: z.string().refine((v) => isValidPhoneNumber(v)),
@@ -143,8 +143,8 @@ export const inheritanceReportSchema = z.object({
         .optional(),
     })
     .refine(
-      ({ skipSpouse, spouse }) => {
-        if (skipSpouse && skipSpouse[0] !== YES) {
+      ({ includeSpouse, spouse }) => {
+        if (includeSpouse && includeSpouse[0] === YES) {
           return isValidEmail(spouse?.email ?? '')
         } else {
           return true
@@ -155,8 +155,8 @@ export const inheritanceReportSchema = z.object({
       },
     )
     .refine(
-      ({ skipSpouse, spouse }) => {
-        if (skipSpouse && skipSpouse[0] !== YES) {
+      ({ includeSpouse, spouse }) => {
+        if (includeSpouse && includeSpouse[0] === YES) {
           return isValidPhoneNumber(spouse?.phone ?? '')
         } else {
           return true

@@ -17,11 +17,11 @@ import { deceased } from './sections/deceased'
 import { applicationInfo } from './sections/applicationInfo'
 import { preSelection } from './sections/applicationTypeSelection'
 import { prePaidHeirs } from './sections/prepaidInheritance/heirs'
-import { prePaidDataCollection } from './sections/prepaidInheritance/dataCollection'
 import { inheritanceExecutor } from './sections/prepaidInheritance/inheritanceExecutor'
 import { inheritance } from './sections/prepaidInheritance/inheritance'
 import { prepaidOverview } from './sections/prepaidInheritance/overview'
 import { finalStep } from './sections/finalStep'
+import { prePaidApplicant } from './sections/prepaidInheritance/applicant'
 
 export const prepaidInheritanceForm: Form = buildForm({
   id: 'prePaidInheritanceReport',
@@ -30,7 +30,7 @@ export const prepaidInheritanceForm: Form = buildForm({
   renderLastScreenBackButton: true,
   renderLastScreenButton: true,
   children: [
-    prePaidDataCollection,
+    prePaidApplicant,
     inheritanceExecutor,
     inheritance,
     assets,

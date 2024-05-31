@@ -2,6 +2,7 @@ import {
   buildCheckboxField,
   buildDescriptionField,
   buildMultiField,
+  buildNationalIdWithNameField,
   buildPhoneField,
   buildSection,
   buildTextField,
@@ -9,16 +10,8 @@ import {
 } from '@island.is/application/core'
 import { m } from '../../../lib/messages'
 import { format as formatNationalId } from 'kennitala'
-import {
-  Application,
-  NationalRegistryUser,
-  UserProfile,
-} from '@island.is/api/schema'
+import { Application, UserProfile } from '@island.is/api/schema'
 import { removeCountryCode } from '@island.is/application/ui-components'
-import {
-  getSpouseFromExternalData,
-  isApplicantMarried,
-} from '../../../lib/utils/helpers'
 
 export const inheritanceExecutor = buildSection({
   id: 'inheritanceExecutor',
@@ -31,101 +24,63 @@ export const inheritanceExecutor = buildSection({
         'Lorem ipsum foo bar beep boop meep morp lorem ipsum foo bar beep boop meep morp lorem ipsum foo bar beep boop meep morp.',
       children: [
         buildDescriptionField({
-          id: 'executors.executor',
-          title: 'Arfláti 1',
+          id: 'description.executors.executor',
+          title: m.grantor,
           titleVariant: 'h3',
         }),
-        buildTextField({
-          id: 'executors.executor.name',
+        buildNationalIdWithNameField({
+          id: 'executors.executor',
           title: m.name,
-          defaultValue: ({ externalData }: Application) =>
-            (externalData.nationalRegistry?.data as NationalRegistryUser)
-              ?.fullName ?? '',
-          width: 'half',
-          readOnly: true,
-        }),
-        buildTextField({
-          id: 'executors.executor.nationalId',
-          title: m.nationalId,
-          defaultValue: ({ externalData }: Application) =>
-            formatNationalId(
-              (externalData.nationalRegistry?.data as NationalRegistryUser)
-                ?.nationalId,
-            ),
-          width: 'half',
-          readOnly: true,
-        }),
-        buildTextField({
-          id: 'executors.executor.phone',
-          title: m.phone,
-          width: 'half',
-          format: '###-####',
           required: true,
-          defaultValue: (application: Application) => {
-            const phone =
-              (
-                application.externalData.userProfile?.data as {
-                  mobilePhoneNumber?: string
-                }
-              )?.mobilePhoneNumber ?? ''
-
-            return removeCountryCode(phone)
-          },
         }),
         buildTextField({
           id: 'executors.executor.email',
           title: m.email,
           width: 'half',
+          variant: 'email',
           required: true,
-          defaultValue: ({ externalData }: Application) => {
-            const data = externalData.userProfile?.data as UserProfile
-            return data?.email
-          },
         }),
-        //Todo: ef hjúskaparstaða er married
+        buildPhoneField({
+          id: 'executors.executor.phone',
+          title: m.phone,
+          width: 'half',
+          required: true,
+        }),
+        buildDescriptionField({
+          id: 'description_empty',
+          title: '',
+          marginBottom: 'p5',
+        }),
         buildCheckboxField({
-          id: 'executors.skipSpouse',
+          id: 'executors.includeSpouse',
           title: '',
           large: false,
           backgroundColor: 'white',
           defaultValue: [],
+          description: m.includeSpousePrePaidDescription,
           options: [
             {
               value: YES,
-              label: m.skipSpousePrePaid,
+              label: m.includeSpousePrePaid,
             },
           ],
-          condition: (_, externalData) => isApplicantMarried(externalData),
         }),
         buildDescriptionField({
-          id: 'executors.spouse',
-          title: 'Arfláti 2',
+          id: 'description.executors.spouse',
+          title: m.grantor,
           titleVariant: 'h3',
           space: 'containerGutter',
           condition: (answers) =>
-            !((answers.executors as any)?.skipSpouse as Array<string>)?.length,
+            !!((answers.executors as any)?.includeSpouse as Array<string>)
+              ?.length,
         }),
-        buildTextField({
-          id: 'executors.spouse.name',
+        buildNationalIdWithNameField({
+          id: 'executors.spouse',
           title: m.name,
-          defaultValue: ({ externalData }: Application) =>
-            getSpouseFromExternalData(externalData)?.fullName,
-          width: 'half',
-          readOnly: true,
+          required: true,
           condition: (answers) =>
-            !((answers.executors as any)?.skipSpouse as Array<string>)?.length,
-        }),
-        buildTextField({
-          id: 'executors.spouse.nationalId',
-          title: m.nationalId,
-          defaultValue: ({ externalData }: Application) =>
-            formatNationalId(
-              getSpouseFromExternalData(externalData)?.nationalId ?? '',
-            ),
-          width: 'half',
-          readOnly: true,
-          condition: (answers) =>
-            !((answers.executors as any)?.skipSpouse as Array<string>)?.length,
+            !!((answers.executors as any)?.includeSpouse as Array<string>)
+              ?.length,
         }),
         buildTextField({
           id: 'executors.spouse.email',
@@ -134,7 +89,8 @@ export const inheritanceExecutor = buildSection({
           variant: 'email',
           required: true,
           condition: (answers) =>
-            !((answers.executors as any)?.skipSpouse as Array<string>)?.length,
+            !!((answers.executors as any)?.includeSpouse as Array<string>)
+              ?.length,
         }),
         buildPhoneField({
           id: 'executors.spouse.phone',
@@ -142,7 +98,8 @@ export const inheritanceExecutor = buildSection({
           width: 'half',
           required: true,
           condition: (answers) =>
-            !((answers.executors as any)?.skipSpouse as Array<string>)?.length,
+            !!((answers.executors as any)?.includeSpouse as Array<string>)
+              ?.length,
         }),
       ],
     }),

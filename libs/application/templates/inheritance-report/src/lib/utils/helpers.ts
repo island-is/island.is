@@ -100,11 +100,6 @@ export const getPrePaidTotalValueFromApplication = (
   return money + vehicleTotal + realEstateTotal + otherTotal + bankAccountTotal
 }
 
-export const isApplicantMarried = (externalData: ExternalData) => {
-  const spouse = getSpouseFromExternalData(externalData)
-  return !!spouse && spouse?.maritalStatus === '3'
-}
-
 export const customZodError = (
   zodValidation: ZodTypeAny,
   errorMessage: MessageDescriptor,

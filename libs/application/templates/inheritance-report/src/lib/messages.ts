@@ -91,6 +91,11 @@ export const m = defineMessages({
     defaultMessage: 'Staðfesta',
     description: '',
   },
+  inheritance: {
+    id: 'ir.application:inheritance',
+    defaultMessage: 'Arfur',
+    description: '',
+  },
 
   // Data collection - external data providers
   dataCollectionTitle: {
@@ -1449,6 +1454,11 @@ export const m = defineMessages({
     defaultMessage: 'Skiptastjóri',
     description: '',
   },
+  grantor: {
+    id: 'ir.application:grantor',
+    defaultMessage: 'Arfláti',
+    description: '',
+  },
   heirs: {
     id: 'ir.application:heirs',
     defaultMessage: 'Erfingjar',
@@ -1659,9 +1669,15 @@ export const m = defineMessages({
     defaultMessage: 'Markaðsverðmæti',
     description: '',
   },
-  skipSpousePrePaid: {
-    id: 'id.application:skipSpouse',
-    defaultMessage: 'Sleppa maka',
+  includeSpousePrePaid: {
+    id: 'id.application:includeSpouse',
+    defaultMessage: 'Ráðstafa úr sameign hjúskaps',
+    description: '',
+  },
+  includeSpousePrePaidDescription: {
+    id: 'id.application:includeSpouseDescription',
+    defaultMessage:
+      'Ef arfláti er í gift/ur og ráðstafa á úr sameign, þarf maki að vera með sem arfláti',
     description: '',
   },
   // Error messages
