@@ -225,9 +225,3 @@ export class ApplicationPayment {
   @Field()
   paymentUrl!: string
 }
-
-// @ObjectType()
-// export class AplicationStatistics {
-//   @Field(() => String)
-//   data: string
-// }
