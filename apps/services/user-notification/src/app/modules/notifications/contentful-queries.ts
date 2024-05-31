@@ -1,4 +1,4 @@
-export const GET_HNIPP_TEMPLATE_BY_ID = `
+export const GET_HNIPP_TEMPLATE_BY_TEMPLATE_ID = `
   query GetTemplateById($templateId: String!, $locale: String!) {
     hnippTemplateCollection(where: {templateId: $templateId}, locale: $locale) {
       items {
@@ -32,4 +32,10 @@ export const GET_HNIPP_TEMPLATES = `{
     }
   }`
 
-// Define other queries as needed...
+export const GET_ORGANIZATION_BY_KENNITALA = `{
+    organizationCollection(where: {kennitala: String!}, locale: String!) {
+      items {
+        title
+      }
+    }
+  }`
