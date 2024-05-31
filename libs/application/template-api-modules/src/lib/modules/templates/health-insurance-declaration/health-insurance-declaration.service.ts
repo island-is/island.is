@@ -1,4 +1,8 @@
-import { ApplicationTypes } from '@island.is/application/types'
+import {
+  ApplicantChildCustodyInformation,
+  ApplicationTypes,
+  NationalRegistrySpouse,
+} from '@island.is/application/types'
 import {
   InsurancestatementsApi,
   MinarsidurAPIModelsInsuranceStatementsResponseInsuranceStatementApplicationResponseDTO,
@@ -8,6 +12,7 @@ import { BaseTemplateApiService } from '../../base-template-api.service'
 import { TemplateApiModuleActionProps } from '../../../types'
 import { AuthMiddleware, Auth } from '@island.is/auth-nest-tools'
 import { ApplicationAttachmentProvider } from './attachments/provider'
+import { prerequisites } from '@island.is/application/templates/health-insurance-declaration'
 import {
   applicationToStudentApplication,
   applicationToTouristApplication,
@@ -17,6 +22,7 @@ import {
   getPersonsFromExternalData,
 } from './health-insurance-declaration.utils'
 import { ApplicantType } from './consts'
+import { TemplateApiError } from '@island.is/nest/problem'
 
 @Injectable()
 export class HealthInsuranceDeclarationService extends BaseTemplateApiService {
@@ -52,10 +58,30 @@ export class HealthInsuranceDeclarationService extends BaseTemplateApiService {
     ).getInsuranceStatementCountries()
   }
 
-  async getInsuranceStatementData(application: TemplateApiModuleActionProps) {
-    const status = await this.status(application)
-    const continents = await this.continents(application)
-    const countries = await this.countries(application)
+  async getInsuranceStatementData(
+    applicationWithProps: TemplateApiModuleActionProps,
+  ) {
+    const status = await this.status(applicationWithProps)
+    const continents = await this.continents(applicationWithProps)
+    const countries = await this.countries(applicationWithProps)
+    const { application } = applicationWithProps
+    console.log(application.externalData.childCustodyInformation)
+
+    if (status.canApply !== true) {
+      const childrenInformation = application.externalData
+        .childrenCustodyInformation.data as ApplicantChildCustodyInformation[]
+      const spouse = application.externalData.nationalRegistrySpouse
+        .data as NationalRegistrySpouse
+      if (!spouse && childrenInformation.length < 1) {
+        throw new TemplateApiError(
+          {
+            summary: prerequisites.errors.noDeclarationAvailable,
+            title: prerequisites.errors.noDeclarationAvailableTitle,
+          },
+          400,
+        )
+      }
+    }
 
     return {
       ...status,
@@ -80,17 +106,16 @@ export class HealthInsuranceDeclarationService extends BaseTemplateApiService {
       response = await this.insuranceStatementsApiWithAuth(
         auth,
       ).insuranceStatementStudentApplication({
-        minarsidurAPIModelsInsuranceStatementsStudentApplicationDTO:
-          applicationStudentRequest,
+        minarsidurAPIModelsInsuranceStatementsStudentApplicationDTO: applicationStudentRequest,
       })
     } else {
-      const applicationTouristRequest =
-        applicationToTouristApplication(application)
+      const applicationTouristRequest = applicationToTouristApplication(
+        application,
+      )
       response = await this.insuranceStatementsApiWithAuth(
         auth,
       ).insuranceStatementTouristApplication({
-        minarsidurAPIModelsInsuranceStatementsTouristApplicationDTO:
-          applicationTouristRequest,
+        minarsidurAPIModelsInsuranceStatementsTouristApplicationDTO: applicationTouristRequest,
       })
     }
     if (!response.success) {

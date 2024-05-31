@@ -36,6 +36,7 @@ import {
   getInsuranceStatus,
   getSelectedFamily,
   getSpouseAsOptions,
+  hasFamilyAvailable,
   hasFamilySelected,
 } from '../utils'
 import { HealthInsuranceDeclaration } from '../lib/dataSchema'
@@ -47,6 +48,7 @@ import {
 } from '@island.is/application/ui-components'
 import format from 'date-fns/format'
 import { ApplicantType } from '../shared/constants'
+import { application } from 'express'
 
 export const HealthInsuranceDeclarationForm: Form = buildForm({
   id: 'HealthInsuranceDeclarationDraft',
@@ -220,7 +222,8 @@ export const HealthInsuranceDeclarationForm: Form = buildForm({
         }),
       ],
       condition: (answers: FormValue) => {
-        return !answers.isHealthInsured as boolean
+        return (answers.isHealthInsured !== undefined &&
+          !answers.isHealthInsured) as boolean
       },
     }),
     buildSection({
@@ -291,6 +294,8 @@ export const HealthInsuranceDeclarationForm: Form = buildForm({
           ],
         }),
       ],
+      condition: (answers: FormValue) =>
+        !!(answers.hasSpouse || answers.hasChildren),
     }),
     buildSection({
       id: 'residencySectionTourist',
