@@ -14,6 +14,7 @@ const enableGeneratedFiles = process.env.ENABLE_GENERATED_FILES === 'true'
 const enableCypress = process.env.ENABLE_CYPRESS === 'true'
 const cypressPath = process.env.CYPRESS_PATH
 const keys = JSON.parse(process.env.keys)
+console.log(keys);
 const YAML_FILE = process.env['YAML_FILE']
 
 const steps = [
@@ -101,7 +102,10 @@ function createRuns(steps) {
                     id,
                     uses,
                     ...value,
-                    with: withValue,
+                    with: {
+                        path: withValue.path,
+                        key: withValue.key
+                    },
                 }
             }),
         },
