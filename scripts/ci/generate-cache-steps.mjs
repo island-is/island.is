@@ -1,10 +1,8 @@
-import { spawn } from 'node:child_process'
-import { resolve } from 'node:path'
-import { ROOT } from './_common.mjs'
 import { spawn } from "node:child_process";
 import { mkdir } from "node:fs/promises";
 import { dirname, resolve } from "node:path";
-import { ROOT } from "./_common.mjs";
+import { ROOT } from './_common.mjs'
+
 
 const enableNodeModules = process.env.ENABLE_NODE_MODULES === 'true'
 const enableMobileNodeModules =
