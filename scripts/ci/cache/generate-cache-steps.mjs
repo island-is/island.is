@@ -10,9 +10,13 @@ import { HAS_HASH_KEYS } from './_common.mjs'
 import { writeToSummary, writeToOutput } from './_get_hashes_utils.mjs'
 import { keyStorage } from './_key_storage.mjs'
 
+if (!HAS_HASH_KEYS) {
+    console.log('Generating cache hashes')
+}
 /** Generate hash */
 for (const value of caches) {
     if (value.enabled && !HAS_HASH_KEYS) {
+    console.log(`Generating hash for ${value.name}`)
     keyStorage.setKey(value.id, await value.hash())
   }
   if (!value.enabled && HAS_HASH_KEYS && keyStorage.hasKey(value.id)) {

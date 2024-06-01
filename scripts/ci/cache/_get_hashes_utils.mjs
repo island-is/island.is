@@ -11,10 +11,8 @@ export async function writeToSummary(
     file = process.env.GITHUB_STEP_SUMMARY ?? '',
 ) {
     if (!enabled) {
-        console.log(`Step summary is not enabled`)
         return
     }
-    console.log(`Step summary is enabled`)
     const rows = [
         '|  Key | Hash |',
         '| --- | --- |',

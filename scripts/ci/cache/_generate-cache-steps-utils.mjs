@@ -22,6 +22,9 @@ export function createOutputs(steps) {
                     description: 'Success for all caches',
                     value: JSON.stringify(
                         steps.reduce((a, value) => {
+                            if (!value || !value.enabled) {
+                                return a;
+                            }
                             return {
                                 ...a,
                                 [value.id]: `\${{ steps.${value.id}.outputs.success }}`,

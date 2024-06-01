@@ -20,7 +20,7 @@ import { keyStorage } from './_key_storage.mjs'
 // When testing this is good to manipulate
 const HASH_VERSION = 1
 
-export const ENABLED_MODULES = (process.env[ENV_ENABLED_CACHE] || "hehe").split(",").map((x) => x.trim()).filter((x) => x.length > 0).reduce((a, b) => {
+export const ENABLED_MODULES = (process.env[ENV_ENABLED_CACHE] || "").split(",").map((x) => x.trim()).filter((x) => x.length > 0).reduce((a, b) => {
   a[b] = true
   return a;
 }, {})
@@ -37,16 +37,14 @@ if (ENABLED_MODULES["cypress"] && !cypressPath) {
   throw new Error('Cypress path is not set')
 }
 
-console.log(ENABLED_MODULES);
-
 export const caches = [
   {
-    enabled: ENABLED_MODULES["cypresss"],
+    enabled: ENABLED_MODULES["node_modules"],
     hash: async () =>
-      keyStorage.getKey('node-modules') ??
+      keyStorage.getKey('node_modules') ??
       `node-modules-${HASH_VERSION}-${getPlatformString()}-${await getYarnLockHash()}-${await getPackageHash()}-${await getNodeVersionString()}`,
     name: 'Cache node_modules',
-    id: 'node-modules',
+    id: 'node_modules',
     path: 'node_modules',
     check: async (success, path) => {
       if (!success) {
@@ -60,14 +58,14 @@ export const caches = [
     },
   },
   {
-    enabled: ENABLED_MODULES["mobile-node-modules"],
+    enabled: ENABLED_MODULES["mobile-node_modules"],
     hash: async () =>
-      keyStorage.getKey('mobile-node-modules') ??
+      keyStorage.getKey('mobile-node_modules') ??
       `app-node-modules-${HASH_VERSION}-${getPlatformString()}-${await getYarnLockHash()}-${await getPackageHash(
         MOBILE_APP_DIR,
       )}-${await getNodeVersionString()}`,
     name: 'Cache Mobile node_modules',
-    id: 'mobile-node-modules',
+    id: 'mobile-node_modules',
     path: 'apps/native/app/node_modules',
   },
   {
