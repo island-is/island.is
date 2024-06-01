@@ -1,7 +1,16 @@
+// @ts-check
+
+import { ENV_KEYS } from "./_const.mjs";
+
 class KeyStorage {
     _keys = {};
+    /**
+     * Represents a KeyStorage object.
+     * @constructor
+     * @param {string|undefined} value - The value to initialize the KeyStorage object with.
+     */
     constructor(value = undefined) {
-        if (!_keys) {
+        if (!value) {
             return;
         }
         try {
