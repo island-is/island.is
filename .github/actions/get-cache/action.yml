@@ -40,6 +40,6 @@ runs:
         ENABLE_CACHE: ${{ inputs.enable-cache }}
         CYPRESS_PATH: ${{ inputs.cypress-path }}
         _CACHE_KEYS: ${{ steps.prepare.outputs._CACHE_KEYS }}
-        _INIT_CACHE: ${{ steps.generate-steps.outputs._INIT_CACHE }}
+        _INIT_CACHE: ${{ steps.prepare.outputs._INIT_CACHE }}
       run: |
         node ./scripts/ci/cache/cache-action.mjs
