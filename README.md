@@ -40,6 +40,42 @@ If you are running on Windows we recommend using [Docker and WSL2](https://docs.
 - You have [jq](https://stedolan.github.io/jq/) installed.
   - `brew install jq`
 
+## Devcontainers
+
+Devcontainers provide a consistent development environment using Docker containers, ensuring all developers have the same setup.
+
+### Setup
+
+1. **Requirements**:
+
+   - Docker
+   - Visual Studio Code (VS Code) with the Remote - Containers extension
+
+2. **Using Devcontainers**:
+   - Open the project in VS Code.
+   - Press `F1` and select `Remote-Containers: Open Folder in Container...`.
+   - Select the project folder. VS Code will build and open the container.
+
+### devcontainers-cli Tool
+
+`devcontainers-cli` offers command-line management of devcontainers.
+
+1. **Installation**:
+
+   ```bash
+   npm install -g @devcontainers/cli
+   ```
+
+2. **Usage**:
+
+   - To open a shell in the devcontainer:
+
+     ```bash
+     devcontainers-cli open
+     ```
+
+For more commands and detailed usage, refer to the [devcontainers-cli documentation](https://github.com/devcontainers/cli).
+
 ## Usage
 
 There are many projects that can be built and run. [Click here to see the full list](https://github.com/island-is/island.is/blob/main/nx.json).
