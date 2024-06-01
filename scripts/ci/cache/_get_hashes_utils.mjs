@@ -2,7 +2,6 @@
 import { appendFile } from 'node:fs/promises'
 import { ENV_INIT_CACHE, ENV_KEYS } from './_const.mjs'
 import { HAS_HASH_KEYS } from './_common.mjs'
-import { keyStorage } from './_key_storage.mjs'
 const SUMMARY_TITLE = `Cache keys`
 
 export async function writeToSummary(
@@ -35,10 +34,6 @@ export async function writeToOutput(
     if (!enabled) {
         return
     }
-    Object.keys(hashes)
-        .forEach((key) => {
-            keyStorage.setKey(key, hashes[key]);
-        })
     await appendFile(
         file,
         `${ENV_INIT_CACHE}=${HAS_HASH_KEYS ? 'false' : 'true'}\n`,

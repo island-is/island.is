@@ -25,6 +25,21 @@ class KeyStorage {
     setKey(key, value) {
         this._keys[key] = value;
     }
+    count() {
+        return Object.keys(this._keys).length;
+    }
+    json() {
+        return JSON.stringify(this._keys);
+    }
+    getKeys() {
+        return this._keys;
+    }
+    deleteKey(key) {
+        delete this._keys[key];
+    }
+    hasKey(key) {
+        return this._keys.hasOwnProperty(key);
+    }
 }
 
 export const keyStorage = new KeyStorage(process.env[ENV_KEYS])
