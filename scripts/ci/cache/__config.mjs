@@ -33,6 +33,8 @@ if (ENABLED_MODULES["cypress"] && !cypressPath) {
   throw new Error('Cypress path is not set')
 }
 
+console.log(ENABLED_MODULES);
+
 export const caches = [
   {
     enabled: ENABLED_MODULES["cypresss"],
