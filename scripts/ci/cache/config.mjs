@@ -44,7 +44,6 @@ export const caches = [
     name: 'Cache node_modules',
     id: 'node-modules',
     path: 'node_modules',
-    key: keys['node_modules'],
     check: async (success, path) => {
       if (!success) {
         return false
@@ -66,7 +65,6 @@ export const caches = [
     name: 'Cache Mobile node_modules',
     id: 'mobile-node-modules',
     path: 'apps/native/app/node_modules',
-    key: keys['App node_modules'],
   },
   {
     enabled: enableGeneratedFiles,
@@ -76,7 +74,6 @@ export const caches = [
     name: 'Cache Generated Files',
     id: 'generated-files',
     path: 'generated_files.tar.gz',
-    key: keys['Generated files'],
     check: async (success, path) => {
       if (!success) {
         return false
@@ -96,6 +93,5 @@ export const caches = [
     name: 'Cache Cypress',
     id: 'cypress-cache',
     path: cypressPath || '',
-    key: keys['Cypress Cache'],
   },
 ].filter((step) => step.enabled)
