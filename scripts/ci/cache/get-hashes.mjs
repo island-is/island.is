@@ -51,8 +51,6 @@ async function writeToSummary(
     const title = `### ${SUMMARY_TITLE}`
     const summary = ['', title, '', rows, ''].join('\n')
     await appendFile(file, summary, 'utf-8')
-    const content = await readFile(file, 'utf-8');
-    console.log(content);
 }
 
 async function writeToOutput(
