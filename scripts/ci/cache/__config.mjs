@@ -16,7 +16,7 @@ import { ENV_KEYS, ENV_INIT_CACHE, ENV_ENABLED_CACHE } from './_const.mjs'
 // When testing this is good to manipulate
 const HASH_VERSION = 1
 
-export const ENABLED_MODULES = (process[ENV_ENABLED_CACHE] ?? "").split(",").map((x) => x.trim()).filter((x) => x.length > 0).reduce((a, b) => {
+export const ENABLED_MODULES = (process.env[ENV_ENABLED_CACHE] || "hehe").split(",").map((x) => x.trim()).filter((x) => x.length > 0).reduce((a, b) => {
   a[b] = true
   return a;
 }, {})
