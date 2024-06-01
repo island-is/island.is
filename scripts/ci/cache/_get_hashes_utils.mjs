@@ -41,8 +41,8 @@ export async function writeToOutput(
         })
     await appendFile(
         file,
-        `\n${ENV_INIT_CACHE}=${HAS_HASH_KEYS ? 'false' : 'true'}`,
+        `${ENV_INIT_CACHE}=${HAS_HASH_KEYS ? 'false' : 'true'}\n`,
         'utf-8',
     )
-    await appendFile(file, `\n${ENV_KEYS}=${JSON.stringify(hashes)}\n`, 'utf-8')
+    await appendFile(file, `${ENV_KEYS}=${JSON.stringify(hashes)}\n`, 'utf-8')
 }

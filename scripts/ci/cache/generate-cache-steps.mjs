@@ -3,7 +3,7 @@
  */
 
 // @ts-check
-import { ENV_HASHES_KEY, ENV_KEYS, ENV_YAML_FILE } from './_const.mjs'
+import { ENV_HASHES_KEY, ENV_YAML_FILE } from './_const.mjs'
 import { caches } from './__config.mjs'
 import { generateCacheAction, createOutputs, createRuns, exportToYaml } from './_generate-cache-steps-utils.mjs'
 import { HAS_HASH_KEYS } from './_common.mjs'

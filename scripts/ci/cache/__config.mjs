@@ -11,33 +11,31 @@ import {
   runCommand,
   fileSizeIsEqualOrGreaterThan,
 } from './_utils.mjs'
-import { ENV_KEYS, ENV_INIT_CACHE } from './_const.mjs'
+import { ENV_KEYS, ENV_INIT_CACHE, ENV_ENABLED_CACHE } from './_const.mjs'
 
 // When testing this is good to manipulate
 const HASH_VERSION = 1
 
-export const enableNodeModules = process.env.ENABLE_NODE_MODULES === 'true'
-export const enableMobileNodeModules =
-  process.env.ENABLE_MOBILE_NODE_MODULES === 'true'
-export const enableGeneratedFiles =
-  process.env.ENABLE_GENERATED_FILES === 'true'
-export const enableCypress = process.env.ENABLE_CYPRESS === 'true'
-export const cypressPath = process.env.CYPRESS_PATH
+export const ENABLED_MODULES = (process[ENV_ENABLED_CACHE] ?? "").split(",").map((x) => x.trim()).filter((x) => x.length > 0).reduce((a, b) => {
+  a[b] = true
+  return a;
+}, {})
 export const keys = process.env[ENV_KEYS]
   ? JSON.parse(process.env[ENV_KEYS])
   : {}
+export const cypressPath = process.env.CYPRESS_CACHE_PATH
 export const cacheSuccess = JSON.parse(process.env.CACHE_SUCCESS ?? '{}')
 export const initCache = process.env[ENV_INIT_CACHE] === 'true'
 
 console.log({ keys })
 
-if (enableCypress && !cypressPath) {
+if (ENABLED_MODULES["cypress"] && !cypressPath) {
   throw new Error('Cypress path is not set')
 }
 
 export const caches = [
   {
-    enabled: enableNodeModules,
+    enabled: ENABLED_MODULES["cypresss"],
     hash: async () =>
       keys['node-modules'] ??
       `node-modules-${HASH_VERSION}-${getPlatformString()}-${await getYarnLockHash()}-${await getPackageHash()}-${await getNodeVersionString()}`,
@@ -56,7 +54,7 @@ export const caches = [
     },
   },
   {
-    enabled: enableMobileNodeModules,
+    enabled: ENABLED_MODULES["mobile-node-modules"],
     hash: async () =>
       keys['mobile-node-modules'] ??
       `app-node-modules-${HASH_VERSION}-${getPlatformString()}-${await getYarnLockHash()}-${await getPackageHash(
@@ -67,7 +65,7 @@ export const caches = [
     path: 'apps/native/app/node_modules',
   },
   {
-    enabled: enableGeneratedFiles,
+    enabled: ENABLED_MODULES["generated-files"],
     hash: async () =>
       keys['generated-files'] ??
       `generated-files-${HASH_VERSION}-${getPlatformString()}-${await getGeneratedFileHash()}`,
@@ -86,12 +84,12 @@ export const caches = [
     },
   },
   {
-    enabled: enableCypress,
+    enabled: ENABLED_MODULES["cypress"],
     hash: async () =>
-      keys['cypress-cache'] ??
+      keys['cypress'] ??
       `cypress-cache-${HASH_VERSION}-${getPlatformString()}-${await getYarnLockHash()}-${await getPackageHash()}-${await getNodeVersionString()}`,
     name: 'Cache Cypress',
-    id: 'cypress-cache',
+    id: 'cypress',
     path: cypressPath || '',
   },
 ].filter((step) => step.enabled)

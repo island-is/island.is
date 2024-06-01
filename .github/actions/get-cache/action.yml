@@ -1,18 +1,9 @@
 name: 'Get Cache Keys'
 description: 'Action to get cache'
 inputs:
-  enable-node-modules:
-    description: 'Get node modules cache'
-    default: 'false'
-  enable-mobile-node-modules:
-    description: 'Get mobile node modules'
-    default: 'false'
-  enable-generated-files:
-    description: 'Get generated files'
-    default: 'false'
-  enable-cypress:
-    description: 'Get cypress'
-    default: 'false'
+  enable-cache:
+    description: 'Enable cache'
+    default: ''
   keys:
     description: 'Keys'
     default: 'false'
@@ -31,10 +22,7 @@ runs:
       id: generate-steps
       shell: bash
       env:
-        ENABLE_NODE_MODULES: ${{ inputs.enable-node-modules }}
-        ENABLE_MOBILE_NODE_MODULES: ${{ inputs.enable-mobile-node-modules }}
-        ENABLE_GENERATED_FILES: ${{ inputs.enable-generated-files }}
-        ENABLE_CYPRESS: ${{ inputs.enable-cypress }}
+        ENABLE_CACHE: ${{ inputs.enable-cache }}
         CYPRESS_PATH: ${{ inputs.cypress-path }}
         YAML_FILE: ./.tmp-dynamic-cache/action.yml
       run: |
