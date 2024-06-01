@@ -2,7 +2,7 @@
  * Generate HASH keys. Please edit config.mjs to change keys.
  */
 // @ts-check
-import { appendFile } from 'node:fs/promises'
+import { appendFile, readFile } from 'node:fs/promises'
 import { caches } from './config.mjs'
 import { ENV_HASHES_KEY, ENV_INIT_CACHE, ENV_KEYS } from './_const.mjs'
 
@@ -50,7 +50,9 @@ async function writeToSummary(
   ].join('\n')
   const title = `### ${SUMMARY_TITLE}`
   const summary = ['', title, '', rows, ''].join('\n')
-  await appendFile(file, summary, 'utf-8')
+    await appendFile(file, summary, 'utf-8')
+    const content = await readFile(file, 'utf-8');
+    console.log(content);
 }
 
 async function writeToOutput(
