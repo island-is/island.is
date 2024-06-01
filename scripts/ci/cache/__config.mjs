@@ -1,3 +1,4 @@
+
 // @ts-check
 import { resolve } from 'path'
 import { MOBILE_APP_DIR, ROOT } from './_common.mjs'
@@ -11,7 +12,10 @@ import {
   runCommand,
   fileSizeIsEqualOrGreaterThan,
 } from './_utils.mjs'
-import { ENV_KEYS, ENV_INIT_CACHE, ENV_ENABLED_CACHE } from './_const.mjs'
+
+import { ENV_INIT_CACHE, ENV_ENABLED_CACHE } from './_const.mjs'
+import { keyStorage } from './_key_storage.mjs'
+
 
 // When testing this is good to manipulate
 const HASH_VERSION = 1
@@ -20,14 +24,10 @@ export const ENABLED_MODULES = (process.env[ENV_ENABLED_CACHE] || "hehe").split(
   a[b] = true
   return a;
 }, {})
-export const keys = process.env[ENV_KEYS]
-  ? JSON.parse(process.env[ENV_KEYS])
-  : {}
+
 export const cypressPath = process.env.CYPRESS_CACHE_PATH
 export const cacheSuccess = JSON.parse(process.env.CACHE_SUCCESS ?? '{}')
 export const initCache = process.env[ENV_INIT_CACHE] === 'true'
-
-console.log({ keys })
 
 if (Object.keys(ENABLED_MODULES).length === 0) {
   throw new Error('No cache modules enabled')
@@ -43,7 +43,7 @@ export const caches = [
   {
     enabled: ENABLED_MODULES["cypresss"],
     hash: async () =>
-      keys['node-modules'] ??
+      keyStorage.getKey('node-modules') ??
       `node-modules-${HASH_VERSION}-${getPlatformString()}-${await getYarnLockHash()}-${await getPackageHash()}-${await getNodeVersionString()}`,
     name: 'Cache node_modules',
     id: 'node-modules',
@@ -62,7 +62,7 @@ export const caches = [
   {
     enabled: ENABLED_MODULES["mobile-node-modules"],
     hash: async () =>
-      keys['mobile-node-modules'] ??
+      keyStorage.getKey('mobile-node-modules') ??
       `app-node-modules-${HASH_VERSION}-${getPlatformString()}-${await getYarnLockHash()}-${await getPackageHash(
         MOBILE_APP_DIR,
       )}-${await getNodeVersionString()}`,
@@ -73,7 +73,7 @@ export const caches = [
   {
     enabled: ENABLED_MODULES["generated-files"],
     hash: async () =>
-      keys['generated-files'] ??
+      keyStorage.getKey('generated-files') ??
       `generated-files-${HASH_VERSION}-${getPlatformString()}-${await getGeneratedFileHash()}`,
     name: 'Cache Generated Files',
     id: 'generated-files',
@@ -92,7 +92,7 @@ export const caches = [
   {
     enabled: ENABLED_MODULES["cypress"],
     hash: async () =>
-      keys['cypress'] ??
+      keyStorage.getKey('cypress') ??
       `cypress-cache-${HASH_VERSION}-${getPlatformString()}-${await getYarnLockHash()}-${await getPackageHash()}-${await getNodeVersionString()}`,
     name: 'Cache Cypress',
     id: 'cypress',

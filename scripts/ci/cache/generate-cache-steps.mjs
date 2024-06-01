@@ -4,7 +4,7 @@
 
 // @ts-check
 import { ENV_HASHES_KEY, ENV_YAML_FILE } from './_const.mjs'
-import { caches, keys } from './__config.mjs'
+import { caches } from './__config.mjs'
 import { generateCacheAction, createOutputs, createRuns, exportToYaml } from './_generate-cache-steps-utils.mjs'
 import { HAS_HASH_KEYS } from './_common.mjs'
 import { writeToSummary, writeToOutput } from './_get_hashes_utils.mjs'
@@ -28,7 +28,6 @@ if (!HAS_HASH_KEYS) {
 }
 writeToOutput(HASHES)
 
-console.log(keys);
 
 const steps = await Promise.all(
   caches
