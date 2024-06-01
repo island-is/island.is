@@ -52,7 +52,7 @@ export const caches = [
     },
     init: async () => {
       const path = resolve(ROOT, './scripts/ci/10_prepare-host-deps.sh')
-      await runCommand(path)
+      await runCommand(path, ROOT)
     },
   },
   {
