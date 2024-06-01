@@ -62,7 +62,7 @@ export function generateCacheAction({ name, id, path, key }) {
     return {
         name,
         id,
-        uses: 'island-is/cache@v0.3',
+        uses: 'island-is/cache/restore@v0.3',
         continue_on_error: true,
         with: {
             path,
