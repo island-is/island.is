@@ -37,10 +37,7 @@ runs:
       id: cache-actions
       shell: bash
       env:
-        ENABLE_NODE_MODULES: ${{ inputs.enable-node-modules }}
-        ENABLE_MOBILE_NODE_MODULES: ${{ inputs.enable-mobile-node-modules }}
-        ENABLE_GENERATED_FILES: ${{ inputs.enable-generated-files }}
-        ENABLE_CYPRESS: ${{ inputs.enable-cypress }}
+        ENABLE_CACHE: ${{ inputs.enable-cache }}
         CYPRESS_PATH: ${{ inputs.cypress-path }}
         _CACHE_KEYS: ${{ steps.generate-steps._CACHE_KEYS }}
         _INIT_CACHE: ${{ steps.generate-steps._INIT_CACHE }}
