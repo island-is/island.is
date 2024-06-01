@@ -19,7 +19,7 @@ runs:
   steps:
     - uses: cue-lang/setup-cue@v1.0.1
     - name: Generate Dynamic Steps
-      id: generate-steps
+      id: prepare
       shell: bash
       env:
         ENABLE_CACHE: ${{ inputs.enable-cache }}
@@ -39,7 +39,7 @@ runs:
       env:
         ENABLE_CACHE: ${{ inputs.enable-cache }}
         CYPRESS_PATH: ${{ inputs.cypress-path }}
-        _CACHE_KEYS: ${{ steps.generate-steps._CACHE_KEYS }}
-        _INIT_CACHE: ${{ steps.generate-steps._INIT_CACHE }}
+        _CACHE_KEYS: ${{ steps.prepare.outputs._CACHE_KEYS }}
+        _INIT_CACHE: ${{ steps.generate-steps.outputs._INIT_CACHE }}
       run: |
         node ./scripts/ci/cache/cache-action.mjs
