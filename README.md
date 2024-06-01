@@ -52,31 +52,16 @@ Devcontainers provide a consistent development environment using Docker containe
    - Visual Studio Code (VS Code) with the Remote - Containers extension
 
 2. **Using Devcontainers**:
-   - Open the project in VS Code.
-   - Press `F1` and select `Remote-Containers: Open Folder in Container...`.
-   - Select the project folder. VS Code will build and open the container.
-
-For more information on using Devcontainers, refer to the [Devcontainers documentation](https://code.visualstudio.com/docs/remote/containers).
+   - Refer to the [Devcontainers documentation](https://code.visualstudio.com/docs/remote/containers) for detailed instructions on setting up and using Devcontainers with VS Code.
 
 ### devcontainers-cli Tool
 
 `devcontainers-cli` offers command-line management of devcontainers.
 
-1. **Installation**:
+1. **Installation and Usage**:
+   - Refer to the [devcontainers-cli documentation](https://github.com/devcontainers/cli) for detailed instructions on installation and usage.
 
-   ```bash
-   npm install -g @devcontainers/cli
-   ```
-
-2. **Usage**:
-
-   - To open a shell in the devcontainer:
-
-     ```bash
-     devcontainers-cli open
-     ```
-
-For more commands and detailed usage, refer to the [devcontainers-cli documentation](https://github.com/devcontainers/cli).
+Using Devcontainers and the `devcontainers-cli` tool ensures a uniform development environment, reducing setup time and discrepancies between machines.
 
 ## Setting up Digital Iceland
 
