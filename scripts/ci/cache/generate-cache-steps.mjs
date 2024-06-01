@@ -3,13 +3,31 @@
  */
 
 // @ts-check
-import { ENV_KEYS, ENV_YAML_FILE } from './_const.mjs'
+import { ENV_HASHES_KEY, ENV_KEYS, ENV_YAML_FILE } from './_const.mjs'
 import { caches } from './__config.mjs'
-import { generateCacheAction, createOutputs, createRuns, exportToYaml } from './generateCacheAction.mjs'
+import { generateCacheAction, createOutputs, createRuns, exportToYaml } from './_generate-cache-steps-utils.mjs'
+import { HAS_HASH_KEYS } from './_common.mjs'
+import { writeToSummary, writeToOutput } from './_get_hashes_utils.mjs'
 
-if (!process.env[ENV_KEYS]) {
-  throw new Error(`Keys not set`)
+/** Generate hash */
+const HASHES = HAS_HASH_KEYS
+  ? JSON.parse(process.env[ENV_HASHES_KEY] || '')
+  : {}
+for (const value of caches) {
+  if (value.enabled && !HAS_HASH_KEYS) {
+    HASHES[value.id] = await value.hash()
+  }
+  if (!value.enabled && HAS_HASH_KEYS && HASHES[value.id]) {
+    // Delete key if not enabled
+    delete HASHES[value.id]
+  }
 }
+if (!HAS_HASH_KEYS) {
+  // Only write summary if this is initial run
+  await writeToSummary(HASHES)
+}
+writeToOutput(HASHES)
+
 
 const steps = await Promise.all(
   caches

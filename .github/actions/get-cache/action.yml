@@ -27,16 +27,6 @@ runs:
   using: 'composite'
   steps:
     - uses: cue-lang/setup-cue@v1.0.0
-    - shell: bash
-      env:
-        CACHE_HASHES: ${{ inputs.keys }}
-        ENABLE_NODE_MODULES: ${{ inputs.enable-node-modules }}
-        ENABLE_MOBILE_NODE_MODULES: ${{ inputs.enable-mobile-node-modules }}
-        ENABLE_GENERATED_FILES: ${{ inputs.enable-generated-files }}
-        ENABLE_CYPRESS: ${{ inputs.enable-cypress }}
-      id: get-cache-keys
-      run: |
-        node scripts/ci/cache/get-hashes.mjs
     - name: Generate Dynamic Steps
       id: generate-steps
       shell: bash
@@ -46,8 +36,6 @@ runs:
         ENABLE_GENERATED_FILES: ${{ inputs.enable-generated-files }}
         ENABLE_CYPRESS: ${{ inputs.enable-cypress }}
         CYPRESS_PATH: ${{ inputs.cypress-path }}
-        _CACHE_KEYS: ${{ steps.get-cache-keys.outputs._CACHE_KEYS }}
-        _INIT_CACHE: ${{ steps.get-cache-keys.outputs._INIT_CACHE }}
         YAML_FILE: ./.tmp-dynamic-cache/action.yml
       run: |
         node scripts/ci/cache/generate-cache-steps.mjs
@@ -66,7 +54,7 @@ runs:
         ENABLE_GENERATED_FILES: ${{ inputs.enable-generated-files }}
         ENABLE_CYPRESS: ${{ inputs.enable-cypress }}
         CYPRESS_PATH: ${{ inputs.cypress-path }}
-        _CACHE_KEYS: ${{ steps.get-cache-keys.outputs._CACHE_KEYS }}
-        _INIT_CACHE: ${{ steps.get-cache-keys.outputs._INIT_CACHE }}
+        _CACHE_KEYS: ${{ steps.generate-steps._CACHE_KEYS }}
+        _INIT_CACHE: ${{ steps.generate-steps._INIT_CACHE }}
       run: |
         node ./scripts/ci/cache/cache-action.mjs
