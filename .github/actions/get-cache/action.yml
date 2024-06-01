@@ -20,21 +20,9 @@ inputs:
     description: 'Path to cypress'
     default: '/github/home/.cache/Cypress'
 outputs:
-  node-modules-key:
-    description: 'Cache key for node_modules'
-    value: ${{ steps.get-cache-keys.node-modules-key }}
-  mobile-node-modules-key:
-    description: 'Cache key for mobile app node_modules'
-    value: ${{ steps.get-cache-keys.outputs.mobile-node-modules-key }}
-  generated-files-key:
-    description: 'Cache key for generated files'
-    value: ${{ steps.get-cache-keys.outputs.generated-files-key }}
-  cypress-cache-key:
-    description: 'Cache key for github actions node_modules'
-    value: ${{ steps.get-cache-keys.outputs.cypress-cache-key }}
   keys:
     description: 'Keys'
-    value: ${{ steps.get-cache-keys.outputs.keys }}
+    value: ${{ steps.get-cache-keys.outputs._CACHE_KEYS }}
 runs:
   using: 'composite'
   steps:
@@ -42,9 +30,13 @@ runs:
     - shell: bash
       env:
         CACHE_HASHES: ${{ inputs.keys }}
+        ENABLE_NODE_MODULES: ${{ inputs.enable-node-modules }}
+        ENABLE_MOBILE_NODE_MODULES: ${{ inputs.enable-mobile-node-modules }}
+        ENABLE_GENERATED_FILES: ${{ inputs.enable-generated-files }}
+        ENABLE_CYPRESS: ${{ inputs.enable-cypress }}
       id: get-cache-keys
       run: |
-        node scripts/ci/get-hashes.mjs
+        node scripts/ci/cache/get-hashes.mjs
     - name: Generate Dynamic Steps
       id: generate-steps
       shell: bash
@@ -54,13 +46,28 @@ runs:
         ENABLE_GENERATED_FILES: ${{ inputs.enable-generated-files }}
         ENABLE_CYPRESS: ${{ inputs.enable-cypress }}
         CYPRESS_PATH: ${{ inputs.cypress-path }}
-        keys: ${{ steps.get-cache-keys.outputs.keys }}
+        _CACHE_KEYS: ${{ steps.get-cache-keys.outputs._CACHE_KEYS }}
+        _INIT_CACHE: ${{ steps.get-cache-keys.outputs._INIT_CACHE }}
         YAML_FILE: ./.tmp-dynamic-cache/action.yml
       run: |
-        node scripts/ci/generate-cache-steps.mjs
+        node scripts/ci/cache/generate-cache-steps.mjs
     - name: Run cache workflow
       id: run-cache
       uses: ./.tmp-dynamic-cache
     - name: Cleanup cache workflow
       shell: bash
       run: rm -rf ./.tmp-dynamic-cache/action.yml
+    - name: Cache actions
+      id: cache-actions
+      env:
+        ENABLE_NODE_MODULES: ${{ inputs.enable-node-modules }}
+        ENABLE_MOBILE_NODE_MODULES: ${{ inputs.enable-mobile-node-modules }}
+        ENABLE_GENERATED_FILES: ${{ inputs.enable-generated-files }}
+        ENABLE_CYPRESS: ${{ inputs.enable-cypress }}
+        CYPRESS_PATH: ${{ inputs.cypress-path }}
+        _CACHE_KEYS: ${{ steps.get-cache-keys.outputs._CACHE_KEYS }}
+        _INIT_CACHE: ${{ steps.get-cache-keys.outputs._INIT_CACHE }}
+        YAML_FILE: ./.tmp-dynamic-cache/action.yml
+      uses: ./.scripst/ci/cache/cache-actions.mjs
+
+
