@@ -1,6 +1,6 @@
 // @ts-check
 import { resolve } from 'path'
-import { cacheSuccess, caches, initCache } from './config.mjs'
+import { cacheSuccess, caches, initCache } from './__config.mjs'
 import { ROOT } from './_common.mjs'
 
 const enabledCaches = caches.filter((value) => value.enabled)
