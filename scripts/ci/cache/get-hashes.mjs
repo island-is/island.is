@@ -24,7 +24,7 @@ for (const value of caches) {
     delete HASHES[value.id]
   }
 }
-
+console.log({ HAS_HASH_KEYS });
 if (!HAS_HASH_KEYS) {
   // Only write summary if this is initial run
   await writeToSummary()
