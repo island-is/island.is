@@ -29,6 +29,10 @@ export const initCache = process.env[ENV_INIT_CACHE] === 'true'
 
 console.log({ keys })
 
+if (Object.keys(ENABLED_MODULES).length === 0) {
+  throw new Error('No cache modules enabled')
+}
+
 if (ENABLED_MODULES["cypress"] && !cypressPath) {
   throw new Error('Cypress path is not set')
 }
