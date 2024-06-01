@@ -29,7 +29,7 @@ export const keys = process.env[ENV_KEYS]
 export const cacheSuccess = JSON.parse(process.env.CACHE_SUCCESS ?? '{}')
 export const initCache = process.env[ENV_INIT_CACHE] === 'true'
 
-console.log({ keys });
+console.log({ keys })
 
 if (enableCypress && !cypressPath) {
   throw new Error('Cypress path is not set')

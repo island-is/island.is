@@ -91,11 +91,7 @@ export async function folderSizeIsEqualOrGreaterThan(
         totalSize += stats.size
       } else if (stats.isDirectory()) {
         // @ts-ignore
-        totalSize += await folderSizeIsEqualOrGreaterThan(
-          filePath,
-          size,
-          true,
-        )
+        totalSize += await folderSizeIsEqualOrGreaterThan(filePath, size, true)
       }
       if (totalSize >= size) {
         break
