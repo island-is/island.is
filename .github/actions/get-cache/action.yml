@@ -68,6 +68,5 @@ runs:
         CYPRESS_PATH: ${{ inputs.cypress-path }}
         _CACHE_KEYS: ${{ steps.get-cache-keys.outputs._CACHE_KEYS }}
         _INIT_CACHE: ${{ steps.get-cache-keys.outputs._INIT_CACHE }}
-        YAML_FILE: ./.tmp-dynamic-cache/action.yml
       run: |
-        ./.scripst/ci/cache/cache-actions.mjs
+        ./.scripst/ci/cache/cache-action.mjs
