@@ -6,6 +6,7 @@ import { ROOT } from './_common.mjs'
 const enabledCaches = caches.filter((value) => value.enabled)
 
 for (const cache of enabledCaches) {
+  console.log(cache)
   const fileName = resolve(ROOT, cache.fileName)
   const isOkay = cache.check ?  await cache.check(cacheSuccess[cache.id] === 'true', fileName) : cacheSuccess[cache.id] === 'true'
   if (!isOkay) {
