@@ -69,4 +69,4 @@ runs:
         _CACHE_KEYS: ${{ steps.get-cache-keys.outputs._CACHE_KEYS }}
         _INIT_CACHE: ${{ steps.get-cache-keys.outputs._INIT_CACHE }}
       run: |
-        ./.scripst/ci/cache/cache-action.mjs
+        ./scripts/ci/cache/cache-action.mjs
