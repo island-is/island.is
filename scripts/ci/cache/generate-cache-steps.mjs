@@ -119,10 +119,10 @@ async function exportToYaml(
       const cueProcess = spawn('cue', ['export', '-', '-o', fileName])
       cueProcess.stdin.write(jsonString)
       cueProcess.on('message', (msg) => {
-        console.log(msg)
+        console.error(`Error during YAML export: ${msg}`)
       })
       cueProcess.on('error', (msg) => {
-        console.log(msg)
+        console.error(`Error during YAML export: ${msg}`)
       })
       cueProcess.on('close', (code) => {
         if (code !== 0) {
