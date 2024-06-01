@@ -59,6 +59,7 @@ runs:
       run: rm -rf ./.tmp-dynamic-cache
     - name: Cache actions
       id: cache-actions
+      shell: bash
       env:
         ENABLE_NODE_MODULES: ${{ inputs.enable-node-modules }}
         ENABLE_MOBILE_NODE_MODULES: ${{ inputs.enable-mobile-node-modules }}
@@ -68,4 +69,5 @@ runs:
         _CACHE_KEYS: ${{ steps.get-cache-keys.outputs._CACHE_KEYS }}
         _INIT_CACHE: ${{ steps.get-cache-keys.outputs._INIT_CACHE }}
         YAML_FILE: ./.tmp-dynamic-cache/action.yml
-      uses: ./.scripst/ci/cache/cache-actions.mjs
+      run: |
+        ./.scripst/ci/cache/cache-actions.mjs
