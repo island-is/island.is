@@ -7,7 +7,9 @@ const enabledCaches = caches.filter((value) => value.enabled)
 
 for (const cache of enabledCaches) {
   const fileName = resolve(ROOT, cache.path)
-  const isOkay = cache.check ?  await cache.check(cacheSuccess[cache.id] === 'true', fileName) : cacheSuccess[cache.id] === 'true'
+  const isOkay = cache.check
+    ? await cache.check(cacheSuccess[cache.id] === 'true', fileName)
+    : cacheSuccess[cache.id] === 'true'
   if (!isOkay) {
     if (!initCache) {
       throw new Error(`Cache ${cache.name} is not valid`)
