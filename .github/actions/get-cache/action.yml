@@ -56,7 +56,7 @@ runs:
       uses: ./.tmp-dynamic-cache
     - name: Cleanup cache workflow
       shell: bash
-      run: rm -rf ./.tmp-dynamic-cache/action.yml
+      run: rm -rf ./.tmp-dynamic-cache
     - name: Cache actions
       id: cache-actions
       env:
