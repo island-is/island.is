@@ -17,7 +17,7 @@ outputs:
 runs:
   using: 'composite'
   steps:
-    - uses: cue-lang/setup-cue@v1.0.0
+    - uses: cue-lang/setup-cue@v1.0.1
     - name: Generate Dynamic Steps
       id: generate-steps
       shell: bash
