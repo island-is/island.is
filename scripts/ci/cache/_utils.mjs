@@ -92,7 +92,7 @@ export async function folderSizeIsEqualOrGreaterThan(
       } else if (stats.isDirectory()) {
         // @ts-ignore
         totalSize += await folderSizeIsEqualOrGreaterThan(
-          folderPath,
+          filePath,
           size,
           true,
         )
