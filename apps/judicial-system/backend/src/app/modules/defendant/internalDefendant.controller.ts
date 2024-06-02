@@ -81,6 +81,6 @@ export class InternalDefendantController {
       updatedDefendantChoice,
     )
 
-    return updatedDefendant as Defendant
+    return updatedDefendant
   }
 }
