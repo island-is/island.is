@@ -90,8 +90,6 @@ export class CaseService {
   ): Promise<SubpoenaResponse> {
     const caseData = await this.fetchCase(caseId, defendantNationalId)
 
-    console.log('caseData', caseData)
-
     return SubpoenaResponse.fromInternalCaseResponse(
       caseData,
       defendantNationalId,

@@ -18,7 +18,10 @@ import { FormatMessage, IntlService } from '@island.is/cms-translations'
 import { type Logger, LOGGER_PROVIDER } from '@island.is/logging'
 import type { ConfigType } from '@island.is/nest/config'
 
-import { formatCaseType } from '@island.is/judicial-system/formatters'
+import {
+  formatCaseType,
+  formatNationalId,
+} from '@island.is/judicial-system/formatters'
 import {
   CaseFileCategory,
   CaseOrigin,
@@ -1066,6 +1069,8 @@ export class InternalCaseService {
     caseId: string,
     nationalId: string,
   ): Promise<Case | null> {
+    const defendantNationalId = formatNationalId(nationalId)
+
     const caseById = await this.caseModel.findOne({
       include: [
         { model: Defendant, as: 'defendants' },
@@ -1078,7 +1083,7 @@ export class InternalCaseService {
       where: {
         type: CaseType.INDICTMENT,
         id: caseId,
-        '$defendants.national_id$': nationalId,
+        '$defendants.national_id$': defendantNationalId,
       },
     })
 

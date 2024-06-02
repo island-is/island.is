@@ -12,6 +12,7 @@ import { InjectModel } from '@nestjs/sequelize'
 import type { Logger } from '@island.is/logging'
 import { LOGGER_PROVIDER } from '@island.is/logging'
 
+import { formatNationalId } from '@island.is/judicial-system/formatters'
 import {
   CaseMessage,
   MessageService,
@@ -205,11 +206,12 @@ export class DefendantService {
     defendantNationalId: string,
     update: UpdateDefendantDto,
   ): Promise<Defendant> {
+    const nationalId = formatNationalId(defendantNationalId)
     const [numberOfAffectedRows, defendants] = await this.defendantModel.update(
       update,
       {
         where: {
-          national_id: defendantNationalId,
+          national_id: nationalId,
           caseId,
         },
         returning: true,

@@ -1,5 +1,6 @@
 import { ApiProperty } from '@nestjs/swagger'
 
+import { formatNationalId } from '@island.is/judicial-system/formatters'
 import { DefenderChoice } from '@island.is/judicial-system/types'
 
 import { InternalCaseResponse } from './internal/internalCase.response'
@@ -27,8 +28,10 @@ export class SubpoenaResponse {
     defendantNationalId: string,
     lang?: string,
   ): SubpoenaResponse {
+    const formattedNationalId = formatNationalId(defendantNationalId)
+
     const defendantInfo = internalCase.defendants.find(
-      (defendant) => defendant.nationalId === defendantNationalId,
+      (defendant) => defendant.nationalId === formattedNationalId,
     )
 
     return {
