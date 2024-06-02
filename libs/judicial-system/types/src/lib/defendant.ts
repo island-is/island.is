@@ -10,4 +10,3 @@ export enum DefenderChoice {
   DELAY = 'DELAY', // Delay choice
   DELEGATE = 'DELEGATE', // Delegate choice to judge
 }
-
