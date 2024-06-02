@@ -51,7 +51,9 @@ const SelectDefender: React.FC<React.PropsWithChildren<Props>> = (props) => {
           ? ''
           : defendant.defenderPhoneNumber,
         defenderChoice:
-          defendantWaivesRightToCounsel === true ? DefenderChoice.WAIVE : null,
+          defendantWaivesRightToCounsel === true
+            ? DefenderChoice.WAIVE
+            : undefined,
       }
 
       setAndSendDefendantToServer(updateDefendantInput, setWorkingCase)
