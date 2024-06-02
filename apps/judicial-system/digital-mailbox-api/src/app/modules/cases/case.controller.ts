@@ -2,18 +2,20 @@ import {
   Body,
   Controller,
   Get,
-  HttpCode,
   Inject,
   Param,
   Patch,
-  Post,
   Query,
   UseGuards,
 } from '@nestjs/common'
 import { ApiCreatedResponse, ApiTags } from '@nestjs/swagger'
 
 import type { User } from '@island.is/auth-nest-tools'
-import { CurrentUser, IdsUserGuard } from '@island.is/auth-nest-tools'
+import {
+  CurrentUser,
+  IdsAuthGuard,
+  IdsUserGuard,
+} from '@island.is/auth-nest-tools'
 import { type Logger, LOGGER_PROVIDER } from '@island.is/logging'
 
 import { formatNationalId } from '@island.is/judicial-system/formatters'
@@ -71,7 +73,6 @@ export class CaseController {
     return this.caseService.getSubpoena(caseId, user.nationalId)
   }
 
-  // @HttpCode(200)
   @Patch('cases/:caseId/subpoena')
   async updateSubpoena(
     @CurrentUser() user: User,
