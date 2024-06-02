@@ -8,14 +8,14 @@ module.exports = {
           'defendant',
           'defender_choice',
           {
-            type: Sequelize.ENUM('WAIVE', 'CHOOSE', 'DELAY', 'DELEGATE'),
+            type: Sequelize.STRING,
             allowNull: true,
           },
           { transaction: t },
         )
         .then(() =>
           queryInterface.sequelize.query(
-            `UPDATE "defendant" SET defender_choice = 'WAIVE' where defendant_waives_right_to_counsel = true;`,
+            `UPDATE "defendant" SET defender_choice = 'WAIVE' WHERE defendant_waives_right_to_counsel = true;`,
             { transaction: t },
           ),
         )
@@ -44,20 +44,14 @@ module.exports = {
         )
         .then(() =>
           queryInterface.sequelize.query(
-            `UPDATE "defendant" SET defendant_waives_right_to_counsel = true where defender_choice = 'WAIVE';`,
+            `UPDATE "defendant" SET defendant_waives_right_to_counsel = true WHERE defender_choice = 'WAIVE';`,
             { transaction: t },
           ),
         )
         .then(() =>
-          Promise.all([
-            queryInterface.removeColumn('defendant', 'defender_choice', {
-              transaction: t,
-            }),
-            queryInterface.sequelize.query(
-              'DROP TYPE IF EXISTS "enum_defendant_defender_choice"',
-              { transaction: t },
-            ),
-          ]),
+          queryInterface.removeColumn('defendant', 'defender_choice', {
+            transaction: t,
+          }),
         ),
     )
   },
