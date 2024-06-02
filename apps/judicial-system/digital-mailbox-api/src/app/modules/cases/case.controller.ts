@@ -24,7 +24,7 @@ import { CaseService } from './case.service'
 
 @Controller('api')
 @ApiTags('cases')
-//@UseGuards(IdsUserGuard)
+@UseGuards(IdsUserGuard)
 export class CaseController {
   constructor(
     private readonly caseService: CaseService,
@@ -56,30 +56,30 @@ export class CaseController {
   }
 
   @Get('cases/:caseId/subpoena')
-  // @ApiCreatedResponse({
-  //   type: () => SubpoenaResponse,
-  //   description: 'Get subpoena by case id',
-  // })
+  @ApiCreatedResponse({
+    type: () => SubpoenaResponse,
+    description: 'Get subpoena by case id',
+  })
   async getSubpoena(
     @Param('caseId') caseId: string,
-    //@CurrentUser() user: User,
+    @CurrentUser() user: User,
   ): Promise<SubpoenaResponse> {
     this.logger.debug(`Getting subpoena by case id ${caseId}`)
 
-    return this.caseService.getSubpoena(caseId, '010891-2489')
+    return this.caseService.getSubpoena(caseId, user.nationalId)
   }
 
   // @HttpCode(200)
   @Patch('cases/:caseId/subpoena')
   async updateSubpoena(
-    //@CurrentUser() user: User,
+    @CurrentUser() user: User,
     @Param('caseId') caseId: string,
     @Body() defenderAssignment: UpdateSubpoenaDto,
   ): Promise<SubpoenaResponse> {
     this.logger.debug(`Assigning defender to subpoena ${caseId}`)
 
     return this.caseService.updateSubpoena(
-      '010891-2489',
+      user.nationalId,
       caseId,
       defenderAssignment,
     )

@@ -127,13 +127,18 @@ export class CaseService {
       }
     }
 
-    const patchedDefender = await this.patchSubpoenaDefender(
+    await this.patchSubpoenaDefender(
       defendantNationalId,
       caseId,
       defenderChoice,
     )
 
-    return new SubpoenaResponse()
+    const updatedCase = await this.fetchCase(caseId, defendantNationalId)
+
+    return SubpoenaResponse.fromInternalCaseResponse(
+      updatedCase,
+      defendantNationalId,
+    )
   }
 
   private async fetchCases(
