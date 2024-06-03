@@ -51,6 +51,9 @@ export const applicationSystemAdminModule: PortalModule = {
           name: m.statistics,
           path: ApplicationSystemPaths.Statistics,
           element: <Statistics />,
+          enabled: props.userInfo.scope?.includes(
+            AdminPortalScope.applicationSystemAdmin,
+          ),
         },
       ],
     },

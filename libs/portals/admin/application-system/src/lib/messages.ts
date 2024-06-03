@@ -227,4 +227,8 @@ export const m = defineMessages({
     id: 'admin-portal.application-system:tableHeaderRejected',
     defaultMessage: 'Hafnað',
   },
+  noData: {
+    id: 'admin-portal.application-system:noData',
+    defaultMessage: 'Engin gögn fundust á tímabilinu...',
+  },
 })
