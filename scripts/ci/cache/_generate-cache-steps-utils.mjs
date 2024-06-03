@@ -27,7 +27,7 @@ export function createOutputs(steps) {
                             }
                             return {
                                 ...a,
-                                [value.id]: `\${{ steps.${value.id}.outputs.success }}`,
+                                [value.id]: `\${{ steps.${value.id}.outputs.cache-hit }}`,
                             };
                         }, {})
                     ),
@@ -58,12 +58,13 @@ export function createRuns(steps) {
     };
 }
 
-export function generateCacheAction({ name, id, path, key }) {
+export function generateCacheActionRestore({ name, id, path, key }) {
     return {
         name,
         id,
-        uses: 'island-is/cache/restore@v0.3',
+        uses: 'island-is/new-cache@3889472650c918d4ae808744116721f07167dc4d',
         continue_on_error: true,
+        enableCrossOsArchive: true,
         with: {
             path,
             key,

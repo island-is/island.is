@@ -5,7 +5,7 @@
 // @ts-check
 import { ENV_YAML_FILE } from './_const.mjs'
 import { caches } from './__config.mjs'
-import { generateCacheAction, createOutputs, createRuns, exportToYaml } from './_generate-cache-steps-utils.mjs'
+import { generateCacheActionRestore, createOutputs, createRuns, exportToYaml } from './_generate-cache-steps-utils.mjs'
 import { HAS_HASH_KEYS } from './_common.mjs'
 import { writeToSummary, writeToOutput } from './_get_hashes_utils.mjs'
 import { keyStorage } from './_key_storage.mjs'
@@ -37,7 +37,7 @@ const steps = await Promise.all(
       if (!value.enabled) {
         return null
       }
-      return generateCacheAction({
+      return generateCacheActionRestore({
         name: value.name,
         id: value.id,
         path: value.path,
