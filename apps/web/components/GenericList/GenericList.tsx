@@ -93,7 +93,6 @@ const ClickableItem = ({ item }: ItemProps) => {
       href={item.slug ? pathname + '/' + item.slug : undefined}
     >
       <Stack space={0}>
-        {JSON.stringify(item)}
         <Stack space={0}>
           <Text variant="eyebrow" color="purple400">
             {item.date && format(new Date(item.date), 'dd.MM.yyyy')}
