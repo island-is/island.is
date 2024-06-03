@@ -290,6 +290,8 @@ export const expandAnswers = (
         answers?.customShare?.hasCustomSpouseSharePercentage ?? 'No',
       customSpouseSharePercentage:
         answers?.customShare?.customSpouseSharePercentage ?? '50',
+      deceasedWasMarried: answers?.customShare?.deceasedWasMarried ?? '',
+      deceasedHadAssets: answers?.customShare?.deceasedHadAssets ?? '',
     },
   }
 }
