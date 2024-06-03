@@ -20,7 +20,7 @@ export class ExternalEndpoints {
   @Field(() => String, { nullable: true })
   url?: string | null
 
-  @Field(() => EExternalEndpointType)
+  @Field(() => EExternalEndpointType, { nullable: true })
   type?: EExternalEndpointType
 
   @Field(() => EExternalEndpointEnvironment, { nullable: true })

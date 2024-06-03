@@ -13,8 +13,6 @@ import {
   ItemType,
   NavbarSelectStatus,
 } from '../lib/utils/interfaces'
-import { MessageDescriptor } from 'react-intl'
-import { Options } from 'react-select'
 
 export interface IControlContext {
   control: ControlState

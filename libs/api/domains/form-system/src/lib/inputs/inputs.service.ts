@@ -77,14 +77,11 @@ export class InputsService {
       inputId: input.inputId,
     }
 
-    const response = await this.inputsApiWithAuth(auth)
+    await this.inputsApiWithAuth(auth)
       .apiInputsInputIdDelete(request)
       .catch((e) => handle4xx(e, this.handleError, 'failed to delete input'))
 
-    if (!response || response instanceof ApolloError) {
-      return void 0
-    }
-    return response
+    return
   }
 
   async updateInput(auth: User, input: UpdateInputInput): Promise<void> {
@@ -98,13 +95,10 @@ export class InputsService {
         inputUpdateDto: input.inputUpdateDto,
       }
     }
-    const response = await this.inputsApiWithAuth(auth)
+    await this.inputsApiWithAuth(auth)
       .apiInputsInputIdPut(request)
       .catch((e) => handle4xx(e, this.handleError, 'failed to update input'))
 
-    if (!response || response instanceof ApolloError) {
-      return void 0
-    }
-    return response
+    return
   }
 }
