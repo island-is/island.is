@@ -1,6 +1,6 @@
 // @ts-check
 import { spawn } from 'node:child_process';
-import { mkdir } from 'node:fs/promises';
+import { mkdir, readFile } from 'node:fs/promises';
 import { dirname, resolve } from 'node:path';
 import { ROOT } from './_common.mjs';
 
@@ -107,7 +107,9 @@ export async function exportToYaml(
             cueProcess.on('error', (msg) => {
                 console.error(`Error during YAML export: ${msg}`);
             });
-            cueProcess.on('close', (code) => {
+            cueProcess.on('close', async (code) => {
+                const content = await readFile(fileName, { encoding: 'utf-8' })
+                console.log(content);
                 if (code !== 0) {
                     console.error(`cue export failed with code ${code}`);
                     process.exit(1);
@@ -117,4 +119,5 @@ export async function exportToYaml(
             cueProcess.stdin.end();
         })
     );
+
 }
