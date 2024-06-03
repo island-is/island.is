@@ -47,12 +47,6 @@ query GetPasskeyAuthenticationOptions {
   }
 }
 
-mutation VerifyPasskeyAuthentication($input: AuthPasskeyAuthenticationObject!) {
-  authPasskeyVerifyAuthentication(input: $input) {
-    verified
-  }
-}
-
 mutation DeletePasskey {
   authDeletePasskey
 }

@@ -5,10 +5,7 @@ import {
   convertBase64UrlToBase64String,
   padChallenge,
 } from './helpers'
-import {
-  useGetPasskeyAuthenticationOptionsLazyQuery,
-  useVerifyPasskeyAuthenticationMutation,
-} from '../../graphql/types/schema'
+import { useGetPasskeyAuthenticationOptionsLazyQuery } from '../../graphql/types/schema'
 import { preferencesStore } from '../../stores/preferences-store'
 
 const ONE_HOUR = 3600000
@@ -19,8 +16,6 @@ export const useAuthenticatePasskey = () => {
 
   const [getPasskeyAuthenticationOptions] =
     useGetPasskeyAuthenticationOptionsLazyQuery()
-
-  const [verifyPasskeyAuthentication] = useVerifyPasskeyAuthenticationMutation()
 
   const authenticatePasskey = async () => {
     // Ids session should be valid for one hour, so we only need to authenticate once per hour
@@ -59,25 +54,10 @@ export const useAuthenticatePasskey = () => {
 
         preferencesStore.setState({ lastUsedPasskey: new Date().getTime() })
 
+        // TODO: Remove from updatedResult stuff we don't need to make url smaller
         const passkey = btoa(JSON.stringify(updatedResult))
 
-        // Verify authentication with server - will be skipped later and done through ids via login_hint instead
-        const verifyAuthenticateResponse = await verifyPasskeyAuthentication({
-          variables: {
-            input: { passkey },
-          },
-        })
-
-        if (
-          verifyAuthenticateResponse?.data?.authPasskeyVerifyAuthentication
-            .verified
-        ) {
-          return passkey
-        }
-        console.error(
-          'Passkey authentication not verified',
-          verifyAuthenticateResponse,
-        )
+        return passkey
       } catch (error: any) {
         // User cancelled the authentication flow, swallow the error
         if (error?.error === 'UserCancelled') {
