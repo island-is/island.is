@@ -20,6 +20,8 @@ import { Languages } from './review-groups/Languages'
 import { Parents } from './review-groups/Parents'
 import { Photography } from './review-groups/Photography'
 import { Relatives } from './review-groups/Relatives'
+import { Siblings } from './review-groups/Siblings'
+import { Support } from './review-groups/Support'
 
 interface ReviewScreenProps {
   application: Application
@@ -150,7 +152,9 @@ export const Review: FC<ReviewScreenProps> = ({
       <Child {...childProps} />
       <Parents {...childProps} />
       <Relatives {...childProps} />
+      <Siblings {...childProps} />
       <Languages {...childProps} />
+      <Support {...childProps} />
       <Photography {...childProps} />
     </>
   )

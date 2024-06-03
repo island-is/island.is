@@ -1,4 +1,4 @@
-import { RelationOptions } from './lib/constants'
+import { RelationOptions, SiblingRelationOptions } from './lib/constants'
 
 export interface RelativesRow {
   fullName: string
@@ -6,6 +6,12 @@ export interface RelativesRow {
   nationalId: string
   relation: RelationOptions
   canPickUpChild: string[]
+}
+
+export interface SiblingsRow {
+  fullName: string
+  nationalId: string
+  relation: SiblingRelationOptions
 }
 
 export type Child = {

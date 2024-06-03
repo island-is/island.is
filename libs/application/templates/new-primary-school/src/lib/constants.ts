@@ -26,9 +26,15 @@ export type Option = {
 }
 
 export enum RelationOptions {
-  GRANDPARENTS = 'grandparents',
-  SIBLINGS = 'siblings',
-  STEP_PARENT = 'stepParent',
-  RELATIVES = 'relatives',
-  FRIENDS_AND_OTHER = 'friendsAndOther',
+  GRANDPARENT = 'grandparent',
+  SIBLING = 'sibling',
+  STEPPARENT = 'stepparent',
+  RELATIVE = 'relative',
+  FRIEND_OR_OTHER = 'friendOrOther',
+}
+
+export enum SiblingRelationOptions {
+  SIBLING = 'Sibling',
+  HALF_SIBLING = 'halfSibling',
+  STEP_SIBLING = 'stepSibling',
 }

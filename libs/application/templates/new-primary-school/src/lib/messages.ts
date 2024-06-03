@@ -80,6 +80,16 @@ export const newPrimarySchoolMessages: MessageDir = {
       defaultMessage: 'Símanúmer',
       description: 'Phonenumber',
     },
+    relation: {
+      id: 'dess.nps.application:relation',
+      defaultMessage: 'Tengsl',
+      description: 'Relation',
+    },
+    relationPlaceholder: {
+      id: 'dess.nps.application:relation.placeholder',
+      defaultMessage: 'Veldu tengsl',
+      description: 'Select relation',
+    },
   }),
 
   pre: defineMessages({
@@ -249,40 +259,30 @@ export const newPrimarySchoolMessages: MessageDir = {
       defaultMessage: 'Eyða aðstandanda',
       description: 'Remove relative',
     },
-    relativesRelation: {
-      id: 'dess.nps.application:childrenNParents.relatives.relation',
-      defaultMessage: 'Tengsl',
-      description: 'Relation',
-    },
-    relativesRelationPlaceholder: {
-      id: 'dess.nps.application:childrenNParents.relatives.relation.placeholder',
-      defaultMessage: 'Veldu tengsl',
-      description: 'Select relation',
-    },
-    relativesRelationGrandparents: {
-      id: 'dess.nps.application:childrenNParents.relatives.relation.randparents',
+    relativesRelationGrandparent: {
+      id: 'dess.nps.application:childrenNParents.relatives.relation.grandparent',
       defaultMessage: 'Afi/amma',
-      description: 'Grandparents',
+      description: 'Grandparent',
     },
-    relativesRelationSiblings: {
-      id: 'dess.nps.application:childrenNParents.relatives.relation.siblings',
+    relativesRelationSibling: {
+      id: 'dess.nps.application:childrenNParents.relatives.relation.sibling',
       defaultMessage: 'Systkini',
-      description: 'Siblings',
+      description: 'Sibling',
     },
-    relativesRelationStepParent: {
-      id: 'dess.nps.application:childrenNParents.relatives.relation.step.parent',
+    relativesRelationStepparent: {
+      id: 'dess.nps.application:childrenNParents.relatives.relation.stepparent',
       defaultMessage: 'Stjúpforeldri',
-      description: 'Step parent',
+      description: 'Stepparent',
     },
-    relativesRelationRelatives: {
-      id: 'dess.nps.application:childrenNParents.relatives.relation.relatives',
+    relativesRelationRelative: {
+      id: 'dess.nps.application:childrenNParents.relatives.relation.relative',
       defaultMessage: 'Frændfólk',
-      description: 'Relatives',
+      description: 'Relative',
     },
-    relativesRelationFriendsAndOther: {
-      id: 'dess.nps.application:childrenNParents.relatives.relation.friends.and.other',
+    relativesRelationFriendOrOther: {
+      id: 'dess.nps.application:childrenNParents.relatives.relation.friend.or.other',
       defaultMessage: 'Vinafólk/annað',
-      description: 'Friends/others',
+      description: 'Friend/other',
     },
     relativesCanPickUpChild: {
       id: 'dess.nps.application:childrenNParents.relatives.can.pick.up.child',
@@ -322,6 +322,46 @@ export const newPrimarySchoolMessages: MessageDir = {
       id: 'dess.nps.application:primary.school.starting.school.siblings.sub.section.title',
       defaultMessage: 'Systkini',
       description: 'Siblings',
+    },
+    siblingsTitle: {
+      id: 'dess.nps.application:primary.school.starting.school.siblings.title',
+      defaultMessage: 'Systkini í sama grunnskóla',
+      description: 'Siblings in the same primary school',
+    },
+    siblingsRegistrationTitle: {
+      id: 'dess.nps.application:primary.school.siblings.registration.title',
+      defaultMessage: 'Skráning systkinis',
+      description: 'Registration of a sibling',
+    },
+    siblingsAddRelative: {
+      id: 'dess.nps.application:primary.school.siblings.add.relative',
+      defaultMessage: 'Bæta við systkini',
+      description: 'Add a sibling',
+    },
+    siblingsRegisterRelative: {
+      id: 'dess.nps.application:primary.school.siblings.register.relative',
+      defaultMessage: 'Skrá systkini',
+      description: 'Register sibling',
+    },
+    siblingsDeleteRelative: {
+      id: 'dess.nps.application:primary.school.siblings.delete.relative',
+      defaultMessage: 'Eyða systkini',
+      description: 'Remove sibling',
+    },
+    siblingsRelationSibling: {
+      id: 'dess.nps.application:primary.school.siblings.relation.sibling',
+      defaultMessage: 'Alsystkini',
+      description: 'Sibling',
+    },
+    halfSiblingsRelationSibling: {
+      id: 'dess.nps.application:primary.school.siblings.relation.half.sibling',
+      defaultMessage: 'Hálfsystkini',
+      description: 'Half sibling',
+    },
+    stepSiblingsRelationSibling: {
+      id: 'dess.nps.application:primary.school.siblings.relation.step.sibling',
+      defaultMessage: 'Stjúpsystkini',
+      description: 'Step sibling',
     },
 
     // Starting school
@@ -403,6 +443,49 @@ export const newPrimarySchoolMessages: MessageDir = {
       id: 'dess.nps.application:different.needs.support.sub.section.title',
       defaultMessage: 'Stuðningur',
       description: 'Support',
+    },
+    support: {
+      id: 'dess.nps.application:different.needs.support',
+      defaultMessage: 'Stuðningur',
+      description: 'Support',
+    },
+    supportDescription: {
+      id: 'dess.nps.application:different.needs.support.description',
+      defaultMessage:
+        'Ef barnið þitt er með greiningu um fötlun, þroskafrávik, langvinn veikindi eða alvarlegan sjúkdóm sem gætu haft áhrif á skólagöngu þess, þá sér núverandi skóli barns um að miðla þeim upplýsingum áfram til þess skóla sem sótt er um í.',
+      description:
+        "If your child has a diagnosis of a disability, developmental disorder, chronic illness or serious illness that could affect their schooling, the child's current school will forward that information to the school they are applying to.",
+    },
+    developmentalAssessment: {
+      id: 'dess.nps.application:different.needs.developmental.assessment',
+      defaultMessage:
+        'Hefur farið fram þroskamat eða skimun námslegri stöðu nemandans',
+      description:
+        "Has there been a developmental assessment or screening of the student's academic status",
+    },
+    specialSupport: {
+      id: 'dess.nps.application:different.needs.special.support',
+      defaultMessage: 'Hefur nemandinn þörf fyrir sérstuðning í skóla',
+      description: 'Does the student need special support at school',
+    },
+    supportInfo: {
+      id: 'dess.nps.application:different.needs.support.info',
+      defaultMessage:
+        'Ef um er að ræða skólaflutning milli landa flytjast gögnin ekki sjálfkrafa á milli. Vinsamlegast hafðu beint samband við skólann ef gera þarf sérstakar ráðstafanir vegna barnsins.',
+      description:
+        'In the case of a school transfer between countries, the data is not transferred automatically. Please contact the school directly if special arrangements need to be made for the child.',
+    },
+    requestMeeting: {
+      id: 'dess.nps.application:different.needs.request.meeting',
+      defaultMessage:
+        'Ef þú telur að grunnskólinn þurfi nánari upplýsingar um þarfir barnsins geturðu óskað eftir samtali við umsjónarkennara. Umsjónarkennari mun setja sig í samband við þig áður en barnið byrjar í skólanum.',
+      description:
+        "If you believe that the elementary school needs more information about the child's needs, you can request a conversation with the supervising teacher. The supervising teacher will contact you before the child starts school.",
+    },
+    requestMeetingDescription: {
+      id: 'dess.nps.application:different.needs.request.meeting.info',
+      defaultMessage: 'Óska eftir samtali við skóla',
+      description: 'Request meeting with the school',
     },
 
     // School bus
@@ -559,9 +642,14 @@ export const errorMessages = defineMessages({
     defaultMessage: 'Nauðsynlegt er að bæta við a.m.k einum aðstandenda',
     description: 'You must add at least one relative',
   },
+  siblingsRequired: {
+    id: 'dess.nps.application:error.siblings.required',
+    defaultMessage: 'Nauðsynlegt er að bæta við a.m.k einu systkini',
+    description: 'You must add at least one sibling',
+  },
   languagesRequired: {
     id: 'dess.nps.application:error.languages.required',
-    defaultMessage: 'Það þarf að velja að minnsta kosti eitt tungumál',
+    defaultMessage: 'Það þarf að velja a.m.k eitt tungumál',
     description: 'At least one language must be selected',
   },
 })

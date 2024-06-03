@@ -29,7 +29,7 @@ import {
 } from '@island.is/application/ui-components'
 import { buildFormConclusionSection } from '@island.is/application/ui-forms'
 import { format as formatKennitala } from 'kennitala'
-import { RelationOptions } from '../lib/constants'
+import { RelationOptions, SiblingRelationOptions } from '../lib/constants'
 import { newPrimarySchoolMessages } from '../lib/messages'
 import {
   canApply,
@@ -38,6 +38,8 @@ import {
   getOtherParent,
   getRelationOptionLabel,
   getRelationOptions,
+  getSiblingRelationOptionLabel,
+  getSiblingRelationOptions,
   hasOtherParent,
 } from '../lib/newPrimarySchoolUtils'
 
@@ -354,13 +356,10 @@ export const NewPrimarySchoolForm: Form = buildForm({
                     },
                     relation: {
                       component: 'select',
-                      label:
-                        newPrimarySchoolMessages.childrenNParents
-                          .relativesRelation,
+                      label: newPrimarySchoolMessages.shared.relation,
                       width: 'half',
                       placeholder:
-                        newPrimarySchoolMessages.childrenNParents
-                          .relativesRelationPlaceholder,
+                        newPrimarySchoolMessages.shared.relationPlaceholder,
                       // TODO: Nota gögn fá Júní
                       options: getRelationOptions(),
                       dataTestId: 'relative-relation',
@@ -396,8 +395,7 @@ export const NewPrimarySchoolForm: Form = buildForm({
                       newPrimarySchoolMessages.shared.fullName,
                       newPrimarySchoolMessages.shared.phoneNumber,
                       newPrimarySchoolMessages.shared.nationalId,
-                      newPrimarySchoolMessages.childrenNParents
-                        .relativesRelation,
+                      newPrimarySchoolMessages.shared.relation,
                       newPrimarySchoolMessages.childrenNParents
                         .relativesCanPickUpChildTableHeader,
                     ],
@@ -429,7 +427,75 @@ export const NewPrimarySchoolForm: Form = buildForm({
         buildSubSection({
           id: 'siblingsSubSection',
           title: newPrimarySchoolMessages.primarySchool.siblingsSubSectionTitle,
-          children: [],
+          condition: (answers, externalData) => {
+            // TODO: Only display section if "Siblings" selected as Reason for transfer
+            return true
+          },
+          children: [
+            buildMultiField({
+              id: 'siblings',
+              title: newPrimarySchoolMessages.primarySchool.siblingsTitle,
+              children: [
+                buildTableRepeaterField({
+                  id: 'siblings',
+                  title: '',
+                  formTitle:
+                    newPrimarySchoolMessages.primarySchool
+                      .siblingsRegistrationTitle,
+                  addItemButtonText:
+                    newPrimarySchoolMessages.primarySchool.siblingsAddRelative,
+                  saveItemButtonText:
+                    newPrimarySchoolMessages.primarySchool
+                      .siblingsRegisterRelative,
+                  removeButtonTooltipText:
+                    newPrimarySchoolMessages.primarySchool
+                      .siblingsDeleteRelative,
+                  marginTop: 0,
+                  fields: {
+                    fullName: {
+                      component: 'input',
+                      label: newPrimarySchoolMessages.shared.fullName,
+                      width: 'half',
+                      type: 'text',
+                      dataTestId: 'sibling-full-name',
+                    },
+                    nationalId: {
+                      component: 'input',
+                      label: newPrimarySchoolMessages.shared.nationalId,
+                      width: 'half',
+                      type: 'text',
+                      format: '######-####',
+                      placeholder: '000000-0000',
+                      dataTestId: 'sibling-national-id',
+                    },
+                    relation: {
+                      component: 'select',
+                      label: newPrimarySchoolMessages.shared.relation,
+                      placeholder:
+                        newPrimarySchoolMessages.shared.relationPlaceholder,
+                      // TODO: Nota gögn fá Júní?
+                      options: getSiblingRelationOptions(),
+                      dataTestId: 'sibling-relation',
+                    },
+                  },
+                  table: {
+                    format: {
+                      nationalId: (value) => formatKennitala(value),
+                      relation: (value) =>
+                        getSiblingRelationOptionLabel(
+                          value as SiblingRelationOptions,
+                        ),
+                    },
+                    header: [
+                      newPrimarySchoolMessages.shared.fullName,
+                      newPrimarySchoolMessages.shared.nationalId,
+                      newPrimarySchoolMessages.shared.relation,
+                    ],
+                  },
+                }),
+              ],
+            }),
+          ],
         }),
         buildSubSection({
           id: 'startingSchoolSubSection',
@@ -557,7 +623,75 @@ export const NewPrimarySchoolForm: Form = buildForm({
         buildSubSection({
           id: 'supportSubSection',
           title: newPrimarySchoolMessages.differentNeeds.supportSubSectionTitle,
-          children: [],
+          children: [
+            buildMultiField({
+              id: 'support',
+              title: newPrimarySchoolMessages.differentNeeds.support,
+              description:
+                newPrimarySchoolMessages.differentNeeds.supportDescription,
+              children: [
+                buildRadioField({
+                  id: 'support.developmentalAssessment',
+                  title:
+                    newPrimarySchoolMessages.differentNeeds
+                      .developmentalAssessment,
+                  width: 'half',
+                  required: true,
+                  options: [
+                    {
+                      label: newPrimarySchoolMessages.shared.yes,
+                      dataTestId: 'yes-option',
+                      value: YES,
+                    },
+                    {
+                      label: newPrimarySchoolMessages.shared.no,
+                      dataTestId: 'no-option',
+                      value: NO,
+                    },
+                  ],
+                }),
+                buildRadioField({
+                  id: 'support.specialSupport',
+                  title: newPrimarySchoolMessages.differentNeeds.specialSupport,
+                  width: 'half',
+                  required: true,
+                  options: [
+                    {
+                      label: newPrimarySchoolMessages.shared.yes,
+                      dataTestId: 'yes-option',
+                      value: YES,
+                    },
+                    {
+                      label: newPrimarySchoolMessages.shared.no,
+                      dataTestId: 'no-option',
+                      value: NO,
+                    },
+                  ],
+                }),
+                buildAlertMessageField({
+                  id: 'support.info',
+                  title: newPrimarySchoolMessages.shared.alertTitle,
+                  message: newPrimarySchoolMessages.differentNeeds.supportInfo,
+                  doesNotRequireAnswer: true,
+                  alertType: 'info',
+                }),
+                buildCheckboxField({
+                  id: 'support.requestMeeting',
+                  title: '',
+                  description:
+                    newPrimarySchoolMessages.differentNeeds.requestMeeting,
+                  options: () => [
+                    {
+                      value: YES,
+                      label:
+                        newPrimarySchoolMessages.differentNeeds
+                          .requestMeetingDescription,
+                    },
+                  ],
+                }),
+              ],
+            }),
+          ],
         }),
         buildSubSection({
           id: 'schoolBusSubSection',
