@@ -35,16 +35,24 @@ export class ScopeEnvironment {
   @Field(() => Boolean)
   emphasize!: boolean
 
-  @Field(() => Boolean)
+  @Field(() => Boolean, {
+    deprecationReason: 'Use supportedDelegationTypes instead',
+  })
   grantToAuthenticatedUser!: boolean
 
-  @Field(() => Boolean)
+  @Field(() => Boolean, {
+    deprecationReason: 'Use supportedDelegationTypes instead',
+  })
   grantToLegalGuardians!: boolean
 
-  @Field(() => Boolean)
+  @Field(() => Boolean, {
+    deprecationReason: 'Use supportedDelegationTypes instead',
+  })
   grantToProcuringHolders!: boolean
 
-  @Field(() => Boolean)
+  @Field(() => Boolean, {
+    deprecationReason: 'Use supportedDelegationTypes instead',
+  })
   grantToPersonalRepresentatives!: boolean
 
   @Field(() => [String])
