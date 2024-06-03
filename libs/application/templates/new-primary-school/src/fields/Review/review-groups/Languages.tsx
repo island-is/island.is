@@ -16,9 +16,8 @@ export const Languages = ({
   goToScreen,
 }: ReviewGroupProps) => {
   const { formatMessage } = useLocale()
-  const { otherLanguages, languages } = getApplicationAnswers(
-    application.answers,
-  )
+  const { otherLanguages, languages, icelandicNotSpokenAroundChild } =
+    getApplicationAnswers(application.answers)
 
   return (
     <ReviewGroup
@@ -48,17 +47,20 @@ export const Languages = ({
                 />
               </GridColumn>
             </GridRow>
-            {/* TODO: Á ég að bæta við 'Það er ekki töluð íslenska í nærumhverfi barnsins' spurningunni hérna? */}
-            {/* <GridRow>
+            <GridRow>
               <GridColumn span={['12/12', '12/12', '12/12', '12/12']}>
                 <DataValue
                   label={formatMessage(
-                    newPrimarySchoolMessages.differentNeeds.languageTitle,
+                    newPrimarySchoolMessages.confirm.icelandicSpokenAroundChild,
                   )}
-                  value={languages}
+                  value={formatMessage(
+                    icelandicNotSpokenAroundChild?.includes(YES)
+                      ? newPrimarySchoolMessages.shared.no
+                      : newPrimarySchoolMessages.shared.yes,
+                  )}
                 />
               </GridColumn>
-            </GridRow> */}
+            </GridRow>
           </>
         )}
       </Stack>

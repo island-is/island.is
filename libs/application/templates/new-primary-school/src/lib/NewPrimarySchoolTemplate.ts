@@ -17,14 +17,14 @@ import {
   NationalRegistryUserApi,
   UserProfileApi,
 } from '@island.is/application/types'
+import unset from 'lodash/unset'
+import { assign } from 'xstate'
 import { Events, Roles, States } from './constants'
 import { dataSchema } from './dataSchema'
 import { newPrimarySchoolMessages, statesMessages } from './messages'
-import { assign } from 'xstate'
-import unset from 'lodash/unset'
 import {
-  hasChildrenThatCanApply,
   getApplicationAnswers,
+  hasChildrenThatCanApply,
 } from './newPrimarySchoolUtils'
 
 const NewPrimarySchoolTemplate: ApplicationTemplate<
@@ -91,7 +91,7 @@ const NewPrimarySchoolTemplate: ApplicationTemplate<
         },
       },
       [States.DRAFT]: {
-        exit: ['clearPublication'],
+        exit: ['clearLanguages', 'clearPublication'],
         meta: {
           name: States.DRAFT,
           status: 'draft',
@@ -160,6 +160,15 @@ const NewPrimarySchoolTemplate: ApplicationTemplate<
   },
   stateMachineOptions: {
     actions: {
+      clearLanguages: assign((context) => {
+        const { application } = context
+        const { otherLanguages } = getApplicationAnswers(application.answers)
+        if (otherLanguages === NO) {
+          unset(application.answers, 'languages.languages')
+          unset(application.answers, 'languages.icelandicNotSpokenAroundChild')
+        }
+        return context
+      }),
       clearPublication: assign((context) => {
         const { application } = context
         const { photographyConsent } = getApplicationAnswers(

@@ -489,20 +489,15 @@ export const newPrimarySchoolMessages: MessageDir = {
       defaultMessage: 'Breyta umsókn',
       description: 'Edit application',
     },
-    email: {
-      id: 'dess.nps.application:review.email',
-      defaultMessage: 'Netfang',
-      description: 'Email address',
-    },
-    phoneNumber: {
-      id: 'dess.nps.application:review.email',
-      defaultMessage: 'Símanúmer',
-      description: 'Phone number',
-    },
     parents: {
       id: 'dess.nps.application:review.parents',
       defaultMessage: 'Foreldri/forsjáraðili',
       description: 'Parent / guardian',
+    },
+    icelandicSpokenAroundChild: {
+      id: 'dess.nps.application:review.icelandic.spoken.around.child',
+      defaultMessage: 'Íslenska er töluð í nærumhverfi barnsins',
+      description: 'Icelandic is spoken daily in our home',
     },
   }),
 

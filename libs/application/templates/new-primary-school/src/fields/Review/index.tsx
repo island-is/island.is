@@ -117,7 +117,7 @@ export const Review: FC<ReviewScreenProps> = ({
         >
           <Box>
             <Text variant="h2">
-              {formatMessage(newPrimarySchoolMessages.confirm.overviewTitle)}
+              {formatMessage(newPrimarySchoolMessages.confirm.sectionTitle)}
             </Text>
           </Box>
           <Box display="flex" columnGap={2} alignItems="center">
