@@ -62,7 +62,21 @@ export function generateCacheActionRestore({ name, id, path, key }) {
     return {
         name,
         id,
-        uses: 'island-is/new-cache@3889472650c918d4ae808744116721f07167dc4d',
+        uses: 'island-is/new-cache/restore@3889472650c918d4ae808744116721f07167dc4d',
+        continue_on_error: true,
+        enableCrossOsArchive: true,
+        with: {
+            path,
+            key,
+        },
+    };
+}
+
+export function generateCacheActionSave({ name, id, path, key }) {
+    return {
+        name,
+        id,
+        uses: 'island-is/new-cache/save@3889472650c918d4ae808744116721f07167dc4d',
         continue_on_error: true,
         enableCrossOsArchive: true,
         with: {
