@@ -31,7 +31,9 @@ export class SubpoenaResponse {
     const formattedNationalId = formatNationalId(defendantNationalId)
 
     const defendantInfo = internalCase.defendants.find(
-      (defendant) => defendant.nationalId === formattedNationalId,
+      (defendant) =>
+        defendant.nationalId === formattedNationalId ||
+        defendant.nationalId === defendantNationalId,
     )
 
     return {

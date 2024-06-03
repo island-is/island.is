@@ -36,12 +36,12 @@ export class CaseService {
     return this.auditTrailService.audit(
       'digital-mailbox-api',
       AuditedAction.GET_INDICTMENTS,
-      this.getAllCases(nationalId, lang),
+      this.getCasesInfo(nationalId, lang),
       nationalId,
     )
   }
 
-  async getCaseById(
+  async getCase(
     id: string,
     nationalId: string,
     lang?: string,
@@ -49,8 +49,20 @@ export class CaseService {
     return this.auditTrailService.audit(
       'digital-mailbox-api',
       AuditedAction.GET_INDICTMENT,
-      this.getCase(id, nationalId, lang),
+      this.getCaseInfo(id, nationalId, lang),
       () => id,
+    )
+  }
+
+  async getSubpoena(
+    caseId: string,
+    nationalId: string,
+  ): Promise<SubpoenaResponse> {
+    return this.auditTrailService.audit(
+      'digital-mailbox-api',
+      AuditedAction.GET_SUBPOENA,
+      this.getSubpoenaInfo(caseId, nationalId),
+      nationalId,
     )
   }
 
@@ -67,7 +79,7 @@ export class CaseService {
     )
   }
 
-  private async getAllCases(
+  private async getCasesInfo(
     nationalId: string,
     lang?: string,
   ): Promise<CasesResponse[]> {
@@ -75,7 +87,7 @@ export class CaseService {
     return CasesResponse.fromInternalCasesResponse(response, lang)
   }
 
-  private async getCase(
+  private async getCaseInfo(
     id: string,
     nationalId: string,
     lang?: string,
@@ -84,12 +96,11 @@ export class CaseService {
     return CaseResponse.fromInternalCaseResponse(response, lang)
   }
 
-  async getSubpoena(
+  private async getSubpoenaInfo(
     caseId: string,
     defendantNationalId: string,
   ): Promise<SubpoenaResponse> {
     const caseData = await this.fetchCase(caseId, defendantNationalId)
-
     return SubpoenaResponse.fromInternalCaseResponse(
       caseData,
       defendantNationalId,

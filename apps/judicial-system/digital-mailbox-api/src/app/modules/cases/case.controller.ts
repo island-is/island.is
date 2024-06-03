@@ -52,10 +52,10 @@ export class CaseController {
   ): Promise<CaseResponse> {
     this.logger.debug('Getting case by id')
 
-    return this.caseService.getCaseById(caseId, user.nationalId, query?.lang)
+    return this.caseService.getCase(caseId, user.nationalId, query?.lang)
   }
 
-  @Get('cases/:caseId/subpoena')
+  @Get('case/:caseId/subpoena')
   @ApiOkResponse({
     type: () => SubpoenaResponse,
     description: 'Get subpoena by case id',
@@ -69,7 +69,7 @@ export class CaseController {
     return this.caseService.getSubpoena(caseId, user.nationalId)
   }
 
-  @Patch('cases/:caseId/subpoena')
+  @Patch('case/:caseId/subpoena')
   @ApiOkResponse({
     type: () => SubpoenaResponse,
     description: 'Update subpoena info',
@@ -80,10 +80,9 @@ export class CaseController {
     @Body() defenderAssignment: UpdateSubpoenaDto,
   ): Promise<SubpoenaResponse> {
     this.logger.debug(`Assigning defender to subpoena ${caseId}`)
-    const formattedNationalId = formatNationalId(user.nationalId)
 
     return this.caseService.updateSubpoena(
-      formattedNationalId,
+      user.nationalId,
       caseId,
       defenderAssignment,
     )

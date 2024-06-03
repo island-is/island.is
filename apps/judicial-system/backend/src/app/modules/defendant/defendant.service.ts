@@ -206,13 +206,17 @@ export class DefendantService {
     defendantNationalId: string,
     update: UpdateDefendantDto,
   ): Promise<Defendant> {
-    const nationalId = formatNationalId(defendantNationalId)
+    const formattedNationalId = formatNationalId(defendantNationalId)
+
     const [numberOfAffectedRows, defendants] = await this.defendantModel.update(
       update,
       {
         where: {
-          national_id: nationalId,
           caseId,
+          [Op.or]: [
+            { national_id: formattedNationalId },
+            { national_id: defendantNationalId },
+          ],
         },
         returning: true,
       },
