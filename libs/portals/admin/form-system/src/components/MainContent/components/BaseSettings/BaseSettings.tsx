@@ -31,7 +31,7 @@ export const BaseSettings = () => {
             placeholder={formatMessage(m.applicationName)}
             name="formName"
             value={form?.name?.is ?? ''}
-            backgroundColor={'blue'}
+            backgroundColor="blue"
             onFocus={(e) => setFocus(e.target.value)}
             onBlur={(e) => e.target.value !== focus && formUpdate()}
             onChange={(e) =>

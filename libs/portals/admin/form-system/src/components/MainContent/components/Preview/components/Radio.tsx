@@ -47,8 +47,8 @@ export const Radio = ({ currentItem }: Props) => {
         marginTop={2}
         marginBottom={2}
         display="flex"
-        flexDirection={'row'}
-        flexWrap={'wrap'}
+        flexDirection="row"
+        flexWrap="wrap"
       >
         {radioButtons?.map((rb, index) => radioButton(rb, index))}
       </Box>

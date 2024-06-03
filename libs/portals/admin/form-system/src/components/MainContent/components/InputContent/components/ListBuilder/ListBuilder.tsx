@@ -125,7 +125,7 @@ export const ListBuilder = () => {
         </Row>
         <Stack space={2}>
           <DndContext
-            id={'listDnd'}
+            id="listDnd"
             sensors={sensors}
             onDragStart={onDragStart}
             onDragOver={onDragOver}

@@ -40,17 +40,17 @@ export const updateDnd = (
           form: {
             groupsList: groups?.map(
               (g) =>
-              ({
-                id: g?.id,
-                name: g?.name,
-                guid: g?.guid,
-                displayOrder: g?.displayOrder,
-                isHidden: (g?.isHidden ?? false) as boolean,
-                stepId: g?.stepId,
-                multiSet: g?.multiSet,
-                stepGuid: g?.stepGuid,
-                inputs: null,
-              } as FormSystemGroupInput),
+                ({
+                  id: g?.id,
+                  name: g?.name,
+                  guid: g?.guid,
+                  displayOrder: g?.displayOrder,
+                  isHidden: (g?.isHidden ?? false) as boolean,
+                  stepId: g?.stepId,
+                  multiSet: g?.multiSet,
+                  stepGuid: g?.stepGuid,
+                  inputs: null,
+                } as FormSystemGroupInput),
             ),
           },
         },

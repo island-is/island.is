@@ -2,10 +2,10 @@ import { useContext } from 'react'
 import { ControlContext } from '../../../../../../context/ControlContext'
 import { FormSystemInput } from '@island.is/api/schema'
 import { MessageWithLinkSettings } from './components/MessageWithLinkSettings'
-import { FileUploadSettings } from './components/FIleUploadSettings'
 import { TextInputSettings } from './components/TextInputSettings'
 import { ListSettings } from './components/ListSettings'
 import { ToggleConnection } from './components/ToggleConnection'
+import { FileUploadSettings } from './components/FIleUploadSettings'
 
 export const InputSettings = () => {
   const { control } = useContext(ControlContext)

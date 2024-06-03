@@ -60,7 +60,7 @@ export const Forms = () => {
         <Box marginTop={5}></Box>
 
         <Box marginTop={5}>
-          <Box width={'half'}></Box>
+          <Box width="half"></Box>
         </Box>
         <TableRow isHeader={true} />
         {forms &&
