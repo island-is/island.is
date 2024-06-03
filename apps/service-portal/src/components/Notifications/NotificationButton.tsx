@@ -47,7 +47,7 @@ const NotificationButton = ({
       markAllAsSeen()
       setHasMarkedLocally(true)
     }
-  }, [showMenu, showBadge])
+  }, [showMenu, showBadge, markAllAsSeen])
 
   return (
     <Box

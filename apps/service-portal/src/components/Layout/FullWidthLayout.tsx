@@ -45,19 +45,11 @@ export const FullWidthLayout: FC<FullWidthLayoutProps> = ({
   const { formatMessage } = useLocale()
   const { userInfo } = useAuth()
   const [navItems, setNavItems] = useState<PortalNavigationItem[] | undefined>()
-  const [activeChild, setActiveChild] = useState<
-    PortalNavigationItem | undefined
-  >()
 
   useEffect(() => {
     const visibleNavItems =
       activeParent?.children?.filter((item) => !item.navHide) || undefined
     setNavItems(visibleNavItems)
-
-    const activeVisibleChild = visibleNavItems?.filter(
-      (item) => item.active,
-    )?.[0]
-    setActiveChild(activeVisibleChild)
   }, [activeParent?.children])
 
   const hasDocumentsDelegationAccess = userInfo?.scopes?.includes(
