@@ -52,4 +52,4 @@ runs:
       uses: ./.tmp-dynamic-post-cache
     - name: Cleanup cache workflow
       shell: bash
-      run: rm -rf ./.tmp-dynamicpost-cache
+      run: rm -rf ./.tmp-dynamic-post-cache
