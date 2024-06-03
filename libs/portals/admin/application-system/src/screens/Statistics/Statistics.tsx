@@ -7,7 +7,7 @@ import {
 } from '@island.is/island-ui/core'
 import { useLocale } from '@island.is/localization'
 import { ApplicationSystemPaths } from '../../lib/paths'
-import { ApplicationFilters, MultiChoiceFilter } from '../../types/filters'
+import type { ApplicationFilters, MultiChoiceFilter } from '../../types/filters'
 import { StatisticsForm } from '../../components/StatisticsForm/StatisticsForm'
 import { useGetApplicationStatisticsQuery } from '../../queries/overview.generated'
 import { useState } from 'react'
