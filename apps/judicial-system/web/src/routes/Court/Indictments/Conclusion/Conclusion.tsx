@@ -8,10 +8,9 @@ import {
   Input,
   InputFileUpload,
   RadioButton,
-  toast,
 } from '@island.is/island-ui/core'
 import * as constants from '@island.is/judicial-system/consts'
-import { core, errors, titles } from '@island.is/judicial-system-web/messages'
+import { core, titles } from '@island.is/judicial-system-web/messages'
 import {
   BlueBox,
   CourtArrangements,
