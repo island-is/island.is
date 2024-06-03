@@ -8,14 +8,10 @@ import {
   Query,
   UseGuards,
 } from '@nestjs/common'
-import { ApiCreatedResponse, ApiTags } from '@nestjs/swagger'
+import { ApiOkResponse, ApiTags } from '@nestjs/swagger'
 
 import type { User } from '@island.is/auth-nest-tools'
-import {
-  CurrentUser,
-  IdsAuthGuard,
-  IdsUserGuard,
-} from '@island.is/auth-nest-tools'
+import { CurrentUser, IdsUserGuard } from '@island.is/auth-nest-tools'
 import { type Logger, LOGGER_PROVIDER } from '@island.is/logging'
 
 import { formatNationalId } from '@island.is/judicial-system/formatters'
@@ -37,7 +33,7 @@ export class CaseController {
   ) {}
 
   @Get('cases')
-  @ApiCreatedResponse({ type: String, description: 'Get all cases' })
+  @ApiOkResponse({ type: String, description: 'Get all cases' })
   async getAllCases(
     @CurrentUser() user: User,
     @Query() query?: { lang: string },
@@ -48,7 +44,7 @@ export class CaseController {
   }
 
   @Get('case/:caseId')
-  @ApiCreatedResponse({ type: CaseResponse, description: 'Get case by id' })
+  @ApiOkResponse({ type: CaseResponse, description: 'Get case by id' })
   async getCase(
     @Param('caseId') caseId: string,
     @CurrentUser() user: User,
@@ -60,7 +56,7 @@ export class CaseController {
   }
 
   @Get('cases/:caseId/subpoena')
-  @ApiCreatedResponse({
+  @ApiOkResponse({
     type: () => SubpoenaResponse,
     description: 'Get subpoena by case id',
   })
@@ -74,6 +70,10 @@ export class CaseController {
   }
 
   @Patch('cases/:caseId/subpoena')
+  @ApiOkResponse({
+    type: () => SubpoenaResponse,
+    description: 'Update subpoena info',
+  })
   async updateSubpoena(
     @CurrentUser() user: User,
     @Param('caseId') caseId: string,
