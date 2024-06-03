@@ -172,7 +172,7 @@ export const FileUploadController: FC<
       .map((f) => f.size)
       .reduce((a, b) => a + b, 0)
 
-    // Show an error if the sum im the file sizes exceeds totalMaxSize.
+    // Show an error if the sum in the file sizes exceeds totalMaxSize.
     console.log(maxSize, totalMaxSize)
 
     if (totalMaxSize && totalNewFileSize + sumOfFileSizes > totalMaxSize) {
