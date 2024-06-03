@@ -1,8 +1,6 @@
 import { Module } from '@nestjs/common'
 import { SequelizeModule } from '@nestjs/sequelize'
-import { CacheModule } from '@nestjs/cache-manager'
 import * as firebaseAdmin from 'firebase-admin'
-
 import { AuthDelegationApiClientModule } from '@island.is/clients/auth/delegation-api'
 import { NationalRegistryV3ClientModule } from '@island.is/clients/national-registry-v3'
 import { UserProfileClientModule } from '@island.is/clients/user-profile'
@@ -12,7 +10,6 @@ import { LoggingModule } from '@island.is/logging'
 import { QueueModule } from '@island.is/message-queue'
 import { FeatureFlagModule } from '@island.is/nest/feature-flags'
 import { type ConfigType } from '@island.is/nest/config'
-
 import { UserNotificationsConfig } from '../../../config'
 import { FIREBASE_PROVIDER } from '../../../constants'
 import { environment } from '../../../environments/environment'

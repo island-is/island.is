@@ -26,6 +26,15 @@ import type { Locale } from '@island.is/shared/types'
 import { mapToContentfulLocale, mapToLocale } from './utils'
 import { ContentfulGraphQLClientService } from '@island.is/clients/contentful-graphql'
 import { GET_HNIPP_TEMPLATE_BY_TEMPLATE_ID,GET_HNIPP_TEMPLATES,GET_ORGANIZATION_BY_KENNITALA } from './contentful-queries';
+import { send } from 'process'
+
+
+
+// AGENDA
+// where and how GQL queryies ... libs/clients/car-recycling/src/lib/createRecyclingRequest.generated.ts
+// enhancedFetch caching setup
+// UN API infra setup
+
 
 
 /**
@@ -60,11 +69,13 @@ export class NotificationsService {
     senderId: string,
     locale?: Locale,
   ): Promise<SenderOrganization | undefined> {
+    console.log(senderId, locale,)
     locale = mapToLocale(locale as Locale)
     const queryVariables = {
-      senderId,
+      kennitala: "4110140100", // senderId
       locale: mapToContentfulLocale(locale),
     };
+    console.log(queryVariables)
     const res = await this.contentfulGraphQLClientService.fetchData(GET_ORGANIZATION_BY_KENNITALA, queryVariables);
     const items = res.organizationCollection.items;
     if(items.length > 0){
