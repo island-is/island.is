@@ -140,20 +140,7 @@ export class UniversityService extends BaseTemplateApiService {
               application,
               answers.educationDetails.exemptionDetails?.degreeAttachments?.map(
                 (x, i) => {
-                  let type
-                  switch (i) {
-                    case 1:
-                      type = 'profskirteini'
-                      break
-                    case 2:
-                      type = 'profskirteini2'
-                      break
-                    case 3:
-                      type = 'profskirteini3'
-                      break
-                    default:
-                      type = ''
-                  }
+                  const type = this.mapFileTypes(i)
                   return {
                     name: x.name,
                     key: x.key,
@@ -184,20 +171,7 @@ export class UniversityService extends BaseTemplateApiService {
               application,
               answers.educationDetails.thirdLevelDetails?.degreeAttachments?.map(
                 (x, i) => {
-                  let type
-                  switch (i) {
-                    case 1:
-                      type = 'profskirteini'
-                      break
-                    case 2:
-                      type = 'profskirteini2'
-                      break
-                    case 3:
-                      type = 'profskirteini3'
-                      break
-                    default:
-                      type = ''
-                  }
+                  const type = this.mapFileTypes(i)
                   return {
                     name: x.name,
                     key: x.key,
@@ -216,20 +190,7 @@ export class UniversityService extends BaseTemplateApiService {
             degreeAttachments: await this.getFilesFromAttachment(
               application,
               item.degreeAttachments?.map((x, i) => {
-                let type
-                switch (i) {
-                  case 1:
-                    type = 'profskirteini'
-                    break
-                  case 2:
-                    type = 'profskirteini2'
-                    break
-                  case 3:
-                    type = 'profskirteini3'
-                    break
-                  default:
-                    type = ''
-                }
+                const type = this.mapFileTypes(i)
                 return {
                   name: x.name,
                   key: x.key,
@@ -313,5 +274,23 @@ export class UniversityService extends BaseTemplateApiService {
         }
       }) || [],
     )
+  }
+
+  private mapFileTypes = (fileIndex: number): string => {
+    let type
+    switch (fileIndex) {
+      case 1:
+        type = 'profskirteini'
+        break
+      case 2:
+        type = 'profskirteini2'
+        break
+      case 3:
+        type = 'profskirteini3'
+        break
+      default:
+        type = ''
+    }
+    return type
   }
 }
