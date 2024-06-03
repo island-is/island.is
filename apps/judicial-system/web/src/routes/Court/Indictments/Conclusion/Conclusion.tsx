@@ -139,13 +139,18 @@ const Conclusion: React.FC = () => {
       const success = await setAndSendCaseToServer(
         [
           {
-            indictmentDecision: IndictmentDecision.POSTPONING_UNTIL_VERDICT,
-            courtDate: {
-              date:
-                postponement?.isSettingVerdictDate && selectedCourtDate
+            ...(workingCase.indictmentDecision !==
+              IndictmentDecision.POSTPONING_UNTIL_VERDICT && {
+              indictmentDecision: IndictmentDecision.POSTPONING_UNTIL_VERDICT,
+            }),
+            ...((postponement?.isSettingVerdictDate ||
+              workingCase.courtDate) && {
+              courtDate: {
+                date: selectedCourtDate
                   ? formatDateForServer(selectedCourtDate)
                   : null,
-            },
+              },
+            }),
             force: true,
           },
         ],
@@ -153,6 +158,7 @@ const Conclusion: React.FC = () => {
         setWorkingCase,
       )
 
+      console.log('success', success)
       if (!success) {
         return
       }
