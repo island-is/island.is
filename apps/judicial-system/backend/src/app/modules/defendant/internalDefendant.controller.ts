@@ -7,7 +7,7 @@ import {
   Post,
   UseGuards,
 } from '@nestjs/common'
-import { ApiCreatedResponse, ApiTags } from '@nestjs/swagger'
+import { ApiCreatedResponse, ApiOkResponse, ApiTags } from '@nestjs/swagger'
 
 import type { Logger } from '@island.is/logging'
 import { LOGGER_PROVIDER } from '@island.is/logging'
@@ -63,7 +63,7 @@ export class InternalDefendantController {
   }
 
   @Patch('defense/:defendantNationalId')
-  @ApiCreatedResponse({
+  @ApiOkResponse({
     type: Defendant,
     description: 'Assigns defense choice to defendant',
   })
