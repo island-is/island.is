@@ -40,7 +40,9 @@ export class NationalRegistryV3ClientService {
       : this.individualApi.midlunV1EinstaklingarNationalIdGet({ nationalId })
   }
 
-  getFamily(nationalId: string): Promise<EinstaklingurDTOLogforeldrar | null> {
+  getBiologicalFamily(
+    nationalId: string,
+  ): Promise<EinstaklingurDTOLogforeldrar | null> {
     return this.individualApi.midlunV1EinstaklingarNationalIdLogforeldrarGet({
       nationalId,
     })

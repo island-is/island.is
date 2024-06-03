@@ -77,6 +77,35 @@ export const _tryToGetDate = (value: string | null) => {
   return null
 }
 
+// This function splits a string into a list of strings. The split
+// is done by commas that are not inside quotes. This is useful when
+// parsing CSV files since commas inside quotes should not be used
+// as a separator. This function is used in the processDataFromSource
+// function to split each line of the CSV file into an array of strings
+export const splitCsvLine = (line: string) => {
+  const result: string[] = []
+  let current = ''
+  let inQuote = false
+
+  for (const char of line) {
+    if (char === '"') {
+      inQuote = !inQuote
+    } else if (char === ',' && !inQuote) {
+      result.push(current)
+      current = ''
+    } else {
+      current += char
+    }
+  }
+
+  if (current.length > 0) {
+    // Add the last segment
+    result.push(current)
+  }
+
+  return result
+}
+
 export const processDataFromSource = (data: string) => {
   const lines = data
     .replace(/\r/g, '')
@@ -84,7 +113,7 @@ export const processDataFromSource = (data: string) => {
     .filter((l) => l.length > 0)
 
   const headers = lines[0].split(',')
-  const dataLines = lines.slice(1).map((line) => line.split(','))
+  const dataLines = lines.slice(1).map(splitCsvLine)
 
   const result: StatisticSourceData['data'] = {}
 
@@ -114,8 +143,15 @@ export const processDataFromSource = (data: string) => {
         result[key] = []
       }
 
-      const isPercentage = lineColumns[i]?.endsWith('%') ?? false
-      const rawValue = lineColumns[i]?.replace('%', '')?.trim()
+      const isPercentage = lineColumns[i]?.endsWith('%') || false
+      const rawValue = lineColumns[i]
+        ?.replace(/%/g, '')
+        // When we have a value like "1,000,000" it is surrounded by quotes
+        ?.replace(/"/g, '')
+        // We can then safely remove the commas since they are not used to
+        // separate decimal digits but rather to separate thousands
+        ?.replace(/,/g, '')
+        ?.trim()
 
       const isInvalidValue =
         (typeof rawValue === 'string' && rawValue.length === 0) ||

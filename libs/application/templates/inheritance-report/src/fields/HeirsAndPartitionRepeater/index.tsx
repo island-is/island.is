@@ -120,7 +120,8 @@ export const HeirsAndPartitionRepeater: FC<
       label: relation,
     })) || []
 
-  const error = (errors as any)?.heirs?.data ?? {}
+  const error =
+    ((errors as any)?.heirs?.data || (errors as any)?.heirs?.total) ?? []
 
   const handleAddMember = () =>
     append({
@@ -440,6 +441,11 @@ export const HeirsAndPartitionRepeater: FC<
                             onAfterChange={(val) => {
                               updateValues(fieldIndex, val, customFieldIndex)
                             }}
+                            hasError={
+                              error && error[mainIndex]
+                                ? !!error[mainIndex][customField.id]
+                                : false
+                            }
                             errorMessage={
                               error && error[mainIndex]
                                 ? error[mainIndex][customField.id]
@@ -617,7 +623,7 @@ export const HeirsAndPartitionRepeater: FC<
                 readOnly
                 hasError={
                   (props.sumField === 'heirsPercentage' &&
-                    error &&
+                    !!error.length &&
                     total !== 100) ??
                   false
                 }

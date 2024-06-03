@@ -473,6 +473,7 @@ export const NavigationTree: FC<
       {({ baseId, activeAccordions, toggleAccordion }) => (
         <Box
           component="ul"
+          role="menu"
           {...(id && { id: `navigation-tree-${id}` })}
           {...(labelId && { 'aria-labelledby': labelId })}
           className={cn(styles.ul, styles.level[level])}
