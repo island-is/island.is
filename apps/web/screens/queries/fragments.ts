@@ -852,6 +852,7 @@ export const slices = gql`
     __typename
     id
     searchInputPlaceholder
+    itemType
     firstPageListItemResponse {
       input {
         genericListId
@@ -864,6 +865,7 @@ export const slices = gql`
         id
         date
         title
+        slug
         cardIntro {
           ...HtmlFields
         }
