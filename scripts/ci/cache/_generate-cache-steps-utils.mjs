@@ -5,19 +5,10 @@ import { dirname, resolve } from 'node:path';
 import { ROOT } from './_common.mjs';
 
 
-export function createOutputs(steps) {
+export function createRestoreOutputs(steps) {
     return {
-        outputs: steps.reduce(
-            (a, value) => {
-                return {
-                    ...a,
-                    [`${value.id}-success`]: {
-                        description: `Success for ${value.name}`,
-                        value: `\${{ steps.${value.id}.outputs.success }}`,
-                    },
-                };
-            },
-            {
+        outputs:
+            [{
                 success: {
                     description: 'Success for all caches',
                     value: JSON.stringify(
@@ -33,8 +24,21 @@ export function createOutputs(steps) {
                     ),
                 },
             }
-        ),
-    };
+            ],
+    }
+}
+
+export function createSaveOutputs() {
+    return {
+        outputs:
+            [{
+                success: {
+                    description: 'Success for all caches',
+                    value: "${{ steps.success-check.success }}"
+                },
+            }
+            ],
+    }
 }
 
 export function createRuns(steps) {
@@ -75,7 +79,7 @@ export function generateCacheActionRestore({ name, id, path, key }) {
 export function generateCacheActionSave({ name, id, path, key }) {
     return {
         name,
-        id,
+        id: `save-${id}`,
         uses: 'island-is/new-cache/save@3889472650c918d4ae808744116721f07167dc4d',
         continue_on_error: true,
         enableCrossOsArchive: true,
