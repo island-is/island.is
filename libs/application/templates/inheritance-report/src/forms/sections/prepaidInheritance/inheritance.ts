@@ -8,12 +8,12 @@ import { m } from '../../../lib/messages'
 
 export const inheritance = buildSection({
   id: 'inheritance',
-  title: 'Arfur',
+  title: m.inheritance,
   children: [
     buildMultiField({
       id: 'inheritance',
-      title: 'Hvað á að greiða í arf?',
-      description: 'Lorem ipsum foo bar beep boop meep morp.',
+      title: m.inheritanceSelectionPrePaid,
+      description: m.inheritanceSelectionDescriptionPrePaid,
       children: [
         buildCheckboxField({
           id: 'prepaidInheritance.realEstate',

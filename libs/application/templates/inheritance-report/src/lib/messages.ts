@@ -96,7 +96,16 @@ export const m = defineMessages({
     defaultMessage: 'Arfur',
     description: '',
   },
-
+  inheritanceSelectionPrePaid: {
+    id: 'ir.application:inheritanceSelectionPrePaid',
+    defaultMessage: 'Hvað á að greiða í arf?',
+    description: '',
+  },
+  inheritanceSelectionDescriptionPrePaid: {
+    id: 'ir.application:inheritanceSelectionDescriptionPrePaid',
+    defaultMessage: 'Lorem ipsum foo bar beep boop meep morp.',
+    description: '',
+  },
   // Data collection - external data providers
   dataCollectionTitle: {
     id: 'ir.application:dataCollectionTitle',
