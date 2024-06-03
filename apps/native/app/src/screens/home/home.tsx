@@ -185,25 +185,6 @@ export const MainHomeScreen: NavigationFunctionComponent = ({
 
   return (
     <>
-      <View
-        style={{
-          flex: 1,
-          maxHeight: '25%',
-          justifyContent: 'center',
-          marginHorizontal: 16,
-        }}
-      >
-        <ScrollView style={{ flex: 1 }}>
-          <View style={{ height: 100 }}>
-            <Button
-              title={'Opna mínar síður'}
-              onPress={() =>
-                openBrowser('http://island.is/minarsidur', componentId)
-              }
-            />
-          </View>
-        </ScrollView>
-      </View>
       <Animated.FlatList
         ref={flatListRef}
         testID={testIDs.SCREEN_HOME}
