@@ -14,8 +14,6 @@ import type { User } from '@island.is/auth-nest-tools'
 import { CurrentUser, IdsUserGuard } from '@island.is/auth-nest-tools'
 import { type Logger, LOGGER_PROVIDER } from '@island.is/logging'
 
-import { formatNationalId } from '@island.is/judicial-system/formatters'
-
 import { UpdateSubpoenaDto } from './dto/subpoena.dto'
 import { CaseResponse } from './models/case.response'
 import { CasesResponse } from './models/cases.response'
