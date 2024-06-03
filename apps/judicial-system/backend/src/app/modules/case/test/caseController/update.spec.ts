@@ -190,6 +190,7 @@ describe('CaseController - Update', () => {
 
     it('should delete a case file', () => {
       expect(mockFileService.deleteCaseFile).toHaveBeenCalledWith(
+        theCase,
         caseFile,
         transaction,
       )

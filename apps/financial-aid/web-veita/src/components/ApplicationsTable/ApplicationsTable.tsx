@@ -145,7 +145,7 @@ const ApplicationsTable = ({
                       ),
                       TextTableItem(
                         'default',
-                        getMonth(new Date(item.created).getMonth()),
+                        getMonth(new Date(item.applied).getMonth()),
                       ),
                       assignButton(item),
                     ]}

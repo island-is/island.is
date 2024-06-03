@@ -47,6 +47,7 @@ export enum ApplicationHeaderSortByEnum {
   MODIFIED = 'modified',
   CREATED = 'created',
   STAFF = 'staff',
+  APPLIED = 'applied',
 }
 
 export enum ApplicationStateUrl {
@@ -67,6 +68,7 @@ export enum ApplicationEventType {
   FILEUPLOAD = 'FileUpload',
   SPOUSEFILEUPLOAD = 'SpouseFileUpload',
   ASSIGNCASE = 'AssignCase',
+  DATECHANGED = 'DateChanged',
 }
 
 export enum FileType {
@@ -122,4 +124,10 @@ export enum AidName {
 export enum FilterType {
   APPLICATIONSTATE = 'applicationState',
   STAFF = 'staff',
+}
+
+export enum ChildrenAid {
+  NOTDEFINED = 'NotDefined',
+  INSTITUTION = 'Institution',
+  APPLICANT = 'Applicant',
 }

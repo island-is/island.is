@@ -16,6 +16,7 @@ import {
 import {
   isDistrictCourtUser,
   isProsecutionUser,
+  isRequestCase,
 } from '@island.is/judicial-system/types'
 import { core, tables } from '@island.is/judicial-system-web/messages'
 import {
@@ -326,6 +327,7 @@ const ActiveCases: React.FC<React.PropsWithChildren<Props>> = (props) => {
                         isCourtRole={isDistrictCourtUser(user)}
                         isValidToDateInThePast={c.isValidToDateInThePast}
                         courtDate={c.courtDate}
+                        indictmentRulingDecision={c.indictmentRulingDecision}
                       />
                     </Box>
                     {c.appealState && (
@@ -381,7 +383,10 @@ const ActiveCases: React.FC<React.PropsWithChildren<Props>> = (props) => {
                               onClick: () => handleOpenCase(c.id, true),
                               icon: 'open',
                             },
-                            ...(isProsecutionUser(user)
+                            ...(isProsecutionUser(user) &&
+                            (isRequestCase(c.type) ||
+                              c.state === CaseState.DRAFT ||
+                              c.state === CaseState.WAITING_FOR_CONFIRMATION)
                               ? [
                                   {
                                     title: formatMessage(
