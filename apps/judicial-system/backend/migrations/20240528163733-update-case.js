@@ -17,16 +17,9 @@ module.exports = {
 
   async down(queryInterface) {
     return queryInterface.sequelize.transaction((t) =>
-      queryInterface
-        .removeColumn('case', 'indictment_decision', {
-          transaction: t,
-        })
-        .then(() => {
-          queryInterface.sequelize.query(
-            'DROP TYPE "enum_case_indictment_decision";',
-            { transaction: t },
-          )
-        }),
+      queryInterface.removeColumn('case', 'indictment_decision', {
+        transaction: t,
+      }),
     )
   },
 }
