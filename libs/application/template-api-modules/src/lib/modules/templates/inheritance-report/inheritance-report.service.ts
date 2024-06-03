@@ -68,7 +68,7 @@ export class InheritanceReportService extends BaseTemplateApiService {
 
         return new Promise<void>((resolve) => {
           this.syslumennService
-            .getInheritanceTax(inheritanceDate)
+            .getInheritanceTax(new Date())
             .then((inheritanceTax) => {
               inheritanceReportInfo.inheritanceTax = inheritanceTax
               resolve()
