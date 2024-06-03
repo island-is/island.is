@@ -13,6 +13,17 @@ globalStyle(`${link} > span`, {
   boxShadow: 'none',
 })
 
+export const noScope = style({})
+
+globalStyle(`${noScope} button:disabled`, {
+  background: theme.color.white,
+  boxShadow: `inset 0 0 0 1px ${theme.color.blue200}`,
+})
+
+globalStyle(`${noScope} button:disabled path`, {
+  stroke: theme.color.dark300,
+})
+
 export const badge = style({
   position: 'absolute',
   top: 11,
