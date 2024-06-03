@@ -39,6 +39,10 @@ export const routesTemplate = {
     is: '/s/[organization]/vidburdir',
     en: '/en/o/[organization]/events',
   },
+  organizationsubpagelistitem: {
+    is: '/s/[organization]/[slug]/[listItemSlug]',
+    en: '/en/o/[organization]/[slug]/[listItemSlug]',
+  },
   aboutsubpage: {
     is: '/s/stafraent-island/[slug]',
     en: '',

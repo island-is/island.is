@@ -57,6 +57,7 @@ export interface SubPageProps {
   customContent?: React.ReactNode
   backLink?: { text: string; url: string }
   customBreadcrumbItems?: BreadCrumbItem[]
+  customContentfulIds?: (string | undefined)[]
 }
 
 const SubPage: Screen<SubPageProps> = ({
@@ -66,6 +67,7 @@ const SubPage: Screen<SubPageProps> = ({
   locale,
   customContent,
   customBreadcrumbItems,
+  customContentfulIds,
   backLink,
 }) => {
   const router = useRouter()
@@ -74,7 +76,11 @@ const SubPage: Screen<SubPageProps> = ({
   const n = useNamespace(namespace)
   const { linkResolver } = useLinkResolver()
 
-  useContentfulId(organizationPage?.id, subpage?.id)
+  const contentfulIds = customContentfulIds
+    ? customContentfulIds
+    : [organizationPage?.id, subpage?.id]
+
+  useContentfulId(...contentfulIds)
 
   const pathWithoutHash = router.asPath.split('#')[0]
   // eslint-disable-next-line @typescript-eslint/ban-ts-comment

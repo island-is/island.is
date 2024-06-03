@@ -27,6 +27,7 @@ export const GET_GENERIC_LIST_ITEMS_QUERY = gql`
 export const GET_GENERIC_LIST_ITEM_BY_SLUG_QUERY = gql`
   query GetGenericListItemBySlug($input: GetGenericListItemBySlugInput!) {
     getGenericListItemBySlug(input: $input) {
+      id
       date
       title
       slug

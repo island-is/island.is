@@ -62,6 +62,11 @@ export const Component: ScreenType<ComponentProps> = ({
           text: activeLocale === 'is' ? 'Til baka' : 'Go back', // TODO: perhaps read this value from contentful
           url: backLinkUrl,
         },
+        customContentfulIds: [
+          parentProps.componentProps.organizationPage?.id,
+          parentProps.componentProps.subpage?.id,
+          genericListItemProps.item.id,
+        ],
       }}
     />
   )
