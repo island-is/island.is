@@ -46,7 +46,7 @@ import { ProjectFooter } from './components/ProjectFooter'
 import { ProjectWrapper } from './components/ProjectWrapper'
 import { getThemeConfig } from './utils'
 
-interface PageProps {
+export interface PageProps {
   projectPage: Query['getProjectPage']
   namespace: Record<string, string>
   projectNamespace: Record<string, string>
@@ -54,6 +54,9 @@ interface PageProps {
   stepOptionsFromNamespace: { data: Record<string, any>[]; slug: string }[]
   stepperNamespace: Record<string, string>
   locale: Locale
+  backLink?: { url: string; text: string }
+  customContentfulIds?: (string | undefined)[]
+  customBreadcrumbItems?: BreadCrumbItem[]
 }
 const ProjectPage: Screen<PageProps> = ({
   projectPage,
@@ -62,6 +65,9 @@ const ProjectPage: Screen<PageProps> = ({
   stepperNamespace,
   stepOptionsFromNamespace,
   locale,
+  backLink,
+  customContentfulIds,
+  customBreadcrumbItems,
 }) => {
   const n = useNamespace(namespace)
   const p = useNamespace(projectNamespace)
@@ -77,7 +83,11 @@ const ProjectPage: Screen<PageProps> = ({
     [router.query.subSlug, projectPage?.projectSubpages],
   )
 
-  useContentfulId(projectPage?.id, subpage?.id)
+  const contentfulIds = customContentfulIds
+    ? customContentfulIds
+    : [projectPage?.id, subpage?.id]
+
+  useContentfulId(...contentfulIds)
 
   const baseRouterPath = router.asPath.split('?')[0].split('#')[0]
 
@@ -116,7 +126,9 @@ const ProjectPage: Screen<PageProps> = ({
     }
   }, [renderSlicesAsTabs, subpage, router.asPath])
 
-  const breadCrumbs: BreadCrumbItem[] = !subpage
+  const breadCrumbs: BreadCrumbItem[] = customBreadcrumbItems
+    ? customBreadcrumbItems
+    : !subpage
     ? []
     : [
         {
@@ -157,6 +169,7 @@ const ProjectPage: Screen<PageProps> = ({
         breadcrumbItems={breadCrumbs}
         sidebarNavigationTitle={navigationTitle}
         withSidebar={projectPage?.sidebar}
+        backLink={backLink}
       >
         {!subpage && shouldDisplayWebReader && (
           <Webreader

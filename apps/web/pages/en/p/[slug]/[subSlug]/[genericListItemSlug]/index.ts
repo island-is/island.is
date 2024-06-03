@@ -1,11 +1,11 @@
 import withApollo from '@island.is/web/graphql/withApollo'
 import { withLocale } from '@island.is/web/i18n'
-import GenericListItem from '@island.is/web/screens/GenericList/GenericListItem'
+import { Component } from '@island.is/web/pages/v/[slug]/[subSlug]/[genericListItemSlug]'
 import { getServerSidePropsWrapper } from '@island.is/web/utils/getServerSidePropsWrapper'
 
 // eslint-disable-next-line @typescript-eslint/ban-ts-comment
 // @ts-ignore make web strict
-const Screen = withApollo(withLocale('en')(GenericListItem))
+const Screen = withApollo(withLocale('en')(Component))
 
 export default Screen
 
