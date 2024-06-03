@@ -37,10 +37,12 @@ export class SubpoenaResponse {
     return {
       caseId: internalCase.id,
       displayInfo: lang === 'en' ? 'Subpoena' : 'Þingbók',
-      defenderInfo: {
-        defenderChoice: defendantInfo?.defenderChoice,
-        defenderName: defendantInfo?.defenderName,
-      },
+      defenderInfo: defendantInfo
+        ? {
+            defenderChoice: defendantInfo?.defenderChoice,
+            defenderName: defendantInfo?.defenderName,
+          }
+        : undefined,
     }
   }
 }
