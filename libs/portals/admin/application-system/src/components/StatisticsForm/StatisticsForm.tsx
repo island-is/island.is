@@ -1,6 +1,6 @@
 import { Box, DatePicker } from '@island.is/island-ui/core'
 import { useLocale } from '@island.is/localization'
-import { ApplicationFilters } from '../../types/filters'
+import type { ApplicationFilters } from '../../types/filters'
 import { m } from '../../lib/messages'
 
 type Props = {
