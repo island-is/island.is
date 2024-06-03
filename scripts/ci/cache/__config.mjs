@@ -1,4 +1,3 @@
-
 // @ts-check
 import { resolve } from 'path'
 import { MOBILE_APP_DIR, ROOT } from './_common.mjs'
@@ -16,14 +15,17 @@ import {
 import { ENV_INIT_CACHE, ENV_ENABLED_CACHE } from './_const.mjs'
 import { keyStorage } from './_key_storage.mjs'
 
-
 // When testing this is good to manipulate
 const HASH_VERSION = 1
 
-export const ENABLED_MODULES = (process.env[ENV_ENABLED_CACHE] || "").split(",").map((x) => x.trim()).filter((x) => x.length > 0).reduce((a, b) => {
-  a[b] = true
-  return a;
-}, {})
+export const ENABLED_MODULES = (process.env[ENV_ENABLED_CACHE] || '')
+  .split(',')
+  .map((x) => x.trim())
+  .filter((x) => x.length > 0)
+  .reduce((a, b) => {
+    a[b] = true
+    return a
+  }, {})
 
 export const cypressPath = process.env.CYPRESS_CACHE_PATH
 export const cacheSuccess = JSON.parse(process.env.CACHE_SUCCESS ?? '{}')
@@ -33,13 +35,13 @@ if (Object.keys(ENABLED_MODULES).length === 0) {
   throw new Error('No cache modules enabled')
 }
 
-if (ENABLED_MODULES["cypress"] && !cypressPath) {
+if (ENABLED_MODULES['cypress'] && !cypressPath) {
   throw new Error('Cypress path is not set')
 }
 
 export const caches = [
   {
-    enabled: ENABLED_MODULES["node_modules"],
+    enabled: ENABLED_MODULES['node_modules'],
     hash: async () =>
       keyStorage.getKey('node_modules') ??
       `node-modules-${HASH_VERSION}-${getPlatformString()}-${await getYarnLockHash()}-${await getPackageHash()}-${await getNodeVersionString()}`,
@@ -57,13 +59,13 @@ export const caches = [
       try {
         await runCommand(path, ROOT)
       } catch {
-        return false;
+        return false
       }
-      return true;
+      return true
     },
   },
   {
-    enabled: ENABLED_MODULES["mobile-node_modules"],
+    enabled: ENABLED_MODULES['mobile-node_modules'],
     hash: async () =>
       keyStorage.getKey('mobile-node_modules') ??
       `app-node-modules-${HASH_VERSION}-${getPlatformString()}-${await getYarnLockHash()}-${await getPackageHash(
@@ -74,7 +76,7 @@ export const caches = [
     path: 'apps/native/app/node_modules',
   },
   {
-    enabled: ENABLED_MODULES["generated-files"],
+    enabled: ENABLED_MODULES['generated-files'],
     hash: async () =>
       keyStorage.getKey('generated-files') ??
       `generated-files-${HASH_VERSION}-${getPlatformString()}-${await getGeneratedFileHash()}`,
@@ -93,7 +95,7 @@ export const caches = [
     },
   },
   {
-    enabled: ENABLED_MODULES["cypress"],
+    enabled: ENABLED_MODULES['cypress'],
     hash: async () =>
       keyStorage.getKey('cypress') ??
       `cypress-cache-${HASH_VERSION}-${getPlatformString()}-${await getYarnLockHash()}-${await getPackageHash()}-${await getNodeVersionString()}`,
