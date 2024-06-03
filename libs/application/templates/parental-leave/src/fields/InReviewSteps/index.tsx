@@ -11,11 +11,16 @@ import { Review } from '../Review/Review'
 import { parentalLeaveFormMessages } from '../../lib/messages'
 import {
   getApplicationAnswers,
-  getExpectedDateOfBirthOrAdoptionDate,
+  getExpectedDateOfBirthOrAdoptionDateOrBirthDate,
   isFosterCareAndAdoption,
   showResidenceGrant,
 } from '../../lib/parentalLeaveUtils'
-import { States as ApplicationStates, States, YES } from '../../constants'
+import {
+  States as ApplicationStates,
+  StartDateOptions,
+  States,
+  YES,
+} from '../../constants'
 import { useRemainingRights } from '../../hooks/useRemainingRights'
 
 const InReviewSteps: FC<React.PropsWithChildren<FieldBaseProps>> = (props) => {
@@ -32,7 +37,7 @@ const InReviewSteps: FC<React.PropsWithChildren<FieldBaseProps>> = (props) => {
   )
   const { formatMessage } = useLocale()
 
-  const dob = getExpectedDateOfBirthOrAdoptionDate(application)
+  const dob = getExpectedDateOfBirthOrAdoptionDateOrBirthDate(application, true)
   const dobDate = dob ? new Date(dob) : null
 
   const canBeEdited =
@@ -104,6 +109,9 @@ const InReviewSteps: FC<React.PropsWithChildren<FieldBaseProps>> = (props) => {
               ? formatMessage(
                   parentalLeaveFormMessages.reviewScreen.adoptionDate,
                 )
+              : periods?.[0]?.firstPeriodStart ===
+                StartDateOptions.ACTUAL_DATE_OF_BIRTH
+              ? formatMessage(parentalLeaveFormMessages.shared.dateOfBirthTitle)
               : formatMessage(
                   parentalLeaveFormMessages.reviewScreen.estimatedBirthDate,
                 )}

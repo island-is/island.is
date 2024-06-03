@@ -28,10 +28,20 @@ const validateDeceasedShare = ({
     deceasedShareEnabled.includes(YES)
   ) {
     const value = valueToNumber(deceasedShare)
-    return value > 0 && value <= 100
+    return value >= 0 && value <= 100
   }
 
   return true
+}
+
+const validateAssetNumber = (assetNumber: string) => {
+  const assetNumberPattern = /^[Ff]{0,1}\d{7}$|^[Ll]{0,1}\d{6}$/
+  return assetNumberPattern.test(assetNumber)
+}
+
+const validateDebtBankAccount = (assetNumber: string) => {
+  const assetNumberPattern = /^\d{4}-\d{2}-\d{6}|\d{12}$/
+  return assetNumberPattern.test(assetNumber)
 }
 
 const assetSchema = ({ withShare }: { withShare?: boolean } = {}) =>
@@ -39,7 +49,9 @@ const assetSchema = ({ withShare }: { withShare?: boolean } = {}) =>
     .object({
       data: z
         .object({
-          assetNumber: z.string(),
+          assetNumber: z
+            .string()
+            .refine((v) => (withShare ? validateAssetNumber(v) : true)),
           description: z.string(),
           propertyValuation: z.string(),
           ...(withShare ? { share: z.string() } : {}),
@@ -68,7 +80,7 @@ const assetSchema = ({ withShare }: { withShare?: boolean } = {}) =>
 
               const value = isNaN(num) ? 0 : num
 
-              return value >= 0 && value <= 100
+              return value > 0 && value <= 100
             }
 
             return true
@@ -306,7 +318,7 @@ export const inheritanceReportSchema = z.object({
           .object({
             description: z.string(),
             nationalId: z.string(),
-            assetNumber: z.string(),
+            assetNumber: z.string(), //.refine((v) => validateDebtBankAccount(v)),
             propertyValuation: z.string(),
           })
           .refine(
@@ -364,6 +376,8 @@ export const inheritanceReportSchema = z.object({
     publicCharges: z.string().optional(),
     debtsTotal: z.number().optional(),
   }),
+
+  estateInfoSelection: z.string().min(1),
 
   funeralCost: z
     .object({
@@ -423,7 +437,7 @@ export const inheritanceReportSchema = z.object({
           if (!v) return true
 
           const num = parseInt(v, 10) ?? 0
-          return num > -1 && num < 101
+          return num > 0 && num < 101
         }),
         taxFreeInheritance: z.string(),
         inheritance: z.string(),
@@ -577,16 +591,61 @@ export const inheritanceReportSchema = z.object({
   spouseTotal: z.number(),
   estateTotal: z.number(),
   netPropertyForExchange: z.number(),
-  hasCustomSpouseSharePercentage: z.array(z.enum([YES])).optional(),
-  customSpouseSharePercentage: z
-    .string()
-    .refine((v) => {
-      const val = valueToNumber(v)
-      return val >= 0 && val <= 100
+  customShare: z
+    .object({
+      deceasedWasMarried: z.string().min(1),
+      deceasedHadAssets: z.string().optional(),
+      hasCustomSpouseSharePercentage: z.string().optional(),
+      customSpouseSharePercentage: z.string().optional(),
     })
-    .optional(),
+    .refine(
+      ({ deceasedWasMarried, hasCustomSpouseSharePercentage }) => {
+        if (deceasedWasMarried === YES) {
+          return (
+            hasCustomSpouseSharePercentage &&
+            [YES, NO].includes(hasCustomSpouseSharePercentage)
+          )
+        }
 
-  /* einkaskipti */
+        return true
+      },
+      {
+        path: ['hasCustomSpouseSharePercentage'],
+      },
+    )
+    .refine(
+      ({ deceasedWasMarried, deceasedHadAssets }) => {
+        if (deceasedWasMarried === YES) {
+          return deceasedHadAssets && [YES, NO].includes(deceasedHadAssets)
+        }
+
+        return true
+      },
+      {
+        path: ['deceasedHadAssets'],
+      },
+    )
+    .refine(
+      ({
+        hasCustomSpouseSharePercentage,
+        customSpouseSharePercentage,
+        deceasedWasMarried,
+      }) => {
+        if (
+          hasCustomSpouseSharePercentage === YES &&
+          deceasedWasMarried === YES
+        ) {
+          const val = valueToNumber(customSpouseSharePercentage)
+          return val >= 50 && val <= 100
+        }
+
+        return true
+      },
+      {
+        path: ['customSpouseSharePercentage'],
+        params: m.assetsToShareHasCustomSpousePercentageError,
+      },
+    ),
   confirmAction: z.array(z.enum([YES])).length(1),
 })
 

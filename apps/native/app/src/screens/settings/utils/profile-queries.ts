@@ -1,4 +1,4 @@
-import { client } from '../../../graphql/client'
+import { useApolloClient } from '@apollo/client'
 import {
   GetProfileDocument,
   GetProfileQuery,
@@ -7,10 +7,9 @@ import {
 } from '../../../graphql/types/schema'
 
 export const useUpdateUserProfile = () => {
+  const client = useApolloClient()
   const [updateUserProfileMutation, { loading, error }] =
-    useUpdateProfileMutation({
-      client,
-    })
+    useUpdateProfileMutation()
 
   const updateUserProfile = (input: {
     email?: string

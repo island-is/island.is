@@ -2,11 +2,13 @@ import { Auth, AuthMiddleware, User } from '@island.is/auth-nest-tools'
 import { CitizenshipApplication } from './directorateOfImmigrationClient.types'
 import { Injectable } from '@nestjs/common'
 import {
+  ApplicantApi,
   ApplicantResidenceConditionApi,
   ApplicantResidenceConditionViewModel,
   ApplicationApi,
   ApplicationAttachmentApi,
   AttachmentType,
+  CitizenshipValidity,
   CountryOfResidenceApi,
   CountryOfResidenceViewModel,
   LookupType,
@@ -28,6 +30,7 @@ export class DirectorateOfImmigrationClient {
     private optionSetApi: OptionSetApi,
     private residenceAbroadApi: ResidenceAbroadApi,
     private travelDocumentApi: TravelDocumentApi,
+    private applicantApi: ApplicantApi,
   ) {}
 
   private applicantResidenceConditionApiWithAuth(auth: Auth) {
@@ -58,6 +61,10 @@ export class DirectorateOfImmigrationClient {
     return this.travelDocumentApi.withMiddleware(new AuthMiddleware(auth))
   }
 
+  private applicantApiWithAuth(auth: Auth) {
+    return this.applicantApi.withMiddleware(new AuthMiddleware(auth))
+  }
+
   // Common:
 
   getCountries(): Promise<OptionSetItem[]> {
@@ -80,6 +87,12 @@ export class DirectorateOfImmigrationClient {
     return this.countryOfResidenceApiWithAuth(
       auth,
     ).apiCountryOfResidenceGetAllGet()
+  }
+
+  getApplicantValidity(auth: Auth): Promise<CitizenshipValidity> {
+    return this.applicantApiWithAuth(
+      auth,
+    ).apiApplicantGetCitizenshipValidityGet()
   }
 
   getCurrentStayAbroadList(auth: Auth): Promise<ResidenceAbroadViewModel[]> {
@@ -162,7 +175,7 @@ export class DirectorateOfImmigrationClient {
                 ).toISOString()
               : undefined,
           countryOfBirth: application.birthCountry,
-          maritalStatus: application.maritalStatusCode,
+          maritalStatus: application.maritalStatus,
           dateOfMarriage: application.dateOfMaritalStatus
             ? new Date(application.dateOfMaritalStatus).toISOString()
             : undefined,
@@ -257,6 +270,9 @@ export class DirectorateOfImmigrationClient {
       const childInfo = application.children.find(
         (c) => c.nationalId === childNationalId,
       )
+      const childCitizenship = application.selectedChildren.find(
+        (x) => x.nationalId === childNationalId,
+      )?.citizenship
 
       if (!childInfo) {
         continue
@@ -297,6 +313,7 @@ export class DirectorateOfImmigrationClient {
               ? new Date(selectedChild.otherParentBirtDate).toISOString()
               : undefined,
             parent2Name: selectedChild.otherParentName,
+            nationality: childCitizenship,
           },
         },
       })

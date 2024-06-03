@@ -6,6 +6,8 @@ import { NotFoundException } from '@nestjs/common'
 import {
   CaseFileCategory,
   CaseFileState,
+  CaseState,
+  CaseType,
   User,
 } from '@island.is/judicial-system/types'
 
@@ -65,34 +67,39 @@ describe('FileController - Upload case file to court', () => {
   describe('AWS S3 existance check', () => {
     const user = {} as User
     const caseId = uuid()
-    const theCase = { id: caseId } as Case
+    const theCase = {
+      id: caseId,
+      type: CaseType.ELECTRONIC_DATA_DISCOVERY_INVESTIGATION,
+      state: CaseState.DISMISSED,
+    } as Case
     const fileId = uuid()
-    const key = `uploads/${caseId}/${uuid()}/test.txt`
+    const key = `${caseId}/${uuid()}/test.txt`
     const caseFile = { id: fileId, key } as CaseFile
-    let mockObjectExists: jest.Mock
 
     beforeEach(async () => {
-      mockObjectExists = mockAwsS3Service.objectExists as jest.Mock
-
       await givenWhenThen(caseId, fileId, user, theCase, caseFile)
     })
 
     it('should check if the file exists in AWS S3', () => {
-      expect(mockObjectExists).toHaveBeenCalledWith(key)
+      expect(mockAwsS3Service.objectExists).toHaveBeenCalledWith(
+        theCase.type,
+        theCase.state,
+        key,
+      )
     })
   })
 
   describe('AWS S3 get file', () => {
     const user = {} as User
     const caseId = uuid()
-    const theCase = { id: caseId } as Case
+    const type = CaseType.INDICTMENT
+    const state = CaseState.REJECTED
+    const theCase = { id: caseId, type, state } as Case
     const fileId = uuid()
-    const key = `uploads/${caseId}/${uuid()}/test.txt`
+    const key = `${caseId}/${uuid()}/test.txt`
     const caseFile = { id: fileId, key } as CaseFile
-    let mockGetObject: jest.Mock
 
     beforeEach(async () => {
-      mockGetObject = mockAwsS3Service.getObject as jest.Mock
       const mockObjectExists = mockAwsS3Service.objectExists as jest.Mock
       mockObjectExists.mockResolvedValueOnce(true)
 
@@ -100,7 +107,7 @@ describe('FileController - Upload case file to court', () => {
     })
 
     it('should get the file from AWS S3', () => {
-      expect(mockGetObject).toHaveBeenCalledWith(key)
+      expect(mockAwsS3Service.getObject).toHaveBeenCalledWith(type, state, key)
     })
   })
 
@@ -115,7 +122,7 @@ describe('FileController - Upload case file to court', () => {
       courtCaseNumber,
     } as Case
     const fileId = uuid()
-    const key = `indictments/${caseId}/${uuid()}/test.txt`
+    const key = `${caseId}/${uuid()}/test.txt`
     const fileName = 'test.txt'
     const fileType = 'text/plain'
     const caseFile = {
@@ -174,7 +181,7 @@ describe('FileController - Upload case file to court', () => {
         courtCaseNumber,
       } as Case
       const fileId = uuid()
-      const key = `uploads/${caseId}/${uuid()}/test.txt`
+      const key = `${caseId}/${uuid()}/test.txt`
       const fileName = 'test.txt'
       const fileType = 'text/plain'
       const caseFile = {
@@ -218,14 +225,12 @@ describe('FileController - Upload case file to court', () => {
     const caseId = uuid()
     const theCase = { id: caseId } as Case
     const fileId = uuid()
-    const key = `uploads/${caseId}/${uuid()}/test.txt`
+    const key = `${caseId}/${uuid()}/test.txt`
     const caseFile = { id: fileId, key } as CaseFile
     const content = Buffer.from('Test content')
     const documentId = uuid()
-    let mockUpdate: jest.Mock
 
     beforeEach(async () => {
-      mockUpdate = mockFileModel.update as jest.Mock
       const mockObjectExists = mockAwsS3Service.objectExists as jest.Mock
       mockObjectExists.mockResolvedValueOnce(true)
       const mockGetObject = mockAwsS3Service.getObject as jest.Mock
@@ -237,7 +242,7 @@ describe('FileController - Upload case file to court', () => {
     })
 
     it('should update case file state', () => {
-      expect(mockUpdate).toHaveBeenCalledWith(
+      expect(mockFileModel.update).toHaveBeenCalledWith(
         { state: CaseFileState.STORED_IN_COURT },
         { where: { id: fileId } },
       )
@@ -249,7 +254,7 @@ describe('FileController - Upload case file to court', () => {
     const caseId = uuid()
     const theCase = { id: caseId } as Case
     const fileId = uuid()
-    const key = `uploads/${caseId}/${uuid()}/test.txt`
+    const key = `${caseId}/${uuid()}/test.txt`
     const caseFile = { id: fileId, key } as CaseFile
     const content = Buffer.from('Test content')
     let then: Then
@@ -261,8 +266,6 @@ describe('FileController - Upload case file to court', () => {
       mockGetObject.mockResolvedValueOnce(content)
       const mockUpdate = mockFileModel.update as jest.Mock
       mockUpdate.mockResolvedValueOnce([1])
-      const mockDeleteObject = mockAwsS3Service.deleteObject as jest.Mock
-      mockDeleteObject.mockResolvedValueOnce(true)
 
       then = await givenWhenThen(caseId, fileId, user, theCase, caseFile)
     })
@@ -277,7 +280,7 @@ describe('FileController - Upload case file to court', () => {
     const caseId = uuid()
     const theCase = { id: caseId } as Case
     const fileId = uuid()
-    const key = `uploads/${caseId}/${uuid()}/test.txt`
+    const key = `${caseId}/${uuid()}/test.txt`
     const caseFile = { id: fileId, key } as CaseFile
     const content = Buffer.from('Test content')
     let then: Then
@@ -341,13 +344,11 @@ describe('FileController - Upload case file to court', () => {
     const caseId = uuid()
     const theCase = { id: caseId } as Case
     const fileId = uuid()
-    const key = `uploads/${caseId}/${uuid()}/test.txt`
+    const key = `${caseId}/${uuid()}/test.txt`
     const caseFile = { id: fileId, key } as CaseFile
-    let mockUpdate: jest.Mock
     let then: Then
 
     beforeEach(async () => {
-      mockUpdate = mockFileModel.update as jest.Mock
       const mockObjectExists = mockAwsS3Service.objectExists as jest.Mock
       mockObjectExists.mockResolvedValueOnce(false)
 
@@ -355,7 +356,7 @@ describe('FileController - Upload case file to court', () => {
     })
 
     it('should remove the key', () => {
-      expect(mockUpdate).toHaveBeenCalledWith(
+      expect(mockFileModel.update).toHaveBeenCalledWith(
         { key: null },
         { where: { id: fileId } },
       )
@@ -372,7 +373,7 @@ describe('FileController - Upload case file to court', () => {
     const caseId = uuid()
     const theCase = { id: caseId } as Case
     const fileId = uuid()
-    const key = `uploads/${caseId}/${uuid()}/test.txt`
+    const key = `${caseId}/${uuid()}/test.txt`
     const caseFile = { id: fileId, key } as CaseFile
     let then: Then
 
@@ -394,7 +395,7 @@ describe('FileController - Upload case file to court', () => {
     const caseId = uuid()
     const theCase = { id: caseId } as Case
     const fileId = uuid()
-    const key = `uploads/${caseId}/${uuid()}/test.txt`
+    const key = `${caseId}/${uuid()}/test.txt`
     const caseFile = { id: fileId, key } as CaseFile
     let then: Then
 
@@ -418,7 +419,7 @@ describe('FileController - Upload case file to court', () => {
     const caseId = uuid()
     const theCase = { id: caseId } as Case
     const fileId = uuid()
-    const key = `uploads/${caseId}/${uuid()}/test.txt`
+    const key = `${caseId}/${uuid()}/test.txt`
     const caseFile = { id: fileId, key } as CaseFile
     const content = Buffer.from('Test content')
     let then: Then
@@ -445,7 +446,7 @@ describe('FileController - Upload case file to court', () => {
     const caseId = uuid()
     const theCase = { id: caseId } as Case
     const fileId = uuid()
-    const key = `uploads/${caseId}/${uuid()}/test.txt`
+    const key = `${caseId}/${uuid()}/test.txt`
     const caseFile = { id: fileId, key } as CaseFile
     const content = Buffer.from('Test content')
     let then: Then

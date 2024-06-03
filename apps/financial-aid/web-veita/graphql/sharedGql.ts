@@ -7,6 +7,7 @@ export const ApplicationQuery = gql`
       applicationSystemId
       nationalId
       created
+      applied
       modified
       name
       phoneNumber
@@ -40,6 +41,7 @@ export const ApplicationQuery = gql`
       }
       state
       formComment
+      childrenComment
       spouseFormComment
       municipalityCode
       studentCustom
@@ -59,8 +61,18 @@ export const ApplicationQuery = gql`
         staffNationalId
         emailSent
       }
+      children {
+        id
+        applicationId
+        nationalId
+        name
+        school
+        livesWithApplicant
+        livesWithBothParents
+      }
       amount {
         aidAmount
+        childrenAidAmount
         income
         personalTaxCredit
         spousePersonalTaxCredit
@@ -193,9 +205,11 @@ export const ApplicationEventMutation = gql`
   mutation CreateApplicationEvent($input: CreateApplicationEventInput!) {
     createApplicationEvent(input: $input) {
       id
+      applicationSystemId
       nationalId
       created
       modified
+      applied
       name
       phoneNumber
       email
@@ -210,6 +224,14 @@ export const ApplicationEventMutation = gql`
       interview
       employmentCustom
       homeCircumstancesCustom
+      familyStatus
+      spouseNationalId
+      spouseName
+      spouseEmail
+      spousePhoneNumber
+      city
+      streetName
+      postalCode
       files {
         id
         applicationId
@@ -220,11 +242,15 @@ export const ApplicationEventMutation = gql`
       }
       state
       formComment
+      childrenComment
+      spouseFormComment
+      municipalityCode
       studentCustom
       rejection
       staff {
         name
         municipalityIds
+        nationalId
       }
       applicationEvents {
         id
@@ -232,8 +258,31 @@ export const ApplicationEventMutation = gql`
         eventType
         comment
         created
-        staffNationalId
         staffName
+        staffNationalId
+        emailSent
+      }
+      children {
+        id
+        applicationId
+        nationalId
+        name
+        school
+        livesWithApplicant
+        livesWithBothParents
+      }
+      amount {
+        aidAmount
+        childrenAidAmount
+        income
+        personalTaxCredit
+        spousePersonalTaxCredit
+        tax
+        finalAmount
+        deductionFactors {
+          description
+          amount
+        }
       }
       spouseHasFetchedDirectTaxPayment
       hasFetchedDirectTaxPayment
@@ -277,9 +326,11 @@ export const UpdateApplicationMutation = gql`
   mutation UpdateApplicationMutation($input: UpdateApplicationInput!) {
     updateApplication(input: $input) {
       id
+      applicationSystemId
       nationalId
       created
       modified
+      applied
       name
       phoneNumber
       email
@@ -299,7 +350,6 @@ export const UpdateApplicationMutation = gql`
       spouseName
       spouseEmail
       spousePhoneNumber
-      municipalityCode
       city
       streetName
       postalCode
@@ -313,9 +363,16 @@ export const UpdateApplicationMutation = gql`
       }
       state
       formComment
+      childrenComment
       spouseFormComment
+      municipalityCode
       studentCustom
       rejection
+      staff {
+        name
+        municipalityIds
+        nationalId
+      }
       applicationEvents {
         id
         applicationId
@@ -326,10 +383,27 @@ export const UpdateApplicationMutation = gql`
         staffNationalId
         emailSent
       }
-      staff {
-        name
-        municipalityIds
+      children {
+        id
+        applicationId
         nationalId
+        name
+        school
+        livesWithApplicant
+        livesWithBothParents
+      }
+      amount {
+        aidAmount
+        childrenAidAmount
+        income
+        personalTaxCredit
+        spousePersonalTaxCredit
+        tax
+        finalAmount
+        deductionFactors {
+          description
+          amount
+        }
       }
       spouseHasFetchedDirectTaxPayment
       hasFetchedDirectTaxPayment
@@ -341,18 +415,6 @@ export const UpdateApplicationMutation = gql`
         month
         year
         userType
-      }
-      amount {
-        aidAmount
-        income
-        personalTaxCredit
-        spousePersonalTaxCredit
-        tax
-        finalAmount
-        deductionFactors {
-          description
-          amount
-        }
       }
       navSuccess
     }
@@ -455,6 +517,7 @@ export const UpdateMunicipalityMutation = gql`
       navUrl
       navUsername
       navPassword
+      childrenAid
       individualAid {
         ownPlace
         registeredRenting

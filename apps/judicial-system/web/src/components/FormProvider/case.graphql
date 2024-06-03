@@ -22,6 +22,9 @@ query Case($input: CaseQueryInput!) {
       defenderPhoneNumber
       defendantWaivesRightToCounsel
       defendantPlea
+      serviceRequirement
+      verdictViewDate
+      verdictAppealDeadline
     }
     defenderName
     defenderNationalId
@@ -70,7 +73,6 @@ query Case($input: CaseQueryInput!) {
     courtCaseNumber
     sessionArrangements
     courtLocation
-    courtRoom
     courtStartDate
     courtEndTime
     isClosedCourtHidden
@@ -239,16 +241,27 @@ query Case($input: CaseQueryInput!) {
       nationalId
       userRole
     }
-    dateLogs {
-      id
-      caseId
-      dateType
+    arraignmentDate {
       date
+      location
+    }
+    courtDate {
+      date
+      location
     }
     prosecutorsOffice {
       id
       name
       policeCaseNumberPrefix
     }
+    postponedIndefinitelyExplanation
+    indictmentRulingDecision
+    indictmentReviewer {
+      id
+      name
+    }
+    indictmentAppealDeadline
+    indictmentVerdictViewedByAll
+    indictmentVerdictAppealDeadline
   }
 }

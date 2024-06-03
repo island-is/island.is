@@ -10,12 +10,15 @@ import {
   DEFENDER_ROUTE,
 } from '@island.is/judicial-system/consts'
 import {
+  isCompletedCase,
   isCourtOfAppealsUser,
   isDefenceUser,
   isDistrictCourtUser,
   isIndictmentCase,
   isInvestigationCase,
+  isPublicProsecutorUser,
   isRestrictionCase,
+  isTrafficViolationCase,
 } from '@island.is/judicial-system/types'
 import { errors } from '@island.is/judicial-system-web/messages'
 import { UserContext } from '@island.is/judicial-system-web/src/components'
@@ -23,13 +26,11 @@ import { useCaseLazyQuery } from '@island.is/judicial-system-web/src/components/
 import { useLimitedAccessCaseLazyQuery } from '@island.is/judicial-system-web/src/components/FormProvider/limitedAccessCase.generated'
 import {
   CaseAppealState,
-  CaseState,
   User,
 } from '@island.is/judicial-system-web/src/graphql/schema'
 import { TempCase as Case } from '@island.is/judicial-system-web/src/types'
 
 import { findFirstInvalidStep } from '../../formHelper'
-import { isTrafficViolationIndictment } from '../../stepHelper'
 import useCase from '../useCase'
 
 const useCaseList = () => {
@@ -73,7 +74,7 @@ const useCaseList = () => {
 
   const openCase = (caseToOpen: Case, user: User) => {
     let routeTo = null
-    const isTrafficViolation = isTrafficViolationIndictment(caseToOpen)
+    const isTrafficViolation = isTrafficViolationCase(caseToOpen)
 
     if (isDefenceUser(user)) {
       if (isIndictmentCase(caseToOpen.type)) {
@@ -81,22 +82,8 @@ const useCaseList = () => {
       } else {
         routeTo = DEFENDER_ROUTE
       }
-    } else if (
-      caseToOpen.state === CaseState.ACCEPTED ||
-      caseToOpen.state === CaseState.REJECTED ||
-      caseToOpen.state === CaseState.DISMISSED
-    ) {
-      if (isIndictmentCase(caseToOpen.type)) {
-        routeTo = constants.CLOSED_INDICTMENT_OVERVIEW_ROUTE
-      } else if (isCourtOfAppealsUser(user)) {
-        if (caseToOpen.appealState === CaseAppealState.COMPLETED) {
-          routeTo = constants.COURT_OF_APPEAL_RESULT_ROUTE
-        } else {
-          routeTo = constants.COURT_OF_APPEAL_OVERVIEW_ROUTE
-        }
-      } else {
-        routeTo = constants.SIGNED_VERDICT_OVERVIEW_ROUTE
-      }
+    } else if (isPublicProsecutorUser(user)) {
+      routeTo = constants.PUBLIC_PROSECUTOR_STAFF_INDICTMENT_OVERVIEW_ROUTE
     } else if (isDistrictCourtUser(user)) {
       if (isRestrictionCase(caseToOpen.type)) {
         routeTo = findFirstInvalidStep(
@@ -112,6 +99,18 @@ const useCaseList = () => {
         // Route to Indictment Overview section since it always a valid step and
         // would be skipped if we route to the last valid step
         routeTo = constants.INDICTMENTS_COURT_OVERVIEW_ROUTE
+      }
+    } else if (isCompletedCase(caseToOpen.state)) {
+      if (isIndictmentCase(caseToOpen.type)) {
+        routeTo = constants.CLOSED_INDICTMENT_OVERVIEW_ROUTE
+      } else if (isCourtOfAppealsUser(user)) {
+        if (caseToOpen.appealState === CaseAppealState.COMPLETED) {
+          routeTo = constants.COURT_OF_APPEAL_RESULT_ROUTE
+        } else {
+          routeTo = constants.COURT_OF_APPEAL_OVERVIEW_ROUTE
+        }
+      } else {
+        routeTo = constants.SIGNED_VERDICT_OVERVIEW_ROUTE
       }
     } else {
       if (isRestrictionCase(caseToOpen.type)) {
@@ -163,6 +162,7 @@ const useCaseList = () => {
           ? getLimitedAccessCase({ variables: { input: { id } } })
           : getCase({ variables: { input: { id } } })
       }
+
       if (
         isTransitioningCase ||
         isSendingNotification ||

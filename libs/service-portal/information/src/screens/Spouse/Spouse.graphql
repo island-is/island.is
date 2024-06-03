@@ -1,5 +1,5 @@
-query NationalRegistrySpouse($api: String) {
-  nationalRegistryPerson(api: $api) {
+query NationalRegistrySpouse {
+  nationalRegistryPerson {
     nationalId
     maritalStatus
     spouse {

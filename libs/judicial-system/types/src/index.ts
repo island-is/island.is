@@ -1,11 +1,13 @@
 export { Feature } from './lib/feature'
 
 export { Gender } from './lib/defendant'
-
+export type { Defendant } from './lib/defendant'
 export { InstitutionType } from './lib/institution'
 export { NotificationType } from './lib/notification'
+export type { Institution } from './lib/institution'
 export { EventType } from './lib/eventLog'
-export { DateType, getLatestDateType } from './lib/dateLog'
+export { DateType } from './lib/dateLog'
+export { CommentType } from './lib/comment'
 
 export { CaseFileState, CaseFileCategory } from './lib/file'
 
@@ -13,6 +15,8 @@ export {
   UserRole,
   prosecutionRoles,
   isProsecutionUser,
+  publicProsecutorRoles,
+  isPublicProsecutorUser,
   districtCourtRoles,
   isDistrictCourtUser,
   courtOfAppealsRoles,
@@ -23,6 +27,7 @@ export {
   isDefenceUser,
   isAdminUser,
   isCoreUser,
+  isPublicProsecutor,
 } from './lib/user'
 export type { User } from './lib/user'
 
@@ -31,34 +36,48 @@ export {
   CaseType,
   IndictmentSubtype,
   CaseState,
+  IndictmentCaseState,
+  CaseAppealState,
+  RequestCaseState,
   CaseTransition,
+  IndictmentCaseTransition,
+  RequestCaseTransition,
   CaseLegalProvisions,
   CaseCustodyRestrictions,
   CaseAppealDecision,
   CaseDecision,
   CaseAppealRulingDecision,
+  CaseIndictmentRulingDecision,
   RequestSharedWithDefender,
   DefendantPlea,
+  ServiceRequirement,
   SessionArrangements,
+  indictmentCases,
   restrictionCases,
   investigationCases,
-  indictmentCases,
+  IndictmentCaseReviewDecision,
   isIndictmentCase,
   isRestrictionCase,
   isInvestigationCase,
+  isRequestCase,
   isAcceptingCaseDecision,
   isTrafficViolationCase,
+  completedRequestCaseStates,
+  completedIndictmentCaseStates,
   completedCaseStates,
   isCompletedCase,
-  CaseAppealState,
+  hasIndictmentCaseBeenSubmittedToCourt,
   getStatementDeadline,
   prosecutorCanSelectDefenderForInvestigationCase,
+  isIndictmentCaseState,
+  isRequestCaseState,
+  isIndictmentCaseTransition,
+  isRequestCaseTransition,
 } from './lib/case'
 export type {
   CrimeScene,
   CrimeSceneMap,
   IndictmentSubtypeMap,
-  IndictmentConfirmation,
 } from './lib/case'
 
 export {

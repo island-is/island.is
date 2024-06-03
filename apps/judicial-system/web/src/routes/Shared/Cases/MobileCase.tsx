@@ -72,11 +72,13 @@ const MobileCase: React.FC<React.PropsWithChildren<Props>> = ({
       onClick={onClick}
       tags={[
         <TagCaseState
+          key={theCase.id}
           caseState={theCase.state}
           caseType={theCase.type}
           isCourtRole={isCourtRole}
           isValidToDateInThePast={theCase.isValidToDateInThePast}
           courtDate={theCase.courtDate}
+          indictmentRulingDecision={theCase.indictmentRulingDecision}
         />,
       ]}
       isLoading={isLoading}

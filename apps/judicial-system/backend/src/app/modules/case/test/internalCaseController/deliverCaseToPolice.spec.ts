@@ -16,7 +16,7 @@ import {
   getRequestPdfAsString,
 } from '../../../../formatters'
 import { randomDate } from '../../../../test'
-import { CourtDocumentType, PoliceService } from '../../../police'
+import { PoliceDocumentType, PoliceService } from '../../../police'
 import { Case } from '../../models/case.model'
 import { DeliverResponse } from '../../models/deliver.response'
 
@@ -130,15 +130,15 @@ describe('InternalCaseController - Deliver case to police', () => {
         caseConclusion,
         [
           {
-            type: CourtDocumentType.RVKR,
+            type: PoliceDocumentType.RVKR,
             courtDocument: Base64.btoa(requestPdf),
           },
           {
-            type: CourtDocumentType.RVTB,
+            type: PoliceDocumentType.RVTB,
             courtDocument: Base64.btoa(courtRecordPdf),
           },
           {
-            type: CourtDocumentType.RVVI,
+            type: PoliceDocumentType.RVVI,
             courtDocument: Base64.btoa(custodyNoticePdf),
           },
         ],

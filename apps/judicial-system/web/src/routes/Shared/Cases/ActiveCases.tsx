@@ -16,6 +16,7 @@ import {
 import {
   isDistrictCourtUser,
   isProsecutionUser,
+  isRequestCase,
 } from '@island.is/judicial-system/types'
 import { core, tables } from '@island.is/judicial-system-web/messages'
 import {
@@ -48,6 +49,7 @@ import {
 import { compareLocaleIS } from '@island.is/judicial-system-web/src/utils/sortHelper'
 
 import MobileCase from './MobileCase'
+import { strings } from './ActiveCases.strings'
 import { cases as m } from './Cases.strings'
 import * as styles from './Cases.css'
 
@@ -93,7 +95,9 @@ const ActiveCases: React.FC<React.PropsWithChildren<Props>> = (props) => {
             return entry.defendants[0].name ?? ''
           }
           if (sortConfig.column === 'courtDate') {
-            return entry.courtDate ?? ''
+            return entry.postponedIndefinitelyExplanation
+              ? ''
+              : entry.courtDate ?? ''
           }
           return entry.created
         }
@@ -147,13 +151,17 @@ const ActiveCases: React.FC<React.PropsWithChildren<Props>> = (props) => {
                   )}: ${theCase.prosecutor?.name}`}
                 </Text>
               )}
-            {theCase.courtDate && (
-              <Text fontWeight={'medium'} variant="small">
-                {`${formatMessage(tableStrings.hearing)} ${format(
-                  parseISO(theCase.courtDate),
-                  'd.M.y',
-                )} kl. ${format(parseISO(theCase.courtDate), 'kk:mm')}`}
-              </Text>
+            {theCase.postponedIndefinitelyExplanation ? (
+              <Text>{formatMessage(strings.postponed)}</Text>
+            ) : (
+              theCase.courtDate && (
+                <Text fontWeight={'medium'} variant="small">
+                  {`${formatMessage(tableStrings.hearing)} ${format(
+                    parseISO(theCase.courtDate),
+                    'd.M.y',
+                  )} kl. ${format(parseISO(theCase.courtDate), 'kk:mm')}`}
+                </Text>
+              )
             )}
           </MobileCase>
         </Box>
@@ -319,6 +327,7 @@ const ActiveCases: React.FC<React.PropsWithChildren<Props>> = (props) => {
                         isCourtRole={isDistrictCourtUser(user)}
                         isValidToDateInThePast={c.isValidToDateInThePast}
                         courtDate={c.courtDate}
+                        indictmentRulingDecision={c.indictmentRulingDecision}
                       />
                     </Box>
                     {c.appealState && (
@@ -329,21 +338,32 @@ const ActiveCases: React.FC<React.PropsWithChildren<Props>> = (props) => {
                     )}
                   </td>
                   <td className={styles.td}>
-                    {c.courtDate && (
-                      <>
-                        <Text>
-                          <Box component="span" className={styles.blockColumn}>
-                            {capitalize(
-                              format(parseISO(c.courtDate), 'EEEE d. LLLL y', {
-                                locale: localeIS,
-                              }),
-                            ).replace('dagur', 'd.')}
-                          </Box>
-                        </Text>
-                        <Text as="span" variant="small">
-                          kl. {format(parseISO(c.courtDate), 'kk:mm')}
-                        </Text>
-                      </>
+                    {c.postponedIndefinitelyExplanation ? (
+                      <Text>{formatMessage(strings.postponed)}</Text>
+                    ) : (
+                      c.courtDate && (
+                        <>
+                          <Text>
+                            <Box
+                              component="span"
+                              className={styles.blockColumn}
+                            >
+                              {capitalize(
+                                format(
+                                  parseISO(c.courtDate),
+                                  'EEEE d. LLLL y',
+                                  {
+                                    locale: localeIS,
+                                  },
+                                ),
+                              ).replace('dagur', 'd.')}
+                            </Box>
+                          </Text>
+                          <Text as="span" variant="small">
+                            kl. {format(parseISO(c.courtDate), 'kk:mm')}
+                          </Text>
+                        </>
+                      )
                     )}
                   </td>
                   <td className={styles.td}>
@@ -363,7 +383,10 @@ const ActiveCases: React.FC<React.PropsWithChildren<Props>> = (props) => {
                               onClick: () => handleOpenCase(c.id, true),
                               icon: 'open',
                             },
-                            ...(isProsecutionUser(user)
+                            ...(isProsecutionUser(user) &&
+                            (isRequestCase(c.type) ||
+                              c.state === CaseState.DRAFT ||
+                              c.state === CaseState.WAITING_FOR_CONFIRMATION)
                               ? [
                                   {
                                     title: formatMessage(

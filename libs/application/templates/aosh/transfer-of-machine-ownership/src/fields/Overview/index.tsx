@@ -25,7 +25,13 @@ import { useMutation } from '@apollo/client'
 
 export const Overview: FC<
   React.PropsWithChildren<FieldBaseProps & ReviewScreenProps>
-> = ({ setStep, reviewerNationalId = '', buyerOperator = {}, ...props }) => {
+> = ({
+  setStep,
+  reviewerNationalId = '',
+  buyerOperator = {},
+  location = {},
+  ...props
+}) => {
   const { application, refetch } = props
   const { formatMessage } = useLocale()
 
@@ -101,6 +107,7 @@ export const Overview: FC<
 
         <LocationSection
           setStep={setStep}
+          location={location}
           {...props}
           reviewerNationalId={reviewerNationalId}
         />

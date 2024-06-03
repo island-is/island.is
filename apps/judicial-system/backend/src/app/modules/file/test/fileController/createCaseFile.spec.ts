@@ -64,11 +64,11 @@ describe('FileController - Create case file', () => {
     'case file created for %s case',
     (type) => {
       const caseId = uuid()
-      const theCase = { id: caseId, type } as Case
+      const theCase = { id: caseId, type, appealCaseNumber: uuid() } as Case
       const uuId = uuid()
       const createCaseFile: CreateFileDto = {
         type: 'text/plain',
-        key: `uploads/${caseId}/${uuId}/test.txt`,
+        key: `${caseId}/${uuId}/test.txt`,
         size: 99,
         category: CaseFileCategory.PROSECUTOR_APPEAL_STATEMENT_CASE_FILE,
       }
@@ -76,7 +76,7 @@ describe('FileController - Create case file', () => {
       const timeStamp = randomDate()
       const caseFile = {
         type: 'text/plain',
-        key: `uploads/${caseId}/${uuId}/test.txt`,
+        key: `${caseId}/${uuId}/test.txt`,
         size: 99,
         category: CaseFileCategory.PROSECUTOR_APPEAL_STATEMENT_CASE_FILE,
         id: fileId,
@@ -96,7 +96,7 @@ describe('FileController - Create case file', () => {
         expect(mockFileModel.create).toHaveBeenCalledWith({
           type: 'text/plain',
           state: CaseFileState.STORED_IN_RVG,
-          key: `uploads/${caseId}/${uuId}/test.txt`,
+          key: `${caseId}/${uuId}/test.txt`,
           size: 99,
           category: CaseFileCategory.PROSECUTOR_APPEAL_STATEMENT_CASE_FILE,
           caseId,
@@ -122,14 +122,14 @@ describe('FileController - Create case file', () => {
     const uuId = uuid()
     const createCaseFile: CreateFileDto = {
       type: 'text/plain',
-      key: `indictments/${caseId}/${uuId}/test.txt`,
+      key: `${caseId}/${uuId}/test.txt`,
       size: 99,
     }
     const fileId = uuid()
     const timeStamp = randomDate()
     const caseFile = {
       type: 'text/plain',
-      key: `indictments/${caseId}/${uuId}/test.txt`,
+      key: `${caseId}/${uuId}/test.txt`,
       size: 99,
       id: fileId,
       created: timeStamp,
@@ -148,7 +148,7 @@ describe('FileController - Create case file', () => {
       expect(mockFileModel.create).toHaveBeenCalledWith({
         type: 'text/plain',
         state: CaseFileState.STORED_IN_RVG,
-        key: `indictments/${caseId}/${uuId}/test.txt`,
+        key: `${caseId}/${uuId}/test.txt`,
         size: 99,
         caseId,
         name: 'test.txt',
@@ -164,7 +164,7 @@ describe('FileController - Create case file', () => {
     const uuId = `-${uuid()}`
     const createCaseFile: CreateFileDto = {
       type: 'text/plain',
-      key: `uploads/${caseId}/${uuId}/test.txt`,
+      key: `${caseId}/${uuId}/test.txt`,
       size: 99,
     }
     let then: Then
@@ -176,7 +176,7 @@ describe('FileController - Create case file', () => {
     it('should throw bad gateway exception', () => {
       expect(then.error).toBeInstanceOf(BadRequestException)
       expect(then.error.message).toBe(
-        `uploads/${caseId}/${uuId}/test.txt is not a valid key for case ${caseId}`,
+        `${caseId}/${uuId}/test.txt is not a valid key for case ${caseId}`,
       )
     })
   })
@@ -187,7 +187,7 @@ describe('FileController - Create case file', () => {
     const uuId = uuid()
     const createCaseFile: CreateFileDto = {
       type: 'text/plain',
-      key: `uploads/${caseId}/${uuId}/test.txt`,
+      key: `${caseId}/${uuId}/test.txt`,
       size: 99,
     }
     let then: Then

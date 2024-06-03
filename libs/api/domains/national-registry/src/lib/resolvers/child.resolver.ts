@@ -12,7 +12,7 @@ import {
 import { Audit } from '@island.is/nest/audit'
 
 import { NationalRegistryService } from '../nationalRegistry.service'
-import { FamilyChild } from '../v1/types'
+import { FamilyChild } from '../v3/types'
 import { Child } from '../shared/models'
 
 @UseGuards(IdsUserGuard, ScopesGuard)
@@ -32,8 +32,7 @@ export class ChildResolver {
   async getMyChildren(
     @CurrentUser() user: AuthUser,
   ): Promise<FamilyChild[] | null> {
-    const api = await this.service.getApi(user)
-    return this.service.getChildren(user.nationalId, api)
+    return this.service.getChildren(user.nationalId)
   }
 
   @ResolveField('legalResidence', () => String, { nullable: true })

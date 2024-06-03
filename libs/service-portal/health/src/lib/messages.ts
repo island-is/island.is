@@ -99,12 +99,12 @@ export const messages = defineMessages({
     id: 'sp.health:monthly-payment-short',
     defaultMessage: 'Greitt í mán.',
   },
-  paymentParticationExplination: {
+  paymentParticationExplanation: {
     id: 'sp.health:payment-partication-info',
     defaultMessage:
       'Við útreikning á greiðsluþátttöku er tekið mið af greiðslum fyrir heilbrigðisþjónustu s.l. fimm mánuði. Eigir þú á rétt á hámarksafslætti vegna fyrri greiðslna verður hámarksgreiðsla þín í mánuði {basePayment} kr. Fjárhæðin miðar við greiðslumark þitt eins og það birtist í Réttindagátt í dag. Birt með þeim fyrirvara að fjárhæðin tekur mið af þeim reikningum sem hafa borist Sjúkratryggingar.',
   },
-  paymentParticationExplinationFooter: {
+  paymentParticationExplanationFooter: {
     id: 'sp.health:payment-partication-info-footer',
     defaultMessage:
       'Undir greiðsluþátttökukerfið falla greiðslur fyrir þjónustu sem veitt er á heilsugæslustöðvum og sjúkrahúsum. Einnig heilbrigðisþjónusta sem veitt er hjá sjálfstætt starfandi læknum, sjúkraþjálfurum, iðjuþjálfum, talmeinafræðingum og sálfræðingum sem Sjúkratryggingar Íslands hafa samið við. Enn fremur greiðslur fyrir meðferð húðsjúkdóma, sem veitt er af öðrum heilbrigðisstarfsmönnum en læknum, samkvæmt samningum við Sjúkratryggingar Íslands.',
@@ -159,6 +159,10 @@ export const messages = defineMessages({
     id: 'sp.health:internal-service-error-title',
     defaultMessage: 'Ekki tókst að sækja gögn frá Sjúkratryggingum',
   },
+  ehic: {
+    id: 'sp.health:ehic',
+    defaultMessage: 'Evrópska sjúkratryggingakortið',
+  },
   healthInternalServiceErrorInfo: {
     id: 'sp.health:internal-service-error-info',
     defaultMessage:
@@ -195,11 +199,16 @@ export const messages = defineMessages({
   },
   healthInsuranceConfirmationTransferError: {
     id: 'sp.health:health-center-registration-transfer-error-title',
-    defaultMessage: 'Villa hefur komið upp',
+    defaultMessage:
+      'Villa kom upp þegar sótt var staðfesting á sjúkratryggingu',
   },
   noHealthInsurance: {
     id: 'sp.health:no-health-insurance',
     defaultMessage: 'Þú ert ekki með sjúkratryggingu',
+  },
+  noHealthInsuranceMessage: {
+    id: 'sp.health:no-health-insurance-message',
+    defaultMessage: 'Síðasta trygging: {arg}',
   },
   paymentTarget: {
     id: 'sp.health:payment-target',
@@ -919,6 +928,10 @@ export const messages = defineMessages({
     id: 'sp.health:medicine-valid-to',
     defaultMessage: 'Gildir til',
   },
+  validityPeriod: {
+    id: 'sp.health:validity-period',
+    defaultMessage: 'Gildistími',
+  },
   medicineValidFrom: {
     id: 'sp.health:medicine-valid-from',
     defaultMessage: 'Gildir frá',
@@ -926,5 +939,9 @@ export const messages = defineMessages({
   medicineNameOfDoctor: {
     id: 'sp.health:medicine-name-of-doctor',
     defaultMessage: 'Heiti læknis',
+  },
+  medicineCalculatorAddToPurchaseLabel: {
+    id: 'sp.health:medicine-calculator-add-to-purchase-label',
+    defaultMessage: 'Bæta {arg} við lyfjakaupalista',
   },
 })
