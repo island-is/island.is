@@ -48,7 +48,7 @@ const BioChild = () => {
         console.error('Failed to decrypt baseId', e)
       }
     }
-    
+
     decrypt()
   }, [baseId, userInfo])
 
