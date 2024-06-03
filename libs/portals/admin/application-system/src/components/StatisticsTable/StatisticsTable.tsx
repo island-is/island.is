@@ -10,7 +10,7 @@ type Props = {
 export default function StatisticsTable({ data }: Props) {
   const { formatMessage } = useLocale()
 
-  if (!data?.applicationApplicationsAdminStatistics?.length) {
+  if (data && !data?.applicationApplicationsAdminStatistics?.length) {
     return <Box marginTop={[3, 3, 6]}>{formatMessage(m.noData)}</Box>
   }
 
