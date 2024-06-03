@@ -107,6 +107,7 @@ export class AdminPatchClientDto {
 
   @ApiPropertyOptional({
     description: 'Only super users can update this value.',
+    deprecated: true,
   })
   @IsOptional()
   @IsBoolean()

@@ -322,6 +322,7 @@ export class ClientBaseDTO {
   @IsNotEmpty()
   @ApiProperty({
     example: true,
+    deprecated: true,
   })
   readonly supportsPersonalRepresentatives!: boolean
 

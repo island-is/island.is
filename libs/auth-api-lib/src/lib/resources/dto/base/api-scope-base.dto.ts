@@ -8,7 +8,7 @@ import {
   Max,
   IsArray,
 } from 'class-validator'
-import { ApiProperty, ApiPropertyOptional } from '@nestjs/swagger'
+import { ApiProperty } from '@nestjs/swagger'
 
 export class ApiScopeBaseDTO {
   @IsBoolean()
@@ -93,6 +93,7 @@ export class ApiScopeBaseDTO {
   @IsNotEmpty()
   @ApiProperty({
     example: false,
+    deprecated: true,
   })
   readonly grantToPersonalRepresentatives!: boolean
 
