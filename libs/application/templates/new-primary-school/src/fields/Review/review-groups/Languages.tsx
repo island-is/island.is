@@ -26,7 +26,7 @@ export const Languages = ({
     >
       <Stack space={2}>
         <GridRow>
-          <GridColumn span={['12/12', '12/12', '12/12', '12/12']}>
+          <GridColumn span={['9/12', '9/12', '9/12', '12/12']}>
             <RadioValue
               label={formatMessage(
                 newPrimarySchoolMessages.differentNeeds.languageQuestion,
