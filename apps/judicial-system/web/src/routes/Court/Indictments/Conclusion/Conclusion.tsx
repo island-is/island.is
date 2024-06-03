@@ -34,6 +34,7 @@ import {
 } from '@island.is/judicial-system-web/src/graphql/schema'
 import { stepValidationsType } from '@island.is/judicial-system-web/src/utils/formHelper'
 import {
+  formatDateForServer,
   useCase,
   useS3Upload,
   useUploadFiles,
@@ -50,6 +51,7 @@ type Decision =
 interface Postponement {
   postponedIndefinitely?: boolean
   isSettingVerdictDate?: boolean
+  verdictDate?: string
   reason?: string
 }
 
@@ -139,7 +141,12 @@ const Conclusion: React.FC = () => {
         [
           {
             indictmentDecision: IndictmentDecision.POSTPONING_UNTIL_VERDICT,
-            courtDate: null,
+            courtDate: {
+              date:
+                postponement?.isSettingVerdictDate && selectedCourtDate
+                  ? formatDateForServer(selectedCourtDate)
+                  : null,
+            },
             force: true,
           },
         ],
@@ -153,7 +160,13 @@ const Conclusion: React.FC = () => {
 
       router.push(`${destination}/${workingCase.id}`)
     },
-    [setAndSendCaseToServer, setWorkingCase, workingCase],
+    [
+      postponement?.isSettingVerdictDate,
+      selectedCourtDate,
+      setAndSendCaseToServer,
+      setWorkingCase,
+      workingCase,
+    ],
   )
 
   const handlePostponementIndefinitely = useCallback(
