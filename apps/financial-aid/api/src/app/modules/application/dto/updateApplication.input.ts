@@ -26,7 +26,7 @@ export class UpdateApplicationInput implements UpdateApplication {
 
   @Allow()
   @Field({ nullable: true })
-  readonly applied?: string
+  readonly appliedDate?: string
 
   @Allow()
   @Field({ nullable: true })

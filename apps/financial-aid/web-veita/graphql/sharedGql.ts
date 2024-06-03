@@ -151,7 +151,7 @@ export const UpdateApplicationTableMutation = gql`
         email
         modified
         created
-        applied
+        appliedDate
         state
         staff {
           name
@@ -180,7 +180,7 @@ export const ApplicationsQuery = gql`
       email
       modified
       created
-      applied
+      appliedDate
       state
       staff {
         name
