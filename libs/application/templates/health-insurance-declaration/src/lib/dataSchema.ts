@@ -7,6 +7,8 @@ export const HealthInsuranceDeclarationSchema = z.object({
   approveExternalData: z.boolean().refine((v) => v),
   applicant: applicantInformationSchema(),
   isHealthInsured: z.boolean(),
+  hasSpouse: z.boolean(),
+  hasChildren: z.boolean(),
   studentOrTouristRadioFieldTourist: z.enum([
     ApplicantType.STUDENT,
     ApplicantType.TOURIST,
@@ -19,8 +21,32 @@ export const HealthInsuranceDeclarationSchema = z.object({
     .string()
     .or(z.undefined())
     .refine((v) => !!v),
-  registerPersonsSpouseCheckboxField: z.string().array(),
-  registerPersonsChildrenCheckboxField: z.string().array(),
+  selectedApplicants: z
+    .object({
+      registerPersonsSpouseCheckboxField: z.string().array().optional(),
+      registerPersonsChildrenCheckboxField: z.string().array().optional(),
+      isHealthInsured: z.boolean(),
+    })
+    .superRefine((v, ctx) => {
+      if (
+        !v.isHealthInsured &&
+        !v.registerPersonsSpouseCheckboxField?.length &&
+        !v.registerPersonsChildrenCheckboxField?.length
+      ) {
+        ctx.addIssue({
+          code: z.ZodIssueCode.custom,
+          path: ['registerPersonsChildrenCheckboxField'],
+          params: errors.fields.noSelectedApplicant,
+        })
+        ctx.addIssue({
+          code: z.ZodIssueCode.custom,
+          path: ['registerPersonsSpouseCheckboxField'],
+          params: errors.fields.noSelectedApplicant,
+        })
+        return false
+      }
+      return true
+    }),
   educationConfirmationFileUploadField: z
     .object({
       name: z.string(),
