@@ -1180,6 +1180,14 @@ const ParentalLeaveTemplate: ApplicationTemplate<
               cond: (application) =>
                 goToState(
                   application,
+                  States.EMPLOYER_WAITING_TO_ASSIGN_FOR_EDITS,
+                ),
+              target: States.VINNUMALASTOFNUN_APPROVE_EDITS,
+            },
+            {
+              cond: (application) =>
+                goToState(
+                  application,
                   States.APPROVED,
                 ),
               target: States.APPROVED,
