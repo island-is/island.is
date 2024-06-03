@@ -25,9 +25,7 @@ export const DocumentsEmpty = ({ hasDelegationAccess }: Props) => {
           ? formatMessage(m.emptyDocumentsList)
           : formatMessage(m.accessNeeded)}
       </Text>
-      {hasDelegationAccess ? (
-        ''
-      ) : (
+      {!hasDelegationAccess && (
         <Text textAlign="center" whiteSpace="preLine">
           {formatMessage(m.accessDeniedText)}
         </Text>
