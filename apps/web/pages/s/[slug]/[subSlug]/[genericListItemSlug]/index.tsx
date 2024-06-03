@@ -71,7 +71,7 @@ export const Component: ScreenType<ComponentProps> = ({
           },
         ],
         backLink: {
-          text: activeLocale === 'is' ? 'Til baka' : 'Go back', // TODO: perhaps read this value from contentful
+          text: activeLocale === 'is' ? 'Til baka' : 'Go back',
           url: backLinkUrl,
         },
         customContentfulIds: [
