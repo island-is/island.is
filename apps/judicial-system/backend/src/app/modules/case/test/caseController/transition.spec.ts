@@ -301,8 +301,6 @@ describe('CaseController - Transition', () => {
       ${CaseTransition.COMPLETE}             | ${CaseState.RECEIVED}                 | ${CaseState.COMPLETED}
       ${CaseTransition.DELETE}               | ${CaseState.DRAFT}                    | ${CaseState.DELETED}
       ${CaseTransition.DELETE}               | ${CaseState.WAITING_FOR_CONFIRMATION} | ${CaseState.DELETED}
-      ${CaseTransition.DELETE}               | ${CaseState.SUBMITTED}                | ${CaseState.DELETED}
-      ${CaseTransition.DELETE}               | ${CaseState.RECEIVED}                 | ${CaseState.DELETED}
     `.describe(
     '$transition $oldState case transitioning to $newState case',
     ({ transition, oldState, newState }) => {

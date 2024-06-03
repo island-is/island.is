@@ -111,12 +111,14 @@ const HousingBenefitCalculator = ({ slice }: HousingBenefitCalculatorProps) => {
       { label: '1', value: 1 },
       { label: '2', value: 2 },
       { label: '3', value: 3 },
-      { label: '4', value: 4 },
     ]
 
     if (slice?.configJson?.showSixOptions) {
+      options.push({ label: '4', value: 4 })
       options.push({ label: '5', value: 5 })
       options.push({ label: n('sixOrMore', '6 eða fleiri'), value: 6 })
+    } else {
+      options.push({ label: n('fourOrMore', '4 eða fleiri'), value: 4 })
     }
 
     return options
