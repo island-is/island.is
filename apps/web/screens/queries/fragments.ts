@@ -833,6 +833,7 @@ export const slices = gql`
     xAxisFormat
     xAxisValueType
     customStyleConfig
+    reduceAndRoundValue
   }
 
   fragment ChartNumberBoxFields on ChartNumberBox {

@@ -67,4 +67,18 @@ export class ChildrenModel extends Model<ApplicationChildren> {
   })
   @ApiProperty()
   school?: string
+
+  @Column({
+    type: DataType.BOOLEAN,
+    allowNull: false,
+  })
+  @ApiProperty()
+  livesWithApplicant: boolean
+
+  @Column({
+    type: DataType.BOOLEAN,
+    allowNull: false,
+  })
+  @ApiProperty()
+  livesWithBothParents: boolean
 }

@@ -4,10 +4,11 @@ import {
   IsNumber,
   IsOptional,
   IsNotEmpty,
+  IsArray,
 } from 'class-validator'
 import { ApiProperty } from '@nestjs/swagger'
 
-export abstract class ClientBaseDTO {
+export class ClientBaseDTO {
   @IsString()
   @IsNotEmpty()
   @ApiProperty({
@@ -286,6 +287,12 @@ export abstract class ClientBaseDTO {
     example: null,
   })
   contactEmail!: string
+
+  @IsArray()
+  @ApiProperty({
+    type: [String],
+  })
+  supportedDelegationTypes!: string[]
 
   @IsBoolean()
   @IsNotEmpty()

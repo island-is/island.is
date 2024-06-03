@@ -37,6 +37,7 @@ import {
   UniversityCareersClientModule,
   UniversityOfAkureyriCareerClientConfig,
   UniversityOfIcelandCareerClientConfig,
+  IcelandUniversityOfTheArtsCareerClientConfig,
 } from '@island.is/clients/university-careers'
 import {
   RegulationsClientConfig,
@@ -96,6 +97,7 @@ import {
         UniversityOfAkureyriCareerClientConfig,
         HolarUniversityCareerClientConfig,
         BifrostUniversityCareerClientConfig,
+        IcelandUniversityOfTheArtsCareerClientConfig,
         RegulationsAdminClientConfig,
         RegulationsClientConfig,
         WorkMachinesClientConfig,

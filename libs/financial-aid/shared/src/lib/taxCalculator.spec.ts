@@ -367,6 +367,42 @@ describe('Tax calculator', () => {
       ])
     })
 
+    test('should return amount from 250.000', () => {
+      const amountBreakdown = acceptedAmountBreakDown({
+        aidAmount: 200000,
+        childrenAidAmount: 50000,
+        personalTaxCredit: 0,
+        tax: 78625,
+        finalAmount: 171375,
+      })
+      expect(amountBreakdown).toEqual([
+        {
+          title: 'Grunnupphæð',
+          calculation: `+ 200.000 kr.`,
+        },
+        {
+          title: 'Styrkur vegna barna',
+          calculation: `+ 50.000 kr.`,
+        },
+        {
+          title: 'Tekjur',
+          calculation: `0 kr.`,
+        },
+        {
+          title: 'Skattur',
+          calculation: `- 78.625 kr.`,
+        },
+        {
+          title: 'Persónuafsláttur',
+          calculation: ` 0 kr.`,
+        },
+        {
+          title: 'Aðstoð',
+          calculation: `171.375 kr.`,
+        },
+      ])
+    })
+
     test('should return amount from 250.000 with income and deductionFactors', () => {
       const amountBreakdown = acceptedAmountBreakDown({
         aidAmount: 250000,

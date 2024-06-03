@@ -20,6 +20,7 @@ import {
 } from '../types'
 import { isValid24HFormatTime } from '../utils'
 import { error } from './messages/error'
+import { time } from 'console'
 
 export enum OnBehalf {
   MYSELF = 'myself',
@@ -166,6 +167,14 @@ export const AccidentNotificationSchema = z.object({
     accidentSymptoms: z.string().refine((x) => x.trim().length > 0, {
       params: error.invalidValue,
     }),
+    dateOfDoctorVisit: z.string().refine((x) => x.trim().length > 0, {
+      params: error.invalidValue,
+    }),
+    timeOfDoctorVisit: z
+      .string()
+      .refine((x) => (x ? isValid24HFormatTime(x) : false), {
+        params: error.invalidValue,
+      }),
   }),
   isRepresentativeOfCompanyOrInstitue: z.array(z.string()).optional(),
   fishingShipInfo: z.object({
@@ -252,6 +261,7 @@ export const AccidentNotificationSchema = z.object({
       WorkAccidentTypeEnum.GENERAL,
       WorkAccidentTypeEnum.PROFESSIONALATHLETE,
     ]),
+    jobTitle: z.string().optional(),
   }),
   studiesAccident: z.object({
     type: z.enum([
@@ -274,6 +284,7 @@ export const AccidentNotificationSchema = z.object({
         params: error.invalidValue,
       }),
     phoneNumber: z.string().optional(),
+    jobTitle: z.string().optional(),
   }),
   juridicalPerson: z.object({
     companyName: z.string().refine((x) => x.trim().length > 0, {
