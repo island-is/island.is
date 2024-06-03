@@ -35,6 +35,7 @@ import { PaperMailPreferences } from './models/v2/paperMailPreferences.model'
 import { MailActionInput } from './models/v2/bulkMailAction.input'
 import { DocumentMailAction } from './models/v2/mailAction.model.'
 import { LOGGER_PROVIDER, type Logger } from '@island.is/logging'
+import { DocumentV2MarkAllMailAsRead } from './models/v2/markAllMailAsRead.model'
 
 const LOG_CATEGORY = 'documents-resolver'
 
@@ -128,6 +129,14 @@ export class DocumentResolverV2 {
       user.nationalId,
       input.wantsPaper,
     )
+  }
+
+  @Scopes(DocumentsScope.main)
+  @Mutation(() => DocumentV2MarkAllMailAsRead, { nullable: true })
+  markAllMailAsRead(
+    @CurrentUser() user: User,
+  ): Promise<DocumentV2MarkAllMailAsRead> {
+    return this.documentServiceV2.markAllMailAsRead(user.nationalId)
   }
 
   @Scopes(DocumentsScope.main)

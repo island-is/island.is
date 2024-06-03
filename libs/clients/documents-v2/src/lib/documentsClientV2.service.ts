@@ -112,6 +112,14 @@ export class DocumentsClientV2Service {
       },
     })
   }
+  async markAllMailAsRead(nationalId: string) {
+    await this.api.customersReadAllDocuments({
+      kennitala: nationalId,
+    })
+    return {
+      success: true,
+    }
+  }
   async archiveMail(nationalId: string, documentId: string) {
     await this.api.customersArchive({
       kennitala: nationalId,
