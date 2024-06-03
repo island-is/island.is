@@ -19,7 +19,6 @@ import {
 
 import { Action, ActionTypes } from './types'
 import { InputImageUpload } from '../../components/InputImageUpload/InputImageUpload'
-// import { DEFAULT_TOTAL_FILE_SIZE_SUM } from '../../constants'
 import { uploadFileToS3 } from './utils'
 
 type UploadFileAnswer = {
@@ -172,9 +171,7 @@ export const FileUploadController: FC<
       .map((f) => f.size)
       .reduce((a, b) => a + b, 0)
 
-    // Show an error if the sum in the file sizes exceeds totalMaxSize.
-    console.log(maxSize, totalMaxSize)
-
+    // Show an error if the sum of the file sizes exceeds totalMaxSize.
     if (totalMaxSize && totalNewFileSize + sumOfFileSizes > totalMaxSize) {
       setUploadError(
         formatMessage(coreErrorMessages.fileMaxSumSizeLimitExceeded, {
