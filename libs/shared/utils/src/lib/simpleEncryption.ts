@@ -66,7 +66,7 @@ export const maskString = async (
     const ivStr = bufferToBase64(iv)
     const encryptedStr = bufferToBase64(encrypted)
 
-    return ivStr + DELIMITER + encryptedStr
+    return encodeURIComponent(ivStr + DELIMITER + encryptedStr)
   } catch (e) {
     console.error(e)
     return null
@@ -83,6 +83,7 @@ export const unmaskString = async (
   key: string,
 ): Promise<string | null> => {
   try {
+    encryptedText = decodeURIComponent(encryptedText)
     const [ivPart, encryptedPart] = encryptedText.split(DELIMITER)
     const iv = base64ToBuffer(ivPart)
 

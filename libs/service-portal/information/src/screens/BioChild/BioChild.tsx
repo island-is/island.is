@@ -23,6 +23,7 @@ import { spmm } from '../../lib/messages'
 import { unmaskString } from '@island.is/shared/utils'
 import { Problem } from '@island.is/react-spa/shared'
 import { useNationalRegistryBioChildQuery } from './BioChild.generated'
+import { useEffect, useState } from 'react'
 
 type UseParams = {
   baseId: string
@@ -33,11 +34,29 @@ const BioChild = () => {
   const { formatMessage } = useLocale()
   const userInfo = useUserInfo()
   const { baseId } = useParams() as UseParams
+  const [unmaskedBaseId, setUnmaskedBaseId] = useState<string | null>(null)
+
+  useEffect(() => {
+    const decrypt = async () => {
+      try {
+        const decrypted = await unmaskString(
+          baseId,
+          userInfo.profile.nationalId,
+        )
+        setUnmaskedBaseId(decrypted ?? null)
+      } catch (e) {
+        console.error('Failed to decrypt baseId', e)
+      }
+    }
+    
+    decrypt()
+  }, [baseId, userInfo])
 
   const { data, loading, error } = useNationalRegistryBioChildQuery({
     variables: {
-      childNationalId: unmaskString(baseId, userInfo.profile.nationalId),
+      childNationalId: unmaskedBaseId,
     },
+    skip: !unmaskedBaseId,
   })
 
   const child = data?.nationalRegistryPerson?.biologicalChildren?.[0].details
