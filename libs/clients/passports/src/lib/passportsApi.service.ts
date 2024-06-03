@@ -116,6 +116,7 @@ export class PassportsService {
     type?: string | null,
   ): Promise<IdentityDocument[] | undefined> {
     try {
+      console.log('type here', type)
       const passportResponse = await this.getPassportsWithAuth(
         auth,
       ).identityDocumentGetIdentityDocument({
@@ -226,6 +227,7 @@ export class PassportsService {
     user: User,
     type?: string | null,
   ): Promise<Passport> {
+    console.log('typpppppe', type)
     const userPassports = await this.getIdentityDocument(user, type)
     const childPassports = await this.getIdentityDocumentChildren(user)
 

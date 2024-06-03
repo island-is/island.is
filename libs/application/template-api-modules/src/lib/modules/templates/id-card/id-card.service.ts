@@ -36,9 +36,11 @@ export class IdCardService extends BaseTemplateApiService {
   }
 
   async identityDocument({ auth, application }: TemplateApiModuleActionProps) {
+    console.log('in here')
+    const type = 'I'
     const identityDocument = await this.passportApi.getCurrentPassport(
       auth,
-      'ID',
+      type,
     )
     if (!identityDocument) {
       this.logger.warn(
