@@ -287,9 +287,11 @@ export const expandAnswers = (
     netPropertyForExchange: answers.netPropertyForExchange ?? 0,
     customShare: {
       hasCustomSpouseSharePercentage:
-        answers?.customShare?.hasCustomSpouseSharePercentage ?? [],
+        answers?.customShare?.hasCustomSpouseSharePercentage ?? 'No',
       customSpouseSharePercentage:
         answers?.customShare?.customSpouseSharePercentage ?? '50',
+      deceasedWasMarried: answers?.customShare?.deceasedWasMarried ?? '',
+      deceasedHadAssets: answers?.customShare?.deceasedHadAssets ?? '',
     },
   }
 }

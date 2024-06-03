@@ -14,9 +14,9 @@ import {
   isCourtOfAppealsUser,
   isDefenceUser,
   isDistrictCourtUser,
-  isIndictmentCase,
   isInvestigationCase,
   isPublicProsecutorUser,
+  isRequestCase,
   isRestrictionCase,
   isTrafficViolationCase,
 } from '@island.is/judicial-system/types'
@@ -77,57 +77,78 @@ const useCaseList = () => {
     const isTrafficViolation = isTrafficViolationCase(caseToOpen)
 
     if (isDefenceUser(user)) {
-      if (isIndictmentCase(caseToOpen.type)) {
-        routeTo = DEFENDER_INDICTMENT_ROUTE
-      } else {
+      if (isRequestCase(caseToOpen.type)) {
         routeTo = DEFENDER_ROUTE
+      } else {
+        routeTo = DEFENDER_INDICTMENT_ROUTE
       }
     } else if (isPublicProsecutorUser(user)) {
+      // Public prosecutor users can only see completed indictments
       routeTo = constants.PUBLIC_PROSECUTOR_STAFF_INDICTMENT_OVERVIEW_ROUTE
+    } else if (isCourtOfAppealsUser(user)) {
+      // Court of appeals users can only see appealed request cases
+      if (caseToOpen.appealState === CaseAppealState.COMPLETED) {
+        routeTo = constants.COURT_OF_APPEAL_RESULT_ROUTE
+      } else {
+        routeTo = constants.COURT_OF_APPEAL_OVERVIEW_ROUTE
+      }
     } else if (isDistrictCourtUser(user)) {
       if (isRestrictionCase(caseToOpen.type)) {
-        routeTo = findFirstInvalidStep(
-          constants.courtRestrictionCasesRoutes,
-          caseToOpen,
-        )
-      } else if (isInvestigationCase(caseToOpen.type)) {
-        routeTo = findFirstInvalidStep(
-          constants.courtInvestigationCasesRoutes,
-          caseToOpen,
-        )
-      } else {
-        // Route to Indictment Overview section since it always a valid step and
-        // would be skipped if we route to the last valid step
-        routeTo = constants.INDICTMENTS_COURT_OVERVIEW_ROUTE
-      }
-    } else if (isCompletedCase(caseToOpen.state)) {
-      if (isIndictmentCase(caseToOpen.type)) {
-        routeTo = constants.CLOSED_INDICTMENT_OVERVIEW_ROUTE
-      } else if (isCourtOfAppealsUser(user)) {
-        if (caseToOpen.appealState === CaseAppealState.COMPLETED) {
-          routeTo = constants.COURT_OF_APPEAL_RESULT_ROUTE
+        if (isCompletedCase(caseToOpen.state)) {
+          routeTo = constants.SIGNED_VERDICT_OVERVIEW_ROUTE
         } else {
-          routeTo = constants.COURT_OF_APPEAL_OVERVIEW_ROUTE
+          routeTo = findFirstInvalidStep(
+            constants.courtRestrictionCasesRoutes,
+            caseToOpen,
+          )
+        }
+      } else if (isInvestigationCase(caseToOpen.type)) {
+        if (isCompletedCase(caseToOpen.state)) {
+          routeTo = constants.SIGNED_VERDICT_OVERVIEW_ROUTE
+        } else {
+          routeTo = findFirstInvalidStep(
+            constants.courtInvestigationCasesRoutes,
+            caseToOpen,
+          )
         }
       } else {
-        routeTo = constants.SIGNED_VERDICT_OVERVIEW_ROUTE
+        if (isCompletedCase(caseToOpen.state)) {
+          routeTo = constants.INDICTMENTS_COMPLETED_ROUTE
+        } else {
+          // Route to Indictment Overview section since it always a valid step and
+          // would be skipped if we route to the last valid step
+          routeTo = constants.INDICTMENTS_COURT_OVERVIEW_ROUTE
+        }
       }
     } else {
+      // The user is a prosecution user
       if (isRestrictionCase(caseToOpen.type)) {
-        routeTo = findFirstInvalidStep(
-          constants.prosecutorRestrictionCasesRoutes,
-          caseToOpen,
-        )
+        if (isCompletedCase(caseToOpen.state)) {
+          routeTo = constants.SIGNED_VERDICT_OVERVIEW_ROUTE
+        } else {
+          routeTo = findFirstInvalidStep(
+            constants.prosecutorRestrictionCasesRoutes,
+            caseToOpen,
+          )
+        }
       } else if (isInvestigationCase(caseToOpen.type)) {
-        routeTo = findFirstInvalidStep(
-          constants.prosecutorInvestigationCasesRoutes,
-          caseToOpen,
-        )
+        if (isCompletedCase(caseToOpen.state)) {
+          routeTo = constants.SIGNED_VERDICT_OVERVIEW_ROUTE
+        } else {
+          routeTo = findFirstInvalidStep(
+            constants.prosecutorInvestigationCasesRoutes,
+            caseToOpen,
+          )
+        }
       } else {
-        routeTo = findFirstInvalidStep(
-          constants.prosecutorIndictmentRoutes(isTrafficViolation),
-          caseToOpen,
-        )
+        if (isCompletedCase(caseToOpen.state)) {
+          routeTo = constants.CLOSED_INDICTMENT_OVERVIEW_ROUTE
+        } else {
+          routeTo = findFirstInvalidStep(
+            constants.prosecutorIndictmentRoutes(isTrafficViolation),
+            caseToOpen,
+          )
+        }
       }
     }
 
