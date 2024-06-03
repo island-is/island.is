@@ -27,7 +27,7 @@ import { Defendant } from './models/defendant.model'
 import { DeliverResponse } from './models/deliver.response'
 import { DefendantService } from './defendant.service'
 
-@Controller(`api/internal/case/:caseId`)
+@Controller('api/internal/case/:caseId')
 @ApiTags('internal defendants')
 @UseGuards(TokenGuard, CaseExistsGuard)
 export class InternalDefendantController {
