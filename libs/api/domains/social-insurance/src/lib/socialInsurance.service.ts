@@ -30,10 +30,9 @@ export class SocialInsuranceService {
   ) {}
 
   async getPayments(user: User): Promise<Payments | undefined> {
-    const [payments, years] = await Promise.all([
-      this.socialInsuranceApi.getPayments(user),
-      this.socialInsuranceApi.getValidYearsForPaymentPlan(user),
-    ])
+    const payments = await this.socialInsuranceApi
+      .getPayments(user)
+      .catch(handle404)
 
     if (!payments) {
       return undefined
@@ -47,16 +46,12 @@ export class SocialInsuranceService {
     return {
       nextPayment: payments.nextPayment ?? undefined,
       previousPayment: payments.previousPayment ?? undefined,
-      paymentYears: years,
     }
   }
 
-  async getPaymentPlan(
-    user: User,
-    year: number,
-  ): Promise<PaymentPlan | undefined> {
+  async getPaymentPlan(user: User): Promise<PaymentPlan | undefined> {
     const paymentPlan = await this.socialInsuranceApi
-      .getPaymentPlan(user, year)
+      .getPaymentPlan(user)
       .catch(handle404)
 
     if (!paymentPlan) {
@@ -124,9 +119,6 @@ export class SocialInsuranceService {
       totalPaymentsSubtraction: paymentPlan.subtracted ?? undefined,
       paymentGroups,
     }
-  }
-  async getValidPaymentPlanYear(user: User): Promise<Array<number>> {
-    return this.socialInsuranceApi.getValidYearsForPaymentPlan(user)
   }
 
   async getPensionCalculation(
