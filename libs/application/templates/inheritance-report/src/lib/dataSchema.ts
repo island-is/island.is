@@ -593,7 +593,7 @@ export const inheritanceReportSchema = z.object({
   netPropertyForExchange: z.number(),
   customShare: z
     .object({
-      deceasedWasMarried: z.string().min(1),
+      deceasedWasMarried: z.enum([YES, NO]),
       deceasedHadAssets: z.string().optional(),
       hasCustomSpouseSharePercentage: z.string().optional(),
       customSpouseSharePercentage: z.string().optional(),
