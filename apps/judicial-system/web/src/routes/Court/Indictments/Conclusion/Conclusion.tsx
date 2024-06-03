@@ -62,7 +62,6 @@ const Conclusion: React.FC = () => {
   const [selectedAction, setSelectedAction] = useState<IndictmentDecision>()
   const [selectedDecision, setSelectedDecision] = useState<Decision>()
   const [postponement, setPostponement] = useState<Postponement>()
-  const [selectedCourtDate, setSelectedCourtDate] = useState<Date>()
 
   const {
     courtDate,
@@ -142,8 +141,11 @@ const Conclusion: React.FC = () => {
           indictmentDecision: IndictmentDecision.POSTPONING_UNTIL_VERDICT,
         }),
         ...((postponement?.isSettingVerdictDate || workingCase.courtDate) && {
-          courtDate: selectedCourtDate
-            ? { date: formatDateForServer(selectedCourtDate) }
+          courtDate: courtDate?.date
+            ? {
+                date: formatDateForServer(new Date(courtDate.date)),
+                location: courtDate?.location,
+              }
             : null,
         }),
       }
@@ -170,7 +172,6 @@ const Conclusion: React.FC = () => {
     },
     [
       postponement?.isSettingVerdictDate,
-      selectedCourtDate,
       setAndSendCaseToServer,
       setWorkingCase,
       workingCase,
@@ -295,7 +296,7 @@ const Conclusion: React.FC = () => {
   const stepIsValid = () => {
     if (selectedAction === IndictmentDecision.POSTPONING_UNTIL_VERDICT) {
       return postponement?.isSettingVerdictDate
-        ? Boolean(selectedCourtDate)
+        ? Boolean(courtDate?.date)
         : true
     } else if (!allFilesDoneOrError) {
       return false
@@ -514,14 +515,13 @@ const Conclusion: React.FC = () => {
                   filled
                 />
               </Box>
-              <DateTime
-                name="verdictDate"
-                onChange={(date) => {
-                  setSelectedCourtDate(date)
-                }}
+              <CourtArrangements
+                handleCourtDateChange={handleCourtDateChange}
+                handleCourtRoomChange={handleCourtRoomChange}
                 blueBox={false}
-                disabled={!postponement?.isSettingVerdictDate}
-                required={postponement?.isSettingVerdictDate}
+                dateTimeDisabled={!postponement?.isSettingVerdictDate}
+                courtRoomDisabled={!postponement?.isSettingVerdictDate}
+                courtDate={courtDate}
               />
             </BlueBox>
           </Box>
