@@ -81,5 +81,6 @@ query PrisonCases {
       active
     }
     postponedIndefinitelyExplanation
+    indictmentRulingDecision
   }
 }
