@@ -19,7 +19,7 @@ import {
 
 import { Action, ActionTypes } from './types'
 import { InputImageUpload } from '../../components/InputImageUpload/InputImageUpload'
-import { uploadFileToS3 } from './utils'
+import { DEFAULT_TOTAL_MAX_SIZE, uploadFileToS3 } from './utils'
 
 type UploadFileAnswer = {
   name: string
@@ -89,7 +89,7 @@ export const FileUploadController: FC<
   accept,
   maxSize,
   maxSizeErrorText,
-  totalMaxSize = 100000000,
+  totalMaxSize = DEFAULT_TOTAL_MAX_SIZE,
   forImageUpload,
 }) => {
   const { formatMessage } = useLocale()
