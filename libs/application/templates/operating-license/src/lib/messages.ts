@@ -487,7 +487,8 @@ export const m = defineMessages({
   },
   guarantorDescription: {
     id: 'ol.application:guarantorDescription',
-    defaultMessage: 'Vinsamlegast veldu kennitölu ábyrgðaraðila',
+    defaultMessage:
+      'Vinsamlegast veldu kennitölu ábyrgðaraðila. Ábyrgðaraðilar geta verið þeir einstaklingar sem hefur verið veitt umboð fyrir þessa umsókn sem og umsóknarstofnandi.',
     description: 'Description of Guarantor',
   },
   loadingGuarantorOptions: {

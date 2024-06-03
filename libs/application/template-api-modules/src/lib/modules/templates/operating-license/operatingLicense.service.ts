@@ -228,14 +228,10 @@ export class OperatingLicenseService extends BaseTemplateApiService {
         type: PersonType.CounterParty,
       }))
 
-      const persons: Person[] = [applicant, ...actors]
-
       //const attachments = await this.getAttachments(application, auth)
       const attachments: Attachment[] = []
 
       const extraData = getExtraData(application)
-
-      console.log(JSON.stringify(extraData))
 
       return {
         success: true,

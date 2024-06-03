@@ -186,6 +186,7 @@ export const dataSchema = z.object({
   temporaryLicense: z.array(z.enum([YES, NO])).optional(),
   debtClaim: z.array(z.enum([YES, NO])).optional(),
   otherInfoText: z.string().optional(),
+  guarantor: z.string().min(1),
   attachments: z.object({
     healthLicense: z.object({
       file: z.array(FileSchema).optional(),
