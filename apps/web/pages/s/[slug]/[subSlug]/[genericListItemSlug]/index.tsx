@@ -4,7 +4,7 @@ import { useRouter } from 'next/router'
 import withApollo from '@island.is/web/graphql/withApollo'
 import { useLinkResolver } from '@island.is/web/hooks'
 import { useI18n, withLocale } from '@island.is/web/i18n'
-import { LayoutProps } from '@island.is/web/layouts/main'
+import type { LayoutProps } from '@island.is/web/layouts/main'
 import GenericListItemPage, {
   type GenericListItemPageProps,
 } from '@island.is/web/screens/GenericList/GenericListItem'

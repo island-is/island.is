@@ -1,11 +1,11 @@
 import { useMemo } from 'react'
 import { useRouter } from 'next/router'
 
-import { ProjectPage } from '@island.is/web/graphql/schema'
+import type { ProjectPage } from '@island.is/web/graphql/schema'
 import withApollo from '@island.is/web/graphql/withApollo'
 import { useLinkResolver } from '@island.is/web/hooks'
 import { useI18n, withLocale } from '@island.is/web/i18n'
-import { LayoutProps } from '@island.is/web/layouts/main'
+import type { LayoutProps } from '@island.is/web/layouts/main'
 import type { GenericListItemPageProps } from '@island.is/web/screens/GenericList/GenericListItem'
 import GenericListItemPage from '@island.is/web/screens/GenericList/GenericListItem'
 import SubPageLayout, {
