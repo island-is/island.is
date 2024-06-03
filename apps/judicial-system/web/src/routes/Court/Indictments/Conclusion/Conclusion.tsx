@@ -139,26 +139,21 @@ const Conclusion: React.FC = () => {
         [
           {
             indictmentDecision: IndictmentDecision.POSTPONING_UNTIL_VERDICT,
+            courtDate: null,
             force: true,
           },
         ],
         workingCase,
         setWorkingCase,
       )
-      const updateCourtDateSuccess = await sendCourtDateToServer()
 
-      if (!success || !updateCourtDateSuccess) {
+      if (!success) {
         return
       }
 
       router.push(`${destination}/${workingCase.id}`)
     },
-    [
-      sendCourtDateToServer,
-      setAndSendCaseToServer,
-      setWorkingCase,
-      workingCase,
-    ],
+    [setAndSendCaseToServer, setWorkingCase, workingCase],
   )
 
   const handlePostponementIndefinitely = useCallback(
