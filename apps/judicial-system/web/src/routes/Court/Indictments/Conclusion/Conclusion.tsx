@@ -136,29 +136,32 @@ const Conclusion: React.FC = () => {
 
   const handlePostponementUntilVerdict = useCallback(
     async (destination: string) => {
-      const success = await setAndSendCaseToServer(
-        [
-          {
-            ...(workingCase.indictmentDecision !==
-              IndictmentDecision.POSTPONING_UNTIL_VERDICT && {
-              indictmentDecision: IndictmentDecision.POSTPONING_UNTIL_VERDICT,
-            }),
-            ...((postponement?.isSettingVerdictDate ||
-              workingCase.courtDate) && {
-              courtDate: {
-                date: selectedCourtDate
-                  ? formatDateForServer(selectedCourtDate)
-                  : null,
-              },
-            }),
-            force: true,
-          },
-        ],
-        workingCase,
-        setWorkingCase,
-      )
+      const updates = {
+        ...(workingCase.indictmentDecision !==
+          IndictmentDecision.POSTPONING_UNTIL_VERDICT && {
+          indictmentDecision: IndictmentDecision.POSTPONING_UNTIL_VERDICT,
+        }),
+        ...((postponement?.isSettingVerdictDate || workingCase.courtDate) && {
+          courtDate: selectedCourtDate
+            ? { date: formatDateForServer(selectedCourtDate) }
+            : null,
+        }),
+      }
 
-      console.log('success', success)
+      const success =
+        Object.keys(updates).length > 0
+          ? await setAndSendCaseToServer(
+              [
+                {
+                  ...updates,
+                  force: true,
+                },
+              ],
+              workingCase,
+              setWorkingCase,
+            )
+          : true
+
       if (!success) {
         return
       }
