@@ -15,6 +15,7 @@ import {
   RelationOptions,
   SiblingRelationOptions,
   languageCodes,
+  Gender,
 } from './constants'
 import { newPrimarySchoolMessages } from './messages'
 
@@ -245,9 +246,7 @@ export const hasChildrenThatCanApply = (application: Application) => {
   return children.some((child) => canApply(child))
 }
 
-export const getOtherParent = (
-  application: Application,
-): Person | undefined => {
+export const getSelectedChild = (application: Application) => {
   const { childNationalId } = getApplicationAnswers(application.answers)
   const { children } = getApplicationExternalData(application.externalData)
 
@@ -255,6 +254,13 @@ export const getOtherParent = (
   const selectedChild = children.find((child) => {
     return child.nationalId === childNationalId
   })
+  return selectedChild
+}
+
+export const getOtherParent = (
+  application: Application,
+): Person | undefined => {
+  const selectedChild = getSelectedChild(application)
 
   return selectedChild?.otherParent as Person | undefined
 }
@@ -447,3 +453,9 @@ export const getFoodIntolerancesOptionsLabel = (
     ''
   )
 }
+
+export const getGenderOptions = () => [
+  { label: newPrimarySchoolMessages.shared.male, value: Gender.MALE },
+  { label: newPrimarySchoolMessages.shared.female, value: Gender.FEMALE },
+  { label: newPrimarySchoolMessages.shared.otherGender, value: Gender.OTHER },
+]

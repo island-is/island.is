@@ -105,6 +105,21 @@ export const newPrimarySchoolMessages: MessageDir = {
       defaultMessage: 'Veldu skóla',
       description: 'Select school',
     },
+    male: {
+      id: 'dess.nps.application:gender.male',
+      defaultMessage: 'Karl',
+      description: 'Notað fyrir orðið Karl í öllum flæðum.',
+    },
+    female: {
+      id: 'dess.nps.application:gender.female',
+      defaultMessage: 'Kona',
+      description: 'Notað fyrir orðið Kona í öllum flæðum.',
+    },
+    otherGender: {
+      id: 'dess.nps.application:gender.other',
+      defaultMessage: 'Kynsegin/Annað',
+      description: 'Notað fyrir orðið Kynsegin/Annað í öllum flæðum.',
+    },
   }),
 
   pre: defineMessages({
@@ -224,6 +239,27 @@ export const newPrimarySchoolMessages: MessageDir = {
       id: 'dess.nps.application:childrenNParents.child.info.sub.section.title',
       defaultMessage: 'Upplýsingar um barn',
       description: 'Information about child',
+    },
+    childInfoTitle: {
+      id: 'dess.nps.application:childrenNParents.child.info.title',
+      defaultMessage: 'Upplýsingar um barn',
+      description: 'Information about child',
+    },
+    childInfoDescription: {
+      id: 'dess.nps.application:childrenNParents.child.info.description',
+      defaultMessage:
+        'Athugaðu hvort upplýsingarnar séu réttar áður en þú heldur áfram.',
+      description: 'Check that the information is correct before proceeding.',
+    },
+    childInfoChosenName: {
+      id: 'dess.nps.application:childrenNParents.child.info.chosen.name',
+      defaultMessage: 'Valið nafn',
+      description: 'Preferred name',
+    },
+    childInfoGender: {
+      id: 'dess.nps.application:childrenNParents.child.info.gender',
+      defaultMessage: 'Kyn',
+      description: 'Gender',
     },
 
     // Parents/guardians

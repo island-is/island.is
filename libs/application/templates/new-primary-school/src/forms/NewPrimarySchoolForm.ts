@@ -45,10 +45,12 @@ import {
   getFoodAllergiesOptions,
   getFoodIntolerancesOptions,
   getLanguageCodes,
+  getGenderOptions,
   getOtherParent,
   getReasonForApplicationOptions,
   getRelationOptionLabel,
   getRelationOptions,
+  getSelectedChild,
   getSiblingRelationOptionLabel,
   getSiblingRelationOptions,
   hasOtherParent,
@@ -111,7 +113,75 @@ export const NewPrimarySchoolForm: Form = buildForm({
           id: 'childInfoSubSection',
           title:
             newPrimarySchoolMessages.childrenNParents.childInfoSubSectionTitle,
-          children: [],
+          children: [
+            buildMultiField({
+              id: 'childInfo',
+              title: newPrimarySchoolMessages.childrenNParents.childInfoTitle,
+              description:
+                newPrimarySchoolMessages.childrenNParents.childInfoDescription,
+              children: [
+                buildTextField({
+                  id: 'childInfo.name',
+                  title: newPrimarySchoolMessages.shared.fullName,
+                  disabled: true,
+                  defaultValue: (application: Application) =>
+                    getSelectedChild(application)?.fullName,
+                }),
+                buildTextField({
+                  id: 'childInfo.nationalId',
+                  title: newPrimarySchoolMessages.shared.nationalId,
+                  width: 'half',
+                  format: '######-####',
+                  disabled: true,
+                  defaultValue: (application: Application) =>
+                    getSelectedChild(application)?.nationalId,
+                }),
+                buildTextField({
+                  id: 'childInfo.streetAddress',
+                  title: newPrimarySchoolMessages.shared.address,
+                  width: 'half',
+                  disabled: true,
+                  // TODO: Nota gögn frá Júní?
+                  defaultValue: (application: Application) =>
+                    getSelectedChild(application)?.domicileInIceland,
+                }),
+                buildTextField({
+                  id: 'childInfo.postalcode',
+                  title: newPrimarySchoolMessages.shared.postalcode,
+                  width: 'half',
+                  disabled: true,
+                  // TODO: Nota gögn frá Júní?
+                  defaultValue: (application: Application) =>
+                    getSelectedChild(application)?.domicileInIceland,
+                }),
+                buildTextField({
+                  id: 'childInfo.city',
+                  title: newPrimarySchoolMessages.shared.municipality,
+                  width: 'half',
+                  disabled: true,
+                  // TODO: Nota gögn frá Júní?
+                  defaultValue: (application: Application) =>
+                    getSelectedChild(application)?.domicileInIceland,
+                }),
+                buildTextField({
+                  id: 'childInfo.chosenName',
+                  title:
+                    newPrimarySchoolMessages.childrenNParents
+                      .childInfoChosenName,
+                  width: 'half',
+                  defaultValue: (application: Application) =>
+                    getSelectedChild(application)?.fullName,
+                }),
+                buildSelectField({
+                  id: 'childInfo.gender',
+                  title:
+                    newPrimarySchoolMessages.childrenNParents.childInfoGender,
+                  width: 'half',
+                  options: getGenderOptions(),
+                }),
+              ],
+            }),
+          ],
         }),
         buildSubSection({
           id: 'parentsSubSection',

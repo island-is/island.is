@@ -8,6 +8,7 @@ import {
   ReasonForApplicationOptions,
   RelationOptions,
   SiblingRelationOptions,
+  Gender,
 } from './constants'
 import { errorMessages } from './messages'
 
@@ -51,6 +52,9 @@ export const dataSchema = z.object({
         ),
       })
       .optional(),
+  }),
+  childInfo: z.object({
+    gender: z.enum([Gender.MALE, Gender.FEMALE, Gender.OTHER]),
   }),
   relatives: z
     .array(
