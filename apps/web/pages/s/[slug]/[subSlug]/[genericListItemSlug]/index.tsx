@@ -35,25 +35,37 @@ export const Component: ScreenType<ComponentProps> = ({
     return pathname.slice(0, pathname.lastIndexOf('/'))
   }, [router.asPath])
 
+  const { organizationPage, subpage } = parentProps.componentProps
+
   return (
     <SubPageLayout
       layoutProps={parentProps.layoutProps}
       componentProps={{
         ...parentProps.componentProps,
-        customContent: <GenericListItemPage item={genericListItemProps.item} />,
+        customContent: (
+          <GenericListItemPage
+            item={genericListItemProps.item}
+            ogTitle={
+              genericListItemProps.item.title &&
+              `${genericListItemProps.item.title}${
+                subpage?.title ? ' | ' + subpage.title : ''
+              }`
+            }
+          />
+        ),
         customBreadcrumbItems: [
           {
             title: 'Ísland.is',
             href: linkResolver('homepage').href,
           },
           {
-            title: parentProps.componentProps.organizationPage?.title ?? '',
+            title: organizationPage?.title ?? '',
             href: linkResolver('organizationpage', [
-              parentProps.componentProps.organizationPage?.slug ?? '',
+              organizationPage?.slug ?? '',
             ]).href,
           },
           {
-            title: parentProps.componentProps.subpage?.title ?? '',
+            title: subpage?.title ?? '',
             href: backLinkUrl,
             isTag: true,
           },
@@ -63,8 +75,8 @@ export const Component: ScreenType<ComponentProps> = ({
           url: backLinkUrl,
         },
         customContentfulIds: [
-          parentProps.componentProps.organizationPage?.id,
-          parentProps.componentProps.subpage?.id,
+          organizationPage?.id,
+          subpage?.id,
           genericListItemProps.item.id,
         ],
       }}

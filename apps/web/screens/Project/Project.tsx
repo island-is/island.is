@@ -57,6 +57,7 @@ export interface PageProps {
   backLink?: { url: string; text: string }
   customContentfulIds?: (string | undefined)[]
   customBreadcrumbItems?: BreadCrumbItem[]
+  ogTitle?: string
 }
 const ProjectPage: Screen<PageProps> = ({
   projectPage,
@@ -68,6 +69,7 @@ const ProjectPage: Screen<PageProps> = ({
   backLink,
   customContentfulIds,
   customBreadcrumbItems,
+  ogTitle,
 }) => {
   const n = useNamespace(namespace)
   const p = useNamespace(projectNamespace)
@@ -155,7 +157,7 @@ const ProjectPage: Screen<PageProps> = ({
   return (
     <>
       <HeadWithSocialSharing
-        title={`${projectPage?.title} | Ísland.is`}
+        title={ogTitle || `${projectPage?.title} | Ísland.is`}
         description={projectPage?.featuredDescription || projectPage?.intro}
         imageUrl={projectPage?.featuredImage?.url}
         imageContentType={projectPage?.featuredImage?.contentType}

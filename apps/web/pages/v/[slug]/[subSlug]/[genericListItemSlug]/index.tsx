@@ -65,6 +65,11 @@ export const Component: ScreenType<ComponentProps> = ({
             isTag: true,
           },
         ],
+        ogTitle:
+          genericListItemProps.item.title &&
+          `${genericListItemProps.item.title}${
+            subpage?.title ? ' | ' + subpage.title : ''
+          }`,
         projectPage: {
           ...projectPage,
           backLink: {

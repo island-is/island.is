@@ -15,21 +15,20 @@ import { GET_GENERIC_LIST_ITEM_BY_SLUG_QUERY } from '../queries/GenericList'
 export interface GenericListItemPageProps {
   item: GenericListItem
   showReadspeaker?: boolean
+  ogTitle?: string
 }
 
 const GenericListItemPage: Screen<GenericListItemPageProps> = ({
   item,
   showReadspeaker = true,
+  ogTitle,
 }) => {
   const { format } = useDateUtils()
 
   return (
     <GridContainer className="rs_read">
       <Box paddingBottom={2}>
-        <HeadWithSocialSharing
-          title={item.title}
-          // TODO: implement and perhaps use subpage looking title
-        />
+        {ogTitle && <HeadWithSocialSharing title={ogTitle} />}
         <Stack space={0}>
           {item.date && (
             <Text variant="eyebrow">
