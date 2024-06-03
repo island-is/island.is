@@ -109,7 +109,6 @@ const GenericListItemSlugField = () => {
               'fields.slug': value,
               'sys.id[ne]': sdk.entry.getSys().id,
               'sys.archivedVersion[exists]': false,
-              'fields.genericList.sys.id': genericListId,
             },
           })
         )?.items ?? []
