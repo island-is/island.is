@@ -12,6 +12,7 @@ import {
   FormFooter,
   IndictmentCaseFilesList,
   IndictmentsLawsBrokenAccordionItem,
+  InfoCard,
   InfoCardActiveIndictment,
   InfoCardCaseScheduledIndictment,
   InfoCardClosedIndictment,
@@ -21,7 +22,10 @@ import {
   PageTitle,
   useIndictmentsLawsBroken,
 } from '@island.is/judicial-system-web/src/components'
-import { CaseState } from '@island.is/judicial-system-web/src/graphql/schema'
+import {
+  CaseState,
+  IndictmentDecision,
+} from '@island.is/judicial-system-web/src/graphql/schema'
 import { useDefendants } from '@island.is/judicial-system-web/src/utils/hooks'
 
 import ReturnIndictmentModal from '../ReturnIndictmentCaseModal/ReturnIndictmentCaseModal'
@@ -71,6 +75,20 @@ const IndictmentOverview = () => {
             : formatMessage(strings.inProgressTitle)}
         </PageTitle>
         <CourtCaseInfo workingCase={workingCase} />
+        {workingCase.indictmentDecision ===
+          IndictmentDecision.POSTPONING_UNTIL_VERDICT && (
+          <Box component="section" marginBottom={5}>
+            <InfoCard
+              data={[
+                {
+                  title: formatMessage(strings.scheduledInfoCardTitle),
+                  value: formatMessage(strings.scheduledInfoCardValue),
+                },
+              ]}
+              icon="calendar"
+            />
+          </Box>
+        )}
         {caseHasBeenReceivedByCourt && workingCase.court && latestDate?.date && (
           <Box component="section" marginBottom={5}>
             <InfoCardCaseScheduledIndictment

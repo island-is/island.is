@@ -35,4 +35,14 @@ export const strings = defineMessages({
     description:
       'Notaður sem texti á takka í staðfestingarglugga um að mál hafi verið sent til Ríkissaksóknara.',
   },
+  scheduledInfoCardTitle: {
+    id: 'judicial.system.core:indictment_overview.scheduled_info_card_title',
+    defaultMessage: 'Á dagskrá',
+    description: 'Notaður sem titill á Á dagskrá upplýsingakorti.',
+  },
+  scheduledInfoCardValue: {
+    id: 'judicial.system.core:indictment_overview.scheduled_info_card_value',
+    defaultMessage: 'Málið er dómtekið',
+    description: 'Notaður sem gildi á Á dagskrá upplýsingakorti.',
+  },
 })

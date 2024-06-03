@@ -45,14 +45,4 @@ export const strings = defineMessages({
       'Gögn hafa verið send á ákæranda og verjanda hafi þeim verið hlaðið upp.',
     description: 'Notaður sem texti í staðfestingarglugga um að mál sé lokið.',
   },
-  scheduledInfoCardTitle: {
-    id: 'judicial.system.core:indictments.summary.scheduled_info_card_title',
-    defaultMessage: 'Á dagskrá',
-    description: 'Notaður sem titill á Á dagskrá upplýsingakorti.',
-  },
-  scheduledInfoCardValue: {
-    id: 'judicial.system.core:indictments.summary.scheduled_info_card_value',
-    defaultMessage: 'Málið er dómtekið',
-    description: 'Notaður sem gildi á Á dagskrá upplýsingakorti.',
-  },
 })
