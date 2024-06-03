@@ -4,6 +4,7 @@ import {
   ExternalData,
   FormValue,
   NO,
+  NationalRegistryMunicipality,
   YES,
   YesOrNo,
 } from '@island.is/application/types'
@@ -108,6 +109,11 @@ export const getApplicationExternalData = (
     'childrenCustodyInformation.data.otherParent.fullName',
   ) as string
 
+  const municipalities = getValueViaPath(
+    externalData,
+    'municipalities.data',
+  ) as NationalRegistryMunicipality[]
+
   return {
     children,
     applicantName,
@@ -116,6 +122,7 @@ export const getApplicationExternalData = (
     applicantPostalCode,
     applicantCity,
     otherParentName,
+    municipalities,
   }
 }
 

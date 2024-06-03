@@ -14,6 +14,7 @@ import {
   ApplicationTypes,
   ChildrenCustodyInformationApi,
   DefaultEvents,
+  NationalRegistryMunicipalityCodesApi,
   NationalRegistryUserApi,
   UserProfileApi,
 } from '@island.is/application/types'
@@ -73,6 +74,7 @@ const NewPrimarySchoolTemplate: ApplicationTemplate<
                 ChildrenCustodyInformationApi,
                 NationalRegistryUserApi,
                 UserProfileApi,
+                NationalRegistryMunicipalityCodesApi,
               ],
             },
           ],

@@ -12,7 +12,7 @@ import {
   DefaultEvents,
   Form,
   FormModes,
-  IdentityApi,
+  NationalRegistryMunicipalityCodesApi,
   NationalRegistryUserApi,
   UserProfileApi,
 } from '@island.is/application/types'
@@ -60,6 +60,10 @@ export const Prerequisites: Form = buildForm({
               provider: ChildrenCustodyInformationApi,
               title: '',
               subTitle: '',
+            }),
+            buildDataProviderItem({
+              provider: NationalRegistryMunicipalityCodesApi,
+              title: '',
             }),
             buildDataProviderItem({
               provider: UserProfileApi,

@@ -505,6 +505,11 @@ export const newPrimarySchoolMessages: MessageDir = {
       defaultMessage: 'Yfirlit',
       description: 'Overview',
     },
+    overviewTitle: {
+      id: 'dess.nps.application:confirmation.overview.title',
+      defaultMessage: 'Yfirlit',
+      description: 'Overview',
+    },
     overviewDescription: {
       id: 'dess.nps.application:confirmation.description',
       defaultMessage:

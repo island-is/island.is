@@ -10,6 +10,7 @@ import {
   buildPhoneField,
   buildRadioField,
   buildSection,
+  buildSelectField,
   buildSubSection,
   buildSubmitField,
   buildTableRepeaterField,
@@ -21,6 +22,7 @@ import {
   Form,
   FormModes,
   NO,
+  NationalRegistryMunicipality,
   YES,
 } from '@island.is/application/types'
 import {
@@ -436,23 +438,22 @@ export const NewPrimarySchoolForm: Form = buildForm({
                     },
                   ],
                 }),
-                buildAsyncSelectField({
+                buildSelectField({
                   id: 'school.muncipality',
                   title: newPrimarySchoolMessages.shared.municipality,
                   condition: (answers) => !isMovingAbroad(answers),
 
-                  loadOptions: async ({ apolloClient }) => {
-                    //Todo: get data from Juni
-                    return [
-                      {
-                        value: 'Reykjavík',
-                        label: 'Reykjavík',
-                      },
-                      {
-                        value: 'Garðarbær',
-                        label: 'Garðarbær',
-                      },
-                    ]
+                  options: (application) => {
+                    const { municipalities } = getApplicationExternalData(
+                      application.externalData,
+                    )
+
+                    return municipalities.map(
+                      (municipality: NationalRegistryMunicipality) => ({
+                        value: municipality?.code || '',
+                        label: municipality.name || '',
+                      }),
+                    )
                   },
 
                   placeholder:
