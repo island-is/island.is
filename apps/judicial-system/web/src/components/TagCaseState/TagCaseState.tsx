@@ -128,8 +128,8 @@ const TagCaseState: FC<Props> = (props) => {
         isValidToDateInThePast,
         courtDate,
         isCourtRole,
-        indictmentDecision,
         indictmentRulingDecision,
+        indictmentDecision,
       )
 
   if (!tagVariant) return null
