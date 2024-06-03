@@ -143,10 +143,6 @@ export class DefendantService {
     )
   }
 
-  async findByCaseId(caseId: string): Promise<Defendant[]> {
-    return this.defendantModel.findAll({ where: { caseId } })
-  }
-
   async update(
     theCase: Case,
     defendant: Defendant,
@@ -221,14 +217,6 @@ export class DefendantService {
         returning: true,
       },
     )
-
-    if (numberOfAffectedRows > 1) {
-      this.logger.error(
-        `Unexpected number of rows (${numberOfAffectedRows}) affected when updating defendant ${defendants[0].id} of case ${caseId}`,
-      )
-    } else if (numberOfAffectedRows < 1) {
-      throw new NotFoundException(`Could not find defendant to update`)
-    }
 
     const updatedDefendant = this.getUpdatedDefendant(
       numberOfAffectedRows,

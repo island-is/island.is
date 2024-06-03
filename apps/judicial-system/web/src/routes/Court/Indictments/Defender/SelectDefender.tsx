@@ -3,7 +3,6 @@ import { useIntl } from 'react-intl'
 
 import { Box, Checkbox, Text } from '@island.is/island-ui/core'
 import { capitalize } from '@island.is/judicial-system/formatters'
-import { DefenderChoice } from '@island.is/judicial-system/types'
 import { core } from '@island.is/judicial-system-web/messages'
 import {
   BlueBox,
@@ -11,7 +10,10 @@ import {
   DefenderNotFound,
   FormContext,
 } from '@island.is/judicial-system-web/src/components'
-import { Defendant } from '@island.is/judicial-system-web/src/graphql/schema'
+import {
+  Defendant,
+  DefenderChoice,
+} from '@island.is/judicial-system-web/src/graphql/schema'
 import { useDefendants } from '@island.is/judicial-system-web/src/utils/hooks'
 
 import { defender as m } from './Defender.strings'
