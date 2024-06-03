@@ -1,6 +1,7 @@
 import { useMutation } from '@apollo/client'
 import { Box, Button, toast } from '@island.is/island-ui/core'
 import { useLocale } from '@island.is/localization'
+import { hasPassedTimeout } from '../../utils/dateUtils'
 import {
   CREATE_PK_PASS,
   useUserProfile,
@@ -35,7 +36,7 @@ export const PkPass = ({ licenseType }: PkPassProps) => {
   }
 
   useEffect(() => {
-    if (pkpassUrl) {
+    if (pkpassUrl && !hasPassedTimeout(linkTimestamp, 10)) {
       try {
         setTimeout(() => window.location.assign(pkpassUrl), 100)
       } catch {
