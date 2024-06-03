@@ -56,7 +56,7 @@ const AcceptModal = ({
   const router = useRouter()
   const maximumInputLength = 6
 
-  const showChildren =
+  const hasChildrenAid =
     applicationMunicipality.childrenAid === ChildrenAid.APPLICANT &&
     hasApplicantChildren
 
@@ -85,7 +85,7 @@ const AcceptModal = ({
 
   const [state, setState] = useState<calculationsState>({
     amount: aidAmount,
-    childrenAidAmount: showChildren ? undefined : 0,
+    childrenAidAmount: undefined,
     income: undefined,
     personalTaxCreditPercentage: undefined,
     secondPersonalTaxCredit: 0,
@@ -122,7 +122,7 @@ const AcceptModal = ({
   const areRequiredFieldsFilled =
     state.income === undefined ||
     state.personalTaxCreditPercentage === undefined ||
-    state.childrenAidAmount === undefined ||
+    (hasChildrenAid && state.childrenAidAmount === undefined) ||
     !finalAmount ||
     finalAmount === 0
 
@@ -172,7 +172,7 @@ const AcceptModal = ({
         />
       </Box>
 
-      {showChildren && (
+      {hasChildrenAid && (
         <Box marginBottom={3}>
           <NumberInput
             label="Styrkur vegna barna"
