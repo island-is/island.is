@@ -2,7 +2,6 @@
 import { resolve } from 'path'
 import { cacheSuccess, caches, initCache } from './__config.mjs'
 import { ROOT } from './_common.mjs'
-import { name } from 'faker';
 import { ENV_JOB_STATUS, ENV_YAML_FILE } from './_const.mjs';
 import { createSaveOutputs, createRuns, generateCacheActionSave, exportToYaml } from './_generate-cache-steps-utils.mjs';
 
