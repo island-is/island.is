@@ -35,7 +35,7 @@ export default function StatisticsTable({ data }: Props) {
             <T.Body>
               {data.applicationApplicationsAdminStatistics?.map((row, i) => {
                 return (
-                  <T.Row key={i}>
+                  <T.Row key={`${row.typeid}-${i}`}>
                     <T.Data>{row.typeid}</T.Data>
                     <T.Data>{row.count}</T.Data>
                     <T.Data>{row.draft}</T.Data>
