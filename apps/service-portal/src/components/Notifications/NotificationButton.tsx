@@ -16,9 +16,14 @@ import {
 interface Props {
   setMenuState: (val: MenuTypes) => void
   showMenu?: boolean
+  disabled?: boolean
 }
 
-const NotificationButton = ({ setMenuState, showMenu = false }: Props) => {
+const NotificationButton = ({
+  setMenuState,
+  showMenu = false,
+  disabled,
+}: Props) => {
   const { formatMessage } = useLocale()
   const [hasMarkedLocally, setHasMarkedLocally] = useState(false)
   const [markAllAsSeen] = useMarkAllNotificationsAsSeenMutation()
@@ -45,10 +50,15 @@ const NotificationButton = ({ setMenuState, showMenu = false }: Props) => {
   }, [showMenu, showBadge])
 
   return (
-    <Box position="relative" marginRight={[1, 1, 2]}>
+    <Box
+      className={disabled ? styles.noScope : undefined}
+      position="relative"
+      marginRight={[1, 1, 2]}
+    >
       <Button
         variant="utility"
         colorScheme="white"
+        disabled={disabled}
         icon={showMenu && isMobile ? 'close' : 'notifications'}
         iconType="outline"
         onClick={() => {

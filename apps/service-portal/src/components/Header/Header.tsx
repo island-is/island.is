@@ -26,6 +26,7 @@ import { useWindowSize } from 'react-use'
 import NotificationButton from '../Notifications/NotificationButton'
 import Sidemenu from '../Sidemenu/Sidemenu'
 import * as styles from './Header.css'
+import { DocumentsScope } from '@island.is/auth/scopes'
 export type MenuTypes = 'side' | 'user' | 'notifications' | undefined
 
 interface Props {
@@ -56,6 +57,10 @@ export const Header = ({ position }: Props) => {
     isFlagEnabled()
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [])
+
+  const hasNotificationsDelegationAccess = user?.scopes?.includes(
+    DocumentsScope.main,
+  )
 
   return (
     <div className={styles.placeholder}>
@@ -96,7 +101,6 @@ export const Header = ({ position }: Props) => {
                       flexWrap="nowrap"
                       marginLeft={[1, 1, 2]}
                     >
-                      {user && <UserLanguageSwitcher user={user} />}
                       <Hidden below="md">
                         <Box marginRight={[1, 1, 2]} position="relative">
                           <LinkResolver
@@ -122,8 +126,11 @@ export const Header = ({ position }: Props) => {
                         <NotificationButton
                           setMenuState={(val: MenuTypes) => setMenuOpen(val)}
                           showMenu={menuOpen === 'notifications'}
+                          disabled={!hasNotificationsDelegationAccess}
                         />
                       )}
+
+                      {user && <UserLanguageSwitcher user={user} />}
 
                       <Box className={styles.overview} marginRight={[1, 1, 2]}>
                         <Button
