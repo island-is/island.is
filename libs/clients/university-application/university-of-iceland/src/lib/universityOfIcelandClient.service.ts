@@ -74,31 +74,18 @@ export class UniversityOfIcelandApplicationClient {
       mappedApplication,
     )
 
-    if (application.attachments) {
-      const validAttachments = application.attachments.filter((x) => !!x)
-      for (let j = 0; j < validAttachments.length; j++) {
-        let attachmentKey: AttachmentKey | undefined
-        switch (validAttachments[j]?.fileType) {
-          case 'profskirteini':
-            attachmentKey = AttachmentKey.profskirteini
-            break
-          case 'profskirteini2':
-            attachmentKey = AttachmentKey.profskirteini2
-            break
-          case 'profskirteini3':
-            attachmentKey = AttachmentKey.profskirteini3
-            break
-          default:
-            attachmentKey = undefined
-        }
-        const requestParams = {
-          guid: application.id,
-          attachment: validAttachments[j]?.blob,
-          attachmentKey: attachmentKey,
-        }
-        await this.applicationApi.applicationsAttachmentsGuidPost(requestParams)
+    application.attachments?.filter(Boolean).forEach(async (attachment) => {
+      const attachmentKey = attachment?.fileType
+        ? AttachmentKey[attachment.fileType as keyof typeof AttachmentKey] ||
+          undefined
+        : undefined
+      const requestParams = {
+        guid: application.id,
+        attachment: attachment?.blob,
+        attachmentKey,
       }
-    }
+      await this.applicationApi.applicationsAttachmentsGuidPost(requestParams)
+    })
 
     return response
   }
