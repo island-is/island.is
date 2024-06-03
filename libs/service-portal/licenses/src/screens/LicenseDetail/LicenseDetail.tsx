@@ -369,7 +369,7 @@ const LicenseDetail = () => {
       <ErrorScreen
         figure="./assets/images/hourglass.svg"
         tagVariant="red"
-        tag={'bing bang bong'}
+        tag={formatMessage(coreMessages.errorTitle)}
         title={formatMessage(coreMessages.somethingWrong)}
         children={formatMessage(coreMessages.errorFetchModule, {
           module: formatMessage(coreMessages.licenses).toLowerCase(),
