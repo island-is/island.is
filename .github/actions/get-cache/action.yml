@@ -13,7 +13,7 @@ inputs:
 outputs:
   success:
     description: 'Success'
-    value: ${{ steps.run-cache.outputs.success }}
+    value: ${{ steps.run-post-cache.outputs.success }}
   keys:
     description: 'Keys'
     value: ${{ steps.get-cache-keys.outputs._CACHE_KEYS }}
@@ -48,7 +48,7 @@ runs:
       run: |
         node ./scripts/ci/cache/cache-action.mjs
     - name: Run post cache workflow
-      id: run-cache
+      id: run-post-cache
       uses: ./.tmp-dynamic-post-cache
     - name: Cleanup cache workflow
       shell: bash
