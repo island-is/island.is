@@ -16,6 +16,7 @@ import {
 
 import { Child } from './review-groups/Child'
 import { Parents } from './review-groups/Parents'
+import { Support } from './review-groups/Support'
 import { Photography } from './review-groups/Photography'
 import { Relatives } from './review-groups/Relatives'
 import { Siblings } from './review-groups/Siblings'
@@ -158,6 +159,7 @@ export const Review: FC<ReviewScreenProps> = ({
           <Relatives {...childProps} />
           <School {...childProps}></School>
           <Siblings {...childProps} />
+          <Support {...childProps} />
           <Photography {...childProps} />
         </>
       )}

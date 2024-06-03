@@ -1,4 +1,4 @@
-import { getValueViaPath } from '@island.is/application/core'
+import { NO, getValueViaPath } from '@island.is/application/core'
 import {
   Application,
   ExternalData,
@@ -21,6 +21,22 @@ export const getApplicationAnswers = (answers: Application['answers']) => {
   const relatives = getValueViaPath(answers, 'relatives') as RelativesRow[]
 
   const siblings = getValueViaPath(answers, 'siblings') as SiblingsRow[]
+
+  const developmentalAssessment = getValueViaPath(
+    answers,
+    'support.developmentalAssessment',
+  ) as YesOrNo
+
+  const specialSupport = getValueViaPath(
+    answers,
+    'support.specialSupport',
+  ) as YesOrNo
+
+  const requestMeeting = getValueViaPath(
+    answers,
+    'support.requestMeeting[0]',
+    NO,
+  ) as YesOrNo
 
   const movingAbroad = getValueViaPath(
     answers,
@@ -59,6 +75,9 @@ export const getApplicationAnswers = (answers: Application['answers']) => {
     parents,
     relatives,
     siblings,
+    developmentalAssessment,
+    specialSupport,
+    requestMeeting,
     photographyConsent,
     photoSchoolPublication,
     photoMediaPublication,

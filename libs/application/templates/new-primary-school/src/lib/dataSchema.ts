@@ -98,6 +98,11 @@ export const dataSchema = z.object({
       params: errorMessages.siblingsRequired,
     }),
   startDate: z.string(),
+  support: z.object({
+    developmentalAssessment: z.enum([YES, NO]),
+    specialSupport: z.enum([YES, NO]),
+    requestMeeting: z.array(z.enum([YES, NO])).optional(),
+  }),
   photography: z
     .object({
       photographyConsent: z.enum([YES, NO]),
