@@ -748,8 +748,6 @@ describe('Transition Case', () => {
     const allowedFromStates = [
       CaseState.DRAFT,
       CaseState.WAITING_FOR_CONFIRMATION,
-      CaseState.SUBMITTED,
-      CaseState.RECEIVED,
     ]
 
     describe.each(allowedFromStates)(
