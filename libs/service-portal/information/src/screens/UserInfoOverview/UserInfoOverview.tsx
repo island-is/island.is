@@ -20,11 +20,15 @@ const UserInfoOverview = () => {
   const { formatMessage } = useLocale()
   const userInfo = useUserInfo()
 
-  const { data, error, loading } = useUserInfoOverviewQuery({
-    variables: { api: 'v3' },
-  })
+  const { data, error, loading } = useUserInfoOverviewQuery()
 
-  const { spouse, childCustody } = data?.nationalRegistryPerson || {}
+  const { spouse, childCustody, biologicalChildren } =
+    data?.nationalRegistryPerson || {}
+
+  //Filter out children with custody
+  const bioChildren = biologicalChildren?.filter(
+    (child) => !childCustody?.some((c) => c.nationalId === child.nationalId),
+  )
 
   return (
     <>
@@ -75,7 +79,18 @@ const UserInfoOverview = () => {
               baseId={
                 maskString(child.nationalId, userInfo.profile.nationalId) ?? ''
               }
-              familyRelation="child"
+              familyRelation="custody"
+            />
+          ))}
+          {bioChildren?.map((child) => (
+            <FamilyMemberCard
+              key={child.nationalId}
+              title={child.fullName || ''}
+              nationalId={child.nationalId}
+              baseId={
+                maskString(child.nationalId, userInfo.profile.nationalId) ?? ''
+              }
+              familyRelation="bio-child"
             />
           ))}
           <FootNote serviceProviderSlug={THJODSKRA_SLUG} />

@@ -50,6 +50,13 @@ export class ApplicationModel extends Model {
   modified: Date
 
   @Column({
+    type: DataType.DATE,
+    allowNull: false,
+  })
+  @ApiProperty()
+  applied: Date
+
+  @Column({
     type: DataType.STRING,
     allowNull: false,
   })
@@ -164,11 +171,18 @@ export class ApplicationModel extends Model {
   interview: boolean
 
   @Column({
-    type: DataType.STRING,
+    type: DataType.TEXT,
     allowNull: true,
   })
   @ApiProperty()
   formComment: string
+
+  @Column({
+    type: DataType.TEXT,
+    allowNull: true,
+  })
+  @ApiProperty()
+  childrenComment: string
 
   @Column({
     type: DataType.STRING,

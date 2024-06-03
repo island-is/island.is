@@ -1,5 +1,4 @@
 export enum ApiActions {
-  getResidenceConditionInfo = 'getResidenceConditionInfo',
   getCurrentCountryOfResidenceList = 'getCurrentCountryOfResidenceList',
   getResidenceInIcelandLastChangeDate = 'getResidenceInIcelandLastChangeDate',
   submitApplication = 'submitApplication',

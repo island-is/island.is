@@ -77,6 +77,16 @@ export const dataSchema = z.object({
   }),
   applicantEmail: customZodError(z.string().email(), m.errorEmail),
   applicantRelation: customZodError(z.string().min(1), m.errorRelation),
+  firearmApplicant: z
+    .object({
+      nationalId: z.string(),
+      name: z.string(),
+      phone: z.string().refine((v) => isValidPhoneNumber(v), {
+        params: m.errorPhoneNumber,
+      }),
+      email: customZodError(z.string().email(), m.errorEmail),
+    })
+    .optional(),
   assets: z.object({
     assets: z
       .object({
@@ -118,3 +128,5 @@ export const dataSchema = z.object({
     encountered: z.boolean().optional(),
   }),
 })
+
+export type AnnouncementOfDeath = z.TypeOf<typeof dataSchema>

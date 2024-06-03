@@ -5,8 +5,10 @@ import {
   CaseAppealRulingDecision,
   CaseAppealState,
   CaseDecision,
+  CaseIndictmentRulingDecision,
   CaseState,
   CaseType,
+  IndictmentCaseReviewDecision,
 } from '@island.is/judicial-system/types'
 
 import { Defendant } from '../../defendant'
@@ -108,6 +110,18 @@ export class CaseListEntry {
   @Field(() => User, { nullable: true })
   readonly indictmentReviewer?: User
 
+  @Field(() => IndictmentCaseReviewDecision, { nullable: true })
+  readonly indictmentReviewDecision?: IndictmentCaseReviewDecision
+
   @Field(() => String, { nullable: true })
   readonly indictmentAppealDeadline?: string
+
+  @Field(() => Boolean, { nullable: true })
+  readonly indictmentVerdictViewedByAll?: boolean
+
+  @Field(() => String, { nullable: true })
+  readonly indictmentVerdictAppealDeadline?: string
+
+  @Field(() => CaseIndictmentRulingDecision, { nullable: true })
+  readonly indictmentRulingDecision?: CaseIndictmentRulingDecision
 }

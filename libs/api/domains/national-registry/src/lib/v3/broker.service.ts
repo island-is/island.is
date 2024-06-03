@@ -7,7 +7,7 @@ import {
   EinstaklingurDTOLoghTengsl,
   NationalRegistryV3ClientService,
 } from '@island.is/clients/national-registry-v3'
-import { FamilyChild, User } from '../v1/types'
+import { FamilyChild, User } from './types'
 import {
   formatPersonDiscriminated,
   formatAddress,
@@ -151,6 +151,34 @@ export class BrokerService {
       (await this.nationalRegistryV3.getCitizenship(nationalId))
 
     return data && formatCitizenship(data)
+  }
+
+  async getBiologicalFamily(
+    parentNationalId: string,
+    rawData?: EinstaklingurDTOAllt | null,
+    useFakeData?: boolean,
+  ): Promise<Array<ChildCustodyV3> | null> {
+    const parentData =
+      rawData ??
+      (await this.nationalRegistryV3.getAllDataIndividual(
+        parentNationalId,
+        useFakeData,
+      ))
+
+    if (!parentData) {
+      return null
+    }
+
+    const children = parentData.logforeldrar?.born ?? []
+
+    return children
+      .map((c) => formatChildCustody(c, useFakeData))
+      .filter(isDefined)
+      .sort((a, b) => {
+        return (
+          kennitala.info(b.nationalId).age - kennitala.info(a.nationalId).age
+        )
+      })
   }
 
   async getChildrenCustodyInformation(

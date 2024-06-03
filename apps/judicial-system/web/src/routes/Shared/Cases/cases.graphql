@@ -26,6 +26,7 @@ query Cases {
       name
       noNationalId
       defendantWaivesRightToCounsel
+      verdictViewDate
     }
     courtDate
     isValidToDateInThePast
@@ -87,6 +88,10 @@ query Cases {
       id
       name
     }
+    indictmentReviewDecision
     indictmentAppealDeadline
+    indictmentVerdictViewedByAll
+    indictmentVerdictAppealDeadline
+    indictmentRulingDecision
   }
 }

@@ -2,7 +2,7 @@ import React from 'react'
 import { defineMessage } from 'react-intl'
 import { checkDelegation } from '@island.is/shared/utils'
 import { info } from 'kennitala'
-
+import { Problem } from '@island.is/react-spa/shared'
 import { Box, Divider, Stack } from '@island.is/island-ui/core'
 import { useLocale, useNamespaces } from '@island.is/localization'
 import {
@@ -22,18 +22,13 @@ import {
 import { spmm, urls } from '../../lib/messages'
 import { formatAddress, formatNameBreaks } from '../../helpers/formatting'
 import { useNationalRegistryPersonQuery } from './UserInfo.generated'
-import { Problem } from '@island.is/react-spa/shared'
 
 const SubjectInfo = () => {
   useNamespaces('sp.family')
   const userInfo = useUserInfo()
   const { formatMessage } = useLocale()
 
-  const { data, loading, error } = useNationalRegistryPersonQuery({
-    variables: {
-      api: 'v3',
-    },
-  })
+  const { data, loading, error } = useNationalRegistryPersonQuery()
 
   const { nationalRegistryPerson } = data || {}
   const isDelegation = userInfo && checkDelegation(userInfo)

@@ -377,9 +377,7 @@ export class LimitedAccessCaseService {
       })
   }
 
-  private zipFiles(
-    files: Array<{ data: Buffer; name: string }>,
-  ): Promise<Buffer> {
+  private zipFiles(files: { data: Buffer; name: string }[]): Promise<Buffer> {
     return new Promise((resolve, reject) => {
       const buffs: Buffer[] = []
       const converter = new Writable()
@@ -410,7 +408,7 @@ export class LimitedAccessCaseService {
   }
 
   async getAllFilesZip(theCase: Case, user: TUser): Promise<Buffer> {
-    const filesToZip: Array<{ data: Buffer; name: string }> = []
+    const filesToZip: { data: Buffer; name: string }[] = []
 
     const caseFilesByCategory =
       theCase.caseFiles?.filter(
@@ -422,9 +420,10 @@ export class LimitedAccessCaseService {
           ),
       ) ?? []
 
+    // TODO: speed this up by fetching all files in parallel
     for (const file of caseFilesByCategory) {
       await this.awsS3Service
-        .getObject(file.key ?? '')
+        .getObject(theCase.type, theCase.state, file.key)
         .then((content) => filesToZip.push({ data: content, name: file.name }))
         .catch((reason) =>
           // Tolerate failure, but log what happened

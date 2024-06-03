@@ -15,6 +15,7 @@ import {
   LinkV2,
   Text,
 } from '@island.is/island-ui/core'
+import { haskolanamTrackSearchQuery } from '@island.is/plausible'
 import {
   getThemeConfig,
   OrganizationWrapper,
@@ -258,6 +259,7 @@ const LandingPage: Screen<LandingPageProps> = ({
                   }}
                   onKeyDown={(k) => {
                     if (k.code === 'Enter') {
+                      haskolanamTrackSearchQuery(searchTerm)
                       routeToSearch()
                     }
                   }}
@@ -265,7 +267,10 @@ const LandingPage: Screen<LandingPageProps> = ({
                 <button
                   aria-label="Search"
                   className={cn(styles.searchIcon)}
-                  onClick={() => routeToSearch()}
+                  onClick={() => {
+                    haskolanamTrackSearchQuery(searchTerm)
+                    routeToSearch()
+                  }}
                 >
                   <Icon size="large" icon="search" color="blue400" />
                 </button>

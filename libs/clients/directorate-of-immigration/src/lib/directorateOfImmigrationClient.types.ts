@@ -4,6 +4,7 @@ export interface CitizenshipApplication {
     otherParentNationalId?: string
     otherParentBirtDate?: Date
     otherParentName?: string
+    citizenship?: string
   }[]
   isFormerIcelandicCitizen: boolean
   givenName?: string | null
