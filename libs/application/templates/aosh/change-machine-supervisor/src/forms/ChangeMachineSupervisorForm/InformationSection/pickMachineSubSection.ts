@@ -34,21 +34,6 @@ export const pickMachineSubSection = buildSubSection({
             const machineList = application?.externalData.machinesList
               .data as MachinesWithTotalCount
             return machineList?.machines[0].id ?? ''
-            // console.log('machine', machine)
-            // return {
-            //   value: machine.id || '',
-            //   label: machine?.regNumber || '',
-            //   subLabel: `${machine.category}: ${machine.type} - ${machine.subType}`,
-            //   disabled: machine?.disabled || false,
-
-            //   tag: machine?.disabled
-            //     ? {
-            //         label: machine?.status || '',
-            //         variant: 'red',
-            //         outlined: true,
-            //       }
-            //     : undefined,
-            // }
           },
           options: (application) => {
             const machineList = application?.externalData.machinesList
