@@ -1,4 +1,4 @@
-import { TopLine, Button } from '@ui'
+import { TopLine } from '@ui'
 import React, {
   ReactElement,
   useCallback,
@@ -12,8 +12,6 @@ import {
   ListRenderItemInfo,
   Platform,
   RefreshControl,
-  ScrollView,
-  View,
 } from 'react-native'
 import CodePush from 'react-native-code-push'
 import { NavigationFunctionComponent } from 'react-native-navigation'
@@ -33,8 +31,6 @@ import { getRightButtons } from '../../utils/get-main-root'
 import { testIDs } from '../../utils/test-ids'
 import { ApplicationsModule } from './applications-module'
 import { OnboardingModule } from './onboarding-module'
-import { IP_ADDRESS } from '../../lib/passkeys/server'
-import { useBrowser } from '../../lib/useBrowser'
 
 interface ListItem {
   id: string
@@ -106,11 +102,8 @@ export const MainHomeScreen: NavigationFunctionComponent = ({
   const syncToken = useNotificationsStore(({ syncToken }) => syncToken)
   const checkUnseen = useNotificationsStore(({ checkUnseen }) => checkUnseen)
   const [refetching, setRefetching] = useState(false)
-  const { openBrowser } = useBrowser()
   const flatListRef = useRef<FlatList>(null)
   const ui = useUiStore()
-
-  const isPasskeyEnabled = useFeatureFlag('isPasskeyEnabled', false)
 
   useActiveTabItemPress(2, () => {
     flatListRef.current?.scrollToOffset({ offset: -150, animated: true })
