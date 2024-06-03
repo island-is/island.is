@@ -1,14 +1,4 @@
-import { useParams } from 'react-router-dom'
 import { useUserInfo } from '@island.is/auth/react'
-import { useLocale, useNamespaces } from '@island.is/localization'
-import {
-  formatNationalId,
-  UserInfoLine,
-  m,
-  IntroHeader,
-  THJODSKRA_SLUG,
-  LinkButton,
-} from '@island.is/service-portal/core'
 import { defineMessage } from 'react-intl'
 import {
   Box,
@@ -19,31 +9,61 @@ import {
   Inline,
   Stack,
 } from '@island.is/island-ui/core'
+import { useLocale, useNamespaces } from '@island.is/localization'
+import { Problem } from '@island.is/react-spa/shared'
+import {
+  formatNationalId,
+  IntroHeader,
+  LinkButton,
+  m,
+  THJODSKRA_SLUG,
+  UserInfoLine,
+} from '@island.is/service-portal/core'
+import { unmaskString } from '@island.is/shared/utils'
+import { useParams } from 'react-router-dom'
 import { TwoColumnUserInfoLine } from '../../components/TwoColumnUserInfoLine/TwoColumnUserInfoLine'
 import { formatNameBreaks } from '../../helpers/formatting'
-import { spmm, urls } from '../../lib/messages'
-import { useNationalRegistryChildCustodyQuery } from './Child.generated'
 import { natRegGenderMessageDescriptorRecord } from '../../helpers/localizationHelpers'
-import { unmaskString } from '@island.is/shared/utils'
-import { Problem } from '@island.is/react-spa/shared'
+import { spmm, urls } from '../../lib/messages'
+import { useNationalRegistryChildCustodyQuery } from './ChildCustody.generated'
+import { useEffect, useState } from 'react'
 
 type UseParams = {
   baseId: string
 }
 
-const Child = () => {
+const ChildCustody = () => {
   useNamespaces('sp.family')
   const { formatMessage } = useLocale()
   const userInfo = useUserInfo()
   const { baseId } = useParams() as UseParams
+  const [unmaskedBaseId, setUnmaskedBaseId] = useState<string | null>(null)
+
+  useEffect(() => {
+    const decrypt = async () => {
+      try {
+        const decrypted = await unmaskString(
+          baseId,
+          userInfo.profile.nationalId,
+        )
+        setUnmaskedBaseId(decrypted)
+      } catch (error) {
+        console.error('Error encrypting text:', error)
+      }
+    }
+
+    decrypt()
+  }, [baseId, userInfo])
 
   const { data, loading, error } = useNationalRegistryChildCustodyQuery({
     variables: {
-      childNationalId: unmaskString(baseId, userInfo.profile.nationalId),
+      childNationalId: unmaskedBaseId,
     },
+    skip: !unmaskedBaseId,
   })
 
   const child = data?.nationalRegistryPerson?.childCustody?.[0]?.details
+
   const nationalId = child?.nationalId
 
   const parent1 = child?.birthParents ? child.birthParents[0] : undefined
@@ -305,4 +325,4 @@ const Child = () => {
   )
 }
 
-export default Child
+export default ChildCustody
