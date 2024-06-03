@@ -16,6 +16,7 @@ import {
   Organization,
   SchoolType,
   DrivingLicenseBookStudentOverview,
+  TeacherRights,
 } from './drivingLicenceBook.type'
 import { CreateDrivingSchoolTestResultInput } from './dto/createDrivingSchoolTestResult.input'
 
@@ -159,5 +160,12 @@ export class DrivingLicenseBookService {
       teacherNationalId: user.nationalId,
       studentNationalId: student.nationalId,
     })
+  }
+
+  async getTeacher(nationalId: string): Promise<TeacherRights> {
+    this.logger.debug(
+      `driving-license-book: Get Teacher with id: ${nationalId}`,
+    )
+    return await this.drivingLicenseBookClientApiFactory.getTeacher(nationalId)
   }
 }

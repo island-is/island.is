@@ -2,7 +2,7 @@
   "openapi": "3.0.1",
   "info": {
     "title": "Digital DrivingLicenceBook API",
-    "description": "Vefþjónusta fyrir rafræna ökunámsbók - 4fce44e9931a53f1bf023daf007c3402f78f3e36-20240418.2",
+    "description": "Vefþjónusta fyrir rafræna ökunámsbók - f9a51338fc6bb51bf829cfc1123ddd104a8439cd-20240530.1",
     "contact": {
       "name": "Samgöngustofa",
       "url": "https://www.samgongustofa.is/",
@@ -44,7 +44,7 @@
         },
         "responses": {
           "200": {
-            "description": "Success",
+            "description": "OK",
             "content": {
               "application/json": {
                 "schema": {
@@ -68,7 +68,7 @@
         ],
         "responses": {
           "200": {
-            "description": "Success",
+            "description": "OK",
             "content": {
               "application/json": {
                 "schema": {
@@ -101,7 +101,7 @@
               }
             }
           },
-          "500": { "description": "Server Error" }
+          "500": { "description": "Internal Server Error" }
         }
       }
     },
@@ -117,7 +117,7 @@
         ],
         "responses": {
           "200": {
-            "description": "Success",
+            "description": "OK",
             "content": {
               "application/json": {
                 "schema": {
@@ -150,7 +150,7 @@
               }
             }
           },
-          "500": { "description": "Server Error" }
+          "500": { "description": "Internal Server Error" }
         }
       }
     },
@@ -173,7 +173,7 @@
         ],
         "responses": {
           "200": {
-            "description": "Success",
+            "description": "OK",
             "content": {
               "application/json": {
                 "schema": {
@@ -206,7 +206,7 @@
               }
             }
           },
-          "500": { "description": "Server Error" }
+          "500": { "description": "Internal Server Error" }
         }
       }
     },
@@ -223,7 +223,7 @@
         ],
         "responses": {
           "200": {
-            "description": "Success",
+            "description": "OK",
             "content": {
               "application/json": {
                 "schema": {
@@ -256,7 +256,7 @@
               }
             }
           },
-          "500": { "description": "Server Error" }
+          "500": { "description": "Internal Server Error" }
         }
       }
     },
@@ -320,7 +320,7 @@
               }
             }
           },
-          "500": { "description": "Server Error" }
+          "500": { "description": "Internal Server Error" }
         }
       }
     },
@@ -391,7 +391,7 @@
               }
             }
           },
-          "500": { "description": "Server Error" }
+          "500": { "description": "Internal Server Error" }
         }
       }
     },
@@ -433,7 +433,7 @@
               }
             }
           },
-          "500": { "description": "Server Error" }
+          "500": { "description": "Internal Server Error" }
         }
       }
     },
@@ -450,7 +450,7 @@
         ],
         "responses": {
           "200": {
-            "description": "Success",
+            "description": "OK",
             "content": {
               "application/json": {
                 "schema": { "$ref": "#/components/schemas/Organization" }
@@ -474,7 +474,7 @@
               }
             }
           },
-          "500": { "description": "Server Error" }
+          "500": { "description": "Internal Server Error" }
         }
       }
     },
@@ -497,7 +497,7 @@
         ],
         "responses": {
           "200": {
-            "description": "Success",
+            "description": "OK",
             "content": {
               "application/json": {
                 "schema": {
@@ -530,7 +530,7 @@
               }
             }
           },
-          "500": { "description": "Server Error" }
+          "500": { "description": "Internal Server Error" }
         }
       }
     },
@@ -594,7 +594,7 @@
               }
             }
           },
-          "500": { "description": "Server Error" }
+          "500": { "description": "Internal Server Error" }
         }
       }
     },
@@ -622,7 +622,7 @@
         ],
         "responses": {
           "200": {
-            "description": "Success",
+            "description": "OK",
             "content": {
               "application/json": {
                 "schema": {
@@ -655,7 +655,7 @@
               }
             }
           },
-          "500": { "description": "Server Error" }
+          "500": { "description": "Internal Server Error" }
         }
       }
     },
@@ -677,7 +677,7 @@
         ],
         "responses": {
           "200": {
-            "description": "Success",
+            "description": "OK",
             "content": {
               "application/json": {
                 "schema": {
@@ -710,7 +710,7 @@
               }
             }
           },
-          "500": { "description": "Server Error" }
+          "500": { "description": "Internal Server Error" }
         }
       }
     },
@@ -733,7 +733,7 @@
         ],
         "responses": {
           "200": {
-            "description": "Success",
+            "description": "OK",
             "content": {
               "application/json": {
                 "schema": {
@@ -766,7 +766,7 @@
               }
             }
           },
-          "500": { "description": "Server Error" }
+          "500": { "description": "Internal Server Error" }
         }
       }
     },
@@ -783,7 +783,7 @@
         ],
         "responses": {
           "200": {
-            "description": "Success",
+            "description": "OK",
             "content": {
               "application/json": {
                 "schema": {
@@ -816,7 +816,7 @@
               }
             }
           },
-          "500": { "description": "Server Error" }
+          "500": { "description": "Internal Server Error" }
         }
       }
     },
@@ -833,7 +833,7 @@
         ],
         "responses": {
           "200": {
-            "description": "Success",
+            "description": "OK",
             "content": {
               "application/json": {
                 "schema": {
@@ -866,7 +866,7 @@
               }
             }
           },
-          "500": { "description": "Server Error" }
+          "500": { "description": "Internal Server Error" }
         }
       }
     },
@@ -883,7 +883,7 @@
         ],
         "responses": {
           "200": {
-            "description": "Success",
+            "description": "OK",
             "content": {
               "application/json": {
                 "schema": {
@@ -916,7 +916,7 @@
               }
             }
           },
-          "500": { "description": "Server Error" }
+          "500": { "description": "Internal Server Error" }
         }
       }
     },
@@ -938,7 +938,7 @@
         ],
         "responses": {
           "200": {
-            "description": "Success",
+            "description": "OK",
             "content": {
               "application/json": {
                 "schema": {
@@ -971,7 +971,7 @@
               }
             }
           },
-          "500": { "description": "Server Error" }
+          "500": { "description": "Internal Server Error" }
         }
       }
     },
@@ -1042,7 +1042,7 @@
               }
             }
           },
-          "500": { "description": "Server Error" }
+          "500": { "description": "Internal Server Error" }
         }
       }
     },
@@ -1059,7 +1059,7 @@
           { "name": "reason", "in": "query", "schema": { "type": "string" } }
         ],
         "responses": {
-          "200": { "description": "Success" },
+          "200": { "description": "OK" },
           "204": { "description": "No Content" },
           "401": {
             "description": "Unauthorized",
@@ -1077,7 +1077,7 @@
               }
             }
           },
-          "500": { "description": "Server Error" }
+          "500": { "description": "Internal Server Error" }
         }
       }
     },
@@ -1095,7 +1095,7 @@
         ],
         "responses": {
           "200": {
-            "description": "Success",
+            "description": "OK",
             "content": {
               "application/json": {
                 "schema": {
@@ -1128,7 +1128,57 @@
               }
             }
           },
-          "500": { "description": "Server Error" }
+          "500": { "description": "Internal Server Error" }
+        }
+      }
+    },
+    "/api/Teacher/GetTeacher/{ssn}": {
+      "get": {
+        "tags": ["DrivingLicenseBook"],
+        "parameters": [
+          {
+            "name": "ssn",
+            "in": "path",
+            "required": true,
+            "schema": { "type": "string" }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "OK",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/TeacherDetailsGetResponse"
+                }
+              }
+            }
+          },
+          "401": {
+            "description": "Unauthorized",
+            "content": {
+              "application/json": {
+                "schema": { "$ref": "#/components/schemas/ProblemDetails" }
+              }
+            }
+          },
+          "403": {
+            "description": "Forbidden",
+            "content": {
+              "application/json": {
+                "schema": { "$ref": "#/components/schemas/ProblemDetails" }
+              }
+            }
+          },
+          "404": {
+            "description": "Not Found",
+            "content": {
+              "application/json": {
+                "schema": { "$ref": "#/components/schemas/ProblemDetails" }
+              }
+            }
+          },
+          "500": { "description": "Internal Server Error" }
         }
       }
     },
@@ -1161,7 +1211,7 @@
         ],
         "responses": {
           "200": {
-            "description": "Success",
+            "description": "OK",
             "content": {
               "application/json": {
                 "schema": {
@@ -1194,7 +1244,7 @@
               }
             }
           },
-          "500": { "description": "Server Error" }
+          "500": { "description": "Internal Server Error" }
         }
       }
     },
@@ -1227,7 +1277,7 @@
         ],
         "responses": {
           "200": {
-            "description": "Success",
+            "description": "OK",
             "content": {
               "application/json": {
                 "schema": {
@@ -1260,7 +1310,7 @@
               }
             }
           },
-          "500": { "description": "Server Error" }
+          "500": { "description": "Internal Server Error" }
         }
       }
     },
@@ -1324,7 +1374,7 @@
               }
             }
           },
-          "500": { "description": "Server Error" }
+          "500": { "description": "Internal Server Error" }
         }
       }
     },
@@ -1395,7 +1445,7 @@
               }
             }
           },
-          "500": { "description": "Server Error" }
+          "500": { "description": "Internal Server Error" }
         }
       }
     },
@@ -1442,7 +1492,7 @@
               }
             }
           },
-          "500": { "description": "Server Error" }
+          "500": { "description": "Internal Server Error" }
         }
       }
     },
@@ -1470,7 +1520,7 @@
               }
             }
           },
-          "500": { "description": "Server Error" }
+          "500": { "description": "Internal Server Error" }
         }
       }
     },
@@ -1519,7 +1569,7 @@
               }
             }
           },
-          "500": { "description": "Server Error" }
+          "500": { "description": "Internal Server Error" }
         }
       }
     },
@@ -1561,7 +1611,7 @@
               }
             }
           },
-          "500": { "description": "Server Error" }
+          "500": { "description": "Internal Server Error" }
         }
       }
     },
@@ -1577,7 +1627,7 @@
         ],
         "responses": {
           "200": {
-            "description": "Success",
+            "description": "OK",
             "content": {
               "application/json": {
                 "schema": {
@@ -1610,7 +1660,7 @@
               }
             }
           },
-          "500": { "description": "Server Error" }
+          "500": { "description": "Internal Server Error" }
         }
       }
     },
@@ -1633,7 +1683,7 @@
         ],
         "responses": {
           "200": {
-            "description": "Success",
+            "description": "OK",
             "content": {
               "application/json": {
                 "schema": {
@@ -1666,7 +1716,7 @@
               }
             }
           },
-          "500": { "description": "Server Error" }
+          "500": { "description": "Internal Server Error" }
         }
       }
     },
@@ -1730,7 +1780,7 @@
               }
             }
           },
-          "500": { "description": "Server Error" }
+          "500": { "description": "Internal Server Error" }
         }
       }
     },
@@ -1801,7 +1851,7 @@
               }
             }
           },
-          "500": { "description": "Server Error" }
+          "500": { "description": "Internal Server Error" }
         }
       }
     },
@@ -1835,7 +1885,7 @@
               }
             }
           },
-          "500": { "description": "Server Error" }
+          "500": { "description": "Internal Server Error" }
         }
       }
     },
@@ -1851,7 +1901,7 @@
         ],
         "responses": {
           "200": {
-            "description": "Success",
+            "description": "OK",
             "content": {
               "application/json": {
                 "schema": { "$ref": "#/components/schemas/TestTypeGetResponse" }
@@ -1882,7 +1932,7 @@
               }
             }
           },
-          "500": { "description": "Server Error" }
+          "500": { "description": "Internal Server Error" }
         }
       }
     },
@@ -1899,7 +1949,7 @@
         ],
         "responses": {
           "200": {
-            "description": "Success",
+            "description": "OK",
             "content": {
               "application/json": {
                 "schema": { "$ref": "#/components/schemas/TestGetResponse" }
@@ -1930,7 +1980,7 @@
               }
             }
           },
-          "500": { "description": "Server Error" }
+          "500": { "description": "Internal Server Error" }
         }
       }
     },
@@ -1953,7 +2003,7 @@
         ],
         "responses": {
           "200": {
-            "description": "Success",
+            "description": "OK",
             "content": {
               "application/json": {
                 "schema": {
@@ -1986,7 +2036,7 @@
               }
             }
           },
-          "500": { "description": "Server Error" }
+          "500": { "description": "Internal Server Error" }
         }
       }
     },
@@ -2009,7 +2059,7 @@
         ],
         "responses": {
           "200": {
-            "description": "Success",
+            "description": "OK",
             "content": {
               "application/json": {
                 "schema": {
@@ -2042,7 +2092,7 @@
               }
             }
           },
-          "500": { "description": "Server Error" }
+          "500": { "description": "Internal Server Error" }
         }
       }
     },
@@ -2114,7 +2164,7 @@
               }
             }
           },
-          "500": { "description": "Server Error" }
+          "500": { "description": "Internal Server Error" }
         }
       }
     },
@@ -2185,7 +2235,7 @@
               }
             }
           },
-          "500": { "description": "Server Error" }
+          "500": { "description": "Internal Server Error" }
         }
       }
     },
@@ -2219,7 +2269,7 @@
               }
             }
           },
-          "500": { "description": "Server Error" }
+          "500": { "description": "Internal Server Error" }
         }
       }
     },
@@ -2250,7 +2300,7 @@
         ],
         "responses": {
           "200": {
-            "description": "Success",
+            "description": "OK",
             "content": {
               "application/json": {
                 "schema": {
@@ -2276,7 +2326,7 @@
               }
             }
           },
-          "500": { "description": "Server Error" }
+          "500": { "description": "Internal Server Error" }
         }
       }
     },
@@ -2293,7 +2343,7 @@
         ],
         "responses": {
           "200": {
-            "description": "Success",
+            "description": "OK",
             "content": {
               "application/json": {
                 "schema": {
@@ -2318,7 +2368,7 @@
               }
             }
           },
-          "500": { "description": "Server Error" }
+          "500": { "description": "Internal Server Error" }
         }
       }
     }
@@ -2391,6 +2441,78 @@
         },
         "additionalProperties": false,
         "description": "Data Transfer Object for Actor information specific to students"
+      },
+      "ActorTeacher": {
+        "type": "object",
+        "properties": {
+          "id": {
+            "type": "string",
+            "description": "Unique id",
+            "nullable": true,
+            "example": "11111111-1111-1111-1111-111111111111"
+          },
+          "ssn": {
+            "type": "string",
+            "description": "Social security number",
+            "nullable": true,
+            "example": "0000000000"
+          },
+          "name": {
+            "type": "string",
+            "description": "Name",
+            "nullable": true,
+            "example": "Jón Jónsson"
+          },
+          "zipCode": {
+            "type": "integer",
+            "description": "Postcode",
+            "format": "int32",
+            "nullable": true,
+            "example": 101
+          },
+          "address": {
+            "type": "string",
+            "description": "Address",
+            "nullable": true,
+            "example": "Borgartúni 1"
+          },
+          "email": {
+            "type": "string",
+            "description": "Email",
+            "nullable": true,
+            "example": "nafn@postur.is"
+          },
+          "primaryPhoneNumber": {
+            "type": "string",
+            "description": "Primary phone number",
+            "nullable": true,
+            "example": "8888888"
+          },
+          "secondaryPhoneNumber": {
+            "type": "string",
+            "description": "Secondary phone number",
+            "nullable": true,
+            "example": "5555555"
+          },
+          "active": {
+            "type": "boolean",
+            "description": "Is actor active",
+            "example": true
+          },
+          "hasRegisteredDrivingLessons": {
+            "type": "boolean",
+            "description": "Indicates whether the teacher has registered driving lessons."
+          },
+          "credentials": {
+            "type": "array",
+            "items": { "type": "string" },
+            "description": "A list of credentials associated with the teacher.",
+            "nullable": true,
+            "example": ["B", "BE", "C", "C1", "C1E"]
+          }
+        },
+        "additionalProperties": false,
+        "description": "Data Transfer Object for Actor information specific to teachers.\r\nThis class extends the Actor base class with additional properties relevant to teachers, such as their registered driving lessons status and credentials."
       },
       "Application": {
         "type": "object",
@@ -2643,6 +2765,11 @@
           "statusName": {
             "type": "string",
             "description": "Gets or sets the status name of the application.",
+            "nullable": true
+          },
+          "studentId": {
+            "type": "string",
+            "description": "Gets or sets the actorId for student",
             "nullable": true
           },
           "studentSsn": {
@@ -4186,6 +4313,18 @@
         "additionalProperties": false,
         "description": "Provides a short overview of a student's details and their lesson progress."
       },
+      "TeacherDetailsGetResponse": {
+        "type": "object",
+        "properties": {
+          "data": {
+            "$ref": "#/components/schemas/ActorTeacher",
+            "description": "Gets or sets the detailed information about the teacher.",
+            "nullable": true
+          }
+        },
+        "additionalProperties": false,
+        "description": "Represents the response for retrieving detailed information about a teacher in the admin system."
+      },
       "TestExamRights": {
         "type": "object",
         "properties": {
@@ -4224,18 +4363,29 @@
         "properties": {
           "id": {
             "type": "string",
-            "description": "Gets or sets the ID of the factor.",
+            "description": "Gets or sets the factor ID.",
             "nullable": true
           },
           "factor": {
             "type": "string",
-            "description": "Gets or sets the name of the factor.",
+            "description": "Gets or sets the factor name.",
+            "nullable": true
+          },
+          "orderNumber": {
+            "type": "integer",
+            "description": "Gets or sets the order number of the factor.",
+            "format": "int32"
+          },
+          "cardNumber": {
+            "type": "integer",
+            "description": "Gets or sets the optional card number associated with the factor.",
+            "format": "int32",
             "nullable": true
           },
           "scores": {
             "type": "array",
             "items": { "$ref": "#/components/schemas/TestFactorScore" },
-            "description": "Gets or sets the list of scores associated with the factor.",
+            "description": "Gets or sets the scores associated with the factor.",
             "nullable": true
           }
         },
@@ -4316,10 +4466,20 @@
             "description": "Gets or sets the license category of the test.",
             "nullable": true
           },
+          "testTypeId": {
+            "type": "integer",
+            "description": "Gets or sets the identifier for the type of the test.",
+            "format": "int32"
+          },
+          "abbreviation": {
+            "type": "string",
+            "description": "Gets or sets the abbreviation commonly used for the test.",
+            "nullable": true
+          },
           "factors": {
             "type": "array",
             "items": { "$ref": "#/components/schemas/TestFactor" },
-            "description": "Gets or sets the list of factors associated with the test.",
+            "description": "Gets or sets the list of factors associated with the test.\r\nThese factors are criteria or components that are evaluated or assessed in the test.",
             "nullable": true
           }
         },

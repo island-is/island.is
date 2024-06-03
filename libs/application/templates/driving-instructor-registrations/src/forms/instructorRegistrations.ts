@@ -8,6 +8,7 @@ import {
 import {
   Form,
   FormModes,
+  GetTeacherRightsApi,
   HasTeachingRightsApi,
   NationalRegistryUserApi,
 } from '@island.is/application/types'
@@ -37,6 +38,11 @@ export const getInstructorRegistrations = (): Form => {
               }),
               buildDataProviderItem({
                 provider: NationalRegistryUserApi,
+                title: '',
+                subTitle: '',
+              }),
+              buildDataProviderItem({
+                provider: GetTeacherRightsApi,
                 title: '',
                 subTitle: '',
               }),

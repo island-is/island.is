@@ -9,6 +9,7 @@ import {
   defineTemplateApi,
   HasTeachingRightsApi,
   NationalRegistryUserApi,
+  GetTeacherRightsApi,
 } from '@island.is/application/types'
 import { Events, States, Roles } from './constants'
 import { dataSchema } from './dataSchema'
@@ -58,13 +59,18 @@ const InstructorRegistrationsTemplate: ApplicationTemplate<
                   type: 'primary',
                 },
               ],
-              api: [HasTeachingRightsApi, NationalRegistryUserApi],
+              api: [
+                HasTeachingRightsApi,
+                NationalRegistryUserApi,
+                GetTeacherRightsApi,
+              ],
               delete: true,
               write: {
                 answers: ['approveExternalData'],
                 externalData: [
                   HasTeachingRightsApi.externalDataId,
                   NationalRegistryUserApi.externalDataId,
+                  GetTeacherRightsApi.externalDataId,
                 ],
               },
             },

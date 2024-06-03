@@ -23,6 +23,7 @@ import { DrivingLicenseBookStudentForTeacher as Student } from '../../types/sche
 import { format as formatKennitala } from 'kennitala'
 import * as styles from '../style.css'
 import { LicenseCategory } from '../../types/enums'
+import { getValueViaPath } from '@island.is/application/core'
 
 const StudentsOverview: FC<React.PropsWithChildren<FieldBaseProps>> = ({
   application,
@@ -51,6 +52,12 @@ const StudentsOverview: FC<React.PropsWithChildren<FieldBaseProps>> = ({
   const [studentId, setStudentId] = useState('')
   const [searchTerm, setSearchTerm] = useState('')
   const [filteredStudents, setFilteredStudents] = useState<Array<Student>>()
+
+  const teacherRights = getValueViaPath<string[]>(
+    application.externalData,
+    'getTeacherRights.data.rights',
+  )
+  const showLicenseCategoryTabs = teacherRights?.includes(LicenseCategory.BE)
 
   const handlePagination = (page: number, students: Array<Student>) => {
     setPage(page)
@@ -90,7 +97,7 @@ const StudentsOverview: FC<React.PropsWithChildren<FieldBaseProps>> = ({
           ? formatMessage(m.viewStudentTitle)
           : formatMessage(m.viewBEStudentTitle)}
       </Text>
-      {showStudentOverview ? (
+      {showStudentOverview && showLicenseCategoryTabs ? (
         <Box marginBottom={5}>
           <Tabs
             selected={currentTab}

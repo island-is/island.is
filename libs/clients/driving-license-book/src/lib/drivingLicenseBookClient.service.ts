@@ -1,4 +1,8 @@
-import { Configuration, DrivingLicenseBookApi } from '../../gen/fetch'
+import {
+  Configuration,
+  DrivingLicenseBookApi,
+  TeacherDetailsGetResponse,
+} from '../../gen/fetch'
 import { createEnhancedFetch } from '@island.is/clients/middlewares'
 import { XRoadConfig } from '@island.is/nest/config'
 import type { ConfigType } from '@island.is/nest/config'
@@ -25,6 +29,7 @@ import {
   PracticalDrivingLesson,
   PracticalDrivingLessonsInput,
   SchoolType,
+  TeacherRights,
   UpdatePracticalDrivingLessonInput,
 } from './drivingLicenseBookType.types'
 import {
@@ -34,6 +39,7 @@ import {
   getStudentMapper,
   schoolForSchoolStaffMapper,
   schoolTypeMapper,
+  teacherRightsMapper,
 } from '../utils/mappers'
 import { LOGGER_PROVIDER } from '@island.is/logging'
 import type { Logger } from '@island.is/logging'
@@ -412,5 +418,14 @@ export class DrivingLicenseBookClientApiFactory {
     } catch (e) {
       return { success: false }
     }
+  }
+
+  async getTeacher(nationalId: string): Promise<TeacherRights> {
+    const api = await this.create()
+    return teacherRightsMapper(
+      await api.apiTeacherGetTeacherSsnGet({
+        ssn: nationalId,
+      }),
+    )
   }
 }

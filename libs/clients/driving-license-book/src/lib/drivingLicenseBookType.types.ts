@@ -167,3 +167,9 @@ export interface AllowedPractieDrivingInput {
   teacherNationalId: string
   studentNationalId: string
 }
+
+export interface TeacherRights {
+  active: boolean
+  hasRegisteredDrivingLessons: boolean
+  rights: string[]
+}
