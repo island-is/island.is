@@ -105,7 +105,7 @@ const AcceptModal = ({
 
   const finalAmount = calculateAcceptedAidFinalAmount(
     state.amount +
-      (state?.childrenAidAmount || 0) -
+      (state.childrenAidAmount ?? 0) -
       checkingValue(state.income) -
       sumValues,
     checkingValue(state.personalTaxCreditPercentage),
