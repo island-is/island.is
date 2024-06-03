@@ -1,4 +1,4 @@
-import React, { useState, useMemo } from 'react'
+import React, { useState, useMemo, useContext } from 'react'
 import cn from 'classnames'
 import format from 'date-fns/format'
 
@@ -281,6 +281,7 @@ const ApplicationProfile = ({
 
         {!isPrint && (
           <CommentSection
+            applicationId={application.id}
             className={`contentUp delay-125 ${styles.widthAlmostFull}`}
             setApplication={setApplication}
           />
@@ -338,6 +339,8 @@ const ApplicationProfile = ({
         }}
         appliedDate={application.applied}
         createdDate={application.created}
+        applicationId={application.id}
+        setApplication={setApplication}
       />
     </>
   )
