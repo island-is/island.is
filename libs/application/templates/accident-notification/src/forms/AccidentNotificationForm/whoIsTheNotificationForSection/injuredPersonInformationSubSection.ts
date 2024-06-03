@@ -66,7 +66,7 @@ export const injuredPersonInformationSubSection = buildSubSection({
         buildTextField({
           id: 'injuredPersonInformation.jobTitle',
           title: injuredPersonInformation.labels.jobTitle,
-          backgroundColor: 'white',
+          backgroundColor: 'blue',
           width: 'full',
           maxLength: 100,
         }),
