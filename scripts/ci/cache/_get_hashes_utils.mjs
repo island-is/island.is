@@ -1,7 +1,8 @@
 // @ts-check
-import { appendFile } from 'node:fs/promises'
+import { appendFile, readFile } from 'node:fs/promises'
 import { ENV_INIT_CACHE, ENV_KEYS } from './_const.mjs'
 import { HAS_HASH_KEYS } from './_common.mjs'
+
 
 const SUMMARY_TITLE = `Cache keys`
 
@@ -39,6 +40,8 @@ export async function writeToOutput(
         'utf-8',
     )
     await appendFile(file, `${ENV_KEYS}=${JSON.stringify(hashes)}\n`, 'utf-8')
+    const content = await readFile(file, { encoding: 'utf-8' })
+    console.log(content);
 }
 
 
@@ -55,4 +58,6 @@ export async function writeToOutputPost(
         `success=${success ? 'true' : 'false'}\n`,
         'utf-8',
     )    
+    const content = await readFile(file, { encoding: 'utf-8' })
+    console.log(content);
 }
