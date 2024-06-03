@@ -7,8 +7,17 @@ import { ROOT } from './_common.mjs';
 
 export function createRestoreOutputs(steps) {
     return {
-        outputs:
-            [{
+        outputs: steps.reduce(
+            (a, value) => {
+                return {
+                    ...a,
+                    [`${value.id}-success`]: {
+                        description: `Success for ${value.name}`,
+                        value: `\${{ steps.${value.id}.outputs.success }}`,
+                    },
+                };
+            },
+            {
                 success: {
                     description: 'Success for all caches',
                     value: JSON.stringify(
@@ -18,14 +27,14 @@ export function createRestoreOutputs(steps) {
                             }
                             return {
                                 ...a,
-                                [value.id]: `\${{ steps.${value.id}.outputs.cache-hit }}`,
+                                [value.id]: `\${{ steps.${value.id}.outputs.success }}`,
                             };
                         }, {})
                     ),
                 },
             }
-            ],
-    }
+        ),
+    };
 }
 
 export function createSaveOutputs() {
