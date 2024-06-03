@@ -15,11 +15,13 @@ import {
   TrWebCommonsExternalPortalsApiModelsPaymentPlanPaymentPlanDto,
 } from '../../gen/fetch'
 import { handle404 } from '@island.is/clients/middlewares'
+import { ApplicationWriteApi } from './socialInsuranceAdministrationClient.type'
 
 @Injectable()
 export class SocialInsuranceAdministrationClientService {
   constructor(
     private readonly applicationApi: ApplicationApi,
+    private readonly applicationWriteApi: ApplicationWriteApi,
     private readonly applicantApi: ApplicantApi,
     private readonly paymentPlanApi: PaymentPlanApi,
     private readonly currencyApi: GeneralApi,
@@ -28,6 +30,9 @@ export class SocialInsuranceAdministrationClientService {
 
   private applicationApiWithAuth = (user: User) =>
     this.applicationApi.withMiddleware(new AuthMiddleware(user as Auth))
+
+  private applicationWriteApiWithAuth = (user: User) =>
+    this.applicationWriteApi.withMiddleware(new AuthMiddleware(user as Auth))
 
   private applicantApiWithAuth = (user: User) =>
     this.applicantApi.withMiddleware(new AuthMiddleware(user as Auth))
@@ -40,10 +45,9 @@ export class SocialInsuranceAdministrationClientService {
 
   getPaymentPlan(
     user: User,
-    year?: number,
   ): Promise<TrWebCommonsExternalPortalsApiModelsPaymentPlanPaymentPlanDto> {
     return this.paymentPlanApiWithAuth(user).apiProtectedV1PaymentPlanGet({
-      year: year ? year.toString() : undefined,
+      year: undefined,
     })
   }
 
@@ -55,20 +59,12 @@ export class SocialInsuranceAdministrationClientService {
       .catch(handle404)
   }
 
-  async getValidYearsForPaymentPlan(user: User): Promise<Array<number>> {
-    return (
-      (await this.paymentPlanApiWithAuth(user)
-        .apiProtectedV1PaymentPlanValidyearsGet()
-        .catch(handle404)) ?? []
-    )
-  }
-
   sendApplication(
     user: User,
     applicationDTO: object,
     applicationType: string,
   ): Promise<TrWebApiServicesDomainApplicationsModelsCreateApplicationFromPaperReturn> {
-    return this.applicationApiWithAuth(
+    return this.applicationWriteApiWithAuth(
       user,
     ).apiProtectedV1ApplicationApplicationTypePost({
       applicationType,
@@ -81,7 +77,7 @@ export class SocialInsuranceAdministrationClientService {
     applicationId: string,
     documents: Array<TrWebCommonsExternalPortalsApiModelsDocumentsDocument>,
   ): Promise<void> {
-    return this.applicationApiWithAuth(
+    return this.applicationWriteApiWithAuth(
       user,
     ).apiProtectedV1ApplicationApplicationGuidDocumentsPost({
       applicationGuid: applicationId,

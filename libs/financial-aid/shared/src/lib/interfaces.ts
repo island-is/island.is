@@ -130,6 +130,7 @@ export interface Address {
 }
 
 export interface UpdateApplication {
+  applied?: string
   state?: ApplicationState
   event: ApplicationEventType
   rejection?: string
