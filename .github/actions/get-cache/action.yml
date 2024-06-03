@@ -11,6 +11,9 @@ inputs:
     description: 'Path to cypress'
     default: '/github/home/.cache/Cypress'
 outputs:
+  success:
+    description: 'Success'
+    value: ${{ steps.run-cache.outputs.success }}
   keys:
     description: 'Keys'
     value: ${{ steps.get-cache-keys.outputs._CACHE_KEYS }}
@@ -41,5 +44,12 @@ runs:
         CYPRESS_PATH: ${{ inputs.cypress-path }}
         _CACHE_KEYS: ${{ steps.prepare.outputs._CACHE_KEYS }}
         _INIT_CACHE: ${{ steps.prepare.outputs._INIT_CACHE }}
+        YAML_FILE: ./.tmp-dynamic-post-cache/action.yml
       run: |
         node ./scripts/ci/cache/cache-action.mjs
+    - name: Run post cache workflow
+      id: run-cache
+      uses: ./.tmp-dynamic-post-cache
+    - name: Cleanup cache workflow
+      shell: bash
+      run: rm -rf ./.tmp-dynamicpost-cache
