@@ -466,7 +466,7 @@ export const newPrimarySchoolMessages: MessageDir = {
       defaultMessage: 'Upplýsingar um skólaakstur',
       description: 'Information about school bus',
     },
-    schoolAlertMessage: {
+    schoolBusAlertMessage: {
       id: 'dess.nps.application:different.needs.school.bus.alert.message',
       defaultMessage:
         'Barn gæti átt rétt á skólaakstri með skólabíl eða strætókorti í almenningssamgöngur til að komast í og úr skóla, vegna fjarlægðar lögheimilis frá hverfiskóla. Skólastjóri mun skoða málið og tilkynna foreldrum /forsjáraðilum ef svo er.\n\n\n Nemendur sem sökum fötlunar geta ekki nýtt sér almenningssamgöngur eða skólaakstur eiga rétt á ferðaþjónustu. Sækja þarf um ferðaþjónustu sérstaklega á vef sveitarfélags.',

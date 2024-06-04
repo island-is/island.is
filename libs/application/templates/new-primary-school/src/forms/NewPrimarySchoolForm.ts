@@ -622,10 +622,11 @@ export const NewPrimarySchoolForm: Form = buildForm({
               title: newPrimarySchoolMessages.differentNeeds.schoolBusTitle,
               children: [
                 buildAlertMessageField({
-                  id: 'schoolBusSubSection.info',
+                  id: 'schoolBus.info',
                   title: newPrimarySchoolMessages.shared.alertTitle,
                   message:
-                    newPrimarySchoolMessages.differentNeeds.schoolAlertMessage,
+                    newPrimarySchoolMessages.differentNeeds
+                      .schoolBusAlertMessage,
                   doesNotRequireAnswer: true,
                   alertType: 'info',
                 }),
