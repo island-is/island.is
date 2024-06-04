@@ -1,5 +1,3 @@
-import { CanActivate } from '@nestjs/common'
-
 import { indictmentCases } from '@island.is/judicial-system/types'
 
 import { CaseExistsGuard } from '../../guards/caseExists.guard'
@@ -17,34 +15,12 @@ describe('InternalCaseController - Deliver indictment to police guards', () => {
     )
   })
 
-  it('should have two guards', () => {
+  it('should have the right guard configuration', () => {
     expect(guards).toHaveLength(2)
-  })
-
-  describe('CaseExistsGuard', () => {
-    let guard: CanActivate
-
-    beforeEach(() => {
-      guard = new guards[0]()
-    })
-
-    it('should have CaseExistsGuard as guard 1', () => {
-      expect(guard).toBeInstanceOf(CaseExistsGuard)
-    })
-  })
-
-  describe('CaseTypeGuard', () => {
-    let guard: CanActivate
-
-    beforeEach(() => {
-      guard = guards[1]
-    })
-
-    it('should have CaseTypeGuard as guard 2', () => {
-      expect(guard).toBeInstanceOf(CaseTypeGuard)
-      expect(guard).toEqual({
-        allowedCaseTypes: indictmentCases,
-      })
+    expect(new guards[0]()).toBeInstanceOf(CaseExistsGuard)
+    expect(guards[1]).toBeInstanceOf(CaseTypeGuard)
+    expect(guards[1]).toEqual({
+      allowedCaseTypes: indictmentCases,
     })
   })
 })
