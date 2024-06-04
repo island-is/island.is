@@ -1,6 +1,5 @@
 import {
   buildCustomField,
-  buildDataProviderItem,
   buildDescriptionField,
   buildForm,
   buildMessageWithLinkButtonField,

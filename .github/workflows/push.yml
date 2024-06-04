@@ -345,11 +345,6 @@ jobs:
           git checkout $GITHUB_SHA
           echo "BASE=$BASE" >> $GITHUB_ENV
           echo "LAST_GOOD_BUILD_DOCKER_TAG=${LAST_GOOD_BUILD_DOCKER_TAG}" >> $GITHUB_OUTPUT
-
-          if [ -n "${NX_AFFECTED_ALL+x}" ]; then
-            echo "NX_AFFECTED_ALL=$NX_AFFECTED_ALL" >> $GITHUB_ENV
-          fi
-
       - name: Docker login to ECR repo
         run: ./scripts/ci/docker-login-ecr.sh
         env:

@@ -101,8 +101,7 @@ export const AssetsRepeater: FC<
 
   useEffect(() => {
     calculateTotal()
-    // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, [])
+  }, [fields])
 
   const handleAddRepeaterFields = () => {
     const values = props.fields.map((field: object) => {

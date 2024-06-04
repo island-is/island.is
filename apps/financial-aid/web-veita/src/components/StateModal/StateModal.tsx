@@ -66,8 +66,9 @@ const StateModal = ({
 
     await changeApplicationState(
       applicationId,
-      state,
       eventTypeFromApplicationState[state],
+      state,
+      undefined,
       rejection,
       comment,
       amount,
