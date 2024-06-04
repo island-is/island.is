@@ -167,6 +167,8 @@ export const inheritanceReportSchema = z.object({
       },
     ),
 
+  applicationFor: z.enum(['estateInheritance', 'prePaidInheritance']),
+
   /* assets */
   assets: z.object({
     realEstate: assetWithShare,

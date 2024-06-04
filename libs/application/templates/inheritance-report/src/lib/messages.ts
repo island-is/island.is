@@ -45,6 +45,12 @@ export const m = defineMessages({
     defaultMessage: 'Tegund umsóknar',
     description: 'Get application for',
   },
+  preDataCollectionApplicationFoDescription: {
+    id: 'ir.application:preDataCollectionApplicationFoDescription#markdown',
+    defaultMessage:
+      'Lorem ipsum dolor sit amet, consectetur adipiscing elit. Donec a ex magna. Aenean varius dui eget consectetur posuere. Pellentesque dignissim nunc id euismod porttitor. Curabitur ut ante pellentesque, rutrum purus in, vestibulum elit. Donec egestas lacus justo.',
+    description: 'Get application for',
+  },
   preDataCollectionApplicationForPrepaid: {
     id: 'ir.application:preDataCollectionApplicationForPrepaid',
     defaultMessage: 'Fyrirframgreiddur arfur',

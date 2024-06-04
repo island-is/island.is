@@ -1,6 +1,4 @@
-import {
-  buildForm,
-} from '@island.is/application/core'
+import { buildForm } from '@island.is/application/core'
 import { Form, FormModes } from '@island.is/application/types'
 import { assets } from './sections/assets'
 import { debtsAndFuneralCost } from './sections/debtsAndFuneralCost'
