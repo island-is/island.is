@@ -9,6 +9,7 @@ import { isReportingOnBehalfOfChild } from '../../../utils'
 export const childInCustodySubSection = buildSubSection({
   id: 'childInCustody.section',
   title: childInCustody.general.sectionTitle,
+  nextButtonText: 'TEST',
   children: [
     buildMultiField({
       id: 'childInCustody.fields',

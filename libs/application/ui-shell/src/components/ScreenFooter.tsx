@@ -7,10 +7,12 @@ import {
   FormModes,
   SubmitField,
   CallToAction,
+  FormText,
 } from '@island.is/application/types'
 
 import * as styles from './ScreenFooter.css'
 import { useAuth } from '@island.is/auth/react'
+import { MessageDescriptor, defineMessage } from 'react-intl'
 
 interface FooterProps {
   application: Application
@@ -25,6 +27,7 @@ interface FooterProps {
   shouldLastScreenButtonSubmit?: boolean
   renderLastScreenBackButton?: boolean
   submitButtonDisabled?: boolean
+  nextButtonText?: FormText
 }
 
 type SubmitButton = Omit<ButtonTypes, 'circle'> & {
@@ -65,6 +68,7 @@ export const ScreenFooter: FC<React.PropsWithChildren<FooterProps>> = ({
   renderLastScreenButton,
   renderLastScreenBackButton,
   submitButtonDisabled,
+  nextButtonText,
 }) => {
   const { formatMessage } = useLocale()
   const { userInfo: user } = useAuth()
@@ -72,6 +76,7 @@ export const ScreenFooter: FC<React.PropsWithChildren<FooterProps>> = ({
   const isLastScreen = activeScreenIndex === numberOfScreens - 1
   const showGoBack =
     activeScreenIndex > 0 && (!isLastScreen || renderLastScreenBackButton)
+  // console.log('ScreenFooter: ', nextButtonText)
 
   if (
     (isLastScreen && !renderLastScreenButton) ||
@@ -124,6 +129,8 @@ export const ScreenFooter: FC<React.PropsWithChildren<FooterProps>> = ({
         )
       })
   }
+  // console.log('NextButtonText: ', nextButtonText)
+  // console.log('CoreMessages: ', coreMessages.buttonBack)
 
   return (
     <Box marginTop={7} className={styles.buttonContainer}>
@@ -168,7 +175,9 @@ export const ScreenFooter: FC<React.PropsWithChildren<FooterProps>> = ({
                   type="submit"
                   disabled={submitButtonDisabled}
                 >
-                  {formatMessage(coreMessages.buttonNext)}
+                  {nextButtonText
+                    ? formatMessage(nextButtonText as MessageDescriptor)
+                    : formatMessage(coreMessages.buttonNext)}
                 </Button>
               </Box>
             )}

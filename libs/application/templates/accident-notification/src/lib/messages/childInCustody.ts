@@ -18,6 +18,11 @@ export const childInCustody = {
         'Ef tilkynning er sett fram barn, þá er nauðsynlegt að sá sem tilkynnir sé skráður forsjársaðili barnsins hjá Þjóðskrá Íslands.',
       description: `If a child is notified, it is necessary for the person notifying the child to be registered as the child's custodian.`,
     },
+    nextButtonText: {
+      id: 'an.application:childInCustody.general.nextButtonText',
+      defaultMessage: 'Áfram->->',
+      description: 'Next',
+    },
   }),
   labels: defineMessages({
     name: {

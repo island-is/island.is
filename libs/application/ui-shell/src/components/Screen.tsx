@@ -8,7 +8,11 @@ import React, {
   useState,
 } from 'react'
 import { ApolloError, useMutation } from '@apollo/client'
-import { formatText, mergeAnswers } from '@island.is/application/core'
+import {
+  coreMessages,
+  formatText,
+  mergeAnswers,
+} from '@island.is/application/core'
 import {
   Application,
   Answer,
@@ -19,6 +23,7 @@ import {
   Schema,
   BeforeSubmitCallback,
   Section,
+  FormText,
 } from '@island.is/application/types'
 import {
   Box,
@@ -50,6 +55,7 @@ import FormExternalDataProvider from './FormExternalDataProvider'
 import { extractAnswersToSubmitFromScreen, findSubmitField } from '../utils'
 import ScreenFooter from './ScreenFooter'
 import RefetchContext from '../context/RefetchContext'
+import { log } from 'console'
 
 type ScreenProps = {
   activeScreenIndex: number
@@ -80,6 +86,18 @@ const getServerValidationErrors = (error: ApolloError | undefined) => {
     return problem.fields
   }
   return null
+}
+
+const findNextButtonText = (
+  sections: Array<Section>,
+  screen: FormScreen,
+  index: number,
+): FormText => {
+  console.log('sections: ', sections)
+  console.log('screen: ', screen)
+  console.log('index: ', index)
+
+  return screen.nextButtonText ?? coreMessages.buttonNext
 }
 
 const Screen: FC<React.PropsWithChildren<ScreenProps>> = ({
@@ -113,6 +131,7 @@ const Screen: FC<React.PropsWithChildren<ScreenProps>> = ({
       resolver({ formValue, context, formatMessage }),
     context: { dataSchema, formNode: screen },
   })
+
   const [fieldLoadingState, setFieldLoadingState] = useState(false)
   const [isSubmitting, setIsSubmitting] = useState(false)
   const refetch = useContext<() => void>(RefetchContext)
@@ -165,6 +184,8 @@ const Screen: FC<React.PropsWithChildren<ScreenProps>> = ({
     ...beforeSubmitError,
     ...formErrors,
   }
+
+  // const nextButtonText = sections[activeScreenIndex].nextButtonText
 
   const goBack = useCallback(() => {
     setSubmitButtonDisabled(false)
@@ -258,6 +279,8 @@ const Screen: FC<React.PropsWithChildren<ScreenProps>> = ({
   const { width } = useWindowSize()
   const headerHeight = 85
 
+  const nextButtonText = findNextButtonText(sections, screen, activeScreenIndex)
+
   useEffect(() => {
     if (width < theme.breakpoints.md) {
       return setIsMobile(true)
@@ -315,6 +338,7 @@ const Screen: FC<React.PropsWithChildren<ScreenProps>> = ({
     screen.type === FormItemTypes.REPEATER ||
     screen.type === FormItemTypes.EXTERNAL_DATA_PROVIDER
   )
+
   return (
     <FormProvider {...hookFormData}>
       <Box
@@ -391,7 +415,6 @@ const Screen: FC<React.PropsWithChildren<ScreenProps>> = ({
         </GridColumn>
 
         <ToastContainer hideProgressBar closeButton useKeyframeStyles={false} />
-
         <ScreenFooter
           submitButtonDisabled={submitButtonDisabled}
           application={application}
@@ -404,6 +427,7 @@ const Screen: FC<React.PropsWithChildren<ScreenProps>> = ({
           submitField={submitField}
           loading={loading}
           canProceed={!isLoadingOrPending}
+          nextButtonText={nextButtonText}
         />
       </Box>
     </FormProvider>

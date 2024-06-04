@@ -28,4 +28,9 @@ export const betaTest = defineMessages({
     defaultMessage: 'mailto:island@island.is',
     description: 'Mail link for beta test message',
   },
+  nextButtonText: {
+    id: 'an.application:betaTest.test',
+    defaultMessage: 'TEST',
+    description: 'Test for an optional custom text for next button',
+  },
 })
