@@ -928,11 +928,13 @@ const ParentalLeaveTemplate: ApplicationTemplate<
             historyLogs: [
               {
                 onEvent: DefaultEvents.SUBMIT,
-                logMessage: statesMessages.editOrAddPeriodsSubmitHistoryLogMessage,
+                logMessage:
+                  statesMessages.editOrAddPeriodsSubmitHistoryLogMessage,
               },
               {
                 onEvent: DefaultEvents.ASSIGN,
-                logMessage: statesMessages.editOrAddPeriodsSubmitHistoryLogMessage,
+                logMessage:
+                  statesMessages.editOrAddPeriodsSubmitHistoryLogMessage,
               },
             ],
           },
@@ -1050,7 +1052,7 @@ const ParentalLeaveTemplate: ApplicationTemplate<
                 logMessage:
                   parentalLeaveFormMessages.draftFlow
                     .draftNotApprovedEmployerDesc,
-              }, 
+              },
             ],
           },
           lifecycle: birthDayLifeCycle,
@@ -1162,18 +1164,12 @@ const ParentalLeaveTemplate: ApplicationTemplate<
           [DefaultEvents.ABORT]: [
             {
               cond: (application) =>
-                goToState(
-                  application,
-                  States.VINNUMALASTOFNUN_APPROVAL,
-                ),
+                goToState(application, States.VINNUMALASTOFNUN_APPROVAL),
               target: States.VINNUMALASTOFNUN_APPROVAL,
             },
             {
               cond: (application) =>
-                goToState(
-                  application,
-                  States.VINNUMALASTOFNUN_APPROVE_EDITS,
-                ),
+                goToState(application, States.VINNUMALASTOFNUN_APPROVE_EDITS),
               target: States.VINNUMALASTOFNUN_APPROVE_EDITS,
             },
             {
@@ -1185,11 +1181,7 @@ const ParentalLeaveTemplate: ApplicationTemplate<
               target: States.VINNUMALASTOFNUN_APPROVE_EDITS,
             },
             {
-              cond: (application) =>
-                goToState(
-                  application,
-                  States.APPROVED,
-                ),
+              cond: (application) => goToState(application, States.APPROVED),
               target: States.APPROVED,
             },
           ],

@@ -2949,7 +2949,6 @@ export const statesMessages = defineMessages({
     description: 'Applicant applied for residence grant',
   },
 
-
   otherParentRequestApprovalTitle: {
     id: 'pl.application:otherParentRequestApproval.title',
     defaultMessage: 'Hitt foreldri óskar eftir samþykki þínu',
