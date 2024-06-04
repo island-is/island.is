@@ -1,5 +1,9 @@
 import { createIntl } from 'react-intl'
 
+import {
+  CaseIndictmentRulingDecision,
+  IndictmentDecision,
+} from '@island.is/judicial-system/types'
 import { tables } from '@island.is/judicial-system-web/messages'
 import {
   CaseState,
@@ -21,6 +25,8 @@ describe('mapCaseStateToTagVariant', () => {
     caseType: CaseType,
     isValidToDateInThePast?: boolean,
     courtDate?: string,
+    indictmendRulingDecision?: CaseIndictmentRulingDecision | null,
+    indictmentDecision?: IndictmentDecision | null,
   ) =>
     mapCaseStateToTagVariant(
       formatMessage,
@@ -29,6 +35,8 @@ describe('mapCaseStateToTagVariant', () => {
       isValidToDateInThePast,
       courtDate,
       isCourtRole,
+      indictmendRulingDecision,
+      indictmentDecision,
     )
 
   test('should return draft state', () => {
@@ -116,6 +124,23 @@ describe('mapCaseStateToTagVariant', () => {
     expect(fn(CaseState.MAIN_HEARING, false, CaseType.INDICTMENT)).toEqual({
       color: 'blue',
       text: strings.reassignment.defaultMessage,
+    })
+  })
+
+  test('should return postponed until verdict state', () => {
+    expect(
+      fn(
+        CaseState.RECEIVED,
+        false,
+        CaseType.INDICTMENT,
+        false,
+        '2020-01-01',
+        null,
+        IndictmentDecision.POSTPONING_UNTIL_VERDICT,
+      ),
+    ).toEqual({
+      color: 'mint',
+      text: strings.postponedUntilVerdict.defaultMessage,
     })
   })
 })
