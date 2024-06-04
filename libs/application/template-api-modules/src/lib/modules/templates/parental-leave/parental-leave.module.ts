@@ -18,26 +18,12 @@ import {
 } from '@island.is/clients/national-registry-v2'
 import { APPLICATION_ATTACHMENT_BUCKET } from './constants'
 
-const XROAD_VMST_MEMBER_CODE = process.env.XROAD_VMST_MEMBER_CODE ?? ''
-const XROAD_VMST_API_PATH = process.env.XROAD_VMST_API_PATH ?? ''
-const XROAD_CLIENT_ID = process.env.XROAD_CLIENT_ID ?? ''
-const XROAD_VMST_API_KEY = process.env.XROAD_VMST_API_KEY ?? ''
-
 export class ParentalLeaveModule {
   static register(config: BaseTemplateAPIModuleConfig): DynamicModule {
     return {
       module: ParentalLeaveModule,
       imports: [
-        VMSTModule.register({
-          xRoadPath: createXRoadAPIPath(
-            config.xRoadBasePathWithEnv,
-            XRoadMemberClass.GovernmentInstitution,
-            XROAD_VMST_MEMBER_CODE,
-            XROAD_VMST_API_PATH,
-          ),
-          xRoadClient: XROAD_CLIENT_ID,
-          apiKey: XROAD_VMST_API_KEY,
-        }),
+        VMSTModule,
         SharedTemplateAPIModule.register(config),
         SmsModule.register(config.smsOptions),
         ApplicationApiCoreModule,
