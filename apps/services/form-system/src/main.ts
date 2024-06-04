@@ -8,7 +8,7 @@ import { NestFactory } from '@nestjs/core'
 import { SwaggerModule, DocumentBuilder } from '@nestjs/swagger'
 import { AppModule } from './app/app.module'
 
-async function bootstrap() {
+const bootstrap = async () => {
   const app = await NestFactory.create(AppModule)
 
   const config = new DocumentBuilder()
@@ -26,14 +26,3 @@ async function bootstrap() {
 }
 
 bootstrap()
-
-// bootstrap({
-//   appModule: AppModule,
-//   name: 'form-system-api',
-//   openApi,
-//   // port: environment.port,
-//   // enableVersioning: true,
-//   // healthCheck: {
-//   //   database: true,
-//   // },
-// })

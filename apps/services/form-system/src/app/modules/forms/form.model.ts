@@ -1,24 +1,14 @@
+import { CreationOptional } from 'sequelize'
 import {
-  CreationOptional,
-  InferAttributes,
-  InferCreationAttributes,
-  NonAttribute,
-} from 'sequelize'
-import {
-  AllowNull,
   AutoIncrement,
   Column,
   CreatedAt,
   DataType,
-  Default,
   HasMany,
   Model,
-  NotNull,
-  PrimaryKey,
   Table,
   UpdatedAt,
 } from 'sequelize-typescript'
-import { LanguageType } from '../../dataTypes/languageType.model'
 import { Step } from '../steps/step.model'
 import { ApiProperty } from '@nestjs/swagger'
 
