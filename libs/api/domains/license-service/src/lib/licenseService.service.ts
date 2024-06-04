@@ -22,7 +22,6 @@ import {
   InternalServerErrorException,
 } from '@nestjs/common'
 import { isJSON, isJWT } from 'class-validator'
-import isString from 'lodash/isString'
 
 import ShortUniqueId from 'short-unique-id'
 import { GenericUserLicense } from './dto/GenericUserLicense.dto'
@@ -50,6 +49,7 @@ import {
   LICENSE_MAPPER_FACTORY,
 } from './licenseService.constants'
 import { CreateBarcodeResult } from './dto/CreateBarcodeResult.dto'
+import { isDefined } from '@island.is/shared/utils'
 
 const LOG_CATEGORY = 'license-service'
 
@@ -150,31 +150,32 @@ export class LicenseServiceService {
     locale: Locale,
     { includedTypes, excludedTypes, onlyList }: GetGenericLicenseOptions = {},
   ): Promise<UserLicensesResponse> {
-    const licenses: GenericUserLicense[] = []
-
-    for await (const license of AVAILABLE_LICENSES) {
+    const fetchPromises = AVAILABLE_LICENSES.map(async (license) => {
       if (excludedTypes && excludedTypes.indexOf(license.type) >= 0) {
-        continue
+        return null
       }
 
       if (includedTypes && includedTypes.indexOf(license.type) < 0) {
-        continue
+        return null
       }
 
       if (!onlyList) {
-        const genericLicenses = await this.getLicensesOfType(
-          user,
-          locale,
-          license.type,
-        )
+        return this.getLicensesOfType(user, locale, license.type)
+      }
 
-        genericLicenses
-          ?.filter(
-            (gl) => gl.license.status === GenericUserLicenseStatus.HasLicense,
-          )
-          .forEach((gl) => licenses.push(gl))
+      return null
+    }).filter(isDefined)
+
+    const licenses: Array<GenericUserLicense> = []
+    for (const licenseArrayResult of await Promise.allSettled(fetchPromises)) {
+      if (
+        licenseArrayResult.status === 'fulfilled' &&
+        licenseArrayResult.value
+      ) {
+        licenses.push(...licenseArrayResult.value)
       }
     }
+
     return {
       nationalId: user.nationalId,
       licenses: licenses ?? [],
@@ -185,31 +186,32 @@ export class LicenseServiceService {
     locale: Locale,
     { includedTypes, excludedTypes, onlyList }: GetGenericLicenseOptions = {},
   ): Promise<GenericUserLicense[]> {
-    const licenses: GenericUserLicense[] = []
-
-    for await (const license of AVAILABLE_LICENSES) {
+    const fetchPromises = AVAILABLE_LICENSES.map(async (license) => {
       if (excludedTypes && excludedTypes.indexOf(license.type) >= 0) {
-        continue
+        return null
       }
 
       if (includedTypes && includedTypes.indexOf(license.type) < 0) {
-        continue
+        return null
       }
 
       if (!onlyList) {
-        const genericLicenses = await this.getLicensesOfType(
-          user,
-          locale,
-          license.type,
-        )
+        return this.getLicensesOfType(user, locale, license.type)
+      }
 
-        genericLicenses
-          ?.filter(
-            (gl) => gl.license.status === GenericUserLicenseStatus.HasLicense,
-          )
-          .forEach((gl) => licenses.push(gl))
+      return null
+    }).filter(isDefined)
+
+    const licenses: Array<GenericUserLicense> = []
+    for (const licenseArrayResult of await Promise.allSettled(fetchPromises)) {
+      if (
+        licenseArrayResult.status === 'fulfilled' &&
+        licenseArrayResult.value
+      ) {
+        licenses.push(...licenseArrayResult.value)
       }
     }
+
     return licenses
   }
 
