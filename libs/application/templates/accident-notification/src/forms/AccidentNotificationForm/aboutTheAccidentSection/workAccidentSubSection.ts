@@ -73,7 +73,7 @@ export const workAccidentSubSection = buildSubSection({
         buildTextField({
           id: 'workAccident.jobTitle',
           title: injuredPersonInformation.labels.jobTitle,
-          backgroundColor: 'white',
+          backgroundColor: 'blue',
           width: 'full',
           maxLength: 100,
           condition: (formValue) => isReportingOnBehalfSelf(formValue),

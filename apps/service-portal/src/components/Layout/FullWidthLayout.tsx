@@ -19,6 +19,8 @@ import { IntroHeader, ServicePortalPaths } from '@island.is/service-portal/core'
 import { Link, matchPath, useNavigate } from 'react-router-dom'
 import { DocumentsPaths } from '@island.is/service-portal/documents'
 import { theme } from '@island.is/island-ui/theme'
+import { useAuth } from '@island.is/auth/react'
+import { DocumentsScope } from '@island.is/auth/scopes'
 
 interface FullWidthLayoutWrapperProps {
   activeParent?: PortalNavigationItem
@@ -41,27 +43,28 @@ export const FullWidthLayout: FC<FullWidthLayoutProps> = ({
 }) => {
   const navigate = useNavigate()
   const { formatMessage } = useLocale()
+  const { userInfo } = useAuth()
   const [navItems, setNavItems] = useState<PortalNavigationItem[] | undefined>()
-  const [activeChild, setActiveChild] = useState<
-    PortalNavigationItem | undefined
-  >()
 
   useEffect(() => {
     const visibleNavItems =
       activeParent?.children?.filter((item) => !item.navHide) || undefined
     setNavItems(visibleNavItems)
-
-    const activeVisibleChild = visibleNavItems?.filter(
-      (item) => item.active,
-    )?.[0]
-    setActiveChild(activeVisibleChild)
   }, [activeParent?.children])
+
+  const hasDocumentsDelegationAccess = userInfo?.scopes?.includes(
+    DocumentsScope.main,
+  )
 
   return (
     <Box
       as="main"
       component="main"
-      className={isDocuments ? styles.fullWidthSplit : undefined}
+      className={
+        isDocuments && hasDocumentsDelegationAccess
+          ? styles.fullWidthSplit
+          : undefined
+      }
       paddingTop={isDocuments || isDashboard ? undefined : 9}
       style={{
         marginTop: height,

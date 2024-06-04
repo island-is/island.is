@@ -1,10 +1,16 @@
-import { getValueViaPath } from '@island.is/application/core'
-import { Application, FormValue } from '@island.is/application/types'
+import { NationalRegistrySpouse } from '@island.is/api/schema'
+import { YES, getValueViaPath } from '@island.is/application/core'
+import {
+  Application,
+  ExternalData,
+  FormValue,
+} from '@island.is/application/types'
 import { InheritanceReportInfo } from '@island.is/clients/syslumenn'
 import { parsePhoneNumberFromString } from 'libphonenumber-js'
 import { MessageDescriptor } from 'react-intl'
-import { ZodTypeAny } from 'zod'
-import { YES } from '../constants'
+import { boolean, ZodTypeAny } from 'zod'
+import { Answers } from '../../types'
+import { ESTATE_INHERITANCE } from '../constants'
 
 export const currencyStringToNumber = (str: string) => {
   if (!str) {
@@ -33,6 +39,65 @@ export const getEstateDataFromApplication = (
   return {
     inheritanceReportInfo: estateData,
   }
+}
+
+export const getSpouseFromExternalData = (
+  externalData: ExternalData,
+): NationalRegistrySpouse | undefined => {
+  const spouse = getValueViaPath(externalData, 'maritalStatus.data', {}) as
+    | NationalRegistrySpouse
+    | undefined
+
+  return spouse
+}
+
+export const getPrePaidOverviewSectionsToDisplay = (
+  answers: FormValue,
+): {
+  isMoney: boolean
+  isOther: boolean
+  isStocks: boolean
+  isRealEstate: boolean
+} => {
+  if (answers.applicationFor === ESTATE_INHERITANCE) {
+    return {
+      isMoney: true,
+      isOther: true,
+      isStocks: true,
+      isRealEstate: true,
+    }
+  }
+
+  const { money, stocks, other, realEstate } = answers.prepaidInheritance as {
+    money: []
+    stocks: []
+    other: []
+    realEstate: []
+  }
+  return {
+    isMoney: money.length > 0,
+    isOther: other.length > 0,
+    isStocks: stocks.length > 0,
+    isRealEstate: realEstate.length > 0,
+  }
+}
+
+export const getPrePaidTotalValueFromApplication = (
+  application: Application<FormValue>,
+): number => {
+  const { answers } = application
+  const money = valueToNumber(
+    getValueViaPath(answers, 'assets.money.value', '0'),
+  )
+  const vehicleTotal =
+    getValueViaPath<number>(answers, 'assets.vehicles.total', 0) ?? 0
+  const realEstateTotal =
+    getValueViaPath<number>(answers, 'assets.realEstate.total', 0) ?? 0
+  const otherTotal =
+    getValueViaPath<number>(answers, 'assets.otherAssets.total', 0) ?? 0
+  const bankAccountTotal =
+    getValueViaPath<number>(answers, 'assets.bankAccounts.total', 0) ?? 0
+  return money + vehicleTotal + realEstateTotal + otherTotal + bankAccountTotal
 }
 
 export const customZodError = (
@@ -88,6 +153,25 @@ export const isValidRealEstate = (value: string) => {
   return assetNumberPattern.test(value)
 }
 
+export const parseLabel = (
+  label: MessageDescriptor | { [key: string]: MessageDescriptor },
+  answers: Answers | undefined,
+): MessageDescriptor => {
+  if (isMessageDescriptor(label)) {
+    return label
+  }
+  const applicationFor: string = answers?.applicationFor as string
+  return label[applicationFor]
+}
+
+export const isMessageDescriptor = (obj: any): obj is MessageDescriptor => {
+  return (
+    obj &&
+    typeof obj === 'object' &&
+    ('id' in obj || 'defaultMessage' in obj || 'description' in obj)
+  )
+}
+
 export const getDeceasedWasMarriedAndHadAssets = (
   application: Application,
 ): boolean =>
@@ -97,23 +181,23 @@ export const getDeceasedWasMarriedAndHadAssets = (
 
 export const getDeceasedHadAssets = (application: Application): boolean =>
   application?.answers &&
-  getValueViaPath(application.answers, 'deceasedHadAssets') === YES
+  getValueViaPath(application.answers, 'customShare.deceasedHadAssets') === YES
 
 export const getDeceasedWasInCohabitation = (
   application: Application,
 ): boolean =>
   application?.answers &&
-  getValueViaPath(application.answers, 'deceasedWasMarried') === YES
+  getValueViaPath(application.answers, 'customShare.deceasedWasMarried') === YES
 
 export const hasYes = (arr?: string[]) =>
   Array.isArray(arr) && arr.includes(YES)
 
 export const shouldShowDeceasedShareField = (answers: FormValue) =>
-  getValueViaPath(answers, 'deceasedHadAssets') === YES &&
-  getValueViaPath(answers, 'deceasedWasMarried') === YES
+  getValueViaPath(answers, 'customShare.deceasedHadAssets') === YES &&
+  getValueViaPath(answers, 'customShare.deceasedWasMarried') === YES
 
 export const shouldShowCustomSpouseShare = (answers: FormValue) =>
-  getValueViaPath(answers, 'deceasedWasMarried') === YES
+  getValueViaPath(answers, 'customShare.deceasedWasMarried') === YES
 
 export const roundedValueToNumber = (value: unknown) =>
   Math.round(valueToNumber(value))

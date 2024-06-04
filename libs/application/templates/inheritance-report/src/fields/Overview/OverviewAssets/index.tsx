@@ -24,126 +24,143 @@ import { SectionType, RowProps, RowItemType } from './types'
 import { getValueViaPath } from '@island.is/application/core'
 import { formatCurrency } from '@island.is/application/ui-components'
 import { calculateTotalAssets } from '../../../lib/utils/calculateTotalAssets'
+import { PREPAID_INHERITANCE } from '../../../lib/constants'
+import { getPrePaidOverviewSectionsToDisplay } from '../../../lib/utils/helpers'
 
 export const OverviewAssets: FC<React.PropsWithChildren<FieldBaseProps>> = ({
   application,
 }) => {
   const { formatMessage } = useLocale()
   const { answers } = application
+  const isPrePaid = answers.applicationFor === PREPAID_INHERITANCE
+  const { isRealEstate, isStocks, isMoney, isOther } =
+    getPrePaidOverviewSectionsToDisplay(answers)
 
   const sections: SectionType[] = []
 
   // Real estate
-  const realEstateDataRow = getRealEstateDataRow(answers)
-  const realEstateDataTotal = formatCurrency(
-    String(getValueViaPath(answers, 'assets.realEstate.total')) ?? '',
-  )
+  if (isRealEstate) {
+    const realEstateDataRow = getRealEstateDataRow(answers)
+    const realEstateDataTotal = formatCurrency(
+      String(getValueViaPath(answers, 'assets.realEstate.total')) ?? '',
+    )
 
-  sections.push({
-    title: m.realEstate,
-    data: realEstateDataRow,
-    total: realEstateDataTotal,
-    totalTitle: m.realEstateEstimationOnDeath,
-  })
+    sections.push({
+      title: m.realEstate,
+      data: realEstateDataRow,
+      total: realEstateDataTotal,
+      totalTitle: isPrePaid
+        ? m.realEstateEstimationPrePaid
+        : m.realEstateEstimation,
+    })
+  }
 
-  // Vehicles
-  const vehiclesDataRow = getVehiclesDataRow(answers)
-  const vehiclesDataTotal = formatCurrency(
-    String(getValueViaPath(answers, 'assets.vehicles.total')) ?? '',
-  )
+  if (!isPrePaid) {
+    // Vehicles
+    const vehiclesDataRow = getVehiclesDataRow(answers)
+    const vehiclesDataTotal = formatCurrency(
+      String(getValueViaPath(answers, 'assets.vehicles.total')) ?? '',
+    )
 
-  sections.push({
-    title: m.vehicles,
-    data: vehiclesDataRow,
-    total: vehiclesDataTotal,
-    totalTitle: m.marketValue,
-  })
+    sections.push({
+      title: m.vehicles,
+      data: vehiclesDataRow,
+      total: vehiclesDataTotal,
+      totalTitle: m.marketValueTotal,
+    })
 
-  // Guns
-  const gunsDataRow = getGunsDataRow(answers)
-  const gunsDataTotal = formatCurrency(
-    String(getValueViaPath(answers, 'assets.guns.total')) ?? '',
-  )
+    // Guns
+    const gunsDataRow = getGunsDataRow(answers)
+    const gunsDataTotal = formatCurrency(
+      String(getValueViaPath(answers, 'assets.guns.total')) ?? '',
+    )
 
-  sections.push({
-    title: m.guns,
-    data: gunsDataRow,
-    total: gunsDataTotal,
-    totalTitle: m.marketValue,
-  })
+    sections.push({
+      title: m.guns,
+      data: gunsDataRow,
+      total: gunsDataTotal,
+      totalTitle: m.marketValueTotal,
+    })
 
-  // Inventory
-  const inventoryDataRow = getInventoryDataRow(answers)
-  const inventoryDataTotal = formatCurrency(
-    String(getValueViaPath(answers, 'assets.inventory.value')) ?? '',
-  )
+    // Inventory
+    const inventoryDataRow = getInventoryDataRow(answers)
+    const inventoryDataTotal = formatCurrency(
+      String(getValueViaPath(answers, 'assets.inventory.value')) ?? '',
+    )
 
-  sections.push({
-    title: m.inventoryTitle,
-    data: inventoryDataRow,
-    total: inventoryDataTotal,
-    totalTitle: m.marketValue,
-    showTotalFirst: true,
-  })
+    sections.push({
+      title: m.inventoryTitle,
+      data: inventoryDataRow,
+      total: inventoryDataTotal,
+      totalTitle: m.marketValueTotal,
+      showTotalFirst: true,
+    })
 
-  // Bank accounts
-  const bankAccountsDataRow = getBankAccountsDataRow(answers)
-  const bankAccountsDataTotal = formatCurrency(
-    String(getValueViaPath(answers, 'assets.inventory.value')) ?? '',
-  )
+    // Bank accounts
+    const bankAccountsDataRow = getBankAccountsDataRow(answers)
+    const bankAccountsDataTotal = formatCurrency(
+      String(getValueViaPath(answers, 'assets.bankAccounts.total')) ?? '',
+    )
 
-  sections.push({
-    title: m.estateBankInfo,
-    data: bankAccountsDataRow,
-    total: bankAccountsDataTotal,
-    totalTitle: m.banksBalance,
-  })
+    sections.push({
+      title: m.estateBankInfo,
+      data: bankAccountsDataRow,
+      total: bankAccountsDataTotal,
+      totalTitle: m.banksBalance,
+    })
 
-  // Claims
-  const claimsDataRow = getClaimsDataRow(answers)
-  const claimsDataTotal = formatCurrency(
-    String(getValueViaPath(answers, 'assets.claims.total')) ?? '',
-  )
+    // Claims
+    const claimsDataRow = getClaimsDataRow(answers)
+    const claimsDataTotal = formatCurrency(
+      String(getValueViaPath(answers, 'assets.claims.total')) ?? '',
+    )
 
-  sections.push({
-    title: m.claimsTitle,
-    data: claimsDataRow,
-    total: claimsDataTotal,
-    totalTitle: m.totalValue,
-  })
+    sections.push({
+      title: m.claimsTitle,
+      data: claimsDataRow,
+      total: claimsDataTotal,
+      totalTitle: m.totalValue,
+    })
+  }
 
   // Stocks
-  const stocksDataRow = getStocksDataRow(answers)
-  const stocksDataTotal = formatCurrency(
-    String(getValueViaPath(answers, 'assets.stocks.total')) ?? '',
-  )
+  if (isStocks) {
+    const stocksDataRow = getStocksDataRow(answers)
+    const stocksDataTotal = formatCurrency(
+      String(getValueViaPath(answers, 'assets.stocks.total')) ?? '',
+    )
 
-  sections.push({
-    title: m.stocksTitle,
-    data: stocksDataRow,
-    total: stocksDataTotal,
-    totalTitle: m.totalValue,
-  })
+    sections.push({
+      title: m.stocksTitle,
+      data: stocksDataRow,
+      total: stocksDataTotal,
+      totalTitle: isPrePaid ? m.totalValuePrePaid : m.totalValue,
+    })
+  }
 
   // Money
-  const moneyDataRow = getMoneyDataRow(answers)
-  sections.push({
-    title: m.moneyTitle,
-    data: moneyDataRow,
-  })
+  if (isMoney) {
+    const moneyDataRow = getMoneyDataRow(answers)
+    sections.push({
+      title: isPrePaid ? m.moneyTitlePrePaid : m.moneyTitle,
+      data: moneyDataRow,
+    })
+  }
 
   // Other assets
-  const otherAssetsDataRow = getOtherAssetsDataRow(answers)
-  const otherAssetsDataTotal = formatCurrency(
-    String(getValueViaPath(answers, 'assets.otherAssets.total')) ?? '',
-  )
+  if (isOther) {
+    const otherAssetsDataRow = getOtherAssetsDataRow(answers)
+    const otherAssetsDataTotal = formatCurrency(
+      String(getValueViaPath(answers, 'assets.otherAssets.total')) ?? '',
+    )
 
-  sections.push({
-    title: m.otherAssetsTitle,
-    data: otherAssetsDataRow,
-    total: otherAssetsDataTotal,
-    totalTitle: m.totalValue,
-  })
+    sections.push({
+      title: m.otherAssetsTitle,
+      data: otherAssetsDataRow,
+      total: otherAssetsDataTotal,
+      totalTitle: isPrePaid ? m.totalValuePrePaid : m.totalValue,
+    })
+  }
 
   const totalAssets = calculateTotalAssets(answers)
 
