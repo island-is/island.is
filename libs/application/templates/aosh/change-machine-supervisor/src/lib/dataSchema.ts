@@ -1,6 +1,6 @@
 import { z } from 'zod'
 import * as kennitala from 'kennitala'
-import { isValidNumber, parse, parseNumber } from 'libphonenumber-js'
+import { isValidNumber } from 'libphonenumber-js'
 
 export const MachineAnswersSchema = z.object({
   machine: z.object({
