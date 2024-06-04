@@ -14,6 +14,9 @@ import {
 } from '../../utils'
 import * as styles from './ChartNumberBox.css'
 
+const formatNumberBoxPercentageForPresentation = (percentage: number) =>
+  formatPercentageForPresentation(percentage, percentage < 0.1 ? 1 : 0)
+
 type ChartNumberBoxRendererProps = {
   slice: IChartNumberBox & { chartNumberBoxId: string }
 }
@@ -113,7 +116,7 @@ export const ChartNumberBox = ({ slice }: ChartNumberBoxRendererProps) => {
                 mostRecentValue,
                 reduceAndRoundValue,
               )
-            : formatPercentageForPresentation(
+            : formatNumberBoxPercentageForPresentation(
                 index === 0 ? mostRecentValue : change - 1,
               )
 
@@ -124,7 +127,7 @@ export const ChartNumberBox = ({ slice }: ChartNumberBoxRendererProps) => {
                 mostRecentValue,
                 reduceAndRoundValue,
               )
-            : formatPercentageForPresentation(
+            : formatNumberBoxPercentageForPresentation(
                 index === 0 ? mostRecentValue : Math.abs(change - 1),
               )
 
