@@ -10,6 +10,7 @@ import { PermissionFormTypes } from '../EditPermission.schema'
 import { useEnvironmentState } from '../../../hooks/useEnvironmentState'
 import { checkEnvironmentsSync } from '../../../utils/checkEnvironmentsSync'
 import { useDelegationProviders } from '../../../context/DelegationProviders/DelegationProvidersContext'
+import { getDelegationProviderTranslations } from '../../../utils/getDelegationProviderTranslations'
 
 const FIELD_PREFIX = 'field-'
 
@@ -25,6 +26,10 @@ export const PermissionDelegations = () => {
 
   const delegationProviders = getDelegationProviders(
     selectedPermission.environment,
+  )
+
+  const providers = delegationProviders.map(
+    getDelegationProviderTranslations('apiScopeDelegation', formatMessage),
   )
 
   const [inputValues, setInputValues] = useEnvironmentState<{
@@ -107,32 +112,36 @@ export const PermissionDelegations = () => {
       ])}
     >
       <Stack space={4}>
-        {delegationProviders.map((provider) => (
-          <Stack space={2} key={provider.id}>
-            <Text variant="h5" as="h4">
-              {provider.name}
-            </Text>
-            <Stack space={2} component="ul">
-              {provider.delegationTypes.map((delegationType) => (
-                <Checkbox
-                  key={delegationType.id}
-                  label={delegationType.name}
-                  backgroundColor={'blue'}
-                  large
-                  name={`${FIELD_PREFIX}${delegationType.id}`}
-                  value="true"
-                  checked={inputValues.supportedDelegationTypes?.includes(
-                    delegationType.id,
-                  )}
-                  onChange={(e) =>
-                    toggleDelegationType(e.target.name, e.target.checked)
-                  }
-                  subLabel={delegationType.description}
-                />
-              ))}
+        {providers.map((provider) =>
+          !provider ? null : (
+            <Stack space={2} key={provider.id}>
+              <Text variant="h5" as="h4">
+                {provider.name}
+              </Text>
+              <Stack space={2} component="ul">
+                {provider.delegationTypes.map((delegationType) =>
+                  !delegationType ? null : (
+                    <Checkbox
+                      key={delegationType.id}
+                      label={delegationType.name}
+                      backgroundColor={'blue'}
+                      large
+                      name={`${FIELD_PREFIX}${delegationType.id}`}
+                      value="true"
+                      checked={inputValues.supportedDelegationTypes?.includes(
+                        delegationType.id,
+                      )}
+                      onChange={(e) =>
+                        toggleDelegationType(e.target.name, e.target.checked)
+                      }
+                      subLabel={delegationType.description}
+                    />
+                  ),
+                )}
+              </Stack>
             </Stack>
-          </Stack>
-        ))}
+          ),
+        )}
         {inputValues.removedDelegationTypes.map((type) => (
           <Hidden key={type} print screen>
             <input type="hidden" name="removedDelegationTypes" value={type} />

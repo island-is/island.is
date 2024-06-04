@@ -12,6 +12,7 @@ import { FormCard } from '../../../components/FormCard/FormCard'
 import React from 'react'
 import { useDelegationProviders } from '../../../context/DelegationProviders/DelegationProvidersContext'
 import { AuthAdminEnvironment } from '@island.is/api/schema'
+import { getDelegationProviderTranslations } from '../../../utils/getDelegationProviderTranslations'
 
 interface DelegationProps {
   promptDelegations: boolean
@@ -48,6 +49,10 @@ const Delegation = ({
     addedDelegationTypes: [],
     removedDelegationTypes: [],
   })
+
+  const providers = delegationProviders.map(
+    getDelegationProviderTranslations('clientDelegation', formatMessage),
+  )
 
   const toggleDelegationType = (field: string, checked: boolean) => {
     const type = field.split(FIELD_PREFIX)[1]
@@ -124,33 +129,37 @@ const Delegation = ({
       ])}
     >
       <Stack space={4}>
-        {delegationProviders.map((provider) => (
-          <Stack space={2} key={provider.id}>
-            <Text variant="h5" as="h4">
-              {provider.name}
-            </Text>
-            <Stack space={2} component="ul">
-              {provider.delegationTypes.map((delegationType) => (
-                <Checkbox
-                  key={delegationType.id}
-                  label={delegationType.name}
-                  backgroundColor={'blue'}
-                  large
-                  name={`${FIELD_PREFIX}${delegationType.id}`}
-                  value="true"
-                  disabled={!isSuperAdmin}
-                  checked={inputValues.supportedDelegationTypes?.includes(
-                    delegationType.id,
-                  )}
-                  onChange={(e) =>
-                    toggleDelegationType(e.target.name, e.target.checked)
-                  }
-                  subLabel={delegationType.description}
-                />
-              ))}
+        {providers.map((provider) =>
+          !provider ? null : (
+            <Stack space={2} key={provider.id}>
+              <Text variant="h5" as="h4">
+                {provider.name}
+              </Text>
+              <Stack space={2} component="ul">
+                {provider.delegationTypes.map((delegationType) =>
+                  !delegationType ? null : (
+                    <Checkbox
+                      key={delegationType.id}
+                      label={delegationType.name}
+                      backgroundColor={'blue'}
+                      large
+                      name={`${FIELD_PREFIX}${delegationType.id}`}
+                      value="true"
+                      disabled={!isSuperAdmin}
+                      checked={inputValues.supportedDelegationTypes?.includes(
+                        delegationType.id,
+                      )}
+                      onChange={(e) =>
+                        toggleDelegationType(e.target.name, e.target.checked)
+                      }
+                      subLabel={delegationType.description}
+                    />
+                  ),
+                )}
+              </Stack>
             </Stack>
-          </Stack>
-        ))}
+          ),
+        )}
         <Stack space={2}>
           <Text variant="h5" as="h4">
             {formatMessage(m.additionalSettingsLabel)}
