@@ -4,6 +4,7 @@ import {
   Get,
   Inject,
   InternalServerErrorException,
+  Param,
   UseInterceptors,
 } from '@nestjs/common'
 import { ApiCreatedResponse, ApiTags } from '@nestjs/swagger'
@@ -41,6 +42,27 @@ export class DefenderController {
     } catch (error) {
       this.logger.error('Failed to retrieve lawyers', error)
       throw new InternalServerErrorException('Failed to retrieve lawyers')
+    }
+  }
+
+  @Get('defender/:nationalId')
+  @ApiCreatedResponse({
+    type: Defender,
+    description: 'Retrieves a defender by national id',
+  })
+  async getLawyer(@Param('nationalId') nationalId: string): Promise<Defender> {
+    try {
+      this.logger.debug(`Retrieving lawyer by national id ${nationalId}`)
+
+      const lawyer = await this.lawyersService.getLawyer(nationalId)
+      return {
+        nationalId: lawyer.SSN,
+        name: lawyer.Name,
+        practice: lawyer.Practice,
+      }
+    } catch (error) {
+      this.logger.error('Failed to retrieve lawyer', error)
+      throw new InternalServerErrorException('Failed to retrieve lawyer')
     }
   }
 }

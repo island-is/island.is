@@ -23,6 +23,9 @@ export class SubpoenaResponse {
   @ApiProperty({ type: () => DefenderInfo })
   defenderInfo?: DefenderInfo
 
+  @ApiProperty({ type: () => Boolean })
+  acceptCompensationClaim?: boolean
+
   static fromInternalCaseResponse(
     internalCase: InternalCaseResponse,
     defendantNationalId: string,
@@ -45,6 +48,7 @@ export class SubpoenaResponse {
             defenderName: defendantInfo?.defenderName,
           }
         : undefined,
+      acceptCompensationClaim: defendantInfo?.acceptCompensationClaim,
     }
   }
 }
