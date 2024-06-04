@@ -77,14 +77,11 @@ export class GroupsService {
       groupId: input.groupId,
     }
 
-    const response = await this.groupsApiWithAuth(auth)
+    await this.groupsApiWithAuth(auth)
       .apiGroupsGroupIdDelete(request)
       .catch((e) => handle4xx(e, this.handleError, 'failed to delete group'))
 
-    if (!response || response instanceof ApolloError) {
-      return void 0
-    }
-    return response
+    return
   }
 
   async updateGroup(auth: User, input: UpdateGroupInput): Promise<void> {
@@ -92,13 +89,10 @@ export class GroupsService {
       groupId: input.groupId,
       groupUpdateDto: input.groupUpdateDto as GroupUpdateDto,
     }
-    const response = await this.groupsApiWithAuth(auth)
+    await this.groupsApiWithAuth(auth)
       .apiGroupsGroupIdPut(request)
       .catch((e) => handle4xx(e, this.handleError, 'failed to update group'))
 
-    if (!response || response instanceof ApolloError) {
-      return void 0
-    }
-    return response
+    return
   }
 }

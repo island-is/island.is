@@ -116,7 +116,7 @@ export const TableRow = ({
           <ColumnText text={ApplicationTemplateStatus[state ? state : 0]} />
         </Column>
         <Column span="1/12">
-          <Box display="flex" justifyContent={'center'} alignItems={'center'}>
+          <Box display="flex" justifyContent="center" alignItems="center">
             <DropdownMenu
               menuLabel={`${formatMessage(m.actions)} ${name}`}
               disclosure={

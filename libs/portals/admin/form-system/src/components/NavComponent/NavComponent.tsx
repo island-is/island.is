@@ -93,6 +93,7 @@ export const NavComponent = ({
         ...attributes,
         onClick: () => focusComponent(type, data.guid as UniqueIdentifier),
       })}
+      ref={setNodeRef}
     >
       {active ? (
         <Box display="flex" flexDirection="row">

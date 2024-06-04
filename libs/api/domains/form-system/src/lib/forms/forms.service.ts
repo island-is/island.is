@@ -104,14 +104,11 @@ export class FormsService {
     const request: ApiFormsFormIdDeleteRequest = {
       formId: input.id,
     }
-    const response = await this.formsApiWithAuth(auth)
+    await this.formsApiWithAuth(auth)
       .apiFormsFormIdDelete(request)
       .catch((e) => handle4xx(e, this.handleError, 'failed to delete form'))
 
-    if (!response || response instanceof ApolloError) {
-      return void 0
-    }
-    return response
+    return
   }
 
   async updateForm(auth: User, input: UpdateFormInput): Promise<void> {
@@ -127,13 +124,11 @@ export class FormsService {
       formId: input.formId,
       formUpdateDto: formattedForm as FormUpdateDto,
     }
-    const response = await this.formsApiWithAuth(auth)
+    await this.formsApiWithAuth(auth)
       .apiFormsFormIdPut(request)
       .catch((e) => handle4xx(e, this.handleError, 'failed to update form'))
-    if (!response || response instanceof ApolloError) {
-      return void 0
-    }
-    return response
+
+    return
   }
 
   async updateFormSettings(
@@ -145,16 +140,12 @@ export class FormsService {
       formSettingsUpdateDto:
         input.formSettingsUpdateDto as FormSettingsUpdateDto,
     }
-    console.log(request)
-    const response = await this.formsApiWithAuth(auth)
+    await this.formsApiWithAuth(auth)
       .apiFormsFormIdSettingsPut(request)
       .catch((e) =>
         handle4xx(e, this.handleError, 'failed to update form settings'),
       )
 
-    if (!response || response instanceof ApolloError) {
-      return void 0
-    }
-    return response
+    return
   }
 }

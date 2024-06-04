@@ -155,7 +155,6 @@ export const Navbar = () => {
     const overId = over.id
 
     if (activeId === overId) return
-
     const activeStep = active.data?.current?.type === 'Step'
     const activeGroup = active.data?.current?.type === 'Group'
     const activeInput = active.data?.current?.type === 'Input'
@@ -199,7 +198,7 @@ export const Navbar = () => {
   if (inSettings) {
     return (
       <div>
-        <Box paddingBottom={2} overflow="hidden" flexDirection={'row'}>
+        <Box paddingBottom={2} overflow="hidden" flexDirection="row">
           <NavbarTab />
         </Box>
         <div>
@@ -255,12 +254,12 @@ export const Navbar = () => {
           paddingBottom={2}
           overflow="hidden"
           display="flex"
-          flexDirection={'row'}
+          flexDirection="row"
         >
           <NavbarTab />
         </Box>
         <DndContext
-          id={'navDnd'}
+          id="navDnd"
           sensors={sensors}
           onDragStart={onDragStart}
           onDragEnd={onDragEnd}

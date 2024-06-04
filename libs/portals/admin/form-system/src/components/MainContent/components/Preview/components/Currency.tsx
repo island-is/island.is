@@ -30,7 +30,7 @@ export const Currency = ({ currentItem }: Props) => {
       <Column span="10/10">
         <Input
           label={label ?? ''}
-          name={'Currency'}
+          name="Currency"
           value={currency}
           onChange={handleCurrencyChange}
           required={currentItem?.isRequired ?? false}

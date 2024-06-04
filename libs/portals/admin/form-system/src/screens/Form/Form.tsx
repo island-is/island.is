@@ -49,7 +49,14 @@ export const Form = () => {
   const [updateInput] = useFormSystemUpdateInputMutation()
   const [updateForm] = useFormSystemUpdateFormMutation()
   const [updateFormSettings] = useFormSystemUpdateFormSettingsMutation()
-  const [getTranslation] = useFormSystemGetTranslationMutation()
+  const updateActiveItem = (updatedActiveItem?: ActiveItem) =>
+    updateActiveItemFn(
+      control.activeItem,
+      updateStep,
+      updateGroup,
+      updateInput,
+      updatedActiveItem,
+    )
 
   const initialControl: ControlState = {
     activeItem: {

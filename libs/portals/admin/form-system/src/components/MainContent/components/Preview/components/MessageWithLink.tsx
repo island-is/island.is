@@ -16,11 +16,11 @@ export const MessageWithLink = ({ data }: Props) => {
   }
   return (
     <Box
-      flexDirection={'row'}
-      display={'flex'}
+      flexDirection="row"
+      display="flex"
       padding={4}
-      background={'white'}
-      alignItems={'center'}
+      background="white"
+      alignItems="center"
     >
       <Box display="flex" flexDirection="column">
         <Box paddingBottom={1}>
