@@ -4,17 +4,24 @@ import {
   type EnhancedFetchAPI,
 } from '@island.is/clients/middlewares'
 import {
+  ConfigType,
   LazyDuringDevScope,
 } from '@island.is/nest/config'
+import { getCache } from './cache'
+import { ContentfulGraphQLClientConfig } from './contentful-graphql.config'
+
 
 export const ContentfulGraphQLFetchProviderKey = 'ContentfulGraphQLFetchProviderKey'
 
 export const ContentfulGraphQLFetchProvider: Provider<EnhancedFetchAPI> = {
   provide: ContentfulGraphQLFetchProviderKey,
   scope: LazyDuringDevScope, // config 
-  useFactory: () =>
+  useFactory: async (
+    config: ConfigType<typeof ContentfulGraphQLClientConfig>,
+  ) =>
     createEnhancedFetch({
       name: 'clients-contentful-graphql',
+      cache: await getCache(config),
       // autoAuth: undefined
     }),
   inject: [],
