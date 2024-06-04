@@ -195,7 +195,7 @@ export const OrganizationHeader: React.FC<
 > = ({ organizationPage }) => {
   const { linkResolver } = useLinkResolver()
   const namespace = useMemo(
-    () => JSON.parse(organizationPage?.organization?.namespace?.fields ?? '{}'),
+    () => JSON.parse(organizationPage?.organization?.namespace?.fields || '{}'),
     [organizationPage?.organization?.namespace?.fields],
   )
   const n = useNamespace(namespace)
@@ -522,7 +522,7 @@ export const OrganizationFooter: React.FC<
     : organizations.find((x) => x?.footerItems?.length > 0)
 
   const namespace = useMemo(
-    () => JSON.parse(organization?.namespace?.fields ?? '{}'),
+    () => JSON.parse(organization?.namespace?.fields || '{}'),
     [],
   )
   const n = useNamespace(namespace)
