@@ -138,7 +138,16 @@ export class UniversityService extends BaseTemplateApiService {
         ? {
             degreeAttachments: await this.getFilesFromAttachment(
               application,
-              answers.educationDetails.exemptionDetails?.degreeAttachments,
+              answers.educationDetails.exemptionDetails?.degreeAttachments?.map(
+                (x, i) => {
+                  const type = this.mapFileTypes(i)
+                  return {
+                    name: x.name,
+                    key: x.key,
+                    type: type,
+                  }
+                },
+              ),
             ),
             moreDetails: answers.educationDetails.exemptionDetails?.moreDetails,
           }
@@ -160,7 +169,16 @@ export class UniversityService extends BaseTemplateApiService {
               answers.educationDetails.thirdLevelDetails?.moreDetails,
             degreeAttachments: await this.getFilesFromAttachment(
               application,
-              answers.educationDetails.thirdLevelDetails?.degreeAttachments,
+              answers.educationDetails.thirdLevelDetails?.degreeAttachments?.map(
+                (x, i) => {
+                  const type = this.mapFileTypes(i)
+                  return {
+                    name: x.name,
+                    key: x.key,
+                    type: type,
+                  }
+                },
+              ),
             ),
           }
         : undefined
@@ -171,7 +189,14 @@ export class UniversityService extends BaseTemplateApiService {
             ...item,
             degreeAttachments: await this.getFilesFromAttachment(
               application,
-              item.degreeAttachments,
+              item.degreeAttachments?.map((x, i) => {
+                const type = this.mapFileTypes(i)
+                return {
+                  name: x.name,
+                  key: x.key,
+                  type: type,
+                }
+              }),
             ),
           }
         })) ||
@@ -233,20 +258,39 @@ export class UniversityService extends BaseTemplateApiService {
 
   private async getFilesFromAttachment(
     application: ApplicationWithAttachments,
-    attachments?: { name: string; key: string }[],
-  ): Promise<{ fileName: string; base64: string }[]> {
+    attachments?: { name: string; key: string; type: string }[],
+  ): Promise<{ fileName: string; fileType: string; blob: Blob }[]> {
     return await Promise.all(
       attachments?.map(async (file) => {
-        const base64 =
-          await this.sharedTemplateAPIService.getAttachmentContentAsBase64(
+        const blob =
+          await this.sharedTemplateAPIService.getAttachmentContentAsBlob(
             application,
             file.key,
           )
         return {
           fileName: file.name,
-          base64,
+          fileType: file.type,
+          blob,
         }
       }) || [],
     )
+  }
+
+  private mapFileTypes = (fileIndex: number): string => {
+    let type
+    switch (fileIndex) {
+      case 1:
+        type = 'profskirteini'
+        break
+      case 2:
+        type = 'profskirteini2'
+        break
+      case 3:
+        type = 'profskirteini3'
+        break
+      default:
+        type = ''
+    }
+    return type
   }
 }
