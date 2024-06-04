@@ -111,7 +111,6 @@ const Delegation = ({
     }
   }
 
-  console.log(inputValues)
   return (
     <FormCard
       title={formatMessage(m.delegations)}

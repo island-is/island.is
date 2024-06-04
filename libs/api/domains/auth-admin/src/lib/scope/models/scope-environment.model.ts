@@ -35,9 +35,7 @@ export class ScopeEnvironment {
   @Field(() => Boolean)
   emphasize!: boolean
 
-  @Field(() => Boolean, {
-    deprecationReason: 'Use supportedDelegationTypes instead',
-  })
+  @Field(() => Boolean)
   grantToAuthenticatedUser!: boolean
 
   @Field(() => Boolean, {
@@ -58,7 +56,9 @@ export class ScopeEnvironment {
   @Field(() => [String])
   supportedDelegationTypes!: string[]
 
-  @Field(() => Boolean)
+  @Field(() => Boolean, {
+    deprecationReason: 'Use supportedDelegationTypes instead',
+  })
   allowExplicitDelegationGrant!: boolean
 
   @Field(() => Boolean)
