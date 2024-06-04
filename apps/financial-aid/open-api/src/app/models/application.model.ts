@@ -11,6 +11,7 @@ import {
   DirectTaxPaymentModel,
   StaffModel,
 } from './index'
+import { ChildrenModel } from './children.model'
 
 @ObjectType()
 export class ApplicationModel {
@@ -109,4 +110,10 @@ export class ApplicationModel {
 
   @Field({ nullable: true })
   readonly navSuccess?: boolean
+
+  @Field({ nullable: true })
+  readonly childrenComment?: string
+
+  @Field(() => [ChildrenModel])
+  readonly children?: ChildrenModel[]
 }
