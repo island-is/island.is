@@ -1,6 +1,10 @@
 import { defineTemplateApi } from '../../TemplateApi'
 
-export const PassportsApi = defineTemplateApi({
+export interface PassportsParameters {
+  type?: string
+}
+
+export const PassportsApi = defineTemplateApi<PassportsParameters>({
   action: 'identityDocument',
   namespace: 'IdentityDocument',
 })

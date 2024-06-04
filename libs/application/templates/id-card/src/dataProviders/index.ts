@@ -4,6 +4,7 @@ import {
   UserProfileApi,
   NationalRegistryUserApi,
   InstitutionNationalIds,
+  PassportsApi,
 } from '@island.is/application/types'
 import { error } from '../lib/messages'
 
@@ -12,9 +13,20 @@ export {
   DisabiltyLicenseApi,
 } from '@island.is/application/types'
 
-export const IdentityDocumentApi = defineTemplateApi({
-  action: 'identityDocument',
+export const PassportsApiResponse = PassportsApi.configure({
+  params: {
+    type: 'I',
+  },
 })
+
+export const IdentityDocuments = defineTemplateApi({
+  action: 'getIdentityDocument',
+  externalDataId: 'getIdentityDocument',
+  params: {
+    type: 'I',
+  },
+})
+
 export const UserInfoApi = UserProfileApi.configure({
   params: {
     catchMock: true,

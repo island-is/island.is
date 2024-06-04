@@ -26,7 +26,9 @@ import {
 import {
   DeliveryAddressApi,
   DisabiltyLicenseApi,
+  IdentityDocuments,
   NationalRegistryUser,
+  PassportsApiResponse,
   SyslumadurPaymentCatalogApi,
   // SyslumadurPaymentCatalogApi,
   UserInfoApi,
@@ -109,7 +111,7 @@ export const Prerequisites: Form = buildForm({
               subTitle: externalData.userProfile.subTitle,
             }),
             buildDataProviderItem({
-              provider: PassportsApi,
+              provider: PassportsApiResponse,
               title: externalData.identityDocument.title,
               subTitle: externalData.identityDocument.subTitle,
             }),
@@ -119,6 +121,10 @@ export const Prerequisites: Form = buildForm({
             }),
             buildDataProviderItem({
               provider: DisabiltyLicenseApi,
+              title: '',
+            }),
+            buildDataProviderItem({
+              provider: IdentityDocuments,
               title: '',
             }),
             buildDataProviderItem({

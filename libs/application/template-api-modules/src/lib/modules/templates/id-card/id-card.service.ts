@@ -15,7 +15,10 @@ import {
 import { generateAssignParentBApplicationEmail } from './emailGenerators/assignParentBEmail'
 import { PassportsService } from '@island.is/clients/passports'
 import { BaseTemplateApiService } from '../../base-template-api.service'
-import { ApplicationTypes } from '@island.is/application/types'
+import {
+  ApplicationTypes,
+  PassportsParameters,
+} from '@island.is/application/types'
 import { TemplateApiError } from '@island.is/nest/problem'
 import {
   IdCardAnswers,
@@ -35,18 +38,16 @@ export class IdCardService extends BaseTemplateApiService {
     super(ApplicationTypes.ID_CARD)
   }
 
-  async identityDocument({ auth, application }: TemplateApiModuleActionProps) {
-    console.log('in here')
-    const type = 'I'
+  async getIdentityDocument({
+    auth,
+    params,
+  }: TemplateApiModuleActionProps<PassportsParameters>) {
+    console.log('am I here??', params)
     const identityDocument = await this.passportApi.getCurrentPassport(
       auth,
-      type,
+      params?.type,
     )
     if (!identityDocument) {
-      this.logger.warn(
-        'No passport found for user for application: ',
-        application.id,
-      )
       throw new TemplateApiError(
         {
           title: coreErrorMessages.failedDataProvider,

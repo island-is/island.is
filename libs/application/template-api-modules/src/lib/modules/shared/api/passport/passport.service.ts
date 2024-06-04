@@ -3,9 +3,9 @@ import { TemplateApiModuleActionProps } from '../../../../types'
 import { coreErrorMessages } from '@island.is/application/core'
 
 import { PassportsService } from '@island.is/clients/passports'
-import { ApplicationTypes } from '@island.is/application/types'
 import { TemplateApiError } from '@island.is/nest/problem'
 import { BaseTemplateApiService } from '../../../base-template-api.service'
+import { PassportsParameters } from '@island.is/application/types'
 
 @Injectable()
 export class PassportService extends BaseTemplateApiService {
@@ -13,8 +13,16 @@ export class PassportService extends BaseTemplateApiService {
     super('IdentityDocument')
   }
 
-  async identityDocument({ application, auth }: TemplateApiModuleActionProps) {
-    const identityDocument = await this.passportApi.getCurrentPassport(auth)
+  async identityDocument({
+    application,
+    auth,
+    params,
+  }: TemplateApiModuleActionProps<PassportsParameters>) {
+    console.log('how about here??', params)
+    const identityDocument = await this.passportApi.getCurrentPassport(
+      auth,
+      params?.type,
+    )
     if (!identityDocument) {
       throw new TemplateApiError(
         {
