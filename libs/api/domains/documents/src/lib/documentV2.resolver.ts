@@ -16,7 +16,7 @@ import {
   Scopes,
 } from '@island.is/auth-nest-tools'
 import { DocumentsScope } from '@island.is/auth/scopes'
-import { AuditService } from '@island.is/nest/audit'
+import { AuditService, Audit } from '@island.is/nest/audit'
 
 import {
   DocumentPageNumber,
@@ -41,6 +41,7 @@ const LOG_CATEGORY = 'documents-resolver'
 
 @UseGuards(IdsUserGuard, ScopesGuard)
 @Resolver(() => PaginatedDocuments)
+@Audit({ namespace: '@island.is/api/document-v2' })
 export class DocumentResolverV2 {
   constructor(
     private documentServiceV2: DocumentServiceV2,
@@ -76,6 +77,7 @@ export class DocumentResolverV2 {
 
   @Scopes(DocumentsScope.main)
   @Query(() => PaginatedDocuments, { nullable: true })
+  @Audit()
   documentsV2(
     @Args('input') input: DocumentsInput,
     @CurrentUser() user: User,
@@ -121,6 +123,7 @@ export class DocumentResolverV2 {
 
   @Scopes(DocumentsScope.main)
   @Mutation(() => PaperMailPreferences, { nullable: true })
+  @Audit()
   postPaperMailInfo(
     @CurrentUser() user: User,
     @Args('input') input: PostRequestPaperInput,
@@ -133,6 +136,7 @@ export class DocumentResolverV2 {
 
   @Scopes(DocumentsScope.main)
   @Mutation(() => DocumentV2MarkAllMailAsRead, { nullable: true })
+  @Audit()
   markAllMailAsRead(
     @CurrentUser() user: User,
   ): Promise<DocumentV2MarkAllMailAsRead> {
@@ -144,6 +148,7 @@ export class DocumentResolverV2 {
     nullable: true,
     name: 'postMailActionV2',
   })
+  @Audit()
   async postMailAction(
     @CurrentUser() user: User,
     @Args('input') input: MailActionInput,
