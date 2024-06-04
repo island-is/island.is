@@ -20,14 +20,13 @@ import {
 import { Features } from '@island.is/feature-flags'
 import { assign } from 'xstate'
 import {
-  PassportsApiResponse,
   // SyslumadurPaymentCatalogApi,
   DeliveryAddressApi,
   UserInfoApi,
   NationalRegistryUser,
   DisabiltyLicenseApi,
   SyslumadurPaymentCatalogApi,
-  IdentityDocuments,
+  IdentityDocumentApi,
 } from '../dataProviders'
 import { application as applicationMessage } from './messages'
 import { Events, Roles, States, ApiActions, Routes } from './constants'
@@ -92,10 +91,9 @@ const IdCardTemplate: ApplicationTemplate<
                 SyslumadurPaymentCatalogApi,
                 PassportsApi,
                 DistrictsApi,
-                PassportsApiResponse,
                 DeliveryAddressApi,
                 DisabiltyLicenseApi,
-                IdentityDocuments,
+                IdentityDocumentApi,
               ],
             },
           ],
@@ -185,7 +183,6 @@ const IdCardTemplate: ApplicationTemplate<
                 // SyslumadurPaymentCatalogApi,
                 PassportsApi,
                 DistrictsApi,
-                PassportsApiResponse,
                 DeliveryAddressApi,
               ],
             },

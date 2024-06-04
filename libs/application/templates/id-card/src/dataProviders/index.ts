@@ -19,9 +19,9 @@ export const PassportsApiResponse = PassportsApi.configure({
   },
 })
 
-export const IdentityDocuments = defineTemplateApi({
+export const IdentityDocumentApi = defineTemplateApi({
   action: 'getIdentityDocument',
-  externalDataId: 'getIdentityDocument',
+  externalDataId: 'identityDocument',
   params: {
     type: 'I',
   },

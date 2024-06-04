@@ -42,7 +42,6 @@ export class IdCardService extends BaseTemplateApiService {
     auth,
     params,
   }: TemplateApiModuleActionProps<PassportsParameters>) {
-    console.log('am I here??', params)
     const identityDocument = await this.passportApi.getCurrentPassport(
       auth,
       params?.type,
