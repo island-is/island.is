@@ -8,16 +8,20 @@ import {
 } from 'react'
 import { DefenseDecision } from '../lib/const'
 
+interface Lawyer {
+  nationalId: string
+  name: string
+}
 export type LawAndOrderStateProps = {
   subpoenaAcknowledged: boolean | undefined
   subpoenaModalVisible: boolean
   defenseChoice: DefenseDecision | undefined
-  lawyerSelected: string | undefined
+  lawyerSelected: Lawyer | undefined
 
   setSubpoenaAcknowledged: Dispatch<SetStateAction<boolean | undefined>>
   setSubpoenaModalVisible: Dispatch<SetStateAction<boolean>>
   setDefenseChoice: Dispatch<SetStateAction<DefenseDecision | undefined>>
-  setLawyerSelected: Dispatch<SetStateAction<string | undefined>>
+  setLawyerSelected: Dispatch<SetStateAction<Lawyer | undefined>>
 }
 
 export const LawAndOrderContext = createContext<LawAndOrderStateProps>({
@@ -46,7 +50,7 @@ export const LawAndOrderProvider: FC<React.PropsWithChildren<unknown>> = ({
     DefenseDecision | undefined
   >(undefined)
 
-  const [lawyerSelected, setLawyerSelected] = useState<string | undefined>(
+  const [lawyerSelected, setLawyerSelected] = useState<Lawyer | undefined>(
     undefined,
   )
 

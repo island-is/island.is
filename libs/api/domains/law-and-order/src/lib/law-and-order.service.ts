@@ -1,9 +1,8 @@
 import { Injectable } from '@nestjs/common'
 import { AuthMiddleware } from '@island.is/auth-nest-tools'
-import type { User } from '@island.is/auth-nest-tools'
+import type { Auth, User } from '@island.is/auth-nest-tools'
 import { CourtCases } from '../models/courtCases.model'
 import { getCase, getLawyers, getSubpoena, listCases } from './helpers/mockData'
-import { LawAndOrderClientService } from '@island.is/clients/law-and-order'
 import { CourtCase } from '../models/courtCase.model'
 import { Subpoena } from '../models/subpoena.model'
 import { Lawyers } from '../models/lawyers.model'
@@ -12,24 +11,30 @@ import { PostDefenseChoiceInput } from '../dto/postDefenseChoiceInput.model'
 import { PostSubpoenaAcknowledgedInput } from '../dto/postSubpeonaAcknowledgedInput.model'
 import { SubpoenaAcknowledged } from '../models/subpoenaAcknowledged.model'
 import { Locale } from 'locale'
+import {
+  CasesResponse,
+  Defender,
+  LawAndOrderClientService,
+} from '@island.is/clients/law-and-order'
 
 @Injectable()
 export class LawAndOrderService {
-  constructor(private lawAndOrderApi: LawAndOrderClientService) {}
+  constructor(private api: LawAndOrderClientService) {}
 
   async getCourtCases(user: User, locale: Locale) {
-    // const answer = this.lawAndOrderApi.getTest(user)
+    const answer: Array<CasesResponse> = await this.api.getCases(user)
     const mockAnswer = listCases(locale)
     const list: CourtCases = { items: [] }
+    const randomBoolean = Math.random() < 0.75
 
-    mockAnswer.map((x) => {
+    answer.map((x) => {
       list.items?.push({
-        id: x.data.id,
-        acknowledged: x.data.acknowledged,
-        caseNumber: x.data.caseNumber,
-        caseNumberTitle: x.data.caseNumberTitle,
-        state: { title: x.data.status },
-        type: x.data.type,
+        id: x.id,
+        acknowledged: randomBoolean,
+        caseNumber: x.caseNumber,
+        caseNumberTitle: x.caseNumber,
+        state: x.state,
+        type: x.type,
       })
     })
 
@@ -77,11 +82,10 @@ export class LawAndOrderService {
   }
 
   async getLawyers(user: User, locale: Locale) {
-    //const answer = this.lawAndOrderApi.getTest(user)
-    const mockAnswer = getLawyers().data.items
+    const answer: Array<Defender> = await this.api.getLawyers(user)
     const list: Lawyers = { items: [] }
 
-    mockAnswer.map((x) => {
+    answer.map((x) => {
       list.items?.push({
         name: x.name,
         nationalId: x.nationalId,
@@ -89,6 +93,7 @@ export class LawAndOrderService {
       })
     })
 
+    console.log('lawyers', list)
     return list
   }
 
