@@ -17,7 +17,7 @@ import { logger } from '@island.is/logging'
 import { mapUglaPrograms } from './utils/mapUglaPrograms'
 import { mapUglaCourses } from './utils/mapUglaCourses'
 import { mapUglaApplication } from './utils/mapUglaApplication'
-import { InlineResponse2004 } from '../../gen/fetch'
+import { AttachmentKey, InlineResponse2004 } from '../../gen/fetch'
 
 @Injectable()
 export class UniversityOfIcelandApplicationClient {
@@ -73,6 +73,20 @@ export class UniversityOfIcelandApplicationClient {
     const response = await this.applicationApi.applicationsPost(
       mappedApplication,
     )
+
+    application.attachments?.filter(Boolean).forEach(async (attachment) => {
+      const attachmentKey = attachment?.fileType
+        ? AttachmentKey[attachment.fileType as keyof typeof AttachmentKey] ||
+          undefined
+        : undefined
+      const requestParams = {
+        guid: application.id,
+        attachment: attachment?.blob,
+        attachmentKey,
+      }
+      await this.applicationApi.applicationsAttachmentsGuidPost(requestParams)
+    })
+
     return response
   }
 

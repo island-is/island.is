@@ -99,8 +99,7 @@ export const AssetsRepeater: FC<
 
   useEffect(() => {
     calculateTotal()
-    // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, [])
+  }, [fields])
 
   const handleAddRepeaterFields = () => {
     const values = props.fields.map((field: object) => {
@@ -274,6 +273,7 @@ const FieldComponent = ({
   let content = null
 
   const defaultProps = {
+    ...field,
     id: fieldName,
     name: fieldName,
     format: field.format,
@@ -283,13 +283,12 @@ const FieldComponent = ({
     placeholder: field.placeholder,
     backgroundColor: field.color ? field.color : 'blue',
     currency: field.currency,
-    required: field.required,
+    required: readOnly ? false : field.required,
     loading: fieldName === loadingFieldName,
     suffix: field.suffix,
     onChange: () => onAfterChange?.(),
     error: error,
     readOnly: readOnly,
-    ...field,
   }
 
   switch (field.id) {
@@ -339,6 +338,7 @@ const FieldComponent = ({
           onAfterChange={onAfterChange}
           readOnly={readOnly}
           hasError={!!error}
+          required={field.required && !readOnly}
         />
       )
       break
