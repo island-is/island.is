@@ -177,9 +177,9 @@ export function buildRadioField(
   }
 }
 
-export function buildSelectField(
-  data: Omit<SelectField, 'type' | 'component' | 'children'>,
-): SelectField {
+export function buildSelectField<IsMulti extends boolean = false>(
+  data: Omit<SelectField<IsMulti>, 'type' | 'component' | 'children'>,
+): SelectField<IsMulti> {
   const {
     options,
     placeholder,

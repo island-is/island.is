@@ -15,7 +15,7 @@ type SelectControllerProps<Value, IsMulti extends boolean = false> = {
     s: IsMulti extends true ? MultiValue<Option<Value>> : Option<Value>,
     onChange: (t: unknown) => void,
   ) => void
-  defaultValue?: IsMulti extends true ? Value[] : Value
+  defaultValue?: /* (IsMulti extends true ? Value[] : Value) | null */ Value
   options?: Option<Value>[]
   placeholder?: string
   backgroundColor?: InputBackgroundColor

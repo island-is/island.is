@@ -274,34 +274,21 @@ export interface RadioField extends BaseField {
   onSelect?(s: string): void
 }
 
-export type SelectField = BaseField & {
+export type SelectField<IsMulti extends boolean = false> = BaseField & {
   readonly type: FieldTypes.SELECT
   component: FieldComponents.SELECT
   options: MaybeWithApplicationAndField<Option[]>
-  onSelect?(
-    s: MultiValue<UIOption<SelectValue>> | SingleValue<UIOption<SelectValue>>,
+  onSelect?: (
+    s: IsMulti extends true
+      ? MultiValue<UIOption<SelectValue>>
+      : UIOption<SelectValue>,
     cb: (t: unknown) => void,
-  ): void
+  ) => void
   placeholder?: FormText
   backgroundColor?: InputBackgroundColor
   required?: boolean
-  isMulti?: boolean
-} & (
-    | {
-        isMulti: true
-        onSelect?: (
-          s: MultiValue<UIOption<SelectValue>>,
-          cb: (t: unknown) => void,
-        ) => void
-      }
-    | {
-        isMulti?: false
-        onSelect?: (
-          s: SingleValue<UIOption<SelectValue>>,
-          cb: (t: unknown) => void,
-        ) => void
-      }
-  )
+  isMulti?: IsMulti
+}
 
 export interface CompanySearchField extends BaseField {
   readonly type: FieldTypes.COMPANY_SEARCH
@@ -313,37 +300,23 @@ export interface CompanySearchField extends BaseField {
   required?: boolean
 }
 
-export type AsyncSelectField = BaseField & {
+export type AsyncSelectField<IsMulti extends boolean = false> = BaseField & {
   readonly type: FieldTypes.ASYNC_SELECT
   component: FieldComponents.ASYNC_SELECT
   placeholder?: FormText
   loadOptions(c: Context): Promise<Option[]>
-  onSelect?(
-    s: MultiValue<UIOption<SelectValue>> | SingleValue<UIOption<SelectValue>>,
+  onSelect?: (
+    s: IsMulti extends true
+      ? MultiValue<UIOption<SelectValue>>
+      : UIOption<SelectValue>,
     cb: (t: unknown) => void,
-  ): void
+  ) => void
   loadingError?: FormText
   backgroundColor?: InputBackgroundColor
   isSearchable?: boolean
   required?: boolean
-} & (
-    | {
-        isMulti: true
-        defaultValue?: MaybeWithApplicationAndField<SelectOption[]>
-        onSelect?: (
-          s: MultiValue<UIOption<SelectValue>>,
-          cb: (t: unknown) => void,
-        ) => void
-      }
-    | {
-        isMulti?: false
-        defaultValue?: MaybeWithApplicationAndField<SelectOption>
-        onSelect?: (
-          s: SingleValue<UIOption<SelectValue>>,
-          cb: (t: unknown) => void,
-        ) => void
-      }
-  )
+  isMulti?: IsMulti
+}
 
 export interface TextField extends BaseField {
   readonly type: FieldTypes.TEXT

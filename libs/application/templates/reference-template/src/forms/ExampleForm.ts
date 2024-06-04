@@ -96,11 +96,16 @@ export const ExampleForm: Form = buildForm({
                 value: '18',
               },
             }),
+            // eslint-disable-next-line @typescript-eslint/ban-ts-comment
+            // @ts-ignore
             buildSelectField({
               id: 'person.country',
               title: 'Test',
               width: 'half',
               isMulti: true,
+              onSelect: (val) => {
+                console.log(val)
+              },
               options: [
                 { label: 'Iceland', value: 'is' },
                 { label: 'United Kingdom', value: 'uk' },
