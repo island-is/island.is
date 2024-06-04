@@ -15,8 +15,8 @@ import {
   DelegationScopeService,
   DelegationsIncomingService,
   DelegationsService,
-  DelegationType,
   MergedDelegationDTO,
+  DelegationsIndexService,
 } from '@island.is/auth-api-lib'
 import type { User } from '@island.is/auth-nest-tools'
 import {
@@ -25,6 +25,7 @@ import {
   Scopes,
   ScopesGuard,
 } from '@island.is/auth-nest-tools'
+import { AuthDelegationType } from 'delegation'
 
 @UseGuards(IdsUserGuard, ScopesGuard)
 @ApiTags('delegations')
@@ -37,12 +38,15 @@ export class DelegationsController {
     private readonly delegationsService: DelegationsService,
     private readonly delegationScopeService: DelegationScopeService,
     private readonly delegationsIncomingService: DelegationsIncomingService,
+    private readonly delegationIndexService: DelegationsIndexService,
   ) {}
 
   @Scopes('@identityserver.api/authentication')
   @Get()
   @ApiOkResponse({ isArray: true })
   async findAllToV1(@CurrentUser() user: User): Promise<DelegationDTO[]> {
+    void this.delegationIndexService.indexDelegations(user)
+
     return this.delegationsService.findAllIncoming(user)
   }
 
@@ -58,6 +62,8 @@ export class DelegationsController {
     )
     requestedScopes: Array<string>,
   ): Promise<MergedDelegationDTO[]> {
+    void this.delegationIndexService.indexDelegations(user)
+
     return this.delegationsIncomingService.findAllAvailable({
       user,
       requestedScopes,
@@ -74,19 +80,19 @@ export class DelegationsController {
       'delegationType',
       new ParseArrayPipe({ optional: true, items: String, separator: ',' }),
     )
-    delegationType: Array<DelegationType>,
+    delegationType: Array<AuthDelegationType>,
   ): Promise<string[]> {
     const scopePromises = []
 
-    if (delegationType.includes(DelegationType.ProcurationHolder))
+    if (delegationType.includes(AuthDelegationType.ProcurationHolder))
       scopePromises.push(this.delegationScopeService.findAllProcurationScopes())
 
-    if (delegationType.includes(DelegationType.LegalGuardian))
+    if (delegationType.includes(AuthDelegationType.LegalGuardian))
       scopePromises.push(
         this.delegationScopeService.findAllLegalGuardianScopes(),
       )
 
-    if (delegationType.includes(DelegationType.PersonalRepresentative))
+    if (delegationType.includes(AuthDelegationType.PersonalRepresentative))
       scopePromises.push(
         this.delegationScopeService.findPersonalRepresentativeScopes(
           user.nationalId,
@@ -94,7 +100,7 @@ export class DelegationsController {
         ),
       )
 
-    if (delegationType.includes(DelegationType.Custom))
+    if (delegationType.includes(AuthDelegationType.Custom))
       scopePromises.push(
         this.delegationScopeService
           .findAllValidCustomScopesTo(user.nationalId, fromNationalId)
@@ -109,8 +115,8 @@ export class DelegationsController {
 
     if (
       scopes.length > 0 ||
-      delegationType.includes(DelegationType.ProcurationHolder) ||
-      delegationType.includes(DelegationType.LegalGuardian)
+      delegationType.includes(AuthDelegationType.ProcurationHolder) ||
+      delegationType.includes(AuthDelegationType.LegalGuardian)
     ) {
       scopes = [
         ...scopes,
