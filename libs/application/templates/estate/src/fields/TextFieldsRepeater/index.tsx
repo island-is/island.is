@@ -75,7 +75,7 @@ export const TextFieldsRepeater: FC<
 
   useEffect(() => {
     calculateTotal()
-  }, [calculateTotal])
+  }, [fields])
 
   const handleAddRepeaterFields = useCallback(() => {
     const values = props.fields.map((field: Field) => {

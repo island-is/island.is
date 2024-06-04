@@ -93,8 +93,7 @@ export const BusinessAssetsRepeater: FC<
 
   useEffect(() => {
     calculateTotal()
-    // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, [])
+  }, [fields])
 
   useEffect(() => {
     const estData =
