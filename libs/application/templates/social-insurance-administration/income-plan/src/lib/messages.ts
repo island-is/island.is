@@ -89,8 +89,15 @@ export const incomePlanFormMessage: MessageDir = {
     },
     bulletList: {
       id: `ip.application:conclusionScreen.bulletList#markdown`,
-      defaultMessage: `* Tryggingastofnun fer yfir tekjuáætlun og hefur eftirlit með að tekjur séu í samræmi við rauntekjur og getur verið að tekjuáætlun þinni verði breytt á þeim grundvelli. (Lög um almannatryggingar nr. 100/2007)(https://www.althingi.is/altext/lendu/2007100.html) \n* Hægt er að leiðrétta tekjuáætlun hvenær sem er á árinu en þó aðeins hægt að skila inn breyttri tekjuáætlun á 10 daga fresti. Með vandaðri tekjuáætlun er hægt að koma í veg fyrir of- eða vangreiðslur sem þarf að leiðrétta síðar. \n* Athugið að greitt er 1. hvers mánaðar samkvæmt tekjuáætlun eins og hún er þann 15. mánaðarins á undan. \n* Greiðslur eru endurreiknaðar þegar framtal vegna greiðsluárs liggur fyrir sem tryggir að allir fá réttar greiðslur í samræmi við endanlegar tekjur.`,
+      defaultMessage: `* Tryggingastofnun fer yfir tekjuáætlun og hefur eftirlit með að tekjur séu í samræmi við rauntekjur og getur verið að tekjuáætlun þinni verði breytt á þeim grundvelli. (Lög um almannatryggingar nr. 100/2007)(https://www.althingi.is/altext/lendu/2007100.html) \n* Hægt er að leiðrétta tekjuáætlun hvenær sem er á árinu en þó aðeins hægt að skila inn breyttri tekjuáætlun á 10 daga fresti. Með vandaðri tekjuáætlun er hægt að koma í veg fyrir of- eða vangreiðslur sem þarf að leiðrétta síðar. \n* Greitt er 1. hvers mánaðar samkvæmt gildandi tekjuáætlun. \n* Greiðslur eru endurreiknaðar þegar framtal vegna greiðsluárs liggur fyrir sem tryggir að allir fá réttar greiðslur í samræmi við endanlegar tekjur.`,
       description: 'BulletList',
+    },
+    bottomButtonMessage: {
+      id: 'ip.application:conclusionScreen.bottom.button.message',
+      defaultMessage:
+        'Á Mínum síðum Ísland.is getur þú nálgast stöðu tekjuáætlunarinnar og þegar hún hefur verið samþykkt er hún aðgengileg undir framfærslu.',
+      description:
+        'Under My Pages at Ísland.is you can see the status of your income plan, and when it has been approved you can view it under subsistence.',
     },
   }),
 }

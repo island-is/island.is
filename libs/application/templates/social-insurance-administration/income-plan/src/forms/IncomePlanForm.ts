@@ -57,6 +57,8 @@ export const IncomePlanForm: Form = buildForm({
         incomePlanFormMessage.conclusionScreen.bulletList,
       expandableIntro:
         '',
+      bottomButtonMessage: 
+        incomePlanFormMessage.conclusionScreen.bottomButtonMessage,   
     }),
   ],
 })
