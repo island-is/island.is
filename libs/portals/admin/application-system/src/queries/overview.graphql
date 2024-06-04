@@ -97,3 +97,17 @@ query getOrganizations($input: GetOrganizationsInput) {
     }
   }
 }
+
+query getApplicationStatistics(
+  $input: ApplicationApplicationsAdminStatisticsInput!
+) {
+  applicationApplicationsAdminStatistics(input: $input) {
+    typeid
+    count
+    draft
+    inprogress
+    completed
+    rejected
+    approved
+  }
+}
