@@ -106,7 +106,7 @@ export function ListItem({
           <Icon unread={unread}>
             <Image
               source={icon as ImageSourcePropType}
-              style={{ width: 16, height: 16 }}
+              style={{ width: 24, height: 24 }}
             />
           </Icon>
         ) : null}
