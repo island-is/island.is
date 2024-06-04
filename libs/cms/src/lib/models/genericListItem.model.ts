@@ -39,10 +39,10 @@ export const mapGenericListItem = ({
   title: fields.title ?? '',
   date: fields.date || null,
   cardIntro: fields.cardIntro
-    ? mapDocument(fields.cardIntro, sys.id + ':cardIntro')
+    ? mapDocument(fields.cardIntro, `${sys.id}:cardIntro`)
     : [],
   content: fields.content
-    ? mapDocument(fields.content, sys.id + ':content')
+    ? mapDocument(fields.content, `${sys.id}:content`)
     : [],
   slug: fields.slug,
 })

@@ -77,7 +77,7 @@ const GenericListItemSlugField = () => {
         setValue(
           `${slugify(title, {
             customReplacements: CUSTOM_SLUGIFY_REPLACEMENTS,
-          })}${date ? '-' + slugifyDate(date) : ''}`,
+          })}${date ? `-${slugifyDate(date)}` : ''}`,
         )
       })
 

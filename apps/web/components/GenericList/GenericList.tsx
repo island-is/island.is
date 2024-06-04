@@ -90,7 +90,7 @@ const ClickableItem = ({ item }: ItemProps) => {
       padding={[2, 2, 3]}
       border="standard"
       borderRadius="large"
-      href={item.slug ? pathname + '/' + item.slug : undefined}
+      href={item.slug ? `${pathname}/${item.slug}` : undefined}
     >
       <Stack space={0}>
         <Stack space={0}>

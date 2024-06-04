@@ -256,9 +256,8 @@ const ProjectPage: Screen<PageProps> = ({
           {pageSlices.map((slice: Slice, index) => {
             const sliceCount = pageSlices.length
             return (
-              <Box className="rs_read">
+              <Box className="rs_read" key={slice.id}>
                 <SliceMachine
-                  key={slice.id}
                   slice={slice}
                   namespace={namespace}
                   fullWidth={true}

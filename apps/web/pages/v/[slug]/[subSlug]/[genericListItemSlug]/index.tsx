@@ -71,7 +71,7 @@ export const Component: ScreenType<ComponentProps> = ({
             ogTitle={
               genericListItemProps.item.title &&
               `${genericListItemProps.item.title}${
-                subpage?.title ? ' | ' + subpage.title : ''
+                subpage?.title ? ` | ${subpage.title}` : ''
               }`
             }
           />

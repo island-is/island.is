@@ -1,6 +1,6 @@
 import { Box, GridContainer, Stack, Text } from '@island.is/island-ui/core'
 import { HeadWithSocialSharing, Webreader } from '@island.is/web/components'
-import {
+import type {
   GenericListItem,
   Query,
   QueryGetGenericListItemBySlugArgs,
