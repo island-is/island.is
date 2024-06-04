@@ -1,4 +1,4 @@
-import { getValueViaPath } from '@island.is/application/core'
+import { YES, getValueViaPath } from '@island.is/application/core'
 import { FieldBaseProps } from '@island.is/application/types'
 import { formatCurrency } from '@island.is/application/ui-components'
 import {
@@ -20,7 +20,6 @@ import {
 import { EstateAssets } from '../../types'
 import { MessageDescriptor } from 'react-intl'
 import { useFormContext } from 'react-hook-form'
-import { YES } from '../../lib/constants'
 
 type CalcShared = {
   value: number

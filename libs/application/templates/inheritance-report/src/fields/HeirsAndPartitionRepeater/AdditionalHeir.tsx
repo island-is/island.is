@@ -21,7 +21,11 @@ import { GenericFormField, YES } from '@island.is/application/types'
 import { hasYes } from '@island.is/application/core'
 import { Fragment, useEffect, useMemo } from 'react'
 import { EstateMember } from '../../types'
-import { ErrorValue } from '../../lib/constants'
+import {
+  ErrorValue,
+  PREPAID_INHERITANCE,
+  PrePaidHeirsRelationTypes,
+} from '../../lib/constants'
 import { LookupPerson } from '../LookupPerson'
 import { HeirsAndPartitionRepeaterProps } from './types'
 import ShareInput from '../../components/ShareInput'
@@ -92,6 +96,9 @@ export const AdditionalHeir = ({
   const requiresAdvocate = useMemo(() => {
     return memberAge !== undefined && memberAge < 18
   }, [memberAge])
+
+  const isDisabledField =
+    values.applicationFor === PREPAID_INHERITANCE ? false : !currentHeir.enabled
 
   useEffect(() => {
     clearErrors(nameField)
@@ -233,8 +240,7 @@ export const AdditionalHeir = ({
 
       <GridRow>
         {customFields.map((customField: any, customFieldIndex) => {
-          const defaultValue = (currentHeir as any)?.[customField.id]
-
+          const defaultValue = currentHeir?.[customField.id]
           return (
             <Fragment key={customFieldIndex}>
               {customField?.sectionTitle ? (
@@ -256,11 +262,11 @@ export const AdditionalHeir = ({
                     onSelect={() => {
                       clearErrors()
                     }}
-                    defaultValue={currentHeir.relation}
+                    defaultValue={currentHeir?.relation ?? ''}
                     options={relationOptions}
                     error={error?.relation}
                     backgroundColor="blue"
-                    disabled={!currentHeir.enabled}
+                    disabled={isDisabledField}
                     required
                   />
                 </GridColumn>
@@ -268,7 +274,7 @@ export const AdditionalHeir = ({
                 <GridColumn span="1/2" paddingBottom={2}>
                   <ShareInput
                     name={`${fieldIndex}.${customField.id}`}
-                    disabled={!currentHeir.enabled}
+                    disabled={isDisabledField}
                     label={formatMessage(customField.title)}
                     onAfterChange={(val) => {
                       updateValues(fieldIndex, val, customFieldIndex)
@@ -277,12 +283,14 @@ export const AdditionalHeir = ({
                     required
                   />
                 </GridColumn>
-              ) : (
+              ) : customField.id === 'taxFreeInheritance' &&
+                currentHeir?.relation !==
+                  PrePaidHeirsRelationTypes.SPOUSE ? null : (
                 <GridColumn span={['1/2']} paddingBottom={2}>
                   <InputController
                     id={`${fieldIndex}.${customField.id}`}
                     name={`${fieldIndex}.${customField.id}`}
-                    disabled={!currentHeir.enabled}
+                    disabled={isDisabledField}
                     defaultValue={defaultValue ? defaultValue : ''}
                     format={customField.format}
                     label={formatMessage(customField.title)}
