@@ -101,9 +101,8 @@ export const ListSettings = () => {
             <Column>
               <RadioButton
                 label={formatMessage(m.predeterminedLists)}
-                onChange={(e) => {
-                  console.log()
-                }}
+                // eslint-disable-next-line @typescript-eslint/no-empty-function
+                onChange={() => { }}
                 checked={radio[1]}
               />
             </Column>
