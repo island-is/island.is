@@ -151,6 +151,7 @@ export class FileService {
 
   private async confirmIndictmentCaseFile(
     theCase: Case,
+    file: CaseFile,
     pdf: Buffer,
   ): Promise<string | undefined> {
     const confirmationEvent = theCase.eventLogs?.find(
@@ -178,7 +179,7 @@ export class FileService {
         const hash = CryptoJS.MD5(binaryPdf).toString(CryptoJS.enc.Hex)
 
         // No need to wait for the update to finish
-        this.fileModel.update({ hash }, { where: { id: theCase.id } })
+        this.fileModel.update({ hash }, { where: { id: file.id } })
 
         return binaryPdf
       })
@@ -203,7 +204,8 @@ export class FileService {
         theCase.state,
         file.key,
         !file.hash,
-        (content: Buffer) => this.confirmIndictmentCaseFile(theCase, content),
+        (content: Buffer) =>
+          this.confirmIndictmentCaseFile(theCase, file, content),
       )
     }
 
@@ -350,7 +352,8 @@ export class FileService {
         theCase.state,
         file.key,
         !file.hash,
-        (content: Buffer) => this.confirmIndictmentCaseFile(theCase, content),
+        (content: Buffer) =>
+          this.confirmIndictmentCaseFile(theCase, file, content),
         timeToLive,
       )
     }
