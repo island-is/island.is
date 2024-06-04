@@ -1,5 +1,5 @@
 import { buildCustomField, buildMultiField } from '@island.is/application/core'
-import { betaTest, externalData } from '../../../lib/messages'
+import { externalData } from '../../../lib/messages'
 
 export const agreementDescriptionMultiField = buildMultiField({
   title: externalData.agreementDescription.sectionTitle,

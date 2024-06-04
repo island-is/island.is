@@ -76,7 +76,6 @@ export const ScreenFooter: FC<React.PropsWithChildren<FooterProps>> = ({
   const isLastScreen = activeScreenIndex === numberOfScreens - 1
   const showGoBack =
     activeScreenIndex > 0 && (!isLastScreen || renderLastScreenBackButton)
-  // console.log('ScreenFooter: ', nextButtonText)
 
   if (
     (isLastScreen && !renderLastScreenButton) ||
@@ -129,8 +128,6 @@ export const ScreenFooter: FC<React.PropsWithChildren<FooterProps>> = ({
         )
       })
   }
-  // console.log('NextButtonText: ', nextButtonText)
-  // console.log('CoreMessages: ', coreMessages.buttonBack)
 
   return (
     <Box marginTop={7} className={styles.buttonContainer}>
