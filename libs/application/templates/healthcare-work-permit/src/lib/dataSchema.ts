@@ -6,8 +6,7 @@ const UserInformationSchema = z.object({
 })
 
 const SelectWorkPermitSchema = z.object({
-  studyProgram: z.string().min(1),
-  // idProfession: z.string().min(1),
+  programId: z.string().min(1),
 })
 
 export const HealthcareWorkPermitSchema = z.object({
