@@ -1,6 +1,6 @@
 import { Injectable } from '@nestjs/common'
 import { CoursesApi, ProgramsApi } from '../../gen/fetch/apis'
-import { ICourse, IProgram} from '@island.is/university-gateway'
+import { ICourse, IProgram } from '@island.is/university-gateway'
 import { logger } from '@island.is/logging'
 import {
   mapUglaPrograms,

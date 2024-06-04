@@ -72,7 +72,7 @@ export const mapStringToEnum = <TDestEnum, TKeys extends string>(
   defaultValue: TDestEnum | undefined = undefined,
 ): TDestEnum => {
   if (!value) {
-    throw new EnumError( 'EMPTY_VALUE',`Empty value for enum: ${enumName}`)
+    throw new EnumError('EMPTY_VALUE', `Empty value for enum: ${enumName}`)
   }
 
   const keys = Object.keys(enumType)
@@ -82,7 +82,10 @@ export const mapStringToEnum = <TDestEnum, TKeys extends string>(
 
   if (index < 0) {
     if (defaultValue) return defaultValue
-    throw new EnumError('VALUE_NOT_SUPPORTED',`${value} does not exist in enum: ${enumName}`)
+    throw new EnumError(
+      'VALUE_NOT_SUPPORTED',
+      `${value} does not exist in enum: ${enumName}`,
+    )
   }
 
   return values[index] as TDestEnum
@@ -94,12 +97,9 @@ export class EnumError extends Error {
   name: EnumErrorName
   message: string
 
-  constructor(
-    name: EnumErrorName,
-    message: string
-  ) {
-    super();
-    this.name = name;
-    this.message = message;
+  constructor(name: EnumErrorName, message: string) {
+    super()
+    this.name = name
+    this.message = message
   }
 }

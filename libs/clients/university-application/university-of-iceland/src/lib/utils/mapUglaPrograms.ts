@@ -12,7 +12,7 @@ import {
   InlineResponse2002Data,
   InlineResponse2002ExtraApplicationFields,
 } from '../../../gen/fetch'
-import {logger} from "@island.is/logging";
+import { logger } from '@island.is/logging'
 
 export const mapUglaPrograms = (
   res: InlineResponse2002,
@@ -30,12 +30,20 @@ export const mapUglaPrograms = (
         departmentNameIs: program.departmentNameIs || '',
         departmentNameEn: program.departmentNameEn || '',
         startingSemesterYear: Number(program.startingSemesterYear) || 0,
-        startingSemesterSeason: mapStringToEnum(program.startingSemesterSeason,Season, 'Season'),
+        startingSemesterSeason: mapStringToEnum(
+          program.startingSemesterSeason,
+          Season,
+          'Season',
+        ),
         applicationStartDate: program.applicationStartDate || new Date(),
         applicationEndDate: program.applicationEndDate || new Date(),
         schoolAnswerDate: undefined, //TODO missing in api
         studentAnswerDate: undefined, //TODO missing in api
-        degreeType: mapStringToEnum(program.degreeType, DegreeType, 'DegreeType'),
+        degreeType: mapStringToEnum(
+          program.degreeType,
+          DegreeType,
+          'DegreeType',
+        ),
         degreeAbbreviation: program.degreeAbbreviation || '',
         credits: program.credits || 0,
         descriptionIs: program.descriptionIs || '',
@@ -78,15 +86,18 @@ export const mapUglaPrograms = (
             : true,
       })
     } catch (e) {
-        if (e instanceof EnumError) {
-          logger.warn(`EnumError when trying to map program with externalId ${program.externalId} for university ${universityName}, update skipped.`, e);
-        } else {
-          logger.error(
-            `Failed to map program with externalId ${program.externalId} for university ${universityName}, reason:`,
-            e,
-          )
-        }
+      if (e instanceof EnumError) {
+        logger.warn(
+          `EnumError when trying to map program with externalId ${program.externalId} for university ${universityName}, update skipped.`,
+          e,
+        )
+      } else {
+        logger.error(
+          `Failed to map program with externalId ${program.externalId} for university ${universityName}, reason:`,
+          e,
+        )
       }
+    }
   }
 
   return mappedRes
