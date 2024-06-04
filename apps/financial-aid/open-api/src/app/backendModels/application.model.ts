@@ -19,7 +19,6 @@ import {
   DirectTaxPaymentBackendModel,
   StaffBackendModel,
 } from './index'
-import { ChildrenBackendModel } from './children.model'
 
 @Table({
   tableName: 'applications',
@@ -227,15 +226,4 @@ export class ApplicationBackendModel extends Model {
   @HasMany(() => DirectTaxPaymentBackendModel, 'applicationId')
   @ApiProperty({ type: () => DirectTaxPaymentBackendModel, isArray: true })
   directTaxPayments!: DirectTaxPaymentBackendModel[]
-
-  @HasMany(() => ChildrenBackendModel, 'applicationId')
-  @ApiProperty({ type: ChildrenBackendModel, isArray: true })
-  children?: ChildrenBackendModel[]
-
-  @Column({
-    type: DataType.TEXT,
-    allowNull: true,
-  })
-  @ApiProperty()
-  childrenComment?: string
 }
