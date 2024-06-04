@@ -439,7 +439,7 @@ export const NewPrimarySchoolForm: Form = buildForm({
                   ],
                 }),
                 buildSelectField({
-                  id: 'school.muncipality',
+                  id: 'school.municipality',
                   title: newPrimarySchoolMessages.shared.municipality,
                   condition: (answers) => !isMovingAbroad(answers),
 
@@ -464,8 +464,9 @@ export const NewPrimarySchoolForm: Form = buildForm({
                   id: 'school.district',
                   title: newPrimarySchoolMessages.shared.district,
                   condition: (answers) => {
-                    const { schoolMuncipality } = getApplicationAnswers(answers)
-                    return !isMovingAbroad(answers) && !!schoolMuncipality
+                    const { schoolMunicipality } =
+                      getApplicationAnswers(answers)
+                    return !isMovingAbroad(answers) && !!schoolMunicipality
                   },
                   loadOptions: async ({ apolloClient }) => {
                     //Todo: get data from Juni
@@ -489,11 +490,11 @@ export const NewPrimarySchoolForm: Form = buildForm({
                   id: 'school.school',
                   title: newPrimarySchoolMessages.shared.school,
                   condition: (answers) => {
-                    const { schoolMuncipality, schoolDistrict } =
+                    const { schoolMunicipality, schoolDistrict } =
                       getApplicationAnswers(answers)
                     return (
                       !isMovingAbroad(answers) &&
-                      !!schoolMuncipality &&
+                      !!schoolMunicipality &&
                       !!schoolDistrict
                     )
                   }, //Todo: get data from Juni

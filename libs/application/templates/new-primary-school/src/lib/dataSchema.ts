@@ -79,6 +79,19 @@ export const dataSchema = z.object({
     .refine((r) => r === undefined || r.length > 0, {
       params: errorMessages.relativesRequired,
     }),
+  school: z
+    .object({
+      movingAbroad: z.array(z.enum([YES, NO])).optional(),
+      school: z.string().optional(),
+    })
+    .refine(
+      ({ movingAbroad, school }) =>
+        (movingAbroad && movingAbroad.length > 0) ||
+        (movingAbroad && movingAbroad.length === 0 && !!school),
+      {
+        path: ['school'],
+      },
+    ),
   siblings: z
     .array(
       z.object({

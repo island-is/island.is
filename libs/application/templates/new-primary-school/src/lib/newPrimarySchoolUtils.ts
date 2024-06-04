@@ -3,7 +3,6 @@ import {
   Application,
   ExternalData,
   FormValue,
-  NO,
   NationalRegistryMunicipality,
   YES,
   YesOrNo,
@@ -46,9 +45,9 @@ export const getApplicationAnswers = (answers: Application['answers']) => {
 
   const startDate = getValueViaPath(answers, 'startDate') as string
 
-  const schoolMuncipality = getValueViaPath(
+  const schoolMunicipality = getValueViaPath(
     answers,
-    'school.muncipality',
+    'school.municipality',
   ) as string
 
   const schoolDistrict = getValueViaPath(answers, 'school.district') as string
@@ -83,7 +82,7 @@ export const getApplicationAnswers = (answers: Application['answers']) => {
     photoMediaPublication,
     movingAbroad,
     startDate,
-    schoolMuncipality,
+    schoolMunicipality,
     schoolDistrict,
     selectedSchool,
   }
