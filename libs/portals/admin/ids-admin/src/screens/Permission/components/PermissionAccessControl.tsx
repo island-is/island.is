@@ -39,7 +39,7 @@ export const PermissionAccessControl = () => {
         'grantToAuthenticatedUser',
       ])}
     >
-      <Stack space={2}>
+      <Stack space={3}>
         <Checkbox
           label={formatMessage(m.isAccessControlled)}
           subLabel={formatMessage(m.isAccessControlledDescription)}

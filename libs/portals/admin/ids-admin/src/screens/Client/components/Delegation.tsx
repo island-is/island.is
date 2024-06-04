@@ -135,7 +135,7 @@ const Delegation = ({
               <Text variant="h5" as="h4">
                 {provider.name}
               </Text>
-              <Stack space={2} component="ul">
+              <Stack space={3} component="ul">
                 {provider.delegationTypes.map((delegationType) =>
                   !delegationType ? null : (
                     <Checkbox
@@ -160,7 +160,7 @@ const Delegation = ({
             </Stack>
           ),
         )}
-        <Stack space={2}>
+        <Stack space={3}>
           <Text variant="h5" as="h4">
             {formatMessage(m.additionalSettingsLabel)}
           </Text>
