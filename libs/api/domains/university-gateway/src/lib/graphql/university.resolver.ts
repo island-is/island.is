@@ -4,7 +4,7 @@ import { CacheControl, CacheControlOptions } from '@island.is/nest/graphql'
 import {
   OrganizationLinkByReferenceIdLoader,
   OrganizationLinkEnByReferenceIdLoader,
-  OrganizationLogoLoader,
+  OrganizationLogoByReferenceIdLoader,
   OrganizationTitleByReferenceIdLoader,
   OrganizationTitleEnByReferenceIdLoader,
 } from '@island.is/cms'
@@ -12,7 +12,7 @@ import type {
   LogoUrl,
   OrganizationLink,
   OrganizationLinkByReferenceIdDataLoader,
-  OrganizationLogoDataLoader,
+  OrganizationLogoByReferenceIdDataLoader,
   OrganizationTitleByReferenceIdDataLoader,
   ShortTitle,
 } from '@island.is/cms'
@@ -37,14 +37,11 @@ export class UniversityResolver {
   @CacheControl(defaultCache)
   @ResolveField('contentfulLogoUrl', () => String, { nullable: true })
   async resolveContentfulLogoUrl(
-    @Loader(OrganizationLogoLoader)
-    organizationLogoLoader: OrganizationLogoDataLoader,
+    @Loader(OrganizationLogoByReferenceIdLoader)
+    organizationLogoLoader: OrganizationLogoByReferenceIdDataLoader,
     @Parent() university: UniversityGatewayUniversity,
   ): Promise<LogoUrl> {
-    return await organizationLogoLoader.load({
-      value: university.contentfulKey,
-      field: 'referenceIdentifier',
-    })
+    return await organizationLogoLoader.load(university.contentfulKey)
   }
 
   @CacheControl(defaultCache)

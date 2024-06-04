@@ -297,7 +297,13 @@ export const WatsonChatPanel = (props: WatsonChatPanelProps) => {
 
     let scriptElement: HTMLScriptElement | null = null
 
-    if (hasButtonBeenClicked || showLauncher) {
+    const queryParam = new URLSearchParams(window.location.search).get('wa_lid')
+
+    if (
+      hasButtonBeenClicked ||
+      showLauncher ||
+      (queryParam && ['t10', 't11'].includes(queryParam))
+    ) {
       setLoading(true)
       scriptElement = loadScript(
         {

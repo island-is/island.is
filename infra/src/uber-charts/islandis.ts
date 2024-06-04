@@ -175,6 +175,7 @@ export const Services: EnvironmentServices = {
     universityGatewayService,
     universityGatewayWorker,
     contentfulApps,
+    contentfulEntryTagger,
   ],
   staging: [
     appSystemApi,
@@ -261,4 +262,5 @@ export const ExcludedFeatureDeploymentServices: ServiceBuilder<any>[] = [
   contentfulEntryTagger,
   searchIndexer,
   contentfulApps,
+  githubActionsCache,
 ]

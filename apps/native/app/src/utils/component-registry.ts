@@ -22,7 +22,6 @@ export const ComponentRegistry = {
   WalletPassportScreen: `${prefix}.screens.WalletPassport`,
   DocumentDetailScreen: `${prefix}.screens.DocumentDetail`,
   NotificationsScreen: `${prefix}.screens.Notifications`,
-  NotificationDetailScreen: `${prefix}.screens.NotificationDetail`,
   WebViewScreen: `${prefix}.screens.WebViewScreen`,
   LicenseScannerScreen: `${prefix}.screens.LicenseScannerScreen`,
   LicenseScanDetailScreen: `${prefix}.screens.LicenseScanDetailScreen`,
@@ -53,6 +52,7 @@ export const ComponentRegistry = {
 }
 
 export const ButtonRegistry = {
+  LoadingButton: `${prefix}.button.LoadingButton`,
   OfflineButton: `${prefix}.button.OfflineButton`,
   SettingsButton: `${prefix}.button.SettingsButton`,
   // to do remove this unused user button

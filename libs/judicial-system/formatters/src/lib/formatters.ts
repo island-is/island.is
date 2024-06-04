@@ -7,6 +7,7 @@ import {
   CaseAppealDecision,
   CaseAppealRulingDecision,
   CaseCustodyRestrictions,
+  CaseIndictmentRulingDecision,
   CaseType,
   Gender,
   IndictmentSubtype,
@@ -97,6 +98,23 @@ export const laws = {
   _97_1: '1. mgr. 97. gr. sml.',
   _99_1_B: 'b-lið 1. mgr. 99. gr. sml.',
   _100_1: '1. mgr. 100. gr. sml.',
+}
+
+export const getHumanReadableCaseIndictmentRulingDecision = (
+  rulingDecision?: CaseIndictmentRulingDecision,
+) => {
+  switch (rulingDecision) {
+    case CaseIndictmentRulingDecision.RULING:
+      return 'Dómur'
+    case CaseIndictmentRulingDecision.FINE:
+      return 'Viðurlagaákvörðun'
+    case CaseIndictmentRulingDecision.DISMISSAL:
+      return 'Frávísun'
+    case CaseIndictmentRulingDecision.CANCELLATION:
+      return 'Niðurfelling máls'
+    default:
+      return 'Ekki skráð'
+  }
 }
 
 type CaseTypes = { [c in CaseType]: string }

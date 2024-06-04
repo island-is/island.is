@@ -54,11 +54,9 @@ export class PersonResolver {
   @Audit()
   async nationalRegistryPerson(
     @CurrentUser() user: AuthUser,
-    @Args('api', { nullable: true }) requestedApi?: 'v1' | 'v3',
     @Args('useFakeData', { nullable: true }) useFakeData?: boolean,
   ): Promise<Person | null> {
-    const api = await this.service.getApi(user, requestedApi)
-    return this.service.getPerson(user.nationalId, api, useFakeData)
+    return this.service.getPerson(user.nationalId, useFakeData)
   }
 
   @ResolveField('custodians', () => [Custodian], {
@@ -77,11 +75,7 @@ export class PersonResolver {
     if (
       person.nationalIdType === NationalIdType.NATIONAL_REGISTRY_NATIONAL_ID
     ) {
-      return this.service.getCustodians(
-        person.nationalId,
-        user.nationalId,
-        person,
-      )
+      return this.service.getCustodians(person.nationalId, person)
     }
     return null
   }
@@ -102,9 +96,45 @@ export class PersonResolver {
     if (
       person.nationalIdType === NationalIdType.NATIONAL_REGISTRY_NATIONAL_ID
     ) {
-      return this.service.getParents(person.nationalId, person, user.nationalId)
+      return this.service.getParents(person.nationalId, person)
     }
     return null
+  }
+
+  @ResolveField('biologicalChildren', () => [ChildCustody], {
+    nullable: true,
+  })
+  async resolveBiologicalChildren(
+    @Context('req') { user }: { user: User },
+    @Parent() person: SharedPerson,
+    @Args('childNationalId', { nullable: true }) childNationalId?: string,
+  ): Promise<Array<SharedChildCustody> | null> {
+    this.auditService.audit({
+      auth: user,
+      namespace,
+      action: 'resolveBiologicalChildren',
+      resources: user.nationalId,
+    })
+
+    if (
+      !(person.nationalIdType === NationalIdType.NATIONAL_REGISTRY_NATIONAL_ID)
+    ) {
+      return null
+    }
+
+    const bioChildren = await this.service.getBiologicalChildren(
+      person.nationalId,
+      person,
+    )
+
+    if (childNationalId) {
+      const child = (bioChildren as Array<SharedChildCustody>)?.find(
+        (c) => c.nationalId === childNationalId,
+      )
+      return child ? [child] : null
+    }
+
+    return bioChildren as Array<SharedChildCustody>
   }
 
   @ResolveField('childCustody', () => [ChildCustody], {

@@ -137,6 +137,9 @@ export interface Claims {
 
 export interface StocksData extends DeceasedShare {
   value: string
+  assetNumber: string
+  description: string
+  propertyValuation: string
   amount: string
   faceValue: string
   nationalId: string
@@ -207,12 +210,12 @@ export interface BankAccounts {
   total: number
 }
 
-export interface AllDebts {
-  balance: string
+export interface Debt {
+  assetNumber: string
   nationalId: string
-  creditorName: string
-  loanIdentity: string
-  taxFreeInheritance: number
+  description: string
+  propertyValuation: string
+  debtType: string
 }
 
 export interface ApplicationDebts {
@@ -229,7 +232,7 @@ interface DomesticAndForeignDebtsData {
 }
 
 interface DomesticAndForeignDebts {
-  data: DomesticAndForeignDebtsData[]
+  data: Debt[]
   total: number
 }
 

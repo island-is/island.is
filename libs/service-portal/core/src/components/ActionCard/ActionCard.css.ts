@@ -11,12 +11,19 @@ export const tag = style({
   }),
 })
 
-export const avatar = style({
+export const image = style({
   display: 'none',
   ...themeUtils.responsiveStyle({
     sm: {
       display: 'flex',
       width: 66,
+    },
+  }),
+})
+
+export const avatar = style({
+  ...themeUtils.responsiveStyle({
+    sm: {
       height: 66,
     },
   }),

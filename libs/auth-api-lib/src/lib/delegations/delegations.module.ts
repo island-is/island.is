@@ -28,6 +28,10 @@ import { DelegationIndex } from './models/delegation-index.model'
 import { DelegationIndexMeta } from './models/delegation-index-meta.model'
 import { DelegationsIndexService } from './delegations-index.service'
 import { UserIdentitiesModule } from '../user-identities/user-identities.module'
+import { DelegationTypeModel } from './models/delegation-type.model'
+import { DelegationProviderModel } from './models/delegation-provider.model'
+import { DelegationProviderService } from './delegation-provider.service'
+import { ApiScopeDelegationType } from '../resources/models/api-scope-delegation-type.model'
 
 @Module({
   imports: [
@@ -39,6 +43,7 @@ import { UserIdentitiesModule } from '../user-identities/user-identities.module'
     FeatureFlagModule,
     SequelizeModule.forFeature([
       ApiScope,
+      ApiScopeDelegationType,
       IdentityResource,
       Delegation,
       DelegationScope,
@@ -47,6 +52,8 @@ import { UserIdentitiesModule } from '../user-identities/user-identities.module'
       Client,
       ClientAllowedScope,
       ApiScopeUserAccess,
+      DelegationTypeModel,
+      DelegationProviderModel,
     ]),
     UserSystemNotificationModule,
   ],
@@ -61,6 +68,7 @@ import { UserIdentitiesModule } from '../user-identities/user-identities.module'
     DelegationsIncomingCustomService,
     DelegationsIncomingRepresentativeService,
     DelegationsIndexService,
+    DelegationProviderService,
   ],
   exports: [
     DelegationsService,
@@ -68,6 +76,7 @@ import { UserIdentitiesModule } from '../user-identities/user-identities.module'
     DelegationsIncomingService,
     DelegationScopeService,
     DelegationsIndexService,
+    DelegationProviderService,
   ],
 })
 export class DelegationsModule {}

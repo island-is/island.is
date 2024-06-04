@@ -21,7 +21,6 @@ import { EstateAssets } from '../../types'
 import { MessageDescriptor } from 'react-intl'
 import { useFormContext } from 'react-hook-form'
 import { YES } from '../../lib/constants'
-import ShareInput from '../../components/ShareInput'
 
 type CalcShared = {
   value: number
@@ -55,9 +54,9 @@ export const CalculateShare: FC<React.PropsWithChildren<FieldBaseProps>> = ({
   const formValues = getValues()
   const [customSpouseSharePercentage, setCustomSpouseSharePercentage] =
     useState(
-      formValues?.customSpouseSharePercentage
-        ? formValues.customSpouseSharePercentage / 100
-        : 0,
+      formValues?.customShare?.customSpouseSharePercentage
+        ? formValues.customShare?.customSpouseSharePercentage / 100
+        : 50 / 100,
     )
 
   const deceasedHadAssets = getDeceasedHadAssets(application)
@@ -65,7 +64,7 @@ export const CalculateShare: FC<React.PropsWithChildren<FieldBaseProps>> = ({
 
   const hasCustomSpouseSharePercentage =
     deceasedWasInCohabitation &&
-    !!formValues?.hasCustomSpouseSharePercentage?.includes(YES)
+    formValues?.customShare?.hasCustomSpouseSharePercentage === YES
 
   const [shareValues, setShareValues] = useState<
     Record<keyof Partial<EstateAssets>, ShareItem>
@@ -436,7 +435,7 @@ export const CalculateShare: FC<React.PropsWithChildren<FieldBaseProps>> = ({
   useEffect(() => {
     if (!hasCustomSpouseSharePercentage) {
       setCustomSpouseSharePercentage(0)
-      setValue('customSpouseSharePercentage', '0')
+      setValue('customShare.customSpouseSharePercentage', '50')
     }
   }, [hasCustomSpouseSharePercentage, setValue])
 
@@ -448,27 +447,13 @@ export const CalculateShare: FC<React.PropsWithChildren<FieldBaseProps>> = ({
     updateShareCalculations,
   ])
 
-  const inputError = (errors?.customSpouseSharePercentage as string) ?? ''
+  const inputError =
+    (errors?.customShare as { customSpouseSharePercentage: string })
+      ?.customSpouseSharePercentage ?? ''
 
   return (
     <Box>
-      {hasCustomSpouseSharePercentage && (
-        <GridRow>
-          <GridColumn span={['1/1', '1/2']}>
-            <ShareInput
-              name="customSpouseSharePercentage"
-              label={formatMessage(m.assetsToShareCustomSpousePercentage)}
-              onAfterChange={(val) => {
-                setCustomSpouseSharePercentage(val / 100)
-              }}
-              errorMessage={inputError}
-              required
-            />
-          </GridColumn>
-        </GridRow>
-      )}
-
-      <Box marginTop={4}>
+      <Box marginTop={2}>
         <TitleRow
           title={m.assetsToShareTotalAssets}
           value={roundedValueToNumber(total)}
@@ -481,22 +466,6 @@ export const CalculateShare: FC<React.PropsWithChildren<FieldBaseProps>> = ({
           title={m.netProperty}
           value={roundedValueToNumber(netTotal)}
         />
-        {deceasedHadAssets && shareTotal > 0 && (
-          <TitleRow title={m.share} value={roundedValueToNumber(shareTotal)} />
-        )}
-        <Box marginLeft={[0, 4]}>
-          <GridRow rowGap={1}>
-            <ShareItemRow item={shareValues.bankAccounts} />
-            <ShareItemRow item={shareValues.claims} />
-            <ShareItemRow item={shareValues.guns} />
-            <ShareItemRow item={shareValues.inventory} />
-            <ShareItemRow item={shareValues.money} />
-            <ShareItemRow item={shareValues.otherAssets} />
-            <ShareItemRow item={shareValues.realEstate} />
-            <ShareItemRow item={shareValues.stocks} />
-            <ShareItemRow item={shareValues.vehicles} />
-          </GridRow>
-        </Box>
         <Box marginY={4}>
           {deceasedWasInCohabitation && (
             <TitleRow
@@ -509,6 +478,9 @@ export const CalculateShare: FC<React.PropsWithChildren<FieldBaseProps>> = ({
             value={roundedValueToNumber(estateTotal)}
           />
         </Box>
+        {deceasedHadAssets && shareTotal > 0 && (
+          <TitleRow title={m.share} value={roundedValueToNumber(shareTotal)} />
+        )}
         <Divider />
         <Box paddingTop={4}>
           <TitleRow
@@ -522,49 +494,6 @@ export const CalculateShare: FC<React.PropsWithChildren<FieldBaseProps>> = ({
 }
 
 export default CalculateShare
-
-const ShareItemRow = ({ item }: { item: ShareItem }) => {
-  const { formatMessage } = useLocale()
-
-  const total = item.items.reduce((acc, item) => acc + item.value, 0)
-  const shareTotal = item.items.reduce(
-    (acc, item) => acc + item.deceasedShareValue,
-    0,
-  )
-
-  return (
-    <GridColumn span={['1/1']}>
-      <GridRow rowGap={0}>
-        <GridColumn span={['1/1', '1/2']}>
-          {item.title && (
-            <Text variant="small">{formatMessage(item.title)}</Text>
-          )}
-        </GridColumn>
-        <GridColumn span={['1/1', '1/2']}>
-          <Box textAlign={['left', 'right']}>
-            <Text variant="small">
-              {formatCurrency(String(roundedValueToNumber(total)))}
-            </Text>
-          </Box>
-        </GridColumn>
-        {shareTotal > 0 && (
-          <>
-            <GridColumn span={['1/1', '1/2']}>
-              <Text variant="small">{formatMessage(m.share)}</Text>
-            </GridColumn>
-            <GridColumn span={['1/1', '1/2']}>
-              <Box textAlign={['left', 'right']}>
-                <Text variant="small">
-                  {formatCurrency(String(roundedValueToNumber(shareTotal)))}
-                </Text>
-              </Box>
-            </GridColumn>
-          </>
-        )}
-      </GridRow>
-    </GridColumn>
-  )
-}
 
 const TitleRow = ({
   title,

@@ -351,6 +351,10 @@ export interface FileUploadField extends BaseField {
    */
   readonly maxSize?: number
   readonly maxSizeErrorText?: FormText
+  /**
+   * Defaults to 100MB
+   */
+  readonly totalMaxSize?: number
   readonly forImageUpload?: boolean
 }
 
@@ -500,10 +504,17 @@ export type TableRepeaterField = BaseField & {
   saveItemButtonText?: StaticText
   getStaticTableData?: (application: Application) => Record<string, string>[]
   removeButtonTooltipText?: StaticText
+  editButtonTooltipText?: StaticText
+  editField?: boolean
   marginTop?: ResponsiveProp<Space>
   marginBottom?: ResponsiveProp<Space>
   titleVariant?: TitleVariants
   fields: Record<string, TableRepeaterItem>
+  /**
+   * Maximum rows that can be added to the table.
+   * When the maximum is reached, the button to add a new row is disabled.
+   */
+  maxRows?: number
   table?: {
     /**
      * List of strings to render,

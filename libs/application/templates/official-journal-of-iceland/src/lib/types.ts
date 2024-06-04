@@ -96,9 +96,7 @@ export type CommitteeSignatureState = NonNullable<
 export enum TemplateApiActions {
   departments = 'departments',
   types = 'types',
-  submitApplication = 'submitApplication',
-  validateAdvert = 'validateAdvert',
-  cancelApplication = 'cancelApplication',
+  postApplication = 'postApplication',
 }
 
 export type NestedType<T> = {
