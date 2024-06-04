@@ -93,7 +93,7 @@ export const BusinessAssetsRepeater: FC<
 
   useEffect(() => {
     calculateTotal()
-  }, [fields])
+  }, [fields, calculateTotal])
 
   useEffect(() => {
     const estData =
