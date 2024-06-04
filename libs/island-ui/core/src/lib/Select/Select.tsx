@@ -41,6 +41,7 @@ export const Select = <
   icon = 'chevronDown',
   isSearchable = true,
   isCreatable = false,
+  isMulti,
   size = 'md',
   backgroundColor = 'white',
   required,
@@ -92,6 +93,7 @@ export const Select = <
         isOptionDisabled={(option) => !!option.disabled}
         hasError={hasError}
         isSearchable={isSearchable}
+        isMulti={isMulti}
         size={size}
         required={required}
         formatGroupLabel={formatGroupLabel}
@@ -150,6 +152,7 @@ export const Select = <
         dataTestId={dataTestId}
         icon={icon}
         placeholder={placeholder}
+        isMulti={isMulti}
         defaultValue={defaultValue}
         isOptionDisabled={(option) => !!option.disabled}
         hasError={hasError}

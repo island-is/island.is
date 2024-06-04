@@ -19,6 +19,8 @@ import React from 'react'
 import { TestSupport } from '@island.is/island-ui/utils'
 import { MessageDescriptor } from 'react-intl'
 import { Locale } from '@island.is/shared/types'
+import { MultiValue, SingleValue } from 'react-select'
+import { Option as UIOption } from '@island.is/island-ui/core'
 
 type Space = keyof typeof theme.spacing
 
@@ -136,7 +138,9 @@ export interface Option extends TestSupport {
   }
 }
 
-export interface SelectOption<T = string | number> {
+type SelectValue = string | number
+
+export interface SelectOption<T = SelectValue> {
   label: string
   value: T
 }
@@ -270,15 +274,34 @@ export interface RadioField extends BaseField {
   onSelect?(s: string): void
 }
 
-export interface SelectField extends BaseField {
+export type SelectField = BaseField & {
   readonly type: FieldTypes.SELECT
   component: FieldComponents.SELECT
   options: MaybeWithApplicationAndField<Option[]>
-  onSelect?(s: SelectOption, cb: (t: unknown) => void): void
+  onSelect?(
+    s: MultiValue<UIOption<SelectValue>> | SingleValue<UIOption<SelectValue>>,
+    cb: (t: unknown) => void,
+  ): void
   placeholder?: FormText
   backgroundColor?: InputBackgroundColor
   required?: boolean
-}
+  isMulti?: boolean
+} & (
+    | {
+        isMulti: true
+        onSelect?: (
+          s: MultiValue<UIOption<SelectValue>>,
+          cb: (t: unknown) => void,
+        ) => void
+      }
+    | {
+        isMulti?: false
+        onSelect?: (
+          s: SingleValue<UIOption<SelectValue>>,
+          cb: (t: unknown) => void,
+        ) => void
+      }
+  )
 
 export interface CompanySearchField extends BaseField {
   readonly type: FieldTypes.COMPANY_SEARCH
@@ -290,17 +313,37 @@ export interface CompanySearchField extends BaseField {
   required?: boolean
 }
 
-export interface AsyncSelectField extends BaseField {
+export type AsyncSelectField = BaseField & {
   readonly type: FieldTypes.ASYNC_SELECT
   component: FieldComponents.ASYNC_SELECT
   placeholder?: FormText
   loadOptions(c: Context): Promise<Option[]>
-  onSelect?(s: SelectOption, cb: (t: unknown) => void): void
+  onSelect?(
+    s: MultiValue<UIOption<SelectValue>> | SingleValue<UIOption<SelectValue>>,
+    cb: (t: unknown) => void,
+  ): void
   loadingError?: FormText
   backgroundColor?: InputBackgroundColor
   isSearchable?: boolean
   required?: boolean
-}
+} & (
+    | {
+        isMulti: true
+        defaultValue?: MaybeWithApplicationAndField<SelectOption[]>
+        onSelect?: (
+          s: MultiValue<UIOption<SelectValue>>,
+          cb: (t: unknown) => void,
+        ) => void
+      }
+    | {
+        isMulti?: false
+        defaultValue?: MaybeWithApplicationAndField<SelectOption>
+        onSelect?: (
+          s: SingleValue<UIOption<SelectValue>>,
+          cb: (t: unknown) => void,
+        ) => void
+      }
+  )
 
 export interface TextField extends BaseField {
   readonly type: FieldTypes.TEXT

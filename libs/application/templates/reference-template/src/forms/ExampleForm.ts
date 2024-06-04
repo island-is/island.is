@@ -96,6 +96,17 @@ export const ExampleForm: Form = buildForm({
                 value: '18',
               },
             }),
+            buildSelectField({
+              id: 'person.country',
+              title: 'Test',
+              width: 'half',
+              isMulti: true,
+              options: [
+                { label: 'Iceland', value: 'is' },
+                { label: 'United Kingdom', value: 'uk' },
+                { label: 'Denmark', value: 'dk' },
+              ],
+            }),
           ],
         }),
         buildFileUploadField({

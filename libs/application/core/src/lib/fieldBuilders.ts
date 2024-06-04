@@ -185,6 +185,7 @@ export function buildSelectField(
     placeholder,
     onSelect,
     backgroundColor = 'blue',
+    isMulti,
     required,
   } = data
   return {
@@ -196,6 +197,7 @@ export function buildSelectField(
     type: FieldTypes.SELECT,
     component: FieldComponents.SELECT,
     onSelect,
+    isMulti,
     backgroundColor,
   }
 }

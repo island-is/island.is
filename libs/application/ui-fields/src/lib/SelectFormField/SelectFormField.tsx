@@ -34,6 +34,7 @@ export const SelectFormField: FC<React.PropsWithChildren<Props>> = ({
     onSelect,
     backgroundColor,
     required = false,
+    isMulti,
   } = field
   const { formatMessage } = useLocale()
 
@@ -64,6 +65,7 @@ export const SelectFormField: FC<React.PropsWithChildren<Props>> = ({
           error={error}
           id={id}
           dataTestId={field.dataTestId}
+          isMulti={isMulti}
           backgroundColor={backgroundColor}
           options={finalOptions?.map(({ label, tooltip, ...o }) => ({
             ...o,
