@@ -12,7 +12,6 @@ export const betaTestSection = buildSection({
         title: betaTest.title,
         component: 'DescriptionWithLink',
         doesNotRequireAnswer: true,
-        nextButtonText: betaTest.nextButtonText,
       },
       {
         descriptionFirstPart: betaTest.descriptionFirstPart,

@@ -15,7 +15,6 @@ import {
 } from '@island.is/application/core'
 import {
   Application,
-  Answer,
   ExternalData,
   FormItemTypes,
   FormModes,
@@ -55,7 +54,6 @@ import FormExternalDataProvider from './FormExternalDataProvider'
 import { extractAnswersToSubmitFromScreen, findSubmitField } from '../utils'
 import ScreenFooter from './ScreenFooter'
 import RefetchContext from '../context/RefetchContext'
-import { log } from 'console'
 
 type ScreenProps = {
   activeScreenIndex: number
@@ -86,18 +84,6 @@ const getServerValidationErrors = (error: ApolloError | undefined) => {
     return problem.fields
   }
   return null
-}
-
-const findNextButtonText = (
-  sections: Array<Section>,
-  screen: FormScreen,
-  index: number,
-): FormText => {
-  console.log('sections: ', sections)
-  console.log('screen: ', screen)
-  console.log('index: ', index)
-
-  return screen.nextButtonText ?? coreMessages.buttonNext
 }
 
 const Screen: FC<React.PropsWithChildren<ScreenProps>> = ({
@@ -184,8 +170,6 @@ const Screen: FC<React.PropsWithChildren<ScreenProps>> = ({
     ...beforeSubmitError,
     ...formErrors,
   }
-
-  // const nextButtonText = sections[activeScreenIndex].nextButtonText
 
   const goBack = useCallback(() => {
     setSubmitButtonDisabled(false)
@@ -279,7 +263,7 @@ const Screen: FC<React.PropsWithChildren<ScreenProps>> = ({
   const { width } = useWindowSize()
   const headerHeight = 85
 
-  const nextButtonText = findNextButtonText(sections, screen, activeScreenIndex)
+  const nextButtonText = screen.nextButtonText ?? coreMessages.buttonNext
 
   useEffect(() => {
     if (width < theme.breakpoints.md) {
