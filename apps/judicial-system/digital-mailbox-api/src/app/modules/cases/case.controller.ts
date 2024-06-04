@@ -1,19 +1,23 @@
 import {
+  Body,
   Controller,
   Get,
   Inject,
   Param,
+  Patch,
   Query,
   UseGuards,
 } from '@nestjs/common'
-import { ApiCreatedResponse, ApiTags } from '@nestjs/swagger'
+import { ApiOkResponse, ApiTags } from '@nestjs/swagger'
 
 import type { User } from '@island.is/auth-nest-tools'
 import { CurrentUser, IdsUserGuard } from '@island.is/auth-nest-tools'
 import { type Logger, LOGGER_PROVIDER } from '@island.is/logging'
 
+import { UpdateSubpoenaDto } from './dto/subpoena.dto'
 import { CaseResponse } from './models/case.response'
 import { CasesResponse } from './models/cases.response'
+import { SubpoenaResponse } from './models/subpoena.response'
 import { CaseService } from './case.service'
 
 @Controller('api')
@@ -22,23 +26,12 @@ import { CaseService } from './case.service'
 export class CaseController {
   constructor(
     private readonly caseService: CaseService,
+
     @Inject(LOGGER_PROVIDER) private readonly logger: Logger,
   ) {}
 
-  @Get('test')
-  @ApiCreatedResponse({ type: String, description: 'Test connection' })
-  async test(@CurrentUser() user: User): Promise<string> {
-    this.logger.debug('Testing connection')
-
-    return this.caseService.testConnection(user.nationalId)
-  }
-
   @Get('cases')
-  @ApiCreatedResponse({
-    type: CasesResponse,
-    isArray: true,
-    description: 'Get all cases',
-  })
+  @ApiOkResponse({ type: String, description: 'Get all cases' })
   async getAllCases(
     @CurrentUser() user: User,
     @Query() query?: { lang: string },
@@ -49,7 +42,7 @@ export class CaseController {
   }
 
   @Get('case/:caseId')
-  @ApiCreatedResponse({ type: CaseResponse, description: 'Get case by id' })
+  @ApiOkResponse({ type: CaseResponse, description: 'Get case by id' })
   async getCase(
     @Param('caseId') caseId: string,
     @CurrentUser() user: User,
@@ -57,6 +50,39 @@ export class CaseController {
   ): Promise<CaseResponse> {
     this.logger.debug('Getting case by id')
 
-    return this.caseService.getCaseById(caseId, user.nationalId, query?.lang)
+    return this.caseService.getCase(caseId, user.nationalId, query?.lang)
+  }
+
+  @Get('case/:caseId/subpoena')
+  @ApiOkResponse({
+    type: () => SubpoenaResponse,
+    description: 'Get subpoena by case id',
+  })
+  async getSubpoena(
+    @Param('caseId') caseId: string,
+    @CurrentUser() user: User,
+  ): Promise<SubpoenaResponse> {
+    this.logger.debug(`Getting subpoena by case id ${caseId}`)
+
+    return this.caseService.getSubpoena(caseId, user.nationalId)
+  }
+
+  @Patch('case/:caseId/subpoena')
+  @ApiOkResponse({
+    type: () => SubpoenaResponse,
+    description: 'Update subpoena info',
+  })
+  async updateSubpoena(
+    @CurrentUser() user: User,
+    @Param('caseId') caseId: string,
+    @Body() defenderAssignment: UpdateSubpoenaDto,
+  ): Promise<SubpoenaResponse> {
+    this.logger.debug(`Assigning defender to subpoena ${caseId}`)
+
+    return this.caseService.updateSubpoena(
+      user.nationalId,
+      caseId,
+      defenderAssignment,
+    )
   }
 }
