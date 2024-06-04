@@ -402,7 +402,7 @@ export const DetailsRepeaterItem: FC<DetailsRepeaterItemProps> = ({
 
       {!readOnly && (
         <FileUploadController
-          id={degreeAttachmentsField}
+          id={degreeAttachmentsField} //profskirteini, profskirteini2, profskirteini3
           application={application}
           multiple
           header={formatMessage(

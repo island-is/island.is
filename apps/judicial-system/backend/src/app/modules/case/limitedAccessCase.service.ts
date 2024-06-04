@@ -97,6 +97,8 @@ export const attributes: (keyof Case)[] = [
   'appealRulingModifiedHistory',
   'requestAppealRulingNotToBePublished',
   'prosecutorsOfficeId',
+  'indictmentRulingDecision',
+  'indictmentHash',
 ]
 
 export interface LimitedAccessUpdateCase

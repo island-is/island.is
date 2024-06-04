@@ -158,7 +158,7 @@ export const ShareInput = ({
               return onAfterChange?.(numberValue)
             }
           }}
-          hasError={hasError ?? false}
+          hasError={(!disabled && hasError) ?? false}
           errorMessage={formatMessage(m.invalidShareValue)}
           disabled={disabled}
           required={required}
