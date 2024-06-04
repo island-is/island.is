@@ -273,16 +273,7 @@ export const AdditionalHeir = ({
                     onAfterChange={(val) => {
                       updateValues(fieldIndex, val, customFieldIndex)
                     }}
-                    errorMessage={
-                      error && error[index]
-                        ? error[index][customField.id]
-                        : undefined
-                    }
-                    hasError={
-                      error && error[index]
-                        ? !!error[index][customField.id]
-                        : false
-                    }
+                    hasError={!!error?.heirsPercentage}
                     required
                   />
                 </GridColumn>

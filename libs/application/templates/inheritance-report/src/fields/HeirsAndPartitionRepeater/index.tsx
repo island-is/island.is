@@ -338,6 +338,7 @@ export const HeirsAndPartitionRepeater: FC<
                       clearErrors(`${fieldIndex}.email`)
                       clearErrors(`${fieldIndex}.advocate.phone`)
                       clearErrors(`${fieldIndex}.advocate.email`)
+                      clearErrors(`${fieldIndex}.heirsPercentage`)
                       calculateTotal()
                     }}
                   >
@@ -567,6 +568,7 @@ export const HeirsAndPartitionRepeater: FC<
         [] as JSX.Element[],
       )}
       {fields.map((member: GenericFormField<EstateMember>, index) => {
+        console.log(error, 'errrrrr')
         if (member.initial) return null
         return (
           <Box key={member.id}>
