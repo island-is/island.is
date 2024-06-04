@@ -62,6 +62,7 @@ export class DelegationsIncomingRepresentativeService {
         type: AuthDelegationType.PersonalRepresentative,
         provider: AuthDelegationProvider.PersonalRepresentativeRegistry,
         rights: representative.rights,
+        prDelegationType: representative.prDelegationTypes,
       })
 
       const personalRepresentatives =
