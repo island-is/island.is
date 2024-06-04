@@ -73,7 +73,7 @@ export const OtherAssetsRepeater: FC<
 
   useEffect(() => {
     calculateTotal()
-  }, [calculateTotal])
+  }, [fields, calculateTotal])
 
   const handleAddRepeaterFields = () => {
     const values = props.fields.map((field: object) => {
