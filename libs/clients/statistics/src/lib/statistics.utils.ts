@@ -5,17 +5,16 @@ import endOfMonth from 'date-fns/endOfMonth'
 import endOfDay from 'date-fns/endOfDay'
 import parse from 'date-fns/parse'
 
-import {
-  GetSingleStatisticQuery,
-  GetStatisticsQuery,
-  SourceValue,
-  StatisticSourceData,
-} from './types'
+import { GetSingleStatisticQuery, GetStatisticsQuery } from './types'
 import {
   DEFAULT_NUMBER_OF_DATA_POINTS,
   MONTH_NAMES,
 } from './statistics.constants'
 import { EnhancedFetchAPI } from '@island.is/clients/middlewares'
+import type {
+  StatisticSourceData,
+  StatisticSourceValue,
+} from '@island.is/shared/types'
 
 export const _tryToGetDate = (value: string | null) => {
   if (!value) {
@@ -203,9 +202,9 @@ const processResponse = (result: StatisticSourceData, response: string) => {
 
 let fetchStatisticsPromise: Promise<StatisticSourceData> | undefined
 
-export const getStatisticsFromSource = (
+export const getStatisticsFromCsvUrls = (
   fetchClient: EnhancedFetchAPI,
-  dataSources: string[],
+  csvUrls: string[],
 ): Promise<StatisticSourceData> => {
   if (fetchStatisticsPromise) {
     return fetchStatisticsPromise
@@ -215,7 +214,7 @@ export const getStatisticsFromSource = (
   // is in progress reuse the same promise
   fetchStatisticsPromise = new Promise((resolve, reject) => {
     Promise.all<Promise<string>[]>(
-      dataSources.map((source) => fetchClient(source).then(handleResponse)),
+      csvUrls.map((source) => fetchClient(source).then(handleResponse)),
     )
       .then((responses) =>
         resolve(
@@ -236,7 +235,7 @@ export const getStatisticsFromSource = (
   return fetchStatisticsPromise
 }
 
-const _valueIsNotDefined = (item: SourceValue) => {
+const _valueIsNotDefined = (item: StatisticSourceValue) => {
   return typeof item.value !== 'number'
 }
 
@@ -245,9 +244,9 @@ export const getStatistics = ({
   dateFrom,
   dateTo,
   sourceData,
-}: GetSingleStatisticQuery): SourceValue[] => {
+}: GetSingleStatisticQuery): StatisticSourceValue[] => {
   const allSourceDataForKey = get(sourceData.data, sourceDataKey) as
-    | SourceValue[]
+    | StatisticSourceValue[]
     | undefined
 
   if (!allSourceDataForKey) {
@@ -261,7 +260,7 @@ export const getStatistics = ({
     header: item.header,
   }))
 
-  const dropLeft = (item: SourceValue) => {
+  const dropLeft = (item: StatisticSourceValue) => {
     if (isDateHeader && dateFrom && new Date(item.header) < dateFrom) {
       return true
     }
@@ -273,7 +272,7 @@ export const getStatistics = ({
     return false
   }
 
-  const dropRight = (item: SourceValue) => {
+  const dropRight = (item: StatisticSourceValue) => {
     if (isDateHeader && dateTo && new Date(item.header) > dateTo) {
       return true
     }
@@ -336,7 +335,7 @@ export const getMultipleStatistics = async (
       result[dataPoint.header][sourceDataKey] = dataPoint.value
     }
     return result
-  }, {} as Record<string, Record<string, SourceValue['value']>>)
+  }, {} as Record<string, Record<string, StatisticSourceValue['value']>>)
 
   const headers = Object.keys(byHeader)
   headers.sort((a, b) => new Date(a).getTime() - new Date(b).getTime())

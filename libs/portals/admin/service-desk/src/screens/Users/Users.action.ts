@@ -1,8 +1,5 @@
 import { z } from 'zod'
 import { redirect } from 'react-router-dom'
-import { isEmail } from 'class-validator'
-import * as kennitala from 'kennitala'
-import { parsePhoneNumber } from 'libphonenumber-js'
 
 import {
   RawRouterActionResponse,
@@ -13,7 +10,7 @@ import {
   validateFormData,
   ValidateFormDataResult,
 } from '@island.is/react-spa/shared'
-import { isSearchTermValid, maskString } from '@island.is/shared/utils'
+import { maskString, isSearchTermValid } from '@island.is/shared/utils'
 
 import {
   GetPaginatedUserProfilesDocument,
@@ -88,10 +85,10 @@ export const UsersAction: WrappedActionFn =
           replaceParams({
             href: ServiceDeskPaths.User,
             params: {
-              nationalId: maskString(
+              nationalId: (await maskString(
                 respData[0].nationalId,
                 userInfo.profile.nationalId,
-              ) as string,
+              )) as string,
             },
           }),
         )
