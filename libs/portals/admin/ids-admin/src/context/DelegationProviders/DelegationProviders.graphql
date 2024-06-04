@@ -1,18 +1,17 @@
-
 query GetDelegationProviders {
   authDelegationProviders {
     environments {
       environment
       providers {
-      id
-      name
-      description
-      delegationTypes {
         id
         name
         description
-        providerId
-      }
+        delegationTypes {
+          id
+          name
+          description
+          providerId
+        }
       }
     }
   }
