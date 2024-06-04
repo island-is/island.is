@@ -1133,7 +1133,7 @@ const ParentalLeaveTemplate: ApplicationTemplate<
             },
             historyLogs: [
               {
-                onEvent: DefaultEvents.EDIT,
+                onEvent: DefaultEvents.ABORT,
                 logMessage: statesMessages.employerActionDeleteChanges,
               },
             ],
