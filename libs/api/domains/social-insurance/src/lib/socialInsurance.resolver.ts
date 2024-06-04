@@ -1,6 +1,6 @@
 import { Audit } from '@island.is/nest/audit'
 import { ApiScope } from '@island.is/auth/scopes'
-import { Args, Int, Query, Resolver } from '@nestjs/graphql'
+import { Args, Query, Resolver } from '@nestjs/graphql'
 import {
   IdsUserGuard,
   ScopesGuard,
@@ -12,7 +12,6 @@ import {
 import { UseGuards } from '@nestjs/common'
 import { SocialInsuranceService } from './socialInsurance.service'
 import { PaymentPlan } from './models/paymentPlan.model'
-import { PaymentPlanInput } from './dtos/paymentPlan.input'
 import {
   FeatureFlagGuard,
   FeatureFlag,
@@ -35,11 +34,8 @@ export class SocialInsuranceResolver {
   @FeatureFlag(Features.servicePortalSocialInsurancePageEnabled)
   @Scopes(ApiScope.internal)
   @Audit()
-  async paymentPlan(
-    @CurrentUser() user: User,
-    @Args('input') input: PaymentPlanInput,
-  ) {
-    return this.service.getPaymentPlan(user, input.year)
+  async paymentPlan(@CurrentUser() user: User) {
+    return this.service.getPaymentPlan(user)
   }
 
   @Query(() => Payments, {

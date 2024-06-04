@@ -39,8 +39,6 @@ import { createNavigationOptionHooks } from '../../hooks/create-navigation-optio
 import { navigateTo } from '../../lib/deep-linking'
 import { showPicker } from '../../lib/show-picker'
 import { authStore } from '../../stores/auth-store'
-import { clearAllStorages } from '../../stores/mmkv'
-import { useNotificationsStore } from '../../stores/notifications-store'
 import {
   preferencesStore,
   usePreferencesStore,
@@ -78,11 +76,6 @@ export const SettingsScreen: NavigationFunctionComponent = ({
     setUseBiometrics,
     appLockTimeout,
   } = usePreferencesStore()
-  const pushToken = useNotificationsStore(({ pushToken }) => pushToken)
-  const deletePushToken = useNotificationsStore(
-    ({ deletePushToken }) => deletePushToken,
-  )
-  const resetNotificationsStore = useNotificationsStore(({ reset }) => reset)
   const [loadingCP, setLoadingCP] = useState(false)
   const [localPackage, setLocalPackage] = useState<LocalPackage | null>(null)
   const efficient = useRef<any>({}).current
@@ -91,15 +84,6 @@ export const SettingsScreen: NavigationFunctionComponent = ({
   const biometricType = useBiometricType(authenticationTypes)
 
   const onLogoutPress = async () => {
-    if (pushToken) {
-      await deletePushToken(pushToken)
-    }
-
-    resetNotificationsStore()
-
-    // Clear all MMKV storages
-    void clearAllStorages()
-
     await authStore.getState().logout()
     await Navigation.dismissAllModals()
     await Navigation.setRoot({

@@ -220,6 +220,11 @@ export const coreMessages = defineMessages({
     defaultMessage: 'Eyða færslu',
     description: 'Delete field text',
   },
+  editFieldText: {
+    id: 'application.system:core.edit.field.text',
+    defaultMessage: 'Breyta færslu',
+    description: 'Edit field text',
+  },
   deleteApplicationDialogTitle: {
     id: 'application.system:delete.application.dialog.title',
     defaultMessage: 'Eyða umsókn',

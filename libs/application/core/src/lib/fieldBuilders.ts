@@ -748,7 +748,10 @@ export function buildTableRepeaterField(
     addItemButtonText,
     saveItemButtonText,
     removeButtonTooltipText,
+    editButtonTooltipText,
+    editField,
     getStaticTableData,
+    maxRows,
   } = data
 
   return {
@@ -765,7 +768,10 @@ export function buildTableRepeaterField(
     addItemButtonText,
     saveItemButtonText,
     removeButtonTooltipText,
+    editButtonTooltipText,
+    editField,
     getStaticTableData,
+    maxRows,
   }
 }
 

@@ -1,28 +1,32 @@
-import { useEffect, useRef, useState } from 'react'
+import { useAuth } from '@island.is/auth/react'
 import {
   Box,
-  Hidden,
   Button,
-  Logo,
   FocusableBox,
   GridColumn,
   GridContainer,
   GridRow,
+  Hidden,
+  Logo,
 } from '@island.is/island-ui/core'
-import * as styles from './Header.css'
-import { ServicePortalPaths } from '@island.is/service-portal/core'
-import { useLocale } from '@island.is/localization'
-import { UserLanguageSwitcher, UserMenu } from '@island.is/shared/components'
-import { m } from '@island.is/service-portal/core'
-import { Link } from 'react-router-dom'
 import { helperStyles, theme } from '@island.is/island-ui/theme'
-import { useWindowSize } from 'react-use'
+import { useLocale } from '@island.is/localization'
 import { PortalPageLoader } from '@island.is/portals/core'
-import { useAuth } from '@island.is/auth/react'
-import Sidemenu from '../Sidemenu/Sidemenu'
-import { DocumentsPaths } from '@island.is/service-portal/documents'
-import NotificationButton from '../Notifications/NotificationButton'
 import { useFeatureFlagClient } from '@island.is/react/feature-flags'
+import {
+  LinkResolver,
+  ServicePortalPaths,
+  m,
+} from '@island.is/service-portal/core'
+import { DocumentsPaths } from '@island.is/service-portal/documents'
+import { UserLanguageSwitcher, UserMenu } from '@island.is/shared/components'
+import { useEffect, useRef, useState } from 'react'
+import { Link } from 'react-router-dom'
+import { useWindowSize } from 'react-use'
+import NotificationButton from '../Notifications/NotificationButton'
+import Sidemenu from '../Sidemenu/Sidemenu'
+import * as styles from './Header.css'
+import { DocumentsScope } from '@island.is/auth/scopes'
 export type MenuTypes = 'side' | 'user' | 'notifications' | undefined
 
 interface Props {
@@ -53,6 +57,10 @@ export const Header = ({ position }: Props) => {
     isFlagEnabled()
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [])
+
+  const hasNotificationsDelegationAccess = user?.scopes?.includes(
+    DocumentsScope.main,
+  )
 
   return (
     <div className={styles.placeholder}>
@@ -93,24 +101,24 @@ export const Header = ({ position }: Props) => {
                       flexWrap="nowrap"
                       marginLeft={[1, 1, 2]}
                     >
-                      {user && <UserLanguageSwitcher user={user} />}
                       <Hidden below="md">
                         <Box marginRight={[1, 1, 2]} position="relative">
-                          <Link to={DocumentsPaths.ElectronicDocumentsRoot}>
+                          <LinkResolver
+                            href={DocumentsPaths.ElectronicDocumentsRoot}
+                          >
                             <Button
-                              variant="utility"
-                              colorScheme="white"
-                              size="small"
                               icon="mail"
                               iconType="outline"
+                              colorScheme="white"
+                              size="small"
                               type="span"
+                              variant="utility"
                               unfocusable
                             />
-
                             <span className={helperStyles.srOnly}>
-                              {formatMessage(m.documents)}
+                              {formatMessage(m.openDocuments)}
                             </span>
-                          </Link>
+                          </LinkResolver>
                         </Box>
                       </Hidden>
 
@@ -118,8 +126,11 @@ export const Header = ({ position }: Props) => {
                         <NotificationButton
                           setMenuState={(val: MenuTypes) => setMenuOpen(val)}
                           showMenu={menuOpen === 'notifications'}
+                          disabled={!hasNotificationsDelegationAccess}
                         />
                       )}
+
+                      {user && <UserLanguageSwitcher user={user} />}
 
                       <Box className={styles.overview} marginRight={[1, 1, 2]}>
                         <Button

@@ -1,6 +1,7 @@
 import { UploadData } from '../types'
 import PDFDocument from 'pdfkit'
 import getStream from 'get-stream'
+import { EstateTypes } from '../consts'
 
 const someValueIsSet = (object: Record<string, unknown>) => {
   return Object.values(object).some((value) => value !== undefined)
@@ -60,6 +61,10 @@ export const transformUploadDataToPDFStream = async (
     data.notifier.phoneNumber ?? 'Símanúmer vantar',
   )
   fieldWithValue(doc, 'Netfang', data.notifier.email ?? 'Netfang vantar')
+  if (data.applicationType === EstateTypes.permitForUndividedEstate) {
+    fieldWithValue(doc, 'Lögráða', data.notifier.autonomous ?? 'Svar vantar')
+  }
+
   moveDownBy(2, doc)
 
   if (data.representative) {

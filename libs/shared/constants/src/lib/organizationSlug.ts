@@ -10,6 +10,7 @@ export type OrganizationSlugType =
   | 'holaskoli-haskolinn-a-holum'
   | 'bifrost'
   | 'landbunadarhaskoli-islands'
+  | 'lhi'
   | 'vinnueftirlitid'
   | 'thjodskra'
   | 'stafraent-island'
@@ -44,3 +45,4 @@ export type OrganizationSlugType =
   | 'vegagerdin'
   | 'landlaeknir'
   | 'hugverkastofan'
+  | 'geislavarnir-rikisins'

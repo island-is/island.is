@@ -43,6 +43,7 @@ const MobilePastCase: React.FC<Props> = ({
           isCourtRole={isCourtRole}
           isValidToDateInThePast={theCase.isValidToDateInThePast}
           courtDate={theCase.courtDate}
+          indictmentRulingDecision={theCase.indictmentRulingDecision}
         />,
       ]}
       isLoading={isLoading}
