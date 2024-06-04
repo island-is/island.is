@@ -12,19 +12,14 @@ import { StatisticsForm } from '../../components/StatisticsForm/StatisticsForm'
 import { useGetApplicationStatisticsQuery } from '../../queries/overview.generated'
 import { useState } from 'react'
 import StatisticsTable from '../../components/StatisticsTable/StatisticsTable'
-
-function getFirstDateOfMonth() {
-  const now = new Date()
-  const firstDateOfMonth = new Date(now.getFullYear(), now.getMonth(), 1)
-  return firstDateOfMonth
-}
+import { startOfMonth } from 'date-fns'
 
 const Statistics = () => {
   const { formatMessage } = useLocale()
   const [dateInterval, setDateInterval] = useState<
     ApplicationFilters['period']
   >({
-    from: getFirstDateOfMonth(),
+    from: startOfMonth(new Date()),
     to: new Date(),
   })
   const [error, setError] = useState<string | null>(null)

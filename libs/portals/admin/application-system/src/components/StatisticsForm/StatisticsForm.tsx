@@ -19,28 +19,28 @@ export const StatisticsForm = ({ onDateChange, dateInterval }: Props) => {
       flexDirection={['column', 'column', 'column', 'row']}
     >
       <Box display="flex" flexDirection={['column', 'column', 'row']}>
+        <DatePicker
+          id="periodFrom"
+          label=""
+          backgroundColor="blue"
+          selected={dateInterval?.from}
+          placeholderText={formatMessage(m.filterFrom)}
+          handleChange={(from) => onDateChange({ from })}
+          size="xs"
+          locale="is"
+        />
         <Box marginX={[0, 0, 2]} marginY={[2, 2, 0]}>
           <DatePicker
-            id="periodFrom"
+            id="periodTo"
             label=""
             backgroundColor="blue"
-            selected={dateInterval?.from}
-            placeholderText={formatMessage(m.filterFrom)}
-            handleChange={(from) => onDateChange({ from })}
+            selected={dateInterval?.to}
+            placeholderText={formatMessage(m.filterTo)}
+            handleChange={(to) => onDateChange({ to })}
             size="xs"
             locale="is"
           />
         </Box>
-        <DatePicker
-          id="periodTo"
-          label=""
-          backgroundColor="blue"
-          selected={dateInterval?.to}
-          placeholderText={formatMessage(m.filterTo)}
-          handleChange={(to) => onDateChange({ to })}
-          size="xs"
-          locale="is"
-        />
       </Box>
     </Box>
   )
