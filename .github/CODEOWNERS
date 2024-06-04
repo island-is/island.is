@@ -142,14 +142,16 @@ codemagic.yaml                                                                  
 /libs/api/domains/user-profile/                                                                          @island-is/hugsmidjan @island-is/juni @island-is/aranja
 /libs/api/domains/passport/                                                                              @island-is/hugsmidjan
 /libs/api/domains/vehicles/                                                                              @island-is/hugsmidjan
-/libs/api/domains/university-of-iceland/                                                                 @island-is/hugsmidjan
+/libs/api/domains/university-careers/                                                                    @island-is/hugsmidjan
 /libs/api/domains/regulations/                                                                           @island-is/hugsmidjan
 /libs/api/domains/regulations-admin/                                                                     @island-is/hugsmidjan
 /libs/api/domains/rights-portal                                                                          @island-is/hugsmidjan
 /libs/api/domains/social-insurance                                                                       @island-is/hugsmidjan @island-is/stefna
 /libs/api/domains/occupational-licenses/                                                                 @island-is/hugsmidjan
+/libs/api/domains/occupational-licenses-v2/                                                              @island-is/hugsmidjan
 /libs/api/domains/intellectual-properties/                                                               @island-is/hugsmidjan
 /libs/api/domains/official-journal-of-iceland/                                                           @island-is/hugsmidjan
+/libs/api/domains/official-journal-of-iceland-application/                                               @island-is/hugsmidjan
 /libs/api/domains/document-provider/                                                                     @island-is/hugsmidjan @island-is/core
 /libs/api/domains/housing-benefits/                                                                      @island-is/hugsmidjan
 /libs/clients/documents/                                                                                 @island-is/hugsmidjan
@@ -165,8 +167,8 @@ codemagic.yaml                                                                  
 /libs/clients/license-client/                                                                            @island-is/hugsmidjan @island-is/aranja
 /libs/clients/intellectual-properties/                                                                   @island-is/hugsmidjan
 /libs/clients/islykill/                                                                                  @island-is/hugsmidjan
-/libs/clients/national-registry/v1/                                                                      @island-is/hugsmidjan
 /libs/clients/national-registry/v3/                                                                      @island-is/hugsmidjan
+/libs/clients/district-commissioners-licenses/                                                           @island-is/hugsmidjan
 /libs/clients/regulations/                                                                               @island-is/hugsmidjan
 /libs/clients/vehicles/                                                                                  @island-is/hugsmidjan
 /libs/clients/vehicles-mileage/                                                                          @island-is/hugsmidjan
@@ -174,7 +176,7 @@ codemagic.yaml                                                                  
 /libs/clients/passports/                                                                                 @island-is/hugsmidjan
 /libs/clients/p-card/                                                                                    @island-is/hugsmidjan
 /libs/clients/assets/                                                                                    @island-is/hugsmidjan
-/libs/clients/university-of-iceland/                                                                     @island-is/hugsmidjan
+/libs/clients/university-careers/                                                                        @island-is/hugsmidjan
 /libs/clients/regulations-admin/                                                                         @island-is/hugsmidjan
 /libs/clients/inna/                                                                                      @island-is/hugsmidjan
 /libs/clients/hms-loans/                                                                                 @island-is/hugsmidjan
@@ -189,7 +191,6 @@ codemagic.yaml                                                                  
 /libs/portals/admin/air-discount-scheme                                                                  @island-is/hugsmidjan
 /libs/application/templates/official-journal-of-iceland/                                                 @island-is/hugsmidjan
 /libs/application/template-api-modules/src/lib/modules/templates/official-journal-of-iceland/            @island-is/hugsmidjan
-
 /libs/application/templates/data-protection-complaint/                                                   @island-is/norda
 /libs/application/templates/institution-collaboration/                                                   @island-is/norda @island-is/fuglar
 /libs/application/templates/login-service/                                                               @island-is/norda
@@ -211,7 +212,7 @@ codemagic.yaml                                                                  
 /libs/clients/rsk/company-registry                                                                       @island-is/norda
 /libs/clients/althingi-ombudsman/                                                                        @island-is/norda
 /libs/api/domains/company-registry                                                                       @island-is/norda
-/libs/clients/icelandic-health-insurance/health-insurance/                                               @island-is/norda                                                                       @island-is/norda
+/libs/clients/icelandic-health-insurance/health-insurance/                                               @island-is/norda
 /libs/clients/data-protection-complaint/                                                                 @island-is/norda
 /libs/clients/fishing-license/                                                                           @island-is/norda
 /libs/api/domains/fishing-license/                                                                       @island-is/norda
@@ -272,7 +273,7 @@ codemagic.yaml                                                                  
 /libs/api/domains/directorate-of-labour/                                                                 @island-is/deloitte
 /libs/application/template-api-modules/src/lib/modules/templates/social-insurance-administration         @island-is/deloitte
 /libs/application/templates/social-insurance-administration/                                             @island-is/deloitte
-/libs/clients/social-insurance-administration/                                                           @island-is/deloitte @island-is/stefna
+/libs/clients/social-insurance-administration/                                                           @island-is/deloitte @island-is/stefna @island-is/hugsmidjan
 /libs/application/templates/car-recycling/                                                               @island-is/deloitte
 /libs/application/template-api-modules/src/lib/modules/templates/car-recycling/                          @island-is/deloitte
 /libs/clients/car-recycling/                                                                             @island-is/deloitte

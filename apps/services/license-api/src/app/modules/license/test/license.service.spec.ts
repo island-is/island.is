@@ -242,6 +242,7 @@ describe('LicenseService', () => {
           provide: LOGGER_PROVIDER,
           useClass: jest.fn(() => ({
             debug: () => ({}),
+            info: () => ({}),
             error: () => ({}),
           })),
         },

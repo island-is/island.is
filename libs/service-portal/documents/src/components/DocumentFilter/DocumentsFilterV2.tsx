@@ -23,6 +23,7 @@ import {
   DocumentsV2Sender,
 } from '@island.is/api/schema'
 import { useDocumentFilters } from '../../hooks/useDocumentFilters'
+import { isDefined } from '@island.is/shared/utils'
 
 interface Props {
   filterValue: FilterValuesType
@@ -66,12 +67,17 @@ const DocumentsFilter = ({
   const mapToFilterItem = (
     array: DocumentsV2Category[] | DocumentsV2Sender[] | DocumentType[],
   ) => {
-    return array.map((item) => {
-      return {
-        label: item.name,
-        value: item.id,
-      }
-    })
+    return array
+      .map((item) => {
+        if (!item.id) {
+          return undefined
+        }
+        return {
+          label: item.name,
+          value: item.id,
+        }
+      })
+      .filter(isDefined)
   }
 
   const sendersAvailable = mapToFilterItem(senders)

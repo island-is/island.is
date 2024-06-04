@@ -1,5 +1,10 @@
 import { json, service, ServiceBuilder } from '../../../../../infra/src/dsl/dsl'
-import { Base, Client, RskProcuring } from '../../../../../infra/src/dsl/xroad'
+import {
+  Base,
+  Client,
+  NationalRegistryAuthB2C,
+  RskProcuring,
+} from '../../../../../infra/src/dsl/xroad'
 // eslint-disable-next-line
 import { UserProfileScope } from '../../../../../libs/auth/scopes/src/lib/userProfile.scope'
 
@@ -90,8 +95,10 @@ export const serviceSetup = (): ServiceBuilder<'services-auth-ids-api'> => {
       NOVA_URL: '/k8s/services-auth/NOVA_URL',
       NOVA_USERNAME: '/k8s/services-auth/NOVA_USERNAME',
       NOVA_PASSWORD: '/k8s/services-auth/NOVA_PASSWORD',
+      NATIONAL_REGISTRY_B2C_CLIENT_SECRET:
+        '/k8s/services-auth/NATIONAL_REGISTRY_B2C_CLIENT_SECRET',
     })
-    .xroad(Base, Client, RskProcuring)
+    .xroad(Base, Client, RskProcuring, NationalRegistryAuthB2C)
     .readiness('/health/check')
     .liveness('/liveness')
     .db({ name: 'servicesauth', extensions: ['uuid-ossp'] })
@@ -134,15 +141,16 @@ export const cleanupSetup = (): ServiceBuilder<typeof cleanupId> =>
         memory: '256Mi',
       },
     })
-    .db()
+    .db({ name: 'servicesauth', extensions: ['uuid-ossp'] })
+    .env({
+      IDENTITY_SERVER_ISSUER_URL: {
+        dev: 'https://identity-server.dev01.devland.is',
+        staging: 'https://identity-server.staging01.devland.is',
+        prod: 'https://innskra.island.is',
+      },
+    })
     .extraAttributes({
-      dev: {
-        schedule,
-      },
-      staging: {
-        schedule,
-      },
-      prod: {
-        schedule,
-      },
+      dev: schedule,
+      staging: schedule,
+      prod: schedule,
     })

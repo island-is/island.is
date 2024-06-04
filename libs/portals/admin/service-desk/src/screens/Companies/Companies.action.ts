@@ -74,7 +74,7 @@ export const CompaniesAction: WrappedActionFn =
       if (companies?.length === 1) {
         return redirect(
           replaceParams({
-            href: ServiceDeskPaths.Procurers,
+            href: ServiceDeskPaths.Company,
             params: {
               nationalId: companies[0].nationalId,
             },

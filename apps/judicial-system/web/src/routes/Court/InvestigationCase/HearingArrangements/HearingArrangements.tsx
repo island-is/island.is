@@ -113,6 +113,10 @@ const HearingArrangements = () => {
     courtDate?.date,
   )
 
+  const isCorrectingRuling = workingCase.notifications?.some(
+    (notification) => notification.type === NotificationType.RULING,
+  )
+
   return (
     <PageLayout
       workingCase={workingCase}
@@ -298,10 +302,11 @@ const HearingArrangements = () => {
             </Box>
             <Box marginBottom={2}>
               <CourtArrangements
-                workingCase={workingCase}
                 handleCourtDateChange={handleCourtDateChange}
                 handleCourtRoomChange={handleCourtRoomChange}
                 courtDate={courtDate}
+                courtRoomDisabled={isCorrectingRuling}
+                dateTimeDisabled={isCorrectingRuling}
               />
             </Box>
           </Box>

@@ -1,75 +1,74 @@
-import { assign } from 'xstate'
+import cloneDeep from 'lodash/cloneDeep'
 import set from 'lodash/set'
 import unset from 'lodash/unset'
-import cloneDeep from 'lodash/cloneDeep'
+import { assign } from 'xstate'
 
 import {
-  coreMessages,
   EphemeralStateLifeCycle,
-  pruneAfterDays,
   coreHistoryMessages,
+  coreMessages,
+  pruneAfterDays,
 } from '@island.is/application/core'
 import {
-  ApplicationContext,
+  Application,
   ApplicationConfigurations,
+  ApplicationContext,
   ApplicationRole,
   ApplicationStateSchema,
-  ApplicationTypes,
   ApplicationTemplate,
-  Application,
+  ApplicationTypes,
   DefaultEvents,
-  defineTemplateApi,
-  UserProfileApi,
   StateLifeCycle,
+  UserProfileApi,
+  defineTemplateApi,
 } from '@island.is/application/types'
 
 import {
-  YES,
   ApiModuleActions,
-  States,
-  ParentalRelations,
-  NO,
-  MANUAL,
-  SPOUSE,
-  TransferRightsOption,
-  SINGLE,
-  FileType,
-  NO_MULTIPLE_BIRTHS,
-  UnEmployedBenefitTypes,
-  PLEvents,
-  Roles,
   Events,
+  MANUAL,
+  NO,
+  NO_MULTIPLE_BIRTHS,
   PARENTAL_GRANT,
   PARENTAL_GRANT_STUDENTS,
   PARENTAL_LEAVE,
+  PLEvents,
+  ParentalRelations,
+  Roles,
+  SINGLE,
+  SPOUSE,
+  States,
+  TransferRightsOption,
+  UnEmployedBenefitTypes,
+  YES,
 } from '../constants'
-import { dataSchema } from './dataSchema'
-import { answerValidators } from './answerValidators'
-import { parentalLeaveFormMessages, statesMessages } from './messages'
+import { ChildrenApi, GetPersonInformation } from '../dataProviders'
 import {
-  allEmployersHaveApproved,
-  findActionName,
-  goToState,
-  hasDateOfBirth,
-  hasEmployer,
-  needsOtherParentApproval,
-} from './parentalLeaveTemplateUtils'
-import {
+  calculatePruneDate,
+  determineNameFromApplicationAnswers,
+  employerApprovalStatePendingAction,
+  getActionName,
   getApplicationAnswers,
   getApplicationExternalData,
-  getApprovedEmployers,
   getMaxMultipleBirthsDays,
   getMultipleBirthRequestDays,
   getOtherParentId,
   getSelectedChild,
-  determineNameFromApplicationAnswers,
+  getSpouse,
   isParentWithoutBirthParent,
   otherParentApprovalStatePendingAction,
-  employerApprovalStatePendingAction,
-  calculatePruneDate,
-  getSpouse,
 } from '../lib/parentalLeaveUtils'
-import { ChildrenApi, GetPersonInformation } from '../dataProviders'
+import { answerValidators } from './answerValidators'
+import { dataSchema } from './dataSchema'
+import { parentalLeaveFormMessages, statesMessages } from './messages'
+import {
+  allEmployersHaveApproved,
+  goToState,
+  hasDateOfBirth,
+  hasEmployer,
+  needsOtherParentApproval,
+  restructureVMSTPeriods,
+} from './parentalLeaveTemplateUtils'
 
 export const birthDayLifeCycle: StateLifeCycle = {
   shouldBeListed: true,
@@ -560,11 +559,19 @@ const ParentalLeaveTemplate: ApplicationTemplate<
               throwOnError: true,
             }),
           ],
-          onExit: defineTemplateApi({
-            action: ApiModuleActions.setBirthDate,
-            externalDataId: 'dateOfBirth',
-            throwOnError: false,
-          }),
+          onExit: [
+            defineTemplateApi({
+              action: ApiModuleActions.setBirthDate,
+              externalDataId: 'dateOfBirth',
+              throwOnError: false,
+            }),
+            defineTemplateApi({
+              action: ApiModuleActions.setVMSTPeriods,
+              triggerEvent: DefaultEvents.EDIT,
+              externalDataId: 'VMSTPeriods',
+              throwOnError: false,
+            }),
+          ],
           roles: [
             {
               id: Roles.APPLICANT,
@@ -760,7 +767,7 @@ const ParentalLeaveTemplate: ApplicationTemplate<
         },
       },
       [States.RESIDENCE_GRANT_APPLICATION]: {
-        entry: ['assignToVMST', 'setResidenceGrant'],
+        entry: ['assignToVMST', 'setResidenceGrant', 'setActionName'],
         exit: ['setPreviousState', 'setHasAppliedForReidenceGrant'],
         meta: {
           status: 'inprogress',
@@ -789,9 +796,9 @@ const ParentalLeaveTemplate: ApplicationTemplate<
           onExit: defineTemplateApi({
             action: ApiModuleActions.validateApplication,
             triggerEvent: DefaultEvents.APPROVE,
-            params: FileType.DOCUMENTPERIOD,
             throwOnError: true,
           }),
+
           roles: [
             {
               id: Roles.APPLICANT,
@@ -856,11 +863,19 @@ const ParentalLeaveTemplate: ApplicationTemplate<
             ],
           },
           lifecycle: birthDayLifeCycle,
-          onExit: defineTemplateApi({
-            action: ApiModuleActions.setBirthDate,
-            externalDataId: 'dateOfBirth',
-            throwOnError: false,
-          }),
+          onExit: [
+            defineTemplateApi({
+              action: ApiModuleActions.setBirthDate,
+              externalDataId: 'dateOfBirth',
+              throwOnError: false,
+            }),
+            defineTemplateApi({
+              action: ApiModuleActions.setVMSTPeriods,
+              triggerEvent: DefaultEvents.EDIT,
+              externalDataId: 'VMSTPeriods',
+              throwOnError: false,
+            }),
+          ],
           roles: [
             {
               id: Roles.APPLICANT,
@@ -925,18 +940,17 @@ const ParentalLeaveTemplate: ApplicationTemplate<
           'removeNullPeriod',
           'setNavId',
           'createTempEmployers',
+          'setVMSTPeriods',
         ],
         exit: [
           'removeAddedEmployers',
           'removeAddedPeriods',
-          'clearChangeEmployerFileIfAddEmployerIsNo',
           'restorePeriodsFromTemp',
           'removeNullPeriod',
           'setNavId',
           'setActionName',
           'clearEmployers',
           'restoreEmployersFromTemp',
-          'clearChangeEmployerFileIfCancel',
         ],
         meta: {
           name: States.EDIT_OR_ADD_EMPLOYERS_AND_PERIODS,
@@ -999,6 +1013,14 @@ const ParentalLeaveTemplate: ApplicationTemplate<
               target: States.VINNUMALASTOFNUN_APPROVAL,
             },
             {
+              cond: (application) =>
+                goToState(
+                  application,
+                  States.EMPLOYER_WAITING_TO_ASSIGN_FOR_EDITS,
+                ),
+              target: States.EMPLOYER_WAITING_TO_ASSIGN_FOR_EDITS,
+            },
+            {
               target: States.VINNUMALASTOFNUN_APPROVE_EDITS,
             },
           ],
@@ -1010,6 +1032,7 @@ const ParentalLeaveTemplate: ApplicationTemplate<
           'setEmployerReviewerNationalRegistryId',
           'restorePeriodsFromTemp',
           'restoreEmployersFromTemp',
+          'setPreviousState',
         ],
         meta: {
           name: States.EMPLOYER_WAITING_TO_ASSIGN_FOR_EDITS,
@@ -1158,7 +1181,7 @@ const ParentalLeaveTemplate: ApplicationTemplate<
             },
             historyLogs: [
               {
-                onEvent: PLEvents.MODIFY,
+                onEvent: DefaultEvents.EDIT,
                 logMessage: statesMessages.editHistoryLogMessage,
               },
               {
@@ -1186,7 +1209,7 @@ const ParentalLeaveTemplate: ApplicationTemplate<
           ],
         },
         on: {
-          MODIFY: {
+          [DefaultEvents.EDIT]: {
             target: States.EDIT_OR_ADD_EMPLOYERS_AND_PERIODS,
           },
           [DefaultEvents.ABORT]: { target: States.APPROVED },
@@ -1198,7 +1221,6 @@ const ParentalLeaveTemplate: ApplicationTemplate<
           'removeNullPeriod',
           'setHasAppliedForReidenceGrant',
           'setNavId',
-          'clearChangedPeriodsNEmployers',
         ],
         exit: [
           'clearTemp',
@@ -1206,6 +1228,9 @@ const ParentalLeaveTemplate: ApplicationTemplate<
           'clearAssignees',
           'setPreviousState',
           'setNavId',
+          'clearChangedPeriodsNEmployers',
+          'clearChangeEmployerFileIfAddEmployerIsNo',
+          'clearChangeEmployerFileIfCancel',
         ],
         meta: {
           name: States.VINNUMALASTOFNUN_APPROVE_EDITS,
@@ -1248,23 +1273,29 @@ const ParentalLeaveTemplate: ApplicationTemplate<
             defineTemplateApi({
               triggerEvent: DefaultEvents.APPROVE,
               action: ApiModuleActions.sendApplication,
-              params: FileType.DOCUMENTPERIOD,
               shouldPersistToExternalData: true,
               throwOnError: true,
             }),
             defineTemplateApi({
               triggerEvent: DefaultEvents.SUBMIT,
               action: ApiModuleActions.sendApplication,
-              params: FileType.DOCUMENTPERIOD,
               shouldPersistToExternalData: true,
               throwOnError: true,
             }),
           ],
-          onExit: defineTemplateApi({
-            action: ApiModuleActions.setBirthDate,
-            externalDataId: 'dateOfBirth',
-            throwOnError: false,
-          }),
+          onExit: [
+            defineTemplateApi({
+              action: ApiModuleActions.setBirthDate,
+              externalDataId: 'dateOfBirth',
+              throwOnError: false,
+            }),
+            defineTemplateApi({
+              action: ApiModuleActions.setVMSTPeriods,
+              triggerEvent: DefaultEvents.EDIT,
+              externalDataId: 'VMSTPeriods',
+              throwOnError: false,
+            }),
+          ],
           roles: [
             {
               id: Roles.APPLICANT,
@@ -1322,7 +1353,7 @@ const ParentalLeaveTemplate: ApplicationTemplate<
             },
             historyLogs: [
               {
-                onEvent: PLEvents.MODIFY,
+                onEvent: DefaultEvents.EDIT,
                 logMessage: statesMessages.editHistoryLogMessage,
               },
               {
@@ -1333,6 +1364,12 @@ const ParentalLeaveTemplate: ApplicationTemplate<
             ],
           },
           lifecycle: birthDayLifeCycle,
+          onExit: defineTemplateApi({
+            action: ApiModuleActions.setVMSTPeriods,
+            triggerEvent: DefaultEvents.EDIT,
+            externalDataId: 'VMSTPeriods',
+            throwOnError: false,
+          }),
           roles: [
             {
               id: Roles.APPLICANT,
@@ -1354,7 +1391,7 @@ const ParentalLeaveTemplate: ApplicationTemplate<
           ],
         },
         on: {
-          MODIFY: {
+          [DefaultEvents.EDIT]: {
             target: States.EDIT_OR_ADD_EMPLOYERS_AND_PERIODS,
           },
           [DefaultEvents.ABORT]: {
@@ -1494,11 +1531,7 @@ const ParentalLeaveTemplate: ApplicationTemplate<
             set(answers, `employers[${i}].ratio`, val.ratio)
             set(answers, `employers[${i}].email`, val.email)
             set(answers, `employers[${i}].reviewerNationalRegistryId`, '')
-            set(
-              answers,
-              `employers[${i}].companyNationalRegistryId`,
-              val.companyNationalRegistryId,
-            )
+            set(answers, `employers[${i}].companyNationalRegistryId`, '')
             set(answers, `employers[${i}].isApproved`, false)
           })
         }
@@ -1650,18 +1683,34 @@ const ParentalLeaveTemplate: ApplicationTemplate<
 
         return context
       }),
-      setIsApprovedOnEmployer: assign((context) => {
+      /**
+       * The employer approved the application.
+       * Set isApproved to true and register companyNationalRegistryId
+       */
+      setIsApprovedOnEmployer: assign((context, event) => {
+        // Only set if employer approves application
+        if (event.type !== DefaultEvents.APPROVE) {
+          return context
+        }
+
         const { application } = context
         const { answers } = application
-        const { employerNationalRegistryId } = getApplicationAnswers(answers)
-        const employers = getApprovedEmployers(answers)
-        if (employers?.length > 0) {
-          set(
-            answers,
-            `employers[${employers.length - 1}].companyNationalRegistryId`,
-            employerNationalRegistryId,
-          )
-        }
+        const { employerNationalRegistryId, employers } =
+          getApplicationAnswers(answers)
+
+        // Multiple employers and we mark first 'available' employer
+        let isAlreadyDone = false
+        employers.forEach((e, i) => {
+          if (!isAlreadyDone && !e.isApproved) {
+            set(answers, `employers[${i}].isApproved`, true)
+            set(
+              answers,
+              `employers[${i}].companyNationalRegistryId`,
+              employerNationalRegistryId,
+            )
+            isAlreadyDone = true
+          }
+        })
 
         return context
       }),
@@ -1796,7 +1845,6 @@ const ParentalLeaveTemplate: ApplicationTemplate<
         let isAlreadyDone = false
         employers.forEach((e, i) => {
           if (!isAlreadyDone && !e.isApproved) {
-            set(answers, `employers[${i}].isApproved`, true)
             set(
               answers,
               `employers[${i}].reviewerNationalRegistryId`,
@@ -1964,9 +2012,8 @@ const ParentalLeaveTemplate: ApplicationTemplate<
       setActionName: assign((context) => {
         const { application } = context
         const { answers } = application
-        const actionName = findActionName(context)
+        const actionName = getActionName(application)
         set(answers, 'actionName', actionName)
-
         return context
       }),
       clearChangedPeriodsNEmployers: assign((context) => {
@@ -1975,6 +2022,8 @@ const ParentalLeaveTemplate: ApplicationTemplate<
 
         unset(answers, 'changeEmployer')
         unset(answers, 'changePeriods')
+        unset(answers, 'addPeriods')
+        unset(answers, 'addEmployer')
 
         return context
       }),
@@ -2034,6 +2083,35 @@ const ParentalLeaveTemplate: ApplicationTemplate<
           unemploymentBenefits !== UnEmployedBenefitTypes.healthInsurance
         ) {
           unset(application.answers, 'fileUpload.benefitsFile')
+        }
+
+        return context
+      }),
+      /**
+       * Copy VMST periods to periods.
+       * Applicant could have made changes on paper, so VMST most likely has the newest changes to periods.
+       */
+      setVMSTPeriods: assign((context, event) => {
+        if (event.type !== DefaultEvents.EDIT) {
+          return context
+        }
+        const { application } = context
+
+        /**
+         * Do not update periods if in these states.
+         * We may be overwriting older edits that have not reached VMST (e.g. still pending employer approval)
+         */
+        if (
+          application.state === States.EMPLOYER_WAITING_TO_ASSIGN_FOR_EDITS ||
+          application.state === States.EMPLOYER_APPROVE_EDITS ||
+          application.state === States.EMPLOYER_EDITS_ACTION
+        ) {
+          return context
+        }
+        const newPeriods = restructureVMSTPeriods(context)
+
+        if (newPeriods.length > 0) {
+          set(application.answers, 'periods', newPeriods)
         }
 
         return context

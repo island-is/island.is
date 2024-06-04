@@ -7,14 +7,21 @@ import {
   Delegation,
   DelegationDTO,
   DelegationDTOMapper,
+  DelegationProviderModel,
   DelegationScope,
+  DelegationTypeModel,
   MergedDelegationDTO,
   PersonalRepresentative,
+  PersonalRepresentativeDelegationTypeModel,
   PersonalRepresentativeRight,
   PersonalRepresentativeRightType,
   PersonalRepresentativeType,
 } from '@island.is/auth-api-lib'
-import { AuthDelegationType } from '@island.is/shared/types'
+import {
+  AuthDelegationProvider,
+  AuthDelegationType,
+  getPersonalRepresentativeDelegationType,
+} from '@island.is/shared/types'
 import { AuthScope } from '@island.is/auth/scopes'
 import { NationalRegistryClientService } from '@island.is/clients/national-registry-v2'
 import { RskRelationshipsClient } from '@island.is/clients-rsk-relationships'
@@ -57,10 +64,10 @@ const swapNames = (
   return delegation
 }
 
-function updateDelegationFromNameToPersonName(
+const updateDelegationFromNameToPersonName = (
   delegations: MergedDelegationDTO[] | MergedDelegationDTO,
   nationalRegistryUsers: NationalRegistryClientPerson[],
-) {
+) => {
   if (Array.isArray(delegations)) {
     return delegations.map((delegation) =>
       swapNames(delegation, nationalRegistryUsers),
@@ -735,6 +742,9 @@ describe('ActorDelegationsController', () => {
         let prRightsModel: typeof PersonalRepresentativeRight
         let prRightTypeModel: typeof PersonalRepresentativeRightType
         let prTypeModel: typeof PersonalRepresentativeType
+        let delegationTypeModel: typeof DelegationTypeModel
+        let delegationProviderModel: typeof DelegationProviderModel
+        let prDelegationTypeModel: typeof PersonalRepresentativeDelegationTypeModel
 
         beforeAll(async () => {
           prTypeModel = app.get<typeof PersonalRepresentativeType>(
@@ -749,6 +759,15 @@ describe('ActorDelegationsController', () => {
           prRightsModel = app.get<typeof PersonalRepresentativeRight>(
             'PersonalRepresentativeRightRepository',
           )
+          delegationTypeModel = app.get<typeof DelegationTypeModel>(
+            getModelToken(DelegationTypeModel),
+          )
+          delegationProviderModel = app.get<typeof DelegationProviderModel>(
+            getModelToken(DelegationProviderModel),
+          )
+          prDelegationTypeModel = app.get<
+            typeof PersonalRepresentativeDelegationTypeModel
+          >(getModelToken(PersonalRepresentativeDelegationTypeModel))
 
           const prType = await prTypeModel.create({
             code: 'prTypeCode',
@@ -764,13 +783,32 @@ describe('ActorDelegationsController', () => {
             externalUserId: '1',
           })
 
+          const dp = await delegationProviderModel.create({
+            id: AuthDelegationProvider.PersonalRepresentativeRegistry,
+            name: 'Talsmannagrunnur',
+            description: 'Talsmannagrunnur',
+          })
+
+          const dt = await delegationTypeModel.create({
+            id: getPersonalRepresentativeDelegationType('prRightType'),
+            providerId: dp.id,
+            name: `Personal Representative: prRightType`,
+            description: `Personal representative delegation type for right type prRightType`,
+          })
+
           const prRightType = await prRightTypeModel.create({
             code: 'prRightType',
             description: 'prRightTypeDescription',
           })
 
-          await prRightsModel.create({
+          const prr = await prRightsModel.create({
             rightTypeCode: prRightType.code,
+            personalRepresentativeId: pr.id,
+          })
+
+          await prDelegationTypeModel.create({
+            id: prr.id,
+            delegationTypeId: dt.id,
             personalRepresentativeId: pr.id,
           })
         })
@@ -881,6 +919,24 @@ describe('ActorDelegationsController', () => {
             force: true,
           })
           await prTypeModel.destroy({
+            where: {},
+            cascade: true,
+            truncate: true,
+            force: true,
+          })
+          await prDelegationTypeModel.destroy({
+            where: {},
+            cascade: true,
+            truncate: true,
+            force: true,
+          })
+          await delegationTypeModel.destroy({
+            where: {},
+            cascade: true,
+            truncate: true,
+            force: true,
+          })
+          await delegationProviderModel.destroy({
             where: {},
             cascade: true,
             truncate: true,

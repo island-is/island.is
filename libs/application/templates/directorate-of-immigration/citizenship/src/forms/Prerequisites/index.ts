@@ -22,14 +22,11 @@ import {
   NationalRegistryBirthplaceApi,
   NationalRegistryParentsApi,
   NationalRegistrySpouseDetailsApi,
-  CurrentCountryOfResidenceListApi,
-  CurrentPassportItemApi,
-  CurrentStayAbroadListApi,
-  ResidenceConditionInfoApi,
   ResidenceInIcelandLastChangeDateApi,
-  TravelDocumentTypesApi,
   UserProfileApi,
   UtlendingastofnunPaymentCatalogApi,
+  TravelDocumentTypesApi,
+  ApplicantInformationApi,
 } from '../../dataProviders'
 
 export const Prerequisites: Form = buildForm({
@@ -94,7 +91,7 @@ export const Prerequisites: Form = buildForm({
               subTitle: externalData.directorateOfImmigration.subTitle,
             }),
             buildDataProviderItem({
-              provider: ResidenceConditionInfoApi,
+              provider: ApplicantInformationApi,
               title: '',
             }),
             buildDataProviderItem({
@@ -103,18 +100,6 @@ export const Prerequisites: Form = buildForm({
             }),
             buildDataProviderItem({
               provider: TravelDocumentTypesApi,
-              title: '',
-            }),
-            buildDataProviderItem({
-              provider: CurrentCountryOfResidenceListApi,
-              title: '',
-            }),
-            buildDataProviderItem({
-              provider: CurrentStayAbroadListApi,
-              title: '',
-            }),
-            buildDataProviderItem({
-              provider: CurrentPassportItemApi,
               title: '',
             }),
             buildDataProviderItem({

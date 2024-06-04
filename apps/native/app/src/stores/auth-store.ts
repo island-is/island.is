@@ -12,12 +12,17 @@ import createUse from 'zustand'
 import create, { State } from 'zustand/vanilla'
 import { bundleId, getConfig } from '../config'
 import { getIntl } from '../contexts/i18n-provider'
-import { client } from '../graphql/client'
+import { getApolloClientAsync } from '../graphql/client'
 import { isAndroid } from '../utils/devices'
 import { getAppRoot } from '../utils/lifecycle/get-app-root'
 import { preferencesStore } from './preferences-store'
+import { clearAllStorages } from '../stores/mmkv'
+import { notificationsStore } from './notifications-store'
 
 const KEYCHAIN_AUTH_KEY = `@islandis_${bundleId}`
+
+// Optional scopes (not required for all users so we do not want to force a logout)
+const OPTIONAL_SCOPES = ['@island.is/licenses:barcode']
 
 interface UserInfo {
   sub: string
@@ -136,6 +141,16 @@ export const authStore = create<AuthStore>((set, get) => ({
     return false
   },
   async logout() {
+    // Clear all MMKV storages
+    clearAllStorages()
+
+    // Clear push token if exists
+    const pushToken = notificationsStore.getState().pushToken
+    if (pushToken) {
+      notificationsStore.getState().deletePushToken(pushToken)
+    }
+    notificationsStore.getState().reset()
+
     const appAuthConfig = getAppAuthConfig()
     // eslint-disable-next-line @typescript-eslint/no-non-null-assertion
     const tokenToRevoke = get().authorizeResult!.accessToken!
@@ -148,6 +163,8 @@ export const authStore = create<AuthStore>((set, get) => ({
     } catch (e) {
       // NOOP
     }
+
+    const client = await getApolloClientAsync()
     await client.cache.reset()
     await Keychain.resetGenericPassword({ service: KEYCHAIN_AUTH_KEY })
     set(
@@ -197,7 +214,10 @@ export async function checkIsAuthenticated() {
   }
 
   if ('scopes' in authorizeResult) {
-    const hasRequiredScopes = appAuthConfig.scopes.every((scope) =>
+    const requiredScopes = appAuthConfig.scopes.filter(
+      (scope) => !OPTIONAL_SCOPES.includes(scope),
+    )
+    const hasRequiredScopes = requiredScopes.every((scope) =>
       authorizeResult.scopes.includes(scope),
     )
     if (!hasRequiredScopes) {

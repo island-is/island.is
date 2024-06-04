@@ -23,7 +23,11 @@ import {
   getApplicationFeatureFlags,
   MarriageCondtionsFeatureFlags,
 } from './getApplicationFeatureFlags'
-import { MaritalStatusApi, ReligionCodesApi } from '../dataProviders'
+import {
+  DistrictCommissionersPaymentCatalogApi,
+  MaritalStatusApi,
+  ReligionCodesApi,
+} from '../dataProviders'
 import { coreHistoryMessages } from '@island.is/application/core'
 import { buildPaymentState } from '@island.is/application/utils'
 
@@ -82,6 +86,7 @@ const MarriageConditionsTemplate: ApplicationTemplate<
                 DistrictsApi,
                 MaritalStatusApi,
                 ReligionCodesApi,
+                DistrictCommissionersPaymentCatalogApi,
               ],
               delete: true,
             },
@@ -148,6 +153,7 @@ const MarriageConditionsTemplate: ApplicationTemplate<
                 DistrictsApi,
                 MaritalStatusApi,
                 ReligionCodesApi,
+                DistrictCommissionersPaymentCatalogApi,
               ],
             },
           ],

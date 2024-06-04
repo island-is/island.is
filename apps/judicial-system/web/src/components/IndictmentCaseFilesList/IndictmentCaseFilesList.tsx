@@ -6,6 +6,7 @@ import { Box, Text } from '@island.is/island-ui/core'
 import {
   isCompletedCase,
   isDistrictCourtUser,
+  isTrafficViolationCase,
 } from '@island.is/judicial-system/types'
 import {
   FileNotFoundModal,
@@ -19,11 +20,9 @@ import {
 } from '@island.is/judicial-system-web/src/graphql/schema'
 import { TempCase as Case } from '@island.is/judicial-system-web/src/types'
 import { useFileList } from '@island.is/judicial-system-web/src/utils/hooks'
-import { isTrafficViolationIndictment } from '@island.is/judicial-system-web/src/utils/stepHelper'
 
-import { courtRecord } from '../../routes/Court/Indictments/CourtRecord/CourtRecord.strings'
 import { caseFiles } from '../../routes/Prosecutor/Indictments/CaseFiles/CaseFiles.strings'
-import { indictmentCaseFilesList as strings } from './IndictmentCaseFilesList.strings'
+import { strings } from './IndictmentCaseFilesList.strings'
 
 interface Props {
   workingCase: Case
@@ -34,7 +33,7 @@ interface RenderFilesProps {
   onOpenFile: (fileId: string) => void
 }
 
-const RenderFiles: React.FC<
+export const RenderFiles: React.FC<
   React.PropsWithChildren<Props & RenderFilesProps>
 > = (props) => {
   const { caseFiles, onOpenFile, workingCase } = props
@@ -66,8 +65,7 @@ const IndictmentCaseFilesList: React.FC<React.PropsWithChildren<Props>> = (
     caseId: workingCase.id,
   })
 
-  const showTrafficViolationCaseFiles =
-    isTrafficViolationIndictment(workingCase)
+  const showTrafficViolationCaseFiles = isTrafficViolationCase(workingCase)
 
   const cf = workingCase.caseFiles
 
@@ -191,13 +189,12 @@ const IndictmentCaseFilesList: React.FC<React.PropsWithChildren<Props>> = (
           </Box>
         ))}
       </Box>
-
       {isDistrictCourtUser(user) || isCompletedCase(workingCase.state) ? (
         <>
           {courtRecords && courtRecords.length > 0 && (
             <Box marginBottom={5}>
               <Text variant="h4" as="h4" marginBottom={1}>
-                {formatMessage(courtRecord.courtRecordTitle)}
+                {formatMessage(strings.courtRecordTitle)}
               </Text>
               <RenderFiles
                 caseFiles={courtRecords}
@@ -209,7 +206,7 @@ const IndictmentCaseFilesList: React.FC<React.PropsWithChildren<Props>> = (
           {rulings && rulings.length > 0 && (
             <Box marginBottom={5}>
               <Text variant="h4" as="h4" marginBottom={1}>
-                {formatMessage(courtRecord.rulingTitle)}
+                {formatMessage(strings.rulingTitle)}
               </Text>
               <RenderFiles
                 caseFiles={rulings}

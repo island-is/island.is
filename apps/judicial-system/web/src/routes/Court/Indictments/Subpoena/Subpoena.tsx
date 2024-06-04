@@ -65,7 +65,9 @@ const Subpoena: React.FC<React.PropsWithChildren<unknown>> = () => {
   )
 
   const stepIsValid = isSubpoenaStepValid(workingCase, courtDate?.date)
-  const isPostponed = Boolean(workingCase.courtDate?.date)
+  const isPostponed = Boolean(
+    workingCase.courtDate?.date || workingCase.postponedIndefinitelyExplanation,
+  )
 
   return (
     <PageLayout
@@ -84,7 +86,6 @@ const Subpoena: React.FC<React.PropsWithChildren<unknown>> = () => {
             title={formatMessage(strings.courtArrangementsHeading)}
           />
           <CourtArrangements
-            workingCase={workingCase}
             handleCourtDateChange={handleCourtDateChange}
             handleCourtRoomChange={handleCourtRoomChange}
             courtDate={courtDate}
