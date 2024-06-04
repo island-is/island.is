@@ -5,13 +5,6 @@ import {
   ApplicationWithAttachments,
 } from '@island.is/application/types'
 import { User } from '@island.is/auth-nest-tools'
-<<<<<<< HEAD
-<<<<<<< HEAD
-=======
-import { HealthInsuranceV2Options } from '@island.is/clients/icelandic-health-insurance/health-insurance'
->>>>>>> 7ad95bbec1 (Data Protection config refactor)
-=======
->>>>>>> 51042d97d7 (HealthInsurance client config refactor)
 import { IslykillApiModuleConfig } from '@island.is/clients/islykill'
 import { Message } from '@island.is/email-service'
 
@@ -44,13 +37,6 @@ export interface BaseTemplateAPIModuleConfig {
   generalPetition: {
     endorsementsApiBasePath: string
   }
-<<<<<<< HEAD
-<<<<<<< HEAD
-=======
-  healthInsuranceV2: HealthInsuranceV2Options
->>>>>>> 7ad95bbec1 (Data Protection config refactor)
-=======
->>>>>>> 51042d97d7 (HealthInsurance client config refactor)
   applicationService: Type<BaseTemplateApiApplicationService>
   userProfile: {
     serviceBasePath: string
