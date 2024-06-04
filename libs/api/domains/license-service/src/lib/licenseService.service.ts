@@ -167,21 +167,14 @@ export class LicenseServiceService {
     }).filter(isDefined)
 
     const licenses: Array<GenericUserLicense> = []
-    await Promise.allSettled(fetchPromises).then((result) =>
-      result.forEach((licenseArrayResult) => {
-        if (
-          licenseArrayResult.status === 'fulfilled' &&
-          licenseArrayResult.value
-        ) {
-          licenseArrayResult.value
-            .filter(
-              (license) =>
-                license.license.status === GenericUserLicenseStatus.HasLicense,
-            )
-            .forEach((license) => licenses.push(license))
-        }
-      }),
-    )
+    for (const licenseArrayResult of await Promise.allSettled(fetchPromises)) {
+      if (
+        licenseArrayResult.status === 'fulfilled' &&
+        licenseArrayResult.value
+      ) {
+        licenses.push(...licenseArrayResult.value)
+      }
+    }
 
     return {
       nationalId: user.nationalId,
@@ -210,16 +203,14 @@ export class LicenseServiceService {
     }).filter(isDefined)
 
     const licenses: Array<GenericUserLicense> = []
-    await Promise.allSettled(fetchPromises).then((result) =>
-      result.forEach((licenseArrayResult) => {
-        if (
-          licenseArrayResult.status === 'fulfilled' &&
-          licenseArrayResult.value
-        ) {
-          licenseArrayResult.value.forEach((license) => licenses.push(license))
-        }
-      }),
-    )
+    for (const licenseArrayResult of await Promise.allSettled(fetchPromises)) {
+      if (
+        licenseArrayResult.status === 'fulfilled' &&
+        licenseArrayResult.value
+      ) {
+        licenses.push(...licenseArrayResult.value)
+      }
+    }
 
     return licenses
   }
