@@ -31,6 +31,7 @@ import { UserIdentitiesModule } from '../user-identities/user-identities.module'
 import { DelegationTypeModel } from './models/delegation-type.model'
 import { DelegationProviderModel } from './models/delegation-provider.model'
 import { DelegationProviderService } from './delegation-provider.service'
+import { ApiScopeDelegationType } from '../resources/models/api-scope-delegation-type.model'
 
 @Module({
   imports: [
@@ -42,6 +43,7 @@ import { DelegationProviderService } from './delegation-provider.service'
     FeatureFlagModule,
     SequelizeModule.forFeature([
       ApiScope,
+      ApiScopeDelegationType,
       IdentityResource,
       Delegation,
       DelegationScope,
