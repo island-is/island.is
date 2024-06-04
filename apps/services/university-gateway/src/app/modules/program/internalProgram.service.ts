@@ -11,7 +11,7 @@ import { BifrostUniversityApplicationClient } from '@island.is/clients/universit
 import { IcelandUniversityOfTheArtsApplicationClient } from '@island.is/clients/university-application/iceland-university-of-the-arts'
 import { AgriculturalUniversityOfIcelandApplicationClient } from '@island.is/clients/university-application/agricultural-university-of-iceland'
 import { HolarUniversityApplicationClient } from '@island.is/clients/university-application/holar-university'
-import { IProgram, UniversityNationalIds } from '@island.is/university-gateway'
+import { IProgram, UniversityNationalIds} from '@island.is/university-gateway'
 import { logger } from '@island.is/logging'
 
 @Injectable()

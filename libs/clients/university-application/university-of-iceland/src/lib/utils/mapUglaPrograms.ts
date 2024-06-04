@@ -5,16 +5,18 @@ import {
   ModeOfDelivery,
   Season,
   mapStringToEnum,
+  EnumError,
 } from '@island.is/university-gateway'
 import {
   InlineResponse2002,
   InlineResponse2002Data,
   InlineResponse2002ExtraApplicationFields,
 } from '../../../gen/fetch'
+import {logger} from "@island.is/logging";
 
 export const mapUglaPrograms = (
   res: InlineResponse2002,
-  logError: (programExternalId: string, error: Error) => void,
+  universityName: string,
 ): IProgram[] => {
   const mappedRes = []
   const programList = res.data || []
@@ -28,15 +30,12 @@ export const mapUglaPrograms = (
         departmentNameIs: program.departmentNameIs || '',
         departmentNameEn: program.departmentNameEn || '',
         startingSemesterYear: Number(program.startingSemesterYear) || 0,
-        startingSemesterSeason: mapStringToEnum(
-          program.startingSemesterSeason,
-          Season,
-        ),
+        startingSemesterSeason: mapStringToEnum(program.startingSemesterSeason,Season, 'Season'),
         applicationStartDate: program.applicationStartDate || new Date(),
         applicationEndDate: program.applicationEndDate || new Date(),
         schoolAnswerDate: undefined, //TODO missing in api
         studentAnswerDate: undefined, //TODO missing in api
-        degreeType: mapStringToEnum(program.degreeType, DegreeType),
+        degreeType: mapStringToEnum(program.degreeType, DegreeType, 'DegreeType'),
         degreeAbbreviation: program.degreeAbbreviation || '',
         credits: program.credits || 0,
         descriptionIs: program.descriptionIs || '',
@@ -63,7 +62,7 @@ export const mapUglaPrograms = (
           : false,
         modeOfDelivery:
           program.modeOfDelivery?.map((m) => {
-            return mapStringToEnum(m, ModeOfDelivery)
+            return mapStringToEnum(m, ModeOfDelivery, 'ModeOfDelivery')
           }) || [],
         extraApplicationFields: mapExtraApplicationFields(program),
         specializations: program.kjorsvid?.map((k) => ({
@@ -79,8 +78,15 @@ export const mapUglaPrograms = (
             : true,
       })
     } catch (e) {
-      logError(program.externalId || '', e)
-    }
+        if (e instanceof EnumError) {
+          logger.warn(`EnumError when trying to map program with externalId ${program.externalId} for university ${universityName}, update skipped.`, e);
+        } else {
+          logger.error(
+            `Failed to map program with externalId ${program.externalId} for university ${universityName}, reason:`,
+            e,
+          )
+        }
+      }
   }
 
   return mappedRes
@@ -105,7 +111,7 @@ const mapExtraApplicationFields = (
       descriptionIs: field.descriptionIs,
       descriptionEn: field.descriptionEn,
       required: field.required || false,
-      fieldType: field.fieldType as unknown as FieldType,
+      fieldType: mapStringToEnum(field.fieldType, FieldType, 'FieldType'),
       uploadAcceptedFileType: field.uploadAcceptedFileType,
       options: mapOptions(program, field),
     })) || []
