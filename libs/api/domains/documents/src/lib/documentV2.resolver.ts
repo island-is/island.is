@@ -130,7 +130,7 @@ export class DocumentResolverV2 {
   @Scopes(DocumentsScope.main)
   @Mutation(() => DocumentV2MarkAllMailAsRead, {
     nullable: true,
-    name: 'markAllDocumentsAsRead',
+    name: 'documentsV2MarkAllAsRead',
   })
   @Audit()
   markAllMailAsRead(
