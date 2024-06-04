@@ -1,6 +1,6 @@
-import { FieldBaseProps, FormatMessage } from '@island.is/application/types'
+import { FieldBaseProps } from '@island.is/application/types'
 import { Box, Text } from '@island.is/island-ui/core'
-import { FC, useEffect, useState } from 'react'
+import { FC, useEffect } from 'react'
 import { useLocale } from '@island.is/localization'
 import { RadioController } from '@island.is/shared/form-fields'
 import { information } from '../../lib/messages'
@@ -81,7 +81,7 @@ export const SelectWorkPermitField: FC<
         {formatMessage(information.labels.selectWorkPermit.sectionTitle)}
       </Text>
       <RadioController
-        id={`${props.field.id}.studyProgram`}
+        id={`${props.field.id}.name`}
         backgroundColor="blue"
         defaultValue={[]}
         options={workPermitOptions(

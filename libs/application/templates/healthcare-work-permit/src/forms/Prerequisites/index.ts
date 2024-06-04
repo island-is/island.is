@@ -18,7 +18,6 @@ import {
   EmbaettiLandlaeknisPaymentCatalogApi,
   HealtcareLicenesApi,
   UserProfileApi,
-  UniversityCareersApi,
   EducationInfoApi,
   NationalRegistryUserApi,
   ProcessPermitsApi,
@@ -65,6 +64,7 @@ export const Prerequisites: Form = buildForm({
               subTitle: externalData.userProfile.subTitle,
             }),
             buildDataProviderItem({
+              provider: HealtcareLicenesApi,
               title: externalData.healtcareLicenses.title,
               subTitle: externalData.healtcareLicenses.subTitle,
             }),

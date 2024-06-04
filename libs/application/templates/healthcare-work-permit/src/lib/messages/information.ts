@@ -23,7 +23,7 @@ export const information = {
       description: {
         id: 'hwp.application:information.labels.selectWorkPermit.description',
         defaultMessage:
-          'Hér að neðan er listi yfir loknar prófgráður frá Háskóla Íslands sem gefa réttindi til starfsleyfa. ',
+          'Hér að neðan er listi yfir loknar prófgráður sem gefa réttindi til starfsleyfa. ',
         description: 'Select work permit description',
       },
       workPermitOptionSubLabelSpeciality: {

@@ -21,14 +21,14 @@ export const error = defineMessages({
   noResponseEducationInfoTitle: {
     id: 'hlc.application:error.noResponseEducationInfoTitle',
     defaultMessage:
-      'Ekki tóks að sækja gögn frá Landlækni, vinsamlegast prufaðu aftur seinna',
+      'Ekki tókst að sækja gögn frá Landlækni, vinsamlegast prufaðu aftur seinna',
     description:
       'No response or faulty response when fetching info on education paths',
   },
   noResponseEducationInfoMessage: {
     id: 'hlc.application:error.noResponseEducationInfoMessage',
     defaultMessage:
-      'Ekki tóks að sækja gögn frá Landlækni, vinsamlegast prufaðu aftur seinna',
+      'Ekki tókst að sækja gögn frá Landlækni, vinsamlegast prufaðu aftur seinna',
     description:
       'No response or faulty response when fetching info on education paths',
   },
@@ -78,5 +78,17 @@ export const error = defineMessages({
     id: 'hlc.application:error.noPermitValidGraduationFoundMessage',
     defaultMessage: 'Ekki fundust brautskráningar sem gefa starfsleyfi',
     description: 'No graduated programs found that are valid form work permit',
+  },
+  noPermitValidForSelfServiceTitle: {
+    id: 'hlc.application:error.noPermitValidForSelfServiceTitle',
+    defaultMessage:
+      'Ekki fundust brautskráningar sem geta farið í gegnum sjálfsafgreiðslu, vinsamlega hafðu samband við Embætti Landlæknis',
+    description: 'No graduated programs found that can go through self service',
+  },
+  noPermitValidForSelfServiceMessage: {
+    id: 'hlc.application:error.noPermitValidForSelfServiceMessage',
+    defaultMessage:
+      'Ekki fundust brautskráningar sem geta farið í gegnum sjálfsafgreiðslu, vinsamlega hafðu samband við Embætti Landlæknis',
+    description: 'No graduated programs found that can go through self service',
   },
 })

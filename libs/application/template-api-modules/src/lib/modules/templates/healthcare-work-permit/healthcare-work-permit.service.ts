@@ -2,18 +2,18 @@ import { Injectable } from '@nestjs/common'
 import { SharedTemplateApiService } from '../../shared'
 import { TemplateApiModuleActionProps } from '../../../types'
 import { BaseTemplateApiService } from '../../base-template-api.service'
-import {
-  ApplicationTypes,
-  NationalRegistryIndividual,
-} from '@island.is/application/types'
+import { ApplicationTypes } from '@island.is/application/types'
 import {
   EES,
   HealthcareWorkPermitAnswers,
+  PermitProgram,
+  Message,
   error as errorMsg,
   information,
 } from '@island.is/application/templates/healthcare-work-permit'
 import {
   HealthDirectorateClientService,
+  Nam,
   NamsUpplysingar,
   StarfsleyfiUmsoknStarfsleyfi,
   UtbuaStarfsleyfiSkjalResponse,
@@ -21,7 +21,6 @@ import {
 import { TemplateApiError } from '@island.is/nest/problem'
 import {
   StudentTrackDto,
-  StudentTrackInstitutionDto,
   UniversityCareersClientService,
   UniversityId,
 } from '@island.is/clients/university-careers'
@@ -37,12 +36,6 @@ const isCitizenOfEES = (alpha2Code: string) => {
   return EES.some((country) => country.alpha2Code === alpha2Code)
 }
 
-interface Message {
-  id: string
-  defaultMessage: string
-  description: string
-}
-
 export interface EinstaklingurDTO {
   kennitala?: string | null
   nafn?: string | null
@@ -50,16 +43,6 @@ export interface EinstaklingurDTO {
   rikisfang?: EinstaklingurDTORikisfang
   faedingarstadur?: EinstaklingurDTOFaeding
   fulltNafn?: EinstaklingurDTONafnAllt
-}
-
-interface PermitProgram {
-  name?: string
-  programId?: string
-  institution?: StudentTrackInstitutionDto
-  error?: boolean
-  errorMsg?: Message | string
-  professionId?: string
-  prereq?: StudentTrackDto // TODO Probably don't need this
 }
 
 const getFoundationProgram = (
@@ -168,11 +151,66 @@ export class HealthcareWorkPermitService extends BaseTemplateApiService {
   async getEducationInfo({
     auth,
   }: TemplateApiModuleActionProps): Promise<NamsUpplysingar[]> {
-    const result =
-      await this.healthDirectorateClientService.getHealthCareWorkPermitEducationInfo(
+    const result: NamsUpplysingar[] = []
+    const test =
+      await this.healthDirectorateClientService.submitApplicationHealthcareWorkPermit(
         auth,
+        {
+          name: 'Gervimaður Danmörk',
+          dateOfBirth: new Date('01.01.2000'),
+          citizenship: 'IS',
+          email: 'jonjonsson@landlaeknir.is',
+          phone: '0000000',
+          idProfession: 'HJ',
+          education: [
+            {
+              educationId: 81,
+              graduationDate: new Date('2009-11-03T00:00:00.0000000'),
+              school: 'Háskóli Íslands',
+            },
+          ],
+        },
       )
 
+    console.log('test', test)
+
+    // const myHeaders = new Headers()
+    // myHeaders.append('X-Road-Client', 'IS-DEV/GOV/10000/island-is-client')
+    // myHeaders.append('Content-Type', 'application/json')
+    // myHeaders.append(
+    //   'Authorization',
+    //   'Bearer eyJhbGciOiJSUzI1NiIsImtpZCI6IjA0NTM2MDVDRTc1M0UxMTJDRTc0QkJGQjhEQ0E1RTM0IiwidHlwIjoiYXQrand0In0.eyJpc3MiOiJodHRwczovL2lkZW50aXR5LXNlcnZlci5kZXYwMS5kZXZsYW5kLmlzIiwibmJmIjoxNzE3MTYzNDgyLCJpYXQiOjE3MTcxNjM0ODIsImV4cCI6MTcxNzE2NzA4MiwiYXVkIjoiQGxhbmRsYWVrbmlyLmlzL3N0YXJmc2xleWZpIiwic2NvcGUiOiJAbGFuZGxhZWtuaXIuaXMvc3RhcmZzbGV5ZmkiLCJhbXIiOlsiIl0sImNsaWVudF9pZCI6IkBpc2xhbmQuaXMvY2xpZW50cy9kZXYiLCJzdWIiOiI2RUI4RkZGNUI1MDMzNkMzQjJEMzMxNkI0RjI3QTk4Rjg4MEQzRDNFOEUzOTRFNTlEQUYwMEQ4MTY0RDI5NjdGIiwiYXV0aF90aW1lIjoxNzE3MTYwOTI0LCJpZHAiOiJnZXJ2aW1hZHVyIiwiYWNyIjoiMCIsIm5hdGlvbmFsSWQiOiIwMTAxMzAyNDc5Iiwic2lkIjoiRTg2QTNBRUY1RjlDMUNEOTI2NDBDQzYyRjlFN0VBQTAiLCJqdGkiOiIzNTk0QjE2QjI5RTk5QUEzN0FCRUQ3MDk0NEMxQ0VDRiJ9.Evl34Sk3GsPCWeMq-x2xODsQunj7vLEMUbKZS_PKuQmZ-Zr9FzlQxzpjBISdr02-cYqcINnuya2QTk-fSyv6bcdV7a0qvHU1up1n3jgPhOhgrmiysaD1QhZhyb67xUSld0O2vOfVY4EGI7RpNotOPd_fUHtmGu1ZLJJchV7jtxpCn0n5r_lJnVAtZ3DiFFpZo1PUesFIsYyt1vmLTl9O3OG9kq2pI0ciPefQbtmk_WZ3SW8vhhcPfnLlGb8fuk9mbYvqehB60sYjaYXm3ioMs9JJIowp7DV8fj-WYbx3LD4nDpew6ze8VaWObgB_zm_4cakxRglW9m3vxYqJPFI-RA',
+    // )
+
+    // const raw = JSON.stringify({
+    //   name: 'Gervimaður Danmörk',
+    //   dateOfBirth: '01.01.2000',
+    //   citizenship: 'IS',
+    //   email: 'jonjonsson@landlaeknir.is',
+    //   phoneNo: '0000000',
+    //   idProfession: 'HJ',
+    //   education: [
+    //     {
+    //       educationId: 81,
+    //       graduationDate: '2009-11-03T00:00:00.0000000',
+    //       school: 'Háskóli Íslands',
+    //     },
+    //   ],
+    // })
+
+    // const requestOptions = {
+    //   method: 'POST',
+    //   headers: myHeaders,
+    //   body: raw,
+    // }
+
+    // fetch(
+    //   'http://localhost:8081/r1/IS-DEV/GOV/10015/EmbaettiLandlaeknis-Protected/landlaeknir/UmsoknStarfsleyfi/UtbuaSkjal',
+    //   requestOptions,
+    // )
+    //   .then((response) => response.text())
+    //   .then((result) => console.log(result))
+    //   .catch((error) => console.error(error))
     if (!result) {
       throw new TemplateApiError(
         {
@@ -212,31 +250,29 @@ export class HealthcareWorkPermitService extends BaseTemplateApiService {
   async processPermits({
     auth,
   }: TemplateApiModuleActionProps): Promise<PermitProgram[]> {
-    const [licenses, programs, careerPrograms] = await Promise.all([
-      this.healthDirectorateClientService.getHealthCareLicensesForWorkPermit(
-        auth,
-      ),
-      this.healthDirectorateClientService.getHealthCareWorkPermitEducationInfo(
-        auth,
-      ),
-      this.universityCareersClientService.getStudentTrackHistory(
-        auth,
-        UniversityId.UNIVERSITY_OF_ICELAND,
-      ),
-    ])
+    const [licenses, programs, careerProgramsHI, careerProgramsUNAK] =
+      await Promise.all([
+        this.healthDirectorateClientService.getHealthCareLicensesForWorkPermit(
+          auth,
+        ),
+        this.healthDirectorateClientService.getHealthCareWorkPermitEducationInfo(
+          auth,
+        ),
+        this.universityCareersClientService.getStudentTrackHistory(
+          auth,
+          UniversityId.UNIVERSITY_OF_ICELAND,
+        ),
+        this.universityCareersClientService.getStudentTrackHistory(
+          auth,
+          UniversityId.UNIVERSITY_OF_AKUREYRI,
+        ),
+      ])
 
-    throw new TemplateApiError(
-      {
-        title: errorMsg.noResponseEducationInfoTitle,
-        summary: errorMsg.noResponseEducationInfoMessage,
-      },
-      400,
-    )
-    if (!careerPrograms) {
+    if (!programs) {
       throw new TemplateApiError(
         {
-          title: errorMsg.emptyCareerResponseTitle,
-          summary: errorMsg.emptyCareerResponseMessage,
+          title: errorMsg.noResponseEducationInfoTitle,
+          summary: errorMsg.noResponseEducationInfoMessage,
         },
         400,
       )
@@ -251,18 +287,33 @@ export class HealthcareWorkPermitService extends BaseTemplateApiService {
       )
     }
 
+    const careerPrograms = careerProgramsHI?.concat(careerProgramsUNAK ?? [])
+    if (!careerPrograms || careerPrograms?.length < 1) {
+      {
+        throw new TemplateApiError(
+          {
+            title: errorMsg.emptyCareerResponseTitle,
+            summary: errorMsg.emptyCareerResponseMessage,
+          },
+          400,
+        )
+      }
+    }
+
     const studentTrackDto = [
       {
         name: 'John Doe',
         nationalId: '1234567890',
         graduationDate: new Date('2024-01-15'),
         trackNumber: 3,
-        institution: {},
+        institution: {
+          displayName: 'Háskóli Íslands',
+        },
         school: 'School of Science',
         faculty: 'Faculty of Mathematics',
-        studyProgram: 'Sjúkraliði',
+        studyProgram: 'Tannsmiður',
         degree: 'Bachelor of Science',
-        programId: 'SJÚ441',
+        programId: 'TSM261',
       },
       {
         name: 'John Doe',
@@ -332,30 +383,36 @@ export class HealthcareWorkPermitService extends BaseTemplateApiService {
 
     const programsToBeDisplayed =
       relevantCareerPermitPrograms?.map((program) => {
-        const { programId, studyProgram, institution, graduationDate } = program
-        let currentPermitProgramProfessionId = ''
+        const { programId, studyProgram, graduationDate, institution } = program
+
         // Find the education program for this career program
         const currentPermitProgram = permitValidPrograms?.find(
           (permitProgram) => {
             if (permitProgram.shortId === program.programId) {
-              currentPermitProgramProfessionId =
-                permitProgram.idProfession || ''
               return true
             }
             return false
           },
         )
-
+        const currentPermitProgramProfessionId =
+          currentPermitProgram?.idProfession || ''
+        const base = {
+          name: studyProgram,
+          programId,
+          professionId: currentPermitProgramProfessionId,
+          mainProgram: {
+            educationId: currentPermitProgram?.educationId,
+            school: institution?.displayName,
+            graduationDate,
+          },
+        }
         // Checking if user already has a license with the same professionId
         const license = licenses?.find(
           (item) => item.idProfession === currentPermitProgramProfessionId,
         )
         if (license) {
           return {
-            name: studyProgram,
-            programId,
-            institution,
-            professionId: currentPermitProgramProfessionId,
+            ...base,
             error: true,
             errorMsg:
               information.labels.selectWorkPermit.restrictionAlreadyHasLicense,
@@ -373,12 +430,18 @@ export class HealthcareWorkPermitService extends BaseTemplateApiService {
             relevantCareerFoundationPrograms || [],
           )
 
+          const baseWithFoundationProgram = {
+            ...base,
+            foundationProgram: {
+              educationId: currentFoundationProgram?.educationId,
+              school: currentFoundationCareerProgram?.institution?.displayName,
+              graduationDate: currentFoundationCareerProgram?.graduationDate,
+            },
+          }
+
           if (!currentFoundationCareerProgram) {
             return {
-              name: studyProgram,
-              programId,
-              institution,
-              professionId: currentPermitProgramProfessionId,
+              ...baseWithFoundationProgram,
               error: true,
               errorMsg:
                 information.labels.selectWorkPermit
@@ -390,10 +453,7 @@ export class HealthcareWorkPermitService extends BaseTemplateApiService {
             !currentFoundationProgram?.educationValidFrom
           ) {
             return {
-              name: studyProgram,
-              programId,
-              institution,
-              professionId: currentPermitProgramProfessionId,
+              ...baseWithFoundationProgram,
               error: true,
               errorMsg:
                 information.labels.selectWorkPermit.restrictionDataError,
@@ -404,10 +464,7 @@ export class HealthcareWorkPermitService extends BaseTemplateApiService {
               new Date(currentFoundationProgram?.educationValidFrom)
             ) {
               return {
-                name: studyProgram,
-                programId,
-                institution,
-                professionId: currentPermitProgramProfessionId,
+                ...baseWithFoundationProgram,
                 error: true,
                 errorMsg:
                   information.labels.selectWorkPermit.restrictionDataError,
@@ -435,10 +492,7 @@ export class HealthcareWorkPermitService extends BaseTemplateApiService {
         }
 
         return {
-          name: studyProgram,
-          programId,
-          institution,
-          professionId: currentPermitProgramProfessionId,
+          ...base,
           error,
           errorMsg,
         }
@@ -454,7 +508,23 @@ export class HealthcareWorkPermitService extends BaseTemplateApiService {
       )
     }
 
-    return programsToBeDisplayed
+    const hasNoError = programsToBeDisplayed.some(
+      (program) => program.error === false,
+    )
+
+    if (!hasNoError) {
+      throw new TemplateApiError(
+        {
+          title: errorMsg.noPermitValidForSelfServiceTitle,
+          summary: errorMsg.noPermitValidForSelfServiceMessage,
+        },
+        400,
+      )
+    }
+
+    return programsToBeDisplayed.sort(
+      (a, b) => Number(a.error) - Number(b.error),
+    )
   }
 
   async submitApplication({
@@ -484,18 +554,64 @@ export class HealthcareWorkPermitService extends BaseTemplateApiService {
     const answers = application.answers as HealthcareWorkPermitAnswers
 
     const nationalRegistryData = application.externalData.nationalRegistry
-      ?.data as NationalRegistryIndividual
+      ?.data as EinstaklingurDTO
+    if (!nationalRegistryData) {
+      throw new Error('National registry data is missing.')
+    }
+
+    const permitPrograms = application.externalData.permitOptions
+      ?.data as PermitProgram[]
+    if (!permitPrograms) {
+      throw new Error('Permit programs data is missing.')
+    }
+
+    const chosenProgram = permitPrograms.find(
+      (program) => program.programId === answers.selectWorkPermit.programId,
+    )
+    if (!chosenProgram || !chosenProgram.professionId) {
+      throw new Error('Chosen program not found.')
+    }
+
+    const { fulltNafn, faedingarstadur, rikisfang } = nationalRegistryData
+    if (
+      !fulltNafn?.fulltNafn ||
+      !faedingarstadur?.faedingarDagur ||
+      !rikisfang?.rikisfangKodi
+    ) {
+      throw new Error('Incomplete national registry data.')
+    }
+
+    const { email, phone } = answers.userInformation
+    if (!email || !phone) {
+      throw new Error('User information is incomplete.')
+    }
+
+    const educations: Nam[] = []
+    if (chosenProgram.mainProgram) {
+      if (chosenProgram.mainProgram.graduationDate)
+        chosenProgram.mainProgram.graduationDate = new Date(
+          chosenProgram.mainProgram.graduationDate,
+        )
+      educations.push(chosenProgram.mainProgram)
+    }
+    if (chosenProgram.foundationProgram) {
+      if (chosenProgram.foundationProgram.graduationDate)
+        chosenProgram.foundationProgram.graduationDate = new Date(
+          chosenProgram.foundationProgram.graduationDate,
+        )
+      educations.push(chosenProgram.foundationProgram)
+    }
 
     return await this.healthDirectorateClientService.submitApplicationHealthcareWorkPermit(
       auth,
       {
-        name: nationalRegistryData.fullName,
-        dateOfBirth: nationalRegistryData.birthDate,
-        email: answers.userInformation?.email,
-        phone: answers.userInformation?.phone, // TODO Is phone in correct format ?
-        idProfession: answers.selectWorkPermit.studyProgram, // TODO Where can I get idProfession from
-        citizenship: nationalRegistryData.citizenship?.code || '',
-        education: [], // TODO
+        name: fulltNafn.fulltNafn,
+        dateOfBirth: faedingarstadur.faedingarDagur,
+        email: email,
+        phone: phone,
+        idProfession: chosenProgram.professionId,
+        citizenship: rikisfang.rikisfangKodi,
+        education: educations,
       },
     )
   }
