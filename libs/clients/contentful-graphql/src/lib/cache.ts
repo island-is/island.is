@@ -8,29 +8,33 @@ import {
 
 import { ContentfulGraphQLClientConfig } from './contentful-graphql.config'
 
-const registryEndpoint = /\/einstaklingar\/\d{10}$/
+// const registryEndpoint = /\/einstaklingar\/\d{10}$/
 
-function shared(request: Request) {
-  return !!request.url.match(registryEndpoint)
-}
+// function shared(request: Request) {
+//   return !!request.url.match(registryEndpoint)
+// }
 
-function overrideCacheControl(request: Request) {
-  if (request.url.match(registryEndpoint)) {
-    // Main registry lookup. Long cache with lazy revalidation.
-    return buildCacheControl({
-      public: true,
-      maxAge: 60 * 60 * 24, // 1 day
-      staleWhileRevalidate: 60 * 60 * 24 * 30, // 30 days
-    })
-  }
-  // Short private cache for the rest.
-  return buildCacheControl({ maxAge: 60 * 10 })
-}
+// function overrideCacheControl(request: Request) {
+//   if (request.url.match(registryEndpoint)) {
+//     // Main registry lookup. Long cache with lazy revalidation.
+//     return buildCacheControl({
+//       public: true,
+//       maxAge: 60 * 60 * 24, // 1 day
+//       staleWhileRevalidate: 60 * 60 * 24 * 30, // 30 days
+//     })
+//   }
+//   // Short private cache for the rest.
+//   return buildCacheControl({ maxAge: 60 * 10 })
+// }
 
 export const getCache = async (
   config: ConfigType<typeof ContentfulGraphQLClientConfig>,
 ): Promise<CacheConfig | undefined> => {
+
+
+
   if (config.redis.nodes.length === 0) {
+    console.log("dis......................................................")
     return undefined
   }
   const cacheManager = await createRedisCacheManager({
@@ -43,7 +47,7 @@ export const getCache = async (
 
   return {
     cacheManager,
-    shared,
-    overrideCacheControl,
+    // shared,
+    // overrideCacheControl,
   }
 }

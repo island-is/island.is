@@ -16,6 +16,8 @@ export const ContentfulGraphQLFetchProviderKey = 'ContentfulGraphQLFetchProvider
 export const ContentfulGraphQLFetchProvider: Provider<EnhancedFetchAPI> = {
   provide: ContentfulGraphQLFetchProviderKey,
   scope: LazyDuringDevScope, // config 
+  // Necessary because of cache-manager.
+  // eslint-disable-next-line local-rules/no-async-module-init
   useFactory: async (
     config: ConfigType<typeof ContentfulGraphQLClientConfig>,
   ) =>
@@ -24,5 +26,5 @@ export const ContentfulGraphQLFetchProvider: Provider<EnhancedFetchAPI> = {
       cache: await getCache(config),
       // autoAuth: undefined
     }),
-  inject: [],
+  inject: [ContentfulGraphQLClientConfig.KEY],// BREAKTHROUGH ?
 }
