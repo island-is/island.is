@@ -96,9 +96,10 @@ export class DocumentsClientV2Service {
     }
 
     if (!mappedDocument?.senderNationalId || !mappedDocument?.date) {
-      this.logger.debug('Document display data missing', {
+      this.logger.warn('Document display data missing', {
         category: LOG_CATEGORY,
-        document: document,
+        documentId,
+        documentProvider: document?.senderName ?? 'No provider available',
       })
     }
 
