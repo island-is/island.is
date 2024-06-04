@@ -136,23 +136,6 @@ function useThrottleState(state: string, delay = 500) {
   return throttledState
 }
 
-const useUnreadCount = () => {
-  const res = useListDocumentsQuery({
-    fetchPolicy: 'cache-first',
-    variables: {
-      input: {
-        page: 1,
-        pageSize: DEFAULT_PAGE_SIZE,
-        opened: false,
-      },
-    },
-  })
-  const unopened = res?.data?.listDocumentsV2?.data?.filter(
-    (item) => item.opened === false,
-  )
-  return unopened?.length ?? 0
-}
-
 type Filters = {
   opened?: boolean
   archived?: boolean
@@ -286,7 +269,6 @@ export const InboxScreen: NavigationFunctionComponent<{
   const [query, setQuery] = useState('')
   const queryString = useThrottleState(query)
   const theme = useTheme()
-  const unreadCount = useUnreadCount()
   const [visible, setVisible] = useState(false)
   const [refetching, setRefetching] = useState(false)
 
@@ -296,6 +278,7 @@ export const InboxScreen: NavigationFunctionComponent<{
     bookmarked,
     subjectContains: queryString,
   })
+  const unreadCount = res?.data?.unreadCount ?? 0
 
   useConnectivityIndicator({
     componentId,

@@ -12,6 +12,7 @@ query ListDocuments($input: GetDocumentListInput!) {
       ...ListDocument
     }
     totalCount
+    unreadCount
   }
 }
 
