@@ -54,6 +54,7 @@ import FormExternalDataProvider from './FormExternalDataProvider'
 import { extractAnswersToSubmitFromScreen, findSubmitField } from '../utils'
 import ScreenFooter from './ScreenFooter'
 import RefetchContext from '../context/RefetchContext'
+import { MessageDescriptor } from 'react-intl'
 
 type ScreenProps = {
   activeScreenIndex: number
@@ -263,7 +264,8 @@ const Screen: FC<React.PropsWithChildren<ScreenProps>> = ({
   const { width } = useWindowSize()
   const headerHeight = 85
 
-  const nextButtonText = screen.nextButtonText ?? coreMessages.buttonNext
+  const nextButtonText = (screen.nextButtonText ??
+    coreMessages.buttonNext) as MessageDescriptor
 
   useEffect(() => {
     if (width < theme.breakpoints.md) {

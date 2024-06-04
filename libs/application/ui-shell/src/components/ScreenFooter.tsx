@@ -27,7 +27,7 @@ interface FooterProps {
   shouldLastScreenButtonSubmit?: boolean
   renderLastScreenBackButton?: boolean
   submitButtonDisabled?: boolean
-  nextButtonText?: FormText
+  nextButtonText?: MessageDescriptor
 }
 
 type SubmitButton = Omit<ButtonTypes, 'circle'> & {
@@ -173,7 +173,7 @@ export const ScreenFooter: FC<React.PropsWithChildren<FooterProps>> = ({
                   disabled={submitButtonDisabled}
                 >
                   {nextButtonText
-                    ? formatMessage(nextButtonText as MessageDescriptor)
+                    ? formatMessage(nextButtonText)
                     : formatMessage(coreMessages.buttonNext)}
                 </Button>
               </Box>
