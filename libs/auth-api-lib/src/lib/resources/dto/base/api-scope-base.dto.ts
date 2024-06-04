@@ -76,32 +76,32 @@ export class ApiScopeBaseDTO {
   @IsBoolean()
   @IsNotEmpty()
   @ApiProperty({
-    example: false,
     deprecated: true,
+    description: 'Use supportedDelegationTypes instead',
   })
   readonly grantToLegalGuardians!: boolean
 
   @IsBoolean()
   @IsNotEmpty()
   @ApiProperty({
-    example: false,
     deprecated: true,
+    description: 'Use supportedDelegationTypes instead',
   })
   readonly grantToProcuringHolders!: boolean
 
   @IsBoolean()
   @IsNotEmpty()
   @ApiProperty({
-    example: false,
     deprecated: true,
+    description: 'Use supportedDelegationTypes instead',
   })
   readonly grantToPersonalRepresentatives!: boolean
 
   @IsBoolean()
   @IsNotEmpty()
   @ApiProperty({
-    example: false,
     deprecated: true,
+    description: 'Use supportedDelegationTypes instead',
   })
   readonly allowExplicitDelegationGrant!: boolean
 
