@@ -127,7 +127,7 @@ export const HeirsAndPartitionRepeater: FC<
   const relations =
     answers.applicationFor === PREPAID_INHERITANCE
       ? PrePaidHeirsRelations.map((relation) => ({
-          value: relation.value,
+          value: formatMessage(relation.label),
           label: formatMessage(relation.label),
         }))
       : externalData?.relationOptions?.map((relation) => ({

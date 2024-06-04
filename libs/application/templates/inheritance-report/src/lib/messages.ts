@@ -1659,7 +1659,7 @@ export const m = defineMessages({
   },
   sibling: {
     id: 'ir.application:sibling',
-    defaultMessage: 'Systkin',
+    defaultMessage: 'Systkini',
     description: '',
   },
   other: {
@@ -1685,12 +1685,12 @@ export const m = defineMessages({
     description: '',
   },
   includeSpousePrePaid: {
-    id: 'id.application:includeSpouse',
+    id: 'ir.application:includeSpouse',
     defaultMessage: 'Ráðstafa úr sameign hjúskaps',
     description: '',
   },
   includeSpousePrePaidDescription: {
-    id: 'id.application:includeSpouseDescription',
+    id: 'ir.application:includeSpouseDescription',
     defaultMessage:
       'Ef arfláti er í gift/ur og ráðstafa á úr sameign, þarf maki að vera með sem arfláti',
     description: '',

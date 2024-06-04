@@ -89,15 +89,17 @@ export const getPrePaidTotalValueFromApplication = (
   const money = valueToNumber(
     getValueViaPath(answers, 'assets.money.value', '0'),
   )
-  const vehicleTotal =
-    getValueViaPath<number>(answers, 'assets.vehicles.total', 0) ?? 0
+  const stocksTotal =
+    getValueViaPath<number>(answers, 'assets.stocks.total', 0) ?? 0
   const realEstateTotal =
     getValueViaPath<number>(answers, 'assets.realEstate.total', 0) ?? 0
-  const otherTotal =
+  const otherAssetsTotal =
     getValueViaPath<number>(answers, 'assets.otherAssets.total', 0) ?? 0
   const bankAccountTotal =
     getValueViaPath<number>(answers, 'assets.bankAccounts.total', 0) ?? 0
-  return money + vehicleTotal + realEstateTotal + otherTotal + bankAccountTotal
+  return (
+    money + stocksTotal + realEstateTotal + otherAssetsTotal + bankAccountTotal
+  )
 }
 
 export const customZodError = (

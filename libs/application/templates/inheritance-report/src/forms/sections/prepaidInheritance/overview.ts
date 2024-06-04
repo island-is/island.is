@@ -11,8 +11,7 @@ import {
 import { m } from '../../../lib/messages'
 import { formatCurrency } from '@island.is/application/ui-components'
 import { InheritanceReport } from '../../../lib/dataSchema'
-import { roundedValueToNumber, valueToNumber } from '../../../lib/utils/helpers'
-import { calculateTotalAssets } from '../../../lib/utils/calculateTotalAssets'
+import { valueToNumber } from '../../../lib/utils/helpers'
 
 export const prepaidOverview = buildSection({
   id: 'prepaidOverview',
@@ -40,35 +39,7 @@ export const prepaidOverview = buildSection({
           title: m.overviewHeirsTitle,
           description: m.overviewHeirsDescription,
           children: [
-            buildDescriptionField({
-              id: 'overviewAssetsTitle',
-              title: m.properties,
-              titleVariant: 'h3',
-              space: 'gutter',
-              marginBottom: 'gutter',
-            }),
             buildDividerField({}),
-            buildKeyValueField({
-              label: m.totalValueOfAssets,
-              display: 'flex',
-              value: ({ answers }) =>
-                formatCurrency(
-                  String(roundedValueToNumber(calculateTotalAssets(answers))),
-                ),
-            }),
-            buildDescriptionField({
-              id: 'space',
-              title: '',
-              space: 'gutter',
-            }),
-            buildDividerField({}),
-            buildDescriptionField({
-              id: 'overviewHeirsTitle',
-              title: m.heirs,
-              titleVariant: 'h3',
-              space: 'gutter',
-              marginBottom: 'gutter',
-            }),
             buildCustomField({
               title: '',
               id: 'overviewHeirs',
