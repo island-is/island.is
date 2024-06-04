@@ -60,10 +60,6 @@ export const heirs = buildSection({
               id: 'netPropertyForExchange',
               title: '',
             }),
-            buildDescriptionField({
-              id: 'customShare.customSpouseSharePercentage',
-              title: '',
-            }),
             buildCustomField({
               title: '',
               id: 'share',
