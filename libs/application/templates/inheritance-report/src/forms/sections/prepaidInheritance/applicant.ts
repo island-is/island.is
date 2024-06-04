@@ -1,17 +1,16 @@
 import {
   buildMultiField,
+  buildNationalIdWithNameField,
   buildSection,
   buildSelectField,
   buildTextField,
 } from '@island.is/application/core'
 import { UserProfile, Application } from '@island.is/api/schema'
-import { format as formatNationalId } from 'kennitala'
 import { removeCountryCode } from '@island.is/application/ui-components'
-import { m } from '../../lib/messages'
-import { RelationEnum } from '../../types'
-import { PREPAID_INHERITANCE } from '../../lib/constants'
+import { m } from '../../../lib/messages'
+import { RelationEnum } from '../../../types'
 
-export const applicant = buildSection({
+export const prePaidApplicant = buildSection({
   id: 'applicantsInformation',
   title: m.applicantsInfo,
   children: [
@@ -20,34 +19,10 @@ export const applicant = buildSection({
       title: m.applicantsInfo,
       description: m.applicantsInfoSubtitle,
       children: [
-        buildTextField({
-          id: 'applicant.name',
+        buildNationalIdWithNameField({
+          id: 'applicant',
           title: m.name,
-          readOnly: true,
-          width: 'half',
-          defaultValue: ({ externalData }: Application) => {
-            return externalData.nationalRegistry?.data.fullName
-          },
-        }),
-        buildTextField({
-          id: 'applicant.nationalId',
-          title: m.nationalId,
-          readOnly: true,
-          width: 'half',
-          defaultValue: ({ externalData }: Application) => {
-            return formatNationalId(
-              externalData.nationalRegistry?.data.nationalId,
-            )
-          },
-        }),
-        buildTextField({
-          id: 'applicant.address',
-          title: m.address,
-          readOnly: true,
-          width: 'half',
-          defaultValue: ({ externalData }: Application) => {
-            return externalData.nationalRegistry?.data.address.streetAddress
-          },
+          required: true,
         }),
         buildTextField({
           id: 'applicant.phone',
@@ -78,13 +53,13 @@ export const applicant = buildSection({
         }),
         buildSelectField({
           id: 'applicant.relation',
-          title: m.relation,
+          title: m.heirsRelation,
           width: 'half',
           required: true,
           options: [
             { label: m.heir, value: RelationEnum.HEIR },
             { label: m.representative, value: RelationEnum.REPRESENTATIVE },
-            { label: m.exchangeManager, value: RelationEnum.EXCHANGEMANAGER },
+            { label: m.grantor, value: RelationEnum.GRANTOR },
           ],
         }),
       ],
