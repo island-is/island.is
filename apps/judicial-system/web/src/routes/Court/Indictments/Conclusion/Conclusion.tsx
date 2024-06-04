@@ -15,7 +15,6 @@ import {
   BlueBox,
   CourtArrangements,
   CourtCaseInfo,
-  DateTime,
   FormContentContainer,
   FormContext,
   FormFooter,
@@ -171,6 +170,8 @@ const Conclusion: React.FC = () => {
       router.push(`${destination}/${workingCase.id}`)
     },
     [
+      courtDate?.date,
+      courtDate?.location,
       postponement?.isSettingVerdictDate,
       setAndSendCaseToServer,
       setWorkingCase,
