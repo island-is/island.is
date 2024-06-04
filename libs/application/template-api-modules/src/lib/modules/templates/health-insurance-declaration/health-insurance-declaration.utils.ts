@@ -65,7 +65,7 @@ const getApplicants = (
   }
 
   // Spouse
-  answers.registerPersonsSpouseCheckboxField.map((s) => {
+  answers.selectedApplicants?.registerPersonsSpouseCheckboxField?.map((s) => {
     const externalSpouse =
       application.externalData.nationalRegistrySpouse.data.nationalId === s
         ? application.externalData.nationalRegistrySpouse.data
@@ -79,7 +79,7 @@ const getApplicants = (
     }
   })
   // Children
-  answers.registerPersonsChildrenCheckboxField.map((c) => {
+  answers.selectedApplicants?.registerPersonsChildrenCheckboxField?.map((c) => {
     const child = application.externalData.childrenCustodyInformation.data.find(
       (externalChild) => externalChild.nationalId === c,
     )
@@ -125,10 +125,12 @@ export const getPersonsFromExternalData = (application: Application) => {
       ).fullName,
     },
   ]
-  persons.push({
-    nationalId: spouse.nationalId,
-    name: spouse.name,
-  })
+  if (spouse) {
+    persons.push({
+      nationalId: spouse.nationalId,
+      name: spouse.name,
+    })
+  }
   children.map((child) => {
     persons.push({
       nationalId: child.nationalId,
