@@ -172,45 +172,6 @@ export class HealthcareWorkPermitService extends BaseTemplateApiService {
         },
       )
 
-    console.log('test', test)
-
-    // const myHeaders = new Headers()
-    // myHeaders.append('X-Road-Client', 'IS-DEV/GOV/10000/island-is-client')
-    // myHeaders.append('Content-Type', 'application/json')
-    // myHeaders.append(
-    //   'Authorization',
-    //   'Bearer eyJhbGciOiJSUzI1NiIsImtpZCI6IjA0NTM2MDVDRTc1M0UxMTJDRTc0QkJGQjhEQ0E1RTM0IiwidHlwIjoiYXQrand0In0.eyJpc3MiOiJodHRwczovL2lkZW50aXR5LXNlcnZlci5kZXYwMS5kZXZsYW5kLmlzIiwibmJmIjoxNzE3MTYzNDgyLCJpYXQiOjE3MTcxNjM0ODIsImV4cCI6MTcxNzE2NzA4MiwiYXVkIjoiQGxhbmRsYWVrbmlyLmlzL3N0YXJmc2xleWZpIiwic2NvcGUiOiJAbGFuZGxhZWtuaXIuaXMvc3RhcmZzbGV5ZmkiLCJhbXIiOlsiIl0sImNsaWVudF9pZCI6IkBpc2xhbmQuaXMvY2xpZW50cy9kZXYiLCJzdWIiOiI2RUI4RkZGNUI1MDMzNkMzQjJEMzMxNkI0RjI3QTk4Rjg4MEQzRDNFOEUzOTRFNTlEQUYwMEQ4MTY0RDI5NjdGIiwiYXV0aF90aW1lIjoxNzE3MTYwOTI0LCJpZHAiOiJnZXJ2aW1hZHVyIiwiYWNyIjoiMCIsIm5hdGlvbmFsSWQiOiIwMTAxMzAyNDc5Iiwic2lkIjoiRTg2QTNBRUY1RjlDMUNEOTI2NDBDQzYyRjlFN0VBQTAiLCJqdGkiOiIzNTk0QjE2QjI5RTk5QUEzN0FCRUQ3MDk0NEMxQ0VDRiJ9.Evl34Sk3GsPCWeMq-x2xODsQunj7vLEMUbKZS_PKuQmZ-Zr9FzlQxzpjBISdr02-cYqcINnuya2QTk-fSyv6bcdV7a0qvHU1up1n3jgPhOhgrmiysaD1QhZhyb67xUSld0O2vOfVY4EGI7RpNotOPd_fUHtmGu1ZLJJchV7jtxpCn0n5r_lJnVAtZ3DiFFpZo1PUesFIsYyt1vmLTl9O3OG9kq2pI0ciPefQbtmk_WZ3SW8vhhcPfnLlGb8fuk9mbYvqehB60sYjaYXm3ioMs9JJIowp7DV8fj-WYbx3LD4nDpew6ze8VaWObgB_zm_4cakxRglW9m3vxYqJPFI-RA',
-    // )
-
-    // const raw = JSON.stringify({
-    //   name: 'Gervimaður Danmörk',
-    //   dateOfBirth: '01.01.2000',
-    //   citizenship: 'IS',
-    //   email: 'jonjonsson@landlaeknir.is',
-    //   phoneNo: '0000000',
-    //   idProfession: 'HJ',
-    //   education: [
-    //     {
-    //       educationId: 81,
-    //       graduationDate: '2009-11-03T00:00:00.0000000',
-    //       school: 'Háskóli Íslands',
-    //     },
-    //   ],
-    // })
-
-    // const requestOptions = {
-    //   method: 'POST',
-    //   headers: myHeaders,
-    //   body: raw,
-    // }
-
-    // fetch(
-    //   'http://localhost:8081/r1/IS-DEV/GOV/10015/EmbaettiLandlaeknis-Protected/landlaeknir/UmsoknStarfsleyfi/UtbuaSkjal',
-    //   requestOptions,
-    // )
-    //   .then((response) => response.text())
-    //   .then((result) => console.log(result))
-    //   .catch((error) => console.error(error))
     if (!result) {
       throw new TemplateApiError(
         {
