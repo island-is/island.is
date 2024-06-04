@@ -57,7 +57,7 @@ export interface PageProps {
   backLink?: { url: string; text: string }
   customContentfulIds?: (string | undefined)[]
   customBreadcrumbItems?: BreadCrumbItem[]
-  ogTitle?: string
+  customContent?: React.ReactNode
 }
 const ProjectPage: Screen<PageProps> = ({
   projectPage,
@@ -69,7 +69,7 @@ const ProjectPage: Screen<PageProps> = ({
   backLink,
   customContentfulIds,
   customBreadcrumbItems,
-  ogTitle,
+  customContent,
 }) => {
   const n = useNamespace(namespace)
   const p = useNamespace(projectNamespace)
@@ -154,10 +154,133 @@ const ProjectPage: Screen<PageProps> = ({
 
   const pageSlices = (subpage ?? projectPage)?.slices ?? []
 
+  const mainContent = (
+    <>
+      {!subpage && shouldDisplayWebReader && (
+        <Webreader
+          marginTop={0}
+          // eslint-disable-next-line @typescript-eslint/ban-ts-comment
+          // @ts-ignore make web strict
+          readId={null}
+          readClass="rs_read"
+        />
+      )}
+      {!!subpage && (
+        <Box marginBottom={1} className="rs_read">
+          <Text as="h1" variant="h1">
+            {subpage.title}
+          </Text>
+          {shouldDisplayWebReader && (
+            <Webreader
+              // eslint-disable-next-line @typescript-eslint/ban-ts-comment
+              // @ts-ignore make web strict
+              readId={null}
+              readClass="rs_read"
+            />
+          )}
+          {subpage.showTableOfContents && (
+            <Box marginY={6} className="rs_read">
+              <TOC slices={subpage.slices} title={navigationTitle} />
+            </Box>
+          )}
+          {subpage.content && (
+            <Box className="rs_read">
+              {webRichText(
+                subpage.content as SliceType[],
+                undefined,
+                activeLocale,
+              )}
+            </Box>
+          )}
+        </Box>
+      )}
+      {renderSlicesAsTabs && !!subpage && subpage.slices.length > 1 && (
+        <Box marginBottom={2} className="rs_read">
+          <TableOfContents
+            tableOfContentsTitle={n('tableOfContentsTitle', 'Undirkaflar')}
+            headings={subpage.slices.map((slice) => ({
+              headingId: slice.id,
+              headingTitle: (slice as OneColumnText).title,
+            }))}
+            selectedHeadingId={selectedSliceTab?.id}
+            onClick={(id) => {
+              const slice = subpage.slices.find(
+                (s) => s.id === id,
+              ) as OneColumnText
+              router.push(
+                `${baseRouterPath}#${slugify(slice.title)}`,
+                undefined,
+                { shallow: true },
+              )
+              setSelectedSliceTab(slice)
+            }}
+          />
+        </Box>
+      )}
+      {renderSlicesAsTabs && selectedSliceTab && (
+        <Box className="rs_read">
+          <Text paddingTop={4} as="h2" variant="h2">
+            {selectedSliceTab.title}
+          </Text>
+        </Box>
+      )}
+      {content?.length > 0 && (
+        <Box className="rs_read" paddingBottom={SLICE_SPACING}>
+          {webRichText(content, {
+            renderComponent: {
+              // eslint-disable-next-line @typescript-eslint/ban-ts-comment
+              // @ts-ignore make web strict
+              TabSection: (slice) => (
+                <TabSectionSlice
+                  slice={slice}
+                  contentColumnProps={{ span: '1/1' }}
+                  contentPaddingTop={0}
+                />
+              ),
+            },
+          })}
+        </Box>
+      )}
+      {!subpage && projectPage?.stepper && (
+        <Box marginTop={6} className="rs_read">
+          <Stepper
+            scrollUpWhenNextStepAppears={false}
+            stepper={projectPage.stepper}
+            optionsFromNamespace={stepOptionsFromNamespace}
+            namespace={stepperNamespace}
+          />
+        </Box>
+      )}
+      {!renderSlicesAsTabs && pageSlices.length > 0 && (
+        <Stack space={SLICE_SPACING}>
+          {pageSlices.map((slice: Slice, index) => {
+            const sliceCount = pageSlices.length
+            return (
+              <Box className="rs_read">
+                <SliceMachine
+                  key={slice.id}
+                  slice={slice}
+                  namespace={namespace}
+                  fullWidth={true}
+                  slug={projectPage?.slug}
+                  marginBottom={
+                    typeof sliceCount === 'number' && index === sliceCount - 1
+                      ? 8
+                      : 0
+                  }
+                />
+              </Box>
+            )
+          })}
+        </Stack>
+      )}
+    </>
+  )
+
   return (
     <>
       <HeadWithSocialSharing
-        title={ogTitle || `${projectPage?.title} | Ísland.is`}
+        title={`${projectPage?.title} | Ísland.is`}
         description={projectPage?.featuredDescription || projectPage?.intro}
         imageUrl={projectPage?.featuredImage?.url}
         imageContentType={projectPage?.featuredImage?.contentType}
@@ -173,124 +296,7 @@ const ProjectPage: Screen<PageProps> = ({
         withSidebar={projectPage?.sidebar}
         backLink={backLink}
       >
-        {!subpage && shouldDisplayWebReader && (
-          <Webreader
-            marginTop={0}
-            // eslint-disable-next-line @typescript-eslint/ban-ts-comment
-            // @ts-ignore make web strict
-            readId={null}
-            readClass="rs_read"
-          />
-        )}
-        {!!subpage && (
-          <Box marginBottom={1} className="rs_read">
-            <Text as="h1" variant="h1">
-              {subpage.title}
-            </Text>
-            {shouldDisplayWebReader && (
-              <Webreader
-                // eslint-disable-next-line @typescript-eslint/ban-ts-comment
-                // @ts-ignore make web strict
-                readId={null}
-                readClass="rs_read"
-              />
-            )}
-            {subpage.showTableOfContents && (
-              <Box marginY={6} className="rs_read">
-                <TOC slices={subpage.slices} title={navigationTitle} />
-              </Box>
-            )}
-            {subpage.content && (
-              <Box className="rs_read">
-                {webRichText(
-                  subpage.content as SliceType[],
-                  undefined,
-                  activeLocale,
-                )}
-              </Box>
-            )}
-          </Box>
-        )}
-        {renderSlicesAsTabs && !!subpage && subpage.slices.length > 1 && (
-          <Box marginBottom={2} className="rs_read">
-            <TableOfContents
-              tableOfContentsTitle={n('tableOfContentsTitle', 'Undirkaflar')}
-              headings={subpage.slices.map((slice) => ({
-                headingId: slice.id,
-                headingTitle: (slice as OneColumnText).title,
-              }))}
-              selectedHeadingId={selectedSliceTab?.id}
-              onClick={(id) => {
-                const slice = subpage.slices.find(
-                  (s) => s.id === id,
-                ) as OneColumnText
-                router.push(
-                  `${baseRouterPath}#${slugify(slice.title)}`,
-                  undefined,
-                  { shallow: true },
-                )
-                setSelectedSliceTab(slice)
-              }}
-            />
-          </Box>
-        )}
-        {renderSlicesAsTabs && selectedSliceTab && (
-          <Box className="rs_read">
-            <Text paddingTop={4} as="h2" variant="h2">
-              {selectedSliceTab.title}
-            </Text>
-          </Box>
-        )}
-        {content?.length > 0 && (
-          <Box className="rs_read" paddingBottom={SLICE_SPACING}>
-            {webRichText(content, {
-              renderComponent: {
-                // eslint-disable-next-line @typescript-eslint/ban-ts-comment
-                // @ts-ignore make web strict
-                TabSection: (slice) => (
-                  <TabSectionSlice
-                    slice={slice}
-                    contentColumnProps={{ span: '1/1' }}
-                    contentPaddingTop={0}
-                  />
-                ),
-              },
-            })}
-          </Box>
-        )}
-        {!subpage && projectPage?.stepper && (
-          <Box marginTop={6} className="rs_read">
-            <Stepper
-              scrollUpWhenNextStepAppears={false}
-              stepper={projectPage.stepper}
-              optionsFromNamespace={stepOptionsFromNamespace}
-              namespace={stepperNamespace}
-            />
-          </Box>
-        )}
-        {!renderSlicesAsTabs && pageSlices.length > 0 && (
-          <Stack space={SLICE_SPACING}>
-            {pageSlices.map((slice: Slice, index) => {
-              const sliceCount = pageSlices.length
-              return (
-                <Box className="rs_read">
-                  <SliceMachine
-                    key={slice.id}
-                    slice={slice}
-                    namespace={namespace}
-                    fullWidth={true}
-                    slug={projectPage?.slug}
-                    marginBottom={
-                      typeof sliceCount === 'number' && index === sliceCount - 1
-                        ? 8
-                        : 0
-                    }
-                  />
-                </Box>
-              )
-            })}
-          </Stack>
-        )}
+        {customContent ? customContent : mainContent}
       </ProjectWrapper>
 
       <Stack

@@ -65,11 +65,17 @@ export const Component: ScreenType<ComponentProps> = ({
             isTag: true,
           },
         ],
-        ogTitle:
-          genericListItemProps.item.title &&
-          `${genericListItemProps.item.title}${
-            subpage?.title ? ' | ' + subpage.title : ''
-          }`,
+        customContent: (
+          <GenericListItemPage
+            item={genericListItemProps.item}
+            ogTitle={
+              genericListItemProps.item.title &&
+              `${genericListItemProps.item.title}${
+                subpage?.title ? ' | ' + subpage.title : ''
+              }`
+            }
+          />
+        ),
         projectPage: {
           ...projectPage,
           backLink: {
@@ -78,20 +84,6 @@ export const Component: ScreenType<ComponentProps> = ({
             text: activeLocale === 'is' ? 'Til baka' : 'Go back',
             url: backLinkUrl,
           },
-          projectSubpages:
-            projectPage.projectSubpages.map((subpage) => {
-              if (subpage.slug === router.query.subSlug) {
-                return {
-                  ...subpage,
-                  bottomSlices: [],
-                  slices: [],
-                  content: genericListItemProps.item.content,
-                  title: genericListItemProps.item.title,
-                  showTableOfContents: false,
-                }
-              }
-              return subpage
-            }) ?? [],
         },
       }}
     />
