@@ -189,6 +189,7 @@ import { VmstClientConfig } from '@island.is/clients/vmst'
 import { HealthInsuranceV2ClientConfig } from '@island.is/clients/icelandic-health-insurance/health-insurance'
 import { CriminalRecordClientConfig } from '@island.is/clients/criminal-record'
 import { HealthInsuranceV2ClientConfig } from '@island.is/clients/icelandic-health-insurance/health-insurance'
+import { VmstClientConfig } from '@island.is/clients/vmst'
 
 const environment = getConfig
 
@@ -408,6 +409,7 @@ const environment = getConfig
         HealthInsuranceV2ClientConfig,
         CriminalRecordClientConfig,
         HealthInsuranceV2ClientConfig,
+        VmstClientConfig,
       ],
     }),
   ],
