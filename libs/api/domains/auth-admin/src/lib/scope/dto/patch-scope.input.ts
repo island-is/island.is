@@ -33,14 +33,14 @@ export class AdminPatchScopeInput {
   @Field(() => Boolean, {
     nullable: true,
     deprecationReason:
-      'Use addedDelegationTypes or removedDelegationTypes  instead',
+      'Use addedDelegationTypes or removedDelegationTypes instead',
   })
   grantToProcuringHolders?: boolean
 
   @Field(() => Boolean, {
     nullable: true,
     deprecationReason:
-      'Use addedDelegationTypes or removedDelegationTypes  instead',
+      'Use addedDelegationTypes or removedDelegationTypes instead',
   })
   allowExplicitDelegationGrant?: boolean
 
@@ -50,7 +50,7 @@ export class AdminPatchScopeInput {
   @Field(() => Boolean, {
     nullable: true,
     deprecationReason:
-      'Use addedDelegationTypes or removedDelegationTypes  instead',
+      'Use addedDelegationTypes or removedDelegationTypes instead',
   })
   grantToPersonalRepresentatives?: boolean
 
