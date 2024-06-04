@@ -49,7 +49,6 @@ type Decision =
 interface Postponement {
   postponedIndefinitely?: boolean
   isSettingVerdictDate?: boolean
-  verdictDate?: string
   reason?: string
 }
 
@@ -140,12 +139,13 @@ const Conclusion: React.FC = () => {
           indictmentDecision: IndictmentDecision.POSTPONING_UNTIL_VERDICT,
         }),
         ...((postponement?.isSettingVerdictDate || workingCase.courtDate) && {
-          courtDate: courtDate?.date
-            ? {
-                date: formatDateForServer(new Date(courtDate.date)),
-                location: courtDate?.location,
-              }
-            : null,
+          courtDate:
+            postponement?.isSettingVerdictDate && courtDate?.date
+              ? {
+                  date: formatDateForServer(new Date(courtDate.date)),
+                  location: courtDate.location,
+                }
+              : null,
         }),
       }
 
@@ -292,7 +292,16 @@ const Conclusion: React.FC = () => {
     workingCase.postponedIndefinitelyExplanation,
     workingCase.indictmentRulingDecision,
     workingCase.indictmentDecision,
+    courtDate,
+    postponement?.isSettingVerdictDate,
   ])
+
+  useEffect(() => {
+    setPostponement((prev) => ({
+      ...prev,
+      isSettingVerdictDate: Boolean(workingCase.courtDate?.date),
+    }))
+  }, [workingCase.courtDate?.date])
 
   const stepIsValid = () => {
     if (selectedAction === IndictmentDecision.POSTPONING_UNTIL_VERDICT) {
@@ -509,6 +518,8 @@ const Conclusion: React.FC = () => {
                       ...prev,
                       isSettingVerdictDate: !prev?.isSettingVerdictDate,
                     }))
+                    handleCourtDateChange(null)
+                    handleCourtRoomChange(null)
                   }}
                   backgroundColor="white"
                   label={formatMessage(strings.arrangeVerdict)}

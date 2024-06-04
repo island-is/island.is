@@ -51,7 +51,9 @@ export const useCourtArrangements = (
     date: Date | undefined | null,
     valid = true,
   ) => {
-    if (date && valid) {
+    if (!date) {
+      setCourtDate(null)
+    } else if (date && valid) {
       const oldDate = workingCase[dateKey]
       if (
         oldDate?.date &&
@@ -72,10 +74,16 @@ export const useCourtArrangements = (
     }
   }
 
-  const handleCourtRoomChange = (courtRoom?: string) => {
-    setCourtDate((previous) =>
-      previous ? { ...previous, location: courtRoom } : { location: courtRoom },
-    )
+  const handleCourtRoomChange = (courtRoom?: string | null) => {
+    if (!courtRoom) {
+      setCourtDate((prev) => ({ ...prev, location: null }))
+    } else {
+      setCourtDate((previous) =>
+        previous
+          ? { ...previous, location: courtRoom }
+          : { location: courtRoom },
+      )
+    }
   }
 
   const sendCourtDateToServer = (otherUpdates: UpdateCase[] = []) => {
@@ -120,6 +128,10 @@ export const CourtArrangements: React.FC<Props> = (props) => {
   const [courtRoomValue, setCourtRoomValue] = useState<string>('')
 
   useEffect(() => {
+    if (courtDate?.location === null) {
+      setCourtRoomValue('')
+    }
+
     if (courtDate?.location) {
       setCourtRoomValue(courtDate.location)
     }
