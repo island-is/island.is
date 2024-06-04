@@ -45,9 +45,10 @@ export class DelegationsController {
   @Get()
   @ApiOkResponse({ isArray: true })
   async findAllToV1(@CurrentUser() user: User): Promise<DelegationDTO[]> {
+    const delegations = await this.delegationsService.findAllIncoming(user)
     void this.delegationIndexService.indexDelegations(user)
 
-    return this.delegationsService.findAllIncoming(user)
+    return delegations
   }
 
   @Scopes('@identityserver.api/authentication')
@@ -62,12 +63,14 @@ export class DelegationsController {
     )
     requestedScopes: Array<string>,
   ): Promise<MergedDelegationDTO[]> {
-    void this.delegationIndexService.indexDelegations(user)
-
-    return this.delegationsIncomingService.findAllAvailable({
+    const delegations = await this.delegationsIncomingService.findAllAvailable({
       user,
       requestedScopes,
     })
+
+    void this.delegationIndexService.indexDelegations(user)
+
+    return delegations
   }
 
   @Scopes('@identityserver.api/authentication')
