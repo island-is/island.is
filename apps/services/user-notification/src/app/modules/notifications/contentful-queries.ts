@@ -35,10 +35,11 @@ export const GET_HNIPP_TEMPLATES = `
 `
 
 export const GET_ORGANIZATION_BY_KENNITALA = `
-query GetOrganizationByKennitala($kennitala: String!, $locale: String!){
+  query GetOrganizationByKennitala($kennitala: String!, $locale: String!){
     organizationCollection(where: {kennitala: $kennitala}, locale: $locale) {
       items {
         title
       }
     }
-  }`
+  }
+`
