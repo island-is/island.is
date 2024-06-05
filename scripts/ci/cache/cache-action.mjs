@@ -93,6 +93,12 @@ await Promise.allSettled(
               if (succesFullJobs.includes(pendingJob)) {
                 break
               }
+              const jobHasFailed = failedJobs.some((e) => e.id === pendingJob)
+              if (jobHasFailed) {
+                console.error(`Failed restoring cache for ${cache.name}`)
+                failedJobs.push(cache)
+                return
+              }
               sleep();
             }
           }
