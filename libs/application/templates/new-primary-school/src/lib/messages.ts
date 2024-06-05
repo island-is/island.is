@@ -426,28 +426,23 @@ export const newPrimarySchoolMessages: MessageDir = {
     developmentalAssessment: {
       id: 'dess.nps.application:different.needs.developmental.assessment',
       defaultMessage:
-        'Hefur farið fram þroskamat eða skimun námslegri stöðu nemandans',
+        'Hafa farið fram skimanir eða greiningar á þroska eða stöðu barnsins í núverandi skóla?',
       description:
-        "Has there been a developmental assessment or screening of the student's academic status",
+        'Have any assessments or diagnoses been conducted on the development or status of the child in the current school?',
     },
     specialSupport: {
       id: 'dess.nps.application:different.needs.special.support',
-      defaultMessage: 'Hefur nemandinn þörf fyrir sérstuðning í skóla',
-      description: 'Does the student need special support at school',
-    },
-    supportInfo: {
-      id: 'dess.nps.application:different.needs.support.info',
       defaultMessage:
-        'Ef um er að ræða skólaflutning milli landa flytjast gögnin ekki sjálfkrafa á milli. Vinsamlegast hafðu beint samband við skólann ef gera þarf sérstakar ráðstafanir vegna barnsins.',
+        'Hefur nemandinn áður notið sérkennslu eða stuðnings í skóla?',
       description:
-        'In the case of a school transfer between countries, the data is not transferred automatically. Please contact the school directly if special arrangements need to be made for the child.',
+        'Has the student previously received special education or support in school?',
     },
     requestMeeting: {
       id: 'dess.nps.application:different.needs.request.meeting',
       defaultMessage:
-        'Ef þú telur að grunnskólinn þurfi nánari upplýsingar um þarfir barnsins geturðu óskað eftir samtali við umsjónarkennara. Umsjónarkennari mun setja sig í samband við þig áður en barnið byrjar í skólanum.',
+        'Ef þú telur að grunnskólinn þurfi nánari upplýsingar um þarfir barnsins getur þú óskað eftir samtali. Skólinn mun setja sig í samband við þig, þegar nær dregur fyrsta skóladegi',
       description:
-        "If you believe that the elementary school needs more information about the child's needs, you can request a conversation with the supervising teacher. The supervising teacher will contact you before the child starts school.",
+        "If you believe that the elementary school needs more information about the child's needs, you can request a meeting. The school will contact you when the first day of school approaches.",
     },
     requestMeetingDescription: {
       id: 'dess.nps.application:different.needs.request.meeting.info',
