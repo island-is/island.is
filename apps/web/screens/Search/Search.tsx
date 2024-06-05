@@ -439,7 +439,7 @@ const Search: Screen<CategoryProps> = ({
       {
         id: 'category',
         label: n('categories', 'Þjónustuflokkar'),
-        selected: state.query.category ?? [],
+        selected: stringToArray(state.query.category),
         singleOption: true,
         filters: (countResults?.tagCounts ?? [])
           .filter((x) => x.value.trim() && x.type === 'category')
@@ -451,7 +451,7 @@ const Search: Screen<CategoryProps> = ({
       {
         id: 'organization',
         label: n('organizations', 'Opinberir aðilar'),
-        selected: state.query.organization ?? [],
+        selected: stringToArray(state.query.organization),
         singleOption: true,
         filters: (countResults?.tagCounts ?? [])
           .filter((x) => x.value.trim() && x.type === 'organization')
