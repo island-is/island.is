@@ -1,6 +1,7 @@
 import {
   Controller,
   Get,
+  Inject,
   ParseArrayPipe,
   Query,
   UseGuards,
@@ -9,6 +10,8 @@ import {
 } from '@nestjs/common'
 import { ApiOkResponse, ApiTags } from '@nestjs/swagger'
 
+import type { Logger } from '@island.is/logging'
+import { LOGGER_PROVIDER } from '@island.is/logging'
 import {
   DelegationDTO,
   DelegationScope,
@@ -35,6 +38,8 @@ import { AuthDelegationType } from 'delegation'
 })
 export class DelegationsController {
   constructor(
+    @Inject(LOGGER_PROVIDER)
+    protected readonly logger: Logger,
     private readonly delegationsService: DelegationsService,
     private readonly delegationScopeService: DelegationScopeService,
     private readonly delegationsIncomingService: DelegationsIncomingService,
@@ -46,7 +51,13 @@ export class DelegationsController {
   @ApiOkResponse({ isArray: true })
   async findAllToV1(@CurrentUser() user: User): Promise<DelegationDTO[]> {
     const delegations = await this.delegationsService.findAllIncoming(user)
-    void this.delegationIndexService.indexDelegations(user)
+
+    // don't fail the request if indexing fails
+    try {
+      void this.delegationIndexService.indexDelegations(user)
+    } catch {
+      this.logger.error('Failed to index delegations')
+    }
 
     return delegations
   }
@@ -68,7 +79,12 @@ export class DelegationsController {
       requestedScopes,
     })
 
-    void this.delegationIndexService.indexDelegations(user)
+    // don't fail the request if indexing fails
+    try {
+      void this.delegationIndexService.indexDelegations(user)
+    } catch {
+      this.logger.error('Failed to index delegations')
+    }
 
     return delegations
   }
