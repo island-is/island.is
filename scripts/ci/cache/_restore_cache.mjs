@@ -1,4 +1,4 @@
-import { restoreCache as _restoreCache } from 'https://esm.sh/@actions/cache';
+import { restoreCache as _restoreCache } from 'https://esm.sh/@actions/cache?raw';
 
 export async function restoreCache({ key, path }) {
     let cache;

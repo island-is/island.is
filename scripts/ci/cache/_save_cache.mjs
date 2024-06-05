@@ -1,4 +1,4 @@
-import { saveCache as _saveCache } from 'https://esm.sh/@actions/cache';
+import { saveCache as _saveCache } from 'https://esm.sh/@actions/cache?raw';
 
 export async function saveCache({ key, path }) {
     let cache;
