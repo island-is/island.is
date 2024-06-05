@@ -112,7 +112,6 @@ const GenericListItemSlugField = () => {
             },
           })
         )?.items ?? []
-      console.log('eee', itemsInSameListWithSameSlug, value)
       setIsValid(itemsInSameListWithSameSlug.length <= 0)
     },
     DEBOUNCE_TIME,
