@@ -22,6 +22,7 @@ import { BypassDelegation } from './guards/bypass-delegation.decorator'
 import {
   ApplicationAdminPaginatedResponse,
   ApplicationListAdminResponseDto,
+  ApplicationStatistics,
 } from './dto/applicationAdmin.response.dto'
 import { ApplicationAdminSerializer } from './tools/applicationAdmin.serializer'
 
@@ -41,6 +42,40 @@ export class AdminController {
     private readonly applicationService: ApplicationService,
     @Inject(LOGGER_PROVIDER) private logger: Logger,
   ) {}
+
+  @Scopes(AdminPortalScope.applicationSystemAdmin)
+  @BypassDelegation()
+  @Get('admin/applications-statistics')
+  @Documentation({
+    description: 'Get applications statistics',
+    response: {
+      status: 200,
+      type: [ApplicationStatistics],
+    },
+    request: {
+      query: {
+        startDate: {
+          type: 'string',
+          required: true,
+          description: 'Start date for the statistics',
+        },
+        endDate: {
+          type: 'string',
+          required: true,
+          description: 'End date for the statistics',
+        },
+      },
+    },
+  })
+  async getCountByTypeIdAndStatus(
+    @Query('startDate') startDate: string,
+    @Query('endDate') endDate: string,
+  ) {
+    return this.applicationService.getApplicationCountByTypeIdAndStatus(
+      startDate,
+      endDate,
+    )
+  }
 
   @Scopes(AdminPortalScope.applicationSystemAdmin)
   @BypassDelegation()
@@ -94,6 +129,7 @@ export class AdminController {
       true, // Show pruned applications
     )
   }
+
   @Scopes(AdminPortalScope.applicationSystemInstitution)
   @BypassDelegation()
   @Get('admin/institution/:nationalId/applications/:page/:count')
