@@ -203,32 +203,30 @@ const Conclusion: React.FC = () => {
 
   const handlePostponement = useCallback(
     async (destination: string) => {
-      const updateCourtDateSuccess = await sendCourtDateToServer([
-        { postponedIndefinitelyExplanation: null, force: true },
-      ])
-
       const updateSuccess = await setAndSendCaseToServer(
         [
           {
             indictmentDecision: IndictmentDecision.POSTPONING,
+            courtDate: courtDate?.date
+              ? {
+                  date: formatDateForServer(new Date(courtDate.date)),
+                  location: courtDate.location,
+                }
+              : undefined,
+            postponedIndefinitelyExplanation: null,
           },
         ],
         workingCase,
         setWorkingCase,
       )
 
-      if (!updateCourtDateSuccess || !updateSuccess) {
+      if (!updateSuccess) {
         return
       }
 
       router.push(`${destination}/${workingCase.id}`)
     },
-    [
-      sendCourtDateToServer,
-      setAndSendCaseToServer,
-      setWorkingCase,
-      workingCase,
-    ],
+    [setAndSendCaseToServer, setWorkingCase, workingCase],
   )
 
   const handleNavigationTo = useCallback(
