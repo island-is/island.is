@@ -84,6 +84,17 @@ export async function getFilesHash(files = []) {
 export function sleep(ms = 50) {
   return new Promise(resolve => setTimeout(resolve, ms))
 }
+
+export async function tryRun(fn, name) {
+  try {
+    await fn()
+  } catch (error) {
+    console.log({type: 'RUN FAILED', name, error })
+    return false
+  }
+  return true;
+}
+
 /**
  * Checks if the file size is equal to or greater than the specified size.
  *

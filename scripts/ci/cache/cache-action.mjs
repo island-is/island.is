@@ -10,7 +10,7 @@ import { writeToSummary, writeToOutput } from './_get_hashes_utils.mjs'
 import { keyStorage } from './_key_storage.mjs'
 import { restoreCache } from './_restore_cache.mjs'
 import { saveCache } from './_save_cache.mjs'
-import { sleep } from './_utils.mjs'
+import { sleep, tryRun } from './_utils.mjs'
 
 if (!HAS_HASH_KEYS) {
   console.log('Generating cache hashes')
@@ -100,7 +100,6 @@ await Promise.all(
           }
         }
       }
-      
       if (HAS_HASH_KEYS) {
         console.error(`Failed restoring cache for ${cache.name}`)
         failedJobs.push(cache)
@@ -109,8 +108,8 @@ await Promise.all(
       console.log(
         `Failed restoring cache for ${cache.name}, trying to init and save`,
       )
-      const fileName = Array.isArray(cache.path) ? cache.path.map((e) => resolve(ROOT, e)) :resolve(ROOT, cache.path)
-      const successInit = await cache.init()
+      const fileName = Array.isArray(cache.path) ? cache.path.map((e) => resolve(ROOT, e)) : resolve(ROOT, cache.path)
+      const successInit = await tryRun(cache.init, cache.name)
       const success = await cache.check(successInit, fileName)
       if (!success) {
         failedJobs.push(cache)
@@ -123,6 +122,7 @@ await Promise.all(
           console.error(`Failed saving cache for ${cache.name}`)
           failedJobs.push(cache)
         }
+        succesFullJobs.push(cache.id)
       }
     }
   }),

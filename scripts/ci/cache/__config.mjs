@@ -62,12 +62,7 @@ export const caches = [
     },
     init: async () => {
       const path = resolve(ROOT, './scripts/ci/10_prepare-host-deps.sh')
-      try {
-        await runCommand(path, ROOT)
-      } catch {
-        return false
-      }
-      return true
+      await runCommand(path, ROOT)
     },
   },
   {
@@ -84,16 +79,11 @@ export const caches = [
       return folderSizeIsEqualOrGreaterThan(path, 1000)
     },
     init: async () => {
-      try {
-        const yarnLockRoot = resolve(ROOT, 'yarn.lock')
-        const yarnLock = resolve(MOBILE_APP_DIR, 'yarn.lock')
-        await runCommand(`cp "${yarnLockRoot}" "${yarnLock}"`, ROOT)
-        await runCommand('yarn install --immutable', MOBILE_APP_DIR)
-        await runCommand(`rm "${yarnLock}"`, MOBILE_APP_DIR)
-      } catch {
-        return false
-      }
-      return true
+      const yarnLockRoot = resolve(ROOT, 'yarn.lock')
+      const yarnLock = resolve(MOBILE_APP_DIR, 'yarn.lock')
+      await runCommand(`cp "${yarnLockRoot}" "${yarnLock}"`, ROOT)
+      await runCommand('yarn install --immutable', MOBILE_APP_DIR)
+      await runCommand(`rm "${yarnLock}"`, MOBILE_APP_DIR)
     },
     name: 'Cache Mobile node_modules',
     id: 'mobile-node_modules',
@@ -116,12 +106,7 @@ export const caches = [
     },
     init: async (path) => {
       const cmd = resolve(ROOT, 'scripts/ci/cache/generate-files.sh')
-      try {
-        await runCommand(cmd, ROOT)
-      } catch {
-        return false
-      }
-      return true
+      await runCommand(cmd, ROOT)
     },
   },
   {
@@ -137,13 +122,7 @@ export const caches = [
     id: 'docker',
     init: async () => {
       const path = resolve(ROOT, './scripts/ci/cache/10_prepare-docker-deps.sh')
-      try {
-        await runCommand(path, ROOT)
-      } catch(_e) {
-        console.error(_e);
-        return false
-      }
-      return true
+      await runCommand(path, ROOT)
     },
     check: async (success, path) => {
       if (!success) {
@@ -164,7 +143,8 @@ export const caches = [
       }
       const pkg = await getPackageJSON();
       const cypressVersion = pkg?.devDependencies?.cypress;
-      return `cypress-cache-${HASH_VERSION}-${getPlatformString()}-${cypressVersion}}`;
+      console.log(`cypressVersion: ${cypressVersion}`)
+      return `cypress-cache-${HASH_VERSION}-${getPlatformString()}-${cypressVersion}`;
     },
     name: 'Cache Cypress',
     id: 'cypress',
@@ -175,15 +155,10 @@ export const caches = [
       return runCommand('npx cypress verify', ROOT)
     },
     init: async () => {
-      try {
-        const pkg = await getPackageJSON();
-        const cypressVersion = pkg?.devDependencies?.cypress
-        await runCommand('npx cypress install', ROOT, { CYPRESS_INSTALL_BINARY: cypressVersion })
-      } catch (_e) {
-        console.error(_e);
-        return false
-      }
-      return true
+      const pkg = await getPackageJSON();
+      const cypressVersion = pkg?.devDependencies?.cypress
+      await runCommand('npx cypress install', ROOT, { CYPRESS_INSTALL_BINARY: cypressVersion })
+
     },
     path: cypressPath || '',
   },
