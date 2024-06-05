@@ -2,7 +2,7 @@
 import { arch, platform } from 'node:os'
 import crypto from 'node:crypto'
 import { ROOT } from './_common.mjs'
-import { exec } from 'node:child_process'
+import { spawn, exec } from 'node:child_process'
 import { resolve, join } from 'node:path'
 import { readFile, readdir, stat } from 'node:fs/promises'
 import { HASH_GENERATE_FILES_SCRIPT } from './_const.mjs'
@@ -157,18 +157,37 @@ export async function folderSizeIsEqualOrGreaterThan(
  */
 export async function runCommand(cmd, cwd = undefined, env = {}) {
   return new Promise((resolve, reject) => {
-    const options = cwd ? { cwd } : {}
+    const options = cwd ? { cwd, encoding: 'utf-8' } : {};
     options.env = { ...process.env, ...env };
-    exec(cmd, options, (error, stdout, stderr) => {
-      if (error) {
-        console.log(error);
-        console.log(stderr)
-        reject(`Error: ${error.message}`)
-        return
-      }
+    options.encoding = 'utf-8'
 
-      resolve(void 0)
-    })
+    const [command, ...args] = cmd.split(' ');
+
+    const childProcess = spawn(command, args, options);
+    const errorChunks = [];
+    const outputChunks = [];
+
+    childProcess.stdout.on('data', (data) => {
+      outputChunks.push(data);
+    });
+
+    childProcess.stderr.on('data', (data) => {
+      errorChunks.push(data);
+    });
+
+    childProcess.on('close', (code) => {
+      if (code !== 0) {
+        console.log(errorChunks.join('\n'));
+        reject(`Error: Process exited with code ${code}`);
+      } else {
+        resolve(void 0);
+      }
+    });
+
+    childProcess.on('error', (error) => {
+      console.log(errorChunks.join('\n'));
+      reject(`Error: ${error.message}`);
+    });
   })
 }
 
