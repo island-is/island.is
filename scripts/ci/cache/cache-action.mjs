@@ -15,7 +15,7 @@ const enabledCaches = caches.filter((value) => value.enabled)
 let failedJobs = []
 let saveJobs = []
 
-console.log(cacheSuccess);
+console.log(cacheSuccess)
 
 for (const cache of enabledCaches) {
   const fileName = resolve(ROOT, cache.path)
@@ -48,14 +48,14 @@ let steps = [
     name: 'Success check',
     id: 'success-check',
     env: {
-      [ENV_JOB_STATUS]: failedJobs.length === 0 ? 'true' : 'false'
+      [ENV_JOB_STATUS]: failedJobs.length === 0 ? 'true' : 'false',
     },
   },
 ]
 
 if (initCache) {
   steps = [
-    ...await Promise.all(
+    ...(await Promise.all(
       saveJobs
         .map(async (value) => {
           if (!value.enabled) {
@@ -69,7 +69,7 @@ if (initCache) {
           })
         })
         .filter((e) => e != null),
-    ),
+    )),
     ...steps,
   ].flat()
 }
