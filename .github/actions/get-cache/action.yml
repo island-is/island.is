@@ -20,7 +20,13 @@ outputs:
 runs:
   using: 'composite'
   steps:
-    - uses: cue-lang/setup-cue@v1.0.1
+    - name: Add required env
+    uses: actions/github-script@v7
+    env:
+      github-token: ${{ secrets.GITHUB_TOKEN }}
+    with:
+      script: |
+        core.exportVariable('ACTIONS_RUNTIME_TOKEN', process.env['ACTIONS_RUNTIME_TOKEN'])
     - name: Get cache
       id: prepare
       shell: bash
