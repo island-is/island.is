@@ -215,6 +215,7 @@ export interface Debt {
   nationalId: string
   description: string
   propertyValuation: string
+  debtType: string
 }
 
 export interface ApplicationDebts {
@@ -270,6 +271,7 @@ export enum RelationEnum {
   REPRESENTATIVE = 'representative',
   HEIR = 'heir',
   EXCHANGEMANAGER = 'exchangeManager',
+  GRANTOR = 'grantor',
 }
 
 export interface EstateMember {

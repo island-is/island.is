@@ -33,8 +33,13 @@ export const childrenForm = {
     },
     commentTitle: {
       id: 'fa.application:section.personalInterest.childrenForm.page.commentTitle',
-      defaultMessage: 'Frekari upplýsingar',
+      defaultMessage: 'Önnur útgjöld',
       description: 'Heading for input, with comment about children',
+    },
+    commentText: {
+      id: 'fa.application:section.personalInterest.childrenForm.page.commentText',
+      defaultMessage: 'Hér getur þú skráð kostnað við frístund eða skólamat.',
+      description: 'Text under heading about comment about children',
     },
   }),
   inputs: defineMessages({
@@ -51,13 +56,8 @@ export const childrenForm = {
     },
     commentLabel: {
       id: 'fa.application:section.personalInterest.childrenForm.inputs.commentLabel',
-      defaultMessage: 'Auka upplýsingar',
+      defaultMessage: 'Önnur útgjöld',
       description: 'Label for comment about children',
-    },
-    commentPlaceholder: {
-      id: 'fa.application:section.personalInterest.childrenForm.inputs.commentPlaceholder',
-      defaultMessage: 'm.a. frístund eða skólamatur',
-      description: 'Placeholder for comment about children',
     },
   }),
 }

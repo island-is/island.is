@@ -12,12 +12,14 @@ import { useLocale } from '@island.is/localization'
 import { m } from '../../lib/messages'
 import DoubleColumnRow from '../../components/DoubleColumnRow'
 import {
-  getDeceasedHadAssets,
+  getDeceasedWasMarriedAndHadAssets,
   getEstateDataFromApplication,
+  parseLabel,
   valueToNumber,
 } from '../../lib/utils/helpers'
 import { InheritanceReportAsset } from '@island.is/clients/syslumenn'
 import DeceasedShare from '../../components/DeceasedShare'
+import { PREPAID_INHERITANCE } from '../../lib/constants'
 
 type OtherAssetsRepeaterProps = {
   field: {
@@ -33,14 +35,16 @@ export const OtherAssetsRepeater: FC<
 > = ({ application, field, errors }) => {
   const { id, props } = field
 
-  const deceasedHadAssets = getDeceasedHadAssets(application)
+  const deceasedHadAssets = getDeceasedWasMarriedAndHadAssets(application)
 
   const getDefaultValue = (
     fieldName: keyof InheritanceReportAsset,
     index = 0,
   ) =>
-    getEstateDataFromApplication(application)?.inheritanceReportInfo
-      ?.otherAssets?.[index]?.[fieldName] ?? ''
+    application.answers.applicationFor === PREPAID_INHERITANCE
+      ? {}
+      : getEstateDataFromApplication(application)?.inheritanceReportInfo
+          ?.otherAssets?.[index]?.[fieldName] ?? ''
 
   const { fields, append, remove } = useFieldArray<any>({
     name: id,
@@ -69,7 +73,7 @@ export const OtherAssetsRepeater: FC<
 
   useEffect(() => {
     calculateTotal()
-  }, [calculateTotal])
+  }, [fields, calculateTotal])
 
   const handleAddRepeaterFields = () => {
     const values = props.fields.map((field: object) => {
@@ -130,7 +134,9 @@ export const OtherAssetsRepeater: FC<
                           : defaultValue
                       }
                       format={field.format}
-                      label={formatMessage(field.title)}
+                      label={formatMessage(
+                        parseLabel(field.title, application.answers),
+                      )}
                       placeholder={
                         field.placeholder
                           ? formatMessage(field.placeholder)

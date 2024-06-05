@@ -1,4 +1,4 @@
-import { getValueViaPath } from '@island.is/application/core'
+import { YES, getValueViaPath } from '@island.is/application/core'
 import { FieldBaseProps } from '@island.is/application/types'
 import { formatCurrency } from '@island.is/application/ui-components'
 import {
@@ -20,8 +20,6 @@ import {
 import { EstateAssets } from '../../types'
 import { MessageDescriptor } from 'react-intl'
 import { useFormContext } from 'react-hook-form'
-import { YES } from '../../lib/constants'
-import ShareInput from '../../components/ShareInput'
 
 type CalcShared = {
   value: number
@@ -43,7 +41,6 @@ export const CalculateShare: FC<React.PropsWithChildren<FieldBaseProps>> = ({
   const { answers } = application
   const [, updateState] = useState<unknown>()
   const forceUpdate = useCallback(() => updateState({}), [])
-  const { formatMessage } = useLocale()
   const { setValue, getValues } = useFormContext()
   const [total, setTotal] = useState(0)
   const [debtsTotal, setDebtsTotal] = useState(0)
@@ -65,7 +62,7 @@ export const CalculateShare: FC<React.PropsWithChildren<FieldBaseProps>> = ({
 
   const hasCustomSpouseSharePercentage =
     deceasedWasInCohabitation &&
-    !!formValues?.customShare?.hasCustomSpouseSharePercentage?.includes(YES)
+    formValues?.customShare?.hasCustomSpouseSharePercentage === YES
 
   const [shareValues, setShareValues] = useState<
     Record<keyof Partial<EstateAssets>, ShareItem>
@@ -346,10 +343,7 @@ export const CalculateShare: FC<React.PropsWithChildren<FieldBaseProps>> = ({
 
   // Set the total value of debts + funeral costs
   useEffect(() => {
-    const funeralCost = getNumberValue('funeralCost.total')
-    const debtsTotalValue = getNumberValue('debts.debtsTotal') + funeralCost
-
-    setDebtsTotal(debtsTotalValue)
+    setDebtsTotal(getNumberValue('debts.debtsTotal'))
   }, [getNumberValue, total])
 
   // Set the total value of all deceased seperate assets
@@ -454,23 +448,7 @@ export const CalculateShare: FC<React.PropsWithChildren<FieldBaseProps>> = ({
 
   return (
     <Box>
-      {hasCustomSpouseSharePercentage && (
-        <GridRow>
-          <GridColumn span={['1/1', '1/2']}>
-            <ShareInput
-              name="customShare.customSpouseSharePercentage"
-              label={formatMessage(m.assetsToShareCustomSpousePercentage)}
-              onAfterChange={(val) => {
-                setCustomSpouseSharePercentage(val / 100)
-              }}
-              errorMessage={inputError}
-              required
-            />
-          </GridColumn>
-        </GridRow>
-      )}
-
-      <Box marginTop={4}>
+      <Box marginTop={2}>
         <TitleRow
           title={m.assetsToShareTotalAssets}
           value={roundedValueToNumber(total)}
