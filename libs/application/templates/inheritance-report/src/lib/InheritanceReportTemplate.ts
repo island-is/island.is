@@ -18,6 +18,7 @@ import { m } from './messages'
 import { inheritanceReportSchema } from './dataSchema'
 import {
   ApiActions,
+  ESTATE_INHERITANCE,
   InheritanceReportEvent,
   PREPAID_INHERITANCE,
   Roles,
@@ -37,6 +38,10 @@ const InheritanceReportTemplate: ApplicationTemplate<
       ? m.prerequisitesTitle.defaultMessage +
         ' - ' +
         m.applicationNamePrepaid.defaultMessage
+      : answers.applicationFor === ESTATE_INHERITANCE
+      ? m.prerequisitesTitle.defaultMessage +
+        ' - ' +
+        m.applicationNameEstate.defaultMessage
       : m.prerequisitesTitle.defaultMessage,
   institution: m.institution,
   dataSchema: inheritanceReportSchema,

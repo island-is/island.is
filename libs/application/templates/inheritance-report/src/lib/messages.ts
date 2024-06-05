@@ -72,6 +72,11 @@ export const m = defineMessages({
     defaultMessage: 'Fyrirframgreiddur arfur',
     description: '',
   },
+  applicationNameEstate: {
+    id: 'ir.application:applicationNameEstate',
+    defaultMessage: 'Dánarbú',
+    description: '',
+  },
   institutionName: {
     id: 'ir.application:institution.name',
     defaultMessage: 'Sýslumenn',
