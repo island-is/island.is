@@ -20,7 +20,7 @@ mutation UpdateCase($input: UpdateCaseInput!) {
       defenderNationalId
       defenderEmail
       defenderPhoneNumber
-      defendantWaivesRightToCounsel
+      defenderChoice
       defendantPlea
     }
     defenderName
