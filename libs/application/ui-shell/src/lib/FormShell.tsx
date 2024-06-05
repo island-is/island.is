@@ -206,26 +206,30 @@ export const FormShell: FC<
               >
                 <FormStepperV2
                   sections={
-                    sections &&
-                    sections.map((section, i) => (
-                      <Section
-                        key={`formStepper-${i}`}
-                        isActive={currentScreen.sectionIndex === i}
-                        section={formatMessage(
-                          section.title as MessageDescriptor,
-                        )}
-                        sectionIndex={i}
-                        subSections={
-                          section.children.length > 1
-                            ? parseSubsections(
-                                section.children,
-                                currentScreen.sectionIndex === i,
-                              )
-                            : undefined
-                        }
-                        isComplete={currentScreen.sectionIndex > i}
-                      />
-                    ))
+                    sections && [
+                      <Box marginLeft={1}>
+                        <Text variant="h4">{formatMessage(form.title)}</Text>
+                      </Box>,
+                      ...sections.map((section, i) => (
+                        <Section
+                          key={`formStepper-${i}`}
+                          isActive={currentScreen.sectionIndex === i}
+                          section={formatMessage(
+                            section.title as MessageDescriptor,
+                          )}
+                          sectionIndex={i}
+                          subSections={
+                            section.children.length > 1
+                              ? parseSubsections(
+                                  section.children,
+                                  currentScreen.sectionIndex === i,
+                                )
+                              : undefined
+                          }
+                          isComplete={currentScreen.sectionIndex > i}
+                        />
+                      )),
+                    ]
                   }
                 />
                 {FormLogo && (
