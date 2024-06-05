@@ -89,7 +89,7 @@ export async function tryRun(fn, name) {
   try {
     await fn()
   } catch (error) {
-    console.log({type: 'RUN FAILED', name, error })
+    console.log({ type: 'RUN FAILED', name, error })
     return false
   }
   return true;
@@ -166,12 +166,12 @@ export async function runCommand(cmd, cwd = undefined, env = {}) {
     options.env = { ...process.env, ...env };
     exec(cmd, options, (error, stdout, stderr) => {
       if (error) {
+        console.log(stderr)
+        console.log(stdout)
         reject(`Error: ${error.message}`)
         return
       }
 
-      console.log(stderr)
-      console.log(stdout)
       resolve(void 0)
     })
   })
