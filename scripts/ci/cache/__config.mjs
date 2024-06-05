@@ -165,7 +165,6 @@ export const caches = [
       const pkg = await getPackageJSON();
       const cypressVersion = pkg?.devDependencies?.cypress
       await runCommand('npx cypress install', ROOT, { CYPRESS_INSTALL_BINARY: cypressVersion })
-
     },
     path: cypressPath || '',
   },
