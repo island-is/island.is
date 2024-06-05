@@ -9,9 +9,8 @@ import { useEffect } from 'react'
 import { useFormContext, useFormState } from 'react-hook-form'
 import { CheckboxController } from '@island.is/shared/form-fields'
 import { m } from '../../lib/messages'
-import { YES } from '../../lib/constants'
 import { useLocale } from '@island.is/localization'
-import { getErrorViaPath } from '@island.is/application/core'
+import { YES, getErrorViaPath } from '@island.is/application/core'
 import { MessageDescriptor } from 'react-intl'
 
 export type DeceasedShareProps = {
