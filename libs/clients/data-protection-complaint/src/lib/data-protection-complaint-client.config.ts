@@ -14,8 +14,8 @@ export const DataProtectionComplaintClientConfig = defineConfig<
   schema,
   load(env) {
     return {
-      password: env.required('DATA_PROTECTION_COMPLAINT_API_PASSWORD'),
-      username: env.required('DATA_PROTECTION_COMPLAINT_API_USERNAME'),
+      password: env.required('DATA_PROTECTION_COMPLAINT_API_PASSWORD', ''),
+      username: env.required('DATA_PROTECTION_COMPLAINT_API_USERNAME', ''),
       XRoadProviderId: env.required(
         'DATA_PROTECTION_COMPLAINT_XROAD_PROVIDER_ID',
         '',
