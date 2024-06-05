@@ -33,7 +33,7 @@ export const ENABLED_MODULES = (process.env[ENV_ENABLED_CACHE] || '')
     return a
   }, {})
 
-export const cypressPath = process.env.CYPRESS_CACHE_PATH
+export const cypressPath = "/github/home/.cache/Cypress"
 export const cacheSuccess = JSON.parse(process.env[ENV_CACHE_SUCCESS] ?? '{}')
 export const initCache = process.env[ENV_INIT_CACHE] === 'true'
 

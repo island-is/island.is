@@ -10,9 +10,6 @@ inputs:
   keys:
     description: 'Keys'
     default: 'false'
-  cypress-path:
-    description: 'Path to cypress'
-    default: '/github/home/.cache/Cypress'
 outputs:
   success:
     description: 'Success'
@@ -37,7 +34,6 @@ runs:
       shell: bash
       env:
         ENABLE_CACHE: ${{ inputs.enable-cache }}
-        CYPRESS_PATH: ${{ inputs.cypress-path }}
         YAML_FILE: ./.tmp-dynamic-cache/action.yml
       run: |
         cd scripts/ci/cache
