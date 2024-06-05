@@ -29,5 +29,7 @@ runs:
         CYPRESS_PATH: ${{ inputs.cypress-path }}
         YAML_FILE: ./.tmp-dynamic-cache/action.yml
       run: |
-        node --experimental-network-imports scripts/ci/cache/generate-cache-steps.mjs
+        cd scripts/ci/cache
+        yarn install --immutable
+        node cache-action.mjs
     

@@ -1,9 +1,14 @@
-import { restoreCache as _restoreCache } from 'https://esm.sh/@actions/cache?raw';
+// @ts-check
+
+import { restoreCache as _restoreCache } from '@actions/cache';
+import { resolve } from 'node:path'
+import { ROOT } from './_common.mjs';
 
 export async function restoreCache({ key, path }) {
     let cache;
+    const paths = [path].map((e) => resolve(ROOT, e));
     try {
-        cache = await cache.restoreCache([path], key, [], {}, true)
+        cache = await _restoreCache(paths, key, [], {}, true)
     } catch (e) {
         return false;
     }

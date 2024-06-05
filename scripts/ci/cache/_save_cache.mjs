@@ -1,9 +1,14 @@
-import { saveCache as _saveCache } from 'https://esm.sh/@actions/cache?raw';
+// @ts-check
+
+import { saveCache as _saveCache } from '@actions/cache';
+import { ROOT } from './_common.mjs';
+import { resolve } from 'node:path'
 
 export async function saveCache({ key, path }) {
     let cache;
+    const paths = [path].map((e) => resolve(ROOT, e));
     try {
-        cache = await cache.saveCache([path], key, [], {}, true)
+        cache = await _saveCache(paths, key, {}, true)
     } catch (e) {
         return false;
     }
