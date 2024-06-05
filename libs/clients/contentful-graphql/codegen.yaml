@@ -2,25 +2,26 @@ schema:
   - https://graphql.contentful.com/content/v1/spaces/8k0h54kbe6bj/environments/master:
       headers:
         Authorization: Bearer ${CONTENTFUL_ACCESS_TOKEN}
-# documents:
-#   - 'src/**/*.graphql'
 generates:
   libs/clients/contentful-graphql/gen/schema.ts:
     plugins:
-      - 'typescript'
-      - 'typescript-operations'
-      # - 'typescript-graphql-request'
+      - typescript
     config:
       namingConvention:
         enumValues: keep
-  libs/clients/contentful-graphql/src/:
-    # documents:
-    #   - libs/clients/contentful-graphql/src/**/*.graphql
+  libs/clients/contentful-graphql/:
+    documents:
+      - libs/clients/contentful-graphql/src/**/*.graphql
     preset: 'near-operation-file'
     presetConfig:
-      # location from the `src` folder of the library
-      baseTypesPath: '../gen/schema'
+      baseTypesPath: './gen/schema'
     plugins:
-      - 'typescript'
-      - 'typescript-operations'
-      # - 'typescript-graphql-request'
+      - typescript-operations
+      - typescript-document-nodes
+    config:
+      namingConvention:
+        enumValues: keep
+      skipTypename: true
+hooks:
+  afterAllFileWrite:
+    - prettier --write
