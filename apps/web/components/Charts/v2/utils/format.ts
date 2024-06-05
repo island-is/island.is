@@ -71,9 +71,9 @@ export const formatValueForPresentation = (
 
 export const formatPercentageForPresentation = (
   percentage: number,
-  precision: number | undefined = undefined,
+  numberOfDecimals = 1,
 ) => {
-  return `${round(percentage * 100, precision ?? percentage < 0.1 ? 1 : 0)}%`
+  return `${round(percentage * 100, numberOfDecimals)}%`
 }
 
 export const createTickFormatter =
