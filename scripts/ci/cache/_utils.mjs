@@ -172,7 +172,7 @@ export async function runCommand(cmd, cwd = undefined, env = {}) {
 
       console.log(stderr)
       console.log(stdout)
-      resolve(stdout)
+      resolve(void 0)
     })
   })
 }

@@ -85,7 +85,7 @@ const failedJobs = []
 const pendingJobs = checkCache.filter((e) => !e.isOk).map((e) => e.id)
 const succesFullJobs = [];
 
-await Promise.all(
+await Promise.allSettled(
   checkCache.map(async (cache) => {
     if (!cache.isOk) {
       if (cache.dependsOn) {
