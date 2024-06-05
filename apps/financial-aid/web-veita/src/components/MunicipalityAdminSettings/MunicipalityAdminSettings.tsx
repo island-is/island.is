@@ -18,7 +18,10 @@ import {
   scrollToId,
 } from '@island.is/financial-aid/shared/lib'
 import MunicipalityNumberInput from './MunicipalityNumberInput/MunicipalityNumberInput'
-import { SelectedMunicipality } from '@island.is/financial-aid-web/veita/src/components'
+import {
+  NumberInput,
+  SelectedMunicipality,
+} from '@island.is/financial-aid-web/veita/src/components'
 import useCurrentMunicipalityState from '@island.is/financial-aid-web/veita/src/utils/useCurrentMunicipalityState'
 import ApiKeysSettings from './ApiKeysSettings/ApiKeysSettings'
 import ApiKeyInfo from './ApiKeysSettings/ApiKeysInfo'
@@ -37,6 +40,8 @@ const MunicipalityAdminSettings = ({ currentMunicipality }: Props) => {
 
   const [hasNavError, setHasNavError] = useState(false)
   const [hasAidError, setHasAidError] = useState(false)
+  const [hasDecemberCompensationError, setHasDecemberCompensationError] =
+    useState(false)
 
   const INDIVIDUAL = 'individual'
   const COHABITATION = 'cohabitation'
@@ -71,13 +76,24 @@ const MunicipalityAdminSettings = ({ currentMunicipality }: Props) => {
     return false
   }
 
+  const errorCheckDesemberAid = () => {
+    if (state.decemberCompensation === 0) {
+      setHasDecemberCompensationError(true)
+      scrollToId('input-desember')
+      return true
+    }
+
+    return false
+  }
+
   const submit = () => {
     const errorNav = errorCheckNav()
     const errorAid =
       errorCheckAid(state.individualAid, INDIVIDUAL, !errorNav) ||
       errorCheckAid(state.cohabitationAid, COHABITATION, !errorNav)
+    const errorDesember = errorCheckDesemberAid()
 
-    if (errorNav || errorAid) {
+    if (errorNav || errorAid || errorDesember) {
       return
     }
     updateMunicipality()
@@ -245,6 +261,29 @@ const MunicipalityAdminSettings = ({ currentMunicipality }: Props) => {
             setState({
               ...state,
               homepage: event.currentTarget.value,
+            })
+          }
+        />
+      ),
+    },
+    {
+      headline: 'Desemberstyrkur',
+      smallText: '',
+      component: (
+        <NumberInput
+          id={`input-desember`}
+          name={`decemberCompensation`}
+          label="Desemberstyrkur"
+          maximumInputLength={6}
+          value={state.decemberCompensation.toString()}
+          hasError={
+            hasDecemberCompensationError && state.decemberCompensation === 0
+          }
+          errorMessage={'Grunnupphæð þarf að vera hærri en 0'}
+          onUpdate={(value) =>
+            setState({
+              ...state,
+              decemberCompensation: value,
             })
           }
         />

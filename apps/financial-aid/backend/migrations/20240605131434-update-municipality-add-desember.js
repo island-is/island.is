@@ -1,21 +1,30 @@
-'use strict';
+'use strict'
 
 module.exports = {
-  async up (queryInterface, Sequelize) {
-    /**
-     * Add altering commands here.
-     *
-     * Example:
-     * await queryInterface.createTable('users', { id: Sequelize.INTEGER });
-     */
+  up: (queryInterface, Sequelize) => {
+    return queryInterface.sequelize.transaction((t) =>
+      Promise.all([
+        queryInterface.addColumn(
+          'municipality',
+          'december_compensation',
+          {
+            type: Sequelize.INTEGER,
+            allowNull: false,
+            defaultValue: 0,
+          },
+          { transaction: t },
+        ),
+      ]),
+    )
   },
 
-  async down (queryInterface, Sequelize) {
-    /**
-     * Add reverting commands here.
-     *
-     * Example:
-     * await queryInterface.dropTable('users');
-     */
-  }
-};
+  down: (queryInterface, Sequelize) => {
+    return queryInterface.sequelize.transaction((t) =>
+      Promise.all([
+        queryInterface.removeColumn('municipality', 'december_compensation', {
+          transaction: t,
+        }),
+      ]),
+    )
+  },
+}
