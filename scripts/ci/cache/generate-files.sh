@@ -1,5 +1,6 @@
 #!/bin/bash
-set -e
+set -euo pipefail
+
 
 if [ -z "$1" ]; then
   echo "Usage: $0 <path-to-tarball>"
@@ -15,7 +16,10 @@ touch "$marker"
 
 CMD="yarn codegen --skip-cache"
 
-node scripts/codegen.js --skip-cache 1>&2
+pwd
+ls
+ls node_modules
+yarn node scripts/codegen.js --skip-cache 1>&2
 
 # THIS IS VERY HACKISH AND MAKES IT DIFFICULT TO RUN ASYNC
 changed_files=$(find "$DIR"/apps "$DIR"/libs -type d \( \
