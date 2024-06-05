@@ -145,7 +145,6 @@ export const caches = [
       }
       const pkg = await getPackageJSON();
       const cypressVersion = pkg?.devDependencies?.cypress;
-      console.log(`cypressVersion: ${cypressVersion}`)
       return `cypress-cache-${HASH_VERSION}-${getPlatformString()}-${cypressVersion}`;
     },
     name: 'Cache Cypress',

@@ -129,9 +129,6 @@ export async function folderSizeIsEqualOrGreaterThan(
 
   try {
     const files = await readdir(folderPath)
-    if (!number) {
-      console.log(files)
-    }
     for (const file of files) {
       const filePath = join(folderPath, file)
       const stats = await stat(filePath)
@@ -149,9 +146,7 @@ export async function folderSizeIsEqualOrGreaterThan(
   } catch (err) {
     throw new Error(`Error reading folder: ${err.message}`)
   }
-  if (!number) {
-    console.log(totalSize)
-  }
+
   return number ? totalSize : totalSize >= size
 }
 
