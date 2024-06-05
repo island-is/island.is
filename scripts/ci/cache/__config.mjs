@@ -12,7 +12,7 @@ import {
   fileSizeIsEqualOrGreaterThan,
 } from './_utils.mjs'
 
-import { ENV_INIT_CACHE, ENV_ENABLED_CACHE } from './_const.mjs'
+import { ENV_INIT_CACHE, ENV_ENABLED_CACHE, ENV_CACHE_SUCCESS } from './_const.mjs'
 import { keyStorage } from './_key_storage.mjs'
 
 // When testing this is good to manipulate
@@ -28,7 +28,7 @@ export const ENABLED_MODULES = (process.env[ENV_ENABLED_CACHE] || '')
   }, {})
 
 export const cypressPath = process.env.CYPRESS_CACHE_PATH
-export const cacheSuccess = JSON.parse(process.env.CACHE_SUCCESS ?? '{}')
+export const cacheSuccess = JSON.parse(process.env[ENV_CACHE_SUCCESS] ?? '{}')
 export const initCache = process.env[ENV_INIT_CACHE] === 'true'
 
 if (Object.keys(ENABLED_MODULES).length === 0) {
