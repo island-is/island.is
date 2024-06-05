@@ -38,6 +38,11 @@ export const Confirmation: Form = buildForm({
       title: payment.general.sectionTitle,
       children: [],
     }),
+    buildSection({
+      id: 'confirmation',
+      title: externalData.dataProvider.confirmationStepTitle,
+      children: [],
+    }),
     buildCustomField({
       component: 'CustomFormConclusionSectionField',
       id: 'custom.conclusionSection',

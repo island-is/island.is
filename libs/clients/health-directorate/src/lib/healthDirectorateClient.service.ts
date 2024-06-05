@@ -173,8 +173,8 @@ export class HealthDirectorateClientService {
   async submitApplicationHealthcareWorkPermit(
     auth: User,
     request: HealthcareWorkPermitRequest,
-  ): Promise<UtbuaStarfsleyfiSkjalResponse> {
-    const item = await this.umsoknStarfsleyfiApiWith(
+  ): Promise<UtbuaStarfsleyfiSkjalResponse[]> {
+    const items = await this.umsoknStarfsleyfiApiWith(
       auth,
     ).umsoknStarfsleyfiUtbuaSkjalPost({
       utbuaStarfsleyfiSkjalRequest: {
@@ -188,11 +188,17 @@ export class HealthDirectorateClientService {
       },
     })
 
-    if (!item.base64String) {
-      throw new Error('Empty file')
+    if (!items || !Array.isArray(items) || items.length === 0) {
+      throw new Error('No items returned')
     }
 
-    return item
+    for (const item of items) {
+      if (!item.base64String) {
+        throw new Error('Empty file in one of the items')
+      }
+    }
+
+    return items
   }
 
   async submitApplicationHealthcareLicenseCertificate(

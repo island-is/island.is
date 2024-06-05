@@ -98,11 +98,10 @@ export const CustomFormConclusionSectionField: FC<
             conclusionMessages.pdfLinkButtonField.verificationLinkUrl,
           getPdfFiles: (application) => {
             const data = application.externalData.submitApplication.data as {
-              base64: string
+              base64String: string
             }[]
-
             return data.map((x, index) => ({
-              base64: x.base64,
+              base64: x.base64String,
               customButtonText: { is: 'TODO_IS', en: 'TODO_EN' },
               filename: `starfsleyfi_${index}.pdf`,
             }))

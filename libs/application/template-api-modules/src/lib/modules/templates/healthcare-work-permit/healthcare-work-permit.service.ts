@@ -59,7 +59,7 @@ const getCareerFoundationProgram = (
   relevantCareerFoundationPrograms: StudentTrackDto[],
 ): StudentTrackDto | undefined => {
   return relevantCareerFoundationPrograms.find(
-    (obj) => obj.programId === foundationProgram?.shortId,
+    (program) => program.programId === foundationProgram?.shortId,
   )
 }
 
@@ -74,6 +74,7 @@ export class HealthcareWorkPermitService extends BaseTemplateApiService {
     super(ApplicationTypes.HEALTHCARE_WORK_PERMIT)
   }
 
+  /* Fetching national registry information and validating that user is from within EES */
   async getNationalRegistryWithEESValidation({
     auth,
   }: TemplateApiModuleActionProps): Promise<EinstaklingurDTO> {
@@ -111,7 +112,7 @@ export class HealthcareWorkPermitService extends BaseTemplateApiService {
       heimilisfang,
       rikisfang,
       kennitala,
-      nafn,
+      nafn, // TODO Don't need this ?
       faedingarstadur,
     } = result
     return {
@@ -124,7 +125,7 @@ export class HealthcareWorkPermitService extends BaseTemplateApiService {
     }
   }
 
-  /* Which health care licenses does this user already have */
+  /* Fetching this users healthcare licenses */
   async getMyHealthcareLicenses({
     auth,
   }: TemplateApiModuleActionProps): Promise<StarfsleyfiUmsoknStarfsleyfi[]> {
@@ -133,7 +134,6 @@ export class HealthcareWorkPermitService extends BaseTemplateApiService {
         auth,
       )
 
-    // TODO Double check if this fails on empty response
     if (!result) {
       throw new TemplateApiError(
         {
@@ -147,45 +147,29 @@ export class HealthcareWorkPermitService extends BaseTemplateApiService {
     return result
   }
 
-  /* Info on different education programs that give work permit licenses */
-  async getEducationInfo({
-    auth,
-  }: TemplateApiModuleActionProps): Promise<NamsUpplysingar[]> {
-    const result: NamsUpplysingar[] = []
-    const test =
-      await this.healthDirectorateClientService.submitApplicationHealthcareWorkPermit(
-        auth,
-        {
-          name: 'Gervimaður Danmörk',
-          dateOfBirth: new Date('01.01.2000'),
-          citizenship: 'IS',
-          email: 'jonjonsson@landlaeknir.is',
-          phone: '0000000',
-          idProfession: 'HJ',
-          education: [
-            {
-              educationId: 81,
-              graduationDate: new Date('2009-11-03T00:00:00.0000000'),
-              school: 'Háskóli Íslands',
-            },
-          ],
-        },
-      )
+  // /* Info on different education programs that give work permit licenses */
+  // async getEducationInfo({
+  //   auth,
+  // }: TemplateApiModuleActionProps): Promise<NamsUpplysingar[]> {
+  //   const result =
+  //     this.healthDirectorateClientService.getHealthCareWorkPermitEducationInfo(
+  //       auth,
+  //     )
 
-    if (!result) {
-      throw new TemplateApiError(
-        {
-          title: errorMsg.noResponseEducationInfoTitle,
-          summary: errorMsg.noResponseEducationInfoMessage,
-        },
-        400,
-      )
-    }
+  //   if (!result) {
+  //     throw new TemplateApiError(
+  //       {
+  //         title: errorMsg.noResponseEducationInfoTitle,
+  //         summary: errorMsg.noResponseEducationInfoMessage,
+  //       },
+  //       400,
+  //     )
+  //   }
 
-    return result
-  }
+  //   return result
+  // }
 
-  /* The academic career of the logged in uses. Used to find which programmes are valid for work permit */
+  /* The academic career of the logged in user. Used to find which programmes are valid for work permit */
   async getMyAcademicCareer({
     auth,
   }: TemplateApiModuleActionProps): Promise<StudentTrackDto[]> {
@@ -211,23 +195,23 @@ export class HealthcareWorkPermitService extends BaseTemplateApiService {
   async processPermits({
     auth,
   }: TemplateApiModuleActionProps): Promise<PermitProgram[]> {
-    const [licenses, programs, careerProgramsHI, careerProgramsUNAK] =
-      await Promise.all([
-        this.healthDirectorateClientService.getHealthCareLicensesForWorkPermit(
-          auth,
-        ),
-        this.healthDirectorateClientService.getHealthCareWorkPermitEducationInfo(
-          auth,
-        ),
-        this.universityCareersClientService.getStudentTrackHistory(
-          auth,
-          UniversityId.UNIVERSITY_OF_ICELAND,
-        ),
-        this.universityCareersClientService.getStudentTrackHistory(
-          auth,
-          UniversityId.UNIVERSITY_OF_AKUREYRI,
-        ),
-      ])
+    const [licenses, programs, careerProgramsHI] = await Promise.all([
+      this.healthDirectorateClientService.getHealthCareLicensesForWorkPermit(
+        auth,
+      ),
+      this.healthDirectorateClientService.getHealthCareWorkPermitEducationInfo(
+        auth,
+      ),
+      this.universityCareersClientService.getStudentTrackHistory(
+        auth,
+        UniversityId.UNIVERSITY_OF_ICELAND,
+      ),
+      // this.universityCareersClientService.getStudentTrackHistory(
+      //   auth,
+      //   UniversityId.UNIVERSITY_OF_AKUREYRI,
+      // ),
+    ])
+    const careerProgramsUNAK: StudentTrackDto[] = []
 
     if (!programs) {
       throw new TemplateApiError(
@@ -261,58 +245,58 @@ export class HealthcareWorkPermitService extends BaseTemplateApiService {
       }
     }
 
-    const studentTrackDto = [
-      {
-        name: 'John Doe',
-        nationalId: '1234567890',
-        graduationDate: new Date('2024-01-15'),
-        trackNumber: 3,
-        institution: {
-          displayName: 'Háskóli Íslands',
-        },
-        school: 'School of Science',
-        faculty: 'Faculty of Mathematics',
-        studyProgram: 'Tannsmiður',
-        degree: 'Bachelor of Science',
-        programId: 'TSM261',
-      },
-      {
-        name: 'John Doe',
-        nationalId: '1234567890',
-        graduationDate: new Date('2024-05-15'),
-        trackNumber: 3,
-        institution: {},
-        school: 'School of Science',
-        faculty: 'Faculty of Mathematics',
-        studyProgram: 'Geislafræðingur',
-        degree: 'Bachelor of Science',
-        programId: 'GSL321',
-      },
-      {
-        name: 'John Doe',
-        nationalId: '1234567890',
-        graduationDate: new Date('2024-05-15'),
-        trackNumber: 3,
-        institution: {},
-        school: 'School of Science',
-        faculty: 'Faculty of Mathematics',
-        studyProgram: 'Hjúkrunafræðingur',
-        degree: 'Bachelor of Science',
-        programId: 'GSL260',
-      },
-      {
-        name: 'John',
-        nationalId: '1234567890',
-        graduationDate: new Date('2024-05-15'),
-        trackNumber: 3,
-        institution: {},
-        school: 'School of Science',
-        faculty: 'Faculty of Mathematics',
-        studyProgram: 'Ljósmóðir',
-        degree: 'Bachelor of Science',
-        programId: 'LJÓ443',
-      },
-    ] as StudentTrackDto[]
+    // const studentTrackDto = [
+    //   {
+    //     name: 'John Doe',
+    //     nationalId: '1234567890',
+    //     graduationDate: new Date('2024-01-15'),
+    //     trackNumber: 3,
+    //     institution: {
+    //       displayName: 'Háskóli Íslands',
+    //     },
+    //     school: 'School of Science',
+    //     faculty: 'Faculty of Mathematics',
+    //     studyProgram: 'Sjúkraþjálfari',
+    //     degree: 'Bachelor of Science',
+    //     programId: 'SJÚ441',
+    //   },
+    //   {
+    //     name: 'John Doe',
+    //     nationalId: '1234567890',
+    //     graduationDate: new Date('2024-05-15'),
+    //     trackNumber: 3,
+    //     institution: {},
+    //     school: 'School of Science',
+    //     faculty: 'Faculty of Mathematics',
+    //     studyProgram: 'Geislafræðingur',
+    //     degree: 'Bachelor of Science',
+    //     programId: 'GSL321',
+    //   },
+    //   {
+    //     name: 'John Doe',
+    //     nationalId: '1234567890',
+    //     graduationDate: new Date('2024-05-15'),
+    //     trackNumber: 3,
+    //     institution: {},
+    //     school: 'School of Science',
+    //     faculty: 'Faculty of Mathematics',
+    //     studyProgram: 'Hjúkrunafræðingur',
+    //     degree: 'Bachelor of Science',
+    //     programId: 'GSL260',
+    //   },
+    //   {
+    //     name: 'John',
+    //     nationalId: '1234567890',
+    //     graduationDate: new Date('2024-05-15'),
+    //     trackNumber: 3,
+    //     institution: {},
+    //     school: 'School of Science',
+    //     faculty: 'Faculty of Mathematics',
+    //     studyProgram: 'Ljósmóðir',
+    //     degree: 'Bachelor of Science',
+    //     programId: 'LJÓ443',
+    //   },
+    // ] as StudentTrackDto[]
 
     // Programs that give licenses to practice (permits)
     const permitValidPrograms = programs?.filter((program) => {
@@ -331,15 +315,15 @@ export class HealthcareWorkPermitService extends BaseTemplateApiService {
       permitValidPrograms?.map((item) => item.shortId),
     )
     // Programs user has graduated that are viable for work permit
-    const relevantCareerPermitPrograms = studentTrackDto?.filter((program) =>
+    const relevantCareerPermitPrograms = careerPrograms?.filter((program) =>
       validPermitIds.has(program.programId),
     )
     const validFoundationProgramIds = new Set(
       foundationPrograms?.map((item) => item.shortId),
     )
     // Programs user has graduated that are needed as foundation for certain work permit (Nursing for Midwife f.x)
-    const relevantCareerFoundationPrograms = studentTrackDto?.filter(
-      (program) => validFoundationProgramIds.has(program.programId),
+    const relevantCareerFoundationPrograms = careerPrograms?.filter((program) =>
+      validFoundationProgramIds.has(program.programId),
     )
 
     const programsToBeDisplayed =
@@ -491,9 +475,7 @@ export class HealthcareWorkPermitService extends BaseTemplateApiService {
   async submitApplication({
     application,
     auth,
-  }: TemplateApiModuleActionProps): Promise<UtbuaStarfsleyfiSkjalResponse> {
-    // TODO Change to custom type with base64 + .. ?
-
+  }: TemplateApiModuleActionProps): Promise<UtbuaStarfsleyfiSkjalResponse[]> {
     const { paymentUrl } = application.externalData.createCharge.data as {
       paymentUrl: string
     }
