@@ -17,7 +17,7 @@ touch "$marker"
 CMD="yarn codegen --skip-cache"
 
 echo RUNNING CODEGEN
-
+NODE_OPTIONS=--max-old-space-size=4096
 yarn node scripts/codegen.js --skip-cache 1>&2
 
 echo CODEGEN DONE

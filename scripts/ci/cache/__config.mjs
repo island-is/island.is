@@ -98,7 +98,9 @@ export const caches = [
     },
     init: async (path) => {
       const script = resolve(ROOT, 'scripts/ci/cache/generate-files.sh')
+      console.log(`Generating files to ${path} - THIS WILL TAKE A LOT OF TIME`)
       await runCommand(`bash ${script} "${path}"`, ROOT)
+      console.log(`WOW DONE`)
     },
   },
   {
