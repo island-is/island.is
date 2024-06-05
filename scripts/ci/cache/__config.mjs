@@ -107,8 +107,8 @@ export const caches = [
       return fileSizeIsEqualOrGreaterThan(path, 1000)
     },
     init: async (path) => {
-      const cmd = resolve(ROOT, 'scripts/ci/cache/generate-files.sh')
-      await runCommand(cmd, ROOT)
+      const script = resolve(ROOT, 'scripts/ci/cache/generate-files.sh')
+      await runCommand(`bash ${script} "${path}"`, ROOT)
     },
   },
   {

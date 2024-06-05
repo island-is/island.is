@@ -85,9 +85,9 @@ export function sleep(ms = 50) {
   return new Promise(resolve => setTimeout(resolve, ms))
 }
 
-export async function tryRun(fn, name) {
+export async function tryRun(fn, name, args = []) {
   try {
-    await fn()
+    await fn(...args)
   } catch (error) {
     console.log({ type: 'RUN FAILED', name, error })
     return false

@@ -113,7 +113,7 @@ await Promise.allSettled(
         `Failed restoring cache for ${cache.name}, trying to init and save`,
       )
       const fileName = Array.isArray(cache.path) ? cache.path.map((e) => resolve(ROOT, e)) : resolve(ROOT, cache.path)
-      const successInit = await tryRun(cache.init, cache.name)
+      const successInit = await tryRun(cache.init, cache.name, [fileName])
       const success = await cache.check(successInit, fileName)
       if (!success) {
         console.log(`Failed init and check for ${cache.name}`)
