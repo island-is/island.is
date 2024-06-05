@@ -6,7 +6,7 @@ import {
   buildSubSection,
 } from '@island.is/application/core'
 import { m } from '../../lib/messages'
-import { DebtTypes } from '@island.is/clients/syslumenn'
+import { DebtTypes } from '../../types'
 
 export const debtsAndFuneralCost = buildSection({
   id: 'debts',
