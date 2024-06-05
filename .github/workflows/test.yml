@@ -21,4 +21,5 @@ jobs:
       - name: Get cache
         uses: ./.github/actions/get-cache
         with:
+          github-token: ${{ secrets.GITHUB_TOKEN }}
           enable-cache: 'node_modules'
