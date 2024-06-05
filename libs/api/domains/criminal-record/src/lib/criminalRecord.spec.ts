@@ -1,13 +1,17 @@
 import { Test } from '@nestjs/testing'
 import { CriminalRecordService } from './criminalRecord.service'
-import { CriminalRecordApiModule } from '@island.is/clients/criminal-record'
+import {
+  CriminalRecordApiModule,
+  CriminalRecordClientConfig,
+} from '@island.is/clients/criminal-record'
 import {
   MOCK_NATIONAL_ID,
   MOCK_NATIONAL_ID_NOT_EXISTS,
   requestHandlers,
 } from './__mock-data__/requestHandlers'
 import { startMocking } from '@island.is/shared/mocking'
-import { createLogger } from 'winston'
+import { ConfigModule } from '@nestjs/config'
+import { XRoadConfig } from '@island.is/nest/config'
 
 startMocking(requestHandlers)
 
@@ -17,15 +21,10 @@ describe('CriminalRecordService', () => {
   beforeEach(async () => {
     const module = await Test.createTestingModule({
       imports: [
-        CriminalRecordApiModule.register({
-          xroadBaseUrl: 'http://localhost',
-          xroadClientId: '',
-          xroadPath: 'v2',
-          fetchOptions: {
-            logger: createLogger({
-              silent: true,
-            }),
-          },
+        CriminalRecordApiModule,
+        ConfigModule.forRoot({
+          isGlobal: true,
+          load: [CriminalRecordClientConfig, XRoadConfig],
         }),
       ],
       providers: [CriminalRecordService, { provide: 'CONFIG', useValue: {} }],
