@@ -80,10 +80,10 @@ export const Prerequisites: Form = buildForm({
               provider: ProcessPermitsApi,
               title: '',
             }),
-            buildDataProviderItem({
-              provider: EducationInfoApi,
-              title: '',
-            }),
+            // buildDataProviderItem({
+            //   provider: EducationInfoApi,
+            //   title: '',
+            // }),
           ],
         }),
       ],

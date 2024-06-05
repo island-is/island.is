@@ -218,17 +218,26 @@
             "content": {
               "text/plain": {
                 "schema": {
-                  "$ref": "#/components/schemas/UtbuaStarfsleyfiSkjalResponse"
+                  "type": "array",
+                  "items": {
+                    "$ref": "#/components/schemas/UtbuaStarfsleyfiSkjalResponse"
+                  }
                 }
               },
               "application/json": {
                 "schema": {
-                  "$ref": "#/components/schemas/UtbuaStarfsleyfiSkjalResponse"
+                  "type": "array",
+                  "items": {
+                    "$ref": "#/components/schemas/UtbuaStarfsleyfiSkjalResponse"
+                  }
                 }
               },
               "text/json": {
                 "schema": {
-                  "$ref": "#/components/schemas/UtbuaStarfsleyfiSkjalResponse"
+                  "type": "array",
+                  "items": {
+                    "$ref": "#/components/schemas/UtbuaStarfsleyfiSkjalResponse"
+                  }
                 }
               }
             }

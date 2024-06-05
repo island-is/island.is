@@ -7,6 +7,11 @@ export const externalData = {
       defaultMessage: 'Gagnaöflun',
       description: 'External data section title',
     },
+    confirmationStepTitle: {
+      id: 'hwp.application:externalData.dataProvider.confirmationStepTitle',
+      defaultMessage: 'Staðfesting',
+      description: 'Confirmation step title',
+    },
     pageTitle: {
       id: 'hwp.application:externalData.dataProvider.pageTitle',
       defaultMessage: 'Gagnaöflun',
