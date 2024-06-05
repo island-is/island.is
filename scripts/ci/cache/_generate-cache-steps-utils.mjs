@@ -60,10 +60,7 @@ export function createRuns(steps) {
           id,
           uses,
           ...value,
-          with: {
-            path: withValue.path,
-            key: withValue.key,
-          },
+          with: withValue,
         }
       }),
     },
