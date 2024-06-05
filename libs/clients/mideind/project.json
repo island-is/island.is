@@ -1,0 +1,61 @@
+{
+  "name": "clients-mideind",
+  "$schema": "../../../node_modules/nx/schemas/project-schema.json",
+  "sourceRoot": "libs/clients/mideind/src",
+  "projectType": "library",
+  "targets": {
+    "lint": {
+      "executor": "@nx/linter:eslint",
+      "outputs": [
+        "{options.outputFile}"
+      ],
+      "options": {
+        "lintFilePatterns": [
+          "libs/clients/mideind/**/*.ts"
+        ]
+      }
+    },
+    "test": {
+      "executor": "@nx/jest:jest",
+      "outputs": [
+        "{workspaceRoot}/coverage/{projectRoot}"
+      ],
+      "options": {
+        "jestConfig": "libs/clients/mideind/jest.config.ts",
+        "passWithNoTests": true
+      },
+      "configurations": {
+        "ci": {
+          "ci": true,
+          "codeCoverage": true
+        }
+      }
+    },
+    "update-openapi-document": {
+      "executor": "nx:run-commands",
+      "options": {
+        "commands": [
+          "curl https://api.greynir.is/openapi.json -H 'Accept: application/json' > src/clientConfig.json",
+          "jq '.components.schemas.ProblemDetails.additionalProperties = false' src/{args.apiVersion}/clientConfig.json > _.tmp && mv _.tmp src/{args.apiVersion}/clientConfig.json",
+          "prettier --write src/clientConfig.json"
+        ],
+        "parallel": false,
+        "cwd": "libs/clients/mideind"
+      }
+    },
+    "codegen/backend-client": {
+      "executor": "nx:run-commands",
+      "options": {
+        "command": "yarn openapi-generator -o libs/clients/mideind/gen/fetch -i libs/clients/mideind/src/clientConfig.json"
+      },
+      "outputs": [
+        "{projectRoot}/gen/fetch"
+      ]
+    }
+  },
+  "schema": "libs/clients/mideind/gen/fetch/api.graphql",
+  "tags": [
+    "lib:client",
+    "scope:client"
+  ]
+}

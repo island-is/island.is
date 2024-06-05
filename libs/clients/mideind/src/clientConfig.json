@@ -1,0 +1,2302 @@
+{
+  "openapi": "3.1.0",
+  "info": {
+    "title": "api.mideind.is",
+    "description": "M├ílt├ªkniveita Mi├░eindar (mideind.is)",
+    "version": "0.24.14"
+  },
+  "paths": {
+    "/translate/": {
+      "post": {
+        "tags": [
+          "translation"
+        ],
+        "summary": "Translate text",
+        "operationId": "translate_translate__post",
+        "requestBody": {
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/TranslationRequestData"
+              }
+            }
+          },
+          "required": true
+        },
+        "responses": {
+          "200": {
+            "description": "Successful Response",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/TranslationResponseData"
+                }
+              }
+            }
+          },
+          "422": {
+            "description": "Validation Error",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/HTTPValidationError"
+                }
+              }
+            }
+          }
+        },
+        "security": [
+          {
+            "CustomAPIKeyHeader": []
+          }
+        ]
+      }
+    },
+    "/translate/languages": {
+      "get": {
+        "tags": [
+          "translation"
+        ],
+        "summary": "List of available languages",
+        "operationId": "languages_translate_languages_get",
+        "responses": {
+          "200": {
+            "description": "Successful Response",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/LanguageResponseData"
+                }
+              }
+            }
+          }
+        },
+        "security": [
+          {
+            "CustomAPIKeyHeader": []
+          }
+        ]
+      }
+    },
+    "/translate/corrected": {
+      "post": {
+        "tags": [
+          "translation"
+        ],
+        "summary": "Translation feedback",
+        "operationId": "corrected_translate_corrected_post",
+        "requestBody": {
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/TranslationCorrectionData"
+              }
+            }
+          },
+          "required": true
+        },
+        "responses": {
+          "200": {
+            "description": "Successful Response",
+            "content": {
+              "application/json": {
+                "schema": {}
+              }
+            }
+          },
+          "422": {
+            "description": "Validation Error",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/HTTPValidationError"
+                }
+              }
+            }
+          }
+        },
+        "security": [
+          {
+            "CustomAPIKeyHeader": []
+          }
+        ]
+      }
+    },
+    "/translate/models": {
+      "get": {
+        "tags": [
+          "translation"
+        ],
+        "summary": "List of valid models and the default model if it's available",
+        "operationId": "model_info_translate_models_get",
+        "responses": {
+          "200": {
+            "description": "Successful Response",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/TranslationModelInfo"
+                }
+              }
+            }
+          }
+        },
+        "security": [
+          {
+            "CustomAPIKeyHeader": []
+          }
+        ]
+      }
+    },
+    "/grammar/": {
+      "post": {
+        "tags": [
+          "grammar"
+        ],
+        "summary": "Grammar correction using rule-based methods",
+        "operationId": "grammar_grammar__post",
+        "requestBody": {
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/GrammarRequestData"
+              }
+            }
+          },
+          "required": true
+        },
+        "responses": {
+          "200": {
+            "description": "Successful Response",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/GrammarResponseData"
+                }
+              }
+            }
+          },
+          "422": {
+            "description": "Validation Error",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/HTTPValidationError"
+                }
+              }
+            }
+          }
+        },
+        "security": [
+          {
+            "CustomAPIKeyHeader": []
+          }
+        ]
+      }
+    },
+    "/grammar_nn/": {
+      "post": {
+        "tags": [
+          "grammar"
+        ],
+        "summary": "Grammar correction using neural networks",
+        "operationId": "grammar_nn_grammar_nn__post",
+        "requestBody": {
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/GrammarNNRequestData"
+              }
+            }
+          },
+          "required": true
+        },
+        "responses": {
+          "200": {
+            "description": "Successful Response",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/GrammarNNResponseData"
+                }
+              }
+            }
+          },
+          "422": {
+            "description": "Validation Error",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/HTTPValidationError"
+                }
+              }
+            }
+          }
+        },
+        "security": [
+          {
+            "CustomAPIKeyHeader": []
+          }
+        ]
+      }
+    },
+    "/rat/v1/token": {
+      "get": {
+        "tags": [
+          "ratatoskur"
+        ],
+        "summary": "Token Endpoint V1",
+        "description": "Endpoint to generate and return access tokens\nfor the WebSocket functionality.",
+        "operationId": "token_endpoint_v1_rat_v1_token_get",
+        "responses": {
+          "200": {
+            "description": "Successful Response",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/AuthToken"
+                }
+              }
+            }
+          },
+          "500": {
+            "description": "Internal Server Error",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/HTTPErrorOutput"
+                }
+              }
+            }
+          }
+        },
+        "security": [
+          {
+            "CustomAPIKeyHeader": []
+          }
+        ]
+      }
+    },
+    "/rat/v1/query": {
+      "post": {
+        "tags": [
+          "ratatoskur"
+        ],
+        "summary": "Query V1",
+        "description": "Endpoint to handle natural language queries.",
+        "operationId": "query_v1_rat_v1_query_post",
+        "requestBody": {
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/QueryInput"
+              }
+            }
+          },
+          "required": true
+        },
+        "responses": {
+          "200": {
+            "description": "Successful Response",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/QueryOutput"
+                }
+              }
+            }
+          },
+          "500": {
+            "description": "Internal Server Error",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/HTTPErrorOutput"
+                }
+              }
+            }
+          },
+          "502": {
+            "description": "Bad Gateway: External Service Error (ASR/Query/TTS)",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/HTTPErrorOutput"
+                }
+              }
+            }
+          },
+          "504": {
+            "description": "Gateway Timeout: External Service Timeout (ASR/Query/TTS)",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/HTTPErrorOutput"
+                }
+              }
+            }
+          },
+          "422": {
+            "description": "Validation Error",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/HTTPValidationError"
+                }
+              }
+            }
+          }
+        },
+        "security": [
+          {
+            "CustomAPIKeyHeader": []
+          }
+        ]
+      }
+    },
+    "/rat/v1/clear_history": {
+      "post": {
+        "tags": [
+          "ratatoskur"
+        ],
+        "summary": "Clear History V1",
+        "description": "Request query service to clear history for a given client.",
+        "operationId": "clear_history_v1_rat_v1_clear_history_post",
+        "requestBody": {
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/ClearHistoryInput"
+              }
+            }
+          },
+          "required": true
+        },
+        "responses": {
+          "204": {
+            "description": "Successful Response"
+          },
+          "500": {
+            "description": "Internal Server Error",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/HTTPErrorOutput"
+                }
+              }
+            }
+          },
+          "502": {
+            "description": "Bad Gateway: External Service Error (ASR/Query/TTS)",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/HTTPErrorOutput"
+                }
+              }
+            }
+          },
+          "504": {
+            "description": "Gateway Timeout: External Service Timeout (ASR/Query/TTS)",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/HTTPErrorOutput"
+                }
+              }
+            }
+          },
+          "422": {
+            "description": "Validation Error",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/HTTPValidationError"
+                }
+              }
+            }
+          }
+        },
+        "security": [
+          {
+            "CustomAPIKeyHeader": []
+          }
+        ]
+      }
+    },
+    "/rat/v1/tts": {
+      "post": {
+        "tags": [
+          "ratatoskur"
+        ],
+        "summary": "Text To Speech V1",
+        "description": "Endpoint to handle text-to-speech requests.",
+        "operationId": "text_to_speech_v1_rat_v1_tts_post",
+        "requestBody": {
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/TTSInputV1"
+              }
+            }
+          },
+          "required": true
+        },
+        "responses": {
+          "200": {
+            "description": "Successful Response",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/TTSOutput"
+                }
+              }
+            }
+          },
+          "500": {
+            "description": "Internal Server Error",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/HTTPErrorOutput"
+                }
+              }
+            }
+          },
+          "502": {
+            "description": "Bad Gateway: External Service Error (ASR/Query/TTS)",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/HTTPErrorOutput"
+                }
+              }
+            }
+          },
+          "504": {
+            "description": "Gateway Timeout: External Service Timeout (ASR/Query/TTS)",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/HTTPErrorOutput"
+                }
+              }
+            }
+          },
+          "422": {
+            "description": "Validation Error",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/HTTPValidationError"
+                }
+              }
+            }
+          }
+        },
+        "deprecated": true,
+        "security": [
+          {
+            "CustomAPIKeyHeader": []
+          }
+        ]
+      }
+    },
+    "/rat/v1/settings": {
+      "get": {
+        "tags": [
+          "ratatoskur"
+        ],
+        "summary": "Settings V1",
+        "description": "Endpoint to get server settings remotely.",
+        "operationId": "settings_v1_rat_v1_settings_get",
+        "responses": {
+          "200": {
+            "description": "Successful Response",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "object",
+                  "title": "Response Settings V1 Rat V1 Settings Get"
+                }
+              }
+            }
+          }
+        },
+        "deprecated": true,
+        "security": [
+          {
+            "CustomAPIKeyHeader": []
+          }
+        ]
+      }
+    },
+    "/rat/v2/settings": {
+      "get": {
+        "tags": [
+          "ratatoskur"
+        ],
+        "summary": "Settings V2",
+        "description": "Endpoint to get server settings remotely.",
+        "operationId": "settings_v2_rat_v2_settings_get",
+        "responses": {
+          "200": {
+            "description": "Successful Response",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ServerSettingsV2"
+                }
+              }
+            }
+          }
+        },
+        "security": [
+          {
+            "CustomAPIKeyHeader": []
+          }
+        ]
+      }
+    },
+    "/rat/v2/tts": {
+      "post": {
+        "tags": [
+          "ratatoskur"
+        ],
+        "summary": "Text To Speech V2",
+        "description": "Endpoint to handle text-to-speech requests.",
+        "operationId": "text_to_speech_v2_rat_v2_tts_post",
+        "requestBody": {
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/TTSInputV2"
+              }
+            }
+          },
+          "required": true
+        },
+        "responses": {
+          "200": {
+            "description": "Successful Response",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/TTSOutput"
+                }
+              }
+            }
+          },
+          "500": {
+            "description": "Internal Server Error",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/HTTPErrorOutput"
+                }
+              }
+            }
+          },
+          "502": {
+            "description": "Bad Gateway: External Service Error (ASR/Query/TTS)",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/HTTPErrorOutput"
+                }
+              }
+            }
+          },
+          "504": {
+            "description": "Gateway Timeout: External Service Timeout (ASR/Query/TTS)",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/HTTPErrorOutput"
+                }
+              }
+            }
+          },
+          "422": {
+            "description": "Validation Error",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/HTTPValidationError"
+                }
+              }
+            }
+          }
+        },
+        "security": [
+          {
+            "CustomAPIKeyHeader": []
+          }
+        ]
+      }
+    },
+    "/long_asr/status/{job_id}": {
+      "get": {
+        "tags": [
+          "long_asr"
+        ],
+        "summary": "Longform ASR task status polling",
+        "description": "Poll the status of a longform ASR task. Returns the status\nof the task, along with metadata such as processing stage/percentage,\nand the final result if the task is done.",
+        "operationId": "long_asr_status_long_asr_status__job_id__get",
+        "security": [
+          {
+            "CustomAPIKeyHeader": []
+          }
+        ],
+        "parameters": [
+          {
+            "name": "job_id",
+            "in": "path",
+            "required": true,
+            "schema": {
+              "type": "string",
+              "title": "Job Id"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "Successful Response",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/LongASRPollingResponse"
+                }
+              }
+            }
+          },
+          "422": {
+            "description": "Validation Error",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/HTTPValidationError"
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/long_asr/": {
+      "post": {
+        "tags": [
+          "long_asr"
+        ],
+        "summary": "Start Longform ASR task",
+        "description": "Endpoint for longform ASR. Returns a job ID which the client\ncan use to poll the status of the job until it is complete.\nThis is done via the /long_asr/status/{job_id} endpoint.",
+        "operationId": "long_asr_long_asr__post",
+        "requestBody": {
+          "content": {
+            "multipart/form-data": {
+              "schema": {
+                "$ref": "#/components/schemas/Body_long_asr_long_asr__post"
+              }
+            }
+          },
+          "required": true
+        },
+        "responses": {
+          "200": {
+            "description": "Successful Response",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/LongASRResponse"
+                }
+              }
+            }
+          },
+          "422": {
+            "description": "Validation Error",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/HTTPValidationError"
+                }
+              }
+            }
+          }
+        },
+        "security": [
+          {
+            "CustomAPIKeyHeader": []
+          }
+        ]
+      }
+    }
+  },
+  "components": {
+    "schemas": {
+      "AnnotatedParagraphModel": {
+        "properties": {
+          "sentences": {
+            "items": {
+              "$ref": "#/components/schemas/AnnotatedSentenceModel"
+            },
+            "type": "array",
+            "title": "Sentences"
+          },
+          "total_tokens": {
+            "type": "integer",
+            "title": "Total Tokens"
+          }
+        },
+        "type": "object",
+        "required": [
+          "sentences",
+          "total_tokens"
+        ],
+        "title": "AnnotatedParagraphModel"
+      },
+      "AnnotatedSentenceModel": {
+        "properties": {
+          "original": {
+            "type": "string",
+            "title": "Original"
+          },
+          "tokens": {
+            "items": {
+              "$ref": "#/components/schemas/TokenModel"
+            },
+            "type": "array",
+            "title": "Tokens"
+          },
+          "annotations": {
+            "items": {
+              "$ref": "#/components/schemas/AnnotationModel"
+            },
+            "type": "array",
+            "title": "Annotations"
+          },
+          "corrected": {
+            "type": "string",
+            "title": "Corrected"
+          }
+        },
+        "type": "object",
+        "required": [
+          "original",
+          "tokens",
+          "annotations",
+          "corrected"
+        ],
+        "title": "AnnotatedSentenceModel"
+      },
+      "AnnotationModel": {
+        "properties": {
+          "start": {
+            "type": "integer",
+            "title": "Start"
+          },
+          "end": {
+            "type": "integer",
+            "title": "End"
+          },
+          "start_char": {
+            "type": "integer",
+            "title": "Start Char"
+          },
+          "end_char": {
+            "type": "integer",
+            "title": "End Char"
+          },
+          "code": {
+            "type": "string",
+            "title": "Code"
+          },
+          "text": {
+            "type": "string",
+            "title": "Text"
+          },
+          "references": {
+            "items": {
+              "type": "string"
+            },
+            "type": "array",
+            "title": "References"
+          },
+          "detail": {
+            "type": "string",
+            "title": "Detail"
+          },
+          "suggest": {
+            "type": "string",
+            "title": "Suggest"
+          }
+        },
+        "type": "object",
+        "required": [
+          "start",
+          "end",
+          "start_char",
+          "end_char",
+          "code",
+          "text",
+          "references",
+          "detail",
+          "suggest"
+        ],
+        "title": "AnnotationModel"
+      },
+      "AnnotationStats": {
+        "properties": {
+          "num_tokens": {
+            "type": "integer",
+            "title": "Num Tokens"
+          },
+          "num_sentences": {
+            "type": "integer",
+            "title": "Num Sentences"
+          },
+          "num_parsed": {
+            "type": "integer",
+            "title": "Num Parsed"
+          },
+          "num_chars": {
+            "type": "integer",
+            "title": "Num Chars"
+          },
+          "ambiguity": {
+            "type": "number",
+            "title": "Ambiguity"
+          }
+        },
+        "type": "object",
+        "required": [
+          "num_tokens",
+          "num_sentences",
+          "num_parsed",
+          "num_chars",
+          "ambiguity"
+        ],
+        "title": "AnnotationStats"
+      },
+      "AuthToken": {
+        "properties": {
+          "token": {
+            "type": "string",
+            "title": "Token",
+            "description": "Token value."
+          },
+          "expires_at": {
+            "type": "string",
+            "format": "date-time",
+            "title": "Expires At",
+            "description": "Expiration timestamp for token."
+          }
+        },
+        "additionalProperties": false,
+        "type": "object",
+        "required": [
+          "token",
+          "expires_at"
+        ],
+        "title": "AuthToken",
+        "description": "Token which allows access to a WebSocket session."
+      },
+      "Body_long_asr_long_asr__post": {
+        "properties": {
+          "file": {
+            "type": "string",
+            "format": "binary",
+            "title": "File"
+          },
+          "postprocess": {
+            "type": "boolean",
+            "title": "Postprocess",
+            "default": true
+          }
+        },
+        "type": "object",
+        "required": [
+          "file"
+        ],
+        "title": "Body_long_asr_long_asr__post"
+      },
+      "ChangeEnum": {
+        "type": "string",
+        "enum": [
+          "edit",
+          "delete",
+          "insert"
+        ],
+        "title": "ChangeEnum"
+      },
+      "ClearHistoryAction": {
+        "type": "string",
+        "enum": [
+          "clear",
+          "clear_all"
+        ],
+        "title": "ClearHistoryAction",
+        "description": "Available actions for the clear history endpoint."
+      },
+      "ClearHistoryInput": {
+        "properties": {
+          "url": {
+            "type": "string",
+            "maxLength": 2083,
+            "minLength": 1,
+            "format": "uri",
+            "title": "Url",
+            "description": "Query service URL to use.",
+            "default": "https://greynir.is/"
+          },
+          "action": {
+            "$ref": "#/components/schemas/ClearHistoryAction"
+          },
+          "client_id": {
+            "type": "string",
+            "title": "Client Id",
+            "description": "Unique identifier for the client."
+          }
+        },
+        "additionalProperties": false,
+        "type": "object",
+        "required": [
+          "action",
+          "client_id"
+        ],
+        "title": "ClearHistoryInput",
+        "description": "Input for clearing query history."
+      },
+      "DiffAnnotatedText": {
+        "properties": {
+          "original_text": {
+            "type": "string",
+            "title": "Original Text",
+            "description": "The original text sent."
+          },
+          "changed_text": {
+            "type": "string",
+            "title": "Changed Text",
+            "description": "The text after automatic correction."
+          },
+          "diff_annotations": {
+            "items": {
+              "$ref": "#/components/schemas/DiffAnnotation"
+            },
+            "type": "array",
+            "title": "Diff Annotations",
+            "description": "A list of annotations marking the changes between the original and the corrected text."
+          }
+        },
+        "type": "object",
+        "required": [
+          "original_text",
+          "changed_text",
+          "diff_annotations"
+        ],
+        "title": "DiffAnnotatedText"
+      },
+      "DiffAnnotation": {
+        "properties": {
+          "orig_start_idx": {
+            "type": "integer",
+            "title": "Orig Start Idx"
+          },
+          "orig_end_idx": {
+            "type": "integer",
+            "title": "Orig End Idx"
+          },
+          "orig_str": {
+            "type": "string",
+            "title": "Orig Str"
+          },
+          "changed_start_idx": {
+            "type": "integer",
+            "title": "Changed Start Idx"
+          },
+          "changed_end_idx": {
+            "type": "integer",
+            "title": "Changed End Idx"
+          },
+          "changed_str": {
+            "type": "string",
+            "title": "Changed Str"
+          },
+          "change_type": {
+            "$ref": "#/components/schemas/ChangeEnum"
+          }
+        },
+        "type": "object",
+        "required": [
+          "orig_start_idx",
+          "orig_end_idx",
+          "orig_str",
+          "changed_start_idx",
+          "changed_end_idx",
+          "changed_str",
+          "change_type"
+        ],
+        "title": "DiffAnnotation"
+      },
+      "DiffEntity": {
+        "type": "string",
+        "enum": [
+          "none",
+          "char",
+          "word",
+          "token",
+          "regex"
+        ],
+        "title": "DiffEntity"
+      },
+      "GrammarNNRequestData": {
+        "properties": {
+          "text": {
+            "items": {
+              "type": "string"
+            },
+            "type": "array",
+            "title": "Text",
+            "description": "The text to be corrected"
+          },
+          "diff_entity": {
+            "$ref": "#/components/schemas/DiffEntity",
+            "description": "The granularity of the diff annotation. If none, no diff annotation is returned.",
+            "default": "none"
+          }
+        },
+        "type": "object",
+        "title": "GrammarNNRequestData"
+      },
+      "GrammarNNResponseData": {
+        "properties": {
+          "results": {
+            "items": {
+              "$ref": "#/components/schemas/DiffAnnotatedText"
+            },
+            "type": "array",
+            "title": "Results",
+            "description": "The correction results with references to the original text."
+          }
+        },
+        "type": "object",
+        "required": [
+          "results"
+        ],
+        "title": "GrammarNNResponseData"
+      },
+      "GrammarRequestData": {
+        "properties": {
+          "text": {
+            "type": "string",
+            "title": "Text",
+            "description": "Text to examine",
+            "default": "J├│n sag├░i: \"M├⌐r langar ├¡ ├¡s.\" Anna sklidi eki hvenrig J├│n gat bor├░a├░ sovna mikin ├¡s. Sem betur fer var ├¡sb├║├░ ├í n├ªsta leyti."
+          },
+          "options": {
+            "$ref": "#/components/schemas/GrammarRequestOptions"
+          }
+        },
+        "type": "object",
+        "required": [
+          "options"
+        ],
+        "title": "GrammarRequestData"
+      },
+      "GrammarRequestOptions": {
+        "properties": {
+          "annotate_unparsed_sentences": {
+            "type": "boolean",
+            "title": "Annotate Unparsed Sentences",
+            "description": "Deprecated. By default, sentences that fail parsing are annotated as containing errors. Setting this option to False is the same as setting 'E001' into 'ignore_rules'.",
+            "default": true
+          },
+          "suppress_suggestions": {
+            "type": "boolean",
+            "title": "Suppress Suggestions",
+            "description": "Suppress less likely suggestions",
+            "default": false
+          },
+          "ignore_words": {
+            "items": {
+              "type": "string"
+            },
+            "type": "array",
+            "title": "Ignore Words",
+            "description": "Not yet implemented.\nDo not attempt to correct spelling on these words.",
+            "default": []
+          },
+          "ignore_rules": {
+            "items": {
+              "type": "string"
+            },
+            "type": "array",
+            "title": "Ignore Rules",
+            "description": "Do not report errors detected by these rules.",
+            "default": []
+          },
+          "custom": {
+            "type": "string",
+            "title": "Custom",
+            "description": "Use a set of custom settings.",
+            "default": ""
+          },
+          "readability_analysis": {
+            "type": "boolean",
+            "title": "Readability Analysis",
+            "description": "Analyze readability of text.",
+            "default": false
+          },
+          "rare_word_analysis": {
+            "type": "boolean",
+            "title": "Rare Word Analysis",
+            "description": "Report on rare words in text.",
+            "default": false
+          }
+        },
+        "type": "object",
+        "title": "GrammarRequestOptions"
+      },
+      "GrammarResponseData": {
+        "properties": {
+          "paragraphs": {
+            "items": {
+              "$ref": "#/components/schemas/AnnotatedParagraphModel"
+            },
+            "type": "array",
+            "title": "Paragraphs"
+          },
+          "stats": {
+            "$ref": "#/components/schemas/AnnotationStats"
+          },
+          "text": {
+            "type": "string",
+            "title": "Text"
+          },
+          "valid": {
+            "type": "boolean",
+            "title": "Valid"
+          },
+          "readability_stats": {
+            "$ref": "#/components/schemas/ReadabilityStats"
+          },
+          "rare_words": {
+            "items": {
+              "type": "string"
+            },
+            "type": "array",
+            "title": "Rare Words"
+          }
+        },
+        "type": "object",
+        "required": [
+          "paragraphs",
+          "stats",
+          "text",
+          "valid",
+          "readability_stats",
+          "rare_words"
+        ],
+        "title": "GrammarResponseData"
+      },
+      "HTTPErrorOutput": {
+        "properties": {
+          "detail": {
+            "type": "string",
+            "title": "Detail"
+          }
+        },
+        "type": "object",
+        "required": [
+          "detail"
+        ],
+        "title": "HTTPErrorOutput"
+      },
+      "HTTPValidationError": {
+        "properties": {
+          "detail": {
+            "items": {
+              "$ref": "#/components/schemas/ValidationError"
+            },
+            "type": "array",
+            "title": "Detail"
+          }
+        },
+        "type": "object",
+        "title": "HTTPValidationError"
+      },
+      "LANGS": {
+        "type": "string",
+        "enum": [
+          "is",
+          "en",
+          "fo",
+          "pl"
+        ],
+        "title": "LANGS"
+      },
+      "LangPairInfo": {
+        "properties": {
+          "src": {
+            "type": "string",
+            "title": "Src"
+          },
+          "tgt": {
+            "type": "string",
+            "title": "Tgt"
+          },
+          "availableModels": {
+            "items": {
+              "type": "string"
+            },
+            "type": "array",
+            "title": "Availablemodels"
+          },
+          "defaultModel": {
+            "type": "string",
+            "title": "Defaultmodel"
+          }
+        },
+        "type": "object",
+        "required": [
+          "src",
+          "tgt",
+          "availableModels",
+          "defaultModel"
+        ],
+        "title": "LangPairInfo"
+      },
+      "LanguageInfo": {
+        "properties": {
+          "language": {
+            "type": "string",
+            "title": "Language",
+            "description": "Language code",
+            "default": "en"
+          }
+        },
+        "type": "object",
+        "required": [
+          "language"
+        ],
+        "title": "LanguageInfo"
+      },
+      "LanguageResponseData": {
+        "properties": {
+          "languages": {
+            "items": {
+              "$ref": "#/components/schemas/LanguageInfo"
+            },
+            "type": "array",
+            "title": "Languages",
+            "description": "List of available languages"
+          }
+        },
+        "type": "object",
+        "required": [
+          "languages"
+        ],
+        "title": "LanguageResponseData"
+      },
+      "LongASRPollingResponse": {
+        "properties": {
+          "job_id": {
+            "type": "string",
+            "title": "Job ID",
+            "description": "Job ID"
+          },
+          "status": {
+            "type": "string",
+            "title": "Status",
+            "description": "Task status"
+          },
+          "info": {
+            "type": "object",
+            "title": "Info",
+            "description": "Task metadata (stage, progress)"
+          },
+          "error": {
+            "type": "string",
+            "title": "Error",
+            "description": "Error message"
+          },
+          "result": {
+            "$ref": "#/components/schemas/LongASRResult",
+            "title": "Result",
+            "description": "Task result object"
+          }
+        },
+        "type": "object",
+        "required": [
+          "job_id",
+          "status",
+          "info",
+          "error",
+          "result"
+        ],
+        "title": "LongASRPollingResponse"
+      },
+      "LongASRResponse": {
+        "properties": {
+          "job_id": {
+            "type": "string",
+            "title": "Job ID",
+            "description": "Job ID"
+          },
+          "error": {
+            "type": "string",
+            "title": "Error",
+            "description": "Error message"
+          }
+        },
+        "type": "object",
+        "required": [
+          "job_id",
+          "error"
+        ],
+        "title": "LongASRResponse"
+      },
+      "LongASRResult": {
+        "properties": {
+          "job_id": {
+            "type": "string",
+            "title": "Job ID",
+            "description": "Job ID"
+          },
+          "transcript": {
+            "type": "string",
+            "title": "Transcript",
+            "description": "Non-postprocessed ASR transcript"
+          },
+          "text": {
+            "type": "string",
+            "title": "Text",
+            "description": "Postprocessed ASR text"
+          },
+          "error": {
+            "type": "string",
+            "title": "Error",
+            "description": "Error message"
+          },
+          "duration": {
+            "type": "number",
+            "title": "Duration",
+            "description": "Duration of the processed media file in seconds"
+          }
+        },
+        "type": "object",
+        "required": [
+          "job_id",
+          "transcript",
+          "text",
+          "error",
+          "duration"
+        ],
+        "title": "LongASRResult"
+      },
+      "QueryInput": {
+        "properties": {
+          "q": {
+            "type": "string",
+            "title": "Q",
+            "description": "Query or multiple queries separated by `|`."
+          },
+          "options": {
+            "$ref": "#/components/schemas/QueryOptions"
+          },
+          "tts": {
+            "type": "boolean",
+            "title": "Tts",
+            "description": "If true, query answer is sent to TTS service.",
+            "default": true
+          },
+          "tts_options": {
+            "$ref": "#/components/schemas/TTSOptionsV1"
+          }
+        },
+        "additionalProperties": false,
+        "type": "object",
+        "required": [
+          "q"
+        ],
+        "title": "QueryInput",
+        "description": "Contains query and settings for query service."
+      },
+      "QueryOptions": {
+        "properties": {
+          "url": {
+            "type": "string",
+            "maxLength": 2083,
+            "minLength": 1,
+            "format": "uri",
+            "title": "Url",
+            "description": "Query service URL to use.",
+            "default": "https://greynir.is/"
+          },
+          "client_id": {
+            "type": "string",
+            "maxLength": 256,
+            "title": "Client Id",
+            "description": "Unique identifier for the client."
+          },
+          "client_type": {
+            "type": "string",
+            "maxLength": 80,
+            "title": "Client Type",
+            "description": "Client type."
+          },
+          "client_version": {
+            "type": "string",
+            "maxLength": 10,
+            "title": "Client Version",
+            "description": "Client version."
+          },
+          "latitude": {
+            "type": "number",
+            "maximum": 90.0,
+            "minimum": -90.0,
+            "title": "Latitude",
+            "description": "Latitude of client when query is made."
+          },
+          "longitude": {
+            "type": "number",
+            "maximum": 180.0,
+            "minimum": -180.0,
+            "title": "Longitude",
+            "description": "Longitude of client when query is made."
+          }
+        },
+        "additionalProperties": false,
+        "type": "object",
+        "title": "QueryOptions",
+        "description": "Settings and information for the query service."
+      },
+      "QueryOutput": {
+        "properties": {
+          "answer": {
+            "type": "string",
+            "title": "Answer",
+            "description": "Textual answer to query."
+          },
+          "error": {
+            "type": "string",
+            "title": "Error",
+            "description": "Error from query service."
+          },
+          "audio": {
+            "type": "string",
+            "title": "Audio",
+            "description": "URL pointing to speech synthesized answer."
+          },
+          "key": {
+            "type": "string",
+            "title": "Key",
+            "description": "Key information in query/answer."
+          },
+          "source": {
+            "type": "string",
+            "title": "Source",
+            "description": "Source for the query answer."
+          },
+          "image": {
+            "type": "string",
+            "title": "Image",
+            "description": "Link to image to display."
+          },
+          "command": {
+            "type": "string",
+            "title": "Command",
+            "description": "Javascript payload."
+          },
+          "open_url": {
+            "type": "string",
+            "title": "Open Url",
+            "description": "URL for client to open."
+          },
+          "num_parsed_sent": {
+            "type": "integer",
+            "title": "Num Parsed Sent",
+            "description": "Number of parsed sentences."
+          },
+          "num_sent": {
+            "type": "integer",
+            "title": "Num Sent",
+            "description": "Number of sentences."
+          },
+          "q": {
+            "type": "string",
+            "title": "Q",
+            "description": "Beautified query."
+          },
+          "q_raw": {
+            "type": "string",
+            "title": "Q Raw",
+            "description": "Raw query."
+          },
+          "qtype": {
+            "type": "string",
+            "title": "Qtype",
+            "description": "Inferred type of query."
+          },
+          "response": {
+            "title": "Response",
+            "description": "Additional data in query answer."
+          },
+          "valid": {
+            "type": "boolean",
+            "title": "Valid",
+            "description": "Whether the query was valid or not."
+          },
+          "voice": {
+            "type": "string",
+            "title": "Voice",
+            "description": "Phonetically transcribed answer (sent to TTS)."
+          },
+          "voice_id": {
+            "type": "string",
+            "title": "Voice Id",
+            "description": "ID/Name of TTS voice used."
+          },
+          "voice_locale": {
+            "type": "string",
+            "title": "Voice Locale",
+            "description": "Locale of TTS voice."
+          }
+        },
+        "additionalProperties": true,
+        "type": "object",
+        "required": [
+          "answer",
+          "error",
+          "audio",
+          "key",
+          "source",
+          "image",
+          "command",
+          "open_url",
+          "num_parsed_sent",
+          "num_sent",
+          "q",
+          "q_raw",
+          "qtype",
+          "response",
+          "valid",
+          "voice",
+          "voice_id",
+          "voice_locale"
+        ],
+        "title": "QueryOutput"
+      },
+      "ReadabilityStats": {
+        "properties": {
+          "flesch_kincaid_score": {
+            "type": "number",
+            "title": "Flesch Kincaid Score"
+          },
+          "flesch_kincaid_feedback": {
+            "type": "string",
+            "title": "Flesch Kincaid Feedback"
+          }
+        },
+        "type": "object",
+        "required": [
+          "flesch_kincaid_score",
+          "flesch_kincaid_feedback"
+        ],
+        "title": "ReadabilityStats"
+      },
+      "ServerSettingsV2": {
+        "properties": {
+          "name": {
+            "type": "string",
+            "title": "Name",
+            "description": "Software name.",
+            "default": "Ratatoskur"
+          },
+          "version": {
+            "type": "string",
+            "title": "Version",
+            "description": "Software version.",
+            "default": "0.24.14"
+          },
+          "author": {
+            "type": "string",
+            "title": "Author",
+            "description": "Software author.",
+            "default": "Mi├░eind ehf."
+          },
+          "copyright": {
+            "type": "string",
+            "title": "Copyright",
+            "description": "Software copyright.",
+            "default": "(C) 2023 Mi├░eind ehf."
+          },
+          "asr": {
+            "type": "object",
+            "title": "Asr",
+            "description": "Defaults and available options for ASR.",
+            "default": {
+              "bit_rate": 16,
+              "channels": 1,
+              "engine": "azure",
+              "format": "pcm",
+              "language": "is-IS",
+              "long_running": false,
+              "max_alternatives": 10,
+              "sample_rate": 16000
+            }
+          },
+          "query": {
+            "type": "object",
+            "title": "Query",
+            "description": "Defaults and available options for querying.",
+            "default": {}
+          },
+          "tts": {
+            "type": "object",
+            "title": "Tts",
+            "description": "Defaults and available options for TTS.",
+            "default": {
+              "audio_format": "mp3",
+              "available_voices": {
+                "Abbi": {
+                  "id": "en-GB-AbbiNeural",
+                  "lang": "en-GB",
+                  "service": "Azure",
+                  "style": "female"
+                },
+                "Abril": {
+                  "id": "es-ES-AbrilNeural",
+                  "lang": "es-ES",
+                  "service": "Azure",
+                  "style": "female"
+                },
+                "Agnieszka": {
+                  "id": "pl-PL-AgnieszkaNeural",
+                  "lang": "pl-PL",
+                  "service": "Azure",
+                  "style": "female"
+                },
+                "Alain": {
+                  "id": "fr-FR-AlainNeural",
+                  "lang": "fr-FR",
+                  "service": "Azure",
+                  "style": "male"
+                },
+                "Alfie": {
+                  "id": "en-GB-AlfieNeural",
+                  "lang": "en-GB",
+                  "service": "Azure",
+                  "style": "male"
+                },
+                "Alvaro": {
+                  "id": "es-ES-AlvaroNeural",
+                  "lang": "es-ES",
+                  "service": "Azure",
+                  "style": "male"
+                },
+                "Brandon": {
+                  "id": "en-US-BrandonNeural",
+                  "lang": "en-US",
+                  "service": "Azure",
+                  "style": "male"
+                },
+                "Brigitte": {
+                  "id": "fr-FR-BrigitteNeural",
+                  "lang": "fr-FR",
+                  "service": "Azure",
+                  "style": "female"
+                },
+                "Christel": {
+                  "id": "da-DK-ChristelNeural",
+                  "lang": "da-DK",
+                  "service": "Azure",
+                  "style": "female"
+                },
+                "Conrad": {
+                  "id": "de-DE-ConradNeural",
+                  "lang": "de-DE",
+                  "service": "Azure",
+                  "style": "male"
+                },
+                "Dora": {
+                  "id": "Dora",
+                  "lang": "is-IS",
+                  "service": "AWS Polly",
+                  "style": "female"
+                },
+                "Elke": {
+                  "id": "de-DE-ElkeNeural",
+                  "lang": "de-DE",
+                  "service": "Azure",
+                  "style": "female"
+                },
+                "Finn": {
+                  "id": "nb-NO-FinnNeural",
+                  "lang": "nb-NO",
+                  "service": "Azure",
+                  "style": "male"
+                },
+                "Gudrun": {
+                  "id": "is-IS-GudrunNeural",
+                  "lang": "is-IS",
+                  "service": "Azure",
+                  "style": "female"
+                },
+                "Gunnar": {
+                  "id": "is-IS-GunnarNeural",
+                  "lang": "is-IS",
+                  "service": "Azure",
+                  "style": "male"
+                },
+                "Iselin": {
+                  "id": "nb-NO-IselinNeural",
+                  "lang": "nb-NO",
+                  "service": "Azure",
+                  "style": "female"
+                },
+                "Jenny": {
+                  "id": "en-US-JennyNeural",
+                  "lang": "en-US",
+                  "service": "Azure",
+                  "style": "female"
+                },
+                "Jeppe": {
+                  "id": "da-DK-JeppeNeural",
+                  "lang": "da-DK",
+                  "service": "Azure",
+                  "style": "male"
+                },
+                "Karl": {
+                  "id": "Karl",
+                  "lang": "is-IS",
+                  "service": "AWS Polly",
+                  "style": "male"
+                },
+                "Marek": {
+                  "id": "pl-PL-MarekNeural",
+                  "lang": "pl-PL",
+                  "service": "Azure",
+                  "style": "male"
+                },
+                "Mattias": {
+                  "id": "sv-SE-MattiasNeural",
+                  "lang": "sv-SE",
+                  "service": "Azure",
+                  "style": "male"
+                },
+                "Sofie": {
+                  "id": "sv-SE-SofieNeural",
+                  "lang": "sv-SE",
+                  "service": "Azure",
+                  "style": "female"
+                }
+              },
+              "speed": 1.0,
+              "text_format": "ssml",
+              "transcription_options": {
+                "amounts": true,
+                "dates": true,
+                "domains": true,
+                "emails": true,
+                "measurements": true,
+                "numbers": false,
+                "ordinals": false,
+                "percentages": true,
+                "urls": true,
+                "years": true
+              },
+              "voice": "Gudrun"
+            }
+          }
+        },
+        "additionalProperties": false,
+        "type": "object",
+        "required": [
+          "name",
+          "version",
+          "author",
+          "copyright",
+          "asr",
+          "query",
+          "tts"
+        ],
+        "title": "ServerSettingsV2"
+      },
+      "TTSInputV1": {
+        "properties": {
+          "text": {
+            "type": "string",
+            "title": "Text",
+            "description": "Text to be synthesized."
+          },
+          "options": {
+            "$ref": "#/components/schemas/TTSOptionsV1"
+          }
+        },
+        "additionalProperties": false,
+        "type": "object",
+        "required": [
+          "text"
+        ],
+        "title": "TTSInputV1",
+        "description": "Contains text and settings for speech synthesis."
+      },
+      "TTSInputV2": {
+        "properties": {
+          "text": {
+            "type": "string",
+            "title": "Text",
+            "description": "Text to be synthesized."
+          },
+          "tts_options": {
+            "$ref": "#/components/schemas/TTSOptions"
+          },
+          "transcribe": {
+            "type": "boolean",
+            "title": "Transcribe",
+            "description": "Set to True to enable transcription, False to disable.",
+            "default": true
+          },
+          "transcription_options": {
+            "$ref": "#/components/schemas/TranscriptionOptions",
+            "description": "Options for transcription."
+          }
+        },
+        "additionalProperties": false,
+        "type": "object",
+        "required": [
+          "text"
+        ],
+        "title": "TTSInputV2",
+        "description": "Contains text and settings for speech synthesis."
+      },
+      "TTSOptions": {
+        "properties": {
+          "voice": {
+            "type": "string",
+            "title": "Voice",
+            "description": "Speech synthesis voice.",
+            "default": "Gudrun"
+          },
+          "speed": {
+            "type": "number",
+            "maximum": 2.0,
+            "minimum": 0.5,
+            "title": "Speed",
+            "description": "TTS speed.",
+            "default": 1.0
+          },
+          "text_format": {
+            "$ref": "#/components/schemas/TextFormats",
+            "description": "Format of text (plaintext or SSML).",
+            "default": "ssml"
+          },
+          "audio_format": {
+            "type": "string",
+            "title": "Audio Format",
+            "description": "Audio format for TTS output.",
+            "default": "mp3"
+          }
+        },
+        "additionalProperties": false,
+        "type": "object",
+        "title": "TTSOptions"
+      },
+      "TTSOptionsV1": {
+        "properties": {
+          "voice_id": {
+            "type": "string",
+            "title": "Voice Id",
+            "description": "Name of voice for speech synthesis.",
+            "default": "Gudrun"
+          },
+          "voice_speed": {
+            "type": "number",
+            "maximum": 2.0,
+            "minimum": 0.5,
+            "title": "Voice Speed",
+            "description": "Speed of the synthesized speech.",
+            "default": 1.0
+          }
+        },
+        "additionalProperties": false,
+        "type": "object",
+        "title": "TTSOptionsV1",
+        "description": "Settings and information for the TTS service."
+      },
+      "TTSOutput": {
+        "properties": {
+          "audio_url": {
+            "type": "string",
+            "title": "Audio Url",
+            "description": "URL of audio file."
+          },
+          "text": {
+            "type": "string",
+            "title": "Text",
+            "description": "Text after transcription, if any was performed."
+          }
+        },
+        "additionalProperties": false,
+        "type": "object",
+        "required": [
+          "audio_url",
+          "text"
+        ],
+        "title": "TTSOutput",
+        "description": "Contains result from speech synthesis."
+      },
+      "TextFormats": {
+        "type": "string",
+        "enum": [
+          "ssml",
+          "text"
+        ],
+        "title": "TextFormats"
+      },
+      "TokenModel": {
+        "properties": {
+          "kind": {
+            "type": "integer",
+            "title": "Kind",
+            "description": "Token kind"
+          },
+          "text": {
+            "type": "string",
+            "title": "Text",
+            "description": "Corrected token text"
+          },
+          "original": {
+            "type": "string",
+            "title": "Original",
+            "description": "Original token text"
+          },
+          "i": {
+            "type": "integer",
+            "title": "Offset",
+            "description": "Character offset of token, indexed from the start of the checked text"
+          }
+        },
+        "type": "object",
+        "required": [
+          "kind",
+          "text",
+          "original",
+          "i"
+        ],
+        "title": "TokenModel"
+      },
+      "TranscriptionOptions": {
+        "properties": {
+          "emails": {
+            "type": "boolean",
+            "title": "Emails",
+            "description": "Whether to transcribe emails.",
+            "default": true
+          },
+          "dates": {
+            "type": "boolean",
+            "title": "Dates",
+            "description": "Whether to transcribe dates.",
+            "default": true
+          },
+          "years": {
+            "type": "boolean",
+            "title": "Years",
+            "description": "Whether to transcribe years.",
+            "default": true
+          },
+          "domains": {
+            "type": "boolean",
+            "title": "Domains",
+            "description": "Whether to transcribe domains.",
+            "default": true
+          },
+          "urls": {
+            "type": "boolean",
+            "title": "Urls",
+            "description": "Whether to transcribe URLs.",
+            "default": true
+          },
+          "amounts": {
+            "type": "boolean",
+            "title": "Amounts",
+            "description": "Whether to transcribe amounts (number with currency).",
+            "default": true
+          },
+          "measurements": {
+            "type": "boolean",
+            "title": "Measurements",
+            "description": "Whether to transcribe measurements (number with unit of measurement).",
+            "default": true
+          },
+          "percentages": {
+            "type": "boolean",
+            "title": "Percentages",
+            "description": "Whether to transcribe percentages.",
+            "default": true
+          },
+          "numbers": {
+            "type": "boolean",
+            "title": "Numbers",
+            "description": "Whether to transcribe (cardinal) numbers.",
+            "default": false
+          },
+          "ordinals": {
+            "type": "boolean",
+            "title": "Ordinals",
+            "description": "Whether to transcribe ordinal numbers.",
+            "default": false
+          }
+        },
+        "additionalProperties": false,
+        "type": "object",
+        "title": "TranscriptionOptions",
+        "description": "Transcription options."
+      },
+      "TranslationCorrectionData": {
+        "properties": {
+          "originalText": {
+            "type": "string",
+            "title": "Originaltext"
+          },
+          "machineTranslatedText": {
+            "type": "string",
+            "title": "Machinetranslatedtext"
+          },
+          "correctedText": {
+            "type": "string",
+            "title": "Correctedtext"
+          },
+          "translationReference": {
+            "type": "integer",
+            "title": "Translationreference"
+          },
+          "languagePair": {
+            "type": "string",
+            "title": "Languagepair"
+          },
+          "model": {
+            "type": "string",
+            "title": "Model"
+          },
+          "userReference": {
+            "type": "string",
+            "title": "Userreference"
+          }
+        },
+        "type": "object",
+        "required": [
+          "originalText",
+          "machineTranslatedText",
+          "correctedText",
+          "translationReference",
+          "languagePair",
+          "model",
+          "userReference"
+        ],
+        "title": "TranslationCorrectionData"
+      },
+      "TranslationModelInfo": {
+        "properties": {
+          "availableModels": {
+            "items": {
+              "type": "string"
+            },
+            "type": "array",
+            "title": "Availablemodels"
+          },
+          "availableLangPairs": {
+            "items": {
+              "$ref": "#/components/schemas/LangPairInfo"
+            },
+            "type": "array",
+            "title": "Availablelangpairs"
+          }
+        },
+        "type": "object",
+        "required": [
+          "availableModels",
+          "availableLangPairs"
+        ],
+        "title": "TranslationModelInfo"
+      },
+      "TranslationRequestData": {
+        "properties": {
+          "contents": {
+            "items": {
+              "type": "string"
+            },
+            "type": "array",
+            "title": "Contents",
+            "description": "Text to translate",
+            "examples": [
+              [
+                "Where is the museum? I want to buy bread and milk. I should buy a boat.",
+                "This fundamental plant growth research is also a key example of how NASA is working to unlock agricultural innovations that could help us understand how plants might overcome stressful conditions in food-scarce areas here on Earth.",
+                "Look on my works, ye mighty, and despair!",
+                "ΓÇ£You know,ΓÇ¥ said Arthur, ΓÇ£itΓÇÖs at times like this, when IΓÇÖm trapped in a Vogon airlock with a man from Betelgeuse, and about to die of asphyxiation in deep space that I really wish IΓÇÖd listened to what my mother told me when I was young.ΓÇ¥ ΓÇ£Why, what did she tell you?ΓÇ¥ ΓÇ£I donΓÇÖt know, I didnΓÇÖt listen.ΓÇ¥"
+              ]
+            ]
+          },
+          "sourceLanguageCode": {
+            "$ref": "#/components/schemas/LANGS",
+            "description": "The source language to translate from",
+            "default": "en"
+          },
+          "targetLanguageCode": {
+            "$ref": "#/components/schemas/LANGS",
+            "description": "The target language to translate into",
+            "default": "is"
+          },
+          "model": {
+            "type": "string",
+            "title": "Model",
+            "description": "Translation model to use",
+            "default": "mbart-multi-doc"
+          },
+          "domain": {
+            "type": "string",
+            "title": "Domain",
+            "description": "Translate text in this domain. Ignored for non-domain-aware models."
+          },
+          "hardConstraints": {
+            "additionalProperties": {
+              "type": "string"
+            },
+            "type": "object",
+            "title": "Hardconstraints",
+            "description": "Hard constraints to apply to the translation. Hard constraints are force the given 'key' to be translated as the given 'value'. Not all models support hard constraints.",
+            "examples": [
+              {
+                "NASA": "Geimfer├░astofnun Bandar├¡kjanna",
+                "asphyxiation": "k├╢fnun"
+              }
+            ]
+          }
+        },
+        "type": "object",
+        "required": [
+          "contents"
+        ],
+        "title": "TranslationRequestData"
+      },
+      "TranslationResponseData": {
+        "properties": {
+          "translations": {
+            "items": {},
+            "type": "array",
+            "title": "Translations",
+            "description": "Results from translation. Results contain both the entire translated text and also the text broken down into sentences as processed by the translation system.",
+            "default": [
+              {
+                "translatedText": "Hvar er safni├░? ├ëg vil kaupa brau├░ og mj├│lk. ├ëg ├ªtti a├░ kaupa b├ít.",
+                "translatedTextStructured": [
+                  [
+                    "Where is the museum?",
+                    "Hvar er safni├░?"
+                  ],
+                  [
+                    "I want to buy bread and milk.",
+                    "├ëg vil kaupa brau├░ og mj├│lk."
+                  ],
+                  [
+                    "I should buy a boat.",
+                    "├ëg ├ªtti a├░ kaupa b├ít."
+                  ]
+                ]
+              },
+              {
+                "translatedText": "├ëg er setning tv├╢.",
+                "translatedTextStructured": [
+                  [
+                    "I am sentence two.",
+                    "├ëg er setning tv├╢."
+                  ]
+                ]
+              }
+            ]
+          },
+          "sourceLanguageCode": {
+            "$ref": "#/components/schemas/LANGS",
+            "description": "The source language code used for translation",
+            "default": "en"
+          },
+          "targetLanguageCode": {
+            "$ref": "#/components/schemas/LANGS",
+            "description": "The target language code used for translation",
+            "default": "is"
+          },
+          "model": {
+            "type": "string",
+            "title": "Model",
+            "description": "The model used for translation",
+            "default": "mbart-multi-doc"
+          }
+        },
+        "type": "object",
+        "required": [
+          "translations",
+          "sourceLanguageCode",
+          "targetLanguageCode",
+          "model"
+        ],
+        "title": "TranslationResponseData"
+      },
+      "ValidationError": {
+        "properties": {
+          "loc": {
+            "items": {
+              "type": "string"
+            },
+            "type": "array",
+            "title": "Location"
+          },
+          "msg": {
+            "type": "string",
+            "title": "Message"
+          },
+          "type": {
+            "type": "string",
+            "title": "Error Type"
+          }
+        },
+        "type": "object",
+        "required": [
+          "loc",
+          "msg",
+          "type"
+        ],
+        "title": "ValidationError"
+      },
+      "ProblemDetails": {
+        "additionalProperties": false
+      }
+    },
+    "securitySchemes": {
+      "CustomAPIKeyHeader": {
+        "type": "apiKey",
+        "in": "header",
+        "name": "X-API-Key"
+      }
+    }
+  },
+  "tags": [
+    {
+      "name": "translation",
+      "description": "Translate between Icelandic and other languages."
+    },
+    {
+      "name": "grammar",
+      "description": "Icelandic grammar correction"
+    },
+    {
+      "name": "ratatoskur",
+      "description": "Short form (single utterance) Icelandic automatic speech recognition, query answering and text-to-speech."
+    },
+    {
+      "name": "long_asr",
+      "description": "Longform Icelandic automatic speech recognition"
+    }
+  ]
+}

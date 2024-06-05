@@ -666,6 +666,7 @@
       "@island.is/clients/middlewares": [
         "libs/clients/middlewares/src/index.ts"
       ],
+      "@island.is/clients/mideind": ["libs/clients/mideind/src/index.ts"],
       "@island.is/clients/mms": ["libs/clients/mms/src/index.ts"],
       "@island.is/clients/municipalities-financial-aid": [
         "libs/clients/municipalities-financial-aid/src/index.ts"
