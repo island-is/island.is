@@ -147,7 +147,7 @@ export class ApplicationService {
             spouseNationalId: nationalId,
           },
         ],
-        applied: { [Op.gte]: firstDateOfMonth() },
+        appliedDate: { [Op.gte]: firstDateOfMonth() },
       },
     })
 
@@ -295,7 +295,7 @@ export class ApplicationService {
 
     const appModel = await this.applicationModel.create({
       ...application,
-      applied: nowFactory(),
+      appliedDate: nowFactory(),
       nationalId: application.nationalId || user.nationalId,
     })
 

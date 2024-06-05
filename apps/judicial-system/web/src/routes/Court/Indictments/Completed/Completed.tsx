@@ -83,6 +83,13 @@ const Completed: FC = () => {
     [workingCase.id],
   )
 
+  const isRulingOrFine =
+    workingCase.indictmentRulingDecision &&
+    [
+      CaseIndictmentRulingDecision.RULING,
+      CaseIndictmentRulingDecision.FINE,
+    ].includes(workingCase.indictmentRulingDecision)
+
   const stepIsValid = () =>
     workingCase.indictmentRulingDecision === CaseIndictmentRulingDecision.RULING
       ? workingCase.defendants?.every(
@@ -112,30 +119,32 @@ const Completed: FC = () => {
         <Box marginBottom={5} component="section">
           <IndictmentCaseFilesList workingCase={workingCase} />
         </Box>
-        <Box marginBottom={5} component="section">
-          <SectionHeading
-            title={formatMessage(strings.criminalRecordUpdateTitle)}
-          />
-          <InputFileUpload
-            fileList={uploadFiles.filter(
-              (file) =>
-                file.category === CaseFileCategory.CRIMINAL_RECORD_UPDATE,
-            )}
-            accept="application/pdf"
-            header={formatMessage(core.uploadBoxTitle)}
-            buttonLabel={formatMessage(core.uploadBoxButtonLabel)}
-            description={formatMessage(core.uploadBoxDescription, {
-              fileEndings: '.pdf',
-            })}
-            onChange={(files) =>
-              handleCriminalRecordUpdateUpload(
-                files,
-                CaseFileCategory.CRIMINAL_RECORD_UPDATE,
-              )
-            }
-            onRemove={(file) => handleRemoveFile(file)}
-          />
-        </Box>
+        {isRulingOrFine && (
+          <Box marginBottom={5} component="section">
+            <SectionHeading
+              title={formatMessage(strings.criminalRecordUpdateTitle)}
+            />
+            <InputFileUpload
+              fileList={uploadFiles.filter(
+                (file) =>
+                  file.category === CaseFileCategory.CRIMINAL_RECORD_UPDATE,
+              )}
+              accept="application/pdf"
+              header={formatMessage(core.uploadBoxTitle)}
+              buttonLabel={formatMessage(core.uploadBoxButtonLabel)}
+              description={formatMessage(core.uploadBoxDescription, {
+                fileEndings: '.pdf',
+              })}
+              onChange={(files) =>
+                handleCriminalRecordUpdateUpload(
+                  files,
+                  CaseFileCategory.CRIMINAL_RECORD_UPDATE,
+                )
+              }
+              onRemove={(file) => handleRemoveFile(file)}
+            />
+          </Box>
+        )}
         {workingCase.indictmentRulingDecision ===
           CaseIndictmentRulingDecision.RULING && (
           <Box marginBottom={10}>
@@ -239,6 +248,7 @@ const Completed: FC = () => {
       <FormContentContainer isFooter>
         <FormFooter
           previousUrl={constants.CASES_ROUTE}
+          hideNextButton={!isRulingOrFine}
           nextButtonText={formatMessage(strings.sendToPublicProsecutor)}
           nextIsDisabled={!stepIsValid()}
           onNextButtonClick={handleNextButtonClick}
