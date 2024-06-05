@@ -365,6 +365,34 @@ export const m = defineMessages({
     id: 'portals-admin.form-system:get-json',
     defaultMessage: 'Sækja JSON',
   },
+  address: {
+    id: 'portals-admin.form-system:address',
+    defaultMessage: 'Heimilisfang',
+  },
+  city: {
+    id: 'portals-admin.form-system:city',
+    defaultMessage: 'Staður',
+  },
+  properties: {
+    id: 'portals-admin.form-system:properties',
+    defaultMessage: 'Eignir',
+  },
+  chooseProperty: {
+    id: 'portals-admin.form-system:choose-property',
+    defaultMessage: 'Veldu eign',
+  },
+  enterPropertyNumber: {
+    id: 'portals-admin.form-system:enter-property-number',
+    defaultMessage: 'Sláðu inn fasteignanúmer',
+  },
+  propertyChoice: {
+    id: 'portals-admin.form-system:property-choice',
+    defaultMessage: 'Velja fasteign',
+  },
+  propertyNumberInput: {
+    id: 'portals-admin.form-system:property-number-input',
+    defaultMessage: 'Skrá fasteignanúmer',
+  },
   // Error messages
   invalidEmail: {
     id: 'portals-admin.form-system:invalid-email',
