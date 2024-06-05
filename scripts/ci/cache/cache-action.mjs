@@ -72,6 +72,9 @@ const checkCache = await Promise.all(
     const isOk = e.check
       ? await e.check(e.restoreSuccess, resolve(ROOT, e.path))
       : e.restoreSuccess
+    if (isOk) {
+      console.log(`Restored cache for ${e.name}`)
+    }
     return {
       ...e,
       isOk,
