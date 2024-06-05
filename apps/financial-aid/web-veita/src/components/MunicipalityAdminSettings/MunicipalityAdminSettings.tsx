@@ -268,7 +268,7 @@ const MunicipalityAdminSettings = ({ currentMunicipality }: Props) => {
     },
     {
       headline: 'Desemberstyrkur',
-      smallText: '',
+      smallText: 'Upphæð er bætt við þegar umsókn er samþykkt í nóvember',
       component: (
         <NumberInput
           id={`input-desember`}
