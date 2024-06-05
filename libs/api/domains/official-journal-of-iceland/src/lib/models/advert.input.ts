@@ -17,6 +17,9 @@ export class AdvertsInput {
   @Field(() => Number, { nullable: true })
   page?: number
 
+  @Field(() => Number, { nullable: true })
+  pageSize?: number
+
   @Field(() => [String], { nullable: true })
   department?: string[]
 
@@ -61,6 +64,9 @@ export class QueryParams {
 
   @Field(() => Number, { nullable: true })
   page?: number
+
+  @Field(() => Number, { nullable: true })
+  pageSize?: number
 }
 
 @InputType('OfficialJournalOfIcelandAdvertSignatureMember')

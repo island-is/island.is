@@ -30,7 +30,7 @@ export const Preview = (props: OJOIFieldBaseProps) => {
     },
   })
 
-  const category = data?.officialJournalOfIcelandTypes.types?.find(
+  const category = data?.officialJournalOfIcelandTypes.types.find(
     (type) => type.id === advert?.type,
   )
 

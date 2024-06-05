@@ -40,6 +40,8 @@ export const Summary = ({ application }: OJOIFieldBaseProps) => {
     },
   })
 
+  console.log(departments)
+
   const extract = (arr?: OfficialJournalOfIcelandAdvertEntity[]) => {
     if (!arr) {
       return ''
@@ -72,14 +74,6 @@ export const Summary = ({ application }: OJOIFieldBaseProps) => {
       <Property
         name={f(summary.properties.submissionDate)}
         value={new Date().toLocaleDateString()}
-      />
-      <Property
-        name={f(summary.properties.fastTrack)}
-        value={f(
-          answers?.publishing?.fastTrack === AnswerOption.YES
-            ? general.yes
-            : general.no,
-        )}
       />
       <Property
         name={f(summary.properties.estimatedDate)}
