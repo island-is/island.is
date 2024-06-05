@@ -78,7 +78,7 @@ if (initCache) {
         .filter((e) => e != null),
     ),
     ...steps,
-  ]
+  ].flat()
 }
 
 const workflow = {
