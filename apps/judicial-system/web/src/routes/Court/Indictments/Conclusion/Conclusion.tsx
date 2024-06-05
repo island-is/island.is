@@ -233,18 +233,23 @@ const Conclusion: React.FC = () => {
 
   const handleNavigationTo = useCallback(
     async (destination: keyof stepValidationsType) => {
-      if (selectedAction === IndictmentDecision.REDISTRIBUTING) {
-        handleRedistribution(destination)
-      } else if (selectedAction === IndictmentDecision.COMPLETING) {
-        handleCompletion(destination)
-      } else if (
-        selectedAction === IndictmentDecision.POSTPONING_UNTIL_VERDICT
-      ) {
-        handlePostponementUntilVerdict(destination)
-      } else if (postponement?.postponedIndefinitely) {
-        handlePostponementIndefinitely(destination)
-      } else {
-        handlePostponement(destination)
+      switch (selectedAction) {
+        case IndictmentDecision.REDISTRIBUTING:
+          handleRedistribution(destination)
+          break
+        case IndictmentDecision.COMPLETING:
+          handleCompletion(destination)
+          break
+        case IndictmentDecision.POSTPONING_UNTIL_VERDICT:
+          handlePostponementUntilVerdict(destination)
+          break
+        case IndictmentDecision.POSTPONING:
+          postponement?.postponedIndefinitely
+            ? handlePostponementIndefinitely(destination)
+            : handlePostponement(destination)
+          break
+        default:
+          break
       }
     },
     [
