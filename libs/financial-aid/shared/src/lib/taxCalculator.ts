@@ -132,6 +132,17 @@ export const calculateAcceptedAidFinalAmount = (
     tax - personalTaxAllowance + spouseTaxAllowance,
     0,
   )
+  console.log(
+    'finalTaxAmount: ',
+    finalTaxAmount,
+    'tax: ',
+    tax,
+    '---',
+    'personalTaxAllowance: ',
+    personalTaxAllowance,
+    'spouseTaxAllowance: ',
+    spouseTaxAllowance,
+  )
   return amount - finalTaxAmount
 }
 
