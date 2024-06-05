@@ -92,7 +92,7 @@ interface CategoryProps {
   page: number
   searchResults: GetSearchResultsDetailedQuery['searchResults']
   countResults: GetSearchCountTagsQuery['searchResults']
-  namespace: GetNamespaceQuery['getNamespace']
+  namespace: Record<string, string>
   referencedByTitle?: string
 }
 
@@ -137,7 +137,7 @@ const connectedTypes: Partial<
   webManual: ['WebManual', 'WebManualChapterItem'],
 }
 
-const stringToArray = (value: string | string[]) =>
+const stringToArray = (value: string | string[] | undefined) =>
   Array.isArray(value) ? value : value?.length ? [value] : []
 
 const Search: Screen<CategoryProps> = ({
@@ -153,14 +153,8 @@ const Search: Screen<CategoryProps> = ({
     ...initialState,
     query: {
       q,
-      // eslint-disable-next-line @typescript-eslint/ban-ts-comment
-      // @ts-ignore make web strict
       type: stringToArray(query.type) as SearchableContentTypes[],
-      // eslint-disable-next-line @typescript-eslint/ban-ts-comment
-      // @ts-ignore make web strict
       category: stringToArray(query.category),
-      // eslint-disable-next-line @typescript-eslint/ban-ts-comment
-      // @ts-ignore make web strict
       organization: stringToArray(query.organization),
     },
   })
@@ -173,8 +167,6 @@ const Search: Screen<CategoryProps> = ({
   const { activeLocale } = useI18n()
   const searchRef = useRef<HTMLInputElement | null>(null)
   const routerReplace = useRouterReplace()
-  // eslint-disable-next-line @typescript-eslint/ban-ts-comment
-  // @ts-ignore make web strict
   const n = useNamespace(namespace)
   const { linkResolver } = useLinkResolver()
 
@@ -227,27 +219,17 @@ const Search: Screen<CategoryProps> = ({
   const getLabels = (item: SearchEntryType) => {
     const labels = []
 
-    switch (item.__typename) {
-      // eslint-disable-next-line @typescript-eslint/ban-ts-comment
-      // @ts-ignore make web strict
+    switch (item.__typename as string | undefined) {
       case 'LifeEventPage':
         labels.push(n('lifeEvent'))
         break
-      // eslint-disable-next-line @typescript-eslint/ban-ts-comment
-      // @ts-ignore make web strict
       case 'News':
         labels.push(n('newsTitle'))
         break
-      // eslint-disable-next-line @typescript-eslint/ban-ts-comment
-      // @ts-ignore make web strict
       case 'AdgerdirPage':
         labels.push(n('adgerdirTitle'))
         break
-      // eslint-disable-next-line @typescript-eslint/ban-ts-comment
-      // @ts-ignore make web strict
       case 'ManualChapterItem':
-        // eslint-disable-next-line @typescript-eslint/ban-ts-comment
-        // @ts-ignore make web strict
         labels.push(item.manualChapter.title)
         break
       default:
