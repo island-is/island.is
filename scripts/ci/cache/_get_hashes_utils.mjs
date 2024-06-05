@@ -33,11 +33,6 @@ export async function writeToOutput(
   if (!enabled) {
     return
   }
-  await appendFile(
-    file,
-    `${ENV_INIT_CACHE}=${HAS_HASH_KEYS ? 'false' : 'true'}\n`,
-    'utf-8',
-  )
   await appendFile(file, `${ENV_KEYS}=${JSON.stringify(hashes)}\n`, 'utf-8')
   const content = await readFile(file, { encoding: 'utf-8' })
   console.log(content)
