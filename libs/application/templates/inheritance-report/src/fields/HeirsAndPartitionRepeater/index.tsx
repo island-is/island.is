@@ -195,9 +195,7 @@ export const HeirsAndPartitionRepeater: FC<
 
       // currently we can only check if heir is spouse by relation string value...
       const spouse = (heirs ?? []).filter(
-        (heir) =>
-          heir.enabled &&
-          (heir.relation === 'Maki'),
+        (heir) => heir.enabled && heir.relation === 'Maki',
       )
 
       let isSpouse = false
@@ -205,8 +203,7 @@ export const HeirsAndPartitionRepeater: FC<
       // it is not possible to select more than one spouse but for now we will check for it anyway
       if (spouse.length > 0) {
         if (isPrePaid) {
-          isSpouse =
-            currentHeir?.relation === 'Maki'
+          isSpouse = currentHeir?.relation === 'Maki'
         } else {
           spouse.forEach((currentSpouse) => {
             isSpouse =

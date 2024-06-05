@@ -293,8 +293,7 @@ export const AdditionalHeir = ({
                   />
                 </GridColumn>
               ) : customField.id === 'taxFreeInheritance' &&
-                currentHeir?.relation !==
-                  'Maki' ? null : (
+                currentHeir?.relation !== 'Maki' ? null : (
                 <GridColumn span={['1/2']} paddingBottom={2}>
                   <InputController
                     id={`${fieldIndex}.${customField.id}`}
