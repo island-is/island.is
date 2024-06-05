@@ -93,6 +93,17 @@ export const expandAnswers = (
 } => {
   return {
     applicant: answers.applicant,
+    executors: {
+      executor: {
+        email: '',
+        phone: '',
+      },
+      spouse: {
+        email: '',
+        phone: '',
+      },
+      includeSpouse: undefined,
+    },
     approveExternalData: answers.approveExternalData,
     assets: {
       assetsTotal: answers.assets.assetsTotal ?? 0,
