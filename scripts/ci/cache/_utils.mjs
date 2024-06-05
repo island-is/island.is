@@ -161,8 +161,8 @@ export async function runCommand(cmd, cwd = undefined, env = {}) {
     options.env = { ...process.env, ...env };
     exec(cmd, options, (error, stdout, stderr) => {
       if (error) {
+        console.log(error);
         console.log(stderr)
-        console.log(stdout)
         reject(`Error: ${error.message}`)
         return
       }
