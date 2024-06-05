@@ -639,6 +639,7 @@ const mapInheritanceReportAssets = (
           debtType: assetTypeTodebtType[iAsset.tegundAngalgs],
           ...asset,
         })
+        break
       default:
         break
     }
