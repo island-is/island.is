@@ -22,7 +22,6 @@ export const ContentfulGraphQLFetchProvider: Provider<EnhancedFetchAPI> = {
     createEnhancedFetch({
       name: 'clients-contentful-graphql',
       cache: await getCache(config),
-      // autoAuth: undefined
     }),
-  inject: [ContentfulGraphQLClientConfig.KEY],// BREAKTHROUGH ?
+  inject: [ContentfulGraphQLClientConfig.KEY],
 }

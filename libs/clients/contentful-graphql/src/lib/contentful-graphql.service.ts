@@ -18,7 +18,7 @@ export class ContentfulGraphQLClientService {
       headers: {
         Authorization: `Bearer ${process.env.CONTENTFUL_ACCESS_TOKEN}`,
       },
-      fetch: this.fetch as any, // Ensure the custom fetch implementation is compatible .... 
+      fetch: this.fetch,
     });
   }
 
@@ -26,9 +26,7 @@ export class ContentfulGraphQLClientService {
     try {
       return await this.client.request(queryString, variables);
     } catch (error) {
-      console.log(error)
       throw new HttpException(error.message, error.status);
-      // throw new Error(`Failed to fetch data from Contentful: status ${error.status} ${error.message}`);
     }
   }
 }

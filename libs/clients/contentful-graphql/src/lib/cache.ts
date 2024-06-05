@@ -34,7 +34,7 @@ export const getCache = async (
 
   return {
     cacheManager,
-    cacheKey: (request: Request) => "bob",//request.url,
+    cacheKey: (request: Request) => request.url + JSON.stringify(request.body),
     shared: true,
     overrideForPost: true, // post for contentful gql
     overrideCacheControl,
