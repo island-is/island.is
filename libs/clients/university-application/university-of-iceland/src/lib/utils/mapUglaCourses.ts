@@ -34,6 +34,7 @@ export const mapUglaCourses = (
       const semesterSeason = mapStringToEnum(
         course.semesterSeason?.toString(),
         CourseSeason,
+        'CourseSeason',
       )
       if (!semesterSeason) {
         throw new Error(
