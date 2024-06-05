@@ -11,7 +11,7 @@ import {
 } from './__mock-data__/requestHandlers'
 import { startMocking } from '@island.is/shared/mocking'
 import { ConfigModule } from '@nestjs/config'
-import { XRoadConfig } from '@island.is/nest/config'
+import { defineConfig } from '@island.is/nest/config'
 
 startMocking(requestHandlers)
 
@@ -24,7 +24,21 @@ describe('CriminalRecordService', () => {
         CriminalRecordApiModule,
         ConfigModule.forRoot({
           isGlobal: true,
-          load: [CriminalRecordClientConfig, XRoadConfig],
+          load: [
+            defineConfig({
+              name: 'CriminalRecordClient',
+              load: (env) => ({
+                xRoadServicePath: 'v2',
+              }),
+            }),
+            defineConfig({
+              name: 'XRoadConfig',
+              load: (env) => ({
+                xRoadBasePath: 'http://localhost',
+                xRoadClient: '',
+              }),
+            }),
+          ],
         }),
       ],
       providers: [CriminalRecordService, { provide: 'CONFIG', useValue: {} }],

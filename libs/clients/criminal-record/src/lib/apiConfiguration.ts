@@ -14,7 +14,7 @@ export const ApiConfiguration = {
         name: 'clients-criminal-record',
         organizationSlug: 'rikislogreglustjori',
       }),
-      basePath: `${xRoadConfig.xRoadBasePath}/r1/${config.xRoadServicePath}`,
+      basePath: `${xRoadConfig.xRoadBasePath}/${config.xRoadServicePath}`,
       headers: {
         'X-Road-Client': xRoadConfig.xRoadClient,
         'Content-Type': 'application/json',
