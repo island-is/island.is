@@ -12,5 +12,6 @@ export async function saveCache({ key, path }) {
     } catch (e) {
         return false;
     }
+    console.log({cache})
     return cache != undefined;
 }
