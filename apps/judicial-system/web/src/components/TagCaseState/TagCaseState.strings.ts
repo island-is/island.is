@@ -78,7 +78,7 @@ export const strings = defineMessages({
       '{indictmentRulingDecision, select, RULING {Dómur} FINE {Viðurlagaákvörðun} DISMISSAL {Frávísun} CANCELLATION {Niðurfelling} other {Lokið}}',
     description: 'Notað sem merki þegar mál í stöðu "Dómþulur" í málalista',
   },
-  cancelled: {
+  recalled: {
     id: 'judicial.system.core:tag_case_state.cancelled',
     defaultMessage: 'Afturkallað',
     description: 'Notað sem merki þegar mál í stöðu "Afturkallað" í málalista',
