@@ -242,10 +242,10 @@ const environment = getConfig
         clientSecret: environment.documentProviderService.prod.clientSecret,
         tokenUrl: environment.documentProviderService.prod.tokenUrl,
       },
-      documentsServiceBasePath: environment.documentProviderService
-        .documentsServiceBasePath!,
-      documentProviderAdmins: environment.documentProviderService
-        .documentProviderAdmins!,
+      documentsServiceBasePath:
+        environment.documentProviderService.documentsServiceBasePath!,
+      documentProviderAdmins:
+        environment.documentProviderService.documentProviderAdmins!,
     }),
     CmsTranslationsModule,
     TerminusModule,
