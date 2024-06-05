@@ -179,7 +179,8 @@ export async function runCommand(cmd, cwd = undefined, env = {}) {
 
     childProcess.on('close', (code) => {
       if (code !== 0) {
-        console.log(errorChunks.join('\n'))
+        console.error(errorChunks.join('\n'))
+        console.error(`Failed to run command: ${cmd} returning code ${code}`)
         reject(`Error: Process exited with code ${code}`)
       } else {
         resolve(void 0)
@@ -188,7 +189,7 @@ export async function runCommand(cmd, cwd = undefined, env = {}) {
 
     childProcess.on('error', (error) => {
       console.log(errorChunks.join('\n'))
-      reject(`Error: ${error.message}`)
+      // reject(`Error: ${error.message}`)
     })
   })
 }
