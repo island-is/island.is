@@ -129,11 +129,11 @@ await Promise.allSettled(
         try {
           const value = await cache.check(successInit, fileName)
         } catch (e) {
-          console.error(e);
-          return false;
+          console.error(e)
+          return false
         }
-        return true;
-      })();
+        return true
+      })()
       if (!success) {
         console.log(`Failed init and check for ${cache.name}`)
         failedJobs.push(cache)
