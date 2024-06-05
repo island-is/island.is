@@ -36,4 +36,3 @@ export async function writeToOutput(
   const content = await readFile(file, { encoding: 'utf-8' })
   console.log(content)
 }
-

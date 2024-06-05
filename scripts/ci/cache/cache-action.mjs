@@ -32,13 +32,13 @@ if (!HAS_HASH_KEYS) {
 writeToOutput(keyStorage.getKeys())
 
 /**
- * @type {any[]} 
+ * @type {any[]}
  */
-const steps = [...(await Promise.all(
-  caches
-    .map(async (value) => {
+const steps = [
+  ...(await Promise.all(
+    caches.map(async (value) => {
       if (!value.enabled) {
-        return null;
+        return null
       }
       return {
         name: value.name,
@@ -46,63 +46,77 @@ const steps = [...(await Promise.all(
         path: value.path,
         key: await value.hash(),
         init: value.init,
-        check: value.check
-      };
-    })
-))].filter((e) => e != null)
+        check: value.check,
+      }
+    }),
+  )),
+].filter((e) => e != null)
 
 // Restore cache
-const restoreJobs = await Promise.all(steps.map(async (value) => {
-  const restoreSuccess = await restoreCache({ key: value.key, path: value.path })
-  console.log({ restoreSuccess })
-  return {
-    ...value,
-    restoreSuccess
-  }
-}));
-
-const checkCache = await Promise.all(restoreJobs.map(async (e) => {
-  const isOk = e.check
-    ? await e.check(e.restoreSuccess, resolve(ROOT, e.path))
-    : e.restoreSuccess
-  console.log({ isOk })
-  return {
-    ...e,
-    isOk
-  }
-}))
-
-
-const failedJobs = [];
-
-await Promise.all(checkCache.map(async (cache) => {
-  if (!cache.isOk) {
-    if (HAS_HASH_KEYS) {
-      console.error(`Failed restoring cache for ${cache.name}`)
-      failedJobs.push(cache)
-      return;
+const restoreJobs = await Promise.all(
+  steps.map(async (value) => {
+    const restoreSuccess = await restoreCache({
+      key: value.key,
+      path: value.path,
+    })
+    console.log({ restoreSuccess })
+    return {
+      ...value,
+      restoreSuccess,
     }
-    console.log(`Failed restoring cache for ${cache.name}, trying to init and save`)
-    const fileName = resolve(ROOT, cache.path)
-    const successInit = await cache.init()
-    const success = await cache.check(successInit, fileName)
-    if (!success) {
-      failedJobs.push(cache)
-    } else {
-      const saveSuccess = await saveCache({ key: cache.key, path: cache.path })
-      if (!saveSuccess) {
-        console.error(`Failed saving cache for ${cache.name}`)
+  }),
+)
+
+const checkCache = await Promise.all(
+  restoreJobs.map(async (e) => {
+    const isOk = e.check
+      ? await e.check(e.restoreSuccess, resolve(ROOT, e.path))
+      : e.restoreSuccess
+    console.log({ isOk })
+    return {
+      ...e,
+      isOk,
+    }
+  }),
+)
+
+const failedJobs = []
+
+await Promise.all(
+  checkCache.map(async (cache) => {
+    if (!cache.isOk) {
+      if (HAS_HASH_KEYS) {
+        console.error(`Failed restoring cache for ${cache.name}`)
         failedJobs.push(cache)
+        return
+      }
+      console.log(
+        `Failed restoring cache for ${cache.name}, trying to init and save`,
+      )
+      const fileName = resolve(ROOT, cache.path)
+      const successInit = await cache.init()
+      const success = await cache.check(successInit, fileName)
+      if (!success) {
+        failedJobs.push(cache)
+      } else {
+        const saveSuccess = await saveCache({
+          key: cache.key,
+          path: cache.path,
+        })
+        if (!saveSuccess) {
+          console.error(`Failed saving cache for ${cache.name}`)
+          failedJobs.push(cache)
+        }
       }
     }
-  }
-}))
+  }),
+)
 
 if (failedJobs.length > 0) {
-  console.log('Failed caches: ', failedJobs.map((e) => e.id).join(', '));
+  console.log('Failed caches: ', failedJobs.map((e) => e.id).join(', '))
   process.exit(1)
 }
-console.log('All caches are restored successfully');
+console.log('All caches are restored successfully')
 
 // Kill all promiseses we don't need
 process.exit(0)
