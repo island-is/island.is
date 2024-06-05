@@ -6,8 +6,8 @@ import {
   Select,
   Box,
 } from '@island.is/island-ui/core'
-import { ChangeEvent, useContext, useState } from "react"
-import ControlContext from "../../../../../context/ControlContext"
+import { ChangeEvent, useState } from "react"
+
 
 interface Props {
   currentItem: FormSystemInput

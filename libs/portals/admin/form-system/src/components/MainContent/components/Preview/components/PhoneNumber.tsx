@@ -9,7 +9,7 @@ interface Props {
   currentItem: FormSystemInput
 }
 
-const PhoneNumber = ({ currentItem }: Props) => {
+export const PhoneNumber = ({ currentItem }: Props) => {
   return (
     <Row>
       <Column>
@@ -24,4 +24,4 @@ const PhoneNumber = ({ currentItem }: Props) => {
   )
 }
 
-export default PhoneNumber
+

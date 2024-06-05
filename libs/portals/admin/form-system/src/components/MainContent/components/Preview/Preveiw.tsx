@@ -47,6 +47,7 @@ export const Preview = ({ data }: Props) => {
       {type === 'Radio_buttons' && <Radio currentItem={data} />}
       {type === 'ISK_numberbox' && <Currency currentItem={data} />}
       {type === 'Checkbox' && <CheckboxPreview currentItem={data} />}
+
     </Box>
   )
 }
