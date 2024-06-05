@@ -29,7 +29,7 @@ export class DocumentsClientV2Service {
     ): T {
       const sanitizedObj = {} as T
       for (const key in obj) {
-        if (obj[key]) {
+        if (obj[key] || key === 'opened') {
           sanitizedObj[key] = obj[key]
         }
       }

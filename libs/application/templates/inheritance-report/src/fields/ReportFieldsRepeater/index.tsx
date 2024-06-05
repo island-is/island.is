@@ -122,7 +122,7 @@ export const ReportFieldsRepeater: FC<
 
   useEffect(() => {
     calculateTotal()
-  }, [calculateTotal])
+  }, [fields, calculateTotal])
 
   //TODO: connect to API
   const debtTypes = [] as any
