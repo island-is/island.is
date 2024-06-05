@@ -4,7 +4,7 @@
 
 // @ts-check
 import { resolve } from 'node:path'
-import { caches } from './__config.mjs'
+import { ENABLED_MODULES, caches } from './__config.mjs'
 import { HAS_HASH_KEYS, ROOT } from './_common.mjs'
 import { writeToSummary, writeToOutput } from './_get_hashes_utils.mjs'
 import { keyStorage } from './_key_storage.mjs'
@@ -12,6 +12,11 @@ import { restoreCache } from './_restore_cache.mjs'
 import { saveCache } from './_save_cache.mjs'
 import { sleep, tryRun } from './_utils.mjs'
 
+if (Object.keys(ENABLED_MODULES).length === 0) {
+  throw new Error('No cache modules enabled')
+}
+
+console.log(`Enabled modules ${caches.map((e) => e.name).join(', ')}`)
 if (!HAS_HASH_KEYS) {
   console.log('Generating cache hashes')
 }
@@ -20,6 +25,7 @@ for (const value of caches) {
   if (value.enabled && !HAS_HASH_KEYS) {
     console.log(`Generating hash for ${value.name}`)
     keyStorage.setKey(value.id, await value.hash())
+    console.log(`Hash for ${value.name} is ${keyStorage.getKey(value.id)}`)
   }
   if (!value.enabled && HAS_HASH_KEYS && keyStorage.hasKey(value.id)) {
     // Delete key if not enabled
@@ -119,7 +125,15 @@ await Promise.allSettled(
         ? cache.path.map((e) => resolve(ROOT, e))
         : resolve(ROOT, cache.path)
       const successInit = await tryRun(cache.init, cache.name, [fileName])
-      const success = await cache.check(successInit, fileName)
+      const success = await (async () => {
+        try {
+          const value = await cache.check(successInit, fileName)
+        } catch (e) {
+          console.error(e);
+          return false;
+        }
+        return true;
+      })();
       if (!success) {
         console.log(`Failed init and check for ${cache.name}`)
         failedJobs.push(cache)
