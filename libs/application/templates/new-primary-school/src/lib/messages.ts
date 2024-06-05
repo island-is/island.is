@@ -455,25 +455,6 @@ export const newPrimarySchoolMessages: MessageDir = {
       description: 'Request meeting with the school',
     },
 
-    // School bus
-    schoolBusSubSectionTitle: {
-      id: 'dess.nps.application:different.needs.school.bus.section.title',
-      defaultMessage: 'Skólaakstur',
-      description: 'School bus',
-    },
-    schoolBusTitle: {
-      id: 'dess.nps.application:different.needs.school.bus.title',
-      defaultMessage: 'Upplýsingar um skólaakstur',
-      description: 'Information about school bus',
-    },
-    schoolBusAlertMessage: {
-      id: 'dess.nps.application:different.needs.school.bus.alert.message',
-      defaultMessage:
-        'Barn gæti átt rétt á skólaakstri með skólabíl eða strætókorti í almenningssamgöngur til að komast í og úr skóla, vegna fjarlægðar lögheimilis frá hverfiskóla. Skólastjóri mun skoða málið og tilkynna foreldrum /forsjáraðilum ef svo er.\n\n\n Nemendur sem sökum fötlunar geta ekki nýtt sér almenningssamgöngur eða skólaakstur eiga rétt á ferðaþjónustu. Sækja þarf um ferðaþjónustu sérstaklega á vef sveitarfélags.',
-      description:
-        'Children may be entitled to school transportation with a school bus or public transportation card to get to and from school due to the distance from their home school. The school principal will review the matter and notify parents/guardians if applicable. Students with disabilities who cannot use public transportation or school transportation are entitled to travel services. Special travel services must be applied for specifically on the municipalitys website',
-    },
-
     // Use of footage
     useOfFootageSubSectionTitle: {
       id: 'dess.nps.application:different.needs.use.of.footage.section.title',
