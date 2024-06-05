@@ -513,7 +513,6 @@ export const NewPrimarySchoolForm: Form = buildForm({
                   id: 'startDate',
                   title: newPrimarySchoolMessages.shared.date,
                   placeholder: newPrimarySchoolMessages.shared.datePlaceholder,
-                  required: true,
                   defaultValue: null,
                   minDate: () => new Date(),
                 }),
