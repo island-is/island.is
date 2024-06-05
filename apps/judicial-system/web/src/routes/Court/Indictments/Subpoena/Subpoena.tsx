@@ -43,12 +43,10 @@ const Subpoena: React.FC<React.PropsWithChildren<unknown>> = () => {
   } = useCourtArrangements(workingCase, setWorkingCase, 'arraignmentDate')
   const { sendNotification } = useCase()
 
-  const isPostponed = Boolean(
+  const isPostponed =
     workingCase.indictmentDecision ===
       IndictmentDecision.POSTPONING_UNTIL_VERDICT ||
-      workingCase.courtDate?.date ||
-      workingCase.postponedIndefinitelyExplanation,
-  )
+    workingCase.indictmentDecision === IndictmentDecision.POSTPONING
 
   const handleNavigationTo = useCallback(
     async (destination: keyof stepValidationsType) => {
