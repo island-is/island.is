@@ -6,7 +6,9 @@ import { ROOT } from './_common.mjs'
 
 export async function restoreCache({ key, path }) {
   let cache
-  const paths = (Array.isArray(path) ? path : [path]).map((e) => resolve(ROOT, e))
+  const paths = (Array.isArray(path) ? path : [path]).map((e) =>
+    resolve(ROOT, e),
+  )
   try {
     cache = await _restoreCache(paths, key, [], {}, true)
   } catch (e) {

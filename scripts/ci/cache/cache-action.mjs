@@ -84,7 +84,7 @@ const checkCache = await Promise.all(
 
 const failedJobs = []
 const pendingJobs = checkCache.filter((e) => !e.isOk).map((e) => e.id)
-const succesFullJobs = [];
+const succesFullJobs = []
 
 await Promise.allSettled(
   checkCache.map(async (cache) => {
@@ -102,7 +102,7 @@ await Promise.allSettled(
                 failedJobs.push(cache)
                 return
               }
-              sleep();
+              sleep()
             }
           }
         }
@@ -115,7 +115,9 @@ await Promise.allSettled(
       console.log(
         `Failed restoring cache for ${cache.name}, trying to init and save`,
       )
-      const fileName = Array.isArray(cache.path) ? cache.path.map((e) => resolve(ROOT, e)) : resolve(ROOT, cache.path)
+      const fileName = Array.isArray(cache.path)
+        ? cache.path.map((e) => resolve(ROOT, e))
+        : resolve(ROOT, cache.path)
       const successInit = await tryRun(cache.init, cache.name, [fileName])
       const success = await cache.check(successInit, fileName)
       if (!success) {

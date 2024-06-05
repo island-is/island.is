@@ -67,7 +67,7 @@ export async function getYarnLockHash(
   root = ROOT,
   filePath = resolve(root, 'yarn.lock'),
 ) {
-  return getFileHash(filePath);
+  return getFileHash(filePath)
 }
 
 export async function getFileHash(file) {
@@ -76,13 +76,15 @@ export async function getFileHash(file) {
 }
 
 export async function getFilesHash(files = []) {
-  const contents = await Promise.all(files.map(file => readFile(file, 'utf-8')));
-  const combinedContent = contents.join('');
-  return crypto.createHash('sha256').update(combinedContent).digest('hex');
+  const contents = await Promise.all(
+    files.map((file) => readFile(file, 'utf-8')),
+  )
+  const combinedContent = contents.join('')
+  return crypto.createHash('sha256').update(combinedContent).digest('hex')
 }
 
 export function sleep(ms = 50) {
-  return new Promise(resolve => setTimeout(resolve, ms))
+  return new Promise((resolve) => setTimeout(resolve, ms))
 }
 
 export async function tryRun(fn, name, args = []) {
@@ -92,7 +94,7 @@ export async function tryRun(fn, name, args = []) {
     console.log({ type: 'RUN FAILED', name, error })
     return false
   }
-  return true;
+  return true
 }
 
 /**
@@ -157,37 +159,37 @@ export async function folderSizeIsEqualOrGreaterThan(
  */
 export async function runCommand(cmd, cwd = undefined, env = {}) {
   return new Promise((resolve, reject) => {
-    const options = cwd ? { cwd, encoding: 'utf-8' } : {};
-    options.env = { ...process.env, ...env };
+    const options = cwd ? { cwd, encoding: 'utf-8' } : {}
+    options.env = { ...process.env, ...env }
     options.encoding = 'utf-8'
 
-    const [command, ...args] = cmd.split(' ');
+    const [command, ...args] = cmd.split(' ')
 
-    const childProcess = spawn(command, args, options);
-    const errorChunks = [];
-    const outputChunks = [];
+    const childProcess = spawn(command, args, options)
+    const errorChunks = []
+    const outputChunks = []
 
     childProcess.stdout.on('data', (data) => {
-      outputChunks.push(data);
-    });
+      outputChunks.push(data)
+    })
 
     childProcess.stderr.on('data', (data) => {
-      errorChunks.push(data);
-    });
+      errorChunks.push(data)
+    })
 
     childProcess.on('close', (code) => {
       if (code !== 0) {
-        console.log(errorChunks.join('\n'));
-        reject(`Error: Process exited with code ${code}`);
+        console.log(errorChunks.join('\n'))
+        reject(`Error: Process exited with code ${code}`)
       } else {
-        resolve(void 0);
+        resolve(void 0)
       }
-    });
+    })
 
     childProcess.on('error', (error) => {
-      console.log(errorChunks.join('\n'));
-      reject(`Error: ${error.message}`);
-    });
+      console.log(errorChunks.join('\n'))
+      reject(`Error: ${error.message}`)
+    })
   })
 }
 

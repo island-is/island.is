@@ -33,9 +33,9 @@ export const ENABLED_MODULES = (process.env[ENV_ENABLED_CACHE] || '')
     return a
   }, {})
 
-console.log({ ENABLED_MODULES });
+console.log({ ENABLED_MODULES })
 
-export const cypressPath = "/github/home/.cache/Cypress"
+export const cypressPath = '/github/home/.cache/Cypress'
 export const cacheSuccess = JSON.parse(process.env[ENV_CACHE_SUCCESS] ?? '{}')
 export const initCache = process.env[ENV_INIT_CACHE] === 'true'
 
@@ -115,12 +115,17 @@ export const caches = [
     enabled: ENABLED_MODULES['docker'],
     dependsOn: ['node_modules', 'mobile-node_modules', 'generated-files'],
     hash: async () => {
-      const files = ["scripts/ci/10_prepare-docker-deps.sh", "scripts/ci/Dockerfile", "scripts/ci/get-node-version.mjs", "scripts/ci/_common.mjs"].map((file) => resolve(ROOT, file))
-      const filesHash = getFilesHash(files);
-      return `docker-${HASH_VERSION}-${getPlatformString()}-${await getYarnLockHash()}-${await getPackageHash()}-${await getNodeVersionString()}-${filesHash}`;
+      const files = [
+        'scripts/ci/10_prepare-docker-deps.sh',
+        'scripts/ci/Dockerfile',
+        'scripts/ci/get-node-version.mjs',
+        'scripts/ci/_common.mjs',
+      ].map((file) => resolve(ROOT, file))
+      const filesHash = getFilesHash(files)
+      return `docker-${HASH_VERSION}-${getPlatformString()}-${await getYarnLockHash()}-${await getPackageHash()}-${await getNodeVersionString()}-${filesHash}`
     },
     name: 'Cache Docker',
-    path: ["cache", "cache_output"],
+    path: ['cache', 'cache_output'],
     id: 'docker',
     init: async () => {
       const path = resolve(ROOT, './scripts/ci/cache/10_prepare-docker-deps.sh')
@@ -130,12 +135,15 @@ export const caches = [
       if (!success) {
         return false
       }
-      const successCheck = (await Promise.all(path.map(async (p) => {
-        return await folderSizeIsEqualOrGreaterThan(p, 1000);
-      }))).every((x) => x);
-      return successCheck;
+      const successCheck = (
+        await Promise.all(
+          path.map(async (p) => {
+            return await folderSizeIsEqualOrGreaterThan(p, 1000)
+          }),
+        )
+      ).every((x) => x)
+      return successCheck
     },
-
   },
   {
     enabled: ENABLED_MODULES['cypress'],
@@ -143,9 +151,9 @@ export const caches = [
       if (keyStorage.getKey('cypress')) {
         return keyStorage.getKey('cypress')
       }
-      const pkg = await getPackageJSON();
-      const cypressVersion = pkg?.devDependencies?.cypress;
-      return `cypress-cache-${HASH_VERSION}-${getPlatformString()}-${cypressVersion}`;
+      const pkg = await getPackageJSON()
+      const cypressVersion = pkg?.devDependencies?.cypress
+      return `cypress-cache-${HASH_VERSION}-${getPlatformString()}-${cypressVersion}`
     },
     name: 'Cache Cypress',
     id: 'cypress',
@@ -158,13 +166,14 @@ export const caches = [
       } catch {
         return false
       }
-      return true;
-
+      return true
     },
     init: async () => {
-      const pkg = await getPackageJSON();
+      const pkg = await getPackageJSON()
       const cypressVersion = pkg?.devDependencies?.cypress
-      await runCommand('npx cypress install', ROOT, { CYPRESS_INSTALL_BINARY: cypressVersion })
+      await runCommand('npx cypress install', ROOT, {
+        CYPRESS_INSTALL_BINARY: cypressVersion,
+      })
     },
     path: cypressPath || '',
   },
