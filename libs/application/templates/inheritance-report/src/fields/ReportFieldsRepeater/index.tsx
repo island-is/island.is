@@ -48,6 +48,7 @@ type RepeaterProps = {
       hideDeceasedShare?: boolean
       skipPushRight?: boolean
       assetKey?: string
+      selections?: Array<{ value: string; label: string }>
     }
   }
 }
@@ -120,7 +121,7 @@ export const ReportFieldsRepeater: FC<
   }, [calculateTotal])
 
   //TODO: connect to API
-  const debtTypes = [] as any
+  const debtTypes = props.selections ?? []
 
   const handleAddRepeaterFields = () => {
     //reset stocks
@@ -389,7 +390,10 @@ export const ReportFieldsRepeater: FC<
                         name={`${fieldIndex}.${field.id}`}
                         label={formatMessage(field.title) ?? ''}
                         placeholder={field.placeholder}
-                        options={debtTypes}
+                        options={debtTypes.map((type) => ({
+                          label: formatMessage(type.label),
+                          value: type.value,
+                        }))}
                         backgroundColor="blue"
                       /> /* Commenting out for testing purposes of this field
                     

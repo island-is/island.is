@@ -360,3 +360,11 @@ export interface VehicleRegistration {
   licensePlate?: string
   color?: string
 }
+
+export enum DebtTypes {
+  Overdraft = 'overdraft',
+  CreditCard = 'creditCard',
+  Loan = 'loan',
+  InsuranceCompany = 'insuranceCompany',
+  PropertyFees = 'propertyFees',
+}
