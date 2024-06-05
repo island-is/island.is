@@ -61,6 +61,7 @@ import {
   InheritanceReportAsset,
   InheritanceEstateMember,
   InheritanceReportInfo,
+  DebtTypes,
 } from './syslumennClient.types'
 const UPLOAD_DATA_SUCCESS = 'Gögn móttekin'
 
@@ -565,6 +566,15 @@ const mapInheritanceReportAssets = (
 
   iAssets?.forEach((iAsset) => {
     const asset = mapInheritanceReportAsset(iAsset)
+
+    const assetTypeTodebtType = {
+      [TegundAndlags.NUMBER_17]: DebtTypes.PropertyFees,
+      [TegundAndlags.NUMBER_18]: DebtTypes.InsuranceCompany,
+      [TegundAndlags.NUMBER_19]: DebtTypes.Loan,
+      [TegundAndlags.NUMBER_20]: DebtTypes.CreditCard,
+      [TegundAndlags.NUMBER_21]: DebtTypes.Overdraft,
+    }
+
     switch (iAsset.tegundAngalgs) {
       case TegundAndlags.NUMBER_0:
         assets.push(asset)
@@ -620,6 +630,15 @@ const mapInheritanceReportAssets = (
       case TegundAndlags.NUMBER_16:
         debtsInBusiness.push(asset)
         break
+      case TegundAndlags.NUMBER_17:
+      case TegundAndlags.NUMBER_18:
+      case TegundAndlags.NUMBER_19:
+      case TegundAndlags.NUMBER_20:
+      case TegundAndlags.NUMBER_21:
+        otherDebts.push({
+          debtType: assetTypeTodebtType[iAsset.tegundAngalgs],
+          ...asset,
+        })
       default:
         break
     }
