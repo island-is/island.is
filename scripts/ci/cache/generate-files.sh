@@ -13,9 +13,9 @@ DIR="$(git rev-parse --show-toplevel)"
 marker=$(mktemp)
 touch "$marker"
 
-CMD=yarn codegen --skip-cache 
+CMD="yarn codegen --skip-cache"
 
-$CMD "$@" 1>&2
+node scripts/codegen.js --skip-cache 1>&2
 
 # THIS IS VERY HACKISH AND MAKES IT DIFFICULT TO RUN ASYNC
 changed_files=$(find "$DIR"/apps "$DIR"/libs -type d \( \
