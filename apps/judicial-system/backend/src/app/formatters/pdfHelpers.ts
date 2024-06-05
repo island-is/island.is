@@ -109,6 +109,8 @@ export const addPoliceStar = (doc: PDFKit.PDFDocument) => {
   doc.scale(25).translate(-270, -70)
 }
 
+const calculatePt = (px: number) => Math.ceil(px * 0.74999943307122)
+
 export const addIndictmentConfirmation = (
   doc: PDFKit.PDFDocument,
   confirmedBy: string,
@@ -118,7 +120,7 @@ export const addIndictmentConfirmation = (
   const lightGray = '#FAFAFA'
   const darkGray = '#CBCBCB'
   const gold = '#ADA373'
-  const pageMargin = 24
+  const pageMargin = calculatePt(18)
   // The shaddow and content heights are the same
   const shaddowHeight = 88
   const coatOfArmsDimensions = 88
