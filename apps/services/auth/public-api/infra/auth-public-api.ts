@@ -74,8 +74,8 @@ export const serviceSetup = (): ServiceBuilder<'services-auth-public-api'> => {
         '/k8s/services-auth/IDENTITY_SERVER_CLIENT_SECRET',
       NATIONAL_REGISTRY_IDS_CLIENT_SECRET:
         '/k8s/xroad/client/NATIONAL-REGISTRY/IDENTITYSERVER_SECRET',
-      PASSKEY_CORE_ALLOWED_ORIGIN:
-        '/k8s/services-auth/PASSKEY_CORE_ALLOWED_ORIGIN',
+      PASSKEY_CORE_ALLOWED_ORIGINS:
+        '/k8s/services-auth/PASSKEY_CORE_ALLOWED_ORIGINS',
     })
     .xroad(Base, Client, RskProcuring)
     .ingress({

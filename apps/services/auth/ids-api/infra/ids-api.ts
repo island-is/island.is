@@ -104,8 +104,8 @@ export const serviceSetup = (): ServiceBuilder<'services-auth-ids-api'> => {
       NOVA_URL: '/k8s/services-auth/NOVA_URL',
       NOVA_USERNAME: '/k8s/services-auth/NOVA_USERNAME',
       NOVA_PASSWORD: '/k8s/services-auth/NOVA_PASSWORD',
-      PASSKEY_CORE_ALLOWED_ORIGIN:
-        '/k8s/services-auth/PASSKEY_CORE_ALLOWED_ORIGIN',
+      PASSKEY_CORE_ALLOWED_ORIGINS:
+        '/k8s/services-auth/PASSKEY_CORE_ALLOWED_ORIGINS',
     })
     .xroad(Base, Client, RskProcuring)
     .readiness('/health/check')
