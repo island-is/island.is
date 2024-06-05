@@ -1,10 +1,10 @@
-﻿'use strict';
+﻿'use strict'
 
 module.exports = {
   up: (queryInterface, Sequelize) => {
     return queryInterface.sequelize.query(`
         ALTER TYPE enum_program_extra_application_field_field_type ADD VALUE 'PERSON'
-        `);
+        `)
   },
 
   down: (queryInterface, Sequelize) => {
@@ -16,5 +16,5 @@ module.exports = {
             WHERE typname = 'enum_program_extra_application_field_field_type'
         )
     `)
-  }
-};
+  },
+}
