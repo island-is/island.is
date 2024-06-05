@@ -154,7 +154,13 @@ export const caches = [
       if (!success) {
         return false
       }
-      return runCommand('npx cypress verify', ROOT)
+      try {
+        await runCommand('npx cypress verify', ROOT)
+      } catch {
+        return false
+      }
+      return true;
+
     },
     init: async () => {
       const pkg = await getPackageJSON();
