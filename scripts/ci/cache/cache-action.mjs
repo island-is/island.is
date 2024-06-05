@@ -15,11 +15,15 @@ const enabledCaches = caches.filter((value) => value.enabled)
 let failedJobs = []
 let saveJobs = []
 
+console.log(cacheSuccess);
+
 for (const cache of enabledCaches) {
   const fileName = resolve(ROOT, cache.path)
   const isOkay = cache.check
     ? await cache.check(cacheSuccess[cache.id] === 'true', fileName)
     : cacheSuccess[cache.id] === 'true'
+  console.log(`Check cache ${cache.name} ${isOkay}`)
+
   if (!isOkay) {
     if (!initCache) {
       failedJobs = [...failedJobs, cache.name]
