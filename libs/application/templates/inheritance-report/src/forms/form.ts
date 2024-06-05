@@ -1,4 +1,5 @@
 import {
+  YES,
   buildCheckboxField,
   buildForm,
   buildMultiField,
@@ -13,11 +14,33 @@ import { heirs } from './sections/heirs'
 import { applicant } from './sections/applicant'
 import { dataCollection } from './sections/dataCollection'
 import { deceased } from './sections/deceased'
-import { YES } from '../lib/constants'
 import { applicationInfo } from './sections/applicationInfo'
-import { preSelection } from './sections/preSelection'
+import { preSelection } from './sections/applicationTypeSelection'
+import { prePaidHeirs } from './sections/prepaidInheritance/heirs'
+import { inheritanceExecutor } from './sections/prepaidInheritance/inheritanceExecutor'
+import { inheritance } from './sections/prepaidInheritance/inheritance'
+import { prepaidOverview } from './sections/prepaidInheritance/overview'
+import { finalStep } from './sections/finalStep'
+import { prePaidApplicant } from './sections/prepaidInheritance/applicant'
 
-export const form: Form = buildForm({
+export const prepaidInheritanceForm: Form = buildForm({
+  id: 'prePaidInheritanceReport',
+  title: '',
+  mode: FormModes.DRAFT,
+  renderLastScreenBackButton: true,
+  renderLastScreenButton: true,
+  children: [
+    prePaidApplicant,
+    inheritanceExecutor,
+    inheritance,
+    assets,
+    prePaidHeirs,
+    prepaidOverview,
+    finalStep,
+  ],
+})
+
+export const estateInheritanceForm: Form = buildForm({
   id: 'inheritanceReport',
   title: '',
   mode: FormModes.DRAFT,
@@ -32,43 +55,6 @@ export const form: Form = buildForm({
     assets,
     debtsAndFuneralCost,
     heirs,
-    buildSection({
-      id: 'finalStep',
-      title: m.readyToSubmit,
-      children: [
-        buildMultiField({
-          id: 'finalStep',
-          title: m.readyToSubmit,
-          description: m.beforeSubmitStatement,
-          children: [
-            buildCheckboxField({
-              id: 'confirmAction',
-              title: '',
-              large: false,
-              backgroundColor: 'white',
-              defaultValue: [],
-              options: [
-                {
-                  value: YES,
-                  label: m.inheritanceReportSubmissionCheckbox,
-                },
-              ],
-            }),
-            buildSubmitField({
-              id: 'inheritanceReport.submit',
-              title: '',
-              refetchApplicationAfterSubmit: true,
-              actions: [
-                {
-                  event: DefaultEvents.SUBMIT,
-                  name: m.submitReport,
-                  type: 'primary',
-                },
-              ],
-            }),
-          ],
-        }),
-      ],
-    }),
+    finalStep,
   ],
 })

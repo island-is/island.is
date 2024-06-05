@@ -10,7 +10,10 @@ import {
   DefenderNotFound,
   FormContext,
 } from '@island.is/judicial-system-web/src/components'
-import { Defendant } from '@island.is/judicial-system-web/src/graphql/schema'
+import {
+  Defendant,
+  DefenderChoice,
+} from '@island.is/judicial-system-web/src/graphql/schema'
 import { useDefendants } from '@island.is/judicial-system-web/src/utils/hooks'
 
 import { defender as m } from './Defender.strings'
@@ -49,7 +52,10 @@ const SelectDefender: React.FC<React.PropsWithChildren<Props>> = (props) => {
         defenderPhoneNumber: defendantWaivesRightToCounsel
           ? ''
           : defendant.defenderPhoneNumber,
-        defendantWaivesRightToCounsel,
+        defenderChoice:
+          defendantWaivesRightToCounsel === true
+            ? DefenderChoice.WAIVE
+            : undefined,
       }
 
       setAndSendDefendantToServer(updateDefendantInput, setWorkingCase)
@@ -79,7 +85,7 @@ const SelectDefender: React.FC<React.PropsWithChildren<Props>> = (props) => {
                 accused: formatMessage(core.indictmentDefendant, { gender }),
               }),
             )}
-            checked={Boolean(defendant.defendantWaivesRightToCounsel)}
+            checked={Boolean(defendant.defenderChoice === DefenderChoice.WAIVE)}
             onChange={(event: React.ChangeEvent<HTMLInputElement>) => {
               toggleDefendantWaivesRightToCounsel(
                 workingCase.id,
@@ -92,7 +98,7 @@ const SelectDefender: React.FC<React.PropsWithChildren<Props>> = (props) => {
           />
         </Box>
         <DefenderInput
-          disabled={defendant.defendantWaivesRightToCounsel}
+          disabled={defendant.defenderChoice === DefenderChoice.WAIVE}
           onDefenderNotFound={setDefenderNotFound}
           defendantId={defendant.id}
         />

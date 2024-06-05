@@ -11,12 +11,16 @@ import {
   AuditedAction,
   AuditTrailService,
 } from '@island.is/judicial-system/audit-trail'
-import { isCompletedCase } from '@island.is/judicial-system/types'
+import { LawyersService } from '@island.is/judicial-system/lawyers'
+import { DefenderChoice } from '@island.is/judicial-system/types'
 
+import { UpdateSubpoenaDto } from './dto/subpoena.dto'
 import { CaseResponse } from './models/case.response'
 import { CasesResponse } from './models/cases.response'
-import { InternalCaseResponse } from './models/internalCase.response'
-import { InternalCasesResponse } from './models/internalCases.response'
+import { InternalCaseResponse } from './models/internal/internalCase.response'
+import { InternalCasesResponse } from './models/internal/internalCases.response'
+import { InternalDefendantResponse } from './models/internal/internalDefendant.response'
+import { SubpoenaResponse } from './models/subpoena.response'
 import { caseModuleConfig } from './case.config'
 
 @Injectable()
@@ -25,132 +29,130 @@ export class CaseService {
     @Inject(caseModuleConfig.KEY)
     private readonly config: ConfigType<typeof caseModuleConfig>,
     private readonly auditTrailService: AuditTrailService,
+    private readonly lawyersService: LawyersService,
   ) {}
 
-  private format(
-    response: InternalCasesResponse[],
+  async getCases(nationalId: string, lang?: string): Promise<CasesResponse[]> {
+    return this.auditTrailService.audit(
+      'digital-mailbox-api',
+      AuditedAction.GET_INDICTMENTS,
+      this.getCasesInfo(nationalId, lang),
+      nationalId,
+    )
+  }
+
+  async getCase(
+    id: string,
+    nationalId: string,
     lang?: string,
-  ): CasesResponse[] {
-    return response.map((item: InternalCasesResponse) => {
-      const language = lang?.toLowerCase()
-
-      return {
-        id: item.id,
-        state: {
-          color: isCompletedCase(item.state) ? 'purple' : 'blue',
-          label:
-            language === 'en'
-              ? isCompletedCase(item.state)
-                ? 'Completed'
-                : 'Active'
-              : isCompletedCase(item.state)
-              ? 'Lokið'
-              : 'Í vinnslu',
-        },
-        caseNumber:
-          language === 'en'
-            ? `Case number ${item.courtCaseNumber}`
-            : `Málsnúmer ${item.courtCaseNumber}`,
-        type: language === 'en' ? 'Indictment' : 'Ákæra',
-      }
-    })
+  ): Promise<CaseResponse> {
+    return this.auditTrailService.audit(
+      'digital-mailbox-api',
+      AuditedAction.GET_INDICTMENT,
+      this.getCaseInfo(id, nationalId, lang),
+      () => id,
+    )
   }
 
-  private formatCase(res: InternalCaseResponse, lang?: string): CaseResponse {
-    const language = lang?.toLowerCase()
-    const defendant = res.defendants[0]
-
-    return {
-      data: {
-        caseNumber:
-          language === 'en'
-            ? `Case number ${res.courtCaseNumber}`
-            : `Málsnúmer ${res.courtCaseNumber}`,
-        groups: [
-          {
-            label: language === 'en' ? 'Defendant' : 'Varnaraðili',
-            items: [
-              [language === 'en' ? 'Name' : 'Nafn', defendant.name],
-              [
-                language === 'en' ? 'National ID' : 'Kennitala',
-                defendant.nationalId,
-              ],
-              [
-                language === 'en' ? 'Address' : 'Heimilisfang',
-                defendant.address,
-              ],
-            ].map((item) => ({
-              label: item[0] ?? '',
-              value: item[1] ?? (language === 'en' ? 'N/A' : 'Ekki skráð'),
-            })),
-          },
-          {
-            label: language === 'en' ? 'Defender' : 'Verjandi',
-            items: [
-              [language === 'en' ? 'Name' : 'Nafn', defendant.defenderName],
-              [
-                language === 'en' ? 'Email' : 'Netfang',
-                defendant.defenderEmail,
-                'email',
-              ],
-              [
-                language === 'en' ? 'Phone Nr.' : 'Símanúmer',
-                defendant.defenderPhoneNumber,
-                'tel',
-              ],
-            ].map((item) => ({
-              label: item[0] ?? '',
-              value: item[1] ?? (language === 'en' ? 'N/A' : 'Ekki skráð'),
-              linkType: item[2] ?? undefined,
-            })),
-          },
-          {
-            label: language === 'en' ? 'Information' : 'Málsupplýsingar',
-            items: [
-              {
-                label: language === 'en' ? 'Type' : 'Tegund',
-                value: language === 'en' ? 'Indictment' : 'Ákæra',
-              },
-              {
-                label:
-                  language === 'en' ? 'Case number' : 'Málsnúmer héraðsdóms',
-                value: res.courtCaseNumber,
-              },
-              {
-                label: language === 'en' ? 'Court' : 'Dómstóll',
-                value: res.court.name,
-              },
-              {
-                label: language === 'en' ? 'Judge' : 'Dómari',
-                value: res.judge.name,
-              },
-              {
-                label: language === 'en' ? 'Institution' : 'Embætti',
-                value: res.prosecutorsOffice.name,
-              },
-              {
-                label: language === 'en' ? 'Prosecutor' : 'Ákærandi',
-                value: res.prosecutor.name,
-              },
-            ],
-          },
-        ],
-      },
-    }
+  async getSubpoena(
+    caseId: string,
+    nationalId: string,
+  ): Promise<SubpoenaResponse> {
+    return this.auditTrailService.audit(
+      'digital-mailbox-api',
+      AuditedAction.GET_SUBPOENA,
+      this.getSubpoenaInfo(caseId, nationalId),
+      nationalId,
+    )
   }
 
-  private async test(nationalId: string): Promise<string> {
-    return `OK ${nationalId}`
+  async updateSubpoena(
+    nationalId: string,
+    caseId: string,
+    updateSubpoena: UpdateSubpoenaDto,
+  ): Promise<SubpoenaResponse> {
+    return await this.auditTrailService.audit(
+      'digital-mailbox-api',
+      AuditedAction.ASSIGN_DEFENDER_TO_SUBPOENA,
+      this.updateSubpoenaDefender(nationalId, caseId, updateSubpoena),
+      nationalId,
+    )
   }
 
-  async testConnection(nationalId: string): Promise<string> {
-    return this.test(nationalId)
-  }
-
-  private async getAllCases(
+  private async getCasesInfo(
     nationalId: string,
     lang?: string,
   ): Promise<CasesResponse[]> {
+    const response = await this.fetchCases(nationalId)
+    return CasesResponse.fromInternalCasesResponse(response, lang)
+  }
+
+  private async getCaseInfo(
+    id: string,
+    nationalId: string,
+    lang?: string,
+  ): Promise<CaseResponse> {
+    const response = await this.fetchCase(id, nationalId)
+    return CaseResponse.fromInternalCaseResponse(response, lang)
+  }
+
+  private async getSubpoenaInfo(
+    caseId: string,
+    defendantNationalId: string,
+  ): Promise<SubpoenaResponse> {
+    const caseData = await this.fetchCase(caseId, defendantNationalId)
+    return SubpoenaResponse.fromInternalCaseResponse(
+      caseData,
+      defendantNationalId,
+    )
+  }
+
+  private async updateSubpoenaDefender(
+    defendantNationalId: string,
+    caseId: string,
+    defenderAssignment: UpdateSubpoenaDto,
+  ): Promise<SubpoenaResponse> {
+    let defenderChoice = { ...defenderAssignment }
+
+    if (
+      defenderAssignment.defenderNationalId &&
+      defenderAssignment.defenderChoice === DefenderChoice.CHOOSE
+    ) {
+      const lawyers = await this.lawyersService.getLawyers()
+      const chosenLawyer = lawyers.find(
+        (l) => l.SSN === defenderAssignment.defenderNationalId,
+      )
+      if (!chosenLawyer) {
+        throw new NotFoundException('Lawyer not found')
+      }
+
+      defenderChoice = {
+        ...defenderChoice,
+        ...{
+          defenderName: chosenLawyer.Name,
+          defenderEmail: chosenLawyer.Email,
+          defenderPhoneNumber: chosenLawyer.Phone,
+        },
+      }
+    }
+
+    await this.patchSubpoenaDefender(
+      defendantNationalId,
+      caseId,
+      defenderChoice,
+    )
+
+    const updatedCase = await this.fetchCase(caseId, defendantNationalId)
+
+    return SubpoenaResponse.fromInternalCaseResponse(
+      updatedCase,
+      defendantNationalId,
+    )
+  }
+
+  private async fetchCases(
+    nationalId: string,
+  ): Promise<InternalCasesResponse[]> {
     try {
       const res = await fetch(
         `${this.config.backendUrl}/api/internal/cases/indictments`,
@@ -163,32 +165,23 @@ export class CaseService {
           body: JSON.stringify({ nationalId }),
         },
       )
-      const response = await res.json()
 
       if (!res.ok) {
         throw new BadGatewayException(
-          response?.detail ||
-            'Unexpected error occurred while fetching all cases',
+          'Unexpected error occurred while fetching cases',
         )
       }
 
-      return this.format(response, lang)
+      return await res.json()
     } catch (reason) {
-      if (reason instanceof BadGatewayException) {
-        throw reason
-      }
-
-      throw new BadGatewayException(
-        `Failed to fetch all cases: ${reason.message}`,
-      )
+      throw new BadGatewayException(`Failed to fetch cases: ${reason.message}`)
     }
   }
 
-  private async getCase(
+  private async fetchCase(
     id: string,
     nationalId: string,
-    lang?: string,
-  ): Promise<CaseResponse> {
+  ): Promise<InternalCaseResponse> {
     try {
       const res = await fetch(
         `${this.config.backendUrl}/api/internal/cases/indictment/${id}`,
@@ -214,9 +207,7 @@ export class CaseService {
         )
       }
 
-      const response = await res.json()
-
-      return this.formatCase(response, lang)
+      return await res.json()
     } catch (reason) {
       if (
         reason instanceof BadGatewayException ||
@@ -231,25 +222,48 @@ export class CaseService {
     }
   }
 
-  async getCases(nationalId: string, lang?: string): Promise<CasesResponse[]> {
-    return this.auditTrailService.audit(
-      'digital-mailbox-api',
-      AuditedAction.GET_INDICTMENTS,
-      this.getAllCases(nationalId, lang),
-      nationalId,
-    )
-  }
+  private async patchSubpoenaDefender(
+    defendantNationalId: string,
+    caseId: string,
+    defenderChoice: UpdateSubpoenaDto,
+  ): Promise<InternalDefendantResponse> {
+    try {
+      const response = await fetch(
+        `${this.config.backendUrl}/api/internal/case/${caseId}/defense/${defendantNationalId}`,
+        {
+          method: 'PATCH',
+          headers: {
+            'Content-Type': 'application/json',
+            authorization: `Bearer ${this.config.secretToken}`,
+          },
+          body: JSON.stringify(defenderChoice),
+        },
+      )
 
-  async getCaseById(
-    id: string,
-    nationalId: string,
-    lang?: string,
-  ): Promise<CaseResponse> {
-    return this.auditTrailService.audit(
-      'digital-mailbox-api',
-      AuditedAction.GET_INDICTMENT,
-      this.getCase(id, nationalId, lang),
-      () => id,
-    )
+      if (!response.ok) {
+        const errorResponse = await response.json()
+        throw new BadGatewayException(
+          `Failed to assign defender: ${
+            errorResponse.message || response.statusText
+          }`,
+        )
+      }
+
+      const updatedDefendant =
+        (await response.json()) as InternalDefendantResponse
+
+      return {
+        id: updatedDefendant.id,
+        defenderChoice: updatedDefendant.defenderChoice,
+        defenderName: updatedDefendant.defenderName,
+      } as InternalDefendantResponse
+    } catch (error) {
+      if (error instanceof NotFoundException) {
+        throw error
+      }
+      throw new BadGatewayException(
+        error.message || 'An unexpected error occurred',
+      )
+    }
   }
 }

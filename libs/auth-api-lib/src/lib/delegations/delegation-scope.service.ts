@@ -6,6 +6,8 @@ import startOfDay from 'date-fns/startOfDay'
 import { Op } from 'sequelize'
 import { uuid } from 'uuidv4'
 
+import { AuthDelegationType } from '@island.is/shared/types'
+
 import { PersonalRepresentativeRightType } from '../personal-representative/models/personal-representative-right-type.model'
 import { PersonalRepresentativeRight } from '../personal-representative/models/personal-representative-right.model'
 import { PersonalRepresentativeScopePermission } from '../personal-representative/models/personal-representative-scope-permission.model'
@@ -16,6 +18,9 @@ import { DelegationConfig } from './DelegationConfig'
 import { UpdateDelegationScopeDTO } from './dto/delegation-scope.dto'
 import { DelegationScope } from './models/delegation-scope.model'
 import { Delegation } from './models/delegation.model'
+import { ApiScopeDelegationType } from '../resources/models/api-scope-delegation-type.model'
+import { DelegationTypeModel } from './models/delegation-type.model'
+import { PersonalRepresentativeDelegationTypeModel } from '../personal-representative/models/personal-representative-delegation-type.model'
 
 @Injectable()
 export class DelegationScopeService {
@@ -26,6 +31,8 @@ export class DelegationScopeService {
     private apiScopeModel: typeof ApiScope,
     @InjectModel(IdentityResource)
     private identityResourceModel: typeof IdentityResource,
+    @InjectModel(ApiScopeDelegationType)
+    private apiScopesDelegationTypesModel: typeof ApiScopeDelegationType,
     @Inject(DelegationConfig.KEY)
     private delegationConfig: ConfigType<typeof DelegationConfig>,
   ) {}
@@ -177,34 +184,20 @@ export class DelegationScopeService {
       },
       include: [
         {
-          model: PersonalRepresentativeScopePermission,
+          model: DelegationTypeModel,
           required: true,
           include: [
             {
-              model: PersonalRepresentativeRightType,
+              model: PersonalRepresentativeDelegationTypeModel,
               required: true,
-              where: {
-                validFrom: {
-                  [Op.or]: { [Op.eq]: null, [Op.lt]: new Date() },
-                },
-                validTo: {
-                  [Op.or]: { [Op.eq]: null, [Op.gt]: new Date() },
-                },
-              },
               include: [
                 {
-                  model: PersonalRepresentativeRight,
+                  model: PersonalRepresentative,
                   required: true,
-                  include: [
-                    {
-                      model: PersonalRepresentative,
-                      required: true,
-                      where: {
-                        nationalIdPersonalRepresentative: toNationalId,
-                        nationalIdRepresentedPerson: fromNationalId,
-                      },
-                    },
-                  ],
+                  where: {
+                    nationalIdPersonalRepresentative: toNationalId,
+                    nationalIdRepresentedPerson: fromNationalId,
+                  },
                 },
               ],
             },

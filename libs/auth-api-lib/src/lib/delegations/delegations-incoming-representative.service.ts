@@ -62,6 +62,7 @@ export class DelegationsIncomingRepresentativeService {
         type: AuthDelegationType.PersonalRepresentative,
         provider: AuthDelegationProvider.PersonalRepresentativeRegistry,
         rights: representative.rights,
+        prDelegationType: representative.prDelegationTypes,
       })
 
       const personalRepresentatives =
@@ -71,6 +72,19 @@ export class DelegationsIncomingRepresentativeService {
           },
           useMaster,
         )
+      // Filter if personal representative actually has a scope in client allowed scopes
+      personalRepresentatives.filter((pr) => {
+        if (pr.prDelegationTypes) {
+          return pr.prDelegationTypes.some((type) =>
+            clientAllowedApiScopes?.some(
+              (scope) =>
+                scope.grantToPersonalRepresentatives &&
+                scope.name === type.name &&
+                !scope.isAccessControlled,
+            ),
+          )
+        }
+      })
 
       const personPromises = personalRepresentatives.map(
         ({ nationalIdRepresentedPerson }) =>
