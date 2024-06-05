@@ -9,6 +9,7 @@ import {
 } from './utils/helpers'
 import { m } from './messages'
 import { NO, YES } from '@island.is/application/core'
+import { ESTATE_INHERITANCE, PREPAID_INHERITANCE } from './constants'
 
 const deceasedShare = {
   deceasedShare: z.string().nonempty().optional(),
@@ -167,7 +168,7 @@ export const inheritanceReportSchema = z.object({
       },
     ),
 
-  applicationFor: z.enum(['estateInheritance', 'prePaidInheritance']),
+  applicationFor: z.enum([ESTATE_INHERITANCE, PREPAID_INHERITANCE]),
 
   /* assets */
   assets: z.object({

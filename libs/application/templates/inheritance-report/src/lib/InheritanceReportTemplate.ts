@@ -129,10 +129,10 @@ const InheritanceReportTemplate: ApplicationTemplate<
           status: 'approved',
           progress: 1,
           lifecycle: EphemeralStateLifeCycle,
-          /*onEntry: defineTemplateApi({
+          onEntry: defineTemplateApi({
             action: ApiActions.completeApplication,
             throwOnError: true,
-          }),*/
+          }),
           roles: [
             {
               id: Roles.ESTATE_INHERITANCE_APPLICANT,

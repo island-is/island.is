@@ -197,8 +197,7 @@ export const HeirsAndPartitionRepeater: FC<
       const spouse = (heirs ?? []).filter(
         (heir) =>
           heir.enabled &&
-          (heir.relation === 'Maki' ||
-            heir.relation.toLowerCase() === 'spouse'),
+          (heir.relation === 'Maki'),
       )
 
       let isSpouse = false
@@ -207,8 +206,7 @@ export const HeirsAndPartitionRepeater: FC<
       if (spouse.length > 0) {
         if (isPrePaid) {
           isSpouse =
-            currentHeir?.relation === 'Maki' ||
-            currentHeir?.relation.toLowerCase() === 'spouse'
+            currentHeir?.relation === 'Maki'
         } else {
           spouse.forEach((currentSpouse) => {
             isSpouse =
