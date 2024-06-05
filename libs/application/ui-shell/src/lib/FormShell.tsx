@@ -207,7 +207,7 @@ export const FormShell: FC<
                 <FormStepperV2
                   sections={
                     sections && [
-                      <Box marginLeft={1}>
+                      <Box marginLeft={1} key={`${form.title.toString}`}>
                         <Text variant="h4">{formatMessage(form.title)}</Text>
                       </Box>,
                       ...sections.map((section, i) => (
