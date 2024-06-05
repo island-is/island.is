@@ -12,11 +12,10 @@ import {
   verifyRegistrationResponse,
 } from '@simplewebauthn/server'
 
-// import { verifyAttestation } from 'node-app-attest'
-
 import type {
   GenerateRegistrationOptionsOpts,
   VerifiedRegistrationResponse,
+  VerifyRegistrationResponseOpts,
 } from '@simplewebauthn/server'
 
 import type {
@@ -91,25 +90,12 @@ export class PasskeysCoreService {
 
     const expectedChallenge = await this.getFromCache(getUserId(user))
 
-    // try {
-    //   const { keyId, publicKey } = verifyAttestation({
-    //     attestation: verificationResponse.response.attestationObject,
-    //     challenge: expectedChallenge,
-    //     keyId: 'test',
-    //     bundleIdentifier: 'is.island.app',
-    //     teamIdentifier: 'team.island', // TODO
-    //     allowDevelopmentEnvironment: process.env.NODE_ENV === 'development',
-    //   })
-    // } catch (e) {
-    //   throw new BadRequestException('Device verification failed')
-    // }
-
     let verification: VerifiedRegistrationResponse | undefined
     try {
-      const verificationOptions = {
+      const verificationOptions: VerifyRegistrationResponseOpts = {
         response: verificationResponse,
         expectedChallenge,
-        expectedOrigin: this.config.passkey.allowedOrigin,
+        expectedOrigin: this.config.passkey.allowedOrigins,
         expectedRPID: this.config.passkey.rpId,
         requireUserVerification: false,
       }
@@ -196,9 +182,15 @@ export class PasskeysCoreService {
     }
 
     let challenge: string
+
     try {
-      challenge = JSON.parse(atob(response.response.clientDataJSON)).challenge
-    } catch {
+      challenge = JSON.parse(
+        Buffer.from(response.response.clientDataJSON, 'base64').toString(
+          'utf-8',
+        ),
+      )
+    } catch (e) {
+      this.logger.log('Invalid clientDataJSON', e)
       throw new BadRequestException('Invalid clientDataJSON')
     }
 
@@ -213,7 +205,7 @@ export class PasskeysCoreService {
       verification = await verifyAuthenticationResponse({
         response,
         expectedChallenge: challenge,
-        expectedOrigin: this.config.passkey.allowedOrigin,
+        expectedOrigin: this.config.passkey.allowedOrigins,
         expectedRPID: this.config.passkey.rpId,
         authenticator: {
           credentialID: passkey.id,

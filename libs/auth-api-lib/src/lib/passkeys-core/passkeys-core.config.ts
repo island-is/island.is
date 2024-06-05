@@ -10,7 +10,7 @@ const PasskeysCoreModuleSchema = z.object({
   passkey: z.object({
     rpId: z.string(),
     rpName: z.string(),
-    allowedOrigin: z.string(),
+    allowedOrigins: z.array(z.string()),
     challengeTtl: z.number(),
   }),
 })
@@ -32,12 +32,11 @@ export const PasskeysCoreConfig = defineConfig({
         ssl: !isRunningOnEnvironment('local'),
       },
       passkey: {
-        rpId: env.required('PASSKEY_CORE_RP_ID', 'localhost'),
+        rpId: env.required('PASSKEY_CORE_RP_ID', 'https://island.is'),
         rpName: env.required('PASSKEY_CORE_RP_NAME', 'Island.is'),
-        allowedOrigin: env.required(
-          'PASSKEY_CORE_ALLOWED_ORIGIN',
+        allowedOrigins: env.requiredJSON('PASSKEY_CORE_ALLOWED_ORIGINS', [
           'http://localhost:4200',
-        ),
+        ]),
         challengeTtl: Number(
           env.required(
             'PASSKEY_CORE_CHALLENGE_TTL_MS',
