@@ -130,6 +130,35 @@ export const TYPES_QUERY = gql`
   }
 `
 
+export const DEPARTMENT_QUERY = gql`
+  query AdvertDepartment($params: OfficialJournalOfIcelandAdvertSingleParams!) {
+    officialJournalOfIcelandDepartment(params: $params) {
+      department {
+        id
+        title
+        slug
+      }
+    }
+  }
+`
+
+export const TYPE_QUERY = gql`
+  query AdvertType($params: OfficialJournalOfIcelandAdvertSingleParams!) {
+    officialJournalOfIcelandType(params: $params) {
+      type {
+        id
+        title
+        slug
+        department {
+          id
+          title
+          slug
+        }
+      }
+    }
+  }
+`
+
 export const DEPARTMENTS_QUERY = gql`
   query AdvertDepartments($params: OfficialJournalOfIcelandQueryInput!) {
     officialJournalOfIcelandDepartments(params: $params) {

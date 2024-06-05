@@ -51,8 +51,8 @@ export class TypeQueryParams {
   page?: number
 }
 
-@InputType('OfficialJournalOfIcelandAdvertQuery')
-export class AdvertQueryParams {
+@InputType('OfficialJournalOfIcelandAdvertSingleParams')
+export class AdvertSingleParams {
   @Field(() => String)
   id!: string
 }
