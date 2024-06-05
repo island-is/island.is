@@ -71,9 +71,9 @@ export function generateCacheActionRestore({ name, id, path, key }) {
     name,
     id,
     uses: 'island-is/new-cache/restore@3889472650c918d4ae808744116721f07167dc4d',
-    continue_on_error: true,
-    enableCrossOsArchive: true,
+    "continue-on-error": true,
     with: {
+      enableCrossOsArchive: true,
       path,
       key,
     },
@@ -85,9 +85,9 @@ export function generateCacheActionSave({ name, id, path, key }) {
     name,
     id: `save-${id}`,
     uses: 'island-is/new-cache/save@3889472650c918d4ae808744116721f07167dc4d',
-    continue_on_error: true,
-    enableCrossOsArchive: true,
+    "continue-on-error": true,
     with: {
+      enableCrossOsArchive: true,
       path,
       key,
     },
