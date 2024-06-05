@@ -603,7 +603,11 @@ const Search: Screen<CategoryProps> = ({
                         </Text>
                         <Inline space={1} alignY="center">
                           {filterTags.map((tag) => (
-                            <FilterTag active={true} onClick={tag.onClick}>
+                            <FilterTag
+                              key={tag.label}
+                              active={true}
+                              onClick={tag.onClick}
+                            >
                               {tag.label}
                             </FilterTag>
                           ))}
@@ -627,9 +631,9 @@ const Search: Screen<CategoryProps> = ({
                         )}
                         {tagsList
                           .filter((x) => x.count > 0)
-                          .map(({ title, key }, index) => (
+                          .map(({ title, key }) => (
                             <Tag
-                              key={index}
+                              key={title}
                               variant="blue"
                               active={
                                 query?.processentry !== 'true' &&
