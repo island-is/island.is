@@ -30,6 +30,7 @@ import {
   CaseTransition,
   IndictmentDecision,
 } from '@island.is/judicial-system-web/src/graphql/schema'
+import { CourtDate } from '@island.is/judicial-system-web/src/types'
 import { stepValidationsType } from '@island.is/judicial-system-web/src/utils/formHelper'
 import {
   formatDateForServer,
@@ -52,6 +53,11 @@ interface Postponement {
   reason?: string
 }
 
+interface PostponeUntilVerdictUpdates {
+  indictmentDecision?: IndictmentDecision
+  courtDate?: CourtDate | null
+}
+
 const Conclusion: React.FC = () => {
   const { formatMessage } = useIntl()
   const { workingCase, setWorkingCase, isLoadingWorkingCase, caseNotFound } =
@@ -61,12 +67,8 @@ const Conclusion: React.FC = () => {
   const [selectedDecision, setSelectedDecision] = useState<Decision>()
   const [postponement, setPostponement] = useState<Postponement>()
 
-  const {
-    courtDate,
-    handleCourtDateChange,
-    handleCourtRoomChange,
-    sendCourtDateToServer,
-  } = useCourtArrangements(workingCase, setWorkingCase, 'courtDate')
+  const { courtDate, handleCourtDateChange, handleCourtRoomChange } =
+    useCourtArrangements(workingCase, setWorkingCase, 'courtDate')
 
   const { isUpdatingCase, transitionCase, setAndSendCaseToServer } = useCase()
 
@@ -133,21 +135,31 @@ const Conclusion: React.FC = () => {
 
   const handlePostponementUntilVerdict = useCallback(
     async (destination: string) => {
-      const updates = {
-        ...(workingCase.indictmentDecision !==
-          IndictmentDecision.POSTPONING_UNTIL_VERDICT && {
-          indictmentDecision: IndictmentDecision.POSTPONING_UNTIL_VERDICT,
-        }),
-        ...((postponement?.isSettingVerdictDate || workingCase.courtDate) && {
-          courtDate:
+      const prepareUpdates = () => {
+        const updates: PostponeUntilVerdictUpdates = {}
+
+        if (
+          workingCase.indictmentDecision !==
+          IndictmentDecision.POSTPONING_UNTIL_VERDICT
+        ) {
+          updates.indictmentDecision =
+            IndictmentDecision.POSTPONING_UNTIL_VERDICT
+        }
+
+        if (postponement?.isSettingVerdictDate || workingCase.courtDate) {
+          updates.courtDate =
             postponement?.isSettingVerdictDate && courtDate?.date
               ? {
                   date: formatDateForServer(new Date(courtDate.date)),
                   location: courtDate.location,
                 }
-              : null,
-        }),
+              : null
+        }
+
+        return updates
       }
+
+      const updates = prepareUpdates()
 
       const success =
         Object.keys(updates).length > 0

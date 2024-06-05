@@ -190,3 +190,8 @@ export interface TempCase
   childCase?: TempCase | null
   indictmentCounts?: TempIndictmentCount[] | null
 }
+
+export interface CourtDate {
+  date?: string | null
+  location?: string | null
+}
