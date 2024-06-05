@@ -115,7 +115,7 @@ export const calculateAcceptedAidFinalAmount = (
   return amount - finalTaxAmount
 }
 
-export const calculateFinalAmount = (
+export const calculateFinalTaxAmount = (
   amount: number,
   personalTaxCreditPercentage: number,
   spousedPersonalTaxCreditPercentage: number,

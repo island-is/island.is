@@ -9,7 +9,7 @@ import {
   aidCalculator,
   Amount,
   calculateAcceptedAidFinalAmount,
-  calculateFinalAmount,
+  calculateFinalTaxAmount,
   calculateTaxOfAmount,
   ChildrenAid,
   FamilyStatus,
@@ -110,7 +110,7 @@ const AcceptModal = ({
     checkingValue(state.income) -
     sumValues
 
-  const taxAmountWithPersonalTax = calculateFinalAmount(
+  const taxAmountWithPersonalTax = calculateFinalTaxAmount(
     amount,
     checkingValue(state.personalTaxCreditPercentage),
     state.secondPersonalTaxCredit,
