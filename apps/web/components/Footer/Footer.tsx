@@ -37,7 +37,7 @@ export const Footer = ({
   return (
     <GridContainer>
       <footer className={styles.footer} style={{ background }}>
-        <Box paddingY={3} paddingX={[3, 3, 3, 3, 12]}>
+        <Box paddingY={3} paddingX={[3, 3, 5, 8, 12]}>
           <GridRow className={styles.noWrap}>
             {imageUrl && (
               <GridColumn hiddenBelow="sm">
@@ -56,7 +56,12 @@ export const Footer = ({
                 {columns.map((column, index) => (
                   <GridColumn
                     key={index}
-                    span={['1/1', '6/12', '6/12', '3/12']}
+                    span={[
+                      '1/1',
+                      columns.length % 3 === 0 ? '4/12' : '6/12',
+                      columns.length % 3 === 0 ? '4/12' : '6/12',
+                      '3/12',
+                    ]}
                     paddingBottom={3}
                   >
                     <Box>
