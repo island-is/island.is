@@ -8,9 +8,10 @@ import {
 import { InheritanceReportInfo } from '@island.is/clients/syslumenn'
 import { parsePhoneNumberFromString } from 'libphonenumber-js'
 import { MessageDescriptor } from 'react-intl'
-import { boolean, ZodTypeAny } from 'zod'
+import { ZodTypeAny } from 'zod'
 import { Answers } from '../../types'
 import { ESTATE_INHERITANCE } from '../constants'
+import { InheritanceReport } from '../dataSchema'
 
 export const currencyStringToNumber = (str: string) => {
   if (!str) {
@@ -203,3 +204,11 @@ export const shouldShowCustomSpouseShare = (answers: FormValue) =>
 
 export const roundedValueToNumber = (value: unknown) =>
   Math.round(valueToNumber(value))
+
+export const showTaxFreeInOverview = (answers: FormValue) => {
+  const total = (answers as InheritanceReport)?.heirs?.data?.reduce(
+    (sum, heir) => sum + valueToNumber(heir.taxFreeInheritance),
+    0,
+  )
+  return !!total && total > 0
+}

@@ -10,7 +10,11 @@ import {
 import { m } from '../../../lib/messages'
 import { formatCurrency } from '@island.is/application/ui-components'
 import { InheritanceReport } from '../../../lib/dataSchema'
-import { roundedValueToNumber, valueToNumber } from '../../../lib/utils/helpers'
+import {
+  roundedValueToNumber,
+  showTaxFreeInOverview,
+  valueToNumber,
+} from '../../../lib/utils/helpers'
 import { calculateTotalAssets } from '../../../lib/utils/calculateTotalAssets'
 
 export const prepaidOverview = buildSubSection({
@@ -89,6 +93,7 @@ export const prepaidOverview = buildSubSection({
         buildKeyValueField({
           label: m.taxFreeInheritance,
           display: 'flex',
+          condition: showTaxFreeInOverview,
           value: ({ answers }) => {
             const total = (answers as InheritanceReport)?.heirs?.data?.reduce(
               (sum, heir) => sum + valueToNumber(heir.taxFreeInheritance),
@@ -102,6 +107,7 @@ export const prepaidOverview = buildSubSection({
           id: 'heirs_space3',
           title: '',
           space: 'gutter',
+          condition: showTaxFreeInOverview,
         }),
         buildKeyValueField({
           label: m.taxableInheritance,
