@@ -40,10 +40,6 @@ export class InternalDefendantController {
   @Post(
     `${messageEndpoint[MessageType.DELIVERY_TO_COURT_DEFENDANT]}/:defendantId`,
   )
-  @UseGuards(DefendantExistsGuard)
-  @Post(
-    `${messageEndpoint[MessageType.DELIVERY_TO_COURT_DEFENDANT]}/:defendantId`,
-  )
   @ApiCreatedResponse({
     type: DeliverResponse,
     description: 'Delivers a case file to court',
