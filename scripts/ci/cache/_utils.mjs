@@ -170,13 +170,13 @@ export async function runCommand(cmd, cwd = undefined, env = {}) {
     const outputChunks = []
 
     childProcess.stdout.on('data', (data) => {
-      console.log(data);
-      outputChunks.push(data)
+      console.log(data.toString());
+      outputChunks.push(data.toString())
     })
 
     childProcess.stderr.on('data', (data) => {
-      console.error(data);
-      errorChunks.push(data)
+      console.error(data.toString());
+      errorChunks.push(data.toString())
     })
 
     childProcess.on('close', (code) => {

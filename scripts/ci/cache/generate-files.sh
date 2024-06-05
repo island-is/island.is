@@ -16,10 +16,11 @@ touch "$marker"
 
 CMD="yarn codegen --skip-cache"
 
-pwd
-ls
-ls node_modules
+echo RUNNING CODEGEN
+
 yarn node scripts/codegen.js --skip-cache 1>&2
+
+echo CODEGEN DONE
 
 # THIS IS VERY HACKISH AND MAKES IT DIFFICULT TO RUN ASYNC
 changed_files=$(find "$DIR"/apps "$DIR"/libs -type d \( \
@@ -28,6 +29,7 @@ changed_files=$(find "$DIR"/apps "$DIR"/libs -type d \( \
     -path "$DIR/cache" -o \
     -path "$DIR/cache_output" \
 \) -prune -o -type f -newer "$marker" -print)
+
 
 relative_paths=$(echo "$changed_files" | xargs realpath --relative-to "$DIR")
 
