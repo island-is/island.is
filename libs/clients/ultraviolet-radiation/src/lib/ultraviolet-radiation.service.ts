@@ -61,7 +61,7 @@ export class UltravioletRadiationClientService {
     }
   }
 
-  async getMesurementSeriesPastYear(): Promise<
+  async getMeasurementSeriesPastYear(): Promise<
     StatisticSourceData<typeof MEASUREMENT_SERIES_PAST_YEAR_KEY>
   > {
     const response = await this.api.returnDailyUV()

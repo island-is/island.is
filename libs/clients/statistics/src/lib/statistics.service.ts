@@ -52,7 +52,7 @@ export class StatisticsClientService {
       }
       if (query.sourceDataKeys.includes(UV_MEASUREMENT_SERIES_PAST_YEAR_KEY)) {
         promises.push(
-          this.ultravioletRadiationService.getMesurementSeriesPastYear(),
+          this.ultravioletRadiationService.getMeasurementSeriesPastYear(),
         )
       }
 
