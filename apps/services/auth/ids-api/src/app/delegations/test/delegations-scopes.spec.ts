@@ -4,7 +4,10 @@ import faker from 'faker'
 import { Sequelize } from 'sequelize-typescript'
 import request from 'supertest'
 
-import { DelegationType } from '@island.is/auth-api-lib'
+import {
+  DelegationsIndexService,
+  DelegationType,
+} from '@island.is/auth-api-lib'
 import { FixtureFactory } from '@island.is/services/auth/testing'
 import {
   createCurrentUser,
@@ -89,6 +92,7 @@ describe('DelegationsController', () => {
   let app: TestApp
   let server: request.SuperTest<request.Test>
   let factory: FixtureFactory
+  let delegationIndexService: DelegationsIndexService
 
   beforeAll(async () => {
     app = await setupWithAuth({
@@ -99,6 +103,9 @@ describe('DelegationsController', () => {
     server = request(app.getHttpServer())
 
     factory = new FixtureFactory(app)
+
+    delegationIndexService = app.get(DelegationsIndexService)
+    jest.spyOn(delegationIndexService, 'indexDelegations').mockImplementation()
   })
 
   afterAll(async () => {
