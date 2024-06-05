@@ -18,6 +18,8 @@ export enum PrePaidHeirsRelationTypes {
   OTHER = 'other',
 }
 
+export const RelationSpouse = 'Maki'
+
 export const PrePaidHeirsRelations = [
   {
     value: PrePaidHeirsRelationTypes.SPOUSE,
