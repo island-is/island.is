@@ -10,6 +10,7 @@ import { writeToSummary, writeToOutput } from './_get_hashes_utils.mjs'
 import { keyStorage } from './_key_storage.mjs'
 import { restoreCache } from './_restore_cache.mjs'
 import { saveCache } from './_save_cache.mjs'
+import { sleep } from './_utils.mjs'
 
 if (!HAS_HASH_KEYS) {
   console.log('Generating cache hashes')
@@ -81,10 +82,25 @@ const checkCache = await Promise.all(
 )
 
 const failedJobs = []
+const pendingJobs = checkCache.filter((e) => !e.isOk).map((e) => e.id)
+const succesFullJobs = [];
 
 await Promise.all(
   checkCache.map(async (cache) => {
     if (!cache.isOk) {
+      if (cache.dependsOn) {
+        for (const pendingJob of pendingJobs) {
+          if (cache.dependsOn.includes(pendingJob)) {
+            while (true) {
+              if (succesFullJobs.includes(pendingJob)) {
+                break
+              }
+              sleep();
+            }
+          }
+        }
+      }
+      
       if (HAS_HASH_KEYS) {
         console.error(`Failed restoring cache for ${cache.name}`)
         failedJobs.push(cache)
@@ -93,7 +109,7 @@ await Promise.all(
       console.log(
         `Failed restoring cache for ${cache.name}, trying to init and save`,
       )
-      const fileName = resolve(ROOT, cache.path)
+      const fileName = Array.isArray(cache.path) ? cache.path.map((e) => resolve(ROOT, e)) :resolve(ROOT, cache.path)
       const successInit = await cache.init()
       const success = await cache.check(successInit, fileName)
       if (!success) {

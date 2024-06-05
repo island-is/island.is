@@ -67,10 +67,23 @@ export async function getYarnLockHash(
   root = ROOT,
   filePath = resolve(root, 'yarn.lock'),
 ) {
-  const content = await readFile(filePath, 'utf-8')
+  return getFileHash(filePath);
+}
+
+export async function getFileHash(file) {
+  const content = await readFile(file, 'utf-8')
   return crypto.createHash('sha256').update(content).digest('hex')
 }
 
+export async function getFilesHash(files = []) {
+  const contents = await Promise.all(files.map(file => readFile(file, 'utf-8')));
+  const combinedContent = contents.join('');
+  return crypto.createHash('sha256').update(combinedContent).digest('hex');
+}
+
+export function sleep(ms = 50) {
+  return new Promise(resolve => setTimeout(resolve, ms))
+}
 /**
  * Checks if the file size is equal to or greater than the specified size.
  *

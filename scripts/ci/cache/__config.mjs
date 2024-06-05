@@ -11,6 +11,7 @@ import {
   runCommand,
   fileSizeIsEqualOrGreaterThan,
   getPackageJSON,
+  getFilesHash,
 } from './_utils.mjs'
 
 import {
@@ -73,7 +74,7 @@ export const caches = [
     enabled: ENABLED_MODULES['mobile-node_modules'],
     hash: async () =>
       keyStorage.getKey('mobile-node_modules') ??
-      `app-node-modules-${HASH_VERSION}-${getPlatformString()}-${await getYarnLockHash()}-${await getPackageHash(
+      `mobile-node-modules-${HASH_VERSION}-${getPlatformString()}-${await getYarnLockHash()}-${await getPackageHash(
         MOBILE_APP_DIR,
       )}-${await getNodeVersionString()}`,
     check: async (success, path) => {
@@ -106,6 +107,7 @@ export const caches = [
     name: 'Cache Generated Files',
     id: 'generated-files',
     path: 'generated_files.tar.gz',
+    dependsOn: ['node_modules', 'mobile-node_modules'],
     check: async (success, path) => {
       if (!success) {
         return false
@@ -113,9 +115,46 @@ export const caches = [
       return fileSizeIsEqualOrGreaterThan(path, 1000)
     },
     init: async (path) => {
-      const cmd = `tar zcvf ${path} $(./scripts/ci/get-files-touched-by.sh yarn codegen --skip-cache | xargs realpath --relative-to ${ROOT})`
-      await runCommand(cmd, ROOT)
+      const cmd = resolve(ROOT, 'scripts/ci/cache/generate-files.sh')
+      try {
+        await runCommand(cmd, ROOT)
+      } catch {
+        return false
+      }
+      return true
     },
+  },
+  {
+    enabled: ENABLED_MODULES['docker'],
+    dependsOn: ['node_modules', 'mobile-node_modules', 'generated-files'],
+    hash: async () => {
+      const files = ["scripts/ci/10_prepare-docker-deps.sh", "scripts/ci/Dockerfile", "scripts/ci/get-node-version.mjs", "scripts/ci/_common.mjs"].map((file) => resolve(ROOT, file))
+      const filesHash = getFilesHash(files);
+      return `docker-${HASH_VERSION}-${getPlatformString()}-${await getYarnLockHash()}-${await getPackageHash()}-${await getNodeVersionString()}-${filesHash}`;
+    },
+    name: 'Cache Docker',
+    path: ["cache", "cache_output"],
+    id: 'docker',
+    init: async () => {
+      const path = resolve(ROOT, './scripts/ci/cache/10_prepare-docker-deps.sh')
+      try {
+        await runCommand(path, ROOT)
+      } catch(_e) {
+        console.error(_e);
+        return false
+      }
+      return true
+    },
+    check: async (success, path) => {
+      if (!success) {
+        return false
+      }
+      const successCheck = (await Promise.all(path.map(async (p) => {
+        return await folderSizeIsEqualOrGreaterThan(p, 1000);
+      }))).every((x) => x);
+      return successCheck;
+    },
+
   },
   {
     enabled: ENABLED_MODULES['cypress'],
@@ -129,16 +168,21 @@ export const caches = [
     },
     name: 'Cache Cypress',
     id: 'cypress',
-    check: async (success, path) => {
+    check: async (success, _path) => {
       if (!success) {
         return false
       }
       return runCommand('npx cypress verify', ROOT)
     },
     init: async () => {
-      const pkg = await getPackageJSON();
-      const cypressVersion = pkg?.devDependencies?.cypress
-      await runCommand('npx cypress install', ROOT, {CYPRESS_INSTALL_BINARY: cypressVersion})
+      try {
+        const pkg = await getPackageJSON();
+        const cypressVersion = pkg?.devDependencies?.cypress
+        await runCommand('npx cypress install', ROOT, { CYPRESS_INSTALL_BINARY: cypressVersion })
+      } catch (_e) {
+        console.error(_e);
+        return false
+      }
       return true
     },
     path: cypressPath || '',
