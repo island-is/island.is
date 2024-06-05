@@ -82,13 +82,28 @@ export const Prerequisites: Form = buildForm({
             buildDescriptionField({
               id: 'noChildrenNationalRegistryDescription',
               title: '',
-              marginTop: 5,
+              marginTop: 3,
+              description:
+                newPrimarySchoolMessages.pre
+                  .noChildrenFoundNationalRegistryDescription,
+            }),
+            buildDescriptionField({
+              id: 'noChildrenIslandisInfo',
+              title: '',
+              marginTop: 2,
+              description:
+                newPrimarySchoolMessages.pre.noChildrenFoundIslandisDescription,
+            }),
+            buildDescriptionField({
+              id: 'noChildrenNationalRegistryInfo',
+              title: '',
+              marginTop: 3,
               description:
                 newPrimarySchoolMessages.pre
                   .noChildrenFoundNationalRegistryInfo,
             }),
             buildDescriptionField({
-              id: 'noChildrenMMSDescription',
+              id: 'noChildrenMMSInfo',
               title: '',
               marginTop: 3,
               description: newPrimarySchoolMessages.pre.noChildrenFoundMMSInfo,
