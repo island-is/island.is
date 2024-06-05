@@ -125,7 +125,6 @@ export const ReportFieldsRepeater: FC<
     calculateTotal()
   }, [fields, calculateTotal])
 
-  //TODO: connect to API
   const debtTypes = props.selections ?? []
 
   const handleAddRepeaterFields = () => {
