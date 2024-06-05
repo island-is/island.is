@@ -12,7 +12,7 @@ export function createRestoreOutputs(steps) {
           ...a,
           [`${value.id}-success`]: {
             description: `Success for ${value.name}`,
-            value: `\${{ steps.${value.id}.outputs.success }}`,
+            value: `\${{ steps.${value.id}.outputs.cache-hit }}`,
           },
         }
       },
@@ -26,7 +26,7 @@ export function createRestoreOutputs(steps) {
               }
               return {
                 ...a,
-                [value.id]: `\${{ steps.${value.id}.outputs.success }}`,
+                [value.id]: `\${{ steps.${value.id}.outputs.cache-hit }}`,
               }
             }, {}),
           ),

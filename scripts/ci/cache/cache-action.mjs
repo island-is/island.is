@@ -35,27 +35,16 @@ for (const cache of enabledCaches) {
     }
   }
 }
-const successJobsEnv = failedJobs.reduce((a, b) => {
-  a[b] = false
-}, {})
-if (saveJobs.length > 0) {
-  saveJobs.forEach((value) => {
-    successJobsEnv[
-      value.name
-    ] = `save-\${{ steps.${value.id}.outcome == 'failure' ? false : true }}`
-  })
-}
 
 /**
- * Array of steps.
- * @type {any[]}
+ * @type {Array}
  */
 let steps = [
   {
     name: 'Success check',
     id: 'success-check',
     env: {
-      [ENV_JOB_STATUS]: JSON.stringify(successJobsEnv),
+      [ENV_JOB_STATUS]: failedJobs.length === 0 ? 'true' : 'false'
     },
   },
 ]
