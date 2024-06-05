@@ -1670,7 +1670,7 @@ export const m = defineMessages({
   },
   sibling: {
     id: 'ir.application:sibling',
-    defaultMessage: 'Systkini',
+    defaultMessage: 'Systkin',
     description: '',
   },
   other: {
