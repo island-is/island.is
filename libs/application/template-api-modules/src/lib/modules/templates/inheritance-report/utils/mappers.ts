@@ -92,6 +92,7 @@ export const expandAnswers = (
   caseNumber: string
 } => {
   return {
+    applicationFor: answers.applicationFor ?? '',
     applicant: answers.applicant,
     executors: {
       executor: {

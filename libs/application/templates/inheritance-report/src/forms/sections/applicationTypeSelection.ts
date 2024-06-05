@@ -48,7 +48,7 @@ export const preSelection = buildSection({
               application.externalData.syslumennOnEntry?.data as {
                 inheritanceReportInfos: Array<InheritanceReportInfo>
               }
-            ).inheritanceReportInfos[0].caseNumber
+            ).inheritanceReportInfos[0]?.caseNumber
           },
           options: (application) => {
             return (

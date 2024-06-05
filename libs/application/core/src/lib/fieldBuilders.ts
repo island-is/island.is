@@ -65,6 +65,7 @@ const extractCommonFields = (
     title,
     dataTestId,
     width = 'full',
+    nextButtonText,
   } = data
 
   return {
@@ -77,6 +78,7 @@ const extractCommonFields = (
     doesNotRequireAnswer,
     title,
     width,
+    nextButtonText,
   }
 }
 
@@ -89,6 +91,7 @@ export function buildCheckboxField(
     large = true,
     required,
     backgroundColor = 'blue',
+    spacing,
   } = data
   return {
     ...extractCommonFields(data),
@@ -98,6 +101,7 @@ export function buildCheckboxField(
     backgroundColor,
     options,
     required,
+    spacing,
     type: FieldTypes.CHECKBOX,
     component: FieldComponents.CHECKBOX,
   }
