@@ -112,6 +112,7 @@ await Promise.allSettled(
       const successInit = await tryRun(cache.init, cache.name)
       const success = await cache.check(successInit, fileName)
       if (!success) {
+        console.log(`Failed init and check for ${cache.name}`)
         failedJobs.push(cache)
       } else {
         const saveSuccess = await saveCache({
@@ -121,8 +122,10 @@ await Promise.allSettled(
         if (!saveSuccess) {
           console.error(`Failed saving cache for ${cache.name}`)
           failedJobs.push(cache)
+        } else {
+          console.log(`Saved cache ${cache.name}`)
+          succesFullJobs.push(cache.id)
         }
-        succesFullJobs.push(cache.id)
       }
     }
   }),
