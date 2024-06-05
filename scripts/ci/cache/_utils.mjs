@@ -136,9 +136,10 @@ export async function folderSizeIsEqualOrGreaterThan(
  * @param {string} cmd
  * @param {string | undefined} cwd
  */
-export async function runCommand(cmd, cwd = undefined) {
+export async function runCommand(cmd, cwd = undefined, env = {}) {
   return new Promise((resolve, reject) => {
     const options = cwd ? { cwd } : {}
+    options.env = { ...process.env, ...env };
     exec(cmd, options, (error, stdout, stderr) => {
       if (error) {
         reject(`Error: ${error.message}`)

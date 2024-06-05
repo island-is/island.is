@@ -10,6 +10,7 @@ import {
   folderSizeIsEqualOrGreaterThan,
   runCommand,
   fileSizeIsEqualOrGreaterThan,
+  getPackageJSON,
 } from './_utils.mjs'
 
 import {
@@ -118,11 +119,28 @@ export const caches = [
   },
   {
     enabled: ENABLED_MODULES['cypress'],
-    hash: async () =>
-      keyStorage.getKey('cypress') ??
-      `cypress-cache-${HASH_VERSION}-${getPlatformString()}-${await getYarnLockHash()}-${await getPackageHash()}-${await getNodeVersionString()}`,
+    hash: async () => {
+      if (keyStorage.getKey('cypress')) {
+        return keyStorage.getKey('cypress')
+      }
+      const pkg = await getPackageJSON();
+      const cypressVersion = pkg?.devDependencies?.cypress;
+      return `cypress-cache-${HASH_VERSION}-${getPlatformString()}-${cypressVersion}}`;
+    },
     name: 'Cache Cypress',
     id: 'cypress',
+    check: async (success, path) => {
+      if (!success) {
+        return false
+      }
+      return runCommand('npx cypress verify', ROOT)
+    },
+    init: async () => {
+      const pkg = await getPackageJSON();
+      const cypressVersion = pkg?.devDependencies?.cypress
+      await runCommand('npx cypress install', ROOT, {CYPRESS_INSTALL_BINARY: cypressVersion})
+      return true
+    },
     path: cypressPath || '',
   },
 ].filter((step) => step.enabled)
