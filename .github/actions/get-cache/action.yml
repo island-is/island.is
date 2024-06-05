@@ -34,7 +34,6 @@ runs:
       shell: bash
       env:
         ENABLE_CACHE: ${{ inputs.enable-cache }}
-        YAML_FILE: ./.tmp-dynamic-cache/action.yml
       run: |
         cd scripts/ci/cache
         yarn install --immutable
