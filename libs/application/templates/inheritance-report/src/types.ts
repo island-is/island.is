@@ -271,6 +271,7 @@ export enum RelationEnum {
   REPRESENTATIVE = 'representative',
   HEIR = 'heir',
   EXCHANGEMANAGER = 'exchangeManager',
+  GRANTOR = 'grantor',
 }
 
 export interface EstateMember {

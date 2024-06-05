@@ -270,6 +270,11 @@ const FormExternalDataProvider: FC<
     }
   }
 
+  useEffect(() => {
+    if (!id) return
+    setValue(id, false)
+  }, [id, setValue])
+
   return (
     <Box>
       <Box marginTop={2} marginBottom={5}>
