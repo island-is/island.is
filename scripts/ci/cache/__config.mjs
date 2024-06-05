@@ -71,6 +71,24 @@ export const caches = [
       `app-node-modules-${HASH_VERSION}-${getPlatformString()}-${await getYarnLockHash()}-${await getPackageHash(
         MOBILE_APP_DIR,
       )}-${await getNodeVersionString()}`,
+      check: async (success, path) => {
+        if (!success) {
+          return false
+        }
+        return folderSizeIsEqualOrGreaterThan(path, 1000)
+      },
+      init: async () => {
+        try {
+          const yarnLockRoot = resolve(ROOT, 'yarn.lock')
+          const yarnLock = resolve(MOBILE_APP_DIR, 'yarn.lock')
+          await runCommand(`cp "${yarnLockRoot}" "${yarnLock}"`, ROOT)
+          await runCommand('yarn install --immutable', MOBILE_APP_DIR)
+          await runCommand(`rm "${yarnLock}"`, MOBILE_APP_DIR)
+        } catch {
+          return false
+        }
+        return true
+      },
     name: 'Cache Mobile node_modules',
     id: 'mobile-node_modules',
     path: 'apps/native/app/node_modules',

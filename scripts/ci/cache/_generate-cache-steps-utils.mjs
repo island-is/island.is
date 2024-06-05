@@ -54,13 +54,12 @@ export function createRuns(steps) {
     runs: {
       using: 'composite',
       steps: steps.map((_value) => {
-        const { name, id, uses, with: withValue, value } = _value
+        const { name, id, uses, ...value } = _value
         return {
           name,
           id,
           uses,
           ...value,
-          with: withValue,
         }
       }),
     },
