@@ -40,9 +40,8 @@ export const strings = defineMessages({
     description: 'Notaður sem titill á staðfestingarglugga um að mál sé lokið.',
   },
   completedCaseModalBody: {
-    id: 'judicial.system.core:indictments.summary.completed_case_modal_body',
-    defaultMessage:
-      'Gögn hafa verið send á ákæranda og verjanda hafi þeim verið hlaðið upp.',
+    id: 'judicial.system.core:indictments.summary.completed_case_modal_body_v2',
+    defaultMessage: 'Gögn hafa verið send ákæranda og verjanda.',
     description: 'Notaður sem texti í staðfestingarglugga um að mál sé lokið.',
   },
 })

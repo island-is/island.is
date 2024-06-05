@@ -92,7 +92,19 @@ export const expandAnswers = (
   caseNumber: string
 } => {
   return {
+    applicationFor: answers.applicationFor ?? '',
     applicant: answers.applicant,
+    executors: {
+      executor: {
+        email: '',
+        phone: '',
+      },
+      spouse: {
+        email: '',
+        phone: '',
+      },
+      includeSpouse: undefined,
+    },
     approveExternalData: answers.approveExternalData,
     assets: {
       assetsTotal: answers.assets.assetsTotal ?? 0,
@@ -287,9 +299,11 @@ export const expandAnswers = (
     netPropertyForExchange: answers.netPropertyForExchange ?? 0,
     customShare: {
       hasCustomSpouseSharePercentage:
-        answers?.customShare?.hasCustomSpouseSharePercentage ?? [],
+        answers?.customShare?.hasCustomSpouseSharePercentage ?? 'No',
       customSpouseSharePercentage:
         answers?.customShare?.customSpouseSharePercentage ?? '50',
+      deceasedWasMarried: answers?.customShare?.deceasedWasMarried ?? '',
+      deceasedHadAssets: answers?.customShare?.deceasedHadAssets ?? '',
     },
   }
 }
