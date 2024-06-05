@@ -25,9 +25,10 @@ for (const cache of enabledCaches) {
       failedJobs = [...failedJobs, cache.name]
     } else if (cache.init) {
       console.log(`Init cache ${cache.name}`)
-      const success = await cache.init()
+      const _success = await cache.init()
+      const success = await cache.check(_success, fileName)
       if (!success && !failedJobs) {
-        failedJobs = [...failedJobs, name]
+        failedJobs = [...failedJobs, cache.name]
       } else {
         saveJobs = [...saveJobs, cache]
       }
