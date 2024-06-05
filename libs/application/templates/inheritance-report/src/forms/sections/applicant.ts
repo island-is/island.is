@@ -9,6 +9,7 @@ import { format as formatNationalId } from 'kennitala'
 import { removeCountryCode } from '@island.is/application/ui-components'
 import { m } from '../../lib/messages'
 import { RelationEnum } from '../../types'
+import { PREPAID_INHERITANCE } from '../../lib/constants'
 
 export const applicant = buildSection({
   id: 'applicantsInformation',

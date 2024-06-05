@@ -22,11 +22,12 @@ query DefenderCases($input: CaseListQueryInput) {
       nationalId
       name
       noNationalId
-      defendantWaivesRightToCounsel
+      defenderChoice
     }
     initialRulingDate
     rulingDate
     postponedIndefinitelyExplanation
     indictmentDecision
+    indictmentRulingDecision
   }
 }
