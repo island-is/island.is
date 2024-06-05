@@ -65,6 +65,7 @@ const extractCommonFields = (
     title,
     dataTestId,
     width = 'full',
+    nextButtonText,
   } = data
 
   return {
@@ -77,6 +78,7 @@ const extractCommonFields = (
     doesNotRequireAnswer,
     title,
     width,
+    nextButtonText,
   }
 }
 
