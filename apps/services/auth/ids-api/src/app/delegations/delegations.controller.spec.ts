@@ -11,7 +11,7 @@ import {
   Delegation,
   DelegationDTO,
   DelegationProviderModel,
-  DelegationType,
+  DelegationsIndexService,
   DelegationTypeModel,
   Domain,
   InactiveReason,
@@ -56,7 +56,7 @@ import {
   getScopePermission,
   personalRepresentativeType,
 } from '../../../test/stubs/personalRepresentativeStubs'
-import { AuthDelegationProvider } from 'delegation'
+import { AuthDelegationType, AuthDelegationProvider } from 'delegation'
 import { getPersonalRepresentativeDelegationType } from '@island.is/shared/types'
 
 describe('DelegationsController', () => {
@@ -74,6 +74,7 @@ describe('DelegationsController', () => {
     let delegationTypeModel: typeof DelegationTypeModel
     let nationalRegistryApi: NationalRegistryClientService
     let delegationProviderModel: typeof DelegationProviderModel
+    let delegationIndexService: DelegationsIndexService
 
     const userNationalId = getFakeNationalId()
 
@@ -125,6 +126,7 @@ describe('DelegationsController', () => {
         getModelToken(DelegationProviderModel),
       )
       nationalRegistryApi = app.get(NationalRegistryClientService)
+      delegationIndexService = app.get(DelegationsIndexService)
     })
 
     afterAll(async () => {
@@ -223,6 +225,7 @@ describe('DelegationsController', () => {
           nationalRegistryErrors: number,
         ) => {
           let nationalRegistryApiSpy: jest.SpyInstance
+          let delegationIndexServiceSpy: jest.SpyInstance
           const validRepresentedPersons: NameIdTuple[] = []
           const outdatedRepresentedPersons: NameIdTuple[] = []
           const unactivatedRepresentedPersons: NameIdTuple[] = []
@@ -378,6 +381,10 @@ describe('DelegationsController', () => {
 
                 return user ?? null
               })
+
+            delegationIndexServiceSpy = jest
+              .spyOn(delegationIndexService, 'indexDelegations')
+              .mockImplementation()
           })
 
           afterAll(async () => {
@@ -463,7 +470,8 @@ describe('DelegationsController', () => {
             it('should have the delegation type claims of PersonalRepresentative', () => {
               expect(
                 body.every(
-                  (d) => d.types[0] === DelegationType.PersonalRepresentative,
+                  (d) =>
+                    d.types[0] === AuthDelegationType.PersonalRepresentative,
                 ),
               ).toBeTruthy()
             })
@@ -499,6 +507,10 @@ describe('DelegationsController', () => {
 
               // Assert
               expect(expectedModels.length).toEqual(errorNationalIds.length)
+            })
+
+            it('should index delegations', () => {
+              expect(delegationIndexServiceSpy).toHaveBeenCalled()
             })
           })
         },
@@ -623,7 +635,7 @@ describe('DelegationsController', () => {
               beforeAll(async () => {
                 response = await server.get(`${path}`).query({
                   fromNationalId: representeeNationalId,
-                  delegationType: DelegationType.PersonalRepresentative,
+                  delegationType: AuthDelegationType.PersonalRepresentative,
                 })
                 body = response.body
               })
@@ -899,8 +911,13 @@ describe('DelegationsController', () => {
             const path = '/delegations'
             let response: request.Response
             let body: DelegationDTO[]
+            let delegationIndexServiceSpy: jest.SpyInstance
 
             beforeAll(async () => {
+              delegationIndexServiceSpy = jest
+                .spyOn(delegationIndexService, 'indexDelegations')
+                .mockImplementation()
+
               response = await server.get(path)
               body = response.body
             })
@@ -956,7 +973,7 @@ describe('DelegationsController', () => {
             it('should have the delegation type claims of PersonalRepresentative', () => {
               expect(
                 body.every(
-                  (d) => d.type === DelegationType.PersonalRepresentative,
+                  (d) => d.type === AuthDelegationType.PersonalRepresentative,
                 ),
               ).toBeTruthy()
             })
@@ -992,6 +1009,10 @@ describe('DelegationsController', () => {
 
               // Assert
               expect(expectedModels.length).toEqual(errorNationalIds.length)
+            })
+
+            it('should index delegations', () => {
+              expect(delegationIndexServiceSpy).toHaveBeenCalled()
             })
           })
         },
@@ -1123,7 +1144,7 @@ describe('DelegationsController', () => {
               beforeAll(async () => {
                 response = await server.get(`${path}`).query({
                   fromNationalId: representeeNationalId,
-                  delegationType: DelegationType.PersonalRepresentative,
+                  delegationType: AuthDelegationType.PersonalRepresentative,
                 })
                 body = response.body
               })
@@ -1247,7 +1268,10 @@ describe('DelegationsController', () => {
         it('should return a single merged delegation', async () => {
           expect(body.length).toEqual(1)
           expect(body[0].types.sort()).toEqual(
-            [DelegationType.Custom, DelegationType.LegalGuardian].sort(),
+            [
+              AuthDelegationType.Custom,
+              AuthDelegationType.LegalGuardian,
+            ].sort(),
           )
         })
       })
