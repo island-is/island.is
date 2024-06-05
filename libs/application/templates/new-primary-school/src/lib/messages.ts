@@ -404,6 +404,117 @@ export const newPrimarySchoolMessages: MessageDir = {
       defaultMessage: 'Skólamáltíð',
       description: 'School Meal',
     },
+    schoolMealDescription: {
+      id: 'dess.nps.application:different.needs.school.meal.description',
+      defaultMessage:
+        'Öll grunnskólabörn eiga rétt á gjaldfrjálsri máltíð í hádeginu. Vinsamlegast merktu við hvort þú vilt þiggja eða afþakka mat fyrir barnið þitt. Þannig vinnum við saman gegn matarsóun.',
+      description:
+        'All primary school children are entitled to a free meal at lunch. Please mark whether you want to accept or decline food for your child. This is how we work together against food waste.',
+    },
+    schoolMealFreeMeals: {
+      id: 'dess.nps.application:different.needs.school.meal.free.meals',
+      defaultMessage: 'Munt þú nýta gjaldfrjálsa skólamáltíð?',
+      description: 'Will you take advantage of free school meals?',
+    },
+    foodAllergiesAndIntolerances: {
+      id: 'dess.nps.application:different.needs.food.allergies.and.intolerances',
+      defaultMessage: 'Fæðuofnæmi og -óþol',
+      description: 'Food allergies and intolerances',
+    },
+    foodAllergiesAndIntolerancesDescription: {
+      id: 'dess.nps.application:different.needs.food.allergies.and.intolerances.description',
+      defaultMessage:
+        'Er barnið með fæðuofnæmi eða -óþol sem starfsfólk skóla þarf að vera meðvitað um?',
+      description:
+        'Does the child have food allergies or intolerances that the school staff need to be aware of?',
+    },
+    childHasFoodAllergies: {
+      id: 'dess.nps.application:different.needs.child.has.food.allergies',
+      defaultMessage: 'Barnið er með fæðuofnæmi',
+      description: 'Child has food allergies',
+    },
+    typeOfAllergies: {
+      id: 'dess.nps.application:different.needs.type.of.allergies',
+      defaultMessage: 'Tegund ofnæmis',
+      description: 'Type of allergies',
+    },
+    typeOfAllergiesPlaceholder: {
+      id: 'dess.nps.application:different.needs.type.of.allergies.placeholder',
+      defaultMessage: 'Veldu tegund ofnæmis',
+      description: 'Select type of allergies',
+    },
+    confirmFoodAllergiesAlertMessage: {
+      id: 'dess.nps.application:different.needs.confirm.food.allergies.alert.message',
+      defaultMessage:
+        'Athugið að skóli getur krafist vottorðs frá lækni til staðfestingar á fæðuofnæmi.',
+      description:
+        'Please note that the school may require a certificate from a doctor to confirm food allergies.',
+    },
+    childHasFoodIntolerances: {
+      id: 'dess.nps.application:different.needs.child.has.food.intolerances',
+      defaultMessage: 'Barnið er með fæðuóþol',
+      description: 'Child has food intolerances',
+    },
+    typeOfIntolerances: {
+      id: 'dess.nps.application:different.needs.type.of.intolerances',
+      defaultMessage: 'Tegund óþols',
+      description: 'Type of intolerances',
+    },
+    typeOfIntolerancesPlaceholder: {
+      id: 'dess.nps.application:different.needs.type.of.intolerances.placeholder',
+      defaultMessage: 'Veldu tegund óþols',
+      description: 'Select type of intolerances',
+    },
+    epinephrinePen: {
+      id: 'dess.nps.application:different.needs.epinephrine.pen',
+      defaultMessage: 'Notar barnið adrenalínpenna?',
+      description: 'Does the child use an epinephrine pen?',
+    },
+    eggAllergy: {
+      id: 'dess.nps.application:different.needs.egg.allergy',
+      defaultMessage: 'Eggjaofnæmi',
+      description: 'Egg allergy',
+    },
+    fishAllergy: {
+      id: 'dess.nps.application:different.needs.fish.allergy',
+      defaultMessage: 'Fiskiofnæmi',
+      description: 'Fish allergy',
+    },
+    nutAllergy: {
+      id: 'dess.nps.application:different.needs.nut.allergy',
+      defaultMessage: 'Hnetuofnæmi',
+      description: 'Nut allergy',
+    },
+    wheatAllergy: {
+      id: 'dess.nps.application:different.needs.wheat.allergy',
+      defaultMessage: 'Hveitiofnæmi',
+      description: 'Wheat allergy',
+    },
+    milkAllergy: {
+      id: 'dess.nps.application:different.needs.milk.allergy',
+      defaultMessage: 'Mjólkurofnæmi',
+      description: 'Milk allergy',
+    },
+    other: {
+      id: 'dess.nps.application:different.needs.other',
+      defaultMessage: 'Annað',
+      description: 'Other',
+    },
+    lactoseIntolerance: {
+      id: 'dess.nps.application:different.needs.lactose.intolerance',
+      defaultMessage: 'Mjólkursykuróþol',
+      description: 'Lactose intolerance',
+    },
+    glutenIntolerance: {
+      id: 'dess.nps.application:different.needs.gluten.intolerance',
+      defaultMessage: 'Glútenóþol',
+      description: 'Gluten intolerance',
+    },
+    msgIntolerance: {
+      id: 'dess.nps.application:different.needs.msg.intolerance',
+      defaultMessage: 'MSG-óþol',
+      description: 'MSG intolerance',
+    },
 
     // Support
     supportSubSectionTitle: {
@@ -554,6 +665,21 @@ export const newPrimarySchoolMessages: MessageDir = {
       defaultMessage: 'Foreldri/forsjáraðili',
       description: 'Parent / guardian',
     },
+    foodAllergies: {
+      id: 'dess.nps.application:review.food.allergies',
+      defaultMessage: 'Fæðuofnæmi',
+      description: 'Food allergies',
+    },
+    foodIntolerances: {
+      id: 'dess.nps.application:review.food.intolerances',
+      defaultMessage: 'Fæðuóþol',
+      description: 'Food intolerances',
+    },
+    usesEpinephrinePen: {
+      id: 'dess.nps.application:review.uses.epinephrine.pen',
+      defaultMessage: 'Notar adrenalínpenna',
+      description: 'Uses an epinephrine pen',
+    },
   }),
 
   conclusion: defineMessages({
@@ -618,5 +744,15 @@ export const errorMessages = defineMessages({
     id: 'dess.nps.application:error.siblings.required',
     defaultMessage: 'Nauðsynlegt er að bæta við a.m.k einu systkini',
     description: 'You must add at least one sibling',
+  },
+  foodAllergyRequired: {
+    id: 'dess.nps.application:error.food.allergy.required',
+    defaultMessage: 'Það þarf að velja a.m.k eitt fæðuofnæmi',
+    description: 'At least one food allergy must be selected',
+  },
+  foodIntoleranceRequired: {
+    id: 'dess.nps.application:error.food.intolerance.required',
+    defaultMessage: 'Það þarf að velja a.m.k eitt fæðuóþol',
+    description: 'At least one food intolerance must be selected',
   },
 })

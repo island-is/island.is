@@ -9,6 +9,7 @@ import {
   buildPhoneField,
   buildRadioField,
   buildSection,
+  buildSelectField,
   buildSubSection,
   buildSubmitField,
   buildTableRepeaterField,
@@ -34,6 +35,8 @@ import {
   canApply,
   getApplicationAnswers,
   getApplicationExternalData,
+  getFoodAllergiesOptions,
+  getFoodIntolerancesOptions,
   getOtherParent,
   getRelationOptionLabel,
   getRelationOptions,
@@ -537,7 +540,143 @@ export const NewPrimarySchoolForm: Form = buildForm({
           id: 'schoolMealSubSection',
           title:
             newPrimarySchoolMessages.differentNeeds.schoolMealSubSectionTitle,
-          children: [],
+          children: [
+            buildMultiField({
+              id: 'schoolMeal',
+              title:
+                newPrimarySchoolMessages.differentNeeds
+                  .schoolMealSubSectionTitle,
+              description:
+                newPrimarySchoolMessages.differentNeeds.schoolMealDescription,
+              children: [
+                buildRadioField({
+                  id: 'schoolMeal.isRequestingFreeSchoolMeals',
+                  title:
+                    newPrimarySchoolMessages.differentNeeds.schoolMealFreeMeals,
+                  width: 'half',
+                  required: true,
+                  options: [
+                    {
+                      label: newPrimarySchoolMessages.shared.yes,
+                      dataTestId: 'yes-option',
+                      value: YES,
+                    },
+                    {
+                      label: newPrimarySchoolMessages.shared.no,
+                      dataTestId: 'no-option',
+                      value: NO,
+                    },
+                  ],
+                }),
+                buildDescriptionField({
+                  id: 'schoolMeal.description',
+                  title:
+                    newPrimarySchoolMessages.differentNeeds
+                      .foodAllergiesAndIntolerances,
+                  description:
+                    newPrimarySchoolMessages.differentNeeds
+                      .foodAllergiesAndIntolerancesDescription,
+                  titleVariant: 'h4',
+                  marginTop: 4,
+                }),
+                buildCheckboxField({
+                  id: 'schoolMeal.hasFoodAllergies',
+                  title: '',
+                  spacing: 0,
+                  options: [
+                    {
+                      value: YES,
+                      label:
+                        newPrimarySchoolMessages.differentNeeds
+                          .childHasFoodAllergies,
+                    },
+                  ],
+                }),
+                buildSelectField({
+                  // TODO: Multi select
+                  id: 'schoolMeal.foodAllergies',
+                  title:
+                    newPrimarySchoolMessages.differentNeeds.typeOfAllergies,
+                  dataTestId: 'food-allergies',
+                  placeholder:
+                    newPrimarySchoolMessages.differentNeeds
+                      .typeOfAllergiesPlaceholder,
+                  // TODO: Nota gögn fá Júní?
+                  options: getFoodAllergiesOptions(),
+                  condition: (answers) => {
+                    const { hasFoodAllergies } = getApplicationAnswers(answers)
+
+                    return hasFoodAllergies?.includes(YES)
+                  },
+                }),
+                buildAlertMessageField({
+                  id: 'support.info',
+                  title: newPrimarySchoolMessages.shared.alertTitle,
+                  message:
+                    newPrimarySchoolMessages.differentNeeds
+                      .confirmFoodAllergiesAlertMessage,
+                  doesNotRequireAnswer: true,
+                  alertType: 'info',
+                  marginBottom: 4,
+                  condition: (answers) => {
+                    const { hasFoodAllergies } = getApplicationAnswers(answers)
+
+                    return hasFoodAllergies?.includes(YES)
+                  },
+                }),
+                buildCheckboxField({
+                  id: 'schoolMeal.hasFoodIntolerances',
+                  title: '',
+                  spacing: 0,
+                  options: [
+                    {
+                      value: YES,
+                      label:
+                        newPrimarySchoolMessages.differentNeeds
+                          .childHasFoodIntolerances,
+                    },
+                  ],
+                }),
+                buildSelectField({
+                  // TODO: Multi select
+                  id: 'schoolMeal.foodIntolerances',
+                  title:
+                    newPrimarySchoolMessages.differentNeeds.typeOfIntolerances,
+                  dataTestId: 'food-intolerances',
+                  placeholder:
+                    newPrimarySchoolMessages.differentNeeds
+                      .typeOfIntolerancesPlaceholder,
+                  // TODO: Nota gögn fá Júní?
+                  options: getFoodIntolerancesOptions(),
+                  condition: (answers) => {
+                    const { hasFoodIntolerances } =
+                      getApplicationAnswers(answers)
+
+                    return hasFoodIntolerances?.includes(YES)
+                  },
+                }),
+                buildRadioField({
+                  id: 'schoolMeal.isUsingEpiPen',
+                  title: newPrimarySchoolMessages.differentNeeds.epinephrinePen,
+                  width: 'half',
+                  required: true,
+                  space: 6,
+                  options: [
+                    {
+                      label: newPrimarySchoolMessages.shared.yes,
+                      dataTestId: 'yes-option',
+                      value: YES,
+                    },
+                    {
+                      label: newPrimarySchoolMessages.shared.no,
+                      dataTestId: 'no-option',
+                      value: NO,
+                    },
+                  ],
+                }),
+              ],
+            }),
+          ],
         }),
         buildSubSection({
           id: 'supportSubSection',
@@ -599,7 +738,7 @@ export const NewPrimarySchoolForm: Form = buildForm({
                   title: '',
                   description:
                     newPrimarySchoolMessages.differentNeeds.requestMeeting,
-                  options: () => [
+                  options: [
                     {
                       value: YES,
                       label:

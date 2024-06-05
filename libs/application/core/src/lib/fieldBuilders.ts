@@ -84,6 +84,7 @@ export function buildCheckboxField(
     large = true,
     required,
     backgroundColor = 'blue',
+    spacing,
   } = data
   return {
     ...extractCommonFields(data),
@@ -93,6 +94,7 @@ export function buildCheckboxField(
     backgroundColor,
     options,
     required,
+    spacing,
     type: FieldTypes.CHECKBOX,
     component: FieldComponents.CHECKBOX,
   }
