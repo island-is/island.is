@@ -341,7 +341,7 @@ export class InternalCaseService {
             ...caseToCreate,
             state: isIndictmentCase(caseToCreate.type)
               ? CaseState.DRAFT
-              : undefined,
+              : CaseState.NEW,
             origin: CaseOrigin.LOKE,
             creatingProsecutorId: creator.id,
             prosecutorId:

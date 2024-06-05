@@ -48,6 +48,7 @@ const Overview: React.FC<React.PropsWithChildren<unknown>> = () => {
     | 'caseSubmitModal'
     | 'caseSentForConfirmationModal'
     | 'caseDeniedModal'
+    | 'askForCancellationModal'
   >('noModal')
   const [indictmentConfirmationDecision, setIndictmentConfirmationDecision] =
     useState<'confirm' | 'deny'>()
@@ -116,6 +117,18 @@ const Overview: React.FC<React.PropsWithChildren<unknown>> = () => {
 
   const handleConfirmIndictment = async () => {
     const transitionSuccess = await handleTransition(CaseTransition.SUBMIT)
+
+    if (!transitionSuccess) {
+      return
+    }
+
+    router.push(constants.CASES_ROUTE)
+  }
+
+  const handleAskForCancellation = async () => {
+    const transitionSuccess = await handleTransition(
+      CaseTransition.ASK_FOR_CANCELLATION,
+    )
 
     if (!transitionSuccess) {
       return
@@ -239,6 +252,18 @@ const Overview: React.FC<React.PropsWithChildren<unknown>> = () => {
           nextIsDisabled={
             userCanSendCaseToCourt && !indictmentConfirmationDecision
           }
+          actionButtonText={formatMessage(strings.askForCancellationButtonText)}
+          actionButtonColorScheme={'destructive'}
+          actionButtonIsDisabled={
+            !(
+              workingCase.state &&
+              [CaseState.SUBMITTED, CaseState.RECEIVED].includes(
+                workingCase.state,
+              ) &&
+              !workingCase.indictmentDecision
+            )
+          }
+          onActionButtonClick={() => setModal('askForCancellationModal')}
         />
       </FormContentContainer>
       <AnimatePresence>
@@ -273,6 +298,21 @@ const Overview: React.FC<React.PropsWithChildren<unknown>> = () => {
             setWorkingCase={setWorkingCase}
             onClose={() => setModal('noModal')}
             onComplete={() => router.push(constants.CASES_ROUTE)}
+          />
+        ) : modal === 'askForCancellationModal' ? (
+          <Modal
+            title={formatMessage(strings.askForCancellationModalTitle)}
+            text={formatMessage(strings.askForCancellationModalText)}
+            onClose={() => setModal('noModal')}
+            secondaryButtonText={formatMessage(
+              strings.askForCancellationSecondaryButtonText,
+            )}
+            onSecondaryButtonClick={() => setModal('noModal')}
+            onPrimaryButtonClick={handleAskForCancellation}
+            primaryButtonText={formatMessage(
+              strings.askForCancellationPrimaryButtonText,
+            )}
+            isPrimaryButtonLoading={isTransitioningCase}
           />
         ) : null}
       </AnimatePresence>
