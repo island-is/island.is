@@ -52,6 +52,7 @@ const steps = [...(await Promise.all(
 // Restore cache
 const restoreJobs = await Promise.all(steps.map(async (value) => {
   const restoreSuccess = await restoreCache({ key: value.key, path: value.path })
+  console.log({ restoreSuccess })
   return {
     ...value,
     restoreSuccess
@@ -62,6 +63,7 @@ const checkCache = await Promise.all(restoreJobs.filter(async (e) => {
   const isOk = e.check
     ? await e.check(e.restoreSuccess, resolve(ROOT, e.path))
     : e.restoreSuccess
+  console.log({isOk})
   return {
     ...e,
     isOk
