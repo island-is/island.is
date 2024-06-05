@@ -25,8 +25,7 @@ import {
 import type { Locale } from '@island.is/shared/types'
 import { mapToContentfulLocale, mapToLocale } from './utils'
 import { ContentfulGraphQLClientService } from '@island.is/clients/contentful-graphql'
-import { GET_HNIPP_TEMPLATE_BY_TEMPLATE_ID,GET_HNIPP_TEMPLATES,GET_ORGANIZATION_BY_KENNITALA } from './contentful-queries';
-
+import { GetTemplateByTemplateId,GetTemplates,GetOrganizationByKennitala } from '@island.is/clients/contentful-graphql'
 
 
 /**
@@ -53,25 +52,28 @@ export class NotificationsService {
     @InjectModel(Notification)
     private readonly notificationModel: typeof Notification,
     private readonly contentfulGraphQLClientService: ContentfulGraphQLClientService,
+    
   ) {}
 
- 
 
   async getSenderOrganizationTitle(
     senderId: string,
     locale?: Locale,
   ): Promise<SenderOrganization | undefined> {
-    console.log(senderId, locale,)
     locale = mapToLocale(locale as Locale)
     const queryVariables = {
       kennitala: senderId,
       locale: mapToContentfulLocale(locale),
     };
-    console.log(queryVariables)
-    const res = await this.contentfulGraphQLClientService.fetchData(GET_ORGANIZATION_BY_KENNITALA, queryVariables);
+    // try...........................
+    const res = await this.contentfulGraphQLClientService.fetchData(
+      GetOrganizationByKennitala, 
+      queryVariables
+  );
     const items = res.organizationCollection.items;
     if(items.length > 0){
-      return {title:items[0].title}
+      console.log(items[0]) // ............................................................
+      return items[0] //{title:items[0].title}
     } else {
       this.logger.warn(`Organization title not found for senderId: ${senderId}`)
     }
@@ -146,7 +148,7 @@ export class NotificationsService {
     const queryVariables = {
       locale: mapToContentfulLocale(locale),
     };
-    const res = await this.contentfulGraphQLClientService.fetchData(GET_HNIPP_TEMPLATES, queryVariables);
+    const res = await this.contentfulGraphQLClientService.fetchData(GetTemplates, queryVariables);
     return res.hnippTemplateCollection.items
 
   }
@@ -160,7 +162,7 @@ export class NotificationsService {
       templateId,
       locale: mapToContentfulLocale(locale),
     };
-    const res = await this.contentfulGraphQLClientService.fetchData(GET_HNIPP_TEMPLATE_BY_TEMPLATE_ID, queryVariables);
+    const res = await this.contentfulGraphQLClientService.fetchData(GetTemplateByTemplateId, queryVariables);
     const items = res.hnippTemplateCollection.items;
     if(items.length > 0){
       return items[0]

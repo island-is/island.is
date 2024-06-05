@@ -4,6 +4,7 @@ import type { ConfigType } from '@island.is/nest/config';
 import { ContentfulGraphQLClientConfig } from './contentful-graphql.config';
 import { ContentfulGraphQLFetchProviderKey } from './contentful-graphql-fetch-provider';
 import { GraphQLClient } from 'graphql-request';
+import { DocumentNode } from 'graphql';
 
 @Injectable()
 export class ContentfulGraphQLClientService {
@@ -22,9 +23,9 @@ export class ContentfulGraphQLClientService {
     });
   }
 
-  async fetchData(queryString: string, variables?: Record<string, any>) {
+  async fetchData(query: DocumentNode, variables?: Record<string, any>) {
     try {
-      return await this.client.request(queryString, variables);
+      return await this.client.request(query, variables);
     } catch (error) {
       throw new HttpException(error.message, error.status);
     }
