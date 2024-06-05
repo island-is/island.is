@@ -8,8 +8,8 @@ import {
   valueToNumber,
 } from './utils/helpers'
 import { m } from './messages'
-import { DebtTypes } from '@island.is/clients/syslumenn'
 import { NO, YES } from '@island.is/application/core'
+import { DebtTypes } from '../types'
 
 const deceasedShare = {
   deceasedShare: z.string().nonempty().optional(),
