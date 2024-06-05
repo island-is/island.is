@@ -1474,6 +1474,16 @@ export const m = defineMessages({
     defaultMessage: 'Skiptastjóri',
     description: '',
   },
+  grantors: {
+    id: 'ir.application:grantors',
+    defaultMessage: 'Arflátar',
+    description: '',
+  },
+  grantorsDescription: {
+    id: 'ir.application:grantorsDescription',
+    defaultMessage: 'Lorem ipsum foo bar beep boop meep morp.',
+    description: '',
+  },
   grantor: {
     id: 'ir.application:grantor',
     defaultMessage: 'Arfláti',
