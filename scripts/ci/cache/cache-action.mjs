@@ -62,7 +62,7 @@ let steps = [
 
 if (initCache) {
   steps = [
-    await Promise.all(
+    ...await Promise.all(
       saveJobs
         .map(async (value) => {
           if (!value.enabled) {
