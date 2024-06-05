@@ -240,7 +240,7 @@ const Conclusion: React.FC = () => {
       } else if (
         selectedAction === IndictmentDecision.POSTPONING_UNTIL_VERDICT
       ) {
-        await handlePostponementUntilVerdict(destination)
+        handlePostponementUntilVerdict(destination)
       } else if (postponement?.postponedIndefinitely) {
         handlePostponementIndefinitely(destination)
       } else {
