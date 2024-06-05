@@ -12,7 +12,6 @@ import {
 
 import * as styles from './ScreenFooter.css'
 import { useAuth } from '@island.is/auth/react'
-import { MessageDescriptor, defineMessage } from 'react-intl'
 
 interface FooterProps {
   application: Application
@@ -27,7 +26,7 @@ interface FooterProps {
   shouldLastScreenButtonSubmit?: boolean
   renderLastScreenBackButton?: boolean
   submitButtonDisabled?: boolean
-  nextButtonText?: MessageDescriptor
+  nextButtonText?: FormText
 }
 
 type SubmitButton = Omit<ButtonTypes, 'circle'> & {
@@ -173,7 +172,7 @@ export const ScreenFooter: FC<React.PropsWithChildren<FooterProps>> = ({
                   disabled={submitButtonDisabled}
                 >
                   {nextButtonText
-                    ? formatMessage(nextButtonText)
+                    ? formatText(nextButtonText, application, formatMessage)
                     : formatMessage(coreMessages.buttonNext)}
                 </Button>
               </Box>

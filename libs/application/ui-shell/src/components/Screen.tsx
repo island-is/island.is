@@ -264,8 +264,7 @@ const Screen: FC<React.PropsWithChildren<ScreenProps>> = ({
   const { width } = useWindowSize()
   const headerHeight = 85
 
-  const nextButtonText = (screen.nextButtonText ??
-    coreMessages.buttonNext) as MessageDescriptor
+  const nextButtonText = screen.nextButtonText ?? coreMessages.buttonNext
 
   useEffect(() => {
     if (width < theme.breakpoints.md) {
