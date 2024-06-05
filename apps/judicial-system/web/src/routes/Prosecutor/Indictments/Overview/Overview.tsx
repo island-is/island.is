@@ -242,7 +242,10 @@ const Overview: React.FC<React.PropsWithChildren<unknown>> = () => {
                   isNewIndictment,
                 })
           }
-          hideNextButton={caseHasBeenReceivedByCourt}
+          hideNextButton={
+            caseHasBeenReceivedByCourt ||
+            workingCase.state === CaseState.WAITING_FOR_CANCELLATION
+          }
           infoBoxText={
             caseHasBeenReceivedByCourt
               ? formatMessage(strings.indictmentSentToCourt)
@@ -251,6 +254,9 @@ const Overview: React.FC<React.PropsWithChildren<unknown>> = () => {
           onNextButtonClick={handleNextButtonClick}
           nextIsDisabled={
             userCanSendCaseToCourt && !indictmentConfirmationDecision
+          }
+          hideActionButton={
+            workingCase.state === CaseState.WAITING_FOR_CANCELLATION
           }
           actionButtonText={formatMessage(strings.askForCancellationButtonText)}
           actionButtonColorScheme={'destructive'}
