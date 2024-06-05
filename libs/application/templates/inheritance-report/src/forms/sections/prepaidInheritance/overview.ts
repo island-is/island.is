@@ -10,7 +10,8 @@ import {
 import { m } from '../../../lib/messages'
 import { formatCurrency } from '@island.is/application/ui-components'
 import { InheritanceReport } from '../../../lib/dataSchema'
-import { valueToNumber } from '../../../lib/utils/helpers'
+import { roundedValueToNumber, valueToNumber } from '../../../lib/utils/helpers'
+import { calculateTotalAssets } from '../../../lib/utils/calculateTotalAssets'
 
 export const prepaidOverview = buildSubSection({
   id: 'prepaidOverview',
@@ -21,6 +22,27 @@ export const prepaidOverview = buildSubSection({
       title: m.overviewHeirsTitle,
       description: m.overviewHeirsDescription,
       children: [
+        buildDividerField({}),
+        buildDescriptionField({
+          id: 'overviewAssetsTitle',
+          title: m.properties,
+          titleVariant: 'h3',
+          space: 'gutter',
+          marginBottom: 'gutter',
+        }),
+        buildKeyValueField({
+          label: m.netProperty,
+          display: 'flex',
+          value: ({ answers }) =>
+            formatCurrency(
+              String(roundedValueToNumber(calculateTotalAssets(answers))),
+            ),
+        }),
+        buildDescriptionField({
+          id: 'space',
+          title: '',
+          space: 'gutter',
+        }),
         buildDividerField({}),
         buildCustomField({
           title: '',
