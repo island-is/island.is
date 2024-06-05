@@ -17,8 +17,8 @@ export const HealthInsuranceV2ClientConfig = defineConfig<
         'XROAD_HEALTH_INSURANCE_ID',
         'IS-DEV/GOV/10007/SJUKRA-Protected',
       ),
-      username: env.required('XROAD_HEALTH_INSURANCE_V2_XROAD_USERNAME'),
-      password: env.required('XROAD_HEALTH_INSURANCE_V2_XROAD_PASSWORD'),
+      username: env.required('XROAD_HEALTH_INSURANCE_V2_XROAD_USERNAME', ''),
+      password: env.required('XROAD_HEALTH_INSURANCE_V2_XROAD_PASSWORD', ''),
     }
   },
 })
