@@ -349,7 +349,6 @@ const renderSlices = (
               marginBottom={index === slices.length - 1 ? 5 : 0}
               params={{
                 renderAnchorPagesAsProfileCards: true,
-                latestNewsSliceBackground: 'white',
                 forceTitleSectionHorizontalPadding: 'true',
               }}
               fullWidth={true}
@@ -366,7 +365,6 @@ const renderSlices = (
             marginBottom={index === slices.length - 1 ? 5 : 0}
             params={{
               renderAnchorPagesAsProfileCards: true,
-              latestNewsSliceBackground: 'white',
               forceTitleSectionHorizontalPadding: 'true',
             }}
           />
