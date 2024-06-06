@@ -30,6 +30,7 @@ runs:
       id: prepare
       shell: bash
       env:
+        _CACHE_KEYS: ${{ inputs.keys }}
         ENABLE_CACHE: ${{ inputs.enable-cache }}
         NODE_OPTIONS: --max-old-space-size=8192
       run: |

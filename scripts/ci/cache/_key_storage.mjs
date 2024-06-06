@@ -10,7 +10,7 @@ class KeyStorage {
    * @param {string|undefined} value - The value to initialize the KeyStorage object with.
    */
   constructor(value = undefined) {
-    if (!value) {
+    if (!value || value === 'false') {
       return
     }
     try {
