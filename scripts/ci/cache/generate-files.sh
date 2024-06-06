@@ -14,10 +14,8 @@ DIR="$(git rev-parse --show-toplevel)"
 marker=$(mktemp)
 touch "$marker"
 
-CMD="yarn codegen --skip-cache"
-
 echo RUNNING CODEGEN
-NODE_OPTIONS=--max-old-space-size=4096
+export NODE_OPTIONS=--max-old-space-size=4096
 yarn node scripts/codegen.js --skip-cache 1>&2
 
 echo CODEGEN DONE
@@ -30,4 +28,4 @@ changed_files=$(find "$DIR"/apps "$DIR"/libs -type d \( \
     -path "$DIR/cache_output" \
 \) -prune -o -type f -newer "$marker" -print)
 
-tar zcvf generated_files.tar.gz $(echo "$changed_files"  | xargs realpath --relative-to $(pwd))
+tar zcvf "$path" "$(echo "$changed_files"  | xargs realpath --relative-to "$(pwd)")"
