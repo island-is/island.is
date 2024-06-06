@@ -532,9 +532,9 @@ export const newPrimarySchoolMessages: MessageDir = {
     photographyInfo: {
       id: 'dess.nps.application:different.needs.photography.info',
       defaultMessage:
-        'Ef myndefni er notað í öðrum tilgangi, eða myndataka er fyrirhuguð í öðrum tilgangi en samþykki nær til, þarf að upplýsa foreldra og afla sérstaks samþykkis.',
+        'Ekki er heimilt að nota myndefni í öðrum tilgangi en samþykki nær til.\n\nEf myndefni er notað í öðrum tilgangi, eða myndataka er fyrirhuguð í öðrum tilgangi en samþykki nær til, verða foreldrar upplýstir sérstaklega og sérstaks samþykkis aflað.\n\nForeldri getur afturkallað samþykki sitt með því að hafa samband við skóla. Afturköllun hefur þó ekki áhrif á lögmæti þeirrar myndatöku og myndbirtingar sem fram hefur farið fram að þeim tíma.\n\nHver og einn skóli er ábyrgðaraðili vegna persónuupplýsinga sem þar eru unnar. Frekari leiðbeiningar og fræðsla um mynda- og myndbandstökur sem og myndbirtingar má finna á vef viðkomandi sveitarfélags.',
       description:
-        'If footage is used for other purposes, or photography is planned for purposes other than consented for, parents must be informed and special consent obtained.',
+        'It is not allowed to use visual material for any purpose other than what has been approved.\n\nIf visual material is used for a purpose other than what has been approved, or if photography is intended for a purpose other than what has been approved, parents will be informed specifically and a separate consent will be obtained.\n\nA parent can revoke their consent by contacting the school. However, revocation does not affect the legality of any photography or publication that has already taken place up to that time.\n\nEach school is responsible for the personal information processed there. Further guidance and education on photography and publication, as well as image processing, can be found on the website of the relevant municipality.',
     },
   }),
 
