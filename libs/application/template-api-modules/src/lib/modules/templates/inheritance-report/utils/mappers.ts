@@ -92,6 +92,7 @@ export const expandAnswers = (
   caseNumber: string
 } => {
   return {
+    applicationFor: answers.applicationFor ?? '',
     applicant: answers.applicant,
     executors: {
       executor: {
@@ -230,6 +231,7 @@ export const expandAnswers = (
               propertyValuation: debt.propertyValuation ?? 0,
               description: debt.description ?? '',
               nationalId: debt.nationalId ?? '',
+              debtType: debt.debtType ?? '',
             }
           },
         ),
