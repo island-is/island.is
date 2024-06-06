@@ -13,7 +13,7 @@ inputs:
 outputs:
   keys:
     description: 'Keys'
-    value: ${{ steps.get-cache-keys.outputs._CACHE_KEYS }}
+    value: ${{ steps.prepare.outputs._CACHE_KEYS }}
 runs:
   using: 'composite'
   steps:
