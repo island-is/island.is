@@ -66,7 +66,22 @@ export class DocumentServiceV2 {
       default:
         type = FileType.UNKNOWN
     }
-
+    const mappedActions = document.actions?.map((x) => {
+      if (x.type === 'file') {
+        return {
+          ...x,
+          icon: 'download',
+          data: `${this.downloadServiceConfig.baseUrl}/download/v1/electronic-documents/${x.data}`,
+        }
+      }
+      if (x.type === 'url') {
+        return {
+          ...x,
+          icon: 'open',
+        }
+      }
+      return { ...x, icon: 'receipt' }
+    })
     return {
       ...document,
       publicationDate: document.date,
@@ -80,6 +95,8 @@ export class DocumentServiceV2 {
         type,
         value: document.content,
       },
+      isUrgent: document.urgent,
+      actions: mappedActions,
     }
   }
 
@@ -115,7 +132,6 @@ export class DocumentServiceV2 {
     const documentData: Array<Document> =
       documents?.documents
         .map((d) => {
-          const isImportant = Math.random() < 0.3
           if (!d) {
             return null
           }
@@ -128,22 +144,8 @@ export class DocumentServiceV2 {
               name: d.senderName,
               id: d.senderNationalId,
             },
-            isImportant: isImportant,
-            alertMessage: {
-              type: 'success',
-              message:
-                'Staðfesting á möttöku hefur verið send á dómstóla og ákæruvald.',
-            },
-            actions: isImportant
-              ? [
-                  {
-                    title: 'Velja verjanda',
-                    type: 'url',
-                    data: '/domsmal/123/fyrirkall/',
-                    icon: 'receipt',
-                  },
-                ]
-              : undefined,
+            isUrgent: d.urgent,
+            actions: d.actions,
           }
         })
         .filter(isDefined) ?? []

@@ -19,7 +19,7 @@ query DocumentsV2($input: DocumentsV2DocumentsInput!) {
         type
         value
       }
-      isImportant
+      isUrgent
       actions {
         type
         title
@@ -49,6 +49,12 @@ query GetDocumentInboxLineV2($input: DocumentInput!) {
     content {
       type
       value
+    }
+    actions {
+      type
+      title
+      data
+      icon
     }
   }
 }

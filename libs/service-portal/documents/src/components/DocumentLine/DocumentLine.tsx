@@ -22,11 +22,11 @@ import {
   useLocation,
 } from 'react-router-dom'
 import { DocumentsPaths } from '../../lib/paths'
-import { FavAndStash } from '../FavAndStash'
+import { FavAndStash } from '../FavAndStash/FavAndStash'
 import { useSubmitMailAction } from '../../utils/useSubmitMailAction'
 import { useIsChildFocusedorHovered } from '../../hooks/useIsChildFocused'
 import { ActiveDocumentType } from '../../lib/types'
-import ImportantTag from './ImportantTag'
+import UrgentTag from '../UrgentTag/UrgentTag'
 
 interface Props {
   documentLine: Document
@@ -276,7 +276,7 @@ export const DocumentLine: FC<Props> = ({
                 {documentLine.subject}
               </Text>
             </button>
-            {asFrame && isImportant && <ImportantTag />}
+            {asFrame && isImportant && <UrgentTag />}
             {(hasFocusOrHover || isBookmarked || isArchived) &&
               !postLoading &&
               !asFrame && (

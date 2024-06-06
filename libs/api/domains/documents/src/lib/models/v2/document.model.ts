@@ -25,7 +25,7 @@ export class Actions {
   @Field({ nullable: true })
   data?: string
 
-  @Field({ nullable: true })
+  @Field(() => String, { nullable: true })
   icon?: string
 }
 @ObjectType('DocumentV2')
@@ -69,14 +69,14 @@ export class Document {
   })
   downloadUrl?: string
 
-  @Field(() => Boolean, { nullable: true })
-  isImportant?: boolean
-
   @Field(() => Message, { nullable: true })
   alertMessage?: Message
 
   @Field(() => [Actions], { nullable: true })
   actions?: Array<Actions>
+
+  @Field(() => Boolean, { nullable: true })
+  isUrgent?: boolean
 }
 
 @ObjectType('DocumentsV2')

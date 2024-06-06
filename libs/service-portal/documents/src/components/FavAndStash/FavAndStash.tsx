@@ -32,7 +32,12 @@ export const FavAndStash: React.FC<FavAndStashProps> = ({
   }
 
   return (
-    <Box className={styles.filterActionButtons} display="flex">
+    <Box
+      className={styles.filterActionButtons}
+      display="flex"
+      height="full"
+      alignItems="center"
+    >
       {onStash && (
         <Tooltip
           text={formatMessage(archived ? m.removeFromStorage : m.addToStorage)}
@@ -76,3 +81,5 @@ export const FavAndStash: React.FC<FavAndStashProps> = ({
     </Box>
   )
 }
+
+export default FavAndStash

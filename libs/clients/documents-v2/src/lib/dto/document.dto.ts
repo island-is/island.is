@@ -1,4 +1,4 @@
-import { DocumentDTO } from '../..'
+import { DocumentDTO, MessageAction } from '../..'
 
 export type FileType = 'pdf' | 'html' | 'url'
 
@@ -13,6 +13,8 @@ export type DocumentDto = {
   senderNationalId?: string
   subject: string
   categoryId?: string
+  urgent?: boolean
+  actions?: Array<MessageAction>
 }
 
 export const mapToDocument = (document: DocumentDTO): DocumentDto | null => {
@@ -65,5 +67,7 @@ export const mapToDocument = (document: DocumentDTO): DocumentDto | null => {
     senderNationalId: document.senderKennitala,
     subject: document.subject ?? 'Óþekktur titill', // All of the content in this service is strictly Icelandic. Fallback to match.
     categoryId: document.categoryId?.toString(),
+    urgent: document.urgent,
+    actions: document.actions,
   }
 }

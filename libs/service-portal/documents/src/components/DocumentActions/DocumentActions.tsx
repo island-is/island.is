@@ -1,26 +1,82 @@
+import { DocumentV2Actions } from '@island.is/api/schema'
 import { AlertMessage, Box, Button } from '@island.is/island-ui/core'
+import { IconMapIcon } from '@island.is/island-ui/core/types'
+import { FC } from 'react'
+import { downloadAppendix } from '../../utils/downloadDocumentV2'
+import { useUserInfo } from '@island.is/auth/react'
+import { useDocumentContext } from '../../screens/Overview/DocumentContext'
 
-const DocumentActions = () => {
+interface Props {
+  alert?: string
+  actions?: Array<DocumentV2Actions>
+}
+const DocumentActions: FC<Props> = ({ alert, actions }) => {
+  const { activeDocument } = useDocumentContext()
+  const userInfo = useUserInfo()
+  const DEFAULT_ICON: IconMapIcon = 'document'
   return (
     <Box>
-      <Box marginBottom={2}>
-        <AlertMessage
-          type="success"
-          message={
-            'Staðfesting á möttöku hefur verið send á dómstóla og ákæruvald.'
-          }
-        />
-      </Box>
-      <Box marginBottom={2}>
-        <Button
-          size="small"
-          variant="utility"
-          icon="receipt"
-          iconType="outline"
+      {/* {alert && (
+        <Box marginBottom={2}>
+          <AlertMessage
+            type="success"
+            message={
+              'Staðfesting á möttöku hefur verið send á dómstóla og ákæruvald.'
+            }
+          />
+        </Box>
+      )} */}
+      {actions && (
+        <Box
+          marginBottom={2}
+          display="flex"
+          flexDirection="row"
+          flexWrap="wrap"
         >
-          {'Velja verjanda'}
-        </Button>
-      </Box>
+          {actions.map((a) => {
+            if (a.type === 'url' && a.data) {
+              return (
+                <Box marginRight={1}>
+                  <a href={a.data}>
+                    <Button
+                      as="span"
+                      unfocusable
+                      colorScheme="default"
+                      icon={(a.icon as IconMapIcon) ?? DEFAULT_ICON}
+                      iconType="outline"
+                      size="default"
+                      variant="utility"
+                    >
+                      {a.title}
+                    </Button>
+                  </a>
+                </Box>
+              )
+            }
+            return (
+              <Box marginRight={1}>
+                {activeDocument && (
+                  <Button
+                    size="small"
+                    variant="utility"
+                    icon={(a.icon as IconMapIcon) ?? DEFAULT_ICON}
+                    iconType="outline"
+                    onClick={() =>
+                      downloadAppendix(
+                        activeDocument.id,
+                        a.data ?? activeDocument.downloadUrl,
+                        userInfo,
+                      )
+                    }
+                  >
+                    {a.title}
+                  </Button>
+                )}
+              </Box>
+            )
+          })}
+        </Box>
+      )}
     </Box>
   )
 }

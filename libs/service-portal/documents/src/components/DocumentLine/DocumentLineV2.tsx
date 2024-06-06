@@ -2,7 +2,11 @@ import cn from 'classnames'
 import format from 'date-fns/format'
 import { FC, useEffect, useRef, useState } from 'react'
 
-import { DocumentV2, DocumentV2Content } from '@island.is/api/schema'
+import {
+  DocumentV2,
+  DocumentV2Actions,
+  DocumentV2Content,
+} from '@island.is/api/schema'
 import { Box, Text, LoadingDots, Icon } from '@island.is/island-ui/core'
 import { dateFormat } from '@island.is/shared/constants'
 import { m } from '@island.is/service-portal/core'
@@ -17,13 +21,13 @@ import {
   useLocation,
 } from 'react-router-dom'
 import { DocumentsPaths } from '../../lib/paths'
-import { FavAndStash } from '../FavAndStash'
+import { FavAndStash } from '../FavAndStash/FavAndStash'
 import { useIsChildFocusedorHovered } from '../../hooks/useIsChildFocused'
 import { useGetDocumentInboxLineV2LazyQuery } from '../../screens/Overview/Overview.generated'
 import { useDocumentContext } from '../../screens/Overview/DocumentContext'
 import { useDocumentList } from '../../hooks/useDocumentList'
 import { useMailAction } from '../../hooks/useMailActionV2'
-import ImportantTag from './ImportantTag'
+import UrgentTag from '../UrgentTag/UrgentTag'
 
 interface Props {
   documentLine: DocumentV2
@@ -55,7 +59,7 @@ export const DocumentLine: FC<Props> = ({
   const { id } = useParams<{
     id: string
   }>()
-  const isImportant = documentLine.isImportant ?? false
+  const isUrgent = documentLine.isUrgent ?? false
 
   const {
     submitMailAction,
@@ -83,7 +87,10 @@ export const DocumentLine: FC<Props> = ({
     setHasAvatarFocus(isAvatarFocused)
   }, [isAvatarFocused])
 
-  const displayPdf = (content?: DocumentV2Content) => {
+  const displayPdf = (
+    content?: DocumentV2Content,
+    actions?: Array<DocumentV2Actions>,
+  ) => {
     setActiveDocument({
       document: {
         type: content?.type,
@@ -97,6 +104,7 @@ export const DocumentLine: FC<Props> = ({
       date: date,
       img,
       categoryId: documentLine.categoryId ?? undefined,
+      actions: actions,
     })
     window.scrollTo({
       top: 0,
@@ -123,8 +131,9 @@ export const DocumentLine: FC<Props> = ({
           )
         } else {
           const docContent = data?.documentV2?.content
+          const actions = data?.documentV2?.actions ?? undefined
           if (docContent) {
-            displayPdf(docContent)
+            displayPdf(docContent, actions)
             setDocumentDisplayError(undefined)
           } else {
             setDocumentDisplayError(formatMessage(messages.documentErrorLoad))
@@ -167,7 +176,10 @@ export const DocumentLine: FC<Props> = ({
   const unread = !documentLine.opened
   const isBookmarked = bookmarked || bookmarkSuccess
   const isArchived = activeArchive || archiveSuccess
-
+  hasFocusOrHover && console.log('hasFocusOrHover')
+  !hasFocusOrHover && console.log('FALSE focusOrHover')
+  isArchived && console.log('ARCHIVED')
+  isBookmarked && console.log('IS BOOKMARKED')
   return (
     <Box className={styles.wrapper} ref={wrapperRef}>
       <Box
@@ -178,7 +190,7 @@ export const DocumentLine: FC<Props> = ({
         borderTopWidth={includeTopBorder ? 'standard' : undefined}
         paddingX={2}
         paddingTop="p2"
-        paddingBottom={isImportant ? 'p1' : 'p2'}
+        paddingBottom={isUrgent ? 'p1' : 'p2'}
         width="full"
         className={cn(styles.docline, {
           [styles.active]: active,
@@ -252,46 +264,47 @@ export const DocumentLine: FC<Props> = ({
               </Text>
             </button>
 
-            {(hasFocusOrHover || isBookmarked || isArchived) &&
-              !postLoading &&
-              !fileLoading &&
-              !asFrame && (
-                <FavAndStash
-                  bookmarked={isBookmarked}
-                  archived={isArchived}
-                  onFav={
-                    isBookmarked || hasFocusOrHover
-                      ? async (e) => {
-                          e.stopPropagation()
-                          await submitMailAction(
-                            isBookmarked ? 'unbookmark' : 'bookmark',
-                            documentLine.id,
-                          )
-                          refetch(fetchObject)
-                        }
-                      : undefined
-                  }
-                  onStash={
-                    isArchived || hasFocusOrHover
-                      ? async (e) => {
-                          e.stopPropagation()
-                          await submitMailAction(
-                            isArchived ? 'unarchive' : 'archive',
-                            documentLine.id,
-                          )
-                          refetch(fetchObject)
-                        }
-                      : undefined
-                  }
-                />
+            <Box display="flex" alignItems="center">
+              {(postLoading || fileLoading) && (
+                <Box display="flex" alignItems="center">
+                  <LoadingDots single />
+                </Box>
               )}
-            {isImportant && <ImportantTag />}
-
-            {(postLoading || fileLoading) && (
-              <Box display="flex" alignItems="center">
-                <LoadingDots single />
-              </Box>
-            )}
+              {(hasFocusOrHover || isBookmarked || isArchived) &&
+                !postLoading &&
+                !fileLoading &&
+                !asFrame && (
+                  <FavAndStash
+                    bookmarked={isBookmarked}
+                    archived={isArchived}
+                    onFav={
+                      isBookmarked || hasFocusOrHover
+                        ? async (e) => {
+                            e.stopPropagation()
+                            await submitMailAction(
+                              isBookmarked ? 'unbookmark' : 'bookmark',
+                              documentLine.id,
+                            )
+                            refetch(fetchObject)
+                          }
+                        : undefined
+                    }
+                    onStash={
+                      isArchived || hasFocusOrHover
+                        ? async (e) => {
+                            e.stopPropagation()
+                            await submitMailAction(
+                              isArchived ? 'unarchive' : 'archive',
+                              documentLine.id,
+                            )
+                            refetch(fetchObject)
+                          }
+                        : undefined
+                    }
+                  />
+                )}
+              {isUrgent && <UrgentTag />}
+            </Box>
           </Box>
         </Box>
       </Box>
