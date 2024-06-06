@@ -95,6 +95,7 @@ export const Prerequisites: Form = buildForm({
               id: 'noChildrenMMSDescription',
               title: '',
               marginTop: 3,
+              marginBottom: 6,
               description: newPrimarySchoolMessages.pre.noChildrenFoundMMSInfo,
             }),
           ],
