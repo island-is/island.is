@@ -3,3 +3,10 @@ export enum Gender {
   FEMALE = 'FEMALE',
   OTHER = 'OTHER',
 }
+
+export enum DefenderChoice {
+  WAIVE = 'WAIVE', // Waive right to counsel
+  CHOOSE = 'CHOOSE', // Choose defender
+  DELAY = 'DELAY', // Delay choice
+  DELEGATE = 'DELEGATE', // Delegate choice to judge
+}
