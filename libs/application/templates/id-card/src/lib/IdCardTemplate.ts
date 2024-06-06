@@ -24,7 +24,6 @@ import {
   DeliveryAddressApi,
   UserInfoApi,
   NationalRegistryUser,
-  DisabiltyLicenseApi,
   SyslumadurPaymentCatalogApi,
   IdentityDocumentApi,
 } from '../dataProviders'
@@ -92,7 +91,6 @@ const IdCardTemplate: ApplicationTemplate<
                 PassportsApi,
                 DistrictsApi,
                 DeliveryAddressApi,
-                DisabiltyLicenseApi,
                 IdentityDocumentApi,
               ],
             },

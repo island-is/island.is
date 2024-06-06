@@ -1,7 +1,6 @@
 import {
   buildAlertMessageField,
   buildDataProviderItem,
-  buildDescriptionField,
   buildExternalDataProvider,
   buildForm,
   buildSection,
@@ -12,7 +11,6 @@ import {
   DefaultEvents,
   Form,
   FormModes,
-  PassportsApi,
   FormValue,
 } from '@island.is/application/types'
 import {
@@ -25,11 +23,9 @@ import {
 } from '../../lib/messages'
 import {
   DeliveryAddressApi,
-  DisabiltyLicenseApi,
   IdentityDocumentApi,
   NationalRegistryUser,
   SyslumadurPaymentCatalogApi,
-  // SyslumadurPaymentCatalogApi,
   UserInfoApi,
 } from '../../dataProviders'
 import { priceList } from '../../lib/messages/priceList'
@@ -56,10 +52,6 @@ export const Prerequisites: Form = buildForm({
               alertType: 'info',
               message: externalData.preInformation.hasValidCardAlert,
               marginTop: 0,
-              condition: (formValue: FormValue) => {
-                // Add condition from service
-                return true
-              },
             }),
             buildAlertMessageField({
               id: 'preInformation.alertField.lostOldCard',
@@ -67,10 +59,6 @@ export const Prerequisites: Form = buildForm({
               alertType: 'info',
               message: externalData.preInformation.lostOldCardAlert,
               marginTop: 0,
-              condition: (formValue: FormValue) => {
-                // Add condition from service
-                return true
-              },
             }),
           ],
         }),
@@ -112,10 +100,6 @@ export const Prerequisites: Form = buildForm({
 
             buildDataProviderItem({
               provider: DeliveryAddressApi,
-              title: '',
-            }),
-            buildDataProviderItem({
-              provider: DisabiltyLicenseApi,
               title: '',
             }),
             buildDataProviderItem({

@@ -27,7 +27,7 @@ export const PriceListSubSection = buildSection({
           id: `${Routes.PRICELIST}.priceChoice`,
           title: '',
           width: 'half',
-          options: (application) => {
+          options: (application: Application) => {
             const hasDiscount = checkForDiscount(application)
             return [
               {

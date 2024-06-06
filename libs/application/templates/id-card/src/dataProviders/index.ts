@@ -8,10 +8,7 @@ import {
 } from '@island.is/application/types'
 import { error } from '../lib/messages'
 
-export {
-  MockProviderApi,
-  DisabiltyLicenseApi,
-} from '@island.is/application/types'
+export { MockProviderApi } from '@island.is/application/types'
 
 export const PassportsApiResponse = PassportsApi.configure({
   params: {

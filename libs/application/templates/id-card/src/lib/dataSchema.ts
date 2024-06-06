@@ -22,6 +22,7 @@ const personInfo = z
     phoneNumber: z.string().refine((v) => isValidPhoneNumber(v), {
       params: error.invalidValue,
     }),
+    hasDisabilityLicense: z.boolean().optional(),
   })
   .refine((x) => {
     return true

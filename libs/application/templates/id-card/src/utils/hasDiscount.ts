@@ -3,11 +3,11 @@ import { getValueViaPath } from '@island.is/application/core'
 import { info } from 'kennitala'
 
 export const checkForDiscount = (application: Application) => {
-  const { externalData } = application
+  const { answers } = application
 
   const hasDisability = getValueViaPath<boolean>(
-    externalData,
-    'hasDisability.data',
+    answers,
+    'applicantInformation.hasDisabilityLicense',
   ) as boolean | undefined
 
   if (!hasDisability) {
