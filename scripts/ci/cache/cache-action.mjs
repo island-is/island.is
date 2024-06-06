@@ -45,7 +45,7 @@ if (!HAS_HASH_KEYS) {
   // Only write summary if this is initial run
   await writeToSummary(keyStorage.getKeys())
 }
-writeToOutput(keyStorage.getKeys())
+await writeToOutput(keyStorage.getKeys())
 
 /**
  * @type {any[]}
