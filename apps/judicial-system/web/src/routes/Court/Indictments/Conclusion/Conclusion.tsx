@@ -28,9 +28,9 @@ import {
   CaseFileCategory,
   CaseIndictmentRulingDecision,
   CaseTransition,
+  DateLog,
   IndictmentDecision,
 } from '@island.is/judicial-system-web/src/graphql/schema'
-import { CourtDate } from '@island.is/judicial-system-web/src/types'
 import { stepValidationsType } from '@island.is/judicial-system-web/src/utils/formHelper'
 import {
   formatDateForServer,
@@ -55,7 +55,7 @@ interface Postponement {
 
 interface PostponeUntilVerdictUpdates {
   indictmentDecision?: IndictmentDecision
-  courtDate?: CourtDate | null
+  courtDate?: DateLog | null
 }
 
 const Conclusion: React.FC = () => {
@@ -85,11 +85,6 @@ const Conclusion: React.FC = () => {
 
   const handleRedistribution = useCallback(
     async (destination: string) => {
-      const transitionSuccessful = await transitionCase(
-        workingCase.id,
-        CaseTransition.REDISTRIBUTE,
-      )
-
       const success = await setAndSendCaseToServer(
         [
           {
@@ -101,7 +96,16 @@ const Conclusion: React.FC = () => {
         setWorkingCase,
       )
 
-      if (!transitionSuccessful || !success) {
+      if (!success) {
+        return
+      }
+
+      const transitionSuccessful = await transitionCase(
+        workingCase.id,
+        CaseTransition.REDISTRIBUTE,
+      )
+
+      if (!transitionSuccessful) {
         return
       }
 
