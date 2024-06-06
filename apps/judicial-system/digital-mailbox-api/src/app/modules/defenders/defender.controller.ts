@@ -6,7 +6,12 @@ import {
   InternalServerErrorException,
   UseInterceptors,
 } from '@nestjs/common'
-import { ApiCreatedResponse, ApiTags } from '@nestjs/swagger'
+import {
+  ApiCreatedResponse,
+  ApiOkResponse,
+  ApiResponse,
+  ApiTags,
+} from '@nestjs/swagger'
 
 import { type Logger, LOGGER_PROVIDER } from '@island.is/logging'
 
@@ -24,10 +29,11 @@ export class DefenderController {
   ) {}
 
   @Get('defenders')
-  @ApiCreatedResponse({
+  @ApiOkResponse({
     type: [Defender],
     description: 'Returns a list of defenders',
   })
+  @ApiResponse({ status: 500, description: 'Failed to retrieve defenders' })
   async getLawyers(): Promise<Defender[]> {
     try {
       this.logger.debug('Retrieving lawyers from lawyer registry')
