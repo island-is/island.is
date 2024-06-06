@@ -697,7 +697,7 @@ export class CourtService {
   ): Promise<unknown> {
     try {
       const subject = `Landsréttur - ${appealCaseNumber} - skjal`
-      const content = JSON.stringify({ category, name, url, dateSent })
+      const content = JSON.stringify({ category, name, dateSent, url })
 
       return this.sendToRobot(
         subject,
