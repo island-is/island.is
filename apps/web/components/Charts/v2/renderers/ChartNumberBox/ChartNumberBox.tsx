@@ -14,6 +14,9 @@ import {
 } from '../../utils'
 import * as styles from './ChartNumberBox.css'
 
+const formatNumberBoxPercentageForPresentation = (percentage: number) =>
+  formatPercentageForPresentation(percentage, percentage < 0.1 ? 1 : 0)
+
 type ChartNumberBoxRendererProps = {
   slice: IChartNumberBox & { chartNumberBoxId: string }
 }
@@ -83,6 +86,8 @@ export const ChartNumberBox = ({ slice }: ChartNumberBoxRendererProps) => {
     return <p>{messages[activeLocale].noDataForChart}</p>
   }
 
+  const reduceAndRoundValue = slice.reduceAndRoundValue ?? true
+
   return (
     <div
       role="group"
@@ -94,7 +99,7 @@ export const ChartNumberBox = ({ slice }: ChartNumberBoxRendererProps) => {
       })}
     >
       {boxData.map((data, index) => {
-        // We assume that the data that key that is provided is a valid number
+        // We assume that the data behind the key that is provided is a valid number
         const comparisonValue = queryResult.data?.[data.sourceDataIndex]?.[
           data.sourceDataKey
         ] as number
@@ -106,15 +111,23 @@ export const ChartNumberBox = ({ slice }: ChartNumberBoxRendererProps) => {
 
         const ariaValue =
           data.valueType === 'number'
-            ? formatValueForPresentation(activeLocale, mostRecentValue)
-            : formatPercentageForPresentation(
+            ? formatValueForPresentation(
+                activeLocale,
+                mostRecentValue,
+                reduceAndRoundValue,
+              )
+            : formatNumberBoxPercentageForPresentation(
                 index === 0 ? mostRecentValue : change - 1,
               )
 
         const displayedValue =
           data.valueType === 'number'
-            ? formatValueForPresentation(activeLocale, mostRecentValue)
-            : formatPercentageForPresentation(
+            ? formatValueForPresentation(
+                activeLocale,
+                mostRecentValue,
+                reduceAndRoundValue,
+              )
+            : formatNumberBoxPercentageForPresentation(
                 index === 0 ? mostRecentValue : Math.abs(change - 1),
               )
 
