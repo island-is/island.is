@@ -6,6 +6,7 @@ import {
   buildSubSection,
 } from '@island.is/application/core'
 import { m } from '../../lib/messages'
+import { DebtTypes } from '../../types'
 
 export const debtsAndFuneralCost = buildSection({
   id: 'debts',
@@ -66,6 +67,28 @@ export const debtsAndFuneralCost = buildSection({
                 repeaterButtonText: m.debtsRepeaterButton,
                 fromExternalData: 'otherDebts',
                 sumField: 'propertyValuation',
+                selections: [
+                  {
+                    label: m.debtOverDraft,
+                    value: DebtTypes.Overdraft,
+                  },
+                  {
+                    label: m.debtCreditCard,
+                    value: DebtTypes.CreditCard,
+                  },
+                  {
+                    label: m.debtLoan,
+                    value: DebtTypes.Loan,
+                  },
+                  {
+                    label: m.debtInsuranceCompany,
+                    value: DebtTypes.InsuranceCompany,
+                  },
+                  {
+                    label: m.debtPropertyFees,
+                    value: DebtTypes.PropertyFees,
+                  },
+                ],
               },
             ),
           ],
