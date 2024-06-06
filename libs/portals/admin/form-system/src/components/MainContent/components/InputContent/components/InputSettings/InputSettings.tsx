@@ -7,7 +7,6 @@ import { ListSettings } from './components/ListSettings'
 import { ToggleConnection } from './components/ToggleConnection'
 import { FileUploadSettings } from './components/FileUploadSettings'
 
-
 export const InputSettings = () => {
   const { control } = useContext(ControlContext)
   const currentItem = control.activeItem.data as FormSystemInput
