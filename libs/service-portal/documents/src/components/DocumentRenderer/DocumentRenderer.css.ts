@@ -33,11 +33,17 @@ export const space = style({
 
 export const pdfAction = style({})
 
+export const htmlDoc = style({})
+
 export const pdfPage = style({
   background: theme.color.blue100,
   padding: theme.spacing[2],
   border: `1px solid ${theme.color.blue200}`,
   borderTop: 0,
+})
+
+globalStyle(`${pdfControls} button`, {
+  boxShadow: 'none',
 })
 
 globalStyle(`${pdfControls} button`, {
@@ -51,4 +57,8 @@ globalStyle(`${pdfAction} + button`, {
       display: 'flex',
     },
   }),
+})
+
+globalStyle(`${htmlDoc} a`, {
+  color: theme.color.blue400,
 })
