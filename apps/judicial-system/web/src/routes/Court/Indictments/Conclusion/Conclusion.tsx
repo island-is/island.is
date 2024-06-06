@@ -238,7 +238,13 @@ const Conclusion: React.FC = () => {
 
       router.push(`${destination}/${workingCase.id}`)
     },
-    [setAndSendCaseToServer, setWorkingCase, workingCase],
+    [
+      courtDate?.date,
+      courtDate?.location,
+      setAndSendCaseToServer,
+      setWorkingCase,
+      workingCase,
+    ],
   )
 
   const handleNavigationTo = useCallback(
