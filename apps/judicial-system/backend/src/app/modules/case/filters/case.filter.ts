@@ -1,3 +1,4 @@
+import { formatNationalId } from '@island.is/judicial-system/formatters'
 import type { User } from '@island.is/judicial-system/types'
 import {
   CaseAppealState,
@@ -272,17 +273,23 @@ const canDefenceUserAccessCase = (theCase: Case, user: User): boolean => {
     }
   }
 
+  const formattedNationalId = formatNationalId(user.nationalId)
   // Check case defender access
   if (isIndictmentCase(theCase.type)) {
     if (
       !theCase.defendants?.some(
-        (defendant) => defendant.defenderNationalId === user.nationalId,
+        (defendant) =>
+          defendant.defenderNationalId === user.nationalId ||
+          defendant.defenderNationalId === formattedNationalId,
       )
     ) {
       return false
     }
   } else {
-    if (theCase.defenderNationalId !== user.nationalId) {
+    if (
+      theCase.defenderNationalId !== user.nationalId &&
+      theCase.defenderNationalId !== formattedNationalId
+    ) {
       return false
     }
   }
