@@ -1,6 +1,6 @@
-import { useEffect, useState } from 'react'
 import { BLOCKS } from '@contentful/rich-text-types'
-import { theme } from '@island.is/island-ui/theme'
+
+import type { SliceType } from '@island.is/island-ui/contentful'
 import {
   Box,
   GridColumn,
@@ -10,9 +10,7 @@ import {
   Text,
   TextProps,
 } from '@island.is/island-ui/core'
-import type { SliceType } from '@island.is/island-ui/contentful'
 import type { FooterItem } from '@island.is/web/graphql/schema'
-import { useWindowSize } from '@island.is/web/hooks/useViewport'
 import { webRichText } from '@island.is/web/utils/richText'
 
 import * as styles from './Footer.css'
@@ -36,28 +34,17 @@ export const Footer = ({
   background,
   titleVariant = 'h3',
 }: FooterProps) => {
-  const { width } = useWindowSize()
-
-  const [isMobileScreenWidth, setIsMobileScreenWidth] = useState(false)
-
-  useEffect(() => {
-    setIsMobileScreenWidth(width < theme.breakpoints.sm)
-  }, [width])
-
   return (
-    <footer className={styles.footer} style={{ background }}>
-      <Box paddingTop={5} paddingBottom={5}>
-        <GridContainer>
+    <GridContainer>
+      <footer className={styles.footer} style={{ background }}>
+        <Box paddingY={3} paddingX={[3, 3, 5, 8, 12]}>
           <GridRow className={styles.noWrap}>
             {imageUrl && (
               <GridColumn hiddenBelow="sm">
                 <img width={IMAGE_WIDTH} src={imageUrl} alt="" />
               </GridColumn>
             )}
-            <GridColumn
-              offset={isMobileScreenWidth ? '2/12' : undefined}
-              className={styles.fullWidth}
-            >
+            <GridColumn offset={['2/12', '0']} className={styles.fullWidth}>
               <GridRow marginBottom={3} marginTop={2}>
                 <GridColumn>
                   <Text color={color} variant={titleVariant} as="h2">
@@ -69,11 +56,12 @@ export const Footer = ({
                 {columns.map((column, index) => (
                   <GridColumn
                     key={index}
-                    span={
-                      isMobileScreenWidth
-                        ? '1/1'
-                        : `${columns.length < 4 ? 4 : 3}/12`
-                    }
+                    span={[
+                      '1/1',
+                      columns.length % 3 === 0 ? '4/12' : '6/12',
+                      columns.length % 3 === 0 ? '4/12' : '6/12',
+                      '3/12',
+                    ]}
                     paddingBottom={3}
                   >
                     <Box>
@@ -109,9 +97,9 @@ export const Footer = ({
               </GridRow>
             </GridColumn>
           </GridRow>
-        </GridContainer>
-      </Box>
-    </footer>
+        </Box>
+      </footer>
+    </GridContainer>
   )
 }
 

@@ -1,6 +1,5 @@
 import * as z from 'zod'
 import * as kennitala from 'kennitala'
-import { NO, YES } from './constants'
 import {
   customZodError,
   isValidEmail,
@@ -9,6 +8,12 @@ import {
   valueToNumber,
 } from './utils/helpers'
 import { m } from './messages'
+import { NO, YES } from '@island.is/application/core'
+import {
+  ESTATE_INHERITANCE,
+  PREPAID_INHERITANCE,
+  RelationSpouse,
+} from './constants'
 
 const deceasedShare = {
   deceasedShare: z.string().nonempty().optional(),
@@ -21,7 +26,7 @@ const validateDeceasedShare = ({
   deceasedShareEnabled,
 }: {
   deceasedShare: string | undefined
-  deceasedShareEnabled: 'Yes'[] | undefined
+  deceasedShareEnabled: 'yes'[] | undefined
 }) => {
   if (
     Array.isArray(deceasedShareEnabled) &&
@@ -126,6 +131,48 @@ export const inheritanceReportSchema = z.object({
     nationalId: z.string(),
     relation: z.string(),
   }),
+
+  /* prePaid inheritance executor */
+  executors: z
+    .object({
+      includeSpouse: z.array(z.enum([YES])).optional(),
+      executor: z.object({
+        email: z.string().email(),
+        phone: z.string().refine((v) => isValidPhoneNumber(v)),
+      }),
+      spouse: z
+        .object({
+          email: z.string().optional(),
+          phone: z.string().optional(),
+        })
+        .optional(),
+    })
+    .refine(
+      ({ includeSpouse, spouse }) => {
+        if (includeSpouse && includeSpouse[0] === YES) {
+          return isValidEmail(spouse?.email ?? '')
+        } else {
+          return true
+        }
+      },
+      {
+        path: ['spouse', 'email'],
+      },
+    )
+    .refine(
+      ({ includeSpouse, spouse }) => {
+        if (includeSpouse && includeSpouse[0] === YES) {
+          return isValidPhoneNumber(spouse?.phone ?? '')
+        } else {
+          return true
+        }
+      },
+      {
+        path: ['spouse', 'phone'],
+      },
+    ),
+
+  applicationFor: z.enum([ESTATE_INHERITANCE, PREPAID_INHERITANCE]),
 
   /* assets */
   assets: z.object({
@@ -433,12 +480,7 @@ export const inheritanceReportSchema = z.object({
         enabled: z.boolean(),
         phone: z.string().optional(),
         email: z.string(),
-        heirsPercentage: z.string().refine((v) => {
-          if (!v) return true
-
-          const num = parseInt(v, 10) ?? 0
-          return num > 0 && num < 101
-        }),
+        heirsPercentage: z.string().optional(),
         taxFreeInheritance: z.string(),
         inheritance: z.string(),
         taxableInheritance: z.string(),
@@ -453,6 +495,15 @@ export const inheritanceReportSchema = z.object({
           })
           .optional(),
       })
+      .refine(
+        ({ enabled, heirsPercentage }) => {
+          const num = heirsPercentage ? parseInt(heirsPercentage, 10) : 0
+          return enabled ? num > 0 && num < 101 : true
+        },
+        {
+          path: ['heirsPercentage'],
+        },
+      )
       .refine(
         ({ enabled, foreignCitizenship, dateOfBirth }) => {
           if (!enabled) return true
@@ -523,8 +574,7 @@ export const inheritanceReportSchema = z.object({
         (v) => {
           if (v.length > 0) {
             const count = v.filter(
-              (x) =>
-                x.enabled && (x.relation === 'Maki' || x.relation === 'Spouse'),
+              (x) => x.enabled && x.relation === RelationSpouse,
             )?.length
             return count <= 1
           }
