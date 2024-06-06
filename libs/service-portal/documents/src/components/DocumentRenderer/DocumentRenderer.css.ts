@@ -46,10 +46,6 @@ globalStyle(`${pdfControls} button`, {
   boxShadow: 'none',
 })
 
-globalStyle(`${pdfControls} button`, {
-  boxShadow: 'none',
-})
-
 globalStyle(`${pdfAction} + button`, {
   display: 'none',
   ...themeUtils.responsiveStyle({
