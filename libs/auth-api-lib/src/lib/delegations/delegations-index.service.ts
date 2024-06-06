@@ -209,7 +209,6 @@ export class DelegationsIndexService {
 
   /* Index all incoming delegations */
   async indexDelegations(user: User) {
-    console.log('FLFLFLFLLSDLD')
     const now = new Date().getTime()
 
     const meta = await this.delegationIndexMetaModel.findOne({
