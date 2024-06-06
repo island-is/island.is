@@ -57,7 +57,7 @@ export const ADVERTS_QUERY = gql`
 `
 
 export const ADVERT_QUERY = gql`
-  query Advert($params: OfficialJournalOfIcelandAdvertQuery!) {
+  query Advert($params: OfficialJournalOfIcelandAdvertSingleParams!) {
     officialJournalOfIcelandAdvert(params: $params) {
       advert {
         id

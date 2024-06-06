@@ -60,9 +60,10 @@ export const Publishing = (props: OJOIFieldBaseProps) => {
   if (minDate.getHours() >= 12) {
     minDate.setDate(minDate.getDate() + 1)
   }
+
   const defaultDate = answers.publishing?.date
-    ? new Date(answers.publishing.date)
-    : addWeekdays(today, MINIMUM_WEEKDAYS)
+    ? new Date(answers.publishing.date).toISOString().split('T')[0]
+    : addWeekdays(today, MINIMUM_WEEKDAYS).toISOString().split('T')[0]
 
   const { setValue, clearErrors } = useFormContext()
 
@@ -193,9 +194,9 @@ export const Publishing = (props: OJOIFieldBaseProps) => {
             backgroundColor="blue"
             size="sm"
             locale="is"
+            defaultValue={defaultDate}
             minDate={minDate}
             maxDate={maxEndDate}
-            defaultValue={defaultDate.toString()}
             excludeDates={getWeekendDates(today, maxEndDate)}
             onChange={(date) => setState({ ...state, date })}
             error={

@@ -37,7 +37,16 @@ export class OfficialJournalOfIcelandClientService {
   }
 
   public async types(params: JournalControllerTypesRequest) {
-    return this.api.journalControllerTypes(params)
+    try {
+      const result = await this.api.journalControllerTypes(params)
+
+      console.log(result)
+
+      return result
+    } catch (error) {
+      console.error(error)
+      throw new Error('Something went wrong')
+    }
   }
 
   public async mainCategories(params: JournalControllerMainCategoriesRequest) {

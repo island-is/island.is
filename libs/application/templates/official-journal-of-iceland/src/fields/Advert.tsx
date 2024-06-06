@@ -99,16 +99,11 @@ export const Advert = ({ application, errors, selectedAdvertId }: Props) => {
   const debouncedStateUpdate = debounce(updateState, DEBOUNCE_INPUT_TIMER)
 
   useEffect(() => {
-    const department = externalData.departments.data.departments.find(
-      (d) => d.id === state.department,
-    )
-
     const fetchTypes = async () => {
       await lazyTypesQuery({
         variables: {
           params: {
-            search: '',
-            department: department?.slug ?? 'a-deild',
+            department: state.department,
           },
         },
         onCompleted: (data) => {
@@ -123,11 +118,7 @@ export const Advert = ({ application, errors, selectedAdvertId }: Props) => {
     }
 
     fetchTypes()
-  }, [
-    externalData.departments.data.departments,
-    lazyTypesQuery,
-    state.department,
-  ])
+  }, [lazyTypesQuery, state.department])
 
   useEffect(() => {
     const fetchAdvert = async () => {
