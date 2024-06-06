@@ -131,6 +131,7 @@ export function getSectionsInForm(
   })
   return sections
 }
+
 export function getSubSectionsInSection(
   section: Section,
   answers: FormValue,
@@ -281,7 +282,7 @@ export function formatAndParseAsHTML(
   text: FormText,
   application: Application,
   formatMessage: MessageFormatter,
-): React.ReactElement[] {
+) {
   return HtmlParser(formatText(text, application, formatMessage))
 }
 
