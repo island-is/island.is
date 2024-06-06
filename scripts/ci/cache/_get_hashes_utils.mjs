@@ -1,5 +1,5 @@
 // @ts-check
-import { appendFile } from 'node:fs/promises'
+import { appendFile, readFile } from 'node:fs/promises'
 import { ENV_KEYS } from './_const.mjs'
 
 const SUMMARY_TITLE = `Cache keys`
@@ -33,4 +33,6 @@ export async function writeToOutput(
     return
   }
   await appendFile(file, `${ENV_KEYS}=${JSON.stringify(hashes)}\n`, 'utf-8')
+  const content = await readFile(file, 'utf-8')
+  console.log(`Output content: ${content}`);
 }
