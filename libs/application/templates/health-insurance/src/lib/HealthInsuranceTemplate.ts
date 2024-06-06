@@ -134,7 +134,6 @@ const HealthInsuranceTemplate: ApplicationTemplate<
           name: applicationName,
           onEntry: defineTemplateApi({
             action: API_MODULE.sendApplyHealthInsuranceApplication,
-            throwOnError: false,
           }),
           actionCard: {
             pendingAction: {
