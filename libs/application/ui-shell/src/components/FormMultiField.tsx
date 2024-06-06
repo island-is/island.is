@@ -17,6 +17,7 @@ import { useLocale } from '@island.is/localization'
 import ConditionHandler from './ConditionHandler'
 import FormField from './FormField'
 import { FieldDef, MultiFieldScreen } from '../types'
+import { useAuth } from '@island.is/auth/react'
 
 const IGNORED_HALF_TYPES: FieldTypes[] = [FieldTypes.RADIO]
 
@@ -45,6 +46,7 @@ const FormMultiField: FC<
 }) => {
   const { description, children, space = 0 } = multiField
   const { formatMessage } = useLocale()
+  const { userInfo: user } = useAuth()
   return (
     <GridRow>
       <ConditionHandler
@@ -82,11 +84,13 @@ const FormMultiField: FC<
           !IGNORED_HALF_TYPES.includes(field.type) && field?.width === 'half'
         const span = isHalfColumn ? '1/2' : '1/1'
 
+        console.log(application)
+
         const evaluatedCondition = shouldShowFormItem(
           field,
           application.answers,
           application.externalData,
-          null,
+          user,
         )
 
         const paddingBottom = !evaluatedCondition
