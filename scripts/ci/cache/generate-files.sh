@@ -30,5 +30,4 @@ changed_files=$(find "$DIR"/apps "$DIR"/libs -type d \( \
     -path "$DIR/cache_output" \
 \) -prune -o -type f -newer "$marker" -print)
 
-
-echo "$changed_files" | xargs -I{} realpath --relative-to="$DIR" "{}" | tar zcvf "$path" -T -
+tar zcvf generated_files.tar.gz $(echo "$changed_files"  | xargs realpath --relative-to $(pwd))
