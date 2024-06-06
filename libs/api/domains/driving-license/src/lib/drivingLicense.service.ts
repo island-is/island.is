@@ -70,7 +70,10 @@ export class DrivingLicenseService {
     const drivingLicesnes = await this.drivingLicenseApi
       .getAllDriverLicenses(token)
       .catch((e) => {
-        this.logger.log(`${LOGTAG} Error fetching all driver licenses`, e)
+        this.logger.warn(`Error fetching all driver licenses`, {
+          error: e,
+          category: LOGTAG,
+        })
       })
     return drivingLicesnes ?? []
   }
@@ -445,6 +448,23 @@ export class DrivingLicenseService {
       willBringQualityPhoto: input.needsToPresentQualityPhoto,
       sendLicenseInMail: false,
       sendLicenseToAddress: '',
+    })
+
+    return {
+      success: response,
+      errorMessage: null,
+    }
+  }
+
+  async applyForBELicense(
+    nationalId: User['nationalId'],
+    auth: User['authorization'],
+    jurisdiction: number,
+  ): Promise<NewDrivingLicenseResult> {
+    const response = await this.drivingLicenseApi.postApplyForBELicense({
+      nationalIdApplicant: nationalId,
+      token: auth,
+      jurisdictionId: jurisdiction,
     })
 
     return {

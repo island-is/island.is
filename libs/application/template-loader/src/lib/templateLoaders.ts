@@ -146,7 +146,7 @@ const templates: Record<ApplicationTypes, () => Promise<unknown>> = {
       '@island.is/application/templates/social-insurance-administration/additional-support-for-the-elderly'
     ),
   [ApplicationTypes.OFFICIAL_JOURNAL_OF_ICELAND]: () =>
-    import('@island.is/application-templates-official-journal-of-iceland'),
+    import('@island.is/application/templates/official-journal-of-iceland'),
   [ApplicationTypes.ENERGY_FUNDS]: () =>
     import('@island.is/application/templates/energy-funds'),
   [ApplicationTypes.HEALTHCARE_LICENSE_CERTIFICATE]: () =>

@@ -301,8 +301,6 @@ describe('CaseController - Transition', () => {
       ${CaseTransition.COMPLETE}             | ${CaseState.RECEIVED}                 | ${CaseState.COMPLETED}
       ${CaseTransition.DELETE}               | ${CaseState.DRAFT}                    | ${CaseState.DELETED}
       ${CaseTransition.DELETE}               | ${CaseState.WAITING_FOR_CONFIRMATION} | ${CaseState.DELETED}
-      ${CaseTransition.DELETE}               | ${CaseState.SUBMITTED}                | ${CaseState.DELETED}
-      ${CaseTransition.DELETE}               | ${CaseState.RECEIVED}                 | ${CaseState.DELETED}
     `.describe(
     '$transition $oldState case transitioning to $newState case',
     ({ transition, oldState, newState }) => {
@@ -359,12 +357,22 @@ describe('CaseController - Transition', () => {
                 transition === CaseTransition.DELETE ? null : undefined,
               courtCaseNumber:
                 transition === CaseTransition.RETURN_INDICTMENT
-                  ? ''
+                  ? null
+                  : undefined,
+              indictmentHash:
+                transition === CaseTransition.RETURN_INDICTMENT
+                  ? null
                   : undefined,
               rulingDate:
                 transition === CaseTransition.COMPLETE ? date : undefined,
               judgeId:
                 transition === CaseTransition.REDISTRIBUTE ? null : undefined,
+              indictmentDeniedExplanation:
+                transition === CaseTransition.SUBMIT ? null : undefined,
+              indictmentReturnedExplanation:
+                transition === CaseTransition.ASK_FOR_CONFIRMATION
+                  ? null
+                  : undefined,
             },
             { where: { id: caseId }, transaction },
           )

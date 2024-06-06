@@ -242,18 +242,16 @@ export class SharedTemplateApiService {
     )
   }
 
-  async getAttachmentContentAsBase64(
+  async getS3File(
     application: ApplicationWithAttachments,
     attachmentKey: string,
-  ): Promise<string> {
+  ) {
     const fileName = (
       application.attachments as {
         [key: string]: string
       }
     )[attachmentKey]
-
     const { bucket, key } = AmazonS3URI(fileName)
-
     const uploadBucket = bucket
     const file = await this.s3
       .getObject({
@@ -261,7 +259,14 @@ export class SharedTemplateApiService {
         Key: key,
       })
       .promise()
-    const fileContent = file.Body as Buffer
+    return file.Body as Buffer
+  }
+
+  async getAttachmentContentAsBase64(
+    application: ApplicationWithAttachments,
+    attachmentKey: string,
+  ): Promise<string> {
+    const fileContent = await this.getS3File(application, attachmentKey)
     return fileContent?.toString('base64') || ''
   }
 
@@ -269,41 +274,8 @@ export class SharedTemplateApiService {
     application: ApplicationWithAttachments,
     attachmentKey: string,
   ): Promise<Blob> {
-    const fileName = (
-      application.attachments as {
-        [key: string]: string
-      }
-    )[attachmentKey]
-
-    const { bucket, key } = AmazonS3URI(fileName)
-
-    const uploadBucket = bucket
-
-    const file = await this.s3
-      .getObject({
-        Bucket: uploadBucket,
-        Key: key,
-      })
-      .promise()
-
-    const fileContent = file.Body as Buffer
-    const fileContentString = fileContent.toString()
-
-    const byteArrays: Uint8Array[] = []
-
-    for (let offset = 0; offset < fileContentString.length; offset += 512) {
-      const slice: string = fileContentString.slice(offset, offset + 512)
-
-      const byteNumbers: number[] = new Array(slice.length)
-      for (let i = 0; i < slice.length; i++) {
-        byteNumbers[i] = slice.charCodeAt(i)
-      }
-
-      const byteArray: Uint8Array = new Uint8Array(byteNumbers)
-      byteArrays.push(byteArray)
-    }
-
-    const blob: Blob = new Blob(byteArrays, { type: 'multipart/form-data' })
+    const fileContent = await this.getS3File(application, attachmentKey)
+    const blob: Blob = new Blob([fileContent], { type: 'multipart/form-data' })
     return blob
   }
 }

@@ -123,6 +123,7 @@ export type UploadFileType =
 export enum SummaryComment {
   FORMCOMMENT = 'formComment',
   SPOUSEFORMCOMMENT = 'spouseFormComment',
+  CHILDRENCOMMENT = 'childrenComment',
 }
 
 export enum SchoolType {

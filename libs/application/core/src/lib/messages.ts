@@ -220,6 +220,11 @@ export const coreMessages = defineMessages({
     defaultMessage: 'Eyða færslu',
     description: 'Delete field text',
   },
+  editFieldText: {
+    id: 'application.system:core.edit.field.text',
+    defaultMessage: 'Breyta færslu',
+    description: 'Edit field text',
+  },
   deleteApplicationDialogTitle: {
     id: 'application.system:delete.application.dialog.title',
     defaultMessage: 'Eyða umsókn',
@@ -348,6 +353,12 @@ export const coreErrorMessages = defineMessages({
     defaultMessage:
       'Skráin er of stór. Hægt er að hlaða inn skrám sem eru {maxSizeInMb}MB eða minni.',
     description: 'Error message when file size exceeds max size limit',
+  },
+  fileMaxSumSizeLimitExceeded: {
+    id: 'application.system:core.error.file.maxSizeLimitSumExceeded',
+    defaultMessage:
+      'Skrárnar eru samtals of stórar. Hægt er að hlaða inn skrám sem eru samtals {maxSizeInMb}MB eða minni.',
+    description: 'Error message when sum of file sizes exceeds max size limit',
   },
   fileInvalidExtension: {
     id: 'application.system:core.error.file.invalidExtension',

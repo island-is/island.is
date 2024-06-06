@@ -14,7 +14,7 @@ import { createTestingPoliceModule } from './createTestingPoliceModule'
 
 import { randomDate } from '../../../test'
 import { policeModuleConfig } from '../police.config'
-import { CourtDocumentType } from '../police.service'
+import { PoliceDocumentType } from '../police.service'
 
 jest.mock('node-fetch')
 
@@ -36,8 +36,8 @@ describe('PoliceController - Update Police Case', () => {
   const validToDate = randomDate()
   const caseConclusion = 'test conclusion'
   const courtDocuments = [
-    { type: CourtDocumentType.RVKR, courtDocument: 'test request pdf' },
-    { type: CourtDocumentType.RVTB, courtDocument: 'test court record pdf' },
+    { type: PoliceDocumentType.RVKR, courtDocument: 'test request pdf' },
+    { type: PoliceDocumentType.RVTB, courtDocument: 'test court record pdf' },
   ]
 
   let mockConfig: ConfigType<typeof policeModuleConfig>

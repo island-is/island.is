@@ -46,6 +46,11 @@ import {
 import { Colors } from '@island.is/island-ui/theme'
 import { SpanType, BoxProps } from '@island.is/island-ui/core/types'
 import { coreDefaultFieldMessages } from './messages'
+import {
+  DEFAULT_ALLOWED_FILE_TYPES,
+  DEFAULT_FILE_SIZE_LIMIT,
+  DEFAULT_TOTAL_FILE_SIZE_SUM,
+} from './constants'
 
 const extractCommonFields = (
   data: Omit<BaseField, 'type' | 'component' | 'children'>,
@@ -60,6 +65,7 @@ const extractCommonFields = (
     title,
     dataTestId,
     width = 'full',
+    nextButtonText,
   } = data
 
   return {
@@ -72,6 +78,7 @@ const extractCommonFields = (
     doesNotRequireAnswer,
     title,
     width,
+    nextButtonText,
   }
 }
 
@@ -84,6 +91,7 @@ export function buildCheckboxField(
     large = true,
     required,
     backgroundColor = 'blue',
+    spacing,
   } = data
   return {
     ...extractCommonFields(data),
@@ -93,6 +101,7 @@ export function buildCheckboxField(
     backgroundColor,
     options,
     required,
+    spacing,
     type: FieldTypes.CHECKBOX,
     component: FieldComponents.CHECKBOX,
   }
@@ -337,6 +346,7 @@ export function buildFileUploadField(
     uploadAccept,
     maxSize,
     maxSizeErrorText,
+    totalMaxSize,
     forImageUpload,
   } = data
   return {
@@ -352,10 +362,10 @@ export function buildFileUploadField(
       uploadButtonLabel ||
       coreDefaultFieldMessages.defaultFileUploadButtonLabel,
     uploadMultiple,
-    uploadAccept:
-      uploadAccept ?? '.pdf, .doc, .docx, .rtf, .jpg, .jpeg, .png, .heic',
-    maxSize: maxSize ?? 10000000,
+    uploadAccept: uploadAccept ?? DEFAULT_ALLOWED_FILE_TYPES,
+    maxSize: maxSize ?? DEFAULT_FILE_SIZE_LIMIT,
     maxSizeErrorText,
+    totalMaxSize: totalMaxSize ?? DEFAULT_TOTAL_FILE_SIZE_SUM,
     forImageUpload,
     type: FieldTypes.FILEUPLOAD,
     component: FieldComponents.FILEUPLOAD,
@@ -745,7 +755,10 @@ export function buildTableRepeaterField(
     addItemButtonText,
     saveItemButtonText,
     removeButtonTooltipText,
+    editButtonTooltipText,
+    editField,
     getStaticTableData,
+    maxRows,
   } = data
 
   return {
@@ -762,7 +775,10 @@ export function buildTableRepeaterField(
     addItemButtonText,
     saveItemButtonText,
     removeButtonTooltipText,
+    editButtonTooltipText,
+    editField,
     getStaticTableData,
+    maxRows,
   }
 }
 
