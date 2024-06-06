@@ -10,6 +10,9 @@ import { List } from './components/List'
 import { Radio } from './components/Radio'
 import { Currency } from './components/Currency'
 import { CheckboxPreview } from './components/CheckboxPreview'
+import { PhoneNumber } from './components/PhoneNumber'
+import TimeInput from './components/TimeInput'
+import { PropertyNumber } from './components/PropertyNumber'
 
 interface Props {
   data: FormSystemInput
@@ -47,7 +50,9 @@ export const Preview = ({ data }: Props) => {
       {type === 'Radio_buttons' && <Radio currentItem={data} />}
       {type === 'ISK_numberbox' && <Currency currentItem={data} />}
       {type === 'Checkbox' && <CheckboxPreview currentItem={data} />}
-
+      {type === 'Phone_number' && <PhoneNumber currentItem={data} />}
+      {type === 'Time_input' && <TimeInput currentItem={data} />}
+      {type === 'Property_number' && <PropertyNumber />}
     </Box>
   )
 }
