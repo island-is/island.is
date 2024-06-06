@@ -55,19 +55,6 @@ jobs:
         run: |
           node -v
           ls -l `which node`
-      - name: Docker login to ECR repo
-        run: ./scripts/ci/docker-login-ecr.sh
-        env:
-          AWS_ACCESS_KEY_ID: ${{ secrets.AWS_ACCESS_KEY_ID }}
-          AWS_SECRET_ACCESS_KEY: ${{ secrets.AWS_SECRET_ACCESS_KEY }}
-
-      - name: Set up QEMU
-        uses: docker/setup-qemu-action@v1
-        with:
-          image: '${{ env.DOCKER_BASE_IMAGE_REGISTRY }}/eks-distro-build-tooling/binfmt-misc:qemu-v6.1.0'
-      - name: Set up Docker Buildx
-        uses: docker/setup-buildx-action@v1
-
       - name: Checking out relevant branches
         run: |
           git checkout $GITHUB_HEAD_REF
@@ -92,7 +79,7 @@ jobs:
         uses: ./.github/actions/get-cache
         with:
           github-token: ${{ secrets.GITHUB_TOKEN }}
-          enable-cache: 'node_modules,cypress,generated-files,docker'
+          enable-cache: 'node_modules,cypress,generated-files'
 
       - run: |
           echo "HEAD=$GITHUB_SHA" >> $GITHUB_ENV
