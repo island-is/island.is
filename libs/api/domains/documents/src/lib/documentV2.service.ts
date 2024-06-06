@@ -108,6 +108,7 @@ export class DocumentServiceV2 {
     const documents = await this.documentService.getDocumentList({
       ...restOfInput,
       categoryId: mutableCategoryIds.join(),
+      nationalId,
     })
 
     if (typeof documents?.totalCount !== 'number') {

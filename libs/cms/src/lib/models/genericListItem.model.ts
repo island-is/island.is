@@ -20,21 +20,29 @@ export class GenericListItem {
 
   @CacheField(() => [SliceUnion])
   cardIntro: Array<typeof SliceUnion> = []
+
+  @CacheField(() => [SliceUnion], { nullable: true })
+  content?: Array<typeof SliceUnion>
+
+  @Field(() => String, { nullable: true })
+  slug?: string
 }
 
 export const mapGenericListItem = ({
   fields,
   sys,
-}: IGenericListItem): GenericListItem => {
-  return {
-    id: sys.id,
-    genericList: fields.genericList
-      ? mapGenericList(fields.genericList)
-      : undefined,
-    title: fields.title ?? '',
-    date: fields.date || null,
-    cardIntro: fields.cardIntro
-      ? mapDocument(fields.cardIntro, sys.id + ':cardIntro')
-      : [],
-  }
-}
+}: IGenericListItem): GenericListItem => ({
+  id: sys.id,
+  genericList: fields.genericList
+    ? mapGenericList(fields.genericList)
+    : undefined,
+  title: fields.title ?? '',
+  date: fields.date || null,
+  cardIntro: fields.cardIntro
+    ? mapDocument(fields.cardIntro, `${sys.id}:cardIntro`)
+    : [],
+  content: fields.content
+    ? mapDocument(fields.content, `${sys.id}:content`)
+    : [],
+  slug: fields.slug,
+})
