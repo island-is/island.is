@@ -5,16 +5,27 @@ import { FieldBaseProps } from '@island.is/application/types'
 import { InheritanceReport } from '../../lib/dataSchema'
 import { m } from '../../lib/messages'
 import { formatCurrency } from '@island.is/application/ui-components'
+import { format as formatNationalId } from 'kennitala'
+import {
+  ESTATE_INHERITANCE,
+  PREPAID_INHERITANCE,
+  RelationSpouse,
+} from '../../lib/constants'
 
 export const HeirsOverview: FC<React.PropsWithChildren<FieldBaseProps>> = ({
   application,
 }) => {
-  const heirs = (application.answers as InheritanceReport).heirs?.data
+  const { answers } = application
+  const heirs = (answers as InheritanceReport).heirs?.data
   const { formatMessage } = useLocale()
 
   return (
     <Box>
       {heirs?.map((heir, index) => {
+        const showTaxFree =
+          answers.applicationFor === ESTATE_INHERITANCE ||
+          (answers.applicationFor === PREPAID_INHERITANCE &&
+            heir.relation === RelationSpouse)
         if (!heir.enabled) return null
 
         return (
@@ -25,7 +36,7 @@ export const HeirsOverview: FC<React.PropsWithChildren<FieldBaseProps>> = ({
             <Box display="flex" marginBottom={2}>
               <Box width="half">
                 <Text variant="h4">{formatMessage(m.nationalId)}</Text>
-                <Text>{heir.nationalId}</Text>
+                <Text>{formatNationalId(heir.nationalId ?? '')}</Text>
               </Box>
               <Box width="half">
                 <Text variant="h4">{formatMessage(m.name)}</Text>
@@ -56,23 +67,44 @@ export const HeirsOverview: FC<React.PropsWithChildren<FieldBaseProps>> = ({
             </Box>
             <Box display={'flex'} marginBottom={2}>
               <Box width="half">
-                <Text variant="h4">{formatMessage(m.taxFreeInheritance)}</Text>
-                <Text>
-                  {formatCurrency(String(heir.taxFreeInheritance || '0'))}
-                </Text>
-              </Box>
-              <Box width="half">
                 <Text variant="h4">{formatMessage(m.inheritanceAmount)}</Text>
                 <Text>{formatCurrency(String(heir.inheritance || '0'))}</Text>
               </Box>
+              {showTaxFree ? (
+                <Box width="half">
+                  <Text variant="h4">
+                    {formatMessage(m.taxFreeInheritance)}
+                  </Text>
+                  <Text>
+                    {formatCurrency(String(heir.taxFreeInheritance || '0'))}
+                  </Text>
+                </Box>
+              ) : (
+                <Box width="half">
+                  <Text variant="h4">
+                    {formatMessage(m.taxableInheritance)}
+                  </Text>
+                  <Text>
+                    {formatCurrency(String(heir.taxableInheritance || '0'))}
+                  </Text>
+                </Box>
+              )}
             </Box>
-            <Box display={'flex'} marginBottom={2}>
-              <Box width="half">
-                <Text variant="h4">{formatMessage(m.taxableInheritance)}</Text>
-                <Text>
-                  {formatCurrency(String(heir.taxableInheritance || '0'))}
-                </Text>
-              </Box>
+            <Box
+              display={'flex'}
+              marginBottom={2}
+              flexDirection={showTaxFree ? 'rowReverse' : 'row'}
+            >
+              {showTaxFree && (
+                <Box width="half">
+                  <Text variant="h4">
+                    {formatMessage(m.taxableInheritance)}
+                  </Text>
+                  <Text>
+                    {formatCurrency(String(heir.taxableInheritance || '0'))}
+                  </Text>
+                </Box>
+              )}
               <Box width="half">
                 <Text variant="h4">{formatMessage(m.inheritanceTax)}</Text>
                 <Text>
@@ -90,7 +122,7 @@ export const HeirsOverview: FC<React.PropsWithChildren<FieldBaseProps>> = ({
                     <Text variant="h4">
                       {formatMessage(m.advocateNationalId)}
                     </Text>
-                    <Text>{heir.advocate.nationalId}</Text>
+                    <Text>{formatNationalId(heir.advocate.nationalId)}</Text>
                   </Box>
                   <Box width="half">
                     <Text variant="h4">{formatMessage(m.advocateName)}</Text>
