@@ -2,10 +2,7 @@ import { DataValue, ReviewGroup } from '@island.is/application/ui-components'
 import { GridColumn, GridRow, Stack, Text } from '@island.is/island-ui/core'
 import { useLocale } from '@island.is/localization'
 import { newPrimarySchoolMessages } from '../../../lib/messages'
-import {
-  getApplicationAnswers,
-  isMovingAbroad,
-} from '../../../lib/newPrimarySchoolUtils'
+import { getApplicationAnswers } from '../../../lib/newPrimarySchoolUtils'
 import { ReviewGroupProps } from './props'
 
 export const School = ({
@@ -17,15 +14,6 @@ export const School = ({
   const { startDate, selectedSchool } = getApplicationAnswers(
     application.answers,
   )
-
-  let selectedSchoolName = selectedSchool
-  const movingAbroad = isMovingAbroad(application.answers)
-
-  if (movingAbroad) {
-    selectedSchoolName = formatMessage(
-      newPrimarySchoolMessages.shared.movingAbroad,
-    )
-  }
 
   return (
     <ReviewGroup
@@ -54,7 +42,7 @@ export const School = ({
               label={formatMessage(
                 newPrimarySchoolMessages.confirm.selectedSchool,
               )}
-              value={selectedSchoolName}
+              value={selectedSchool}
             />
           </GridColumn>
         </GridRow>
@@ -65,14 +53,12 @@ export const School = ({
               value={'- TBA -'}
             />
           </GridColumn>
-          {!movingAbroad && (
-            <GridColumn span={['12/12', '12/12', '12/12', '5/12']}>
-              <DataValue
-                label={formatMessage(newPrimarySchoolMessages.shared.date)}
-                value={formatDate(startDate)}
-              />
-            </GridColumn>
-          )}
+          <GridColumn span={['12/12', '12/12', '12/12', '5/12']}>
+            <DataValue
+              label={formatMessage(newPrimarySchoolMessages.shared.date)}
+              value={formatDate(startDate)}
+            />
+          </GridColumn>
         </GridRow>
       </Stack>
     </ReviewGroup>

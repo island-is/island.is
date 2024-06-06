@@ -95,16 +95,6 @@ export const newPrimarySchoolMessages: MessageDir = {
       defaultMessage: 'Veldu tengsl',
       description: 'Select relation',
     },
-    district: {
-      id: 'dess.nps.application:district',
-      defaultMessage: 'Umdæmi',
-      description: 'District',
-    },
-    districtPlaceholder: {
-      id: 'dess.nps.application:district.placeholder',
-      defaultMessage: 'Veldu umdæmi',
-      description: 'Select disctrict',
-    },
     school: {
       id: 'dess.nps.application:school',
       defaultMessage: 'Skóli',
@@ -114,11 +104,6 @@ export const newPrimarySchoolMessages: MessageDir = {
       id: 'dess.nps.application:school.placeholder',
       defaultMessage: 'Veldu skóla',
       description: 'Select school',
-    },
-    movingAbroad: {
-      id: 'dess.nps.application:moving.abroad',
-      defaultMessage: 'Fluttningur úr landi',
-      description: 'Moving abroad',
     },
   }),
 

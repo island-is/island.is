@@ -37,22 +37,17 @@ export const getApplicationAnswers = (answers: Application['answers']) => {
     NO,
   ) as YesOrNo
 
-  const movingAbroad = getValueViaPath(
-    answers,
-    'school.movingAbroad[0]',
-    NO,
-  ) as YesOrNo
-
   const startDate = getValueViaPath(answers, 'startDate') as string
 
   const schoolMunicipality = getValueViaPath(
     answers,
-    'school.municipality',
+    'schools.newSchool.municipality',
   ) as string
 
-  const schoolDistrict = getValueViaPath(answers, 'school.district') as string
-
-  const selectedSchool = getValueViaPath(answers, 'school.school') as string
+  const selectedSchool = getValueViaPath(
+    answers,
+    'schools.newSchool.school',
+  ) as string
 
   const photographyConsent = getValueViaPath(
     answers,
@@ -80,10 +75,9 @@ export const getApplicationAnswers = (answers: Application['answers']) => {
     photographyConsent,
     photoSchoolPublication,
     photoMediaPublication,
-    movingAbroad,
+
     startDate,
     schoolMunicipality,
-    schoolDistrict,
     selectedSchool,
   }
 }
@@ -246,9 +240,4 @@ export const getSiblingRelationOptionLabel = (
 ) => {
   const relationOptions = getSiblingRelationOptions()
   return relationOptions.find((option) => option.value === value)?.label ?? ''
-}
-
-export const isMovingAbroad = (answers: FormValue): boolean => {
-  const { movingAbroad } = getApplicationAnswers(answers)
-  return movingAbroad === YES
 }

@@ -43,7 +43,6 @@ import {
   getSiblingRelationOptionLabel,
   getSiblingRelationOptions,
   hasOtherParent,
-  isMovingAbroad,
 } from '../lib/newPrimarySchoolUtils'
 
 export const NewPrimarySchoolForm: Form = buildForm({
@@ -424,24 +423,9 @@ export const NewPrimarySchoolForm: Form = buildForm({
               title:
                 newPrimarySchoolMessages.primarySchool.newSchoolSubSectionTitle,
               children: [
-                buildCheckboxField({
-                  id: 'school.movingAbroad',
-                  title: '',
-                  dataTestId: 'new-school-moving-abroad',
-                  backgroundColor: 'white',
-                  defaultValue: '',
-                  options: [
-                    {
-                      value: YES,
-                      dataTestId: 'yes-option',
-                      label: newPrimarySchoolMessages.shared.movingAbroad,
-                    },
-                  ],
-                }),
                 buildSelectField({
-                  id: 'school.municipality',
+                  id: 'schools.newSchool.municipality',
                   title: newPrimarySchoolMessages.shared.municipality,
-                  condition: (answers) => !isMovingAbroad(answers),
 
                   options: (application) => {
                     const { municipalities } = getApplicationExternalData(
@@ -460,43 +444,14 @@ export const NewPrimarySchoolForm: Form = buildForm({
                     newPrimarySchoolMessages.shared.municipalityPlaceholder,
                   dataTestId: 'new-school-municipality',
                 }),
+
                 buildAsyncSelectField({
-                  id: 'school.district',
-                  title: newPrimarySchoolMessages.shared.district,
+                  id: 'schools.newSchool.school',
+                  title: newPrimarySchoolMessages.shared.school,
                   condition: (answers) => {
                     const { schoolMunicipality } =
                       getApplicationAnswers(answers)
-                    return !isMovingAbroad(answers) && !!schoolMunicipality
-                  },
-                  loadOptions: async ({ apolloClient }) => {
-                    //Todo: get data from Juni
-                    return [
-                      {
-                        value: 'Árbær',
-                        label: 'Árbær',
-                      },
-                      {
-                        value: 'Breiðholt',
-                        label: 'Breiðholt',
-                      },
-                    ]
-                  },
-
-                  placeholder:
-                    newPrimarySchoolMessages.shared.districtPlaceholder,
-                  dataTestId: 'new-school-district',
-                }),
-                buildAsyncSelectField({
-                  id: 'school.school',
-                  title: newPrimarySchoolMessages.shared.school,
-                  condition: (answers) => {
-                    const { schoolMunicipality, schoolDistrict } =
-                      getApplicationAnswers(answers)
-                    return (
-                      !isMovingAbroad(answers) &&
-                      !!schoolMunicipality &&
-                      !!schoolDistrict
-                    )
+                    return !!schoolMunicipality
                   }, //Todo: get data from Juni
                   loadOptions: async ({ apolloClient }) => {
                     return [
@@ -523,7 +478,6 @@ export const NewPrimarySchoolForm: Form = buildForm({
           title:
             newPrimarySchoolMessages.primarySchool
               .reasonForTransferSubSectionTitle,
-          condition: (answers) => !isMovingAbroad(answers),
           children: [],
         }),
         buildSubSection({
@@ -532,7 +486,7 @@ export const NewPrimarySchoolForm: Form = buildForm({
 
           condition: (answers, externalData) => {
             // TODO: Only display section if "Siblings" selected as Reason for transfer
-            return !isMovingAbroad(answers)
+            return true
           },
           children: [
             buildMultiField({
@@ -605,7 +559,6 @@ export const NewPrimarySchoolForm: Form = buildForm({
           title:
             newPrimarySchoolMessages.primarySchool
               .startingSchoolSubSectionTitle,
-          condition: (answers) => !isMovingAbroad(answers),
           children: [
             buildMultiField({
               id: 'startingSchoolMultiField',
@@ -631,7 +584,6 @@ export const NewPrimarySchoolForm: Form = buildForm({
     buildSection({
       id: 'differentNeedsSection',
       title: newPrimarySchoolMessages.differentNeeds.sectionTitle,
-      condition: (answers) => !isMovingAbroad(answers),
       children: [
         buildSubSection({
           id: 'languageSubSection',

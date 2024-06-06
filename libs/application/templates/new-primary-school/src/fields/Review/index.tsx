@@ -9,10 +9,7 @@ import has from 'lodash/has'
 import { FC } from 'react'
 import { States } from '../../lib/constants'
 import { newPrimarySchoolMessages } from '../../lib/messages'
-import {
-  getApplicationAnswers,
-  isMovingAbroad,
-} from '../../lib/newPrimarySchoolUtils'
+import { getApplicationAnswers } from '../../lib/newPrimarySchoolUtils'
 
 import { Child } from './review-groups/Child'
 import { Parents } from './review-groups/Parents'
@@ -80,8 +77,6 @@ export const Review: FC<ReviewScreenProps> = ({
       refetch?.()
     }
   }
-
-  const movingAbroad = isMovingAbroad(application.answers)
 
   return (
     <>
@@ -154,16 +149,11 @@ export const Review: FC<ReviewScreenProps> = ({
       )}
       <Child {...childProps} />
       <Parents {...childProps} />
-      {!movingAbroad && (
-        <>
-          <Relatives {...childProps} />
-          <School {...childProps}></School>
-          <Siblings {...childProps} />
-          <Support {...childProps} />
-          <Photography {...childProps} />
-        </>
-      )}
-      {movingAbroad && <School {...childProps}></School>}
+      <Relatives {...childProps} />
+      <School {...childProps}></School>
+      <Siblings {...childProps} />
+      <Support {...childProps} />
+      <Photography {...childProps} />
     </>
   )
 }
