@@ -87,7 +87,7 @@ const restoreJobs = await Promise.all(
 const checkCache = await Promise.all(
   restoreJobs.map(async (e) => {
     const isOk = e.check
-      ? await e.check(e.restoreSuccess, resolve(ROOT, e.path))
+      ? await e.check(e.restoreSuccess, Array.isArray(e.path) ? e.path.map((e) => resolve(ROOT, e)): resolve(ROOT, e.path))
       : e.restoreSuccess
     if (isOk) {
       console.log(`Restored cache for ${e.name}`)

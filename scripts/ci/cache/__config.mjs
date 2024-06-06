@@ -123,7 +123,7 @@ export const caches = [
     path: ['cache', 'cache_output'],
     id: 'docker',
     init: async () => {
-      const path = resolve(ROOT, './scripts/ci/cache/10_prepare-docker-deps.sh')
+      const path = resolve(ROOT, './scripts/ci/10_prepare-docker-deps.sh')
       await runCommand(path, ROOT)
     },
     check: async (success, path) => {

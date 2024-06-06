@@ -98,7 +98,7 @@ export async function tryRun(fn, name, args = []) {
 }
 
 /**
- * Checks if the file size is equal to or greater than the specified size.
+ * Checks if the file size is e1qual to or greater than the specified size.
  *
  * @param {string} filePath - The path to the file.
  * @param {number} size - The size to compare against.
@@ -184,6 +184,7 @@ export async function runCommand(cmd, cwd = undefined, env = {}) {
       if (code !== 0) {
         console.error(errorChunks.join('\n'))
         console.error(`Failed to run command: ${cmd} returning code ${code}`)
+        console.log(outputChunks.join('\n'));
         reject(`Error: Process exited with code ${code}`)
         return
       }
