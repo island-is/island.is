@@ -26,7 +26,7 @@ export class DefenderController {
   @Get('defenders')
   @ApiCreatedResponse({
     type: [Defender],
-    description: 'Retrieves a list of defenders',
+    description: 'Returns a list of defenders',
   })
   async getLawyers(): Promise<Defender[]> {
     try {
