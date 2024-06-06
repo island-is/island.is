@@ -19,6 +19,7 @@ import {
   Requirement,
   Season,
   mapStringToEnum,
+  EnumError,
 } from '@island.is/university-gateway'
 import { logger } from '@island.is/logging'
 import * as kennitala from 'kennitala'
@@ -45,12 +46,17 @@ export class ReykjavikUniversityApplicationClient {
           startingSemesterSeason: mapStringToEnum(
             program.startingSemesterSeason,
             Season,
+            'Season',
           ),
           applicationStartDate: program.applicationStartDate || new Date(),
           applicationEndDate: program.applicationEndDate || new Date(),
           schoolAnswerDate: undefined, //TODO missing in api
           studentAnswerDate: undefined, //TODO missing in api
-          degreeType: mapStringToEnum(program.degreeType, DegreeType),
+          degreeType: mapStringToEnum(
+            program.degreeType,
+            DegreeType,
+            'DegreeType',
+          ),
           degreeAbbreviation: program.degreeAbbreviation || '',
           credits: program.credits || 0,
           descriptionIs: program.descriptionIs || '',
@@ -72,7 +78,7 @@ export class ReykjavikUniversityApplicationClient {
           allowThirdLevelQualification: false, //TODO missing in api
           modeOfDelivery:
             program.modeOfDelivery?.map((m) => {
-              return mapStringToEnum(m, ModeOfDelivery)
+              return mapStringToEnum(m, ModeOfDelivery, 'ModeOfDelivery')
             }) || [],
           extraApplicationFields: program.extraApplicationFields?.map(
             (field) => ({
@@ -91,10 +97,17 @@ export class ReykjavikUniversityApplicationClient {
           applicationInUniversityGateway: false, //TODO missing in api
         })
       } catch (e) {
-        logger.error(
-          `Failed to map program with externalId ${program.externalId} (reykjavik-university), reason:`,
-          e,
-        )
+        if (e instanceof EnumError) {
+          logger.warn(
+            `EnumError when trying to map program with externalId ${program.externalId} for university (reykjavik-university), update skipped.`,
+            e,
+          )
+        } else {
+          logger.error(
+            `Failed to map program with externalId ${program.externalId} for university (reykjavik-university), reason:`,
+            e,
+          )
+        }
       }
     }
 
@@ -120,7 +133,11 @@ export class ReykjavikUniversityApplicationClient {
         if (course.semesterSeason === 'NOTSET') {
           semesterSeason = CourseSeason.ANY
         } else {
-          semesterSeason = mapStringToEnum(course.semesterSeason, CourseSeason)
+          semesterSeason = mapStringToEnum(
+            course.semesterSeason,
+            CourseSeason,
+            'CourseSeason',
+          )
         }
         if (!semesterSeason) {
           throw new Error(
@@ -172,7 +189,11 @@ export class ReykjavikUniversityApplicationClient {
       )
     }
 
-    return mapStringToEnum(application.status, ApplicationStatus)
+    return mapStringToEnum(
+      application.status,
+      ApplicationStatus,
+      'ApplicationStatus',
+    )
   }
 
   async createApplication(application: IApplication): Promise<string> {
@@ -183,11 +204,13 @@ export class ReykjavikUniversityApplicationClient {
         modeOfDelivery: mapStringToEnum(
           application.modeOfDelivery,
           RekUniITAPICustomModelsHvinNewApplicationModeOfDeliveryEnum,
+          'RekUniITAPICustomModelsHvinNewApplicationModeOfDeliveryEnum',
         ),
         startingSemesterYear: application.startingSemesterYear,
         startingSemesterSeason: mapStringToEnum(
           application.startingSemesterSeason,
           RekUniITAPICustomModelsHvinNewApplicationStartingSemesterSeasonEnum,
+          'RekUniITAPICustomModelsHvinNewApplicationStartingSemesterSeasonEnum',
         ),
         applicantInfo: {
           kennitala: application.applicant.nationalId,
@@ -202,6 +225,7 @@ export class ReykjavikUniversityApplicationClient {
           gender: mapStringToEnum(
             application.applicant.genderCode,
             RekUniITAPICustomModelsHvinApplicantGenderEnum,
+            'RekUniITAPICustomModelsHvinApplicantGenderEnum',
           ),
           nationalityCode: application.applicant.citizenshipCode,
           streetNameAndHouseNumber: application.applicant.streetAddress,
@@ -227,6 +251,7 @@ export class ReykjavikUniversityApplicationClient {
     const mappedStatus = mapStringToEnum(
       status.toString(),
       RekUniITAPICustomModelsHvinUpdateApplicationStatusNewStatusValueEnum,
+      'RekUniITAPICustomModelsHvinUpdateApplicationStatusNewStatusValueEnum',
     )
 
     const res = await this.hvinApi.hvinUpdateApplicationById({

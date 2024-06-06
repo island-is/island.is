@@ -751,6 +751,9 @@
       "@island.is/clients/transport-authority/vehicle-printing": [
         "libs/clients/transport-authority/vehicle-printing/src/index.ts"
       ],
+      "@island.is/clients/ultraviolet-radiation": [
+        "libs/clients/ultraviolet-radiation/src/index.ts"
+      ],
       "@island.is/clients/university-application/agricultural-university-of-iceland": [
         "libs/clients/university-application/agricultural-university-of-iceland/src/index.ts"
       ],
@@ -874,6 +877,9 @@
       ],
       "@island.is/judicial-system/formatters": [
         "libs/judicial-system/formatters/src/index.ts"
+      ],
+      "@island.is/judicial-system/lawyers": [
+        "libs/judicial-system/lawyers/src/index.ts"
       ],
       "@island.is/judicial-system/message": [
         "libs/judicial-system/message/src/index.ts"

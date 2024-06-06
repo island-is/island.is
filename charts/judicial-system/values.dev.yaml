@@ -302,6 +302,7 @@ judicial-system-digital-mailbox-api:
     BACKEND_ACCESS_TOKEN: '/k8s/judicial-system/BACKEND_ACCESS_TOKEN'
     CONFIGCAT_SDK_KEY: '/k8s/configcat/CONFIGCAT_SDK_KEY'
     ERROR_EVENT_URL: '/k8s/judicial-system/ERROR_EVENT_URL'
+    LAWYERS_ICELAND_API_KEY: '/k8s/judicial-system/LAWYERS_ICELAND_API_KEY'
   securityContext:
     allowPrivilegeEscalation: false
     privileged: false

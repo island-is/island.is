@@ -55,6 +55,7 @@ import { DeductionFactorsModel } from '../deductionFactors'
 import { DirectTaxPaymentService } from '../directTaxPayment'
 import { DirectTaxPaymentModel } from '../directTaxPayment/models'
 import { ChildrenModel, ChildrenService } from '../children'
+import { nowFactory } from './factories/date.factory'
 
 interface Recipient {
   name: string
@@ -146,7 +147,7 @@ export class ApplicationService {
             spouseNationalId: nationalId,
           },
         ],
-        created: { [Op.gte]: firstDateOfMonth() },
+        appliedDate: { [Op.gte]: firstDateOfMonth() },
       },
     })
 
@@ -294,6 +295,7 @@ export class ApplicationService {
 
     const appModel = await this.applicationModel.create({
       ...application,
+      appliedDate: nowFactory(),
       nationalId: application.nationalId || user.nationalId,
     })
 

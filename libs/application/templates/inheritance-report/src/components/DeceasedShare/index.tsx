@@ -9,9 +9,8 @@ import { useEffect } from 'react'
 import { useFormContext, useFormState } from 'react-hook-form'
 import { CheckboxController } from '@island.is/shared/form-fields'
 import { m } from '../../lib/messages'
-import { YES } from '../../lib/constants'
 import { useLocale } from '@island.is/localization'
-import { getErrorViaPath } from '@island.is/application/core'
+import { YES, getErrorViaPath } from '@island.is/application/core'
 import { MessageDescriptor } from 'react-intl'
 
 export type DeceasedShareProps = {
@@ -49,7 +48,7 @@ export const DeceasedShare = ({
   const watchedCheckboxField = watch(checkboxFieldName)
   const watchedInputField = watch(inputFieldName)
 
-  const hasError = getErrorViaPath(errors, `${id}.${valueFieldName}`)
+  const error = getErrorViaPath(errors, `${id}.${valueFieldName}`)
   const checked = watchedCheckboxField?.[0] === YES
 
   useEffect(() => {
@@ -67,7 +66,7 @@ export const DeceasedShare = ({
         paddingBottom={paddingBottom}
       >
         <Box width="full">
-          <Box paddingBottom={checked ? 2 : 0} width="full">
+          <Box paddingBottom={checked ? 5 : 0} width="full">
             <CheckboxController
               name={checkboxFieldName}
               large={false}
@@ -88,7 +87,8 @@ export const DeceasedShare = ({
             <Box width="full">
               <ShareInput
                 name={inputFieldName}
-                errorMessage={hasError}
+                hasError={!!error}
+                errorMessage={error}
                 disabled={!checked}
                 label={formatMessage(labelInput)}
               />
