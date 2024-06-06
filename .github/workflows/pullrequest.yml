@@ -78,7 +78,7 @@ jobs:
         uses: ./.github/actions/get-cache
         with:
           github-token: ${{ secrets.GITHUB_TOKEN }}
-          enable-cache: 'node_modules,cypress,generated-files,docker'
+          enable-cache: 'node_modules,cypress,generated-files'
 
       - run: |
           echo "HEAD=$GITHUB_SHA" >> $GITHUB_ENV
@@ -192,7 +192,7 @@ jobs:
         with:
           github-token: ${{ secrets.GITHUB_TOKEN }}
           keys: ${{ needs.prepare.outputs.node-modules-hash }}-yarn
-          enable-cache: 'node_modules,cypress,generated-files,docker'
+          enable-cache: 'node_modules,cypress,generated-files'
 
       - uses: ./.github/actions/unit-test
         with:
@@ -236,7 +236,7 @@ jobs:
         with:
           github-token: ${{ secrets.GITHUB_TOKEN }}
           keys: ${{ needs.prepare.outputs.node-modules-hash }}-yarn
-          enable-cache: 'node_modules,cypress,generated-files,docker'
+          enable-cache: 'node_modules,cypress,generated-files'
 
       - name: Running e2e tests
         run: ./scripts/ci/40_e2e.sh ${AFFECTED_PROJECT}
