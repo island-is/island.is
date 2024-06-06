@@ -14,6 +14,7 @@ import {
   PREPAID_INHERITANCE,
   RelationSpouse,
 } from './constants'
+import { DebtTypes } from '../types'
 
 const deceasedShare = {
   deceasedShare: z.string().nonempty().optional(),
@@ -367,6 +368,13 @@ export const inheritanceReportSchema = z.object({
             nationalId: z.string(),
             assetNumber: z.string(), //.refine((v) => validateDebtBankAccount(v)),
             propertyValuation: z.string(),
+            debtType: z.enum([
+              DebtTypes.CreditCard,
+              DebtTypes.InsuranceCompany,
+              DebtTypes.Loan,
+              DebtTypes.Overdraft,
+              DebtTypes.PropertyFees,
+            ]),
           })
           .refine(
             ({ nationalId }) => {
