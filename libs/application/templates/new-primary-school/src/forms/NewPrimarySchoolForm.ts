@@ -586,13 +586,6 @@ export const NewPrimarySchoolForm: Form = buildForm({
                     },
                   ],
                 }),
-                buildAlertMessageField({
-                  id: 'support.info',
-                  title: newPrimarySchoolMessages.shared.alertTitle,
-                  message: newPrimarySchoolMessages.differentNeeds.supportInfo,
-                  doesNotRequireAnswer: true,
-                  alertType: 'info',
-                }),
                 buildCheckboxField({
                   id: 'support.requestMeeting',
                   title: '',
