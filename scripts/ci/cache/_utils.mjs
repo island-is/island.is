@@ -184,7 +184,7 @@ export async function runCommand(cmd, cwd = undefined, env = {}) {
       if (code !== 0) {
         console.error(errorChunks.join('\n'))
         console.error(`Failed to run command: ${cmd} returning code ${code}`)
-        console.log(outputChunks.join('\n'));
+        console.log(outputChunks.join('\n'))
         reject(`Error: Process exited with code ${code}`)
         return
       }
