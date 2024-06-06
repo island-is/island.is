@@ -116,7 +116,7 @@ export class NotificationDispatchService {
   }
 
   private async handleSendError(
-    error: FirebaseError, // confirm this type.................................................
+    error: FirebaseError,
     nationalId: string,
     token: string,
     messageId: string,

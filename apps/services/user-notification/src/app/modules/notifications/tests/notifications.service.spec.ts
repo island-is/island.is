@@ -17,6 +17,7 @@ import {
   UnreadNotificationsCountDto,
   UnseenNotificationsCountDto,
 } from '../dto/notification.dto'
+import { ContentfulGraphQLClientService } from '@island.is/clients/contentful-graphql'
 
 const user: User = {
   nationalId: '1234567890',
@@ -46,6 +47,7 @@ const mockCreateHnippNotificationDto: CreateHnippNotificationDto = {
   ],
 }
 
+
 describe('NotificationsService', () => {
   let service: NotificationsService
 
@@ -61,6 +63,12 @@ describe('NotificationsService', () => {
         {
           provide: getModelToken(Notification),
           useClass: jest.fn(() => ({})),
+        },
+        {
+          provide: ContentfulGraphQLClientService,
+          useValue: {
+            fetchData: jest.fn(),
+          },
         },
       ],
     }).compile()

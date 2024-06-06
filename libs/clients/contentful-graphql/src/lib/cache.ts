@@ -15,13 +15,19 @@ import { ContentfulGraphQLClientConfig } from './contentful-graphql.config'
 // }
 
 function overrideCacheControl(request: Request) {
+  console.log(request)
   return buildCacheControl({ maxAge: 60 * 10 })
 }
+
+// function overrideCacheKey(request: Request) {
+//   return buildCacheControl({ maxAge: 60 * 10 })
+// }
 
 export const getCache = async (
   config: ConfigType<typeof ContentfulGraphQLClientConfig>,
 ): Promise<CacheConfig | undefined> => {
   if (config.redis.nodes.length === 0) {
+    console.warn('No redis nodes defined, cache will not be used')
     return undefined
   }
   const cacheManager = await createRedisCacheManager({
@@ -34,7 +40,7 @@ export const getCache = async (
 
   return {
     cacheManager,
-    cacheKey: (request: Request) => request.url + JSON.stringify(request.body),
+    cacheKey: (request: Request) => request.url, // + JSON.stringify(request.body),
     shared: true,
     overrideForPost: true, // post for contentful gql
     overrideCacheControl,

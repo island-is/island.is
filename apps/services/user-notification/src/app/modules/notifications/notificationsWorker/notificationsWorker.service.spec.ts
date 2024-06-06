@@ -36,6 +36,7 @@ import {
   userWithNoDelegations,
   userProfiles,
 } from './mocks'
+import { ContentfulGraphQLClientService } from '@island.is/clients/contentful-graphql'
 
 const workingHoursDelta = 1000 * 60 * 60 // 1 hour
 const insideWorkingHours = new Date(2021, 1, 1, 9, 0, 0)
@@ -62,7 +63,9 @@ export const MockV2UsersApi = {
     },
   ),
 }
-
+const mockContentfulGraphQLClientService = {
+  fetchData: jest.fn(),
+};
 describe('NotificationsWorkerService', () => {
   let app: INestApplication
   let sequelize: Sequelize
@@ -89,7 +92,9 @@ describe('NotificationsWorkerService', () => {
           .overrideProvider(UserNotificationsConfig.KEY)
           .useValue(MockUserNotificationsConfig)
           .overrideProvider(FIREBASE_PROVIDER)
-          .useValue({}),
+          .useValue({})
+          .overrideProvider(ContentfulGraphQLClientService)
+          .useValue(mockContentfulGraphQLClientService),
       hooks: [
         useDatabase({ type: 'postgres', provider: SequelizeConfigService }),
       ],

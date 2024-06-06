@@ -15,7 +15,7 @@ export const ContentfulGraphQLFetchProviderKey = 'ContentfulGraphQLFetchProvider
 
 export const ContentfulGraphQLFetchProvider: Provider<EnhancedFetchAPI> = {
   provide: ContentfulGraphQLFetchProviderKey,
-  scope: LazyDuringDevScope, // config 
+  scope: LazyDuringDevScope,
   useFactory: async (
     config: ConfigType<typeof ContentfulGraphQLClientConfig>,
   ) =>

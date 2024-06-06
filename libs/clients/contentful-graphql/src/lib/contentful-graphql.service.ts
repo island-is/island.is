@@ -6,6 +6,8 @@ import { ContentfulGraphQLFetchProviderKey } from './contentful-graphql-fetch-pr
 import { GraphQLClient } from 'graphql-request';
 import { DocumentNode } from 'graphql';
 
+
+
 @Injectable()
 export class ContentfulGraphQLClientService {
   private readonly client: GraphQLClient;
@@ -17,7 +19,7 @@ export class ContentfulGraphQLClientService {
   ) {
     this.client = new GraphQLClient(this.config.gqlBasePath, {
       headers: {
-        Authorization: `Bearer ${process.env.CONTENTFUL_ACCESS_TOKEN}`,
+        Authorization: `Bearer ${process.env.CONTENTFUL_ACCESS_TOKEN}`
       },
       fetch: this.fetch,
     });
@@ -25,7 +27,9 @@ export class ContentfulGraphQLClientService {
 
   async fetchData(query: DocumentNode, variables?: Record<string, any>) {
     try {
-      return await this.client.request(query, variables);
+      const res = await this.client.request(query, variables);
+      // console.log(res)
+      return res
     } catch (error) {
       throw new HttpException(error.message, error.status);
     }
