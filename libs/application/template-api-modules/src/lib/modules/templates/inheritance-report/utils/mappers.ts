@@ -231,6 +231,7 @@ export const expandAnswers = (
               propertyValuation: debt.propertyValuation ?? 0,
               description: debt.description ?? '',
               nationalId: debt.nationalId ?? '',
+              debtType: debt.debtType ?? '',
             }
           },
         ),
