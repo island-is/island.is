@@ -4,6 +4,7 @@
   "sourceRoot": "apps/services/auth/ids-api/src",
   "projectType": "application",
   "prefix": "ids-api",
+  "tags": ["scope:auth-api"],
   "generators": {},
   "targets": {
     "build": {
@@ -83,16 +84,12 @@
       }
     },
     "lint": {
-      "executor": "@nx/linter:eslint",
-      "options": {
-        "lintFilePatterns": ["apps/services/auth/ids-api/**/*.{ts,tsx,js,jsx}"]
-      }
+      "executor": "@nx/eslint:lint"
     },
     "test": {
       "executor": "@nx/jest:jest",
       "options": {
         "jestConfig": "apps/services/auth/ids-api/jest.config.ts",
-        "passWithNoTests": true,
         "runInBand": true
       },
       "outputs": ["{workspaceRoot}/coverage/apps/services/auth/ids-api"]
@@ -178,6 +175,5 @@
         "parallel": true
       }
     }
-  },
-  "tags": ["scope:auth-api"]
+  }
 }

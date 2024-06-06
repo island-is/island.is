@@ -3,16 +3,11 @@
   "$schema": "../../../../node_modules/nx/schemas/project-schema.json",
   "sourceRoot": "libs/portals/admin/signature-collection/src",
   "projectType": "library",
+  "tags": ["scope:portals-admin", "lib:portals-admin"],
   "generators": {},
   "targets": {
     "lint": {
-      "executor": "@nx/linter:eslint",
-      "outputs": ["{options.outputFile}"],
-      "options": {
-        "lintFilePatterns": [
-          "libs/portals/admin/signature-collection/**/*.{ts,tsx,js,jsx}"
-        ]
-      }
+      "executor": "@nx/eslint:lint"
     },
     "test": {
       "executor": "@nx/jest:jest",
@@ -20,8 +15,7 @@
         "{workspaceRoot}/coverage/libs/portals/admin/signature-collection"
       ],
       "options": {
-        "jestConfig": "libs/portals/admin/signature-collection/jest.config.ts",
-        "passWithNoTests": true
+        "jestConfig": "libs/portals/admin/signature-collection/jest.config.ts"
       }
     },
     "codegen/frontend-client": {
@@ -36,6 +30,5 @@
         "command": "yarn ts-node -P libs/localization/tsconfig.lib.json libs/localization/scripts/extract libs/portals/admin/signature-collection/src/lib/messages.ts"
       }
     }
-  },
-  "tags": ["scope:portals-admin", "lib:portals-admin"]
+  }
 }

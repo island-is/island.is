@@ -4,6 +4,7 @@
   "sourceRoot": "apps/financial-aid/backend/src",
   "projectType": "application",
   "prefix": "financial-aid-backend",
+  "tags": ["scope:nest"],
   "generators": {},
   "targets": {
     "build": {
@@ -47,17 +48,13 @@
       }
     },
     "lint": {
-      "executor": "@nx/linter:eslint",
-      "options": {
-        "lintFilePatterns": ["apps/financial-aid/backend/**/*.{ts,tsx,js,jsx}"]
-      }
+      "executor": "@nx/eslint:lint"
     },
     "test": {
       "executor": "@nx/jest:jest",
       "options": {
         "jestConfig": "apps/financial-aid/backend/jest.config.ts",
-        "runInBand": true,
-        "passWithNoTests": true
+        "runInBand": true
       },
       "outputs": ["{workspaceRoot}/coverage/apps/financial-aid/backend"]
     },
@@ -97,6 +94,5 @@
       }
     },
     "docker-express": {}
-  },
-  "tags": ["scope:nest"]
+  }
 }

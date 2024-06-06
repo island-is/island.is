@@ -4,6 +4,7 @@
   "sourceRoot": "apps/services/search-indexer/src",
   "projectType": "application",
   "prefix": "services-search-indexer",
+  "tags": ["scope:nest"],
   "generators": {},
   "targets": {
     "build": {
@@ -61,22 +62,15 @@
       }
     },
     "lint": {
-      "executor": "@nx/linter:eslint",
-      "options": {
-        "lintFilePatterns": [
-          "apps/services/search-indexer/**/*.{ts,tsx,js,jsx}"
-        ]
-      }
+      "executor": "@nx/eslint:lint"
     },
     "test": {
       "executor": "@nx/jest:jest",
       "options": {
-        "jestConfig": "apps/services/search-indexer/jest.config.ts",
-        "passWithNoTests": true
+        "jestConfig": "apps/services/search-indexer/jest.config.ts"
       },
       "outputs": ["{workspaceRoot}/coverage/apps/services/search-indexer"]
     },
     "docker-express": {}
-  },
-  "tags": ["scope:nest"]
+  }
 }

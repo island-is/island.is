@@ -3,6 +3,7 @@
   "$schema": "../../../node_modules/nx/schemas/project-schema.json",
   "sourceRoot": "apps/services/sessions/src",
   "projectType": "application",
+  "tags": ["scope:nest"],
   "targets": {
     "build": {
       "executor": "./tools/executors/node:build",
@@ -51,11 +52,7 @@
       }
     },
     "lint": {
-      "executor": "@nx/linter:eslint",
-      "outputs": ["{options.outputFile}"],
-      "options": {
-        "lintFilePatterns": ["apps/services/sessions/**/*.ts"]
-      }
+      "executor": "@nx/eslint:lint"
     },
     "test": {
       "executor": "@nx/jest:jest",
@@ -124,6 +121,5 @@
       }
     },
     "docker-express": {}
-  },
-  "tags": ["scope:nest"]
+  }
 }

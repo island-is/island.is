@@ -4,6 +4,7 @@
   "sourceRoot": "apps/air-discount-scheme/backend/src",
   "projectType": "application",
   "prefix": "air-discount-scheme-backend",
+  "tags": ["scope:nest"],
   "generators": {},
   "targets": {
     "build": {
@@ -47,19 +48,13 @@
       }
     },
     "lint": {
-      "executor": "@nx/linter:eslint",
-      "options": {
-        "lintFilePatterns": [
-          "apps/air-discount-scheme/backend/**/*.{ts,tsx,js,jsx}"
-        ]
-      }
+      "executor": "@nx/eslint:lint"
     },
     "test": {
       "executor": "@nx/jest:jest",
       "options": {
         "jestConfig": "apps/air-discount-scheme/backend/jest.config.ts",
-        "runInBand": true,
-        "passWithNoTests": true
+        "runInBand": true
       },
       "outputs": ["{workspaceRoot}/coverage/apps/air-discount-scheme/backend"]
     },
@@ -112,6 +107,5 @@
       }
     },
     "docker-express": {}
-  },
-  "tags": ["scope:nest"]
+  }
 }

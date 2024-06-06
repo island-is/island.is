@@ -4,6 +4,7 @@
   "sourceRoot": "apps/services/user-notification/src",
   "projectType": "application",
   "prefix": "services-user-notification",
+  "tags": ["scope:nest"],
   "targets": {
     "extract-strings": {
       "executor": "nx:run-commands",
@@ -77,19 +78,13 @@
       }
     },
     "lint": {
-      "executor": "@nx/linter:eslint",
-      "options": {
-        "lintFilePatterns": [
-          "apps/services/user-notification/**/*.{ts,tsx,js,jsx}"
-        ]
-      }
+      "executor": "@nx/eslint:lint"
     },
     "test": {
       "executor": "@nx/jest:jest",
       "outputs": ["{workspaceRoot}/coverage/apps/services/user-notification"],
       "options": {
-        "jestConfig": "apps/services/user-notification/jest.config.ts",
-        "passWithNoTests": true
+        "jestConfig": "apps/services/user-notification/jest.config.ts"
       }
     },
     "dev-services": {
@@ -138,6 +133,5 @@
       }
     },
     "docker-express": {}
-  },
-  "tags": ["scope:nest"]
+  }
 }

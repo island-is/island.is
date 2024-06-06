@@ -4,6 +4,7 @@
   "sourceRoot": "apps/system-e2e/src",
   "projectType": "application",
   "prefix": "system-e2e",
+  "tags": ["scope:e2e"],
   "generators": {},
   "targets": {
     "build": {
@@ -22,10 +23,7 @@
       "outputs": ["{workspaceRoot}/dist/apps/system-e2e"]
     },
     "lint": {
-      "executor": "@nx/linter:eslint",
-      "options": {
-        "lintFilePatterns": ["apps/system-e2e/**/*.{ts,tsx,js,jsx}"]
-      }
+      "executor": "@nx/eslint:lint"
     },
     "smoke": {
       "executor": "nx:run-commands",
@@ -40,6 +38,5 @@
       }
     },
     "docker-playwright": {}
-  },
-  "tags": ["scope:e2e"]
+  }
 }

@@ -4,6 +4,7 @@
   "sourceRoot": "apps/skilavottord/ws/src",
   "projectType": "application",
   "prefix": "skilavottord-ws",
+  "tags": ["scope:nest"],
   "generators": {},
   "targets": {
     "build": {
@@ -54,16 +55,12 @@
       }
     },
     "lint": {
-      "executor": "@nx/linter:eslint",
-      "options": {
-        "lintFilePatterns": ["apps/skilavottord/ws/**/*.{ts,tsx,js,jsx}"]
-      }
+      "executor": "@nx/eslint:lint"
     },
     "test": {
       "executor": "@nx/jest:jest",
       "options": {
-        "jestConfig": "apps/skilavottord/ws/jest.config.ts",
-        "passWithNoTests": true
+        "jestConfig": "apps/skilavottord/ws/jest.config.ts"
       },
       "outputs": ["{workspaceRoot}/coverage/apps/skilavottord/ws"]
     },
@@ -123,6 +120,5 @@
       }
     },
     "docker-express": {}
-  },
-  "tags": ["scope:nest"]
+  }
 }
