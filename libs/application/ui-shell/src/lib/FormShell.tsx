@@ -31,6 +31,7 @@ import { ErrorShell } from '../components/ErrorShell'
 import { useAuth } from '@island.is/auth/react'
 import { useLocale } from '@island.is/localization'
 import { MessageDescriptor } from 'react-intl'
+import FormStepper from '../components/FormStepper'
 
 export const FormShell: FC<
   React.PropsWithChildren<{
@@ -204,33 +205,11 @@ export const FormShell: FC<
                 paddingLeft={[0, 0, 0, 4]}
                 className={styles.sidebarInner}
               >
-                <FormStepperV2
-                  sections={
-                    sections && [
-                      <Box marginLeft={1} key={`${form.title.toString}`}>
-                        <Text variant="h4">{formatMessage(form.title)}</Text>
-                      </Box>,
-                      ...sections.map((section, i) => (
-                        <Section
-                          key={`formStepper-${i}`}
-                          isActive={currentScreen.sectionIndex === i}
-                          section={formatMessage(
-                            section.title as MessageDescriptor,
-                          )}
-                          sectionIndex={i}
-                          subSections={
-                            section.children.length > 1
-                              ? parseSubsections(
-                                  section.children,
-                                  currentScreen.sectionIndex === i,
-                                )
-                              : undefined
-                          }
-                          isComplete={currentScreen.sectionIndex > i}
-                        />
-                      )),
-                    ]
-                  }
+                <FormStepper
+                  form={form}
+                  sections={sections}
+                  screens={screens}
+                  currentScreen={currentScreen}
                 />
                 {FormLogo && (
                   <Box
