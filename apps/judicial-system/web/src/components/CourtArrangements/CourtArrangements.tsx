@@ -7,11 +7,11 @@ import {
   BlueBox,
   DateTime,
 } from '@island.is/judicial-system-web/src/components'
-import { NotificationType } from '@island.is/judicial-system-web/src/graphql/schema'
 import {
-  CourtDate,
-  TempCase as Case,
-} from '@island.is/judicial-system-web/src/types'
+  DateLog,
+  NotificationType,
+} from '@island.is/judicial-system-web/src/graphql/schema'
+import { TempCase as Case } from '@island.is/judicial-system-web/src/types'
 import {
   formatDateForServer,
   UpdateCase,
@@ -24,7 +24,7 @@ import { strings } from './CourtArrangements.string'
 interface Props {
   handleCourtDateChange: (date: Date | undefined | null, valid: boolean) => void
   handleCourtRoomChange: (courtRoom?: string) => void
-  courtDate?: CourtDate | null
+  courtDate?: DateLog | null
   blueBox?: boolean
   dateTimeDisabled?: boolean
   courtRoomDisabled?: boolean
@@ -36,7 +36,7 @@ export const useCourtArrangements = (
   dateKey: keyof Pick<Case, 'arraignmentDate' | 'courtDate'>,
 ) => {
   const { setAndSendCaseToServer } = useCase()
-  const [courtDate, setCourtDate] = useState<CourtDate | null>()
+  const [courtDate, setCourtDate] = useState<DateLog | null>()
   const [courtDateHasChanged, setCourtDateHasChanged] = useState(false)
 
   useEffect(() => {
