@@ -5,7 +5,7 @@ import faker from 'faker'
 import { setupWithAuth } from '../../../../test/setup'
 import { createNationalRegistryUser } from '@island.is/testing/fixtures'
 import { NationalRegistryClientService } from '@island.is/clients/national-registry-v2'
-import { DelegationDTO, DelegationsIndexService } from '@island.is/auth-api-lib'
+import { DelegationDTO } from '@island.is/auth-api-lib'
 import { RskRelationshipsClient } from '@island.is/clients-rsk-relationships'
 import { user } from './delegations-filters-types'
 import { Sequelize } from 'sequelize-typescript'
@@ -20,7 +20,6 @@ describe('DelegationsController', () => {
   let factory: FixtureFactory
   let nationalRegistryApi: NationalRegistryClientService
   let rskApi: RskRelationshipsClient
-  let delegationIndexService: DelegationsIndexService
   beforeAll(async () => {
     app = await setupWithAuth({
       user: user,
