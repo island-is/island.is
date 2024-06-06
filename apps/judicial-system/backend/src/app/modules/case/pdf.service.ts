@@ -206,16 +206,16 @@ export class PDFService {
     let confirmation: IndictmentConfirmation | undefined = undefined
 
     if (hasIndictmentCaseBeenSubmittedToCourt(theCase.state)) {
-      if (theCase.indictmentHash) {
-        const existingPdf = await this.tryGetPdfFromS3(
-          theCase,
-          `${theCase.id}/indictment.pdf`,
-        )
+      // if (theCase.indictmentHash) {
+      //   const existingPdf = await this.tryGetPdfFromS3(
+      //     theCase,
+      //     `${theCase.id}/indictment.pdf`,
+      //   )
 
-        if (existingPdf) {
-          return existingPdf
-        }
-      }
+      //   if (existingPdf) {
+      //     return existingPdf
+      //   }
+      // }
 
       const confirmationEvent = theCase.eventLogs?.find(
         (event) => event.eventType === EventType.INDICTMENT_CONFIRMED,

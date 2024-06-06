@@ -92,7 +92,7 @@ export const createIndictment = async (
     )
   }
 
-  addEmptyLines(doc, 4, doc.page.margins.left)
+  addEmptyLines(doc, 6, doc.page.margins.left)
 
   addGiganticHeading(doc, heading, 'Times-Roman')
   addNormalPlusText(doc, ' ')
