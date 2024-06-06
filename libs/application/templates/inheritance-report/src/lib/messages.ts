@@ -45,6 +45,12 @@ export const m = defineMessages({
     defaultMessage: 'Tegund umsóknar',
     description: 'Get application for',
   },
+  preDataCollectionApplicationFoDescription: {
+    id: 'ir.application:preDataCollectionApplicationFoDescription#markdown',
+    defaultMessage:
+      'Lorem ipsum dolor sit amet, consectetur adipiscing elit. Donec a ex magna. Aenean varius dui eget consectetur posuere. Pellentesque dignissim nunc id euismod porttitor. Curabitur ut ante pellentesque, rutrum purus in, vestibulum elit. Donec egestas lacus justo.',
+    description: 'Get application for',
+  },
   preDataCollectionApplicationForPrepaid: {
     id: 'ir.application:preDataCollectionApplicationForPrepaid',
     defaultMessage: 'Fyrirframgreiddur arfur',
@@ -64,6 +70,11 @@ export const m = defineMessages({
   applicationNamePrepaid: {
     id: 'ir.application:applicationNamePrepaid',
     defaultMessage: 'Fyrirframgreiddur arfur',
+    description: '',
+  },
+  applicationNameEstate: {
+    id: 'ir.application:applicationNameEstate',
+    defaultMessage: 'Dánarbú',
     description: '',
   },
   institutionName: {
@@ -959,6 +970,31 @@ export const m = defineMessages({
     defaultMessage: 'Tegund skuldar',
     description: '',
   },
+  debtOverDraft: {
+    id: 'ir.application:debtOverDraft',
+    defaultMessage: 'Yfirdráttur',
+    description: 'Selection for debts: Overdraft',
+  },
+  debtCreditCard: {
+    id: 'ir.application:debtCreditCard',
+    defaultMessage: 'Kreditkort',
+    description: 'Selection for debts: Credit card',
+  },
+  debtLoan: {
+    id: 'ir.application:debtLoan',
+    defaultMessage: 'Lán',
+    description: 'Selection for debts: Loan',
+  },
+  debtInsuranceCompany: {
+    id: 'ir.application:debtInsuranceCompany',
+    defaultMessage: 'Tryggingastofnun',
+    description: 'Selection for debts: Insurance company',
+  },
+  debtPropertyFees: {
+    id: 'ir.application:debtPropertyFees',
+    defaultMessage: 'Fasteignagjöld',
+    description: 'Selection for debts: Property fees',
+  },
   creditorsNationalId: {
     id: 'ir.application:creditorsNationalId',
     defaultMessage: 'Kennitala',
@@ -1463,6 +1499,16 @@ export const m = defineMessages({
     defaultMessage: 'Skiptastjóri',
     description: '',
   },
+  grantors: {
+    id: 'ir.application:grantors',
+    defaultMessage: 'Arflátar',
+    description: '',
+  },
+  grantorsDescription: {
+    id: 'ir.application:grantorsDescription',
+    defaultMessage: 'Lorem ipsum foo bar beep boop meep morp.',
+    description: '',
+  },
   grantor: {
     id: 'ir.application:grantor',
     defaultMessage: 'Arfláti',
@@ -1685,12 +1731,12 @@ export const m = defineMessages({
     description: '',
   },
   includeSpousePrePaid: {
-    id: 'id.application:includeSpouse',
+    id: 'ir.application:includeSpouse',
     defaultMessage: 'Ráðstafa úr sameign hjúskaps',
     description: '',
   },
   includeSpousePrePaidDescription: {
-    id: 'id.application:includeSpouseDescription',
+    id: 'ir.application:includeSpouseDescription',
     defaultMessage:
       'Ef arfláti er í gift/ur og ráðstafa á úr sameign, þarf maki að vera með sem arfláti',
     description: '',

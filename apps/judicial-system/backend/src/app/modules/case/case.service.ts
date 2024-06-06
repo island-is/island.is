@@ -246,6 +246,11 @@ export const include: Includeable[] = [
     include: [{ model: Institution, as: 'institution' }],
   },
   {
+    model: User,
+    as: 'indictmentReviewer',
+    include: [{ model: Institution, as: 'institution' }],
+  },
+  {
     model: Case,
     as: 'parentCase',
     include: [
@@ -289,11 +294,6 @@ export const include: Includeable[] = [
     where: { commentType: { [Op.in]: commentTypes } },
   },
   { model: Notification, as: 'notifications' },
-  {
-    model: User,
-    as: 'indictmentReviewer',
-    include: [{ model: Institution, as: 'institution' }],
-  },
 ]
 
 export const order: OrderItem[] = [

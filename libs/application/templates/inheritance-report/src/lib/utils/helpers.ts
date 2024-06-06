@@ -8,9 +8,10 @@ import {
 import { InheritanceReportInfo } from '@island.is/clients/syslumenn'
 import { parsePhoneNumberFromString } from 'libphonenumber-js'
 import { MessageDescriptor } from 'react-intl'
-import { boolean, ZodTypeAny } from 'zod'
+import { ZodTypeAny } from 'zod'
 import { Answers } from '../../types'
 import { ESTATE_INHERITANCE } from '../constants'
+import { InheritanceReport } from '../dataSchema'
 
 export const currencyStringToNumber = (str: string) => {
   if (!str) {
@@ -89,15 +90,17 @@ export const getPrePaidTotalValueFromApplication = (
   const money = valueToNumber(
     getValueViaPath(answers, 'assets.money.value', '0'),
   )
-  const vehicleTotal =
-    getValueViaPath<number>(answers, 'assets.vehicles.total', 0) ?? 0
+  const stocksTotal =
+    getValueViaPath<number>(answers, 'assets.stocks.total', 0) ?? 0
   const realEstateTotal =
     getValueViaPath<number>(answers, 'assets.realEstate.total', 0) ?? 0
-  const otherTotal =
+  const otherAssetsTotal =
     getValueViaPath<number>(answers, 'assets.otherAssets.total', 0) ?? 0
   const bankAccountTotal =
     getValueViaPath<number>(answers, 'assets.bankAccounts.total', 0) ?? 0
-  return money + vehicleTotal + realEstateTotal + otherTotal + bankAccountTotal
+  return (
+    money + stocksTotal + realEstateTotal + otherAssetsTotal + bankAccountTotal
+  )
 }
 
 export const customZodError = (
@@ -201,3 +204,11 @@ export const shouldShowCustomSpouseShare = (answers: FormValue) =>
 
 export const roundedValueToNumber = (value: unknown) =>
   Math.round(valueToNumber(value))
+
+export const showTaxFreeInOverview = (answers: FormValue) => {
+  const total = (answers as InheritanceReport)?.heirs?.data?.reduce(
+    (sum, heir) => sum + valueToNumber(heir.taxFreeInheritance),
+    0,
+  )
+  return !!total && total > 0
+}
