@@ -96,12 +96,28 @@ export const ExampleForm: Form = buildForm({
                 value: '18',
               },
             }),
+
+            buildSelectField({
+              id: 'person.country',
+              title: 'Single',
+              width: 'half',
+              placeholder: 'Select something',
+              onSelect: (val) => {
+                console.log(val)
+              },
+              options: [
+                { label: 'Iceland', value: 'is' },
+                { label: 'United Kingdom', value: 'uk' },
+                { label: 'Denmark', value: 'dk' },
+              ],
+            }),
             // eslint-disable-next-line @typescript-eslint/ban-ts-comment
             // @ts-ignore
             buildSelectField({
-              id: 'person.country',
-              title: 'Test',
+              id: 'person.countrymulti',
+              title: 'Multi',
               width: 'half',
+              placeholder: 'Select something',
               isMulti: true,
               onSelect: (val) => {
                 console.log(val)
@@ -117,6 +133,10 @@ export const ExampleForm: Form = buildForm({
         buildFileUploadField({
           id: 'attachments',
           title: 'Viðhengi',
+          condition: (app) => {
+            console.log(app)
+            return true
+          },
           introduction: 'Hér getur þú bætt við viðhengjum við umsóknina þína.',
           uploadMultiple: true,
         }),

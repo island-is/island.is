@@ -22,6 +22,57 @@ export const valueContainer = style(
   'valueContainer',
 )
 
+export const multiValue = style(
+  {
+    backgroundColor: theme.color.blue400,
+    color: theme.color.white,
+    borderRadius: theme.border.radius.large,
+    overflow: 'hidden',
+  },
+  'multiValue',
+)
+
+export const multiValueLabel = style(
+  {
+    color: theme.color.white,
+    borderRadius: 0,
+  },
+  'multiValueLabel',
+)
+
+export const multiValueRemove = style(
+  {
+    borderRadius: 0,
+  },
+  'multiValueRemove',
+)
+
+globalStyle(`${wrapper} .island-select__multi-value`, {
+  borderRadius: theme.border.radius.large,
+})
+
+globalStyle(
+  `${wrapper} .island-select__value-container--is-multi.island-select__value-container--has-value .island-select__input-container`,
+  {
+    width: 'auto',
+  },
+)
+
+globalStyle(`${wrapper} .island-select__multi-value__label`, {
+  borderRadius: 0,
+  paddingLeft: '0.5rem',
+  paddingBottom: '0.33rem',
+  paddingTop: '0.33rem',
+  lineHeight: 1,
+})
+globalStyle(`${wrapper} .island-select__multi-value__remove`, {
+  borderRadius: 0,
+  paddingLeft: 0,
+  paddingRight: '0.5rem',
+  paddingBottom: '0.33rem',
+  paddingTop: '0.33rem',
+})
+
 globalStyle(`${wrapper} ${valueContainer} .island-select__input-container`, {
   margin: 0,
 })

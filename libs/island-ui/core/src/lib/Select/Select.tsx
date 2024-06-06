@@ -15,6 +15,8 @@ import {
   Placeholder,
   SingleValue,
   ValueContainer,
+  MultiValue,
+  MultiValueLabel,
   customStyles,
 } from './Components'
 import { Option as OptionType, SelectProps } from './Select.types'
@@ -111,6 +113,8 @@ export const Select = <
           IndicatorsContainer,
           Menu,
           Option,
+          MultiValue,
+          MultiValueLabel,
         }}
         isClearable
         backspaceRemovesValue
@@ -171,6 +175,8 @@ export const Select = <
           IndicatorsContainer,
           Menu,
           Option,
+          MultiValue,
+          MultiValueLabel,
         }}
         isClearable={isClearable}
         backspaceRemovesValue={isClearable}

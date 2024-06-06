@@ -54,6 +54,16 @@ export const SelectController = <Value, IsMulti extends boolean = false>({
     return Array.isArray(value)
   }
 
+  const getValue = (value: Value | Value[]) => {
+    if (Array.isArray(value)) {
+      return value
+        .map((v) => options.find((option) => option.value === v))
+        .filter(Boolean) as Option<Value>[]
+    }
+
+    return options.find((option) => option.value === value)
+  }
+
   return (
     <Controller
       {...(defaultValue !== undefined && { defaultValue })}
@@ -73,7 +83,7 @@ export const SelectController = <Value, IsMulti extends boolean = false>({
           label={label}
           dataTestId={dataTestId}
           placeholder={placeholder}
-          value={options.find((option) => option.value === value)}
+          value={getValue(value)}
           isSearchable={isSearchable}
           isMulti={isMulti}
           size={size}

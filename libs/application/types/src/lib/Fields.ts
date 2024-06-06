@@ -20,7 +20,6 @@ import { TestSupport } from '@island.is/island-ui/utils'
 import { MessageDescriptor } from 'react-intl'
 import { Locale } from '@island.is/shared/types'
 import { MultiValue, SingleValue } from 'react-select'
-import { Option as UIOption } from '@island.is/island-ui/core'
 
 type Space = keyof typeof theme.spacing
 
@@ -280,8 +279,8 @@ export type SelectField<IsMulti extends boolean = false> = BaseField & {
   options: MaybeWithApplicationAndField<Option[]>
   onSelect?: (
     s: IsMulti extends true
-      ? MultiValue<UIOption<SelectValue>>
-      : UIOption<SelectValue>,
+      ? MultiValue<SelectOption<SelectValue>>
+      : SelectOption<SelectValue>,
     cb: (t: unknown) => void,
   ) => void
   placeholder?: FormText
@@ -307,8 +306,8 @@ export type AsyncSelectField<IsMulti extends boolean = false> = BaseField & {
   loadOptions(c: Context): Promise<Option[]>
   onSelect?: (
     s: IsMulti extends true
-      ? MultiValue<UIOption<SelectValue>>
-      : UIOption<SelectValue>,
+      ? MultiValue<SelectOption<SelectValue>>
+      : SelectOption<SelectValue>,
     cb: (t: unknown) => void,
   ) => void
   loadingError?: FormText
