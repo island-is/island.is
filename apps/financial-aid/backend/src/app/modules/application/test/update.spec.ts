@@ -316,6 +316,7 @@ describe('ApplicationController - Update', () => {
         ${ApplicationEventType.APPROVED}
         ${ApplicationEventType.STAFFCOMMENT}
         ${ApplicationEventType.ASSIGNCASE}
+        ${ApplicationEventType.DATECHANGED}
         ${ApplicationEventType.NEW}
         ${ApplicationEventType.INPROGRESS}
       `.describe('$event', ({ event }) => {
@@ -423,6 +424,7 @@ describe('ApplicationController - Update', () => {
         ${ApplicationEventType.APPROVED}
         ${ApplicationEventType.STAFFCOMMENT}
         ${ApplicationEventType.ASSIGNCASE}
+        ${ApplicationEventType.DATECHANGED}
         ${ApplicationEventType.NEW}
         ${ApplicationEventType.INPROGRESS}
       `.describe('$event', ({ event }) => {

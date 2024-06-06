@@ -21,7 +21,7 @@ export const userLoader: WrappedLoaderFn = ({ client, userInfo }) => {
     if (!nationalId) throw new Error('User not found')
 
     const unMaskedNationalId =
-      unmaskString(nationalId, userInfo.profile.nationalId) ?? ''
+      (await unmaskString(nationalId, userInfo.profile.nationalId)) ?? ''
 
     const res = await client.query<
       GetUserProfileByNationalIdQuery,

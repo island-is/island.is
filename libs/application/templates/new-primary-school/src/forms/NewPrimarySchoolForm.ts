@@ -571,7 +571,6 @@ export const NewPrimarySchoolForm: Form = buildForm({
                   id: 'startDate',
                   title: newPrimarySchoolMessages.shared.date,
                   placeholder: newPrimarySchoolMessages.shared.datePlaceholder,
-                  required: true,
                   defaultValue: null,
                   minDate: () => new Date(),
                 }),
@@ -645,13 +644,6 @@ export const NewPrimarySchoolForm: Form = buildForm({
                     },
                   ],
                 }),
-                buildAlertMessageField({
-                  id: 'support.info',
-                  title: newPrimarySchoolMessages.shared.alertTitle,
-                  message: newPrimarySchoolMessages.differentNeeds.supportInfo,
-                  doesNotRequireAnswer: true,
-                  alertType: 'info',
-                }),
                 buildCheckboxField({
                   id: 'support.requestMeeting',
                   title: '',
@@ -669,12 +661,6 @@ export const NewPrimarySchoolForm: Form = buildForm({
               ],
             }),
           ],
-        }),
-        buildSubSection({
-          id: 'schoolBusSubSection',
-          title:
-            newPrimarySchoolMessages.differentNeeds.schoolBusSubSectionTitle,
-          children: [],
         }),
         buildSubSection({
           id: 'useOfFootageSubSection',

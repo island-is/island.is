@@ -161,9 +161,23 @@ export const newPrimarySchoolMessages: MessageDir = {
     noChildrenFoundReasons: {
       id: 'dess.nps.application:prerequisites.nochildren.reasons#markdown',
       defaultMessage:
-        'Ástæður fyrir því gætu verið eftirfarandi:\n\n\n* Þú ert ekki skráður forsjáraðili hjá Þjóðskrá með lögheimilistengsl. \n* Barnið er ekki skráð í Þjóðskrá.',
+        'Eingöngu sá sem er með lögheimilisforsjá hefur heimild til að sækja um fyrir barn. Ástæður fyrir því að þú ert ekki með skráð barn geta verið eftirfarandi:\n\n\n* Þú ert ekki skráður forsjáraðili hjá Þjóðskrá með lögheimilistengsl. \n* Barnið er ekki skráð í Þjóðskrá.',
       description:
-        'You are not registered as a legal guardian with a domicile connection in the National Registry. The child is not registered in the National Registry.',
+        'Only the person who has legal custody has the authority to apply for a child. Reasons why you do not have a registered child may include the following',
+    },
+    noChildrenFoundNationalRegistryDescription: {
+      id: 'dess.nps.application:prerequisites.nochildren.national.registry.description',
+      defaultMessage:
+        'Þjóðskrá skráir hver eða hverjir teljast foreldrar barns og hver fari með forsjárskyldur þess. Upplýsingar um skráningu forsjár og lögheimilisforeldris má nálgast hér: [Foreldrar og forsjá | Þjóðskrá (skra.is)](https://www.skra.is/folk/skraning-barns/foreldrar-og-forsja/)',
+      description:
+        'The National Registry records who or which individuals are considered to be the parents of a child and who has custody responsibilities. Information on registering custody and legal guardianship can be found here: [Parents and Custody | National Registry (skra.is)](https://www.skra.is/folk/skraning-barns/foreldrar-og-forsja/)',
+    },
+    noChildrenFoundIslandisDescription: {
+      id: 'dess.nps.application:prerequisites.nochildren.islandis.description',
+      defaultMessage:
+        'Upplýsingum um tengsl á milli barna og foreldra auk forsjáraðila eru einnig aðgengilegar á [Mínum síðum á Ísland.is](https://island.is/minarsidur)',
+      description:
+        'Information about the relationship between children and parents, as well as custody authorities, is also available on [My Pages on Iceland.is](https://island.is/minarsidur)',
     },
     noChildrenFoundNationalRegistryInfo: {
       id: 'dess.nps.application:prerequisites.nochildren.national.registry.info#markdown',
@@ -387,8 +401,8 @@ export const newPrimarySchoolMessages: MessageDir = {
     },
     startingSchoolTitle: {
       id: 'dess.nps.application:primary.school.starting.school.title',
-      defaultMessage: 'Hvenær viltu að barnið byrji í nýja skólanum?',
-      description: 'When do you want your child to start at the new school?',
+      defaultMessage: 'Hvenær óskar þú eftir að barnið byrji í nýjum skóla?',
+      description: 'When do you wish the child to start in a new school?',
     },
     startingSchoolDescription: {
       id: 'dess.nps.application:primary.school.starting.school.description',
@@ -441,40 +455,28 @@ export const newPrimarySchoolMessages: MessageDir = {
     developmentalAssessment: {
       id: 'dess.nps.application:different.needs.developmental.assessment',
       defaultMessage:
-        'Hefur farið fram þroskamat eða skimun námslegri stöðu nemandans',
+        'Hafa farið fram skimanir eða greiningar á þroska eða stöðu barnsins í núverandi skóla?',
       description:
-        "Has there been a developmental assessment or screening of the student's academic status",
+        'Have any assessments or diagnoses been conducted on the development or status of the child in the current school?',
     },
     specialSupport: {
       id: 'dess.nps.application:different.needs.special.support',
-      defaultMessage: 'Hefur nemandinn þörf fyrir sérstuðning í skóla',
-      description: 'Does the student need special support at school',
-    },
-    supportInfo: {
-      id: 'dess.nps.application:different.needs.support.info',
       defaultMessage:
-        'Ef um er að ræða skólaflutning milli landa flytjast gögnin ekki sjálfkrafa á milli. Vinsamlegast hafðu beint samband við skólann ef gera þarf sérstakar ráðstafanir vegna barnsins.',
+        'Hefur nemandinn áður notið sérkennslu eða stuðnings í skóla?',
       description:
-        'In the case of a school transfer between countries, the data is not transferred automatically. Please contact the school directly if special arrangements need to be made for the child.',
+        'Has the student previously received special education or support in school?',
     },
     requestMeeting: {
       id: 'dess.nps.application:different.needs.request.meeting',
       defaultMessage:
-        'Ef þú telur að grunnskólinn þurfi nánari upplýsingar um þarfir barnsins geturðu óskað eftir samtali við umsjónarkennara. Umsjónarkennari mun setja sig í samband við þig áður en barnið byrjar í skólanum.',
+        'Ef þú telur að grunnskólinn þurfi nánari upplýsingar um þarfir barnsins getur þú óskað eftir samtali. Skólinn mun setja sig í samband við þig, þegar nær dregur fyrsta skóladegi',
       description:
-        "If you believe that the elementary school needs more information about the child's needs, you can request a conversation with the supervising teacher. The supervising teacher will contact you before the child starts school.",
+        "If you believe that the elementary school needs more information about the child's needs, you can request a meeting. The school will contact you when the first day of school approaches.",
     },
     requestMeetingDescription: {
       id: 'dess.nps.application:different.needs.request.meeting.info',
       defaultMessage: 'Óska eftir samtali við skóla',
       description: 'Request meeting with the school',
-    },
-
-    // School bus
-    schoolBusSubSectionTitle: {
-      id: 'dess.nps.application:different.needs.school.bus.section.title',
-      defaultMessage: 'Skólaakstur',
-      description: 'School bus',
     },
 
     // Use of footage
@@ -521,9 +523,9 @@ export const newPrimarySchoolMessages: MessageDir = {
     photographyInfo: {
       id: 'dess.nps.application:different.needs.photography.info',
       defaultMessage:
-        'Ef myndefni er notað í öðrum tilgangi, eða myndataka er fyrirhuguð í öðrum tilgangi en samþykki nær til, þarf að upplýsa foreldra og afla sérstaks samþykkis.',
+        'Ekki er heimilt að nota myndefni í öðrum tilgangi en samþykki nær til.\n\nEf myndefni er notað í öðrum tilgangi, eða myndataka er fyrirhuguð í öðrum tilgangi en samþykki nær til, verða foreldrar upplýstir sérstaklega og sérstaks samþykkis aflað.\n\nForeldri getur afturkallað samþykki sitt með því að hafa samband við skóla. Afturköllun hefur þó ekki áhrif á lögmæti þeirrar myndatöku og myndbirtingar sem fram hefur farið fram að þeim tíma.\n\nHver og einn skóli er ábyrgðaraðili vegna persónuupplýsinga sem þar eru unnar. Frekari leiðbeiningar og fræðsla um mynda- og myndbandstökur sem og myndbirtingar má finna á vef viðkomandi sveitarfélags.',
       description:
-        'If footage is used for other purposes, or photography is planned for purposes other than consented for, parents must be informed and special consent obtained.',
+        'It is not allowed to use visual material for any purpose other than what has been approved.\n\nIf visual material is used for a purpose other than what has been approved, or if photography is intended for a purpose other than what has been approved, parents will be informed specifically and a separate consent will be obtained.\n\nA parent can revoke their consent by contacting the school. However, revocation does not affect the legality of any photography or publication that has already taken place up to that time.\n\nEach school is responsible for the personal information processed there. Further guidance and education on photography and publication, as well as image processing, can be found on the website of the relevant municipality.',
     },
   }),
 
@@ -605,9 +607,9 @@ export const newPrimarySchoolMessages: MessageDir = {
     expandableDescription: {
       id: 'dess.nps.application:conclusion.expandable.description#markdown',
       defaultMessage:
-        'Skólastjóri mun taka afstöðu til umsóknarinnar eftir aðstæðum í skólanum hversu sinni og svara þér eins fljótt og auðið er í tölvupósti. Svarið mun einnig birtast í stafrænu pósthólfi hér á Island.is',
+        'Skólastjóri mun taka afstöðu til umsóknarinnar eftir aðstæðum í skólanum hverju sinni og svara þér eins fljótt og auðið er.\n\nÁður en afstaða er tekin kann að vera þörf á því að afla frekari gagna í þeim tilgangi að upplýsa um aðstæður barns og /eða forsjáraðila. Mun þá skólastjóri setja sig í samband við þig.\n\nEf umsókn um nýjan skóla er samþykkt, boðar skólinn þig í kjölfarið til móttökuviðtals.',
       description:
-        'The principal will evaluate the application based on the current circumstances at the school and will respond to you as soon as possible by email. The response will also appear in the digital mailbox here on Island.is.',
+        'The school principal will make a decision on the application based on the circumstances in the school and will respond to you as quickly and easily as possible.\n\nBefore a decision is made, there may be a need to gather further information for the purpose of informing about the childs circumstances and/or custody authorities. The school principal will then contact you.\n\nIf the application for a new school is approved, the school will invite you to an admission interview.',
     },
   }),
 }
