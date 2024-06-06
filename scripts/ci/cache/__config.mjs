@@ -73,9 +73,9 @@ export const caches = [
     init: async () => {
       const yarnLockRoot = resolve(ROOT, 'yarn.lock')
       const yarnLock = resolve(MOBILE_APP_DIR, 'yarn.lock')
-      await runCommand(`cp "${yarnLockRoot}" "${yarnLock}"`, ROOT)
-      await runCommand('yarn install --immutable', MOBILE_APP_DIR)
-      await runCommand(`rm "${yarnLock}"`, MOBILE_APP_DIR)
+      await runCommand(`cp ${yarnLockRoot} ${yarnLock}`, ROOT)
+      await runCommand('yarn install', MOBILE_APP_DIR)
+      await runCommand(`rm ${yarnLock}`, MOBILE_APP_DIR)
     },
     name: 'Cache Mobile node_modules',
     id: 'mobile-node_modules',
