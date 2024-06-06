@@ -47,6 +47,7 @@ import {
   UniversityCareers,
   OfficialJournalOfIceland,
   OfficialJournalOfIcelandApplication,
+  JudicialSystemServicePortal,
 } from '../../../infra/src/dsl/xroad'
 
 export const serviceSetup = (services: {
@@ -419,6 +420,7 @@ export const serviceSetup = (services: {
       SignatureCollection,
       SocialInsuranceAdministration,
       OfficialJournalOfIceland,
+      JudicialSystemServicePortal,
       OfficialJournalOfIcelandApplication,
     )
     .files({ filename: 'islyklar.p12', env: 'ISLYKILL_CERT' })

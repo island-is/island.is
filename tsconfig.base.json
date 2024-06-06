@@ -667,6 +667,9 @@
       "@island.is/clients/judicial-administration": [
         "libs/clients/judicial-administration/src/index.ts"
       ],
+      "@island.is/clients/judicial-system-sp": [
+        "libs/clients/judicial-system-sp/src/index.ts"
+      ],
       "@island.is/clients/license-client": [
         "libs/clients/license-client/src/index.ts"
       ],
