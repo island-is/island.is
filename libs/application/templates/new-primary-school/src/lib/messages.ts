@@ -572,9 +572,9 @@ export const newPrimarySchoolMessages: MessageDir = {
     expandableDescription: {
       id: 'dess.nps.application:conclusion.expandable.description#markdown',
       defaultMessage:
-        'Skólastjóri mun taka afstöðu til umsóknarinnar eftir aðstæðum í skólanum hversu sinni og svara þér eins fljótt og auðið er í tölvupósti. Svarið mun einnig birtast í stafrænu pósthólfi hér á Island.is',
+        'Skólastjóri mun taka afstöðu til umsóknarinnar eftir aðstæðum í skólanum hverju sinni og svara þér eins fljótt og auðið er.\n\nÁður en afstaða er tekin kann að vera þörf á því að afla frekari gagna í þeim tilgangi að upplýsa um aðstæður barns og /eða forsjáraðila. Mun þá skólastjóri setja sig í samband við þig.\n\nEf umsókn um nýjan skóla er samþykkt, boðar skólinn þig í kjölfarið til móttökuviðtals.',
       description:
-        'The principal will evaluate the application based on the current circumstances at the school and will respond to you as soon as possible by email. The response will also appear in the digital mailbox here on Island.is.',
+        'The school principal will make a decision on the application based on the circumstances in the school and will respond to you as quickly and easily as possible.\n\nBefore a decision is made, there may be a need to gather further information for the purpose of informing about the childs circumstances and/or custody authorities. The school principal will then contact you.\n\nIf the application for a new school is approved, the school will invite you to an admission interview.',
     },
   }),
 }
