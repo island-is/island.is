@@ -28,7 +28,7 @@ export const List = ({ currentItem }: Props) => {
 
   useEffect(() => {
     const type = currentItem.inputSettings?.listType
-    if (type === 'customList') {
+    if (type === 'customList' || type === '') {
       const currentList = currentItem.inputSettings?.list ?? []
       setListItems(
         currentList.map((l: FormSystemListItem) => ({

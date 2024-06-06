@@ -1,5 +1,5 @@
 import { Select, Stack, Tabs, GridRow as Row, GridColumn as Column, Box, Input, Option } from "@island.is/island-ui/core"
-import { ChangeEvent, ReactNode, useState } from "react"
+import { ChangeEvent, useState } from "react"
 import { useIntl } from "react-intl"
 import { SingleValue } from "react-select"
 import { m } from "../../../../../lib/messages"
@@ -11,7 +11,8 @@ export const PropertyNumber = () => {
   const showPropertyNumber = propertyNumber.length === 7
   const showOwnedProperty = ownedProperty !== ''
   const { formatMessage } = useIntl()
-  const propertyProperties: ReactNode = (
+
+  const propertyProperties = (
     <Row>
       <Column span="5/10">
         <Box padding={2}>
@@ -42,7 +43,7 @@ export const PropertyNumber = () => {
     setOwnedProperty(e?.value ?? '')
   }
 
-  const ownedProperties: ReactNode = (
+  const ownedProperties = (
     <Stack space={2}>
       <Row>
         <Column span="5/10" >
@@ -72,12 +73,11 @@ export const PropertyNumber = () => {
     }
   }
 
-  const inputPropertyNumber: ReactNode = (
+  const inputPropertyNumber = (
     <Stack space={1}>
       <Row>
         <Column span="5/10">
           <Box
-            marginTop={1}
             padding={2}
           >
             <Input

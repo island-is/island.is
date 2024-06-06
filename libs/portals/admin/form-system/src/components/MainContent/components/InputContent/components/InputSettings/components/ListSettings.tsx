@@ -99,20 +99,35 @@ export const ListSettings = () => {
           </Row>
           <Row>
             <Column>
-              <RadioButton
-                label={formatMessage(m.predeterminedLists)}
-                // eslint-disable-next-line @typescript-eslint/no-empty-function
-                onChange={() => { }}
-                checked={radio[1]}
-              />
+              <Box
+                onClick={() => {
+                  controlDispatch({
+                    type: 'SET_LIST_TYPE',
+                    payload: {
+                      listType: 'other',
+                      update: updateActiveItem,
+                    },
+                  })
+                  radioHandler(1)
+                }}
+              >
+                <RadioButton
+                  label={formatMessage(m.predeterminedLists)}
+                  // eslint-disable-next-line @typescript-eslint/no-empty-function
+                  onChange={() => { }}
+                  checked={radio[1]}
+                />
+              </Box>
             </Column>
           </Row>
         </>
       )}
       {radio[0] && (
-        <Button variant="ghost" onClick={() => setInListBuilder(true)}>
-          {formatMessage(m.listBuilder)}
-        </Button>
+        <Column span="5/10">
+          <Button variant="ghost" onClick={() => setInListBuilder(true)}>
+            {formatMessage(m.listBuilder)}
+          </Button>
+        </Column>
       )}
       {radio[1] && (
         <Column span="5/10">
