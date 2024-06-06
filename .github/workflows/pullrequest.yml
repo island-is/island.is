@@ -189,7 +189,7 @@ jobs:
         uses: ./.github/actions/get-cache
         with:
           github-token: ${{ secrets.GITHUB_TOKEN }}
-          keys: ${{ needs.prepare.outputs.node-modules-hash }}-yarn
+          keys: ${{ needs.prepare.get-cache-keys }}
           enable-cache: 'node_modules,cypress,generated-files'
 
       - uses: ./.github/actions/unit-test
@@ -233,7 +233,7 @@ jobs:
         uses: ./.github/actions/get-cache
         with:
           github-token: ${{ secrets.GITHUB_TOKEN }}
-          keys: ${{ needs.prepare.outputs.node-modules-hash }}-yarn
+          keys: ${{ needs.prepare.get-cache-keys }}
           enable-cache: 'node_modules,cypress,generated-files'
 
       - name: Running e2e tests
@@ -258,8 +258,8 @@ jobs:
         uses: ./.github/actions/get-cache
         with:
           github-token: ${{ secrets.GITHUB_TOKEN }}
-          keys: ${{ needs.prepare.outputs.node-modules-hash }}-yarn
-          enable-cache: 'node_modules'
+          keys: ${{ needs.prepare.get-cache-keys }}
+          enable-cache: 'node_modules,generated-files'
 
       - name: Linting workspace
         run: ./scripts/ci/20_lint-workspace.sh
@@ -307,7 +307,7 @@ jobs:
         uses: ./.github/actions/get-cache
         with:
           github-token: ${{ secrets.GITHUB_TOKEN }}
-          keys: ${{ needs.prepare.outputs.node-modules-hash }}-yarn
+          keys: ${{ needs.prepare.get-cache-keys }}
           enable-cache: 'node_modules'
 
       - name: NX format:check
@@ -347,7 +347,7 @@ jobs:
         uses: ./.github/actions/get-cache
         with:
           github-token: ${{ secrets.GITHUB_TOKEN }}
-          keys: ${{ needs.prepare.outputs.node-modules-hash }}-yarn
+          keys: ${{ needs.prepare.get-cache-keys }}
           enable-cache: 'node_modules,generated-files'
       - name: Linting
         run: ./scripts/ci/run-in-parallel-native.sh lint
@@ -378,7 +378,7 @@ jobs:
         uses: ./.github/actions/get-cache
         with:
           github-token: ${{ secrets.GITHUB_TOKEN }}
-          keys: ${{ needs.prepare.outputs.node-modules-hash }}-yarn
+          keys: ${{ needs.prepare.get-cache-keys }}
           enable-cache: 'node_modules,generated-files'
 
       - name: Building
