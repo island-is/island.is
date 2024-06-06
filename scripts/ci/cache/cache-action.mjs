@@ -11,9 +11,10 @@ import { keyStorage } from './_key_storage.mjs'
 import { restoreCache } from './_restore_cache.mjs'
 import { saveCache } from './_save_cache.mjs'
 import { sleep, tryRun } from './_utils.mjs'
+import { ENV_ENABLED_CACHE } from './_const.mjs'
 
 if (Object.keys(ENABLED_MODULES).length === 0) {
-  throw new Error('No cache modules enabled')
+  throw new Error(`No cache modules enabled, set env key ${ENV_ENABLED_CACHE}`)
 }
 
 console.log(`Enabled modules ${caches.map((e) => e.name).join(', ')}`)

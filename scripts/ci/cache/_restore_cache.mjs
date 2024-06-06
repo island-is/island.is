@@ -6,6 +6,10 @@ import { ROOT } from './_common.mjs'
 
 export async function restoreCache({ key, path }) {
   let cache
+  if (!process.env.ci) {
+    // For testing
+    return false;
+  }
   const paths = (Array.isArray(path) ? path : [path]).map((e) =>
     resolve(ROOT, e),
   )

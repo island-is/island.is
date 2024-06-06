@@ -31,6 +31,4 @@ changed_files=$(find "$DIR"/apps "$DIR"/libs -type d \( \
 \) -prune -o -type f -newer "$marker" -print)
 
 
-relative_paths=$(echo "$changed_files" | xargs realpath --relative-to "$DIR")
-
-tar zcvf "$path" "$relative_paths"
+echo "$changed_files" | xargs -I{} realpath --relative-to="$DIR" "{}" | tar zcvf "$path" -T -

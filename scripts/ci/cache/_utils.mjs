@@ -90,11 +90,11 @@ export function sleep(ms = 50) {
 export async function tryRun(fn, name, args = []) {
   try {
     await fn(...args)
+    return true
   } catch (error) {
     console.log({ type: 'RUN FAILED', name, error })
     return false
   }
-  return true
 }
 
 /**
@@ -185,9 +185,9 @@ export async function runCommand(cmd, cwd = undefined, env = {}) {
         console.error(errorChunks.join('\n'))
         console.error(`Failed to run command: ${cmd} returning code ${code}`)
         reject(`Error: Process exited with code ${code}`)
-      } else {
-        resolve(void 0)
-      }
+        return
+      } 
+      resolve(void 0)
     })
 
     childProcess.on('error', (error) => {
