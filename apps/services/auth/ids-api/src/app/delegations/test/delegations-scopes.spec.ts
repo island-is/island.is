@@ -92,7 +92,6 @@ describe('DelegationsController', () => {
   let app: TestApp
   let server: request.SuperTest<request.Test>
   let factory: FixtureFactory
-  let delegationIndexService: DelegationsIndexService
 
   beforeAll(async () => {
     app = await setupWithAuth({
@@ -103,9 +102,6 @@ describe('DelegationsController', () => {
     server = request(app.getHttpServer())
 
     factory = new FixtureFactory(app)
-
-    delegationIndexService = app.get(DelegationsIndexService)
-    jest.spyOn(delegationIndexService, 'indexDelegations').mockImplementation()
   })
 
   afterAll(async () => {
