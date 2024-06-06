@@ -22,9 +22,10 @@ import { hasYes } from '@island.is/application/core'
 import { Fragment, useEffect, useMemo } from 'react'
 import { EstateMember } from '../../types'
 import {
+  ESTATE_INHERITANCE,
   ErrorValue,
   PREPAID_INHERITANCE,
-  PrePaidHeirsRelationTypes,
+  RelationSpouse,
 } from '../../lib/constants'
 import { LookupPerson } from '../LookupPerson'
 import { HeirsAndPartitionRepeaterProps } from './types'
@@ -131,7 +132,7 @@ export const AdditionalHeir = ({
   }, [foreignCitizenship, requiresAdvocate])
 
   return (
-    <Box position="relative" key={field.id} marginTop={7}>
+    <Box position="relative" key={field.id} marginTop={3}>
       <Controller
         name={initialField}
         control={control}
@@ -284,8 +285,9 @@ export const AdditionalHeir = ({
                   />
                 </GridColumn>
               ) : customField.id === 'taxFreeInheritance' &&
-                currentHeir?.relation !==
-                  PrePaidHeirsRelationTypes.SPOUSE ? null : (
+                ((values.applicationFor === PREPAID_INHERITANCE &&
+                  currentHeir?.relation !== RelationSpouse) ||
+                  values.applicationFor === ESTATE_INHERITANCE) ? null : (
                 <GridColumn span={['1/2']} paddingBottom={2}>
                   <InputController
                     id={`${fieldIndex}.${customField.id}`}
