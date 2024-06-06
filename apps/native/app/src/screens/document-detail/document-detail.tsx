@@ -19,10 +19,10 @@ import Share from 'react-native-share'
 import WebView from 'react-native-webview'
 import styled from 'styled-components/native'
 import {
-  Document,
+  DocumentV2,
   ListDocumentFragmentDoc,
-  useGetDocumentQuery,
-  useListDocumentsLazyQuery,
+  useGetDocumentContentLazyQuery,
+  useGetDocumentLazyQuery,
 } from '../../graphql/types/schema'
 import { createNavigationOptionHooks } from '../../hooks/create-navigation-option-hooks'
 import { useConnectivityIndicator } from '../../hooks/use-connectivity-indicator'
@@ -178,17 +178,25 @@ export const DocumentDetailScreen: NavigationFunctionComponent<{
   const [accessToken, setAccessToken] = useState<string>()
   const [error, setError] = useState(false)
 
-  const doc = useFragment_experimental<Document>({
+  // Check if we have the document in the cache
+  const doc = useFragment_experimental<DocumentV2>({
     fragment: ListDocumentFragmentDoc,
     from: {
-      __typename: 'Document',
+      __typename: 'DocumentV2',
       id: docId,
     },
     returnPartialData: true,
   })
 
-  const [getListDocuments] = useListDocumentsLazyQuery()
-  const docRes = useGetDocumentQuery({
+  const [getDocument, docRes] = useGetDocumentLazyQuery({
+    variables: {
+      input: {
+        id: docId,
+      },
+    },
+  })
+
+  const [getDocumentContent, docContent] = useGetDocumentContentLazyQuery({
     variables: {
       input: {
         id: docId,
@@ -197,29 +205,30 @@ export const DocumentDetailScreen: NavigationFunctionComponent<{
   })
 
   const Document = {
-    ...(docRes.data?.getDocument || {}),
-    ...doc.data,
+    ...(doc?.data || {}),
+    ...(docRes.data?.documentV2 || {}),
+    ...(docContent.data?.documentV2 || {}),
   }
 
   useEffect(() => {
     if (doc.missing) {
-      void getListDocuments({
-        variables: {
-          input: {
-            page: 1,
-            pageSize: 50,
-          },
-        },
-      })
+      // If we don't have the document in the cache, fetch it
+      void getDocument()
+    } else if (doc.data?.content === null) {
+      // Currently the document list query does not return the content props, so we need to fetch it
+      // Will be fixed soon and then we will not need this
+      void getDocumentContent()
     }
-  }, [doc])
+  }, [doc.missing, doc.data?.content, docId])
 
   const [visible, setVisible] = useState(false)
   const [loaded, setLoaded] = useState(false)
   const [pdfUrl, setPdfUrl] = useState('')
   const [touched, setTouched] = useState(false)
-  const hasPdf = Document.fileType?.toLocaleLowerCase() === 'pdf'
-  const isHtml = typeof Document.html === 'string' && Document.html !== ''
+  const hasPdf = Document?.content?.type.toLocaleLowerCase() === 'pdf'
+  const isHtml =
+    Document?.content?.type.toLocaleLowerCase() === 'html' &&
+    Document.content?.value !== ''
 
   useConnectivityIndicator({
     componentId,
@@ -247,16 +256,16 @@ export const DocumentDetailScreen: NavigationFunctionComponent<{
       )
       setTouched(true)
     }
-    if (buttonId === ButtonRegistry.ShareButton) {
+    if (buttonId === ButtonRegistry.ShareButton && loaded) {
       if (Platform.OS === 'android') {
         authStore.setState({ noLockScreenUntilNextAppStateActive: true })
       }
       Share.open({
         title: Document.subject!,
         subject: Document.subject!,
-        message: `${Document.senderName!} \n ${Document.subject!}`,
+        message: `${Document.sender!.name!} \n ${Document.subject!}`,
         type: hasPdf ? 'application/pdf' : undefined,
-        url: hasPdf ? `file://${pdfUrl}` : Document.url!,
+        url: hasPdf ? `file://${pdfUrl}` : Document.downloadUrl!,
       })
     }
   }, componentId)
@@ -281,7 +290,7 @@ export const DocumentDetailScreen: NavigationFunctionComponent<{
     // Lets mark the document as read
     client.cache.modify({
       id: client.cache.identify({
-        __typename: 'Document',
+        __typename: 'DocumentV2',
         id: Document.id,
       }),
       fields: {
@@ -323,12 +332,16 @@ export const DocumentDetailScreen: NavigationFunctionComponent<{
     <>
       <Host>
         <Header
-          title={Document.senderName}
-          date={<FormattedDate value={Document.date} />}
+          title={Document.sender?.name ?? ''}
+          date={
+            Document.publicationDate ? (
+              <FormattedDate value={Document.publicationDate} />
+            ) : undefined
+          }
           message={Document.subject}
           isLoading={loading}
           hasBorder={false}
-          logo={getOrganizationLogoUrl(Document.senderName!, 75)}
+          logo={getOrganizationLogoUrl(Document.sender?.name ?? '', 75)}
         />
       </Host>
       <Border />
@@ -345,7 +358,7 @@ export const DocumentDetailScreen: NavigationFunctionComponent<{
         >
           {isHtml ? (
             <WebView
-              source={{ html: Document.html ?? '' }}
+              source={{ html: Document.content?.value ?? '' }}
               scalesPageToFit
               onLoadEnd={() => {
                 setLoaded(true)
@@ -355,7 +368,7 @@ export const DocumentDetailScreen: NavigationFunctionComponent<{
             <PdfWrapper>
               {visible && accessToken && (
                 <PdfViewer
-                  url={Document.url ?? ''}
+                  url={Document.downloadUrl ?? ''}
                   body={`documentId=${Document.id}&__accessToken=${accessToken}`}
                   onLoaded={(filePath: any) => {
                     setPdfUrl(filePath)
@@ -370,7 +383,7 @@ export const DocumentDetailScreen: NavigationFunctionComponent<{
             </PdfWrapper>
           ) : (
             <WebView
-              source={{ uri: Document.url! }}
+              source={{ uri: Document.content?.value ?? '' }}
               onLoadEnd={() => {
                 setLoaded(true)
               }}

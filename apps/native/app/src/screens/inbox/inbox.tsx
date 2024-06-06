@@ -6,7 +6,6 @@ import {
   SearchBar,
   Tag,
   TopLine,
-  useDynamicColor,
 } from '@ui'
 import { setBadgeCountAsync } from 'expo-notifications'
 import React, { useCallback, useEffect, useMemo, useRef, useState } from 'react'
@@ -32,12 +31,11 @@ import illustrationSrc from '../../assets/illustrations/le-company-s3.png'
 import { BottomTabsIndicator } from '../../components/bottom-tabs-indicator/bottom-tabs-indicator'
 import { PressableHighlight } from '../../components/pressable-highlight/pressable-highlight'
 import {
-  Document,
   ListDocumentsDocument,
   ListDocumentsQuery,
-  useListDocumentsQuery,
   useListDocumentsLazyQuery,
   useMarkAllDocumentsAsReadMutation,
+  DocumentV2,
 } from '../../graphql/types/schema'
 import { createNavigationOptionHooks } from '../../hooks/create-navigation-option-hooks'
 import { useActiveTabItemPress } from '../../hooks/use-active-tab-item-press'
@@ -52,7 +50,7 @@ import { testIDs } from '../../utils/test-ids'
 
 type ListItem =
   | { id: string; type: 'skeleton' | 'empty' }
-  | (Document & { type: undefined })
+  | (DocumentV2 & { type: undefined })
 
 const DEFAULT_PAGE_SIZE = 50
 
@@ -95,7 +93,7 @@ const { useNavigationOptions, getNavigationOptions } =
   )
 
 const PressableListItem = React.memo(
-  ({ item, listParams }: { item: Document; listParams: any }) => {
+  ({ item, listParams }: { item: DocumentV2; listParams: any }) => {
     const { getOrganizationLogoUrl } = useOrganizationsStore()
     const [starred, setStarred] = useState<boolean>(!!item.bookmarked)
     useEffect(() => setStarred(!!item.bookmarked), [item.bookmarked])
@@ -105,22 +103,26 @@ const PressableListItem = React.memo(
         highlightColor={theme.shade.shade400}
         onPress={() =>
           navigateTo(`/inbox/${item.id}`, {
-            title: item.senderName,
+            title: item.sender.name,
             listParams,
           })
         }
       >
         <ListItem
-          title={item.senderName}
+          title={item.sender.name ?? ''}
           subtitle={item.subject}
-          date={new Date(item.date)}
+          date={
+            item?.publicationDate ? new Date(item.publicationDate) : undefined
+          }
           unread={!item.opened}
           starred={starred}
           onStarPress={() => {
             toggleAction(!item.bookmarked ? 'bookmark' : 'unbookmark', item.id)
             setStarred(!item.bookmarked)
           }}
-          icon={getOrganizationLogoUrl(item.senderName, 75)}
+          icon={
+            item.sender.name && getOrganizationLogoUrl(item.sender.name, 75)
+          }
         />
       </PressableHighlight>
     )
@@ -137,23 +139,6 @@ function useThrottleState(state: string, delay = 500) {
     return () => clearTimeout(timeout)
   }, [state, delay])
   return throttledState
-}
-
-const useUnreadCount = () => {
-  const res = useListDocumentsQuery({
-    fetchPolicy: 'cache-first',
-    variables: {
-      input: {
-        page: 1,
-        pageSize: 50,
-        opened: false,
-      },
-    },
-  })
-  const unopened = res?.data?.listDocumentsV2?.data?.filter(
-    (item) => item.opened === false,
-  )
-  return unopened?.length ?? 0
 }
 
 type Filters = {
@@ -175,7 +160,7 @@ function applyFilters(filters?: Filters) {
 function useInboxQuery(incomingFilters?: Filters) {
   const [filters, setFilters] = useState(applyFilters(incomingFilters))
   const [page, setPage] = useState<number>(1)
-  const [data, setData] = useState<ListDocumentsQuery['listDocumentsV2']>()
+  const [data, setData] = useState<ListDocumentsQuery['documentsV2']>()
   const [refetching, setRefetching] = useState(true)
   const [loading, setLoading] = useState(false)
   const [refetcher, setRefetcher] = useState(0)
@@ -229,12 +214,12 @@ function useInboxQuery(incomingFilters?: Filters) {
             setData((prevData) => ({
               data: [
                 ...(prevData?.data ?? []),
-                ...(data.listDocumentsV2?.data ?? []),
+                ...(data.documentsV2?.data ?? []),
               ],
-              totalCount: data.listDocumentsV2?.totalCount,
+              totalCount: data.documentsV2?.totalCount ?? 0,
             }))
           } else {
-            setData(data.listDocumentsV2)
+            setData(data.documentsV2)
           }
         }
       })
@@ -289,7 +274,6 @@ export const InboxScreen: NavigationFunctionComponent<{
   const [query, setQuery] = useState('')
   const queryString = useThrottleState(query)
   const theme = useTheme()
-  const unreadCount = useUnreadCount()
   const [visible, setVisible] = useState(false)
   const [refetching, setRefetching] = useState(false)
 
@@ -308,6 +292,7 @@ export const InboxScreen: NavigationFunctionComponent<{
         }
       },
     })
+  const unreadCount = res?.data?.unreadCount ?? 0
 
   useConnectivityIndicator({
     componentId,
@@ -324,7 +309,7 @@ export const InboxScreen: NavigationFunctionComponent<{
     res.refetch()
   }, [refresh])
 
-  const items = res.data?.data ?? []
+  const items = useMemo(() => res.data?.data ?? [], [res.data])
   const isSearch = ui.inboxQuery.length > 2
 
   useActiveTabItemPress(0, () => {
@@ -383,7 +368,7 @@ export const InboxScreen: NavigationFunctionComponent<{
       }
       return (
         <PressableListItem
-          item={item as Document}
+          item={item as DocumentV2}
           listParams={{
             ...res.filters,
           }}
