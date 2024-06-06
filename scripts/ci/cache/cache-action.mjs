@@ -10,7 +10,7 @@ import { writeToSummary, writeToOutput } from './_get_hashes_utils.mjs'
 import { keyStorage } from './_key_storage.mjs'
 import { restoreCache } from './_restore_cache.mjs'
 import { saveCache } from './_save_cache.mjs'
-import { sleep, tryRun } from './_utils.mjs'
+import { arrayIncludesOneOf, sleep, tryRun } from './_utils.mjs'
 import { ENV_ENABLED_CACHE } from './_const.mjs'
 
 if (Object.keys(ENABLED_MODULES).length === 0) {
@@ -49,8 +49,10 @@ const steps = [
         return null
       }
       return {
+        ...value,
         name: value.name,
         id: value.id,
+        dependsOn: value.dependsOn,
         path: value.path,
         key: await value.hash(),
         init: value.init,
@@ -93,67 +95,48 @@ const failedJobs = []
 const pendingJobs = checkCache.filter((e) => !e.isOk).map((e) => e.id)
 const succesFullJobs = []
 
-await Promise.allSettled(
-  checkCache.map(async (cache) => {
-    if (!cache.isOk) {
-      if (cache.dependsOn) {
-        for (const pendingJob of pendingJobs) {
-          if (cache.dependsOn.includes(pendingJob)) {
-            while (true) {
-              if (succesFullJobs.includes(pendingJob)) {
-                break
-              }
-              const jobHasFailed = failedJobs.some((e) => e.id === pendingJob)
-              if (jobHasFailed) {
-                console.error(`Failed restoring cache for ${cache.name}`)
-                failedJobs.push(cache)
-                return
-              }
-              sleep()
-            }
-          }
-        }
+for (const cache of checkCache) {
+  if (!cache.isOk) {
+    if ((cache.dependsOn && arrayIncludesOneOf(failedJobs.map((e) => e.name), cache.dependsOn)) || HAS_HASH_KEYS) {
+      console.error(`Failed restoring cache for ${cache.name}`)
+      failedJobs.push(cache)
+      continue;
+    }
+
+    const fileName = Array.isArray(cache.path)
+      ? cache.path.map((e) => resolve(ROOT, e))
+      : resolve(ROOT, cache.path)
+    console.log(
+      `Failed restoring cache for ${cache.name}, trying to init and save`,
+    )
+    const successInit = await tryRun(cache.init, cache.name, [fileName])
+    const success = await (async () => {
+      try {
+        const value = await cache.check(successInit, fileName)
+      } catch (e) {
+        console.error(e)
+        return false
       }
-      if (HAS_HASH_KEYS) {
-        console.error(`Failed restoring cache for ${cache.name}`)
-        failedJobs.push(cache)
-        return
-      }
-      console.log(
-        `Failed restoring cache for ${cache.name}, trying to init and save`,
-      )
-      const fileName = Array.isArray(cache.path)
-        ? cache.path.map((e) => resolve(ROOT, e))
-        : resolve(ROOT, cache.path)
-      const successInit = await tryRun(cache.init, cache.name, [fileName])
-      const success = await (async () => {
-        try {
-          const value = await cache.check(successInit, fileName)
-        } catch (e) {
-          console.error(e)
-          return false
-        }
-        return true
-      })()
-      if (!success) {
-        console.log(`Failed init and check for ${cache.name}`)
+      return true
+    })()
+    if (!success) {
+      console.log(`Failed init and check for ${cache.name}`)
+      failedJobs.push(cache)
+    } else {
+      const saveSuccess = await saveCache({
+        key: cache.key,
+        path: cache.path,
+      })
+      if (!saveSuccess) {
+        console.error(`Failed saving cache for ${cache.name}`)
         failedJobs.push(cache)
       } else {
-        const saveSuccess = await saveCache({
-          key: cache.key,
-          path: cache.path,
-        })
-        if (!saveSuccess) {
-          console.error(`Failed saving cache for ${cache.name}`)
-          failedJobs.push(cache)
-        } else {
-          console.log(`Saved cache ${cache.name}`)
-          succesFullJobs.push(cache.id)
-        }
+        console.log(`Saved cache ${cache.name}`)
+        succesFullJobs.push(cache.id)
       }
     }
-  }),
-)
+  }
+}
 
 if (failedJobs.length > 0) {
   console.log('Failed caches: ', failedJobs.map((e) => e.id).join(', '))

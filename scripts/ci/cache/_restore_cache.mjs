@@ -6,7 +6,7 @@ import { ROOT } from './_common.mjs'
 
 export async function restoreCache({ key, path }) {
   let cache
-  if (!process.env.ci) {
+  if (!process.env.CI) {
     // For testing
     return false;
   }

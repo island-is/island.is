@@ -211,3 +211,8 @@ export async function getPackageJSON(
   const content = JSON.parse(await readFile(filePath, 'utf-8'))
   return content
 }
+
+
+export function arrayIncludesOneOf(array, values) {
+  return values.some((value) => array.includes(value))
+}

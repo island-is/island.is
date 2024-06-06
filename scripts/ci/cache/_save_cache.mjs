@@ -6,7 +6,7 @@ import { resolve } from 'node:path'
 
 export async function saveCache({ key, path }) {
   let cache
-  if (!process.env.ci) {
+  if (!process.env.CI) {
     // For testing
     return false;
   }
