@@ -386,8 +386,8 @@ export const newPrimarySchoolMessages: MessageDir = {
     },
     startingSchoolTitle: {
       id: 'dess.nps.application:primary.school.starting.school.title',
-      defaultMessage: 'Hvenær viltu að barnið byrji í nýja skólanum?',
-      description: 'When do you want your child to start at the new school?',
+      defaultMessage: 'Hvenær óskar þú eftir að barnið byrji í nýjum skóla?',
+      description: 'When do you wish the child to start in a new school?',
     },
     startingSchoolDescription: {
       id: 'dess.nps.application:primary.school.starting.school.description',
