@@ -874,4 +874,19 @@ export const requirementsMessages = defineMessages({
       'Þú þarft að hafa búsetu á Íslandi til að geta sótt um fullnaðarskírteini.',
     description: 'requirement unmet api returned false',
   },
+  //TODO: Remove when RLS/SGS supports health certificate in BE license
+  beLicenseRequiresHealthCertificateDescription: {
+    id: 'dl.application:requirementunmet.beLicenseRequiresHealthCertificateDescription',
+    defaultMessage:
+      'Ef tákntölur sem varða heilsufar/sjón eru skráðar á fyrri ökuskírteini þarf umsækjandi að mæta í sitt sýslumanns embætti með vottorð og leggja inn umsókn á staðnum',
+    description:
+      'BE application does not support health certificate requirement',
+  },
+  //TODO: Remove when RLS/SGS supports health certificate in BE license
+  beLicenseRequiresHealthCertificateTitle: {
+    id: 'dl.application:requirementunmet.beLicenseRequiresHealthCertificateTitle',
+    defaultMessage: 'Læknisvottorð',
+    description:
+      'BE application does not support health certificate requirement',
+  },
 })

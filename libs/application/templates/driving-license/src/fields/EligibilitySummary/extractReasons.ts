@@ -74,6 +74,13 @@ const requirementKeyToStep = (
         title: requirementsMessages.localResidencyTitle,
         description: requirementsMessages.currentLocalResidencyDescription,
       }
+    //TODO: Remove when RLS/SGS supports health certificate in BE license
+    case RequirementKey.BeRequiresHealthCertificate:
+      return {
+        title: requirementsMessages.beLicenseRequiresHealthCertificateTitle,
+        description:
+          requirementsMessages.beLicenseRequiresHealthCertificateDescription,
+      }
     default:
       throw new Error('Unknown requirement reason - should not happen')
   }
