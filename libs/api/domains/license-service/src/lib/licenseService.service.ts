@@ -80,7 +80,7 @@ export class LicenseServiceService {
     private readonly barcodeService: BarcodeService,
     private readonly licenseClient: LicenseClientService,
     private readonly cmsContentfulService: CmsContentfulService,
-    @Inject(CACHE_MANAGER) private cacheManager: Cache,
+    @Inject(CACHE_MANAGER) private readonly cacheManager: Cache,
     @Inject(LICENSE_MAPPER_FACTORY)
     private readonly licenseMapperFactory: (
       type: GenericLicenseType,
@@ -108,6 +108,8 @@ export class LicenseServiceService {
   ): Promise<GenericLicenseLabels> => {
     const cacheKey = `namespace-licenses-${locale}`
     const namespace = await this.cacheManager.get<Namespace | null>(cacheKey)
+
+    this.logger.debug('namespace', namespace)
 
     let licenseNamespace: Namespace | null
     if (!namespace) {
