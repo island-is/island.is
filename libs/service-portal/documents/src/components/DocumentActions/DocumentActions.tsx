@@ -2,7 +2,7 @@ import { DocumentV2Actions } from '@island.is/api/schema'
 import { AlertMessage, Box, Button } from '@island.is/island-ui/core'
 import { IconMapIcon } from '@island.is/island-ui/core/types'
 import { FC } from 'react'
-import { downloadAppendix } from '../../utils/downloadDocumentV2'
+import { sendForm } from '../../utils/downloadDocumentV2'
 import { useUserInfo } from '@island.is/auth/react'
 import { useDocumentContext } from '../../screens/Overview/DocumentContext'
 
@@ -62,7 +62,7 @@ const DocumentActions: FC<Props> = ({ alert, actions }) => {
                     icon={(a.icon as IconMapIcon) ?? DEFAULT_ICON}
                     iconType="outline"
                     onClick={() =>
-                      downloadAppendix(
+                      sendForm(
                         activeDocument.id,
                         a.data ?? activeDocument.downloadUrl,
                         userInfo,
