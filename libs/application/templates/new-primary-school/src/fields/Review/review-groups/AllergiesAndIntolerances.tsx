@@ -1,9 +1,5 @@
 import { YES } from '@island.is/application/core'
-import {
-  DataValue,
-  RadioValue,
-  ReviewGroup,
-} from '@island.is/application/ui-components'
+import { DataValue, ReviewGroup } from '@island.is/application/ui-components'
 import { GridColumn, GridRow, Stack } from '@island.is/island-ui/core'
 import { useLocale } from '@island.is/localization'
 import { newPrimarySchoolMessages } from '../../../lib/messages'
@@ -14,14 +10,13 @@ import {
 } from '../../../lib/newPrimarySchoolUtils'
 import { ReviewGroupProps } from './props'
 
-export const SchoolMeal = ({
+export const AllergiesAndIntolerances = ({
   application,
   editable,
   goToScreen,
 }: ReviewGroupProps) => {
   const { formatMessage } = useLocale()
   const {
-    isRequestingFreeSchoolMeals,
     hasFoodAllergies,
     hasFoodIntolerances,
     isUsingEpiPen,
@@ -33,19 +28,9 @@ export const SchoolMeal = ({
     // TODO: Skoða betur þegar multiSelect er tilbúið
     <ReviewGroup
       isEditable={editable}
-      editAction={() => goToScreen?.('schoolMeal')}
+      editAction={() => goToScreen?.('allergiesAndIntolerances')}
     >
       <Stack space={2}>
-        <GridRow>
-          <GridColumn span={['12/12', '12/12', '12/12', '12/12']}>
-            <RadioValue
-              label={formatMessage(
-                newPrimarySchoolMessages.differentNeeds.schoolMealFreeMeals,
-              )}
-              value={isRequestingFreeSchoolMeals}
-            />
-          </GridColumn>
-        </GridRow>
         {hasFoodAllergies.includes(YES) && (
           <GridRow>
             <GridColumn span={['12/12', '12/12', '12/12', '12/12']}>
@@ -76,11 +61,15 @@ export const SchoolMeal = ({
         )}
         <GridRow>
           <GridColumn span={['12/12', '12/12', '12/12', '12/12']}>
-            <RadioValue
+            <DataValue
               label={formatMessage(
                 newPrimarySchoolMessages.confirm.usesEpinephrinePen,
               )}
-              value={isUsingEpiPen}
+              value={formatMessage(
+                isUsingEpiPen?.includes(YES)
+                  ? newPrimarySchoolMessages.shared.yes
+                  : newPrimarySchoolMessages.shared.no,
+              )}
             />
           </GridColumn>
         </GridRow>

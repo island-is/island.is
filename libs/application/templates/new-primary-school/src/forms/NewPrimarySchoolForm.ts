@@ -537,50 +537,22 @@ export const NewPrimarySchoolForm: Form = buildForm({
           children: [],
         }),
         buildSubSection({
-          id: 'schoolMealSubSection',
+          id: 'allergiesAndIntolerancesSubSection',
           title:
-            newPrimarySchoolMessages.differentNeeds.schoolMealSubSectionTitle,
+            newPrimarySchoolMessages.differentNeeds
+              .allergiesAndIntolerancesSubSectionTitle,
           children: [
             buildMultiField({
-              id: 'schoolMeal',
+              id: 'allergiesAndIntolerances',
               title:
                 newPrimarySchoolMessages.differentNeeds
-                  .schoolMealSubSectionTitle,
+                  .foodAllergiesAndIntolerancesTitle,
               description:
-                newPrimarySchoolMessages.differentNeeds.schoolMealDescription,
+                newPrimarySchoolMessages.differentNeeds
+                  .foodAllergiesAndIntolerancesDescription,
               children: [
-                buildRadioField({
-                  id: 'schoolMeal.isRequestingFreeSchoolMeals',
-                  title:
-                    newPrimarySchoolMessages.differentNeeds.schoolMealFreeMeals,
-                  width: 'half',
-                  required: true,
-                  options: [
-                    {
-                      label: newPrimarySchoolMessages.shared.yes,
-                      dataTestId: 'yes-option',
-                      value: YES,
-                    },
-                    {
-                      label: newPrimarySchoolMessages.shared.no,
-                      dataTestId: 'no-option',
-                      value: NO,
-                    },
-                  ],
-                }),
-                buildDescriptionField({
-                  id: 'schoolMeal.description',
-                  title:
-                    newPrimarySchoolMessages.differentNeeds
-                      .foodAllergiesAndIntolerances,
-                  description:
-                    newPrimarySchoolMessages.differentNeeds
-                      .foodAllergiesAndIntolerancesDescription,
-                  titleVariant: 'h4',
-                  marginTop: 4,
-                }),
                 buildCheckboxField({
-                  id: 'schoolMeal.hasFoodAllergies',
+                  id: 'allergiesAndIntolerances.hasFoodAllergies',
                   title: '',
                   spacing: 0,
                   options: [
@@ -594,7 +566,7 @@ export const NewPrimarySchoolForm: Form = buildForm({
                 }),
                 buildSelectField({
                   // TODO: Multi select
-                  id: 'schoolMeal.foodAllergies',
+                  id: 'allergiesAndIntolerances.foodAllergies',
                   title:
                     newPrimarySchoolMessages.differentNeeds.typeOfAllergies,
                   dataTestId: 'food-allergies',
@@ -610,7 +582,7 @@ export const NewPrimarySchoolForm: Form = buildForm({
                   },
                 }),
                 buildAlertMessageField({
-                  id: 'support.info',
+                  id: 'allergiesAndIntolerances.info',
                   title: newPrimarySchoolMessages.shared.alertTitle,
                   message:
                     newPrimarySchoolMessages.differentNeeds
@@ -625,7 +597,7 @@ export const NewPrimarySchoolForm: Form = buildForm({
                   },
                 }),
                 buildCheckboxField({
-                  id: 'schoolMeal.hasFoodIntolerances',
+                  id: 'allergiesAndIntolerances.hasFoodIntolerances',
                   title: '',
                   spacing: 0,
                   options: [
@@ -639,7 +611,7 @@ export const NewPrimarySchoolForm: Form = buildForm({
                 }),
                 buildSelectField({
                   // TODO: Multi select
-                  id: 'schoolMeal.foodIntolerances',
+                  id: 'allergiesAndIntolerances.foodIntolerances',
                   title:
                     newPrimarySchoolMessages.differentNeeds.typeOfIntolerances,
                   dataTestId: 'food-intolerances',
@@ -655,22 +627,28 @@ export const NewPrimarySchoolForm: Form = buildForm({
                     return hasFoodIntolerances?.includes(YES)
                   },
                 }),
-                buildRadioField({
-                  id: 'schoolMeal.isUsingEpiPen',
-                  title: newPrimarySchoolMessages.differentNeeds.epinephrinePen,
-                  width: 'half',
-                  required: true,
-                  space: 6,
+                buildDescriptionField({
+                  // Needed to add space
+                  id: 'allergiesAndIntolerances.divider',
+                  title: '',
+                  marginBottom: 4,
+                  condition: (answers) => {
+                    const { hasFoodIntolerances } =
+                      getApplicationAnswers(answers)
+
+                    return hasFoodIntolerances?.includes(YES)
+                  },
+                }),
+                buildCheckboxField({
+                  id: 'allergiesAndIntolerances.isUsingEpiPen',
+                  title: '',
+                  spacing: 0,
                   options: [
                     {
-                      label: newPrimarySchoolMessages.shared.yes,
-                      dataTestId: 'yes-option',
                       value: YES,
-                    },
-                    {
-                      label: newPrimarySchoolMessages.shared.no,
-                      dataTestId: 'no-option',
-                      value: NO,
+                      label:
+                        newPrimarySchoolMessages.differentNeeds
+                          .usesEpinephrinePen,
                     },
                   ],
                 }),

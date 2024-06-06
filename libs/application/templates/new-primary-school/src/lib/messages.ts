@@ -398,26 +398,14 @@ export const newPrimarySchoolMessages: MessageDir = {
       description: 'Language',
     },
 
-    // School Meal
-    schoolMealSubSectionTitle: {
-      id: 'dess.nps.application:different.needs.school.meal.section.title',
-      defaultMessage: 'Skólamáltíð',
-      description: 'School Meal',
+    // Allergies and intolerances
+    allergiesAndIntolerancesSubSectionTitle: {
+      id: 'dess.nps.application:different.needs.allergies.and.intolerances.sub.section.title',
+      defaultMessage: 'Ofnæmi og óþol',
+      description: 'Allergies and intolerances',
     },
-    schoolMealDescription: {
-      id: 'dess.nps.application:different.needs.school.meal.description',
-      defaultMessage:
-        'Öll grunnskólabörn eiga rétt á gjaldfrjálsri máltíð í hádeginu. Vinsamlegast merktu við hvort þú vilt þiggja eða afþakka mat fyrir barnið þitt. Þannig vinnum við saman gegn matarsóun.',
-      description:
-        'All primary school children are entitled to a free meal at lunch. Please mark whether you want to accept or decline food for your child. This is how we work together against food waste.',
-    },
-    schoolMealFreeMeals: {
-      id: 'dess.nps.application:different.needs.school.meal.free.meals',
-      defaultMessage: 'Munt þú nýta gjaldfrjálsa skólamáltíð?',
-      description: 'Will you take advantage of free school meals?',
-    },
-    foodAllergiesAndIntolerances: {
-      id: 'dess.nps.application:different.needs.food.allergies.and.intolerances',
+    foodAllergiesAndIntolerancesTitle: {
+      id: 'dess.nps.application:different.needs.food.allergies.and.intolerances.title',
       defaultMessage: 'Fæðuofnæmi og -óþol',
       description: 'Food allergies and intolerances',
     },
@@ -446,9 +434,9 @@ export const newPrimarySchoolMessages: MessageDir = {
     confirmFoodAllergiesAlertMessage: {
       id: 'dess.nps.application:different.needs.confirm.food.allergies.alert.message',
       defaultMessage:
-        'Athugið að skóli getur krafist vottorðs frá lækni til staðfestingar á fæðuofnæmi.',
+        'Athugið að skóli mun krefjast vottorðs frá lækni til staðfestingar á fæðuofnæmi.',
       description:
-        'Please note that the school may require a certificate from a doctor to confirm food allergies.',
+        "Please note that the school will require a doctor's certificate to confirm food allergies.",
     },
     childHasFoodIntolerances: {
       id: 'dess.nps.application:different.needs.child.has.food.intolerances',
@@ -465,10 +453,10 @@ export const newPrimarySchoolMessages: MessageDir = {
       defaultMessage: 'Veldu tegund óþols',
       description: 'Select type of intolerances',
     },
-    epinephrinePen: {
-      id: 'dess.nps.application:different.needs.epinephrine.pen',
-      defaultMessage: 'Notar barnið adrenalínpenna?',
-      description: 'Does the child use an epinephrine pen?',
+    usesEpinephrinePen: {
+      id: 'dess.nps.application:different.needs.uses.epinephrine.pen',
+      defaultMessage: 'Notar adrenalínpenna',
+      description: 'Uses epinephrine pen',
     },
     eggAllergy: {
       id: 'dess.nps.application:different.needs.egg.allergy',

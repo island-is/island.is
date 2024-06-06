@@ -24,34 +24,29 @@ export const getApplicationAnswers = (answers: Application['answers']) => {
 
   const siblings = getValueViaPath(answers, 'siblings') as SiblingsRow[]
 
-  const isRequestingFreeSchoolMeals = getValueViaPath(
-    answers,
-    'schoolMeal.isRequestingFreeSchoolMeals',
-  ) as YesOrNo
-
   const hasFoodAllergies = getValueViaPath(
     answers,
-    'schoolMeal.hasFoodAllergies',
+    'allergiesAndIntolerances.hasFoodAllergies',
   ) as string[]
 
   const foodAllergies = getValueViaPath(
     answers,
-    'schoolMeal.foodAllergies',
+    'allergiesAndIntolerances.foodAllergies',
   ) as FoodAllergiesOptions
 
   const hasFoodIntolerances = getValueViaPath(
     answers,
-    'schoolMeal.hasFoodIntolerances',
+    'allergiesAndIntolerances.hasFoodIntolerances',
   ) as string[]
 
   const foodIntolerances = getValueViaPath(
     answers,
-    'schoolMeal.foodIntolerances',
+    'allergiesAndIntolerances.foodIntolerances',
   ) as FoodIntolerancesOptions
 
   const isUsingEpiPen = getValueViaPath(
     answers,
-    'schoolMeal.isUsingEpiPen',
+    'allergiesAndIntolerances.isUsingEpiPen',
   ) as YesOrNo
 
   const developmentalAssessment = getValueViaPath(
@@ -96,7 +91,6 @@ export const getApplicationAnswers = (answers: Application['answers']) => {
     photographyConsent,
     photoSchoolPublication,
     photoMediaPublication,
-    isRequestingFreeSchoolMeals,
     hasFoodAllergies,
     foodAllergies,
     hasFoodIntolerances,

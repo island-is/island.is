@@ -91,7 +91,7 @@ const NewPrimarySchoolTemplate: ApplicationTemplate<
         },
       },
       [States.DRAFT]: {
-        exit: ['clearSchoolMeal', 'clearPublication'],
+        exit: ['clearAllergiesAndIntolerances', 'clearPublication'],
         meta: {
           name: States.DRAFT,
           status: 'draft',
@@ -161,20 +161,23 @@ const NewPrimarySchoolTemplate: ApplicationTemplate<
   stateMachineOptions: {
     actions: {
       /**
-       * If the use changes his answers,
+       * If the user changes his answers,
        * clear selected food allergies and intolerances.
        */
-      clearSchoolMeal: assign((context) => {
+      clearAllergiesAndIntolerances: assign((context) => {
         const { application } = context
         const { hasFoodAllergies, hasFoodIntolerances } = getApplicationAnswers(
           application.answers,
         )
 
         if (hasFoodAllergies?.length === 0) {
-          unset(application.answers, 'schoolMeal.foodAllergies')
+          unset(application.answers, 'allergiesAndIntolerances.foodAllergies')
         }
         if (hasFoodIntolerances?.length === 0) {
-          unset(application.answers, 'schoolMeal.foodIntolerances')
+          unset(
+            application.answers,
+            'allergiesAndIntolerances.foodIntolerances',
+          )
         }
         return context
       }),

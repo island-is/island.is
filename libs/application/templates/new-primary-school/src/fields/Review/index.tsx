@@ -11,11 +11,11 @@ import { States } from '../../lib/constants'
 import { newPrimarySchoolMessages } from '../../lib/messages'
 import { getApplicationAnswers } from '../../lib/newPrimarySchoolUtils'
 
+import { AllergiesAndIntolerances } from './review-groups/AllergiesAndIntolerances'
 import { Child } from './review-groups/Child'
 import { Parents } from './review-groups/Parents'
 import { Photography } from './review-groups/Photography'
 import { Relatives } from './review-groups/Relatives'
-import { SchoolMeal } from './review-groups/SchoolMeal'
 import { Siblings } from './review-groups/Siblings'
 import { Support } from './review-groups/Support'
 
@@ -151,7 +151,7 @@ export const Review: FC<ReviewScreenProps> = ({
       <Parents {...childProps} />
       <Relatives {...childProps} />
       <Siblings {...childProps} />
-      <SchoolMeal {...childProps} />
+      <AllergiesAndIntolerances {...childProps} />
       <Support {...childProps} />
       <Photography {...childProps} />
     </>

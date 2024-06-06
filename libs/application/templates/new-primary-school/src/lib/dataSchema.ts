@@ -103,10 +103,9 @@ export const dataSchema = z.object({
       params: errorMessages.siblingsRequired,
     }),
   startDate: z.string(),
-  schoolMeal: z
+  allergiesAndIntolerances: z
     .object({
       // TODO: Skoða betur þegar miltiSelect er tilbúið
-      isRequestingFreeSchoolMeals: z.enum([YES, NO]),
       hasFoodAllergies: z.array(z.string()),
       hasFoodIntolerances: z.array(z.string()),
       foodAllergies: z
@@ -127,7 +126,7 @@ export const dataSchema = z.object({
           FoodIntolerancesOptions.OTHER,
         ])
         .optional(),
-      isUsingEpiPen: z.enum([YES, NO]),
+      isUsingEpiPen: z.array(z.string()),
     })
     .refine(
       ({ hasFoodAllergies, foodAllergies }) =>
