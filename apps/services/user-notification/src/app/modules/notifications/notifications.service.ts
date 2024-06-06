@@ -27,7 +27,6 @@ import { mapToContentfulLocale, mapToLocale } from './utils'
 import { ContentfulGraphQLClientService } from '@island.is/clients/contentful-graphql'
 import { GetTemplateByTemplateId,GetTemplates,GetOrganizationByKennitala } from '@island.is/clients/contentful-graphql'
 
-
 /**
  * These are the properties that can be replaced in the template
  */
@@ -65,15 +64,13 @@ export class NotificationsService {
       kennitala: senderId,
       locale: mapToContentfulLocale(locale),
     };
-    // try...........................
     const res = await this.contentfulGraphQLClientService.fetchData(
       GetOrganizationByKennitala, 
       queryVariables
-  );
+    );
     const items = res.organizationCollection.items;
     if(items.length > 0){
-      console.log(items[0]) // ............................................................
-      return items[0] //{title:items[0].title}
+      return items[0] 
     } else {
       this.logger.warn(`Organization title not found for senderId: ${senderId}`)
     }
@@ -391,3 +388,4 @@ export class NotificationsService {
     }
   }
 }
+
