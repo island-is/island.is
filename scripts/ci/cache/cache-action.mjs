@@ -17,6 +17,14 @@ if (Object.keys(ENABLED_MODULES).length === 0) {
   throw new Error(`No cache modules enabled, set env key ${ENV_ENABLED_CACHE}`)
 }
 
+const invalidModules = Object.keys(ENABLED_MODULES).filter((e) => {
+  return caches.find((c) => c.id === e) == null
+});
+
+if (invalidModules.length > 0) {
+  throw new Error(`Invalid modules ${invalidModules.join(', ')}`)
+}
+
 console.log(`Enabled modules ${caches.map((e) => e.name).join(', ')}`)
 if (!HAS_HASH_KEYS) {
   console.log('Generating cache hashes')
@@ -147,10 +155,7 @@ for (const cache of checkCache) {
 
 if (failedJobs.length > 0) {
   console.log('Failed caches: ', failedJobs.map((e) => e.id).join(', '))
-  setTimeout(() => {
-    process.exit(1)
-  }, 5000)
-  //process.exit(1)
+  process.exit(1)
 } else {
   console.log('All caches are restored successfully')
   // Kill all promiseses we don't need

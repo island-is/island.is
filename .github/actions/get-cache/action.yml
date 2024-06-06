@@ -11,9 +11,6 @@ inputs:
     description: 'Keys'
     default: 'false'
 outputs:
-  success:
-    description: 'Success'
-    value: ${{ steps.run-post-cache.outputs.success }}
   keys:
     description: 'Keys'
     value: ${{ steps.get-cache-keys.outputs._CACHE_KEYS }}

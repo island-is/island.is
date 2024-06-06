@@ -23,3 +23,7 @@ jobs:
         with:
           github-token: ${{ secrets.GITHUB_TOKEN }}
           enable-cache: 'node_modules,cypress,generated-files'
+      - name: Debug
+        shell: bash
+        run: |
+          echo "Cache keys: ${{ steps.get-cache.outputs.keys }}"
