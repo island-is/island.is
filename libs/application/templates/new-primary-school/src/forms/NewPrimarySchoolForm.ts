@@ -612,28 +612,6 @@ export const NewPrimarySchoolForm: Form = buildForm({
           ],
         }),
         buildSubSection({
-          id: 'schoolBusSubSection',
-          title:
-            newPrimarySchoolMessages.differentNeeds.schoolBusSubSectionTitle,
-          children: [
-            buildMultiField({
-              id: 'schoolBus',
-              title: newPrimarySchoolMessages.differentNeeds.schoolBusTitle,
-              children: [
-                buildAlertMessageField({
-                  id: 'schoolBus.info',
-                  title: newPrimarySchoolMessages.shared.alertTitle,
-                  message:
-                    newPrimarySchoolMessages.differentNeeds
-                      .schoolBusAlertMessage,
-                  doesNotRequireAnswer: true,
-                  alertType: 'info',
-                }),
-              ],
-            }),
-          ],
-        }),
-        buildSubSection({
           id: 'useOfFootageSubSection',
           title:
             newPrimarySchoolMessages.differentNeeds.useOfFootageSubSectionTitle,
