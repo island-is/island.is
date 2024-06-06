@@ -146,9 +146,23 @@ export const newPrimarySchoolMessages: MessageDir = {
     noChildrenFoundReasons: {
       id: 'dess.nps.application:prerequisites.nochildren.reasons#markdown',
       defaultMessage:
-        'Ástæður fyrir því gætu verið eftirfarandi:\n\n\n* Þú ert ekki skráður forsjáraðili hjá Þjóðskrá með lögheimilistengsl. \n* Barnið er ekki skráð í Þjóðskrá.',
+        'Eingöngu sá sem er með lögheimilisforsjá hefur heimild til að sækja um fyrir barn. Ástæður fyrir því að þú ert ekki með skráð barn geta verið eftirfarandi:\n\n\n* Þú ert ekki skráður forsjáraðili hjá Þjóðskrá með lögheimilistengsl. \n* Barnið er ekki skráð í Þjóðskrá.',
       description:
-        'You are not registered as a legal guardian with a domicile connection in the National Registry. The child is not registered in the National Registry.',
+        'Only the person who has legal custody has the authority to apply for a child. Reasons why you do not have a registered child may include the following',
+    },
+    noChildrenFoundNationalRegistryDescription: {
+      id: 'dess.nps.application:prerequisites.nochildren.national.registry.description',
+      defaultMessage:
+        'Þjóðskrá skráir hver eða hverjir teljast foreldrar barns og hver fari með forsjárskyldur þess. Upplýsingar um skráningu forsjár og lögheimilisforeldris má nálgast hér: [Foreldrar og forsjá | Þjóðskrá (skra.is)](https://www.skra.is/folk/skraning-barns/foreldrar-og-forsja/)',
+      description:
+        'The National Registry records who or which individuals are considered to be the parents of a child and who has custody responsibilities. Information on registering custody and legal guardianship can be found here: [Parents and Custody | National Registry (skra.is)](https://www.skra.is/folk/skraning-barns/foreldrar-og-forsja/)',
+    },
+    noChildrenFoundIslandisDescription: {
+      id: 'dess.nps.application:prerequisites.nochildren.islandis.description',
+      defaultMessage:
+        'Upplýsingum um tengsl á milli barna og foreldra auk forsjáraðila eru einnig aðgengilegar á [Mínum síðum á Ísland.is](https://island.is/minarsidur)',
+      description:
+        'Information about the relationship between children and parents, as well as custody authorities, is also available on [My Pages on Iceland.is](https://island.is/minarsidur)',
     },
     noChildrenFoundNationalRegistryInfo: {
       id: 'dess.nps.application:prerequisites.nochildren.national.registry.info#markdown',
