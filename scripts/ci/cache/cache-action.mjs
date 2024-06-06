@@ -19,7 +19,7 @@ if (Object.keys(ENABLED_MODULES).length === 0) {
 
 const invalidModules = Object.keys(ENABLED_MODULES).filter((e) => {
   return caches.find((c) => c.id === e) == null
-});
+})
 
 if (invalidModules.length > 0) {
   throw new Error(`Invalid modules ${invalidModules.join(', ')}`)
@@ -92,7 +92,7 @@ const checkCache = await Promise.all(
     if (isOk) {
       console.log(`Restored cache for ${e.name}`)
       if (e.post) {
-        await tryRun(e.post, e.name, [resolve(ROOT, e.path)]);
+        await tryRun(e.post, e.name, [resolve(ROOT, e.path)])
       }
     }
     return {
@@ -130,7 +130,7 @@ for (const cache of checkCache) {
     const success = await (async () => {
       try {
         const value = await cache.check(successInit, fileName)
-        return value;
+        return value
       } catch (e) {
         console.error(e)
         return false
