@@ -164,6 +164,4 @@ if (failedJobs.length > 0) {
   console.log('All caches are restored successfully')
   // Kill all promiseses we don't need
   process.exit(0)
-
 }
-
