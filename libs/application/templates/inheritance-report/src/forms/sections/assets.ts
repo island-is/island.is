@@ -498,6 +498,7 @@ export const assets = buildSection({
                   {
                     title: m.stocksOrganization,
                     id: 'description',
+                    required: true,
                   },
                   {
                     title: m.stocksNationalId,

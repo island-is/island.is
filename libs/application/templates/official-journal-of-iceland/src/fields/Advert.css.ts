@@ -1,6 +1,15 @@
 import { theme } from '@island.is/island-ui/theme'
 import { globalStyle, style } from '@vanilla-extract/css'
 
+export const inputWrapper = style({
+  width: '50%',
+
+  '@media': {
+    [`screen and (max-width: ${theme.breakpoints.lg}px)`]: {
+      width: '100%',
+    },
+  },
+})
 export const modalBase = style({
   height: '100%',
   display: 'block',
@@ -20,7 +29,9 @@ export const modal = style({
   rowGap: theme.spacing[4],
   padding: theme.spacing[3],
   maxWidth: '888px',
+  height: '90vh',
   width: '100%',
+  overflowY: 'auto',
   borderRadius: theme.border.radius.large,
   boxShadow: '0px 4px 30px rgba(0, 97, 255, 0.16)',
   background: theme.color.white,

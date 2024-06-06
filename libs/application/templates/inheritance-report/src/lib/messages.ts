@@ -633,7 +633,7 @@ export const m = defineMessages({
     description: '',
   },
   stocksDescription: {
-    id: 'ir.application:stocksDescription',
+    id: 'ir.application:stocksDescription#markdown',
     defaultMessage: 'Nafn og kennitala ef um einstakling er að ræða.',
     description: '',
   },
@@ -970,6 +970,31 @@ export const m = defineMessages({
     defaultMessage: 'Tegund skuldar',
     description: '',
   },
+  debtOverDraft: {
+    id: 'ir.application:debtOverDraft',
+    defaultMessage: 'Yfirdráttur',
+    description: 'Selection for debts: Overdraft',
+  },
+  debtCreditCard: {
+    id: 'ir.application:debtCreditCard',
+    defaultMessage: 'Kreditkort',
+    description: 'Selection for debts: Credit card',
+  },
+  debtLoan: {
+    id: 'ir.application:debtLoan',
+    defaultMessage: 'Lán',
+    description: 'Selection for debts: Loan',
+  },
+  debtInsuranceCompany: {
+    id: 'ir.application:debtInsuranceCompany',
+    defaultMessage: 'Tryggingastofnun',
+    description: 'Selection for debts: Insurance company',
+  },
+  debtPropertyFees: {
+    id: 'ir.application:debtPropertyFees',
+    defaultMessage: 'Fasteignagjöld',
+    description: 'Selection for debts: Property fees',
+  },
   creditorsNationalId: {
     id: 'ir.application:creditorsNationalId',
     defaultMessage: 'Kennitala',
@@ -1177,6 +1202,11 @@ export const m = defineMessages({
   },
   deceasedShare: {
     id: 'ir.application:deceasedShare',
+    defaultMessage: 'Hlutfall séreignar',
+    description: '',
+  },
+  deceasedSharePart: {
+    id: 'ir.application:deceasedSharePart',
     defaultMessage: 'Hlutfall séreignar',
     description: '',
   },
