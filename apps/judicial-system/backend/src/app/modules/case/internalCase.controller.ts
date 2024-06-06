@@ -80,9 +80,27 @@ export class InternalCaseController {
     @Body() internalCasesDto: InternalCasesDto,
   ): Promise<Case[]> {
     this.logger.debug('Getting all indictment cases')
-    const nationalId = formatNationalId(internalCasesDto.nationalId)
 
-    return this.internalCaseService.getIndictmentCases(nationalId)
+    return this.internalCaseService.getIndictmentCases(
+      internalCasesDto.nationalId,
+    )
+  }
+
+  @Post('cases/indictment/:caseId')
+  @ApiOkResponse({
+    type: Case,
+    description: 'Gets indictment case by id',
+  })
+  getIndictmentCase(
+    @Param('caseId') caseId: string,
+    @Body() internalCasesDto: InternalCasesDto,
+  ): Promise<Case | null> {
+    this.logger.debug(`Getting indictment case ${caseId}`)
+
+    return this.internalCaseService.getIndictmentCase(
+      caseId,
+      internalCasesDto.nationalId,
+    )
   }
 
   @UseGuards(CaseExistsGuard)

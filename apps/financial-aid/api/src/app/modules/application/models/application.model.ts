@@ -27,6 +27,9 @@ export class ApplicationModel implements Application {
   readonly modified!: string
 
   @Field()
+  readonly appliedDate!: string
+
+  @Field()
   readonly nationalId!: string
 
   @Field()

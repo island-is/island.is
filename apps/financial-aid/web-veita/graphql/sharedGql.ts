@@ -7,6 +7,7 @@ export const ApplicationQuery = gql`
       applicationSystemId
       nationalId
       created
+      appliedDate
       modified
       name
       phoneNumber
@@ -150,6 +151,7 @@ export const UpdateApplicationTableMutation = gql`
         email
         modified
         created
+        appliedDate
         state
         staff {
           name
@@ -178,6 +180,7 @@ export const ApplicationsQuery = gql`
       email
       modified
       created
+      appliedDate
       state
       staff {
         name
@@ -208,6 +211,7 @@ export const ApplicationEventMutation = gql`
       nationalId
       created
       modified
+      appliedDate
       name
       phoneNumber
       email
@@ -328,6 +332,7 @@ export const UpdateApplicationMutation = gql`
       nationalId
       created
       modified
+      appliedDate
       name
       phoneNumber
       email

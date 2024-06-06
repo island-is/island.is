@@ -97,16 +97,16 @@ const Users = () => {
                         variant="text"
                         icon="arrowForward"
                         size="small"
-                        onClick={() =>
+                        onClick={async () =>
                           navigate(
                             replaceParams({
                               href: ServiceDeskPaths.User,
                               params: {
                                 nationalId:
-                                  maskString(
+                                  (await maskString(
                                     nationalId,
                                     userInfo?.profile?.nationalId ?? '',
-                                  ) ?? '',
+                                  )) ?? '',
                               },
                             }),
                           )
