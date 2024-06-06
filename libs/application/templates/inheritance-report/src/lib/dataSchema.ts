@@ -9,6 +9,11 @@ import {
 } from './utils/helpers'
 import { m } from './messages'
 import { NO, YES } from '@island.is/application/core'
+import {
+  ESTATE_INHERITANCE,
+  PREPAID_INHERITANCE,
+  RelationSpouse,
+} from './constants'
 
 const deceasedShare = {
   deceasedShare: z.string().nonempty().optional(),
@@ -166,6 +171,8 @@ export const inheritanceReportSchema = z.object({
         path: ['spouse', 'phone'],
       },
     ),
+
+  applicationFor: z.enum([ESTATE_INHERITANCE, PREPAID_INHERITANCE]),
 
   /* assets */
   assets: z.object({
@@ -567,8 +574,7 @@ export const inheritanceReportSchema = z.object({
         (v) => {
           if (v.length > 0) {
             const count = v.filter(
-              (x) =>
-                x.enabled && (x.relation === 'Maki' || x.relation === 'Spouse'),
+              (x) => x.enabled && x.relation === RelationSpouse,
             )?.length
             return count <= 1
           }

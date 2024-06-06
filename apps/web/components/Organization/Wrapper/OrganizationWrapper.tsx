@@ -14,6 +14,7 @@ import {
   GridRow,
   Inline,
   Link,
+  LinkV2,
   Navigation,
   NavigationItem,
   ProfileCard,
@@ -123,6 +124,7 @@ interface WrapperProps {
   showExternalLinks?: boolean
   showReadSpeaker?: boolean
   isSubpage?: boolean
+  backLink?: { text: string; url: string }
 }
 
 interface HeaderProps {
@@ -195,7 +197,7 @@ export const OrganizationHeader: React.FC<
 > = ({ organizationPage }) => {
   const { linkResolver } = useLinkResolver()
   const namespace = useMemo(
-    () => JSON.parse(organizationPage?.organization?.namespace?.fields ?? '{}'),
+    () => JSON.parse(organizationPage?.organization?.namespace?.fields || '{}'),
     [organizationPage?.organization?.namespace?.fields],
   )
   const n = useNamespace(namespace)
@@ -522,7 +524,7 @@ export const OrganizationFooter: React.FC<
     : organizations.find((x) => x?.footerItems?.length > 0)
 
   const namespace = useMemo(
-    () => JSON.parse(organization?.namespace?.fields ?? '{}'),
+    () => JSON.parse(organization?.namespace?.fields || '{}'),
     [],
   )
   const n = useNamespace(namespace)
@@ -872,6 +874,7 @@ export const OrganizationWrapper: React.FC<
   showExternalLinks = false,
   showReadSpeaker = true,
   isSubpage = true,
+  backLink,
 }) => {
   const router = useRouter()
   const { width } = useWindowSize()
@@ -922,21 +925,39 @@ export const OrganizationWrapper: React.FC<
           fullWidthContent={fullWidthContent}
           sidebarContent={
             <SidebarContainer>
-              <Navigation
-                baseId="pageNav"
-                items={navigationData.items}
-                title={navigationData.title}
-                activeItemTitle={activeNavigationItemTitle}
-                renderLink={(link, item) => {
-                  return item?.href ? (
-                    <NextLink href={item?.href} legacyBehavior>
-                      {link}
-                    </NextLink>
-                  ) : (
-                    link
-                  )
-                }}
-              />
+              <Stack space={3}>
+                {backLink && (
+                  <Box display={['none', 'none', 'block']} printHidden>
+                    <LinkV2 href={backLink.url}>
+                      <Button
+                        preTextIcon="arrowBack"
+                        preTextIconType="filled"
+                        size="small"
+                        type="button"
+                        variant="text"
+                        truncate
+                      >
+                        {backLink.text}
+                      </Button>
+                    </LinkV2>
+                  </Box>
+                )}
+                <Navigation
+                  baseId="pageNav"
+                  items={navigationData.items}
+                  title={navigationData.title}
+                  activeItemTitle={activeNavigationItemTitle}
+                  renderLink={(link, item) => {
+                    return item?.href ? (
+                      <NextLink href={item?.href} legacyBehavior>
+                        {link}
+                      </NextLink>
+                    ) : (
+                      link
+                    )
+                  }}
+                />
+              </Stack>
               {showSecondaryMenu && (
                 <>
                   {organizationPage.secondaryMenu &&
