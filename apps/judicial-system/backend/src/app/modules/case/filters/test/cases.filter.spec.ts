@@ -419,7 +419,11 @@ describe('getCasesQueryFilter', () => {
                     { state: completedRequestCaseStates },
                   ],
                 },
-                { defender_national_id: user.nationalId },
+                {
+                  defender_national_id: {
+                    [Op.or]: [user.nationalId, user.nationalId],
+                  },
+                },
               ],
             },
             {
@@ -433,7 +437,9 @@ describe('getCasesQueryFilter', () => {
                   ],
                 },
                 {
-                  '$defendants.defender_national_id$': user.nationalId,
+                  '$defendants.defender_national_id$': {
+                    [Op.or]: [user.nationalId, user.nationalId],
+                  },
                 },
               ],
             },
