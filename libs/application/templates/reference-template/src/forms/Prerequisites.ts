@@ -7,8 +7,6 @@ import {
   buildSubmitField,
   buildExternalDataProvider,
   buildDataProviderItem,
-  buildTextField,
-  buildKeyValueField,
 } from '@island.is/application/core'
 import { Application, Form, FormModes } from '@island.is/application/types'
 import { m } from '../lib/messages'
@@ -24,75 +22,6 @@ export const Prerequisites: Form = buildForm({
   title: 'Skilyrði',
   mode: FormModes.DRAFT,
   children: [
-    buildSection({
-      id: 'testMultiFieldSpaces',
-      title: 'Test MultiField Spaces',
-      children: [
-        buildMultiField({
-          id: 'testMultiFieldSpaces',
-          title: 'Test MultiField Spaces',
-          space: 'containerGutter',
-          children: [
-            buildKeyValueField({
-              label: 'Test MultiField Spaces',
-              condition: (answers) => true,
-              value: 'Test MultiField Spaces',
-            }),
-            buildKeyValueField({
-              label: 'Test MultiField Spaces',
-              condition: (answers) => true,
-              value: 'Test MultiField Spaces',
-            }),
-            buildKeyValueField({
-              label: 'Test MultiField Spaces',
-              condition: (answers) => true,
-              value: 'Test MultiField Spaces',
-            }),
-            buildKeyValueField({
-              label: 'Test MultiField Spaces',
-              condition: (answers) => false,
-              value: 'Test MultiField Spaces',
-            }),
-            buildDescriptionField({
-              id: 'testMultiFieldSpacesDescription',
-              title: 'Test MultiField Spaces Description',
-              description: 'This is a test description',
-              condition: (formValue) => false,
-            }),
-            buildDescriptionField({
-              id: 'testMultiFieldSpacesDescriptionA',
-              title: 'Test MultiField Spaces DescriptionA',
-              description: 'This is a test descriptionA',
-            }),
-            buildTextField({
-              id: 'injuredPersonInformation.jobTitle',
-              title: 'testInput',
-              backgroundColor: 'blue',
-              width: 'full',
-              maxLength: 100,
-            }),
-            buildDescriptionField({
-              id: 'testMultiFieldSpacesDescriptionAA',
-              title: 'Test MultiField Spaces DescriptionAA',
-              description: 'This is a test descriptionAA',
-              condition: (formValue) => false,
-              space: 'gutter',
-            }),
-            buildDescriptionField({
-              id: 'testMultiFieldSpacesDescriptionAAA',
-              title: 'Test MultiField Spaces DescriptionAAA',
-              description: 'This is a test descriptionAAA',
-              space: 'gutter',
-            }),
-            buildDescriptionField({
-              id: 'testMultiFieldSpacesDescriptionAAA',
-              title: 'Test MultiField Spaces DescriptionAAAA',
-              description: 'This is a test descriptionAAAA',
-            }),
-          ],
-        }),
-      ],
-    }),
     buildSection({
       id: 'conditions',
       title: m.conditionsSection,
