@@ -267,14 +267,15 @@ const MunicipalityAdminSettings = ({ currentMunicipality }: Props) => {
       ),
     },
     {
-      headline: 'Desemberstyrkur',
-      smallText: 'Upphæð er bætt við þegar umsókn er samþykkt í nóvember',
+      headline: 'Desember uppbót',
+      smallText:
+        'Hlutfallið sem er tekið af grunnupphæð og bætt við einungis í umsóknum í nóvember',
       component: (
         <NumberInput
           id={`input-desember`}
           name={`decemberCompensation`}
           label="Desemberstyrkur"
-          maximumInputLength={6}
+          maximumInputLength={3}
           value={state.decemberCompensation.toString()}
           hasError={
             hasDecemberCompensationError && state.decemberCompensation === 0
