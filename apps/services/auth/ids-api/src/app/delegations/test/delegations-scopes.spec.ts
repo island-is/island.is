@@ -4,10 +4,7 @@ import faker from 'faker'
 import { Sequelize } from 'sequelize-typescript'
 import request from 'supertest'
 
-import {
-  DelegationsIndexService,
-  DelegationType,
-} from '@island.is/auth-api-lib'
+import { DelegationType } from '@island.is/auth-api-lib'
 import { FixtureFactory } from '@island.is/services/auth/testing'
 import {
   createCurrentUser,
