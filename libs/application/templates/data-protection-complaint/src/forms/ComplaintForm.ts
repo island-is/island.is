@@ -234,10 +234,6 @@ export const ComplaintForm: Form = buildForm({
                     },
                   ],
                 }),
-                buildAlertMessageField({
-                  id: 'forceFeatureDeploy',
-                  title: 'Testing',
-                }),
               ],
             }),
           ],

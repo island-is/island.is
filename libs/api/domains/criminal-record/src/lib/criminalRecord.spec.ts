@@ -1,9 +1,6 @@
 import { Test } from '@nestjs/testing'
 import { CriminalRecordService } from './criminalRecord.service'
-import {
-  CriminalRecordApiModule,
-  CriminalRecordClientConfig,
-} from '@island.is/clients/criminal-record'
+import { CriminalRecordApiModule } from '@island.is/clients/criminal-record'
 import {
   MOCK_NATIONAL_ID,
   MOCK_NATIONAL_ID_NOT_EXISTS,
@@ -27,13 +24,13 @@ describe('CriminalRecordService', () => {
           load: [
             defineConfig({
               name: 'CriminalRecordClient',
-              load: (env) => ({
+              load: () => ({
                 xRoadServicePath: 'v2',
               }),
             }),
             defineConfig({
               name: 'XRoadConfig',
-              load: (env) => ({
+              load: () => ({
                 xRoadBasePath: 'http://localhost',
                 xRoadClient: '',
               }),
