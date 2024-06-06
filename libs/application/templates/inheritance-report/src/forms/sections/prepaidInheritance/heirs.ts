@@ -8,6 +8,7 @@ import {
   buildTextField,
 } from '@island.is/application/core'
 import { m } from '../../../lib/messages'
+import { prepaidOverview } from './overview'
 
 export const prePaidHeirs = buildSection({
   id: 'heirs',
@@ -117,5 +118,6 @@ export const prePaidHeirs = buildSection({
         }),
       ],
     }),
+    prepaidOverview,
   ],
 })
