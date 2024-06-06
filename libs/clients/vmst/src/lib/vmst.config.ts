@@ -7,7 +7,7 @@ const schema = z.object({
   vmstMemberCode: z.string(),
   vmstMemberClass: z.nativeEnum(XRoadMemberClass),
   vmstApiPath: z.string(),
-  xraodBasePathWithEnv: z.string(),
+  xroadBasePathWithEnv: z.string(),
 })
 
 const XROAD_VMST_MEMBER_CLASS = XRoadMemberClass.GovernmentInstitution
@@ -21,7 +21,7 @@ export const VmstClientConfig = defineConfig<z.infer<typeof schema>>({
       vmstMemberCode: env.required('XROAD_VMST_MEMBER_CODE', ''),
       vmstMemberClass: XROAD_VMST_MEMBER_CLASS,
       vmstApiPath: env.required('XROAD_VMST_API_PATH', ''),
-      xraodBasePathWithEnv: env.required('XROAD_BASE_PATH_WITH_ENV', ''),
+      xroadBasePathWithEnv: env.required('XROAD_BASE_PATH_WITH_ENV', ''),
     }
   },
 })

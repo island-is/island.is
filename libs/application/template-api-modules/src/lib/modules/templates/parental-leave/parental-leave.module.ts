@@ -1,11 +1,5 @@
 import { DynamicModule } from '@nestjs/common'
-
 import { VMSTModule } from '@island.is/clients/vmst'
-import {
-  createXRoadAPIPath,
-  XRoadMemberClass,
-} from '@island.is/shared/utils/server'
-
 import { BaseTemplateAPIModuleConfig } from '../../../types'
 import { SharedTemplateAPIModule } from '../../shared'
 import { ParentalLeaveService } from './parental-leave.service'

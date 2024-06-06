@@ -16,9 +16,7 @@ import { DataProtectionComplaintClientConfig } from './data-protection-complaint
       useFactory: (
         config: ConfigType<typeof DataProtectionComplaintClientConfig>,
         securityApi,
-      ) => {
-        new TokenMiddleware(config, securityApi)
-      },
+      ) => new TokenMiddleware(config, securityApi),
       inject: [DataProtectionComplaintClientConfig.KEY, SecurityApi],
     },
     ...exportedApis,

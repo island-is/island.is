@@ -16,7 +16,7 @@ export const ApiConfiguration = {
     new Configuration({
       fetchApi: isRunningOnProduction ? fetch : createWrappedFetchWithLogging,
       basePath: createXRoadAPIPath(
-        config.xraodBasePathWithEnv,
+        config.xroadBasePathWithEnv,
         config.vmstMemberClass,
         config.vmstMemberCode,
         config.vmstApiPath,

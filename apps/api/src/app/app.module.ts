@@ -226,7 +226,7 @@ const environment = getConfig
       baseApiUrl: environment.applicationSystem.baseApiUrl!,
     }),
     LicenseServiceModule,
-    DirectorateOfLabourModule.register(),
+    DirectorateOfLabourModule,
     FileUploadModule,
     DocumentModule,
     DocumentProviderModule.register({
