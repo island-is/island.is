@@ -8,7 +8,7 @@ export async function saveCache({ key, path }) {
   let cache
   if (!process.env.CI) {
     // For testing
-    return false;
+    return false
   }
   const paths = (Array.isArray(path) ? path : [path]).map((e) =>
     resolve(ROOT, e),

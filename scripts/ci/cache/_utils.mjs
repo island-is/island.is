@@ -186,7 +186,7 @@ export async function runCommand(cmd, cwd = undefined, env = {}) {
         console.error(`Failed to run command: ${cmd} returning code ${code}`)
         reject(`Error: Process exited with code ${code}`)
         return
-      } 
+      }
       resolve(void 0)
     })
 
@@ -211,7 +211,6 @@ export async function getPackageJSON(
   const content = JSON.parse(await readFile(filePath, 'utf-8'))
   return content
 }
-
 
 export function arrayIncludesOneOf(array, values) {
   return values.some((value) => array.includes(value))

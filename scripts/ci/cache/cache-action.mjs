@@ -97,10 +97,17 @@ const succesFullJobs = []
 
 for (const cache of checkCache) {
   if (!cache.isOk) {
-    if ((cache.dependsOn && arrayIncludesOneOf(failedJobs.map((e) => e.name), cache.dependsOn)) || HAS_HASH_KEYS) {
+    if (
+      (cache.dependsOn &&
+        arrayIncludesOneOf(
+          failedJobs.map((e) => e.name),
+          cache.dependsOn,
+        )) ||
+      HAS_HASH_KEYS
+    ) {
       console.error(`Failed restoring cache for ${cache.name}`)
       failedJobs.push(cache)
-      continue;
+      continue
     }
 
     const fileName = Array.isArray(cache.path)
