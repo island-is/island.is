@@ -23,6 +23,7 @@ import { TemplateApiError } from '@island.is/nest/problem'
 import {
   IdCardAnswers,
   Services,
+  isWithinExpirationDate,
 } from '@island.is/application/templates/id-card'
 import { generateApplicationRejectEmail } from './emailGenerators/rejectApplicationEmail'
 import { generateApplicationSubmittedEmail } from './emailGenerators/applicationSubmittedEmail'
@@ -51,6 +52,41 @@ export class IdCardService extends BaseTemplateApiService {
         {
           title: coreErrorMessages.failedDataProvider,
           summary: coreErrorMessages.errorDataProvider,
+        },
+        400,
+      )
+    }
+
+    const expDate = identityDocument.userPassport?.expirationDate?.toString()
+    // if applicant has valid id that is not withinExpirationDate, then not available for application,
+    // otherwise available, either with no id or id within expiration limit
+    const applicantIdentityWithinLimits = expDate
+      ? isWithinExpirationDate(expDate)
+      : true
+
+    let childIdentityWithinLimits = false
+    identityDocument.childPassports?.map((child) => {
+      if (child.passports && child.passports.length > 0) {
+        child.passports.map((id) => {
+          const withinLimits = id.expirationDate
+            ? isWithinExpirationDate(id.expirationDate.toString())
+            : true
+
+          if (withinLimits) {
+            // if there is any id for any child that is within limits then user should be let through dataProvider
+            childIdentityWithinLimits = true
+          }
+        })
+      } else {
+        childIdentityWithinLimits = true // if child has no id, then let through for application of new id
+      }
+    })
+
+    if (!applicantIdentityWithinLimits && !childIdentityWithinLimits) {
+      throw new TemplateApiError(
+        {
+          title: coreErrorMessages.idCardApplicationRequirementsNotMet,
+          summary: coreErrorMessages.idCardApplicationRequirementsNotMet,
         },
         400,
       )
@@ -202,6 +238,11 @@ export class IdCardService extends BaseTemplateApiService {
     // 2. Submit the application
     const answers = application.answers as IdCardAnswers
 
+    const combinedType = {
+      type: 'I',
+      subType: answers.typeOfId === 'II' ? 'I' : 'D',
+    }
+
     const userIsApplicant =
       answers.applicantInformation.nationalId === auth.nationalId
     const applicantInformation = answers.applicantInformation
@@ -233,6 +274,8 @@ export class IdCardService extends BaseTemplateApiService {
           phoneMobile: applicantInformation.phoneNumber,
           email: applicantInformation.email,
         },
+        type: combinedType.type,
+        subType: combinedType.subType,
       })
     } else {
       const approvalB = {
@@ -259,6 +302,8 @@ export class IdCardService extends BaseTemplateApiService {
           phoneMobile: firstGuardianInformation?.phoneNumber || '',
           email: firstGuardianInformation?.email || '',
         },
+        type: combinedType.type,
+        subType: combinedType.subType,
       })
     }
 
@@ -298,8 +343,4 @@ export class IdCardService extends BaseTemplateApiService {
         })
     }
   }
-
-  //   private log(lvl: 'error' | 'info', message: string, meta: unknown) {
-  //     this.logger.log(lvl, `[passport] ${message}`, meta)
-  //   }
 }

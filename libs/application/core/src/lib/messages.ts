@@ -656,6 +656,11 @@ export const coreErrorMessages = defineMessages({
     defaultMessage: 'Lágmarksaldur er {minAge} ára',
     description: 'Min age not fulfilled error',
   },
+  idCardApplicationRequirementsNotMet: {
+    id: 'application.system:core.fetch.data.idCardApplicationRequirementsNotMet',
+    defaultMessage: 'Þú uppfyllir ekki skilyrði fyrir umsókn um nafnskírteini',
+    description: 'Requirements for id card application not met',
+  },
 })
 
 export const coreDelegationsMessages = defineMessages({

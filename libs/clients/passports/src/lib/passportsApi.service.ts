@@ -116,7 +116,6 @@ export class PassportsService {
     type?: string | null,
   ): Promise<IdentityDocument[] | undefined> {
     try {
-      console.log('type here', type)
       const passportResponse = await this.getPassportsWithAuth(
         auth,
       ).identityDocumentGetIdentityDocument({
@@ -133,12 +132,14 @@ export class PassportsService {
 
   async getIdentityDocumentChildren(
     auth: User,
+    type?: string | null,
   ): Promise<IdentityDocumentChild[] | undefined> {
     try {
       const passportResponse = await this.getPassportsWithAuth(
         auth,
       ).identityDocumentGetChildrenIdentityDocument({
         xRoadClient: this.xroadConfig.xRoadClient,
+        type,
       })
 
       const childrenArray = passportResponse.map((child) => {
@@ -227,9 +228,8 @@ export class PassportsService {
     user: User,
     type?: string | null,
   ): Promise<Passport> {
-    console.log('typpppppe', type)
     const userPassports = await this.getIdentityDocument(user, type)
-    const childPassports = await this.getIdentityDocumentChildren(user)
+    const childPassports = await this.getIdentityDocumentChildren(user, type)
 
     const userPassport = userPassports
       ? userPassports.sort((a, b) =>

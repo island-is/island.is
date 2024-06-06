@@ -11,6 +11,8 @@ import {
   Routes,
 } from '../../../lib/constants'
 import { idInformation } from '../../../lib/messages/idInformation'
+import { isWithinExpirationDate } from '../../../utils'
+import { formatDate } from '../../../utils/formatDate'
 
 export const ChosenApplicantsSubSection = buildSubSection({
   id: Routes.CHOSENAPPLICANTS,
@@ -40,9 +42,9 @@ export const ChosenApplicantsSubSection = buildSubSection({
 
             const applicantPassport = getValueViaPath(
               application.externalData,
-              'identityDocument.data.userPassport', // TODO CHANGE THIS TO ID NOT PASSPORT
-              {},
-            ) as IdentityDocument
+              'identityDocument.data.userPassport',
+              undefined,
+            ) as IdentityDocument | undefined
 
             const applicantChildren = getValueViaPath(
               application.externalData,
@@ -50,35 +52,57 @@ export const ChosenApplicantsSubSection = buildSubSection({
               [],
             ) as Array<IdentityDocumentChild>
 
-            // TODO fix this any and type this correctly
+            const applicantIsDisabled = applicantPassport
+              ? !isWithinExpirationDate(applicantPassport.expirationDate)
+              : false
+
             const passportList: Array<any> = [
               {
                 label: applicantName,
                 subLabel: applicantPassport
                   ? {
                       ...idInformation.labels.idNumber,
-                      values: { passportNumber: applicantPassport?.number },
+                      values: {
+                        passportNumber: applicantPassport?.number,
+                        expirationDate: formatDate(
+                          new Date(applicantPassport.expirationDate),
+                        ),
+                      },
                     }
                   : {
                       ...idInformation.labels.noIdNumber,
                     },
                 value: applicantNationalId,
+                disabled: applicantIsDisabled,
               },
             ]
+
             applicantChildren.map((item) => {
+              const idDocument =
+                item.passports && item.passports.length > 0
+                  ? (item.passports[0] as IdentityDocument)
+                  : undefined
+              const isDisabled = idDocument
+                ? isWithinExpirationDate(idDocument.expirationDate)
+                : false
               return passportList.push({
                 label: item.childName,
-                subLabel:
-                  item.passports && item.passports.length > 0
-                    ? {
-                        ...idInformation.labels.idNumber,
-                        values: { passportNumber: item.passports[0].number },
-                      }
-                    : {
-                        ...idInformation.labels.noIdNumber,
+                subLabel: idDocument
+                  ? {
+                      ...idInformation.labels.idNumber,
+                      values: {
+                        passportNumber: idDocument.number,
+                        expirationDate: formatDate(
+                          new Date(idDocument.expirationDate),
+                        ),
                       },
+                    }
+                  : {
+                      ...idInformation.labels.noIdNumber,
+                    },
 
                 value: item.childNationalId,
+                disabled: isDisabled,
               })
             })
 

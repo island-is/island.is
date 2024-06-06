@@ -63,6 +63,8 @@ export interface PreregistrationInput {
   contactInfo?: ContactInfo
   documents?: Document[]
   deliveryName?: string
+  type?: string
+  subType?: string
 }
 
 export interface DocumentLossnInput {

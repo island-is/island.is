@@ -29,7 +29,7 @@ const personInfo = z
 
 export const IdCardSchema = z.object({
   approveExternalData: z.boolean().refine((v) => v),
-  typeOfId: z.enum(['WithTravel', 'WithoutTravel']),
+  typeOfId: z.enum(['II', 'ID']), //II = Nafnskírteini sem ferðaskilríki, ID = Nafnskírteini ekki sem ferðaskilríki
   chosenApplicants: z.string(),
   applicantInformation: personInfo,
   firstGuardianInformation: personInfo,

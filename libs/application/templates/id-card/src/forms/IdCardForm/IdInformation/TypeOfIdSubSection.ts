@@ -22,13 +22,14 @@ export const TypeOfIdSubSection = buildSubSection({
           width: 'half',
           required: true,
           options: [
+            //II = Nafnskírteini sem ferðaskilríki, ID = Nafnskírteini ekki sem ferðaskilríki
             {
               label: idInformation.labels.typeOfIdRadioAnswerOne,
-              value: 'WithTravel',
+              value: 'II',
             },
             {
               label: idInformation.labels.typeOfIdRadioAnswerTwo,
-              value: 'WithoutTravel',
+              value: 'ID',
             },
           ],
         }),

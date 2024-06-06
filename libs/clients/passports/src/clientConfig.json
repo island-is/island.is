@@ -163,6 +163,12 @@
         "operationId": "IdentityDocument_GetChildrenIdentityDocument",
         "parameters": [
           {
+            "name": "type",
+            "in": "query",
+            "schema": { "type": "string", "nullable": true },
+            "x-position": 1
+          },
+          {
             "name": "X-Road-Client",
             "in": "header",
             "required": true,

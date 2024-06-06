@@ -52,7 +52,7 @@ export const priceList = {
     },
     discountRegularPriceTitle: {
       id: 'id.application:priceList.labels.discountRegularPriceTitle',
-      defaultMessage: 'Almenn afgreiðsla: börn 4.600 kr.',
+      defaultMessage: 'Almenn afgreiðsla: börn, aldraðir, öryrkjar 4.600 kr.',
       description: 'Discount Regular price radio button title',
     },
     discountFastPriceTitle: {

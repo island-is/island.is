@@ -38,13 +38,6 @@ export enum Services {
   EXPRESS_DISCOUNT = 'expressDiscount',
 }
 
-export enum PASSPORT_CHARGE_CODES {
-  REGULAR = 'AY105',
-  EXPRESS = 'AY106',
-  DISCOUNT_REGULAR = 'AY107',
-  DISCOUNT_EXPRESS = 'AY108',
-}
-
 export enum ApiActions {
   assignParentB = 'assignParentB',
   submitApplication = 'submitApplication',
@@ -53,8 +46,7 @@ export enum ApiActions {
   checkForDiscount = 'checkForDiscount',
 }
 
-export const YES = 'yes'
-export const NO = 'no'
+export const EXPIRATION_LIMIT_MONTHS = 9
 
 export type Service = {
   type: Services
@@ -135,19 +127,3 @@ export interface IdentityDocumentData {
 export const twoDays = 24 * 3600 * 1000 * 2
 export const sixtyDays = 24 * 3600 * 1000 * 60
 export const sevenDays = 24 * 3600 * 1000 * 7
-
-export const IdentityDocumentProviderMock = {
-  productionRequestID: '3fa85f64-5717-4562-b3fc-2c963f66afa6',
-  number: 'A1234567',
-  type: 'P',
-  verboseType: 'Vegabréf: Almennt',
-  subType: 'A',
-  status: 'ISSUED',
-  issuingDate: new Date('2012-10-02'),
-  expirationDate: new Date('2022-10-02'),
-  displayFirstName: 'Gervimaður',
-  displayLastName: 'Mock',
-  mrzFirstName: 'GERVIMAÐUR',
-  mrzLastName: 'MOCK',
-  sex: 'X',
-}
