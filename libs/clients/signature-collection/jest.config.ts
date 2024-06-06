@@ -1,11 +1,17 @@
 /* eslint-disable */
 export default {
   displayName: 'clients-signature-collection',
-  preset: '../../../jest.preset.js',
+  preset: './jest.preset.js',
+  rootDir: '../../..',
+  roots: [__dirname],
+  globals: {},
   testEnvironment: 'node',
   transform: {
-    '^.+\\.[tj]s$': ['ts-jest', { tsconfig: '<rootDir>/tsconfig.spec.json' }],
+    '^.+\\.[tj]sx?$': [
+      'ts-jest',
+      { tsconfig: `${__dirname}/tsconfig.spec.json` },
+    ],
   },
-  moduleFileExtensions: ['ts', 'js', 'html'],
-  coverageDirectory: '../../../coverage/libs/clients/signature-collection',
+  moduleFileExtensions: ['ts', 'tsx', 'js', 'jsx'],
+  coverageDirectory: '<rootDir>/coverage/libs/clients/signature-collection',
 }
