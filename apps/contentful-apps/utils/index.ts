@@ -60,3 +60,13 @@ export const parseContentfulErrorMessage = (error: unknown) => {
   }
   return errorMessage
 }
+
+export const slugifyDate = (value: string) => {
+  if (!value) return ''
+  try {
+    const date = new Date(value)
+    return `${date.getDate()}-${date.getMonth() + 1}-${date.getFullYear()}`
+  } catch {
+    return ''
+  }
+}
