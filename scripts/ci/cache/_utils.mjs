@@ -166,6 +166,7 @@ export async function runCommand(cmd, cwd = undefined, env = {}) {
     const [command, ...args] = cmd.split(' ')
 
     const childProcess = spawn(command, args, options)
+    childProcess.stdout.setEncoding('utf-8');
     const errorChunks = []
     const outputChunks = []
 

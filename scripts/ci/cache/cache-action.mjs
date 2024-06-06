@@ -156,9 +156,14 @@ await Promise.allSettled(
 
 if (failedJobs.length > 0) {
   console.log('Failed caches: ', failedJobs.map((e) => e.id).join(', '))
-  process.exit(1)
-}
-console.log('All caches are restored successfully')
+  setTimeout(() => {
+    process.exit(1)
+  }, 5000)
+  //process.exit(1)
+} else {
+  console.log('All caches are restored successfully')
+  // Kill all promiseses we don't need
+  process.exit(0)
 
-// Kill all promiseses we don't need
-process.exit(0)
+}
+
