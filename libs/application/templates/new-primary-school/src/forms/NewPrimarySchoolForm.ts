@@ -9,6 +9,7 @@ import {
   buildPhoneField,
   buildRadioField,
   buildSection,
+  buildSelectField,
   buildSubSection,
   buildSubmitField,
   buildTableRepeaterField,
@@ -34,6 +35,8 @@ import {
   canApply,
   getApplicationAnswers,
   getApplicationExternalData,
+  getFoodAllergiesOptions,
+  getFoodIntolerancesOptions,
   getOtherParent,
   getRelationOptionLabel,
   getRelationOptions,
@@ -533,10 +536,124 @@ export const NewPrimarySchoolForm: Form = buildForm({
           children: [],
         }),
         buildSubSection({
-          id: 'schoolMealSubSection',
+          id: 'allergiesAndIntolerancesSubSection',
           title:
-            newPrimarySchoolMessages.differentNeeds.schoolMealSubSectionTitle,
-          children: [],
+            newPrimarySchoolMessages.differentNeeds
+              .allergiesAndIntolerancesSubSectionTitle,
+          children: [
+            buildMultiField({
+              id: 'allergiesAndIntolerances',
+              title:
+                newPrimarySchoolMessages.differentNeeds
+                  .foodAllergiesAndIntolerancesTitle,
+              description:
+                newPrimarySchoolMessages.differentNeeds
+                  .foodAllergiesAndIntolerancesDescription,
+              children: [
+                buildCheckboxField({
+                  id: 'allergiesAndIntolerances.hasFoodAllergies',
+                  title: '',
+                  spacing: 0,
+                  options: [
+                    {
+                      value: YES,
+                      label:
+                        newPrimarySchoolMessages.differentNeeds
+                          .childHasFoodAllergies,
+                    },
+                  ],
+                }),
+                buildSelectField({
+                  // TODO: Multi select
+                  id: 'allergiesAndIntolerances.foodAllergies',
+                  title:
+                    newPrimarySchoolMessages.differentNeeds.typeOfAllergies,
+                  dataTestId: 'food-allergies',
+                  placeholder:
+                    newPrimarySchoolMessages.differentNeeds
+                      .typeOfAllergiesPlaceholder,
+                  // TODO: Nota gögn fá Júní?
+                  options: getFoodAllergiesOptions(),
+                  condition: (answers) => {
+                    const { hasFoodAllergies } = getApplicationAnswers(answers)
+
+                    return hasFoodAllergies?.includes(YES)
+                  },
+                }),
+                buildAlertMessageField({
+                  id: 'allergiesAndIntolerances.info',
+                  title: newPrimarySchoolMessages.shared.alertTitle,
+                  message:
+                    newPrimarySchoolMessages.differentNeeds
+                      .confirmFoodAllergiesAlertMessage,
+                  doesNotRequireAnswer: true,
+                  alertType: 'info',
+                  marginBottom: 4,
+                  condition: (answers) => {
+                    const { hasFoodAllergies } = getApplicationAnswers(answers)
+
+                    return hasFoodAllergies?.includes(YES)
+                  },
+                }),
+                buildCheckboxField({
+                  id: 'allergiesAndIntolerances.hasFoodIntolerances',
+                  title: '',
+                  spacing: 0,
+                  options: [
+                    {
+                      value: YES,
+                      label:
+                        newPrimarySchoolMessages.differentNeeds
+                          .childHasFoodIntolerances,
+                    },
+                  ],
+                }),
+                buildSelectField({
+                  // TODO: Multi select
+                  id: 'allergiesAndIntolerances.foodIntolerances',
+                  title:
+                    newPrimarySchoolMessages.differentNeeds.typeOfIntolerances,
+                  dataTestId: 'food-intolerances',
+                  placeholder:
+                    newPrimarySchoolMessages.differentNeeds
+                      .typeOfIntolerancesPlaceholder,
+                  // TODO: Nota gögn fá Júní?
+                  options: getFoodIntolerancesOptions(),
+                  condition: (answers) => {
+                    const { hasFoodIntolerances } =
+                      getApplicationAnswers(answers)
+
+                    return hasFoodIntolerances?.includes(YES)
+                  },
+                }),
+                buildDescriptionField({
+                  // Needed to add space
+                  id: 'allergiesAndIntolerances.divider',
+                  title: '',
+                  marginBottom: 4,
+                  condition: (answers) => {
+                    const { hasFoodIntolerances } =
+                      getApplicationAnswers(answers)
+
+                    return hasFoodIntolerances?.includes(YES)
+                  },
+                }),
+                buildCheckboxField({
+                  id: 'allergiesAndIntolerances.isUsingEpiPen',
+                  title: '',
+                  spacing: 0,
+                  options: [
+                    {
+                      value: YES,
+                      label:
+                        newPrimarySchoolMessages.differentNeeds
+                          .usesEpinephrinePen,
+                    },
+                  ],
+                }),
+              ],
+            }),
+          ],
         }),
         buildSubSection({
           id: 'supportSubSection',
@@ -591,7 +708,7 @@ export const NewPrimarySchoolForm: Form = buildForm({
                   title: '',
                   description:
                     newPrimarySchoolMessages.differentNeeds.requestMeeting,
-                  options: () => [
+                  options: [
                     {
                       value: YES,
                       label:

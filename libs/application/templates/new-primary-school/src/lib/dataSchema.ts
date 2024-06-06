@@ -2,7 +2,12 @@ import { NO, YES } from '@island.is/application/types'
 import * as kennitala from 'kennitala'
 import { parsePhoneNumberFromString } from 'libphonenumber-js'
 import { z } from 'zod'
-import { RelationOptions, SiblingRelationOptions } from './constants'
+import {
+  FoodAllergiesOptions,
+  FoodIntolerancesOptions,
+  RelationOptions,
+  SiblingRelationOptions,
+} from './constants'
 import { errorMessages } from './messages'
 
 export const dataSchema = z.object({
@@ -98,6 +103,47 @@ export const dataSchema = z.object({
       params: errorMessages.siblingsRequired,
     }),
   startDate: z.string(),
+  allergiesAndIntolerances: z
+    .object({
+      // TODO: Skoða betur þegar miltiSelect er tilbúið
+      hasFoodAllergies: z.array(z.string()),
+      hasFoodIntolerances: z.array(z.string()),
+      foodAllergies: z
+        .enum([
+          FoodAllergiesOptions.EGG_ALLERGY,
+          FoodAllergiesOptions.FISH_ALLERGY,
+          FoodAllergiesOptions.PENUT_ALLERGY,
+          FoodAllergiesOptions.WHEAT_ALLERGY,
+          FoodAllergiesOptions.MILK_ALLERGY,
+          FoodAllergiesOptions.OTHER,
+        ])
+        .optional(),
+      foodIntolerances: z
+        .enum([
+          FoodIntolerancesOptions.LACTOSE_INTOLERANCE,
+          FoodIntolerancesOptions.GLUTEN_INTOLERANCE,
+          FoodIntolerancesOptions.MSG_INTOLERANCE,
+          FoodIntolerancesOptions.OTHER,
+        ])
+        .optional(),
+      isUsingEpiPen: z.array(z.string()),
+    })
+    .refine(
+      ({ hasFoodAllergies, foodAllergies }) =>
+        hasFoodAllergies.includes(YES) ? !!foodAllergies : true,
+      {
+        path: ['foodAllergies'],
+        params: errorMessages.foodAllergyRequired,
+      },
+    )
+    .refine(
+      ({ hasFoodIntolerances, foodIntolerances }) =>
+        hasFoodIntolerances.includes(YES) ? !!foodIntolerances : true,
+      {
+        path: ['foodIntolerances'],
+        params: errorMessages.foodIntoleranceRequired,
+      },
+    ),
   support: z.object({
     developmentalAssessment: z.enum([YES, NO]),
     specialSupport: z.enum([YES, NO]),

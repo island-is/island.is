@@ -7,7 +7,12 @@ import {
 } from '@island.is/application/types'
 import * as kennitala from 'kennitala'
 import { Child, Parents, Person, RelativesRow, SiblingsRow } from '../types'
-import { RelationOptions, SiblingRelationOptions } from './constants'
+import {
+  FoodAllergiesOptions,
+  FoodIntolerancesOptions,
+  RelationOptions,
+  SiblingRelationOptions,
+} from './constants'
 import { newPrimarySchoolMessages } from './messages'
 
 export const getApplicationAnswers = (answers: Application['answers']) => {
@@ -18,6 +23,31 @@ export const getApplicationAnswers = (answers: Application['answers']) => {
   const relatives = getValueViaPath(answers, 'relatives') as RelativesRow[]
 
   const siblings = getValueViaPath(answers, 'siblings') as SiblingsRow[]
+
+  const hasFoodAllergies = getValueViaPath(
+    answers,
+    'allergiesAndIntolerances.hasFoodAllergies',
+  ) as string[]
+
+  const foodAllergies = getValueViaPath(
+    answers,
+    'allergiesAndIntolerances.foodAllergies',
+  ) as FoodAllergiesOptions
+
+  const hasFoodIntolerances = getValueViaPath(
+    answers,
+    'allergiesAndIntolerances.hasFoodIntolerances',
+  ) as string[]
+
+  const foodIntolerances = getValueViaPath(
+    answers,
+    'allergiesAndIntolerances.foodIntolerances',
+  ) as FoodIntolerancesOptions
+
+  const isUsingEpiPen = getValueViaPath(
+    answers,
+    'allergiesAndIntolerances.isUsingEpiPen',
+  ) as YesOrNo
 
   const developmentalAssessment = getValueViaPath(
     answers,
@@ -61,6 +91,11 @@ export const getApplicationAnswers = (answers: Application['answers']) => {
     photographyConsent,
     photoSchoolPublication,
     photoMediaPublication,
+    hasFoodAllergies,
+    foodAllergies,
+    hasFoodIntolerances,
+    foodIntolerances,
+    isUsingEpiPen,
   }
 }
 
@@ -216,4 +251,67 @@ export const getSiblingRelationOptionLabel = (
 ) => {
   const relationOptions = getSiblingRelationOptions()
   return relationOptions.find((option) => option.value === value)?.label ?? ''
+}
+
+export const getFoodAllergiesOptions = () => [
+  {
+    value: FoodAllergiesOptions.EGG_ALLERGY,
+    label: newPrimarySchoolMessages.differentNeeds.eggAllergy,
+  },
+  {
+    value: FoodAllergiesOptions.FISH_ALLERGY,
+    label: newPrimarySchoolMessages.differentNeeds.fishAllergy,
+  },
+  {
+    value: FoodAllergiesOptions.PENUT_ALLERGY,
+    label: newPrimarySchoolMessages.differentNeeds.nutAllergy,
+  },
+  {
+    value: FoodAllergiesOptions.WHEAT_ALLERGY,
+    label: newPrimarySchoolMessages.differentNeeds.wheatAllergy,
+  },
+  {
+    value: FoodAllergiesOptions.MILK_ALLERGY,
+    label: newPrimarySchoolMessages.differentNeeds.milkAllergy,
+  },
+  {
+    value: FoodAllergiesOptions.OTHER,
+    label: newPrimarySchoolMessages.differentNeeds.other,
+  },
+]
+
+export const getFoodAllergiesOptionsLabel = (value: FoodAllergiesOptions) => {
+  const foodAllergiesOptions = getFoodAllergiesOptions()
+  return (
+    foodAllergiesOptions.find((option) => option.value === value)?.label ?? ''
+  )
+}
+
+export const getFoodIntolerancesOptions = () => [
+  {
+    value: FoodIntolerancesOptions.LACTOSE_INTOLERANCE,
+    label: newPrimarySchoolMessages.differentNeeds.lactoseIntolerance,
+  },
+  {
+    value: FoodIntolerancesOptions.GLUTEN_INTOLERANCE,
+    label: newPrimarySchoolMessages.differentNeeds.glutenIntolerance,
+  },
+  {
+    value: FoodIntolerancesOptions.MSG_INTOLERANCE,
+    label: newPrimarySchoolMessages.differentNeeds.msgIntolerance,
+  },
+  {
+    value: FoodIntolerancesOptions.OTHER,
+    label: newPrimarySchoolMessages.differentNeeds.other,
+  },
+]
+
+export const getFoodIntolerancesOptionsLabel = (
+  value: FoodIntolerancesOptions,
+) => {
+  const foodIntolerancesOptions = getFoodIntolerancesOptions()
+  return (
+    foodIntolerancesOptions.find((option) => option.value === value)?.label ??
+    ''
+  )
 }

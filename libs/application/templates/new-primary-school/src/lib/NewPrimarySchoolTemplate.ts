@@ -17,14 +17,14 @@ import {
   NationalRegistryUserApi,
   UserProfileApi,
 } from '@island.is/application/types'
+import unset from 'lodash/unset'
+import { assign } from 'xstate'
 import { Events, Roles, States } from './constants'
 import { dataSchema } from './dataSchema'
 import { newPrimarySchoolMessages, statesMessages } from './messages'
-import { assign } from 'xstate'
-import unset from 'lodash/unset'
 import {
-  hasChildrenThatCanApply,
   getApplicationAnswers,
+  hasChildrenThatCanApply,
 } from './newPrimarySchoolUtils'
 
 const NewPrimarySchoolTemplate: ApplicationTemplate<
@@ -91,7 +91,7 @@ const NewPrimarySchoolTemplate: ApplicationTemplate<
         },
       },
       [States.DRAFT]: {
-        exit: ['clearPublication'],
+        exit: ['clearAllergiesAndIntolerances', 'clearPublication'],
         meta: {
           name: States.DRAFT,
           status: 'draft',
@@ -160,6 +160,27 @@ const NewPrimarySchoolTemplate: ApplicationTemplate<
   },
   stateMachineOptions: {
     actions: {
+      /**
+       * If the user changes his answers,
+       * clear selected food allergies and intolerances.
+       */
+      clearAllergiesAndIntolerances: assign((context) => {
+        const { application } = context
+        const { hasFoodAllergies, hasFoodIntolerances } = getApplicationAnswers(
+          application.answers,
+        )
+
+        if (hasFoodAllergies?.length === 0) {
+          unset(application.answers, 'allergiesAndIntolerances.foodAllergies')
+        }
+        if (hasFoodIntolerances?.length === 0) {
+          unset(
+            application.answers,
+            'allergiesAndIntolerances.foodIntolerances',
+          )
+        }
+        return context
+      }),
       clearPublication: assign((context) => {
         const { application } = context
         const { photographyConsent } = getApplicationAnswers(
