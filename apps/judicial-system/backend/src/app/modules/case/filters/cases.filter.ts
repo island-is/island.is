@@ -2,6 +2,7 @@ import { Op, WhereOptions } from 'sequelize'
 
 import { ForbiddenException } from '@nestjs/common'
 
+import { formatNationalId } from '@island.is/judicial-system/formatters'
 import type { User } from '@island.is/judicial-system/types'
 import {
   CaseAppealState,
@@ -202,6 +203,7 @@ const getPrisonSystemStaffUserCasesQueryFilter = (user: User): WhereOptions => {
 }
 
 const getDefenceUserCasesQueryFilter = (user: User): WhereOptions => {
+  const formattedNationalId = formatNationalId(user.nationalId)
   const options: WhereOptions = [
     { isArchived: false },
     {
@@ -235,7 +237,11 @@ const getDefenceUserCasesQueryFilter = (user: User): WhereOptions => {
                 },
               ],
             },
-            { defender_national_id: user.nationalId },
+            {
+              defender_national_id: {
+                [Op.or]: [user.nationalId, formattedNationalId],
+              },
+            },
           ],
         },
         {
@@ -249,7 +255,9 @@ const getDefenceUserCasesQueryFilter = (user: User): WhereOptions => {
               ],
             },
             {
-              '$defendants.defender_national_id$': user.nationalId,
+              '$defendants.defender_national_id$': {
+                [Op.or]: [user.nationalId, formattedNationalId],
+              },
             },
           ],
         },

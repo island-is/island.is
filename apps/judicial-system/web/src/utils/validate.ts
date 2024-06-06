@@ -9,6 +9,7 @@ import {
   CaseAppealState,
   CaseFileCategory,
   CaseType,
+  DefenderChoice,
   SessionArrangements,
   User,
 } from '@island.is/judicial-system-web/src/graphql/schema'
@@ -422,7 +423,7 @@ export const isDefenderStepValid = (workingCase: Case): boolean => {
   const defendantsAreValid = () =>
     workingCase.defendants?.every((defendant) => {
       return (
-        defendant.defendantWaivesRightToCounsel ||
+        defendant.defenderChoice === DefenderChoice.WAIVE ||
         validate([
           [defendant.defenderName, ['empty']],
           [defendant.defenderEmail, ['email-format']],
@@ -432,6 +433,11 @@ export const isDefenderStepValid = (workingCase: Case): boolean => {
     })
 
   return Boolean(workingCase.prosecutor && defendantsAreValid())
+}
+
+export const isConclusionStepValid = (workingCase: Case): boolean => {
+  // TODO: Implement after selected action has been added as a field to the case
+  return true
 }
 
 export const isAdminUserFormValid = (user: User): boolean => {
