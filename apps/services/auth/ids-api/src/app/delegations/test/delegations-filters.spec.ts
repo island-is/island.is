@@ -21,7 +21,6 @@ describe('DelegationsController', () => {
   let nationalRegistryApi: NationalRegistryClientService
   let rskApi: RskRelationshipsClient
   let delegationIndexService: DelegationsIndexService
-
   beforeAll(async () => {
     app = await setupWithAuth({
       user: user,
@@ -30,7 +29,6 @@ describe('DelegationsController', () => {
 
     server = request(app.getHttpServer())
 
-    delegationIndexService = app.get(DelegationsIndexService)
     nationalRegistryApi = app.get(NationalRegistryClientService)
     jest
       .spyOn(nationalRegistryApi, 'getIndividual')
@@ -40,8 +38,6 @@ describe('DelegationsController', () => {
           name: faker.name.findName(),
         }),
       )
-    jest.spyOn(delegationIndexService, 'indexDelegations').mockImplementation()
-
     rskApi = app.get(RskRelationshipsClient)
 
     factory = new FixtureFactory(app)
