@@ -33,6 +33,8 @@ export const ENABLED_MODULES = (process.env[ENV_ENABLED_CACHE] || '')
     return a
   }, {})
 
+
+
 export const cypressPath = '/github/home/.cache/Cypress'
 export const cacheSuccess = JSON.parse(process.env[ENV_CACHE_SUCCESS] ?? '{}')
 export const initCache = process.env[ENV_INIT_CACHE] === 'true'
@@ -95,6 +97,10 @@ export const caches = [
         return false
       }
       return fileSizeIsEqualOrGreaterThan(path, 1000)
+    },
+    post: async (path) => {
+      await runCommand(`tar zxvf ${path}`, ROOT)
+      await runCommand(`rm ${path}`, ROOT)
     },
     init: async (path) => {
       const script = resolve(ROOT, 'scripts/ci/cache/generate-files.sh')

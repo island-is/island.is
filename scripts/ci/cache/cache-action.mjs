@@ -91,6 +91,9 @@ const checkCache = await Promise.all(
       : e.restoreSuccess
     if (isOk) {
       console.log(`Restored cache for ${e.name}`)
+      if (e.post) {
+        await tryRun(e.post, e.name, [resolve(ROOT, e.path)]);
+      }
     }
     return {
       ...e,
@@ -100,7 +103,6 @@ const checkCache = await Promise.all(
 )
 
 const failedJobs = []
-const pendingJobs = checkCache.filter((e) => !e.isOk).map((e) => e.id)
 const succesFullJobs = []
 
 for (const cache of checkCache) {
@@ -128,11 +130,11 @@ for (const cache of checkCache) {
     const success = await (async () => {
       try {
         const value = await cache.check(successInit, fileName)
+        return value;
       } catch (e) {
         console.error(e)
         return false
       }
-      return true
     })()
     if (!success) {
       console.log(`Failed init and check for ${cache.name}`)
@@ -148,6 +150,9 @@ for (const cache of checkCache) {
       } else {
         console.log(`Saved cache ${cache.name}`)
         succesFullJobs.push(cache.id)
+        if (cache.post) {
+          await tryRun(cache.post, cache.name, [fileName])
+        }
       }
     }
   }
