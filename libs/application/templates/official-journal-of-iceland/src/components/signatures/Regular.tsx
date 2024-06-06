@@ -223,20 +223,6 @@ export const RegularSignature = ({ state, setState, errors }: Props) => {
                         }
                         error={errors && getErrorViaPath(errors, abovePath)}
                       />
-
-                      <InputController
-                        id={namePath}
-                        label={f(signatures.inputs.name.label)}
-                        defaultValue={signature.name}
-                        backgroundColor="blue"
-                        size="sm"
-                        onChange={(e) =>
-                          onChangeMember(index, i, 'name', e.target.value)
-                        }
-                        error={errors && getErrorViaPath(errors, namePath)}
-                      />
-                    </Box>
-                    <Box className={styles.inputWrapper}>
                       <InputController
                         id={afterPath}
                         label={f(signatures.inputs.after.label)}
@@ -248,7 +234,19 @@ export const RegularSignature = ({ state, setState, errors }: Props) => {
                         }
                         error={errors && getErrorViaPath(errors, afterPath)}
                       />
-
+                    </Box>
+                    <Box className={styles.inputWrapper}>
+                      <InputController
+                        id={namePath}
+                        label={f(signatures.inputs.name.label)}
+                        defaultValue={signature.name}
+                        backgroundColor="blue"
+                        size="sm"
+                        onChange={(e) =>
+                          onChangeMember(index, i, 'name', e.target.value)
+                        }
+                        error={errors && getErrorViaPath(errors, namePath)}
+                      />
                       <InputController
                         id={belowPath}
                         label={f(signatures.inputs.below.label)}
