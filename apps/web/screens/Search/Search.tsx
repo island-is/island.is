@@ -148,7 +148,7 @@ const Search: Screen<CategoryProps> = ({
   namespace,
   referencedByTitle,
 }) => {
-  const { query } = useRouter()
+  const { query, events } = useRouter()
   const [state, dispatch] = useReducer(reducer, {
     ...initialState,
     query: {
@@ -158,6 +158,49 @@ const Search: Screen<CategoryProps> = ({
       organization: stringToArray(query.organization),
     },
   })
+
+  useEffect(() => {
+    const onRouteChangeComplete = () => {
+      const queryParamsHaveChanged =
+        query.q !== state.query.q ||
+        JSON.stringify(stringToArray(query.type)) !==
+          JSON.stringify(stringToArray(state.query.type)) ||
+        JSON.stringify(stringToArray(query.category)) !==
+          JSON.stringify(stringToArray(state.query.category)) ||
+        JSON.stringify(stringToArray(query.organization)) !==
+          JSON.stringify(stringToArray(state.query.organization))
+
+      if (queryParamsHaveChanged) {
+        dispatch({
+          type: ActionType.SET_PARAMS,
+          payload: {
+            query: {
+              q: query.q ?? '',
+              type: stringToArray(query.type) as SearchableContentTypes[],
+              category: stringToArray(query.category),
+              organization: stringToArray(query.organization),
+            },
+          },
+        })
+      }
+    }
+    events.on('routeChangeComplete', onRouteChangeComplete)
+
+    return () => {
+      events.off('routeChangeComplete', onRouteChangeComplete)
+    }
+  }, [
+    events,
+    query.category,
+    query.organization,
+    query.q,
+    query.type,
+    state.query.category,
+    state.query.organization,
+    state.query.q,
+    state.query.type,
+  ])
+
   usePlausible('Search Query', {
     query: (q ?? '').trim().toLowerCase(),
     source: 'Web',
