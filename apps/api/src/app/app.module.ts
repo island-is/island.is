@@ -184,7 +184,6 @@ import {
 } from '@island.is/clients/university-careers'
 import { HousingBenefitsConfig } from '@island.is/clients/hms-housing-benefits'
 import { UserProfileClientConfig } from '@island.is/clients/user-profile'
-import { LawAndOrderClientConfig } from '@island.is/clients/law-and-order'
 import { LawAndOrderModule } from '@island.is/api/domains/law-and-order'
 import { UltravioletRadiationClientConfig } from '@island.is/clients/ultraviolet-radiation'
 import { JudicialSystemSPClientConfig } from '@island.is/clients/judicial-system-sp'
@@ -417,7 +416,6 @@ const environment = getConfig
         UniversityGatewayApiClientConfig,
         LicenseConfig,
         UserProfileClientConfig,
-        LawAndOrderClientConfig,
         UltravioletRadiationClientConfig,
         JudicialSystemSPClientConfig,
       ],
