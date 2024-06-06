@@ -25,6 +25,11 @@ export class CreateAmountDto {
   @ApiProperty()
   readonly income?: number
 
+  @IsOptional()
+  @IsNumber()
+  @ApiProperty()
+  readonly childrenAidAmount?: number
+
   @IsNotEmpty()
   @IsNumber()
   @ApiProperty()

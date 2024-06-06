@@ -17,7 +17,7 @@ import {
 } from '@island.is/application/types'
 import { application } from '../lib/messages'
 import Logo from '../assets/Logo'
-import { prerequisites } from '../lib/messages/prerequsites'
+import { prerequisites } from '../lib/messages/prerequisites'
 
 export const Prerequisites: Form = buildForm({
   id: 'HealthInsuranceDeclarationPrerequsites',

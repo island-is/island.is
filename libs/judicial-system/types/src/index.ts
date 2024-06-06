@@ -1,9 +1,9 @@
 export { Feature } from './lib/feature'
 
-export { Gender } from './lib/defendant'
-
+export { Gender, DefenderChoice } from './lib/defendant'
 export { InstitutionType } from './lib/institution'
 export { NotificationType } from './lib/notification'
+export type { Institution } from './lib/institution'
 export { EventType } from './lib/eventLog'
 export { DateType } from './lib/dateLog'
 export { CommentType } from './lib/comment'
@@ -65,6 +65,7 @@ export {
   completedIndictmentCaseStates,
   completedCaseStates,
   isCompletedCase,
+  hasIndictmentCaseBeenSubmittedToCourt,
   getStatementDeadline,
   prosecutorCanSelectDefenderForInvestigationCase,
   isIndictmentCaseState,
@@ -76,7 +77,6 @@ export type {
   CrimeScene,
   CrimeSceneMap,
   IndictmentSubtypeMap,
-  IndictmentConfirmation,
 } from './lib/case'
 
 export {

@@ -1367,6 +1367,10 @@ export const m = defineMessages({
     id: 'service.portal:remove-from-storage',
     defaultMessage: 'Flytja í pósthólf',
   },
+  goToArg: {
+    id: 'service.portal:go-to-arg',
+    defaultMessage: 'Fara til {arg}',
+  },
   openDocumentAriaLabel: {
     id: 'service.portal:open-document',
     defaultMessage: 'Opna {subject}',
@@ -1564,5 +1568,9 @@ export const m = defineMessages({
   subpoena: {
     id: 'service.portal:subpoena',
     defaultMessage: 'Fyrirkall',
+  },
+  readMoreAbout: {
+    id: 'service.portal:read-more-about',
+    defaultMessage: 'Lesa meira um {arg}',
   },
 })

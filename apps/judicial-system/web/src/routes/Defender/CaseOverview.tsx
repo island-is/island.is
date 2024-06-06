@@ -364,7 +364,9 @@ export const CaseOverview: React.FC<React.PropsWithChildren<unknown>> = () => {
               strings.confirmAppealAfterDeadlineModalSecondaryButtonText,
             )}
             onPrimaryButtonClick={() => {
-              router.push(`${constants.APPEAL_ROUTE}/${workingCase.id}`)
+              router.push(
+                `${constants.DEFENDER_APPEAL_ROUTE}/${workingCase.id}`,
+              )
             }}
             onSecondaryButtonClick={() => {
               setModalVisible('NoModal')

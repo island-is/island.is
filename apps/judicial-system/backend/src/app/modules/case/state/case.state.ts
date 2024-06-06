@@ -101,8 +101,6 @@ const indictmentCaseStateMachine: Map<
       fromStates: [
         IndictmentCaseState.DRAFT,
         IndictmentCaseState.WAITING_FOR_CONFIRMATION,
-        IndictmentCaseState.SUBMITTED,
-        IndictmentCaseState.RECEIVED,
       ],
       to: { state: IndictmentCaseState.DELETED },
     },

@@ -22,6 +22,7 @@ import {
   getStateUrlFromRoute,
   Routes,
   SortableTableHeaderProps,
+  truncateString,
 } from '@island.is/financial-aid/shared/lib'
 
 import { useAllApplications } from '@island.is/financial-aid-web/veita/src/utils/useAllApplications'
@@ -81,7 +82,7 @@ const ApplicationsTable = ({
       <>
         {application.staff?.name ? (
           <Box className={tableStyles.rowContent}>
-            <Text>{application.staff?.name}</Text>
+            <Text>{truncateString(application.staff?.name, 13)}</Text>
           </Box>
         ) : (
           <Box>
@@ -145,7 +146,7 @@ const ApplicationsTable = ({
                       ),
                       TextTableItem(
                         'default',
-                        getMonth(new Date(item.created).getMonth()),
+                        getMonth(new Date(item.appliedDate).getMonth()),
                       ),
                       assignButton(item),
                     ]}
