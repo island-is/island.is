@@ -4,6 +4,7 @@
   "sourceRoot": "apps/reference-backend/src",
   "projectType": "application",
   "prefix": "reference-backend",
+  "tags": ["scope:nest"],
   "generators": {},
   "targets": {
     "build": {
@@ -47,16 +48,12 @@
       }
     },
     "lint": {
-      "executor": "@nx/linter:eslint",
-      "options": {
-        "lintFilePatterns": ["apps/reference-backend/**/*.{ts,tsx,js,jsx}"]
-      }
+      "executor": "@nx/eslint:lint"
     },
     "test": {
       "executor": "@nx/jest:jest",
       "options": {
-        "jestConfig": "apps/reference-backend/jest.config.ts",
-        "passWithNoTests": true
+        "jestConfig": "apps/reference-backend/jest.config.ts"
       },
       "outputs": ["{workspaceRoot}/coverage/apps/reference-backend"]
     },
@@ -89,6 +86,5 @@
         "cwd": "apps/reference-backend"
       }
     }
-  },
-  "tags": ["scope:nest"]
+  }
 }

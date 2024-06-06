@@ -4,6 +4,7 @@
   "sourceRoot": "apps/services/auth/admin-api/src",
   "projectType": "application",
   "prefix": "auth-admin-api",
+  "tags": ["scope:auth-api"],
   "generators": {},
   "targets": {
     "build": {
@@ -31,18 +32,12 @@
       }
     },
     "lint": {
-      "executor": "@nx/linter:eslint",
-      "options": {
-        "lintFilePatterns": [
-          "apps/services/auth/admin-api/**/*.{ts,tsx,js,jsx}"
-        ]
-      }
+      "executor": "@nx/eslint:lint"
     },
     "test": {
       "executor": "@nx/jest:jest",
       "options": {
         "jestConfig": "apps/services/auth/admin-api/jest.config.ts",
-        "passWithNoTests": true,
         "runInBand": true
       },
       "outputs": ["{workspaceRoot}/coverage/apps/services/auth/admin-api"]
@@ -55,6 +50,5 @@
       "outputs": ["{projectRoot}/src/openapi.yaml"]
     },
     "docker-express": {}
-  },
-  "tags": ["scope:auth-api"]
+  }
 }

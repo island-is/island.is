@@ -4,6 +4,7 @@
   "sourceRoot": "apps/judicial-system/xrd-api/src",
   "projectType": "application",
   "prefix": "judicial-system-xrd-api",
+  "tags": ["scope:judicial-system-api"],
   "generators": {},
   "targets": {
     "build": {
@@ -30,18 +31,12 @@
       }
     },
     "lint": {
-      "executor": "@nx/linter:eslint",
-      "options": {
-        "lintFilePatterns": [
-          "apps/judicial-system/xrd-api/**/*.{ts,tsx,js,jsx}"
-        ]
-      }
+      "executor": "@nx/eslint:lint"
     },
     "test": {
       "executor": "@nx/jest:jest",
       "options": {
-        "jestConfig": "apps/judicial-system/xrd-api/jest.config.ts",
-        "passWithNoTests": true
+        "jestConfig": "apps/judicial-system/xrd-api/jest.config.ts"
       }
     },
     "codegen/backend-schema": {
@@ -52,6 +47,5 @@
       "outputs": ["{projectRoot}/src/openapi.yaml"]
     },
     "docker-express": {}
-  },
-  "tags": ["scope:judicial-system-api"]
+  }
 }

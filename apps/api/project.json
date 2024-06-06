@@ -4,6 +4,9 @@
   "sourceRoot": "apps/api/src",
   "projectType": "application",
   "prefix": "api",
+  "tags": [
+    "scope:api"
+  ],
   "generators": {},
   "targets": {
     "build": {
@@ -22,7 +25,9 @@
           "inspect": false
         }
       },
-      "outputs": ["{options.outputPath}"]
+      "outputs": [
+        "{options.outputPath}"
+      ]
     },
     "serve": {
       "executor": "@nx/js:node",
@@ -31,25 +36,30 @@
       }
     },
     "lint": {
-      "executor": "@nx/linter:eslint",
+      "executor": "@nx/eslint:lint",
       "options": {
-        "lintFilePatterns": ["apps/api/**/*.{ts,tsx,js,jsx}"]
+        "lintFilePatterns": [
+          "apps/api/**/*.ts"
+        ]
       }
     },
     "test": {
       "executor": "@nx/jest:jest",
       "options": {
-        "jestConfig": "apps/api/jest.config.ts",
-        "passWithNoTests": true
+        "jestConfig": "apps/api/jest.config.ts"
       },
-      "outputs": ["{workspaceRoot}/coverage/apps/api"]
+      "outputs": [
+        "{workspaceRoot}/coverage/apps/api"
+      ]
     },
     "codegen/backend-schema": {
       "executor": "nx:run-commands",
       "options": {
         "command": "yarn ts-node -P apps/api/tsconfig.json scripts/build-graphql-schema.ts apps/api/src/app/app.module"
       },
-      "outputs": ["{projectRoot}/src/api.graphql"]
+      "outputs": [
+        "{projectRoot}/src/api.graphql"
+      ]
     },
     "contentful-types": {
       "executor": "nx:run-commands",
@@ -67,7 +77,9 @@
     "dev-init": {
       "executor": "nx:run-commands",
       "options": {
-        "commands": ["yarn get-secrets api"],
+        "commands": [
+          "yarn get-secrets api"
+        ],
         "parallel": false
       }
     },
@@ -81,11 +93,13 @@
     "dev": {
       "executor": "nx:run-commands",
       "options": {
-        "commands": ["./scripts/run-xroad-proxy.sh", "yarn start api"],
+        "commands": [
+          "./scripts/run-xroad-proxy.sh",
+          "yarn start api"
+        ],
         "parallel": true
       }
     },
     "docker-express": {}
-  },
-  "tags": ["scope:api"]
+  }
 }

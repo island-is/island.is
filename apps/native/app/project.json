@@ -3,6 +3,7 @@
   "$schema": "../../../node_modules/nx/schemas/project-schema.json",
   "sourceRoot": "apps/native/app/src",
   "projectType": "application",
+  "tags": ["scope:js"],
   "generators": {},
   "targets": {
     "serve": {
@@ -27,10 +28,7 @@
       }
     },
     "lint": {
-      "executor": "@nx/linter:eslint",
-      "options": {
-        "lintFilePatterns": ["apps/native/app/**/*.{ts,tsx,js,jsx}"]
-      }
+      "executor": "@nx/eslint:lint"
     },
     "codegen/frontend-client": {
       "executor": "nx:run-commands",
@@ -40,6 +38,5 @@
       }
     },
     "docker-native": {}
-  },
-  "tags": ["scope:js"]
+  }
 }

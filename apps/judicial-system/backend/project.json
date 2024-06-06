@@ -4,6 +4,7 @@
   "sourceRoot": "apps/judicial-system/backend/src",
   "projectType": "application",
   "prefix": "judicial-system-backend",
+  "tags": ["scope:judicial-system-api"],
   "generators": {},
   "targets": {
     "build": {
@@ -48,19 +49,13 @@
       }
     },
     "lint": {
-      "executor": "@nx/linter:eslint",
-      "options": {
-        "lintFilePatterns": [
-          "apps/judicial-system/backend/**/*.{ts,tsx,js,jsx}"
-        ]
-      }
+      "executor": "@nx/eslint:lint"
     },
     "test": {
       "executor": "@nx/jest:jest",
       "options": {
         "jestConfig": "apps/judicial-system/backend/jest.config.ts",
         "logHeapUsage": true,
-        "passWithNoTests": true,
         "workerIdleMemoryLimit": "1028"
       },
       "outputs": ["{workspaceRoot}/coverage/apps/judicial-system/backend"]
@@ -114,6 +109,5 @@
         "command": "yarn ts-node -P libs/localization/tsconfig.lib.json libs/localization/scripts/extract 'apps/judicial-system/backend/src/app/messages/**/*.ts'"
       }
     }
-  },
-  "tags": ["scope:judicial-system-api"]
+  }
 }
