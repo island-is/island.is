@@ -1,5 +1,5 @@
 import { Inject, Injectable } from '@nestjs/common'
-import { LOGGER_PROVIDER, Logger } from '@island.is/logging'
+import { LOGGER_PROVIDER, type Logger } from '@island.is/logging'
 import { ApolloError } from '@apollo/client'
 import { AuthMiddleware, User } from '@island.is/auth-nest-tools'
 import {
