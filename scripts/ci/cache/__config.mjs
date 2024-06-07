@@ -22,7 +22,7 @@ import {
 import { keyStorage } from './_key_storage.mjs'
 
 // When testing this is good to manipulate
-const HASH_VERSION = 1
+const HASH_VERSION = `newcache-${2}`
 
 export const ENABLED_MODULES = (process.env[ENV_ENABLED_CACHE] || '')
   .split(',')
@@ -96,14 +96,12 @@ export const caches = [
       }
       return fileSizeIsEqualOrGreaterThan(path, 1000)
     },
-    post: async (path) => {
-      await runCommand(`tar zxvf ${path}`, ROOT)
-      await runCommand(`rm ${path}`, ROOT)
+    post: async () => {
+      await runCommand(`tar zxvf generated_files.tar.gz`, ROOT)
     },
     init: async (path) => {
-      const script = resolve(ROOT, 'scripts/ci/cache/generate-files.sh')
       console.log(`Generating files to ${path} - THIS WILL TAKE A LOT OF TIME`)
-      await runCommand(`bash ${script} "${path}"`, ROOT)
+      await runCommand(`tar zcvf generated_files.tar.gz \$(./scripts/ci/get-files-touched-by.sh yarn codegen --skip-cache | xargs realpath --relative-to \$(pwd))`, ROOT)
     },
   },
   {
