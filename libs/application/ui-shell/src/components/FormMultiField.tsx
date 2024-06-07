@@ -84,8 +84,6 @@ const FormMultiField: FC<
           !IGNORED_HALF_TYPES.includes(field.type) && field?.width === 'half'
         const span = isHalfColumn ? '1/2' : '1/1'
 
-        console.log(application)
-
         const evaluatedCondition = shouldShowFormItem(
           field,
           application.answers,
