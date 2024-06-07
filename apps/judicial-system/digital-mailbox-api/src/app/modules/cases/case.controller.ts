@@ -45,7 +45,7 @@ export class CaseController {
 
   @Get('cases')
   @ApiOkResponse({
-    type: CasesResponse,
+    type: [CasesResponse],
     description:
       'Returns a list of accessible indictment cases for authenticated user. If user has no cases it returns an empty list.',
   })
