@@ -9,6 +9,12 @@ import {
 } from './utils/helpers'
 import { m } from './messages'
 import { NO, YES } from '@island.is/application/core'
+import {
+  ESTATE_INHERITANCE,
+  PREPAID_INHERITANCE,
+  RelationSpouse,
+} from './constants'
+import { DebtTypes } from '../types'
 
 const deceasedShare = {
   deceasedShare: z.string().nonempty().optional(),
@@ -167,6 +173,8 @@ export const inheritanceReportSchema = z.object({
       },
     ),
 
+  applicationFor: z.enum([ESTATE_INHERITANCE, PREPAID_INHERITANCE]),
+
   /* assets */
   assets: z.object({
     realEstate: assetWithShare,
@@ -262,6 +270,16 @@ export const inheritanceReportSchema = z.object({
             value: z.string().refine((v) => v),
             ...deceasedShare,
           })
+          .refine(
+            ({ amount, exchangeRateOrInterest, description }) => {
+              return amount === '' && exchangeRateOrInterest === ''
+                ? true
+                : description !== ''
+            },
+            {
+              path: ['description'],
+            },
+          )
           .refine(
             ({ assetNumber }) => {
               return assetNumber === ''
@@ -360,6 +378,13 @@ export const inheritanceReportSchema = z.object({
             nationalId: z.string(),
             assetNumber: z.string(), //.refine((v) => validateDebtBankAccount(v)),
             propertyValuation: z.string(),
+            debtType: z.enum([
+              DebtTypes.CreditCard,
+              DebtTypes.InsuranceCompany,
+              DebtTypes.Loan,
+              DebtTypes.Overdraft,
+              DebtTypes.PropertyFees,
+            ]),
           })
           .refine(
             ({ nationalId }) => {
@@ -567,8 +592,7 @@ export const inheritanceReportSchema = z.object({
         (v) => {
           if (v.length > 0) {
             const count = v.filter(
-              (x) =>
-                x.enabled && (x.relation === 'Maki' || x.relation === 'Spouse'),
+              (x) => x.enabled && x.relation === RelationSpouse,
             )?.length
             return count <= 1
           }
