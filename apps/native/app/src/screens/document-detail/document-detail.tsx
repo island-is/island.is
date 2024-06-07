@@ -215,8 +215,7 @@ export const DocumentDetailScreen: NavigationFunctionComponent<{
       // If we don't have the document in the cache, fetch it
       void getDocument()
     } else if (doc.data?.content === null) {
-      // Currently the document list query does not return the content props, so we need to fetch it
-      // Will be fixed soon and then we will not need this
+      // Content is missing, fetch it
       void getDocumentContent()
     }
   }, [doc.missing, doc.data?.content, docId])
@@ -225,6 +224,12 @@ export const DocumentDetailScreen: NavigationFunctionComponent<{
   const [loaded, setLoaded] = useState(false)
   const [pdfUrl, setPdfUrl] = useState('')
   const [touched, setTouched] = useState(false)
+
+  const loading = docRes.loading || !accessToken
+  const fileTypeLoaded =
+    !docContent.loading && !docContent.error && !docRes.loading && !docRes.error
+  const hasError = error || docContent.error || docRes.error
+
   const hasPdf = Document?.content?.type.toLocaleLowerCase() === 'pdf'
   const isHtml =
     Document?.content?.type.toLocaleLowerCase() === 'html' &&
@@ -314,8 +319,6 @@ export const DocumentDetailScreen: NavigationFunctionComponent<{
     }
   }, [])
 
-  const loading = docRes.loading || !accessToken
-
   const fadeAnim = useRef(new Animated.Value(0)).current
 
   React.useEffect(() => {
@@ -356,42 +359,48 @@ export const DocumentDetailScreen: NavigationFunctionComponent<{
             opacity: fadeAnim,
           }}
         >
-          {isHtml ? (
-            <WebView
-              source={{ html: Document.content?.value ?? '' }}
-              scalesPageToFit
-              onLoadEnd={() => {
-                setLoaded(true)
-              }}
-            />
-          ) : hasPdf ? (
-            <PdfWrapper>
-              {visible && accessToken && (
-                <PdfViewer
-                  url={Document.downloadUrl ?? ''}
-                  body={`documentId=${Document.id}&__accessToken=${accessToken}`}
-                  onLoaded={(filePath: any) => {
-                    setPdfUrl(filePath)
-                    setLoaded(true)
-                  }}
-                  onError={() => {
-                    setLoaded(true)
-                    setError(true)
-                  }}
-                />
-              )}
-            </PdfWrapper>
-          ) : (
-            <WebView
-              source={{ uri: Document.content?.value ?? '' }}
-              onLoadEnd={() => {
-                setLoaded(true)
-              }}
-            />
-          )}
+          {fileTypeLoaded &&
+            !error &&
+            (isHtml ? (
+              <WebView
+                source={{ html: Document.content?.value ?? '' }}
+                scalesPageToFit
+                onLoadEnd={() => {
+                  setLoaded(true)
+                }}
+              />
+            ) : hasPdf ? (
+              <PdfWrapper>
+                {visible && accessToken && (
+                  <PdfViewer
+                    url={Document.downloadUrl ?? ''}
+                    body={`documentId=${Document.id}&__accessToken=${accessToken}`}
+                    onLoaded={(filePath: any) => {
+                      setPdfUrl(filePath)
+                      setLoaded(true)
+                    }}
+                    onError={() => {
+                      setLoaded(true)
+                      setError(true)
+                    }}
+                  />
+                )}
+              </PdfWrapper>
+            ) : (
+              <WebView
+                source={{ uri: Document.content?.value ?? '' }}
+                onLoadEnd={() => {
+                  setLoaded(true)
+                }}
+                onError={() => {
+                  setLoaded(true)
+                  setError(true)
+                }}
+              />
+            ))}
         </Animated.View>
 
-        {(!loaded || !accessToken || error) && (
+        {(!loaded || !accessToken || hasError) && (
           <View
             style={[
               StyleSheet.absoluteFill,
@@ -402,7 +411,7 @@ export const DocumentDetailScreen: NavigationFunctionComponent<{
               },
             ]}
           >
-            {error ? (
+            {hasError ? (
               <Problem type="error" withContainer />
             ) : (
               <Loader
