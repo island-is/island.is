@@ -34,12 +34,14 @@ export class SubpoenaResponse {
         defendant.nationalId === defendantNationalId,
     )
 
+    const hasDefender = defendantInfo?.defenderChoice !== DefenderChoice.WAIVE
+
     return {
       caseId: internalCase.id,
       defenderInfo: defendantInfo
         ? {
             defenderChoice: defendantInfo?.defenderChoice,
-            defenderName: defendantInfo?.defenderName,
+            defenderName: hasDefender ? defendantInfo?.defenderName : undefined,
           }
         : undefined,
     }
