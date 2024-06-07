@@ -148,8 +148,9 @@ export class ApplicationValidationService {
     }
 
     const helper = new ApplicationTemplateHelper(application, template)
-    const writableAnswersAndExternalData =
-      helper.getWritableAnswersAndExternalData(role)
+    const writableAnswersAndExternalData = helper.getWritableAnswersAndExternalData(
+      role,
+    )
 
     let trimmedAnswers: FormValue
 
@@ -185,17 +186,12 @@ export class ApplicationValidationService {
       }
     }
 
-    try {
-      const errorMap = await helper.applyAnswerValidators(
-        newAnswers,
-        formatMessage,
-      )
-      if (errorMap) {
-        throw new ValidationFailed(errorMap)
-      }
-    } catch (error) {
-      this.logger.error('Failed to validate answers', error)
-      throw error
+    const errorMap = await helper.applyAnswerValidators(
+      newAnswers,
+      formatMessage,
+    )
+    if (errorMap) {
+      throw new ValidationFailed(errorMap)
     }
 
     return trimmedAnswers
@@ -217,8 +213,9 @@ export class ApplicationValidationService {
       )
     }
     const helper = new ApplicationTemplateHelper(application, template)
-    const writableAnswersAndExternalData =
-      helper.getWritableAnswersAndExternalData(role)
+    const writableAnswersAndExternalData = helper.getWritableAnswersAndExternalData(
+      role,
+    )
     if (writableAnswersAndExternalData === 'all') {
       return
     }
