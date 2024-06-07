@@ -2,7 +2,7 @@
 
 ## Service Portal
 
-This client main focus is data for the Service Portal, Law and Order module. Displaying and receiving information about court cases and data related to it, subpoenas, lawyers etc.
+This client's main focus is data for the Service Portal, Law and Order module. Displaying and receiving information about court cases and data related to it, subpoenas, lawyers etc.
 
 ## Judicial System App
 
