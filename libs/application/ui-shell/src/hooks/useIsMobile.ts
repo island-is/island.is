@@ -8,10 +8,7 @@ export const useIsMobile = () => {
   const { width } = useWindowSize()
 
   useEffect(() => {
-    if (!!width && width < theme.breakpoints.md) {
-      return setIsMobile(true)
-    }
-    return setIsMobile(false)
+    setIsMobile(!!width && width < theme.breakpoints.md);
   }, [width])
 
   return {
