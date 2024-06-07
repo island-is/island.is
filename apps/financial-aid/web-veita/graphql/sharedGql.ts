@@ -124,6 +124,7 @@ export const ApplicationFilterQuery = gql`
         state
         modified
         created
+        appliedDate
         staff {
           name
         }
