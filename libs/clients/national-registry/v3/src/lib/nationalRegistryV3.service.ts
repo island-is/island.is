@@ -1,9 +1,9 @@
 import { Injectable } from '@nestjs/common'
 
+import { handle204 } from '@island.is/clients/middlewares'
 import { isDefined } from '@island.is/shared/utils'
 
 import {
-  ApiResponse,
   EinstaklingarApi,
   EinstaklingurDTOAllt,
   EinstaklingurDTOFaeding,
@@ -18,8 +18,6 @@ import {
   EinstaklingurDTOTru,
   GerviEinstaklingarApi,
 } from '../../gen/fetch'
-
-const MODERN_IGNORED_STATUS = 204
 
 @Injectable()
 export class NationalRegistryV3ClientService {
@@ -42,7 +40,7 @@ export class NationalRegistryV3ClientService {
       ? this.fakeApi.midlunV1GerviEinstaklingarNationalIdGet({
           nationalId,
         })
-      : this.handleModernMissingData(
+      : handle204(
           this.individualApi.midlunV1EinstaklingarNationalIdGetRaw({
             nationalId,
           }),
@@ -116,15 +114,5 @@ export class NationalRegistryV3ClientService {
         nationalId,
       },
     )
-  }
-
-  private async handleModernMissingData<T>(
-    promise: Promise<ApiResponse<T>>,
-  ): Promise<T | null> {
-    const response = await promise
-    if (response.raw.status === MODERN_IGNORED_STATUS) {
-      return null
-    }
-    return response.value()
   }
 }
