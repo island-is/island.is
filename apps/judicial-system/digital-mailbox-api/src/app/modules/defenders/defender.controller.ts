@@ -6,11 +6,7 @@ import {
   InternalServerErrorException,
   UseInterceptors,
 } from '@nestjs/common'
-import {
-  ApiOkResponse,
-  ApiResponse,
-  ApiTags,
-} from '@nestjs/swagger'
+import { ApiOkResponse, ApiResponse, ApiTags } from '@nestjs/swagger'
 
 import { type Logger, LOGGER_PROVIDER } from '@island.is/logging'
 
