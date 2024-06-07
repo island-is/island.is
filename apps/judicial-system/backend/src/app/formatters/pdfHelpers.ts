@@ -199,7 +199,9 @@ export const addIndictmentConfirmation = (
   doc.font('Times-Roman')
   drawTextWithEllipsis(
     doc,
-    `${applyCase('þgf', confirmation.actor)}, ${confirmation.title}`,
+    `${applyCase('þgf', confirmation.actor)}${
+      confirmation.title ? `, ${confirmation.title}` : ''
+    }`,
     titleX,
     pageMargin + titleHeight + calculatePt(32),
     confirmedByWidth - calculatePt(16),

@@ -54,7 +54,7 @@ const roman = (num: number) => {
 
 export interface IndictmentConfirmation {
   actor: string
-  title: string
+  title?: string
   institution: string
   date: Date
 }
