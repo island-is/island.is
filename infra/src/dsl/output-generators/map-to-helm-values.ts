@@ -50,6 +50,7 @@ const serializeService: SerializeMethod<HelmService> = async (
     'application-system-form',
     'github-actions-cache',
     'portals-admin',
+    'service-portal',
     'island-ui-storybook',
   ]
   const result: HelmService = {

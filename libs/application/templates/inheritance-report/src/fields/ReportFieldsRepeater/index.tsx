@@ -17,15 +17,20 @@ import {
 } from '@island.is/island-ui/core'
 import { Answers } from '../../types'
 import * as styles from '../styles.css'
-import { getErrorViaPath, getValueViaPath } from '@island.is/application/core'
+import {
+  YES,
+  getErrorViaPath,
+  getValueViaPath,
+} from '@island.is/application/core'
 import { formatCurrency } from '@island.is/application/ui-components'
 import { useLocale } from '@island.is/localization'
 import { m } from '../../lib/messages'
-import { YES } from '../../lib/constants'
+import { PREPAID_INHERITANCE, PrePaidHeirsRelations } from '../../lib/constants'
 import DoubleColumnRow from '../../components/DoubleColumnRow'
 import {
   getDeceasedWasMarriedAndHadAssets,
   getEstateDataFromApplication,
+  parseLabel,
 } from '../../lib/utils/helpers'
 import {
   InheritanceReportAsset,
@@ -47,6 +52,8 @@ type RepeaterProps = {
       calcWithShareValue?: boolean
       hideDeceasedShare?: boolean
       skipPushRight?: boolean
+      assetKey?: string
+      selections?: Array<{ value: string; label: string }>
     }
   }
 }
@@ -56,7 +63,7 @@ const valueKeys = ['exchangeRateOrInterest', 'amount']
 export const ReportFieldsRepeater: FC<
   React.PropsWithChildren<FieldBaseProps<Answers> & RepeaterProps>
 > = ({ application, field, errors }) => {
-  const { answers, externalData } = application
+  const { answers } = application
 
   const { id, props } = field
 
@@ -116,10 +123,9 @@ export const ReportFieldsRepeater: FC<
 
   useEffect(() => {
     calculateTotal()
-  }, [calculateTotal])
+  }, [fields, calculateTotal])
 
-  //TODO: connect to API
-  const debtTypes = [] as any
+  const debtTypes = props.selections ?? []
 
   const handleAddRepeaterFields = () => {
     //reset stocks
@@ -194,7 +200,9 @@ export const ReportFieldsRepeater: FC<
   /* ------ Set fields from external data (realEstate, vehicles) ------ */
   useEffect(() => {
     const estateData =
-      getEstateDataFromApplication(application).inheritanceReportInfo
+      answers.applicationFor === PREPAID_INHERITANCE
+        ? undefined
+        : getEstateDataFromApplication(application).inheritanceReportInfo
     const extData: Array<InheritanceReportAsset> =
       estateData && props.fromExternalData
         ? (estateData[
@@ -268,7 +276,6 @@ export const ReportFieldsRepeater: FC<
     <Box>
       {fields.map((repeaterField: any, mainIndex) => {
         const fieldIndex = `${id}[${mainIndex}]`
-
         return (
           <Box position="relative" key={repeaterField.id} marginTop={4}>
             <Box position="absolute" className={styles.removeFieldButton}>
@@ -299,6 +306,15 @@ export const ReportFieldsRepeater: FC<
 
                 shouldPushRight = pushRight
 
+                if (
+                  field.condition &&
+                  !field.condition(application.answers.applicationFor)
+                ) {
+                  if (field.id === 'exchangeRateOrInterest') {
+                    setValue(`${fieldIndex}.${field.id}`, '0')
+                  }
+                  return null
+                }
                 return field?.sectionTitle ? (
                   <GridColumn key={field.id} span="1/1">
                     <Text
@@ -347,7 +363,7 @@ export const ReportFieldsRepeater: FC<
                       />
                     ) : field.type !== 'nationalId' &&
                       field.id === 'assetNumber' &&
-                      field.props?.assetKey === 'bankAccounts' ? (
+                      props?.assetKey === 'bankAccounts' ? (
                       <InputController
                         id={`${fieldIndex}.${field.id}`}
                         label={formatMessage(field.title)}
@@ -386,9 +402,16 @@ export const ReportFieldsRepeater: FC<
                       <SelectController
                         id={`${fieldIndex}.${field.id}`}
                         name={`${fieldIndex}.${field.id}`}
-                        label={formatMessage(field.title) ?? ''}
+                        label={
+                          formatMessage(
+                            parseLabel(field.title, application.answers),
+                          ) ?? ''
+                        }
                         placeholder={field.placeholder}
-                        options={debtTypes}
+                        options={debtTypes.map((type) => ({
+                          label: formatMessage(type.label),
+                          value: type.value,
+                        }))}
                         backgroundColor="blue"
                       /> /* Commenting out for testing purposes of this field
                     
@@ -401,7 +424,11 @@ export const ReportFieldsRepeater: FC<
                           calculateTotal()
                           setIndex(fieldIndex)
                         }}
-                        label={formatMessage(field.title) ?? ''}
+                        label={
+                          formatMessage(
+                            parseLabel(field.title, application.answers),
+                          ) ?? ''
+                        }
                       />
                     )*/
                     ) : (
@@ -412,7 +439,9 @@ export const ReportFieldsRepeater: FC<
                           repeaterField[field.id] ? repeaterField[field.id] : ''
                         }
                         format={field.format}
-                        label={formatMessage(field.title)}
+                        label={formatMessage(
+                          parseLabel(field.title, application.answers),
+                        )}
                         placeholder={field.placeholder}
                         backgroundColor={field.color ? field.color : 'blue'}
                         currency={field.currency}

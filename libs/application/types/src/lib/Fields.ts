@@ -232,6 +232,7 @@ export interface CheckboxField extends BaseField {
   required?: boolean
   backgroundColor?: InputBackgroundColor
   onSelect?: ((s: string[]) => void) | undefined
+  spacing?: 0 | 1 | 2
 }
 
 export interface DateField extends BaseField {
@@ -351,6 +352,10 @@ export interface FileUploadField extends BaseField {
    */
   readonly maxSize?: number
   readonly maxSizeErrorText?: FormText
+  /**
+   * Defaults to 100MB
+   */
+  readonly totalMaxSize?: number
   readonly forImageUpload?: boolean
 }
 

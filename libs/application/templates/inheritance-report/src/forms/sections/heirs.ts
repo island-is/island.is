@@ -60,10 +60,6 @@ export const heirs = buildSection({
               id: 'netPropertyForExchange',
               title: '',
             }),
-            buildDescriptionField({
-              id: 'customShare.customSpouseSharePercentage',
-              title: '',
-            }),
             buildCustomField({
               title: '',
               id: 'share',
@@ -174,7 +170,7 @@ export const heirs = buildSection({
             buildFileUploadField({
               id: 'heirsAdditionalInfoPrivateTransferFiles',
               uploadAccept: '.pdf, .doc, .docx, .jpg, .jpeg, .png, .xls, .xlsx',
-              uploadDescription: m.fileUploadFileTypes,
+              uploadDescription: m.uploadPrivateTransferDescription,
               uploadMultiple: false,
               title: '',
               uploadHeader: '',
@@ -189,7 +185,7 @@ export const heirs = buildSection({
             buildFileUploadField({
               id: 'heirsAdditionalInfoFilesOtherDocuments',
               uploadAccept: '.pdf, .doc, .docx, .jpg, .jpeg, .png, .xls, .xlsx',
-              uploadDescription: m.fileUploadFileTypes,
+              uploadDescription: m.uploadOtherDocumentsDescription,
               title: '',
               uploadHeader: '',
             }),
