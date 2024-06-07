@@ -263,7 +263,7 @@ const Overview: React.FC<React.PropsWithChildren<unknown>> = () => {
           }
           hideActionButton={isIndictmentWaitingForCancellation}
           actionButtonText={formatMessage(strings.askForCancellationButtonText)}
-          actionButtonColorScheme={'destructive'}
+          actionButtonColorScheme="destructive"
           actionButtonIsDisabled={!userCanCancelIndictment}
           onActionButtonClick={() => setModal('askForCancellationModal')}
         />
