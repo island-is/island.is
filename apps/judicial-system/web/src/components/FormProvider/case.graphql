@@ -263,5 +263,6 @@ query Case($input: CaseQueryInput!) {
     indictmentAppealDeadline
     indictmentVerdictViewedByAll
     indictmentVerdictAppealDeadline
+    indictmentDecision
   }
 }

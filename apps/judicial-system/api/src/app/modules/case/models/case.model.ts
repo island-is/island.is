@@ -19,6 +19,7 @@ import {
   CaseType,
   CourtDocument,
   IndictmentCaseReviewDecision,
+  IndictmentDecision,
   RequestSharedWithDefender,
   SessionArrangements,
   UserRole,
@@ -51,6 +52,7 @@ registerEnumType(CaseIndictmentRulingDecision, {
 registerEnumType(IndictmentCaseReviewDecision, {
   name: 'IndictmentCaseReviewDecision',
 })
+registerEnumType(IndictmentDecision, { name: 'IndictmentDecision' })
 
 @ObjectType()
 class DateLog {
@@ -434,4 +436,7 @@ export class Case {
 
   @Field(() => String, { nullable: true })
   readonly indictmentVerdictAppealDeadline?: string
+
+  @Field(() => IndictmentDecision, { nullable: true })
+  readonly indictmentDecision?: IndictmentDecision
 }
