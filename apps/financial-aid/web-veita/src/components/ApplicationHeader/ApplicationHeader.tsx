@@ -47,10 +47,10 @@ const ApplicationHeader = ({
 
     await changeApplicationState(
       application.id,
+      ApplicationEventType.ASSIGNCASE,
       application.state === ApplicationState.NEW
         ? ApplicationState.INPROGRESS
         : application.state,
-      ApplicationEventType.ASSIGNCASE,
     )
       .then((updatedApplication) => {
         setApplication(updatedApplication)

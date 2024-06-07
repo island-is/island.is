@@ -13,6 +13,7 @@ import { InjectModel } from '@nestjs/sequelize'
 import type { Logger } from '@island.is/logging'
 import { LOGGER_PROVIDER } from '@island.is/logging'
 
+import { formatNationalId } from '@island.is/judicial-system/formatters'
 import {
   CaseMessage,
   MessageService,
@@ -26,6 +27,7 @@ import {
   CaseState,
   CommentType,
   DateType,
+  EventType,
   NotificationType,
   UserRole,
 } from '@island.is/judicial-system/types'
@@ -33,6 +35,7 @@ import {
 import { nowFactory, uuidFactory } from '../../factories'
 import { AwsS3Service } from '../aws-s3'
 import { Defendant, DefendantService } from '../defendant'
+import { EventLog } from '../event-log'
 import {
   CaseFile,
   defenderCaseFileCategoriesForRestrictionAndInvestigationCases,
@@ -97,6 +100,8 @@ export const attributes: (keyof Case)[] = [
   'appealRulingModifiedHistory',
   'requestAppealRulingNotToBePublished',
   'prosecutorsOfficeId',
+  'indictmentRulingDecision',
+  'indictmentHash',
 ]
 
 export interface LimitedAccessUpdateCase
@@ -109,6 +114,7 @@ export interface LimitedAccessUpdateCase
     | 'appealRulingDecision'
   > {}
 
+const eventTypes = Object.values(EventType)
 const dateTypes = Object.values(DateType)
 const commentTypes = Object.values(CommentType)
 
@@ -183,6 +189,14 @@ export const include: Includeable[] = [
         CaseFileCategory.APPEAL_COURT_RECORD,
       ],
     },
+  },
+  {
+    model: EventLog,
+    as: 'eventLogs',
+    required: false,
+    where: { eventType: { [Op.in]: eventTypes } },
+    order: [['created', 'ASC']],
+    separate: true,
   },
   {
     model: DateLog,
@@ -341,10 +355,14 @@ export class LimitedAccessCaseService {
   }
 
   async findDefenderByNationalId(nationalId: string): Promise<User> {
+    const formattedNationalId = formatNationalId(nationalId)
     return this.caseModel
       .findOne({
         where: {
-          defenderNationalId: nationalId,
+          [Op.or]: [
+            { defenderNationalId: formattedNationalId },
+            { defenderNationalId: nationalId },
+          ],
           state: { [Op.not]: CaseState.DELETED },
           isArchived: false,
         },
