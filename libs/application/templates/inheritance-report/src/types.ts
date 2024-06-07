@@ -295,9 +295,10 @@ export interface EstateMember {
 export const heirAgeValidation = 'heirAgeValidation'
 
 export enum DebtTypes {
-  Overdraft = 'overdraft',
-  CreditCard = 'creditCard',
-  Loan = 'loan',
-  InsuranceCompany = 'insuranceCompany',
-  PropertyFees = 'propertyFees',
+  Overdraft = 'Yfirdráttur',
+  CreditCard = 'Kreditkort',
+  Loan = 'Lán',
+  InsuranceCompany = 'Tryggingafélag',
+  PropertyFees = 'Fastagjöld',
+  OtherDebts = 'Aðrar skuldir',
 }
