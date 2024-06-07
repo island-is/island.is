@@ -1524,6 +1524,18 @@ export const m = defineMessages({
     defaultMessage: 'Fylgigögn',
     description: '',
   },
+  fileUploadOtherDocumentsPrePaidDescription: {
+    id: 'ir.application:fileUploadOtherDocumentsPrePaidDescription',
+    defaultMessage:
+      'Samþykktar skráargerðir eru .pdf, .doc, .docx, .jpg, .jpeg, .png, .xls og .xlsx',
+    description: '',
+  },
+  fileUploadOtherDocumentsPrePaidUserGuidelines: {
+    id: 'ir.application:fileUploadOtherDocumentsPrePaidUserGuidelines#markdown',
+    defaultMessage:
+      'Vinsamlegast hlaðið upp önnur fylgigögn. Hægt að hlaða inn fleiri en eitt skjal.',
+    description: '',
+  },
   uploadPrivateTransferDescription: {
     id: 'ir.application:uploadPrivateTransferDescription',
     defaultMessage:

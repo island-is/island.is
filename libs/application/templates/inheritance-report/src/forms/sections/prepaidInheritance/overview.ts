@@ -35,7 +35,7 @@ export const prepaidOverview = buildSubSection({
           marginBottom: 'gutter',
         }),
         buildKeyValueField({
-          label: m.netProperty,
+          label: m.netPropertyForExchange,
           display: 'flex',
           value: ({ answers }) =>
             formatCurrency(
