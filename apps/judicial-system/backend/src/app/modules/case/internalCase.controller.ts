@@ -13,7 +13,6 @@ import type { Logger } from '@island.is/logging'
 import { LOGGER_PROVIDER } from '@island.is/logging'
 
 import { TokenGuard } from '@island.is/judicial-system/auth'
-import { formatNationalId } from '@island.is/judicial-system/formatters'
 import {
   messageEndpoint,
   MessageType,

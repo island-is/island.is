@@ -104,11 +104,7 @@ const AcceptModal = ({
 
   const checkingValue = (element?: number) => (element ? element : 0)
 
-  const amount =
-    (state.amount || 0) +
-    (state.childrenAidAmount || 0) -
-    checkingValue(state.income) -
-    sumValues
+  const amount = (state.amount || 0) - checkingValue(state.income) - sumValues
 
   const taxAmountWithPersonalTax = calculateFinalTaxAmount(
     amount,
@@ -119,6 +115,7 @@ const AcceptModal = ({
   const finalAmount = calculateAcceptedAidFinalAmount(
     amount,
     taxAmountWithPersonalTax,
+    state.childrenAidAmount || 0,
   )
 
   const taxAmount = calculateTaxOfAmount(amount)
@@ -178,6 +175,9 @@ const AcceptModal = ({
 
       {hasChildrenAid && (
         <Box marginBottom={3}>
+          <Text variant="small" fontWeight="semiBold" marginBottom={1}>
+            ATH. ekki er tekinn skattur af styrk barna
+          </Text>
           <NumberInput
             label="Styrkur vegna barna"
             placeholder="Sláðu inn upphæð"
