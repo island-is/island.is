@@ -231,7 +231,8 @@ const Overview: React.FC<React.PropsWithChildren<unknown>> = () => {
         <FormFooter
           nextButtonIcon="arrowForward"
           previousUrl={
-            caseHasBeenReceivedByCourt
+            caseHasBeenReceivedByCourt ||
+            workingCase.state === CaseState.WAITING_FOR_CANCELLATION
               ? constants.CASES_ROUTE
               : `${constants.INDICTMENTS_CASE_FILES_ROUTE}/${workingCase.id}`
           }
