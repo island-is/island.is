@@ -3,6 +3,7 @@ import * as styles from './TabBar.css'
 import { useRef } from 'react'
 import { TabItem, TabItemProps } from './TabItem'
 import { useLocale } from '@island.is/localization'
+import { SubTabItem } from './SubTabItem'
 
 interface Props extends BoxProps {
   tabs?: Array<Omit<TabItemProps, 'onKeyDown' | 'ref'>>
@@ -48,31 +49,6 @@ export const TabBar = ({ tabs, variant = 'default', ...boxProps }: Props) => {
 
   const activeTabIndex = tabs.indexOf(activeTab)
 
-  const tabItems = tabs.map((tab, index) => {
-    return (
-      <TabItem
-        id={`tab-item-${index}`}
-        active={tab.active}
-        onClick={tab.onClick}
-        variant={variant}
-        isFirstTab={index === 0}
-        isLastTab={index === tabs.length - 1}
-        isNextTabToActive={index - 1 === activeTabIndex}
-        isPrevTabToActive={index + 1 === activeTabIndex}
-        onKeyDown={(code) => keyPressHandler(index, tabs.length, code)}
-        name={formatMessage(tab.name)}
-        ref={(node) => {
-          const map = getMap()
-          if (node) {
-            map.set(index, node)
-          } else {
-            map.delete(index)
-          }
-        }}
-      />
-    )
-  })
-
   if (!tabs?.length) {
     return null
   }
@@ -81,14 +57,34 @@ export const TabBar = ({ tabs, variant = 'default', ...boxProps }: Props) => {
     return (
       <Box
         background={'blue100'}
+        role="tablist"
         marginY={1}
+        marginX={1}
         borderRadius="standard"
         borderColor="blue100"
         borderWidth="large"
+        display="flex"
         className={styles.tabBar}
         {...boxProps}
       >
-        {tabItems}
+        {tabs.map((tab, index) => (
+          <SubTabItem
+            id={`tab-item-${index}`}
+            active={tab.active}
+            onClick={tab.onClick}
+            isPrevTabToActive={index + 1 === activeTabIndex}
+            onKeyDown={(code) => keyPressHandler(index, tabs.length, code)}
+            name={formatMessage(tab.name)}
+            ref={(node) => {
+              const map = getMap()
+              if (node) {
+                map.set(index, node)
+              } else {
+                map.delete(index)
+              }
+            }}
+          />
+        ))}
       </Box>
     )
   }
@@ -101,7 +97,27 @@ export const TabBar = ({ tabs, variant = 'default', ...boxProps }: Props) => {
       width="full"
       {...boxProps}
     >
-      {tabItems}
+      {tabs.map((tab, index) => (
+        <TabItem
+          id={`tab-item-${index}`}
+          active={tab.active}
+          onClick={tab.onClick}
+          isFirstTab={index === 0}
+          isLastTab={index === tabs.length - 1}
+          isNextTabToActive={index - 1 === activeTabIndex}
+          isPrevTabToActive={index + 1 === activeTabIndex}
+          onKeyDown={(code) => keyPressHandler(index, tabs.length, code)}
+          name={formatMessage(tab.name)}
+          ref={(node) => {
+            const map = getMap()
+            if (node) {
+              map.set(index, node)
+            } else {
+              map.delete(index)
+            }
+          }}
+        />
+      ))}
     </Box>
   )
 }

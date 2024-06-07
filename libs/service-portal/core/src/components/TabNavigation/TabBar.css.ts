@@ -12,3 +12,11 @@ export const tabBar = style({
     },
   },
 })
+
+export const alternativeTabDivider = style({
+  height: '90%',
+  margin: 'auto',
+  inset: 0,
+  width: '1px',
+  background: theme.color.blue200,
+})

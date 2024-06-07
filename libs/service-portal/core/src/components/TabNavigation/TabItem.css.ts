@@ -1,24 +1,6 @@
 import { style, globalStyle } from '@vanilla-extract/css'
 import { theme } from '@island.is/island-ui/theme'
 
-export const subTab = style({
-  backgroundColor: 'transparent',
-  ':hover': {
-    backgroundColor: theme.color.white,
-  },
-})
-
-export const alternativeTabItem = style({
-  selectors: {
-    '&:first-child': {
-      borderLeft: 'none',
-    },
-    '&:last-child': {
-      borderRight: 'none',
-    },
-  },
-})
-
 export const tab = style({
   height: '100%',
   width: '100%',
@@ -266,3 +248,7 @@ globalStyle(
     zIndex: 2,
   },
 )
+
+globalStyle(`${tabNotSelected}:hover span`, {
+  color: theme.color.blue400,
+})
