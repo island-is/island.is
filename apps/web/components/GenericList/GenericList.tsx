@@ -1,18 +1,21 @@
 import { useRef, useState } from 'react'
 import { useDebounce } from 'react-use'
 import { Locale } from 'locale'
+import { useRouter } from 'next/router'
 import { useLazyQuery } from '@apollo/client'
 
 import {
   AlertMessage,
   Box,
   FilterInput,
+  FocusableBox,
   GridContainer,
   Pagination,
   Stack,
   Text,
 } from '@island.is/island-ui/core'
 import {
+  GenericListItem,
   GenericListItemResponse,
   GetGenericListItemsQueryVariables,
   Query,
@@ -44,16 +47,80 @@ const getResultsFoundText = (totalItems: number, locale: Locale) => {
   return plural
 }
 
+interface ItemProps {
+  item: GenericListItem
+}
+
+const NonClickableItem = ({ item }: ItemProps) => {
+  const { format } = useDateUtils()
+
+  return (
+    <Box
+      key={item.id}
+      padding={[2, 2, 3]}
+      border="standard"
+      borderRadius="large"
+    >
+      <Stack space={0}>
+        <Stack space={0}>
+          <Text variant="eyebrow" color="purple400">
+            {item.date && format(new Date(item.date), 'dd.MM.yyyy')}
+          </Text>
+          <Text variant="h3" as="span" color="dark400">
+            {item.title}
+          </Text>
+        </Stack>
+        {item.cardIntro?.length > 0 && (
+          <Box>{webRichText(item.cardIntro ?? [])}</Box>
+        )}
+      </Stack>
+    </Box>
+  )
+}
+
+const ClickableItem = ({ item }: ItemProps) => {
+  const { format } = useDateUtils()
+  const router = useRouter()
+
+  const pathname = new URL(router.asPath, 'https://island.is').pathname
+
+  return (
+    <FocusableBox
+      key={item.id}
+      padding={[2, 2, 3]}
+      border="standard"
+      borderRadius="large"
+      href={item.slug ? `${pathname}/${item.slug}` : undefined}
+    >
+      <Stack space={0}>
+        <Stack space={0}>
+          <Text variant="eyebrow" color="purple400">
+            {item.date && format(new Date(item.date), 'dd.MM.yyyy')}
+          </Text>
+          <Text variant="h3" as="span" color="blue400">
+            {item.title}
+          </Text>
+        </Stack>
+        {item.cardIntro?.length > 0 && (
+          <Box>{webRichText(item.cardIntro ?? [])}</Box>
+        )}
+      </Stack>
+    </FocusableBox>
+  )
+}
+
 interface GenericListProps {
   id: string
   firstPageItemResponse?: GenericListItemResponse
   searchInputPlaceholder?: string | null
+  itemType?: string | null
 }
 
 export const GenericList = ({
   id,
   firstPageItemResponse,
   searchInputPlaceholder,
+  itemType,
 }: GenericListProps) => {
   const [searchValue, setSearchValue] = useState('')
   const [page, setPage] = useState(1)
@@ -61,7 +128,6 @@ export const GenericList = ({
   const searchValueRef = useRef(searchValue)
   const [itemsResponse, setItemsResponse] = useState(firstPageItemResponse)
   const firstRender = useRef(true)
-  const { format } = useDateUtils()
   const [errorOccurred, setErrorOccurred] = useState(false)
 
   const { activeLocale } = useI18n()
@@ -119,6 +185,8 @@ export const GenericList = ({
 
   const resultsFoundText = getResultsFoundText(totalItems, activeLocale)
 
+  const itemsAreClickable = itemType === 'Clickable'
+
   return (
     <Box paddingBottom={3}>
       <GridContainer>
@@ -153,28 +221,14 @@ export const GenericList = ({
               <Text>
                 {totalItems} {resultsFoundText}
               </Text>
-              {items.map((item) => (
-                <Box
-                  key={item.id}
-                  padding={[2, 2, 3]}
-                  border="standard"
-                  borderRadius="large"
-                >
-                  <Stack space={0}>
-                    <Stack space={0}>
-                      <Text variant="eyebrow" color="purple400">
-                        {item.date && format(new Date(item.date), 'dd.MM.yyyy')}
-                      </Text>
-                      <Text variant="h3" as="span" color="dark400">
-                        {item.title}
-                      </Text>
-                    </Stack>
-                    {item.cardIntro?.length > 0 && (
-                      <Box>{webRichText(item.cardIntro ?? [])}</Box>
-                    )}
-                  </Stack>
-                </Box>
-              ))}
+              {!itemsAreClickable &&
+                items.map((item) => (
+                  <NonClickableItem key={item.id} item={item} />
+                ))}
+              {itemsAreClickable &&
+                items.map((item) => (
+                  <ClickableItem key={item.id} item={item} />
+                ))}
             </Stack>
           )}
 

@@ -96,8 +96,8 @@ const ApplicationProfile = ({
     {
       title: 'Fyrir tímabilið',
       content:
-        getMonth(new Date(application.applied).getMonth()) +
-        format(new Date(application.applied), ' y'),
+        getMonth(new Date(application.appliedDate).getMonth()) +
+        format(new Date(application.appliedDate), ' y'),
       onclick: () => {
         setAppliedMonthModalVisible(true)
       },
@@ -337,7 +337,7 @@ const ApplicationProfile = ({
         onVisibilityChange={(isVisibleBoolean) => {
           setAppliedMonthModalVisible(isVisibleBoolean)
         }}
-        appliedDate={application.applied}
+        appliedDate={application.appliedDate}
         createdDate={application.created}
         applicationId={application.id}
         setApplication={setApplication}

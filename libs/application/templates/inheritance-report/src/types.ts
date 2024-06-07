@@ -293,3 +293,11 @@ export interface EstateMember {
 }
 
 export const heirAgeValidation = 'heirAgeValidation'
+
+export enum DebtTypes {
+  Overdraft = 'overdraft',
+  CreditCard = 'creditCard',
+  Loan = 'loan',
+  InsuranceCompany = 'insuranceCompany',
+  PropertyFees = 'propertyFees',
+}

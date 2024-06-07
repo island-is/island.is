@@ -11,9 +11,8 @@ import {
   isCompletedCase,
   isDefenceUser,
   isIndictmentCase,
-  isInvestigationCase,
   isPrisonSystemUser,
-  isRestrictionCase,
+  isRequestCase,
   User,
 } from '@island.is/judicial-system/types'
 
@@ -47,30 +46,32 @@ export class LimitedAccessViewCaseFileGuard implements CanActivate {
       throw new InternalServerErrorException('Missing case file')
     }
 
-    if (isCompletedCase(theCase.state) && caseFile.category) {
-      if (isDefenceUser(user)) {
-        if (
-          (isRestrictionCase(theCase.type) ||
-            isInvestigationCase(theCase.type)) &&
-          defenderCaseFileCategoriesForRestrictionAndInvestigationCases.includes(
-            caseFile.category,
-          )
-        ) {
-          return true
-        }
+    if (isDefenceUser(user) && caseFile.category) {
+      if (
+        isRequestCase(theCase.type) &&
+        isCompletedCase(theCase.state) &&
+        defenderCaseFileCategoriesForRestrictionAndInvestigationCases.includes(
+          caseFile.category,
+        )
+      ) {
+        return true
+      }
 
-        if (
-          isIndictmentCase(theCase.type) &&
-          defenderCaseFileCategoriesForIndictmentCases.includes(
-            caseFile.category,
-          )
-        ) {
-          return true
-        }
-      } else if (isPrisonSystemUser(user)) {
-        if (caseFile.category === CaseFileCategory.APPEAL_RULING) {
-          return true
-        }
+      if (
+        isIndictmentCase(theCase.type) &&
+        defenderCaseFileCategoriesForIndictmentCases.includes(caseFile.category)
+      ) {
+        return true
+      }
+    }
+
+    if (isPrisonSystemUser(user)) {
+      if (
+        isCompletedCase(theCase.state) &&
+        caseFile.category &&
+        caseFile.category === CaseFileCategory.APPEAL_RULING
+      ) {
+        return true
       }
     }
 

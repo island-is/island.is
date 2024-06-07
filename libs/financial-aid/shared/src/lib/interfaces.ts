@@ -334,7 +334,7 @@ export interface Application {
   id: string
   created: string
   modified: string
-  applied: string
+  appliedDate: string
   nationalId: string
   name: string
   phoneNumber?: string

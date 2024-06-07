@@ -67,6 +67,11 @@ export const strings = defineMessages({
     defaultMessage: 'Móttekið',
     description: 'Notað sem merki þegar mál í stöðu "Móttekið" í málalista',
   },
+  postponedUntilVerdict: {
+    id: 'judicial.system.core:tag_case_state.postponed_until_verdict',
+    defaultMessage: 'Dómtekið',
+    description: 'Notað sem merki þegar mál í stöðu "Dómtekið" í málalista',
+  },
   completed: {
     id: 'judicial.system.core:tag_case_state.completed',
     defaultMessage:
