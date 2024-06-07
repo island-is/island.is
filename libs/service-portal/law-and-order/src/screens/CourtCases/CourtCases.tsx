@@ -16,6 +16,7 @@ import { useEffect } from 'react'
 const CourtCases = () => {
   useNamespaces('sp.law-and-order')
   const { lang } = useLocale()
+  const { formatMessage } = useLocale()
 
   const { data, loading, error, refetch } = useGetCourtCasesQuery({
     variables: {
@@ -26,8 +27,6 @@ const CourtCases = () => {
   })
 
   const cases = data?.lawAndOrderCourtCasesList?.items
-
-  const { formatMessage } = useLocale()
 
   useEffect(() => {
     refetch()
@@ -73,6 +72,15 @@ const CourtCases = () => {
             />
           </Box>
         ))}
+      {!loading && !error && cases?.length === 0 && (
+        <Problem
+          type="no_data"
+          noBorder={false}
+          title={formatMessage(m.noData)}
+          message={formatMessage(m.noDataFoundDetail)}
+          imgSrc="./assets/images/sofa.svg"
+        />
+      )}
     </>
   )
 }

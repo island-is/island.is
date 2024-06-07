@@ -52,4 +52,16 @@ export class JudicialSystemSPClientService {
     }
     return lawyers
   }
+
+  async getSubpoena(id: string, user: User) {
+    let subpoena
+    try {
+      subpoena = await this.casesApiWithAuth(user).caseControllerGetSubpoena({
+        caseId: id,
+      })
+    } catch (error) {
+      this.logger.warn('Failed getting subpoena for user', error)
+    }
+    return subpoena
+  }
 }

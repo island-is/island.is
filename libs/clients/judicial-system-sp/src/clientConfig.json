@@ -35,35 +35,15 @@
         "tags": ["internal"]
       }
     },
-    "/api/test": {
-      "get": {
-        "operationId": "CaseController_test",
-        "parameters": [],
-        "responses": {
-          "201": {
-            "description": "Test connection",
-            "content": {
-              "application/json": { "schema": { "type": "string" } }
-            }
-          }
-        },
-        "tags": ["cases"]
-      }
-    },
     "/api/cases": {
       "get": {
         "operationId": "CaseController_getAllCases",
         "parameters": [],
         "responses": {
-          "201": {
+          "200": {
             "description": "Get all cases",
             "content": {
-              "application/json": {
-                "schema": {
-                  "type": "array",
-                  "items": { "$ref": "#/components/schemas/CasesResponse" }
-                }
-              }
+              "application/json": { "schema": { "type": "string" } }
             }
           }
         },
@@ -82,11 +62,65 @@
           }
         ],
         "responses": {
-          "201": {
+          "200": {
             "description": "Get case by id",
             "content": {
               "application/json": {
                 "schema": { "$ref": "#/components/schemas/CaseResponse" }
+              }
+            }
+          }
+        },
+        "tags": ["cases"]
+      }
+    },
+    "/api/case/{caseId}/subpoena": {
+      "get": {
+        "operationId": "CaseController_getSubpoena",
+        "parameters": [
+          {
+            "name": "caseId",
+            "required": true,
+            "in": "path",
+            "schema": { "type": "string" }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "Get subpoena by case id",
+            "content": {
+              "application/json": {
+                "schema": { "$ref": "#/components/schemas/SubpoenaResponse" }
+              }
+            }
+          }
+        },
+        "tags": ["cases"]
+      },
+      "patch": {
+        "operationId": "CaseController_updateSubpoena",
+        "parameters": [
+          {
+            "name": "caseId",
+            "required": true,
+            "in": "path",
+            "schema": { "type": "string" }
+          }
+        ],
+        "requestBody": {
+          "required": true,
+          "content": {
+            "application/json": {
+              "schema": { "$ref": "#/components/schemas/UpdateSubpoenaDto" }
+            }
+          }
+        },
+        "responses": {
+          "200": {
+            "description": "Update subpoena info",
+            "content": {
+              "application/json": {
+                "schema": { "$ref": "#/components/schemas/SubpoenaResponse" }
               }
             }
           }
@@ -238,20 +272,38 @@
         "properties": { "version": { "type": "string" } },
         "required": ["version"]
       },
-      "CasesResponse": {
-        "type": "object",
-        "properties": {
-          "id": { "type": "string" },
-          "caseNumber": { "type": "string" },
-          "type": { "type": "string" },
-          "state": { "type": "object" }
-        },
-        "required": ["id", "caseNumber", "type", "state"]
-      },
       "CaseResponse": {
         "type": "object",
         "properties": { "data": { "type": "object" } },
         "required": ["data"]
+      },
+      "DefenderInfo": {
+        "type": "object",
+        "properties": {
+          "defenderChoice": { "type": "number", "enum": [] },
+          "defenderName": { "type": "string" }
+        },
+        "required": ["defenderChoice", "defenderName"]
+      },
+      "SubpoenaResponse": {
+        "type": "object",
+        "properties": {
+          "caseId": { "type": "string" },
+          "displayInfo": { "type": "string" },
+          "defenderInfo": { "$ref": "#/components/schemas/DefenderInfo" }
+        },
+        "required": ["caseId", "displayInfo", "defenderInfo"]
+      },
+      "UpdateSubpoenaDto": {
+        "type": "object",
+        "properties": {
+          "defenderChoice": {
+            "type": "string",
+            "enum": ["WAIVE", "CHOOSE", "DELAY", "DELEGATE"]
+          },
+          "defenderNationalId": { "type": "string" }
+        },
+        "required": ["defenderChoice", "defenderNationalId"]
       },
       "Defender": {
         "type": "object",

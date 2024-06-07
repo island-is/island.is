@@ -115,40 +115,30 @@ const CourtCaseDetail = () => {
           )}
         </Box>
         {error && !loading && <Problem error={error} noBorder={false} />}
-        {!error && !loading && !courtCase && (
-          <Problem
-            type="no_data"
-            noBorder={false}
-            title={formatMessage(m.noDataFoundVariable, {
-              arg: formatMessage(messages.courtCases).toLowerCase(),
-            })}
-            message={formatMessage(m.noDataFoundVariableDetail, {
-              arg: formatMessage(messages.courtCases).toLowerCase(),
-            })}
-            imgSrc="./assets/images/sofa.svg"
-          />
-        )}
-        {!error && !loading && courtCase && (
-          <Box paddingRight={2} marginBottom={[1]}>
-            {courtCase?.actions?.map((x, y) => {
-              return (
-                <Button
-                  as="span"
-                  unfocusable
-                  colorScheme="default"
-                  icon="download"
-                  iconType="outline"
-                  size="default"
-                  variant="utility"
-                  key={`'courtcase-button-'${y}`}
-                  onClick={() => alert('hleður niður PDF')}
-                >
-                  {x.title}
-                </Button>
-              )
-            })}
-          </Box>
-        )}
+        {!error &&
+          !loading &&
+          courtCase?.actions &&
+          courtCase.actions.length > 0 && (
+            <Box paddingRight={2} marginBottom={[1]}>
+              {courtCase?.actions?.map((x, y) => {
+                return (
+                  <Button
+                    as="span"
+                    unfocusable
+                    colorScheme="default"
+                    icon="download"
+                    iconType="outline"
+                    size="default"
+                    variant="utility"
+                    key={`'courtcase-button-'${y}`}
+                    onClick={() => alert('hleður niður PDF')}
+                  >
+                    {x.title}
+                  </Button>
+                )
+              })}
+            </Box>
+          )}
       </Box>
       {!error && !loading && courtCase && (
         <>
@@ -160,6 +150,18 @@ const CourtCaseDetail = () => {
           )}
         </>
       )}
+      {!loading &&
+        !error &&
+        courtCase?.data &&
+        courtCase?.data?.groups?.length === 0 && (
+          <Problem
+            type="no_data"
+            noBorder={false}
+            title={formatMessage(m.noData)}
+            message={formatMessage(m.noDataFoundDetail)}
+            imgSrc="./assets/images/sofa.svg"
+          />
+        )}
     </>
   )
 }

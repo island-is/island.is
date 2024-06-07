@@ -24,8 +24,12 @@ const SubpoenaConfirmationModal: FC<React.PropsWithChildren<Props>> = ({
 }) => {
   useNamespaces('sp.law-and-order')
   const { formatMessage } = useLocale()
-  const { setSubpoenaAcknowledged, setSubpoenaModalVisible } =
-    useLawAndOrderContext()
+  const {
+    setSubpoenaAcknowledged,
+    setSubpoenaModalVisible,
+    subpoenaModalVisible,
+    subpoenaAcknowledged,
+  } = useLawAndOrderContext()
 
   const [postAction, { loading: postActionLoading, data: updateData }] =
     usePostSubpoenaAcknowledgedMutation({
@@ -35,7 +39,8 @@ const SubpoenaConfirmationModal: FC<React.PropsWithChildren<Props>> = ({
       onCompleted: () => {
         setSubpoenaModalVisible(false)
         //TODO: What to do if user closes or cancel the pop up?
-        updateData?.lawAndOrderSubpoenaAcknowledged?.acknowledged &&
+
+        subpoenaAcknowledged &&
           toast.success(formatMessage(messages.registrationCompleted))
       },
     })
@@ -59,6 +64,7 @@ const SubpoenaConfirmationModal: FC<React.PropsWithChildren<Props>> = ({
       onCloseModal={() => {
         setSubpoenaModalVisible(false)
       }}
+      toggleClose={subpoenaModalVisible}
     >
       <GridRow>
         <GridColumn span={['12/12', '12/12', '8/12']}>

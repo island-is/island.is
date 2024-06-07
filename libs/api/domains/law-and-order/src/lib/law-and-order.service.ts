@@ -14,6 +14,7 @@ import {
   CaseResponse,
   Defender,
   JudicialSystemSPClientService,
+  SubpoenaResponse,
 } from '@island.is/clients/judicial-system-sp'
 
 interface CaseResponseTemp {
@@ -41,24 +42,26 @@ export class LawAndOrderService {
   constructor(private api: JudicialSystemSPClientService) {}
 
   async getCourtCases(user: User, locale: Locale) {
-    const answer = (await this.api.getCases(
+    const cases = (await this.api.getCases(
       user,
     )) as unknown as Array<CaseResponse> // Temp fix while waiting for declared types from service
     const list: CourtCases = { items: [] }
     const randomBoolean = Math.random() < 0.75
 
-    answer?.map((x) => {
-      const data = x as unknown as CaseResponseTemp // Temp fix while waiting for declared types from service
+    cases?.length > 0 &&
+      Array.isArray(cases) &&
+      cases?.map((x) => {
+        const data = x as unknown as CaseResponseTemp // Temp fix while waiting for declared types from service
 
-      list.items?.push({
-        id: data?.id,
-        acknowledged: randomBoolean,
-        caseNumber: data?.caseNumber,
-        caseNumberTitle: data.caseNumber,
-        state: data.state,
-        type: data.type,
+        list.items?.push({
+          id: data?.id,
+          acknowledged: randomBoolean,
+          caseNumber: data?.caseNumber,
+          caseNumberTitle: data.caseNumber,
+          state: data.state,
+          type: data.type,
+        })
       })
-    })
 
     return list
   }
@@ -87,15 +90,20 @@ export class LawAndOrderService {
   }
 
   async getSubpoena(user: User, id: string, locale: Locale) {
+    const subpoena: SubpoenaResponse | undefined = await this.api.getSubpoena(
+      id,
+      user,
+    )
     const mockAnswer = getSubpoena(id).data
     let data: Subpoena = {}
 
     data = {
       data: {
-        id: id,
-        acknowledged: mockAnswer?.data.acknowledged,
-        chosenDefender: mockAnswer?.data.chosenDefender,
-        displayClaim: mockAnswer?.data.displayClaim,
+        id: subpoena?.caseId ?? id,
+        acknowledged: undefined,
+        chosenDefender: subpoena?.defenderInfo.defenderName,
+        defenderChoice: subpoena?.defenderInfo.defenderChoice,
+        displayClaim: false,
         groups: mockAnswer?.data.groups,
       },
       actions: mockAnswer?.actions,
