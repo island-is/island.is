@@ -7,7 +7,6 @@ import { Logo } from '../../assets/Logo'
 import { buildFormPaymentChargeOverviewSection } from '@island.is/application/ui-forms'
 import { getChargeItemCodesAndExtraLabel } from '../../utils'
 
-
 export const HealthcareWorkPermitForm: Form = buildForm({
   id: 'HealthcareWorkPermitForm',
   title: '',
