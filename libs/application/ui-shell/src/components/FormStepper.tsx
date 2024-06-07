@@ -23,10 +23,15 @@ type Props = {
 const FormStepper = ({ form, sections, screens, currentScreen }: Props) => {
   const { formatMessage } = useLocale()
   const { isMobile } = useIsMobile()
+
   const parseSubsections = (
     children: Array<SectionChildren>,
     isParentActive: boolean,
   ) => {
+    if (!children || children.length === 0) {
+      return []
+    }
+
     const childrenToParse: Array<SectionChildren> = []
 
     children.forEach((child) => {
