@@ -22,12 +22,14 @@ export const getForm = (): Form =>
         children: [
           buildMultiField({
             title: m.preDataCollectionApplicationFor,
+            description: m.preDataCollectionApplicationFoDescription,
             children: [
               buildRadioField({
                 id: 'applicationFor',
                 title: '',
                 largeButtons: true,
                 backgroundColor: 'blue',
+                required: true,
                 options: [
                   {
                     value: ESTATE_INHERITANCE,

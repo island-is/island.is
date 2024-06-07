@@ -6,8 +6,10 @@ import {
 } from '@island.is/judicial-system/types'
 import { tables } from '@island.is/judicial-system-web/messages'
 import {
+  CaseIndictmentRulingDecision,
   CaseState,
   CaseType,
+  IndictmentDecision,
 } from '@island.is/judicial-system-web/src/graphql/schema'
 
 import { mapCaseStateToTagVariant } from './TagCaseState'

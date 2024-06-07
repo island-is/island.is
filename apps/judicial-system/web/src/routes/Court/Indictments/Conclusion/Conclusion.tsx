@@ -28,6 +28,7 @@ import {
   CaseFileCategory,
   CaseIndictmentRulingDecision,
   CaseTransition,
+  DateLog,
   IndictmentDecision,
 } from '@island.is/judicial-system-web/src/graphql/schema'
 import { stepValidationsType } from '@island.is/judicial-system-web/src/utils/formHelper'
@@ -52,6 +53,11 @@ interface Postponement {
   reason?: string
 }
 
+interface PostponeUntilVerdictUpdates {
+  indictmentDecision?: IndictmentDecision
+  courtDate?: DateLog | null
+}
+
 const Conclusion: React.FC = () => {
   const { formatMessage } = useIntl()
   const { workingCase, setWorkingCase, isLoadingWorkingCase, caseNotFound } =
@@ -61,12 +67,8 @@ const Conclusion: React.FC = () => {
   const [selectedDecision, setSelectedDecision] = useState<Decision>()
   const [postponement, setPostponement] = useState<Postponement>()
 
-  const {
-    courtDate,
-    handleCourtDateChange,
-    handleCourtRoomChange,
-    sendCourtDateToServer,
-  } = useCourtArrangements(workingCase, setWorkingCase, 'courtDate')
+  const { courtDate, handleCourtDateChange, handleCourtRoomChange } =
+    useCourtArrangements(workingCase, setWorkingCase, 'courtDate')
 
   const { isUpdatingCase, transitionCase, setAndSendCaseToServer } = useCase()
 
@@ -83,11 +85,6 @@ const Conclusion: React.FC = () => {
 
   const handleRedistribution = useCallback(
     async (destination: string) => {
-      const transitionSuccessful = await transitionCase(
-        workingCase.id,
-        CaseTransition.REDISTRIBUTE,
-      )
-
       const success = await setAndSendCaseToServer(
         [
           {
@@ -99,7 +96,16 @@ const Conclusion: React.FC = () => {
         setWorkingCase,
       )
 
-      if (!transitionSuccessful || !success) {
+      if (!success) {
+        return
+      }
+
+      const transitionSuccessful = await transitionCase(
+        workingCase.id,
+        CaseTransition.REDISTRIBUTE,
+      )
+
+      if (!transitionSuccessful) {
         return
       }
 
@@ -133,21 +139,31 @@ const Conclusion: React.FC = () => {
 
   const handlePostponementUntilVerdict = useCallback(
     async (destination: string) => {
-      const updates = {
-        ...(workingCase.indictmentDecision !==
-          IndictmentDecision.POSTPONING_UNTIL_VERDICT && {
-          indictmentDecision: IndictmentDecision.POSTPONING_UNTIL_VERDICT,
-        }),
-        ...((postponement?.isSettingVerdictDate || workingCase.courtDate) && {
-          courtDate:
+      const prepareUpdates = () => {
+        const updates: PostponeUntilVerdictUpdates = {}
+
+        if (
+          workingCase.indictmentDecision !==
+          IndictmentDecision.POSTPONING_UNTIL_VERDICT
+        ) {
+          updates.indictmentDecision =
+            IndictmentDecision.POSTPONING_UNTIL_VERDICT
+        }
+
+        if (postponement?.isSettingVerdictDate || workingCase.courtDate) {
+          updates.courtDate =
             postponement?.isSettingVerdictDate && courtDate?.date
               ? {
                   date: formatDateForServer(new Date(courtDate.date)),
                   location: courtDate.location,
                 }
-              : null,
-        }),
+              : null
+        }
+
+        return updates
       }
+
+      const updates = prepareUpdates()
 
       const success =
         Object.keys(updates).length > 0
@@ -203,28 +219,32 @@ const Conclusion: React.FC = () => {
 
   const handlePostponement = useCallback(
     async (destination: string) => {
-      const updateCourtDateSuccess = await sendCourtDateToServer([
-        { postponedIndefinitelyExplanation: null, force: true },
-      ])
-
       const updateSuccess = await setAndSendCaseToServer(
         [
           {
             indictmentDecision: IndictmentDecision.POSTPONING,
+            courtDate: courtDate?.date
+              ? {
+                  date: formatDateForServer(new Date(courtDate.date)),
+                  location: courtDate.location,
+                }
+              : undefined,
+            postponedIndefinitelyExplanation: null,
           },
         ],
         workingCase,
         setWorkingCase,
       )
 
-      if (!updateCourtDateSuccess || !updateSuccess) {
+      if (!updateSuccess) {
         return
       }
 
       router.push(`${destination}/${workingCase.id}`)
     },
     [
-      sendCourtDateToServer,
+      courtDate?.date,
+      courtDate?.location,
       setAndSendCaseToServer,
       setWorkingCase,
       workingCase,
@@ -233,18 +253,23 @@ const Conclusion: React.FC = () => {
 
   const handleNavigationTo = useCallback(
     async (destination: keyof stepValidationsType) => {
-      if (selectedAction === IndictmentDecision.REDISTRIBUTING) {
-        handleRedistribution(destination)
-      } else if (selectedAction === IndictmentDecision.COMPLETING) {
-        handleCompletion(destination)
-      } else if (
-        selectedAction === IndictmentDecision.POSTPONING_UNTIL_VERDICT
-      ) {
-        await handlePostponementUntilVerdict(destination)
-      } else if (postponement?.postponedIndefinitely) {
-        handlePostponementIndefinitely(destination)
-      } else {
-        handlePostponement(destination)
+      switch (selectedAction) {
+        case IndictmentDecision.REDISTRIBUTING:
+          handleRedistribution(destination)
+          break
+        case IndictmentDecision.COMPLETING:
+          handleCompletion(destination)
+          break
+        case IndictmentDecision.POSTPONING_UNTIL_VERDICT:
+          handlePostponementUntilVerdict(destination)
+          break
+        case IndictmentDecision.POSTPONING:
+          postponement?.postponedIndefinitely
+            ? handlePostponementIndefinitely(destination)
+            : handlePostponement(destination)
+          break
+        default:
+          break
       }
     },
     [
