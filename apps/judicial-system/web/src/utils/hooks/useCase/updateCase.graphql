@@ -20,7 +20,7 @@ mutation UpdateCase($input: UpdateCaseInput!) {
       defenderNationalId
       defenderEmail
       defenderPhoneNumber
-      defendantWaivesRightToCounsel
+      defenderChoice
       defendantPlea
     }
     defenderName
@@ -219,5 +219,6 @@ mutation UpdateCase($input: UpdateCaseInput!) {
     }
     indictmentDeniedExplanation
     indictmentReturnedExplanation
+    indictmentDecision
   }
 }

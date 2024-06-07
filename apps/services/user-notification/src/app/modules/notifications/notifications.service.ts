@@ -26,7 +26,6 @@ import type { Locale } from '@island.is/shared/types'
 import { mapToContentfulLocale, mapToLocale } from './utils'
 import { ContentfulGraphQLClientService } from '@island.is/clients/contentful-graphql'
 import { GetTemplateByTemplateId,GetTemplates,GetOrganizationByKennitala } from '@island.is/clients/contentful-graphql'
-import { uuid } from 'uuidv4'
 
 /**
  * These are the properties that can be replaced in the template

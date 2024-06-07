@@ -213,10 +213,6 @@ const OrganizationHomePage: Screen<HomeProps> = ({
             slug={organizationPage.slug}
             fullWidth={true}
             params={{
-              latestNewsSliceBackground:
-                organizationPage.theme === 'landing_page'
-                  ? 'white'
-                  : 'purple100',
               latestNewsSliceColorVariant:
                 organizationPage.theme === 'landing_page' ? 'blue' : 'default',
             }}

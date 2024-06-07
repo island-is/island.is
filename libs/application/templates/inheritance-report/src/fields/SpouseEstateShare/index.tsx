@@ -21,10 +21,10 @@ import {
 } from '@island.is/island-ui/core'
 import { m } from '../../lib/messages'
 import { Answers } from '../../types'
-import { NO, YES } from '../../lib/constants'
 import { MessageDescriptor } from 'react-intl'
 import { SpanType } from '@island.is/island-ui/core/types'
 import { valueToNumber } from '../../lib/utils/helpers'
+import { NO, YES } from '@island.is/application/core'
 
 type CustomField = {
   id: string

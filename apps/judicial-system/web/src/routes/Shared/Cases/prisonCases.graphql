@@ -25,7 +25,7 @@ query PrisonCases {
       nationalId
       name
       noNationalId
-      defendantWaivesRightToCounsel
+      defenderChoice
     }
     courtDate
     isValidToDateInThePast
@@ -81,5 +81,6 @@ query PrisonCases {
       active
     }
     postponedIndefinitelyExplanation
+    indictmentRulingDecision
   }
 }

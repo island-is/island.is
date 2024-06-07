@@ -2,8 +2,8 @@ import { applyCase } from 'beygla'
 import { PDFDocument, rgb, StandardFonts } from 'pdf-lib'
 
 import { formatDate } from '@island.is/judicial-system/formatters'
-import { IndictmentConfirmation } from '@island.is/judicial-system/types'
 
+import { IndictmentConfirmation } from './indictmentPdf'
 import { drawTextWithEllipsisPDFKit } from './pdfHelpers'
 import { PDFKitCoatOfArms } from './PDFKitCoatOfArms'
 
