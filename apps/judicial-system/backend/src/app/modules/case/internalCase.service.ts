@@ -1086,7 +1086,7 @@ export class InternalCaseService {
         { model: User, as: 'judge' },
         { model: User, as: 'prosecutor' },
       ],
-      attributes: ['courtCaseNumber'],
+      attributes: ['courtCaseNumber', 'id'],
       where: {
         type: CaseType.INDICTMENT,
         id: caseId,

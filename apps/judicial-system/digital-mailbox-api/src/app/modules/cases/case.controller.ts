@@ -5,6 +5,7 @@ import {
   Get,
   Inject,
   Param,
+  ParseUUIDPipe,
   Patch,
   Query,
   UseGuards,
@@ -46,13 +47,9 @@ export class CaseController {
   @ApiOkResponse({
     type: CasesResponse,
     description:
-      'Returns all accessible indictment cases for authenticated user',
+      'Returns a list of accessible indictment cases for authenticated user. If user has no cases it returns an empty list.',
   })
   @CommonApiResponses()
-  @ApiResponse({
-    status: 404,
-    description: 'No cases found for authenticated user',
-  })
   async getAllCases(
     @CurrentUser() user: User,
     @Query() query?: { lang: string },
@@ -73,7 +70,7 @@ export class CaseController {
     description: 'Case for given case id and authenticated user not found',
   })
   async getCase(
-    @Param('caseId') caseId: string,
+    @Param('caseId', new ParseUUIDPipe()) caseId: string,
     @CurrentUser() user: User,
     @Query() query?: { lang: string },
   ): Promise<CaseResponse> {
@@ -93,7 +90,7 @@ export class CaseController {
     description: 'Subpoena for given case id and authenticated user not found',
   })
   async getSubpoena(
-    @Param('caseId') caseId: string,
+    @Param('caseId', new ParseUUIDPipe()) caseId: string,
     @CurrentUser() user: User,
   ): Promise<SubpoenaResponse> {
     this.logger.debug(`Getting subpoena by case id ${caseId}`)
@@ -117,7 +114,7 @@ export class CaseController {
   })
   async updateSubpoena(
     @CurrentUser() user: User,
-    @Param('caseId') caseId: string,
+    @Param('caseId', new ParseUUIDPipe()) caseId: string,
     @Body() defenderAssignment: UpdateSubpoenaDto,
   ): Promise<SubpoenaResponse> {
     this.logger.debug(`Assigning defender to subpoena ${caseId}`)

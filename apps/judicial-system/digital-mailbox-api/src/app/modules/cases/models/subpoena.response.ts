@@ -17,9 +17,6 @@ export class SubpoenaResponse {
   @ApiProperty({ type: () => String })
   caseId!: string
 
-  @ApiProperty({ type: () => String })
-  displayInfo?: string
-
   @ApiProperty({ type: () => DefenderInfo })
   defenderInfo?: DefenderInfo
 
@@ -29,6 +26,7 @@ export class SubpoenaResponse {
     lang?: string,
   ): SubpoenaResponse {
     const formattedNationalId = formatNationalId(defendantNationalId)
+    const title = lang === 'en' ? 'Subpoena' : 'Fyrirkall' //TODO add subpoena info to response
 
     const defendantInfo = internalCase.defendants.find(
       (defendant) =>
@@ -38,7 +36,6 @@ export class SubpoenaResponse {
 
     return {
       caseId: internalCase.id,
-      displayInfo: lang === 'en' ? 'Subpoena' : 'Þingbók',
       defenderInfo: defendantInfo
         ? {
             defenderChoice: defendantInfo?.defenderChoice,
