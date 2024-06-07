@@ -31,7 +31,7 @@ export const HeirsOverview: FC<React.PropsWithChildren<FieldBaseProps>> = ({
         return (
           <Box key={index} marginTop={index === 0 ? 3 : 6}>
             <Text marginBottom={2} variant="h4">
-              {formatMessage(m.heir)}
+              {formatMessage(m.heir) + ' ' + (index + 1)}
             </Text>
             <Box display="flex" marginBottom={2}>
               <Box width="half">
