@@ -17,7 +17,6 @@ import { useLocale } from '@island.is/localization'
 import ConditionHandler from './ConditionHandler'
 import FormField from './FormField'
 import { FieldDef, MultiFieldScreen } from '../types'
-import { useAuth } from '@island.is/auth/react'
 
 const IGNORED_HALF_TYPES: FieldTypes[] = [FieldTypes.RADIO]
 
