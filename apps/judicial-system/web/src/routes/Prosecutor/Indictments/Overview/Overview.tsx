@@ -259,7 +259,7 @@ const Overview: React.FC<React.PropsWithChildren<unknown>> = () => {
             workingCase.state === CaseState.WAITING_FOR_CANCELLATION
           }
           actionButtonText={formatMessage(strings.askForCancellationButtonText)}
-          actionButtonColorScheme={'destructive'}
+          actionButtonColorScheme="destructive"
           actionButtonIsDisabled={
             !(
               workingCase.state &&
