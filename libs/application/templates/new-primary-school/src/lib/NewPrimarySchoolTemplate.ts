@@ -91,7 +91,11 @@ const NewPrimarySchoolTemplate: ApplicationTemplate<
         },
       },
       [States.DRAFT]: {
-        exit: ['clearLanguages', 'clearPublication'],
+        exit: [
+          'clearLanguages',
+          'clearAllergiesAndIntolerances',
+          'clearPublication',
+        ],
         meta: {
           name: States.DRAFT,
           status: 'draft',
@@ -168,6 +172,27 @@ const NewPrimarySchoolTemplate: ApplicationTemplate<
         if (otherLanguagesSpokenDaily === NO) {
           unset(application.answers, 'languages.otherLanguages')
           unset(application.answers, 'languages.icelandicNotSpokenAroundChild')
+        }
+        return context
+      }),
+      /**
+       * If the user changes his answers,
+       * clear selected food allergies and intolerances.
+       */
+      clearAllergiesAndIntolerances: assign((context) => {
+        const { application } = context
+        const { hasFoodAllergies, hasFoodIntolerances } = getApplicationAnswers(
+          application.answers,
+        )
+
+        if (hasFoodAllergies?.length === 0) {
+          unset(application.answers, 'allergiesAndIntolerances.foodAllergies')
+        }
+        if (hasFoodIntolerances?.length === 0) {
+          unset(
+            application.answers,
+            'allergiesAndIntolerances.foodIntolerances',
+          )
         }
         return context
       }),

@@ -15,6 +15,7 @@ import { FC } from 'react'
 import { States } from '../../lib/constants'
 import { newPrimarySchoolMessages } from '../../lib/messages'
 
+import { AllergiesAndIntolerances } from './review-groups/AllergiesAndIntolerances'
 import { Child } from './review-groups/Child'
 import { Languages } from './review-groups/Languages'
 import { Parents } from './review-groups/Parents'
@@ -154,6 +155,7 @@ export const Review: FC<ReviewScreenProps> = ({
       <Relatives {...childProps} />
       <Siblings {...childProps} />
       <Languages {...childProps} />
+      <AllergiesAndIntolerances {...childProps} />
       <Support {...childProps} />
       <Photography {...childProps} />
     </>

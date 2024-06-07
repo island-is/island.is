@@ -39,6 +39,22 @@ export enum SiblingRelationOptions {
   STEP_SIBLING = 'stepSibling',
 }
 
+export enum FoodAllergiesOptions {
+  EGG_ALLERGY = 'eggAllergy',
+  FISH_ALLERGY = 'fishAllergy',
+  PENUT_ALLERGY = 'peanutAllergy',
+  WHEAT_ALLERGY = 'wheatAllergy',
+  MILK_ALLERGY = 'milkAllergy',
+  OTHER = 'other',
+}
+
+export enum FoodIntolerancesOptions {
+  LACTOSE_INTOLERANCE = 'lactoseIntolerance',
+  GLUTEN_INTOLERANCE = 'glutenIntolerance',
+  MSG_INTOLERANCE = 'msgIntolerance',
+  OTHER = 'other',
+}
+
 export interface Language {
   code: string
   name: string
