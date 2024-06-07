@@ -100,7 +100,11 @@ export const TableRow = ({
         </Column>
         <Column span="2/12">
           <ColumnText
-            text={formatDate(lastModified ? lastModified : new Date(), { day: 'numeric', month: 'numeric', year: 'numeric' })}
+            text={formatDate(lastModified ? lastModified : new Date(), {
+              day: 'numeric',
+              month: 'numeric',
+              year: 'numeric',
+            })}
           />
         </Column>
         <Column span="1/12">
