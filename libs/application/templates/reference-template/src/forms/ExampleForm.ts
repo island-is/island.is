@@ -14,7 +14,6 @@ import {
   buildPhoneField,
   buildHiddenInput,
   buildHiddenInputWithWatchedValue,
-  buildAsyncSelectField,
 } from '@island.is/application/core'
 import {
   Application,
@@ -102,10 +101,6 @@ export const ExampleForm: Form = buildForm({
         buildFileUploadField({
           id: 'attachments',
           title: 'Viðhengi',
-          condition: (app) => {
-            console.log(app)
-            return true
-          },
           introduction: 'Hér getur þú bætt við viðhengjum við umsóknina þína.',
           uploadMultiple: true,
         }),
