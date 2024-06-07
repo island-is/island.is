@@ -32,6 +32,7 @@ export class NationalRegistryService extends BaseTemplateApiService {
     params,
   }: TemplateApiModuleActionProps<NationalRegistryParameters>): Promise<NationalRegistryIndividual | null> {
     const individual = await this.getIndividual(auth.nationalId)
+
     //Check if individual is found in national registry
     if (!individual) {
       throw new TemplateApiError(
