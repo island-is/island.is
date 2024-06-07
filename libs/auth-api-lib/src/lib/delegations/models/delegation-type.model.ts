@@ -1,5 +1,5 @@
-import type {
-  CreationOptional,
+import {
+  type CreationOptional,
   InferAttributes,
   InferCreationAttributes,
 } from 'sequelize'
@@ -9,6 +9,7 @@ import {
   CreatedAt,
   DataType,
   ForeignKey,
+  HasMany,
   Model,
   PrimaryKey,
   Table,
@@ -17,6 +18,8 @@ import {
 } from 'sequelize-typescript'
 
 import { DelegationProviderModel } from './delegation-provider.model'
+import { PersonalRepresentativeDelegationTypeModel } from '../../personal-representative/models/personal-representative-delegation-type.model'
+import { DelegationTypeDto } from '../dto/delegation-type.dto'
 import { ClientDelegationType } from '../../clients/models/client-delegation-type.model'
 import { Client } from '../../clients/models/client.model'
 import { ApiScopeDelegationType } from '../../resources/models/api-scope-delegation-type.model'
@@ -72,4 +75,16 @@ export class DelegationTypeModel extends Model<
 
   @UpdatedAt
   readonly modified?: Date
+
+  @HasMany(() => PersonalRepresentativeDelegationTypeModel)
+  prDelegationType?: PersonalRepresentativeDelegationTypeModel[]
+
+  toDTO(): DelegationTypeDto {
+    return {
+      id: this.id,
+      description: this.description,
+      providerId: this.providerId,
+      name: this.name,
+    }
+  }
 }

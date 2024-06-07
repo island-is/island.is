@@ -110,6 +110,13 @@ export const calculatePersonalTaxAllowanceFromAmount = (
 
 export const calculateAcceptedAidFinalAmount = (
   amount: number,
+  finalTaxAmount: number,
+): number => {
+  return amount - finalTaxAmount
+}
+
+export const calculateFinalTaxAmount = (
+  amount: number,
   personalTaxCreditPercentage: number,
   spousedPersonalTaxCreditPercentage: number,
 ): number => {
@@ -128,11 +135,12 @@ export const calculateAcceptedAidFinalAmount = (
 
   const tax = Math.floor(amount * taxPercentage)
 
-  const finalTaxAmount = Math.max(
-    tax - personalTaxAllowance + spouseTaxAllowance,
-    0,
-  )
-  return amount - finalTaxAmount
+  // Ensure that the total allowances do not exceed the calculated tax
+  const totalAllowances = personalTaxAllowance + spouseTaxAllowance
+  const applicableAllowances = Math.min(totalAllowances, tax)
+
+  const finalTaxAmount = Math.max(tax - applicableAllowances, 0)
+  return finalTaxAmount
 }
 
 export const estimatedBreakDown = (
@@ -194,11 +202,24 @@ export const acceptedAmountBreakDown = (amount?: Amount): Calculations[] => {
       }
     }) ?? []
 
+  const childrenAid =
+    amount?.childrenAidAmount && amount?.childrenAidAmount !== 0
+      ? [
+          {
+            title: 'Styrkur vegna barna',
+            calculation: `+ ${amount?.childrenAidAmount?.toLocaleString(
+              'de-DE',
+            )} kr.`,
+          },
+        ]
+      : []
+
   const basicCalc = [
     {
       title: 'Grunnupphæð',
       calculation: `+ ${amount?.aidAmount.toLocaleString('de-DE')} kr.`,
     },
+    ...childrenAid,
     {
       title: 'Tekjur',
       calculation: amount?.income

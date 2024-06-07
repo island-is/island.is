@@ -8,10 +8,6 @@ import {
   formatDate,
   lowercase,
 } from '@island.is/judicial-system/formatters'
-import {
-  CaseState,
-  type IndictmentConfirmation,
-} from '@island.is/judicial-system/types'
 
 import { nowFactory } from '../factories'
 import { indictment } from '../messages'
@@ -56,6 +52,12 @@ const roman = (num: number) => {
   return str
 }
 
+export interface IndictmentConfirmation {
+  actor: string
+  institution: string
+  date: Date
+}
+
 export const createIndictment = async (
   theCase: Case,
   formatMessage: FormatMessage,
@@ -81,7 +83,7 @@ export const createIndictment = async (
 
   setTitle(doc, title)
 
-  if (theCase.state === CaseState.SUBMITTED && confirmation) {
+  if (confirmation) {
     addIndictmentConfirmation(
       doc,
       confirmation.actor,

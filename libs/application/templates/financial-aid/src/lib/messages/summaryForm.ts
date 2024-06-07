@@ -76,6 +76,11 @@ export const summaryForm = {
     },
   }),
   childrenInfo: defineMessages({
+    title: {
+      id: 'fa.application:section.summaryForm.childrenInfo.title',
+      defaultMessage: 'Börn',
+      description: 'Summary form children information title ',
+    },
     name: {
       id: 'fa.application:section.summaryForm.childrenInfo.name',
       defaultMessage: 'Nafn',
@@ -90,6 +95,12 @@ export const summaryForm = {
       id: 'fa.application:section.summaryForm.childrenInfo.school',
       defaultMessage: 'Skóli',
       description: 'Summary form children information title of school ',
+    },
+    comment: {
+      id: 'fa.application:section.summaryForm.childrenInfo.comment',
+      defaultMessage: 'Athugasemd',
+      description:
+        'Summary form children information title of children comment ',
     },
   }),
   formInfo: defineMessages({

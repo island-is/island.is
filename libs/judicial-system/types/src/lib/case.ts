@@ -1,5 +1,7 @@
 import flatten from 'lodash/flatten'
 
+import { CaseFileCategory } from './file'
+
 export enum CaseOrigin {
   UNKNOWN = 'UNKNOWN',
   RVG = 'RVG',
@@ -215,6 +217,13 @@ export enum CaseDecision {
   DISMISSING = 'DISMISSING',
 }
 
+export enum IndictmentDecision {
+  POSTPONING = 'POSTPONING',
+  POSTPONING_UNTIL_VERDICT = 'POSTPONING_UNTIL_VERDICT',
+  COMPLETING = 'COMPLETING',
+  REDISTRIBUTING = 'REDISTRIBUTING',
+}
+
 export enum CaseAppealRulingDecision {
   ACCEPTING = 'ACCEPTING',
   REPEAL = 'REPEAL',
@@ -229,6 +238,8 @@ export enum CaseAppealRulingDecision {
 export enum CaseIndictmentRulingDecision {
   RULING = 'RULING',
   FINE = 'FINE',
+  DISMISSAL = 'DISMISSAL',
+  CANCELLATION = 'CANCELLATION',
 }
 
 export enum IndictmentCaseReviewDecision {
@@ -310,7 +321,6 @@ export const acceptedCaseDecisions = [
   CaseDecision.ACCEPTING_PARTIALLY,
 ]
 
-// TODO: Move to the client as it is only used there
 export const isAcceptingCaseDecision = (
   decision?: CaseDecision | null,
 ): boolean => {
@@ -333,21 +343,44 @@ export const isCompletedCase = (state?: CaseState | null): boolean => {
   return Boolean(state && completedCaseStates.includes(state))
 }
 
-export const isTrafficViolationCase = (
-  indictmentSubtypes?: IndictmentSubtypeMap,
-  type?: CaseType,
+export const hasIndictmentCaseBeenSubmittedToCourt = (
+  state?: CaseState | null,
 ): boolean => {
-  if (!indictmentSubtypes || type !== CaseType.INDICTMENT) {
+  return Boolean(
+    state &&
+      [
+        CaseState.SUBMITTED,
+        CaseState.RECEIVED,
+        CaseState.MAIN_HEARING,
+        ...completedIndictmentCaseStates,
+      ].includes(state),
+  )
+}
+
+export const isTrafficViolationCase = (theCase: {
+  type?: CaseType | null
+  indictmentSubtypes?: IndictmentSubtypeMap
+  caseFiles?: { category?: CaseFileCategory | null }[] | null
+}): boolean => {
+  if (
+    theCase.type !== CaseType.INDICTMENT ||
+    !theCase.indictmentSubtypes ||
+    theCase.caseFiles?.some(
+      (file) => file.category === CaseFileCategory.INDICTMENT,
+    )
+  ) {
     return false
   }
 
-  const flatIndictmentSubtypes = flatten(Object.values(indictmentSubtypes))
+  const flatIndictmentSubtypes = flatten(
+    Object.values(theCase.indictmentSubtypes),
+  )
 
-  return Boolean(
+  return (
     flatIndictmentSubtypes.length > 0 &&
-      flatIndictmentSubtypes.every(
-        (val) => val === IndictmentSubtype.TRAFFIC_VIOLATION,
-      ),
+    flatIndictmentSubtypes.every(
+      (val) => val === IndictmentSubtype.TRAFFIC_VIOLATION,
+    )
   )
 }
 
@@ -403,7 +436,3 @@ export const isRequestCaseTransition = (
     transition as RequestCaseTransition,
   )
 }
-
-export type IndictmentConfirmation =
-  | { actor: string; institution: string; date: Date }
-  | undefined

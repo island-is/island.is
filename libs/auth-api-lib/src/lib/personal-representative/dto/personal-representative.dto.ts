@@ -1,17 +1,18 @@
 import {
-  IsNotEmpty,
-  IsString,
-  IsEnum,
-  IsDate,
-  IsOptional,
   IsArray,
   IsBoolean,
+  IsDate,
+  IsEnum,
+  IsNotEmpty,
+  IsOptional,
+  IsString,
 } from 'class-validator'
 import { ApiProperty, ApiPropertyOptional } from '@nestjs/swagger'
 import { Type } from 'class-transformer'
 import { PersonalRepresentativeRightTypeDTO } from './personal-representative-right-type.dto'
 import { PersonalRepresentative } from '../models/personal-representative.model'
 import { InactiveReason } from '../models/personal-representative.enum'
+import { DelegationTypeDto } from '../../delegations/dto/delegation-type.dto'
 
 export class PersonalRepresentativeDTO {
   @IsString()
@@ -80,6 +81,13 @@ export class PersonalRepresentativeDTO {
       'A list of right typess that the personal representative has on behalf of represented person',
   })
   rights!: PersonalRepresentativeRightTypeDTO[]
+
+  @IsArray()
+  @ApiProperty({
+    description:
+      'A list of delegation types rights that the personal representative has on behalf of represented person',
+  })
+  prDelegationTypes!: DelegationTypeDto[]
 
   @IsBoolean()
   @ApiProperty({
