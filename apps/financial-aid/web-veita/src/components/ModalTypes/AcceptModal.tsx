@@ -104,7 +104,7 @@ const AcceptModal = ({
 
   const checkingValue = (element?: number) => (element ? element : 0)
 
-  const amount = (state.amount || 0) + checkingValue(state.income) - sumValues
+  const amount = (state.amount || 0) - checkingValue(state.income) - sumValues
 
   const taxAmountWithPersonalTax = calculateFinalTaxAmount(
     amount,
