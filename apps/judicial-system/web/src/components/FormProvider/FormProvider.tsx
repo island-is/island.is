@@ -69,8 +69,12 @@ export const FormContext = createContext<FormProvider>({
   isLoadingWorkingCase: true,
   caseNotFound: false,
   isCaseUpToDate: false,
-  // eslint-disable-next-line @typescript-eslint/no-empty-function
-  refreshCase: () => {},
+  refreshCase: () => {
+    return
+  },
+  getCase: () => {
+    return
+  },
 })
 
 const MaybeFormProvider = ({ children }: Props) => {

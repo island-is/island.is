@@ -209,9 +209,6 @@ const useCase = () => {
       async (
         workingCase: Case,
         setWorkingCase: React.Dispatch<React.SetStateAction<Case>>,
-        setCourtCaseNumberErrorMessage: React.Dispatch<
-          React.SetStateAction<string>
-        >,
       ): Promise<string> => {
         try {
           if (isCreatingCourtCase === false) {
@@ -225,16 +222,11 @@ const useCase = () => {
                 courtCaseNumber: (data.createCourtCase as Case).courtCaseNumber,
               }))
 
-              setCourtCaseNumberErrorMessage('')
-
               return data.createCourtCase.courtCaseNumber
             }
           }
         } catch (error) {
-          // Catch all so we can set an eror message
-          setCourtCaseNumberErrorMessage(
-            'Ekki tókst að stofna nýtt mál, reyndu aftur eða sláðu inn málsnúmer',
-          )
+          // Catch all so we can return the empty string
         }
 
         return ''
