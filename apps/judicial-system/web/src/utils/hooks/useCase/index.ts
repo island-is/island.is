@@ -248,10 +248,6 @@ const useCase = () => {
         ? limitedAccessUpdateCaseMutation
         : updateCaseMutation
 
-      const resultType = limitedAccess
-        ? 'limitedAccessUpdateCase'
-        : 'updateCase'
-
       try {
         if (!id || Object.keys(updateCase).length === 0) {
           return
@@ -263,7 +259,9 @@ const useCase = () => {
 
         const res = data as UpdateCaseMutation & LimitedAccessUpdateCaseMutation
 
-        return res && res[resultType]
+        return (
+          res && res[limitedAccess ? 'limitedAccessUpdateCase' : 'updateCase']
+        )
       } catch (error) {
         toast.error(formatMessage(errors.updateCase))
       }
