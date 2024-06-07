@@ -1,9 +1,5 @@
 import { createIntl } from 'react-intl'
 
-import {
-  CaseIndictmentRulingDecision,
-  IndictmentDecision,
-} from '@island.is/judicial-system/types'
 import { tables } from '@island.is/judicial-system-web/messages'
 import {
   CaseIndictmentRulingDecision,
