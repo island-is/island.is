@@ -12,6 +12,10 @@ import Logo from '@island.is/application/templates/social-insurance-administrati
 import { incomePlanFormMessage } from '../lib/messages'
 import { socialInsuranceAdministrationMessage } from '@island.is/application/templates/social-insurance-administration-core/lib/messages'
 import { RatioType, YES } from '../lib/constants'
+import {
+  getCategoriesOptions,
+  getTypesOptions,
+} from '../lib/incomePlanUtils'
 
 export const IncomePlanForm: Form = buildForm({
   id: 'IncomePlanDraft',
@@ -53,8 +57,7 @@ export const IncomePlanForm: Form = buildForm({
             buildTableRepeaterField({
               id: 'incomePlan.table',
               title: incomePlanFormMessage.info.section,
-              description:
-                'Hér er tillaga að tekjuáætlun. Hér getur þú breytt upphæðum, fjarlægt tekjur og/eða bætt við tekjum sem ekki er búið að setja inn.',
+              description: incomePlanFormMessage.incomePlan.description,
               formTitle: incomePlanFormMessage.incomePlan.registerIncome,
               addItemButtonText: incomePlanFormMessage.incomePlan.addIncome,
               saveItemButtonText: incomePlanFormMessage.incomePlan.saveIncome,
@@ -69,12 +72,9 @@ export const IncomePlanForm: Form = buildForm({
                   displayInTable: false,
                   width: 'half',
                   isSearchable: true,
-                  options: Array(100)
-                    .fill(undefined)
-                    .map((_, idx, array) => ({
-                      value: `${array.length - idx}`,
-                      label: `${array.length - idx}%`,
-                    })),
+                  options: (application) => {
+                    return getCategoriesOptions(application.externalData)
+                  },
                 },
                 incomeTypes: {
                   component: 'select',
@@ -83,12 +83,14 @@ export const IncomePlanForm: Form = buildForm({
                     incomePlanFormMessage.incomePlan.selectIncomeType,
                   width: 'half',
                   isSearchable: true,
-                  options: Array(100)
-                    .fill(undefined)
-                    .map((_, idx, array) => ({
-                      value: `${array.length - idx}`,
-                      label: `${array.length - idx}%`,
-                    })),
+                  options: (application, activeField) => {
+                    if (activeField?.incomeCategories !== undefined) {
+                      return getTypesOptions(
+                        application.externalData,
+                        activeField.incomeCategories,
+                      ) 
+                    }
+                  },
                 },
                 income: {
                   component: 'radio',
@@ -148,7 +150,9 @@ export const IncomePlanForm: Form = buildForm({
                   label: incomePlanFormMessage.incomePlan.annualIncome,
                   width: 'half',
                   type: 'number',
+                  backgroundColor: 'white',
                   displayInTable: false,
+                  readonly: true,
                   condition: (_, activeField) => {
                     return activeField?.income === RatioType.MONTHLY
                   },

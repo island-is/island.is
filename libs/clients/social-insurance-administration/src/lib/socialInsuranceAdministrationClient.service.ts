@@ -5,12 +5,14 @@ import {
   ApplicantApi,
   ApplicationApi,
   GeneralApi,
+  IncomePlanApi,
   PaymentPlanApi,
   PensionCalculatorApi,
   TrWebApiServicesDomainApplicationsModelsCreateApplicationFromPaperReturn,
   TrWebCommonsExternalPortalsApiModelsApplicantApplicantInfoReturn,
   TrWebCommonsExternalPortalsApiModelsApplicationsIsEligibleForApplicationReturn,
   TrWebCommonsExternalPortalsApiModelsDocumentsDocument,
+  TrWebCommonsExternalPortalsApiModelsIncomePlanExternalIncomeTypeDto,
   TrWebCommonsExternalPortalsApiModelsPaymentPlanLegitimatePayments,
   TrWebCommonsExternalPortalsApiModelsPaymentPlanPaymentPlanDto,
 } from '../../gen/fetch'
@@ -26,6 +28,7 @@ export class SocialInsuranceAdministrationClientService {
     private readonly paymentPlanApi: PaymentPlanApi,
     private readonly currencyApi: GeneralApi,
     private readonly pensionCalculatorApi: PensionCalculatorApi,
+    private readonly incomePlanApi: IncomePlanApi,
   ) {}
 
   private applicationApiWithAuth = (user: User) =>
@@ -42,6 +45,9 @@ export class SocialInsuranceAdministrationClientService {
 
   private paymentPlanApiWithAuth = (user: User) =>
     this.paymentPlanApi.withMiddleware(new AuthMiddleware(user as Auth))
+
+  private incomePlanApiWithAuth = (user: User) =>
+    this.incomePlanApi.withMiddleware(new AuthMiddleware(user as Auth))
 
   getPaymentPlan(
     user: User,
@@ -111,5 +117,15 @@ export class SocialInsuranceAdministrationClientService {
       trWebCommonsExternalPortalsApiModelsPensionCalculatorPensionCalculatorInput:
         parameters,
     })
+  }
+
+  async getCategorizedIncomeTypes(
+    user: User,
+  ): Promise<
+    Array<TrWebCommonsExternalPortalsApiModelsIncomePlanExternalIncomeTypeDto>
+  > {
+    return this.incomePlanApiWithAuth(
+      user,
+    ).apiProtectedV1IncomePlanCategorizedIncomeTypesGet()
   }
 }

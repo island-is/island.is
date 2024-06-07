@@ -15,6 +15,7 @@ import {
 import { socialInsuranceAdministrationMessage } from '@island.is/application/templates/social-insurance-administration-core/lib/messages'
 import { incomePlanFormMessage } from '../lib/messages'
 import Logo from '@island.is/application/templates/social-insurance-administration-core/assets/Logo'
+import { SocialInsuranceAdministrationCategorizedIncomeTypes } from '../dataProviders'
 
 export const PrerequisitesForm: Form = buildForm({
   id: 'IncomePlanPrerequisites',
@@ -30,8 +31,10 @@ export const PrerequisitesForm: Form = buildForm({
         buildExternalDataProvider({
           id: 'approveExternalData',
           title: socialInsuranceAdministrationMessage.pre.externalDataSection,
-          subTitle: socialInsuranceAdministrationMessage.pre.externalDataDescription,
-          checkboxLabel: socialInsuranceAdministrationMessage.pre.checkboxProvider,
+          subTitle:
+            socialInsuranceAdministrationMessage.pre.externalDataDescription,
+          checkboxLabel:
+            socialInsuranceAdministrationMessage.pre.checkboxProvider,
           submitField: buildSubmitField({
             id: 'submit',
             placement: 'footer',
@@ -48,17 +51,19 @@ export const PrerequisitesForm: Form = buildForm({
           dataProviders: [
             buildDataProviderItem({
               provider: NationalRegistryUserApi,
-              title: socialInsuranceAdministrationMessage.pre.skraInformationTitle,
-              subTitle:
-                incomePlanFormMessage.pre.registryIcelandDescription,
+              title:
+                socialInsuranceAdministrationMessage.pre.skraInformationTitle,
+              subTitle: incomePlanFormMessage.pre.registryIcelandDescription,
             }),
             buildDataProviderItem({
               provider: UserProfileApi,
-              title:
-                socialInsuranceAdministrationMessage.pre.contactInfoTitle,
+              title: socialInsuranceAdministrationMessage.pre.contactInfoTitle,
               subTitle:
-                socialInsuranceAdministrationMessage.pre
-                  .contactInfoDescription,
+                socialInsuranceAdministrationMessage.pre.contactInfoDescription,
+            }),
+            buildDataProviderItem({
+              provider: SocialInsuranceAdministrationCategorizedIncomeTypes,
+              title: '',
             }),
             buildDataProviderItem({
               id: 'sia.data',

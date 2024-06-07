@@ -509,4 +509,8 @@ export class SocialInsuranceAdministrationService extends BaseTemplateApiService
   async getCurrencies({ auth }: TemplateApiModuleActionProps) {
     return await this.siaClientService.getCurrencies(auth)
   }
+
+  async getCategorizedIncomeTypes({ auth }: TemplateApiModuleActionProps) {
+    return await this.siaClientService.getCategorizedIncomeTypes(auth)
+  }
 }

@@ -18,9 +18,8 @@ import {
 import { Events, Roles, States } from './constants'
 import { dataSchema } from './dataSchema'
 import { incomePlanFormMessage } from './messages'
-import {
-  socialInsuranceAdministrationMessage,
-} from '@island.is/application/templates/social-insurance-administration-core/lib/messages'
+import { socialInsuranceAdministrationMessage } from '@island.is/application/templates/social-insurance-administration-core/lib/messages'
+import { SocialInsuranceAdministrationCategorizedIncomeTypes } from '../dataProviders'
 
 const IncomePlanTemplate: ApplicationTemplate<
   ApplicationContext,
@@ -30,9 +29,7 @@ const IncomePlanTemplate: ApplicationTemplate<
   type: ApplicationTypes.INCOME_PLAN,
   name: incomePlanFormMessage.shared.applicationTitle,
   institution: socialInsuranceAdministrationMessage.shared.institution,
-  translationNamespaces: [
-    ApplicationConfigurations.IncomePlan.translation,
-  ],
+  translationNamespaces: [ApplicationConfigurations.IncomePlan.translation],
   dataSchema,
   stateMachineConfig: {
     initial: States.PREREQUESITES,
@@ -64,6 +61,7 @@ const IncomePlanTemplate: ApplicationTemplate<
                     validateEmail: true,
                   },
                 }),
+                SocialInsuranceAdministrationCategorizedIncomeTypes,
               ],
               delete: true,
             },

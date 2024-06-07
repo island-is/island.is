@@ -49,6 +49,12 @@ export const incomePlanFormMessage: MessageDir = {
   }),
 
   incomePlan: defineMessages({
+    description: {
+      id: 'ip.application:income.plan.description',
+      defaultMessage:
+        'Hér er tillaga að tekjuáætlun. Upplýsingar um launatekjur eru fengnar úr staðgreiðsluskrá og fjármagnstekjur eru sóttar í skattframtal. Þú getur breytt upphæðum, fjarlægt tekjur og/eða bætt við tekjum sem ekki er búið að setja inn.',
+      description: 'english translation',
+    },
     registerIncome: {
       id: 'pp.application:register.income',
       defaultMessage: 'Skráning tekna',
@@ -111,8 +117,8 @@ export const incomePlanFormMessage: MessageDir = {
     },
     unevenIncomePerYear: {
       id: 'pp.application:uneven.income.per.year',
-      defaultMessage: 'Ójafnar tekjur á ári',
-      description: 'Uneven income per year',
+      defaultMessage: 'Óska eftir mánaðarskiptingu atvinnutekna',
+      description: 'Request a monthly distribution of employment income',
     },
     currency: {
       id: 'pp.application:currency',
@@ -153,15 +159,12 @@ export const incomePlanFormMessage: MessageDir = {
   conclusionScreen: defineMessages({
     receivedTitle: {
       id: 'ip.application:conclusionScreen.receivedTitle',
-      defaultMessage:
-        'Tekjuáætlun móttekin',
-      description:
-        'Income plan received',
+      defaultMessage: 'Tekjuáætlun móttekin',
+      description: 'Income plan received',
     },
     alertTitle: {
       id: 'ip.application:conclusionScreen.alertTitle',
-      defaultMessage:
-        'Tekjuáætlun hefur verið send til Tryggingastofnunar',
+      defaultMessage: 'Tekjuáætlun hefur verið send til Tryggingastofnunar',
       description:
         'An income plan has been sent to the Social Insurance Administration',
     },

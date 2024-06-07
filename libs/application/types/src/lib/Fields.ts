@@ -69,7 +69,12 @@ export type TableRepeaterItem = {
   displayInTable?: boolean
   label?: StaticText
   placeholder?: StaticText
-  options?: { label: StaticText; value: string }[]
+  options?:
+    | { label: StaticText; value: string }[]
+    | ((
+        application: Application,
+        activeField: Record<string, string>,
+      ) => { label: StaticText; value: string }[] | void)
   backgroundColor?: 'blue' | 'white'
   width?: 'half' | 'full' | 'third'
   required?: boolean
@@ -78,6 +83,7 @@ export type TableRepeaterItem = {
     activeField?: Record<string, string>,
   ) => boolean
   dataTestId?: string
+  readonly?: boolean
 } & (
   | {
       component: 'input'
@@ -102,7 +108,12 @@ export type TableRepeaterItem = {
   | {
       component: 'select'
       label: StaticText
-      options: { label: StaticText; value: string }[]
+      options?:
+        | { label: StaticText; value: string }[]
+        | ((
+            application: Application,
+            activeField: Record<string, string>,
+          ) => { label: StaticText; value: string }[] | void)
       isSearchable?: boolean
     }
   | {
