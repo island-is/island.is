@@ -1,7 +1,7 @@
 import React, { FC } from 'react'
 
 import { Box, GridColumn, GridRow } from '@island.is/island-ui/core'
-import { formatText, shouldShowFormItem } from '@island.is/application/core'
+import { formatText } from '@island.is/application/core'
 import {
   Application,
   FormValue,
@@ -10,6 +10,7 @@ import {
   SetBeforeSubmitCallback,
   SetFieldLoadingState,
   SetSubmitButtonDisabled,
+  Field,
 } from '@island.is/application/types'
 import { FieldDescription } from '@island.is/shared/form-fields'
 import { useLocale } from '@island.is/localization'
@@ -84,14 +85,12 @@ const FormMultiField: FC<
           !IGNORED_HALF_TYPES.includes(field.type) && field?.width === 'half'
         const span = isHalfColumn ? '1/2' : '1/1'
 
-        const evaluatedCondition = shouldShowFormItem(
-          field,
-          application.answers,
-          application.externalData,
-          user,
-        )
+        const typedField = field as Field & { isNavigable?: boolean }
 
-        const paddingBottom = !evaluatedCondition
+        // Just in case isNavigable is null or undefined, then we still show the field
+        const hideField = typedField?.isNavigable === false ?? true
+
+        const paddingBottom = hideField
           ? 0
           : index === children.length - 1
           ? 0
