@@ -1,7 +1,7 @@
-# clients-judicial-system-sp
+# Judicial System client 
 
-This library was generated with [Nx](https://nx.dev).
+## Service Portal 
+This client main focus is data for the Service Portal, Law and Order module. Displaying and receiving information about court cases and data related to it, subpoenas, lawyers etc.
 
-## Running unit tests
-
-Run `nx test clients-judicial-system-sp` to execute the unit tests via [Jest](https://jestjs.io).
+## Judicial System App
+This client is not related to the app itself "Judicial System" although coming from the same organization, Dómsmálaráðuneytið.  
