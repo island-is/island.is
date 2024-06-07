@@ -94,13 +94,13 @@ export const addCoatOfArms = (
   x?: number,
   y?: number,
 ) => {
-  doc.translate(x ?? 270, y ?? 70).scale(0.5)
+  doc.translate(x ?? 270, y ?? 70).scale(0.4)
 
   coatOfArms(doc)
 
   doc
     .fillColor('black')
-    .scale(2)
+    .scale(2.5)
     .translate(x ? -x : -270, y ? -y : -70)
 }
 
@@ -147,7 +147,7 @@ export const addIndictmentConfirmation = (
     .rect(coatOfArmsX, pageMargin, coatOfArmsWidth, coatOfArmsHeight)
     .fillAndStroke('white', darkGray)
 
-  addCoatOfArms(doc, calculatePt(44), calculatePt(30))
+  addCoatOfArms(doc, calculatePt(49), calculatePt(33))
 
   // Draw the confirmation title
   doc
