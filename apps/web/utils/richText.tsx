@@ -193,6 +193,7 @@ const defaultRenderComponent = {
       id={slice.id}
       firstPageItemResponse={slice.firstPageListItemResponse}
       searchInputPlaceholder={slice.searchInputPlaceholder}
+      itemType={slice.itemType}
     />
   ),
 }
