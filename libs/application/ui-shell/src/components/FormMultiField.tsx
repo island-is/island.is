@@ -10,7 +10,6 @@ import {
   SetBeforeSubmitCallback,
   SetFieldLoadingState,
   SetSubmitButtonDisabled,
-  Field,
 } from '@island.is/application/types'
 import { FieldDescription } from '@island.is/shared/form-fields'
 import { useLocale } from '@island.is/localization'
@@ -85,7 +84,7 @@ const FormMultiField: FC<
           !IGNORED_HALF_TYPES.includes(field.type) && field?.width === 'half'
         const span = isHalfColumn ? '1/2' : '1/1'
 
-        const typedField = field as Field & { isNavigable?: boolean }
+        const typedField = field as FieldDef
 
         // Just in case isNavigable is null or undefined, then we still show the field
         const hideField = typedField?.isNavigable === false ?? true
