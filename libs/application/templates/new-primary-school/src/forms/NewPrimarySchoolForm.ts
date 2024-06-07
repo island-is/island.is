@@ -37,6 +37,7 @@ import {
   getApplicationExternalData,
   getFoodAllergiesOptions,
   getFoodIntolerancesOptions,
+  getLanguageCodes,
   getOtherParent,
   getRelationOptionLabel,
   getRelationOptions,
@@ -533,7 +534,89 @@ export const NewPrimarySchoolForm: Form = buildForm({
           id: 'languageSubSection',
           title:
             newPrimarySchoolMessages.differentNeeds.languageSubSectionTitle,
-          children: [],
+          children: [
+            buildMultiField({
+              id: 'languages',
+              title: newPrimarySchoolMessages.differentNeeds.languageTitle,
+              description:
+                newPrimarySchoolMessages.differentNeeds.languageDescription,
+              children: [
+                buildDescriptionField({
+                  id: 'languages.nativeLanguage.title',
+                  title:
+                    newPrimarySchoolMessages.differentNeeds.childNativeLanguage,
+                  titleVariant: 'h4',
+                }),
+                buildSelectField({
+                  id: 'languages.nativeLanguage',
+                  dataTestId: 'languages-native-language',
+                  title:
+                    newPrimarySchoolMessages.differentNeeds
+                      .languageSubSectionTitle,
+                  placeholder:
+                    newPrimarySchoolMessages.differentNeeds.languagePlaceholder,
+                  options: getLanguageCodes(),
+                }),
+                buildRadioField({
+                  id: 'languages.otherLanguagesSpokenDaily',
+                  title:
+                    newPrimarySchoolMessages.differentNeeds
+                      .otherLanguagesSpokenDaily,
+                  width: 'half',
+                  required: true,
+                  space: 4,
+                  options: [
+                    {
+                      label: newPrimarySchoolMessages.shared.yes,
+                      dataTestId: 'other-languages',
+                      value: YES,
+                    },
+                    {
+                      label: newPrimarySchoolMessages.shared.no,
+                      dataTestId: 'no-other-languages',
+                      value: NO,
+                    },
+                  ],
+                }),
+                buildSelectField({
+                  // TODO: Multi select
+                  id: 'languages.otherLanguages',
+                  dataTestId: 'languages-other-languages',
+                  title:
+                    newPrimarySchoolMessages.differentNeeds
+                      .languageSubSectionTitle,
+                  placeholder:
+                    newPrimarySchoolMessages.differentNeeds.languagePlaceholder,
+                  options: getLanguageCodes(),
+                  condition: (answers) => {
+                    const { otherLanguagesSpokenDaily } =
+                      getApplicationAnswers(answers)
+
+                    return otherLanguagesSpokenDaily === YES
+                  },
+                }),
+                buildCheckboxField({
+                  id: 'languages.icelandicNotSpokenAroundChild',
+                  title: '',
+                  // TODO: Disable ef Íslenska valin?
+                  options: [
+                    {
+                      label:
+                        newPrimarySchoolMessages.differentNeeds
+                          .icelandicNotSpokenAroundChild,
+                      value: YES,
+                    },
+                  ],
+                  condition: (answers) => {
+                    const { otherLanguagesSpokenDaily } =
+                      getApplicationAnswers(answers)
+
+                    return otherLanguagesSpokenDaily === YES
+                  },
+                }),
+              ],
+            }),
+          ],
         }),
         buildSubSection({
           id: 'allergiesAndIntolerancesSubSection',
@@ -814,18 +897,18 @@ export const NewPrimarySchoolForm: Form = buildForm({
       ],
     }),
     buildSection({
-      id: 'confirmationSection',
-      title: newPrimarySchoolMessages.confirm.sectionTitle,
+      id: 'overviewSection',
+      title: newPrimarySchoolMessages.overview.sectionTitle,
       children: [
         buildMultiField({
-          id: 'confirmation',
+          id: 'overview',
           title: '',
           description: '',
           children: [
             buildCustomField(
               {
-                id: 'confirmationScreen',
-                title: newPrimarySchoolMessages.confirm.overviewTitle,
+                id: 'overviewScreen',
+                title: newPrimarySchoolMessages.overview.overviewTitle,
                 component: 'Review',
               },
               {
@@ -835,11 +918,11 @@ export const NewPrimarySchoolForm: Form = buildForm({
             buildSubmitField({
               id: 'submit',
               placement: 'footer',
-              title: newPrimarySchoolMessages.confirm.submitButton,
+              title: newPrimarySchoolMessages.overview.submitButton,
               actions: [
                 {
                   event: DefaultEvents.SUBMIT,
-                  name: newPrimarySchoolMessages.confirm.submitButton,
+                  name: newPrimarySchoolMessages.overview.submitButton,
                   type: 'primary',
                 },
               ],

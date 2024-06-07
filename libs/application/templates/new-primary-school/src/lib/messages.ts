@@ -319,21 +319,21 @@ export const newPrimarySchoolMessages: MessageDir = {
 
     // Apply to a new school
     newSchoolSubSectionTitle: {
-      id: 'dess.nps.application:primary.school.new.school.section.title',
+      id: 'dess.nps.application:primary.school.new.school.sub.section.title',
       defaultMessage: 'Nýr skóli',
       description: 'New school',
     },
 
     // Reason for transfer
     reasonForTransferSubSectionTitle: {
-      id: 'dess.nps.application:primary.school.starting.school.reason.for.transfer.section.title',
+      id: 'dess.nps.application:primary.school.starting.school.reason.for.transfer.sub.section.title',
       defaultMessage: 'Ástæða flutnings',
       description: 'Reason for transfer',
     },
 
     // Siblings
     siblingsSubSectionTitle: {
-      id: 'dess.nps.application:primary.school.starting.school.siblings.section.title',
+      id: 'dess.nps.application:primary.school.starting.school.siblings.sub.section.title',
       defaultMessage: 'Systkini',
       description: 'Siblings',
     },
@@ -407,9 +407,42 @@ export const newPrimarySchoolMessages: MessageDir = {
 
     // Language
     languageSubSectionTitle: {
-      id: 'dess.nps.application:different.needs.language.section.title',
+      id: 'dess.nps.application:different.needs.language.sub.section.title',
       defaultMessage: 'Tungumál',
       description: 'Language',
+    },
+    languageTitle: {
+      id: 'dess.nps.application:different.needs.language.title',
+      defaultMessage: 'Tungumál barnsins',
+      description: "The child's languages",
+    },
+    languageDescription: {
+      id: 'dess.nps.application:different.needs.language.description',
+      defaultMessage:
+        'Til að hægt sé að koma til móts við þarfir barnsins þarf skólinn að vita hvaða tungumál eru töluð í nærumhverfi þess. Veldu þau tungumál, eitt eða flerir sem töluð eru dagsdaglega á heimilinu í samskiptum við eða í kringum barn.',
+      description:
+        "In order to meet the child's needs, the school needs to know which languages ​​are spoken in their immediate environment. Choose the languages, one or more, that are spoken daily at home in communication with or around a child.",
+    },
+    childNativeLanguage: {
+      id: 'dess.nps.application:different.needs.child.native.language',
+      defaultMessage: 'Hvert er móðurmál barnsins?',
+      description: "What is the child's native language?",
+    },
+    otherLanguagesSpokenDaily: {
+      id: 'dess.nps.application:different.needs.other.languages.spoken.daily',
+      defaultMessage: 'Eru daglega töluð önnur tungumál á heimili barnsins?',
+      description: "Are other languages ​​spoken daily in the child's home?",
+    },
+    languagePlaceholder: {
+      id: 'dess.nps.application:different.needs.language.placeholder',
+      defaultMessage: 'Veldu tungumál',
+      description: 'Choose a language',
+    },
+    icelandicNotSpokenAroundChild: {
+      id: 'dess.nps.application:different.needs.icelandic.not.spoken.around.child',
+      defaultMessage: 'Það er ekki töluð íslenska í nærumhverfi barnsins',
+      description:
+        "Icelandic is not spoken in the child's immediate environment",
     },
 
     // Allergies and intolerances
@@ -520,7 +553,7 @@ export const newPrimarySchoolMessages: MessageDir = {
 
     // Support
     supportSubSectionTitle: {
-      id: 'dess.nps.application:different.needs.support.section.title',
+      id: 'dess.nps.application:different.needs.support.sub.section.title',
       defaultMessage: 'Stuðningur',
       description: 'Support',
     },
@@ -565,7 +598,7 @@ export const newPrimarySchoolMessages: MessageDir = {
 
     // Use of footage
     useOfFootageSubSectionTitle: {
-      id: 'dess.nps.application:different.needs.use.of.footage.section.title',
+      id: 'dess.nps.application:different.needs.use.of.footage.sub.section.title',
       defaultMessage: 'Notkun myndefnis',
       description: 'Use of footage',
     },
@@ -613,60 +646,60 @@ export const newPrimarySchoolMessages: MessageDir = {
     },
   }),
 
-  confirm: defineMessages({
+  overview: defineMessages({
     sectionTitle: {
-      id: 'dess.nps.application:confirmation.section.title',
+      id: 'dess.nps.application:overview.section.title',
       defaultMessage: 'Yfirlit',
       description: 'Overview',
     },
     overviewDescription: {
-      id: 'dess.nps.application:confirmation.description',
+      id: 'dess.nps.application:overview.description',
       defaultMessage:
         'Vinsamlegast farðu yfir umsóknina áður en þú sendir hana inn.',
       description: 'Please review the application before submitting.',
     },
     child: {
-      id: 'dess.nps.application:confirmation.child',
+      id: 'dess.nps.application:overview.child',
       defaultMessage: 'Barn',
       description: 'Child',
     },
     submitButton: {
-      id: 'dess.nps.application:confirm.submit.button',
+      id: 'dess.nps.application:overview.submit.button',
       defaultMessage: 'Senda inn umsókn',
       description: 'Submit application',
     },
     editButton: {
-      id: 'dess.nps.application:confirm.edit.button',
+      id: 'dess.nps.application:overview.edit.button',
       defaultMessage: 'Breyta umsókn',
       description: 'Edit application',
     },
-    email: {
-      id: 'dess.nps.application:review.email',
-      defaultMessage: 'Netfang',
-      description: 'Email address',
-    },
-    phoneNumber: {
-      id: 'dess.nps.application:review.email',
-      defaultMessage: 'Símanúmer',
-      description: 'Phone number',
-    },
     parents: {
-      id: 'dess.nps.application:review.parents',
+      id: 'dess.nps.application:overview.parents',
       defaultMessage: 'Foreldri/forsjáraðili',
       description: 'Parent / guardian',
     },
+    nativeLanguage: {
+      id: 'dess.nps.application:overview.native.language',
+      defaultMessage: 'Móðurmál barnsins',
+      description: "The child's native language",
+    },
+    icelandicSpokenAroundChild: {
+      id: 'dess.nps.application:overview.icelandic.spoken.around.child',
+      defaultMessage: 'Íslenska er töluð í nærumhverfi barnsins',
+      description: "Icelandic is spoken in the child's immediate environment",
+    },
     foodAllergies: {
-      id: 'dess.nps.application:review.food.allergies',
+      id: 'dess.nps.application:overview.food.allergies',
       defaultMessage: 'Fæðuofnæmi',
       description: 'Food allergies',
     },
     foodIntolerances: {
-      id: 'dess.nps.application:review.food.intolerances',
+      id: 'dess.nps.application:overview.food.intolerances',
       defaultMessage: 'Fæðuóþol',
       description: 'Food intolerances',
     },
     usesEpinephrinePen: {
-      id: 'dess.nps.application:review.uses.epinephrine.pen',
+      id: 'dess.nps.application:overview.uses.epinephrine.pen',
       defaultMessage: 'Notar adrenalínpenna',
       description: 'Uses an epinephrine pen',
     },
@@ -734,6 +767,11 @@ export const errorMessages = defineMessages({
     id: 'dess.nps.application:error.siblings.required',
     defaultMessage: 'Nauðsynlegt er að bæta við a.m.k einu systkini',
     description: 'You must add at least one sibling',
+  },
+  languagesRequired: {
+    id: 'dess.nps.application:error.languages.required',
+    defaultMessage: 'Það þarf að velja a.m.k eitt tungumál',
+    description: 'At least one language must be selected',
   },
   foodAllergyRequired: {
     id: 'dess.nps.application:error.food.allergy.required',

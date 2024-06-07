@@ -12,6 +12,7 @@ import {
   FoodIntolerancesOptions,
   RelationOptions,
   SiblingRelationOptions,
+  languageCodes,
 } from './constants'
 import { newPrimarySchoolMessages } from './messages'
 
@@ -23,6 +24,26 @@ export const getApplicationAnswers = (answers: Application['answers']) => {
   const relatives = getValueViaPath(answers, 'relatives') as RelativesRow[]
 
   const siblings = getValueViaPath(answers, 'siblings') as SiblingsRow[]
+
+  const nativeLanguage = getValueViaPath(
+    answers,
+    'languages.nativeLanguage',
+  ) as string
+
+  const otherLanguagesSpokenDaily = getValueViaPath(
+    answers,
+    'languages.otherLanguagesSpokenDaily',
+  ) as YesOrNo
+
+  const otherLanguages = getValueViaPath(
+    answers,
+    'languages.otherLanguages',
+  ) as string
+
+  const icelandicNotSpokenAroundChild = getValueViaPath(
+    answers,
+    'languages.icelandicNotSpokenAroundChild',
+  ) as string[]
 
   const hasFoodAllergies = getValueViaPath(
     answers,
@@ -85,17 +106,21 @@ export const getApplicationAnswers = (answers: Application['answers']) => {
     parents,
     relatives,
     siblings,
+    nativeLanguage,
+    otherLanguagesSpokenDaily,
+    otherLanguages,
+    icelandicNotSpokenAroundChild,
+    hasFoodAllergies,
+    foodAllergies,
+    hasFoodIntolerances,
+    foodIntolerances,
+    isUsingEpiPen,
     developmentalAssessment,
     specialSupport,
     requestMeeting,
     photographyConsent,
     photoSchoolPublication,
     photoMediaPublication,
-    hasFoodAllergies,
-    foodAllergies,
-    hasFoodIntolerances,
-    foodIntolerances,
-    isUsingEpiPen,
   }
 }
 
@@ -251,6 +276,17 @@ export const getSiblingRelationOptionLabel = (
 ) => {
   const relationOptions = getSiblingRelationOptions()
   return relationOptions.find((option) => option.value === value)?.label ?? ''
+}
+
+export const getLanguageCodes = () => {
+  return languageCodes.map((x) => ({
+    label: x.name,
+    value: x.code,
+  }))
+}
+
+export const getLanguageLabel = (code: string) => {
+  return languageCodes.find((language) => language.code === code)?.name ?? ''
 }
 
 export const getFoodAllergiesOptions = () => [

@@ -1,11 +1,10 @@
+import { YES } from '@island.is/application/core'
 import { RadioValue, ReviewGroup } from '@island.is/application/ui-components'
-
 import { GridColumn, GridRow, Stack } from '@island.is/island-ui/core'
 import { useLocale } from '@island.is/localization'
 import { newPrimarySchoolMessages } from '../../../lib/messages'
 import { getApplicationAnswers } from '../../../lib/newPrimarySchoolUtils'
 import { ReviewGroupProps } from './props'
-import { YES } from '@island.is/application/core'
 
 export const Photography = ({
   application,
@@ -20,6 +19,7 @@ export const Photography = ({
     <ReviewGroup
       isEditable={editable}
       editAction={() => goToScreen?.('photography')}
+      isLast={true}
     >
       <Stack space={2}>
         <GridRow>

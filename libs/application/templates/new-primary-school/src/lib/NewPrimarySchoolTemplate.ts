@@ -91,7 +91,11 @@ const NewPrimarySchoolTemplate: ApplicationTemplate<
         },
       },
       [States.DRAFT]: {
-        exit: ['clearAllergiesAndIntolerances', 'clearPublication'],
+        exit: [
+          'clearLanguages',
+          'clearAllergiesAndIntolerances',
+          'clearPublication',
+        ],
         meta: {
           name: States.DRAFT,
           status: 'draft',
@@ -160,6 +164,17 @@ const NewPrimarySchoolTemplate: ApplicationTemplate<
   },
   stateMachineOptions: {
     actions: {
+      clearLanguages: assign((context) => {
+        const { application } = context
+        const { otherLanguagesSpokenDaily } = getApplicationAnswers(
+          application.answers,
+        )
+        if (otherLanguagesSpokenDaily === NO) {
+          unset(application.answers, 'languages.otherLanguages')
+          unset(application.answers, 'languages.icelandicNotSpokenAroundChild')
+        }
+        return context
+      }),
       /**
        * If the user changes his answers,
        * clear selected food allergies and intolerances.

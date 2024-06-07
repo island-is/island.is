@@ -103,6 +103,21 @@ export const dataSchema = z.object({
       params: errorMessages.siblingsRequired,
     }),
   startDate: z.string(),
+  languages: z
+    .object({
+      // TODO: Skoða betur þegar multiSelect er tilbúið
+      nativeLanguage: z.string(),
+      otherLanguagesSpokenDaily: z.enum([YES, NO]),
+      otherLanguages: z.string().optional(),
+    })
+    .refine(
+      ({ otherLanguagesSpokenDaily, otherLanguages }) =>
+        otherLanguagesSpokenDaily === YES ? !!otherLanguages : true,
+      {
+        path: ['otherLanguages'],
+        params: errorMessages.languagesRequired,
+      },
+    ),
   allergiesAndIntolerances: z
     .object({
       // TODO: Skoða betur þegar miltiSelect er tilbúið

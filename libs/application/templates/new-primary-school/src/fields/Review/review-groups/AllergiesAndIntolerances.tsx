@@ -36,7 +36,7 @@ export const AllergiesAndIntolerances = ({
             <GridColumn span={['12/12', '12/12', '12/12', '12/12']}>
               <DataValue
                 label={formatMessage(
-                  newPrimarySchoolMessages.confirm.foodAllergies,
+                  newPrimarySchoolMessages.overview.foodAllergies,
                 )}
                 value={formatMessage(
                   getFoodAllergiesOptionsLabel(foodAllergies),
@@ -50,7 +50,7 @@ export const AllergiesAndIntolerances = ({
             <GridColumn span={['12/12', '12/12', '12/12', '12/12']}>
               <DataValue
                 label={formatMessage(
-                  newPrimarySchoolMessages.confirm.foodIntolerances,
+                  newPrimarySchoolMessages.overview.foodIntolerances,
                 )}
                 value={formatMessage(
                   getFoodIntolerancesOptionsLabel(foodIntolerances),
@@ -63,7 +63,7 @@ export const AllergiesAndIntolerances = ({
           <GridColumn span={['12/12', '12/12', '12/12', '12/12']}>
             <DataValue
               label={formatMessage(
-                newPrimarySchoolMessages.confirm.usesEpinephrinePen,
+                newPrimarySchoolMessages.overview.usesEpinephrinePen,
               )}
               value={formatMessage(
                 isUsingEpiPen?.includes(YES)

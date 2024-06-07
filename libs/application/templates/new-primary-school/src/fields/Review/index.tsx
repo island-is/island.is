@@ -1,6 +1,11 @@
 import { useMutation } from '@apollo/client'
 import { SUBMIT_APPLICATION } from '@island.is/application/graphql'
-import { Application, Field, RecordObject } from '@island.is/application/types'
+import {
+  Application,
+  DefaultEvents,
+  Field,
+  RecordObject,
+} from '@island.is/application/types'
 import { handleServerError } from '@island.is/application/ui-components'
 import { Box, Button, Text } from '@island.is/island-ui/core'
 import { useLocale } from '@island.is/localization'
@@ -9,10 +14,10 @@ import has from 'lodash/has'
 import { FC } from 'react'
 import { States } from '../../lib/constants'
 import { newPrimarySchoolMessages } from '../../lib/messages'
-import { getApplicationAnswers } from '../../lib/newPrimarySchoolUtils'
 
 import { AllergiesAndIntolerances } from './review-groups/AllergiesAndIntolerances'
 import { Child } from './review-groups/Child'
+import { Languages } from './review-groups/Languages'
 import { Parents } from './review-groups/Parents'
 import { Photography } from './review-groups/Photography'
 import { Relatives } from './review-groups/Relatives'
@@ -60,14 +65,12 @@ export const Review: FC<ReviewScreenProps> = ({
   )
 
   const handleSubmit = async (event: string) => {
-    const TBD = getApplicationAnswers(application.answers)
-
     const res = await submitApplication({
       variables: {
         input: {
           id: application.id,
           event,
-          answers: {},
+          answers: application.answers,
         },
       },
     })
@@ -85,13 +88,13 @@ export const Review: FC<ReviewScreenProps> = ({
           <Box>
             <Box marginBottom={2}>
               <Text variant="h2">
-                {formatMessage(newPrimarySchoolMessages.confirm.sectionTitle)}
+                {formatMessage(newPrimarySchoolMessages.overview.sectionTitle)}
               </Text>
             </Box>
             <Box marginBottom={10}>
               <Text variant="default">
                 {formatMessage(
-                  newPrimarySchoolMessages.confirm.overviewDescription,
+                  newPrimarySchoolMessages.overview.overviewDescription,
                 )}
               </Text>
             </Box>
@@ -117,7 +120,7 @@ export const Review: FC<ReviewScreenProps> = ({
         >
           <Box>
             <Text variant="h2">
-              {formatMessage(newPrimarySchoolMessages.confirm.overviewTitle)}
+              {formatMessage(newPrimarySchoolMessages.overview.sectionTitle)}
             </Text>
           </Box>
           <Box display="flex" columnGap={2} alignItems="center">
@@ -131,9 +134,9 @@ export const Review: FC<ReviewScreenProps> = ({
                 icon="pencil"
                 loading={loadingSubmit}
                 disabled={loadingSubmit}
-                onClick={() => handleSubmit('EDIT')}
+                onClick={() => handleSubmit(DefaultEvents.EDIT)}
               >
-                {formatMessage(newPrimarySchoolMessages.confirm.editButton)}
+                {formatMessage(newPrimarySchoolMessages.overview.editButton)}
               </Button>
             )}
             <Button
@@ -151,6 +154,7 @@ export const Review: FC<ReviewScreenProps> = ({
       <Parents {...childProps} />
       <Relatives {...childProps} />
       <Siblings {...childProps} />
+      <Languages {...childProps} />
       <AllergiesAndIntolerances {...childProps} />
       <Support {...childProps} />
       <Photography {...childProps} />
