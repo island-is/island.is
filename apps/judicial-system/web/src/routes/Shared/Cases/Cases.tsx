@@ -149,7 +149,7 @@ export const Cases: React.FC = () => {
       (c) =>
         isIndictmentCase(c.type) &&
         c.state !== CaseState.WAITING_FOR_CANCELLATION &&
-        c.judge === null,
+        !c.judge,
     )
 
     const casesAwaitingReview = filterCases(
