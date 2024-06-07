@@ -8,20 +8,14 @@ import {
 
 import { ContentfulGraphQLClientConfig } from './contentful-graphql.config'
 
-// const registryEndpoint = /\/einstaklingar\/\d{10}$/
-
-// function shared(request: Request) {
-//   return !!request.url.match(registryEndpoint)
-// }
 
 function overrideCacheControl(request: Request) {
-  console.log(request)
-  return buildCacheControl({ maxAge: 60 * 10 })
+  return buildCacheControl({ 
+    maxAge: 10 * 60, // 10 minutes
+    public: true // required to enable caching for this contentful gql
+  })
 }
 
-// function overrideCacheKey(request: Request) {
-//   return buildCacheControl({ maxAge: 60 * 10 })
-// }
 
 export const getCache = async (
   config: ConfigType<typeof ContentfulGraphQLClientConfig>,
@@ -35,15 +29,13 @@ export const getCache = async (
     nodes: config.redis.nodes,
     ssl: config.redis.ssl,
     noPrefix: true,
-    ttl: 10 * 60 * 1000 , // 10 minutes
+    ttl: 0
   })
 
   return {
     cacheManager,
-    cacheKey: (request: Request) => request.url, // + JSON.stringify(request.body),
+    cacheKey: (request: Request) => request.url + JSON.stringify(request.body),
     shared: true,
-    overrideForPost: true, // post for contentful gql
     overrideCacheControl,
-    
   }
 }

@@ -26,6 +26,7 @@ import type { Locale } from '@island.is/shared/types'
 import { mapToContentfulLocale, mapToLocale } from './utils'
 import { ContentfulGraphQLClientService } from '@island.is/clients/contentful-graphql'
 import { GetTemplateByTemplateId,GetTemplates,GetOrganizationByKennitala } from '@island.is/clients/contentful-graphql'
+import { uuid } from 'uuidv4'
 
 /**
  * These are the properties that can be replaced in the template
@@ -54,7 +55,11 @@ export class NotificationsService {
     
   ) {}
 
-
+  private cleanStringAdvanced(str:string) {
+    return str.trim() // Remove leading and trailing whitespace
+              .replace(/\t/g, '') // Remove tabs
+              .replace(/\n/g, '') // Remove newlines
+  }
   async getSenderOrganizationTitle(
     senderId: string,
     locale?: Locale,
@@ -70,8 +75,8 @@ export class NotificationsService {
     );
     const items = res.organizationCollection.items;
     if(items.length > 0){
-      this.logger.info(`senderId: ${senderId} found with title: ${items[0].title}`)
-      return items[0] 
+      items[0].title = this.cleanStringAdvanced(items[0].title)
+      return items[0]
     } else {
       this.logger.warn(`No org found for senderid: ${senderId}`)
     }
@@ -142,6 +147,14 @@ export class NotificationsService {
   }
 
   async getTemplates(locale?: Locale): Promise<HnippTemplate[]> {
+    // const tempCreate = await this.notificationModel.create({
+    //   messageId: uuid(),
+    //   recipient: '0101302989',
+    //   senderId: '5408790289',
+    //   templateId: 'HNIPP.POSTHOLF.NEW_DOCUMENT',
+    //   args: [{ key: 'organization', value: 'REPLACE' },{ key: 'documentId', value: 'REPLACEdoc' }],
+    // })
+    // console.log(tempCreate)
     locale = mapToLocale(locale as Locale)
     const queryVariables = {
       locale: mapToContentfulLocale(locale),

@@ -18,6 +18,11 @@ export class ContentfulGraphQLClientService {
     private readonly fetch: EnhancedFetchAPI,
   ) {
     this.client = new GraphQLClient(this.config.gqlBasePath, {
+      method: 'GET',
+      jsonSerializer: {
+        parse: JSON.parse,
+        stringify: JSON.stringify,
+      },
       headers: {
         Authorization: `Bearer ${process.env.CONTENTFUL_ACCESS_TOKEN}`
       },
@@ -28,7 +33,6 @@ export class ContentfulGraphQLClientService {
   async fetchData(query: DocumentNode, variables?: Record<string, any>) {
     try {
       const res = await this.client.request(query, variables);
-      // console.log(res)
       return res
     } catch (error) {
       throw new HttpException(error.message, error.status);
