@@ -25,6 +25,7 @@ import {
   CaseState,
   CaseType,
   Gender,
+  IndictmentDecision,
   InstitutionType,
   User,
 } from '@island.is/judicial-system-web/src/graphql/schema'
@@ -594,7 +595,6 @@ const useSections = (
     user?: User,
   ): RouteSection => {
     const { id, parentCase, state } = workingCase
-
     return {
       name: formatMessage(sections.courtSection.title),
       isActive:
@@ -894,7 +894,7 @@ const useSections = (
   }
 
   const getIndictmentsCourtSections = (workingCase: Case, user?: User) => {
-    const { id, state } = workingCase
+    const { id, state, indictmentDecision } = workingCase
 
     return {
       name: formatMessage(sections.indictmentsCourtSection.title),
@@ -998,6 +998,12 @@ const useSections = (
               href: `${constants.INDICTMENTS_SUMMARY_ROUTE}/${id}`,
               onClick:
                 !isActive(constants.INDICTMENTS_SUMMARY_ROUTE) &&
+                /**
+                 * This is a special case where we need to check the intent of the judge
+                 * because this last step should only be clicable if the judge intends to
+                 * close the case.
+                 */
+                indictmentDecision === IndictmentDecision.COMPLETING &&
                 validateFormStepper(
                   isValid,
                   [
