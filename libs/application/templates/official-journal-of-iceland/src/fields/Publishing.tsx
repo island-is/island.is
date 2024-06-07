@@ -56,6 +56,15 @@ export const Publishing = (props: OJOIFieldBaseProps) => {
 
   const today = new Date()
   const maxEndDate = addYears(today, 5)
+  const minDate = new Date()
+  if (minDate.getHours() >= 12) {
+    minDate.setDate(minDate.getDate() + 1)
+  }
+
+  const defaultDate = answers.publishing?.date
+    ? new Date(answers.publishing.date).toISOString().split('T')[0]
+    : addWeekdays(today, MINIMUM_WEEKDAYS).toISOString().split('T')[0]
+
   const { setValue, clearErrors } = useFormContext()
 
   const [channelState, setChannelState] = useState<Channel>({
@@ -67,7 +76,6 @@ export const Publishing = (props: OJOIFieldBaseProps) => {
 
   const [state, setState] = useState<LocalState>({
     date: answers.publishing?.date ?? '',
-    fastTrack: answers.publishing?.fastTrack ?? AnswerOption.NO,
     contentCategories:
       answers.publishing?.contentCategories ?? ([] as CategoryOption[]),
     communicationChannels:
@@ -82,7 +90,7 @@ export const Publishing = (props: OJOIFieldBaseProps) => {
     {
       variables: {
         params: {
-          search: '',
+          pageSize: 1000,
         },
       },
       onCompleted: (data) => {
@@ -151,7 +159,6 @@ export const Publishing = (props: OJOIFieldBaseProps) => {
     })
 
     setValue(InputFields.publishing.date, state.date)
-    setValue(InputFields.publishing.fastTrack, state.fastTrack)
     setValue(InputFields.publishing.contentCategories, state.contentCategories)
     setValue(
       InputFields.publishing.communicationChannels,
@@ -176,11 +183,6 @@ export const Publishing = (props: OJOIFieldBaseProps) => {
   }, [updateHandler])
   const debouncedStateUpdate = debounce(updateState, DEBOUNCE_INPUT_TIMER)
 
-  const minDate = addWeekdays(
-    today,
-    state.fastTrack === AnswerOption.YES ? 0 : MINIMUM_WEEKDAYS,
-  )
-
   return (
     <>
       <FormGroup title={f(publishing.headings.date)}>
@@ -192,38 +194,15 @@ export const Publishing = (props: OJOIFieldBaseProps) => {
             backgroundColor="blue"
             size="sm"
             locale="is"
+            defaultValue={defaultDate}
             minDate={minDate}
             maxDate={maxEndDate}
-            defaultValue={answers.publishing?.date}
             excludeDates={getWeekendDates(today, maxEndDate)}
             onChange={(date) => setState({ ...state, date })}
             error={
               props.errors &&
               getErrorViaPath(props.errors, InputFields.publishing.date)
             }
-          />
-        </Box>
-        <Box width="half">
-          <CheckboxController
-            id={InputFields.publishing.fastTrack}
-            large={false}
-            defaultValue={[state.fastTrack]}
-            onSelect={(options) => {
-              setState({
-                ...state,
-                fastTrack: options.includes(AnswerOption.YES)
-                  ? AnswerOption.YES
-                  : AnswerOption.NO,
-                date: '',
-              })
-              setValue(InputFields.publishing.date, '')
-            }}
-            options={[
-              {
-                label: f(publishing.inputs.fastTrack.label),
-                value: AnswerOption.YES,
-              },
-            ]}
           />
         </Box>
         <Box width="half">

@@ -9,6 +9,7 @@ import {
   aidCalculator,
   Amount,
   calculateAcceptedAidFinalAmount,
+  calculateFinalTaxAmount,
   calculateTaxOfAmount,
   ChildrenAid,
   FamilyStatus,
@@ -103,21 +104,21 @@ const AcceptModal = ({
 
   const checkingValue = (element?: number) => (element ? element : 0)
 
-  const finalAmount = calculateAcceptedAidFinalAmount(
-    state.amount +
-      (state.childrenAidAmount ?? 0) -
-      checkingValue(state.income) -
-      sumValues,
+  const amount = (state.amount || 0) - checkingValue(state.income) - sumValues
+
+  const taxAmountWithPersonalTax = calculateFinalTaxAmount(
+    amount,
     checkingValue(state.personalTaxCreditPercentage),
     state.secondPersonalTaxCredit,
   )
 
-  const taxAmount = calculateTaxOfAmount(
-    (state.amount || 0) +
-      (state.childrenAidAmount || 0) -
-      checkingValue(state.income) -
-      sumValues,
+  const finalAmount = calculateAcceptedAidFinalAmount(
+    amount,
+    taxAmountWithPersonalTax,
+    state.childrenAidAmount || 0,
   )
+
+  const taxAmount = calculateTaxOfAmount(amount)
 
   const areRequiredFieldsFilled =
     state.income === undefined ||
@@ -174,6 +175,9 @@ const AcceptModal = ({
 
       {hasChildrenAid && (
         <Box marginBottom={3}>
+          <Text variant="small" fontWeight="semiBold" marginBottom={1}>
+            ATH. ekki er tekinn skattur af styrk barna
+          </Text>
           <NumberInput
             label="Styrkur vegna barna"
             placeholder="Sláðu inn upphæð"
@@ -310,11 +314,12 @@ const AcceptModal = ({
           value={Number(state.personalTaxCreditPercentage).toString()}
           type="number"
           onChange={(e) => {
-            if (e.target.value.length <= 3 && Number(e.target.value) <= 100) {
+            const value = Number(e.target.value)
+            if (e.target.value.length <= 3 && value <= 100) {
               setState({
                 ...state,
                 hasError: false,
-                personalTaxCreditPercentage: Number(e.target.value),
+                personalTaxCreditPercentage: value,
               })
             }
           }}
@@ -335,11 +340,12 @@ const AcceptModal = ({
             value={Number(state.secondPersonalTaxCredit).toString()}
             type="number"
             onChange={(e) => {
-              if (e.target.value.length <= 3 && Number(e.target.value) <= 100) {
+              const value = Number(e.target.value)
+              if (e.target.value.length <= 3 && value <= 100) {
                 setState({
                   ...state,
                   hasError: false,
-                  secondPersonalTaxCredit: Number(e.target.value),
+                  secondPersonalTaxCredit: value,
                 })
               }
             }}
@@ -366,11 +372,21 @@ const AcceptModal = ({
       </Box>
 
       <Box marginBottom={3}>
+        <Box marginBottom={1}>
+          <Input
+            label="Skattur "
+            id="tax"
+            name="tax"
+            value={taxAmount.toLocaleString('de-DE')}
+            readOnly={true}
+          />
+        </Box>
+
         <Input
-          label="Skattur "
+          label="Reiknaður skattur tekið tillit til persónuafsláttar"
           id="tax"
           name="tax"
-          value={taxAmount.toLocaleString('de-DE')}
+          value={taxAmountWithPersonalTax.toLocaleString('de-DE')}
           readOnly={true}
         />
       </Box>

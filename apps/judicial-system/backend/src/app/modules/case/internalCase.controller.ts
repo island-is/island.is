@@ -13,7 +13,6 @@ import type { Logger } from '@island.is/logging'
 import { LOGGER_PROVIDER } from '@island.is/logging'
 
 import { TokenGuard } from '@island.is/judicial-system/auth'
-import { formatNationalId } from '@island.is/judicial-system/formatters'
 import {
   messageEndpoint,
   MessageType,
@@ -80,9 +79,10 @@ export class InternalCaseController {
     @Body() internalCasesDto: InternalCasesDto,
   ): Promise<Case[]> {
     this.logger.debug('Getting all indictment cases')
-    const nationalId = formatNationalId(internalCasesDto.nationalId)
 
-    return this.internalCaseService.getIndictmentCases(nationalId)
+    return this.internalCaseService.getIndictmentCases(
+      internalCasesDto.nationalId,
+    )
   }
 
   @Post('cases/indictment/:caseId')
@@ -95,9 +95,11 @@ export class InternalCaseController {
     @Body() internalCasesDto: InternalCasesDto,
   ): Promise<Case | null> {
     this.logger.debug(`Getting indictment case ${caseId}`)
-    const nationalId = formatNationalId(internalCasesDto.nationalId)
 
-    return this.internalCaseService.getIndictmentCase(caseId, nationalId)
+    return this.internalCaseService.getIndictmentCase(
+      caseId,
+      internalCasesDto.nationalId,
+    )
   }
 
   @UseGuards(CaseExistsGuard)
