@@ -95,7 +95,6 @@ export class NotificationsService {
       }
 
       // check for organization argument to fetch translated organization title
-      // TODO move this into push when ready
       const organizationArg = notification.args.find(
         (arg) => arg.key === 'organization',
       )
@@ -146,14 +145,6 @@ export class NotificationsService {
   }
 
   async getTemplates(locale?: Locale): Promise<HnippTemplate[]> {
-    // const tempCreate = await this.notificationModel.create({
-    //   messageId: uuid(),
-    //   recipient: '0101302989',
-    //   senderId: '5408790289',
-    //   templateId: 'HNIPP.POSTHOLF.NEW_DOCUMENT',
-    //   args: [{ key: 'organization', value: 'REPLACE' },{ key: 'documentId', value: 'REPLACEdoc' }],
-    // })
-    // console.log(tempCreate)
     locale = mapToLocale(locale as Locale)
     const queryVariables = {
       locale: mapToContentfulLocale(locale),

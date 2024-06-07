@@ -31,8 +31,6 @@ export class NotificationsController {
     @InjectQueue('notifications') private queue: QueueService,
   ) {}
 
-
-
   @Documentation({
     summary: 'Fetches all notification templates',
     includeNoContentResponse: true,

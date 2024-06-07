@@ -41,7 +41,6 @@ import { ContentfulGraphQLClientConfig } from '@island.is/clients/contentful-gra
       ],
     }),
     NotificationsModule
-    
   ],
 })
 export class AppModule {}

@@ -44,7 +44,6 @@ import { ContentfulGraphQLClientModule } from '@island.is/clients/contentful-gra
     NationalRegistryV3ClientModule,
     AuthDelegationApiClientModule,
     ContentfulGraphQLClientModule
-    
   ],
   controllers: [NotificationsController, MeNotificationsController],
   providers: [
@@ -65,6 +64,5 @@ import { ContentfulGraphQLClientModule } from '@island.is/clients/contentful-gra
       inject: [UserNotificationsConfig.KEY],
     },
   ],
-  
 })
 export class NotificationsModule {}
