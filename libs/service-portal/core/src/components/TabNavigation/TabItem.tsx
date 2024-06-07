@@ -22,8 +22,6 @@ export const TabItem = forwardRef<HTMLElement, TabItemProps>(
       id,
       active = false,
       onClick,
-      isFirstTab,
-      isLastTab,
       isPrevTabToActive,
       isNextTabToActive,
       onKeyDown,
@@ -48,8 +46,6 @@ export const TabItem = forwardRef<HTMLElement, TabItemProps>(
           !active && !isPrevTabToActive && !isNextTabToActive,
         [styles.tabPreviousToSelectedTab]: isPrevTabToActive,
         [styles.tabNextToSelectedTab]: isNextTabToActive,
-        [styles.lastTab]: isLastTab,
-        [styles.firstTab]: isFirstTab,
       })}
     >
       <div className={styles.borderElement} />

@@ -104,8 +104,6 @@ export const TabBar = ({ tabs, variant = 'default', ...boxProps }: Props) => {
           key={`tab-item-${index}`}
           active={tab.active}
           onClick={tab.onClick}
-          isFirstTab={index === 0}
-          isLastTab={index === tabs.length - 1}
           isNextTabToActive={index - 1 === activeTabIndex}
           isPrevTabToActive={index + 1 === activeTabIndex}
           onKeyDown={(code) => keyPressHandler(index, tabs.length, code)}
