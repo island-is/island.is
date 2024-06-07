@@ -217,6 +217,13 @@ export enum CaseDecision {
   DISMISSING = 'DISMISSING',
 }
 
+export enum IndictmentDecision {
+  POSTPONING = 'POSTPONING',
+  POSTPONING_UNTIL_VERDICT = 'POSTPONING_UNTIL_VERDICT',
+  COMPLETING = 'COMPLETING',
+  REDISTRIBUTING = 'REDISTRIBUTING',
+}
+
 export enum CaseAppealRulingDecision {
   ACCEPTING = 'ACCEPTING',
   REPEAL = 'REPEAL',
