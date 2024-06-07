@@ -137,9 +137,7 @@ export interface Option extends TestSupport {
   }
 }
 
-type SelectValue = string | number
-
-export interface SelectOption<T = SelectValue> {
+export interface SelectOption<T = string | number> {
   label: string
   value: T
 }
@@ -274,7 +272,7 @@ export interface RadioField extends BaseField {
   onSelect?(s: string): void
 }
 
-export type SelectField = BaseField & {
+export interface SelectField extends BaseField {
   readonly type: FieldTypes.SELECT
   component: FieldComponents.SELECT
   options: MaybeWithApplicationAndField<Option[]>
@@ -295,7 +293,7 @@ export interface CompanySearchField extends BaseField {
   required?: boolean
 }
 
-export type AsyncSelectField = BaseField & {
+export interface AsyncSelectField extends BaseField {
   readonly type: FieldTypes.ASYNC_SELECT
   component: FieldComponents.ASYNC_SELECT
   placeholder?: FormText

@@ -5,19 +5,19 @@ import { Select, Option, InputBackgroundColor } from '@island.is/island-ui/core'
 import { TestSupport } from '@island.is/island-ui/utils'
 import { MultiValue, SingleValue } from 'react-select'
 
-type SelectControllerProps<Value, IsMulti extends boolean = false> = {
+interface SelectControllerProps<Value, IsMulti extends boolean = false> {
   error?: string
   id: string
+  defaultValue?: Value
   disabled?: boolean
   name?: string
   label: string
+  options?: Option<Value>[]
+  placeholder?: string
   onSelect?: (
     s: IsMulti extends true ? MultiValue<Option<Value>> : Option<Value>,
     onChange: (t: unknown) => void,
   ) => void
-  defaultValue?: /* (IsMulti extends true ? Value[] : Value) | null */ Value
-  options?: Option<Value>[]
-  placeholder?: string
   backgroundColor?: InputBackgroundColor
   isSearchable?: boolean
   isMulti?: IsMulti
