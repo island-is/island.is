@@ -70,6 +70,7 @@ export const TabBar = ({ tabs, variant = 'default', ...boxProps }: Props) => {
         {tabs.map((tab, index) => (
           <SubTabItem
             id={`tab-item-${index}`}
+            key={`tab-item-${index}`}
             active={tab.active}
             onClick={tab.onClick}
             isPrevTabToActive={index + 1 === activeTabIndex}
@@ -100,6 +101,7 @@ export const TabBar = ({ tabs, variant = 'default', ...boxProps }: Props) => {
       {tabs.map((tab, index) => (
         <TabItem
           id={`tab-item-${index}`}
+          key={`tab-item-${index}`}
           active={tab.active}
           onClick={tab.onClick}
           isFirstTab={index === 0}

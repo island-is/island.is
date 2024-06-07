@@ -39,6 +39,6 @@ export const inactiveSubTabItemWithDivider = style({
   },
 })
 
-globalStyle(`${inactiveSubTabItem}: hover p`, {
+globalStyle(`${subTabItem}:hover p`, {
   color: theme.color.blue400,
 })

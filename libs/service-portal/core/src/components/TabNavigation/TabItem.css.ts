@@ -252,3 +252,11 @@ globalStyle(
 globalStyle(`${tabNotSelected}:hover span`, {
   color: theme.color.blue400,
 })
+
+globalStyle(`${tabNextToSelectedTab}:hover span`, {
+  color: theme.color.blue400,
+})
+
+globalStyle(`${tabPreviousToSelectedTab}:hover span`, {
+  color: theme.color.blue400,
+})
