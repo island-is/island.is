@@ -1,12 +1,33 @@
+import { generatePerson } from 'kennitala'
+import faker from 'faker'
+
 import { createNationalId } from '@island.is/testing/fixtures'
 import { createClient } from '@island.is/services/auth/testing'
 
 import { clientId, TestCase } from './delegations-index-types'
 
+const YEAR = 1000 * 60 * 60 * 24 * 365
+export const testDate = new Date(2024, 2, 1)
+const today = new Date()
+
 const adult1 = createNationalId('residentAdult')
 const adult2 = createNationalId('residentAdult')
-const child1 = createNationalId('residentChild')
-const child2 = createNationalId('residentChild')
+const child1 = generatePerson(
+  new Date(
+    Date.now() - faker.datatype.number({ min: 17 * YEAR, max: 18 * YEAR }),
+  ),
+) // between 17-18 years old
+const child2 = generatePerson(
+  new Date(
+    Date.now() - faker.datatype.number({ min: 1 * YEAR, max: 15 * YEAR }),
+  ),
+) // under 16 years old
+const child3 = generatePerson(
+  new Date(today.getFullYear() - 16, today.getMonth(), today.getDate()),
+) // exactly 16 years old
+const child4 = generatePerson(
+  new Date(today.getFullYear() - 18, today.getMonth(), today.getDate()),
+) // exactly 18 years old
 const company1 = createNationalId('company')
 const company2 = createNationalId('company')
 export const prRight1 = 'pr1'
@@ -31,7 +52,7 @@ export const indexingTestCases: Record<string, TestCase> = {
     }),
     {
       fromChildren: [child2, child1],
-      expectedFrom: [child2, child1],
+      expectedFrom: [child2, child2, child1], // gets both LegalGuardian and LegalGuardianMinor delegation types for child2
     },
   ), // should not index if child is 18 eighteen years old
   ward2: new TestCase(
@@ -41,6 +62,26 @@ export const indexingTestCases: Record<string, TestCase> = {
     }),
     {
       fromChildren: [adult1], // more than 18 years old
+      expectedFrom: [],
+    },
+  ),
+  ward3: new TestCase(
+    createClient({
+      clientId: clientId,
+      supportsLegalGuardians: true,
+    }),
+    {
+      fromChildren: [child3], // exactly 16 years old
+      expectedFrom: [child3],
+    },
+  ),
+  ward4: new TestCase(
+    createClient({
+      clientId: clientId,
+      supportsLegalGuardians: true,
+    }),
+    {
+      fromChildren: [child4], // exactly 18 years old
       expectedFrom: [],
     },
   ),

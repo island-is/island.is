@@ -24,11 +24,13 @@ import {
   AuthDelegationType,
 } from '@island.is/shared/types'
 
-import { indexingTestCases, prRight1 } from './delegation-index-test-cases'
+import {
+  indexingTestCases,
+  prRight1,
+  testDate,
+} from './delegation-index-test-cases'
 import { domainName, TestCase, user } from './delegations-index-types'
 import { setupWithAuth } from '../../../../../test/setup'
-
-const testDate = new Date(2024, 2, 1)
 
 describe('DelegationsIndexService', () => {
   let app: TestApp
