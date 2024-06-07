@@ -6,7 +6,7 @@ import { coatOfArms } from './coatOfArms'
 import { IndictmentConfirmation } from './indictmentPdf'
 import { policeStar } from './policeStar'
 
-const calculatePt = (px: number) => Math.ceil(px * 0.74999943307122)
+export const calculatePt = (px: number) => Math.ceil(px * 0.74999943307122)
 
 export const smallFontSize = 9
 export const baseFontSize = 11
