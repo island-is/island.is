@@ -38,11 +38,12 @@ ARG USERNAME=${USERNAME}
 # hadolint ignore=DL3040,DL3041
 RUN --mount=type=cache,target=/var/cache/dnf \
   dnf install -y \
-  java-11-openjdk gcc-c++ jq graphviz \
+  # Basic requirements
+  bash zsh git java-11-openjdk gcc-c++ jq graphviz \
   # AWS/DevOps specific dependencies
   awscli2 \
   # Niceties
-  bash zsh the_silver_searcher ripgrep fzf neovim
+  the_silver_searcher ripgrep fzf neovim
 
 # Create user and environment
 RUN useradd -m -s /bin/${SHELL} -G wheel ${USERNAME}
