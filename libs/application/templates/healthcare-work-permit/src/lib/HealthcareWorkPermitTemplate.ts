@@ -25,7 +25,6 @@ import {
   EmbaettiLandlaeknisPaymentCatalogApi,
   HealtcareLicenesApi,
   UniversityCareersApi,
-  EducationInfoApi,
   NationalRegistryUserApi,
   ProcessPermitsApi,
 } from '../dataProviders'
@@ -45,7 +44,7 @@ const template: ApplicationTemplate<
     ApplicationConfigurations.HealthcareWorkPermit.translation,
   ],
   dataSchema: HealthcareWorkPermitSchema,
-  featureFlag: Features.healthcareLicenseCertificate,
+  featureFlag: Features.healthcareWorkPermit,
   stateMachineConfig: {
     initial: States.PREREQUISITES,
     states: {
@@ -88,7 +87,6 @@ const template: ApplicationTemplate<
                 EmbaettiLandlaeknisPaymentCatalogApi,
                 UniversityCareersApi,
                 HealtcareLicenesApi,
-                EducationInfoApi,
                 ProcessPermitsApi,
               ],
             },

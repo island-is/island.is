@@ -107,20 +107,13 @@ export class HealthcareWorkPermitService extends BaseTemplateApiService {
       )
     }
 
-    const {
-      fulltNafn,
-      heimilisfang,
-      rikisfang,
-      kennitala,
-      nafn, // TODO Don't need this ?
-      faedingarstadur,
-    } = result
+    const { fulltNafn, heimilisfang, rikisfang, kennitala, faedingarstadur } =
+      result
     return {
       fulltNafn,
       heimilisfang,
       rikisfang,
       kennitala,
-      nafn,
       faedingarstadur,
     }
   }
@@ -147,28 +140,6 @@ export class HealthcareWorkPermitService extends BaseTemplateApiService {
     return result
   }
 
-  // /* Info on different education programs that give work permit licenses */
-  // async getEducationInfo({
-  //   auth,
-  // }: TemplateApiModuleActionProps): Promise<NamsUpplysingar[]> {
-  //   const result =
-  //     this.healthDirectorateClientService.getHealthCareWorkPermitEducationInfo(
-  //       auth,
-  //     )
-
-  //   if (!result) {
-  //     throw new TemplateApiError(
-  //       {
-  //         title: errorMsg.noResponseEducationInfoTitle,
-  //         summary: errorMsg.noResponseEducationInfoMessage,
-  //       },
-  //       400,
-  //     )
-  //   }
-
-  //   return result
-  // }
-
   /* The academic career of the logged in user. Used to find which programmes are valid for work permit */
   async getMyAcademicCareer({
     auth,
@@ -192,26 +163,27 @@ export class HealthcareWorkPermitService extends BaseTemplateApiService {
     return result
   }
 
+  /* Processing and cross validating users graduated programs and healthcare licenses with education info from Landlæknir */
   async processPermits({
     auth,
   }: TemplateApiModuleActionProps): Promise<PermitProgram[]> {
-    const [licenses, programs, careerProgramsHI] = await Promise.all([
-      this.healthDirectorateClientService.getHealthCareLicensesForWorkPermit(
-        auth,
-      ),
-      this.healthDirectorateClientService.getHealthCareWorkPermitEducationInfo(
-        auth,
-      ),
-      this.universityCareersClientService.getStudentTrackHistory(
-        auth,
-        UniversityId.UNIVERSITY_OF_ICELAND,
-      ),
-      // this.universityCareersClientService.getStudentTrackHistory(
-      //   auth,
-      //   UniversityId.UNIVERSITY_OF_AKUREYRI,
-      // ),
-    ])
-    const careerProgramsUNAK: StudentTrackDto[] = []
+    const [licenses, programs, careerProgramsUNAK, careerProgramsHI] =
+      await Promise.all([
+        this.healthDirectorateClientService.getHealthCareLicensesForWorkPermit(
+          auth,
+        ),
+        this.healthDirectorateClientService.getHealthCareWorkPermitEducationInfo(
+          auth,
+        ),
+        this.universityCareersClientService.getStudentTrackHistory(
+          auth,
+          UniversityId.UNIVERSITY_OF_AKUREYRI,
+        ),
+        this.universityCareersClientService.getStudentTrackHistory(
+          auth,
+          UniversityId.UNIVERSITY_OF_ICELAND,
+        ),
+      ])
 
     if (!programs) {
       throw new TemplateApiError(
@@ -245,59 +217,6 @@ export class HealthcareWorkPermitService extends BaseTemplateApiService {
       }
     }
 
-    // const studentTrackDto = [
-    //   {
-    //     name: 'John Doe',
-    //     nationalId: '1234567890',
-    //     graduationDate: new Date('2024-01-15'),
-    //     trackNumber: 3,
-    //     institution: {
-    //       displayName: 'Háskóli Íslands',
-    //     },
-    //     school: 'School of Science',
-    //     faculty: 'Faculty of Mathematics',
-    //     studyProgram: 'Sjúkraþjálfari',
-    //     degree: 'Bachelor of Science',
-    //     programId: 'SJÚ441',
-    //   },
-    //   {
-    //     name: 'John Doe',
-    //     nationalId: '1234567890',
-    //     graduationDate: new Date('2024-05-15'),
-    //     trackNumber: 3,
-    //     institution: {},
-    //     school: 'School of Science',
-    //     faculty: 'Faculty of Mathematics',
-    //     studyProgram: 'Geislafræðingur',
-    //     degree: 'Bachelor of Science',
-    //     programId: 'GSL321',
-    //   },
-    //   {
-    //     name: 'John Doe',
-    //     nationalId: '1234567890',
-    //     graduationDate: new Date('2024-05-15'),
-    //     trackNumber: 3,
-    //     institution: {},
-    //     school: 'School of Science',
-    //     faculty: 'Faculty of Mathematics',
-    //     studyProgram: 'Hjúkrunafræðingur',
-    //     degree: 'Bachelor of Science',
-    //     programId: 'GSL260',
-    //   },
-    //   {
-    //     name: 'John',
-    //     nationalId: '1234567890',
-    //     graduationDate: new Date('2024-05-15'),
-    //     trackNumber: 3,
-    //     institution: {},
-    //     school: 'School of Science',
-    //     faculty: 'Faculty of Mathematics',
-    //     studyProgram: 'Ljósmóðir',
-    //     degree: 'Bachelor of Science',
-    //     programId: 'LJÓ443',
-    //   },
-    // ] as StudentTrackDto[]
-
     // Programs that give licenses to practice (permits)
     const permitValidPrograms = programs?.filter((program) => {
       return (
@@ -306,20 +225,23 @@ export class HealthcareWorkPermitService extends BaseTemplateApiService {
       )
     })
 
-    // Programs that serve as Foundation for certain licenses (Hjúkrunfræði fyrir Ljósmóðir t.d)
+    // Programs that serve as Foundation for certain licenses (Nursing for Midwife f.x)
     const foundationPrograms = programs?.filter((program) => {
       return program.dataOrder === 1 && program.noOfData === 2
     })
 
+    // Splitting up programs from Embætti Landlæknis into those that give permits and those that server as foundation
+    // for other permits. For easy lookup
     const validPermitIds = new Set(
       permitValidPrograms?.map((item) => item.shortId),
     )
+    const validFoundationProgramIds = new Set(
+      foundationPrograms?.map((item) => item.shortId),
+    )
+
     // Programs user has graduated that are viable for work permit
     const relevantCareerPermitPrograms = careerPrograms?.filter((program) =>
       validPermitIds.has(program.programId),
-    )
-    const validFoundationProgramIds = new Set(
-      foundationPrograms?.map((item) => item.shortId),
     )
     // Programs user has graduated that are needed as foundation for certain work permit (Nursing for Midwife f.x)
     const relevantCareerFoundationPrograms = careerPrograms?.filter((program) =>
@@ -345,6 +267,7 @@ export class HealthcareWorkPermitService extends BaseTemplateApiService {
           name: studyProgram,
           programId,
           professionId: currentPermitProgramProfessionId,
+          error: true,
           mainProgram: {
             educationId: currentPermitProgram?.educationId,
             school: institution?.displayName,
@@ -358,14 +281,13 @@ export class HealthcareWorkPermitService extends BaseTemplateApiService {
         if (license) {
           return {
             ...base,
-            error: true,
             errorMsg:
               information.labels.selectWorkPermit.restrictionAlreadyHasLicense,
           }
         }
 
         if (currentPermitProgram?.noOfData === 2) {
-          // Work permit requires some foundational program to qualify for work permit
+          // If noOfData equals 2, means that this graduated program requires a specific foundation/prereq
           const currentFoundationProgram = getFoundationProgram(
             currentPermitProgramProfessionId,
             foundationPrograms || [],
@@ -387,32 +309,28 @@ export class HealthcareWorkPermitService extends BaseTemplateApiService {
           if (!currentFoundationCareerProgram) {
             return {
               ...baseWithFoundationProgram,
-              error: true,
               errorMsg:
                 information.labels.selectWorkPermit
                   .restrictionFoundationMissing,
             }
           }
-          if (
-            !currentFoundationCareerProgram?.graduationDate ||
-            !currentFoundationProgram?.educationValidFrom
-          ) {
+
+          const graduationDate = currentFoundationCareerProgram?.graduationDate
+          const educationValidFrom =
+            currentFoundationProgram?.educationValidFrom
+
+          if (!graduationDate || !educationValidFrom) {
             return {
               ...baseWithFoundationProgram,
-              error: true,
               errorMsg:
                 information.labels.selectWorkPermit.restrictionDataError,
             }
           } else {
-            if (
-              currentFoundationCareerProgram?.graduationDate <
-              new Date(currentFoundationProgram?.educationValidFrom)
-            ) {
+            if (graduationDate < new Date(educationValidFrom)) {
               return {
                 ...baseWithFoundationProgram,
-                error: true,
                 errorMsg:
-                  information.labels.selectWorkPermit.restrictionDataError,
+                  information.labels.selectWorkPermit.restrictionFoundationDate,
               }
             }
           }

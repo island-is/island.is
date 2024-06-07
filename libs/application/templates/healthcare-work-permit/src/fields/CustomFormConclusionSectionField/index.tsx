@@ -15,6 +15,8 @@ import { coreMessages, formatText } from '@island.is/application/core'
 import * as styles from './styles.css'
 import { confirmation } from '../../lib/messages'
 import { conclusionMessages } from '@island.is/application/ui-forms'
+import { PermitProgram } from '../../lib'
+import { HealthcareWorkPermitAnswers } from '../..'
 
 export const CustomFormConclusionSectionField: FC<
   React.PropsWithChildren<FieldBaseProps>
@@ -68,6 +70,18 @@ export const CustomFormConclusionSectionField: FC<
     )
   }
 
+  const answers = props.application.answers as HealthcareWorkPermitAnswers
+
+  const permitPrograms = props.application.externalData.permitOptions
+    ?.data as PermitProgram[]
+  if (!permitPrograms) {
+    throw new Error('Permit programs data is missing.')
+  }
+
+  const chosenProgram = permitPrograms.find(
+    (program) => program.programId === answers.selectWorkPermit.programId,
+  )
+
   return (
     <>
       <Text variant="h1" marginBottom={3}>
@@ -100,10 +114,17 @@ export const CustomFormConclusionSectionField: FC<
             const data = application.externalData.submitApplication.data as {
               base64String: string
             }[]
+            // This should only ever be at most 2 files, in order license -> license number (when license number is applicable)
             return data.map((x, index) => ({
               base64: x.base64String,
-              customButtonText: { is: 'TODO_IS', en: 'TODO_EN' },
-              filename: `starfsleyfi_${index}.pdf`,
+              customButtonText: {
+                is:
+                  index === 0
+                    ? `Starfsleyfi - ${chosenProgram?.name}`
+                    : `Leyfisnúmer`,
+                en: index === 0 ? `License to practice` : `License number`,
+              },
+              filename: index === 0 ? `starfsleyfi_.pdf` : `leyfisnumer_.pdf`,
             }))
           },
           setViewPdfFile: (file: { base64: string; filename: string }) => {

@@ -31,11 +31,6 @@ export const ProcessPermitsApi = defineTemplateApi({
   externalDataId: 'permitOptions',
 })
 
-export const EducationInfoApi = defineTemplateApi({
-  action: ApiActions.getEducationInfo,
-  externalDataId: 'educationInfo',
-})
-
 export const NationalRegistryUserApi = defineTemplateApi({
   action: ApiActions.getNationalRegistryWithEESValidation,
   externalDataId: 'nationalRegistry',

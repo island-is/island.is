@@ -18,7 +18,6 @@ import {
   EmbaettiLandlaeknisPaymentCatalogApi,
   HealtcareLicenesApi,
   UserProfileApi,
-  EducationInfoApi,
   NationalRegistryUserApi,
   ProcessPermitsApi,
 } from '../../dataProviders'
@@ -80,10 +79,6 @@ export const Prerequisites: Form = buildForm({
               provider: ProcessPermitsApi,
               title: '',
             }),
-            // buildDataProviderItem({
-            //   provider: EducationInfoApi,
-            //   title: '',
-            // }),
           ],
         }),
       ],

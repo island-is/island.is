@@ -1,32 +1,11 @@
 import {
-  buildHiddenInput,
   buildMultiField,
   buildRadioField,
   buildSection,
 } from '@island.is/application/core'
 import { information } from '../../lib/messages'
-import {
-  StudentTrackDto,
-  StudentTrackInstitutionDto,
-} from '@island.is/clients/university-careers'
-import { formatText } from '@island.is/application/core'
 import { Application } from '@island.is/api/schema'
-
-interface Message {
-  id: string
-  defaultMessage: string
-  description: string
-}
-
-interface PermitProgram {
-  name?: string
-  programId?: string
-  institution?: StudentTrackInstitutionDto
-  error?: boolean
-  errorMsg?: Message | string
-  professionId?: string
-  prereq?: StudentTrackDto // TODO Probably don't need this
-}
+import { PermitProgram } from '../../lib'
 
 export const SelectWorkPermitSection = buildSection({
   id: 'selectWorkPermitSection',
@@ -49,7 +28,7 @@ export const SelectWorkPermitSection = buildSection({
               return {
                 value: permitProgram.programId || '',
                 label: permitProgram.name || '',
-                subLabel: '',
+                subLabel: permitProgram.errorMsg,
                 disabled: permitProgram.error,
               }
             })

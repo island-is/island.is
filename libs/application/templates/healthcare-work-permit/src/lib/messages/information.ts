@@ -58,13 +58,18 @@ export const information = {
         id: 'hwp.application:information.labels.selectWorkPermit.restrictionFoundationMissing',
         defaultMessage: 'Ekki fannst grunnnám',
         description:
-          'Select work permit restriction message, graduation date too old',
+          'Select work permit restriction message, foundation program missing',
       },
       restrictionDataError: {
         id: 'hwp.application:information.labels.selectWorkPermit.restrictionDataError',
         defaultMessage: 'Villa í gögnum, engin dagsetning fannst',
+        description: 'Select work permit restriction message, error in data',
+      },
+      restrictionFoundationDate: {
+        id: 'hwp.application:information.labels.selectWorkPermit.restrictionFoundationDate',
+        defaultMessage: 'Útskrift grunnnáms fyrir starfsleyfi er of gömull',
         description:
-          'Select work permit restriction message, graduation date too old',
+          'Select work permit restriction message, foundation graduation date is too old',
       },
       restrictionAlreadyHasLicense: {
         id: 'hwp.application:information.labels.selectWorkPermit.restrictionAlreadyHasLicense',

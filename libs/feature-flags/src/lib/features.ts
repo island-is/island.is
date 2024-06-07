@@ -22,7 +22,7 @@ export enum Features {
   energyFunds = 'isEnergyFundsEnabled',
   complaintsToAlthingiOmbudsman = 'isComplaintToAlthingiOmbudsmanEnabled',
   healthcareLicenseCertificate = 'isHealthcareLicenseCertificateEnabled',
-  healthcareWorkPermit = 'isHealthcareWorkPermitEnabled',
+  healthcareWorkPermit = 'ishealthcareworkpermitenabled',
   pensionSupplementApplication = 'isPensionSupplementEnable',
   transferOfMachineOwnership = 'isTransferOfMachineOwnershipEnabled',
   university = 'isUniversityEnabled',
