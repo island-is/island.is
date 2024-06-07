@@ -3,6 +3,7 @@ import { TestingModuleBuilder } from '@nestjs/testing'
 
 import {
   ApiScope,
+  DelegationsIndexService,
   Domain,
   SequelizeConfigService,
 } from '@island.is/auth-api-lib'
@@ -84,6 +85,10 @@ class MockUserProfile {
   meUserProfileControllerFindUserProfile = jest.fn().mockResolvedValue({})
 }
 
+class MockDelegationsIndexService {
+  indexDelegations = jest.fn().mockImplementation(() => Promise.resolve())
+}
+
 interface SetupOptions {
   user: User
   scopes?: Scopes
@@ -128,7 +133,9 @@ export const setupWithAuth = async ({
         .useValue({
           getValue: (feature: Features) =>
             !features || features.includes(feature),
-        }),
+        })
+        .overrideProvider(DelegationsIndexService)
+        .useClass(MockDelegationsIndexService),
     hooks: [
       useAuth({ auth: user }),
       useDatabase({ type: 'postgres', provider: SequelizeConfigService }),
