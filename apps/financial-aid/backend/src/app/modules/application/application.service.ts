@@ -673,9 +673,9 @@ export class ApplicationService {
         },
         municipalityCode: { [Op.in]: municipalityCodes },
       },
-      attributes: ['created'],
+      attributes: ['appliedDate'],
       include: [staffOptions],
-      order: [['created', 'ASC']],
+      order: [['appliedDate', 'ASC']],
     })
 
     const resultsStaffWithApplications = await this.applicationModel.findAll({
@@ -701,7 +701,7 @@ export class ApplicationService {
     return {
       applications: resultsApplications.rows,
       totalCount: resultsApplications.count,
-      minDateCreated: resultsMinDate?.created,
+      minDateCreated: resultsMinDate?.appliedDate,
       staffList: staffListUniq,
     }
   }
