@@ -7,7 +7,6 @@ import {
   UseInterceptors,
 } from '@nestjs/common'
 import {
-  ApiCreatedResponse,
   ApiOkResponse,
   ApiResponse,
   ApiTags,
