@@ -4,17 +4,10 @@ import {
   UserProfileApi,
   NationalRegistryUserApi,
   InstitutionNationalIds,
-  PassportsApi,
 } from '@island.is/application/types'
 import { error } from '../lib/messages'
 
 export { MockProviderApi } from '@island.is/application/types'
-
-export const PassportsApiResponse = PassportsApi.configure({
-  params: {
-    type: 'I',
-  },
-})
 
 export const IdentityDocumentApi = defineTemplateApi({
   action: 'getIdentityDocument',
