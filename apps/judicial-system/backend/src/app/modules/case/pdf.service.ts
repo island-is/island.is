@@ -228,6 +228,7 @@ export class PDFService {
 
         confirmation = {
           actor: actor.name,
+          title: actor.title,
           institution: actor.institution?.name ?? '',
           date: confirmationEvent.created,
         }

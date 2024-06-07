@@ -54,6 +54,7 @@ const roman = (num: number) => {
 
 export interface IndictmentConfirmation {
   actor: string
+  title: string
   institution: string
   date: Date
 }
@@ -84,12 +85,7 @@ export const createIndictment = async (
   setTitle(doc, title)
 
   if (confirmation) {
-    addIndictmentConfirmation(
-      doc,
-      confirmation.actor,
-      confirmation.institution,
-      confirmation.date,
-    )
+    addIndictmentConfirmation(doc, confirmation)
   }
 
   addEmptyLines(doc, 6, doc.page.margins.left)

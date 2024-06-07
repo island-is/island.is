@@ -4,6 +4,7 @@ import { PDFFont, PDFPage } from 'pdf-lib'
 import { formatDate } from '@island.is/judicial-system/formatters'
 
 import { coatOfArms } from './coatOfArms'
+import { IndictmentConfirmation } from './indictmentPdf'
 import { policeStar } from './policeStar'
 
 const calculatePt = (px: number) => Math.ceil(px * 0.74999943307122)
@@ -113,9 +114,7 @@ export const addPoliceStar = (doc: PDFKit.PDFDocument) => {
 
 export const addIndictmentConfirmation = (
   doc: PDFKit.PDFDocument,
-  confirmedBy: string,
-  institutionName: string,
-  createdDate: Date,
+  confirmation: IndictmentConfirmation,
 ) => {
   const lightGray = '#FAFAFA'
   const darkGray = '#CBCBCB'
@@ -200,7 +199,7 @@ export const addIndictmentConfirmation = (
   doc.font('Times-Roman')
   drawTextWithEllipsis(
     doc,
-    applyCase('þgf', confirmedBy),
+    `${applyCase('þgf', confirmation.actor)}, ${confirmation.title}`,
     titleX,
     pageMargin + titleHeight + calculatePt(32),
     confirmedByWidth - calculatePt(16),
@@ -224,7 +223,7 @@ export const addIndictmentConfirmation = (
   )
   doc.font('Times-Roman')
   doc.text(
-    institutionName,
+    confirmation.institution,
     titleX + confirmedByWidth,
     pageMargin + titleHeight + calculatePt(32),
   )
@@ -248,7 +247,7 @@ export const addIndictmentConfirmation = (
   )
   doc.font('Times-Roman')
   doc.text(
-    formatDate(createdDate, 'P') || '',
+    formatDate(confirmation.date, 'P') || '',
     coatOfArmsX + coatOfArmsWidth + titleWidth - calculatePt(55),
     pageMargin + titleHeight + calculatePt(32),
     {
