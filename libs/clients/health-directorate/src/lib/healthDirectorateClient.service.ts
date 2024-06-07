@@ -42,7 +42,7 @@ export class HealthDirectorateClientService {
     return this.umsoknStarfsleyfiApi.withMiddleware(new AuthMiddleware(auth))
   }
 
-  public async getHealthDirectorateLicense(
+  public async getHealthDirectorateLicenseToPractice(
     auth: User,
   ): Promise<Array<HealthDirectorateLicenseToPractice> | null> {
     const licenses = await this.starfsleyfiAMinumSidumApiWithAuth(auth)
