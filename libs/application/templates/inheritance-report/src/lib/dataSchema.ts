@@ -271,6 +271,16 @@ export const inheritanceReportSchema = z.object({
             ...deceasedShare,
           })
           .refine(
+            ({ amount, exchangeRateOrInterest, description }) => {
+              return amount === '' && exchangeRateOrInterest === ''
+                ? true
+                : description !== ''
+            },
+            {
+              path: ['description'],
+            },
+          )
+          .refine(
             ({ assetNumber }) => {
               return assetNumber === ''
                 ? true
