@@ -4,7 +4,6 @@ import type { SliceType } from '@island.is/island-ui/contentful'
 import {
   Box,
   GridColumn,
-  GridContainer,
   GridRow,
   Hyphen,
   Text,
