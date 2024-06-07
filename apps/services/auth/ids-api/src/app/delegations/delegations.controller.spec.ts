@@ -225,7 +225,6 @@ describe('DelegationsController', () => {
           nationalRegistryErrors: number,
         ) => {
           let nationalRegistryApiSpy: jest.SpyInstance
-          let delegationIndexServiceSpy: jest.SpyInstance
           const validRepresentedPersons: NameIdTuple[] = []
           const outdatedRepresentedPersons: NameIdTuple[] = []
           const unactivatedRepresentedPersons: NameIdTuple[] = []
@@ -381,10 +380,6 @@ describe('DelegationsController', () => {
 
                 return user ?? null
               })
-
-            delegationIndexServiceSpy = jest
-              .spyOn(delegationIndexService, 'indexDelegations')
-              .mockImplementation()
           })
 
           afterAll(async () => {
@@ -510,7 +505,7 @@ describe('DelegationsController', () => {
             })
 
             it('should index delegations', () => {
-              expect(delegationIndexServiceSpy).toHaveBeenCalled()
+              expect(delegationIndexService.indexDelegations).toHaveBeenCalled()
             })
           })
         },
@@ -911,13 +906,8 @@ describe('DelegationsController', () => {
             const path = '/delegations'
             let response: request.Response
             let body: DelegationDTO[]
-            let delegationIndexServiceSpy: jest.SpyInstance
 
             beforeAll(async () => {
-              delegationIndexServiceSpy = jest
-                .spyOn(delegationIndexService, 'indexDelegations')
-                .mockImplementation()
-
               response = await server.get(path)
               body = response.body
             })
@@ -1012,7 +1002,7 @@ describe('DelegationsController', () => {
             })
 
             it('should index delegations', () => {
-              expect(delegationIndexServiceSpy).toHaveBeenCalled()
+              expect(delegationIndexService.indexDelegations).toHaveBeenCalled()
             })
           })
         },
