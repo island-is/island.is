@@ -633,7 +633,7 @@ export const m = defineMessages({
     description: '',
   },
   stocksDescription: {
-    id: 'ir.application:stocksDescription',
+    id: 'ir.application:stocksDescription#markdown',
     defaultMessage: 'Nafn og kennitala ef um einstakling er að ræða.',
     description: '',
   },
@@ -1202,6 +1202,11 @@ export const m = defineMessages({
   },
   deceasedShare: {
     id: 'ir.application:deceasedShare',
+    defaultMessage: 'Hlutfall séreignar',
+    description: '',
+  },
+  deceasedSharePart: {
+    id: 'ir.application:deceasedSharePart',
     defaultMessage: 'Hlutfall séreignar',
     description: '',
   },
