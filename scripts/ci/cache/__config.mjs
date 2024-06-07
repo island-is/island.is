@@ -101,7 +101,8 @@ export const caches = [
     },
     init: async (path) => {
       console.log(`Generating files to ${path} - THIS WILL TAKE A LOT OF TIME`)
-      await runCommand(`tar zcvf generated_files.tar.gz \$(./scripts/ci/get-files-touched-by.sh yarn codegen --skip-cache | xargs realpath --relative-to \$(pwd))`, ROOT)
+      const script = resolve(ROOT, 'scripts/ci/generate-files.sh')
+      await runCommand(`bash ${script}`, ROOT)
     },
   },
   {

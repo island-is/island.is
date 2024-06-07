@@ -163,7 +163,7 @@ export async function runCommand(cmd, cwd = undefined, env = {}) {
     options.env = { ...process.env, ...env }
     options.encoding = 'utf-8'
 
-    const [command, ...args] = cmd.split(' ')
+    const [command, ...args] = Array.isArray(cmd) ? cmd : cmd.split(' ')
 
     const childProcess = spawn(command, args, options)
     childProcess.stdout.setEncoding('utf-8')

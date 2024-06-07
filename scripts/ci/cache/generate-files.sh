@@ -1,31 +1,5 @@
 #!/bin/bash
 set -euo pipefail
 
-
-if [ -z "$1" ]; then
-  echo "Usage: $0 <path-to-tarball>"
-  exit 1
-fi
-
-path=$1
-shift
-
-DIR="$(git rev-parse --show-toplevel)"
-marker=$(mktemp)
-touch "$marker"
-
-echo RUNNING CODEGEN
-export NODE_OPTIONS=--max-old-space-size=4096
-yarn node scripts/codegen.js --skip-cache 1>&2
-
-echo CODEGEN DONE
-
-# THIS IS VERY HACKISH AND MAKES IT DIFFICULT TO RUN ASYNC
-changed_files=$(find "$DIR"/apps "$DIR"/libs -type d \( \
-    -path "$DIR/node_modules" -o \
-    -path "$DIR/**/node_modules" -o \
-    -path "$DIR/cache" -o \
-    -path "$DIR/cache_output" \
-\) -prune -o -type f -newer "$marker" -print)
-
-tar zcvf "$path" "$(echo "$changed_files"  | xargs realpath --relative-to "$(pwd)")"
+# shellcheck disable=SC2046
+bash tar zcvf generated_files.tar.gz $(./scripts/ci/get-files-touched-by.sh yarn codegen --skip-cache | xargs realpath --relative-to $(pwd))
