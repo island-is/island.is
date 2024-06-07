@@ -70,9 +70,10 @@ export class NotificationsService {
     );
     const items = res.organizationCollection.items;
     if(items.length > 0){
+      this.logger.info(`senderId: ${senderId} found with title: ${items[0].title}`)
       return items[0] 
     } else {
-      this.logger.warn(`Organization title not found for senderId: ${senderId}`)
+      this.logger.warn(`No org found for senderid: ${senderId}`)
     }
   }
 
