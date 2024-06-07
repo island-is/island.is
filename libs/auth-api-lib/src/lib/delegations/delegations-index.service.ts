@@ -69,6 +69,11 @@ type FetchDelegationRecordsArgs = {
 
 const getTimeUntilEighteen = (nationalId: string) => {
   const birthDate = kennitala.info(nationalId).birthday
+
+  if (!birthDate) {
+    return null
+  }
+
   const now = startOfDay(new Date())
   const eighteen = startOfDay(
     new Date(
