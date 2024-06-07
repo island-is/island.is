@@ -4,7 +4,9 @@
   "sourceRoot": "apps/air-discount-scheme/backend/src",
   "projectType": "application",
   "prefix": "air-discount-scheme-backend",
-  "tags": ["scope:nest"],
+  "tags": [
+    "scope:nest"
+  ],
   "generators": {},
   "targets": {
     "build": {
@@ -39,7 +41,9 @@
           "inspect": false
         }
       },
-      "outputs": ["{options.outputPath}"]
+      "outputs": [
+        "{options.outputPath}"
+      ]
     },
     "serve": {
       "executor": "@nx/js:node",
@@ -48,7 +52,12 @@
       }
     },
     "lint": {
-      "executor": "@nx/eslint:lint"
+      "executor": "@nx/eslint:lint",
+      "options": {
+        "lintFilePatterns": [
+          "apps/air-discount-scheme/backend/**/*.ts"
+        ]
+      }
     },
     "test": {
       "executor": "@nx/jest:jest",
@@ -56,7 +65,9 @@
         "jestConfig": "apps/air-discount-scheme/backend/jest.config.ts",
         "runInBand": true
       },
-      "outputs": ["{workspaceRoot}/coverage/apps/air-discount-scheme/backend"]
+      "outputs": [
+        "{workspaceRoot}/coverage/apps/air-discount-scheme/backend"
+      ]
     },
     "dev-services": {
       "executor": "nx:run-commands",
