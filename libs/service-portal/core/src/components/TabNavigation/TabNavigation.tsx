@@ -97,14 +97,14 @@ export const TabNavigation: React.FC<Props> = ({ items, pathname, label }) => {
           />
         </Box>
       )}
-      <Box marginTop={[1, 1, 2, 4, 4]}>
+      <Box marginTop={[0, 0, 2, 4, 4]}>
         <GridContainer>
           <GridRow>
             {(!!activePath.description || !!activePath.children?.length) && (
               <GridColumn span="6/8">
                 <Box printHidden className={styles.description}>
                   <TabBar
-                    aria-label={label}
+                    label={formatMessage(activePath.name)}
                     variant={'alternative'}
                     tabs={
                       activePath.children?.map((itemChild, ii) => {
@@ -121,6 +121,25 @@ export const TabNavigation: React.FC<Props> = ({ items, pathname, label }) => {
                       }) ?? []
                     }
                   />
+                  {activePath.children && activePath.name && isMobile && (
+                    <Box className={styles.select}>
+                      <Select
+                        size="sm"
+                        name={formatMessage(activePath.name)}
+                        label={formatMessage(activePath.name)}
+                        onChange={(opt) => tabChangeHandler(opt?.value)}
+                        options={activePath.children.map((itemChild) => ({
+                          label: formatMessage(itemChild.name),
+                          value: itemChild.path,
+                        }))}
+                        defaultValue={{
+                          label: formatMessage(activePath.children[0].name),
+                          value: activePath.children[0].path,
+                        }}
+                        isSearchable={false}
+                      />
+                    </Box>
+                  )}
                   {descriptionText && (
                     <Box>
                       <Text marginBottom={4}>

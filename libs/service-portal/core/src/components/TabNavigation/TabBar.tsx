@@ -56,7 +56,6 @@ export const TabBar = ({ tabs, variant = 'default', ...boxProps }: Props) => {
   if (variant === 'alternative') {
     return (
       <Box
-        background={'blue100'}
         role="tablist"
         marginY={1}
         marginX={1}
