@@ -1,8 +1,5 @@
-import React, { FC } from 'react'
 import { Box, FormStepperV2, Section, Text } from '@island.is/island-ui/core'
 import {
-  Application,
-  FormModes,
   Section as TSection,
   SectionChildren,
 } from '@island.is/application/types'
@@ -10,6 +7,8 @@ import { useLocale } from '@island.is/localization'
 import { MessageDescriptor } from 'react-intl'
 
 import { FormScreen } from '../types'
+import useIsMobile from '../hooks/useIsMobile'
+import { ExcludesFalse } from '@island.is/application/utils'
 
 type Props = {
   form: {
@@ -23,7 +22,7 @@ type Props = {
 
 const FormStepper = ({ form, sections, screens, currentScreen }: Props) => {
   const { formatMessage } = useLocale()
-
+  const { isMobile } = useIsMobile()
   const parseSubsections = (
     children: Array<SectionChildren>,
     isParentActive: boolean,
@@ -55,13 +54,22 @@ const FormStepper = ({ form, sections, screens, currentScreen }: Props) => {
     })
   }
 
+  const stepperTitle = isMobile ? null : (
+    <Box
+      marginLeft={1}
+      key={`${form.title.toString}`}
+      paddingBottom={[0, 0, 4]}
+    >
+      <Text variant="h4">{formatMessage(form.title)}</Text>
+    </Box>
+  )
+
   return (
     <FormStepperV2
       sections={
-        sections && [
-          <Box marginLeft={1} key={`${form.title.toString}`}>
-            <Text variant="h4">{formatMessage(form.title)}</Text>
-          </Box>,
+        sections &&
+        [
+          stepperTitle,
           ...sections.map((section, i) => (
             <Section
               key={`formStepper-${i}`}
@@ -79,7 +87,7 @@ const FormStepper = ({ form, sections, screens, currentScreen }: Props) => {
               isComplete={currentScreen.sectionIndex > i}
             />
           )),
-        ]
+        ].filter(Boolean as unknown as ExcludesFalse)
       }
     />
   )
