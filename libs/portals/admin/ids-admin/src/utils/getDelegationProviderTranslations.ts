@@ -34,9 +34,18 @@ export const getDelegationProviderTranslations =
       isDelegationType: false,
       type: 'name',
     })
+    const providerDescriptionTranslationKey = getDelegationTypeTranslationKey({
+      prefix,
+      id: provider.id,
+      isDelegationType: false,
+      type: 'description',
+    })
 
     const providerNameTranslation = Object.entries(m).find(
       ([key]) => key === providerNameTranslationKey,
+    )
+    const providerDescriptionTranslation = Object.entries(m).find(
+      ([key]) => key === providerDescriptionTranslationKey,
     )
 
     if (!providerNameTranslation) {
@@ -68,13 +77,17 @@ export const getDelegationProviderTranslations =
         )
 
         if (
-          delegationTypeNameTranslation &&
+          delegationTypeNameTranslation ||
           delegationTypeDescriptionTranslation
         ) {
           return {
             ...delegationType,
-            name: formatMessage(delegationTypeNameTranslation[1]),
-            description: formatMessage(delegationTypeDescriptionTranslation[1]),
+            name: delegationTypeNameTranslation
+              ? formatMessage(delegationTypeNameTranslation[1])
+              : '',
+            description: delegationTypeDescriptionTranslation
+              ? formatMessage(delegationTypeDescriptionTranslation[1])
+              : '',
           }
         }
 
@@ -97,6 +110,9 @@ export const getDelegationProviderTranslations =
     return {
       ...provider,
       name: formatMessage(providerNameTranslation[1]),
+      description: providerDescriptionTranslation
+        ? formatMessage(providerDescriptionTranslation[1])
+        : '',
       delegationTypes,
     }
   }

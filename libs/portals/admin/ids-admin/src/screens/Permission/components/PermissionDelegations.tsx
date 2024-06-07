@@ -115,9 +115,14 @@ export const PermissionDelegations = () => {
         {providers.map((provider) =>
           !provider ? null : (
             <Stack space={2} key={provider.id}>
-              <Text variant="h5" as="h4">
-                {provider.name}
-              </Text>
+              <div>
+                <Text variant="h5" as="h4" paddingBottom={1}>
+                  {provider.name}
+                </Text>
+                <Text variant="small" as="h5">
+                  {provider.description}
+                </Text>
+              </div>
               <Stack space={3} component="ul">
                 {provider.delegationTypes.map((delegationType) =>
                   !delegationType ? null : (
