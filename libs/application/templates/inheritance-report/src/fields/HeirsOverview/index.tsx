@@ -11,6 +11,7 @@ import {
   PREPAID_INHERITANCE,
   RelationSpouse,
 } from '../../lib/constants'
+import format from 'date-fns/format'
 
 export const HeirsOverview: FC<React.PropsWithChildren<FieldBaseProps>> = ({
   application,
@@ -22,6 +23,7 @@ export const HeirsOverview: FC<React.PropsWithChildren<FieldBaseProps>> = ({
   return (
     <Box>
       {heirs?.map((heir, index) => {
+        console.log(heir)
         const showTaxFree =
           answers.applicationFor === ESTATE_INHERITANCE ||
           (answers.applicationFor === PREPAID_INHERITANCE &&
@@ -35,8 +37,18 @@ export const HeirsOverview: FC<React.PropsWithChildren<FieldBaseProps>> = ({
             </Text>
             <Box display="flex" marginBottom={2}>
               <Box width="half">
-                <Text variant="h4">{formatMessage(m.nationalId)}</Text>
-                <Text>{formatNationalId(heir.nationalId ?? '')}</Text>
+                <Text variant="h4">
+                  {formatMessage(
+                    heir.foreignCitizenship?.length
+                      ? m.dateOfBirth
+                      : m.nationalId,
+                  )}
+                </Text>
+                <Text>
+                  {heir.foreignCitizenship?.length
+                    ? format(new Date(heir.dateOfBirth ?? ''), 'dd.MM.yyyy')
+                    : formatNationalId(heir.nationalId ?? '')}
+                </Text>
               </Box>
               <Box width="half">
                 <Text variant="h4">{formatMessage(m.name)}</Text>

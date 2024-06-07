@@ -217,6 +217,11 @@ export const m = defineMessages({
     defaultMessage: 'Nafn',
     description: '',
   },
+  dateOfBirth: {
+    id: 'ir.application:dateOfBirth',
+    defaultMessage: 'Fæðingardagur',
+    description: '',
+  },
   nationalId: {
     id: 'ir.application:nationalId',
     defaultMessage: 'Kennitala',
