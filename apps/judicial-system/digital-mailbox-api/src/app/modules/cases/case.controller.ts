@@ -10,7 +10,7 @@ import {
   Query,
   UseGuards,
 } from '@nestjs/common'
-import { ApiOkResponse, ApiResponse, ApiTags } from '@nestjs/swagger'
+import { ApiOkResponse, ApiQuery, ApiResponse, ApiTags } from '@nestjs/swagger'
 
 import type { User } from '@island.is/auth-nest-tools'
 import { CurrentUser, IdsUserGuard } from '@island.is/auth-nest-tools'
@@ -22,16 +22,23 @@ import { CasesResponse } from './models/cases.response'
 import { SubpoenaResponse } from './models/subpoena.response'
 import { CaseService } from './case.service'
 
-const CommonApiResponses = () => {
-  return applyDecorators(
-    ApiResponse({ status: 400, description: 'Bad Request' }),
-    ApiResponse({
-      status: 401,
-      description: 'User is not authorized to perform this action',
-    }),
-    ApiResponse({ status: 500, description: 'Internal Server Error' }),
-  )
-}
+const CommonApiResponses = applyDecorators(
+  ApiResponse({ status: 400, description: 'Bad Request' }),
+  ApiResponse({
+    status: 401,
+    description: 'User is not authorized to perform this action',
+  }),
+  ApiResponse({ status: 500, description: 'Internal Server Error' }),
+)
+
+const ApiLangQuery = applyDecorators(
+  ApiQuery({
+    name: 'lang',
+    required: false,
+    description:
+      'The requested language of the response. Defaults to Icelandic.',
+  }),
+)
 
 @Controller('api')
 @ApiTags('cases')
@@ -49,7 +56,8 @@ export class CaseController {
     description:
       'Returns a list of accessible indictment cases for authenticated user. If user has no cases it returns an empty list.',
   })
-  @CommonApiResponses()
+  @CommonApiResponses
+  @ApiLangQuery
   async getAllCases(
     @CurrentUser() user: User,
     @Query() query?: { lang: string },
@@ -64,11 +72,12 @@ export class CaseController {
     type: CaseResponse,
     description: 'Returns indictment case by case id',
   })
-  @CommonApiResponses()
+  @CommonApiResponses
   @ApiResponse({
     status: 404,
     description: 'Case for given case id and authenticated user not found',
   })
+  @ApiLangQuery
   async getCase(
     @Param('caseId', new ParseUUIDPipe()) caseId: string,
     @CurrentUser() user: User,
@@ -84,11 +93,12 @@ export class CaseController {
     type: () => SubpoenaResponse,
     description: 'Returns subpoena by case id',
   })
-  @CommonApiResponses()
+  @CommonApiResponses
   @ApiResponse({
     status: 404,
     description: 'Subpoena for given case id and authenticated user not found',
   })
+  @ApiLangQuery
   async getSubpoena(
     @Param('caseId', new ParseUUIDPipe()) caseId: string,
     @CurrentUser() user: User,
@@ -104,7 +114,7 @@ export class CaseController {
     type: () => SubpoenaResponse,
     description: 'Updates subpoena info',
   })
-  @CommonApiResponses()
+  @CommonApiResponses
   @ApiResponse({
     status: 404,
     description: 'Subpoena for given case id and authenticated user not found',
@@ -113,6 +123,7 @@ export class CaseController {
     status: 403,
     description: 'User is not allowed to update subpoena',
   })
+  @ApiLangQuery
   async updateSubpoena(
     @CurrentUser() user: User,
     @Param('caseId', new ParseUUIDPipe()) caseId: string,
