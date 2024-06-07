@@ -45,7 +45,6 @@ const FormMultiField: FC<
 }) => {
   const { description, children, space = 0 } = multiField
   const { formatMessage } = useLocale()
-  const { userInfo: user } = useAuth()
   return (
     <GridRow>
       <ConditionHandler
