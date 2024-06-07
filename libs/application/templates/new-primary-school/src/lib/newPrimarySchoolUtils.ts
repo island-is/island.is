@@ -7,7 +7,11 @@ import {
 } from '@island.is/application/types'
 import * as kennitala from 'kennitala'
 import { Child, Parents, Person, RelativesRow, SiblingsRow } from '../types'
-import { RelationOptions, SiblingRelationOptions } from './constants'
+import {
+  RelationOptions,
+  SiblingRelationOptions,
+  languageCodes,
+} from './constants'
 import { newPrimarySchoolMessages } from './messages'
 
 export const getApplicationAnswers = (answers: Application['answers']) => {
@@ -19,12 +23,20 @@ export const getApplicationAnswers = (answers: Application['answers']) => {
 
   const siblings = getValueViaPath(answers, 'siblings') as SiblingsRow[]
 
+  const nativeLanguage = getValueViaPath(
+    answers,
+    'languages.nativeLanguage',
+  ) as string
+
+  const otherLanguagesSpokenDaily = getValueViaPath(
+    answers,
+    'languages.otherLanguagesSpokenDaily',
+  ) as YesOrNo
+
   const otherLanguages = getValueViaPath(
     answers,
     'languages.otherLanguages',
-  ) as YesOrNo
-
-  const languages = getValueViaPath(answers, 'languages.languages') as string
+  ) as string
 
   const icelandicNotSpokenAroundChild = getValueViaPath(
     answers,
@@ -67,8 +79,9 @@ export const getApplicationAnswers = (answers: Application['answers']) => {
     parents,
     relatives,
     siblings,
+    nativeLanguage,
+    otherLanguagesSpokenDaily,
     otherLanguages,
-    languages,
     icelandicNotSpokenAroundChild,
     developmentalAssessment,
     specialSupport,
@@ -231,4 +244,15 @@ export const getSiblingRelationOptionLabel = (
 ) => {
   const relationOptions = getSiblingRelationOptions()
   return relationOptions.find((option) => option.value === value)?.label ?? ''
+}
+
+export const getLanguageCodes = () => {
+  return languageCodes.map((x) => ({
+    label: x.name,
+    value: x.code,
+  }))
+}
+
+export const getLanguageLabel = (code: string) => {
+  return languageCodes.find((language) => language.code === code)?.name ?? ''
 }

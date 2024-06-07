@@ -27,7 +27,7 @@ export const Parents = ({
             <GridRow>
               <GridColumn span={['12/12', '12/12', '12/12', '12/12']}>
                 <Text variant="h3" as="h3">
-                  {formatMessage(newPrimarySchoolMessages.confirm.parents)}{' '}
+                  {formatMessage(newPrimarySchoolMessages.overview.parents)}{' '}
                   {index + 1}
                 </Text>
               </GridColumn>

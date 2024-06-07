@@ -100,14 +100,16 @@ export const dataSchema = z.object({
   startDate: z.string(),
   languages: z
     .object({
-      otherLanguages: z.enum([YES, NO]),
-      languages: z.string().optional(),
+      // TODO: Skoða betur þegar multiSelect er tilbúið
+      nativeLanguage: z.string(),
+      otherLanguagesSpokenDaily: z.enum([YES, NO]),
+      otherLanguages: z.string().optional(),
     })
     .refine(
-      ({ otherLanguages, languages }) =>
-        otherLanguages === YES ? !!languages : true,
+      ({ otherLanguagesSpokenDaily, otherLanguages }) =>
+        otherLanguagesSpokenDaily === YES ? !!otherLanguages : true,
       {
-        path: ['languages'],
+        path: ['otherLanguages'],
         params: errorMessages.languagesRequired,
       },
     ),

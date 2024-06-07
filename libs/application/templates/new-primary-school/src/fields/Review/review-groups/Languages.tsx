@@ -7,7 +7,10 @@ import {
 import { GridColumn, GridRow, Stack } from '@island.is/island-ui/core'
 import { useLocale } from '@island.is/localization'
 import { newPrimarySchoolMessages } from '../../../lib/messages'
-import { getApplicationAnswers } from '../../../lib/newPrimarySchoolUtils'
+import {
+  getApplicationAnswers,
+  getLanguageLabel,
+} from '../../../lib/newPrimarySchoolUtils'
 import { ReviewGroupProps } from './props'
 
 export const Languages = ({
@@ -16,26 +19,42 @@ export const Languages = ({
   goToScreen,
 }: ReviewGroupProps) => {
   const { formatMessage } = useLocale()
-  const { otherLanguages, languages, icelandicNotSpokenAroundChild } =
-    getApplicationAnswers(application.answers)
+  const {
+    nativeLanguage,
+    otherLanguagesSpokenDaily,
+    otherLanguages,
+    icelandicNotSpokenAroundChild,
+  } = getApplicationAnswers(application.answers)
 
   return (
+    // TODO: Skoða betur þegar multiSelect er tilbúið
     <ReviewGroup
       isEditable={editable}
       editAction={() => goToScreen?.('languages')}
     >
       <Stack space={2}>
         <GridRow>
-          <GridColumn span={['9/12', '9/12', '9/12', '12/12']}>
-            <RadioValue
+          <GridColumn span={['12/12', '12/12', '12/12', '12/12']}>
+            <DataValue
               label={formatMessage(
-                newPrimarySchoolMessages.differentNeeds.languageQuestion,
+                newPrimarySchoolMessages.overview.nativeLanguage,
               )}
-              value={otherLanguages}
+              value={getLanguageLabel(nativeLanguage)}
             />
           </GridColumn>
         </GridRow>
-        {otherLanguages === YES && (
+        <GridRow>
+          <GridColumn span={['12/12', '12/12', '12/12', '12/12']}>
+            <RadioValue
+              label={formatMessage(
+                newPrimarySchoolMessages.differentNeeds
+                  .otherLanguagesSpokenDaily,
+              )}
+              value={otherLanguagesSpokenDaily}
+            />
+          </GridColumn>
+        </GridRow>
+        {otherLanguagesSpokenDaily === YES && (
           <>
             <GridRow>
               <GridColumn span={['12/12', '12/12', '12/12', '12/12']}>
@@ -43,24 +62,23 @@ export const Languages = ({
                   label={formatMessage(
                     newPrimarySchoolMessages.differentNeeds.languageTitle,
                   )}
-                  value={languages}
+                  value={getLanguageLabel(otherLanguages)}
                 />
               </GridColumn>
             </GridRow>
-            <GridRow>
-              <GridColumn span={['12/12', '12/12', '12/12', '12/12']}>
-                <DataValue
-                  label={formatMessage(
-                    newPrimarySchoolMessages.confirm.icelandicSpokenAroundChild,
-                  )}
-                  value={formatMessage(
-                    icelandicNotSpokenAroundChild?.includes(YES)
-                      ? newPrimarySchoolMessages.shared.no
-                      : newPrimarySchoolMessages.shared.yes,
-                  )}
-                />
-              </GridColumn>
-            </GridRow>
+            {icelandicNotSpokenAroundChild?.includes(YES) && (
+              <GridRow>
+                <GridColumn span={['12/12', '12/12', '12/12', '12/12']}>
+                  <DataValue
+                    label={formatMessage(
+                      newPrimarySchoolMessages.overview
+                        .icelandicSpokenAroundChild,
+                    )}
+                    value={formatMessage(newPrimarySchoolMessages.shared.no)}
+                  />
+                </GridColumn>
+              </GridRow>
+            )}
           </>
         )}
       </Stack>

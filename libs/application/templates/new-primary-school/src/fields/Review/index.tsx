@@ -87,13 +87,13 @@ export const Review: FC<ReviewScreenProps> = ({
           <Box>
             <Box marginBottom={2}>
               <Text variant="h2">
-                {formatMessage(newPrimarySchoolMessages.confirm.sectionTitle)}
+                {formatMessage(newPrimarySchoolMessages.overview.sectionTitle)}
               </Text>
             </Box>
             <Box marginBottom={10}>
               <Text variant="default">
                 {formatMessage(
-                  newPrimarySchoolMessages.confirm.overviewDescription,
+                  newPrimarySchoolMessages.overview.overviewDescription,
                 )}
               </Text>
             </Box>
@@ -119,7 +119,7 @@ export const Review: FC<ReviewScreenProps> = ({
         >
           <Box>
             <Text variant="h2">
-              {formatMessage(newPrimarySchoolMessages.confirm.sectionTitle)}
+              {formatMessage(newPrimarySchoolMessages.overview.sectionTitle)}
             </Text>
           </Box>
           <Box display="flex" columnGap={2} alignItems="center">
@@ -135,7 +135,7 @@ export const Review: FC<ReviewScreenProps> = ({
                 disabled={loadingSubmit}
                 onClick={() => handleSubmit(DefaultEvents.EDIT)}
               >
-                {formatMessage(newPrimarySchoolMessages.confirm.editButton)}
+                {formatMessage(newPrimarySchoolMessages.overview.editButton)}
               </Button>
             )}
             <Button

@@ -35,6 +35,7 @@ import {
   canApply,
   getApplicationAnswers,
   getApplicationExternalData,
+  getLanguageCodes,
   getOtherParent,
   getRelationOptionLabel,
   getRelationOptions,
@@ -536,14 +537,33 @@ export const NewPrimarySchoolForm: Form = buildForm({
             buildMultiField({
               id: 'languages',
               title: newPrimarySchoolMessages.differentNeeds.languageTitle,
+              description:
+                newPrimarySchoolMessages.differentNeeds.languageDescription,
               children: [
-                buildRadioField({
-                  // TODO: Taka þetta út?
-                  id: 'languages.otherLanguages',
+                buildDescriptionField({
+                  id: 'languages.nativeLanguage.title',
                   title:
-                    newPrimarySchoolMessages.differentNeeds.languageQuestion,
+                    newPrimarySchoolMessages.differentNeeds.childNativeLanguage,
+                  titleVariant: 'h4',
+                }),
+                buildSelectField({
+                  id: 'languages.nativeLanguage',
+                  dataTestId: 'languages-native-language',
+                  title:
+                    newPrimarySchoolMessages.differentNeeds
+                      .languageSubSectionTitle,
+                  placeholder:
+                    newPrimarySchoolMessages.differentNeeds.languagePlaceholder,
+                  options: getLanguageCodes(),
+                }),
+                buildRadioField({
+                  id: 'languages.otherLanguagesSpokenDaily',
+                  title:
+                    newPrimarySchoolMessages.differentNeeds
+                      .otherLanguagesSpokenDaily,
                   width: 'half',
                   required: true,
+                  space: 4,
                   options: [
                     {
                       label: newPrimarySchoolMessages.shared.yes,
@@ -557,57 +577,40 @@ export const NewPrimarySchoolForm: Form = buildForm({
                     },
                   ],
                 }),
-                buildDescriptionField({
-                  id: 'languages.description',
-                  title:
-                    newPrimarySchoolMessages.differentNeeds
-                      .languageSubSectionTitle,
-                  description:
-                    newPrimarySchoolMessages.differentNeeds.languageDescription,
-                  titleVariant: 'h4',
-                  marginTop: 3,
-                  condition: (answers) => {
-                    const { otherLanguages } = getApplicationAnswers(answers)
-
-                    return otherLanguages === YES
-                  },
-                }),
                 buildSelectField({
                   // TODO: Multi select
-                  id: 'languages.languages',
-                  dataTestId: 'private-pension-fund-ratio',
+                  id: 'languages.otherLanguages',
+                  dataTestId: 'languages-other-languages',
                   title:
                     newPrimarySchoolMessages.differentNeeds
                       .languageSubSectionTitle,
                   placeholder:
                     newPrimarySchoolMessages.differentNeeds.languagePlaceholder,
-                  // TODO: Nota gögn fá Júní?
-                  options: [
-                    { label: 'Íslenska', value: 'is' },
-                    { label: 'Enska', value: 'en' },
-                    { label: 'Danska', value: 'dk' },
-                  ],
+                  options: getLanguageCodes(),
                   condition: (answers) => {
-                    const { otherLanguages } = getApplicationAnswers(answers)
+                    const { otherLanguagesSpokenDaily } =
+                      getApplicationAnswers(answers)
 
-                    return otherLanguages === YES
+                    return otherLanguagesSpokenDaily === YES
                   },
                 }),
                 buildCheckboxField({
                   id: 'languages.icelandicNotSpokenAroundChild',
                   title: '',
+                  // TODO: Disable ef Íslenska valin?
                   options: [
                     {
                       label:
                         newPrimarySchoolMessages.differentNeeds
-                          .languageCheckbox,
+                          .icelandicNotSpokenAroundChild,
                       value: YES,
                     },
                   ],
                   condition: (answers) => {
-                    const { otherLanguages } = getApplicationAnswers(answers)
+                    const { otherLanguagesSpokenDaily } =
+                      getApplicationAnswers(answers)
 
-                    return otherLanguages === YES
+                    return otherLanguagesSpokenDaily === YES
                   },
                 }),
               ],
@@ -808,18 +811,18 @@ export const NewPrimarySchoolForm: Form = buildForm({
       ],
     }),
     buildSection({
-      id: 'confirmationSection',
-      title: newPrimarySchoolMessages.confirm.sectionTitle,
+      id: 'overviewSection',
+      title: newPrimarySchoolMessages.overview.sectionTitle,
       children: [
         buildMultiField({
-          id: 'confirmation',
+          id: 'overview',
           title: '',
           description: '',
           children: [
             buildCustomField(
               {
-                id: 'confirmationScreen',
-                title: newPrimarySchoolMessages.confirm.overviewTitle,
+                id: 'overviewScreen',
+                title: newPrimarySchoolMessages.overview.overviewTitle,
                 component: 'Review',
               },
               {
@@ -829,11 +832,11 @@ export const NewPrimarySchoolForm: Form = buildForm({
             buildSubmitField({
               id: 'submit',
               placement: 'footer',
-              title: newPrimarySchoolMessages.confirm.submitButton,
+              title: newPrimarySchoolMessages.overview.submitButton,
               actions: [
                 {
                   event: DefaultEvents.SUBMIT,
-                  name: newPrimarySchoolMessages.confirm.submitButton,
+                  name: newPrimarySchoolMessages.overview.submitButton,
                   type: 'primary',
                 },
               ],

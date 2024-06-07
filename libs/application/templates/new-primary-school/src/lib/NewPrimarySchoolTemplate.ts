@@ -162,9 +162,11 @@ const NewPrimarySchoolTemplate: ApplicationTemplate<
     actions: {
       clearLanguages: assign((context) => {
         const { application } = context
-        const { otherLanguages } = getApplicationAnswers(application.answers)
-        if (otherLanguages === NO) {
-          unset(application.answers, 'languages.languages')
+        const { otherLanguagesSpokenDaily } = getApplicationAnswers(
+          application.answers,
+        )
+        if (otherLanguagesSpokenDaily === NO) {
+          unset(application.answers, 'languages.otherLanguages')
           unset(application.answers, 'languages.icelandicNotSpokenAroundChild')
         }
         return context
