@@ -97,38 +97,6 @@ export const ExampleForm: Form = buildForm({
                 value: '18',
               },
             }),
-
-            buildSelectField({
-              id: 'person.countrymulti',
-              title: 'Multi',
-              width: 'full',
-              placeholder: 'Select something',
-              isMulti: true,
-              onSelect: (val) => {
-                console.log(val)
-              },
-              options: [
-                { label: 'Iceland', value: 'is' },
-                { label: 'United Kingdom', value: 'uk' },
-                { label: 'Denmark', value: 'dk' },
-              ],
-            }),
-
-            buildAsyncSelectField({
-              id: 'person.countrymultiasync',
-              title: 'MultiAsync',
-              width: 'full',
-              placeholder: 'Select something',
-              isMulti: true,
-              onSelect: (val) => {
-                console.log(val)
-              },
-              loadOptions: async () => [
-                { label: 'Iceland', value: 'is' },
-                { label: 'United Kingdom', value: 'uk' },
-                { label: 'Denmark', value: 'dk' },
-              ],
-            }),
           ],
         }),
         buildFileUploadField({
@@ -170,12 +138,6 @@ export const ExampleForm: Form = buildForm({
                 { value: 'yes', label: m.yesOptionLabel },
                 { value: 'no', label: m.noOptionLabel },
               ],
-              condition: (formValue: FormValue) => {
-                return (
-                  (formValue as { person: { age: string } })?.person?.age >=
-                  '18'
-                )
-              },
             }),
             buildMultiField({
               id: 'careerHistoryDetails',
