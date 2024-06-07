@@ -14,6 +14,7 @@ import {
   buildPhoneField,
   buildHiddenInput,
   buildHiddenInputWithWatchedValue,
+  buildAsyncSelectField,
 } from '@island.is/application/core'
 import {
   Application,
@@ -98,10 +99,11 @@ export const ExampleForm: Form = buildForm({
             }),
 
             buildSelectField({
-              id: 'person.country',
-              title: 'Single',
-              width: 'half',
+              id: 'person.countrymulti',
+              title: 'Multi',
+              width: 'full',
               placeholder: 'Select something',
+              isMulti: true,
               onSelect: (val) => {
                 console.log(val)
               },
@@ -111,18 +113,17 @@ export const ExampleForm: Form = buildForm({
                 { label: 'Denmark', value: 'dk' },
               ],
             }),
-            // eslint-disable-next-line @typescript-eslint/ban-ts-comment
-            // @ts-ignore
-            buildSelectField({
-              id: 'person.countrymulti',
-              title: 'Multi',
-              width: 'half',
+
+            buildAsyncSelectField({
+              id: 'person.countrymultiasync',
+              title: 'MultiAsync',
+              width: 'full',
               placeholder: 'Select something',
               isMulti: true,
               onSelect: (val) => {
                 console.log(val)
               },
-              options: [
+              loadOptions: async () => [
                 { label: 'Iceland', value: 'is' },
                 { label: 'United Kingdom', value: 'uk' },
                 { label: 'Denmark', value: 'dk' },

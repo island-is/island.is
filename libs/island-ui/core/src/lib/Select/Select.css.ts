@@ -24,8 +24,9 @@ export const valueContainer = style(
 
 export const multiValue = style(
   {
-    backgroundColor: theme.color.blue400,
-    color: theme.color.white,
+    backgroundColor: theme.color.blue200,
+    color: theme.color.blue600,
+    fontWeight: theme.typography.medium,
     borderRadius: theme.border.radius.large,
     overflow: 'hidden',
   },
@@ -34,17 +35,11 @@ export const multiValue = style(
 
 export const multiValueLabel = style(
   {
-    color: theme.color.white,
+    color: theme.color.blue600,
+    fontWeight: theme.typography.medium,
     borderRadius: 0,
   },
   'multiValueLabel',
-)
-
-export const multiValueRemove = style(
-  {
-    borderRadius: 0,
-  },
-  'multiValueRemove',
 )
 
 globalStyle(`${wrapper} .island-select__multi-value`, {
@@ -63,14 +58,24 @@ globalStyle(`${wrapper} .island-select__multi-value__label`, {
   paddingLeft: '0.5rem',
   paddingBottom: '0.33rem',
   paddingTop: '0.33rem',
+  paddingRight: 0,
   lineHeight: 1,
 })
+
 globalStyle(`${wrapper} .island-select__multi-value__remove`, {
   borderRadius: 0,
-  paddingLeft: 0,
-  paddingRight: '0.5rem',
+  paddingLeft: '0.25rem',
+  paddingRight: '0.33rem',
   paddingBottom: '0.33rem',
   paddingTop: '0.33rem',
+  transition: 'background .2s, color .2s',
+  fontWeight: theme.typography.medium,
+  cursor: 'pointer',
+})
+
+globalStyle(`${wrapper} .island-select__multi-value__remove:hover`, {
+  backgroundColor: theme.color.blue600,
+  color: theme.color.white,
 })
 
 globalStyle(`${wrapper} ${valueContainer} .island-select__input-container`, {

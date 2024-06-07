@@ -34,8 +34,6 @@ export const MultiValue = <
 >(
   props: MultiValueProps<Value, IsMulti, Group>,
 ) => {
-  const { size = 'md' } = props.selectProps
-
   return (
     <components.MultiValue className={styles.multiValue} {...props}>
       {props.children}

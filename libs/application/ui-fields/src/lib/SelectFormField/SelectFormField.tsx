@@ -79,7 +79,7 @@ export const SelectFormField: FC<React.PropsWithChildren<Props>> = ({
               ? formatText(placeholder as string, application, formatMessage)
               : undefined
           }
-          onSelect={onSelect}
+          onSelect={onSelect as any}
         />
       </Box>
     </div>

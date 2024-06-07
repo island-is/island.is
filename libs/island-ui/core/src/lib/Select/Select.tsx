@@ -44,6 +44,7 @@ export const Select = <
   isSearchable = true,
   isCreatable = false,
   isMulti,
+  closeMenuOnSelect = !isMulti,
   size = 'md',
   backgroundColor = 'white',
   required,
@@ -96,6 +97,7 @@ export const Select = <
         hasError={hasError}
         isSearchable={isSearchable}
         isMulti={isMulti}
+        closeMenuOnSelect={closeMenuOnSelect}
         size={size}
         required={required}
         formatGroupLabel={formatGroupLabel}
@@ -157,6 +159,7 @@ export const Select = <
         icon={icon}
         placeholder={placeholder}
         isMulti={isMulti}
+        closeMenuOnSelect={closeMenuOnSelect}
         defaultValue={defaultValue}
         isOptionDisabled={(option) => !!option.disabled}
         hasError={hasError}

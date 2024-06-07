@@ -19,7 +19,7 @@ import React from 'react'
 import { TestSupport } from '@island.is/island-ui/utils'
 import { MessageDescriptor } from 'react-intl'
 import { Locale } from '@island.is/shared/types'
-import { MultiValue, SingleValue } from 'react-select'
+import { MultiValue } from 'react-select'
 
 type Space = keyof typeof theme.spacing
 
@@ -274,20 +274,15 @@ export interface RadioField extends BaseField {
   onSelect?(s: string): void
 }
 
-export type SelectField<IsMulti extends boolean = false> = BaseField & {
+export type SelectField = BaseField & {
   readonly type: FieldTypes.SELECT
   component: FieldComponents.SELECT
   options: MaybeWithApplicationAndField<Option[]>
-  onSelect?: (
-    s: IsMulti extends true
-      ? MultiValue<SelectOption<SelectValue>>
-      : SelectOption<SelectValue>,
-    cb: (t: unknown) => void,
-  ) => void
+  onSelect?(s: SelectOption, cb: (t: unknown) => void): void
   placeholder?: FormText
   backgroundColor?: InputBackgroundColor
   required?: boolean
-  isMulti?: IsMulti
+  isMulti?: boolean
 }
 
 export interface CompanySearchField extends BaseField {
@@ -300,22 +295,17 @@ export interface CompanySearchField extends BaseField {
   required?: boolean
 }
 
-export type AsyncSelectField<IsMulti extends boolean = false> = BaseField & {
+export type AsyncSelectField = BaseField & {
   readonly type: FieldTypes.ASYNC_SELECT
   component: FieldComponents.ASYNC_SELECT
   placeholder?: FormText
   loadOptions(c: Context): Promise<Option[]>
-  onSelect?: (
-    s: IsMulti extends true
-      ? MultiValue<SelectOption<SelectValue>>
-      : SelectOption<SelectValue>,
-    cb: (t: unknown) => void,
-  ) => void
+  onSelect?(s: SelectOption, cb: (t: unknown) => void): void
   loadingError?: FormText
   backgroundColor?: InputBackgroundColor
   isSearchable?: boolean
   required?: boolean
-  isMulti?: IsMulti
+  isMulti?: boolean
 }
 
 export interface TextField extends BaseField {

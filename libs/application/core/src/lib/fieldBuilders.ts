@@ -186,9 +186,9 @@ export function buildRadioField(
   }
 }
 
-export function buildSelectField<IsMulti extends boolean = false>(
-  data: Omit<SelectField<IsMulti>, 'type' | 'component' | 'children'>,
-): SelectField<IsMulti> {
+export function buildSelectField(
+  data: Omit<SelectField, 'type' | 'component' | 'children'>,
+): SelectField {
   const {
     options,
     placeholder,
@@ -221,6 +221,7 @@ export function buildAsyncSelectField(
     onSelect,
     backgroundColor = 'blue',
     isSearchable,
+    isMulti,
   } = data
 
   return {
@@ -234,6 +235,7 @@ export function buildAsyncSelectField(
     onSelect,
     backgroundColor,
     isSearchable,
+    isMulti,
   }
 }
 
