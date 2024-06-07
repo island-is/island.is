@@ -2,22 +2,6 @@ import { ApiProperty } from '@nestjs/swagger'
 
 import { InternalCaseResponse } from './internal/internalCase.response'
 
-class IndictmentCaseData {
-  @ApiProperty({ type: String })
-  caseNumber!: string
-
-  @ApiProperty({ type: Object })
-  groups!: Groups[]
-}
-
-class Groups {
-  @ApiProperty({ type: String })
-  label!: string
-
-  @ApiProperty({ type: Object })
-  items!: Items[]
-}
-
 class Items {
   @ApiProperty({ type: String })
   label!: string
@@ -25,12 +9,28 @@ class Items {
   @ApiProperty({ type: String })
   value?: string
 
-  @ApiProperty({ type: String })
+  @ApiProperty({ type: String, enum: ['email', 'tel'] })
   linkType?: 'email' | 'tel'
 }
 
+class Groups {
+  @ApiProperty({ type: String })
+  label!: string
+
+  @ApiProperty({ type: [Items] })
+  items!: Items[]
+}
+
+class IndictmentCaseData {
+  @ApiProperty({ type: String })
+  caseNumber!: string
+
+  @ApiProperty({ type: [Groups] })
+  groups!: Groups[]
+}
+
 export class CaseResponse {
-  @ApiProperty({ type: Object })
+  @ApiProperty({ type: IndictmentCaseData })
   data!: IndictmentCaseData
 
   static fromInternalCaseResponse(
