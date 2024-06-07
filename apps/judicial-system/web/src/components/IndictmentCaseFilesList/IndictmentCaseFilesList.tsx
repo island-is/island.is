@@ -6,6 +6,8 @@ import { Box, Text } from '@island.is/island-ui/core'
 import {
   isCompletedCase,
   isDistrictCourtUser,
+  isPublicProsecutor,
+  isPublicProsecutorUser,
   isTrafficViolationCase,
 } from '@island.is/judicial-system/types'
 import {
@@ -91,6 +93,9 @@ const IndictmentCaseFilesList: React.FC<React.PropsWithChildren<Props>> = (
   const courtRecords = cf?.filter(
     (file) => file.category === CaseFileCategory.COURT_RECORD,
   )
+  const criminalRecordUpdate = cf?.filter(
+    (file) => file.category === CaseFileCategory.CRIMINAL_RECORD_UPDATE,
+  )
 
   return (
     <>
@@ -146,6 +151,22 @@ const IndictmentCaseFilesList: React.FC<React.PropsWithChildren<Props>> = (
           />
         </Box>
       )}
+      {criminalRecordUpdate &&
+        criminalRecordUpdate.length > 0 &&
+        (isDistrictCourtUser(user) ||
+          isPublicProsecutor(user) ||
+          isPublicProsecutorUser(user)) && (
+          <Box marginBottom={5}>
+            <Text variant="h4" as="h4" marginBottom={1}>
+              {formatMessage(caseFiles.criminalRecordUpdateSection)}
+            </Text>
+            <RenderFiles
+              caseFiles={criminalRecordUpdate}
+              onOpenFile={onOpen}
+              workingCase={workingCase}
+            />
+          </Box>
+        )}
       {costBreakdowns && costBreakdowns.length > 0 && (
         <Box marginBottom={5}>
           <Text variant="h4" as="h4" marginBottom={1}>
