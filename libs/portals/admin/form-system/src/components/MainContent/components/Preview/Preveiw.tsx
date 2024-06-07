@@ -52,7 +52,7 @@ export const Preview = ({ data }: Props) => {
       {type === 'Checkbox' && <CheckboxPreview currentItem={data} />}
       {type === 'Phone_number' && <PhoneNumber currentItem={data} />}
       {type === 'Time_input' && <TimeInput currentItem={data} />}
-      {type === 'Property_number' && <PropertyNumber />}
+      {type === 'Property_number' && <PropertyNumber currentItem={data} />}
     </Box>
   )
 }

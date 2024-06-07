@@ -3,13 +3,19 @@ import { ChangeEvent, useState } from "react"
 import { useIntl } from "react-intl"
 import { SingleValue } from "react-select"
 import { m } from "../../../../../lib/messages"
+import { FormSystemInput } from "@island.is/api/schema"
 
-export const PropertyNumber = () => {
+interface Props {
+  currentItem: FormSystemInput
+}
+
+export const PropertyNumber = ({ currentItem }: Props) => {
 
   const [propertyNumber, setPropertyNumber] = useState<string>('')
   const [ownedProperty, setOwnedProperty] = useState<string>('')
   const showPropertyNumber = propertyNumber.length === 7
   const showOwnedProperty = ownedProperty !== ''
+  const isRequired = currentItem?.isRequired ?? false
   const { formatMessage } = useIntl()
 
   const propertyProperties = (
@@ -22,6 +28,7 @@ export const PropertyNumber = () => {
             disabled
             value="Borgartún 1"
             backgroundColor="blue"
+            required={isRequired}
           />
         </Box>
       </Column>
@@ -33,6 +40,7 @@ export const PropertyNumber = () => {
             disabled
             value="Reykjavík"
             backgroundColor="blue"
+            required={isRequired}
           />
         </Box>
       </Column>
@@ -44,7 +52,7 @@ export const PropertyNumber = () => {
   }
 
   const ownedProperties = (
-    <Stack space={2}>
+    <Stack space={1}>
       <Row>
         <Column span="5/10" >
           <Box padding={2}>
@@ -59,6 +67,7 @@ export const PropertyNumber = () => {
               ]}
               onChange={(e) => handleOwnedPropertyChange(e)}
               backgroundColor="blue"
+              required={isRequired}
             />
           </Box>
         </Column>
@@ -88,6 +97,7 @@ export const PropertyNumber = () => {
               value={propertyNumber}
               onChange={(e) => handlePropertyNumberChange(e)}
               backgroundColor="blue"
+              required={isRequired}
             />
           </Box>
         </Column>
