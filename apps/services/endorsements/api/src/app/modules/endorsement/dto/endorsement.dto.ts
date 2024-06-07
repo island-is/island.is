@@ -5,4 +5,7 @@ export class EndorsementDto {
   @ApiProperty({ type: Boolean })
   @IsBoolean()
   showName!: boolean
+
+  @ApiProperty({ type: String })
+  email!: string
 }

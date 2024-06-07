@@ -14,6 +14,7 @@ import { EndorsementTag } from '../endorsementList/constants'
 import { paginate } from '@island.is/nest/pagination'
 import { ENDORSEMENT_SYSTEM_GENERAL_PETITION_TAGS } from '../../../environments/environment'
 import { NationalRegistryV3ClientService } from '@island.is/clients/national-registry-v3'
+import { EmailService } from '@island.is/email-service'
 
 interface FindEndorsementInput {
   listId: string
@@ -24,6 +25,7 @@ interface EndorsementInput {
   endorsementList: EndorsementList
   nationalId: string
   showName: boolean
+  email: string
 }
 
 interface DeleteEndorsementInput {
@@ -53,6 +55,8 @@ export class EndorsementService {
     private endorsementModel: typeof Endorsement,
     @Inject(LOGGER_PROVIDER)
     private logger: Logger,
+    @Inject(EmailService)
+    private emailService: EmailService,
     private readonly nationalRegistryApiV3: NationalRegistryV3ClientService,
   ) {}
 
@@ -114,6 +118,7 @@ export class EndorsementService {
     endorsementList,
     nationalId,
     showName,
+    email,
   }: EndorsementInput) {
     this.logger.info(`Creating resource with nationalId - ${nationalId}`)
 
@@ -134,20 +139,28 @@ export class EndorsementService {
       },
     }
 
-    return this.endorsementModel.create(endorsement).catch((error) => {
-      // map meaningful sequelize errors to custom errors, else return error
-      switch (error.constructor) {
-        case UniqueConstraintError: {
-          this.logger.warn('Endorsement already exists in list')
-          throw new MethodNotAllowedException([
-            'Endorsement already exists in list',
-          ])
+    const response = this.endorsementModel
+      .create(endorsement)
+      .catch((error) => {
+        // map meaningful sequelize errors to custom errors, else return error
+        switch (error.constructor) {
+          case UniqueConstraintError: {
+            this.logger.warn('Endorsement already exists in list')
+            throw new MethodNotAllowedException([
+              'Endorsement already exists in list',
+            ])
+          }
+          default: {
+            throw error
+          }
         }
-        default: {
-          throw error
-        }
-      }
-    })
+      })
+    await this.sendEmail(
+      endorsementList,
+      person?.fulltNafn?.fulltNafn ?? '',
+      email,
+    )
+    return response
   }
 
   async deleteFromListByNationalId({
@@ -179,6 +192,52 @@ export class EndorsementService {
         { listId: endorsementList.id },
       )
       throw new NotFoundException(["This endorsement doesn't exist"])
+    }
+  }
+
+  private async sendEmail(
+    endorsementList: EndorsementList,
+    fullName: string,
+    email: string,
+  ) {
+    console.log('Sending email')
+    try {
+      await this.emailService.sendEmail({
+        from: {
+          name: '',
+          address: '',
+        },
+        to: {
+          name: fullName,
+          address: email,
+        },
+        subject: '',
+        template: {
+          title: '',
+          body: [
+            {
+              component: 'Heading',
+              context: {
+                copy: `Undirskriftalisti ${endorsementList.title}`,
+                small: true,
+              },
+            },
+            { component: 'Copy', context: { copy: 'Sæl/l/t', small: true } },
+            {
+              component: 'Copy',
+              context: {
+                copy: `Meðfylgjandi er undirskriftalisti",
+                sem  er skráður ábyrgðarmaður fyrir.`,
+                small: true,
+              },
+            },
+          ],
+        },
+      })
+      return { success: true }
+    } catch (error) {
+      this.logger.error('Failed to send email', error)
+      return { success: false }
     }
   }
 }

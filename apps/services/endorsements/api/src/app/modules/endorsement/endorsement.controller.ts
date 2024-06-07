@@ -173,6 +173,7 @@ export class EndorsementController {
       nationalId: user.nationalId,
       endorsementList,
       showName: endorsement.showName,
+      email: endorsement.email,
     })
   }
 

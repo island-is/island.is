@@ -30,6 +30,7 @@ const SignPetitionView: FC<React.PropsWithChildren<FieldBaseProps>> = ({
     .id
   const [acceptTerms, setAcceptTerms] = useState(false)
   const [showName, setShowName] = useState(true)
+  const [email, setEmail] = useState('')
 
   const checkForSigned = useHasSigned(listId)
   const [hasSigned, setHasSigned] = useState(checkForSigned)
@@ -42,6 +43,10 @@ const SignPetitionView: FC<React.PropsWithChildren<FieldBaseProps>> = ({
 
   useEffect(() => setHasSigned(checkForSigned), [checkForSigned])
 
+  const handleEmailChange = (e: any) => {
+    setEmail(e.target.value)
+  }
+
   const signPetition = async () => {
     const success = await createEndorsement({
       variables: {
@@ -49,6 +54,7 @@ const SignPetitionView: FC<React.PropsWithChildren<FieldBaseProps>> = ({
           listId: listId,
           endorsementDto: {
             showName: showName,
+            email: email,
           },
         },
       },
@@ -120,14 +126,16 @@ const SignPetitionView: FC<React.PropsWithChildren<FieldBaseProps>> = ({
               <GridRow>
                 <GridColumn span={['12/12', '6/12']}>
                   <Box marginTop={[0, 4]}>
-                    <Box marginBottom={2}>
-                      <Input
-                        label={formatMessage(m.name)}
-                        name={formatMessage(m.name)}
-                        value={userData?.nationalRegistryPerson?.fullName}
-                        readOnly
-                      />
-                    </Box>
+                    <GridRow>
+                      <Box marginBottom={2}>
+                        <Input
+                          label={formatMessage(m.name)}
+                          name={formatMessage(m.name)}
+                          value={userData?.nationalRegistryPerson?.fullName}
+                          readOnly
+                        />
+                      </Box>
+                    </GridRow>
                     <Box marginTop={[0, 6]}>
                       <CheckboxController
                         id="showName"
@@ -144,6 +152,17 @@ const SignPetitionView: FC<React.PropsWithChildren<FieldBaseProps>> = ({
                         {formatMessage(m.hideNameText)}
                       </Text>
                     </Box>
+                  </Box>
+                </GridColumn>
+                <GridColumn span={['12/12', '6/12']}>
+                  <Box marginTop={[0, 4]}>
+                    <Input
+                      id="email"
+                      label={formatMessage(m.email)}
+                      name={formatMessage(m.email)}
+                      value={email}
+                      onChange={(e) => handleEmailChange(e)}
+                    />
                   </Box>
                 </GridColumn>
               </GridRow>

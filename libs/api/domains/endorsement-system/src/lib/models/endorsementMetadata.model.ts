@@ -7,4 +7,7 @@ export class EndorsementMetadata {
 
   @Field({ nullable: true })
   locality?: string
+
+  @Field({ nullable: true })
+  email?: string
 }

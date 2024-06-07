@@ -68,6 +68,7 @@ export const EndorseList = gql`
       endorsementListId
       meta {
         fullName
+        email
       }
       created
       modified
