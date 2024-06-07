@@ -133,6 +133,12 @@ export const ExampleForm: Form = buildForm({
                 { value: 'yes', label: m.yesOptionLabel },
                 { value: 'no', label: m.noOptionLabel },
               ],
+              condition: (formValue: FormValue) => {
+                return (
+                  (formValue as { person: { age: string } })?.person?.age >=
+                  '18'
+                )
+              },
             }),
             buildMultiField({
               id: 'careerHistoryDetails',
