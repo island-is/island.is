@@ -37,7 +37,7 @@ export const createConfirmedIndictment = async (
     y: height - shaddowHeight - 32,
     width: doc.getWidth() - 2 * pageMargin - 8,
     height: shaddowHeight,
-    color: darkGray,
+    color: lightGray,
   })
 
   doc.drawRectangle({
