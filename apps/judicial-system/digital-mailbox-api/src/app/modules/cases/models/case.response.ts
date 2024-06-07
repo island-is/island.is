@@ -30,6 +30,9 @@ class IndictmentCaseData {
 }
 
 export class CaseResponse {
+  @ApiProperty({ type: String })
+  caseId!: string
+
   @ApiProperty({ type: IndictmentCaseData })
   data!: IndictmentCaseData
 
@@ -41,6 +44,7 @@ export class CaseResponse {
     const defendant = res.defendants[0]
 
     return {
+      caseId: res.id,
       data: {
         caseNumber:
           language === 'en'

@@ -5,11 +5,12 @@ import {
   Get,
   Inject,
   Param,
+  ParseUUIDPipe,
   Patch,
   Query,
   UseGuards,
 } from '@nestjs/common'
-import { ApiOkResponse, ApiResponse, ApiTags } from '@nestjs/swagger'
+import { ApiOkResponse, ApiQuery, ApiResponse, ApiTags } from '@nestjs/swagger'
 
 import type { User } from '@island.is/auth-nest-tools'
 import { CurrentUser, IdsUserGuard } from '@island.is/auth-nest-tools'
@@ -21,16 +22,23 @@ import { CasesResponse } from './models/cases.response'
 import { SubpoenaResponse } from './models/subpoena.response'
 import { CaseService } from './case.service'
 
-const CommonApiResponses = () => {
-  return applyDecorators(
-    ApiResponse({ status: 400, description: 'Bad Request' }),
-    ApiResponse({
-      status: 401,
-      description: 'User is not authorized to perform this action',
-    }),
-    ApiResponse({ status: 500, description: 'Internal Server Error' }),
-  )
-}
+const CommonApiResponses = applyDecorators(
+  ApiResponse({ status: 400, description: 'Bad Request' }),
+  ApiResponse({
+    status: 401,
+    description: 'User is not authorized to perform this action',
+  }),
+  ApiResponse({ status: 500, description: 'Internal Server Error' }),
+)
+
+const ApiLangQuery = applyDecorators(
+  ApiQuery({
+    name: 'lang',
+    required: false,
+    description:
+      'The requested language of the response. Defaults to Icelandic.',
+  }),
+)
 
 @Controller('api')
 @ApiTags('cases')
@@ -44,15 +52,12 @@ export class CaseController {
 
   @Get('cases')
   @ApiOkResponse({
-    type: CasesResponse,
+    type: [CasesResponse],
     description:
-      'Returns all accessible indictment cases for authenticated user',
+      'Returns a list of accessible indictment cases for authenticated user. If user has no cases it returns an empty list.',
   })
-  @CommonApiResponses()
-  @ApiResponse({
-    status: 404,
-    description: 'No cases found for authenticated user',
-  })
+  @CommonApiResponses
+  @ApiLangQuery
   async getAllCases(
     @CurrentUser() user: User,
     @Query() query?: { lang: string },
@@ -67,13 +72,14 @@ export class CaseController {
     type: CaseResponse,
     description: 'Returns indictment case by case id',
   })
-  @CommonApiResponses()
+  @CommonApiResponses
   @ApiResponse({
     status: 404,
     description: 'Case for given case id and authenticated user not found',
   })
+  @ApiLangQuery
   async getCase(
-    @Param('caseId') caseId: string,
+    @Param('caseId', new ParseUUIDPipe()) caseId: string,
     @CurrentUser() user: User,
     @Query() query?: { lang: string },
   ): Promise<CaseResponse> {
@@ -87,18 +93,20 @@ export class CaseController {
     type: () => SubpoenaResponse,
     description: 'Returns subpoena by case id',
   })
-  @CommonApiResponses()
+  @CommonApiResponses
   @ApiResponse({
     status: 404,
     description: 'Subpoena for given case id and authenticated user not found',
   })
+  @ApiLangQuery
   async getSubpoena(
-    @Param('caseId') caseId: string,
+    @Param('caseId', new ParseUUIDPipe()) caseId: string,
     @CurrentUser() user: User,
+    @Query() query?: { lang: string },
   ): Promise<SubpoenaResponse> {
     this.logger.debug(`Getting subpoena by case id ${caseId}`)
 
-    return this.caseService.getSubpoena(caseId, user.nationalId)
+    return this.caseService.getSubpoena(caseId, user.nationalId, query?.lang)
   }
 
   @Patch('case/:caseId/subpoena')
@@ -106,7 +114,7 @@ export class CaseController {
     type: () => SubpoenaResponse,
     description: 'Updates subpoena info',
   })
-  @CommonApiResponses()
+  @CommonApiResponses
   @ApiResponse({
     status: 404,
     description: 'Subpoena for given case id and authenticated user not found',
@@ -115,10 +123,12 @@ export class CaseController {
     status: 403,
     description: 'User is not allowed to update subpoena',
   })
+  @ApiLangQuery
   async updateSubpoena(
     @CurrentUser() user: User,
-    @Param('caseId') caseId: string,
+    @Param('caseId', new ParseUUIDPipe()) caseId: string,
     @Body() defenderAssignment: UpdateSubpoenaDto,
+    @Query() query?: { lang: string },
   ): Promise<SubpoenaResponse> {
     this.logger.debug(`Assigning defender to subpoena ${caseId}`)
 
@@ -126,6 +136,7 @@ export class CaseController {
       user.nationalId,
       caseId,
       defenderAssignment,
+      query?.lang,
     )
   }
 }
