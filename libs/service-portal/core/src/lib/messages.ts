@@ -1573,4 +1573,17 @@ export const m = defineMessages({
     id: 'service.portal:read-more-about',
     defaultMessage: 'Lesa meira um {arg}',
   },
+  acknowledgeTitle: {
+    id: 'sp.service.portal:acknowledge-title',
+    defaultMessage: 'Staðfesting á móttöku',
+  },
+  acknowledgeText: {
+    id: 'sp.service.portal:acknowledge-text',
+    defaultMessage:
+      'Þú ert að opna erindi frá {arg}. Veljir þú að opna erindið fá viðeigandi aðilar senda staðfestingu á möttöku. Veljir þú að opna ekki erindið munu viðeigandi aðilar leita annarra leiða til að afhenda þér það, t.d. með aðstoð lögreglu.',
+  },
+  acknowledgementCompleted: {
+    id: 'sp.service.portal:acknowledgement-completed',
+    defaultMessage: 'Staðfesting á móttöku tókst',
+  },
 })

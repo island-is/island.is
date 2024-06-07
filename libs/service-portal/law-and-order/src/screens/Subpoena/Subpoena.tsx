@@ -51,6 +51,7 @@ const Subpoena = () => {
     setSubpoenaAcknowledged,
     defenseChoice,
     lawyerSelected,
+    setSubpoenaModalVisible,
   } = useLawAndOrderContext()
 
   useEffect(() => {
@@ -60,11 +61,13 @@ const Subpoena = () => {
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [])
 
-  if (subpoena?.data && !subpoenaAcknowledged) {
+  if (subpoena?.data && subpoenaAcknowledged === undefined) {
+    setSubpoenaModalVisible(true)
     return <ConfirmationModal id={subpoena?.data?.id} />
   }
 
   if (subpoenaAcknowledged === false) {
+    console.log('is false')
     return <CourtCaseDetail />
   }
 

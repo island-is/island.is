@@ -7,7 +7,7 @@ import {
   toast,
 } from '@island.is/island-ui/core'
 import { useLocale, useNamespaces } from '@island.is/localization'
-import { LinkResolver, Modal } from '@island.is/service-portal/core'
+import { LinkResolver, Modal, m } from '@island.is/service-portal/core'
 import { messages } from '../../lib/messages'
 import { FC } from 'react'
 import { LawAndOrderPaths } from '../../lib/paths'
@@ -16,7 +16,7 @@ import * as styles from './ConfirmationModal.css'
 import { usePostSubpoenaAcknowledgedMutation } from './SubpoenaAcknowledged.generated'
 
 interface Props {
-  id: string | null
+  id: string
 }
 
 const SubpoenaConfirmationModal: FC<React.PropsWithChildren<Props>> = ({
@@ -27,7 +27,6 @@ const SubpoenaConfirmationModal: FC<React.PropsWithChildren<Props>> = ({
   const {
     setSubpoenaAcknowledged,
     setSubpoenaModalVisible,
-    subpoenaModalVisible,
     subpoenaAcknowledged,
   } = useLawAndOrderContext()
 
@@ -37,17 +36,16 @@ const SubpoenaConfirmationModal: FC<React.PropsWithChildren<Props>> = ({
         toast.error(formatMessage(messages.registrationError))
       },
       onCompleted: () => {
-        setSubpoenaModalVisible(false)
         //TODO: What to do if user closes or cancel the pop up?
 
         subpoenaAcknowledged &&
           toast.success(formatMessage(messages.registrationCompleted))
+        setSubpoenaModalVisible(false)
       },
     })
 
   const handleSubmit = (status: boolean) => {
     // TODO: What to do if error ?
-    if (!id) return
     setSubpoenaAcknowledged(status)
     postAction({
       variables: {
@@ -63,8 +61,8 @@ const SubpoenaConfirmationModal: FC<React.PropsWithChildren<Props>> = ({
       id="subpoena-confirmation-modal"
       onCloseModal={() => {
         setSubpoenaModalVisible(false)
+        setSubpoenaAcknowledged(undefined)
       }}
-      toggleClose={subpoenaModalVisible}
     >
       <GridRow>
         <GridColumn span={['12/12', '12/12', '8/12']}>
@@ -75,11 +73,11 @@ const SubpoenaConfirmationModal: FC<React.PropsWithChildren<Props>> = ({
             marginTop={2}
           >
             <Box>
-              <Text variant="h3">
-                {formatMessage(messages.acknowledgeTitle)}
-              </Text>
+              <Text variant="h3">{formatMessage(m.acknowledgeTitle)}</Text>
               <Text marginTop={3}>
-                {formatMessage(messages.acknowledgeText)}
+                {formatMessage(m.acknowledgeText, {
+                  arg: formatMessage(messages.modalFromPolice),
+                })}
               </Text>
             </Box>
             <Box
