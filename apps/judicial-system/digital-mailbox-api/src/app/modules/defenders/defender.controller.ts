@@ -47,7 +47,7 @@ export class DefenderController {
   }
 
   @Get('defender/:nationalId')
-  @ApiCreatedResponse({
+  @ApiOkResponse({
     type: Defender,
     description: 'Retrieves a defender by national id',
   })
