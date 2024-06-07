@@ -12,6 +12,7 @@ import { SubpoenaAcknowledged } from '../models/subpoenaAcknowledged.model'
 import { Locale } from 'locale'
 import {
   CaseResponse,
+  CasesResponse,
   Defender,
   JudicialSystemSPClientService,
   SubpoenaResponse,
@@ -42,26 +43,23 @@ export class LawAndOrderService {
   constructor(private api: JudicialSystemSPClientService) {}
 
   async getCourtCases(user: User, locale: Locale) {
-    const cases = (await this.api.getCases(
+    const cases: Array<CasesResponse> | undefined = await this.api.getCases(
       user,
-    )) as unknown as Array<CaseResponse> // Temp fix while waiting for declared types from service
+      locale,
+    )
     const list: CourtCases = { items: [] }
     const randomBoolean = Math.random() < 0.75
 
-    cases?.length > 0 &&
-      Array.isArray(cases) &&
-      cases?.map((x) => {
-        const data = x as unknown as CaseResponseTemp // Temp fix while waiting for declared types from service
-
-        list.items?.push({
-          id: data?.id,
-          acknowledged: randomBoolean,
-          caseNumber: data?.caseNumber,
-          caseNumberTitle: data.caseNumber,
-          state: data.state,
-          type: data.type,
-        })
+    cases?.map((x: CasesResponse) => {
+      list.items?.push({
+        id: x.id,
+        acknowledged: randomBoolean,
+        caseNumber: x.caseNumber,
+        caseNumberTitle: x.caseNumber,
+        state: x.state,
+        type: x.type,
       })
+    })
 
     return list
   }
@@ -70,6 +68,7 @@ export class LawAndOrderService {
     const singleCase = (await this.api.getCase(
       id,
       user,
+      locale,
     )) as unknown as SingleCaseResponseTemp
     const randomBoolean = Math.random() < 0.75
     let data: CourtCase = {}
@@ -93,6 +92,7 @@ export class LawAndOrderService {
     const subpoena: SubpoenaResponse | undefined = await this.api.getSubpoena(
       id,
       user,
+      locale,
     )
     const mockAnswer = getSubpoena(id).data
     let data: Subpoena = {}
@@ -103,7 +103,7 @@ export class LawAndOrderService {
         acknowledged: undefined,
         chosenDefender: subpoena?.defenderInfo.defenderName,
         defenderChoice: subpoena?.defenderInfo.defenderChoice,
-        displayClaim: false,
+        displayClaim: subpoena?.acceptCompensationClaim,
         groups: mockAnswer?.data.groups,
       },
       actions: mockAnswer?.actions,
@@ -114,7 +114,10 @@ export class LawAndOrderService {
   }
 
   async getLawyers(user: User, locale: Locale) {
-    const answer: Array<Defender> | undefined = await this.api.getLawyers(user)
+    const answer: Array<Defender> | undefined = await this.api.getLawyers(
+      user,
+      locale,
+    )
     const list: Lawyers = { items: [] }
 
     answer?.map((x) => {
