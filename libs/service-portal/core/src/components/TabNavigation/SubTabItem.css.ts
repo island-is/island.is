@@ -2,24 +2,33 @@ import { theme } from '@island.is/island-ui/theme'
 import { globalStyle, style } from '@vanilla-extract/css'
 
 export const subTabItem = style({
-  margin: `0 ${theme.spacing.smallGutter}px`,
-  padding: `${theme.spacing[1]}px ${theme.spacing[2]}px`,
+  border: `${theme.border.radius.standard} solid ${theme.color.transparent}`,
+  borderRadius: `${theme.border.radius.large}`,
+  padding: `${theme.spacing[1]}px ${theme.spacing[3]}px`,
+  margin: '-1px 0',
   selectors: {
-    '&:last-child': {
-      marginRight: 0,
-    },
     '&:first-child': {
-      marginLeft: 0,
+      marginLeft: '-3px',
+    },
+    '&:last-child': {
+      marginRight: '-3px',
     },
   },
 })
 
-export const activeSubTabItem = style({})
+export const activeSubTabItem = style({
+  border: `1px solid ${theme.color.blue200}`,
+  borderRadius: theme.border.radius.standard,
+  //overwrite focusable box
+  ':hover': {
+    borderColor: theme.color.blue200,
+  },
+})
 
 export const inactiveSubTabItem = style({
   ':hover': {
     backgroundColor: 'white',
-    color: theme.color.blue200,
+    borderColor: theme.color.blue100,
   },
 })
 
@@ -39,6 +48,6 @@ export const inactiveSubTabItemWithDivider = style({
   },
 })
 
-globalStyle(`${subTabItem}:hover p`, {
-  color: theme.color.blue400,
+globalStyle(`${inactiveSubTabItem}:hover p`, {
+  color: theme.color.blue600,
 })

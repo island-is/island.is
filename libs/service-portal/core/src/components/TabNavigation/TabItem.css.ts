@@ -100,7 +100,7 @@ const unselectedTabUnderline = {
   height: '1px',
   width: '90%',
   bottom: -1,
-  background: theme.color.blue400,
+  background: theme.color.blue600,
   zIndex: 5,
 } as const
 
@@ -139,7 +139,6 @@ const selectedTabBarEdge = {
   height: 'calc(50% + 1px)',
   width: '1px',
   bottom: 0,
-  left: -1,
 } as const
 
 globalStyle(`${tabSelected}:first-of-type span:before`, {
@@ -245,7 +244,7 @@ globalStyle(
 
 //Text color change on hover
 const hoverText = {
-  color: theme.color.blue400,
+  color: theme.color.blue600,
 } as const
 
 globalStyle(`${tabNotSelected}:hover span`, hoverText)
