@@ -55,7 +55,7 @@ export const PersonalSection = buildSection({
             ),
         }),
         buildTextField({
-          id: 'userInformation.birthDate',
+          id: 'userInformation.citizenship',
           title: personal.labels.userInformation.citizenship,
           backgroundColor: 'white',
           width: 'half',
