@@ -93,8 +93,7 @@ export const SelectController = <Value, IsMulti extends boolean = false>({
             clearErrors(id)
 
             if (isMultiValue(newVal)) {
-              const newValue = newVal.map((v) => v.value)
-              onChange(newValue)
+              onChange(newVal.map((v) => v.value))
             } else {
               onChange(newVal?.value)
             }

@@ -90,7 +90,9 @@ export const AsyncSelectFormField: FC<React.PropsWithChildren<Props>> = ({
               ? formatText(placeholder as string, application, formatMessage)
               : undefined
           }
-          onSelect={onSelect as any}
+          // eslint-disable-next-line @typescript-eslint/ban-ts-comment
+          // @ts-ignore make web strict
+          onSelect={onSelect}
           backgroundColor={backgroundColor}
           isSearchable={isSearchable}
           isMulti={isMulti}
