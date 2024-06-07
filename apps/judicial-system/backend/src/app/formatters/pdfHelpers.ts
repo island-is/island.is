@@ -1,4 +1,3 @@
-import { applyCase } from 'beygla'
 import { PDFFont, PDFPage } from 'pdf-lib'
 
 import { formatDate } from '@island.is/judicial-system/formatters'
@@ -195,11 +194,15 @@ export const addIndictmentConfirmation = (
     .fillAndStroke('white', darkGray)
   doc.fill('black')
   doc.font('Times-Bold')
-  doc.text('Samþykkt af', titleX, pageMargin + titleHeight + calculatePt(16))
+  doc.text(
+    'Samþykktaraðili',
+    titleX,
+    pageMargin + titleHeight + calculatePt(16),
+  )
   doc.font('Times-Roman')
   drawTextWithEllipsis(
     doc,
-    `${applyCase('þgf', confirmation.actor)}${
+    `${confirmation.actor}${
       confirmation.title ? `, ${confirmation.title}` : ''
     }`,
     titleX,
