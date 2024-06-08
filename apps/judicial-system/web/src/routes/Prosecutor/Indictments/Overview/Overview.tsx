@@ -57,16 +57,23 @@ const Overview: React.FC<React.PropsWithChildren<unknown>> = () => {
   const { transitionCase, isTransitioningCase } = useCase()
   const lawsBroken = useIndictmentsLawsBroken(workingCase)
 
-  const isNewIndictment = workingCase.state === CaseState.DRAFT
-  const isSubmittedIndictment = workingCase.state === CaseState.SUBMITTED
-  const caseHasBeenReceivedByCourt =
+  const latestDate = workingCase.courtDate ?? workingCase.arraignmentDate
+
+  const isIndictmentNew = workingCase.state === CaseState.DRAFT
+  const isIndictmentSubmitted = workingCase.state === CaseState.SUBMITTED
+  const isIndictmentWaitingForCancellation =
+    workingCase.state === CaseState.WAITING_FOR_CANCELLATION
+  const isIndictmentReceived =
     workingCase.state === CaseState.RECEIVED ||
     workingCase.state === CaseState.MAIN_HEARING
-  const latestDate = workingCase.courtDate ?? workingCase.arraignmentDate
-  const userCanSendCaseToCourt = Boolean(
-    user?.canConfirmIndictment &&
-      workingCase.state === CaseState.WAITING_FOR_CONFIRMATION,
-  )
+
+  const userCanSendIndictmentToCourt =
+    Boolean(user?.canConfirmIndictment) &&
+    workingCase.state === CaseState.WAITING_FOR_CONFIRMATION
+  const userCanCancelIndictment =
+    (workingCase.state === CaseState.SUBMITTED ||
+      workingCase.state === CaseState.RECEIVED) &&
+    !workingCase.indictmentDecision
 
   const handleTransition = async (transitionType: CaseTransition) => {
     const caseTransitioned = await transitionCase(
@@ -87,15 +94,15 @@ const Overview: React.FC<React.PropsWithChildren<unknown>> = () => {
     let transitionType
     let modalType: typeof modal = 'noModal'
 
-    if (userCanSendCaseToCourt) {
+    if (userCanSendIndictmentToCourt) {
       if (indictmentConfirmationDecision === 'confirm') {
         modalType = 'caseSubmitModal'
       } else if (indictmentConfirmationDecision === 'deny') {
         modalType = 'caseDeniedModal'
-      } else if (isSubmittedIndictment) {
+      } else if (isIndictmentSubmitted) {
         transitionType = CaseTransition.ASK_FOR_CONFIRMATION
       }
-    } else if (isNewIndictment || isSubmittedIndictment) {
+    } else if (isIndictmentNew || isIndictmentSubmitted) {
       transitionType = CaseTransition.ASK_FOR_CONFIRMATION
       modalType = 'caseSentForConfirmationModal'
     } else if (workingCase.state === CaseState.WAITING_FOR_CONFIRMATION) {
@@ -193,10 +200,10 @@ const Overview: React.FC<React.PropsWithChildren<unknown>> = () => {
             <IndictmentsLawsBrokenAccordionItem workingCase={workingCase} />
           </Box>
         )}
-        <Box marginBottom={userCanSendCaseToCourt ? 5 : 10}>
+        <Box marginBottom={userCanSendIndictmentToCourt ? 5 : 10}>
           <IndictmentCaseFilesList workingCase={workingCase} />
         </Box>
-        {userCanSendCaseToCourt && (
+        {userCanSendIndictmentToCourt && (
           <Box marginBottom={10}>
             <SectionHeading
               title={formatMessage(strings.indictmentConfirmationTitle)}
@@ -231,44 +238,33 @@ const Overview: React.FC<React.PropsWithChildren<unknown>> = () => {
         <FormFooter
           nextButtonIcon="arrowForward"
           previousUrl={
-            caseHasBeenReceivedByCourt
+            isIndictmentReceived || isIndictmentWaitingForCancellation
               ? constants.CASES_ROUTE
               : `${constants.INDICTMENTS_CASE_FILES_ROUTE}/${workingCase.id}`
           }
           nextButtonText={
-            userCanSendCaseToCourt
+            userCanSendIndictmentToCourt
               ? undefined
               : formatMessage(strings.nextButtonText, {
-                  isNewIndictment,
+                  isNewIndictment: isIndictmentNew,
                 })
           }
           hideNextButton={
-            caseHasBeenReceivedByCourt ||
-            workingCase.state === CaseState.WAITING_FOR_CANCELLATION
+            isIndictmentReceived || isIndictmentWaitingForCancellation
           }
           infoBoxText={
-            caseHasBeenReceivedByCourt
+            isIndictmentReceived
               ? formatMessage(strings.indictmentSentToCourt)
               : undefined
           }
           onNextButtonClick={handleNextButtonClick}
           nextIsDisabled={
-            userCanSendCaseToCourt && !indictmentConfirmationDecision
+            userCanSendIndictmentToCourt && !indictmentConfirmationDecision
           }
-          hideActionButton={
-            workingCase.state === CaseState.WAITING_FOR_CANCELLATION
-          }
+          hideActionButton={isIndictmentWaitingForCancellation}
           actionButtonText={formatMessage(strings.askForCancellationButtonText)}
-          actionButtonColorScheme={'destructive'}
-          actionButtonIsDisabled={
-            !(
-              workingCase.state &&
-              [CaseState.SUBMITTED, CaseState.RECEIVED].includes(
-                workingCase.state,
-              ) &&
-              !workingCase.indictmentDecision
-            )
-          }
+          actionButtonColorScheme="destructive"
+          actionButtonIsDisabled={!userCanCancelIndictment}
           onActionButtonClick={() => setModal('askForCancellationModal')}
         />
       </FormContentContainer>
