@@ -1,4 +1,5 @@
 import {
+  BadRequestException,
   Body,
   Controller,
   Post,
@@ -6,7 +7,6 @@ import {
   VERSION_NEUTRAL,
 } from '@nestjs/common'
 import { ApiCreatedResponse, ApiTags } from '@nestjs/swagger'
-import type { AuthenticationResponseJSON } from '@simplewebauthn/types'
 
 import { PasskeysCoreService } from '@island.is/auth-api-lib'
 import { Documentation } from '@island.is/nest/swagger'
@@ -16,6 +16,11 @@ import {
 } from './dto/authenticationOptions.dto'
 import { IdsAuthGuard, ScopesGuard } from '@island.is/auth-nest-tools'
 import { Audit } from '@island.is/nest/audit'
+import {
+  FeatureFlag,
+  FeatureFlagGuard,
+  Features,
+} from '@island.is/nest/feature-flags'
 
 const namespace = '@island.is/auth-ids-api/passkeys'
 
@@ -24,7 +29,7 @@ const namespace = '@island.is/auth-ids-api/passkeys'
   path: 'passkeys',
   version: ['1', VERSION_NEUTRAL],
 })
-@UseGuards(IdsAuthGuard, ScopesGuard)
+@UseGuards(IdsAuthGuard, ScopesGuard, FeatureFlagGuard)
 @Audit({ namespace })
 export class PasskeysController {
   constructor(private readonly passkeysCoreService: PasskeysCoreService) {}
@@ -41,6 +46,7 @@ export class PasskeysController {
     resources: (authenticationResult) =>
       authenticationResult.verified.toString(),
   })
+  @FeatureFlag(Features.isPasskeyAuthEnabled)
   async verifyAuthentication(
     @Body() body: AuthenticationOptions,
   ): Promise<AuthenticationResult> {

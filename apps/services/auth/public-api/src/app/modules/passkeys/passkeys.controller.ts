@@ -18,6 +18,11 @@ import type { User } from '@island.is/auth-nest-tools'
 import { PasskeysCoreService } from '@island.is/auth-api-lib'
 import { Audit } from '@island.is/nest/audit'
 import { Documentation } from '@island.is/nest/swagger'
+import {
+  FeatureFlag,
+  FeatureFlagGuard,
+  Features,
+} from '@island.is/nest/feature-flags'
 
 import {
   RegistrationOptions,
@@ -34,7 +39,7 @@ import { AuthenticationResponse } from './dto/authenticationResponse.dto'
 const namespace = '@island.is/auth-public-api/passkeys'
 
 @ApiTags('passkeys')
-@UseGuards(IdsUserGuard, ScopesGuard)
+@UseGuards(IdsUserGuard, ScopesGuard, FeatureFlagGuard)
 @Controller({
   path: 'passkeys',
   version: ['1', VERSION_NEUTRAL],
@@ -62,6 +67,7 @@ export class PasskeysController {
   })
   @Audit()
   @ApiCreatedResponse({ type: RegistrationOptions })
+  @FeatureFlag(Features.isPasskeyRegistrationEnabled)
   async getPasskeyRegistrationOptions(
     @CurrentActor() actor: User,
   ): Promise<RegistrationOptions> {
@@ -82,6 +88,7 @@ export class PasskeysController {
   @Audit<RegistrationResult>({
     resources: (result) => result.verified.toString(),
   })
+  @FeatureFlag(Features.isPasskeyRegistrationEnabled)
   async verifyRegistration(
     @CurrentActor() actor: User,
     @Body() body: RegistrationResponse,
@@ -102,6 +109,7 @@ export class PasskeysController {
   })
   @ApiCreatedResponse({ type: AuthenticationOptions })
   @Audit()
+  @FeatureFlag(Features.isPasskeyAuthEnabled)
   async getPasskeyAuthenticationOptions(
     @CurrentActor() actor: User,
   ): Promise<AuthenticationOptions> {
@@ -121,6 +129,7 @@ export class PasskeysController {
     response: { status: 200, type: AuthenticationResult },
   })
   @ApiCreatedResponse({ type: AuthenticationResult })
+  @FeatureFlag(Features.isPasskeyAuthEnabled)
   async verifyAuthentication(
     @Body() body: AuthenticationResponse,
   ): Promise<AuthenticationResult> {
