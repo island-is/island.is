@@ -13,22 +13,22 @@ import { Locale } from '../../user-profile/types/localeTypes'
 export class UserProfileDto {
   @ApiProperty()
   @IsString()
-  readonly nationalId: string
+  readonly nationalId!: string
 
   @ApiPropertyOptional()
   @IsOptional()
   @IsEmail()
-  readonly email?: string
+  readonly email?: string | null
 
   @ApiPropertyOptional()
   @IsOptional()
   @IsString()
-  readonly mobilePhoneNumber?: string
+  readonly mobilePhoneNumber?: string | null
 
   @ApiPropertyOptional()
   @IsOptional()
   @IsEnum(Locale)
-  readonly locale?: Locale
+  readonly locale?: Locale | null
 
   @ApiProperty()
   @IsBoolean()

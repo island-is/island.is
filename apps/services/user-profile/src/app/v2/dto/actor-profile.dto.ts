@@ -32,7 +32,7 @@ export class ActorProfileDto {
   @ApiPropertyOptional()
   @IsOptional()
   @IsEmail()
-  readonly email?: string
+  readonly email?: string | null
 
   @ApiProperty()
   @IsBoolean()
@@ -45,7 +45,7 @@ export class ActorProfileDto {
   @ApiPropertyOptional()
   @IsOptional()
   @IsEnum(Locale)
-  readonly locale?: Locale
+  readonly locale?: Locale | null
 }
 
 export class PatchActorProfileDto {

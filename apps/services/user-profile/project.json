@@ -52,13 +52,6 @@
         "buildTarget": "services-user-profile:build"
       }
     },
-    "worker": {
-      "executor": "@nx/js:node",
-      "options": {
-        "buildTarget": "services-user-profile:build",
-        "args": ["--job", "worker"]
-      }
-    },
     "lint": {
       "executor": "@nx/linter:eslint",
       "options": {
@@ -98,7 +91,7 @@
     "migrate/generate": {
       "executor": "nx:run-commands",
       "options": {
-        "command": "../../../node_modules/.bin/sequelize-cli migration:generate --name $(whoami)",
+        "command": "../../../node_modules/.bin/sequelize-cli migration:generate",
         "cwd": "apps/services/user-profile/"
       }
     },
