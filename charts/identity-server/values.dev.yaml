@@ -478,6 +478,7 @@ services-auth-ids-api:
     NOVA_URL: '/k8s/services-auth/NOVA_URL'
     NOVA_USERNAME: '/k8s/services-auth/NOVA_USERNAME'
     PASSKEY_CORE_ALLOWED_ORIGINS: '/k8s/services-auth/PASSKEY_CORE_ALLOWED_ORIGINS'
+    PASSKEY_CORE_MAX_AGE_DAYS: '/k8s/services-auth/PASSKEY_CORE_MAX_AGE_DAYS'
   securityContext:
     allowPrivilegeEscalation: false
     privileged: false
