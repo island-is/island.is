@@ -47,12 +47,7 @@ import { PresignedPost } from './models/presignedPost.model'
 import { SignedUrl } from './models/signedUrl.model'
 import { FileService } from './file.service'
 
-@UseGuards(
-  JwtAuthGuard,
-  RolesGuard,
-  LimitedAccessCaseExistsGuard,
-  CaseCompletedGuard,
-)
+@UseGuards(JwtAuthGuard, RolesGuard, LimitedAccessCaseExistsGuard)
 @Controller('api/case/:caseId/limitedAccess')
 @ApiTags('files')
 export class LimitedAccessFileController {
@@ -64,6 +59,7 @@ export class LimitedAccessFileController {
   @UseGuards(
     new CaseTypeGuard([...restrictionCases, ...investigationCases]),
     CaseWriteGuard,
+    CaseCompletedGuard,
   )
   @RolesRules(defenderRule)
   @Post('file/url')
@@ -84,6 +80,7 @@ export class LimitedAccessFileController {
   @UseGuards(
     new CaseTypeGuard([...restrictionCases, ...investigationCases]),
     CaseWriteGuard,
+    CaseCompletedGuard,
     LimitedAccessWriteCaseFileGuard,
   )
   @RolesRules(defenderRule)
@@ -92,7 +89,7 @@ export class LimitedAccessFileController {
     type: CaseFile,
     description: 'Creates a new case file',
   })
-  async createCaseFile(
+  createCaseFile(
     @Param('caseId') caseId: string,
     @CurrentHttpUser() user: User,
     @CurrentCase() theCase: Case,
@@ -126,6 +123,7 @@ export class LimitedAccessFileController {
   @UseGuards(
     new CaseTypeGuard([...restrictionCases, ...investigationCases]),
     CaseWriteGuard,
+    CaseCompletedGuard,
     CaseFileExistsGuard,
     LimitedAccessWriteCaseFileGuard,
   )
