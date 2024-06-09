@@ -64,8 +64,6 @@ export class PasskeysCoreService {
       },
       // ES256 and RS256
       supportedAlgorithmIDs: [-7, -257],
-      // TODO?
-      // excludeCredentials: [ ... ]
     }
 
     const options = await generateRegistrationOptions(opts)
