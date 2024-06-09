@@ -1,7 +1,8 @@
 import { BadRequestException, Inject, Injectable } from '@nestjs/common'
-
 import { InjectModel } from '@nestjs/sequelize'
 import { Cache as CacheManager } from 'cache-manager'
+import { Op } from 'sequelize'
+import addDays from 'date-fns/addDays'
 
 import {
   // Authentication
@@ -135,6 +136,9 @@ export class PasskeysCoreService {
     const passkey = await this.passkeyModel.findOne({
       where: {
         user_sub: user.sub,
+        created: {
+          [Op.gte]: addDays(new Date(), -this.config.passkey.maxAgeDays),
+        },
       },
     })
 
@@ -172,6 +176,9 @@ export class PasskeysCoreService {
     const passkey = await this.passkeyModel.findOne({
       where: {
         passkey_id: response.id,
+        created: {
+          [Op.gte]: addDays(new Date(), -this.config.passkey.maxAgeDays),
+        },
       },
     })
 

@@ -12,6 +12,7 @@ const PasskeysCoreModuleSchema = z.object({
     rpName: z.string(),
     allowedOrigins: z.array(z.string()),
     challengeTtl: z.number(),
+    maxAgeDays: z.number(),
   }),
 })
 
@@ -43,6 +44,7 @@ export const PasskeysCoreConfig = defineConfig({
             (2 * 60 * 1000).toString(),
           ),
         ),
+        maxAgeDays: Number(env.optional('PASSKEY_CORE_MAX_AGE_DAYS', '365')),
       },
     }
 
