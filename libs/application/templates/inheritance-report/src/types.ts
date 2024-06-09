@@ -271,6 +271,7 @@ export enum RelationEnum {
   REPRESENTATIVE = 'representative',
   HEIR = 'heir',
   EXCHANGEMANAGER = 'exchangeManager',
+  GRANTOR = 'grantor',
 }
 
 export interface EstateMember {
@@ -292,3 +293,12 @@ export interface EstateMember {
 }
 
 export const heirAgeValidation = 'heirAgeValidation'
+
+export enum DebtTypes {
+  Overdraft = 'Yfirdráttur',
+  CreditCard = 'Kreditkort',
+  Loan = 'Lán',
+  InsuranceCompany = 'Tryggingafélag',
+  PropertyFees = 'Fastagjöld',
+  OtherDebts = 'Aðrar skuldir',
+}
