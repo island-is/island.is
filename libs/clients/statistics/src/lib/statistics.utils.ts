@@ -5,17 +5,16 @@ import endOfMonth from 'date-fns/endOfMonth'
 import endOfDay from 'date-fns/endOfDay'
 import parse from 'date-fns/parse'
 
-import {
-  GetSingleStatisticQuery,
-  GetStatisticsQuery,
-  SourceValue,
-  StatisticSourceData,
-} from './types'
+import { GetSingleStatisticQuery, GetStatisticsQuery } from './types'
 import {
   DEFAULT_NUMBER_OF_DATA_POINTS,
   MONTH_NAMES,
 } from './statistics.constants'
 import { EnhancedFetchAPI } from '@island.is/clients/middlewares'
+import type {
+  StatisticSourceData,
+  StatisticSourceValue,
+} from '@island.is/shared/types'
 
 export const _tryToGetDate = (value: string | null) => {
   if (!value) {
@@ -78,6 +77,35 @@ export const _tryToGetDate = (value: string | null) => {
   return null
 }
 
+// This function splits a string into a list of strings. The split
+// is done by commas that are not inside quotes. This is useful when
+// parsing CSV files since commas inside quotes should not be used
+// as a separator. This function is used in the processDataFromSource
+// function to split each line of the CSV file into an array of strings
+export const splitCsvLine = (line: string) => {
+  const result: string[] = []
+  let current = ''
+  let inQuote = false
+
+  for (const char of line) {
+    if (char === '"') {
+      inQuote = !inQuote
+    } else if (char === ',' && !inQuote) {
+      result.push(current)
+      current = ''
+    } else {
+      current += char
+    }
+  }
+
+  if (current.length > 0) {
+    // Add the last segment
+    result.push(current)
+  }
+
+  return result
+}
+
 export const processDataFromSource = (data: string) => {
   const lines = data
     .replace(/\r/g, '')
@@ -85,7 +113,7 @@ export const processDataFromSource = (data: string) => {
     .filter((l) => l.length > 0)
 
   const headers = lines[0].split(',')
-  const dataLines = lines.slice(1).map((line) => line.split(','))
+  const dataLines = lines.slice(1).map(splitCsvLine)
 
   const result: StatisticSourceData['data'] = {}
 
@@ -115,8 +143,15 @@ export const processDataFromSource = (data: string) => {
         result[key] = []
       }
 
-      const isPercentage = lineColumns[i]?.endsWith('%') ?? false
-      const rawValue = lineColumns[i]?.replace('%', '')?.trim()
+      const isPercentage = lineColumns[i]?.endsWith('%') || false
+      const rawValue = lineColumns[i]
+        ?.replace(/%/g, '')
+        // When we have a value like "1,000,000" it is surrounded by quotes
+        ?.replace(/"/g, '')
+        // We can then safely remove the commas since they are not used to
+        // separate decimal digits but rather to separate thousands
+        ?.replace(/,/g, '')
+        ?.trim()
 
       const isInvalidValue =
         (typeof rawValue === 'string' && rawValue.length === 0) ||
@@ -167,9 +202,9 @@ const processResponse = (result: StatisticSourceData, response: string) => {
 
 let fetchStatisticsPromise: Promise<StatisticSourceData> | undefined
 
-export const getStatisticsFromSource = (
+export const getStatisticsFromCsvUrls = (
   fetchClient: EnhancedFetchAPI,
-  dataSources: string[],
+  csvUrls: string[],
 ): Promise<StatisticSourceData> => {
   if (fetchStatisticsPromise) {
     return fetchStatisticsPromise
@@ -179,7 +214,7 @@ export const getStatisticsFromSource = (
   // is in progress reuse the same promise
   fetchStatisticsPromise = new Promise((resolve, reject) => {
     Promise.all<Promise<string>[]>(
-      dataSources.map((source) => fetchClient(source).then(handleResponse)),
+      csvUrls.map((source) => fetchClient(source).then(handleResponse)),
     )
       .then((responses) =>
         resolve(
@@ -200,7 +235,7 @@ export const getStatisticsFromSource = (
   return fetchStatisticsPromise
 }
 
-const _valueIsNotDefined = (item: SourceValue) => {
+const _valueIsNotDefined = (item: StatisticSourceValue) => {
   return typeof item.value !== 'number'
 }
 
@@ -209,9 +244,9 @@ export const getStatistics = ({
   dateFrom,
   dateTo,
   sourceData,
-}: GetSingleStatisticQuery): SourceValue[] => {
+}: GetSingleStatisticQuery): StatisticSourceValue[] => {
   const allSourceDataForKey = get(sourceData.data, sourceDataKey) as
-    | SourceValue[]
+    | StatisticSourceValue[]
     | undefined
 
   if (!allSourceDataForKey) {
@@ -225,7 +260,7 @@ export const getStatistics = ({
     header: item.header,
   }))
 
-  const dropLeft = (item: SourceValue) => {
+  const dropLeft = (item: StatisticSourceValue) => {
     if (isDateHeader && dateFrom && new Date(item.header) < dateFrom) {
       return true
     }
@@ -237,7 +272,7 @@ export const getStatistics = ({
     return false
   }
 
-  const dropRight = (item: SourceValue) => {
+  const dropRight = (item: StatisticSourceValue) => {
     if (isDateHeader && dateTo && new Date(item.header) > dateTo) {
       return true
     }
@@ -300,7 +335,7 @@ export const getMultipleStatistics = async (
       result[dataPoint.header][sourceDataKey] = dataPoint.value
     }
     return result
-  }, {} as Record<string, Record<string, SourceValue['value']>>)
+  }, {} as Record<string, Record<string, StatisticSourceValue['value']>>)
 
   const headers = Object.keys(byHeader)
   headers.sort((a, b) => new Date(a).getTime() - new Date(b).getTime())

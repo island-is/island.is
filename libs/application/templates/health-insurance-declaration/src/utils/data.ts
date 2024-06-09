@@ -59,6 +59,21 @@ export const getCountryNameFromCode = (
   return ''
 }
 
+export const hasFamilyAvailable = (answers: HealthInsuranceDeclaration) => {
+  return answers.hasSpouse || answers.hasChildren
+}
+
+export const hasFamilySelected = (answers: HealthInsuranceDeclaration) => {
+  return !!(
+    (answers.selectedApplicants?.registerPersonsSpouseCheckboxField &&
+      answers.selectedApplicants?.registerPersonsSpouseCheckboxField?.length >
+        0) ||
+    (answers.selectedApplicants?.registerPersonsChildrenCheckboxField &&
+      answers.selectedApplicants?.registerPersonsChildrenCheckboxField?.length >
+        0)
+  )
+}
+
 export const getContinentNameFromCode = (
   code: string,
   externalData: ExternalData,
@@ -77,6 +92,12 @@ export const getContinentsFromExternalData = (
   return (
     getInsuranceStatementDataFromExternalData(externalData)?.continents ?? []
   )
+}
+
+export const getCommentFromExternalData = (
+  externalData: ExternalData,
+): string => {
+  return getInsuranceStatementDataFromExternalData(externalData).comment ?? ''
 }
 
 export const getContinentsAsOption = (externalData: ExternalData): Option[] => {
@@ -139,27 +160,37 @@ export const getSelectedFamily = (
 
   if (spouse) {
     selectedFamily = selectedFamily.concat(
-      answers.registerPersonsSpouseCheckboxField.map((s) => {
-        if (s === spouse.nationalId) {
-          return [
-            spouse.name,
-            spouse.nationalId,
-            m.overview.familyTableRelationSpouseText,
-          ]
-        } else return []
-      }),
+      answers.selectedApplicants?.registerPersonsSpouseCheckboxField
+        ? answers.selectedApplicants?.registerPersonsSpouseCheckboxField?.map(
+            (s) => {
+              if (s === spouse.nationalId) {
+                return [
+                  spouse.name,
+                  spouse.nationalId,
+                  m.overview.familyTableRelationSpouseText,
+                ]
+              } else return []
+            },
+          )
+        : [],
     )
   }
-  selectedFamily = selectedFamily.concat(
-    answers.registerPersonsChildrenCheckboxField.map((childNationalId) => {
-      const childData = children.find((c) => c.nationalId === childNationalId)
-      return [
-        childData ? childData.fullName : '',
-        childData ? childData.nationalId : '',
-        m.overview.familyTableRelationChildText,
-      ]
-    }),
-  )
+
+  const selectedChildren =
+    answers.selectedApplicants?.registerPersonsChildrenCheckboxField?.map(
+      (childNationalId) => {
+        const childData = children.find((c) => c.nationalId === childNationalId)
+        return [
+          childData ? childData.fullName : '',
+          childData ? childData.nationalId : '',
+          m.overview.familyTableRelationChildText,
+        ]
+      },
+    )
+
+  if (selectedChildren) {
+    selectedFamily.concat(selectedChildren)
+  }
   return selectedFamily
 }
 

@@ -16,4 +16,5 @@ export const UniversityContentfulReferenceIds: Record<UniversityId, string> = {
   holar: '17217',
   lbhi: '17216',
   hi: '17201',
+  lhi: '17228',
 }

@@ -9,6 +9,7 @@ import { information } from '../../../lib/messages'
 import { MachinesWithTotalCount } from '@island.is/clients/work-machines'
 import { mustInspectBeforeStreetRegistration } from '../../../utils/getSelectedMachine'
 import { useLocale } from '@island.is/localization'
+import { Application } from '@island.is/application/types'
 
 export const pickMachineSubSection = buildSubSection({
   id: 'pickMachine',
@@ -20,7 +21,7 @@ export const pickMachineSubSection = buildSubSection({
       description: information.labels.pickMachine.description,
       children: [
         buildRadioField({
-          id: 'pickMachine.id',
+          id: 'machine.id',
           title: '',
           condition: (_, externalData) => {
             const machines = getValueViaPath(
@@ -30,7 +31,11 @@ export const pickMachineSubSection = buildSubSection({
             ) as MachinesWithTotalCount
             return machines.totalCount <= 5
           },
-
+          defaultValue: (application: Application) => {
+            const machineList = application?.externalData.machinesList
+              .data as MachinesWithTotalCount
+            return machineList?.machines[0].id ?? ''
+          },
           options: (application) => {
             const machineList = application?.externalData.machinesList
               .data as MachinesWithTotalCount

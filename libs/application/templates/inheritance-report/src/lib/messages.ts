@@ -1,6 +1,11 @@
 import { defineMessages } from 'react-intl'
 
 export const m = defineMessages({
+  prerequisitesTitle: {
+    id: 'ir.application:prerequisitesTitle',
+    defaultMessage: 'Erfðafjárskýrsla',
+    description: '',
+  },
   // Pre-data collection
   preDataCollectionHeading: {
     id: 'ir.application:preDataCollectionHeading',
@@ -27,14 +32,49 @@ export const m = defineMessages({
 
   preDataCollectionChooseEstateSelectTitle: {
     id: 'ir.application:preDataCollectionChooseEstateSelectTitle',
-    defaultMessage: 'Foröflun gagna',
+    defaultMessage: 'Upplýsingaöflun',
     description: 'Title for pre-collection of data',
   },
-
+  preDataCollectionChooseEstateSelectTitleDropdown: {
+    id: 'ir.application:preDataCollectionChooseEstateSelectTitleDropdown',
+    defaultMessage: 'Upplýsingaöflun (nýr textareitur)',
+    description: 'Title for pre-collection of data',
+  },
+  preDataCollectionApplicationFor: {
+    id: 'ir.application:preDataCollectionApplicationFor',
+    defaultMessage: 'Tegund umsóknar',
+    description: 'Get application for',
+  },
+  preDataCollectionApplicationFoDescription: {
+    id: 'ir.application:preDataCollectionApplicationFoDescription#markdown',
+    defaultMessage:
+      'Lorem ipsum dolor sit amet, consectetur adipiscing elit. Donec a ex magna. Aenean varius dui eget consectetur posuere. Pellentesque dignissim nunc id euismod porttitor. Curabitur ut ante pellentesque, rutrum purus in, vestibulum elit. Donec egestas lacus justo.',
+    description: 'Get application for',
+  },
+  preDataCollectionApplicationForPrepaid: {
+    id: 'ir.application:preDataCollectionApplicationForPrepaid',
+    defaultMessage: 'Fyrirframgreiddur arfur',
+    description: '',
+  },
+  preDataCollectionApplicationForDefault: {
+    id: 'ir.application:preDataCollectionApplicationForDefault',
+    defaultMessage: 'Dánarbú',
+    description: '',
+  },
   // Application begin
   applicationName: {
     id: 'ir.application:applicationName',
     defaultMessage: 'Erfðafjárskýrsla eftir andlát',
+    description: '',
+  },
+  applicationNamePrepaid: {
+    id: 'ir.application:applicationNamePrepaid',
+    defaultMessage: 'Fyrirframgreiddur arfur',
+    description: '',
+  },
+  applicationNameEstate: {
+    id: 'ir.application:applicationNameEstate',
+    defaultMessage: 'Dánarbú',
     description: '',
   },
   institutionName: {
@@ -62,7 +102,21 @@ export const m = defineMessages({
     defaultMessage: 'Staðfesta',
     description: '',
   },
-
+  inheritance: {
+    id: 'ir.application:inheritance',
+    defaultMessage: 'Arfur',
+    description: '',
+  },
+  inheritanceSelectionPrePaid: {
+    id: 'ir.application:inheritanceSelectionPrePaid',
+    defaultMessage: 'Hvað á að greiða í arf?',
+    description: '',
+  },
+  inheritanceSelectionDescriptionPrePaid: {
+    id: 'ir.application:inheritanceSelectionDescriptionPrePaid',
+    defaultMessage: 'Lorem ipsum foo bar beep boop meep morp.',
+    description: '',
+  },
   // Data collection - external data providers
   dataCollectionTitle: {
     id: 'ir.application:dataCollectionTitle',
@@ -145,17 +199,6 @@ export const m = defineMessages({
       'Persónustillingar þínar (sími og netfang) þínar frá Ísland.is.',
     description: '',
   },
-  funeralExpensesTitle: {
-    id: 'ir.application:funeralExpensesTitle',
-    defaultMessage: 'Yfirlit um útfararkostnað',
-    description: '',
-  },
-  funeralExpensesSubtitle: {
-    id: 'ir.application:funeralExpensesSubtitle',
-    defaultMessage:
-      'Athugað er hvort að skráningaraðili sé búinn að fylla út yfirlit um útfararkostnað',
-    description: '',
-  },
 
   // Applicant's Information
   applicantsInfo: {
@@ -172,6 +215,11 @@ export const m = defineMessages({
   name: {
     id: 'ir.application:name',
     defaultMessage: 'Nafn',
+    description: '',
+  },
+  dateOfBirth: {
+    id: 'ir.application:dateOfBirth',
+    defaultMessage: 'Fæðingardagur',
     description: '',
   },
   nationalId: {
@@ -265,14 +313,19 @@ export const m = defineMessages({
     defaultMessage: 'Innlendar og erlendar eignir á dánardegi hins látna',
     description: '',
   },
+  propertiesDescriptionPrePaid: {
+    id: 'ir.application:propertiesDescriptionPrePaid',
+    defaultMessage: 'Lorem ipsum lorem ipsum',
+    description: '',
+  },
   propertiesDescription: {
     id: 'ir.application:propertiesDescription',
     defaultMessage:
       'Vinsamlegast tilgreindu allar hjúskapareignir beggja hjóna utan einstaklingsatvinnurekstrar á dánardegi hins látna. Einnig séreign hins látna.',
     description: '',
   },
-  continueWithoutAssests: {
-    id: 'ir.application:continueWithoutAssests',
+  continueWithoutAssets: {
+    id: 'ir.application:continueWithoutAssets',
     defaultMessage:
       'Ef hinn látni átti ekki fasteign vinsamlegast haltu áfram í ferlinu.',
     description: '',
@@ -289,8 +342,8 @@ export const m = defineMessages({
       'Ef hinn látni átti ekki skotvopn vinsamlegast haltu áfram í ferlinu.',
     description: '',
   },
-  continueWithoutInnventory: {
-    id: 'ir.application:continueWithoutInnventory',
+  continueWithoutInventory: {
+    id: 'ir.application:continueWithoutInventory',
     defaultMessage:
       'Ef hinn látni átti ekki innbú vinsamlegast haltu áfram í ferlinu.',
     description: '',
@@ -360,13 +413,13 @@ export const m = defineMessages({
     defaultMessage: 'Lögheimili',
     description: '',
   },
-  propertyValuation: {
-    id: 'ir.application:propertyValuation',
+  propertyValuationPrePaid: {
+    id: 'ir.application:propertyValuationPrepaid',
     defaultMessage: 'Fasteignamat',
     description: '',
   },
-  propertyValuationOnDeath: {
-    id: 'ir.application:propertyValuationOnDeath',
+  propertyValuation: {
+    id: 'ir.application:propertyValuation',
     defaultMessage: 'Fasteignamat á dánardegi',
     description: '',
   },
@@ -421,7 +474,7 @@ export const m = defineMessages({
     description: '',
   },
   propertyNumber: {
-    id: 'es.application:propertyNumber',
+    id: 'ir.application:propertyNumber',
     defaultMessage: 'Fastanúmer',
     description: 'Property number label',
   },
@@ -487,8 +540,8 @@ export const m = defineMessages({
     defaultMessage: 'Markaðsverðmæti á dánardegi',
     description: '',
   },
-  gunNumber: {
-    id: 'ir.application:gunNumber',
+  gunSerialNumber: {
+    id: 'ir.application:gunSerialNumber',
     defaultMessage: 'Raðnúmer',
     description: '',
   },
@@ -523,6 +576,11 @@ export const m = defineMessages({
   bankAccountBalance: {
     id: 'ir.application:bankAccountBalance',
     defaultMessage: 'Innstæða með vöxtum á dánardegi',
+    description: '',
+  },
+  bankAccountCapitalPrePaid: {
+    id: 'ir.application:bankAccountCapitalPrePaid',
+    defaultMessage: 'Upphæð',
     description: '',
   },
   bankAccountCapital: {
@@ -580,8 +638,14 @@ export const m = defineMessages({
     description: '',
   },
   stocksDescription: {
-    id: 'ir.application:stocksDescription',
+    id: 'ir.application:stocksDescription#markdown',
     defaultMessage: 'Nafn og kennitala ef um einstakling er að ræða.',
+    description: '',
+  },
+  stocksDescriptionPrePaid: {
+    id: 'ir.application:stocksDescriptionPrePaid',
+    defaultMessage:
+      'Upplýsingar um nafnverð hlutabréfa má finna í síðasta skattframtali. Upplýsingar um gengi hlutabréfa er hægt að fá hjá bönkum, félaginu sjálfu eða miða við síðasta ársreikning félagsins sem sækja má á heimasíðu Skattsins, www.skatturinn.is/fyrirtaekjaskra',
     description: '',
   },
   stocksOrganization: {
@@ -621,8 +685,18 @@ export const m = defineMessages({
     defaultMessage: 'Peningar og bankahólf',
     description: '',
   },
+  moneyTitlePrePaid: {
+    id: 'ir.application:moneyTitlePrePaid',
+    defaultMessage: 'Peningar',
+    description: '',
+  },
   moneyDescription: {
     id: 'ir.application:moneyDescription',
+    defaultMessage: 'Peningar sem varðveittir eru utan fjármálastofnanna.',
+    description: '',
+  },
+  moneyDescriptionPrePaid: {
+    id: 'ir.application:moneyDescriptionPrePaid',
     defaultMessage: 'Peningar sem varðveittir eru utan fjármálastofnanna.',
     description: '',
   },
@@ -634,6 +708,11 @@ export const m = defineMessages({
   moneyPlaceholder: {
     id: 'ir.application:moneyPlaceholder',
     defaultMessage: 'Skráðu inn upplýsingar hér',
+    description: '',
+  },
+  moneyValuePrePaid: {
+    id: 'ir.application:moneyValuePrePaid',
+    defaultMessage: 'Fjárhæð',
     description: '',
   },
   moneyValue: {
@@ -711,9 +790,9 @@ export const m = defineMessages({
     defaultMessage: 'Yfirlit eigna',
     description: '',
   },
-  debtsOverview: {
-    id: 'ir.application:debtsOverview',
-    defaultMessage: 'Yfirlit skulda',
+  debtsAndFuneralCostOverview: {
+    id: 'ir.application:debtsAndFuneralCostOverview',
+    defaultMessage: 'Yfirlit skulda og útfararkostnaðar',
     description: '',
   },
   assetOverviewDescription: {
@@ -722,24 +801,29 @@ export const m = defineMessages({
       'Vinsamlegast farðu yfir upplýsingarnar og gakktu úr skugga um að þær séu réttar.',
     description: '',
   },
-  realEstateEstimationOnDeath: {
-    id: 'ir.application:realEstateEstimationOnDeath',
+  realEstateEstimation: {
+    id: 'ir.application:realEstateEstimation',
     defaultMessage: 'Fasteignamat samtals á dánardegi',
     description: '',
   },
-  realEstateEstimation: {
-    id: 'ir.application:realEstateEstimation',
+  realEstateEstimationPrePaid: {
+    id: 'ir.application:realEstateEstimationPrePaid',
     defaultMessage: 'Fasteignamat samtals',
     description: '',
   },
-  marketValue: {
-    id: 'ir.application:marketValue',
+  marketValueTotal: {
+    id: 'ir.application:marketValueTotal',
     defaultMessage: 'Markaðsverð samtals á dánardegi',
     description: '',
   },
   totalValue: {
     id: 'ir.application:totalValue',
     defaultMessage: 'Verðmæti samtals á dánardegi',
+    description: '',
+  },
+  totalValuePrePaid: {
+    id: 'ir.application:totalValuePrePaid',
+    defaultMessage: 'Verðmæti samtals',
     description: '',
   },
   banksBalance: {
@@ -886,6 +970,11 @@ export const m = defineMessages({
     defaultMessage: 'Auðkenni / Lánsnúmer',
     description: '',
   },
+  debtType: {
+    id: 'ir.application:debtsType',
+    defaultMessage: 'Tegund skuldar',
+    description: '',
+  },
   creditorsNationalId: {
     id: 'ir.application:creditorsNationalId',
     defaultMessage: 'Kennitala',
@@ -931,6 +1020,30 @@ export const m = defineMessages({
   totalAmount: {
     id: 'ir.application:totalAmount',
     defaultMessage: 'Samtals fjárhæð',
+    description: '',
+  },
+
+  totalAmountDebts: {
+    id: 'ir.application:totalAmountDebts',
+    defaultMessage: 'Samtals fjárhæð skuldir',
+    description: '',
+  },
+
+  totalAmountPublic: {
+    id: 'ir.application:totalAmountPublic',
+    defaultMessage: 'Samtals fjárhæð opinber gjöld',
+    description: '',
+  },
+
+  totalAmountFuneralCost: {
+    id: 'ir.application:totalAmountFuneralCost',
+    defaultMessage: 'Samtals fjárhæð útfararkostnaðar',
+    description: '',
+  },
+
+  debtsAndFuneralCostTitle: {
+    id: 'ir.application:debtsAndFuneralCostTitle',
+    defaultMessage: 'Skuldir og útfararkostnaður',
     description: '',
   },
 
@@ -1072,6 +1185,11 @@ export const m = defineMessages({
     defaultMessage: 'Hlutfall séreignar',
     description: '',
   },
+  deceasedSharePart: {
+    id: 'ir.application:deceasedSharePart',
+    defaultMessage: 'Hlutfall séreignar',
+    description: '',
+  },
   spousesShareDescription: {
     id: 'ir.application:spousesShareDescription',
     defaultMessage:
@@ -1081,6 +1199,21 @@ export const m = defineMessages({
   wasInCohabitation: {
     id: 'ir.application:wasInCohabitation',
     defaultMessage: 'Var hinn látni í hjúskap?',
+    description: '',
+  },
+  hasCustomSpouseSharePercentage: {
+    id: 'ir.application:hasCustomSpouseSharePercentage',
+    defaultMessage: 'Er verið að skipta dánarbúi að fullu eða að hluta?',
+    description: '',
+  },
+  spouseShareFull: {
+    id: 'ir.application:spouseShareFull',
+    defaultMessage: 'Að fullu',
+    description: '',
+  },
+  spouseSharePart: {
+    id: 'ir.application:spouseSharePart',
+    defaultMessage: 'Að hluta',
     description: '',
   },
   hadSeparateProperty: {
@@ -1159,6 +1292,16 @@ export const m = defineMessages({
   netPropertyForExchange: {
     id: 'ir.application:netPropertyForExchange',
     defaultMessage: 'Hrein eign til skipta',
+    description: '',
+  },
+  heirsTitlePrePaid: {
+    id: 'ir.application:heirsTitlePrePaid',
+    defaultMessage: 'Hver á að fá arfinn?',
+    description: '',
+  },
+  heirsDescriptionPrePaid: {
+    id: 'ir.application:heirsDescriptionPrePaid',
+    defaultMessage: 'Lorem ipsum lorem ipsum',
     description: '',
   },
   heirsAndPartition: {
@@ -1341,6 +1484,21 @@ export const m = defineMessages({
     defaultMessage: 'Skiptastjóri',
     description: '',
   },
+  grantors: {
+    id: 'ir.application:grantors',
+    defaultMessage: 'Arflátar',
+    description: '',
+  },
+  grantorsDescription: {
+    id: 'ir.application:grantorsDescription',
+    defaultMessage: 'Lorem ipsum foo bar beep boop meep morp.',
+    description: '',
+  },
+  grantor: {
+    id: 'ir.application:grantor',
+    defaultMessage: 'Arfláti',
+    description: '',
+  },
   heirs: {
     id: 'ir.application:heirs',
     defaultMessage: 'Erfingjar',
@@ -1354,6 +1512,57 @@ export const m = defineMessages({
   heirAdditionalInfo: {
     id: 'ir.application:heirAdditionalInfo',
     defaultMessage: 'Athugasemdir erfingja',
+    description: '',
+  },
+  fileUploadPrivateTransfer: {
+    id: 'ir.application:fileUploadPrivateTransfer',
+    defaultMessage: 'Einkaskiptagerð',
+    description: '',
+  },
+  fileUploadOtherDocuments: {
+    id: 'ir.application:fileUploadOtherDocuments',
+    defaultMessage: 'Önnur fylgigögn',
+    description: '',
+  },
+  fileUploadOtherDocumentsPrePaid: {
+    id: 'ir.application:fileUploadOtherDocumentsPrePaid',
+    defaultMessage: 'Fylgigögn',
+    description: '',
+  },
+  fileUploadOtherDocumentsPrePaidDescription: {
+    id: 'ir.application:fileUploadOtherDocumentsPrePaidDescription',
+    defaultMessage:
+      'Samþykktar skráargerðir eru .pdf, .doc, .docx, .jpg, .jpeg, .png, .xls og .xlsx',
+    description: '',
+  },
+  fileUploadOtherDocumentsPrePaidUserGuidelines: {
+    id: 'ir.application:fileUploadOtherDocumentsPrePaidUserGuidelines#markdown',
+    defaultMessage:
+      'Vinsamlegast hlaðið upp önnur fylgigögn. Hægt að hlaða inn fleiri en eitt skjal.',
+    description: '',
+  },
+  uploadPrivateTransferDescription: {
+    id: 'ir.application:uploadPrivateTransferDescription',
+    defaultMessage:
+      'Samþykktar skráargerðir eru .pdf, .doc, .docx, .jpg, .jpeg, .png, .xls og .xlsx',
+    description: '',
+  },
+  uploadPrivateTransferUserGuidelines: {
+    id: 'ir.application:uploadPrivateTransferUserGuidelines#markdown',
+    defaultMessage:
+      'Vinsamlegast hlaðið upp einkaskiptagerð. Aðeins er hægt að hlaða inn 1 skjal.',
+    description: '',
+  },
+  uploadOtherDocumentsDescription: {
+    id: 'ir.application:uploadOtherDocumentsDescription',
+    defaultMessage:
+      'Samþykktar skráargerðir eru .pdf, .doc, .docx, .jpg, .jpeg, .png, .xls og .xlsx',
+    description: '',
+  },
+  uploadOtherDocumentsUserGuidelines: {
+    id: 'ir.application:uploadOtherDocumentsUserGuidelines#markdown',
+    defaultMessage:
+      'Vinsamlegast hlaðið upp önnur fylgigögn. Hægt að hlaða inn fleiri 1 skjal.',
     description: '',
   },
   heirShare: {
@@ -1407,12 +1616,28 @@ export const m = defineMessages({
     defaultMessage: 'Prenta yfirlit',
     description: '',
   },
+  overviewHeirsTitle: {
+    id: 'ir.application:overviewHeirsTitle',
+    defaultMessage: 'Yfirlit erfingja',
+    description: '',
+  },
+  overviewHeirsDescription: {
+    id: 'ir.application:overviewHeirsDescription',
+    defaultMessage: 'Yfirlit yfir erfingja og skiptingu',
+    description: '',
+  },
 
   // Done
   beforeSubmitStatement: {
     id: 'ir.application:beforeSubmitStatement#markdown',
     defaultMessage:
       'Undirritaðir erfingjar eða umboðsmenn þeirra lýsa því yfir með undirskrift sinni og leggja við drengskap sinn:\n\n1. Að á erfðafjárskýrslu þessari séu tilgreindir allir erfingjar búsins, sem þeim er kunnugt um.\n2. Að á erfðafjárskýrslu þessari komi fram tæmandi talning á eignum og skuldum búsins og að réttilega sé frá verðmæti þeirra eða matsverði greint í öllum atriðum.\n3. Að þeir taki sér á hendur einn fyrir alla og allir fyrir einn greiðslu allra skulda búsins, jafnt þeirra sem fram koma í þessari skýrslu, sem þeirra er óþekktar eru en síðar kunna að koma í ljós, svo og með sama skilorði greiðslu erfðafjárskatts.\n4. Ef við á, að gagnvart erfingjum sem eru ófjárráða eða málsvarar koma annars fram fyrir við skiptin, takast erfingjar á hendur ábyrgð á því að þeir fyrrnefndu muni ekki gjalda fyrir ábyrgð sína á skuldum búsins og gjöldum, umfram arfshluta sinn.',
+    description: '',
+  },
+  beforeSubmitStatementPrePaid: {
+    id: 'ir.application:beforeSubmitStatementPrePaid#markdown',
+    defaultMessage:
+      'Undirritaðir erfingjar eða umboðsmenn þeirra lýsa því yfir með undirskrift sinni og leggja við drengskap sinn:\n\n1. Lorem ipsum dolor sit amet, consectetur adipiscing elit. Nunc vel leo eu nunc varius suscipit.\n2. Lorem ipsum dolor sit amet, consectetur adipiscing elit. Nunc vel leo eu nunc varius suscipit.\n3. Lorem ipsum dolor sit amet, consectetur adipiscing elit. Nunc vel leo eu nunc varius suscipit.\n4. Lorem ipsum dolor sit amet, consectetur adipiscing elit. Nunc vel leo eu nunc varius suscipit.',
     description: '',
   },
   readyToSubmit: {
@@ -1430,15 +1655,31 @@ export const m = defineMessages({
     defaultMessage: 'Senda inn skýrslu',
     description: '',
   },
-  doneTitle: {
-    id: 'ir.application:doneTitle',
+  doneTitleEFS: {
+    id: 'ir.application:doneTitleEFS',
     defaultMessage: 'Erfðafjárskýrsla móttekin',
     description: '',
   },
-  doneDescription: {
-    id: 'ir.application:doneDescription',
+  doneTitlePrepaidEFS: {
+    id: 'ir.application:doneTitlePrepaidEFS',
+    defaultMessage: 'Umsókn um fyrirframgreiddan arf móttekin',
+    description: '',
+  },
+  doneDescriptionEFS: {
+    id: 'ir.application:doneDescriptionEFS#markdown',
     defaultMessage:
       'Sýslumaður hefur móttekið erfðafjárskýrslu. Hún verður nú yfirfarin. Ef sýslumaður staðfestir skýrsluna að þá fá erfingjar/umboðsmaður senda tilkynningu um álagningu erfðafjárskatts í pósthólf á Íslands.is. Ef sýslumaður hefur athugasemdir við innsenda skýrslu mun sýslumaður senda bréf í pósthólf erfingja inn á Ísland.is',
+    description: '',
+  },
+  doneDescriptionPrepaidEFS: {
+    id: 'ir.application:doneDescriptionPrepaidEFS#markdown',
+    defaultMessage:
+      'Lorem ipsum dolor sit amet, consectetur adipiscing elit. Sed sit amet urna nec nunc ultricies ultricies.',
+    description: '',
+  },
+  nextSteps: {
+    id: 'ir.application:nextSteps',
+    defaultMessage: 'Næstu skref',
     description: '',
   },
   errorRelation: {
@@ -1455,6 +1696,33 @@ export const m = defineMessages({
     description: '',
   },
 
+  // Pre-paid inheritance relation types
+  spouse: {
+    id: 'ir.application:spouse',
+    defaultMessage: 'Maki',
+    description: '',
+  },
+  child: {
+    id: 'ir.application:child',
+    defaultMessage: 'Barn',
+    description: '',
+  },
+  parent: {
+    id: 'ir.application:parent',
+    defaultMessage: 'Foreldri',
+    description: '',
+  },
+  sibling: {
+    id: 'ir.application:sibling',
+    defaultMessage: 'Systkin',
+    description: '',
+  },
+  other: {
+    id: 'ir.application:other',
+    defaultMessage: 'Annað',
+    description: '',
+  },
+
   // general
   yes: {
     id: 'ir.application:yes',
@@ -1466,11 +1734,27 @@ export const m = defineMessages({
     defaultMessage: 'Nei',
     description: '',
   },
+  marketValue: {
+    id: 'ir.application:marketValuation',
+    defaultMessage: 'Markaðsverðmæti',
+    description: '',
+  },
+  includeSpousePrePaid: {
+    id: 'ir.application:includeSpouse',
+    defaultMessage: 'Ráðstafa úr sameign hjúskaps',
+    description: '',
+  },
+  includeSpousePrePaidDescription: {
+    id: 'ir.application:includeSpouseDescription',
+    defaultMessage:
+      'Ef arfláti er í gift/ur og ráðstafa á úr sameign, þarf maki að vera með sem arfláti',
+    description: '',
+  },
   // Error messages
   errorPropertyNumber: {
-    id: 'es.application:error.errorPropertyNumber',
+    id: 'ir.application:error.errorPropertyNumber',
     defaultMessage:
-      'Verður að innihalda 6 tölustafi eða L + 6 fyrir landeignanúmeri, 7 tölustafi, F + 7 fyrir fasteignanúmeri',
+      'Verður að innihalda 6 tölustafi eða L + 6 fyrir landeignanúmer, 7 tölustafi eða F + 7 fyrir fasteignanúmer',
     description: 'Property number is invalid',
   },
 })

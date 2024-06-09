@@ -503,6 +503,12 @@ export const m = defineMessages({
     defaultMessage: 'Umsókn þín um fullnaðarskírteini hefur verið móttekin.',
     description: 'Application received',
   },
+  applicationDoneAlertMessageBE: {
+    id: 'dl.application:applicationDoneAlertMessageBE',
+    defaultMessage:
+      'Umsókn þín um að hefja ökunám fyrir BE réttindi hefur verið móttekin.',
+    description: 'Application received',
+  },
   nextStepsTitle: {
     id: 'dl.application:nextStepsTitle',
     defaultMessage: 'Næstu skref',
