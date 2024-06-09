@@ -1,4 +1,4 @@
-import React, { useContext, useEffect, useMemo, useState } from 'react'
+import React, { useEffect, useMemo, useState } from 'react'
 import { useIntl } from 'react-intl'
 import { useLocalStorage } from 'react-use'
 import format from 'date-fns/format'
@@ -13,19 +13,13 @@ import {
   displayFirstPlusRemaining,
   formatDOB,
 } from '@island.is/judicial-system/formatters'
-import {
-  isDistrictCourtUser,
-  isProsecutionUser,
-  isRequestCase,
-} from '@island.is/judicial-system/types'
+import { isRequestCase } from '@island.is/judicial-system/types'
 import { core, tables } from '@island.is/judicial-system-web/messages'
 import {
   ContextMenu,
-  FormContext,
   Modal,
   TagAppealState,
   TagCaseState,
-  UserContext,
 } from '@island.is/judicial-system-web/src/components'
 import { contextMenu as contextMenuStrings } from '@island.is/judicial-system-web/src/components/ContextMenu/ContextMenu.strings'
 import IconButton from '@island.is/judicial-system-web/src/components/IconButton/IconButton'
@@ -58,13 +52,11 @@ interface Props {
   cases: CaseListEntry[]
   isDeletingCase: boolean
   onDeleteCase?: (caseToDelete: CaseListEntry) => Promise<void>
-  onCancelCase?: (caseToCancel: CaseListEntry) => Promise<void>
 }
 
 const ActiveCases: React.FC<React.PropsWithChildren<Props>> = (props) => {
   const { cases, isDeletingCase, onDeleteCase } = props
 
-  const { user } = useContext(UserContext)
   const { formatMessage } = useIntl()
   const { width } = useViewport()
   const [sortConfig, setSortConfig] = useLocalStorage<SortConfig>(
@@ -77,9 +69,7 @@ const ActiveCases: React.FC<React.PropsWithChildren<Props>> = (props) => {
   const { isOpeningCaseId, showLoading, handleOpenCase, LoadingIndicator } =
     useCaseList()
   const [displayCases, setDisplayCases] = useState<CaseListEntry[]>([])
-  const [modalVisible, setVisibleModal] = useState<
-    'DELETE_CASE' | 'CANCEL_CASE'
-  >()
+  const [modalVisible, setVisibleModal] = useState<'DELETE_CASE'>()
   // The id of the case that's about to be removed
   const [caseToRemove, setCaseToRemove] = useState<CaseListEntry | undefined>()
 
@@ -143,14 +133,10 @@ const ActiveCases: React.FC<React.PropsWithChildren<Props>> = (props) => {
         <Box marginTop={2} key={theCase.id}>
           <MobileCase
             onClick={() => {
-              if (c.state === CaseState.WAITING_FOR_CANCELLATION) {
-                setVisibleModal('CANCEL_CASE')
-              } else {
-                handleOpenCase(c.id)
-              }
+              handleOpenCase(theCase.id)
             }}
             theCase={theCase}
-            isCourtRole={isDistrictCourtUser(user)}
+            isCourtRole={false}
             isLoading={isOpeningCaseId === theCase.id && showLoading}
           >
             {theCase.state &&
@@ -236,7 +222,7 @@ const ActiveCases: React.FC<React.PropsWithChildren<Props>> = (props) => {
         <LayoutGroup>
           <tbody>
             <AnimatePresence>
-              {cases.map((c, i) => (
+              {cases.map((c) => (
                 <motion.tr
                   key={c.id}
                   className={styles.tableRowContainer}
@@ -246,11 +232,7 @@ const ActiveCases: React.FC<React.PropsWithChildren<Props>> = (props) => {
                   aria-label="Opna kröfu"
                   aria-disabled={isDeletingCase || isOpeningCaseId === c.id}
                   onClick={() => {
-                    if (c.state === CaseState.WAITING_FOR_CANCELLATION) {
-                      setVisibleModal('CANCEL_CASE')
-                    } else {
-                      handleOpenCase(c.id)
-                    }
+                    handleOpenCase(c.id)
                   }}
                 >
                   <td className={styles.td}>
@@ -338,7 +320,6 @@ const ActiveCases: React.FC<React.PropsWithChildren<Props>> = (props) => {
                       <TagCaseState
                         caseState={c.state}
                         caseType={c.type}
-                        isCourtRole={isDistrictCourtUser(user)}
                         isValidToDateInThePast={c.isValidToDateInThePast}
                         courtDate={c.courtDate}
                         indictmentDecision={c.indictmentDecision}
@@ -382,54 +363,51 @@ const ActiveCases: React.FC<React.PropsWithChildren<Props>> = (props) => {
                     )}
                   </td>
                   <td className={styles.td}>
-                    {c.state !== CaseState.WAITING_FOR_CANCELLATION && (
-                      <AnimatePresence exitBeforeEnter initial={false}>
-                        {isOpeningCaseId === c.id && showLoading ? (
-                          <div className={styles.deleteButtonWrapper}>
-                            <LoadingIndicator />
-                          </div>
-                        ) : (
-                          <ContextMenu
-                            menuLabel={`Valmynd fyrir mál ${c.courtCaseNumber}`}
-                            items={[
-                              {
-                                title: formatMessage(
-                                  contextMenuStrings.openInNewTab,
-                                ),
-                                onClick: () => handleOpenCase(c.id, true),
-                                icon: 'open',
-                              },
-                              ...(isProsecutionUser(user) &&
-                              (isRequestCase(c.type) ||
-                                c.state === CaseState.DRAFT ||
-                                c.state === CaseState.WAITING_FOR_CONFIRMATION)
-                                ? [
-                                    {
-                                      title: formatMessage(
-                                        contextMenuStrings.deleteCase,
-                                      ),
-                                      onClick: () => {
-                                        setCaseToRemove(c)
-                                        setVisibleModal('DELETE_CASE')
-                                      },
-                                      icon: 'trash' as IconMapIcon,
+                    <AnimatePresence exitBeforeEnter initial={false}>
+                      {isOpeningCaseId === c.id && showLoading ? (
+                        <div className={styles.deleteButtonWrapper}>
+                          <LoadingIndicator />
+                        </div>
+                      ) : (
+                        <ContextMenu
+                          menuLabel={`Valmynd fyrir mál ${c.courtCaseNumber}`}
+                          items={[
+                            {
+                              title: formatMessage(
+                                contextMenuStrings.openInNewTab,
+                              ),
+                              onClick: () => handleOpenCase(c.id, true),
+                              icon: 'open',
+                            },
+                            ...(isRequestCase(c.type) ||
+                            c.state === CaseState.DRAFT ||
+                            c.state === CaseState.WAITING_FOR_CONFIRMATION
+                              ? [
+                                  {
+                                    title: formatMessage(
+                                      contextMenuStrings.deleteCase,
+                                    ),
+                                    onClick: () => {
+                                      setCaseToRemove(c)
+                                      setVisibleModal('DELETE_CASE')
                                     },
-                                  ]
-                                : []),
-                            ]}
-                            disclosure={
-                              <IconButton
-                                icon="ellipsisVertical"
-                                colorScheme="transparent"
-                                onClick={(evt) => {
-                                  evt.stopPropagation()
-                                }}
-                              />
-                            }
-                          />
-                        )}
-                      </AnimatePresence>
-                    )}
+                                    icon: 'trash' as IconMapIcon,
+                                  },
+                                ]
+                              : []),
+                          ]}
+                          disclosure={
+                            <IconButton
+                              icon="ellipsisVertical"
+                              colorScheme="transparent"
+                              onClick={(evt) => {
+                                evt.stopPropagation()
+                              }}
+                            />
+                          }
+                        />
+                      )}
+                    </AnimatePresence>
                   </td>
                 </motion.tr>
               ))}
@@ -462,18 +440,6 @@ const ActiveCases: React.FC<React.PropsWithChildren<Props>> = (props) => {
             m.activeRequests.deleteCaseModal.secondaryButtonText,
           )}
           isPrimaryButtonLoading={isDeletingCase}
-        />
-      )}
-      {modalVisible === 'CANCEL_CASE' && (
-        <Modal
-          title={formatMessage(m.activeRequests.cancelCaseModal.title)}
-          text={formatMessage(m.activeRequests.cancelCaseModal.text)}
-          secondaryButtonText={formatMessage(
-            m.activeRequests.cancelCaseModal.secondaryButtonText,
-          )}
-          onSecondaryButtonClick={() => {
-            setVisibleModal(undefined)
-          }}
         />
       )}
     </>

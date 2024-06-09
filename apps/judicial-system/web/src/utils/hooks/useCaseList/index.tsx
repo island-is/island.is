@@ -140,22 +140,14 @@ const useCaseList = () => {
       if (clickedCase[0] !== id && !openInNewTab) {
         setClickedCase([id, false])
 
-        timeouts.push(
-          setTimeout(() => {
-            setClickedCase([id, true])
-          }, 2000),
-        )
+        timeouts.push(setTimeout(() => setClickedCase([id, true]), 2000))
       }
 
       const getCaseToOpen = (id: string) => {
         getCase(
           id,
-          (caseData) => {
-            openCase(caseData, openInNewTab)
-          },
-          () => {
-            toast.error(formatMessage(errors.getCaseToOpen))
-          },
+          (caseData) => openCase(caseData, openInNewTab),
+          () => toast.error(formatMessage(errors.getCaseToOpen)),
         )
       }
 

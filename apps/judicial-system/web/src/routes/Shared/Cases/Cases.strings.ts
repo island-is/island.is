@@ -108,25 +108,6 @@ export const cases = {
         description: 'Notaður sem texti á Halda áfram takka í Afturkalla mál.',
       },
     }),
-    cancelCaseModal: defineMessages({
-      title: {
-        id: 'judicial.system.core:cases.active_requests.cancel_case_modal.title',
-        defaultMessage: 'Mál afturkallað',
-        description: 'Notaður sem titill í Afturkalla mál dómstóla modal.',
-      },
-      text: {
-        id: 'judicial.system.core:cases.active_requests.cancel_case_modal.text',
-        defaultMessage:
-          'Ákæruvaldið hefur afturkallað ákæruna. Hægt er að skrá málsnúmer og ljúka málinu hér.',
-        description: 'Notaður sem texti í Afturkalla mál dómstóla modal.',
-      },
-      secondaryButtonText: {
-        id: 'judicial.system.core:cases.active_requests.delete_case_modal.secondary_button_text',
-        defaultMessage: 'Hætta við',
-        description:
-          'Notaður sem texti á Hætta við takka í Afturkalla mál dómstóla modal.',
-      },
-    }),
   },
   pastRequests: {
     table: {
