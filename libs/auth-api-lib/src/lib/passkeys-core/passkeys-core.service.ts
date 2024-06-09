@@ -188,7 +188,7 @@ export class PasskeysCoreService {
         Buffer.from(response.response.clientDataJSON, 'base64').toString(
           'utf-8',
         ),
-      )
+      ).challenge
     } catch (e) {
       this.logger.log('Invalid clientDataJSON', e)
       throw new BadRequestException('Invalid clientDataJSON')
@@ -210,8 +210,7 @@ export class PasskeysCoreService {
         authenticator: {
           credentialID: passkey.id,
           credentialPublicKey: passkey.public_key,
-          // TODO?
-          counter: 0,
+          counter: 0, // TODO: Store in db and increment on authentication
           transports: ['internal'],
         },
       })
