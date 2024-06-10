@@ -131,14 +131,24 @@ describe('Tax calculator', () => {
       const acceptedAidFinalAmount = calculateAcceptedAidFinalAmount(
         100000,
         100,
+        0,
       )
       expect(acceptedAidFinalAmount).toEqual(99900)
+    })
+    test('should return accepted final amount with 100% personal and 100% spouse credit, adding children aid', () => {
+      const acceptedAidFinalAmount = calculateAcceptedAidFinalAmount(
+        100000,
+        100,
+        40000,
+      )
+      expect(acceptedAidFinalAmount).toEqual(139900)
     })
 
     test('should return accepted final amount with 10% personal and 30% spouse credit', () => {
       const acceptedAidFinalAmount = calculateAcceptedAidFinalAmount(
         300000,
         64926,
+        0,
       )
       expect(acceptedAidFinalAmount).toEqual(235074)
     })
@@ -147,8 +157,18 @@ describe('Tax calculator', () => {
       const acceptedAidFinalAmount = calculateAcceptedAidFinalAmount(
         150000,
         50000,
+        0,
       )
       expect(acceptedAidFinalAmount).toEqual(100000)
+    })
+
+    test('should return accepted final amount with 10% personal and 30% spouse credit, adding children aid', () => {
+      const acceptedAidFinalAmount = calculateAcceptedAidFinalAmount(
+        150000,
+        50000,
+        50000,
+      )
+      expect(acceptedAidFinalAmount).toEqual(150000)
     })
   })
 

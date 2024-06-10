@@ -1050,13 +1050,22 @@ export class InternalCaseService {
     return originalAncestor
   }
 
+  // As this is only currently used by the digital mailbox API
+  // we will only return indictment cases that have a court date
   async getIndictmentCases(nationalId: string): Promise<Case[]> {
     const formattedNationalId = formatNationalId(nationalId)
 
     return this.caseModel.findAll({
       include: [
         { model: Defendant, as: 'defendants' },
-        { model: DateLog, as: 'dateLogs' },
+        {
+          model: DateLog,
+          as: 'dateLogs',
+          where: {
+            date_type: 'ARRAIGNMENT_DATE',
+          },
+          required: true,
+        },
       ],
       order: [[{ model: DateLog, as: 'dateLogs' }, 'created', 'DESC']],
       attributes: ['id', 'courtCaseNumber', 'type', 'state'],
@@ -1086,7 +1095,7 @@ export class InternalCaseService {
         { model: User, as: 'judge' },
         { model: User, as: 'prosecutor' },
       ],
-      attributes: ['courtCaseNumber'],
+      attributes: ['courtCaseNumber', 'id'],
       where: {
         type: CaseType.INDICTMENT,
         id: caseId,
