@@ -69,7 +69,7 @@ export const DailyApiConfig = {
   useFactory: (config: ConfigType<typeof UltravioletRadiationClientConfig>) =>
     fetchFactory(
       config,
-      24 * 60 * 60 * 1000, // 24 hours
+      16 * 60 * 60 * 1000, // 16 hours
     ),
   inject: [UltravioletRadiationClientConfig.KEY],
 }
