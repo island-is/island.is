@@ -15,6 +15,7 @@ import { useWindowSize } from 'react-use'
 import { theme } from '@island.is/island-ui/theme'
 import { OrganizationSlugType } from '@island.is/shared/constants'
 import { ISLANDIS_SLUG } from '../../utils/constants'
+import { m } from '../../lib/messages'
 
 interface Props {
   serviceProviderSlug?: OrganizationSlugType
@@ -69,6 +70,13 @@ export const IntroHeader = (props: IntroHeaderProps & Props) => {
           <InstitutionPanel
             loading={loading}
             linkHref={organization.link ?? ''}
+            linkLabel={
+              organization.title
+                ? formatMessage(m.readMoreAbout, {
+                    arg: organization.title,
+                  })
+                : ''
+            }
             img={organization.logo?.url ?? ''}
             imgContainerDisplay={isMobile ? 'block' : 'flex'}
             isSvg={organization.logo?.contentType === 'image/svg+xml'}

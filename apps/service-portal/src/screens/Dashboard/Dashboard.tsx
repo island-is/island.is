@@ -18,7 +18,6 @@ import {
   DocumentLine,
 } from '@island.is/service-portal/documents'
 import {
-  EmptyImageSmall,
   LinkResolver,
   PlausiblePageviewDetail,
   ServicePortalPaths,
@@ -26,6 +25,7 @@ import {
   useDynamicRoutesWithNavigation,
 } from '@island.is/service-portal/core'
 import Greeting from '../../components/Greeting/Greeting'
+import DocumentsEmpty from '../../components/DocumentsEmpty/DocumentsEmpty'
 import { iconIdMapper, iconTypeToSVG } from '../../utils/Icons/idMapper'
 import { useWindowSize } from 'react-use'
 import { theme } from '@island.is/island-ui/theme'
@@ -232,28 +232,7 @@ export const Dashboard: FC<React.PropsWithChildren<unknown>> = () => {
                     </Box>
                   ))
                 ) : (
-                  <Box
-                    display="flex"
-                    flexDirection="column"
-                    paddingTop={2}
-                    justifyContent="center"
-                    alignItems="center"
-                    rowGap={2}
-                  >
-                    <EmptyImageSmall style={{ maxHeight: 160 }} />
-                    <Text variant="h3">
-                      {formatMessage(m.emptyDocumentsList)}
-                    </Text>
-                    {!hasDelegationAccess && (
-                      <Icon
-                        color="blue600"
-                        type="outline"
-                        icon="lockClosed"
-                        size="small"
-                        className={styles.lock}
-                      />
-                    )}
-                  </Box>
+                  <DocumentsEmpty hasDelegationAccess={!!hasDelegationAccess} />
                 )}
 
                 {hasDelegationAccess && (

@@ -1,8 +1,7 @@
 import { Injectable } from '@nestjs/common'
-import { AuthMiddleware } from '@island.is/auth-nest-tools'
-import type { Auth, User } from '@island.is/auth-nest-tools'
-import { CourtCases } from '../models/courtCases.model'
-import { getCase, getLawyers, getSubpoena, listCases } from './helpers/mockData'
+import type { User } from '@island.is/auth-nest-tools'
+import { CourtCases, State } from '../models/courtCases.model'
+import { getSubpoena } from './helpers/mockData'
 import { CourtCase } from '../models/courtCase.model'
 import { Subpoena } from '../models/subpoena.model'
 import { Lawyers } from '../models/lawyers.model'
@@ -12,22 +11,46 @@ import { PostSubpoenaAcknowledgedInput } from '../dto/postSubpeonaAcknowledgedIn
 import { SubpoenaAcknowledged } from '../models/subpoenaAcknowledged.model'
 import { Locale } from 'locale'
 import {
+  CaseResponse,
   CasesResponse,
   Defender,
-  LawAndOrderClientService,
-} from '@island.is/clients/law-and-order'
+  JudicialSystemSPClientService,
+  SubpoenaResponse,
+} from '@island.is/clients/judicial-system-sp'
 
+interface CaseResponseTemp {
+  id: string
+  caseNumber: string
+  type: string
+  state: State
+}
+
+interface SingleCaseResponseTemp {
+  data: {
+    caseNumber: string
+    groups: {
+      label: string
+      items: {
+        label: string
+        value: string
+        linkType?: string | undefined
+      }[]
+    }[]
+  }
+}
 @Injectable()
 export class LawAndOrderService {
-  constructor(private api: LawAndOrderClientService) {}
+  constructor(private api: JudicialSystemSPClientService) {}
 
   async getCourtCases(user: User, locale: Locale) {
-    const answer: Array<CasesResponse> = await this.api.getCases(user)
-    const mockAnswer = listCases(locale)
+    const cases: Array<CasesResponse> | undefined = await this.api.getCases(
+      user,
+      locale,
+    )
     const list: CourtCases = { items: [] }
     const randomBoolean = Math.random() < 0.75
 
-    answer.map((x) => {
+    cases?.map((x: CasesResponse) => {
       list.items?.push({
         id: x.id,
         acknowledged: randomBoolean,
@@ -42,36 +65,41 @@ export class LawAndOrderService {
   }
 
   async getCourtCase(user: User, id: string, locale: Locale) {
-    //const answer = this.lawAndOrderApi.getTest(user)
-    const mockAnswer = getCase(id, locale).data
+    const singleCase = await this.api.getCase(id, user, locale)
+    const randomBoolean = Math.random() < 0.75
     let data: CourtCase = {}
 
     data = {
       data: {
-        id: id,
-        acknowledged: mockAnswer?.data.acknowledged,
-        caseNumber: mockAnswer?.data.caseNumber,
-        caseNumberTitle: mockAnswer?.data.caseNumberTitle,
-        groups: mockAnswer?.data.groups,
+        id: singleCase?.caseId ?? id,
+        acknowledged: randomBoolean,
+        caseNumber: singleCase?.data.caseNumber,
+        caseNumberTitle: singleCase?.data.caseNumber,
+        groups: singleCase?.data.groups,
       },
-      actions: mockAnswer?.actions,
-      texts: mockAnswer?.texts,
+      actions: undefined,
+      texts: undefined,
     }
 
     return data
   }
 
   async getSubpoena(user: User, id: string, locale: Locale) {
-    //const answer = this.lawAndOrderApi.getTest(user)
+    const subpoena: SubpoenaResponse | undefined = await this.api.getSubpoena(
+      id,
+      user,
+      locale,
+    )
     const mockAnswer = getSubpoena(id).data
     let data: Subpoena = {}
 
     data = {
       data: {
-        id: id,
-        acknowledged: mockAnswer?.data.acknowledged,
-        chosenDefender: mockAnswer?.data.chosenDefender,
-        displayClaim: mockAnswer?.data.displayClaim,
+        id: subpoena?.caseId ?? id,
+        acknowledged: undefined,
+        chosenDefender: subpoena?.defenderInfo.defenderName,
+        defenderChoice: subpoena?.defenderInfo.defenderChoice,
+        displayClaim: subpoena?.acceptCompensationClaim,
         groups: mockAnswer?.data.groups,
       },
       actions: mockAnswer?.actions,
@@ -82,10 +110,13 @@ export class LawAndOrderService {
   }
 
   async getLawyers(user: User, locale: Locale) {
-    const answer: Array<Defender> = await this.api.getLawyers(user)
+    const answer: Array<Defender> | undefined = await this.api.getLawyers(
+      user,
+      locale,
+    )
     const list: Lawyers = { items: [] }
 
-    answer.map((x) => {
+    answer?.map((x) => {
       list.items?.push({
         name: x.name,
         nationalId: x.nationalId,
@@ -93,7 +124,6 @@ export class LawAndOrderService {
       })
     })
 
-    console.log('lawyers', list)
     return list
   }
 

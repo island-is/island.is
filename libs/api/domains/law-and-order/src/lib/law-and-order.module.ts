@@ -4,10 +4,10 @@ import { AuthModule } from '@island.is/auth-nest-tools'
 import { FeatureFlagModule } from '@island.is/nest/feature-flags'
 import { LawAndOrderResolver } from './law-and-order.resolver'
 import { LawAndOrderService } from './law-and-order.service'
-import { LawAndOrderClientModule } from '@island.is/clients/law-and-order'
+import { JudicialSystemSPClientModule } from '@island.is/clients/judicial-system-sp'
 
 @Module({
-  imports: [LawAndOrderClientModule, AuthModule, FeatureFlagModule],
+  imports: [JudicialSystemSPClientModule, AuthModule, FeatureFlagModule],
   providers: [LawAndOrderResolver, LawAndOrderService],
 })
 export class LawAndOrderModule {}

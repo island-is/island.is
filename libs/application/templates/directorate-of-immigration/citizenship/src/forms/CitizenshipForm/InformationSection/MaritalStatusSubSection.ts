@@ -7,41 +7,45 @@ import {
 } from '@island.is/application/core'
 import { information } from '../../../lib/messages'
 import { Application } from '@island.is/api/schema'
-import { ApplicantResidenceConditionViewModel } from '@island.is/clients/directorate-of-immigration'
 import { formatDate } from '../../../utils'
 import { Routes } from '../../../lib/constants'
 import {
   NationalRegistryIndividual,
   NationalRegistrySpouse,
 } from '@island.is/application/types'
+import { ApplicantInformation } from '../../../shared'
 
 export const MaritalStatusSubSection = buildSubSection({
   id: Routes.MARITALSTATUS,
   title: information.labels.maritalStatus.subSectionTitle,
   condition: (_, externalData) => {
-    const spouseDetails = getValueViaPath(
-      externalData,
-      'spouseDetails.data',
-      undefined,
-    ) as NationalRegistrySpouse | undefined
-    const maritalStatus = spouseDetails?.maritalStatus
-    const hasSpouse = !!spouseDetails?.nationalId
-    const isMarriedOrCohabitation =
-      maritalStatus === '3' || (maritalStatus === '1' && hasSpouse)
-
     // Check if the only residence condition that the applicant can apply for, is related to marital status
     const residenceConditionInfo = getValueViaPath(
       externalData,
-      'residenceConditionInfo.data',
+      'applicantInformation.data.residenceConditionInfo',
       {},
-    ) as ApplicantResidenceConditionViewModel
-    const hasOnlyResConMaritalStatus =
-      residenceConditionInfo.isAnyResConValid &&
-      residenceConditionInfo.isOnlyMarriedOrCohabitationWithISCitizen
+    ) as ApplicantInformation
 
-    // TODO revert
-    // return isMarriedOrCohabitation && hasOnlyResConMaritalStatus
-    return isMarriedOrCohabitation
+    const hasResConMaritalStatus =
+      residenceConditionInfo.cohabitationISCitizen5YearDomicile ||
+      residenceConditionInfo.cohabitationISCitizen5YrsDomicileMissingDate ||
+      residenceConditionInfo.marriedISCitizenDomicile4Years ||
+      residenceConditionInfo.marriedISCitizenDomicile4YrsMissingDate
+
+    const hasOtherValidResidenceConditions =
+      residenceConditionInfo.domicileResidence7Years ||
+      residenceConditionInfo.asylumSeekerOrHumanitarianResPerm5year ||
+      residenceConditionInfo.noNationalityAnd5YearsDomicile ||
+      residenceConditionInfo.nordicCitizenship4YearDomicile
+
+    const spouseIsCitizen = residenceConditionInfo.spouseIsCitizen
+    const eesResidenceCondition = residenceConditionInfo.eesResidenceCondition
+    const showThisPage = spouseIsCitizen && !eesResidenceCondition
+
+    return (
+      (!!hasResConMaritalStatus && !hasOtherValidResidenceConditions) ||
+      !!showThisPage
+    )
   },
   children: [
     buildMultiField({

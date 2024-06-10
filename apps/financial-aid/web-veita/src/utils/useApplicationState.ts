@@ -34,10 +34,11 @@ export const useApplicationState = () => {
     }
   }
 
-  const changeApplicationState = async (
+  const updateApplication = async (
     applicationId: string,
-    state: ApplicationState,
     event: ApplicationEventType,
+    state?: ApplicationState,
+    appliedDate?: Date,
     rejection?: string,
     comment?: string,
     amount?: Amount,
@@ -48,9 +49,10 @@ export const useApplicationState = () => {
           input: {
             id: applicationId,
             state,
+            appliedDate,
             rejection,
             comment,
-            staffId: admin?.staff?.id,
+            staffId: appliedDate ? undefined : admin?.staff?.id,
             event,
             amount,
           },
@@ -64,5 +66,5 @@ export const useApplicationState = () => {
     }
   }
 
-  return changeApplicationState
+  return updateApplication
 }

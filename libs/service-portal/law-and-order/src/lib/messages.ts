@@ -191,17 +191,8 @@ export const messages = defineMessages({
     id: 'sp.law-and-order:change',
     defaultMessage: 'Breyta',
   },
-  acknowledgeTitle: {
-    id: 'sp.law-and-order:acknowledge-title',
-    defaultMessage: 'Staðfesting á móttöku',
-  },
-  acknowledgeText: {
-    id: 'sp.law-and-order:acknowledge-text',
-    defaultMessage:
-      'Þú ert að opna erindi frá Lögreglustjóranum á höfuðborgarsvæðinu. Veljir þú að opna erindið fá dómstólar senda staðfestingu á möttöku. Veljir þú að opna ekki erindið munu dómstólar leita annarra leiða til að afhenda þér það, t.d. með aðstoð lögreglu.',
-  },
-  acknowledgementCompleted: {
-    id: 'sp.law-and-order:acknowledgement-completed',
-    defaultMessage: 'Staðfesting á móttöku tókst',
+  modalFromPolice: {
+    id: 'sp.law-and-order:modal-from-police',
+    defaultMessage: 'Lögreglustjóranum á höfuðborgarsvæðinu',
   },
 })

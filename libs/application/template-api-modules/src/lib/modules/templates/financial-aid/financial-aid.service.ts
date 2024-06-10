@@ -88,6 +88,8 @@ export class FinancialAidService extends BaseTemplateApiService {
             name: child.fullName,
             nationalId: child.nationalId,
             school: child.school,
+            livesWithApplicant: child.livesWithApplicant,
+            livesWithBothParents: child.livesWithBothParents,
           }
         })
       : []
@@ -178,6 +180,7 @@ export class FinancialAidService extends BaseTemplateApiService {
       state: ApplicationState.NEW,
       files: files,
       children: children,
+      childrenComment: answers.childrenComment,
       spouseNationalId:
         externalData.nationalRegistrySpouse.data?.nationalId ||
         answers.relationshipStatus?.spouseNationalId,

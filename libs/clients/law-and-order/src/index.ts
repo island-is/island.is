@@ -1,5 +1,0 @@
-export { LawAndOrderClientModule } from './lib/lawAndOrderClient.module'
-export { LawAndOrderClientConfig } from './lib/lawAndOrderClient.config'
-export { CasesApi, DefendersApi } from '../gen/fetch'
-export { LawAndOrderClientService } from './lib/lawAndOrderClient.service'
-export * from '../gen/fetch/models'
