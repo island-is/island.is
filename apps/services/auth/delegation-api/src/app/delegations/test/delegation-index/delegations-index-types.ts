@@ -8,6 +8,7 @@ import {
 } from '@island.is/services/auth/testing'
 import { createCurrentUser } from '@island.is/testing/fixtures'
 import { GetIndividualRelationships } from '@island.is/clients-rsk-relationships'
+import { AuthDelegationType } from 'delegation'
 
 export const clientId = '@island.is/webapp'
 export const domainName = '@island.is'
@@ -28,7 +29,7 @@ export interface ITestCaseOptions {
   fromRepresentative?: CreatePersonalRepresentativeDelegation[]
   scopes?: string[]
   scopeAccess?: [string, string][]
-  expectedFrom: string[]
+  expectedFrom: { nationalId: string; type: AuthDelegationType }[]
   representativeRights?: string[]
 }
 
@@ -42,7 +43,7 @@ export class TestCase {
   fromRepresentative: CreatePersonalRepresentativeDelegation[]
   scopes: string[]
   scopeAccess: [string, string][]
-  expectedFrom: string[]
+  expectedFrom: { nationalId: string; type: AuthDelegationType }[]
 
   constructor(client: CreateClient, options: ITestCaseOptions) {
     this.client = client

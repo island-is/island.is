@@ -5,6 +5,7 @@ import { createNationalId } from '@island.is/testing/fixtures'
 import { createClient } from '@island.is/services/auth/testing'
 
 import { clientId, TestCase } from './delegations-index-types'
+import { AuthDelegationType } from 'delegation'
 
 const YEAR = 1000 * 60 * 60 * 24 * 365
 export const testDate = new Date(2024, 2, 1)
@@ -41,7 +42,10 @@ export const indexingTestCases: Record<string, TestCase> = {
     }),
     {
       fromCustom: [adult1, adult2],
-      expectedFrom: [adult1, adult2],
+      expectedFrom: [
+        { nationalId: adult1, type: AuthDelegationType.Custom },
+        { nationalId: adult2, type: AuthDelegationType.Custom },
+      ],
     },
   ),
   // Should index legal guardian delegations
@@ -52,7 +56,11 @@ export const indexingTestCases: Record<string, TestCase> = {
     }),
     {
       fromChildren: [child2, child1],
-      expectedFrom: [child2, child2, child1], // gets both LegalGuardian and LegalGuardianMinor delegation types for child2
+      expectedFrom: [
+        { nationalId: child2, type: AuthDelegationType.LegalGuardian },
+        { nationalId: child2, type: AuthDelegationType.LegalGuardianMinor },
+        { nationalId: child1, type: AuthDelegationType.LegalGuardian },
+      ], // gets both LegalGuardian and LegalGuardianMinor delegation types for child2 (since they are under 16 years old)
     },
   ), // should not index if child is 18 eighteen years old
   ward2: new TestCase(
@@ -72,7 +80,9 @@ export const indexingTestCases: Record<string, TestCase> = {
     }),
     {
       fromChildren: [child3], // exactly 16 years old
-      expectedFrom: [child3],
+      expectedFrom: [
+        { nationalId: child3, type: AuthDelegationType.LegalGuardian },
+      ],
     },
   ),
   ward4: new TestCase(
@@ -93,7 +103,10 @@ export const indexingTestCases: Record<string, TestCase> = {
     }),
     {
       fromCompanies: [company1, company2],
-      expectedFrom: [company1, company2],
+      expectedFrom: [
+        { nationalId: company1, type: AuthDelegationType.ProcurationHolder },
+        { nationalId: company2, type: AuthDelegationType.ProcurationHolder },
+      ],
     },
   ),
   // Should index personal representatives delegations
@@ -106,7 +119,12 @@ export const indexingTestCases: Record<string, TestCase> = {
       fromRepresentative: [
         { fromNationalId: adult1, rightTypes: [{ code: prRight1 }] },
       ],
-      expectedFrom: [adult1],
+      expectedFrom: [
+        {
+          nationalId: adult1,
+          type: `${AuthDelegationType.PersonalRepresentative}:${prRight1}` as AuthDelegationType,
+        },
+      ],
     },
   ),
   singleCustomDelegation: new TestCase(
@@ -116,7 +134,7 @@ export const indexingTestCases: Record<string, TestCase> = {
     }),
     {
       fromCustom: [adult1],
-      expectedFrom: [adult1],
+      expectedFrom: [{ nationalId: adult1, type: AuthDelegationType.Custom }],
     },
   ),
 }

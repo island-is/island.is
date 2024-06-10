@@ -208,8 +208,12 @@ describe('DelegationsIndexService', () => {
 
           expect(delegations.length).toBe(testCase.expectedFrom.length)
           delegations.forEach((delegation) => {
-            expect(testCase.expectedFrom).toContain(delegation.fromNationalId)
-            expect(delegation.toNationalId).toBe(user.nationalId)
+            const delegationRecord = testCase.expectedFrom.find(
+              (record) =>
+                record.nationalId === delegation.fromNationalId &&
+                record.type === delegation.type,
+            )
+            expect(delegationRecord).toBeDefined()
           })
         })
       },
@@ -443,8 +447,12 @@ describe('DelegationsIndexService', () => {
 
       expect(delegations.length).toEqual(testCase.expectedFrom.length)
       delegations.forEach((delegation) => {
-        expect(testCase.expectedFrom).toContain(delegation.fromNationalId)
-        expect(delegation.toNationalId).toBe(user.nationalId)
+        const delegationRecord = testCase.expectedFrom.find(
+          (record) =>
+            record.nationalId === delegation.fromNationalId &&
+            record.type === delegation.type,
+        )
+        expect(delegationRecord).toBeDefined()
       })
     })
   })
@@ -476,11 +484,13 @@ describe('DelegationsIndexService', () => {
 
       expect(delegations.length).toEqual(testCase.expectedFrom.length)
       delegations.forEach((delegation) => {
-        expect(testCase.expectedFrom).toContain(delegation.fromNationalId)
-        expect(delegation.toNationalId).toBe(user.nationalId)
-        expect(delegation.type).toBe(
-          `${AuthDelegationType.PersonalRepresentative}:${prRight1}`,
+        const delegationRecord = testCase.expectedFrom.find(
+          (record) =>
+            record.nationalId === delegation.fromNationalId &&
+            record.type ===
+              `${AuthDelegationType.PersonalRepresentative}:${prRight1}`,
         )
+        expect(delegationRecord).toBeDefined()
       })
     })
   })
