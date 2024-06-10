@@ -3,11 +3,16 @@ import { PDFFont, PDFPage } from 'pdf-lib'
 import { formatDate } from '@island.is/judicial-system/formatters'
 
 import { coatOfArms } from './coatOfArms'
-import { IndictmentConfirmation } from './indictmentPdf'
 import { policeStar } from './policeStar'
 
-export const calculatePt = (px: number) => Math.ceil(px * 0.74999943307122)
+export interface IndictmentConfirmation {
+  actor: string
+  title?: string
+  institution: string
+  date: Date
+}
 
+export const calculatePt = (px: number) => Math.ceil(px * 0.74999943307122)
 export const smallFontSize = 9
 export const baseFontSize = 11
 export const basePlusFontSize = 12

@@ -20,6 +20,7 @@ import {
   addNormalPlusJustifiedText,
   addNormalPlusText,
   addNormalText,
+  IndictmentConfirmation,
   setTitle,
 } from './pdfHelpers'
 
@@ -50,13 +51,6 @@ const roman = (num: number) => {
   }
 
   return str
-}
-
-export interface IndictmentConfirmation {
-  actor: string
-  title?: string
-  institution: string
-  date: Date
 }
 
 export const createIndictment = async (
