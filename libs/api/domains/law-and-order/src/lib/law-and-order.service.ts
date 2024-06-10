@@ -65,21 +65,17 @@ export class LawAndOrderService {
   }
 
   async getCourtCase(user: User, id: string, locale: Locale) {
-    const singleCase = (await this.api.getCase(
-      id,
-      user,
-      locale,
-    )) as unknown as SingleCaseResponseTemp
+    const singleCase = await this.api.getCase(id, user, locale)
     const randomBoolean = Math.random() < 0.75
     let data: CourtCase = {}
 
     data = {
       data: {
-        id: id,
+        id: singleCase?.caseId ?? id,
         acknowledged: randomBoolean,
-        caseNumber: singleCase.data.caseNumber,
-        caseNumberTitle: singleCase.data.caseNumber,
-        groups: singleCase.data.groups,
+        caseNumber: singleCase?.data.caseNumber,
+        caseNumberTitle: singleCase?.data.caseNumber,
+        groups: singleCase?.data.groups,
       },
       actions: undefined,
       texts: undefined,
