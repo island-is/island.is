@@ -59,13 +59,17 @@ export const organizationsStore = create<OrganizationsStore>(
             orgs.find((o) => o.logo?.title === 'Skjaldarmerki')
           c = match?.logo?.url
           if (c) {
-            logoCache.set(forName, c)
+            if (!c.startsWith('https://')) {
+              logoCache.set(forName, `https:${c}`)
+            } else {
+              logoCache.set(forName, c)
+            }
           }
         }
         const url =
           c ??
           'https://images.ctfassets.net/8k0h54kbe6bj/6XhCz5Ss17OVLxpXNVDxAO/d3d6716bdb9ecdc5041e6baf68b92ba6/coat_of_arms.svg'
-        const uri = `${url}?w=${size}&h=${size}&fit=pad&bg=white&fm=png`
+        const uri = `${url}?w=${size}&h=${size}&fit=pad&fm=png`
         return { uri }
       },
       actions: {

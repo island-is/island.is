@@ -99,6 +99,11 @@ export const mapCaseStateToTagVariant = (
           color: 'darkerBlue',
           text: formatMessage(strings.completed, { indictmentRulingDecision }),
         }
+      case CaseState.WAITING_FOR_CANCELLATION:
+        return {
+          color: 'rose',
+          text: formatMessage(strings.recalled),
+        }
       default:
         return { color: 'white', text: formatMessage(strings.unknown) }
     }
