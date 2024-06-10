@@ -1,5 +1,8 @@
 import { Inject, Injectable } from '@nestjs/common'
-import { DocumentsClientV2Service } from '@island.is/clients/documents-v2'
+import {
+  DocumentsClientV2Service,
+  MessageAction,
+} from '@island.is/clients/documents-v2'
 import { LOGGER_PROVIDER, type Logger } from '@island.is/logging'
 import { isDefined } from '@island.is/shared/utils'
 import { Category } from './models/v2/category.model'
@@ -8,6 +11,7 @@ import {
   PaginatedDocuments,
   Document,
   DocumentPageNumber,
+  Actions,
 } from './models/v2/document.model'
 import type { ConfigType } from '@island.is/nest/config'
 import { DocumentsInput } from './models/v2/documents.input'
@@ -67,22 +71,7 @@ export class DocumentServiceV2 {
       default:
         type = FileType.UNKNOWN
     }
-    const mappedActions = document.actions?.map((x) => {
-      if (x.type === 'file') {
-        return {
-          ...x,
-          icon: 'download',
-          data: `${this.downloadServiceConfig.baseUrl}/download/v1/electronic-documents/${x.data}`,
-        }
-      }
-      if (x.type === 'url') {
-        return {
-          ...x,
-          icon: 'open',
-        }
-      }
-      return { ...x, icon: 'receipt' }
-    })
+
     return {
       ...document,
       publicationDate: document.date,
@@ -97,7 +86,7 @@ export class DocumentServiceV2 {
         value: document.content,
       },
       isUrgent: document.urgent,
-      actions: mappedActions,
+      actions: this.actionMapper(documentId, document.actions),
     }
   }
 
@@ -150,7 +139,6 @@ export class DocumentServiceV2 {
               id: d.senderNationalId,
             },
             isUrgent: d.urgent,
-            actions: d.actions,
           }
         })
         .filter(isDefined) ?? []
@@ -346,5 +334,44 @@ export class DocumentServiceV2 {
         })
         throw new Error('Invalid single document action')
     }
+  }
+
+  private actionMapper = (id: string, actions?: Array<MessageAction>) => {
+    if (actions === undefined) return undefined
+    const hasEmpty = actions.every(
+      (x) =>
+        x?.data === undefined ||
+        x.title === undefined ||
+        x.title === '' ||
+        x.data === '',
+    )
+
+    // we return the document even if the actions are faulty, logged for tracability
+    if (hasEmpty) {
+      this.logger.warn('No title or data in actions array', {
+        category: LOG_CATEGORY,
+        id,
+      })
+      return undefined
+    }
+
+    const mapped: Array<Actions> = actions?.map((x) => {
+      if (x.type === 'file') {
+        return {
+          ...x,
+          icon: 'download',
+          data: `${this.downloadServiceConfig.baseUrl}/download/v1/electronic-documents/${x.data}`, // if type file, we download
+        }
+      }
+      if (x.type === 'url') {
+        return {
+          ...x,
+          icon: 'open',
+        }
+      }
+      return { ...x, icon: 'receipt' }
+    })
+
+    return mapped
   }
 }

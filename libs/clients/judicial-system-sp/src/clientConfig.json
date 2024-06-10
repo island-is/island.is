@@ -44,7 +44,7 @@
             "required": false,
             "in": "query",
             "description": "The requested language of the response. Defaults to Icelandic.",
-            "schema": {}
+            "schema": { "type": "string" }
           }
         ],
         "responses": {
@@ -83,7 +83,7 @@
             "required": false,
             "in": "query",
             "description": "The requested language of the response. Defaults to Icelandic.",
-            "schema": {}
+            "schema": { "type": "string" }
           }
         ],
         "responses": {
@@ -122,7 +122,7 @@
             "required": false,
             "in": "query",
             "description": "The requested language of the response. Defaults to Icelandic.",
-            "schema": {}
+            "schema": { "type": "string" }
           }
         ],
         "responses": {
@@ -159,7 +159,7 @@
             "required": false,
             "in": "query",
             "description": "The requested language of the response. Defaults to Icelandic.",
-            "schema": {}
+            "schema": { "type": "string" }
           }
         ],
         "requestBody": {

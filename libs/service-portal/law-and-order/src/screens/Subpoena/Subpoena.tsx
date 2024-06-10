@@ -67,7 +67,6 @@ const Subpoena = () => {
   }
 
   if (subpoenaAcknowledged === false) {
-    console.log('is false')
     return <CourtCaseDetail />
   }
 

@@ -176,10 +176,7 @@ export const DocumentLine: FC<Props> = ({
   const unread = !documentLine.opened
   const isBookmarked = bookmarked || bookmarkSuccess
   const isArchived = activeArchive || archiveSuccess
-  hasFocusOrHover && console.log('hasFocusOrHover')
-  !hasFocusOrHover && console.log('FALSE focusOrHover')
-  isArchived && console.log('ARCHIVED')
-  isBookmarked && console.log('IS BOOKMARKED')
+
   return (
     <Box className={styles.wrapper} ref={wrapperRef}>
       <Box

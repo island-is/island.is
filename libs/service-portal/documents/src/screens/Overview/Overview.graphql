@@ -20,12 +20,6 @@ query DocumentsV2($input: DocumentsV2DocumentsInput!) {
         value
       }
       isUrgent
-      actions {
-        type
-        title
-        data
-        icon
-      }
       alertMessage {
         type
         message
