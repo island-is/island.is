@@ -3,11 +3,16 @@ import { PDFFont, PDFPage } from 'pdf-lib'
 import { formatDate } from '@island.is/judicial-system/formatters'
 
 import { coatOfArms } from './coatOfArms'
-import { IndictmentConfirmation } from './indictmentPdf'
 import { policeStar } from './policeStar'
 
-export const calculatePt = (px: number) => Math.ceil(px * 0.74999943307122)
+export interface IndictmentConfirmation {
+  actor: string
+  title?: string
+  institution: string
+  date: Date
+}
 
+export const calculatePt = (px: number) => Math.ceil(px * 0.74999943307122)
 export const smallFontSize = 9
 export const baseFontSize = 11
 export const basePlusFontSize = 12
@@ -119,7 +124,6 @@ export const addIndictmentConfirmation = (
   const darkGray = '#CBCBCB'
   const gold = '#ADA373'
   const pageMargin = calculatePt(18)
-  // The shaddow and content heights are the same
   const shaddowHeight = calculatePt(90)
   const coatOfArmsWidth = calculatePt(105)
   const coatOfArmsHeight = calculatePt(90)
@@ -135,7 +139,7 @@ export const addIndictmentConfirmation = (
     .rect(
       pageMargin,
       pageMargin + calculatePt(8),
-      doc.page.width + calculatePt(8) - 2 * pageMargin,
+      doc.page.width - calculatePt(8) - 2 * pageMargin,
       shaddowHeight,
     )
     .fill(lightGray)

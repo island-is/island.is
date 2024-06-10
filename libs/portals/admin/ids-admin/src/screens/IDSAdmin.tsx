@@ -12,6 +12,7 @@ import { BackButton } from '@island.is/portals/admin/core'
 
 import { IDSAdminRouteHandle } from '../module'
 import { IDSAdminPaths } from '../lib/paths'
+import { DelegationProvidersProvider } from '../context/DelegationProviders/DelegationProvidersContext'
 
 const IDSAdmin = () => {
   const navigate = useNavigate()
@@ -61,10 +62,12 @@ const IDSAdmin = () => {
   const showBackButton = location.pathname !== IDSAdminPaths.IDSAdmin
 
   return (
-    <Stack space="gutter">
-      {showBackButton && <BackButton onClick={navigateBack} />}
-      <Outlet />
-    </Stack>
+    <DelegationProvidersProvider>
+      <Stack space="gutter">
+        {showBackButton && <BackButton onClick={navigateBack} />}
+        <Outlet />
+      </Stack>
+    </DelegationProvidersProvider>
   )
 }
 

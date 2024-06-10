@@ -2,11 +2,11 @@ import { PDFDocument, rgb, StandardFonts } from 'pdf-lib'
 
 import { formatDate } from '@island.is/judicial-system/formatters'
 
-import { IndictmentConfirmation } from './indictmentPdf'
 import {
   calculatePt,
   drawTextWithEllipsisPDFKit,
   smallFontSize,
+  IndictmentConfirmation,
 } from './pdfHelpers'
 import { PDFKitCoatOfArms } from './PDFKitCoatOfArms'
 
