@@ -68,6 +68,9 @@ export const useEligibility = (
     application.externalData,
     'currentLicense.data',
   )
+  const hasQualityPhoto =
+    getValueViaPath<boolean>(application.externalData, 'qualityPhoto.data') ??
+    false
   const hasOtherLicenseCategories = (
     currentLicense: DrivingLicense | undefined,
   ) => {
@@ -119,13 +122,18 @@ export const useEligibility = (
         isEligible: loading
           ? undefined
           : (data.drivingLicenseApplicationEligibility?.isEligible ?? false) &&
-            !hasGlasses,
+            !hasGlasses &&
+            hasQualityPhoto,
         requirements: [
           ...eligibility,
           {
             key: RequirementKey.BeRequiresHealthCertificate,
             requirementMet:
               !hasGlasses && !hasOtherLicenseCategories(currentLicense),
+          },
+          {
+            key: RequirementKey.HasNoPhoto,
+            requirementMet: hasQualityPhoto,
           },
         ],
       },

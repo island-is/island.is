@@ -50,7 +50,6 @@ const requirementKeyToStep = (
         description: requirementsMessages.drivingAssessmentDescription,
       }
     case RequirementKey.DeniedByService:
-    case RequirementKey.HasNoPhoto:
     case RequirementKey.HasDeprivation:
     case RequirementKey.HasNoSignature:
     case RequirementKey.HasPoints:
@@ -80,6 +79,11 @@ const requirementKeyToStep = (
         title: requirementsMessages.beLicenseRequiresHealthCertificateTitle,
         description:
           requirementsMessages.beLicenseRequiresHealthCertificateDescription,
+      }
+    case RequirementKey.HasNoPhoto:
+      return {
+        title: requirementsMessages.beLicenseQualityPhotoTitle,
+        description: requirementsMessages.beLicenseQualityPhotoDescription,
       }
     default:
       throw new Error('Unknown requirement reason - should not happen')

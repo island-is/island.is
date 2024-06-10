@@ -897,4 +897,19 @@ export const requirementsMessages = defineMessages({
     description:
       'BE application does not support health certificate requirement',
   },
+  //TODO: Remove when RLS/SGS supports health certificate in BE license
+  beLicenseQualityPhotoTitle: {
+    id: 'dl.application:requirementunmet.beLicenseQualityPhotoTitle',
+    defaultMessage: 'Gæðavottuð mynd',
+    description:
+      'requirement unmet api returned false for an unspecified reason',
+  },
+  //TODO: Remove when RLS/SGS supports health certificate in BE license
+  beLicenseQualityPhotoDescription: {
+    id: 'dl.application:requirementunmet.beLicenseQualityPhotoDescription',
+    defaultMessage:
+      'Ef ekki er til gæðavottuð mynd, þarf umsækjandi að mæta í sitt sýslumanns embætti með nýja mynd og leggja inn umsókn á staðnum',
+    description:
+      'requirement unmet api returned false for an unspecified reason',
+  },
 })
