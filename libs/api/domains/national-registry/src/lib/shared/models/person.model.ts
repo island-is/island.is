@@ -37,6 +37,9 @@ export class Person extends PersonBase {
   @Field(() => [ChildCustody], { nullable: true })
   childCustody?: Array<ChildCustody> | null
 
+  @Field(() => [ChildCustody], { nullable: true })
+  biologicalChildren?: Array<ChildCustody> | null
+
   @Field(() => Birthplace, { nullable: true })
   birthplace?: Birthplace | null
 

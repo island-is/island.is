@@ -80,15 +80,10 @@ export function NotificationCard({
   testID,
 }: CardProps) {
   const theme = useTheme()
-
   return (
     <Host
       onPress={() => onPress(id)}
-      underlayColor={
-        underlayColor ?? theme.isDark
-          ? theme.shade.shade400
-          : theme.color.blue100
-      }
+      underlayColor={underlayColor ?? theme.shade.shade400}
       unread={unread}
       testID={testID}
     >

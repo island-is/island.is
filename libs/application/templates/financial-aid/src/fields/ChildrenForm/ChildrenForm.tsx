@@ -13,7 +13,6 @@ import { childrenForm } from '../../lib/messages'
 
 import { ChildInput } from './ChildInput'
 import { sortChildrenUnderAgeByAge } from '../../lib/utils'
-import { SummaryComment } from '../Summary'
 import { Controller, useFormContext } from 'react-hook-form'
 
 const ChildrenForm = ({ application, field, errors }: FAFieldBaseProps) => {
@@ -35,10 +34,17 @@ const ChildrenForm = ({ application, field, errors }: FAFieldBaseProps) => {
       </Box>
 
       {childrenInfo?.map((child, index) => {
+        const fieldIndex = `${field.id}[${index}]`
+
+        setValue(`${fieldIndex}.livesWithApplicant`, child.livesWithApplicant)
+        setValue(
+          `${fieldIndex}.livesWithBothParents`,
+          child.livesWithBothParents,
+        )
+
         return (
           <ChildInput
-            id={field.id}
-            index={index}
+            fieldIndex={fieldIndex}
             errors={errors}
             childFullName={child.fullName}
             childNationalId={child.nationalId}
@@ -57,6 +63,9 @@ const ChildrenForm = ({ application, field, errors }: FAFieldBaseProps) => {
           <Text as="h3" variant="h3">
             {formatMessage(childrenForm.page.commentTitle)}
           </Text>
+          <Text variant="small">
+            {formatMessage(childrenForm.page.commentText)}
+          </Text>
         </Box>
 
         <Controller
@@ -68,9 +77,6 @@ const ChildrenForm = ({ application, field, errors }: FAFieldBaseProps) => {
                 id={summaryCommentType}
                 name={summaryCommentType}
                 label={formatMessage(childrenForm.inputs.commentLabel)}
-                placeholder={formatMessage(
-                  childrenForm.inputs.commentPlaceholder,
-                )}
                 value={value}
                 textarea={true}
                 rows={8}

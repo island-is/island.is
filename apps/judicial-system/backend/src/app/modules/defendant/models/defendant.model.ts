@@ -13,6 +13,7 @@ import { ApiProperty, ApiPropertyOptional } from '@nestjs/swagger'
 
 import {
   DefendantPlea,
+  DefenderChoice,
   Gender,
   ServiceRequirement,
 } from '@island.is/judicial-system/types'
@@ -94,9 +95,13 @@ export class Defendant extends Model {
   @ApiPropertyOptional({ type: String })
   defenderPhoneNumber?: string
 
-  @Column({ type: DataType.BOOLEAN, allowNull: false, defaultValue: false })
-  @ApiProperty({ type: Boolean })
-  defendantWaivesRightToCounsel!: boolean
+  @Column({
+    type: DataType.ENUM,
+    allowNull: true,
+    values: Object.values(DefenderChoice),
+  })
+  @ApiPropertyOptional({ enum: DefenderChoice })
+  defenderChoice?: DefenderChoice
 
   @Column({
     type: DataType.ENUM,
@@ -120,4 +125,8 @@ export class Defendant extends Model {
   })
   @ApiProperty()
   verdictViewDate?: string
+
+  @Column({ type: DataType.BOOLEAN, allowNull: true })
+  @ApiPropertyOptional({ type: Boolean })
+  acceptCompensationClaim?: boolean
 }

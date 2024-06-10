@@ -274,6 +274,8 @@ export const en: TranslatedMessages = {
 
   // notifications
   'notifications.screenTitle': 'Notifications',
+  'notifications.markAllAsRead': 'Mark all as read',
+  'notifications.settings': 'My settings',
   'notifications.errorUnknown': 'Error occurred while loading notifications',
 
   // profile

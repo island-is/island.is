@@ -2,9 +2,11 @@ import { applyCase } from 'beygla'
 import { PDFDocument, rgb, StandardFonts } from 'pdf-lib'
 
 import { formatDate } from '@island.is/judicial-system/formatters'
-import { IndictmentConfirmation } from '@island.is/judicial-system/types'
 
-import { drawTextWithEllipsisPDFKit } from './pdfHelpers'
+import {
+  drawTextWithEllipsisPDFKit,
+  IndictmentConfirmation,
+} from './pdfHelpers'
 import { PDFKitCoatOfArms } from './PDFKitCoatOfArms'
 
 export const createConfirmedIndictment = async (
