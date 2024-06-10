@@ -576,22 +576,6 @@ export const assets = buildSection({
               marginBottom: 2,
             }),
             buildTextField({
-              id: 'assets.money.info',
-              title: m.moneyText,
-              placeholder: m.moneyPlaceholder,
-              variant: 'textarea',
-              defaultValue: (application: Application) => {
-                return application.answers.applicationFor ===
-                  PREPAID_INHERITANCE
-                  ? ''
-                  : getEstateDataFromApplication(application)
-                      ?.inheritanceReportInfo?.depositsAndMoney?.[0]
-                      ?.description ?? ''
-              },
-              rows: 4,
-              maxLength: 1800,
-            }),
-            buildTextField({
               id: 'assets.money.value',
               title: (application) =>
                 application.answers?.applicationFor === PREPAID_INHERITANCE
