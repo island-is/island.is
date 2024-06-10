@@ -11,8 +11,8 @@ export const done: Form = buildForm({
   children: [
     buildFormConclusionSection({
       sectionTitle: '',
-      multiFieldTitle: 'Umsókn móttekin',
-      alertTitle: 'Umsókn móttekin',
+      multiFieldTitle: m.doneMultiFieldTitleEFS,
+      alertTitle: m.doneAlertTitleEFS,
       alertMessage: ({ answers }) =>
         answers.applicationFor === PREPAID_INHERITANCE
           ? m.doneTitlePrepaidEFS

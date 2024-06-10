@@ -23,7 +23,6 @@ export const HeirsOverview: FC<React.PropsWithChildren<FieldBaseProps>> = ({
   return (
     <Box>
       {heirs?.map((heir, index) => {
-        console.log(heir)
         const showTaxFree =
           answers.applicationFor === ESTATE_INHERITANCE ||
           (answers.applicationFor === PREPAID_INHERITANCE &&

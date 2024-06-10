@@ -430,7 +430,7 @@ export class CaseService {
         ...caseToCreate,
         state: isIndictmentCase(caseToCreate.type)
           ? CaseState.DRAFT
-          : undefined,
+          : CaseState.NEW,
       },
       { transaction },
     )

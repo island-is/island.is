@@ -49,7 +49,6 @@ export const useDocumentList = () => {
   }
 
   const { data, loading, error, refetch } = useDocumentsV2Query({
-    fetchPolicy: 'network-only',
     variables: fetchObject,
   })
 
