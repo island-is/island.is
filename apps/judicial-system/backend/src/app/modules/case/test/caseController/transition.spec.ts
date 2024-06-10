@@ -501,6 +501,14 @@ describe('CaseController - Transition', () => {
                   body: { type: NotificationType.RECEIVED_BY_COURT },
                 },
                 {
+                  type: MessageType.DELIVERY_TO_COURT_INDICTMENT_INFO,
+                  user: {
+                    ...defaultUser,
+                    canConfirmIndictment: isIndictmentCase(theCase.type),
+                  },
+                  caseId,
+                },
+                {
                   type: MessageType.DELIVERY_TO_POLICE_INDICTMENT,
                   user: {
                     ...defaultUser,
