@@ -393,6 +393,14 @@ export const m = defineMessages({
     id: 'portals-admin.form-system:property-number-input',
     defaultMessage: 'Skrá fasteignanúmer',
   },
+  addGroupHover: {
+    id: 'portals-admin.form-system:add-step-hover',
+    defaultMessage: 'Bæta við skrefi',
+  },
+  addInputHover: {
+    id: 'portals-admin.form-system:add-input-hover',
+    defaultMessage: 'Bæta við innslætti',
+  },
   // Error messages
   invalidEmail: {
     id: 'portals-admin.form-system:invalid-email',

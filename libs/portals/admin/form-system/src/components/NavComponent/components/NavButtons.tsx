@@ -1,4 +1,4 @@
-import { Box, Icon } from '@island.is/island-ui/core'
+import { Box, Icon, Tooltip } from '@island.is/island-ui/core'
 import { useContext } from 'react'
 import { FormSystemGroup, FormSystemInput } from '@island.is/api/schema'
 import {
@@ -12,11 +12,15 @@ import {
 import { useFormSystemDeleteStepMutation } from './Step.generated'
 import { ControlContext } from '../../../context/ControlContext'
 import { removeTypename } from '../../../lib/utils/removeTypename'
+import { useIntl } from 'react-intl'
+import { m } from '../../../lib/messages'
 
 export const NavButtons = () => {
   const { control, controlDispatch } = useContext(ControlContext)
   const { activeItem, form } = control
   const { groupsList: groups, inputsList: inputs } = form
+  const { formatMessage } = useIntl()
+  const hoverText = activeItem.type === 'Step' ? formatMessage(m.addGroupHover) : formatMessage(m.addInputHover)
 
   const [addGroup] = useFormSystemCreateGroupMutation()
   const [addInput] = useFormSystemCreateInputMutation()
@@ -116,11 +120,22 @@ export const NavButtons = () => {
           marginRight={1}
           onClick={addItem}
         >
-          <Icon icon="add" color="blue400" size="medium" />
+          <Tooltip
+            text={hoverText}
+            color='white'
+          >
+            <span>
+              <Icon icon="add" color="blue400" size="medium" />
+            </span>
+          </Tooltip>
         </Box>
       )}
       <Box style={{ paddingTop: '5px', cursor: 'pointer' }} onClick={remove}>
-        <Icon icon="trash" size="medium" />
+        <Tooltip text="Eyða">
+          <span>
+            <Icon icon="trash" size="medium" />
+          </span>
+        </Tooltip>
       </Box>
     </Box>
   )
