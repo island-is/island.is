@@ -11,7 +11,7 @@ import {
   getEstateDataFromApplication,
   shouldShowDeceasedShareField,
 } from '../../lib/utils/helpers'
-import { Application, YES } from '@island.is/application/types'
+import { Application, FormValue, YES } from '@island.is/application/types'
 import { ESTATE_INHERITANCE, PREPAID_INHERITANCE } from '../../lib/constants'
 
 export const assets = buildSection({
@@ -574,6 +574,24 @@ export const assets = buildSection({
                   : m.moneyDescription,
               titleVariant: 'h3',
               marginBottom: 2,
+            }),
+            buildTextField({
+              id: 'assets.money.info',
+              title: m.moneyText,
+              placeholder: m.moneyPlaceholder,
+              variant: 'textarea',
+              defaultValue: (application: Application) => {
+                return application.answers.applicationFor ===
+                  PREPAID_INHERITANCE
+                  ? ''
+                  : getEstateDataFromApplication(application)
+                      ?.inheritanceReportInfo?.depositsAndMoney?.[0]
+                      ?.description ?? ''
+              },
+              rows: 4,
+              maxLength: 1800,
+              condition: (answers: FormValue) =>
+                answers.applicationFor === ESTATE_INHERITANCE,
             }),
             buildTextField({
               id: 'assets.money.value',
