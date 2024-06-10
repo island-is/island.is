@@ -73,7 +73,7 @@ function HealthDeclaration({ field, application }: PropTypes): JSX.Element {
                 ) as string[]
                 if (
                   value === YES &&
-                  !(currValues as string[]).some((x) => x === field.id)
+                  !(currValues as string[])?.some((x) => x === field.id)
                 ) {
                   setValue('healthDeclarationValidForBELicense', [
                     ...(currValues ?? []),

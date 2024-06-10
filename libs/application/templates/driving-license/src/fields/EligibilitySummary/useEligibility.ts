@@ -75,7 +75,7 @@ export const useEligibility = (
     currentLicense: DrivingLicense | undefined,
   ) => {
     return (
-      currentLicense?.categories.some(
+      (currentLicense?.categories.some(
         (license) =>
           license.nr === 'C' ||
           license.nr === 'C1' ||
@@ -83,7 +83,13 @@ export const useEligibility = (
           license.nr === 'D' ||
           license.nr === 'D1' ||
           license.nr === 'DE',
-      ) ?? false
+      ) ??
+        false) ||
+      currentLicense?.remarks?.some((x) =>
+        x.includes(
+          'Réttindi til farþegaflutninga í atvinnuskyni fyrir B-flokk.',
+        ),
+      )
     )
   }
 
