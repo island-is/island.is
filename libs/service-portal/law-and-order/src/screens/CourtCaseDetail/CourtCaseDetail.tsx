@@ -79,14 +79,28 @@ const CourtCaseDetail = () => {
         serviceProviderTooltip={formatMessage(m.domsmalaraduneytidTooltip)}
       />
       <Box marginBottom={3} display="flex" flexWrap="wrap">
-        <Box paddingRight={2} marginBottom={[1]}>
-          {subpoenaAcknowledged ? (
-            <LinkResolver
-              href={LawAndOrderPaths.SubpoenaDetail.replace(
-                ':id',
-                id?.toString() || '',
-              )}
-            >
+        {!loading && (
+          <Box paddingRight={2} marginBottom={[1]}>
+            {subpoenaAcknowledged ? (
+              <LinkResolver
+                href={LawAndOrderPaths.SubpoenaDetail.replace(
+                  ':id',
+                  id?.toString() || '',
+                )}
+              >
+                <Button
+                  as="span"
+                  unfocusable
+                  colorScheme="default"
+                  icon="receipt"
+                  iconType="outline"
+                  size="default"
+                  variant="utility"
+                >
+                  {formatMessage(messages.seeSubpoena)}
+                </Button>
+              </LinkResolver>
+            ) : (
               <Button
                 as="span"
                 unfocusable
@@ -95,25 +109,13 @@ const CourtCaseDetail = () => {
                 iconType="outline"
                 size="default"
                 variant="utility"
+                onClick={() => toggleModal()}
               >
                 {formatMessage(messages.seeSubpoena)}
               </Button>
-            </LinkResolver>
-          ) : (
-            <Button
-              as="span"
-              unfocusable
-              colorScheme="default"
-              icon="receipt"
-              iconType="outline"
-              size="default"
-              variant="utility"
-              onClick={() => toggleModal()}
-            >
-              {formatMessage(messages.seeSubpoena)}
-            </Button>
-          )}
-        </Box>
+            )}
+          </Box>
+        )}
         {error && !loading && <Problem error={error} noBorder={false} />}
         {!error &&
           !loading &&
