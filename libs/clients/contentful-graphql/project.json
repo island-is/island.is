@@ -24,7 +24,7 @@
     "codegen/backend-client": {
       "executor": "nx:run-commands",
       "options": {
-        "command": "cross-env INIT_SCHEMA=true graphql-codegen --config libs/clients/contentful-graphql/codegen.yaml"
+        "command": "cross-env INIT_SCHEMA=true yarn ts-node graphql-codegen --config libs/clients/contentful-graphql/codegen.yaml"
       },
       "inputs": ["{projectRoot}/codegen.yaml"],
       "outputs": ["{projectRoot}/gen", "{projectRoot}/**/*.generated.ts"]
