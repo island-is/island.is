@@ -29,6 +29,7 @@ import { hasSentNotification } from '@island.is/judicial-system-web/src/utils/st
 import { isSubpoenaStepValid } from '@island.is/judicial-system-web/src/utils/validate'
 
 import { subpoena as strings } from './Subpoena.strings'
+import * as styles from './Subpoena.css'
 
 const Subpoena: React.FC<React.PropsWithChildren<unknown>> = () => {
   const { workingCase, setWorkingCase, isLoadingWorkingCase, caseNotFound } =
@@ -100,7 +101,7 @@ const Subpoena: React.FC<React.PropsWithChildren<unknown>> = () => {
             required
           />
           <BlueBox>
-            <Box marginBottom={2}>
+            <Box className={styles.subpoenaTypeGrid}>
               <RadioButton
                 large
                 name="subpoenaType"
@@ -110,16 +111,16 @@ const Subpoena: React.FC<React.PropsWithChildren<unknown>> = () => {
                 checked={subpoenaType === 'absence'}
                 onChange={() => setSubpoenaType('absence')}
               />
+              <RadioButton
+                large
+                name="subpoenaType"
+                id="subpoenaTypeArrest"
+                backgroundColor="white"
+                label={formatMessage(strings.subpoenaTypeArrest)}
+                checked={subpoenaType === 'arrest'}
+                onChange={() => setSubpoenaType('arrest')}
+              />
             </Box>
-            <RadioButton
-              large
-              name="subpoenaType"
-              id="subpoenaTypeArrest"
-              backgroundColor="white"
-              label={formatMessage(strings.subpoenaTypeArrest)}
-              checked={subpoenaType === 'arrest'}
-              onChange={() => setSubpoenaType('arrest')}
-            />
           </BlueBox>
         </Box>
         <Box component="section" marginBottom={10}>
