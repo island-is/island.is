@@ -1,4 +1,4 @@
-import { Op } from 'sequelize'
+import { json, Op } from 'sequelize'
 import { Includeable, OrderItem, Transaction } from 'sequelize/types'
 import { Sequelize } from 'sequelize-typescript'
 
@@ -602,20 +602,28 @@ export class CaseService {
       },
     ]
 
-    if (isIndictmentCase(theCase.type) && theCase.origin === CaseOrigin.LOKE) {
+    if (isIndictmentCase(theCase.type)) {
       messages.push({
-        type: MessageType.DELIVERY_TO_POLICE_INDICTMENT,
+        type: MessageType.DELIVERY_TO_COURT_INDICTMENT_INFO,
         user,
         caseId: theCase.id,
       })
-      theCase.policeCaseNumbers.forEach((policeCaseNumber) =>
+
+      if (theCase.origin === CaseOrigin.LOKE) {
         messages.push({
-          type: MessageType.DELIVERY_TO_POLICE_CASE_FILES_RECORD,
+          type: MessageType.DELIVERY_TO_POLICE_INDICTMENT,
           user,
           caseId: theCase.id,
-          elementId: policeCaseNumber,
-        }),
-      )
+        })
+        theCase.policeCaseNumbers.forEach((policeCaseNumber) =>
+          messages.push({
+            type: MessageType.DELIVERY_TO_POLICE_CASE_FILES_RECORD,
+            user,
+            caseId: theCase.id,
+            elementId: policeCaseNumber,
+          }),
+        )
+      }
     }
 
     return this.messageService.sendMessagesToQueue(messages)
@@ -1090,8 +1098,10 @@ export class CaseService {
     user: TUser,
   ): Promise<void> {
     const isIndictment = isIndictmentCase(updatedCase.type)
+
     if (updatedCase.state !== theCase.state) {
       // New case state
+
       if (
         updatedCase.state === CaseState.RECEIVED &&
         theCase.state === CaseState.SUBMITTED
@@ -1374,19 +1384,34 @@ export class CaseService {
     transaction: Transaction,
   ) {
     if (
-      isIndictmentCase(theCase.type) &&
-      update.state === CaseState.SUBMITTED &&
-      theCase.state === CaseState.WAITING_FOR_CONFIRMATION
+      update.state === CaseState.RECEIVED &&
+      theCase.state === CaseState.SUBMITTED
     ) {
       return this.eventLogService.create(
         {
-          eventType: EventType.INDICTMENT_CONFIRMED,
+          eventType: EventType.CASE_RECEIVED_BY_COURT,
           caseId: theCase.id,
           nationalId: user.nationalId,
           userRole: user.role,
         },
         transaction,
       )
+    }
+    if (isIndictmentCase(theCase.type)) {
+      if (
+        update.state === CaseState.SUBMITTED &&
+        theCase.state === CaseState.WAITING_FOR_CONFIRMATION
+      ) {
+        return this.eventLogService.create(
+          {
+            eventType: EventType.INDICTMENT_CONFIRMED,
+            caseId: theCase.id,
+            nationalId: user.nationalId,
+            userRole: user.role,
+          },
+          transaction,
+        )
+      }
     }
   }
 
