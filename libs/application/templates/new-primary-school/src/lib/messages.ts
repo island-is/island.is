@@ -317,28 +317,94 @@ export const newPrimarySchoolMessages: MessageDir = {
       description: 'Primary school',
     },
 
-    // Apply to a new school
-    newSchoolSubSectionTitle: {
-      id: 'dess.nps.application:primary.school.new.school.sub.section.title',
-      defaultMessage: 'Nýr skóli',
-      description: 'New school',
+    // Reason for application
+    reasonForApplicationSubSectionTitle: {
+      id: 'dess.nps.application:primary.school.reason.for.application.sub.section.title',
+      defaultMessage: 'Ástæða umsóknar',
+      description: 'Reason for application',
     },
-
-    // Reason for transfer
-    reasonForTransferSubSectionTitle: {
-      id: 'dess.nps.application:primary.school.starting.school.reason.for.transfer.sub.section.title',
-      defaultMessage: 'Ástæða flutnings',
-      description: 'Reason for transfer',
+    reasonForApplicationDescription: {
+      id: 'dess.nps.application:primary.school.reason.for.application.description',
+      defaultMessage:
+        'Barn á alltaf rétt á skólavist í sínum hverfisskóla. Séu ástæður umsóknar aðrar en flutningur lögheimilis getur verið að skólinn sjái sér ekki fært að taka á móti barninu. Það fer eftir aðstæðum í skólanum hverju sinni, svo sem rými.',
+      description:
+        'A child always has the right to attend school in his neighborhood school. If the reasons for the application are other than a change of legal residence, the school may not be able to accept the child. It depends on the situation in the school each time, such as space.',
+    },
+    reasonForApplicationPlaceholder: {
+      id: 'dess.nps.application:primary.school.reason.for.application.placeholder',
+      defaultMessage: 'Veldu ástæðu',
+      description: 'Select reason',
+    },
+    transferOfLegalDomicile: {
+      id: 'dess.nps.application:primary.school.transfer.of.legal.domicile',
+      defaultMessage: 'Flutningur lögheimilis',
+      description: 'Transfer of legal domicile',
+    },
+    studyStayForParents: {
+      id: 'dess.nps.application:primary.school.study.stay.for.parents',
+      defaultMessage: 'Námsdvöl foreldra',
+      description: 'Study stay for parents',
+    },
+    parentsParliamentaryMembership: {
+      id: 'dess.nps.application:primary.school.parents.parliamentary.membership',
+      defaultMessage: 'Þingmennska foreldris',
+      description: "Parent's parliamentary membership",
+    },
+    temporaryFoster: {
+      id: 'dess.nps.application:primary.school.temporary.foster',
+      defaultMessage: 'Tímabundið fóstur',
+      description: 'Temporary foster',
+    },
+    expertService: {
+      id: 'dess.nps.application:primary.school.expert.service',
+      defaultMessage: 'Sérfræðiþjónusta',
+      description: 'Expert service',
+    },
+    sickly: {
+      id: 'dess.nps.application:primary.school.sickly',
+      defaultMessage: 'Sjúkralega',
+      description: 'Sickly',
+    },
+    livesInTwoHomes: {
+      id: 'dess.nps.application:primary.school.lives.in.two.homes',
+      defaultMessage: 'Býr á tveimur heimilum',
+      description: 'Lives in two homes',
+    },
+    movingAbroad: {
+      id: 'dess.nps.application:primary.school.moving.abroad',
+      defaultMessage: 'Flutningur erlendis',
+      description: 'Moving abroad',
+    },
+    otherReasons: {
+      id: 'dess.nps.application:primary.school.other.reasons',
+      defaultMessage: 'Aðrar ástæður',
+      description: 'Other reasons',
+    },
+    registerNewDomicileAlertMessage: {
+      id: 'dess.nps.application:primary.school.register.new.domicile.alert.message',
+      defaultMessage: 'Minnum þig á að skrá nýtt lögheimili í Þjóðskrá.',
+      description:
+        'We remind you to register your new domicile in the National Registry.',
+    },
+    country: {
+      id: 'dess.nps.application:primary.school.country',
+      defaultMessage: 'Til hvaða lands er verið að flytja?',
+      description: 'What country are you moving to?',
+    },
+    countryPlaceholder: {
+      id: 'dess.nps.application:primary.school.country.placeholder',
+      defaultMessage: 'Veldu land',
+      description: 'Select a country',
     },
 
     // Siblings
     siblingsSubSectionTitle: {
-      id: 'dess.nps.application:primary.school.starting.school.siblings.sub.section.title',
+      id: 'dess.nps.application:primary.school.siblings.sub.section.title',
       defaultMessage: 'Systkini',
       description: 'Siblings',
     },
     siblingsTitle: {
-      id: 'dess.nps.application:primary.school.starting.school.siblings.title',
+      id: 'dess.nps.application:primary.school.siblings.title',
       defaultMessage: 'Systkini í sama grunnskóla',
       description: 'Siblings in the same primary school',
     },
@@ -376,6 +442,13 @@ export const newPrimarySchoolMessages: MessageDir = {
       id: 'dess.nps.application:primary.school.siblings.relation.step.sibling',
       defaultMessage: 'Stjúpsystkini',
       description: 'Step sibling',
+    },
+
+    // Apply to a new school
+    newSchoolSubSectionTitle: {
+      id: 'dess.nps.application:primary.school.new.school.sub.section.title',
+      defaultMessage: 'Nýr skóli',
+      description: 'New school',
     },
 
     // Starting school

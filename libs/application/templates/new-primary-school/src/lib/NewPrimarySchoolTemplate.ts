@@ -19,7 +19,7 @@ import {
 } from '@island.is/application/types'
 import unset from 'lodash/unset'
 import { assign } from 'xstate'
-import { Events, Roles, States } from './constants'
+import { Events, ReasonForApplicationOptions, Roles, States } from './constants'
 import { dataSchema } from './dataSchema'
 import { newPrimarySchoolMessages, statesMessages } from './messages'
 import {
@@ -92,6 +92,7 @@ const NewPrimarySchoolTemplate: ApplicationTemplate<
       },
       [States.DRAFT]: {
         exit: [
+          'clearApplicationIfReasonForApplication',
           'clearLanguages',
           'clearAllergiesAndIntolerances',
           'clearPublication',
@@ -164,6 +165,39 @@ const NewPrimarySchoolTemplate: ApplicationTemplate<
   },
   stateMachineOptions: {
     actions: {
+      /**
+       * Clear answers depending on what is selected as reason for application
+       */
+      clearApplicationIfReasonForApplication: assign((context) => {
+        const { application } = context
+        const { reasonForApplication } = getApplicationAnswers(
+          application.answers,
+        )
+
+        // Clear answers if "Moving abroad" is selected as reason for application
+        if (
+          reasonForApplication === ReasonForApplicationOptions.MOVING_ABROAD
+        ) {
+          unset(application.answers, 'support')
+          unset(application.answers, 'siblings')
+          unset(application.answers, 'languages')
+          unset(application.answers, 'startDate')
+          unset(application.answers, 'photography')
+          unset(application.answers, 'allergiesAndIntolerances')
+        } else {
+          // Clear country if "Moving abroad" is not selected as reason for application
+          unset(application.answers, 'reasonForApplication.country')
+        }
+
+        // Clear siblings if "Siblings in the same primary school" is not selected as reason for application
+        if (
+          reasonForApplication !==
+          ReasonForApplicationOptions.SIBLINGS_IN_THE_SAME_PRIMARY_SCHOOL
+        ) {
+          unset(application.answers, 'siblings')
+        }
+        return context
+      }),
       clearLanguages: assign((context) => {
         const { application } = context
         const { otherLanguagesSpokenDaily } = getApplicationAnswers(

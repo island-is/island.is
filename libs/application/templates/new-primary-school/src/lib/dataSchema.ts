@@ -5,6 +5,7 @@ import { z } from 'zod'
 import {
   FoodAllergiesOptions,
   FoodIntolerancesOptions,
+  ReasonForApplicationOptions,
   RelationOptions,
   SiblingRelationOptions,
 } from './constants'
@@ -84,6 +85,29 @@ export const dataSchema = z.object({
     .refine((r) => r === undefined || r.length > 0, {
       params: errorMessages.relativesRequired,
     }),
+  reasonForApplication: z
+    .object({
+      reason: z.enum([
+        ReasonForApplicationOptions.TRANSFER_OF_LEGAL_DOMICILE,
+        ReasonForApplicationOptions.STUDY_STAY_FOR_PARENTS,
+        ReasonForApplicationOptions.PARENTS_PARLIAMENTARY_MEMBERSHIP,
+        ReasonForApplicationOptions.TEMPORARY_FROSTER,
+        ReasonForApplicationOptions.EXPERT_SERVICE,
+        ReasonForApplicationOptions.SICKLY,
+        ReasonForApplicationOptions.LIVES_IN_TWO_HOMES,
+        ReasonForApplicationOptions.SIBLINGS_IN_THE_SAME_PRIMARY_SCHOOL,
+        ReasonForApplicationOptions.MOVING_ABROAD,
+        ReasonForApplicationOptions.OTHER_REASONS,
+      ]),
+      country: z.string().optional(),
+    })
+    .refine(
+      ({ reason, country }) =>
+        reason === ReasonForApplicationOptions.MOVING_ABROAD ? !!country : true,
+      {
+        path: ['country'],
+      },
+    ),
   siblings: z
     .array(
       z.object({
@@ -98,7 +122,6 @@ export const dataSchema = z.object({
         ]),
       }),
     )
-    // TODO: Skoða betur þegar Reason for transfer er komið inn?
     .refine((r) => r === undefined || r.length > 0, {
       params: errorMessages.siblingsRequired,
     }),

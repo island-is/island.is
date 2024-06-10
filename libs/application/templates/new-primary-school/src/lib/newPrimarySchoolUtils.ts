@@ -10,6 +10,7 @@ import { Child, Parents, Person, RelativesRow, SiblingsRow } from '../types'
 import {
   FoodAllergiesOptions,
   FoodIntolerancesOptions,
+  ReasonForApplicationOptions,
   RelationOptions,
   SiblingRelationOptions,
   languageCodes,
@@ -22,6 +23,16 @@ export const getApplicationAnswers = (answers: Application['answers']) => {
   const parents = getValueViaPath(answers, 'parents') as Parents
 
   const relatives = getValueViaPath(answers, 'relatives') as RelativesRow[]
+
+  const reasonForApplication = getValueViaPath(
+    answers,
+    'reasonForApplication.reason',
+  ) as ReasonForApplicationOptions
+
+  const reasonForApplicationCountry = getValueViaPath(
+    answers,
+    'reasonForApplication.country',
+  ) as string
 
   const siblings = getValueViaPath(answers, 'siblings') as SiblingsRow[]
 
@@ -105,6 +116,8 @@ export const getApplicationAnswers = (answers: Application['answers']) => {
     childNationalId,
     parents,
     relatives,
+    reasonForApplication,
+    reasonForApplicationCountry,
     siblings,
     nativeLanguage,
     otherLanguagesSpokenDaily,
@@ -254,6 +267,60 @@ export const getRelationOptions = () => [
 export const getRelationOptionLabel = (value: RelationOptions) => {
   const relationOptions = getRelationOptions()
   return relationOptions.find((option) => option.value === value)?.label ?? ''
+}
+
+export const getReasonForApplicationOptions = () => [
+  {
+    value: ReasonForApplicationOptions.TRANSFER_OF_LEGAL_DOMICILE,
+    label: newPrimarySchoolMessages.primarySchool.transferOfLegalDomicile,
+  },
+  {
+    value: ReasonForApplicationOptions.STUDY_STAY_FOR_PARENTS,
+    label: newPrimarySchoolMessages.primarySchool.studyStayForParents,
+  },
+  {
+    value: ReasonForApplicationOptions.PARENTS_PARLIAMENTARY_MEMBERSHIP,
+    label:
+      newPrimarySchoolMessages.primarySchool.parentsParliamentaryMembership,
+  },
+  {
+    value: ReasonForApplicationOptions.TEMPORARY_FROSTER,
+    label: newPrimarySchoolMessages.primarySchool.temporaryFoster,
+  },
+  {
+    value: ReasonForApplicationOptions.EXPERT_SERVICE,
+    label: newPrimarySchoolMessages.primarySchool.expertService,
+  },
+  {
+    value: ReasonForApplicationOptions.SICKLY,
+    label: newPrimarySchoolMessages.primarySchool.sickly,
+  },
+  {
+    value: ReasonForApplicationOptions.LIVES_IN_TWO_HOMES,
+    label: newPrimarySchoolMessages.primarySchool.livesInTwoHomes,
+  },
+  {
+    value: ReasonForApplicationOptions.SIBLINGS_IN_THE_SAME_PRIMARY_SCHOOL,
+    label: newPrimarySchoolMessages.primarySchool.siblingsTitle,
+  },
+  {
+    value: ReasonForApplicationOptions.MOVING_ABROAD,
+    label: newPrimarySchoolMessages.primarySchool.movingAbroad,
+  },
+  {
+    value: ReasonForApplicationOptions.OTHER_REASONS,
+    label: newPrimarySchoolMessages.primarySchool.otherReasons,
+  },
+]
+
+export const getReasonForApplicationOptionLabel = (
+  value: ReasonForApplicationOptions,
+) => {
+  const reasonForApplicationOptions = getReasonForApplicationOptions()
+  return (
+    reasonForApplicationOptions.find((option) => option.value === value)
+      ?.label ?? ''
+  )
 }
 
 export const getSiblingRelationOptions = () => [

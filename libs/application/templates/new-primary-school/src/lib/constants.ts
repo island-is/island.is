@@ -33,6 +33,19 @@ export enum RelationOptions {
   FRIEND_OR_OTHER = 'friendOrOther',
 }
 
+export enum ReasonForApplicationOptions {
+  TRANSFER_OF_LEGAL_DOMICILE = 'transferOfLegalDomicile',
+  STUDY_STAY_FOR_PARENTS = 'studyStayForParents',
+  PARENTS_PARLIAMENTARY_MEMBERSHIP = 'parentsParliamentaryMembership',
+  TEMPORARY_FROSTER = 'temporaryFoster',
+  EXPERT_SERVICE = 'expertService',
+  SICKLY = 'sickly',
+  LIVES_IN_TWO_HOMES = 'livesInTwoHomes',
+  SIBLINGS_IN_THE_SAME_PRIMARY_SCHOOL = 'siblingsInTheSamePrimarySchool',
+  MOVING_ABROAD = 'movingAbroad',
+  OTHER_REASONS = 'otherReasons',
+}
+
 export enum SiblingRelationOptions {
   SIBLING = 'Sibling',
   HALF_SIBLING = 'halfSibling',
