@@ -14,7 +14,8 @@ import {
 } from '@island.is/application/types'
 import { m } from '../lib/messages'
 
-export const getInstructorRegistrations = (): Form => {
+export const getInstructorRegistrations = (allowBELicense = false): Form => {
+  console.log(allowBELicense)
   return buildForm({
     id: 'InstructorRegistrationsTemplate',
     title: '',
@@ -54,11 +55,16 @@ export const getInstructorRegistrations = (): Form => {
         id: 'students',
         title: m.studentsOverviewSideTitle,
         children: [
-          buildCustomField({
-            title: '',
-            id: 'table',
-            component: 'StudentsOverview',
-          }),
+          buildCustomField(
+            {
+              title: '',
+              id: 'table',
+              component: 'StudentsOverview',
+            },
+            {
+              allowBELicense: allowBELicense,
+            },
+          ),
         ],
       }),
     ],

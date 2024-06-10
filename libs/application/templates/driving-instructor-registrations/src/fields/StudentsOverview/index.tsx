@@ -25,9 +25,12 @@ import * as styles from '../style.css'
 import { LicenseCategory } from '../../types/enums'
 import { getValueViaPath } from '@island.is/application/core'
 
-const StudentsOverview: FC<React.PropsWithChildren<FieldBaseProps>> = ({
-  application,
-}) => {
+const StudentsOverview: FC<
+  React.PropsWithChildren<FieldBaseProps> & {
+    field: { props: { allowBELicense: boolean } }
+  }
+> = ({ application, field }) => {
+  const { allowBELicense } = field.props
   const { formatMessage } = useLocale()
 
   /* table pagination */
@@ -57,7 +60,8 @@ const StudentsOverview: FC<React.PropsWithChildren<FieldBaseProps>> = ({
     application.externalData,
     'getTeacherRights.data.rights',
   )
-  const showLicenseCategoryTabs = teacherRights?.includes(LicenseCategory.BE)
+  const showLicenseCategoryTabs =
+    allowBELicense && teacherRights?.includes(LicenseCategory.BE)
 
   const handlePagination = (page: number, students: Array<Student>) => {
     setPage(page)

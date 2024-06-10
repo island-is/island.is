@@ -15,6 +15,11 @@ import { Events, States, Roles } from './constants'
 import { dataSchema } from './dataSchema'
 import { m } from './messages'
 import { ApiActions } from './constants'
+import {
+  DrivingLicenseFeatureFlags,
+  getApplicationFeatureFlags,
+} from './getApplicationFeatureFlags'
+import { FeatureFlagClient } from '@island.is/feature-flags'
 
 const InstructorRegistrationsTemplate: ApplicationTemplate<
   ApplicationContext,
@@ -48,10 +53,19 @@ const InstructorRegistrationsTemplate: ApplicationTemplate<
           roles: [
             {
               id: Roles.INSTRUCTOR,
-              formLoader: () =>
-                import('../forms/instructorRegistrations').then((val) =>
-                  Promise.resolve(val.getInstructorRegistrations()),
-                ),
+              formLoader: async ({ featureFlagClient }) => {
+                const featureFlags = await getApplicationFeatureFlags(
+                  featureFlagClient as FeatureFlagClient,
+                )
+                const getForm = await import(
+                  '../forms/instructorRegistrations'
+                ).then((val) => val.getInstructorRegistrations)
+                console.log(featureFlags)
+
+                return getForm(
+                  featureFlags[DrivingLicenseFeatureFlags.ALLOW_BE_LICENSE],
+                )
+              },
               actions: [
                 {
                   event: DefaultEvents.SUBMIT,
