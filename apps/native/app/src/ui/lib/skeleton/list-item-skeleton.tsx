@@ -1,24 +1,31 @@
 import React from 'react'
-import { StyleSheet } from 'react-native'
 import styled from 'styled-components/native'
 import { dynamicColor } from '../../utils'
 import { Skeleton } from './skeleton'
 
 const Host = styled.SafeAreaView`
   position: relative;
-  margin-right: 16px;
   flex-direction: row;
+  border-bottom-width: ${({ theme }) => theme.border.width.standard}px;
+  border-bottom-color: ${dynamicColor(
+    ({ theme }) => ({
+      light: theme.color.blue200,
+      dark: theme.shades.dark.shade400,
+    }),
+    true,
+  )};
 `
 
 const Icon = styled.View`
-  padding: 22px;
   align-items: center;
   justify-content: center;
 `
 
 const Circle = styled.View`
-  height: 25px;
-  width: 25px;
+  margin-vertical: ${({ theme }) => theme.spacing[3]}px;
+  margin-horizontal: ${({ theme }) => theme.spacing[2]}px;
+  height: 42px;
+  width: 42px;
   border-radius: 50px;
   background-color: ${dynamicColor(({ theme }) => ({
     dark: theme.shades.dark.shade100,
@@ -30,8 +37,9 @@ const Content = styled.View`
   flex: 1;
   flex-direction: column;
   align-items: flex-start;
-  padding-bottom: ${({ theme }) => theme.spacing[1]}px;
-  padding-top: ${({ theme }) => theme.spacing[2]}px;
+  padding-bottom: ${({ theme }) => theme.spacing[3]}px;
+  padding-top: ${({ theme }) => theme.spacing[3]}px;
+  margin-right: ${({ theme }) => theme.spacing[2]}px;
 `
 
 const Row = styled.View`
@@ -54,17 +62,6 @@ const Message = styled.View`
   padding-bottom: ${({ theme }) => theme.spacing[1]}px;
 `
 
-const Divider = styled.View`
-  position: absolute;
-  left: 0px;
-  right: -16px;
-  bottom: 0px;
-  background-color: ${dynamicColor(({ theme }) => ({
-    dark: theme.shades.dark.shade100,
-    light: theme.color.blue200,
-  }))};
-`
-
 export function ListItemSkeleton() {
   return (
     <Host>
@@ -84,7 +81,6 @@ export function ListItemSkeleton() {
           <Skeleton active style={{ borderRadius: 4 }} height={17} />
         </Message>
       </Content>
-      <Divider style={{ height: StyleSheet.hairlineWidth }} />
     </Host>
   )
 }
