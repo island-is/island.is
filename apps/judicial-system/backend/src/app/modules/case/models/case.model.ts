@@ -33,6 +33,7 @@ import {
   IndictmentDecision,
   RequestSharedWithDefender,
   SessionArrangements,
+  SubpoenaType,
   UserRole,
 } from '@island.is/judicial-system/types'
 
@@ -1033,4 +1034,15 @@ export class Case extends Model {
   @Column({ type: DataType.STRING, allowNull: true })
   @ApiPropertyOptional({ type: String })
   indictmentHash?: string
+
+  /**********
+   * The type of subpoena in indictment cases
+   **********/
+  @Column({
+    type: DataType.ENUM,
+    allowNull: true,
+    values: Object.values(SubpoenaType),
+  })
+  @ApiPropertyOptional({ enum: SubpoenaType })
+  subpoenaType?: SubpoenaType
 }

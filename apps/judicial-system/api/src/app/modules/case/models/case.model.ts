@@ -22,6 +22,7 @@ import {
   IndictmentDecision,
   RequestSharedWithDefender,
   SessionArrangements,
+  SubpoenaType,
   UserRole,
 } from '@island.is/judicial-system/types'
 
@@ -53,6 +54,7 @@ registerEnumType(IndictmentCaseReviewDecision, {
   name: 'IndictmentCaseReviewDecision',
 })
 registerEnumType(IndictmentDecision, { name: 'IndictmentDecision' })
+registerEnumType(SubpoenaType, { name: 'SubpoenaType' })
 
 @ObjectType()
 class DateLog {
@@ -439,4 +441,7 @@ export class Case {
 
   @Field(() => IndictmentDecision, { nullable: true })
   readonly indictmentDecision?: IndictmentDecision
+
+  @Field(() => SubpoenaType, { nullable: true })
+  readonly subpoenaType?: SubpoenaType
 }
