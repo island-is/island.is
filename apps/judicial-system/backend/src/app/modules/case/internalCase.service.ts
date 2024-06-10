@@ -818,7 +818,7 @@ export class InternalCaseService {
       nowFactory() // The API requires a date so we send now as a dummy date
 
     return this.policeService.updatePoliceCase(
-    user,
+      user,
       originalAncestor.id,
       theCase.type,
       theCase.state,
