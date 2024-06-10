@@ -2,10 +2,11 @@ import React, { useCallback, useContext, useState } from 'react'
 import { useIntl } from 'react-intl'
 import router from 'next/router'
 
-import { Box } from '@island.is/island-ui/core'
+import { Box, RadioButton } from '@island.is/island-ui/core'
 import * as constants from '@island.is/judicial-system/consts'
 import { core, titles } from '@island.is/judicial-system-web/messages'
 import {
+  BlueBox,
   CourtArrangements,
   CourtCaseInfo,
   FormContentContainer,
@@ -33,6 +34,7 @@ const Subpoena: React.FC<React.PropsWithChildren<unknown>> = () => {
   const { workingCase, setWorkingCase, isLoadingWorkingCase, caseNotFound } =
     useContext(FormContext)
   const [navigateTo, setNavigateTo] = useState<keyof stepValidationsType>()
+  const [subpoenaType, setSubpoenaType] = useState<string>()
   const { formatMessage } = useIntl()
   const {
     courtDate,
@@ -92,6 +94,34 @@ const Subpoena: React.FC<React.PropsWithChildren<unknown>> = () => {
       <FormContentContainer>
         <PageTitle>{formatMessage(strings.title)}</PageTitle>
         <CourtCaseInfo workingCase={workingCase} />
+        <Box component="section" marginBottom={5}>
+          <SectionHeading
+            title={formatMessage(strings.subpoenaTypeTitle)}
+            required
+          />
+          <BlueBox>
+            <Box marginBottom={2}>
+              <RadioButton
+                large
+                name="subpoenaType"
+                id="subpoenaTypeAbsence"
+                backgroundColor="white"
+                label={formatMessage(strings.subpoenaTypeAbsence)}
+                checked={subpoenaType === 'absence'}
+                onChange={() => setSubpoenaType('absence')}
+              />
+            </Box>
+            <RadioButton
+              large
+              name="subpoenaType"
+              id="subpoenaTypeArrest"
+              backgroundColor="white"
+              label={formatMessage(strings.subpoenaTypeArrest)}
+              checked={subpoenaType === 'arrest'}
+              onChange={() => setSubpoenaType('arrest')}
+            />
+          </BlueBox>
+        </Box>
         <Box component="section" marginBottom={10}>
           <SectionHeading
             title={formatMessage(strings.courtArrangementsHeading)}
