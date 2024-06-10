@@ -45,6 +45,12 @@ export const m = defineMessages({
     defaultMessage: 'Tegund umsóknar',
     description: 'Get application for',
   },
+  preDataCollectionApplicationFoDescription: {
+    id: 'ir.application:preDataCollectionApplicationFoDescription#markdown',
+    defaultMessage:
+      'Lorem ipsum dolor sit amet, consectetur adipiscing elit. Donec a ex magna. Aenean varius dui eget consectetur posuere. Pellentesque dignissim nunc id euismod porttitor. Curabitur ut ante pellentesque, rutrum purus in, vestibulum elit. Donec egestas lacus justo.',
+    description: 'Get application for',
+  },
   preDataCollectionApplicationForPrepaid: {
     id: 'ir.application:preDataCollectionApplicationForPrepaid',
     defaultMessage: 'Fyrirframgreiddur arfur',
@@ -64,6 +70,11 @@ export const m = defineMessages({
   applicationNamePrepaid: {
     id: 'ir.application:applicationNamePrepaid',
     defaultMessage: 'Fyrirframgreiddur arfur',
+    description: '',
+  },
+  applicationNameEstate: {
+    id: 'ir.application:applicationNameEstate',
+    defaultMessage: 'Dánarbú',
     description: '',
   },
   institutionName: {
@@ -204,6 +215,11 @@ export const m = defineMessages({
   name: {
     id: 'ir.application:name',
     defaultMessage: 'Nafn',
+    description: '',
+  },
+  dateOfBirth: {
+    id: 'ir.application:dateOfBirth',
+    defaultMessage: 'Fæðingardagur',
     description: '',
   },
   nationalId: {
@@ -622,7 +638,7 @@ export const m = defineMessages({
     description: '',
   },
   stocksDescription: {
-    id: 'ir.application:stocksDescription',
+    id: 'ir.application:stocksDescription#markdown',
     defaultMessage: 'Nafn og kennitala ef um einstakling er að ræða.',
     description: '',
   },
@@ -1169,6 +1185,11 @@ export const m = defineMessages({
     defaultMessage: 'Hlutfall séreignar',
     description: '',
   },
+  deceasedSharePart: {
+    id: 'ir.application:deceasedSharePart',
+    defaultMessage: 'Hlutfall séreignar',
+    description: '',
+  },
   spousesShareDescription: {
     id: 'ir.application:spousesShareDescription',
     defaultMessage:
@@ -1463,6 +1484,16 @@ export const m = defineMessages({
     defaultMessage: 'Skiptastjóri',
     description: '',
   },
+  grantors: {
+    id: 'ir.application:grantors',
+    defaultMessage: 'Arflátar',
+    description: '',
+  },
+  grantorsDescription: {
+    id: 'ir.application:grantorsDescription',
+    defaultMessage: 'Lorem ipsum foo bar beep boop meep morp.',
+    description: '',
+  },
   grantor: {
     id: 'ir.application:grantor',
     defaultMessage: 'Arfláti',
@@ -1498,16 +1529,40 @@ export const m = defineMessages({
     defaultMessage: 'Fylgigögn',
     description: '',
   },
+  fileUploadOtherDocumentsPrePaidDescription: {
+    id: 'ir.application:fileUploadOtherDocumentsPrePaidDescription',
+    defaultMessage:
+      'Samþykktar skráargerðir eru .pdf, .doc, .docx, .jpg, .jpeg, .png, .xls og .xlsx',
+    description: '',
+  },
+  fileUploadOtherDocumentsPrePaidUserGuidelines: {
+    id: 'ir.application:fileUploadOtherDocumentsPrePaidUserGuidelines#markdown',
+    defaultMessage:
+      'Vinsamlegast hlaðið upp önnur fylgigögn. Hægt að hlaða inn fleiri en eitt skjal.',
+    description: '',
+  },
   uploadPrivateTransferDescription: {
     id: 'ir.application:uploadPrivateTransferDescription',
     defaultMessage:
       'Samþykktar skráargerðir eru .pdf, .doc, .docx, .jpg, .jpeg, .png, .xls og .xlsx',
     description: '',
   },
+  uploadPrivateTransferUserGuidelines: {
+    id: 'ir.application:uploadPrivateTransferUserGuidelines#markdown',
+    defaultMessage:
+      'Vinsamlegast hlaðið upp einkaskiptagerð. Aðeins er hægt að hlaða inn 1 skjal.',
+    description: '',
+  },
   uploadOtherDocumentsDescription: {
     id: 'ir.application:uploadOtherDocumentsDescription',
     defaultMessage:
       'Samþykktar skráargerðir eru .pdf, .doc, .docx, .jpg, .jpeg, .png, .xls og .xlsx',
+    description: '',
+  },
+  uploadOtherDocumentsUserGuidelines: {
+    id: 'ir.application:uploadOtherDocumentsUserGuidelines#markdown',
+    defaultMessage:
+      'Vinsamlegast hlaðið upp önnur fylgigögn. Hægt að hlaða inn fleiri 1 skjal.',
     description: '',
   },
   heirShare: {
@@ -1685,12 +1740,12 @@ export const m = defineMessages({
     description: '',
   },
   includeSpousePrePaid: {
-    id: 'id.application:includeSpouse',
+    id: 'ir.application:includeSpouse',
     defaultMessage: 'Ráðstafa úr sameign hjúskaps',
     description: '',
   },
   includeSpousePrePaidDescription: {
-    id: 'id.application:includeSpouseDescription',
+    id: 'ir.application:includeSpouseDescription',
     defaultMessage:
       'Ef arfláti er í gift/ur og ráðstafa á úr sameign, þarf maki að vera með sem arfláti',
     description: '',
