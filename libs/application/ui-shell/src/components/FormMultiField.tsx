@@ -84,14 +84,9 @@ const FormMultiField: FC<
 
         const typedField = field as FieldDef
 
-        // Just in case isNavigable is null or undefined, then we still show the field
-        const hideField = typedField?.isNavigable === false ?? true
-
-        const paddingBottom = hideField
-          ? 0
-          : index === children.length - 1
-          ? 0
-          : space
+        const shouldHideField = typedField?.isNavigable === false
+        const isLastChild = index === children.length - 1
+        const paddingBottom = shouldHideField || isLastChild ? 0 : space
 
         return (
           <GridColumn
