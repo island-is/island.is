@@ -15,7 +15,6 @@ import {
 import { m } from '../lib/messages'
 
 export const getInstructorRegistrations = (allowBELicense = false): Form => {
-  console.log(allowBELicense)
   return buildForm({
     id: 'InstructorRegistrationsTemplate',
     title: '',

@@ -60,7 +60,6 @@ const InstructorRegistrationsTemplate: ApplicationTemplate<
                 const getForm = await import(
                   '../forms/instructorRegistrations'
                 ).then((val) => val.getInstructorRegistrations)
-                console.log(featureFlags)
 
                 return getForm(
                   featureFlags[DrivingLicenseFeatureFlags.ALLOW_BE_LICENSE],
