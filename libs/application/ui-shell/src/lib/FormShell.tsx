@@ -5,16 +5,19 @@ import {
   Form,
   FormModes,
   Schema,
+  SectionChildren,
 } from '@island.is/application/types'
 import {
   Box,
+  FormStepperV2,
   GridColumn,
   GridContainer,
   GridRow,
+  Section,
+  Text,
 } from '@island.is/island-ui/core'
 
 import Screen from '../components/Screen'
-import FormStepper from '../components/FormStepper'
 import {
   ApplicationReducer,
   initializeReducer,
@@ -26,6 +29,9 @@ import { useHeaderInfo } from '../context/HeaderInfoProvider'
 import * as styles from './FormShell.css'
 import { ErrorShell } from '../components/ErrorShell'
 import { useAuth } from '@island.is/auth/react'
+import { useLocale } from '@island.is/localization'
+import { MessageDescriptor } from 'react-intl'
+import FormStepper from '../components/FormStepper'
 
 export const FormShell: FC<
   React.PropsWithChildren<{
@@ -53,6 +59,7 @@ export const FormShell: FC<
     },
     initializeReducer,
   )
+  const { formatMessage } = useLocale()
   const {
     activeScreen,
     application: storedApplication,
@@ -94,6 +101,37 @@ export const FormShell: FC<
 
   if (updateForbidden) {
     return <ErrorShell errorType="lost" applicationType={application.typeId} />
+  }
+
+  const parseSubsections = (
+    children: Array<SectionChildren>,
+    isParentActive: boolean,
+  ) => {
+    const childrenToParse: Array<SectionChildren> = []
+
+    children.forEach((child) => {
+      const childScreen = screens.find((s) => s.id === child.id)
+
+      if (childScreen?.subSectionIndex === -1) {
+        return null
+      }
+
+      childrenToParse.push(child)
+    })
+
+    return childrenToParse.map((child, i) => {
+      const isChildActive =
+        isParentActive && currentScreen.subSectionIndex === i
+      return (
+        <Text
+          variant="medium"
+          fontWeight={isChildActive ? 'semiBold' : 'regular'}
+          key={`formStepperChild-${i}`}
+        >
+          {formatMessage(child.title as MessageDescriptor)}
+        </Text>
+      )
+    })
   }
 
   return (
@@ -168,12 +206,10 @@ export const FormShell: FC<
                 className={styles.sidebarInner}
               >
                 <FormStepper
-                  application={storedApplication}
-                  mode={mode}
-                  showTag={showProgressTag}
                   form={form}
                   sections={sections}
-                  screen={currentScreen}
+                  screens={screens}
+                  currentScreen={currentScreen}
                 />
                 {FormLogo && (
                   <Box
