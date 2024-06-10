@@ -187,12 +187,16 @@ export class AdminScopeService {
         transaction,
       )
 
-      await this.addScopeDelegationTypes({
-        apiScopeName: scope.name,
-        delegationBooleanTypes: input,
-        delegationTypes: input.supportedDelegationTypes,
-        transaction,
-      })
+      if (
+        input.supportedDelegationTypes &&
+        input.supportedDelegationTypes.length > 0
+      ) {
+        await this.addScopeDelegationTypes({
+          apiScopeName: scope.name,
+          delegationTypes: input.supportedDelegationTypes,
+          transaction,
+        })
+      }
 
       return scope
     })
@@ -352,18 +356,25 @@ export class AdminScopeService {
         },
       )
 
-      await this.addScopeDelegationTypes({
-        apiScopeName: scopeName,
-        delegationBooleanTypes: input,
-        delegationTypes: input.addedDelegationTypes,
-        transaction,
-      })
-      await this.removeScopeDelegationTypes({
-        apiScopeName: scopeName,
-        delegationBooleanTypes: input,
-        delegationTypes: input.removedDelegationTypes,
-        transaction,
-      })
+      if (input.addedDelegationTypes && input.addedDelegationTypes.length > 0) {
+        await this.addScopeDelegationTypes({
+          apiScopeName: scopeName,
+          delegationTypes: input.addedDelegationTypes,
+          transaction,
+        })
+      }
+
+      if (
+        input.removedDelegationTypes &&
+        input.removedDelegationTypes.length > 0
+      ) {
+        await this.removeScopeDelegationTypes({
+          apiScopeName: scopeName,
+          delegationTypes: input.removedDelegationTypes,
+          transaction,
+        })
+      }
+
       await this.updateScopeTranslatedValueFields(scopeName, input, transaction)
     })
 
@@ -394,73 +405,40 @@ export class AdminScopeService {
 
   private async addScopeDelegationTypes({
     apiScopeName,
-    delegationBooleanTypes,
-    delegationTypes,
+    delegationTypes = [],
     transaction,
   }: {
     apiScopeName: string
     delegationTypes?: string[]
-    delegationBooleanTypes: {
-      allowExplicitDelegationGrant?: boolean
-      grantToLegalGuardians?: boolean
-      grantToProcuringHolders?: boolean
-      grantToPersonalRepresentatives?: boolean
-    }
     transaction: Transaction
   }) {
     // boolean fields
-    const grantToProcuringHolders =
-      delegationTypes?.includes(AuthDelegationType.ProcurationHolder) ||
-      delegationBooleanTypes.grantToProcuringHolders
-    const grantToLegalGuardians =
-      delegationTypes?.includes(AuthDelegationType.LegalGuardian) ||
-      delegationBooleanTypes.grantToLegalGuardians
-    const grantToPersonalRepresentatives =
-      delegationTypes?.some((delegationType) =>
+    const grantToProcuringHolders = delegationTypes?.includes(
+      AuthDelegationType.ProcurationHolder,
+    )
+    const grantToLegalGuardians = delegationTypes?.includes(
+      AuthDelegationType.LegalGuardian,
+    )
+    const grantToPersonalRepresentatives = delegationTypes?.some(
+      (delegationType) =>
         delegationType.startsWith(AuthDelegationType.PersonalRepresentative),
-      ) || delegationBooleanTypes.grantToPersonalRepresentatives
-    const allowExplicitDelegationGrant =
-      delegationTypes?.includes(AuthDelegationType.Custom) ||
-      delegationBooleanTypes.allowExplicitDelegationGrant
-
-    // delegation types to add to api_scope_delegation_types table
-    const delegationTypesToAdd: string[] = [
-      ...(allowExplicitDelegationGrant ? [AuthDelegationType.Custom] : []),
-      ...(grantToLegalGuardians ? [AuthDelegationType.LegalGuardian] : []),
-      ...(grantToProcuringHolders
-        ? [AuthDelegationType.ProcurationHolder]
-        : []),
-    ]
-
-    if (grantToPersonalRepresentatives) {
-      const personalRepresentativeDelegationTypes =
-        await this.delegationTypeModel.findAll({
-          where: {
-            provider: AuthDelegationProvider.PersonalRepresentativeRegistry,
-          },
-        })
-
-      delegationTypesToAdd.push(
-        ...personalRepresentativeDelegationTypes.map(
-          (delegationType) => delegationType.id,
-        ),
-      )
-    }
+    )
+    const allowExplicitDelegationGrant = delegationTypes?.includes(
+      AuthDelegationType.Custom,
+    )
 
     // create delegation type rows
-    if (delegationTypesToAdd.length > 0) {
-      await Promise.all(
-        delegationTypesToAdd.map((delegationType) =>
-          this.apiScopeDelegationType.upsert(
-            {
-              apiScopeName,
-              delegationType,
-            },
-            { transaction },
-          ),
+    await Promise.all(
+      delegationTypes.map((delegationType) =>
+        this.apiScopeDelegationType.upsert(
+          {
+            apiScopeName,
+            delegationType,
+          },
+          { transaction },
         ),
-      )
-    }
+      ),
+    )
 
     // update boolean fields
     if (
@@ -488,18 +466,11 @@ export class AdminScopeService {
 
   private async removeScopeDelegationTypes({
     apiScopeName,
-    delegationBooleanTypes,
-    delegationTypes,
+    delegationTypes = [],
     transaction,
   }: {
     apiScopeName: string
     delegationTypes?: string[]
-    delegationBooleanTypes: {
-      allowExplicitDelegationGrant?: boolean
-      grantToLegalGuardians?: boolean
-      grantToProcuringHolders?: boolean
-      grantToPersonalRepresentatives?: boolean
-    }
     transaction: Transaction
   }) {
     // boolean fields
@@ -507,44 +478,27 @@ export class AdminScopeService {
       AuthDelegationType.ProcurationHolder,
     )
       ? false
-      : delegationBooleanTypes.grantToProcuringHolders
+      : undefined
     const grantToLegalGuardians = delegationTypes?.includes(
       AuthDelegationType.LegalGuardian,
     )
       ? false
-      : delegationBooleanTypes.grantToLegalGuardians
+      : undefined
     const grantToPersonalRepresentatives = delegationTypes?.some(
       (delegationType) =>
         delegationType.startsWith(AuthDelegationType.PersonalRepresentative),
     )
       ? false
-      : delegationBooleanTypes.grantToPersonalRepresentatives
+      : undefined
     const allowExplicitDelegationGrant = delegationTypes?.includes(
       AuthDelegationType.Custom,
     )
       ? false
-      : delegationBooleanTypes.allowExplicitDelegationGrant
-
-    // delegation types to remove from api_scope_delegation_types table
-    const delegationTypesToRemove = [
-      ...(allowExplicitDelegationGrant === false
-        ? [AuthDelegationType.Custom]
-        : []),
-      ...(grantToLegalGuardians === false
-        ? [AuthDelegationType.LegalGuardian]
-        : []),
-      ...(grantToProcuringHolders === false
-        ? [AuthDelegationType.ProcurationHolder]
-        : []),
-      ...(grantToPersonalRepresentatives === false
-        ? [AuthDelegationType.PersonalRepresentative]
-        : []),
-    ]
+      : undefined
 
     // remove delegation type rows
-
     await Promise.all(
-      delegationTypesToRemove.map((delegationType) =>
+      delegationTypes.map((delegationType) =>
         this.apiScopeDelegationType.destroy({
           transaction,
           where: {
