@@ -2,7 +2,6 @@ import { BadRequestException, Injectable } from '@nestjs/common'
 import { InjectModel } from '@nestjs/sequelize'
 import { Op } from 'sequelize'
 import * as kennitala from 'kennitala'
-import startOfDay from 'date-fns/startOfDay'
 
 import { User } from '@island.is/auth-nest-tools'
 import {
@@ -36,6 +35,7 @@ import {
 } from './utils/delegations'
 import { DelegationDirection } from './types/delegationDirection'
 import { UserIdentitiesService } from '../user-identities/user-identities.service'
+import { getXBirthday } from './utils/getXBirthday'
 
 const TEN_MINUTES = 1000 * 60 * 10
 const ONE_WEEK = 1000 * 60 * 60 * 24 * 7
@@ -67,26 +67,7 @@ type FetchDelegationRecordsArgs = {
   direction: DelegationDirection
 }
 
-const getTimeUntilEighteen = (nationalId: string) => {
-  const birthDate = kennitala.info(nationalId).birthday
 
-  if (!birthDate) {
-    return null
-  }
-
-  const now = startOfDay(new Date())
-  const eighteen = startOfDay(
-    new Date(
-      birthDate.getFullYear() + 18,
-      birthDate.getMonth(),
-      birthDate.getDate(),
-    ),
-  )
-
-  const timeUntilEighteen = eighteen.getTime() - now.getTime()
-
-  return timeUntilEighteen > 0 ? new Date(timeUntilEighteen) : null
-}
 
 const validateCrudParams = (delegation: DelegationRecordInputDTO) => {
   if (!validateDelegationTypeAndProvider(delegation)) {
@@ -488,10 +469,13 @@ export class DelegationsIndexService {
           .map((delegation) =>
             toDelegationIndexInfo({
               ...delegation,
-              validTo: getTimeUntilEighteen(delegation.fromNationalId), // validTo is the date the child turns 18
+              validTo:
+                delegation.type === AuthDelegationType.LegalGuardian
+                  ? getXBirthday(18, delegation.fromNationalId) // validTo is the date the child turns 18 for legal guardian delegations
+                  : getXBirthday(16, delegation.fromNationalId), // validTo is the date the child turns 16 for legal guardian minor delegations
             }),
           )
-          .filter((d) => d.validTo !== null), // if child has already turned 18, we don't want to index the delegation
+          .filter((d) => d.validTo !== null), // if child has already turned 18/16, we don't want to index the delegation
     )
   }
 
