@@ -10,6 +10,7 @@ import {
   Inject,
   Injectable,
   InternalServerErrorException,
+  NotFoundException,
 } from '@nestjs/common'
 import { InjectConnection, InjectModel } from '@nestjs/sequelize'
 
@@ -17,7 +18,10 @@ import { FormatMessage, IntlService } from '@island.is/cms-translations'
 import { type Logger, LOGGER_PROVIDER } from '@island.is/logging'
 import type { ConfigType } from '@island.is/nest/config'
 
-import { formatCaseType } from '@island.is/judicial-system/formatters'
+import {
+  formatCaseType,
+  formatNationalId,
+} from '@island.is/judicial-system/formatters'
 import {
   CaseFileCategory,
   CaseOrigin,
@@ -49,8 +53,9 @@ import { CaseEvent, EventService } from '../event'
 import { EventLogService } from '../event-log'
 import { CaseFile, FileService } from '../file'
 import { IndictmentCount, IndictmentCountService } from '../indictment-count'
+import { Institution } from '../institution'
 import { PoliceDocument, PoliceDocumentType, PoliceService } from '../police'
-import { UserService } from '../user'
+import { User, UserService } from '../user'
 import { InternalCreateCaseDto } from './dto/internalCreateCase.dto'
 import { archiveFilter } from './filters/case.archiveFilter'
 import { ArchiveResponse } from './models/archive.response'
@@ -1045,18 +1050,66 @@ export class InternalCaseService {
     return originalAncestor
   }
 
+  // As this is only currently used by the digital mailbox API
+  // we will only return indictment cases that have a court date
   async getIndictmentCases(nationalId: string): Promise<Case[]> {
+    const formattedNationalId = formatNationalId(nationalId)
+
     return this.caseModel.findAll({
       include: [
         { model: Defendant, as: 'defendants' },
-        { model: DateLog, as: 'dateLogs' },
+        {
+          model: DateLog,
+          as: 'dateLogs',
+          where: {
+            date_type: 'ARRAIGNMENT_DATE',
+          },
+          required: true,
+        },
       ],
       order: [[{ model: DateLog, as: 'dateLogs' }, 'created', 'DESC']],
       attributes: ['id', 'courtCaseNumber', 'type', 'state'],
       where: {
         type: CaseType.INDICTMENT,
-        '$defendants.national_id$': nationalId,
+        [Op.or]: [
+          { '$defendants.national_id$': nationalId },
+          { '$defendants.national_id$': formattedNationalId },
+        ],
       },
     })
+  }
+
+  async getIndictmentCase(
+    caseId: string,
+    nationalId: string,
+  ): Promise<Case | null> {
+    // The national id could be without a hyphen or with a hyphen so we need to
+    // search for both
+    const formattedNationalId = formatNationalId(nationalId)
+
+    const caseById = await this.caseModel.findOne({
+      include: [
+        { model: Defendant, as: 'defendants' },
+        { model: Institution, as: 'court' },
+        { model: Institution, as: 'prosecutorsOffice' },
+        { model: User, as: 'judge' },
+        { model: User, as: 'prosecutor' },
+      ],
+      attributes: ['courtCaseNumber', 'id'],
+      where: {
+        type: CaseType.INDICTMENT,
+        id: caseId,
+        [Op.or]: [
+          { '$defendants.national_id$': nationalId },
+          { '$defendants.national_id$': formattedNationalId },
+        ],
+      },
+    })
+
+    if (!caseById) {
+      throw new NotFoundException(`Case ${caseId} not found`)
+    }
+
+    return caseById
   }
 }

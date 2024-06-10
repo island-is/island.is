@@ -1,4 +1,4 @@
-import React, { useState, useMemo } from 'react'
+import React, { useState, useMemo, useContext } from 'react'
 import cn from 'classnames'
 import format from 'date-fns/format'
 
@@ -28,6 +28,7 @@ import {
   ApplicationHeader,
   FilesListWithHeaderContainer,
   RejectionCommentModal,
+  AppliedMonthModal,
 } from '@island.is/financial-aid-web/veita/src/components'
 
 import {
@@ -63,6 +64,8 @@ const ApplicationProfile = ({
   applicationMunicipality,
 }: ApplicationProps) => {
   const [isStateModalVisible, setStateModalVisible] = useState(false)
+  const [appliedMonthModalVisible, setAppliedMonthModalVisible] =
+    useState(false)
 
   const [isRejectedReasonModalVisible, setRejectedReasonModalVisible] =
     useState(false)
@@ -87,15 +90,19 @@ const ApplicationProfile = ({
 
   const applicationInfo: ApplicationProfileInfo[] = [
     {
-      title: 'Tímabil',
-      content:
-        getMonth(new Date(application.created).getMonth()) +
-        format(new Date(application.created), ' y'),
-    },
-    {
-      title: 'Sótt um',
+      title: 'Dagsetning umsóknar',
       content: format(new Date(application.created), 'dd.MM.y  · kk:mm'),
     },
+    {
+      title: 'Fyrir tímabilið',
+      content:
+        getMonth(new Date(application.appliedDate).getMonth()) +
+        format(new Date(application.appliedDate), ' y'),
+      onclick: () => {
+        setAppliedMonthModalVisible(true)
+      },
+    },
+
     aidAmount
       ? {
           title: 'Áætluð aðstoð',
@@ -274,6 +281,7 @@ const ApplicationProfile = ({
 
         {!isPrint && (
           <CommentSection
+            applicationId={application.id}
             className={`contentUp delay-125 ${styles.widthAlmostFull}`}
             setApplication={setApplication}
           />
@@ -298,7 +306,7 @@ const ApplicationProfile = ({
           homeCircumstances={application.homeCircumstances}
           familyStatus={application.familyStatus}
           setIsLoading={setIsLoading}
-          applicationCreated={application.created}
+          applicationCreated={application.appliedDate}
           applicationMunicipality={applicationMunicipality}
           hasApplicantChildren={
             !application?.children || application?.children.length > 0
@@ -321,6 +329,18 @@ const ApplicationProfile = ({
           setRejectedReasonModalVisible(visability)
         }}
         reason={application.rejection ?? ''}
+      />
+
+      <AppliedMonthModal
+        headline="Velja mánuð"
+        isVisible={appliedMonthModalVisible}
+        onVisibilityChange={(isVisibleBoolean) => {
+          setAppliedMonthModalVisible(isVisibleBoolean)
+        }}
+        appliedDate={application.appliedDate}
+        createdDate={application.created}
+        applicationId={application.id}
+        setApplication={setApplication}
       />
     </>
   )

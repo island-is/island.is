@@ -4,6 +4,7 @@ import { ApiPropertyOptional } from '@nestjs/swagger'
 
 import {
   DefendantPlea,
+  DefenderChoice,
   Gender,
   ServiceRequirement,
 } from '@island.is/judicial-system/types'
@@ -60,9 +61,9 @@ export class UpdateDefendantDto {
   readonly defenderPhoneNumber?: string
 
   @IsOptional()
-  @IsBoolean()
-  @ApiPropertyOptional({ type: Boolean })
-  readonly defendantWaivesRightToCounsel?: boolean
+  @IsEnum(DefenderChoice)
+  @ApiPropertyOptional({ enum: DefenderChoice })
+  readonly defenderChoice?: DefenderChoice
 
   @IsOptional()
   @IsEnum(DefendantPlea)
@@ -78,4 +79,9 @@ export class UpdateDefendantDto {
   @IsString()
   @ApiPropertyOptional()
   readonly verdictViewDate?: string
+
+  @IsOptional()
+  @IsBoolean()
+  @ApiPropertyOptional({ type: Boolean })
+  readonly acceptCompensationClaim?: boolean
 }

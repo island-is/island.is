@@ -109,10 +109,7 @@ export const update = (update: UpdateCase, workingCase: Case): UpdateCase => {
   return validUpdates
 }
 
-export const formatUpdates = (
-  updates: Array<UpdateCase>,
-  workingCase: Case,
-) => {
+export const formatUpdates = (updates: UpdateCase[], workingCase: Case) => {
   const changes: UpdateCase[] = updates.map((entry) => {
     if (entry.force) {
       return overwrite(entry)
@@ -385,7 +382,7 @@ const useCase = () => {
       delete updatesToCase.force
 
       if (Object.keys(updatesToCase).length === 0) {
-        return
+        return false
       }
 
       setWorkingCase((prevWorkingCase) => ({
@@ -394,16 +391,19 @@ const useCase = () => {
       }))
 
       if (!workingCase.id) {
-        return
+        return false
       }
 
       const newWorkingCase = await updateCase(workingCase.id, updatesToCase)
 
       if (!newWorkingCase) {
-        throw new Error()
+        return false
       }
+
+      return true
     } catch (error) {
       toast.error(formatMessage(errors.updateCase))
+      return false
     }
   }
 
