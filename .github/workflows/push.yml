@@ -48,6 +48,7 @@ jobs:
       CREATE_PATTERNS: ^release/
       PRE_RELEASE_PATTERN: ^pre-release/
     outputs:
+      CACHE_KEYS: ${{ steps.get-cache-key.outputs.keys }}
       NODE_IMAGE_TAG: ${{ steps.git-branch.outputs.NODE_IMAGE_TAG }}
       GIT_BRANCH: ${{ steps.git-branch.outputs.GIT_BRANCH }}
       GIT_BRANCH_DEPLOY: ${{ steps.git-branch-deploy.outputs.GIT_BRANCH_DEPLOY }}
@@ -156,6 +157,7 @@ jobs:
       SERVERSIDE_FEATURES_ON: ''
 
     outputs:
+      CACHE_KEYS: ${{ steps.get-cache-key.outputs.keys }}
       TEST_CHUNKS: ${{ steps.test_projects.outputs.CHUNKS }}
       DOCKER_TAG: ${{ steps.docker_tags.outputs.DOCKER_TAG }}
       NODE_IMAGE_TAG: ${{ steps.nodejs_image.outputs.NODE_IMAGE_TAG }}
@@ -166,7 +168,7 @@ jobs:
       node-modules-hash: ${{ steps.calculate_node_modules_hash.outputs.node-modules-hash }}
       generated-files-cache-key: ${{ steps.calculate_generated_files_cache_key.outputs.generated-files-cache-key }}
     steps:
-      - uses: actions/checkout@v4
+      - uses: actions/checkout@v3
         with:
           fetch-depth: 0
       - uses: actions/setup-node@v4
@@ -416,7 +418,7 @@ jobs:
       fail-fast: false
       matrix: ${{ fromJson(needs.prepare.outputs.TEST_CHUNKS) }}
     steps:
-      - uses: actions/checkout@v4
+      - uses: actions/checkout@v3
         with:
           fetch-depth: 0
 
@@ -432,7 +434,7 @@ jobs:
         uses: ./.github/actions/get-cache
         with:
           github-token: ${{ secrets.GITHUB_TOKEN }}
-          keys: ${{ needs.prepare.get-cache-keys }}
+          keys: ${{ needs.prepare.outputs.CACHE_KEYS }}
           enable-cache: 'node_modules,generated-files'
 
       - uses: ./.github/actions/unit-test
@@ -471,7 +473,7 @@ jobs:
           echo "AFFECTED_PROJECTS=$AFFECTED_PROJECTS" >> $GITHUB_ENV
           echo "DOCKER_TYPE=$DOCKER_TYPE" >> $GITHUB_ENV
         continue-on-error: true
-      - uses: actions/checkout@v4
+      - uses: actions/checkout@v3
         if: steps.gather.outcome == 'success'
       - uses: actions/setup-node@v4
         with:
@@ -487,7 +489,7 @@ jobs:
         uses: ./.github/actions/get-cache
         with:
           github-token: ${{ secrets.GITHUB_TOKEN }}
-          keys: ${{ needs.prepare.get-cache-keys }}
+          keys: ${{ needs.prepare.outputs.CACHE_KEYS }}
           enable-cache: 'node_modules,generated-files'
 
       - name: Cache for dependencies Docker layer
@@ -567,7 +569,7 @@ jobs:
       GIT_BRANCH: ${{ needs.pre-checks.outputs.GIT_BRANCH }}
       NODE_IMAGE_TAG: ${{ needs.prepare.outputs.NODE_IMAGE_TAG }}
     steps:
-      - uses: actions/checkout@v4
+      - uses: actions/checkout@v3
 
       - name: Docker login
         run: ./scripts/ci/docker-login-ecr.sh
@@ -635,7 +637,7 @@ jobs:
         run: '[[ ${{ needs.prepare.result }} == "success" ]] || exit 1'
       - name: Check docker-build success
         run: '[[ ${{ needs.docker-build.result }} != "failure" ]] || exit 1'
-      - uses: actions/checkout@v4
+      - uses: actions/checkout@v3
       - name: Configure AWS credentials
         uses: aws-actions/configure-aws-credentials@v1
         with:
@@ -661,7 +663,7 @@ jobs:
       DOCKER_TAG: ${{ needs.prepare.outputs.DOCKER_TAG }}
       IMAGES: ${{ needs.prepare.outputs.IMAGES }}
     steps:
-      - uses: actions/checkout@v4
+      - uses: actions/checkout@v3
       - name: Trigger Deployment for service
         env:
           SPINNAKER_WEBHOOK_TOKEN: ${{ secrets.SPINNAKER_WEBHOOK_TOKEN }}
@@ -753,7 +755,7 @@ jobs:
       image: public.ecr.aws/m3u4c4h9/island-is/actions-runner-public:latest
     steps:
       - name: Checkout
-        uses: actions/checkout@v4
+        uses: actions/checkout@v3
       - name: Scan & upload main config
         uses: configcat/scan-repository@v2
         with:
