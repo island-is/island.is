@@ -2,6 +2,7 @@
   "name": "island.is",
   "version": "0.0.2",
   "license": "MIT",
+  "fordceBuildAll": true,
   "engines": {
     "npm": "please-use-yarn",
     "node": "20.14.0",
