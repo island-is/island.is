@@ -60,6 +60,7 @@ import {
   DistrictCommissionersLicensesClientConfig,
   DistrictCommissionersLicensesClientModule,
 } from '@island.is/clients/district-commissioners-licenses'
+import { ContentfulAssetController } from './modules/contentful-assets/contentful-assets.controller'
 @Module({
   controllers: [
     DocumentController,
@@ -71,6 +72,7 @@ import {
     WorkMachinesController,
     OccupationalLicensesController,
     HealthPaymentsOverviewController,
+    ContentfulAssetController,
   ],
   imports: [
     AuditModule.forRoot(environment.audit),
