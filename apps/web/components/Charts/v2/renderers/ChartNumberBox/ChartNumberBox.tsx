@@ -145,7 +145,7 @@ export const ChartNumberBox = ({ slice }: ChartNumberBoxRendererProps) => {
           queryResult?.data?.[data.sourceDataIndex]?.header
             ? format(
                 new Date(Number(queryResult.data[data.sourceDataIndex].header)),
-                'do MMM YYY HH:MM',
+                'do MMM yyyy HH:MM',
               )
             : ''
 
