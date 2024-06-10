@@ -146,7 +146,10 @@ export const Cases: React.FC = () => {
     )
 
     const casesAwaitingAssignment = filterCases(
-      (c) => isIndictmentCase(c.type) && c.judge === null,
+      (c) =>
+        isIndictmentCase(c.type) &&
+        c.state !== CaseState.WAITING_FOR_CANCELLATION &&
+        !c.judge,
     )
 
     const casesAwaitingReview = filterCases(
@@ -163,11 +166,27 @@ export const Cases: React.FC = () => {
         return false
       }
 
-      if (isIndictmentCase(c.type) || !isDistrictCourtUser(user)) {
-        return !isCompletedCase(c.state)
-      } else {
-        return !(isCompletedCase(c.state) && c.rulingSignatureDate)
+      if (isDistrictCourtUser(user)) {
+        if (isIndictmentCase(c.type)) {
+          return !isCompletedCase(c.state)
+        } else {
+          return !(isCompletedCase(c.state) && c.rulingSignatureDate)
+        }
       }
+
+      if (isProsecutionUser(user)) {
+        if (isIndictmentCase(c.type)) {
+          return !(
+            isCompletedCase(c.state) ||
+            c.state === CaseState.WAITING_FOR_CANCELLATION
+          )
+        } else {
+          return !isCompletedCase(c.state)
+        }
+      }
+
+      // This componenet is only used for prosecution and district court users
+      return false
     })
 
     const pastCases = filterCases(
@@ -200,8 +219,7 @@ export const Cases: React.FC = () => {
       caseToDelete.state === CaseState.DRAFT ||
       caseToDelete.state === CaseState.WAITING_FOR_CONFIRMATION ||
       caseToDelete.state === CaseState.SUBMITTED ||
-      caseToDelete.state === CaseState.RECEIVED ||
-      caseToDelete.state === CaseState.MAIN_HEARING
+      caseToDelete.state === CaseState.RECEIVED
     ) {
       await transitionCase(caseToDelete.id, CaseTransition.DELETE)
       refetch()
