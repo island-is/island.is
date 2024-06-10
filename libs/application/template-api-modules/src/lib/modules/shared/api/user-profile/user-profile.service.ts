@@ -1,5 +1,5 @@
 import { Injectable } from '@nestjs/common'
-import { Auth, AuthMiddleware } from '@island.is/auth-nest-tools'
+import { Auth, AuthMiddleware, User } from '@island.is/auth-nest-tools'
 import { IslyklarApi } from '@island.is/clients/islykill'
 import {
   UserProfileControllerFindUserProfileClientTypeEnum,
@@ -16,7 +16,6 @@ import {
   UserProfile,
   UserProfileParameters,
 } from '@island.is/application/types'
-import type { User } from '@island.is/auth-nest-tools'
 import { getSlugFromType } from '@island.is/application/core'
 import { IdsClientConfig } from '@island.is/nest/config'
 import { Inject } from '@nestjs/common'
@@ -45,7 +44,6 @@ export class UserProfileService extends BaseTemplateApiService {
   async userProfile({
     auth,
   }: TemplateApiModuleActionProps<UserProfileParameters>): Promise<UserProfile> {
-    // Temporary solution while we still run the old user profile service.
     const { mobilePhoneNumber, email } = await this.userProfileApiWithAuth(auth)
       .userProfileControllerFindUserProfile({
         xParamNationalId: auth.nationalId,
@@ -71,6 +69,7 @@ export class UserProfileService extends BaseTemplateApiService {
       bankInfo,
     }
   }
+
   private async getBankInfoFromIslykill(auth: User) {
     return this.islyklarApi
       .islyklarGet({ ssn: auth.nationalId })
