@@ -1,4 +1,4 @@
-import { json, Op } from 'sequelize'
+import { Op } from 'sequelize'
 import { Includeable, OrderItem, Transaction } from 'sequelize/types'
 import { Sequelize } from 'sequelize-typescript'
 
@@ -1098,10 +1098,8 @@ export class CaseService {
     user: TUser,
   ): Promise<void> {
     const isIndictment = isIndictmentCase(updatedCase.type)
-
     if (updatedCase.state !== theCase.state) {
       // New case state
-
       if (
         updatedCase.state === CaseState.RECEIVED &&
         theCase.state === CaseState.SUBMITTED
@@ -1397,21 +1395,20 @@ export class CaseService {
         transaction,
       )
     }
-    if (isIndictmentCase(theCase.type)) {
-      if (
-        update.state === CaseState.SUBMITTED &&
-        theCase.state === CaseState.WAITING_FOR_CONFIRMATION
-      ) {
-        return this.eventLogService.create(
-          {
-            eventType: EventType.INDICTMENT_CONFIRMED,
-            caseId: theCase.id,
-            nationalId: user.nationalId,
-            userRole: user.role,
-          },
-          transaction,
-        )
-      }
+    if (
+      isIndictmentCase(theCase.type) &&
+      update.state === CaseState.SUBMITTED &&
+      theCase.state === CaseState.WAITING_FOR_CONFIRMATION
+    ) {
+      return this.eventLogService.create(
+        {
+          eventType: EventType.INDICTMENT_CONFIRMED,
+          caseId: theCase.id,
+          nationalId: user.nationalId,
+          userRole: user.role,
+        },
+        transaction,
+      )
     }
   }
 

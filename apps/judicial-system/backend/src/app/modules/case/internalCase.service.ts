@@ -27,7 +27,6 @@ import {
   CaseOrigin,
   CaseState,
   CaseType,
-  DateType,
   EventType,
   isIndictmentCase,
   isProsecutionUser,
@@ -767,26 +766,18 @@ export class InternalCaseService {
         user,
         theCase.id,
         theCase.courtCaseNumber,
-        theCase.eventLogs
-          ? theCase.eventLogs.find(
-              (eventLog) =>
-                eventLog.eventType === EventType.CASE_RECEIVED_BY_COURT,
-            )?.created
-          : undefined,
-        theCase.eventLogs
-          ? theCase.eventLogs.find(
-              (eventLog) =>
-                eventLog.eventType === EventType.INDICTMENT_CONFIRMED,
-            )?.created
-          : undefined,
+        theCase.eventLogs?.find(
+          (eventLog) => eventLog.eventType === EventType.CASE_RECEIVED_BY_COURT,
+        )?.created,
+        theCase.eventLogs?.find(
+          (eventLog) => eventLog.eventType === EventType.INDICTMENT_CONFIRMED,
+        )?.created,
         theCase.policeCaseNumbers[0],
         mappedSubtypes,
-        theCase.defendants
-          ? theCase.defendants?.map((defendant) => ({
-              name: defendant.name,
-              nationalId: defendant.nationalId,
-            }))
-          : undefined,
+        theCase.defendants?.map((defendant) => ({
+          name: defendant.name,
+          nationalId: defendant.nationalId,
+        })),
         theCase.prosecutor
           ? {
               name: theCase.prosecutor.name,
@@ -827,7 +818,7 @@ export class InternalCaseService {
       nowFactory() // The API requires a date so we send now as a dummy date
 
     return this.policeService.updatePoliceCase(
-      user,
+    user,
       originalAncestor.id,
       theCase.type,
       theCase.state,

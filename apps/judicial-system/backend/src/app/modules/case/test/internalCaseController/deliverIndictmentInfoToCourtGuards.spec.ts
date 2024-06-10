@@ -1,28 +1,25 @@
 import { CanActivate } from '@nestjs/common'
 
-import {
-  investigationCases,
-  restrictionCases,
-} from '@island.is/judicial-system/types'
+import { indictmentCases } from '@island.is/judicial-system/types'
 
 import { CaseCompletedGuard } from '../../guards/caseCompleted.guard'
 import { CaseExistsGuard } from '../../guards/caseExists.guard'
 import { CaseTypeGuard } from '../../guards/caseType.guard'
 import { InternalCaseController } from '../../internalCase.controller'
 
-describe('InternalCaseController - Deliver indictment info to court guards', () => {
+describe('InternalCaseController - Deliver indictment case to police guards', () => {
   // eslint-disable-next-line @typescript-eslint/no-explicit-any
   let guards: any[]
 
   beforeEach(() => {
     guards = Reflect.getMetadata(
       '__guards__',
-      InternalCaseController.prototype.deliverConclusionToCourtOfAppeals,
+      InternalCaseController.prototype.deliverIndictmentInfoToCourt,
     )
   })
 
-  it('should have three guards', () => {
-    expect(guards).toHaveLength(3)
+  it('should have two guards', () => {
+    expect(guards).toHaveLength(2)
   })
 
   describe('CaseExistsGuard', () => {
@@ -47,20 +44,8 @@ describe('InternalCaseController - Deliver indictment info to court guards', () 
     it('should have CaseTypeGuard as guard 2', () => {
       expect(guard).toBeInstanceOf(CaseTypeGuard)
       expect(guard).toEqual({
-        allowedCaseTypes: [...restrictionCases, ...investigationCases],
+        allowedCaseTypes: indictmentCases,
       })
-    })
-  })
-
-  describe('CaseCompletedGuard', () => {
-    let guard: CanActivate
-
-    beforeEach(() => {
-      guard = new guards[2]()
-    })
-
-    it('should have CaseCompletedGuard as guard 3', () => {
-      expect(guard).toBeInstanceOf(CaseCompletedGuard)
     })
   })
 })
