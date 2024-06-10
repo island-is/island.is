@@ -465,7 +465,7 @@ export const InboxScreen: NavigationFunctionComponent<{
               style={{
                 padding: 16,
                 flexDirection: 'row',
-                gap: 15,
+                gap: 8,
               }}
             >
               <SearchBar
@@ -482,6 +482,7 @@ export const InboxScreen: NavigationFunctionComponent<{
                 isOutlined
                 isUtilityButton
                 style={{
+                  marginLeft: 8,
                   paddingTop: 0,
                   paddingBottom: 0,
                 }}
@@ -499,6 +500,12 @@ export const InboxScreen: NavigationFunctionComponent<{
                 icon={inboxReadIcon}
                 isUtilityButton
                 isOutlined
+                style={{
+                  paddingTop: 0,
+                  paddingBottom: 0,
+                  paddingHorizontal: 12,
+                  width: 40,
+                }}
                 onPress={onPressMarkAllAsRead}
               />
             </View>
