@@ -140,7 +140,7 @@ export const ChartNumberBox = ({ slice }: ChartNumberBoxRendererProps) => {
               )
 
         const timestamp =
-          boxData.length === 1 &&
+          index === 0 &&
           slice.displayTimestamp &&
           queryResult?.data?.[data.sourceDataIndex]?.header
             ? format(
