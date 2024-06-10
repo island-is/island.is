@@ -29,7 +29,10 @@ export class ActorProfileDto {
   @IsBoolean()
   emailNotifications!: boolean
 
-  @ApiPropertyOptional()
+  @ApiPropertyOptional({
+    type: () => String,
+    nullable: true,
+  })
   @IsOptional()
   @IsEmail()
   readonly email?: string | null
@@ -42,7 +45,7 @@ export class ActorProfileDto {
   @IsBoolean()
   readonly documentNotifications!: boolean
 
-  @ApiPropertyOptional()
+  @ApiPropertyOptional({ enum: Locale, type: () => Locale, nullable: true })
   @IsOptional()
   @IsEnum(Locale)
   readonly locale?: Locale | null

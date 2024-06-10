@@ -15,17 +15,23 @@ export class UserProfileDto {
   @IsString()
   readonly nationalId!: string
 
-  @ApiPropertyOptional()
+  @ApiPropertyOptional({
+    type: () => String,
+    nullable: true,
+  })
   @IsOptional()
   @IsEmail()
   readonly email?: string | null
 
-  @ApiPropertyOptional()
+  @ApiPropertyOptional({
+    type: () => String,
+    nullable: true,
+  })
   @IsOptional()
   @IsString()
   readonly mobilePhoneNumber?: string | null
 
-  @ApiPropertyOptional()
+  @ApiPropertyOptional({ enum: Locale, type: () => Locale, nullable: true })
   @IsOptional()
   @IsEnum(Locale)
   readonly locale?: Locale | null
@@ -47,7 +53,10 @@ export class UserProfileDto {
   @IsString()
   readonly profileImageUrl?: string
 
-  @ApiPropertyOptional()
+  @ApiPropertyOptional({
+    type: () => Boolean,
+    nullable: true,
+  })
   @IsOptional()
   @IsBoolean()
   readonly needsNudge?: boolean | null
