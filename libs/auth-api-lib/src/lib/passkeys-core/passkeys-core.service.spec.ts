@@ -72,7 +72,7 @@ describe('PasskeyCoreService', () => {
 
       assert(opts)
       expect(typeof opts.challenge).toBe('string')
-      assert(opts.rpId)
+      expect(opts.rp.id).toBe('localhost')
     })
   })
 
@@ -97,6 +97,7 @@ describe('PasskeyCoreService', () => {
         audkenni_sim_number: '123',
         name: 'Tester',
         type: 'IslandisApp',
+        idp: 'gervimadur',
       })
 
       const user = {

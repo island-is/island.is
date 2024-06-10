@@ -22,6 +22,7 @@ import type {
 import type {
   RegistrationResponseJSON,
   PublicKeyCredentialRequestOptionsJSON,
+  PublicKeyCredentialCreationOptionsJSON,
   AuthenticationResponseJSON,
 } from '@simplewebauthn/types'
 
@@ -78,7 +79,7 @@ export class PasskeysCoreService {
         ...options.user,
         displayName: tokenInfo.name,
       },
-    } as PublicKeyCredentialRequestOptionsJSON
+    } as PublicKeyCredentialCreationOptionsJSON
   }
 
   async verifyRegistration(
