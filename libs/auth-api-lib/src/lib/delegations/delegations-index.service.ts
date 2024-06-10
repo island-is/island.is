@@ -36,6 +36,7 @@ import {
 import { DelegationDirection } from './types/delegationDirection'
 import { UserIdentitiesService } from '../user-identities/user-identities.service'
 import { getXBirthday } from './utils/getXBirthday'
+import { isUnderXAge } from './utils/isUnderXAge'
 
 const TEN_MINUTES = 1000 * 60 * 10
 const ONE_WEEK = 1000 * 60 * 60 * 24 * 7
@@ -66,8 +67,6 @@ type FetchDelegationRecordsArgs = {
   nationalId: string
   direction: DelegationDirection
 }
-
-
 
 const validateCrudParams = (delegation: DelegationRecordInputDTO) => {
   if (!validateDelegationTypeAndProvider(delegation)) {
@@ -260,6 +259,24 @@ export class DelegationsIndexService {
   /* Add item to index */
   async createOrUpdateDelegationRecord(delegation: DelegationRecordInputDTO) {
     validateCrudParams(delegation)
+
+    // legal guardian delegations have a validTo date
+    if (delegation.type === AuthDelegationType.LegalGuardian) {
+      // ensure delegation only exists if child is under 18
+      if (!delegation.validTo) {
+        delegation.validTo = getXBirthday(18, delegation.fromNationalId)
+      }
+
+      // create additional delegation for children under 16
+      const isMinor = isUnderXAge(16, delegation.fromNationalId)
+      if (isMinor) {
+        await this.delegationIndexModel.upsert({
+          ...delegation,
+          type: AuthDelegationType.LegalGuardianMinor,
+          validTo: getXBirthday(16, delegation.fromNationalId),
+        })
+      }
+    }
 
     const [updatedDelegation] = await this.delegationIndexModel.upsert(
       delegation,

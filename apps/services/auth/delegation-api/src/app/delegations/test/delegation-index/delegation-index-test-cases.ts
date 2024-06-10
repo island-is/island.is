@@ -18,7 +18,7 @@ const child1 = generatePerson(
     Date.now() - faker.datatype.number({ min: 17 * YEAR, max: 18 * YEAR }),
   ),
 ) // between 17-18 years old
-const child2 = generatePerson(
+export const child2 = generatePerson(
   new Date(
     Date.now() - faker.datatype.number({ min: 1 * YEAR, max: 15 * YEAR }),
   ),
