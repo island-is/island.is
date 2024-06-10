@@ -174,7 +174,7 @@ export const en: TranslatedMessages = {
   'inbox.filterArchivedTagTitle': 'Archived',
   'inbox.filterStarredTagTitle': 'Starred',
   'inbox.markAllAsReadPromptTitle': 'Do you want to mark all as read?',
-  'inbox.markAllAsReadPromptDescription': 'This action cannot be undone.',
+  'inbox.markAllAsReadPromptDescription': 'This action cannot be undone',
   'inbox.markAllAsReadPromptCancel': 'Cancel',
   'inbox.markAllAsReadPromptConfirm': 'Mark all as read',
 
