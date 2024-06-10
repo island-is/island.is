@@ -1,14 +1,16 @@
 import { getValueViaPath } from '@island.is/application/core'
 import { Application } from '@island.is/application/types'
-import { ApplicationEligibility } from '../../types/schema'
+import { ApplicationEligibility, RequirementKey } from '../../types/schema'
 import { useQuery, gql } from '@apollo/client'
 import {
   B_FULL,
+  BE,
   DrivingLicenseApplicationFor,
   DrivingLicenseFakeData,
   YES,
 } from '../../lib/constants'
 import { fakeEligibility } from './fakeEligibility'
+import { DrivingLicense } from '../../lib/types'
 
 const QUERY = gql`
   query EligibilityQuery($input: ApplicationEligibilityInput!) {
@@ -29,14 +31,17 @@ export interface UseEligibilityResult {
 }
 
 export const useEligibility = (
-  answers: Application['answers'],
+  application: Application,
 ): UseEligibilityResult => {
-  const fakeData = getValueViaPath<DrivingLicenseFakeData>(answers, 'fakeData')
+  const fakeData = getValueViaPath<DrivingLicenseFakeData>(
+    application.answers,
+    'fakeData',
+  )
   const usingFakeData = fakeData?.useFakeData === YES
 
   const applicationFor =
     getValueViaPath<DrivingLicenseApplicationFor>(
-      answers,
+      application.answers,
       'applicationFor',
       B_FULL,
     ) ?? B_FULL
@@ -54,12 +59,49 @@ export const useEligibility = (
     },
   })
 
+  //TODO: Remove when RLS/SGS supports health certificate in BE license
+  const hasGlasses = getValueViaPath<boolean>(
+    application.externalData,
+    'glassesCheck.data',
+  )
+  const currentLicense = getValueViaPath<DrivingLicense>(
+    application.externalData,
+    'currentLicense.data',
+  )
+  const hasQualityPhoto =
+    getValueViaPath<boolean>(application.externalData, 'qualityPhoto.data') ??
+    false
+  const hasOtherLicenseCategories = (
+    currentLicense: DrivingLicense | undefined,
+  ) => {
+    return (
+      (currentLicense?.categories.some(
+        (license) =>
+          license.nr === 'C' ||
+          license.nr === 'C1' ||
+          license.nr === 'CE' ||
+          license.nr === 'D' ||
+          license.nr === 'D1' ||
+          license.nr === 'DE',
+      ) ??
+        false) ||
+      currentLicense?.remarks?.some((x) =>
+        x.includes(
+          'Réttindi til farþegaflutninga í atvinnuskyni fyrir B-flokk.',
+        ),
+      )
+    )
+  }
+
   if (usingFakeData) {
     return {
       loading: false,
       eligibility: fakeEligibility(
         applicationFor,
         parseInt(fakeData?.howManyDaysHaveYouLivedInIceland.toString(), 10),
+
+        //TODO: Remove when RLS/SGS supports health certificate in BE license
+        hasGlasses,
       ),
     }
   }
@@ -70,6 +112,37 @@ export const useEligibility = (
     return {
       loading: false,
       error: error,
+    }
+  }
+
+  //TODO: Remove when RLS/SGS supports health certificate in BE license
+  if (application.answers.applicationFor === BE) {
+    const eligibility =
+      data.drivingLicenseApplicationEligibility === undefined
+        ? []
+        : (data.drivingLicenseApplicationEligibility as ApplicationEligibility)
+            .requirements
+    return {
+      loading: loading,
+      eligibility: {
+        isEligible: loading
+          ? undefined
+          : (data.drivingLicenseApplicationEligibility?.isEligible ?? false) &&
+            !hasGlasses &&
+            hasQualityPhoto,
+        requirements: [
+          ...eligibility,
+          {
+            key: RequirementKey.BeRequiresHealthCertificate,
+            requirementMet:
+              !hasGlasses && !hasOtherLicenseCategories(currentLicense),
+          },
+          {
+            key: RequirementKey.HasNoPhoto,
+            requirementMet: hasQualityPhoto,
+          },
+        ],
+      },
     }
   }
 
