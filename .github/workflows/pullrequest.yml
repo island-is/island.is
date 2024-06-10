@@ -143,7 +143,7 @@ jobs:
           fi
           echo "BUILD_ID=$GITHUB_RUN_ID-$GITHUB_RUN_NUMBER-$(uuidgen)" >> $GITHUB_OUTPUT
 
-      - name: Prepare build targets    
+      - name: Prepare build targets
         id: build_projects
         env:
           CHUNK_SIZE: 4
