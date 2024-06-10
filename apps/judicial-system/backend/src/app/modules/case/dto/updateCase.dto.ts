@@ -31,6 +31,7 @@ import {
   IndictmentDecision,
   RequestSharedWithDefender,
   SessionArrangements,
+  SubpoenaType,
   UserRole,
 } from '@island.is/judicial-system/types'
 
@@ -502,4 +503,9 @@ export class UpdateCaseDto {
   @IsEnum(IndictmentDecision)
   @ApiPropertyOptional({ enum: IndictmentDecision })
   readonly indictmentDecision?: IndictmentDecision
+
+  @IsOptional()
+  @IsEnum(SubpoenaType)
+  @ApiPropertyOptional({ enum: SubpoenaType })
+  readonly subpoenaType?: SubpoenaType
 }

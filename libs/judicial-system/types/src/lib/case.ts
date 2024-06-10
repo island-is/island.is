@@ -228,6 +228,11 @@ export enum IndictmentDecision {
   REDISTRIBUTING = 'REDISTRIBUTING',
 }
 
+export enum SubpoenaType {
+  ABSENCE = 'ABSENCE',
+  ARREST = 'ARREST',
+}
+
 export enum CaseAppealRulingDecision {
   ACCEPTING = 'ACCEPTING',
   REPEAL = 'REPEAL',
