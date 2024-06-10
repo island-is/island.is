@@ -37,6 +37,7 @@ import {
   ListDocumentsQuery,
   useListDocumentsQuery,
   useListDocumentsLazyQuery,
+  useMarkAllDocumentsAsReadMutation,
 } from '../../graphql/types/schema'
 import { createNavigationOptionHooks } from '../../hooks/create-navigation-option-hooks'
 import { useActiveTabItemPress } from '../../hooks/use-active-tab-item-press'
@@ -299,6 +300,14 @@ export const InboxScreen: NavigationFunctionComponent<{
     subjectContains: queryString,
   })
 
+  const [markAllAsRead] = useMarkAllDocumentsAsReadMutation({
+    onCompleted: (data) => {
+      if (data.documentsV2MarkAllAsRead?.success) {
+        res.refetch()
+      }
+    },
+  })
+
   useConnectivityIndicator({
     componentId,
     rightButtons: getRightButtons(),
@@ -421,8 +430,7 @@ export const InboxScreen: NavigationFunctionComponent<{
           }),
           style: 'destructive',
           onPress: async () => {
-            console.log('marking all as read')
-            // await markAllAsRead()
+            await markAllAsRead()
           },
         },
       ],
