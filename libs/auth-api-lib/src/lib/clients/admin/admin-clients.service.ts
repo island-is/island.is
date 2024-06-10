@@ -499,33 +499,25 @@ export class AdminClientsService {
       })
     }
 
-    await this.clientsService.addClientDelegationTypes({
-      clientId: data.clientId,
-      delegationTypes: addedDelegationTypes,
-      delegationBooleanTypes: {
-        supportsPersonalRepresentatives,
-        supportsLegalGuardians,
-        supportsProcuringHolders,
-        supportsCustomDelegation,
-      },
-      options: {
-        transaction,
-      },
-    })
+    if (addedDelegationTypes && addedDelegationTypes.length > 0) {
+      await this.clientsService.addClientDelegationTypes({
+        clientId: data.clientId,
+        delegationTypes: addedDelegationTypes,
+        options: {
+          transaction,
+        },
+      })
+    }
 
-    await this.clientsService.removeClientDelegationTypes({
-      clientId: data.clientId,
-      delegationTypes: removedDelegationTypes,
-      delegationBooleanTypes: {
-        supportsPersonalRepresentatives,
-        supportsLegalGuardians,
-        supportsProcuringHolders,
-        supportsCustomDelegation,
-      },
-      options: {
-        transaction,
-      },
-    })
+    if (removedDelegationTypes && removedDelegationTypes.length > 0) {
+      await this.clientsService.removeClientDelegationTypes({
+        clientId: data.clientId,
+        delegationTypes: removedDelegationTypes,
+        options: {
+          transaction,
+        },
+      })
+    }
   }
 
   private defaultClientAttributes(clientType: ClientType) {
