@@ -1,4 +1,4 @@
-import React, { SetStateAction, useEffect, useState } from 'react'
+import React, { FC, SetStateAction, useEffect, useState } from 'react'
 import { useIntl } from 'react-intl'
 import compareAsc from 'date-fns/compareAsc'
 
@@ -28,6 +28,7 @@ interface Props {
   blueBox?: boolean
   dateTimeDisabled?: boolean
   courtRoomDisabled?: boolean
+  courtRoomRequired?: boolean
 }
 
 export const useCourtArrangements = (
@@ -112,7 +113,7 @@ export const useCourtArrangements = (
   }
 }
 
-export const CourtArrangements: React.FC<Props> = (props) => {
+export const CourtArrangements: FC<Props> = (props) => {
   const {
     handleCourtDateChange,
     handleCourtRoomChange,
@@ -120,6 +121,7 @@ export const CourtArrangements: React.FC<Props> = (props) => {
     blueBox = true,
     dateTimeDisabled,
     courtRoomDisabled,
+    courtRoomRequired = false,
   } = props
   const { formatMessage } = useIntl()
 
@@ -162,6 +164,7 @@ export const CourtArrangements: React.FC<Props> = (props) => {
           handleCourtRoomChange(evt.target.value)
         }}
         disabled={courtRoomDisabled}
+        required={courtRoomRequired}
       />
     </>
   )

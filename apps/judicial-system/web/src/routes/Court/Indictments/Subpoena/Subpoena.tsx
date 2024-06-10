@@ -102,6 +102,7 @@ const Subpoena: FC = () => {
   const stepIsValid = isSubpoenaStepValid(
     workingCase,
     courtDate?.date,
+    courtDate?.location,
     subpoenaType,
   )
 
@@ -155,8 +156,9 @@ const Subpoena: FC = () => {
             handleCourtDateChange={handleCourtDateChange}
             handleCourtRoomChange={handleCourtRoomChange}
             courtDate={courtDate}
-            courtRoomDisabled={isPostponed}
             dateTimeDisabled={isPostponed}
+            courtRoomDisabled={isPostponed}
+            courtRoomRequired
           />
         </Box>
       </FormContentContainer>
