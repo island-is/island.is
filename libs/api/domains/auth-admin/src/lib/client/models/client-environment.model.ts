@@ -45,16 +45,24 @@ export class ClientEnvironment {
   @Field(() => [String], { nullable: true })
   supportedDelegationTypes?: string[]
 
-  @Field(() => Boolean)
+  @Field(() => Boolean, {
+    deprecationReason: 'Use supportedDelegationTypes instead',
+  })
   supportsCustomDelegation!: boolean
 
-  @Field(() => Boolean)
+  @Field(() => Boolean, {
+    deprecationReason: 'Use supportedDelegationTypes instead',
+  })
   supportsLegalGuardians!: boolean
 
-  @Field(() => Boolean)
+  @Field(() => Boolean, {
+    deprecationReason: 'Use supportedDelegationTypes instead',
+  })
   supportsProcuringHolders!: boolean
 
-  @Field(() => Boolean)
+  @Field(() => Boolean, {
+    deprecationReason: 'Use supportedDelegationTypes instead',
+  })
   supportsPersonalRepresentatives!: boolean
 
   @Field(() => Boolean)
