@@ -45,7 +45,7 @@ const Content = styled.View`
 const Row = styled.View`
   flex-direction: row;
   justify-content: space-between;
-  padding-bottom: ${({ theme }) => theme.spacing[2]}px;
+  padding-bottom: ${({ theme }) => theme.spacing.smallGutter}px;
 `
 
 const Title = styled.View`
@@ -59,7 +59,7 @@ const Date = styled.View`
 
 const Message = styled.View`
   width: 100%;
-  padding-bottom: ${({ theme }) => theme.spacing[1]}px;
+  padding-bottom: ${({ theme }) => theme.spacing.smallGutter}px;
 `
 
 export function ListItemSkeleton() {
