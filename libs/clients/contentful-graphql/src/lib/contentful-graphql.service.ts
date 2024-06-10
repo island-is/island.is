@@ -32,8 +32,7 @@ export class ContentfulGraphQLClientService {
 
   async fetchData(query: DocumentNode, variables?: Record<string, any>) {
     try {
-      const res = await this.client.request(query, variables);
-      return res
+      return await this.client.request(query, variables);
     } catch (error) {
       throw new HttpException(error.message, error.status);
     }
