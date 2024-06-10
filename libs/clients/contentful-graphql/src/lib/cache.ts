@@ -34,7 +34,7 @@ export const getCache = async (
 
   return {
     cacheManager,
-    cacheKey: (request: Request) => request.url + JSON.stringify(request.body),
+    cacheKey: (request: Request) => request.url,
     shared: true,
     overrideCacheControl,
   }

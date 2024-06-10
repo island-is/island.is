@@ -24,8 +24,7 @@ import {
 } from './dto/notification.dto'
 import type { Locale } from '@island.is/shared/types'
 import { mapToContentfulLocale, mapToLocale } from './utils'
-import { ContentfulGraphQLClientService } from '@island.is/clients/contentful-graphql'
-import { GetTemplateByTemplateId,GetTemplates,GetOrganizationByKennitala } from '@island.is/clients/contentful-graphql'
+import { ContentfulGraphQLClientService,GetTemplateByTemplateId,GetTemplates,GetOrganizationByKennitala } from '@island.is/clients/contentful-graphql'
 
 /**
  * These are the properties that can be replaced in the template
