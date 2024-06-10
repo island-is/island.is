@@ -140,9 +140,10 @@ export const ChartNumberBox = ({ slice }: ChartNumberBoxRendererProps) => {
               )
 
         const timestamp =
-          index === 0 &&
           slice.displayTimestamp &&
-          queryResult?.data?.[data.sourceDataIndex]?.header
+          index === 0 &&
+          queryResult?.data?.[data.sourceDataIndex]?.header &&
+          !isNaN(Number(queryResult.data[data.sourceDataIndex].header))
             ? format(
                 new Date(Number(queryResult.data[data.sourceDataIndex].header)),
                 'do MMM yyyy HH:mm',
