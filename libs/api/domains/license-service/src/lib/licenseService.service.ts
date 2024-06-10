@@ -109,8 +109,6 @@ export class LicenseServiceService {
     const cacheKey = `namespace-licenses-${locale}`
     const namespace = await this.cacheManager.get<Namespace | null>(cacheKey)
 
-    this.logger.debug('namespace', namespace)
-
     let licenseNamespace: Namespace | null
     if (!namespace) {
       const result = await this.cmsContentfulService.getNamespace(
