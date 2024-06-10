@@ -139,5 +139,6 @@
     },
     "docker-express": {}
   },
-  "tags": ["scope:nest"]
+  "tags": ["scope:nest"],
+  "implicitDependencies": ["clients-contentful-graphql"]
 }
