@@ -3,6 +3,10 @@ import styled from 'styled-components/native'
 import { dynamicColor } from '../../utils'
 import { Skeleton } from './skeleton'
 
+interface ListItemSkeletonProps {
+  multilineMessage?: boolean
+}
+
 const Host = styled.SafeAreaView`
   position: relative;
   flex-direction: row;
@@ -16,9 +20,10 @@ const Host = styled.SafeAreaView`
   )};
 `
 
-const Icon = styled.View`
+const Icon = styled.View<{ multilineMessage: boolean }>`
   align-items: center;
-  justify-content: center;
+  justify-content: ${({ multilineMessage }) =>
+    multilineMessage ? 'flex-start' : 'center'};
 `
 
 const Circle = styled.View`
@@ -57,15 +62,18 @@ const Date = styled.View`
   width: 65px;
 `
 
-const Message = styled.View`
-  width: 100%;
+const Message = styled.View<{ multilineMessage: boolean }>`
+  width: ${({ multilineMessage }) => (multilineMessage ? '80%' : '100%')};
   padding-bottom: ${({ theme }) => theme.spacing.smallGutter}px;
+  margin-top: ${({ theme }) => theme.spacing[1]}px;
 `
 
-export function ListItemSkeleton() {
+export function ListItemSkeleton({
+  multilineMessage = false,
+}: ListItemSkeletonProps) {
   return (
     <Host>
-      <Icon>
+      <Icon multilineMessage={multilineMessage}>
         <Circle />
       </Icon>
       <Content>
@@ -77,8 +85,15 @@ export function ListItemSkeleton() {
             <Skeleton active style={{ borderRadius: 4 }} height={17} />
           </Date>
         </Row>
-        <Message>
+        <Message multilineMessage={multilineMessage}>
           <Skeleton active style={{ borderRadius: 4 }} height={17} />
+          {multilineMessage && (
+            <Skeleton
+              active
+              style={{ borderRadius: 4, width: '65%', marginTop: 5 }}
+              height={17}
+            />
+          )}
         </Message>
       </Content>
     </Host>
