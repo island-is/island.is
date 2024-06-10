@@ -3,6 +3,7 @@ import {
   isIndictmentCase,
   isTrafficViolationCase,
   prosecutorCanSelectDefenderForInvestigationCase,
+  SubpoenaType,
 } from '@island.is/judicial-system/types'
 import {
   CaseAppealRulingDecision,
@@ -413,9 +414,11 @@ export const isCourtRecordStepValidIC = (workingCase: Case): boolean => {
 export const isSubpoenaStepValid = (
   workingCase: Case,
   courtDate?: string | null,
+  subpoenaType?: SubpoenaType
 ): boolean => {
   return validate([
     [courtDate ?? workingCase.arraignmentDate?.date, ['empty', 'date-format']],
+    [subpoenaType ?? workingCase.subpoenaType, ['empty']],
   ]).isValid
 }
 

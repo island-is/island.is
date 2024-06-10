@@ -1,4 +1,4 @@
-import React, { useCallback, useContext, useState } from 'react'
+import React, { FC, useCallback, useContext, useEffect, useState } from 'react'
 import { useIntl } from 'react-intl'
 import router from 'next/router'
 
@@ -22,6 +22,7 @@ import {
 import {
   IndictmentDecision,
   NotificationType,
+  SubpoenaType,
 } from '@island.is/judicial-system-web/src/graphql/schema'
 import type { stepValidationsType } from '@island.is/judicial-system-web/src/utils/formHelper'
 import { useCase } from '@island.is/judicial-system-web/src/utils/hooks'
@@ -31,11 +32,11 @@ import { isSubpoenaStepValid } from '@island.is/judicial-system-web/src/utils/va
 import { subpoena as strings } from './Subpoena.strings'
 import * as styles from './Subpoena.css'
 
-const Subpoena: React.FC<React.PropsWithChildren<unknown>> = () => {
+const Subpoena: FC = () => {
   const { workingCase, setWorkingCase, isLoadingWorkingCase, caseNotFound } =
     useContext(FormContext)
   const [navigateTo, setNavigateTo] = useState<keyof stepValidationsType>()
-  const [subpoenaType, setSubpoenaType] = useState<string>()
+  const [subpoenaType, setSubpoenaType] = useState<SubpoenaType>()
   const { formatMessage } = useIntl()
   const {
     courtDate,
@@ -44,7 +45,13 @@ const Subpoena: React.FC<React.PropsWithChildren<unknown>> = () => {
     handleCourtRoomChange,
     sendCourtDateToServer,
   } = useCourtArrangements(workingCase, setWorkingCase, 'arraignmentDate')
-  const { sendNotification } = useCase()
+  const { sendNotification, setAndSendCaseToServer } = useCase()
+
+  useEffect(() => {
+    if (workingCase.subpoenaType) {
+      setSubpoenaType(workingCase.subpoenaType)
+    }
+  }, [workingCase.subpoenaType])
 
   const isPostponed =
     workingCase.indictmentDecision ===
@@ -58,7 +65,16 @@ const Subpoena: React.FC<React.PropsWithChildren<unknown>> = () => {
         return
       }
 
-      await sendCourtDateToServer()
+      const courtDateSentToServer = await sendCourtDateToServer()
+      const subpoenaTypeSentToServer = await setAndSendCaseToServer(
+        [{ subpoenaType, force: true }],
+        workingCase,
+        setWorkingCase,
+      )
+
+      if (!courtDateSentToServer || !subpoenaTypeSentToServer) {
+        return
+      }
 
       if (
         hasSentNotification(
@@ -75,13 +91,19 @@ const Subpoena: React.FC<React.PropsWithChildren<unknown>> = () => {
     [
       isPostponed,
       sendCourtDateToServer,
-      workingCase.notifications,
-      workingCase.id,
+      setAndSendCaseToServer,
+      subpoenaType,
+      workingCase,
+      setWorkingCase,
       courtDateHasChanged,
     ],
   )
 
-  const stepIsValid = isSubpoenaStepValid(workingCase, courtDate?.date)
+  const stepIsValid = isSubpoenaStepValid(
+    workingCase,
+    courtDate?.date,
+    subpoenaType,
+  )
 
   return (
     <PageLayout
@@ -108,8 +130,9 @@ const Subpoena: React.FC<React.PropsWithChildren<unknown>> = () => {
                 id="subpoenaTypeAbsence"
                 backgroundColor="white"
                 label={formatMessage(strings.subpoenaTypeAbsence)}
-                checked={subpoenaType === 'absence'}
-                onChange={() => setSubpoenaType('absence')}
+                checked={subpoenaType === SubpoenaType.ABSENCE}
+                onChange={() => setSubpoenaType(SubpoenaType.ABSENCE)}
+                disabled={isPostponed}
               />
               <RadioButton
                 large
@@ -117,8 +140,9 @@ const Subpoena: React.FC<React.PropsWithChildren<unknown>> = () => {
                 id="subpoenaTypeArrest"
                 backgroundColor="white"
                 label={formatMessage(strings.subpoenaTypeArrest)}
-                checked={subpoenaType === 'arrest'}
-                onChange={() => setSubpoenaType('arrest')}
+                checked={subpoenaType === SubpoenaType.ARREST}
+                onChange={() => setSubpoenaType(SubpoenaType.ARREST)}
+                disabled={isPostponed}
               />
             </Box>
           </BlueBox>
