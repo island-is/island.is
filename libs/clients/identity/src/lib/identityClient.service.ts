@@ -3,6 +3,7 @@ import * as kennitala from 'kennitala'
 
 import { CompanyRegistryClientService } from '@island.is/clients/rsk/company-registry'
 import { NationalRegistryClientService } from '@island.is/clients/national-registry-v2'
+import { NationalRegistryV3ClientService } from '@island.is/clients/national-registry-v3'
 import { LOGGER_PROVIDER } from '@island.is/logging'
 import type { Logger } from '@island.is/logging'
 
@@ -16,6 +17,7 @@ export class IdentityClientService {
   constructor(
     private nationalRegistryXRoadService: NationalRegistryClientService,
     private rskCompanyInfoService: CompanyRegistryClientService,
+    private nationalRegistryV3ClientService: NationalRegistryV3ClientService,
     @Inject(LOGGER_PROVIDER) private logger: Logger,
   ) {}
 
@@ -80,7 +82,11 @@ export class IdentityClientService {
     const person = await this.nationalRegistryXRoadService.getIndividual(
       nationalId,
     )
-
+    const personv3 =
+      await this.nationalRegistryV3ClientService.getAllDataIndividual(
+        nationalId,
+      )
+    console.log('personv3', personv3)
     if (!person) {
       return null
     }

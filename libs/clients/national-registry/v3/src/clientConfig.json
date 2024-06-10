@@ -1,6 +1,9 @@
 {
   "openapi": "3.0.1",
-  "info": { "title": "Miðlun API - V1.0", "version": "v1.0" },
+  "info": {
+    "title": "Miðlun API - V1.0",
+    "version": "v1.0"
+  },
   "paths": {
     "/Midlun/v1/Einstaklingar/{nationalId}": {
       "get": {
@@ -10,7 +13,9 @@
             "name": "nationalId",
             "in": "path",
             "required": true,
-            "schema": { "type": "string" }
+            "schema": {
+              "type": "string"
+            }
           }
         ],
         "responses": {
@@ -24,8 +29,8 @@
                 "examples": {
                   "Grunnpakki": {
                     "value": {
-                      "nafn": "Jón Jónsson",
                       "kennitala": "1234567890",
+                      "nafn": "Jón Jónsson",
                       "tegundKennitolu": "Kennitala á Þjóðskrá",
                       "tegundEinstaklingsNr": 1,
                       "tegundEinstaklingsLysing": "Kennitala á Þjóðskrá",
@@ -43,8 +48,8 @@
                   },
                   "Allir pakkar": {
                     "value": {
-                      "nafn": "Jón Jónsson",
                       "kennitala": "1234567890",
+                      "nafn": "Jón Jónsson",
                       "tegundKennitolu": "Kennitala á Þjóðskrá",
                       "tegundEinstaklingsNr": 1,
                       "tegundEinstaklingsLysing": "Kennitala á Þjóðskrá",
@@ -69,7 +74,10 @@
                             "kennitala": "0011221500",
                             "nafn": "Drengur Jónsson"
                           },
-                          { "kennitala": "1234567890", "nafn": "Jón Jónsson" }
+                          {
+                            "kennitala": "1234567890",
+                            "nafn": "Jón Jónsson"
+                          }
                         ]
                       },
                       "itarupplysingar": {
@@ -92,7 +100,10 @@
                         "makiKennitala": "0987654321",
                         "makiNafn": "Anna Önnudóttir"
                       },
-                      "kyn": { "kynKodi": "1", "kynTexti": "Karl" },
+                      "kyn": {
+                        "kynKodi": "1",
+                        "kynTexti": "Karl"
+                      },
                       "rikisfang": {
                         "rikisfangKodi": "IS",
                         "rikisfangLand": "Ísland"
@@ -167,8 +178,8 @@
                   },
                   "Kerfiskennitölur - Grunnpakki": {
                     "value": {
-                      "nafn": "Jens Larson",
                       "kennitala": "1122335000",
+                      "nafn": "Jens Larson",
                       "tegundKennitolu": "Kerfiskennitala",
                       "tegundEinstaklingsNr": 2,
                       "tegundEinstaklingsLysing": "Kerfiskennitala",
@@ -186,8 +197,8 @@
                   },
                   "Kerfiskennitölur - Allir pakkar": {
                     "value": {
-                      "nafn": "Jens Larson",
                       "kennitala": "1122335000",
+                      "nafn": "Jens Larson",
                       "tegundKennitolu": "Kerfiskennitala",
                       "tegundEinstaklingsNr": 2,
                       "tegundEinstaklingsLysing": "Kerfiskennitala",
@@ -201,20 +212,23 @@
                         "sveitarfelag": "Reykjavík",
                         "tegundHeimilisfangs": "Dvalarstaður"
                       },
-                      "kyn": { "kynKodi": "1", "kynTexti": "Karl" },
+                      "kyn": {
+                        "kynKodi": "1",
+                        "kynTexti": "Karl"
+                      },
                       "rikisfang": {
                         "rikisfangKodi": "DK",
                         "rikisfangLand": "Danmörk"
                       },
                       "nyskraningDagsetning": {
-                        "nyskraningDagur": "2023-12-05T16:21:19.5180577+00:00"
+                        "nyskraningDagur": "2024-05-21T13:25:08.3311122+00:00"
                       }
                     }
                   },
                   "Látnir - grunnpakki": {
                     "value": {
-                      "nafn": "Jóna Jónsdóttir",
                       "kennitala": "1122335678",
+                      "nafn": "Jóna Jónsdóttir",
                       "tegundKennitolu": "Kennitala á Þjóðskrá",
                       "tegundEinstaklingsNr": 3,
                       "tegundEinstaklingsLysing": "Lést",
@@ -225,8 +239,8 @@
                   },
                   "Látnir - allir pakkar": {
                     "value": {
-                      "nafn": "Jóna Jónsdóttir",
                       "kennitala": "1122335678",
+                      "nafn": "Jóna Jónsdóttir",
                       "tegundKennitolu": "Kennitala á Þjóðskrá",
                       "tegundEinstaklingsNr": 3,
                       "tegundEinstaklingsLysing": "Lést",
@@ -261,12 +275,16 @@
               }
             }
           },
-          "204": { "description": "No Content" },
+          "204": {
+            "description": "No Content"
+          },
           "401": {
             "description": "Unauthorized",
             "content": {
               "application/json": {
-                "schema": { "$ref": "#/components/schemas/ProblemDetails" }
+                "schema": {
+                  "$ref": "#/components/schemas/ProblemDetails"
+                }
               }
             }
           }
@@ -281,7 +299,9 @@
             "name": "nationalId",
             "in": "path",
             "required": true,
-            "schema": { "type": "string" }
+            "schema": {
+              "type": "string"
+            }
           }
         ],
         "responses": {
@@ -295,8 +315,8 @@
                 "examples": {
                   "Grunnpakki": {
                     "value": {
-                      "nafn": "Jón Jónsson",
                       "kennitala": "1234567890",
+                      "nafn": "Jón Jónsson",
                       "tegundKennitolu": "Kennitala á Þjóðskrá",
                       "tegundEinstaklingsNr": 1,
                       "tegundEinstaklingsLysing": "Kennitala á Þjóðskrá",
@@ -316,12 +336,16 @@
               }
             }
           },
-          "204": { "description": "No Content" },
+          "204": {
+            "description": "No Content"
+          },
           "401": {
             "description": "Unauthorized",
             "content": {
               "application/json": {
-                "schema": { "$ref": "#/components/schemas/ProblemDetails" }
+                "schema": {
+                  "$ref": "#/components/schemas/ProblemDetails"
+                }
               }
             }
           }
@@ -336,7 +360,9 @@
             "name": "nationalId",
             "in": "path",
             "required": true,
-            "schema": { "type": "string" }
+            "schema": {
+              "type": "string"
+            }
           }
         ],
         "responses": {
@@ -362,12 +388,16 @@
               }
             }
           },
-          "204": { "description": "No Content" },
+          "204": {
+            "description": "No Content"
+          },
           "401": {
             "description": "Unauthorized",
             "content": {
               "application/json": {
-                "schema": { "$ref": "#/components/schemas/ProblemDetails" }
+                "schema": {
+                  "$ref": "#/components/schemas/ProblemDetails"
+                }
               }
             }
           }
@@ -382,7 +412,9 @@
             "name": "nationalId",
             "in": "path",
             "required": true,
-            "schema": { "type": "string" }
+            "schema": {
+              "type": "string"
+            }
           }
         ],
         "responses": {
@@ -421,12 +453,16 @@
               }
             }
           },
-          "204": { "description": "No Content" },
+          "204": {
+            "description": "No Content"
+          },
           "401": {
             "description": "Unauthorized",
             "content": {
               "application/json": {
-                "schema": { "$ref": "#/components/schemas/ProblemDetails" }
+                "schema": {
+                  "$ref": "#/components/schemas/ProblemDetails"
+                }
               }
             }
           }
@@ -441,7 +477,9 @@
             "name": "nationalId",
             "in": "path",
             "required": true,
-            "schema": { "type": "string" }
+            "schema": {
+              "type": "string"
+            }
           }
         ],
         "responses": {
@@ -465,7 +503,10 @@
                           "kennitala": "0011221500",
                           "nafn": "Drengur Jónsson"
                         },
-                        { "kennitala": "1234567890", "nafn": "Jón Jónsson" }
+                        {
+                          "kennitala": "1234567890",
+                          "nafn": "Jón Jónsson"
+                        }
                       ]
                     }
                   }
@@ -473,12 +514,16 @@
               }
             }
           },
-          "204": { "description": "No Content" },
+          "204": {
+            "description": "No Content"
+          },
           "401": {
             "description": "Unauthorized",
             "content": {
               "application/json": {
-                "schema": { "$ref": "#/components/schemas/ProblemDetails" }
+                "schema": {
+                  "$ref": "#/components/schemas/ProblemDetails"
+                }
               }
             }
           }
@@ -493,7 +538,9 @@
             "name": "nationalId",
             "in": "path",
             "required": true,
-            "schema": { "type": "string" }
+            "schema": {
+              "type": "string"
+            }
           }
         ],
         "responses": {
@@ -518,12 +565,16 @@
               }
             }
           },
-          "204": { "description": "No Content" },
+          "204": {
+            "description": "No Content"
+          },
           "401": {
             "description": "Unauthorized",
             "content": {
               "application/json": {
-                "schema": { "$ref": "#/components/schemas/ProblemDetails" }
+                "schema": {
+                  "$ref": "#/components/schemas/ProblemDetails"
+                }
               }
             }
           }
@@ -538,7 +589,9 @@
             "name": "nationalId",
             "in": "path",
             "required": true,
-            "schema": { "type": "string" }
+            "schema": {
+              "type": "string"
+            }
           }
         ],
         "responses": {
@@ -550,17 +603,26 @@
                   "$ref": "#/components/schemas/EinstaklingurDTOKyn"
                 },
                 "examples": {
-                  "Kyn": { "value": { "kynKodi": "1", "kynTexti": "Karl" } }
+                  "Kyn": {
+                    "value": {
+                      "kynKodi": "1",
+                      "kynTexti": "Karl"
+                    }
+                  }
                 }
               }
             }
           },
-          "204": { "description": "No Content" },
+          "204": {
+            "description": "No Content"
+          },
           "401": {
             "description": "Unauthorized",
             "content": {
               "application/json": {
-                "schema": { "$ref": "#/components/schemas/ProblemDetails" }
+                "schema": {
+                  "$ref": "#/components/schemas/ProblemDetails"
+                }
               }
             }
           }
@@ -575,7 +637,9 @@
             "name": "nationalId",
             "in": "path",
             "required": true,
-            "schema": { "type": "string" }
+            "schema": {
+              "type": "string"
+            }
           }
         ],
         "responses": {
@@ -597,12 +661,16 @@
               }
             }
           },
-          "204": { "description": "No Content" },
+          "204": {
+            "description": "No Content"
+          },
           "401": {
             "description": "Unauthorized",
             "content": {
               "application/json": {
-                "schema": { "$ref": "#/components/schemas/ProblemDetails" }
+                "schema": {
+                  "$ref": "#/components/schemas/ProblemDetails"
+                }
               }
             }
           }
@@ -617,7 +685,9 @@
             "name": "nationalId",
             "in": "path",
             "required": true,
-            "schema": { "type": "string" }
+            "schema": {
+              "type": "string"
+            }
           }
         ],
         "responses": {
@@ -658,12 +728,16 @@
               }
             }
           },
-          "204": { "description": "No Content" },
+          "204": {
+            "description": "No Content"
+          },
           "401": {
             "description": "Unauthorized",
             "content": {
               "application/json": {
-                "schema": { "$ref": "#/components/schemas/ProblemDetails" }
+                "schema": {
+                  "$ref": "#/components/schemas/ProblemDetails"
+                }
               }
             }
           }
@@ -678,7 +752,9 @@
             "name": "nationalId",
             "in": "path",
             "required": true,
-            "schema": { "type": "string" }
+            "schema": {
+              "type": "string"
+            }
           }
         ],
         "responses": {
@@ -701,12 +777,16 @@
               }
             }
           },
-          "204": { "description": "No Content" },
+          "204": {
+            "description": "No Content"
+          },
           "401": {
             "description": "Unauthorized",
             "content": {
               "application/json": {
-                "schema": { "$ref": "#/components/schemas/ProblemDetails" }
+                "schema": {
+                  "$ref": "#/components/schemas/ProblemDetails"
+                }
               }
             }
           }
@@ -721,7 +801,9 @@
             "name": "nationalId",
             "in": "path",
             "required": true,
-            "schema": { "type": "string" }
+            "schema": {
+              "type": "string"
+            }
           }
         ],
         "responses": {
@@ -750,12 +832,16 @@
               }
             }
           },
-          "204": { "description": "No Content" },
+          "204": {
+            "description": "No Content"
+          },
           "401": {
             "description": "Unauthorized",
             "content": {
               "application/json": {
-                "schema": { "$ref": "#/components/schemas/ProblemDetails" }
+                "schema": {
+                  "$ref": "#/components/schemas/ProblemDetails"
+                }
               }
             }
           }
@@ -770,7 +856,9 @@
             "name": "nationalId",
             "in": "path",
             "required": true,
-            "schema": { "type": "string" }
+            "schema": {
+              "type": "string"
+            }
           }
         ],
         "responses": {
@@ -808,12 +896,16 @@
               }
             }
           },
-          "204": { "description": "No Content" },
+          "204": {
+            "description": "No Content"
+          },
           "401": {
             "description": "Unauthorized",
             "content": {
               "application/json": {
-                "schema": { "$ref": "#/components/schemas/ProblemDetails" }
+                "schema": {
+                  "$ref": "#/components/schemas/ProblemDetails"
+                }
               }
             }
           }
@@ -828,7 +920,9 @@
             "name": "nationalId",
             "in": "path",
             "required": true,
-            "schema": { "type": "string" }
+            "schema": {
+              "type": "string"
+            }
           }
         ],
         "responses": {
@@ -873,12 +967,16 @@
               }
             }
           },
-          "204": { "description": "No Content" },
+          "204": {
+            "description": "No Content"
+          },
           "401": {
             "description": "Unauthorized",
             "content": {
               "application/json": {
-                "schema": { "$ref": "#/components/schemas/ProblemDetails" }
+                "schema": {
+                  "$ref": "#/components/schemas/ProblemDetails"
+                }
               }
             }
           }
@@ -893,7 +991,9 @@
             "name": "nationalId",
             "in": "path",
             "required": true,
-            "schema": { "type": "string" }
+            "schema": {
+              "type": "string"
+            }
           }
         ],
         "responses": {
@@ -905,17 +1005,25 @@
                   "$ref": "#/components/schemas/EinstaklingurDTONafn"
                 },
                 "examples": {
-                  "Nafn einstaklings": { "value": { "nafn": "Jón Jónsson" } }
+                  "Nafn einstaklings": {
+                    "value": {
+                      "nafn": "Jón Jónsson"
+                    }
+                  }
                 }
               }
             }
           },
-          "204": { "description": "No Content" },
+          "204": {
+            "description": "No Content"
+          },
           "401": {
             "description": "Unauthorized",
             "content": {
               "application/json": {
-                "schema": { "$ref": "#/components/schemas/ProblemDetails" }
+                "schema": {
+                  "$ref": "#/components/schemas/ProblemDetails"
+                }
               }
             }
           }
@@ -930,7 +1038,9 @@
             "name": "nationalId",
             "in": "path",
             "required": true,
-            "schema": { "type": "string" }
+            "schema": {
+              "type": "string"
+            }
           }
         ],
         "responses": {
@@ -956,12 +1066,16 @@
               }
             }
           },
-          "204": { "description": "No Content" },
+          "204": {
+            "description": "No Content"
+          },
           "401": {
             "description": "Unauthorized",
             "content": {
               "application/json": {
-                "schema": { "$ref": "#/components/schemas/ProblemDetails" }
+                "schema": {
+                  "$ref": "#/components/schemas/ProblemDetails"
+                }
               }
             }
           }
@@ -976,7 +1090,9 @@
             "name": "nationalId",
             "in": "path",
             "required": true,
-            "schema": { "type": "string" }
+            "schema": {
+              "type": "string"
+            }
           }
         ],
         "responses": {
@@ -989,18 +1105,24 @@
                 },
                 "examples": {
                   "Dagsetning nýskráningar": {
-                    "value": { "nyskraningDagur": null }
+                    "value": {
+                      "nyskraningDagur": null
+                    }
                   }
                 }
               }
             }
           },
-          "204": { "description": "No Content" },
+          "204": {
+            "description": "No Content"
+          },
           "401": {
             "description": "Unauthorized",
             "content": {
               "application/json": {
-                "schema": { "$ref": "#/components/schemas/ProblemDetails" }
+                "schema": {
+                  "$ref": "#/components/schemas/ProblemDetails"
+                }
               }
             }
           }
@@ -1015,7 +1137,9 @@
             "name": "nationalId",
             "in": "path",
             "required": true,
-            "schema": { "type": "string" }
+            "schema": {
+              "type": "string"
+            }
           }
         ],
         "responses": {
@@ -1033,12 +1157,16 @@
               }
             }
           },
-          "204": { "description": "No Content" },
+          "204": {
+            "description": "No Content"
+          },
           "401": {
             "description": "Unauthorized",
             "content": {
               "application/json": {
-                "schema": { "$ref": "#/components/schemas/ProblemDetails" }
+                "schema": {
+                  "$ref": "#/components/schemas/ProblemDetails"
+                }
               }
             }
           }
@@ -1053,72 +1181,113 @@
             "name": "nationalId",
             "in": "path",
             "required": true,
-            "schema": { "type": "string" }
+            "schema": {
+              "type": "string"
+            }
           },
           {
             "name": "LoghTengsl",
             "in": "query",
-            "schema": { "type": "boolean", "default": true }
+            "schema": {
+              "type": "boolean",
+              "default": true
+            }
           },
           {
             "name": "GrunnAuka",
             "in": "query",
-            "schema": { "type": "boolean", "default": true }
+            "schema": {
+              "type": "boolean",
+              "default": true
+            }
           },
           {
             "name": "Hjuskapur",
             "in": "query",
-            "schema": { "type": "boolean", "default": true }
+            "schema": {
+              "type": "boolean",
+              "default": true
+            }
           },
           {
             "name": "Kyn",
             "in": "query",
-            "schema": { "type": "boolean", "default": true }
+            "schema": {
+              "type": "boolean",
+              "default": true
+            }
           },
           {
             "name": "Rikisfang",
             "in": "query",
-            "schema": { "type": "boolean", "default": true }
+            "schema": {
+              "type": "boolean",
+              "default": true
+            }
           },
           {
             "name": "Forsja",
             "in": "query",
-            "schema": { "type": "boolean", "default": true }
+            "schema": {
+              "type": "boolean",
+              "default": true
+            }
           },
           {
             "name": "FaedStad",
             "in": "query",
-            "schema": { "type": "boolean", "default": true }
+            "schema": {
+              "type": "boolean",
+              "default": true
+            }
           },
           {
             "name": "Latinn1",
             "in": "query",
-            "schema": { "type": "boolean", "default": true }
+            "schema": {
+              "type": "boolean",
+              "default": true
+            }
           },
           {
             "name": "Latinn2",
             "in": "query",
-            "schema": { "type": "boolean", "default": true }
+            "schema": {
+              "type": "boolean",
+              "default": true
+            }
           },
           {
             "name": "Nafn",
             "in": "query",
-            "schema": { "type": "boolean", "default": true }
+            "schema": {
+              "type": "boolean",
+              "default": true
+            }
           },
           {
             "name": "Nyskraning",
             "in": "query",
-            "schema": { "type": "boolean", "default": true }
+            "schema": {
+              "type": "boolean",
+              "default": true
+            }
           },
           {
             "name": "LogForeldrar",
             "in": "query",
-            "schema": { "type": "boolean", "default": true }
+            "schema": {
+              "type": "boolean",
+              "default": true
+            }
           },
           {
             "name": "Tru",
             "in": "query",
-            "schema": { "type": "boolean", "default": true }
+            "schema": {
+              "type": "boolean",
+              "default": true
+            }
           }
         ],
         "responses": {
@@ -1132,8 +1301,8 @@
                 "examples": {
                   "Grunnpakki": {
                     "value": {
-                      "nafn": "Jón Jónsson",
                       "kennitala": "1234567890",
+                      "nafn": "Jón Jónsson",
                       "tegundKennitolu": "Kennitala á Þjóðskrá",
                       "tegundEinstaklingsNr": 1,
                       "tegundEinstaklingsLysing": "Kennitala á Þjóðskrá",
@@ -1153,12 +1322,16 @@
               }
             }
           },
-          "204": { "description": "No Content" },
+          "204": {
+            "description": "No Content"
+          },
           "401": {
             "description": "Unauthorized",
             "content": {
               "application/json": {
-                "schema": { "$ref": "#/components/schemas/ProblemDetails" }
+                "schema": {
+                  "$ref": "#/components/schemas/ProblemDetails"
+                }
               }
             }
           }
@@ -1172,10 +1345,18 @@
           {
             "name": "amount",
             "in": "query",
-            "schema": { "type": "integer", "format": "int32", "default": 10 }
+            "schema": {
+              "type": "integer",
+              "format": "int32",
+              "default": 10
+            }
           }
         ],
-        "responses": { "200": { "description": "Success" } }
+        "responses": {
+          "200": {
+            "description": "Success"
+          }
+        }
       }
     }
   },
@@ -1184,13 +1365,34 @@
       "EinstaklingurDTOAllt": {
         "type": "object",
         "properties": {
-          "kennitala": { "type": "string", "nullable": true },
-          "nafn": { "type": "string", "nullable": true },
-          "tegundKennitolu": { "type": "string", "nullable": true },
-          "tegundEinstaklingsNr": { "type": "integer", "format": "int32" },
-          "tegundEinstaklingsLysing": { "type": "string", "nullable": true },
-          "bannmerking": { "type": "boolean", "nullable": true },
-          "afdrif": { "type": "string", "nullable": true },
+          "kennitala": {
+            "type": "string",
+            "nullable": true
+          },
+          "nafn": {
+            "type": "string",
+            "nullable": true
+          },
+          "tegundKennitolu": {
+            "type": "string",
+            "nullable": true
+          },
+          "tegundEinstaklingsNr": {
+            "type": "integer",
+            "format": "int32"
+          },
+          "tegundEinstaklingsLysing": {
+            "type": "string",
+            "nullable": true
+          },
+          "bannmerking": {
+            "type": "boolean",
+            "nullable": true
+          },
+          "afdrif": {
+            "type": "string",
+            "nullable": true
+          },
           "heimilisfang": {
             "$ref": "#/components/schemas/EinstaklingurDTOHeimili"
           },
@@ -1203,15 +1405,21 @@
           "hjuskaparstada": {
             "$ref": "#/components/schemas/EinstaklingurDTOHju"
           },
-          "kyn": { "$ref": "#/components/schemas/EinstaklingurDTOKyn" },
+          "kyn": {
+            "$ref": "#/components/schemas/EinstaklingurDTOKyn"
+          },
           "rikisfang": {
             "$ref": "#/components/schemas/EinstaklingurDTORikisfang"
           },
-          "forsja": { "$ref": "#/components/schemas/EinstaklingurDTOForsja" },
+          "forsja": {
+            "$ref": "#/components/schemas/EinstaklingurDTOForsja"
+          },
           "faedingarstadur": {
             "$ref": "#/components/schemas/EinstaklingurDTOFaeding"
           },
-          "latnir": { "$ref": "#/components/schemas/EinstaklingurDTOLatnir1" },
+          "latnir": {
+            "$ref": "#/components/schemas/EinstaklingurDTOLatnir1"
+          },
           "latnirItar": {
             "$ref": "#/components/schemas/EinstaklingurDTOLatnir2"
           },
@@ -1224,15 +1432,23 @@
           "nyskraningDagsetning": {
             "$ref": "#/components/schemas/EinstaklingurDTONyskra"
           },
-          "trufelag": { "$ref": "#/components/schemas/EinstaklingurDTOTru" }
+          "trufelag": {
+            "$ref": "#/components/schemas/EinstaklingurDTOTru"
+          }
         },
         "additionalProperties": false
       },
       "EinstaklingurDTOBase": {
         "type": "object",
         "properties": {
-          "kennitala": { "type": "string", "nullable": true },
-          "nafn": { "type": "string", "nullable": true }
+          "kennitala": {
+            "type": "string",
+            "nullable": true
+          },
+          "nafn": {
+            "type": "string",
+            "nullable": true
+          }
         },
         "additionalProperties": false
       },
@@ -1244,8 +1460,14 @@
             "format": "date-time",
             "nullable": true
           },
-          "faedingarStadurKodi": { "type": "string", "nullable": true },
-          "faedingarStadurHeiti": { "type": "string", "nullable": true }
+          "faedingarStadurKodi": {
+            "type": "string",
+            "nullable": true
+          },
+          "faedingarStadurHeiti": {
+            "type": "string",
+            "nullable": true
+          }
         },
         "additionalProperties": false
       },
@@ -1272,12 +1494,30 @@
       "EinstaklingurDTOForsjaItem": {
         "type": "object",
         "properties": {
-          "barnKennitala": { "type": "string", "nullable": true },
-          "barnNafn": { "type": "string", "nullable": true },
-          "forsjaAdiliKennitala": { "type": "string", "nullable": true },
-          "forsjaAdiliNafn": { "type": "string", "nullable": true },
-          "forsjaKodi": { "type": "string", "nullable": true },
-          "forsjaTexti": { "type": "string", "nullable": true },
+          "barnKennitala": {
+            "type": "string",
+            "nullable": true
+          },
+          "barnNafn": {
+            "type": "string",
+            "nullable": true
+          },
+          "forsjaAdiliKennitala": {
+            "type": "string",
+            "nullable": true
+          },
+          "forsjaAdiliNafn": {
+            "type": "string",
+            "nullable": true
+          },
+          "forsjaKodi": {
+            "type": "string",
+            "nullable": true
+          },
+          "forsjaTexti": {
+            "type": "string",
+            "nullable": true
+          },
           "forsjaAdiliFaedingardagur": {
             "type": "string",
             "format": "date-time",
@@ -1289,13 +1529,34 @@
       "EinstaklingurDTOGrunn": {
         "type": "object",
         "properties": {
-          "kennitala": { "type": "string", "nullable": true },
-          "nafn": { "type": "string", "nullable": true },
-          "tegundKennitolu": { "type": "string", "nullable": true },
-          "tegundEinstaklingsNr": { "type": "integer", "format": "int32" },
-          "tegundEinstaklingsLysing": { "type": "string", "nullable": true },
-          "bannmerking": { "type": "boolean", "nullable": true },
-          "afdrif": { "type": "string", "nullable": true },
+          "kennitala": {
+            "type": "string",
+            "nullable": true
+          },
+          "nafn": {
+            "type": "string",
+            "nullable": true
+          },
+          "tegundKennitolu": {
+            "type": "string",
+            "nullable": true
+          },
+          "tegundEinstaklingsNr": {
+            "type": "integer",
+            "format": "int32"
+          },
+          "tegundEinstaklingsLysing": {
+            "type": "string",
+            "nullable": true
+          },
+          "bannmerking": {
+            "type": "boolean",
+            "nullable": true
+          },
+          "afdrif": {
+            "type": "string",
+            "nullable": true
+          },
           "heimilisfang": {
             "$ref": "#/components/schemas/EinstaklingurDTOHeimili"
           }
@@ -1305,43 +1566,98 @@
       "EinstaklingurDTOHeimili": {
         "type": "object",
         "properties": {
-          "husHeiti": { "type": "string", "nullable": true },
-          "ibud": { "type": "string", "nullable": true },
-          "postnumer": { "type": "string", "nullable": true },
-          "poststod": { "type": "string", "nullable": true },
-          "sveitarfelag": { "type": "string", "nullable": true },
-          "tegundHeimilisfangs": { "type": "string", "nullable": true }
+          "husHeiti": {
+            "type": "string",
+            "nullable": true
+          },
+          "ibud": {
+            "type": "string",
+            "nullable": true
+          },
+          "postnumer": {
+            "type": "string",
+            "nullable": true
+          },
+          "poststod": {
+            "type": "string",
+            "nullable": true
+          },
+          "sveitarfelag": {
+            "type": "string",
+            "nullable": true
+          },
+          "tegundHeimilisfangs": {
+            "type": "string",
+            "nullable": true
+          }
         },
         "additionalProperties": false
       },
       "EinstaklingurDTOHju": {
         "type": "object",
         "properties": {
-          "hjuskaparstadaKodi": { "type": "string", "nullable": true },
-          "hjuskaparstadaTexti": { "type": "string", "nullable": true },
-          "sambudTexti": { "type": "boolean", "nullable": true },
-          "makiKennitala": { "type": "string", "nullable": true },
-          "makiNafn": { "type": "string", "nullable": true }
+          "hjuskaparstadaKodi": {
+            "type": "string",
+            "nullable": true
+          },
+          "hjuskaparstadaTexti": {
+            "type": "string",
+            "nullable": true
+          },
+          "sambudTexti": {
+            "type": "boolean",
+            "nullable": true
+          },
+          "makiKennitala": {
+            "type": "string",
+            "nullable": true
+          },
+          "makiNafn": {
+            "type": "string",
+            "nullable": true
+          }
         },
         "additionalProperties": false
       },
       "EinstaklingurDTOItar": {
         "type": "object",
         "properties": {
-          "logheimiliskodi": { "type": "string", "nullable": true },
-          "logheimiliskodi112": { "type": "string", "nullable": true },
-          "logheimiliskodiSIsl": { "type": "string", "nullable": true },
-          "adsetur": { "$ref": "#/components/schemas/EinstaklingurDTOHeimili" }
+          "logheimiliskodi": {
+            "type": "string",
+            "nullable": true
+          },
+          "logheimiliskodi112": {
+            "type": "string",
+            "nullable": true
+          },
+          "logheimiliskodiSIsl": {
+            "type": "string",
+            "nullable": true
+          },
+          "adsetur": {
+            "$ref": "#/components/schemas/EinstaklingurDTOHeimili"
+          }
         },
         "additionalProperties": false
       },
       "EinstaklingurDTOItarAuka": {
         "type": "object",
         "properties": {
-          "logheimiliskodi": { "type": "string", "nullable": true },
-          "logheimiliskodi112": { "type": "string", "nullable": true },
-          "logheimiliskodiSIsl": { "type": "string", "nullable": true },
-          "adsetur": { "$ref": "#/components/schemas/EinstaklingurDTOHeimili" },
+          "logheimiliskodi": {
+            "type": "string",
+            "nullable": true
+          },
+          "logheimiliskodi112": {
+            "type": "string",
+            "nullable": true
+          },
+          "logheimiliskodiSIsl": {
+            "type": "string",
+            "nullable": true
+          },
+          "adsetur": {
+            "$ref": "#/components/schemas/EinstaklingurDTOHeimili"
+          },
           "heimilisfang": {
             "$ref": "#/components/schemas/EinstaklingurDTOHeimili"
           }
@@ -1351,8 +1667,14 @@
       "EinstaklingurDTOKyn": {
         "type": "object",
         "properties": {
-          "kynKodi": { "type": "string", "nullable": true },
-          "kynTexti": { "type": "string", "nullable": true }
+          "kynKodi": {
+            "type": "string",
+            "nullable": true
+          },
+          "kynTexti": {
+            "type": "string",
+            "nullable": true
+          }
         },
         "additionalProperties": false
       },
@@ -1373,30 +1695,84 @@
       "EinstaklingurDTOLatnir2": {
         "type": "object",
         "properties": {
-          "andlatKynKodi": { "type": "string", "nullable": true },
-          "andlatKynTexti": { "type": "string", "nullable": true },
-          "andlatHjuKodi": { "type": "string", "nullable": true },
-          "andlatHjuTexti": { "type": "string", "nullable": true },
-          "andlatMakiKennitala": { "type": "string", "nullable": true },
-          "andlatMakiNafn": { "type": "string", "nullable": true },
-          "andlatLoghTengsl": { "type": "string", "nullable": true },
-          "andlatFaedingarStadurKodi": { "type": "string", "nullable": true },
-          "andlatFaedingarStadurHeiti": { "type": "string", "nullable": true }
+          "andlatKynKodi": {
+            "type": "string",
+            "nullable": true
+          },
+          "andlatKynTexti": {
+            "type": "string",
+            "nullable": true
+          },
+          "andlatHjuKodi": {
+            "type": "string",
+            "nullable": true
+          },
+          "andlatHjuTexti": {
+            "type": "string",
+            "nullable": true
+          },
+          "andlatMakiKennitala": {
+            "type": "string",
+            "nullable": true
+          },
+          "andlatMakiNafn": {
+            "type": "string",
+            "nullable": true
+          },
+          "andlatLoghTengsl": {
+            "type": "string",
+            "nullable": true
+          },
+          "andlatFaedingarStadurKodi": {
+            "type": "string",
+            "nullable": true
+          },
+          "andlatFaedingarStadurHeiti": {
+            "type": "string",
+            "nullable": true
+          }
         },
         "additionalProperties": false
       },
       "EinstaklingurDTOLatnirItar": {
         "type": "object",
         "properties": {
-          "andlatKynKodi": { "type": "string", "nullable": true },
-          "andlatKynTexti": { "type": "string", "nullable": true },
-          "andlatHjuKodi": { "type": "string", "nullable": true },
-          "andlatHjuTexti": { "type": "string", "nullable": true },
-          "andlatMakiKennitala": { "type": "string", "nullable": true },
-          "andlatMakiNafn": { "type": "string", "nullable": true },
-          "andlatLoghTengsl": { "type": "string", "nullable": true },
-          "andlatFaedingarStadurKodi": { "type": "string", "nullable": true },
-          "andlatFaedingarStadurHeiti": { "type": "string", "nullable": true },
+          "andlatKynKodi": {
+            "type": "string",
+            "nullable": true
+          },
+          "andlatKynTexti": {
+            "type": "string",
+            "nullable": true
+          },
+          "andlatHjuKodi": {
+            "type": "string",
+            "nullable": true
+          },
+          "andlatHjuTexti": {
+            "type": "string",
+            "nullable": true
+          },
+          "andlatMakiKennitala": {
+            "type": "string",
+            "nullable": true
+          },
+          "andlatMakiNafn": {
+            "type": "string",
+            "nullable": true
+          },
+          "andlatLoghTengsl": {
+            "type": "string",
+            "nullable": true
+          },
+          "andlatFaedingarStadurKodi": {
+            "type": "string",
+            "nullable": true
+          },
+          "andlatFaedingarStadurHeiti": {
+            "type": "string",
+            "nullable": true
+          },
           "andlatsDagur": {
             "type": "string",
             "format": "date-time",
@@ -1411,10 +1787,22 @@
       "EinstaklingurDTOLogForeldriItem": {
         "type": "object",
         "properties": {
-          "barnKennitala": { "type": "string", "nullable": true },
-          "barnNafn": { "type": "string", "nullable": true },
-          "logForeldriKennitala": { "type": "string", "nullable": true },
-          "logForeldriNafn": { "type": "string", "nullable": true },
+          "barnKennitala": {
+            "type": "string",
+            "nullable": true
+          },
+          "barnNafn": {
+            "type": "string",
+            "nullable": true
+          },
+          "logForeldriKennitala": {
+            "type": "string",
+            "nullable": true
+          },
+          "logForeldriNafn": {
+            "type": "string",
+            "nullable": true
+          },
           "logForeldriFaedingardagur": {
             "type": "string",
             "format": "date-time",
@@ -1446,10 +1834,15 @@
       "EinstaklingurDTOLoghTengsl": {
         "type": "object",
         "properties": {
-          "logheimilistengsl": { "type": "string", "nullable": true },
+          "logheimilistengsl": {
+            "type": "string",
+            "nullable": true
+          },
           "logheimilismedlimir": {
             "type": "array",
-            "items": { "$ref": "#/components/schemas/EinstaklingurDTOBase" },
+            "items": {
+              "$ref": "#/components/schemas/EinstaklingurDTOBase"
+            },
             "nullable": true
           }
         },
@@ -1457,29 +1850,67 @@
       },
       "EinstaklingurDTONafn": {
         "type": "object",
-        "properties": { "nafn": { "type": "string", "nullable": true } },
+        "properties": {
+          "nafn": {
+            "type": "string",
+            "nullable": true
+          }
+        },
         "additionalProperties": false
       },
       "EinstaklingurDTONafnAllt": {
         "type": "object",
         "properties": {
-          "eiginNafn": { "type": "string", "nullable": true },
-          "milliNafn": { "type": "string", "nullable": true },
-          "kenniNafn": { "type": "string", "nullable": true },
-          "fulltNafn": { "type": "string", "nullable": true },
-          "nafnStadfest": { "type": "string", "nullable": true }
+          "eiginNafn": {
+            "type": "string",
+            "nullable": true
+          },
+          "milliNafn": {
+            "type": "string",
+            "nullable": true
+          },
+          "kenniNafn": {
+            "type": "string",
+            "nullable": true
+          },
+          "fulltNafn": {
+            "type": "string",
+            "nullable": true
+          },
+          "nafnStadfest": {
+            "type": "string",
+            "nullable": true
+          }
         },
         "additionalProperties": false
       },
       "EinstaklingurDTONafnItar": {
         "type": "object",
         "properties": {
-          "eiginNafn": { "type": "string", "nullable": true },
-          "milliNafn": { "type": "string", "nullable": true },
-          "kenniNafn": { "type": "string", "nullable": true },
-          "fulltNafn": { "type": "string", "nullable": true },
-          "nafnStadfest": { "type": "string", "nullable": true },
-          "birtNafn": { "type": "string", "nullable": true }
+          "eiginNafn": {
+            "type": "string",
+            "nullable": true
+          },
+          "milliNafn": {
+            "type": "string",
+            "nullable": true
+          },
+          "kenniNafn": {
+            "type": "string",
+            "nullable": true
+          },
+          "fulltNafn": {
+            "type": "string",
+            "nullable": true
+          },
+          "nafnStadfest": {
+            "type": "string",
+            "nullable": true
+          },
+          "birtNafn": {
+            "type": "string",
+            "nullable": true
+          }
         },
         "additionalProperties": false
       },
@@ -1497,27 +1928,55 @@
       "EinstaklingurDTORikisfang": {
         "type": "object",
         "properties": {
-          "rikisfangKodi": { "type": "string", "nullable": true },
-          "rikisfangLand": { "type": "string", "nullable": true }
+          "rikisfangKodi": {
+            "type": "string",
+            "nullable": true
+          },
+          "rikisfangLand": {
+            "type": "string",
+            "nullable": true
+          }
         },
         "additionalProperties": false
       },
       "EinstaklingurDTOTru": {
         "type": "object",
         "properties": {
-          "trufelagKodi": { "type": "string", "nullable": true },
-          "trufelagHeiti": { "type": "string", "nullable": true }
+          "trufelagKodi": {
+            "type": "string",
+            "nullable": true
+          },
+          "trufelagHeiti": {
+            "type": "string",
+            "nullable": true
+          }
         },
         "additionalProperties": false
       },
       "ProblemDetails": {
         "type": "object",
         "properties": {
-          "type": { "type": "string", "nullable": true },
-          "title": { "type": "string", "nullable": true },
-          "status": { "type": "integer", "format": "int32", "nullable": true },
-          "detail": { "type": "string", "nullable": true },
-          "instance": { "type": "string", "nullable": true }
+          "type": {
+            "type": "string",
+            "nullable": true
+          },
+          "title": {
+            "type": "string",
+            "nullable": true
+          },
+          "status": {
+            "type": "integer",
+            "format": "int32",
+            "nullable": true
+          },
+          "detail": {
+            "type": "string",
+            "nullable": true
+          },
+          "instance": {
+            "type": "string",
+            "nullable": true
+          }
         },
         "additionalProperties": false
       }
@@ -1531,5 +1990,9 @@
       }
     }
   },
-  "security": [{ "Bearer": [] }]
+  "security": [
+    {
+      "Bearer": []
+    }
+  ]
 }
