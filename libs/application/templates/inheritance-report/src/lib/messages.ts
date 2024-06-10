@@ -217,6 +217,11 @@ export const m = defineMessages({
     defaultMessage: 'Nafn',
     description: '',
   },
+  dateOfBirth: {
+    id: 'ir.application:dateOfBirth',
+    defaultMessage: 'Fæðingardagur',
+    description: '',
+  },
   nationalId: {
     id: 'ir.application:nationalId',
     defaultMessage: 'Kennitala',
@@ -970,31 +975,6 @@ export const m = defineMessages({
     defaultMessage: 'Tegund skuldar',
     description: '',
   },
-  debtOverDraft: {
-    id: 'ir.application:debtOverDraft',
-    defaultMessage: 'Yfirdráttur',
-    description: 'Selection for debts: Overdraft',
-  },
-  debtCreditCard: {
-    id: 'ir.application:debtCreditCard',
-    defaultMessage: 'Kreditkort',
-    description: 'Selection for debts: Credit card',
-  },
-  debtLoan: {
-    id: 'ir.application:debtLoan',
-    defaultMessage: 'Lán',
-    description: 'Selection for debts: Loan',
-  },
-  debtInsuranceCompany: {
-    id: 'ir.application:debtInsuranceCompany',
-    defaultMessage: 'Tryggingastofnun',
-    description: 'Selection for debts: Insurance company',
-  },
-  debtPropertyFees: {
-    id: 'ir.application:debtPropertyFees',
-    defaultMessage: 'Fasteignagjöld',
-    description: 'Selection for debts: Property fees',
-  },
   creditorsNationalId: {
     id: 'ir.application:creditorsNationalId',
     defaultMessage: 'Kennitala',
@@ -1549,16 +1529,40 @@ export const m = defineMessages({
     defaultMessage: 'Fylgigögn',
     description: '',
   },
+  fileUploadOtherDocumentsPrePaidDescription: {
+    id: 'ir.application:fileUploadOtherDocumentsPrePaidDescription',
+    defaultMessage:
+      'Samþykktar skráargerðir eru .pdf, .doc, .docx, .jpg, .jpeg, .png, .xls og .xlsx',
+    description: '',
+  },
+  fileUploadOtherDocumentsPrePaidUserGuidelines: {
+    id: 'ir.application:fileUploadOtherDocumentsPrePaidUserGuidelines#markdown',
+    defaultMessage:
+      'Vinsamlegast hlaðið upp önnur fylgigögn. Hægt að hlaða inn fleiri en eitt skjal.',
+    description: '',
+  },
   uploadPrivateTransferDescription: {
     id: 'ir.application:uploadPrivateTransferDescription',
     defaultMessage:
       'Samþykktar skráargerðir eru .pdf, .doc, .docx, .jpg, .jpeg, .png, .xls og .xlsx',
     description: '',
   },
+  uploadPrivateTransferUserGuidelines: {
+    id: 'ir.application:uploadPrivateTransferUserGuidelines#markdown',
+    defaultMessage:
+      'Vinsamlegast hlaðið upp einkaskiptagerð. Aðeins er hægt að hlaða inn 1 skjal.',
+    description: '',
+  },
   uploadOtherDocumentsDescription: {
     id: 'ir.application:uploadOtherDocumentsDescription',
     defaultMessage:
       'Samþykktar skráargerðir eru .pdf, .doc, .docx, .jpg, .jpeg, .png, .xls og .xlsx',
+    description: '',
+  },
+  uploadOtherDocumentsUserGuidelines: {
+    id: 'ir.application:uploadOtherDocumentsUserGuidelines#markdown',
+    defaultMessage:
+      'Vinsamlegast hlaðið upp önnur fylgigögn. Hægt að hlaða inn fleiri 1 skjal.',
     description: '',
   },
   heirShare: {
