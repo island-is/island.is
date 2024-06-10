@@ -84,9 +84,65 @@ describe('mapCaseStateToTagVariant', () => {
       text: strings.active.defaultMessage,
     })
 
+    expect(
+      fn(
+        CaseState.COMPLETED,
+        false,
+        CaseType.INDICTMENT,
+        false,
+        undefined,
+        CaseIndictmentRulingDecision.RULING,
+      ),
+    ).toEqual({
+      color: 'darkerBlue',
+      text: 'Dómur',
+    })
+
+    expect(
+      fn(
+        CaseState.COMPLETED,
+        false,
+        CaseType.INDICTMENT,
+        false,
+        undefined,
+        CaseIndictmentRulingDecision.FINE,
+      ),
+    ).toEqual({
+      color: 'darkerBlue',
+      text: 'Viðurlagaákvörðun',
+    })
+
+    expect(
+      fn(
+        CaseState.COMPLETED,
+        false,
+        CaseType.INDICTMENT,
+        false,
+        undefined,
+        CaseIndictmentRulingDecision.DISMISSAL,
+      ),
+    ).toEqual({
+      color: 'darkerBlue',
+      text: 'Frávísun',
+    })
+
+    expect(
+      fn(
+        CaseState.COMPLETED,
+        false,
+        CaseType.INDICTMENT,
+        false,
+        undefined,
+        CaseIndictmentRulingDecision.CANCELLATION,
+      ),
+    ).toEqual({
+      color: 'darkerBlue',
+      text: 'Niðurfelling',
+    })
+
     expect(fn(CaseState.COMPLETED, false, CaseType.INDICTMENT)).toEqual({
       color: 'darkerBlue',
-      text: strings.inactive.defaultMessage,
+      text: 'Lokið',
     })
   })
 
@@ -140,5 +196,11 @@ describe('mapCaseStateToTagVariant', () => {
       color: 'mint',
       text: strings.postponedUntilVerdict.defaultMessage,
     })
+  })
+
+  test('should return revoked state', () => {
+    expect(
+      fn(CaseState.WAITING_FOR_CANCELLATION, false, CaseType.INDICTMENT),
+    ).toEqual({ color: 'rose', text: strings.recalled.defaultMessage })
   })
 })
