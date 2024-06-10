@@ -79,4 +79,9 @@ export class UpdateDefendantDto {
   @IsString()
   @ApiPropertyOptional()
   readonly verdictViewDate?: string
+
+  @IsOptional()
+  @IsBoolean()
+  @ApiPropertyOptional({ type: Boolean })
+  readonly acceptCompensationClaim?: boolean
 }

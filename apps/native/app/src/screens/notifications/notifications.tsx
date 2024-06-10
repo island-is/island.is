@@ -211,9 +211,6 @@ export const NotificationsScreen: NavigationFunctionComponent = ({
             uri: `${item.sender.logoUrl}?w=64&h=64&fit=pad&fm=png`,
           }
         }
-        underlayColor={
-          theme.isDark ? theme.shade.shade400 : theme.color.blue100
-        }
         unread={!item.metadata.read}
         onPress={() => onNotificationPress(item)}
         testID={testIDs.NOTIFICATION_CARD_BUTTON}
