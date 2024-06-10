@@ -31,6 +31,8 @@ const fetchFactory = async (
   config: ConfigType<typeof UltravioletRadiationClientConfig>,
   ttl: number,
 ) => {
+  const maxAgeInSeconds = ttl / 1000 // Convert milliseconds to seconds
+
   return new Configuration({
     headers: {
       'x-api-key': config.apiKey,
@@ -43,9 +45,11 @@ const fetchFactory = async (
         cacheManager: await getCacheManager(config, ttl),
         overrideCacheControl: () =>
           buildCacheControl({
-            maxAge: ttl / 1000, // Convert milliseconds to seconds
+            maxAge: maxAgeInSeconds,
+            sharedMaxAge: maxAgeInSeconds,
             staleWhileRevalidate: 3600 * 24 * 14, // 14 days
             staleIfError: 3600 * 24 * 30, // 1 month
+            public: true,
           }),
       },
     }),
