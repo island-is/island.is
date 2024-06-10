@@ -10,6 +10,7 @@ import {
   YES,
 } from '../../lib/constants'
 import { fakeEligibility } from './fakeEligibility'
+import { DrivingLicense } from '../../lib/types'
 
 const QUERY = gql`
   query EligibilityQuery($input: ApplicationEligibilityInput!) {
@@ -63,6 +64,25 @@ export const useEligibility = (
     application.externalData,
     'glassesCheck.data',
   )
+  const currentLicense = getValueViaPath<DrivingLicense>(
+    application.externalData,
+    'currentLicense.data',
+  )
+  const hasOtherLicenseCategories = (
+    currentLicense: DrivingLicense | undefined,
+  ) => {
+    return (
+      currentLicense?.categories.some(
+        (license) =>
+          license.nr === 'C' ||
+          license.nr === 'C1' ||
+          license.nr === 'CE' ||
+          license.nr === 'D' ||
+          license.nr === 'D1' ||
+          license.nr === 'DE',
+      ) ?? false
+    )
+  }
 
   if (usingFakeData) {
     return {
@@ -104,7 +124,8 @@ export const useEligibility = (
           ...eligibility,
           {
             key: RequirementKey.BeRequiresHealthCertificate,
-            requirementMet: !hasGlasses,
+            requirementMet:
+              !hasGlasses && !hasOtherLicenseCategories(currentLicense),
           },
         ],
       },
