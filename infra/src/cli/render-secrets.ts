@@ -23,6 +23,7 @@ export const renderSecretsCommand = async (service: string) => {
     } else {
       logger.error(error)
     }
+    process.exit(1)
     return {} as ReturnType<typeof renderSecrets>
   })
 }
